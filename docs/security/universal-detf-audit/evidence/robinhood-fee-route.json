@@ -1,0 +1,30 @@
+{
+  "date": "2026-09-05",
+  "rpc": "https://rpc.mainnet.chain.robinhood.com",
+  "addressSource": "frontend/packages/protocol/src/addresses/chain/4663/platform.json",
+  "chainId": "0x1237",
+  "observedBlock": "0x34c6dc1",
+  "codePresenceCheck": {
+    "blockTag": "latest",
+    "managerHasCode": true,
+    "feeCollectorHasCode": true,
+    "limitation": "Proxy code presence is not facet implementation or deployed-source verification."
+  },
+  "calls": [
+    {
+      "to": "0x09682b00D873D913ada0bB69B4D4c9631810d0bc",
+      "signature": "feeTo()",
+      "data": "0x017e7e58",
+      "blockTag": "0x34c6dc1",
+      "result": "0x00000000000000000000000020af9a1e21a59a411cd3b0c40e70af9084770b2e"
+    },
+    {
+      "to": "0x20af9A1e21a59a411cd3b0C40E70AF9084770b2E",
+      "signature": "owner()",
+      "data": "0x8da5cb5b",
+      "blockTag": "0x34c6dc1",
+      "result": "0x00000000000000000000000072bea6fa3e68ef18c87d045aac7c4aa5249d933b"
+    }
+  ],
+  "stateChangingTransactions": false
+}

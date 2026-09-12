@@ -1,0 +1,28 @@
+{
+  "recorded_at_utc": "2026-09-08T04:20:55.475478+00:00",
+  "status": "APPLIED_VALIDATION_PENDING",
+  "measured_failure": "Current CurveQuad SeFacet 25,944 bytes exceeds EIP-170 by 1,368; Weighted SeFacet 25,422 exceeds by 846. Their exported selectors do not include previewSwapAfterRedeem, but Solidity inherited that public method from HooksTarget.",
+  "change": "Move each unchanged composed quote to an abstract target in its same existing source file, inherited only by the HooksFacet that already exports it. Preserve the exact proxy selector, quote math, ownership and execution paths; no new deployed facet/package.",
+  "files": [
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget.sol",
+      "before_sha256": "251878b722a35debbc7ba3f6ebcfd8be4c83d688b4983589404d136571e24c98",
+      "after_sha256": "a8569e80ddadff7b0f4818b450d403a8a6f450559a39ab620c26c6cdb802ab7d"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet.sol",
+      "before_sha256": "d65dd26a4361ccb479e4feccc1eb28242cc89501a46e0fe797e8cf6bcaea9df0",
+      "after_sha256": "9da231027f01730b2b16e83d9387c07b316eb444e9975381cded24fb51366e45"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookHooksTarget.sol",
+      "before_sha256": "bd8c5c9cdb20c0a33576fe1ba828735bb8438ccb5e47aa9b7c739aa5a97c6413",
+      "after_sha256": "eedf87348cca53d7d3c77e4c16accd79b1f7c030ab7b69d04f7f0fcd55be7b5f"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookHooksFacet.sol",
+      "before_sha256": "23b6a979f85904c4a752deabfd132000c1a6830296295f15599e4866dc5a18e9",
+      "after_sha256": "8062217b8669551b2d478ccbd8cda55117e9b7a1f61a7e728a5db113d99f130a"
+    }
+  ]
+}

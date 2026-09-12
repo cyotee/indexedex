@@ -211,7 +211,7 @@ contract TestBase_BalancerV3StandardExchangeRouter is TestBase_BalancerV3Vault, 
 
     function _deployRouterFacets() internal virtual {
         // Deploy SenderGuardFacet directly
-        senderGuardFacet = IFacet(address(new SenderGuardFacet()));
+        senderGuardFacet = create3Factory.deployFacet(type(SenderGuardFacet).creationCode, keccak256("SenderGuardFacet"));
         vm.label(address(senderGuardFacet), "SenderGuardFacet");
 
         exactInQueryFacet = create3Factory.deployBalancerV3StandardExchangeRouterExactInQueryFacet();

@@ -26,8 +26,7 @@ library Phase_06_Stage_01_BondNftPkg {
         );
         IDETFNFTVaultDFPkg.PkgInit memory nftPkgInit = DetfComponentFactoryService.buildDETFNFTVaultPkgInit(
             erc721FacetDetf,
-            s.erc4626BasicVaultFacet,
-            s.erc4626StandardVaultFacet,
+            DetfFacetFactoryService.deployDETFFundedBondMetadataFacet(s.create3Factory),
             detfNFTVaultFacet,
             IVaultFeeOracleQuery(address(s.indexedexManager)),
             IVaultRegistryDeployment(address(s.indexedexManager))

@@ -1,0 +1,21 @@
+{
+  "scope": "D60 required test deployment argument compatibility only; current production packages and excluded test assertions retained",
+  "files": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf.sol",
+      "before_sha256": "12f0d427c0a314d7310bba9225823400b7a00ed60597d70c8eeeb26f547594ac",
+      "after_sha256": "61a94387a55a385a83b808a306e1d71f52d1dd02586db8dcc8df4e5e904bfe9d"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf_Decimals.sol",
+      "before_sha256": "a2a625f7de9f5bbd6afd656cac5b276d8f3e0612b3b8e343a43c81f022960bce",
+      "after_sha256": "9f6efbc144258acd690881ef9c95ebe22a138a4998dff91d22e6d0dfe15b2923"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF_Decimals.sol",
+      "before_sha256": "c7a0e9def43ac9aea96adf81b73d15994c112b4c63ad97918f097fd2daad518d",
+      "after_sha256": "c6982bfca64d5fe14d0c5da49ad12e7fa5a84453de4b981fa6b76b97d9f26b7e"
+    }
+  ],
+  "validation": "pending default full build"
+}

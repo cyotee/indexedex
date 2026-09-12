@@ -1,9 +1,8 @@
 // Swap state management hook
 import { useState, useMemo, useEffect, useCallback } from 'react'
-import { useAccount, useChainId, useConnection, useConnectorClient, usePublicClient, useSignTypedData, useWalletClient } from 'wagmi'
+import { useAccount, useChainId, useConnectorClient, usePublicClient, useSignTypedData, useWalletClient } from 'wagmi'
 import { parseUnits } from 'viem'
-import { CHAIN_ID_ANVIL, CHAIN_ID_BASE, CHAIN_ID_BASE_SEPOLIA, CHAIN_ID_LOCALHOST, CHAIN_ID_SEPOLIA, getAddressArtifacts, isSupportedChainId, resolveArtifactsChainId } from '@indexedex/protocol/addressArtifacts'
-import { usePreferredBrowserChainId } from '@indexedex/protocol/browserChain'
+import { getAddressArtifacts, isSupportedChainId, resolveArtifactsChainId } from '@indexedex/protocol/addressArtifacts'
 import {
   buildPoolOptionsForChain,
   buildTokenOptionsForChain,
@@ -103,17 +102,11 @@ export interface SwapState {
 export function useSwapState(): SwapState {
   const { address, isConnected } = useAccount()
   const configChainId = useChainId()
-  const connection = useConnection()
-  const connectorId = connection.connector?.id
+  const connection = useAccount()
   const { data: connectorClient } = useConnectorClient()
   const { data: walletClient } = useWalletClient()
-  const preferredBrowserChainIds = useMemo(
-    () => [CHAIN_ID_BASE_SEPOLIA, CHAIN_ID_SEPOLIA, CHAIN_ID_ANVIL, CHAIN_ID_LOCALHOST, CHAIN_ID_BASE],
-    [],
-  )
-  const browserChainId = usePreferredBrowserChainId(isConnected, preferredBrowserChainIds, connectorId, address)
   const walletChainId = isConnected
-    ? (browserChainId ?? connectorClient?.chain?.id ?? walletClient?.chain?.id ?? connection.chainId ?? configChainId)
+    ? (connection.chainId ?? connectorClient?.chain?.id ?? walletClient?.chain?.id ?? configChainId)
     : configChainId
   const resolvedChainId = resolveArtifactsChainId(walletChainId ?? 11155111) ?? walletChainId ?? 11155111
   const isUnsupportedChain = isConnected && walletChainId !== undefined && !isSupportedChainId(walletChainId)

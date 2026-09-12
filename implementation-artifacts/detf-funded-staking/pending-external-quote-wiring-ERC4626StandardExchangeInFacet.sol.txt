@@ -1,0 +1,49 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+import {NativeStandardYieldSelectors} from "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol";
+import {ERC4626StandardYieldTarget} from "./ERC4626StandardYieldTarget.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {IStandardExchangeTransitionQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {ERC4626StandardExchangeInTarget} from
+    "contracts/vaults/standard/erc4626/ERC4626StandardExchangeInTarget.sol";
+
+contract ERC4626StandardExchangeInFacet is ERC4626StandardExchangeInTarget, ERC4626StandardYieldTarget, IFacet {
+    function facetName() public pure returns (string memory name) {
+        return type(ERC4626StandardExchangeInFacet).name;
+    }
+
+    function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
+        interfaces = new bytes4[](4);
+        interfaces[0] = type(IStandardExchangeIn).interfaceId;
+        interfaces[1] = type(IStandardExchangeTransitionQuote).interfaceId;
+        interfaces[2] = type(IStandardizedYield).interfaceId;
+        interfaces[3] = type(IStandardExchangeExternalQuote).interfaceId;
+        return interfaces;
+    }
+
+    function facetFuncs() public pure returns (bytes4[] memory funcs) {
+        funcs = new bytes4[](7);
+        funcs[0] = IStandardExchangeIn.previewExchangeIn.selector;
+        funcs[1] = IStandardExchangeIn.exchangeIn.selector;
+        funcs[2] = IStandardExchangeTransitionQuote.quoteState.selector;
+        funcs[3] = IStandardExchangeTransitionQuote.quoteTransition.selector;
+        funcs[4] = IStandardExchangeTransitionQuote.quoteAssets.selector;
+        funcs[5] = IStandardExchangeTransitionQuote.quoteShareBalance.selector;
+        funcs[6] = IStandardExchangeExternalQuote.quoteExternalExchange.selector;
+        return NativeStandardYieldSelectors._append(funcs);
+    }
+
+    function facetMetadata()
+        external
+        pure
+        returns (string memory name_, bytes4[] memory interfaces, bytes4[] memory functions)
+    {
+        name_ = facetName();
+        interfaces = facetInterfaces();
+        functions = facetFuncs();
+    }
+}

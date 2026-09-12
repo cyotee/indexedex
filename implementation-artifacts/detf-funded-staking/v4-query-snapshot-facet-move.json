@@ -1,0 +1,37 @@
+{
+  "recorded_at_utc": "2026-09-08T04:20:30.382480+00:00",
+  "status": "APPLIED_VALIDATION_PENDING",
+  "change": "Move quoteState unchanged from existing InQuery to existing OutMultiQuery facet; retain the exact assembled proxy API and package deployment structure. Transition execution remains on InQuery. Independent selector controls migrate with the implementation.",
+  "files": [
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryTarget.sol",
+      "before_sha256": "4ddb839bdbbe7e1e114bdf08e629aa0139e093bd707f8b7a7ad17c663b4226b6",
+      "after_sha256": "e915db909b034879e03f46e2b4b7e52d71c0da36124f9b2621b8fd3b82e5feda"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiQueryTarget.sol",
+      "before_sha256": "df2cfa9942aa4982895df00557de6ac76d8bc8a5199376d7c50b02335638c4c9",
+      "after_sha256": "ea5f939bc95b20a01f2c6b5d1b59a88491ee9a7d1264aea9dfc75b5fe7be803d"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryFacet.sol",
+      "before_sha256": "f7961e6ea84be75687c13155eb865ec69295776305b25016da8df8756a2ba267",
+      "after_sha256": "418b3fa4c43aa955765cc2ff5abf8e8a2a3ade0204f1081f85875add5bae16ce"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiQueryFacet.sol",
+      "before_sha256": "138f6165c6d4e286b1098ede53e5ffb4066fde0fc76ae5ac421cfa7894a97efb",
+      "after_sha256": "58e27b27e746fd4284f6e2bdac0e21e9558b01c3d73c9ed0756d0f0c1f361888"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryFacet_IFacet_Test.t.sol",
+      "before_sha256": "773814a8eb46ba1315a1c15e7c9c95152270df8a4a7182c67ea8abfda3375cee",
+      "after_sha256": "0ace5b14fb6acaee104c41c81263d4ecacfa30942fa3e54e1d75e7e6723781f0"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiQueryFacet_IFacet_Test.t.sol",
+      "before_sha256": "29b5fc121f42cbc36081d93978923ac058d0c4a214818f2b208ca389b6492d2a",
+      "after_sha256": "57278adcf087636d4516d7a787be8dddfdaf051c75c56173b7c26d63a33a0ec6"
+    }
+  ]
+}

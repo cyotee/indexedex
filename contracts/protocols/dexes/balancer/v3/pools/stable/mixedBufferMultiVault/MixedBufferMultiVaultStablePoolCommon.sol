@@ -30,7 +30,16 @@ abstract contract MixedBufferMultiVaultStablePoolCommon {
     function _liftToScaled18Rated(uint256 rawAmount, uint256 tokenIndex) internal view returns (uint256) {
         if (rawAmount == 0) return 0;
         (uint256 rate, uint256 scalingFactor) = _vaultTokenRateAndScale(tokenIndex);
-        return Math.mulDiv(rawAmount * scalingFactor, rate, 1e18);
+        return Math.mulDiv(rawAmount, scalingFactor * rate, 1e18);
+    }
+
+    /// @dev Vault scaled18 → native buffer units. Identity for 18-dec STANDARD buffer.
+    function _bufferToRaw(uint256 scaled18) internal view returns (uint256) {
+        if (scaled18 == 0) return 0;
+        (uint256 rate, uint256 scalingFactor) = _vaultTokenRateAndScale(Repo._bufferIndex());
+        uint256 denom = scalingFactor * rate;
+        if (denom == 0) return 0;
+        return Math.mulDiv(scaled18, 1e18, denom);
     }
 
     function _derivedShareDepth(uint256 vaultIndex, uint256[] memory balancesLiveScaled18)

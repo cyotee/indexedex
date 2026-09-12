@@ -31,8 +31,24 @@ library DETFMintSplitLib {
         pure
         returns (uint256 userDetf_, uint256 potDetf_, uint256 join_)
     {
+        return _splitBond(joinDetf_, joinDetf_, p_);
+    }
+
+    /// @notice Split independently quoted purchased DETF and the unboosted liquidity self-leg.
+    /// @dev D36/D49: principal is (1-p)*U; the reward pot is floor(p*U)+floor(p*G).
+    /// @param purchasedGross_ Gross DETF quoted from the duration-adjusted payment.
+    /// @param joinDetf_ DETF quoted from the actual payment for the reserve liquidity join.
+    /// @param p_ Existing WAD seigniorage fraction.
+    /// @return userDetf_ Fixed net DETF principal to fund into the bond's staking position.
+    /// @return potDetf_ DETF reward pot distributed immediately after funding principal.
+    /// @return join_ Separately minted liquidity self-leg, unaffected by the purchase bonus.
+    function _splitBond(uint256 purchasedGross_, uint256 joinDetf_, uint256 p_)
+        internal
+        pure
+        returns (uint256 userDetf_, uint256 potDetf_, uint256 join_)
+    {
         join_ = joinDetf_;
-        userDetf_ = Math.mulDiv(joinDetf_, ONE_WAD - p_, ONE_WAD);
-        potDetf_ = Math.mulDiv(joinDetf_, p_, ONE_WAD) + Math.mulDiv(joinDetf_, p_, ONE_WAD);
+        userDetf_ = Math.mulDiv(purchasedGross_, ONE_WAD - p_, ONE_WAD);
+        potDetf_ = Math.mulDiv(purchasedGross_, p_, ONE_WAD) + Math.mulDiv(joinDetf_, p_, ONE_WAD);
     }
 }

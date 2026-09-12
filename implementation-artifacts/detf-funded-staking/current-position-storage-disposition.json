@@ -1,0 +1,178 @@
+{
+  "recorded_at_utc": "2026-09-09T00:47:36.929654+00:00",
+  "status": "APPLIED_ALL_FIELD_CLEANUP_FINAL_RUNTIME_VALIDATION_PENDING",
+  "source_snapshot": "96d7a3ff1d5d6d8f41f1ff0c7a8dd09419e8243b669dd27700325822edf63dde",
+  "rows": [
+    {
+      "source": "contracts/protocols/dexes/uniswap/v3/UniswapV3VaultRepo.sol",
+      "struct": "Storage",
+      "fields_before": [
+        "Position centerPosition",
+        "uint160 lastSqrtPriceX96",
+        "int24 lastTick",
+        "uint32 lastTimestamp",
+        "address importedPositionManager",
+        "uint256 importedPositionTokenId",
+        "bool importedPositionActive"
+      ],
+      "fields_after": [
+        "Position centerPosition"
+      ],
+      "removed_fields": [
+        "uint160 lastSqrtPriceX96",
+        "int24 lastTick",
+        "uint32 lastTimestamp",
+        "address importedPositionManager",
+        "uint256 importedPositionTokenId",
+        "bool importedPositionActive"
+      ],
+      "source_sha256": "4e36478f32eef7cbc63477148034d59345dd1002680f193f585771db7be0afa6"
+    },
+    {
+      "source": "contracts/protocols/dexes/uniswap/v3/UniswapV3VaultRepo.sol",
+      "struct": "Position",
+      "fields_before": [
+        "int24 tickLower",
+        "int24 tickUpper",
+        "uint128 liquidity",
+        "bool created"
+      ],
+      "fields_after": [
+        "int24 tickLower",
+        "int24 tickUpper",
+        "bool created"
+      ],
+      "removed_fields": [
+        "uint128 liquidity"
+      ],
+      "source_sha256": "4e36478f32eef7cbc63477148034d59345dd1002680f193f585771db7be0afa6"
+    },
+    {
+      "source": "contracts/protocols/dexes/uniswap/v4/UniswapV4PositionRepo.sol",
+      "struct": "Storage",
+      "fields_before": [
+        "PositionState centerPosition",
+        "PositionState lowerWingPosition",
+        "PositionState upperWingPosition",
+        "IPositionManager importedPositionManager",
+        "uint256 importedPositionTokenId",
+        "bool importedPositionActive",
+        "IPositionManager authorizedPositionManager",
+        "uint160 lastSqrtPriceX96",
+        "int24 lastTick",
+        "uint32 lastTimestamp"
+      ],
+      "fields_after": [
+        "PositionState centerPosition",
+        "IPositionManager importedPositionManager",
+        "uint256 importedPositionTokenId",
+        "bool importedPositionActive",
+        "IPositionManager authorizedPositionManager"
+      ],
+      "removed_fields": [
+        "PositionState lowerWingPosition",
+        "PositionState upperWingPosition",
+        "uint160 lastSqrtPriceX96",
+        "int24 lastTick",
+        "uint32 lastTimestamp"
+      ],
+      "source_sha256": "5cdccf9aec1d0a0817450b7f98a21254fcf2061ed0bf7ee711e33c44eb04fe26"
+    },
+    {
+      "source": "contracts/protocols/dexes/uniswap/v4/UniswapV4PositionRepo.sol",
+      "struct": "PositionState",
+      "fields_before": [
+        "int24 tickLower",
+        "int24 tickUpper",
+        "uint128 liquidity",
+        "bytes32 salt",
+        "bool created"
+      ],
+      "fields_after": [
+        "int24 tickLower",
+        "int24 tickUpper",
+        "bytes32 salt",
+        "bool created"
+      ],
+      "removed_fields": [
+        "uint128 liquidity"
+      ],
+      "source_sha256": "5cdccf9aec1d0a0817450b7f98a21254fcf2061ed0bf7ee711e33c44eb04fe26"
+    },
+    {
+      "source": "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangePositionImportTarget.sol",
+      "struct": "ImportedPosition",
+      "fields_before": [
+        "uint96 nonce",
+        "address operator",
+        "address token0",
+        "address token1",
+        "uint24 fee",
+        "int24 lower",
+        "int24 upper",
+        "uint128 liquidity",
+        "uint256 growth0",
+        "uint256 growth1",
+        "uint128 owed0",
+        "uint128 owed1"
+      ],
+      "fields_after": [
+        "uint96 nonce",
+        "address operator",
+        "address token0",
+        "address token1",
+        "uint24 fee",
+        "int24 lower",
+        "int24 upper",
+        "uint128 liquidity",
+        "uint256 growth0",
+        "uint256 growth1",
+        "uint128 owed0",
+        "uint128 owed1"
+      ],
+      "removed_fields": [],
+      "source_sha256": "cb80aa19514d4de00c85555aecdc9c5a2741b9126fc5659acf536127c6977bbf"
+    },
+    {
+      "source": "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangePositionImportTarget.sol",
+      "struct": "ImportRemintState",
+      "fields_before": [
+        "uint256 booked0",
+        "uint256 booked1",
+        "uint256 inbound0",
+        "uint256 inbound1",
+        "uint160 sqrtPriceX96",
+        "uint128 remintLiquidity",
+        "uint256 amount0Used",
+        "uint256 amount1Used"
+      ],
+      "fields_after": [
+        "uint256 booked0",
+        "uint256 booked1",
+        "uint256 inbound0",
+        "uint256 inbound1"
+      ],
+      "removed_fields": [
+        "uint160 sqrtPriceX96",
+        "uint128 remintLiquidity",
+        "uint256 amount0Used",
+        "uint256 amount1Used"
+      ],
+      "source_sha256": "cb80aa19514d4de00c85555aecdc9c5a2741b9126fc5659acf536127c6977bbf"
+    }
+  ],
+  "retention_reasons": {
+    "centerPosition": "Tracks the managed full-range position ticks, creation state and V4 salt used for exact principal/fee ownership.",
+    "V4 imported manager/token ID/active": "Active operational context during authenticated import: initialize it, decrease NFT liquidity and collect actual assets through the common settlement helper, quote funded shares, then finish conversion before creating/rebalancing the managed position. The context is read during settlement; it is not an unread cache.",
+    "V4 authorizedPositionManager": "Immutable trusted manager binding checked before accepting NFT custody; retained for import authorization.",
+    "ImportedPosition nonce/operator and remaining fields": "Retain the exact external V3 positions() ABI tuple layout, even for values unused by local business logic."
+  },
+  "notes": [
+    "Removed unread price/tick/time caches, write-only liquidity copies, never-created V4 wings and their traversal code, and four unused V3 import scratch members.",
+    "These are new immutable deployments with code-bound component salts; no upgrade of existing storage is performed.",
+    "The 26-component build passes. Actual import/full-range/fee/sleeve/route and adversarial regression execution is still required.",
+    "V3 NFT metadata retention was initially misclassified. The prepared follow-up removes it after the active source-frozen test run; V4 settlement context remains separately operational."
+  ],
+  "removed_v3_import_metadata": "Removed unused manager/token ID/active state and private readers; actual import drains the NFT and creates a directly vault-owned full-range pool position using the existing center initializer.",
+  "final_cleanup_record": "v3-import-storage-followup-applied.json"
+}

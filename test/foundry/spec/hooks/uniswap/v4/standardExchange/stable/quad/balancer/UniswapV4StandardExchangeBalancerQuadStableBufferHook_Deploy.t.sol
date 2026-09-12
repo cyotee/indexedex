@@ -44,7 +44,7 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Deploy is TestBas
         assertEq(quad.ratedScale(1), quad.invScale(1)); // raw leg equal
     }
 
-    function test_firstMint_fullBook_geoMeanMinusMin() public {
+    function test_firstMint_fullBook_invariantMinusMin() public {
         uint256 shares = _firstMintEqual(1000 ether);
         assertGt(shares, 0);
         assertEq(IERC20(hook).balanceOf(user), shares);
@@ -76,59 +76,50 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Deploy is TestBas
     }
 
     function test_reject_zeroSE_binding() public {
-        address[4] memory toks = [address(token0), address(token1), address(token2), address(token3)];
-        address[4] memory ses;
-        address[4] memory rps;
-        vm.expectRevert();
-        hookPkg.deployVaultAutoMine(_pkgArgs(toks, ses, rps, DEFAULT_BASE_AMP));
+        IPkg.PkgArgs memory args = _defaultPkgArgs();
+        args.standardExchanges[0] = address(0);
+        args.seDecimals[0] = 0;
+        vm.expectRevert(IPkg.ZeroStandardExchangeRequired.selector);
+        hookPkg.processArgs(abi.encode(args));
     }
 
     function test_reject_sameSE_binding() public {
-        address[4] memory toks = [address(token0), address(token1), address(token2), address(token3)];
-        address[4] memory ses;
-        ses[0] = se0;
-        ses[1] = se0;
-        address[4] memory rps;
-        vm.expectRevert();
-        hookPkg.deployVaultAutoMine(_pkgArgs(toks, ses, rps, DEFAULT_BASE_AMP));
+        IPkg.PkgArgs memory args = _defaultPkgArgs();
+        args.standardExchanges[1] = args.standardExchanges[0];
+        vm.expectRevert(IPkg.SameStandardExchange.selector);
+        hookPkg.processArgs(abi.encode(args));
     }
 
     function test_reject_rpWithoutSE() public {
-        address[4] memory toks = [address(token0), address(token1), address(token2), address(token3)];
-        address[4] memory ses;
-        ses[0] = se0;
-        address[4] memory rps;
-        rps[1] = address(new RateProviderMock());
-        vm.expectRevert();
-        hookPkg.deployVaultAutoMine(_pkgArgs(toks, ses, rps, DEFAULT_BASE_AMP));
+        IPkg.PkgArgs memory args = _defaultPkgArgs();
+        args.rateProviders[1] = address(new RateProviderMock());
+        vm.expectRevert(IPkg.RateProviderWithoutSE.selector);
+        hookPkg.processArgs(abi.encode(args));
     }
 
     function test_reject_badAmp_zero() public {
-        address[4] memory toks = [address(token0), address(token1), address(token2), address(token3)];
-        address[4] memory ses;
-        ses[0] = se0;
-        address[4] memory rps;
-        vm.expectRevert();
-        hookPkg.deployVaultAutoMine(_pkgArgs(toks, ses, rps, 0));
+        IPkg.PkgArgs memory args = _defaultPkgArgs();
+        args.baseAmp = 0;
+        vm.expectRevert(IPkg.InvalidAmp.selector);
+        hookPkg.processArgs(abi.encode(args));
     }
 
     function test_reject_badAmp_max() public {
-        address[4] memory toks = [address(token0), address(token1), address(token2), address(token3)];
-        address[4] memory ses;
-        ses[0] = se0;
-        address[4] memory rps;
-        vm.expectRevert();
-        hookPkg.deployVaultAutoMine(_pkgArgs(toks, ses, rps, 1_000_000));
+        IPkg.PkgArgs memory args = _defaultPkgArgs();
+        args.baseAmp = 1_000_000;
+        vm.expectRevert(IPkg.InvalidAmp.selector);
+        hookPkg.processArgs(abi.encode(args));
     }
 
     function test_reject_nonAscending_tokens() public {
-        // tokens must be address-ascending; reverse order should fail
-        address[4] memory toks = [address(token3), address(token2), address(token1), address(token0)];
-        address[4] memory ses;
-        ses[0] = se3; // SE must own token3
-        address[4] memory rps;
-        vm.expectRevert();
-        hookPkg.deployVaultAutoMine(_pkgArgs(toks, ses, rps, DEFAULT_BASE_AMP));
+        IPkg.PkgArgs memory args = _defaultPkgArgs();
+        (args.tokens[0], args.tokens[3]) = (args.tokens[3], args.tokens[0]);
+        (args.standardExchanges[0], args.standardExchanges[3]) =
+            (args.standardExchanges[3], args.standardExchanges[0]);
+        (args.tokenDecimals[0], args.tokenDecimals[3]) = (args.tokenDecimals[3], args.tokenDecimals[0]);
+        (args.seDecimals[0], args.seDecimals[3]) = (args.seDecimals[3], args.seDecimals[0]);
+        vm.expectRevert(IPkg.TokensNotAscending.selector);
+        hookPkg.processArgs(abi.encode(args));
     }
 
     function test_seMatrix_allFourSE() public {
@@ -153,5 +144,68 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Deploy is TestBas
         assertEq(uint8(b[2]), uint8(bytes1("B")));
         assertEq(uint8(b[3]), uint8(bytes1("Q")));
         assertEq(uint8(b[4]), uint8(bytes1("S")));
+    }
+
+    function test_initAccount_emptySelfLeg_usesPkgArgsDecimals() public {
+        address emptySelf = address(uint160(uint256(keccak256("empty-detf"))));
+        assertEq(emptySelf.code.length, 0, "empty self-leg");
+        IPkg.PkgArgs memory args = _emptySelfLegArgs(emptySelf);
+        address h = _deployBootstrapOnly(args);
+        _ensureProductDoorsAndFinalize(
+            h, args.tokens[0], args.tokens[1], args.tokens[2], args.tokens[3]
+        );
+        assertTrue(h.code.length > 0, "hook deployed");
+        assertEq(IERC20Metadata(h).name(), "SEBQS Balancer Stable Buffer Hook LP");
+        assertEq(IERC20Metadata(h).symbol(), "SEBQS-LP");
+    }
+
+    function test_processArgs_selfLegDecimalsNot18_reverts() public {
+        IPkg.PkgArgs memory args = _defaultPkgArgs();
+        args.tokenDecimals[1] = 17;
+        vm.expectRevert(IPkg.InvalidDecimals.selector);
+        hookPkg.processArgs(abi.encode(args));
+    }
+
+    function test_processArgs_tokenDecimalsOutOfRange_reverts() public {
+        IPkg.PkgArgs memory args = _defaultPkgArgs();
+        args.tokenDecimals[0] = 0;
+        vm.expectRevert(IPkg.InvalidDecimals.selector);
+        hookPkg.processArgs(abi.encode(args));
+        args = _defaultPkgArgs();
+        args.tokenDecimals[0] = 19;
+        vm.expectRevert(IPkg.InvalidDecimals.selector);
+        hookPkg.processArgs(abi.encode(args));
+    }
+
+    function test_calcSalt_differsWhenTokenDecimalsDiffer() public view {
+        IPkg.PkgArgs memory args = _defaultPkgArgs();
+        args.tokenDecimals[0] = 6;
+        bytes32 salt6 = hookPkg.calcSalt(abi.encode(args));
+        args.tokenDecimals[0] = 18;
+        bytes32 salt18 = hookPkg.calcSalt(abi.encode(args));
+        assertTrue(salt6 != salt18, "salt includes tokenDecimals");
+    }
+
+    function _emptySelfLegArgs(address emptySelf)
+        internal
+        view
+        returns (IPkg.PkgArgs memory)
+    {
+        address[4] memory toks;
+        toks[0] = emptySelf;
+        toks[1] = address(token0);
+        toks[2] = address(token1);
+        toks[3] = address(token2);
+        for (uint256 i; i < 4; ++i) {
+            for (uint256 j = i + 1; j < 4; ++j) {
+                if (toks[i] > toks[j]) (toks[i], toks[j]) = (toks[j], toks[i]);
+            }
+        }
+        address[4] memory ses;
+        address[4] memory rps;
+        for (uint256 i; i < 4; ++i) {
+            if (toks[i] == address(token0)) ses[i] = se0;
+        }
+        return _pkgArgs(toks, ses, rps, DEFAULT_BASE_AMP);
     }
 }

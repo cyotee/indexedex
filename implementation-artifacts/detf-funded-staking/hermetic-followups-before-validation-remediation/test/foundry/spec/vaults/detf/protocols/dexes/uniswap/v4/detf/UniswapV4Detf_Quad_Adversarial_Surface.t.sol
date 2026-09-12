@@ -1,0 +1,135 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+
+import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
+import {Behavior_IFacet} from "@crane/contracts/factories/diamondPkg/Behavior_IFacet.sol";
+import {IUniswapV4SeBufferHook, IUniswapV4SeBufferHookClaimQuote, IUniswapV4SeBufferHookClaimExitQuote} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IStandardExchangeMultiAssetLiquidity} from "contracts/interfaces/IStandardExchangeMultiAssetLiquidity.sol";
+import {IUniswapV4StandardExchangeCurveQuadStableBufferHook as IQuadHook} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
+
+import {IUniswapV4Detf} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
+import {TestBase_UniswapV4Detf} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
+import {TestBase_UniswapV4Detf_Adversarial} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol";
+import {TestBase_UniswapV4Detf_Quad} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad.sol";
+import {TestBase_UniswapV4Detf_Quad_Adversarial} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_Adversarial.sol";
+import {Adversarial_Surface} from
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/adversarial/Adversarial_Surface.t.sol";
+
+/// @notice Quad gold J1–J3 on the Quad proxy (same DETF facet cuts).
+contract UniswapV4Detf_Quad_Adversarial_Surface is
+    TestBase_UniswapV4Detf_Quad_Adversarial,
+    Adversarial_Surface
+{
+    function setUp()
+        public
+        override(TestBase_UniswapV4Detf_Quad_Adversarial, TestBase_UniswapV4Detf_Adversarial)
+    {
+        TestBase_UniswapV4Detf_Quad_Adversarial.setUp();
+    }
+
+    function _firstBond(uint256 pairAmount_)
+        internal
+        override(TestBase_UniswapV4Detf_Quad_Adversarial, TestBase_UniswapV4Detf)
+        returns (uint256 tokenId, uint256 shares)
+    {
+        return TestBase_UniswapV4Detf_Quad._firstBond(pairAmount_);
+    }
+
+    function _assertNoJoinableDust()
+        internal
+        view
+        override(TestBase_UniswapV4Detf_Quad_Adversarial, TestBase_UniswapV4Detf)
+    {
+        TestBase_UniswapV4Detf_Quad._assertNoJoinableDust();
+    }
+
+    function _uniqueDetfArgs(string memory tag_)
+        internal
+        view
+        override(TestBase_UniswapV4Detf_Quad_Adversarial, TestBase_UniswapV4Detf_Adversarial)
+        returns (IUniswapV4Detf.PkgArgs memory)
+    {
+        return TestBase_UniswapV4Detf_Quad_Adversarial._uniqueDetfArgs(tag_);
+    }
+
+    function _approveUserForDetf(address detf_)
+        internal
+        override(TestBase_UniswapV4Detf_Quad_Adversarial, TestBase_UniswapV4Detf_Adversarial)
+    {
+        TestBase_UniswapV4Detf_Quad_Adversarial._approveUserForDetf(detf_);
+    }
+
+    function _deployHookThenDetfForPair(
+        IUniswapV4Detf.PkgArgs memory args,
+        address pair_,
+        address se_
+    )
+        internal
+        override(TestBase_UniswapV4Detf_Quad_Adversarial, TestBase_UniswapV4Detf_Adversarial)
+        returns (address)
+    {
+        return TestBase_UniswapV4Detf_Quad_Adversarial._deployHookThenDetfForPair(args, pair_, se_);
+    }
+    /// @notice Independent controls cover both installed liquidity facets and the native SY surface.
+    function test_hookJoinFacet_exposesCompleteSurface() public {
+        bytes4[] memory execution = new bytes4[](9);
+        execution[0] = IUniswapV4SeBufferHook.joinProportional.selector;
+        execution[1] = IStandardExchangeMultiAssetLiquidity.joinUnbalanced.selector;
+        execution[2] = IUniswapV4SeBufferHook.joinSingleAssetExactIn.selector;
+        execution[3] = IUniswapV4SeBufferHook.joinSingleAssetExactOut.selector;
+        execution[4] = IQuadHook.depositSingle.selector;
+        execution[5] = IQuadHook.joinProportionalFlexible.selector;
+        execution[6] = IQuadHook.joinSingleAssetExactInFlexible.selector;
+        execution[7] = IQuadHook.depositSingleFlexible.selector;
+        execution[8] = IUniswapV4SeBufferHook.joinUnbalanced.selector;
+        _assertInstalledHookFacet(execution);
+        bytes4[] memory queries = new bytes4[](26);
+        queries[0] = IUniswapV4SeBufferHook.previewJoinProportional.selector;
+        queries[1] = IStandardExchangeMultiAssetLiquidity.previewJoinUnbalanced.selector;
+        queries[2] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactIn.selector;
+        queries[3] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactOut.selector;
+        queries[4] = IQuadHook.previewDepositSingle.selector;
+        queries[5] = IQuadHook.previewJoinProportionalFlexible.selector;
+        queries[6] = IQuadHook.previewJoinSingleAssetExactInFlexible.selector;
+        queries[7] = IQuadHook.previewDepositSingleFlexible.selector;
+        queries[8] = IUniswapV4SeBufferHook.previewJoinUnbalanced.selector;
+        queries[9] = IDetfReserveQuote.previewSynthetic.selector;
+        queries[10] = IStandardizedYield.deposit.selector;
+        queries[11] = IStandardizedYield.redeem.selector;
+        queries[12] = IStandardizedYield.exchangeRate.selector;
+        queries[13] = IStandardizedYield.yieldToken.selector;
+        queries[14] = IStandardizedYield.assetInfo.selector;
+        queries[15] = IStandardizedYield.getTokensIn.selector;
+        queries[16] = IStandardizedYield.getTokensOut.selector;
+        queries[17] = IStandardizedYield.isValidTokenIn.selector;
+        queries[18] = IStandardizedYield.isValidTokenOut.selector;
+        queries[19] = IStandardizedYield.previewDeposit.selector;
+        queries[20] = IStandardizedYield.previewRedeem.selector;
+        queries[21] = IStandardizedYield.getRewardTokens.selector;
+        queries[22] = IStandardizedYield.accruedRewards.selector;
+        queries[23] = IStandardizedYield.rewardIndexesCurrent.selector;
+        queries[24] = IStandardizedYield.rewardIndexesStored.selector;
+        queries[25] = IStandardizedYield.claimRewards.selector;
+        _assertInstalledHookFacet(queries);
+        assertEq(IDiamondLoupe(reserveHook).facetAddress(IUniswapV4SeBufferHookClaimQuote.previewClaimAfterJoin.selector), address(0), "retired LP claim join projection absent");
+        assertEq(IDiamondLoupe(reserveHook).facetAddress(IUniswapV4SeBufferHookClaimExitQuote.previewClaimExit.selector), address(0), "retired LP claim exit projection absent");
+    }
+
+    function _assertInstalledHookFacet(bytes4[] memory expected_) private {
+        address facet_ = IDiamondLoupe(reserveHook).facetAddress(expected_[0]);
+        assertTrue(facet_ != address(0), "hook facet installed");
+        assertTrue(Behavior_IFacet.areValid_IFacet_facetFuncs(IFacet(facet_), expected_, IFacet(facet_).facetFuncs()));
+        for (uint256 i_; i_ < expected_.length; ++i_) {
+            assertEq(IDiamondLoupe(reserveHook).facetAddress(expected_[i_]), facet_, "hook selector routed exactly");
+        }
+    }
+}

@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+import {UniswapV4BalancerQuadStableSwapHookLiquidityFacet} from "contracts/hooks/uniswap/v4/stable/quad/balancer/facets/UniswapV4BalancerQuadStableSwapHookLiquidityFacet.sol";
+import {UniswapV4BalancerQuadStableSwapHookHooksFacet} from "contracts/hooks/uniswap/v4/stable/quad/balancer/facets/UniswapV4BalancerQuadStableSwapHookHooksFacet.sol";
 
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -8,27 +11,13 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 import {VM_ADDRESS} from "@crane/contracts/constants/FoundryConstants.sol";
 import {Vm} from "forge-std/Vm.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
-import {
-    IUniswapV4HookDiamondPackage
-} from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackage.sol";
-import {
-    IUniswapV4HookDiamondPackageCallBackFactory
-} from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackageCallBackFactory.sol";
+import {IUniswapV4HookDiamondPackage} from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackage.sol";
+import {IUniswapV4HookDiamondPackageCallBackFactory} from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackageCallBackFactory.sol";
 import {
     UniswapV4HookDiamondPackageCallBackFactory_FactoryService as HookFactoryService
 } from "contracts/hooks/uniswap/v4/factory/UniswapV4HookDiamondPackageCallBackFactory_FactoryService.sol";
-import {
-    UniswapV4BalancerQuadStableSwapHookHooksFacet
-} from "contracts/hooks/uniswap/v4/stable/quad/balancer/facets/UniswapV4BalancerQuadStableSwapHookHooksFacet.sol";
-import {
-    UniswapV4BalancerQuadStableSwapHookLiquidityFacet
-} from "contracts/hooks/uniswap/v4/stable/quad/balancer/facets/UniswapV4BalancerQuadStableSwapHookLiquidityFacet.sol";
-import {
-    UniswapV4BalancerQuadStableSwapHookDFPkg
-} from "contracts/hooks/uniswap/v4/stable/quad/balancer/UniswapV4BalancerQuadStableSwapHookDFPkg.sol";
-import {
-    IUniswapV4BalancerQuadStableSwapHookPackage
-} from "contracts/hooks/uniswap/v4/stable/quad/balancer/interfaces/IUniswapV4BalancerQuadStableSwapHookPackage.sol";
+
+import {IUniswapV4BalancerQuadStableSwapHookPackage} from "contracts/hooks/uniswap/v4/stable/quad/balancer/interfaces/IUniswapV4BalancerQuadStableSwapHookPackage.sol";
 
 /**
  * @title UniswapV4BalancerQuadStableSwapHook_FactoryService
@@ -44,18 +33,18 @@ library UniswapV4BalancerQuadStableSwapHook_FactoryService {
 
     function deployHooksFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         facet = create3Factory.deployFacet(
-            type(UniswapV4BalancerQuadStableSwapHookHooksFacet).creationCode,
-            abi.encode(type(UniswapV4BalancerQuadStableSwapHookHooksFacet).name)._hash()
+            type(UniswapV4BalancerQuadStableSwapHookHooksFacet).creationCode /* unlinked artifact; type().creationCode required */,
+            abi.encode("UniswapV4BalancerQuadStableSwapHookHooksFacet")._hash()
         );
-        vm.label(address(facet), type(UniswapV4BalancerQuadStableSwapHookHooksFacet).name);
+        vm.label(address(facet), "UniswapV4BalancerQuadStableSwapHookHooksFacet");
     }
 
     function deployLiquidityFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         facet = create3Factory.deployFacet(
-            type(UniswapV4BalancerQuadStableSwapHookLiquidityFacet).creationCode,
-            abi.encode(type(UniswapV4BalancerQuadStableSwapHookLiquidityFacet).name)._hash()
+            type(UniswapV4BalancerQuadStableSwapHookLiquidityFacet).creationCode /* unlinked artifact; type().creationCode required */,
+            abi.encode("UniswapV4BalancerQuadStableSwapHookLiquidityFacet")._hash()
         );
-        vm.label(address(facet), type(UniswapV4BalancerQuadStableSwapHookLiquidityFacet).name);
+        vm.label(address(facet), "UniswapV4BalancerQuadStableSwapHookLiquidityFacet");
     }
 
     function deployPackage(
@@ -67,10 +56,10 @@ library UniswapV4BalancerQuadStableSwapHook_FactoryService {
         vm.prank(owner);
         pkg = IUniswapV4BalancerQuadStableSwapHookPackage(
             registry.deployPkg(
-                type(UniswapV4BalancerQuadStableSwapHookDFPkg).creationCode, abi.encode(init), salt
+                ArtifactCreationCode.creationCode("UniswapV4BalancerQuadStableSwapHookDFPkg.sol:UniswapV4BalancerQuadStableSwapHookDFPkg"), abi.encode(init), salt
             )
         );
-        vm.label(address(pkg), type(UniswapV4BalancerQuadStableSwapHookDFPkg).name);
+        vm.label(address(pkg), "UniswapV4BalancerQuadStableSwapHookDFPkg");
     }
 
     function findMineNonce(

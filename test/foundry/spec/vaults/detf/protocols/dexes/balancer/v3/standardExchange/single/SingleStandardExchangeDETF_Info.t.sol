@@ -4,7 +4,6 @@ pragma solidity ^0.8.0;
 import {
     TestBase_SingleStandardExchangeDETF
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF.sol";
-import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 
 /// @notice Phase 5 Info surface: role refs, thresholds, synthetic gate views.
 contract SingleStandardExchangeDETF_Info_Test is TestBase_SingleStandardExchangeDETF {
@@ -19,7 +18,7 @@ contract SingleStandardExchangeDETF_Info_Test is TestBase_SingleStandardExchange
     function test_info_thresholdsDefault() public view {
         assertEq(detfInfo.mintThreshold(), 1.05e18);
         assertEq(detfInfo.burnThreshold(), 0.95e18);
-        assertEq(uint8(detfInfo.thresholdMode()), uint8(ThresholdMode.Policy));
+        assertGt(detfInfo.mintThreshold(), detfInfo.burnThreshold(), "mandatory policy deadband");
     }
 
     function test_info_inert_isAllowedFalse() public view {
@@ -35,15 +34,7 @@ contract SingleStandardExchangeDETF_Info_Test is TestBase_SingleStandardExchange
         assertTrue(detfInfo.isReserveLive(), "live after bootstrap");
 
         // Live + Policy: is*Allowed == synthetic deadband (strict inequalities).
-        assertEq(
-            detfInfo.isMintingAllowed(),
-            synth_ > detfInfo.mintThreshold(),
-            "mint gate coupling (live + Policy)"
-        );
-        assertEq(
-            detfInfo.isBurningAllowed(),
-            synth_ < detfInfo.burnThreshold(),
-            "burn gate coupling (live + Policy)"
-        );
+        assertEq(detfInfo.isMintingAllowed(), synth_ > detfInfo.mintThreshold(), "mint gate coupling (live + Policy)");
+        assertEq(detfInfo.isBurningAllowed(), synth_ < detfInfo.burnThreshold(), "burn gate coupling (live + Policy)");
     }
 }

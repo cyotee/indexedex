@@ -195,7 +195,7 @@ Do not leave catalog IDs silently missing.
 4. `TestBase_*_Adversarial` extends feature TestBase
 5. Implement P0: **A0**, **E6** if refund exists, **CROPS** if disable exists, D2-class, C1–C3, A1/A3, E1/E5, F1 (diamond **and** satellite tokens), F2–F3, H2–H3, B1/B3 if priced, **I1–I3**, **J1–J3**, **K1**, plus **L/M/N/O** when surface applies
 6. Declaration controls from **Target/interface**; proxy smoke of full product API
-7. `forge test --match-path '.../adversarial/**'` then full feature path. **`--match-test` prefixes must not collide** with older suites (`test_C` hits ProtocolCompound `test_C1`; use `--match-contract` the WP file). A red extra is not in-scope CODE.
+7. After production edits: `forge build` then `forge test --match-path '.../adversarial/**'` then full feature path. **`--match-test` prefixes must not collide** with older suites (`test_C` hits ProtocolCompound `test_C1`; use `--match-contract` the WP file). A red extra is not in-scope CODE.
 8. Update `docs/testing/ADVERSARIAL_VAULT_COVERAGE_*` status / deferred NatSpec as needed
 9. Ship gate: Crane `references/implementation-test-dod.md`
 
@@ -208,6 +208,8 @@ Do not leave catalog IDs silently missing.
 ## Commands
 
 ```bash
+# After production contract edits: forge build first (FactoryService reads out/)
+forge build
 forge test --match-path 'test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/**' -vv
 forge test --match-path 'test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/**'
 ```

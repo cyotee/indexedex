@@ -1,0 +1,440 @@
+--- a/contracts/vaults/standard/erc4626/ERC4626StandardExchangeQuoteTarget.sol
++++ b/contracts/vaults/standard/erc4626/ERC4626StandardExchangeQuoteTarget.sol
+@@ -14,31 +14,43 @@
+     struct QuoteState {
+         address exchange;
+         address vault;
++        address asset;
+         address holder;
+         uint256 holderShares;
+         uint256 supply;
+         uint256 vaultShares;
+         bytes vaultState;
+         bool nativeQuote;
++        // Native nested snapshots track all issued shares. This separate gap
++        // preserves actual wrapper custody through receipt transfers without
++        // pretending those transfers mint or redeem underlying vault shares.
++        uint256 nativeExcludedShares;
+     }
+ 
+     function quoteState(address asset_, address holder_)
+         external view returns (bytes memory state_, uint256 holderAssets_)
+     {
+-        if (asset_ != _underlying()) revert UnsupportedQuoteAsset(asset_);
++        if (asset_ != _underlying() && asset_ != address(protocolVault())) revert UnsupportedQuoteAsset(asset_);
+         QuoteState memory q;
+         q.exchange = address(this);
+         q.vault = address(protocolVault());
++        q.asset = asset_;
+         q.holder = holder_;
+         q.holderShares = IERC20(address(this)).balanceOf(holder_);
+         q.supply = ERC20Repo._totalSupply();
+         q.vaultShares = IERC20(q.vault).balanceOf(address(this));
+-        try IStandardExchangeTransitionQuote(q.vault).quoteState(asset_, address(this))
+-            returns (bytes memory nested, uint256) {
+-            q.vaultState = nested;
+-            q.nativeQuote = true;
+-        } catch {
+-            q.vaultState = abi.encode(_virtualSnapshot(IERC4626(q.vault)));
++        // IERC4626 execution is authoritative here. A nested SE can expose
++        // separate deposit routes with different fees from IERC4626.deposit.
++        (VirtualVault memory virtualState, bool canonical) = _virtualSnapshot(IERC4626(q.vault));
++        if (!canonical) (virtualState, canonical) = _ratioSnapshot(IERC4626(q.vault));
++        if (canonical) q.vaultState = abi.encode(virtualState);
++        else {
++            try IStandardExchangeTransitionQuote(q.vault).quoteState(_underlying(), address(this))
++                returns (bytes memory nested, uint256) {
++                q.vaultState = nested;
++                q.nativeQuote = true;
++                _normalizeNativeSnapshot(q);
++            } catch { revert InvalidQuoteState(); }
+         }
+         holderAssets_ = _quoteHolderAssets(q);
+         state_ = abi.encode(q);
+@@ -57,7 +69,9 @@
+         if (operation_ == Operation.DepositExactIn) {
+             amountIn_ = amount_;
+             uint256 vaultAdded_;
+-            (, vaultAdded_) = _vaultTransition(q, Operation.DepositExactIn, amount_);
++            (, vaultAdded_) = _vaultTransition(
++                q, q.asset == q.vault ? Operation.ReceiveShares : Operation.DepositExactIn, amount_
++            );
+             amountOut_ = q.supply == 0 || q.vaultShares == 0
+                 ? vaultAdded_ : Math.mulDiv(vaultAdded_, q.supply, q.vaultShares);
+             q.vaultShares = _vaultShareBalance(q);
+@@ -74,14 +88,21 @@
+         } else {
+             amountIn_ = amount_;
+             if (operation_ == Operation.WithdrawExactOut) {
+-                QuoteState memory copy = abi.decode(abi.encode(q), (QuoteState));
+-                (uint256 needed_,) = _vaultTransition(copy, Operation.WithdrawExactOut, amount_);
++                uint256 needed_ = amount_;
++                if (q.asset != q.vault) {
++                    QuoteState memory copy = abi.decode(abi.encode(q), (QuoteState));
++                    (needed_,) = _vaultTransition(copy, Operation.WithdrawExactOut, amount_);
++                }
+                 amountIn_ = q.supply == 0 || q.vaultShares == 0
+                     ? needed_ : Math.mulDiv(needed_, q.supply, q.vaultShares, Math.Rounding.Ceil);
+             }
+             if (amountIn_ > q.holderShares) revert InsufficientQuoteShares(amountIn_, q.holderShares);
+-            uint256 vaultOut_ = q.supply == 0 ? 0 : Math.mulDiv(amountIn_, q.vaultShares, q.supply);
+-            (, amountOut_) = _vaultTransition(q, Operation.RedeemExactIn, vaultOut_);
++            uint256 vaultOut_ = q.asset == q.vault && operation_ == Operation.WithdrawExactOut
++                ? amount_ : (q.supply == 0 ? 0 : Math.mulDiv(amountIn_, q.vaultShares, q.supply));
++            if (q.asset == q.vault) {
++                _sendVaultShares(q, vaultOut_);
++                amountOut_ = vaultOut_;
++            } else (, amountOut_) = _vaultTransition(q, Operation.RedeemExactIn, vaultOut_);
+             q.holderShares -= amountIn_;
+             q.supply -= amountIn_;
+             q.vaultShares = _vaultShareBalance(q);
+@@ -94,7 +115,7 @@
+         if (q.holderShares == 0 || q.supply == 0) return 0;
+         uint256 vaultClaim_ = Math.mulDiv(q.holderShares, q.vaultShares, q.supply);
+         if (vaultClaim_ == 0) return 0;
+-        return _vaultAssets(q, vaultClaim_);
++        return q.asset == q.vault ? vaultClaim_ : _vaultAssets(q, vaultClaim_);
+     }
+ 
+     function quoteAssets(bytes calldata state_, uint256 shares_) external view returns (uint256) {
+@@ -133,11 +154,16 @@
+     {
+         QuoteState memory q = abi.decode(state_, (QuoteState));
+         if (q.exchange != address(this) || q.vault != address(protocolVault())) revert InvalidQuoteState();
+-        if (tokenIn_ != q.vault) revert UnsupportedQuoteAsset(tokenIn_);
+-        // The external payment is already-issued protocol-vault shares. Receive
+-        // and redeem just those shares; the buffered holder retains its SE stake.
+-        _vaultTransition(q, Operation.ReceiveShares, amountIn_);
+-        (, amountOut_) = _vaultTransition(q, Operation.RedeemExactIn, amountIn_);
++        if (q.asset == q.vault && tokenIn_ == _underlying()) {
++            // The underlying deposit pays protocol receipts to the external
++            // recipient, leaving the wrapper's existing receipt reserve intact.
++            (, amountOut_) = _vaultTransition(q, Operation.DepositExactIn, amountIn_);
++            _sendVaultShares(q, amountOut_);
++        } else if (q.asset == _underlying() && tokenIn_ == q.vault) {
++            // Redeem only the external payment, preserving buffered SE custody.
++            _vaultTransition(q, Operation.ReceiveShares, amountIn_);
++            (, amountOut_) = _vaultTransition(q, Operation.RedeemExactIn, amountIn_);
++        } else revert UnsupportedQuoteAsset(tokenIn_);
+         q.vaultShares = _vaultShareBalance(q);
+         return (abi.encode(q), amountOut_, _quoteHolderAssets(q));
+     }
+@@ -150,37 +176,61 @@
+         uint256 assets;
+         uint256 supply;
+         uint256 virtualShares;
++        uint256 virtualAssets;
+         uint256 heldShares;
+         uint256 pendingHeldFee;
+     }
+ 
+-    function _virtualSnapshot(IERC4626 vault) private view returns (VirtualVault memory v) {
++    function _virtualSnapshot(IERC4626 vault) private view returns (VirtualVault memory v, bool canonical) {
+         v.assets = vault.totalAssets();
++        v.virtualAssets = 1;
+         uint8 shareDecimals = IERC20Metadata(address(vault)).decimals();
+         uint8 assetDecimals = IERC20Metadata(vault.asset()).decimals();
+-        if (shareDecimals < assetDecimals || shareDecimals - assetDecimals > 77) revert InvalidQuoteState();
++        if (shareDecimals < assetDecimals || shareDecimals - assetDecimals > 77) return (v, false);
+         v.virtualShares = 10 ** (shareDecimals - assetDecimals);
+         // For (assets + 1)/(supply + virtual shares), this exact denominator
+         // probe recovers effective supply without losing sub-share precision.
+         uint256 scaledSupply = vault.convertToShares(v.assets + 1);
+         uint256 issued = vault.totalSupply();
+-        if (scaledSupply < issued + v.virtualShares) revert InvalidQuoteState();
++        if (scaledSupply < issued + v.virtualShares) {
++            // Existing Crane packages can retain 18 metadata decimals while
++            // configuring a zero arithmetic offset for a 6/9-decimal receipt.
++            // Recognize the exact issued+1 denominator, not a guessed fee pot.
++            if (scaledSupply != issued + 1) return (v, false);
++            v.virtualShares = 1;
++        }
+         v.supply = scaledSupply - v.virtualShares;
+         v.heldShares = vault.balanceOf(address(this));
+-        if (vault.convertToAssets(scaledSupply) != v.assets + 1) revert InvalidQuoteState();
++        if (vault.convertToAssets(scaledSupply) != v.assets + 1) return (v, false);
+         uint256 probe = 10 ** assetDecimals;
+         if (vault.previewDeposit(probe) != Math.mulDiv(probe, scaledSupply, v.assets + 1)
+-            || vault.previewRedeem(v.heldShares) != _virtualAssets(v, v.heldShares)) revert InvalidQuoteState();
++            || vault.previewRedeem(v.heldShares) != _virtualAssets(v, v.heldShares)) return (v, false);
+         if (v.supply > issued) {
+             (bool ok, bytes memory data) = address(vault).staticcall(abi.encodeWithSignature("feeRecipient()"));
+             if (ok && data.length == 32 && abi.decode(data, (address)) == address(this)) {
+                 v.pendingHeldFee = v.supply - issued;
+             }
+         }
++        canonical = true;
++    }
++
++    /// @dev Solmate-style proportional vaults, including the retained sfrxETH
++    /// integration, have no virtual offsets. Check their actual conversion and
++    /// directional previews before using that distinct balance model.
++    function _ratioSnapshot(IERC4626 vault) private view returns (VirtualVault memory v, bool canonical) {
++        v.assets = vault.totalAssets();
++        v.supply = vault.totalSupply();
++        v.heldShares = vault.balanceOf(address(this));
++        if (v.assets == 0 || v.supply == 0) return (v, false);
++        if (vault.convertToShares(v.assets) != v.supply || vault.convertToAssets(v.supply) != v.assets) return (v, false);
++        uint256 probe = 10 ** IERC20Metadata(vault.asset()).decimals();
++        canonical = vault.previewDeposit(probe) == Math.mulDiv(probe, v.supply, v.assets)
++            && vault.previewWithdraw(probe) == Math.mulDiv(probe, v.supply, v.assets, Math.Rounding.Ceil)
++            && vault.previewRedeem(v.heldShares) == _virtualAssets(v, v.heldShares);
+     }
+ 
+     function _virtualAssets(VirtualVault memory v, uint256 shares) private pure returns (uint256) {
+-        return Math.mulDiv(shares, v.assets + 1, v.supply + v.virtualShares);
++        return Math.mulDiv(shares, v.assets + v.virtualAssets, v.supply + v.virtualShares);
+     }
+ 
+     function _vaultAssets(QuoteState memory q, uint256 shares) private view returns (uint256) {
+@@ -189,7 +239,8 @@
+     }
+ 
+     function _vaultShareBalance(QuoteState memory q) private view returns (uint256) {
+-        if (q.nativeQuote) return IStandardExchangeTransitionQuote(q.vault).quoteShareBalance(q.vaultState);
++        if (q.nativeQuote) return IStandardExchangeTransitionQuote(q.vault).quoteTotalSupply(q.vaultState)
++            - q.nativeExcludedShares;
+         return abi.decode(q.vaultState, (VirtualVault)).heldShares;
+     }
+ 
+@@ -197,8 +248,14 @@
+         private view returns (uint256 amountIn, uint256 amountOut)
+     {
+         if (q.nativeQuote) {
++            if (operation == Operation.ReceiveShares) {
++                if (amount > q.nativeExcludedShares) revert InvalidQuoteState();
++                q.nativeExcludedShares -= amount;
++                return (amount, amount);
++            }
+             (q.vaultState, amountIn, amountOut,) = IStandardExchangeTransitionQuote(q.vault)
+                 .quoteTransition(q.vaultState, operation, amount);
++            _normalizeNativeSnapshot(q);
+             return (amountIn, amountOut);
+         }
+         VirtualVault memory v = abi.decode(q.vaultState, (VirtualVault));
+@@ -210,13 +267,13 @@
+             v.heldShares += v.pendingHeldFee;
+             v.pendingHeldFee = 0;
+             if (operation == Operation.DepositExactIn) {
+-                amountOut = Math.mulDiv(amount, v.supply + v.virtualShares, v.assets + 1);
++                amountOut = Math.mulDiv(amount, v.supply + v.virtualShares, v.assets + v.virtualAssets);
+                 v.assets += amount;
+                 v.supply += amountOut;
+                 v.heldShares += amountOut;
+             } else {
+                 if (operation == Operation.WithdrawExactOut) {
+-                    amountIn = Math.mulDiv(amount, v.supply + v.virtualShares, v.assets + 1, Math.Rounding.Ceil);
++                    amountIn = Math.mulDiv(amount, v.supply + v.virtualShares, v.assets + v.virtualAssets, Math.Rounding.Ceil);
+                     amountOut = amount;
+                 } else amountOut = _virtualAssets(v, amount);
+                 if (amountIn > v.heldShares) revert InsufficientQuoteShares(amountIn, v.heldShares);
+@@ -229,6 +286,25 @@
+         q.vaultState = abi.encode(v);
+     }
+ 
++    function _normalizeNativeSnapshot(QuoteState memory q) private view {
++        IStandardExchangeTransitionQuote nested = IStandardExchangeTransitionQuote(q.vault);
++        uint256 missing = nested.quoteTotalSupply(q.vaultState) - nested.quoteShareBalance(q.vaultState);
++        if (missing == 0) return;
++        q.nativeExcludedShares += missing;
++        (q.vaultState,,,) = nested.quoteTransition(q.vaultState, Operation.ReceiveShares, missing);
++    }
++
++    function _sendVaultShares(QuoteState memory q, uint256 amount) private view {
++        uint256 held = _vaultShareBalance(q);
++        if (amount > held) revert InsufficientQuoteShares(amount, held);
++        if (q.nativeQuote) q.nativeExcludedShares += amount;
++        else {
++            VirtualVault memory v = abi.decode(q.vaultState, (VirtualVault));
++            v.heldShares -= amount;
++            q.vaultState = abi.encode(v);
++        }
++    }
++
+     function quoteTotalSupply(bytes calldata state_) external view returns (uint256) {
+         QuoteState memory q = abi.decode(state_, (QuoteState));
+         if (q.exchange != address(this) || q.vault != address(protocolVault())) revert InvalidQuoteState();
+--- a/test/foundry/fork/eth_main/vaults/standard/erc4626/ERC4626StandardExchange_SfrxETH_Fork.t.sol
++++ b/test/foundry/fork/eth_main/vaults/standard/erc4626/ERC4626StandardExchange_SfrxETH_Fork.t.sol
+@@ -138,3 +138,56 @@
+         assertGt(seOut, 0, "SE from underlying path");
+     }
+ }
++
++import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
++import {TransitionQuoteAssertions} from "test/foundry/spec/vaults/standard/TransitionQuoteAssertions.sol";
++
++/// @notice Exact sequential quotes against the existing deployed sfrxETH vault.
++contract ERC4626StandardExchange_SfrxETH_ProjectionFork is
++    TestBase_ERC4626StandardExchange, TransitionQuoteAssertions
++{
++    IERC4626 constant RECEIPT = IERC4626(0xac3E018457B222d93114458476f3E3416Abbe38F);
++    IERC20 constant ASSET = IERC20(0x5E8422345238F34275888049021821E8E08CAa1f);
++    IfrxETHMinter constant MINTER = IfrxETHMinter(0xbAFA44EFE7901E04E39Dad13167D089C559c1138);
++    address internal exchange;
++
++    function setUp() public override {
++        vm.createSelectFork(vm.rpcUrl("ethereum_mainnet_alchemy"), 24_000_000);
++        TestBase_ERC4626StandardExchange.setUp();
++        exchange = _deployERC4626SE(address(RECEIPT));
++        vm.deal(address(this), 1_001 ether);
++        MINTER.submit{value: 1_000 ether}();
++        ASSET.approve(exchange, type(uint256).max);
++        ASSET.approve(address(RECEIPT), type(uint256).max);
++        RECEIPT.deposit(200 ether, address(this));
++        IStandardExchangeIn(exchange).exchangeIn(ASSET, 100 ether, IERC20(exchange), 1, address(this), false, block.timestamp);
++        vm.prank(owner);
++        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(exchange, 7e16);
++    }
++
++    function test_sfrxProjectionSequentialUnderlyingAndReceipt() public {
++        uint256 snapshot = vm.snapshotState();
++        _assertQuoteSequence(exchange, ASSET, address(this), 1 ether);
++        assertTrue(vm.revertToState(snapshot));
++        _assertQuoteSequence(exchange, IERC20(address(RECEIPT)), address(this), 1 ether);
++    }
++
++    function test_sfrxProjectionExternalDepositsAndFeeReceipts() public {
++        address holder = address(indexedexManager.feeTo());
++        IERC20(exchange).transfer(holder, 10 ether);
++        _assertExternalDepositQuote(exchange, ASSET, ASSET, 10 ether + 7, holder);
++        _assertExternalDepositQuote(exchange, IERC20(address(RECEIPT)), ASSET, 7 ether + 11, holder);
++        _assertExternalDepositQuote(exchange, ASSET, IERC20(address(RECEIPT)), 5 ether + 17, holder);
++    }
++
++    function test_sfrxProjectionExternalConversionBothDirections() public {
++        _assertExternalExchangeQuote(exchange, ASSET, IERC20(address(RECEIPT)), 10 ether + 7);
++        _assertExternalExchangeQuote(exchange, IERC20(address(RECEIPT)), ASSET, 7 ether + 11);
++    }
++
++    function test_sfrxProjectionRewardCycleCatchup() public {
++        uint256 boundary = IsfrxETH(address(RECEIPT)).rewardsCycleEnd();
++        vm.warp(boundary + 1);
++        _assertQuoteSequence(exchange, ASSET, address(this), 1 ether);
++    }
++}
+--- a/test/foundry/spec/vaults/standard/erc4626/ERC4626StandardExchange_TransitionQuote.t.sol
++++ b/test/foundry/spec/vaults/standard/erc4626/ERC4626StandardExchange_TransitionQuote.t.sol
+@@ -2,6 +2,7 @@
+ pragma solidity ^0.8.0;
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
++import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
+ import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
+ import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
+ import {ERC4626TargetStub} from "@crane/contracts/tokens/ERC4626/ERC4626TargetStub.sol";
+@@ -133,4 +134,114 @@
+         vault_.simulateYield(accrued_);
+         _assertQuoteSequence(se_, IERC20(address(asset_)), holder_, unit_);
+     }
++
++    function test_receiptAccounting_nestedErc4626DepositDoesNotChargeNestedSeUsageFee() public {
++        _nestedErc4626FeeSemantics(6);
++        _nestedErc4626FeeSemantics(9);
++        _nestedErc4626FeeSemantics(18);
++    }
++
++    function _nestedErc4626FeeSemantics(uint8 decimals) private {
++        uint256 unit = 10 ** decimals;
++        MintableERC20Decimals asset = new MintableERC20Decimals("Asset", "ASSET", decimals);
++        ERC4626TargetStub receipt = new ERC4626TargetStub(IERC20Metadata(address(asset)), 0, permit2);
++        address inner = _deployERC4626SE(address(receipt));
++        address outer = _deployERC4626SE(inner);
++        asset.mint(address(this), 10_000 * unit);
++        asset.approve(address(receipt), type(uint256).max);
++        receipt.deposit(9_000 * unit, address(this));
++        IERC20(address(receipt)).approve(inner, type(uint256).max);
++        IERC4626(inner).deposit(1_000 * unit, address(this));
++        vm.startPrank(owner);
++        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(inner, 7e16);
++        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(outer, 11e16);
++        vm.stopPrank();
++        IERC20(address(receipt)).approve(outer, type(uint256).max);
++        IStandardExchangeIn(outer).exchangeIn(IERC20(address(receipt)), 1_000 * unit, IERC20(outer), 1, address(this), false, block.timestamp);
++        address fee = address(indexedexManager.feeTo());
++        uint256 beforeFee = IERC20(inner).balanceOf(fee);
++        _assertQuoteSequence(outer, IERC20(address(receipt)), address(this), unit);
++        assertEq(IERC20(inner).balanceOf(fee), beforeFee, "nested IERC4626 deposit has no SE usage fee");
++    }
++
++    function test_receiptAccounting_canonicalVirtualVaultSequence() public {
++        MintableERC20Decimals asset = new MintableERC20Decimals("Asset", "ASSET", 18);
++        ERC4626TargetStub vault = new ERC4626TargetStub(IERC20Metadata(address(asset)), 0, permit2);
++        address se = _deployERC4626SE(address(vault));
++        asset.mint(address(this), 3_000 ether);
++        asset.approve(address(vault), type(uint256).max);
++        vault.deposit(2_000 ether, address(this));
++        IERC20(address(vault)).approve(se, type(uint256).max);
++        IStandardExchangeIn(se).exchangeIn(IERC20(address(vault)), 1_000 ether, IERC20(se), 1, address(this), false, block.timestamp);
++        vm.prank(owner);
++        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(se, 7e16);
++        _assertQuoteSequence(se, IERC20(address(vault)), address(this), 1 ether);
++        _assertExternalExchangeQuote(se, IERC20(address(asset)), IERC20(address(vault)), 20 ether);
++    }
++
++    function test_receiptAccounting_sequentialDepositWithdrawalAndRedemption() public {
++        (address se, SimpleYieldERC4626 vault,) = _fundPrepaidReceiptCase();
++        _assertQuoteSequence(se, IERC20(address(vault)), address(this), 1 ether);
++    }
++
++    function test_receiptAccounting_exactOutputRetainsRoundingSurplus() public {
++        (address se, SimpleYieldERC4626 vault,) = _fundPrepaidReceiptCase();
++        vault.transfer(se, 90 ether);
++        IStandardExchangeTransitionQuote quote = IStandardExchangeTransitionQuote(se);
++        (bytes memory state,) = quote.quoteState(address(vault), address(this));
++        Step memory step;
++        (step.state, step.input, step.output, step.claim) = quote.quoteTransition(
++            state, IStandardExchangeTransitionQuote.Operation.WithdrawExactOut, 2
++        );
++        assertEq(step.output, 2, "receipt exact-output pays only the requested amount");
++        uint256 before = vault.balanceOf(address(this));
++        assertEq(IStandardExchangeOut(se).exchangeOut(
++            IERC20(se), step.input, IERC20(address(vault)), 2, address(this), false, block.timestamp
++        ), step.input);
++        assertEq(vault.balanceOf(address(this)) - before, 2);
++        (bytes memory actual, uint256 claim) = quote.quoteState(address(vault), address(this));
++        _assertProjectedState(actual, step.state);
++        assertEq(claim, step.claim, "unpaid conversion surplus remains backing");
++    }
++
++    function test_receiptAccounting_externalUnderlyingAndReceiptDeposits() public {
++        (address se, SimpleYieldERC4626 vault, IERC20 asset) = _fundPrepaidReceiptCase();
++        address holder = address(indexedexManager.feeTo());
++        IERC20(se).transfer(holder, IERC20(se).balanceOf(address(this)) / 2);
++        _assertExternalDepositQuote(se, IERC20(address(vault)), IERC20(address(vault)), 10 ether, holder);
++        _assertExternalDepositQuote(se, asset, IERC20(address(vault)), 20 ether, holder);
++    }
++
++    function test_receiptAccounting_externalUnderlyingConversionPreservesReserve() public {
++        (address se, SimpleYieldERC4626 vault, IERC20 asset) = _fundPrepaidReceiptCase();
++        uint256 reserve = vault.balanceOf(se);
++        uint256 issued = IERC20(se).totalSupply();
++        _assertExternalExchangeQuote(se, asset, IERC20(address(vault)), 20 ether);
++        assertEq(vault.balanceOf(se), reserve, "passthrough receipt belongs to paying user");
++        assertEq(IERC20(se).totalSupply(), issued, "passthrough does not issue wrapper shares");
++    }
++
++    function testFuzz_receiptAccounting_sequenceWithYieldAndFeeRecipient(
++        uint8 decimals_, uint64 yield_, bool feeHolder_
++    ) public {
++        uint256 unit = 10 ** bound(decimals_, 6, 18);
++        MintableERC20Decimals asset = new MintableERC20Decimals("Asset", "ASSET", uint8(bound(decimals_, 6, 18)));
++        SimpleYieldERC4626 vault = new SimpleYieldERC4626(asset);
++        address se = _deployERC4626SE(address(vault));
++        address holder = feeHolder_ ? address(indexedexManager.feeTo()) : makeAddr("receipt quote holder");
++        vm.prank(owner);
++        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(se, 7e16);
++        asset.mint(holder, 10_000 * unit);
++        vm.startPrank(holder);
++        asset.approve(address(vault), type(uint256).max);
++        vault.deposit(9_000 * unit, holder);
++        vault.approve(se, type(uint256).max);
++        IStandardExchangeIn(se).exchangeIn(IERC20(address(vault)), 1_000 * unit + 13, IERC20(se), 1, holder, false, block.timestamp);
++        vm.stopPrank();
++        uint256 accrued = bound(yield_, 1, 100 * unit);
++        asset.mint(address(this), accrued);
++        asset.approve(address(vault), accrued);
++        vault.simulateYield(accrued);
++        _assertQuoteSequence(se, IERC20(address(vault)), holder, unit);
++    }
+ }

@@ -1,0 +1,50 @@
+    struct IoFundedBondSnapshot {
+        uint256 purchased;
+        uint256 principal;
+        uint256 rewards;
+        uint256 liquidityDetf;
+        uint256 supply;
+        uint256 backing;
+        uint256 gonsPerUnit;
+        uint256 userDetf;
+        uint256 ownedLp;
+    }
+
+    /// @notice Actual payment funds liquidity G separately from the immediately staked purchased principal.
+    function test_T7_10_laterBond_joinUnbalanced_unboostedG() public {
+        _firstBond(FIRST_AMOUNT);
+        uint256 amount_ = LATER_AMOUNT;
+        IERC20 payment_ = IERC20(PAYMENT_ADDRESS);
+        IStakedDETF staking_ = IStakedDETF(detfInfo.rebasingClaimToken());
+        IDetfBondNFT nft_ = IDetfBondNFT(detfInfo.bondNftVault());
+        IoFundedBondSnapshot memory expected_;
+        (expected_.purchased, expected_.principal, expected_.rewards, expected_.liquidityDetf) =
+            detfInfo.previewBond(payment_, amount_, DEFAULT_MIN_LOCK);
+        uint256 p_ = IVaultFeeOracleQuery(address(indexedexManager)).seigniorageIncentivePercentageOfVault(detf);
+        assertEq(expected_.liquidityDetf, _unboostedBondG(address(payment_), amount_), "G uses actual unboosted payment");
+        assertEq(expected_.principal, Math.mulDiv(expected_.purchased, 1e18 - p_, 1e18), "purchased allocation split");
+        assertEq(expected_.rewards,
+            Math.mulDiv(expected_.purchased, p_, 1e18) + Math.mulDiv(expected_.liquidityDetf, p_, 1e18),
+            "new issuance reward pot counts independent U and G once");
+        expected_.supply = IERC20(detf).totalSupply();
+        expected_.backing = staking_.stakingState().accountedBacking;
+        expected_.gonsPerUnit = staking_.stakingState().gonsPerUnit;
+        expected_.userDetf = IERC20(detf).balanceOf(detfUser);
+        expected_.ownedLp = IERC20(detfInfo.hook()).balanceOf(address(nft_)) + IERC20(detfInfo.hook()).balanceOf(detf);
+        vm.prank(detfUser);
+        (uint256 id_, uint256 lpOut_) = detfInfo.bond(
+            payment_, amount_, DEFAULT_MIN_LOCK, detfUser, false, block.timestamp + 1 hours
+        );
+        assertGt(id_, 2, "purchased NFT");
+        assertGt(lpOut_, 0, "new liquidity acquired");
+        assertEq(nft_.positionOf(id_).principal, expected_.principal, "fixed funded native DETF principal");
+        assertEq(nft_.positionOf(id_).stakingGons, expected_.principal * expected_.gonsPerUnit, "principal staked before own immediate rewards");
+        assertEq(IERC20(detf).balanceOf(detfUser), expected_.userDetf, "purchased allocation is escrowed");
+        assertEq(staking_.stakingState().accountedBacking - expected_.backing, expected_.principal + expected_.rewards, "only held DETF funds staking");
+        assertEq(IERC20(detf).totalSupply() - expected_.supply,
+            expected_.principal + expected_.rewards + expected_.liquidityDetf, "liquidity self-leg is additional issuance");
+        uint256 owned_ = IERC20(detfInfo.hook()).balanceOf(address(nft_)) + IERC20(detfInfo.hook()).balanceOf(detf);
+        assertGe(owned_ - expected_.ownedLp, lpOut_, "actual LP in protocol custody");
+        assertEq(IERC20(detfInfo.hook()).balanceOf(address(staking_)), 0, "staking has held DETF backing only");
+        _assertNoJoinableDust();
+    }

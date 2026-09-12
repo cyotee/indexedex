@@ -1,0 +1,26 @@
+{
+  "status": "APPLIED_RUNTIME_VALIDATION_PENDING",
+  "recorded_at_utc": "2026-09-09T08:20:55.153002+00:00",
+  "gate": "Entire active parent4255 exits before application.",
+  "changes": [
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_MorphoBlueSe_ProductLaw.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/orbital-donation-consolidation-drafts/UniswapV4Detf_Orbital_MorphoBlueSe_ProductLaw.t.sol.txt",
+      "reason": "Retire the two fake 18-decimal DETF donation overrides and reuse the retained shared donation tests with actually funded non-DETF reserve payments. Exact runtime test names remain inherited.",
+      "before_sha256": "dc6bd0ce39f351592be83440fa94118a97ef23510460d73b291d13d3b9e3aa8e",
+      "after_sha256": "e55cd99baaf4b00f601247cd8da55a86eb759e98df4c9479b73ae5c6eaff8092"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_MorphoMix_ProductLaw.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/orbital-donation-consolidation-drafts/UniswapV4Detf_Orbital_MorphoMix_ProductLaw.t.sol.txt",
+      "reason": "Retire the two fake 18-decimal DETF donation overrides and reuse the retained shared donation tests with actually funded non-DETF reserve payments. Exact runtime test names remain inherited.",
+      "before_sha256": "18816a2226dc46d2d9b8cd30fefb66dce02b99d7ecf750fd59bbfb8f4c8f9029",
+      "after_sha256": "bcf19acea0d3143ee90268d14ed343a1af6957587129499705922de9113e287b"
+    }
+  ],
+  "scope": "Two Orbital provider test fixtures only; preserve all 108 inherited methods and actual common payment/custody assertions.",
+  "validation_passed": false,
+  "required_validation": "Typecheck followed by both full real-provider suites including DN13 and DN14.",
+  "applied_at_utc": "2026-09-09T08:34:04.631375+00:00",
+  "application_record": "hermetic-followups-validation-remediation-applied.json"
+}

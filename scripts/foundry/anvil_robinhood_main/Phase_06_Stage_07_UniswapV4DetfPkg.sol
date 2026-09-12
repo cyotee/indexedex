@@ -1,8 +1,13 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {DetfPkgFactoryService} from "contracts/vaults/detf/common/factory/DetfPkgFactoryService.sol";
+
 import {LaunchState} from "./LaunchState.sol";
 
+import {Vm} from "forge-std/Vm.sol";
+import {VM_ADDRESS} from "@crane/contracts/constants/FoundryConstants.sol";
+import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
@@ -25,21 +30,45 @@ library Phase_06_Stage_07_UniswapV4DetfPkg {
     function execute(LaunchState storage s) internal {
         require(_live(s.bondNftVaultPkg), "Phase 06-07: bondNftVaultPkg");
         require(_live(s.rebasingClaimTokenPkg), "Phase 06-07: rebasingClaimTokenPkg");
+        _requireCurrentDependency(
+            s.bondNftVaultPkg, "UniswapV4DetfBondNFTVaultDFPkg", "UniswapV4DetfBondNFTVaultFacet"
+        );
+        _requireCurrentDependency(
+            s.rebasingClaimTokenPkg, "RebasingClaimTokenDFPkg", "RebasingClaimTokenFacet"
+        );
         IVaultRegistryDeployment reg = IVaultRegistryDeployment(address(s.indexedexManager));
-        IFacet productFacet = UniswapV4Detf_Facet_FactoryService.deployUniswapV4DetfFacet(s.create3Factory);
+        IFacet[5] memory productFacets = UniswapV4Detf_Facet_FactoryService.deployUniswapV4DetfFacets(s.create3Factory);
         IUniswapV4DetfDFPkg.PkgInit memory init_ = IUniswapV4DetfDFPkg.PkgInit({
             erc20Facet: s.erc20Facet,
             erc5267Facet: s.erc5267Facet,
             erc2612Facet: s.erc2612Facet,
             multiAssetBasicVaultFacet: s.multiAssetBasicVaultFacet,
             multiAssetStandardVaultFacet: s.multiAssetStandardVaultFacet,
-            productFacet: productFacet,
+            productFacets: productFacets,
             feeOracle: IVaultFeeOracleQuery(address(s.indexedexManager)),
             vaultRegistryDeployment: reg,
             bondNftVaultPkg: IUniswapV4DetfBondNFTVaultDFPkg(s.bondNftVaultPkg),
-            rebasingClaimTokenPkg: IRebasingClaimTokenDFPkg(s.rebasingClaimTokenPkg)
+            rebasingClaimTokenPkg: IRebasingClaimTokenDFPkg(s.rebasingClaimTokenPkg),
+            syPkg: DetfPkgFactoryService.deployDETFSYComponents(
+                s.create3Factory, reg, IVaultFeeOracleQuery(address(s.indexedexManager)),
+                s.erc5267Facet, s.erc2612Facet
+            )
         });
         s.uniV4DetfPkg = address(UniswapV4Detf_Pkg_FactoryService.deployUniswapV4DetfDFPkg(reg, init_));
+    }
+
+    /// @dev Fail before product deployment if a skipped dependency still has old code.
+    function _requireCurrentDependency(address pkg_, string memory name_, string memory facetName_) private view {
+        IDiamondFactoryPackage pkg = IDiamondFactoryPackage(pkg_);
+        require(keccak256(bytes(pkg.packageName())) == keccak256(bytes(name_)), "Phase 06-07: wrong dependency package");
+        bytes memory expected = Vm(VM_ADDRESS).getDeployedCode(string.concat(facetName_, ".sol:", facetName_));
+        require(expected.length != 0, "Phase 06-07: missing dependency artifact");
+        bytes32 expectedHash = keccak256(expected);
+        address[] memory facets = pkg.facetAddresses();
+        for (uint256 i; i < facets.length; ++i) {
+            if (facets[i].codehash == expectedHash) return;
+        }
+        revert("Phase 06-07: stale dependency facet; run 06-01 and 06-02");
     }
 
     function _live(address a) private view returns (bool) {

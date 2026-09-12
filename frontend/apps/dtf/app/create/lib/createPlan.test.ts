@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest'
 
-import { CREATE_DETF_TYPES, CREATE_SE_HOSTS, platformDetfPkgKey, platformSePkgKey } from '../detfTypes'
+import {
+  CREATE_DETF_TYPES,
+  CREATE_SE_HOSTS,
+  platformDetfPkgKey,
+  platformHookPkgKey,
+  platformSePkgKey,
+} from '../detfTypes'
 import {
   applyType,
   bondSymbolFrom,
@@ -100,17 +106,35 @@ describe('validateBasket', () => {
     expect(validateBasket(p)).toMatch(/at least 2/)
   })
 
-  it('caps stables at four vaults', () => {
+  it('requires exactly three dollar vaults', () => {
+    const p = emptyPlan()
+    p.typeId = 'stables'
+    p.vaults = ['0xCc4A3951D3569c987Ef9742F29E5b61Cb483d099']
+    expect(validateBasket(p)).toMatch(/at least 3/)
+    p.vaults = [
+      '0xCc4A3951D3569c987Ef9742F29E5b61Cb483d099',
+      '0xfb40276683454159A6b1F9aB1f7C2c3355d22EBd',
+      '0x1111111111111111111111111111111111111111',
+      '0x2222222222222222222222222222222222222222',
+    ]
+    expect(validateBasket(p)).toMatch(/At most 3/)
+  })
+
+  it('requires a pair token per dollar vault', () => {
     const p = emptyPlan()
     p.typeId = 'stables'
     p.vaults = [
       '0xCc4A3951D3569c987Ef9742F29E5b61Cb483d099',
       '0xfb40276683454159A6b1F9aB1f7C2c3355d22EBd',
       '0x1111111111111111111111111111111111111111',
+    ]
+    expect(validateBasket(p)).toMatch(/pair token/)
+    p.pairTokens = [
+      '0xd97e3BCF599A5dbc893387680868d4Ad76E81206',
       '0x2222222222222222222222222222222222222222',
       '0x3333333333333333333333333333333333333333',
     ]
-    expect(validateBasket(p)).toMatch(/At most 4/)
+    expect(validateBasket(p)).toBeNull()
   })
 
   it('requires DETF plus pair weights to sum to 100', () => {
@@ -188,22 +212,24 @@ describe('include choice limits', () => {
     expect(maxVaults('one-vault')).toBe(1)
     expect(minVaults('weighted')).toBe(2)
     expect(maxVaults('weighted')).toBe(7)
-    expect(minVaults('stables')).toBe(2)
-    expect(maxVaults('stables')).toBe(4)
-    expect(platformDetfPkgKey('one-vault')).toBe('cpDetfPkg')
-    expect(platformDetfPkgKey('weighted')).toBe('weightedDetfPkg')
-    expect(platformDetfPkgKey('stables')).toBe('curveQuadDetfPkg')
+    expect(minVaults('stables')).toBe(3)
+    expect(maxVaults('stables')).toBe(3)
+    expect(platformDetfPkgKey('one-vault')).toBe('uniV4DetfPkg')
+    expect(platformDetfPkgKey('weighted')).toBe('uniV4DetfPkg')
+    expect(platformDetfPkgKey('stables')).toBe('uniV4DetfPkg')
     expect(platformSePkgKey('uniswap-v3')).toBe('uniV3SePkg')
     expect(platformSePkgKey('uniswap-v4')).toBe('uniV4SePkg')
     expect(platformSePkgKey('morpho')).toBe('morphoBlueSePkg')
+    expect(platformHookPkgKey('one-vault')).toBe('cpHookPkg')
+    expect(platformHookPkgKey('weighted')).toBe('weightedHookPkg')
+    expect(platformHookPkgKey('stables')).toBe('curveQuadHookPkg')
   })
 
-  it('marks one-strategy as update coming soon and the other types coming soon', () => {
-    const one = CREATE_DETF_TYPES.find((t) => t.id === 'one-vault')
-    expect(one?.comingSoon).toBe(true)
-    expect(one?.comingSoonLabel).toBe('Update Coming Soon')
-    expect(CREATE_DETF_TYPES.find((t) => t.id === 'weighted')?.comingSoon).toBe(true)
-    expect(CREATE_DETF_TYPES.find((t) => t.id === 'stables')?.comingSoon).toBe(true)
+  it('offers one strategy, several strategies, and three dollar vaults', () => {
+    expect(CREATE_DETF_TYPES.find((t) => t.id === 'one-vault')?.comingSoon).toBeFalsy()
+    expect(CREATE_DETF_TYPES.find((t) => t.id === 'weighted')?.comingSoon).toBeFalsy()
+    expect(CREATE_DETF_TYPES.find((t) => t.id === 'stables')?.comingSoon).toBeFalsy()
+    expect(CREATE_DETF_TYPES.find((t) => t.id === 'stables')?.title).toBe('Three dollar vaults')
   })
 
   it('keeps customer titles free of package names', () => {
@@ -217,7 +243,7 @@ describe('include choice limits', () => {
 
 describe('derived names', () => {
   it('builds claim and bond symbols', () => {
-    expect(claimSymbolFrom('FOO')).toBe('FOOIR')
+    expect(claimSymbolFrom('FOO')).toBe('sFOO')
     expect(bondSymbolFrom('FOO')).toBe('FOO-BOND')
   })
 
@@ -424,7 +450,22 @@ describe('planReady', () => {
     expect(json).toMatch(/"bondSymbol": "FOO-BOND"/)
     expect(json).toMatch(/"creationPairPerDetfWad"/)
     expect(json).toMatch(/1100000000000000000/)
-    expect(json).toMatch(/"thresholdMode": 0/)
+    expect(JSON.parse(json)).not.toHaveProperty('thresholdMode')
     expect(json).toMatch(/"seHost": "uniswap-v4"/)
+  })
+})
+
+
+describe('mandatory funded DETF price gates', () => {
+  it('does not allow a saved legacy Open field to bypass threshold validation or reach serialized deployment data', () => {
+    const plan = Object.assign(emptyPlan(), { mode: 'open', mintBandPct: 'invalid' })
+    expect(validateGates(plan)).toMatch(/Mint line/)
+    plan.mintBandPct = '5'
+    expect(validateGates(plan)).toBeNull()
+    const serialized = JSON.parse(serializePlan(plan))
+    expect(serialized).not.toHaveProperty('mode')
+    expect(serialized).not.toHaveProperty('thresholdMode')
+    expect(serialized.mintThreshold).toBe('1050000000000000000')
+    expect(serialized.burnThreshold).toBe('950000000000000000')
   })
 })

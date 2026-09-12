@@ -1,0 +1,88 @@
+{
+  "status": "COMPLETED_REQUIRES_FAILURE_REVIEW",
+  "provenance": {
+    "recorded_at_utc": "2026-09-11T06:52:51.257936+00:00",
+    "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+    "source_and_config_sha256": "ef447bba96c7914b47a84f95ccd6b9ecbae984cc92a464b64479955cc3148f71",
+    "source_and_config_files": 4817,
+    "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+    "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+    "crane_tracked_contract_and_config_diff_sha256": "3bb0f52c1183f2be28ee8a63fab300170f65e989720b5048e21da9c61028cc4d",
+    "crane_source_and_config_sha256": "b45a057611f782040ee29f1fddbbcc8eeba01def2c9341ef01c6bb65f685e123",
+    "crane_source_and_config_files": 14819,
+    "dependency_scope": "Crane Solidity tree, including untracked Solidity and nested vendored libraries/tests, plus Crane Foundry config. Final compiler metadata separately verifies every imported source closure.",
+    "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+    "machine": "macOS-26.6.2-x86_64-i386-64bit",
+    "architecture": "x86_64",
+    "logical_cpus": 16,
+    "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+  },
+  "steps": [
+    {
+      "name": "full-build",
+      "command": [
+        "python3",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/run-full-build.py",
+        "--include-scripts"
+      ],
+      "exit_code": 0,
+      "seconds": 9269.866,
+      "sources_unchanged": true,
+      "changed_fingerprints": []
+    },
+    {
+      "name": "lifecycle-regressions",
+      "command": [
+        "python3",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/run-lifecycle-production-regressions.py"
+      ],
+      "exit_code": 1,
+      "seconds": 38.18,
+      "sources_unchanged": true,
+      "changed_fingerprints": []
+    }
+  ],
+  "started_at_utc": "2026-09-11T06:52:51.444487+00:00",
+  "archive": "before-current-repository-production-readiness-lifecycle-nav-stack",
+  "archived_evidence": [
+    {
+      "path": "implementation-full-build.json",
+      "sha256": "b638e931a5c46318cad133b155720fd23c77d602a509aa04ae2f2fd070cfa512"
+    },
+    {
+      "path": "implementation-full-build.log",
+      "sha256": "9d74db60d5bdd611f3761ccd2825526bf333bccf16c35b515331a3f5fbb671fd"
+    },
+    {
+      "path": "implementation-hermetic-start.json",
+      "sha256": "353adae1815713e6f43aa744be8bc83190b1f9092e0b49c2a390bf671a1d25a4"
+    },
+    {
+      "path": "implementation-hermetic-test.json",
+      "sha256": "515b0bba3454b08d0871b2c1b8b59b62eef6e41772ccf0a5d8d1599d51fdfa9f"
+    },
+    {
+      "path": "implementation-hermetic-test.log",
+      "sha256": "a7965e711e1610146a285c8ed336d894fe6f108157fb3c00c3288f76d0f02716"
+    },
+    {
+      "path": "current-hermetic-baseline-attribution.json",
+      "sha256": "0eb26167a970ed2a3ffe38e61d705b9e442b4a2499033feadd663a6cfbf905de"
+    },
+    {
+      "path": "acceptance-current-run-anchors.json",
+      "sha256": "282dec92f7909f49e2025efa6b6ef18738837d2385e73f5a2ebc1168b63a4151"
+    },
+    {
+      "path": "maintained-script-build-scope.json",
+      "sha256": "68f6e2fbbdf0df1569b0e9f7c4f9378ce28bb033aaa99f448e91a855063b7ec6"
+    },
+    {
+      "path": "final-provider-repository-post-position-sequence.json",
+      "sha256": "92faa8127a824f4176679fc3e9c5ef21f9857d04723633bb8b6011316cb2e36a"
+    }
+  ],
+  "scope": "Full default contracts/tests plus maintained scripts; unfiltered default hermetic tests; exact baseline and owner-scope attribution.",
+  "limitations": "D60 failures remain reported. No result automatically closes acceptance or substitutes for the strict local rehearsal.",
+  "finished_at_utc": "2026-09-11T09:27:59.716982+00:00"
+}

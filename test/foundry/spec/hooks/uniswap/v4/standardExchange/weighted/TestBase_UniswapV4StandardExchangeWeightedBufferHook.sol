@@ -53,6 +53,7 @@ import {
 import {
     UniswapV4StandardExchangeWeightedBufferHookTestDeployLib as DeployLib
 } from "test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookTestDeployLib.sol";
+import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 import {
     UniswapV4StandardExchangeWeightedBufferHookPairPoolLib as PairPoolLib
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookPairPoolLib.sol";
@@ -239,6 +240,8 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedBufferHook is TestBa
             weights: w,
             standardExchanges: ses,
             rateProviders: rps,
+            tokenDecimals: HookPkgArgsDecimalsLib.tokenDecimals(toks),
+            seDecimals: HookPkgArgsDecimalsLib.seDecimals(ses),
             ownerOnlyLiquidity: _pkgOwnerOnlyLiquidity(),
             owner: _pkgOwner()
         });
@@ -299,8 +302,10 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedBufferHook is TestBa
             amountSpecified: int256(amountOut),
             sqrtPriceLimitX96: zeroForOne ? TickMath.MIN_SQRT_PRICE + 1 : TickMath.MAX_SQRT_PRICE - 1
         });
+        // This router settles the maximum before swapping, then refunds the unused input.
+        uint256 maximum = weighted.previewSwapExactOut(tokenIn, tokenOut, amountOut);
         vm.prank(user);
-        swapRouter.swapExactOut(key, params, type(uint256).max, "");
+        swapRouter.swapExactOut(key, params, maximum, "");
     }
 
     /// @notice n-token args with optional all-SE; equal weights; ≥1 SE on leg 0.
@@ -329,6 +334,8 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedBufferHook is TestBa
         }
         a.ownerOnlyLiquidity = _pkgOwnerOnlyLiquidity();
         a.owner = _pkgOwner();
+        a.tokenDecimals = HookPkgArgsDecimalsLib.tokenDecimals(a.tokens);
+        a.seDecimals = HookPkgArgsDecimalsLib.seDecimals(a.standardExchanges);
     }
 
     function _pkgArgs(
@@ -344,6 +351,8 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedBufferHook is TestBa
         a.weights = weights;
         a.standardExchanges = ses;
         a.rateProviders = rps;
+        a.tokenDecimals = HookPkgArgsDecimalsLib.tokenDecimals(a.tokens);
+        a.seDecimals = HookPkgArgsDecimalsLib.seDecimals(a.standardExchanges);
         a.ownerOnlyLiquidity = _pkgOwnerOnlyLiquidity();
         a.owner = _pkgOwner();
     }

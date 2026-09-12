@@ -1,0 +1,16 @@
+{
+  "rows": [
+    {
+      "source": "test/foundry/fork/base_main/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_Fork.t.sol",
+      "sha256": "366843668d6895d3ff15ecf79f87a7982190f6c18dbf37c607ef8c6258b48be5",
+      "matches_prepared": true
+    },
+    {
+      "source": "test/foundry/fork/robinhood_4663/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_Robinhood.t.sol",
+      "sha256": "f6637d7aa730b795017e788ff45d0757afe3989320c1566cf9f0840fdf22fa1b",
+      "matches_prepared": true
+    }
+  ],
+  "all_match": true,
+  "next": "Runner retains completed-sequence and matching-full-build guards; queue now points to production-readiness-final."
+}

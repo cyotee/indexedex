@@ -4357,335 +4357,552 @@ exports.diamondPackageCallBackFactoryConfig = {
  */
 exports.uniswapV2StandardExchangeDfPkgAbi = [
     {
-        type: 'constructor',
-        inputs: [
+        "type": "constructor",
+        "inputs": [
             {
-                name: 'pkgInit',
-                internalType: 'struct IUniswapV2StandardExchangeDFPkg.PkgInit',
-                type: 'tuple',
-                components: [
+                "name": "pkgInit",
+                "type": "tuple",
+                "internalType": "struct IUniswapV2StandardExchangeDFPkg.PkgInit",
+                "components": [
                     {
-                        name: 'erc20Facet',
-                        internalType: 'contract IFacet',
-                        type: 'address',
+                        "name": "erc20Facet",
+                        "type": "address",
+                        "internalType": "contract IFacet"
                     },
                     {
-                        name: 'erc5267Facet',
-                        internalType: 'contract IFacet',
-                        type: 'address',
+                        "name": "erc5267Facet",
+                        "type": "address",
+                        "internalType": "contract IFacet"
                     },
                     {
-                        name: 'erc2612Facet',
-                        internalType: 'contract IFacet',
-                        type: 'address',
+                        "name": "erc2612Facet",
+                        "type": "address",
+                        "internalType": "contract IFacet"
                     },
                     {
-                        name: 'erc4626Facet',
-                        internalType: 'contract IFacet',
-                        type: 'address',
+                        "name": "erc4626Facet",
+                        "type": "address",
+                        "internalType": "contract IFacet"
                     },
                     {
-                        name: 'erc4626BasicVaultFacet',
-                        internalType: 'contract IFacet',
-                        type: 'address',
+                        "name": "multiAssetBasicVaultFacet",
+                        "type": "address",
+                        "internalType": "contract IFacet"
                     },
                     {
-                        name: 'erc4626StandardVaultFacet',
-                        internalType: 'contract IFacet',
-                        type: 'address',
+                        "name": "multiAssetStandardVaultFacet",
+                        "type": "address",
+                        "internalType": "contract IFacet"
                     },
                     {
-                        name: 'uniswapV2StandardExchangeInFacet',
-                        internalType: 'contract IFacet',
-                        type: 'address',
+                        "name": "uniswapV2StandardExchangeInFacet",
+                        "type": "address",
+                        "internalType": "contract IFacet"
                     },
                     {
-                        name: 'uniswapV2StandardExchangeOutFacet',
-                        internalType: 'contract IFacet',
-                        type: 'address',
+                        "name": "uniswapV2StandardExchangeOutFacet",
+                        "type": "address",
+                        "internalType": "contract IFacet"
                     },
                     {
-                        name: 'vaultFeeOracleQuery',
-                        internalType: 'contract IVaultFeeOracleQuery',
-                        type: 'address',
+                        "name": "uniswapV2StandardExchangeQueryFacet",
+                        "type": "address",
+                        "internalType": "contract IFacet"
                     },
                     {
-                        name: 'vaultRegistryDeployment',
-                        internalType: 'contract IVaultRegistryDeployment',
-                        type: 'address',
+                        "name": "vaultFeeOracleQuery",
+                        "type": "address",
+                        "internalType": "contract IVaultFeeOracleQuery"
                     },
                     {
-                        name: 'permit2',
-                        internalType: 'contract IPermit2',
-                        type: 'address',
+                        "name": "vaultRegistryDeployment",
+                        "type": "address",
+                        "internalType": "contract IVaultRegistryDeployment"
                     },
                     {
-                        name: 'uniswapV2Factory',
-                        internalType: 'contract IUniswapV2Factory',
-                        type: 'address',
+                        "name": "permit2",
+                        "type": "address",
+                        "internalType": "contract IPermit2"
                     },
                     {
-                        name: 'uniswapV2Router',
-                        internalType: 'contract IUniswapV2Router',
-                        type: 'address',
+                        "name": "uniswapV2Factory",
+                        "type": "address",
+                        "internalType": "contract IUniswapV2Factory"
                     },
-                ],
+                    {
+                        "name": "uniswapV2Router",
+                        "type": "address",
+                        "internalType": "contract IUniswapV2Router"
+                    }
+                ]
+            }
+        ],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
+        "name": "calcSalt",
+        "inputs": [
+            {
+                "name": "pkgArgs",
+                "type": "bytes",
+                "internalType": "bytes"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "salt",
+                "type": "bytes32",
+                "internalType": "bytes32"
+            }
+        ],
+        "stateMutability": "pure"
+    },
+    {
+        "type": "function",
+        "name": "deployVault",
+        "inputs": [
+            {
+                "name": "pool",
+                "type": "address",
+                "internalType": "contract IUniswapV2Pair"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "vault",
+                "type": "address",
+                "internalType": "address"
+            }
+        ],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
+        "name": "deployVault",
+        "inputs": [
+            {
+                "name": "tokenA",
+                "type": "address",
+                "internalType": "contract IERC20"
             },
-        ],
-        stateMutability: 'nonpayable',
-    },
-    {
-        type: 'function',
-        inputs: [{ name: 'pkgArgs', internalType: 'bytes', type: 'bytes' }],
-        name: 'calcSalt',
-        outputs: [{ name: 'salt', internalType: 'bytes32', type: 'bytes32' }],
-        stateMutability: 'pure',
-    },
-    {
-        type: 'function',
-        inputs: [
             {
-                name: 'pool',
-                internalType: 'contract IUniswapV2Pair',
-                type: 'address',
+                "name": "tokenAAmount",
+                "type": "uint256",
+                "internalType": "uint256"
             },
-        ],
-        name: 'deployVault',
-        outputs: [{ name: 'vault', internalType: 'address', type: 'address' }],
-        stateMutability: 'nonpayable',
-    },
-    {
-        type: 'function',
-        inputs: [
-            { name: 'tokenA', internalType: 'contract IERC20', type: 'address' },
-            { name: 'tokenAAmount', internalType: 'uint256', type: 'uint256' },
-            { name: 'tokenB', internalType: 'contract IERC20', type: 'address' },
-            { name: 'tokenBAmount', internalType: 'uint256', type: 'uint256' },
-            { name: 'recipient', internalType: 'address', type: 'address' },
-        ],
-        name: 'deployVault',
-        outputs: [{ name: 'vault', internalType: 'address', type: 'address' }],
-        stateMutability: 'nonpayable',
-    },
-    {
-        type: 'function',
-        inputs: [],
-        name: 'diamondConfig',
-        outputs: [
             {
-                name: 'config',
-                internalType: 'struct IDiamondFactoryPackage.DiamondConfig',
-                type: 'tuple',
-                components: [
+                "name": "tokenB",
+                "type": "address",
+                "internalType": "contract IERC20"
+            },
+            {
+                "name": "tokenBAmount",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "recipient",
+                "type": "address",
+                "internalType": "address"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "vault",
+                "type": "address",
+                "internalType": "address"
+            }
+        ],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
+        "name": "diamondConfig",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "config",
+                "type": "tuple",
+                "internalType": "struct IDiamondFactoryPackage.DiamondConfig",
+                "components": [
                     {
-                        name: 'facetCuts',
-                        internalType: 'struct IDiamond.FacetCut[]',
-                        type: 'tuple[]',
-                        components: [
+                        "name": "facetCuts",
+                        "type": "tuple[]",
+                        "internalType": "struct IDiamond.FacetCut[]",
+                        "components": [
                             {
-                                name: 'facetAddress',
-                                internalType: 'address',
-                                type: 'address',
+                                "name": "facetAddress",
+                                "type": "address",
+                                "internalType": "address"
                             },
                             {
-                                name: 'action',
-                                internalType: 'enum IDiamond.FacetCutAction',
-                                type: 'uint8',
+                                "name": "action",
+                                "type": "uint8",
+                                "internalType": "enum IDiamond.FacetCutAction"
                             },
                             {
-                                name: 'functionSelectors',
-                                internalType: 'bytes4[]',
-                                type: 'bytes4[]',
-                            },
-                        ],
-                    },
-                    { name: 'interfaces', internalType: 'bytes4[]', type: 'bytes4[]' },
-                ],
-            },
-        ],
-        stateMutability: 'view',
-    },
-    {
-        type: 'function',
-        inputs: [],
-        name: 'facetAddresses',
-        outputs: [
-            { name: 'facetAddresses_', internalType: 'address[]', type: 'address[]' },
-        ],
-        stateMutability: 'view',
-    },
-    {
-        type: 'function',
-        inputs: [],
-        name: 'facetCuts',
-        outputs: [
-            {
-                name: 'facetCuts_',
-                internalType: 'struct IDiamond.FacetCut[]',
-                type: 'tuple[]',
-                components: [
-                    { name: 'facetAddress', internalType: 'address', type: 'address' },
-                    {
-                        name: 'action',
-                        internalType: 'enum IDiamond.FacetCutAction',
-                        type: 'uint8',
+                                "name": "functionSelectors",
+                                "type": "bytes4[]",
+                                "internalType": "bytes4[]"
+                            }
+                        ]
                     },
                     {
-                        name: 'functionSelectors',
-                        internalType: 'bytes4[]',
-                        type: 'bytes4[]',
+                        "name": "interfaces",
+                        "type": "bytes4[]",
+                        "internalType": "bytes4[]"
+                    }
+                ]
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "facetAddresses",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "facetAddresses_",
+                "type": "address[]",
+                "internalType": "address[]"
+            }
+        ],
+        "stateMutability": "view"
+    },
+    {
+        "type": "function",
+        "name": "facetCuts",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "facetCuts_",
+                "type": "tuple[]",
+                "internalType": "struct IDiamond.FacetCut[]",
+                "components": [
+                    {
+                        "name": "facetAddress",
+                        "type": "address",
+                        "internalType": "address"
                     },
-                ],
-            },
+                    {
+                        "name": "action",
+                        "type": "uint8",
+                        "internalType": "enum IDiamond.FacetCutAction"
+                    },
+                    {
+                        "name": "functionSelectors",
+                        "type": "bytes4[]",
+                        "internalType": "bytes4[]"
+                    }
+                ]
+            }
         ],
-        stateMutability: 'view',
+        "stateMutability": "view"
     },
     {
-        type: 'function',
-        inputs: [],
-        name: 'facetInterfaces',
-        outputs: [
-            { name: 'interfaces', internalType: 'bytes4[]', type: 'bytes4[]' },
-        ],
-        stateMutability: 'pure',
-    },
-    {
-        type: 'function',
-        inputs: [{ name: 'initArgs', internalType: 'bytes', type: 'bytes' }],
-        name: 'initAccount',
-        outputs: [],
-        stateMutability: 'nonpayable',
-    },
-    {
-        type: 'function',
-        inputs: [],
-        name: 'name',
-        outputs: [{ name: '', internalType: 'string', type: 'string' }],
-        stateMutability: 'pure',
-    },
-    {
-        type: 'function',
-        inputs: [],
-        name: 'packageMetadata',
-        outputs: [
-            { name: 'name_', internalType: 'string', type: 'string' },
-            { name: 'interfaces', internalType: 'bytes4[]', type: 'bytes4[]' },
-            { name: 'facets', internalType: 'address[]', type: 'address[]' },
-        ],
-        stateMutability: 'view',
-    },
-    {
-        type: 'function',
-        inputs: [],
-        name: 'packageName',
-        outputs: [{ name: 'name_', internalType: 'string', type: 'string' }],
-        stateMutability: 'pure',
-    },
-    {
-        type: 'function',
-        inputs: [{ name: '', internalType: 'address', type: 'address' }],
-        name: 'postDeploy',
-        outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-        stateMutability: 'pure',
-    },
-    {
-        type: 'function',
-        inputs: [
-            { name: 'tokenA', internalType: 'contract IERC20', type: 'address' },
-            { name: 'tokenAAmount', internalType: 'uint256', type: 'uint256' },
-            { name: 'tokenB', internalType: 'contract IERC20', type: 'address' },
-            { name: 'tokenBAmount', internalType: 'uint256', type: 'uint256' },
-        ],
-        name: 'previewDeployVault',
-        outputs: [
+        "type": "function",
+        "name": "facetInterfaces",
+        "inputs": [],
+        "outputs": [
             {
-                name: 'result',
-                internalType: 'struct IUniswapV2StandardExchangeDFPkg.DeployWithPoolResult',
-                type: 'tuple',
-                components: [
-                    { name: 'pairExists', internalType: 'bool', type: 'bool' },
-                    { name: 'proportionalA', internalType: 'uint256', type: 'uint256' },
-                    { name: 'proportionalB', internalType: 'uint256', type: 'uint256' },
-                    { name: 'expectedLP', internalType: 'uint256', type: 'uint256' },
-                ],
-            },
+                "name": "interfaces",
+                "type": "bytes4[]",
+                "internalType": "bytes4[]"
+            }
         ],
-        stateMutability: 'view',
+        "stateMutability": "pure"
     },
     {
-        type: 'function',
-        inputs: [{ name: 'pkgArgs', internalType: 'bytes', type: 'bytes' }],
-        name: 'processArgs',
-        outputs: [
-            { name: 'processedPkgArgs', internalType: 'bytes', type: 'bytes' },
-        ],
-        stateMutability: 'view',
-    },
-    {
-        type: 'function',
-        inputs: [
-            { name: '', internalType: 'address', type: 'address' },
-            { name: '', internalType: 'bytes', type: 'bytes' },
-        ],
-        name: 'updatePkg',
-        outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
-        stateMutability: 'pure',
-    },
-    {
-        type: 'function',
-        inputs: [],
-        name: 'vaultDeclaration',
-        outputs: [
+        "type": "function",
+        "name": "initAccount",
+        "inputs": [
             {
-                name: 'declaration',
-                internalType: 'struct IStandardVaultPkg.VaultPkgDeclaration',
-                type: 'tuple',
-                components: [
-                    { name: 'name', internalType: 'string', type: 'string' },
-                    { name: 'vaultFeeTypeIds', internalType: 'bytes32', type: 'bytes32' },
-                    { name: 'vaultTypes', internalType: 'bytes4[]', type: 'bytes4[]' },
-                ],
+                "name": "initArgs",
+                "type": "bytes",
+                "internalType": "bytes"
+            }
+        ],
+        "outputs": [],
+        "stateMutability": "nonpayable"
+    },
+    {
+        "type": "function",
+        "name": "name",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "",
+                "type": "string",
+                "internalType": "string"
+            }
+        ],
+        "stateMutability": "pure"
+    },
+    {
+        "type": "function",
+        "name": "packageMetadata",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "name_",
+                "type": "string",
+                "internalType": "string"
             },
+            {
+                "name": "interfaces",
+                "type": "bytes4[]",
+                "internalType": "bytes4[]"
+            },
+            {
+                "name": "facets",
+                "type": "address[]",
+                "internalType": "address[]"
+            }
         ],
-        stateMutability: 'pure',
+        "stateMutability": "view"
     },
     {
-        type: 'function',
-        inputs: [],
-        name: 'vaultFeeTypeIds',
-        outputs: [
-            { name: 'vaultFeeTypeIds_', internalType: 'bytes32', type: 'bytes32' },
+        "type": "function",
+        "name": "packageName",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "name_",
+                "type": "string",
+                "internalType": "string"
+            }
         ],
-        stateMutability: 'pure',
+        "stateMutability": "pure"
     },
     {
-        type: 'function',
-        inputs: [],
-        name: 'vaultTypes',
-        outputs: [{ name: 'typeIDs', internalType: 'bytes4[]', type: 'bytes4[]' }],
-        stateMutability: 'pure',
-    },
-    {
-        type: 'error',
-        inputs: [
-            { name: 'length', internalType: 'uint256', type: 'uint256' },
-            { name: 'invalidIndex', internalType: 'uint256', type: 'uint256' },
-            { name: 'errorCode', internalType: 'uint256', type: 'uint256' },
+        "type": "function",
+        "name": "postDeploy",
+        "inputs": [
+            {
+                "name": "",
+                "type": "address",
+                "internalType": "address"
+            }
         ],
-        name: 'IndexOutOfBounds',
+        "outputs": [
+            {
+                "name": "",
+                "type": "bool",
+                "internalType": "bool"
+            }
+        ],
+        "stateMutability": "pure"
     },
     {
-        type: 'error',
-        inputs: [{ name: 'caller', internalType: 'address', type: 'address' }],
-        name: 'NotCalledByRegistry',
+        "type": "function",
+        "name": "previewDeployVault",
+        "inputs": [
+            {
+                "name": "tokenA",
+                "type": "address",
+                "internalType": "contract IERC20"
+            },
+            {
+                "name": "tokenAAmount",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "tokenB",
+                "type": "address",
+                "internalType": "contract IERC20"
+            },
+            {
+                "name": "tokenBAmount",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "result",
+                "type": "tuple",
+                "internalType": "struct IUniswapV2StandardExchangeDFPkg.DeployWithPoolResult",
+                "components": [
+                    {
+                        "name": "pairExists",
+                        "type": "bool",
+                        "internalType": "bool"
+                    },
+                    {
+                        "name": "proportionalA",
+                        "type": "uint256",
+                        "internalType": "uint256"
+                    },
+                    {
+                        "name": "proportionalB",
+                        "type": "uint256",
+                        "internalType": "uint256"
+                    },
+                    {
+                        "name": "expectedLP",
+                        "type": "uint256",
+                        "internalType": "uint256"
+                    }
+                ]
+            }
+        ],
+        "stateMutability": "view"
     },
-    { type: 'error', inputs: [], name: 'PairCreationFailed' },
-    { type: 'error', inputs: [], name: 'RecipientRequiredForDeposit' },
     {
-        type: 'error',
-        inputs: [{ name: 'str', internalType: 'string', type: 'string' }],
-        name: 'StringTooLong',
+        "type": "function",
+        "name": "processArgs",
+        "inputs": [
+            {
+                "name": "pkgArgs",
+                "type": "bytes",
+                "internalType": "bytes"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "processedPkgArgs",
+                "type": "bytes",
+                "internalType": "bytes"
+            }
+        ],
+        "stateMutability": "view"
     },
+    {
+        "type": "function",
+        "name": "updatePkg",
+        "inputs": [
+            {
+                "name": "",
+                "type": "address",
+                "internalType": "address"
+            },
+            {
+                "name": "",
+                "type": "bytes",
+                "internalType": "bytes"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "",
+                "type": "bool",
+                "internalType": "bool"
+            }
+        ],
+        "stateMutability": "pure"
+    },
+    {
+        "type": "function",
+        "name": "vaultDeclaration",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "declaration",
+                "type": "tuple",
+                "internalType": "struct IStandardVaultPkg.VaultPkgDeclaration",
+                "components": [
+                    {
+                        "name": "name",
+                        "type": "string",
+                        "internalType": "string"
+                    },
+                    {
+                        "name": "vaultFeeTypeIds",
+                        "type": "bytes32",
+                        "internalType": "bytes32"
+                    },
+                    {
+                        "name": "vaultTypes",
+                        "type": "bytes4[]",
+                        "internalType": "bytes4[]"
+                    }
+                ]
+            }
+        ],
+        "stateMutability": "pure"
+    },
+    {
+        "type": "function",
+        "name": "vaultFeeTypeIds",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "vaultFeeTypeIds_",
+                "type": "bytes32",
+                "internalType": "bytes32"
+            }
+        ],
+        "stateMutability": "pure"
+    },
+    {
+        "type": "function",
+        "name": "vaultTypes",
+        "inputs": [],
+        "outputs": [
+            {
+                "name": "typeIDs",
+                "type": "bytes4[]",
+                "internalType": "bytes4[]"
+            }
+        ],
+        "stateMutability": "pure"
+    },
+    {
+        "type": "error",
+        "name": "IndexOutOfBounds",
+        "inputs": [
+            {
+                "name": "length",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "invalidIndex",
+                "type": "uint256",
+                "internalType": "uint256"
+            },
+            {
+                "name": "errorCode",
+                "type": "uint256",
+                "internalType": "uint256"
+            }
+        ]
+    },
+    {
+        "type": "error",
+        "name": "NotCalledByRegistry",
+        "inputs": [
+            {
+                "name": "caller",
+                "type": "address",
+                "internalType": "address"
+            }
+        ]
+    },
+    {
+        "type": "error",
+        "name": "PairCreationFailed",
+        "inputs": []
+    },
+    {
+        "type": "error",
+        "name": "RecipientRequiredForDeposit",
+        "inputs": []
+    },
+    {
+        "type": "error",
+        "name": "StringTooLong",
+        "inputs": [
+            {
+                "name": "str",
+                "type": "string",
+                "internalType": "string"
+            }
+        ]
+    }
 ];
 /**
  * - [__View Contract on Base Basescan__](https://basescan.org/address/0xb1451d5e9Be225ec537CcFC5a79aF7DdEfD0C97F)

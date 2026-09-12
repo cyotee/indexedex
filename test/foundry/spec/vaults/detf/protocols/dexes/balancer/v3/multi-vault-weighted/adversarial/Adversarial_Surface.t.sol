@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IDETFFundedRewards} from "contracts/interfaces/IStakedDETF.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
@@ -9,10 +11,16 @@ import {
     TestBase_MultiVaultWeightedDetf_Adversarial
 } from "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/TestBase_MultiVaultWeightedDetf_Adversarial.sol";
 import {
-    IMultiVaultWeightedDetfBonding
+    ILegacyMultiVaultWeightedDetfBonding as IMultiVaultWeightedDetfBonding
+} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf.sol";
+import {
+    IMultiVaultWeightedDetfBonding as IMultiVaultWeightedDetfBondingSelectorSource
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfBondingTarget.sol";
 import {
-    IMultiVaultWeightedDetfInfo
+    ILegacyMultiVaultWeightedDetfInfo as IMultiVaultWeightedDetfInfo
+} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf.sol";
+import {
+    IMultiVaultWeightedDetfInfo as IMultiVaultWeightedDetfInfoSelectorSource
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfInfoTarget.sol";
 
 /**
@@ -28,19 +36,30 @@ contract Adversarial_Surface_Test is TestBase_MultiVaultWeightedDetf_Adversarial
         assertTrue(_contains(xfuncs_, IStandardExchangeIn.previewExchangeIn.selector), "previewExchangeIn");
 
         bytes4[] memory funcs_ = multiVaultWeightedDetfBondingFacet.facetFuncs();
-        assertTrue(_contains(funcs_, IMultiVaultWeightedDetfBonding.bond.selector), "bond");
-        assertTrue(_contains(funcs_, IMultiVaultWeightedDetfBonding.initializeReserve.selector), "initializeReserve");
-        assertTrue(_contains(funcs_, IMultiVaultWeightedDetfBonding.redeemClaim.selector), "redeemClaim");
-        assertTrue(_contains(funcs_, IMultiVaultWeightedDetfBonding.buyClaim.selector), "buyClaim");
-        assertTrue(_contains(funcs_, IMultiVaultWeightedDetfBonding.closeBondMature.selector), "closeBondMature");
-        assertTrue(_contains(funcs_, IMultiVaultWeightedDetfBonding.joinDonatedCapital.selector), "joinDonated");
-        assertTrue(_contains(funcs_, IMultiVaultWeightedDetfBonding.donate.selector), "donate");
+        assertTrue(_contains(funcs_, IMultiVaultWeightedDetfBondingSelectorSource.bond.selector), "bond");
+        assertTrue(
+            _contains(funcs_, IMultiVaultWeightedDetfBondingSelectorSource.initializeReserve.selector),
+            "initializeReserve"
+        );
+        assertFalse(_contains(funcs_, IMultiVaultWeightedDetfBonding.redeemClaim.selector), "retired redeemClaim");
+        assertFalse(_contains(funcs_, IMultiVaultWeightedDetfBonding.buyClaim.selector), "retired buyClaim");
+        assertFalse(
+            _contains(funcs_, IMultiVaultWeightedDetfBonding.closeBondMature.selector), "retired closeBondMature"
+        );
+        assertTrue(
+            _contains(funcs_, IMultiVaultWeightedDetfBondingSelectorSource.joinDonatedCapital.selector), "joinDonated"
+        );
+        assertTrue(_contains(funcs_, IMultiVaultWeightedDetfBondingSelectorSource.donate.selector), "donate");
         assertTrue(!_contains(funcs_, bytes4(keccak256("sellNFT(uint256,address)"))), "sellNFT gone");
 
         bytes4[] memory ifuncs_ = multiVaultWeightedDetfInfoFacet.facetFuncs();
-        assertTrue(_contains(ifuncs_, IMultiVaultWeightedDetfInfo.isReserveLive.selector), "isReserveLive");
-        assertTrue(_contains(ifuncs_, IMultiVaultWeightedDetfInfo.syntheticPrice.selector), "syntheticPrice");
-        assertTrue(_contains(ifuncs_, IMultiVaultWeightedDetfInfo.compoundProtocolRewards.selector), "compound");
+        assertTrue(
+            _contains(ifuncs_, IMultiVaultWeightedDetfInfoSelectorSource.isReserveLive.selector), "isReserveLive"
+        );
+        assertTrue(
+            _contains(ifuncs_, IMultiVaultWeightedDetfInfoSelectorSource.syntheticPrice.selector), "syntheticPrice"
+        );
+        assertTrue(_contains(ifuncs_, IDETFFundedRewards.synchronizeRewards.selector), "funded reward settlement");
     }
 
     /// @notice J2: every facetFuncs selector is registered on the production proxy loupe.
@@ -78,16 +97,16 @@ contract Adversarial_Surface_Test is TestBase_MultiVaultWeightedDetf_Adversarial
         assertTrue(info_.vaultCount() >= 1, "proxy vaultCount");
         assertTrue(info_.reservePool() != address(0), "proxy reservePool");
         assertTrue(info_.syntheticPrice() > 0, "proxy syntheticPrice");
-        assertTrue(info_.isMintingAllowed() || info_.isBurningAllowed(), "proxy threshold views");
+        assertGt(info_.mintThreshold(), info_.burnThreshold(), "mandatory deadband");
+        info_.isMintingAllowed();
+        info_.isBurningAllowed();
 
         // Mutating surface via proxy (mint)
         uint256 shares_ = _fundSeSharesLeg(0, bob, 25e18);
         uint256 preview_ = ex_.previewExchangeIn(seShares[0], shares_, IERC20(instance_));
         vm.startPrank(bob);
         seShares[0].approve(instance_, shares_);
-        uint256 out_ = ex_.exchangeIn(
-            seShares[0], shares_, IERC20(instance_), 0, bob, false, block.timestamp + 1 hours
-        );
+        uint256 out_ = ex_.exchangeIn(seShares[0], shares_, IERC20(instance_), 0, bob, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertEq(out_, preview_, "proxy mint preview==exec");
         assertTrue(out_ > 0, "proxy mint ok");
@@ -98,11 +117,16 @@ contract Adversarial_Surface_Test is TestBase_MultiVaultWeightedDetf_Adversarial
         assertTrue(loupeFacet_ != instance_, "not self-facet");
         assertTrue(loupeFacet_ != address(0), "facet set");
 
-        IMultiVaultWeightedDetfBonding bonding_ = IMultiVaultWeightedDetfBonding(instance_);
-        assertEq(bonding_.protocolBondOriginalShares(), 0, "proxy protocol bond empty at live");
-        bonding_.previewBuyClaim(1e18);
-        address buyFacet_ = IDiamondLoupe(instance_).facetAddress(IMultiVaultWeightedDetfBonding.buyClaim.selector);
-        assertEq(buyFacet_, address(multiVaultWeightedDetfBondingFacet), "buyClaim loupe");
+        IMultiVaultWeightedDetfBondingSelectorSource bonding_ = IMultiVaultWeightedDetfBondingSelectorSource(instance_);
+        (uint256 principal_, uint256 liquidity_,) = bonding_.previewBond(seShares[0], shares_ / 10, DEFAULT_MIN_LOCK);
+        assertGt(principal_, 0);
+        assertGt(liquidity_, 0);
+        IDETFFundedRewards(instance_).synchronizeRewards();
+        assertEq(
+            IDiamondLoupe(instance_).facetAddress(IMultiVaultWeightedDetfBondingSelectorSource.previewBond.selector),
+            address(multiVaultWeightedDetfBondingFacet),
+            "funded purchase preview routed"
+        );
     }
 
     /// @notice J facet metadata parity (extends IFacet unit test onto CREATE3-deployed facet).

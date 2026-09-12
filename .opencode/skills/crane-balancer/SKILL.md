@@ -1,7 +1,6 @@
 ---
 name: crane-balancer
 description: This skill should be used when the user asks about "Balancer V3 integration", "Balancer pool", "weighted pool", "constant product pool", "BPT token", "Balancer vault", "rate provider", or needs to create or interact with Balancer V3 pools using Crane's DFPkg and service libraries.
-license: MIT
 ---
 
 # Crane Balancer V3 Integration

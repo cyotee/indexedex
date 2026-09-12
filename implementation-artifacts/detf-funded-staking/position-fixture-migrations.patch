@@ -1,0 +1,2752 @@
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_LocalLiquidBuffer.t.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_LocalLiquidBuffer.t.sol
+@@ -78,7 +78,8 @@
+         _assertFreeWithinDeadband(0.2e18);
+     }
+ 
+-    function test_T1b_idleDeposit_token0Only_doesNotRequireSleeveAndL() public {
++    function test_T1b_subsequentSingleTokenDeposit_keepsFullRangeLiquidity() public {
++        _bootstrapDeposit(20 ether);
+         uint256 amountIn = 50 ether;
+         ERC20PermitMintableStub(_token0()).mint(address(this), amountIn);
+         IERC20(_token0()).approve(address(vault), amountIn);
+@@ -86,12 +87,11 @@
+             IERC20(_token0()), amountIn, IERC20(address(vault)), 0, address(this), false, _deadline()
+         );
+         assertGt(shares, 0, "T1b: shares");
+-        (uint256 dep0, uint256 dep1) = liquid.deployedReserve();
+-        // Full-range L needs both tokens; token0-only must not require 20% + in-range L.
+-        assertTrue(dep0 + dep1 == 0 || liquid.actualLiquidReservePercentage(_token0()) != 0.2e18);
++        assertGt(_centerLiquidity(), 0, "T1b: full-range position retained");
+     }
+ 
+     function test_T2_blockedDeposit_sleeveNoNestedMint() public {
++        _bootstrapDeposit(20 ether);
+         uint256 amountIn = 5 ether;
+         address t0 = _token0();
+         ERC20PermitMintableStub(t0).mint(address(lockCaller), amountIn);
+@@ -167,6 +167,7 @@
+     }
+ 
+     function test_T8_previewEqualsExec_freeZapIn() public {
++        _bootstrapDeposit(20 ether);
+         uint256 amountIn = 3 ether;
+         uint256 preview = vault.previewExchangeIn(IERC20(_token0()), amountIn, IERC20(address(vault)));
+         ERC20PermitMintableStub(_token0()).mint(address(this), amountIn);
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_LocalLiquidBuffer_Decimals.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_LocalLiquidBuffer_Decimals.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v3/libraries/TickMath.sol";
+@@ -65,7 +67,8 @@
+         _assertFreeWithinDeadband(0.2e18);
+     }
+ 
+-    function test_T1b_idleDeposit_token0Only_doesNotRequireSleeveAndL() public {
++    function test_T1b_subsequentSingleTokenDeposit_keepsFullRangeLiquidity() public {
++        _bootstrapDeposit(_u0(20), _u1(20));
+         uint256 amountIn = _u0(50);
+         _mint(_token0(), address(this), amountIn);
+         IERC20(_token0()).approve(address(vault), amountIn);
+@@ -73,11 +76,11 @@
+             IERC20(_token0()), amountIn, IERC20(address(vault)), 0, address(this), false, _deadline()
+         );
+         assertGt(shares, 0, "T1b: shares");
+-        (uint256 dep0, uint256 dep1) = liquid.deployedReserve();
+-        assertTrue(dep0 + dep1 == 0 || liquid.actualLiquidReservePercentage(_token0()) != 0.2e18);
++        assertGt(_centerLiquidity(), 0, "T1b: full-range position retained");
+     }
+ 
+     function test_T2_blockedDeposit_sleeveNoNestedMint() public {
++        _bootstrapDeposit(_u0(20), _u1(20));
+         uint256 amountIn = _u0(5);
+         address t0 = _token0();
+         _mint(t0, address(lockCaller), amountIn);
+@@ -156,6 +159,7 @@
+     }
+ 
+     function test_T8_previewEqualsExec_freeZapIn() public {
++        _bootstrapDeposit(_u0(20), _u1(20));
+         uint256 amountIn = _u0(3);
+         uint256 preview = vault.previewExchangeIn(IERC20(_token0()), amountIn, IERC20(address(vault)));
+         _mint(_token0(), address(this), amountIn);
+@@ -188,12 +192,16 @@
+         IERC20(_token0()).approve(address(vault), amount0);
+         IERC20(_token1()).approve(address(vault), amount1);
+         vm.stopPrank();
+-        lockCaller.runExchangeIn(
+-            address(vault), IERC20(_token0()), amount0, IERC20(address(vault)), 0, address(this), false, _deadline()
+-        );
+-        lockCaller.runExchangeIn(
+-            address(vault), IERC20(_token1()), amount1, IERC20(address(vault)), 0, address(this), false, _deadline()
+-        );
++        address[] memory tokens = new address[](2);
++        tokens[0] = _token0();
++        tokens[1] = _token1();
++        uint256[] memory amounts = new uint256[](2);
++        amounts[0] = amount0;
++        amounts[1] = amount1;
++        uint256 shares = lockCaller.runExchangeInManyToOne(
++            address(vault), tokens, amounts, IERC20(address(vault)), 0, address(this), false, _deadline()
++        );
++        assertGt(shares, 0, "T12: funded shares while blocked");
+         assertEq(_centerLiquidity(), 0, "T12: no L while blocked");
+         liquid.rebalanceLiquidReserve();
+         assertGt(_centerLiquidity(), 0, "T12: idle rebalance mints L");
+@@ -243,13 +251,15 @@
+         _mint(_token1(), address(this), amount1);
+         IERC20(_token0()).approve(address(vault), amount0);
+         IERC20(_token1()).approve(address(vault), amount1);
+-        uint256 shares0 = vault.exchangeIn(
+-            IERC20(_token0()), amount0, IERC20(address(vault)), 0, address(this), false, _deadline()
+-        );
+-        uint256 shares1 = vault.exchangeIn(
+-            IERC20(_token1()), amount1, IERC20(address(vault)), 0, address(this), false, _deadline()
+-        );
+-        shares = shares0 + shares1;
++        address[] memory tokens = new address[](2);
++        tokens[0] = _token0();
++        tokens[1] = _token1();
++        uint256[] memory amounts = new uint256[](2);
++        amounts[0] = amount0;
++        amounts[1] = amount1;
++        shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
++            tokens, amounts, IERC20(address(vault)), 0, address(this), false, _deadline()
++        );
+         assertGt(shares, 0, "bootstrap");
+     }
+ 
+--- a/test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_LocalLiquidBuffer.t.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_LocalLiquidBuffer.t.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IReentrancyLock} from "@crane/contracts/access/reentrancy/IReentrancyLock.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
+@@ -149,6 +151,7 @@
+     }
+ 
+     function test_T1b_idleDeposit_notFullDeployRefund() public {
++        _bootstrapDeposit(20 ether);
+         uint256 amountIn = 50 ether;
+         ERC20PermitMintableStub(_token0()).mint(address(this), amountIn);
+         IERC20(_token0()).approve(address(vault), amountIn);
+@@ -160,6 +163,7 @@
+     }
+ 
+     function test_T2_inSessionDeposit_sleeveNoNestedUnlock() public {
++        _bootstrapDeposit(20 ether);
+         uint256 amountIn = 5 ether;
+         // L-GAPS-9: honest path is in-call transferFrom (!pretransferred). Transfer-before-call
+         // + pretransferred=true is outside the pull window and free-credits inventory.
+@@ -182,10 +186,10 @@
+     function test_T3_publicRebalanceAfterBlockedDeposit() public {
+         test_T2_inSessionDeposit_sleeveNoNestedUnlock();
+         assertTrue(liquid.canOpenPoolManagerUnlock(), "idle after outer unlock");
+-        uint256 freeBefore = liquid.localReserve(_token0());
+-        liquid.rebalanceLiquidReserve();
+-        // Token0-only sleeve cannot mint in-range full-range L (needs pair token). Best-effort no revert.
+-        assertEq(liquid.localReserve(_token0()), freeBefore, "token0 stays sleeve without pair token");
++        uint256 supplyBefore = vault.totalSupply();
++        liquid.rebalanceLiquidReserve();
++        assertEq(vault.totalSupply(), supplyBefore, "rebalance does not issue shares");
++        _assertFreeWithinDeadband(0.2e18);
+     }
+ 
+     function test_T4_blockedAmountOut_paysSleeve() public {
+@@ -284,6 +288,7 @@
+     }
+ 
+     function test_T8_previewEqualsExec_freeZapIn() public {
++        _bootstrapDeposit(20 ether);
+         uint256 amountIn = 3 ether;
+         ERC20PermitMintableStub t0 = ERC20PermitMintableStub(_token0());
+         t0.mint(address(this), amountIn);
+@@ -342,20 +347,33 @@
+     }
+ 
+     function test_T12_firstMintBlocked_thenFreeRebalanceCreatesPosition() public {
+-        uint256 amountIn = 8 ether;
+-        ERC20PermitMintableStub t0 = ERC20PermitMintableStub(_token0());
+-        t0.mint(address(unlockCaller), amountIn);
+-        vm.prank(address(unlockCaller));
+-        t0.approve(address(vault), amountIn);
+-
+-        uint256 shares = unlockCaller.runExchangeIn(
+-            address(vault), IERC20(_token0()), amountIn, IERC20(address(vault)), 0, address(this), false, _deadline()
+-        );
+-        assertGt(shares, 0, "first mint free only");
+-        (uint256 dep0,) = liquid.deployedReserve();
+-        assertEq(dep0, 0, "no position while blocked first mint");
+-
+-        liquid.rebalanceLiquidReserve();
++        uint256 amount0 = 8 ether;
++        uint256 amount1 = 8 ether;
++        ERC20PermitMintableStub(_token0()).mint(address(unlockCaller), amount0);
++        ERC20PermitMintableStub(_token1()).mint(address(unlockCaller), amount1);
++        vm.startPrank(address(unlockCaller));
++        IERC20(_token0()).approve(address(vault), amount0);
++        IERC20(_token1()).approve(address(vault), amount1);
++        vm.stopPrank();
++        address[] memory tokens = new address[](2);
++        tokens[0] = _token0();
++        tokens[1] = _token1();
++        uint256[] memory amounts = new uint256[](2);
++        amounts[0] = amount0;
++        amounts[1] = amount1;
++        uint256 shares = unlockCaller.runExchangeInManyToOne(
++            address(vault), tokens, amounts, IERC20(address(vault)), 0, address(this), false, _deadline()
++        );
++        assertGt(shares, 0, "first mint funded in both sleeve currencies");
++        (uint256 dep0, uint256 dep1) = liquid.deployedReserve();
++        assertEq(dep0, 0, "no token0 deployed during outer unlock");
++        assertEq(dep1, 0, "no token1 deployed during outer unlock");
++        assertEq(liquid.localReserve(_token0()), amount0, "token0 held in sleeve");
++        assertEq(liquid.localReserve(_token1()), amount1, "token1 held in sleeve");
++        liquid.rebalanceLiquidReserve();
++        (dep0, dep1) = liquid.deployedReserve();
++        assertGt(dep0, 0, "idle rebalance deploys token0");
++        assertGt(dep1, 0, "idle rebalance deploys token1");
+         assertTrue(liquid.canOpenPoolManagerUnlock(), "idle");
+     }
+ 
+@@ -417,23 +435,28 @@
+         seeder.addLiquidity(hk, tickLower, tickUpper, liq);
+ 
+         IStandardExchangeProxy hVault = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(hk));
+-        hostile.setAttackTarget(address(hVault), Currency.unwrap(hk.currency0) == address(hostile));
+-
+-        uint256 amountIn = 1 ether;
+-        hostile.mint(address(this), amountIn);
+-        hostile.approve(address(hVault), amountIn);
+-
+-        // Nested exchangeIn from transferFrom must hit nonReentrant (IsLocked).
+-        vm.expectRevert();
+-        hVault.exchangeIn(
+-            IERC20(Currency.unwrap(hk.currency0) == address(hostile) ? address(hostile) : address(pair)),
+-            amountIn,
+-            IERC20(address(hVault)),
+-            0,
+-            address(this),
+-            false,
+-            _deadline()
+-        );
++        hostile.mint(address(this), 11 ether);
++        pair.mint(address(this), 10 ether);
++        hostile.approve(address(hVault), 11 ether);
++        pair.approve(address(hVault), 10 ether);
++        address[] memory tokens = new address[](2);
++        tokens[0] = Currency.unwrap(hk.currency0);
++        tokens[1] = Currency.unwrap(hk.currency1);
++        uint256[] memory amounts = new uint256[](2);
++        amounts[0] = 10 ether;
++        amounts[1] = 10 ether;
++        uint256 initialShares = IStandardExchangeInMulti(address(hVault)).exchangeInManyToOne(
++            tokens, amounts, IERC20(address(hVault)), 0, address(this), false, _deadline()
++        );
++        assertGt(initialShares, 0, "hostile vault activated before arming reentry");
++        hostile.setAttackTarget(address(hVault), true);
++        uint256 depositedShares = hVault.exchangeIn(
++            IERC20(address(hostile)), 1 ether, IERC20(address(hVault)), 0, address(this), false, _deadline()
++        );
++        assertGt(depositedShares, 0, "outer funded deposit completes");
++        assertEq(hostile.reentryAttempts(), 1, "hostile transferFrom reaches nested call");
++        assertFalse(hostile.nestedCallSucceeded(), "nested deposit blocked");
++        assertEq(hostile.nestedErrorSelector(), IReentrancyLock.IsLocked.selector, "nested guard error");
+     }
+ 
+     function test_H3_midSessionAmountOut_cover() public {
+@@ -568,6 +591,9 @@
+ 
+ /// @dev Minimal ERC20 that reenters SE.exchangeIn during transferFrom (T13).
+ contract HostileReenterERC20 {
++    uint256 public reentryAttempts;
++    bool public nestedCallSucceeded;
++    bytes4 public nestedErrorSelector;
+     string public name = "Hostile";
+     string public symbol = "HOS";
+     uint8 public decimals = 18;
+@@ -611,8 +637,18 @@
+         if (attackEnabled && !entered && attackVault != address(0) && to == attackVault) {
+             entered = true;
+             // Nested deposit while outer exchangeIn holds nonReentrant lock.
+-            IStandardExchangeProxy(attackVault)
+-                .exchangeIn(IERC20(address(this)), 0, IERC20(attackVault), 0, address(this), true, block.timestamp + 1);
++            ++reentryAttempts;
++            try IStandardExchangeProxy(attackVault).exchangeIn(
++                IERC20(address(this)), 0, IERC20(attackVault), 0, address(this), true, block.timestamp + 1
++            ) returns (uint256) {
++                nestedCallSucceeded = true;
++            } catch (bytes memory reason) {
++                if (reason.length >= 4) {
++                    bytes4 selector;
++                    assembly { selector := mload(add(reason, 32)) }
++                    nestedErrorSelector = selector;
++                }
++            }
+             entered = false;
+         }
+         return true;
+--- a/test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_LocalLiquidBuffer_Decimals.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_LocalLiquidBuffer_Decimals.sol
+@@ -1,5 +1,9 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IReentrancyLock} from "@crane/contracts/access/reentrancy/IReentrancyLock.sol";
++
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {IPositionManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPositionManager.sol";
+@@ -111,6 +115,7 @@
+     }
+ 
+     function test_T1b_idleDeposit_notFullDeployRefund() public {
++        _bootstrapDeposit(20);
+         uint256 amountIn = _u0(50);
+         MintableERC20Decimals(_token0()).mint(address(this), amountIn);
+         IERC20(_token0()).approve(address(vault), amountIn);
+@@ -122,6 +127,7 @@
+     }
+ 
+     function test_T2_inSessionDeposit_sleeveNoNestedUnlock() public {
++        _bootstrapDeposit(20);
+         uint256 amountIn = _u0(5);
+         MintableERC20Decimals t0 = MintableERC20Decimals(_token0());
+         t0.mint(address(unlockCaller), amountIn);
+@@ -142,9 +148,10 @@
+     function test_T3_publicRebalanceAfterBlockedDeposit() public {
+         test_T2_inSessionDeposit_sleeveNoNestedUnlock();
+         assertTrue(liquid.canOpenPoolManagerUnlock(), "idle after outer unlock");
+-        uint256 freeBefore = liquid.localReserve(_token0());
+-        liquid.rebalanceLiquidReserve();
+-        assertEq(liquid.localReserve(_token0()), freeBefore, "token0 stays sleeve without pair token");
++        uint256 supplyBefore = vault.totalSupply();
++        liquid.rebalanceLiquidReserve();
++        assertEq(vault.totalSupply(), supplyBefore, "rebalance does not issue shares");
++        _assertFreeWithinDeadband(0.2e18);
+     }
+ 
+     function test_T4_blockedAmountOut_paysSleeve() public {
+@@ -242,6 +249,7 @@
+     }
+ 
+     function test_T8_previewEqualsExec_freeZapIn() public {
++        _bootstrapDeposit(20);
+         uint256 amountIn = _u0(3);
+         MintableERC20Decimals t0 = MintableERC20Decimals(_token0());
+         t0.mint(address(this), amountIn);
+@@ -299,20 +307,33 @@
+     }
+ 
+     function test_T12_firstMintBlocked_thenFreeRebalanceCreatesPosition() public {
+-        uint256 amountIn = _u0(8);
+-        MintableERC20Decimals t0 = MintableERC20Decimals(_token0());
+-        t0.mint(address(unlockCaller), amountIn);
+-        vm.prank(address(unlockCaller));
+-        t0.approve(address(vault), amountIn);
+-
+-        uint256 shares = unlockCaller.runExchangeIn(
+-            address(vault), IERC20(_token0()), amountIn, IERC20(address(vault)), 0, address(this), false, _deadline()
+-        );
+-        assertGt(shares, 0, "first mint free only");
+-        (uint256 dep0,) = liquid.deployedReserve();
+-        assertEq(dep0, 0, "no position while blocked first mint");
+-
+-        liquid.rebalanceLiquidReserve();
++        uint256 amount0 = _u0(8);
++        uint256 amount1 = _u1(8);
++        MintableERC20Decimals(_token0()).mint(address(unlockCaller), amount0);
++        MintableERC20Decimals(_token1()).mint(address(unlockCaller), amount1);
++        vm.startPrank(address(unlockCaller));
++        IERC20(_token0()).approve(address(vault), amount0);
++        IERC20(_token1()).approve(address(vault), amount1);
++        vm.stopPrank();
++        address[] memory tokens = new address[](2);
++        tokens[0] = _token0();
++        tokens[1] = _token1();
++        uint256[] memory amounts = new uint256[](2);
++        amounts[0] = amount0;
++        amounts[1] = amount1;
++        uint256 shares = unlockCaller.runExchangeInManyToOne(
++            address(vault), tokens, amounts, IERC20(address(vault)), 0, address(this), false, _deadline()
++        );
++        assertGt(shares, 0, "first mint funded in both sleeve currencies");
++        (uint256 dep0, uint256 dep1) = liquid.deployedReserve();
++        assertEq(dep0, 0, "no token0 deployed during outer unlock");
++        assertEq(dep1, 0, "no token1 deployed during outer unlock");
++        assertEq(liquid.localReserve(_token0()), amount0, "token0 held in sleeve");
++        assertEq(liquid.localReserve(_token1()), amount1, "token1 held in sleeve");
++        liquid.rebalanceLiquidReserve();
++        (dep0, dep1) = liquid.deployedReserve();
++        assertGt(dep0, 0, "idle rebalance deploys token0");
++        assertGt(dep1, 0, "idle rebalance deploys token1");
+         assertTrue(liquid.canOpenPoolManagerUnlock(), "idle");
+     }
+ 
+@@ -372,22 +393,28 @@
+         seeder.addLiquidity(hk, tickLower, tickUpper, liq);
+ 
+         IStandardExchangeProxy hVault = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(hk));
+-        hostile.setAttackTarget(address(hVault), Currency.unwrap(hk.currency0) == address(hostile));
+-
+-        uint256 amountIn = 1 ether;
+-        hostile.mint(address(this), amountIn);
+-        hostile.approve(address(hVault), amountIn);
+-
+-        vm.expectRevert();
+-        hVault.exchangeIn(
+-            IERC20(Currency.unwrap(hk.currency0) == address(hostile) ? address(hostile) : address(pair)),
+-            amountIn,
+-            IERC20(address(hVault)),
+-            0,
+-            address(this),
+-            false,
+-            _deadline()
+-        );
++        hostile.mint(address(this), 11 ether);
++        pair.mint(address(this), 10 ether);
++        hostile.approve(address(hVault), 11 ether);
++        pair.approve(address(hVault), 10 ether);
++        address[] memory tokens = new address[](2);
++        tokens[0] = Currency.unwrap(hk.currency0);
++        tokens[1] = Currency.unwrap(hk.currency1);
++        uint256[] memory amounts = new uint256[](2);
++        amounts[0] = 10 ether;
++        amounts[1] = 10 ether;
++        uint256 initialShares = IStandardExchangeInMulti(address(hVault)).exchangeInManyToOne(
++            tokens, amounts, IERC20(address(hVault)), 0, address(this), false, _deadline()
++        );
++        assertGt(initialShares, 0, "hostile vault activated before arming reentry");
++        hostile.setAttackTarget(address(hVault), true);
++        uint256 depositedShares = hVault.exchangeIn(
++            IERC20(address(hostile)), 1 ether, IERC20(address(hVault)), 0, address(this), false, _deadline()
++        );
++        assertGt(depositedShares, 0, "outer funded deposit completes");
++        assertEq(hostile.reentryAttempts(), 1, "hostile transferFrom reaches nested call");
++        assertFalse(hostile.nestedCallSucceeded(), "nested deposit blocked");
++        assertEq(hostile.nestedErrorSelector(), IReentrancyLock.IsLocked.selector, "nested guard error");
+     }
+ 
+     function test_H3_midSessionAmountOut_cover() public {
+@@ -401,13 +428,15 @@
+         MintableERC20Decimals(_token1()).mint(address(this), amount1);
+         IERC20(_token0()).approve(address(vault), amount0);
+         IERC20(_token1()).approve(address(vault), amount1);
+-        uint256 shares0 = vault.exchangeIn(
+-            IERC20(_token0()), amount0, IERC20(address(vault)), 0, address(this), false, _deadline()
+-        );
+-        uint256 shares1 = vault.exchangeIn(
+-            IERC20(_token1()), amount1, IERC20(address(vault)), 0, address(this), false, _deadline()
+-        );
+-        shares = shares0 + shares1;
++        address[] memory tokens = new address[](2);
++        tokens[0] = _token0();
++        tokens[1] = _token1();
++        uint256[] memory amounts = new uint256[](2);
++        amounts[0] = amount0;
++        amounts[1] = amount1;
++        shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
++            tokens, amounts, IERC20(address(vault)), 0, address(this), false, _deadline()
++        );
+         assertGt(shares, 0, "bootstrap");
+     }
+ 
+@@ -500,6 +529,9 @@
+ 
+ /// @dev Minimal ERC20 that reenters SE.exchangeIn during transferFrom (T13). Stays 18-dec (not a configured underlying).
+ contract HostileReenterERC20Decimals {
++    uint256 public reentryAttempts;
++    bool public nestedCallSucceeded;
++    bytes4 public nestedErrorSelector;
+     string public name = "Hostile";
+     string public symbol = "HOS";
+     uint8 public decimals = 18;
+@@ -542,8 +574,18 @@
+ 
+         if (attackEnabled && !entered && attackVault != address(0) && to == attackVault) {
+             entered = true;
+-            IStandardExchangeProxy(attackVault)
+-                .exchangeIn(IERC20(address(this)), 0, IERC20(attackVault), 0, address(this), true, block.timestamp + 1);
++            ++reentryAttempts;
++            try IStandardExchangeProxy(attackVault).exchangeIn(
++                IERC20(address(this)), 0, IERC20(attackVault), 0, address(this), true, block.timestamp + 1
++            ) returns (uint256) {
++                nestedCallSucceeded = true;
++            } catch (bytes memory reason) {
++                if (reason.length >= 4) {
++                    bytes4 selector;
++                    assembly { selector := mload(add(reason, 32)) }
++                    nestedErrorSelector = selector;
++                }
++            }
+             entered = false;
+         }
+         return true;
+--- a/test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_NativeEthWrap.t.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_NativeEthWrap.t.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
+@@ -81,7 +83,7 @@
+     function setUp() public override {
+         super.setUp();
+ 
+-        pairToken = new ERC20PermitMintableStub("Pair", "PAIR", 18, address(this), 0);
++        pairToken = _deployNativePair();
+         poolKey = PoolKey({
+             currency0: Currency.wrap(address(0)),
+             currency1: Currency.wrap(address(pairToken)),
+@@ -113,6 +115,48 @@
+         return block.timestamp + 1 days;
+     }
+ 
++    function _deployNativePair() internal returns (ERC20PermitMintableStub deployed) {
++        bytes32 initHash = keccak256(abi.encodePacked(
++            type(ERC20PermitMintableStub).creationCode, abi.encode("Pair", "PAIR", 18, address(this), 0)
++        ));
++        for (uint256 nonce; ; ++nonce) {
++            bytes32 salt = bytes32(nonce);
++            address predicted = address(uint160(uint256(keccak256(
++                abi.encodePacked(bytes1(0xff), address(this), salt, initHash)
++            ))));
++            if (predicted < address(weth)) {
++                return new ERC20PermitMintableStub{salt: salt}("Pair", "PAIR", 18, address(this), 0);
++            }
++        }
++    }
++
++    /// @dev PoolKey order is native currency first, exposed as WETH even when its address sorts last.
++    function _activateNativeVault(uint256 wethAmount, uint256 pairAmount) internal returns (uint256 shares) {
++        address[] memory tokens = new address[](2);
++        tokens[0] = address(weth);
++        tokens[1] = address(pairToken);
++        uint256[] memory amounts = new uint256[](2);
++        amounts[0] = wethAmount;
++        amounts[1] = pairAmount;
++        uint256 preview = IStandardExchangeInMulti(address(vault)).previewExchangeInManyToOne(
++            tokens, amounts, IERC20(address(vault))
++        );
++        shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
++            tokens, amounts, IERC20(address(vault)), preview, address(this), false, _deadline()
++        );
++        assertEq(shares, preview, "native activation preview equals execution");
++        assertGt(shares, 0, "native two-token activation");
++        assertGt(uint160(tokens[0]), uint160(tokens[1]), "WETH face deliberately sorts after pair");
++        (tokens[0], tokens[1]) = (tokens[1], tokens[0]);
++        vm.expectRevert(bytes4(keccak256("ExchangeInNotAvailable()")));
++        IStandardExchangeInMulti(address(vault)).previewExchangeInManyToOne(tokens, amounts, IERC20(address(vault)));
++        vm.expectRevert(bytes4(keccak256("ExchangeInNotAvailable()")));
++        IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
++            tokens, amounts, IERC20(address(vault)), 0, address(this), false, _deadline()
++        );
++        _assertNoNativeDust();
++    }
++
+     function _assertNoNativeDust() internal view {
+         assertEq(address(vault).balance, 0, "vault must not hold native ETH");
+     }
+@@ -122,10 +166,12 @@
+         assertEq(IBasicVault(address(vault)).vaultTokens()[0], address(weth), "WETH face");
+ 
+         vm.deal(address(this), 20 ether);
+-        weth.deposit{value: 10 ether}();
+-        pairToken.mint(address(this), 10 ether);
+-        IERC20(address(weth)).approve(address(vault), 10 ether);
+-        pairToken.approve(address(vault), 10 ether);
++        weth.deposit{value: 11 ether}();
++        pairToken.mint(address(this), 11 ether);
++        IERC20(address(weth)).approve(address(vault), 11 ether);
++        pairToken.approve(address(vault), 11 ether);
++
++        _activateNativeVault(1 ether, 1 ether);
+ 
+         uint256 shares0 = vault.exchangeIn(
+             IERC20(address(weth)), 10 ether, IERC20(address(vault)), 0, address(this), false, _deadline()
+@@ -149,10 +195,7 @@
+         IERC20(address(weth)).approve(address(vault), type(uint256).max);
+         pairToken.approve(address(vault), type(uint256).max);
+ 
+-        vault.exchangeIn(IERC20(address(weth)), 10 ether, IERC20(address(vault)), 0, address(this), false, _deadline());
+-        vault.exchangeIn(
+-            IERC20(address(pairToken)), 10 ether, IERC20(address(vault)), 0, address(this), false, _deadline()
+-        );
++        _activateNativeVault(10 ether, 10 ether);
+         _assertNoNativeDust();
+ 
+         uint256 pairBefore = pairToken.balanceOf(address(this));
+@@ -182,10 +225,7 @@
+         pairToken.approve(address(vault), type(uint256).max);
+         IERC20(address(vault)).approve(address(vault), type(uint256).max);
+ 
+-        vault.exchangeIn(IERC20(address(weth)), 10 ether, IERC20(address(vault)), 0, address(this), false, _deadline());
+-        vault.exchangeIn(
+-            IERC20(address(pairToken)), 10 ether, IERC20(address(vault)), 0, address(this), false, _deadline()
+-        );
++        _activateNativeVault(10 ether, 10 ether);
+ 
+         uint256 shares = IERC20(address(vault)).balanceOf(address(this));
+         assertGt(shares, 0, "shares");
+--- a/test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_NativeEthWrap_Decimals.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_NativeEthWrap_Decimals.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
+@@ -80,7 +82,7 @@
+     function setUp() public virtual override {
+         super.setUp();
+ 
+-        pairToken = new MintableERC20Decimals("Pair", "PAIR", _tokenADecimals());
++        pairToken = _deployNativePair();
+         poolKey = PoolKey({
+             currency0: Currency.wrap(address(0)),
+             currency1: Currency.wrap(address(pairToken)),
+@@ -108,6 +110,48 @@
+         vault = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(poolKey));
+     }
+ 
++    function _deployNativePair() internal returns (MintableERC20Decimals deployed) {
++        bytes32 initHash = keccak256(abi.encodePacked(
++            type(MintableERC20Decimals).creationCode, abi.encode("Pair", "PAIR", _tokenADecimals())
++        ));
++        for (uint256 nonce; ; ++nonce) {
++            bytes32 salt = bytes32(nonce);
++            address predicted = address(uint160(uint256(keccak256(
++                abi.encodePacked(bytes1(0xff), address(this), salt, initHash)
++            ))));
++            if (predicted < address(weth)) {
++                return new MintableERC20Decimals{salt: salt}("Pair", "PAIR", _tokenADecimals());
++            }
++        }
++    }
++
++    /// @dev PoolKey order is native currency first, exposed as WETH even when its address sorts last.
++    function _activateNativeVault(uint256 wethAmount, uint256 pairAmount) internal returns (uint256 shares) {
++        address[] memory tokens = new address[](2);
++        tokens[0] = address(weth);
++        tokens[1] = address(pairToken);
++        uint256[] memory amounts = new uint256[](2);
++        amounts[0] = wethAmount;
++        amounts[1] = pairAmount;
++        uint256 preview = IStandardExchangeInMulti(address(vault)).previewExchangeInManyToOne(
++            tokens, amounts, IERC20(address(vault))
++        );
++        shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
++            tokens, amounts, IERC20(address(vault)), preview, address(this), false, _deadline()
++        );
++        assertEq(shares, preview, "native activation preview equals execution");
++        assertGt(shares, 0, "native two-token activation");
++        assertGt(uint160(tokens[0]), uint160(tokens[1]), "WETH face deliberately sorts after pair");
++        (tokens[0], tokens[1]) = (tokens[1], tokens[0]);
++        vm.expectRevert(bytes4(keccak256("ExchangeInNotAvailable()")));
++        IStandardExchangeInMulti(address(vault)).previewExchangeInManyToOne(tokens, amounts, IERC20(address(vault)));
++        vm.expectRevert(bytes4(keccak256("ExchangeInNotAvailable()")));
++        IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
++            tokens, amounts, IERC20(address(vault)), 0, address(this), false, _deadline()
++        );
++        _assertNoNativeDust();
++    }
++
+     function _assertNoNativeDust() internal view {
+         assertEq(address(vault).balance, 0, "vault must not hold native ETH");
+     }
+@@ -116,10 +160,12 @@
+         assertEq(IBasicVault(address(vault)).vaultTokens()[0], address(weth), "WETH face");
+ 
+         vm.deal(address(this), 20 ether);
+-        weth.deposit{value: 10 ether}();
+-        pairToken.mint(address(this), _uA(10));
+-        IERC20(address(weth)).approve(address(vault), 10 ether);
+-        pairToken.approve(address(vault), _uA(10));
++        weth.deposit{value: 11 ether}();
++        pairToken.mint(address(this), _uA(11));
++        IERC20(address(weth)).approve(address(vault), 11 ether);
++        pairToken.approve(address(vault), _uA(11));
++
++        _activateNativeVault(1 ether, _uA(1));
+ 
+         uint256 shares0 = vault.exchangeIn(
+             IERC20(address(weth)), 10 ether, IERC20(address(vault)), 0, address(this), false, _deadline()
+@@ -142,10 +188,7 @@
+         IERC20(address(weth)).approve(address(vault), type(uint256).max);
+         pairToken.approve(address(vault), type(uint256).max);
+ 
+-        vault.exchangeIn(IERC20(address(weth)), 10 ether, IERC20(address(vault)), 0, address(this), false, _deadline());
+-        vault.exchangeIn(
+-            IERC20(address(pairToken)), _uA(10), IERC20(address(vault)), 0, address(this), false, _deadline()
+-        );
++        _activateNativeVault(10 ether, _uA(10));
+         _assertNoNativeDust();
+ 
+         uint256 pairBefore = pairToken.balanceOf(address(this));
+@@ -174,10 +217,7 @@
+         pairToken.approve(address(vault), type(uint256).max);
+         IERC20(address(vault)).approve(address(vault), type(uint256).max);
+ 
+-        vault.exchangeIn(IERC20(address(weth)), 10 ether, IERC20(address(vault)), 0, address(this), false, _deadline());
+-        vault.exchangeIn(
+-            IERC20(address(pairToken)), _uA(10), IERC20(address(vault)), 0, address(this), false, _deadline()
+-        );
++        _activateNativeVault(10 ether, _uA(10));
+ 
+         uint256 shares = IERC20(address(vault)).balanceOf(address(this));
+         assertGt(shares, 0, "shares");
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Reentrancy.t.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Reentrancy.t.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
+@@ -184,6 +186,20 @@
+         hostilePool.mint(address(this), tickLower, tickUpper, liquidity, abi.encode(address(this)));
+     }
+ 
++    function _activateHostileVault(uint256 hostileAmount, uint256 pairAmount, address recipient)
++        internal returns (uint256 shares)
++    {
++        address[] memory tokens = new address[](2);
++        tokens[0] = hostilePool.token0();
++        tokens[1] = hostilePool.token1();
++        uint256[] memory amounts = new uint256[](2);
++        amounts[0] = tokens[0] == address(hostile) ? hostileAmount : pairAmount;
++        amounts[1] = tokens[1] == address(hostile) ? hostileAmount : pairAmount;
++        shares = IStandardExchangeInMulti(address(hostileVault)).exchangeInManyToOne(
++            tokens, amounts, IERC20(address(hostileVault)), 0, recipient, false, block.timestamp + 1
++        );
++    }
++
+     function _assertIsLockedProbe(HostileV3Token token_, string memory tag_) internal view {
+         assertEq(token_.reentryAttempts(), 1, string.concat(tag_, " reentry attempted"));
+         assertFalse(token_.nestedCallSucceeded(), string.concat(tag_, " nested blocked"));
+@@ -228,13 +244,12 @@
+         IERC20 tokenHostile = IERC20(address(hostile));
+         IERC20 tokenPair = IERC20(h0 == address(hostile) ? h1 : h0);
+ 
+-        // Bootstrap shares via pair token zap so hostile is still paid on zap-out to hostile.
++        hostile.mint(victim, 100 ether);
+         pairToken.mint(victim, 100 ether);
+         vm.startPrank(victim);
++        tokenHostile.approve(address(hostileVault), type(uint256).max);
+         tokenPair.approve(address(hostileVault), type(uint256).max);
+-        uint256 shares = hostileVault.exchangeIn(
+-            tokenPair, 100 ether, IERC20(address(hostileVault)), 0, victim, false, block.timestamp + 1
+-        );
++        uint256 shares = _activateHostileVault(100 ether, 100 ether, victim);
+         vm.stopPrank();
+         assertGt(shares, 0, "bootstrap shares");
+ 
+@@ -338,12 +353,11 @@
+         hostile.disarm();
+     }
+ 
+-    /// @notice C4 - during authenticated mint callback (zap mint), reenter exchangeIn share mint → IsLocked.
++    /// @notice C4 - during authenticated two-token activation mint callback, reenter exchangeIn share mint → IsLocked.
+     function test_C4_callback_reentry_blocked() public {
+         address h0 = hostilePool.token0();
+         address h1 = hostilePool.token1();
+         IERC20 tokenIn = IERC20(address(hostile));
+-        IERC20 tokenOut = IERC20(address(hostileVault)); // zap-in to shares
+ 
+         // Nested exchangeIn during mint callback payment of hostile to pool.
+         bytes memory reentry = abi.encodeCall(
+@@ -360,13 +374,10 @@
+         vm.startPrank(attacker);
+         tokenIn.approve(address(hostileVault), type(uint256).max);
+         IERC20(other).approve(address(hostileVault), type(uint256).max);
+-        uint256 shares = hostileVault.exchangeIn(
+-            tokenIn, amountIn, tokenOut, 0, attacker, false, block.timestamp + 1
+-        );
+-        hostileVault.exchangeIn(IERC20(other), amountIn, tokenOut, 0, attacker, false, block.timestamp + 1);
+-        vm.stopPrank();
+-
+-        assertGt(shares, 0, "C4 outer zap completed");
++        uint256 shares = _activateHostileVault(amountIn, 30 ether, attacker);
++        vm.stopPrank();
++
++        assertGt(shares, 0, "C4 outer activation completed");
+         assertGe(hostile.reentryAttempts(), 1, "C4 reentry attempted during callback pay");
+         assertFalse(hostile.nestedCallSucceeded(), "C4 nested share mint blocked");
+         assertEq(hostile.nestedErrorSelector(), IReentrancyLock.IsLocked.selector, "C4 IsLocked");
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Reentrancy_Decimals.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Reentrancy_Decimals.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
+@@ -193,6 +195,20 @@
+         hostilePool.mint(address(this), tickLower, tickUpper, liq, abi.encode(address(this)));
+     }
+ 
++    function _activateHostileVault(uint256 hostileAmount, uint256 pairAmount, address recipient)
++        internal returns (uint256 shares)
++    {
++        address[] memory tokens = new address[](2);
++        tokens[0] = hostilePool.token0();
++        tokens[1] = hostilePool.token1();
++        uint256[] memory amounts = new uint256[](2);
++        amounts[0] = tokens[0] == address(hostile) ? hostileAmount : pairAmount;
++        amounts[1] = tokens[1] == address(hostile) ? hostileAmount : pairAmount;
++        shares = IStandardExchangeInMulti(address(hostileVault)).exchangeInManyToOne(
++            tokens, amounts, IERC20(address(hostileVault)), 0, recipient, false, block.timestamp + 1
++        );
++    }
++
+     function _assertIsLockedProbe(HostileV3Token_Dec token_, string memory tag_) internal view {
+         assertEq(token_.reentryAttempts(), 1, string.concat(tag_, " reentry attempted"));
+         assertFalse(token_.nestedCallSucceeded(), string.concat(tag_, " nested blocked"));
+@@ -232,12 +248,12 @@
+         IERC20 tokenHostile = IERC20(address(hostile));
+         IERC20 tokenPair = IERC20(h0 == address(hostile) ? hostilePool.token1() : h0);
+ 
++        hostile.mint(victim, _uH(100));
+         pairToken.mint(victim, _uP(100));
+         vm.startPrank(victim);
++        tokenHostile.approve(address(hostileVault), type(uint256).max);
+         tokenPair.approve(address(hostileVault), type(uint256).max);
+-        uint256 shares = hostileVault.exchangeIn(
+-            tokenPair, _uP(100), IERC20(address(hostileVault)), 0, victim, false, block.timestamp + 1
+-        );
++        uint256 shares = _activateHostileVault(_uH(100), _uP(100), victim);
+         vm.stopPrank();
+         assertGt(shares, 0, "bootstrap shares");
+ 
+@@ -338,7 +354,6 @@
+         address h0 = hostilePool.token0();
+         address h1 = hostilePool.token1();
+         IERC20 tokenIn = IERC20(address(hostile));
+-        IERC20 tokenOut = IERC20(address(hostileVault));
+ 
+         bytes memory reentry = abi.encodeCall(
+             UniV3SeReentryTarget_Dec.reenterExchangeIn,
+@@ -354,13 +369,10 @@
+         vm.startPrank(attacker);
+         tokenIn.approve(address(hostileVault), type(uint256).max);
+         IERC20(other).approve(address(hostileVault), type(uint256).max);
+-        uint256 shares = hostileVault.exchangeIn(
+-            tokenIn, amountIn, tokenOut, 0, attacker, false, block.timestamp + 1
+-        );
+-        hostileVault.exchangeIn(IERC20(other), _uToken(other, 30), tokenOut, 0, attacker, false, block.timestamp + 1);
+-        vm.stopPrank();
+-
+-        assertGt(shares, 0, "C4 outer zap completed");
++        uint256 shares = _activateHostileVault(amountIn, _uP(30), attacker);
++        vm.stopPrank();
++
++        assertGt(shares, 0, "C4 outer activation completed");
+         assertGe(hostile.reentryAttempts(), 1, "C4 reentry attempted during callback pay");
+         assertFalse(hostile.nestedCallSucceeded(), "C4 nested share mint blocked");
+         assertEq(hostile.nestedErrorSelector(), IReentrancyLock.IsLocked.selector, "C4 IsLocked");
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FeeCompound_Decimals.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FeeCompound_Decimals.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {ONE_WAD} from "@crane/contracts/constants/Constants.sol";
+@@ -37,12 +39,16 @@
+         vm.startPrank(incumbent);
+         IERC20(token0).approve(address(vault), type(uint256).max);
+         IERC20(token1).approve(address(vault), type(uint256).max);
+-        uint256 incumbentShares0 =
+-            vault.exchangeIn(IERC20(token0), large0, IERC20(address(vault)), 0, incumbent, false, block.timestamp + 1);
+-        uint256 incumbentShares1 =
+-            vault.exchangeIn(IERC20(token1), large1, IERC20(address(vault)), 0, incumbent, false, block.timestamp + 1);
++        address[] memory tokens = new address[](2);
++        tokens[0] = token0;
++        tokens[1] = token1;
++        uint256[] memory amounts = new uint256[](2);
++        amounts[0] = large0;
++        amounts[1] = large1;
++        uint256 incumbentShares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
++            tokens, amounts, IERC20(address(vault)), 0, incumbent, false, block.timestamp + 1
++        );
+         vm.stopPrank();
+-        uint256 incumbentShares = incumbentShares0 + incumbentShares1;
+ 
+         _swapHuman(pool, true, 50_000);
+         _swapHuman(pool, false, 50_000);
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Import_Decimals.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Import_Decimals.sol
+@@ -43,6 +43,11 @@
+         internal
+         returns (uint256 tokenId, uint128 liquidity)
+     {
++        // Callers specify offsets around the human 1:1 spot, which is not tick zero for mixed decimals.
++        (, int24 currentTick,,,,,) = pool.slot0();
++        int24 alignedTick = (currentTick / pool.tickSpacing()) * pool.tickSpacing();
++        tickLower += alignedTick;
++        tickUpper += alignedTick;
+         address token0 = pool.token0();
+         address token1 = pool.token1();
+         _mint(token0, address(this), amount0);
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchangeDFPkg_Deploy.t.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchangeDFPkg_Deploy.t.sol
+@@ -39,7 +39,7 @@
+             UniswapV3StandardExchangeDFPkg(address(uniswapV3StandardExchangeDFPkg)).packageMetadata();
+ 
+         assertEq(name_, type(UniswapV3StandardExchangeDFPkg).name, "package name");
+-        assertEq(interfaces.length, 13, "interface count");
++        assertEq(interfaces.length, 15, "interface count");
+         assertEq(facets.length, 15, "facet count");
+         assertEq(facets[0], address(erc20Facet), "erc20");
+         assertEq(facets[5], address(uniswapV3StandardExchangeInFacet), "in");
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchangeDFPkg_Deploy_Decimals.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchangeDFPkg_Deploy_Decimals.sol
+@@ -34,7 +34,7 @@
+             UniswapV3StandardExchangeDFPkg(address(uniswapV3StandardExchangeDFPkg)).packageMetadata();
+ 
+         assertEq(name_, type(UniswapV3StandardExchangeDFPkg).name, "package name");
+-        assertEq(interfaces.length, 13, "interface count");
++        assertEq(interfaces.length, 15, "interface count");
+         assertEq(facets.length, 15, "facet count");
+         assertEq(facets[0], address(erc20Facet), "erc20");
+         assertEq(facets[5], address(uniswapV3StandardExchangeInFacet), "in");
+--- a/test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg_Deploy.t.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg_Deploy.t.sol
+@@ -35,7 +35,7 @@
+             UniswapV4StandardExchangeDFPkg(address(uniswapV4StandardExchangeDFPkg)).packageMetadata();
+ 
+         assertEq(name_, type(UniswapV4StandardExchangeDFPkg).name, "package name");
+-        assertEq(interfaces.length, 13, "interface count");
++        assertEq(interfaces.length, 15, "interface count");
+         assertEq(facets.length, 15, "facet count");
+ 
+         assertEq(facets[0], address(erc20Facet), "erc20 facet");
+@@ -80,7 +80,7 @@
+         assertEq(config.tokens.length, 2, "config token count");
+         assertEq(config.tokens[0], expectedTokens[0], "config token0");
+         assertEq(config.tokens[1], expectedTokens[1], "config token1");
+-        assertEq(config.vaultTypes.length, 12, "vault types count");
++        assertEq(config.vaultTypes.length, 15, "vault types count");
+         assertTrue(IERC165(vault).supportsInterface(type(IStandardExchangeIn).interfaceId), "erc165 in");
+         assertTrue(IERC165(vault).supportsInterface(type(IStandardExchangeOut).interfaceId), "erc165 out");
+         assertTrue(IERC165(vault).supportsInterface(type(IStandardExchangeInMulti).interfaceId), "erc165 in multi");
+--- a/test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeDFPkg_Deploy_Decimals.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeDFPkg_Deploy_Decimals.sol
+@@ -38,7 +38,7 @@
+             UniswapV4StandardExchangeDFPkg(address(uniswapV4StandardExchangeDFPkg)).packageMetadata();
+ 
+         assertEq(name_, type(UniswapV4StandardExchangeDFPkg).name, "package name");
+-        assertEq(interfaces.length, 13, "interface count");
++        assertEq(interfaces.length, 15, "interface count");
+         assertEq(facets.length, 15, "facet count");
+ 
+         assertEq(facets[0], address(erc20Facet), "erc20 facet");
+@@ -83,7 +83,7 @@
+         assertEq(config.tokens.length, 2, "config token count");
+         assertEq(config.tokens[0], expectedTokens[0], "config token0");
+         assertEq(config.tokens[1], expectedTokens[1], "config token1");
+-        assertEq(config.vaultTypes.length, 12, "vault types count");
++        assertEq(config.vaultTypes.length, 15, "vault types count");
+         assertTrue(IERC165(vault).supportsInterface(type(IStandardExchangeIn).interfaceId), "erc165 in");
+         assertTrue(IERC165(vault).supportsInterface(type(IStandardExchangeOut).interfaceId), "erc165 out");
+         assertTrue(IERC165(vault).supportsInterface(type(IStandardExchangeInMulti).interfaceId), "erc165 in multi");
+--- a/test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeRoutes_Test.t.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeRoutes_Test.t.sol
+@@ -267,13 +267,9 @@
+         _test_previewExchangeOut_direct_matchesExecution(true);
+     }
+ 
+-    function test_previewExchangeIn_zap_firstDeposit_matchesExecution_token0ToShares() public {
+-        _test_previewExchangeIn_zap_firstDeposit_matchesExecution(true);
+-    }
+-
+-    function test_previewExchangeIn_zap_firstDeposit_matchesExecution_token1ToShares() public {
+-        _test_previewExchangeIn_zap_firstDeposit_matchesExecution(false);
+-    }
++
++
++
+ 
+     function test_previewExchangeIn_zap_secondDeposit_matchesExecution_token0ToShares() public {
+         _test_previewExchangeIn_zap_secondDeposit_matchesExecution(true);
+@@ -337,24 +333,18 @@
+         assertGe(tokenOut.balanceOf(recipient), desiredAmountOut, "recipient refunded exact out");
+     }
+ 
+-    function test_exchangeIn_zap_token0ToShares_firstDeposit() public {
++    function test_twoTokenActivation_token0Dominant_previewAndExecution() public {
+         _test_exchangeIn_zap_firstDeposit(true);
+     }
+ 
+-    function test_exchangeIn_zap_token1ToShares_firstDeposit() public {
++    function test_twoTokenActivation_token1Dominant_previewAndExecution() public {
+         _test_exchangeIn_zap_firstDeposit(false);
+     }
+ 
+     function test_exchangeIn_zap_token0ToShares_secondDeposit() public {
+         IERC20 vaultToken = IERC20(address(vault));
+-        uint256 bootstrapAmount = 1e18;
+-
+         ERC20PermitMintableStub t0 = _tokenStub(_token0Address());
+-        t0.mint(address(this), bootstrapAmount);
+-        t0.approve(address(vault), bootstrapAmount);
+-        uint256 bootstrapShares = vault.exchangeIn(
+-            IERC20(_token0Address()), bootstrapAmount, vaultToken, 0, address(this), false, _deadline()
+-        );
++        uint256 bootstrapShares = _bootstrapShares();
+         assertGt(bootstrapShares, 0, "bootstrap shares");
+ 
+         uint256 amountIn = 1e18;
+@@ -377,6 +367,7 @@
+     }
+ 
+     function test_exchangeIn_zap_reverts_whenMinSharesTooHigh() public {
++        _bootstrapShares();
+         IERC20 vaultToken = IERC20(address(vault));
+         uint256 amountIn = 1e18;
+ 
+@@ -397,6 +388,7 @@
+     ///         Credits `claimed` when `claimed <= U = B - R` (unbooked surplus after push).
+     ///         I1 booked free inventory without new push is covered by adversarial secure-pull suite.
+     function test_exchangeIn_zap_pretransferred_true() public {
++        _bootstrapShares();
+         IERC20 vaultToken = IERC20(address(vault));
+         uint256 amountIn = 1e18;
+         address recipient = makeAddr("zapInPretransferredRecipient");
+@@ -543,58 +535,40 @@
+         assertEq(actualIn, preview, "preview exact out matches execution");
+     }
+ 
+-    function _test_exchangeIn_zap_firstDeposit(bool token0ToShares) internal {
+-        IERC20 tokenIn = token0ToShares ? IERC20(_token0Address()) : IERC20(_token1Address());
+-        IERC20 vaultToken = IERC20(address(vault));
+-        ERC20PermitMintableStub inputStub = _tokenStub(address(tokenIn));
+-
+-        uint256 amountIn = 1e18;
+-        address recipient = makeAddr(token0ToShares ? "zapRecipient0" : "zapRecipient1");
+-
+-        inputStub.mint(address(this), amountIn);
+-        inputStub.approve(address(vault), amountIn);
+-
+-        uint256 preview = vault.previewExchangeIn(tokenIn, amountIn, vaultToken);
+-        assertGt(preview, 0, "preview shares first deposit");
+-
+-        uint256 sharesOut = vault.exchangeIn(tokenIn, amountIn, vaultToken, 0, recipient, false, _deadline());
+-
+-        assertGt(sharesOut, 0, "shares out first deposit");
+-        assertEq(vault.balanceOf(recipient), sharesOut, "recipient first deposit shares");
+-        assertEq(vault.totalSupply(), sharesOut, "total supply first deposit");
+-        // Single-sided sleeve mint: deposited token has free+deployed inventory; the other may remain 0.
+-        address deposited = address(tokenIn);
+-        assertGt(vault.reserveOfToken(deposited), 0, "vault reserve of deposited token");
+-        assertGt(
+-            vault.reserveOfToken(_token0Address()) + vault.reserveOfToken(_token1Address()), 0, "vault total reserves"
+-        );
+-    }
+-
+-    function _test_previewExchangeIn_zap_firstDeposit_matchesExecution(bool token0ToShares) internal {
+-        IERC20 tokenIn = token0ToShares ? IERC20(_token0Address()) : IERC20(_token1Address());
+-        IERC20 vaultToken = IERC20(address(vault));
+-        ERC20PermitMintableStub inputStub = _tokenStub(address(tokenIn));
+-
+-        uint256 amountIn = 1e18;
+-        address recipient = makeAddr(token0ToShares ? "previewZapInFirst0" : "previewZapInFirst1");
+-
+-        uint256 preview = vault.previewExchangeIn(tokenIn, amountIn, vaultToken);
+-        assertGt(preview, 0, "preview zap-in first deposit");
+-
+-        inputStub.mint(address(this), amountIn);
+-        inputStub.approve(address(vault), amountIn);
+-
+-        uint256 actualShares = vault.exchangeIn(tokenIn, amountIn, vaultToken, 0, recipient, false, _deadline());
+-
+-        assertApproxEqAbs(actualShares, preview, 10, "preview zap-in first deposit matches execution");
+-    }
++    function _test_exchangeIn_zap_firstDeposit(bool token0Dominant) internal {
++        address[] memory tokens = new address[](2);
++        tokens[0] = _token0Address();
++        tokens[1] = _token1Address();
++        uint256[] memory amounts = new uint256[](2);
++        amounts[0] = token0Dominant ? 2 ether : 1 ether;
++        amounts[1] = token0Dominant ? 1 ether : 2 ether;
++        address recipient = makeAddr(token0Dominant ? "firstToken0Dominant" : "firstToken1Dominant");
++        for (uint256 i; i < 2; ++i) {
++            _tokenStub(tokens[i]).mint(address(this), amounts[i]);
++            IERC20(tokens[i]).approve(address(vault), amounts[i]);
++        }
++        uint256 preview = IStandardExchangeInMulti(address(vault)).previewExchangeInManyToOne(
++            tokens, amounts, IERC20(address(vault))
++        );
++        uint256 shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
++            tokens, amounts, IERC20(address(vault)), preview, recipient, false, _deadline()
++        );
++        assertGt(shares, 0, "two-token initial shares");
++        assertEq(shares, preview, "activation preview equals execution");
++        assertEq(vault.balanceOf(recipient), shares, "activation recipient shares");
++        assertEq(vault.totalSupply(), shares, "activation total supply");
++        assertGt(vault.reserveOfToken(tokens[0]), 0, "activation token0 reserve");
++        assertGt(vault.reserveOfToken(tokens[1]), 0, "activation token1 reserve");
++    }
++
++
+ 
+     function _test_previewExchangeIn_zap_secondDeposit_matchesExecution(bool token0ToShares) internal {
+         IERC20 tokenIn = token0ToShares ? IERC20(_token0Address()) : IERC20(_token1Address());
+         IERC20 vaultToken = IERC20(address(vault));
+         ERC20PermitMintableStub inputStub = _tokenStub(address(tokenIn));
+ 
+-        _bootstrapDualShares();
++        _bootstrapShares();
+ 
+         uint256 amountIn = 1e18;
+         address recipient = makeAddr(token0ToShares ? "previewZapInSecond0" : "previewZapInSecond1");
+@@ -652,30 +626,21 @@
+         assertGe(tokenOut.balanceOf(recipient), desiredAmountOut, "recipient zap out tokens");
+     }
+ 
+-    function _bootstrapDualShares() internal returns (uint256) {
++
++
++    function _bootstrapShares() internal returns (uint256 bootstrapShares) {
+         address[] memory tokens = new address[](2);
+         tokens[0] = _token0Address();
+         tokens[1] = _token1Address();
+         uint256[] memory amounts = new uint256[](2);
++        amounts[0] = 2 ether;
++        amounts[1] = 2 ether;
+         for (uint256 i; i < 2; ++i) {
+-            amounts[i] = 2 ether;
+             _tokenStub(tokens[i]).mint(address(this), amounts[i]);
+-            _tokenStub(tokens[i]).approve(address(vault), amounts[i]);
++            IERC20(tokens[i]).approve(address(vault), amounts[i]);
+         }
+-        return IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
++        bootstrapShares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
+             tokens, amounts, IERC20(address(vault)), 0, address(this), false, _deadline()
+-        );
+-    }
+-
+-    function _bootstrapShares() internal returns (uint256 bootstrapShares) {
+-        IERC20 vaultToken = IERC20(address(vault));
+-        uint256 bootstrapAmount = 2e18;
+-
+-        ERC20PermitMintableStub t0 = _tokenStub(_token0Address());
+-        t0.mint(address(this), bootstrapAmount);
+-        t0.approve(address(vault), bootstrapAmount);
+-        bootstrapShares = vault.exchangeIn(
+-            IERC20(_token0Address()), bootstrapAmount, vaultToken, 0, address(this), false, _deadline()
+         );
+     }
+ 
+--- a/test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeRoutes_Test_Decimals.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeRoutes_Test_Decimals.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
+@@ -180,13 +182,9 @@
+         _test_previewExchangeOut_direct_matchesExecution(true);
+     }
+ 
+-    function test_previewExchangeIn_zap_firstDeposit_matchesExecution_token0ToShares() public {
+-        _test_previewExchangeIn_zap_firstDeposit_matchesExecution(true);
+-    }
+-
+-    function test_previewExchangeIn_zap_firstDeposit_matchesExecution_token1ToShares() public {
+-        _test_previewExchangeIn_zap_firstDeposit_matchesExecution(false);
+-    }
++
++
++
+ 
+     function test_previewExchangeIn_zap_secondDeposit_matchesExecution_token0ToShares() public {
+         _test_previewExchangeIn_zap_secondDeposit_matchesExecution(true);
+@@ -250,24 +248,18 @@
+         assertGe(tokenOut.balanceOf(recipient), desiredAmountOut, "recipient refunded exact out");
+     }
+ 
+-    function test_exchangeIn_zap_token0ToShares_firstDeposit() public {
++    function test_twoTokenActivation_token0Dominant_previewAndExecution() public {
+         _test_exchangeIn_zap_firstDeposit(true);
+     }
+ 
+-    function test_exchangeIn_zap_token1ToShares_firstDeposit() public {
++    function test_twoTokenActivation_token1Dominant_previewAndExecution() public {
+         _test_exchangeIn_zap_firstDeposit(false);
+     }
+ 
+     function test_exchangeIn_zap_token0ToShares_secondDeposit() public {
+         IERC20 vaultToken = IERC20(address(vault));
+-        uint256 bootstrapAmount = _u0(1);
+-
+         MintableERC20Decimals t0 = _tokenStub(_token0Address());
+-        t0.mint(address(this), bootstrapAmount);
+-        t0.approve(address(vault), bootstrapAmount);
+-        uint256 bootstrapShares = vault.exchangeIn(
+-            IERC20(_token0Address()), bootstrapAmount, vaultToken, 0, address(this), false, _deadline()
+-        );
++        uint256 bootstrapShares = _bootstrapShares();
+         assertGt(bootstrapShares, 0, "bootstrap shares");
+ 
+         uint256 amountIn = _u0(1);
+@@ -290,6 +282,7 @@
+     }
+ 
+     function test_exchangeIn_zap_reverts_whenMinSharesTooHigh() public {
++        _bootstrapShares();
+         IERC20 vaultToken = IERC20(address(vault));
+         uint256 amountIn = _u0(1);
+ 
+@@ -308,6 +301,7 @@
+ 
+     /// @notice Durable U: transfer-before-call + pretransferred=true is the canonical nested/router push path.
+     function test_exchangeIn_zap_pretransferred_true() public {
++        _bootstrapShares();
+         IERC20 vaultToken = IERC20(address(vault));
+         uint256 amountIn = _u0(1);
+         address recipient = makeAddr("zapInPretransferredRecipient");
+@@ -453,61 +447,40 @@
+         assertEq(actualIn, preview, "preview exact out matches execution");
+     }
+ 
+-    function _test_exchangeIn_zap_firstDeposit(bool token0ToShares) internal {
+-        IERC20 tokenIn = token0ToShares ? IERC20(_token0Address()) : IERC20(_token1Address());
+-        IERC20 vaultToken = IERC20(address(vault));
+-        MintableERC20Decimals inputStub = _tokenStub(address(tokenIn));
+-
+-        uint256 amountIn = _uOf(address(tokenIn), 1);
+-        address recipient = makeAddr(token0ToShares ? "zapRecipient0" : "zapRecipient1");
+-
+-        inputStub.mint(address(this), amountIn);
+-        inputStub.approve(address(vault), amountIn);
+-
+-        uint256 preview = vault.previewExchangeIn(tokenIn, amountIn, vaultToken);
+-        assertGt(preview, 0, "preview shares first deposit");
+-
+-        uint256 sharesOut = vault.exchangeIn(tokenIn, amountIn, vaultToken, 0, recipient, false, _deadline());
+-
+-        assertGt(sharesOut, 0, "shares out first deposit");
+-        assertEq(vault.balanceOf(recipient), sharesOut, "recipient first deposit shares");
+-        assertEq(vault.totalSupply(), sharesOut, "total supply first deposit");
+-        address deposited = address(tokenIn);
+-        assertGt(vault.reserveOfToken(deposited), 0, "vault reserve of deposited token");
+-        assertGt(
+-            vault.reserveOfToken(_token0Address()) + vault.reserveOfToken(_token1Address()), 0, "vault total reserves"
+-        );
+-    }
+-
+-    function _test_previewExchangeIn_zap_firstDeposit_matchesExecution(bool token0ToShares) internal {
+-        IERC20 tokenIn = token0ToShares ? IERC20(_token0Address()) : IERC20(_token1Address());
+-        IERC20 vaultToken = IERC20(address(vault));
+-        MintableERC20Decimals inputStub = _tokenStub(address(tokenIn));
+-
+-        uint256 amountIn = _uOf(address(tokenIn), 1);
+-        address recipient = makeAddr(token0ToShares ? "previewZapInFirst0" : "previewZapInFirst1");
+-
+-        uint256 preview = vault.previewExchangeIn(tokenIn, amountIn, vaultToken);
+-        assertGt(preview, 0, "preview zap-in first deposit");
+-
+-        inputStub.mint(address(this), amountIn);
+-        inputStub.approve(address(vault), amountIn);
+-
+-        uint256 actualShares = vault.exchangeIn(tokenIn, amountIn, vaultToken, 0, recipient, false, _deadline());
+-
+-        assertApproxEqAbs(actualShares, preview, 10, "preview zap-in first deposit matches execution");
+-    }
++    function _test_exchangeIn_zap_firstDeposit(bool token0Dominant) internal {
++        address[] memory tokens = new address[](2);
++        tokens[0] = _token0Address();
++        tokens[1] = _token1Address();
++        uint256[] memory amounts = new uint256[](2);
++        amounts[0] = token0Dominant ? _u0(2) : _u0(1);
++        amounts[1] = token0Dominant ? _u1(1) : _u1(2);
++        address recipient = makeAddr(token0Dominant ? "firstToken0Dominant" : "firstToken1Dominant");
++        for (uint256 i; i < 2; ++i) {
++            _tokenStub(tokens[i]).mint(address(this), amounts[i]);
++            IERC20(tokens[i]).approve(address(vault), amounts[i]);
++        }
++        uint256 preview = IStandardExchangeInMulti(address(vault)).previewExchangeInManyToOne(
++            tokens, amounts, IERC20(address(vault))
++        );
++        uint256 shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
++            tokens, amounts, IERC20(address(vault)), preview, recipient, false, _deadline()
++        );
++        assertGt(shares, 0, "two-token initial shares");
++        assertEq(shares, preview, "activation preview equals execution");
++        assertEq(vault.balanceOf(recipient), shares, "activation recipient shares");
++        assertEq(vault.totalSupply(), shares, "activation total supply");
++        assertGt(vault.reserveOfToken(tokens[0]), 0, "activation token0 reserve");
++        assertGt(vault.reserveOfToken(tokens[1]), 0, "activation token1 reserve");
++    }
++
++
+ 
+     function _test_previewExchangeIn_zap_secondDeposit_matchesExecution(bool token0ToShares) internal {
+         IERC20 tokenIn = token0ToShares ? IERC20(_token0Address()) : IERC20(_token1Address());
+         IERC20 vaultToken = IERC20(address(vault));
+         MintableERC20Decimals inputStub = _tokenStub(address(tokenIn));
+ 
+-        uint256 bootstrapAmount = _u0(2);
+-        MintableERC20Decimals t0 = _tokenStub(_token0Address());
+-        t0.mint(address(this), bootstrapAmount);
+-        t0.approve(address(vault), bootstrapAmount);
+-        vault.exchangeIn(IERC20(_token0Address()), bootstrapAmount, vaultToken, 0, address(this), false, _deadline());
++        _bootstrapShares();
+ 
+         uint256 amountIn = _uOf(address(tokenIn), 1);
+         address recipient = makeAddr(token0ToShares ? "previewZapInSecond0" : "previewZapInSecond1");
+@@ -566,14 +539,18 @@
+     }
+ 
+     function _bootstrapShares() internal returns (uint256 bootstrapShares) {
+-        IERC20 vaultToken = IERC20(address(vault));
+-        uint256 bootstrapAmount = _u0(2);
+-
+-        MintableERC20Decimals t0 = _tokenStub(_token0Address());
+-        t0.mint(address(this), bootstrapAmount);
+-        t0.approve(address(vault), bootstrapAmount);
+-        bootstrapShares = vault.exchangeIn(
+-            IERC20(_token0Address()), bootstrapAmount, vaultToken, 0, address(this), false, _deadline()
++        address[] memory tokens = new address[](2);
++        tokens[0] = _token0Address();
++        tokens[1] = _token1Address();
++        uint256[] memory amounts = new uint256[](2);
++        amounts[0] = _u0(2);
++        amounts[1] = _u1(2);
++        for (uint256 i; i < 2; ++i) {
++            _tokenStub(tokens[i]).mint(address(this), amounts[i]);
++            IERC20(tokens[i]).approve(address(vault), amounts[i]);
++        }
++        bootstrapShares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
++            tokens, amounts, IERC20(address(vault)), 0, address(this), false, _deadline()
+         );
+     }
+ 
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_Routes.t.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_Routes.t.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
+@@ -23,6 +25,21 @@
+     IStandardExchangeProxy internal vault;
+     address internal alice = makeAddr("alice");
+ 
++    /// @dev Caller has already funded/approved token0 and is pranking as alice.
++    function _activateWithFundedToken0(uint256 amount0, uint256 amount1) internal returns (uint256 shares) {
++        ERC20PermitMintableStub(pool.token1()).mint(alice, amount1);
++        IERC20(pool.token1()).approve(address(vault), amount1);
++        address[] memory tokens = new address[](2);
++        tokens[0] = pool.token0();
++        tokens[1] = pool.token1();
++        uint256[] memory amounts = new uint256[](2);
++        amounts[0] = amount0;
++        amounts[1] = amount1;
++        shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
++            tokens, amounts, IERC20(address(vault)), 0, alice, false, block.timestamp + 1
++        );
++    }
++
+     function setUp() public override {
+         super.setUp();
+         tokenA = new ERC20PermitMintableStub("Token A", "TKNA", 18, address(this), 0);
+@@ -74,7 +91,7 @@
+         assertGt(in10, 0, "exact out t1->t0");
+     }
+ 
+-    function test_zapIn_firstDeposit_createsPositionsAndShares() public {
++    function test_twoTokenActivation_createsPositionsAndShares() public {
+         address token0 = pool.token0();
+         uint256 amountIn = 100 ether;
+         ERC20PermitMintableStub(token0).mint(alice, amountIn);
+@@ -82,7 +99,7 @@
+         vm.startPrank(alice);
+         IERC20(token0).approve(address(vault), amountIn);
+         uint256 shares =
+-            vault.exchangeIn(IERC20(token0), amountIn, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
++            _activateWithFundedToken0(amountIn, 100 ether);
+         vm.stopPrank();
+ 
+         assertGt(shares, 0, "shares minted");
+@@ -98,7 +115,7 @@
+         vm.startPrank(alice);
+         IERC20(token0).approve(address(vault), type(uint256).max);
+         uint256 first =
+-            vault.exchangeIn(IERC20(token0), amountIn, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
++            _activateWithFundedToken0(amountIn, 100 ether);
+         uint256 second =
+             vault.exchangeIn(IERC20(token0), amountIn, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
+         vm.stopPrank();
+@@ -116,7 +133,7 @@
+         vm.startPrank(alice);
+         IERC20(token0).approve(address(vault), type(uint256).max);
+         uint256 shares =
+-            vault.exchangeIn(IERC20(token0), amountIn, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
++            _activateWithFundedToken0(amountIn, 100 ether);
+ 
+         uint256 balBefore = IERC20(token0).balanceOf(alice);
+         // Burn shares for token0 out - use half shares as max, request some min out.
+@@ -143,7 +160,7 @@
+ 
+         // share -> share
+         ERC20PermitMintableStub(token0).mint(alice, 10 ether);
+-        vault.exchangeIn(IERC20(token0), 10 ether, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
++        _activateWithFundedToken0(10 ether, 10 ether);
+         vm.expectRevert(IStandardExchangeIn.ExchangeInNotAvailable.selector);
+         vault.exchangeIn(
+             IERC20(address(vault)), 1, IERC20(address(vault)), 0, alice, false, block.timestamp + 1
+@@ -165,16 +182,19 @@
+     }
+ 
+     function test_slippage_revertsWithoutPartialMint() public {
++        uint256 amountIn = 100 ether;
+         address token0 = pool.token0();
+         ERC20PermitMintableStub(token0).mint(alice, 100 ether);
+         vm.startPrank(alice);
+         IERC20(token0).approve(address(vault), type(uint256).max);
+-        vm.expectRevert();
++        uint256 supplyBefore = _activateWithFundedToken0(amountIn, 100 ether);
++        ERC20PermitMintableStub(token0).mint(alice, amountIn);
++        vm.expectRevert(bytes4(keccak256("UniswapV3ExchangeIn_SlippageExceeded()")));
+         vault.exchangeIn(
+             IERC20(token0), 100 ether, IERC20(address(vault)), type(uint256).max, alice, false, block.timestamp + 1
+         );
+         vm.stopPrank();
+-        assertEq(IERC20(address(vault)).totalSupply(), 0, "no partial share mint");
++        assertEq(IERC20(address(vault)).totalSupply(), supplyBefore, "no partial share mint");
+     }
+ 
+     function test_callbackSpoof_reverts() public {
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_Previews.t.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_Previews.t.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
+@@ -17,6 +19,21 @@
+     IStandardExchangeProxy internal vault;
+     address internal alice = makeAddr("alice");
+ 
++    /// @dev Caller has already funded/approved token0 and is pranking as alice.
++    function _activateWithFundedToken0(uint256 amount0, uint256 amount1) internal returns (uint256 shares) {
++        ERC20PermitMintableStub(pool.token1()).mint(alice, amount1);
++        IERC20(pool.token1()).approve(address(vault), amount1);
++        address[] memory tokens = new address[](2);
++        tokens[0] = pool.token0();
++        tokens[1] = pool.token1();
++        uint256[] memory amounts = new uint256[](2);
++        amounts[0] = amount0;
++        amounts[1] = amount1;
++        shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
++            tokens, amounts, IERC20(address(vault)), 0, alice, false, block.timestamp + 1
++        );
++    }
++
+     function setUp() public override {
+         super.setUp();
+         tokenA = new ERC20PermitMintableStub("Token A", "TKNA", 18, address(this), 0);
+@@ -58,35 +75,34 @@
+         assertEq(preview, executed, "P-IN-02");
+     }
+ 
+-    function test_P_IN_03_zapIn_token0_firstDeposit() public {
+-        address token0 = pool.token0();
+-        uint256 amountIn = 50 ether;
+-        uint256 preview = vault.previewExchangeIn(IERC20(token0), amountIn, IERC20(address(vault)));
+-
+-        ERC20PermitMintableStub(token0).mint(alice, amountIn);
+-        vm.startPrank(alice);
+-        IERC20(token0).approve(address(vault), amountIn);
+-        uint256 executed =
+-            vault.exchangeIn(IERC20(token0), amountIn, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
+-        vm.stopPrank();
+-
+-        // Multi-step Uni V3 zap rounding can differ by a few wei vs closed-form plan.
+-        assertApproxEqAbs(preview, executed, 10, "P-IN-03");
+-    }
+-
+-    function test_P_IN_04_zapIn_token1_firstDeposit() public {
+-        address token1 = pool.token1();
+-        uint256 amountIn = 50 ether;
+-        uint256 preview = vault.previewExchangeIn(IERC20(token1), amountIn, IERC20(address(vault)));
+-
+-        ERC20PermitMintableStub(token1).mint(alice, amountIn);
+-        vm.startPrank(alice);
+-        IERC20(token1).approve(address(vault), amountIn);
+-        uint256 executed =
+-            vault.exchangeIn(IERC20(token1), amountIn, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
+-        vm.stopPrank();
+-
+-        assertApproxEqAbs(preview, executed, 10, "P-IN-04");
++    function test_P_IN_03_singleToken0ActivationRejected() public {
++        address token = pool.token0();
++        uint256 amount = 50 ether;
++        assertEq(vault.previewExchangeIn(IERC20(token), amount, IERC20(address(vault))), 0, "one token cannot activate");
++        ERC20PermitMintableStub(token).mint(alice, amount);
++        vm.startPrank(alice);
++        IERC20(token).approve(address(vault), amount);
++        uint256 balanceBefore = IERC20(token).balanceOf(alice);
++        vm.expectRevert(bytes4(keccak256("UniswapV3Exchange_ZeroAmount()")));
++        vault.exchangeIn(IERC20(token), amount, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
++        vm.stopPrank();
++        assertEq(IERC20(address(vault)).totalSupply(), 0, "no unbacked initial shares");
++        assertEq(IERC20(token).balanceOf(alice), balanceBefore, "failed activation returns input");
++    }
++
++    function test_P_IN_04_singleToken1ActivationRejected() public {
++        address token = pool.token1();
++        uint256 amount = 50 ether;
++        assertEq(vault.previewExchangeIn(IERC20(token), amount, IERC20(address(vault))), 0, "one token cannot activate");
++        ERC20PermitMintableStub(token).mint(alice, amount);
++        vm.startPrank(alice);
++        IERC20(token).approve(address(vault), amount);
++        uint256 balanceBefore = IERC20(token).balanceOf(alice);
++        vm.expectRevert(bytes4(keccak256("UniswapV3Exchange_ZeroAmount()")));
++        vault.exchangeIn(IERC20(token), amount, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
++        vm.stopPrank();
++        assertEq(IERC20(address(vault)).totalSupply(), 0, "no unbacked initial shares");
++        assertEq(IERC20(token).balanceOf(alice), balanceBefore, "failed activation returns input");
+     }
+ 
+     function test_P_IN_05_zapIn_subsequent_afterFees() public {
+@@ -96,7 +112,7 @@
+ 
+         vm.startPrank(alice);
+         IERC20(token0).approve(address(vault), type(uint256).max);
+-        vault.exchangeIn(IERC20(token0), bootstrap, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
++        _activateWithFundedToken0(bootstrap, 100 ether);
+         vm.stopPrank();
+ 
+         // Accrue fees via external round-trip swaps against the vault's positions.
+@@ -158,7 +174,7 @@
+         vm.startPrank(alice);
+         IERC20(token0).approve(address(vault), type(uint256).max);
+         uint256 shares =
+-            vault.exchangeIn(IERC20(token0), amountIn, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
++            _activateWithFundedToken0(amountIn, 100 ether);
+ 
+         // Request a modest amount out; preview shares then execute.
+         uint256 want0 = 1 ether;
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Routes_Decimals.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Routes_Decimals.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {
+@@ -18,6 +20,21 @@
+ abstract contract UniswapV3StandardExchange_Routes_Decimals is TestBase_UniswapV3StandardExchange_Decimals {
+     address internal alice = makeAddr("alice");
+ 
++    /// @dev Caller has already funded/approved token0 and is pranking as alice.
++    function _activateWithFundedToken0(uint256 amount0, uint256 amount1) internal returns (uint256 shares) {
++        _mint(pool.token1(), alice, amount1);
++        IERC20(pool.token1()).approve(address(vault), amount1);
++        address[] memory tokens = new address[](2);
++        tokens[0] = pool.token0();
++        tokens[1] = pool.token1();
++        uint256[] memory amounts = new uint256[](2);
++        amounts[0] = amount0;
++        amounts[1] = amount1;
++        shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
++            tokens, amounts, IERC20(address(vault)), 0, alice, false, block.timestamp + 1
++        );
++    }
++
+     function setUp() public virtual override {
+         super.setUp();
+         _deployPairTokens();
+@@ -70,7 +87,7 @@
+         assertGt(in10, 0, "exact out t1->t0");
+     }
+ 
+-    function test_zapIn_firstDeposit_createsPositionsAndShares() public {
++    function test_twoTokenActivation_createsPositionsAndShares() public {
+         address token0 = pool.token0();
+         uint256 amountIn = _u0(100);
+         _mint(token0, alice, amountIn);
+@@ -78,7 +95,7 @@
+         vm.startPrank(alice);
+         IERC20(token0).approve(address(vault), amountIn);
+         uint256 shares =
+-            vault.exchangeIn(IERC20(token0), amountIn, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
++            _activateWithFundedToken0(amountIn, _u1(100));
+         vm.stopPrank();
+ 
+         assertGt(shares, 0, "shares minted");
+@@ -94,7 +111,7 @@
+         vm.startPrank(alice);
+         IERC20(token0).approve(address(vault), type(uint256).max);
+         uint256 first =
+-            vault.exchangeIn(IERC20(token0), amountIn, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
++            _activateWithFundedToken0(amountIn, _u1(100));
+         uint256 second =
+             vault.exchangeIn(IERC20(token0), amountIn, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
+         vm.stopPrank();
+@@ -112,7 +129,7 @@
+         vm.startPrank(alice);
+         IERC20(token0).approve(address(vault), type(uint256).max);
+         uint256 shares =
+-            vault.exchangeIn(IERC20(token0), amountIn, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
++            _activateWithFundedToken0(amountIn, _u1(100));
+ 
+         uint256 balBefore = IERC20(token0).balanceOf(alice);
+         uint256 sharesBurned = vault.exchangeOut(
+@@ -137,7 +154,7 @@
+         vault.exchangeIn(IERC20(address(foreign)), 1 ether, IERC20(token0), 0, alice, false, block.timestamp + 1);
+ 
+         _mint(token0, alice, _u0(10));
+-        vault.exchangeIn(IERC20(token0), _u0(10), IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
++        _activateWithFundedToken0(_u0(10), _u1(10));
+         vm.expectRevert(IStandardExchangeIn.ExchangeInNotAvailable.selector);
+         vault.exchangeIn(
+             IERC20(address(vault)), 1, IERC20(address(vault)), 0, alice, false, block.timestamp + 1
+@@ -164,12 +181,14 @@
+         _mint(token0, alice, amountIn);
+         vm.startPrank(alice);
+         IERC20(token0).approve(address(vault), type(uint256).max);
+-        vm.expectRevert();
++        uint256 supplyBefore = _activateWithFundedToken0(amountIn, _u1(100));
++        _mint(token0, alice, amountIn);
++        vm.expectRevert(bytes4(keccak256("UniswapV3ExchangeIn_SlippageExceeded()")));
+         vault.exchangeIn(
+             IERC20(token0), amountIn, IERC20(address(vault)), type(uint256).max, alice, false, block.timestamp + 1
+         );
+         vm.stopPrank();
+-        assertEq(IERC20(address(vault)).totalSupply(), 0, "no partial share mint");
++        assertEq(IERC20(address(vault)).totalSupply(), supplyBefore, "no partial share mint");
+     }
+ 
+     function test_callbackSpoof_reverts() public {
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Previews_Decimals.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Previews_Decimals.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {
+@@ -9,6 +11,21 @@
+ /// @notice Preview = execution. pairToken = tokenA. Amounts are raw units via `_u0`/`_u1`.
+ abstract contract UniswapV3StandardExchange_Previews_Decimals is TestBase_UniswapV3StandardExchange_Decimals {
+     address internal alice = makeAddr("alice");
++
++    /// @dev Caller has already funded/approved token0 and is pranking as alice.
++    function _activateWithFundedToken0(uint256 amount0, uint256 amount1) internal returns (uint256 shares) {
++        _mint(pool.token1(), alice, amount1);
++        IERC20(pool.token1()).approve(address(vault), amount1);
++        address[] memory tokens = new address[](2);
++        tokens[0] = pool.token0();
++        tokens[1] = pool.token1();
++        uint256[] memory amounts = new uint256[](2);
++        amounts[0] = amount0;
++        amounts[1] = amount1;
++        shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
++            tokens, amounts, IERC20(address(vault)), 0, alice, false, block.timestamp + 1
++        );
++    }
+ 
+     function setUp() public virtual override {
+         super.setUp();
+@@ -50,34 +67,34 @@
+         assertEq(preview, executed, "P-IN-02");
+     }
+ 
+-    function test_P_IN_03_zapIn_token0_firstDeposit() public {
+-        address token0 = pool.token0();
+-        uint256 amountIn = _u0(50);
+-        uint256 preview = vault.previewExchangeIn(IERC20(token0), amountIn, IERC20(address(vault)));
+-
+-        _mint(token0, alice, amountIn);
+-        vm.startPrank(alice);
+-        IERC20(token0).approve(address(vault), amountIn);
+-        uint256 executed =
+-            vault.exchangeIn(IERC20(token0), amountIn, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
+-        vm.stopPrank();
+-
+-        assertApproxEqAbs(preview, executed, 10, "P-IN-03");
+-    }
+-
+-    function test_P_IN_04_zapIn_token1_firstDeposit() public {
+-        address token1 = pool.token1();
+-        uint256 amountIn = _u1(50);
+-        uint256 preview = vault.previewExchangeIn(IERC20(token1), amountIn, IERC20(address(vault)));
+-
+-        _mint(token1, alice, amountIn);
+-        vm.startPrank(alice);
+-        IERC20(token1).approve(address(vault), amountIn);
+-        uint256 executed =
+-            vault.exchangeIn(IERC20(token1), amountIn, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
+-        vm.stopPrank();
+-
+-        assertApproxEqAbs(preview, executed, 10, "P-IN-04");
++    function test_P_IN_03_singleToken0ActivationRejected() public {
++        address token = pool.token0();
++        uint256 amount = _u0(50);
++        assertEq(vault.previewExchangeIn(IERC20(token), amount, IERC20(address(vault))), 0, "one token cannot activate");
++        _mint(token, alice, amount);
++        vm.startPrank(alice);
++        IERC20(token).approve(address(vault), amount);
++        uint256 balanceBefore = IERC20(token).balanceOf(alice);
++        vm.expectRevert(bytes4(keccak256("UniswapV3Exchange_ZeroAmount()")));
++        vault.exchangeIn(IERC20(token), amount, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
++        vm.stopPrank();
++        assertEq(IERC20(address(vault)).totalSupply(), 0, "no unbacked initial shares");
++        assertEq(IERC20(token).balanceOf(alice), balanceBefore, "failed activation returns input");
++    }
++
++    function test_P_IN_04_singleToken1ActivationRejected() public {
++        address token = pool.token1();
++        uint256 amount = _u1(50);
++        assertEq(vault.previewExchangeIn(IERC20(token), amount, IERC20(address(vault))), 0, "one token cannot activate");
++        _mint(token, alice, amount);
++        vm.startPrank(alice);
++        IERC20(token).approve(address(vault), amount);
++        uint256 balanceBefore = IERC20(token).balanceOf(alice);
++        vm.expectRevert(bytes4(keccak256("UniswapV3Exchange_ZeroAmount()")));
++        vault.exchangeIn(IERC20(token), amount, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
++        vm.stopPrank();
++        assertEq(IERC20(address(vault)).totalSupply(), 0, "no unbacked initial shares");
++        assertEq(IERC20(token).balanceOf(alice), balanceBefore, "failed activation returns input");
+     }
+ 
+     function test_P_IN_05_zapIn_subsequent_afterFees() public {
+@@ -87,7 +104,7 @@
+ 
+         vm.startPrank(alice);
+         IERC20(token0).approve(address(vault), type(uint256).max);
+-        vault.exchangeIn(IERC20(token0), bootstrap, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
++        _activateWithFundedToken0(bootstrap, _u1(100));
+         vm.stopPrank();
+ 
+         _swapHuman(pool, true, 20_000);
+@@ -147,7 +164,7 @@
+         vm.startPrank(alice);
+         IERC20(token0).approve(address(vault), type(uint256).max);
+         uint256 shares =
+-            vault.exchangeIn(IERC20(token0), amountIn, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
++            _activateWithFundedToken0(amountIn, _u1(100));
+ 
+         uint256 want0 = _u0(1);
+         uint256 previewShares0 = vault.previewExchangeOut(IERC20(address(vault)), IERC20(token0), want0);
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/TestBase_UniswapV3StandardExchange_Adversarial.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/TestBase_UniswapV3StandardExchange_Adversarial.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
+@@ -26,9 +28,32 @@
+         vault = _deployVault(pool);
+     }
+ 
++    /// @dev The caller already funded/approved token0 and is pranking as actor.
++    function _activationInputs(address actor, uint256 amount0, uint256 amount1)
++        internal returns (address[] memory tokens, uint256[] memory amounts)
++    {
++        ERC20PermitMintableStub(pool.token1()).mint(actor, amount1);
++        IERC20(pool.token1()).approve(address(vault), amount1);
++        tokens = new address[](2);
++        tokens[0] = pool.token0();
++        tokens[1] = pool.token1();
++        amounts = new uint256[](2);
++        amounts[0] = amount0;
++        amounts[1] = amount1;
++    }
++
++    function _activateWithFundedToken0(address actor, uint256 amount0, uint256 amount1)
++        internal returns (uint256 shares)
++    {
++        (address[] memory tokens, uint256[] memory amounts) = _activationInputs(actor, amount0, amount1);
++        shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
++            tokens, amounts, IERC20(address(vault)), 0, actor, false, block.timestamp + 1
++        );
++    }
++
+     function _assertNoUnexpectedFreeInventory(uint256 maxDust) internal view {
+-        // D27: dual-sided books keep a ~20% sleeve. Token0-only first mint may hold all free
+-        // (full-range L needs both tokens). Dust bound applies only when both sides exist.
++        // D27: dual-sided books keep a ~20% sleeve. Initial activation supplies both tokens.
++        // A subsequent single-token deposit can remain in the sleeve.
+         uint256 free0 = IERC20(pool.token0()).balanceOf(address(vault));
+         uint256 free1 = IERC20(pool.token1()).balanceOf(address(vault));
+         if (free0 == 0 || free1 == 0) {
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Accounting.t.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Accounting.t.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
+@@ -14,7 +16,7 @@
+         vm.startPrank(attacker);
+         IERC20(token0).approve(address(vault), type(uint256).max);
+         uint256 shares =
+-            vault.exchangeIn(IERC20(token0), 100 ether, IERC20(address(vault)), 0, attacker, false, block.timestamp + 1);
++            _activateWithFundedToken0(attacker, 100 ether, 100 ether);
+         uint256 balBefore = IERC20(token0).balanceOf(attacker);
+         vault.exchangeOut(
+             IERC20(address(vault)), shares, IERC20(token0), 1, attacker, false, block.timestamp + 1
+@@ -47,9 +49,12 @@
+         ERC20PermitMintableStub(token0).mint(attacker, 50 ether);
+         vm.startPrank(attacker);
+         IERC20(token0).approve(address(vault), type(uint256).max);
+-        vm.expectRevert();
+-        vault.exchangeIn(
+-            IERC20(token0), 50 ether, IERC20(address(vault)), type(uint256).max, attacker, false, block.timestamp + 1
++        (address[] memory tokens, uint256[] memory amounts) = _activationInputs(
++            attacker, 50 ether, 50 ether
++        );
++        vm.expectRevert(bytes4(keccak256("UniswapV3ExchangeIn_SlippageExceeded()")));
++        IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
++            tokens, amounts, IERC20(address(vault)), type(uint256).max, attacker, false, block.timestamp + 1
+         );
+         vm.stopPrank();
+         assertEq(IERC20(address(vault)).totalSupply(), 0);
+@@ -60,7 +65,7 @@
+         ERC20PermitMintableStub(token0).mint(attacker, 50 ether);
+         vm.startPrank(attacker);
+         IERC20(token0).approve(address(vault), type(uint256).max);
+-        vault.exchangeIn(IERC20(token0), 50 ether, IERC20(address(vault)), 0, attacker, false, block.timestamp + 1);
++        _activateWithFundedToken0(attacker, 50 ether, 50 ether);
+         vm.stopPrank();
+         _assertNoUnexpectedFreeInventory(1 ether);
+     }
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Donation.t.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Donation.t.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
+@@ -15,7 +17,7 @@
+         vm.startPrank(victim);
+         IERC20(token0).approve(address(vault), type(uint256).max);
+         uint256 shares =
+-            vault.exchangeIn(IERC20(token0), 100 ether, IERC20(address(vault)), 0, victim, false, block.timestamp + 1);
++            _activateWithFundedToken0(victim, 100 ether, 100 ether);
+         vm.stopPrank();
+ 
+         // Attacker donates tokens directly.
+@@ -41,7 +43,7 @@
+         vm.startPrank(victim);
+         IERC20(token0).approve(address(vault), type(uint256).max);
+         uint256 incumbent =
+-            vault.exchangeIn(IERC20(token0), 200 ether, IERC20(address(vault)), 0, victim, false, block.timestamp + 1);
++            _activateWithFundedToken0(victim, 200 ether, 200 ether);
+         vm.stopPrank();
+ 
+         _externalSwapExactIn(pool, true, 40_000 ether);
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_PriceManipulation.t.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_PriceManipulation.t.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
+@@ -14,7 +16,7 @@
+         vm.startPrank(victim);
+         IERC20(token0).approve(address(vault), type(uint256).max);
+         uint256 shares =
+-            vault.exchangeIn(IERC20(token0), 100 ether, IERC20(address(vault)), 0, victim, false, block.timestamp + 1);
++            _activateWithFundedToken0(victim, 100 ether, 100 ether);
+         vm.stopPrank();
+ 
+         // Moderate external skew (not enough to break zap quote limits).
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_SecRemediation.t.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_SecRemediation.t.sol
+@@ -47,9 +47,14 @@
+         ERC20PermitMintableStub(pairToken).mint(actor, amountIn);
+         vm.startPrank(actor);
+         IERC20(pairToken).approve(address(vault), amountIn);
+-        shares = vault.exchangeIn(
+-            IERC20(pairToken), amountIn, IERC20(address(vault)), 0, actor, false, _deadline()
+-        );
++        if (IERC20(address(vault)).totalSupply() == 0) {
++            assertEq(pairToken, pool.token0(), "activation fixture token0 funding");
++            shares = _activateWithFundedToken0(actor, amountIn, amountIn);
++        } else {
++            shares = vault.exchangeIn(
++                IERC20(pairToken), amountIn, IERC20(address(vault)), 0, actor, false, _deadline()
++            );
++        }
+         vm.stopPrank();
+     }
+ 
+@@ -248,7 +253,7 @@
+ 
+     /// @notice A0: donate pairToken before first zap-in; redeem cannot take the donation.
+     /// @dev Anti-theater: donate before live; donator ≠ attacker; must redeem; call proxy.
+-    function test_A0_donatePair_thenFirstZapIn_cannotRedeemDonation() public {
++    function test_A0_donatePair_thenTwoTokenActivation_cannotRedeemDonation() public {
+         address pairToken = pool.token0();
+         assertEq(IERC20(address(vault)).totalSupply(), 0, "A0: empty supply");
+ 
+@@ -261,9 +266,7 @@
+ 
+         vm.startPrank(attacker);
+         IERC20(pairToken).approve(address(vault), zapIn_);
+-        uint256 shares_ = vault.exchangeIn(
+-            IERC20(pairToken), zapIn_, IERC20(address(vault)), 0, attacker, false, _deadline()
+-        );
++        uint256 shares_ = _activateWithFundedToken0(attacker, zapIn_, 10 ether);
+         vm.stopPrank();
+ 
+         assertGt(shares_, 0, "A0: first zap minted");
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/TestBase_UniswapV3StandardExchange_Adversarial_Decimals.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/TestBase_UniswapV3StandardExchange_Adversarial_Decimals.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {
+@@ -24,6 +26,29 @@
+         vault = _deployVault(pool);
+     }
+ 
++    /// @dev The caller already funded/approved token0 and is pranking as actor.
++    function _activationInputs(address actor, uint256 amount0, uint256 amount1)
++        internal returns (address[] memory tokens, uint256[] memory amounts)
++    {
++        _mint(pool.token1(), actor, amount1);
++        IERC20(pool.token1()).approve(address(vault), amount1);
++        tokens = new address[](2);
++        tokens[0] = pool.token0();
++        tokens[1] = pool.token1();
++        amounts = new uint256[](2);
++        amounts[0] = amount0;
++        amounts[1] = amount1;
++    }
++
++    function _activateWithFundedToken0(address actor, uint256 amount0, uint256 amount1)
++        internal returns (uint256 shares)
++    {
++        (address[] memory tokens, uint256[] memory amounts) = _activationInputs(actor, amount0, amount1);
++        shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
++            tokens, amounts, IERC20(address(vault)), 0, actor, false, block.timestamp + 1
++        );
++    }
++
+     function _assertNoUnexpectedFreeInventory(uint256) internal view {
+         uint256 free0 = IERC20(pool.token0()).balanceOf(address(vault));
+         uint256 free1 = IERC20(pool.token1()).balanceOf(address(vault));
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Accounting_Decimals.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Accounting_Decimals.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {
+@@ -15,7 +17,7 @@
+         vm.startPrank(attacker);
+         IERC20(token0).approve(address(vault), type(uint256).max);
+         uint256 shares =
+-            vault.exchangeIn(IERC20(token0), deposit, IERC20(address(vault)), 0, attacker, false, block.timestamp + 1);
++            _activateWithFundedToken0(attacker, deposit, _u1(100));
+         uint256 balBefore = IERC20(token0).balanceOf(attacker);
+         vault.exchangeOut(
+             IERC20(address(vault)), shares, IERC20(token0), 1, attacker, false, block.timestamp + 1
+@@ -49,9 +51,12 @@
+         _mint(token0, attacker, amountIn);
+         vm.startPrank(attacker);
+         IERC20(token0).approve(address(vault), type(uint256).max);
+-        vm.expectRevert();
+-        vault.exchangeIn(
+-            IERC20(token0), amountIn, IERC20(address(vault)), type(uint256).max, attacker, false, block.timestamp + 1
++        (address[] memory tokens, uint256[] memory amounts) = _activationInputs(
++            attacker, _u0(50), _u1(50)
++        );
++        vm.expectRevert(bytes4(keccak256("UniswapV3ExchangeIn_SlippageExceeded()")));
++        IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
++            tokens, amounts, IERC20(address(vault)), type(uint256).max, attacker, false, block.timestamp + 1
+         );
+         vm.stopPrank();
+         assertEq(IERC20(address(vault)).totalSupply(), 0);
+@@ -62,7 +67,7 @@
+         _mint(token0, attacker, _u0(50));
+         vm.startPrank(attacker);
+         IERC20(token0).approve(address(vault), type(uint256).max);
+-        vault.exchangeIn(IERC20(token0), _u0(50), IERC20(address(vault)), 0, attacker, false, block.timestamp + 1);
++        _activateWithFundedToken0(attacker, _u0(50), _u1(50));
+         vm.stopPrank();
+         _assertNoUnexpectedFreeInventory(_u0(1));
+     }
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Donation_Decimals.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Donation_Decimals.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {
+@@ -15,7 +17,7 @@
+         vm.startPrank(victim);
+         IERC20(token0).approve(address(vault), type(uint256).max);
+         uint256 shares =
+-            vault.exchangeIn(IERC20(token0), victimIn, IERC20(address(vault)), 0, victim, false, block.timestamp + 1);
++            _activateWithFundedToken0(victim, victimIn, _u1(100));
+         vm.stopPrank();
+ 
+         uint256 donate_ = _u0(50);
+@@ -42,7 +44,7 @@
+         vm.startPrank(victim);
+         IERC20(token0).approve(address(vault), type(uint256).max);
+         uint256 incumbent =
+-            vault.exchangeIn(IERC20(token0), victimIn, IERC20(address(vault)), 0, victim, false, block.timestamp + 1);
++            _activateWithFundedToken0(victim, victimIn, _u1(200));
+         vm.stopPrank();
+ 
+         _swapHuman(pool, true, 40_000);
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_PriceManipulation_Decimals.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_PriceManipulation_Decimals.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {
+@@ -15,7 +17,7 @@
+         vm.startPrank(victim);
+         IERC20(token0).approve(address(vault), type(uint256).max);
+         uint256 shares =
+-            vault.exchangeIn(IERC20(token0), victimIn, IERC20(address(vault)), 0, victim, false, block.timestamp + 1);
++            _activateWithFundedToken0(victim, victimIn, _u1(100));
+         vm.stopPrank();
+ 
+         _swapHuman(pool, true, 5_000);
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_SecRemediation_Decimals.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_SecRemediation_Decimals.sol
+@@ -42,9 +42,14 @@
+         _mint(pairToken, actor, amountIn);
+         vm.startPrank(actor);
+         IERC20(pairToken).approve(address(vault), amountIn);
+-        shares = vault.exchangeIn(
+-            IERC20(pairToken), amountIn, IERC20(address(vault)), 0, actor, false, _deadline()
+-        );
++        if (IERC20(address(vault)).totalSupply() == 0) {
++            assertEq(pairToken, pool.token0(), "activation fixture token0 funding");
++            shares = _activateWithFundedToken0(actor, amountIn, amountIn * _u1(1) / _u0(1));
++        } else {
++            shares = vault.exchangeIn(
++                IERC20(pairToken), amountIn, IERC20(address(vault)), 0, actor, false, _deadline()
++            );
++        }
+         vm.stopPrank();
+     }
+ 
+@@ -220,7 +225,7 @@
+         assertEq(IERC20(address(vault)).balanceOf(attacker), 0, "I1: attacker vaultShare unchanged");
+     }
+ 
+-    function test_A0_donatePair_thenFirstZapIn_cannotRedeemDonation() public {
++    function test_A0_donatePair_thenTwoTokenActivation_cannotRedeemDonation() public {
+         address pairToken = pool.token0();
+         assertEq(IERC20(address(vault)).totalSupply(), 0, "A0: empty supply");
+ 
+@@ -233,9 +238,7 @@
+ 
+         vm.startPrank(attacker);
+         IERC20(pairToken).approve(address(vault), zapIn_);
+-        uint256 shares_ = vault.exchangeIn(
+-            IERC20(pairToken), zapIn_, IERC20(address(vault)), 0, attacker, false, _deadline()
+-        );
++        uint256 shares_ = _activateWithFundedToken0(attacker, zapIn_, _u1(10));
+         vm.stopPrank();
+ 
+         assertGt(shares_, 0, "A0: first zap minted");
+--- a/test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_MultiJoinExit.t.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_MultiJoinExit.t.sol
+@@ -127,6 +127,7 @@
+     }
+ 
+     function test_MJ1_lengthNotTwo_reverts_singleZapInStillWorks() public {
++        _join(4 ether, 4 ether);
+         address[] memory one = new address[](1);
+         one[0] = _token0();
+         uint256[] memory oneAmt = new uint256[](1);
+--- a/test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_MultiJoinExit_Decimals.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_MultiJoinExit_Decimals.sol
+@@ -88,6 +88,7 @@
+     }
+ 
+     function test_MJ1_lengthNotTwo_reverts_singleZapInStillWorks() public {
++        _join(_u0(4), _u1(4));
+         address[] memory one = new address[](1);
+         one[0] = _token0();
+         uint256[] memory oneAmt = new uint256[](1);
+--- a/test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_TwapPoke.t.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_TwapPoke.t.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+@@ -155,13 +157,9 @@
+         bytes4 sel = bytes4(keccak256("update((address,address,uint24,int24,address))"));
+         vm.mockCallRevert(address(twapOracle), abi.encodeWithSelector(sel), "hostile");
+         uint256 amountIn = 5 ether;
+-        ERC20PermitMintableStub(_token0()).mint(address(this), amountIn);
+-        IERC20(_token0()).approve(address(vault), amountIn);
+         vm.expectEmit(false, false, false, true, address(vault));
+         emit UniswapV4StandardExchangeCommon.TwapOracleUpdateFailed(PoolId.unwrap(poolKey.toId()), bytes("hostile"));
+-        uint256 shares = vault.exchangeIn(
+-            IERC20(_token0()), amountIn, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1 hours
+-        );
++        uint256 shares = _zapIn(_token0(), amountIn);
+         assertGt(shares, 0);
+         vm.clearMockedCalls();
+     }
+@@ -259,12 +257,21 @@
+     }
+ 
+     function _zapIn(address token, uint256 amountIn) internal returns (uint256 shares) {
+-        ERC20PermitMintableStub(token).mint(address(this), amountIn);
+-        IERC20(token).approve(address(vault), amountIn);
+-        shares = vault.exchangeIn(
+-            IERC20(token), amountIn, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1 hours
+-        );
+-        assertGt(shares, 0);
++        assertEq(token, _token0(), "TWAP fixture starts from token0");
++        address[] memory tokens = new address[](2);
++        tokens[0] = _token0();
++        tokens[1] = Currency.unwrap(poolKey.currency1);
++        uint256[] memory amounts = new uint256[](2);
++        amounts[0] = amountIn;
++        amounts[1] = amountIn;
++        for (uint256 i; i < 2; ++i) {
++            ERC20PermitMintableStub(tokens[i]).mint(address(this), amounts[i]);
++            IERC20(tokens[i]).approve(address(vault), amounts[i]);
++        }
++        shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
++            tokens, amounts, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1 hours
++        );
++        assertGt(shares, 0, "funded activation writes TWAP");
+     }
+ 
+     function _state()
+--- a/test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_Univ4SeNestedCaller.t.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_Univ4SeNestedCaller.t.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
+@@ -92,6 +94,22 @@
+     Univ4SeNestedShareHolder internal holder;
+     PoolKey internal poolKey;
+ 
++    function _mintInitialShares() internal returns (uint256 shares) {
++        tokenA.mint(address(this), 10 ether);
++        tokenB.mint(address(this), 10 ether);
++        tokenA.approve(address(vault), 10 ether);
++        tokenB.approve(address(vault), 10 ether);
++        address[] memory tokens = new address[](2);
++        tokens[0] = Currency.unwrap(poolKey.currency0);
++        tokens[1] = Currency.unwrap(poolKey.currency1);
++        uint256[] memory amounts = new uint256[](2);
++        amounts[0] = tokens[0] == address(tokenA) ? 10 ether : 10 ether;
++        amounts[1] = tokens[1] == address(tokenA) ? 10 ether : 10 ether;
++        shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
++            tokens, amounts, IERC20(address(vault)), 0, address(this), false, _deadline()
++        );
++    }
++
+     function setUp() public override {
+         super.setUp();
+         tokenA = new ERC20PermitMintableStub("Token A", "TKNA", 18, address(this), 0);
+@@ -134,12 +152,7 @@
+     }
+ 
+     function test_exchangeIn_shares_contractHolder_zeroAllowance_revertsTransferFromFailed() public {
+-        uint256 amountIn = 10 ether;
+-        tokenA.mint(address(this), amountIn);
+-        tokenA.approve(address(vault), amountIn);
+-        uint256 shares = IStandardExchangeIn(address(vault)).exchangeIn(
+-            IERC20(address(tokenA)), amountIn, IERC20(address(vault)), 0, address(this), false, _deadline()
+-        );
++        uint256 shares = _mintInitialShares();
+         assertGt(shares, 0, "minted shares");
+ 
+         IERC20(address(vault)).transfer(address(holder), shares);
+@@ -151,12 +164,7 @@
+     }
+ 
+     function test_exchangeIn_shares_contractHolder_afterApprove_succeeds() public {
+-        uint256 amountIn = 10 ether;
+-        tokenA.mint(address(this), amountIn);
+-        tokenA.approve(address(vault), amountIn);
+-        uint256 shares = IStandardExchangeIn(address(vault)).exchangeIn(
+-            IERC20(address(tokenA)), amountIn, IERC20(address(vault)), 0, address(this), false, _deadline()
+-        );
++        uint256 shares = _mintInitialShares();
+         assertGt(shares, 0, "minted shares");
+ 
+         IERC20(address(vault)).transfer(address(holder), shares);
+--- a/test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_LocalLiquidBuffer_H2.t.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_LocalLiquidBuffer_H2.t.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+@@ -155,6 +157,7 @@
+         seVault = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(sePoolKey));
+         liquid = IUniswapV4StandardExchangeLiquidReserve(address(seVault));
+         assertTrue(liquid.canOpenPoolManagerUnlock(), "SE idle at deploy");
++        _activateUnderlyingSe();
+ 
+         // --- Real Single SE Buffer CP hook package with SE = this V4 vault ---
+         IFacet hookFlagsFacet = HookFactoryService.deployUniswapV4HookFlagsFacet(create3Factory);
+@@ -281,6 +284,23 @@
+         assertTrue(liquid.canOpenPoolManagerUnlock(), "PM idle after swap");
+     }
+ 
++    function _activateUnderlyingSe() internal {
++        pairToken.mint(address(this), 100 ether);
++        seOtherToken.mint(address(this), 100 ether);
++        pairToken.approve(address(seVault), 100 ether);
++        seOtherToken.approve(address(seVault), 100 ether);
++        address[] memory tokens = new address[](2);
++        tokens[0] = Currency.unwrap(sePoolKey.currency0);
++        tokens[1] = Currency.unwrap(sePoolKey.currency1);
++        uint256[] memory amounts = new uint256[](2);
++        amounts[0] = tokens[0] == address(pairToken) ? 100 ether : 100 ether;
++        amounts[1] = tokens[1] == address(pairToken) ? 100 ether : 100 ether;
++        uint256 shares = IStandardExchangeInMulti(address(seVault)).exchangeInManyToOne(
++            tokens, amounts, IERC20(address(seVault)), 0, address(this), false, block.timestamp + 1 hours
++        );
++        assertGt(shares, 0, "two-token SE activation before hook liquidity");
++    }
++
+     function _amountForCurrency(address currency, uint256 amtRaw, uint256 amtPair) internal view returns (uint256) {
+         if (currency == address(rawToken)) return amtRaw;
+         if (currency == address(pairToken)) return amtPair;
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Griefing.t.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Griefing.t.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
+@@ -17,10 +19,18 @@
+         address v = uniswapV3StandardExchangeDFPkg.deployVault(p);
+         address token0 = p.token0();
+         ERC20PermitMintableStub(token0).mint(attacker, 20 ether);
++        ERC20PermitMintableStub(p.token1()).mint(attacker, 20 ether);
+         vm.startPrank(attacker);
+         IERC20(token0).approve(v, type(uint256).max);
+-        uint256 shares = IStandardExchangeProxy(v).exchangeIn(
+-            IERC20(token0), 20 ether, IERC20(v), 0, attacker, false, block.timestamp + 1
++        IERC20(p.token1()).approve(v, type(uint256).max);
++        address[] memory tokens = new address[](2);
++        tokens[0] = token0;
++        tokens[1] = p.token1();
++        uint256[] memory amounts = new uint256[](2);
++        amounts[0] = 20 ether;
++        amounts[1] = 20 ether;
++        uint256 shares = IStandardExchangeInMulti(v).exchangeInManyToOne(
++            tokens, amounts, IERC20(v), 0, attacker, false, block.timestamp + 1
+         );
+         vm.stopPrank();
+         assertGt(shares, 0);
+--- a/test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_TwapPoke_Decimals.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_TwapPoke_Decimals.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
+@@ -109,13 +111,9 @@
+         bytes4 sel = bytes4(keccak256("update((address,address,uint24,int24,address))"));
+         vm.mockCallRevert(address(twapOracle), abi.encodeWithSelector(sel), "hostile");
+         uint256 amountIn = _u0(5);
+-        MintableERC20Decimals(_token0()).mint(address(this), amountIn);
+-        IERC20(_token0()).approve(address(vault), amountIn);
+         vm.expectEmit(false, false, false, true, address(vault));
+         emit UniswapV4StandardExchangeCommon.TwapOracleUpdateFailed(PoolId.unwrap(poolKey.toId()), bytes("hostile"));
+-        uint256 shares = vault.exchangeIn(
+-            IERC20(_token0()), amountIn, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1 hours
+-        );
++        uint256 shares = _zapIn(_token0(), amountIn);
+         assertGt(shares, 0);
+         vm.clearMockedCalls();
+     }
+@@ -212,12 +210,21 @@
+     }
+ 
+     function _zapIn(address token, uint256 amountIn) internal returns (uint256 shares) {
+-        MintableERC20Decimals(token).mint(address(this), amountIn);
+-        IERC20(token).approve(address(vault), amountIn);
+-        shares = vault.exchangeIn(
+-            IERC20(token), amountIn, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1 hours
+-        );
+-        assertGt(shares, 0);
++        assertEq(token, _token0(), "TWAP fixture starts from token0");
++        address[] memory tokens = new address[](2);
++        tokens[0] = _token0();
++        tokens[1] = Currency.unwrap(poolKey.currency1);
++        uint256[] memory amounts = new uint256[](2);
++        amounts[0] = amountIn;
++        amounts[1] = amountIn * _uOf(Currency.unwrap(poolKey.currency1), 1) / _uOf(token, 1);
++        for (uint256 i; i < 2; ++i) {
++            MintableERC20Decimals(tokens[i]).mint(address(this), amounts[i]);
++            IERC20(tokens[i]).approve(address(vault), amounts[i]);
++        }
++        shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
++            tokens, amounts, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1 hours
++        );
++        assertGt(shares, 0, "funded activation writes TWAP");
+     }
+ 
+     function _state()
+--- a/test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_Univ4SeNestedCaller_Decimals.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_Univ4SeNestedCaller_Decimals.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {SafeTransferLib} from "@crane/contracts/tokens/ERC20/utils/SafeTransferLib.sol";
+@@ -44,6 +46,22 @@
+     Univ4SeNestedShareHolderDecimals internal holder;
+     PoolKey internal poolKey;
+ 
++    function _mintInitialShares() internal returns (uint256 shares) {
++        tokenA.mint(address(this), _uA(10));
++        tokenB.mint(address(this), _uB(10));
++        tokenA.approve(address(vault), _uA(10));
++        tokenB.approve(address(vault), _uB(10));
++        address[] memory tokens = new address[](2);
++        tokens[0] = Currency.unwrap(poolKey.currency0);
++        tokens[1] = Currency.unwrap(poolKey.currency1);
++        uint256[] memory amounts = new uint256[](2);
++        amounts[0] = tokens[0] == address(tokenA) ? _uA(10) : _uB(10);
++        amounts[1] = tokens[1] == address(tokenA) ? _uA(10) : _uB(10);
++        shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
++            tokens, amounts, IERC20(address(vault)), 0, address(this), false, _deadline()
++        );
++    }
++
+     function setUp() public virtual override {
+         super.setUp();
+         tokenA = new MintableERC20Decimals("Token A", "TKNA", _tokenADecimals());
+@@ -76,12 +94,7 @@
+     }
+ 
+     function test_exchangeIn_shares_contractHolder_zeroAllowance_revertsTransferFromFailed() public {
+-        uint256 amountIn = _uA(10);
+-        tokenA.mint(address(this), amountIn);
+-        tokenA.approve(address(vault), amountIn);
+-        uint256 shares = IStandardExchangeIn(address(vault)).exchangeIn(
+-            IERC20(address(tokenA)), amountIn, IERC20(address(vault)), 0, address(this), false, _deadline()
+-        );
++        uint256 shares = _mintInitialShares();
+         assertGt(shares, 0, "minted shares");
+ 
+         IERC20(address(vault)).transfer(address(holder), shares);
+@@ -93,12 +106,7 @@
+     }
+ 
+     function test_exchangeIn_shares_contractHolder_afterApprove_succeeds() public {
+-        uint256 amountIn = _uA(10);
+-        tokenA.mint(address(this), amountIn);
+-        tokenA.approve(address(vault), amountIn);
+-        uint256 shares = IStandardExchangeIn(address(vault)).exchangeIn(
+-            IERC20(address(tokenA)), amountIn, IERC20(address(vault)), 0, address(this), false, _deadline()
+-        );
++        uint256 shares = _mintInitialShares();
+         assertGt(shares, 0, "minted shares");
+ 
+         IERC20(address(vault)).transfer(address(holder), shares);
+--- a/test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_LocalLiquidBuffer_H2_Decimals.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_LocalLiquidBuffer_H2_Decimals.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+@@ -104,6 +106,7 @@
+         seVault = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(sePoolKey));
+         liquid = IUniswapV4StandardExchangeLiquidReserve(address(seVault));
+         assertTrue(liquid.canOpenPoolManagerUnlock(), "SE idle at deploy");
++        _activateUnderlyingSe();
+ 
+         IFacet hookFlagsFacet = HookFactoryService.deployUniswapV4HookFlagsFacet(create3Factory);
+         IFacetRegistry facetReg = IFacetRegistry(address(create3Factory));
+@@ -219,6 +222,23 @@
+         assertTrue(liquid.canOpenPoolManagerUnlock(), "PM idle after swap");
+     }
+ 
++    function _activateUnderlyingSe() internal {
++        pairToken.mint(address(this), _uA(100));
++        seOtherToken.mint(address(this), _uB(100));
++        pairToken.approve(address(seVault), _uA(100));
++        seOtherToken.approve(address(seVault), _uB(100));
++        address[] memory tokens = new address[](2);
++        tokens[0] = Currency.unwrap(sePoolKey.currency0);
++        tokens[1] = Currency.unwrap(sePoolKey.currency1);
++        uint256[] memory amounts = new uint256[](2);
++        amounts[0] = tokens[0] == address(pairToken) ? _uA(100) : _uB(100);
++        amounts[1] = tokens[1] == address(pairToken) ? _uA(100) : _uB(100);
++        uint256 shares = IStandardExchangeInMulti(address(seVault)).exchangeInManyToOne(
++            tokens, amounts, IERC20(address(seVault)), 0, address(this), false, block.timestamp + 1 hours
++        );
++        assertGt(shares, 0, "two-token SE activation before hook liquidity");
++    }
++
+     function _amountForCurrency(address currency, uint256 amtRaw, uint256 amtPair) internal view returns (uint256) {
+         if (currency == address(rawToken)) return amtRaw;
+         if (currency == address(pairToken)) return amtPair;
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Griefing_Decimals.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Griefing_Decimals.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {IUniswapV3Pool} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Pool.sol";
+@@ -17,10 +19,18 @@
+         address token0 = p.token0();
+         uint256 amountIn = _uToken(token0, 20);
+         _mint(token0, attacker, amountIn);
++        _mint(p.token1(), attacker, _uToken(p.token1(), 20));
+         vm.startPrank(attacker);
+         IERC20(token0).approve(v, type(uint256).max);
+-        uint256 shares = IStandardExchangeProxy(v).exchangeIn(
+-            IERC20(token0), amountIn, IERC20(v), 0, attacker, false, block.timestamp + 1
++        IERC20(p.token1()).approve(v, type(uint256).max);
++        address[] memory tokens = new address[](2);
++        tokens[0] = token0;
++        tokens[1] = p.token1();
++        uint256[] memory amounts = new uint256[](2);
++        amounts[0] = _uToken(token0, 20);
++        amounts[1] = _uToken(p.token1(), 20);
++        uint256 shares = IStandardExchangeInMulti(v).exchangeInManyToOne(
++            tokens, amounts, IERC20(v), 0, attacker, false, block.timestamp + 1
+         );
+         vm.stopPrank();
+         assertGt(shares, 0);
+--- a/test/foundry/spec/protocol/dexes/uniswap/v4/adversarial/Adversarial_UniswapV4SE_SecurePull.t.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v4/adversarial/Adversarial_UniswapV4SE_SecurePull.t.sol
+@@ -148,7 +148,22 @@
+         ERC20PermitMintableStub(token0_).mint(to_, amountIn_);
+         vm.startPrank(to_);
+         IERC20(token0_).approve(address(vault), amountIn_);
+-        shares_ = vault.exchangeIn(IERC20(token0_), amountIn_, IERC20(address(vault)), 0, to_, false, _deadline());
++        if (vault.totalSupply() == 0) {
++            uint256 amount1_ = amountIn_;
++            ERC20PermitMintableStub(_token1()).mint(to_, amount1_);
++            IERC20(_token1()).approve(address(vault), amount1_);
++            address[] memory tokens = new address[](2);
++            tokens[0] = token0_;
++            tokens[1] = _token1();
++            uint256[] memory amounts = new uint256[](2);
++            amounts[0] = amountIn_;
++            amounts[1] = amount1_;
++            shares_ = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
++                tokens, amounts, IERC20(address(vault)), 0, to_, false, _deadline()
++            );
++        } else {
++            shares_ = vault.exchangeIn(IERC20(token0_), amountIn_, IERC20(address(vault)), 0, to_, false, _deadline());
++        }
+         vm.stopPrank();
+         assertGt(shares_, 0, "minted SE shares");
+     }
+@@ -166,11 +181,7 @@
+ 
+         // Book face via honest !pretransfer (end-syncs R including deployed + free face).
+         uint256 honestIn_ = 2 ether;
+-        ERC20PermitMintableStub(token0_).mint(victim, honestIn_);
+-        vm.startPrank(victim);
+-        IERC20(token0_).approve(address(vault), honestIn_);
+-        vault.exchangeIn(IERC20(token0_), honestIn_, IERC20(address(vault)), 0, victim, false, _deadline());
+-        vm.stopPrank();
++        _mintSeShares(victim, honestIn_);
+ 
+         assertEq(IERC20(token0_).balanceOf(attacker), 0, "attacker empty");
+         assertEq(IERC20(token0_).allowance(attacker, address(vault)), 0, "no allowance");
+@@ -197,11 +208,7 @@
+ 
+         // Book via honest path so face free is fully accounted (U=0 even if free face dust remains).
+         uint256 honestIn_ = 2 ether;
+-        ERC20PermitMintableStub(token0_).mint(victim, honestIn_);
+-        vm.startPrank(victim);
+-        IERC20(token0_).approve(address(vault), honestIn_);
+-        vault.exchangeIn(IERC20(token0_), honestIn_, IERC20(address(vault)), 0, victim, false, _deadline());
+-        vm.stopPrank();
++        _mintSeShares(victim, honestIn_);
+ 
+         vm.prank(attacker);
+         vm.expectRevert(
+@@ -213,14 +220,7 @@
+     /// @notice Positive control: honest !pretransferred pull succeeds and mints shares.
+     function test_I_positive_honestPullMint_succeeds() public {
+         uint256 amountIn_ = 2 ether;
+-        address token0_ = _token0();
+-        ERC20PermitMintableStub(token0_).mint(attacker, amountIn_);
+-        vm.startPrank(attacker);
+-        IERC20(token0_).approve(address(vault), amountIn_);
+-        uint256 out_ = vault.exchangeIn(
+-            IERC20(token0_), amountIn_, IERC20(address(vault)), 0, attacker, false, _deadline()
+-        );
+-        vm.stopPrank();
++        uint256 out_ = _mintSeShares(attacker, amountIn_);
+         assertGt(out_, 0, "honest !pretransferred mint");
+         assertEq(vault.balanceOf(attacker), out_, "attacker received shares");
+     }
+@@ -538,6 +538,7 @@
+ 
+     /// @notice J3: smoke-call money + view selectors on **proxy** (not facet impl address).
+     function test_J3_proxyCallable_smoke_eachSelector() public {
++        _mintSeShares(victim, 2 ether);
+         address exchangeInFacet_ = IDiamondLoupe(address(vault)).facetAddress(IStandardExchangeIn.exchangeIn.selector);
+         address exchangeOutFacet_ =
+             IDiamondLoupe(address(vault)).facetAddress(IStandardExchangeOut.exchangeOut.selector);
+--- a/test/foundry/spec/protocol/dexes/uniswap/v4/adversarial/Adversarial_UniswapV4SE_E6ImpA0.t.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v4/adversarial/Adversarial_UniswapV4SE_E6ImpA0.t.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+@@ -185,7 +187,22 @@
+         ERC20PermitMintableStub(token0_).mint(to_, amountIn_);
+         vm.startPrank(to_);
+         IERC20(token0_).approve(address(vault), amountIn_);
+-        shares_ = vault.exchangeIn(IERC20(token0_), amountIn_, IERC20(address(vault)), 0, to_, false, _deadline());
++        if (vault.totalSupply() == 0) {
++            uint256 amount1_ = amountIn_;
++            ERC20PermitMintableStub(_token1()).mint(to_, amount1_);
++            IERC20(_token1()).approve(address(vault), amount1_);
++            address[] memory tokens = new address[](2);
++            tokens[0] = token0_;
++            tokens[1] = _token1();
++            uint256[] memory amounts = new uint256[](2);
++            amounts[0] = amountIn_;
++            amounts[1] = amount1_;
++            shares_ = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
++                tokens, amounts, IERC20(address(vault)), 0, to_, false, _deadline()
++            );
++        } else {
++            shares_ = vault.exchangeIn(IERC20(token0_), amountIn_, IERC20(address(vault)), 0, to_, false, _deadline());
++        }
+         vm.stopPrank();
+         assertGt(shares_, 0, "minted SE shares");
+     }
+--- a/test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_SecurePull_Decimals.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_SecurePull_Decimals.sol
+@@ -93,7 +93,22 @@
+         MintableERC20Decimals(token0_).mint(to_, amountIn_);
+         vm.startPrank(to_);
+         IERC20(token0_).approve(address(vault), amountIn_);
+-        shares_ = vault.exchangeIn(IERC20(token0_), amountIn_, IERC20(address(vault)), 0, to_, false, _deadline());
++        if (vault.totalSupply() == 0) {
++            uint256 amount1_ = amountIn_ * _u1(1) / _u0(1);
++            MintableERC20Decimals(_token1()).mint(to_, amount1_);
++            IERC20(_token1()).approve(address(vault), amount1_);
++            address[] memory tokens = new address[](2);
++            tokens[0] = token0_;
++            tokens[1] = _token1();
++            uint256[] memory amounts = new uint256[](2);
++            amounts[0] = amountIn_;
++            amounts[1] = amount1_;
++            shares_ = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
++                tokens, amounts, IERC20(address(vault)), 0, to_, false, _deadline()
++            );
++        } else {
++            shares_ = vault.exchangeIn(IERC20(token0_), amountIn_, IERC20(address(vault)), 0, to_, false, _deadline());
++        }
+         vm.stopPrank();
+         assertGt(shares_, 0, "minted SE shares");
+     }
+@@ -103,11 +118,7 @@
+         address token0_ = _token0();
+ 
+         uint256 honestIn_ = _u0(2);
+-        MintableERC20Decimals(token0_).mint(victim, honestIn_);
+-        vm.startPrank(victim);
+-        IERC20(token0_).approve(address(vault), honestIn_);
+-        vault.exchangeIn(IERC20(token0_), honestIn_, IERC20(address(vault)), 0, victim, false, _deadline());
+-        vm.stopPrank();
++        _mintSeShares(victim, honestIn_);
+ 
+         assertEq(IERC20(token0_).balanceOf(attacker), 0, "attacker empty");
+         assertEq(IERC20(token0_).allowance(attacker, address(vault)), 0, "no allowance");
+@@ -132,11 +143,7 @@
+         address token0_ = _token0();
+ 
+         uint256 honestIn_ = _u0(2);
+-        MintableERC20Decimals(token0_).mint(victim, honestIn_);
+-        vm.startPrank(victim);
+-        IERC20(token0_).approve(address(vault), honestIn_);
+-        vault.exchangeIn(IERC20(token0_), honestIn_, IERC20(address(vault)), 0, victim, false, _deadline());
+-        vm.stopPrank();
++        _mintSeShares(victim, honestIn_);
+ 
+         vm.prank(attacker);
+         vm.expectRevert(
+@@ -147,14 +154,7 @@
+ 
+     function test_I_positive_honestPullMint_succeeds() public {
+         uint256 amountIn_ = _u0(2);
+-        address token0_ = _token0();
+-        MintableERC20Decimals(token0_).mint(attacker, amountIn_);
+-        vm.startPrank(attacker);
+-        IERC20(token0_).approve(address(vault), amountIn_);
+-        uint256 out_ = vault.exchangeIn(
+-            IERC20(token0_), amountIn_, IERC20(address(vault)), 0, attacker, false, _deadline()
+-        );
+-        vm.stopPrank();
++        uint256 out_ = _mintSeShares(attacker, amountIn_);
+         assertGt(out_, 0, "honest !pretransferred mint");
+         assertEq(vault.balanceOf(attacker), out_, "attacker received shares");
+     }
+@@ -442,6 +442,7 @@
+     }
+ 
+     function test_J3_proxyCallable_smoke_eachSelector() public {
++        _mintSeShares(victim, _u0(2));
+         address exchangeInFacet_ = IDiamondLoupe(address(vault)).facetAddress(IStandardExchangeIn.exchangeIn.selector);
+         address exchangeOutFacet_ =
+             IDiamondLoupe(address(vault)).facetAddress(IStandardExchangeOut.exchangeOut.selector);
+--- a/test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_E6ImpA0_Decimals.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_E6ImpA0_Decimals.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+@@ -131,7 +133,22 @@
+         MintableERC20Decimals(token0_).mint(to_, amountIn_);
+         vm.startPrank(to_);
+         IERC20(token0_).approve(address(vault), amountIn_);
+-        shares_ = vault.exchangeIn(IERC20(token0_), amountIn_, IERC20(address(vault)), 0, to_, false, _deadline());
++        if (vault.totalSupply() == 0) {
++            uint256 amount1_ = amountIn_ * _u1(1) / _u0(1);
++            MintableERC20Decimals(_token1()).mint(to_, amount1_);
++            IERC20(_token1()).approve(address(vault), amount1_);
++            address[] memory tokens = new address[](2);
++            tokens[0] = token0_;
++            tokens[1] = _token1();
++            uint256[] memory amounts = new uint256[](2);
++            amounts[0] = amountIn_;
++            amounts[1] = amount1_;
++            shares_ = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
++                tokens, amounts, IERC20(address(vault)), 0, to_, false, _deadline()
++            );
++        } else {
++            shares_ = vault.exchangeIn(IERC20(token0_), amountIn_, IERC20(address(vault)), 0, to_, false, _deadline());
++        }
+         vm.stopPrank();
+         assertGt(shares_, 0, "minted SE shares");
+     }
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Import_Decimals.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Import_Decimals.sol
+@@ -37,6 +37,8 @@
+         address token0 = pool.token0();
+         address token1 = pool.token1();
+         int24 spacing = pool.tickSpacing();
++        (, int24 spotTick,,,,,) = pool.slot0();
++        int24 center = (spotTick / spacing) * spacing;
+         uint256 a0 = _u0(30);
+         uint256 a1 = _u1(30);
+         _mint(token0, address(this), a0);
+@@ -48,8 +50,8 @@
+                 token0: token0,
+                 token1: token1,
+                 fee: FEE_MEDIUM,
+-                tickLower: -spacing * 8,
+-                tickUpper: spacing * 8,
++                tickLower: center - spacing * 8,
++                tickUpper: center + spacing * 8,
+                 amount0Desired: a0,
+                 amount1Desired: a1,
+                 amount0Min: 0,

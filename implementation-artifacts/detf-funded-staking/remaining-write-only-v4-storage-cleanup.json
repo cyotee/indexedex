@@ -1,0 +1,10 @@
+{
+  "recorded_at_utc": "2026-09-08T07:35:21.567924+00:00",
+  "status": "APPLIED_CURRENT_VALIDATION_PENDING",
+  "member": "UniswapV4DetfRepo.Storage.epochAnchor",
+  "evidence": "Only a declaration and first-bond assignment occur in current V4 sources; no reader/getter/caller. Excluded Balancer implementations use their independent fields and remain unchanged.",
+  "preserved_clock": "First bond initializes lastExpansionTimestamp; settlement advances it by complete eight-hour intervals and retains the remainder. No epoch arithmetic or boundary changes.",
+  "authorization": "Existing owner requirement to remove unused storage members while continuing the funded refactor.",
+  "patch": "remaining-write-only-v4-storage-cleanup.patch",
+  "applied_at_utc": "2026-09-08T07:53:06.566927+00:00"
+}

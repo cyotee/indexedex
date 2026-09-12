@@ -1,0 +1,44 @@
+{
+  "status": "ENGINEERING_INTEGRATION_OPEN_NO_OWNER_APPROVAL_PENDING",
+  "regression": "T7.7 exposed that an external SE redemption changes the hook's buffered claim book before its pair-to-DETF fallback quote.",
+  "implemented_unvalidated": "Historical key: the four-family custom bond/donation and corrected Orbital custody cases passed in the recorded 47-pass checkpoint. They are included in the current full-build follow-up selection.",
+  "remaining_review": [
+    "Complete remaining accepted-provider compatibility, including prepared Aerodrome state/LP-fee projection; no unapproved capability restriction.",
+    "Complete current full contracts/tests/scripts build, exact hermetic baseline attribution and current strict Robinhood deployment/lifecycles.",
+    "Reconcile final selector/storage/ABI/size evidence after any further source changes."
+  ],
+  "current_implementation": [
+    "Four-provider quoteExternalExchange exported with actual provider tests",
+    "Four reserve hosts use generalized previewSwapAfterExchange for configured custom input routes",
+    "Six transition providers expose projected total supply; Standard/Wrapped SE rate providers reuse live rate math on projected state",
+    "ERC4626 wrapper prefers native transition capability and projects canonical virtual balances when underlying lacks the extension",
+    "Four provider external-deposit projections and four reserve custom donation/bond projections applied",
+    "Prepaid ERC4626 receipt routes exclude actual credited payment from prepayment backing; exact output refunds only unused credit"
+  ],
+  "review_findings": [
+    {
+      "route": "Custom bond payment through an SE wrapper",
+      "source": "UniswapV4DetfQueryTarget.previewBond versus UniswapV4DetfTarget._seatBond/_purchaseBond",
+      "finding": "Execution can mint SE shares before valuing purchased principal and the matching liquidity leg; preview currently values the input against the pre-wrap SE and reserve state. Verify with real fee-bearing provider regression after the current run; preserve received-capital economics.",
+      "status": "Corrected; selected runtime passed in post-build-47-pass-orbital-fixture-failure-summary.json. Full final acceptance remains open."
+    },
+    {
+      "route": "Orbital residual withdrawals with SE-dependent rate provider",
+      "source": "UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib._withdraw/_refresh",
+      "finding": "Quote caches the live provider rate and does not refresh it from projected SE state after redemption. Verify against a real dependent provider and align the view with actual execution if necessary.",
+      "status": "Corrected; selected runtime passed in post-build-47-pass-orbital-fixture-failure-summary.json. Full final acceptance remains open."
+    }
+  ],
+  "latest_runtime": "post-build-47-pass-orbital-fixture-failure-summary.json",
+  "stata_runtime": "stata-composed-quote-proxy-green-run.json",
+  "remaining_provider_review": "custom-route-provider-compatibility-review.json",
+  "current_validation": "Release sequence session52340: full contracts/default tests plus 294 maintained scripts, targeted follow-ups and complete current hermetic suite.",
+  "owner_decision_needed": false,
+  "provider_validation": {
+    "Lido": "Eight proxy + four actual-protocol fork cases; V4 nested payment/fallback/bond cases in both CP policies pass.",
+    "Stata": "Eight proxy + occupied deployment namespace regression pass.",
+    "Camelot": "19 proxy cases pass; camelot-projection-referral-receipts-run.json",
+    "EtherFi": "Five actual-protocol cases pass at Ethereum block24000000; etherfi-live-projection-fork-run.json",
+    "Aerodrome": "Six projection cases and exact fee-index model prepared only; production source frozen during current sequence."
+  }
+}

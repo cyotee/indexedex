@@ -41,10 +41,11 @@ contract FeeCollectorManagerFacet is FeeCollectorManagerTarget, IFacet {
      * @inheritdoc IFacet
      */
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](3);
+        funcs = new bytes4[](4);
         funcs[0] = IFeeCollectorManager.syncReserve.selector;
         funcs[1] = IFeeCollectorManager.syncReserves.selector;
         funcs[2] = IFeeCollectorManager.pullFee.selector;
+        funcs[3] = IFeeCollectorManager.redeemReserveLiquidity.selector;
         return funcs;
     }
 

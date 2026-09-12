@@ -1,0 +1,2515 @@
+{
+  "decision": "Owner D32-D55 and implementation plan 11.1.1. Retire only superseded LP/Open/capped behaviors after mapping to funded-family assertions or their removal decision. Native decimal reserve-route integration remains separate.",
+  "new_assertion_validation": "checkpoint-388-run.json: complete focused suite, 388 tests / 47 suites pass after separate build, including epoch-on-unstake and default/config checks.",
+  "retired_files": 41,
+  "rows": [
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_NaturalExpansion.t.sol",
+      "sha256": "75f56738b4f09518fe4a91d89688984eaa514234a02538e1996502f24f0b2f1b",
+      "inherited_only": false,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedNativeUnitsAndFundedSYRoutes"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_NaturalExpansion_B_ALL6.t.sol",
+      "sha256": "44f8997197241d576d0da8a3c6863992238194f2bee8bec29965b2f7590a708d",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedNativeUnitsAndFundedSYRoutes"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_NaturalExpansion_B_ALL9.t.sol",
+      "sha256": "0da4153b0e44e485f54c7575a18e9d095f79374c42e0d784e2f214ba55a17a8f",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedNativeUnitsAndFundedSYRoutes"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_NaturalExpansion_B_P18_R6.t.sol",
+      "sha256": "30acf96f69df269f1e9633c86e5cb4d3518d56e107c28ce3964ab6fb704576a7",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedNativeUnitsAndFundedSYRoutes"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_NaturalExpansion_B_P18_R9.t.sol",
+      "sha256": "5c1870801a24d199ee6eb17f56d01f7c6a3d0bd7d2b7adae262087248184ce59",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedNativeUnitsAndFundedSYRoutes"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_NaturalExpansion_B_P6_R18.t.sol",
+      "sha256": "7dcf9a6a6b93b3e48efb5b5e378c029a05a24f5147c1f5e8be0b990ffbb3d76d",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedNativeUnitsAndFundedSYRoutes"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_NaturalExpansion_B_P6_R9.t.sol",
+      "sha256": "8d909389fcdfefe80113c94cc1c91bd11cc45ccce85fcf40a8cae8311abd5efc",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedNativeUnitsAndFundedSYRoutes"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_NaturalExpansion_B_P9_R18.t.sol",
+      "sha256": "96c7aba1835f89c26fdcf5ce10e3132eb01d04922b21c28d29d3ea9d572aa6ae",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedNativeUnitsAndFundedSYRoutes"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_NaturalExpansion_B_P9_R6.t.sol",
+      "sha256": "e920c9991a267b34be7da642a19f966f7705049b6a6958bc4bb73446cbffec99",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedNativeUnitsAndFundedSYRoutes"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_NaturalExpansion_Decimals.sol",
+      "sha256": "dc6e04524f48d34af742f5452a99c9709948d12e997845c767d4e46b0e9d81d5",
+      "inherited_only": false,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedNativeUnitsAndFundedSYRoutes"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_NaturalExpansion.t.sol",
+      "sha256": "d886cd3c557243869bc2ec96d6a3c14362384841dbeab436e41533c946a946f1",
+      "inherited_only": false,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiNativeMetadataAndRegisteredChildSYs"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_NaturalExpansion_B_ALL6.t.sol",
+      "sha256": "d1cd0484e5bb7fb35d42246306e3a778655e152bb208118cc574297beef5c16d",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiNativeMetadataAndRegisteredChildSYs"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_NaturalExpansion_B_ALL9.t.sol",
+      "sha256": "491a38299095b8ea9dbc7cb290f9724e912275689039379d67ea424f714d66ec",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiNativeMetadataAndRegisteredChildSYs"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_NaturalExpansion_B_P18_R6.t.sol",
+      "sha256": "fad586c74a343f11203ec0efc05fc3d4a2838267504df09421ce440d34aed54f",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiNativeMetadataAndRegisteredChildSYs"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_NaturalExpansion_B_P18_R9.t.sol",
+      "sha256": "4e08507fecc6ef276a1f082db52de9548dc8bfd8ca609ad8346f8d2bd68adc62",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiNativeMetadataAndRegisteredChildSYs"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_NaturalExpansion_B_P6_R18.t.sol",
+      "sha256": "fecff94d1467b40603b494d0083db05dbbcb6c516e3785630e95bb017b630840",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiNativeMetadataAndRegisteredChildSYs"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_NaturalExpansion_B_P6_R9.t.sol",
+      "sha256": "de78091fe263c066b522d3e4822317a300ccc4d5a09d329625e42b076e76a017",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiNativeMetadataAndRegisteredChildSYs"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_NaturalExpansion_B_P9_R18.t.sol",
+      "sha256": "6e820215c9fb17d2e4c278a68c259cfba5a336dbef68b6411557c5e5413a9a77",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiNativeMetadataAndRegisteredChildSYs"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_NaturalExpansion_B_P9_R6.t.sol",
+      "sha256": "f561b9f6fb2d10f2e742dcd4bb2cb43565b696f246491b02c07b481a50d17383",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiNativeMetadataAndRegisteredChildSYs"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_NaturalExpansion_Decimals.sol",
+      "sha256": "6ddeb82d81058404fdf46a3821e17ddcbfb148173de896a18d3cc4159dc52ba2",
+      "inherited_only": false,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiNativeMetadataAndRegisteredChildSYs"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_NaturalExpansion.t.sol",
+      "sha256": "821a51d397de4e3ccb18584b87d4e10778b5f60ccd33f78a4e82d9828674cd5b",
+      "inherited_only": false,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedImmutableNativeUnitsAndCompleteRoutes"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_NaturalExpansion_B_ALL6.t.sol",
+      "sha256": "6889df9ff426362294f5d362ac280d6b195cc755d8b16b73a35992ea2fa755dd",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedImmutableNativeUnitsAndCompleteRoutes"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_NaturalExpansion_B_ALL9.t.sol",
+      "sha256": "16e8e120ad5fa8c06751a39279b7ddb2aa4a2ba57abbbd0a9534c3cfd2d8be9e",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedImmutableNativeUnitsAndCompleteRoutes"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_NaturalExpansion_B_P18_R6.t.sol",
+      "sha256": "326369023d2bc7fe955504ddf408c7d4fa2addb013b2b60195d9d86dba078e4d",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedImmutableNativeUnitsAndCompleteRoutes"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_NaturalExpansion_B_P18_R9.t.sol",
+      "sha256": "d9f3c6ea5863578dedfb65bc8c613a1f49f0f33f36c3c375f13ea2fe957aa338",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedImmutableNativeUnitsAndCompleteRoutes"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_NaturalExpansion_B_P6_R18.t.sol",
+      "sha256": "991d5edfecafe0a2c84a01567da95b4b7ff59903e06c8b8170e540a436c1fe0c",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedImmutableNativeUnitsAndCompleteRoutes"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_NaturalExpansion_B_P6_R9.t.sol",
+      "sha256": "2fed0b3e701c9519b2af537ffc17a4025e0a9671cac310a5e28005784141fc3c",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedImmutableNativeUnitsAndCompleteRoutes"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_NaturalExpansion_B_P9_R18.t.sol",
+      "sha256": "f0bcb881196fb9e6219af2a9640ef17dc7c34df67fa0b8912eeadc9614de9b5c",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedImmutableNativeUnitsAndCompleteRoutes"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_NaturalExpansion_B_P9_R6.t.sol",
+      "sha256": "ef10e6300410f718d490cb4cd503bc21a8ad3b1d8932543e111b5c797f3dea8a",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedImmutableNativeUnitsAndCompleteRoutes"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_NaturalExpansion_Decimals.sol",
+      "sha256": "3d13816856ff41fe8b09742d894331fa94c48aab97ebd793c2cfddc732dd6600",
+      "inherited_only": false,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedImmutableNativeUnitsAndCompleteRoutes"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_NaturalExpansion.t.sol",
+      "sha256": "39553ad9b3088178cb91f2d57c5809b8738a1701e19b6de1e4e59d35a6406608",
+      "inherited_only": false,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_nativeUnitsAndFundedSYDeployment"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_NaturalExpansion_Decimals.sol",
+      "sha256": "e8aad73d3767e990d6752fab2a136def2806c9be3b10d9cec2f363f53961d58f",
+      "inherited_only": false,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_nativeUnitsAndFundedSYDeployment"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_NaturalExpansion_H6.t.sol",
+      "sha256": "79edb14160abe500224d0a5a8d91af288380561904d4fea26700c102a803f4d2",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_nativeUnitsAndFundedSYDeployment"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_NaturalExpansion_H9.t.sol",
+      "sha256": "9f2414a03a339939ea40d3ffbed5b8796107418b00a3df0918ad4f58c6a34af3",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_nativeUnitsAndFundedSYDeployment"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_NaturalExpansion_P18_R6.t.sol",
+      "sha256": "a084face98c67f82cc7715de6b89c6f73aa8403082165e65994130909e776682",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_nativeUnitsAndFundedSYDeployment"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_NaturalExpansion_P18_R9.t.sol",
+      "sha256": "8b95ff41de36100171d4265cdfe1d0875ff33b5ac6cbe99adf2ee9472c22b7c8",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_nativeUnitsAndFundedSYDeployment"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_NaturalExpansion_P6_R18.t.sol",
+      "sha256": "557a80bc3af97222ea67054eb9152fe101bb66b798cdd5e74955186975a6aed4",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_nativeUnitsAndFundedSYDeployment"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_NaturalExpansion_P6_R9.t.sol",
+      "sha256": "683ed025cae8edf8fb088685a75b0bf68a8806661a4d828f7602a14ce935c1fb",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_nativeUnitsAndFundedSYDeployment"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_NaturalExpansion_P9_R18.t.sol",
+      "sha256": "16dcdeaaf5091c501807616c29bf082aed8f8d2271cd58a5d34045d9d177a02c",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_nativeUnitsAndFundedSYDeployment"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_NaturalExpansion_P9_R6.t.sol",
+      "sha256": "301d620f6ed3b079781e9c98b3cc50f7ecd00b4a329de56ec84012ba31d5fe1d",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_nativeUnitsAndFundedSYDeployment"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/_skeptic_probe/E6Probe.t.sol",
+      "sha256": "5b1f0e4ae16c62777daa9bf86e7903f986021d08dbb632abf05ef4e69fc1f6c4",
+      "inherited_only": false,
+      "cases": [
+        {
+          "old_test": "test_E1_policyExpandAfterRichSyntheticAndWarp",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: one lazy aggregate mint on completed eight-hour boundaries; independent mint and funding deltas."
+        },
+        {
+          "old_test": "test_E2_openModeNeverExpands",
+          "replacements": [],
+          "disposition": "D51 retires Open deployments; no Open-specific behavior remains."
+        },
+        {
+          "old_test": "test_E3_multiBondRewardRatioMatchesShares",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D38: two actual bonds have fixed attributed gons; each funded epoch grows each bond at the same index with exact floors."
+        },
+        {
+          "old_test": "test_E4_pendingEqualsClaimAfterSync",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: synced preview equals actual sDETF rewards; repeat claim is zero."
+        },
+        {
+          "old_test": "test_E5_claimExpansionWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35: both bonds claim rewards before their vesting periods finish; purchased principal remains unchanged."
+        },
+        {
+          "old_test": "test_E6_protocolExpansionShareCompoundsToBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36: expansion now funds staking. Actual protocol LP remains unchanged; automatic reward-to-LP compounding is retired."
+        },
+        {
+          "old_test": "test_E7_deployOnlyParamsNoSetter",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedImmutableNativeUnitsAndCompleteRoutes"
+          ],
+          "disposition": "D50/D51/D52: deployment retains its annual closure-rate default; no mode/cap getters or mutable closure-rate setter."
+        },
+        {
+          "old_test": "test_E8_catchUpCapAndNoDoubleCount",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50/D52: 25-hour and seven-day catch-up consumes all completed epochs with one mint and no supply/time cap; repeat sync is zero."
+        },
+        {
+          "old_test": "test_probe_E6_strongPathMustCompound",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D36/D50: the old conditional auto-LP probe is replaced by a required positive expansion, actual held-DETF funding, one mint, unchanged LP and paid sDETF rewards for two bonds."
+        }
+      ]
+    }
+  ]
+}

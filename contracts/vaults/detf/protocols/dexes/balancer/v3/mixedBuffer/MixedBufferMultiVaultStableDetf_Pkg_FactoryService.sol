@@ -1,14 +1,12 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 import {Vm} from "forge-std/Vm.sol";
 import {VM_ADDRESS} from "@crane/contracts/constants/FoundryConstants.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
-import {
-    IMixedBufferMultiVaultStableDetfDFPkg,
-    MixedBufferMultiVaultStableDetfDFPkg
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfDFPkg.sol";
+import {IMixedBufferMultiVaultStableDetfDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfDFPkg.sol";
 
 library MixedBufferMultiVaultStableDetf_Pkg_FactoryService {
     using BetterEfficientHashLib for bytes;
@@ -22,12 +20,12 @@ library MixedBufferMultiVaultStableDetf_Pkg_FactoryService {
         instance_ = IMixedBufferMultiVaultStableDetfDFPkg(
             address(
                 vaultRegistry_.deployPkg(
-                    type(MixedBufferMultiVaultStableDetfDFPkg).creationCode,
+                    ArtifactCreationCode.creationCode("MixedBufferMultiVaultStableDetfDFPkg.sol:MixedBufferMultiVaultStableDetfDFPkg"),
                     abi.encode(pkgInit_),
-                    abi.encode(type(MixedBufferMultiVaultStableDetfDFPkg).name)._hash()
+                    abi.encode("MixedBufferMultiVaultStableDetfDFPkg")._hash()
                 )
             )
         );
-        vm.label(address(instance_), type(MixedBufferMultiVaultStableDetfDFPkg).name);
+        vm.label(address(instance_), "MixedBufferMultiVaultStableDetfDFPkg");
     }
 }

@@ -1,0 +1,194 @@
+--- a/test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolPkg_Smoke.t.sol
++++ b/test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolPkg_Smoke.t.sol
+@@ -1,95 +1,6 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
+ 
+-import {Test} from "forge-std/Test.sol";
+-
+-import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+-import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
+-import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
+-
+-import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
+-import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+-import {
+-    IStandardExchangeRateProviderDFPkg
+-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
+-
+-import {
+-    IStandardExchangeBufferPoolPkg,
+-    StandardExchangeBufferPoolStandardVaultPkg
+-} from "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolStandardVaultPkg.sol";
+-
+-/**
+- * @title StandardExchangeBufferPoolPkg_Smoke
+- * @notice Smoke test: instantiate the DFPkg with mock addresses and assert
+- *         the static metadata arrays have the correct lengths.
+- *         No deployment or Vault interaction is required.
+- */
+-contract StandardExchangeBufferPoolPkg_Smoke is Test {
+-    StandardExchangeBufferPoolStandardVaultPkg pkg;
+-
+-    function setUp() public {
+-        // Use address(this) as a stand-in for IVaultFeeOracleQuery so that
+-        // feeTo() returns a non-zero address (required by BalancerV3BasePoolFactoryRepo._initialize).
+-        vm.mockCall(address(this), abi.encodeWithSelector(IVaultFeeOracleQuery.feeTo.selector), abi.encode(address(0xFEE)));
+-
+-        IStandardExchangeBufferPoolPkg.PkgInit memory init = IStandardExchangeBufferPoolPkg.PkgInit({
+-            basicVaultFacet:                          IFacet(address(0xF1)),
+-            standardVaultFacet:                       IFacet(address(0xF2)),
+-            balancerV3VaultAwareFacet:                IFacet(address(0xF3)),
+-            betterBalancerV3PoolTokenFacet:           IFacet(address(0xF4)),
+-            defaultPoolInfoFacet:                     IFacet(address(0xF5)),
+-            standardSwapFeePercentageBoundsFacet:     IFacet(address(0xF6)),
+-            unbalancedLiquidityInvariantRatioBoundsFacet: IFacet(address(0xF7)),
+-            balancerV3AuthenticationFacet:            IFacet(address(0xF8)),
+-            bufferPoolFacet:                          IFacet(address(0xF9)),
+-            poolLiquidityFacet:                       IFacet(address(0xFA)),
+-            hookFacet:                                IFacet(address(0xFB)),
+-            vaultRegistry:                            IVaultRegistryDeployment(address(0xAA)),
+-            vaultFeeOracle:                           IVaultFeeOracleQuery(address(this)),
+-            balancerV3Vault:                          IVault(address(0xBB)),
+-            diamondFactory:                           IDiamondPackageCallBackFactory(address(0xCC)),
+-            rateProviderPkg:                          IStandardExchangeRateProviderDFPkg(address(0xDD))
+-        });
+-
+-        pkg = new StandardExchangeBufferPoolStandardVaultPkg(init);
+-    }
+-
+-    function test_facetAddresses_length() public view {
+-        assertEq(pkg.facetAddresses().length, 11);
+-    }
+-
+-    function test_facetInterfaces_length() public view {
+-        assertEq(pkg.facetInterfaces().length, 15);
+-    }
+-
+-    function test_facetAddresses_matchesInit() public view {
+-        address[] memory addrs = pkg.facetAddresses();
+-        assertEq(addrs[0],  address(0xF1));
+-        assertEq(addrs[1],  address(0xF2));
+-        assertEq(addrs[2],  address(0xF3));
+-        assertEq(addrs[3],  address(0xF4));
+-        assertEq(addrs[4],  address(0xF5));
+-        assertEq(addrs[5],  address(0xF6));
+-        assertEq(addrs[6],  address(0xF7));
+-        assertEq(addrs[7],  address(0xF8));
+-        assertEq(addrs[8],  address(0xF9));
+-        assertEq(addrs[9],  address(0xFA));
+-        assertEq(addrs[10], address(0xFB));
+-    }
+-
+-    function test_packageName_notEmpty() public view {
+-        assertFalse(bytes(pkg.packageName()).length == 0);
+-    }
+-
+-    function test_name_matchesPackageName() public view {
+-        assertEq(pkg.name(), pkg.packageName());
+-    }
+-
+-    function test_vaultRegistry_immutable() public view {
+-        assertEq(address(pkg.VAULT_REGISTRY()), address(0xAA));
+-    }
+-
+-    function test_balancerV3Vault_immutable() public view {
+-        assertEq(address(pkg.BALANCER_V3_VAULT()), address(0xBB));
+-    }
+-}
++// The seven package declarations are exercised in TestBase_Smoke.t.sol using
++// the existing manager/registry deployment and real facets. The former package
++// constructed with mock addresses is retired; no declaration coverage is lost.
+--- a/test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/TestBase_Smoke.t.sol
++++ b/test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/TestBase_Smoke.t.sol
+@@ -1,5 +1,13 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
++import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
++import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
++import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
++import {StandardExchangeBufferPoolStandardVaultPkg} from
++    "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolStandardVaultPkg.sol";
++
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {TestBase_StandardExchangeBufferPool} from
+@@ -63,4 +71,54 @@
+         address fromDFPkg = address(seRateProvider);
+         assertEq(fromPool, fromDFPkg, "pool RP must equal canonical RP for the (seVault, tta) pair");
+     }
++
++    /// @notice The registered package retains its eleven actual production facets.
++    function test_facetAddresses_length() public view {
++        assertEq(bufferPoolPkg.facetAddresses().length, 11);
++    }
++
++    /// @notice Existing declarations include standard exchange and native Pendle SY on the live pool.
++    function test_facetInterfaces_length() public view {
++        bytes4[] memory interfaces = bufferPoolPkg.facetInterfaces();
++        assertEq(interfaces.length, 18);
++        assertEq(interfaces[15], type(IStandardExchangeIn).interfaceId);
++        assertEq(interfaces[16], type(IStandardExchangeOut).interfaceId);
++        assertEq(interfaces[17], type(IStandardizedYield).interfaceId);
++        for (uint256 i; i < interfaces.length; ++i) {
++            assertTrue(IERC165(bufferPool).supportsInterface(interfaces[i]), "live pool declares package interface");
++        }
++    }
++
++    /// @notice Compare exact constructor bindings to the real deployed facet addresses.
++    function test_facetAddresses_matchesInit() public view {
++        address[11] memory expected = [address(multiAssetBasicVaultFacet), address(multiAssetStandardVaultFacet),
++            address(balancerV3VaultAwareFacet), address(betterBalancerV3PoolTokenFacet), address(defaultPoolInfoFacet),
++            address(standardSwapFeePercentageBoundsFacet), address(unbalancedLiquidityInvariantRatioBoundsFacet),
++            address(balancerV3AuthenticationFacet), address(bufferPoolFacet), address(poolLiquidityFacet), address(hookFacet)];
++        address[] memory actual = bufferPoolPkg.facetAddresses();
++        for (uint256 i; i < expected.length; ++i) {
++            assertEq(actual[i], expected[i], "registered constructor facet binding");
++            assertGt(actual[i].code.length, 0, "actual facet bytecode");
++        }
++    }
++
++    /// @notice The production package publishes the expected stable name.
++    function test_packageName_notEmpty() public view {
++        assertEq(bufferPoolPkg.packageName(), "StandardExchangeBufferPoolStandardVaultPkg");
++    }
++
++    /// @notice Registry and package names agree.
++    function test_name_matchesPackageName() public view {
++        assertEq(bufferPoolPkg.name(), bufferPoolPkg.packageName());
++    }
++
++    /// @notice The registered package uses the current real manager registry.
++    function test_vaultRegistry_immutable() public view {
++        assertEq(address(StandardExchangeBufferPoolStandardVaultPkg(address(bufferPoolPkg)).VAULT_REGISTRY()), address(indexedexManager));
++    }
++
++    /// @notice Balancer accounting is bound to the actual deployed protocol vault.
++    function test_balancerV3Vault_immutable() public view {
++        assertEq(address(StandardExchangeBufferPoolStandardVaultPkg(address(bufferPoolPkg)).BALANCER_V3_VAULT()), address(bv3Vault));
++    }
+ }
+--- a/test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/bases/TestBase_StandardExchangeBufferPool.sol
++++ b/test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/bases/TestBase_StandardExchangeBufferPool.sol
+@@ -485,15 +485,15 @@
+         betterBalancerV3PoolTokenFacet = create3Factory.deployBalancerV3PoolTokenFacet();
+         balancerV3AuthenticationFacet = create3Factory.deployBalancerV3AuthenticationFacet();
+ 
+-        // These three facets are deployed directly (no FactoryService helper needed).
+-        defaultPoolInfoFacet = IFacet(address(new DefaultPoolInfoFacet()));
++        // Use the same CREATE3 deployment path for these retained protocol facets.
++        defaultPoolInfoFacet = create3Factory.deployFacet(vm.getCode("DefaultPoolInfoFacet.sol:DefaultPoolInfoFacet"), keccak256(abi.encode("DefaultPoolInfoFacet")));
+         vm.label(address(defaultPoolInfoFacet), "DefaultPoolInfoFacet");
+ 
+-        standardSwapFeePercentageBoundsFacet = IFacet(address(new StandardSwapFeePercentageBoundsFacet()));
++        standardSwapFeePercentageBoundsFacet = create3Factory.deployFacet(vm.getCode("StandardSwapFeePercentageBoundsFacet.sol:StandardSwapFeePercentageBoundsFacet"), keccak256(abi.encode("StandardSwapFeePercentageBoundsFacet")));
+         vm.label(address(standardSwapFeePercentageBoundsFacet), "StandardSwapFeePercentageBoundsFacet");
+ 
+         unbalancedLiquidityInvariantRatioBoundsFacet =
+-            IFacet(address(new StandardUnbalancedLiquidityInvariantRatioBoundsFacet()));
++            create3Factory.deployFacet(vm.getCode("StandardUnbalancedLiquidityInvariantRatioBoundsFacet.sol:StandardUnbalancedLiquidityInvariantRatioBoundsFacet"), keccak256(abi.encode("StandardUnbalancedLiquidityInvariantRatioBoundsFacet")));
+         vm.label(
+             address(unbalancedLiquidityInvariantRatioBoundsFacet), "StandardUnbalancedLiquidityInvariantRatioBoundsFacet"
+         );

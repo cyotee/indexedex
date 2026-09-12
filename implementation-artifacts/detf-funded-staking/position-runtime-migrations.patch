@@ -1,0 +1,636 @@
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Accounting.t.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Accounting.t.sol
+@@ -12,20 +12,31 @@
+ contract Adversarial_Accounting_Test is TestBase_UniswapV3StandardExchange_Adversarial {
+     function test_E1_roundTrip_zapInOut_conservation() public {
+         address token0 = pool.token0();
+-        ERC20PermitMintableStub(token0).mint(attacker, 100 ether);
++        uint256 deposit = 100 ether;
++        // A separate holder provides both activation assets. The attacker pays only token0.
++        ERC20PermitMintableStub(token0).mint(victim, deposit);
++        vm.startPrank(victim);
++        IERC20(token0).approve(address(vault), type(uint256).max);
++        _activateWithFundedToken0(victim, deposit, 100 ether);
++        vm.stopPrank();
++
++        ERC20PermitMintableStub(token0).mint(attacker, deposit);
++        uint256 beforePayment = IERC20(token0).balanceOf(attacker);
+         vm.startPrank(attacker);
+         IERC20(token0).approve(address(vault), type(uint256).max);
+-        uint256 shares =
+-            _activateWithFundedToken0(attacker, 100 ether, 100 ether);
+-        uint256 balBefore = IERC20(token0).balanceOf(attacker);
+-        vault.exchangeOut(
++        uint256 shares = vault.exchangeIn(
++            IERC20(token0), deposit, IERC20(address(vault)), 0, attacker, false, block.timestamp + 1
++        );
++        vault.approve(address(vault), shares);
++        uint256 beforeRedemption = IERC20(token0).balanceOf(attacker);
++        uint256 recovered = vault.exchangeIn(
+             IERC20(address(vault)), shares, IERC20(token0), 1, attacker, false, block.timestamp + 1
+         );
+         vm.stopPrank();
+-        uint256 recovered = IERC20(token0).balanceOf(attacker) - balBefore;
+-        // Fees/slippage on wing path; recovery should be positive and not exceed deposit.
++        assertEq(vault.balanceOf(attacker), 0, "all attacker shares redeemed");
++        assertEq(IERC20(token0).balanceOf(attacker) - beforeRedemption, recovered, "actual recovery");
+         assertGt(recovered, 0);
+-        assertLe(recovered, 100 ether);
++        assertLe(IERC20(token0).balanceOf(attacker), beforePayment, "round trip cannot exceed payment");
+         _assertNoUnexpectedFreeInventory(1 ether);
+     }
+ 
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Accounting_Decimals.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Accounting_Decimals.sol
+@@ -13,19 +13,30 @@
+     function test_E1_roundTrip_zapInOut_conservation() public {
+         address token0 = pool.token0();
+         uint256 deposit = _u0(100);
++        // A separate holder provides both activation assets. The attacker pays only token0.
++        _mint(token0, victim, deposit);
++        vm.startPrank(victim);
++        IERC20(token0).approve(address(vault), type(uint256).max);
++        _activateWithFundedToken0(victim, deposit, _u1(100));
++        vm.stopPrank();
++
+         _mint(token0, attacker, deposit);
++        uint256 beforePayment = IERC20(token0).balanceOf(attacker);
+         vm.startPrank(attacker);
+         IERC20(token0).approve(address(vault), type(uint256).max);
+-        uint256 shares =
+-            _activateWithFundedToken0(attacker, deposit, _u1(100));
+-        uint256 balBefore = IERC20(token0).balanceOf(attacker);
+-        vault.exchangeOut(
++        uint256 shares = vault.exchangeIn(
++            IERC20(token0), deposit, IERC20(address(vault)), 0, attacker, false, block.timestamp + 1
++        );
++        vault.approve(address(vault), shares);
++        uint256 beforeRedemption = IERC20(token0).balanceOf(attacker);
++        uint256 recovered = vault.exchangeIn(
+             IERC20(address(vault)), shares, IERC20(token0), 1, attacker, false, block.timestamp + 1
+         );
+         vm.stopPrank();
+-        uint256 recovered = IERC20(token0).balanceOf(attacker) - balBefore;
++        assertEq(vault.balanceOf(attacker), 0, "all attacker shares redeemed");
++        assertEq(IERC20(token0).balanceOf(attacker) - beforeRedemption, recovered, "actual recovery");
+         assertGt(recovered, 0);
+-        assertLe(recovered, deposit);
++        assertLe(IERC20(token0).balanceOf(attacker), beforePayment, "round trip cannot exceed payment");
+         _assertNoUnexpectedFreeInventory(_u0(1));
+     }
+ 
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_Decimals.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_Decimals.sol
+@@ -126,45 +126,44 @@
+         assertLe(received, amount, "mixed decimal round trip preserves incumbent value");
+     }
+ 
+-    function test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL() public {
+-        uint256 amount0 = _u0(10);
+-        uint256 amount1 = _u1(10);
+-        _mint(_token0(), address(this), amount0);
+-        IERC20(_token0()).approve(address(vault), amount0);
+-        uint256 shares = vault.exchangeIn(
+-            IERC20(_token0()), amount0, IERC20(address(vault)), 0, address(this), false, _deadline()
+-        );
+-        assertGt(shares, 0, "FR5: shares");
+-        (int24 minTick, int24 maxTick) = _fullRangeTicks();
+-        uint128 lAfterFirst = _liquidityAt(minTick, maxTick);
+-
+-        _mint(_token1(), address(this), amount1);
+-        IERC20(_token1()).approve(address(vault), amount1);
+-        IERC20 missing = IERC20(_token1());
+-        assertEq(vault.previewExchangeIn(missing, amount1, IERC20(address(vault))), 0);
++    function test_FR5_bothTokensActivateThenSingleTokenDepositsRemainAvailable() public {
++        uint256 amount = _u0(10);
++        IERC20 input = IERC20(_token0());
++        _mint(address(input), address(this), amount);
++        input.approve(address(vault), amount);
++        assertEq(vault.previewExchangeIn(input, amount, IERC20(address(vault))), 0);
++        uint256 balance = input.balanceOf(address(this));
+         vm.expectRevert(bytes4(keccak256("UniswapV3Exchange_ZeroAmount()")));
+-        vault.exchangeIn(missing, amount1, IERC20(address(vault)), 0, address(this), false, _deadline());
+-        _dualJoin(amount0, amount1);
+-        uint128 lAfterSecond = _liquidityAt(minTick, maxTick);
+-        assertGt(lAfterSecond, lAfterFirst, "FR5: second token mints full-range L");
+-    }
+-
+-    function test_FR6_importedNftTicksNotRewritten() public {
++        vault.exchangeIn(input, amount, IERC20(address(vault)), 0, address(this), false, _deadline());
++        assertEq(input.balanceOf(address(this)), balance, "failed activation keeps payment");
++        assertEq(IERC20(address(vault)).totalSupply(), 0);
++        assertEq(input.balanceOf(address(vault)), 0);
++        uint256 issued = _dualJoin(amount, _u1(10));
++        assertGt(issued, 0);
++        (int24 lower, int24 upper) = _fullRangeTicks();
++        assertGt(_liquidityAt(lower, upper), 0, "dual activation creates full-range liquidity");
++        input.approve(address(vault), amount);
++        uint256 quote = vault.previewExchangeIn(input, amount, IERC20(address(vault)));
++        assertGt(quote, 0);
++        assertEq(vault.exchangeIn(input, amount, IERC20(address(vault)), quote, address(this), false, _deadline()), quote);
++    }
++
++    function test_FR6_importedNftConvertedToFullRange() public {
+         int24 spacing = pool.tickSpacing();
+-        int24 importedLower = -spacing * 10;
+-        int24 importedUpper = spacing * 10;
++        (, int24 spotTick,,,,,) = pool.slot0();
++        int24 center = (spotTick / spacing) * spacing;
++        int24 importedLower = center - spacing * 10;
++        int24 importedUpper = center + spacing * 10;
+         (int24 minTick, int24 maxTick) = _fullRangeTicks();
+         assertTrue(importedLower != minTick || importedUpper != maxTick, "FR6: imported != full range");
+ 
+         IStandardExchangeProxy emptyVault = _deployVault(pool);
+         address token0 = pool.token0();
+         address token1 = pool.token1();
+-        uint256 a0 = _u0(20);
+-        uint256 a1 = _u1(20);
+-        _mint(token0, address(this), a0);
+-        _mint(token1, address(this), a1);
+-        IERC20(token0).approve(address(npm), a0);
+-        IERC20(token1).approve(address(npm), a1);
++        _mint(token0, address(this), _u0(20));
++        _mint(token1, address(this), _u1(20));
++        IERC20(token0).approve(address(npm), _u0(20));
++        IERC20(token1).approve(address(npm), _u1(20));
+         (uint256 tokenId,,,) = npm.mint(
+             INonfungiblePositionManager.MintParams({
+                 token0: token0,
+@@ -172,8 +171,8 @@
+                 fee: FEE_MEDIUM,
+                 tickLower: importedLower,
+                 tickUpper: importedUpper,
+-                amount0Desired: a0,
+-                amount1Desired: a1,
++                amount0Desired: _u0(20),
++                amount1Desired: _u1(20),
+                 amount0Min: 0,
+                 amount1Min: 0,
+                 recipient: address(this),
+@@ -190,8 +189,8 @@
+         (uint128 importedL,,,,) =
+             pool.positions(keccak256(abi.encodePacked(address(emptyVault), importedLower, importedUpper)));
+         (uint128 fullL,,,,) = pool.positions(keccak256(abi.encodePacked(address(emptyVault), minTick, maxTick)));
+-        assertGt(importedL, 0, "FR6: imported ticks hold L");
+-        assertEq(fullL, 0, "FR6: not rewritten to min/max");
++        assertEq(importedL, 0, "FR6: imported narrow range fully removed");
++        assertGt(fullL, 0, "FR6: conversion deploys maximum usable range");
+     }
+ 
+     function _dualJoin(uint256 amount0, uint256 amount1) internal returns (uint256 shares) {
+--- a/test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_Decimals.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_Decimals.sol
+@@ -1,5 +1,16 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
++import {FixedPointMathLib} from "@crane/contracts/utils/FixedPointMathLib.sol";
++import {FullMath} from "@crane/contracts/protocols/dexes/uniswap/libraries/FullMath.sol";
++import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
++import {IAllowanceTransfer} from "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
++import {PositionManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PositionManager.sol";
++import {PositionDescriptor} from "@crane/contracts/protocols/dexes/uniswap/v4/PositionDescriptor.sol";
++import {IWETH9} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/external/IWETH9.sol";
++import {Actions} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Actions.sol";
++import {LiquidityAmounts as ReferenceLiquidityAmounts} from "@crane/contracts/protocols/dexes/uniswap/v3/periphery/libraries/LiquidityAmounts.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+@@ -10,7 +21,6 @@
+ import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/TickMath.sol";
+ import {LiquidityAmounts} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/LiquidityAmounts.sol";
+ import {StateLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/StateLibrary.sol";
+-import {PositionInfo} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/PositionInfoLibrary.sol";
+ import {ONE_WAD} from "@crane/contracts/constants/Constants.sol";
+ 
+ import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
+@@ -37,40 +47,6 @@
+     UniswapV4ExternalSwapper_ProDexUniV4
+ } from "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/harness/UniswapV4SeDecimalsPoolOps.sol";
+ 
+-/// @dev Bind-path PositionManager for FR6. Copied from gold.
+-contract Fr6PositionManagerDecimals {
+-    PoolKey public key;
+-    uint128 public liq;
+-    address public nftOwner;
+-    PositionInfo public info;
+-
+-    function configure(PoolKey memory key_, uint128 liq_, address nftOwner_, int24 tickLower_, int24 tickUpper_)
+-        external
+-    {
+-        key = key_;
+-        liq = liq_;
+-        nftOwner = nftOwner_;
+-        uint256 packed = (uint256(uint24(tickLower_)) << 8) | (uint256(uint24(tickUpper_)) << 32);
+-        info = PositionInfo.wrap(packed);
+-    }
+-
+-    function getPoolAndPositionInfo(uint256) external view returns (PoolKey memory, PositionInfo) {
+-        return (key, info);
+-    }
+-
+-    function getPositionLiquidity(uint256) external view returns (uint128) {
+-        return liq;
+-    }
+-
+-    function ownerOf(uint256) external view returns (address) {
+-        return nftOwner;
+-    }
+-
+-    function transferFrom(address, address, uint256) external {}
+-
+-    function modifyLiquidities(bytes calldata, uint256) external {}
+-}
+-
+ /**
+  * @title UniswapV4StandardExchange_FullRangeBook_Decimals
+  * @notice FR1–FR6 on combo decimals. pairToken = tokenA. vaultShare stays 18.
+@@ -213,49 +189,90 @@
+         assertLe(received, amount, "mixed decimal round trip preserves incumbent value");
+     }
+ 
+-    function test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL() public {
+-        uint256 amount0 = _u0(10);
+-        uint256 amount1 = _u1(10);
+-        MintableERC20Decimals(_token0()).mint(address(this), amount0);
+-        IERC20(_token0()).approve(address(vault), amount0);
+-        uint256 shares = vault.exchangeIn(
+-            IERC20(_token0()), amount0, IERC20(address(vault)), 0, address(this), false, _deadline()
+-        );
+-        assertGt(shares, 0, "FR5: shares");
+-        (int24 minTick, int24 maxTick) = _fullRangeTicks();
+-        uint128 lAfterFirst = _liquidityAt(minTick, maxTick, bytes32(0));
+-
+-        MintableERC20Decimals(_token1()).mint(address(this), amount1);
+-        IERC20(_token1()).approve(address(vault), amount1);
+-        IERC20 missing = IERC20(_token1());
+-        assertEq(vault.previewExchangeIn(missing, amount1, IERC20(address(vault))), 0);
++    function test_FR5_bothTokensActivateThenSingleTokenDepositsRemainAvailable() public {
++        uint256 amount = _u0(10);
++        IERC20 input = IERC20(_token0());
++        MintableERC20Decimals(address(input)).mint(address(this), amount);
++        input.approve(address(vault), amount);
++        assertEq(vault.previewExchangeIn(input, amount, IERC20(address(vault))), 0);
++        uint256 balance = input.balanceOf(address(this));
+         vm.expectRevert(bytes4(keccak256("UniswapV4Exchange_ZeroAmount()")));
+-        vault.exchangeIn(missing, amount1, IERC20(address(vault)), 0, address(this), false, _deadline());
+-        _dualJoin(amount0, amount1);
+-        uint128 lAfterSecond = _liquidityAt(minTick, maxTick, bytes32(0));
+-        assertGt(lAfterSecond, lAfterFirst, "FR5: second token mints full-range L");
+-    }
+-
+-    function test_FR6_importedNftTicksNotRewritten() public {
+-        int24 importedLower = -120;
+-        int24 importedUpper = 120;
+-        Fr6PositionManagerDecimals pm_ = new Fr6PositionManagerDecimals();
+-        pm_.configure(poolKey, 1_000_000, address(this), importedLower, importedUpper);
+-        IStandardExchangeProxy bound_ = _deployVaultBoundToPm(IPositionManager(address(pm_)));
+-
+-        uint256 shares = IUniswapV4StandardExchangePositionImport(address(bound_)).importPosition(
+-            IPositionManager(address(pm_)), 1, 0, address(this), address(this), _deadline()
+-        );
+-        assertGt(shares, 0, "FR6: import minted");
+-
+-        IUniswapV4StandardExchangeLiquidReserve boundLiq_ = IUniswapV4StandardExchangeLiquidReserve(address(bound_));
+-        MintableERC20Decimals(_token0()).mint(address(bound_), _u0(20));
+-        MintableERC20Decimals(_token1()).mint(address(bound_), _u1(20));
+-        boundLiq_.rebalanceLiquidReserve();
+-
+-        (int24 minTick, int24 maxTick) = _fullRangeTicks();
+-        assertTrue(importedLower != minTick || importedUpper != maxTick, "FR6: imported != full range");
+-        assertEq(_liquidityAtOn(address(bound_), minTick, maxTick, bytes32(0)), 0, "FR6: no rewrite to min/max");
++        vault.exchangeIn(input, amount, IERC20(address(vault)), 0, address(this), false, _deadline());
++        assertEq(input.balanceOf(address(this)), balance, "failed activation keeps payment");
++        assertEq(IERC20(address(vault)).totalSupply(), 0);
++        assertEq(input.balanceOf(address(vault)), 0);
++        uint256 issued = _dualJoin(amount, _u1(10));
++        assertGt(issued, 0);
++        (int24 lower, int24 upper) = _fullRangeTicks();
++        assertGt(_liquidityAt(lower, upper, bytes32(0)), 0, "dual activation creates full-range liquidity");
++        input.approve(address(vault), amount);
++        uint256 quote = vault.previewExchangeIn(input, amount, IERC20(address(vault)));
++        assertGt(quote, 0);
++        assertEq(vault.exchangeIn(input, amount, IERC20(address(vault)), quote, address(this), false, _deadline()), quote);
++    }
++
++    function test_FR6_importConvertsRealNftToFullRangeIncludingEarnedFees() public {
++        (, int24 spotTick,,) = StateLibrary.getSlot0(poolManager, poolKey.toId());
++        int24 center = (spotTick / poolKey.tickSpacing) * poolKey.tickSpacing;
++        int24 lowerImport = center - 120;
++        int24 upperImport = center + 120;
++        (IPositionManager manager, uint256 id) = _mintImportPosition(lowerImport, upperImport);
++        swapper.swapExactIn(poolKey, true, _u0(100));
++        swapper.swapExactIn(poolKey, false, _u1(100));
++        uint256 expected = _importEntitlement(manager, id, lowerImport, upperImport);
++        IStandardExchangeProxy bound = _deployVaultBoundToPm(manager);
++        IERC721(address(manager)).approve(address(bound), id);
++        uint256 shares = IUniswapV4StandardExchangePositionImport(address(bound)).importPosition(
++            manager, id, expected, address(this), address(this), block.timestamp
++        );
++        assertEq(shares, expected, "exact principal plus accrued fees fund shares once");
++        assertEq(manager.getPositionLiquidity(id), 0, "narrow NFT is emptied");
++        assertEq(IERC721(address(manager)).ownerOf(id), address(bound));
++        (int24 lower, int24 upper) = _fullRangeTicks();
++        assertGt(_liquidityAtOn(address(bound), lower, upper, bytes32(0)), 0);
++        assertEq(_liquidityAtOn(address(bound), lowerImport, upperImport, bytes32(0)), 0);
++        IStandardizedYield sy = IStandardizedYield(address(bound));
++        assertGt(sy.exchangeRate(), 0);
++        uint256 out = sy.previewRedeem(_token0(), shares / 10);
++        assertEq(sy.redeem(address(this), shares / 10, _token0(), out, false), out);
++    }
++
++    function _mintImportPosition(int24 lower, int24 upper) internal returns (IPositionManager manager, uint256 id) {
++        PositionDescriptor descriptor = new PositionDescriptor(poolManager, address(weth), bytes32("ETH"));
++        manager = IPositionManager(address(new PositionManager(
++            poolManager, IAllowanceTransfer(address(permit2)), 100_000, descriptor, IWETH9(address(weth))
++        )));
++        for (uint256 i; i < 2; ++i) {
++            address token = i == 0 ? _token0() : _token1();
++            MintableERC20Decimals(token).mint(address(this), _uOf(token, 10_000));
++            IERC20(token).approve(address(permit2), type(uint256).max);
++            IAllowanceTransfer(address(permit2)).approve(token, address(manager), type(uint160).max, type(uint48).max);
++        }
++        (uint160 price,,,) = StateLibrary.getSlot0(poolManager, poolKey.toId());
++        uint128 liquidity = LiquidityAmounts.getLiquidityForAmounts(
++            price, TickMath.getSqrtPriceAtTick(lower), TickMath.getSqrtPriceAtTick(upper), _u0(1000), _u1(1000)
++        );
++        id = manager.nextTokenId();
++        bytes[] memory params = new bytes[](2);
++        params[0] = abi.encode(poolKey, lower, upper, uint256(liquidity), uint128(_u0(1000)), uint128(_u1(1000)), address(this), bytes(""));
++        params[1] = abi.encode(poolKey.currency0, poolKey.currency1);
++        manager.modifyLiquidities(abi.encode(abi.encodePacked(uint8(Actions.MINT_POSITION), uint8(Actions.SETTLE_PAIR)), params), block.timestamp);
++    }
++
++    function _importEntitlement(IPositionManager manager, uint256 id, int24 lower, int24 upper) internal view returns (uint256) {
++        (uint160 price,,,) = StateLibrary.getSlot0(poolManager, poolKey.toId());
++        (uint128 liquidity, uint256 last0, uint256 last1) = StateLibrary.getPositionInfo(
++            poolManager, poolKey.toId(), address(manager), lower, upper, bytes32(id)
++        );
++        (uint256 amount0, uint256 amount1) = ReferenceLiquidityAmounts.getAmountsForLiquidity(
++            price, TickMath.getSqrtPriceAtTick(lower), TickMath.getSqrtPriceAtTick(upper), liquidity
++        );
++        (uint256 growth0, uint256 growth1) = StateLibrary.getFeeGrowthInside(poolManager, poolKey.toId(), lower, upper);
++        unchecked {
++            amount0 += FullMath.mulDiv(growth0 - last0, liquidity, uint256(1) << 128);
++            amount1 += FullMath.mulDiv(growth1 - last1, liquidity, uint256(1) << 128);
++        }
++        return FixedPointMathLib.mulSqrt(amount0, amount1);
+     }
+ 
+     function _dualJoin(uint256 amount0, uint256 amount1) internal returns (uint256 shares) {
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchangeOutQueryFacet_IFacet_Test.t.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchangeOutQueryFacet_IFacet_Test.t.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+ 
+ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+ import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
+@@ -31,12 +33,29 @@
+     }
+ 
+     function controlFacetInterfaces() public pure override returns (bytes4[] memory controlInterfaces) {
+-        controlInterfaces = new bytes4[](1);
++        controlInterfaces = new bytes4[](2);
+         controlInterfaces[0] = type(IStandardExchangeOut).interfaceId;
++        controlInterfaces[1] = type(IStandardizedYield).interfaceId;
+     }
+ 
+     function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
+-        controlFuncs = new bytes4[](1);
++        controlFuncs = new bytes4[](17);
+         controlFuncs[0] = IStandardExchangeOut.previewExchangeOut.selector;
++        controlFuncs[1] = IStandardizedYield.deposit.selector;
++        controlFuncs[2] = IStandardizedYield.redeem.selector;
++        controlFuncs[3] = IStandardizedYield.exchangeRate.selector;
++        controlFuncs[4] = IStandardizedYield.yieldToken.selector;
++        controlFuncs[5] = IStandardizedYield.assetInfo.selector;
++        controlFuncs[6] = IStandardizedYield.getTokensIn.selector;
++        controlFuncs[7] = IStandardizedYield.getTokensOut.selector;
++        controlFuncs[8] = IStandardizedYield.isValidTokenIn.selector;
++        controlFuncs[9] = IStandardizedYield.isValidTokenOut.selector;
++        controlFuncs[10] = IStandardizedYield.previewDeposit.selector;
++        controlFuncs[11] = IStandardizedYield.previewRedeem.selector;
++        controlFuncs[12] = IStandardizedYield.getRewardTokens.selector;
++        controlFuncs[13] = IStandardizedYield.accruedRewards.selector;
++        controlFuncs[14] = IStandardizedYield.rewardIndexesCurrent.selector;
++        controlFuncs[15] = IStandardizedYield.rewardIndexesStored.selector;
++        controlFuncs[16] = IStandardizedYield.claimRewards.selector;
+     }
+ }
+--- a/test/foundry/spec/protocol/dexes/uniswap/v4/adversarial/Adversarial_UniswapV4SE_E6ImpA0.t.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v4/adversarial/Adversarial_UniswapV4SE_E6ImpA0.t.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IUniswapV4StandardExchangeLiquidReserve} from "contracts/protocols/dexes/uniswap/v4/interfaces/IUniswapV4StandardExchangeLiquidReserve.sol";
+ 
+ import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+@@ -398,6 +400,14 @@
+         assertGt(vault.balanceOf(DEAD_SHARES_SINK), 0, "A0: dead shares for residual");
+         assertEq(vault.balanceOf(attacker), shares_, "A0: attacker user shares");
+         assertLt(shares_, vault.totalSupply(), "A0: attacker is not 100% supply");
++        // Activation paid both assets. Independently bound ownership of each leg.
++        IUniswapV4StandardExchangeLiquidReserve book = IUniswapV4StandardExchangeLiquidReserve(address(vault));
++        (uint256 total0, uint256 total1) = book.deployedReserve();
++        total0 += book.localReserve(token0_);
++        total1 += book.localReserve(_token1());
++        assertLe(shares_ * total0, mintIn_ * vault.totalSupply(), "A0: token0 claim excludes donation");
++        assertLe(shares_ * total1, mintIn_ * vault.totalSupply(), "A0: token1 claim limited to payment");
++
+ 
+         vm.startPrank(attacker);
+         vault.approve(address(vault), shares_);
+@@ -405,8 +415,9 @@
+         vm.stopPrank();
+ 
+         uint256 attackerTokAfter_ = IERC20(token0_).balanceOf(attacker);
+-        // Spent mintIn_; redeem must not return the donation.
+-        assertLe(attackerTokAfter_, attackerTokBefore_ + mintIn_, "A0: no donation extract");
++        // Both deposited assets are worth mintIn_ token0 at the initial human 1:1 price.
++        assertLe(attackerTokAfter_, attackerTokBefore_ + 2 * mintIn_, "A0: recovery limited to both paid assets");
++        assertEq(vault.balanceOf(attacker), 0, "A0: all attacker shares redeemed");
+         assertGt(vault.balanceOf(DEAD_SHARES_SINK), 0, "A0: dead shares remain after redeem");
+         assertLt(attackerTokAfter_ - attackerTokBefore_, donation_, "A0: did not absorb donation");
+     }
+@@ -430,13 +441,20 @@
+ 
+         vm.startPrank(victim);
+         IERC20(token0_).approve(address(vault), victimIn_);
+-        vm.expectRevert(UniswapV4StandardExchangeCommon.UniswapV4Exchange_ZeroAmount.selector);
+-        vault.exchangeIn(IERC20(token0_), victimIn_, IERC20(address(vault)), 0, victim, false, _deadline());
++        uint256 quoted = vault.previewExchangeIn(IERC20(token0_), victimIn_, IERC20(address(vault)));
++        if (quoted == 0) {
++            vm.expectRevert(UniswapV4StandardExchangeCommon.UniswapV4Exchange_ZeroAmount.selector);
++            vault.exchangeIn(IERC20(token0_), victimIn_, IERC20(address(vault)), 0, victim, false, _deadline());
++            assertEq(IERC20(token0_).balanceOf(victim), victimTokBefore_, "A0: zero-share payment returned");
++        } else {
++            uint256 received = vault.exchangeIn(IERC20(token0_), victimIn_, IERC20(address(vault)), quoted, victim, false, _deadline());
++            assertEq(received, quoted, "A0: positive quote funds actual shares");
++            assertEq(IERC20(token0_).balanceOf(victim), victimTokBefore_ - victimIn_, "A0: exact funded payment");
++        }
+         vm.stopPrank();
+ 
+-        assertEq(IERC20(token0_).balanceOf(victim), victimTokBefore_, "A0: victim tokens returned");
+-        assertEq(vault.balanceOf(victim), 0, "A0: no zero-share credit");
++        assertEq(vault.balanceOf(victim), quoted, "A0: no payment without positive shares");
+         assertEq(vault.balanceOf(attacker), attackerSharesBefore_, "A0: attacker shares unchanged");
+-        assertEq(vault.totalSupply(), supplyBefore_, "A0: supply unchanged");
++        assertEq(vault.totalSupply(), supplyBefore_ + quoted, "A0: only victim shares issued");
+     }
+ }
+--- a/test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_E6ImpA0_Decimals.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_E6ImpA0_Decimals.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IUniswapV4StandardExchangeLiquidReserve} from "contracts/protocols/dexes/uniswap/v4/interfaces/IUniswapV4StandardExchangeLiquidReserve.sol";
+ 
+ import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ 
+@@ -323,6 +325,14 @@
+         assertGt(vault.balanceOf(DEAD_SHARES_SINK), 0, "A0: dead shares for residual");
+         assertEq(vault.balanceOf(attacker), shares_, "A0: attacker user shares");
+         assertLt(shares_, vault.totalSupply(), "A0: attacker is not 100% supply");
++        // Activation paid both assets. Independently bound ownership of each leg.
++        IUniswapV4StandardExchangeLiquidReserve book = IUniswapV4StandardExchangeLiquidReserve(address(vault));
++        (uint256 total0, uint256 total1) = book.deployedReserve();
++        total0 += book.localReserve(token0_);
++        total1 += book.localReserve(_token1());
++        assertLe(shares_ * total0, mintIn_ * vault.totalSupply(), "A0: token0 claim excludes donation");
++        assertLe(shares_ * total1, _u1(1) * vault.totalSupply(), "A0: token1 claim limited to payment");
++
+ 
+         vm.startPrank(attacker);
+         vault.approve(address(vault), shares_);
+@@ -330,7 +340,8 @@
+         vm.stopPrank();
+ 
+         uint256 attackerTokAfter_ = IERC20(token0_).balanceOf(attacker);
+-        assertLe(attackerTokAfter_, attackerTokBefore_ + mintIn_, "A0: no donation extract");
++        assertLe(attackerTokAfter_, attackerTokBefore_ + 2 * mintIn_, "A0: recovery limited to both paid assets");
++        assertEq(vault.balanceOf(attacker), 0, "A0: all attacker shares redeemed");
+         assertGt(vault.balanceOf(DEAD_SHARES_SINK), 0, "A0: dead shares remain after redeem");
+         assertLt(attackerTokAfter_ - attackerTokBefore_, donation_, "A0: did not absorb donation");
+     }
+@@ -353,13 +364,20 @@
+ 
+         vm.startPrank(victim);
+         IERC20(token0_).approve(address(vault), victimIn_);
+-        vm.expectRevert(UniswapV4StandardExchangeCommon.UniswapV4Exchange_ZeroAmount.selector);
+-        vault.exchangeIn(IERC20(token0_), victimIn_, IERC20(address(vault)), 0, victim, false, _deadline());
++        uint256 quoted = vault.previewExchangeIn(IERC20(token0_), victimIn_, IERC20(address(vault)));
++        if (quoted == 0) {
++            vm.expectRevert(UniswapV4StandardExchangeCommon.UniswapV4Exchange_ZeroAmount.selector);
++            vault.exchangeIn(IERC20(token0_), victimIn_, IERC20(address(vault)), 0, victim, false, _deadline());
++            assertEq(IERC20(token0_).balanceOf(victim), victimTokBefore_, "A0: zero-share payment returned");
++        } else {
++            uint256 received = vault.exchangeIn(IERC20(token0_), victimIn_, IERC20(address(vault)), quoted, victim, false, _deadline());
++            assertEq(received, quoted, "A0: positive quote funds actual shares");
++            assertEq(IERC20(token0_).balanceOf(victim), victimTokBefore_ - victimIn_, "A0: exact funded payment");
++        }
+         vm.stopPrank();
+ 
+-        assertEq(IERC20(token0_).balanceOf(victim), victimTokBefore_, "A0: victim tokens returned");
+-        assertEq(vault.balanceOf(victim), 0, "A0: no zero-share credit");
++        assertEq(vault.balanceOf(victim), quoted, "A0: no payment without positive shares");
+         assertEq(vault.balanceOf(attacker), attackerSharesBefore_, "A0: attacker shares unchanged");
+-        assertEq(vault.totalSupply(), supplyBefore_, "A0: supply unchanged");
++        assertEq(vault.totalSupply(), supplyBefore_ + quoted, "A0: only victim shares issued");
+     }
+ }
+--- a/test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_TwapPoke.t.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_TwapPoke.t.sol
+@@ -157,9 +157,12 @@
+         bytes4 sel = bytes4(keccak256("update((address,address,uint24,int24,address))"));
+         vm.mockCallRevert(address(twapOracle), abi.encodeWithSelector(sel), "hostile");
+         uint256 amountIn = 5 ether;
++        (address[] memory tokens, uint256[] memory amounts) = _fundDualInput(_token0(), amountIn);
+         vm.expectEmit(false, false, false, true, address(vault));
+         emit UniswapV4StandardExchangeCommon.TwapOracleUpdateFailed(PoolId.unwrap(poolKey.toId()), bytes("hostile"));
+-        uint256 shares = _zapIn(_token0(), amountIn);
++        uint256 shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
++            tokens, amounts, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1 hours
++        );
+         assertGt(shares, 0);
+         vm.clearMockedCalls();
+     }
+@@ -256,18 +259,24 @@
+         );
+     }
+ 
+-    function _zapIn(address token, uint256 amountIn) internal returns (uint256 shares) {
++    function _fundDualInput(address token, uint256 amountIn)
++        internal returns (address[] memory tokens, uint256[] memory amounts)
++    {
+         assertEq(token, _token0(), "TWAP fixture starts from token0");
+-        address[] memory tokens = new address[](2);
++        tokens = new address[](2);
+         tokens[0] = _token0();
+         tokens[1] = Currency.unwrap(poolKey.currency1);
+-        uint256[] memory amounts = new uint256[](2);
++        amounts = new uint256[](2);
+         amounts[0] = amountIn;
+         amounts[1] = amountIn;
+         for (uint256 i; i < 2; ++i) {
+             ERC20PermitMintableStub(tokens[i]).mint(address(this), amounts[i]);
+             IERC20(tokens[i]).approve(address(vault), amounts[i]);
+         }
++    }
++
++    function _zapIn(address token, uint256 amountIn) internal returns (uint256 shares) {
++        (address[] memory tokens, uint256[] memory amounts) = _fundDualInput(token, amountIn);
+         shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
+             tokens, amounts, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1 hours
+         );
+--- a/test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_TwapPoke_Decimals.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_TwapPoke_Decimals.sol
+@@ -111,9 +111,12 @@
+         bytes4 sel = bytes4(keccak256("update((address,address,uint24,int24,address))"));
+         vm.mockCallRevert(address(twapOracle), abi.encodeWithSelector(sel), "hostile");
+         uint256 amountIn = _u0(5);
++        (address[] memory tokens, uint256[] memory amounts) = _fundDualInput(_token0(), amountIn);
+         vm.expectEmit(false, false, false, true, address(vault));
+         emit UniswapV4StandardExchangeCommon.TwapOracleUpdateFailed(PoolId.unwrap(poolKey.toId()), bytes("hostile"));
+-        uint256 shares = _zapIn(_token0(), amountIn);
++        uint256 shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
++            tokens, amounts, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1 hours
++        );
+         assertGt(shares, 0);
+         vm.clearMockedCalls();
+     }
+@@ -209,18 +212,24 @@
+         );
+     }
+ 
+-    function _zapIn(address token, uint256 amountIn) internal returns (uint256 shares) {
++    function _fundDualInput(address token, uint256 amountIn)
++        internal returns (address[] memory tokens, uint256[] memory amounts)
++    {
+         assertEq(token, _token0(), "TWAP fixture starts from token0");
+-        address[] memory tokens = new address[](2);
++        tokens = new address[](2);
+         tokens[0] = _token0();
+         tokens[1] = Currency.unwrap(poolKey.currency1);
+-        uint256[] memory amounts = new uint256[](2);
++        amounts = new uint256[](2);
+         amounts[0] = amountIn;
+         amounts[1] = amountIn * _uOf(Currency.unwrap(poolKey.currency1), 1) / _uOf(token, 1);
+         for (uint256 i; i < 2; ++i) {
+             MintableERC20Decimals(tokens[i]).mint(address(this), amounts[i]);
+             IERC20(tokens[i]).approve(address(vault), amounts[i]);
+         }
++    }
++
++    function _zapIn(address token, uint256 amountIn) internal returns (uint256 shares) {
++        (address[] memory tokens, uint256[] memory amounts) = _fundDualInput(token, amountIn);
+         shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
+             tokens, amounts, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1 hours
+         );

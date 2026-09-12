@@ -1,0 +1,12 @@
+{
+  "recorded_at_utc": "2026-09-08T09:10:35.122258+00:00",
+  "status": "APPLIED_AWAITING_FULL_BUILD_AND_RUNTIME",
+  "excluded_scope": "Two historical Single-over-Composed matrices: remove missing input members and assign only their existing fixture inputs. Required funded components remain unset; no excluded functional migration.",
+  "v4_scope": "Four CP/Weighted/Orbital/decimal adversarial callers use standard exchange instead of retired mint. Each proves the same funded bond callback succeeds outside the lock, then checks IsLocked and untouched callback payment during execution.",
+  "v4_files": [
+    "UniswapV4Detf_Orbital_Adversarial_Reentrancy.t.sol",
+    "UniswapV4Detf_Weighted_Adversarial_Reentrancy.t.sol",
+    "adversarial/Adversarial_Reentrancy.t.sol",
+    "decimals/adversarial/Adversarial_Reentrancy_Decimals.sol"
+  ]
+}

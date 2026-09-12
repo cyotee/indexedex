@@ -1,0 +1,21 @@
+{
+  "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/adversarial/Adversarial_Surface.t.sol",
+  "before_sha256": "9d83e8c8afaa46d60a95a980b92a301cd3372ca0fe5cc8b9e75196ab4d98c571",
+  "after_sha256": "bead16970eabf437360067b5ca0076682faaea235e96cf29566e16370948a959",
+  "old_tests": [
+    "test_J1_targetSelectors_subseteq_facetFuncs",
+    "test_J2_facetFuncs_subseteq_loupe_onProxy",
+    "test_J3_proxySmoke_loupeRoutedCalls",
+    "test_J_facetMetadata_matches_CREATE3_facet"
+  ],
+  "new_tests": [
+    "test_J1_targetSelectors_subseteq_facetFuncs",
+    "test_J2_facetFuncs_subseteq_loupe_onProxy",
+    "test_J3_proxySmoke_loupeRoutedCalls",
+    "test_J_facetMetadata_matches_CREATE3_facet",
+    "test_J2_retiredSelectorsCannotBeCalled"
+  ],
+  "disposition": "J1 independently specifies the funded API, J2 validates all package controls against actual cuts/loupe plus removal of old selectors, J3 executes actual funded staking and a purchased NFT. Existing metadata case retained.",
+  "status": "validated: all five tests passed",
+  "validation": "mixed-funded-surface-run.json"
+}

@@ -1,0 +1,550 @@
+{
+  "updated_at_utc": "2026-09-09T19:57:22.357066+00:00",
+  "status": "USER_REPORTED_FAILURE_REMEDIATION_APPLIED_AWAITING_OWNER_BUILD_TEST",
+  "workspace": "main repository; preserve unrelated changes",
+  "current_source_and_config_sha256": "26484c06fffc5dc4aaf6fcaf8054f8dac5448e3b394f1181207cee58f08ca911",
+  "active_forge_session": null,
+  "active_validation_parent_pid": null,
+  "active_sequence_record": "current-repository-user-failure-remediation-sequence.json",
+  "solidity_frozen_until_session_exits": false,
+  "in_validation": [],
+  "completed_checkpoints": {
+    "mature_close_cleanup": {
+      "status": "OWNER_APPROVED_APPLIED",
+      "evidence": [
+        "v4-close-cleanup-owner-approval.json",
+        "approved-v4-close-cleanup.json"
+      ]
+    },
+    "local_providers": {
+      "uniswap-v2": {
+        "cases": 8,
+        "passed": true,
+        "record": "uniswap-v2-funded-followups-run.json"
+      },
+      "camelot": {
+        "cases": 22,
+        "passed": true,
+        "record": "camelot-funded-followups-run.json"
+      },
+      "aerodrome": {
+        "cases": 37,
+        "passed": true,
+        "record": "aerodrome-funded-followups-run.json"
+      },
+      "erc4626": {
+        "cases": 13,
+        "passed": true,
+        "record": "erc4626-funded-followups-run.json"
+      }
+    },
+    "position_runtime_migrations": {
+      "status": "PASS",
+      "cases": 333,
+      "suites": 46,
+      "failures": 0,
+      "record": "position-cleanup-runtime-migrations-run.json",
+      "resolved_failure_map": "position-runtime-failure-migration-map.json"
+    },
+    "rocket_and_sfrxeth_forks": [
+      {
+        "provider": "rocket",
+        "record": "rocket-post-position-live-projection-fork-run.json",
+        "passed": 7
+      },
+      {
+        "provider": "rocket-v4",
+        "record": "rocket-v4-post-position-live-projection-fork-run.json",
+        "passed": 7
+      },
+      {
+        "provider": "sfrxeth",
+        "record": "sfrxeth-post-position-live-projection-fork-run.json",
+        "passed": 4
+      }
+    ],
+    "earlier_actual_providers": {
+      "etherfi_cases": 5,
+      "lido_cases": 4,
+      "evidence": [
+        "etherfi-live-projection-fork-run.json",
+        "lido-live-projection-fork-run.json"
+      ]
+    },
+    "frontend": {
+      "evidence": "frontend-v2-query-package-check.json",
+      "exit_code": 0,
+      "tests_passed": 410,
+      "files_passed": 59,
+      "seconds": 58.748,
+      "checks": [
+        "lint",
+        "typecheck",
+        "complete app tests"
+      ]
+    },
+    "prior_full_build_and_integration": {
+      "source_sha256": "5ea6bc62285fe1ada40f1a30ce59ffcc689475fee1909b4e016c50c4e2205246",
+      "full_build_seconds": 23391.542,
+      "integration_cases": 48,
+      "integration_suites": 22,
+      "archive": "pre-provider-build-checkpoint/",
+      "note": "Historical matching source checkpoint; current complete validation remains required."
+    },
+    "current_full_build": {
+      "status": "PASS",
+      "record": "implementation-full-build.json",
+      "seconds": 20057.124,
+      "source_sha256": "96d7a3ff1d5d6d8f41f1ff0c7a8dd09419e8243b669dd27700325822edf63dde",
+      "maintained_script_sources": 294,
+      "complete_plan": false,
+      "checkpoint_note": "Historical checkpoint retained for comparison; the active funded-final sequence must supply matching current-source evidence before final acceptance."
+    },
+    "current_funded_artifact_closures": {
+      "record": "current-funded-selector-manifest.json",
+      "components": 16,
+      "stale_source_closures": 0,
+      "all_deployable_components_fit_eip170": true,
+      "note": "Artifact/source validation only; actual installed proxy surface tests remain part of active hermetic validation.",
+      "checkpoint_note": "Historical checkpoint retained for comparison; the active funded-final sequence must supply matching current-source evidence before final acceptance."
+    },
+    "current_full_hermetic": {
+      "record": "implementation-hermetic-test.json",
+      "attribution": "current-hermetic-baseline-attribution.json",
+      "source_sha256": "96d7a3ff1d5d6d8f41f1ff0c7a8dd09419e8243b669dd27700325822edf63dde",
+      "suites": 2699,
+      "passed": 19858,
+      "failed": 7973,
+      "failure_scope_counts": {
+        "SHARED_OR_UNRELATED_REQUIRES_ATTRIBUTION": 212,
+        "D60_BALANCER_DETF_EXCLUDED": 637,
+        "IN_SCOPE_DETF": 7124
+      },
+      "seconds": 4842.791,
+      "validation_passed": false,
+      "checkpoint_note": "Historical checkpoint retained for comparison; the active funded-final sequence must supply matching current-source evidence before final acceptance."
+    },
+    "stata_remediation": {
+      "record": "hermetic-remediation-stata-first-runtime.json",
+      "passed": 112,
+      "failed": 0,
+      "suites": 6,
+      "build_seconds": 112.56,
+      "test_seconds": 5.69,
+      "source_sha256": "533ada6ae25e3d23c56f260129208866fecd6de9b6d28de41a3d6fe314ee2b74"
+    },
+    "surface_remediation": {
+      "record": "hermetic-remediation-surfaces-isolated-imports.json",
+      "passed": 136,
+      "failed": 0,
+      "suites": 10,
+      "build_seconds": 188.089,
+      "test_seconds": 15.67,
+      "source_sha256": "533ada6ae25e3d23c56f260129208866fecd6de9b6d28de41a3d6fe314ee2b74"
+    },
+    "gold_first_remediation": {
+      "record": "hermetic-remediation-v4-gold-first-runtime.json",
+      "passed": 897,
+      "failed": 37,
+      "expected_methods": 934,
+      "build_seconds": 698.731,
+      "test_seconds": 206.688,
+      "source_sha256": "533ada6ae25e3d23c56f260129208866fecd6de9b6d28de41a3d6fe314ee2b74",
+      "status": "FAILED_REQUIRES_REVIEW"
+    },
+    "policy_funded_opening": {
+      "record": "hermetic-remediation-v4-policy-funded-opening.json",
+      "passed": 421,
+      "failed": 17,
+      "incomplete_suites": 0,
+      "build_seconds": 373.047,
+      "runtime_seconds": 102.999
+    },
+    "obsolete_common_ledger": {
+      "status": "APPLIED_SELECTED_RUNTIME_PASSED",
+      "removed_files": 6,
+      "removed_storage_members": 17,
+      "selected_cases": 102,
+      "evidence": [
+        "obsolete-common-ledger-cleanup-applied.json",
+        "hermetic-remediation-v4-policy-funded-opening.json"
+      ],
+      "remaining": "Final complete current build and acceptance reconciliation."
+    },
+    "public_policy_initial_build": {
+      "record": "hermetic-remediation-v4-policy-public-market.json",
+      "build_exit_code": 1,
+      "build_seconds": 448.199,
+      "failure": "Stack too deep in the new policy test helper; extracted public trade assertions without compiler-setting changes."
+    },
+    "public_policy_provider_codegen": {
+      "record": "public-policy-provider-codegen.json",
+      "methods": 21,
+      "seconds": 105.977,
+      "runtime_acceptance": false
+    },
+    "policy_public_market": {
+      "status": "PASS_SELECTED_SUITES",
+      "record": "hermetic-remediation-v4-policy-public-market-split.json",
+      "passed": 438,
+      "failed": 0,
+      "incomplete_suites": 0,
+      "build_seconds": 1185.534,
+      "runtime_seconds": 220.246,
+      "source_sha256": "8b95fa9d3b840eee0885c252c2c8a20e62a596a5ea9be110235c634e0195a295"
+    },
+    "current_documentation_navigation": {
+      "record": "common-ledger-documentation-followup.json",
+      "files": 8,
+      "validated_links": 18,
+      "scope": "Explicit current/historical distinction for the approved unused ledger removal; no Solidity/configuration changes."
+    },
+    "se_source_models": {
+      "record": "current-se-package-inventory.json",
+      "issuers": 25,
+      "scope": "Current source definitions and wiring only; final matching proxy execution is required."
+    }
+  },
+  "remaining_release_work": [
+    "Finish the normal full-source build including maintained scripts and the unfiltered default suite; attribute and resolve actual in-scope failures. This is the required runtime validation for all Balancer SE and all 477 V4 provider sources; no narrowed precheck is separately required.",
+    "Execute both applied V3 fork fixture migrations: all seven retained declarations plus inherited Base sanity on real pinned pools.",
+    "Deploy current packages and execute all 39 strict local Robinhood lifecycle cases.",
+    "Reconcile final source closures, selectors, storage, ABIs/callers, compiled test counts and before/after consolidation evidence.",
+    "Finalize PRD acceptance matrix, implementation stages and the reviewable validation report only when required checks are complete."
+  ],
+  "prepared_followups": [
+    {
+      "record": "v3-fork-fixture-followup-prepared.json",
+      "status": "APPLIED_RUNTIME_VALIDATION_PENDING",
+      "source_count": 2,
+      "scope": "Three retained cases require dual activation before later single-token deposits. Preserve all seven declared cases and inherited Base sanity; normalize actual token units, strengthen custody/conservation assertions, and pin Robinhood block.",
+      "gate": "Applied after the preceding full-run parent exited; final runtime validation remains required.",
+      "diagnostic": {
+        "record": "retained-v3-fork-fixtures-draft-typecheck.json",
+        "passed": true,
+        "compiled_methods": 8,
+        "seconds": 12.185,
+        "runtime_validation": false
+      },
+      "application_record": "hermetic-followups-validation-remediation-applied.json"
+    },
+    {
+      "record": "stata-hermetic-followups-prepared.json",
+      "status": "APPLIED_SELECTED_RUNTIME_VALIDATION_PASSED",
+      "source_count": 7,
+      "scope": "See checked source records.",
+      "gate": "Applied after the preceding full-run parent exited; final runtime validation remains required.",
+      "diagnostic": {
+        "record": "stata-hermetic-draft-typecheck.json",
+        "passed": true,
+        "compiled_methods": 112,
+        "seconds": 20.31,
+        "runtime_validation": false
+      },
+      "application_record": "hermetic-followups-validation-remediation-applied.json"
+    },
+    {
+      "record": "production-se-fixture-followups-prepared.json",
+      "status": "APPLIED_RUNTIME_VALIDATION_PENDING",
+      "source_count": 34,
+      "scope": "34 existing V4 provider fixture sources: exact V3 seeding, funded dual activation across all reserve families, and actual first-leg token/decimal binding. Every test declaration retained.",
+      "gate": "Applied after the preceding full-run parent exited; final runtime validation remains required.",
+      "diagnostic": {
+        "record": "actual-provider-binding-and-short-payment-draft-typecheck.json",
+        "passed": true,
+        "compiled_methods": 133,
+        "seconds": 26.683,
+        "runtime_validation": false
+      },
+      "application_record": "hermetic-followups-validation-remediation-applied.json"
+    },
+    {
+      "record": "current-surface-fixture-followups-prepared.json",
+      "status": "APPLIED_SELECTED_RUNTIME_VALIDATION_PASSED",
+      "source_count": 10,
+      "scope": "Existing in-scope V4 tests only; every declaration retained. No product, Balancer DETF, or Slipstream change.",
+      "gate": "Applied after the preceding full-run parent exited; final runtime validation remains required.",
+      "diagnostic": {
+        "record": "current-surface-casts-draft-typecheck.json",
+        "passed": true,
+        "compiled_methods": 136,
+        "seconds": 33.988,
+        "runtime_validation": false
+      },
+      "application_record": "hermetic-followups-validation-remediation-applied.json"
+    },
+    {
+      "record": "balancer-se-fixture-followups-prepared.json",
+      "status": "APPLIED_RUNTIME_VALIDATION_PENDING",
+      "source_count": 8,
+      "scope": "Unrelated Balancer SE remains in scope; no Balancer-hosted DETF functional changes.",
+      "gate": "Applied after the preceding full-run parent exited; final runtime validation remains required.",
+      "diagnostic": {
+        "record": "balancer-native-fixtures-draft-typecheck.json",
+        "passed": true,
+        "compiled_methods": 49,
+        "seconds": 21.317,
+        "runtime_validation": false
+      },
+      "application_record": "hermetic-followups-validation-remediation-applied.json"
+    },
+    {
+      "record": "balancer-se-smoke-consolidation-prepared.json",
+      "status": "APPLIED_RUNTIME_VALIDATION_PENDING",
+      "source_count": 3,
+      "scope": "Balancer SE only; no Balancer-hosted DETF or Slipstream changes.",
+      "gate": "Applied after the preceding full-run parent exited; final runtime validation remains required.",
+      "diagnostic": {
+        "record": "balancer-smoke-and-stable-draft-typecheck.json",
+        "passed": true,
+        "compiled_methods": 20,
+        "seconds": 18.067,
+        "runtime_validation": false
+      },
+      "application_record": "hermetic-followups-validation-remediation-applied.json"
+    },
+    {
+      "record": "balancer-stable-walk-fixture-prepared.json",
+      "status": "APPLIED_RUNTIME_VALIDATION_PENDING",
+      "source_count": 1,
+      "scope": "Existing Balancer SE walk/exhaust tests only; no Balancer DETF or Slipstream change.",
+      "gate": "Applied after the preceding full-run parent exited; final runtime validation remains required.",
+      "diagnostic": {
+        "record": "balancer-smoke-and-stable-draft-typecheck.json",
+        "passed": true,
+        "compiled_methods": 20,
+        "seconds": 18.067,
+        "runtime_validation": false
+      },
+      "application_record": "hermetic-followups-validation-remediation-applied.json"
+    },
+    {
+      "record": "funded-lifecycle-fixture-followups-prepared.json",
+      "status": "APPLIED_RUNTIME_VALIDATION_PENDING",
+      "source_count": 6,
+      "scope": "Six shared V4 test sources only; no economic formula, fuzz settings, or assertion weakening.",
+      "gate": "Applied after the preceding full-run parent exited; final runtime validation remains required.",
+      "diagnostic": {
+        "record": "funded-lifecycle-fixtures-draft-typecheck.json",
+        "passed": true,
+        "compiled_methods": 79,
+        "seconds": 22.822,
+        "runtime_validation": false
+      },
+      "application_record": "hermetic-followups-validation-remediation-applied.json"
+    },
+    {
+      "record": "source-presence-consolidation-prepared.json",
+      "status": "APPLIED_RUNTIME_VALIDATION_PENDING",
+      "source_count": 1,
+      "scope": "Shared test consolidation; preserve historical source in before-file archive, excluded Balancer DETF and Slipstream runtime tests unchanged.",
+      "gate": "Applied after the preceding full-run parent exited; final runtime validation remains required.",
+      "application_record": "hermetic-followups-validation-remediation-applied.json"
+    },
+    {
+      "record": "funded-policy-fixture-followups-prepared.json",
+      "status": "APPLIED_RUNTIME_VALIDATION_PENDING",
+      "source_count": 3,
+      "scope": "Existing policy fixtures only; production price, reserve and expansion math unchanged. All declarations and final assertions retained.",
+      "gate": "Applied after the preceding full-run parent exited; final runtime validation remains required.",
+      "diagnostic": {
+        "record": "funded-policy-fixtures-draft-typecheck.json",
+        "passed": true,
+        "compiled_methods": 52,
+        "seconds": 20.064,
+        "runtime_validation": false
+      },
+      "application_record": "hermetic-followups-validation-remediation-applied.json"
+    },
+    {
+      "record": "nested-short-funding-followups-prepared.json",
+      "status": "APPLIED_RUNTIME_VALIDATION_PENDING",
+      "source_count": 2,
+      "scope": "Two existing shared V4 adversarial fixtures; all declarations retained; no production edits.",
+      "gate": "Applied after the preceding full-run parent exited; final runtime validation remains required.",
+      "diagnostic": {
+        "record": "actual-provider-binding-and-short-payment-draft-typecheck.json",
+        "passed": true,
+        "compiled_methods": 133,
+        "seconds": 26.683,
+        "runtime_validation": false
+      },
+      "application_record": "hermetic-followups-validation-remediation-applied.json"
+    },
+    {
+      "record": "orbital-donation-consolidation-prepared.json",
+      "status": "APPLIED_RUNTIME_VALIDATION_PENDING",
+      "source_count": 2,
+      "scope": "Two Orbital provider test fixtures only; preserve all 108 inherited methods and actual common payment/custody assertions.",
+      "gate": "Applied after the preceding full-run parent exited; final runtime validation remains required.",
+      "diagnostic": {
+        "record": "orbital-funded-donations-draft-typecheck.json",
+        "passed": true,
+        "compiled_methods": 112,
+        "seconds": 22.093,
+        "runtime_validation": false
+      },
+      "application_record": "hermetic-followups-validation-remediation-applied.json"
+    }
+  ],
+  "applied_pending_final_validation": [
+    {
+      "record": "v3-import-storage-followup-applied.json",
+      "scope": "Remove unused V3 NFT import metadata; preserve V4 settlement context. Multi-interface ordering NatSpec corrected."
+    },
+    "17-source owner-reported failure remediation: buffer scaling, Orbital sequential zap quotes, V3 inverse quote search and current funded/policy/decimal fixtures; user-failure-remediation/applied.json."
+  ],
+  "owner_decisions_pending": [],
+  "scope": {
+    "D60": "Balancer-hosted DETF functional work excluded; compilation maintenance only. Unrelated Balancer SE remains in scope.",
+    "D66": "Unfinished Slipstream work explicitly owner-deferred, with no release blocker. Preserve completed changes, tests and evidence."
+  },
+  "local_rehearsal": {
+    "rpc": "http://127.0.0.1:18663",
+    "chain_id": 4663,
+    "fork_block": 56118361,
+    "code_size_limit": 24576,
+    "block_gas_limit": 32000000,
+    "record": "current-robinhood-rehearsal/node.json",
+    "status": "NODE_AND_CORE_READY_CURRENT_PACKAGES_AND_LIFECYCLE_PENDING",
+    "current_readiness": "current-robinhood-rehearsal/current-node-readiness.json",
+    "launch_limit_maintenance": "robinhood-launch-strict-size-maintenance.json",
+    "cache_policy": "After the active validation sequence exits, seed a separate visible rehearsal cache from cache_forge/solidity-files-cache.json and pass FOUNDRY_CACHE_PATH to the maintained shell. Preserve canonical out/ and full default cache; no cache clearing and no claimed compilation speedup."
+  },
+  "history": "queue-history-before-final-reconciliation-7e29f3157bb9.json",
+  "evidence_note": "Selected checkpoint counts overlap; they must not be summed into full-suite or full-plan acceptance.",
+  "test_retirement_reconciliation": {
+    "record": "retired-test-anchor-consolidation.json",
+    "mapped_sources": 77,
+    "retired_declarations": 493,
+    "in_scope_retirements_without_record": 0,
+    "inventory": "current-test-consolidation.json",
+    "baseline_source": "immutable e08b415733e729471779dcb8102529631330ea16 Git blobs",
+    "note": "Source mapping only; final executed-case counts and timings remain required.",
+    "source_inventory_summary": {
+      "source_files": 3112,
+      "dispositions": {
+        "UNCHANGED": 1679,
+        "UPDATED": 937,
+        "REMOVED_OR_MOVED": 474,
+        "ADDED": 22
+      },
+      "scopes": {
+        "IN_SCOPE_OR_SHARED_DEPENDENCY": 1990,
+        "D66_DEFERRED_PRESERVE_EXISTING": 24,
+        "D60_BALANCER_DETF_EXCLUDED": 1098
+      },
+      "declared_tests_before": 6499,
+      "declared_tests_current": 5199,
+      "files_with_retired_declarations_without_direct_record": 0
+    }
+  },
+  "last_source_freeze_verified_at_utc": "2026-09-09T08:31:48.363757+00:00",
+  "completed_documentation_followups": [
+    "Three Rocket Pool package documents now specify the implemented four-address deployment arguments and native SY surface.",
+    "Consolidation comparison reads immutable baseline Git blobs; all in-scope retired declarations have records.",
+    "Local Robinhood launch helper now enforces the same 24576-byte EIP-170 limit as the existing node."
+  ],
+  "actual_hermetic_findings_pending_completion": {
+    "status": "FULL_RUN_ATTRIBUTED_REMEDIATION_APPLIED_VALIDATION_PENDING",
+    "stata": "Zero-supply guard and actual native-unit routes, fees and reward fixtures validated by all 112 affected cases.",
+    "additional_review": [
+      "Separate Weighted/Orbital provider fixtures need the same funded two-currency SE activation as CP/Quad.",
+      "Balancer SE fixtures confuse actual buffer-token roles and native units; existing real-package smoke and rate tests also require migration.",
+      "Orbital policy fixtures assume a fixed opening premium and sufficient 30-year catch-up; repeated swaps incorrectly require a whole DETF after the bond was claimed.",
+      "Obsolete source-string presence checks are mapped to retained actual custody/adversarial runtime coverage."
+    ],
+    "no_owner_decision_needed": true
+  },
+  "active_draft_codegen": null,
+  "prepared_followup_sources": 79,
+  "additional_draft_codegen": [
+    {
+      "record": "retained-v3-forks-draft-codegen.json",
+      "passed": true,
+      "methods": 8,
+      "seconds": 49.419,
+      "runtime_validation": false
+    },
+    {
+      "record": "final-policy-donation-and-short-payment-draft-codegen.json",
+      "passed": true,
+      "methods": 176,
+      "suites": 5,
+      "seconds": 224.434,
+      "runtime_validation": false
+    }
+  ],
+  "prepared_application_runner": "apply-checked-hermetic-followups.py --label <unique-label> --apply (only after complete active sequence exit and attribution)",
+  "prepared_runtime_runner": "run-hermetic-remediation-checks.py --group <stata|surfaces|balancer-se|v4-gold|v4-providers> --label <unique-label>",
+  "active_diagnostic": {
+    "status": "CODEGEN_ONLY_PASSED",
+    "record": "user-failure-remediation/applied.json",
+    "methods": 237
+  },
+  "last_application_record": "hermetic-followups-validation-remediation-applied.json",
+  "active_runtime_record": null,
+  "authorized_dead_storage_followup": {
+    "record": "obsolete-common-ledger-cleanup-prepared.json",
+    "status": "APPLIED_RUNTIME_VALIDATION_PENDING",
+    "approval": "v4-close-cleanup-owner-approval.json",
+    "owner_question_pending": false,
+    "sources": 16,
+    "deleted_unused_sources": 6,
+    "removed_storage_members": 17,
+    "retired_test_declarations": 7,
+    "gate": "Wait for active gold build/runtime parent to exit; then verify and apply current before hashes.",
+    "scope": "Repo-wide import audit proves the legacy NFT ledger has no actual product consumer. Legacy interfaces needed by excluded Balancer DETFs remain.",
+    "application_record": "obsolete-common-ledger-cleanup-applied.json"
+  },
+  "gold_policy_followup": "gold-policy-funding-correction.json",
+  "upcoming_affected_runtime_groups": {
+    "balancer-se": "153 complete pool suites plus WrappedStandardExchangeRateProvider outside that directory; D60 DETFs excluded.",
+    "v4-providers": "All 477 provider sources and eight gold decimal ProductLaw sources are included in the active unfiltered full run. The prepared 52-source precheck was not executed."
+  },
+  "final_repository_runner": {
+    "command": "python3 implementation-artifacts/detf-funded-staking/run-current-repository-checks.py --label funded-final",
+    "status": "RUNNING",
+    "prerequisite": "Wait for the entire active selected validation sequence to exit and resolve all actual in-scope failures before starting. One Forge process at a time.",
+    "scope": "Archive preceding full evidence; current full build plus maintained scripts; unfiltered default tests; exact baseline/scope attribution even for a completed failing test run. No automatic acceptance closure.",
+    "record": "current-repository-funded-final-sequence.json",
+    "archive": "before-current-repository-funded-final",
+    "current_recompiled_files": 1843
+  },
+  "stopped_selected_sequence": {
+    "pty": 45846,
+    "result": "First command completed with setup failures; later V4-provider and V3-fork commands did not start.",
+    "record": "hermetic-remediation-balancer-se-current-fixtures.json",
+    "passed": 61,
+    "failed_setup_cases": 154,
+    "expected_methods": 1381,
+    "incomplete_suites": 149,
+    "build_seconds": 2315.566,
+    "test_seconds": 32.579,
+    "diagnosis": "ERC20Facet vm.getCode lookup is absent from the narrowed runtime project even though old cache/out metadata exists; seed the maintained artifact libraries as a compiler root.",
+    "trace": "balancer-se-missing-artifact-setup-trace.json",
+    "production_changes": false
+  },
+  "active_selected_sequence": {
+    "status": "FINISHED_ARTIFACT_LOOKUP_SETUP_FAILURES",
+    "pty": 66356,
+    "record": "hermetic-remediation-balancer-se-artifact-seed-root.json",
+    "build_exit_code": 0,
+    "build_seconds": 4395.846,
+    "test_seconds": 29.258,
+    "passed": 61,
+    "failed": 154,
+    "incomplete_suites": 149,
+    "note": "Same generic vm.getCode setup failures after a fresh 933-file build; the specific later missing artifact was not retraced. The earlier trace identifies ERC20Facet for the preceding run."
+  },
+  "validation_sequence_consolidation": "remaining-validation-sequence-consolidation.json",
+  "next_commands_after_active_pass": [
+    "python3 implementation-artifacts/detf-funded-staking/run-v3-retained-live-pool-forks.py --label current-full-range",
+    "Deploy current packages and pass all 39 strict local Robinhood lifecycle cases.",
+    "Reconcile current compiled/source/selector/storage/caller manifests, test counts/timings and all applicable acceptance criteria."
+  ],
+  "next_command_policy": "Owner runs the next complete build and hermetic test. No new long Forge run was started during remediation. Preserve full-run logs and attribute in-scope failures before acceptance.",
+  "retained_fork_runner_ready": "Uses the normal contracts source root and default script root, guards completion of the active full sequence and a matching successful full build, and seeds a separate cache from that full build. All eight existing actual-pool cases retained.",
+  "next_build_test_command": "python3 implementation-artifacts/detf-funded-staking/run-current-repository-checks.py --label user-failure-remediation",
+  "latest_remediation": "user-failure-remediation/applied.json"
+}

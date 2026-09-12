@@ -1,0 +1,851 @@
+{
+  "status": "APPLIED_RUNTIME_VALIDATION_PENDING",
+  "started_at_utc": "2026-09-09T08:34:04.631375+00:00",
+  "approval": "Owner instruction to finish the existing implementation and test plan; mature-close deletion approval is separately preserved in v4-close-cleanup-owner-approval.json.",
+  "previous_validated_snapshot": {
+    "recorded_at_utc": "2026-09-09T01:27:40.813808+00:00",
+    "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+    "source_and_config_sha256": "96d7a3ff1d5d6d8f41f1ff0c7a8dd09419e8243b669dd27700325822edf63dde",
+    "source_and_config_files": 4818,
+    "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+    "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+    "crane_tracked_contract_and_config_diff_sha256": "284fd75764cb255d1e527eef38fd51e65fca73e8ebb11b7465965e8dfeb2122c",
+    "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+    "machine": "macOS-26.6.2-x86_64-i386-64bit",
+    "architecture": "x86_64",
+    "logical_cpus": 16,
+    "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+  },
+  "completed_full_test_record": "implementation-hermetic-test.json",
+  "completed_attribution_record": "current-hermetic-baseline-attribution.json",
+  "before_archive": "implementation-artifacts/detf-funded-staking/hermetic-followups-before-validation-remediation",
+  "records": [
+    "v3-fork-fixture-followup-prepared.json",
+    "stata-hermetic-followups-prepared.json",
+    "production-se-fixture-followups-prepared.json",
+    "current-surface-fixture-followups-prepared.json",
+    "balancer-se-fixture-followups-prepared.json",
+    "balancer-se-smoke-consolidation-prepared.json",
+    "balancer-stable-walk-fixture-prepared.json",
+    "funded-lifecycle-fixture-followups-prepared.json",
+    "source-presence-consolidation-prepared.json",
+    "funded-policy-fixture-followups-prepared.json",
+    "nested-short-funding-followups-prepared.json",
+    "orbital-donation-consolidation-prepared.json"
+  ],
+  "changes": [
+    {
+      "path": "test/foundry/fork/base_main/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_Fork.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/v3-fork-fixture-followup-drafts/base.sol.txt",
+      "before_sha256": "e9c898f1c3c386ccc4e5ef6916808431902adb06c7fe8662bd9cf19100694a02",
+      "after_sha256": "366843668d6895d3ff15ecf79f87a7982190f6c18dbf37c607ef8c6258b48be5",
+      "retained_direct_cases": [
+        "test_fork_directSwap_and_zap",
+        "test_fork_MJ2_or_FR1_fullRangeCenter",
+        "test_fork_A0_deadSharesOnResidual",
+        "test_fork_blockedSleevePath"
+      ]
+    },
+    {
+      "path": "test/foundry/fork/robinhood_4663/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_Robinhood.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/v3-fork-fixture-followup-drafts/robinhood.sol.txt",
+      "before_sha256": "ab9d8635f87b80a38e997b955ce1978a96124b82ca5f0e3046ae6ec4ccb7775a",
+      "after_sha256": "f6637d7aa730b795017e788ff45d0757afe3989320c1566cf9f0840fdf22fa1b",
+      "retained_direct_cases": [
+        "test_fork4663_MJ2_or_FR1_fullRangeCenter",
+        "test_fork4663_A0_deadSharesOnResidual",
+        "test_fork4663_blockedSleevePath"
+      ]
+    },
+    {
+      "path": "contracts/protocols/lending/aave/v3.6/AaveV3StataStandardExchangeOutTarget.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/stata-hermetic-followup-drafts/AaveV3StataStandardExchangeOutTarget.sol.txt",
+      "reason": "Reject positive exact-output withdrawals from an empty SE supply or backing; preserve proportional ceil pricing.",
+      "before_sha256": "ba642cebadc4740c5727d90c605e0c793380b5761a9148b66096137fe72b0596",
+      "after_sha256": "c7791bf3322e9812c404591410217ef5e859845195c4360354a5bd67dcba0210",
+      "declared_tests_before": [],
+      "declared_tests_after": []
+    },
+    {
+      "path": "contracts/test/bases/TestBase_AaveV3StataStandardExchange_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/stata-hermetic-followup-drafts/TestBase_AaveV3StataStandardExchange_Decimals.sol.txt",
+      "reason": "Share the real Crane Stata fixture across all three decimal cases; remove ineffective address-zero oracle mocks.",
+      "before_sha256": "a3808f5c53f4aeece87c256df9d459d57133e1d7b81b8a664407b165c75ee809",
+      "after_sha256": "5fa5578c1d54eecafae1318b52a8cb158bc112cff7acc250b0440b6ec773bdbc",
+      "declared_tests_before": [],
+      "declared_tests_after": []
+    },
+    {
+      "path": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/stata-hermetic-followup-drafts/AaveV3StataStandardExchange_Real_Decimals.sol.txt",
+      "reason": "Consolidated actual-protocol route tests distinguish desired output from shares spent, include actual aToken exits, and configure/check real fee receipts.",
+      "before_sha256": "f981de215bd5bb82929ec02a1d291c8284ad8cb2b5496682bfa19b35b01d1626",
+      "after_sha256": "8bff9f5e1fb122ad33536d94e0ff40006d93fcf992c7e01c80452b2dbd6409da",
+      "declared_tests_before": [
+        "test_Real_Route_BaseToSE_PreviewMatches",
+        "test_Real_Route_StataToSE",
+        "test_Real_Route_SEToStata_PreviewMatches",
+        "test_Real_Route_SEToBase_PreviewMatches",
+        "testFuzz_Real_BaseToSE",
+        "testFuzz_Real_SEToStata",
+        "testFuzz_Real_FeeOnBaseToSE",
+        "testFuzz_Real_SEToStata_Pretransferred",
+        "test_Real_Route_BaseToStata",
+        "test_Real_Route_BaseToStata_Pretransferred",
+        "test_Real_Route_BaseToStata_Pretransferred_bookedInventory_reverts",
+        "test_Real_Route_ATokenToStata",
+        "test_Real_Route_ATokenToSE",
+        "test_Real_Route_SEToAToken",
+        "test_Real_Route_SEToBase_Pretransferred",
+        "test_Real_FeeApplicationAndMarker",
+        "test_Real_RewardsForwarded_NA"
+      ],
+      "declared_tests_after": [
+        "test_Real_Route_BaseToSE_PreviewMatches",
+        "test_Real_Route_StataToSE",
+        "test_Real_Route_SEToStata_PreviewMatches",
+        "test_Real_Route_SEToBase_PreviewMatches",
+        "testFuzz_Real_BaseToSE",
+        "testFuzz_Real_SEToStata",
+        "testFuzz_Real_FeeOnBaseToSE",
+        "testFuzz_Real_SEToStata_Pretransferred",
+        "test_Real_Route_BaseToStata",
+        "test_Real_Route_BaseToStata_Pretransferred",
+        "test_Real_Route_BaseToStata_Pretransferred_bookedInventory_reverts",
+        "test_Real_Route_ATokenToStata",
+        "test_Real_Route_ATokenToSE",
+        "test_Real_Route_SEToAToken",
+        "test_Real_Route_SEToBase_Pretransferred",
+        "test_Real_FeeApplicationAndMarker",
+        "test_Real_FeeOnAndOff",
+        "test_Real_RewardsForwarded",
+        "test_Real_MarkerAndDeployment",
+        "testFuzz_Real_StataToSE_Pretransferred",
+        "testFuzz_Real_BaseToStata"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange_Real.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/stata-hermetic-followup-drafts/AaveV3StataStandardExchange_Real.t.sol.txt",
+      "reason": "Replace the duplicated 18-decimal fixture body with the same real-protocol cases as the retained 6/9-decimal leaves.",
+      "before_sha256": "6ce9800b82f9cb8acbf56a6f405d758430907bfd8077802b0a867f4b3a6187cb",
+      "after_sha256": "05ba78b631f16a2450d63bc064cc5ee918bc712b6aa11d6c0446a2cbc0f2397d",
+      "declared_tests_before": [
+        "test_Real_Route_BaseToSE_PreviewMatches",
+        "test_Real_Route_StataToSE",
+        "test_Real_Route_SEToStata_PreviewMatches",
+        "test_Real_Route_SEToBase_PreviewMatches",
+        "testFuzz_Real_BaseToSE",
+        "testFuzz_Real_SEToStata",
+        "testFuzz_Real_FeeOnBaseToSE",
+        "testFuzz_Real_SEToStata_Pretransferred",
+        "test_Real_Route_BaseToStata",
+        "test_Real_Route_BaseToStata_Pretransferred",
+        "test_Real_Route_BaseToStata_Pretransferred_bookedInventory_reverts",
+        "test_Real_Route_ATokenToStata",
+        "test_Real_Route_ATokenToSE",
+        "test_Real_Route_SEToAToken",
+        "test_Real_Route_SEToBase_Pretransferred",
+        "test_Real_FeeApplicationAndMarker",
+        "test_Real_RewardsForwarded_NA"
+      ],
+      "declared_tests_after": []
+    },
+    {
+      "path": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/Adversarial_AaveV3StataSE_SecurePull_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/stata-hermetic-followup-drafts/Adversarial_AaveV3StataSE_SecurePull_Decimals.sol.txt",
+      "reason": "Preserve all attack tests, use exact typed errors and full-share proportional redemption; enforce empty-supply rejection in both preview and execution.",
+      "before_sha256": "a715e74570d1293f1879523f60a3cda6fed33287ec5374c2d764bb5abf359da3",
+      "after_sha256": "ed198283847e6182b96efa599078d957a9d5fea7663ba5d5c293dbd7f86facf9",
+      "declared_tests_before": [
+        "test_I1_pretransferred_stataInventoryNoInCallTransfer_reverts",
+        "test_FreeMint_stataToSe_pretransferredInventory_reverts",
+        "test_FreeMint_baseToSe_pretransferredInventory_reverts",
+        "test_A0_pretransferred_noDelta_reverts",
+        "test_I_positive_honestStataPullMint_succeeds",
+        "test_A1_donateBase_cannotMintFreeShares",
+        "test_A2_donateSeShares_noFreeMintOrTheft",
+        "test_A3_donateStata_cannotMintFreeShares",
+        "test_E1_mintRedeemRoundTrip_bounded",
+        "test_E4_holderBalance_notDilutedByOthersMint",
+        "test_E5_zeroAmount_noFreeMint",
+        "test_E5_invalidRoute_unsupportedToken_reverts",
+        "test_H2_minOutTooHigh_balancesUnchanged",
+        "test_H3_minOutTooHigh_noFreeShares",
+        "test_H2_exchangeOut_withoutShares_balancesUnchanged"
+      ],
+      "declared_tests_after": [
+        "test_I1_pretransferred_stataInventoryNoInCallTransfer_reverts",
+        "test_FreeMint_stataToSe_pretransferredInventory_reverts",
+        "test_FreeMint_baseToSe_pretransferredInventory_reverts",
+        "test_A0_pretransferred_noDelta_reverts",
+        "test_I_positive_honestStataPullMint_succeeds",
+        "test_A1_donateBase_cannotMintFreeShares",
+        "test_A2_donateSeShares_noFreeMintOrTheft",
+        "test_A3_donateStata_cannotMintFreeShares",
+        "test_E1_mintRedeemRoundTrip_bounded",
+        "test_E4_holderBalance_notDilutedByOthersMint",
+        "test_E5_zeroAmount_noFreeMint",
+        "test_E5_invalidRoute_unsupportedToken_reverts",
+        "test_H2_minOutTooHigh_balancesUnchanged",
+        "test_H3_minOutTooHigh_noFreeShares",
+        "test_H2_exchangeOut_withoutShares_balancesUnchanged"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/protocol/lending/aave/v3.6/adversarial/Adversarial_AaveV3StataSE_SecurePull.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/stata-hermetic-followup-drafts/Adversarial_AaveV3StataSE_SecurePull.t.sol.txt",
+      "reason": "Consolidate duplicated mocked attacks into real shared decimal fixture; retain F1/J1/J2/J3 production proxy checks.",
+      "before_sha256": "d0db56919b761a5a7e7361123ce6b2c023f18d2945900099c7efc83dfcfa9cd7",
+      "after_sha256": "2765773cfe21563c188f91c91b00a3e59934a14440df56483761c4675fb813db",
+      "declared_tests_before": [
+        "test_I1_pretransferred_stataInventoryNoInCallTransfer_revertsDelta0",
+        "test_FreeMint_stataToSe_pretransferredInventory_reverts",
+        "test_FreeMint_baseToSe_pretransferredInventory_reverts",
+        "test_A0_pretransferred_noDelta_reverts",
+        "test_I_positive_honestStataPullMint_succeeds",
+        "test_A1_donateBase_cannotMintFreeShares",
+        "test_A2_donateSeShares_noFreeMintOrTheft",
+        "test_A3_donateStata_cannotMintFreeShares",
+        "test_E1_mintRedeemRoundTrip_bounded",
+        "test_E4_holderBalance_notDilutedByOthersMint",
+        "test_E5_zeroAmount_noFreeMint",
+        "test_E5_invalidRoute_unsupportedToken_reverts",
+        "test_F1_diamondCut_blocked",
+        "test_H2_minOutTooHigh_balancesUnchanged",
+        "test_H3_minOutTooHigh_noFreeShares",
+        "test_H2_exchangeOut_withoutShares_balancesUnchanged",
+        "test_J1_facetFuncs_coversTargetApi",
+        "test_J2_proxyLoupe_allProductSelectors",
+        "test_J3_proxyCallable_smoke_eachSelector"
+      ],
+      "declared_tests_after": [
+        "test_F1_diamondCut_blocked",
+        "test_J1_facetFuncs_coversTargetApi",
+        "test_J2_proxyLoupe_allProductSelectors",
+        "test_J3_proxyCallable_smoke_eachSelector"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/stata-hermetic-followup-drafts/AaveV3StataStandardExchange.t.sol.txt",
+      "reason": "Retire the duplicate mocked product suite after mapping every declaration to actual-protocol coverage; preserve this navigation pointer.",
+      "before_sha256": "8d7451592404d70a5cac52209502bfd606bb550c527c0950180691798da4826e",
+      "after_sha256": "2f80519bf1636313a5d9cd3d65a2ae34d4098cd1b459740a619a6d81eb664a7f",
+      "declared_tests_before": [
+        "test_MarkerInterface",
+        "test_DeploymentPaths",
+        "test_Route_BaseToSE",
+        "test_Route_StataToSE",
+        "test_FeeOnAndOff",
+        "test_RewardsForwarded",
+        "test_AllRoutesSmoke",
+        "test_FeeApplicationAndMarker",
+        "test_RewardCollectionTrigger",
+        "test_Route_SEToStata",
+        "test_Route_SEToBase",
+        "test_Route_BaseToStata",
+        "test_Route_BaseToStata_Pretransferred",
+        "test_Route_BaseToStata_Pretransferred_bookedInventory_reverts",
+        "test_Route_ATokenToStata",
+        "test_Route_ATokenToSE",
+        "test_Route_SEToStata_Pretransferred",
+        "test_Route_SEToBase_Pretransferred",
+        "test_Route_SEToAToken",
+        "testFuzz_Route_BaseToSE",
+        "testFuzz_Route_StataToSE_Pretransferred",
+        "testFuzz_Route_BaseToStata",
+        "testFuzz_Route_SEToStata",
+        "testFuzz_FeeApplication"
+      ],
+      "declared_tests_after": []
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/UniswapV4DetfProductionSeDeployLib.sol.txt",
+      "reason": "Use exact funded mixed-decimal V3 seed liquidity and a shared real two-token position activation helper; protocol product contracts unchanged.",
+      "before_sha256": "f491c5984d19d5210e0ff7dead5f4bf0254005a8bf96ec897ac48d3898e16bd1",
+      "after_sha256": "276176c295c6a02ed0634d77c071058cdaf48586f4af0964040ffc119960e911"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_ProdSe.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Quad_ProdSe.sol.txt",
+      "reason": "Activate each position underlier after actual fixture funding; Morpho accounting assets remain on their existing initialization path.",
+      "before_sha256": "a89fa16e9918e9b5cb24a6b84d45b304b67518722989021c0f07a2438fb85bf1",
+      "after_sha256": "18f7e11e5f8a4074634c1e3d08a4091fc194933cb10a23184b9250b7345a2425"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ3Se.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Cp_Univ3Se.sol.txt",
+      "reason": "Activate the real SE with both currencies after its user funding and before DETF first-bond execution.",
+      "before_sha256": "1e3923cb4e787c8707c02662bbbe72dc762f061b3e4450ef263ba8be21a74852",
+      "after_sha256": "666c00b0e98e6f5a376b8931504cd6a0158d8592638825586713902843ef43d8"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ4Se.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Cp_Univ4Se.sol.txt",
+      "reason": "Activate the real SE with both currencies after its user funding and before DETF first-bond execution.",
+      "before_sha256": "0aadcb85ef8b595b9c00db3375e97c702b7f6960782220fce378c5ec73aebea2",
+      "after_sha256": "4bf7485959ac3f254d858af7953fb70a0c94e94d433f2fe1c94a5e34a397de2a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_PonsV1Se.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Cp_PonsV1Se.sol.txt",
+      "reason": "Activate the real SE with both currencies after its user funding and before DETF first-bond execution.",
+      "before_sha256": "b233037fbe9ce89066952d89d854e344dab010008bbc7ec17df702a7cb1f8983",
+      "after_sha256": "34b1801ee56e21d4e264747ce87c2847e6b21edfa602d032dc0fb904b7415bce"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_ProdSe_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Quad_ProdSe_Decimals.sol.txt",
+      "reason": "Activate each position underlier after actual fixture funding; Morpho accounting assets remain on their existing initialization path. Bind the actual first reserve leg for retained Pons lifecycle routes and native decimal scaling.",
+      "before_sha256": "9dfb581b9e82859213690ceba1d5664ec459818acd80004efaeda012dd45d899",
+      "after_sha256": "f017f2e63a6219cdb945f1fbb1cb52f6105c7dd56f72a2b904e582a72c4ff581"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ3Se_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Cp_Univ3Se_Decimals.sol.txt",
+      "reason": "Activate the real SE with both currencies after its user funding and before DETF first-bond execution.",
+      "before_sha256": "09f9422a56756767b2748b3ff37b4dee829de0236790d0b573882d576afc0c7b",
+      "after_sha256": "b5ba59eb1aaa4b015230e8c244162949ce1c0da8b2531d5ccdbe5e7dafa15f09"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ4Se_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Cp_Univ4Se_Decimals.sol.txt",
+      "reason": "Activate the real SE with both currencies after its user funding and before DETF first-bond execution.",
+      "before_sha256": "8b1e024acd10e1627507360582dd50af87a933c6936c14778aba66027b75fd2b",
+      "after_sha256": "6e3ffbcb790d69e9e74d2efaf574c8906b2f4966387c07d2357870f1ccc86eda"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_PonsV1Se_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Cp_PonsV1Se_Decimals.sol.txt",
+      "reason": "Activate the real SE with both currencies after its user funding and before DETF first-bond execution.",
+      "before_sha256": "91a02dab7e555672c049365e5d783d0c919b23c17160b8b1e8636a0981c1e34b",
+      "after_sha256": "43142e7cda92354db2690ef80d0fd4a182e5b80279c30588c670f9e53a3ddc32"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_Univ3Se.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Weighted_Univ3Se.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "cafb2e20e255043b0589c72b5299ab941c91c6c612e134863318106a2e6bf590",
+      "after_sha256": "6330f010d16ccd10ddec6a32d598d75b2e9dd17a6bbc90b5f82369dca2067352"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_Univ3Se_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Weighted_Univ3Se_Decimals.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "c20a5fbdf3132e4f1e2076eb6cd0e9f9a17b0fc01292e46854fcea045423e1ff",
+      "after_sha256": "04c1e7b1d096e2e1971854935355c2b6f844db0a101d1375f4548b1aad6a994e"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_Univ4Se.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Weighted_Univ4Se.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "68f42b600835d6d0da79bae58bd6afa04aef47866204e08776c1b332e0b56f15",
+      "after_sha256": "6c9eb61ea71a19b127d0225ae5e1c90f1d946ca2220ed4fbd149d3cf902aa08a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_Univ4Se_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Weighted_Univ4Se_Decimals.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "672a652166fc7a3a999691df6231ca46e2f521b29520b06b8051c1f2272dccdf",
+      "after_sha256": "5d3bd7e3bf6d1690e0dc0f0869e11fd0c71eb9eafdc89cbf434d6d54273a077c"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_PonsV1Se.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Weighted_PonsV1Se.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "d1e446498b9cbf82c8ec1066ee1b2e6f7fcaa1fc2725ab196d7def45bc3e96a6",
+      "after_sha256": "d791b459cce5a7e74e94c4a417dc84bb77e5245ec28f7ef35e28750fc031fa00"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_PonsV1Se_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Weighted_PonsV1Se_Decimals.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "c8e5d9b03c578f15d31aab80ccbea15541a23d4958af0744a8dcb6a270276a7b",
+      "after_sha256": "2d8e338cc2e7d28f470769e34b9e3de28c184d097bdccba7cf31addd48e674df"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_PonsV2Se.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Weighted_PonsV2Se.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "9f8bb645e078bf107ebb524a9dbc8b9d7589cbb7ab4de30c0fff918d8ca1bee7",
+      "after_sha256": "d571757f959e5d9f50c68dd5a749e1b9b8db5c9627c269b976080067ca8a722b"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_PonsV2Se_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Weighted_PonsV2Se_Decimals.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "ff310e65b731153e3b3e30d8dba1c3d7c8cf7d92db9744aba1683cdfb779747b",
+      "after_sha256": "9400f739facfa9848df59aaad789cfadac2171fd247ffdb30b46f9289991ef20"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_PonsMix.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Weighted_PonsMix.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "14dd6b74e7f2e6bc2a11313df4dcebca914418f7720cbcf54a56068e1594208c",
+      "after_sha256": "1c5036e80f9c5b01858e652ef90945888ffd85ccef30a96bcf10698181588c19"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_PonsMix_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Weighted_PonsMix_Decimals.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "09403ae20d41334397e2b1408ccc68c7750a7e7b4305cb48016420d620774fe4",
+      "after_sha256": "a8e2450c22d2d28211cd8cb3b84ea05bc7f1231c7e1b15583d53c18a9c89a0f1"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_MorphoMix.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Weighted_MorphoMix.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "ad0bf71bc7941824a539a276fe51eda9869d4fe97fef44b8a7c141dd9c564fca",
+      "after_sha256": "a016b8cf31f51cf912b65f1ddfb1500abf9cfe827071f06a833073b8f3f46a51"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_MorphoMix_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Weighted_MorphoMix_Decimals.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "8ecf187a9c1f09fb340abe30fa6e2d2741710d2969f9d95896e7f381b6fe464a",
+      "after_sha256": "ee7b5228ff4daa82dd8568536b94d22aa1a26a153c587c5af617e550ba55c596"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Univ3Se.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Orbital_Univ3Se.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "1b765a25914475903a150bfc80a97180d217cd1c9e4ed7a8781ada56408f8cfd",
+      "after_sha256": "5cf93370716aa4e58c268c9f99421942acb9cb6c26e198ea4a98e79812197012"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Univ3Se_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Orbital_Univ3Se_Decimals.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "48a6f48eae812e11fcff486ab842a8c90a4323cc2767b4a7c84e7a3e85308b94",
+      "after_sha256": "8dfd0a4652ff9bffbd24b81cf8bef433b69b98e187bf59aae2ee078c51a162f4"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Univ4Se.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Orbital_Univ4Se.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "786e7be39e7d025811ce82f027db984b0b50867891c9ce73cef695b80f68d5a2",
+      "after_sha256": "d0934a20e50b42e510b3009cf3280860c89f9863b96de018e749e4429244ba82"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Univ4Se_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Orbital_Univ4Se_Decimals.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "6f242d4e3ae9ed8d0e3322da8b37db394f5f9777c1bb505ea745845b2ca62aee",
+      "after_sha256": "9a469274f2bb60699e538545ac0a59674a7388bb5819b9969aa9bb64de0322db"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_PonsV1Se.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Orbital_PonsV1Se.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "2b4cc2beb7007510e100c90354bfeb940919095eefb75849f4dacf6e073eaa0f",
+      "after_sha256": "f7e90898c3379977522b9988c7018d84d2d13ad3e8de903584a1e0d067783f4d"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_PonsV1Se_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Orbital_PonsV1Se_Decimals.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "78f17824fe3d464bc3d2f02d7e55f49c78c94889cb99667192cfb9eedf8564b5",
+      "after_sha256": "2b7feb8387546efe1e7f09ee933d24f02e5faa56c8e0626ac7c08d6d0bd37fd5"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_PonsV2Se.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Orbital_PonsV2Se.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "740859509c9171a480d3d29f2f619482cc7cde3f515393b0c37da9958fb6996d",
+      "after_sha256": "973af28971a3e5b594336dfdeff51c3bfaf5c9d7cb352ae8fe1fd4645990038b"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_PonsV2Se_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Orbital_PonsV2Se_Decimals.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "543905dc1dc9b23536bcf1ab6911403eef6b48d0dd378809ba3d74f58d0724dc",
+      "after_sha256": "0a8151169e2cbb587e273bd0ecd2f61eea4bedaccf14517f63eb6a96676b5f35"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_PonsMix.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Orbital_PonsMix.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "51319ac9568828cde3098c8949aa96adba34acdf3c24529af7862b701b6eadcb",
+      "after_sha256": "721f0e9f861616b65eacee0b3d6aab04c08dfed54d96e7673ce0b6a73972a492"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_PonsMix_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Orbital_PonsMix_Decimals.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "13e102dc68c268c22731f58feaee8bb4f0e5a561ce4049fdda00a4e12ffe65e2",
+      "after_sha256": "092032d5aa9ecbe4714fe66e05b87abc8bd6bf01a9c8df5ca60e7a3fa428aa9a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_MorphoMix.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Orbital_MorphoMix.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "2ef8a02846f85a27bf0164a487b1f8216b74fc6f8a696d2ddd44e73b695ebc00",
+      "after_sha256": "90cd57e949b593cc66ff097e91ea0b9ef5e0a12c19bbaea26032942f4be0fc6a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_MorphoMix_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Orbital_MorphoMix_Decimals.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "0114cb2e67f13eadfcdbd0db5b2142080fd806c1ed025e5e54efceea0da74c02",
+      "after_sha256": "34399371f4e549dee788abc215300c44e3ce804b4e50ea1e26d7df8f2f1416f8"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_ProdSe_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Orbital_ProdSe_Decimals.sol.txt",
+      "reason": "Cache actual selected pair decimals after sorting and binding; avoid treating a 6-decimal payment as 18 decimals in existing first-bond, pricing and lifecycle tests.",
+      "before_sha256": "02f53dfe19e3a3761ad0d0d46a0c83a3c4f2d183c02ca65f47af6f39ab52898c",
+      "after_sha256": "2b7a2ec22029d90f1f387215b6f5916a1fd5fe4c2f6fe9cdf6c307a74644303a"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_FacetPackaging.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/current-surface-fixture-followup-drafts/UniswapV4Detf_FacetPackaging.t.sol.txt",
+      "reason": "Owner-approved close getters absent; all 46 current selectors remain unique and route to their CREATE3 facets.",
+      "before_sha256": "fa4df848b46f9abdcdf5a04dc1ac308cae4d75cb90552fac9474acc6c51b0abb",
+      "after_sha256": "5b04c07feb3300b5eedc664825d3f5ba606d9430a34d0ef813511b82f502587e"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_BondNftPackaging.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/current-surface-fixture-followup-drafts/UniswapV4Detf_BondNftPackaging.t.sol.txt",
+      "reason": "Find the live funded position facet; preserve generic ERC721 and guarded transfer assertions.",
+      "before_sha256": "aea3ed26b5d03ca9e7d9f0999398b47c5f462577278a5be4d1ce6717a6003fad",
+      "after_sha256": "bcb9b52d8e811eb6002240c7a90ff09a63e1490ca51d25d73620c1c7231aa1af"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/current-surface-fixture-followup-drafts/UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface.t.sol.txt",
+      "reason": "Retain deposit partition/disjointness and loupe checks; assert every Pendle selector on the withdrawal facet.",
+      "before_sha256": "3bb12763e4c44fea3a80190fdc0337f7564a74a923cc76cc50c0ea7967c9c364",
+      "after_sha256": "0cc5b650c8e03a0bacd919dc849aeb9b8dac7b4a6d87ed2b2c446e52abeb2d03"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualSEBCPHook_Surface.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/current-surface-fixture-followup-drafts/UniswapV4DualSEBCPHook_Surface.t.sol.txt",
+      "reason": "Assert all sixteen native SY methods alongside the existing six SE/owner-swap selectors.",
+      "before_sha256": "276e608e08f94256c7a8fcad5d8c00dfcd1662c4f85d9347b1d8b33af393d91f",
+      "after_sha256": "f15d241fc9181e4edfbd5d703310fae70810ebfa1f20f4e732b891fb9c667736"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_Surface.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/current-surface-fixture-followup-drafts/UniswapV4StandardExchangeOrbitalBufferHook_Surface.t.sol.txt",
+      "reason": "Cover every split deposit facet on the live proxy and the complete native SY surface; radius belongs to deposit queries.",
+      "before_sha256": "363cea32832be65dd2fedb34ecba8c39af2a8defd0763104cd9b8f41610c5f28",
+      "after_sha256": "dce109fc5ba82e80482481cb8d7ce245b0eae2512b59c5e8d80177e6d24fa377"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_StagedInit.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/current-surface-fixture-followup-drafts/UniswapV4StandardExchangeWeightedBufferHook_StagedInit.t.sol.txt",
+      "reason": "Expected DiamondCut includes every current production facet, then the unchanged InitializationFinalized event.",
+      "before_sha256": "14ed20d7e1d2c5afe3aa662728e941658c772d98bf8a1c1faa4c6f0c939585d0",
+      "after_sha256": "752acc2baacb1bee584d34faf135d995e25026d79278a9da697103984aa3211f"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_StagedInit.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/current-surface-fixture-followup-drafts/UniswapV4StandardExchangeOrbitalBufferHook_StagedInit.t.sol.txt",
+      "reason": "Expected DiamondCut includes every current production facet, then the unchanged InitializationFinalized event.",
+      "before_sha256": "da4ef52b4899b5a875d20d076d49b7b00ce94249dd36f61bedbc9de72b0e506e",
+      "after_sha256": "7cf7633763b6715fcf1218536cf758d6f7e733f221eda632c4219cfe78f63bbf"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_StagedInit.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/current-surface-fixture-followup-drafts/UniswapV4StandardExchangeCurveQuadStableBufferHook_StagedInit.t.sol.txt",
+      "reason": "Expected DiamondCut includes every current production facet, then the unchanged InitializationFinalized event.",
+      "before_sha256": "1e9e296fe243a19b53bc5751ae0f0d16a4f90aa21a794e7c1c558c3645a8a686",
+      "after_sha256": "dffcb8ac0cc6de660e89ce9fd09576ea4d74298615170c9a305e3f2e9fe9e649"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_PackageDecl.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/current-surface-fixture-followup-drafts/UniswapV4StandardExchangeOrbitalBufferHook_PackageDecl.t.sol.txt",
+      "reason": "Keep exact package declaration ordering, expanded with the two split deposit facets and Pendle interface.",
+      "before_sha256": "16eae597a2ceccde3801232fb9f8553490ab19149d17e0471b97af804414d665",
+      "after_sha256": "10ee25a5c84673cc0385fa50d2fd67d23fff7fdb957fa809ba94940b15739144"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Adversarial_Surface.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/current-surface-fixture-followup-drafts/UniswapV4Detf_Quad_Adversarial_Surface.t.sol.txt",
+      "reason": "Retain exact facet membership and retired-claim negatives while including funded deposit projection.",
+      "before_sha256": "6970f3f62cc6b6090b16da78abd7a71a279426a71b485088d121abe955c44b6f",
+      "after_sha256": "cb5e9c9ec1f762f81f988da0fa84acb909de82843f6ccb90f5db55b993f52886"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/balancer-se-fixture-followup-drafts/CommonBufferMultiVault_RoutingAndWalk_Decimals.sol.txt",
+      "before_sha256": "99593df60607128d2c9c8bb65b7dac8a96fb3ce3fea7a209637adb54e5b5813d",
+      "after_sha256": "bac9126da34a2db9162f7077895023d8edf233639b4ee9121c3e908b4ce97a99",
+      "reason": "Use the configured registered buffer token (pairToken), not the distinct underlying rateAsset. Express buffer payments in its actual native decimals."
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/balancer-se-fixture-followup-drafts/MultiPairBuffer_CrossPair_Decimals.sol.txt",
+      "reason": "Use configured buffer0 and native payment quantities, preserving cross-pair book isolation checks.",
+      "before_sha256": "97fd045cd9efe57abc5ac9b606f4d025089dbbf35ee72c30c8b326f0522ec418",
+      "after_sha256": "8ecfdd400124941c1c52122ab7e27233952a6d57a578530431c2471aa97351e7"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/balancer-se-fixture-followup-drafts/MixedLegWeightedBufferPool_Decimals.sol.txt",
+      "reason": "Correct buffer/unpaired roles to the configured fixture and normalize actual token transfers, retaining exact output/book checks.",
+      "before_sha256": "807577a28f2792482b994096bbedf3639b81669f672a944d30683970d9a78d6a",
+      "after_sha256": "e3c15d558612b0fe782dcbd01dd97e41267be0d7aea7866d42faa9935a6dc957"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/balancer-se-fixture-followup-drafts/MixedLeg_P4_Smoke_Decimals.sol.txt",
+      "reason": "Preserve four-pair and U4/P2 fixtures while using actual buffer roles and native swap amounts.",
+      "before_sha256": "bf793433ca8b82878d09efdf7249206de08b01d12d33e9e7ce8e933750cf1ac2",
+      "after_sha256": "d4ec4a03b2703cfa80e73fb25b2f654f29f01a04b08fd1ba0f99a56b71fbc035"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/bases/TestBase_MixedLegWeightedBufferPool_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/balancer-se-fixture-followup-drafts/TestBase_MixedLegWeightedBufferPool_Decimals.sol.txt",
+      "reason": "Actually acquire enough SE shares through proportional Aerodrome liquidity; prevent initializer transfer failures without fabricating SE balances.",
+      "before_sha256": "bad58590197fb6a68422ecafc639a5b429dc614ef9e1afe92061d91cc0824cd8",
+      "after_sha256": "0aa853e100ed8e6dab90de8bacc13b9d5192547879083f49e7dec3e52ea0bdb8"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/bases/TestBase_MultiPairStandardExchangeBufferPool_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/balancer-se-fixture-followup-drafts/TestBase_MultiPairStandardExchangeBufferPool_Decimals.sol.txt",
+      "reason": "Seed each buffer with the same human-unit amount, preventing 6/9-decimal book inflation and arithmetic overflow.",
+      "before_sha256": "a86d81d2e5a8d5a8463cb1e77ed83868255b4dcbbb9467e079ff595adbbae498",
+      "after_sha256": "8ab3937d2073bc79b1e470c1085b494989be016fa6c85cd17e14cfce0618a3b5"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/balancer-se-fixture-followup-drafts/MultiPairStandardExchangeBufferPool_Decimals.sol.txt",
+      "reason": "Use the configured TTA for payments and received balances; match independently scaled initialization and liquidity amounts.",
+      "before_sha256": "e4dace630c1847ed08e8c2ef183eba8446f7bf7b7cb93c85cd878db6aa8d0600",
+      "after_sha256": "e8532d1a9455d6d1e0a15181140f09491406c518f387213c219e94ee81c97129"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/balancer/v3/WrappedStandardExchangeRateProvider.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/balancer-se-fixture-followup-drafts/WrappedStandardExchangeRateProvider.t.sol.txt",
+      "reason": "Independent manual-rate vector uses one native wrapper token, including its retained ten-decimal offset.",
+      "before_sha256": "1f8c1e746ffa6e7530585b40993f54b9f71381f7743127bd1e2458d09e4eb6df",
+      "after_sha256": "fa7c09d04caeeda00e7acca323174f7d23c572d2deb430050d8b7b7d20339719"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolPkg_Smoke.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/balancer-se-smoke-drafts/StandardExchangeBufferPoolPkg_Smoke.t.sol.txt",
+      "reason": "Retire the mock-address DFPkg constructor suite after moving all seven declarations into the existing production-path smoke suite.",
+      "before_sha256": "41dd0648f946387094549eaedf5d9a2fb18b9c1e4209bb8a9c6564576ccf7791",
+      "after_sha256": "5d4d57eda013616daa5d107d6e82c87d866d7c3d29a48b746d92dc03472e9fd7"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/TestBase_Smoke.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/balancer-se-smoke-drafts/TestBase_Smoke.t.sol.txt",
+      "reason": "Consolidate every former declaration into the retained real registry/protocol fixture and check the installed interfaces.",
+      "before_sha256": "a55a11897c8a649de2797257cc1ca8f0e3dcbd4647cb025afd8ac2af75517c30",
+      "after_sha256": "f24ed3baf888222cbe682cdc381cb1e80f85e6efa79e687a6055850ea8d0103a"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/bases/TestBase_StandardExchangeBufferPool.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/balancer-se-smoke-drafts/TestBase_StandardExchangeBufferPool.sol.txt",
+      "reason": "Preserve the actual protocol fixture while deploying its remaining three facets through CREATE3 rather than constructors.",
+      "before_sha256": "658777536083323431b92d3c5b1f73c442a1b792fe1beef967d09154c434bc27",
+      "after_sha256": "34fd5dc6dbb1312afe91c17474a72b13ddcf706c211b7af922c5b78831e6c4fb"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/balancer-se-fixture-followup-drafts/MixedBufferMultiVaultStable_WalkAndExhaust_Decimals.sol.txt",
+      "before_sha256": "0ebe0a4e43979a1c35e98348ee1210f6a15824928e5c99b2506f29dc6381da7a",
+      "after_sha256": "d9598591cf2e5a60fae1bc77896e17d5e5c82214c2afc41d0bebd96e655d7bf0",
+      "reason": "Normalize both stable-pool initial token legs and retain honest 18-decimal share/native-buffer conversions in the existing hostile routing dependency."
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_CloseD25Base.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/funded-lifecycle-fixture-drafts/UniswapV4Detf_Alignment_CloseD25Base.sol.txt",
+      "before_sha256": "984e04117d53087337d68aa48794cfcecf6cd6986f598c30da550c34301a4980",
+      "after_sha256": "0072d0618944b9c4ab639026d1c2a52e0f99c4eff8983957838d5a2436c7c7a2",
+      "reason": "D25 claims use a later 10%-of-first-payment bond within the retained weighted reserve quote limit; exact principal/reward/custody assertions unchanged."
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ClaimOpenBase.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/funded-lifecycle-fixture-drafts/UniswapV4Detf_ClaimOpenBase.sol.txt",
+      "before_sha256": "366a38801c810b81745f0806c868fb9dbb66db1d738fdeb06297f192a589ef27",
+      "after_sha256": "0835461bd04d511df372b3c9c7893bead1ecee89974aa880d92f8cfe14abb0ee",
+      "reason": "Mature claim test uses a funded later bond below the existing weighted swap input ratio; preserve complete claim assertions."
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ReserveDonationOpenBase.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/funded-lifecycle-fixture-drafts/UniswapV4Detf_ReserveDonationOpenBase.sol.txt",
+      "before_sha256": "fa230d4fef7d6cfc95392d85c9f9f4bcbb5dbd0a20154c32402d56166ec53b08",
+      "after_sha256": "584512bf1e92d6964ded1e06f27e0ec6fc176772ea520fa505213fe14169be97",
+      "reason": "Keep every multi-holder donation/disabled-exit scenario, with funded bond sizes executable under all four retained reserve curves. Preview and execution use the same actual amount."
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_CloseD25Base_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/funded-lifecycle-fixture-drafts/UniswapV4Detf_Alignment_CloseD25Base_Decimals.sol.txt",
+      "before_sha256": "9f2b3a88dacd2752fe088fb3d695ff353a60c0d9f1615109e93c364caaf0bb90",
+      "after_sha256": "5044ba24e65c901a1b1a6c00979652eac628bcf3e2e9e6d70d51c28917156fde",
+      "reason": "D25 claims use a later 10%-of-first-payment bond within the retained weighted reserve quote limit; exact principal/reward/custody assertions unchanged."
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_ClaimOpenBase_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/funded-lifecycle-fixture-drafts/UniswapV4Detf_ClaimOpenBase_Decimals.sol.txt",
+      "before_sha256": "8533ecbd9969afad648aa04a6ef1324d2ee2278a970cb00772a31c3ce9cc34cb",
+      "after_sha256": "54fe47d41e71f7c2ca8c120f8bcf6fc0aafc497bd4b0c26a3e60463bc607d4d7",
+      "reason": "Mature claim test uses a funded later bond below the existing weighted swap input ratio; preserve complete claim assertions."
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_ReserveDonationOpenBase_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/funded-lifecycle-fixture-drafts/UniswapV4Detf_ReserveDonationOpenBase_Decimals.sol.txt",
+      "before_sha256": "da7b25c3d6f4a316913a8f29f09ca23ce0d401139c1470879d2d8bf0aac31618",
+      "after_sha256": "e4bae27b454e91d1e47d828f21aa99aa7e797236511b1d6cfe9849d47afbb367",
+      "reason": "Keep every multi-holder donation/disabled-exit scenario, with funded bond sizes executable under all four retained reserve curves. Preview and execution use the same actual amount."
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/DetfNestedPush_ProductionPresence.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/DetfNestedPush_ProductionPresence.t.sol.txt",
+      "before_sha256": "73f05cf7f26f46c635c6afd2f6f8c9d63030d647731f3e6779fab8481fa336cd",
+      "after_sha256": "8765ad1653df3875f4ff6a36c46937574910abc18a23bbad0fe708727b3a2a05",
+      "reason": "Replace obsolete source-string/blanket false-flag checks with retained actual transfer, booked-inventory, short-payment and custody regressions; no runtime test removed."
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/funded-policy-fixture-drafts/TestBase_UniswapV4Detf_Policy.sol.txt",
+      "reason": "Preserve fractional purchased DETF for repeated swaps, use an explicit below-peg no-expansion fixture, and establish actual post-expansion gate closure without a fixed-horizon assumption.",
+      "before_sha256": "a4b57a09449f79690bac727aa508921ea20ecac0f51c1f54c46d9ed843e76589",
+      "after_sha256": "a197b84efe346ea812052f7c1d7980d286f97073f8631310bf41aba850ba7c9a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/funded-policy-fixture-drafts/TestBase_UniswapV4Detf_Policy_Decimals.sol.txt",
+      "reason": "Preserve fractional purchased DETF for repeated swaps, use an explicit below-peg no-expansion fixture, and establish actual post-expansion gate closure without a fixed-horizon assumption.",
+      "before_sha256": "09a3e32563fa2b8f5c4fa4bce58c066f2b8ae0c024beadc89538d45742b27d4c",
+      "after_sha256": "0b1b612763b52bbc38ba872ab2b11ea613069398c557000537f5e34b485f69df"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/funded-policy-fixture-drafts/UniswapV4Detf_Weighted.t.sol.txt",
+      "reason": "Use an actual rich launch for the retained custom mint-route membership test; keep both positive A and negative B assertions.",
+      "before_sha256": "e1e42f505b5771af960b973db4c3abd9cafef3af3e616374bfd9ce84b7615822",
+      "after_sha256": "3cf1c20e71b72b67b2f9646f092b98dbe87fc03ab35980cacac6adcb5bb52d72"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/nested-short-funding-drafts/TestBase_UniswapV4Detf_Adversarial.sol.txt",
+      "reason": "Measure actual transfer delta for the retained nested short-payment negative; preserve no-free-mint and custody assertions across liquid and position SE providers.",
+      "before_sha256": "5d741fcb2b22ee07c948e18ac86c2b49aa2b60b966382f9538599e3d4da6a474",
+      "after_sha256": "193ae8a81d98af6bd22de6796b01302a28e0ace87a450d13af69ac3513e72842"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/nested-short-funding-drafts/TestBase_UniswapV4Detf_Adversarial_Decimals.sol.txt",
+      "reason": "Measure actual transfer delta for the retained nested short-payment negative; preserve no-free-mint and custody assertions across liquid and position SE providers.",
+      "before_sha256": "98c8194ceac34482966bf1571feb1353a1d02c22c2c5fb41c015fe41b0cbc1d5",
+      "after_sha256": "d007100847ffc9a0305dd728d65bacbd7531d1d837b730722baa4788e7aac6c7"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_MorphoBlueSe_ProductLaw.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/orbital-donation-consolidation-drafts/UniswapV4Detf_Orbital_MorphoBlueSe_ProductLaw.t.sol.txt",
+      "reason": "Retire the two fake 18-decimal DETF donation overrides and reuse the retained shared donation tests with actually funded non-DETF reserve payments. Exact runtime test names remain inherited.",
+      "before_sha256": "dc6bd0ce39f351592be83440fa94118a97ef23510460d73b291d13d3b9e3aa8e",
+      "after_sha256": "e55cd99baaf4b00f601247cd8da55a86eb759e98df4c9479b73ae5c6eaff8092"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_MorphoMix_ProductLaw.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/orbital-donation-consolidation-drafts/UniswapV4Detf_Orbital_MorphoMix_ProductLaw.t.sol.txt",
+      "reason": "Retire the two fake 18-decimal DETF donation overrides and reuse the retained shared donation tests with actually funded non-DETF reserve payments. Exact runtime test names remain inherited.",
+      "before_sha256": "18816a2226dc46d2d9b8cd30fefb66dce02b99d7ecf750fd59bbfb8f4c8f9029",
+      "after_sha256": "bcf19acea0d3143ee90268d14ed343a1af6957587129499705922de9113e287b"
+    }
+  ],
+  "applied_paths": [
+    "test/foundry/fork/base_main/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_Fork.t.sol",
+    "test/foundry/fork/robinhood_4663/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_Robinhood.t.sol",
+    "contracts/protocols/lending/aave/v3.6/AaveV3StataStandardExchangeOutTarget.sol",
+    "contracts/test/bases/TestBase_AaveV3StataStandardExchange_Decimals.sol",
+    "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+    "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange_Real.t.sol",
+    "test/foundry/spec/protocol/lending/aave/v3.6/decimals/Adversarial_AaveV3StataSE_SecurePull_Decimals.sol",
+    "test/foundry/spec/protocol/lending/aave/v3.6/adversarial/Adversarial_AaveV3StataSE_SecurePull.t.sol",
+    "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange.t.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_ProdSe.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ3Se.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ4Se.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_PonsV1Se.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_ProdSe_Decimals.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ3Se_Decimals.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ4Se_Decimals.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_PonsV1Se_Decimals.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_Univ3Se.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_Univ3Se_Decimals.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_Univ4Se.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_Univ4Se_Decimals.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_PonsV1Se.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_PonsV1Se_Decimals.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_PonsV2Se.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_PonsV2Se_Decimals.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_PonsMix.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_PonsMix_Decimals.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_MorphoMix.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_MorphoMix_Decimals.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Univ3Se.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Univ3Se_Decimals.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Univ4Se.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Univ4Se_Decimals.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_PonsV1Se.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_PonsV1Se_Decimals.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_PonsV2Se.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_PonsV2Se_Decimals.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_PonsMix.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_PonsMix_Decimals.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_MorphoMix.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_MorphoMix_Decimals.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_ProdSe_Decimals.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_FacetPackaging.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_BondNftPackaging.t.sol",
+    "test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface.t.sol",
+    "test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualSEBCPHook_Surface.t.sol",
+    "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_Surface.t.sol",
+    "test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_StagedInit.t.sol",
+    "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_StagedInit.t.sol",
+    "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_StagedInit.t.sol",
+    "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_PackageDecl.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Adversarial_Surface.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_Decimals.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_Decimals.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_Decimals.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_Decimals.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/bases/TestBase_MixedLegWeightedBufferPool_Decimals.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/bases/TestBase_MultiPairStandardExchangeBufferPool_Decimals.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_Decimals.sol",
+    "test/foundry/spec/protocol/dexes/balancer/v3/WrappedStandardExchangeRateProvider.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolPkg_Smoke.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/TestBase_Smoke.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/bases/TestBase_StandardExchangeBufferPool.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_Decimals.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_CloseD25Base.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ClaimOpenBase.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ReserveDonationOpenBase.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_CloseD25Base_Decimals.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_ClaimOpenBase_Decimals.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_ReserveDonationOpenBase_Decimals.sol",
+    "test/foundry/spec/vaults/detf/DetfNestedPush_ProductionPresence.t.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted.t.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_MorphoBlueSe_ProductLaw.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_MorphoMix_ProductLaw.t.sol"
+  ],
+  "validation_passed": false,
+  "finished_at_utc": "2026-09-09T08:34:04.811646+00:00",
+  "applied_provenance": {
+    "recorded_at_utc": "2026-09-09T08:34:05.635721+00:00",
+    "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+    "source_and_config_sha256": "533ada6ae25e3d23c56f260129208866fecd6de9b6d28de41a3d6fe314ee2b74",
+    "source_and_config_files": 4818,
+    "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+    "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+    "crane_tracked_contract_and_config_diff_sha256": "284fd75764cb255d1e527eef38fd51e65fca73e8ebb11b7465965e8dfeb2122c",
+    "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+    "machine": "macOS-26.6.2-x86_64-i386-64bit",
+    "architecture": "x86_64",
+    "logical_cpus": 16,
+    "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+  }
+}

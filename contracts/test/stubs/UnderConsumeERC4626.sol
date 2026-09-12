@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
-import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
+import {MintableERC20Decimals} from "contracts/test/stubs/MintableERC20Decimals.sol";
 import {SimpleYieldERC4626} from "contracts/test/stubs/SimpleYieldERC4626.sol";
 
 /**
@@ -12,7 +12,7 @@ import {SimpleYieldERC4626} from "contracts/test/stubs/SimpleYieldERC4626.sol";
 contract UnderConsumeERC4626 is SimpleYieldERC4626 {
     uint256 public leaveDust;
 
-    constructor(SimpleMintableERC20 asset_) SimpleYieldERC4626(asset_) {}
+    constructor(MintableERC20Decimals asset_) SimpleYieldERC4626(asset_) {}
 
     function setLeaveDust(uint256 d) external {
         leaveDust = d;

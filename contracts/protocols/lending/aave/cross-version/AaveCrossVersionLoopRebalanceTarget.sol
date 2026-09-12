@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ReentrancyLockRepo} from "@crane/contracts/access/reentrancy/ReentrancyLockRepo.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 
@@ -62,12 +63,13 @@ contract AaveCrossVersionLoopRebalanceTarget is AaveCrossVersionLoopExchangeBase
 
     /// @dev Test/inspection helper: current orientation net carry.
     function previewNetCarry() external view returns (int256) {
+        ReentrancyLockRepo._onlyUnlocked();
         return _currentNetCarry(_market());
     }
 
     /// @notice Permissionless rebalance (decision 3). One bounded step (decision 7): de-risk if carry
     ///         is below threshold or HF is low, else extend. Min-interval guarded (anti-churn).
-    function rebalance() external {
+    function rebalance() external nonReentrant {
         uint256 nextAllowed = LoopPositionRepo._lastRebalanceTimestamp() + MIN_REBALANCE_INTERVAL;
         if (block.timestamp < nextAllowed) revert RebalanceTooSoon(nextAllowed);
 
@@ -90,7 +92,7 @@ contract AaveCrossVersionLoopRebalanceTarget is AaveCrossVersionLoopExchangeBase
     }
 
     /// @notice Permissionless force-repay when either version's HF is below the safety floor (decision 3).
-    function forceRepay() external {
+    function forceRepay() external nonReentrant {
         CrossVersionLoopExecutor.Market memory m = _market();
         bool atRisk = AaveV36Service.healthFactor(m.v36Pool, address(this)) < HF_SAFETY_FLOOR
             || AaveV4Service.healthFactor(m.v4Spoke, address(this)) < HF_SAFETY_FLOOR;

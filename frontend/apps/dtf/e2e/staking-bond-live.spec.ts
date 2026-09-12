@@ -1,6 +1,8 @@
 import { parseEther } from 'viem'
 import { test, expect, ANVIL_ACCOUNT_0 } from './wallet/fixture'
-import { feeDetfAddress, findBaseBySymbol, loadPlatform } from './helpers/chainArtifacts'
+import { feeDetfAddress, findBaseBySymbol } from './helpers/chainArtifacts'
+import { readBondNftVault } from '../app/lib/detf/bondNftVault'
+import { insightsViewAbi } from '../app/insights/lib/insightsAbi'
 import { prepareLocalChain, connectInjectedWallet } from './helpers/connect'
 import {
   chainIdMatches,
@@ -9,6 +11,7 @@ import {
   isDetfReserveLive,
   nftBalance,
   rpcAlive,
+  publicClient,
 } from './helpers/rpc'
 
 /**
@@ -52,66 +55,41 @@ test.describe('Live staking bond (Anvil RH)', () => {
     const wethBefore = await erc20Balance(weth.address as `0x${string}`, ANVIL_ACCOUNT_0.address)
     test.skip(wethBefore < parseEther('0.01'), 'Insufficient WETH on Anvil #0')
 
-    const platform = loadPlatform()
-    const nftVault = (platform.protocolNftVault ?? platform.bondNftVault) as string | undefined
+    const client = publicClient()
+    const nftVault = await readBondNftVault(client, detf)
+    expect(nftVault, 'The DETF must expose its actual funded bond child').toBeTruthy()
+    const stakingToken = await client.readContract({ address: detf, abi: insightsViewAbi, functionName: 'rebasingClaimToken' })
+    const nftBefore = await nftBalance(nftVault!, ANVIL_ACCOUNT_0.address)
+    const stakedBefore = await erc20Balance(stakingToken, nftVault!)
 
-    await walletPage.goto(`/staking?detf=${detf}`, { waitUntil: 'networkidle' })
+    await walletPage.goto(`/staking?detf=${detf}&tab=bond`, { waitUntil: 'networkidle' })
     await expect(walletPage.getByTestId('detf-workspace-full')).toBeVisible({ timeout: 30_000 })
-    await expect(walletPage.getByTestId('staking-bond-rate-asset-amount')).toBeVisible({
+    await expect(walletPage.getByTestId('detf-bond-amount')).toBeVisible({
       timeout: 20_000,
     })
 
-    // Minimal lock days for faster oracle-path (still subject to on-chain min lock)
-    await walletPage.getByTestId('staking-bond-lock-days').fill('30')
-    await walletPage.getByTestId('staking-bond-rate-asset-amount').fill('0.01')
+    await walletPage.getByTestId('detf-action-token').selectOption(weth.address)
 
-    const submit = walletPage.getByTestId('staking-bond-rate-asset-submit')
+    // The selected duration remains subject to the actual oracle's allowed range.
+    await walletPage.getByTestId('detf-bond-days').fill('30')
+    await walletPage.getByTestId('detf-bond-amount').fill('0.01')
+
+    const submit = walletPage.getByTestId('detf-bond')
+    const approval = walletPage.getByTestId('detf-approve')
+    await expect(approval.or(submit)).toBeVisible({ timeout: 30_000 })
+    if (await approval.isVisible()) {
+      await expect(approval).toBeEnabled()
+      await approval.click()
+      await expect(walletPage.getByTestId('detf-action-status')).toHaveText('Approved. Bond or mint next.', { timeout: 60_000 })
+    }
     await expect(submit).toBeEnabled({ timeout: 30_000 })
-
-    const nftBefore =
-      nftVault && /^0x[0-9a-fA-F]{40}$/.test(nftVault)
-        ? await nftBalance(nftVault as `0x${string}`, ANVIL_ACCOUNT_0.address)
-        : null
-
     await submit.click()
+    await expect(walletPage.getByTestId('detf-action-status')).toHaveText('Bond confirmed.', { timeout: 120_000 })
 
-    // Approve + bond: UI may take two txs; poll for WETH spend or NFT mint
-    await expect
-      .poll(
-        async () => {
-          const wethAfter = await erc20Balance(
-            weth.address as `0x${string}`,
-            ANVIL_ACCOUNT_0.address,
-          )
-          if (wethAfter < wethBefore) return true
-          if (nftBefore !== null && nftVault) {
-            const n = await nftBalance(nftVault as `0x${string}`, ANVIL_ACCOUNT_0.address)
-            if (n > nftBefore) return true
-          }
-          const body = await walletPage.locator('body').innerText()
-          if (/Bond rate asset confirmed|confirmed: 0x/i.test(body)) return true
-          if (/revert|failed|error/i.test(body) && /bond/i.test(body)) {
-            // surface failure instead of hanging
-            return 'fail'
-          }
-          return false
-        },
-        { timeout: 120_000 },
-      )
-      .not.toBe(false)
-
-    const outcome = await (async () => {
-      const wethAfter = await erc20Balance(weth.address as `0x${string}`, ANVIL_ACCOUNT_0.address)
-      if (wethAfter < wethBefore) return 'weth-spent'
-      if (nftBefore !== null && nftVault) {
-        const n = await nftBalance(nftVault as `0x${string}`, ANVIL_ACCOUNT_0.address)
-        if (n > nftBefore) return 'nft-minted'
-      }
-      const body = await walletPage.locator('body').innerText()
-      if (/Bond rate asset confirmed|confirmed: 0x/i.test(body)) return 'status-ok'
-      return 'unknown'
-    })()
-
-    expect(['weth-spent', 'nft-minted', 'status-ok']).toContain(outcome)
+    // A purchase must spend the payment, mint a bond, and fund its staked escrow.
+    // Approval receipts or status text alone never satisfy this money-path test.
+    await expect.poll(() => erc20Balance(weth.address as `0x${string}`, ANVIL_ACCOUNT_0.address)).toBe(wethBefore - parseEther('0.01'))
+    await expect.poll(() => nftBalance(nftVault!, ANVIL_ACCOUNT_0.address)).toBe(nftBefore + 1n)
+    await expect.poll(() => erc20Balance(stakingToken, nftVault!)).toBeGreaterThan(stakedBefore)
   })
 })

@@ -6,6 +6,13 @@ pragma solidity ^0.8.0;
 library FixtureEconomics {
     string internal constant SALT_NS = "RhMain";
 
+    /// @dev Owner-selected metadata for the fee-accrual DETF instance (Phase 08-03).
+    string internal constant FEE_ACCRUAL_DETF_NAME = "DTF-DETF";
+    string internal constant FEE_ACCRUAL_DETF_SYMBOL = "DTF-DETF";
+    uint256 internal constant FEE_ACCRUAL_DETF_WEIGHT = 0.6e18;
+    uint256 internal constant FEE_ACCRUAL_WETH_WEIGHT = 0.2e18;
+    uint256 internal constant FEE_ACCRUAL_DTF_WEIGHT = 0.2e18;
+
     uint256 internal constant MIN_LOCK = 86400;
     uint256 internal constant MAX_LOCK = 180 days;
 

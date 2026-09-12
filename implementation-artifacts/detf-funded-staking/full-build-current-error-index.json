@@ -1,0 +1,77 @@
+[
+  {
+    "code": "4334",
+    "message": "Trying to override non-virtual function. Did you forget to add \"virtual\"?",
+    "location": "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:649:5:"
+  },
+  {
+    "code": "4334",
+    "message": "Trying to override non-virtual function. Did you forget to add \"virtual\"?",
+    "location": "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:649:5:"
+  },
+  {
+    "code": "4334",
+    "message": "Trying to override non-virtual function. Did you forget to add \"virtual\"?",
+    "location": "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:649:5:"
+  },
+  {
+    "code": "4334",
+    "message": "Trying to override non-virtual function. Did you forget to add \"virtual\"?",
+    "location": "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:691:5:"
+  },
+  {
+    "code": "4334",
+    "message": "Trying to override non-virtual function. Did you forget to add \"virtual\"?",
+    "location": "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol:649:5:"
+  },
+  {
+    "code": "4334",
+    "message": "Trying to override non-virtual function. Did you forget to add \"virtual\"?",
+    "location": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Decimals.sol:364:5:"
+  },
+  {
+    "code": "7407",
+    "message": "Type contract ISingleStandardExchangeDETFInfo is not implicitly convertible to expected type contract ILegacySingleStandardExchangeDETFInfo.",
+    "location": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol:115:20:"
+  },
+  {
+    "code": "7407",
+    "message": "Type contract ISingleStandardExchangeDETFBonding is not implicitly convertible to expected type contract ILegacySingleStandardExchangeDETFBonding.",
+    "location": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol:116:23:"
+  },
+  {
+    "code": "7407",
+    "message": "Type contract ISingleStandardExchangeDETFInfo is not implicitly convertible to expected type contract ILegacySingleStandardExchangeDETFInfo.",
+    "location": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol:193:51:"
+  },
+  {
+    "code": "7407",
+    "message": "Type contract ISingleStandardExchangeDETFBonding is not implicitly convertible to expected type contract ILegacySingleStandardExchangeDETFBonding.",
+    "location": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol:193:104:"
+  },
+  {
+    "code": "7407",
+    "message": "Type contract ISingleStandardExchangeDETFInfo is not implicitly convertible to expected type contract ILegacySingleStandardExchangeDETFInfo.",
+    "location": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol:203:20:"
+  },
+  {
+    "code": "7407",
+    "message": "Type contract ISingleStandardExchangeDETFBonding is not implicitly convertible to expected type contract ILegacySingleStandardExchangeDETFBonding.",
+    "location": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol:204:23:"
+  },
+  {
+    "code": "7407",
+    "message": "Type contract ISingleStandardExchangeDETFInfo is not implicitly convertible to expected type contract ILegacySingleStandardExchangeDETFInfo.",
+    "location": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol:230:20:"
+  },
+  {
+    "code": "7407",
+    "message": "Type contract ISingleStandardExchangeDETFBonding is not implicitly convertible to expected type contract ILegacySingleStandardExchangeDETFBonding.",
+    "location": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol:230:73:"
+  },
+  {
+    "code": "9582",
+    "message": "Member \"buyClaim\" not found or not visible after argument-dependent lookup in type(contract IMixedBufferMultiVaultStableDetfBonding).",
+    "location": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeInFacet_IFacet_Test.t.sol:35:38:"
+  }
+]

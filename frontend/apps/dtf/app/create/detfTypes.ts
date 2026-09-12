@@ -24,8 +24,6 @@ export const CREATE_DETF_TYPES: readonly CreateDetfType[] = [
     title: 'One strategy',
     blurb: 'One vault. Mint and burn against one pair token from that vault.',
     href: '/create/one-vault',
-    comingSoon: true,
-    comingSoonLabel: 'Update Coming Soon',
   },
   {
     id: 'weighted',
@@ -33,15 +31,13 @@ export const CREATE_DETF_TYPES: readonly CreateDetfType[] = [
     title: 'Up to 7 strategies',
     blurb: 'Several vaults in one basket. You set how much each one gets. The mix stays put.',
     href: '/create/weighted',
-    comingSoon: true,
   },
   {
     id: 'stables',
     kicker: 'Stablecoins',
-    title: 'Up to 4 stablecoins',
-    blurb: 'A small set of dollar tokens. Use this when the basket is stables, not mixed assets.',
+    title: 'Three dollar vaults',
+    blurb: 'Three dollar vaults. The DETF token sits next to them. Use this when the basket is stables, not mixed assets.',
     href: '/create/stables',
-    comingSoon: true,
   },
 ]
 
@@ -53,14 +49,27 @@ export function isComingSoonCreateType(id: string): boolean {
   return CREATE_DETF_TYPES.some((t) => t.id === id && t.comingSoon)
 }
 
-/** Platform DFPkg key. Do not render this string. */
-export type CreateDetfPkgKey = 'cpDetfPkg' | 'weightedDetfPkg' | 'curveQuadDetfPkg'
+/** Platform DETF DFPkg key. One Uni V4 DETF package binds any SE buffer hook. Do not render this string. */
+export type CreateDetfPkgKey = 'uniV4DetfPkg'
 
 export function platformDetfPkgKey(id: CreateDetfTypeId | ''): CreateDetfPkgKey | null {
-  if (id === 'one-vault') return 'cpDetfPkg'
-  if (id === 'weighted') return 'weightedDetfPkg'
-  if (id === 'stables') return 'curveQuadDetfPkg'
+  if (id === 'one-vault' || id === 'weighted' || id === 'stables') return 'uniV4DetfPkg'
   return null
+}
+
+/** Platform hook DFPkg key for the basket shape. Do not render this string. */
+export type CreateHookPkgKey = 'cpHookPkg' | 'weightedHookPkg' | 'curveQuadHookPkg'
+
+export function platformHookPkgKey(id: CreateDetfTypeId | ''): CreateHookPkgKey | null {
+  if (id === 'one-vault') return 'cpHookPkg'
+  if (id === 'weighted') return 'weightedHookPkg'
+  if (id === 'stables') return 'curveQuadHookPkg'
+  return null
+}
+
+/** Weighted and stables pick a market per vault slot. */
+export function usesSlotHosts(id: CreateDetfTypeId | ''): boolean {
+  return id === 'weighted' || id === 'stables'
 }
 
 /** Where the one-strategy vault sits. Never put DFPkg names in UI copy. */

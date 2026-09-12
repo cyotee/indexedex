@@ -89,9 +89,9 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_StagedInit_Test i
         }
     }
 
-    function test_productionFacetCuts_sixAdds() public view {
+    function test_productionFacetCuts_eightAdds() public view {
         IDiamond.FacetCut[] memory cuts = hookPkg.productionFacetCuts();
-        assertEq(cuts.length, 6);
+        assertEq(cuts.length, 8);
         assertEq(cuts[0].facetAddress, address(hookPkg.HOOKS_FACET()));
         assertEq(cuts[1].facetAddress, address(hookPkg.LIQUIDITY_FACET()));
         assertEq(cuts[2].facetAddress, address(hookPkg.SE_FACET()));
@@ -104,7 +104,11 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_StagedInit_Test i
         _assertSelectorsEq(cuts[3].functionSelectors, erc20Facet.facetFuncs());
         _assertSelectorsEq(cuts[4].functionSelectors, erc5267Facet.facetFuncs());
         _assertSelectorsEq(cuts[5].functionSelectors, erc2612Facet.facetFuncs());
-        for (uint256 i; i < 6; ++i) {
+        assertEq(cuts[6].facetAddress, address(hookPkg.EXIT_FACET()));
+        assertEq(cuts[7].facetAddress, address(hookPkg.QUERY_FACET()));
+        _assertSelectorsEq(cuts[6].functionSelectors, hookPkg.EXIT_FACET().facetFuncs());
+        _assertSelectorsEq(cuts[7].functionSelectors, hookPkg.QUERY_FACET().facetFuncs());
+        for (uint256 i; i < cuts.length; ++i) {
             assertEq(uint8(cuts[i].action), uint8(IDiamond.FacetCutAction.Add));
         }
     }
@@ -115,9 +119,9 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_StagedInit_Test i
         assertTrue(boot.length != prod.length);
     }
 
-    function test_facetInterfaces_tenProductionIds() public view {
+    function test_facetInterfaces_twelveProductionIds() public view {
         bytes4[] memory ids = hookPkg.facetInterfaces();
-        assertEq(ids.length, 10);
+        assertEq(ids.length, 12);
         assertEq(ids[0], type(IERC20).interfaceId);
         assertEq(ids[1], type(IERC20Metadata).interfaceId);
         assertEq(ids[2], type(IERC20Permit).interfaceId);
@@ -411,18 +415,13 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_StagedInit_Test i
 
     function _expectedFinalizeCuts() internal view returns (IDiamond.FacetCut[] memory cuts) {
         IDiamond.FacetCut[] memory adds = hookPkg.productionFacetCuts();
-        cuts = new IDiamond.FacetCut[](7);
+        cuts = new IDiamond.FacetCut[](adds.length + 1);
         cuts[0] = IDiamond.FacetCut({
             facetAddress: address(hookPkg),
             action: IDiamond.FacetCutAction.Remove,
             functionSelectors: IFacet(address(hookPkg)).facetFuncs()
         });
-        cuts[1] = adds[0];
-        cuts[2] = adds[1];
-        cuts[3] = adds[2];
-        cuts[4] = adds[3];
-        cuts[5] = adds[4];
-        cuts[6] = adds[5];
+        for (uint256 i_; i_ < adds.length; ++i_) cuts[i_ + 1] = adds[i_];
     }
 
     function _assertKeyEq(PoolKey memory a, PoolKey memory b) internal pure {

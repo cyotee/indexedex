@@ -20,6 +20,7 @@ import {
   seHostMeta,
   seHostNameTag,
   seHostSymbolTag,
+  usesSlotHosts,
   type CreateDetfTypeId,
   type CreateSeHostId,
 } from './detfTypes'
@@ -85,7 +86,7 @@ const STEP_LEDE: Record<CreateStepId, string> = {
   name: 'Names start from the tokens in the SE vault. You can edit them. Blank bond or claim fields use the default.',
   basket:
     'Pick listed SE vaults, or build one from the market you chose. Create the pool if it is missing. Deploy the vault if that market has none.',
-  gates: 'Set the peg price, the opening price, and whether mint and burn use Policy or Open.',
+  gates: 'Set the peg price, first-bond opening price, and primary mint and burn thresholds.',
   review: 'Check the mix, basket, names, peg price, opening price, mint and burn.',
 }
 
@@ -275,7 +276,9 @@ export function CreateWizard({ initialTypeId }: { initialTypeId?: CreateDetfType
               ? 'Names start from the tokens in the basket, the strategies you picked, and the weights. DETF token first, then each strategy. You can edit them.'
               : step === 'basket' && plan.typeId === 'weighted'
                 ? 'Pick listed SE vaults, or build one per strategy. The reserve also holds the DETF token. Give that token a weight too.'
-                : STEP_LEDE[step]}
+                : step === 'basket' && plan.typeId === 'stables'
+                  ? 'Pick three listed dollar vaults, or build them from a pool. Each vault needs its pair token.'
+                  : STEP_LEDE[step]}
           </p>
           {type && step !== 'shape' ? (
             <p className="mt-3 text-sm text-[var(--accent,#4FD44B)]">
@@ -735,13 +738,13 @@ function StepName({
       </Card>
 
       <Card>
-        <p className="landing-section-label">Claim token</p>
+        <p className="landing-section-label">Staking token</p>
         <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
-          The rebasing claim token. Blank uses the DETF name plus Claim, and the DETF symbol plus IR.
+          The staking token holds funded DETF and can be unstaked 1:1. Blank uses a Staked name and an s-prefixed symbol. Both tokens use nine decimals.
         </p>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
           <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
-            Claim name
+            Staking token name
             <input
               className={inputClass}
               value={plan.claimName}
@@ -749,11 +752,11 @@ function StepName({
               maxLength={40}
               autoComplete="off"
               data-testid="create-claim-name"
-              placeholder={claimNameFrom(plan.name) || 'Double Dollar Claim'}
+              placeholder={claimNameFrom(plan.name) || 'Staked Double Dollar'}
             />
           </label>
           <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
-            Claim symbol
+            Staking token symbol
             <input
               className={`${inputClass} font-mono`}
               value={plan.claimSymbol}
@@ -761,7 +764,7 @@ function StepName({
               maxLength={20}
               autoComplete="off"
               data-testid="create-claim-symbol"
-              placeholder={claimSymbolFrom(plan.symbol) || '$$DETFIR'}
+              placeholder={claimSymbolFrom(plan.symbol) || 's$$DETF'}
             />
           </label>
         </div>
@@ -802,57 +805,36 @@ function StepGates({
 
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <button
-          type="button"
-          onClick={() => setPlan({ ...priced, mode: 'policy' })}
-          data-testid="create-mode-policy"
-          className="text-left"
-        >
-          {plan.mode === 'policy' ? (
-            <div className="landing-feature-hero h-full rounded-xl p-6">
-              <p className="landing-section-label">Default</p>
-              <h3 className="mt-2 text-xl font-semibold text-[var(--text-primary,#EDEDED)]">Policy</h3>
-              <p className="mt-3 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
-                Mint when the price index is above the mint line. Burn when it is below the burn line.
-                Those lines sit around 1, not around the pair count.
-              </p>
-            </div>
-          ) : (
-            <Card className="h-full">
-              <p className="landing-section-label">Restricted</p>
-              <h3 className="mt-2 text-xl font-semibold text-[var(--text-primary,#EDEDED)]">Policy</h3>
-              <p className="mt-3 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
-                Mint and burn wait on the price index.
-              </p>
-            </Card>
-          )}
-        </button>
-        <button
-          type="button"
-          onClick={() => setPlan({ ...priced, mode: 'open' })}
-          data-testid="create-mode-open"
-          className="text-left"
-        >
-          {plan.mode === 'open' ? (
-            <div className="landing-feature-hero h-full rounded-xl p-6">
-              <p className="landing-section-label">No price gate</p>
-              <h3 className="mt-2 text-xl font-semibold text-[var(--text-primary,#EDEDED)]">Open</h3>
-              <p className="mt-3 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
-                No price restrictions on primary mint and burn. Fees can still apply.
-              </p>
-            </div>
-          ) : (
-            <Card className="h-full">
-              <p className="landing-section-label">No price gate</p>
-              <h3 className="mt-2 text-xl font-semibold text-[var(--text-primary,#EDEDED)]">Open</h3>
-              <p className="mt-3 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
-                Mint and burn with no price restrictions.
-              </p>
-            </Card>
-          )}
-        </button>
-      </div>
+      <Card>
+        <p className="landing-section-label">Price thresholds</p>
+        <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
+          All DETFs use price thresholds for primary issuance and redemption. Outside those thresholds,
+          mint and burn routes execute swaps through the reserve pool.
+        </p>
+      </Card>
+
+      {['one-vault', 'weighted', 'stables'].includes(plan.typeId) ? (
+        <Card>
+          <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
+            Reserve liquidity
+            <select
+              className={inputClass}
+              value={plan.ownerOnlyLiquidity ? 'restricted' : 'public'}
+              onChange={(e) => setPlan({ ...priced, ownerOnlyLiquidity: e.target.value === 'restricted' })}
+              data-testid="create-reserve-liquidity"
+            >
+              <option value="restricted">Restricted liquidity</option>
+              <option value="public">Public deposits and LP redemptions</option>
+            </select>
+          </label>
+          <p className="mt-2 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
+            {plan.ownerOnlyLiquidity
+              ? 'Only the DETF contract can add reserve liquidity. It and the current fee collector can redeem LP they hold.'
+              : 'Anyone can add reserve liquidity and redeem LP they own or are authorized to spend.'}
+            {' '}Swaps remain public. This choice is permanent; the creator receives no reserve administration rights.
+          </p>
+        </Card>
+      ) : null}
 
       <Card>
         <p className="landing-section-label">Mint and burn</p>
@@ -898,8 +880,7 @@ function StepGates({
             )
           })}
         </div>
-        {plan.mode === 'policy' ? (
-          <>
+        <>
             <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
                 Mint line (% above 1)
@@ -928,12 +909,6 @@ function StepGates({
                 : 'Enter 0–50 for each line.'}
             </p>
           </>
-        ) : (
-          <p className="mt-4 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
-            Open never pauses mint or burn for the price index. Peg price still sets pair tokens per
-            DETF at 1.
-          </p>
-        )}
       </Card>
     </div>
   )
@@ -1046,7 +1021,7 @@ function StepBasket({
           : typeId === 'one-vault'
           ? 'Pick a listed SE vault or build one from the pool type you chose. Then pick the pair token from that vault.'
           : typeId === 'stables'
-            ? `Pick ${min}–${max} dollar vaults. Each one can be listed or built from a pool.`
+            ? 'Pick three dollar vaults. Each one can be listed or built from a pool. Then pick the pair token from that vault.'
             : typeId === 'weighted'
               ? `Pick ${min}–${max} strategy vaults. The reserve also holds the DETF token, so it needs a weight too. DETF plus strategies must add to 100%. Each at least 1%.`
               : `Pick ${min}–${max} strategy vaults. Each vault can be listed or built from a pool.`}
@@ -1102,24 +1077,24 @@ function StepBasket({
               }
               tokens={tokens}
               seHost={typeId === 'one-vault' ? plan.seHost : (plan.seHosts[i] ?? '')}
-              hostPerSlot={typeId === 'weighted'}
+              hostPerSlot={usesSlotHosts(typeId)}
               selectedVault={plan.vaults[i] ?? ''}
               pairToken={
                 typeId === 'one-vault' && i === 0
                   ? plan.pairToken
-                  : typeId === 'weighted'
+                  : usesSlotHosts(typeId)
                     ? (plan.pairTokens[i] ?? '')
                     : ''
               }
-              persistPair={(typeId === 'one-vault' && i === 0) || typeId === 'weighted'}
+              persistPair={(typeId === 'one-vault' && i === 0) || usesSlotHosts(typeId)}
               weight={plan.weights[i]}
               showWeight={typeId === 'weighted'}
               onSelectVault={(vault) => setVaultAt(i, vault)}
               onSelectPair={(pairToken) => {
                 if (typeId === 'one-vault' && i === 0) setPlan({ ...plan, pairToken })
-                if (typeId === 'weighted') setPairAt(i, pairToken)
+                if (usesSlotHosts(typeId)) setPairAt(i, pairToken)
               }}
-              onSelectHost={typeId === 'weighted' ? (host) => setHostAt(i, host) : undefined}
+              onSelectHost={usesSlotHosts(typeId) ? (host) => setHostAt(i, host) : undefined}
               onWeight={typeId === 'weighted' ? (value) => setWeight(i, value) : undefined}
               testIdPrefix={`create-slot-${i}`}
             />
@@ -1227,24 +1202,25 @@ function StepReview({
             {plan.typeId === 'one-vault' ? (
               <Row k="Market" v={seHostMeta(plan.seHost)?.title ?? '—'} />
             ) : null}
-            <Row k="Claim token" v={`${resolvedClaimName(plan) || '—'} · ${resolvedClaimSymbol(plan) || '—'}`} />
+            <Row k="Staking token" v={`${resolvedClaimName(plan) || '—'} · ${resolvedClaimSymbol(plan) || '—'}`} />
             <Row k="Bond NFT" v={`${resolvedBondName(plan) || '—'} · ${resolvedBondSymbol(plan) || '—'}`} />
           </dl>
         </Card>
         <Card>
           <p className="landing-section-label">Mint and burn</p>
           <h3 className="mt-2 text-xl font-semibold text-[var(--text-primary,#EDEDED)]">
-            {plan.mode === 'open' ? 'Open' : 'Policy'}
+            Price gated
           </h3>
           <dl className="mt-4 space-y-2 text-sm">
             <Row k="Peg price" v={priced.creationPairPerDetf.join(' / ') || '—'} />
             <Row k="Opening price" v={openingDisplay || 'peg'} />
+            {['one-vault', 'weighted', 'stables'].includes(plan.typeId) ? (
+              <Row k="Reserve liquidity" v={plan.ownerOnlyLiquidity ? 'Restricted · fixed' : 'Public · fixed'} />
+            ) : null}
             <Row
               k="Mint / burn"
               v={
-                plan.mode === 'open'
-                  ? 'No price restrictions'
-                  : `Mint above ${mintLine || '—'}. Burn below ${burnLine || '—'}.`
+                `Primary mint above ${mintLine || '—'}. Primary burn below ${burnLine || '—'}. Reserve swap otherwise.`
               }
             />
           </dl>
@@ -1266,8 +1242,10 @@ function StepReview({
           {plan.vaults.map((addr, i) => {
             const v = findToken(vaults, addr)
             const w = plan.typeId === 'weighted' ? plan.weights[i] : null
-            const host = plan.typeId === 'weighted' ? seHostMeta(plan.seHosts[i] ?? '')?.title : null
-            const pair = plan.typeId === 'weighted' ? plan.pairTokens[i] : null
+            const host = usesSlotHosts(plan.typeId)
+              ? seHostMeta(plan.seHosts[i] ?? '')?.title
+              : null
+            const pair = usesSlotHosts(plan.typeId) ? plan.pairTokens[i] : null
             const pairMeta = pair ? findToken(tokens, pair) : null
             return (
               <li key={addr} className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm">
@@ -1299,9 +1277,9 @@ function StepReview({
       <div className="landing-lab__panel p-6">
         <p className="landing-section-label">Creator bond</p>
         <p className="mt-3 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
-          Creating a DETF issues a bond to you that you cannot cash out. It can collect a cut of DETF minted
-          to bond holders. On Policy it can also collect from regular supply expansion. Amounts are not
-          guaranteed. The DETF stays off until someone bonds.
+          Creating a DETF gives you standing reward rights. The role itself has no redeemable principal,
+          but its sDETF receipts can be unstaked for DETF. It can receive more after you redeem earlier
+          receipts. The DETF stays off until the first bond.
         </p>
       </div>
 

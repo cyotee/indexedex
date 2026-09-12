@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
 import {
@@ -13,13 +15,15 @@ contract UniswapV4StandardExchangeInMultiQueryFacet is UniswapV4StandardExchange
     }
 
     function facetInterfaces() public pure override returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](1);
+        interfaces = new bytes4[](2);
         interfaces[0] = type(IStandardExchangeInMulti).interfaceId;
+        interfaces[1] = type(IStandardExchangeIn).interfaceId;
     }
 
     function facetFuncs() public pure override returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](1);
+        funcs = new bytes4[](2);
         funcs[0] = IStandardExchangeInMulti.previewExchangeInManyToOne.selector;
+        funcs[1] = IStandardExchangeIn.previewExchangeIn.selector;
     }
 
     function facetMetadata()

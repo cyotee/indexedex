@@ -11,7 +11,7 @@ export const rateProvidersArticle: ResearchArticle = {
   title: 'Rate providers: keep the price honest, or let traders catch up',
   summary:
     'A DETF is one token for a basket. The basket often holds vault shares. A rate provider tells the DETF what one vault share is worth right now. Turn rates on to keep mint, burn, and the shown price current. Leave them off if you want traders to fix a stale price. Neither setting is yield.',
-  date: '2026-08-17',
+  date: '2026-09-07',
   tags: ['rates', 'detf', 'product'],
   status: 'published',
   claims: [
@@ -20,7 +20,7 @@ export const rateProvidersArticle: ResearchArticle = {
     'Rates off leave raw vault-share counts. If the underlying moves and nobody trades the reserve, the displayed price can lag.',
     'That lag can invite traders to reprice the reserve when the gap is large enough to cover fees and path costs. Volume is not promised.',
     'Rate providers re-mark vault shares. They do not move capital from one vault to another.',
-    'Open still uses the same mark for quotes. Only Policy uses that price to pause mint or burn.',
+    'Every new DETF uses the reserve mark to choose primary issuance/redemption or a reserve swap.',
   ],
   notClaiming: [
     'Neither setting prints yield, guarantees profit, or promises live reprice volume.',
@@ -44,7 +44,7 @@ export const rateProvidersArticle: ResearchArticle = {
     {
       heading: 'Why the mark matters',
       paragraphs: [
-        'Mint, burn, and deposits size themselves from the reserve. Policy also uses that price to pause mint or burn near a target. If the mark is stale, quotes and those pauses read a stale book.',
+        'Quotes read the reserve. Price gates use its backing measure to choose primary issuance/redemption or a reserve swap. A stale mark can affect both the price and the selected route.',
       ],
       bullets: [
         '**The DETF token sits in the reserve.** Liquidity is how the backing is managed, not a side listing.',
@@ -61,8 +61,8 @@ export const rateProvidersArticle: ResearchArticle = {
       bullets: [
         'The reserve re-marks vault shares as their claim value changes, even before anyone trades the DETF.',
         'Quotes stay closer to redeem value. You do not need a trader to update the mid.',
-        'Policy still pauses mint and burn near target. The pause reads a current book.',
-        'Open does not pause for price. Quotes still stay current.',
+        'Primary price gates read the current book.',
+        'When a primary price condition is not met, the supported route swaps through the reserve.',
       ],
     },
     {
@@ -94,8 +94,8 @@ export const rateProvidersArticle: ResearchArticle = {
         'Want fair mint, burn, and deposits as vault-share value moves? Turn rates on.',
         'Want the displayed price to stay current without waiting for a trade? Turn rates on.',
         'Want lag that can invite traders to reprice the reserve? Leave rates off, and accept stale quotes until that trade happens.',
-        'On Policy, the mint and burn pause reads this same mark. A current book keeps that pause honest.',
-        'On Open, mint and burn stay available at any price. The mark still decides quote quality.',
+        'Primary issuance and redemption conditions read the same reserve mark.',
+        'A failed price condition selects a reserve swap; liquidity and your minimum output still matter.',
         'This flag does not pick mint versus bond. That choice is /research/bond-vs-mint.',
       ],
     },
@@ -125,7 +125,7 @@ export const rateProvidersArticle: ResearchArticle = {
         '**Which is better for a fair primary market?** Rates on. Mint, burn, and deposits stay closer to redeem value.',
         '**Which invites traders to reprice the reserve?** Rates off, when the gap clears costs. Volume is not promised.',
         '**Do rate providers rebalance the basket for me?** No. They re-mark vault shares. You still mint, burn, bond, or deposit to change exposure.',
-        '**Does Open make this irrelevant?** No. Open only removes price restrictions on mint and burn. Quote quality still follows how the reserve marks vault shares.',
+        '**Does a price gate block my route?** A failed primary condition selects a reserve swap on supported routes. Quote quality still depends on the reserve mark.',
         '**Where next?** How DETFs work: /research/detf. Types: /research/detf-types. Mint or bond: /research/bond-vs-mint. Building-block vaults: /earn.',
       ],
     },

@@ -1,0 +1,44 @@
+{
+  "status": "PASS",
+  "recorded_at_utc": "2026-09-11T06:22:07.971774+00:00",
+  "source_sha256": "754ba5cb065e4c1cc06996d5e3da6217a0b0601c17e72c1d146b75ac8537d338",
+  "cases": [
+    {
+      "case": "local-staged",
+      "command_count": 2,
+      "legacy": true,
+      "passed": true
+    },
+    {
+      "case": "local-dry-run",
+      "command_count": 1,
+      "legacy": true,
+      "passed": true
+    },
+    {
+      "case": "public-default",
+      "command_count": 2,
+      "legacy": false,
+      "passed": true
+    },
+    {
+      "case": "explicit-legacy",
+      "command_count": 2,
+      "legacy": true,
+      "passed": true
+    },
+    {
+      "case": "funding-quote",
+      "command_count": 1,
+      "legacy": false,
+      "passed": true
+    },
+    {
+      "case": "stage-funding-quote",
+      "command_count": 1,
+      "legacy": false,
+      "passed": true
+    }
+  ],
+  "scope": "Actual shell command builders; Forge and RPC were not executed. Local deployment and EIP-1559 funding simulation remain required."
+}

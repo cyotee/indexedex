@@ -10,7 +10,7 @@ test.describe('Connected wallet UI (DTF)', () => {
     await walletPage.goto('/')
     const hasProvider = await walletPage.evaluate(() => {
       const eth = (window as any).ethereum
-      return Boolean(eth?.isMetaMask && typeof eth.request === 'function')
+      return Boolean(eth?.isIndexedexTestWallet && typeof eth.request === 'function')
     })
     expect(hasProvider).toBe(true)
 
@@ -25,21 +25,14 @@ test.describe('Connected wallet UI (DTF)', () => {
     expect(Number.parseInt(chainIdHex, 16)).toBe(DEFAULT_E2E_CHAIN_ID)
   })
 
-  test('Connect Wallet uses injected provider and shows truncated address', async ({
+  test('RainbowKit connects the selected provider and shows its address', async ({
     walletPage,
     walletAddress,
   }) => {
     await prepareLocalChain(walletPage)
-    const short = walletAddress.slice(0, 6)
-
-    if (await walletPage.getByText(new RegExp(short, 'i')).first().isVisible().catch(() => false)) {
-      return
-    }
-
     await connectInjectedWallet(walletPage)
-    await expect(walletPage.getByText(new RegExp(short, 'i')).first()).toBeVisible({
-      timeout: 25_000,
-    })
+    await expect(walletPage.getByTestId('wallet-account')).toHaveAttribute('title', walletAddress)
+
   })
 
   test('Earn is reachable with wallet provider present', async ({ walletPage }) => {
@@ -53,7 +46,7 @@ test.describe('Connected wallet UI (DTF)', () => {
 
 test.describe('Shell without requiring chain', () => {
   test('primary nav exposes Explore DETFs Create You Learn', async ({ walletPage }) => {
-    await walletPage.goto('/')
+    await walletPage.goto('/learn')
     const nav = walletPage.getByRole('navigation')
     await expect(nav.getByRole('link', { name: 'Explore', exact: true })).toBeVisible()
     await expect(nav.getByRole('link', { name: 'DETFs', exact: true })).toBeVisible()

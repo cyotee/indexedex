@@ -1,0 +1,35 @@
+{
+  "recorded_at_utc": "2026-09-08T08:38:40.209435+00:00",
+  "status": "APPLIED_PROXY_AND_LIVE_PROTOCOL_TESTS_PASSED",
+  "scope": "Lido standard provider projections for non-rebasing accounting assets WETH and wstETH, with existing WETH/stETH/wstETH payment conversions; no deployment allowlist",
+  "files": [
+    "contracts/protocols/staking/lido/LidoWstETHStandardExchangeInTarget.sol",
+    "contracts/protocols/staking/lido/LidoWstETHStandardExchangeInFacet.sol",
+    "contracts/protocols/staking/lido/LidoWstETHStandardExchangeDFPkg.sol",
+    "contracts/protocols/staking/lido/LidoWstETH_Component_FactoryService.sol",
+    "test/foundry/spec/vaults/standard/sy/LiquidStakingNativeSY.t.sol"
+  ],
+  "remaining": [
+    "V4 buffer composition, custom bond, fallback and full current-source repository validation"
+  ],
+  "applied_at_utc": "2026-09-08T08:42:29.960992+00:00",
+  "validation": {
+    "hermetic": {
+      "record": "lido-composed-quote-proxy-green-run.json",
+      "passed": 8,
+      "failed": 0
+    },
+    "live_fork": {
+      "record": "lido-live-projection-fork-run.json",
+      "block": 24000000,
+      "passed": 4,
+      "failed": 0,
+      "build_seconds": 50.169,
+      "test_seconds": 9.027
+    },
+    "runtime_sizes": {
+      "LidoWstETHStandardExchangeInFacet": 16233,
+      "LidoWstETHStandardExchangeDFPkg": 9775
+    }
+  }
+}

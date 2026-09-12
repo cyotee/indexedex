@@ -19,6 +19,7 @@ IndexedEx uses **exactly two** Foundry product profiles:
 4. Fork tests **must** live under `test/foundry/fork/**`.
 5. **`via_ir = false` always.** Fix stack-too-deep with structs / helper frames (see Crane code-style skill). Never re-enable IR.
 6. Contract size output: `forge build --sizes` when needed (`sizes = false` on both profiles for quiet logs).
+7. **After production contract edits, `forge build` then `forge test`.** IndexedEx FactoryServices load creation bytecode from `out/` (`ArtifactCreationCode` / `vm.getCode`). `forge test` alone can deploy stale artifacts. Same for `forge script`. See root `CLAUDE.md` item 10 and agent law § FactoryService creation bytecode.
 
 ## What runs on GitHub
 
@@ -34,11 +35,13 @@ IndexedEx uses **exactly two** Foundry product profiles:
 ## Local commands
 
 ```bash
-# Hermetic (default suite under test/foundry/spec) — same as CI
+# After production contract edits: always build first (FactoryService reads out/)
 forge build
+
+# Hermetic (default suite under test/foundry/spec) — same as CI
 forge test -vv
 
-# Focus a package without a custom profile
+# Focus a package without a custom profile (still after a current forge build)
 forge test --match-path 'test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/**' -vv
 forge test --match-path 'test/foundry/spec/routers/**' -vv
 

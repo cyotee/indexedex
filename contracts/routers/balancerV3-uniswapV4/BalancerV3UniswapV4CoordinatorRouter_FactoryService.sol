@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+import {BalancerV3UniswapV4CoordinatorRouterQueryFacet} from "contracts/routers/balancerV3-uniswapV4/facets/BalancerV3UniswapV4CoordinatorRouterQueryFacet.sol";
+import {BalancerV3UniswapV4CoordinatorRouterExactInFacet} from "contracts/routers/balancerV3-uniswapV4/facets/BalancerV3UniswapV4CoordinatorRouterExactInFacet.sol";
 
 import {Vm} from "forge-std/Vm.sol";
 import {VM_ADDRESS} from "@crane/contracts/constants/FoundryConstants.sol";
@@ -16,21 +19,6 @@ import {
     IBalancerV3UniswapV4CoordinatorRouter,
     IBalancerV3UniswapV4CoordinatorRouterDFPkg
 } from "contracts/routers/balancerV3-uniswapV4/interfaces/IBalancerV3UniswapV4CoordinatorRouter.sol";
-import {
-    BalancerV3UniswapV4CoordinatorRouterDFPkg
-} from "contracts/routers/balancerV3-uniswapV4/BalancerV3UniswapV4CoordinatorRouterDFPkg.sol";
-import {
-    BalancerV3UniswapV4CoordinatorRouterExactInFacet
-} from "contracts/routers/balancerV3-uniswapV4/facets/BalancerV3UniswapV4CoordinatorRouterExactInFacet.sol";
-import {
-    BalancerV3UniswapV4CoordinatorRouterQueryFacet
-} from "contracts/routers/balancerV3-uniswapV4/facets/BalancerV3UniswapV4CoordinatorRouterQueryFacet.sol";
-import {
-    BalancerV3UniswapV4CoordinatorRouterAdminFacet
-} from "contracts/routers/balancerV3-uniswapV4/facets/BalancerV3UniswapV4CoordinatorRouterAdminFacet.sol";
-import {
-    BalancerV3UniswapV4CoordinatorRouterPermit2WitnessFacet
-} from "contracts/routers/balancerV3-uniswapV4/facets/BalancerV3UniswapV4CoordinatorRouterPermit2WitnessFacet.sol";
 
 library BalancerV3UniswapV4CoordinatorRouter_FactoryService {
     using BetterEfficientHashLib for bytes;
@@ -39,34 +27,34 @@ library BalancerV3UniswapV4CoordinatorRouter_FactoryService {
 
     function deployExactInFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         facet = create3Factory.deployFacet(
-            type(BalancerV3UniswapV4CoordinatorRouterExactInFacet).creationCode,
-            abi.encode(type(BalancerV3UniswapV4CoordinatorRouterExactInFacet).name)._hash()
+            type(BalancerV3UniswapV4CoordinatorRouterExactInFacet).creationCode /* unlinked artifact; type().creationCode required */,
+            abi.encode("BalancerV3UniswapV4CoordinatorRouterExactInFacet")._hash()
         );
-        vm.label(address(facet), type(BalancerV3UniswapV4CoordinatorRouterExactInFacet).name);
+        vm.label(address(facet), "BalancerV3UniswapV4CoordinatorRouterExactInFacet");
     }
 
     function deployQueryFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         facet = create3Factory.deployFacet(
-            type(BalancerV3UniswapV4CoordinatorRouterQueryFacet).creationCode,
-            abi.encode(type(BalancerV3UniswapV4CoordinatorRouterQueryFacet).name)._hash()
+            type(BalancerV3UniswapV4CoordinatorRouterQueryFacet).creationCode /* unlinked artifact; type().creationCode required */,
+            abi.encode("BalancerV3UniswapV4CoordinatorRouterQueryFacet")._hash()
         );
-        vm.label(address(facet), type(BalancerV3UniswapV4CoordinatorRouterQueryFacet).name);
+        vm.label(address(facet), "BalancerV3UniswapV4CoordinatorRouterQueryFacet");
     }
 
     function deployAdminFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         facet = create3Factory.deployFacet(
-            type(BalancerV3UniswapV4CoordinatorRouterAdminFacet).creationCode,
-            abi.encode(type(BalancerV3UniswapV4CoordinatorRouterAdminFacet).name)._hash()
+            ArtifactCreationCode.creationCode("BalancerV3UniswapV4CoordinatorRouterAdminFacet.sol:BalancerV3UniswapV4CoordinatorRouterAdminFacet"),
+            abi.encode("BalancerV3UniswapV4CoordinatorRouterAdminFacet")._hash()
         );
-        vm.label(address(facet), type(BalancerV3UniswapV4CoordinatorRouterAdminFacet).name);
+        vm.label(address(facet), "BalancerV3UniswapV4CoordinatorRouterAdminFacet");
     }
 
     function deployPermit2WitnessFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         facet = create3Factory.deployFacet(
-            type(BalancerV3UniswapV4CoordinatorRouterPermit2WitnessFacet).creationCode,
-            abi.encode(type(BalancerV3UniswapV4CoordinatorRouterPermit2WitnessFacet).name)._hash()
+            ArtifactCreationCode.creationCode("BalancerV3UniswapV4CoordinatorRouterPermit2WitnessFacet.sol:BalancerV3UniswapV4CoordinatorRouterPermit2WitnessFacet"),
+            abi.encode("BalancerV3UniswapV4CoordinatorRouterPermit2WitnessFacet")._hash()
         );
-        vm.label(address(facet), type(BalancerV3UniswapV4CoordinatorRouterPermit2WitnessFacet).name);
+        vm.label(address(facet), "BalancerV3UniswapV4CoordinatorRouterPermit2WitnessFacet");
     }
 
     function deployDFPkg(
@@ -76,13 +64,13 @@ library BalancerV3UniswapV4CoordinatorRouter_FactoryService {
         pkg = IBalancerV3UniswapV4CoordinatorRouterDFPkg(
             address(
                 create3Factory.deployPackageWithArgs(
-                    type(BalancerV3UniswapV4CoordinatorRouterDFPkg).creationCode,
+                    ArtifactCreationCode.creationCode("BalancerV3UniswapV4CoordinatorRouterDFPkg.sol:BalancerV3UniswapV4CoordinatorRouterDFPkg"),
                     abi.encode(pkgInit),
-                    abi.encode(type(BalancerV3UniswapV4CoordinatorRouterDFPkg).name)._hash()
+                    abi.encode("BalancerV3UniswapV4CoordinatorRouterDFPkg")._hash()
                 )
             )
         );
-        vm.label(address(pkg), type(BalancerV3UniswapV4CoordinatorRouterDFPkg).name);
+        vm.label(address(pkg), "BalancerV3UniswapV4CoordinatorRouterDFPkg");
     }
 
     function deployCoordinator(

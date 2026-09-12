@@ -2,7 +2,9 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeTransitionQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 
 /**
@@ -11,6 +13,24 @@ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.so
  */
 library UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib {
     error InsufficientTokenOut();
+
+    function supportsTransitionQuote(address se, address pairToken, address holder) external view returns (bool) {
+        return _supportsTransitionQuote(se, pairToken, holder);
+    }
+
+    function _supportsTransitionQuote(address se, address pairToken, address holder) private view returns (bool) {
+        try IERC165(se).supportsInterface(type(IStandardExchangeTransitionQuote).interfaceId) returns (bool supported_) {
+            if (!supported_) return false;
+        } catch {
+            return false;
+        }
+        // A wrapper's underlying vault may not implement the optional capability.
+        try IStandardExchangeTransitionQuote(se).quoteState(pairToken, holder) returns (bytes memory, uint256) {
+            return true;
+        } catch {
+            return false;
+        }
+    }
 
     function _feeShares(address se, uint256 sharesOut, IVaultFeeOracleQuery feeOracle)
         private
@@ -28,6 +48,7 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib {
         returns (uint256)
     {
         if (seAmount == 0) return 0;
+        if (se == pairToken) return seAmount;
         return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seAmount, IERC20(pairToken));
     }
 
@@ -39,6 +60,16 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib {
         address hook
     ) private view returns (uint256) {
         if (amountInRaw == 0) return 0;
+        if (se == pairToken) return amountInRaw;
+        if (_supportsTransitionQuote(se, pairToken, hook)) {
+            (bytes memory state_, uint256 before_) = IStandardExchangeTransitionQuote(se).quoteState(pairToken, hook);
+            (,, uint256 minted_, uint256 after_) = IStandardExchangeTransitionQuote(se)
+                .quoteTransition(state_, IStandardExchangeTransitionQuote.Operation.DepositExactIn, amountInRaw);
+            uint256 held_ = IERC20(se).balanceOf(hook);
+            if (before_ == 0 && held_ > 0) before_ = 1;
+            if (after_ == 0 && (held_ > 0 || minted_ > 0)) after_ = 1;
+            return after_ > before_ ? after_ - before_ : 0;
+        }
         uint256 sharesOut =
             IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), amountInRaw, IERC20(se));
         if (sharesOut == 0) return 0;

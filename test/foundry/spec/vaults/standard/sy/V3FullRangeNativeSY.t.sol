@@ -1,0 +1,132 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {TransitionQuoteAssertions} from "test/foundry/spec/vaults/standard/TransitionQuoteAssertions.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
+import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
+import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
+import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
+import {IUniswapV3Pool} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Pool.sol";
+import {IUniswapV3FlashCallback} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/callback/IUniswapV3FlashCallback.sol";
+import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v3/libraries/TickMath.sol";
+import {LiquidityAmounts} from "@crane/contracts/protocols/dexes/uniswap/v3/periphery/libraries/LiquidityAmounts.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
+import {TestBase_UniswapV3StandardExchange} from "contracts/protocols/dexes/uniswap/v3/test/bases/TestBase_UniswapV3StandardExchange.sol";
+
+contract V3FullRangeNativeSYTest is TestBase_UniswapV3StandardExchange, IUniswapV3FlashCallback, TransitionQuoteAssertions {
+    IUniswapV3Pool private pool;
+    IStandardExchangeProxy private se;
+    IStandardizedYield private sy;
+    IERC20 private token0;
+    IERC20 private token1;
+    bool private lockCallback;
+
+    function setUp() public override {
+        super.setUp();
+        ERC20PermitMintableStub a = new ERC20PermitMintableStub("A", "A", 18, address(this), 0);
+        ERC20PermitMintableStub b = new ERC20PermitMintableStub("B", "B", 18, address(this), 0);
+        pool = _createPoolOneToOne(address(a), address(b), FEE_MEDIUM);
+        _seedExternalLiquidity(pool, 1_000_000e18);
+        se = _deployVault(pool); sy = IStandardizedYield(address(se));
+        token0 = IERC20(pool.token0()); token1 = IERC20(pool.token1());
+        a.mint(address(this), 10_000e18); b.mint(address(this), 10_000e18);
+        token0.approve(address(se), type(uint256).max); token1.approve(address(se), type(uint256).max);
+    }
+
+    function _activate() private returns (uint256) {
+        address[] memory tokens = new address[](2); tokens[0] = address(token0); tokens[1] = address(token1);
+        uint256[] memory amounts = new uint256[](2); amounts[0] = 1_000e18; amounts[1] = 1_000e18;
+        return IStandardExchangeInMulti(address(se)).exchangeInManyToOne(tokens, amounts, IERC20(address(se)), 1_000e18, address(this), false, block.timestamp);
+    }
+
+    function test_receivedSharesDoNotRebalanceOrChangePoolInventory() public {
+        _activate();
+        _assertShareReceipt(address(se), token0, address(this));
+    }
+
+    function test_installedQueryFacetsFitRuntimeLimit() public view {
+        address[] memory facets_ = IDiamondLoupe(address(se)).facetAddresses();
+        for (uint256 i_; i_ < facets_.length; ++i_) {
+            assertLe(facets_[i_].code.length, 24_576, "installed facet runtime exceeds EIP-170");
+        }
+    }
+
+    function test_nativeSYRequiresBothTokensForInitialActivation() public {
+        assertEq(sy.previewDeposit(address(token0), 1e18), 0);
+        uint256 before0 = token0.balanceOf(address(this));
+        vm.expectRevert(); sy.deposit(address(this), address(token0), 1e18, 0);
+        assertEq(token0.balanceOf(address(this)), before0); assertEq(se.totalSupply(), 0);
+        assertEq(_activate(), 1_000e18);
+        (uint128 liquidity,,,,) = pool.positions(keccak256(abi.encodePacked(address(se), TickMath.minUsableTick(pool.tickSpacing()), TickMath.maxUsableTick(pool.tickSpacing()))));
+        assertGt(liquidity, 0);
+    }
+
+    function test_nativeSYMetadataAndWholeBookRate() public {
+        _activate();
+        assertTrue(IERC165(address(se)).supportsInterface(type(IStandardizedYield).interfaceId));
+        assertEq(IERC20Metadata(address(sy)).decimals(), 18); assertEq(sy.yieldToken(), address(0));
+        (IStandardizedYield.AssetType kind, address asset, uint8 decimals) = sy.assetInfo();
+        assertEq(uint8(kind), uint8(IStandardizedYield.AssetType.LIQUIDITY)); assertEq(asset, address(pool)); assertEq(decimals, 18);
+        assertEq(sy.getRewardTokens().length, 0);
+        int24 lower = TickMath.minUsableTick(pool.tickSpacing()); int24 upper = TickMath.maxUsableTick(pool.tickSpacing());
+        (uint128 liquidity,,,,) = pool.positions(keccak256(abi.encodePacked(address(se), lower, upper)));
+        (uint160 price,,,,,,) = pool.slot0();
+        (uint256 deployed0, uint256 deployed1) = LiquidityAmounts.getAmountsForLiquidity(price, TickMath.getSqrtRatioAtTick(lower), TickMath.getSqrtRatioAtTick(upper), liquidity);
+        uint256 total0 = token0.balanceOf(address(se)) + deployed0;
+        uint256 total1 = token1.balanceOf(address(se)) + deployed1;
+        assertEq(total0, total1); // At price 1 the independent exact CL amounts are symmetric.
+        assertEq(sy.exchangeRate(), total0 * 1e18 / se.totalSupply());
+    }
+
+    function test_nativeSYLaterSingleTokenRoutesAndCallerRedemption() public {
+        _activate();
+        uint256 quote = sy.previewDeposit(address(token0), 10e18);
+        assertGt(quote, 0); assertEq(sy.deposit(address(this), address(token0), 10e18, quote), quote);
+        uint256 before0 = token0.balanceOf(address(this)); uint256 shares = se.balanceOf(address(this));
+        uint256 out = sy.previewRedeem(address(token0), quote);
+        assertEq(se.allowance(address(this), address(se)), 0);
+        assertEq(sy.redeem(address(this), quote, address(token0), out, false), out);
+        assertEq(token0.balanceOf(address(this)) - before0, out); assertEq(se.balanceOf(address(this)), shares - quote);
+    }
+
+    function test_nativeSYInternalBalanceBurnsOnlyTheRequestedShares() public {
+        _activate(); se.transfer(address(se), 5e18);
+        uint256 supply = se.totalSupply(); uint256 quote = sy.previewRedeem(address(token1), 2e18);
+        assertEq(sy.redeem(address(this), 2e18, address(token1), quote, true), quote);
+        assertEq(se.balanceOf(address(se)), 3e18); assertEq(se.totalSupply(), supply - 2e18);
+    }
+
+    function test_nativeSYAccruedFeeDepositMatchesItsPreview() public {
+        _activate();
+        _externalSwapExactIn(pool, true, 100e18); _externalSwapExactIn(pool, false, 100e18);
+        uint256 quoted = sy.previewDeposit(address(token1), 7e18);
+        assertGt(quoted, 0); assertEq(sy.deposit(address(this), address(token1), 7e18, quoted), quoted);
+    }
+
+    function test_nativeSYSlippageRollbackPreservesBothLedgers() public {
+        _activate(); uint256 balance = token0.balanceOf(address(this)); uint256 supply = se.totalSupply();
+        uint256 quote = sy.previewDeposit(address(token0), 3e18);
+        vm.expectRevert(); sy.deposit(address(this), address(token0), 3e18, quote + 1);
+        assertEq(token0.balanceOf(address(this)), balance); assertEq(se.totalSupply(), supply);
+        uint256 out = sy.previewRedeem(address(token0), 1e18);
+        vm.expectRevert(); sy.redeem(address(this), 1e18, address(token0), out + 1, false);
+        assertEq(se.totalSupply(), supply); assertEq(se.balanceOf(address(se)), 0);
+    }
+
+    function test_nativeSYPreservesFundedSleeveOperationsDuringPoolLock() public {
+        _activate(); lockCallback = true; pool.flash(address(this), 0, 0, ""); lockCallback = false;
+    }
+
+    function uniswapV3FlashCallback(uint256, uint256, bytes calldata) external {
+        require(msg.sender == address(pool) && lockCallback);
+        (,,,,,, bool unlocked) = pool.slot0(); assertFalse(unlocked);
+        uint256 quote = sy.previewDeposit(address(token0), 4e18);
+        assertGt(quote, 0); assertEq(sy.deposit(address(this), address(token0), 4e18, quote), quote);
+        uint256 out = sy.previewRedeem(address(token1), 1e18);
+        assertGt(out, 0); assertEq(sy.redeem(address(this), 1e18, address(token1), out, false), out);
+        assertGt(sy.exchangeRate(), 0);
+    }
+}

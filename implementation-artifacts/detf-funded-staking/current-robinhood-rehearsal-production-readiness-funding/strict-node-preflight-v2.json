@@ -1,0 +1,23 @@
+{
+  "checked_at_utc": "2026-09-10T21:17:24.555606+00:00",
+  "status": "PASS_STRICT_NODE_PREFLIGHT_NO_DEPLOYMENT",
+  "rpc": "http://127.0.0.1:18664",
+  "chain_id": 4663,
+  "block_number": 56118361,
+  "block_hash": "0x108ba210e727f1fa6ecea533508dd0266759a0a6a18be55de934552a74f20175",
+  "historical_upstream_header_gas_limit": 1125899906842624,
+  "configured_local_gas_limit": 32000000,
+  "checks": {
+    "chain_id": true,
+    "pinned_head": true,
+    "fork_pin": true,
+    "configured_local_gas_limit": true,
+    "prague": true,
+    "explicit_runtime_limit": true
+  },
+  "previous_attempt": "strict-node-preflight.json",
+  "correction": "The untouched fork head is the historical upstream block, whose gas limit is not the configured limit for locally mined blocks. The initial preflight incorrectly equated them. Node configuration is verified here; receipt reconciliation separately requires every local deployment block and transaction to stay within 32M.",
+  "code_size_evidence": "Explicit 24576 Anvil startup flag in node.json; actual runtime acceptance is verified by deployment.",
+  "public_transactions": false,
+  "local_deployment_transactions": false
+}

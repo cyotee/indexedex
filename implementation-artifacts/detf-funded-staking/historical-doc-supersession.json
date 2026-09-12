@@ -1,0 +1,162 @@
+[
+  {
+    "path": "contracts/vaults/detf/DETF_RESERVE_DONATION_PRD.md",
+    "previous_sha256": "4cdf66ad698fb2afd8608b7245b0c1568950d30afab180bf660c25f8418da41e"
+  },
+  {
+    "path": "contracts/vaults/detf/UNIFIED_DETF_PRODUCTION_SE_HOOK_MATRIX_TEST_PRD.md",
+    "previous_sha256": "69bee64b4b669a8d42c4517df0aecf2f223ffc2a0fd202dff2be3a3e8ecc2bf7"
+  },
+  {
+    "path": "contracts/vaults/detf/UNIFIED_DETF_DEPRECATION_TEST_COVERAGE_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "previous_sha256": "9e779cc2c2050ef243e8c598a280994e1ad3cc6a2f7c95a16094f13d2bed7273"
+  },
+  {
+    "path": "contracts/vaults/detf/DETF_INSTANCE_IO_ROUTING_PROGRAM.md",
+    "previous_sha256": "ac63f80a97434523e01365e368560f63b41068ea5caadaac75b5ae8ec6fb77aa"
+  },
+  {
+    "path": "contracts/vaults/detf/DETF_INSTANCE_IO_ROUTING_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "previous_sha256": "7aac8dc935d51de9d254a25936862b8da91e75dbe8eba8e84ef9ae2832e812ec"
+  },
+  {
+    "path": "contracts/vaults/detf/DETF_ALIGNMENT_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "previous_sha256": "673feda84f4654f90e26bb7612a4d661f25f37533413b3570f55b720c4de9e1c"
+  },
+  {
+    "path": "contracts/vaults/detf/UNIFIED_DETF_DEPRECATION_TEST_COVERAGE_PRD.md",
+    "previous_sha256": "c61fd52e2bc4cb484918fb8eb4677fff4a6b8b8c24f9174bead4d2b14b5d29e2"
+  },
+  {
+    "path": "contracts/vaults/detf/DETF_INSTANCE_IO_ROUTING_PRD.md",
+    "previous_sha256": "fa45b4aeeb65e6bc438cefe5ef38719c5c97c1259f506b45e76b469b318f12eb"
+  },
+  {
+    "path": "contracts/vaults/detf/io-routing/04_Quad_Buffer_Hook_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "previous_sha256": "6991f6f0b076f9defbd76c3970a75e5498d05eac66a829e629b49b6a62d82921"
+  },
+  {
+    "path": "contracts/vaults/detf/io-routing/02_Orbital_Buffer_Hook_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "previous_sha256": "e204936aac8425c22ebbc08342596cda444a63e696e1449b7659e21e173a8f8e"
+  },
+  {
+    "path": "contracts/vaults/detf/io-routing/07_UniswapV4_Detf_Cp_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "previous_sha256": "1d6736705604c8c8277352e93f85f88864434c61e10055de8e75081c07140554"
+  },
+  {
+    "path": "contracts/vaults/detf/io-routing/01_Cp_Buffer_Hook_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "previous_sha256": "84ed352eae1b32bca601db869b7952ff5c2a520d1c85e4395384527da46418d7"
+  },
+  {
+    "path": "contracts/vaults/detf/io-routing/00_Shared_Hook_ABI_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "previous_sha256": "dcf106acb40f7427d1a0b42bf09b289c2b1611984b90808b40f9e804d378b8db"
+  },
+  {
+    "path": "contracts/vaults/detf/io-routing/10_Pons_V2_Graduated_Pool_Se_And_Detf_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "previous_sha256": "ee851ea05dfa2c7dba5c13fb62644bcaa9a35b1fad7d5e0b1726fff6fbb820c0"
+  },
+  {
+    "path": "contracts/vaults/detf/io-routing/06_Detf_Interface_And_Bond_Nft_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "previous_sha256": "feb6c9d47e68aad41da36196c0830cd59b312b12cc61090b2d6db942cd9b6365"
+  },
+  {
+    "path": "contracts/vaults/detf/io-routing/09_Docs_Alignment_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "previous_sha256": "da7b16741e8fbeb8cf9cb833cf5f51b2beda7554b3e3a7e93e200669a3d4ef08"
+  },
+  {
+    "path": "contracts/vaults/detf/io-routing/05_Dual_Se_Cp_Hook_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "previous_sha256": "a063b2b3a9f8c2e3acccb3a6666fcf2faf03caef48319081c3d1178cfe16cf36"
+  },
+  {
+    "path": "contracts/vaults/detf/io-routing/03_Weighted_Buffer_Hook_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "previous_sha256": "2f92a506b5aac03da2325d3a836b193b7b1c7d4ff4f1661c50c2b50687c4f78f"
+  },
+  {
+    "path": "contracts/vaults/detf/io-routing/08_UniswapV4_Detf_Hook_Matrix_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "previous_sha256": "5aa19677f129225858ac46bfad616829cb818b31f38c4c41803e02bc84478a92"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableDETF_PRD.md",
+    "previous_sha256": "c7dcd78c6c16b50ae9eb8cbbde928ab97dedded7d3316adfd7afba1719bbacf1"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeDETF_PRD.md",
+    "previous_sha256": "122f4339df3e7c11dc549ddc639ab82b8b638f187fad97ef6c90463abb7c61b6"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedDETF_PRD.md",
+    "previous_sha256": "425387257ddca7f9836fc6eff12e1b994faf7126d579bd7223028d7f94cbf4d9"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalDETF_PRD.md",
+    "previous_sha256": "833dee378b8f7b1c8f7656b1858fa08cf9b7a237a2786640850fe83c9c152fae"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/BALANCER_V3_DETF_PRODUCT_LAW_ALIGNMENT_PRD.md",
+    "previous_sha256": "318cad9971de147e58d63dee2cf9d6dcdd60af7bf7c80203e691cab2397f9dbd"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/BALANCER_V3_DETF_PRODUCT_LAW_ALIGNMENT_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "previous_sha256": "c21cb880a899443fc1b1497f6181d1dd439207de570cb41943c9214b5620c171"
+  },
+  {
+    "path": "docs/detf/00_DETF_Protocol_Compound_Shared_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "previous_sha256": "9faff632dea3eb510a2bf3ba540f7df2098ef760c26e643a64df8ab707bdc8ea"
+  },
+  {
+    "path": "docs/detf/05_DETF_Natural_Expansion_Shared_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "previous_sha256": "4f6240702f9d6a5d89215528ddcfe854aa7911315adaadf12e09d1726be62d8e"
+  },
+  {
+    "path": "docs/detf/DETF_Olympus_Flywheel_Bond_And_Expansion_PRD.md",
+    "previous_sha256": "ee28d1879b1337b4d5d64159d5af7bd4681b631787a5e6407997f6dcd512d90d"
+  },
+  {
+    "path": "docs/detf/DETFThresholdPolicy_Threshold_Modes_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "previous_sha256": "d8ca38177c8da0d44aff8b7ca4017a04954b7308c1cebc17cd30540e54974fdd"
+  },
+  {
+    "path": "docs/detf/DETF_Protocol_Compound_And_Supply_Expansion_PRD.md",
+    "previous_sha256": "a4572467876fffcbe19092aa1331c80549e1419a09d411481aeef392d561744e"
+  },
+  {
+    "path": "docs/detf/DETF_Protocol_Compound_And_Supply_Expansion_PROGRAM.md",
+    "previous_sha256": "12d9900d839e01e902f195ff3b36d044e082a9a1c309dcb40e24a20ecb671f04"
+  },
+  {
+    "path": "docs/detf/DETF_Protocol_Compound_And_Supply_Expansion_HANDOFF_FOR_DOCS_AND_UI.md",
+    "previous_sha256": "d81d1ddc4495a996bab5bc353fcd6082449495ff03fd769a435afd8d9076b452"
+  },
+  {
+    "path": "docs/detf/balancer/v3/mixedBuffer/08_MixedBufferMultiVaultStableDetf_Natural_Expansion_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "previous_sha256": "0efcfe125953ca69275e040a2161935b0d9a54378670e52a75cab0e7b28789e5"
+  },
+  {
+    "path": "docs/detf/balancer/v3/mixedBuffer/03_MixedBufferMultiVaultStableDetf_Protocol_Compound_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "previous_sha256": "ee4d86ebd5f7a7cfc4bd05c8f107474b815a51cd41645adaae81693b7890494d"
+  },
+  {
+    "path": "docs/detf/balancer/v3/stable/common/09_ComposedStableCommonDetf_Natural_Expansion_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "previous_sha256": "4ccca58de730ccbbcccb02f024e0075091646e3e1833d0c35319f21d3d19a8bb"
+  },
+  {
+    "path": "docs/detf/balancer/v3/stable/common/04_ComposedStableCommonDetf_Protocol_Compound_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "previous_sha256": "30d41a040adb7bbb11fec015a3bdd377145e6d090df84ad79748d40959f455f9"
+  },
+  {
+    "path": "docs/detf/balancer/v3/standardExchange/single/06_SingleStandardExchangeDETF_Natural_Expansion_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "previous_sha256": "cebe775a561fbba4aa6145f3e26633e9012737222ed94904917b9078fc070434"
+  },
+  {
+    "path": "docs/detf/balancer/v3/standardExchange/single/01_SingleStandardExchangeDETF_Protocol_Compound_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "previous_sha256": "f08831b67a9613ede1a57501b1316831f5db1af13b58aa616b9c468ece657447"
+  },
+  {
+    "path": "docs/detf/balancer/v3/multi-vault-weighted/07_MultiVaultWeightedDetf_Natural_Expansion_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "previous_sha256": "4f024f64ebc3906c2c05ccc25f856f3a411996484327ba683d1936e3b92a5c12"
+  },
+  {
+    "path": "docs/detf/balancer/v3/multi-vault-weighted/02_MultiVaultWeightedDetf_Protocol_Compound_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "previous_sha256": "3e8cc42073832660467f9e50191c869888a16457fa3280dd905ff01299cd9047"
+  }
+]

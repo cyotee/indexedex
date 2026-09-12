@@ -64,12 +64,12 @@ contract UniswapV4StandardExchangeOrbitalBufferHookHooksFacet is
         funcs[15] = IUniswapV4StandardExchangeOrbitalBufferHook.standardExchange.selector;
         funcs[16] = IUniswapV4StandardExchangeOrbitalBufferHook.rateProvider.selector;
         funcs[17] = IUniswapV4StandardExchangeOrbitalBufferHook.isBuffered.selector;
-        funcs[18] = IUniswapV4StandardExchangeOrbitalBufferHook.radius.selector;
-        funcs[19] = IUniswapV4StandardExchangeOrbitalBufferHook.lSquared.selector;
+        funcs[18] = IUniswapV4StandardExchangeOrbitalBufferHook.lSquared.selector;
+        funcs[19] = this.previewSwapAfterExchange.selector;
     }
 
     function _b() private pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](25);
+        funcs = new bytes4[](26);
         funcs[0] = IUniswapV4StandardExchangeOrbitalBufferHook.rawReserve.selector;
         funcs[1] = IUniswapV4StandardExchangeOrbitalBufferHook.seBalance.selector;
         funcs[2] = IUniswapV4StandardExchangeOrbitalBufferHook.seClaim.selector;
@@ -95,6 +95,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHookHooksFacet is
         funcs[22] = IUniswapV4SeBufferHook.isLive.selector;
         funcs[23] = IUniswapV4SeBufferHook.tradingFeeWad.selector;
         funcs[24] = IDetfReserveQuote.previewSynthetic.selector;
+        funcs[25] = this.ownerOnlyLiquidity.selector;
     }
 
     function facetMetadata()

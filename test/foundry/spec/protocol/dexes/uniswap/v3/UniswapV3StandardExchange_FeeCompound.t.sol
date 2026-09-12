@@ -6,6 +6,7 @@ import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20Permit
 import {IUniswapV3Pool} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Pool.sol";
 import {ONE_WAD} from "@crane/contracts/constants/Constants.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
 import {
     TestBase_UniswapV3StandardExchange
 } from "contracts/protocols/dexes/uniswap/v3/test/bases/TestBase_UniswapV3StandardExchange.sol";
@@ -33,6 +34,18 @@ contract UniswapV3StandardExchange_FeeCompound_Test is TestBase_UniswapV3Standar
         liquid = IUniswapV3StandardExchangeLiquidReserve(address(vault));
     }
 
+    function _seedIncumbent(address token0, address token1, uint256 amount) internal returns (uint256) {
+        address[] memory tokens = new address[](2);
+        tokens[0] = token0;
+        tokens[1] = token1;
+        uint256[] memory amounts = new uint256[](2);
+        amounts[0] = amount;
+        amounts[1] = amount;
+        return IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
+            tokens, amounts, IERC20(address(vault)), 0, incumbent, false, block.timestamp + 1
+        );
+    }
+
     function test_d27_subsequentTinyZap_doesNotDiluteIncumbentIntoFees_freeRemainsSleeve() public {
         address token0 = pool.token0();
         address token1 = pool.token1();
@@ -44,12 +57,8 @@ contract UniswapV3StandardExchange_FeeCompound_Test is TestBase_UniswapV3Standar
         vm.startPrank(incumbent);
         IERC20(token0).approve(address(vault), type(uint256).max);
         IERC20(token1).approve(address(vault), type(uint256).max);
-        uint256 incumbentShares0 =
-            vault.exchangeIn(IERC20(token0), large, IERC20(address(vault)), 0, incumbent, false, block.timestamp + 1);
-        uint256 incumbentShares1 =
-            vault.exchangeIn(IERC20(token1), large, IERC20(address(vault)), 0, incumbent, false, block.timestamp + 1);
+        uint256 incumbentShares = _seedIncumbent(token0, token1, large);
         vm.stopPrank();
-        uint256 incumbentShares = incumbentShares0 + incumbentShares1;
 
         _externalSwapExactIn(pool, true, 50_000 ether);
         _externalSwapExactIn(pool, false, 50_000 ether);

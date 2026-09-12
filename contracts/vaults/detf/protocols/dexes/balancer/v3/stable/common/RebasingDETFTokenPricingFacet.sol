@@ -1,63 +1,43 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
-
-/* -------------------------------------------------------------------------- */
-/*                                    Crane                                   */
-/* -------------------------------------------------------------------------- */
-
-import {IFacet} from '@crane/contracts/interfaces/IFacet.sol';
-
-/* -------------------------------------------------------------------------- */
-/*                                  Indexedex                                 */
-/* -------------------------------------------------------------------------- */
-
-import {IDETF} from 'contracts/interfaces/IDETF.sol';
-import {RebasingDETFTokenPricingTarget} from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenPricingTarget.sol';
-
+import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {IComposedStableCommonDetfInfo} from "./IComposedStableCommonDetfInfo.sol";
+import {RebasingDETFTokenPricingTarget} from "./RebasingDETFTokenPricingTarget.sol";
 contract RebasingDETFTokenPricingFacet is RebasingDETFTokenPricingTarget, IFacet {
-    function facetName() external pure returns (string memory name_) {
-        return type(RebasingDETFTokenPricingFacet).name;
+    function facetName() public pure returns (string memory) { return type(RebasingDETFTokenPricingFacet).name; }
+    function facetInterfaces() public pure returns (bytes4[] memory a_) {
+        a_ = new bytes4[](1);
+        a_[0] = type(IComposedStableCommonDetfInfo).interfaceId;
     }
-
-    function facetInterfaces() external pure returns (bytes4[] memory interfaces_) {
-        interfaces_ = new bytes4[](1);
-        interfaces_[0] = type(IDETF).interfaceId;
+    function facetFuncs() public pure returns (bytes4[] memory a_) {
+        a_ = new bytes4[](25);
+        a_[0] = this.reservePool.selector;
+        a_[1] = this.bondNftVault.selector;
+        a_[2] = this.rebasingClaimToken.selector;
+        a_[3] = this.syntheticDetfEthPrice.selector;
+        a_[4] = this.previewStablePoolBptEthValue.selector;
+        a_[5] = this.previewCommonPoolBptEthValue.selector;
+        a_[6] = this.previewReservePoolDecomposition.selector;
+        a_[7] = this.mintThreshold.selector;
+        a_[8] = this.burnThreshold.selector;
+        a_[9] = this.isMintingAllowed.selector;
+        a_[10] = this.isBurningAllowed.selector;
+        a_[11] = this.isReserveLive.selector;
+        a_[12] = this.epochAnchor.selector;
+        a_[13] = this.lastExpansionTimestamp.selector;
+        a_[14] = this.expansionClosureRatePerSecond.selector;
+        a_[15] = this.pendingExpansionDetf.selector;
+        a_[16] = this.rawSY.selector;
+        a_[17] = this.stakingSY.selector;
+        a_[18] = this.tokensIn.selector;
+        a_[19] = this.tokensOut.selector;
+        a_[20] = this.synchronizeRewards.selector;
+        a_[21] = this.previewStakingGonsPerUnit.selector;
+        a_[22] = this.previewExchangeIn.selector;
+        a_[23] = this.previewJoinDonatedCapital.selector;
+        a_[24] = this.openingConfiguration.selector;
     }
-
-    function facetFuncs() external pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](10);
-        funcs_[0] = IDETF.bondNftVault.selector;
-        funcs_[1] = IDETF.detfNFTId.selector;
-        funcs_[2] = IDETF.rebasingDetfToken.selector;
-        funcs_[3] = IDETF.reservePool.selector;
-        funcs_[4] = IDETF.previewRebasingDetfTokenReserveBpt.selector;
-        funcs_[5] = IDETF.previewRebasingDetfTokenEthValue.selector;
-        funcs_[6] = IDETF.previewStablePoolBptEthValue.selector;
-        funcs_[7] = IDETF.previewCommonPoolBptEthValue.selector;
-        funcs_[8] = IDETF.syntheticDetfEthPrice.selector;
-        funcs_[9] = IDETF.previewReservePoolDecomposition.selector;
-    }
-
-    function facetMetadata()
-        external
-        pure
-        returns (string memory name_, bytes4[] memory interfaces_, bytes4[] memory functions_)
-    {
-        name_ = type(RebasingDETFTokenPricingFacet).name;
-
-        interfaces_ = new bytes4[](1);
-        interfaces_[0] = type(IDETF).interfaceId;
-
-        functions_ = new bytes4[](10);
-        functions_[0] = IDETF.bondNftVault.selector;
-        functions_[1] = IDETF.detfNFTId.selector;
-        functions_[2] = IDETF.rebasingDetfToken.selector;
-        functions_[3] = IDETF.reservePool.selector;
-        functions_[4] = IDETF.previewRebasingDetfTokenReserveBpt.selector;
-        functions_[5] = IDETF.previewRebasingDetfTokenEthValue.selector;
-        functions_[6] = IDETF.previewStablePoolBptEthValue.selector;
-        functions_[7] = IDETF.previewCommonPoolBptEthValue.selector;
-        functions_[8] = IDETF.syntheticDetfEthPrice.selector;
-        functions_[9] = IDETF.previewReservePoolDecomposition.selector;
+    function facetMetadata() external pure returns (string memory, bytes4[] memory, bytes4[] memory) {
+        return (facetName(), facetInterfaces(), facetFuncs());
     }
 }

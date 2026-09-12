@@ -1,0 +1,113 @@
+{
+  "provenance": {
+    "recorded_at_utc": "2026-09-08T07:14:48.309267+00:00",
+    "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+    "source_and_config_sha256": "717caca26821b083104f4c752e31bdaece662485e13b8611fa1822276c0caf10",
+    "source_and_config_files": 4813,
+    "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+    "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+    "crane_tracked_contract_and_config_diff_sha256": "284fd75764cb255d1e527eef38fd51e65fca73e8ebb11b7465965e8dfeb2122c",
+    "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+    "machine": "macOS-26.6.2-x86_64-i386-64bit",
+    "architecture": "x86_64",
+    "logical_cpus": 16,
+    "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+  },
+  "rows": [
+    {
+      "contract": "StandardExchangeRateProviderFacet",
+      "bytes": 3580,
+      "within_limit": true
+    },
+    {
+      "contract": "WrappedStandardExchangeRateProviderFacet",
+      "bytes": 3844,
+      "within_limit": true
+    },
+    {
+      "contract": "ERC4626StandardExchangeInFacet",
+      "bytes": 21034,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV2StandardExchangeInFacet",
+      "bytes": 16314,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV3StandardExchangeInQueryFacet",
+      "bytes": 23163,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4StandardExchangeInQueryFacet",
+      "bytes": 22946,
+      "within_limit": true
+    },
+    {
+      "contract": "ERC4626StandardExchangeOutFacet",
+      "bytes": 7292,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFacet",
+      "bytes": 18004,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet",
+      "bytes": 23562,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4StandardExchangeWeightedBufferHookJoinQueryFacet",
+      "bytes": 21894,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4StandardExchangeWeightedBufferHookHooksFacet",
+      "bytes": 23895,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4StandardExchangeCurveQuadStableBufferHookJoinQueryFacet",
+      "bytes": 24471,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet",
+      "bytes": 24535,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4StandardExchangeOrbitalBufferHookDepositQueryFacet",
+      "bytes": 24139,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4StandardExchangeOrbitalBufferHookHooksFacet",
+      "bytes": 23546,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4DetfQueryFacet",
+      "bytes": 19308,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV2StandardExchangeQueryFacet",
+      "bytes": 15084,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4SeBufferHookLegLib",
+      "bytes": 3839,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib",
+      "bytes": 15164,
+      "within_limit": true
+    }
+  ]
+}

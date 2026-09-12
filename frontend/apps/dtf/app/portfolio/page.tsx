@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import {
   useAccount,
-  useConnection,
+  useConfig,
   useConnectorClient,
   useWalletClient,
   useWriteContract,
@@ -33,7 +33,8 @@ import {
   isFunctionNotFound,
   readBondNftVault,
   readBondPosition,
-  readDetfNftId,
+  readBondClaim,
+  BOND_NFT_POSITION_ABI,
 } from '../lib/detf/bondNftVault'
 import {
   entryFromAddress,
@@ -64,76 +65,7 @@ import { resolveAppChain } from '@indexedex/protocol/runtimeChains'
 
 const ZERO = BigInt(0)
 
-const protocolNftVaultAbi = [
-  {
-    type: 'function',
-    name: 'claimRewards',
-    stateMutability: 'nonpayable',
-    inputs: [
-      { name: 'tokenId', type: 'uint256' },
-      { name: 'recipient', type: 'address' },
-    ],
-    outputs: [{ name: 'rewards', type: 'uint256' }],
-  },
-  {
-    type: 'function',
-    name: 'redeemPosition',
-    stateMutability: 'nonpayable',
-    inputs: [
-      { name: 'tokenId', type: 'uint256' },
-      { name: 'recipient', type: 'address' },
-      { name: 'deadline', type: 'uint256' },
-    ],
-    outputs: [{ name: 'wethOut', type: 'uint256' }],
-  },
-  {
-    type: 'function',
-    name: 'rewardToken',
-    stateMutability: 'view',
-    inputs: [],
-    outputs: [{ name: '', type: 'address' }],
-  },
-  {
-    type: 'function',
-    name: 'getPosition',
-    stateMutability: 'view',
-    inputs: [{ name: 'tokenId', type: 'uint256' }],
-    outputs: [
-      {
-        name: 'position',
-        type: 'tuple',
-        components: [
-          { name: 'originalShares', type: 'uint256' },
-          { name: 'effectiveShares', type: 'uint256' },
-          { name: 'bonusMultiplier', type: 'uint256' },
-          { name: 'unlockTime', type: 'uint256' },
-          { name: 'rewardDebt', type: 'uint256' },
-        ],
-      },
-    ],
-  },
-  {
-    type: 'function',
-    name: 'pendingRewards',
-    stateMutability: 'view',
-    inputs: [{ name: 'tokenId', type: 'uint256' }],
-    outputs: [{ name: '', type: 'uint256' }],
-  },
-  {
-    type: 'function',
-    name: 'tokenURI',
-    stateMutability: 'view',
-    inputs: [{ name: 'tokenId', type: 'uint256' }],
-    outputs: [{ name: '', type: 'string' }],
-  },
-  {
-    type: 'function',
-    name: 'ownerOf',
-    stateMutability: 'view',
-    inputs: [{ name: 'tokenId', type: 'uint256' }],
-    outputs: [{ name: '', type: 'address' }],
-  },
-] as const
+const protocolNftVaultAbi = BOND_NFT_POSITION_ABI
 
 const transferEvent = parseAbiItem('event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)')
 
@@ -165,14 +97,6 @@ function clampBlockFromLatest(latest: bigint, lookbackBlocks: bigint): bigint {
   if (lookbackBlocks <= ZERO) return ZERO
   if (latest <= lookbackBlocks) return ZERO
   return latest - lookbackBlocks
-}
-
-function formatPercentWad(wad: bigint | undefined): string {
-  if (wad === undefined) return '?'
-  // bonusPercentage is WAD, where 1e18 == 100%
-  const scaled = Number(wad) / 1e16 // convert 1e18 -> percent with 2 decimals
-  if (!Number.isFinite(scaled)) return wad.toString()
-  return `${(scaled / 100).toFixed(4)}x`
 }
 
 function formatUnixSeconds(unlockTime: bigint | undefined): string {
@@ -212,68 +136,13 @@ function parseBondMetadataFromTokenUri(tokenUri: string): BondNftMetadata {
   }
 }
 
-function encodeDataUriBase64(value: string, mime: string): string {
-  return `data:${mime};base64,${btoa(unescape(encodeURIComponent(value)))}`
-}
-
-function formatProtocolUnlockLabel(unlockTime: bigint | undefined): string {
-  if (unlockTime === undefined) return 'Unknown'
-  const now = Math.floor(Date.now() / 1000)
-  const unlock = Number(unlockTime)
-  if (!Number.isFinite(unlock)) return unlockTime.toString()
-  if (unlock <= now) return 'Unlocked'
-
-  const secs = unlock - now
-  const d = Math.floor(secs / 86400)
-  const h = Math.floor((secs % 86400) / 3600)
-  const m = Math.floor((secs % 3600) / 60)
-
-  if (d > 0) return `${d}d ${h}h`
-  if (h > 0) return `${h}h ${m}m`
-  return `${m}m`
-}
-
 function buildProtocolBondMetadata(pos: BondPosition): BondNftMetadata {
-  const unlockLabel =
-    pos.protocolNftId !== undefined && pos.tokenId === pos.protocolNftId
-      ? 'Protocol (No Lock)'
-      : formatProtocolUnlockLabel(pos.lockInfo?.unlockTime)
-
-  // Human decimals for certificate — never raw wei .toString()
-  const shares = formatBondAmount(pos.lockInfo?.sharesAwarded, 18)
-  const rewards = formatBondAmount(pos.pendingRewards, 18)
-  const tokenId = pos.tokenId.toString()
-
-  const svg = `
-<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#0f172a"/>
-      <stop offset="100%" stop-color="#1d4ed8"/>
-    </linearGradient>
-  </defs>
-  <rect width="800" height="800" fill="url(#bg)" rx="32"/>
-  <rect x="32" y="32" width="736" height="736" rx="24" fill="rgba(15,23,42,0.58)" stroke="rgba(255,255,255,0.16)"/>
-  <text x="72" y="118" fill="#93c5fd" font-size="26" font-family="Georgia, serif">Protocol Bond Certificate</text>
-  <text x="72" y="180" fill="#ffffff" font-size="54" font-weight="700" font-family="Georgia, serif">${pos.detf.symbol} #${tokenId}</text>
-  <text x="72" y="268" fill="#cbd5e1" font-size="28" font-family="ui-monospace, SFMono-Regular, monospace">Unlock: ${unlockLabel}</text>
-  <text x="72" y="328" fill="#cbd5e1" font-size="28" font-family="ui-monospace, SFMono-Regular, monospace">Shares: ${shares}</text>
-  <text x="72" y="388" fill="#cbd5e1" font-size="28" font-family="ui-monospace, SFMono-Regular, monospace">Pending rewards: ${rewards}</text>
-  <text x="72" y="720" fill="#93c5fd" font-size="22" font-family="ui-monospace, SFMono-Regular, monospace">client-generated fallback metadata</text>
-</svg>`.trim()
-
-  const image = encodeDataUriBase64(svg, 'image/svg+xml')
-  const json = JSON.stringify({
-    name: `${pos.detf.symbol} #${tokenId}`,
-    description: 'Protocol bond certificate rendered client-side because tokenURI() is not exposed by the deployed NFT vault proxy.',
-    image,
-  })
-
+  const role = pos.tokenId === 1n ? 'Fee recipient' : pos.tokenId === 2n ? 'Creator' : undefined
   return {
-    name: `${pos.detf.symbol} #${tokenId}`,
-    description: 'Protocol bond certificate rendered client-side because tokenURI() is not exposed by the deployed NFT vault proxy.',
-    image,
-    rawTokenUri: encodeDataUriBase64(json, 'application/json'),
+    name: `${pos.detf.symbol} ${role ?? 'Bond'} #${pos.tokenId}`,
+    description: role
+      ? `${role} receipts are delivered directly as sDETF when rewards are funded.`
+      : `Purchased principal: ${formatBondAmount(pos.position?.principal, 9)} DETF. Claimable principal: ${formatBondAmount(pos.claim?.principalDue, 9)} sDETF. Staking rewards: ${formatBondAmount(pos.claim?.rewardsDue, 9)} sDETF.`,
   }
 }
 
@@ -293,7 +162,8 @@ function PortfolioPage() {
   const { address, chainId: accountChainId, isConnected } = useAccount()
   const { environment } = useDeploymentEnvironment()
   const { selectedChainId } = useSelectedNetwork()
-  const connection = useConnection()
+  const config = useConfig()
+  const connection = useAccount()
   const connectedWalletChainId = useConnectedWalletChainId(isConnected, connection.connector)
   const browserChainId = useBrowserChainId(isConnected)
   const { data: connectorClient } = useConnectorClient()
@@ -308,7 +178,7 @@ function PortfolioPage() {
   const resolvedChainId = selectedChainId ?? CHAIN_ID_ROBINHOOD
   const isUnsupportedChain = isConnected && attachedWalletChainId !== undefined && !isSupportedChainId(attachedWalletChainId, environment)
 
-  const targetChain = useMemo(() => resolveAppChain(resolvedChainId), [resolvedChainId])
+  const targetChain = useMemo(() => config.chains.find((chain) => chain.id === resolvedChainId) ?? resolveAppChain(resolvedChainId), [config.chains, resolvedChainId])
 
   const [isLoading, setIsLoading] = useState(false)
   const [strategyVaultBalances, setStrategyVaultBalances] = useState<TokenBalance[]>([])
@@ -545,15 +415,10 @@ function PortfolioPage() {
 
           if (candidateIdList.length === 0) continue
 
-          let protocolNftId: bigint | null = null
-          if (kind === 'protocol') {
-            protocolNftId = await readDetfNftId(readClient, nftVault)
-          }
-
           const ownedIds: bigint[] = []
           await Promise.all(
             candidateIdList.map(async (tokenId) => {
-              if (protocolNftId !== null && tokenId === protocolNftId) return
+              if (tokenId === 0n) return
 
               try {
                 const owner = (await readClient.readContract({
@@ -573,60 +438,29 @@ function PortfolioPage() {
           if (ownedIds.length === 0) continue
 
           let claimToken: `0x${string}` | undefined
-          let rewardToken: `0x${string}` | undefined
           try {
-            rewardToken = (await readClient.readContract({
-              address: nftVault,
-              abi: protocolNftVaultAbi,
-              functionName: 'rewardToken',
-            })) as `0x${string}`
-          } catch {
-            // non-fatal
-          }
+            claimToken = await readClient.readContract({
+              address: detfAddress,
+              abi: [{ type: 'function', name: 'rebasingClaimToken', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] }],
+              functionName: 'rebasingClaimToken',
+            }) as `0x${string}`
+          } catch { /* Position reads still fail closed if this deployment predates funded staking. */ }
 
-          const perId = await Promise.all(
-            ownedIds.map(async (tokenId) => {
-              const out: BondPosition = {
-                kind,
-                detf,
-                nftVault,
-                protocolNftId: protocolNftId ?? undefined,
-                claimToken,
-                rewardToken,
-                tokenId,
-              }
-              try {
-                const [position, pending] = await Promise.all([
-                  readBondPosition(readClient, nftVault, tokenId),
-                  readClient.readContract({
-                    address: nftVault,
-                    abi: protocolNftVaultAbi,
-                    functionName: 'pendingRewards',
-                    args: [tokenId],
-                  }),
-                ])
+          const perId = await Promise.all(ownedIds.map(async (tokenId) => {
+            try {
+              const [position, claim] = await Promise.all([
+                readBondPosition(readClient, nftVault, tokenId),
+                readBondClaim(readClient, nftVault, tokenId),
+              ])
+              if (!position || !claim) return null
+              return { kind, detf, nftVault, claimToken, tokenId, position, claim } satisfies BondPosition
+            } catch (e: any) {
+              if (!isFunctionNotFound(e)) appendError(`Failed position details for ${detf.symbol} #${tokenId}: ${String(e?.message ?? e)}`)
+              return null
+            }
+          }))
 
-                if (!position || (position.originalShares === ZERO && position.effectiveShares === ZERO)) {
-                  return null
-                }
-
-                out.lockInfo = {
-                  sharesAwarded: position.effectiveShares,
-                  rewardPerShare: position.rewardDebt,
-                  bonusPercentage: position.bonusMultiplier,
-                  unlockTime: position.unlockTime,
-                }
-                out.pendingRewards = pending as bigint
-              } catch (e: any) {
-                if (!isFunctionNotFound(e)) {
-                  appendError(`Failed position details for ${detf.symbol} #${tokenId}: ${String(e?.message ?? e)}`)
-                }
-              }
-              return out
-            })
-          )
-
-          allBondPositions.push(...perId.filter((position): position is BondPosition => position !== null))
+          allBondPositions.push(...perId.filter((position): position is NonNullable<typeof position> => position !== null))
         }
       }
 
@@ -677,9 +511,7 @@ function PortfolioPage() {
             )
           )
 
-          const detail = messageIncludesNoTargetForTokenUri(e)
-            ? 'tokenURI() is not exposed by the deployed protocol NFT vault proxy, so the certificate was generated client-side.'
-            : 'tokenURI() metadata was unavailable from the vault, so the certificate was generated client-side.'
+          const detail = 'The certificate image is unavailable. Showing the current funded position details.'
           setErrors((prev) => [
             ...prev,
             `Protocol bond metadata fallback for ${pos.detf.symbol} #${pos.tokenId}: ${detail}`,
@@ -700,7 +532,7 @@ function PortfolioPage() {
       const key = `${pos.nftVault}:${pos.tokenId.toString()}:claim`
       setActionKeyPending(key)
       try {
-        await writeContractAsync({
+        const hash = await writeContractAsync({
           chain: targetChain,
           account: address,
           address: pos.nftVault,
@@ -708,6 +540,9 @@ function PortfolioPage() {
           functionName: 'claimRewards',
           args: [pos.tokenId, address as `0x${string}`],
         })
+        const client = createAppReadClient(resolvedChainId)
+        const receipt = await client.waitForTransactionReceipt({ hash })
+        if (receipt.status !== 'success') throw new Error('Claim transaction reverted')
         await refresh()
       } catch (e: any) {
         setErrors((prev) => [...prev, `Claim rewards failed for ${pos.detf.symbol} #${pos.tokenId}: ${String(e?.message ?? e)}`])
@@ -715,7 +550,7 @@ function PortfolioPage() {
         setActionKeyPending(null)
       }
     },
-    [address, targetChain, writeContractAsync, refresh]
+    [address, targetChain, writeContractAsync, refresh, resolvedChainId]
   )
 
   const redeemProtocolBond = useCallback(
@@ -725,14 +560,17 @@ function PortfolioPage() {
       const key = `${pos.nftVault}:${pos.tokenId.toString()}:redeem`
       setActionKeyPending(key)
       try {
-        await writeContractAsync({
+        const hash = await writeContractAsync({
           chain: targetChain,
           account: address,
           address: pos.nftVault,
           abi: protocolNftVaultAbi,
-          functionName: 'redeemPosition',
-          args: [pos.tokenId, address as `0x${string}`, BigInt(Math.floor(Date.now() / 1000) + 1800)],
+          functionName: 'claimBond',
+          args: [pos.tokenId, address as `0x${string}`],
         })
+        const client = createAppReadClient(resolvedChainId)
+        const receipt = await client.waitForTransactionReceipt({ hash })
+        if (receipt.status !== 'success') throw new Error('Claim transaction reverted')
         await refresh()
       } catch (e: any) {
         setErrors((prev) => [...prev, `Redeem failed for ${pos.detf.symbol} #${pos.tokenId}: ${String(e?.message ?? e)}`])
@@ -740,7 +578,7 @@ function PortfolioPage() {
         setActionKeyPending(null)
       }
     },
-    [address, targetChain, writeContractAsync, refresh]
+    [address, targetChain, writeContractAsync, refresh, resolvedChainId]
   )
 
   useEffect(() => {
@@ -826,7 +664,7 @@ function PortfolioPage() {
         <div className="mb-8">
           <EmptyState
             title="No positions yet"
-            body="Nothing here yet. Open Protocol DETF to mint, bond, and sell. Or browse Earn vaults."
+            body="Nothing here yet. Open Protocol DETF to exchange, stake, or purchase a bond. Or browse Earn vaults."
             action={
               <div className="flex flex-wrap gap-2">
                 <Link href={feeDetfExploreHref}>
@@ -1048,13 +886,11 @@ function PortfolioPage() {
         ) : (
           <div className="mt-4 space-y-4">
             {bondPositions.map((pos) => {
-              const nowSec = BigInt(Math.floor(Date.now() / 1000))
-              const unlockTime = pos.lockInfo?.unlockTime
-              const matured = unlockTime !== undefined ? nowSec >= unlockTime : false
+              const vestingEnd = pos.position ? pos.position.startTimestamp + pos.position.vestingDuration : undefined
               const claimKey = `${pos.nftVault}:${pos.tokenId.toString()}:claim`
               const redeemKey = `${pos.nftVault}:${pos.tokenId.toString()}:redeem`
               const bondKey = `${pos.nftVault}:${pos.tokenId.toString()}`
-              const sharesLabel = formatBondAmount(pos.lockInfo?.sharesAwarded, 18)
+              const sharesLabel = formatBondAmount(pos.position?.principal, 9)
 
               return (
                 <div key={bondKey} className="space-y-2">
@@ -1065,12 +901,11 @@ function PortfolioPage() {
                     chainId={resolvedChainId}
                     nftVault={pos.nftVault}
                     claimToken={pos.claimToken}
-                    rewardToken={pos.rewardToken}
-                    unlockTimeLabel={formatUnixSeconds(pos.lockInfo?.unlockTime) || '—'}
-                    bonusLabel={formatPercentWad(pos.lockInfo?.bonusPercentage)}
-                    sharesAwarded={pos.lockInfo?.sharesAwarded}
-                    pendingRewards={pos.pendingRewards}
-                    matured={matured}
+                    vestingEndLabel={formatUnixSeconds(vestingEnd) || '—'}
+                    principal={pos.position?.principal}
+                    claimedPrincipal={pos.position?.claimedPrincipal}
+                    principalDue={pos.claim?.principalDue}
+                    pendingRewards={pos.claim?.rewardsDue}
                     actionKeyPending={actionKeyPending}
                     claimKey={claimKey}
                     redeemKey={redeemKey}

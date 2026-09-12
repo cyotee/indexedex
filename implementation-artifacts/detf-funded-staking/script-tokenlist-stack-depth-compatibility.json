@@ -1,0 +1,8 @@
+{
+  "status": "APPLIED_MAINTAINED_SCRIPT_COMPILATION_PASSED",
+  "source": "scripts/foundry/anvil_sepolia/Script_ExportTokenlists.s.sol",
+  "fix": "Store seven pool addresses in one fixed memory array and derive presence from nonzero addresses. The existing _readAddressSafe returns (zero,false) for every failed read, so optional-list inclusion and entry contents are preserved.",
+  "compiler": "No viaIR or optimizer/profile changes.",
+  "trigger": "Actual combined build stack-depth error at _exportBalancerCombinedPools; existing supported tokenlist export caller.",
+  "compilation_evidence": "maintained-script-294-green.json"
+}

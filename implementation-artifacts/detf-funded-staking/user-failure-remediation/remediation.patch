@@ -1,0 +1,962 @@
+--- a/contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookCommon.sol
++++ b/contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookCommon.sol
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++import {UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib as ExitQuoteLib} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib.sol";
+ import {UniswapV4SeBufferHookLegLib as LegLib} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+@@ -278,19 +279,6 @@
+         uint256 used2;
+     }
+ 
+-    struct ZapSimArgs {
+-        address tokenIn;
+-        uint256 saleJ;
+-        uint256 saleK;
+-        uint256 outJ;
+-        uint256 outK;
+-        uint256 a0;
+-        uint256 a1;
+-        uint256 a2;
+-        uint256 supply;
+-    }
+-
+-
+     /* internals */
+     function _feeOracle() internal view returns (IVaultFeeOracleQuery) {
+         return IVaultFeeOracleQuery(Repo._layout().feeOracle);
+@@ -1905,29 +1893,6 @@
+     }
+ 
+ 
+-    function _zapAmountsToBinding(
+-        uint8 inIdx,
+-        uint8 j,
+-        uint256 residual,
+-        uint256 outJ,
+-        uint256 outK
+-    ) private pure returns (uint256 a0, uint256 a1, uint256 a2) {
+-        if (inIdx == 0) {
+-            a0 = residual;
+-            a1 = j == 1 ? outJ : outK;
+-            a2 = j == 1 ? outK : outJ;
+-        } else if (inIdx == 1) {
+-            a1 = residual;
+-            a0 = j == 0 ? outJ : outK;
+-            a2 = j == 0 ? outK : outJ;
+-        } else {
+-            a2 = residual;
+-            a0 = j == 0 ? outJ : outK;
+-            a1 = j == 0 ? outK : outJ;
+-        }
+-    }
+-
+-
+     function _planZap(address tokenIn, uint256 amountIn) internal view returns (ZapPlan memory p) {
+         _requireZapEligibleOrOwnerMin();
+         if (!_isBound(tokenIn)) revert InvalidPoolToken();
+@@ -1945,9 +1910,16 @@
+             return _singleSidedPlan(tokenIn, amountIn);
+         }
+ 
+-        _fillZapSales(p, tokenIn, amountIn);
+-        _fillZapOuts(p, tokenIn);
+-        _fillZapShares(p, tokenIn);
++        ExitQuoteLib.DepositQuote memory q = ExitQuoteLib.planDeposit(tokenIn, amountIn);
++        p.saleJ = q.saleJ;
++        p.saleK = q.saleK;
++        p.residual = q.offered[p.inIdx];
++        p.outJ = q.offered[p.j];
++        p.outK = q.offered[p.k];
++        p.shares = q.shares;
++        p.used0 = q.used[0];
++        p.used1 = q.used[1];
++        p.used2 = q.used[2];
+     }
+ 
+     function _ratioZapWouldDrain(uint8 inIdx, uint256 amountIn) private view returns (bool) {
+@@ -1972,84 +1944,6 @@
+     }
+ 
+ 
+-    function _runZapSplit(address tokenIn, uint256 amountIn, uint8 inIdx)
+-        private
+-        view
+-        returns (Math.ZapSplitResult memory z)
+-    {
+-        Math.ZapSplitArgs memory a;
+-        (a.e0, a.e1, a.e2) = _effectiveWad();
+-        Repo.Layout storage l = Repo._layout();
+-        a.R = l.R;
+-        a.L2 = Math.recomputeL2(a.R, a.e0, a.e1, a.e2);
+-        a.feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
+-        a.inIdx = inIdx;
+-        a.amountInWad = _toWad(tokenIn, amountIn);
+-        return Math.zapSplitWad(a);
+-    }
+-
+-
+-    function _fillZapSales(ZapPlan memory p, address tokenIn, uint256 amountIn) private view {
+-        Math.ZapSplitResult memory z = _runZapSplit(tokenIn, amountIn, p.inIdx);
+-        p.saleJ = _fromWadCeil(tokenIn, z.sJWad);
+-        p.saleK = _fromWadCeil(tokenIn, z.sKWad);
+-        if (p.saleJ + p.saleK > amountIn) {
+-            p.saleJ = _fromWadFloor(tokenIn, z.sJWad);
+-            p.saleK = _fromWadFloor(tokenIn, z.sKWad);
+-            if (p.saleJ + p.saleK > amountIn) {
+-                if (p.saleJ >= amountIn) {
+-                    p.saleJ = amountIn / 2;
+-                    p.saleK = amountIn - p.saleJ;
+-                } else {
+-                    p.saleK = amountIn - p.saleJ;
+-                }
+-            }
+-        }
+-        p.residual = amountIn - p.saleJ - p.saleK;
+-        // Stash algebraic aJ for raw-leg preference in _fillZapOuts via residual field? keep on stack via z.aJWad call below.
+-        // Apply algebraic outJ preference for raw (non-SE) j inside this frame while z is live.
+-        p.outJ = z.aJWad; // temporary: WAD out; converted in _fillZapOuts if non-SE
+-    }
+-
+-
+-    function _fillZapOuts(ZapPlan memory p, address tokenIn) private view {
+-        Repo.Layout storage l = Repo._layout();
+-        address tokenJ = Repo._tokenAt(l, p.j);
+-        address tokenK = Repo._tokenAt(l, p.k);
+-
+-        uint256 algJWad = p.outJ; // stashed WAD from _fillZapSales
+-        p.outJ = p.saleJ > 0 ? _previewSwapExactIn(tokenIn, tokenJ, p.saleJ) : 0;
+-        p.outK = p.saleK > 0 ? _previewZapSecondLegEffective(tokenIn, tokenJ, tokenK, p.saleJ, p.saleK) : 0;
+-
+-        if (algJWad > 0 && _seOf(tokenJ) == address(0)) {
+-            uint256 algJ = _fromWadFloor(tokenJ, algJWad);
+-            if (algJ > 0) p.outJ = algJ;
+-        }
+-    }
+-
+-
+-    function _fillZapShares(ZapPlan memory p, address tokenIn) private view {
+-        (uint256 a0, uint256 a1, uint256 a2) =
+-            _zapAmountsToBinding(p.inIdx, p.j, p.residual, p.outJ, p.outK);
+-        (, uint256 supplyAfter) = _previewProtocolMintShares();
+-        ZapSimArgs memory sim;
+-        sim.tokenIn = tokenIn;
+-        sim.saleJ = p.saleJ;
+-        sim.saleK = p.saleK;
+-        sim.outJ = p.outJ;
+-        sim.outK = p.outK;
+-        sim.a0 = a0;
+-        sim.a1 = a1;
+-        sim.a2 = a2;
+-        sim.supply = supplyAfter;
+-        SharesUsed memory r = _computeAddAfterSimulatedZapEffective(sim);
+-        p.shares = r.shares;
+-        p.used0 = r.used0;
+-        p.used1 = r.used1;
+-        p.used2 = r.used2;
+-    }
+-
+-
+     function _previewZapSplit(address tokenIn, uint256 amountIn)
+         internal
+         view
+@@ -2066,159 +1960,6 @@
+         returns (uint256 shares)
+     {
+         return _planZap(tokenIn, amountIn).shares;
+-    }
+-
+-
+-    function _previewZapSecondLegEffective(
+-        address tokenIn,
+-        address tokenJ,
+-        address tokenK,
+-        uint256 saleJ,
+-        uint256 saleK
+-    ) private view returns (uint256 outK) {
+-        uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
+-        SphereLegsWad memory legs = _sphereLegsAfterFirstZapLeg(tokenIn, tokenJ, tokenK, saleJ);
+-
+-        uint256 dIn1 = _dInNative(tokenIn, saleK);
+-        uint256 dxNet = Math.applyTradingFeeNet(_toWad(tokenIn, dIn1), feeWad);
+-        // Map effective out WAD → face out (raw floor, or SE unwrap of that effective)
+-        outK = _effectiveWadOutToFace(tokenK, _sphereExactIn(legs, dxNet));
+-    }
+-
+-
+-    function _sphereLegsAfterFirstZapLeg(
+-        address tokenIn,
+-        address tokenJ,
+-        address tokenK,
+-        uint256 saleJ
+-    ) private view returns (SphereLegsWad memory legs) {
+-        uint256 eInN = _effectiveNativeOf(tokenIn);
+-        uint256 eJN = _effectiveNativeOf(tokenJ);
+-        uint256 eKN = _effectiveNativeOf(tokenK);
+-
+-        eInN += _dInNative(tokenIn, saleJ);
+-        eJN -= _dOutNativeDebit(tokenJ, _previewSwapExactIn(tokenIn, tokenJ, saleJ));
+-        if (eJN == 0 || eInN == 0) revert Math.MathDomain();
+-
+-        legs.R = Repo._layout().R;
+-        legs.xWad = _toWad(tokenIn, eInN);
+-        legs.yWad = _toWad(tokenK, eKN);
+-        legs.zWad = _toWad(tokenJ, eJN);
+-        legs.L2 = Math.recomputeL2(legs.R, legs.xWad, legs.zWad, legs.yWad);
+-    }
+-
+-
+-    function _dInNative(address token, uint256 faceIn) private view returns (uint256) {
+-        if (faceIn == 0) return 0;
+-        address se = _seOf(token);
+-        if (se == address(0)) return faceIn;
+-        return ClaimLib.previewBufferClaimIn(se, _rpOf(token), token, faceIn, address(this));
+-    }
+-
+-
+-    function _dOutNativeDebit(address token, uint256 faceOut) private view returns (uint256) {
+-        if (faceOut == 0) return 0;
+-        address se = _seOf(token);
+-        if (se == address(0)) return faceOut;
+-        // Effective reduction from unwrapping enough shares to deliver faceOut
+-        uint256 shares = ClaimLib.invertUnwrapExactTokenOut(se, token, faceOut);
+-        address rp = _rpOf(token);
+-        if (rp != address(0)) {
+-            return (shares * ClaimLib.getRateFailClosed(rp)) / 1e18;
+-        }
+-        return ClaimLib.seClaimOf(se, token, shares);
+-    }
+-
+-
+-    function _effectiveWadOutToFace(address token, uint256 outWad) private view returns (uint256) {
+-        if (outWad == 0) return 0;
+-        address se = _seOf(token);
+-        uint256 outNative = _fromWadFloor(token, outWad);
+-        if (se == address(0)) return outNative;
+-        // Face token from unwrapping shares that realize outNative effective
+-        address rp = _rpOf(token);
+-        if (rp != address(0)) {
+-            uint256 rate = ClaimLib.getRateFailClosed(rp);
+-            uint256 shares = (outNative * 1e18 + rate - 1) / rate;
+-            return ClaimLib.previewUnwrapShares(se, token, shares);
+-        }
+-        (uint256 face,) = ClaimLib.previewUnwrapForEffectiveOut(se, address(0), token, outNative);
+-        return face;
+-    }
+-
+-
+-    function _computeAddAfterSimulatedZapEffective(ZapSimArgs memory s)
+-        private
+-        view
+-        returns (SharesUsed memory r)
+-    {
+-        Repo.Layout storage l = Repo._layout();
+-        (uint256 e0, uint256 e1, uint256 e2) = _simulatedEffectiveAfterZap(s);
+-
+-        Math.FullBookArgs memory fb = _faceToFullBookArgs(s.a0, s.a1, s.a2, e0, e1, e2, s.supply);
+-        r.shares = Math.fullBookShares(fb);
+-
+-        uint256 u0e = _fromWadFloor(l.token0, Math.fullBookUsedWad(r.shares, fb.e0Wad, s.supply));
+-        uint256 u1e = _fromWadFloor(l.token1, Math.fullBookUsedWad(r.shares, fb.e1Wad, s.supply));
+-        uint256 u2e = _fromWadFloor(l.token2, Math.fullBookUsedWad(r.shares, fb.e2Wad, s.supply));
+-        r.used0 = l.se0 == address(0) ? u0e : _invertBufferForEffective(l.token0, u0e);
+-        r.used1 = l.se1 == address(0) ? u1e : _invertBufferForEffective(l.token1, u1e);
+-        r.used2 = l.se2 == address(0) ? u2e : _invertBufferForEffective(l.token2, u2e);
+-        if (r.used0 == 0 || r.used1 == 0 || r.used2 == 0) revert ZeroAmount();
+-        // Cap used to available maxes
+-        if (r.used0 > s.a0) r.used0 = s.a0;
+-        if (r.used1 > s.a1) r.used1 = s.a1;
+-        if (r.used2 > s.a2) r.used2 = s.a2;
+-    }
+-
+-
+-    function _simulatedEffectiveAfterZap(ZapSimArgs memory s)
+-        private
+-        view
+-        returns (uint256 e0, uint256 e1, uint256 e2)
+-    {
+-        Repo.Layout storage l = Repo._layout();
+-        e0 = _effectiveNativeAt(0);
+-        e1 = _effectiveNativeAt(1);
+-        e2 = _effectiveNativeAt(2);
+-        uint8 inIdx = Repo._indexOf(l, s.tokenIn);
+-        (uint8 j, uint8 k) = _otherIdx(inIdx);
+-
+-        uint256 dIn = _dInNative(s.tokenIn, s.saleJ) + _dInNative(s.tokenIn, s.saleK);
+-        if (inIdx == 0) e0 += dIn;
+-        else if (inIdx == 1) e1 += dIn;
+-        else e2 += dIn;
+-
+-        uint256 dOutJ = _dOutNativeDebit(Repo._tokenAt(l, j), s.outJ);
+-        uint256 dOutK = _dOutNativeDebit(Repo._tokenAt(l, k), s.outK);
+-        if (j == 0) e0 -= dOutJ;
+-        else if (j == 1) e1 -= dOutJ;
+-        else e2 -= dOutJ;
+-        if (k == 0) e0 -= dOutK;
+-        else if (k == 1) e1 -= dOutK;
+-        else e2 -= dOutK;
+-
+-        if (e0 == 0 || e1 == 0 || e2 == 0) revert Math.MathDomain();
+-    }
+-
+-
+-    function _faceToFullBookArgs(
+-        uint256 a0,
+-        uint256 a1,
+-        uint256 a2,
+-        uint256 e0,
+-        uint256 e1,
+-        uint256 e2,
+-        uint256 supply
+-    ) private view returns (Math.FullBookArgs memory fb) {
+-        Repo.Layout storage l = Repo._layout();
+-        fb.a0Wad = _toWad(l.token0, _previewClaimInAt(0, a0));
+-        fb.a1Wad = _toWad(l.token1, _previewClaimInAt(1, a1));
+-        fb.a2Wad = _toWad(l.token2, _previewClaimInAt(2, a2));
+-        fb.e0Wad = _toWad(l.token0, e0);
+-        fb.e1Wad = _toWad(l.token1, e1);
+-        fb.e2Wad = _toWad(l.token2, e2);
+-        fb.supply = supply;
+     }
+ 
+ 
+--- a/contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib.sol
++++ b/contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib.sol
+@@ -9,7 +9,7 @@
+ import {UniswapV4StandardExchangeOrbitalBufferHookRepo as Repo} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookRepo.sol";
+ import {UniswapV4StandardExchangeOrbitalBufferHookMath as Math} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookMath.sol";
+ 
+-/// @notice Sequential proportional withdrawal and residual swap quotes for the Orbital LP.
++/// @notice Sequential withdrawal, swap and deposit quotes for the Orbital LP.
+ library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
+     struct Leg {
+         address se;
+@@ -149,8 +149,7 @@
+         return decimals <= 18 ? amount * (10 ** (18 - decimals)) : amount / (10 ** (decimals - 18));
+     }
+     /// @notice Quote the retained zap after receiving and redeeming an SE-share payment.
+-    /// @dev Only the initial redemption is projected here. The subsequent zap keeps
+-    /// the family's existing split, claim conversion, protocol fee and LP formulas.
++    /// @dev Project redemption and both zap swaps before pricing the final deposit.
+     function previewShareDeposit(address tokenIn, uint256 amountIn) external view returns (uint256) {
+         Repo.Layout storage l = Repo._layout();
+         uint8 index = Repo._indexOf(l, l.legs.pairOfStandardExchange[tokenIn]);
+@@ -213,32 +212,57 @@
+         uint256 supply;
+         uint256 saleJ;
+         uint256 saleK;
+-        uint256 algebraicJ;
++        uint256 shares;
+         uint256[3] offered;
+-        uint256[3] reserves;
++        uint256[3] used;
++    }
++
++    /// @notice Plan a ratio zap against the SE state produced by each preceding swap.
++    function planDeposit(address tokenIn, uint256 amount) external view returns (DepositQuote memory q) {
++        Leg[3] memory legs;
++        for (uint8 i; i < 3; ++i) legs[i] = _withdraw(i, 0, 1);
++        q = _depositQuote(legs, Repo._indexOf(Repo._layout(), tokenIn));
++        _planDeposit(legs, q, amount);
+     }
+ 
+     function _depositAtState(Leg[3] memory legs, uint8 index, uint256 amount) private view returns (uint256) {
+-        DepositQuote memory q;
++        DepositQuote memory q = _depositQuote(legs, index);
++        if (legs[index].effective > 0 && amount > legs[index].effective
++            && (legs[q.j].effective < amount / 4 || legs[q.k].effective < amount / 4)) {
++            return _partialDepositAtState(legs, q, amount);
++        }
++        _planDeposit(legs, q, amount);
++        return q.shares;
++    }
++
++    function _depositQuote(Leg[3] memory legs, uint8 index) private view returns (DepositQuote memory q) {
+         q.input = index;
+         q.j = index == 0 ? 1 : 0;
+         q.k = 3 - index - q.j;
+-        for (uint8 i; i < 3; ++i) q.reserves[i] = legs[i].effective;
+         q.supply = _depositSupply(legs);
+-        if (amount > legs[index].effective && (legs[q.j].effective < amount / 4 || legs[q.k].effective < amount / 4)) {
+-            return _partialDepositAtState(legs, q, amount);
+-        }
++    }
++
++    function _planDeposit(Leg[3] memory legs, DepositQuote memory q, uint256 amount) private view {
+         _depositSales(legs, q, amount);
+         _depositOutputs(legs, q);
++        uint256[3] memory claims;
++        for (uint8 i; i < 3; ++i) claims[i] = _claimIn(legs[i], q.offered[i]);
+         Math.FullBookArgs memory fb;
+-        fb.a0Wad = Math.toWad(_claimIn(legs[0], q.offered[0]), legs[0].decimals);
+-        fb.a1Wad = Math.toWad(_claimIn(legs[1], q.offered[1]), legs[1].decimals);
+-        fb.a2Wad = Math.toWad(_claimIn(legs[2], q.offered[2]), legs[2].decimals);
+-        fb.e0Wad = Math.toWad(q.reserves[0], legs[0].decimals);
+-        fb.e1Wad = Math.toWad(q.reserves[1], legs[1].decimals);
+-        fb.e2Wad = Math.toWad(q.reserves[2], legs[2].decimals);
++        fb.a0Wad = Math.toWad(claims[0], legs[0].decimals);
++        fb.a1Wad = Math.toWad(claims[1], legs[1].decimals);
++        fb.a2Wad = Math.toWad(claims[2], legs[2].decimals);
++        fb.e0Wad = Math.toWad(legs[0].effective, legs[0].decimals);
++        fb.e1Wad = Math.toWad(legs[1].effective, legs[1].decimals);
++        fb.e2Wad = Math.toWad(legs[2].effective, legs[2].decimals);
+         fb.supply = q.supply;
+-        return Math.fullBookShares(fb);
++        q.shares = Math.fullBookShares(fb);
++        for (uint8 i; i < 3; ++i) {
++            uint256 needed = Math.fromWadFloor(
++                Math.fullBookUsedWad(q.shares, Math.toWad(legs[i].effective, legs[i].decimals), q.supply),
++                legs[i].decimals
++            );
++            q.used[i] = _faceForClaim(legs[i], needed, q.offered[i], claims[i]);
++        }
+     }
+ 
+     function _depositSales(Leg[3] memory legs, DepositQuote memory q, uint256 amount) private view {
+@@ -264,47 +288,47 @@
+             }
+         }
+         q.offered[q.input] = amount - q.saleJ - q.saleK;
+-        q.algebraicJ = z.aJWad;
+     }
+ 
+     function _depositOutputs(Leg[3] memory legs, DepositQuote memory q) private view {
+-        uint256 actualJ;
+-        if (q.saleJ > 0) actualJ = _depositSale(legs, q, q.j, q.saleJ);
+-        uint256 addedJ = _claimIn(legs[q.input], q.saleJ);
+-        uint256 removedJ = _claimDebit(legs[q.j], actualJ);
+-        q.reserves[q.input] += addedJ;
+-        q.reserves[q.j] -= removedJ;
+-        if (q.saleK > 0) q.offered[q.k] = _depositSale(legs, q, q.k, q.saleK);
+-        q.offered[q.j] = actualJ;
+-        if (legs[q.j].se == address(0) && q.algebraicJ > 0) {
+-            uint256 algebraic = Math.fromWadFloor(q.algebraicJ, legs[q.j].decimals);
+-            if (algebraic > 0) q.offered[q.j] = algebraic;
+-        }
+-        q.reserves[q.input] += _claimIn(legs[q.input], q.saleK);
+-        q.reserves[q.j] = legs[q.j].effective - _claimDebit(legs[q.j], q.offered[q.j]);
+-        q.reserves[q.k] -= _claimDebit(legs[q.k], q.offered[q.k]);
+-    }
+-
+-    function _depositSale(Leg[3] memory legs, DepositQuote memory q, uint8 outIndex, uint256 amount)
+-        private view returns (uint256 faceOut)
+-    {
+-        uint256 x = Math.toWad(q.reserves[q.input], legs[q.input].decimals);
+-        uint256 y = Math.toWad(q.reserves[outIndex], legs[outIndex].decimals);
+-        uint8 witness = 3 - q.input - outIndex;
+-        uint256 z = Math.toWad(q.reserves[witness], legs[witness].decimals);
+-        uint256 net = Math.applyTradingFeeNet(
+-            Math.toWad(_claimIn(legs[q.input], amount), legs[q.input].decimals),
+-            IVaultFeeOracleQuery(Repo._layout().feeOracle).dexSwapFeeOfVault(address(this))
+-        );
+-        uint256 radius = Repo._layout().R;
+-        faceOut = Math.fromWadFloor(
+-            Math.sphereExactInOutWad(radius, Math.recomputeL2(radius, x, y, z), x, y, z, net),
+-            legs[outIndex].decimals
+-        );
+-        if (legs[outIndex].rate != 0) {
+-            uint256 shares = (faceOut * 1e18 + legs[outIndex].rate - 1) / legs[outIndex].rate;
+-            faceOut = Transition(legs[outIndex].se).quoteAssets(legs[outIndex].state, shares);
+-        }
++        // _swap updates both SE snapshots, including exact-out overpayment and
++        // rebalancing. The next swap and LP quote see those updated books.
++        if (q.saleJ > 0) {
++            legs[q.input].withdrawn = q.saleJ;
++            q.offered[q.j] = _swap(legs, q.input, q.j);
++        }
++        if (q.saleK > 0) {
++            legs[q.input].withdrawn = q.saleK;
++            q.offered[q.k] = _swap(legs, q.input, q.k);
++        }
++    }
++
++    function _faceForClaim(Leg memory leg, uint256 desired, uint256 available, uint256 above)
++        private view returns (uint256)
++    {
++        if (desired == 0 || above < desired) revert Math.MathDomain();
++        if (leg.se == address(0)) return desired;
++        uint256 low = 1;
++        uint256 high = available;
++        uint256 below;
++        uint256 probes;
++        while (low < high) {
++            uint256 mid = low + (high - low) / 2;
++            if (above > below && probes < 8) {
++                mid = low - 1 + FullMath.mulDiv(desired - below, high - low + 1, above - below);
++                mid = FullMath.max(low, FullMath.min(mid, high - 1));
++                ++probes;
++            }
++            uint256 claim = _claimIn(leg, mid);
++            if (claim >= desired) {
++                high = mid;
++                above = claim;
++            } else {
++                low = mid + 1;
++                below = claim;
++            }
++        }
++        return low;
+     }
+ 
+     function _claimIn(Leg memory leg, uint256 amount) private view returns (uint256) {
+@@ -313,12 +337,6 @@
+         if (leg.rate != 0) return minted * leg.rate / 1e18;
+         uint256 afterClaim = Transition(leg.se).quoteAssets(leg.state, leg.shares + minted);
+         return afterClaim > leg.effective ? afterClaim - leg.effective : 0;
+-    }
+-
+-    function _claimDebit(Leg memory leg, uint256 amount) private view returns (uint256) {
+-        if (amount == 0 || leg.se == address(0)) return amount;
+-        (, uint256 shares,,) = Transition(leg.se).quoteTransition(leg.state, Transition.Operation.WithdrawExactOut, amount);
+-        return leg.rate == 0 ? Transition(leg.se).quoteAssets(leg.state, shares) : shares * leg.rate / 1e18;
+     }
+ 
+     function _depositSupply(Leg[3] memory legs) private view returns (uint256 supply) {
+--- a/contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolCommon.sol
++++ b/contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolCommon.sol
+@@ -32,6 +32,12 @@
+         if (rawAmount == 0) return 0;
+         (uint256 rate, uint256 scalingFactor) = _vaultTokenRateAndScale(tokenIndex);
+         return Math.mulDiv(rawAmount * scalingFactor, rate, 1e18);
++    }
++
++    /// @dev Convert the Vault's scaled buffer amount back to native transfer units.
++    function _bufferToRaw(uint256 scaled18, uint256 pairIndex) internal view returns (uint256) {
++        (uint256 rate, uint256 scalingFactor) = _vaultTokenRateAndScale(Repo._bufferIndex(pairIndex));
++        return Math.mulDiv(scaled18, 1e18, scalingFactor * rate);
+     }
+ 
+     function _derivedShareDepth(uint256 pairIndex, uint256[] memory balancesLiveScaled18)
+--- a/contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolHookTarget.sol
++++ b/contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolHookTarget.sol
+@@ -252,7 +252,7 @@
+         (IMixedLegWeightedBufferPool.TokenKind kindIn, uint256 legIn) =
+             Repo._resolveToken(address(params.tokenIn));
+         if (kindIn == IMixedLegWeightedBufferPool.TokenKind.Buffer) {
+-            _reconcileBufferIn(params.amountInScaled18, legIn, params.router);
++            _reconcileBufferIn(_bufferToRaw(params.amountInScaled18, legIn), legIn, params.router);
+         }
+         // Unpaired and share legs: physical balances only (no SE I/O).
+         return (true, params.amountCalculatedRaw);
+@@ -494,8 +494,8 @@
+             vault.removeLiquidity(_buildRemoveLiquidityParams(address(this), 0, remAmts, RemoveLiquidityKind.CUSTOM));
+         }
+ 
+-        // amountInScaled18 for STANDARD buffer ≈ raw for 18-decimal tokens (test tokens are 18).
+-        Repo._setVirtualBuffer(pairIn, Repo._virtualBuffer(pairIn) + xRaw);
++        // Virtual buffers use the same scaled18 units as initialization and swap math.
++        Repo._setVirtualBuffer(pairIn, Repo._virtualBuffer(pairIn) + _liftToScaled18Rated(xRaw, bufferIdx));
+         Repo._setHookShareDelta(pairIn, Repo._hookShareDelta(pairIn) + int256(donationRaw));
+     }
+ 
+--- a/contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferHookTarget.sol
++++ b/contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferHookTarget.sol
+@@ -226,7 +226,7 @@
+ 
+         (uint256 pairIn, bool inIsBuffer) = Repo._resolveToken(address(params.tokenIn));
+         if (inIsBuffer) {
+-            _reconcileBufferIn(params.amountInScaled18, pairIn, params.router);
++            _reconcileBufferIn(_bufferToRaw(params.amountInScaled18, pairIn), pairIn, params.router);
+         }
+         // share ↔ share (and after buffer-out path without buffer-in): done
+         return (true, params.amountCalculatedRaw);
+--- a/contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPoolCommon.sol
++++ b/contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPoolCommon.sol
+@@ -32,6 +32,12 @@
+         if (rawAmount == 0) return 0;
+         (uint256 rate, uint256 scalingFactor) = _vaultTokenRateAndScale(tokenIndex);
+         return Math.mulDiv(rawAmount, scalingFactor * rate, 1e18);
++    }
++
++    /// @dev Convert the Vault's scaled buffer amount back to native transfer units.
++    function _bufferToRaw(uint256 scaled18, uint256 pairIndex) internal view returns (uint256) {
++        (uint256 rate, uint256 scalingFactor) = _vaultTokenRateAndScale(Repo._bufferIndex(pairIndex));
++        return Math.mulDiv(scaled18, 1e18, scalingFactor * rate);
+     }
+ 
+     /**
+--- a/contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInQueryTarget.sol
++++ b/contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInQueryTarget.sol
+@@ -227,10 +227,27 @@
+         }
+         uint256 low = 1;
+         uint256 high = q.supply;
++        uint256 below;
++        uint256 above = _inventoryAssets(q, high);
++        if (above < amount) return q.supply;
++        uint256 probes;
+         while (low < high) {
+             uint256 mid = low + (high - low) / 2;
+-            if (_inventoryAssets(q, mid) >= amount) high = mid;
+-            else low = mid + 1;
++            // Keep projected exact-out quotes on the same bounded search as
++            // the live withdrawal path.
++            if (above > below && probes < 8) {
++                mid = low - 1 + Math.mulDiv(amount - below, high - low + 1, above - below);
++                mid = Math.max(low, Math.min(mid, high - 1));
++                ++probes;
++            }
++            uint256 assets = _inventoryAssets(q, mid);
++            if (assets >= amount) {
++                high = mid;
++                above = assets;
++            } else {
++                low = mid + 1;
++                below = assets;
++            }
+         }
+         return _bufferedInventoryShares(high, q.supply);
+     }
+--- a/contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutBase.sol
++++ b/contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutBase.sol
+@@ -65,14 +65,27 @@
+ 
+         uint256 low = 1;
+         uint256 high = totalShares;
++        uint256 below;
++        uint256 above = _quoteZapOutAmount(tokenOut, high, totalShares);
++        if (above < desiredAmountOut) return totalShares;
++        uint256 probes;
+ 
+         while (low < high) {
+             uint256 mid = low + (high - low) / 2;
++            // Interpolate within forward-verified bounds before falling back to
++            // bisection. Both paths retain the minimum sufficient share amount.
++            if (above > below && probes < 8) {
++                mid = low - 1 + Math.mulDiv(desiredAmountOut - below, high - low + 1, above - below);
++                mid = Math.max(low, Math.min(mid, high - 1));
++                ++probes;
++            }
+             uint256 amountOut = _quoteZapOutAmount(tokenOut, mid, totalShares);
+             if (amountOut >= desiredAmountOut) {
+                 high = mid;
++                above = amountOut;
+             } else {
+                 low = mid + 1;
++                below = amountOut;
+             }
+         }
+ 
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ3Se_Decimals.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ3Se_Decimals.sol
+@@ -100,7 +100,17 @@
+     function _assertNoJoinableDust() internal view virtual override {
+         address hook_ = detfInfo.hook();
+         assertEq(IERC20(hook_).balanceOf(detf), 0, "no hook LP on diamond");
+-        assertEq(IERC20(mintToken).balanceOf(detf), 0, "no mintToken on diamond");
++        uint256 residual = IERC20(mintToken).balanceOf(detf);
++        assertLe(residual, 10, "R19 native-token rounding dust");
++        if (residual != 0) {
++            try IUniswapV4SeBufferHook(hook_).previewJoinSingleAssetExactIn(mintToken, residual)
++                returns (uint256 joinable)
++            {
++                assertEq(joinable, 0, "remaining dust cannot mint hook LP");
++            } catch {
++                // A below-minimum SE deposit cannot fund a hook join.
++            }
++        }
+         assertEq(IERC20(se).balanceOf(detf), 0, "no SE share on diamond");
+     }
+ }
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
+ import {Test} from "forge-std/Test.sol";
++import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
+ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+ 
+ 
+@@ -178,15 +179,37 @@
+         IUniswapV4Detf.IoRoute[] memory routes_ = info.mintRoutes();
+         assertGt(routes_.length, 0, "mintRoutes");
+         bool any_;
+-        uint256 syn_ = info.syntheticPrice();
+-        bool expectedGate_ = syn_ > info.mintThreshold();
+         for (uint256 i; i < routes_.length; ++i) {
++            bool expectedGate_ = _policyRouteSynthetic(d, address(routes_[i].vault)) > info.mintThreshold();
+             bool tok_ = info.isMintingAllowed(routes_[i].token);
+             assertEq(tok_, expectedGate_, "H8 token gate");
+             if (tok_) any_ = true;
+         }
+         assertEq(info.isMintingAllowed(), any_, "no-arg iff some mintRoutes token");
+         assertFalse(info.isMintingAllowed(IERC20(address(this))), "unknown token");
++    }
++
++    /// @dev Each route uses its own reserve pair and creation price.
++    function _policyRouteSynthetic(address d, address vault_) internal view returns (uint256) {
++        IUniswapV4Detf info_ = IUniswapV4Detf(d);
++        address hook_ = info_.hook();
++        address[] memory tokens_ = IUniswapV4SeBufferHook(hook_).tokens();
++        uint256[] memory creation_ = info_.creationPairPerDetfWad();
++        uint256 pairIndex_;
++        for (uint256 i_; i_ < tokens_.length; ++i_) {
++            if (tokens_[i_] == d) continue;
++            if (IUniswapV4SeBufferHook(hook_).standardExchangeOf(tokens_[i_]) == vault_) {
++                IDetfReserveQuote.DetfQuoteCtx memory ctx_ = IDetfReserveQuote.DetfQuoteCtx({
++                    detfTotalSupply: IERC20(d).totalSupply() * 1e9,
++                    pendingExpansion: 0,
++                    ownedLp: IERC20(hook_).balanceOf(d) + IERC20(hook_).balanceOf(info_.bondNftVault()),
++                    creationPairPerDetfWad: creation_[pairIndex_]
++                });
++                return IDetfReserveQuote(hook_).previewSynthetic(ctx_, tokens_[i_]);
++            }
++            ++pairIndex_;
++        }
++        revert("policy route has no reserve pair");
+     }
+ 
+     function _assert_policy_mint_blocked_in_deadband_then_allowed_after_push(address d) internal {
+@@ -566,8 +589,8 @@
+         _bindPolicy(d);
+     }
+ 
+-    /// @notice Launch-rich Policy: opening 1.1e18 then +0.05e18 until isMintingAllowed after first bond.
+-    /// @dev Max 24 steps (final 2.25e18). Still false is §6.1. Never prank(detf) LP before first bond.
++    /// @notice Find a rich opening using each real provider's measured reserve valuation.
++    /// @dev Keep the candidate bound; provider fees and full-range backing affect the needed opening.
+     function _deployPolicyLaunchRichLive() internal returns (address d) {
+         return _deployLaunchRichLive(false);
+     }
+@@ -577,14 +600,12 @@
+     }
+ 
+     function _deployLaunchRichLive(bool d31_) internal returns (address d) {
+-        uint256 wad = LAUNCH_RICH_START;
++        uint256 wad = d31_ ? 2.2e18 : LAUNCH_RICH_START;
+         IUniswapV4Detf info;
+         // Policy trading needs the first rich candidate the actual host accepts.
+         // A fixed 2.2 opening overprices Orbital for the available funded traders.
+         // Keep the stronger premium for expansion-specific D31 scenarios.
+         for (uint256 i; i <= LAUNCH_RICH_MAX_STEPS; ++i) {
+-            wad = LAUNCH_RICH_START + i * LAUNCH_RICH_STEP;
+-            if (d31_) wad = i == 0 ? 2.2e18 : LAUNCH_RICH_START + (i - 1) * LAUNCH_RICH_STEP;
+             IUniswapV4Detf.PkgArgs memory args = d31_ ? _policyD31Args() : _policyArgs();
+             args = _withOpening(_withTag(args, string.concat("lr", vm.toString(i), _nextTag())), wad);
+             d = _deployInstance(args);
+@@ -594,10 +615,13 @@
+             assertTrue(info.isReserveLive(), "first bond live");
+             emit log_named_uint("launchRichOpeningWad", wad);
+             emit log_named_uint("syntheticAfterFirstBond", info.syntheticPrice());
+-            if (info.isMintingAllowed()) {
++            if (info.isMintingAllowed(_mintTokenOf(d)) && info.syntheticPrice() > info.mintThreshold()) {
+                 launchRichOpeningWad = wad;
+                 return d;
+             }
++            uint256 price_ = info.syntheticPrice();
++            wad = price_ == 0 ? wad + LAUNCH_RICH_STEP
++                : wad * (info.mintThreshold() + 0.15e18) / price_ + LAUNCH_RICH_STEP;
+         }
+         launchRichOpeningWad = wad;
+         revert("6.1 launch-rich isMintingAllowed still false after 24 steps");
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol
+@@ -333,8 +333,8 @@
+         _bindPolicy(d);
+     }
+ 
+-    /// @notice Launch-rich Policy: opening 1.1e18 then +0.05e18 until isMintingAllowed after first bond.
+-    /// @dev Max 24 steps (final 2.25e18). Still false is §6.1. Never prank(detf) LP before first bond.
++    /// @notice Find a rich opening using each real provider's measured reserve valuation.
++    /// @dev Keep the candidate bound; provider fees and full-range backing affect the needed opening.
+     function _deployPolicyLaunchRichLive() internal returns (address d) {
+         return _deployLaunchRichLive(false);
+     }
+@@ -344,13 +344,11 @@
+     }
+ 
+     function _deployLaunchRichLive(bool d31_) internal returns (address d) {
+-        uint256 wad = LAUNCH_RICH_START;
++        uint256 wad = d31_ ? 2.2e18 : LAUNCH_RICH_START;
+         IUniswapV4Detf info;
+-        // This price already opens the primary gate in the gold fixtures.
+-        // Keep all original candidates as a fallback for distinct provider bindings.
++        // Start with the gold fixture price, then use each provider's actual
++        // reserve valuation to select the next candidate.
+         for (uint256 i; i <= LAUNCH_RICH_MAX_STEPS; ++i) {
+-            wad = LAUNCH_RICH_START + i * LAUNCH_RICH_STEP;
+-            if (d31_) wad = i == 0 ? 2.2e18 : LAUNCH_RICH_START + (i - 1) * LAUNCH_RICH_STEP;
+             IUniswapV4Detf.PkgArgs memory args = d31_ ? _policyD31Args() : _policyArgs();
+             args = _withOpening(_withTag(args, string.concat("lr", vm.toString(i), _nextTag())), wad);
+             d = _deployInstance(args);
+@@ -360,10 +358,13 @@
+             assertTrue(info.isReserveLive(), "first bond live");
+             emit log_named_uint("launchRichOpeningWad", wad);
+             emit log_named_uint("syntheticAfterFirstBond", info.syntheticPrice());
+-            if (info.isMintingAllowed()) {
++            if (info.isMintingAllowed(_mintTokenOf(d)) && info.syntheticPrice() > info.mintThreshold()) {
+                 launchRichOpeningWad = wad;
+                 return d;
+             }
++            uint256 price_ = info.syntheticPrice();
++            wad = price_ == 0 ? wad + LAUNCH_RICH_STEP
++                : wad * (info.mintThreshold() + 0.15e18) / price_ + LAUNCH_RICH_STEP;
+         }
+         launchRichOpeningWad = wad;
+         revert("6.1 launch-rich isMintingAllowed still false after 24 steps");
+--- a/test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_Decimals.sol
++++ b/test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_Decimals.sol
+@@ -53,7 +53,7 @@
+         // tokenOut = share0 (vault 0) - must still deposit to vault 1
+         uint256 out = swapExactIn(alice, _bufferToken(), IERC20(address(seVault)), amountIn);
+         assertGt(out, 0);
+-        assertEq(cbmv().virtualBuffer(), vBefore + amountIn, "virtual += amountIn");
++        assertEq(cbmv().virtualBuffer(), vBefore + 40e18, "virtual += scaled amountIn");
+         assertGt(cbmv().hookShareDelta(1), d1Before, "deposit donation on most-needed vault1");
+         // vault0 may change from swap share-out accounting; deposit target must be vault1
+         assertTrue(
+@@ -83,7 +83,7 @@
+         _mintToken(address(_bufferToken()), alice, amountIn);
+         uint256 out = swapExactIn(alice, _bufferToken(), IERC20(address(seVault)), amountIn);
+         assertGt(out, 0);
+-        assertEq(cbmv().virtualBuffer(), vBefore + amountIn, "virtual += X");
++        assertEq(cbmv().virtualBuffer(), vBefore + 30e18, "virtual += scaled X");
+         assertGt(cbmv().hookShareDelta(1), d1, "deposit on vault1");
+         // vault0 delta should not increase from deposit donation (may decrease from pre-seat/other); deposit gift is vault1
+         assertLe(cbmv().hookShareDelta(0), d0 + int256(1e15), "vault0 not primary deposit recipient");
+@@ -109,7 +109,7 @@
+         vm.stopPrank();
+         assertGt(bptOut, 0, "unbalanced add must mint BPT");
+         // Buffer portion of unbalanced add must bump virtual (onAfterAddLiquidity UNBALANCED path).
+-        assertEq(cbmv().virtualBuffer(), vBefore + bufAdd, "virtual grows by buffer amount via UNBALANCED");
++        assertEq(cbmv().virtualBuffer(), vBefore + 5e18, "virtual grows by scaled buffer amount via UNBALANCED");
+     }
+ 
+     function test_L20_tieBreak_lowestIndex_whenEqualWeights() public view {
+--- a/test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_Decimals.sol
++++ b/test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_Decimals.sol
+@@ -215,7 +215,7 @@
+         uint256 out = swapExactIn(alice, IERC20(address(pairToken)), IERC20(address(rateAsset)), amountIn);
+         assertGt(out, 0);
+         assertEq(rateAsset.balanceOf(alice), usdcBefore + out);
+-        assertGe(ml().virtualBuffer(0), vtBefore);
++        assertEq(ml().virtualBuffer(0), vtBefore + 10e18, "virtual input is scaled18");
+     }
+ 
+     /* ----- Swaps: buffer ↔ shares (pair-local, same as multi-pair) ----- */
+@@ -227,10 +227,15 @@
+         pairToken.approve(address(permit2), type(uint256).max);
+ 
+         uint256 sharesBefore = IERC20(address(seVault)).balanceOf(alice);
++        uint256 bufferBefore = pairToken.balanceOf(alice);
++        uint256 vtBefore = ml().virtualBuffer(0);
+         uint256 out = swapExactIn(alice, IERC20(address(pairToken)), IERC20(address(seVault)), amountIn);
+         assertGt(out, 0);
+         assertEq(IERC20(address(seVault)).balanceOf(alice), sharesBefore + out);
+-        assertGe(ml().virtualBuffer(0), ML_INIT_BUFFER);
++        assertEq(pairToken.balanceOf(alice), bufferBefore - amountIn, "native input paid");
++        assertEq(ml().virtualBuffer(0), vtBefore + 10e18, "virtual input is scaled18");
++        (,, uint256[] memory balancesRaw,) = bv3Vault.getPoolTokenInfo(mixedLegPool);
++        assertEq(balancesRaw[ml().bufferIndex(0)], 0, "physical buffer reconciled");
+     }
+ 
+     function test_swap_sharesToBuffer_exactIn() public {
+--- a/test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_Decimals.sol
++++ b/test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_Decimals.sol
+@@ -125,14 +125,15 @@
+         // permit2 already approved for router in base setUp for pairToken
+ 
+         uint256 sharesBefore = IERC20(address(seVault)).balanceOf(alice);
++        uint256 bufferBefore = pairToken.balanceOf(alice);
++        uint256 vtBefore = mp().virtualBuffer(0);
+         uint256 out = swapExactIn(alice, tta, IERC20(address(seVault)), amountIn);
+         assertGt(out, 0);
+         assertEq(IERC20(address(seVault)).balanceOf(alice), sharesBefore + out);
+-        // eventual-zero physical buffer on pool (approx)
+-        uint256 poolDai = pairToken.balanceOf(address(bv3Vault)); // vault holds pooled tokens
+-        // After reconcile, pool's registered buffer balance should be ~0 for this pool's accounting;
+-        // check virtual grew
+-        assertGe(mp().virtualBuffer(0), MP_INIT_BUFFER);
++        assertEq(pairToken.balanceOf(alice), bufferBefore - amountIn, "native input paid");
++        assertEq(mp().virtualBuffer(0), vtBefore + 10e18, "virtual input is scaled18");
++        (,, uint256[] memory balancesRaw,) = bv3Vault.getPoolTokenInfo(multiPairPool);
++        assertEq(balancesRaw[mp().bufferIndex(0)], 0, "physical buffer reconciled");
+     }
+ 
+     function test_swap_sharesToBuffer_exactIn() public {
+--- a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Stage11OpenSuite.sol
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Stage11OpenSuite.sol
+@@ -231,21 +231,21 @@
+         );
+     }
+ 
+-    /// @dev After last user close, Univ3/n-leg pair wrap can be thinner than 20 ether.
+-    ///      Donate DETF self-leg (mint leftover) so the LP booking still runs.
++    /// @dev Retire all funded positions, donate, then prove the next bond cannot
++    /// capture protocol LP. Purchases stay within the weighted swap input domain.
+     function test_DN16_lastClose_thenDonate_nextBondDoesNotCapture() public override {
+         _ensureLiveBond();
+         address bob_ = makeAddr("donation last prior holder");
+         address carol_ = makeAddr("donation next holder");
+-        (uint256 bobId_,) = _bondAs(bob_, 40 ether);
++        (uint256 bobId_,) = _bondAs(bob_, 10 ether);
+         vm.warp(block.timestamp + DEFAULT_MIN_LOCK + 1);
+         _claimFundedDonationPosition(detfInfo, dnUserBondId, detfUser);
+         _claimFundedDonationPosition(detfInfo, bobId_, bob_);
+         _donatePair(dnDonor, 20 ether);
+         uint256 lp_ = _lpToken().balanceOf(address(_nft())) + _lpToken().balanceOf(detf);
+         assertGt(lp_, 0, "all prior claims preserve donated protocol liquidity");
+-        (, uint256 principal_,,) = detfInfo.previewBond(_openPairToken(), 30 ether, DEFAULT_MIN_LOCK);
+-        (uint256 nextId_,) = _bondAs(carol_, 30 ether);
++        (, uint256 principal_,,) = detfInfo.previewBond(_openPairToken(), 10 ether, DEFAULT_MIN_LOCK);
++        (uint256 nextId_,) = _bondAs(carol_, 10 ether);
+         assertEq(IDetfBondNFT(address(_nft())).positionOf(nextId_).principal, principal_, "next bond only receives its quoted funded purchase");
+         assertGe(_lpToken().balanceOf(address(_nft())) + _lpToken().balanceOf(detf), lp_, "new bond cannot capture old LP");
+         vm.warp(block.timestamp + DEFAULT_MIN_LOCK + 1);
+--- a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Stage11OpenSuite_Decimals.sol
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Stage11OpenSuite_Decimals.sol
+@@ -250,23 +250,21 @@
+         );
+     }
+ 
+-    /// @dev After last user close, donate, next bond does not capture donated LP.
+-    ///      CP (n=2): mint then pair-donate like gold ReserveDonation.
+-    ///      n-leg: skip pre-close mint (mixed-dec mint can drain a reserve); shrink pair/DETF
+-    ///      donate and carol bond. Last close may MathDomain on orbital min-book — continue.
++    /// @dev Retire all funded positions, donate, then prove the next bond cannot
++    /// capture protocol LP. Purchases stay within the weighted swap input domain.
+     function test_DN16_lastClose_thenDonate_nextBondDoesNotCapture() public virtual override {
+         _ensureLiveBond();
+         address bob_ = makeAddr("donation last prior holder");
+         address carol_ = makeAddr("donation next holder");
+-        (uint256 bobId_,) = _bondAs(bob_, _uPair(40));
++        (uint256 bobId_,) = _bondAs(bob_, _uPair(10));
+         vm.warp(block.timestamp + DEFAULT_MIN_LOCK + 1);
+         _claimFundedDonationPosition(detfInfo, dnUserBondId, detfUser);
+         _claimFundedDonationPosition(detfInfo, bobId_, bob_);
+         _donatePair(dnDonor, _uPair(20));
+         uint256 lp_ = _lpToken().balanceOf(address(_nft())) + _lpToken().balanceOf(detf);
+         assertGt(lp_, 0, "all prior claims preserve donated protocol liquidity");
+-        (, uint256 principal_,,) = detfInfo.previewBond(_openPairToken(), _uPair(30), DEFAULT_MIN_LOCK);
+-        (uint256 nextId_,) = _bondAs(carol_, _uPair(30));
++        (, uint256 principal_,,) = detfInfo.previewBond(_openPairToken(), _uPair(10), DEFAULT_MIN_LOCK);
++        (uint256 nextId_,) = _bondAs(carol_, _uPair(10));
+         assertEq(IDetfBondNFT(address(_nft())).positionOf(nextId_).principal, principal_, "next bond only receives its quoted funded purchase");
+         assertGe(_lpToken().balanceOf(address(_nft())) + _lpToken().balanceOf(detf), lp_, "new bond cannot capture old LP");
+         vm.warp(block.timestamp + DEFAULT_MIN_LOCK + 1);
+--- a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ4Se.t.sol
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ4Se.t.sol
+@@ -47,15 +47,16 @@
+ 
+     function test_fundedSe_claimPurchaseMatchesBalanceQuote() public {
+         _seedBothSeAssets();
+-        _firstBond(100 ether);
++        (uint256 id_,) = _firstBond(100 ether);
++        _assertFundedMatureClaim(detf, id_, detfUser);
+         IERC20 claim = IERC20(detfInfo.rebasingClaimToken());
+         for (uint256 i; i < 2; ++i) {
+             uint256 amount = IERC20(detf).balanceOf(detfUser) / 10;
+-            uint256 quoted = detfExchangeIn.previewExchangeIn(IERC20(detf), amount, claim);
++            uint256 quoted = IStandardExchangeIn(address(claim)).previewExchangeIn(IERC20(detf), amount, claim);
+             assertGt(quoted, 0);
+             vm.startPrank(detfUser);
+-            IERC20(detf).approve(detf, amount);
+-            uint256 minted = detfExchangeIn.exchangeIn(
++            IERC20(detf).approve(address(claim), amount);
++            uint256 minted = IStandardExchangeIn(address(claim)).exchangeIn(
+                 IERC20(detf), amount, claim, quoted, detfUser, false, block.timestamp + 1 hours
+             );
+             vm.stopPrank();

@@ -1,0 +1,91 @@
+{
+  "library": "contracts/vaults/detf/common/core/DETFNaturalExpansionLib.sol",
+  "previous_library_sha256": "08bffb91c6f3bce9d53d06c6704c16e721b8f360effc8b4548dfdf4a1dfaf6d8",
+  "removed": "Unused capped AccrualInput, resolveExpansionParams, computeExpansionMint, cap constants and obsolete NatSpec. Production callers already use computeEpochExpansion/resolveClosureRate.",
+  "canonical_test": "test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol",
+  "previous_test_sha256": "87ed263529d21f555c087426f42efa3a185794b56d0eb4e29189d3def4feabc8",
+  "folded_source": "test/foundry/spec/vaults/detf/common/core/DETFFundedBalancerExpansion.t.sol",
+  "folded_sha256": "d781ca4bf31fed3af6a0851c1dfd339a229d3d35e54c3c7a22b3e072814d7329",
+  "dispositions": [
+    {
+      "old_test": "test_defaults_matchPlan",
+      "new_test": "test_defaultRateAndExplicitRatesResolveWithoutCaps",
+      "decision": "D50-D52 fixed completed epochs, no caps; Open is retired. Retain rate default, tiny-rate floors, inert/gate/zero/dust safeguards."
+    },
+    {
+      "old_test": "test_T5_9_resolveZeros_toDefaults",
+      "new_test": "test_defaultRateAndExplicitRatesResolveWithoutCaps",
+      "decision": "D50-D52 fixed completed epochs, no caps; Open is retired. Retain rate default, tiny-rate floors, inert/gate/zero/dust safeguards."
+    },
+    {
+      "old_test": "test_T5_10_resolve_zeroMeansDefault_notOff_explicitRateKept",
+      "new_test": "test_defaultRateAndExplicitRatesResolveWithoutCaps",
+      "decision": "D50-D52 fixed completed epochs, no caps; Open is retired. Retain rate default, tiny-rate floors, inert/gate/zero/dust safeguards."
+    },
+    {
+      "old_test": "test_T5_1_notLive_mintZero",
+      "new_test": "test_inertClockDoesNotAccrue",
+      "decision": "D50-D52 fixed completed epochs, no caps; Open is retired. Retain rate default, tiny-rate floors, inert/gate/zero/dust safeguards."
+    },
+    {
+      "old_test": "test_T5_2_openMode_mintZero",
+      "new_test": null,
+      "decision": "D50-D52 fixed completed epochs, no caps; Open is retired. Retain rate default, tiny-rate floors, inert/gate/zero/dust safeguards."
+    },
+    {
+      "old_test": "test_T5_3_notMintAllowed_mintZero",
+      "new_test": "test_zeroEligibilityAdvancesBoundaryWithoutMint",
+      "decision": "D50-D52 fixed completed epochs, no caps; Open is retired. Retain rate default, tiny-rate floors, inert/gate/zero/dust safeguards."
+    },
+    {
+      "old_test": "test_T5_4_deadband_mintZero",
+      "new_test": "test_zeroEligibilityAdvancesBoundaryWithoutMint",
+      "decision": "D50-D52 fixed completed epochs, no caps; Open is retired. Retain rate default, tiny-rate floors, inert/gate/zero/dust safeguards."
+    },
+    {
+      "old_test": "test_T5_5_dtZero_mintZero",
+      "new_test": "test_sameBoundaryCannotBeConsumedTwice",
+      "decision": "D50-D52 fixed completed epochs, no caps; Open is retired. Retain rate default, tiny-rate floors, inert/gate/zero/dust safeguards."
+    },
+    {
+      "old_test": "test_T5_8_zeroSupply_mintZero",
+      "new_test": "test_zeroSupplyConsumesCompletedEpochs",
+      "decision": "D50-D52 fixed completed epochs, no caps; Open is retired. Retain rate default, tiny-rate floors, inert/gate/zero/dust safeguards."
+    },
+    {
+      "old_test": "test_T5_6_richSmallDt_mintPositiveDeterministic",
+      "new_test": "test_hour25Settles24AndRetainsPartialEpoch",
+      "decision": "D50-D52 fixed completed epochs, no caps; Open is retired. Retain rate default, tiny-rate floors, inert/gate/zero/dust safeguards."
+    },
+    {
+      "old_test": "test_T5_6_explicitTinyRate_stillExpandsSlowly",
+      "new_test": "test_zeroAndTinyRatesPreservePerSecondFloor",
+      "decision": "D50-D52 fixed completed epochs, no caps; Open is retired. Retain rate default, tiny-rate floors, inert/gate/zero/dust safeguards."
+    },
+    {
+      "old_test": "test_T5_7_hugeDt_cappedByMaxSecondsAndBps",
+      "new_test": "test_weekHasNoOneDayOrSupplyRelativeCap",
+      "decision": "D50-D52 fixed completed epochs, no caps; Open is retired. Retain rate default, tiny-rate floors, inert/gate/zero/dust safeguards."
+    },
+    {
+      "old_test": "test_bpsCap_bindsWhenRateAndDtWouldExceed",
+      "new_test": "test_largeSupplyUsesFullPrecisionWithoutProductOverflow",
+      "decision": "D50-D52 fixed completed epochs, no caps; Open is retired. Retain rate default, tiny-rate floors, inert/gate/zero/dust safeguards."
+    },
+    {
+      "old_test": "test_premiumZero_mintZero",
+      "new_test": "test_zeroEligibilityAdvancesBoundaryWithoutMint",
+      "decision": "D50-D52 fixed completed epochs, no caps; Open is retired. Retain rate default, tiny-rate floors, inert/gate/zero/dust safeguards."
+    },
+    {
+      "old_test": "test_dust_floorsToZero",
+      "new_test": "test_nativeDustFloorsBeforeElapsedMultiplication",
+      "decision": "D50-D52 fixed completed epochs, no caps; Open is retired. Retain rate default, tiny-rate floors, inert/gate/zero/dust safeguards."
+    },
+    {
+      "old_test": "test_unresolvedZeroRate_mintZero",
+      "new_test": "test_zeroAndTinyRatesPreservePerSecondFloor",
+      "decision": "D50-D52 fixed completed epochs, no caps; Open is retired. Retain rate default, tiny-rate floors, inert/gate/zero/dust safeguards."
+    }
+  ]
+}

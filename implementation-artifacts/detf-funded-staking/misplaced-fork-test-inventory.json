@@ -1,0 +1,51 @@
+{
+  "status": "complete source move/deduplication; network smoke validation remains separate and unavailable in current restricted runtime",
+  "rows": [
+    {
+      "source": "test/foundry/spec/hooks/uniswap/v4/factory/UniswapV4HookDiamondFactory_BaseFork.t.sol",
+      "sha256": "184a8c1711318b7c05534c8d886f4f5a034e64445aac8ce93d2bd9a57d62acd8",
+      "proposed_destination": "test/foundry/fork/base_main/hooks/uniswap/v4/factory/UniswapV4HookDiamondFactory_BaseFork.t.sol",
+      "destination_exists": false,
+      "destination_identical": false,
+      "disposition": "unchanged network test moved to the matching fork profile directory",
+      "destination_sha256": "184a8c1711318b7c05534c8d886f4f5a034e64445aac8ce93d2bd9a57d62acd8"
+    },
+    {
+      "source": "test/foundry/spec/hooks/uniswap/v4/factory/UniswapV4HookDiamondFactory_EthereumFork.t.sol",
+      "sha256": "21593ca58c86a4b0790d03fa0693189887b7a9e8339a2b6f3aedbd7f1ca4b2ed",
+      "proposed_destination": "test/foundry/fork/eth_main/hooks/uniswap/v4/factory/UniswapV4HookDiamondFactory_EthereumFork.t.sol",
+      "destination_exists": false,
+      "destination_identical": false,
+      "disposition": "unchanged network test moved to the matching fork profile directory",
+      "destination_sha256": "21593ca58c86a4b0790d03fa0693189887b7a9e8339a2b6f3aedbd7f1ca4b2ed"
+    },
+    {
+      "source": "test/foundry/spec/hooks/uniswap/v4/factory/UniswapV4HookDiamondFactory_RobinhoodFork.t.sol",
+      "sha256": "4b41d34e187041c731b6897026bde5ff71fe83d916a66d67b14b8099e8b26e61",
+      "proposed_destination": "test/foundry/fork/robinhood_4663/hooks/uniswap/v4/factory/UniswapV4HookDiamondFactory_RobinhoodFork.t.sol",
+      "destination_exists": false,
+      "destination_identical": false,
+      "disposition": "unchanged network test moved to the matching fork profile directory",
+      "destination_sha256": "4b41d34e187041c731b6897026bde5ff71fe83d916a66d67b14b8099e8b26e61"
+    },
+    {
+      "source": "test/foundry/spec/hooks/uniswap/v4/standardExchange/single/fork/base_main/UniswapV4SingleSEBufferHook_Base.t.sol",
+      "sha256": "ae1c6536e5523015e8a7803d11bcf8f63a556308a678960737e9cb97d79dcee4",
+      "proposed_destination": "test/foundry/fork/base_main/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleSEBufferHook_Base.t.sol",
+      "destination_exists": true,
+      "destination_identical": true,
+      "disposition": "duplicate fork test retired; identical canonical fork source retained",
+      "destination_sha256": "ae1c6536e5523015e8a7803d11bcf8f63a556308a678960737e9cb97d79dcee4"
+    },
+    {
+      "source": "test/foundry/spec/hooks/uniswap/v4/standardExchange/single/fork/robinhood_4663/UniswapV4SingleSEBufferHook_Robinhood.t.sol",
+      "sha256": "280de4bd76d30f5c102111b52deafed846fa6fe263e5d9b85a633fc855eb9eb1",
+      "proposed_destination": "test/foundry/fork/robinhood_4663/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleSEBufferHook_Robinhood.t.sol",
+      "destination_exists": true,
+      "destination_identical": true,
+      "disposition": "duplicate fork test retired; identical canonical fork source retained",
+      "destination_sha256": "280de4bd76d30f5c102111b52deafed846fa6fe263e5d9b85a633fc855eb9eb1"
+    }
+  ],
+  "reason": "CLAUDE profile law: default must be hermetic. Baseline full forge test crashed in macOS system-configuration during misplaced fork initialization; full default tests must not initiate network forks."
+}

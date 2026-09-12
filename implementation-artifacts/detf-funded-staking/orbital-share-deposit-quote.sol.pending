@@ -1,0 +1,175 @@
+    /// @notice Quote the retained zap after receiving and redeeming an SE-share payment.
+    /// @dev Only the initial redemption is projected here. The subsequent zap keeps
+    /// the family's existing split, claim conversion, protocol fee and LP formulas.
+    function previewShareDeposit(address tokenIn, uint256 amountIn) external view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        uint8 index = Repo._indexOf(l, l.legs.pairOfStandardExchange[tokenIn]);
+        Leg[3] memory legs;
+        for (uint8 i; i < 3; ++i) legs[i] = _withdraw(i, 0, 1);
+        Leg memory input = legs[index];
+        (input.state,,,) = Transition(tokenIn).quoteTransition(
+            input.state, Transition.Operation.ReceiveShares, amountIn
+        );
+        (input.state,, amountIn,) = Transition(tokenIn).quoteTransition(
+            input.state, Transition.Operation.RedeemExactIn, amountIn
+        );
+        _refresh(input);
+        return _depositAtState(legs, index, amountIn);
+    }
+
+    struct DepositQuote {
+        uint8 input;
+        uint8 j;
+        uint8 k;
+        uint256 supply;
+        uint256 saleJ;
+        uint256 saleK;
+        uint256 algebraicJ;
+        uint256[3] offered;
+        uint256[3] reserves;
+    }
+
+    function _depositAtState(Leg[3] memory legs, uint8 index, uint256 amount) private view returns (uint256) {
+        DepositQuote memory q;
+        q.input = index;
+        q.j = index == 0 ? 1 : 0;
+        q.k = 3 - index - q.j;
+        for (uint8 i; i < 3; ++i) q.reserves[i] = legs[i].effective;
+        q.supply = _depositSupply(legs);
+        if (amount > legs[index].effective && (legs[q.j].effective < amount / 4 || legs[q.k].effective < amount / 4)) {
+            return _partialDepositAtState(legs, q, amount);
+        }
+        _depositSales(legs, q, amount);
+        _depositOutputs(legs, q);
+        Math.FullBookArgs memory fb;
+        fb.a0Wad = Math.toWad(_claimIn(legs[0], q.offered[0]), legs[0].decimals);
+        fb.a1Wad = Math.toWad(_claimIn(legs[1], q.offered[1]), legs[1].decimals);
+        fb.a2Wad = Math.toWad(_claimIn(legs[2], q.offered[2]), legs[2].decimals);
+        fb.e0Wad = Math.toWad(q.reserves[0], legs[0].decimals);
+        fb.e1Wad = Math.toWad(q.reserves[1], legs[1].decimals);
+        fb.e2Wad = Math.toWad(q.reserves[2], legs[2].decimals);
+        fb.supply = q.supply;
+        return Math.fullBookShares(fb);
+    }
+
+    function _depositSales(Leg[3] memory legs, DepositQuote memory q, uint256 amount) private view {
+        Math.ZapSplitArgs memory a;
+        a.e0 = Math.toWad(legs[0].effective, legs[0].decimals);
+        a.e1 = Math.toWad(legs[1].effective, legs[1].decimals);
+        a.e2 = Math.toWad(legs[2].effective, legs[2].decimals);
+        a.R = Repo._layout().R;
+        a.L2 = Math.recomputeL2(a.R, a.e0, a.e1, a.e2);
+        a.feeWad = IVaultFeeOracleQuery(Repo._layout().feeOracle).dexSwapFeeOfVault(address(this));
+        a.inIdx = q.input;
+        uint8 decimals = legs[q.input].decimals;
+        a.amountInWad = Math.toWad(amount, decimals);
+        Math.ZapSplitResult memory z = Math.zapSplitWad(a);
+        q.saleJ = Math.fromWadCeil(z.sJWad, decimals);
+        q.saleK = Math.fromWadCeil(z.sKWad, decimals);
+        if (q.saleJ + q.saleK > amount) {
+            q.saleJ = Math.fromWadFloor(z.sJWad, decimals);
+            q.saleK = Math.fromWadFloor(z.sKWad, decimals);
+            if (q.saleJ + q.saleK > amount) {
+                if (q.saleJ >= amount) q.saleJ = amount / 2;
+                q.saleK = amount - q.saleJ;
+            }
+        }
+        q.offered[q.input] = amount - q.saleJ - q.saleK;
+        q.algebraicJ = z.aJWad;
+    }
+
+    function _depositOutputs(Leg[3] memory legs, DepositQuote memory q) private view {
+        uint256 actualJ;
+        if (q.saleJ > 0) actualJ = _depositSale(legs, q, q.j, q.saleJ);
+        uint256 addedJ = _claimIn(legs[q.input], q.saleJ);
+        uint256 removedJ = _claimDebit(legs[q.j], actualJ);
+        q.reserves[q.input] += addedJ;
+        q.reserves[q.j] -= removedJ;
+        if (q.saleK > 0) q.offered[q.k] = _depositSale(legs, q, q.k, q.saleK);
+        q.offered[q.j] = actualJ;
+        if (legs[q.j].se == address(0) && q.algebraicJ > 0) {
+            uint256 algebraic = Math.fromWadFloor(q.algebraicJ, legs[q.j].decimals);
+            if (algebraic > 0) q.offered[q.j] = algebraic;
+        }
+        q.reserves[q.input] += _claimIn(legs[q.input], q.saleK);
+        q.reserves[q.j] = legs[q.j].effective - _claimDebit(legs[q.j], q.offered[q.j]);
+        q.reserves[q.k] -= _claimDebit(legs[q.k], q.offered[q.k]);
+    }
+
+    function _depositSale(Leg[3] memory legs, DepositQuote memory q, uint8 outIndex, uint256 amount)
+        private view returns (uint256 faceOut)
+    {
+        uint256 x = Math.toWad(q.reserves[q.input], legs[q.input].decimals);
+        uint256 y = Math.toWad(q.reserves[outIndex], legs[outIndex].decimals);
+        uint8 witness = 3 - q.input - outIndex;
+        uint256 z = Math.toWad(q.reserves[witness], legs[witness].decimals);
+        uint256 net = Math.applyTradingFeeNet(
+            Math.toWad(_claimIn(legs[q.input], amount), legs[q.input].decimals),
+            IVaultFeeOracleQuery(Repo._layout().feeOracle).dexSwapFeeOfVault(address(this))
+        );
+        uint256 radius = Repo._layout().R;
+        faceOut = Math.fromWadFloor(
+            Math.sphereExactInOutWad(radius, Math.recomputeL2(radius, x, y, z), x, y, z, net),
+            legs[outIndex].decimals
+        );
+        if (legs[outIndex].rate != 0) {
+            uint256 shares = (faceOut * 1e18 + legs[outIndex].rate - 1) / legs[outIndex].rate;
+            faceOut = Transition(legs[outIndex].se).quoteAssets(legs[outIndex].state, shares);
+        }
+    }
+
+    function _claimIn(Leg memory leg, uint256 amount) private view returns (uint256) {
+        if (amount == 0 || leg.se == address(0)) return amount;
+        (,, uint256 minted,) = Transition(leg.se).quoteTransition(leg.state, Transition.Operation.DepositExactIn, amount);
+        if (leg.rate != 0) return minted * leg.rate / 1e18;
+        uint256 afterClaim = Transition(leg.se).quoteAssets(leg.state, leg.shares + minted);
+        return afterClaim > leg.effective ? afterClaim - leg.effective : 0;
+    }
+
+    function _claimDebit(Leg memory leg, uint256 amount) private view returns (uint256) {
+        if (amount == 0 || leg.se == address(0)) return amount;
+        (, uint256 shares,,) = Transition(leg.se).quoteTransition(leg.state, Transition.Operation.WithdrawExactOut, amount);
+        return leg.rate == 0 ? Transition(leg.se).quoteAssets(leg.state, shares) : shares * leg.rate / 1e18;
+    }
+
+    function _depositSupply(Leg[3] memory legs) private view returns (uint256 supply) {
+        supply = IERC20(address(this)).totalSupply();
+        Repo.Layout storage l = Repo._layout();
+        IVaultFeeOracleQuery oracle = IVaultFeeOracleQuery(l.feeOracle);
+        uint256 usage = oracle.usageFeeOfVault(address(this));
+        uint256 ownerShare = usage * Repo.FEE_DENOMINATOR / 1e18;
+        if (address(oracle.feeTo()) == address(0) || usage == 0 || usage >= 1e18 || ownerShare == 0 || l.kLast == 0) return supply;
+        uint256 a = Math.toWad(legs[0].effective, legs[0].decimals);
+        uint256 b = Math.toWad(legs[1].effective, legs[1].decimals);
+        uint256 c = Math.toWad(legs[2].effective, legs[2].decimals);
+        uint8 mode = a > 0 && b > 0 && c > 0 ? 0 : 1;
+        if (mode != l.kLastMode) return supply;
+        uint256 root = mode == 0 ? Math.cbrt(a * b * c) : a + b + c;
+        uint256 previous = mode == 0 ? Math.cbrt(l.kLast) : l.kLast;
+        supply += Math.protocolLpShares(supply, root, previous, ownerShare);
+    }
+
+    function _partialDepositAtState(Leg[3] memory legs, DepositQuote memory q, uint256 amount)
+        private view returns (uint256)
+    {
+        Leg memory leg = legs[q.input];
+        uint256 radius = Repo._layout().R;
+        uint256 effectiveWad = Math.toWad(leg.effective, leg.decimals);
+        if (effectiveWad + 1 >= radius) revert Math.MathDomain();
+        uint256 room = Math.fromWadFloor(radius - effectiveWad - 1, leg.decimals);
+        if (amount > room) amount = room;
+        uint256 proRata = Math.toWad(amount, leg.decimals) * q.supply / effectiveWad;
+        uint256 used = Math.fromWadFloor(Math.fullBookUsedWad(proRata, effectiveWad, q.supply), leg.decimals);
+        uint256[3] memory usedWad;
+        usedWad[q.input] = Math.toWad(used, leg.decimals);
+        Math.SphereNavArgs memory nav;
+        nav.supply = q.supply;
+        nav.R = radius;
+        nav.r0Wad = Math.toWad(legs[0].effective, legs[0].decimals);
+        nav.r1Wad = Math.toWad(legs[1].effective, legs[1].decimals);
+        nav.r2Wad = Math.toWad(legs[2].effective, legs[2].decimals);
+        nav.used0Wad = usedWad[0];
+        nav.used1Wad = usedWad[1];
+        nav.used2Wad = usedWad[2];
+        return Math.sphereNavShares(nav);
+    }

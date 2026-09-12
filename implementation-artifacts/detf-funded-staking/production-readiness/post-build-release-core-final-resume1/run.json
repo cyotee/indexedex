@@ -1,0 +1,153 @@
+{
+  "status": "STOPPED_REQUIRES_REVIEW",
+  "provenance": {
+    "recorded_at_utc": "2026-09-11T04:33:11.517489+00:00",
+    "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+    "source_and_config_sha256": "2dab3ca0e3307eef624b38fee597f569513a1b6c699207fcbd642b8fb19c1ff5",
+    "source_and_config_files": 4816,
+    "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+    "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+    "crane_tracked_contract_and_config_diff_sha256": "3bb0f52c1183f2be28ee8a63fab300170f65e989720b5048e21da9c61028cc4d",
+    "crane_source_and_config_sha256": "b45a057611f782040ee29f1fddbbcc8eeba01def2c9341ef01c6bb65f685e123",
+    "crane_source_and_config_files": 14819,
+    "dependency_scope": "Crane Solidity tree, including untracked Solidity and nested vendored libraries/tests, plus Crane Foundry config. Final compiler metadata separately verifies every imported source closure.",
+    "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+    "machine": "macOS-26.6.2-x86_64-i386-64bit",
+    "architecture": "x86_64",
+    "logical_cpus": 16,
+    "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+  },
+  "started_at_utc": "2026-09-11T04:33:11.585578+00:00",
+  "predecessor": "implementation-artifacts/detf-funded-staking/current-repository-production-readiness-core-final-sequence.json",
+  "steps": [
+    {
+      "name": "test-consolidation",
+      "command": [
+        "python3",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/reconcile-test-consolidation.py",
+        "--baseline-evidence",
+        "implementation-artifacts/detf-funded-staking/production-readiness/post-build-release-core-final/prior-reconciliation/current-test-consolidation.json"
+      ],
+      "exit_code": 0,
+      "seconds": 7.066,
+      "changed_fingerprints": [],
+      "log": "implementation-artifacts/detf-funded-staking/production-readiness/post-build-release-core-final-resume1/test-consolidation.log",
+      "log_sha256": "f13fea109674a68f162089232f04f6a884e681669676ce393f75456870905719"
+    },
+    {
+      "name": "release-artifacts",
+      "command": [
+        "python3",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/production-readiness/record-release-artifacts.py"
+      ],
+      "exit_code": 0,
+      "seconds": 17.181,
+      "changed_fingerprints": [],
+      "log": "implementation-artifacts/detf-funded-staking/production-readiness/post-build-release-core-final-resume1/release-artifacts.log",
+      "log_sha256": "ba6dd338f7a4995e4d581c67cee85c4ba84963d7530c8813a01e5f0e182c50cc"
+    },
+    {
+      "name": "frontend-abis",
+      "command": [
+        "node",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/production-readiness/reconcile-frontend-abis.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 7.167,
+      "changed_fingerprints": [],
+      "log": "implementation-artifacts/detf-funded-staking/production-readiness/post-build-release-core-final-resume1/frontend-abis.log",
+      "log_sha256": "b311b518fc9f0e4a5f8d47d7e74c2b1c9718120d3f78952aeb34c50c0a982fed"
+    },
+    {
+      "name": "renderer",
+      "command": [
+        "python3",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/production-readiness/reconcile-renderer-evidence.py"
+      ],
+      "exit_code": 0,
+      "seconds": 13.06,
+      "changed_fingerprints": [],
+      "log": "implementation-artifacts/detf-funded-staking/production-readiness/post-build-release-core-final-resume1/renderer.log",
+      "log_sha256": "09c6382ced1958556a8348ae7269775facfca5ad8cc02aeccff2bd0f33346683"
+    },
+    {
+      "name": "provider-forks",
+      "command": [
+        "python3",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/production-readiness/run-provider-renewal.py",
+        "--label",
+        "core-final"
+      ],
+      "exit_code": 1,
+      "seconds": 13.192,
+      "changed_fingerprints": [],
+      "log": "implementation-artifacts/detf-funded-staking/production-readiness/post-build-release-core-final-resume1/provider-forks.log",
+      "log_sha256": "a4767fdadaff8e0a1cfd8922a64c22ff4c958dd62a2e7d386531a9108c7db4e4"
+    }
+  ],
+  "public_broadcast": false,
+  "fund_migration": false,
+  "local_nodes": [
+    "http://127.0.0.1:18663",
+    "http://127.0.0.1:18664"
+  ],
+  "scope": "Run the remaining machine checks sequentially after the matching P3 pass.\n\nOnly the existing fixed-loopback runners may broadcast. Provider forks are\nread-only. This coordinator never closes acceptance or authorizes a public\ndeployment, and stops at the first failed check for review.\n",
+  "resumed_from": {
+    "path": "implementation-artifacts/detf-funded-staking/production-readiness/post-build-release-core-final/run.json",
+    "sha256": "d407e2bc533313811b3af31578d44d5e416d1e74fa1908b5157b224d0c6fb61c"
+  },
+  "reused_steps": [
+    {
+      "name": "selectors",
+      "command": [
+        "python3",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/reconcile-funded-selector-manifest.py",
+        "--require-current"
+      ],
+      "exit_code": 0,
+      "seconds": 4.581,
+      "changed_fingerprints": [],
+      "log": "implementation-artifacts/detf-funded-staking/production-readiness/post-build-release-core-final/selectors.log",
+      "log_sha256": "4dbc0315ee9b004eba941da89461558cd7336a21a2dba1bd0ec1d3e6ae747f97"
+    },
+    {
+      "name": "native-se-proxies",
+      "command": [
+        "python3",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/reconcile-se-proxy-evidence.py",
+        "--require-current"
+      ],
+      "exit_code": 0,
+      "seconds": 10.021,
+      "changed_fingerprints": [],
+      "log": "implementation-artifacts/detf-funded-staking/production-readiness/post-build-release-core-final/native-se-proxies.log",
+      "log_sha256": "3fdd474250c2063d5f7b2411fbe311125dbabeb4c9ce24c66539405594aed28f"
+    },
+    {
+      "name": "source-inventory",
+      "command": [
+        "python3",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/reconcile-current-source-manifest.py"
+      ],
+      "exit_code": 0,
+      "seconds": 5.694,
+      "changed_fingerprints": [],
+      "log": "implementation-artifacts/detf-funded-staking/production-readiness/post-build-release-core-final/source-inventory.log",
+      "log_sha256": "837a60a2e9b79d1793645012fc2b007da88cd996680d64d2e0604a68a1aabf11"
+    },
+    {
+      "name": "compiled-test-inventory",
+      "command": [
+        "python3",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/inventory-compiled-tests.py"
+      ],
+      "exit_code": 0,
+      "seconds": 55.023,
+      "changed_fingerprints": [],
+      "log": "implementation-artifacts/detf-funded-staking/production-readiness/post-build-release-core-final/compiled-test-inventory.log",
+      "log_sha256": "3404923d75967e02a7d4c3abb31e056dd641db34baed37321d054da043f7a08b"
+    }
+  ],
+  "active_step": "provider-forks",
+  "finished_at_utc": "2026-09-11T04:35:00.355200+00:00"
+}

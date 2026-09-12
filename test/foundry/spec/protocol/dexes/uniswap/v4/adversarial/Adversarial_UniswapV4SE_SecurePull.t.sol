@@ -148,7 +148,22 @@ contract Adversarial_UniswapV4SE_SecurePull is TestBase_UniswapV4StandardExchang
         ERC20PermitMintableStub(token0_).mint(to_, amountIn_);
         vm.startPrank(to_);
         IERC20(token0_).approve(address(vault), amountIn_);
-        shares_ = vault.exchangeIn(IERC20(token0_), amountIn_, IERC20(address(vault)), 0, to_, false, _deadline());
+        if (vault.totalSupply() == 0) {
+            uint256 amount1_ = amountIn_;
+            ERC20PermitMintableStub(_token1()).mint(to_, amount1_);
+            IERC20(_token1()).approve(address(vault), amount1_);
+            address[] memory tokens = new address[](2);
+            tokens[0] = token0_;
+            tokens[1] = _token1();
+            uint256[] memory amounts = new uint256[](2);
+            amounts[0] = amountIn_;
+            amounts[1] = amount1_;
+            shares_ = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
+                tokens, amounts, IERC20(address(vault)), 0, to_, false, _deadline()
+            );
+        } else {
+            shares_ = vault.exchangeIn(IERC20(token0_), amountIn_, IERC20(address(vault)), 0, to_, false, _deadline());
+        }
         vm.stopPrank();
         assertGt(shares_, 0, "minted SE shares");
     }
@@ -166,11 +181,7 @@ contract Adversarial_UniswapV4SE_SecurePull is TestBase_UniswapV4StandardExchang
 
         // Book face via honest !pretransfer (end-syncs R including deployed + free face).
         uint256 honestIn_ = 2 ether;
-        ERC20PermitMintableStub(token0_).mint(victim, honestIn_);
-        vm.startPrank(victim);
-        IERC20(token0_).approve(address(vault), honestIn_);
-        vault.exchangeIn(IERC20(token0_), honestIn_, IERC20(address(vault)), 0, victim, false, _deadline());
-        vm.stopPrank();
+        _mintSeShares(victim, honestIn_);
 
         assertEq(IERC20(token0_).balanceOf(attacker), 0, "attacker empty");
         assertEq(IERC20(token0_).allowance(attacker, address(vault)), 0, "no allowance");
@@ -197,11 +208,7 @@ contract Adversarial_UniswapV4SE_SecurePull is TestBase_UniswapV4StandardExchang
 
         // Book via honest path so face free is fully accounted (U=0 even if free face dust remains).
         uint256 honestIn_ = 2 ether;
-        ERC20PermitMintableStub(token0_).mint(victim, honestIn_);
-        vm.startPrank(victim);
-        IERC20(token0_).approve(address(vault), honestIn_);
-        vault.exchangeIn(IERC20(token0_), honestIn_, IERC20(address(vault)), 0, victim, false, _deadline());
-        vm.stopPrank();
+        _mintSeShares(victim, honestIn_);
 
         vm.prank(attacker);
         vm.expectRevert(
@@ -213,14 +220,7 @@ contract Adversarial_UniswapV4SE_SecurePull is TestBase_UniswapV4StandardExchang
     /// @notice Positive control: honest !pretransferred pull succeeds and mints shares.
     function test_I_positive_honestPullMint_succeeds() public {
         uint256 amountIn_ = 2 ether;
-        address token0_ = _token0();
-        ERC20PermitMintableStub(token0_).mint(attacker, amountIn_);
-        vm.startPrank(attacker);
-        IERC20(token0_).approve(address(vault), amountIn_);
-        uint256 out_ = vault.exchangeIn(
-            IERC20(token0_), amountIn_, IERC20(address(vault)), 0, attacker, false, _deadline()
-        );
-        vm.stopPrank();
+        uint256 out_ = _mintSeShares(attacker, amountIn_);
         assertGt(out_, 0, "honest !pretransferred mint");
         assertEq(vault.balanceOf(attacker), out_, "attacker received shares");
     }
@@ -480,7 +480,7 @@ contract Adversarial_UniswapV4SE_SecurePull is TestBase_UniswapV4StandardExchang
         );
         assertTrue(
             _facetFuncsContains(
-                uniswapV4StandardExchangeInQueryFacet.facetFuncs(), IStandardExchangeIn.previewExchangeIn.selector
+                uniswapV4StandardExchangeInMultiQueryFacet.facetFuncs(), IStandardExchangeIn.previewExchangeIn.selector
             ),
             "J1 previewExchangeIn"
         );
@@ -538,6 +538,7 @@ contract Adversarial_UniswapV4SE_SecurePull is TestBase_UniswapV4StandardExchang
 
     /// @notice J3: smoke-call money + view selectors on **proxy** (not facet impl address).
     function test_J3_proxyCallable_smoke_eachSelector() public {
+        _mintSeShares(victim, 2 ether);
         address exchangeInFacet_ = IDiamondLoupe(address(vault)).facetAddress(IStandardExchangeIn.exchangeIn.selector);
         address exchangeOutFacet_ =
             IDiamondLoupe(address(vault)).facetAddress(IStandardExchangeOut.exchangeOut.selector);

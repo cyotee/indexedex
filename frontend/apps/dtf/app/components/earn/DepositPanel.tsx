@@ -1,5 +1,7 @@
 'use client'
 
+import { useConnectModal } from '@rainbow-me/rainbowkit'
+
 import Link from 'next/link'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
@@ -10,7 +12,6 @@ import {
   useAccount,
   useBalance,
   useChainId,
-  useConnect,
   usePublicClient,
   useReadContract,
   useSwitchChain,
@@ -84,7 +85,7 @@ export function DepositPanel({
 }) {
   const { address, isConnected } = useAccount()
   const walletChainId = useChainId()
-  const { connect, connectors, isPending: isConnectPending } = useConnect()
+  const { openConnectModal, connectModalOpen: isConnectPending } = useConnectModal()
   const { switchChainAsync, isPending: isSwitchPending } = useSwitchChain()
   const { environment } = useDeploymentEnvironment()
   const publicClient = usePublicClient({ chainId }) as PublicClient | undefined
@@ -402,9 +403,8 @@ export function DepositPanel({
           : null)
 
   const handleConnect = useCallback(() => {
-    const c = connectors[0]
-    if (c) connect({ connector: c })
-  }, [connect, connectors])
+    openConnectModal?.()
+  }, [openConnectModal])
 
   const handleSwitch = useCallback(async () => {
     try {

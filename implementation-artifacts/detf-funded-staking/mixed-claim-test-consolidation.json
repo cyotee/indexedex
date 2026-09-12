@@ -1,0 +1,97 @@
+{
+  "decision": "D32/D35/D53 and plan 11.1.1 replace mature LP-position sale and redeemClaim with funded NFT sDETF claims and Standard Exchange 1:1 unstaking. Decimal reserve-route suites and the pending LP-only bond payment regression remain.",
+  "validation": "checkpoint-388-run.json",
+  "retired_files": 10,
+  "rows": [
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_Claim.t.sol",
+      "sha256": "68760e7bdb6a893eeb49b04b00789f1cf58eff91e38e676960b83bd1533eb19a",
+      "old_test": "test_sell_to_claim_and_redeem_detf",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+        "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Claim_B_ALL6.t.sol",
+      "sha256": "216359ccea716d47a120412f572f9adb734370f009086aae66b7f56aeda602bc",
+      "old_test": "test_sell_to_claim_and_redeem_detf",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+        "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Claim_B_ALL9.t.sol",
+      "sha256": "0dbf70fbe07e7f9134ebc4b0242275f0f93e5bdfd910a6558399ea458cc7c225",
+      "old_test": "test_sell_to_claim_and_redeem_detf",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+        "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Claim_B_P18_R6.t.sol",
+      "sha256": "55586daba01956161aa1b1618f4d2f84d1ab2ed7d933df0d4bdf77b3f9980860",
+      "old_test": "test_sell_to_claim_and_redeem_detf",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+        "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Claim_B_P18_R9.t.sol",
+      "sha256": "7f973c1a7076c68ac769895771bd670ac6e0cd261ad62e00ae47c8cb67e3bb3e",
+      "old_test": "test_sell_to_claim_and_redeem_detf",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+        "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Claim_B_P6_R18.t.sol",
+      "sha256": "262d6ff1c86d66e62275fe20e76f1e058ddb7b8e7d260f0bff5da145307911ef",
+      "old_test": "test_sell_to_claim_and_redeem_detf",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+        "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Claim_B_P6_R9.t.sol",
+      "sha256": "bcc047720c1ccb2289def08c8a18366044129fd2c8193f4db19051a4e70ef08e",
+      "old_test": "test_sell_to_claim_and_redeem_detf",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+        "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Claim_B_P9_R18.t.sol",
+      "sha256": "ac402359ec14e3390b20eaf14661128328e2119cad55bb79a1961a10121def1c",
+      "old_test": "test_sell_to_claim_and_redeem_detf",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+        "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Claim_B_P9_R6.t.sol",
+      "sha256": "160f6b22fb4dcb044638515decaf18886574935d13da5b3c03b96a75e020a3c9",
+      "old_test": "test_sell_to_claim_and_redeem_detf",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+        "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Claim_Decimals.sol",
+      "sha256": "d2f45e25110a38153bccecb4d753033891f24ab560ba8f2f99d2aa5d233b83f5",
+      "old_test": "test_sell_to_claim_and_redeem_detf",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+        "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+      ]
+    }
+  ]
+}

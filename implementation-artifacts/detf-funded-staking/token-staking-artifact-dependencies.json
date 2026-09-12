@@ -1,0 +1,25 @@
+{
+  "status": "applied; validation pending",
+  "path": "contracts/protocols/staking/token/TokenStaking_Component_FactoryService.sol",
+  "before_sha256": "6f2fb6a03b00aa4ccf1c8f78270b68438d7c2aff081550f73b5ab54e99d27191",
+  "after_sha256": "15ac19defcf2f8ad1dceaa313cf1d07ea13b0eef7ce130c59b0eb5ab6fc7b8ab",
+  "artifacts": [
+    {
+      "artifact": "TokenStakingFacet.sol:TokenStakingFacet",
+      "source": "contracts/protocols/staking/token/TokenStakingFacet.sol"
+    },
+    {
+      "artifact": "RebasingAwareERC4626Facet.sol:RebasingAwareERC4626Facet",
+      "source": "contracts/protocols/staking/rebasingVault/RebasingAwareERC4626Facet.sol"
+    },
+    {
+      "artifact": "RebasingAwareERC4626DFPkg.sol:RebasingAwareERC4626DFPkg",
+      "source": "contracts/protocols/staking/rebasingVault/RebasingAwareERC4626DFPkg.sol"
+    },
+    {
+      "artifact": "TokenStakingDFPkg.sol:TokenStakingDFPkg",
+      "source": "contracts/protocols/staking/token/TokenStakingDFPkg.sol"
+    }
+  ],
+  "purpose": "Make existing vm.getCode creation-bytecode dependencies explicit so build-before-test compiles changed targets. Factory API, salts and deployment operations unchanged."
+}

@@ -37,11 +37,12 @@ import {
   settlePayToken,
   withEthPayOption,
 } from '../../lib/ethPay'
-import { isFunctionNotFound } from '../../lib/detf/bondNftVault'
+import { asBondClaim, asBondPosition, requireFundedBondSupport } from '../../lib/detf/bondNftVault'
+import { FUNDED_BOND_ABI, V4_BOND_PREVIEW_ABI, fundedBondArgs, resolveBondRoute } from '../../lib/detf/bondRoute'
 import { parseContractError } from '../../lib/tx/parseContractError'
 import { isArchivedDetf } from '../lib/archivedDetfs'
 import { isInsightsActionTab } from '../lib/insightsHref'
-import { bondNftAbi, insightsViewAbi } from '../lib/insightsAbi'
+import { bondNftAbi, diamondLoupeAbi, insightsViewAbi, standardizedYieldDiscoveryAbi } from '../lib/insightsAbi'
 import {
   addressesMatch,
   bondIdScanCount,
@@ -55,7 +56,7 @@ import {
 } from '../lib/claimRewardsGate'
 import { isZero } from '../lib/tokenLabels'
 import { lockSecondsFromDays, MIN_LOCK_DAYS } from '../lib/lockSeconds'
-import { actionTokenOptionLabel, type ActionToken } from '../lib/actionTokens'
+import { actionTokenOptionLabel, asAddr, tokensForStandardRoute, type ActionToken } from '../lib/actionTokens'
 import { DetfStaking } from './DetfStaking'
 
 export type { ActionToken }
@@ -85,7 +86,6 @@ export function DetfActions({
   claimToken,
   claimSymbol,
   reserveLive,
-  burningAllowed,
   archived: archivedProp,
   initialTab,
   nftVault: nftVaultProp,
@@ -98,7 +98,6 @@ export function DetfActions({
   claimToken?: `0x${string}`
   claimSymbol?: string
   reserveLive?: boolean
-  burningAllowed?: boolean
   archived?: boolean
   initialTab?: string
   nftVault?: `0x${string}`
@@ -135,19 +134,41 @@ export function DetfActions({
   const [approvedSpend, setApprovedSpend] = useState(0n)
   const [approvedDetfSpend, setApprovedDetfSpend] = useState(0n)
 
-  const payTokens = useMemo(
-    () =>
-      withEthPayOption(pairTokens, platform.weth, { address: ETH_PAY, symbol: 'ETH' }),
-    [pairTokens, platform.weth],
-  )
+  const { data: rawSYValue } = useReadContract({
+    chainId, address: detf, abi: standardizedYieldDiscoveryAbi, functionName: 'rawSY',
+    query: { enabled: !!detf, retry: 0 },
+  })
+  const rawSY = asAddr(rawSYValue) ?? undefined
+  const { data: tokensIn } = useReadContract({
+    chainId, address: rawSY, abi: standardizedYieldDiscoveryAbi, functionName: 'getTokensIn',
+    query: { enabled: !!rawSY, retry: 0 },
+  })
+  const { data: tokensOut } = useReadContract({
+    chainId, address: rawSY, abi: standardizedYieldDiscoveryAbi, functionName: 'getTokensOut',
+    query: { enabled: !!rawSY, retry: 0 },
+  })
+  const { data: bondTokens } = useReadContract({
+    chainId, address: detf, abi: insightsViewAbi, functionName: 'acceptedBondTokens',
+    query: { enabled: !!detf, retry: 0 },
+  })
+  const { data: reserveLp } = useReadContract({
+    chainId, address: detf, abi: insightsViewAbi, functionName: 'reservePool',
+    query: { enabled: !!detf && tab === 'bond', retry: 0 },
+  })
+  const payTokens = useMemo(() => withEthPayOption(tokensForStandardRoute({
+    discovered: tab === 'bond' ? bondTokens : tab === 'burn' ? tokensOut : tokensIn,
+    labels: pairTokens,
+    exclude: [detf, claimToken],
+  }), platform.weth, { address: ETH_PAY, symbol: 'ETH' }), [tab, bondTokens, tokensOut, tokensIn, pairTokens, detf, claimToken, platform.weth])
 
   useEffect(() => {
-    if (payTokens.length === 0) return
+    if (payTokens.length === 0) { setToken(''); return }
     const ok = payTokens.some((t) => t.address.toLowerCase() === token.toLowerCase())
     if (!ok) setToken(payTokens[0]!.address)
   }, [payTokens, token])
 
-  const tokenAddr = (token || payTokens[0]?.address || '') as `0x${string}` | ''
+  const tokenAddr = (payTokens.some((item) => item.address.toLowerCase() === token.toLowerCase())
+    ? token : payTokens[0]?.address ?? '') as `0x${string}` | ''
   const tokenMeta = payTokens.find((t) => t.address.toLowerCase() === tokenAddr.toLowerCase()) ?? payTokens[0]
   const payEth = isEthPay(tokenAddr)
   const spendToken = settlePayToken(tokenAddr, platform.weth)
@@ -158,13 +179,14 @@ export function DetfActions({
   }, [tokenAddr, detf, address])
 
   const { data: tokenDecimals } = useReadContract({
+    chainId,
     address: payEth ? undefined : tokenAddr || undefined,
     abi: erc20Abi,
     functionName: 'decimals',
     query: { enabled: !!tokenAddr && !payEth },
   })
   const decimals = payEth || tokenDecimals == null ? 18 : Number(tokenDecimals)
-  const parsed = parseAmount(amount, decimals)
+  const parsed = payEth || tokenDecimals != null ? parseAmount(amount, decimals) : undefined
   const lock = lockSecondsFromDays(lockDays)
   const parsedId = useMemo(() => parseBondTokenId(tokenId), [tokenId])
 
@@ -174,6 +196,7 @@ export function DetfActions({
     query: { enabled: payEth && !!address },
   })
   const { data: erc20Bal } = useReadContract({
+    chainId,
     address: payEth ? undefined : tokenAddr || undefined,
     abi: erc20Abi,
     functionName: 'balanceOf',
@@ -182,6 +205,7 @@ export function DetfActions({
   })
   const balance = payEth ? ethBal?.value : erc20Bal
   const { data: allowance, refetch: refetchAllowance } = useReadContract({
+    chainId,
     address: spendToken || undefined,
     abi: erc20Abi,
     functionName: 'allowance',
@@ -189,6 +213,7 @@ export function DetfActions({
     query: { enabled: !!spendToken && !!address && !!detf },
   })
   const { data: oracleTerms } = useReadContract({
+    chainId,
     address: platform.feeOracle ?? undefined,
     abi: FEE_ORACLE_BOND_ABI,
     functionName: 'bondTermsOfVault',
@@ -206,7 +231,15 @@ export function DetfActions({
       setLockDays(String(minDays))
     }
   }, [minDays, maxDays, lockDays])
+  const oracleLock = lockSecondsFromNumber(clampLockDays(lockDays, minDays, maxDays) ?? minDays)
+  const { data: bondPreview } = useReadContract({
+    chainId, address: detf, abi: V4_BOND_PREVIEW_ABI, functionName: 'previewBond',
+    args: spendToken && parsed != null ? [spendToken, parsed, oracleLock] : undefined,
+    query: { enabled: tab === 'bond' && !!detf && !!spendToken && parsed != null && parsed > 0n, retry: 0, refetchInterval: 15_000 },
+  })
+  const payingReserveLp = tab === 'bond' && addressesMatch(spendToken, reserveLp)
   const { data: preview } = useReadContract({
+    chainId,
     address: detf,
     abi: insightsViewAbi,
     functionName: 'previewExchangeIn',
@@ -214,15 +247,17 @@ export function DetfActions({
     query: { enabled: tab === 'mint' && !!detf && !!spendToken && parsed != null && parsed > BigInt(0) },
   })
   const { data: detfDecimalsRaw } = useReadContract({
+    chainId,
     address: detf,
     abi: erc20Abi,
     functionName: 'decimals',
     query: { enabled: !!detf },
   })
-  const detfDecimals = detfDecimalsRaw == null ? 18 : Number(detfDecimalsRaw)
-  const parsedBurn = parseAmount(burnAmount, detfDecimals)
-  const burnLive = reserveLive !== false && burningAllowed !== false
+  const detfDecimals = detfDecimalsRaw == null ? 9 : Number(detfDecimalsRaw)
+  const parsedBurn = detfDecimalsRaw != null ? parseAmount(burnAmount, detfDecimals) : undefined
+  const burnLive = reserveLive === true
   const { data: detfBal } = useReadContract({
+    chainId,
     address: detf,
     abi: erc20Abi,
     functionName: 'balanceOf',
@@ -230,6 +265,7 @@ export function DetfActions({
     query: { enabled: tab === 'burn' && !!detf && !!address },
   })
   const { data: detfAllowance, refetch: refetchDetfAllowance } = useReadContract({
+    chainId,
     address: detf,
     abi: erc20Abi,
     functionName: 'allowance',
@@ -237,6 +273,7 @@ export function DetfActions({
     query: { enabled: tab === 'burn' && !!detf && !!address },
   })
   const { data: burnPreview } = useReadContract({
+    chainId,
     address: detf,
     abi: insightsViewAbi,
     functionName: 'previewExchangeIn',
@@ -273,21 +310,14 @@ export function DetfActions({
       : protocolVault && !isZero(protocolVault)
         ? protocolVault
         : undefined
-  const { data: nextTokenIdRaw } = useReadContract({
-    chainId,
-    address: nftVault,
-    abi: bondNftAbi,
-    functionName: 'nextTokenId',
-    query: { enabled: tab === 'claim' && !!nftVault, retry: 0 },
-  })
-  const scanCount = bondIdScanCount(typeof nextTokenIdRaw === 'bigint' ? nextTokenIdRaw : undefined)
+  const scanCount = bondIdScanCount()
   const ownerScanContracts = useMemo(() => {
     if (tab !== 'claim' || !nftVault) return []
     return Array.from({ length: scanCount }, (_, i) => ({
       address: nftVault,
       abi: bondNftAbi,
       functionName: 'ownerOf' as const,
-      args: [BigInt(i + 1)] as const,
+      args: [BigInt(i + 3)] as const,
       chainId,
     }))
   }, [tab, nftVault, scanCount, chainId])
@@ -307,17 +337,18 @@ export function DetfActions({
     setTokenId(ownedIds[0]!.toString())
   }, [ownedIds, tokenId])
 
+  const [claimKind, setClaimKind] = useState<'claimBond' | 'claimPrincipal' | 'claimRewards'>('claimBond')
+
   const claimReadsOn =
     tab === 'claim' && !!nftVault && parsedId !== undefined
 
-  const { data: pendingRewards } = useReadContract({
-    chainId,
-    address: nftVault,
-    abi: bondNftAbi,
-    functionName: 'pendingRewards',
+  const claimPreviewRead = useReadContract({
+    chainId, address: nftVault, abi: bondNftAbi, functionName: 'previewClaim',
     args: parsedId !== undefined ? [parsedId] : undefined,
-    query: { enabled: claimReadsOn, retry: 0 },
+    query: { enabled: claimReadsOn, retry: 0, refetchInterval: 15_000 },
   })
+  const claimPreview = asBondClaim(claimPreviewRead.data)
+  const pendingRewards = claimPreview?.rewardsDue
   const { data: ownerOf, isError: ownerReadFailed, isFetching: ownerReading } = useReadContract({
     chainId,
     address: nftVault,
@@ -326,14 +357,13 @@ export function DetfActions({
     args: parsedId !== undefined ? [parsedId] : undefined,
     query: { enabled: claimReadsOn, retry: 0 },
   })
-  const { data: unlockTime } = useReadContract({
-    chainId,
-    address: nftVault,
-    abi: bondNftAbi,
-    functionName: 'unlockTimeOf',
+  const positionRead = useReadContract({
+    chainId, address: nftVault, abi: bondNftAbi, functionName: 'positionOf',
     args: parsedId !== undefined ? [parsedId] : undefined,
-    query: { enabled: claimReadsOn, retry: 0 },
+    query: { enabled: claimReadsOn, retry: 0, refetchInterval: 15_000 },
   })
+  const position = asBondPosition(positionRead.data)
+  const unlockTime = position ? position.startTimestamp + position.vestingDuration : undefined
   const ownerAddr = bondOwnerAddress(typeof ownerOf === 'string' ? ownerOf : undefined)
   const ownsBond = addressesMatch(ownerAddr, address)
   const unlock = bondUnlockState(
@@ -341,7 +371,7 @@ export function DetfActions({
     Math.floor(Date.now() / 1000),
   )
   const canClaim = claimRewardsButtonEnabled({
-    canSign: isConnected && walletMatches && !!detf && !!address && pendingLeg == null,
+    canSign: isConnected && walletMatches && !!nftVault && !!address && !!claimPreview && !!publicClient && pendingLeg == null,
     tokenId: parsedId,
     matured: unlock.locked === false,
     pendingRewards: typeof pendingRewards === 'bigint' ? pendingRewards : undefined,
@@ -360,10 +390,9 @@ export function DetfActions({
   const detfCovered =
     detfAllowance != null && detfAllowance >= (parsedBurn ?? 0n) ? detfAllowance : approvedDetfSpend
   const needApproveDetf = parsedBurn != null && parsedBurn > 0n && detfCovered < parsedBurn
-  const canSign = isConnected && walletMatches && !!detf && !!address && pendingLeg == null
+  const canSign = isConnected && walletMatches && !!detf && !!address && !!publicClient && pendingLeg == null
   const canMintOrBond = canSign && !archived
   const canBurn = canSign && burnLive
-  const oracleLock = lockSecondsFromNumber(clampLockDays(lockDays, minDays, maxDays) ?? minDays)
 
   async function writeOnWallet(params: Parameters<typeof writeContractAsync>[0] | EthWrapWrite) {
     if (typeof walletChainId === 'number' && walletChainId !== chainId && !localWallet) {
@@ -379,11 +408,10 @@ export function DetfActions({
 
   async function wait(hash: `0x${string}`, label: string) {
     setStatus(`${label} submitted.`)
-    if (publicClient) {
-      const receipt = await publicClient.waitForTransactionReceipt({ hash })
-      if (receipt.status === 'reverted') throw new Error('Transaction reverted')
-      setStatus(`${label} confirmed.`)
-    }
+    if (!publicClient) throw new Error('The selected network is unavailable.')
+    const receipt = await publicClient.waitForTransactionReceipt({ hash })
+    if (receipt.status === 'reverted') throw new Error('Transaction reverted')
+    setStatus(`${label} confirmed.`)
   }
 
   async function wrapEth() {
@@ -415,10 +443,11 @@ export function DetfActions({
   }
 
   async function approve() {
-    if (archived || !detf || !spendToken || parsed == null || !address) return
+    if (archived || !detf || !spendToken || parsed == null || parsed <= 0n || !address || !publicClient) return
     setPendingLeg('approve')
     setStatus('')
     try {
+      if (tab === 'bond') await readBondRoute()
       const hash = await writeOnWallet({
         account: address,
         address: spendToken,
@@ -473,7 +502,7 @@ export function DetfActions({
   }
 
   async function burn() {
-    if (!detf || !spendToken || parsedBurn == null || !address) return
+    if (!detf || !spendToken || parsedBurn == null || parsedBurn <= 0n || !address || !publicClient) return
     setPendingLeg('burn')
     setStatus('')
     try {
@@ -486,10 +515,7 @@ export function DetfActions({
               args: [address],
             })) as bigint)
           : null
-      const minOut =
-        burnPreview != null && burnPreview > BigInt(0)
-          ? (burnPreview * BigInt(99)) / BigInt(100)
-          : BigInt(0)
+      const minOut = await freshMinimum(detf, parsedBurn, spendToken)
       const args = [detf, parsedBurn, spendToken, minOut, address, false, deadline()] as const
       if (publicClient) {
         await publicClient.simulateContract({
@@ -525,14 +551,14 @@ export function DetfActions({
   }
 
   async function mint() {
-    if (archived || !detf || !spendToken || parsed == null || !address) return
+    if (archived || !detf || !spendToken || parsed == null || parsed <= 0n || !address || !publicClient) return
     setPendingLeg('mint')
     setStatus('')
     try {
+      await freshMinimum(spendToken, parsed, detf)
       await wrapEth()
       if (payEth) await approveWethIfNeeded()
-      const minOut =
-        preview != null && preview > BigInt(0) ? (preview * BigInt(99)) / BigInt(100) : BigInt(0)
+      const minOut = await freshMinimum(spendToken, parsed, detf)
       const args = [spendToken, parsed, detf, minOut, address, false, deadline()] as const
       if (publicClient) {
         await publicClient.simulateContract({
@@ -558,21 +584,37 @@ export function DetfActions({
     }
   }
 
+  async function readBondRoute() {
+    if (!publicClient || !detf) throw new Error('The selected DETF is unavailable.')
+    await requireFundedBondSupport(publicClient, detf)
+    return resolveBondRoute((selector) => publicClient.readContract({
+      address: detf, abi: diamondLoupeAbi, functionName: 'facetAddress', args: [selector],
+    }))
+  }
+
+  async function freshMinimum(tokenIn: `0x${string}`, amountIn: bigint, tokenOut: `0x${string}`) {
+    if (!publicClient || !detf) throw new Error('The selected DETF is unavailable.')
+    const quote = await publicClient.readContract({
+      address: detf, abi: insightsViewAbi, functionName: 'previewExchangeIn', args: [tokenIn, amountIn, tokenOut],
+    })
+    if (quote <= 0n) throw new Error('No positive quote is available for this amount.')
+    const minimum = quote * 99n / 100n
+    return minimum > 0n ? minimum : 1n
+  }
+
   async function bond() {
-    if (archived || !detf || !spendToken || parsed == null || !address) return
+    if (archived || !detf || !spendToken || parsed == null || parsed <= 0n || !address || !publicClient) return
     setPendingLeg('bond')
     setStatus('')
     try {
+      const route = await readBondRoute()
       await wrapEth()
       if (payEth) await approveWethIfNeeded()
-      const hash = await writeOnWallet({
-        account: address,
-        address: detf,
-        abi: insightsViewAbi,
-        functionName: 'bond',
-        args: [spendToken, parsed, oracleLock, address, false, deadline()],
-      })
+      const args = fundedBondArgs(route, { token: spendToken, amount: parsed, duration: oracleLock, recipient: address, deadline: deadline() })
+      await publicClient.simulateContract({ account: address, address: detf, abi: FUNDED_BOND_ABI, functionName: 'bond', args })
+      const hash = await writeOnWallet({ account: address, address: detf, abi: FUNDED_BOND_ABI, functionName: 'bond', args })
       await wait(hash, 'Bond')
+      await ownerScan.refetch()
     } catch (e) {
       setStatus(parseContractError(e))
     } finally {
@@ -581,47 +623,15 @@ export function DetfActions({
   }
 
   async function claim() {
-    if (!address || parsedId === undefined) return
-    const attempts: { address: `0x${string}`; abi: typeof insightsViewAbi | typeof bondNftAbi }[] = []
-    if (detf) attempts.push({ address: detf, abi: insightsViewAbi })
-    if (nftVault && (!detf || nftVault.toLowerCase() !== detf.toLowerCase())) {
-      attempts.push({ address: nftVault, abi: bondNftAbi })
-    }
-    if (attempts.length === 0) return
+    if (!address || parsedId === undefined || !nftVault || !publicClient || !canClaim) return
     setPendingLeg('claim')
     setStatus('')
     try {
       const args = [parsedId, address] as const
-      let lastError: unknown
-      for (let i = 0; i < attempts.length; i++) {
-        const attempt = attempts[i]!
-        try {
-          if (publicClient) {
-            await publicClient.simulateContract({
-              account: address,
-              address: attempt.address,
-              abi: attempt.abi,
-              functionName: 'claimRewards',
-              args,
-            })
-          }
-          const hash = await writeOnWallet({
-            account: address,
-            address: attempt.address,
-            abi: attempt.abi,
-            functionName: 'claimRewards',
-            args,
-          })
-          await wait(hash, 'Claim rewards')
-          lastError = undefined
-          break
-        } catch (e) {
-          lastError = e
-          if (i < attempts.length - 1 && isFunctionNotFound(e)) continue
-          throw e
-        }
-      }
-      if (lastError) throw lastError
+      await publicClient.simulateContract({ account: address, address: nftVault, abi: bondNftAbi, functionName: claimKind, args })
+      const hash = await writeOnWallet({ account: address, address: nftVault, abi: bondNftAbi, functionName: claimKind, args })
+      await wait(hash, 'Claim sDETF')
+      await Promise.all([claimPreviewRead.refetch(), positionRead.refetch(), ownerScan.refetch()])
     } catch (e) {
       setStatus(parseContractError(e))
     } finally {
@@ -645,11 +655,9 @@ export function DetfActions({
       </h3>
       <p className="mt-1 text-sm text-[var(--text-muted,#9aa3b2)]">
         {archived
-          ? `Mint and bond are off on this archived DETF. Burn pays ${detfSymbol} and returns a token from the list. Stake mints the rebasing claim token. Claim takes DETF that accrued to a bond.`
-          : `Mint pays a token this DETF accepts and receives ${detfSymbol}. Burn pays ${detfSymbol} and
-        returns a token from that list. Bond locks from the same list. Stake mints the rebasing
-        claim token. That is not minting ${detfSymbol}. Claim takes DETF that accrued to a bond.
-        You can claim while the bond is still locked. Claiming is not cashing the bond out.`}
+          ? `New minting and bonds are off on this archived DETF. Existing funded positions can claim available sDETF and unstake it for DETF.`
+          : `Exchange accepted tokens for ${detfSymbol}, or bond to purchase discounted DETF that stays staked while it vests. Claim vested principal and staking rewards as sDETF. Unstake sDETF for an equal amount of DETF.`}
+
       </p>
 
       <div className="mt-4">
@@ -659,7 +667,7 @@ export function DetfActions({
             { id: 'burn', label: 'Burn' },
             { id: 'bond', label: 'Bond' },
             { id: 'stake', label: 'Stake' },
-            { id: 'claim', label: 'Claim rewards' },
+            { id: 'claim', label: 'Claim bond' },
           ]}
           active={tab}
           onChange={(id) => {
@@ -682,13 +690,13 @@ export function DetfActions({
             ) : (
               payTokens.map((t) => (
                 <option key={t.address} value={t.address}>
-                  {isEthPay(t.address) ? 'ETH' : actionTokenOptionLabel(t, vaultShare)}
+                  {isEthPay(t.address) ? 'ETH' : tab === 'bond' && addressesMatch(t.address, reserveLp) ? 'Reserve LP' : actionTokenOptionLabel(t, vaultShare)}
                 </option>
               ))
             )}
           </select>
           <span className="mt-1 block text-xs text-[var(--text-muted,#9aa3b2)]">
-            Pair token, vault token, and the tokens in the vault.
+            Tokens supported by this route.
             {tab === 'burn'
               ? platform.weth
                 ? ' ETH unwraps WETH after the burn.'
@@ -716,24 +724,24 @@ export function DetfActions({
           {burnPreview != null
             ? `${formatUnits(burnPreview, decimals)} ${payEth ? 'ETH' : tokenMeta?.symbol ?? ''}`
             : '—'}
-          . Preview is a quote, not a guarantee the reserve can pay that token out.
+          . The transaction uses a fresh quote with a 1% minimum-output allowance.
         </p>
         {blockedCopy ? <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]">{blockedCopy}</p> : null}
         {reserveLive === false ? (
           <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]">
             This DETF is inert until the first bond.
           </p>
-        ) : burningAllowed === false ? (
+        ) : (
           <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]">
-            Burn is blocked. Policy burn is allowed when the contract price is below the burn line.
+            When primary burning is outside its price threshold, this route swaps DETF through the reserve pool.
           </p>
-        ) : null}
+        )}
         <div className="mt-4 flex flex-wrap gap-2">
           {needApproveDetf ? (
             <Button
               type="button"
               onClick={() => void approveDetf()}
-              disabled={!canBurn || parsedBurn == null}
+              disabled={!canBurn || parsedBurn == null || parsedBurn <= 0n}
               loading={pendingLeg === 'approve'}
               data-testid="detf-burn-approve"
             >
@@ -743,7 +751,7 @@ export function DetfActions({
             <Button
               type="button"
               onClick={() => void burn()}
-              disabled={!canBurn || parsedBurn == null || !spendToken}
+              disabled={!canBurn || parsedBurn == null || parsedBurn <= 0n || !spendToken}
               loading={pendingLeg === 'burn'}
               data-testid="detf-burn"
             >
@@ -765,8 +773,8 @@ export function DetfActions({
           data-testid="detf-mint-amount"
         />
         <p className="mt-2 text-xs text-[var(--text-muted,#9aa3b2)]">
-          Preview: {preview != null ? `${formatUnits(preview, 18)} ${detfSymbol}` : '—'}
-          . Preview is a quote, not a guarantee the reserve can take the token in.
+          Preview: {preview != null ? `${formatUnits(preview, detfDecimals)} ${detfSymbol}` : '—'}
+          . The transaction uses a fresh quote with a 1% minimum-output allowance.
         </p>
         {archived ? (
           <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]" data-testid="detf-mint-archived">
@@ -780,7 +788,7 @@ export function DetfActions({
             <Button
               type="button"
               onClick={() => void approve()}
-              disabled={!canMintOrBond || parsed == null}
+              disabled={!canMintOrBond || parsed == null || parsed <= 0n}
               loading={pendingLeg === 'approve'}
               data-testid="detf-approve"
             >
@@ -790,7 +798,7 @@ export function DetfActions({
             <Button
               type="button"
               onClick={() => void mint()}
-              disabled={!canMintOrBond || parsed == null || !spendToken}
+              disabled={!canMintOrBond || reserveLive !== true || parsed == null || parsed <= 0n || !spendToken}
               loading={pendingLeg === 'mint'}
               data-testid="detf-mint"
             >
@@ -822,9 +830,20 @@ export function DetfActions({
           />
         </label>
         <p className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)]">
-          Minimum {minDays} days. Maximum {maxDays} days. Set by the vault fee oracle. You cannot cash
-          the bond principal until it matures.
+          Minimum {minDays} days. Maximum {maxDays} days. Principal unlocks continuously over the selected period.
+          Staking rewards can be claimed while principal is still vesting.
         </p>
+        {bondPreview ? (
+          <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]" data-testid="detf-bond-preview">
+            Purchase preview: {formatUnits(bondPreview[1], 9)} DETF, staked throughout the vesting period.
+          </p>
+        ) : null}
+        {payingReserveLp ? (
+          <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]">
+            The whole LP position stays in the reserve. Only its non-DETF assets determine your bond purchase;
+            DETF already contained in the LP is excluded from the purchase price.
+          </p>
+        ) : null}
         {archived ? (
           <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]" data-testid="detf-bond-archived">
             Bond is off on this archived DETF.
@@ -837,7 +856,7 @@ export function DetfActions({
             <Button
               type="button"
               onClick={() => void approve()}
-              disabled={!canMintOrBond || parsed == null}
+              disabled={!canMintOrBond || parsed == null || parsed <= 0n}
               loading={pendingLeg === 'approve'}
               data-testid="detf-approve"
             >
@@ -847,7 +866,7 @@ export function DetfActions({
             <Button
               type="button"
               onClick={() => void bond()}
-              disabled={!canMintOrBond || parsed == null || lock == null || !spendToken}
+              disabled={!canMintOrBond || parsed == null || parsed <= 0n || lock == null || !spendToken}
               loading={pendingLeg === 'bond'}
               data-testid="detf-bond"
             >
@@ -863,7 +882,7 @@ export function DetfActions({
             detf={detf}
             detfSymbol={detfSymbol}
             claimToken={claimToken}
-            claimSymbol={claimSymbol || 'claim'}
+            claimSymbol={claimSymbol || 'sDETF'}
             pairTokens={pairTokens}
             vaultShare={vaultShare}
             weth={platform.weth}
@@ -880,7 +899,7 @@ export function DetfActions({
             className={`${inputClass} font-mono`}
             value={tokenId}
             onChange={(e) => setTokenId(e.target.value)}
-            placeholder="1"
+            placeholder="3"
             data-testid="detf-claim-id"
           />
         </label>
@@ -900,7 +919,7 @@ export function DetfActions({
           </p>
         ) : address && tab === 'claim' && ownerScan.isFetched ? (
           <p className="mt-2 text-xs text-[var(--text-muted,#9aa3b2)]" data-testid="detf-claim-owned">
-            No bonds found for this wallet on this DETF.
+            No owned bonds found in this scan. Enter a bond ID or use Portfolio to discover older positions.
           </p>
         ) : null}
         <div className="mt-3 space-y-1.5 text-sm text-[var(--text-primary,#EDEDED)]">
@@ -920,18 +939,22 @@ export function DetfActions({
               <span className="text-xs text-[var(--text-muted,#9aa3b2)]">No bond with that ID.</span>
             )}
           </div>
-          <p className="text-xs text-[var(--text-muted,#9aa3b2)]">
-            Pending:{' '}
-            {pendingRewards != null ? `${formatUnits(pendingRewards, 18)} ${detfSymbol}` : '—'}
-            . The owner can claim even if pending is 0.
-          </p>
-          <p className="text-xs text-[var(--text-muted,#9aa3b2)]">
-            {unlock.locked === true && typeof unlockTime === 'bigint'
-              ? `Locked until ${new Date(Number(unlockTime) * 1000).toLocaleString()}. You can still claim rewards.`
-              : unlock.locked === false && typeof unlockTime === 'bigint'
-                ? `Unlocked ${new Date(Number(unlockTime) * 1000).toLocaleString()}.`
-                : 'Lock time: —'}
-          </p>
+          {parsedId !== undefined && parsedId < 3n ? <p className="text-xs text-[var(--text-muted,#9aa3b2)]">
+            Fee and creator receipts arrive directly as sDETF in the NFT owner’s wallet when rewards are funded.
+          </p> : <>
+            <p className="text-xs text-[var(--text-muted,#9aa3b2)]">
+              Principal available: {claimPreview ? `${formatUnits(claimPreview.principalDue, 9)} sDETF` : '—'}
+            </p>
+            <p className="text-xs text-[var(--text-muted,#9aa3b2)]">
+              Staking rewards available: {pendingRewards != null ? `${formatUnits(pendingRewards, 9)} sDETF` : '—'}
+            </p>
+            <p className="text-xs text-[var(--text-muted,#9aa3b2)]">
+              {unlockTime != null && unlockTime > 0n
+                ? `Vesting ends ${new Date(Number(unlockTime) * 1000).toLocaleString()}. Principal unlocks continuously; rewards can be claimed during vesting.`
+                : 'Vesting details unavailable.'}
+            </p>
+            {claimPreviewRead.isError ? <p className="text-xs text-[var(--text-muted,#9aa3b2)]">Unable to read this funded bond’s claim amounts.</p> : null}
+          </>}
           {ownerAddr && address ? (
             <p className="text-xs text-[var(--text-muted,#9aa3b2)]">
               {ownsBond ? 'This wallet owns this bond.' : 'This wallet does not own that bond.'}
@@ -939,6 +962,15 @@ export function DetfActions({
           ) : null}
         </div>
         {blockedCopy ? <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]">{blockedCopy}</p> : null}
+        <label className="mt-3 block text-sm text-[var(--text-primary,#EDEDED)]">
+          Claim
+          <select className={inputClass} value={claimKind}
+            onChange={(event) => setClaimKind(event.target.value as typeof claimKind)}>
+            <option value="claimBond">Available principal and rewards</option>
+            <option value="claimPrincipal">Vested principal only</option>
+            <option value="claimRewards">Staking rewards only</option>
+          </select>
+        </label>
         <Button
           type="button"
           className="mt-4"
@@ -948,7 +980,7 @@ export function DetfActions({
           title={claimBlocked ?? undefined}
           data-testid="detf-claim"
         >
-          Claim rewards
+          Claim sDETF
         </Button>
       </TabPanel>
 

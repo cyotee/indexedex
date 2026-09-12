@@ -252,7 +252,7 @@ abstract contract MixedLegWeightedBufferPoolHookTarget is MixedLegWeightedBuffer
         (IMixedLegWeightedBufferPool.TokenKind kindIn, uint256 legIn) =
             Repo._resolveToken(address(params.tokenIn));
         if (kindIn == IMixedLegWeightedBufferPool.TokenKind.Buffer) {
-            _reconcileBufferIn(params.amountInScaled18, legIn, params.router);
+            _reconcileBufferIn(_bufferToRaw(params.amountInScaled18, legIn), legIn, params.router);
         }
         // Unpaired and share legs: physical balances only (no SE I/O).
         return (true, params.amountCalculatedRaw);
@@ -494,8 +494,8 @@ abstract contract MixedLegWeightedBufferPoolHookTarget is MixedLegWeightedBuffer
             vault.removeLiquidity(_buildRemoveLiquidityParams(address(this), 0, remAmts, RemoveLiquidityKind.CUSTOM));
         }
 
-        // amountInScaled18 for STANDARD buffer ≈ raw for 18-decimal tokens (test tokens are 18).
-        Repo._setVirtualBuffer(pairIn, Repo._virtualBuffer(pairIn) + xRaw);
+        // Virtual buffers use the same scaled18 units as initialization and swap math.
+        Repo._setVirtualBuffer(pairIn, Repo._virtualBuffer(pairIn) + _liftToScaled18Rated(xRaw, bufferIdx));
         Repo._setHookShareDelta(pairIn, Repo._hookShareDelta(pairIn) + int256(donationRaw));
     }
 

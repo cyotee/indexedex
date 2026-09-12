@@ -1,0 +1,25 @@
+{
+  "status": "APPLIED_FIVE_REGRESSIONS_PASS",
+  "source_review": "Seven actual own-LP deposit/withdrawal branches need current ownership checkpoints. Passthrough swaps do not reset yield checkpoints. Existing zero-token sorting is already correct and stays unchanged.",
+  "required_prior_validation": "Run the four prepared actual-proxy regressions against current source first; do not mark this correction validated from source inspection alone.",
+  "fee_formula": "Keep the existing usage-fee calculation; correct the book state supplied to later fee calculation.",
+  "files": [
+    {
+      "path": "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeCommon.sol",
+      "before_sha256": "fee0267ca0bcff0f973ec2789759833a2cc26007e22d62c711342983dab46009",
+      "after_sha256": "c1a4c8c475470f37715c74970e6f4a338ed4fd7ff13057cdb9e5c78b67b74ea8"
+    },
+    {
+      "path": "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeInTarget.sol",
+      "before_sha256": "976616c2392d70e69e4ce4740c3bd75e86b4c519f6200af85b56ab7482edc33d",
+      "after_sha256": "d311d738fb16b56cd980c63e956e662a7fcdc865e8f5ee90fe4dd1fdd32118da"
+    },
+    {
+      "path": "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeOutTarget.sol",
+      "before_sha256": "5f01226757e19f1a65ace341f12f2aa535064d5bb50a748cdf7cf04a9ed11a49",
+      "after_sha256": "651ee9143c5d33b3202d92a73e0d10263f6a3620eeb8e528d124258dc19628ac"
+    }
+  ],
+  "before_evidence": "camelot-checkpoint-before-run.json",
+  "after_evidence": "camelot-checkpoint-after-run.json"
+}

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 import {Vm} from "forge-std/Vm.sol";
 import {VM_ADDRESS} from "@crane/contracts/constants/FoundryConstants.sol";
@@ -8,20 +9,8 @@ import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
-import {
-    LidoWstETHStandardExchangeInFacet
-} from "contracts/protocols/staking/lido/LidoWstETHStandardExchangeInFacet.sol";
-import {
-    LidoWstETHStandardExchangeOutFacet
-} from "contracts/protocols/staking/lido/LidoWstETHStandardExchangeOutFacet.sol";
-import {LidoWstETHMarkerFacet} from "contracts/protocols/staking/lido/LidoWstETHMarkerFacet.sol";
-import {LidoWstETHRebalanceFacet} from "contracts/protocols/staking/lido/LidoWstETHRebalanceFacet.sol";
-import {
-    ILidoWstETHStandardExchangeDFPkg
-} from "contracts/protocols/staking/lido/interfaces/ILidoWstETHStandardExchangeDFPkg.sol";
-import {
-    LidoWstETHStandardExchangeDFPkg
-} from "contracts/protocols/staking/lido/LidoWstETHStandardExchangeDFPkg.sol";
+
+import {ILidoWstETHStandardExchangeDFPkg} from "contracts/protocols/staking/lido/interfaces/ILidoWstETHStandardExchangeDFPkg.sol";
 
 library LidoWstETH_Component_FactoryService {
     using BetterEfficientHashLib for bytes;
@@ -32,51 +21,41 @@ library LidoWstETH_Component_FactoryService {
         internal
         returns (IFacet instance)
     {
-        instance = create3Factory.deployFacet(
-            type(LidoWstETHStandardExchangeInFacet).creationCode,
-            abi.encode(type(LidoWstETHStandardExchangeInFacet).name)._hash()
-        );
-        vm.label(address(instance), type(LidoWstETHStandardExchangeInFacet).name);
+        bytes memory code = ArtifactCreationCode.creationCode("LidoWstETHStandardExchangeInFacet.sol:LidoWstETHStandardExchangeInFacet");
+        instance = create3Factory.deployFacet(code, ArtifactCreationCode.releaseSalt(abi.encode("LidoWstETHStandardExchangeInFacet")._hash(), code, ""));
+        vm.label(address(instance), "LidoWstETHStandardExchangeInFacet");
     }
 
     function deployLidoWstETHStandardExchangeOutFacet(ICreate3FactoryProxy create3Factory)
         internal
         returns (IFacet instance)
     {
-        instance = create3Factory.deployFacet(
-            type(LidoWstETHStandardExchangeOutFacet).creationCode,
-            abi.encode(type(LidoWstETHStandardExchangeOutFacet).name)._hash()
-        );
-        vm.label(address(instance), type(LidoWstETHStandardExchangeOutFacet).name);
+        bytes memory code = ArtifactCreationCode.creationCode("LidoWstETHStandardExchangeOutFacet.sol:LidoWstETHStandardExchangeOutFacet");
+        instance = create3Factory.deployFacet(code, ArtifactCreationCode.releaseSalt(abi.encode("LidoWstETHStandardExchangeOutFacet")._hash(), code, ""));
+        vm.label(address(instance), "LidoWstETHStandardExchangeOutFacet");
     }
 
     function deployLidoWstETHMarkerFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
-        instance = create3Factory.deployFacet(
-            type(LidoWstETHMarkerFacet).creationCode, abi.encode(type(LidoWstETHMarkerFacet).name)._hash()
-        );
-        vm.label(address(instance), type(LidoWstETHMarkerFacet).name);
+        bytes memory code = ArtifactCreationCode.creationCode("LidoWstETHMarkerFacet.sol:LidoWstETHMarkerFacet");
+        instance = create3Factory.deployFacet(code, ArtifactCreationCode.releaseSalt(abi.encode("LidoWstETHMarkerFacet")._hash(), code, ""));
+        vm.label(address(instance), "LidoWstETHMarkerFacet");
     }
 
     function deployLidoWstETHRebalanceFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
-        instance = create3Factory.deployFacet(
-            type(LidoWstETHRebalanceFacet).creationCode, abi.encode(type(LidoWstETHRebalanceFacet).name)._hash()
-        );
-        vm.label(address(instance), type(LidoWstETHRebalanceFacet).name);
+        bytes memory code = ArtifactCreationCode.creationCode("LidoWstETHRebalanceFacet.sol:LidoWstETHRebalanceFacet");
+        instance = create3Factory.deployFacet(code, ArtifactCreationCode.releaseSalt(abi.encode("LidoWstETHRebalanceFacet")._hash(), code, ""));
+        vm.label(address(instance), "LidoWstETHRebalanceFacet");
     }
 
     function deployLidoWstETHStandardExchangeDFPkg(
         IIndexedexManagerProxy indexedexManager,
         ILidoWstETHStandardExchangeDFPkg.PkgInit memory pkgInit
     ) internal returns (ILidoWstETHStandardExchangeDFPkg instance) {
-        instance = ILidoWstETHStandardExchangeDFPkg(
-            address(
-                IVaultRegistryDeployment(address(indexedexManager)).deployPkg(
-                    type(LidoWstETHStandardExchangeDFPkg).creationCode,
-                    abi.encode(pkgInit),
-                    abi.encode(type(LidoWstETHStandardExchangeDFPkg).name)._hash()
-                )
-            )
-        );
-        vm.label(address(instance), type(LidoWstETHStandardExchangeDFPkg).name);
+        bytes memory code = ArtifactCreationCode.creationCode("LidoWstETHStandardExchangeDFPkg.sol:LidoWstETHStandardExchangeDFPkg");
+        bytes memory args = abi.encode(pkgInit);
+        instance = ILidoWstETHStandardExchangeDFPkg(IVaultRegistryDeployment(address(indexedexManager)).deployPkg(
+            code, args, ArtifactCreationCode.releaseSalt(abi.encode("LidoWstETHStandardExchangeDFPkg")._hash(), code, args)
+        ));
+        vm.label(address(instance), "LidoWstETHStandardExchangeDFPkg");
     }
 }

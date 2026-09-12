@@ -1,0 +1,133 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+
+
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
+import {TestBase_UniswapV4Detf_Cp_Univ4Se} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ4Se.sol";
+
+/// @notice H-CP-GV4 money paths: firstBond / mint / burn / close against Uni V4 SE.
+contract UniswapV4Detf_Cp_Univ4Se is TestBase_UniswapV4Detf_Cp_Univ4Se {
+    function _seedBothSeAssets() private {
+        uint256 amount = 10_000 ether;
+        pairToken.mint(address(this), amount);
+        seOther.mint(address(this), amount);
+        pairToken.approve(se, amount);
+        seOther.approve(se, amount);
+        address[] memory tokens = new address[](2);
+        tokens[0] = address(pairToken) < address(seOther) ? address(pairToken) : address(seOther);
+        tokens[1] = address(pairToken) < address(seOther) ? address(seOther) : address(pairToken);
+        uint256[] memory amounts = new uint256[](2);
+        amounts[0] = amount;
+        amounts[1] = amount;
+        uint256 minted = IStandardExchangeInMulti(se).exchangeInManyToOne(
+            tokens, amounts, IERC20(se), 1, address(this), false, block.timestamp + 1 hours
+        );
+        assertGt(minted, 0);
+    }
+
+    function test_fundedSe_mint() public {
+        _seedBothSeAssets();
+        test_H_CP_GV4_mint();
+    }
+
+    function test_fundedSe_burn() public {
+        _seedBothSeAssets();
+        test_H_CP_GV4_burn();
+    }
+
+    function test_fundedSe_close() public {
+        _seedBothSeAssets();
+        test_H_CP_GV4_close();
+    }
+
+    function test_fundedSe_claimPurchaseMatchesBalanceQuote() public {
+        _seedBothSeAssets();
+        _firstBond(100 ether);
+        IERC20 claim = IERC20(detfInfo.rebasingClaimToken());
+        for (uint256 i; i < 2; ++i) {
+            uint256 amount = IERC20(detf).balanceOf(detfUser) / 10;
+            uint256 quoted = detfExchangeIn.previewExchangeIn(IERC20(detf), amount, claim);
+            assertGt(quoted, 0);
+            vm.startPrank(detfUser);
+            IERC20(detf).approve(detf, amount);
+            uint256 minted = detfExchangeIn.exchangeIn(
+                IERC20(detf), amount, claim, quoted, detfUser, false, block.timestamp + 1 hours
+            );
+            vm.stopPrank();
+            assertEq(minted, quoted, "funded SE claim preview matches rebasing balance");
+        }
+    }
+
+    function test_H_CP_GV4_firstBond() public {
+        (uint256 tokenId, uint256 shares) = _firstBond(100 ether);
+        assertGt(tokenId, 0, "tokenId");
+        assertGt(shares, 0, "shares");
+        assertTrue(detfInfo.isReserveLive(), "live");
+        _assertR19();
+    }
+
+    function test_H_CP_GV4_mint() public {
+        _firstBond(100 ether);
+        uint256 mintIn = 10 ether;
+        uint256 userPred = IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(mintToken), mintIn, IERC20(address(detfInfo)));
+        vm.startPrank(detfUser);
+        uint256 out = IStandardExchangeIn(address(detfInfo)).exchangeIn{gas: 30_000_000}(IERC20(mintToken), mintIn, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
+        vm.stopPrank();
+        assertGt(out, 0, "out");
+        assertEq(out, userPred, "previewMint==exec");
+        _assertR19();
+        _assertSeAllowancesZero();
+    }
+
+    function test_H_CP_GV4_burn() public {
+        _firstBond(100 ether);
+        vm.startPrank(detfUser);
+        uint256 minted = IStandardExchangeIn(address(detfInfo)).exchangeIn{gas: 30_000_000}(IERC20(mintToken), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
+        vm.stopPrank();
+        assertGt(minted, 0, "minted");
+
+        uint256 burnIn = minted / 2;
+        _assertR19();
+        _assertSeAllowancesZero();
+        uint256 preview = IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(address(detfInfo)), burnIn, IERC20(mintToken));
+        uint256 pairBefore = IERC20(mintToken).balanceOf(detfUser);
+        uint256 supplyBefore = IERC20(detf).totalSupply();
+        bool primaryBurn = detfInfo.isBurningAllowed(IERC20(mintToken));
+
+        vm.startPrank(detfUser);
+        IERC20(detf).approve(detf, burnIn);
+        uint256 amountOut = IStandardExchangeIn(address(detfInfo)).exchangeIn{gas: 30_000_000}(IERC20(address(detfInfo)), burnIn, IERC20(mintToken), 0, detfUser, false, block.timestamp + 1 hours);
+        vm.stopPrank();
+
+        assertEq(amountOut, preview, "previewBurn==exec");
+        uint256 pairAfter = IERC20(mintToken).balanceOf(detfUser);
+        assertGe(pairAfter, pairBefore, "user mintToken increased");
+        assertEq(pairAfter - pairBefore, amountOut, "user mintToken delta");
+        assertEq(IERC20(detf).totalSupply(), supplyBefore - (primaryBurn ? burnIn : 0), "primary burn or supply-neutral reserve swap");
+        assertEq(IERC20(reserveHook).balanceOf(detf), 0, "leftover LP not on diamond");
+        assertGt(IERC20(reserveHook).balanceOf(detfInfo.bondNftVault()), 0, "LP on Bond NFT");
+        _assertR19();
+    }
+
+    function test_H_CP_GV4_close() public {
+        (uint256 tokenId,) = _firstBond(100 ether);
+        vm.startPrank(detfUser);
+        IStandardExchangeIn(address(detfInfo)).exchangeIn{gas: 30_000_000}(IERC20(mintToken), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
+        vm.stopPrank();
+        _assertSeAllowancesZero();
+        _assertFundedMatureClaim(detf, tokenId, detfUser);
+        _assertR19();
+        _assertSeAllowancesZero();
+        address[] memory toks = IUniswapV4SeBufferHook(reserveHook).tokens();
+        for (uint256 i; i < toks.length; ++i) {
+            if (toks[i] != detf) {
+                assertLe(IERC20(toks[i]).balanceOf(reserveHook), 10, "hook pair <=10 wei");
+            }
+        }
+    }
+}

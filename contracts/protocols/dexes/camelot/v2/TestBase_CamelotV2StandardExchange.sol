@@ -37,6 +37,7 @@ contract TestBase_CamelotV2StandardExchange is TestBase_Permit2, TestBase_Camelo
 
     IFacet camelotV2StandardExchangeInFacet;
     IFacet camelotV2StandardExchangeOutFacet;
+    IFacet camelotV2StandardExchangeQueryFacet;
     ICamelotV2StandardExchangeDFPkg camelotV2StandardExchangeDFPkg;
 
     function setUp() public virtual override(TestBase_Permit2, TestBase_CamelotV2, TestBase_VaultComponents) {
@@ -45,6 +46,7 @@ contract TestBase_CamelotV2StandardExchange is TestBase_Permit2, TestBase_Camelo
         TestBase_VaultComponents.setUp();
         camelotV2StandardExchangeInFacet = create3Factory.deployCamelotV2StandardExchangeInFacet();
         camelotV2StandardExchangeOutFacet = create3Factory.deployCamelotV2StandardExchangeOutFacet();
+        camelotV2StandardExchangeQueryFacet = create3Factory.deployCamelotV2StandardExchangeQueryFacet();
         vm.prank(owner);
         camelotV2StandardExchangeDFPkg = indexedexManager.deployCamelotV2StandardExchangeDFPkg(_buildCamelotV2PkgInit());
     }
@@ -61,6 +63,7 @@ contract TestBase_CamelotV2StandardExchange is TestBase_Permit2, TestBase_Camelo
             multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
             camelotV2StandardExchangeInFacet: camelotV2StandardExchangeInFacet,
             camelotV2StandardExchangeOutFacet: camelotV2StandardExchangeOutFacet,
+            camelotV2StandardExchangeQueryFacet: camelotV2StandardExchangeQueryFacet,
             vaultFeeOracleQuery: indexedexManager,
             vaultRegistryDeployment: indexedexManager,
             permit2: permit2,

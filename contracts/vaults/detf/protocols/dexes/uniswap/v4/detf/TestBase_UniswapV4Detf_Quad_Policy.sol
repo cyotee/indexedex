@@ -20,6 +20,7 @@ import {TestBase_UniswapV4Detf} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
 import {TestBase_UniswapV4Detf_Quad} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad.sol";
+import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 import {TestBase_UniswapV4Detf_Policy} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol";
 
@@ -87,35 +88,11 @@ abstract contract TestBase_UniswapV4Detf_Quad_Policy is
     }
 
     function _pushSyntheticUp(address d) internal virtual override {
-        _donatePairAmt(d, IERC20(address(pair0)), 80 ether);
-        if (IUniswapV4Detf(d).isMintingAllowed()) return;
-        _donatePairAmt(d, IERC20(address(pair1)), 80 ether);
-        if (IUniswapV4Detf(d).isMintingAllowed()) return;
-        _donatePairAmt(d, IERC20(address(pair2)), 80 ether);
-        if (IUniswapV4Detf(d).isMintingAllowed()) return;
-        _ownerSwap(d, d, address(pair0), 40 ether);
-        _ownerSwap(d, d, address(pair1), 40 ether);
-        _ownerSwap(d, d, address(pair2), 40 ether);
+        _policyBuyFromReserve(d);
     }
 
     function _skewSyntheticDown(address d) internal virtual override {
-        if (IUniswapV4Detf(d).isMintingAllowed()) {
-            try this.mintExternal(d, 30 ether) {} catch {}
-        }
-        uint256 bal_ = IERC20(d).balanceOf(detfUser);
-        if (bal_ > 1 ether) {
-            uint256 amt_ = bal_ / 4;
-            if (amt_ == 0) amt_ = bal_;
-            vm.prank(detfUser);
-            IERC20(d).transfer(d, amt_);
-            _ownerSwap(d, d, address(pair0), amt_ / 3);
-            _ownerSwap(d, d, address(pair1), amt_ / 3);
-            _ownerSwap(d, d, address(pair2), amt_ - (amt_ / 3) * 2);
-            return;
-        }
-        _ownerSwap(d, d, address(pair0), 80 ether);
-        _ownerSwap(d, d, address(pair1), 80 ether);
-        _ownerSwap(d, d, address(pair2), 80 ether);
+        _skewSyntheticDownAmt(d, 80e9);
     }
 
     function _donatePairAmt(address d, IERC20 tok, uint256 amount) internal {
@@ -149,7 +126,6 @@ abstract contract TestBase_UniswapV4Detf_Quad_Policy is
     /// @dev Bind a Quad hook at the predicted DETF, then `deployVault` must revert InvalidCreationRate.
     function _expectInvalidCreationRate(IUniswapV4Detf.PkgArgs memory args) internal virtual override {
         address predicted_ = _predictDetf(args);
-        vm.etch(predicted_, address(pair0).code);
         address[4] memory toks;
         toks[0] = predicted_;
         toks[1] = address(pair0);
@@ -171,8 +147,10 @@ abstract contract TestBase_UniswapV4Detf_Quad_Policy is
                 tokens: toks,
                 standardExchanges: ses,
                 rateProviders: rps,
+                tokenDecimals: HookPkgArgsDecimalsLib.tokenDecimals4(toks, predicted_),
+                seDecimals: HookPkgArgsDecimalsLib.seDecimals4(ses),
                 baseAmp: QUAD_BASE_AMP,
-                ownerOnlyLiquidity: true,
+                ownerOnlyLiquidity: args.ownerOnlyLiquidity,
                 owner: predicted_
             });
         uint256 mineNonce = QuadFactory.findMineNonce(hookFactory, quadHookPkg, hArgs);
@@ -185,7 +163,6 @@ abstract contract TestBase_UniswapV4Detf_Quad_Policy is
         init.deployPair(toks[1], toks[3]);
         init.deployPair(toks[2], toks[3]);
         require(init.finalizeInitialization(), "finalize");
-        vm.etch(predicted_, "");
         args.hook = hook_;
         vm.startPrank(owner);
         vm.expectRevert(IUniswapV4DetfDFPkg.InvalidCreationRate.selector);

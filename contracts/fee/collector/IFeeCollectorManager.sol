@@ -13,6 +13,12 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
  * @author cyotee doge <not_cyotee@proton.me>
  */
 interface IFeeCollectorManager {
+    /// @notice Redeem LP held by this collector for its proportional underlying assets.
+    /// @dev Restricted hooks authorize the current feeTo collector dynamically.
+    function redeemReserveLiquidity(
+        IERC20 reserveLp, uint256 amount, uint256[] calldata amountsMin, address recipient, uint256 deadline
+    ) external returns (uint256[] memory amounts);
+
     // tag::syncReserve(address)[]
     /**
      * @notice Syncs the reserve of a token held by the Fee Collector.

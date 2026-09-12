@@ -1,0 +1,6 @@
+{
+  "status": "assertion corrected; validation pending",
+  "evidence": "v4-fee-bond-return-unit-failure-run.json",
+  "finding": "Retained bond() second return is actual LP output. Purchased DETF principal is read from the funded NFT position, which must match previewBond principal. No contract economics or ABI changes are needed.",
+  "prior_results": "Five funded close/security tests and eight immediate/no-duplicate/role-rejection cases passed. Sixteen floor cases stopped before allocation checks on the incorrect LP-to-DETF assertion."
+}

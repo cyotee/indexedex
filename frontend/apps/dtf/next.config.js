@@ -2,16 +2,11 @@
 const nextConfig = {
   transpilePackages: ['@indexedex/protocol'],
   webpack: (config) => {
-    config.resolve = config.resolve || {}
+    // Wallet connectors need the SDK's browser entry during SSR as well.
+    // Its Node entry imports CDP server payments and optional x402 peers.
     config.resolve.alias = {
-      ...(config.resolve.alias || {}),
-      '@base-org/account': false,
-      '@coinbase/wallet-sdk': false,
-      '@gemini-wallet/core': false,
-      '@metamask/sdk': false,
-      '@safe-global/safe-apps-provider': false,
-      '@safe-global/safe-apps-sdk': false,
-      '@walletconnect/ethereum-provider': false,
+      ...config.resolve.alias,
+      '@base-org/account$': require.resolve('@base-org/account/browser'),
     }
     return config
   },

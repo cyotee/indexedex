@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 
 import {DeploymentBase} from "./DeploymentBase.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
@@ -139,6 +140,7 @@ contract Script_04_DeployDEXPackages is DeploymentBase {
                 multiAssetStandardVaultFacet,
                 create3Factory.deployUniswapV2StandardExchangeInFacet(),
                 create3Factory.deployUniswapV2StandardExchangeOutFacet(),
+                create3Factory.deployUniswapV2StandardExchangeQueryFacet(),
                 indexedexManager,
                 indexedexManager,
                 permit2,
@@ -194,6 +196,7 @@ contract Script_04_DeployDEXPackages is DeploymentBase {
         init.multiAssetStandardVaultFacet = multiAssetStandardVaultFacet;
         init.camelotV2StandardExchangeInFacet = create3Factory.deployCamelotV2StandardExchangeInFacet();
         init.camelotV2StandardExchangeOutFacet = create3Factory.deployCamelotV2StandardExchangeOutFacet();
+        init.camelotV2StandardExchangeQueryFacet = create3Factory.deployCamelotV2StandardExchangeQueryFacet();
         init.vaultFeeOracleQuery = indexedexManager;
         init.vaultRegistryDeployment = indexedexManager;
         init.permit2 = permit2;

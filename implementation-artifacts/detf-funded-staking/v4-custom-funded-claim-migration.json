@@ -1,0 +1,31 @@
+{
+  "status": "applied; validation pending",
+  "coverage": "Custom configuration remains pending A30; funded mature claims and actual reserve custody replace obsolete basket exits. Quad E6 compares actual clean funded payouts with unrelated actual pair inventory. Duplicate Pons CROPS disabled-route cases consolidated into DN18, retaining claims, unstake, burn and inbound rejection.",
+  "files": [
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_IoTables.t.sol",
+      "before_sha256": "28f1fe07dfd420b47ba02718ad81317bae1c2038c49fa0c309f7bb7d00625da4",
+      "after_sha256": "7a8944b88045433826f838328656ad293871758a671329e4cc0f90ec2864054f"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_IoTables_Decimals.sol",
+      "before_sha256": "614d93f5d00ebda0cb1af3a5dc665b42d22b013d916b4e82bb65587a29b853ac",
+      "after_sha256": "353c6a5685d79d1f53e3d2ce8be5c092b8608b6475500ef2481156c4ae8a533d"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad.t.sol",
+      "before_sha256": "0419ff82d232e4d37a607889afc004a692cc62a12e91cc59c1fc3425b30454c8",
+      "after_sha256": "cc825d3c91a11a2b3b1ccca693041eef40901f91e567b0e62b2b1cb44b1648db"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+      "before_sha256": "7236c3f0aabf05b5b13a18670a5d888c3a32b8dc738ec95b774c5e1d3dc3a741",
+      "after_sha256": "090a73d7ac2f65b5ffd6f22cc15d488fd1ec0a84319b5020ca742a107690bf46"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+      "before_sha256": "68a4c243a3e0760d5232e7a08ecd710f66cde782d94e32dac7b675981cd0a952",
+      "after_sha256": "434c3d5b66ab694db4825b3a74788ff54c2727dadd69de8d891bc8eede5126a0"
+    }
+  ]
+}

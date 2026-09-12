@@ -1,0 +1,18 @@
+{
+  "status": "applied; validation pending",
+  "problem": "Crane CREATE3 returns existing code at an occupied namespace without comparing implementation or constructor. Fixed namespaces would reuse old Fee Collector and SE rate-provider components on the existing core.",
+  "resolution": "Use the existing ArtifactCreationCode.releaseSalt convention for the changed collector manager, both SE rate facets, and their packages; instance identity rules and existing deployments remain unchanged.",
+  "scope": "Fee Collector and unrelated SE rate providers used by V4; no Balancer-hosted DETF functional change and no Slipstream edit.",
+  "files": [
+    {
+      "path": "contracts/fee/collector/FeeCollectorFactoryService.sol",
+      "before_sha256": "71d31f2e6f139e5cca03c4a9e629590d298467e951d821724f040bcd38eb0a32",
+      "after_sha256": "984bc1bcbf0f939881eac9ab61f341289e02bbc9e9cffa84be9892c7e07441fe"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProvider_FactoryService.sol",
+      "before_sha256": "8be010b0cc4ff55b2dd9c60c89d4e99f250c74d5ed8e5c87140b1bf6b5d8545a",
+      "after_sha256": "5e46ce827eb658d8e622186ceccfb98972f31676c50b18f6b6539f723e25b9bf"
+    }
+  ]
+}

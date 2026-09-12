@@ -1,0 +1,8 @@
+{
+  "status": "applied; validation pending",
+  "path": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+  "reason": "Compare received-capital bond execution with preview after a real custom protocol-share wrap that charges the configured SE usage fee.",
+  "consolidation": "The mint-fallback, donation and bond regressions share one actual protocol-share funding helper; no mocked accounting or new fixture.",
+  "before_sha256": "e751128234fed434b634fd2adec8e90b5b56790a64803d4f88526aaf203d855f",
+  "after_sha256": "7549d46fbc379e5ee2916a8484694c3a68ef00c38e153891665223f3475f8a3c"
+}

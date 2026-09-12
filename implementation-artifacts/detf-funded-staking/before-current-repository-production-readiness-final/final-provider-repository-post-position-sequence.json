@@ -1,0 +1,97 @@
+{
+  "status": "STOPPED_REQUIRED_FAILURE_REVIEW",
+  "provenance": {
+    "recorded_at_utc": "2026-09-09T01:27:40.813808+00:00",
+    "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+    "source_and_config_sha256": "96d7a3ff1d5d6d8f41f1ff0c7a8dd09419e8243b669dd27700325822edf63dde",
+    "source_and_config_files": 4818,
+    "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+    "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+    "crane_tracked_contract_and_config_diff_sha256": "284fd75764cb255d1e527eef38fd51e65fca73e8ebb11b7465965e8dfeb2122c",
+    "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+    "machine": "macOS-26.6.2-x86_64-i386-64bit",
+    "architecture": "x86_64",
+    "logical_cpus": 16,
+    "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+  },
+  "steps": [
+    {
+      "name": "rocket-v3",
+      "command": [
+        "python3",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/run-etherfi-live-projection-fork.py",
+        "--provider",
+        "rocket",
+        "--label",
+        "post-position"
+      ],
+      "exit_code": 0,
+      "seconds": 196.586,
+      "sources_unchanged": true
+    },
+    {
+      "name": "rocket-v4",
+      "command": [
+        "python3",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/run-etherfi-live-projection-fork.py",
+        "--provider",
+        "rocket",
+        "--rocket-block",
+        "25934585",
+        "--label",
+        "post-position"
+      ],
+      "exit_code": 0,
+      "seconds": 78.021,
+      "sources_unchanged": true
+    },
+    {
+      "name": "sfrxeth",
+      "command": [
+        "python3",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/run-etherfi-live-projection-fork.py",
+        "--provider",
+        "sfrxeth",
+        "--label",
+        "post-position"
+      ],
+      "exit_code": 0,
+      "seconds": 256.029,
+      "sources_unchanged": true
+    },
+    {
+      "name": "full-build",
+      "command": [
+        "python3",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/run-full-build.py",
+        "--include-scripts"
+      ],
+      "exit_code": 0,
+      "seconds": 20065.546,
+      "sources_unchanged": true
+    },
+    {
+      "name": "full-hermetic",
+      "command": [
+        "python3",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/run-current-hermetic.py"
+      ],
+      "exit_code": 1,
+      "seconds": 4846.421,
+      "sources_unchanged": true
+    },
+    {
+      "name": "baseline-attribution",
+      "command": [
+        "python3",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/compare-current-hermetic.py"
+      ],
+      "exit_code": 0,
+      "seconds": 2.087,
+      "sources_unchanged": true
+    }
+  ],
+  "started_at_utc": "2026-09-09T01:27:40.972414+00:00",
+  "scope": "Pinned actual Rocket v3/v4 and sfrxETH; complete default build with maintained scripts; unfiltered hermetic suite; exact baseline attribution. One Forge at a time, no cache clearing or test settings changes.",
+  "finished_at_utc": "2026-09-09T08:31:46.203601+00:00"
+}

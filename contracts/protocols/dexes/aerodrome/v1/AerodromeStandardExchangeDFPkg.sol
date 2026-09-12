@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                    Crane                                   */
@@ -417,7 +419,7 @@ contract AerodromeStandardExchangeDFPkg is IAerodromeStandardExchangeDFPkg {
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](11);
+        interfaces = new bytes4[](14);
 
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
@@ -430,6 +432,9 @@ contract AerodromeStandardExchangeDFPkg is IAerodromeStandardExchangeDFPkg {
         interfaces[8] = type(IStandardExchangeIn).interfaceId;
         interfaces[9] = type(IStandardExchangeOut).interfaceId;
         interfaces[10] = type(IVaultFeeOracleQueryAware).interfaceId;
+        interfaces[11] = type(IStandardizedYield).interfaceId;
+        interfaces[12] = type(IStandardExchangeTransitionQuote).interfaceId;
+        interfaces[13] = type(IStandardExchangeExternalQuote).interfaceId;
         return interfaces;
     }
 

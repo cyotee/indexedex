@@ -1,0 +1,20 @@
+--- contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfRepo.sol
++++ contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfRepo.sol
+@@ -52,7 +52,6 @@
+         uint256 mintThreshold;
+         uint256 burnThreshold;
+         uint256 expansionClosureRatePerYearWad;
+-        uint256 epochAnchor;
+         uint256 lastExpansionTimestamp;
+         address bondNftVaultPkg;
+         address rebasingClaimTokenPkg;
+--- contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol
++++ contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol
+@@ -612,7 +612,6 @@
+         if (first_ && shares == 0) revert Repo.FirstBondBelowMinimumLiquidity();
+         if (first_) {
+             Repo._setReserveLive();
+-            s.epochAnchor = block.timestamp;
+             s.lastExpansionTimestamp = block.timestamp;
+         }
+         tokenId = _openBondNft(split_.userDetf, duration_, recipient);

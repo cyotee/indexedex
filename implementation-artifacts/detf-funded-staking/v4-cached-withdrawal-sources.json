@@ -1,0 +1,57 @@
+{
+  "checkpoint": {
+    "archive": "v4-cached-withdrawal-and-collector-340-green-*",
+    "build_seconds": 37.678,
+    "test_seconds": 79.889,
+    "passed": 340,
+    "failed": 0,
+    "suites": 44,
+    "coverage": "Four V4 reserves/two liquidity policies, actual LP ownership/payment, funded swap fallback, Fee Collector rotation/internal SY, real V4 position-backed Orbital routes, V3/V4 full-range/transition checks, native buffer SY, packaging and moved SY selectors"
+  },
+  "files": [
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeCommon.sol",
+      "sha256": "01475cffe74f7aeaffbf4dc0e7507acb8a8475393825af13303b40239c88dfbe"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryTarget.sol",
+      "sha256": "4ddb839bdbbe7e1e114bdf08e629aa0139e093bd707f8b7a7ad17c663b4226b6"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutBase.sol",
+      "sha256": "e871c9dc8954544c80b5c90d457775de8b380d506978c3897e48ee816aabcf9c"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutExecutionDelegate.sol",
+      "sha256": "b84f6064bfa5a3926716eccd0904d1d0e6ce339470ddcde56d493f54679d2a3d"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutQueryTarget.sol",
+      "sha256": "f21728cae9fa2038c6cfe89649a1a49de502f3e5964e8323275ee804f1a75720"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutQueryFacet.sol",
+      "sha256": "fe47114a048590edee0e2ed78063bd20a525e9e125a5c691484fba39f4be182e"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiQueryTarget.sol",
+      "sha256": "df2cfa9942aa4982895df00557de6ac76d8bc8a5199376d7c50b02335638c4c9"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiQueryFacet.sol",
+      "sha256": "138f6165c6d4e286b1098ede53e5ffb4066fde0fc76ae5ac421cfa7894a97efb"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_FullRangeBook.t.sol",
+      "sha256": "48bc20df7e9f43a5b291a0bcfbf1d493756e2102b0077b8a242467abd354f107"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiQueryFacet_IFacet_Test.t.sol",
+      "sha256": "29b5fc121f42cbc36081d93978923ac058d0c4a214818f2b208ca389b6492d2a"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/common/DETFFundedStakingSuite.t.sol",
+      "sha256": "4388c5e816f6fb32e7a3e1c7d06401e2346971d38f5b9264af59a7ce0cd6dfac"
+    }
+  ]
+}

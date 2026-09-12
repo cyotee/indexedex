@@ -39,7 +39,7 @@ contract UniswapV3StandardExchangeDFPkg_Deploy_Test is TestBase_UniswapV3Standar
             UniswapV3StandardExchangeDFPkg(address(uniswapV3StandardExchangeDFPkg)).packageMetadata();
 
         assertEq(name_, type(UniswapV3StandardExchangeDFPkg).name, "package name");
-        assertEq(interfaces.length, 12, "interface count");
+        assertEq(interfaces.length, 15, "interface count");
         assertEq(facets.length, 15, "facet count");
         assertEq(facets[0], address(erc20Facet), "erc20");
         assertEq(facets[5], address(uniswapV3StandardExchangeInFacet), "in");

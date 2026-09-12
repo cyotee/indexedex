@@ -1,0 +1,23 @@
+{
+  "status": "PREPARED_NOT_APPLIED",
+  "reason": "Existing standard LP payment and redemption routes must remain usable as composed accounting assets.",
+  "changes": [
+    {
+      "path": "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeQuoteTarget.sol",
+      "before_sha256": "51b9c86e807451d6ebca53a324991507fea67f740cd297fd4fca22792c253dda",
+      "after_sha256": "ce798d9fe12ecdac633c262363466e583fce9e50ecd342be14de118b047006fb"
+    },
+    {
+      "path": "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeQuoteTarget.sol",
+      "before_sha256": "c1410e0b25b9923d98eeedbd4696625e625356578d2963137e2ceed444388b52",
+      "after_sha256": "2540c9cd1deadda2ddcda76117f1e8fbf0b875a0853ceee3c41156dfb091dbb1"
+    },
+    {
+      "path": "test/foundry/spec/vaults/standard/sy/ConstantProductNativeSY.t.sol",
+      "before_sha256": "bfe398e21073a6f4f4048da0ef5748f2e906880e725709aa6978a2c3996b2603",
+      "after_sha256": "3f5d72ba59ce43ec17bfa66c871c1b2d4c16e6e7572e0f97a6c32cda30ee864c"
+    }
+  ],
+  "validation": "Pending compiled production-proxy sequences and full-state comparisons; no execution proof from source review.",
+  "application": "Included by prepare-aerodrome-projection.py to consolidate the shared fixture edit; do not apply both patches."
+}

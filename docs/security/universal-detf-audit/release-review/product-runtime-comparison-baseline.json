@@ -1,0 +1,106 @@
+[
+  {
+    "id": "cpHookPkg:4",
+    "artifact": "out/UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet.sol/UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet.json",
+    "liveBytes": 16195,
+    "localArtifactBytes": 21257,
+    "exactRuntimeMatch": false,
+    "hasUnlinkedArtifactReferences": true
+  },
+  {
+    "id": "cpHookPkg:5",
+    "artifact": "out/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet.sol/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet.json",
+    "liveBytes": 24593,
+    "localArtifactBytes": 12952,
+    "exactRuntimeMatch": false,
+    "hasUnlinkedArtifactReferences": true
+  },
+  {
+    "id": "cpHookPkg:6",
+    "artifact": "out/UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet.sol/UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet.json",
+    "liveBytes": 12601,
+    "localArtifactBytes": 16291,
+    "exactRuntimeMatch": false,
+    "hasUnlinkedArtifactReferences": true
+  },
+  {
+    "id": "weightedHookPkg:4",
+    "artifact": "out/UniswapV4StandardExchangeWeightedBufferHookJoinFacet.sol/UniswapV4StandardExchangeWeightedBufferHookJoinFacet.json",
+    "liveBytes": 17261,
+    "localArtifactBytes": 29648,
+    "exactRuntimeMatch": false,
+    "hasUnlinkedArtifactReferences": true
+  },
+  {
+    "id": "weightedHookPkg:5",
+    "artifact": "out/UniswapV4StandardExchangeWeightedBufferHookExitFacet.sol/UniswapV4StandardExchangeWeightedBufferHookExitFacet.json",
+    "liveBytes": 25280,
+    "localArtifactBytes": 23098,
+    "exactRuntimeMatch": false,
+    "hasUnlinkedArtifactReferences": true
+  },
+  {
+    "id": "weightedHookPkg:6",
+    "artifact": "out/UniswapV4StandardExchangeWeightedBufferHookSeFacet.sol/UniswapV4StandardExchangeWeightedBufferHookSeFacet.json",
+    "liveBytes": 21541,
+    "localArtifactBytes": 20936,
+    "exactRuntimeMatch": false,
+    "hasUnlinkedArtifactReferences": true
+  },
+  {
+    "id": "weightedHookPkg:7",
+    "artifact": "out/UniswapV4StandardExchangeWeightedBufferHookHooksFacet.sol/UniswapV4StandardExchangeWeightedBufferHookHooksFacet.json",
+    "liveBytes": 19034,
+    "localArtifactBytes": 18429,
+    "exactRuntimeMatch": false,
+    "hasUnlinkedArtifactReferences": true
+  },
+  {
+    "id": "curveQuadHookPkg:4",
+    "artifact": "out/UniswapV4StandardExchangeCurveQuadStableBufferHookJoinFacet.sol/UniswapV4StandardExchangeCurveQuadStableBufferHookJoinFacet.json",
+    "liveBytes": 17828,
+    "localArtifactBytes": 26019,
+    "exactRuntimeMatch": false,
+    "hasUnlinkedArtifactReferences": true
+  },
+  {
+    "id": "curveQuadHookPkg:5",
+    "artifact": "out/UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet.sol/UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet.json",
+    "liveBytes": 22411,
+    "localArtifactBytes": 22168,
+    "exactRuntimeMatch": false,
+    "hasUnlinkedArtifactReferences": true
+  },
+  {
+    "id": "curveQuadHookPkg:6",
+    "artifact": "out/UniswapV4StandardExchangeCurveQuadStableBufferHookSeFacet.sol/UniswapV4StandardExchangeCurveQuadStableBufferHookSeFacet.json",
+    "liveBytes": 20675,
+    "localArtifactBytes": 21795,
+    "exactRuntimeMatch": false,
+    "hasUnlinkedArtifactReferences": true
+  },
+  {
+    "id": "curveQuadHookPkg:7",
+    "artifact": "out/UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet.sol/UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet.json",
+    "liveBytes": 19247,
+    "localArtifactBytes": 19619,
+    "exactRuntimeMatch": false,
+    "hasUnlinkedArtifactReferences": true
+  },
+  {
+    "id": "bondNftVaultPkg:3",
+    "artifact": "out/DETFNFTVaultFacet.sol/DETFNFTVaultFacet.json",
+    "liveBytes": 24756,
+    "localArtifactBytes": 24755,
+    "exactRuntimeMatch": false,
+    "hasUnlinkedArtifactReferences": false
+  },
+  {
+    "id": "rebasingClaimTokenPkg:2",
+    "artifact": "out/RebasingClaimTokenFacet.sol/RebasingClaimTokenFacet.json",
+    "liveBytes": 11746,
+    "localArtifactBytes": 11884,
+    "exactRuntimeMatch": false,
+    "hasUnlinkedArtifactReferences": false
+  }
+]

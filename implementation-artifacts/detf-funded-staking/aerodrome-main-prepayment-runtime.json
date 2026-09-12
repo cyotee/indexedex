@@ -1,0 +1,21 @@
+{
+  "validation": "main-decimal-adapter-and-prepayment-run.json",
+  "scope": "Successfully built main-directory artifacts; all 27 AeroNativeSY cases passed; does not claim the complete selected run passed.",
+  "facets": [
+    {
+      "facet": "AerodromeStandardExchangeInFacet",
+      "runtime_bytes": 21861,
+      "runtime_sha256": "8812a9b7ff0bb1f435b74e2c1e827ffe4392f882cdffdf20f4bbfd68188492f8"
+    },
+    {
+      "facet": "AerodromeStandardExchangeOutFacet",
+      "runtime_bytes": 19240,
+      "runtime_sha256": "f9dc768c7c6aeda41e8c2cfc1b64522488b1352843925faf1092b9a831594cb0"
+    },
+    {
+      "facet": "AerodromeStandardExchangeOutQueryFacet",
+      "runtime_bytes": 13627,
+      "runtime_sha256": "cbf1ec6877d1daf391fa06de2c610b71e024d10b7ac0533c5c76d72b30a29bc7"
+    }
+  ]
+}

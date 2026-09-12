@@ -1,0 +1,22 @@
+{
+  "status": "DRAFT_TYPECHECK_ONLY_NOT_RUNTIME_VALIDATION",
+  "seconds": 32.019,
+  "exit_code": 0,
+  "errors": [],
+  "concrete_suites": {
+    "UniswapV4Detf_Cp_PonsV1Se_ProductLaw": 54,
+    "UniswapV4Detf_Cp_Univ3Se_ProductLaw": 54,
+    "UniswapV4Detf_Cp_Univ4Se_ProductLaw": 54,
+    "UniswapV4Detf_Orbital_Univ4Se_ProductLaw": 54,
+    "UniswapV4Detf_Quad_PonsMix_ProductLaw": 54,
+    "UniswapV4Detf_Weighted_MorphoMix_ProductLaw": 54,
+    "UniswapV4Detf_Cp_PonsV1Se_ProductLaw_P18_R6": 52,
+    "UniswapV4Detf_Cp_Univ3Se_ProductLaw_P9_R6": 52,
+    "UniswapV4Detf_Cp_Univ4Se_ProductLaw_P9_R6": 52,
+    "UniswapV4Detf_Quad_MorphoMix_ProductLaw_B_P9_R6": 52
+  },
+  "compiled_methods": 532,
+  "compiler_input_sha256": "4b8d4268e33117be599d8fb82dd73638240fed27af76688d758f5ff5eb19083f",
+  "validation_passed": true,
+  "canonical_sources_unchanged": true
+}

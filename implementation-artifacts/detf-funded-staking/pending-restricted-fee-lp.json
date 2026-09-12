@@ -1,0 +1,53 @@
+{
+  "decision": "D65",
+  "status": "RESOLVED by owner",
+  "finding": "Reserve hooks can mint protocol-fee LP to feeTo(); ownerOnlyLiquidity blocks that recipient from direct liquidity removal.",
+  "required_action": "Implement and validate current collector redemption, feeTo rotation, owner access, LP custody/approval, and unchanged addition restriction.",
+  "not_approved": "Public withdrawals in restricted mode, collector liquidity additions, or a cached original fee-recipient exemption.",
+  "approved_policy": "Restricted additions: DETF only. Restricted removals: DETF or current feeTo Fee Collector; swaps public.",
+  "scope": "V4 DETF reserve hooks; distinct from retired Balancer LP-payment question",
+  "evidence": [
+    {
+      "path": "contracts/fee/collector/FeeCollectorManagerTarget.sol",
+      "finding": "pullFee transfers LP tokens only; no underlying redemption."
+    },
+    {
+      "path": "contracts/fee/collector/FeeCollectorDFPkg.sol",
+      "finding": "Deployed facet set has no LP redemption/execution adapter."
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/libs/UniswapV4HookOwnerOnlyLiquidityLib.sol",
+      "finding": "Restricted liquidity routes require hook owner, which is DETF."
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol",
+      "finding": "Existing burn path redeems protocol-owned LP for DETF burns; does not accept third-party LP for proportional redemption."
+    }
+  ],
+  "owner_decision": "Allow redemption of owner restricted liquidity through feeTo(), a Fee Collector instance, including when feeTo changes.",
+  "accepted_implementation": "Only collector owner initiates proportional redemption of collector-held LP. Hook removals allow DETF or current oracle feeTo; additions remain DETF-only. Previous collector can transfer remaining LP to current collector but has no grandfathered direct withdrawal right.",
+  "evidence_as_of": "Pre-D65 investigation; superseded by the implemented mechanism and selected validation below.",
+  "validation": {
+    "archive": "v4-native-sy-and-collector-300-green-*; v4-funded-fallback-and-packaging-108-green-*",
+    "status": "Selected four-family/two-policy cases passed; repository-wide and integration completion still pending",
+    "cases": [
+      "Actual protocol fee LP custody",
+      "Owner-operated current collector proportional redemption and minimums",
+      "Old collector denied after rotation",
+      "Old LP owner transfers LP to new collector, which can redeem",
+      "Collector has no restricted deposit privilege",
+      "External users cannot redeem unowned LP",
+      "Current collector internal-balance native SY redemption; old collector denied after feeTo rotation",
+      "Public approved LP spender can redeem acquired LP; legitimate LP ownership alone does not bypass restricted removal"
+    ]
+  },
+  "latest_selected_validation": {
+    "archive": "v4-cached-withdrawal-and-collector-340-green-*",
+    "build_seconds": 37.678,
+    "test_seconds": 79.889,
+    "passed": 340,
+    "failed": 0,
+    "suites": 44,
+    "coverage": "Four V4 reserves/two liquidity policies, actual LP ownership/payment, funded swap fallback, Fee Collector rotation/internal SY, real V4 position-backed Orbital routes, V3/V4 full-range/transition checks, native buffer SY, packaging and moved SY selectors"
+  }
+}

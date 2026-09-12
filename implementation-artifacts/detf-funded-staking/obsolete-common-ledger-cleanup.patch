@@ -1,0 +1,2331 @@
+--- a/contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol
++++ /dev/null
+@@ -1,875 +0,0 @@
+-// SPDX-License-Identifier: BSL-1.1
+-pragma solidity ^0.8.0;
+-
+-/* -------------------------------------------------------------------------- */
+-/*                                    Crane                                   */
+-/* -------------------------------------------------------------------------- */
+-
+-import {ONE_WAD} from "@crane/contracts/constants/Constants.sol";
+-import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+-import {ERC721Repo} from "@crane/contracts/tokens/ERC721/ERC721Repo.sol";
+-import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
+-import {MultiStepOwnableModifiers} from "@crane/contracts/access/ERC8023/MultiStepOwnableModifiers.sol";
+-import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
+-
+-import {IERC721Errors} from "@crane/contracts/interfaces/IERC721Errors.sol";
+-
+-/* -------------------------------------------------------------------------- */
+-/*                                  Indexedex                                 */
+-/* -------------------------------------------------------------------------- */
+-
+-import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
+-import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
+-import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+-import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
+-import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
+-import {
+-    IDetfReserveDonation,
+-    IDetfNftReserveDonation
+-} from "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol";
+-import {IAllowanceTransfer} from "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
+-import {ISignatureTransfer} from "@crane/contracts/interfaces/protocols/utils/permit2/ISignatureTransfer.sol";
+-import {DETFBondNFTMathLib} from "contracts/vaults/detf/common/core/DETFBondNFTMathLib.sol";
+-import {
+-    DETF_CREATOR_BOND_NFT_ID,
+-    DETF_FEE_TO_BOND_NFT_ID,
+-    DETF_PROTOCOL_BOND_NFT_ID
+-} from "contracts/vaults/detf/common/core/DETFBondNftIds.sol";
+-import {DETFNFTVaultRepo} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultRepo.sol";
+-import {DETFNFTVaultCommon} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultCommon.sol";
+-import {DETFNFTVaultService} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultService.sol";
+-import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
+-
+-/**
+- * @title DETFNFTVaultTarget
+- * @author cyotee doge <not_cyotee@proton.me>
+- * @notice Implementation of the Protocol NFT Vault.
+- * @dev Manages NFT-based bonding positions with time-locked reward-token accrual.
+- *      Users lock LP tokens for a duration and receive boosted reward shares.
+- *      The DETF diamond owns this vault and is the only entity that can create lock positions.
+- */
+-contract DETFNFTVaultTarget is
+-    DETFNFTVaultCommon,
+-    ReentrancyLockModifiers,
+-    MultiStepOwnableModifiers,
+-    IDetfNftReserveDonation
+-{
+-    // IDETFNFTVault
+-    using DETFNFTVaultRepo for DETFNFTVaultRepo.Storage;
+-    using ERC721Repo for ERC721Repo.Storage;
+-    using BetterSafeERC20 for IERC20;
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                              Events                                    */
+-    /* ---------------------------------------------------------------------- */
+-
+-    event NewLock(
+-        uint256 indexed tokenId, address indexed recipient, uint256 shares, uint256 bonusMultiplier, uint256 unlockTime
+-    );
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                       Create Position (Owner Only)                     */
+-    /* ---------------------------------------------------------------------- */
+-
+-    // /**
+-    //  * @inheritdoc IDETFNFTVault
+-    //  * @dev Only the owner (DETF diamond) can call this function.
+-    //  */
+-    function createPosition(uint256 shares, uint256 lockDuration, address recipient)
+-        external
+-        onlyOwner
+-        nonReentrant
+-        returns (uint256 tokenId)
+-    {
+-        // Peer path: original = effective base = shares (LP); bonus applied to both.
+-        tokenId = _createPositionInternal(shares, shares, lockDuration, recipient);
+-    }
+-
+-    /// @notice Open bond with LP principal + separate reward-weight base (before lock bonus).
+-    function createPositionWithEffectiveBase(
+-        uint256 originalShares,
+-        uint256 effectiveBase,
+-        uint256 lockDuration,
+-        address recipient
+-    ) external onlyOwner nonReentrant returns (uint256 tokenId) {
+-        tokenId = _createPositionInternal(originalShares, effectiveBase, lockDuration, recipient);
+-    }
+-
+-    function _createPositionInternal(
+-        uint256 originalShares_,
+-        uint256 effectiveBase_,
+-        uint256 lockDuration_,
+-        address recipient_
+-    ) private returns (uint256 tokenId) {
+-        if (originalShares_ == 0) revert BaseSharesZero();
+-        if (effectiveBase_ == 0) revert BaseSharesZero();
+-
+-        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+-        _validateLockDuration(layoutStruct, lockDuration_);
+-
+-        uint256 bonusMultiplier = _calcBonusMultiplier(lockDuration_);
+-        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+-
+-        // Reward ledger weight = effectiveBase * lock bonus (PRD open-time mids path).
+-        uint256 effectiveShares = DETFBondNFTMathLib._calcEffectiveShares(effectiveBase_, bonusMultiplier);
+-
+-        tokenId = ERC721Repo._mint(recipient_);
+-        DETFNFTVaultRepo._createPosition(
+-            layoutStruct,
+-            tokenId,
+-            originalShares_,
+-            effectiveShares,
+-            bonusMultiplier,
+-            block.timestamp + lockDuration_
+-        );
+-
+-        emit NewLock(tokenId, recipient_, originalShares_, bonusMultiplier, block.timestamp + lockDuration_);
+-    }
+-
+-    /// @notice Mints and records the protocol-owned NFT (once).
+-    function initializeDETFNFT() external onlyOwner nonReentrant returns (uint256 tokenId) {
+-        tokenId = _initializeProtocolNft();
+-    }
+-
+-    /// @notice D7: mint ids 0, 1, 2 (protocol / feeTo / creator) before any user bond.
+-    function initializeReservedBondNfts(address feeTo, address creator)
+-        external
+-        onlyOwner
+-        nonReentrant
+-        returns (uint256 protocolId)
+-    {
+-        protocolId = _initializeReservedBondNfts(feeTo, creator);
+-    }
+-
+-    function reservedBondNftsWired() external view returns (bool) {
+-        return DETFNFTVaultRepo._reservedIdsWired();
+-    }
+-
+-    function _initializeProtocolNft() private returns (uint256 tokenId) {
+-        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+-        if (layoutStruct.protocolNftInitialized) {
+-            return layoutStruct.detfNFTId;
+-        }
+-        tokenId = ERC721Repo._mint(address(this));
+-        DETFNFTVaultRepo._setDETFNFTId(layoutStruct, tokenId);
+-        DETFNFTVaultRepo._setProtocolNftInitialized(layoutStruct, true);
+-    }
+-
+-    function _initializeReservedBondNfts(address feeTo_, address creator_) private returns (uint256 protocolId) {
+-        if (feeTo_ == address(0)) revert FeeToZero();
+-        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+-        if (layoutStruct.reservedIdsWired) {
+-            return layoutStruct.detfNFTId;
+-        }
+-
+-        ERC721Repo.Storage storage erc721_ = ERC721Repo._layoutStruct();
+-        if (!layoutStruct.protocolNftInitialized) {
+-            if (erc721_.nextTokenId != DETF_PROTOCOL_BOND_NFT_ID) {
+-                revert ReservedBondNftIdsUnavailable(erc721_.nextTokenId);
+-            }
+-            protocolId = ERC721Repo._mint(address(this));
+-            DETFNFTVaultRepo._setDETFNFTId(layoutStruct, protocolId);
+-            DETFNFTVaultRepo._setProtocolNftInitialized(layoutStruct, true);
+-        } else {
+-            protocolId = layoutStruct.detfNFTId;
+-            if (protocolId != DETF_PROTOCOL_BOND_NFT_ID) {
+-                revert ReservedBondNftIdsUnavailable(protocolId);
+-            }
+-        }
+-
+-        if (ERC721Repo._ownerOf(DETF_FEE_TO_BOND_NFT_ID) == address(0)) {
+-            if (erc721_.nextTokenId != DETF_FEE_TO_BOND_NFT_ID) {
+-                revert ReservedBondNftIdsUnavailable(erc721_.nextTokenId);
+-            }
+-            ERC721Repo._mint(feeTo_);
+-        }
+-        address creatorOwner_ = creator_ == address(0) ? feeTo_ : creator_;
+-        if (ERC721Repo._ownerOf(DETF_CREATOR_BOND_NFT_ID) == address(0)) {
+-            if (erc721_.nextTokenId != DETF_CREATOR_BOND_NFT_ID) {
+-                revert ReservedBondNftIdsUnavailable(erc721_.nextTokenId);
+-            }
+-            ERC721Repo._mint(creatorOwner_);
+-        }
+-        DETFNFTVaultRepo._setReservedIdsWired(layoutStruct, true);
+-    }
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                          Redeem Position                               */
+-    /* ---------------------------------------------------------------------- */
+-
+-    // /**
+-    //  * @inheritdoc IDETFNFTVault
+-    //  */
+-    function redeemPosition(uint256 tokenId, address recipient, uint256 deadline)
+-        external
+-        onlyOwner
+-        nonReentrant
+-        returns (uint256 wethOut)
+-    {
+-        if (DETFBondNFTMathLib._isDeadlineExceeded(deadline, block.timestamp)) {
+-            revert DeadlineExceeded(deadline, block.timestamp);
+-        }
+-
+-        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+-
+-        // Cannot redeem protocol NFT or standing reward ids 1–2 (D7 / D17).
+-        if (_isDETFNFT(tokenId) || _isStandingRewardNft(tokenId)) {
+-            revert DETFNFTRestricted(tokenId);
+-        }
+-
+-        // Mature-only: public user close is DETF `closeBondMature`; this path is DETF-only.
+-        {
+-            uint256 unlockTime = layoutStruct.unlockTimeOf[tokenId];
+-            if (block.timestamp < unlockTime) {
+-                revert BondNotMature(unlockTime);
+-            }
+-        }
+-
+-        // Update and harvest rewards
+-        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+-        uint256 rewards = _harvestRewardsInternal(layoutStruct, tokenId, recipient);
+-
+-        // N10: 4626 input is originalShares, never effectiveShares (lock bonus is reward weight only).
+-        uint256 lpAmount = DETFNFTVaultRepo._convertToAssets(layoutStruct, layoutStruct.originalSharesOf[tokenId]);
+-        DETFNFTVaultRepo._removePosition(layoutStruct, tokenId);
+-
+-        // Grant approval for burn if DETF is calling
+-        if (msg.sender == address(layoutStruct.detf)) {
+-            ERC721Repo._layoutStruct().approvedForTokenId[tokenId] = msg.sender;
+-        }
+-        ERC721Repo._burn(tokenId);
+-
+-        // Canonical Bond NFT → WETH redemption:
+-        // delegate to the DETF diamond, which custody-holds BPT and executes the pool unwind.
+-        wethOut = layoutStruct.detf.claimLiquidity(lpAmount, recipient);
+-
+-        emit IDETFNFTVault.PositionRedeemed(tokenId, recipient, wethOut, rewards);
+-    }
+-
+-    /// @notice D25: harvest + remove + burn a mature user bond. Does not credit id 0.
+-    function retireMaturePosition(uint256 tokenId, address rewardsRecipient)
+-        external
+-        onlyOwner
+-        nonReentrant
+-        returns (uint256 originalShares, uint256 rewardsClaimed)
+-    {
+-        if (_isDETFNFT(tokenId) || _isStandingRewardNft(tokenId)) {
+-            revert DETFNFTRestricted(tokenId);
+-        }
+-        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+-        address owner_ = ERC721Repo._ownerOf(tokenId);
+-        if (owner_ == address(0)) revert PositionNotFound(tokenId);
+-        {
+-            uint256 unlockTime = layoutStruct.unlockTimeOf[tokenId];
+-            if (block.timestamp < unlockTime) {
+-                revert BondNotMature(unlockTime);
+-            }
+-        }
+-        if (rewardsRecipient == address(0)) rewardsRecipient = owner_;
+-        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+-        rewardsClaimed = _harvestRewardsInternal(layoutStruct, tokenId, rewardsRecipient);
+-        originalShares = layoutStruct.originalSharesOf[tokenId];
+-        if (originalShares == 0) revert PositionNotFound(tokenId);
+-        DETFNFTVaultRepo._removePosition(layoutStruct, tokenId);
+-        ERC721Repo._layoutStruct().approvedForTokenId[tokenId] = msg.sender;
+-        ERC721Repo._burn(tokenId);
+-    }
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                          Claim Rewards                                 */
+-    /* ---------------------------------------------------------------------- */
+-
+-    // /**
+-    //  * @inheritdoc IDETFNFTVault
+-    //  */
+-    function claimRewards(uint256 tokenId, address recipient) external nonReentrant returns (uint256 rewards) {
+-        // Bond holder OR package owner (DETF diamond orchestrating holder claim).
+-        address owner = ERC721Repo._ownerOf(tokenId);
+-        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+-        if (!DETFBondNFTMathLib._isCallerOwner(owner, msg.sender) && msg.sender != address(layoutStruct.detf)) {
+-            revert NotBondHolder(owner, msg.sender);
+-        }
+-
+-        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+-
+-        rewards = _harvestRewardsInternal(layoutStruct, tokenId, recipient);
+-
+-        emit IDETFNFTVault.RewardsClaimed(tokenId, recipient, rewards);
+-    }
+-
+-    /**
+-     * @dev Internal function to harvest rewards for a position.
+-     *      Uses service library structs to avoid stack-too-deep.
+-     */
+-    function _harvestRewardsInternal(DETFNFTVaultRepo.Storage storage layoutStruct_, uint256 tokenId_, address recipient_)
+-        internal
+-        returns (uint256 rewards_)
+-    {
+-        // Build params struct to reduce stack usage (math fields only)
+-        DETFNFTVaultService.HarvestParams memory params = DETFNFTVaultService.HarvestParams({
+-            effectiveShares: layoutStruct_.effectiveSharesOf[tokenId_],
+-            rewardPerShares: layoutStruct_.rewardPerShares,
+-            paidPerShare: layoutStruct_.userRewardPerSharePaid[tokenId_]
+-        });
+-
+-        //     // Calculate rewards using service
+-        DETFNFTVaultService.HarvestResult memory result = DETFNFTVaultService._calcHarvestRewards(params);
+-
+-        if (!result.hasRewards) {
+-            return 0;
+-        }
+-
+-        rewards_ = result.rewards;
+-
+-        // Execute transfer using service
+-        DETFNFTVaultService._executeHarvestTransfer(layoutStruct_, tokenId_, recipient_, rewards_);
+-    }
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                      Protocol NFT Operations                           */
+-    /* ---------------------------------------------------------------------- */
+-
+-    /**
+-     * @dev Only callable by the DETF diamond owner.
+-     */
+-    function addToDETFNFT(uint256 tokenId, uint256 shares) external onlyOwner {
+-        if (tokenId != DETFNFTVaultRepo._detfNFTId()) {
+-            revert DETFNFTRestricted(tokenId);
+-        }
+-
+-        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+-        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+-        DETFNFTVaultRepo._addToPosition(layoutStruct, tokenId, shares);
+-    }
+-
+-    /// @notice L7: effective-share weight only on ids 1 or 2. Does not change `originalShares`.
+-    function addEffectiveSharesOnly(uint256 tokenId, uint256 shares) external onlyOwner {
+-        if (!_isStandingRewardNft(tokenId)) {
+-            revert DETFNFTRestricted(tokenId);
+-        }
+-        if (ERC721Repo._ownerOf(tokenId) == address(0)) {
+-            revert ReservedBondNftsNotWired();
+-        }
+-        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+-        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+-        DETFNFTVaultRepo._addEffectiveSharesOnly(layoutStruct, tokenId, shares);
+-    }
+-
+-    /// @notice Debit protocol-NFT principal 1:1 (original and effective). `tokenId` must be `detfNFTId`.
+-    function removeFromDETFNFT(uint256 tokenId, uint256 shares) external onlyOwner {
+-        if (tokenId != DETFNFTVaultRepo._detfNFTId()) {
+-            revert DETFNFTRestricted(tokenId);
+-        }
+-
+-        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+-        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+-        DETFNFTVaultRepo._removeFromPosition(layoutStruct, tokenId, shares);
+-    }
+-
+-    /**
+-     * @notice Sells a user bond NFT into the protocol-owned position.
+-     */
+-    function sellPositionToDetfNft(uint256 tokenId, address seller, address rewardsRecipient)
+-        external
+-        onlyOwner
+-        nonReentrant
+-        returns (uint256 principalShares, uint256 rewardsClaimed)
+-    {
+-        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+-
+-        // Cannot sell protocol NFT or standing reward ids 1–2 (D7 / D17).
+-        if (_isDETFNFT(tokenId) || _isStandingRewardNft(tokenId)) {
+-            revert DETFNFTRestricted(tokenId);
+-        }
+-
+-        address owner = ERC721Repo._ownerOf(tokenId);
+-        if (owner != seller) {
+-            revert NotBondHolder(owner, seller);
+-        }
+-
+-        principalShares = layoutStruct.originalSharesOf[tokenId];
+-        if (principalShares == 0) {
+-            revert PositionNotFound(tokenId);
+-        }
+-
+-        {
+-            uint256 unlockTime = layoutStruct.unlockTimeOf[tokenId];
+-            if (block.timestamp < unlockTime) {
+-                revert BondNotMature(unlockTime);
+-            }
+-        }
+-
+-        if (rewardsRecipient == address(0)) {
+-            rewardsRecipient = seller;
+-        }
+-
+-        // Update + harvest rewards to recipient (per TASK.md).
+-        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+-        rewardsClaimed = _harvestRewardsInternal(layoutStruct, tokenId, rewardsRecipient);
+-
+-        // Remove the sold position (burns bonus shares by removing effectiveShares).
+-        DETFNFTVaultRepo._removePosition(layoutStruct, tokenId);
+-
+-        // Transfer principal-only shares into the protocol NFT position.
+-        DETFNFTVaultRepo._addToPosition(layoutStruct, layoutStruct.detfNFTId, principalShares);
+-
+-        // Burn the sold bond NFT.
+-        ERC721Repo._layoutStruct().approvedForTokenId[tokenId] = msg.sender;
+-        ERC721Repo._burn(tokenId);
+-    }
+-
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                          View Functions                                */
+-    /* ---------------------------------------------------------------------- */
+-
+-    // /**
+-    //  * @inheritdoc IDETFNFTVault
+-    //  */
+-    function getPosition(uint256 tokenId) external view returns (IDETFNFTVault.Position memory) {
+-        return _getPosition(tokenId);
+-    }
+-
+-    /**
+-     * @notice Returns pending rewards for a position.
+-     */
+-    function pendingRewards(uint256 tokenId) external view returns (uint256) {
+-        return DETFNFTVaultRepo._earned(tokenId);
+-    }
+-
+-    /**
+-     * @notice Returns the lock info for a position.
+-     */
+-    function lockInfoOf(uint256 tokenId) external view returns (IDETFNFTVault.LockInfo memory info) {
+-        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+-
+-        uint256 originalShares = DETFNFTVaultRepo._originalSharesOf(layoutStruct, tokenId);
+-        uint256 effectiveShares = DETFNFTVaultRepo._effectiveSharesOf(layoutStruct, tokenId);
+-        uint256 bonusMultiplier = DETFNFTVaultRepo._bonusMultiplierOf(layoutStruct, tokenId);
+-
+-        info.sharesAwarded = originalShares;
+-        info.rewardPerShare = layoutStruct.rewardPerShares;
+-        info.bonusPercentage = bonusMultiplier != 0
+-            ? bonusMultiplier
+-            : (originalShares > 0 ? (effectiveShares * ONE_WAD) / originalShares : ONE_WAD);
+-        info.unlockTime = DETFNFTVaultRepo._unlockTimeOf(layoutStruct, tokenId);
+-    }
+-
+-    /**
+-     * @notice Returns the token URI for an NFT.
+-     */
+-    function tokenURI(uint256 tokenId) external view returns (string memory) {
+-        uint256 originalShares = DETFNFTVaultRepo._originalSharesOf(tokenId);
+-        if (originalShares == 0) revert PositionNotFound(tokenId);
+-        return DETFNFTVaultRepo._generateTokenURI(tokenId);
+-    }
+-
+-    /**
+-     * @notice Returns total effective shares across all positions.
+-     */
+-    function totalShares() external view returns (uint256) {
+-        return DETFNFTVaultRepo._totalShares();
+-    }
+-
+-    /**
+-     * @notice Returns the current accumulated reward per share.
+-     */
+-    function rewardPerShares() external view returns (uint256) {
+-        return DETFNFTVaultRepo._rewardPerShares();
+-    }
+-
+-    /**
+-     * @notice Returns the DETF diamond.
+-     */
+-    function detf() external view returns (IDetf) {
+-        return DETFNFTVaultRepo._detf();
+-    }
+-
+-    /**
+-     * @notice Returns the LP token (BPT) contract.
+-     */
+-    function lpToken() external view returns (IERC20) {
+-        return DETFNFTVaultRepo._lpToken();
+-    }
+-
+-    /**
+-     * @notice Returns the reward token contract.
+-     */
+-    function rewardToken() external view returns (IERC20) {
+-        return DETFNFTVaultRepo._rewardToken();
+-    }
+-
+-    /**
+-     * @notice Returns the protocol-owned NFT ID.
+-     */
+-    function detfNFTId() external view returns (uint256) {
+-        return DETFNFTVaultRepo._detfNFTId();
+-    }
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                   IDETFNFTVault View Functions                     */
+-    /* ---------------------------------------------------------------------- */
+-
+-    // /**
+-    //  * @inheritdoc IDETFNFTVault
+-    //  */
+-    function positionOf(uint256 tokenId) external view returns (IDETFNFTVault.Position memory position) {
+-        return _getPosition(tokenId);
+-    }
+-
+-    // /**
+-    //  * @inheritdoc IDETFNFTVault
+-    //  */
+-    function originalSharesOf(uint256 tokenId) external view returns (uint256 shares) {
+-        return DETFNFTVaultRepo._originalSharesOf(tokenId);
+-    }
+-
+-    function totalOriginalShares() external view returns (uint256 shares) {
+-        return DETFNFTVaultRepo._totalOriginalShares();
+-    }
+-
+-    // /**
+-    //  * @inheritdoc IDETFNFTVault
+-    //  */
+-    function effectiveSharesOf(uint256 tokenId) external view returns (uint256 shares) {
+-        return DETFNFTVaultRepo._effectiveSharesOf(tokenId);
+-    }
+-
+-    // /**
+-    //  * @inheritdoc IDETFNFTVault
+-    //  */
+-    function unlockTimeOf(uint256 tokenId) external view returns (uint256 unlockTime) {
+-        return DETFNFTVaultRepo._unlockTimeOf(tokenId);
+-    }
+-
+-    // /**
+-    //  * @inheritdoc IDETFNFTVault
+-    //  */
+-    function isUnlocked(uint256 tokenId) external view returns (bool unlocked) {
+-        uint256 unlockTime = DETFNFTVaultRepo._unlockTimeOf(tokenId);
+-        return block.timestamp >= unlockTime;
+-    }
+-
+-    // /**
+-    //  * @inheritdoc IDETFNFTVault
+-    //  */
+-    function convertToShares(uint256 lpAmount) external view returns (uint256 shares) {
+-        return DETFNFTVaultRepo._convertToShares(lpAmount);
+-    }
+-
+-    // /**
+-    //  * @inheritdoc IDETFNFTVault
+-    //  */
+-    /**
+-     * @notice Owner (DETF) transfers foreign ERC-20 held by this vault (reserve LP custody).
+-     */
+-    function transferHeldToken(IERC20 token, address to, uint256 amount) external onlyOwner nonReentrant {
+-        if (to == address(0) || address(token) == address(0)) revert NotAuthorized(address(0));
+-        if (amount == 0) revert BaseSharesZero();
+-        token.safeTransfer(to, amount);
+-    }
+-
+-    function convertToAssets(uint256 shares) external view returns (uint256 lpAmount) {
+-        return DETFNFTVaultRepo._convertToAssets(shares);
+-    }
+-
+-    // /**
+-    //  * @inheritdoc IDETFNFTVault
+-    //  */
+-    function reallocateDetfNftRewards(address recipient) external nonReentrant returns (uint256 amount) {
+-        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+-
+-        // Allow FeeCollector or the DETF diamond itself to collect the detf-owned NFT's accrued reward-token share.
+-        if (msg.sender != address(StandardVaultRepo._feeOracle().feeTo()) && msg.sender != address(layoutStruct.detf)) {
+-            revert NotAuthorized(msg.sender);
+-        }
+-
+-        uint256 protocolTokenId = layoutStruct.detfNFTId;
+-
+-        // Update global rewards
+-        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+-
+-        // Harvest protocol NFT rewards
+-        amount = _harvestRewardsInternal(layoutStruct, protocolTokenId, recipient);
+-
+-        emit IDETFNFTVault.DetfNftRewardsReallocated(recipient, amount);
+-    }
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                          Reserve donation (D29)                        */
+-    /* ---------------------------------------------------------------------- */
+-
+-    address private constant _PERMIT2 = 0x000000000022D473030F116dDEE9F6B43aC78BA3;
+-    uint8 private constant _PULL_TRANSFER = 0;
+-    uint8 private constant _PULL_PERMIT2_ALLOWANCE = 1;
+-    uint8 private constant _PULL_PERMIT2_SIGNATURE = 2;
+-
+-    /// @inheritdoc IDetfNftReserveDonation
+-    function donate(IERC20 token, uint256 amount, uint256 minLpOut, bool pretransferred, uint256 deadline)
+-        external
+-        nonReentrant
+-        returns (uint256 lpOut)
+-    {
+-        lpOut = _donate(
+-            msg.sender, token, amount, minLpOut, pretransferred, deadline, _PULL_TRANSFER, bytes("")
+-        );
+-    }
+-
+-    /// @inheritdoc IDetfNftReserveDonation
+-    function donate(
+-        address donor,
+-        IERC20 token,
+-        uint256 amount,
+-        uint256 minLpOut,
+-        bool pretransferred,
+-        uint256 deadline
+-    ) external nonReentrant returns (uint256 lpOut) {
+-        if (msg.sender != address(DETFNFTVaultRepo._detf())) {
+-            revert NotAuthorized(msg.sender);
+-        }
+-        if (donor == address(0)) revert NotAuthorized(address(0));
+-        lpOut = _donate(
+-            donor, token, amount, minLpOut, pretransferred, deadline, _PULL_TRANSFER, bytes("")
+-        );
+-    }
+-
+-    /// @inheritdoc IDetfNftReserveDonation
+-    function donateWithPermit2Allowance(IERC20 token, uint256 amount, uint256 minLpOut, uint256 deadline)
+-        external
+-        nonReentrant
+-        returns (uint256 lpOut)
+-    {
+-        lpOut = _donate(
+-            msg.sender, token, amount, minLpOut, false, deadline, _PULL_PERMIT2_ALLOWANCE, bytes("")
+-        );
+-    }
+-
+-    /// @inheritdoc IDetfNftReserveDonation
+-    function donateWithPermit2Signature(
+-        IERC20 token,
+-        uint256 amount,
+-        uint256 minLpOut,
+-        uint256 deadline,
+-        bytes calldata permit2Data
+-    ) external nonReentrant returns (uint256 lpOut) {
+-        lpOut = _donate(
+-            msg.sender, token, amount, minLpOut, false, deadline, _PULL_PERMIT2_SIGNATURE, permit2Data
+-        );
+-    }
+-
+-    /// @inheritdoc IDetfNftReserveDonation
+-    function previewDonate(IERC20 token, uint256 amount) external view returns (uint256 lpOut) {
+-        if (amount == 0) return 0;
+-        address detf_ = address(DETFNFTVaultRepo._detf());
+-        if (!_staticIsReserveLive(detf_)) return 0;
+-        if (address(token) == address(DETFNFTVaultRepo._lpToken())) {
+-            return amount;
+-        }
+-        (bool ok_, bytes memory ret_) =
+-            detf_.staticcall(abi.encodeCall(IDetfReserveDonation.previewJoinDonatedCapital, (token, amount)));
+-        if (!ok_ || ret_.length < 32) return 0;
+-        return abi.decode(ret_, (uint256));
+-    }
+-
+-    function _donate(
+-        address donor_,
+-        IERC20 token_,
+-        uint256 amount_,
+-        uint256 minLpOut_,
+-        bool pretransferred_,
+-        uint256 deadline_,
+-        uint8 pullMode_,
+-        bytes memory permit2Data_
+-    ) private returns (uint256 lpOut_) {
+-        if (amount_ == 0) revert ZeroAmount();
+-        if (DETFBondNFTMathLib._isDeadlineExceeded(deadline_, block.timestamp)) {
+-            revert DeadlineExceeded(deadline_, block.timestamp);
+-        }
+-        IDetf detf_ = DETFNFTVaultRepo._detf();
+-        _requireDetfLiveAndEnabled(detf_);
+-
+-        IERC20 lp_ = DETFNFTVaultRepo._lpToken();
+-        uint256 lpBefore_ = lp_.balanceOf(address(this));
+-        uint256 amountIn_;
+-
+-        if (address(token_) == address(lp_)) {
+-            if (pretransferred_) {
+-                revert ISecurePullErrors.TransferDeltaInsufficient(amount_, 0);
+-            }
+-            amountIn_ = _pullDonate(token_, amount_, donor_, false, pullMode_, permit2Data_);
+-            lpOut_ = lp_.balanceOf(address(this)) - lpBefore_;
+-            if (lpOut_ == 0) revert ZeroAmount();
+-            _creditId0(lpBefore_, lpOut_);
+-            if (lpOut_ < minLpOut_) {
+-                revert IStandardExchangeErrors.MinAmountNotMet(minLpOut_, lpOut_);
+-            }
+-            IDetfReserveDonation(address(detf_)).notifyReserveDonated();
+-            emit IDetfNftReserveDonation.ReserveDonated(donor_, address(token_), amountIn_, lpOut_);
+-            return lpOut_;
+-        }
+-
+-        amountIn_ = _pullDonate(token_, amount_, donor_, pretransferred_, pullMode_, permit2Data_);
+-        token_.forceApprove(address(detf_), amountIn_);
+-        lpOut_ = IDetfReserveDonation(address(detf_)).joinDonatedCapital(token_, amountIn_, deadline_);
+-        token_.forceApprove(address(detf_), 0);
+-        if (lpOut_ == 0) revert ZeroAmount();
+-        uint256 inboundLp_ = lp_.balanceOf(address(this)) - lpBefore_;
+-        if (inboundLp_ < lpOut_) {
+-            lpOut_ = inboundLp_;
+-        }
+-        if (lpOut_ == 0) revert ZeroAmount();
+-        _creditId0(lpBefore_, lpOut_);
+-        if (lpOut_ < minLpOut_) {
+-            revert IStandardExchangeErrors.MinAmountNotMet(minLpOut_, lpOut_);
+-        }
+-        IDetfReserveDonation(address(detf_)).notifyReserveDonated();
+-        emit IDetfNftReserveDonation.ReserveDonated(donor_, address(token_), amountIn_, lpOut_);
+-    }
+-
+-    function _requireDetfLiveAndEnabled(IDetf detf_) private view {
+-        address detfAddr_ = address(detf_);
+-        address oracle_ = address(StandardVaultRepo._feeOracle());
+-        if (oracle_ != address(0)) {
+-            try IVaultRegistryDisableQuery(oracle_).isDisabled(detfAddr_) returns (bool disabled_) {
+-                if (disabled_) revert IVaultRegistryDisableQuery.VaultDisabled(detfAddr_);
+-            } catch {}
+-        }
+-        if (!_staticIsReserveLive(detfAddr_)) revert ReserveNotLive();
+-    }
+-
+-    function _staticIsReserveLive(address detfAddr_) private view returns (bool) {
+-        if (detfAddr_ == address(0) || detfAddr_.code.length == 0) return false;
+-        (bool ok_, bytes memory ret_) =
+-            detfAddr_.staticcall(abi.encodeWithSelector(IDetfReserveDonation.isReserveLive.selector));
+-        if (!ok_ || ret_.length < 32) return false;
+-        return abi.decode(ret_, (bool));
+-    }
+-
+-    function _pullDonate(
+-        IERC20 token_,
+-        uint256 amount_,
+-        address from_,
+-        bool pretransferred_,
+-        uint8 pullMode_,
+-        bytes memory permit2Data_
+-    ) private returns (uint256 actual_) {
+-        if (pretransferred_) {
+-            uint256 bal_ = token_.balanceOf(address(this));
+-            uint256 booked_ = 0;
+-            if (address(token_) == address(DETFNFTVaultRepo._detf())) {
+-                booked_ = DETFNFTVaultRepo._lastRewardTokenBalance();
+-            }
+-            uint256 surplus_ = bal_ > booked_ ? bal_ - booked_ : 0;
+-            if (surplus_ == 0) revert ZeroAmount();
+-            if (amount_ > surplus_) {
+-                revert ISecurePullErrors.TransferDeltaInsufficient(amount_, surplus_);
+-            }
+-            return amount_;
+-        }
+-        uint256 before_ = token_.balanceOf(address(this));
+-        if (pullMode_ == _PULL_PERMIT2_ALLOWANCE) {
+-            IAllowanceTransfer(_PERMIT2).transferFrom(from_, address(this), uint160(amount_), address(token_));
+-        } else if (pullMode_ == _PULL_PERMIT2_SIGNATURE) {
+-            _pullPermit2Signature(token_, amount_, from_, permit2Data_);
+-        } else {
+-            token_.safeTransferFrom(from_, address(this), amount_);
+-        }
+-        actual_ = token_.balanceOf(address(this)) - before_;
+-        if (actual_ == 0) revert ZeroAmount();
+-    }
+-
+-    function _pullPermit2Signature(
+-        IERC20 token_,
+-        uint256 amount_,
+-        address from_,
+-        bytes memory permit2Data_
+-    ) private {
+-        (ISignatureTransfer.PermitTransferFrom memory permit_, bytes memory signature_) =
+-            abi.decode(permit2Data_, (ISignatureTransfer.PermitTransferFrom, bytes));
+-        if (permit_.permitted.token != address(token_)) revert InvalidPermit2Data();
+-        ISignatureTransfer.SignatureTransferDetails memory details_ = ISignatureTransfer
+-            .SignatureTransferDetails({to: address(this), requestedAmount: amount_});
+-        ISignatureTransfer(_PERMIT2).permitTransferFrom(permit_, details_, from_, signature_);
+-    }
+-
+-    function _creditId0(uint256 lpBefore_, uint256 lpOut_) private {
+-        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+-        uint256 shares_ = DETFNFTVaultRepo._convertToSharesAtLpReserve(layoutStruct, lpOut_, lpBefore_);
+-        if (shares_ == 0) revert ZeroAmount();
+-        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+-        uint256 protocolId_ = layoutStruct.detfNFTId;
+-        DETFNFTVaultRepo._addToPosition(layoutStruct, protocolId_, shares_);
+-        emit IDETFNFTVault.DETFNFTUpdated(protocolId_, lpOut_, layoutStruct.totalShares);
+-    }
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                            ERC721 Functions                            */
+-    /* ---------------------------------------------------------------------- */
+-
+-    /**
+-     * @notice Returns the number of NFTs owned by an address.
+-     */
+-    function balanceOf(address owner) public view returns (uint256 balance) {
+-        return ERC721Repo._balanceOf(owner);
+-    }
+-
+-    /**
+-     * @notice Returns the owner of an NFT.
+-     */
+-    function ownerOf(uint256 tokenId) public view returns (address owner) {
+-        return ERC721Repo._ownerOf(tokenId);
+-    }
+-
+-    /**
+-     * @notice Approves an address to transfer an NFT.
+-     */
+-    function approve(address to, uint256 tokenId) public virtual {
+-        ERC721Repo._approve(to, tokenId);
+-    }
+-
+-    /**
+-     * @notice Returns the approved address for an NFT.
+-     */
+-    function getApproved(uint256 tokenId) public view returns (address operator) {
+-        return ERC721Repo._getApproved(tokenId);
+-    }
+-
+-    /**
+-     * @notice Sets approval for all NFTs for an operator.
+-     */
+-    function setApprovalForAll(address operator, bool approved) public virtual {
+-        ERC721Repo._setApprovalForAll(operator, approved);
+-    }
+-
+-    /**
+-     * @notice Returns if an operator is approved for all NFTs of an owner.
+-     */
+-    function isApprovedForAll(address owner, address operator) public view returns (bool) {
+-        return ERC721Repo._isApprovedForAll(owner, operator);
+-    }
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                        ERC721 Transfer Guards                          */
+-    /* ---------------------------------------------------------------------- */
+-
+-    function safeTransferFrom(address from, address to, uint256 tokenId, bytes calldata data) public virtual {
+-        if (to == address(DETFNFTVaultRepo._detf())) {
+-            revert IERC721Errors.ERC721InvalidReceiver(to);
+-        }
+-        ERC721Repo._safeTransferFrom(from, to, tokenId, data);
+-    }
+-
+-    function safeTransferFrom(address from, address to, uint256 tokenId) public virtual {
+-        if (to == address(DETFNFTVaultRepo._detf())) {
+-            revert IERC721Errors.ERC721InvalidReceiver(to);
+-        }
+-        ERC721Repo._safeTransferFrom(from, to, tokenId);
+-    }
+-
+-    function transferFrom(address from, address to, uint256 tokenId) public virtual {
+-        if (to == address(DETFNFTVaultRepo._detf())) {
+-            revert IERC721Errors.ERC721InvalidReceiver(to);
+-        }
+-        ERC721Repo._transferFrom(from, to, tokenId);
+-    }
+-}
+--- a/contracts/vaults/detf/common/bondNft/DETFNFTVaultCommon.sol
++++ /dev/null
+@@ -1,136 +0,0 @@
+-// SPDX-License-Identifier: BSL-1.1
+-pragma solidity ^0.8.0;
+-
+-/* -------------------------------------------------------------------------- */
+-/*                                    Crane                                   */
+-/* -------------------------------------------------------------------------- */
+-
+-import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+-
+-/* -------------------------------------------------------------------------- */
+-/*                                  Indexedex                                 */
+-/* -------------------------------------------------------------------------- */
+-
+-import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
+-import {IDetfErrors} from "contracts/interfaces/IDetfErrors.sol";
+-import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
+-import {DETFBondNFTMathLib} from "contracts/vaults/detf/common/core/DETFBondNFTMathLib.sol";
+-import {DETFNFTVaultRepo} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultRepo.sol";
+-import {
+-    DETF_CREATOR_BOND_NFT_ID,
+-    DETF_FEE_TO_BOND_NFT_ID
+-} from "contracts/vaults/detf/common/core/DETFBondNftIds.sol";
+-
+-/**
+- * @title DETFNFTVaultCommon
+- * @author cyotee doge <not_cyotee@proton.me>
+- * @notice Common functionality for Protocol NFT Vault.
+- * @dev Contains shared logic for:
+- *      - Lock duration validation
+- *      - Bonus multiplier calculation
+- *      - Position lookup helpers
+- */
+-abstract contract DETFNFTVaultCommon is IDetfErrors {
+-    using DETFNFTVaultRepo for DETFNFTVaultRepo.Storage;
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                          Error Definitions                             */
+-    /* ---------------------------------------------------------------------- */
+-
+-    error BaseSharesZero();
+-    error DeadlineExceeded(uint256 deadline, uint256 currentTimestamp);
+-    error LockDurationNotExpired(uint256 currentTime, uint256 unlockTime);
+-    error BondNotMature(uint256 unlockTime);
+-    error InsufficientOriginalShares(uint256 needed, uint256 available);
+-    error NotBondHolder(address owner, address caller);
+-    error LockDurationTooShort(uint256 duration, uint256 minimum);
+-    error LockDurationTooLong(uint256 duration, uint256 maximum);
+-    error DETFNFTCannotBeUnlocked(uint256 tokenId);
+-    error ReservedBondNftsNotWired();
+-    error ReservedBondNftIdsUnavailable(uint256 nextTokenId);
+-    error FeeToZero();
+-    error ReserveNotLive();
+-    error InvalidRoute(IERC20 token, IERC20 expected);
+-    error InvalidPermit2Data();
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                          Bond Terms Helper                             */
+-    /* ---------------------------------------------------------------------- */
+-
+-    /**
+-     * @notice Gets bond terms from the fee oracle via StandardVaultRepo.
+-     * @dev Queries the fee oracle's 3-level fallback chain (vault -> type -> global).
+-     * @return terms The current bond terms
+-     */
+-    function _bondTerms() internal view returns (BondTerms memory terms) {
+-        terms = DETFBondNFTMathLib._bondTerms(address(this));
+-    }
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                       Lock Duration Validation                         */
+-    /* ---------------------------------------------------------------------- */
+-
+-    /**
+-     * @notice Validates that lock duration is within allowed bounds.
+-     * @param lockDuration_ Duration to validate
+-     */
+-    function _validateLockDuration(DETFNFTVaultRepo.Storage storage, uint256 lockDuration_) internal view {
+-        BondTerms memory terms = _bondTerms();
+-        DETFBondNFTMathLib.LockDurationStatus status = DETFBondNFTMathLib._lockDurationStatus(terms, lockDuration_);
+-
+-        if (status == DETFBondNFTMathLib.LockDurationStatus.TooShort) {
+-            revert LockDurationTooShort(lockDuration_, terms.minLockDuration);
+-        }
+-
+-        if (status == DETFBondNFTMathLib.LockDurationStatus.TooLong) {
+-            revert LockDurationTooLong(lockDuration_, terms.maxLockDuration);
+-        }
+-    }
+-
+-    /**
+-     * @notice Calculates bonus multiplier for a given lock duration.
+-     * @dev Uses quadratic curve: longer locks get exponentially higher bonuses.
+-     *      bonus = min_bonus + (max_bonus - min_bonus) * (normalized_duration)^2
+-     *      multiplier = 1 + bonus
+-     *
+-     * @param lockDuration_ Lock duration in seconds
+-     * @return bonusMultiplier_ Multiplier scaled by 1e18 (1e18 = 1x = no bonus)
+-     */
+-    function _calcBonusMultiplier(uint256 lockDuration_) internal view returns (uint256 bonusMultiplier_) {
+-        bonusMultiplier_ = DETFBondNFTMathLib._bonusMultiplierOfVault(address(this), lockDuration_);
+-    }
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                       Position Lookup Helpers                          */
+-    /* ---------------------------------------------------------------------- */
+-
+-    /**
+-     * @notice Gets the position details for a token ID.
+-     * @param tokenId_ Token ID to query
+-     * @return position The position data
+-     */
+-    function _getPosition(uint256 tokenId_) internal view returns (IDETFNFTVault.Position memory position) {
+-        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+-        position = DETFBondNFTMathLib._position(
+-            layoutStruct.originalSharesOf[tokenId_],
+-            layoutStruct.effectiveSharesOf[tokenId_],
+-            layoutStruct.bonusMultiplierOf[tokenId_],
+-            layoutStruct.unlockTimeOf[tokenId_],
+-            layoutStruct.userRewardPerSharePaid[tokenId_]
+-        );
+-    }
+-
+-    /**
+-     * @notice Checks if a token ID is the protocol-owned NFT.
+-     * @param tokenId_ Token ID to check
+-     * @return True if this is the protocol NFT
+-     */
+-    function _isDETFNFT(uint256 tokenId_) internal view returns (bool) {
+-        return tokenId_ == DETFNFTVaultRepo._detfNFTId();
+-    }
+-
+-    function _isStandingRewardNft(uint256 tokenId_) internal view returns (bool) {
+-        if (!DETFNFTVaultRepo._reservedIdsWired()) return false;
+-        return tokenId_ == DETF_FEE_TO_BOND_NFT_ID || tokenId_ == DETF_CREATOR_BOND_NFT_ID;
+-    }
+-}
+--- a/contracts/vaults/detf/common/bondNft/DETFNFTVaultRepo.sol
++++ /dev/null
+@@ -1,719 +0,0 @@
+-// SPDX-License-Identifier: BSL-1.1
+-pragma solidity ^0.8.0;
+-
+-/* -------------------------------------------------------------------------- */
+-/*                                    Crane                                   */
+-/* -------------------------------------------------------------------------- */
+-
+-import {Math} from "@crane/contracts/utils/Math.sol";
+-
+-import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+-import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
+-import {ERC721Repo} from "@crane/contracts/tokens/ERC721/ERC721Repo.sol";
+-import {LibString} from "@crane/contracts/utils/LibString.sol";
+-import {Base64} from "@crane/contracts/utils/Base64.sol";
+-import {BetterMath} from "@crane/contracts/utils/math/BetterMath.sol";
+-import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
+-
+-/* -------------------------------------------------------------------------- */
+-/*                                  Indexedex                                 */
+-/* -------------------------------------------------------------------------- */
+-
+-import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
+-import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+-
+-/* -------------------------------------------------------------------------- */
+-/*                              SVG Constants                                 */
+-/* -------------------------------------------------------------------------- */
+-
+-string constant METADATA_JSON_PREFIX = "data:application/json;base64,";
+-string constant JSON_NAME_PREFIX = '{"name": "Protocol Bond NFT # ';
+-string constant JSON_NAME_SUFFIX = '", ';
+-string constant JSON_DESCRIPTION = '"description": "This NFT represents a DETF bond position.",';
+-string constant JSON_IMAGE_PREFIX = '"image": "data:image/svg+xml;base64,';
+-
+-string constant SVG_IMAGE_PREFIX =
+-    '<?xml version="1.0" encoding="UTF-8"?><svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">';
+-
+-string constant SVG_IMAGE_TOKEN_ID_PREFIX =
+-    '<rect width="400" height="300" rx="10" ry="10" fill="#1a1a2e"/><text x="200" y="40" fill="#00ff00" font-family="Courier New, monospace" font-size="18" font-weight="bold" text-anchor="middle">PROTOCOL BOND</text><text x="200" y="70" fill="#00ff00" font-family="Courier New, monospace" font-size="24" font-weight="bold" text-anchor="middle">Token ID: ';
+-
+-string constant SVG_UNLOCK_PREFIX =
+-    '</text><text x="200" y="100" fill="#00ff00" font-family="Courier New, monospace" font-size="14" text-anchor="middle">Unlock: ';
+-
+-string constant SVG_SHARES_PREFIX =
+-    '</text><rect x="50" y="120" width="300" height="80" rx="5" ry="5" fill="none" stroke="#00ff00"/><text x="200" y="150" fill="#00ff00" font-family="Courier New, monospace" font-size="14" text-anchor="middle">Shares: ';
+-
+-string constant SVG_REWARDS_PREFIX =
+-    '</text><text x="200" y="180" fill="#00ff00" font-family="Courier New, monospace" font-size="14" text-anchor="middle">Pending rewards: ';
+-
+-string constant SVG_TEXT_CLOSE = "</text>";
+-string constant SVG_IMAGE_CLOSE = "</svg>";
+-
+-/**
+- * @title DETFNFTVaultRepo
+- * @author cyotee doge <not_cyotee@proton.me>
+- * @notice Storage library for Protocol NFT Vault state.
+- * @dev Follows the Crane Repo pattern with dual _layoutStruct() functions.
+- *      Manages bond positions with:
+- *      - Original shares (base LP allocation)
+- *      - Effective shares (boosted by lock duration)
+- *      - Reward-token tracking
+- *      - Protocol-owned NFT for accumulated positions
+- */
+-library DETFNFTVaultRepo {
+-    using BetterSafeERC20 for IERC20Metadata;
+-    using LibString for uint256;
+-
+-    bytes32 internal constant STORAGE_SLOT = keccak256("indexedex.vaults.protocol.nft");
+-
+-    struct Storage {
+-        /// @notice The DETF diamond
+-        IDetf detf;
+-        /// @notice The LP token (BPT from reserve pool)
+-        IERC20 lpToken;
+-        /// @notice The reward token
+-        IERC20 rewardToken;
+-        /// @notice Last recorded reward token balance for calculating new rewards
+-        uint256 lastRewardTokenBalance;
+-        /// @notice Total effective shares across all positions
+-        uint256 totalShares;
+-        /// @notice Accumulated reward per share (scaled by 1e18)
+-        uint256 rewardPerShares;
+-        /// @notice Decimal offset for share calculations
+-        uint8 decimalOffset;
+-        /// @notice Original shares allocated to each token ID
+-        mapping(uint256 tokenId => uint256 originalShares) originalSharesOf;
+-        /// @notice Boosted shares (including bonus) for each token ID
+-        mapping(uint256 tokenId => uint256 effectiveShares) effectiveSharesOf;
+-        /// @notice Bonus multiplier (scaled by 1e18) used when position was created
+-        mapping(uint256 tokenId => uint256 bonusMultiplier) bonusMultiplierOf;
+-        /// @notice Unlock timestamp for each token ID
+-        mapping(uint256 tokenId => uint256 unlockTime) unlockTimeOf;
+-        /// @notice Reward per share at time of last update for each token ID
+-        mapping(uint256 tokenId => uint256) userRewardPerSharePaid;
+-        /// @notice Counter for generating unique token IDs
+-        uint256 nextTokenId;
+-        /// @notice Protocol-owned NFT token ID (has no unlock time). 0 is a valid D7 protocol id.
+-        uint256 detfNFTId;
+-        /// @notice Sum of originalShares across all tokenIds (user + protocol).
+-        uint256 totalOriginalShares;
+-        /// @notice L6: protocol NFT has been minted. Do not treat `detfNFTId == 0` as unwired.
+-        bool protocolNftInitialized;
+-        /// @notice D7: ids 0, 1, and 2 have been minted (protocol / feeTo / creator).
+-        bool reservedIdsWired;
+-    }
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                           Layout Functions                             */
+-    /* ---------------------------------------------------------------------- */
+-
+-    function _layoutStruct(bytes32 slot_) internal pure returns (Storage storage layoutStruct_) {
+-        assembly {
+-            layoutStruct_.slot := slot_
+-        }
+-    }
+-
+-    function _layoutStruct() internal pure returns (Storage storage) {
+-        return _layoutStruct(STORAGE_SLOT);
+-    }
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                         Initialization                                 */
+-    /* ---------------------------------------------------------------------- */
+-
+-    function _initialize(
+-        Storage storage layoutStruct_,
+-        IDetf detf_,
+-        IERC20 lpToken_,
+-        IERC20 rewardToken_,
+-        uint8 decimalOffset_
+-    ) internal {
+-        layoutStruct_.detf = detf_;
+-        layoutStruct_.lpToken = lpToken_;
+-        layoutStruct_.rewardToken = rewardToken_;
+-        layoutStruct_.decimalOffset = decimalOffset_;
+-        layoutStruct_.nextTokenId = 1;
+-    }
+-
+-    function _initialize(IDetf detf_, IERC20 lpToken_, IERC20 rewardToken_, uint8 decimalOffset_) internal {
+-        _initialize(_layoutStruct(), detf_, lpToken_, rewardToken_, decimalOffset_);
+-    }
+-
+-    function _setDETFNFTId(Storage storage layoutStruct_, uint256 tokenId_) internal {
+-        layoutStruct_.detfNFTId = tokenId_;
+-    }
+-
+-    function _setDETFNFTId(uint256 tokenId_) internal {
+-        _setDETFNFTId(_layoutStruct(), tokenId_);
+-    }
+-
+-    function _protocolNftInitialized(Storage storage layoutStruct_) internal view returns (bool) {
+-        return layoutStruct_.protocolNftInitialized;
+-    }
+-
+-    function _protocolNftInitialized() internal view returns (bool) {
+-        return _protocolNftInitialized(_layoutStruct());
+-    }
+-
+-    function _setProtocolNftInitialized(Storage storage layoutStruct_, bool value_) internal {
+-        layoutStruct_.protocolNftInitialized = value_;
+-    }
+-
+-    function _setProtocolNftInitialized(bool value_) internal {
+-        _setProtocolNftInitialized(_layoutStruct(), value_);
+-    }
+-
+-    function _reservedIdsWired(Storage storage layoutStruct_) internal view returns (bool) {
+-        return layoutStruct_.reservedIdsWired;
+-    }
+-
+-    function _reservedIdsWired() internal view returns (bool) {
+-        return _reservedIdsWired(_layoutStruct());
+-    }
+-
+-    function _setReservedIdsWired(Storage storage layoutStruct_, bool value_) internal {
+-        layoutStruct_.reservedIdsWired = value_;
+-    }
+-
+-    function _setReservedIdsWired(bool value_) internal {
+-        _setReservedIdsWired(_layoutStruct(), value_);
+-    }
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                            Token References                            */
+-    /* ---------------------------------------------------------------------- */
+-
+-    function _detf(Storage storage layoutStruct_) internal view returns (IDetf) {
+-        return layoutStruct_.detf;
+-    }
+-
+-    function _detf() internal view returns (IDetf) {
+-        return _detf(_layoutStruct());
+-    }
+-
+-    function _lpToken(Storage storage layoutStruct_) internal view returns (IERC20) {
+-        return layoutStruct_.lpToken;
+-    }
+-
+-    function _lpToken() internal view returns (IERC20) {
+-        return _lpToken(_layoutStruct());
+-    }
+-
+-    function _rewardToken(Storage storage layoutStruct_) internal view returns (IERC20) {
+-        return layoutStruct_.rewardToken;
+-    }
+-
+-    function _rewardToken() internal view returns (IERC20) {
+-        return _rewardToken(_layoutStruct());
+-    }
+-
+-    function _decimalOffset(Storage storage layoutStruct_) internal view returns (uint8) {
+-        return layoutStruct_.decimalOffset;
+-    }
+-
+-    function _decimalOffset() internal view returns (uint8) {
+-        return _decimalOffset(_layoutStruct());
+-    }
+-
+-    function _detfNFTId(Storage storage layoutStruct_) internal view returns (uint256) {
+-        return layoutStruct_.detfNFTId;
+-    }
+-
+-    function _detfNFTId() internal view returns (uint256) {
+-        return _detfNFTId(_layoutStruct());
+-    }
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                          Share Accounting                              */
+-    /* ---------------------------------------------------------------------- */
+-
+-    function _totalShares(Storage storage layoutStruct_) internal view returns (uint256) {
+-        return layoutStruct_.totalShares;
+-    }
+-
+-    function _totalShares() internal view returns (uint256) {
+-        return _totalShares(_layoutStruct());
+-    }
+-
+-    function _totalOriginalShares(Storage storage layoutStruct_) internal view returns (uint256) {
+-        return layoutStruct_.totalOriginalShares;
+-    }
+-
+-    function _totalOriginalShares() internal view returns (uint256) {
+-        return _totalOriginalShares(_layoutStruct());
+-    }
+-
+-    function _setTotalShares(Storage storage layoutStruct_, uint256 amount_) internal {
+-        layoutStruct_.totalShares = amount_;
+-    }
+-
+-    function _originalSharesOf(Storage storage layoutStruct_, uint256 tokenId_) internal view returns (uint256) {
+-        return layoutStruct_.originalSharesOf[tokenId_];
+-    }
+-
+-    function _originalSharesOf(uint256 tokenId_) internal view returns (uint256) {
+-        return _originalSharesOf(_layoutStruct(), tokenId_);
+-    }
+-
+-    function _effectiveSharesOf(Storage storage layoutStruct_, uint256 tokenId_) internal view returns (uint256) {
+-        return layoutStruct_.effectiveSharesOf[tokenId_];
+-    }
+-
+-    function _effectiveSharesOf(uint256 tokenId_) internal view returns (uint256) {
+-        return _effectiveSharesOf(_layoutStruct(), tokenId_);
+-    }
+-
+-    function _unlockTimeOf(Storage storage layoutStruct_, uint256 tokenId_) internal view returns (uint256) {
+-        return layoutStruct_.unlockTimeOf[tokenId_];
+-    }
+-
+-    function _unlockTimeOf(uint256 tokenId_) internal view returns (uint256) {
+-        return _unlockTimeOf(_layoutStruct(), tokenId_);
+-    }
+-
+-    function _bonusMultiplierOf(Storage storage layoutStruct_, uint256 tokenId_) internal view returns (uint256) {
+-        return layoutStruct_.bonusMultiplierOf[tokenId_];
+-    }
+-
+-    function _bonusMultiplierOf(uint256 tokenId_) internal view returns (uint256) {
+-        return _bonusMultiplierOf(_layoutStruct(), tokenId_);
+-    }
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                          Reward Accounting                             */
+-    /* ---------------------------------------------------------------------- */
+-
+-    function _rewardPerShares(Storage storage layoutStruct_) internal view returns (uint256) {
+-        return layoutStruct_.rewardPerShares;
+-    }
+-
+-    function _rewardPerShares() internal view returns (uint256) {
+-        return _rewardPerShares(_layoutStruct());
+-    }
+-
+-    function _lastRewardTokenBalance(Storage storage layoutStruct_) internal view returns (uint256) {
+-        return layoutStruct_.lastRewardTokenBalance;
+-    }
+-
+-    function _lastRewardTokenBalance() internal view returns (uint256) {
+-        return _lastRewardTokenBalance(_layoutStruct());
+-    }
+-
+-    function _setLastRewardTokenBalance(Storage storage layoutStruct_, uint256 amount_) internal {
+-        layoutStruct_.lastRewardTokenBalance = amount_;
+-    }
+-
+-    function _userRewardPerSharePaid(Storage storage layoutStruct_, uint256 tokenId_) internal view returns (uint256) {
+-        return layoutStruct_.userRewardPerSharePaid[tokenId_];
+-    }
+-
+-    function _userRewardPerSharePaid(uint256 tokenId_) internal view returns (uint256) {
+-        return _userRewardPerSharePaid(_layoutStruct(), tokenId_);
+-    }
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                         Position Management                            */
+-    /* ---------------------------------------------------------------------- */
+-
+-    function _nextTokenId(Storage storage layoutStruct_) internal view returns (uint256) {
+-        return layoutStruct_.nextTokenId;
+-    }
+-
+-    function _nextTokenId() internal view returns (uint256) {
+-        return _nextTokenId(_layoutStruct());
+-    }
+-
+-    function _incrementNextTokenId(Storage storage layoutStruct_) internal returns (uint256 tokenId_) {
+-        tokenId_ = layoutStruct_.nextTokenId;
+-        layoutStruct_.nextTokenId = tokenId_ + 1;
+-    }
+-
+-    function _incrementNextTokenId() internal returns (uint256) {
+-        return _incrementNextTokenId(_layoutStruct());
+-    }
+-
+-    function _createPosition(
+-        Storage storage layoutStruct_,
+-        uint256 tokenId_,
+-        uint256 originalShares_,
+-        uint256 effectiveShares_,
+-        uint256 bonusMultiplier_,
+-        uint256 unlockTime_
+-    ) internal {
+-        layoutStruct_.originalSharesOf[tokenId_] = originalShares_;
+-        layoutStruct_.effectiveSharesOf[tokenId_] = effectiveShares_;
+-        layoutStruct_.bonusMultiplierOf[tokenId_] = bonusMultiplier_;
+-        layoutStruct_.unlockTimeOf[tokenId_] = unlockTime_;
+-        layoutStruct_.userRewardPerSharePaid[tokenId_] = layoutStruct_.rewardPerShares;
+-        layoutStruct_.totalShares += effectiveShares_;
+-        layoutStruct_.totalOriginalShares += originalShares_;
+-    }
+-
+-    function _createPosition(
+-        uint256 tokenId_,
+-        uint256 originalShares_,
+-        uint256 effectiveShares_,
+-        uint256 bonusMultiplier_,
+-        uint256 unlockTime_
+-    ) internal {
+-        _createPosition(_layoutStruct(), tokenId_, originalShares_, effectiveShares_, bonusMultiplier_, unlockTime_);
+-    }
+-
+-    function _removePosition(Storage storage layoutStruct_, uint256 tokenId_) internal {
+-        layoutStruct_.totalShares -= layoutStruct_.effectiveSharesOf[tokenId_];
+-        layoutStruct_.totalOriginalShares -= layoutStruct_.originalSharesOf[tokenId_];
+-        delete layoutStruct_.originalSharesOf[tokenId_];
+-        delete layoutStruct_.effectiveSharesOf[tokenId_];
+-        delete layoutStruct_.bonusMultiplierOf[tokenId_];
+-        delete layoutStruct_.unlockTimeOf[tokenId_];
+-        delete layoutStruct_.userRewardPerSharePaid[tokenId_];
+-    }
+-
+-    function _removePosition(uint256 tokenId_) internal {
+-        _removePosition(_layoutStruct(), tokenId_);
+-    }
+-
+-    /**
+-     * @notice Adds LP to an existing position without affecting lock time.
+-     * @dev Used when adding to the protocol-owned NFT (sell-in, protocol compound BPT credit).
+-     *      Reward debt is kept consistent so new principal does not invent phantom pending:
+-     *      - First shares on a tokenId: set paid = current `rewardPerShares` (baseline).
+-     *      - Additional shares: preserve previously earned pending by re-basing paid on new effective.
+-     *      Callers should `_updateGlobalRewards` first (see `addToDETFNFT` / sell path).
+-     */
+-    function _addToPosition(Storage storage layoutStruct_, uint256 tokenId_, uint256 additionalShares_) internal {
+-        if (additionalShares_ == 0) return;
+-
+-        uint256 oldEff_ = layoutStruct_.effectiveSharesOf[tokenId_];
+-        if (oldEff_ == 0) {
+-            // No prior stake: do not inherit historical rewardPerShares as claimable debt.
+-            layoutStruct_.userRewardPerSharePaid[tokenId_] = layoutStruct_.rewardPerShares;
+-            layoutStruct_.originalSharesOf[tokenId_] += additionalShares_;
+-            layoutStruct_.effectiveSharesOf[tokenId_] += additionalShares_;
+-            layoutStruct_.totalShares += additionalShares_;
+-            layoutStruct_.totalOriginalShares += additionalShares_;
+-            return;
+-        }
+-
+-        // Preserve pending earned on old stake while increasing principal.
+-        uint256 pending_ = _earned(layoutStruct_, tokenId_);
+-        layoutStruct_.originalSharesOf[tokenId_] += additionalShares_;
+-        layoutStruct_.effectiveSharesOf[tokenId_] += additionalShares_;
+-        layoutStruct_.totalShares += additionalShares_;
+-        layoutStruct_.totalOriginalShares += additionalShares_;
+-
+-        uint256 newEff_ = layoutStruct_.effectiveSharesOf[tokenId_];
+-        uint256 rps_ = layoutStruct_.rewardPerShares;
+-        // pending = newEff * (rps - paid) / 1e18  ⇒  paid = rps - pending * 1e18 / newEff
+-        if (newEff_ > 0 && pending_ > 0) {
+-            uint256 pendingPerShare_ = (pending_ * 1e18) / newEff_;
+-            layoutStruct_.userRewardPerSharePaid[tokenId_] = rps_ > pendingPerShare_ ? rps_ - pendingPerShare_ : 0;
+-        } else {
+-            layoutStruct_.userRewardPerSharePaid[tokenId_] = rps_;
+-        }
+-    }
+-
+-    function _addToPosition(uint256 tokenId_, uint256 additionalShares_) internal {
+-        _addToPosition(_layoutStruct(), tokenId_, additionalShares_);
+-    }
+-
+-    /// @notice L7: add effective-share weight only. Does not change `originalShares`.
+-    /// @dev Reward debt matches `_addToPosition` first/add paths so new shares do not claim old pot (FC4).
+-    function _addEffectiveSharesOnly(Storage storage layoutStruct_, uint256 tokenId_, uint256 additionalShares_)
+-        internal
+-    {
+-        if (additionalShares_ == 0) return;
+-
+-        uint256 oldEff_ = layoutStruct_.effectiveSharesOf[tokenId_];
+-        if (oldEff_ == 0) {
+-            layoutStruct_.userRewardPerSharePaid[tokenId_] = layoutStruct_.rewardPerShares;
+-            layoutStruct_.effectiveSharesOf[tokenId_] += additionalShares_;
+-            layoutStruct_.totalShares += additionalShares_;
+-            return;
+-        }
+-
+-        uint256 pending_ = _earned(layoutStruct_, tokenId_);
+-        layoutStruct_.effectiveSharesOf[tokenId_] += additionalShares_;
+-        layoutStruct_.totalShares += additionalShares_;
+-
+-        uint256 newEff_ = layoutStruct_.effectiveSharesOf[tokenId_];
+-        uint256 rps_ = layoutStruct_.rewardPerShares;
+-        if (newEff_ > 0 && pending_ > 0) {
+-            uint256 pendingPerShare_ = (pending_ * 1e18) / newEff_;
+-            layoutStruct_.userRewardPerSharePaid[tokenId_] = rps_ > pendingPerShare_ ? rps_ - pendingPerShare_ : 0;
+-        } else {
+-            layoutStruct_.userRewardPerSharePaid[tokenId_] = rps_;
+-        }
+-    }
+-
+-    function _addEffectiveSharesOnly(uint256 tokenId_, uint256 additionalShares_) internal {
+-        _addEffectiveSharesOnly(_layoutStruct(), tokenId_, additionalShares_);
+-    }
+-
+-    error BondNotMature(uint256 unlockTime);
+-    error InsufficientOriginalShares(uint256 needed, uint256 available);
+-
+-    /**
+-     * @notice Debits LP 1:1 from original and effective shares (inverse of `_addToPosition`).
+-     * @dev only protocol NFT. Preserves pending reward debt on remaining effective shares.
+-     */
+-    function _removeFromPosition(Storage storage layoutStruct_, uint256 tokenId_, uint256 shares_) internal {
+-        if (shares_ == 0) return;
+-
+-        uint256 orig_ = layoutStruct_.originalSharesOf[tokenId_];
+-        if (shares_ > orig_) {
+-            revert InsufficientOriginalShares(shares_, orig_);
+-        }
+-
+-        uint256 pending_ = _earned(layoutStruct_, tokenId_);
+-        layoutStruct_.originalSharesOf[tokenId_] -= shares_;
+-        layoutStruct_.effectiveSharesOf[tokenId_] -= shares_;
+-        layoutStruct_.totalShares -= shares_;
+-        layoutStruct_.totalOriginalShares -= shares_;
+-
+-        uint256 newEff_ = layoutStruct_.effectiveSharesOf[tokenId_];
+-        uint256 rps_ = layoutStruct_.rewardPerShares;
+-        if (newEff_ > 0 && pending_ > 0) {
+-            uint256 pendingPerShare_ = (pending_ * 1e18) / newEff_;
+-            layoutStruct_.userRewardPerSharePaid[tokenId_] = rps_ > pendingPerShare_ ? rps_ - pendingPerShare_ : 0;
+-        } else {
+-            layoutStruct_.userRewardPerSharePaid[tokenId_] = rps_;
+-        }
+-    }
+-
+-    function _removeFromPosition(uint256 tokenId_, uint256 shares_) internal {
+-        _removeFromPosition(_layoutStruct(), tokenId_, shares_);
+-    }
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                          Share Conversion                              */
+-    /* ---------------------------------------------------------------------- */
+-
+-    /**
+-     * @notice LP inventory used for share↔asset conversion (alignment N10).
+-     * @dev Numerator is physical `lpToken.balanceOf(this)`. Denominator is `totalOriginalShares`.
+-     *      Do not use `totalShares` (effective) and do not subtract protocol / id 0 effective shares.
+-     *      Empty originalShares or empty physical LP is the 1:1 branch in `_convertToShares` /
+-     *      `_convertToAssets` (no diamond call). Diamond `reserveOfToken` is only for peers that
+-     *      still custody BPT on the DETF while originalShares are already non-zero.
+-     */
+-    function _totalLpReserveForConversion(Storage storage layoutStruct_)
+-        internal
+-        view
+-        returns (uint256 totalLpReserve_, uint256 totalShares_)
+-    {
+-        totalShares_ = layoutStruct_.totalOriginalShares;
+-        totalLpReserve_ = layoutStruct_.lpToken.balanceOf(address(this));
+-        if (totalLpReserve_ > 0) {
+-            return (totalLpReserve_, totalShares_);
+-        }
+-        if (totalShares_ == 0) {
+-            return (0, 0);
+-        }
+-        // Diamond-custody peers: BPT still on the DETF (not this NFT).
+-        totalLpReserve_ = IBasicVault(address(layoutStruct_.detf)).reserveOfToken(address(layoutStruct_.lpToken));
+-    }
+-
+-    /**
+-     * @notice Converts LP token amount to shares using proportional math.
+-     */
+-    function _convertToShares(Storage storage layoutStruct_, uint256 lpAmount_)
+-        internal
+-        view
+-        returns (uint256 shares_)
+-    {
+-        (uint256 totalLpReserve, uint256 totalShares_) = _totalLpReserveForConversion(layoutStruct_);
+-
+-        if (totalShares_ == 0 || totalLpReserve == 0) {
+-            shares_ = lpAmount_;
+-        } else {
+-            shares_ =
+-                BetterMath._convertToSharesDown(lpAmount_, totalLpReserve, totalShares_, layoutStruct_.decimalOffset);
+-        }
+-    }
+-
+-    function _convertToShares(uint256 lpAmount_) internal view returns (uint256) {
+-        return _convertToShares(_layoutStruct(), lpAmount_);
+-    }
+-
+-    /// @notice Convert inbound LP using a **pre-credit** physical LP snapshot (N10 / donate N4).
+-    /// @dev After LP has already landed, `convertToShares(ΔL)` would use L' and under-mint id 0.
+-    function _convertToSharesAtLpReserve(Storage storage layoutStruct_, uint256 lpAmount_, uint256 lpReserveBefore_)
+-        internal
+-        view
+-        returns (uint256 shares_)
+-    {
+-        uint256 totalShares_ = layoutStruct_.totalOriginalShares;
+-        if (totalShares_ == 0 || lpReserveBefore_ == 0) {
+-            return lpAmount_;
+-        }
+-        shares_ =
+-            BetterMath._convertToSharesDown(lpAmount_, lpReserveBefore_, totalShares_, layoutStruct_.decimalOffset);
+-    }
+-
+-    /**
+-     * @notice Converts shares back to LP token amount.
+-     */
+-    function _convertToAssets(Storage storage layoutStruct_, uint256 shares_)
+-        internal
+-        view
+-        returns (uint256 lpAmount_)
+-    {
+-        (uint256 totalLpReserve, uint256 totalShares_) = _totalLpReserveForConversion(layoutStruct_);
+-
+-        if (totalShares_ == 0 || totalLpReserve == 0) {
+-            lpAmount_ = shares_;
+-        } else {
+-            lpAmount_ = BetterMath._convertToAssets(
+-                shares_, totalLpReserve, totalShares_, layoutStruct_.decimalOffset, Math.Rounding.Floor
+-            );
+-        }
+-    }
+-
+-    function _convertToAssets(uint256 shares_) internal view returns (uint256) {
+-        return _convertToAssets(_layoutStruct(), shares_);
+-    }
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                          Reward Calculations                           */
+-    /* ---------------------------------------------------------------------- */
+-
+-    /**
+-     * @notice Updates the global reward per share based on new reward deposits.
+-     */
+-    function _updateGlobalRewards(Storage storage layoutStruct_) internal {
+-        uint256 totalShares_ = layoutStruct_.totalShares;
+-        if (totalShares_ == 0) {
+-            return;
+-        }
+-
+-        uint256 currentBalance = layoutStruct_.rewardToken.balanceOf(address(this));
+-        uint256 lastBalance = layoutStruct_.lastRewardTokenBalance;
+-
+-        if (currentBalance > lastBalance) {
+-            uint256 newRewards = currentBalance - lastBalance;
+-            layoutStruct_.rewardPerShares += (newRewards * 1e18) / totalShares_;
+-            layoutStruct_.lastRewardTokenBalance = currentBalance;
+-        }
+-    }
+-
+-    function _updateGlobalRewards() internal {
+-        _updateGlobalRewards(_layoutStruct());
+-    }
+-
+-    /**
+-     * @notice Calculates pending rewards for a token ID.
+-     */
+-    function _earned(Storage storage layoutStruct_, uint256 tokenId_) internal view returns (uint256 pending_) {
+-        uint256 effectiveShares_ = layoutStruct_.effectiveSharesOf[tokenId_];
+-        if (effectiveShares_ == 0) {
+-            return 0;
+-        }
+-
+-        uint256 rewardPerShare = layoutStruct_.rewardPerShares;
+-
+-        // Include pending rewards not yet distributed
+-        uint256 totalShares_ = layoutStruct_.totalShares;
+-        if (totalShares_ > 0) {
+-            uint256 currentBalance = layoutStruct_.rewardToken.balanceOf(address(this));
+-            uint256 lastBalance = layoutStruct_.lastRewardTokenBalance;
+-            if (currentBalance > lastBalance) {
+-                uint256 newRewards = currentBalance - lastBalance;
+-                rewardPerShare += (newRewards * 1e18) / totalShares_;
+-            }
+-        }
+-
+-        uint256 paidPerShare = layoutStruct_.userRewardPerSharePaid[tokenId_];
+-        if (rewardPerShare <= paidPerShare) {
+-            return 0;
+-        }
+-
+-        pending_ = (effectiveShares_ * (rewardPerShare - paidPerShare)) / 1e18;
+-    }
+-
+-    function _earned(uint256 tokenId_) internal view returns (uint256) {
+-        return _earned(_layoutStruct(), tokenId_);
+-    }
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                          NFT Metadata                                  */
+-    /* ---------------------------------------------------------------------- */
+-
+-    function _generateTokenURI(Storage storage layoutStruct_, uint256 tokenId_) internal view returns (string memory) {
+-        string memory svg = _buildSVG(layoutStruct_, tokenId_);
+-        string memory json = _buildJSON(tokenId_, svg);
+-
+-        return string(abi.encodePacked(METADATA_JSON_PREFIX, Base64.encode(bytes(json))));
+-    }
+-
+-    function _generateTokenURI(uint256 tokenId_) internal view returns (string memory) {
+-        return _generateTokenURI(_layoutStruct(), tokenId_);
+-    }
+-
+-    function _buildSVG(Storage storage layoutStruct_, uint256 tokenId_) private view returns (string memory) {
+-        string memory svg = string.concat(SVG_IMAGE_PREFIX, SVG_IMAGE_TOKEN_ID_PREFIX, tokenId_.toString());
+-
+-        string memory unlockStr;
+-        // Handle protocol NFT special case
+-        if (tokenId_ == layoutStruct_.detfNFTId) {
+-            unlockStr = "Protocol (No Lock)";
+-        } else {
+-            uint256 unlockTime_ = layoutStruct_.unlockTimeOf[tokenId_];
+-            unlockStr = block.timestamp >= unlockTime_ ? "Unlocked" : _formatDuration(unlockTime_ - block.timestamp);
+-        }
+-        svg = string.concat(svg, SVG_UNLOCK_PREFIX, unlockStr);
+-
+-        uint256 effectiveShares_ = layoutStruct_.effectiveSharesOf[tokenId_];
+-        svg = string.concat(svg, SVG_SHARES_PREFIX, effectiveShares_.toString());
+-
+-        uint256 pendingRewards = _earned(layoutStruct_, tokenId_);
+-        svg = string.concat(svg, SVG_REWARDS_PREFIX, pendingRewards.toString());
+-
+-        svg = string.concat(svg, SVG_TEXT_CLOSE, SVG_IMAGE_CLOSE);
+-        // string memory svg = string(abi.encodePacked(
+-        //     SVG_IMAGE_PREFIX,
+-        //     SVG_IMAGE_TOKEN_ID_PREFIX,
+-        //     tokenId_.toString(),
+-        //     SVG_UNLOCK_PREFIX,
+-        //     unlockStr,
+-        //     SVG_SHARES_PREFIX,
+-        //     effectiveShares_.toString(),
+-        //     SVG_REWARDS_PREFIX,
+-        //     pendingRewards.toString(),
+-        //     SVG_TEXT_CLOSE,
+-        //     SVG_IMAGE_CLOSE
+-        // ));
+-
+-        return svg;
+-    }
+-
+-    function _buildJSON(uint256 tokenId_, string memory svg_) private pure returns (string memory) {
+-        return string(
+-            abi.encodePacked(
+-                JSON_NAME_PREFIX,
+-                tokenId_.toString(),
+-                JSON_NAME_SUFFIX,
+-                JSON_DESCRIPTION,
+-                JSON_IMAGE_PREFIX,
+-                Base64.encode(bytes(svg_)),
+-                '"}'
+-            )
+-        );
+-    }
+-
+-    function _formatDuration(uint256 secs_) private pure returns (string memory) {
+-        if (secs_ == 0) return "0";
+-        uint256 d = secs_ / 86400;
+-        uint256 h = (secs_ % 86400) / 3600;
+-        uint256 m = (secs_ % 3600) / 60;
+-
+-        if (d > 0) {
+-            return string(abi.encodePacked(d.toString(), "d ", h.toString(), "h"));
+-        }
+-        if (h > 0) {
+-            return string(abi.encodePacked(h.toString(), "h ", m.toString(), "m"));
+-        }
+-        return string(abi.encodePacked(m.toString(), "m"));
+-    }
+-}
+--- a/contracts/vaults/detf/common/bondNft/DETFNFTVaultService.sol
++++ /dev/null
+@@ -1,97 +0,0 @@
+-// SPDX-License-Identifier: BSL-1.1
+-pragma solidity ^0.8.0;
+-
+-import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+-
+-/* -------------------------------------------------------------------------- */
+-/*                                  Indexedex                                 */
+-/* -------------------------------------------------------------------------- */
+-
+-import {DETFBondNFTMathLib} from "contracts/vaults/detf/common/core/DETFBondNFTMathLib.sol";
+-import {DETFSafeTransferLib} from "contracts/vaults/detf/common/core/DETFSafeTransferLib.sol";
+-import {DETFNFTVaultRepo} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultRepo.sol";
+-
+-/**
+- * @title DETFNFTVaultService
+- * @author cyotee doge <not_cyotee@proton.me>
+- * @notice Stateless service library for Protocol NFT Vault operations.
+- * @dev Uses structs to avoid stack-too-deep errors.
+- */
+-library DETFNFTVaultService {
+-    /* ---------------------------------------------------------------------- */
+-    /*                              Structs                                   */
+-    /* ---------------------------------------------------------------------- */
+-
+-    /// @notice Parameters for harvesting rewards (math inputs only; L-STRUCT-2)
+-    struct HarvestParams {
+-        uint256 effectiveShares;
+-        uint256 rewardPerShares;
+-        uint256 paidPerShare;
+-    }
+-
+-    /// @notice Result of harvest calculation
+-    struct HarvestResult {
+-        uint256 rewards;
+-        bool hasRewards;
+-    }
+-
+-    /// @notice Parameters for redemption caller validation (L-STRUCT-2: no unused tokenId)
+-    struct RedeemParams {
+-        address recipient;
+-        address caller;
+-        address detf;
+-    }
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                          Harvest Logic                                 */
+-    /* ---------------------------------------------------------------------- */
+-
+-    /**
+-     * @dev Calculates rewards without state modification.
+-     *      Separates calculation from transfer to reduce stack depth.
+-     */
+-    function _calcHarvestRewards(HarvestParams memory params) internal pure returns (HarvestResult memory result) {
+-        (result.rewards, result.hasRewards) = DETFBondNFTMathLib._calcHarvestRewards(
+-            params.effectiveShares, params.rewardPerShares, params.paidPerShare
+-        );
+-    }
+-
+-    /**
+-     * @dev Performs the reward transfer. Call after _calcHarvestRewards.
+-     */
+-    function _executeHarvestTransfer(
+-        DETFNFTVaultRepo.Storage storage layout_,
+-        uint256 tokenId_,
+-        address recipient_,
+-        uint256 rewards_
+-    ) internal {
+-        // Update paid amount
+-        layout_.userRewardPerSharePaid[tokenId_] = layout_.rewardPerShares;
+-        layout_.lastRewardTokenBalance -= rewards_;
+-
+-        // Safe transfer - using low-level call to avoid stack issues
+-        _safeTransfer(layout_.rewardToken, recipient_, rewards_);
+-    }
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                          Transfer Helpers                              */
+-    /* ---------------------------------------------------------------------- */
+-
+-    /**
+-     * @dev Safe ERC20 transfer without SafeERC20 library to avoid stack depth.
+-     */
+-    function _safeTransfer(IERC20 token, address to, uint256 amount) internal {
+-        DETFSafeTransferLib._safeTransfer(token, to, amount);
+-    }
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                       Redemption Validation                            */
+-    /* ---------------------------------------------------------------------- */
+-
+-    /**
+-     * @dev Validates redemption caller. Returns true if valid.
+-     */
+-    function _validateRedeemCaller(RedeemParams memory params, address owner) internal pure returns (bool) {
+-        return DETFBondNFTMathLib._validateRedeemCaller(params.caller, params.recipient, params.detf, owner);
+-    }
+-}
+--- a/contracts/vaults/detf/common/core/DETFBondLifecycleLib.sol
++++ /dev/null
+@@ -1,109 +0,0 @@
+-// SPDX-License-Identifier: BSL-1.1
+-pragma solidity ^0.8.0;
+-
+-import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+-import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
+-import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
+-import {IDetfSelfNftInventoryPolicy} from "contracts/vaults/detf/common/inventory/IDetfSelfNftInventoryPolicy.sol";
+-import {DETFSeigniorageShareLib} from "contracts/vaults/detf/common/core/DETFSeigniorageShareLib.sol";
+-
+-/// @notice Shared bond / detf-NFT lifecycle helpers for true DETFs.
+-/// @dev Protocol BPT compound is **DETF-orchestrated** (see `DETFProtocolCompoundLib`).
+-///      Callers that compound detf-owned NFT rewards own the full pipeline after harvest:
+-///      single-sided DETF join → credit BPT via `_addReservePoolBptToDetfNft`.
+-///      Preferred pull pattern: harvest only on the successful compound path so join
+-///      failure leaves pending rewards intact (lazy hooks must not fail the outer user path).
+-library DETFBondLifecycleLib {
+-    using BetterSafeERC20 for IERC20;
+-
+-    error NoSeigniorageToCapture();
+-    error BondNotMature(uint256 unlockTime);
+-
+-    /// @notice D2: top up ids 1 and 2 after any event that changes others' effective shares.
+-    function _topUpFeeCreatorShares(IDetfSelfNftInventoryPolicy vault_, uint256 f_, uint256 c_) internal {
+-        DETFSeigniorageShareLib._topUpFeeCreatorShares(vault_, f_, c_);
+-    }
+-
+-    function _createBondPosition(
+-        IDetfSelfNftInventoryPolicy vault_,
+-        uint256 shares_,
+-        uint256 lockDuration_,
+-        address recipient_
+-    ) internal returns (uint256 tokenId_) {
+-        if (recipient_ == address(0)) {
+-            recipient_ = msg.sender;
+-        }
+-
+-        tokenId_ = vault_.createPosition(shares_, lockDuration_, recipient_);
+-    }
+-
+-    /// @notice Open bond with LP principal + rateAsset mid (or other) reward base before lock bonus.
+-    function _createBondPositionWithEffectiveBase(
+-        IDetfSelfNftInventoryPolicy vault_,
+-        uint256 originalShares_,
+-        uint256 effectiveBase_,
+-        uint256 lockDuration_,
+-        address recipient_
+-    ) internal returns (uint256 tokenId_) {
+-        if (recipient_ == address(0)) {
+-            recipient_ = msg.sender;
+-        }
+-        tokenId_ = vault_.createPositionWithEffectiveBase(
+-            originalShares_, effectiveBase_, lockDuration_, recipient_
+-        );
+-    }
+-
+-    function _sellPositionToRebasingClaim(
+-        IDetfSelfNftInventoryPolicy vault_,
+-        IRebasingClaimToken rebasingClaimToken_,
+-        uint256 tokenId_,
+-        address seller_,
+-        address recipient_
+-    ) internal returns (uint256 principalShares_, uint256 rebasingClaimMinted_) {
+-        uint256 protocolBefore_ = vault_.originalSharesOf(vault_.detfNFTId());
+-        principalShares_ = _sellPositionToDetfNft(vault_, tokenId_, seller_, recipient_);
+-
+-        rebasingClaimMinted_ =
+-            rebasingClaimToken_.mintFromNFTSale(principalShares_, protocolBefore_, recipient_);
+-    }
+-
+-    function _sellPositionToDetfNft(
+-        IDetfSelfNftInventoryPolicy vault_,
+-        uint256 tokenId_,
+-        address seller_,
+-        address recipient_
+-    ) internal returns (uint256 principalShares_) {
+-        uint256 unlockTime_ = vault_.unlockTimeOf(tokenId_);
+-        if (block.timestamp < unlockTime_) {
+-            revert BondNotMature(unlockTime_);
+-        }
+-        (principalShares_,) = vault_.sellPositionToDetfNft(tokenId_, seller_, recipient_);
+-    }
+-
+-    /// @notice Harvest free DETF rewards from the detf-owned NFT to this contract.
+-    /// @dev Free-DETF harvest only — **not** protocol BPT compound. Compound remains
+-    ///      DETF-orchestrated: after a successful harvest on the compound path, the caller
+-    ///      must single-sided join DETF into the reserve and credit BPT with
+-    ///      `_addReservePoolBptToDetfNft`. Prefer not calling this until join will succeed
+-    ///      (or reverse on join failure) so reward debt never wipes without BPT credit.
+-    ///      Reverts `NoSeigniorageToCapture` when harvest returns zero.
+-    function _collectDetfNftRewards(IDetfSelfNftInventoryPolicy vault_) internal returns (uint256 rewardAmount_) {
+-        rewardAmount_ = vault_.reallocateDetfNftRewards(address(this));
+-        if (rewardAmount_ == 0) {
+-            revert NoSeigniorageToCapture();
+-        }
+-    }
+-
+-    /// @notice Credit reserve BPT principal onto the detf-owned NFT after a successful join.
+-    /// @dev Stage 00 / Phase 1 compound step 6: family join produces `bptAmount_`, then
+-    ///      this helper approves + `addToDETFNFT`. Do not call if join failed.
+-    function _addReservePoolBptToDetfNft(
+-        IERC20 reservePoolToken_,
+-        IDetfSelfNftInventoryPolicy vault_,
+-        uint256 detfNftId_,
+-        uint256 bptAmount_
+-    ) internal {
+-        reservePoolToken_.forceApprove(address(vault_), bptAmount_);
+-        vault_.addToDETFNFT(detfNftId_, bptAmount_);
+-    }
+-}--- a/contracts/vaults/detf/common/core/DETFProtocolCompoundLib.sol
++++ /dev/null
+@@ -1,74 +0,0 @@
+-// SPDX-License-Identifier: BSL-1.1
+-pragma solidity ^0.8.0;
+-
+-/// @title DETFProtocolCompoundLib
+-/// @notice Shared pure helpers for Phase 1 protocol seigniorage compound (Stage 00).
+-/// @dev Product law: `DETF_Protocol_Compound_And_Supply_Expansion_PRD.md` Phase 1.
+-///
+-/// # Ownership
+-///
+-/// **Compound is DETF-orchestrated**, not bond-vault-orchestrated. Families implement
+-/// `_tryCompoundProtocolRewards` / public `compoundProtocolRewards` using this dust gate
+-/// plus existing harvest + single-sided DETF join + `addToDETFNFT` plumbing.
+-/// Bond NFT continues to expose free-DETF harvest (`reallocateDetfNftRewards`); it does
+-/// **not** call the DETF on every user `claimRewards` (avoids vault→DETF reentrancy).
+-///
+-/// # Normative call order (Stage 00 law for Stages 01–04)
+-///
+-/// ```text
+-/// 1. Update global bond rewards on the bond NFT vault
+-/// 2. Measure detf-owned NFT pending reward DETF (earned)
+-/// 3. If !isCompoundable(pending): return (no-op)
+-/// 4. Harvest detf-NFT rewards to the DETF diamond only as part of the successful compound path
+-/// 5. Single-sided DETF join into reservePool → BPT out
+-/// 6. Credit BPT to detf-owned NFT principal (addToDETFNFT / family equivalent)
+-/// ```
+-///
+-/// # Preferred atomicity
+-///
+-/// Preferred v1 **pull** pattern on public `compoundProtocolRewards` and lazy hooks:
+-/// measure pending → if compoundable, harvest + join + BPT credit in one atomic path.
+-/// Harvest only when join succeeds (or reverse harvest on join failure). Never wipe
+-/// reward debt without a successful join that credits BPT.
+-///
+-/// # Lazy hook vs standalone public compound
+-///
+-/// - `_tryCompoundProtocolRewards()` (internal): **best-effort** — swallows join failure
+-///   (or returns false / zeros); never corrupts debt; never fails the outer user path
+-///   solely because join reverts.
+-/// - `compoundProtocolRewards()` (external): may surface success via return values /
+-///   events (`ProtocolRewardsCompounded` / optional `ProtocolCompoundSkipped`); still must
+-///   not strand inconsistent debt. Prefer the same try semantics as the lazy hook.
+-///
+-/// # Scope locks
+-///
+-/// - Only **detf-owned NFT** rewards auto-compound (single-sided DETF self-leg join).
+-/// - User and fee-recipient NFT rewards stay claimable free DETF while locked — no auto-compound.
+-/// - No Balancer / diamond calls in this library (family-specific join lives in family Common).
+-/// - No natural supply expansion logic (Stages 05–09).
+-library DETFProtocolCompoundLib {
+-    /// @notice Default dust below which protocol compound is a no-op.
+-    /// @dev `1` wei DETF: pending at dust is not compoundable; dust+1 is.
+-    ///      Families may use a larger local dust if join dust forces it; this constant is
+-    ///      the Stage 00 / shared default documented by unit tests.
+-    uint256 internal constant DEFAULT_COMPOUND_DUST = 1;
+-
+-    /// @notice True when `pending_` is strictly above the default compound dust.
+-    /// @dev `isCompoundable(0) == false`, `isCompoundable(DEFAULT_COMPOUND_DUST) == false`,
+-    ///      `isCompoundable(DEFAULT_COMPOUND_DUST + 1) == true`.
+-    /// @param pending_ Detf-owned NFT pending reward DETF amount (wei).
+-    /// @return True if a compound attempt should proceed past the dust gate.
+-    function isCompoundable(uint256 pending_) internal pure returns (bool) {
+-        return pending_ > DEFAULT_COMPOUND_DUST;
+-    }
+-
+-    /// @notice True when `pending_` is strictly above `dust_`.
+-    /// @dev Family override path when join dust requires a threshold other than
+-    ///      `DEFAULT_COMPOUND_DUST`. Same strict-greater semantics as `isCompoundable`.
+-    /// @param pending_ Detf-owned NFT pending reward DETF amount (wei).
+-    /// @param dust_ Family- or call-site dust threshold (wei).
+-    /// @return True if a compound attempt should proceed past the dust gate.
+-    function isCompoundable(uint256 pending_, uint256 dust_) internal pure returns (bool) {
+-        return pending_ > dust_;
+-    }
+-}
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol
+@@ -1,39 +1,32 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
+ 
+-import {
+-    IUniswapV4DetfSelfCall
+-} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4DetfSelfCall.sol";
++import {IUniswapV4DetfSelfCall} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4DetfSelfCall.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+-import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
+-import {IUniswapV4SeBufferHookClaimExitQuote} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
++
+ import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
+ import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
+ import {Math} from "@crane/contracts/utils/Math.sol";
+-import {BetterMath} from "@crane/contracts/utils/math/BetterMath.sol";
++
+ import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
+ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+ import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
+-import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
++
+ import {AddressSet, AddressSetRepo} from "@crane/contracts/utils/collections/sets/AddressSetRepo.sol";
+ 
+ import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
+-import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
+-import {IRebasingClaimTokenSupply} from "contracts/interfaces/IRebasingClaimToken.sol";
++
+ import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
+ import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
+ import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
+-import {DETFThresholdPolicy, ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
++import {DETFThresholdPolicy} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
+ import {DETFMintSplitLib} from "contracts/vaults/detf/common/core/DETFMintSplitLib.sol";
+ import {MintSplit} from "contracts/vaults/detf/common/core/DETFMintSplit.sol";
+ import {DETFBondNFTMathLib} from "contracts/vaults/detf/common/core/DETFBondNFTMathLib.sol";
+-import {DETFProtocolCompoundLib} from "contracts/vaults/detf/common/core/DETFProtocolCompoundLib.sol";
+-import {DETFBondLifecycleLib} from "contracts/vaults/detf/common/core/DETFBondLifecycleLib.sol";
++
+ import {DETFEpochNaturalExpansionLib} from "contracts/vaults/detf/common/core/DETFEpochNaturalExpansionLib.sol";
+-import {DETF_CREATOR_BOND_NFT_ID, DETF_FEE_TO_BOND_NFT_ID} from "contracts/vaults/detf/common/core/DETFBondNftIds.sol";
+-import {IDetfSelfNftInventoryPolicy} from "contracts/vaults/detf/common/inventory/IDetfSelfNftInventoryPolicy.sol";
+-import {IDetfErrors} from "contracts/interfaces/IDetfErrors.sol";
++
+ import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+ import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+ import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
+@@ -41,16 +34,14 @@
+ import {UniswapV4DetfRepo as Repo} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfRepo.sol";
+ import {DETFDecimalScaleLib} from "contracts/vaults/detf/common/core/DETFDecimalScaleLib.sol";
+ import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
+-import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
+ 
+ /// @title UniswapV4DetfCommon
+-/// @notice Shared gates, quotes, pull, sweep, expansion, compound. Opaque hook ABI only.
++/// @notice Shared gates, quotes, pull, sweep and funded expansion. Opaque hook ABI only.
+ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
+     using BetterSafeERC20 for IERC20;
+     using AddressSetRepo for AddressSet;
+ 
+     uint256 internal constant ONE_WAD = 1e18;
+-
+ 
+     function _requireReserveLive() internal view {
+         if (!Repo._layoutStruct().isReserveLive) revert Repo.ReserveNotLive();
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol
+@@ -2,14 +2,7 @@
+ pragma solidity ^0.8.0;
+ import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
+ 
+-import {BetterMath} from "@crane/contracts/utils/math/BetterMath.sol";
+-import {IRebasingClaimTokenMintQuote} from "contracts/interfaces/IRebasingClaimToken.sol";
+-import {IUniswapV4SeBufferHookClaimQuote} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+-
+-
+-import {
+-    IUniswapV4DetfSelfCall
+-} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4DetfSelfCall.sol";
++import {IUniswapV4DetfSelfCall} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4DetfSelfCall.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
+@@ -24,19 +17,16 @@
+ import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
+ import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
+ import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+-import {DETFBondNFTMathLib} from "contracts/vaults/detf/common/core/DETFBondNFTMathLib.sol";
++
+ import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
+ import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
+ import {IDetfNftReserveDonation} from "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol";
+ import {MintSplit} from "contracts/vaults/detf/common/core/DETFMintSplit.sol";
+ import {DETFDecimalScaleLib} from "contracts/vaults/detf/common/core/DETFDecimalScaleLib.sol";
+-import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
+-import {DETFBondLifecycleLib} from "contracts/vaults/detf/common/core/DETFBondLifecycleLib.sol";
++
+ import {DETFChildTokenMetadata} from "contracts/vaults/detf/common/DETFChildTokenMetadata.sol";
+-import {IDetfSelfNftInventoryPolicy} from "contracts/vaults/detf/common/inventory/IDetfSelfNftInventoryPolicy.sol";
+-import {
+-    IUniswapV4DetfBondNFTVaultDFPkg
+-} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg.sol";
++
++import {IUniswapV4DetfBondNFTVaultDFPkg} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg.sol";
+ import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
+ import {DETF_FEE_TO_BOND_NFT_ID} from "contracts/vaults/detf/common/core/DETFBondNftIds.sol";
+ import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfQueryTarget.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfQueryTarget.sol
+@@ -6,7 +6,6 @@
+ import {Math} from "@crane/contracts/utils/Math.sol";
+ 
+ import {IUniswapV4HookLiquidityPolicy} from "contracts/hooks/uniswap/v4/libs/UniswapV4HookOwnerOnlyLiquidityLib.sol";
+-
+ 
+ import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
+ import {UniswapV4DetfRepo as Repo} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfRepo.sol";
+@@ -17,7 +16,7 @@
+ import {DETFChildSYRepo} from "contracts/vaults/detf/common/sy/DETFChildSYRepo.sol";
+ import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
+ import {IUniswapV4Detf} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
+-import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
++
+ import {UniswapV4DetfTarget} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol";
+ 
+ /// @notice Query entrypoints for the universal DETF diamond.
+@@ -246,7 +245,6 @@
+         return _entryPreviewJoinDonatedCapital(token, amount);
+     }
+ 
+-
+     function previewFirstBondPayments(IERC20 tokenIn_, uint256 amount_)
+         external view returns (address[] memory tokens_, uint256[] memory amounts_)
+     {
+--- a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol
+@@ -25,7 +25,6 @@
+ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+ import {IVaultRegistryDisableManager} from "contracts/interfaces/IVaultRegistryDisableManager.sol";
+ import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
+-import {DETFNFTVaultCommon} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultCommon.sol";
+ import {IDetfNftReserveDonation} from "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol";
+ import {
+     DETF_CREATOR_BOND_NFT_ID,
+--- a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_Stage11Helpers.sol
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_Stage11Helpers.sol
+@@ -31,7 +31,6 @@
+ import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
+ import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
+ import {IDetfNftReserveDonation} from "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol";
+-import {DETFNFTVaultCommon} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultCommon.sol";
+ import {
+     DETF_CREATOR_BOND_NFT_ID,
+     DETF_FEE_TO_BOND_NFT_ID,
+--- a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol
+@@ -25,7 +25,6 @@
+ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+ import {IVaultRegistryDisableManager} from "contracts/interfaces/IVaultRegistryDisableManager.sol";
+ import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
+-import {DETFNFTVaultCommon} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultCommon.sol";
+ import {IDetfNftReserveDonation} from "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol";
+ import {
+     DETF_CREATOR_BOND_NFT_ID,
+--- a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Stage11Helpers_Decimals.sol
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Stage11Helpers_Decimals.sol
+@@ -31,7 +31,6 @@
+ import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
+ import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
+ import {IDetfNftReserveDonation} from "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol";
+-import {DETFNFTVaultCommon} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultCommon.sol";
+ import {
+     DETF_CREATOR_BOND_NFT_ID,
+     DETF_FEE_TO_BOND_NFT_ID,
+--- a/test/foundry/spec/saf/T10_DeadMembers.t.sol
++++ b/test/foundry/spec/saf/T10_DeadMembers.t.sol
+@@ -1,28 +1,6 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
+ 
+-import {Test} from "forge-std/Test.sol";
+-import {DETFNFTVaultService} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultService.sol";
+-
+-/// @notice T10 / L-STRUCT-2: harvest/redeem params compile without dead tokenId/recipient fields.
+-contract T10_DeadMembers_Test is Test {
+-    function test_harvestParams_mathOnlyFields() public pure {
+-        DETFNFTVaultService.HarvestParams memory p = DETFNFTVaultService.HarvestParams({
+-            effectiveShares: 1e18,
+-            rewardPerShares: 2e18,
+-            paidPerShare: 1e18
+-        });
+-        DETFNFTVaultService.HarvestResult memory r = DETFNFTVaultService._calcHarvestRewards(p);
+-        assertTrue(r.hasRewards || r.rewards == 0);
+-    }
+-
+-    function test_redeemParams_noTokenId() public pure {
+-        DETFNFTVaultService.RedeemParams memory p = DETFNFTVaultService.RedeemParams({
+-            recipient: address(1),
+-            caller: address(2),
+-            detf: address(3)
+-        });
+-        // Validate shape only — pure helper uses caller/detf/owner.
+-        assertTrue(p.caller != address(0));
+-    }
+-}
++// Obsolete LP-backed harvest/compound checks retired under funded staking.
++// See implementation-artifacts/detf-funded-staking/obsolete-common-ledger-test-consolidation.json.
++// Current funded NFT, staking-math and fixed-epoch suites retain behavior coverage.
+--- a/test/foundry/spec/vaults/detf/common/core/DETFProtocolCompoundLib.t.sol
++++ b/test/foundry/spec/vaults/detf/common/core/DETFProtocolCompoundLib.t.sol
+@@ -1,58 +1,6 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
+ 
+-import {Test} from "forge-std/Test.sol";
+-import {DETFProtocolCompoundLib} from "contracts/vaults/detf/common/core/DETFProtocolCompoundLib.sol";
+-
+-/// @notice Pure unit tests for DETFProtocolCompoundLib (Stage 00 protocol compound foundation).
+-/// @dev No diamond / CraneTest - exercises the production library entry points only.
+-contract DETFProtocolCompoundLibTest is Test {
+-    //--------------------------------------------------------------------------
+-    // Dust gate (T0.1 / T0.2)
+-    //--------------------------------------------------------------------------
+-
+-    function test_isCompoundable_zeroIsFalse() public pure {
+-        // T0.1: pending of 0 is never compoundable.
+-        assertFalse(DETFProtocolCompoundLib.isCompoundable(0));
+-    }
+-
+-    function test_isCompoundable_dustBoundary() public pure {
+-        // T0.2: at dust = not compoundable; dust+1 = compoundable.
+-        uint256 dust_ = DETFProtocolCompoundLib.DEFAULT_COMPOUND_DUST;
+-        assertEq(dust_, 1, "Stage 00 default dust is 1 wei DETF");
+-        assertFalse(DETFProtocolCompoundLib.isCompoundable(dust_));
+-        assertTrue(DETFProtocolCompoundLib.isCompoundable(dust_ + 1));
+-    }
+-
+-    function test_isCompoundable_aboveDust() public pure {
+-        assertTrue(DETFProtocolCompoundLib.isCompoundable(2));
+-        assertTrue(DETFProtocolCompoundLib.isCompoundable(1e18));
+-        assertTrue(DETFProtocolCompoundLib.isCompoundable(type(uint256).max));
+-    }
+-
+-    function test_isCompoundable_customDust() public pure {
+-        // Family override: same strict-greater semantics with caller-supplied dust.
+-        uint256 customDust_ = 1000;
+-        assertFalse(DETFProtocolCompoundLib.isCompoundable(0, customDust_));
+-        assertFalse(DETFProtocolCompoundLib.isCompoundable(customDust_, customDust_));
+-        assertTrue(DETFProtocolCompoundLib.isCompoundable(customDust_ + 1, customDust_));
+-        assertTrue(DETFProtocolCompoundLib.isCompoundable(customDust_ + 500, customDust_));
+-    }
+-
+-    function test_defaultDust_matchesUnaryGate() public pure {
+-        // Unary overload must equal binary overload with DEFAULT_COMPOUND_DUST.
+-        uint256 dust_ = DETFProtocolCompoundLib.DEFAULT_COMPOUND_DUST;
+-        assertEq(
+-            DETFProtocolCompoundLib.isCompoundable(0),
+-            DETFProtocolCompoundLib.isCompoundable(0, dust_)
+-        );
+-        assertEq(
+-            DETFProtocolCompoundLib.isCompoundable(dust_),
+-            DETFProtocolCompoundLib.isCompoundable(dust_, dust_)
+-        );
+-        assertEq(
+-            DETFProtocolCompoundLib.isCompoundable(dust_ + 1),
+-            DETFProtocolCompoundLib.isCompoundable(dust_ + 1, dust_)
+-        );
+-    }
+-}
++// Obsolete LP-backed harvest/compound checks retired under funded staking.
++// See implementation-artifacts/detf-funded-staking/obsolete-common-ledger-test-consolidation.json.
++// Current funded NFT, staking-math and fixed-epoch suites retain behavior coverage.
+--- a/test/foundry/spec/oracles/fee/VaultFeeOracle_BondTermsFallback.t.sol
++++ b/test/foundry/spec/oracles/fee/VaultFeeOracle_BondTermsFallback.t.sol
+@@ -17,7 +17,7 @@
+ /**
+  * @title VaultFeeOracle_BondTermsFallback_Test
+  * @notice US-IDXEX-040.1: Tests documenting the Vault Fee Oracle's 3-level bond terms fallback hierarchy.
+- * @notice US-IDXEX-040.2: Tests proving DETFNFTVaultTarget always delegates to the oracle.
++ * @notice US-IDXEX-040.2: Tests proving current bond terms delegate to the oracle.
+  *
+  * @dev The fee oracle resolves bond terms via a sentinel-based fallback chain:
+  *
+@@ -405,7 +405,7 @@
+         assertEq(after_.maxBonusPercentage, 3e17);
+     }
+ 
+-    /// @notice DETFNFTVaultCommon._bondTerms() has different hardcoded values than the oracle.
++    /// @notice The former NFT base used different hardcoded values than the oracle.
+     /// @dev If the vault ever used the base class fallback instead of the oracle, the values
+     ///      would be: minLock=7d, maxLock=365d, minBonus=0, maxBonus=1e18 (100%).
+     ///      This test documents that bondTermsOfVault returns oracle values (30d, 180d, 5%, 10%),
+@@ -419,7 +419,7 @@
+         assertEq(terms.minBonusPercentage, 5e16, "Should be oracle's 5%, not base class 0");
+         assertEq(terms.maxBonusPercentage, 1e17, "Should be oracle's 10%, not base class 100% (1e18)");
+ 
+-        // Verify these are NOT the DETFNFTVaultCommon base class values:
++        // Verify these differ from the historical NFT base values:
+         assertTrue(terms.minLockDuration != 7 days, "Must differ from base class minLock");
+         assertTrue(terms.maxLockDuration != 365 days, "Must differ from base class maxLock");
+         assertTrue(terms.maxBonusPercentage != 1e18, "Must differ from base class maxBonus (100%)");

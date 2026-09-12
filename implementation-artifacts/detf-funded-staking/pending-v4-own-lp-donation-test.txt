@@ -1,0 +1,23 @@
+    function test_externallyOwnedLpDonationTransfersWholePositionWithoutStakingIssuance() public {
+        uint256 amount_ = _externalLp();
+        IUniswapV4Detf subject_ = _subject();
+        IERC20 lp_ = _lp();
+        IDetfNftReserveDonation receiver_ = IDetfNftReserveDonation(subject_.bondNftVault());
+        IStakedDETF staking_ = IStakedDETF(subject_.rebasingClaimToken());
+        uint256 owned_ = lp_.balanceOf(address(receiver_));
+        uint256 supply_ = IERC20(address(subject_)).totalSupply();
+        uint256 lpSupply_ = lp_.totalSupply();
+        bytes32 state_ = keccak256(abi.encode(staking_.stakingState()));
+        assertEq(receiver_.previewDonate(lp_, amount_), amount_, "whole LP donation quote");
+        address buyer_ = _buyer();
+        vm.startPrank(buyer_);
+        lp_.approve(address(receiver_), amount_);
+        uint256 received_ = receiver_.donate(lp_, amount_, amount_, false, block.timestamp);
+        vm.stopPrank();
+        assertEq(received_, amount_, "whole external LP received");
+        assertEq(lp_.balanceOf(buyer_), 0, "external ownership transferred");
+        assertEq(lp_.balanceOf(address(receiver_)), owned_ + amount_, "actual protocol custody credited once");
+        assertEq(lp_.totalSupply(), lpSupply_, "gift needs no new LP join or unwind");
+        assertEq(IERC20(address(subject_)).totalSupply(), supply_, "existing LP gift has no DETF issuance");
+        assertEq(keccak256(abi.encode(staking_.stakingState())), state_, "LP gift neither creates staking backing nor purchased principal");
+    }

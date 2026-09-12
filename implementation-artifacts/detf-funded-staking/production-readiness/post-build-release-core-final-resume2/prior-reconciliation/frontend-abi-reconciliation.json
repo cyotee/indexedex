@@ -1,0 +1,523 @@
+{
+  "checked_at_utc": "2026-09-11T04:34:14.730Z",
+  "method": "Bundle the actual exported TypeScript ABI constants and compare canonical input/output tuple shapes and mutability with compiled production interfaces/facets/packages. Live proxy installation is independently covered by Solidity surface tests and the release rehearsal.",
+  "frontend_sources": [
+    {
+      "path": "frontend/apps/dtf/app/create/lib/detfAbi.ts",
+      "sha256": "03496348c99ea78b706a50dfc2e4fde0fb6f78a91dbc5b8558799688e2051265"
+    },
+    {
+      "path": "frontend/apps/dtf/app/insights/lib/insightsAbi.ts",
+      "sha256": "845d2280a99df472561570feefc51a29f56d825c24411e2ee15979b5f2b4d9c8"
+    },
+    {
+      "path": "frontend/apps/dtf/app/lib/detf/bondNftVault.ts",
+      "sha256": "e2280158fd3df5d2c5cf9d6abdd53477a518074a8b51357515eda894c7b05ffa"
+    },
+    {
+      "path": "frontend/apps/dtf/app/lib/detf/bondRoute.ts",
+      "sha256": "e72ef891effb13369d77a2deac4b6acffa21f4a61ca27a3a5e35b89fa9be5674"
+    }
+  ],
+  "declarations": [
+    {
+      "label": "DETF deployment",
+      "signature": "deployVault((string,string,address,bool,uint256[],uint256[],uint256,uint256,uint256,address,string,string,string,string,uint8,(address,address)[],uint8,(address,address)[],uint8,(address,address)[],uint8,(address,address)[]))",
+      "frontend_outputs": [
+        "address"
+      ],
+      "compatible": true,
+      "matches": [
+        {
+          "artifact": "out/UniswapV4DetfDFPkg.sol/UniswapV4DetfDFPkg.json",
+          "artifact_sha256": "123e7806ac1bf943206b9c391a6ebfa5f219469468e501e839f8bdadef1e214e",
+          "outputs": [
+            "address"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Weighted hook deployment",
+      "signature": "deployVault((address,address,uint8,address[],uint256[],address[],address[],uint8[],uint8[],bool,address),uint256)",
+      "frontend_outputs": [
+        "address"
+      ],
+      "compatible": true,
+      "matches": [
+        {
+          "artifact": "out/UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol/UniswapV4StandardExchangeWeightedBufferHookDFPkg.json",
+          "artifact_sha256": "258544ad59c3d25e790e5ff1f396095ad9942f7f0f9cfb739c66782ced43edcf",
+          "outputs": [
+            "address"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "CP hook deployment",
+      "signature": "deployVault((address,address,address,address,address,uint8,uint8,bool,address),uint256)",
+      "frontend_outputs": [
+        "address"
+      ],
+      "compatible": true,
+      "matches": [
+        {
+          "artifact": "out/UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg.sol/UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg.json",
+          "artifact_sha256": "f075f164fb51548fc1e4b14740c97c58da4ec2a318e75ddc5088d0d616b29a92",
+          "outputs": [
+            "address"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Curve Quad hook deployment",
+      "signature": "deployVault((address,address,address[4],address[4],address[4],uint8[4],uint8[4],uint256,bool,address),uint256)",
+      "frontend_outputs": [
+        "address"
+      ],
+      "compatible": true,
+      "matches": [
+        {
+          "artifact": "out/UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg.sol/UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg.json",
+          "artifact_sha256": "fbd95f3ac614f5c2df1eca07c1e082e4893f483889829c5d6ff60b917851267b",
+          "outputs": [
+            "address"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Current DETF exchange and discovery",
+      "signature": "mintThreshold()",
+      "frontend_outputs": [
+        "uint256"
+      ],
+      "compatible": true,
+      "matches": [
+        {
+          "artifact": "out/UniswapV4DetfQueryFacet.sol/UniswapV4DetfQueryFacet.json",
+          "artifact_sha256": "39fc23651828ead8af79fbdd88c0404a9a37eb05e15f080e1f90c75be1fcc8fc",
+          "outputs": [
+            "uint256"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Current DETF exchange and discovery",
+      "signature": "burnThreshold()",
+      "frontend_outputs": [
+        "uint256"
+      ],
+      "compatible": true,
+      "matches": [
+        {
+          "artifact": "out/UniswapV4DetfQueryFacet.sol/UniswapV4DetfQueryFacet.json",
+          "artifact_sha256": "39fc23651828ead8af79fbdd88c0404a9a37eb05e15f080e1f90c75be1fcc8fc",
+          "outputs": [
+            "uint256"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Current DETF exchange and discovery",
+      "signature": "isReserveLive()",
+      "frontend_outputs": [
+        "bool"
+      ],
+      "compatible": true,
+      "matches": [
+        {
+          "artifact": "out/UniswapV4DetfQueryFacet.sol/UniswapV4DetfQueryFacet.json",
+          "artifact_sha256": "39fc23651828ead8af79fbdd88c0404a9a37eb05e15f080e1f90c75be1fcc8fc",
+          "outputs": [
+            "bool"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Current DETF exchange and discovery",
+      "signature": "rebasingClaimToken()",
+      "frontend_outputs": [
+        "address"
+      ],
+      "compatible": true,
+      "matches": [
+        {
+          "artifact": "out/UniswapV4DetfQueryFacet.sol/UniswapV4DetfQueryFacet.json",
+          "artifact_sha256": "39fc23651828ead8af79fbdd88c0404a9a37eb05e15f080e1f90c75be1fcc8fc",
+          "outputs": [
+            "address"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Current DETF exchange and discovery",
+      "signature": "reservePool()",
+      "frontend_outputs": [
+        "address"
+      ],
+      "compatible": true,
+      "matches": [
+        {
+          "artifact": "out/UniswapV4DetfQueryFacet.sol/UniswapV4DetfQueryFacet.json",
+          "artifact_sha256": "39fc23651828ead8af79fbdd88c0404a9a37eb05e15f080e1f90c75be1fcc8fc",
+          "outputs": [
+            "address"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Current DETF exchange and discovery",
+      "signature": "acceptedBondTokens()",
+      "frontend_outputs": [
+        "address[]"
+      ],
+      "compatible": true,
+      "matches": [
+        {
+          "artifact": "out/UniswapV4DetfQueryFacet.sol/UniswapV4DetfQueryFacet.json",
+          "artifact_sha256": "39fc23651828ead8af79fbdd88c0404a9a37eb05e15f080e1f90c75be1fcc8fc",
+          "outputs": [
+            "address[]"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Current DETF exchange and discovery",
+      "signature": "isMintingAllowed()",
+      "frontend_outputs": [
+        "bool"
+      ],
+      "compatible": true,
+      "matches": [
+        {
+          "artifact": "out/UniswapV4DetfQueryFacet.sol/UniswapV4DetfQueryFacet.json",
+          "artifact_sha256": "39fc23651828ead8af79fbdd88c0404a9a37eb05e15f080e1f90c75be1fcc8fc",
+          "outputs": [
+            "bool"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Current DETF exchange and discovery",
+      "signature": "isBurningAllowed()",
+      "frontend_outputs": [
+        "bool"
+      ],
+      "compatible": true,
+      "matches": [
+        {
+          "artifact": "out/UniswapV4DetfQueryFacet.sol/UniswapV4DetfQueryFacet.json",
+          "artifact_sha256": "39fc23651828ead8af79fbdd88c0404a9a37eb05e15f080e1f90c75be1fcc8fc",
+          "outputs": [
+            "bool"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Current DETF exchange and discovery",
+      "signature": "bondNftVault()",
+      "frontend_outputs": [
+        "address"
+      ],
+      "compatible": true,
+      "matches": [
+        {
+          "artifact": "out/UniswapV4DetfQueryFacet.sol/UniswapV4DetfQueryFacet.json",
+          "artifact_sha256": "39fc23651828ead8af79fbdd88c0404a9a37eb05e15f080e1f90c75be1fcc8fc",
+          "outputs": [
+            "address"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Current DETF exchange and discovery",
+      "signature": "previewExchangeIn(address,uint256,address)",
+      "frontend_outputs": [
+        "uint256"
+      ],
+      "compatible": true,
+      "matches": [
+        {
+          "artifact": "out/UniswapV4DetfQueryFacet.sol/UniswapV4DetfQueryFacet.json",
+          "artifact_sha256": "39fc23651828ead8af79fbdd88c0404a9a37eb05e15f080e1f90c75be1fcc8fc",
+          "outputs": [
+            "uint256"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Current DETF exchange and discovery",
+      "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+      "frontend_outputs": [
+        "uint256"
+      ],
+      "compatible": true,
+      "matches": [
+        {
+          "artifact": "out/UniswapV4DetfExchangeFacet.sol/UniswapV4DetfExchangeFacet.json",
+          "artifact_sha256": "6f81fdde318d00ecab5159da2ace79341ad4904bfc3185bb1345b3bd19d653f1",
+          "outputs": [
+            "uint256"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Funded V4 bond purchase",
+      "signature": "bond(address,uint256,uint256,address,bool,uint256)",
+      "frontend_outputs": [
+        "uint256",
+        "uint256"
+      ],
+      "compatible": true,
+      "matches": [
+        {
+          "artifact": "out/UniswapV4DetfBondFacet.sol/UniswapV4DetfBondFacet.json",
+          "artifact_sha256": "3d145ed9f76f74a1a043ea34f6a4abd1bda445cdf051a2f64de3d3bdb199a32e",
+          "outputs": [
+            "uint256",
+            "uint256"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Funded V4 bond quote",
+      "signature": "previewBond(address,uint256,uint256)",
+      "frontend_outputs": [
+        "uint256",
+        "uint256",
+        "uint256",
+        "uint256"
+      ],
+      "compatible": true,
+      "matches": [
+        {
+          "artifact": "out/UniswapV4DetfQueryFacet.sol/UniswapV4DetfQueryFacet.json",
+          "artifact_sha256": "39fc23651828ead8af79fbdd88c0404a9a37eb05e15f080e1f90c75be1fcc8fc",
+          "outputs": [
+            "uint256",
+            "uint256",
+            "uint256",
+            "uint256"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Funded bond ownership and payouts",
+      "signature": "positionOf(uint256)",
+      "frontend_outputs": [
+        "(uint256,uint256,uint256,uint256,uint256)"
+      ],
+      "compatible": true,
+      "matches": [
+        {
+          "artifact": "out/DETFNFTVaultFacet.sol/DETFNFTVaultFacet.json",
+          "artifact_sha256": "5b1e107dc720b25ec807d61e397215e9d190a3a04ebebd9a5bb321393f6a8ace",
+          "outputs": [
+            "(uint256,uint256,uint256,uint256,uint256)"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Funded bond ownership and payouts",
+      "signature": "previewClaim(uint256)",
+      "frontend_outputs": [
+        "(uint256,uint256,uint256,uint256)"
+      ],
+      "compatible": true,
+      "matches": [
+        {
+          "artifact": "out/DETFNFTVaultFacet.sol/DETFNFTVaultFacet.json",
+          "artifact_sha256": "5b1e107dc720b25ec807d61e397215e9d190a3a04ebebd9a5bb321393f6a8ace",
+          "outputs": [
+            "(uint256,uint256,uint256,uint256)"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Funded bond ownership and payouts",
+      "signature": "claimPrincipal(uint256,address)",
+      "frontend_outputs": [
+        "uint256"
+      ],
+      "compatible": true,
+      "matches": [
+        {
+          "artifact": "out/DETFNFTVaultFacet.sol/DETFNFTVaultFacet.json",
+          "artifact_sha256": "5b1e107dc720b25ec807d61e397215e9d190a3a04ebebd9a5bb321393f6a8ace",
+          "outputs": [
+            "uint256"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Funded bond ownership and payouts",
+      "signature": "claimRewards(uint256,address)",
+      "frontend_outputs": [
+        "uint256"
+      ],
+      "compatible": true,
+      "matches": [
+        {
+          "artifact": "out/DETFNFTVaultFacet.sol/DETFNFTVaultFacet.json",
+          "artifact_sha256": "5b1e107dc720b25ec807d61e397215e9d190a3a04ebebd9a5bb321393f6a8ace",
+          "outputs": [
+            "uint256"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Funded bond ownership and payouts",
+      "signature": "claimBond(uint256,address)",
+      "frontend_outputs": [
+        "uint256",
+        "uint256"
+      ],
+      "compatible": true,
+      "matches": [
+        {
+          "artifact": "out/DETFNFTVaultFacet.sol/DETFNFTVaultFacet.json",
+          "artifact_sha256": "5b1e107dc720b25ec807d61e397215e9d190a3a04ebebd9a5bb321393f6a8ace",
+          "outputs": [
+            "uint256",
+            "uint256"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Funded bond ownership and payouts",
+      "signature": "ownerOf(uint256)",
+      "frontend_outputs": [
+        "address"
+      ],
+      "compatible": true,
+      "matches": [
+        {
+          "artifact": "out/ERC721Facet.sol/ERC721Facet.json",
+          "artifact_sha256": "8d5c7b8e2c3d14a03c9ea334fed7c3818581a3e884e121fb33ccdf21c6fca45e",
+          "outputs": [
+            "address"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Funded bond ownership and payouts",
+      "signature": "getApproved(uint256)",
+      "frontend_outputs": [
+        "address"
+      ],
+      "compatible": true,
+      "matches": [
+        {
+          "artifact": "out/ERC721Facet.sol/ERC721Facet.json",
+          "artifact_sha256": "8d5c7b8e2c3d14a03c9ea334fed7c3818581a3e884e121fb33ccdf21c6fca45e",
+          "outputs": [
+            "address"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Funded bond ownership and payouts",
+      "signature": "isApprovedForAll(address,address)",
+      "frontend_outputs": [
+        "bool"
+      ],
+      "compatible": true,
+      "matches": [
+        {
+          "artifact": "out/ERC721Facet.sol/ERC721Facet.json",
+          "artifact_sha256": "8d5c7b8e2c3d14a03c9ea334fed7c3818581a3e884e121fb33ccdf21c6fca45e",
+          "outputs": [
+            "bool"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Funded bond ownership and payouts",
+      "signature": "tokenURI(uint256)",
+      "frontend_outputs": [
+        "string"
+      ],
+      "compatible": true,
+      "matches": [
+        {
+          "artifact": "out/DETFFundedBondMetadataFacet.sol/DETFFundedBondMetadataFacet.json",
+          "artifact_sha256": "9be0f04d1a01555849fc0fae49d8fcc03f219445e928b955d8a864df56fe42ec",
+          "outputs": [
+            "string"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Direct/composed staking exchange",
+      "signature": "previewExchangeIn(address,uint256,address)",
+      "frontend_outputs": [
+        "uint256"
+      ],
+      "compatible": true,
+      "matches": [
+        {
+          "artifact": "out/RebasingClaimTokenFacet.sol/RebasingClaimTokenFacet.json",
+          "artifact_sha256": "76205b574a26c4ea08c0a8a7e5d47ebb4afb81fc42d9ee9e1c0db1607d92627e",
+          "outputs": [
+            "uint256"
+          ]
+        }
+      ]
+    },
+    {
+      "label": "Direct/composed staking exchange",
+      "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+      "frontend_outputs": [
+        "uint256"
+      ],
+      "compatible": true,
+      "matches": [
+        {
+          "artifact": "out/RebasingClaimTokenFacet.sol/RebasingClaimTokenFacet.json",
+          "artifact_sha256": "76205b574a26c4ea08c0a8a7e5d47ebb4afb81fc42d9ee9e1c0db1607d92627e",
+          "outputs": [
+            "uint256"
+          ]
+        }
+      ]
+    }
+  ],
+  "all_compatible": true,
+  "optional_historical_getters": [
+    {
+      "signature": "reserveHook()",
+      "disposition": "InsightsPageClient uses reserveHookFromDetf ?? reservePool; reservePool() is the required current V4 getter checked above."
+    },
+    {
+      "signature": "pairTokens()",
+      "disposition": "Historical weighted-family discovery with retry: 0. Current action routes use supported tokensIn()/tokensOut() and acceptedBondTokens(); pairTokens is only an optional display label source."
+    }
+  ],
+  "existing_multi_family_views": "Insights intentionally uses allowFailure for historical-family discovery getters. Only supported current V4 write and required view routes are asserted here; their selectors are not replaced with historical alternatives.",
+  "limitations": "No deployment address bindings changed. Full app lint/typecheck/410 tests are recorded separately; this is ABI reconciliation, not a new browser transaction run."
+}

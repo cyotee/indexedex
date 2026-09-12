@@ -136,6 +136,7 @@ contract Script_05_DeployFoundationPackages is LocalTestingDeploymentBase {
                 multiAssetStandardVaultFacet,
                 create3Factory.deployUniswapV2StandardExchangeInFacet(),
                 create3Factory.deployUniswapV2StandardExchangeOutFacet(),
+                create3Factory.deployUniswapV2StandardExchangeQueryFacet(),
                 indexedexManager,
                 indexedexManager,
                 permit2,

@@ -12,6 +12,7 @@ library RocketPoolRETHStandardExchangeRepo {
         address rETH;
         address weth;
         address depositPool;
+        address rocketStorage;
     }
 
     function _layout() internal pure returns (Storage storage s) {
@@ -21,11 +22,12 @@ library RocketPoolRETHStandardExchangeRepo {
         }
     }
 
-    function _initialize(address rETH_, address weth_, address depositPool_) internal {
+    function _initialize(address rETH_, address weth_, address depositPool_, address rocketStorage_) internal {
         Storage storage s = _layout();
         s.rETH = rETH_;
         s.weth = weth_;
         s.depositPool = depositPool_;
+        s.rocketStorage = rocketStorage_;
     }
 
     function _rETH() internal view returns (address) {
@@ -38,5 +40,8 @@ library RocketPoolRETHStandardExchangeRepo {
 
     function _depositPool() internal view returns (address) {
         return _layout().depositPool;
+    }
+    function _rocketStorage() internal view returns (address) {
+        return _layout().rocketStorage;
     }
 }

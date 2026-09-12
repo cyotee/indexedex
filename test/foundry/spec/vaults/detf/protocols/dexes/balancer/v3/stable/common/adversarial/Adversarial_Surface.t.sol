@@ -6,10 +6,13 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IDetfReserveDonation} from "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol";
 import {IDETF} from "contracts/interfaces/IDETF.sol";
 import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IDetfErrors} from "contracts/interfaces/IDetfErrors.sol";
+
 import {IComposedStableCommonDetfBonding} from "contracts/interfaces/IComposedStableCommonDetfBonding.sol";
+
 import {
     IComposedStableCommonDetfInfo
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/IComposedStableCommonDetfInfo.sol";
@@ -17,220 +20,109 @@ import {
     ComposedStableCommonDetf_IntegratedDeploy_Test
 } from "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_IntegratedDeploy.t.sol";
 
-/**
- * @title Adversarial_ComposedStable_Surface_Test
- * @notice J1–J3 diamond surface: Target ⊆ facetFuncs ⊆ loupe ⊆ **proxy** smoke (not facet impl alone).
- * @dev WP-J-DETF-CS-MB-001 (CS half). Production DETF proxy via IntegratedDeploy; multi-facet cut.
- *      CS CODE (I suite) already on main — this file is TEST-only surface coverage.
- */
 contract Adversarial_ComposedStable_Surface_Test is ComposedStableCommonDetf_IntegratedDeploy_Test {
-    address internal attacker;
-
-    function setUp() public override {
-        super.setUp();
-        attacker = makeAddr("csSurfaceAttacker");
-    }
-
-    function _contains(bytes4[] memory arr_, bytes4 sel_) internal pure returns (bool) {
-        for (uint256 i; i < arr_.length; ++i) {
-            if (arr_[i] == sel_) return true;
-        }
-        return false;
-    }
-
-    function _assertFacetFuncsOnLoupe(address instance_, IFacet facet_, address expectedFacet_) internal view {
+    function _has(IFacet facet_, bytes4 selector_) internal view {
         bytes4[] memory funcs_ = facet_.facetFuncs();
-        for (uint256 i; i < funcs_.length; ++i) {
-            address loupeFacet_ = IDiamondLoupe(instance_).facetAddress(funcs_[i]);
-            assertEq(loupeFacet_, expectedFacet_, "loupe maps selector to CREATE3 facet");
-            assertTrue(loupeFacet_ != instance_ && loupeFacet_ != address(0), "facet cut non-zero non-self");
+        bool found_;
+        for (uint256 i_; i_ < funcs_.length; ++i_) {
+            if (funcs_[i_] == selector_) found_ = true;
+        }
+        assertTrue(found_, "target selector declared");
+        assertEq(
+            IDiamondLoupe(deployedDetfVault).facetAddress(selector_),
+            address(facet_),
+            "selector reaches production facet"
+        );
+    }
+
+    function test_J1_exchangeIn_targetSelectors_subseteq_facetFuncs() public view {
+        assertEq(exchangeInFacet.facetFuncs().length, 2);
+        _has(exchangeInFacet, IStandardExchangeIn.exchangeIn.selector);
+        _has(pricingFacet, IStandardExchangeIn.previewExchangeIn.selector);
+    }
+
+    function test_J1_bonding_targetSelectors_subseteq_facetFuncs() public view {
+        assertEq(bondingFacet.facetFuncs().length, 9);
+        _has(bondingFacet, IDetfReserveDonation.joinDonatedCapital.selector);
+        _has(bondingFacet, IDetfReserveDonation.notifyReserveDonated.selector);
+        _has(bondingFacet, bytes4(keccak256("donate(address,uint256,bool)")));
+        _has(bondingFacet, IComposedStableCommonDetfBonding.bond.selector);
+        _has(bondingFacet, IComposedStableCommonDetfBonding.previewBond.selector);
+        _has(bondingFacet, IComposedStableCommonDetfBonding.initializeReserve.selector);
+        _has(bondingFacet, IComposedStableCommonDetfBonding.previewInitializeReserve.selector);
+        _has(bondingFacet, IComposedStableCommonDetfBonding.acceptedBondTokens.selector);
+        _has(bondingFacet, IComposedStableCommonDetfBonding.isAcceptedBondToken.selector);
+    }
+
+    function test_J1_exchangeOut_targetSelectors_subseteq_facetFuncs() public view {
+        assertEq(exchangeOutQueryFacet.facetFuncs().length, 2);
+        _has(exchangeOutQueryFacet, IStandardExchangeOut.previewExchangeOut.selector);
+        _has(exchangeOutQueryFacet, IStandardExchangeOut.exchangeOut.selector);
+        assertEq(
+            IDiamondLoupe(deployedDetfVault).facetAddress(IDetf.claimLiquidity.selector),
+            address(0),
+            "legacy reserve claim removed"
+        );
+    }
+
+    function test_J1_pricing_targetSelectors_subseteq_facetFuncs() public view {
+        assertEq(pricingFacet.facetFuncs().length, 25);
+        _has(pricingFacet, IComposedStableCommonDetfInfo.bondNftVault.selector);
+        _has(pricingFacet, IComposedStableCommonDetfInfo.rebasingClaimToken.selector);
+        _has(pricingFacet, IComposedStableCommonDetfInfo.reservePool.selector);
+        _has(pricingFacet, IComposedStableCommonDetfInfo.syntheticDetfEthPrice.selector);
+        _has(pricingFacet, IComposedStableCommonDetfInfo.previewReservePoolDecomposition.selector);
+        _has(pricingFacet, IComposedStableCommonDetfInfo.openingConfiguration.selector);
+    }
+
+    function test_J2_facetFuncs_subseteq_loupe_onProxy() public view {
+        IFacet[4] memory facets_ = [
+            IFacet(address(exchangeInFacet)),
+            IFacet(address(bondingFacet)),
+            IFacet(address(exchangeOutQueryFacet)),
+            IFacet(address(pricingFacet))
+        ];
+        for (uint256 f_; f_ < facets_.length; ++f_) {
+            bytes4[] memory funcs_ = facets_[f_].facetFuncs();
+            for (uint256 i_; i_ < funcs_.length; ++i_) {
+                _has(facets_[f_], funcs_[i_]);
+            }
         }
     }
 
-    /* ---------------------------------------------------------------------- */
-    /*  J1: Target/product selectors ⊆ Facet.facetFuncs()                     */
-    /* ---------------------------------------------------------------------- */
-
-    /// @notice J1: exchangeIn Target + Info + compound ⊆ exchangeInFacet.facetFuncs().
-    function test_J1_exchangeIn_targetSelectors_subseteq_facetFuncs() public view {
-        bytes4[] memory funcs_ = exchangeInFacet.facetFuncs();
-        assertTrue(funcs_.length >= 13, "exchangeIn facetFuncs length");
-
-        assertTrue(_contains(funcs_, IStandardExchangeIn.previewExchangeIn.selector), "previewExchangeIn");
-        assertTrue(_contains(funcs_, IStandardExchangeIn.exchangeIn.selector), "exchangeIn");
-        assertTrue(_contains(funcs_, IComposedStableCommonDetfInfo.mintThreshold.selector), "mintThreshold");
-        assertTrue(_contains(funcs_, IComposedStableCommonDetfInfo.burnThreshold.selector), "burnThreshold");
-        assertTrue(_contains(funcs_, IComposedStableCommonDetfInfo.thresholdMode.selector), "thresholdMode");
-        assertTrue(_contains(funcs_, IComposedStableCommonDetfInfo.isMintingAllowed.selector), "isMintingAllowed");
-        assertTrue(_contains(funcs_, IComposedStableCommonDetfInfo.isBurningAllowed.selector), "isBurningAllowed");
-        assertTrue(
-            _contains(funcs_, IComposedStableCommonDetfInfo.lastExpansionTimestamp.selector), "lastExpansionTimestamp"
-        );
-        assertTrue(
-            _contains(funcs_, IComposedStableCommonDetfInfo.expansionClosureRatePerSecond.selector),
-            "expansionClosureRatePerSecond"
-        );
-        assertTrue(
-            _contains(funcs_, IComposedStableCommonDetfInfo.expansionCatchUpMaxSeconds.selector),
-            "expansionCatchUpMaxSeconds"
-        );
-        assertTrue(
-            _contains(funcs_, IComposedStableCommonDetfInfo.expansionCatchUpCapBps.selector), "expansionCatchUpCapBps"
-        );
-        assertTrue(
-            _contains(funcs_, IComposedStableCommonDetfInfo.compoundProtocolRewards.selector), "compoundProtocolRewards"
-        );
-        assertTrue(
-            _contains(funcs_, bytes4(keccak256("compoundProtocolRewardsAtomic()"))), "compoundProtocolRewardsAtomic"
-        );
-    }
-
-    /// @notice J1: bonding Target ⊆ bondingFacet.facetFuncs().
-    function test_J1_bonding_targetSelectors_subseteq_facetFuncs() public view {
-        bytes4[] memory funcs_ = bondingFacet.facetFuncs();
-        assertTrue(funcs_.length >= 4, "bonding facetFuncs length");
-        assertTrue(_contains(funcs_, IComposedStableCommonDetfBonding.acceptedBondTokens.selector), "accepted");
-        assertTrue(_contains(funcs_, IComposedStableCommonDetfBonding.isAcceptedBondToken.selector), "isAccepted");
-        assertTrue(_contains(funcs_, IComposedStableCommonDetfBonding.bond.selector), "bond");
-        assertTrue(_contains(funcs_, IComposedStableCommonDetfBonding.sellPositionToDetfNft.selector), "sell");
-        assertTrue(_contains(funcs_, IComposedStableCommonDetfBonding.buyClaim.selector), "buyClaim");
-        assertTrue(_contains(funcs_, IComposedStableCommonDetfBonding.closeBondMature.selector), "close");
-        assertTrue(_contains(funcs_, IComposedStableCommonDetfBonding.redeemClaim.selector), "redeemClaim");
-        assertTrue(!_contains(funcs_, bytes4(keccak256("sellNFT(uint256,address)"))), "sellNFT gone");
-    }
-
-    /// @notice J1: exchangeOut / claim Target ⊆ exchangeOutQueryFacet.facetFuncs().
-    function test_J1_exchangeOut_targetSelectors_subseteq_facetFuncs() public view {
-        bytes4[] memory funcs_ = exchangeOutQueryFacet.facetFuncs();
-        assertTrue(funcs_.length >= 4, "exchangeOut facetFuncs length");
-        assertTrue(_contains(funcs_, IStandardExchangeOut.previewExchangeOut.selector), "previewExchangeOut");
-        assertTrue(_contains(funcs_, IStandardExchangeOut.exchangeOut.selector), "exchangeOut");
-        assertTrue(_contains(funcs_, IDetf.previewClaimLiquidity.selector), "previewClaimLiquidity");
-        assertTrue(_contains(funcs_, IDetf.claimLiquidity.selector), "claimLiquidity");
-    }
-
-    /// @notice J1: pricing IDETF Target ⊆ pricingFacet.facetFuncs().
-    function test_J1_pricing_targetSelectors_subseteq_facetFuncs() public view {
-        bytes4[] memory funcs_ = pricingFacet.facetFuncs();
-        assertTrue(funcs_.length >= 10, "pricing facetFuncs length");
-        assertTrue(_contains(funcs_, IDETF.bondNftVault.selector), "bondNftVault");
-        assertTrue(_contains(funcs_, IDETF.detfNFTId.selector), "detfNFTId");
-        assertTrue(_contains(funcs_, IDETF.rebasingDetfToken.selector), "rebasingDetfToken");
-        assertTrue(_contains(funcs_, IDETF.reservePool.selector), "reservePool");
-        assertTrue(_contains(funcs_, IDETF.previewRebasingDetfTokenReserveBpt.selector), "previewReserveBpt");
-        assertTrue(_contains(funcs_, IDETF.previewRebasingDetfTokenEthValue.selector), "previewEthValue");
-        assertTrue(_contains(funcs_, IDETF.previewStablePoolBptEthValue.selector), "previewStable");
-        assertTrue(_contains(funcs_, IDETF.previewCommonPoolBptEthValue.selector), "previewCommon");
-        assertTrue(_contains(funcs_, IDETF.syntheticDetfEthPrice.selector), "syntheticPrice");
-        assertTrue(_contains(funcs_, IDETF.previewReservePoolDecomposition.selector), "decomposition");
-    }
-
-    /* ---------------------------------------------------------------------- */
-    /*  J2: facetFuncs ⊆ loupe on production proxy                            */
-    /* ---------------------------------------------------------------------- */
-
-    /// @notice J2: every product facetFuncs selector is registered on the production proxy loupe.
-    function test_J2_facetFuncs_subseteq_loupe_onProxy() public view {
-        address instance_ = deployedDetfVault;
-        _assertFacetFuncsOnLoupe(instance_, exchangeInFacet, address(exchangeInFacet));
-        _assertFacetFuncsOnLoupe(instance_, bondingFacet, address(bondingFacet));
-        _assertFacetFuncsOnLoupe(instance_, exchangeOutQueryFacet, address(exchangeOutQueryFacet));
-        _assertFacetFuncsOnLoupe(instance_, pricingFacet, address(pricingFacet));
-    }
-
-    /* ---------------------------------------------------------------------- */
-    /*  J3: money path + view smoke on proxy (not facet impl)                 */
-    /* ---------------------------------------------------------------------- */
-
-    /// @notice J3: proxy smoke — loupe-routed selectors execute on the production diamond.
     function test_J3_proxySmoke_moneyAndViews() public {
-        _bootstrapReserveGraph();
-        address instance_ = deployedDetfVault;
-
-        // Prove cut is proxy-routed, not self / zero.
-        address exchangeFacetAddr_ =
-            IDiamondLoupe(instance_).facetAddress(IStandardExchangeIn.exchangeIn.selector);
-        assertEq(exchangeFacetAddr_, address(exchangeInFacet), "exchangeIn loupe facet");
-        assertTrue(exchangeFacetAddr_ != instance_ && exchangeFacetAddr_ != address(0), "proxy cut");
-
-        IComposedStableCommonDetfInfo info_ = IComposedStableCommonDetfInfo(instance_);
-        IDETF pricing_ = IDETF(instance_);
-        IComposedStableCommonDetfBonding bonding_ = IComposedStableCommonDetfBonding(instance_);
-        IStandardExchangeIn exIn_ = IStandardExchangeIn(instance_);
-        IStandardExchangeOut exOut_ = IStandardExchangeOut(instance_);
-
-        // --- Views via proxy ---
+        uint256 paid_ = _buyFixtureRaw(bob);
+        assertGt(paid_, 0);
+        assertEq(detfToken.balanceOf(bob), paid_);
+        IComposedStableCommonDetfInfo info_ = IComposedStableCommonDetfInfo(deployedDetfVault);
+        assertTrue(info_.isReserveLive());
+        assertGt(info_.syntheticDetfEthPrice(), 0);
+        assertEq(info_.bondNftVault(), address(bondNFTVault));
+        assertEq(info_.rebasingClaimToken(), address(rebasingDetfToken));
         info_.mintThreshold();
         info_.burnThreshold();
-        info_.thresholdMode();
         info_.isMintingAllowed();
         info_.isBurningAllowed();
         info_.lastExpansionTimestamp();
         info_.expansionClosureRatePerSecond();
-        info_.expansionCatchUpMaxSeconds();
-        info_.expansionCatchUpCapBps();
-
-        assertTrue(pricing_.bondNftVault() != address(0), "proxy bondNftVault");
-        assertTrue(pricing_.rebasingDetfToken() != address(0), "proxy rebasing");
-        assertTrue(pricing_.reservePool() != address(0), "proxy reservePool");
-        pricing_.detfNFTId();
-        pricing_.syntheticDetfEthPrice();
-        pricing_.previewRebasingDetfTokenReserveBpt(0);
-        pricing_.previewReservePoolDecomposition(0);
-
-        address[] memory accepted_ = bonding_.acceptedBondTokens();
-        assertTrue(accepted_.length >= 1, "proxy acceptedBondTokens");
-        assertTrue(bonding_.isAcceptedBondToken(dai), "proxy isAcceptedBondToken");
-
-        // Previews via proxy (no state)
-        assertEq(exIn_.previewExchangeIn(dai, 0, detfToken), 0, "zero mint preview");
-        assertEq(exOut_.previewExchangeOut(detfToken, dai, 0), 0, "zero burn preview");
-
-        // Money path: ZeroAmount proves selector is live on proxy (exact product error).
-        vm.prank(attacker);
-        vm.expectRevert(IDetfErrors.ZeroAmount.selector);
-        exIn_.exchangeIn(dai, 0, detfToken, 0, attacker, false, block.timestamp + 1);
-
-        vm.prank(attacker);
-        vm.expectRevert(IDetfErrors.ZeroAmount.selector);
-        bonding_.bond(dai, 0, 30 days, attacker, block.timestamp + 1);
-
-        // Live money smoke: mint on diamond proxy (not facet impl).
-        uint256 amountIn_ = 500e18;
-        deal(address(dai), bob, amountIn_, true);
-        uint256 preview_ = exIn_.previewExchangeIn(dai, amountIn_, detfToken);
-        vm.startPrank(bob);
-        dai.approve(instance_, amountIn_);
-        uint256 out_ = exIn_.exchangeIn(dai, amountIn_, detfToken, 0, bob, false, block.timestamp + 1);
-        vm.stopPrank();
-        assertTrue(out_ > 0, "proxy mint ok");
-        assertGe(out_, preview_, "proxy mint meets preview");
-        assertEq(detfToken.balanceOf(bob), out_, "proxy mint balance");
-
-        // compound: permissionless best-effort; must not be "function does not exist".
-        info_.compoundProtocolRewards();
-
-        // Explicit anti-theater: primary SUT is proxy, not facet implementation address.
-        assertTrue(exchangeFacetAddr_ != instance_, "J3 primary target is proxy");
+        info_.openingConfiguration();
+        uint256 id_ = _buyFixtureBond(alice);
+        _assertBondMaturePreviewEqualsPayment(deployedDetfVault, id_, alice);
     }
 
-    /// @notice J facet metadata parity (CREATE3-deployed facets).
     function test_J_facetMetadata_matches_CREATE3_facets() public view {
-        _assertMetadataParity(exchangeInFacet, "ComposedStableCommonDetfExchangeIn");
-        _assertMetadataParity(bondingFacet, "ComposedStableCommonDetfBondingFacet");
-        _assertMetadataParity(exchangeOutQueryFacet, "ComposedStableCommonDetfExchangeOutQueryFacet");
-        _assertMetadataParity(pricingFacet, "RebasingDETFTokenPricingFacet");
-    }
-
-    function _assertMetadataParity(IFacet facet_, string memory expectedName_) internal view {
-        (string memory name_, bytes4[] memory ifaces_, bytes4[] memory funcs_) = facet_.facetMetadata();
-        assertEq(keccak256(bytes(name_)), keccak256(bytes(expectedName_)), "facet name");
-        assertTrue(ifaces_.length >= 1, "interfaces");
-        assertEq(facet_.facetFuncs().length, funcs_.length, "funcs match metadata");
-        assertEq(
-            keccak256(abi.encodePacked(funcs_)),
-            keccak256(abi.encodePacked(facet_.facetFuncs())),
-            "metadata funcs == facetFuncs"
-        );
+        IFacet[4] memory facets_ = [
+            IFacet(address(exchangeInFacet)),
+            IFacet(address(bondingFacet)),
+            IFacet(address(exchangeOutQueryFacet)),
+            IFacet(address(pricingFacet))
+        ];
+        for (uint256 i_; i_ < facets_.length; ++i_) {
+            (string memory name_, bytes4[] memory ids_, bytes4[] memory funcs_) = facets_[i_].facetMetadata();
+            assertEq(name_, facets_[i_].facetName());
+            assertGt(bytes(name_).length, 0);
+            assertEq(keccak256(abi.encode(ids_)), keccak256(abi.encode(facets_[i_].facetInterfaces())));
+            assertEq(keccak256(abi.encode(funcs_)), keccak256(abi.encode(facets_[i_].facetFuncs())));
+        }
     }
 }

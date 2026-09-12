@@ -1,0 +1,11 @@
+{
+  "command": [
+    "forge",
+    "build",
+    "--offline"
+  ],
+  "exit_code": 1,
+  "seconds": 57.634,
+  "scope": "default full source/test/script build",
+  "cache": "seeded, with earlier focused incremental builds; no clean"
+}

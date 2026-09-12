@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {
@@ -45,14 +46,12 @@ contract MultiVaultWeightedDetf_Nested_Test is TestBase_MultiVaultWeightedDetf {
         // Outer mint using nested DETF shares (leg 0)
         uint256 nestedIn_ = _fundNestedDetfShares(nested_, nestedUser, 20e18);
         assertTrue(nestedIn_ > 0, "nested shares for outer mint");
-        if (nestedIn_ > 5e18) nestedIn_ = 5e18;
-        uint256 preview_ =
-            IStandardExchangeIn(outer_).previewExchangeIn(IERC20(nested_), nestedIn_, IERC20(outer_));
+        nestedIn_ = _capNestedInput(outer_, nested_, nestedIn_);
+        uint256 preview_ = IStandardExchangeIn(outer_).previewExchangeIn(IERC20(nested_), nestedIn_, IERC20(outer_));
         vm.startPrank(nestedUser);
         IERC20(nested_).approve(outer_, nestedIn_);
-        uint256 outerOut_ = IStandardExchangeIn(outer_).exchangeIn(
-            IERC20(nested_), nestedIn_, IERC20(outer_), 0, nestedUser, false, block.timestamp + 1 hours
-        );
+        uint256 outerOut_ = IStandardExchangeIn(outer_)
+            .exchangeIn(IERC20(nested_), nestedIn_, IERC20(outer_), 0, nestedUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertEq(preview_, outerOut_, "outer mint nested leg preview==exec");
         assertTrue(outerOut_ > 0, "outer minted");
@@ -60,13 +59,11 @@ contract MultiVaultWeightedDetf_Nested_Test is TestBase_MultiVaultWeightedDetf {
         // Outer burn back to nested shares
         uint256 burnAmt_ = outerOut_ / 2;
         if (burnAmt_ == 0) burnAmt_ = outerOut_;
-        uint256 previewB_ =
-            IStandardExchangeIn(outer_).previewExchangeIn(IERC20(outer_), burnAmt_, IERC20(nested_));
+        uint256 previewB_ = IStandardExchangeIn(outer_).previewExchangeIn(IERC20(outer_), burnAmt_, IERC20(nested_));
         vm.startPrank(nestedUser);
         IERC20(outer_).approve(outer_, burnAmt_);
-        uint256 nestedBack_ = IStandardExchangeIn(outer_).exchangeIn(
-            IERC20(outer_), burnAmt_, IERC20(nested_), 0, nestedUser, false, block.timestamp + 1 hours
-        );
+        uint256 nestedBack_ = IStandardExchangeIn(outer_)
+            .exchangeIn(IERC20(outer_), burnAmt_, IERC20(nested_), 0, nestedUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertApproxEqAbs(previewB_, nestedBack_, 10, "outer burn nested leg");
         assertTrue(nestedBack_ > 0, "got nested shares back");
@@ -75,22 +72,17 @@ contract MultiVaultWeightedDetf_Nested_Test is TestBase_MultiVaultWeightedDetf {
         uint256 seShares_ = _fundSeSharesLeg(0, directUser, 15e18);
         vm.startPrank(directUser);
         seShares[0].approve(nested_, seShares_);
-        uint256 direct_ = IStandardExchangeIn(nested_).exchangeIn(
-            seShares[0], seShares_, IERC20(nested_), 0, directUser, false, block.timestamp + 1 hours
-        );
+        uint256 direct_ = IStandardExchangeIn(nested_)
+            .exchangeIn(seShares[0], seShares_, IERC20(nested_), 0, directUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertTrue(direct_ > 0, "nested still mints directly");
 
         _assertNoFreeInventory(outer_);
     }
 
-    function _goLiveOuterWithNested(
-        address outer_,
-        address nested_,
-        address user,
-        uint256 nestedLp,
-        uint256 seLp
-    ) internal {
+    function _goLiveOuterWithNested(address outer_, address nested_, address user, uint256 nestedLp, uint256 seLp)
+        internal
+    {
         uint256 nestedShares_ = _fundNestedDetfShares(nested_, user, nestedLp);
         uint256 seShares_ = _fundSeSharesLeg(1, user, seLp);
         uint256[] memory amounts_ = new uint256[](2);
@@ -100,9 +92,23 @@ contract MultiVaultWeightedDetf_Nested_Test is TestBase_MultiVaultWeightedDetf {
         vm.startPrank(user);
         IERC20(nested_).approve(outer_, nestedShares_);
         seShares[1].approve(outer_, seShares_);
-        IMultiVaultWeightedDetfBonding(outer_).initializeReserve(
-            amounts_, DEFAULT_MIN_LOCK, user, block.timestamp + 1 hours
-        );
+        IMultiVaultWeightedDetfBonding(outer_)
+            .initializeReserve(amounts_, DEFAULT_MIN_LOCK, user, block.timestamp + 1 hours);
         vm.stopPrank();
+    }
+
+    /// @dev Bound the trade to the actual nine-decimal reserve balance. A
+    /// fixed 5e18 cap is larger than the entire nested leg after the refactor.
+    function _capNestedInput(address outer_, address nested_, uint256 funded_) internal view returns (uint256) {
+        address pool_ = IMultiVaultWeightedDetfInfo(outer_).reservePool();
+        (IERC20[] memory tokens_,, uint256[] memory raw_,) = IVault(address(vault)).getPoolTokenInfo(pool_);
+        for (uint256 i; i < tokens_.length; ++i) {
+            if (address(tokens_[i]) == nested_) {
+                uint256 limit_ = raw_[i] / 10;
+                assertGt(limit_, 0, "nested reserve supports a funded trade");
+                return funded_ < limit_ ? funded_ : limit_;
+            }
+        }
+        revert("nested reserve leg missing");
     }
 }

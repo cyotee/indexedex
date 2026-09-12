@@ -1,0 +1,1089 @@
+{
+  "status": "applied; validation pending",
+  "coverage_mapping": {
+    "FC1/FC2/FC3/FC4/FC5/FC12": "fundedTwoWavesMatchIndependentFloors: purchased gons + immediate ordered allocation, independent exact integer floors, old principal ownership and backing conservation across two waves",
+    "FC6": "noNewFundingCannotRepeatStandingPayout: immediate receipts cannot be issued twice without new funding",
+    "FC7/FC8/FC9": "reservedRolesCannotClaimEscrowAgain: both roles have zero purchased principal/gons and typed rejection; fullExit also rejects unauthorized transfer and duplicate unstake",
+    "FC10": "fullExitAndFeeToRotationPreserveStandingIncome: exact redeemable sDETF exit, persistent standing rights, unchanged NFT recipients after live oracle change, later funded receipts again",
+    "FC11": "creatorZeroFundsBothRightsToOriginalFeeOwner plus explicitCreatorReceivesSeparateFundedIncome"
+  },
+  "consolidation": "Twelve duplicated economic cases become six inherited current cases per existing provider/native-unit fixture. Reuses existing FundedRewardAssertions independent integer reference; no new SUT, alternate math package, or per-provider copy.",
+  "files": [
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_FeeCreatorClaimBase.sol",
+      "before_sha256": "b7c495f7d4665c0f28383f2302d294e103453d406a0f494393648ae73507d288",
+      "after_sha256": "68085faaa781e8ecfa1a535f6a9ebb7418e755d98f82be288fb9f9f6a91cfb0e",
+      "migrated_tests": []
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_FeeCreatorClaimBase_Decimals.sol",
+      "before_sha256": "5f38d8286232b8b84a4e7edf750dd898f9384ac0ca5e7cc84a2d5bdb42b2b07e",
+      "after_sha256": "bb735f3377f33b89cf2b2587451416c06a04a133be99db0f9d74ac84d81ee87c",
+      "migrated_tests": []
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Alignment_FeeCreatorClaim.t.sol",
+      "before_sha256": "b0021f52c157536ece8b976c4a834626ad9a3b787714891572d11449be48b8bb",
+      "after_sha256": "4b7f4b4bf9358a9c64b0aa8611ca0ba49c1d216c2fe5775f62ceda0357e4a9f6",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_orbital_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_orbital_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_orbital_dueAmountsFloor",
+        "test_FC4_univ4Detf_orbital_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_orbital_newPotAtNewWeights",
+        "test_FC6_univ4Detf_orbital_secondClaimZero",
+        "test_FC7_univ4Detf_orbital_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_orbital_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_orbital_d2NoOriginalShares",
+        "test_FC10_univ4Detf_orbital_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_orbital_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_orbital_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Alignment_FeeCreatorClaim.t.sol",
+      "before_sha256": "17705f60e81635ff2ae9559db471a7ea320cc50c4c63eb12f1ac54b6c51719b4",
+      "after_sha256": "8cbd62921d0894ae91d845a0a0006f2e7d54b74e246562e8c32811853f1fccbb",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_weighted_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_weighted_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_weighted_dueAmountsFloor",
+        "test_FC4_univ4Detf_weighted_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_weighted_newPotAtNewWeights",
+        "test_FC6_univ4Detf_weighted_secondClaimZero",
+        "test_FC7_univ4Detf_weighted_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_weighted_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_weighted_d2NoOriginalShares",
+        "test_FC10_univ4Detf_weighted_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_weighted_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_weighted_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Alignment_FeeCreatorClaim.t.sol",
+      "before_sha256": "4d8fe28f11aa03f40784489692124bbdc5a0d62a8c7362993af52f7723acc41f",
+      "after_sha256": "97b05b0f93fd5c9fcd5a75cfdd193fcf8915c66cfebb6b5bd2e58bdaee6dc35f",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_quad_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_quad_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_quad_dueAmountsFloor",
+        "test_FC4_univ4Detf_quad_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_quad_newPotAtNewWeights",
+        "test_FC6_univ4Detf_quad_secondClaimZero",
+        "test_FC7_univ4Detf_quad_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_quad_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_quad_d2NoOriginalShares",
+        "test_FC10_univ4Detf_quad_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_quad_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_quad_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_FeeCreatorClaim.t.sol",
+      "before_sha256": "b983f96988f888a66bed76a447e848d318dcfbb5048f03f1f727f1cfa5905b57",
+      "after_sha256": "0df994adf985678068964b303317438d78c22a20187888502fa06108f02e68c5",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_cp_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_cp_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_cp_dueAmountsFloor",
+        "test_FC4_univ4Detf_cp_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_cp_newPotAtNewWeights",
+        "test_FC6_univ4Detf_cp_secondClaimZero",
+        "test_FC7_univ4Detf_cp_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_cp_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_cp_d2NoOriginalShares",
+        "test_FC10_univ4Detf_cp_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_cp_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_cp_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_Policy.t.sol",
+      "before_sha256": "9d07916c38b9d3c426ddbc941f228044e14ad95cd9e7feadafa9962903e4a207",
+      "after_sha256": "fb8d37526eee7ff7ac9813216c1c4303eae5f7543106b9c57d27782803758920",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_CP_P2_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_CP_P2_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_CP_P2_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_CP_P2_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_CP_P2_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_CP_P2_secondClaimZero",
+        "test_FC7_univ4Detf_H_CP_P2_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_CP_P2_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_CP_P2_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_CP_P2_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_CP_P2_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_CP_P2_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Policy_Decimals.sol",
+      "before_sha256": "f82ee5c5882183cdb226f9f102e0c4ff088cfa5680283554cef77c09f04b89d0",
+      "after_sha256": "fcc1cdaf9cc5a25c8a6105b0c12f9b76fae8fcab406c904f2cf2993d59400d00",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_CP_P2_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_CP_P2_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_CP_P2_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_CP_P2_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_CP_P2_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_CP_P2_secondClaimZero",
+        "test_FC7_univ4Detf_H_CP_P2_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_CP_P2_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_CP_P2_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_CP_P2_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_CP_P2_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_CP_P2_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_MorphoBlueSe_Policy.t.sol",
+      "before_sha256": "816a0e303baa87daae58c204283f04f8256b7bffaedd9479246c801dd7f565fe",
+      "after_sha256": "83251166fcb4d0e52cb2bcc04af11498877b3282e26b896e68692ef0a1cbdfe7",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_CP_MB_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_CP_MB_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_CP_MB_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_CP_MB_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_CP_MB_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_CP_MB_secondClaimZero",
+        "test_FC7_univ4Detf_H_CP_MB_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_CP_MB_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_CP_MB_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_CP_MB_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_CP_MB_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_CP_MB_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_PonsV1Se_Policy.t.sol",
+      "before_sha256": "debdaface3bb61a2d7b01655387ed5e07b3123eea68a5b49b991485797421ef8",
+      "after_sha256": "c8fa4410adf37790c73157a28c7a759e41ded063fb474454da877518ac1db841",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_CP_P1_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_CP_P1_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_CP_P1_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_CP_P1_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_CP_P1_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_CP_P1_secondClaimZero",
+        "test_FC7_univ4Detf_H_CP_P1_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_CP_P1_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_CP_P1_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_CP_P1_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_CP_P1_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_CP_P1_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ3Se_Policy.t.sol",
+      "before_sha256": "c8a464eb76c0a442bc493b564862f342271030bd36bec7c2ddf43895a8c69cf5",
+      "after_sha256": "774e4eb0de058692515f0f117d05c0223f2dc1c4a457fd6b5366bbadb6b591ec",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_CP_GV3_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_CP_GV3_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_CP_GV3_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_CP_GV3_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_CP_GV3_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_CP_GV3_secondClaimZero",
+        "test_FC7_univ4Detf_H_CP_GV3_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_CP_GV3_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_CP_GV3_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_CP_GV3_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_CP_GV3_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_CP_GV3_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ4Se_Policy.t.sol",
+      "before_sha256": "4ba80b381b93950c05427fde6cfa3cdcbf076a4e13daf16fbe3ef65e3aae790f",
+      "after_sha256": "44baf5051d518d85ada784187528b586e310e5447e83a4b83b0e2e85af589d75",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_CP_GV4_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_CP_GV4_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_CP_GV4_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_CP_GV4_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_CP_GV4_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_CP_GV4_secondClaimZero",
+        "test_FC7_univ4Detf_H_CP_GV4_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_CP_GV4_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_CP_GV4_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_CP_GV4_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_CP_GV4_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_CP_GV4_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_MorphoBlueSe_Policy.t.sol",
+      "before_sha256": "adafab4eeb6935e06c7a16262965c6f6be8a97f790f138cf6d14707c86beb3da",
+      "after_sha256": "913250d4abe5c0fdebe212cac9c277c984a6acdeba5757eb33c4fc1653f9469d",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_OR_MB_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_OR_MB_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_OR_MB_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_OR_MB_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_OR_MB_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_OR_MB_secondClaimZero",
+        "test_FC7_univ4Detf_H_OR_MB_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_OR_MB_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_OR_MB_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_OR_MB_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_OR_MB_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_OR_MB_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_MorphoMix_Policy.t.sol",
+      "before_sha256": "b050db22da32f4fcb4fe78db3b7c432f3f742b38d55b273fe13d7512201aabea",
+      "after_sha256": "4432b97351472ddf07f6a2a00add5a466b27687dc32e5eeb3d34a0fda7076616",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_M_OR_MorphoMix_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_M_OR_MorphoMix_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_M_OR_MorphoMix_dueAmountsFloor",
+        "test_FC4_univ4Detf_M_OR_MorphoMix_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_M_OR_MorphoMix_newPotAtNewWeights",
+        "test_FC6_univ4Detf_M_OR_MorphoMix_secondClaimZero",
+        "test_FC7_univ4Detf_M_OR_MorphoMix_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_M_OR_MorphoMix_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_M_OR_MorphoMix_d2NoOriginalShares",
+        "test_FC10_univ4Detf_M_OR_MorphoMix_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_M_OR_MorphoMix_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_M_OR_MorphoMix_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_PonsMix_Policy.t.sol",
+      "before_sha256": "eed3e0dab7e47f70fa8debbfe10db52ed3d2cf0470ac086c78731a2def1edb21",
+      "after_sha256": "e8bf9bb9c574f2a72ff4235676534f45716769f75d3a6f33ef603208ab1b7333",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_M_OR_PonsMix_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_M_OR_PonsMix_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_M_OR_PonsMix_dueAmountsFloor",
+        "test_FC4_univ4Detf_M_OR_PonsMix_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_M_OR_PonsMix_newPotAtNewWeights",
+        "test_FC6_univ4Detf_M_OR_PonsMix_secondClaimZero",
+        "test_FC7_univ4Detf_M_OR_PonsMix_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_M_OR_PonsMix_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_M_OR_PonsMix_d2NoOriginalShares",
+        "test_FC10_univ4Detf_M_OR_PonsMix_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_M_OR_PonsMix_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_M_OR_PonsMix_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_PonsV1Se_Policy.t.sol",
+      "before_sha256": "a7565421f860e3f367dddfa754148dd1b21659d75a01dc9f015d2e4a3f2934b2",
+      "after_sha256": "cd367053e585011ddf1284d0b493fcd2964092b67ce4cdbb46f0d7cdec7180af",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_OR_P1_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_OR_P1_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_OR_P1_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_OR_P1_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_OR_P1_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_OR_P1_secondClaimZero",
+        "test_FC7_univ4Detf_H_OR_P1_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_OR_P1_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_OR_P1_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_OR_P1_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_OR_P1_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_OR_P1_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_PonsV2Se_Policy.t.sol",
+      "before_sha256": "f4acc90ef1f0dcdd9c15d053bc241211f5c27b2d8c455a6391fae05ceb5a995a",
+      "after_sha256": "431aa97d3cb65084f863a6f28cf7d2ad61381d6f837b261ea6c204340558be4e",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_OR_P2_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_OR_P2_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_OR_P2_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_OR_P2_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_OR_P2_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_OR_P2_secondClaimZero",
+        "test_FC7_univ4Detf_H_OR_P2_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_OR_P2_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_OR_P2_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_OR_P2_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_OR_P2_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_OR_P2_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_Univ3Se_Policy.t.sol",
+      "before_sha256": "1d895fc24b104cd7a32673bc284eac8b754bd25e0d3915f783b5a35cfc45a228",
+      "after_sha256": "107661064425af10e9c75d97f8b1c37d938a94150dc2d5d1599c4ff76e2e08ac",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_OR_GV3_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_OR_GV3_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_OR_GV3_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_OR_GV3_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_OR_GV3_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_OR_GV3_secondClaimZero",
+        "test_FC7_univ4Detf_H_OR_GV3_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_OR_GV3_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_OR_GV3_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_OR_GV3_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_OR_GV3_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_OR_GV3_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_Univ4Se_Policy.t.sol",
+      "before_sha256": "7b579be374b8b3a142de21c1f79eee48cee76fac8880745a0f2de203943365a2",
+      "after_sha256": "a03635be95e968e5e8ce2143e34d5f5b0b5a8e57390c3fbf2800012e96e48011",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_OR_GV4_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_OR_GV4_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_OR_GV4_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_OR_GV4_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_OR_GV4_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_OR_GV4_secondClaimZero",
+        "test_FC7_univ4Detf_H_OR_GV4_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_OR_GV4_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_OR_GV4_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_OR_GV4_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_OR_GV4_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_OR_GV4_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Quad_MorphoBlueSe_Policy.t.sol",
+      "before_sha256": "ea09993809f21fd1691a36a27a880a7f97d27e1fe5bd17d520f3fcf8714abed3",
+      "after_sha256": "5aca8e67fd3e41031058f88fd3dd6e8fd90e396cf5941a2ad6b5c9f8d3c85d3f",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_QD_MB_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_QD_MB_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_QD_MB_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_QD_MB_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_QD_MB_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_QD_MB_secondClaimZero",
+        "test_FC7_univ4Detf_H_QD_MB_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_QD_MB_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_QD_MB_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_QD_MB_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_QD_MB_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_QD_MB_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Quad_MorphoMix_Policy.t.sol",
+      "before_sha256": "ebe2da049280092b5b94a4b7fcedd2980b5b5ed121f0790f2c815496bbf1bc64",
+      "after_sha256": "f54df37ebb86967e8a127a7eb7028d2573c2c4771d05326b65451fddded26297",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_M_QD_MorphoMix_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_M_QD_MorphoMix_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_M_QD_MorphoMix_dueAmountsFloor",
+        "test_FC4_univ4Detf_M_QD_MorphoMix_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_M_QD_MorphoMix_newPotAtNewWeights",
+        "test_FC6_univ4Detf_M_QD_MorphoMix_secondClaimZero",
+        "test_FC7_univ4Detf_M_QD_MorphoMix_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_M_QD_MorphoMix_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_M_QD_MorphoMix_d2NoOriginalShares",
+        "test_FC10_univ4Detf_M_QD_MorphoMix_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_M_QD_MorphoMix_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_M_QD_MorphoMix_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Quad_PonsMix_Policy.t.sol",
+      "before_sha256": "e3c26df4d79d1d27dea14cabdc7be80bf8cb9741716433175be9375be851f709",
+      "after_sha256": "0fb4204e256be98cfd1db11c7f15876bd3cb131f91a3fd0cd578663e86a0618f",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_M_QD_PonsMix_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_M_QD_PonsMix_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_M_QD_PonsMix_dueAmountsFloor",
+        "test_FC4_univ4Detf_M_QD_PonsMix_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_M_QD_PonsMix_newPotAtNewWeights",
+        "test_FC6_univ4Detf_M_QD_PonsMix_secondClaimZero",
+        "test_FC7_univ4Detf_M_QD_PonsMix_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_M_QD_PonsMix_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_M_QD_PonsMix_d2NoOriginalShares",
+        "test_FC10_univ4Detf_M_QD_PonsMix_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_M_QD_PonsMix_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_M_QD_PonsMix_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Quad_PonsV1Se_Policy.t.sol",
+      "before_sha256": "a78b2ab7f7e858a67f7b2ad148c18d44c4e41763fa4262412e3d5176a01f9221",
+      "after_sha256": "971aca22bcf64a5ca5f60c326fcbde2772843119d5c90dacc678f20d9ec9e7cd",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_QD_P1_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_QD_P1_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_QD_P1_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_QD_P1_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_QD_P1_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_QD_P1_secondClaimZero",
+        "test_FC7_univ4Detf_H_QD_P1_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_QD_P1_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_QD_P1_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_QD_P1_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_QD_P1_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_QD_P1_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Quad_PonsV2Se_Policy.t.sol",
+      "before_sha256": "8ba8b9993a330f69e4133f703487cef5fdf3d409690348a77d3ca84c3de9a23a",
+      "after_sha256": "94513fa020c3ff9a3267573e4562a1d18aba4e50c18b8e4608966bc4fed70a1e",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_QD_P2_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_QD_P2_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_QD_P2_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_QD_P2_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_QD_P2_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_QD_P2_secondClaimZero",
+        "test_FC7_univ4Detf_H_QD_P2_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_QD_P2_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_QD_P2_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_QD_P2_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_QD_P2_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_QD_P2_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Quad_Univ3Se_Policy.t.sol",
+      "before_sha256": "d10553801384c68a70178d716004ce0b57f553bd52d9158308abdeeee381b657",
+      "after_sha256": "a546571a88b624bd7d47f37dee203756ee5ef30031a643c8633105cf0ced19c5",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_QD_GV3_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_QD_GV3_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_QD_GV3_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_QD_GV3_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_QD_GV3_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_QD_GV3_secondClaimZero",
+        "test_FC7_univ4Detf_H_QD_GV3_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_QD_GV3_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_QD_GV3_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_QD_GV3_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_QD_GV3_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_QD_GV3_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Quad_Univ4Se_Policy.t.sol",
+      "before_sha256": "6e73b1dd90715fcd590bcd7682464d10f9c3fa7a53748671515ca03b20a8399f",
+      "after_sha256": "35acb927b0c1c1622dbca17c24ade37f774d2640f5d1da968adc5af8ad512804",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_QD_GV4_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_QD_GV4_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_QD_GV4_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_QD_GV4_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_QD_GV4_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_QD_GV4_secondClaimZero",
+        "test_FC7_univ4Detf_H_QD_GV4_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_QD_GV4_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_QD_GV4_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_QD_GV4_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_QD_GV4_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_QD_GV4_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_MorphoBlueSe_Policy.t.sol",
+      "before_sha256": "823b8fc4dd15075515ea7c5c7710d0a8b605c3362c3590db2b6a412b26e59916",
+      "after_sha256": "86e552940e46efbfc3c974a0ecc5a0e01586e97d1b60a6f653e55854041f40ae",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_WE_MB_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_WE_MB_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_WE_MB_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_WE_MB_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_WE_MB_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_WE_MB_secondClaimZero",
+        "test_FC7_univ4Detf_H_WE_MB_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_WE_MB_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_WE_MB_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_WE_MB_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_WE_MB_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_WE_MB_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_MorphoMix_Policy.t.sol",
+      "before_sha256": "18314aeb1e0c1ddcbbcfedaa24ae46ee166a6e835974b8c7b32e99f16b730cb6",
+      "after_sha256": "314b023fc60d5ba127294af97dfe9fb3a56d642dffa8c8e0a07dfcf1335e93c7",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_M_WE_MorphoMix_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_M_WE_MorphoMix_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_M_WE_MorphoMix_dueAmountsFloor",
+        "test_FC4_univ4Detf_M_WE_MorphoMix_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_M_WE_MorphoMix_newPotAtNewWeights",
+        "test_FC6_univ4Detf_M_WE_MorphoMix_secondClaimZero",
+        "test_FC7_univ4Detf_M_WE_MorphoMix_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_M_WE_MorphoMix_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_M_WE_MorphoMix_d2NoOriginalShares",
+        "test_FC10_univ4Detf_M_WE_MorphoMix_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_M_WE_MorphoMix_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_M_WE_MorphoMix_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_PonsMix_Policy.t.sol",
+      "before_sha256": "7747a4af1d762d73f01441956ef4b1be738702abde8b7ef879098b6588526084",
+      "after_sha256": "801f224672467dabd54229355683eb1859c3ca7b8f559c2f40dd43409437a30f",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_M_WE_PonsMix_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_M_WE_PonsMix_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_M_WE_PonsMix_dueAmountsFloor",
+        "test_FC4_univ4Detf_M_WE_PonsMix_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_M_WE_PonsMix_newPotAtNewWeights",
+        "test_FC6_univ4Detf_M_WE_PonsMix_secondClaimZero",
+        "test_FC7_univ4Detf_M_WE_PonsMix_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_M_WE_PonsMix_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_M_WE_PonsMix_d2NoOriginalShares",
+        "test_FC10_univ4Detf_M_WE_PonsMix_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_M_WE_PonsMix_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_M_WE_PonsMix_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_PonsV1Se_Policy.t.sol",
+      "before_sha256": "a9d71c792944458666af16bb74a73f21737f4d4d457d5c584295263188937929",
+      "after_sha256": "e3c8c76995e4f62787a66dc2acfcc55287d586431945f62741514f9768d73bb4",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_WE_P1_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_WE_P1_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_WE_P1_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_WE_P1_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_WE_P1_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_WE_P1_secondClaimZero",
+        "test_FC7_univ4Detf_H_WE_P1_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_WE_P1_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_WE_P1_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_WE_P1_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_WE_P1_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_WE_P1_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_PonsV2Se_Policy.t.sol",
+      "before_sha256": "f6aea4f78fce05177c5fddcbd1ace021ef2909893d650bc40d0d83f060826656",
+      "after_sha256": "5bbe2575eec0c41f11d9fdf843a6a1377c17d7a57cd649b3d4b43b5a8b7962af",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_WE_P2_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_WE_P2_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_WE_P2_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_WE_P2_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_WE_P2_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_WE_P2_secondClaimZero",
+        "test_FC7_univ4Detf_H_WE_P2_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_WE_P2_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_WE_P2_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_WE_P2_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_WE_P2_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_WE_P2_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_Univ3Se_Policy.t.sol",
+      "before_sha256": "e05189ea3315d4158bacdf830558a21371a8256206445ca0d8e705d90f4c3325",
+      "after_sha256": "cd2ef18d68885a95c089d5161b06b42f6f1f6c98ed5fef9e9adb53bd6b46d099",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_WE_GV3_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_WE_GV3_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_WE_GV3_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_WE_GV3_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_WE_GV3_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_WE_GV3_secondClaimZero",
+        "test_FC7_univ4Detf_H_WE_GV3_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_WE_GV3_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_WE_GV3_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_WE_GV3_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_WE_GV3_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_WE_GV3_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_Univ4Se_Policy.t.sol",
+      "before_sha256": "89979e0b95b89f6918dc70db0704edc136d838e64d6d91e030f211a70467beff",
+      "after_sha256": "a179c06ec7041249d26cda0e44526c612bd408825825f9e4d514a7205483054b",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_WE_GV4_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_WE_GV4_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_WE_GV4_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_WE_GV4_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_WE_GV4_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_WE_GV4_secondClaimZero",
+        "test_FC7_univ4Detf_H_WE_GV4_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_WE_GV4_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_WE_GV4_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_WE_GV4_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_WE_GV4_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_WE_GV4_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Cp_MorphoBlueSe_Policy_Decimals.sol",
+      "before_sha256": "7102ffecd995257cad7668a291f67bc19aeb9cbc95d992d094ef5723cae7a49d",
+      "after_sha256": "4f085c0a475651cd2ef7d96406c61d19dbd07e78354910710e3660bc09dfa065",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_CP_MB_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_CP_MB_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_CP_MB_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_CP_MB_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_CP_MB_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_CP_MB_secondClaimZero",
+        "test_FC7_univ4Detf_H_CP_MB_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_CP_MB_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_CP_MB_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_CP_MB_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_CP_MB_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_CP_MB_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Cp_PonsV1Se_Policy_Decimals.sol",
+      "before_sha256": "dcbb33bb1e3610a49f2d32fb245afb0fbc3f5df0d87a1c6701b3f24a443319d2",
+      "after_sha256": "b8b609fc55c93b28580f8eb0654dac2207dc91acf4b9549d79bf9b3e6a2f8d91",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_CP_P1_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_CP_P1_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_CP_P1_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_CP_P1_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_CP_P1_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_CP_P1_secondClaimZero",
+        "test_FC7_univ4Detf_H_CP_P1_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_CP_P1_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_CP_P1_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_CP_P1_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_CP_P1_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_CP_P1_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Cp_Univ3Se_Policy_Decimals.sol",
+      "before_sha256": "3a9866de86b06bfc46f7b990b4b5a33c42ab7b6a550dd284a399a3b699f11db8",
+      "after_sha256": "7de6f5479f60c44330aaeec8fc399b0cc78c8a3cbaace4553b62880c3b304f6d",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_CP_GV3_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_CP_GV3_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_CP_GV3_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_CP_GV3_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_CP_GV3_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_CP_GV3_secondClaimZero",
+        "test_FC7_univ4Detf_H_CP_GV3_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_CP_GV3_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_CP_GV3_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_CP_GV3_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_CP_GV3_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_CP_GV3_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Cp_Univ4Se_Policy_Decimals.sol",
+      "before_sha256": "81f1fa14c24c71834ea3148c1510b240fca3457d94e12f18050f91148ee2ce6c",
+      "after_sha256": "1607ac06ad39cf1ea59e02cfee88ff84dfd4b9ab704c85be54add0bb501551f0",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_CP_GV4_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_CP_GV4_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_CP_GV4_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_CP_GV4_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_CP_GV4_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_CP_GV4_secondClaimZero",
+        "test_FC7_univ4Detf_H_CP_GV4_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_CP_GV4_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_CP_GV4_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_CP_GV4_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_CP_GV4_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_CP_GV4_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Orbital_MorphoBlueSe_Policy_Decimals.sol",
+      "before_sha256": "1c9573069d5b8649eef00dda278d1caa40351a39ae678ed254fde71ad045261f",
+      "after_sha256": "99e40cdec1b54220a2e54ee591f06a8f9dd11974ae791dac64adaf809cb0490c",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_OR_MB_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_OR_MB_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_OR_MB_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_OR_MB_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_OR_MB_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_OR_MB_secondClaimZero",
+        "test_FC7_univ4Detf_H_OR_MB_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_OR_MB_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_OR_MB_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_OR_MB_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_OR_MB_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_OR_MB_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Orbital_MorphoMix_Policy_Decimals.sol",
+      "before_sha256": "2a26dceb675171040946a2db62ae64298c0ad7f81d1fd018702955a62b184f20",
+      "after_sha256": "82424d55babfb0f7f4c6ec80e06068325b5a1c795e9dd873bced05a2b8fdc715",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_OR_Mix_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_OR_Mix_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_OR_Mix_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_OR_Mix_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_OR_Mix_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_OR_Mix_secondClaimZero",
+        "test_FC7_univ4Detf_H_OR_Mix_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_OR_Mix_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_OR_Mix_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_OR_Mix_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_OR_Mix_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_OR_Mix_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Orbital_PonsMix_Policy_Decimals.sol",
+      "before_sha256": "c08259b45dde2d3bdd18f366c8f21b90f093fd28d13af3424a764dddac7abc74",
+      "after_sha256": "da65e7d3bbde945236f14d3f821d9613cc22c933abc395f7da1bdde7a25c0a27",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_OR_PonsMix_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_OR_PonsMix_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_OR_PonsMix_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_OR_PonsMix_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_OR_PonsMix_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_OR_PonsMix_secondClaimZero",
+        "test_FC7_univ4Detf_H_OR_PonsMix_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_OR_PonsMix_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_OR_PonsMix_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_OR_PonsMix_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_OR_PonsMix_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_OR_PonsMix_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Orbital_PonsV1Se_Policy_Decimals.sol",
+      "before_sha256": "2ff2a4814cc005396a582c2977c1a77ec16aca9b447744df4fe39f6c7c9bdaf5",
+      "after_sha256": "0900d663ae0be767c7620c50f233ee2704b68a67ec4ec4908e7bf9a2f49b48e3",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_OR_P1_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_OR_P1_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_OR_P1_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_OR_P1_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_OR_P1_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_OR_P1_secondClaimZero",
+        "test_FC7_univ4Detf_H_OR_P1_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_OR_P1_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_OR_P1_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_OR_P1_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_OR_P1_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_OR_P1_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Orbital_PonsV2Se_Policy_Decimals.sol",
+      "before_sha256": "a5d632f2c1b8f21caf96b88ac878f68b8bcb487555fd985529375be5be484509",
+      "after_sha256": "a5b20075ec83d4e64dce93d437a1aebe672c81225cacbcd7b4883330c1ee33f2",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_OR_P2_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_OR_P2_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_OR_P2_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_OR_P2_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_OR_P2_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_OR_P2_secondClaimZero",
+        "test_FC7_univ4Detf_H_OR_P2_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_OR_P2_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_OR_P2_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_OR_P2_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_OR_P2_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_OR_P2_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Orbital_Univ3Se_Policy_Decimals.sol",
+      "before_sha256": "ed967189e60669503ccc655f7bc378415a1685e91fb87de8fe2fdd9780154cc7",
+      "after_sha256": "a6c6b92a4f0d5ce35e851237028db05a1275aea29917f3e661648f1e85f2fefd",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_OR_GV3_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_OR_GV3_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_OR_GV3_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_OR_GV3_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_OR_GV3_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_OR_GV3_secondClaimZero",
+        "test_FC7_univ4Detf_H_OR_GV3_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_OR_GV3_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_OR_GV3_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_OR_GV3_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_OR_GV3_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_OR_GV3_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Orbital_Univ4Se_Policy_Decimals.sol",
+      "before_sha256": "f9bc9ce55a8fa40af8837de1be6b0059e5baf2a39d0f663ac6756fbaaa609bc1",
+      "after_sha256": "507bc618e44150f9213b5cc0e7fddf8613404c540d7eb1d9239847a983ae228a",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_OR_GV4_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_OR_GV4_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_OR_GV4_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_OR_GV4_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_OR_GV4_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_OR_GV4_secondClaimZero",
+        "test_FC7_univ4Detf_H_OR_GV4_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_OR_GV4_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_OR_GV4_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_OR_GV4_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_OR_GV4_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_OR_GV4_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Quad_MorphoBlueSe_Policy_Decimals.sol",
+      "before_sha256": "6ab30f27820766f1a07b6aafd3fd512caf4b0265ac0366030b29656075833274",
+      "after_sha256": "0a6096a18994e4489d99c77ab665390154f65edc8e2f41798c7119d645bba09a",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_QD_MB_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_QD_MB_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_QD_MB_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_QD_MB_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_QD_MB_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_QD_MB_secondClaimZero",
+        "test_FC7_univ4Detf_H_QD_MB_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_QD_MB_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_QD_MB_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_QD_MB_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_QD_MB_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_QD_MB_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Quad_MorphoMix_Policy_Decimals.sol",
+      "before_sha256": "069282f582dd662b48607fa3cf41c33b3308aed01afeece485f4e387dbab7adb",
+      "after_sha256": "9e83c3265e4cb2c1a7674084b1313052ba651e4b850403c63d70820ef1dd5661",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_QD_Mix_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_QD_Mix_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_QD_Mix_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_QD_Mix_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_QD_Mix_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_QD_Mix_secondClaimZero",
+        "test_FC7_univ4Detf_H_QD_Mix_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_QD_Mix_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_QD_Mix_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_QD_Mix_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_QD_Mix_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_QD_Mix_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Quad_PonsMix_Policy_Decimals.sol",
+      "before_sha256": "5932d38585caa812200d0888ee8bd3996d79ffec819d6670ad153453b5fa8f3b",
+      "after_sha256": "7fdc4eea2bf1ade0dc9f6c580b258bbaddc82f2d4a68aa61943c02ce25f386e4",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_QD_PonsMix_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_QD_PonsMix_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_QD_PonsMix_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_QD_PonsMix_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_QD_PonsMix_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_QD_PonsMix_secondClaimZero",
+        "test_FC7_univ4Detf_H_QD_PonsMix_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_QD_PonsMix_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_QD_PonsMix_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_QD_PonsMix_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_QD_PonsMix_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_QD_PonsMix_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Quad_PonsV1Se_Policy_Decimals.sol",
+      "before_sha256": "c71894050c01773b866c5611a2dfdb5424c513e0fc2aaa8396c1b26b692866f5",
+      "after_sha256": "c63f65bd9e541d2d77325b4235930df0629fa881ea9eca8d07dc6f4aaba715f7",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_QD_P1_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_QD_P1_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_QD_P1_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_QD_P1_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_QD_P1_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_QD_P1_secondClaimZero",
+        "test_FC7_univ4Detf_H_QD_P1_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_QD_P1_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_QD_P1_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_QD_P1_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_QD_P1_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_QD_P1_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Quad_PonsV2Se_Policy_Decimals.sol",
+      "before_sha256": "7a0373ac9b46f217a9113dbad2c740ccc9dacb70155bd94e0729c67157910326",
+      "after_sha256": "ce18a7c78aeda07d36e67d646be07f5b066a2d60d25668e44bcfdd89234c0675",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_QD_P2_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_QD_P2_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_QD_P2_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_QD_P2_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_QD_P2_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_QD_P2_secondClaimZero",
+        "test_FC7_univ4Detf_H_QD_P2_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_QD_P2_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_QD_P2_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_QD_P2_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_QD_P2_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_QD_P2_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Quad_Univ3Se_Policy_Decimals.sol",
+      "before_sha256": "3470049a43b56d793611fac5fa50babf69c90122fa17c0ef936c0f61a2fce35c",
+      "after_sha256": "22565bf09cd4bc72d1ad5cc5d78c8224127f9dfe633db42d7c338d6c5db7b9fc",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_QD_GV3_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_QD_GV3_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_QD_GV3_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_QD_GV3_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_QD_GV3_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_QD_GV3_secondClaimZero",
+        "test_FC7_univ4Detf_H_QD_GV3_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_QD_GV3_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_QD_GV3_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_QD_GV3_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_QD_GV3_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_QD_GV3_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Quad_Univ4Se_Policy_Decimals.sol",
+      "before_sha256": "bb5a954b3b8b4c401d934bf1fb77080b3dd4bfd4715eb43e2d6cb11e6ceab0a3",
+      "after_sha256": "b83d4f2408a7061122148648def4179ed2d82a6088ff8e06b6226f8650b062ff",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_QD_GV4_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_QD_GV4_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_QD_GV4_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_QD_GV4_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_QD_GV4_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_QD_GV4_secondClaimZero",
+        "test_FC7_univ4Detf_H_QD_GV4_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_QD_GV4_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_QD_GV4_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_QD_GV4_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_QD_GV4_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_QD_GV4_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Weighted_MorphoBlueSe_Policy_Decimals.sol",
+      "before_sha256": "55cd39631f8a75c7228750e19a9596e3df71ec39e7e6d9a7cc1dd410c03191ba",
+      "after_sha256": "9147a931189ce14c7c4dafb12285296a0f80303a4e62fba327e61a550b022667",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_WE_MB_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_WE_MB_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_WE_MB_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_WE_MB_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_WE_MB_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_WE_MB_secondClaimZero",
+        "test_FC7_univ4Detf_H_WE_MB_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_WE_MB_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_WE_MB_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_WE_MB_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_WE_MB_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_WE_MB_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Weighted_MorphoMix_Policy_Decimals.sol",
+      "before_sha256": "d3f984f20fd1b3faad275652170bc2c5b621ce4f48ea6f4050c5ed520de14550",
+      "after_sha256": "69f1aecf5b4b28b7f984dcc903bb4ac06655302e5f6785ccda80990212605a5b",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_WE_Mix_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_WE_Mix_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_WE_Mix_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_WE_Mix_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_WE_Mix_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_WE_Mix_secondClaimZero",
+        "test_FC7_univ4Detf_H_WE_Mix_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_WE_Mix_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_WE_Mix_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_WE_Mix_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_WE_Mix_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_WE_Mix_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Weighted_PonsMix_Policy_Decimals.sol",
+      "before_sha256": "a9d64853c870775a26f34b294854027e93aebbaf829df87dc966518e1cb56c0a",
+      "after_sha256": "dce10a752c68157861eb619e0f68de9cce1a275745d4348333a5b783b3460b18",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_WE_PonsMix_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_WE_PonsMix_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_WE_PonsMix_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_WE_PonsMix_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_WE_PonsMix_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_WE_PonsMix_secondClaimZero",
+        "test_FC7_univ4Detf_H_WE_PonsMix_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_WE_PonsMix_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_WE_PonsMix_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_WE_PonsMix_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_WE_PonsMix_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_WE_PonsMix_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Weighted_PonsV1Se_Policy_Decimals.sol",
+      "before_sha256": "c0b956ae2ae639c62d7a86b8c2b8de08cf19d914f59e961f93f2f82f098d30b3",
+      "after_sha256": "78c680758c183e44ebd626ebf349cc07e533ce2651db5a4c328a2e97a18fcf71",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_WE_P1_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_WE_P1_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_WE_P1_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_WE_P1_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_WE_P1_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_WE_P1_secondClaimZero",
+        "test_FC7_univ4Detf_H_WE_P1_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_WE_P1_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_WE_P1_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_WE_P1_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_WE_P1_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_WE_P1_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Weighted_PonsV2Se_Policy_Decimals.sol",
+      "before_sha256": "8fe9c3029627954f4dd8e33004639b603c2dba834489b931ccfa4f8de9e12bfb",
+      "after_sha256": "c3ab6e01205223a42a9fab4ebfc3abf449fe0ee1c7df3a8ed904b830f9958fb6",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_WE_P2_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_WE_P2_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_WE_P2_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_WE_P2_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_WE_P2_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_WE_P2_secondClaimZero",
+        "test_FC7_univ4Detf_H_WE_P2_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_WE_P2_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_WE_P2_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_WE_P2_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_WE_P2_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_WE_P2_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Weighted_Univ3Se_Policy_Decimals.sol",
+      "before_sha256": "723ede0482116cb7c728d0c367561387012c812201cd7bd340c54ebf823f1076",
+      "after_sha256": "3d7e90fdeaefa7328113f5ceda898a332cc97014c4f6e4ca2fea105abe419c0a",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_WE_GV3_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_WE_GV3_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_WE_GV3_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_WE_GV3_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_WE_GV3_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_WE_GV3_secondClaimZero",
+        "test_FC7_univ4Detf_H_WE_GV3_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_WE_GV3_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_WE_GV3_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_WE_GV3_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_WE_GV3_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_WE_GV3_conservationTwoWaves"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Weighted_Univ4Se_Policy_Decimals.sol",
+      "before_sha256": "325e2631609f478cab8b0065575fb4247bdb5698022fa4501f83b35c71bb4716",
+      "after_sha256": "2e23ee3b0eda11752eb822c0970281d3ded9a5dcfa97ae32806096855084bbe4",
+      "migrated_tests": [
+        "test_FC1_univ4Detf_H_WE_GV4_feeToAndCreatorCanClaim",
+        "test_FC2_univ4Detf_H_WE_GV4_claimEqualsPendingAndBalance",
+        "test_FC3_univ4Detf_H_WE_GV4_dueAmountsFloor",
+        "test_FC4_univ4Detf_H_WE_GV4_newSharesDoNotClaimOldPot",
+        "test_FC5_univ4Detf_H_WE_GV4_newPotAtNewWeights",
+        "test_FC6_univ4Detf_H_WE_GV4_secondClaimZero",
+        "test_FC7_univ4Detf_H_WE_GV4_nonOwnerCannotClaim",
+        "test_FC8_univ4Detf_H_WE_GV4_ids1and2CannotSellOrClose",
+        "test_FC9_univ4Detf_H_WE_GV4_d2NoOriginalShares",
+        "test_FC10_univ4Detf_H_WE_GV4_feeToChangeDoesNotMoveId1",
+        "test_FC11_univ4Detf_H_WE_GV4_creatorZeroFeeToOwnsBoth",
+        "test_FC12_univ4Detf_H_WE_GV4_conservationTwoWaves"
+      ]
+    }
+  ]
+}

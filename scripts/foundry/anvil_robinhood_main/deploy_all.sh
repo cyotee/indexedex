@@ -2,7 +2,7 @@
 # =============================================================================
 # Anvil Robinhood mainnet fork — IndexedEx architecture (chain 4663)
 # Phase/Stage catalog: Crane factories, IndexedEx manager, TWAP, Uni V4 SE pkg,
-# Morpho Blue SE pkg, CP/Weighted/Curve Quad hook pkgs, unified Uni V4 DETF pkg.
+# Morpho Blue SE pkg, CP/Weighted/Curve Quad/Balancer Stable hook pkgs, unified Uni V4 DETF pkg.
 # No test tokens. No SE vault instances. No DETF instances.
 # =============================================================================
 set -euo pipefail
@@ -40,6 +40,7 @@ RPC_URL="${RPC_URL:-http://127.0.0.1:8545}"
 ANVIL_HOST="${ANVIL_HOST:-127.0.0.1}"
 ANVIL_PORT="${ANVIL_PORT:-8545}"
 ANVIL_CHAIN_ID="${ANVIL_CHAIN_ID:-4663}"
+FORK_ALIAS_FROM_ENV="${FOUNDRY_FORK_RPC_ALIAS:+1}"
 FOUNDRY_FORK_RPC_ALIAS="${FOUNDRY_FORK_RPC_ALIAS:-robinhood_mainnet}"
 ANVIL_FORK_URL="${ANVIL_FORK_URL:-}"
 CLI_FORK_ALIAS=""
@@ -89,12 +90,24 @@ Usage:
 
 Deploys Crane factories + IndexedEx architecture (FeeCollector, Manager,
 TWAP oracle) + Uni V4 SE package + Morpho Blue SE package + CP / Weighted /
-Curve Quad hook and DETF packages.
+Curve Quad, Balancer Stable hook and DETF packages.
 No tokens. No SE vaults. No Protocol DETF instances.
 
 Commands:
   all           Phase 00 then catalog Phases 01–06 (architecture packages)
   foundation    Same as all
+  rehearse      Local package deployment followed by the lifecycle matrix.
+  rehearse-packages  Deploy release packages using the existing mainnet core on
+                     local Anvil. Isolates manifests and broadcasts under
+                     REHEARSAL_DIR (default .scratch/robinhood-mainnet-rehearsal).
+  rehearse-lifecycle Run the hook/backend integration matrix against
+                     the packages already deployed by rehearse-packages.
+                     Rehearsal defaults to the configured mainnet Alchemy alias.
+  token-staking      Phase 06 Stage 08 TokenStaking DFPkg, then Phase 08 Stage 01
+                     DTF instance (7-day rewardsDuration). Does not notifyRewardAmount.
+                     Same as forge script: simulates unless --broadcast.
+  token-staking-fund Phase 08 Stage 02: notifyRewardAmount(sender DTF balance).
+                     Same as forge script: simulates unless --broadcast.
   simulate      Script_SimulateArchitecture (library execute 02–06 in one
                 Foundry script). Default is no broadcast. EIP-1559 from the
                 fork source (no --legacy / --gas-price). Prints a deployer
@@ -103,6 +116,13 @@ Commands:
 Public 4663 (no Phase 00): scripts/shell/robinhood_main.sh
 
 Options:
+  fee-accrual-preflight  Read-only existing core, staking and Pons pool validation.
+  fee-accrual-packages   Current product packages through reused core (--broadcast).
+  fee-accrual-prepare    Custody/liquidity SEs, providers, weighted DETF and bootstrap (--broadcast).
+  fee-accrual-migrate    Combined principal/reward migration through existing staking (--broadcast).
+  fee-accrual-verify     Read-only Wrapped state and receipt reconciliation.
+                        All fee-accrual commands require FEE_ACCRUAL_CONFIG and existing local Anvil.
+
   --dry-run         Simulate without broadcasting (default for simulate)
   --broadcast       Force broadcast (overrides simulate's dry-run default)
   --rpc-url URL     RPC (default http://127.0.0.1:8545)
@@ -257,15 +277,20 @@ with open(path) as f:
     data = json.load(f)
 total = 0
 n = 0
-for tx in data.get("transactions") or []:
+transactions = data.get("transactions") or []
+if not transactions:
+    raise SystemExit("No simulated transactions; refusing an empty funding quote")
+for tx in transactions:
     inner = tx.get("transaction") or {}
     gas = inner.get("gas")
     if gas is None:
-        continue
+        raise SystemExit("Missing transaction gas limit; funding quote is incomplete")
     if isinstance(gas, str):
         gas_i = int(gas, 16) if gas.startswith("0x") else int(gas)
     else:
         gas_i = int(gas)
+    if gas_i <= 0:
+        raise SystemExit("Nonpositive transaction gas limit; funding quote is invalid")
     total += gas_i
     n += 1
 print(f"{n} {total}")
@@ -273,7 +298,9 @@ PY
 }
 
 quote_simulate_funding() {
-  local json_path="$REPO_ROOT/broadcast/Script_SimulateArchitecture.s.sol/${CHAIN_ID}/dry-run/run-latest.json"
+  local broadcast_dir="${FOUNDRY_BROADCAST:-$REPO_ROOT/broadcast}"
+  [[ "$broadcast_dir" = /* ]] || broadcast_dir="$REPO_ROOT/$broadcast_dir"
+  local json_path="$broadcast_dir/Script_SimulateArchitecture.s.sol/${CHAIN_ID}/dry-run/run-latest.json"
   local src="${ANVIL_FORK_URL:-$RPC_URL}"
   local counts n_tx gas_sum pay_per_gas cost_wei buffer_bps fund_wei
   buffer_bps="${FUND_ETH_BUFFER_BPS:-2500}"
@@ -378,6 +405,9 @@ launch_anvil() {
     --host "$ANVIL_HOST"
     --port "$ANVIL_PORT"
     --chain-id "$ANVIL_CHAIN_ID"
+    --hardfork prague
+    --code-size-limit 24576
+    --gas-limit 32000000
     --fork-url "$fork_url"
     --compute-units-per-second "$ANVIL_COMPUTE_UNITS_PER_SECOND"
     --fork-retry-backoff "$ANVIL_FORK_RETRY_BACKOFF"
@@ -425,14 +455,19 @@ start_anvil() {
 }
 
 is_localhost_rpc() {
-  case "$RPC_URL" in
-    http://127.0.0.1:*|http://localhost:*|https://127.0.0.1:*|https://localhost:*)
-      return 0
-      ;;
-    *)
-      return 1
-      ;;
-  esac
+  python3 - "$RPC_URL" <<'PY'
+import sys
+from urllib.parse import urlsplit
+try:
+    url = urlsplit(sys.argv[1])
+    local = (url.scheme in ("http", "https")
+             and url.hostname in ("127.0.0.1", "localhost", "::1")
+             and url.username is None and url.password is None
+             and url.port is not None)
+except ValueError:
+    local = False
+sys.exit(0 if local else 1)
+PY
 }
 
 require_localhost_broadcast() {
@@ -478,7 +513,7 @@ run_forge_cmd() {
 
 forge_script_base() {
   local script_path="$1"
-  local cmd=(forge script "$script_path" --rpc-url "$RPC_URL")
+  local cmd=(forge script "$script_path" --rpc-url "$RPC_URL" --code-size-limit 98304 --non-interactive)
   if [[ -n "$FORGE_VERBOSITY" ]]; then
     cmd+=("$FORGE_VERBOSITY")
   fi
@@ -489,8 +524,105 @@ forge_script_base() {
   # Simulate: EIP-1559 with the fork source tip. Never --legacy / --gas-price.
   if is_simulate_command && [[ -n "${FEE_PRIORITY_WEI:-}" && "$FEE_PRIORITY_WEI" =~ ^[0-9]+$ ]]; then
     cmd+=(--priority-gas-price "$FEE_PRIORITY_WEI")
+  elif ! is_simulate_command; then
+    # Staged simulation and broadcast must use the same Anvil fee workaround.
+    if is_localhost_rpc || [[ "${FORGE_LEGACY:-0}" == "1" ]]; then
+      cmd+=(--legacy --gas-price "${FORGE_GAS_PRICE:-2000000000}")
+    fi
   fi
   printf '%s\n' "${cmd[@]}"
+}
+
+prepare_package_rehearsal() {
+  is_localhost_rpc || { log_error "Package rehearsal requires local Anvil"; return 1; }
+  cast rpc anvil_nodeInfo --rpc-url "$RPC_URL" | jq -e \
+    '.environment.chainId == 4663 and .forkConfig.forkBlockNumber != null' >/dev/null
+  local seed_dir="${REHEARSAL_CORE_DIR:-$REPO_ROOT/deployments/anvil_robinhood_main}"
+  local file address manager
+  mkdir -p "$OUT_DIR_OVERRIDE" "$FOUNDRY_BROADCAST"
+  for file in phase01_stage01_permit2.json phase01_stage02_weth.json \
+    phase01_stage03_uniswap_v4.json phase02_stage01_create3_factory.json \
+    phase02_stage02_diamond_package_factory.json phase02_stage03_hook_factory.json \
+    phase03_stage01_common_facets.json phase04_stage01_fee_collector_and_manager.json \
+    phase05_stage02_uniswap_v4_twap_oracle.json; do
+    if [[ ! -f "$OUT_DIR_OVERRIDE/$file" ]]; then
+      cp "$seed_dir/$file" "$OUT_DIR_OVERRIDE/$file"
+    fi
+    jq -e '.chainId == 4663' "$OUT_DIR_OVERRIDE/$file" >/dev/null
+  done
+  manager="$(jq -er '.indexedexManager' "$OUT_DIR_OVERRIDE/phase04_stage01_fee_collector_and_manager.json")"
+  for address in "$manager" \
+    "$(jq -er '.create3Factory' "$OUT_DIR_OVERRIDE/phase02_stage01_create3_factory.json")" \
+    "$(jq -er '.diamondPackageFactory' "$OUT_DIR_OVERRIDE/phase02_stage02_diamond_package_factory.json")" \
+    "$(jq -er '.hookFactory' "$OUT_DIR_OVERRIDE/phase02_stage03_hook_factory.json")"; do
+    if [[ "$(cast code "$address" --rpc-url "$RPC_URL")" == "0x" ]]; then
+      log_error "Missing deployed core at $address"; return 1
+    fi
+  done
+  SENDER="$(cast call "$manager" 'owner()(address)' --rpc-url "$RPC_URL")"
+  export SENDER DEPLOYER_ADDRESS="$SENDER" DEV_ADDRESS="$SENDER" OWNER="$SENDER" UI_WALLET="$SENDER"
+  cast rpc anvil_impersonateAccount "$SENDER" --rpc-url "$RPC_URL" >/dev/null
+  cast rpc anvil_setBalance "$SENDER" 0xd3c21bcecceda1000000 --rpc-url "$RPC_URL" >/dev/null
+}
+
+build_rehearsal_artifacts() {
+  # FactoryServices load facets from artifacts. Build their implementations before scripts.
+  local source
+  local sources=(
+    contracts/utils/foundry/CraneFactoryArtifactSeed.sol
+    contracts/utils/foundry/UniswapV4DetfFactoryArtifactSeed.sol
+  )
+  while IFS= read -r source; do
+    sources+=("$source")
+  done < <(
+    cd "$REPO_ROOT"
+    rg --files \
+      contracts/hooks/uniswap/v4/libs \
+      contracts/hooks/uniswap/v4/standardExchange/constantProduct/single \
+      contracts/hooks/uniswap/v4/standardExchange/weighted \
+      contracts/hooks/uniswap/v4/standardExchange/orbital \
+      contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve \
+      contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer \
+      contracts/vaults/detf/protocols/dexes/uniswap/v4/detf \
+      contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft \
+      contracts/vaults/detf/common/claimToken \
+      contracts/vaults/detf/common/bondNft \
+      contracts/vaults/detf/common/sy \
+      contracts/vaults/standard/sy \
+      contracts/fee/collector \
+      contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange \
+      contracts/vaults/standard/erc4626 \
+      contracts/vaults/standard/exchange/protocols/morpho/blue \
+      contracts/protocols/dexes/uniswap/v2 \
+      contracts/protocols/dexes/uniswap/v3 \
+      contracts/protocols/dexes/uniswap/v4 \
+      | rg '(Facet|DFPkg|ExecutionDelegate|ClaimLib|ExitQuoteLib|LegLib)\.sol$' \
+      | sort
+  )
+  log_info "Building production artifacts for the package rehearsal"
+  run_forge_cmd forge build "${sources[@]}"
+}
+
+run_package_rehearsal() {
+  build_rehearsal_artifacts
+  local pp ss
+  while read -r pp ss; do
+    case "$pp $ss" in
+      '05 03'|'05 04'|'05 05'|'05 06'|'06 01'|'06 02'|'06 03'|'06 04'|'06 05'|'06 06'|'06 07'|'06 09'|'06 10') ;;
+      *) continue ;;
+    esac
+    rh_should_run_stage "$pp" "$ss" "$FROM_PHASE" "${FROM_STAGE:-00}" || continue
+    run_stage "Phase ${pp} Stage ${ss}" "$(rh_stage_script "$pp" "$ss")"
+  done < <(rh_catalog_rows)
+}
+
+run_lifecycle_rehearsal() {
+  export REHEARSAL_RPC_URL="$RPC_URL" REHEARSAL_DEPLOYMENTS_DIR="$OUT_DIR_OVERRIDE"
+  # Reuse the maintained fork root and its warm cache without generating an
+  # import-only source wrapper in the deployment evidence directory.
+  FOUNDRY_PROFILE=fork FOUNDRY_TEST="$REPO_ROOT/test/foundry/fork" run_forge_cmd forge test \
+    --match-contract '^RobinhoodReleaseRehearsalTest$' --threads "${REHEARSAL_TEST_THREADS:-1}" \
+    --offline --etherscan-api-key '' -vv
 }
 
 run_stage() {
@@ -518,13 +650,6 @@ run_stage() {
 
   bcast_cmd=("${sim_cmd[@]}")
   bcast_cmd+=("$BROADCAST_FLAG" --slow --gas-estimate-multiplier "${GAS_ESTIMATE_MULTIPLIER:-300}")
-  # `simulate` is the funding-quote path: EIP-1559, never a forced gas price.
-  # Staged `all` still uses legacy 2 gwei on Anvil (feeHistory work-around).
-  if ! is_simulate_command; then
-    if is_localhost_rpc || [[ "${FORGE_LEGACY:-0}" == "1" ]]; then
-      bcast_cmd+=(--legacy --gas-price "${FORGE_GAS_PRICE:-2000000000}")
-    fi
-  fi
 
   log_info "Broadcasting $label"
   run_forge_cmd "${bcast_cmd[@]}"
@@ -541,11 +666,178 @@ stage_script() {
   esac
 }
 
+# Local rehearsal orchestration; the Solidity stages are also used for public deployment.
+
+rh_fee_accrual_check() {
+  python3 "$REPO_ROOT/scripts/shell/lib/rh_4663_fee_accrual.py" "$@"
+}
+
+rh_fee_accrual_stage() {
+  local pp="$1" ss="$2" signer="$3" mode="$4" script basename record
+  script="$(rh_stage_script "$pp" "$ss")"
+  basename="$(basename "$script")"
+  record="$FOUNDRY_BROADCAST/$basename/4663/run-latest.json"
+  export DEPLOYER_ADDRESS="$signer" SENDER="$signer" OWNER="$signer" PRIVATE_KEY=0
+  local args=(forge script "$script" --rpc-url "$RPC_URL" --sender "$signer" --unlocked --legacy --gas-price 2000000000)
+  if [[ "$mode" == broadcast ]] && rh_fee_accrual_check stage-complete "$pp-$ss" >/dev/null 2>&1; then
+    # Migration chunks intentionally share a stage and must continue from the live balance.
+    if [[ "$pp-$ss" == 07-04 ]]; then
+      # Initial liquidity is a money stage. Its confirmed receipt authorizes reuse, never another seed.
+      return
+    elif [[ "$pp-$ss" == 08-04 ]]; then
+      rh_fee_accrual_stage 09 02 "$signer" read
+      return
+    elif [[ "$pp-$ss" != 08-07 ]]; then
+      (cd "$REPO_ROOT" && "${args[@]}")
+      return
+    fi
+  fi
+  if [[ "$mode" == broadcast ]]; then
+    cast rpc --rpc-url "$RPC_URL" anvil_impersonateAccount "$signer" >/dev/null
+    # Gas funding only. Do not alter ERC20 balances or contract storage.
+    if [[ "$(cast balance "$signer" --rpc-url "$RPC_URL")" == 0 ]]; then
+      cast rpc --rpc-url "$RPC_URL" anvil_setBalance "$signer" 0x8ac7230489e80000 >/dev/null
+    fi
+    args+=(--broadcast --slow --gas-estimate-multiplier 150)
+    # A stale run-latest file must never certify a later failed command.
+    local before_hash=""
+    [[ ! -f "$record" ]] || before_hash="$(shasum -a 256 "$record")"
+    (cd "$REPO_ROOT" && "${args[@]}") || return $?
+    [[ -f "$record" && "$(shasum -a 256 "$record")" != "$before_hash" ]] || {
+      echo "No fresh broadcast record for $basename; reconcile live state before continuing" >&2
+      return 1
+    }
+    rh_fee_accrual_check receipts "$pp-$ss" "$record"
+  else
+    (cd "$REPO_ROOT" && "${args[@]}")
+  fi
+}
+
+rh_run_fee_accrual() {
+  [[ -n "${FEE_ACCRUAL_CONFIG:-}" && -f "$FEE_ACCRUAL_CONFIG" ]] || {
+    echo "Set FEE_ACCRUAL_CONFIG to the reviewed run JSON" >&2; return 1;
+  }
+  [[ "${RESTART_ANVIL:-0}" == 0 && "${FORCE:-0}" == 0 ]] || {
+    echo "Fee accrual commands never reset Anvil or force replay" >&2; return 1;
+  }
+  export OUT_DIR_OVERRIDE="${FEE_ACCRUAL_RUN_DIR:-$REPO_ROOT/.scratch/fee-accrual/deployments}"
+  export FOUNDRY_BROADCAST="$(dirname "$OUT_DIR_OVERRIDE")/broadcast"
+  rh_fee_accrual_check preflight || return $?
+  local manager_owner staking_owner bootstrap_actor
+  manager_owner="$(jq -er '.managerOwner' "$FEE_ACCRUAL_CONFIG")"
+  staking_owner="$(jq -er '.stakingOwner' "$FEE_ACCRUAL_CONFIG")"
+  if [[ "$COMMAND" == fee-accrual-preflight ]]; then
+    rh_fee_accrual_stage 01 04 "$manager_owner" read
+    return
+  fi
+  if [[ "$COMMAND" == fee-accrual-verify ]]; then
+    rh_fee_accrual_stage 08 08 "$staking_owner" read && rh_fee_accrual_check verify
+    return
+  fi
+  [[ "$SIMULATE_BROADCAST_OVERRIDE" == 1 && "$BROADCAST_FLAG" == --broadcast ]] || {
+    echo "Use --broadcast for persistent local prepare/migrate; fee-accrual-preflight is read-only" >&2; return 1;
+  }
+  if [[ "$COMMAND" == fee-accrual-packages ]]; then
+    rh_fee_accrual_copy_core || return $?
+    # Current package libraries use CREATE3 + manager registry; never run core creation.
+    build_rehearsal_artifacts || return $?
+    forge build contracts/protocols/staking/rebasingVault/RebasingAwareERC4626DFPkg.sol \
+      contracts/protocols/staking/rebasingVault/RebasingAwareERC4626Facet.sol \
+      contracts/protocols/staking/rebasingVault/RebasingAwareStandardExchangeFacet.sol \
+      contracts/protocols/staking/rebasingVault/RebasingAwareStandardYieldFacet.sol \
+      contracts/protocols/staking/rebasingVault/RebasingAwareVaultMetadataFacet.sol \
+      contracts/protocols/staking/rebasingVault/RebasingAwareStandardExchangeQuoteFacet.sol || return $?
+    local pp ss
+    while read -r pp ss; do
+      rh_fee_accrual_stage "$pp" "$ss" "$manager_owner" broadcast || return $?
+    done <<'PACKAGES'
+05 01
+05 03
+06 01
+06 02
+06 04
+06 07
+06 10
+PACKAGES
+    echo "Package records are in $OUT_DIR_OVERRIDE; pin their addresses in the reviewed composition config."
+    return
+  fi
+  rh_fee_accrual_check ready || return $?
+  bootstrap_actor="$(jq -er '.bootstrap.actor' "$FEE_ACCRUAL_CONFIG")"
+  if [[ "$COMMAND" == fee-accrual-prepare ]]; then
+    # Registered package prerequisites use the existing architecture stages. Their verified
+    # addresses must be pinned in the run config before creating any composition products.
+    rh_fee_accrual_stage 07 01 "$manager_owner" broadcast || return $?
+    rh_fee_accrual_stage 07 02 "$manager_owner" broadcast || return $?
+    rh_fee_accrual_stage 07 03 "$manager_owner" broadcast || return $?
+    rh_fee_accrual_stage 07 04 "$bootstrap_actor" broadcast || return $?
+    rh_fee_accrual_stage 08 03 "$manager_owner" broadcast || return $?
+    rh_fee_accrual_stage 08 04 "$bootstrap_actor" broadcast || return $?
+  elif [[ "$COMMAND" == fee-accrual-migrate ]]; then
+    local configured_target actual_detf
+    configured_target="$(cast call "$(jq -r '.tokenStaking' "$FEE_ACCRUAL_CONFIG")" 'targetDetf()(address)' --rpc-url "$RPC_URL")"
+    actual_detf="$(jq -er .feeDetf "$OUT_DIR_OVERRIDE/phase08_stage03_fee_accrual_detf.json")"
+    if [[ "$configured_target" == 0x0000000000000000000000000000000000000000 || "$configured_target" == "$actual_detf" ]]; then
+      rh_fee_accrual_stage 08 05 "$staking_owner" broadcast || return $?
+    else
+      rh_fee_accrual_stage 08 05 "$staking_owner" read || return $?
+    fi
+    rh_fee_accrual_stage 08 06 "$staking_owner" read || return $?
+    rh_fee_accrual_check begin-migration || return $?
+    local remaining
+    remaining="$(rh_fee_accrual_check remaining)" || return $?
+    if [[ "$remaining" != 0 ]]; then
+      # The shared stage sizes, quotes and records at most maxChunks native migration calls.
+      rh_fee_accrual_stage 08 07 "$staking_owner" broadcast || return $?
+      remaining="$(rh_fee_accrual_check remaining)" || return $?
+      [[ "$remaining" == 0 ]] || { echo "Chunk limit reached; migration remains resumable" >&2; return 1; }
+    fi
+    rh_fee_accrual_stage 08 08 "$staking_owner" read || return $?
+    rh_fee_accrual_check verify || return $?
+  fi
+  rh_fee_accrual_stage 09 02 "$staking_owner" read
+}
+
+# Read existing core/common-facet manifests only; verify exact configured identities before use.
+rh_fee_accrual_copy_core() {
+  local seed="${REHEARSAL_CORE_DIR:-$REPO_ROOT/deployments/anvil_robinhood_main}" file key actual expected
+  local files=(phase01_stage01_permit2.json phase01_stage02_weth.json
+    phase01_stage03_uniswap_v4.json phase02_stage01_create3_factory.json
+    phase02_stage02_diamond_package_factory.json phase02_stage03_hook_factory.json
+    phase03_stage01_common_facets.json phase04_stage01_fee_collector_and_manager.json
+    phase05_stage02_uniswap_v4_twap_oracle.json)
+  for file in "${files[@]}"; do
+    [[ -f "$seed/$file" ]] || { echo "Missing existing core manifest: $file" >&2; return 1; }
+    jq -e '.chainId == 4663' "$seed/$file" >/dev/null || return 1
+  done
+  while read -r file key; do
+    actual="$(jq -er --arg key "$key" '.[$key]' "$seed/$file")" || return $?
+    expected="$(jq -er --arg key "$key" '.[$key]' "$FEE_ACCRUAL_CONFIG")" || return $?
+    [[ "$(printf '%s' "$actual" | tr '[:upper:]' '[:lower:]')" == "$(printf '%s' "$expected" | tr '[:upper:]' '[:lower:]')" ]] || {
+      echo "Existing manifest does not match configured $key" >&2; return 1;
+    }
+  done <<'CORE'
+phase02_stage01_create3_factory.json create3Factory
+phase02_stage02_diamond_package_factory.json diamondPackageFactory
+phase02_stage03_hook_factory.json hookFactory
+phase04_stage01_fee_collector_and_manager.json indexedexManager
+phase04_stage01_fee_collector_and_manager.json feeCollector
+CORE
+  for file in "${files[@]}"; do
+    if [[ -f "$OUT_DIR_OVERRIDE/$file" ]]; then
+      cmp -s "$seed/$file" "$OUT_DIR_OVERRIDE/$file" || { echo "Conflicting core manifest: $file" >&2; return 1; }
+    else
+      cp "$seed/$file" "$OUT_DIR_OVERRIDE/$file"
+    fi
+  done
+}
+
+
 ARGS=()
 SIMULATE_BROADCAST_OVERRIDE=0
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    all|foundation|simulate|stagesimulate)
+    all|foundation|rehearse|rehearse-packages|rehearse-lifecycle|simulate|stagesimulate|token-staking|token-staking-fund|fee-accrual-preflight|fee-accrual-packages|fee-accrual-prepare|fee-accrual-migrate|fee-accrual-verify)
       COMMAND="$1"
       shift
       ;;
@@ -660,13 +952,30 @@ if [[ "$KILL_ANVIL" -eq 1 ]]; then
   exit 0
 fi
 
-# simulate is the gas-estimate path: no broadcast unless --broadcast is explicit.
-if [[ "$COMMAND" == "simulate" || "$COMMAND" == "stagesimulate" ]] && [[ "$SIMULATE_BROADCAST_OVERRIDE" -eq 0 ]]; then
+# simulate / token-staking match forge script: no broadcast unless --broadcast.
+if [[ "$COMMAND" == "simulate" || "$COMMAND" == "stagesimulate" || "$COMMAND" == "token-staking" || "$COMMAND" == "token-staking-fund" ]] && [[ "$SIMULATE_BROADCAST_OVERRIDE" -eq 0 ]]; then
   BROADCAST_FLAG=""
+fi
+
+if [[ "$COMMAND" == fee-accrual-* ]]; then
+  rh_run_fee_accrual
+  exit $?
 fi
 
 require_deployer
 require_localhost_broadcast
+
+if [[ "$COMMAND" == rehearse* ]]; then
+  is_localhost_rpc || { log_error "Package rehearsal requires local Anvil"; exit 1; }
+  REHEARSAL_DIR="${REHEARSAL_DIR:-$REPO_ROOT/.scratch/robinhood-mainnet-rehearsal}"
+  export OUT_DIR_OVERRIDE="$REHEARSAL_DIR/deployments"
+  export FOUNDRY_BROADCAST="$REHEARSAL_DIR/broadcast"
+  export PRIVATE_KEY=0
+  export GAS_ESTIMATE_MULTIPLIER="${GAS_ESTIMATE_MULTIPLIER:-120}"
+  if [[ -z "$FORK_ALIAS_FROM_ENV" && -z "$CLI_FORK_ALIAS" && -z "$ANVIL_FORK_URL" ]]; then
+    FOUNDRY_FORK_RPC_ALIAS=robinhood_mainnet_alchemy
+  fi
+fi
 
 if [[ "$RESTART_ANVIL" -eq 1 ]] && ! is_localhost_rpc; then
   log_error "--restart-anvil requires a localhost RPC_URL (got $RPC_URL)"
@@ -712,6 +1021,10 @@ if [[ "$CID" != "4663" ]]; then
 fi
 log_success "Chain id $CID RPC=$RPC_URL"
 
+if [[ "$COMMAND" == rehearse* ]]; then
+  prepare_package_rehearsal
+fi
+
 log_header "Anvil Robinhood architecture: $COMMAND"
 log_info "SENDER=$SENDER OUT_DIR=$OUT_DIR_OVERRIDE"
 
@@ -720,8 +1033,24 @@ if is_simulate_command; then
 fi
 
 case "$COMMAND" in
+  rehearse)
+    run_package_rehearsal
+    run_lifecycle_rehearsal
+    ;;
+  rehearse-packages)
+    run_package_rehearsal
+    ;;
+  rehearse-lifecycle)
+    run_lifecycle_rehearsal
+    ;;
   all|foundation)
     rh_run_catalog 1 "$FROM_PHASE" "${FROM_STAGE:-00}"
+    ;;
+  token-staking)
+    rh_run_token_staking
+    ;;
+  token-staking-fund)
+    rh_run_token_staking_fund
     ;;
   simulate|stagesimulate)
     run_stage "Simulate architecture" "$(stage_script simulate)"

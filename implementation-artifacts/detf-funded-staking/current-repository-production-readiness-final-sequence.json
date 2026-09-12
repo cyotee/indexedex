@@ -1,0 +1,73 @@
+{
+  "status": "COMPLETED_REQUIRES_FAILURE_REVIEW",
+  "provenance": {
+    "recorded_at_utc": "2026-09-10T16:03:38.782681+00:00",
+    "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+    "source_and_config_sha256": "5f34fd158fb5883b1ffb11be7fabe6defca8c450765092dc96324b5e4274a30d",
+    "source_and_config_files": 4815,
+    "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+    "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+    "crane_tracked_contract_and_config_diff_sha256": "284fd75764cb255d1e527eef38fd51e65fca73e8ebb11b7465965e8dfeb2122c",
+    "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+    "machine": "macOS-26.6.2-x86_64-i386-64bit",
+    "architecture": "x86_64",
+    "logical_cpus": 16,
+    "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+  },
+  "steps": [
+    {
+      "name": "full-build",
+      "command": [
+        "python3",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/run-full-build.py",
+        "--include-scripts"
+      ],
+      "exit_code": 0,
+      "seconds": 15792.908,
+      "sources_unchanged": false
+    }
+  ],
+  "started_at_utc": "2026-09-10T16:03:38.879837+00:00",
+  "archive": "before-current-repository-production-readiness-final",
+  "archived_evidence": [
+    {
+      "path": "implementation-full-build.json",
+      "sha256": "82dd09a9107a21b880c488eb45c3b60bea8cfef98f5ff656f5ac49c51fc79874"
+    },
+    {
+      "path": "implementation-full-build.log",
+      "sha256": "7f19af409276859fc95ce109600289b79c41d79f53f93867f192b87ca8a1cc54"
+    },
+    {
+      "path": "implementation-hermetic-start.json",
+      "sha256": "79c63e2032f5ee64e0722fc862d2b792c3e1f7f20fd52795d2988b64cf7fdb13"
+    },
+    {
+      "path": "implementation-hermetic-test.json",
+      "sha256": "896e0696a3c8ce457d2a57f44365ea05fcb79b4f3e7870a3741ad4897fc1d26a"
+    },
+    {
+      "path": "implementation-hermetic-test.log",
+      "sha256": "5f34d3e821b1432c0963c1a6670eeb9b21f0db1c4e605682b2af3586a3b3e631"
+    },
+    {
+      "path": "current-hermetic-baseline-attribution.json",
+      "sha256": "5113f4cd97cba9a6298d3810622d0a22deba9951278f4ed7f84e5761253c5913"
+    },
+    {
+      "path": "acceptance-current-run-anchors.json",
+      "sha256": "63a74f593acd634249d8d665483d1b7465917a2bdf6d3765097d656fa24f2657"
+    },
+    {
+      "path": "maintained-script-build-scope.json",
+      "sha256": "68f6e2fbbdf0df1569b0e9f7c4f9378ce28bb033aaa99f448e91a855063b7ec6"
+    },
+    {
+      "path": "final-provider-repository-post-position-sequence.json",
+      "sha256": "92faa8127a824f4176679fc3e9c5ef21f9857d04723633bb8b6011316cb2e36a"
+    }
+  ],
+  "scope": "Full default contracts/tests plus maintained scripts; unfiltered default hermetic tests; exact baseline and owner-scope attribution.",
+  "limitations": "D60 failures remain reported. No result automatically closes acceptance or substitutes for the strict local rehearsal.",
+  "finished_at_utc": "2026-09-10T20:26:52.000721+00:00"
+}

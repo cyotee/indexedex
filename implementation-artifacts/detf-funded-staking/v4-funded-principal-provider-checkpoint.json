@@ -1,0 +1,13 @@
+{
+  "status": "44 passed, zero failed across seven suites",
+  "build_seconds": 440.468,
+  "test_seconds": 17.875,
+  "evidence": "v4-funded-principal-provider-44-green-run.json",
+  "coverage": [
+    "All four real reserve bindings: funded principal, donation isolation, mature sDETF claim, 1:1 stake/unstake, minimum rollback",
+    "CP one-native-unit stake and zero-representable-principal rollback",
+    "Weighted/Quad current policy including simultaneous Weighted A-primary/B-fallback",
+    "Actual CP/V3 SE two-token activation and five provider lifecycle cases"
+  ],
+  "scope": "Focused evidence only; full build and release acceptance remain open."
+}

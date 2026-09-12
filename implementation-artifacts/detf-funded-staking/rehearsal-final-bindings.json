@@ -1,0 +1,8 @@
+{
+  "status": "applied; validation pending",
+  "path": "test/foundry/fork/robinhood_4663/RobinhoodReleaseRehearsal.t.sol",
+  "scope": "Existing Robinhood fork rehearsal; all four V4 DETF bindings, predicted native units, fresh current Fee Collector deployed through production factories and fork-local live feeTo rotation.",
+  "preserved": "Existing unrelated Balancer SE hook cases and all prior backend coverage; no public deployment or Slipstream edit.",
+  "before_sha256": "16ae0810f0c3d43cc89e9e0569a5c6320344e0582a44f920912bd585c03912a7",
+  "after_sha256": "548c6820282be04b32bab16381d3dfe2806ed16f89561897595b9edd05f400f7"
+}

@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 import {
     IUniswapV4HookStagedPairInit
 } from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
@@ -105,7 +106,6 @@ abstract contract TestBase_UniswapV4Detf_Orbital_Adversarial is
     ) internal returns (address predicted_) {
         address pairB_ = pair_ == address(pair1) ? address(pair0) : address(pair1);
         predicted_ = _predictDetf(args);
-        vm.etch(predicted_, address(pair0).code);
         (address t0, address t1, address t2) = _sort3(predicted_, pair_, pairB_);
         address seB_ = pairB_ == address(pair0) ? se0 : se1;
         IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory hArgs;
@@ -114,10 +114,13 @@ abstract contract TestBase_UniswapV4Detf_Orbital_Adversarial is
         hArgs.token0 = t0;
         hArgs.token1 = t1;
         hArgs.token2 = t2;
+        hArgs.decimals0 = HookPkgArgsDecimalsLib.tokenDec(t0, predicted_);
+        hArgs.decimals1 = HookPkgArgsDecimalsLib.tokenDec(t1, predicted_);
+        hArgs.decimals2 = HookPkgArgsDecimalsLib.tokenDec(t2, predicted_);
         hArgs.se0 = _hostileSeOf(t0, predicted_, pair_, se_, seB_);
         hArgs.se1 = _hostileSeOf(t1, predicted_, pair_, se_, seB_);
         hArgs.se2 = _hostileSeOf(t2, predicted_, pair_, se_, seB_);
-        hArgs.ownerOnlyLiquidity = true;
+        hArgs.ownerOnlyLiquidity = args.ownerOnlyLiquidity;
         hArgs.owner = predicted_;
         uint256 mineNonce = OrbitalFactory.findMineNonce(hookFactory, orbitalHookPkg, hArgs);
         address hook_ = OrbitalFactory.deployHook(orbitalHookPkg, hArgs, mineNonce);
@@ -126,7 +129,6 @@ abstract contract TestBase_UniswapV4Detf_Orbital_Adversarial is
         init.deployPair(t1, t2);
         init.deployPair(t0, t2);
         require(init.finalizeInitialization(), "finalize hostile");
-        vm.etch(predicted_, "");
         args.hook = hook_;
         vm.label(hook_, "hostileOrbitalHook");
     }

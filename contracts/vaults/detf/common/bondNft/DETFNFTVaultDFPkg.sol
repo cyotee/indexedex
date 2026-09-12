@@ -1,49 +1,31 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
-/* -------------------------------------------------------------------------- */
-/*                                    Crane                                   */
-/* -------------------------------------------------------------------------- */
-
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
-import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
 import {IERC721Metadata} from "@crane/contracts/interfaces/IERC721Metadata.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
-import {ERC721Repo} from "@crane/contracts/tokens/ERC721/ERC721Repo.sol";
 import {ERC721MetadataRepo} from "@crane/contracts/tokens/ERC721/ERC721MetadataRepo.sol";
-import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
-import {MultiStepOwnableRepo} from "@crane/contracts/access/ERC8023/MultiStepOwnableRepo.sol";
-import {ERC4626Repo} from "@crane/contracts/tokens/ERC4626/ERC4626Repo.sol";
-
-/* -------------------------------------------------------------------------- */
-/*                                  Indexedex                                 */
-/* -------------------------------------------------------------------------- */
-
 import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
-import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
+import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
-import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {VaultFeeType} from "contracts/interfaces/VaultFeeTypes.sol";
 import {VaultTypeUtils} from "contracts/registries/vault/VaultTypeUtils.sol";
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
-import {DETFNFTVaultRepo} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultRepo.sol";
+import {IDetfNftReserveDonation} from "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol";
+import {DETFFundedBondRepo} from "contracts/vaults/detf/common/bondNft/DETFFundedBondRepo.sol";
 
-/**
- * @title IDETFNFTVaultDFPkg
- * @notice Interface for Protocol NFT Vault Diamond Factory Package.
- */
+/// @notice Factory schema for fresh funded-bond deployments.
 interface IDETFNFTVaultDFPkg is IDiamondFactoryPackage {
     struct PkgInit {
         IFacet erc721Facet;
-        IFacet erc4626BasicVaultFacet;
-        IFacet erc4626StandardVaultFacet;
+        IFacet metadataFacet;
         IFacet detfNFTVaultFacet;
         IVaultFeeOracleQuery feeOracle;
         IVaultRegistryDeployment vaultRegistryDeployment;
@@ -52,230 +34,131 @@ interface IDETFNFTVaultDFPkg is IDiamondFactoryPackage {
     struct PkgArgs {
         string name;
         string symbol;
-        /// @notice The DETF diamond that owns this vault
         IDetf detf;
-        /// @notice The LP token (BPT from the 80/20 pool)
         IERC20 lpToken;
-        /// @notice The reward token
-        IERC20 rewardToken;
-        /// @notice Decimal offset for share calculations
-        uint8 decimalOffset;
-        /// @notice Owner address (typically the DETF contract)
-        address owner;
     }
 
     error NotCalledByRegistry(address caller);
+    error InvalidPackageArguments();
 
-    function deployVault(
-        string memory name,
-        string memory symbol,
-        IDetf detf,
-        IERC20 lpToken,
-        IERC20 rewardToken,
-        uint8 decimalOffset,
-        address owner
-    ) external returns (address vaultAddress);
+    function deployVault(string memory name_, string memory symbol_, IDetf detf_, IERC20 lpToken_)
+        external returns (address);
 }
 
-/**
- * @title DETFNFTVaultDFPkg
- * @author cyotee doge <not_cyotee@proton.me>
- * @notice Diamond Factory Package for deploying Protocol NFT Vaults.
- */
+/// @title DETFNFTVaultDFPkg
+/// @notice Registered NFT package with a minimal funded vesting ledger and protocol LP custody.
 contract DETFNFTVaultDFPkg is IDETFNFTVaultDFPkg, IStandardVaultPkg {
     using BetterEfficientHashLib for bytes;
-    using BetterSafeERC20 for IERC20;
-    using BetterSafeERC20 for IERC20Metadata;
 
-    bytes4 private constant _SAFE_TRANSFER_FROM_WITH_DATA_SELECTOR =
-        bytes4(keccak256("safeTransferFrom(address,address,uint256,bytes)"));
-    bytes4 private constant _SAFE_TRANSFER_FROM_SELECTOR =
-        bytes4(keccak256("safeTransferFrom(address,address,uint256)"));
+    IFacet private immutable ERC721_FACET;
+    IFacet private immutable METADATA_FACET;
+    IFacet private immutable BOND_FACET;
+    IVaultFeeOracleQuery private immutable FEE_ORACLE;
+    IVaultRegistryDeployment private immutable REGISTRY;
 
-    DETFNFTVaultDFPkg SELF;
-
-    IFacet immutable ERC721_FACET;
-    IFacet immutable ERC4626_BASIC_VAULT_FACET;
-    IFacet immutable ERC4626_STANDARD_VAULT_FACET;
-    IFacet immutable PROTOCOL_NFT_VAULT_FACET;
-    IVaultFeeOracleQuery immutable VAULT_FEE_ORACLE_QUERY;
-    IVaultRegistryDeployment immutable VAULT_REGISTRY_DEPLOYMENT;
-
-    constructor(PkgInit memory pkgInit) {
-        SELF = this;
-        ERC721_FACET = pkgInit.erc721Facet;
-        ERC4626_BASIC_VAULT_FACET = pkgInit.erc4626BasicVaultFacet;
-        ERC4626_STANDARD_VAULT_FACET = pkgInit.erc4626StandardVaultFacet;
-        PROTOCOL_NFT_VAULT_FACET = pkgInit.detfNFTVaultFacet;
-        VAULT_FEE_ORACLE_QUERY = pkgInit.feeOracle;
-        VAULT_REGISTRY_DEPLOYMENT = pkgInit.vaultRegistryDeployment;
+    constructor(PkgInit memory init_) {
+        ERC721_FACET = init_.erc721Facet;
+        METADATA_FACET = init_.metadataFacet;
+        BOND_FACET = init_.detfNFTVaultFacet;
+        FEE_ORACLE = init_.feeOracle;
+        REGISTRY = init_.vaultRegistryDeployment;
     }
 
-    function deployVault(
-        string memory name_,
-        string memory symbol,
-        IDetf detf,
-        IERC20 lpToken,
-        IERC20 rewardToken,
-        uint8 decimalOffset,
-        address owner
-    ) external returns (address vaultAddress) {
-        return address(
-            VAULT_REGISTRY_DEPLOYMENT.deployVault(
-                SELF,
-                abi.encode(
-                    PkgArgs({
-                        name: name_,
-                        symbol: symbol,
-                        detf: detf,
-                        lpToken: lpToken,
-                        rewardToken: rewardToken,
-                        decimalOffset: decimalOffset,
-                        owner: owner
-                    })
-                )
-            )
-        );
-    }
-
-    /* ---------------------------------------------------------------------- */
-    /*                       IDiamondFactoryPackage                           */
-    /* ---------------------------------------------------------------------- */
-
-    function packageName() public pure returns (string memory name_) {
-        return type(DETFNFTVaultDFPkg).name;
-    }
-
-    function facetAddresses() public view returns (address[] memory facetAddresses_) {
-        facetAddresses_ = new address[](4);
-        facetAddresses_[0] = address(ERC721_FACET);
-        facetAddresses_[1] = address(ERC4626_BASIC_VAULT_FACET);
-        facetAddresses_[2] = address(ERC4626_STANDARD_VAULT_FACET);
-        facetAddresses_[3] = address(PROTOCOL_NFT_VAULT_FACET);
-    }
-
-    function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](5);
-        interfaces[0] = type(IERC721).interfaceId;
-        interfaces[1] = type(IERC721Metadata).interfaceId;
-        interfaces[2] = type(IDETFNFTVault).interfaceId;
-        interfaces[3] = type(IBasicVault).interfaceId;
-        interfaces[4] = type(IStandardVault).interfaceId;
-    }
-
-    function packageMetadata()
-        public
-        view
-        returns (string memory name_, bytes4[] memory interfaces, address[] memory facets)
+    /// @inheritdoc IDETFNFTVaultDFPkg
+    function deployVault(string memory name_, string memory symbol_, IDetf detf_, IERC20 lpToken_)
+        external returns (address)
     {
-        name_ = packageName();
-        interfaces = facetInterfaces();
-        facets = facetAddresses();
+        return address(REGISTRY.deployVault(
+            IStandardVaultPkg(address(this)), abi.encode(PkgArgs(name_, symbol_, detf_, lpToken_))
+        ));
     }
 
-    function facetCuts() public view returns (IDiamond.FacetCut[] memory facetCuts_) {
-        facetCuts_ = new IDiamond.FacetCut[](5);
+    /// @inheritdoc IDiamondFactoryPackage
+    function packageName() public pure virtual returns (string memory) { return type(DETFNFTVaultDFPkg).name; }
 
-        facetCuts_[0] = IDiamond.FacetCut({
-            facetAddress: address(ERC721_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: ERC721_FACET.facetFuncs()
-        });
-        facetCuts_[1] = IDiamond.FacetCut({
-            facetAddress: address(ERC4626_BASIC_VAULT_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: ERC4626_BASIC_VAULT_FACET.facetFuncs()
-        });
-        facetCuts_[2] = IDiamond.FacetCut({
-            facetAddress: address(ERC4626_STANDARD_VAULT_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: ERC4626_STANDARD_VAULT_FACET.facetFuncs()
-        });
-        facetCuts_[3] = IDiamond.FacetCut({
-            facetAddress: address(PROTOCOL_NFT_VAULT_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: PROTOCOL_NFT_VAULT_FACET.facetFuncs()
-        });
-
-        // Replace ERC721 transfer selectors to prevent sending bond NFTs to the DETF.
-        bytes4[] memory guardedTransferSelectors = new bytes4[](3);
-        guardedTransferSelectors[0] = _SAFE_TRANSFER_FROM_WITH_DATA_SELECTOR;
-        guardedTransferSelectors[1] = _SAFE_TRANSFER_FROM_SELECTOR;
-        guardedTransferSelectors[2] = IERC721.transferFrom.selector;
-
-        facetCuts_[4] = IDiamond.FacetCut({
-            facetAddress: address(PROTOCOL_NFT_VAULT_FACET),
-            action: IDiamond.FacetCutAction.Replace,
-            functionSelectors: guardedTransferSelectors
-        });
+    /// @inheritdoc IDiamondFactoryPackage
+    function facetAddresses() public view returns (address[] memory facets_) {
+        facets_ = new address[](3);
+        facets_[0] = address(ERC721_FACET);
+        facets_[1] = address(BOND_FACET);
+        facets_[2] = address(METADATA_FACET);
     }
 
-    function diamondConfig() public view returns (DiamondConfig memory config) {
-        config = IDiamondFactoryPackage.DiamondConfig({facetCuts: facetCuts(), interfaces: facetInterfaces()});
+    /// @inheritdoc IDiamondFactoryPackage
+    function facetInterfaces() public pure returns (bytes4[] memory interfaces_) {
+        interfaces_ = new bytes4[](5);
+        interfaces_[0] = type(IERC721).interfaceId;
+        interfaces_[1] = type(IERC721Metadata).interfaceId;
+        interfaces_[2] = type(IDetfBondNFT).interfaceId;
+        interfaces_[3] = type(IStandardVault).interfaceId;
+        interfaces_[4] = type(IDetfNftReserveDonation).interfaceId;
     }
 
-    function calcSalt(bytes memory pkgArgs) public pure returns (bytes32 salt) {
-        return abi.encode(pkgArgs)._hash();
+    /// @inheritdoc IDiamondFactoryPackage
+    function packageMetadata() public view returns (string memory, bytes4[] memory, address[] memory) {
+        return (packageName(), facetInterfaces(), facetAddresses());
     }
 
-    function processArgs(bytes memory pkgArgs) public view virtual returns (bytes memory processedPkgArgs) {
-        if (msg.sender != address(VAULT_REGISTRY_DEPLOYMENT)) {
-            revert NotCalledByRegistry(msg.sender);
-        }
-        return pkgArgs;
+    /// @inheritdoc IDiamondFactoryPackage
+    function facetCuts() public view returns (IDiamond.FacetCut[] memory cuts_) {
+        cuts_ = new IDiamond.FacetCut[](4);
+        cuts_[0] = IDiamond.FacetCut(address(ERC721_FACET), IDiamond.FacetCutAction.Add, ERC721_FACET.facetFuncs());
+        cuts_[1] = IDiamond.FacetCut(address(BOND_FACET), IDiamond.FacetCutAction.Add, BOND_FACET.facetFuncs());
+        bytes4[] memory transfers_ = new bytes4[](3);
+        transfers_[0] = IERC721.transferFrom.selector;
+        transfers_[1] = bytes4(keccak256("safeTransferFrom(address,address,uint256)"));
+        transfers_[2] = bytes4(keccak256("safeTransferFrom(address,address,uint256,bytes)"));
+        cuts_[2] = IDiamond.FacetCut(address(BOND_FACET), IDiamond.FacetCutAction.Replace, transfers_);
+        cuts_[3] = IDiamond.FacetCut(address(METADATA_FACET), IDiamond.FacetCutAction.Add, METADATA_FACET.facetFuncs());
     }
 
-    function updatePkg(address, bytes memory) public pure virtual returns (bool) {
-        return true;
+    /// @inheritdoc IDiamondFactoryPackage
+    function diamondConfig() public view returns (DiamondConfig memory) {
+        return DiamondConfig({facetCuts: facetCuts(), interfaces: facetInterfaces()});
     }
 
-    function initAccount(bytes memory initArgs) public {
-        PkgArgs memory args = abi.decode(initArgs, (PkgArgs));
+    /// @inheritdoc IDiamondFactoryPackage
+    function calcSalt(bytes memory args_) public pure returns (bytes32) { return abi.encode(args_)._hash(); }
 
-        // Initialize ownership (DETF is the owner)
-        MultiStepOwnableRepo._initialize(args.owner, 1 days);
-
-        // Initialize ERC721 metadata
-        ERC721MetadataRepo._initialize(args.name, args.symbol);
-
-        // Vault components (ERC4626-backed Basic/Standard vault views)
-        ERC4626Repo._initialize(args.lpToken, IERC20Metadata(address(args.lpToken)).safeDecimals(), args.decimalOffset);
-        ERC4626Repo._setLastTotalAssets(args.lpToken.balanceOf(address(this)));
-
-        {
-            address[] memory contents = new address[](1);
-            contents[0] = address(args.lpToken);
-            StandardVaultRepo._initialize(
-                VAULT_FEE_ORACLE_QUERY, vaultFeeTypeIds(), vaultTypes(), abi.encode(contents)._hash()
-            );
-        }
-
-        // Initialize Protocol NFT vault storage
-        DETFNFTVaultRepo._initialize(args.detf, args.lpToken, args.rewardToken, args.decimalOffset);
+    /// @inheritdoc IDiamondFactoryPackage
+    function processArgs(bytes memory args_) public view returns (bytes memory) {
+        if (msg.sender != address(REGISTRY)) revert NotCalledByRegistry(msg.sender);
+        PkgArgs memory decoded_ = abi.decode(args_, (PkgArgs));
+        bytes memory canonical_ = abi.encode(decoded_);
+        if (address(decoded_.detf) == address(0) || address(decoded_.lpToken) == address(0)
+            || keccak256(canonical_) != keccak256(args_)) revert InvalidPackageArguments();
+        return canonical_;
     }
 
-    /* ---------------------------------------------------------------------- */
-    /*                              IStandardVaultPkg                         */
-    /* ---------------------------------------------------------------------- */
+    /// @inheritdoc IDiamondFactoryPackage
+    function updatePkg(address, bytes memory) public pure returns (bool) { return true; }
 
-    function name() public pure returns (string memory) {
-        return packageName();
+    /// @inheritdoc IDiamondFactoryPackage
+    function initAccount(bytes memory args_) public {
+        PkgArgs memory decoded_ = abi.decode(args_, (PkgArgs));
+        ERC721MetadataRepo._initialize(decoded_.name, decoded_.symbol);
+        address[] memory contents_ = new address[](1);
+        contents_[0] = address(decoded_.lpToken);
+        StandardVaultRepo._initialize(FEE_ORACLE, vaultFeeTypeIds(), vaultTypes(), abi.encode(contents_)._hash());
+        DETFFundedBondRepo._initialize(address(decoded_.detf), decoded_.lpToken);
     }
 
-    function vaultFeeTypeIds() public pure returns (bytes32 vaultFeeTypeIds_) {
-        vaultFeeTypeIds_ =
-            VaultTypeUtils._insertFeeTypeId(vaultFeeTypeIds_, VaultFeeType.BOND, type(IDETFNFTVault).interfaceId);
+    /// @inheritdoc IStandardVaultPkg
+    function name() public pure returns (string memory) { return packageName(); }
+
+    /// @inheritdoc IStandardVaultPkg
+    function vaultFeeTypeIds() public pure returns (bytes32 ids_) {
+        return VaultTypeUtils._insertFeeTypeId(ids_, VaultFeeType.BOND, type(IDetfBondNFT).interfaceId);
     }
 
-    function vaultTypes() public pure returns (bytes4[] memory typeIDs) {
-        return facetInterfaces();
-    }
+    /// @inheritdoc IStandardVaultPkg
+    function vaultTypes() public pure returns (bytes4[] memory) { return facetInterfaces(); }
 
-    function vaultDeclaration() public pure returns (VaultPkgDeclaration memory declaration) {
+    /// @inheritdoc IStandardVaultPkg
+    function vaultDeclaration() public pure returns (VaultPkgDeclaration memory) {
         return VaultPkgDeclaration({name: name(), vaultFeeTypeIds: vaultFeeTypeIds(), vaultTypes: vaultTypes()});
     }
 
-    function postDeploy(address) public pure returns (bool) {
-        return true;
-    }
+    /// @inheritdoc IDiamondFactoryPackage
+    function postDeploy(address) public pure returns (bool) { return true; }
 }

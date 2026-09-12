@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {BetterEfficientHashLib} from '@crane/contracts/utils/BetterEfficientHashLib.sol';
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
@@ -231,10 +232,11 @@ contract AaveCrossVersionLoopDFPkg is IAaveCrossVersionLoopDFPkg {
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](3);
+        interfaces = new bytes4[](4);
         interfaces[0] = type(IStandardExchangeIn).interfaceId;
         interfaces[1] = type(IStandardExchangeOut).interfaceId;
         interfaces[2] = type(IAaveCrossVersionLoopVault).interfaceId;
+        interfaces[3] = type(IStandardizedYield).interfaceId;
     }
 
     function facetCuts() public view returns (IDiamond.FacetCut[] memory cuts) {

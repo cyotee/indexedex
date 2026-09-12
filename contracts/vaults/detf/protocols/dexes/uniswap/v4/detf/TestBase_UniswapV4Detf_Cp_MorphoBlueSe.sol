@@ -111,7 +111,7 @@ abstract contract TestBase_UniswapV4Detf_Cp_MorphoBlueSe is TestBase_UniswapV4De
             address se_ = IUniswapV4SeBufferHook(hook_).standardExchangeOf(toks[i]);
             if (se_ != address(0) && IERC20(se_).balanceOf(detf) > 0) needSweep = true;
         }
-        if (needSweep) detfInfo.sweepDust();
+        if (needSweep) detfInfo.sweepDust{gas: 30_000_000}();
         assertEq(IERC20(hook_).balanceOf(detf), 0, "R19 hook LP");
         for (uint256 i; i < toks.length; ++i) {
             uint256 bal = IERC20(toks[i]).balanceOf(detf);

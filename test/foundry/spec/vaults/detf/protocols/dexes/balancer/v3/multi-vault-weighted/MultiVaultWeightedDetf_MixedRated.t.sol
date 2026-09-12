@@ -1,23 +1,25 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {FundedBondLifecycleAssertions} from "contracts/test/bases/FundedBondLifecycleAssertions.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {
     TestBase_MultiVaultWeightedDetf
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf.sol";
 import {
-    IMultiVaultWeightedDetfInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfInfoTarget.sol";
+    ILegacyMultiVaultWeightedDetfInfo as IMultiVaultWeightedDetfInfo
+} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf.sol";
 import {
-    IMultiVaultWeightedDetfBonding
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfBondingTarget.sol";
+    ILegacyMultiVaultWeightedDetfBonding as IMultiVaultWeightedDetfBonding
+} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf.sol";
 import {
     MultiVaultWeightedDetfRepo
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfRepo.sol";
 import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 
 /// @notice Mixed rated + unrated legs; unrated has no rateAsset redeem target.
-contract MultiVaultWeightedDetf_MixedRated_Test is TestBase_MultiVaultWeightedDetf {
+contract MultiVaultWeightedDetf_MixedRated_Test is TestBase_MultiVaultWeightedDetf, FundedBondLifecycleAssertions {
     function test_mixedRatedUnrated_mintBothLegs() public {
         address instance_ = _deployDetfNMixedRated(2, 0, 0, ThresholdMode.Open);
         IMultiVaultWeightedDetfInfo info_ = IMultiVaultWeightedDetfInfo(instance_);
@@ -38,32 +40,15 @@ contract MultiVaultWeightedDetf_MixedRated_Test is TestBase_MultiVaultWeightedDe
         _assertNoFreeInventory(instance_);
     }
 
-    function test_mixed_claimRedeem_onlyRatedLeg() public {
+    function test_mixedRated_bondPayout_unstakesOneToOne() public {
         address instance_ = _deployDetfNMixedRated(2, 0, 0, ThresholdMode.Open);
-        // Larger bootstrap so protocol BPT unwind stays above Balancer min token balances.
         (uint256 tokenId_,) = _goLiveViaBptBond(instance_, alice, 5_000e18);
-
-        IMultiVaultWeightedDetfBonding bonding_ = IMultiVaultWeightedDetfBonding(instance_);
-        IMultiVaultWeightedDetfInfo info_ = IMultiVaultWeightedDetfInfo(instance_);
-
-        _warpPastUnlock(instance_, tokenId_);
-        vm.prank(alice);
-        uint256 minted_ = bonding_.sellPositionToDetfNft(tokenId_, 0, alice);
-        assertTrue(minted_ > 0, "claim minted");
-
-        uint256 claimBal_ = IERC20(info_.rebasingClaimToken()).balanceOf(alice);
-        // D15: redeem a small slice for DETF only.
-        uint256 redeemAmt_ = claimBal_ / 20;
-        if (redeemAmt_ == 0) redeemAmt_ = claimBal_;
-        uint256 before_ = IERC20(instance_).balanceOf(alice);
-        vm.prank(alice);
-        uint256 out_ = bonding_.redeemClaim(redeemAmt_, IERC20(instance_), 0, alice, block.timestamp + 1 hours);
-        assertTrue(out_ > 0, "redeem DETF");
-        assertEq(IERC20(instance_).balanceOf(alice) - before_, out_, "payout");
-
-        // Unrated leg has no rateAsset - zero address is invalid route for redeem
-        vm.prank(alice);
-        vm.expectRevert();
-        bonding_.redeemClaim(1, IERC20(address(0)), 0, alice, block.timestamp + 1 hours);
+        address[] memory rateAssets_ = IMultiVaultWeightedDetfInfo(instance_).rateAssets();
+        assertTrue(rateAssets_[0] != address(0));
+        assertEq(rateAssets_[1], address(0));
+        _assertBondMaturePreviewEqualsPayment(instance_, tokenId_, alice);
+        uint256 amount_ = _fundedBondStaking(instance_).balanceOf(alice) / 20;
+        _assertFundedUnstake(instance_, alice, amount_);
+        _assertFundedUnstakeRejected(instance_, alice, 1, IERC20(address(0)), 0);
     }
 }

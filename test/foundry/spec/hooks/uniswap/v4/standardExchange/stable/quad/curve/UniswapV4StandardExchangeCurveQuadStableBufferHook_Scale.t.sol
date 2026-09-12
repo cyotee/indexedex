@@ -7,16 +7,52 @@ import {
 import {
     UniswapV4StandardExchangeCurveQuadStableBufferHookMath as Math
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookMath.sol";
-import {
-    MintableERC20Decimals
-} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/MintableERC20Decimals.sol";
+import {MintableERC20Decimals as StubDecimals} from "contracts/test/stubs/MintableERC20Decimals.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {SimpleYieldERC4626} from "contracts/test/stubs/SimpleYieldERC4626.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {RateProviderMock} from "contracts/test/balancer/v3/RateProviderMock.sol";
 
 contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Scale is TestBase {
+    function test_stableInvariant_extremeImbalance_independentRootAndPermutation() public pure {
+        uint256 expectedD = 65_389_163_658;
+        // Integer root of 400*S = 399*D + D^5/(256*product(book)),
+        // evaluated independently with arbitrary-precision integer arithmetic.
+        for (uint256 big; big < 4; ++big) {
+            uint256[4] memory permuted = [uint256(127_193_491_014_612_794_248), 949, 872, 872];
+            (permuted[0], permuted[big]) = (permuted[big], permuted[0]);
+            uint256 inputIndex = big == 1 ? 0 : 1;
+            assertEq(Math.getD(permuted, 10_000), expectedD, "invariant independent of currency order");
+            uint256 out = Math.quoteExactInRated(permuted, inputIndex, big, 63, 10_000);
+            assertEq(out, 4_022_698_071_222_784_755, "independent quadratic output root");
+            permuted[inputIndex] += 63;
+            permuted[big] -= out;
+            assertGe(Math.getD(permuted, 10_000), expectedD, "swap preserves invariant");
+        }
+    }
+
+    function test_stableInvariant_largeSingleJoin() public pure {
+        uint256[4] memory reserves = [uint256(980), 3_598_017_528_478_584, 1065, 980];
+        uint256 beforeD = Math.getD(reserves, 10_000);
+        uint256 amount = 67_956_303_914_057_137_153;
+        uint256 shares = Math.singleJoinExactInShares(reserves, amount, 1, 10_000, 268_400_699, 3e14);
+        assertGt(shares, 0, "surplus DETF can rejoin after claim redemption");
+        reserves[1] += amount;
+        uint256 afterD = Math.getD(reserves, 10_000);
+        assertGt(afterD, beforeD, "positive deposit increases invariant");
+        // Independent root of 400*S = 399*D + D^5/(256*product(reserves)).
+        assertApproxEqAbs(afterD, 54_565_914_790, 100, "StableSwap root with integer rounding");
+    }
+
+    function testFuzz_stableInvariant_imbalancedDepositIncreasesD(uint64 balance, uint64 deposit) public pure {
+        uint256[4] memory reserves = [uint256(980), uint256(balance) + 1e12, 1065, 980];
+        uint256 beforeD = Math.getD(reserves, 10_000);
+        reserves[1] += uint256(deposit) + reserves[1] / 10;
+        assertGt(Math.getD(reserves, 10_000), beforeD, "invariant is monotonic across solver paths");
+    }
+
     function test_geoMean4_firstMintDomain() public pure {
         uint256 g = Math.geometricMean4(1e18, 1e18, 1e18, 1e18);
         assertEq(g, 1e18);
@@ -45,14 +81,14 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Scale is TestBase {
         }
     }
 
-    /// @notice FIX-SCALE-6-18: one raw 6-dec + three 18-dec (one SE-wrapped).
+    /// @notice FIX-SCALE-6-18: 6-dec SE-buffered + three 18-dec self-legs.
     function test_FIX_SCALE_6_18_mixedDecimalsFirstMint() public {
-        MintableERC20Decimals t6 = new MintableERC20Decimals("Six", "SIX", 6);
+        StubDecimals t6 = new StubDecimals("Six", "SIX", 6);
         SimpleMintableERC20 t18a = new SimpleMintableERC20("E18a", "E18A");
         SimpleMintableERC20 t18b = new SimpleMintableERC20("E18b", "E18B");
         SimpleMintableERC20 t18c = new SimpleMintableERC20("E18c", "E18C");
-        SimpleYieldERC4626 vault = new SimpleYieldERC4626(t18a);
-        address se18 = _deployERC4626SE(address(vault));
+        SimpleYieldERC4626 vault6 = new SimpleYieldERC4626(t6);
+        address se6 = _deployERC4626SE(address(vault6));
 
         address[4] memory toks = [address(t6), address(t18a), address(t18b), address(t18c)];
         for (uint256 i; i < 4; ++i) {
@@ -63,12 +99,15 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Scale is TestBase {
         address[4] memory ses;
         address[4] memory rps;
         uint8 i6;
-        uint8 iSe;
+        uint8 i18;
+        bool set18;
         for (uint8 i; i < 4; ++i) {
-            if (toks[i] == address(t6)) i6 = i;
-            if (toks[i] == address(t18a)) {
-                iSe = i;
-                ses[i] = se18;
+            if (toks[i] == address(t6)) {
+                i6 = i;
+                ses[i] = se6;
+            } else if (!set18) {
+                i18 = i;
+                set18 = true;
             }
         }
 
@@ -85,10 +124,11 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Scale is TestBase {
         t18c.approve(hook, type(uint256).max);
         vm.stopPrank();
 
+        uint8 se6Dec = IERC20Metadata(se6).decimals();
         assertEq(quad.ratedScale(i6), 10 ** uint256(36 - 6), "ratedScale 6dec");
-        assertEq(quad.invScale(i6), quad.ratedScale(i6), "raw 6 inv==rated");
-        assertEq(quad.invScale(iSe), 10 ** uint256(36 - 18), "SE inv share 18");
-        assertTrue(quad.ratedScale(i6) != quad.ratedScale(iSe), "cross-leg scales differ");
+        assertEq(quad.invScale(i6), 10 ** uint256(36 - se6Dec), "SE inv share scale");
+        assertEq(quad.invScale(i18), quad.ratedScale(i18), "self-leg inv==rated");
+        assertTrue(quad.ratedScale(i6) != quad.ratedScale(i18), "cross-leg scales differ");
 
         uint256[] memory amounts = new uint256[](4);
         for (uint8 i; i < 4; ++i) {
@@ -96,7 +136,7 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Scale is TestBase {
         }
         (uint256 prev,) = quad.previewJoinProportional(amounts);
         vm.prank(user);
-        (uint256 shares,) = quad.joinProportional(amounts, user, 0, block.timestamp + 1 hours);
+        (uint256 shares,) = quad.joinProportional(amounts, user, prev, block.timestamp + 1 hours);
         assertEq(shares, prev);
         assertGt(shares, 0, "first mint mixed decimals");
         assertTrue(quad.isFullBook());

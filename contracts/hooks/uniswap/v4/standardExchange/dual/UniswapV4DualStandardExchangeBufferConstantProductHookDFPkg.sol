@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC20Permit} from "@crane/contracts/interfaces/IERC20Permit.sol";
@@ -14,6 +15,7 @@ import {ERC2535Repo} from "@crane/contracts/introspection/ERC2535/ERC2535Repo.so
 import {Hooks} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Hooks.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {UniswapV4SeBufferHookLegLib} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
@@ -136,7 +138,7 @@ contract UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg is
         returns (bytes4[] memory interfaces)
     {
         // ERC20Permit + vault + product type + M3 SE In/Out + §15.12 hook ABI.
-        interfaces = new bytes4[](11);
+        interfaces = new bytes4[](12);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20Permit).interfaceId;
@@ -148,6 +150,7 @@ contract UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg is
         interfaces[8] = HOOK_VAULT_TYPE;
         interfaces[9] = type(IUniswapV4SeBufferHook).interfaceId;
         interfaces[10] = type(IDetfReserveQuote).interfaceId;
+        interfaces[11] = type(IStandardizedYield).interfaceId;
     }
 
     function facetAddresses() public view returns (address[] memory facets) {
@@ -374,6 +377,7 @@ contract UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg is
     }
 
     function _requireTokenInVaultTokens(address se, address token) private view {
+        if (UniswapV4SeBufferHookLegLib.isWrapperShareInventory(token, se)) return;
         address[] memory tokens = IBasicVault(se).vaultTokens();
         for (uint256 i; i < tokens.length; i++) {
             if (tokens[i] == token) return;

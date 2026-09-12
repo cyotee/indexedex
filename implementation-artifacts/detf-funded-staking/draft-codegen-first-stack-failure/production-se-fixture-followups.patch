@@ -1,0 +1,174 @@
+--- contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol
++++ contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol
+@@ -1,6 +1,9 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
+ 
++import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
++import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
++import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+ import {Vm} from "forge-std/Vm.sol";
+ import {VM_ADDRESS} from "@crane/contracts/constants/FoundryConstants.sol";
+ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+@@ -129,14 +132,10 @@
+ contract Univ3LiquiditySeeder is IUniswapV3MintCallback {
+     function seedFullRange(IUniswapV3Pool pool, uint128 liquidity) external {
+         int24 tickSpacing = pool.tickSpacing();
+-        int24 tickLower = (-887220 / tickSpacing) * tickSpacing;
+-        int24 tickUpper = (887220 / tickSpacing) * tickSpacing;
+-        if (tickLower >= tickUpper) {
+-            tickLower = -tickSpacing * 1000;
+-            tickUpper = tickSpacing * 1000;
+-        }
+-        uint128 liq = liquidity < 1e18 ? 50_000_000e18 : liquidity;
+-        pool.mint(address(this), tickLower, tickUpper, liq, abi.encode(address(this)));
++        int24 tickLower = TickMathV4.minUsableTick(tickSpacing);
++        int24 tickUpper = TickMathV4.maxUsableTick(tickSpacing);
++        require(liquidity > 0, "funded seed liquidity");
++        pool.mint(address(this), tickLower, tickUpper, liquidity, abi.encode(address(this)));
+     }
+ 
+     function uniswapV3MintCallback(uint256 amount0Owed, uint256 amount1Owed, bytes calldata data)
+@@ -377,7 +376,57 @@
+         address t1 = pool.token1();
+         IProdSeMintable(t0).mint(address(seeder), _humanUnits(t0, 100_000_000));
+         IProdSeMintable(t1).mint(address(seeder), _humanUnits(t1, 100_000_000));
+-        seeder.seedFullRange(pool, 50_000_000e18);
++        (uint160 sqrtPrice,,,,,,) = pool.slot0();
++        uint128 liquidity = LiquidityAmounts.getLiquidityForAmounts(
++            sqrtPrice,
++            TickMathV4.getSqrtPriceAtTick(TickMathV4.minUsableTick(pool.tickSpacing())),
++            TickMathV4.getSqrtPriceAtTick(TickMathV4.maxUsableTick(pool.tickSpacing())),
++            _humanUnits(t0, 50_000_000), _humanUnits(t1, 50_000_000)
++        );
++        seeder.seedFullRange(pool, liquidity);
++    }
++
++    /// @dev Activate existing V3/V4 SEs before a DETF can make later one-token deposits.
++    /// Generic test assets are minted; real Pons payment tokens come from the
++    /// fixture's existing purchases and WETH is actually wrapped from ETH.
++    function activatePositionVault(address vault, address payment, address payer, address weth) internal {
++        (IStandardizedYield.AssetType kind,,) = IStandardizedYield(vault).assetInfo();
++        if (kind != IStandardizedYield.AssetType.LIQUIDITY || IERC20(vault).totalSupply() != 0) return;
++        address[] memory discovered = IStandardizedYield(vault).getTokensIn();
++        address[] memory tokens = new address[](2);
++        uint256 found;
++        for (uint256 i; i < discovered.length; ++i) {
++            if (discovered[i] == vault) continue;
++            require(found < 2, "two position currencies");
++            tokens[found++] = discovered[i];
++        }
++        require(found == 2 && (tokens[0] == payment || tokens[1] == payment), "position payment leg");
++        uint256 paymentIndex = tokens[0] == payment ? 0 : 1;
++        uint256[] memory amounts = new uint256[](2);
++        amounts[paymentIndex] = Math.min(_humanUnits(payment, 100), IERC20(payment).balanceOf(payer) / 100);
++        address other = tokens[1 - paymentIndex];
++        amounts[1 - paymentIndex] = IStandardExchangeIn(vault).previewExchangeIn(
++            IERC20(payment), amounts[paymentIndex], IERC20(other)
++        );
++        require(amounts[0] > 0 && amounts[1] > 0, "fund both position legs");
++        if (other == weth) {
++            vm.deal(payer, payer.balance + amounts[1 - paymentIndex]);
++            vm.prank(payer);
++            IWETH(other).deposit{value: amounts[1 - paymentIndex]}();
++        } else {
++            IProdSeMintable(other).mint(payer, amounts[1 - paymentIndex]);
++        }
++        address seedHolder = address(uint160(uint256(keccak256("production-position-seed-holder"))));
++        vm.startPrank(payer);
++        IERC20(tokens[0]).approve(vault, type(uint256).max);
++        IERC20(tokens[1]).approve(vault, type(uint256).max);
++        uint256 quote = IStandardExchangeInMulti(vault).previewExchangeInManyToOne(tokens, amounts, IERC20(vault));
++        uint256 minted = IStandardExchangeInMulti(vault).exchangeInManyToOne(
++            tokens, amounts, IERC20(vault), quote, seedHolder, false, block.timestamp + 1 hours
++        );
++        vm.stopPrank();
++        require(minted > 0 && minted == quote, "position activation quote/execution");
++        require(IERC20(vault).balanceOf(seedHolder) == minted, "external seed shares");
+     }
+ 
+     function deployUniv3Vault(IUniswapV3StandardExchangeDFPkg pkg, IUniswapV3Pool pool)
+--- contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_ProdSe.sol
++++ contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_ProdSe.sol
+@@ -90,6 +90,9 @@
+         se2 = hookSe2;
+ 
+         _fundAndApprove();
++        SeLib.activatePositionVault(hookSe0, hookPair0, detfUser, address(weth));
++        SeLib.activatePositionVault(hookSe1, hookPair1, detfUser, address(weth));
++        SeLib.activatePositionVault(hookSe2, hookPair2, detfUser, address(weth));
+     }
+ 
+     function _deployProductionSes() internal virtual;
+--- contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ3Se.sol
++++ contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ3Se.sol
+@@ -72,6 +72,7 @@
+         pairToken.approve(se, type(uint256).max);
+         IERC20(se).approve(detf, type(uint256).max);
+         vm.stopPrank();
++        SeLib.activatePositionVault(se, mintToken, detfUser, address(0));
+     }
+ 
+     /// @dev V3 SE activation requires both assets; later DETF routes remain single-token.
+--- contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ4Se.sol
++++ contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ4Se.sol
+@@ -65,6 +65,7 @@
+         pairToken.approve(se, type(uint256).max);
+         IERC20(se).approve(detf, type(uint256).max);
+         vm.stopPrank();
++        SeLib.activatePositionVault(se, mintToken, detfUser, address(weth));
+     }
+ 
+     function _craneCtx() internal view returns (SeLib.CraneCtx memory ctx) {
+--- contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_PonsV1Se.sol
++++ contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_PonsV1Se.sol
+@@ -86,6 +86,7 @@
+         IERC20(launchToken).approve(se, type(uint256).max);
+         IERC20(se).approve(detf, type(uint256).max);
+         vm.stopPrank();
++        SeLib.activatePositionVault(se, mintToken, detfUser, address(weth));
+     }
+ 
+     /// @dev Extra Policy deploys and `_fundToken` top-ups. Swap until `to_` holds `minBal`.
+--- contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_ProdSe_Decimals.sol
++++ contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_ProdSe_Decimals.sol
+@@ -87,6 +87,9 @@
+         se2 = hookSe2;
+ 
+         _fundAndApprove();
++        SeLib.activatePositionVault(hookSe0, hookPair0, detfUser, address(weth));
++        SeLib.activatePositionVault(hookSe1, hookPair1, detfUser, address(weth));
++        SeLib.activatePositionVault(hookSe2, hookPair2, detfUser, address(weth));
+     }
+ 
+     function _deployProductionSes() internal virtual;
+--- contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ3Se_Decimals.sol
++++ contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ3Se_Decimals.sol
+@@ -65,6 +65,7 @@
+         pairToken.approve(se, type(uint256).max);
+         IERC20(se).approve(detf, type(uint256).max);
+         vm.stopPrank();
++        SeLib.activatePositionVault(se, mintToken, detfUser, address(0));
+     }
+ 
+     function _craneCtx() internal view returns (SeLib.CraneCtx memory ctx) {
+--- contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ4Se_Decimals.sol
++++ contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ4Se_Decimals.sol
+@@ -60,6 +60,7 @@
+         pairToken.approve(se, type(uint256).max);
+         IERC20(se).approve(detf, type(uint256).max);
+         vm.stopPrank();
++        SeLib.activatePositionVault(se, mintToken, detfUser, address(weth));
+     }
+ 
+     function _craneCtx() internal view returns (SeLib.CraneCtx memory ctx) {
+--- contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_PonsV1Se_Decimals.sol
++++ contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_PonsV1Se_Decimals.sol
+@@ -87,6 +87,7 @@
+         IERC20(launchToken).approve(se, type(uint256).max);
+         IERC20(se).approve(detf, type(uint256).max);
+         vm.stopPrank();
++        SeLib.activatePositionVault(se, mintToken, detfUser, address(weth));
+     }
+ 
+     /// @dev Extra Policy deploys and `_fundToken` top-ups. Swap until `to_` holds `minBal`.

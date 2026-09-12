@@ -100,7 +100,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookLiquidityTarget is
     {
         Repo.Layout storage l = Repo._layout();
         if (amounts.length != l.numTokens) revert InvalidN();
-        uint256 supply = _totalSupply();
+        uint256 supply = _previewSupplyAfterProtocolMint();
         // amounts are pair-token edge; map to inventory for algebra
         uint256[] memory invIn = _pairToInvPreview(amounts);
         if (supply == 0) {
@@ -235,17 +235,17 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookLiquidityTarget is
         }
         if (_anySeShare(isSe)) {
             uint256[] memory invIn = _edgeToInvPreview(edge, isSe);
-            if (_totalSupply() == 0) {
+            if (_previewSupplyAfterProtocolMint() == 0) {
                 (shares,) = _firstMint(invIn, edge);
                 return shares;
             }
             uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
             if (feeWad >= Math.WAD) return 0;
             return Math.unbalancedJoinShares(
-                _invWadAll(), _scaleInvAmounts(invIn), Repo._layout().weights, _totalSupply(), feeWad
+                _invWadAll(), _scaleInvAmounts(invIn), Repo._layout().weights, _previewSupplyAfterProtocolMint(), feeWad
             );
         }
-        if (_totalSupply() == 0) {
+        if (_previewSupplyAfterProtocolMint() == 0) {
             (shares,) = _firstMint(_pairToInvPreview(edge), edge);
             return shares;
         }
@@ -272,7 +272,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookLiquidityTarget is
         view
         returns (uint256 amountOut)
     {
-        if (lpAmount == 0 || _totalSupply() == 0) return 0;
+        if (lpAmount == 0 || _previewSupplyAfterProtocolMint() == 0) return 0;
         Repo.Layout storage l = Repo._layout();
         UniswapV4SeBufferHookLegLib.LegKind k =
             UniswapV4SeBufferHookLegLib.classify(l.legs, tokenOut);
@@ -416,7 +416,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookLiquidityTarget is
         if (feeWad >= Math.WAD) revert InvalidFeeWad();
         uint256[] memory invIn = _pairToInvPreview(pairAmounts);
         shares = Math.unbalancedJoinShares(
-            _invWadAll(), _scaleInvAmounts(invIn), Repo._layout().weights, _totalSupply(), feeWad
+            _invWadAll(), _scaleInvAmounts(invIn), Repo._layout().weights, _previewSupplyAfterProtocolMint(), feeWad
         );
     }
 
@@ -493,7 +493,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookLiquidityTarget is
             Repo._layout().weights,
             idx,
             Math.scaleTo(invIn[idx], Repo._layout().invScales[idx]),
-            _totalSupply(),
+            _previewSupplyAfterProtocolMint(),
             feeWad
         );
     }
@@ -536,7 +536,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookLiquidityTarget is
         if (feeWad >= Math.WAD) revert InvalidFeeWad();
         Repo.Layout storage l = Repo._layout();
         uint256 aS = Math.singleJoinExactOutAmountIn(
-            _invWadAll(), l.weights, idx, sharesOut, _totalSupply(), feeWad
+            _invWadAll(), l.weights, idx, sharesOut, _previewSupplyAfterProtocolMint(), feeWad
         );
         uint256 invNeeded = Math.descaleUp(aS, l.invScales[idx]);
         if (l.standardExchanges[idx] == address(0)) {
@@ -572,7 +572,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookLiquidityTarget is
     {
         // amounts = pair-token edge
         uint256[] memory natives = _nativeAll();
-        uint256[] memory invOut = Math.proportionalExitAmounts(shares, natives, _totalSupply());
+        uint256[] memory invOut = Math.proportionalExitAmounts(shares, natives, _previewSupplyAfterProtocolMint());
         amounts = _invToPairOutPreview(invOut);
     }
 
@@ -628,7 +628,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookLiquidityTarget is
         for (uint8 i; i < l.numTokens; ++i) {
             if (invOut[i] == 0) continue;
             address se = l.standardExchanges[i];
-            if (se == address(0)) {
+            if (se == address(0) || se == l.tokens[i]) {
                 pairOut[i] = invOut[i];
             } else {
                 pairOut[i] = IStandardExchangeIn(se).previewExchangeIn(
@@ -711,7 +711,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookLiquidityTarget is
         uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
         if (feeWad >= Math.WAD) revert InvalidFeeWad();
         uint256 outS = Math.singleExitExactInAmountOut(
-            _invWadAll(), Repo._layout().weights, idx, sharesIn, _totalSupply(), feeWad
+            _invWadAll(), Repo._layout().weights, idx, sharesIn, _previewSupplyAfterProtocolMint(), feeWad
         );
         invOut = Math.descale(outS, Repo._layout().invScales[idx]);
     }
@@ -827,7 +827,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookLiquidityTarget is
             l.weights,
             idx,
             Math.scaleToUp(invOut, l.invScales[idx]),
-            _totalSupply(),
+            _previewSupplyAfterProtocolMint(),
             feeWad
         );
     }
@@ -875,14 +875,14 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookLiquidityTarget is
         }
         _validateSeShareFlags(amountIsSeShare);
         uint256[] memory invIn = _edgeToInvPreview(amounts, amountIsSeShare);
-        if (_totalSupply() == 0) {
+        if (_previewSupplyAfterProtocolMint() == 0) {
             return _firstMint(invIn, amounts);
         }
         uint256[] memory natives = _nativeAll();
         if (Math.isFullBookReserves(natives)) {
-            return _fullPropJoin(amounts, invIn, _totalSupply());
+            return _fullPropJoin(amounts, invIn, _previewSupplyAfterProtocolMint());
         }
-        return _partialJoin(amounts, invIn, _totalSupply());
+        return _partialJoin(amounts, invIn, _previewSupplyAfterProtocolMint());
     }
 
     /// @dev Map user edge amounts → inventory deltas (SE shares or face). SE-share legs pass through.
@@ -955,7 +955,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookLiquidityTarget is
     {
         _validateSeShareFlags(receiveSeShare);
         uint256[] memory natives = _nativeAll();
-        uint256[] memory invOut = Math.proportionalExitAmounts(shares, natives, _totalSupply());
+        uint256[] memory invOut = Math.proportionalExitAmounts(shares, natives, _previewSupplyAfterProtocolMint());
         amounts = _invToEdgeOutPreview(invOut, receiveSeShare);
     }
 
@@ -1117,7 +1117,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookLiquidityTarget is
             Repo._layout().weights,
             idx,
             Math.scaleTo(invIn[idx], Repo._layout().invScales[idx]),
-            _totalSupply(),
+            _previewSupplyAfterProtocolMint(),
             feeWad
         );
     }

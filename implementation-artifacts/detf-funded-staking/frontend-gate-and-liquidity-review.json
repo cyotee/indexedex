@@ -1,0 +1,45 @@
+{
+  "recorded_at_utc": "2026-09-09T10:18:21.403599+00:00",
+  "status": "READ_ONLY_SOURCE_REVIEW_PASSED",
+  "findings": [
+    "Primary mint/burn flags drive route labels and default action selection, not transaction-button authorization.",
+    "Mint/bond actions require a signing wallet and unarchived listing; burn availability requires reserve activation, not the primary burn price gate.",
+    "Creation describes both permanent liquidity policies, public swaps, current fee-collector redemption and absence of creator administration rights.",
+    "Deployment builders carry the selected ownerOnlyLiquidity value into both DETF and actual hook arguments; existing tests cover both modes across the UI reserve families."
+  ],
+  "sources": [
+    {
+      "path": "frontend/apps/dtf/app/insights/InsightsPageClient.tsx",
+      "sha256": "6ad418a455f4ae5a533883488f572503b38bd072a364b4a88ac2451f5e31626a"
+    },
+    {
+      "path": "frontend/apps/dtf/app/insights/components/DetfActions.tsx",
+      "sha256": "48d01ea6df139bece9350a8a3cf829f57ec8492502fec69659f4e640093a3210"
+    },
+    {
+      "path": "frontend/apps/dtf/app/create/CreateWizard.tsx",
+      "sha256": "71a8463e45b200ab8d9cf792fb3ab3bdb947ed1ecb974642a21858149df4949e"
+    },
+    {
+      "path": "frontend/apps/dtf/app/create/lib/detfDeploy.ts",
+      "sha256": "7b5369c98d452dd83ce4bedee6089943ef369575f1599b7e6e599e1fc8b8d67b"
+    },
+    {
+      "path": "frontend/apps/dtf/app/create/lib/detfDeploy.test.ts",
+      "sha256": "62d296f9b600136950bdd42b29a795cf5b1d757d8fe1de709331442ecd705356"
+    }
+  ],
+  "runtime_evidence": "frontend-v2-query-package-check.json",
+  "limitations": "This check made no frontend change and is not a fresh browser transaction run. Prior complete app lint/typecheck/410-test evidence is retained; strict contract rehearsal remains required.",
+  "retired_route_search": {
+    "scope": "All frontend TypeScript, TSX and JSON outside node_modules/.next; V4/common DETF Solidity, interfaces and maintained Robinhood launch Solidity.",
+    "symbols": [
+      "closeRouteMode",
+      "closeRoutes",
+      "mintClaim",
+      "burnClaim"
+    ],
+    "findings": "Only detfDeploy.test.ts negative assertions for absent legacy close fields; no active callers or deployment arguments.",
+    "production_frontend_changes_required": false
+  }
+}

@@ -1,5 +1,8 @@
 # Stage 06 — `IUniswapV4Detf` + Uni V4 Bond NFT (R12a)
 
+> **Funded-design supersession (2026-09-07):** This document records earlier requirements or implementation evidence. For the authorized funded DETF refactor, [alignment PRD D32–D66 / §24](../DETF_ALIGNMENT_PRD.md) and the [funded implementation plan](../DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md) take precedence over conflicting Open-mode, LP-claim, rebasing, reward, epoch, decimal, cap and public-route instructions below. Unrelated host behavior remains applicable. Historical completion marks do not certify the funded refactor. The owner-approved unused common NFT ledger/lifecycle cleanup is applied; references below to `DETFNFTVaultTarget._donate` / `_creditId0` describe retired code. Current donation and funded claim behavior live in `common/bondNft/DETFFundedBondTarget.sol`, with D60/D66 scope preserved.
+
+
 ## Agent execution header
 
 | Field | Value |

@@ -5,6 +5,7 @@ pragma solidity ^0.8.0;
 /*                                    Crane                                   */
 /* -------------------------------------------------------------------------- */
 
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {Address} from "@crane/contracts/utils/Address.sol";
 
@@ -46,7 +47,8 @@ abstract contract UniswapV4StandardExchangeOutExecuteTarget is UniswapV4Standard
                 || (address(tokenIn) == token1 && address(tokenOut) == token0)
         ) {
             _requireCanOpenPoolManagerUnlock();
-            uint256 estimatedAmountIn = _quoteSwapOut(amountOut, address(tokenIn) == token0);
+            // Reuse the installed query facet so the execute facet does not embed a second quoter.
+            uint256 estimatedAmountIn = IStandardExchangeOut(address(this)).previewExchangeOut(tokenIn, tokenOut, amountOut);
             if (estimatedAmountIn > maxAmountIn) revert UniswapV4ExchangeOut_InsufficientInput();
 
             uint256 providedAmountIn = _secureTokenTransfer(tokenIn, maxAmountIn, pretransferred);

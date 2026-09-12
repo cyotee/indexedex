@@ -368,13 +368,12 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
                 DetfPkgFactoryService.deployDETFNFTVaultDFPkg(
                     vaultRegistry,
                     DetfComponentFactoryService.buildDETFNFTVaultPkgInit(
-                        erc721Facet,
-                        erc4626BasicVaultFacet,
-                        erc4626StandardVaultFacet,
-                        detfNFTVaultFacet,
-                        feeOracle,
-                        vaultRegistry
-                    )
+            erc721Facet,
+            DetfFacetFactoryService.deployDETFFundedBondMetadataFacet(create3Factory),
+            detfNFTVaultFacet,
+            feeOracle,
+            vaultRegistry
+        )
                 )
             )
         );
@@ -429,6 +428,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
                 exchangeInFacet: singleStandardExchangeDetfExchangeInFacet,
+                bondingFacet: create3Factory.deployBondingFacet(),
                 feeOracle: feeOracle,
                 vaultRegistryDeployment: vaultRegistry,
                 balancerV3Router: balancerV3StandardExchangeRouter,
@@ -437,6 +437,9 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
                 rateProviderPkg: rateProviderPkg,
                 bondNftVaultPkg: detfNFTVaultPkg,
                 rebasingClaimTokenPkg: rebasingClaimTokenPkg,
+                syPkg: DetfPkgFactoryService.deployDETFSYComponents(
+                    create3Factory, vaultRegistry, feeOracle, erc5267Facet, erc2612Facet
+                ),
                 diamondFactory: diamondPackageFactory
             })
         );
@@ -456,10 +459,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
             vaultShareWeight: 0,
             mintThreshold: 0,
             burnThreshold: 0,
-            thresholdMode: ThresholdMode.Policy,
         expansionClosureRatePerSecond: 0,
-        expansionCatchUpMaxSeconds: 0,
-        expansionCatchUpCapBps: 0,
             creator: address(0),
             claimName: "",
             claimSymbol: "",

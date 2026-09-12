@@ -31,6 +31,9 @@ library Phase_06_Stage_04_WeightedBufferHookPkg {
         IFacet hooksFacet = WeightedHookFS.deployHooksFacet(s.create3Factory);
         IWeightedHookPkg.PkgInit memory init_;
         init_.vaultRegistryDeployment = reg;
+        init_.joinQueryFacet = WeightedHookFS.deployJoinQueryFacet(s.create3Factory);
+        init_.joinFlexibleFacet = WeightedHookFS.deployJoinFlexibleFacet(s.create3Factory);
+        init_.exitQueryFacet = WeightedHookFS.deployExitQueryFacet(s.create3Factory);
         init_.vaultFeeOracleQuery = feeOracle;
         init_.joinFacet = joinFacet;
         init_.exitFacet = exitFacet;

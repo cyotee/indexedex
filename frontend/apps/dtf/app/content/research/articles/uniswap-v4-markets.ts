@@ -11,15 +11,15 @@ export const uniswapV4MarketsArticle: ResearchArticle = {
   title: 'Uniswap V4 markets for DETFs',
   summary:
     'A DETF needs a real market behind the token. These use Uniswap V4 pools people can trade. This launch has three setups: one two-token pool, three pools that share one pot, and a weighted set of pools. Diagrams below.',
-  date: '2026-08-06',
+  date: '2026-09-07',
   tags: ['detf', 'uniswap-v4', 'markets', 'product'],
   status: 'published',
   claims: [
     'A DETF prices from real Uniswap V4 pools, not a thin wrap with no pool.',
     'Launch set is three setups only: one two-token ConstProd pool, three shared-inventory pools (triangle), and a weighted multi-token set of pools.',
-    'Each setup mints a liquidity token (LP) that can be used as DETF bond principal.',
+    'Each setup mints LP for liquidity providers. LP acquired by DETF operations is protocol-owned; user bond principal is separately funded staked DETF.',
     'Cash in a pool may sit in a strategy vault. The vault claim is still inventory in that Uniswap V4 market.',
-    'Same DETF process on every type: bond to go live, then mint or burn under Policy or Open.',
+    'The funded design uses the same lifecycle on each type: bond to go live, then use primary issuance/redemption or a reserve swap; stake DETF and claim linear bond principal as sDETF.',
   ],
   notClaiming: [
     'Not every setup is live on every chain today.',
@@ -30,7 +30,7 @@ export const uniswapV4MarketsArticle: ResearchArticle = {
   relatedProductHref: '/research/detf',
   relatedProductLabel: 'How DETFs work',
   sourceNote:
-    'Product law co-located under contracts/hooks/uniswap/v4/standardExchange/{constantProduct,orbital,weighted}/ and contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/. Narrative: docs/marketing/DETF_NARRATIVE_SPINE.md. Public marketing static mirror: marketing/research-site/ (ConstProd naming only).',
+    'Product law co-located under contracts/hooks/uniswap/v4/standardExchange/{constantProduct,orbital,weighted}/ and contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/; funded lifecycle in DETF_ALIGNMENT_PRD.md D32–D55. Narrative: docs/marketing/DETF_NARRATIVE_SPINE.md. Public marketing static mirror: marketing/research-site/ (ConstProd naming only).',
   sections: [
     {
       heading: 'Why Uniswap V4',
@@ -42,7 +42,7 @@ export const uniswapV4MarketsArticle: ResearchArticle = {
     {
       heading: 'How a DETF sits on Uniswap V4',
       paragraphs: [
-        'You hold the DETF token. You own a piece of the assets behind it. Those assets sit in Uniswap V4 pools. Cash can sit in a vault. When you bond, you add to that market and get LP tokens. Those LP tokens are what you lock. They are not a second price.',
+        'You hold the DETF token. You own a piece of the assets behind it. Those assets sit in Uniswap V4 pools. Cash can sit in a vault. A bond adds actual payment and separately minted matching DETF to that market. The resulting LP belongs to the DETF. Your purchased DETF is additionally funded and staked for linear vesting.',
       ],
       mermaid: `graph TD
     User["You hold the DETF token"]
@@ -79,7 +79,7 @@ export const uniswapV4MarketsArticle: ResearchArticle = {
     Free["DETF token in the pool"]
     Pair["Cash token"]
     SE["Strategy vault · optional"]
-    LP["LP token · used to bond"]
+    LP["Protocol-owned reserve LP"]
     Pool["Uniswap V4 pool<br/>DETF token ↔ cash"]
 
     DETF -->|"in the pool"| Free
@@ -100,7 +100,7 @@ export const uniswapV4MarketsArticle: ResearchArticle = {
     class Hook,Pool,LP market
     class SE vault`,
       mermaidCaption:
-        'Pair DETF: one Uniswap V4 pool. DETF token on one side, cash on the other. First bond opens the reserve. LP tokens are what you bond with.',
+        'Pair DETF: one Uniswap V4 pool. DETF token on one side, cash on the other. First bond opens the reserve. The bond also funds staked DETF principal for the buyer.',
     },
     {
       heading: 'Three pools, one pot',
@@ -116,7 +116,7 @@ export const uniswapV4MarketsArticle: ResearchArticle = {
     PoolDA["Uniswap V4 pool<br/>DETF token ↔ A"]
     PoolDB["Uniswap V4 pool<br/>DETF token ↔ B"]
     PoolAB["Uniswap V4 pool<br/>A ↔ B"]
-    LP["LP token · used to bond"]
+    LP["Protocol-owned reserve LP"]
     SEA["Optional vault under A"]
     SEB["Optional vault under B"]
 
@@ -156,7 +156,7 @@ export const uniswapV4MarketsArticle: ResearchArticle = {
     Ext2["External token 2"]
     ExtN["External token n · up to 7"]
     Pools["Uniswap V4 pools<br/>one pool per token pair"]
-    LP["LP token · used to bond"]
+    LP["Protocol-owned reserve LP"]
     SE1["Vault under token 1"]
     SE2["Vault under token 2 · optional"]
     Bare["Plain token · optional"]
@@ -187,13 +187,13 @@ export const uniswapV4MarketsArticle: ResearchArticle = {
     {
       heading: 'How this meets DETFs',
       paragraphs: [
-        'Each DETF uses its matching Uniswap V4 setup. One pool. Or three pools that share one pot. Or a pool for every pair. In every case you bond with that setup\'s LP token.',
+        'Each DETF uses its matching Uniswap V4 setup. One pool. Or three pools that share one pot. Or a pool for every pair. Each funded bond adds reserve liquidity and separately mints and stakes the purchased principal.',
         'The main offer is still: create your own DETF. These pools are the market under it.',
       ],
       bullets: [
-        'One pool: DETF token on one side, cash on the other. Cash can sit in a vault. Bond with that LP token.',
-        'Three pools, one pot: DETF token plus two other tokens. Bond with that LP token.',
-        'A pool for every pair: bond with that LP token.',
+        'One pool: DETF token on one side, cash on the other. Cash can sit in a vault. Bond using the accepted payment route.',
+        'Three pools, one pot: DETF token plus two other tokens. Bond using the accepted payment route.',
+        'A pool for every pair: bond using the accepted payment route.',
       ],
       mermaid: `flowchart LR
     subgraph Pair["Pair type"]
@@ -219,7 +219,7 @@ export const uniswapV4MarketsArticle: ResearchArticle = {
     class P_DETF,T_DETF,W_DETF product
     class P_MKT,T_MKT,W_MKT,P_LP,T_LP,W_LP market`,
       mermaidCaption:
-        'Three launch types. Each DETF maps to its Uniswap V4 pool setup. You bond with that setup’s LP token.',
+        'Three launch types. Each DETF maps to its Uniswap V4 pool setup. Each bond funds reserve liquidity and separately staked DETF principal.',
     },
   ],
 }

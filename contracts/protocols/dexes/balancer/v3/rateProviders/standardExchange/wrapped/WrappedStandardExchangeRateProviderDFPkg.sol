@@ -11,6 +11,7 @@ import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
 import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
+import {IStandardExchangeTransitionQuote, IStandardExchangeRateQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
 
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
@@ -77,9 +78,10 @@ contract WrappedStandardExchangeRateProviderDFPkg is IWrappedStandardExchangeRat
 	}
 
 	function facetInterfaces() public pure returns (bytes4[] memory interfaces_) {
-		interfaces_ = new bytes4[](2);
+		interfaces_ = new bytes4[](3);
 		interfaces_[0] = type(IRateProvider).interfaceId;
 		interfaces_[1] = type(IWrappedStandardExchangeRateProvider).interfaceId;
+        interfaces_[2] = type(IStandardExchangeRateQuote).interfaceId;
 	}
 
 	function packageMetadata()

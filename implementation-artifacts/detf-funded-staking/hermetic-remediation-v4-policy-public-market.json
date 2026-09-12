@@ -1,0 +1,64 @@
+{
+  "status": "BUILD_FAILED_REQUIRES_REVIEW",
+  "group": "v4-policy",
+  "provenance": {
+    "recorded_at_utc": "2026-09-09T09:18:54.075251+00:00",
+    "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+    "source_and_config_sha256": "f27e90463cc776e7f244d2d25d8ba413e4cdfe32faf22221104dcd7a8a3a5a1d",
+    "source_and_config_files": 4812,
+    "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+    "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+    "crane_tracked_contract_and_config_diff_sha256": "284fd75764cb255d1e527eef38fd51e65fca73e8ebb11b7465965e8dfeb2122c",
+    "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+    "machine": "macOS-26.6.2-x86_64-i386-64bit",
+    "architecture": "x86_64",
+    "logical_cpus": 16,
+    "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+  },
+  "started_at_utc": "2026-09-09T09:18:54.261326+00:00",
+  "test_sources": [
+    "test/foundry/spec/oracles/fee/VaultFeeOracle_BondTermsFallback.t.sol",
+    "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+    "test/foundry/spec/vaults/detf/common/core/DETFEpochNaturalExpansionLib.t.sol",
+    "test/foundry/spec/vaults/detf/common/core/DETFFundedStakingMath.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Deploy.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Alignment_RedeemD15.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Policy.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Policy.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Orbital_Policy_B_ALL6.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Orbital_Policy_B_ALL9.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Orbital_Policy_B_P18_R6.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Orbital_Policy_B_P18_R9.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Orbital_Policy_B_P6_R18.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Orbital_Policy_B_P6_R9.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Orbital_Policy_B_P9_R18.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Orbital_Policy_B_P9_R6.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Weighted_Policy_B_ALL6.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Weighted_Policy_B_ALL9.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Weighted_Policy_B_P18_R6.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Weighted_Policy_B_P18_R9.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Weighted_Policy_B_P6_R18.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Weighted_Policy_B_P6_R9.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Weighted_Policy_B_P9_R18.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Weighted_Policy_B_P9_R6.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol"
+  ],
+  "explicitly_empty_rpc_environment_keys": [
+    "ALCHEMY_KEY",
+    "INFURA_KEY"
+  ],
+  "scope": "Complete selected existing suites, including inherited tests; no reduced fuzz runs, profiles, viaIR, or artifact clearing. Final unfiltered default validation remains required.",
+  "build": {
+    "command": [
+      "forge",
+      "build",
+      "--offline",
+      "--contracts",
+      "contracts/hooks/uniswap/v4"
+    ],
+    "exit_code": 1,
+    "seconds": 448.199,
+    "log": "hermetic-remediation-v4-policy-public-market-build.log",
+    "log_sha256": "e846cc931966f26a4c6e8d16c9b7f4aa45434d102926cf48f15f25b2e30148fe"
+  }
+}

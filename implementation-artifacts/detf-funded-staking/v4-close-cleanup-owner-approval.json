@@ -1,0 +1,61 @@
+{
+  "recorded_at_utc": "2026-09-08T03:17:57.671895+00:00",
+  "status": "APPROVED_BY_OWNER_APPLIED_SELECTED_VALIDATION_PASSED",
+  "source": "Explicit owner message in the active implementation conversation",
+  "approval_quote": "I explicitly approve the pending cleanup that automatic approval review previously rejected: delete the obsolete V4 mature-close configuration, getters, storage members, and associated dead code.",
+  "authorized_scope": [
+    "Regenerate against current main-repository files and delete obsolete closeRouteMode / closeRoutes arguments, getters, storage, initialization, readers and writers.",
+    "Update affected callers, tests, ABIs and documentation.",
+    "Preserve funded bond claims, linear vesting, claimable staking rewards and standard exchange/SY redemption paths.",
+    "Continue all remaining implementation, validation, migration and acceptance work; retain D60 and D66 scope."
+  ],
+  "previous_automatic_review": "Historical rejection acknowledged by owner; this explicit approval resolves that specific pending decision.",
+  "remaining_approval_questions": [],
+  "application": "Regenerated and applied to current main sources by regenerate-approved-v4-close-cleanup.py; exact files/hashes and coverage mapping in approved-v4-close-cleanup.json.",
+  "applied_at_utc": "2026-09-08T03:25:33.221461+00:00",
+  "validation": {
+    "evidence": "all-native-se-and-approved-cleanup-603-pass-size-failures-run.json",
+    "build_exit_code": 0,
+    "functional_tests_passed": 603,
+    "separate_size_failures": 3,
+    "cleanup_abi_and_source_check": "approved-close-cleanup-surface.json",
+    "note": "All selected cleanup deployment, retired-selector, funded claim and caller cases pass. The combined run is not green because three distinct SE facet size checks fail; full plan acceptance remains open.",
+    "later_checkpoint": "The complete default build and all 16 funded artifact/source-closure records passed before subsequent provider/fixture/script changes. Ten cleanup surface checks pass. The latest focused result is 47 pass / one Orbital fixture setup failure, corrected and awaiting rerun; all custom quote and corrected custody checks pass. Final current-source build, hermetic and local deployment acceptance remain required.",
+    "latest_checkpoint": {
+      "record": "hermetic-remediation-v4-policy-public-market-split.json",
+      "source_and_config_sha256": "8b95fa9d3b840eee0885c252c2c8a20e62a596a5ea9be110235c634e0195a295",
+      "passed": 438,
+      "failed": 0,
+      "incomplete_suites": 0,
+      "dedicated_cleanup_cases": 102,
+      "status": "SELECTED_RUNTIME_PASSED_FINAL_RELEASE_CHECKS_PENDING"
+    }
+  },
+  "additional_dead_code_cleanup": {
+    "recorded_at_utc": "2026-09-08T04:50:32.059659+00:00",
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol",
+    "action": "Deleted the unreferenced obsolete V4 NFT target, including its mature-only redemption and old reward ledger code.",
+    "evidence": "Search of current contracts, tests, scripts and frontend found only the target declaration itself. The actual V4 facet inherits common DETFNFTVaultFacet and its funded lifecycle.",
+    "validation": "Current 2081-file combined build passed; all ten source/ABI cleanup checks passed; current selected funded claims and LP/Fee Collector routes pass. Evidence current-composed-quotes-351-pass-donation-artifact-failures-*.",
+    "approval": "Covered by the explicit owner approval of obsolete V4 mature-close and associated unused legacy code."
+  },
+  "remaining_storage_cleanup": {
+    "record": "remaining-write-only-v4-storage-cleanup.json",
+    "status": "Applied: removed write-only V4 epochAnchor; operational eight-hour clock preserved."
+  },
+  "verified_additional_dead_storage": {
+    "record": "obsolete-common-ledger-cleanup-prepared.json",
+    "status": "APPLIED_SELECTED_RUNTIME_VALIDATION_PASSED",
+    "authorization": "Covered by explicit owner approval and plan A30. No new decision requested.",
+    "details": "Seventeen unused common legacy NFT ledger fields and six unused implementation/lifecycle files. Four unused Pons imports and seven tests preserving obsolete struct/dust behavior are accounted for. No current Balancer-hosted DETF imports this cluster.",
+    "application_record": "obsolete-common-ledger-cleanup-applied.json",
+    "compiler_diagnostic": "obsolete-common-ledger-draft-typecheck.json",
+    "selected_runtime": {
+      "record": "hermetic-remediation-v4-policy-public-market-split.json",
+      "dedicated_cleanup_cases": 102,
+      "all_selected_cases": 438,
+      "failures": 0,
+      "remaining": "Final matching full repository validation and acceptance reconciliation."
+    }
+  }
+}

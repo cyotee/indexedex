@@ -1,0 +1,31 @@
+{
+  "timestamp_utc": "2026-09-07T22:47:56.527747+00:00",
+  "chain_id_raw": "0x1237",
+  "rpc_alias": "robinhood_mainnet_alchemy",
+  "broadcast": false,
+  "block": {
+    "number": "0x368d763",
+    "hash": "0xe9f5e4860e4c0c27fc9ff41235aedfc015eac480e37f69ad2f79fd68c64e1558",
+    "timestamp": "0x6a9f3f1c",
+    "gasLimit": "0x4000000000000",
+    "gasUsed": "0x2ea6ec"
+  },
+  "getGasAccountingParams()": {
+    "result": "0x00000000000000000000000000000000000000000000000000000000006acfc00000000000000000000000000000000000000000000000000000000001e848000000000000000000000000000000000000000000000000000000000001e84800",
+    "decoded_uint256": [
+      7000000,
+      32000000,
+      32000000
+    ]
+  },
+  "getMaxTxGasLimit()": {
+    "result": "0x0000000000000000000000000000000000000000000000000000000001e84800",
+    "decoded_uint256": [
+      32000000
+    ]
+  },
+  "source_urls": [
+    "https://docs.robinhood.com/chain/connecting/",
+    "https://raw.githubusercontent.com/OffchainLabs/nitro/master/precompiles/ArbGasInfo.go"
+  ]
+}

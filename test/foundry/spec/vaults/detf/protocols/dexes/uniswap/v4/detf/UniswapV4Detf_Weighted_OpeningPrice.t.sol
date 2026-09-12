@@ -77,12 +77,7 @@ contract UniswapV4Detf_Weighted_OpeningPrice is
         TestBase_UniswapV4Detf_Weighted_Policy._expectInvalidCreationRate(args);
     }
 
-    function _ownerSwap(address d, address tokenIn, address tokenOut, uint256 amount)
-        internal
-        override(TestBase_UniswapV4Detf_Policy, TestBase_UniswapV4Detf_Weighted_Policy)
-    {
-        TestBase_UniswapV4Detf_Weighted_Policy._ownerSwap(d, tokenIn, tokenOut, amount);
-    }
+
 
     function _pushSyntheticUp(address d)
         internal

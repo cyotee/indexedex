@@ -12,8 +12,8 @@ import {
  * @dev Slot: indexedex.hooks.uv4.se.stable.quad.buffer.storage
  *      LP ERC-20 uses shared ERC20Repo; vaultTokens use MultiAssetBasicVaultRepo.
  *      Live inventory (D21): raw = face balanceOf(hook) (donations dilute LP);
- *      SE legs = SE share balanceOf(hook). Free pair on SE legs is never book.
- *      rawReserves[i] = intentional raw book for free-pretransfer gate only
+ *      SE inventory = SE share balanceOf(hook); retained pair tokens have a separate funding baseline.
+ *      rawReserves[i] = raw-leg book or retained SE-leg pair balance for the funding gate
  *      (free_raw = bal - rawReserves; inventory cannot fund pretransfer).
  *      I1 freeze: kLast = geometricMean4(invWad0..3).
  *      DETF-facing membership is `legs` (AddressSetRepo); do not scan tokens() at runtime.
@@ -45,13 +45,14 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookRepo {
         address[4] tokens;
         address[4] standardExchanges;
         address[4] rateProviders;
-        /// @dev Inventory scale: 10^(36 - invDecimals); raw = pair decimals; SE = share decimals.
+        /// @dev Inventory scale: 10^(36 - invDecimals), using pair decimals for raw
+        ///      legs and SE share-token decimals for buffered legs.
         uint256[4] invScales;
         /// @dev Rated scale: always 10^(36 - pairToken.decimals()).
         uint256[4] ratedScales;
         uint8[4] pairDecimals;
         uint8[4] invDecimals;
-        /// @dev Intentional raw face inventory for raw legs only (buffered legs stay 0).
+        /// @dev Raw-leg inventory baseline; on SE legs, recorded retained pair-token balance.
         uint256[4] rawReserves;
         /// @dev Append-only: set by finalizeInitialization after all six product doors are live.
         bool initializationFinalized;

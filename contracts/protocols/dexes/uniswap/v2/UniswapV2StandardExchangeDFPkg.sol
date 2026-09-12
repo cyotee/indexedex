@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                    Crane                                   */
 /* -------------------------------------------------------------------------- */
 
+import {IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {IStandardExchangeTransitionQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IDiamondCut} from "@crane/contracts/interfaces/IDiamondCut.sol";
@@ -70,6 +73,7 @@ interface IUniswapV2StandardExchangeDFPkg is IDiamondFactoryPackage, IStandardVa
         IFacet multiAssetStandardVaultFacet;
         IFacet uniswapV2StandardExchangeInFacet;
         IFacet uniswapV2StandardExchangeOutFacet;
+        IFacet uniswapV2StandardExchangeQueryFacet;
         IVaultFeeOracleQuery vaultFeeOracleQuery;
         IVaultRegistryDeployment vaultRegistryDeployment;
         IPermit2 permit2;
@@ -133,6 +137,7 @@ contract UniswapV2StandardExchangeDFPkg is IUniswapV2StandardExchangeDFPkg {
     IFacet immutable MULTI_ASSET_STANDARD_VAULT_FACET;
     IFacet immutable UNISWAP_V2_STANDARD_EXCHANGE_IN_FACET;
     IFacet immutable UNISWAP_V2_STANDARD_EXCHANGE_OUT_FACET;
+    IFacet immutable UNISWAP_V2_STANDARD_EXCHANGE_QUERY_FACET;
     IVaultFeeOracleQuery immutable VAULT_FEE_ORACLE_QUERY;
     IVaultRegistryDeployment immutable VAULT_REGISTRY_DEPLOYMENT;
     IPermit2 immutable PERMIT2;
@@ -151,6 +156,7 @@ contract UniswapV2StandardExchangeDFPkg is IUniswapV2StandardExchangeDFPkg {
         MULTI_ASSET_STANDARD_VAULT_FACET = pkgInit.multiAssetStandardVaultFacet;
         UNISWAP_V2_STANDARD_EXCHANGE_IN_FACET = pkgInit.uniswapV2StandardExchangeInFacet;
         UNISWAP_V2_STANDARD_EXCHANGE_OUT_FACET = pkgInit.uniswapV2StandardExchangeOutFacet;
+        UNISWAP_V2_STANDARD_EXCHANGE_QUERY_FACET = pkgInit.uniswapV2StandardExchangeQueryFacet;
         VAULT_FEE_ORACLE_QUERY = pkgInit.vaultFeeOracleQuery;
         VAULT_REGISTRY_DEPLOYMENT = pkgInit.vaultRegistryDeployment;
         PERMIT2 = pkgInit.permit2;
@@ -430,7 +436,7 @@ contract UniswapV2StandardExchangeDFPkg is IUniswapV2StandardExchangeDFPkg {
     }
 
     function facetAddresses() public view returns (address[] memory facetAddresses_) {
-        facetAddresses_ = new address[](8);
+        facetAddresses_ = new address[](9);
         facetAddresses_[0] = address(ERC20_FACET);
         facetAddresses_[1] = address(ERC5267_FACET);
         facetAddresses_[2] = address(ERC2612_FACET);
@@ -441,11 +447,12 @@ contract UniswapV2StandardExchangeDFPkg is IUniswapV2StandardExchangeDFPkg {
         facetAddresses_[5] = address(MULTI_ASSET_STANDARD_VAULT_FACET);
         facetAddresses_[6] = address(UNISWAP_V2_STANDARD_EXCHANGE_IN_FACET);
         facetAddresses_[7] = address(UNISWAP_V2_STANDARD_EXCHANGE_OUT_FACET);
+        facetAddresses_[8] = address(UNISWAP_V2_STANDARD_EXCHANGE_QUERY_FACET);
         return facetAddresses_;
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](11);
+        interfaces = new bytes4[](14);
 
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
@@ -458,6 +465,9 @@ contract UniswapV2StandardExchangeDFPkg is IUniswapV2StandardExchangeDFPkg {
         interfaces[8] = type(IStandardExchangeIn).interfaceId;
         interfaces[9] = type(IStandardExchangeOut).interfaceId;
         interfaces[10] = type(IVaultFeeOracleQueryAware).interfaceId;
+        interfaces[11] = type(IStandardExchangeTransitionQuote).interfaceId;
+        interfaces[12] = type(IStandardizedYield).interfaceId;
+        interfaces[13] = type(IStandardExchangeExternalQuote).interfaceId;
         return interfaces;
     }
 
@@ -472,7 +482,7 @@ contract UniswapV2StandardExchangeDFPkg is IUniswapV2StandardExchangeDFPkg {
     }
 
     function facetCuts() public view returns (IDiamond.FacetCut[] memory facetCuts_) {
-        facetCuts_ = new IDiamond.FacetCut[](8);
+        facetCuts_ = new IDiamond.FacetCut[](9);
 
         facetCuts_[0] = IDiamond.FacetCut({
             // address facetAddress;
@@ -553,6 +563,11 @@ contract UniswapV2StandardExchangeDFPkg is IUniswapV2StandardExchangeDFPkg {
             action: IDiamond.FacetCutAction.Add,
             // bytes4[] functionSelectors;
             functionSelectors: UNISWAP_V2_STANDARD_EXCHANGE_OUT_FACET.facetFuncs()
+        });
+        facetCuts_[8] = IDiamond.FacetCut({
+            facetAddress: address(UNISWAP_V2_STANDARD_EXCHANGE_QUERY_FACET),
+            action: IDiamond.FacetCutAction.Add,
+            functionSelectors: UNISWAP_V2_STANDARD_EXCHANGE_QUERY_FACET.facetFuncs()
         });
     }
 

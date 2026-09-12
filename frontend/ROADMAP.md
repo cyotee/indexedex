@@ -9,6 +9,7 @@
 | **Narrative spine** | [`docs/marketing/DETF_NARRATIVE_SPINE.md`](../docs/marketing/DETF_NARRATIVE_SPINE.md) |
 | **Working directory** | `frontend/apps/dtf` (the only Next app) |
 | **Workspace root** | `frontend/` (`packages/protocol` + DTF) |
+| **Wallet connection** | RainbowKit 2 / Wagmi 2; [configuration and verification](apps/dtf/WALLET_CONNECTION.md) |
 
 **Cold-start rule:** Open **this file first** for frontend product work, then edit **`frontend/apps/dtf`**. Do **not** treat repo-root `PROGRESS.md` as the frontend redesign status (it is historical Permit2 notes unless updated). Do not recreate `apps/indexedex` or `apps/pachira`.
 

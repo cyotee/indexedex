@@ -1,0 +1,35 @@
+{
+  "status": "DRAFT_CODEGEN_ONLY_NOT_RUNTIME_VALIDATION",
+  "seconds": 133.429,
+  "prepared_records": [
+    "balancer-se-fixture-followups-prepared.json",
+    "balancer-se-smoke-consolidation-prepared.json",
+    "balancer-stable-walk-fixture-prepared.json"
+  ],
+  "exit_code": 0,
+  "errors": [],
+  "concrete_suites": {
+    "WrappedStandardExchangeRateProvider_Test": 3,
+    "TestBase_Smoke": 16,
+    "MixedBufferMultiVaultStable_WalkAndExhaust_B_ALL6": 4,
+    "CommonBufferMultiVault_RoutingAndWalk_B_P6_R9": 5,
+    "MixedLegWeightedBufferPool_B_ALL6": 16,
+    "MixedLeg_P4_Smoke_B_P18_R6": 5,
+    "MultiPairBuffer_CrossPair_B_P6_R9": 8,
+    "MultiPairStandardExchangeBufferPool_B_ALL6": 12
+  },
+  "compiled_methods": 69,
+  "compiler_input_sha256": "c838b348ed6fc77a902e55411309e7b60979091d89f826ec03a19c784d49625b",
+  "validation_passed": true,
+  "canonical_sources_unchanged": true,
+  "test_container_runtime_bytes": {
+    "WrappedStandardExchangeRateProvider_Test": 223903,
+    "TestBase_Smoke": 549717,
+    "MixedBufferMultiVaultStable_WalkAndExhaust_B_ALL6": 592899,
+    "CommonBufferMultiVault_RoutingAndWalk_B_P6_R9": 588158,
+    "MixedLegWeightedBufferPool_B_ALL6": 593725,
+    "MixedLeg_P4_Smoke_B_P18_R6": 585444,
+    "MultiPairBuffer_CrossPair_B_P6_R9": 584801,
+    "MultiPairStandardExchangeBufferPool_B_ALL6": 587567
+  }
+}

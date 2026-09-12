@@ -1,0 +1,407 @@
+[
+  {
+    "proxy": "indexedexManager",
+    "facet": "0x69a470758a14176c86927ee080f9419d30c49480",
+    "selectors": [
+      "0x01ffc9a7"
+    ]
+  },
+  {
+    "proxy": "indexedexManager",
+    "facet": "0x343590ed92498739225e351c27133bc2c11b91b9",
+    "selectors": [
+      "0x7a0ed627",
+      "0xadfca15e",
+      "0x52ef6b2c",
+      "0xcdffacc6"
+    ]
+  },
+  {
+    "proxy": "indexedexManager",
+    "facet": "0xe3d915c0211a87077b14dfe995009741dac2f5da",
+    "selectors": [
+      "0x60b5befb"
+    ]
+  },
+  {
+    "proxy": "indexedexManager",
+    "facet": "0xd1fd586d785e9d150a86306bdca9deaa0c202cee",
+    "selectors": [
+      "0xa64bc063",
+      "0xa64b7625"
+    ]
+  },
+  {
+    "proxy": "indexedexManager",
+    "facet": "0xa8fb4aa08f910026d33579bd680fc133a399c447",
+    "selectors": [
+      "0x1f931c1c"
+    ]
+  },
+  {
+    "proxy": "indexedexManager",
+    "facet": "0xf03fad914ec73b6a7d41cece447656ae97b8b16f",
+    "selectors": [
+      "0xc0b6f561",
+      "0x3c213957",
+      "0x737293e2",
+      "0xb842e87f",
+      "0x8da5cb5b",
+      "0xe30c3978",
+      "0x1af1b0c4",
+      "0x0f9f2530"
+    ]
+  },
+  {
+    "proxy": "indexedexManager",
+    "facet": "0xc6367d76d4b04eba5deaebdeea379dc9ea70447e",
+    "selectors": [
+      "0x6d70f7ae",
+      "0xea562a25",
+      "0x558a7297",
+      "0x755dbe7c"
+    ]
+  },
+  {
+    "proxy": "indexedexManager",
+    "facet": "0x2877fdb3510ca459de2a13d55d7b35101506b915",
+    "selectors": [
+      "0x017e7e58",
+      "0x70d8521d",
+      "0x99eed7ac",
+      "0xbbdce0ae",
+      "0x7662f468",
+      "0x8f6dc5ee",
+      "0xd462c40b",
+      "0x65ea6288",
+      "0x502a2c1b",
+      "0xfac8ac1c",
+      "0xd1406ccc",
+      "0x1aa15b12",
+      "0x3324d60f",
+      "0x036c0bfe",
+      "0x5f3bf472",
+      "0x2141a5e0",
+      "0x6eda943f",
+      "0xa4ecef74",
+      "0x8a851ddd",
+      "0x921d28bf",
+      "0x14821f13",
+      "0xc91cb31b",
+      "0xe2b470aa",
+      "0xb9ff265c",
+      "0xe1d271b2",
+      "0x09136817",
+      "0x050f0919",
+      "0xb2da8a0a",
+      "0xb1ce77a2",
+      "0x0eeedfa6",
+      "0x423ac34b",
+      "0x95f22b17",
+      "0xa7849b48",
+      "0x1584d9f7"
+    ]
+  },
+  {
+    "proxy": "indexedexManager",
+    "facet": "0xccc45be0bbdd1117ffb0731cd91163f5487149dd",
+    "selectors": [
+      "0xf46901ed",
+      "0x541b196b",
+      "0x75e8a097",
+      "0x52e4e23a",
+      "0x21fd4bcb",
+      "0x97109390",
+      "0xa20fa5a9",
+      "0xa59e375f",
+      "0xe342c4e1",
+      "0x2a31b390",
+      "0xad26aa7d",
+      "0x78622e00",
+      "0xd4f991d3",
+      "0xcbdf486b",
+      "0x3bd23bf5",
+      "0xeb23e16e",
+      "0x4f7c864b",
+      "0x67c49a33",
+      "0x2c692e79",
+      "0x556222e0",
+      "0x8d4a9483",
+      "0x44cc5026",
+      "0x37caa5ea",
+      "0x828dd38a",
+      "0xdeacb80f"
+    ]
+  },
+  {
+    "proxy": "indexedexManager",
+    "facet": "0xa36792a3c9bc0f96501b1c8791df00a282a9b616",
+    "selectors": [
+      "0x96295ed2",
+      "0x968cbade",
+      "0x22784927",
+      "0x4fc2e844",
+      "0x735129f0"
+    ]
+  },
+  {
+    "proxy": "indexedexManager",
+    "facet": "0x6e05d424b484c95fa3e9b707247283f89c611cdb",
+    "selectors": [
+      "0x3ca888d7",
+      "0x47a6146f"
+    ]
+  },
+  {
+    "proxy": "indexedexManager",
+    "facet": "0x6569b4ad730dc1d0391c838fe55042fed11703d9",
+    "selectors": [
+      "0xf6ea5789",
+      "0xcde195ed"
+    ]
+  },
+  {
+    "proxy": "indexedexManager",
+    "facet": "0x3daa2843d5fe3484094cd3598091fcd6043bb21b",
+    "selectors": [
+      "0xd0742235",
+      "0x9e46b4b6",
+      "0xe41621aa",
+      "0x6737e5d0",
+      "0xd9c37912",
+      "0x80a5a93e",
+      "0x3853b30b",
+      "0x9e43946c",
+      "0x6ca40653",
+      "0x1d2732e7"
+    ]
+  },
+  {
+    "proxy": "indexedexManager",
+    "facet": "0x918f2de88ec3d9138ffb34c6fcb5958c67b007cc",
+    "selectors": [
+      "0x8220ef5b",
+      "0x652b9b41",
+      "0x69722233",
+      "0xa6558759",
+      "0x2b9fc930",
+      "0x25d6a19d",
+      "0x396d8457",
+      "0x08364393",
+      "0x4bef424b",
+      "0x45a04abd",
+      "0xcc130893",
+      "0x1cee886c",
+      "0x5f109775",
+      "0x2398fdc4",
+      "0x7d73194b",
+      "0x902d8230",
+      "0x538981d7",
+      "0x989c5b23",
+      "0x153729c4",
+      "0xd5ef426f",
+      "0x47098530",
+      "0x89499a3b"
+    ]
+  },
+  {
+    "proxy": "indexedexManager",
+    "facet": "0x10e1211a99126304d4dadaec39146c2ac45f7f91",
+    "selectors": [
+      "0x4f6c171d",
+      "0x82070585",
+      "0x60d3f4f5",
+      "0x35a5aaac",
+      "0xfe64d812",
+      "0xef9b0b6b",
+      "0x14f0a95b"
+    ]
+  },
+  {
+    "proxy": "feeCollector",
+    "facet": "0x69a470758a14176c86927ee080f9419d30c49480",
+    "selectors": [
+      "0x01ffc9a7"
+    ]
+  },
+  {
+    "proxy": "feeCollector",
+    "facet": "0x343590ed92498739225e351c27133bc2c11b91b9",
+    "selectors": [
+      "0x7a0ed627",
+      "0xadfca15e",
+      "0x52ef6b2c",
+      "0xcdffacc6"
+    ]
+  },
+  {
+    "proxy": "feeCollector",
+    "facet": "0xe3d915c0211a87077b14dfe995009741dac2f5da",
+    "selectors": [
+      "0x60b5befb"
+    ]
+  },
+  {
+    "proxy": "feeCollector",
+    "facet": "0xf7a99a0aed1a4252c71c99fdd2a5b3250a41f669",
+    "selectors": [
+      "0xa4eef28a",
+      "0xb100fc0a",
+      "0x45e94ee3"
+    ]
+  },
+  {
+    "proxy": "feeCollector",
+    "facet": "0xa8fb4aa08f910026d33579bd680fc133a399c447",
+    "selectors": [
+      "0x1f931c1c"
+    ]
+  },
+  {
+    "proxy": "feeCollector",
+    "facet": "0xf03fad914ec73b6a7d41cece447656ae97b8b16f",
+    "selectors": [
+      "0xc0b6f561",
+      "0x3c213957",
+      "0x737293e2",
+      "0xb842e87f",
+      "0x8da5cb5b",
+      "0xe30c3978",
+      "0x1af1b0c4",
+      "0x0f9f2530"
+    ]
+  },
+  {
+    "proxy": "feeCollector",
+    "facet": "0x694fe17168d3cbe407833832e7f1224b70120491",
+    "selectors": [
+      "0x4a5658f8"
+    ]
+  },
+  {
+    "proxy": "create3Factory",
+    "facet": "0x69a470758a14176c86927ee080f9419d30c49480",
+    "selectors": [
+      "0x01ffc9a7"
+    ]
+  },
+  {
+    "proxy": "create3Factory",
+    "facet": "0x343590ed92498739225e351c27133bc2c11b91b9",
+    "selectors": [
+      "0x7a0ed627",
+      "0xadfca15e",
+      "0x52ef6b2c",
+      "0xcdffacc6"
+    ]
+  },
+  {
+    "proxy": "create3Factory",
+    "facet": "0xe3d915c0211a87077b14dfe995009741dac2f5da",
+    "selectors": [
+      "0x60b5befb"
+    ]
+  },
+  {
+    "proxy": "create3Factory",
+    "facet": "0xc08a6221f2a93b965a5a12ec0f645e9eba717703",
+    "selectors": [
+      "0xba5b83ec"
+    ]
+  },
+  {
+    "proxy": "create3Factory",
+    "facet": "0xa8fb4aa08f910026d33579bd680fc133a399c447",
+    "selectors": [
+      "0x1f931c1c"
+    ]
+  },
+  {
+    "proxy": "create3Factory",
+    "facet": "0xf03fad914ec73b6a7d41cece447656ae97b8b16f",
+    "selectors": [
+      "0xc0b6f561",
+      "0x3c213957",
+      "0x737293e2",
+      "0xb842e87f",
+      "0x8da5cb5b",
+      "0xe30c3978",
+      "0x1af1b0c4",
+      "0x0f9f2530"
+    ]
+  },
+  {
+    "proxy": "create3Factory",
+    "facet": "0xc6367d76d4b04eba5deaebdeea379dc9ea70447e",
+    "selectors": [
+      "0x6d70f7ae",
+      "0xea562a25",
+      "0x558a7297",
+      "0x755dbe7c"
+    ]
+  },
+  {
+    "proxy": "create3Factory",
+    "facet": "0x4e6509e792d7aa5d714ff3dd3a4299269c9b3411",
+    "selectors": [
+      "0x0fe96d13",
+      "0x1cdca5df",
+      "0xa7b62a7f",
+      "0x1f7fe4db"
+    ]
+  },
+  {
+    "proxy": "create3Factory",
+    "facet": "0x5186d17216b2b5f809b318e8af4fabd649bb5b1b",
+    "selectors": [
+      "0x4e097bd0",
+      "0x15fe5788",
+      "0xba63b814",
+      "0xb2da46ef",
+      "0xbed19193",
+      "0xe3ff70d6",
+      "0x9b0a714e",
+      "0x3c517deb",
+      "0x63f296d1",
+      "0x4e8aad46",
+      "0xec5d1493",
+      "0xf0abc784",
+      "0x0d20b70a",
+      "0x5ca13840"
+    ]
+  },
+  {
+    "proxy": "create3Factory",
+    "facet": "0x195d9af10c8d1766ce341bd80123d83b472e4dfe",
+    "selectors": [
+      "0xad0619af",
+      "0xb446d3df",
+      "0x72ad9d54",
+      "0xeea98bb0",
+      "0xa73e3131",
+      "0x14a917ca",
+      "0x067339c4",
+      "0xb92811c5",
+      "0x7ff8bd87",
+      "0x50e4fe75",
+      "0x57c7cde1",
+      "0xcb08be22"
+    ]
+  },
+  {
+    "proxy": "create3Factory",
+    "facet": "0xbd33463cb05a8d1dd74a0f1f323d4fe2c70233c0",
+    "selectors": [
+      "0xd2cfb6ed",
+      "0x6412ef5a"
+    ]
+  },
+  {
+    "proxy": "create3Factory",
+    "facet": "0xc19edc48b9f7d290546d7eb6bd6970e23f545099",
+    "selectors": [
+      "0xaf87fa1d",
+      "0x3b873d77"
+    ]
+  }
+]

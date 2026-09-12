@@ -1,0 +1,545 @@
+--- a/test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_Decimals.sol
++++ b/test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_Decimals.sol
+@@ -48,10 +48,10 @@
+         uint256 vBefore = cbmv().virtualBuffer();
+         uint256 rawBefore = rawPoolBufferBalance();
+ 
+-        uint256 amountIn = 40e18;
+-        rateAsset.mint(alice, amountIn);
++        uint256 amountIn = _from18(address(_bufferToken()), 40e18);
++        _mintToken(address(_bufferToken()), alice, amountIn);
+         // tokenOut = share0 (vault 0) - must still deposit to vault 1
+-        uint256 out = swapExactIn(alice, IERC20(address(rateAsset)), IERC20(address(seVault)), amountIn);
++        uint256 out = swapExactIn(alice, _bufferToken(), IERC20(address(seVault)), amountIn);
+         assertGt(out, 0);
+         assertEq(cbmv().virtualBuffer(), vBefore + amountIn, "virtual += amountIn");
+         assertGt(cbmv().hookShareDelta(1), d1Before, "deposit donation on most-needed vault1");
+@@ -79,9 +79,9 @@
+         int256 d0 = cbmv().hookShareDelta(0);
+         int256 d1 = cbmv().hookShareDelta(1);
+         uint256 rawBefore = rawPoolBufferBalance();
+-        uint256 amountIn = 30e18;
+-        rateAsset.mint(alice, amountIn);
+-        uint256 out = swapExactIn(alice, IERC20(address(rateAsset)), IERC20(address(seVault)), amountIn);
++        uint256 amountIn = _from18(address(_bufferToken()), 30e18);
++        _mintToken(address(_bufferToken()), alice, amountIn);
++        uint256 out = swapExactIn(alice, _bufferToken(), IERC20(address(seVault)), amountIn);
+         assertGt(out, 0);
+         assertEq(cbmv().virtualBuffer(), vBefore + amountIn, "virtual += X");
+         assertGt(cbmv().hookShareDelta(1), d1, "deposit on vault1");
+@@ -93,17 +93,17 @@
+     /// @notice Unbalanced add with buffer leg must hit onAfterAddLiquidity UNBALANCED and grow virtual.
+     function test_lp_unbalanced_buffer_add_growsVirtual() public {
+         uint256 vBefore = cbmv().virtualBuffer();
+-        uint256 bufAdd = 5e18;
++        uint256 bufAdd = _from18(address(_bufferToken()), 5e18);
+         uint256 shareAdd = 5e18;
+         mintSharesForVault(0, alice, shareAdd * 3);
+-        rateAsset.mint(alice, bufAdd);
++        _mintToken(address(_bufferToken()), alice, bufAdd);
+         (IERC20[] memory tokens,,,) = bv3Vault.getPoolTokenInfo(cbmvPool);
+         uint256[] memory maxAmounts = new uint256[](tokens.length);
+         maxAmounts[cbmv().bufferIndex()] = bufAdd;
+         // Include some share so Balancer invariant-ratio stays valid (not pure single-sided).
+         maxAmounts[cbmv().shareIndex(0)] = shareAdd;
+         vm.startPrank(alice);
+-        rateAsset.approve(address(router), type(uint256).max);
++        _bufferToken().approve(address(router), type(uint256).max);
+         IERC20(address(seVault)).approve(address(router), type(uint256).max);
+         uint256 bptOut = router.addLiquidityUnbalanced(cbmvPool, maxAmounts, 0, false, bytes(""));
+         vm.stopPrank();
+--- a/test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_Decimals.sol
++++ b/test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_Decimals.sol
+@@ -17,14 +17,14 @@
+     function test_deploy_P2() public view {
+         assertEq(mp().pairCount(), 2);
+         assertEq(mp().tokenCount(), 4);
+-        assertEq(address(mp().bufferToken(0)), address(rateAsset));
++        assertEq(address(mp().bufferToken(0)), address(buffer0));
+         assertEq(address(mp().bufferToken(1)), address(usdt));
+         assertTrue(address(mp().shareToken(0)) != address(mp().shareToken(1)));
+     }
+ 
+     function test_swap_withinPair0_bufferToShare() public {
+-        uint256 amt = 5e18;
+-        rateAsset.mint(alice, amt);
++        uint256 amt = _from18(address(buffer0), 5e18);
++        _mintToken(address(buffer0), alice, amt);
+         uint256 v0 = mp().virtualBuffer(0);
+         uint256 rawBefore = rawPoolBufferBalance(0);
+         uint256 out = swapExactIn(alice, buffer0, IERC20(address(seVault)), amt);
+@@ -35,7 +35,7 @@
+     }
+ 
+     function test_swap_withinPair1_bufferToShare() public {
+-        uint256 amt = 5e18;
++        uint256 amt = _from18(address(buffer1), 5e18);
+         usdt.mint(alice, amt);
+         uint256 v1 = mp().virtualBuffer(1);
+         uint256 rawBefore = rawPoolBufferBalance(1);
+@@ -46,8 +46,8 @@
+     }
+ 
+     function test_swap_crossPair_buffer0_to_share1() public {
+-        uint256 amt = 5e18;
+-        rateAsset.mint(alice, amt);
++        uint256 amt = _from18(address(buffer0), 5e18);
++        _mintToken(address(buffer0), alice, amt);
+         uint256 v0 = mp().virtualBuffer(0);
+         uint256 v1 = mp().virtualBuffer(1);
+         int256 h1 = mp().hookShareDelta(1);
+@@ -81,8 +81,8 @@
+     }
+ 
+     function test_swap_buffer_to_buffer() public {
+-        uint256 amt = 5e18;
+-        rateAsset.mint(alice, amt);
++        uint256 amt = _from18(address(buffer0), 5e18);
++        _mintToken(address(buffer0), alice, amt);
+         uint256 v0 = mp().virtualBuffer(0);
+         uint256 v1 = mp().virtualBuffer(1);
+         uint256 raw0 = rawPoolBufferBalance(0);
+@@ -98,8 +98,9 @@
+     function test_E3_withinPair0_leavesPair1Unchanged() public {
+         uint256 v1 = mp().virtualBuffer(1);
+         int256 h1 = mp().hookShareDelta(1);
+-        rateAsset.mint(alice, 3e18);
+-        swapExactIn(alice, buffer0, IERC20(address(seVault)), 3e18);
++        uint256 amount = _from18(address(buffer0), 3e18);
++        _mintToken(address(buffer0), alice, amount);
++        swapExactIn(alice, buffer0, IERC20(address(seVault)), amount);
+         assertEq(mp().virtualBuffer(1), v1);
+         assertEq(mp().hookShareDelta(1), h1);
+     }
+@@ -120,8 +121,8 @@
+     }
+ 
+     function test_swap_P4_crossPair_buffer0_to_share3() public {
+-        uint256 amt = 2e18;
+-        rateAsset.mint(alice, amt);
++        uint256 amt = _from18(address(buffer0), 2e18);
++        _mintToken(address(buffer0), alice, amt);
+         uint256 v0 = mp().virtualBuffer(0);
+         uint256 out = swapExactIn(alice, buffer0, IERC20(address(seVault3)), amt);
+         assertGt(out, 0);
+--- a/test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_Decimals.sol
++++ b/test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_Decimals.sol
+@@ -28,9 +28,9 @@
+         assertEq(ml().unpairedCount(), 2);
+         assertEq(ml().pairCount(), 1);
+         assertEq(ml().tokenCount(), 4);
+-        assertEq(address(ml().bufferToken(0)), address(rateAsset));
++        assertEq(address(ml().bufferToken(0)), address(pairToken));
+         assertEq(address(ml().shareToken(0)), address(seVault));
+-        assertEq(address(ml().unpairedToken(0)), address(pairToken));
++        assertEq(address(ml().unpairedToken(0)), address(rateAsset));
+         assertEq(address(ml().unpairedToken(1)), address(weth));
+     }
+ 
+@@ -77,13 +77,13 @@
+         // unpaired USDC + pair buffer USDC would collide if we force it - use DAI as unpaired + DAI buffer.
+         IERC20[] memory unpaired = new IERC20[](1);
+         IRateProvider[] memory unpairedRps = new IRateProvider[](1);
+-        unpaired[0] = IERC20(address(rateAsset)); // same as buffer
++        unpaired[0] = IERC20(address(pairToken)); // same as buffer
+         unpairedRps[0] = IRateProvider(address(0));
+ 
+         IERC20[] memory buffers = new IERC20[](1);
+         IStandardExchange[] memory vaults = new IStandardExchange[](1);
+         IRateProvider[] memory pairRps = new IRateProvider[](1);
+-        buffers[0] = IERC20(address(rateAsset));
++        buffers[0] = IERC20(address(pairToken));
+         vaults[0] = IStandardExchange(address(seVault));
+         pairRps[0] = IRateProvider(address(0));
+ 
+@@ -104,7 +104,7 @@
+         });
+ 
+         vm.expectRevert(
+-            abi.encodeWithSelector(IMixedLegWeightedBufferPool.DuplicatePoolToken.selector, address(rateAsset))
++            abi.encodeWithSelector(IMixedLegWeightedBufferPool.DuplicatePoolToken.selector, address(pairToken))
+         );
+         mixedLegPkg.deployPool(args);
+     }
+@@ -118,7 +118,7 @@
+         IERC20[] memory buffers = new IERC20[](1);
+         IStandardExchange[] memory vaults = new IStandardExchange[](1);
+         IRateProvider[] memory pairRps = new IRateProvider[](1);
+-        buffers[0] = IERC20(address(rateAsset));
++        buffers[0] = IERC20(address(pairToken));
+         vaults[0] = IStandardExchange(address(seVault));
+         pairRps[0] = IRateProvider(address(0));
+ 
+@@ -147,7 +147,7 @@
+     function test_reject_invalidLayout_tooFew() public {
+         IERC20[] memory unpaired = new IERC20[](1);
+         IRateProvider[] memory unpairedRps = new IRateProvider[](1);
+-        unpaired[0] = IERC20(address(pairToken));
++        unpaired[0] = IERC20(address(rateAsset));
+         unpairedRps[0] = IRateProvider(address(0));
+         IERC20[] memory buffers = new IERC20[](0);
+         IStandardExchange[] memory vaults = new IStandardExchange[](0);
+@@ -173,61 +173,61 @@
+     /* ----- Swaps: unpaired ↔ unpaired (no buffer SE) ----- */
+ 
+     function test_swap_unpairedToUnpaired_exactIn() public {
+-        uint256 amountIn = 10e18;
++        uint256 amountIn = _from18(address(rateAsset), 10e18);
++        rateAsset.mint(alice, amountIn);
++        vm.prank(alice);
++        rateAsset.approve(address(permit2), type(uint256).max);
++
++        uint256 wethBefore = weth.balanceOf(alice);
++        uint256 out = swapExactIn(alice, IERC20(address(rateAsset)), IERC20(address(weth)), amountIn);
++        assertGt(out, 0);
++        assertEq(weth.balanceOf(alice), wethBefore + out);
++        // pair virtual unchanged (no buffer I/O)
++        assertEq(ml().virtualBuffer(0), ML_INIT_BUFFER);
++    }
++
++    /* ----- Swaps: unpaired → buffer (pre-seat) ----- */
++
++    function test_swap_unpairedToBuffer_exactIn() public {
++        uint256 amountIn = _from18(address(rateAsset), 10e18);
++        rateAsset.mint(alice, amountIn);
++        vm.prank(alice);
++        rateAsset.approve(address(permit2), type(uint256).max);
++
++        uint256 daiBefore = pairToken.balanceOf(alice);
++        uint256 vtBefore = ml().virtualBuffer(0);
++        uint256 out = swapExactIn(alice, IERC20(address(rateAsset)), IERC20(address(pairToken)), amountIn);
++        assertGt(out, 0);
++        assertEq(pairToken.balanceOf(alice), daiBefore + out);
++        assertLt(ml().virtualBuffer(0), vtBefore);
++    }
++
++    /* ----- Swaps: buffer → unpaired (reconcile) ----- */
++
++    function test_swap_bufferToUnpaired_exactIn() public {
++        uint256 amountIn = _from18(address(pairToken), 10e18);
+         pairToken.mint(alice, amountIn);
+         vm.prank(alice);
+         pairToken.approve(address(permit2), type(uint256).max);
+ 
+-        uint256 wethBefore = weth.balanceOf(alice);
+-        uint256 out = swapExactIn(alice, IERC20(address(pairToken)), IERC20(address(weth)), amountIn);
+-        assertGt(out, 0);
+-        assertEq(weth.balanceOf(alice), wethBefore + out);
+-        // pair virtual unchanged (no buffer I/O)
+-        assertEq(ml().virtualBuffer(0), ML_INIT_BUFFER);
+-    }
+-
+-    /* ----- Swaps: unpaired → buffer (pre-seat) ----- */
+-
+-    function test_swap_unpairedToBuffer_exactIn() public {
+-        uint256 amountIn = 10e18;
++        uint256 usdcBefore = rateAsset.balanceOf(alice);
++        uint256 vtBefore = ml().virtualBuffer(0);
++        uint256 out = swapExactIn(alice, IERC20(address(pairToken)), IERC20(address(rateAsset)), amountIn);
++        assertGt(out, 0);
++        assertEq(rateAsset.balanceOf(alice), usdcBefore + out);
++        assertGe(ml().virtualBuffer(0), vtBefore);
++    }
++
++    /* ----- Swaps: buffer ↔ shares (pair-local, same as multi-pair) ----- */
++
++    function test_swap_bufferToShares_exactIn() public {
++        uint256 amountIn = _from18(address(pairToken), 10e18);
+         pairToken.mint(alice, amountIn);
+         vm.prank(alice);
+         pairToken.approve(address(permit2), type(uint256).max);
+ 
+-        uint256 daiBefore = rateAsset.balanceOf(alice);
+-        uint256 vtBefore = ml().virtualBuffer(0);
+-        uint256 out = swapExactIn(alice, IERC20(address(pairToken)), IERC20(address(rateAsset)), amountIn);
+-        assertGt(out, 0);
+-        assertEq(rateAsset.balanceOf(alice), daiBefore + out);
+-        assertLt(ml().virtualBuffer(0), vtBefore);
+-    }
+-
+-    /* ----- Swaps: buffer → unpaired (reconcile) ----- */
+-
+-    function test_swap_bufferToUnpaired_exactIn() public {
+-        uint256 amountIn = 10e18;
+-        rateAsset.mint(alice, amountIn);
+-        vm.prank(alice);
+-        rateAsset.approve(address(permit2), type(uint256).max);
+-
+-        uint256 usdcBefore = pairToken.balanceOf(alice);
+-        uint256 vtBefore = ml().virtualBuffer(0);
+-        uint256 out = swapExactIn(alice, IERC20(address(rateAsset)), IERC20(address(pairToken)), amountIn);
+-        assertGt(out, 0);
+-        assertEq(pairToken.balanceOf(alice), usdcBefore + out);
+-        assertGe(ml().virtualBuffer(0), vtBefore);
+-    }
+-
+-    /* ----- Swaps: buffer ↔ shares (pair-local, same as multi-pair) ----- */
+-
+-    function test_swap_bufferToShares_exactIn() public {
+-        uint256 amountIn = 10e18;
+-        rateAsset.mint(alice, amountIn);
+-        vm.prank(alice);
+-        rateAsset.approve(address(permit2), type(uint256).max);
+-
+         uint256 sharesBefore = IERC20(address(seVault)).balanceOf(alice);
+-        uint256 out = swapExactIn(alice, IERC20(address(rateAsset)), IERC20(address(seVault)), amountIn);
++        uint256 out = swapExactIn(alice, IERC20(address(pairToken)), IERC20(address(seVault)), amountIn);
+         assertGt(out, 0);
+         assertEq(IERC20(address(seVault)).balanceOf(alice), sharesBefore + out);
+         assertGe(ml().virtualBuffer(0), ML_INIT_BUFFER);
+@@ -236,10 +236,10 @@
+     function test_swap_sharesToBuffer_exactIn() public {
+         uint256 amountIn = 5e18;
+         mintSharesForPair(0, alice, amountIn * 2);
+-        uint256 daiBefore = rateAsset.balanceOf(alice);
+-        uint256 out = swapExactIn(alice, IERC20(address(seVault)), IERC20(address(rateAsset)), amountIn);
+-        assertGt(out, 0);
+-        assertEq(rateAsset.balanceOf(alice), daiBefore + out);
++        uint256 daiBefore = pairToken.balanceOf(alice);
++        uint256 out = swapExactIn(alice, IERC20(address(seVault)), IERC20(address(pairToken)), amountIn);
++        assertGt(out, 0);
++        assertEq(pairToken.balanceOf(alice), daiBefore + out);
+         assertLt(ml().virtualBuffer(0), ML_INIT_BUFFER);
+     }
+ 
+@@ -274,23 +274,24 @@
+     function test_lp_addProportional_scalesVirtual() public {
+         uint256 vtBefore = ml().virtualBuffer(0);
+         mintSharesForPair(0, alice, ML_INIT_SHARES * 2);
+-        rateAsset.mint(alice, ML_INIT_BUFFER * 2);
+-        pairToken.mint(alice, ML_INIT_UNPAIRED * 2);
+-        _mintToken(address(weth), alice, ML_INIT_UNPAIRED * 2);
++        pairToken.mint(alice, _from18(address(pairToken), ML_INIT_BUFFER) * 2);
++        rateAsset.mint(alice, _from18(address(rateAsset), ML_INIT_UNPAIRED) * 2);
++        _mintToken(address(weth), alice, _from18(address(weth), ML_INIT_UNPAIRED) * 2);
+ 
+         uint256 n = ml().tokenCount();
++        (IERC20[] memory poolTokens,,,) = bv3Vault.getPoolTokenInfo(mixedLegPool);
+         uint256[] memory maxAmts = new uint256[](n);
+         for (uint256 t; t < n; ++t) {
+             (IMixedLegWeightedBufferPool.TokenKind kind,) = ml().resolveTokenIndex(t);
+-            if (kind == IMixedLegWeightedBufferPool.TokenKind.Unpaired) maxAmts[t] = ML_INIT_UNPAIRED;
+-            else if (kind == IMixedLegWeightedBufferPool.TokenKind.Buffer) maxAmts[t] = ML_INIT_BUFFER;
++            if (kind == IMixedLegWeightedBufferPool.TokenKind.Unpaired) maxAmts[t] = _from18(address(poolTokens[t]), ML_INIT_UNPAIRED);
++            else if (kind == IMixedLegWeightedBufferPool.TokenKind.Buffer) maxAmts[t] = _from18(address(poolTokens[t]), ML_INIT_BUFFER);
+             else maxAmts[t] = ML_INIT_SHARES;
+         }
+ 
+         uint256 bptOut = IERC20(mixedLegPool).totalSupply() / 10;
+         vm.startPrank(alice);
++        pairToken.approve(address(router), type(uint256).max);
+         rateAsset.approve(address(router), type(uint256).max);
+-        pairToken.approve(address(router), type(uint256).max);
+         IERC20(address(weth)).approve(address(router), type(uint256).max);
+         IERC20(address(seVault)).approve(address(router), type(uint256).max);
+         router.addLiquidityProportional(mixedLegPool, maxAmts, bptOut, false, bytes(""));
+--- a/test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_Decimals.sol
++++ b/test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_Decimals.sol
+@@ -23,7 +23,7 @@
+         assertEq(ml().unpairedCount(), 0);
+         assertEq(ml().pairCount(), 4);
+         assertEq(ml().tokenCount(), 8);
+-        assertEq(address(ml().bufferToken(0)), address(rateAsset));
++        assertEq(address(ml().bufferToken(0)), address(buffer0));
+         assertEq(address(ml().bufferToken(1)), address(usdt));
+         assertEq(address(ml().bufferToken(2)), address(weth));
+         assertEq(address(ml().bufferToken(3)), address(wsteth));
+@@ -38,8 +38,8 @@
+     }
+ 
+     function test_swap_P4_crossPair_buffer0_to_share3() public {
+-        uint256 amt = 2e18;
+-        rateAsset.mint(alice, amt);
++        uint256 amt = _from18(address(buffer0), 2e18);
++        _mintToken(address(buffer0), alice, amt);
+         uint256 v0 = ml().virtualBuffer(0);
+         uint256 out = swapExactIn(alice, buffer0, IERC20(address(seVault3)), amt);
+         assertGt(out, 0);
+@@ -54,7 +54,7 @@
+     }
+ 
+     function test_swap_P4_buffer_to_buffer() public {
+-        uint256 amt = 2e18;
++        uint256 amt = _from18(address(buffer1), 2e18);
+         usdt.mint(alice, amt);
+         uint256 v1 = ml().virtualBuffer(1);
+         uint256 v2 = ml().virtualBuffer(2);
+@@ -71,8 +71,8 @@
+  * @dev Unpaired: USDC, WETH, WSTETH + extra mintable ERC20 deployed in setUp.
+  */
+ abstract contract MixedLeg_T8_U4P2_Smoke_V3PooWeiMix is TestBase_MixedLegWeightedBufferPool_Decimals {
+-    // Override unpaired to avoid buffer collisions: pair buffers = rateAsset, usdt.
+-    // Indices 0..2 = pairToken, weth, wsteth; index 3 needs a free token.
++    // Override unpaired to avoid buffer collisions: pair buffers = pairToken, usdt.
++    // Indices 0..2 = rateAsset, weth, wsteth; index 3 needs a free token.
+     IERC20 internal extraUnpaired;
+ 
+     function _targetUnpairedCount() internal pure override returns (uint8) {
+@@ -102,7 +102,7 @@
+     }
+ 
+     function _unpairedTokenAt(uint8 i) internal view override returns (IERC20) {
+-        if (i == 0) return IERC20(address(pairToken));
++        if (i == 0) return IERC20(address(rateAsset));
+         if (i == 1) return IERC20(address(weth));
+         if (i == 2) return IERC20(address(wsteth));
+         return extraUnpaired;
+--- a/test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/bases/TestBase_MixedLegWeightedBufferPool_Decimals.sol
++++ b/test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/bases/TestBase_MixedLegWeightedBufferPool_Decimals.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {Math} from "@crane/contracts/utils/Math.sol";
+ 
+ import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+@@ -318,12 +320,17 @@
+         returns (uint256 sharesOut)
+     {
+         address tokenA = address(_bufferAt(pairIndex));
+-        // WAD-raw both legs so SE shares (always 18) stay WAD-sized for init/swaps.
+-        uint256 amtA = tokenAmount;
+-        uint256 amtR = tokenAmount;
++        // Fund actual proportional pool reserves for the requested SE-share fixture budget.
++        // Equal raw token amounts are not proportional in a mixed-decimal pool.
++        Pool pool = _aeroPoolAt(pairIndex);
++        (uint256 r0, uint256 r1,) = pool.getReserves();
++        uint256 supply = pool.totalSupply();
++        uint256 amtA = Math.mulDiv(tokenAmount * 2, pool.token0() == tokenA ? r0 : r1, supply, Math.Rounding.Ceil) + 1;
++        uint256 amtR = Math.mulDiv(tokenAmount * 2, pool.token0() == tokenA ? r1 : r0, supply, Math.Rounding.Ceil) + 1;
+         _mintToken(tokenA, recipient, amtA);
+         rateAsset.mint(recipient, amtR);
+         sharesOut = _addLpAndDeposit(pairIndex, recipient, tokenA, amtA, amtR);
++        require(sharesOut >= tokenAmount, "funded SE-share fixture budget");
+     }
+ 
+     function _addLpAndDeposit(
+--- a/test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/bases/TestBase_MultiPairStandardExchangeBufferPool_Decimals.sol
++++ b/test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/bases/TestBase_MultiPairStandardExchangeBufferPool_Decimals.sol
+@@ -250,7 +250,7 @@
+         uint8 p = _targetPairCount();
+         for (uint8 i; i < p; ++i) {
+             mintSharesForPair(i, alice, MP_INIT_SHARES * 3);
+-            _mintToken(address(_bufferAt(i)), alice, MP_INIT_BUFFER * 2);
++            _mintToken(address(_bufferAt(i)), alice, _from18(address(_bufferAt(i)), MP_INIT_BUFFER) * 2);
+         }
+ 
+         vm.startPrank(alice);
+@@ -265,7 +265,7 @@
+             bool isBuffer;
+             for (uint8 i; i < p; ++i) {
+                 if (address(poolTokens[t]) == address(_bufferAt(i))) {
+-                    amounts[t] = MP_INIT_BUFFER;
++                    amounts[t] = _from18(address(poolTokens[t]), MP_INIT_BUFFER);
+                     isBuffer = true;
+                     break;
+                 }
+--- a/test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_Decimals.sol
++++ b/test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_Decimals.sol
+@@ -42,7 +42,7 @@
+ 
+     function test_init_virtualBuffer_fromBufferSeed() public view {
+         // L25: virtualBuffer matches buffer-leg scaled18 seed (STANDARD 18-dec ≈ raw).
+-        assertEq(mp().virtualBuffer(0), ttaScaled18(MP_INIT_BUFFER));
++        assertEq(mp().virtualBuffer(0), MP_INIT_BUFFER);
+         assertEq(mp().hookShareDelta(0), 0);
+     }
+ 
+@@ -119,17 +119,17 @@
+ 
+     function test_swap_bufferToShares_exactIn() public {
+         uint256 amountIn = _from18(address(tta), 10e18);
+-        rateAsset.mint(alice, amountIn);
++        pairToken.mint(alice, amountIn);
+         vm.prank(alice);
+-        rateAsset.approve(address(permit2), type(uint256).max);
+-        // permit2 already approved for router in base setUp for rateAsset
++        pairToken.approve(address(permit2), type(uint256).max);
++        // permit2 already approved for router in base setUp for pairToken
+ 
+         uint256 sharesBefore = IERC20(address(seVault)).balanceOf(alice);
+         uint256 out = swapExactIn(alice, tta, IERC20(address(seVault)), amountIn);
+         assertGt(out, 0);
+         assertEq(IERC20(address(seVault)).balanceOf(alice), sharesBefore + out);
+         // eventual-zero physical buffer on pool (approx)
+-        uint256 poolDai = rateAsset.balanceOf(address(bv3Vault)); // vault holds pooled tokens
++        uint256 poolDai = pairToken.balanceOf(address(bv3Vault)); // vault holds pooled tokens
+         // After reconcile, pool's registered buffer balance should be ~0 for this pool's accounting;
+         // check virtual grew
+         assertGe(mp().virtualBuffer(0), MP_INIT_BUFFER);
+@@ -139,10 +139,10 @@
+         uint256 amountIn = 5e18;
+         // ensure alice has shares
+         mintShares(alice, amountIn * 2);
+-        uint256 daiBefore = rateAsset.balanceOf(alice);
++        uint256 daiBefore = pairToken.balanceOf(alice);
+         uint256 out = swapExactIn(alice, IERC20(address(seVault)), tta, amountIn);
+         assertGt(out, 0);
+-        assertEq(rateAsset.balanceOf(alice), daiBefore + out);
++        assertEq(pairToken.balanceOf(alice), daiBefore + out);
+         assertLt(mp().virtualBuffer(0), MP_INIT_BUFFER);
+     }
+ 
+@@ -151,18 +151,18 @@
+     function test_lp_addProportional_scalesVirtual() public {
+         uint256 vtBefore = mp().virtualBuffer(0);
+         mintShares(alice, MP_INIT_SHARES * 2);
+-        rateAsset.mint(alice, MP_INIT_BUFFER * 2);
++        pairToken.mint(alice, _from18(address(tta), MP_INIT_BUFFER) * 2);
+ 
+         IMultiPairStandardExchangeBufferPool p = mp();
+         uint256 bIdx = p.bufferIndex(0);
+         uint256 sIdx = p.shareIndex(0);
+         uint256[] memory maxAmts = new uint256[](2);
+-        maxAmts[bIdx] = MP_INIT_BUFFER;
++        maxAmts[bIdx] = _from18(address(tta), MP_INIT_BUFFER);
+         maxAmts[sIdx] = MP_INIT_SHARES;
+ 
+         uint256 bptOut = IERC20(multiPairPool).totalSupply() / 10; // 10% more
+         vm.startPrank(alice);
+-        IERC20(address(rateAsset)).approve(address(router), type(uint256).max);
++        IERC20(address(pairToken)).approve(address(router), type(uint256).max);
+         IERC20(address(seVault)).approve(address(router), type(uint256).max);
+         router.addLiquidityProportional(multiPairPool, maxAmts, bptOut, false, bytes(""));
+         vm.stopPrank();
+@@ -199,13 +199,13 @@
+         uint256 vtBefore = mp().virtualBuffer(0);
+         int256 hBefore = mp().hookShareDelta(0);
+ 
+-        rateAsset.mint(alice, 100e18);
++        pairToken.mint(alice, _from18(address(tta), 100e18));
+         IMultiPairStandardExchangeBufferPool p = mp();
+         uint256[] memory amounts = new uint256[](2);
+-        amounts[p.bufferIndex(0)] = 100e18;
++        amounts[p.bufferIndex(0)] = _from18(address(tta), 100e18);
+ 
+         vm.startPrank(alice);
+-        rateAsset.approve(address(router), type(uint256).max);
++        pairToken.approve(address(router), type(uint256).max);
+         router.donate(multiPairPool, amounts, false, bytes(""));
+         vm.stopPrank();
+ 
+--- a/test/foundry/spec/protocol/dexes/balancer/v3/WrappedStandardExchangeRateProvider.t.sol
++++ b/test/foundry/spec/protocol/dexes/balancer/v3/WrappedStandardExchangeRateProvider.t.sol
+@@ -209,7 +209,8 @@
+             return 0;
+         }
+ 
+-        uint256 quoteShares = totalShares < 1e18 ? totalShares : 1e18;
++        uint256 subjectUnit = 10 ** IERC20Metadata(address(wrapper_)).decimals();
++        uint256 quoteShares = totalShares < subjectUnit ? totalShares : subjectUnit;
+         uint256 reserveShareAmount = wrapper_.previewRedeem(quoteShares);
+         uint256 out;
+         if (reserveShareAmount > 0) {
+@@ -234,8 +235,8 @@
+             return 0;
+         }
+ 
+-        if (quoteShares != 1e18) {
+-            out = (out * 1e18 + quoteShares - 1) / quoteShares;
++        if (quoteShares != subjectUnit) {
++            out = (out * subjectUnit + quoteShares - 1) / quoteShares;
+         }
+ 
+         uint8 targetDecimals = IERC20Metadata(address(rateTarget_)).decimals();

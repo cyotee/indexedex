@@ -1,7 +1,6 @@
 ---
 name: crane-tokens
 description: This skill should be used when the user asks to "deploy an ERC20 token", "create a token", "implement ERC20", "add permit to token", "mint/burn functionality", "ERC4626 vault", "tokenized vault", "ERC721 NFT", or needs guidance on token standards implementation with Crane's Diamond Factory Packages.
-license: MIT
 ---
 
 # Crane Token Components

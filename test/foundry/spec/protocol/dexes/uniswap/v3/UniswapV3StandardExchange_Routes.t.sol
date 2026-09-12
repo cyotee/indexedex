@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
 import {IUniswapV3Pool} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Pool.sol";
@@ -22,6 +24,21 @@ contract UniswapV3StandardExchange_Routes_Test is TestBase_UniswapV3StandardExch
     IUniswapV3Pool internal pool;
     IStandardExchangeProxy internal vault;
     address internal alice = makeAddr("alice");
+
+    /// @dev Caller has already funded/approved token0 and is pranking as alice.
+    function _activateWithFundedToken0(uint256 amount0, uint256 amount1) internal returns (uint256 shares) {
+        ERC20PermitMintableStub(pool.token1()).mint(alice, amount1);
+        IERC20(pool.token1()).approve(address(vault), amount1);
+        address[] memory tokens = new address[](2);
+        tokens[0] = pool.token0();
+        tokens[1] = pool.token1();
+        uint256[] memory amounts = new uint256[](2);
+        amounts[0] = amount0;
+        amounts[1] = amount1;
+        shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
+            tokens, amounts, IERC20(address(vault)), 0, alice, false, block.timestamp + 1
+        );
+    }
 
     function setUp() public override {
         super.setUp();
@@ -74,7 +91,7 @@ contract UniswapV3StandardExchange_Routes_Test is TestBase_UniswapV3StandardExch
         assertGt(in10, 0, "exact out t1->t0");
     }
 
-    function test_zapIn_firstDeposit_createsPositionsAndShares() public {
+    function test_twoTokenActivation_createsPositionsAndShares() public {
         address token0 = pool.token0();
         uint256 amountIn = 100 ether;
         ERC20PermitMintableStub(token0).mint(alice, amountIn);
@@ -82,7 +99,7 @@ contract UniswapV3StandardExchange_Routes_Test is TestBase_UniswapV3StandardExch
         vm.startPrank(alice);
         IERC20(token0).approve(address(vault), amountIn);
         uint256 shares =
-            vault.exchangeIn(IERC20(token0), amountIn, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
+            _activateWithFundedToken0(amountIn, 100 ether);
         vm.stopPrank();
 
         assertGt(shares, 0, "shares minted");
@@ -98,7 +115,7 @@ contract UniswapV3StandardExchange_Routes_Test is TestBase_UniswapV3StandardExch
         vm.startPrank(alice);
         IERC20(token0).approve(address(vault), type(uint256).max);
         uint256 first =
-            vault.exchangeIn(IERC20(token0), amountIn, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
+            _activateWithFundedToken0(amountIn, 100 ether);
         uint256 second =
             vault.exchangeIn(IERC20(token0), amountIn, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
         vm.stopPrank();
@@ -116,7 +133,7 @@ contract UniswapV3StandardExchange_Routes_Test is TestBase_UniswapV3StandardExch
         vm.startPrank(alice);
         IERC20(token0).approve(address(vault), type(uint256).max);
         uint256 shares =
-            vault.exchangeIn(IERC20(token0), amountIn, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
+            _activateWithFundedToken0(amountIn, 100 ether);
 
         uint256 balBefore = IERC20(token0).balanceOf(alice);
         // Burn shares for token0 out - use half shares as max, request some min out.
@@ -143,7 +160,7 @@ contract UniswapV3StandardExchange_Routes_Test is TestBase_UniswapV3StandardExch
 
         // share -> share
         ERC20PermitMintableStub(token0).mint(alice, 10 ether);
-        vault.exchangeIn(IERC20(token0), 10 ether, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
+        _activateWithFundedToken0(10 ether, 10 ether);
         vm.expectRevert(IStandardExchangeIn.ExchangeInNotAvailable.selector);
         vault.exchangeIn(
             IERC20(address(vault)), 1, IERC20(address(vault)), 0, alice, false, block.timestamp + 1
@@ -165,16 +182,19 @@ contract UniswapV3StandardExchange_Routes_Test is TestBase_UniswapV3StandardExch
     }
 
     function test_slippage_revertsWithoutPartialMint() public {
+        uint256 amountIn = 100 ether;
         address token0 = pool.token0();
         ERC20PermitMintableStub(token0).mint(alice, 100 ether);
         vm.startPrank(alice);
         IERC20(token0).approve(address(vault), type(uint256).max);
-        vm.expectRevert();
+        uint256 supplyBefore = _activateWithFundedToken0(amountIn, 100 ether);
+        ERC20PermitMintableStub(token0).mint(alice, amountIn);
+        vm.expectRevert(bytes4(keccak256("UniswapV3ExchangeIn_SlippageExceeded()")));
         vault.exchangeIn(
             IERC20(token0), 100 ether, IERC20(address(vault)), type(uint256).max, alice, false, block.timestamp + 1
         );
         vm.stopPrank();
-        assertEq(IERC20(address(vault)).totalSupply(), 0, "no partial share mint");
+        assertEq(IERC20(address(vault)).totalSupply(), supplyBefore, "no partial share mint");
     }
 
     function test_callbackSpoof_reverts() public {

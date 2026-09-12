@@ -1,0 +1,2248 @@
+{
+  "decision": "Owner D32-D55; implementation plan 11.1.1. Consolidate superseded automatic LP-compound accounting, preserving independent funded accounting and distinct native route regressions. Original sources remain recoverable from baseline commit.",
+  "new_assertion_validation": "checkpoint-417-run.json: 417 tests / 53 suites pass after separate build, including the retired-compound selector checks on all four Balancer families.",
+  "retired_files": 40,
+  "rows": [
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_ProtocolCompound.t.sol",
+      "sha256": "01ebc3a051538554170bb0c69a8fabe57fad5f232db1e0ab8431f95b02f2959d",
+      "inherited_only": false,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientGetsFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimRateProxyPrincipal",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedNativeUnitsAndFundedSYRoutes",
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_ProtocolCompound_B_ALL6.t.sol",
+      "sha256": "3b95e340f733f2fe00550b03f85967ce656f994658243d9814da439c68a15390",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientGetsFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimRateProxyPrincipal",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedNativeUnitsAndFundedSYRoutes",
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_ProtocolCompound_B_ALL9.t.sol",
+      "sha256": "7987d351a926b9f4b48f3c7fa57444f1ae42ee30378d217d688ad45b5d7fd9b9",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientGetsFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimRateProxyPrincipal",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedNativeUnitsAndFundedSYRoutes",
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_ProtocolCompound_B_P18_R6.t.sol",
+      "sha256": "77c85ff2f825228b52fbfb8612f65dff9d68c1a51a8e1ee530e9c1ad0c5af272",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientGetsFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimRateProxyPrincipal",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedNativeUnitsAndFundedSYRoutes",
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_ProtocolCompound_B_P18_R9.t.sol",
+      "sha256": "19b44b21af154b07112667a7b8323724e54c40b9568ac133db336020bf689a1a",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientGetsFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimRateProxyPrincipal",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedNativeUnitsAndFundedSYRoutes",
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_ProtocolCompound_B_P6_R18.t.sol",
+      "sha256": "24339992074d90ffebdbe4cfd86e559f631aa5124e2e3fb861e577c9c26e7b40",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientGetsFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimRateProxyPrincipal",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedNativeUnitsAndFundedSYRoutes",
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_ProtocolCompound_B_P6_R9.t.sol",
+      "sha256": "0b267766a1d728902736fbc2f440d2527e30bc21cdfa0dbfc550f5b111892d4b",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientGetsFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimRateProxyPrincipal",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedNativeUnitsAndFundedSYRoutes",
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_ProtocolCompound_B_P9_R18.t.sol",
+      "sha256": "1536da272b01067f914f66bc913c75a33efbc45d13ed26ed96d9faed576c37c7",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientGetsFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimRateProxyPrincipal",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedNativeUnitsAndFundedSYRoutes",
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_ProtocolCompound_B_P9_R6.t.sol",
+      "sha256": "ed94345044f1b1feb4325ba122a35df5a9d1017c0f21f9cfca7ee0182643d991",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientGetsFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimRateProxyPrincipal",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedNativeUnitsAndFundedSYRoutes",
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_ProtocolCompound_Decimals.sol",
+      "sha256": "6d6fb33054d478247dc6b89068ecc3b712368519e9641a9d72e24b776dd3a140",
+      "inherited_only": false,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientGetsFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimRateProxyPrincipal",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedNativeUnitsAndFundedSYRoutes",
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_ProtocolCompound.t.sol",
+      "sha256": "3b6309cdc9a820d2920073e655b9443f5fc4f42376991efaf2adbf9ab0eb95ea",
+      "inherited_only": false,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientGetsFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimRateProxyPrincipal",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiNativeMetadataAndRegisteredChildSYs",
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_ProtocolCompound_B_ALL6.t.sol",
+      "sha256": "251b43be3ba781db4e27737b9f50abc7ba78317d0d35c75ac6083622e4c6632f",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientGetsFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimRateProxyPrincipal",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiNativeMetadataAndRegisteredChildSYs",
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_ProtocolCompound_B_ALL9.t.sol",
+      "sha256": "d8ba677d8195ae898ea654594e12201a03a0c2633f9cf478be6240313cce6c27",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientGetsFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimRateProxyPrincipal",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiNativeMetadataAndRegisteredChildSYs",
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_ProtocolCompound_B_P18_R6.t.sol",
+      "sha256": "9a72c177f3f7abeeed508a09c5a491d1abac28907b2d9f35d0d162b686e99117",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientGetsFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimRateProxyPrincipal",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiNativeMetadataAndRegisteredChildSYs",
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_ProtocolCompound_B_P18_R9.t.sol",
+      "sha256": "d5472381f4bd814b0de90008d2726e8feabd1473eb766f186dd6caaacfd9d5c4",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientGetsFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimRateProxyPrincipal",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiNativeMetadataAndRegisteredChildSYs",
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_ProtocolCompound_B_P6_R18.t.sol",
+      "sha256": "d40db850e0d0d505ee51e79798247b0e1d85a1ea8c1064f8d3040f92b2529ccf",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientGetsFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimRateProxyPrincipal",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiNativeMetadataAndRegisteredChildSYs",
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_ProtocolCompound_B_P6_R9.t.sol",
+      "sha256": "567e4cb5e4a8e16e6b6936718d02d45c75f55c2e755a1ee9aa8004c04933f6f7",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientGetsFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimRateProxyPrincipal",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiNativeMetadataAndRegisteredChildSYs",
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_ProtocolCompound_B_P9_R18.t.sol",
+      "sha256": "7584478672bc8260e72d847319819ce0484f44a40778b64027e82ee7d122d0d8",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientGetsFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimRateProxyPrincipal",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiNativeMetadataAndRegisteredChildSYs",
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_ProtocolCompound_B_P9_R6.t.sol",
+      "sha256": "27f6bb0f0f3f5a9aa02652be08b3d2c7bde28ad83caf53c66ed455c61057d0b3",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientGetsFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimRateProxyPrincipal",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiNativeMetadataAndRegisteredChildSYs",
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_ProtocolCompound_Decimals.sol",
+      "sha256": "6a0dd3e9c15ee604d1bce0e5abdc1dacda46ff51807d8bb7220ac2a5dee84a27",
+      "inherited_only": false,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientGetsFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimRateProxyPrincipal",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiNativeMetadataAndRegisteredChildSYs",
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_ProtocolCompound.t.sol",
+      "sha256": "7f28514e5abd22bdd6afa816a0f8d4a78bb64ae4ce149484ba0693e4e69a12c4",
+      "inherited_only": false,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientClaimFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimBackingAndRedeemPreview",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedImmutableNativeUnitsAndCompleteRoutes",
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_ProtocolCompound_B_ALL6.t.sol",
+      "sha256": "44cabf42da60fa40ab2c344978dacccd14f58dc327a81d914a17f5a4449bc62e",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientClaimFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimBackingAndRedeemPreview",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedImmutableNativeUnitsAndCompleteRoutes",
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_ProtocolCompound_B_ALL9.t.sol",
+      "sha256": "d35b719c605596f5505a3b73e2da4e01d5ce5126a6f23c21bb5396d46deba53c",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientClaimFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimBackingAndRedeemPreview",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedImmutableNativeUnitsAndCompleteRoutes",
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_ProtocolCompound_B_P18_R6.t.sol",
+      "sha256": "7ebbf70e6410ef3c9055a18d8b2d8848519d4acaa19838760855d3cb9fae5b17",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientClaimFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimBackingAndRedeemPreview",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedImmutableNativeUnitsAndCompleteRoutes",
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_ProtocolCompound_B_P18_R9.t.sol",
+      "sha256": "4f30ca489e888c2a1e8a137664346b501eb6730476a08d4542123620705e0fd2",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientClaimFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimBackingAndRedeemPreview",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedImmutableNativeUnitsAndCompleteRoutes",
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_ProtocolCompound_B_P6_R18.t.sol",
+      "sha256": "6f78cbc0906e29e91a4bbc8a768102bc21948d567632e774e4c6de820c69b7a7",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientClaimFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimBackingAndRedeemPreview",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedImmutableNativeUnitsAndCompleteRoutes",
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_ProtocolCompound_B_P6_R9.t.sol",
+      "sha256": "7b5bbbae8f7994edd52cef07a83ebf05af790953d2520707265b82d5db727047",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientClaimFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimBackingAndRedeemPreview",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedImmutableNativeUnitsAndCompleteRoutes",
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_ProtocolCompound_B_P9_R18.t.sol",
+      "sha256": "5c140015d23f42fe9fa25436a21f70151bbb053022c7831a6ce25ae75f1e7866",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientClaimFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimBackingAndRedeemPreview",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedImmutableNativeUnitsAndCompleteRoutes",
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_ProtocolCompound_B_P9_R6.t.sol",
+      "sha256": "9d4a70c243b84ad1a0aae6b99a54ee85e0a459b7b4100800283131ba9289ac00",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientClaimFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimBackingAndRedeemPreview",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedImmutableNativeUnitsAndCompleteRoutes",
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_ProtocolCompound_Decimals.sol",
+      "sha256": "286fb1779f988faa05cba4c801e8079c462a9729a2daf4ebdf575a5f0bb40394",
+      "inherited_only": false,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientClaimFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimBackingAndRedeemPreview",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedImmutableNativeUnitsAndCompleteRoutes",
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_ProtocolCompound.t.sol",
+      "sha256": "b9688d52eac3601c8e866304a87a6631c3e94ebb288c34020152e12cb272b219",
+      "inherited_only": false,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientGetsFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimRateProxyPrincipal",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_nativeUnitsAndFundedSYDeployment",
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_ProtocolCompound_Decimals.sol",
+      "sha256": "8c944d03202e4071a0c380c10d516fe4a1a5b60e436b18873d6a6cb34b7746b6",
+      "inherited_only": false,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientGetsFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimRateProxyPrincipal",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_nativeUnitsAndFundedSYDeployment",
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_ProtocolCompound_H6.t.sol",
+      "sha256": "0ee9627255bf9016a89ed4231df9eaa8cf96c3ec55d515ce3e3ecc1fb8bb4519",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientGetsFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimRateProxyPrincipal",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_nativeUnitsAndFundedSYDeployment",
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_ProtocolCompound_H9.t.sol",
+      "sha256": "8e2d95b71ba6e4ea3602380615a2d08cface147a945482abfdf978bac18e7572",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientGetsFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimRateProxyPrincipal",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_nativeUnitsAndFundedSYDeployment",
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_ProtocolCompound_P18_R6.t.sol",
+      "sha256": "3fe78240f8abb37afe76a260d0f0780fbbe455a5543371447deddea73ce048b6",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientGetsFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimRateProxyPrincipal",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_nativeUnitsAndFundedSYDeployment",
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_ProtocolCompound_P18_R9.t.sol",
+      "sha256": "50fc2909b0d038e258ae5172c1719ca6d0f6dc3c2aabfb994afe48d66c4e2f6e",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientGetsFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimRateProxyPrincipal",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_nativeUnitsAndFundedSYDeployment",
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_ProtocolCompound_P6_R18.t.sol",
+      "sha256": "c1b6852506bab64910ca548f99ccb1d8bbc5df7fbf036a8d8e4073cda06ab50e",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientGetsFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimRateProxyPrincipal",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_nativeUnitsAndFundedSYDeployment",
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_ProtocolCompound_P6_R9.t.sol",
+      "sha256": "e0a1e9f7bad56538b94ce2365187338451aa0f8a3bf96e552e16ff7776ebb624",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientGetsFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimRateProxyPrincipal",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_nativeUnitsAndFundedSYDeployment",
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_ProtocolCompound_P9_R18.t.sol",
+      "sha256": "aa4138d13260074dd7cee13fc7d6f4bdcfd9234a1cd0b3820b4494983a7005d0",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientGetsFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimRateProxyPrincipal",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_nativeUnitsAndFundedSYDeployment",
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_ProtocolCompound_P9_R6.t.sol",
+      "sha256": "d00e083b1bd73ac566a1ac950dfd1d837bd080be1a95ebaad61d07cc033a66b7",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_C1_C2_lazyCompoundOnMintIncreasesProtocolBpt",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_primaryMintJoinsActualPaymentAndFundsImmediateRewards"
+          ],
+          "disposition": "D36: actual payment still joins protocol liquidity, but immediate seigniorage funds held DETF staking and receipts. Automatic reward-to-LP joins and NFT LP principal are retired. Distinct native payment routes remain in separate route suites for migration."
+        },
+        {
+          "old_test": "test_C6_publicCompoundProtocolRewards",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C3_userClaimFreeDetfWhileLocked",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D35/D36/D50: permissionless synchronization creates one funded aggregate; two actual bonds claim proportional sDETF rewards while vesting, exact preview equals payout, repeated claim is zero, and protocol LP is unchanged. Raw DETF reward claims/compound event are retired."
+        },
+        {
+          "old_test": "test_C4_feeRecipientGetsFreeDetfNotAutoJoined",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_standingRecipientsExitAndReceiveLaterBondFundingAtExactFloors"
+          ],
+          "disposition": "D37/D38: role recipients receive funded sDETF automatically, can unstake all receipts, and receive new receipts on later minting. Independent weight/allocation/rebase floors replace separate reserved-NFT reward claims."
+        },
+        {
+          "old_test": "test_C5_protocolCompoundRaisesClaimRateProxyPrincipal",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange",
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D32/D33: staking backing is actual held DETF. Positive funded expansion grows both bond balances without moving protocol LP; mature payout unstakes 1:1. The former LP-backed redemption-rate requirement is explicitly superseded."
+        },
+        {
+          "old_test": "test_C8_joinFailureBestEffort_thenRetry",
+          "replacements": [],
+          "disposition": "D36 removes the automatic LP join entirely, so there is no best-effort compound/retry branch. Required immediate funding is atomic; no mocked production call is retained. Primary mint minimum rollback is separately tested."
+        },
+        {
+          "old_test": "test_C7_publicAbiAndOnlySelfAtomic",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_nativeUnitsAndFundedSYDeployment",
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D53: compoundProtocolRewards() and its atomic helper are absent from the deployed selector table. synchronizeRewards() is the surviving permissionless settlement route."
+        }
+      ]
+    }
+  ],
+  "inherited_integration_note": "Composed wrappers also repeated IntegratedDeploy assertions. The canonical IntegratedDeploy source and decimal matrix remain; this retirement removes no unique inherited deployment assertion."
+}

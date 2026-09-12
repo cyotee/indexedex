@@ -91,6 +91,7 @@ contract Script_05_DeployUniswapV2 is DeploymentBase {
                 multiAssetStandardVaultFacet,
                 create3Factory.deployUniswapV2StandardExchangeInFacet(),
                 create3Factory.deployUniswapV2StandardExchangeOutFacet(),
+                create3Factory.deployUniswapV2StandardExchangeQueryFacet(),
                 indexedexManager,
                 indexedexManager,
                 permit2,

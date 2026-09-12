@@ -11,6 +11,7 @@ import {InputHelpers} from "@crane/contracts/external/balancer/v3/solidity-utils
 import {BridgeTokenPlanning} from "../shared/BridgeTokenPlanning.sol";
 
 contract Script_13_SeedBalancerVaultTokenPoolLiquidity is DeploymentBase {
+    uint256 internal constant INITIAL_LIQUIDITY = BridgeTokenPlanning.INITIAL_LIQUIDITY;
     uint256 internal constant INITIAL_UNDERLYING = 10_000e18;
     uint256 internal constant INITIAL_VAULT_SHARES = 10_000e18;
     uint256 internal constant VAULT_ASSET_DEPOSIT = 30_000e18;

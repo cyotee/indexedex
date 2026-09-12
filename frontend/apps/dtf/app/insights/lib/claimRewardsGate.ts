@@ -41,7 +41,7 @@ export function walletCanSignOnChain(input: {
 
 /**
  * Claim rewards is allowed while the bond is still locked.
- * Maturity only gates sell / redeem. Pending = 0 still lets the owner claim (returns 0).
+ * Vested principal can also be claimed before maturity. The transaction simulates against current funded state.
  * Known non-owners stay enabled so a bad ownerOf read cannot hide the button; the contract reverts.
  */
 export function claimRewardsButtonEnabled(input: {
@@ -56,7 +56,7 @@ export function claimRewardsButtonEnabled(input: {
   void input.pendingRewards
   void input.owner
   void input.wallet
-  return input.canSign && input.tokenId !== undefined
+  return input.canSign && input.tokenId !== undefined && input.tokenId >= 3n
 }
 
 export function claimRewardsBlockedReason(input: {
@@ -68,6 +68,7 @@ export function claimRewardsBlockedReason(input: {
   if (!input.isConnected) return 'Connect a wallet to sign.'
   if (!input.walletMatches) return `Switch the wallet to chain ${input.appChainId}.`
   if (input.tokenId === undefined) return 'Enter a bond token ID.'
+  if (input.tokenId < 3n) return 'Fee and creator receipts arrive directly as sDETF.'
   return null
 }
 
@@ -83,19 +84,19 @@ export function bondUnlockState(
 
 const DEFAULT_BOND_ID_SCAN = 32
 
-/** How many consecutive token IDs to probe with ownerOf, starting at 1. */
+/** How many consecutive token IDs to probe with ownerOf, starting at 3. */
 export function bondIdScanCount(nextTokenId?: bigint): number {
-  if (nextTokenId == null || nextTokenId <= 1n) return DEFAULT_BOND_ID_SCAN
-  const minted = Number(nextTokenId - 1n)
+  if (nextTokenId == null || nextTokenId <= 3n) return DEFAULT_BOND_ID_SCAN
+  const minted = Number(nextTokenId - 3n)
   if (!Number.isFinite(minted) || minted <= 0) return DEFAULT_BOND_ID_SCAN
   return Math.min(Math.max(minted, 1), 64)
 }
 
-/** Map ownerOf multicall rows (id 1 at index 0) to IDs owned by `wallet`. */
+/** Map ownerOf multicall rows (id 3 at index 0) to IDs owned by `wallet`. */
 export function ownedBondIdsFromOwnerReads(
   reads: unknown,
   wallet?: string | null,
-  firstId = 1n,
+  firstId = 3n,
 ): bigint[] {
   if (!Array.isArray(reads) || !wallet) return []
   const out: bigint[] = []

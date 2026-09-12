@@ -4,8 +4,8 @@ pragma solidity ^0.8.0;
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IReentrancyLock} from "@crane/contracts/access/reentrancy/IReentrancyLock.sol";
-import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
-import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
+import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
+import {FundedBondLifecycleAssertions} from "contracts/test/bases/FundedBondLifecycleAssertions.sol";
 import {
     TestBase_SingleStandardExchangeDETF_Adversarial
 } from "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/adversarial/TestBase_SingleStandardExchangeDETF_Adversarial.sol";
@@ -13,26 +13,27 @@ import {
     SingleStandardExchangeDETFRepo
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFRepo.sol";
 import {
-    ISingleStandardExchangeDETFBonding
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFBondingTarget.sol";
+    ILegacySingleStandardExchangeDETFBonding as ISingleStandardExchangeDETFBonding
+} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF.sol";
 import {
-    ISingleStandardExchangeDETFInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFInfoTarget.sol";
+    ILegacySingleStandardExchangeDETFInfo as ISingleStandardExchangeDETFInfo
+} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF.sol";
 import {DetfReentryTarget} from "contracts/test/adversarial/DetfReentryTarget.sol";
 
 /// @notice Wave 1A P0/P1 adversarial coverage for SingleStandardExchangeDETF.
-/// @dev D6/H2 implemented now that rebasing claim is wired at deploy. G1 nested optional
-///      (see ComposedStable matrix). Production entry points only.
-contract Adversarial_SingleSE_P0_Test is TestBase_SingleStandardExchangeDETF_Adversarial {
+/// @dev Funded bond claims and staking redemption use the deployed child contracts.
+contract Adversarial_SingleSE_P0_Test is
+    TestBase_SingleStandardExchangeDETF_Adversarial,
+    FundedBondLifecycleAssertions
+{
     // --- E5 / H3 / Guards ---
 
     function test_E5_zeroAmount_reverts() public {
         address instance_ = _openLiveOpenThreshold();
         vm.prank(attacker);
         vm.expectRevert(SingleStandardExchangeDETFRepo.ZeroAmount.selector);
-        IStandardExchangeIn(instance_).exchangeIn(
-            seShare, 0, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours
-        );
+        IStandardExchangeIn(instance_)
+            .exchangeIn(seShare, 0, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours);
     }
 
     function test_E5_expiredDeadline_reverts() public {
@@ -43,9 +44,8 @@ contract Adversarial_SingleSE_P0_Test is TestBase_SingleStandardExchangeDETF_Adv
         vm.expectRevert(
             abi.encodeWithSelector(SingleStandardExchangeDETFRepo.DeadlineExpired.selector, block.timestamp - 1)
         );
-        IStandardExchangeIn(instance_).exchangeIn(
-            seShare, shares_, IERC20(instance_), 0, attacker, false, block.timestamp - 1
-        );
+        IStandardExchangeIn(instance_)
+            .exchangeIn(seShare, shares_, IERC20(instance_), 0, attacker, false, block.timestamp - 1);
         vm.stopPrank();
         assertEq(seShare.balanceOf(instance_), 0, "H3 residual shares");
     }
@@ -53,14 +53,14 @@ contract Adversarial_SingleSE_P0_Test is TestBase_SingleStandardExchangeDETF_Adv
     function test_H3_minOutTooHigh_leavesNoInventory() public {
         address instance_ = _openLiveOpenThreshold();
         uint256 shares_ = _fundSeShares(attacker, 30e18);
-        uint256 preview_ =
-            IStandardExchangeIn(instance_).previewExchangeIn(seShare, shares_, IERC20(instance_));
+        uint256 preview_ = IStandardExchangeIn(instance_).previewExchangeIn(seShare, shares_, IERC20(instance_));
         vm.startPrank(attacker);
         seShare.approve(instance_, shares_);
         vm.expectRevert();
-        IStandardExchangeIn(instance_).exchangeIn(
-            seShare, shares_, IERC20(instance_), preview_ + 1e18, attacker, false, block.timestamp + 1 hours
-        );
+        IStandardExchangeIn(instance_)
+            .exchangeIn(
+                seShare, shares_, IERC20(instance_), preview_ + 1e18, attacker, false, block.timestamp + 1 hours
+            );
         vm.stopPrank();
         _assertNoFreeInventory(instance_);
         assertEq(seShare.balanceOf(attacker), shares_, "shares refunded");
@@ -72,9 +72,8 @@ contract Adversarial_SingleSE_P0_Test is TestBase_SingleStandardExchangeDETF_Adv
         vm.startPrank(attacker);
         seShare.approve(instance_, shares_);
         vm.expectRevert();
-        IStandardExchangeIn(instance_).exchangeIn(
-            seShare, shares_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours
-        );
+        IStandardExchangeIn(instance_)
+            .exchangeIn(seShare, shares_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertEq(seShare.balanceOf(instance_), 0, "H3 residual");
     }
@@ -91,13 +90,11 @@ contract Adversarial_SingleSE_P0_Test is TestBase_SingleStandardExchangeDETF_Adv
         assertEq(IERC20(instance_).balanceOf(attacker), attBefore_, "A1: no free DETF");
 
         uint256 victimIn_ = _fundSeShares(victim, 20e18);
-        uint256 preview_ =
-            IStandardExchangeIn(instance_).previewExchangeIn(seShare, victimIn_, IERC20(instance_));
+        uint256 preview_ = IStandardExchangeIn(instance_).previewExchangeIn(seShare, victimIn_, IERC20(instance_));
         vm.startPrank(victim);
         seShare.approve(instance_, victimIn_);
-        uint256 out_ = IStandardExchangeIn(instance_).exchangeIn(
-            seShare, victimIn_, IERC20(instance_), 0, victim, false, block.timestamp + 1 hours
-        );
+        uint256 out_ = IStandardExchangeIn(instance_)
+            .exchangeIn(seShare, victimIn_, IERC20(instance_), 0, victim, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertEq(out_, preview_, "victim mint not inflated by idle donation");
     }
@@ -116,36 +113,40 @@ contract Adversarial_SingleSE_P0_Test is TestBase_SingleStandardExchangeDETF_Adv
 
     function test_A3_cannotDrainBptWithoutBondAuthority() public {
         address instance_ = _openLiveOpenThreshold();
-        address pool_ = ISingleStandardExchangeDETFInfo(instance_).reservePool();
-        uint256 bptBefore_ = IERC20(pool_).balanceOf(instance_);
-        // Attacker without NFT cannot sellPositionToDetfNft on bond vault (onlyOwner = DETF)
-        IDETFNFTVault bondVault_ =
-            IDETFNFTVault(ISingleStandardExchangeDETFInfo(instance_).bondNftVault());
+        IDetfBondNFT nft_ = IDetfBondNFT(ISingleStandardExchangeDETFInfo(instance_).bondNftVault());
+        IERC20 lp_ = nft_.lpToken();
+        uint256 held_ = lp_.balanceOf(address(nft_));
+        assertGt(held_, 0, "protocol holds funded reserve LP");
         vm.prank(attacker);
-        vm.expectRevert();
-        bondVault_.sellPositionToDetfNft(1, attacker, attacker);
-        assertEq(IERC20(pool_).balanceOf(instance_), bptBefore_, "A3: BPT intact");
+        vm.expectRevert(abi.encodeWithSignature("NotAuthorized(address)", attacker));
+        nft_.transferHeldToken(lp_, attacker, held_);
+        assertEq(lp_.balanceOf(address(nft_)), held_, "reserve LP intact");
+        assertEq(lp_.balanceOf(attacker), 0, "no LP extracted");
     }
 
     // --- D bond authority ---
 
-    function test_D2_sellPosition_nonOwner_reverts() public {
-        address instance_ = _openLiveOpenThreshold();
-        // First bond gave alice a tokenId; attacker cannot sell via DETF without ownership
+    function test_D2_claimBond_nonOwner_reverts() public {
+        address instance_ = _deployOpenThresholdDetf("Adv Claim Authority", "advCA");
+        uint256 id_ = _bootstrapDetf(instance_, alice, 1_500e18);
+        IDetfBondNFT nft_ = IDetfBondNFT(ISingleStandardExchangeDETFInfo(instance_).bondNftVault());
         vm.prank(attacker);
-        vm.expectRevert();
-        ISingleStandardExchangeDETFBonding(instance_).sellPositionToDetfNft(1, 0, attacker);
+        vm.expectRevert(abi.encodeWithSignature("NotAuthorized(address)", attacker));
+        nft_.claimBond(id_, attacker);
+        assertEq(nft_.ownerOf(id_), alice, "owner unchanged");
+        assertEq(nft_.positionOf(id_).claimedPrincipal, 0, "principal untouched");
     }
 
-    function test_D3_doubleSell_secondReverts() public {
-        address instance_ = _deployOpenThresholdDetf("Adv DoubleSell", "advDS");
-        uint256 tokenId_ = _bootstrapDetf(instance_, alice, 1_500e18);
-        _warpPastUnlock(instance_, tokenId_);
+    function test_D3_fullBondClaim_retiresPosition() public {
+        address instance_ = _deployOpenThresholdDetf("Adv Double Claim", "advDC");
+        uint256 id_ = _bootstrapDetf(instance_, alice, 1_500e18);
+        _assertBondMaturePreviewEqualsPayment(instance_, id_, alice);
+        IDetfBondNFT nft_ = IDetfBondNFT(ISingleStandardExchangeDETFInfo(instance_).bondNftVault());
+        uint256 held_ = _fundedBondStaking(instance_).balanceOf(alice);
         vm.prank(alice);
-        ISingleStandardExchangeDETFBonding(instance_).sellPositionToDetfNft(tokenId_, 0, alice);
-        vm.prank(alice);
-        vm.expectRevert();
-        ISingleStandardExchangeDETFBonding(instance_).sellPositionToDetfNft(tokenId_, 0, alice);
+        vm.expectRevert(abi.encodeWithSignature("ERC721NonexistentToken(uint256)", id_));
+        nft_.claimBond(id_, alice);
+        assertEq(_fundedBondStaking(instance_).balanceOf(alice), held_, "no second payout");
     }
 
     function test_D5_lockClamp_minRevert_maxOk() public {
@@ -154,74 +155,41 @@ contract Adversarial_SingleSE_P0_Test is TestBase_SingleStandardExchangeDETF_Adv
         vm.startPrank(attacker);
         seShare.approve(instance_, shares_);
         vm.expectRevert();
-        ISingleStandardExchangeDETFBonding(instance_).bond(
-            seShare, shares_, 1 days, attacker, false, block.timestamp + 1 hours
-        );
-        (uint256 tid_,) = ISingleStandardExchangeDETFBonding(instance_).bond(
-            seShare, shares_, DEFAULT_MAX_LOCK + 365 days, attacker, false, block.timestamp + 1 hours
-        );
+        ISingleStandardExchangeDETFBonding(instance_)
+            .bond(seShare, shares_, 1 days, attacker, false, block.timestamp + 1 hours);
+        (uint256 tid_,) = ISingleStandardExchangeDETFBonding(instance_)
+            .bond(seShare, shares_, DEFAULT_MAX_LOCK + 365 days, attacker, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertTrue(tid_ > 0, "clamped max lock");
     }
 
-    function test_D6_cannotRedeemMoreThanClaimPrincipal() public {
-        address instance_ = _deployOpenThresholdDetf("Adv D6 Claim", "advD6");
-        uint256 tokenId_ = _bootstrapDetf(instance_, alice, 2_500e18);
-        ISingleStandardExchangeDETFBonding bonding_ = ISingleStandardExchangeDETFBonding(instance_);
-        ISingleStandardExchangeDETFInfo info_ = ISingleStandardExchangeDETFInfo(instance_);
-
-        _warpPastUnlock(instance_, tokenId_);
-        vm.prank(alice);
-        bonding_.sellPositionToDetfNft(tokenId_, 0, alice);
-
-        IRebasingClaimToken claim_ = IRebasingClaimToken(info_.rebasingClaimToken());
-        uint256 claimBal_ = claim_.balanceOf(alice);
-        uint256 detfBefore_ = IERC20(instance_).balanceOf(alice);
-        uint256 redeemAmt_ = claimBal_ / 5;
-        if (redeemAmt_ == 0) redeemAmt_ = claimBal_;
-
-        vm.prank(alice);
-        uint256 paid_ = bonding_.redeemClaim(redeemAmt_, IERC20(instance_), 0, alice, block.timestamp + 1 hours);
-
-        assertGt(paid_, 0, "D15 DETF paid");
-        assertLt(claim_.balanceOf(alice), claimBal_, "claim burned");
-        assertGt(IERC20(instance_).balanceOf(alice), detfBefore_, "user DETF increased");
-        vm.prank(alice);
-        vm.expectRevert();
-        bonding_.redeemClaim(claimBal_ + 1e18, IERC20(instance_), 0, alice, block.timestamp + 1 hours);
+    function test_D6_cannotUnstakeMoreThanFundedBalance() public {
+        address instance_ = _deployOpenThresholdDetf("Adv Funded D6", "advD6");
+        uint256 id_ = _bootstrapDetf(instance_, alice, 2_500e18);
+        _assertBondMaturePreviewEqualsPayment(instance_, id_, alice);
+        uint256 held_ = _fundedBondStaking(instance_).balanceOf(alice);
+        _assertFundedUnstakeRejected(instance_, alice, held_ + 1, IERC20(instance_), 0);
+        _assertFundedUnstake(instance_, alice, held_ / 5);
+        _assertFundedUnstakeRejected(instance_, alice, held_, IERC20(instance_), 0);
     }
 
-    function test_H2_redeemClaim_minOutTooHigh_claimUnchanged() public {
-        address instance_ = _deployOpenThresholdDetf("Adv H2 Claim", "advH2");
-        uint256 tokenId_ = _bootstrapDetf(instance_, alice, 2_000e18);
-        ISingleStandardExchangeDETFBonding bonding_ = ISingleStandardExchangeDETFBonding(instance_);
-        ISingleStandardExchangeDETFInfo info_ = ISingleStandardExchangeDETFInfo(instance_);
-        _warpPastUnlock(instance_, tokenId_);
-        vm.prank(alice);
-        bonding_.sellPositionToDetfNft(tokenId_, 0, alice);
-
-        IRebasingClaimToken claim_ = IRebasingClaimToken(info_.rebasingClaimToken());
-        uint256 claimBefore_ = claim_.balanceOf(alice);
-        require(claimBefore_ > 0, "claim minted");
-        uint256 redeemAmt_ = claimBefore_ / 5;
-        if (redeemAmt_ == 0) redeemAmt_ = claimBefore_;
-
-        vm.prank(alice);
-        vm.expectRevert();
-        bonding_.redeemClaim(redeemAmt_, IERC20(instance_), type(uint256).max, alice, block.timestamp + 1 hours);
-
-        assertEq(claim_.balanceOf(alice), claimBefore_, "H2: claim unchanged");
+    function test_H2_unstake_minOutTooHigh_balanceUnchanged() public {
+        address instance_ = _deployOpenThresholdDetf("Adv Funded H2", "advH2");
+        uint256 id_ = _bootstrapDetf(instance_, alice, 2_000e18);
+        _assertBondMaturePreviewEqualsPayment(instance_, id_, alice);
+        uint256 amount_ = _fundedBondStaking(instance_).balanceOf(alice) / 5;
+        _assertFundedUnstakeRejected(instance_, alice, amount_, IERC20(instance_), amount_ + 1);
+        _assertFundedUnstake(instance_, alice, amount_);
     }
 
     // --- F access ---
 
-    function test_F2_bondNftVault_createPosition_onlyOwner() public {
+    function test_F2_bondNftVault_createFundedPosition_onlyDetf() public {
         address instance_ = _openLiveOpenThreshold();
-        IDETFNFTVault bondVault_ =
-            IDETFNFTVault(ISingleStandardExchangeDETFInfo(instance_).bondNftVault());
+        IDetfBondNFT nft_ = IDetfBondNFT(ISingleStandardExchangeDETFInfo(instance_).bondNftVault());
         vm.prank(attacker);
-        vm.expectRevert();
-        bondVault_.createPosition(1e18, DEFAULT_MIN_LOCK, attacker);
+        vm.expectRevert(abi.encodeWithSignature("NotAuthorized(address)", attacker));
+        nft_.createFundedPosition(1e9, DEFAULT_MIN_LOCK, attacker);
     }
 
     function test_F1_diamondCut_notCallableByAttacker() public {
@@ -252,14 +220,8 @@ contract Adversarial_SingleSE_P0_Test is TestBase_SingleStandardExchangeDETF_Adv
 
         vm.startPrank(alice);
         hostileShare.approve(instance_, 5_000e18);
-        (uint256 tid_,) = ISingleStandardExchangeDETFBonding(instance_).bond(
-            IERC20(address(hostileShare)),
-            5_000e18,
-            DEFAULT_MIN_LOCK,
-            alice,
-            false,
-            block.timestamp + 1 hours
-        );
+        (uint256 tid_,) = ISingleStandardExchangeDETFBonding(instance_)
+            .bond(IERC20(address(hostileShare)), 5_000e18, DEFAULT_MIN_LOCK, alice, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         assertTrue(tid_ > 0, "outer bond ok");
@@ -282,15 +244,16 @@ contract Adversarial_SingleSE_P0_Test is TestBase_SingleStandardExchangeDETF_Adv
         uint256 amountIn_ = 50e18;
         vm.startPrank(attacker);
         hostileShare.approve(instance_, amountIn_);
-        IStandardExchangeIn(instance_).exchangeIn(
-            IERC20(address(hostileShare)),
-            amountIn_,
-            IERC20(instance_),
-            0,
-            attacker,
-            false,
-            block.timestamp + 1 hours
-        );
+        IStandardExchangeIn(instance_)
+            .exchangeIn(
+                IERC20(address(hostileShare)),
+                amountIn_,
+                IERC20(instance_),
+                0,
+                attacker,
+                false,
+                block.timestamp + 1 hours
+            );
         vm.stopPrank();
 
         assertEq(hostileShare.reentryAttempts(), 1, "C3 reentry");
@@ -311,15 +274,10 @@ contract Adversarial_SingleSE_P0_Test is TestBase_SingleStandardExchangeDETF_Adv
 
         vm.startPrank(attacker);
         hostileShare.approve(instance_, 50e18);
-        IStandardExchangeIn(instance_).exchangeIn(
-            IERC20(address(hostileShare)),
-            50e18,
-            IERC20(instance_),
-            0,
-            attacker,
-            false,
-            block.timestamp + 1 hours
-        );
+        IStandardExchangeIn(instance_)
+            .exchangeIn(
+                IERC20(address(hostileShare)), 50e18, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours
+            );
         vm.stopPrank();
 
         assertEq(hostileShare.reentryAttempts(), 1, "C2 reentry");
@@ -335,24 +293,19 @@ contract Adversarial_SingleSE_P0_Test is TestBase_SingleStandardExchangeDETF_Adv
         uint256 sharesIn_ = _fundSeShares(attacker, 40e18);
         vm.startPrank(attacker);
         seShare.approve(instance_, sharesIn_);
-        uint256 detfOut_ = IStandardExchangeIn(instance_).exchangeIn(
-            seShare, sharesIn_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours
-        );
+        uint256 detfOut_ = IStandardExchangeIn(instance_)
+            .exchangeIn(seShare, sharesIn_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertTrue(detfOut_ > 0, "minted");
 
         uint256 burnAmt_ = detfOut_ / 2;
         if (burnAmt_ == 0) burnAmt_ = detfOut_;
-        if (!ISingleStandardExchangeDETFInfo(instance_).isBurningAllowed()) {
-            // Open burn threshold may still be closed; skip burn half if gate blocks
-            return;
-        }
         vm.startPrank(attacker);
         IERC20(instance_).approve(instance_, burnAmt_);
-        uint256 sharesBack_ = IStandardExchangeIn(instance_).exchangeIn(
-            IERC20(instance_), burnAmt_, seShare, 0, attacker, false, block.timestamp + 1 hours
-        );
+        uint256 sharesBack_ = IStandardExchangeIn(instance_)
+            .exchangeIn(IERC20(instance_), burnAmt_, seShare, 0, attacker, false, block.timestamp + 1 hours);
         vm.stopPrank();
+        assertGt(sharesBack_, 0, "partial redemption executes");
         assertLe(sharesBack_, sharesIn_, "E1: partial out <= in");
         _assertNoFreeInventory(instance_);
     }
@@ -382,17 +335,16 @@ contract Adversarial_SingleSE_P0_Test is TestBase_SingleStandardExchangeDETF_Adv
         uint256 sharesIn_ = _fundSeShares(attacker, 50e18);
         vm.startPrank(attacker);
         seShare.approve(instance_, sharesIn_);
-        uint256 detfOut_ = IStandardExchangeIn(instance_).exchangeIn(
-            seShare, sharesIn_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours
-        );
+        uint256 detfOut_ = IStandardExchangeIn(instance_)
+            .exchangeIn(seShare, sharesIn_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
-        if (ISingleStandardExchangeDETFInfo(instance_).isBurningAllowed() && detfOut_ > 0) {
+        assertGt(detfOut_, 0, "attacker funded DETF");
+        {
             vm.startPrank(attacker);
             IERC20(instance_).approve(instance_, detfOut_);
-            IStandardExchangeIn(instance_).exchangeIn(
-                IERC20(instance_), detfOut_, seShare, 0, attacker, false, block.timestamp + 1 hours
-            );
+            IStandardExchangeIn(instance_)
+                .exchangeIn(IERC20(instance_), detfOut_, seShare, 0, attacker, false, block.timestamp + 1 hours);
             vm.stopPrank();
         }
 

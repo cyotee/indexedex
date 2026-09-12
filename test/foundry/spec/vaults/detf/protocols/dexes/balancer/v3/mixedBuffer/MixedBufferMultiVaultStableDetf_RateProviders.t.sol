@@ -18,24 +18,23 @@ import {
     IMixedBufferMultiVaultStableDetfBonding
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfBondingTarget.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
-import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 
 contract MixedBufferMultiVaultStableDetf_RateProviders_Test is TestBase_MixedBufferMultiVaultStableDetf {
-    function test_share_STANDARD_default() public view {
+    function test_share_STANDARD_default() public virtual {
         // Default deploy uses address(0) share RPs → STANDARD.
         assertEq(detfInfo.rateProvider(0), address(0), "standard share rp");
     }
 
-    function test_share_WITH_RATE_matrix() public {
+    function test_share_WITH_RATE_matrix() public virtual {
         _ensureSeVaults(1);
         // Deploy a real SE rate provider for share leg.
         IRateProvider rp_ = rateProviderPkg.deployRateProvider(
-            IStandardExchange(address(seVaults[0])), seShares[0], IERC20(address(dai))
+            IStandardExchange(address(seVaults[0])), seShares[0], IERC20(address(_fixtureBufferToken()))
         );
 
-        // Product Open (always-allow when live); illegal mint=1/burn=max pairs fail mint>burn validation.
+        // Default mandatory thresholds; both the buffer and rated share routes remain executable.
         IMixedBufferMultiVaultStableDetfDFPkg.PkgArgs memory args =
-            _buildPkgArgs(1, 0, 0, ThresholdMode.Open);
+            _buildPkgArgs(1, 0, 0);
         args.vaultShareRateProviders[0] = rp_;
 
         vm.startPrank(owner);
@@ -46,9 +45,9 @@ contract MixedBufferMultiVaultStableDetf_RateProviders_Test is TestBase_MixedBuf
 
         assertEq(IMixedBufferMultiVaultStableDetfInfo(d).rateProvider(0), address(rp_), "with_rate");
         _bootstrapDefault(d, alice);
-        uint256 out_ = _mintDetfFromVaultShare(d, 0, bob, 40e18);
+        uint256 out_ = _mintDetfFromVaultShare(d, 0, bob, _fixtureAmount(40e18));
         assertTrue(out_ > 0, "mint with rate");
-        out_ = _mintDetfFromBuffer(d, bob, 40e18);
+        out_ = _mintDetfFromBuffer(d, bob, _fixtureAmount(40e18));
         assertTrue(out_ > 0, "buffer mint with rated share leg");
     }
 }

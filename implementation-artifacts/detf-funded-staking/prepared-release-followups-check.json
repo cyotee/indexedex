@@ -1,0 +1,401 @@
+{
+  "recorded_at_utc": "2026-09-08T22:55:30.759226+00:00",
+  "status": "PREPARED_INPUTS_CHECKED_NOT_APPLIED",
+  "provenance_before": {
+    "recorded_at_utc": "2026-09-08T22:55:30.557982+00:00",
+    "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+    "source_and_config_sha256": "5ea6bc62285fe1ada40f1a30ce59ffcc689475fee1909b4e016c50c4e2205246",
+    "source_and_config_files": 4817,
+    "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+    "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+    "crane_tracked_contract_and_config_diff_sha256": "284fd75764cb255d1e527eef38fd51e65fca73e8ebb11b7465965e8dfeb2122c",
+    "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+    "machine": "macOS-26.6.2-x86_64-i386-64bit",
+    "architecture": "x86_64",
+    "logical_cpus": 16,
+    "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+  },
+  "diagnostics": [
+    "aerodrome-draft-compile.json",
+    "aerodrome-draft-test-typecheck.json",
+    "rocket-draft-compile.json",
+    "rocket-draft-test-typecheck.json",
+    "erc4626-receipt-draft-compile.json",
+    "erc4626-receipt-draft-test-typecheck.json",
+    "position-cleanup-draft-production.json",
+    "position-cleanup-draft-typecheck.json",
+    "position-cleanup-draft-test-codegen.json"
+  ],
+  "changes": [
+    {
+      "path": "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeQuoteTarget.sol",
+      "before_sha256": "51b9c86e807451d6ebca53a324991507fea67f740cd297fd4fca22792c253dda",
+      "after_sha256": "ce798d9fe12ecdac633c262363466e583fce9e50ecd342be14de118b047006fb"
+    },
+    {
+      "path": "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeQuoteTarget.sol",
+      "before_sha256": "c1410e0b25b9923d98eeedbd4696625e625356578d2963137e2ceed444388b52",
+      "after_sha256": "2540c9cd1deadda2ddcda76117f1e8fbf0b875a0853ceee3c41156dfb091dbb1"
+    },
+    {
+      "path": "test/foundry/spec/vaults/standard/sy/ConstantProductNativeSY.t.sol",
+      "before_sha256": "bfe398e21073a6f4f4048da0ef5748f2e906880e725709aa6978a2c3996b2603",
+      "after_sha256": "beba16da83e73279e12276d29c863cc2390f338cdc72dee38eaf23d82ae6214a"
+    },
+    {
+      "path": "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeQuoteTarget.sol",
+      "before_sha256": null,
+      "after_sha256": "9b8aafaa067ea11df1cbe04d18eff190c8f4378ba3599b4d5af59ea882de9ded"
+    },
+    {
+      "path": "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeOutQueryFacet.sol",
+      "before_sha256": "45523e3cfc64bc80583d9a758aa29c61f6e0a004e1a206952d136ee87851d774",
+      "after_sha256": "715612c04564d802cb4da86290b4deab557289b2f06519989fd4676d73b4b98e"
+    },
+    {
+      "path": "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeDFPkg.sol",
+      "before_sha256": "7b0725a508537282ca85fb68af3977b171498c998b29f61bcd1df83ed147d26c",
+      "after_sha256": "affa5cc27f2098afdd725388a9c94a3c83e4cce3f634eb4024c3ea560bd673fa"
+    },
+    {
+      "path": "contracts/protocols/dexes/aerodrome/v1/Aerodrome_Component_FactoryService.sol",
+      "before_sha256": "c8bec1dd0026425a1a1f495292a7b54e34b840bcf66ef22d3646a3dad4d3306d",
+      "after_sha256": "f24159a4a5d3597201438cde865d9f37398ac28c6ea4cc973e25313a94998741"
+    },
+    {
+      "path": "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeInTarget.sol",
+      "before_sha256": "acaf1907b087e9453e95ba7912b8096727bb98f835110fccfdf115b7cd9ca14a",
+      "after_sha256": "44f8d0b1edd8f867ddd82e149ed9927b53c754972bcbdf0e90519454e6c1565f"
+    },
+    {
+      "path": "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeInFacet.sol",
+      "before_sha256": "6dfac148292c1dccfcc82c667cec1efb50ccec65bbfb5030bee6797d9d91e72b",
+      "after_sha256": "07f18c0f24dabf946d9d44ca151e4b929ae32cf5d9d83c3bc8fb5080d9d26bfd"
+    },
+    {
+      "path": "contracts/protocols/staking/rocket-pool/interfaces/IRocketPoolRETHStandardExchangeDFPkg.sol",
+      "before_sha256": "80cbbb1c597f50c3b7fa7a9735ba5e1e6c29edcd36a61a6fce8f68f07932d5db",
+      "after_sha256": "0698242eaeb34286eb423db071faa327a08b1cda3e26b70cdcf38d53e5b04cd5"
+    },
+    {
+      "path": "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeRepo.sol",
+      "before_sha256": "873c2ca8d5271536534844646ace60c4e0528d48f36f551a0c6a5d11fa528cf7",
+      "after_sha256": "f82bc73c48cd36a7d94322911f5a0f00b13b228bde9667b514db5ddca76a5fc1"
+    },
+    {
+      "path": "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeDFPkg.sol",
+      "before_sha256": "ad2d77cd8eab5064d2f6c2accd3528963ac8ae1582a18e3e618de0abe752d617",
+      "after_sha256": "a41f5f28b73e901169d6507c5ed7435ce772c86e027b22241ac335ab8955d77a"
+    },
+    {
+      "path": "contracts/protocols/staking/rocket-pool/RocketPoolRETH_Component_FactoryService.sol",
+      "before_sha256": "7270f8deec544670094b1c274169663d67c3fe05b0e5692feb37e879b9cf82e8",
+      "after_sha256": "3762bd84e9b6c8d335316a5550bdb6b12c3e6e91018b7eee737580065757b239"
+    },
+    {
+      "path": "contracts/protocols/staking/rocket-pool/test/hermetic/HermeticRocketPoolPorts.sol",
+      "before_sha256": "2a93f9b77e8385721ce8d60e17ecc8197e3fb02f84cc8dda662bd9d2fd9a6802",
+      "after_sha256": "b0176e885492548043937a9a360efde06246ca6a877ecb98434ef0f8704cd4dc"
+    },
+    {
+      "path": "contracts/test/bases/TestBase_RocketPoolRETHStandardExchange.sol",
+      "before_sha256": "5f36bed70eb3e7a23ccb784084db5b5fc8fc3cc53d1f6ce5520497933eb860a2",
+      "after_sha256": "4ea399bc6aedf4c4cd14a6c358cf3994ba85cc2a0bd0d0abbbd1dfe0dfe9c5b2"
+    },
+    {
+      "path": "test/foundry/spec/protocol/staking/rocket-pool/adversarial/Adversarial_RocketPoolRETH_P0.t.sol",
+      "before_sha256": "1b7f67721c9605f81f78a78395354fdc73e7b078fc359b7281de2f08bc7e9dd9",
+      "after_sha256": "f24586b19d662ad24b8a10b6b6401b5a69b41be135f4dc3ab879321854e5b9cf"
+    },
+    {
+      "path": "test/foundry/fork/eth_main/vaults/staking/rocket-pool/RocketPoolRETHStandardExchange_Fork.t.sol",
+      "before_sha256": "cfcfaed63ab9cad7d0dbce8ae5c80a4d385eed11960483c4a63d14710c5b0615",
+      "after_sha256": "e03335c006c4bb0d37c7119548a99e78569dd6f1c253c66e965297ebf2f316c2"
+    },
+    {
+      "path": "contracts/vaults/standard/erc4626/ERC4626StandardExchangeQuoteTarget.sol",
+      "before_sha256": "af89710289dfcdc6f3930a96b2843168ac017b619d24787274e0e1e2bcb32b37",
+      "after_sha256": "ab6ebda031a1e3f32cf1f5890a2fbd0024c0290264fccdb221e105c380be0fd8"
+    },
+    {
+      "path": "test/foundry/fork/eth_main/vaults/standard/erc4626/ERC4626StandardExchange_SfrxETH_Fork.t.sol",
+      "before_sha256": "298d2ab2d5d64f3912a214f0df156096b283e68e8951ecd0e91b1d98e2eab018",
+      "after_sha256": "4cb1408ec16359b714314dfec4747408824edbf99dd9042dcdaa6c8999c5d056"
+    },
+    {
+      "path": "test/foundry/spec/vaults/standard/erc4626/ERC4626StandardExchange_TransitionQuote.t.sol",
+      "before_sha256": "b5ed3e6cde87bd3a7b4236c5f001e79ab5faf2078ddfc9ec0bef6185cd51f81d",
+      "after_sha256": "0ae9bd73800a0180ba48f02b18e9a1bbe5628b2a370432bee490a2cddeecaa50"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v3/UniswapV3VaultRepo.sol",
+      "before_sha256": "f5026a97e4a9cc0da3a5cc05de95b528395af3a49f231254808fbe9a612af0e0",
+      "after_sha256": "4aa8e001ae138ca8e126e86b8165f1d6c1cdf7c53d108cd30e157f5a2d743242"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4PositionRepo.sol",
+      "before_sha256": "49a4cae811105d964256e0e81478fac5bfa333ad9243c1cb8ed4f9ba5fa547c5",
+      "after_sha256": "5cdccf9aec1d0a0817450b7f98a21254fcf2061ed0bf7ee711e33c44eb04fe26"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeCommon.sol",
+      "before_sha256": "7d45ec5ebeafe5b74351aead8d74c4640e55879b88a4e5ebcd722546b551549b",
+      "after_sha256": "4d1f9d99da8e51613ec50bcc49a8fdde0c93167454904ffb65fe30612771257a"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangePositionImportTarget.sol",
+      "before_sha256": "8ef76c59e4a8864ce4015e74de7bc8f5d50e530ff438443081237dc34ade1149",
+      "after_sha256": "b6891fe3c50f3fca32478934587ab565cf0489ee7c1d21363b2fc248da0ee57b"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeCommon.sol",
+      "before_sha256": "228674b7646645414abbad5309d83a25756b430dc915ed5b1d2f7df5dd9143a4",
+      "after_sha256": "107f55508296c893a651b23003b9ffcf78d21c5f342b74c821bc855c1e743ab3"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInBase.sol",
+      "before_sha256": "54148cd00f6ef11a6a4b4281eb68c8968b2331295b5e19d546b3869ff208fde7",
+      "after_sha256": "62e78f9ca392510c43c2bb35f90bbf1a64dd87e08819c1c45fef751317c7bccc"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutExecutionDelegate.sol",
+      "before_sha256": "b84f6064bfa5a3926716eccd0904d1d0e6ce339470ddcde56d493f54679d2a3d",
+      "after_sha256": "01ecbde64b225e2ea67b174d259c995a05cdbee115d884c7afb90b02237269f9"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiTarget.sol",
+      "before_sha256": "e3f0ab1b875642087e07f2ea8d0920447207bfd1a24e010104ae33e306367130",
+      "after_sha256": "35a302fd9d18ae3df96085ca1080daedf1769df550208eb142a46815b306d8bc"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangePositionImportTarget.sol",
+      "before_sha256": "b8738ac17ab9f5f4af6740e9c6d78ab8964297ea525d7392b760d84657022775",
+      "after_sha256": "6d5790562e1cd2123f212193962e648b8340dc7069915f725e136fa30e9c1ad8"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_LocalLiquidBuffer.t.sol",
+      "before_sha256": "bfd06e198d909c1b743096f418126fe87e13b5ade269041daafe3950cd86b0bf",
+      "after_sha256": "31302c40c1e77083b9707f49e8d074984da8800933058004f275acff706078cc"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_LocalLiquidBuffer_Decimals.sol",
+      "before_sha256": "9ce9c4f62f4a7390bede28ac47e8d29bbbda883e1ffc34e46c2033ecac4a002c",
+      "after_sha256": "7cd60c63b8c15f004e4ea11caf035e7aebd732686e140c0023f587aaafedb039"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_LocalLiquidBuffer.t.sol",
+      "before_sha256": "9e47210f5c0d56d8900e2dfc2267a62a71754bb69be8f504224555eb0c97ebe5",
+      "after_sha256": "a6b13069a2b15c054350d27f5188705ea522090e675b15e9222f9922dda148bd"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_LocalLiquidBuffer_Decimals.sol",
+      "before_sha256": "8664e6533852134886c81760bcb2bae1616b70fc078aaf0085963f0ff1491ea2",
+      "after_sha256": "1b5c19ed90eb76105c21ae7aaff9b827cda356e7978e68abec31bc2d2411d632"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_NativeEthWrap.t.sol",
+      "before_sha256": "1778999d53708c4045312eed06e1a5cb20b74604e323a21c9b193a0a80ae7c5b",
+      "after_sha256": "863d02e2b1a32b03978abcb517d7b84996ad52a9be8749c7008d7bed962b8823"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_NativeEthWrap_Decimals.sol",
+      "before_sha256": "2602bfad2e6946b52ac3758f47e22dba416febc7a25c3700cf8c0cea32e3d97f",
+      "after_sha256": "d8809189875141a8a9c74a613d7f10c443d20a4f86f59b405d694f9c70095827"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Reentrancy.t.sol",
+      "before_sha256": "66198278b60ecb1b383707b5060b70a09db03af710ae3faa5b25255e722da412",
+      "after_sha256": "b0d231ea8978f6c90b386328f0f3f732e75527875c92863f7f3fdb89e25593bf"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Reentrancy_Decimals.sol",
+      "before_sha256": "d3e191a1c0f19172c4e317342826716575123acb5789c286eeee42d436a7321b",
+      "after_sha256": "9acb22bc4ca7bc9ba27f0cce1a531632f73f0c1f8eeca60870d5571772fb6d70"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FeeCompound_Decimals.sol",
+      "before_sha256": "8608f78d1067625211ebfdf08fdcf2ae0aea85080b422ddb5f14cc053892e4dc",
+      "after_sha256": "85e7266d4e63d7208ce6555ab247249de67c717a0e95cb062d88c83a702bae63"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Import_Decimals.sol",
+      "before_sha256": "98332c8ed8e709cf32ba89c35f8af70fbb5d97b1a3d054fbb9706054b60910ae",
+      "after_sha256": "d3e2882c92573e3aa8ed563e502c4238170c3791836ec1f0719fa3aeff78dbef"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchangeDFPkg_Deploy.t.sol",
+      "before_sha256": "55321521d5526239a58a333fe3283a42a4c7f0e416d2332f67d59d9a0840a197",
+      "after_sha256": "a9cf8abdf335ea5c67a556b1fe0f500e85206ebea85d901ea5d2acf55391b4b2"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchangeDFPkg_Deploy_Decimals.sol",
+      "before_sha256": "e598f42cc5dda618a97ce16a619504b13f70d0a081ffb93e6855f3020bd9a20e",
+      "after_sha256": "cf5b6e29a28ce91ccdf5312544dd99b9829da107ed1d40f0cbf7b4c433b84c6c"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg_Deploy.t.sol",
+      "before_sha256": "790fecf782a45d9b5a3456ff886f2d57e53b479057341595595f77ffaccadfd9",
+      "after_sha256": "987dc1324b14aa3c2c1629e26a0f441018d45c29dabe1dd4434b84d54315dc29"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeDFPkg_Deploy_Decimals.sol",
+      "before_sha256": "ed772f1bd99a64e090b63d82a0165f15aa1ad84c2a91b16e641bff359308f05d",
+      "after_sha256": "30d04e21170437689548437a5110ca0a930819b180b644a41412164e9bb87899"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeRoutes_Test.t.sol",
+      "before_sha256": "e3890ff9569638e45164467910260388df2027917c64b04a6dfff40a84918a3d",
+      "after_sha256": "1691dc46ffc981fb6a0c97e295d5aa386f8b339090ad05bacd726270b0f0876a"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeRoutes_Test_Decimals.sol",
+      "before_sha256": "fed3bc16a797db9b0ae6ced81a29be9e8aa0b5e865ceeee38b07d561149b13c4",
+      "after_sha256": "8ecb17e9006c71d3591396950b40a39389f318438e87afb10ee7a4d25815e306"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_Routes.t.sol",
+      "before_sha256": "ca26d2d0bcdbb349dc18fe5fdae299a883f5dbbddb18229be027792ec9adf9c9",
+      "after_sha256": "94efd864fefdaab8191695d3e4385836ba3237afc8360761b0384163b4e881d6"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_Previews.t.sol",
+      "before_sha256": "01d86da0a761c122d33a6b66b6c0278e1050569fc4f778bc3e74f4244d8eb468",
+      "after_sha256": "c16570c71fc0f7e14b64b259c875a29b18e30cf3b9e7e996a668199e134921e9"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Routes_Decimals.sol",
+      "before_sha256": "4ed0d21d2cc22f241664e5bc151f2cce8cb3dceace5863a181f3fe5a74053e1c",
+      "after_sha256": "6c1215b5cd67185e7d153d88407823913f988e24b3202806497fd373c3c35a0d"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Previews_Decimals.sol",
+      "before_sha256": "064b705e39dc3df29171035b53eb51f57a3ab7a959b98b4e621226299b4478b5",
+      "after_sha256": "72d1e555f8496960e06efae1b7b8a79aafb295e8dfac0ee35e35e0e7a595c421"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/TestBase_UniswapV3StandardExchange_Adversarial.sol",
+      "before_sha256": "90a57222cd51c68dff453b724bc358c5c7ef1c37a157c7d2655b6060779233e9",
+      "after_sha256": "8c9fbeb93adc7ee68b1bce59a290e39a0d3be95c98b2699a1f4d7b99e6c4066e"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Accounting.t.sol",
+      "before_sha256": "bbf62569b1a79e2abd9385490cd2f42750b4941b4f2efcf93f164ae666894d12",
+      "after_sha256": "ff95b75c35edb129dacdd86126aaea1bed3bc04489bdb0e62cd663cddd48e78a"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Donation.t.sol",
+      "before_sha256": "048ec4299e819af8df98319c7353e3cbbc8d69e999cc58c513a95ddfb293a59c",
+      "after_sha256": "db7f822d567b3bacc272fc91abc84628b0aa4bea73de57171eb64eb047722ad7"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_PriceManipulation.t.sol",
+      "before_sha256": "9ee9a5d8716460acac40d0079b29fb9b60fe5d813b398bfa108433e2d14d3e56",
+      "after_sha256": "b42ddfe633dddcbcb1b8f66ada0780130be11c70f664ff8fe5eb341a48161bc5"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_SecRemediation.t.sol",
+      "before_sha256": "7b934a4fb43b874f9eda9f39e29e2d8d9a292b65318b3431ee2423f5de9e430b",
+      "after_sha256": "1e76a55ca9ac7f6320246e5758fca1f8f070bc3f6e23794ea433f891e30cf205"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/TestBase_UniswapV3StandardExchange_Adversarial_Decimals.sol",
+      "before_sha256": "ebcbfceefacc9d0bd48e4d7d2d23cb3995b4da9f1f7cea5d2a2f41e9d20fcf2f",
+      "after_sha256": "4a0b73fe7d74fe08bdbc0b8d0f8c78460f4baac77dbd80482370ca9cfb85f6d0"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Accounting_Decimals.sol",
+      "before_sha256": "afa718825100cafa7c2dc20a4ffff428d2c12b40271a2fabdcef0ed2d5daf2c0",
+      "after_sha256": "dce7f5965f9d5b34c7ff96ae51288a1fc208b9d7d8b33b4cdbd2f9bb923650e2"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Donation_Decimals.sol",
+      "before_sha256": "0bd96a2763ef205cf2bd1ce982eef796b1bc3abc5e474b77387ee7904809eeb8",
+      "after_sha256": "8b34bf69ab0694fd9d9cb756694ab86ad15c446ef1603ca74a3712e8ca10b3d0"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_PriceManipulation_Decimals.sol",
+      "before_sha256": "ed31c2377af4c70297052488e6fbee668dd683ac2cbda090bc2834c692e2e4a2",
+      "after_sha256": "bdf95bb9d1e4862e3aefe412067920ed4af0e4cd0417763a024a2402edfba67e"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_SecRemediation_Decimals.sol",
+      "before_sha256": "5822596bdb5df3ff0f00439792619a5435b9a4cdfa82aebb0918b6f8cd52cc46",
+      "after_sha256": "a2d499b4a6487c3a888a269f9188b88605d8b8e47919416011d4e87ab33a9da9"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_MultiJoinExit.t.sol",
+      "before_sha256": "a0caf372095eeefd98d75bb11242da4847279ae75cd87ccad115b86e6b0cb9cf",
+      "after_sha256": "02905894b13631b99ed47d648604c863f22cdf3658cdaf9cad0a0641c06eb7d2"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_MultiJoinExit_Decimals.sol",
+      "before_sha256": "caa895b6c26919b8c76f1c7a94eebdc17773a709afc11606b2224c33a4444fe2",
+      "after_sha256": "eb0b13d5365f777731c50e6c44698715ee7e0d18efe3a0234d328c7c7a90b962"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_TwapPoke.t.sol",
+      "before_sha256": "ad7e86aab3976fb1e87f671e5320a5d157bacdd02e5caab0a949815dd7e1e785",
+      "after_sha256": "5273eb399bb14ddb25847f377dcbed33e07056d45a8d16fa9a54d2d624180eb5"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_Univ4SeNestedCaller.t.sol",
+      "before_sha256": "7f7746198133874f2f8e04cfa42d59a1ae359db58a053f925cfe3bb5e4e8b33f",
+      "after_sha256": "9b8a62b980807260d73af9b14ba259d53ab3f9fe7f9919e4363279bc023cbbb0"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_LocalLiquidBuffer_H2.t.sol",
+      "before_sha256": "f9c48af4a27ab65466c77bc3c67b107cfed6531f6ccd9bb3e4dd610651a72bf4",
+      "after_sha256": "4c97cf60dce4d1b657bf928d5030c6b4e42b925182e0ee5589b972faa2cbd3e0"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Griefing.t.sol",
+      "before_sha256": "c2b2277c4aaa4f80ab829e2896b3cf724944415ae102ea323219fcedf2ee70b3",
+      "after_sha256": "382fa322388f925707e4f6ee4088849393aabe12cb6f996e54bbbe99724d620c"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_TwapPoke_Decimals.sol",
+      "before_sha256": "accb7654204aec94ebb5f80d4181bbc58c1a691b06ce5e2499f1e2ca43642d5d",
+      "after_sha256": "a91eaed2992b82e73b2d0c33b44a00ca9a229cd8ead653ecd0b8217728712a80"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_Univ4SeNestedCaller_Decimals.sol",
+      "before_sha256": "0b538413705bb72a00fabd791754082e085647be405205df775439db8e1b5012",
+      "after_sha256": "c0908040996518e29636ead7ff92fc9d598f9427887fbf32ee71495125c7f0a7"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_LocalLiquidBuffer_H2_Decimals.sol",
+      "before_sha256": "3192a1de055342a96f3949ee920ee924a21275e88dd101813e6ff01d8a226978",
+      "after_sha256": "6167cbd43eedf233f5a3d2177b0ab6bcb43198ba23a0211be6b581184622fc40"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Griefing_Decimals.sol",
+      "before_sha256": "0fb1da8f5a33e4dc91da58be687e59e915324248e21d507fadc8f3292c590c3b",
+      "after_sha256": "50484a456679af76b6152ccaeb4858eebd7458a7cd73c12b499c8dfe96399632"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/adversarial/Adversarial_UniswapV4SE_SecurePull.t.sol",
+      "before_sha256": "ba4825c1c81efac4ba6110cdf6024485f5d1d39f5b0a37003db2b5fbc58d2374",
+      "after_sha256": "346856423bf6b943dc87719e3b9c5d6913f1b818a59c0b69205ff2e403ea9014"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/adversarial/Adversarial_UniswapV4SE_E6ImpA0.t.sol",
+      "before_sha256": "4803726998c117f5002b2757f10843f615cd1edda558080bfbc06ed489cdf10b",
+      "after_sha256": "6f45cad43cbf647037d4151b7734d74c2771d497d78e215d3047a68a8a30b987"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_SecurePull_Decimals.sol",
+      "before_sha256": "c56bdbcac3a401584bb3ac7c2793560c2e74ac95b58c52830e90e4c6486cdf4d",
+      "after_sha256": "b031a9bd85459a7fb0882007b783a8760406601857ed69b4c478e73caf630c48"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_E6ImpA0_Decimals.sol",
+      "before_sha256": "11f75c6911874a4ff3fc9ff8cd3273b534a93ed98be995ebd323a3af168c97b1",
+      "after_sha256": "43d0e519cd7ad840619f69df53ea30b33c1ec630599d44fada608c8bc68f4c1a"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Import_Decimals.sol",
+      "before_sha256": "5ed0d311e1dd907ddd72579141f98e798b43626fcc26a3bfa3c56c383f8e43d1",
+      "after_sha256": "c193e7a6c3098e3874206bf46e19056386f59970e488c5b9e711d8026e149d57"
+    }
+  ]
+}

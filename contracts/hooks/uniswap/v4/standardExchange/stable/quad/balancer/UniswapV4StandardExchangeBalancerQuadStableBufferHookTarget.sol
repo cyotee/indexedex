@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
+import {FixedPointMathLib} from "@crane/contracts/utils/FixedPointMathLib.sol";
 import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
@@ -30,9 +31,9 @@ import {
 
 /**
  * @title UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget
- * @notice Shared book/guards/buffer helpers for 4-asset Balancer StableMath SE buffer facets.
- * @dev No BaseHook inheritance. Fixed N=4; no weights; no partial-book KLast modes.
- *      LP via ERC20Repo; inventory = face | live SE shares; kLast = geoMean4(invWad).
+ * @notice Shared book/guards/buffer helpers for 2–5 asset Balancer StableMath SE buffer facets.
+ * @dev No BaseHook inheritance. Immutable active token count; no weights; no partial-book KLast modes.
+ *      LP via ERC20Repo; inventory = face | live SE shares; pricing uses the SE-valued StableMath invariant.
  */
 abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
     using SafeERC20 for IERC20;
@@ -59,6 +60,8 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
     error BufferFailed();
     error UnwrapFailed();
     error InvalidN();
+    error InvalidTransferAmount();
+    error LiquidityValueLoss();
 
     modifier nonReentrant() {
         Repo.Layout storage l = Repo._layout();
@@ -84,21 +87,16 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
         return PERMIT2;
     }
 
-    function numTokens() public pure returns (uint8) {
-        return uint8(Repo.N_TOKENS);
+    function numTokens() public view returns (uint8) {
+        return uint8(Repo._numTokens());
     }
 
-    function tokens() public view returns (address[] memory out) {
-        Repo.Layout storage l = Repo._layout();
-        out = new address[](Repo.N_TOKENS);
-        out[0] = l.tokens[0];
-        out[1] = l.tokens[1];
-        out[2] = l.tokens[2];
-        out[3] = l.tokens[3];
+    function tokens() public view returns (address[] memory) {
+        return Repo._layout().tokens;
     }
 
     function token(uint256 index) public view returns (address) {
-        if (index >= Repo.N_TOKENS) revert InvalidN();
+        if (index >= Repo._numTokens()) revert InvalidN();
         return Repo._layout().tokens[index];
     }
 
@@ -112,65 +110,66 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
     }
 
     function standardExchange(uint256 index) public view returns (address) {
-        if (index >= Repo.N_TOKENS) revert InvalidN();
+        if (index >= Repo._numTokens()) revert InvalidN();
         return Repo._layout().standardExchanges[index];
     }
 
     function rateProvider(uint256 index) public view returns (address) {
-        if (index >= Repo.N_TOKENS) revert InvalidN();
+        if (index >= Repo._numTokens()) revert InvalidN();
         return Repo._layout().rateProviders[index];
     }
 
     function isBuffered(uint256 index) public view returns (bool) {
-        if (index >= Repo.N_TOKENS) revert InvalidN();
+        if (index >= Repo._numTokens()) revert InvalidN();
         return Repo._layout().standardExchanges[index] != address(0);
     }
 
     function invScale(uint256 index) public view returns (uint256) {
-        if (index >= Repo.N_TOKENS) revert InvalidN();
+        if (index >= Repo._numTokens()) revert InvalidN();
         return Repo._layout().invScales[index];
     }
 
     function ratedScale(uint256 index) public view returns (uint256) {
-        if (index >= Repo.N_TOKENS) revert InvalidN();
+        if (index >= Repo._numTokens()) revert InvalidN();
         return Repo._layout().ratedScales[index];
     }
 
     function nativeReserve(uint256 index) public view returns (uint256) {
-        if (index >= Repo.N_TOKENS) revert InvalidN();
+        if (index >= Repo._numTokens()) revert InvalidN();
         return _nativeAt(uint8(index));
     }
 
     function nativeReserves() public view returns (uint256[] memory out) {
-        uint256[4] memory n = _nativeAll();
+        uint256[] memory n = _nativeAll();
         out = Math.toDynamic(n);
     }
 
     function seBalance(uint256 index) public view returns (uint256) {
-        if (index >= Repo.N_TOKENS) revert InvalidN();
+        if (index >= Repo._numTokens()) revert InvalidN();
         address se = Repo._layout().standardExchanges[index];
         if (se == address(0)) return 0;
         return IERC20(se).balanceOf(address(this));
     }
 
     function seClaim(uint256 index) public view returns (uint256) {
-        if (index >= Repo.N_TOKENS) revert InvalidN();
+        if (index >= Repo._numTokens()) revert InvalidN();
         Repo.Layout storage l = Repo._layout();
         address se = l.standardExchanges[index];
         if (se == address(0)) return 0;
         uint256 bal = IERC20(se).balanceOf(address(this));
         if (bal == 0) return 0;
+        if (se == l.tokens[index]) return bal;
         return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), bal, IERC20(l.tokens[index]));
     }
 
     function ratedBalance(uint256 index) public view returns (uint256) {
-        if (index >= Repo.N_TOKENS) revert InvalidN();
+        if (index >= Repo._numTokens()) revert InvalidN();
         return _ratedPairUnits(uint8(index));
     }
 
     function ratedBalances() public view returns (uint256[] memory out) {
-        uint256[4] memory r;
-        for (uint8 i; i < Repo.N_TOKENS; ++i) {
+        uint256[] memory r = new uint256[](Repo._numTokens());
+        for (uint8 i; i < Repo._numTokens(); ++i) {
             r[i] = _ratedPairUnits(i);
         }
         out = Math.toDynamic(r);
@@ -196,8 +195,8 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
         return Math.isFullBookReserves(_nativeAll());
     }
 
-    function pairDoorCount() public pure returns (uint256) {
-        return PairPoolLib.pairDoorCount();
+    function pairDoorCount() public view returns (uint256) {
+        return PairPoolLib.pairDoorCount(Repo._numTokens());
     }
 
     /* ---------------------------------------------------------------------- */
@@ -229,7 +228,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
     /// @return seUnit True when `t` is the SE share (inventory unit); false for pair face.
     function _indexOfPairOrSe(address t) internal view returns (uint8 idx, bool seUnit) {
         Repo.Layout storage l = Repo._layout();
-        for (uint8 i; i < Repo.N_TOKENS; ++i) {
+        for (uint8 i; i < Repo._numTokens(); ++i) {
             if (l.tokens[i] == t) return (i, false);
             if (l.standardExchanges[i] != address(0) && l.standardExchanges[i] == t) {
                 return (i, true);
@@ -251,21 +250,17 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
         return IERC20(se).balanceOf(address(this));
     }
 
-    /// @notice Free pool-token face above intentional raw book (D47 / conservation helpers).
-    /// @dev Not used for SE pretransfer credit — L-GAPS-11 delta-gates via `_securePull`.
+    /// @notice Pair-token funding above the recorded native balance, excluding retained SE-leg dust.
     function _freeTokenBalance(address token_) internal view returns (uint256 free) {
         uint8 i = _tokenIndex(token_);
         Repo.Layout storage l = Repo._layout();
         uint256 bal = IERC20(token_).balanceOf(address(this));
-        if (l.standardExchanges[i] != address(0)) {
-            return bal;
-        }
         uint256 book = l.rawReserves[i];
         return bal > book ? bal - book : 0;
     }
 
     /// @dev Reserve-delta pull (L-DETF-HOST-UPGRADE). Pull delta only on false;
-    ///      pretransfer credits claimed iff claimed <= U (face surplus; virtual R > B → U = face).
+    ///      pretransfer credits only pair-native funding above its recorded balance.
     function _securePull(IERC20 tokenIn, uint256 claimed, bool pretransferred)
         internal
         returns (uint256 observedDelta)
@@ -275,8 +270,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
             _pull(address(tokenIn), claimed);
             return tokenIn.balanceOf(address(this)) - B0;
         }
-        uint256 R = MultiAssetBasicVaultRepo._reserveOfToken(address(tokenIn));
-        uint256 U = B0 >= R ? B0 - R : B0;
+        uint256 U = _freeTokenBalance(address(tokenIn));
         if (claimed > U) {
             revert ISecurePullErrors.TransferDeltaInsufficient(claimed, U);
         }
@@ -301,8 +295,9 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
         l.rawReserves[i] = book > amount ? book - amount : 0;
     }
 
-    function _nativeAll() internal view returns (uint256[4] memory out) {
-        for (uint8 i; i < Repo.N_TOKENS; ++i) {
+    function _nativeAll() internal view returns (uint256[] memory out) {
+        out = new uint256[](Repo._numTokens());
+        for (uint8 i; i < Repo._numTokens(); ++i) {
             out[i] = _nativeAt(i);
         }
     }
@@ -321,6 +316,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
             uint256 rate = _getRateFailClosed(rp);
             return (seBal * rate) / Math.RATE_PRECISION;
         }
+        if (se == l.tokens[i]) return seBal;
         return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seBal, IERC20(l.tokens[i]));
     }
 
@@ -332,24 +328,60 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
         if (rate == 0) revert RateProviderFailed();
     }
 
-    function _invWadAll() internal view returns (uint256[4] memory scaled) {
+    function _ratedWadAll() internal view returns (uint256[] memory scaled) {
+        scaled = new uint256[](Repo._numTokens());
         Repo.Layout storage l = Repo._layout();
-        for (uint8 i; i < Repo.N_TOKENS; ++i) {
-            scaled[i] = Math.scaleTo(_nativeAt(i), l.invScales[i]);
-        }
-    }
-
-    function _ratedWadAll() internal view returns (uint256[4] memory scaled) {
-        Repo.Layout storage l = Repo._layout();
-        for (uint8 i; i < Repo.N_TOKENS; ++i) {
+        for (uint8 i; i < Repo._numTokens(); ++i) {
             scaled[i] = Math.scaleTo(_ratedPairUnits(i), l.ratedScales[i]);
         }
     }
 
-    function _scaleInv(uint256[4] memory invAmounts) internal view returns (uint256[4] memory scaled) {
+    /// @dev Liquidity and swaps use the same SE-valued book. Physical ownership remains in native inventory units.
+    function _liquidityValue(uint8 i, uint256 inventory, bool roundUp) internal view returns (uint256) {
         Repo.Layout storage l = Repo._layout();
-        for (uint8 i; i < Repo.N_TOKENS; ++i) {
-            scaled[i] = Math.scaleTo(invAmounts[i], l.invScales[i]);
+        if (inventory == 0) return 0;
+        if (l.standardExchanges[i] == address(0)) {
+            return roundUp ? Math.scaleToUp(inventory, l.ratedScales[i]) : Math.scaleTo(inventory, l.ratedScales[i]);
+        }
+        uint256 native = _nativeAt(i);
+        uint256 value = Math.scaleTo(_ratedPairUnits(i), l.ratedScales[i]);
+        if (native == 0 || value == 0) revert NotFullBook();
+        return roundUp ? FixedPointMathLib.fullMulDivUp(inventory, value, native)
+            : FixedPointMathLib.fullMulDiv(inventory, value, native);
+    }
+
+    function _liquidityInventory(uint8 i, uint256 value, bool roundUp) internal view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        if (value == 0) return 0;
+        if (l.standardExchanges[i] == address(0)) {
+            return roundUp ? Math.descaleUp(value, l.ratedScales[i]) : Math.descale(value, l.ratedScales[i]);
+        }
+        uint256 native = _nativeAt(i);
+        uint256 balanceValue = Math.scaleTo(_ratedPairUnits(i), l.ratedScales[i]);
+        if (native == 0 || balanceValue == 0) revert NotFullBook();
+        return roundUp ? FixedPointMathLib.fullMulDivUp(value, native, balanceValue)
+            : FixedPointMathLib.fullMulDiv(value, native, balanceValue);
+    }
+
+    function _liquidityAmounts(uint256[] memory inventory) internal view returns (uint256[] memory values) {
+        values = new uint256[](inventory.length);
+        for (uint8 i; i < inventory.length; ++i) values[i] = _liquidityValue(i, inventory[i], false);
+    }
+
+    /// @dev Initial denomination is D(pair inputs)/n. Share inputs are valued by the SE's public redemption quote.
+    function _initialLiquidityValues(uint256[] memory amounts, bool[] memory sharesIn)
+        internal view returns (uint256[] memory values)
+    {
+        Repo.Layout storage l = Repo._layout();
+        values = new uint256[](amounts.length);
+        for (uint8 i; i < amounts.length; ++i) {
+            uint256 pairAmount = amounts[i];
+            if (sharesIn[i] && pairAmount != 0) {
+                pairAmount = IStandardExchangeIn(l.standardExchanges[i]).previewExchangeIn(
+                    IERC20(l.standardExchanges[i]), pairAmount, IERC20(l.tokens[i])
+                );
+            }
+            values[i] = Math.scaleTo(pairAmount, l.ratedScales[i]);
         }
     }
 
@@ -391,23 +423,37 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
             && ownerFeeShare != 0;
     }
 
-    /// @dev I1: kLast domain = geometricMean4(invWad). Full book only for growth.
+    /// @dev StableMath D of the SE-valued book, normalized by active token count.
     function _rootKNow() internal view returns (uint256) {
-        uint256[4] memory inv = _invWadAll();
+        uint256[] memory inv = _ratedWadAll();
         if (!Math.isFullBookReserves(inv)) return 0;
-        return Math.rootK(inv);
+        return Math.rootK(inv, _amp());
+    }
+
+    /// @dev Revalue both checkpoint and current inventory at the same SE rates; passive yield alone is not fee growth.
+    function _rootKCheckpoint() internal view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        if (l.feeReserves.length != l.tokens.length) return 0;
+        return Math.rootK(_liquidityAmounts(l.feeReserves), _amp());
     }
 
     function _maybeMintProtocolFee() internal returns (uint256 protocolLp) {
         (bool feeOn, address feeTo_, uint256 ownerFeeShare,) = _feeOnAndShare();
         Repo.Layout storage l = Repo._layout();
-        if (!feeOn || l.kLast == 0) return 0;
-        uint256 rootKNow = _rootKNow();
-        if (rootKNow == 0) return 0;
-        protocolLp = Math.protocolLpShares(_totalSupply(), rootKNow, l.kLast, ownerFeeShare);
-        if (protocolLp > 0) {
-            _mintLp(feeTo_, protocolLp);
-            emit IUniswapV4StandardExchangeBalancerQuadStableBufferHook.ProtocolFeeMinted(feeTo_, protocolLp);
+        if (feeOn && l.kLast != 0) {
+            uint256 rootKNow = _rootKNow();
+            protocolLp = Math.protocolLpShares(_totalSupply(), rootKNow, _rootKCheckpoint(), ownerFeeShare);
+            l.kLast = rootKNow;
+            if (protocolLp > 0) {
+                _mintLp(feeTo_, protocolLp);
+                emit IUniswapV4StandardExchangeBalancerQuadStableBufferHook.ProtocolFeeMinted(feeTo_, protocolLp);
+            }
+        }
+        l.liquiditySupplyBefore = _totalSupply();
+        l.feeReserves = _nativeAll();
+        if (l.liquiditySupplyBefore != 0) {
+            l.liquidityValuesBefore = _ratedWadAll();
+            l.liquidityValueBefore = Math.getD(l.liquidityValuesBefore, _amp());
         }
     }
 
@@ -419,42 +465,70 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
         if (!feeOn || l.kLast == 0) return supply;
         uint256 rootKNow = _rootKNow();
         if (rootKNow == 0) return supply;
-        uint256 protocolLp = Math.protocolLpShares(supply, rootKNow, l.kLast, ownerFeeShare);
+        uint256 protocolLp = Math.protocolLpShares(supply, rootKNow, _rootKCheckpoint(), ownerFeeShare);
         return supply + protocolLp;
     }
 
     function _snapshotKLastIfFeeOn() internal {
         (bool feeOn,,,) = _feeOnAndShare();
         Repo.Layout storage l = Repo._layout();
+        if (l.liquiditySupplyBefore != 0) {
+            // Use the same rates as the quote. Downstream SE fees/rate changes are shared by SE owners;
+            // they must not change the hook's in-flight inventory-to-LP exchange rate.
+            uint256[] memory valuesAfter = l.liquidityValuesBefore;
+            uint256 supplyAfter = _totalSupply();
+            bool proportionalBackingPreserved = true;
+            for (uint8 i; i < valuesAfter.length; ++i) {
+                uint256 nativeAfter = _nativeAt(i);
+                if (nativeAfter < FixedPointMathLib.fullMulDivUp(l.feeReserves[i], supplyAfter, l.liquiditySupplyBefore)) {
+                    proportionalBackingPreserved = false;
+                }
+                valuesAfter[i] = FixedPointMathLib.fullMulDiv(nativeAfter, valuesAfter[i], l.feeReserves[i]);
+            }
+            // Component-wise backing proves proportional operations directly, without integer D homogeneity error.
+            if (!proportionalBackingPreserved) {
+                uint256 valueAfter = Math.getD(valuesAfter, _amp());
+                if (valueAfter < FixedPointMathLib.fullMulDiv(l.liquidityValueBefore, supplyAfter, l.liquiditySupplyBefore)) {
+                    revert LiquidityValueLoss();
+                }
+            }
+        }
+        l.liquiditySupplyBefore = 0;
+        l.liquidityValueBefore = 0;
+        delete l.liquidityValuesBefore;
         if (!feeOn) {
             l.kLast = 0;
             return;
         }
         l.kLast = _rootKNow();
+        l.feeReserves = _nativeAll();
     }
 
     function _syncVaultReserves() internal {
         Repo.Layout storage l = Repo._layout();
-        for (uint8 i; i < Repo.N_TOKENS; ++i) {
-            MultiAssetBasicVaultRepo._updateReserve(IERC20(l.tokens[i]), _nativeAt(i));
+        for (uint8 i; i < Repo._numTokens(); ++i) {
+            uint256 inventory = _nativeAt(i);
+            MultiAssetBasicVaultRepo._updateReserve(IERC20(l.tokens[i]), inventory);
+            l.rawReserves[i] = IERC20(l.tokens[i]).balanceOf(address(this));
         }
     }
 
     function _pull(address token_, uint256 amount) internal {
         if (amount == 0) return;
+        uint256 beforeBalance = IERC20(token_).balanceOf(address(this));
         uint256 allowance = IERC20(token_).allowance(msg.sender, address(this));
         if (allowance >= amount) {
             IERC20(token_).safeTransferFrom(msg.sender, address(this), amount);
         } else {
-            IAllowanceTransfer(PERMIT2).transferFrom(
-                msg.sender, address(this), uint160(amount), token_
-            );
+            if (amount > type(uint160).max) revert InvalidTransferAmount();
+            IAllowanceTransfer(PERMIT2).transferFrom(msg.sender, address(this), uint160(amount), token_);
         }
+        if (IERC20(token_).balanceOf(address(this)) - beforeBalance != amount) revert InvalidTransferAmount();
     }
 
-    function _pullAmounts(uint256[4] memory amounts) internal {
+    function _pullAmounts(uint256[] memory amounts) internal {
         Repo.Layout storage l = Repo._layout();
-        for (uint8 i; i < Repo.N_TOKENS; ++i) {
+        for (uint8 i; i < Repo._numTokens(); ++i) {
             if (amounts[i] > 0) _pull(l.tokens[i], amounts[i]);
         }
     }
@@ -473,13 +547,16 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
             _creditRawIntentional(i, amount);
             return 0;
         }
+        if (se == t) return amount;
         uint256 minOut = IStandardExchangeIn(se).previewExchangeIn(IERC20(t), amount, IERC20(se));
         if (minOut == 0) revert BufferFailed();
         IERC20(t).forceApprove(se, amount);
+        uint256 beforeShares = IERC20(se).balanceOf(address(this));
         seOut = IStandardExchangeIn(se).exchangeIn(
             IERC20(t), amount, IERC20(se), minOut, address(this), false, block.timestamp
         );
-        if (seOut < minOut) revert BufferFailed();
+        IERC20(t).forceApprove(se, 0);
+        if (seOut < minOut || IERC20(se).balanceOf(address(this)) - beforeShares != seOut) revert BufferFailed();
     }
 
     function _unwrapSeShares(uint8 i, uint256 seIn, address to) internal returns (uint256 pairOut) {
@@ -487,13 +564,19 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
         Repo.Layout storage l = Repo._layout();
         address se = l.standardExchanges[i];
         address t = l.tokens[i];
+        if (se == t) {
+            if (to != address(this)) IERC20(se).safeTransfer(to, seIn);
+            return seIn;
+        }
         uint256 minOut = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seIn, IERC20(t));
-        if (minOut == 0) revert UnwrapFailed();
+        if (minOut == 0) return 0;
         IERC20(se).forceApprove(se, seIn);
+        uint256 beforeBalance = IERC20(t).balanceOf(to);
         pairOut = IStandardExchangeIn(se).exchangeIn(
             IERC20(se), seIn, IERC20(t), minOut, to, false, block.timestamp
         );
-        if (pairOut < minOut) revert UnwrapFailed();
+        IERC20(se).forceApprove(se, 0);
+        if (pairOut < minOut || IERC20(t).balanceOf(to) - beforeBalance != pairOut) revert UnwrapFailed();
     }
 
     function _unwrapExactTokenOut(uint8 i, uint256 amountOut, address to)
@@ -504,27 +587,41 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
         Repo.Layout storage l = Repo._layout();
         address se = l.standardExchanges[i];
         address t = l.tokens[i];
+        if (se == t) {
+            if (to != address(this)) IERC20(t).safeTransfer(to, amountOut);
+            return amountOut;
+        }
         seIn = IStandardExchangeOut(se).previewExchangeOut(IERC20(se), IERC20(t), amountOut);
+        uint256 beforeBalance = IERC20(t).balanceOf(address(this));
         IERC20(se).forceApprove(se, seIn);
-        uint256 got = IStandardExchangeOut(se).exchangeOut(
-            IERC20(se), seIn, IERC20(t), amountOut, to, false, block.timestamp
+        uint256 spent = IStandardExchangeOut(se).exchangeOut(
+            IERC20(se), seIn, IERC20(t), amountOut, address(this), false, block.timestamp
         );
-        if (got < amountOut) revert UnwrapFailed();
+        IERC20(se).forceApprove(se, 0);
+        uint256 received = IERC20(t).balanceOf(address(this)) - beforeBalance;
+        if (spent > seIn || received < amountOut) revert UnwrapFailed();
+        if (to != address(this)) IERC20(t).safeTransfer(to, amountOut);
+        // SE exits can round up or include execution surplus. Retain that value
+        // in the shared reserve while settling exactly the hook's quoted output.
+        uint256 surplus = received - amountOut;
+        if (surplus != 0 && IStandardExchangeIn(se).previewExchangeIn(IERC20(t), surplus, IERC20(se)) != 0) {
+            _bufferToken(i, surplus);
+        }
+        return spent;
     }
 
     /// @dev Buffer-last: binding-index order for used pair-token amounts > 0.
-    function _bufferLast(uint256[4] memory pairAmounts) internal {
-        for (uint8 i; i < Repo.N_TOKENS; ++i) {
+    function _bufferLast(uint256[] memory pairAmounts) internal {
+        for (uint8 i; i < Repo._numTokens(); ++i) {
             if (pairAmounts[i] > 0) _bufferToken(i, pairAmounts[i]);
         }
     }
 
     function _refundBufferedDust() internal {
         Repo.Layout storage l = Repo._layout();
-        address to = msg.sender;
-        for (uint8 i; i < Repo.N_TOKENS; ++i) {
+        for (uint8 i; i < Repo._numTokens(); ++i) {
             address se = l.standardExchanges[i];
-            if (se == address(0)) continue;
+            if (se == address(0) || se == l.tokens[i]) continue;
             IERC20 pair_ = IERC20(l.tokens[i]);
             uint256 bal = pair_.balanceOf(address(this));
             if (bal <= Repo.MAX_DUST_WEI) continue;
@@ -536,22 +633,22 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
                 if (bal <= Repo.MAX_DUST_WEI) continue;
                 excess = bal - Repo.MAX_DUST_WEI;
             }
-            if (to == address(0) || to == address(this)) continue;
-            pair_.safeTransfer(to, excess);
+            // Unconvertible native dust stays with the reserve until it can be buffered.
         }
     }
 
     /// @dev Map pair-token edge amounts → intended inventory deltas (shares for SE, face for raw).
-    function _pairToInvPreview(uint256[4] memory pairAmounts)
+    function _pairToInvPreview(uint256[] memory pairAmounts)
         internal
         view
-        returns (uint256[4] memory invDeltas)
+        returns (uint256[] memory invDeltas)
     {
+        invDeltas = new uint256[](Repo._numTokens());
         Repo.Layout storage l = Repo._layout();
-        for (uint8 i; i < Repo.N_TOKENS; ++i) {
+        for (uint8 i; i < Repo._numTokens(); ++i) {
             if (pairAmounts[i] == 0) continue;
             address se = l.standardExchanges[i];
-            if (se == address(0)) {
+            if (se == address(0) || se == l.tokens[i]) {
                 invDeltas[i] = pairAmounts[i];
             } else {
                 invDeltas[i] = IStandardExchangeIn(se).previewExchangeIn(
@@ -561,16 +658,17 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
         }
     }
 
-    function _invToPairOutPreview(uint256[4] memory invOut)
+    function _invToPairOutPreview(uint256[] memory invOut)
         internal
         view
-        returns (uint256[4] memory pairOut)
+        returns (uint256[] memory pairOut)
     {
+        pairOut = new uint256[](Repo._numTokens());
         Repo.Layout storage l = Repo._layout();
-        for (uint8 i; i < Repo.N_TOKENS; ++i) {
+        for (uint8 i; i < Repo._numTokens(); ++i) {
             if (invOut[i] == 0) continue;
             address se = l.standardExchanges[i];
-            if (se == address(0)) {
+            if (se == address(0) || se == l.tokens[i]) {
                 pairOut[i] = invOut[i];
             } else {
                 pairOut[i] = IStandardExchangeIn(se).previewExchangeIn(
@@ -580,15 +678,12 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
         }
     }
 
-    function _requireAmountsLen4(uint256[] memory amounts) internal pure {
-        if (amounts.length != Repo.N_TOKENS) revert InvalidN();
+    function _requireAmountsLength(uint256[] memory amounts) internal view {
+        if (amounts.length != Repo._numTokens()) revert InvalidN();
     }
 
-    function _toFixed4(uint256[] memory a) internal pure returns (uint256[4] memory f) {
-        _requireAmountsLen4(a);
-        f[0] = a[0];
-        f[1] = a[1];
-        f[2] = a[2];
-        f[3] = a[3];
+    function _checkedAmounts(uint256[] memory a) internal view returns (uint256[] memory) {
+        _requireAmountsLength(a);
+        return Math.toDynamic(a);
     }
 }

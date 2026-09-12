@@ -1,64 +1,33 @@
-import type { Page } from '@playwright/test'
-import { ANVIL_ACCOUNT_0, DEFAULT_E2E_CHAIN_ID } from '../wallet/fixture'
+import { expect, type Page } from '@playwright/test'
+import { DEFAULT_E2E_CHAIN_ID } from '../wallet/fixture'
 
 export async function prepareLocalChain(page: Page, chainId: number = DEFAULT_E2E_CHAIN_ID) {
-  await page.goto('/')
+  await page.goto('/learn')
   await page.evaluate((id) => {
     localStorage.setItem('indexedex:selected-network', String(id))
     // Align with DTF RH default if present
     localStorage.setItem('indexedex:deployment-environment', 'anvil_robinhood_main')
     for (const k of Object.keys(localStorage)) {
-      if (k.startsWith('dtf-wagmi') || k.startsWith('indexedex-wagmi') || k.includes('wagmi')) {
+      if (k.startsWith('dtf-rainbowkit') || k.startsWith('rk-') || k.includes('wagmi')) {
         localStorage.removeItem(k)
       }
     }
   }, chainId)
   await page.reload({ waitUntil: 'domcontentloaded' })
-  // Prefer App Network control when Robinhood option is present
-  const selector = page.locator('#header-chain-selector')
-  if (await selector.isVisible().catch(() => false)) {
-    if (chainId === 46630 && (await selector.locator('option[value="robinhood_testnet"]').count()) > 0) {
-      await selector.selectOption('robinhood_testnet')
-      await page.waitForTimeout(300)
-    } else if (chainId === 4663 && (await selector.locator('option[value="robinhood"]').count()) > 0) {
-      await selector.selectOption('robinhood')
-      await page.waitForTimeout(300)
-    }
+  const overlay = page.getByTestId('token-staking-overlay')
+  if (await overlay.isVisible()) {
+    await overlay.getByRole('button', { name: 'Close migration notice' }).click()
   }
+  const selector = page.locator('#header-chain-selector')
+  await expect(selector).toHaveValue(String(chainId))
 }
 
 export async function connectInjectedWallet(page: Page) {
-  const short = ANVIL_ACCOUNT_0.address.slice(0, 6)
-  if (await page.getByText(new RegExp(short, 'i')).first().isVisible().catch(() => false)) {
-    return
-  }
-
-  if (!(await page.getByRole('button', { name: /Connect Wallet/i }).first().isVisible().catch(() => false))) {
-    await page.goto('/', { waitUntil: 'domcontentloaded' })
-  }
-
-  await page.waitForFunction(
-    () =>
-      Array.from(document.querySelectorAll('button')).some((b) =>
-        /^Connect Wallet$/i.test((b.textContent || '').trim()),
-      ) ||
-      Array.from(document.querySelectorAll('button')).some((b) =>
-        /0x[a-fA-F0-9]{4}/.test((b.textContent || '').trim()),
-      ),
-    { timeout: 20_000 },
-  )
-
-  if (await page.getByText(new RegExp(short, 'i')).first().isVisible().catch(() => false)) {
-    return
-  }
-
-  await page.evaluate(() => {
-    const btn = Array.from(document.querySelectorAll('button')).find((b) =>
-      /^Connect Wallet$/i.test((b.textContent || '').trim()),
-    ) as HTMLButtonElement | undefined
-    btn?.click()
-  })
-  await page.getByText(new RegExp(short, 'i')).first().waitFor({ state: 'visible', timeout: 25_000 })
+  const account = page.getByTestId('wallet-account')
+  if (await account.isVisible()) return
+  await page.getByTestId('wallet-connect').click()
+  await page.getByRole('button', { name: 'Test Wallet', exact: true }).click()
+  await expect(account).toBeVisible({ timeout: 25_000 })
 }
 
 /** Select option by value (address) on a select element. Case-insensitive for hex. */

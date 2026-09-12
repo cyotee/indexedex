@@ -28,6 +28,7 @@ import {
     IUniswapV4Detf,
     IUniswapV4DetfDFPkg
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
+import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 import {
     UniswapV4DetfHookPremineLib
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/UniswapV4DetfHookPremineLib.sol";
@@ -73,12 +74,12 @@ contract Script_09_DeployChirInstance is DeploymentBase {
         creationPairPerDetfWad = FixtureEconomics.creationPairPerDetfWad();
 
         IUniswapV4Detf.PkgArgs memory args;
+        args.ownerOnlyLiquidity = true;
         args.name = FixtureEconomics.CHIR_NAME;
         args.symbol = FixtureEconomics.CHIR_SYMBOL;
         args.creationPairPerDetfWad = new uint256[](1);
         args.creationPairPerDetfWad[0] = creationPairPerDetfWad;
         args.openingPairPerDetfWad = new uint256[](1);
-        args.thresholdMode = ThresholdMode.Policy;
         args.expansionClosureRatePerYearWad = FixtureEconomics.expansionClosureRatePerYearWad();
 
         address weth_ = RobinhoodCanonicalLib.weth();
@@ -94,7 +95,6 @@ contract Script_09_DeployChirInstance is DeploymentBase {
             weth_
         );
         vm.startBroadcast();
-        vm.etch(predicted, weth_.code);
         IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs memory hArgs =
             IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs({
                 poolManager: RobinhoodCanonicalLib.poolManager(),
@@ -102,7 +102,9 @@ contract Script_09_DeployChirInstance is DeploymentBase {
                 standardExchange: uniV3Se_rich,
                 pairToken: weth_,
                 rawToken: predicted,
-                ownerOnlyLiquidity: true,
+                pairTokenDecimals: HookPkgArgsDecimalsLib.tokenDec(weth_),
+                rawTokenDecimals: predicted.code.length == 0 ? uint8(9) : HookPkgArgsDecimalsLib.tokenDec(predicted),
+                ownerOnlyLiquidity: args.ownerOnlyLiquidity,
                 owner: predicted
             });
         address hook_ = CpHookFactory.deployHook(
@@ -111,7 +113,6 @@ contract Script_09_DeployChirInstance is DeploymentBase {
         IUniswapV4HookStagedPairInit init = IUniswapV4HookStagedPairInit(hook_);
         init.deployPair(predicted, weth_);
         require(init.finalizeInitialization(), "finalize");
-        vm.etch(predicted, "");
         args.hook = hook_;
         chir = IUniswapV4DetfDFPkg(chirDetfPkg).deployVault(args);
         require(chir == predicted, "detf != predicted");

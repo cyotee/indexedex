@@ -1,0 +1,17 @@
+ M .claude/skills/permit2-router-witness/SKILL.md
+ M contracts/constants/networks/ROBINHOOD_MAIN.sol
+ M contracts/factories/create3/Create3Factory.sol
+ M contracts/factories/diamondPkg/DiamondPackageCallBackFactory.plantuml
+ M images/diagrams/sequence/DiamondPackageCallBackFactory.png
+ M snapshots/ConfigPositionManager.Operations.json
+ M snapshots/Hub.Operations.json
+ M snapshots/NativeTokenGateway.Operations.json
+ M snapshots/SignatureGateway.Operations.json
+ M snapshots/Spoke.Operations.ZeroRiskPremium.json
+ M snapshots/Spoke.Operations.json
+?? images/diagrams/call-vs-delegatecall.html
+?? images/diagrams/call-vs-delegatecall.png
+?? images/diagrams/erc2535-diamond.html
+?? images/diagrams/erc2535-diamond.png
+?? images/humor/crane-foreman-pepe-crew-artdeco-crop.jpg
+?? images/humor/crane-foreman-pepe-crew.jpg

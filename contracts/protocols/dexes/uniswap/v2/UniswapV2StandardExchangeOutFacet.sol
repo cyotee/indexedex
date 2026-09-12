@@ -1,5 +1,9 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+import {ConstantProductStandardYieldTarget} from "contracts/vaults/standard/sy/ConstantProductStandardYieldTarget.sol";
+import {NativeStandardYieldSelectors} from "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol";
+
 
 /* -------------------------------------------------------------------------- */
 /*                                    Crane                                   */
@@ -16,7 +20,7 @@ import {
     UniswapV2StandardExchangeOutTarget
 } from "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeOutTarget.sol";
 
-contract UniswapV2StandardExchangeOutFacet is UniswapV2StandardExchangeOutTarget, IFacet {
+contract UniswapV2StandardExchangeOutFacet is UniswapV2StandardExchangeOutTarget, ConstantProductStandardYieldTarget, IFacet {
     function facetName() public pure returns (string memory name) {
         return type(UniswapV2StandardExchangeOutFacet).name;
     }
@@ -30,7 +34,8 @@ contract UniswapV2StandardExchangeOutFacet is UniswapV2StandardExchangeOutTarget
             bytes4[] memory interfaces
         )
     {
-        interfaces = new bytes4[](1);
+        interfaces = new bytes4[](2);
+        interfaces[1] = type(IStandardizedYield).interfaceId;
 
         interfaces[0] = type(IStandardExchangeOut).interfaceId;
     }
@@ -48,6 +53,7 @@ contract UniswapV2StandardExchangeOutFacet is UniswapV2StandardExchangeOutTarget
 
         funcs[0] = IStandardExchangeOut.previewExchangeOut.selector;
         funcs[1] = IStandardExchangeOut.exchangeOut.selector;
+        funcs = NativeStandardYieldSelectors._append(funcs);
     }
 
     function facetMetadata()

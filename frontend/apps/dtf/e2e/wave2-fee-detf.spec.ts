@@ -56,7 +56,7 @@ test.describe('Wave 2 Protocol DETF narrative (DTF / RH)', () => {
 
   test('staking mint/bond chrome loads with testids', async ({ walletPage }) => {
     const hero = feeDetfAddress()
-    const path = hero ? `/staking?detf=${hero}` : '/staking'
+    const path = hero ? `/staking?detf=${hero}&tab=bond` : '/staking?tab=bond'
 
     await walletPage.goto(path)
     await expect(walletPage.getByTestId('detf-workspace-full')).toBeVisible({ timeout: 20_000 })
@@ -64,10 +64,10 @@ test.describe('Wave 2 Protocol DETF narrative (DTF / RH)', () => {
     expect(/mint|bond|sell|workspace|Protocol DETF/i.test(body)).toBe(true)
     // Bond panel testids (present when DETF selected)
     if (hero) {
-      await expect(walletPage.getByTestId('staking-bond-rate-asset-panel')).toBeVisible({
+      await expect(walletPage.getByTestId('detf-bond-amount')).toBeVisible({
         timeout: 15_000,
       })
-      await expect(walletPage.getByTestId('staking-bond-rate-asset-submit')).toBeVisible()
+      await expect(walletPage.getByTestId('detf-bond')).toBeVisible()
     }
   })
 })

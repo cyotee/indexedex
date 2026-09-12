@@ -1,0 +1,55 @@
+{
+  "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+  "decisions": [
+    "D39 mandatory gates with swap fallback",
+    "fixed eight-hour epochs and no catch-up cap",
+    "funded 9-decimal DETF only",
+    "immediate seigniorage to staking"
+  ],
+  "coverage": "Each old shared policy entry retains an explicit funded-route replacement. Native provider wrappers remain and require validation. Duplicate zero-premium wrappers are not retired by this step.",
+  "rate_default": "Zero annual-rate argument resolves to the existing 10% default; former Open fixtures test absence of eligible premium, not a disabled expansion mode.",
+  "files": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol",
+      "before_sha256": "83a361973ccdcb180ef1df5bdc547fc362575c88a1f32fcb5a82c63a30effde9",
+      "after_sha256": "8f5438411786b43d22a5ad49ac3f75d27b1d267e8d41302c1221a8b0d2f0d3cd",
+      "functions": [
+        "_firstBondOn",
+        "_ensureFreeDetf",
+        "_skewSyntheticDown",
+        "_skewSyntheticDownAmt",
+        "_assert_policy_mint_blocked_in_deadband_then_allowed_after_push",
+        "_assert_policy_burn_allowed_when_synthetic_below_burnThreshold",
+        "_assert_open_never_expands",
+        "_assert_D31_1_policyMint_realizesThenGates",
+        "_assert_D31_2_realizeWouldCloseMint_revertsUnchanged",
+        "_assert_D31_3_policyBurn_realizesThenGates",
+        "_assert_D31_4_openMintDoesNotExpand",
+        "_assert_compound_raises_protocolLp"
+      ]
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol",
+      "before_sha256": "e8d3843e477e6b49044bd430c68001447de137453c7fa60671661ca9d7ed0808",
+      "after_sha256": "a97690c51f6fe9e3c601873dbcf06df6a7c093eccf5b3c65ee2d892221369d93",
+      "functions": [
+        "_firstBondOn",
+        "_ensureFreeDetf",
+        "_skewSyntheticDown",
+        "_skewSyntheticDownAmt",
+        "_assert_policy_mint_blocked_in_deadband_then_allowed_after_push",
+        "_assert_policy_burn_allowed_when_synthetic_below_burnThreshold",
+        "_assert_open_never_expands",
+        "_assert_D31_1_policyMint_realizesThenGates",
+        "_assert_D31_2_realizeWouldCloseMint_revertsUnchanged",
+        "_assert_D31_3_policyBurn_realizesThenGates",
+        "_assert_D31_4_openMintDoesNotExpand",
+        "_assert_compound_raises_protocolLp"
+      ]
+    }
+  ],
+  "historical_preparation_status": "prepared; no Solidity edits",
+  "application_record": "v4-policy-base-migration.json",
+  "current_status_source": "current-implementation-queue.json and acceptance-progress.json; later edits and validation can supersede the original application hashes.",
+  "pending_owner_approval": false
+}

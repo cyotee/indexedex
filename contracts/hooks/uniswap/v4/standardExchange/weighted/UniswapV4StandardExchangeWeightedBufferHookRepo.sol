@@ -50,7 +50,7 @@ library UniswapV4StandardExchangeWeightedBufferHookRepo {
         uint256[] ratedScales;
         uint8[] pairDecimals;
         uint8[] invDecimals;
-        /// @dev Intentional raw face inventory for raw legs only (buffered legs stay 0).
+        /// @dev Raw-leg inventory baseline; on SE legs, recorded retained pair-token balance.
         uint256[] rawReserves;
         bool initializationFinalized;
         bool ownerOnlyLiquidity;

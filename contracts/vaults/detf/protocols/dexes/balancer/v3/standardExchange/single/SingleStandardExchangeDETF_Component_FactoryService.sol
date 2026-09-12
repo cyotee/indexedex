@@ -22,6 +22,10 @@ library SingleStandardExchangeDETF_Component_FactoryService {
         facet_ = factory_.deploySingleStandardExchangeDETFExchangeInFacet();
     }
 
+    function deployBondingFacet(ICreate3FactoryProxy factory_) internal returns (IFacet facet_) {
+        return factory_.deploySingleStandardExchangeDETFBondingFacet();
+    }
+
     function deployPkg(
         IVaultRegistryDeployment vaultRegistry_,
         ISingleStandardExchangeDETDFPkg.PkgInit memory pkgInit_

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IReentrancyLock} from "@crane/contracts/access/reentrancy/IReentrancyLock.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
@@ -16,6 +18,7 @@ import {LiquidityAmounts} from "@crane/contracts/protocols/dexes/uniswap/v4/libr
 import {ONE_WAD} from "@crane/contracts/constants/Constants.sol";
 
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {
@@ -148,6 +151,7 @@ contract UniswapV4StandardExchange_LocalLiquidBuffer is TestBase_UniswapV4Standa
     }
 
     function test_T1b_idleDeposit_notFullDeployRefund() public {
+        _bootstrapDeposit(20 ether);
         uint256 amountIn = 50 ether;
         ERC20PermitMintableStub(_token0()).mint(address(this), amountIn);
         IERC20(_token0()).approve(address(vault), amountIn);
@@ -159,6 +163,7 @@ contract UniswapV4StandardExchange_LocalLiquidBuffer is TestBase_UniswapV4Standa
     }
 
     function test_T2_inSessionDeposit_sleeveNoNestedUnlock() public {
+        _bootstrapDeposit(20 ether);
         uint256 amountIn = 5 ether;
         // L-GAPS-9: honest path is in-call transferFrom (!pretransferred). Transfer-before-call
         // + pretransferred=true is outside the pull window and free-credits inventory.
@@ -181,10 +186,10 @@ contract UniswapV4StandardExchange_LocalLiquidBuffer is TestBase_UniswapV4Standa
     function test_T3_publicRebalanceAfterBlockedDeposit() public {
         test_T2_inSessionDeposit_sleeveNoNestedUnlock();
         assertTrue(liquid.canOpenPoolManagerUnlock(), "idle after outer unlock");
-        uint256 freeBefore = liquid.localReserve(_token0());
+        uint256 supplyBefore = vault.totalSupply();
         liquid.rebalanceLiquidReserve();
-        // Token0-only sleeve cannot mint in-range full-range L (needs pair token). Best-effort no revert.
-        assertEq(liquid.localReserve(_token0()), freeBefore, "token0 stays sleeve without pair token");
+        assertEq(vault.totalSupply(), supplyBefore, "rebalance does not issue shares");
+        _assertFreeWithinDeadband(0.2e18);
     }
 
     function test_T4_blockedAmountOut_paysSleeve() public {
@@ -283,6 +288,7 @@ contract UniswapV4StandardExchange_LocalLiquidBuffer is TestBase_UniswapV4Standa
     }
 
     function test_T8_previewEqualsExec_freeZapIn() public {
+        _bootstrapDeposit(20 ether);
         uint256 amountIn = 3 ether;
         ERC20PermitMintableStub t0 = ERC20PermitMintableStub(_token0());
         t0.mint(address(this), amountIn);
@@ -341,20 +347,33 @@ contract UniswapV4StandardExchange_LocalLiquidBuffer is TestBase_UniswapV4Standa
     }
 
     function test_T12_firstMintBlocked_thenFreeRebalanceCreatesPosition() public {
-        uint256 amountIn = 8 ether;
-        ERC20PermitMintableStub t0 = ERC20PermitMintableStub(_token0());
-        t0.mint(address(unlockCaller), amountIn);
-        vm.prank(address(unlockCaller));
-        t0.approve(address(vault), amountIn);
-
-        uint256 shares = unlockCaller.runExchangeIn(
-            address(vault), IERC20(_token0()), amountIn, IERC20(address(vault)), 0, address(this), false, _deadline()
+        uint256 amount0 = 8 ether;
+        uint256 amount1 = 8 ether;
+        ERC20PermitMintableStub(_token0()).mint(address(unlockCaller), amount0);
+        ERC20PermitMintableStub(_token1()).mint(address(unlockCaller), amount1);
+        vm.startPrank(address(unlockCaller));
+        IERC20(_token0()).approve(address(vault), amount0);
+        IERC20(_token1()).approve(address(vault), amount1);
+        vm.stopPrank();
+        address[] memory tokens = new address[](2);
+        tokens[0] = _token0();
+        tokens[1] = _token1();
+        uint256[] memory amounts = new uint256[](2);
+        amounts[0] = amount0;
+        amounts[1] = amount1;
+        uint256 shares = unlockCaller.runExchangeInManyToOne(
+            address(vault), tokens, amounts, IERC20(address(vault)), 0, address(this), false, _deadline()
         );
-        assertGt(shares, 0, "first mint free only");
-        (uint256 dep0,) = liquid.deployedReserve();
-        assertEq(dep0, 0, "no position while blocked first mint");
-
+        assertGt(shares, 0, "first mint funded in both sleeve currencies");
+        (uint256 dep0, uint256 dep1) = liquid.deployedReserve();
+        assertEq(dep0, 0, "no token0 deployed during outer unlock");
+        assertEq(dep1, 0, "no token1 deployed during outer unlock");
+        assertEq(liquid.localReserve(_token0()), amount0, "token0 held in sleeve");
+        assertEq(liquid.localReserve(_token1()), amount1, "token1 held in sleeve");
         liquid.rebalanceLiquidReserve();
+        (dep0, dep1) = liquid.deployedReserve();
+        assertGt(dep0, 0, "idle rebalance deploys token0");
+        assertGt(dep1, 0, "idle rebalance deploys token1");
         assertTrue(liquid.canOpenPoolManagerUnlock(), "idle");
     }
 
@@ -416,23 +435,28 @@ contract UniswapV4StandardExchange_LocalLiquidBuffer is TestBase_UniswapV4Standa
         seeder.addLiquidity(hk, tickLower, tickUpper, liq);
 
         IStandardExchangeProxy hVault = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(hk));
-        hostile.setAttackTarget(address(hVault), Currency.unwrap(hk.currency0) == address(hostile));
-
-        uint256 amountIn = 1 ether;
-        hostile.mint(address(this), amountIn);
-        hostile.approve(address(hVault), amountIn);
-
-        // Nested exchangeIn from transferFrom must hit nonReentrant (IsLocked).
-        vm.expectRevert();
-        hVault.exchangeIn(
-            IERC20(Currency.unwrap(hk.currency0) == address(hostile) ? address(hostile) : address(pair)),
-            amountIn,
-            IERC20(address(hVault)),
-            0,
-            address(this),
-            false,
-            _deadline()
+        hostile.mint(address(this), 11 ether);
+        pair.mint(address(this), 10 ether);
+        hostile.approve(address(hVault), 11 ether);
+        pair.approve(address(hVault), 10 ether);
+        address[] memory tokens = new address[](2);
+        tokens[0] = Currency.unwrap(hk.currency0);
+        tokens[1] = Currency.unwrap(hk.currency1);
+        uint256[] memory amounts = new uint256[](2);
+        amounts[0] = 10 ether;
+        amounts[1] = 10 ether;
+        uint256 initialShares = IStandardExchangeInMulti(address(hVault)).exchangeInManyToOne(
+            tokens, amounts, IERC20(address(hVault)), 0, address(this), false, _deadline()
         );
+        assertGt(initialShares, 0, "hostile vault activated before arming reentry");
+        hostile.setAttackTarget(address(hVault), true);
+        uint256 depositedShares = hVault.exchangeIn(
+            IERC20(address(hostile)), 1 ether, IERC20(address(hVault)), 0, address(this), false, _deadline()
+        );
+        assertGt(depositedShares, 0, "outer funded deposit completes");
+        assertEq(hostile.reentryAttempts(), 1, "hostile transferFrom reaches nested call");
+        assertFalse(hostile.nestedCallSucceeded(), "nested deposit blocked");
+        assertEq(hostile.nestedErrorSelector(), IReentrancyLock.IsLocked.selector, "nested guard error");
     }
 
     function test_H3_midSessionAmountOut_cover() public {
@@ -448,18 +472,20 @@ contract UniswapV4StandardExchange_LocalLiquidBuffer is TestBase_UniswapV4Standa
 
     function _bootstrapDeposit(uint256 amountIn) internal returns (uint256 shares) {
         // D30: full-range center is in range, so both pool tokens are required to mint L.
-        // Sequential single-token zaps (not Multi) jointly allow deploy-excess toward ~20% sleeve.
+        // Establish both reserves in one contribution before testing sleeve operations.
         ERC20PermitMintableStub(_token0()).mint(address(this), amountIn);
         ERC20PermitMintableStub(_token1()).mint(address(this), amountIn);
         IERC20(_token0()).approve(address(vault), amountIn);
         IERC20(_token1()).approve(address(vault), amountIn);
-        uint256 shares0 = vault.exchangeIn(
-            IERC20(_token0()), amountIn, IERC20(address(vault)), 0, address(this), false, _deadline()
+        address[] memory tokens = new address[](2);
+        tokens[0] = _token0();
+        tokens[1] = _token1();
+        uint256[] memory amounts = new uint256[](2);
+        amounts[0] = amountIn;
+        amounts[1] = amountIn;
+        shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
+            tokens, amounts, IERC20(address(vault)), 0, address(this), false, _deadline()
         );
-        uint256 shares1 = vault.exchangeIn(
-            IERC20(_token1()), amountIn, IERC20(address(vault)), 0, address(this), false, _deadline()
-        );
-        shares = shares0 + shares1;
         assertGt(shares, 0, "bootstrap");
     }
 
@@ -565,6 +591,9 @@ contract ImportWhileUnlocked is IUnlockCallback {
 
 /// @dev Minimal ERC20 that reenters SE.exchangeIn during transferFrom (T13).
 contract HostileReenterERC20 {
+    uint256 public reentryAttempts;
+    bool public nestedCallSucceeded;
+    bytes4 public nestedErrorSelector;
     string public name = "Hostile";
     string public symbol = "HOS";
     uint8 public decimals = 18;
@@ -608,8 +637,18 @@ contract HostileReenterERC20 {
         if (attackEnabled && !entered && attackVault != address(0) && to == attackVault) {
             entered = true;
             // Nested deposit while outer exchangeIn holds nonReentrant lock.
-            IStandardExchangeProxy(attackVault)
-                .exchangeIn(IERC20(address(this)), 0, IERC20(attackVault), 0, address(this), true, block.timestamp + 1);
+            ++reentryAttempts;
+            try IStandardExchangeProxy(attackVault).exchangeIn(
+                IERC20(address(this)), 0, IERC20(attackVault), 0, address(this), true, block.timestamp + 1
+            ) returns (uint256) {
+                nestedCallSucceeded = true;
+            } catch (bytes memory reason) {
+                if (reason.length >= 4) {
+                    bytes4 selector;
+                    assembly { selector := mload(add(reason, 32)) }
+                    nestedErrorSelector = selector;
+                }
+            }
             entered = false;
         }
         return true;

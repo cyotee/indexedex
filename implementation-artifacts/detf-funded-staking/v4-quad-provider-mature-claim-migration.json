@@ -1,0 +1,7 @@
+{
+  "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_ProdSe.sol",
+  "before_sha256": "ecb28afbd77f6adc215fa12e5ced969e23c30d7fccc041881ce9ca2feb9ef57f",
+  "after_sha256": "6d036d9291655e7f7cddb64818a33696450e00aa6173a5636907ff5f26ca4356",
+  "mapping": "Retired close/LP-liquidation/fee-LP-principal assumptions replaced by actual funded mature claim, 1:1 standard stake/unstake, unchanged protocol LP and current fee beneficiary sDETF receipts. Retained mint/burn provider transaction and allowance diagnostics.",
+  "validation": "pending"
+}

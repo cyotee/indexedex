@@ -1,0 +1,26 @@
+{
+  "status": "applied; validation pending",
+  "files": [
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_RedeemD15OpenBase.sol",
+      "before_sha256": "cdb5773bd40319ba1b4c1d2512c2c1120735e653a2ccd6d86f0ac6aee878ce12",
+      "after_sha256": "d148401ab2b8de9263ad2bdee4ceb027eaa138839f9a1f7a846abe35e8bfe335"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_RedeemD15OpenBase_Decimals.sol",
+      "before_sha256": "4dc46d387b74ae9849b1a08d55fd91cf64d69dde43fde405392aa6e22e938d8b",
+      "after_sha256": "16ec8d1012cece733a1bd4ae456c1c8359681cc1f55c2c9ad547b453ad7be8e1"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_Stage11Helpers.sol",
+      "before_sha256": "8b5fd8f53d5830d4f7a3f2513822b93ee6176a9725988fb8782efe7c71372530",
+      "after_sha256": "1998bea1acbac6d6e853220d7aa4cf4ec06b21fafda0296c9ed1ea178e11a29e"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Stage11Helpers_Decimals.sol",
+      "before_sha256": "209f1d24484f19ecc395240d2b8a699016a521d9f6a49705ae739254655c6401",
+      "after_sha256": "e558092c1240a0856e80a02eb66d4cc0d3c43e96141bd341183ee65e19a4e8a1"
+    }
+  ],
+  "coverage": "Common D15 and separate Pons helpers use funded NFT owner claims/maturity, native 1:1 standard unstaking and standard previews. Existing actual reserve-token payout invariants retained. Other Pons test bodies require semantic migration."
+}

@@ -1,0 +1,18 @@
+{
+  "status": "PREPARED_NOT_APPLIED",
+  "reason": "The approved fourth V4 reserve family lacks a Robinhood package stage/export; current rehearsal deploys its package inside the test instead of exercising a staged package pin. Reuse existing Orbital factory/package structure and current implementation-bound stage salts.",
+  "files": [
+    "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_05_OrbitalBufferHookPkg.sol",
+    "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_05_OrbitalBufferHookPkg.s.sol",
+    "scripts/foundry/anvil_robinhood_main/LaunchState.sol",
+    "scripts/foundry/anvil_robinhood_main/LaunchIo.sol",
+    "scripts/foundry/anvil_robinhood_main/Phase_09_Stage_01_ExportFrontend.s.sol",
+    "scripts/foundry/anvil_robinhood_main/Script_SimulateArchitecture.s.sol",
+    "scripts/shell/lib/rh_4663_stages.sh",
+    "scripts/foundry/anvil_robinhood_main/deploy_all.sh",
+    "scripts/foundry/anvil_robinhood_main/README.md",
+    "test/foundry/fork/robinhood_4663/RobinhoodReleaseRehearsal.t.sol"
+  ],
+  "next": "Review and apply after active Forge exits; add stage replay/registry/facet coverage to existing StandardExchangeStages tests, then validate actual staged local deployment and lifecycle.",
+  "scope": "No production broadcast, Balancer DETF expansion or Slipstream work. Existing stage exports/other packages retained."
+}

@@ -1,0 +1,39 @@
+{
+  "scope": "D60 test-only compilation maintenance; no production behavior or original legacy assertions changed",
+  "restored_helpers": [
+    "_deployOpenThresholdDetf",
+    "_deployOpenModeDetf",
+    "_assertNoFreeInventory",
+    "_bondNftVault",
+    "_feeTo"
+  ],
+  "source_snapshot": "/private/tmp/indexedex-detf-funded-staking-20260906/contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF.sol",
+  "source_sha256": "e5c1a20494453eaeeb9913b01e1a9a9a399a2f02ecab9e1f8fb5b369c92b20f0",
+  "test_only_retired_selector_declarations": [
+    "thresholdMode",
+    "expansionCatchUpMaxSeconds",
+    "expansionCatchUpCapBps",
+    "compoundProtocolRewards",
+    "sellPositionToDetfNft",
+    "buyClaim",
+    "previewBuyClaim",
+    "closeBondMature",
+    "previewCloseBondMature",
+    "redeemClaim",
+    "previewRedeemClaim",
+    "claimLiquidity",
+    "protocolBondOriginalShares"
+  ],
+  "files": [
+    "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_ReserveDonation.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/adversarial/Adversarial_SingleSE_P0.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/adversarial/Adversarial_Surface.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/adversarial/Adversarial_A0Crops.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_ReserveDonation_Decimals.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/adversarial/Adversarial_A0Crops_Decimals.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/adversarial/Adversarial_SingleSE_P0_Decimals.sol",
+    "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF_Decimals.sol"
+  ],
+  "validation": "pending full build"
+}

@@ -17,6 +17,7 @@ import {TestBase_UniswapV4Detf} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
 import {TestBase_UniswapV4Detf_Quad} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad.sol";
+import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 import {
     TestBase_UniswapV4Detf_Adversarial,
     UniV4DetfPretransferHelper
@@ -90,7 +91,7 @@ abstract contract TestBase_UniswapV4Detf_Quad_Adversarial is
         address se_
     ) internal virtual override returns (address detf_) {
         address predicted_ = _predictDetf(args);
-        address hook_ = _deployHostileQuadHook(predicted_, pair_, se_);
+        address hook_ = _deployHostileQuadHook(predicted_, pair_, se_, args.ownerOnlyLiquidity);
         args.hook = hook_;
         vm.startPrank(owner);
         detf_ = detfPkg.deployVault(args);
@@ -101,14 +102,13 @@ abstract contract TestBase_UniswapV4Detf_Quad_Adversarial is
         vm.label(hook_, "hostileQuadHook");
     }
 
-    function _deployHostileQuadHook(address predicted_, address pair_, address se_)
+    function _deployHostileQuadHook(address predicted_, address pair_, address se_, bool ownerOnlyLiquidity_)
         internal
         returns (address hook_)
     {
         address pB_ = pair_ == address(pair0) ? address(pair1) : address(pair0);
         address pC_ = (pair_ == address(pair2) || pB_ == address(pair2)) ? address(pair1) : address(pair2);
         if (pC_ == pair_ || pC_ == pB_) pC_ = address(pair2);
-        vm.etch(predicted_, address(pair0).code);
         address[4] memory toks;
         toks[0] = predicted_;
         toks[1] = pair_;
@@ -130,8 +130,10 @@ abstract contract TestBase_UniswapV4Detf_Quad_Adversarial is
                 tokens: toks,
                 standardExchanges: ses,
                 rateProviders: rps,
+                tokenDecimals: HookPkgArgsDecimalsLib.tokenDecimals4(toks, predicted_),
+                seDecimals: HookPkgArgsDecimalsLib.seDecimals4(ses),
                 baseAmp: QUAD_BASE_AMP,
-                ownerOnlyLiquidity: true,
+                ownerOnlyLiquidity: ownerOnlyLiquidity_,
                 owner: predicted_
             });
         hook_ = QuadFactory.deployHook(quadHookPkg, hArgs, QuadFactory.findMineNonce(hookFactory, quadHookPkg, hArgs));
@@ -143,6 +145,5 @@ abstract contract TestBase_UniswapV4Detf_Quad_Adversarial is
         init.deployPair(toks[1], toks[3]);
         init.deployPair(toks[2], toks[3]);
         require(init.finalizeInitialization(), "finalize hostile");
-        vm.etch(predicted_, "");
     }
 }

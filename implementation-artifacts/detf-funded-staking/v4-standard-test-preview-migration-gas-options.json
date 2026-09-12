@@ -1,0 +1,211 @@
+{
+  "status": "applied; validation pending",
+  "scope": "V4 test calls only. Same payer, input, recipient, minimum, pretransfer flag and deadline; raw DETF is the explicit standard route endpoint.",
+  "assertions": "Retained. Obsolete economic and removed-selector expectations still need semantic migration; this is not completion evidence.",
+  "files": [
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_MorphoBlueSe.t.sol",
+      "before_sha256": "7a697ffa6b543764118d629eb576ee873a24ad3ee37eaeae5d9bf1a60f9ff2a3",
+      "after_sha256": "1074370ee07c267333557b8c880ba14d509855d7f4b453f89e95130c2edcaf13",
+      "calls": [
+        {
+          "line": 25,
+          "old": "(, uint256 userPred,) = detfInfo.previewMint{gas: 30_000_000}(IERC20(mintToken), mintIn)",
+          "new": "uint256 userPred = IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(mintToken), mintIn, IERC20(address(detfInfo)))"
+        },
+        {
+          "line": 45,
+          "old": "detfInfo.previewBurn{gas: 30_000_000}(burnIn, IERC20(mintToken))",
+          "new": "IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(address(detfInfo)), burnIn, IERC20(mintToken))"
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ3Se.t.sol",
+      "before_sha256": "0139bc1460afe658386b2a6aaada3171df9c2d278091fe721a5b1ccf396ede3c",
+      "after_sha256": "531835296ef0044eaac7c359f2ebe18e5937d078990df82947029e7949d92d60",
+      "calls": [
+        {
+          "line": 77,
+          "old": "(, uint256 userPred,) = detfInfo.previewMint{gas: 30_000_000}(IERC20(mintToken), mintIn)",
+          "new": "uint256 userPred = IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(mintToken), mintIn, IERC20(address(detfInfo)))"
+        },
+        {
+          "line": 97,
+          "old": "detfInfo.previewBurn{gas: 30_000_000}(burnIn, IERC20(mintToken))",
+          "new": "IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(address(detfInfo)), burnIn, IERC20(mintToken))"
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ4Se.t.sol",
+      "before_sha256": "1ea2709918def1449c942d92e186dc25678377a7a3ae7b3907290525c3ec52b7",
+      "after_sha256": "e34ca1a55f955dc7f90e64090605d49f9034a7e70af31f9ddc63813fd31a1c2c",
+      "calls": [
+        {
+          "line": 77,
+          "old": "(, uint256 userPred,) = detfInfo.previewMint{gas: 30_000_000}(IERC20(mintToken), mintIn)",
+          "new": "uint256 userPred = IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(mintToken), mintIn, IERC20(address(detfInfo)))"
+        },
+        {
+          "line": 97,
+          "old": "detfInfo.previewBurn{gas: 30_000_000}(burnIn, IERC20(mintToken))",
+          "new": "IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(address(detfInfo)), burnIn, IERC20(mintToken))"
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_MorphoBlueSe.t.sol",
+      "before_sha256": "6b08195e585f2e23d493b30158232d19f8cd68a2bc3ebb5c65f8f936f3cc9718",
+      "after_sha256": "2191f3c514a1a4d5a6a382a34a09f2226fb49e64a537462601a9b1f11ab94349",
+      "calls": [
+        {
+          "line": 25,
+          "old": "(, uint256 userPred,) = detfInfo.previewMint{gas: 30_000_000}(IERC20(mintToken), mintIn)",
+          "new": "uint256 userPred = IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(mintToken), mintIn, IERC20(address(detfInfo)))"
+        },
+        {
+          "line": 45,
+          "old": "detfInfo.previewBurn{gas: 30_000_000}(burnIn, IERC20(mintToken))",
+          "new": "IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(address(detfInfo)), burnIn, IERC20(mintToken))"
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_Univ3Se.t.sol",
+      "before_sha256": "589771325c9bbf8113b49b991cc7f0e45dda15ab86734fcc6b6b15adf2367e88",
+      "after_sha256": "257fee0bc18ddbd151f640cfd92d49e55293c75641a07dabc940ab614587d0a4",
+      "calls": [
+        {
+          "line": 25,
+          "old": "(, uint256 userPred,) = detfInfo.previewMint{gas: 30_000_000}(IERC20(mintToken), mintIn)",
+          "new": "uint256 userPred = IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(mintToken), mintIn, IERC20(address(detfInfo)))"
+        },
+        {
+          "line": 45,
+          "old": "detfInfo.previewBurn{gas: 30_000_000}(burnIn, IERC20(mintToken))",
+          "new": "IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(address(detfInfo)), burnIn, IERC20(mintToken))"
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_Univ4Se.t.sol",
+      "before_sha256": "e5451f8f15289efc0b1c0a9ba4c6749a86ac4c7c872de20fa14f9e980a64846c",
+      "after_sha256": "41c9a378b4d84e080b87c8357bece8cf6d773c40bd22acb2c7aab08acf947d18",
+      "calls": [
+        {
+          "line": 25,
+          "old": "(, uint256 userPred,) = detfInfo.previewMint{gas: 30_000_000}(IERC20(mintToken), mintIn)",
+          "new": "uint256 userPred = IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(mintToken), mintIn, IERC20(address(detfInfo)))"
+        },
+        {
+          "line": 45,
+          "old": "detfInfo.previewBurn{gas: 30_000_000}(burnIn, IERC20(mintToken))",
+          "new": "IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(address(detfInfo)), burnIn, IERC20(mintToken))"
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Quad_MorphoBlueSe.t.sol",
+      "before_sha256": "750cc936c3c23a4282fec41fb976d530aad11506c7ea393ff16f356798c1e058",
+      "after_sha256": "e0e8fc655a23097f0bad00cc9dbc8641f8ee64e8bf7856c0e7a8f9a5255759ac",
+      "calls": [
+        {
+          "line": 28,
+          "old": "(, uint256 userPred,) = detfInfo.previewMint{gas: 30_000_000}(IERC20(mintToken), mintIn)",
+          "new": "uint256 userPred = IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(mintToken), mintIn, IERC20(address(detfInfo)))"
+        },
+        {
+          "line": 48,
+          "old": "detfInfo.previewBurn{gas: 30_000_000}(burnIn, IERC20(mintToken))",
+          "new": "IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(address(detfInfo)), burnIn, IERC20(mintToken))"
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Quad_Univ3Se.t.sol",
+      "before_sha256": "fa9e9708b40bcd5c39ff411e48b7c4fedee293b5e4b8187081022cd756916c66",
+      "after_sha256": "db58ecad63b1b53dd2ed468324d4bbdf1b1e3b87b4618c9323010f3278dddc15",
+      "calls": [
+        {
+          "line": 28,
+          "old": "(, uint256 userPred,) = detfInfo.previewMint{gas: 30_000_000}(IERC20(mintToken), mintIn)",
+          "new": "uint256 userPred = IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(mintToken), mintIn, IERC20(address(detfInfo)))"
+        },
+        {
+          "line": 48,
+          "old": "detfInfo.previewBurn{gas: 30_000_000}(burnIn, IERC20(mintToken))",
+          "new": "IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(address(detfInfo)), burnIn, IERC20(mintToken))"
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Quad_Univ4Se.t.sol",
+      "before_sha256": "c5847f6c3f615413a7f49dbed46dbe3f9f6e5830d1bf8d8f199a880b9e67ce98",
+      "after_sha256": "1d71b27c175bdaccef602ae3ded9ebb710320d427cc3978750d8f3c09c1eed33",
+      "calls": [
+        {
+          "line": 28,
+          "old": "(, uint256 userPred,) = detfInfo.previewMint{gas: 30_000_000}(IERC20(mintToken), mintIn)",
+          "new": "uint256 userPred = IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(mintToken), mintIn, IERC20(address(detfInfo)))"
+        },
+        {
+          "line": 48,
+          "old": "detfInfo.previewBurn{gas: 30_000_000}(burnIn, IERC20(mintToken))",
+          "new": "IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(address(detfInfo)), burnIn, IERC20(mintToken))"
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_MorphoBlueSe.t.sol",
+      "before_sha256": "16c3e1802c36998daa89472f3c67951c13761327bc23ad5f1c5021960a92db7e",
+      "after_sha256": "5cab2ea25cb76fe132ddf8f703ea4cb1d42291dd203110ca7fca8f5aca3232ab",
+      "calls": [
+        {
+          "line": 26,
+          "old": "(, uint256 userPred,) = detfInfo.previewMint{gas: 30_000_000}(IERC20(mintToken), mintIn)",
+          "new": "uint256 userPred = IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(mintToken), mintIn, IERC20(address(detfInfo)))"
+        },
+        {
+          "line": 46,
+          "old": "detfInfo.previewBurn{gas: 30_000_000}(burnIn, IERC20(mintToken))",
+          "new": "IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(address(detfInfo)), burnIn, IERC20(mintToken))"
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_Univ3Se.t.sol",
+      "before_sha256": "9af56b1dc45b0f92e7397d15714bfe99cf416d533501ae7db260159bc9e09a0a",
+      "after_sha256": "21a029e39312f7c4a71d4558241fddec38c2dc9ad865c39858148d250f3d191b",
+      "calls": [
+        {
+          "line": 25,
+          "old": "(, uint256 userPred,) = detfInfo.previewMint{gas: 30_000_000}(IERC20(mintToken), mintIn)",
+          "new": "uint256 userPred = IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(mintToken), mintIn, IERC20(address(detfInfo)))"
+        },
+        {
+          "line": 45,
+          "old": "detfInfo.previewBurn{gas: 30_000_000}(burnIn, IERC20(mintToken))",
+          "new": "IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(address(detfInfo)), burnIn, IERC20(mintToken))"
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_Univ4Se.t.sol",
+      "before_sha256": "51da9b4de68eb985132de0b2d9830aa8fd06ea33d748285d9641073cb6af4c91",
+      "after_sha256": "bcb3c89aa809675ed2c1da224bea6f9cda99908ffbb3e7df6eaff6393fe64453",
+      "calls": [
+        {
+          "line": 25,
+          "old": "(, uint256 userPred,) = detfInfo.previewMint{gas: 30_000_000}(IERC20(mintToken), mintIn)",
+          "new": "uint256 userPred = IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(mintToken), mintIn, IERC20(address(detfInfo)))"
+        },
+        {
+          "line": 45,
+          "old": "detfInfo.previewBurn{gas: 30_000_000}(burnIn, IERC20(mintToken))",
+          "new": "IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(address(detfInfo)), burnIn, IERC20(mintToken))"
+        }
+      ]
+    }
+  ]
+}

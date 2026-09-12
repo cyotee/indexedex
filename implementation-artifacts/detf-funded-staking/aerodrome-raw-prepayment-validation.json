@@ -1,0 +1,26 @@
+{
+  "status": "validated: all 27 AerodromeNativeSYTest cases passed in main-directory build/test; selected run also had three unrelated Mixed fixture failures",
+  "change": "Validate raw-token prepayment before fee compounding changes unbooked balances; preserve later required-input calculation and this-call refunds.",
+  "sources": [
+    {
+      "source": "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeInTarget.sol",
+      "before_sha256": "a45d7293daaee1cd51ca1899c4bddc36448eb922e30f26ed80183e79316189b2",
+      "after_sha256": "a45d7293daaee1cd51ca1899c4bddc36448eb922e30f26ed80183e79316189b2",
+      "validated_sha256": "655a3be568971b8e71fa3d28fee3204cd67074e60b297b892a3ebe9c92117a63"
+    },
+    {
+      "source": "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeOutExecuteTarget.sol",
+      "before_sha256": "7dad9f8c60e55589dee0bf327e5eaf0daf99132f3fc59aa51a41e8e4a65065f1",
+      "after_sha256": "daf0b6afe97444a2081d37ca7226d529e2c3858df9a9c3ec75fad0186f7a2f44",
+      "validated_sha256": "daf0b6afe97444a2081d37ca7226d529e2c3858df9a9c3ec75fad0186f7a2f44"
+    },
+    {
+      "source": "test/foundry/spec/vaults/standard/sy/ConstantProductNativeSY.t.sol",
+      "before_sha256": "907e9710dabb5dd9693fc5f5b96fe422533b3b1ca351cd1feae7c521d2d81a59",
+      "after_sha256": "ef0a7b571fd39ccba367c580e87c00b6ec39c2cd472b48640c2b66bae2135a25",
+      "validated_sha256": "ef0a7b571fd39ccba367c580e87c00b6ec39c2cd472b48640c2b66bae2135a25"
+    }
+  ],
+  "validation": "main-decimal-adapter-and-prepayment-run.json",
+  "correction_note": "The initial exact-input patch was a no-op (identical before/after hashes). Its failing funded prepayment regression was preserved; the execution path now validates before fee compounding and passes."
+}

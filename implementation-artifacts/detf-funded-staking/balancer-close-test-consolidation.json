@@ -1,0 +1,1688 @@
+{
+  "decision": "Owner-approved D32-D55 and implementation plan test consolidation. Only Balancer legacy LP-close tests are retired; unrelated decimal route suites remain. New behavior is tested once per each of the four actual funded family fixtures.",
+  "retired_files": 40,
+  "old_concrete_cases": 252,
+  "new_family_cases": 4,
+  "rows": [
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_Alignment_CloseD25.t.sol",
+      "sha256": "c6d03b1c32b7a39e20eab2bd90f25a1ed1c60d6fb1d1f1e67c850f13713ac936",
+      "inherited_tests": false,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Alignment_CloseD25_B_ALL6.t.sol",
+      "sha256": "06c8f2f00226cef21aac330b6c4fdc4ddd7ec95fafe42dbc94ee90b8cedf848a",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Alignment_CloseD25_B_ALL9.t.sol",
+      "sha256": "1f694d6e8864255628ebae531b2941bf5e25cd7a38deba427514e56e6b3bade5",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Alignment_CloseD25_B_P18_R6.t.sol",
+      "sha256": "467eb90c656a274831bfbef0d42577453366f7368c42e94e0bad49cb7f9ba3d4",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Alignment_CloseD25_B_P18_R9.t.sol",
+      "sha256": "e5c4ae00c1fee849ec2f5052e52de550136fd2db1b5ba3ad127333255011b328",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Alignment_CloseD25_B_P6_R18.t.sol",
+      "sha256": "781b122475006aad4f8092ea0b25ddee49a0dae523a2a834944b93ca71592359",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Alignment_CloseD25_B_P6_R9.t.sol",
+      "sha256": "a68b5edea8bc2bd1abae0c4fc5e718cee97d56ba011d5930fe1b283ff20156c8",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Alignment_CloseD25_B_P9_R18.t.sol",
+      "sha256": "7882f626b688b0bf45a2c8ec7fbf9a13e7c237e239438ed7442ec449ab9242f1",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Alignment_CloseD25_B_P9_R6.t.sol",
+      "sha256": "a48f6ada09c8c82fe3f8dffa2ad0c1b6bae875252c91f5fcdfd62b68046ac264",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Alignment_CloseD25_Decimals.sol",
+      "sha256": "67140d8d5550e9b37df6a737c40ad8aa002214fe964ab8b050d3bf6fc2a5cd19",
+      "inherited_tests": false,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_Alignment_CloseD25.t.sol",
+      "sha256": "c5d176c58d90baa140a622ec762f0483d28a797b0c5f1cab3eede7db8f466784",
+      "inherited_tests": false,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Alignment_CloseD25_B_ALL6.t.sol",
+      "sha256": "cd990e89b403a2fecc01bc779cf337a05bb67494e532eb0b461f04fa729ed2e3",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Alignment_CloseD25_B_ALL9.t.sol",
+      "sha256": "fc334d219578cc39d974ec9fc9502def6b7aba47757aa0c74712ffbcff68e3b9",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Alignment_CloseD25_B_P18_R6.t.sol",
+      "sha256": "482666c59d708699c807b024616a599449fa90f11ddc745165ea06b124144233",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Alignment_CloseD25_B_P18_R9.t.sol",
+      "sha256": "f1b5a6ffb349de40eb1ceeb3835a760f0c7104420457044e4c729343147be17d",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Alignment_CloseD25_B_P6_R18.t.sol",
+      "sha256": "9cb73418306339e4e19ab8e286d59628fbe065ced9ff0a8b3a1c0ec09dd1e6ad",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Alignment_CloseD25_B_P6_R9.t.sol",
+      "sha256": "5f9ee06de21f99ce44457e7fc56c8d8bd2c56d5fb84e6a87ffc8b98dbe122fe9",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Alignment_CloseD25_B_P9_R18.t.sol",
+      "sha256": "836ad1873c4fd8ff9eadc9e878357837068a688e24f11834affa2fbfe1deb3b0",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Alignment_CloseD25_B_P9_R6.t.sol",
+      "sha256": "4a4077dd62b0312bddb6e6f65a3c03b54637bc738178949ca18559905ee6c32e",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Alignment_CloseD25_Decimals.sol",
+      "sha256": "0e8b623cdd7b8d12ac7091d4c46d5aaafafc7c4c060b7966dcba864f53792c6e",
+      "inherited_tests": false,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_Alignment_CloseD25.t.sol",
+      "sha256": "d2c2f60e1f2a034cae1e92bad90218f0d0caafaab78171f6e921b7e60ae18228",
+      "inherited_tests": false,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_Alignment_CloseD25_B_ALL6.t.sol",
+      "sha256": "1c7fc2ae32fccfa0d8318f4a7e4a4d151ccfbfa1d2ed77387a7704fe0d766604",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_Alignment_CloseD25_B_ALL9.t.sol",
+      "sha256": "1c278952ac9eaa5e69e2c61316634f3ece87a4499a92f06800b08de30c166e19",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_Alignment_CloseD25_B_P18_R6.t.sol",
+      "sha256": "75701c95545bfced2abd2bfff8614b6cd147a95d436eccc068b74df60ebd2781",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_Alignment_CloseD25_B_P18_R9.t.sol",
+      "sha256": "f1a8bf85fa380f559471fb1b1ca091c3e8e0468b129db7bb5cf3c31807f46aea",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_Alignment_CloseD25_B_P6_R18.t.sol",
+      "sha256": "011141d6a31075f92e058923225341cbac6e1f1d544de3051d8b1caea2fd3461",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_Alignment_CloseD25_B_P6_R9.t.sol",
+      "sha256": "a23c730272a7177abd49ec22b19d2a7086bba1b83062eb61f9c09a7217cb30a2",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_Alignment_CloseD25_B_P9_R18.t.sol",
+      "sha256": "decfdc08cb3317efabf0bc4f4b0dd9512286ba808719a0038d32c10bc4e184d4",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_Alignment_CloseD25_B_P9_R6.t.sol",
+      "sha256": "9cf4f142ff0bd1fc0c5ec9af8530c05b705cf7ed9bf5a0fafa69da1ae9ca8b31",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_Alignment_CloseD25_Decimals.sol",
+      "sha256": "5741edb5ad1277bd84630d621047279d2b7e42261e9a7467b761ec911e3cae7e",
+      "inherited_tests": false,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_Alignment_CloseD25.t.sol",
+      "sha256": "6dba97041decd0ab9eff9858cdda8e4f3892656ddba667cdf16ae34f6283e772",
+      "inherited_tests": false,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Alignment_CloseD25_Decimals.sol",
+      "sha256": "9bd9fce542b51aec15fffbf8f3287637b1907002ac4aadd7026df821f0fb7e5b",
+      "inherited_tests": false,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Alignment_CloseD25_H6.t.sol",
+      "sha256": "5c1b76f72a9cd6fd533b666dc3838c63d45e1bd9d2573f29c8604adc9008e7e0",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Alignment_CloseD25_H9.t.sol",
+      "sha256": "c7de19e13ccdf60983db7036fb0dd1f5b4f55e5b37866752c489c8692b4d7a1a",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Alignment_CloseD25_P18_R6.t.sol",
+      "sha256": "b5b2ba1c0a6002d476119a38e911417f05f0db44f86ace4dd18dfde4d6705347",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Alignment_CloseD25_P18_R9.t.sol",
+      "sha256": "28bdb266bc9487d272ca65f7e68d7ca345c460bed842b3cf9d32968a883f8500",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Alignment_CloseD25_P6_R18.t.sol",
+      "sha256": "956a4b952b8f74aa182bd98a2770a3f444c54b9dd4fe3c889a0aad6d845fd7dc",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Alignment_CloseD25_P6_R9.t.sol",
+      "sha256": "44c9d5ef8243e4615482b5436b744da0e220766a35c10b4422f7bfe877ca70e4",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Alignment_CloseD25_P9_R18.t.sol",
+      "sha256": "db6ae555a109cb2ad7726f266e94fe7158d88afbff312811dc6bb97c02c43ea3",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Alignment_CloseD25_P9_R6.t.sol",
+      "sha256": "265efca0c31944002060a351513417b82cd8bae74c62ed162db4669368500fdd",
+      "inherited_tests": true,
+      "assertions": [
+        {
+          "old_test": "test_D25_1_userDetfOnlyFromClaimRewards",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: purchased principal and rewards pay existing sDETF; final claim issues no raw DETF."
+        },
+        {
+          "old_test": "test_D25_2_withdrawnDetfNotBurned",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: a funded claim changes no DETF supply and withdraws no reserve LP."
+        },
+        {
+          "old_test": "test_D25_3_id0OriginalSharesRise",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D34/D54: all acquired LP is already protocol property; bond LP liabilities and ID0 original-shares accounting were removed. Final claim preserves actual LP custody."
+        },
+        {
+          "old_test": "test_D25_4_userReceivesNonDetfBasket",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35/D53: payment baskets on bond close are retired; recipient receives only sDETF. Mixed payment decimals cannot change a nine-decimal escrow transfer."
+        },
+        {
+          "old_test": "test_D25_5_ids1and2CannotClose",
+          "replacement": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol#test_reservedRolesCannotClaimPurchasedEscrow",
+          "reason": "D35/D53: standing role NFTs have no purchased principal; production NFT authorization test preserves exclusion."
+        },
+        {
+          "old_test": "test_D25_6_previewEqualsExecute",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D35: principal and reward preview match actual funded claim exactly."
+        },
+        {
+          "old_test": "test_D25_lastClose_feeCreatorPendingDoesNotJump",
+          "replacement": "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+          "reason": "D36/D38: final escrow payout does not create a reward pot or increase standing recipients balances."
+        }
+      ]
+    }
+  ]
+}

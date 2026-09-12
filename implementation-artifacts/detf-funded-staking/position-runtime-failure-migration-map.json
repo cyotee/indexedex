@@ -1,0 +1,395 @@
+{
+  "status": "ALL_54_FAILURES_RESOLVED_IN_RETAINED_SUITE_RECHECK",
+  "run": "position-cleanup-funded-followups-run.json",
+  "applied_migration": "position-runtime-migrations-applied.json",
+  "failure_count": 54,
+  "failure_category_counts": {
+    "Replace old single-token activation with rejected single input, dual activation and subsequent single-input positive control.": 16,
+    "Replace narrow-range preservation with funded full-range conversion; center mixed-decimal input positions around actual spot and use real V4 PositionManager.": 16,
+    "Declare the complete native SY surface on the query facet using explicit interface selectors.": 2,
+    "Bound independent ownership of both reserve legs by both activation payments, then redeem all shares.": 9,
+    "Require either full rollback for a zero-share quote or actual positive funded share credit for the one-unit payment.": 2,
+    "Fund and approve inputs before installing exact emitted-event expectation; retain fail-open operation and event payload.": 9
+  },
+  "failures": [
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_P6_R18.t.sol",
+      "contract": "UniswapV3StandardExchange_FullRangeBook_P6_R18",
+      "test": "test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL",
+      "reported_result": "[FAIL: UniswapV3Exchange_ZeroAmount()] test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL() (gas: 155078)",
+      "required_correction": "Replace old single-token activation with rejected single input, dual activation and subsequent single-input positive control."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_P6_R18.t.sol",
+      "contract": "UniswapV3StandardExchange_FullRangeBook_P6_R18",
+      "test": "test_FR6_importedNftTicksNotRewritten",
+      "reported_result": "[FAIL: UniswapV3Exchange_ZeroAmount()] test_FR6_importedNftTicksNotRewritten() (gas: 1107264)",
+      "required_correction": "Replace narrow-range preservation with funded full-range conversion; center mixed-decimal input positions around actual spot and use real V4 PositionManager."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchangeOutQueryFacet_IFacet_Test.t.sol",
+      "contract": "UniswapV3StandardExchangeOutQueryFacet_IFacet_Test",
+      "test": "test_IFacet_FacetFunctions",
+      "reported_result": "[FAIL: Facet function selectors count mismatch - extra or missing declarations: 17 != 1] test_IFacet_FacetFunctions() (gas: 18154)",
+      "required_correction": "Declare the complete native SY surface on the query facet using explicit interface selectors."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchangeOutQueryFacet_IFacet_Test.t.sol",
+      "contract": "UniswapV3StandardExchangeOutQueryFacet_IFacet_Test",
+      "test": "test_IFacet_FacetInterfaces",
+      "reported_result": "[FAIL: Facet interfaces count mismatch - extra or missing declarations: 2 != 1] test_IFacet_FacetInterfaces() (gas: 10336)",
+      "required_correction": "Declare the complete native SY surface on the query facet using explicit interface selectors."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_P6_R9.t.sol",
+      "contract": "UniswapV3StandardExchange_FullRangeBook_P6_R9",
+      "test": "test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL",
+      "reported_result": "[FAIL: UniswapV3Exchange_ZeroAmount()] test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL() (gas: 155078)",
+      "required_correction": "Replace old single-token activation with rejected single input, dual activation and subsequent single-input positive control."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_P6_R9.t.sol",
+      "contract": "UniswapV3StandardExchange_FullRangeBook_P6_R9",
+      "test": "test_FR6_importedNftTicksNotRewritten",
+      "reported_result": "[FAIL: UniswapV3Exchange_ZeroAmount()] test_FR6_importedNftTicksNotRewritten() (gas: 1107264)",
+      "required_correction": "Replace narrow-range preservation with funded full-range conversion; center mixed-decimal input positions around actual spot and use real V4 PositionManager."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_P9_R18.t.sol",
+      "contract": "UniswapV3StandardExchange_FullRangeBook_P9_R18",
+      "test": "test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL",
+      "reported_result": "[FAIL: UniswapV3Exchange_ZeroAmount()] test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL() (gas: 155078)",
+      "required_correction": "Replace old single-token activation with rejected single input, dual activation and subsequent single-input positive control."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_P9_R18.t.sol",
+      "contract": "UniswapV3StandardExchange_FullRangeBook_P9_R18",
+      "test": "test_FR6_importedNftTicksNotRewritten",
+      "reported_result": "[FAIL: UniswapV3Exchange_ZeroAmount()] test_FR6_importedNftTicksNotRewritten() (gas: 1107264)",
+      "required_correction": "Replace narrow-range preservation with funded full-range conversion; center mixed-decimal input positions around actual spot and use real V4 PositionManager."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_P9_R6.t.sol",
+      "contract": "UniswapV3StandardExchange_FullRangeBook_P9_R6",
+      "test": "test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL",
+      "reported_result": "[FAIL: UniswapV3Exchange_ZeroAmount()] test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL() (gas: 155078)",
+      "required_correction": "Replace old single-token activation with rejected single input, dual activation and subsequent single-input positive control."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_P9_R6.t.sol",
+      "contract": "UniswapV3StandardExchange_FullRangeBook_P9_R6",
+      "test": "test_FR6_importedNftTicksNotRewritten",
+      "reported_result": "[FAIL: UniswapV3Exchange_ZeroAmount()] test_FR6_importedNftTicksNotRewritten() (gas: 1106026)",
+      "required_correction": "Replace narrow-range preservation with funded full-range conversion; center mixed-decimal input positions around actual spot and use real V4 PositionManager."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_E6ImpA0_H6.t.sol",
+      "contract": "Adversarial_UniswapV4SE_E6ImpA0_H6",
+      "test": "test_A0_donateThenFirstMint_cannotRedeemDonation",
+      "reported_result": "[FAIL: A0: no donation extract: 1090631 > 1000000] test_A0_donateThenFirstMint_cannotRedeemDonation() (gas: 1416546)",
+      "required_correction": "Bound independent ownership of both reserve legs by both activation payments, then redeem all shares."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_P6_R9.t.sol",
+      "contract": "UniswapV4StandardExchange_FullRangeBook_P6_R9",
+      "test": "test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL",
+      "reported_result": "[FAIL: UniswapV4Exchange_ZeroAmount()] test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL() (gas: 165196)",
+      "required_correction": "Replace old single-token activation with rejected single input, dual activation and subsequent single-input positive control."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_P6_R9.t.sol",
+      "contract": "UniswapV4StandardExchange_FullRangeBook_P6_R9",
+      "test": "test_FR6_importedNftTicksNotRewritten",
+      "reported_result": "[FAIL: UniswapV4Exchange_ZeroAmount()] test_FR6_importedNftTicksNotRewritten() (gas: 14999856)",
+      "required_correction": "Replace narrow-range preservation with funded full-range conversion; center mixed-decimal input positions around actual spot and use real V4 PositionManager."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_E6ImpA0_H9.t.sol",
+      "contract": "Adversarial_UniswapV4SE_E6ImpA0_H9",
+      "test": "test_A0_donateThenFirstMint_cannotRedeemDonation",
+      "reported_result": "[FAIL: A0: no donation extract: 1090636358 > 1000000000] test_A0_donateThenFirstMint_cannotRedeemDonation() (gas: 1423902)",
+      "required_correction": "Bound independent ownership of both reserve legs by both activation payments, then redeem all shares."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_P9_R18.t.sol",
+      "contract": "UniswapV4StandardExchange_FullRangeBook_P9_R18",
+      "test": "test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL",
+      "reported_result": "[FAIL: UniswapV4Exchange_ZeroAmount()] test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL() (gas: 165196)",
+      "required_correction": "Replace old single-token activation with rejected single input, dual activation and subsequent single-input positive control."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_P9_R18.t.sol",
+      "contract": "UniswapV4StandardExchange_FullRangeBook_P9_R18",
+      "test": "test_FR6_importedNftTicksNotRewritten",
+      "reported_result": "[FAIL: UniswapV4Exchange_ZeroAmount()] test_FR6_importedNftTicksNotRewritten() (gas: 14999856)",
+      "required_correction": "Replace narrow-range preservation with funded full-range conversion; center mixed-decimal input positions around actual spot and use real V4 PositionManager."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_E6ImpA0_P18_R6.t.sol",
+      "contract": "Adversarial_UniswapV4SE_E6ImpA0_P18_R6",
+      "test": "test_A0_donateThenFirstMint_cannotRedeemDonation",
+      "reported_result": "[FAIL: A0: no donation extract: 1090635 > 1000000] test_A0_donateThenFirstMint_cannotRedeemDonation() (gas: 1544121)",
+      "required_correction": "Bound independent ownership of both reserve legs by both activation payments, then redeem all shares."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_E6ImpA0_P18_R6.t.sol",
+      "contract": "Adversarial_UniswapV4SE_E6ImpA0_P18_R6",
+      "test": "test_A0_dustShare_donation_victimDeposit_noZeroShareAbsorb",
+      "reported_result": "[FAIL: next call did not revert as expected] test_A0_dustShare_donation_victimDeposit_noZeroShareAbsorb() (gas: 1211845)",
+      "required_correction": "Require either full rollback for a zero-share quote or actual positive funded share credit for the one-unit payment."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_P9_R6.t.sol",
+      "contract": "UniswapV4StandardExchange_FullRangeBook_P9_R6",
+      "test": "test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL",
+      "reported_result": "[FAIL: UniswapV4Exchange_ZeroAmount()] test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL() (gas: 165196)",
+      "required_correction": "Replace old single-token activation with rejected single input, dual activation and subsequent single-input positive control."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_P9_R6.t.sol",
+      "contract": "UniswapV4StandardExchange_FullRangeBook_P9_R6",
+      "test": "test_FR6_importedNftTicksNotRewritten",
+      "reported_result": "[FAIL: UniswapV4Exchange_ZeroAmount()] test_FR6_importedNftTicksNotRewritten() (gas: 14999856)",
+      "required_correction": "Replace narrow-range preservation with funded full-range conversion; center mixed-decimal input positions around actual spot and use real V4 PositionManager."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_E6ImpA0_P18_R9.t.sol",
+      "contract": "Adversarial_UniswapV4SE_E6ImpA0_P18_R9",
+      "test": "test_A0_donateThenFirstMint_cannotRedeemDonation",
+      "reported_result": "[FAIL: A0: no donation extract: 1090631910 > 1000000000] test_A0_donateThenFirstMint_cannotRedeemDonation() (gas: 1544915)",
+      "required_correction": "Bound independent ownership of both reserve legs by both activation payments, then redeem all shares."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_E6ImpA0_P18_R9.t.sol",
+      "contract": "Adversarial_UniswapV4SE_E6ImpA0_P18_R9",
+      "test": "test_A0_dustShare_donation_victimDeposit_noZeroShareAbsorb",
+      "reported_result": "[FAIL: next call did not revert as expected] test_A0_dustShare_donation_victimDeposit_noZeroShareAbsorb() (gas: 1212635)",
+      "required_correction": "Require either full rollback for a zero-share quote or actual positive funded share credit for the one-unit payment."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_E6ImpA0_P6_R18.t.sol",
+      "contract": "Adversarial_UniswapV4SE_E6ImpA0_P6_R18",
+      "test": "test_A0_donateThenFirstMint_cannotRedeemDonation",
+      "reported_result": "[FAIL: A0: no donation extract: 1090634999410223449 > 1000000000000000000] test_A0_donateThenFirstMint_cannotRedeemDonation() (gas: 1418898)",
+      "required_correction": "Bound independent ownership of both reserve legs by both activation payments, then redeem all shares."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_E6ImpA0_P6_R9.t.sol",
+      "contract": "Adversarial_UniswapV4SE_E6ImpA0_P6_R9",
+      "test": "test_A0_donateThenFirstMint_cannotRedeemDonation",
+      "reported_result": "[FAIL: A0: no donation extract: 1090630526 > 1000000000] test_A0_donateThenFirstMint_cannotRedeemDonation() (gas: 1418875)",
+      "required_correction": "Bound independent ownership of both reserve legs by both activation payments, then redeem all shares."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_E6ImpA0_P9_R18.t.sol",
+      "contract": "Adversarial_UniswapV4SE_E6ImpA0_P9_R18",
+      "test": "test_A0_donateThenFirstMint_cannotRedeemDonation",
+      "reported_result": "[FAIL: A0: no donation extract: 1090640813408416436 > 1000000000000000000] test_A0_donateThenFirstMint_cannotRedeemDonation() (gas: 1574350)",
+      "required_correction": "Bound independent ownership of both reserve legs by both activation payments, then redeem all shares."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_E6ImpA0_P9_R6.t.sol",
+      "contract": "Adversarial_UniswapV4SE_E6ImpA0_P9_R6",
+      "test": "test_A0_donateThenFirstMint_cannotRedeemDonation",
+      "reported_result": "[FAIL: A0: no donation extract: 1090639 > 1000000] test_A0_donateThenFirstMint_cannotRedeemDonation() (gas: 1359028)",
+      "required_correction": "Bound independent ownership of both reserve legs by both activation payments, then redeem all shares."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_TwapPoke_H6.t.sol",
+      "contract": "UniswapV4StandardExchange_TwapPoke_H6",
+      "test": "test_H16_pokeRevertFailOpen",
+      "reported_result": "[FAIL: log != expected TwapOracleUpdateFailed] test_H16_pokeRevertFailOpen() (gas: 57473)",
+      "required_correction": "Fund and approve inputs before installing exact emitted-event expectation; retain fail-open operation and event payload."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/adversarial/Adversarial_UniswapV4SE_E6ImpA0.t.sol",
+      "contract": "Adversarial_UniswapV4SE_E6ImpA0",
+      "test": "test_A0_donateThenFirstMint_cannotRedeemDonation",
+      "reported_result": "[FAIL: A0: no donation extract: 1090636363144966865 > 1000000000000000000] test_A0_donateThenFirstMint_cannotRedeemDonation() (gas: 1649750)",
+      "required_correction": "Bound independent ownership of both reserve legs by both activation payments, then redeem all shares."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_H9.t.sol",
+      "contract": "UniswapV4StandardExchange_FullRangeBook_H9",
+      "test": "test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL",
+      "reported_result": "[FAIL: UniswapV4Exchange_ZeroAmount()] test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL() (gas: 165196)",
+      "required_correction": "Replace old single-token activation with rejected single input, dual activation and subsequent single-input positive control."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_H9.t.sol",
+      "contract": "UniswapV4StandardExchange_FullRangeBook_H9",
+      "test": "test_FR6_importedNftTicksNotRewritten",
+      "reported_result": "[FAIL: UniswapV4Exchange_ZeroAmount()] test_FR6_importedNftTicksNotRewritten() (gas: 14999856)",
+      "required_correction": "Replace narrow-range preservation with funded full-range conversion; center mixed-decimal input positions around actual spot and use real V4 PositionManager."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_TwapPoke_H9.t.sol",
+      "contract": "UniswapV4StandardExchange_TwapPoke_H9",
+      "test": "test_H16_pokeRevertFailOpen",
+      "reported_result": "[FAIL: log != expected TwapOracleUpdateFailed] test_H16_pokeRevertFailOpen() (gas: 57473)",
+      "required_correction": "Fund and approve inputs before installing exact emitted-event expectation; retain fail-open operation and event payload."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_P18_R9.t.sol",
+      "contract": "UniswapV4StandardExchange_FullRangeBook_P18_R9",
+      "test": "test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL",
+      "reported_result": "[FAIL: UniswapV4Exchange_ZeroAmount()] test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL() (gas: 165196)",
+      "required_correction": "Replace old single-token activation with rejected single input, dual activation and subsequent single-input positive control."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_P18_R9.t.sol",
+      "contract": "UniswapV4StandardExchange_FullRangeBook_P18_R9",
+      "test": "test_FR6_importedNftTicksNotRewritten",
+      "reported_result": "[FAIL: UniswapV4Exchange_ZeroAmount()] test_FR6_importedNftTicksNotRewritten() (gas: 14999856)",
+      "required_correction": "Replace narrow-range preservation with funded full-range conversion; center mixed-decimal input positions around actual spot and use real V4 PositionManager."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_H6.t.sol",
+      "contract": "UniswapV4StandardExchange_FullRangeBook_H6",
+      "test": "test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL",
+      "reported_result": "[FAIL: UniswapV4Exchange_ZeroAmount()] test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL() (gas: 165196)",
+      "required_correction": "Replace old single-token activation with rejected single input, dual activation and subsequent single-input positive control."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_H6.t.sol",
+      "contract": "UniswapV4StandardExchange_FullRangeBook_H6",
+      "test": "test_FR6_importedNftTicksNotRewritten",
+      "reported_result": "[FAIL: UniswapV4Exchange_ZeroAmount()] test_FR6_importedNftTicksNotRewritten() (gas: 14999856)",
+      "required_correction": "Replace narrow-range preservation with funded full-range conversion; center mixed-decimal input positions around actual spot and use real V4 PositionManager."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_TwapPoke.t.sol",
+      "contract": "UniswapV4StandardExchange_TwapPoke",
+      "test": "test_H16_pokeRevertFailOpen",
+      "reported_result": "[FAIL: log != expected TwapOracleUpdateFailed] test_H16_pokeRevertFailOpen() (gas: 51294)",
+      "required_correction": "Fund and approve inputs before installing exact emitted-event expectation; retain fail-open operation and event payload."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_P18_R6.t.sol",
+      "contract": "UniswapV4StandardExchange_FullRangeBook_P18_R6",
+      "test": "test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL",
+      "reported_result": "[FAIL: UniswapV4Exchange_ZeroAmount()] test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL() (gas: 165196)",
+      "required_correction": "Replace old single-token activation with rejected single input, dual activation and subsequent single-input positive control."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_P18_R6.t.sol",
+      "contract": "UniswapV4StandardExchange_FullRangeBook_P18_R6",
+      "test": "test_FR6_importedNftTicksNotRewritten",
+      "reported_result": "[FAIL: UniswapV4Exchange_ZeroAmount()] test_FR6_importedNftTicksNotRewritten() (gas: 14999856)",
+      "required_correction": "Replace narrow-range preservation with funded full-range conversion; center mixed-decimal input positions around actual spot and use real V4 PositionManager."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_P6_R18.t.sol",
+      "contract": "UniswapV4StandardExchange_FullRangeBook_P6_R18",
+      "test": "test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL",
+      "reported_result": "[FAIL: UniswapV4Exchange_ZeroAmount()] test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL() (gas: 165196)",
+      "required_correction": "Replace old single-token activation with rejected single input, dual activation and subsequent single-input positive control."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_P6_R18.t.sol",
+      "contract": "UniswapV4StandardExchange_FullRangeBook_P6_R18",
+      "test": "test_FR6_importedNftTicksNotRewritten",
+      "reported_result": "[FAIL: UniswapV4Exchange_ZeroAmount()] test_FR6_importedNftTicksNotRewritten() (gas: 14999856)",
+      "required_correction": "Replace narrow-range preservation with funded full-range conversion; center mixed-decimal input positions around actual spot and use real V4 PositionManager."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_H9.t.sol",
+      "contract": "UniswapV3StandardExchange_FullRangeBook_H9",
+      "test": "test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL",
+      "reported_result": "[FAIL: UniswapV3Exchange_ZeroAmount()] test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL() (gas: 155078)",
+      "required_correction": "Replace old single-token activation with rejected single input, dual activation and subsequent single-input positive control."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_H9.t.sol",
+      "contract": "UniswapV3StandardExchange_FullRangeBook_H9",
+      "test": "test_FR6_importedNftTicksNotRewritten",
+      "reported_result": "[FAIL: FR6: imported ticks hold L: 0 <= 0] test_FR6_importedNftTicksNotRewritten() (gas: 1866013)",
+      "required_correction": "Replace narrow-range preservation with funded full-range conversion; center mixed-decimal input positions around actual spot and use real V4 PositionManager."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_TwapPoke_P18_R6.t.sol",
+      "contract": "UniswapV4StandardExchange_TwapPoke_P18_R6",
+      "test": "test_H16_pokeRevertFailOpen",
+      "reported_result": "[FAIL: log != expected TwapOracleUpdateFailed] test_H16_pokeRevertFailOpen() (gas: 57473)",
+      "required_correction": "Fund and approve inputs before installing exact emitted-event expectation; retain fail-open operation and event payload."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_H6.t.sol",
+      "contract": "UniswapV3StandardExchange_FullRangeBook_H6",
+      "test": "test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL",
+      "reported_result": "[FAIL: UniswapV3Exchange_ZeroAmount()] test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL() (gas: 155078)",
+      "required_correction": "Replace old single-token activation with rejected single input, dual activation and subsequent single-input positive control."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_H6.t.sol",
+      "contract": "UniswapV3StandardExchange_FullRangeBook_H6",
+      "test": "test_FR6_importedNftTicksNotRewritten",
+      "reported_result": "[FAIL: FR6: imported ticks hold L: 0 <= 0] test_FR6_importedNftTicksNotRewritten() (gas: 1864341)",
+      "required_correction": "Replace narrow-range preservation with funded full-range conversion; center mixed-decimal input positions around actual spot and use real V4 PositionManager."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_TwapPoke_P6_R18.t.sol",
+      "contract": "UniswapV4StandardExchange_TwapPoke_P6_R18",
+      "test": "test_H16_pokeRevertFailOpen",
+      "reported_result": "[FAIL: log != expected TwapOracleUpdateFailed] test_H16_pokeRevertFailOpen() (gas: 57473)",
+      "required_correction": "Fund and approve inputs before installing exact emitted-event expectation; retain fail-open operation and event payload."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_TwapPoke_P18_R9.t.sol",
+      "contract": "UniswapV4StandardExchange_TwapPoke_P18_R9",
+      "test": "test_H16_pokeRevertFailOpen",
+      "reported_result": "[FAIL: log != expected TwapOracleUpdateFailed] test_H16_pokeRevertFailOpen() (gas: 57473)",
+      "required_correction": "Fund and approve inputs before installing exact emitted-event expectation; retain fail-open operation and event payload."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_P18_R6.t.sol",
+      "contract": "UniswapV3StandardExchange_FullRangeBook_P18_R6",
+      "test": "test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL",
+      "reported_result": "[FAIL: UniswapV3Exchange_ZeroAmount()] test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL() (gas: 155078)",
+      "required_correction": "Replace old single-token activation with rejected single input, dual activation and subsequent single-input positive control."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_P18_R6.t.sol",
+      "contract": "UniswapV3StandardExchange_FullRangeBook_P18_R6",
+      "test": "test_FR6_importedNftTicksNotRewritten",
+      "reported_result": "[FAIL: UniswapV3Exchange_ZeroAmount()] test_FR6_importedNftTicksNotRewritten() (gas: 1106627)",
+      "required_correction": "Replace narrow-range preservation with funded full-range conversion; center mixed-decimal input positions around actual spot and use real V4 PositionManager."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_P18_R9.t.sol",
+      "contract": "UniswapV3StandardExchange_FullRangeBook_P18_R9",
+      "test": "test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL",
+      "reported_result": "[FAIL: UniswapV3Exchange_ZeroAmount()] test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL() (gas: 155078)",
+      "required_correction": "Replace old single-token activation with rejected single input, dual activation and subsequent single-input positive control."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_P18_R9.t.sol",
+      "contract": "UniswapV3StandardExchange_FullRangeBook_P18_R9",
+      "test": "test_FR6_importedNftTicksNotRewritten",
+      "reported_result": "[FAIL: UniswapV3Exchange_ZeroAmount()] test_FR6_importedNftTicksNotRewritten() (gas: 1106627)",
+      "required_correction": "Replace narrow-range preservation with funded full-range conversion; center mixed-decimal input positions around actual spot and use real V4 PositionManager."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_TwapPoke_P9_R18.t.sol",
+      "contract": "UniswapV4StandardExchange_TwapPoke_P9_R18",
+      "test": "test_H16_pokeRevertFailOpen",
+      "reported_result": "[FAIL: log != expected TwapOracleUpdateFailed] test_H16_pokeRevertFailOpen() (gas: 57473)",
+      "required_correction": "Fund and approve inputs before installing exact emitted-event expectation; retain fail-open operation and event payload."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_TwapPoke_P6_R9.t.sol",
+      "contract": "UniswapV4StandardExchange_TwapPoke_P6_R9",
+      "test": "test_H16_pokeRevertFailOpen",
+      "reported_result": "[FAIL: log != expected TwapOracleUpdateFailed] test_H16_pokeRevertFailOpen() (gas: 57473)",
+      "required_correction": "Fund and approve inputs before installing exact emitted-event expectation; retain fail-open operation and event payload."
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_TwapPoke_P9_R6.t.sol",
+      "contract": "UniswapV4StandardExchange_TwapPoke_P9_R6",
+      "test": "test_H16_pokeRevertFailOpen",
+      "reported_result": "[FAIL: log != expected TwapOracleUpdateFailed] test_H16_pokeRevertFailOpen() (gas: 57473)",
+      "required_correction": "Fund and approve inputs before installing exact emitted-event expectation; retain fail-open operation and event payload."
+    }
+  ],
+  "validation": "position-cleanup-runtime-migrations-run.json"
+}

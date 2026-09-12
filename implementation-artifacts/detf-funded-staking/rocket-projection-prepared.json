@@ -1,0 +1,99 @@
+{
+  "status": "PREPARED_NOT_APPLIED",
+  "source_freeze": "Wait for complete validation session 52340 and its child Forge processes to exit.",
+  "reason": "Exact existing Rocket Pool SE composition needs canonical protocol settings, capacity and collateral inputs. Existing Rocket Pool PRD deployment sketch permits rocketStorage.",
+  "deployment_change": "Append rocketStorage to per-instance PkgArgs/deployVault, validate existing rETH/depositPool bindings against it, and retain the same 10 facets and registry architecture.",
+  "projection_scope": "Actual deposit-pool versions 3 and 4, one-pass soft sleeve staking, funded usage-fee SE receipts, exact oracle conversions, collateral-limited burns and separate holder/external operations.",
+  "evidence": "rocket-projection-input-preflight.json is read-only state evidence, not execution validation.",
+  "source_references": [
+    "https://raw.githubusercontent.com/rocket-pool/rocketpool/v1.3.1/contracts/contract/deposit/RocketDepositPool.sol",
+    "lib/crane/contracts/external/rocketpool/contract/deposit/RocketDepositPool.sol",
+    "lib/crane/contracts/external/rocketpool/contract/token/RocketTokenRETH.sol"
+  ],
+  "changes": [
+    {
+      "path": "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeInTarget.sol",
+      "before_sha256": "acaf1907b087e9453e95ba7912b8096727bb98f835110fccfdf115b7cd9ca14a",
+      "after_sha256": "44f8d0b1edd8f867ddd82e149ed9927b53c754972bcbdf0e90519454e6c1565f"
+    },
+    {
+      "path": "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeInFacet.sol",
+      "before_sha256": "6dfac148292c1dccfcc82c667cec1efb50ccec65bbfb5030bee6797d9d91e72b",
+      "after_sha256": "07f18c0f24dabf946d9d44ca151e4b929ae32cf5d9d83c3bc8fb5080d9d26bfd"
+    },
+    {
+      "path": "contracts/protocols/staking/rocket-pool/interfaces/IRocketPoolRETHStandardExchangeDFPkg.sol",
+      "before_sha256": "80cbbb1c597f50c3b7fa7a9735ba5e1e6c29edcd36a61a6fce8f68f07932d5db",
+      "after_sha256": "0698242eaeb34286eb423db071faa327a08b1cda3e26b70cdcf38d53e5b04cd5"
+    },
+    {
+      "path": "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeRepo.sol",
+      "before_sha256": "873c2ca8d5271536534844646ace60c4e0528d48f36f551a0c6a5d11fa528cf7",
+      "after_sha256": "f82bc73c48cd36a7d94322911f5a0f00b13b228bde9667b514db5ddca76a5fc1"
+    },
+    {
+      "path": "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeDFPkg.sol",
+      "before_sha256": "ad2d77cd8eab5064d2f6c2accd3528963ac8ae1582a18e3e618de0abe752d617",
+      "after_sha256": "a41f5f28b73e901169d6507c5ed7435ce772c86e027b22241ac335ab8955d77a"
+    },
+    {
+      "path": "contracts/protocols/staking/rocket-pool/RocketPoolRETH_Component_FactoryService.sol",
+      "before_sha256": "7270f8deec544670094b1c274169663d67c3fe05b0e5692feb37e879b9cf82e8",
+      "after_sha256": "3762bd84e9b6c8d335316a5550bdb6b12c3e6e91018b7eee737580065757b239"
+    },
+    {
+      "path": "contracts/protocols/staking/rocket-pool/test/hermetic/HermeticRocketPoolPorts.sol",
+      "before_sha256": "2a93f9b77e8385721ce8d60e17ecc8197e3fb02f84cc8dda662bd9d2fd9a6802",
+      "after_sha256": "b0176e885492548043937a9a360efde06246ca6a877ecb98434ef0f8704cd4dc"
+    },
+    {
+      "path": "contracts/test/bases/TestBase_RocketPoolRETHStandardExchange.sol",
+      "before_sha256": "5f36bed70eb3e7a23ccb784084db5b5fc8fc3cc53d1f6ce5520497933eb860a2",
+      "after_sha256": "4ea399bc6aedf4c4cd14a6c358cf3994ba85cc2a0bd0d0abbbd1dfe0dfe9c5b2"
+    },
+    {
+      "path": "test/foundry/spec/protocol/staking/rocket-pool/adversarial/Adversarial_RocketPoolRETH_P0.t.sol",
+      "before_sha256": "1b7f67721c9605f81f78a78395354fdc73e7b078fc359b7281de2f08bc7e9dd9",
+      "after_sha256": "f24586b19d662ad24b8a10b6b6401b5a69b41be135f4dc3ab879321854e5b9cf"
+    },
+    {
+      "path": "test/foundry/fork/eth_main/vaults/staking/rocket-pool/RocketPoolRETHStandardExchange_Fork.t.sol",
+      "before_sha256": "cfcfaed63ab9cad7d0dbce8ae5c80a4d385eed11960483c4a63d14710c5b0615",
+      "after_sha256": "e03335c006c4bb0d37c7119548a99e78569dd6f1c253c66e965297ebf2f316c2"
+    }
+  ],
+  "required_validation": [
+    "Current-source build and EIP-170 sizes",
+    "Existing hermetic SE/native SY/adversarial tests",
+    "Pinned actual protocol full-state quote sequences, nonzero deposit fee, queue assignment, soft failure and collateral burn",
+    "Deployment binding negatives and stale-code salt regression"
+  ],
+  "fork_blocks": {
+    "deposit_pool_v3": 24000000,
+    "deposit_pool_v4": 25934585
+  },
+  "preflight_records": [
+    "rocket-projection-input-preflight.json",
+    "rocket-projection-input-preflight-25934585.json"
+  ],
+  "required_actual_protocol_executions": 14,
+  "draft_diagnostics": {
+    "production": {
+      "record": "rocket-draft-compile.json",
+      "source_matches_prepared_patch": true,
+      "errors": [],
+      "runtime_bytes": {
+        "RocketPoolRETHStandardExchangeDFPkg": 10244,
+        "RocketPoolRETHStandardExchangeInFacet": 17290
+      },
+      "limitation": "In-memory diagnostic only, not Forge artifact or actual protocol validation."
+    },
+    "typecheck": {
+      "record": "rocket-draft-test-typecheck.json",
+      "source_matches_prepared_patch": true,
+      "errors": [],
+      "runtime_bytes": null,
+      "limitation": "In-memory diagnostic only, not Forge artifact or actual protocol validation."
+    }
+  }
+}

@@ -32,6 +32,7 @@ import {
     IUniswapV4Detf,
     IUniswapV4DetfDFPkg
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
+import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 
 /// @title ProtocolDetfInstanceLib
 /// @notice Required `DTF-DETF` then USD quad `TTDOL-Q` + first-bond as EOA (opening is launch-rich).
@@ -88,6 +89,7 @@ library ProtocolDetfInstanceLib {
     }
 
     function _dtfDetfArgs(LaunchState storage s) private view returns (IUniswapV4Detf.PkgArgs memory args) {
+        args.ownerOnlyLiquidity = true;
         args.name = "Test DETF DTF-DETF";
         args.symbol = "DTF-DETF";
         args.claimName = "Test Claim DTF-CLAIM";
@@ -100,10 +102,7 @@ library ProtocolDetfInstanceLib {
         args.openingPairPerDetfWad[0] = FixtureEconomics.OPENING_PAIR_PER_DETF;
         args.mintThreshold = FixtureEconomics.MINT_THRESHOLD;
         args.burnThreshold = FixtureEconomics.BURN_THRESHOLD;
-        args.thresholdMode = ThresholdMode.Policy;
-        args.expansionEpochLength = FixtureEconomics.EXPANSION_EPOCH;
         args.expansionClosureRatePerYearWad = FixtureEconomics.EXPANSION_R;
-        args.expansionMaxCatchUpEpochs = FixtureEconomics.EXPANSION_CATCHUP;
         require(s.creator != address(0), "DTF-DETF creator is the deployer");
         args.creator = s.creator;
     }
@@ -116,7 +115,9 @@ library ProtocolDetfInstanceLib {
                 standardExchange: s.seRichWeth,
                 pairToken: s.ttWETH,
                 rawToken: predicted,
-                ownerOnlyLiquidity: true,
+                pairTokenDecimals: HookPkgArgsDecimalsLib.tokenDec(s.ttWETH),
+                rawTokenDecimals: predicted.code.length == 0 ? uint8(9) : HookPkgArgsDecimalsLib.tokenDec(predicted),
+                ownerOnlyLiquidity: _dtfDetfArgs(s).ownerOnlyLiquidity,
                 owner: predicted
             });
         return CpHookFactory.findMineNonce(
@@ -129,7 +130,6 @@ library ProtocolDetfInstanceLib {
     function _deployDtfDetf(LaunchState storage s, address bonder, uint256 nonce) private {
         IUniswapV4Detf.PkgArgs memory args = _dtfDetfArgs(s);
         address predicted = _predictDetf(s, args);
-        vm.etch(predicted, s.ttWETH.code);
         IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs memory hArgs =
             IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs({
                 poolManager: RobinhoodCanonicalLib.poolManager(),
@@ -137,7 +137,9 @@ library ProtocolDetfInstanceLib {
                 standardExchange: s.seRichWeth,
                 pairToken: s.ttWETH,
                 rawToken: predicted,
-                ownerOnlyLiquidity: true,
+                pairTokenDecimals: HookPkgArgsDecimalsLib.tokenDec(s.ttWETH),
+                rawTokenDecimals: predicted.code.length == 0 ? uint8(9) : HookPkgArgsDecimalsLib.tokenDec(predicted),
+                ownerOnlyLiquidity: args.ownerOnlyLiquidity,
                 owner: predicted
             });
         address hook_ = CpHookFactory.deployHook(
@@ -146,7 +148,6 @@ library ProtocolDetfInstanceLib {
         IUniswapV4HookStagedPairInit init = IUniswapV4HookStagedPairInit(hook_);
         init.deployPair(predicted, s.ttWETH);
         require(init.finalizeInitialization(), "finalize");
-        vm.etch(predicted, "");
         args.hook = hook_;
         s.dtfDetf = IUniswapV4DetfDFPkg(s.uniV4DetfPkg).deployVault(args);
         require(s.dtfDetf == predicted, "detf != predicted");
@@ -162,6 +163,7 @@ library ProtocolDetfInstanceLib {
     }
 
     function _dolQArgs(LaunchState storage s) private view returns (IUniswapV4Detf.PkgArgs memory args) {
+        args.ownerOnlyLiquidity = true;
         args.name = "Double Dollar DETF";
         args.symbol = "$$DETF";
         args.claimName = "Infinite Double Dollar";
@@ -176,10 +178,7 @@ library ProtocolDetfInstanceLib {
         }
         args.mintThreshold = FixtureEconomics.MINT_THRESHOLD;
         args.burnThreshold = FixtureEconomics.BURN_THRESHOLD;
-        args.thresholdMode = ThresholdMode.Policy;
-        args.expansionEpochLength = FixtureEconomics.EXPANSION_EPOCH;
         args.expansionClosureRatePerYearWad = FixtureEconomics.EXPANSION_R;
-        args.expansionMaxCatchUpEpochs = FixtureEconomics.EXPANSION_CATCHUP;
         require(s.creator != address(0), "$$DETF creator is the deployer");
         args.creator = s.creator;
     }
@@ -217,10 +216,18 @@ library ProtocolDetfInstanceLib {
             tokens: toks,
             standardExchanges: ses,
             rateProviders: rps,
+            tokenDecimals: _quadTokenDecimals(toks, predicted),
+            seDecimals: HookPkgArgsDecimalsLib.seDecimals4(ses),
             baseAmp: FixtureEconomics.BASE_AMP,
-            ownerOnlyLiquidity: true,
+            ownerOnlyLiquidity: _dolQArgs(s).ownerOnlyLiquidity,
             owner: predicted
         });
+    }
+
+    function _quadTokenDecimals(address[4] memory tokens_, address predicted_) private view returns (uint8[4] memory scales_) {
+        for (uint256 i_; i_ < 4; ++i_) {
+            scales_[i_] = tokens_[i_] == predicted_ ? 9 : HookPkgArgsDecimalsLib.tokenDec(tokens_[i_]);
+        }
     }
 
     function _quadMineNonce(LaunchState storage s, address predicted) private returns (uint256) {
@@ -235,7 +242,6 @@ library ProtocolDetfInstanceLib {
         address ttweth = s.ttWETH;
         IUniswapV4Detf.PkgArgs memory args = _dolQArgs(s);
         address predicted = _predictDetf(s, args);
-        vm.etch(predicted, ttweth.code);
         IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgArgs memory hArgs = _quadHArgs(s, predicted);
         address hook_ = QuadFactory.deployHook(
             IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage(s.curveQuadHookPkg), hArgs, nonce
@@ -249,7 +255,6 @@ library ProtocolDetfInstanceLib {
         init.deployPair(toks[1], toks[3]);
         init.deployPair(toks[2], toks[3]);
         require(init.finalizeInitialization(), "finalize");
-        vm.etch(predicted, "");
         args.hook = hook_;
         console2.log("06e calling quad deployVault (premined nonce)", nonce);
         s.ttDolQ = IUniswapV4DetfDFPkg(s.uniV4DetfPkg).deployVault(args);

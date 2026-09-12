@@ -32,6 +32,7 @@ interface IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage is
     error InvalidAmp();
 
     struct PkgInit {
+        IFacet joinQueryFacet;
         IVaultRegistryDeployment vaultRegistryDeployment;
         IVaultFeeOracleQuery vaultFeeOracleQuery;
         IFacet liquidityFacet;
@@ -56,6 +57,8 @@ interface IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage is
         address[4] tokens;
         address[4] standardExchanges;
         address[4] rateProviders;
+        uint8[4] tokenDecimals;
+        uint8[4] seDecimals;
         uint256 baseAmp;
         /// @notice D9: when true, only MultiStepOwnable owner may add/remove LP.
         bool ownerOnlyLiquidity;

@@ -1,0 +1,590 @@
+{
+  "recorded_at_utc": "2026-09-11T12:48:14.116371+00:00",
+  "provenance": {
+    "recorded_at_utc": "2026-09-11T12:48:10.805747+00:00",
+    "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+    "source_and_config_sha256": "187b03242b92380b8696be84a5d3f55a74ba4a140012b67820a4bee70cd7b2fe",
+    "source_and_config_files": 4817,
+    "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+    "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+    "crane_tracked_contract_and_config_diff_sha256": "3bb0f52c1183f2be28ee8a63fab300170f65e989720b5048e21da9c61028cc4d",
+    "crane_source_and_config_sha256": "b45a057611f782040ee29f1fddbbcc8eeba01def2c9341ef01c6bb65f685e123",
+    "crane_source_and_config_files": 14819,
+    "dependency_scope": "Crane Solidity tree, including untracked Solidity and nested vendored libraries/tests, plus Crane Foundry config. Final compiler metadata separately verifies every imported source closure.",
+    "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+    "machine": "macOS-26.6.2-x86_64-i386-64bit",
+    "architecture": "x86_64",
+    "logical_cpus": 16,
+    "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+  },
+  "status": "HOLD_REQUIRED_EVIDENCE_OPEN",
+  "production_readiness": false,
+  "public_deployment_authorized": false,
+  "fund_migration_authorized": false,
+  "scope": "Unified V4 DETF CP/Weighted/Orbital/Curve Quad, funded staking/NFT/SY, retained SE packages. Robinhood architecture rehearsal; customer instance activation is a separate action.",
+  "excluded": [
+    "D60 Balancer-hosted DETF functional work",
+    "D66 unfinished Slipstream",
+    "Opt-in TokenStaking deployment",
+    "Public deployment and fund migration"
+  ],
+  "core_reuse_prohibition": "Pinned old CREATE3 core lacks canonical-registry authorization. Only the recorded corrected core is eligible; applying a source patch does not repair deployed bytecode.",
+  "local_core_prediction": {
+    "address": "0xd41305e8ba283b1043e78f0cfc506557f2c69df1",
+    "create2_deployer": "0x4e59b44847b379578588920ca78fbf26c0b4956c",
+    "salt": "0x153a12e28da767d6612c984cf606c7ee1a7a7b23c13c87d29807d88033565ba1",
+    "init_code_keccak256": "0xa89200e4e79a9a9fedc816ac57445be591a58ef33f065ced73fac93464034a45",
+    "constructor_args": "0x00000000000000000000000072bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+    "unoccupied_before_deployment": true
+  },
+  "full_hermetic_executed_cases": 31312,
+  "evidence": {
+    "script_only_evidence_reuse": {
+      "path": "implementation-artifacts/detf-funded-staking/production-readiness/pr08-script-only-evidence-reuse.json",
+      "present": true,
+      "sha256": "01c361d1a264ad1add82c1afcd1a2c4cd00f362339abc52561bf02c54f613ab3",
+      "recorded_status": "PASS_UNCHANGED_EXECUTION_SOURCE_CLOSURES"
+    },
+    "rehearsal_import_evidence_reuse": {
+      "path": "implementation-artifacts/detf-funded-staking/production-readiness/rehearsal-import-evidence-reuse.json",
+      "present": true,
+      "sha256": "73135d4ec911df8ca4e037b1ccddac0aa549dac3ddb9aa562f5cab8799c4c82d",
+      "recorded_status": "PASS_UNCHANGED_NON_REHEARSAL_SOURCE_CLOSURES"
+    },
+    "lifecycle_fork_evidence_reuse": {
+      "path": "implementation-artifacts/detf-funded-staking/production-readiness/lifecycle-fork-evidence-reuse.json",
+      "present": true,
+      "sha256": "21c53b685f864a932b8d3e80d25b46b872448018f9b8b95f6b97c423bd98b112",
+      "recorded_status": "PASS_UNCHANGED_PROVIDER_AND_V3_FORK_DEPENDENCIES"
+    },
+    "owner_baseline": {
+      "path": "implementation-artifacts/detf-funded-staking/production-readiness/owner-passing-baseline.json",
+      "present": true,
+      "sha256": "9ffaa022b4f651c4ea97d2bf63a45ef8772c7b48fdc26a67978f97c36129690d",
+      "recorded_status": "OWNER_REPORTED_ALL_TESTS_PASS"
+    },
+    "sources": {
+      "path": "implementation-artifacts/detf-funded-staking/production-readiness/release-source-manifest.json",
+      "present": true,
+      "sha256": "6fd4a46eb70b38d52c047dae99b6cdd100a15bd730add5f56a1b7ffb8885727a",
+      "recorded_status": null,
+      "changed_inventory_files": []
+    },
+    "dependencies": {
+      "path": "implementation-artifacts/detf-funded-staking/production-readiness/dependency-revisions.json",
+      "present": true,
+      "sha256": "2b20364198335f7b9a23d92ddf7001b008662d863685f5aa4492cf611c2062c1",
+      "recorded_status": null
+    },
+    "dependency_renewal": {
+      "path": "implementation-artifacts/detf-funded-staking/production-readiness/dependency-revisions-renewal.json",
+      "present": true,
+      "sha256": "6e75f4b66be9143dc30b6e1cd952cb05e619d154a55d39e4e746ba5e6ffe7576",
+      "recorded_status": "PASS_ALL_54_DEPENDENCY_REVISIONS_UNCHANGED"
+    },
+    "full_sequence": {
+      "path": "implementation-artifacts/detf-funded-staking/current-repository-production-readiness-nested-zero-sequence.json",
+      "present": true,
+      "sha256": "7dbf606a95a2506dbc48a93cc5d373bd7239215f82e69584f6e3ef7c7b6b1730",
+      "recorded_status": "REPOSITORY_CHECKS_PASSED_REHEARSAL_AND_ACCEPTANCE_REMAIN"
+    },
+    "production_and_script_build": {
+      "path": "implementation-artifacts/detf-funded-staking/implementation-full-build.json",
+      "present": true,
+      "sha256": "a9cf1ed650010a92c74f2e33cd9e22e8da60852f92bfea4cc24619bfd282c5f5",
+      "recorded_status": null
+    },
+    "maintained_scripts": {
+      "path": "implementation-artifacts/detf-funded-staking/maintained-script-build-scope.json",
+      "present": true,
+      "sha256": "68f6e2fbbdf0df1569b0e9f7c4f9378ce28bb033aaa99f448e91a855063b7ec6",
+      "recorded_status": null
+    },
+    "hermetic": {
+      "path": "implementation-artifacts/detf-funded-staking/implementation-hermetic-test.json",
+      "present": true,
+      "sha256": "c5197313a3132face944a474a66fd88d27df9d468371f2d3c05b6c43029082b3",
+      "recorded_status": null
+    },
+    "named_acceptance_tests": {
+      "path": "implementation-artifacts/detf-funded-staking/acceptance-current-run-anchors.json",
+      "present": true,
+      "sha256": "b68f35dc3897d086dab1c55e5b4b37bdf0b90ff4b9e031c76526648f3cef5648",
+      "recorded_status": "Completed-run named-test evidence only; no acceptance criterion automatically closed."
+    },
+    "regressions": {
+      "path": "implementation-artifacts/detf-funded-staking/production-readiness/corrected-candidate-regressions.json",
+      "present": true,
+      "sha256": "f1b4f36e8e1687ba6b46b52839d05c39276111478f6bed476e8945ce63476f22",
+      "recorded_status": null
+    },
+    "lifecycle_production_regressions": {
+      "path": "implementation-artifacts/detf-funded-staking/production-readiness/lifecycle-production-regressions.json",
+      "present": true,
+      "sha256": "0f48d55f7954a0aef9feab91599d4934b8ac0e833b87bfe3438fe74844207e87",
+      "recorded_status": null
+    },
+    "lifecycle_test_additions": {
+      "path": "implementation-artifacts/detf-funded-staking/production-readiness/lifecycle-test-additions.json",
+      "present": true,
+      "sha256": "ebc104e120b10f7ac72b4487abd85d6a29c300fa4520fb8a181182760cd9f3f4",
+      "recorded_status": "PASS_SEVEN_ADDITIONS_NO_REMOVED_TESTS_39_LIFECYCLE_DECLARATIONS_PRESERVED"
+    },
+    "artifacts": {
+      "path": "implementation-artifacts/detf-funded-staking/production-readiness/release-artifact-manifest.json",
+      "present": true,
+      "sha256": "b818598c455f8d895e68606c78f1d947514a8fd44ee26d43c8455ec8d2ee8740",
+      "recorded_status": null
+    },
+    "v3_forks": {
+      "path": "implementation-artifacts/detf-funded-staking/v3-retained-live-pool-production-readiness-run.json",
+      "present": true,
+      "sha256": "890fb566b5b30338f56e70b9e5accdf808ebf5b08096bba357c788e79ad69b53",
+      "recorded_status": "PASS_ALL_EIGHT_RETAINED_CASES",
+      "executed_provenance": {
+        "recorded_at_utc": "2026-09-11T04:55:11.685195+00:00",
+        "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+        "source_and_config_sha256": "2dab3ca0e3307eef624b38fee597f569513a1b6c699207fcbd642b8fb19c1ff5",
+        "source_and_config_files": 4816,
+        "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+        "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+        "crane_tracked_contract_and_config_diff_sha256": "3bb0f52c1183f2be28ee8a63fab300170f65e989720b5048e21da9c61028cc4d",
+        "crane_source_and_config_sha256": "b45a057611f782040ee29f1fddbbcc8eeba01def2c9341ef01c6bb65f685e123",
+        "crane_source_and_config_files": 14819,
+        "dependency_scope": "Crane Solidity tree, including untracked Solidity and nested vendored libraries/tests, plus Crane Foundry config. Final compiler metadata separately verifies every imported source closure.",
+        "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+        "machine": "macOS-26.6.2-x86_64-i386-64bit",
+        "architecture": "x86_64",
+        "logical_cpus": 16,
+        "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+      },
+      "reused_unchanged_execution_source_closures": [
+        "production-readiness/lifecycle-fork-evidence-reuse.json"
+      ],
+      "original_fingerprint_differences": [
+        "source_and_config_sha256"
+      ]
+    },
+    "provider_forks": {
+      "path": "implementation-artifacts/detf-funded-staking/production-readiness/provider-renewal-core-final/run.json",
+      "present": true,
+      "sha256": "2ed613ed6d747bead9f71a3eb955dca362c16482fd3ada83498c75b60f531f2e",
+      "recorded_status": "PASS_ALL_27_PROVIDER_CASES",
+      "executed_provenance": {
+        "recorded_at_utc": "2026-09-11T04:37:39.220243+00:00",
+        "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+        "source_and_config_sha256": "2dab3ca0e3307eef624b38fee597f569513a1b6c699207fcbd642b8fb19c1ff5",
+        "source_and_config_files": 4816,
+        "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+        "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+        "crane_tracked_contract_and_config_diff_sha256": "3bb0f52c1183f2be28ee8a63fab300170f65e989720b5048e21da9c61028cc4d",
+        "crane_source_and_config_sha256": "b45a057611f782040ee29f1fddbbcc8eeba01def2c9341ef01c6bb65f685e123",
+        "crane_source_and_config_files": 14819,
+        "dependency_scope": "Crane Solidity tree, including untracked Solidity and nested vendored libraries/tests, plus Crane Foundry config. Final compiler metadata separately verifies every imported source closure.",
+        "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+        "machine": "macOS-26.6.2-x86_64-i386-64bit",
+        "architecture": "x86_64",
+        "logical_cpus": 16,
+        "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+      },
+      "reused_unchanged_execution_source_closures": [
+        "production-readiness/lifecycle-fork-evidence-reuse.json"
+      ],
+      "original_fingerprint_differences": [
+        "source_and_config_sha256"
+      ]
+    },
+    "architecture": {
+      "path": "implementation-artifacts/detf-funded-staking/current-robinhood-rehearsal-production-readiness-lifecycle-fixed/architecture-run.json",
+      "present": true,
+      "sha256": "cf8fad42866705b17ac5fabb1f3759517a635dd3b6e6a72e173e6de4230303e9",
+      "recorded_status": "PASS_REQUIRES_RECEIPT_AND_CODE_RECONCILIATION"
+    },
+    "receipts": {
+      "path": "implementation-artifacts/detf-funded-staking/current-robinhood-rehearsal-production-readiness-lifecycle-fixed/receipt-manifest.json",
+      "present": true,
+      "sha256": "ea36d755d89072b7f36f0615fe896ff98af6b79b32642855e6a32ad2fc0f5d06",
+      "recorded_status": "PASS_LOCAL_RECEIPTS_AND_STRICT_BLOCK_LIMITS"
+    },
+    "lifecycle": {
+      "path": "implementation-artifacts/detf-funded-staking/current-robinhood-rehearsal-production-readiness-lifecycle-fixed/lifecycle-run.json",
+      "present": true,
+      "sha256": "0f9429413f0b4df17a18263f9550d9b29a8d5bf1ff8a358ded029d2fbb21c98b",
+      "recorded_status": "PASS_ALL_39_STRICT_LIFECYCLE_CASES"
+    },
+    "funding": {
+      "path": "implementation-artifacts/detf-funded-staking/current-robinhood-rehearsal-production-readiness-funding/funding-quote.json",
+      "present": true,
+      "sha256": "ff5ede10cfb653e3a5298423ee224df841690dc0f0220d81826f419fbc0e7a84",
+      "recorded_status": "PASS_COMPLETE_ISOLATED_EIP1559_FUNDING_QUOTE"
+    },
+    "funding_quote_helpers": {
+      "path": "implementation-artifacts/detf-funded-staking/production-readiness/funding-quote-checks.json",
+      "present": true,
+      "sha256": "0d5276c10594bc6e6ade5969a8f1386eb3b9bd8be215750d467d0ebe20cb57a3",
+      "recorded_status": "PASS"
+    },
+    "staged_fee_helpers": {
+      "path": "implementation-artifacts/detf-funded-staking/production-readiness/staged-local-fee-checks.json",
+      "present": true,
+      "sha256": "7ce164dd610f843f52926845b6bc3ee3d8ba27d913dd18f9b3c2e2c0df341cd3",
+      "recorded_status": "PASS"
+    },
+    "core_and_packages": {
+      "path": "implementation-artifacts/detf-funded-staking/production-readiness/corrected-local-core-and-packages.json",
+      "present": true,
+      "sha256": "373306985fb5ca31ebf0421e9a29c0c28680710fe6da8b375c90ada8af4b0adf",
+      "recorded_status": null
+    },
+    "create3_inputs": {
+      "path": "implementation-artifacts/detf-funded-staking/production-readiness/create3-deployment-inputs.json",
+      "present": true,
+      "sha256": "703826f0a6af150c6592ac7cc9e515e7f843dadf1b40cdeb57a8ecb3f1eeb137",
+      "recorded_status": "PASS_ALL_135_CREATE3_DEPLOYMENT_INPUTS"
+    },
+    "runtime_verifier": {
+      "path": "implementation-artifacts/detf-funded-staking/production-readiness/linked-runtime-verifier-checks.json",
+      "present": true,
+      "sha256": "381746110d785afa5ec23f2f52b42d3c31aec56f0aa4e4ef5aacacb387abd37b",
+      "recorded_status": "PASS_EIGHT_RUNTIME_VERIFIER_CHECKS"
+    },
+    "package_cut_verifier": {
+      "path": "implementation-artifacts/detf-funded-staking/production-readiness/package-cut-verifier-checks.json",
+      "present": true,
+      "sha256": "94682922598bb7b94bb6134d235744d8503f78c5e7d3483c188dfd2d1f09dd33",
+      "recorded_status": "PASS_NINE_PACKAGE_CUT_VERIFIER_CHECKS"
+    },
+    "storage": {
+      "path": "implementation-artifacts/detf-funded-staking/production-readiness/storage-review.json",
+      "present": true,
+      "sha256": "b4094308dc5a4a394d1ce482609dc331bbba4203e9612bc117a740a54953de84",
+      "recorded_status": "PASS_ALL_64_FIELD_DISPOSITIONS_AND_CURRENT_RUNTIME_COVERAGE"
+    },
+    "selectors": {
+      "path": "implementation-artifacts/detf-funded-staking/current-funded-selector-manifest.json",
+      "present": true,
+      "sha256": "cdd4191a57c7b4e098a632fcd98d8b83d9db14bd919c04d9d17dff9d8b697608",
+      "recorded_status": "CURRENT_ARTIFACT_INVENTORY_FINAL_BUILD_AND_PROXY_RECONCILIATION_PENDING"
+    },
+    "native_se_proxy_evidence": {
+      "path": "implementation-artifacts/detf-funded-staking/current-se-package-inventory.json",
+      "present": true,
+      "sha256": "f9e5b3ed2fdff858d1754ee755d39560024f5a1ca46d6b4a6ee87445d01ed979",
+      "recorded_status": "All 25 concrete SE issuers have matching current full-run proxy evidence."
+    },
+    "callers": {
+      "path": "implementation-artifacts/detf-funded-staking/production-readiness/frontend-abi-reconciliation.json",
+      "present": true,
+      "sha256": "45f5fc3fd42fe45e2a2a6d21a10bfd8c75c43a1d658a2c9d874f7e779c50d9e8",
+      "recorded_status": null
+    },
+    "frontend": {
+      "path": "implementation-artifacts/detf-funded-staking/production-readiness/frontend-check.json",
+      "present": true,
+      "sha256": "0b91867ec1a60f3179f82ea93803f8a3726999031fc88e6548cf919eb665db02",
+      "recorded_status": null
+    },
+    "frontend_live_scope": {
+      "path": "implementation-artifacts/detf-funded-staking/production-readiness/frontend-live-check-scope.json",
+      "present": true,
+      "sha256": "3aa95d658270eb9788482236bd31f69a516550e93cd86ea05c28c985f4c09e5a",
+      "recorded_status": "CONDITIONAL_UI_BINDING_GATE_NOT_TRIGGERED"
+    },
+    "renderer": {
+      "path": "implementation-artifacts/detf-funded-staking/production-readiness/renderer-evidence-reuse.json",
+      "present": true,
+      "sha256": "39adc70da7371b34c2c43dbaee9a623440ec8dbead4f375cc27c0a3a30756a85",
+      "recorded_status": "PASS_REUSED_IDENTICAL_VISUAL_EVIDENCE"
+    },
+    "security": {
+      "path": "implementation-artifacts/detf-funded-staking/production-readiness/security-findings.json",
+      "present": true,
+      "sha256": "a32066b21d67aeceda75d13b1f22b5c79b2044376ac4824c2a70fa4de0e86fc8",
+      "recorded_status": null
+    },
+    "acceptance": {
+      "path": "implementation-artifacts/detf-funded-staking/acceptance-progress.json",
+      "present": true,
+      "sha256": "972381bf411710eeb5d0f1ec452e7c3e6246d4d2157c806a71d370faf3b47924",
+      "recorded_status": "CURRENT_FULL_SUITE_PASS_STRICT_LOCAL_RELEASE_VALIDATION_PENDING"
+    },
+    "packages_and_encodings": {
+      "path": "implementation-artifacts/detf-funded-staking/production-readiness/package-source-manifest.json",
+      "present": true,
+      "sha256": "5a10b365f3a311b9c5d2aab6ba789803f041cd0e6b23b74aa704354fe63ae3e2",
+      "recorded_status": "PASS_ALL_30_RETAINED_PACKAGE_PAYLOADS_AND_RUNTIME_RECONCILED"
+    },
+    "deployment_order": {
+      "path": "implementation-artifacts/detf-funded-staking/production-readiness/maintained-release-catalog.json",
+      "present": true,
+      "sha256": "9264e2abb518517267895d64505ce1edb9944a62f3f66105d25f1924e6e1e22d",
+      "recorded_status": null
+    },
+    "export_token_units": {
+      "path": "implementation-artifacts/detf-funded-staking/production-readiness/native-export-token-preflight.json",
+      "present": true,
+      "sha256": "11b4f708861552826293582d09456ecc90c6817d8de2f5db3ffc67aabd3a5dfb",
+      "recorded_status": "PASS_NATIVE_EXPORT_TOKEN_UNITS"
+    },
+    "workspace_preservation": {
+      "path": "implementation-artifacts/detf-funded-staking/production-readiness/workspace-preservation-check.json",
+      "present": true,
+      "sha256": "67fc5b73d839a92c4c539feab5b25783d6f1709456663fb368d37095e5ec1b49",
+      "recorded_status": "PASS_TASK_START_FILES_PRESERVED"
+    }
+  },
+  "gates": [
+    {
+      "id": "script_only_evidence_reuse",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "rehearsal_import_evidence_reuse",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "lifecycle_fork_evidence_reuse",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "owner_baseline",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "sources",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "dependencies",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "dependency_renewal",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "full_sequence",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "production_and_script_build",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "maintained_scripts",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "hermetic",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "named_acceptance_tests",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "regressions",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "lifecycle_production_regressions",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "lifecycle_test_additions",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "artifacts",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "v3_forks",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "provider_forks",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "architecture",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "receipts",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "lifecycle",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "funding",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "funding_quote_helpers",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "staged_fee_helpers",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "core_and_packages",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "create3_inputs",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "runtime_verifier",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "package_cut_verifier",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "storage",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "selectors",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "native_se_proxy_evidence",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "callers",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "frontend",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "frontend_live_scope",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "renderer",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "security",
+      "passed": false,
+      "evidence_accepted": false,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "acceptance",
+      "passed": false,
+      "evidence_accepted": false,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "packages_and_encodings",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "deployment_order",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "export_token_units",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    },
+    {
+      "id": "workspace_preservation",
+      "passed": true,
+      "evidence_accepted": true,
+      "changed_fingerprints": []
+    }
+  ],
+  "open_gates": [
+    "security",
+    "acceptance"
+  ],
+  "runbook": "implementation-artifacts/detf-funded-staking/production-readiness/PUBLIC_DEPLOYMENT_RUNBOOK.md",
+  "limitations": "Internal review is not an independent external audit. Overlapping focused/full test totals are not added. Point-in-time local receipts and funding quotes are not public deployment receipts or future fee guarantees."
+}

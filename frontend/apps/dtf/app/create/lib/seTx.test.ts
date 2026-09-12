@@ -4,12 +4,45 @@ import {
   bytecodeLooksLikeContract,
   requireContractCode,
   receiptFromUnknown,
+  seedAccountCode,
   sendWalletWrite,
   waitForCreateReceipt,
   waitForSubmittedReceipt,
 } from './seTx'
 
 const HASH = `0x${'11'.repeat(32)}` as const
+
+describe('seedAccountCode', () => {
+  it('tries anvil_setCode then hardhat_setCode', async () => {
+    const calls: string[] = []
+    await seedAccountCode({
+      client: {
+        request: async ({ method }) => {
+          calls.push(method)
+          if (method === 'anvil_setCode') throw new Error('missing')
+          return null
+        },
+      },
+      address: '0x1111111111111111111111111111111111111111',
+      bytecode: '0x60806040',
+    })
+    expect(calls).toEqual(['anvil_setCode', 'hardhat_setCode'])
+  })
+
+  it('explains when the RPC cannot seed bytecode', async () => {
+    await expect(
+      seedAccountCode({
+        client: {
+          request: async () => {
+            throw new Error('unknown method')
+          },
+        },
+        address: '0x1111111111111111111111111111111111111111',
+        bytecode: '0x60806040',
+      }),
+    ).rejects.toThrow(/lab RPC/)
+  })
+})
 
 describe('bytecodeLooksLikeContract', () => {
   it('rejects empty accounts that MetaMask would show as Send ETH', () => {

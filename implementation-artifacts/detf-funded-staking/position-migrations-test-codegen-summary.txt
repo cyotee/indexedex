@@ -1,0 +1,165 @@
+Prepared position cleanup across 9 sources; no Solidity changed.
+Prepared fixture migrations across 45 existing sources; no Solidity changed.
+{
+  "status": "DRAFT_DIAGNOSTIC_ONLY_NOT_RUNTIME_VALIDATION",
+  "kind": "test-codegen",
+  "seconds": 398.958,
+  "exit_code": 0,
+  "errors": [],
+  "source_freeze_preserved": true,
+  "compiler_input_sha256": "5f485d8296303f13eb4112ea510f20d0c1473efa835d169a0175980fe4e1b24f",
+  "test_contracts": {
+    "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_FeeCompound.t.sol": {
+      "UniswapV3StandardExchange_FeeCompound_Test": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_LocalLiquidBuffer.t.sol": {
+      "UniswapV3StandardExchange_LocalLiquidBuffer_Test": 19
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_MultiJoinExit.t.sol": {
+      "UniswapV3StandardExchange_MultiJoinExit_Test": 16
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_Previews.t.sol": {
+      "UniswapV3StandardExchange_Previews_Test": 9
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_Routes.t.sol": {
+      "UniswapV3StandardExchange_Routes_Test": 9
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_AccessDisable.t.sol": {
+      "Adversarial_AccessDisable_Test": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Accounting.t.sol": {
+      "Adversarial_Accounting_Test": 4
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_CallbackAuth.t.sol": {
+      "Adversarial_CallbackAuth_Test": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Donation.t.sol": {
+      "Adversarial_Donation_Test": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Griefing.t.sol": {
+      "Adversarial_Griefing_Test": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Import.t.sol": {
+      "Adversarial_Import_Test": 4,
+      "MockTokenDescriptor2": 0
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_PriceManipulation.t.sol": {
+      "Adversarial_PriceManipulation_Test": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Reentrancy.t.sol": {
+      "Adversarial_Reentrancy_Test": 4,
+      "HostileV3Token": 0,
+      "MockTokenDescriptorRe": 0,
+      "UniV3SeReentryTarget": 0
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_SecRemediation.t.sol": {
+      "Adversarial_SecRemediation_Test": 7,
+      "MockTokenDescriptorSec": 0
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FeeCompound_P6_R18.t.sol": {
+      "UniswapV3StandardExchange_FeeCompound_P6_R18": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_LocalLiquidBuffer_P6_R18.t.sol": {
+      "UniswapV3StandardExchange_LocalLiquidBuffer_P6_R18": 19
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_MultiJoinExit_P6_R18.t.sol": {
+      "UniswapV3StandardExchange_MultiJoinExit_P6_R18": 16
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Previews_P6_R18.t.sol": {
+      "UniswapV3StandardExchange_Previews_P6_R18": 9
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Routes_P6_R18.t.sol": {
+      "UniswapV3StandardExchange_Routes_P6_R18": 9
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_AccessDisable_P6_R18.t.sol": {
+      "Adversarial_AccessDisable_P6_R18": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Accounting_P6_R18.t.sol": {
+      "Adversarial_Accounting_P6_R18": 4
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_CallbackAuth_P6_R18.t.sol": {
+      "Adversarial_CallbackAuth_P6_R18": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Donation_P6_R18.t.sol": {
+      "Adversarial_Donation_P6_R18": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Griefing_P6_R18.t.sol": {
+      "Adversarial_Griefing_P6_R18": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Import_P6_R18.t.sol": {
+      "Adversarial_Import_P6_R18": 4
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_PriceManipulation_P6_R18.t.sol": {
+      "Adversarial_PriceManipulation_P6_R18": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Reentrancy_P6_R18.t.sol": {
+      "Adversarial_Reentrancy_P6_R18_ProDexUniV3": 4
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_SecRemediation_P6_R18.t.sol": {
+      "Adversarial_SecRemediation_P6_R18": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeRoutes_Test.t.sol": {
+      "UniswapV4ExternalSwapper": 0,
+      "UniswapV4LiquiditySeeder": 0,
+      "UniswapV4StandardExchangeRoutes_Test": 23
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_LocalLiquidBuffer.t.sol": {
+      "HostileReenterERC20": 0,
+      "ImportWhileUnlocked": 0,
+      "RebalanceWhileUnlocked": 0,
+      "UniswapV4SeedLiquidity": 0,
+      "UniswapV4StandardExchange_LocalLiquidBuffer": 27
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_LocalLiquidBuffer_H2.t.sol": {
+      "H2Seeder": 0,
+      "UniswapV4StandardExchange_LocalLiquidBuffer_H2": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_MultiJoinExit.t.sol": {
+      "MultiJoinExitSeeder": 0,
+      "UniswapV4StandardExchange_MultiJoinExit": 15
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_NativeEthWrap.t.sol": {
+      "UniswapV4NativeEthPoolSeeder": 0,
+      "UniswapV4StandardExchange_NativeEthWrap": 3
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_Univ4SeNestedCaller.t.sol": {
+      "UniswapV4StandardExchange_Univ4SeNestedCaller_Test": 2,
+      "Univ4SeNestedCallerSeeder": 0,
+      "Univ4SeNestedShareHolder": 0
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/adversarial/Adversarial_UniswapV4SE_E6ImpA0.t.sol": {
+      "AdversarialV4SeederE6": 0,
+      "Adversarial_UniswapV4SE_E6ImpA0": 8,
+      "HostileUniswapV4PositionManager": 0
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/adversarial/Adversarial_UniswapV4SE_SecurePull.t.sol": {
+      "AdversarialV4Seeder": 0,
+      "Adversarial_UniswapV4SE_SecurePull": 19
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeRoutes_Test_P6_R18.t.sol": {
+      "UniswapV4StandardExchangeRoutes_Test_P6_R18": 23
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_LocalLiquidBuffer_H2_P6_R18.t.sol": {
+      "UniswapV4StandardExchange_LocalLiquidBuffer_H2_P6_R18": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_LocalLiquidBuffer_P6_R18.t.sol": {
+      "UniswapV4StandardExchange_LocalLiquidBuffer_P6_R18": 27
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_MultiJoinExit_P6_R18.t.sol": {
+      "UniswapV4StandardExchange_MultiJoinExit_P6_R18": 15
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_NativeEthWrap_P6_R18.t.sol": {
+      "UniswapV4StandardExchange_NativeEthWrap_P6_R18": 3
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_Univ4SeNestedCaller_P6_R18.t.sol": {
+      "UniswapV4StandardExchange_Univ4SeNestedCaller_P6_R18": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_E6ImpA0_P6_R18.t.sol": {
+      "Adversarial_UniswapV4SE_E6ImpA0_P6_R18": 8
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_SecurePull_P6_R18.t.sol": {
+      "Adversarial_UniswapV4SE_SecurePull_P6_R18": 19
+    }
+  },
+  "pass": true
+}

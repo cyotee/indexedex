@@ -1,0 +1,27 @@
+{
+  "status": "applied; validation pending",
+  "rows": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf.sol",
+      "before_sha256": "273b00df00bfa2fa7aa31289ed9cab86f923f5e009285d7ba5899c6556a2ce18",
+      "after_sha256": "c48936346346b29656eeb18fa5108bea0d0818be9357d31f419f91fe419190be"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_Deploy.t.sol",
+      "before_sha256": "c8d67bb3d3e020037e024cbe78abf2cef850fc27f469115658599d1aa08b103e",
+      "after_sha256": "316de86c309336708fef5e31f679b8a95eca0ba0e027170029fc43304fb493e0"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_NRange.t.sol",
+      "before_sha256": "e699615ae4eb53a0b699d8ba7a558a23f5a651f5694e2796f9afcb19ddd5bf17",
+      "after_sha256": "678a384f2293db05259ba2e310d9781e000cae2f4f5348c1020209ba9551aa36"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/common/DETFFundedStakingSuite.t.sol",
+      "before_sha256": "4fd27d722c5f95875683d1e59ddb460a4857d784e5d1fc5dc1f52bbd0027ee57",
+      "after_sha256": "f33b9cdc53e9d8aabcab0915b20f725e0bc2bcbbfb528b20f9b2e3f042b9d44b"
+    }
+  ],
+  "preserved": "All four deployment assertions and every one-through-seven actual weighted reserve deployment/bootstrap; no LP-only purchase regression retired.",
+  "changed": "Mandatory default gates and native nine-decimal metadata replace the removed mode getter; funded bootstrap replaces the obsolete helper name."
+}

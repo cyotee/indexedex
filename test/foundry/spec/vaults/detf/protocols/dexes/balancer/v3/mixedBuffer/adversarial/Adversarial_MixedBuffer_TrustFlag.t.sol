@@ -17,19 +17,15 @@ import {
 /// @dev Same-tx helper: push shortDelta then claim > shortDelta with pretransferred=true.
 ///      Under durable U = B - R, observed unbooked surplus equals the same-tx push when residual is booked.
 contract MixedBufferPretransferRouterHelper {
-    function mintPretransfer(
-        address detf_,
-        IERC20 buffer_,
-        uint256 transferAmt_,
-        uint256 claimAmt_,
-        address recipient_
-    ) external returns (uint256 out_) {
+    function mintPretransfer(address detf_, IERC20 buffer_, uint256 transferAmt_, uint256 claimAmt_, address recipient_)
+        external
+        returns (uint256 out_)
+    {
         if (transferAmt_ > 0) {
             buffer_.transferFrom(msg.sender, detf_, transferAmt_);
         }
-        out_ = IStandardExchangeIn(detf_).exchangeIn(
-            buffer_, claimAmt_, IERC20(detf_), 0, recipient_, true, block.timestamp + 1 hours
-        );
+        out_ = IStandardExchangeIn(detf_)
+            .exchangeIn(buffer_, claimAmt_, IERC20(detf_), 0, recipient_, true, block.timestamp + 1 hours);
     }
 }
 
@@ -47,8 +43,8 @@ contract Adversarial_MixedBuffer_TrustFlag_Test is TestBase_MixedBufferMultiVaul
         preHelper = new MixedBufferPretransferRouterHelper();
     }
 
-    function _openLiveOpenThreshold() internal returns (address instance_) {
-        instance_ = _deployOpenThresholdDetfN(1);
+    function _openLiveGated() internal returns (address instance_) {
+        instance_ = _deployDetfN(1, 100e18, 0.1e18);
         _bootstrapDefault(instance_, alice);
         assertTrue(IMixedBufferMultiVaultStableDetfInfo(instance_).isReserveLive(), "live");
     }
@@ -69,9 +65,8 @@ contract Adversarial_MixedBuffer_TrustFlag_Test is TestBase_MixedBufferMultiVaul
         _fundBuffer(victim, honestIn_);
         vm.startPrank(victim);
         buffer_.approve(instance_, honestIn_);
-        uint256 out_ = IStandardExchangeIn(instance_).exchangeIn(
-            buffer_, honestIn_, IERC20(instance_), 0, victim, false, block.timestamp + 1 hours
-        );
+        uint256 out_ = IStandardExchangeIn(instance_)
+            .exchangeIn(buffer_, honestIn_, IERC20(instance_), 0, victim, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(out_, 0, "book residual: honest mint ok");
     }
@@ -83,9 +78,9 @@ contract Adversarial_MixedBuffer_TrustFlag_Test is TestBase_MixedBufferMultiVaul
     /// @notice I1 mint: booked buffer residual cannot free-credit pretransfer mint (claimed, 0).
     /// @dev Bare donation free-credits until end-sync (L-RSRV-DUST) — not I1. Book via honest mint first.
     function test_I1_pretransferred_inventoryNoInCallTransfer_revertsDelta0() public {
-        address instance_ = _openLiveOpenThreshold();
+        address instance_ = _openLiveGated();
         IERC20 buffer_ = _buffer(instance_);
-        uint256 residual_ = 80e18;
+        uint256 residual_ = _fixtureAmount(80e18);
         _bookBufferResidual(instance_, residual_);
 
         uint256 invBefore_ = buffer_.balanceOf(instance_);
@@ -97,13 +92,10 @@ contract Adversarial_MixedBuffer_TrustFlag_Test is TestBase_MixedBufferMultiVaul
 
         vm.prank(attacker);
         vm.expectRevert(
-            abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
-            )
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
         );
-        IStandardExchangeIn(instance_).exchangeIn(
-            buffer_, claimed_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours
-        );
+        IStandardExchangeIn(instance_)
+            .exchangeIn(buffer_, claimed_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours);
 
         assertEq(IERC20(instance_).balanceOf(attacker), attDetfBefore_, "I1: no free detfToken mint");
         assertEq(buffer_.balanceOf(instance_), invBefore_, "I1: inventory unchanged (no in-call transfer)");
@@ -112,8 +104,8 @@ contract Adversarial_MixedBuffer_TrustFlag_Test is TestBase_MixedBufferMultiVaul
     /// @notice I1 burn: booked detfToken residual cannot fund pretransfer burn extract.
     /// @dev Bare donate detf free-credits until end-sync — book via honest burn path first.
     function test_I1_burn_pretransferred_true_usesOnlyCallerTransferredDetf() public {
-        address instance_ = _openLiveOpenThreshold();
-        uint256 minted_ = _mintDetfFromBuffer(instance_, alice, 40e18);
+        address instance_ = _openLiveGated();
+        uint256 minted_ = _mintDetfFromBuffer(instance_, alice, _fixtureAmount(40e18));
         assertGt(minted_, 0, "minted detfToken");
         uint256 donateAmt_ = minted_ / 2;
         if (donateAmt_ == 0) donateAmt_ = minted_;
@@ -125,9 +117,8 @@ contract Adversarial_MixedBuffer_TrustFlag_Test is TestBase_MixedBufferMultiVaul
         IERC20(instance_).transfer(instance_, donateAmt_);
         IERC20(instance_).approve(instance_, burnHonest_);
         IERC20 buffer_ = _buffer(instance_);
-        IStandardExchangeIn(instance_).exchangeIn(
-            IERC20(instance_), burnHonest_, buffer_, 0, alice, false, block.timestamp + 1 hours
-        );
+        IStandardExchangeIn(instance_)
+            .exchangeIn(IERC20(instance_), burnHonest_, buffer_, 0, alice, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         uint256 residualDetf_ = IERC20(instance_).balanceOf(instance_);
@@ -135,29 +126,27 @@ contract Adversarial_MixedBuffer_TrustFlag_Test is TestBase_MixedBufferMultiVaul
         assertEq(IERC20(instance_).balanceOf(attacker), 0, "attacker has 0 detfToken");
 
         address pool_ = IMixedBufferMultiVaultStableDetfInfo(instance_).reservePool();
-        uint256 bptBefore_ = IERC20(pool_).balanceOf(instance_);
+        address custody_ = IMixedBufferMultiVaultStableDetfInfo(instance_).bondNftVault();
+        uint256 bptBefore_ = IERC20(pool_).balanceOf(custody_);
         uint256 bufferBefore_ = buffer_.balanceOf(attacker);
 
         vm.prank(attacker);
         vm.expectRevert(
-            abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, residualDetf_, uint256(0)
-            )
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, residualDetf_, uint256(0))
         );
-        IStandardExchangeIn(instance_).exchangeIn(
-            IERC20(instance_), residualDetf_, buffer_, 0, attacker, true, block.timestamp + 1 hours
-        );
+        IStandardExchangeIn(instance_)
+            .exchangeIn(IERC20(instance_), residualDetf_, buffer_, 0, attacker, true, block.timestamp + 1 hours);
 
         assertEq(IERC20(instance_).balanceOf(instance_), residualDetf_, "free detf still on diamond");
-        assertEq(IERC20(pool_).balanceOf(instance_), bptBefore_, "I1 burn: BPT intact");
+        assertEq(IERC20(pool_).balanceOf(custody_), bptBefore_, "I1 burn: BPT intact");
         assertEq(buffer_.balanceOf(attacker), bufferBefore_, "I1 burn: no free buffer extract");
     }
 
     /// @notice I1 bond: booked buffer residual cannot fund free pretransfer bond.
     function test_I1_bond_pretransferred_inventoryNoTransfer_reverts() public {
-        address instance_ = _openLiveOpenThreshold();
+        address instance_ = _openLiveGated();
         IERC20 buffer_ = _buffer(instance_);
-        uint256 residual_ = 60e18;
+        uint256 residual_ = _fixtureAmount(60e18);
         _bookBufferResidual(instance_, residual_);
 
         uint256 invBefore_ = buffer_.balanceOf(instance_);
@@ -165,13 +154,10 @@ contract Adversarial_MixedBuffer_TrustFlag_Test is TestBase_MixedBufferMultiVaul
 
         vm.prank(attacker);
         vm.expectRevert(
-            abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
-            )
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
         );
-        IMixedBufferMultiVaultStableDetfBonding(instance_).bond(
-            buffer_, claimed_, DEFAULT_MIN_LOCK, attacker, true, block.timestamp + 1 hours
-        );
+        IMixedBufferMultiVaultStableDetfBonding(instance_)
+            .bond(buffer_, claimed_, DEFAULT_MIN_LOCK, attacker, true, block.timestamp + 1 hours);
 
         assertEq(buffer_.balanceOf(instance_), invBefore_, "bond I1: inventory unchanged");
     }
@@ -182,14 +168,14 @@ contract Adversarial_MixedBuffer_TrustFlag_Test is TestBase_MixedBufferMultiVaul
 
     /// @notice I2 short: booked residual + same-tx push shortDelta then claim > short → (claimed, shortDelta).
     function test_I2_pretransferred_claimedGtDelta0_reverts() public {
-        address instance_ = _openLiveOpenThreshold();
+        address instance_ = _openLiveGated();
         IERC20 buffer_ = _buffer(instance_);
 
         // Book any residual so U starts at 0 (openLive + optional residual book).
-        uint256 residual_ = 30e18;
+        uint256 residual_ = _fixtureAmount(30e18);
         _bookBufferResidual(instance_, residual_);
 
-        uint256 claimed_ = 50e18;
+        uint256 claimed_ = _fixtureAmount(50e18);
         uint256 shortDelta_ = claimed_ / 2;
         require(shortDelta_ > 0 && shortDelta_ < claimed_, "need short < claimed");
 
@@ -197,9 +183,7 @@ contract Adversarial_MixedBuffer_TrustFlag_Test is TestBase_MixedBufferMultiVaul
         vm.startPrank(attacker);
         buffer_.approve(address(preHelper), shortDelta_);
         vm.expectRevert(
-            abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, shortDelta_
-            )
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, shortDelta_)
         );
         preHelper.mintPretransfer(instance_, buffer_, shortDelta_, claimed_, attacker);
         vm.stopPrank();
@@ -213,24 +197,23 @@ contract Adversarial_MixedBuffer_TrustFlag_Test is TestBase_MixedBufferMultiVaul
 
     /// @notice I3: after honest pull end-sync, residual donation is booked; free true reverts U=0.
     function test_I3_residualInventory_cannotFundSecondFreePretransfer() public {
-        address instance_ = _openLiveOpenThreshold();
+        address instance_ = _openLiveGated();
         IERC20 buffer_ = _buffer(instance_);
 
         // Pre-seed residual inventory that remains after an honest mint joins only the pulled amount.
-        uint256 residual_ = 30e18;
+        uint256 residual_ = _fixtureAmount(30e18);
         _fundBuffer(alice, residual_);
         vm.prank(alice);
         buffer_.transfer(instance_, residual_);
         assertEq(buffer_.balanceOf(instance_), residual_, "residual seeded");
 
         // Honest first mint via pull path (not pretransfer) — end-sync books residual.
-        uint256 victimIn_ = 20e18;
+        uint256 victimIn_ = _fixtureAmount(20e18);
         _fundBuffer(victim, victimIn_);
         vm.startPrank(victim);
         buffer_.approve(instance_, victimIn_);
-        uint256 out_ = IStandardExchangeIn(instance_).exchangeIn(
-            buffer_, victimIn_, IERC20(instance_), 0, victim, false, block.timestamp + 1 hours
-        );
+        uint256 out_ = IStandardExchangeIn(instance_)
+            .exchangeIn(buffer_, victimIn_, IERC20(instance_), 0, victim, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(out_, 0, "honest mint ok");
         // Residual remains on diamond but is booked (R==B) after end-sync.
@@ -239,13 +222,10 @@ contract Adversarial_MixedBuffer_TrustFlag_Test is TestBase_MixedBufferMultiVaul
         // Second call: pretransferred against residual, no new inbound transfer.
         vm.prank(attacker);
         vm.expectRevert(
-            abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, residual_, uint256(0)
-            )
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, residual_, uint256(0))
         );
-        IStandardExchangeIn(instance_).exchangeIn(
-            buffer_, residual_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours
-        );
+        IStandardExchangeIn(instance_)
+            .exchangeIn(buffer_, residual_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours);
 
         assertEq(buffer_.balanceOf(instance_), residual_, "I3: residual not free-credited");
     }

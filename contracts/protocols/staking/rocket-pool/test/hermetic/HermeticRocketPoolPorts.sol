@@ -150,3 +150,16 @@ contract HermeticDepositPool {
 
     receive() external payable {}
 }
+
+/// @dev External registry port for deployment binding only. This does not model
+/// canonical deposit settings, validator queues or transition quote behavior.
+contract HermeticRocketStorage {
+    mapping(bytes32 => address) private addresses;
+
+    constructor(address reth, address pool) {
+        addresses[keccak256("contract.addressrocketTokenRETH")] = reth;
+        addresses[keccak256("contract.addressrocketDepositPool")] = pool;
+    }
+
+    function getAddress(bytes32 key) external view returns (address) { return addresses[key]; }
+}

@@ -85,6 +85,17 @@ contract UniswapV2StandardExchangeCommon is BasicVaultCommon {
             );
     }
 
+    function _checkpointVaultReserves() internal {
+        IUniswapV2Pair pool = IUniswapV2Pair(address(ERC4626Repo._reserveAsset()));
+        (uint112 reserve0, uint112 reserve1,) = pool.getReserves();
+        uint256 supply = pool.totalSupply();
+        uint256 owned = ERC4626Repo._lastTotalAssets();
+        uint256 owned0 = supply == 0 ? 0 : BetterMath._mulDiv(owned, reserve0, supply);
+        uint256 owned1 = supply == 0 ? 0 : BetterMath._mulDiv(owned, reserve1, supply);
+        ConstProdReserveVaultRepo._setYieldReserveOfToken(pool.token0(), owned0);
+        ConstProdReserveVaultRepo._setYieldReserveOfToken(pool.token1(), owned1);
+    }
+
     function _loadStrategyVault(
         UniV2StrategyVault memory vault,
         // UnIV2IndexSourceReserves memory indexSource,

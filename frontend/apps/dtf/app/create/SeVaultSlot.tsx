@@ -1,10 +1,11 @@
 'use client'
 
+import { useConnectModal } from '@rainbow-me/rainbowkit'
+
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { decodeEventLog, type Address } from 'viem'
 import {
   useAccount,
-  useConnect,
   useReadContract,
   useSwitchChain,
   useWriteContract,
@@ -125,7 +126,7 @@ export function SeVaultSlot({
 }) {
   const { selectedChainId } = useSelectedNetwork()
   const { environment } = useDeploymentEnvironment()
-  const { connect, connectors } = useConnect()
+  const { openConnectModal } = useConnectModal()
   const { switchChainAsync } = useSwitchChain()
   const { writeContractAsync } = useWriteContract()
   const { address, isConnected, chainId: walletChainId, connector } = useAccount()
@@ -459,13 +460,7 @@ export function SeVaultSlot({
     await Promise.all([refetchV3Pool(), refetchV3Slot(), refetchVaultTokens(), refetchV4Slot()])
   }
 
-  const connectWallet = () => {
-    const next =
-      connectors.find((c) => c.id === 'metaMask' || c.id === 'metaMaskSDK') ??
-      connectors.find((c) => c.id === 'injected') ??
-      connectors[0]
-    if (next) connect({ connector: next })
-  }
+  const connectWallet = () => openConnectModal?.()
 
   const writeOnWallet = async (params: Parameters<typeof writeContractAsync>[0]) => {
     if (

@@ -32,6 +32,7 @@ import {
 import {
     IUniswapV4Detf
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
+import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 import {TestBase_UniswapV4Detf} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
 
@@ -92,6 +93,8 @@ abstract contract TestBase_UniswapV4Detf_Orbital is TestBase_UniswapV4Detf {
             IVaultRegistryDeployment(address(indexedexManager)),
             owner,
             IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgInit({
+                depositQueryFacet: OrbitalFactory.deployDepositQueryFacet(create3Factory),
+                depositZapFacet: OrbitalFactory.deployDepositZapFacet(create3Factory),
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
                 depositFacet: depositFacet,
@@ -115,7 +118,6 @@ abstract contract TestBase_UniswapV4Detf_Orbital is TestBase_UniswapV4Detf {
         returns (address predicted_)
     {
         predicted_ = _predictDetf(args);
-        vm.etch(predicted_, address(pair0).code);
         (address t0, address t1, address t2) = _sort3(predicted_, address(pair0), address(pair1));
         IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory hArgs =
             IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs({
@@ -124,6 +126,9 @@ abstract contract TestBase_UniswapV4Detf_Orbital is TestBase_UniswapV4Detf {
                 token0: t0,
                 token1: t1,
                 token2: t2,
+                decimals0: HookPkgArgsDecimalsLib.tokenDec(t0, predicted_),
+                decimals1: HookPkgArgsDecimalsLib.tokenDec(t1, predicted_),
+                decimals2: HookPkgArgsDecimalsLib.tokenDec(t2, predicted_),
                 se0: _seOf(t0, predicted_),
                 se1: _seOf(t1, predicted_),
                 se2: _seOf(t2, predicted_),
@@ -132,7 +137,7 @@ abstract contract TestBase_UniswapV4Detf_Orbital is TestBase_UniswapV4Detf {
                 rp2: address(0),
                 tickSpacing: 0,
                 sqrtPriceX96: 0,
-                ownerOnlyLiquidity: true,
+                ownerOnlyLiquidity: args.ownerOnlyLiquidity,
                 owner: predicted_
             });
         uint256 mineNonce = OrbitalFactory.findMineNonce(hookFactory, orbitalHookPkg, hArgs);
@@ -142,7 +147,6 @@ abstract contract TestBase_UniswapV4Detf_Orbital is TestBase_UniswapV4Detf {
         init.deployPair(t1, t2);
         init.deployPair(t0, t2);
         require(init.finalizeInitialization(), "finalize");
-        vm.etch(predicted_, "");
         args.hook = reserveHook;
         vm.label(reserveHook, "orbitalReserveHook");
     }
@@ -205,6 +209,8 @@ abstract contract TestBase_UniswapV4Detf_Orbital is TestBase_UniswapV4Detf {
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
                 seFacet: seFacet,
                 depositFacet: depositFacet,
+                depositSingleFacet: CpHookFactory.deployDepositSingleFacet(create3Factory),
+                depositPreviewFacet: CpHookFactory.deployDepositPreviewFacet(create3Factory),
                 withdrawFacet: withdrawFacet,
                 erc20Facet: erc20Facet,
                 erc5267Facet: erc5267Facet,

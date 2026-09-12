@@ -110,6 +110,35 @@ export function isZeroDataError(err: unknown): boolean {
   return /returned no data|ContractFunctionZeroDataError/i.test(text)
 }
 
+/**
+ * Seed or clear bytecode at an address on a lab RPC (Anvil / Hardhat).
+ * Unified DETF create needs this: the hook reads `decimals()` on the predicted
+ * DETF address before the diamond exists.
+ */
+export async function seedAccountCode(input: {
+  client: RpcRequestProvider
+  address: Address
+  bytecode: `0x${string}`
+}): Promise<void> {
+  const methods = ['anvil_setCode', 'hardhat_setCode'] as const
+  let last: unknown
+  for (const method of methods) {
+    try {
+      await input.client.request({
+        method,
+        params: [input.address, input.bytecode],
+      })
+      return
+    } catch (err) {
+      last = err
+    }
+  }
+  const detail = last instanceof Error ? last.message : String(last ?? '')
+  throw new Error(
+    `This create path needs a lab RPC that can seed the predicted DETF (anvil_setCode). Public networks cannot seed bytecode before the reserve hook deploys.${detail ? ` ${detail}` : ''}`,
+  )
+}
+
 /** True when eth_getCode returned real bytecode, not an empty account. */
 export function bytecodeLooksLikeContract(code: unknown): boolean {
   if (typeof code !== 'string') return false

@@ -1,0 +1,21 @@
+{
+  "status": "PREPARED_NOT_APPLIED",
+  "recorded_at_utc": "2026-09-09T07:35:28.303908+00:00",
+  "scope": "Unrelated Balancer SE remains in scope; no Balancer-hosted DETF functional changes.",
+  "gate": "Apply only after the entire current validation parent 4255 exits.",
+  "changes": [
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/balancer-se-fixture-followup-drafts/CommonBufferMultiVault_RoutingAndWalk_Decimals.sol.txt",
+      "before_sha256": "99593df60607128d2c9c8bb65b7dac8a96fb3ce3fea7a209637adb54e5b5813d",
+      "after_sha256": "bac9126da34a2db9162f7077895023d8edf233639b4ee9121c3e908b4ce97a99",
+      "reason": "Use the configured registered buffer token (pairToken), not the distinct underlying rateAsset. Express buffer payments in its actual native decimals."
+    }
+  ],
+  "observed_failures": [
+    "TokenNotRegistered in two routing/conservation cases across decimal leaves.",
+    "Unbalanced buffer addition attempts 5e18 raw units regardless of buffer decimals, exhausting the book."
+  ],
+  "remaining": "Review remaining Balancer SE failure groups and execute every affected retained decimal leaf after application.",
+  "runtime_validation_passed": false
+}

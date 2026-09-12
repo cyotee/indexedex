@@ -1,10 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
-/* -------------------------------------------------------------------------- */
-/*                                    Crane                                   */
-/* -------------------------------------------------------------------------- */
-
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
@@ -13,29 +9,21 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC20Permit} from "@crane/contracts/interfaces/IERC20Permit.sol";
 import {IERC5267} from "@crane/contracts/interfaces/IERC5267.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {EIP712Repo} from "@crane/contracts/utils/cryptography/EIP712/EIP712Repo.sol";
-import {MultiStepOwnableRepo} from "@crane/contracts/access/ERC8023/MultiStepOwnableRepo.sol";
-
-/* -------------------------------------------------------------------------- */
-/*                                  Indexedex                                 */
-/* -------------------------------------------------------------------------- */
-
 import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
-import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
-import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
-import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
-import {RebasingClaimTokenRepo} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenRepo.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
+import {DETFFundedStakingRepo} from "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol";
 
-/**
- * @title IRebasingClaimTokenDFPkg
- * @notice Interface for rebasing claim token Diamond Factory Package.
- */
+/// @title IRebasingClaimTokenDFPkg
+/// @notice Deployment arguments for the funded nine-decimal staking token.
 interface IRebasingClaimTokenDFPkg is IDiamondFactoryPackage {
     struct PkgInit {
-        IFacet erc20Facet;
         IFacet erc5267Facet;
         IFacet erc2612Facet;
         IFacet rebasingClaimTokenFacet;
@@ -43,230 +31,141 @@ interface IRebasingClaimTokenDFPkg is IDiamondFactoryPackage {
     }
 
     struct PkgArgs {
-        /// @notice The DETF diamond
         IDetf detf;
-        /// @notice The Protocol NFT Vault contract
         IDETFNFTVault nftVault;
-        /// @notice Settlement token for zapout quotes (pair / rateAsset as wired by the DETF)
-        IERC20 rateAsset;
-        /// @notice The protocol-owned NFT token ID
-        uint256 detfNFTId;
-        /// @notice Owner address (typically the DETF contract)
-        address owner;
-        /// @notice ERC-20 name. Empty → DETF name + " Claim", else "RebasingClaim".
+        IVaultFeeOracleQuery feeOracle;
         string name;
-        /// @notice ERC-20 symbol. Empty → DETF symbol + "IR", else "RebasingClaim".
         string symbol;
-        /// @notice Optional salt for deterministic deployment
         bytes32 optionalSalt;
     }
 
     function deployToken(
-        IDetf detf,
-        IDETFNFTVault nftVault,
-        IERC20 rateAsset,
-        uint256 detfNFTId,
-        address owner
-    ) external returns (address tokenAddress);
-
-    function deployToken(
-        IDetf detf,
-        IDETFNFTVault nftVault,
-        IERC20 rateAsset,
-        uint256 detfNFTId,
-        address owner,
-        string memory name,
-        string memory symbol
-    ) external returns (address tokenAddress);
+        IDetf detf_, IDETFNFTVault nftVault_, IVaultFeeOracleQuery feeOracle_,
+        string memory name_, string memory symbol_
+    ) external returns (address tokenAddress_);
 }
 
-/**
- * @title RebasingClaimTokenDFPkg
- * @author cyotee doge <not_cyotee@proton.me>
- * @notice Diamond Factory Package for deploying rebasing claim token rebasing token.
- */
+/// @title RebasingClaimTokenDFPkg
+/// @notice Immutable funded staking receipts with standard principal routes and ERC-2612 permits.
 contract RebasingClaimTokenDFPkg is IRebasingClaimTokenDFPkg {
     using BetterEfficientHashLib for bytes;
 
-    IFacet immutable ERC20_FACET;
+    error InvalidPackageArguments();
+
     IFacet immutable ERC5267_FACET;
     IFacet immutable ERC2612_FACET;
     IFacet immutable REBASING_CLAIM_TOKEN_FACET;
     IDiamondPackageCallBackFactory immutable DIAMOND_FACTORY;
 
-    constructor(PkgInit memory pkgInit) {
-        ERC20_FACET = pkgInit.erc20Facet;
-        ERC5267_FACET = pkgInit.erc5267Facet;
-        ERC2612_FACET = pkgInit.erc2612Facet;
-        REBASING_CLAIM_TOKEN_FACET = pkgInit.rebasingClaimTokenFacet;
-        DIAMOND_FACTORY = pkgInit.diamondFactory;
+    constructor(PkgInit memory pkgInit_) {
+        ERC5267_FACET = pkgInit_.erc5267Facet;
+        ERC2612_FACET = pkgInit_.erc2612Facet;
+        REBASING_CLAIM_TOKEN_FACET = pkgInit_.rebasingClaimTokenFacet;
+        DIAMOND_FACTORY = pkgInit_.diamondFactory;
     }
 
+    /// @inheritdoc IRebasingClaimTokenDFPkg
     function deployToken(
-        IDetf detf,
-        IDETFNFTVault nftVault,
-        IERC20 rateAsset,
-        uint256 detfNFTId,
-        address owner
-    ) external returns (address tokenAddress) {
-        (string memory name_, string memory symbol_) = _deriveClaimMetadata(detf);
-        return deployToken(detf, nftVault, rateAsset, detfNFTId, owner, name_, symbol_);
+        IDetf detf_, IDETFNFTVault nftVault_, IVaultFeeOracleQuery feeOracle_,
+        string memory name_, string memory symbol_
+    ) external returns (address tokenAddress_) {
+        PkgArgs memory args_ = PkgArgs({
+            detf: detf_,
+            nftVault: nftVault_,
+            feeOracle: feeOracle_,
+            name: bytes(name_).length == 0 ? "Staked DETF" : name_,
+            symbol: bytes(symbol_).length == 0 ? "sDETF" : symbol_,
+            optionalSalt: abi.encode(address(detf_))._hash()
+        });
+        return address(DIAMOND_FACTORY.deploy(this, abi.encode(args_)));
     }
 
-    function deployToken(
-        IDetf detf,
-        IDETFNFTVault nftVault,
-        IERC20 rateAsset,
-        uint256 detfNFTId,
-        address owner,
-        string memory name,
-        string memory symbol
-    ) public returns (address tokenAddress) {
-        (string memory name_, string memory symbol_) = _resolveNameSymbol(detf, name, symbol);
-        return address(
-            DIAMOND_FACTORY.deploy(
-                this,
-                abi.encode(
-                    PkgArgs({
-                        detf: detf,
-                        nftVault: nftVault,
-                        rateAsset: rateAsset,
-                        detfNFTId: detfNFTId,
-                        owner: owner,
-                        name: name_,
-                        symbol: symbol_,
-                        optionalSalt: abi.encode(address(detf))._hash()
-                    })
-                )
-            )
-        );
-    }
-
-    /* ---------------------------------------------------------------------- */
-    /*                       IDiamondFactoryPackage                           */
-    /* ---------------------------------------------------------------------- */
-
-    function packageName() public pure returns (string memory name_) {
+    /// @inheritdoc IDiamondFactoryPackage
+    function packageName() public pure returns (string memory) {
         return type(RebasingClaimTokenDFPkg).name;
     }
 
-    function facetAddresses() public view returns (address[] memory facetAddresses_) {
-        facetAddresses_ = new address[](3);
-        facetAddresses_[0] = address(ERC5267_FACET);
-        facetAddresses_[1] = address(ERC2612_FACET);
-        facetAddresses_[2] = address(REBASING_CLAIM_TOKEN_FACET);
+    /// @inheritdoc IDiamondFactoryPackage
+    function facetAddresses() public view returns (address[] memory facets_) {
+        facets_ = new address[](3);
+        facets_[0] = address(ERC5267_FACET);
+        facets_[1] = address(ERC2612_FACET);
+        facets_[2] = address(REBASING_CLAIM_TOKEN_FACET);
     }
 
-    function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](7);
-        interfaces[0] = type(IERC20).interfaceId;
-        interfaces[1] = type(IERC20Metadata).interfaceId;
-        interfaces[2] = type(IERC20Permit).interfaceId;
-        interfaces[3] = type(IERC5267).interfaceId;
-        interfaces[4] = type(IRebasingClaimToken).interfaceId;
-        interfaces[5] = type(IStandardExchangeIn).interfaceId;
-        interfaces[6] = type(IStandardExchangeOut).interfaceId;
+    /// @inheritdoc IDiamondFactoryPackage
+    function facetInterfaces() public pure returns (bytes4[] memory interfaces_) {
+        interfaces_ = new bytes4[](7);
+        interfaces_[0] = type(IERC20).interfaceId;
+        interfaces_[1] = type(IERC20Metadata).interfaceId;
+        interfaces_[2] = type(IERC20Permit).interfaceId;
+        interfaces_[3] = type(IERC5267).interfaceId;
+        interfaces_[4] = type(IStakedDETF).interfaceId;
+        interfaces_[5] = type(IStandardExchangeIn).interfaceId;
+        interfaces_[6] = type(IStandardExchangeOut).interfaceId;
     }
 
+    /// @inheritdoc IDiamondFactoryPackage
     function packageMetadata()
-        public
-        view
-        returns (string memory name_, bytes4[] memory interfaces, address[] memory facets)
+        public view returns (string memory name_, bytes4[] memory interfaces_, address[] memory facets_)
     {
-        name_ = packageName();
-        interfaces = facetInterfaces();
-        facets = facetAddresses();
+        return (packageName(), facetInterfaces(), facetAddresses());
     }
 
-    function facetCuts() public view returns (IDiamond.FacetCut[] memory facetCuts_) {
-        facetCuts_ = new IDiamond.FacetCut[](3);
-
-        facetCuts_[0] = IDiamond.FacetCut({
-            facetAddress: address(ERC5267_FACET),
-            action: IDiamond.FacetCutAction.Add,
+    /// @inheritdoc IDiamondFactoryPackage
+    function facetCuts() public view returns (IDiamond.FacetCut[] memory cuts_) {
+        cuts_ = new IDiamond.FacetCut[](3);
+        cuts_[0] = IDiamond.FacetCut({
+            facetAddress: address(ERC5267_FACET), action: IDiamond.FacetCutAction.Add,
             functionSelectors: ERC5267_FACET.facetFuncs()
         });
-        facetCuts_[1] = IDiamond.FacetCut({
-            facetAddress: address(ERC2612_FACET),
-            action: IDiamond.FacetCutAction.Add,
+        cuts_[1] = IDiamond.FacetCut({
+            facetAddress: address(ERC2612_FACET), action: IDiamond.FacetCutAction.Add,
             functionSelectors: ERC2612_FACET.facetFuncs()
         });
-        facetCuts_[2] = IDiamond.FacetCut({
-            facetAddress: address(REBASING_CLAIM_TOKEN_FACET),
-            action: IDiamond.FacetCutAction.Add,
+        cuts_[2] = IDiamond.FacetCut({
+            facetAddress: address(REBASING_CLAIM_TOKEN_FACET), action: IDiamond.FacetCutAction.Add,
             functionSelectors: REBASING_CLAIM_TOKEN_FACET.facetFuncs()
         });
     }
 
-    function diamondConfig() public view returns (DiamondConfig memory config) {
-        config = IDiamondFactoryPackage.DiamondConfig({facetCuts: facetCuts(), interfaces: facetInterfaces()});
+    /// @inheritdoc IDiamondFactoryPackage
+    function diamondConfig() public view returns (DiamondConfig memory) {
+        return DiamondConfig({facetCuts: facetCuts(), interfaces: facetInterfaces()});
     }
 
-    function calcSalt(bytes memory pkgArgs) public pure returns (bytes32 salt) {
-        return abi.encode(pkgArgs)._hash();
+    /// @inheritdoc IDiamondFactoryPackage
+    function calcSalt(bytes memory pkgArgs_) public pure returns (bytes32) {
+        return abi.encode(pkgArgs_)._hash();
     }
 
-    function processArgs(bytes memory pkgArgs) public pure virtual returns (bytes memory processedPkgArgs) {
-        return pkgArgs;
+    /// @inheritdoc IDiamondFactoryPackage
+    function processArgs(bytes memory pkgArgs_) public pure returns (bytes memory) {
+        PkgArgs memory args_ = abi.decode(pkgArgs_, (PkgArgs));
+        if (
+            address(args_.detf) == address(0) || address(args_.nftVault) == address(0)
+                || address(args_.feeOracle) == address(0) || abi.encode(args_)._hash() != pkgArgs_._hash()
+        ) revert InvalidPackageArguments();
+        return pkgArgs_;
     }
 
-    function updatePkg(address, bytes memory) public pure virtual returns (bool) {
+    /// @inheritdoc IDiamondFactoryPackage
+    function updatePkg(address, bytes memory) public pure returns (bool) {
         return true;
     }
 
-    function initAccount(bytes memory initArgs) public {
-        PkgArgs memory args = abi.decode(initArgs, (PkgArgs));
-
-        // Initialize ownership (DETF is the owner)
-        MultiStepOwnableRepo._initialize(args.owner, 1 days);
-
-        string memory name_ = bytes(args.name).length == 0 ? "RebasingClaim" : args.name;
-        string memory symbol_ = bytes(args.symbol).length == 0 ? "RebasingClaim" : args.symbol;
-        ERC20Repo._initialize(name_, symbol_, 18);
+    /// @inheritdoc IDiamondFactoryPackage
+    function initAccount(bytes memory initArgs_) public {
+        PkgArgs memory args_ = abi.decode(processArgs(initArgs_), (PkgArgs));
+        string memory name_ = bytes(args_.name).length == 0 ? "Staked DETF" : args_.name;
+        string memory symbol_ = bytes(args_.symbol).length == 0 ? "sDETF" : args_.symbol;
+        ERC20Repo._initialize(name_, symbol_, 9);
         EIP712Repo._initialize(name_, "1");
-
-        // Initialize rebasing claim token storage
-        RebasingClaimTokenRepo._initialize(args.detf, args.nftVault, args.rateAsset, args.detfNFTId);
+        DETFFundedStakingRepo._initialize(IERC20(address(args_.detf)), address(args_.nftVault), args_.feeOracle);
     }
 
+    /// @inheritdoc IDiamondFactoryPackage
     function postDeploy(address) public pure returns (bool) {
         return true;
-    }
-
-    function _deriveClaimMetadata(IDetf detf)
-        private
-        view
-        returns (string memory name_, string memory symbol_)
-    {
-        return _resolveNameSymbol(detf, "", "");
-    }
-
-    function _resolveNameSymbol(IDetf detf, string memory name_, string memory symbol_)
-        private
-        view
-        returns (string memory resolvedName_, string memory resolvedSymbol_)
-    {
-        resolvedName_ = bytes(name_).length == 0 ? _tryDetfClaimName(detf) : name_;
-        resolvedSymbol_ = bytes(symbol_).length == 0 ? _tryDetfClaimSymbol(detf) : symbol_;
-    }
-
-    function _tryDetfClaimName(IDetf detf) private view returns (string memory) {
-        if (address(detf).code.length == 0) return "RebasingClaim";
-        try IERC20Metadata(address(detf)).name() returns (string memory n) {
-            if (bytes(n).length == 0) return "RebasingClaim";
-            return string.concat(n, " Claim");
-        } catch {
-            return "RebasingClaim";
-        }
-    }
-
-    function _tryDetfClaimSymbol(IDetf detf) private view returns (string memory) {
-        if (address(detf).code.length == 0) return "RebasingClaim";
-        try IERC20Metadata(address(detf)).symbol() returns (string memory s) {
-            if (bytes(s).length == 0) return "RebasingClaim";
-            return string.concat(s, "IR");
-        } catch {
-            return "RebasingClaim";
-        }
     }
 }

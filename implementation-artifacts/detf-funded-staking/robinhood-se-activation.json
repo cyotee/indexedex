@@ -1,0 +1,24 @@
+{
+  "recorded_at_utc": "2026-09-08T04:20:58.712285+00:00",
+  "status": "APPLIED_VALIDATION_PENDING",
+  "finding": "Both existing Robinhood helpers seeded the underlying V4 pool but left newly deployed SE supply at zero. Their next single-token DETF intake conflicts with mandatory two-token SE activation.",
+  "change": "Reuse each configured seed amount for a real two-token SE activation before creating its rate provider. Initial SE shares belong to the existing deployment receiver. Share supply prevents repeated activation; clear temporary approvals. No broadcast is performed by this preparation.",
+  "validation_required": "Compile launch sources and cover the shared activation helper through actual V4 proxy execution before any local rehearsal; no production deployment authorized by this script.",
+  "files": [
+    {
+      "path": "scripts/foundry/anvil_robinhood_testnet/PoolSeedLib.sol",
+      "before_sha256": "8012ce3a7652b25cbf019b446f4969542d7a78c0435809fe5647d4137e822e60",
+      "after_sha256": "0af82ca287ea493992d5b3419bf249bcedb66188e0614e733e8d52c70433deb4"
+    },
+    {
+      "path": "scripts/foundry/anvil_robinhood_testnet/UniV4SeInstanceLib.sol",
+      "before_sha256": "262d02d372a099b5ec5237f659d65d4d2a0149432b561a8897051a899ff4e9b8",
+      "after_sha256": "8aaab46e77fd80983a18b21f319b7807282ca4be6256cd10803b51de4da7f201"
+    },
+    {
+      "path": "scripts/foundry/anvil_robinhood_testnet/Phase_07_Stage_04_UniV4SeUsd.sol",
+      "before_sha256": "7d648883553b10a3de010e2106b1a21a471f5f70cf7b2e794e7a9a6af1e1ec5b",
+      "after_sha256": "55c7e5b0ea817aee7512ceb00e9491f64814b8d5255f9706333803fb719d9017"
+    }
+  ]
+}

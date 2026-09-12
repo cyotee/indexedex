@@ -1,0 +1,9 @@
+{
+  "recorded_at_utc": "2026-09-08T08:11:54.446933+00:00",
+  "status": "APPLIED_FULL_BUILD_RETRY_RUNNING",
+  "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_IoTables_Decimals.sol",
+  "cause": "Prior test migration joined the contract closing brace to the end of a line comment.",
+  "fix": "Move closing brace to its own line, retaining all funded claim assertions.",
+  "verification": "Lexical brace scan across contracts/test/scripts found no remaining imbalance after stripping comments/strings; compiler is authoritative and full retry is running.",
+  "behavior_change": false
+}

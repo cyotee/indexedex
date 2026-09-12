@@ -1,0 +1,41 @@
+Prepared position cleanup across 9 sources; no Solidity changed.
+Prepared fixture migrations across 45 existing sources; no Solidity changed.
+{
+  "status": "DRAFT_DIAGNOSTIC_ONLY_NOT_RUNTIME_VALIDATION",
+  "kind": "production",
+  "seconds": 94.625,
+  "exit_code": 0,
+  "errors": [],
+  "source_freeze_preserved": true,
+  "compiler_input_sha256": "18acce5ead04da64db0333f2e04da4e55fea5650d1e2212391c965371e7536f8",
+  "runtime_bytes": {
+    "UniswapV3StandardExchangeDFPkg": 12243,
+    "UniswapV3StandardExchangeInExecutionDelegate": 16852,
+    "UniswapV3StandardExchangeInFacet": 14775,
+    "UniswapV3StandardExchangeInMultiFacet": 16524,
+    "UniswapV3StandardExchangeInMultiQueryFacet": 18071,
+    "UniswapV3StandardExchangeInQueryFacet": 23163,
+    "UniswapV3StandardExchangeLiquidReserveFacet": 12260,
+    "UniswapV3StandardExchangeOutExecutionDelegate": 19918,
+    "UniswapV3StandardExchangeOutFacet": 22418,
+    "UniswapV3StandardExchangeOutMultiFacet": 16196,
+    "UniswapV3StandardExchangeOutMultiQueryFacet": 7916,
+    "UniswapV3StandardExchangeOutQueryFacet": 21738,
+    "UniswapV3StandardExchangePositionImportFacet": 17789,
+    "UniswapV4StandardExchangeDFPkg": 13213,
+    "UniswapV4StandardExchangeInExecutionDelegate": 19925,
+    "UniswapV4StandardExchangeInFacet": 19454,
+    "UniswapV4StandardExchangeInMultiFacet": 20087,
+    "UniswapV4StandardExchangeInMultiQueryFacet": 19689,
+    "UniswapV4StandardExchangeInQueryFacet": 22946,
+    "UniswapV4StandardExchangeLiquidReserveFacet": 17574,
+    "UniswapV4StandardExchangeOutExecutionDelegate": 14035,
+    "UniswapV4StandardExchangeOutFacet": 19168,
+    "UniswapV4StandardExchangeOutMultiFacet": 19911,
+    "UniswapV4StandardExchangeOutMultiQueryFacet": 15464,
+    "UniswapV4StandardExchangeOutQueryFacet": 22555,
+    "UniswapV4StandardExchangePositionImportFacet": 19926
+  },
+  "components_fit_eip170": true,
+  "pass": true
+}

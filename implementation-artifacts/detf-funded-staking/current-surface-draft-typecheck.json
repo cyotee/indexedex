@@ -1,0 +1,16 @@
+{
+  "status": "DRAFT_TYPECHECK_ONLY_NOT_RUNTIME_VALIDATION",
+  "seconds": 23.778,
+  "prepared_records": [
+    "current-surface-fixture-followups-prepared.json"
+  ],
+  "exit_code": 0,
+  "errors": [
+    "TypeError: Member \"DEPOSIT_QUERY_FACET\" not found or not visible after argument-dependent lookup in contract IUniswapV4StandardExchangeOrbitalBufferHookPackage.\n  --> test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_PackageDecl.t.sol:66:48:\n   |\n66 |         assertEq(cuts[7].facetAddress, address(hookPkg.DEPOSIT_QUERY_FACET()));\n   |                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\n"
+  ],
+  "concrete_suites": {},
+  "compiled_methods": 0,
+  "compiler_input_sha256": "2d6ac163a0a5d5358f1b3d709c2ecf7e976cbab4166951f82b83d751f765e438",
+  "validation_passed": false,
+  "canonical_sources_unchanged": true
+}

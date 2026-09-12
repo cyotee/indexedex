@@ -1,0 +1,21 @@
+{
+  "status": "APPLIED_CURRENT_PROXY_VALIDATION_PASSED",
+  "path": "test/foundry/spec/vaults/standard/sy/ConstantProductNativeSY.t.sol",
+  "before_sha256": "5d2e008992ddfb937d863dbe81922d417b3fd4ab944e6a049fdbc42c84da5521",
+  "after_sha256": "44198216f4a8cb20a96d0490ce08f0392beeb1c1a5fd2ddd9a572749a43680dd",
+  "prerequisite": "The five current-production checkpoint/LP-preview regressions must be applied first. This patch is against that exact resulting source, not against the untouched current file.",
+  "cases": 9,
+  "controls": [
+    "Actual query selectors/interfaces and all three facet EIP-170 sizes",
+    "Whole-state sequences in both assets with directional/referrer fees and owner shares 50000,16666,16667",
+    "Actual fee-recipient balance/supply attribution",
+    "External deposits in opposite accounting assets and LP payment",
+    "External LP and directional conversions preserve SE shares",
+    "Pool token donations: actual router inputs/referral outflows versus existing service payout",
+    "LP donations remain existing-holder backing before an LP-payment deposit"
+  ],
+  "production_fixture": "Existing CamelotV2NativeSYTest, registry/CREATE3, actual Camelot port. No new fixture contract or SUT mock.",
+  "prerequisite_evidence": "camelot-checkpoint-after-run.json",
+  "validation_evidence": "camelot-projection-referral-receipts-run.json",
+  "current_source_sha256": "bfe398e21073a6f4f4048da0ef5748f2e906880e725709aa6978a2c3996b2603"
+}

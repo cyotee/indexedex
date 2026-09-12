@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IReentrancyLock} from "@crane/contracts/access/reentrancy/IReentrancyLock.sol";
@@ -110,12 +112,21 @@ contract UniswapV4Detf_Weighted_Adversarial_Reentrancy is TestBase_UniswapV4Detf
             false,
             _deadline()
         );
+        // Prove the exact callback succeeds when the DETF is unlocked and
+        // leave a second funded payment available for the nested attempt.
+        hostilePair.mint(address(hostilePair), 2 * 1 ether);
+        vm.prank(address(hostilePair));
+        hostilePair.approve(hostileDetf, 2 * 1 ether);
+        vm.prank(address(hostilePair));
+        (bool controlOk,) = hostileDetf.call(reentry);
+        assertTrue(controlOk, "funded callback succeeds outside the lock");
         hostilePair.arm(hostileDetf, reentry);
 
         vm.startPrank(detfUser);
-        uint256 out_ = hostileInfo.mint(
+        uint256 out_ = IStandardExchangeIn(hostileDetf).exchangeIn(
             IERC20(address(hostilePair)),
             50 ether,
+            IERC20(hostileDetf),
             0,
             detfUser,
             false,
@@ -127,6 +138,7 @@ contract UniswapV4Detf_Weighted_Adversarial_Reentrancy is TestBase_UniswapV4Detf
         assertGe(hostilePair.reentryAttempts(), 1, "reentry attempted during transferFrom");
         assertFalse(hostilePair.nestedCallSucceeded(), "nested bond blocked");
         assertEq(hostilePair.nestedErrorSelector(), IReentrancyLock.IsLocked.selector, "IsLocked");
+        assertEq(hostilePair.balanceOf(address(hostilePair)), 1 ether, "locked callback cannot spend its payment");
         hostilePair.disarm();
     }
 }

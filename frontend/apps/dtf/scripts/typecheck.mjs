@@ -2,6 +2,7 @@ import { spawnSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { createRequire } from 'node:module'
 
 function run(cmd, args, opts = {}) {
   const result = spawnSync(cmd, args, { stdio: 'inherit', ...opts })
@@ -22,11 +23,6 @@ if (!fs.existsSync(placeholderFile)) {
   fs.writeFileSync(placeholderFile, 'export {}\n', 'utf8')
 }
 
-const tscBin = path.join(
-  frontendDir,
-  'node_modules',
-  '.bin',
-  process.platform === 'win32' ? 'tsc.cmd' : 'tsc'
-)
-
-run(tscBin, ['--noEmit'], { cwd: frontendDir })
+// Resolve hoisted workspace dependencies as well as app-local installs.
+const require = createRequire(import.meta.url)
+run(process.execPath, [require.resolve('typescript/bin/tsc'), '--noEmit'], { cwd: frontendDir })

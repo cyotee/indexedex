@@ -1,9 +1,11 @@
 'use client'
 
+import { useConnectModal } from '@rainbow-me/rainbowkit'
+
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAccount, useConnect, usePublicClient, useSwitchChain, useWriteContract } from 'wagmi'
-import { zeroAddress, type Address } from 'viem'
+import { useAccount, usePublicClient, useSwitchChain, useWriteContract } from 'wagmi'
+import { type Address } from 'viem'
 
 import { CHAIN_ID_ANVIL, CHAIN_ID_LOCALHOST } from '@indexedex/protocol/addressArtifacts'
 import { useDeploymentEnvironment } from '@indexedex/protocol/deploymentEnvironment'
@@ -14,13 +16,14 @@ import { Card } from '../components/ui/Card'
 import { resolveWalletGate } from '../lib/tx/actionState'
 import { parseContractError } from '../lib/tx/parseContractError'
 import type { CreatePlan } from './lib/createPlan'
-import { CP_DETF_PKG_ABI, DETF_WIRE_ABI, HOOK_STAGED_INIT_ABI, WEIGHTED_DETF_PKG_ABI } from './lib/detfAbi'
+import { HOOK_STAGED_INIT_ABI, UNI_V4_DETF_PKG_ABI } from './lib/detfAbi'
 import {
-  buildCpDetfArgs,
-  buildWeightedDetfArgs,
-  premineCpDetf,
-  premineWeightedDetf,
-  productTokensWeighted,
+  buildHookDeployArgs,
+  buildUniV4DetfArgs,
+  hookPkgForPlan,
+  hookProductTokens,
+  predictUniV4Detf,
+  premineHook,
   unorderedPairs,
 } from './lib/detfDeploy'
 import { rememberCreatedDetf } from '../lib/detf/createdDetfs'
@@ -38,7 +41,7 @@ export function DetfDeployPanel({
   const { selectedChainId } = useSelectedNetwork()
   const { environment } = useDeploymentEnvironment()
   const { address, isConnected, chainId: walletChainId } = useAccount()
-  const { connect, connectors } = useConnect()
+  const { openConnectModal } = useConnectModal()
   const { switchChainAsync } = useSwitchChain()
   const { writeContractAsync } = useWriteContract()
   const publicClient = usePublicClient({ chainId: selectedChainId })
@@ -46,17 +49,16 @@ export function DetfDeployPanel({
   const [pending, setPending] = useState(false)
 
   const platform = resolveSePlatform(selectedChainId, environment)
-  const oneVault = plan.typeId === 'one-vault'
-  const weighted = plan.typeId === 'weighted'
-  const canDeployCp = ready && oneVault && !!platform.cpDetfPkg && !!plan.vaults[0] && !!plan.pairToken
-  const canDeployWeighted =
+  const hookPkg = hookPkgForPlan(plan, platform)
+  const canDeploy =
     ready &&
-    weighted &&
-    !!platform.weightedDetfPkg &&
-    !!platform.weightedHookPkg &&
-    plan.vaults.length >= 2 &&
-    plan.pairTokens.slice(0, plan.vaults.length).every((a) => !!a)
-  const canDeploy = canDeployCp || canDeployWeighted
+    !!platform.uniV4DetfPkg &&
+    !!hookPkg &&
+    !!platform.hookFactory &&
+    !!platform.diamondPackageFactory &&
+    !!platform.poolManager &&
+    !!platform.feeOracle &&
+    (plan.typeId === 'one-vault' || plan.typeId === 'weighted' || plan.typeId === 'stables')
 
   const gate = resolveWalletGate({
     isConnected,
@@ -87,13 +89,7 @@ export function DetfDeployPanel({
     return receipt
   }
 
-  const connectWallet = () => {
-    const connector =
-      connectors.find((c) => c.id === 'metaMask' || c.id === 'metaMaskSDK') ??
-      connectors.find((c) => c.id === 'injected') ??
-      connectors[0]
-    if (connector) connect({ connector })
-  }
+  const connectWallet = () => openConnectModal?.()
 
   const finishDeploy = async (predictedDetf: Address) => {
     rememberCreatedDetf({
@@ -101,22 +97,14 @@ export function DetfDeployPanel({
       address: predictedDetf,
       name: plan.name.trim() || 'DETF',
       symbol: plan.symbol.trim() || 'DETF',
-      decimals: 18,
+      decimals: 9,
     })
     setStatus('DETF is deployed. Bond to turn it on.')
     router.push(`/create/bond?detf=${predictedDetf}`)
   }
 
-  const wireHook = async (predictedDetf: Address, pairTokens: Address[]) => {
-    if (!publicClient) throw new Error('No RPC client.')
-    const hook = (await publicClient.readContract({
-      address: predictedDetf,
-      abi: DETF_WIRE_ABI,
-      functionName: 'reserveHook',
-    })) as Address
-    if (!hook || hook === zeroAddress) throw new Error('DETF deployed but reserve hook is missing.')
-
-    const doors = unorderedPairs(productTokensWeighted(predictedDetf, pairTokens))
+  const openHookDoors = async (hook: Address, tokens: Address[]) => {
+    const doors = unorderedPairs(tokens)
     for (let i = 0; i < doors.length; i++) {
       const [a, b] = doors[i]!
       setStatus(`Opening reserve pool ${i + 1} of ${doors.length}…`)
@@ -132,7 +120,6 @@ export function DetfDeployPanel({
         if (!isPoolInitWalletRevert(err)) throw err
       }
     }
-
     setStatus('Finalizing the reserve hook…')
     const finHash = await writeOnWallet({
       address: hook,
@@ -140,57 +127,6 @@ export function DetfDeployPanel({
       functionName: 'finalizeInitialization',
     })
     await waitMined(finHash)
-
-    setStatus('Wiring bond NFT…')
-    const nftHash = await writeOnWallet({
-      address: predictedDetf,
-      abi: DETF_WIRE_ABI,
-      functionName: 'completeReserveBondNft',
-    })
-    await waitMined(nftHash)
-
-    setStatus('Wiring claim token…')
-    const claimHash = await writeOnWallet({
-      address: predictedDetf,
-      abi: DETF_WIRE_ABI,
-      functionName: 'completeReserveClaim',
-    })
-    await waitMined(claimHash)
-  }
-
-  const runCp = async (creator: Address) => {
-    const args = buildCpDetfArgs(plan, creator)
-    if (args.creationPairPerDetfWad === 0n) throw new Error('Peg must be greater than 0.')
-    setStatus('Mining hook nonce…')
-    if (!publicClient) throw new Error('No RPC client.')
-    const { predictedDetf, mineNonce } = await premineCpDetf(publicClient, platform, args)
-    setStatus(`Deploying DETF at ${predictedDetf.slice(0, 8)}…`)
-    const hash = await writeOnWallet({
-      address: platform.cpDetfPkg!,
-      abi: CP_DETF_PKG_ABI,
-      functionName: 'deployVault',
-      args: [args, mineNonce],
-    })
-    await waitMined(hash)
-    await wireHook(predictedDetf, [args.pairToken])
-    await finishDeploy(predictedDetf)
-  }
-
-  const runWeighted = async (creator: Address) => {
-    const args = buildWeightedDetfArgs(plan, creator)
-    setStatus('Mining hook nonce…')
-    if (!publicClient) throw new Error('No RPC client.')
-    const { predictedDetf, mineNonce } = await premineWeightedDetf(publicClient, platform, args)
-    setStatus(`Deploying DETF at ${predictedDetf.slice(0, 8)}…`)
-    const hash = await writeOnWallet({
-      address: platform.weightedDetfPkg!,
-      abi: WEIGHTED_DETF_PKG_ABI,
-      functionName: 'deployVault',
-      args: [args, mineNonce],
-    })
-    await waitMined(hash)
-    await wireHook(predictedDetf, args.pairTokens)
-    await finishDeploy(predictedDetf)
   }
 
   const run = async () => {
@@ -199,10 +135,40 @@ export function DetfDeployPanel({
       setStatus('Finish the plan, then connect a wallet.')
       return
     }
+    if (!publicClient) throw new Error('No RPC client.')
     setPending(true)
     try {
-      if (weighted) await runWeighted(address)
-      else await runCp(address)
+      const args = buildUniV4DetfArgs(plan, address)
+      setStatus('Predicting the DETF address…')
+      const predictedDetf = await predictUniV4Detf(publicClient, platform, args)
+      setStatus('Mining hook nonce…')
+      const { hookPkg: pkg, mineNonce, predictedHook, scales } = await premineHook(
+        publicClient,
+        platform,
+        plan,
+        predictedDetf,
+      )
+      setStatus('Deploying the reserve hook…')
+      const hookCall = buildHookDeployArgs(plan, predictedDetf, platform, mineNonce, scales)
+      const hookHash = await writeOnWallet({
+        address: pkg,
+        abi: hookCall.abi as typeof UNI_V4_DETF_PKG_ABI,
+        functionName: 'deployVault',
+        args: hookCall.args as never,
+      })
+      await waitMined(hookHash)
+      const hook = predictedHook
+      await openHookDoors(hook, hookProductTokens(plan, predictedDetf))
+      args.hook = hook
+      setStatus(`Deploying DETF at ${predictedDetf.slice(0, 8)}…`)
+      const detfHash = await writeOnWallet({
+        address: platform.uniV4DetfPkg!,
+        abi: UNI_V4_DETF_PKG_ABI,
+        functionName: 'deployVault',
+        args: [args],
+      })
+      await waitMined(detfHash)
+      await finishDeploy(predictedDetf)
     } catch (err) {
       setStatus(parseContractError(err))
     } finally {
@@ -215,15 +181,19 @@ export function DetfDeployPanel({
       <p className="landing-section-label">On-chain create</p>
       <h3 className="mt-2 text-lg font-semibold text-[var(--text-primary,#EDEDED)]">Deploy this DETF</h3>
       <p className="mt-3 text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]">
-        {oneVault || weighted
-          ? 'This sends the create transaction, then wires the reserve hook, bond NFT, and claim token. The DETF stays off until someone bonds.'
-          : 'On-chain create from this page is for one strategy or a weighted mix. Copy the plan for the others.'}
+        This creates the market the DETF sits in, then the DETF. Bond NFT and claim token are
+        wired on create. The DETF stays off until someone bonds.
       </p>
-      {oneVault && !platform.cpDetfPkg ? (
-        <p className="mt-3 text-sm text-[var(--danger,#E6386A)]">No one-strategy DETF create path on this network.</p>
+      {!platform.uniV4DetfPkg ? (
+        <p className="mt-3 text-sm text-[var(--danger,#E6386A)]">
+          No unified DETF create path on this network. Re-export platform addresses after the Uni V4
+          DETF package is deployed.
+        </p>
       ) : null}
-      {weighted && (!platform.weightedDetfPkg || !platform.weightedHookPkg) ? (
-        <p className="mt-3 text-sm text-[var(--danger,#E6386A)]">No weighted DETF create path on this network.</p>
+      {platform.uniV4DetfPkg && !hookPkg ? (
+        <p className="mt-3 text-sm text-[var(--danger,#E6386A)]">
+          No create path on this network for this basket.
+        </p>
       ) : null}
       <div className="mt-5">
         <ActionCta

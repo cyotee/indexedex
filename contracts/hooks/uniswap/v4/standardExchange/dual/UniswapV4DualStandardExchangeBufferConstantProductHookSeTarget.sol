@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {UniswapV4BufferHookLiquidityRouteLib as LiquidityRoute} from "contracts/hooks/uniswap/v4/libs/UniswapV4BufferHookLiquidityRouteLib.sol";
+import {NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {
@@ -41,20 +45,44 @@ import {
 
 /// @title UniswapV4DualStandardExchangeBufferConstantProductHookSeTarget
 /// @notice Role Target for size-split Dual SE CP Buffer hook (Option 1a).
-abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookSeTarget is UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
+abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookSeTarget is UniswapV4DualStandardExchangeBufferConstantProductHookCommon, NativeStandardYieldTarget {
     using SafeERC20 for IERC20;
+
+    function getTokensIn() public view override returns (address[] memory tokens_) {
+        Repo.Layout storage l = Repo._layout();
+        tokens_ = new address[](4);
+        tokens_[0] = l.token0;
+        tokens_[1] = l.token1;
+        tokens_[2] = l.se0;
+        tokens_[3] = l.se1;
+    }
+    function getTokensOut() public view override returns (address[] memory) { return getTokensIn(); }
+    function yieldToken() external pure override returns (address) { return address(0); }
+    function assetInfo() external view override returns (IStandardizedYield.AssetType, address, uint8) {
+        return (IStandardizedYield.AssetType.LIQUIDITY, address(this), 18);
+    }
+    function exchangeRate() external view override returns (uint256) {
+        uint256 supply_ = _supplyAfterProtocolMint();
+        return supply_ == 0 ? 1e18 : FullMath.mulDiv(Math.sqrt(_wadProduct()), 1e18, supply_);
+    }
 
     function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
         external
         view
         returns (uint256 amountOut)
     {
+        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return LiquidityRoute.previewIn(tokenIn, amountIn, tokenOut);
         bool zfo = _routeZeroForOne(address(tokenIn), address(tokenOut));
         return _previewSwapExactIn(zfo, amountIn);
     }
 
 
-    function exchangeIn(
+    function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256 minAmountOut, address recipient, bool pretransferred, uint256 deadline) external returns (uint256 amountOut) {
+        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return LiquidityRoute.exchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
+        return _swapExchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
+    }
+
+    function _swapExchangeIn(
         IERC20 tokenIn,
         uint256 amountIn,
         IERC20 tokenOut,
@@ -62,7 +90,7 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookSeTarget
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external nonReentrant returns (uint256 amountOut) {
+    ) internal nonReentrant returns (uint256 amountOut) {
         _requireDeadline(deadline);
         _requireNonZero(amountIn);
         if (recipient == address(0)) revert ZeroAddress();
@@ -83,12 +111,18 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookSeTarget
         view
         returns (uint256 amountIn)
     {
+        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return LiquidityRoute.previewOut(tokenIn, tokenOut, amountOut);
         bool zfo = _routeZeroForOne(address(tokenIn), address(tokenOut));
         return _previewSwapExactOut(zfo, amountOut);
     }
 
 
-    function exchangeOut(
+    function exchangeOut(IERC20 tokenIn, uint256 maxAmountIn, IERC20 tokenOut, uint256 amountOut, address recipient, bool pretransferred, uint256 deadline) external returns (uint256 amountIn) {
+        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return LiquidityRoute.exchangeOut(tokenIn, maxAmountIn, tokenOut, amountOut, recipient, pretransferred, deadline);
+        return _swapExchangeOut(tokenIn, maxAmountIn, tokenOut, amountOut, recipient, pretransferred, deadline);
+    }
+
+    function _swapExchangeOut(
         IERC20 tokenIn,
         uint256 maxAmountIn,
         IERC20 tokenOut,
@@ -96,7 +130,7 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookSeTarget
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external nonReentrant returns (uint256 amountIn) {
+    ) internal nonReentrant returns (uint256 amountIn) {
         _requireDeadline(deadline);
         _requireNonZero(amountOut);
         if (recipient == address(0)) revert ZeroAddress();

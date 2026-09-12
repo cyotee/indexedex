@@ -17,7 +17,7 @@ import {
 
 /**
  * @notice SingleStandardExchange DETF respects registry kill-switch by address and package.
- * @dev Uses an open-mint DETF (mintThreshold=1) so post-bootstrap exchangeIn is a real success path
+ * @dev Uses a live DETF so post-bootstrap exchangeIn exercises the funded reserve swap
  *      (same pattern as SingleStandardExchangeDETF_Mint_Test).
  */
 contract SingleStandardExchangeDETF_Disable_Test is TestBase_SingleStandardExchangeDETF {
@@ -42,7 +42,7 @@ contract SingleStandardExchangeDETF_Disable_Test is TestBase_SingleStandardExcha
         // Bootstrap reserve so subsequent mints are a live mutation path.
         _bootstrapOpen(alice, 1_000e18);
         assertTrue(openInfo.isReserveLive(), "reserve live after first bond");
-        assertTrue(openInfo.isMintingAllowed(), "minting allowed with open threshold");
+        assertFalse(openInfo.isMintingAllowed(), "primary mint remains gated; live exchange uses swap fallback");
     }
 
     function _deployOpenMintDetf() internal returns (address detf_) {
@@ -63,9 +63,8 @@ contract SingleStandardExchangeDETF_Disable_Test is TestBase_SingleStandardExcha
         require(seShares_ > 0, "need funded SE shares");
         vm.startPrank(user);
         seShare.approve(openDetf, seShares_);
-        out_ = openExchangeIn.exchangeIn(
-            seShare, seShares_, IERC20(openDetf), 0, user, false, block.timestamp + 1 hours
-        );
+        out_ =
+            openExchangeIn.exchangeIn(seShare, seShares_, IERC20(openDetf), 0, user, false, block.timestamp + 1 hours);
         vm.stopPrank();
     }
 

@@ -1,0 +1,17 @@
+{
+  "command": [
+    "forge",
+    "test",
+    "--offline",
+    "--contracts",
+    "contracts/vaults/detf/common/core",
+    "--match-contract",
+    "MixedBufferMultiVaultStableDetf_NestedPush_B_ALL6",
+    "--match-test",
+    "test_T_NEST_1",
+    "-vvvvv"
+  ],
+  "exit_code": 1,
+  "seconds": 7.528,
+  "scope": "One existing failing setup; no source changes after successful main build."
+}

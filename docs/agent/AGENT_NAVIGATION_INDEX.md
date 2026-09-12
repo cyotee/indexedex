@@ -25,11 +25,12 @@ method: cartographer+survey
 
 | Task | Skill / agent | Law / PRD | Map / path |
 |------|---------------|-----------|------------|
-| CREATE3 facet / DFPkg / FactoryService | `crane-deployment`, `crane-architecture` | Crane `AGENTS.md` | `lib/crane/contracts/factories`, `lib/crane/contracts/proxies` |
+| CREATE3 facet / DFPkg / FactoryService | `crane-deployment`, `crane-architecture` | Crane `AGENTS.md`; IndexedEx FactoryServices load `out/` via `ArtifactCreationCode` | `lib/crane/contracts/factories`, `lib/crane/contracts/proxies`; `contracts/utils/foundry/ArtifactCreationCode.sol` |
+| After production contract edits | `indexedex-testing` | Agent law § FactoryService creation bytecode: **`forge build` then `forge test`** (same for `forge script`). `forge test` alone can deploy stale `out/` bytecode | `out/` is load-bearing; `CraneFactoryArtifactSeed.sol` is the Crane compile root |
 | Foundry launch scripts / Anvil / 4663 gas quote | `indexedex-launch-scripts` | 46630 rewrite PRD + plan; 4663 `anvil_robinhood_main` README | `scripts/foundry/anvil_robinhood_testnet/`, `scripts/foundry/anvil_robinhood_main/` |
 | 46630 `platform.json` / tokenlists / UI export | `indexedex-launch-scripts` → `references/frontend-export.md` | Phase 09 writer | `frontend/packages/protocol/src/addresses/chain/46630/`, `addressArtifacts.ts` |
 | Deploy vault or DETF package | `indexedex-testing` (deploy path) | Agent law deploy section | `contracts/manager`, `contracts/registries/vault` — `indexedexManager.deploy*DFPkg` / registry, then package `deployVault` |
-| Write hermetic Foundry tests | `crane-testing` → `indexedex-testing` | Agent law testing matrix | `contracts/test/IndexedexTest.sol`, package `TestBase_*`, `test/foundry/` |
+| Write hermetic Foundry tests | `crane-testing` → `indexedex-testing` | Agent law testing matrix + § FactoryService creation bytecode (`forge build` then `forge test`) | `contracts/test/IndexedexTest.sol`, package `TestBase_*`, `test/foundry/` |
 | Adversarial / donation / reentrancy | `crane-adversarial-testing`, `indexedex-adversarial-testing` (catalog A–K + A0/L/M/N/O) | Agent law | DETF/SE package tests co-located or under `test/foundry/` |
 | DeFiHackLabs / incident-driven security | `defi-incident-patterns` | `docs/agent/DEFI_HACKLABS_SKILLS_IMPLEMENTATION_PLAN.md` | `lib/DeFiHackLabs` (submodule; reference only) |
 | Test coverage audit (reports only) | `docs/testing/TEST_COVERAGE_AUDIT_PRD.md` | skills DoD + catalog A–K | Outputs under `docs/testing/coverage-audit/`; feeds gap-closure implementation plan |
@@ -58,7 +59,7 @@ method: cartographer+survey
 
 ## Deploy path (canonical)
 
-1. **Facets:** CREATE3 + `*FactoryService` / `create3Factory` (Crane).
+1. **Facets:** CREATE3 + `*FactoryService` / `create3Factory` (Crane). IndexedEx FactoryServices read initcode from `out/` — `forge build` before `forge test` / `forge script` after production edits.
 2. **Vault / DETF DFPkgs:** `vm.prank(owner); indexedexManager.deploy*DFPkg(...)` then package `deployVault` / vault registry — never bypass with bare `diamondPackageFactory.deploy` for registered vault packages.
 3. **`PkgInit` / `PkgArgs`:** on the **interface**, not the implementation contract.
 4. **Hooks (V4 diamond packages):** package → Vault Registry → hook factory (`deployHookVault` path); skill `indexedex-uniswap-v4-hook-packages`.

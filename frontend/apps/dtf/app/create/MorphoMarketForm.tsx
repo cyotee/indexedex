@@ -1,10 +1,11 @@
 'use client'
 
+import { useConnectModal } from '@rainbow-me/rainbowkit'
+
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { decodeEventLog, type Address } from 'viem'
 import {
   useAccount,
-  useConnect,
   useReadContract,
   useSwitchChain,
   useWriteContract,
@@ -69,7 +70,7 @@ export function MorphoMarketForm({
 }) {
   const { selectedChainId } = useSelectedNetwork()
   const { environment } = useDeploymentEnvironment()
-  const { connect, connectors } = useConnect()
+  const { openConnectModal } = useConnectModal()
   const { switchChainAsync } = useSwitchChain()
   const { writeContractAsync } = useWriteContract()
   const { address, isConnected, chainId: walletChainId, connector } = useAccount()
@@ -256,13 +257,7 @@ export function MorphoMarketForm({
     marketExists && (httpVaults.length === 0 || deployAnother)
   const showPickExisting = marketExists && httpVaults.length > 0 && !deployAnother
 
-  const connectWallet = () => {
-    const next =
-      connectors.find((c) => c.id === 'metaMask' || c.id === 'metaMaskSDK') ??
-      connectors.find((c) => c.id === 'injected') ??
-      connectors[0]
-    if (next) connect({ connector: next })
-  }
+  const connectWallet = () => openConnectModal?.()
 
   const writeOnWallet = async (writeParams: Parameters<typeof writeContractAsync>[0]) => {
     if (

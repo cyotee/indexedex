@@ -1,4 +1,8 @@
 export const tokenStakingAbi = [
+  ...(['claimVault', 'targetDetf'] as const).map((name) => ({
+    type: 'function' as const, name, stateMutability: 'view' as const,
+    inputs: [], outputs: [{ type: 'address' as const }],
+  })),
   {
     type: 'function',
     name: 'stakingToken',

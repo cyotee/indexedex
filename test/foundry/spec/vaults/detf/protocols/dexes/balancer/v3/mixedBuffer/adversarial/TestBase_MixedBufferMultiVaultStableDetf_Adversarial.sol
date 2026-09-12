@@ -1,10 +1,16 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
-import {MockERC20} from "@crane/contracts/test/mocks/MockERC20.sol";
+import {HostileReentrantShare, HostileReentrantShareDecimals} from "contracts/test/adversarial/HostileReentrantShare.sol";
+import {IPool} from "@crane/contracts/interfaces/protocols/dexes/aerodrome/IPool.sol";
+import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
+import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
+import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
+import {DETFFundedStakingMath as Math} from "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {DetfReentryTarget} from "contracts/test/adversarial/DetfReentryTarget.sol";
@@ -20,206 +26,115 @@ import {
 import {
     IMixedBufferMultiVaultStableDetfInfo
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfInfoTarget.sol";
-import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
-
-/// @dev Hostile vault share that is a 1:1 buffer wrapper SE (accept+produce buffer for MixedBuffer).
-///      transferFrom re-enters DETF then ALWAYS completes transfer so probe state persists.
-contract AdvHostileBufferShareSE is MockERC20, IStandardExchange {
-    IERC20 public immutable bufferToken;
-    address public target;
-    bytes public reentryCall;
-    bool public armed;
-    uint256 private _depth;
-
-    uint256 public reentryAttempts;
-    bool public nestedCallSucceeded;
-    bytes4 public nestedErrorSelector;
-
-    constructor(IERC20 buffer_) MockERC20("AdvHostileShareSE", "AHSE", 18) {
-        bufferToken = buffer_;
-    }
-
-    function arm(address target_, bytes memory reentryCall_) external {
-        target = target_;
-        reentryCall = reentryCall_;
-        armed = true;
-        reentryAttempts = 0;
-        nestedCallSucceeded = false;
-        nestedErrorSelector = bytes4(0);
-    }
-
-    function disarm() external {
-        armed = false;
-    }
-
-    function transferFrom(address from_, address to_, uint256 value_) public override returns (bool) {
-        if (armed && _depth == 0) {
-            _depth = 1;
-            unchecked {
-                ++reentryAttempts;
-            }
-            (bool ok_, bytes memory ret_) = target.call(reentryCall);
-            nestedCallSucceeded = ok_;
-            if (!ok_ && ret_.length >= 4) {
-                bytes4 sel;
-                assembly {
-                    sel := mload(add(ret_, 0x20))
-                }
-                nestedErrorSelector = sel;
-            }
-            _depth = 0;
-        }
-        return super.transferFrom(from_, to_, value_);
-    }
-
-    function vaultTokens() external view returns (address[] memory toks) {
-        toks = new address[](2);
-        toks[0] = address(bufferToken);
-        toks[1] = address(this);
-    }
-
-    function previewExchangeIn(IERC20 tokenIn_, uint256 amountIn_, IERC20 tokenOut_)
-        external
-        view
-        returns (uint256)
-    {
-        if (amountIn_ == 0) return 0;
-        if (address(tokenIn_) == address(bufferToken) && address(tokenOut_) == address(this)) return amountIn_;
-        if (address(tokenIn_) == address(this) && address(tokenOut_) == address(bufferToken)) return amountIn_;
-        return 0;
-    }
-
-    function previewExchangeOut(IERC20 tokenIn_, IERC20 tokenOut_, uint256 amountOut_)
-        external
-        view
-        returns (uint256)
-    {
-        if (amountOut_ == 0) return 0;
-        if (address(tokenIn_) == address(this) && address(tokenOut_) == address(bufferToken)) return amountOut_;
-        if (address(tokenIn_) == address(bufferToken) && address(tokenOut_) == address(this)) return amountOut_;
-        return 0;
-    }
-
-    function exchangeIn(
-        IERC20 tokenIn_,
-        uint256 amountIn_,
-        IERC20 tokenOut_,
-        uint256 minAmountOut_,
-        address recipient_,
-        bool pretransferred_,
-        uint256 /* deadline_ */
-    ) external returns (uint256 amountOut_) {
-        if (recipient_ == address(0)) recipient_ = msg.sender;
-        if (address(tokenIn_) == address(bufferToken) && address(tokenOut_) == address(this)) {
-            if (!pretransferred_) {
-                bufferToken.transferFrom(msg.sender, address(this), amountIn_);
-            }
-            _mint(recipient_, amountIn_);
-            amountOut_ = amountIn_;
-        } else if (address(tokenIn_) == address(this) && address(tokenOut_) == address(bufferToken)) {
-            if (!pretransferred_) {
-                transferFrom(msg.sender, address(this), amountIn_);
-            }
-            _burn(address(this), amountIn_);
-            bufferToken.transfer(recipient_, amountIn_);
-            amountOut_ = amountIn_;
-        } else {
-            revert("AdvHostileSE: route");
-        }
-        require(amountOut_ >= minAmountOut_, "min");
-    }
-
-    function exchangeOut(
-        IERC20 /* tokenIn_ */,
-        uint256 /* maxAmountIn_ */,
-        IERC20 /* tokenOut_ */,
-        uint256 /* amountOut_ */,
-        address /* recipient_ */,
-        bool /* pretransferred_ */,
-        uint256 /* deadline_ */
-    ) external pure returns (uint256) {
-        revert("AdvHostileSE: exactOut");
-    }
-}
 
 /// @title TestBase_MixedBufferMultiVaultStableDetf_Adversarial
-/// @notice Production MixedBuffer DETF + hostile share harness (WP-ADV-DETF-MB-001 A–H residual).
+/// @notice Production MixedBuffer DETF + real SE with a hostile underlying ERC20 (WP-ADV-DETF-MB-001 A–H residual).
 /// @dev I CODE (I1–I3 trust-flag / secure pull) lives in Adversarial_MixedBuffer_TrustFlag.t.sol.
 abstract contract TestBase_MixedBufferMultiVaultStableDetf_Adversarial is TestBase_MixedBufferMultiVaultStableDetf {
     address internal attacker;
     address internal victim;
 
-    AdvHostileBufferShareSE internal hostileShare;
+    HostileReentrantShare internal hostileBuffer;
+    IStandardExchangeProxy internal hostileVault;
     DetfReentryTarget internal reentryTarget;
 
     function setUp() public virtual override {
         super.setUp();
-        attacker = makeAddr("attacker");
-        victim = makeAddr("victim");
-        hostileShare = new AdvHostileBufferShareSE(IERC20(address(dai)));
+        attacker = makeAddr("attacker"); victim = makeAddr("victim");
+        hostileBuffer = new HostileReentrantShareDecimals(IERC20Metadata(address(_fixtureBufferToken())).decimals());
         reentryTarget = new DetfReentryTarget();
-        // Seed hostile share inventory + buffer inventory for 1:1 wrapper SE.
-        _fundBuffer(address(hostileShare), 12_000_000e18);
-        hostileShare.mint(attacker, 2_000_000e18);
-        hostileShare.mint(victim, 2_000_000e18);
-        hostileShare.mint(alice, 2_000_000e18);
-        hostileShare.mint(bob, 2_000_000e18);
     }
+
 
     function _bufferOf(address instance_) internal view returns (IERC20) {
         return IERC20(IMixedBufferMultiVaultStableDetfInfo(instance_).bufferToken());
     }
 
-    function _openLiveOpenThreshold() internal returns (address instance_) {
-        instance_ = _deployOpenThresholdDetfN(1);
+    function _openLiveGated() internal returns (address instance_) {
+        instance_ = _deployDetfN(1, 100e18, 0.1e18);
         _bootstrapDefault(instance_, alice);
         _assertLive(instance_);
     }
 
-    function _openLiveOpenThresholdN(uint8 n) internal returns (address instance_) {
-        instance_ = _deployOpenThresholdDetfN(n);
+    function _openLiveGatedN(uint8 n) internal returns (address instance_) {
+        instance_ = _deployDetfN(n, 100e18, 0.1e18);
         _bootstrapDefault(instance_, alice);
         _assertLive(instance_);
     }
 
-    /// @dev Deploy MixedBuffer DETF with hostile share as sole SE leg (Open thresholds).
-    function _deployHostileShareDetf() internal returns (address instance_) {
-        IMixedBufferMultiVaultStableDetfDFPkg.PkgArgs memory args;
-        args.name = "Adv Hostile MBMV";
-        args.symbol = "advHMB";
-        args.bufferToken = IERC20(address(dai));
-        args.standardExchangeVaults = new IStandardExchange[](1);
-        args.vaultShareRateProviders = new IRateProvider[](1);
-        args.standardExchangeVaults[0] = IStandardExchange(address(hostileShare));
-        args.amplificationParameter = MBMVS_AMP;
-        args.mintThreshold = 0;
-        args.burnThreshold = 0;
-        args.thresholdMode = ThresholdMode.Open;
+    /// @dev The SE leg is deployed by the registered production Aerodrome package.
+    function _deployHostileBufferDetf() internal returns (address instance_) {
+        address pool_ = aerodromePoolFactory.createPool(address(hostileBuffer), address(_fixtureBufferToken()), false);
+        uint256 seed_ = AERODROME_POOL_INIT_AMOUNT;
+        hostileBuffer.mint(address(this), seed_); _fundBuffer(address(this), seed_);
+        hostileBuffer.approve(address(aerodromeRouter), seed_); _fixtureBufferToken().approve(address(aerodromeRouter), seed_);
+        aerodromeRouter.addLiquidity(address(hostileBuffer), address(_fixtureBufferToken()), false, seed_, seed_, 1, 1, address(this), block.timestamp);
+        hostileVault = IStandardExchangeProxy(aerodromeStandardExchangeDFPkg.deployVault(IPool(pool_)));
+        IMixedBufferMultiVaultStableDetfDFPkg.PkgArgs memory args = _buildPkgArgs(1, 100e18, 0.1e18);
+        args.name = "Hostile underlying Mixed Buffer DETF";
+        args.symbol = "DETF";
+        args.bufferToken = IERC20(address(hostileBuffer));
+        args.standardExchangeVaults[0] = IStandardExchange(address(hostileVault));
+        instance_ = _deployWithArgs(args);
+    }
 
-        vm.startPrank(owner);
-        instance_ = indexedexManager.deployVault(
-            IStandardVaultPkg(address(mixedBufferDetfPkg)), abi.encode(args)
-        );
+    function _fundHostileVaultShares(address user_, uint256 amount_) internal returns (uint256 shares_) {
+        hostileBuffer.mint(user_, amount_); _fundBuffer(user_, amount_);
+        vm.startPrank(user_);
+        hostileBuffer.approve(address(aerodromeRouter), amount_); _fixtureBufferToken().approve(address(aerodromeRouter), amount_);
+        (,, uint256 lp_) = aerodromeRouter.addLiquidity(address(hostileBuffer), address(_fixtureBufferToken()), false, amount_, amount_, 1, 1, user_, block.timestamp);
+        IERC20(hostileVault.asset()).approve(address(hostileVault), lp_);
+        shares_ = hostileVault.deposit(lp_, user_);
         vm.stopPrank();
+        assertGt(shares_, 0);
     }
 
-    function _bootstrapHostile(address instance_, address user, uint256 bufferAmt_, uint256 shareAmt_)
-        internal
-        returns (uint256 tokenId_)
+
+    function _bootstrapHostile(address instance_, address user_, uint256 bufferAmt_, uint256 shareFunding_)
+        internal returns (uint256 tokenId_)
     {
         uint256[] memory shares_ = new uint256[](1);
-        shares_[0] = shareAmt_;
-        _fundBuffer(user, bufferAmt_);
-        // user already has hostile shares from setUp mint
-        vm.startPrank(user);
-        IERC20(address(dai)).approve(instance_, bufferAmt_);
-        hostileShare.approve(instance_, shareAmt_);
+        shares_[0] = _fundHostileVaultShares(user_, shareFunding_);
+        hostileBuffer.mint(user_, bufferAmt_);
+        vm.startPrank(user_);
+        hostileBuffer.approve(instance_, bufferAmt_); hostileVault.approve(instance_, shares_[0]);
         (tokenId_,,) = IMixedBufferMultiVaultStableDetfBonding(instance_).bootstrapFirstBond(
-            bufferAmt_, shares_, DEFAULT_MIN_LOCK, user, block.timestamp + 1 hours
-        );
+            bufferAmt_, shares_, DEFAULT_MIN_LOCK, user_, block.timestamp);
         vm.stopPrank();
-        require(IMixedBufferMultiVaultStableDetfInfo(instance_).isReserveLive(), "hostile live");
+        _assertLive(instance_);
     }
+
+    function _executeHostileMint(address instance_, address user_, uint256 amount_) internal returns (uint256 paid_) {
+        hostileBuffer.mint(user_, amount_);
+        IStandardExchangeIn exchange_ = IStandardExchangeIn(instance_);
+        uint256 quote_ = exchange_.previewExchangeIn(IERC20(address(hostileBuffer)), amount_, IERC20(instance_));
+        uint256 rawBefore_ = IERC20(instance_).balanceOf(user_);
+        uint256 inputBefore_ = hostileBuffer.balanceOf(user_);
+        vm.startPrank(user_); hostileBuffer.approve(instance_, amount_);
+        paid_ = exchange_.exchangeIn(IERC20(address(hostileBuffer)), amount_, IERC20(instance_), quote_, user_, false, block.timestamp);
+        vm.stopPrank();
+        assertGt(paid_, 0); assertEq(paid_, quote_);
+        assertEq(IERC20(instance_).balanceOf(user_), rawBefore_ + paid_);
+        assertEq(hostileBuffer.balanceOf(user_), inputBefore_ - amount_);
+    }
+
+    function _fundedNft(address instance_) internal view returns (IDetfBondNFT) {
+        return IDetfBondNFT(IMixedBufferMultiVaultStableDetfInfo(instance_).bondNftVault());
+    }
+
+    function _matureClaim(address instance_, uint256 id_, address user_) internal returns (IStakedDETF staking_) {
+        IDetfBondNFT nft_ = _fundedNft(instance_);
+        Math.BondPosition memory position_ = nft_.positionOf(id_);
+        vm.warp(position_.startTimestamp + position_.vestingDuration);
+        staking_ = IStakedDETF(_claimOf(instance_));
+        uint256 before_ = staking_.balanceOf(user_);
+        uint256 lpBefore_ = nft_.lpToken().balanceOf(address(nft_));
+        vm.prank(user_); (uint256 p_, uint256 r_) = nft_.claimBond(id_, user_);
+        assertEq(p_, position_.principal - position_.claimedPrincipal);
+        assertEq(staking_.balanceOf(user_), before_ + p_ + r_);
+        assertEq(nft_.lpToken().balanceOf(address(nft_)), lpBefore_);
+    }
+
 
     function _claimOf(address instance_) internal view returns (address) {
         return IMixedBufferMultiVaultStableDetfInfo(instance_).rebasingClaimToken();
@@ -231,15 +146,14 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf_Adversarial is TestBa
         IMixedBufferMultiVaultStableDetfDFPkg.PkgArgs memory outerArgs;
         outerArgs.name = "Adv Outer MBMV Nested";
         outerArgs.symbol = "advOMV";
-        outerArgs.bufferToken = IERC20(address(dai));
+        outerArgs.bufferToken = IERC20(address(_fixtureBufferToken()));
         outerArgs.standardExchangeVaults = new IStandardExchange[](2);
         outerArgs.vaultShareRateProviders = new IRateProvider[](2);
         outerArgs.standardExchangeVaults[0] = IStandardExchange(nested_);
         outerArgs.standardExchangeVaults[1] = IStandardExchange(address(seVaults[1]));
         outerArgs.amplificationParameter = MBMVS_AMP;
-        outerArgs.mintThreshold = 0;
-        outerArgs.burnThreshold = 0;
-        outerArgs.thresholdMode = ThresholdMode.Open;
+        outerArgs.mintThreshold = 100e18;
+        outerArgs.burnThreshold = 0.1e18;
 
         vm.startPrank(owner);
         outer_ = indexedexManager.deployVault(
@@ -249,12 +163,12 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf_Adversarial is TestBa
     }
 
     function _bootstrapOuterWithNested(address outer_, address nested_, address user) internal {
-        uint256 nestedShares_ = _mintDetfFromBuffer(nested_, user, 400e18);
+        uint256 nestedShares_ = _mintDetfFromBuffer(nested_, user, _fixtureAmount(400e18));
         nestedShares_ += _mintDetfFromVaultShare(nested_, 0, user, 200e18);
-        require(nestedShares_ > 50e18, "nested shares for bootstrap");
+        require(nestedShares_ > 50e9, "nested shares for bootstrap");
 
         uint256 se1Shares_ = _fundVaultShares(1, user, 500e18);
-        _fundBuffer(user, BOOTSTRAP_BUFFER);
+        _fundBuffer(user, _fixtureAmount(BOOTSTRAP_BUFFER));
 
         uint256[] memory amts_ = new uint256[](2);
         amts_[0] = nestedShares_;
@@ -263,9 +177,9 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf_Adversarial is TestBa
         vm.startPrank(user);
         IERC20(nested_).approve(outer_, nestedShares_);
         seShares[1].approve(outer_, se1Shares_);
-        IERC20(address(dai)).approve(outer_, BOOTSTRAP_BUFFER);
+        IERC20(address(_fixtureBufferToken())).approve(outer_, _fixtureAmount(BOOTSTRAP_BUFFER));
         IMixedBufferMultiVaultStableDetfBonding(outer_).bootstrapFirstBond(
-            BOOTSTRAP_BUFFER, amts_, DEFAULT_MIN_LOCK, user, block.timestamp + 1 hours
+            _fixtureAmount(BOOTSTRAP_BUFFER), amts_, DEFAULT_MIN_LOCK, user, block.timestamp + 1 hours
         );
         vm.stopPrank();
         _assertLive(outer_);

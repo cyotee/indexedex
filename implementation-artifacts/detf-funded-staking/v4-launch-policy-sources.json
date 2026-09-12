@@ -1,0 +1,27 @@
+[
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/UniswapV4DetfHookPremineLib.sol",
+    "before_sha256": "daaa505f33f021c8c6af4d71124d03d756a92368f612625971c39f20248bef70",
+    "after_sha256": "afa7f3614522ddfa5d65d33a629ea598b59da3302577668368c39d7f2f4417d4"
+  },
+  {
+    "path": "scripts/foundry/anvil_robinhood_fee_detf/Script_09_DeployChirInstance.s.sol",
+    "before_sha256": "c2be8a1bbc287d9ea9858b97609fef243ec613caf3108b50144cbb2fd24192b5",
+    "after_sha256": "7d842053f9a660bde2b6be78b61c3335553fe6d731f3390dd1f1633ca78f6e15"
+  },
+  {
+    "path": "scripts/foundry/anvil_robinhood_testnet/ProtocolDetfInstanceLib.sol",
+    "before_sha256": "f2df7e66df8f4f1a67fca885ea287122e71aef41001be52a24ce3fd81f4e1feb",
+    "after_sha256": "14de96522b727e57f98c40fe65c0844b04764e991ebabb1b35c0a205ab99d6a3"
+  },
+  {
+    "path": "test/foundry/spec/fee/collector/FeeCollectorManagerFacet_IFacet.t.sol",
+    "before_sha256": "80bd76dcac0b273b128885ce53f3e74564574255d81c601286f68781b53e06ad",
+    "after_sha256": "128ad816a12e655a3879319e3b9f8183f35dc4e845a3cdfcaac1e67b76dab113"
+  },
+  {
+    "path": "test/foundry/spec/fee/collector/FeeCollectorProxy_Selectors.t.sol",
+    "before_sha256": "7bb25edf87e76b3f044bf45057d8499f563b77a591ea9056e83e6988a0cc83d8",
+    "after_sha256": "a700d7a517081fe56147d2d2d953241f7b0bb47e87e2b2bb13d9c73ba6bf0673"
+  }
+]

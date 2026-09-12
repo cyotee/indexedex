@@ -1,0 +1,21 @@
+{
+  "status": "DRAFT_TYPECHECK_ONLY_NOT_RUNTIME_VALIDATION",
+  "seconds": 21.317,
+  "prepared_records": [
+    "balancer-se-fixture-followups-prepared.json"
+  ],
+  "exit_code": 0,
+  "errors": [],
+  "concrete_suites": {
+    "WrappedStandardExchangeRateProvider_Test": 3,
+    "CommonBufferMultiVault_RoutingAndWalk_B_P6_R9": 5,
+    "MixedLegWeightedBufferPool_B_ALL6": 16,
+    "MixedLeg_P4_Smoke_B_P18_R6": 5,
+    "MultiPairBuffer_CrossPair_B_P6_R9": 8,
+    "MultiPairStandardExchangeBufferPool_B_ALL6": 12
+  },
+  "compiled_methods": 49,
+  "compiler_input_sha256": "68d28daa6acca5483581abb90be67bf6607f221de2c324901510e3771e0992c9",
+  "validation_passed": true,
+  "canonical_sources_unchanged": true
+}

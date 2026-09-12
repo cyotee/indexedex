@@ -1,0 +1,813 @@
+{
+  "status": "applied; build and native security validation pending",
+  "rows": [
+    {
+      "source": "contracts/test/adversarial/HostileReentrantShare.sol",
+      "before_sha256": "5c4e3b9bea25637c79adaf79402efa920391c8f2c1bb14e8cc6d4c5ed22c54cb",
+      "after_sha256": "bc487e9f1af11371a71d5eabc1467224d1119b4376d122740f0d8ae596237b92",
+      "before_lines": 69,
+      "after_lines": 78
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/adversarial/TestBase_MixedBufferMultiVaultStableDetf_Adversarial.sol",
+      "before_sha256": "81bde05b0fa94e4ec8dbde5931ea37d2a3a25215b4c6f8c6f0ae433d16efd706",
+      "after_sha256": "bd3ba6152394d7471457f99d8a835721613652a32c1d3fa6f7828824c8543d74",
+      "before_lines": 186,
+      "after_lines": 187,
+      "note": "Registered real Aerodrome SE retained; hostile underlying and ordinary legs use the selected native precision."
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_ReserveDonation.t.sol",
+      "before_sha256": "390e852c0702050a4f8cfea7562ea1ed15b25e41c6c6331d8aad7bbf6c615170",
+      "after_sha256": "2991408298300d4e519f9fd8203f8719a4bb0de204d698bd0a3f0247c8bbf61e",
+      "before_lines": 255,
+      "after_lines": 255
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_PriceShift.t.sol",
+      "before_sha256": "663651836455129272b20001d659bda772e67ba71853ee10594b9d69cb55eea4",
+      "after_sha256": "6ec8570f7ef560ffd95e599cba1b83db74affbc833dd432865b7cc3dcf78dff2",
+      "before_lines": 129,
+      "after_lines": 129
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_Routes.t.sol",
+      "before_sha256": "4cfb268eabaab129c4259bb18e12314b63d198e549cfa620a69e4771f660f9a4",
+      "after_sha256": "af77e77784193d1dbd07944900675bca056d992ecf69d9c97e95ddc2f81941df",
+      "before_lines": 66,
+      "after_lines": 66
+    },
+    {
+      "source": "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/TestBase_MixedBufferMultiVaultStableDetf_Decimals.sol",
+      "before_sha256": "2f785d7d2b233b9fd6acdabcf5a2ef68f7f38554e568355c55da38f2fca269bb",
+      "after_sha256": "55adcfc3374bda76487f26f4722301c259b584d5edfc64c031df3fdd8b32534c",
+      "before_lines": 133,
+      "after_lines": 120,
+      "note": "Remove the unused duplicate external-LP funding helper; retain the actual LP-purchase test and canonical real Router funding."
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_ReserveDonation_Decimals.sol",
+      "before_sha256": "8476349e78c4c5c4f72437d7a679344d78ca2ef14e3d9169b7480f4499e2bd1a",
+      "after_sha256": "b85c4c019ae07155a435411a80299e8092157d1b06c729e85f23f197b2d849bf",
+      "before_lines": 466,
+      "after_lines": 26,
+      "canonical_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_ReserveDonation.t.sol",
+      "old_tests": [
+        "test_N1_donate_pairToken_credits_id0",
+        "test_N2_donate_vaultShare_credits_id0",
+        "test_N3_donate_lpToken_thisCallInboundOnly",
+        "test_N4_donate_detf_selfLeg_noMint",
+        "test_N5_inert_reverts",
+        "test_N6_twoBonders_navUnchanged",
+        "test_N7_idetf_forwarder_donorIsCollector",
+        "test_N8_joinDonatedCapital_eoaReverts",
+        "test_N9_pretransferred_noSurplus_reverts",
+        "test_N10_previewEqualsExecute",
+        "test_N11_publicJoin_nA_donateStillWorks",
+        "test_N12_donate_doesNotRealizeExpansion",
+        "test_N13_burn_afterDonate_usesDonatedLp",
+        "test_N15_n10_userConvertUnchanged",
+        "test_N16_lastClose_thenDonate_nextBondDoesNotCapture",
+        "test_N17_d2_ids12_effectiveShares",
+        "test_N18_disabled_donateReverts_closeWorks",
+        "test_N19_permit2_allowance",
+        "test_N20_permit2_signature",
+        "test_N21_d2_afterDonate"
+      ],
+      "shared_tests": [
+        "test_N1_donate_pairToken_addsProtocolLp",
+        "test_N2_donate_vaultShare_addsProtocolLp",
+        "test_N3_donate_lpToken_thisCallInboundOnly",
+        "test_N4_donate_detf_selfLeg_noMint",
+        "test_N5_inert_reverts",
+        "test_N6_twoBonders_fundedClaimsUnchanged",
+        "test_N7_idetf_forwarder_donorIsCollector",
+        "test_N8_joinDonatedCapital_eoaReverts",
+        "test_N9_pretransferred_noSurplus_reverts",
+        "test_N10_previewAndMinimumMatchExecute",
+        "test_N11_publicJoinPreservesDonations",
+        "test_N12_donate_doesNotRealizeExpansion",
+        "test_N13_burn_afterDonate_usesDonatedLp",
+        "test_N15_donate_preservesClaimPreview",
+        "test_N16_finalClaims_thenDonate_nextBondOnlyReceivesPurchasedPrincipal",
+        "test_N17_reservedRolesHaveStandingWeightsAndNoPrincipal",
+        "test_N18_disabled_donateReverts_claimWorks",
+        "test_N19_permit2_allowance",
+        "test_N20_permit2_signature",
+        "test_N21_donateDoesNotTopUpStandingWeights"
+      ],
+      "mapping": [
+        {
+          "old_test": "test_N1_donate_pairToken_credits_id0",
+          "funded_test": "test_N1_donate_pairToken_addsProtocolLp",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_N2_donate_vaultShare_credits_id0",
+          "funded_test": "test_N2_donate_vaultShare_addsProtocolLp",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_N3_donate_lpToken_thisCallInboundOnly",
+          "funded_test": "test_N3_donate_lpToken_thisCallInboundOnly",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_N4_donate_detf_selfLeg_noMint",
+          "funded_test": "test_N4_donate_detf_selfLeg_noMint",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_N5_inert_reverts",
+          "funded_test": "test_N5_inert_reverts",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_N6_twoBonders_navUnchanged",
+          "funded_test": "test_N6_twoBonders_fundedClaimsUnchanged",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_N7_idetf_forwarder_donorIsCollector",
+          "funded_test": "test_N7_idetf_forwarder_donorIsCollector",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_N8_joinDonatedCapital_eoaReverts",
+          "funded_test": "test_N8_joinDonatedCapital_eoaReverts",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_N9_pretransferred_noSurplus_reverts",
+          "funded_test": "test_N9_pretransferred_noSurplus_reverts",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_N10_previewEqualsExecute",
+          "funded_test": "test_N10_previewAndMinimumMatchExecute",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_N11_publicJoin_nA_donateStillWorks",
+          "funded_test": "test_N11_publicJoinPreservesDonations",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_N12_donate_doesNotRealizeExpansion",
+          "funded_test": "test_N12_donate_doesNotRealizeExpansion",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_N13_burn_afterDonate_usesDonatedLp",
+          "funded_test": "test_N13_burn_afterDonate_usesDonatedLp",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_N15_n10_userConvertUnchanged",
+          "funded_test": "test_N15_donate_preservesClaimPreview",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_N16_lastClose_thenDonate_nextBondDoesNotCapture",
+          "funded_test": "test_N16_finalClaims_thenDonate_nextBondOnlyReceivesPurchasedPrincipal",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_N17_d2_ids12_effectiveShares",
+          "funded_test": "test_N17_reservedRolesHaveStandingWeightsAndNoPrincipal",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_N18_disabled_donateReverts_closeWorks",
+          "funded_test": "test_N18_disabled_donateReverts_claimWorks",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_N19_permit2_allowance",
+          "funded_test": "test_N19_permit2_allowance",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_N20_permit2_signature",
+          "funded_test": "test_N20_permit2_signature",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_N21_d2_afterDonate",
+          "funded_test": "test_N21_donateDoesNotTopUpStandingWeights",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        }
+      ]
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Reentrancy_Decimals.sol",
+      "before_sha256": "15cb29eb844f5999993c1fa009508f7e749ddba465828098c986d8a8bb8f2397",
+      "after_sha256": "b12b1a8c1f9dc8e8cfe1d80ddd1dbbde2c4da11b1c2ae648cc1bec566a44cc28",
+      "before_lines": 301,
+      "after_lines": 26,
+      "canonical_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_Reentrancy.t.sol",
+      "old_tests": [
+        "test_control_path_mint_succeeds",
+        "test_reentrancy_mintSharePath_nestedHitsIsLocked",
+        "test_reentrancy_crossFunction_bond_nestedHitsIsLocked"
+      ],
+      "shared_tests": [
+        "test_control_path_mint_succeeds",
+        "test_reentrancy_mintBufferPath_nestedHitsIsLocked",
+        "test_reentrancy_crossFunction_bond_nestedHitsIsLocked",
+        "test_primaryMint_controlFundsRewardsAndLiquidity",
+        "test_primaryMint_nestedExchangeHitsIsLocked",
+        "test_primaryMint_nestedBondHitsIsLocked"
+      ],
+      "mapping": [
+        {
+          "old_test": "test_control_path_mint_succeeds",
+          "funded_test": "test_control_path_mint_succeeds",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_reentrancy_mintSharePath_nestedHitsIsLocked",
+          "funded_test": "test_reentrancy_mintBufferPath_nestedHitsIsLocked",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_reentrancy_crossFunction_bond_nestedHitsIsLocked",
+          "funded_test": "test_reentrancy_crossFunction_bond_nestedHitsIsLocked",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        }
+      ]
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/TestBase_MixedBufferMultiVaultStableDetf_Adversarial_Decimals.sol",
+      "before_sha256": "21d723b44219d4f8e2f84a2f55ce43ce50c8ac2043242fead0b39522022492a2",
+      "after_sha256": "de38c90f42fbd7c517849f1b9173218dec579decc5a97e4b37e87ba5d3a6b35a",
+      "before_lines": 273,
+      "after_lines": 26,
+      "canonical_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/adversarial/TestBase_MixedBufferMultiVaultStableDetf_Adversarial.sol",
+      "old_tests": [],
+      "shared_tests": [],
+      "mapping": []
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/Adversarial_MixedBuffer_P0_Decimals.sol",
+      "before_sha256": "b5aa7a0365c2027d6484a34d1c5ac24b28174c9a5fba167d651b9b36e39e38a3",
+      "after_sha256": "b12af32e10b8ab80cef83c2992e32b3b4506890764ffc6354d14cb65b47b2562",
+      "before_lines": 581,
+      "after_lines": 27,
+      "canonical_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/adversarial/Adversarial_MixedBuffer_P0.t.sol",
+      "old_tests": [
+        "test_E5_zeroAmount_reverts",
+        "test_E5_expiredDeadline_reverts",
+        "test_H3_minOutTooHigh_leavesNoInventory",
+        "test_preLive_mint_reverts",
+        "test_A1_donateBuffer_cannotMintFreeDetf",
+        "test_A1_donateVaultShares_cannotMintFreeDetf",
+        "test_A2_donateDetfToDiamond_noTheft",
+        "test_A3_D2_redeemWithoutClaim_noBptDrain",
+        "test_D2_sellPosition_nonOwner_reverts",
+        "test_D3_doubleSell_secondReverts",
+        "test_D3_doubleRedeem_overClaim_reverts",
+        "test_D5_lockClamp_minRevert_maxOk",
+        "test_D6_redeemBoundedByClaimAndInventory",
+        "test_F2_bondNftVault_createPosition_onlyOwner",
+        "test_F3_claim_mintFromNFTSale_onlyOwner",
+        "test_F3_claim_burnShares_onlyOwner",
+        "test_F1_diamondCut_notCallableByAttacker",
+        "test_F4_noSetWeightsOrThresholds",
+        "test_C1_reenterBond_duringBootstrap_hitsIsLocked",
+        "test_C2_reenterExchangeIn_duringMint_hitsIsLocked",
+        "test_C3_mintReenterBond_hitsIsLocked",
+        "test_E1_mintThenPartialBurn_conservation",
+        "test_E4_holderBalance_notDilutedByOthersMint",
+        "test_B3_thresholdGates_coupleToSynthetic",
+        "test_B1_openThresholds_mintBurn_boundsSafety",
+        "test_H2_redeemClaim_minOutFail_claimUnchanged",
+        "test_G1_outerActivity_doesNotBrickInner"
+      ],
+      "shared_tests": [
+        "test_E5_zeroAmount_reverts",
+        "test_E5_expiredDeadline_reverts",
+        "test_H3_minOutTooHigh_leavesNoInventory",
+        "test_preLive_mint_reverts",
+        "test_A1_donateBuffer_cannotMintFreeDetf",
+        "test_A1_donateVaultShares_cannotMintFreeDetf",
+        "test_A2_donateDetfToDiamond_noTheft",
+        "test_A3_D2_unstakeWithoutReceipt_noBptOrBackingDrain",
+        "test_D2_claimBond_nonOwner_reverts",
+        "test_D3_finalClaim_cannotPayTwice",
+        "test_D3_unstake_overRemainingReceipt_reverts",
+        "test_D5_lockClamp_minRevert_maxOk",
+        "test_D6_unstakePaysExactlyHeldDetfAndLeavesProtocolLp",
+        "test_F2_createFundedPosition_onlyDetf",
+        "test_F3_fundRewards_onlyDetf",
+        "test_F3_retireEscrowDust_onlyBondNft",
+        "test_F1_diamondCut_notCallableByAttacker",
+        "test_F4_noSetWeightsOrThresholds",
+        "test_C1_reenterBond_duringBootstrap_hitsIsLocked",
+        "test_C2_reenterExchangeIn_duringBufferMint_hitsIsLocked",
+        "test_C3_bufferMintReenterBond_hitsIsLocked",
+        "test_E1_mintThenPartialBurn_conservation",
+        "test_E4_holderBalance_notDilutedByOthersMint",
+        "test_B3_thresholdGates_coupleToSynthetic",
+        "test_B1_reserveFallback_mintBurn_boundsSafety",
+        "test_H2_unstake_minOutFail_receiptAndBackingUnchanged",
+        "test_G1_outerActivity_doesNotBrickInner"
+      ],
+      "mapping": [
+        {
+          "old_test": "test_E5_zeroAmount_reverts",
+          "funded_test": "test_E5_zeroAmount_reverts",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_E5_expiredDeadline_reverts",
+          "funded_test": "test_E5_expiredDeadline_reverts",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_H3_minOutTooHigh_leavesNoInventory",
+          "funded_test": "test_H3_minOutTooHigh_leavesNoInventory",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_preLive_mint_reverts",
+          "funded_test": "test_preLive_mint_reverts",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_A1_donateBuffer_cannotMintFreeDetf",
+          "funded_test": "test_A1_donateBuffer_cannotMintFreeDetf",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_A1_donateVaultShares_cannotMintFreeDetf",
+          "funded_test": "test_A1_donateVaultShares_cannotMintFreeDetf",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_A2_donateDetfToDiamond_noTheft",
+          "funded_test": "test_A2_donateDetfToDiamond_noTheft",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_A3_D2_redeemWithoutClaim_noBptDrain",
+          "funded_test": "test_A3_D2_unstakeWithoutReceipt_noBptOrBackingDrain",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_D2_sellPosition_nonOwner_reverts",
+          "funded_test": "test_D2_claimBond_nonOwner_reverts",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_D3_doubleSell_secondReverts",
+          "funded_test": "test_D3_finalClaim_cannotPayTwice",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_D3_doubleRedeem_overClaim_reverts",
+          "funded_test": "test_D3_unstake_overRemainingReceipt_reverts",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_D5_lockClamp_minRevert_maxOk",
+          "funded_test": "test_D5_lockClamp_minRevert_maxOk",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_D6_redeemBoundedByClaimAndInventory",
+          "funded_test": "test_D6_unstakePaysExactlyHeldDetfAndLeavesProtocolLp",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_F2_bondNftVault_createPosition_onlyOwner",
+          "funded_test": "test_F2_createFundedPosition_onlyDetf",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_F3_claim_mintFromNFTSale_onlyOwner",
+          "funded_test": "test_F3_fundRewards_onlyDetf",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_F3_claim_burnShares_onlyOwner",
+          "funded_test": "test_F3_retireEscrowDust_onlyBondNft",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_F1_diamondCut_notCallableByAttacker",
+          "funded_test": "test_F1_diamondCut_notCallableByAttacker",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_F4_noSetWeightsOrThresholds",
+          "funded_test": "test_F4_noSetWeightsOrThresholds",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_C1_reenterBond_duringBootstrap_hitsIsLocked",
+          "funded_test": "test_C1_reenterBond_duringBootstrap_hitsIsLocked",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_C2_reenterExchangeIn_duringMint_hitsIsLocked",
+          "funded_test": "test_C2_reenterExchangeIn_duringBufferMint_hitsIsLocked",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_C3_mintReenterBond_hitsIsLocked",
+          "funded_test": "test_C3_bufferMintReenterBond_hitsIsLocked",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_E1_mintThenPartialBurn_conservation",
+          "funded_test": "test_E1_mintThenPartialBurn_conservation",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_E4_holderBalance_notDilutedByOthersMint",
+          "funded_test": "test_E4_holderBalance_notDilutedByOthersMint",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_B3_thresholdGates_coupleToSynthetic",
+          "funded_test": "test_B3_thresholdGates_coupleToSynthetic",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_B1_openThresholds_mintBurn_boundsSafety",
+          "funded_test": "test_B1_reserveFallback_mintBurn_boundsSafety",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_H2_redeemClaim_minOutFail_claimUnchanged",
+          "funded_test": "test_H2_unstake_minOutFail_receiptAndBackingUnchanged",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        },
+        {
+          "old_test": "test_G1_outerActivity_doesNotBrickInner",
+          "funded_test": "test_G1_outerActivity_doesNotBrickInner",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        }
+      ]
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/Adversarial_MixedBuffer_A0_Decimals.sol",
+      "before_sha256": "8333535f885a0d31a204b3efec15a3d361bb7aa0f302c076e23ed0acb9450f37",
+      "after_sha256": "70f39f9e016f7cc2ce967bed4e6456493bdf41444f10ed9305328aadd7617bb0",
+      "before_lines": 29,
+      "after_lines": 27,
+      "canonical_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/adversarial/Adversarial_MixedBuffer_A0.t.sol",
+      "old_tests": [
+        "test_A0_mb_donatedBuffer_bootstrapDoesNotStealOthersSeed"
+      ],
+      "shared_tests": [
+        "test_A0_mb_donatedBuffer_bootstrapDoesNotStealOthersSeed"
+      ],
+      "mapping": [
+        {
+          "old_test": "test_A0_mb_donatedBuffer_bootstrapDoesNotStealOthersSeed",
+          "funded_test": "test_A0_mb_donatedBuffer_bootstrapDoesNotStealOthersSeed",
+          "disposition": "Same security concern on funded routes. Token callbacks come from a hostile underlying in a registered real SE; the former minted mock SE is removed."
+        }
+      ]
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Reentrancy_B_P18_R9.t.sol",
+      "before_sha256": "693f0ee3e31d50edd4288f2b630858c5949c72f65d5cbc2e7f33948d4df1b9a6",
+      "after_sha256": "74ae29f0d7ad6c6137552cc6541739d639455cfa467d98a6962f368915a75e58",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_ReserveDonation_B_P9_R18.t.sol",
+      "before_sha256": "48f358500b09e9c932f98954ff9da614df7a80c062e554dddd71dd1a9ce47881",
+      "after_sha256": "af243c1e7692a5aa56fa8981361d871bc9a54d19f7e93cd58c396f0281a48530",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Reentrancy_B_P9_R6.t.sol",
+      "before_sha256": "6f0706c2dfa8e37c5e148db94c295649739a84d70fa1b178cbf9a9508c893543",
+      "after_sha256": "adcec76a302ae5083084905e9f94712c477fd77c6b6bae39c77f5e4e9b0cb699",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_ReserveDonation_B_P9_R6.t.sol",
+      "before_sha256": "e70affd85ad49474b208d88732d76333248e763897fee4a8281b1ccfe21a8de7",
+      "after_sha256": "27a6c58c41e8d8e62b7ecca829fe2393ffbdd5718fdc4b5dc239e5cfeee76441",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_ReserveDonation_B_ALL9.t.sol",
+      "before_sha256": "44b1d466efe02e6f4898b4ab3f8730cd33c9be124f58ae7f8b0fbd627da2fdb4",
+      "after_sha256": "9e75cca21fd1c774d802eb1d50a9fa92243bb4efa1c03afa9960d3af33fd10b8",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Reentrancy_B_ALL9.t.sol",
+      "before_sha256": "e59ccc663629a3657b2997e09f17e4d8a849c49ea849ecd10e2037dd0604b32b",
+      "after_sha256": "0887320ecd6b145042b05467ba4634394abd2f17206f44ec40cc74f9e34f4019",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_ReserveDonation_B_P18_R9.t.sol",
+      "before_sha256": "bae615f7dcb4953e14e8ea02d4584af41f7077c2f9e96044501acf096fda3488",
+      "after_sha256": "882aabc979a3bb6807c93abfff24d9bcd8336feb7e685687c53ac4af51874745",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_ReserveDonation_B_P6_R9.t.sol",
+      "before_sha256": "5bcf4981f856e2ce38d3bfc414f631597b72ef908eb6242d02ab184731ac01e4",
+      "after_sha256": "aa2368cb6bda00edb5f7c57acebdddfe16abdda26409ce7fcd696e2d4b485212",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Reentrancy_B_P6_R9.t.sol",
+      "before_sha256": "fb6754693254cdf0d9a0449487978148cc01922ebb7f3555b9c32fdc5ff0e1cc",
+      "after_sha256": "3a8464fa8ea67dac223bd2e80634c0a9855bf4ad7e0c9436f217e206651ed7ba",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Reentrancy_B_P9_R18.t.sol",
+      "before_sha256": "9d85c2c5d9b97b07e57bc7a1a89eb32cd020738bfb3aec413d58084117776247",
+      "after_sha256": "859c364e878c3cae6c34f18964e2b0b69c54bb91e47361d3d864aeda1c0b1124",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_ReserveDonation_B_P6_R18.t.sol",
+      "before_sha256": "acd302bbb16a1551786cf515999afba366692e59d5fe2fc7e935398fcb3be018",
+      "after_sha256": "2dafe74a2e188696e5735b55701a125d282356b4c71c5a1a3fd2d96085c2a209",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Reentrancy_B_P18_R6.t.sol",
+      "before_sha256": "55f21372a34d08acd15fcf214717b83f1efa73a3b99b2f0a7c03ed480261c6e7",
+      "after_sha256": "35448da1100a3665f9c72ecdd6804b70f6a28af849e4c05b4d6d2aa7f6893d4e",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_ReserveDonation_B_P18_R6.t.sol",
+      "before_sha256": "3cd1352e36401d4ac05c28806696471d103257b9bfdb4cafa748282b1b5c1330",
+      "after_sha256": "b616a6e5a298c2c000a6f6b5400343ac2d7a470e61943176ccfebfcb0fc8f0b6",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_ReserveDonation_B_ALL6.t.sol",
+      "before_sha256": "23876f263ef110556ad75b29b5c27afe1c1ecb1f7cf3c648e96eb11628696e61",
+      "after_sha256": "4b86297639643b7f927f3c6da3c6616212fa195d841b82a81199a9a89fc6165b",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Reentrancy_B_ALL6.t.sol",
+      "before_sha256": "e84815611cc4897a755af87d8bad274c105d66d37fd339d6790cc019814c73fe",
+      "after_sha256": "d8bd4fe007e4b11e58e6eb51a99aa34bea01b4a8345e3b22f24730984f0a0179",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Reentrancy_B_P6_R18.t.sol",
+      "before_sha256": "8c96974add05fe7ef192e8c9903fdbc7dfbd2bcdcd9e305730b03bcac1d76997",
+      "after_sha256": "26e3bd5b788d8bd047f7aad4d761be63eeafa1b522202827d47800d1888c5254",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/TestBase_MixedBufferMultiVaultStableDetf_Adversarial_B_P9_R6.t.sol",
+      "before_sha256": "2a52c525d2a79d9a6d8d996b232bdffbb0e9b39cc6881454534991b126e5eb4f",
+      "after_sha256": "8bf24201593cb32bbb301b18781412db9c34e63152ce69d9937ab0d818791094",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/Adversarial_MixedBuffer_P0_B_P6_R18.t.sol",
+      "before_sha256": "10146f28605ba790315f2131c6b8d5d7f94bef5f790863c996fc7216ec081205",
+      "after_sha256": "db2802e720a7bac2b9a4c65c1e658e8ecf9b45387f797f43903f17884b946925",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/Adversarial_MixedBuffer_A0_B_P9_R18.t.sol",
+      "before_sha256": "034233079cf0103dbf58070ea46f3369db50f18e5f70b0efa6e85a0f39fcd810",
+      "after_sha256": "e115a2c3305fb3264ec74c70083f71e34e22147b316fd53809b32d4ca3e067b5",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/Adversarial_MixedBuffer_P0_B_P6_R9.t.sol",
+      "before_sha256": "d4422f299bc7caf46bbd46361e7b90fb507c0ab589ba4ecf9f8110cfe5c62512",
+      "after_sha256": "8f7cf929600a1f7818d8c8e78b4818387f81df8dd688656e8a58f80d908ab01a",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/TestBase_MixedBufferMultiVaultStableDetf_Adversarial_B_P6_R18.t.sol",
+      "before_sha256": "2ae77d820fd788374d92f1588b2a211d63e0f85a4b441130b7c0d0d7251f92a0",
+      "after_sha256": "6f4c895242f0b0f9e3f6d007160c8ae5d86068d818a2d9fbf4cae15a86b6a859",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/TestBase_MixedBufferMultiVaultStableDetf_Adversarial_B_ALL6.t.sol",
+      "before_sha256": "09802f2a93cb22b2cceaa5e4d69baaeae39a374d76914853e3659138401a498a",
+      "after_sha256": "07be1c38cd2fea865256318fae3caf5c042ad8c9490eb2c7e1b828a542563e77",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/Adversarial_MixedBuffer_TrustFlag_B_P6_R18.t.sol",
+      "before_sha256": "b3e441e440e202afcddc20f86dc6f78f9b448d10d0df214d4b10d2a0931f4f4d",
+      "after_sha256": "2676d499461cd97da279e2124f4c2e9eb31877a9e6fcc5292c7a5c170e9a28fa",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/Adversarial_MixedBuffer_TrustFlag_B_P9_R6.t.sol",
+      "before_sha256": "7378cf15c194a8ed51db3d3b778b2e17b15e61dab27739dfa8a0feceb9cfaf60",
+      "after_sha256": "e5f38e185cee1676afa7cd2c33a7e602cc1aa66d806e2097d60d731d9b0a9763",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/Adversarial_MixedBuffer_TrustFlag_B_P6_R9.t.sol",
+      "before_sha256": "11bd662906909e63d98b53daf3a6aae0ae7ced3a6764e85200389c25f7cf0ea5",
+      "after_sha256": "9eb31e3cb995694fd5fe4ba659a33bb2410e8a7881399c923b4eb028c4c5325b",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/Adversarial_MixedBuffer_P0_B_P18_R6.t.sol",
+      "before_sha256": "f0347e39db95e43190ac35811aec71368b869c5e6248f8fe4525d572fd1a40d7",
+      "after_sha256": "2d4c645752095705f56a345e6f5d19f949f0b14b66dcc13d7f47027c2de0de59",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/Adversarial_MixedBuffer_TrustFlag_B_ALL6.t.sol",
+      "before_sha256": "72f5ba90be7e9301e343ed93dda30e8982b6d066fc53a96f471d614f94c44139",
+      "after_sha256": "b13a00982422a1c854793895e40a8a5645b654b41c21decc9ced49b1a596abcd",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/Adversarial_MixedBuffer_P0_B_P9_R6.t.sol",
+      "before_sha256": "c62ad563e797bf504435b175c69868d38673433446d56703706c577e49e2ed81",
+      "after_sha256": "845e7eaca3e3c6d58b549cc306664dbacce0c30879ffa0fb272ec46c70e60f6a",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/Adversarial_MixedBuffer_A0_B_P18_R9.t.sol",
+      "before_sha256": "72b751cedaa9674dc58958f5fb11fbe523bf3da28e3d387f91949dec299d8893",
+      "after_sha256": "1c5937e751ad1b04c7fbbb83a221654110484c3f3a1372b02be5e1e6d49162c8",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/TestBase_MixedBufferMultiVaultStableDetf_Adversarial_B_P18_R6.t.sol",
+      "before_sha256": "57f21c0136a6af4672e76918130f15993a2103e56a3319fb2979cc7943f8796a",
+      "after_sha256": "a205775e42b31faf97c45d602a25aae24c75ece24b645d84209b0cfe84fa1f72",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/Adversarial_MixedBuffer_P0_B_ALL6.t.sol",
+      "before_sha256": "1b683b39269a07cb2a80961404a82577e585353fa66d86e2821b7f7e4e33413b",
+      "after_sha256": "9b15077621c44e68bcbaa38241c55bfe08c0d9205352e1109e94f6f072472542",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/TestBase_MixedBufferMultiVaultStableDetf_Adversarial_B_P6_R9.t.sol",
+      "before_sha256": "5237adc0bd75194a6bb79bb2b2fb8ec0c4b326ecd42cc9099fc1992244c59715",
+      "after_sha256": "1c3dc3ae5d2715c2e0741ccbc806ea7e14db935bc686c9db3c1b15fe05504cd7",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/Adversarial_MixedBuffer_TrustFlag_B_P18_R6.t.sol",
+      "before_sha256": "a3e6db45cef6cb1b277bac64f8efc8ca2022b2b6fbe5dfb0efedba697eb7aa95",
+      "after_sha256": "8fff500301e62fd348478d4ef7ab5ceb479e750d20e2dba4133923f8a16bb241",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/Adversarial_MixedBuffer_A0_B_ALL6.t.sol",
+      "before_sha256": "29119794fa329ebaaffdf124bf7285c0b020e208669a38bdc1495b8cea919ae3",
+      "after_sha256": "d5ac9e2d76ea131057bb1b27bb562dd3ba976483037e71809091eb1e32ee2624",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/Adversarial_MixedBuffer_A0_B_P6_R9.t.sol",
+      "before_sha256": "deb4e6f3767629d79d988629bb3c95586029c40a69c1ada08ec866bf67ee166a",
+      "after_sha256": "8416e203af3868296b8a0dd988f011de05132d191f1943792f7834693c5df376",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/Adversarial_MixedBuffer_P0_B_P9_R18.t.sol",
+      "before_sha256": "8674ef12e0e345a08bf8a686d3b49947fb94829df725e9420afdbda5b9e73f9a",
+      "after_sha256": "baaca664030fdae4e445adf1a9b24f6e633231db4e3b4f5759e692ac49b0e5d6",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/Adversarial_MixedBuffer_A0_B_P6_R18.t.sol",
+      "before_sha256": "be2ffe7e810b29a248a82e2124f3b2ba16dd1b652aef8fed1379714e2fa2fdf6",
+      "after_sha256": "2153e1d4a9bb42de4ff77bf1bee391b58c08777d42d43211de1d9c4bdf21e0d2",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/TestBase_MixedBufferMultiVaultStableDetf_Adversarial_B_ALL9.t.sol",
+      "before_sha256": "7109607003088683e23269694aa41fe474b463202e4b7c42435994da72f40726",
+      "after_sha256": "0e81dc1704588857cdcbba58c774fe6d10f7a320a198b601935a260c717c3936",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/Adversarial_MixedBuffer_TrustFlag_B_P9_R18.t.sol",
+      "before_sha256": "85731b5a017b4ffdaf5a3ba0ed3a3eee1d69cfe4fb0ba29502b3df87ed3322ca",
+      "after_sha256": "d49a5883340ab19970a695cabe1bdfcf837028626d0415ea874149c00306df65",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/TestBase_MixedBufferMultiVaultStableDetf_Adversarial_B_P9_R18.t.sol",
+      "before_sha256": "5ab7e73d52798c2928290a8a730d0503a0f79b7e896d9647249953fcfe23fba3",
+      "after_sha256": "aecbf7fafd4b54bb9f0678e81be5258d38835e579c7ba78a5a8a51264f00b8c8",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/Adversarial_MixedBuffer_TrustFlag_B_P18_R9.t.sol",
+      "before_sha256": "e1761efec958d8551f514dfe788919b8d88f62bd4a4589b8ee89d59fa78faf2b",
+      "after_sha256": "f10aa18ee2c3582565eb4c6b94cc8ffb2bd50b2ac6ce3e624cea7813a52bbd98",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/Adversarial_MixedBuffer_A0_B_ALL9.t.sol",
+      "before_sha256": "d41b4bcfb2b6a27aa95767290f32fc2340f25c5f3cb55378f45e2863f7499940",
+      "after_sha256": "f231ab399771107bbf78db16cbe3504d69801e85f95c6626bc5c1b2262ad9601",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/Adversarial_MixedBuffer_A0_B_P18_R6.t.sol",
+      "before_sha256": "190b074c1d7fd92a2d52e888f9f7cf70c7b3aabb4ee159c811560b3884b90ad3",
+      "after_sha256": "71b15a504c9f0879c5659b9e32d4952da1434610916293b27859ebc728616128",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/Adversarial_MixedBuffer_P0_B_ALL9.t.sol",
+      "before_sha256": "5aaea82dd6b1358b3f7b52727cc30892b588d38b2ad7ed3110e247761d1e5287",
+      "after_sha256": "14ad78ba4b69f450718dec03ed85e7c647a6e6540d2a9c29bf37e0d37bf7e796",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/TestBase_MixedBufferMultiVaultStableDetf_Adversarial_B_P18_R9.t.sol",
+      "before_sha256": "6afbe97af0beec883e2cffe2f8a15cfb041a210379599db301c172475e43b9a3",
+      "after_sha256": "62d8455f589fffede275ecd3bc85ab2b7b1f4362c8c4bdaffa87eb173bc1fd64",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/Adversarial_MixedBuffer_TrustFlag_B_ALL9.t.sol",
+      "before_sha256": "b4ba63569a542299908939b0ce6beb2cf3aa5fe8384b32ac7934fc253bdbba5b",
+      "after_sha256": "daf3008b68658d56905b6967e659d17043f372c4e547edadb584c59061dc3d7d",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/Adversarial_MixedBuffer_A0_B_P9_R6.t.sol",
+      "before_sha256": "7c06884380dfd284a3a36c43d2f0f58ec2a4dadf6875f3a327a2f897e996c299",
+      "after_sha256": "5cde521b4449316ad8b726d1a0cdc65d8e5cfb5acb72de23a4a6f555946acc13",
+      "before_lines": 20,
+      "after_lines": 20
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/Adversarial_MixedBuffer_P0_B_P18_R9.t.sol",
+      "before_sha256": "3b7c20280bf2e65c78eb160948482b4cb11a5aefe831af12083163e66cfb6574",
+      "after_sha256": "e9ea90253549d39e09c21cae64b7aec199eb6493988d71b7b704b2e2237e339c",
+      "before_lines": 20,
+      "after_lines": 20
+    }
+  ],
+  "scope": "Preserve actual native-book wrappers and security cases; share funded behavior. No LP-only purchase/discovery retirement."
+}

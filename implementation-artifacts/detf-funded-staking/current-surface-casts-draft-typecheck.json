@@ -1,0 +1,26 @@
+{
+  "status": "DRAFT_TYPECHECK_ONLY_NOT_RUNTIME_VALIDATION",
+  "seconds": 33.988,
+  "prepared_records": [
+    "current-surface-fixture-followups-prepared.json"
+  ],
+  "exit_code": 0,
+  "errors": [],
+  "concrete_suites": {
+    "UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface_Test": 14,
+    "UniswapV4DualSEBCPHook_Surface_Test": 12,
+    "UniswapV4StandardExchangeOrbitalBufferHook_PackageDecl_Test": 10,
+    "UniswapV4StandardExchangeOrbitalBufferHook_StagedInit_Test": 27,
+    "_SeOrbitalModifyLiqUnlock": 0,
+    "UniswapV4StandardExchangeOrbitalBufferHook_Surface_Test": 12,
+    "UniswapV4StandardExchangeCurveQuadStableBufferHook_StagedInit_Test": 18,
+    "UniswapV4StandardExchangeWeightedBufferHook_StagedInit_Test": 27,
+    "UniswapV4Detf_BondNftPackaging": 2,
+    "UniswapV4Detf_FacetPackaging": 10,
+    "UniswapV4Detf_Quad_Adversarial_Surface": 4
+  },
+  "compiled_methods": 136,
+  "compiler_input_sha256": "8b49c910b46d88d1ff99b713d1363e91ebd0c43d48d8021b48e8564a5a32e0af",
+  "validation_passed": true,
+  "canonical_sources_unchanged": true
+}

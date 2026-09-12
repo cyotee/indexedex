@@ -1,0 +1,34 @@
+{
+  "status": "APPLIED_RUNTIME_VALIDATION_PENDING",
+  "changes": [
+    {
+      "path": "test/foundry/fork/base_main/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_Fork.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/v3-fork-fixture-followup-drafts/base.sol.txt",
+      "before_sha256": "e9c898f1c3c386ccc4e5ef6916808431902adb06c7fe8662bd9cf19100694a02",
+      "after_sha256": "366843668d6895d3ff15ecf79f87a7982190f6c18dbf37c607ef8c6258b48be5",
+      "retained_direct_cases": [
+        "test_fork_directSwap_and_zap",
+        "test_fork_MJ2_or_FR1_fullRangeCenter",
+        "test_fork_A0_deadSharesOnResidual",
+        "test_fork_blockedSleevePath"
+      ]
+    },
+    {
+      "path": "test/foundry/fork/robinhood_4663/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_Robinhood.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/v3-fork-fixture-followup-drafts/robinhood.sol.txt",
+      "before_sha256": "ab9d8635f87b80a38e997b955ce1978a96124b82ca5f0e3046ae6ec4ccb7775a",
+      "after_sha256": "f6637d7aa730b795017e788ff45d0757afe3989320c1566cf9f0840fdf22fa1b",
+      "retained_direct_cases": [
+        "test_fork4663_MJ2_or_FR1_fullRangeCenter",
+        "test_fork4663_A0_deadSharesOnResidual",
+        "test_fork4663_blockedSleevePath"
+      ]
+    }
+  ],
+  "direct_cases": 7,
+  "additional_inherited_base_sanity_case": 1,
+  "reason": "Three retained cases require dual activation before later single-token deposits. Preserve all seven declared cases and inherited Base sanity; normalize actual token units, strengthen custody/conservation assertions, and pin Robinhood block.",
+  "gate": "Do not apply until active full build/hermetic/baseline attribution parent has exited. Preserve before hashes and backups; execute retained real-pool fork cases before acceptance.",
+  "applied_at_utc": "2026-09-09T08:34:04.631375+00:00",
+  "application_record": "hermetic-followups-validation-remediation-applied.json"
+}

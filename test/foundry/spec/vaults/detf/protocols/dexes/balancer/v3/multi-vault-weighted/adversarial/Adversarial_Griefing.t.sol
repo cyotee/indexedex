@@ -1,90 +1,40 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {FundedBondLifecycleAssertions} from "contracts/test/bases/FundedBondLifecycleAssertions.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {
     TestBase_MultiVaultWeightedDetf_Adversarial
 } from "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/TestBase_MultiVaultWeightedDetf_Adversarial.sol";
 import {
-    IMultiVaultWeightedDetfBonding
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfBondingTarget.sol";
+    ILegacyMultiVaultWeightedDetfBonding as IMultiVaultWeightedDetfBonding
+} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf.sol";
 import {
-    IMultiVaultWeightedDetfInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfInfoTarget.sol";
+    ILegacyMultiVaultWeightedDetfInfo as IMultiVaultWeightedDetfInfo
+} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf.sol";
 
-/// @notice H2 claim redeem atomicity; H3 residual already in Guards.
-/// @dev H2 critical: if redeemClaim reverts, claim balance must be unchanged (single-tx atomicity).
-///      Production burns claim then exits BPT; EVM full-tx revert restores claim if exit fails.
-///      Deferred P2: H1 (N=7 initializeReserve gas boundary - NRange deploys N=7 live path).
-contract Adversarial_Griefing_Test is TestBase_MultiVaultWeightedDetf_Adversarial {
+/// @notice Funded bond claim authorization and atomic staking payouts.
+contract Adversarial_Griefing_Test is TestBase_MultiVaultWeightedDetf_Adversarial, FundedBondLifecycleAssertions {
     /// @notice H2: impossible minOut reverts whole redeem; claim not permanently burned.
-    function test_H2_redeemClaim_revert_claimUnchanged() public {
+    function test_H2_unstake_minimumFailure_preservesFundedClaim() public {
         address instance_ = _deployOpenModeDetfN(1);
-        (uint256 tokenId_,) = _goLiveViaBptBond(instance_, alice, 2_500e18);
-
-        IMultiVaultWeightedDetfBonding bonding_ = IMultiVaultWeightedDetfBonding(instance_);
-        IMultiVaultWeightedDetfInfo info_ = IMultiVaultWeightedDetfInfo(instance_);
-
-        _warpPastUnlock(instance_, tokenId_);
-        vm.prank(alice);
-        bonding_.sellPositionToDetfNft(tokenId_, 0, alice);
-
-        IRebasingClaimToken claim_ = IRebasingClaimToken(info_.rebasingClaimToken());
-        uint256 claimBefore_ = claim_.balanceOf(alice);
-        assertTrue(claimBefore_ > 0, "has claim");
-
-        uint256 redeemAmt_ = claimBefore_ / 10;
-        if (redeemAmt_ == 0) redeemAmt_ = claimBefore_;
-
-        // Impossible minOut forces failure after burn-in-tx → full revert restores claim
-        vm.prank(alice);
-        vm.expectRevert();
-        bonding_.redeemClaim(
-            redeemAmt_, IERC20(instance_), type(uint256).max, alice, block.timestamp + 1 hours
-        );
-
-        assertEq(claim_.balanceOf(alice), claimBefore_, "H2: claim unchanged after failed redeem");
-
-        // Successful redeem still works
-        vm.prank(alice);
-        uint256 out_ = bonding_.redeemClaim(
-            redeemAmt_, IERC20(instance_), 0, alice, block.timestamp + 1 hours
-        );
-        assertTrue(out_ > 0, "H2: successful redeem after failed attempt");
-        assertLt(claim_.balanceOf(alice), claimBefore_, "claim burned on success");
+        (uint256 id_,) = _goLiveViaBptBond(instance_, alice, 2_500e18);
+        _assertBondMaturePreviewEqualsPayment(instance_, id_, alice);
+        uint256 amount_ = _fundedBondStaking(instance_).balanceOf(alice) / 10;
+        assertGt(amount_, 0);
+        _assertFundedUnstakeRejected(instance_, alice, amount_, IERC20(instance_), amount_ + 1);
+        _assertFundedUnstake(instance_, alice, amount_);
     }
 
     /// @notice H2b: full claim redeem either succeeds or reverts cleanly (no partial strand).
-    function test_H2_fullRedeem_atomic() public {
+    function test_H2_fullUnstake_paysEntireFundedBalance() public {
         address instance_ = _deployOpenModeDetfN(1);
-        // Large bootstrap to reduce TokenBalanceBelowMin grief on full exit
-        (uint256 tokenId_,) = _goLiveViaBptBond(instance_, alice, 5_000e18);
-        // Add more reserve via mint so full claim exit is a fraction of pool
+        (uint256 id_,) = _goLiveViaBptBond(instance_, alice, 5_000e18);
         _mintOnLeg(instance_, 0, bob, 200e18);
-
-        IMultiVaultWeightedDetfBonding bonding_ = IMultiVaultWeightedDetfBonding(instance_);
-        IRebasingClaimToken claim_ =
-            IRebasingClaimToken(IMultiVaultWeightedDetfInfo(instance_).rebasingClaimToken());
-
-        _warpPastUnlock(instance_, tokenId_);
-        vm.prank(alice);
-        bonding_.sellPositionToDetfNft(tokenId_, 0, alice);
-        uint256 claimBal_ = claim_.balanceOf(alice);
-        // Redeem majority but not 100% of pool BPT path - use 30% of claim to stay above min balances
-        uint256 part_ = (claimBal_ * 30) / 100;
-        if (part_ == 0) part_ = claimBal_;
-
-        uint256 claimBefore_ = claim_.balanceOf(alice);
-        vm.prank(alice);
-        try bonding_.redeemClaim(part_, IERC20(instance_), 0, alice, block.timestamp + 1 hours) returns (
-            uint256 out_
-        ) {
-            assertTrue(out_ > 0, "partial redeem ok");
-            assertLt(claim_.balanceOf(alice), claimBefore_, "claim reduced on success");
-        } catch {
-            // Clean fail: claim fully restored
-            assertEq(claim_.balanceOf(alice), claimBefore_, "H2: fail leaves claim intact");
-        }
+        _assertBondMaturePreviewEqualsPayment(instance_, id_, alice);
+        _assertFundedUnstake(instance_, alice, _fundedBondStaking(instance_).balanceOf(alice));
+        assertEq(_fundedBondStaking(instance_).gonsOf(alice), 0, "full exit retires fractional gons");
     }
 }

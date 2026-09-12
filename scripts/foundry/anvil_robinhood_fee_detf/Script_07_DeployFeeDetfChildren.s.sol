@@ -106,8 +106,7 @@ contract Script_07_DeployFeeDetfChildren is DeploymentBase {
 
         IDETFNFTVaultDFPkg.PkgInit memory nftPkgInit = DetfComponentFactoryService.buildDETFNFTVaultPkgInit(
             erc721FacetDetf,
-            erc4626BasicVaultFacet,
-            erc4626StandardVaultFacet,
+            DetfFacetFactoryService.deployDETFFundedBondMetadataFacet(create3Factory),
             detfNFTVaultFacet,
             IVaultFeeOracleQuery(indexedexManager),
             IVaultRegistryDeployment(indexedexManager)

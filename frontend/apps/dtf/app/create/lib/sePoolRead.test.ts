@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { SQRT_PRICE_1_1 } from './sePool'
 import { lookupV4PoolKeyById, readV4PoolInitialized, slot0IsInitialized, uniqueAddresses } from './sePoolRead'
@@ -13,7 +13,7 @@ describe('sePoolRead', () => {
   it('treats StateView getSlot0 with a price as initialized', async () => {
     const live = await readV4PoolInitialized(
       {
-        readContract: async () => [SQRT_PRICE_1_1, 0, 0, 3000] as const,
+        readContract: vi.fn().mockResolvedValue([SQRT_PRICE_1_1, 0, 0, 3000] as const),
       },
       '0xF3334192D15450CdD385c8B70e03f9A6bD9E673b',
       '0x7335aabde881aeefbd3ebfd064f33798f2f17b6a31446821977c7eb7098cfb85',
@@ -24,7 +24,7 @@ describe('sePoolRead', () => {
   it('treats StateView getSlot0 zeros as not initialized', async () => {
     const live = await readV4PoolInitialized(
       {
-        readContract: async () => [0n, 0, 0, 0] as const,
+        readContract: vi.fn().mockResolvedValue([0n, 0, 0, 0] as const),
       },
       '0xF3334192D15450CdD385c8B70e03f9A6bD9E673b',
       '0x7335aabde881aeefbd3ebfd064f33798f2f17b6a31446821977c7eb7098cfb85',

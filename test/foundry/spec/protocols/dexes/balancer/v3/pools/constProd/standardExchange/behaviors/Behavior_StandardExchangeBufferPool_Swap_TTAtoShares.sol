@@ -7,6 +7,7 @@ import {IStandardExchangeBufferPool} from
     "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPool.sol";
 import {TestBase_StandardExchangeBufferPool} from
     "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/bases/TestBase_StandardExchangeBufferPool.sol";
+import {DETFDecimalScaleLib} from "contracts/vaults/detf/common/core/DETFDecimalScaleLib.sol";
 
 /**
  * @title Behavior_StandardExchangeBufferPool_Swap_TTAtoShares
@@ -116,11 +117,11 @@ abstract contract Behavior_StandardExchangeBufferPool_Swap_TTAtoShares is Test {
             "swap_TTAtoShares: actual TTA balance unchanged (no ttaSurplus leg)"
         );
 
-        // (d) virtualTTA increased by exactly X (18-decimal TTA assumed).
+        // (d) virtualTTA is Vault scaled18: raw * 10^(18-decimals).
         assertEq(
             p.virtualTTA(),
-            vtPre + amountIn,
-            "swap_TTAtoShares: virtualTTA += X"
+            vtPre + DETFDecimalScaleLib.nativeToWad(address(tb.tta()), amountIn),
+            "swap_TTAtoShares: virtualTTA += X scaled18"
         );
 
         // (e) hookSharesDelta increased by Y' = _bv3SharesDonationRaw(minted), the round-trip

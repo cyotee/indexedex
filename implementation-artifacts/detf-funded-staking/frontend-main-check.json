@@ -1,0 +1,13 @@
+{
+  "cwd": "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/frontend",
+  "started_at_utc": "2026-09-07T15:56:40.251924+00:00",
+  "command": [
+    "npm",
+    "run",
+    "check"
+  ],
+  "source_manifest_sha256": "55d7bfa15d19bed90abd043c187e6dd64691708fd0fc54d5acbef110a34d8a8c",
+  "scope": "Main-directory lint, typecheck and frontend unit tests after authorized relocation; no deployment.",
+  "exit_code": 0,
+  "seconds": 68.527
+}

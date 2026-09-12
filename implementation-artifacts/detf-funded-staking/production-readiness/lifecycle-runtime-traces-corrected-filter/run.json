@@ -1,0 +1,18 @@
+{
+  "command": [
+    "forge",
+    "test",
+    "--match-contract",
+    "^RobinhoodReleaseRehearsalTest$",
+    "--match-test",
+    "^test_(cp_v3|orbital_v2|quad_morpho)\\(\\)$",
+    "--threads",
+    "1",
+    "--offline",
+    "--etherscan-api-key",
+    "",
+    "-vvvv"
+  ],
+  "exit_code": -6,
+  "seconds": 19.450314068002626
+}

@@ -1,0 +1,83 @@
+{
+  "status": "PASS_FINAL_ARTIFACT_RUNTIME_PAYLOAD_STORAGE_RENEWAL",
+  "started_at_utc": "2026-09-11T12:47:05.501434+00:00",
+  "scope": "No Forge rerun. Refresh changed artifact-file metadata and compare current compiled runtime to actual local deployment; preserve unchanged full test evidence.",
+  "steps": [
+    {
+      "name": "artifacts",
+      "command": [
+        "python3",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/production-readiness/record-release-artifacts.py"
+      ],
+      "exit_code": 0,
+      "seconds": 7.168,
+      "log": "implementation-artifacts/detf-funded-staking/production-readiness/final-static-artifacts.log",
+      "log_sha256": "ba6dd338f7a4995e4d581c67cee85c4ba84963d7530c8813a01e5f0e182c50cc"
+    },
+    {
+      "name": "frontend-abis",
+      "command": [
+        "node",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/production-readiness/reconcile-frontend-abis.mjs"
+      ],
+      "exit_code": 0,
+      "seconds": 0.376,
+      "log": "implementation-artifacts/detf-funded-staking/production-readiness/final-static-frontend-abis.log",
+      "log_sha256": "b311b518fc9f0e4a5f8d47d7e74c2b1c9718120d3f78952aeb34c50c0a982fed"
+    },
+    {
+      "name": "selectors",
+      "command": [
+        "python3",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/reconcile-funded-selector-manifest.py",
+        "--require-current"
+      ],
+      "exit_code": 0,
+      "seconds": 0.19,
+      "log": "implementation-artifacts/detf-funded-staking/production-readiness/final-static-selectors.log",
+      "log_sha256": "4dbc0315ee9b004eba941da89461558cd7336a21a2dba1bd0ec1d3e6ae747f97"
+    },
+    {
+      "name": "local-runtime",
+      "command": [
+        "python3",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/production-readiness/inspect-rehearsal-core.py",
+        "--rpc",
+        "http://127.0.0.1:18665",
+        "--deployments",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/current-robinhood-rehearsal-production-readiness-lifecycle-fixed/deployments",
+        "--output",
+        "corrected-local-core-and-packages.json",
+        "--packages",
+        "--require-current"
+      ],
+      "exit_code": 0,
+      "seconds": 13.028,
+      "log": "implementation-artifacts/detf-funded-staking/production-readiness/final-static-local-runtime.log",
+      "log_sha256": "d4bcfcf062c3e10d3bf375fb6d36c4cda3ada9a6d8e7c786c770943f85bb5e74"
+    },
+    {
+      "name": "create3-inputs",
+      "command": [
+        "python3",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/production-readiness/record-create3-release-inputs.py"
+      ],
+      "exit_code": 0,
+      "seconds": 16.597,
+      "log": "implementation-artifacts/detf-funded-staking/production-readiness/final-static-create3-inputs.log",
+      "log_sha256": "b2e73f781346ede07be40d5559ed4a0bf864b29496f33e0af57bf5c18dcaf332"
+    },
+    {
+      "name": "payload-storage-catalog",
+      "command": [
+        "python3",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/production-readiness/renew-release-reviews.py"
+      ],
+      "exit_code": 0,
+      "seconds": 5.666,
+      "log": "implementation-artifacts/detf-funded-staking/production-readiness/final-static-payload-storage-catalog.log",
+      "log_sha256": "57bcf30475009feb9669e9d07ec09a774be39aebd428702707d64ab5e03b3141"
+    }
+  ],
+  "finished_at_utc": "2026-09-11T12:47:48.558711+00:00"
+}

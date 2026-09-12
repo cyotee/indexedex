@@ -42,6 +42,7 @@ import {
 } from "@crane/contracts/protocols/launchpads/ponsFamily/v2/interfaces/ILaunchpadV2.sol";
 
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
 import {
     TestBase_UniswapV4StandardExchange
 } from "contracts/protocols/dexes/uniswap/v4/test/bases/TestBase_UniswapV4StandardExchange.sol";
@@ -96,6 +97,26 @@ abstract contract TestBase_UniswapV4StandardExchange_PonsV2 is TestBase_UniswapV
         _approveWethPairAndGraduate();
         ponsSe = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(graduatedPoolKey));
         vm.label(address(ponsSe), "UniV4Se_ponsV2");
+    }
+
+    /// @dev Activate the SE with actual graduated launch tokens and wrapped ETH before single-token routes.
+    function _activatePonsSe() internal {
+        uint256 quote_ = 0.001 ether;
+        _wrapWeth(address(this), quote_);
+        address[] memory tokens_ = ponsSe.vaultTokens();
+        uint256[] memory amounts_ = new uint256[](2);
+        for (uint256 i; i < tokens_.length; ++i) {
+            amounts_[i] = tokens_[i] == launchToken ? 10_000 ether : quote_;
+            IERC20(tokens_[i]).approve(address(ponsSe), amounts_[i]);
+        }
+        uint256 preview_ = IStandardExchangeInMulti(address(ponsSe)).previewExchangeInManyToOne(
+            tokens_, amounts_, IERC20(address(ponsSe))
+        );
+        uint256 issued_ = IStandardExchangeInMulti(address(ponsSe)).exchangeInManyToOne(
+            tokens_, amounts_, IERC20(address(ponsSe)), preview_, address(this), false, _deadline()
+        );
+        assertGt(issued_, 0, "two-token Pons SE activation");
+        assertEq(issued_, preview_, "Pons activation preview equals execution");
     }
 
     /// @notice Deploy the real pons v2 stack against this TestBase's PoolManager / Permit2 / WETH.

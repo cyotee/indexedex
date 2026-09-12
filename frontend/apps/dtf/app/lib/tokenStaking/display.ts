@@ -1,4 +1,11 @@
-import { formatUnits } from 'viem'
+import { formatUnits, parseUnits, maxUint256 } from 'viem'
+
+/** Never round a claim input up or accept scientific notation. */
+export function parsePositiveAmount(value: string, decimals: number): bigint | undefined {
+  if (!/^\d+(\.\d+)?$/.test(value) || (value.split('.')[1]?.length ?? 0) > decimals) return undefined
+  const amount = parseUnits(value, decimals)
+  return amount > 0n && amount <= maxUint256 ? amount : undefined
+}
 
 import { TOKEN_STAKING_PHASE } from './abi'
 

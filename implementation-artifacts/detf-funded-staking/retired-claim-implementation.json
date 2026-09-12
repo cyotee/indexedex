@@ -1,0 +1,14 @@
+[
+  {
+    "path": "contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol",
+    "sha256": "53e79c6d9b899deb821d97073487c699957dc8d7bb1426b87391a135ce2b8589",
+    "bytes": 29577,
+    "reason": "Unreferenced legacy LP/spot-valued staking implementation; no production/test/script reader outside this removed pair. Funded production package uses StakedDETFTarget and DETFFundedStakingRepo."
+  },
+  {
+    "path": "contracts/vaults/detf/common/claimToken/RebasingClaimTokenRepo.sol",
+    "sha256": "3668ddda24073ae377d85a28b3aafb33bd40abadc8d934c2e6a91499a9b7a3ce",
+    "bytes": 11855,
+    "reason": "Unreferenced legacy LP/spot-valued staking implementation; no production/test/script reader outside this removed pair. Funded production package uses StakedDETFTarget and DETFFundedStakingRepo."
+  }
+]

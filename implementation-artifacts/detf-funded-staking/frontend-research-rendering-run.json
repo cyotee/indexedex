@@ -1,0 +1,20 @@
+{
+  "check": {
+    "command": [
+      "npm",
+      "run",
+      "check"
+    ],
+    "exit_code": 0,
+    "seconds": 60.97
+  },
+  "build": {
+    "command": [
+      "npm",
+      "run",
+      "build"
+    ],
+    "exit_code": 0,
+    "seconds": 77.442
+  }
+}

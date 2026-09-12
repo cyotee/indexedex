@@ -1,0 +1,18 @@
+{
+  "status": "DRAFT_TYPECHECK_ONLY_NOT_RUNTIME_VALIDATION",
+  "seconds": 18.067,
+  "prepared_records": [
+    "balancer-se-smoke-consolidation-prepared.json",
+    "balancer-stable-walk-fixture-prepared.json"
+  ],
+  "exit_code": 0,
+  "errors": [],
+  "concrete_suites": {
+    "TestBase_Smoke": 16,
+    "MixedBufferMultiVaultStable_WalkAndExhaust_B_ALL6": 4
+  },
+  "compiled_methods": 20,
+  "compiler_input_sha256": "600048c9019dc7ff8a4f509f9a65f7e3d1a81d70deabbac6fdb61332f2cd722f",
+  "validation_passed": true,
+  "canonical_sources_unchanged": true
+}

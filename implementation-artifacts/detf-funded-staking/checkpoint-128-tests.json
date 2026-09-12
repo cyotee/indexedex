@@ -1,0 +1,29 @@
+{
+  "build": {
+    "exit_code": 0,
+    "seconds": 465.306,
+    "command": [
+      "forge",
+      "build",
+      "--offline",
+      "--contracts",
+      "contracts/vaults/detf/common/core"
+    ]
+  },
+  "test": {
+    "exit_code": 0,
+    "seconds": 31.371,
+    "command": [
+      "forge",
+      "test",
+      "--offline",
+      "--contracts",
+      "contracts/vaults/detf/common/core",
+      "-vvv"
+    ]
+  },
+  "tests_passed": 128,
+  "tests_failed": 0,
+  "suites": 18,
+  "scope": "Checkpoint 107 plus Mixed Buffer funded staking (9) and native Lido/EtherFi/Rocket Pool SY (12). Aave changes not yet in this graph. Full plan/release incomplete."
+}

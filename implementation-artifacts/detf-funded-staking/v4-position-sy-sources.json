@@ -1,0 +1,42 @@
+[
+  {
+    "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeCommon.sol",
+    "before_sha256": "2fc7e9aa567226f363ed6a5d804f41ccb5825319848038ec32e72e2ae467154e",
+    "after_sha256": "b0902248f1f5e80a66746028f6245d009f3dc052d189cc88517d1ea278df95cc"
+  },
+  {
+    "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeCommon.sol",
+    "before_sha256": "b0902248f1f5e80a66746028f6245d009f3dc052d189cc88517d1ea278df95cc",
+    "after_sha256": "3b6f10d527448df40ee27fc3689ff33c38939084f8b3a36dced7226d59a0057f"
+  },
+  {
+    "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4PositionRepo.sol",
+    "before_sha256": "efe265085e5c4efb995f1789156d24fbf6127564222e2a52f535c9d695bdc29b",
+    "after_sha256": "49a4cae811105d964256e0e81478fac5bfa333ad9243c1cb8ed4f9ba5fa547c5"
+  },
+  {
+    "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangePositionImportTarget.sol",
+    "before_sha256": "2a8fdc3a5e9600de5d447ab1b064c8fcf40856f1ff56369b90847d9da4aee39c",
+    "after_sha256": "b8738ac17ab9f5f4af6740e9c6d78ab8964297ea525d7392b760d84657022775"
+  },
+  {
+    "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInBase.sol",
+    "before_sha256": "9afccfcc86e455f85f26e8c26bd57a07d5189933c64a0955daacee85e6536615",
+    "after_sha256": "54148cd00f6ef11a6a4b4281eb68c8968b2331295b5e19d546b3869ff208fde7"
+  },
+  {
+    "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutQueryTarget.sol",
+    "before_sha256": "f21728cae9fa2038c6cfe89649a1a49de502f3e5964e8323275ee804f1a75720",
+    "after_sha256": "cc7150e17691ffd5f08b9adea0a752f2247deff45675d68b7c3c1fd8fd192902"
+  },
+  {
+    "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutQueryFacet.sol",
+    "before_sha256": "fe47114a048590edee0e2ed78063bd20a525e9e125a5c691484fba39f4be182e",
+    "after_sha256": "5c07960ca0cbc76f3d9af306754501c3715c6eb7de20955ca3a29d4f85ad762f"
+  },
+  {
+    "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol",
+    "before_sha256": "286da781d0c9c9ab007b85482af4b57de52f3ef1914854c94d8a12677a7f857f",
+    "after_sha256": "d5f21e8566fc9c4aa7d4d1bd3a26dc9030dfe1818f8ba0ff071dbef308fe1175"
+  }
+]

@@ -11,6 +11,8 @@ import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeplo
 interface IRocketPoolRETHStandardExchangeDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
     error NotCalledByRegistry(address caller);
     error ZeroAddress();
+    error InvalidPackageArguments();
+    error InvalidProtocolBinding();
 
     struct PkgInit {
         IFacet erc20Facet;
@@ -33,7 +35,8 @@ interface IRocketPoolRETHStandardExchangeDFPkg is IDiamondFactoryPackage, IStand
         address rETH;
         address weth;
         address depositPool;
+        address rocketStorage;
     }
 
-    function deployVault(address rETH, address weth, address depositPool) external returns (address vault);
+    function deployVault(address rETH, address weth, address depositPool, address rocketStorage) external returns (address vault);
 }

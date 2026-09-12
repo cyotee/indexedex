@@ -1,0 +1,73 @@
+{
+  "status": "PREPARED_NOT_APPLIED",
+  "recorded_at_utc": "2026-09-09T07:35:28.303908+00:00",
+  "scope": "Unrelated Balancer SE remains in scope; no Balancer-hosted DETF functional changes.",
+  "gate": "Apply only after the entire current validation parent 4255 exits.",
+  "changes": [
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/balancer-se-fixture-followup-drafts/CommonBufferMultiVault_RoutingAndWalk_Decimals.sol.txt",
+      "before_sha256": "99593df60607128d2c9c8bb65b7dac8a96fb3ce3fea7a209637adb54e5b5813d",
+      "after_sha256": "bac9126da34a2db9162f7077895023d8edf233639b4ee9121c3e908b4ce97a99",
+      "reason": "Use the configured registered buffer token (pairToken), not the distinct underlying rateAsset. Express buffer payments in its actual native decimals."
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/balancer-se-fixture-followup-drafts/MultiPairBuffer_CrossPair_Decimals.sol.txt",
+      "reason": "Use configured buffer0 and native payment quantities, preserving cross-pair book isolation checks.",
+      "before_sha256": "97fd045cd9efe57abc5ac9b606f4d025089dbbf35ee72c30c8b326f0522ec418",
+      "after_sha256": "8ecfdd400124941c1c52122ab7e27233952a6d57a578530431c2471aa97351e7"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/balancer-se-fixture-followup-drafts/MixedLegWeightedBufferPool_Decimals.sol.txt",
+      "reason": "Correct buffer/unpaired roles to the configured fixture and normalize actual token transfers, retaining exact output/book checks.",
+      "before_sha256": "807577a28f2792482b994096bbedf3639b81669f672a944d30683970d9a78d6a",
+      "after_sha256": "e3c15d558612b0fe782dcbd01dd97e41267be0d7aea7866d42faa9935a6dc957"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/balancer-se-fixture-followup-drafts/MixedLeg_P4_Smoke_Decimals.sol.txt",
+      "reason": "Preserve four-pair and U4/P2 fixtures while using actual buffer roles and native swap amounts.",
+      "before_sha256": "bf793433ca8b82878d09efdf7249206de08b01d12d33e9e7ce8e933750cf1ac2",
+      "after_sha256": "d4ec4a03b2703cfa80e73fb25b2f654f29f01a04b08fd1ba0f99a56b71fbc035"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/bases/TestBase_MixedLegWeightedBufferPool_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/balancer-se-fixture-followup-drafts/TestBase_MixedLegWeightedBufferPool_Decimals.sol.txt",
+      "reason": "Actually acquire enough SE shares through proportional Aerodrome liquidity; prevent initializer transfer failures without fabricating SE balances.",
+      "before_sha256": "bad58590197fb6a68422ecafc639a5b429dc614ef9e1afe92061d91cc0824cd8",
+      "after_sha256": "0aa853e100ed8e6dab90de8bacc13b9d5192547879083f49e7dec3e52ea0bdb8"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/bases/TestBase_MultiPairStandardExchangeBufferPool_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/balancer-se-fixture-followup-drafts/TestBase_MultiPairStandardExchangeBufferPool_Decimals.sol.txt",
+      "reason": "Seed each buffer with the same human-unit amount, preventing 6/9-decimal book inflation and arithmetic overflow.",
+      "before_sha256": "a86d81d2e5a8d5a8463cb1e77ed83868255b4dcbbb9467e079ff595adbbae498",
+      "after_sha256": "8ab3937d2073bc79b1e470c1085b494989be016fa6c85cd17e14cfce0618a3b5"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/balancer-se-fixture-followup-drafts/MultiPairStandardExchangeBufferPool_Decimals.sol.txt",
+      "reason": "Use the configured TTA for payments and received balances; match independently scaled initialization and liquidity amounts.",
+      "before_sha256": "e4dace630c1847ed08e8c2ef183eba8446f7bf7b7cb93c85cd878db6aa8d0600",
+      "after_sha256": "e8532d1a9455d6d1e0a15181140f09491406c518f387213c219e94ee81c97129"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/balancer/v3/WrappedStandardExchangeRateProvider.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/balancer-se-fixture-followup-drafts/WrappedStandardExchangeRateProvider.t.sol.txt",
+      "reason": "Independent manual-rate vector uses one native wrapper token, including its retained ten-decimal offset.",
+      "before_sha256": "1f8c1e746ffa6e7530585b40993f54b9f71381f7743127bd1e2458d09e4eb6df",
+      "after_sha256": "fa7c09d04caeeda00e7acca323174f7d23c572d2deb430050d8b7b7d20339719"
+    }
+  ],
+  "observed_failures": [
+    "TokenNotRegistered in two routing/conservation cases across decimal leaves.",
+    "Unbalanced buffer addition attempts 5e18 raw units regardless of buffer decimals, exhausting the book."
+  ],
+  "remaining": "Review remaining Balancer SE failure groups and execute every affected retained decimal leaf after application.",
+  "runtime_validation_passed": false,
+  "updated_at_utc": "2026-09-09T07:56:32.295761+00:00",
+  "validation_passed": false,
+  "required_validation": "Typecheck then all retained affected decimal leaves and actual provider paths; no Balancer DETF changes."
+}

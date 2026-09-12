@@ -3,95 +3,29 @@ pragma solidity ^0.8.0;
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
-import {
+import {IDETFFundedRewards} from "contracts/interfaces/IStakedDETF.sol";
+import {IDETFStandardizedYield, IDETFStakingPreview} from "contracts/interfaces/IDETFStandardizedYield.sol";
+import {DETFBalancerReserveSwapTarget} from "contracts/vaults/detf/protocols/dexes/balancer/v3/common/DETFBalancerReserveSwapTarget.sol";
+import {SingleStandardExchangeDETFExchangeInTarget} from "./SingleStandardExchangeDETFExchangeInTarget.sol";
+import {SingleStandardExchangeDETFExchangeInQueryTarget} from "./SingleStandardExchangeDETFExchangeInQueryTarget.sol";
+import {SingleStandardExchangeDETFBondingTarget, ISingleStandardExchangeDETFBonding} from "./SingleStandardExchangeDETFBondingTarget.sol";
+import {SingleStandardExchangeDETFInfoTarget, ISingleStandardExchangeDETFInfo} from "./SingleStandardExchangeDETFInfoTarget.sol";
+
+contract SingleStandardExchangeDETFExchangeInFacet is IFacet,
     SingleStandardExchangeDETFExchangeInTarget
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFExchangeInTarget.sol";
-import {
-    SingleStandardExchangeDETFBondingTarget,
-    ISingleStandardExchangeDETFBonding
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFBondingTarget.sol";
-import {
-    SingleStandardExchangeDETFExchangeInQueryTarget
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFExchangeInQueryTarget.sol";
-import {
-    SingleStandardExchangeDETFInfoTarget,
-    ISingleStandardExchangeDETFInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFInfoTarget.sol";
-
-/// @dev Combined facet for exchange/bond/info/query (split later if size requires).
-contract SingleStandardExchangeDETFExchangeInFacet is
-    IFacet,
-    SingleStandardExchangeDETFExchangeInTarget,
-    SingleStandardExchangeDETFBondingTarget,
-    SingleStandardExchangeDETFExchangeInQueryTarget,
-    SingleStandardExchangeDETFInfoTarget
 {
-    function facetName() external pure returns (string memory) {
-        return "SingleStandardExchangeDETFExchangeInFacet";
+    function facetName() public pure returns (string memory) { return type(SingleStandardExchangeDETFExchangeInFacet).name; }
+    function facetInterfaces() public pure returns (bytes4[] memory ids_) {
+        ids_ = new bytes4[](1);
+        ids_[0] = type(IStandardExchangeIn).interfaceId;
     }
-
-    function facetInterfaces() external pure override returns (bytes4[] memory interfaces_) {
-        interfaces_ = new bytes4[](3);
-        interfaces_[0] = type(IStandardExchangeIn).interfaceId;
-        interfaces_[1] = type(ISingleStandardExchangeDETFBonding).interfaceId;
-        interfaces_[2] = type(ISingleStandardExchangeDETFInfo).interfaceId;
+    function facetFuncs() public pure returns (bytes4[] memory selectors_) {
+        selectors_ = new bytes4[](3);
+        selectors_[0] = IStandardExchangeIn.exchangeIn.selector;
+        selectors_[1] = DETFBalancerReserveSwapTarget.executeReserveSwap.selector;
+        selectors_[2] = ISingleStandardExchangeDETFBonding.previewJoinDonatedCapital.selector;
     }
-
-    function _facetFuncs() private pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](36);
-        funcs_[0] = IStandardExchangeIn.exchangeIn.selector;
-        funcs_[1] = IStandardExchangeIn.previewExchangeIn.selector;
-        funcs_[2] = ISingleStandardExchangeDETFBonding.bond.selector;
-        funcs_[3] = ISingleStandardExchangeDETFBonding.sellPositionToDetfNft.selector;
-        funcs_[4] = ISingleStandardExchangeDETFInfo.isReserveLive.selector;
-        funcs_[5] = ISingleStandardExchangeDETFInfo.standardExchangeVault.selector;
-        funcs_[6] = ISingleStandardExchangeDETFInfo.standardExchangeVaultShare.selector;
-        funcs_[7] = ISingleStandardExchangeDETFInfo.rateTarget.selector;
-        funcs_[8] = ISingleStandardExchangeDETFInfo.reservePool.selector;
-        funcs_[9] = ISingleStandardExchangeDETFInfo.syntheticPrice.selector;
-        funcs_[10] = ISingleStandardExchangeDETFInfo.mintThreshold.selector;
-        funcs_[11] = ISingleStandardExchangeDETFInfo.burnThreshold.selector;
-        funcs_[12] = ISingleStandardExchangeDETFInfo.thresholdMode.selector;
-        funcs_[13] = ISingleStandardExchangeDETFInfo.isMintingAllowed.selector;
-        funcs_[14] = ISingleStandardExchangeDETFInfo.isBurningAllowed.selector;
-        funcs_[15] = ISingleStandardExchangeDETFInfo.bondNftVault.selector;
-        funcs_[16] = ISingleStandardExchangeDETFInfo.compoundProtocolRewards.selector;
-        // Atomic self-call helper (only-self); not on ISingleStandardExchangeDETFInfo.
-        funcs_[17] = bytes4(keccak256("compoundProtocolRewardsAtomic()"));
-        funcs_[18] = ISingleStandardExchangeDETFInfo.lastExpansionTimestamp.selector;
-        funcs_[19] = ISingleStandardExchangeDETFInfo.expansionClosureRatePerSecond.selector;
-        funcs_[20] = ISingleStandardExchangeDETFInfo.expansionCatchUpMaxSeconds.selector;
-        funcs_[21] = ISingleStandardExchangeDETFInfo.expansionCatchUpCapBps.selector;
-        funcs_[22] = ISingleStandardExchangeDETFInfo.rebasingClaimToken.selector;
-        funcs_[23] = ISingleStandardExchangeDETFBonding.acceptedBondTokens.selector;
-        funcs_[24] = ISingleStandardExchangeDETFBonding.buyClaim.selector;
-        funcs_[25] = ISingleStandardExchangeDETFBonding.previewBuyClaim.selector;
-        funcs_[26] = ISingleStandardExchangeDETFBonding.closeBondMature.selector;
-        funcs_[27] = ISingleStandardExchangeDETFBonding.previewCloseBondMature.selector;
-        funcs_[28] = ISingleStandardExchangeDETFBonding.redeemClaim.selector;
-        funcs_[29] = ISingleStandardExchangeDETFBonding.previewRedeemClaim.selector;
-        funcs_[30] = ISingleStandardExchangeDETFBonding.claimLiquidity.selector;
-        funcs_[31] = ISingleStandardExchangeDETFBonding.protocolBondOriginalShares.selector;
-        funcs_[32] = ISingleStandardExchangeDETFBonding.joinDonatedCapital.selector;
-        funcs_[33] = ISingleStandardExchangeDETFBonding.previewJoinDonatedCapital.selector;
-        funcs_[34] = ISingleStandardExchangeDETFBonding.notifyReserveDonated.selector;
-        funcs_[35] = ISingleStandardExchangeDETFBonding.donate.selector;
-    }
-
-    function facetFuncs() public pure returns (bytes4[] memory funcs_) {
-        funcs_ = _facetFuncs();
-    }
-
-    function facetMetadata()
-        external
-        pure
-        returns (string memory name_, bytes4[] memory interfaces_, bytes4[] memory funcs_)
-    {
-        name_ = "SingleStandardExchangeDETFExchangeInFacet";
-        interfaces_ = new bytes4[](3);
-        interfaces_[0] = type(IStandardExchangeIn).interfaceId;
-        interfaces_[1] = type(ISingleStandardExchangeDETFBonding).interfaceId;
-        interfaces_[2] = type(ISingleStandardExchangeDETFInfo).interfaceId;
-        funcs_ = _facetFuncs();
+    function facetMetadata() external pure returns (string memory, bytes4[] memory, bytes4[] memory) {
+        return (facetName(), facetInterfaces(), facetFuncs());
     }
 }

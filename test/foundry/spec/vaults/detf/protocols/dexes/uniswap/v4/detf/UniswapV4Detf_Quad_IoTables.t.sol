@@ -67,6 +67,8 @@ contract UniswapV4Detf_Quad_IoTables is
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
                 seFacet: seFacet,
                 depositFacet: depositFacet,
+                depositSingleFacet: CpHookFactory.deployDepositSingleFacet(create3Factory),
+                depositPreviewFacet: CpHookFactory.deployDepositPreviewFacet(create3Factory),
                 withdrawFacet: withdrawFacet,
                 erc20Facet: erc20Facet,
                 erc5267Facet: erc5267Facet,

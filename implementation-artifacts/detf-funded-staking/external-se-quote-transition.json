@@ -1,0 +1,39 @@
+{
+  "recorded_at_utc": "2026-09-08T04:21:01.278631+00:00",
+  "status": "APPLIED_PROVIDER_WIRING_TESTS_PENDING",
+  "purpose": "Project actual SE pass-through swaps and external protocol-vault/LP redemptions before a reserve swap, without inventing holder share movements or changing execution economics.",
+  "remaining_before_validation": [
+    "Export the optional selector on the four provider facets and migrate independent selector controls.",
+    "Generalize reserve composition to use the new quote for configured custom inputs, preserving existing share-redemption behavior.",
+    "Exercise real restored-snapshot execution, including V4 Pons fees, V2 fee-on and ERC4626 protocol shares.",
+    "Resolve opaque ERC4626 compatibility independently; this extension alone does not make unsupported underlying transition quotes work.",
+    "Project provider-dependent rates and non-native donation wrapping where applicable."
+  ],
+  "files": [
+    {
+      "path": "contracts/interfaces/IStandardExchangeTransitionQuote.sol",
+      "before_sha256": "2a56b8bc39e9b471b19808c9d5a8c793b1d9bd9f66b97ae193acf052b4dfea89",
+      "after_sha256": "f5110cb0d1931ac851f430083716dd37b61d4028ee090880e6ed98092580eb15"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInQueryTarget.sol",
+      "before_sha256": "d44234ef217c2971decc38af41903803ec1484cb5329b5e68235571b03ed11bf",
+      "after_sha256": "eb86a43fd78108445438d0acfaa37d287a4aadf0d4426d76aa44dc1a7cf07d91"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryTarget.sol",
+      "before_sha256": "e915db909b034879e03f46e2b4b7e52d71c0da36124f9b2621b8fd3b82e5feda",
+      "after_sha256": "fd261f61e64b89bea114bffb0e93d51a28c6fa2b00d720433c5214e91b902162"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeQuoteTarget.sol",
+      "before_sha256": "4470c5e005655bbe3be126056e19d651f436ceab55b9202f4b71ad7596225c49",
+      "after_sha256": "cade800284efa949a9b146de197cca93aa3041b42bbf1c7bd527aa878988c1c1"
+    },
+    {
+      "path": "contracts/vaults/standard/erc4626/ERC4626StandardExchangeQuoteTarget.sol",
+      "before_sha256": "9726d33097c3b7ff0a2fbc9a32056bd3601ab0e5178dfa5584924b60a58da4ad",
+      "after_sha256": "bec888b014c00110e77a0d997929509b650a3a358631469af5a89ec758bbb306"
+    }
+  ]
+}

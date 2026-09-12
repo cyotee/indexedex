@@ -82,9 +82,9 @@ contract UniswapV4StandardExchangeOutMultiTarget is UniswapV4StandardExchangeOut
     }
 
     function _payIdleDualExit(DualExitLocal memory state, address recipient) internal {
+        _collectManagedFeesIfIdle();
         // D3: idle dual exit uses PoolManager even if the sleeve would cover.
         _burnCenterLiquidityForShares(state.sharesToBurn, state.totalShares);
-        _refreshStoredLiquidity();
         uint256 bal0 = IERC20(_token0()).balanceOf(address(this));
         uint256 bal1 = IERC20(_token1()).balanceOf(address(this));
         if (bal0 < state.amount0) {

@@ -22,7 +22,7 @@ function asCreated(raw: unknown): CreatedDetf | null {
   if (typeof row.chainId !== 'number' || !isAddress(row.address)) return null
   const name = typeof row.name === 'string' && row.name.trim() ? row.name.trim() : 'DETF'
   const symbol = typeof row.symbol === 'string' && row.symbol.trim() ? row.symbol.trim() : 'DETF'
-  const decimals = typeof row.decimals === 'number' && Number.isFinite(row.decimals) ? row.decimals : 18
+  const decimals = typeof row.decimals === 'number' && Number.isFinite(row.decimals) ? row.decimals : 9
   return { chainId: row.chainId, address: row.address, name, symbol, decimals }
 }
 
@@ -81,7 +81,7 @@ export function entryFromAddress(chainId: number, address: Address, symbol = 'DE
     address,
     name: symbol,
     symbol,
-    decimals: 18,
+    decimals: 9,
     tags: ['vault', 'detf'],
   }
 }

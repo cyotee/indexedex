@@ -24,6 +24,7 @@ import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
+import {IStandardExchangeTransitionQuote, IStandardExchangeRateQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {
     StandardExchangeRateProviderRepo
@@ -93,8 +94,9 @@ contract StandardExchangeRateProviderDFPkg is IStandardExchangeRateProviderDFPkg
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces_) {
-        interfaces_ = new bytes4[](1);
+        interfaces_ = new bytes4[](2);
         interfaces_[0] = type(IRateProvider).interfaceId;
+        interfaces_[1] = type(IStandardExchangeRateQuote).interfaceId;
     }
 
     function packageMetadata()

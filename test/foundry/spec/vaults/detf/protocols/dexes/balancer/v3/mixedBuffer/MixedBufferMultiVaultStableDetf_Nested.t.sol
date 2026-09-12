@@ -18,7 +18,6 @@ import {
 import {
     IMixedBufferMultiVaultStableDetfBonding
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfBondingTarget.sol";
-import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 
 /// @dev P8: nested MixedBuffer DETF as one share leg of outer MixedBuffer DETF.
 ///      Nested accepts+produces outer bufferToken (DAI) via mint/burn buffer routes.
@@ -28,17 +27,17 @@ contract MixedBufferMultiVaultStableDetf_Nested_Test is TestBase_MixedBufferMult
     address internal nestedDetf;
     address internal outerDetf;
 
-    function setUp() public override {
+    function setUp() public virtual override {
         super.setUp();
         nestedUser = makeAddr("nestedUser");
         directUser = makeAddr("directUser");
     }
 
-    function test_nestedDetf_asLeg_outerMintBurnBond() public {
-        nestedDetf = _deployOpenThresholdDetfN(1);
+    function test_nestedDetf_asLeg_outerMintBurnBond() public virtual {
+        nestedDetf = _deployDetfN(1, 0, 0);
         _bootstrapDefault(nestedDetf, alice);
         assertTrue(IMixedBufferMultiVaultStableDetfInfo(nestedDetf).isReserveLive(), "nested live");
-        assertEq(IMixedBufferMultiVaultStableDetfInfo(nestedDetf).bufferToken(), address(dai), "nested buffer");
+        assertEq(IMixedBufferMultiVaultStableDetfInfo(nestedDetf).bufferToken(), address(_fixtureBufferToken()), "nested buffer");
 
         outerDetf = _deployOuterOverNested(nestedDetf);
         _assertOuterWiring(outerDetf, nestedDetf);
@@ -59,16 +58,15 @@ contract MixedBufferMultiVaultStableDetf_Nested_Test is TestBase_MixedBufferMult
         IMixedBufferMultiVaultStableDetfDFPkg.PkgArgs memory outerArgs;
         outerArgs.name = "Outer MBMV Nested";
         outerArgs.symbol = "omvN";
-        outerArgs.bufferToken = IERC20(address(dai));
+        outerArgs.bufferToken = IERC20(address(_fixtureBufferToken()));
         outerArgs.standardExchangeVaults = new IStandardExchange[](2);
         outerArgs.vaultShareRateProviders = new IRateProvider[](2);
         outerArgs.standardExchangeVaults[0] = IStandardExchange(nested_);
         outerArgs.standardExchangeVaults[1] = IStandardExchange(address(seVaults[1]));
         outerArgs.amplificationParameter = MBMVS_AMP;
-        // Product Open (mint=1/burn=max illegal under mint>burn validation).
+        // Both layers use the mandatory default primary gates and reserve-swap fallback.
         outerArgs.mintThreshold = 0;
         outerArgs.burnThreshold = 0;
-        outerArgs.thresholdMode = ThresholdMode.Open;
 
         vm.startPrank(owner);
         outer_ = indexedexManager.deployVault(
@@ -86,12 +84,12 @@ contract MixedBufferMultiVaultStableDetf_Nested_Test is TestBase_MixedBufferMult
     }
 
     function _bootstrapOuterWithNested(address outer_, address nested_, address user) internal {
-        uint256 nestedShares_ = _mintDetfFromBuffer(nested_, user, 400e18);
+        uint256 nestedShares_ = _mintDetfFromBuffer(nested_, user, _fixtureAmount(400e18));
         nestedShares_ += _mintDetfFromVaultShare(nested_, 0, user, 200e18);
-        require(nestedShares_ > 50e18, "nested shares for bootstrap");
+        require(nestedShares_ > 50e9, "nested shares for bootstrap");
 
         uint256 se1Shares_ = _fundVaultShares(1, user, 500e18);
-        _fundBuffer(user, BOOTSTRAP_BUFFER);
+        _fundBuffer(user, _fixtureAmount(BOOTSTRAP_BUFFER));
 
         uint256[] memory amts_ = new uint256[](2);
         amts_[0] = nestedShares_;
@@ -100,17 +98,17 @@ contract MixedBufferMultiVaultStableDetf_Nested_Test is TestBase_MixedBufferMult
         vm.startPrank(user);
         IERC20(nested_).approve(outer_, nestedShares_);
         seShares[1].approve(outer_, se1Shares_);
-        IERC20(address(dai)).approve(outer_, BOOTSTRAP_BUFFER);
+        IERC20(address(_fixtureBufferToken())).approve(outer_, _fixtureAmount(BOOTSTRAP_BUFFER));
         (uint256 outerBondId_,,) = IMixedBufferMultiVaultStableDetfBonding(outer_).bootstrapFirstBond(
-            BOOTSTRAP_BUFFER, amts_, DEFAULT_MIN_LOCK, user, block.timestamp + 1 hours
+            _fixtureAmount(BOOTSTRAP_BUFFER), amts_, DEFAULT_MIN_LOCK, user, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertTrue(outerBondId_ > 0, "outer bootstrap bond");
     }
 
     function _outerMintFromNestedShares() internal {
-        uint256 nestedIn_ = _mintDetfFromBuffer(nestedDetf, nestedUser, 80e18);
-        if (nestedIn_ > 20e18) nestedIn_ = 20e18;
+        uint256 nestedIn_ = _mintDetfFromBuffer(nestedDetf, nestedUser, _fixtureAmount(80e18));
+        if (nestedIn_ > 20e9) nestedIn_ = 20e9;
 
         uint256 preview_ =
             IStandardExchangeIn(outerDetf).previewExchangeIn(IERC20(nestedDetf), nestedIn_, IERC20(outerDetf));
@@ -125,7 +123,7 @@ contract MixedBufferMultiVaultStableDetf_Nested_Test is TestBase_MixedBufferMult
     }
 
     function _outerMintFromBufferAndBurn() internal {
-        uint256 bufOut_ = _mintDetfFromBuffer(outerDetf, nestedUser, 40e18);
+        uint256 bufOut_ = _mintDetfFromBuffer(outerDetf, nestedUser, _fixtureAmount(40e18));
         assertTrue(bufOut_ > 0, "outer mint from buffer");
 
         uint256 bal_ = IERC20(outerDetf).balanceOf(nestedUser);
@@ -136,7 +134,7 @@ contract MixedBufferMultiVaultStableDetf_Nested_Test is TestBase_MixedBufferMult
     }
 
     function _outerBondNestedShares() internal {
-        uint256 moreNested_ = _mintDetfFromBuffer(nestedDetf, nestedUser, 50e18);
+        uint256 moreNested_ = _mintDetfFromBuffer(nestedDetf, nestedUser, _fixtureAmount(50e18));
         vm.startPrank(nestedUser);
         IERC20(nestedDetf).approve(outerDetf, moreNested_);
         (uint256 tid_, uint256 principal_) = IMixedBufferMultiVaultStableDetfBonding(outerDetf).bond(
@@ -147,7 +145,7 @@ contract MixedBufferMultiVaultStableDetf_Nested_Test is TestBase_MixedBufferMult
     }
 
     function _nestedStillServesDirectUsers() internal {
-        uint256 direct_ = _mintDetfFromBuffer(nestedDetf, directUser, 30e18);
+        uint256 direct_ = _mintDetfFromBuffer(nestedDetf, directUser, _fixtureAmount(30e18));
         assertTrue(direct_ > 0, "nested still mints directly");
         uint256 directBurn_ = _burnDetfToBuffer(nestedDetf, directUser, direct_ / 2);
         assertTrue(directBurn_ > 0, "nested still burns directly");

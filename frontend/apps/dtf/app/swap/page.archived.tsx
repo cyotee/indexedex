@@ -6,7 +6,6 @@ import {
   useAccount,
   useChainId,
   useConnect,
-  useConnection,
   useConnectorClient,
   usePublicClient,
   useSignTypedData,
@@ -379,7 +378,7 @@ function SwapPageInner() {
   const { selectedChainId } = useSelectedNetwork()
   const { connect, connectors, isPending: isConnectPending } = useConnect()
   const { switchChainAsync, isPending: isSwitchPending } = useSwitchChain()
-  const connection = useConnection()
+  const connection = useAccount()
   const connectorId = connection.connector?.id
   const { data: connectorClient } = useConnectorClient()
   const { data: walletClient } = useWalletClient()

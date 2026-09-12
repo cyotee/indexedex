@@ -1,15 +1,13 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 import {Vm} from 'forge-std/Vm.sol';
 import {VM_ADDRESS} from '@crane/contracts/constants/FoundryConstants.sol';
 import {BetterEfficientHashLib} from '@crane/contracts/utils/BetterEfficientHashLib.sol';
 
 import {IVaultRegistryDeployment} from 'contracts/interfaces/IVaultRegistryDeployment.sol';
-import {
-    ComposedStableCommonDetfDFPkg,
-    IComposedStableCommonDetfDFPkg
-} from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfDFPkg.sol';
+import {IComposedStableCommonDetfDFPkg} from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfDFPkg.sol';
 
 library ComposedStableCommonDetf_Pkg_FactoryService {
     using BetterEfficientHashLib for bytes;
@@ -23,12 +21,12 @@ library ComposedStableCommonDetf_Pkg_FactoryService {
         instance_ = IComposedStableCommonDetfDFPkg(
             address(
                 vaultRegistry_.deployPkg(
-                    type(ComposedStableCommonDetfDFPkg).creationCode,
+                    ArtifactCreationCode.creationCode("ComposedStableCommonDetfDFPkg.sol:ComposedStableCommonDetfDFPkg"),
                     abi.encode(pkgInit_),
-                    abi.encode(type(ComposedStableCommonDetfDFPkg).name)._hash()
+                    abi.encode("ComposedStableCommonDetfDFPkg")._hash()
                 )
             )
         );
-        vm.label(address(instance_), type(ComposedStableCommonDetfDFPkg).name);
+        vm.label(address(instance_), "ComposedStableCommonDetfDFPkg");
     }
 }

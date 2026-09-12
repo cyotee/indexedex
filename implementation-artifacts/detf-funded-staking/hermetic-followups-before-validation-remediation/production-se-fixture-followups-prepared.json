@@ -1,0 +1,254 @@
+{
+  "status": "PREPARED_NOT_APPLIED",
+  "recorded_at_utc": "2026-09-09T07:30:26.640236+00:00",
+  "gate": "Wait for the entire active validation parent session 4255 to exit before application.",
+  "changes": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/UniswapV4DetfProductionSeDeployLib.sol.txt",
+      "reason": "Use exact funded mixed-decimal V3 seed liquidity and a shared real two-token position activation helper; protocol product contracts unchanged.",
+      "before_sha256": "f491c5984d19d5210e0ff7dead5f4bf0254005a8bf96ec897ac48d3898e16bd1",
+      "after_sha256": "276176c295c6a02ed0634d77c071058cdaf48586f4af0964040ffc119960e911"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_ProdSe.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Quad_ProdSe.sol.txt",
+      "reason": "Activate each position underlier after actual fixture funding; Morpho accounting assets remain on their existing initialization path.",
+      "before_sha256": "a89fa16e9918e9b5cb24a6b84d45b304b67518722989021c0f07a2438fb85bf1",
+      "after_sha256": "18f7e11e5f8a4074634c1e3d08a4091fc194933cb10a23184b9250b7345a2425"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ3Se.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Cp_Univ3Se.sol.txt",
+      "reason": "Activate the real SE with both currencies after its user funding and before DETF first-bond execution.",
+      "before_sha256": "1e3923cb4e787c8707c02662bbbe72dc762f061b3e4450ef263ba8be21a74852",
+      "after_sha256": "666c00b0e98e6f5a376b8931504cd6a0158d8592638825586713902843ef43d8"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ4Se.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Cp_Univ4Se.sol.txt",
+      "reason": "Activate the real SE with both currencies after its user funding and before DETF first-bond execution.",
+      "before_sha256": "0aadcb85ef8b595b9c00db3375e97c702b7f6960782220fce378c5ec73aebea2",
+      "after_sha256": "4bf7485959ac3f254d858af7953fb70a0c94e94d433f2fe1c94a5e34a397de2a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_PonsV1Se.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Cp_PonsV1Se.sol.txt",
+      "reason": "Activate the real SE with both currencies after its user funding and before DETF first-bond execution.",
+      "before_sha256": "b233037fbe9ce89066952d89d854e344dab010008bbc7ec17df702a7cb1f8983",
+      "after_sha256": "34b1801ee56e21d4e264747ce87c2847e6b21edfa602d032dc0fb904b7415bce"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_ProdSe_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Quad_ProdSe_Decimals.sol.txt",
+      "reason": "Activate each position underlier after actual fixture funding; Morpho accounting assets remain on their existing initialization path. Bind the actual first reserve leg for retained Pons lifecycle routes and native decimal scaling.",
+      "before_sha256": "9dfb581b9e82859213690ceba1d5664ec459818acd80004efaeda012dd45d899",
+      "after_sha256": "f017f2e63a6219cdb945f1fbb1cb52f6105c7dd56f72a2b904e582a72c4ff581"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ3Se_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Cp_Univ3Se_Decimals.sol.txt",
+      "reason": "Activate the real SE with both currencies after its user funding and before DETF first-bond execution.",
+      "before_sha256": "09f9422a56756767b2748b3ff37b4dee829de0236790d0b573882d576afc0c7b",
+      "after_sha256": "b5ba59eb1aaa4b015230e8c244162949ce1c0da8b2531d5ccdbe5e7dafa15f09"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ4Se_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Cp_Univ4Se_Decimals.sol.txt",
+      "reason": "Activate the real SE with both currencies after its user funding and before DETF first-bond execution.",
+      "before_sha256": "8b1e024acd10e1627507360582dd50af87a933c6936c14778aba66027b75fd2b",
+      "after_sha256": "6e3ffbcb790d69e9e74d2efaf574c8906b2f4966387c07d2357870f1ccc86eda"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_PonsV1Se_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Cp_PonsV1Se_Decimals.sol.txt",
+      "reason": "Activate the real SE with both currencies after its user funding and before DETF first-bond execution.",
+      "before_sha256": "91a02dab7e555672c049365e5d783d0c919b23c17160b8b1e8636a0981c1e34b",
+      "after_sha256": "43142e7cda92354db2690ef80d0fd4a182e5b80279c30588c670f9e53a3ddc32"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_Univ3Se.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Weighted_Univ3Se.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "cafb2e20e255043b0589c72b5299ab941c91c6c612e134863318106a2e6bf590",
+      "after_sha256": "6330f010d16ccd10ddec6a32d598d75b2e9dd17a6bbc90b5f82369dca2067352"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_Univ3Se_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Weighted_Univ3Se_Decimals.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "c20a5fbdf3132e4f1e2076eb6cd0e9f9a17b0fc01292e46854fcea045423e1ff",
+      "after_sha256": "04c1e7b1d096e2e1971854935355c2b6f844db0a101d1375f4548b1aad6a994e"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_Univ4Se.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Weighted_Univ4Se.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "68f42b600835d6d0da79bae58bd6afa04aef47866204e08776c1b332e0b56f15",
+      "after_sha256": "6c9eb61ea71a19b127d0225ae5e1c90f1d946ca2220ed4fbd149d3cf902aa08a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_Univ4Se_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Weighted_Univ4Se_Decimals.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "672a652166fc7a3a999691df6231ca46e2f521b29520b06b8051c1f2272dccdf",
+      "after_sha256": "5d3bd7e3bf6d1690e0dc0f0869e11fd0c71eb9eafdc89cbf434d6d54273a077c"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_PonsV1Se.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Weighted_PonsV1Se.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "d1e446498b9cbf82c8ec1066ee1b2e6f7fcaa1fc2725ab196d7def45bc3e96a6",
+      "after_sha256": "d791b459cce5a7e74e94c4a417dc84bb77e5245ec28f7ef35e28750fc031fa00"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_PonsV1Se_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Weighted_PonsV1Se_Decimals.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "c8e5d9b03c578f15d31aab80ccbea15541a23d4958af0744a8dcb6a270276a7b",
+      "after_sha256": "2d8e338cc2e7d28f470769e34b9e3de28c184d097bdccba7cf31addd48e674df"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_PonsV2Se.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Weighted_PonsV2Se.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "9f8bb645e078bf107ebb524a9dbc8b9d7589cbb7ab4de30c0fff918d8ca1bee7",
+      "after_sha256": "d571757f959e5d9f50c68dd5a749e1b9b8db5c9627c269b976080067ca8a722b"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_PonsV2Se_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Weighted_PonsV2Se_Decimals.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "ff310e65b731153e3b3e30d8dba1c3d7c8cf7d92db9744aba1683cdfb779747b",
+      "after_sha256": "9400f739facfa9848df59aaad789cfadac2171fd247ffdb30b46f9289991ef20"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_PonsMix.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Weighted_PonsMix.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "14dd6b74e7f2e6bc2a11313df4dcebca914418f7720cbcf54a56068e1594208c",
+      "after_sha256": "1c5036e80f9c5b01858e652ef90945888ffd85ccef30a96bcf10698181588c19"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_PonsMix_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Weighted_PonsMix_Decimals.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "09403ae20d41334397e2b1408ccc68c7750a7e7b4305cb48016420d620774fe4",
+      "after_sha256": "a8e2450c22d2d28211cd8cb3b84ea05bc7f1231c7e1b15583d53c18a9c89a0f1"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_MorphoMix.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Weighted_MorphoMix.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "ad0bf71bc7941824a539a276fe51eda9869d4fe97fef44b8a7c141dd9c564fca",
+      "after_sha256": "a016b8cf31f51cf912b65f1ddfb1500abf9cfe827071f06a833073b8f3f46a51"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_MorphoMix_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Weighted_MorphoMix_Decimals.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "8ecf187a9c1f09fb340abe30fa6e2d2741710d2969f9d95896e7f381b6fe464a",
+      "after_sha256": "ee7b5228ff4daa82dd8568536b94d22aa1a26a153c587c5af617e550ba55c596"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Univ3Se.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Orbital_Univ3Se.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "1b765a25914475903a150bfc80a97180d217cd1c9e4ed7a8781ada56408f8cfd",
+      "after_sha256": "5cf93370716aa4e58c268c9f99421942acb9cb6c26e198ea4a98e79812197012"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Univ3Se_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Orbital_Univ3Se_Decimals.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "48a6f48eae812e11fcff486ab842a8c90a4323cc2767b4a7c84e7a3e85308b94",
+      "after_sha256": "8dfd0a4652ff9bffbd24b81cf8bef433b69b98e187bf59aae2ee078c51a162f4"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Univ4Se.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Orbital_Univ4Se.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "786e7be39e7d025811ce82f027db984b0b50867891c9ce73cef695b80f68d5a2",
+      "after_sha256": "d0934a20e50b42e510b3009cf3280860c89f9863b96de018e749e4429244ba82"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Univ4Se_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Orbital_Univ4Se_Decimals.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "6f242d4e3ae9ed8d0e3322da8b37db394f5f9777c1bb505ea745845b2ca62aee",
+      "after_sha256": "9a469274f2bb60699e538545ac0a59674a7388bb5819b9969aa9bb64de0322db"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_PonsV1Se.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Orbital_PonsV1Se.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "2b4cc2beb7007510e100c90354bfeb940919095eefb75849f4dacf6e073eaa0f",
+      "after_sha256": "f7e90898c3379977522b9988c7018d84d2d13ad3e8de903584a1e0d067783f4d"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_PonsV1Se_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Orbital_PonsV1Se_Decimals.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "78f17824fe3d464bc3d2f02d7e55f49c78c94889cb99667192cfb9eedf8564b5",
+      "after_sha256": "2b7feb8387546efe1e7f09ee933d24f02e5faa56c8e0626ac7c08d6d0bd37fd5"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_PonsV2Se.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Orbital_PonsV2Se.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "740859509c9171a480d3d29f2f619482cc7cde3f515393b0c37da9958fb6996d",
+      "after_sha256": "973af28971a3e5b594336dfdeff51c3bfaf5c9d7cb352ae8fe1fd4645990038b"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_PonsV2Se_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Orbital_PonsV2Se_Decimals.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "543905dc1dc9b23536bcf1ab6911403eef6b48d0dd378809ba3d74f58d0724dc",
+      "after_sha256": "0a8151169e2cbb587e273bd0ecd2f61eea4bedaccf14517f63eb6a96676b5f35"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_PonsMix.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Orbital_PonsMix.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "51319ac9568828cde3098c8949aa96adba34acdf3c24529af7862b701b6eadcb",
+      "after_sha256": "721f0e9f861616b65eacee0b3d6aab04c08dfed54d96e7673ce0b6a73972a492"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_PonsMix_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Orbital_PonsMix_Decimals.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "13e102dc68c268c22731f58feaee8bb4f0e5a561ce4049fdda00a4e12ffe65e2",
+      "after_sha256": "092032d5aa9ecbe4714fe66e05b87abc8bd6bf01a9c8df5ca60e7a3fa428aa9a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_MorphoMix.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Orbital_MorphoMix.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "2ef8a02846f85a27bf0164a487b1f8216b74fc6f8a696d2ddd44e73b695ebc00",
+      "after_sha256": "90cd57e949b593cc66ff097e91ea0b9ef5e0a12c19bbaea26032942f4be0fc6a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_MorphoMix_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Orbital_MorphoMix_Decimals.sol.txt",
+      "reason": "Fund both position currencies after actual provider funding; preserve all existing test declarations and Morpho token-asset initialization.",
+      "before_sha256": "0114cb2e67f13eadfcdbd0db5b2142080fd806c1ed025e5e54efceea0da74c02",
+      "after_sha256": "34399371f4e549dee788abc215300c44e3ce804b4e50ea1e26d7df8f2f1416f8"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_ProdSe_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Orbital_ProdSe_Decimals.sol.txt",
+      "reason": "Cache actual selected pair decimals after sorting and binding; avoid treating a 6-decimal payment as 18 decimals in existing first-bond, pricing and lifecycle tests.",
+      "before_sha256": "02f53dfe19e3a3761ad0d0d46a0c83a3c4f2d183c02ca65f47af6f39ab52898c",
+      "after_sha256": "2b7a2ec22029d90f1f387215b6f5916a1fd5fe4c2f6fe9cdf6c307a74644303a"
+    }
+  ],
+  "observed_failures": [
+    "V3 mixed-decimal pool setup balance reverts from fixed oversized liquidity.",
+    "V4/pons position underliers still have zero SE supply at the subsequent one-token first-bond deposit."
+  ],
+  "scope": "34 existing V4 provider fixture sources: exact V3 seeding, funded dual activation across all reserve families, and actual first-leg token/decimal binding. Every test declaration retained.",
+  "validation_passed": false,
+  "required_validation": "Draft typecheck followed by actual affected production-provider suites. Other final full-suite failures still need independent review.",
+  "updated_at_utc": "2026-09-09T08:18:42.816979+00:00",
+  "diagnostic_note": "The 33-source activation check passed 1272 methods in 24 suites. The two binding/unit amendments require a fresh combined check and runtime validation."
+}

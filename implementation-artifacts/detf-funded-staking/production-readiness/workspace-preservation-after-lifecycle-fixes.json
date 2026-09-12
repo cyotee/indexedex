@@ -1,0 +1,119 @@
+{
+  "checked_at_utc": "2026-09-11T07:12:07.030999+00:00",
+  "baseline": "owner-passing-baseline.json",
+  "task_start_files_checked": 5365,
+  "missing": [],
+  "changed": [
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookMath.sol",
+      "before_sha256": "5ebf01f81560d7d9cd0b46a82aca72bc794828e87c4c34f16b6cb147ec30177d",
+      "current_sha256": "a92618f9a0e38687d6097c0bdc25894abd4de9e0c33bc011d98b6fcb82185516",
+      "reviewed_disposition": "PR-10 full precision NAV"
+    },
+    {
+      "path": "contracts/vaults/detf/DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "before_sha256": "69f4ff5901945850ad79022d417a106f67813ed31405189b260a6fb23bd51ba3",
+      "current_sha256": "ede9941c4a40fbc3be0f1d998b16748ead8eded196cf9f44520642f07f1b73c5",
+      "reviewed_disposition": "P6 documentation"
+    },
+    {
+      "path": "contracts/vaults/detf/DETF_FUNDED_STAKING_AND_SY_VALIDATION_REPORT.md",
+      "before_sha256": "a4013d9590e98672b5d20a3234c8be2ca76d136ecdb928e1d1fc7311b479b326",
+      "current_sha256": "a21734423bbee9407f42f24a93b03d2277826532d7c4c3677ca0e426fc8b53d5",
+      "reviewed_disposition": "P6 documentation"
+    },
+    {
+      "path": "contracts/vaults/detf/DETF_PRODUCTION_READINESS_REMAINING_IMPLEMENTATION_PLAN.md",
+      "before_sha256": "e5feb3dbfbf1a9eb8ed17a01dfb2b5150d8c4af31c9fd4eca40172ad85b729c9",
+      "current_sha256": "3d75b6eb6fa65cc949f95657591c016bd4bc64cf673ab8846c898724e9a4ea62",
+      "reviewed_disposition": "P0-P6 tracker"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol",
+      "before_sha256": "7aa3cb339e21bd9085a6ca8fd4418da1ef52e3578f2c5d9cc52ebe9e84582a59",
+      "current_sha256": "cbcba746b8d10c7669dcefbbf90c0eeb242225974ccbd7e2403a8b2b1f465844",
+      "reviewed_disposition": "PR-09 zero-LP residual termination"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol",
+      "before_sha256": "a43f26a1b79e55450798aaf6f0e023e885006d1ec494e18246fbdda36d36daf5",
+      "current_sha256": "6bb606480237e4ef3d63492a936f3d4f7393c51adcf505a4f2dfff821b227047",
+      "reviewed_disposition": "PR-01/02 final payout and self-leg dust"
+    },
+    {
+      "path": "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_09_BalancerStableBufferHookPkg.sol",
+      "before_sha256": "3ed4828ea168d537fe3a425c2a87bf2eb69b2500b07efca87190a6b469819fdb",
+      "current_sha256": "5e4cc781704853dc002f07422225ebef0b2f8e775bd64b1d6036a9ae0a100f19",
+      "reviewed_disposition": "PR-08 required facet wiring"
+    },
+    {
+      "path": "scripts/foundry/anvil_robinhood_main/Phase_09_Stage_01_ExportFrontend.s.sol",
+      "before_sha256": "20a4f3fa7ab69c8faa438dc15440af228e35231c12497f088672280dd369916e",
+      "current_sha256": "87a2bd07eb26984bb1395b2a9cf776ff29af778dadc77be8a03ac036fb12dd06",
+      "reviewed_disposition": "PR-05 isolated exports"
+    },
+    {
+      "path": "scripts/foundry/anvil_robinhood_main/README.md",
+      "before_sha256": "c400e86ebd94e853a30e7f57af168ff1c38f0f8ec09fac5f28768b7725e35910",
+      "current_sha256": "07f67b06227cdddac0579f4bf1d04b5da4d23a29942a74e8bf6dc409d80d836d",
+      "reviewed_disposition": "PR-05/06/07 operator instructions"
+    },
+    {
+      "path": "scripts/foundry/anvil_robinhood_main/Script_SimulateArchitecture.s.sol",
+      "before_sha256": "fc18244ff54a34f3f6c6b663c466b831ccef8cbe498483dc7e9174118bd1eeee",
+      "current_sha256": "e8c0273cf8ae3c19b1bc9e7076889375d7d6ee0f2f78a0fc31ebf65dc11a9859",
+      "reviewed_disposition": "PR-06 complete catalog simulation"
+    },
+    {
+      "path": "scripts/foundry/anvil_robinhood_main/deploy_all.sh",
+      "before_sha256": "4c78281d752816cf8a5232e1759396e0e23730ecfe28cb533534a9976aa889e1",
+      "current_sha256": "a3412be07142f7fa5ccab6811fdec81e176ddcfaa59693dcda91933c24073754",
+      "reviewed_disposition": "PR-06/07 quote path/fee mode and preserved fork cache"
+    },
+    {
+      "path": "test/foundry/fork/robinhood_4663/RobinhoodReleaseRehearsal.t.sol",
+      "before_sha256": "a661ff882423a4b67b660b3fb5abbb272b18563529ae50cc4e6414eb8a52b112",
+      "current_sha256": "46e153ff2e66f8035306a4cf65aa9bb79363ff61132c8d3966003a108c3d722a",
+      "reviewed_disposition": "Missing named import and LC-01 funded Quad growth prerequisite"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_Liquidity.t.sol",
+      "before_sha256": "7840a36b533a321d41d333b50d7d51390dac4936ce6214593ca660cce59f23b8",
+      "current_sha256": "cec141f69abca5c67e78bd4d17dd36158f7b9ba475f82da0591c001402b02f48",
+      "reviewed_disposition": "PR-10 direct and bounded NAV regressions"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+      "before_sha256": "7f0baa09086de5f0a1c661af2d6c554207341badd9a87db40344e1420b43ae8c",
+      "current_sha256": "69744e12b0d2641d6216a3187f75daccd2bc85b57803380e4266bde430163f3a",
+      "reviewed_disposition": "PR-01 fallback boundary regressions"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Burn_H6.t.sol",
+      "before_sha256": "c0ac3ca9afaf6cb75feed519d2128081a1fa2a25fa58ef64ed6d64d96d2927a4",
+      "current_sha256": "bb6ead03cb6b3d45e4f2a5c27ed6d1c596dc531333b91a7973a041a17e7415f9",
+      "reviewed_disposition": "PR-01/02 direct dust/payable regressions"
+    }
+  ],
+  "unexpected_changes": [],
+  "status": "PASS_TASK_START_FILES_PRESERVED",
+  "scope": "Compare every captured task-start file; permit only explicitly reviewed edits.\n\nNew files are inventoried separately. This never changes or restores source.\n",
+  "reviewed_allowlist": {
+    "contracts/vaults/detf/DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md": "P6 documentation",
+    "contracts/vaults/detf/DETF_FUNDED_STAKING_AND_SY_VALIDATION_REPORT.md": "P6 documentation",
+    "contracts/vaults/detf/DETF_PRODUCTION_READINESS_REMAINING_IMPLEMENTATION_PLAN.md": "P0-P6 tracker",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol": "PR-01/02 final payout and self-leg dust",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol": "PR-09 zero-LP residual termination",
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookMath.sol": "PR-10 full precision NAV",
+    "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_09_BalancerStableBufferHookPkg.sol": "PR-08 required facet wiring",
+    "scripts/foundry/anvil_robinhood_main/Phase_09_Stage_01_ExportFrontend.s.sol": "PR-05 isolated exports",
+    "scripts/foundry/anvil_robinhood_main/README.md": "PR-05/06/07 operator instructions",
+    "scripts/foundry/anvil_robinhood_main/Script_SimulateArchitecture.s.sol": "PR-06 complete catalog simulation",
+    "scripts/foundry/anvil_robinhood_main/deploy_all.sh": "PR-06/07 quote path/fee mode and preserved fork cache",
+    "test/foundry/fork/robinhood_4663/RobinhoodReleaseRehearsal.t.sol": "Missing named import and LC-01 funded Quad growth prerequisite",
+    "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol": "PR-01 fallback boundary regressions",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Burn_H6.t.sol": "PR-01/02 direct dust/payable regressions",
+    "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_Liquidity.t.sol": "PR-10 direct and bounded NAV regressions"
+  },
+  "crane_patch_evidence": "production-and-launch-fixes.json"
+}

@@ -19,11 +19,14 @@ export type SePlatform = {
   v3Factory: Address | null
   uniV4SePkg: Address | null
   uniV3SePkg: Address | null
+  uniV4DetfPkg: Address | null
   cpDetfPkg: Address | null
   cpHookPkg: Address | null
   curveQuadDetfPkg: Address | null
+  curveQuadHookPkg: Address | null
   weightedDetfPkg: Address | null
   weightedHookPkg: Address | null
+  orbitalHookPkg: Address | null
   morpho: Address | null
   morphoBlueSePkg: Address | null
   morphoIrm: Address | null
@@ -52,11 +55,14 @@ export function resolveSePlatform(
     v3Factory: asAddr(platform.v3Factory) ?? asAddr(platform.uniswapV3Factory),
     uniV4SePkg: asAddr(platform.uniV4SePkg),
     uniV3SePkg: asAddr(platform.uniV3SePkg) ?? asAddr(platform.uniV3SePkg_rich),
+    uniV4DetfPkg: asAddr(platform.uniV4DetfPkg) ?? asAddr(platform.uniswapV4DetfPkg),
     cpDetfPkg: asAddr(platform.cpDetfPkg) ?? asAddr(platform.chirDetfPkg),
     cpHookPkg: asAddr(platform.cpHookPkg) ?? asAddr(platform.bufferCpHookPkg),
     curveQuadDetfPkg: asAddr(platform.curveQuadDetfPkg),
+    curveQuadHookPkg: asAddr(platform.curveQuadHookPkg),
     weightedDetfPkg: asAddr(platform.weightedDetfPkg),
     weightedHookPkg: asAddr(platform.weightedHookPkg),
+    orbitalHookPkg: asAddr(platform.orbitalHookPkg),
     morpho: asAddr(platform.morpho) ?? asAddr(platform.morphoBlue),
     morphoBlueSePkg: asAddr(platform.morphoBlueSePkg),
     morphoIrm: asAddr(platform.morphoIrm) ?? asAddr(platform.morphoAdaptiveCurveIrm),

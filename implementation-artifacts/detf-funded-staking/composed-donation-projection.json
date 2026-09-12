@@ -1,0 +1,66 @@
+{
+  "status": "applied; validation pending",
+  "scope": "Project newly issued SE supply/fees before the retained CP/Orbital zap or Weighted/Curve inventory join. Actual donation execution and issuance economics unchanged.",
+  "files": [
+    {
+      "path": "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol",
+      "before_sha256": "bc149c4946ae18bff607af3be69fb043a2bba9f3611126f59b2da27fe0513dfa",
+      "after_sha256": "54a18979902ff148aa0cfd9fa73d4f50df0e30abeac5d692749767d0fae3fd78"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol",
+      "before_sha256": "94a9fb7b16a02b35d8b41919413ded93ef0092a325f3dff02690e67595acc2e6",
+      "after_sha256": "2dd99c920b9e9d3353609ac327d612ad18d32b8534242ac55720c4fdf843e9b2"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewTarget.sol",
+      "before_sha256": "f373cda1978ddd5e7db56d2245fdad7fcf1fa03741667a21322d05dad833b653",
+      "after_sha256": "ec8ffbf5e484340f7b1389938c20357b84098adcc3c2983b94fb2170b3b0271d"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib.sol",
+      "before_sha256": "5cf05aa4597e53d0428eecaa5af69cca76989ae1f67f2915aedadd2c2108fe00",
+      "after_sha256": "eb44ef3ab0dffd929bc3d3315506b7b98bd72a0b7f5761a1248eb4ee4d28c8fb"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDepositQueryTarget.sol",
+      "before_sha256": "3ddff57138871b714b9f7ae7e0eab960d6bedc8fdd29b3008c5f99f3965bc538",
+      "after_sha256": "9201fe1a15e82947dc810165860bd4b5d292ad506abb501dc9d51ff4f86b2a06"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookJoinQueryTarget.sol",
+      "before_sha256": "b8babf0a3b51ebb7917255d6307a2433ee5f8ce790a18d865bd76dec0984bb43",
+      "after_sha256": "e2becef804fc7b2f5ab15fc1ef168b79ea03b2e7bfd826cd04c5037b93bdeffb"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookJoinQueryTarget.sol",
+      "before_sha256": "14681e9f34386a3f046f6c978c33675e35e9d7591c3cf9ea56e019c2b03f262e",
+      "after_sha256": "a7e4c7324cf818e4298447d9c1985b5d4de96a9fa8f68d5bccb9177f4e6b4cd3"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet.sol",
+      "before_sha256": "762b6e48b51c907c036cfa59e179160340d55162b468a73776d0691e667660dd",
+      "after_sha256": "74520e743845e8479bf2ffc241dafe4c49ba3fbbb01361e90919726f104db2bc"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositQueryFacet.sol",
+      "before_sha256": "4593e4ef627d68a5362910a8d22305711511184d14b3d60002a350ba29f1ee91",
+      "after_sha256": "f3d3f24851c5915d63894502898b325007b9ecd893b69f1ab48d670dba5e309a"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookJoinQueryFacet.sol",
+      "before_sha256": "444fcee5368d3309eb2dec71fe5cdc12c9d90ec7e64cec2facdc2778a01f4131",
+      "after_sha256": "b74c4fbe8a9d227a4939488f62f84cc331e3f8299daf401d9b3943c1adee5eb1"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookJoinQueryFacet.sol",
+      "before_sha256": "81111aaaec4f391c7444f45db19e5af7a05d00deeb53475dd4148b8413b6f83f",
+      "after_sha256": "222a590a8be9c5099736709ddc16d006c81f505c8159b1663e2e6e3a4aa3e51b"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol",
+      "before_sha256": "5863be189220cdb6f8b3ce6346bf9222e4953559fea9d6b53554b80b25d6cc13",
+      "after_sha256": "00caa15035f57117054d6d02f8ebbf4f68c58259bb207fea9fa32d5b52050349"
+    }
+  ]
+}

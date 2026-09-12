@@ -93,7 +93,7 @@ export async function entriesFromAddresses(
           address,
           name: name?.trim() || 'DETF',
           symbol: symbol?.trim() || 'DETF',
-          decimals: typeof decimals === 'number' ? decimals : 18,
+          decimals: typeof decimals === 'number' ? decimals : 9,
           tags: ['vault', 'detf'],
         } satisfies TokenListEntry
       } catch {

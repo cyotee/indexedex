@@ -25,7 +25,8 @@ import {
 import {
     HermeticWETH,
     HermeticRETH,
-    HermeticDepositPool
+    HermeticDepositPool,
+    HermeticRocketStorage
 } from "contracts/protocols/staking/rocket-pool/test/hermetic/HermeticRocketPoolPorts.sol";
 
 /**
@@ -45,6 +46,7 @@ abstract contract TestBase_RocketPoolRETHStandardExchange is TestBase_Permit2, T
     HermeticWETH public hermeticWeth;
     HermeticRETH public hermeticReth;
     HermeticDepositPool public hermeticPool;
+    HermeticRocketStorage public hermeticRegistry;
 
     address public seVault;
     IRocketPoolRETHStandardVault public rocketPoolSe;
@@ -62,6 +64,7 @@ abstract contract TestBase_RocketPoolRETHStandardExchange is TestBase_Permit2, T
         hermeticWeth = new HermeticWETH();
         hermeticReth = new HermeticRETH();
         hermeticPool = new HermeticDepositPool(hermeticReth);
+        hermeticRegistry = new HermeticRocketStorage(address(hermeticReth), address(hermeticPool));
         // Default: open capacity for soft stake tests; Capacity suite zeroes this.
         hermeticPool.setMaxDepositAmount(type(uint256).max);
 
@@ -104,7 +107,7 @@ abstract contract TestBase_RocketPoolRETHStandardExchange is TestBase_Permit2, T
 
     function _deployRocketPoolSe() internal returns (address vault) {
         vm.prank(owner);
-        vault = rocketPoolSeDFPkg.deployVault(address(hermeticReth), address(hermeticWeth), address(hermeticPool));
+        vault = rocketPoolSeDFPkg.deployVault(address(hermeticReth), address(hermeticWeth), address(hermeticPool), address(hermeticRegistry));
     }
 
     function _dealWeth(address to, uint256 amount) public {

@@ -23,6 +23,7 @@ import {Math} from "@crane/contracts/utils/Math.sol";
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
+import {IStandardExchangeTransitionQuote, IStandardExchangeRateQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {
     StandardExchangeRateProviderRepo
@@ -42,29 +43,45 @@ contract StandardExchangeRateProviderFacet is IStandardExchangeRateProvider, IFa
     /* ---------------------------------------------------------------------- */
 
     function getRate() external view returns (uint256) {
+        return _getRate("");
+    }
+
+    function quoteRate(address exchange, address asset, bytes calldata state) external view returns (uint256) {
+        StandardExchangeRateProviderRepo.Storage storage l = StandardExchangeRateProviderRepo._layout();
+        address subject = address(l.rateSubject);
+        if (subject == address(0)) subject = address(l.reserveVault);
+        // An independent subject keeps its live rate. The projected state belongs
+        // only to the supplied SE and is denominated in its selected quote asset.
+        if (exchange != address(l.reserveVault) || asset != address(l.rateTarget) || subject != exchange) {
+            return _getRate("");
+        }
+        return _getRate(state);
+    }
+
+    function _getRate(bytes memory state) private view returns (uint256) {
         StandardExchangeRateProviderRepo.Storage storage layoutStruct = StandardExchangeRateProviderRepo._layout();
         IERC20 subject_ = layoutStruct.rateSubject;
         if (address(subject_) == address(0)) {
             subject_ = IERC20(address(layoutStruct.reserveVault));
         }
-        uint256 totalShares = subject_.totalSupply();
+        uint256 totalShares = state.length == 0 ? subject_.totalSupply()
+            : IStandardExchangeTransitionQuote(address(layoutStruct.reserveVault)).quoteTotalSupply(state);
 
         if (totalShares == 0) {
             return 0;
         }
 
-        // Start from a 1e18 raw-share quote when possible, but never exceed the
-        // vault's actual total supply. Some fresh exchange vaults mint far fewer
-        // than 1e18 raw share units, so quoting 1e18 would effectively ask to
-        // redeem non-existent shares and collapse to zero.
-        uint256 quoteAmount = totalShares < ONE_WAD ? totalShares : ONE_WAD;
+        // Quote one whole subject token, capped by actual supply. DETF and sDETF
+        // use nine decimals; treating 1e18 raw units as one token misprices them.
+        uint256 subjectUnit = 10 ** IERC20Metadata(address(subject_)).decimals();
+        uint256 quoteAmount = totalShares < subjectUnit ? totalShares : subjectUnit;
         (bool success, uint256 out) =
-            _safePreviewExchangeIn(layoutStruct.reserveVault, subject_, quoteAmount, layoutStruct.rateTarget);
+            _safePreviewExchangeIn(quoteAmount, state);
 
         for (uint256 i = 0; !success && quoteAmount > 1 && i < 18; ++i) {
             quoteAmount /= 2;
             (success, out) =
-                _safePreviewExchangeIn(layoutStruct.reserveVault, subject_, quoteAmount, layoutStruct.rateTarget);
+                _safePreviewExchangeIn(quoteAmount, state);
         }
 
         if (!success || quoteAmount == 0) {
@@ -80,7 +97,7 @@ contract StandardExchangeRateProviderFacet is IStandardExchangeRateProvider, IFa
                 break;
             }
             (bool nextSuccess, uint256 nextOut) =
-                _safePreviewExchangeIn(layoutStruct.reserveVault, subject_, nextQuote, layoutStruct.rateTarget);
+                _safePreviewExchangeIn(nextQuote, state);
             if (!nextSuccess) {
                 break;
             }
@@ -88,8 +105,8 @@ contract StandardExchangeRateProviderFacet is IStandardExchangeRateProvider, IFa
             out = nextOut;
         }
 
-        if (quoteAmount != ONE_WAD) {
-            out = out._mulDiv(ONE_WAD, quoteAmount, Math.Rounding.Ceil);
+        if (quoteAmount != subjectUnit) {
+            out = out._mulDiv(subjectUnit, quoteAmount, Math.Rounding.Ceil);
         }
 
         uint8 targetDecimals = layoutStruct.rateTargetDecimals;
@@ -104,12 +121,18 @@ contract StandardExchangeRateProviderFacet is IStandardExchangeRateProvider, IFa
         return out / (10 ** (targetDecimals - 18));
     }
 
-    function _safePreviewExchangeIn(
-        IStandardExchange reserveVault_,
-        IERC20 subject_,
-        uint256 quoteAmount_,
-        IERC20 rateTarget_
-    ) internal view returns (bool success_, uint256 out_) {
+    function _safePreviewExchangeIn(uint256 quoteAmount_, bytes memory state)
+        private view returns (bool success_, uint256 out_)
+    {
+        StandardExchangeRateProviderRepo.Storage storage l = StandardExchangeRateProviderRepo._layout();
+        IStandardExchange reserveVault_ = l.reserveVault;
+        IERC20 subject_ = address(l.rateSubject) == address(0) ? IERC20(address(reserveVault_)) : l.rateSubject;
+        IERC20 rateTarget_ = l.rateTarget;
+        if (state.length != 0) {
+            try IStandardExchangeTransitionQuote(address(reserveVault_)).quoteAssets(state, quoteAmount_)
+                returns (uint256 quotedOut) { return (true, quotedOut); }
+            catch { return (false, 0); }
+        }
         try reserveVault_.previewExchangeIn(subject_, quoteAmount_, rateTarget_) returns (uint256 quotedOut) {
             return (true, quotedOut);
         } catch {
@@ -138,16 +161,18 @@ contract StandardExchangeRateProviderFacet is IStandardExchangeRateProvider, IFa
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces_) {
-        interfaces_ = new bytes4[](2);
+        interfaces_ = new bytes4[](3);
         interfaces_[0] = type(IRateProvider).interfaceId;
         interfaces_[1] = type(IStandardExchangeRateProvider).interfaceId;
+        interfaces_[2] = type(IStandardExchangeRateQuote).interfaceId;
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](3);
+        funcs_ = new bytes4[](4);
         funcs_[0] = IRateProvider.getRate.selector;
         funcs_[1] = IStandardExchangeRateProvider.reserveVault.selector;
         funcs_[2] = IStandardExchangeRateProvider.rateTarget.selector;
+        funcs_[3] = IStandardExchangeRateQuote.quoteRate.selector;
     }
 
     function facetMetadata()

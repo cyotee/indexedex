@@ -10,7 +10,7 @@ import {UniswapV4Detf_ReserveDonationBase} from
 import {UniswapV4Detf_ReserveDonationOpenBase} from
     "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ReserveDonationOpenBase.sol";
 
-/// @notice Orbital gold donation R12a. pairToken is pair0. DN3/DN15 N/A NatSpec on Base.
+/// @notice Orbital gold donation R12a. pairToken is pair0. External LP donation is covered by the four-host/two-policy reserve suite.
 contract UniswapV4Detf_Orbital_ReserveDonation is
     TestBase_UniswapV4Detf_Orbital,
     UniswapV4Detf_ReserveDonationOpenBase,

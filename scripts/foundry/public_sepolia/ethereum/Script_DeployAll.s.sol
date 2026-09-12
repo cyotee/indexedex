@@ -28,7 +28,7 @@ contract DeploymentBase is AnvilDeploymentBase {
 }
 
 contract Script_DeployAll is DeploymentBase {
-    function run() external override {
+    function run() external {
         string memory outDir = _localOutDir();
         vm.setEnv("OUT_DIR_OVERRIDE", outDir);
         vm.setEnv("NETWORK_PROFILE", "ethereum_sepolia");

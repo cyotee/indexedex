@@ -1,0 +1,328 @@
+[
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/TestBase_ComposedStableCommonDetf_Decimals.sol",
+    "hits": [
+      {
+        "line": 275,
+        "text": "thresholdMode: mode_,"
+      },
+      {
+        "line": 277,
+        "text": "expansionCatchUpMaxSeconds: 0,"
+      },
+      {
+        "line": 278,
+        "text": "expansionCatchUpCapBps: 0,"
+      },
+      {
+        "line": 367,
+        "text": "thresholdMode: _composedThresholdMode(),"
+      },
+      {
+        "line": 369,
+        "text": "expansionCatchUpMaxSeconds: 0,"
+      },
+      {
+        "line": 370,
+        "text": "expansionCatchUpCapBps: 0,"
+      }
+    ]
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfDFPkg_Deploy.t.sol",
+    "hits": [
+      {
+        "line": 119,
+        "text": "thresholdMode: ThresholdMode.Policy,"
+      },
+      {
+        "line": 121,
+        "text": "expansionCatchUpMaxSeconds: 0,"
+      },
+      {
+        "line": 122,
+        "text": "expansionCatchUpCapBps: 0,"
+      }
+    ]
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_IntegratedDeploy.t.sol",
+    "hits": [
+      {
+        "line": 253,
+        "text": "thresholdMode: mode_,"
+      },
+      {
+        "line": 255,
+        "text": "expansionCatchUpMaxSeconds: 0,"
+      },
+      {
+        "line": 256,
+        "text": "expansionCatchUpCapBps: 0,"
+      },
+      {
+        "line": 332,
+        "text": "thresholdMode: _composedThresholdMode(),"
+      },
+      {
+        "line": 334,
+        "text": "expansionCatchUpMaxSeconds: 0,"
+      },
+      {
+        "line": 335,
+        "text": "expansionCatchUpCapBps: 0,"
+      }
+    ]
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/adversarial/Adversarial_ComposedStable_GE.t.sol",
+    "hits": [
+      {
+        "line": 355,
+        "text": "pkgArgs_.thresholdMode = ThresholdMode.Open;"
+      },
+      {
+        "line": 357,
+        "text": "pkgArgs_.expansionCatchUpMaxSeconds = 0;"
+      },
+      {
+        "line": 358,
+        "text": "pkgArgs_.expansionCatchUpCapBps = 0;"
+      }
+    ]
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_GE_Decimals.sol",
+    "hits": [
+      {
+        "line": 354,
+        "text": "pkgArgs_.thresholdMode = ThresholdMode.Open;"
+      },
+      {
+        "line": 356,
+        "text": "pkgArgs_.expansionCatchUpMaxSeconds = 0;"
+      },
+      {
+        "line": 357,
+        "text": "pkgArgs_.expansionCatchUpCapBps = 0;"
+      }
+    ]
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_ComposedStableMatrix.t.sol",
+    "hits": [
+      {
+        "line": 141,
+        "text": "thresholdMode: ThresholdMode.Open,"
+      },
+      {
+        "line": 143,
+        "text": "expansionCatchUpMaxSeconds: 0,"
+      },
+      {
+        "line": 144,
+        "text": "expansionCatchUpCapBps: 0,"
+      }
+    ]
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_Reentrancy.t.sol",
+    "hits": [
+      {
+        "line": 132,
+        "text": "thresholdMode: ThresholdMode.Open,"
+      },
+      {
+        "line": 134,
+        "text": "expansionCatchUpMaxSeconds: 0,"
+      },
+      {
+        "line": 135,
+        "text": "expansionCatchUpCapBps: 0,"
+      }
+    ]
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/adversarial/TestBase_SingleStandardExchangeDETF_Adversarial.sol",
+    "hits": [
+      {
+        "line": 71,
+        "text": "thresholdMode: mode_,"
+      },
+      {
+        "line": 73,
+        "text": "expansionCatchUpMaxSeconds: 0,"
+      },
+      {
+        "line": 74,
+        "text": "expansionCatchUpCapBps: 0,"
+      }
+    ]
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Reentrancy_Decimals.sol",
+    "hits": [
+      {
+        "line": 131,
+        "text": "thresholdMode: ThresholdMode.Open,"
+      },
+      {
+        "line": 133,
+        "text": "expansionCatchUpMaxSeconds: 0,"
+      },
+      {
+        "line": 134,
+        "text": "expansionCatchUpCapBps: 0,"
+      }
+    ]
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_ComposedStableMatrix_Decimals.sol",
+    "hits": [
+      {
+        "line": 140,
+        "text": "thresholdMode: ThresholdMode.Open,"
+      },
+      {
+        "line": 142,
+        "text": "expansionCatchUpMaxSeconds: 0,"
+      },
+      {
+        "line": 143,
+        "text": "expansionCatchUpCapBps: 0,"
+      }
+    ]
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/adversarial/TestBase_SingleStandardExchangeDETF_Adversarial_Decimals.sol",
+    "hits": [
+      {
+        "line": 70,
+        "text": "thresholdMode: mode_,"
+      },
+      {
+        "line": 72,
+        "text": "expansionCatchUpMaxSeconds: 0,"
+      },
+      {
+        "line": 73,
+        "text": "expansionCatchUpCapBps: 0,"
+      }
+    ]
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_Reentrancy.t.sol",
+    "hits": [
+      {
+        "line": 101,
+        "text": "thresholdMode: ThresholdMode.Open,"
+      },
+      {
+        "line": 103,
+        "text": "expansionCatchUpMaxSeconds: 0,"
+      },
+      {
+        "line": 104,
+        "text": "expansionCatchUpCapBps: 0,"
+      }
+    ]
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_PkgArgs.t.sol",
+    "hits": [
+      {
+        "line": 89,
+        "text": "args.thresholdMode = ThresholdMode.Open;"
+      }
+    ]
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/TestBase_MultiVaultWeightedDetf_Adversarial.sol",
+    "hits": [
+      {
+        "line": 171,
+        "text": "thresholdMode: mode_,"
+      },
+      {
+        "line": 173,
+        "text": "expansionCatchUpMaxSeconds: 0,"
+      },
+      {
+        "line": 174,
+        "text": "expansionCatchUpCapBps: 0,"
+      }
+    ]
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Deploy_Decimals.sol",
+    "hits": [
+      {
+        "line": 67,
+        "text": "thresholdMode: ThresholdMode.Policy,"
+      },
+      {
+        "line": 69,
+        "text": "expansionCatchUpMaxSeconds: 0,"
+      },
+      {
+        "line": 70,
+        "text": "expansionCatchUpCapBps: 0,"
+      },
+      {
+        "line": 112,
+        "text": "thresholdMode: ThresholdMode.Policy,"
+      },
+      {
+        "line": 114,
+        "text": "expansionCatchUpMaxSeconds: 0,"
+      },
+      {
+        "line": 115,
+        "text": "expansionCatchUpCapBps: 0,"
+      }
+    ]
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Reentrancy_Decimals.sol",
+    "hits": [
+      {
+        "line": 99,
+        "text": "thresholdMode: ThresholdMode.Open,"
+      },
+      {
+        "line": 101,
+        "text": "expansionCatchUpMaxSeconds: 0,"
+      },
+      {
+        "line": 102,
+        "text": "expansionCatchUpCapBps: 0,"
+      }
+    ]
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/adversarial/TestBase_MultiVaultWeightedDetf_Adversarial_Decimals.sol",
+    "hits": [
+      {
+        "line": 171,
+        "text": "thresholdMode: mode_,"
+      },
+      {
+        "line": 173,
+        "text": "expansionCatchUpMaxSeconds: 0,"
+      },
+      {
+        "line": 174,
+        "text": "expansionCatchUpCapBps: 0,"
+      }
+    ]
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/adversarial/Adversarial_PkgArgs_Decimals.sol",
+    "hits": [
+      {
+        "line": 88,
+        "text": "args.thresholdMode = ThresholdMode.Open;"
+      }
+    ]
+  }
+]

@@ -1,0 +1,125 @@
+--- test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol
++++ test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol
+@@ -65,6 +65,8 @@
+         args_.mintRoutes[2] = IUniswapV4Detf.IoRoute(IERC20(IStandardizedYield(se).yieldToken()), IStandardExchange(se));
+         args_.donateRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
+         args_.donateRoutes = args_.mintRoutes;
++        args_.bondRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
++        args_.bondRoutes = args_.mintRoutes;
+         return args_;
+     }
+ 
+@@ -247,6 +249,66 @@
+ 
+     function test_customProtocolShareFallbackComposesActualConversionAndSwap() public {
+         IUniswapV4Detf subject = _activateFallbackInstance();
++        (IERC20 input, uint256 shares) = _fundCustomProtocolPayment(subject);
++        address se = IUniswapV4SeBufferHook(subject.hook()).standardExchangeOf(_leadPayment());
++        assertFalse(subject.isMintingAllowed(input));
++        uint256 preview = IStandardExchangeIn(address(subject)).previewExchangeIn(input, shares, IERC20(address(subject)));
++        assertGt(preview, 0, "configured protocol-share route has an executable quote");
++        assertEq(preview, _actualPostExchangeSwapQuote(subject, se, input, shares));
++        _assertShareSwapSettlement(subject, input, shares, preview);
++    }
++
++    function test_customDonationQuoteIncludesWrappingBeforeReserveJoin() public {
++        IUniswapV4Detf subject = _activateFallbackInstance();
++        (IERC20 input, uint256 shares) = _fundCustomProtocolPayment(subject);
++        IDetfNftReserveDonation nft = IDetfNftReserveDonation(subject.bondNftVault());
++        uint256 preview = nft.previewDonate(input, shares);
++        assertGt(preview, 0, "configured donation remains quotable");
++        FallbackSnapshot memory before_;
++        before_.supply = IERC20(address(subject)).totalSupply();
++        before_.funding = IERC20(address(subject)).balanceOf(subject.rebasingClaimToken());
++        before_.protocolLp = IERC20(subject.hook()).balanceOf(address(nft));
++        vm.startPrank(_buyer());
++        input.approve(address(nft), shares);
++        uint256 minted = nft.donate(input, shares, 0, false, block.timestamp);
++        vm.stopPrank();
++        assertEq(minted, preview, "LP preview includes custom wrap and reserve join");
++        assertEq(IERC20(subject.hook()).balanceOf(address(nft)), before_.protocolLp + minted);
++        assertEq(IERC20(address(subject)).totalSupply(), before_.supply, "donation issues no DETF");
++        assertEq(IERC20(address(subject)).balanceOf(subject.rebasingClaimToken()), before_.funding, "donation issues no staking claim");
++    }
++
++    struct CustomBondQuote {
++        uint256 principal;
++        uint256 rewards;
++        uint256 liquidity;
++    }
++
++    function test_customBondQuoteIncludesWrappingBeforeIssuance() public {
++        IUniswapV4Detf subject = _activateFallbackInstance();
++        (IERC20 input, uint256 shares) = _fundCustomProtocolPayment(subject);
++        CustomBondQuote memory quoted;
++        (, quoted.principal, quoted.rewards, quoted.liquidity) = subject.previewBond(input, shares, 30 days);
++        assertGt(quoted.principal, 0);
++        uint256 supply = IERC20(address(subject)).totalSupply();
++        uint256 backing = IERC20(address(subject)).balanceOf(subject.rebasingClaimToken());
++        uint256 owned = IERC20(subject.hook()).balanceOf(subject.bondNftVault());
++        vm.startPrank(_buyer());
++        input.approve(address(subject), shares);
++        (uint256 id, uint256 lpAdded) = subject.bond(input, shares, 30 days, _buyer(), false, block.timestamp);
++        vm.stopPrank();
++        IDetfBondNFT nft = IDetfBondNFT(subject.bondNftVault());
++        assertEq(nft.positionOf(id).principal, quoted.principal, "custom bond preview includes prior SE wrapping");
++        assertEq(nft.positionOf(id).vestingDuration, 30 days);
++        assertEq(nft.previewClaim(id).principalDue, 0);
++        assertEq(IERC20(address(subject)).totalSupply(), supply + quoted.principal + quoted.rewards + quoted.liquidity);
++        assertEq(IERC20(address(subject)).balanceOf(subject.rebasingClaimToken()), backing + quoted.principal + quoted.rewards);
++        assertEq(IERC20(subject.hook()).balanceOf(address(nft)), owned + lpAdded);
++        assertGt(lpAdded, 0, "ordinary payment adds a matching liquidity leg");
++        assertGt(nft.previewClaim(id).rewardsDue, 0, "new funded bond earns its immediate staking reward");
++    }
++
++    function _fundCustomProtocolPayment(IUniswapV4Detf subject) private returns (IERC20 input, uint256 shares) {
+         address pair = _leadPayment();
+         address se = IUniswapV4SeBufferHook(subject.hook()).standardExchangeOf(pair);
+         IERC4626 protocol = IERC4626(IStandardizedYield(se).yieldToken());
+@@ -255,43 +317,9 @@
+         IVaultFeeOracleManager(oracle).setUsageFeeOfVault(se, 0.07e18);
+         vm.startPrank(_buyer());
+         IERC20(pair).approve(address(protocol), 10 ether);
+-        uint256 shares = protocol.deposit(10 ether, _buyer());
+-        vm.stopPrank();
+-        IERC20 input = IERC20(address(protocol));
+-        assertFalse(subject.isMintingAllowed(input));
+-        uint256 preview = IStandardExchangeIn(address(subject)).previewExchangeIn(input, shares, IERC20(address(subject)));
+-        assertGt(preview, 0, "configured protocol-share route has an executable quote");
+-        assertEq(preview, _actualPostExchangeSwapQuote(subject, se, input, shares));
+-        _assertShareSwapSettlement(subject, input, shares, preview);
+-    }
+-
+-    function test_customDonationQuoteIncludesWrappingBeforeReserveJoin() public {
+-        IUniswapV4Detf subject = _activateFallbackInstance();
+-        address pair = _leadPayment();
+-        address se = IUniswapV4SeBufferHook(subject.hook()).standardExchangeOf(pair);
+-        IERC4626 protocol = IERC4626(IStandardizedYield(se).yieldToken());
+-        address oracle = IReserveOracleBinding(subject.hook()).feeOracle();
+-        vm.prank(_admin(oracle));
+-        IVaultFeeOracleManager(oracle).setUsageFeeOfVault(se, 0.07e18);
+-        vm.startPrank(_buyer());
+-        IERC20(pair).approve(address(protocol), 10 ether);
+-        uint256 shares = protocol.deposit(10 ether, _buyer());
+-        vm.stopPrank();
+-        IDetfNftReserveDonation nft = IDetfNftReserveDonation(subject.bondNftVault());
+-        uint256 preview = nft.previewDonate(IERC20(address(protocol)), shares);
+-        assertGt(preview, 0, "configured donation remains quotable");
+-        FallbackSnapshot memory before_;
+-        before_.supply = IERC20(address(subject)).totalSupply();
+-        before_.funding = IERC20(address(subject)).balanceOf(subject.rebasingClaimToken());
+-        before_.protocolLp = IERC20(subject.hook()).balanceOf(address(nft));
+-        vm.startPrank(_buyer());
+-        IERC20(address(protocol)).approve(address(nft), shares);
+-        uint256 minted = nft.donate(IERC20(address(protocol)), shares, 0, false, block.timestamp);
+-        vm.stopPrank();
+-        assertEq(minted, preview, "LP preview includes custom wrap and reserve join");
+-        assertEq(IERC20(subject.hook()).balanceOf(address(nft)), before_.protocolLp + minted);
+-        assertEq(IERC20(address(subject)).totalSupply(), before_.supply, "donation issues no DETF");
+-        assertEq(IERC20(address(subject)).balanceOf(subject.rebasingClaimToken()), before_.funding, "donation issues no staking claim");
++        shares = protocol.deposit(10 ether, _buyer());
++        vm.stopPrank();
++        input = IERC20(address(protocol));
+     }
+ 
+     function _fundFallbackShares(IUniswapV4Detf subject_) private returns (IERC20 se_, uint256 shares_) {

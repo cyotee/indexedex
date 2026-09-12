@@ -1,0 +1,82 @@
+{
+  "status": "APPLIED_SELECTED_RUNTIME_VALIDATION_PASSED",
+  "recorded_at_utc": "2026-09-09T07:48:32.625135+00:00",
+  "gate": "Do not apply until entire active validation parent4255 has exited.",
+  "scope": "Existing in-scope V4 tests only; every declaration retained. No product, Balancer DETF, or Slipstream change.",
+  "changes": [
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_FacetPackaging.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/current-surface-fixture-followup-drafts/UniswapV4Detf_FacetPackaging.t.sol.txt",
+      "reason": "Owner-approved close getters absent; all 46 current selectors remain unique and route to their CREATE3 facets.",
+      "before_sha256": "fa4df848b46f9abdcdf5a04dc1ac308cae4d75cb90552fac9474acc6c51b0abb",
+      "after_sha256": "5b04c07feb3300b5eedc664825d3f5ba606d9430a34d0ef813511b82f502587e"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_BondNftPackaging.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/current-surface-fixture-followup-drafts/UniswapV4Detf_BondNftPackaging.t.sol.txt",
+      "reason": "Find the live funded position facet; preserve generic ERC721 and guarded transfer assertions.",
+      "before_sha256": "aea3ed26b5d03ca9e7d9f0999398b47c5f462577278a5be4d1ce6717a6003fad",
+      "after_sha256": "bcb9b52d8e811eb6002240c7a90ff09a63e1490ca51d25d73620c1c7231aa1af"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/current-surface-fixture-followup-drafts/UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface.t.sol.txt",
+      "reason": "Retain deposit partition/disjointness and loupe checks; assert every Pendle selector on the withdrawal facet.",
+      "before_sha256": "3bb12763e4c44fea3a80190fdc0337f7564a74a923cc76cc50c0ea7967c9c364",
+      "after_sha256": "0cc5b650c8e03a0bacd919dc849aeb9b8dac7b4a6d87ed2b2c446e52abeb2d03"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualSEBCPHook_Surface.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/current-surface-fixture-followup-drafts/UniswapV4DualSEBCPHook_Surface.t.sol.txt",
+      "reason": "Assert all sixteen native SY methods alongside the existing six SE/owner-swap selectors.",
+      "before_sha256": "276e608e08f94256c7a8fcad5d8c00dfcd1662c4f85d9347b1d8b33af393d91f",
+      "after_sha256": "f15d241fc9181e4edfbd5d703310fae70810ebfa1f20f4e732b891fb9c667736"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_Surface.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/current-surface-fixture-followup-drafts/UniswapV4StandardExchangeOrbitalBufferHook_Surface.t.sol.txt",
+      "reason": "Cover every split deposit facet on the live proxy and the complete native SY surface; radius belongs to deposit queries.",
+      "before_sha256": "363cea32832be65dd2fedb34ecba8c39af2a8defd0763104cd9b8f41610c5f28",
+      "after_sha256": "dce109fc5ba82e80482481cb8d7ce245b0eae2512b59c5e8d80177e6d24fa377"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_StagedInit.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/current-surface-fixture-followup-drafts/UniswapV4StandardExchangeWeightedBufferHook_StagedInit.t.sol.txt",
+      "reason": "Expected DiamondCut includes every current production facet, then the unchanged InitializationFinalized event.",
+      "before_sha256": "14ed20d7e1d2c5afe3aa662728e941658c772d98bf8a1c1faa4c6f0c939585d0",
+      "after_sha256": "752acc2baacb1bee584d34faf135d995e25026d79278a9da697103984aa3211f"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_StagedInit.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/current-surface-fixture-followup-drafts/UniswapV4StandardExchangeOrbitalBufferHook_StagedInit.t.sol.txt",
+      "reason": "Expected DiamondCut includes every current production facet, then the unchanged InitializationFinalized event.",
+      "before_sha256": "da4ef52b4899b5a875d20d076d49b7b00ce94249dd36f61bedbc9de72b0e506e",
+      "after_sha256": "7cf7633763b6715fcf1218536cf758d6f7e733f221eda632c4219cfe78f63bbf"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_StagedInit.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/current-surface-fixture-followup-drafts/UniswapV4StandardExchangeCurveQuadStableBufferHook_StagedInit.t.sol.txt",
+      "reason": "Expected DiamondCut includes every current production facet, then the unchanged InitializationFinalized event.",
+      "before_sha256": "1e9e296fe243a19b53bc5751ae0f0d16a4f90aa21a794e7c1c558c3645a8a686",
+      "after_sha256": "dffcb8ac0cc6de660e89ce9fd09576ea4d74298615170c9a305e3f2e9fe9e649"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_PackageDecl.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/current-surface-fixture-followup-drafts/UniswapV4StandardExchangeOrbitalBufferHook_PackageDecl.t.sol.txt",
+      "reason": "Keep exact package declaration ordering, expanded with the two split deposit facets and Pendle interface.",
+      "before_sha256": "16eae597a2ceccde3801232fb9f8553490ab19149d17e0471b97af804414d665",
+      "after_sha256": "10ee25a5c84673cc0385fa50d2fd67d23fff7fdb957fa809ba94940b15739144"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Adversarial_Surface.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/current-surface-fixture-followup-drafts/UniswapV4Detf_Quad_Adversarial_Surface.t.sol.txt",
+      "reason": "Retain exact facet membership and retired-claim negatives while including funded deposit projection.",
+      "before_sha256": "6970f3f62cc6b6090b16da78abd7a71a279426a71b485088d121abe955c44b6f",
+      "after_sha256": "cb5e9c9ec1f762f81f988da0fa84acb909de82843f6ccb90f5db55b993f52886"
+    }
+  ],
+  "validation_passed": true,
+  "applied_at_utc": "2026-09-09T08:34:04.631375+00:00",
+  "application_record": "hermetic-followups-validation-remediation-applied.json",
+  "runtime_evidence": "hermetic-remediation-surfaces-isolated-imports.json"
+}

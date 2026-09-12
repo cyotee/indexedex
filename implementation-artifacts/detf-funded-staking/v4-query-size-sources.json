@@ -1,0 +1,22 @@
+[
+  {
+    "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryTarget.sol",
+    "before_sha256": "2ddb5054cc792c56ca40db97129039fb57dcb52b4ae276fb071e8d75ae810a1f",
+    "after_sha256": "40c66386031ea6ba6632941b1a19a4cce0a415b40f12b52657df68b1a9197d6a"
+  },
+  {
+    "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInMultiQueryTarget.sol",
+    "before_sha256": "38f7f90c024cff6f81c57e3c16d6288ac343e6464c16ea4fa49057a59d0f14a4",
+    "after_sha256": "4835580dcaa1ecd95e7b3b9dbadb738f3bf4f2660e386f2af5c1899af13c5346"
+  },
+  {
+    "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryFacet.sol",
+    "before_sha256": "0e9c4f1741c119079f41f9d8c8fe9b8e942a3bf2bc5f2b899d442f63e4ff8f7a",
+    "after_sha256": "f7961e6ea84be75687c13155eb865ec69295776305b25016da8df8756a2ba267"
+  },
+  {
+    "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInMultiQueryFacet.sol",
+    "before_sha256": "97754b5ef5f96ab38fcfccf3dd683930643d695ebd165b02e4051decfcbe9167",
+    "after_sha256": "e12a1174bbb295002bd6f799fbad9a2020ec01012c5d36e169b144e87a472686"
+  }
+]

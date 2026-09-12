@@ -85,7 +85,7 @@ describe('claimRewardsButtonEnabled', () => {
     expect(
       claimRewardsButtonEnabled({
         canSign: true,
-        tokenId: 1n,
+        tokenId: 3n,
         matured: false,
         pendingRewards: 0n,
         owner: OWNER,
@@ -105,6 +105,11 @@ describe('claimRewardsButtonEnabled', () => {
         wallet: WALLET,
       }),
     ).toBe(true)
+  })
+
+  it('does not claim standing role NFTs', () => {
+    expect(claimRewardsButtonEnabled({ canSign: true, tokenId: 1n })).toBe(false)
+    expect(claimRewardsButtonEnabled({ canSign: true, tokenId: 2n })).toBe(false)
   })
 
   it('stays off until a token id is entered', () => {
@@ -147,13 +152,13 @@ describe('ownedBondIdsFromOwnerReads', () => {
         [{ result: OTHER }, { result: OWNER }, { result: ZERO }, { status: 'failure' }],
         WALLET,
       ),
-    ).toEqual([2n])
+    ).toEqual([4n])
   })
 })
 
 describe('bondIdScanCount', () => {
   it('uses nextTokenId when present', () => {
-    expect(bondIdScanCount(5n)).toBe(4)
+    expect(bondIdScanCount(5n)).toBe(2)
     expect(bondIdScanCount(1n)).toBe(32)
   })
 })

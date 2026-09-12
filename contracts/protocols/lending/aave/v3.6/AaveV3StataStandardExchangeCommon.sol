@@ -5,6 +5,7 @@ pragma solidity ^0.8.0;
 /*                                    Crane                                   */
 /* -------------------------------------------------------------------------- */
 
+import {Math} from "@crane/contracts/utils/Math.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {ERC4626Repo} from "@crane/contracts/tokens/ERC4626/ERC4626Repo.sol";
 import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
@@ -57,7 +58,7 @@ contract AaveV3StataStandardExchangeCommon is BasicVaultCommon {
         uint256 usageFee = _getCurrentUsageFee();
 
         if (usageFee > 0) {
-            uint256 feeShares = (sharesForDeposit * usageFee) / FEE_DENOMINATOR;
+            uint256 feeShares = Math.mulDiv(sharesForDeposit, usageFee, FEE_DENOMINATOR);
 
             address feeRecipient = address(VaultFeeOracleQueryAwareRepo._feeOracle().feeTo());
             if (feeShares > 0 && feeRecipient != address(0)) {
@@ -93,7 +94,7 @@ contract AaveV3StataStandardExchangeCommon is BasicVaultCommon {
             return deltaStata; // 1:1 on first deposit
         }
         // Simple proportional (in practice use the project's ERC4626 rounding logic)
-        shares = (deltaStata * totalSupply_) / totalAssetsBefore;
+        shares = Math.mulDiv(deltaStata, totalSupply_, totalAssetsBefore);
     }
 
     /**
@@ -104,7 +105,7 @@ contract AaveV3StataStandardExchangeCommon is BasicVaultCommon {
         uint256 totalAssets_ = IERC20(stata).balanceOf(address(this)); // the ERC4626 totalAssets is the stata held
         uint256 totalSupply_ = ERC20Repo._totalSupply();
         if (totalSupply_ == 0) return 0;
-        stataAmount = (shares * totalAssets_) / totalSupply_;
+        stataAmount = Math.mulDiv(shares, totalAssets_, totalSupply_);
     }
 
     /* ------------------------------------------------------------------ */

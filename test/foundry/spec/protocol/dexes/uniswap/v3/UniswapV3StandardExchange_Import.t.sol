@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v3/libraries/TickMath.sol";
+import {UniswapV3StandardExchangePositionImportTarget} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangePositionImportTarget.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
 import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
@@ -106,7 +108,10 @@ contract UniswapV3StandardExchange_Import_Test is TestBase_UniswapV3StandardExch
         (,,,,,,, uint128 remainingLiq,,,,) = npm.positions(tokenId);
         assertEq(remainingLiq, 0, "nft empty");
 
-        // Post-import center-only zap works.
+        (uint128 fullLiquidity,,,,) = pool.positions(keccak256(abi.encodePacked(address(vault), TickMath.minUsableTick(spacing), TickMath.maxUsableTick(spacing))));
+        (uint128 narrowLiquidity,,,,) = pool.positions(keccak256(abi.encodePacked(address(vault), lower, upper)));
+        assertGt(fullLiquidity, 0, "import converted to maximum usable range"); assertEq(narrowLiquidity, 0, "no retained narrow backing");
+        // Post-import single-token deposit works.
         address token0 = pool.token0();
         ERC20PermitMintableStub(token0).mint(alice, 10 ether);
         vm.startPrank(alice);
@@ -138,8 +143,29 @@ contract UniswapV3StandardExchange_Import_Test is TestBase_UniswapV3StandardExch
         );
         vm.stopPrank();
 
-        assertApproxEqRel(preview, shares, 0.02e18, "P-IMP-02");
+        assertEq(preview, shares, "principal plus all earned fees, counted once");
         assertGt(shares, 0);
+    }
+
+    function test_import_approvedVaultDoesNotAuthorizeAnUnrelatedCaller() public {
+        int24 spacing = pool.tickSpacing();
+        (uint256 tokenId,) = _mintNpmPosition(alice, -spacing * 5, spacing * 5, 20 ether, 20 ether);
+        vm.prank(alice); IERC721(address(npm)).approve(address(vault), tokenId);
+        vm.expectRevert(UniswapV3StandardExchangePositionImportTarget.UniswapV3ExchangeImport_UnauthorizedOwner.selector);
+        IUniswapV3StandardExchangePositionImport(address(vault)).importPosition(
+            INonfungiblePositionManager(address(npm)), tokenId, 0, alice, address(this), block.timestamp + 1
+        );
+        assertEq(IERC721(address(npm)).ownerOf(tokenId), alice); assertEq(IERC20(address(vault)).totalSupply(), 0);
+    }
+
+    function test_import_oneSidedPositionCannotActivateVault() public {
+        int24 spacing = pool.tickSpacing();
+        (uint256 tokenId,) = _mintNpmPosition(alice, spacing * 5, spacing * 10, 20 ether, 0);
+        IUniswapV3StandardExchangePositionImport importer = IUniswapV3StandardExchangePositionImport(address(vault));
+        vm.expectRevert(); importer.previewImportPosition(INonfungiblePositionManager(address(npm)), tokenId);
+        vm.startPrank(alice); IERC721(address(npm)).approve(address(vault), tokenId);
+        vm.expectRevert(); importer.importPosition(INonfungiblePositionManager(address(npm)), tokenId, 0, alice, alice, block.timestamp + 1); vm.stopPrank();
+        assertEq(IERC721(address(npm)).ownerOf(tokenId), alice); assertEq(IERC20(address(vault)).totalSupply(), 0);
     }
 
     function test_import_secondImport_reverts() public {

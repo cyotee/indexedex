@@ -1,0 +1,47 @@
+{
+  "recorded_at_utc": "2026-09-09T09:58:39.802198+00:00",
+  "status": "APPLIED",
+  "scope": "Current-vs-historical navigation for the approved common ledger removal; historical audit evidence retained, no Solidity/configuration change.",
+  "changes": [
+    {
+      "path": "docs/DETF_CONSOLIDATION_IMPLEMENTATION_PLAN.md",
+      "before_sha256": "64e75ffc0a8aafbbd8db52592953e1b240c88d36eee2b179463f251aba0ee628",
+      "after_sha256": "f832cfcad0b460dfeaef9310d43c600d18a173e5bc1d241b0937bed7be7b0180"
+    },
+    {
+      "path": "docs/DETF_CONSOLIDATION_REPORT.md",
+      "before_sha256": "635a59c1a7634050b1486497d4ed09dbd83061e351138e93118f7b3248e1c07a",
+      "after_sha256": "2821a2a4b06e1741277016eff80fa823dcd4a9a84515001d228c5af77c2c3c77"
+    },
+    {
+      "path": "contracts/vaults/detf/DETF_DIRECTORY_REORGANIZATION_PRD.md",
+      "before_sha256": "82a9a54b13f4f86d8241705df5ebd7b740ab4fa8b3b9f31a3e03d6b69d228672",
+      "after_sha256": "5159f6611889055936bccd8c6f29ced53c83baa02a4dbb298c0332f57895f3a6"
+    },
+    {
+      "path": "docs/STRUCT_AUDIT_FIXES_PRD.md",
+      "before_sha256": "ac3a7693baef4ff07df82d745a344c277df5c8c643dc5d93fc3bfc148a0df0c4",
+      "after_sha256": "f237f9686683310660879d500c4377dd801143030f80c9e9b9d68f614b6b30c0"
+    },
+    {
+      "path": "docs/STRUCT_AUDIT_FIXES_IMPLEMENTATION_PLAN.md",
+      "before_sha256": "9485915a21519f274f3c21d9045c805efa76fab3f3b48ff21c3196c9dc590483",
+      "after_sha256": "a9459d8f7d32d33389fa71cf9a756740f505c1f5a38b12ce43fb135d738eac4f"
+    },
+    {
+      "path": "docs/vaults/DETF_NESTED_SE_PUSH_PRETRANSFER_PRD.md",
+      "before_sha256": "507e1926337fc951b57e2d2a6580fd71b9f1147250d1f0227ef8c68929ab0915",
+      "after_sha256": "f4d69ce9b7807816aca3f8ad456fae9c37d896cf6f751bc17ea0b965fe18e65a"
+    },
+    {
+      "path": "contracts/vaults/detf/io-routing/06_Detf_Interface_And_Bond_Nft_IMPLEMENTATION_AND_TEST_PLAN.md",
+      "before_sha256": "b7e65a06da07b4ded20b0c2afbb4e6b4cc41fa1270c2a35dffb9658526f5fcba",
+      "after_sha256": "09b20ce38a48b8e227544626b32cbf2fadd31598c07f4410dba48409c367261a"
+    },
+    {
+      "path": "contracts/vaults/detf/DETF_ALIGNMENT_PRD.md",
+      "before_sha256": "a1413cc69e9b33070d0a0ec22b5e73c5828b7f7e53c5aa68f1ffb56b9041dd9a",
+      "after_sha256": "cbb9c637cd8690080e9f901cdbd5596d01216c38b857c5fd7992fc9a92b35f02"
+    }
+  ]
+}

@@ -272,6 +272,7 @@ contract ResearchFixture_UniswapV2SeRateMatrix is TestBase_BalancerV3Vault, Inde
         pkgInit.multiAssetStandardVaultFacet = multiAssetStandardVaultFacet;
         pkgInit.uniswapV2StandardExchangeInFacet = v2In;
         pkgInit.uniswapV2StandardExchangeOutFacet = v2Out;
+        pkgInit.uniswapV2StandardExchangeQueryFacet = UniswapV2_Component_FactoryService.deployUniswapV2StandardExchangeQueryFacet(create3Factory);
         pkgInit.vaultFeeOracleQuery = indexedexManager;
         pkgInit.vaultRegistryDeployment = indexedexManager;
         pkgInit.permit2 = permit2;

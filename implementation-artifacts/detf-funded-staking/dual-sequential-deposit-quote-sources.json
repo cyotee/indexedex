@@ -1,0 +1,49 @@
+{
+  "validation": "v4-dual-sequential-sy-green-*",
+  "files": [
+    {
+      "path": "contracts/interfaces/IStandardExchangeTransitionQuote.sol",
+      "sha256": "2a56b8bc39e9b471b19808c9d5a8c793b1d9bd9f66b97ae193acf052b4dfea89"
+    },
+    {
+      "path": "contracts/vaults/standard/erc4626/ERC4626StandardExchangeQuoteTarget.sol",
+      "sha256": "9726d33097c3b7ff0a2fbc9a32056bd3601ab0e5178dfa5584924b60a58da4ad"
+    },
+    {
+      "path": "contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeQuoteTarget.sol",
+      "sha256": "007c0f612519cde1a45eedf495a5fb1f035ca41a5623afe9db4d76f86fb25bba"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeQuoteTarget.sol",
+      "sha256": "4470c5e005655bbe3be126056e19d651f436ceab55b9202f4b71ad7596225c49"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInQueryTarget.sol",
+      "sha256": "d44234ef217c2971decc38af41903803ec1484cb5329b5e68235571b03ed11bf"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryTarget.sol",
+      "sha256": "e28a92b6c70038368b1c47eb26cc40d70ed62d6e2c32ec93b4a4fa3b2792d1c2"
+    },
+    {
+      "path": "contracts/test/stubs/SimpleYieldERC4626.sol",
+      "sha256": "c369c6a84a527ac27b019205452ac0cf919761a9d30886b1b3a03558666e9cd0"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib.sol",
+      "sha256": "c1ca4c18674d2fd8fe395bbf027af152fa5c514a3bf8d1591fc8d73ad8b1b4ea"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookCommon.sol",
+      "sha256": "c6b42174a39e8793302cb407c25f39f61f0722119b2c185506b53094d33ff245"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDepositTarget.sol",
+      "sha256": "3e3d40594ec2def60b0c2ffc2a993c379b1dd1093eeb13dc310553bb7fb01e79"
+    },
+    {
+      "path": "test/foundry/spec/vaults/standard/sy/DualBufferHookNativeSY.t.sol",
+      "sha256": "ff6d3f396baac531b9f414ca9b4b9604a23b31f121f99ce571b3fe109837ab65"
+    }
+  ]
+}

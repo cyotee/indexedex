@@ -1,0 +1,9 @@
+{
+  "status": "APPLIED_MAINTAINED_SCRIPT_COMPILATION_PASSED",
+  "fixes": [
+    "Use the current balancerV3StandardExchangePermit2WitnessFacet package field; retain the actual witness facet deployment and functionality.",
+    "Remove invalid override modifiers from the two public Sepolia orchestrator run functions; their DeploymentBase has no run member."
+  ],
+  "scope": "Compile maintenance of existing SE deployment callers; no public deployment or excluded DETF functionality.",
+  "compilation_evidence": "maintained-script-294-green.json"
+}

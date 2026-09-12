@@ -1,0 +1,48 @@
+{
+  "scope": "Active frontend only; no production deployment or old-state conversion.",
+  "entries": [
+    {
+      "retired": "frontend/apps/dtf/app/staking/sections/MintChirSection.tsx",
+      "baseline_sha256": "5916549642d9ad9a01f5b360e3a1a3c3aa0d89166b5a6bc8254a4c8513284788",
+      "replacement": "app/insights/components/DetfActions.tsx: Standard Exchange payment-to-DETF route",
+      "proof": "No importing readers remain after StakingPageClient consolidation; checked with rg."
+    },
+    {
+      "retired": "frontend/apps/dtf/app/staking/sections/BurnChirSection.tsx",
+      "baseline_sha256": "ceb4bbdc13266c5d0eb64cba206a94b0806f529d6e5034c957c8c26d4a572969",
+      "replacement": "app/insights/components/DetfActions.tsx: Standard Exchange DETF-to-payment route with reserve-swap fallback",
+      "proof": "No importing readers remain after StakingPageClient consolidation; checked with rg."
+    },
+    {
+      "retired": "frontend/apps/dtf/app/staking/sections/BondSection.tsx",
+      "baseline_sha256": "a2d059dd01c52e0e1fff14d017f69422dfa2d06181de9cc9b4b5fb20527b3b39",
+      "replacement": "app/insights/components/DetfActions.tsx and app/lib/detf/bondRoute.ts: installed funded bond entrypoint",
+      "proof": "No importing readers remain after StakingPageClient consolidation; checked with rg."
+    },
+    {
+      "retired": "frontend/apps/dtf/app/staking/sections/SellNftSection.tsx",
+      "baseline_sha256": "edee5f75f16304e8558ff43e534a91190e27094a6732d683812c2aae392ccf90",
+      "replacement": "app/insights/components/DetfActions.tsx and app/components/earn/BondNftCard.tsx: vested principal and reward claims paid in sDETF",
+      "proof": "No importing readers remain after StakingPageClient consolidation; checked with rg."
+    },
+    {
+      "retired": "frontend/apps/dtf/app/staking/sections/PriceInfoSection.tsx",
+      "baseline_sha256": "534e71a53fa223d77fbd66b7fcd9ad342baced44d1fd2f2e14f25d47b48f5de9",
+      "replacement": "app/staking/StakingPageClient.tsx: fixed thresholds and synthetic price",
+      "proof": "No importing readers remain after StakingPageClient consolidation; checked with rg."
+    },
+    {
+      "retired": "frontend/apps/dtf/app/staking/sections/StakingDebugPanel.tsx",
+      "baseline_sha256": "92c2d8e8a0f099edf661b14e4c494c2338fcfb155250510c9f26c39a11ebec83",
+      "replacement": "app/staking/StakingPageClient.tsx: contract-address disclosure; old LP debug fields retired",
+      "proof": "No importing readers remain after StakingPageClient consolidation; checked with rg."
+    },
+    {
+      "retired": "frontend/apps/dtf/app/lib/hooks/useStakingContractReads.ts",
+      "baseline_sha256": "079c537a1b31f8aa93be63668fda88be812aa2386516652dc8d6183bd490731d",
+      "replacement": "app/staking/StakingPageClient.tsx: batched actual funded children and pricing views; DetfActions directional discovery",
+      "proof": "No importing readers remain after StakingPageClient consolidation; checked with rg."
+    }
+  ],
+  "validation": "frontend-checkpoint-388.{json,log}: lint (existing unrelated warnings), typecheck, 388 tests in 58 files passed, including new ABI, gate and decimal checks. Live bond test requires actual payment, NFT and escrow effects; a newly deployed funded stack is not yet available."
+}

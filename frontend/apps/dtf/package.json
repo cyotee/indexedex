@@ -29,8 +29,9 @@
     "tevm": "^1.0.0-next.149",
     "viem": "^2.43.5",
     "voltaire": "npm:@tevm/voltaire",
-    "wagmi": "^3.0.0",
-    "@indexedex/protocol": "*"
+    "wagmi": "^2.19.5",
+    "@indexedex/protocol": "*",
+    "@rainbow-me/rainbowkit": "2.2.11"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1",

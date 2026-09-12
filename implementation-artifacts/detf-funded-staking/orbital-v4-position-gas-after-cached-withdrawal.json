@@ -1,0 +1,85 @@
+{
+  "validation": "43 passed / zero failed across three suites",
+  "archive": "v4-cached-exact-withdrawal-43-green-*",
+  "measurement": "Warm Foundry execution calls, excluding preceding previews and transaction intrinsic gas; deployment addresses change with released bytecode",
+  "routes": [
+    {
+      "input": "0xB31907a70f083F9B7263545Bd16b13BF87E3bdb6",
+      "output": "0x5991A2dF15A8F6A256D3Ec51E99254Cd3fb576A9",
+      "deposit_gas": 33308531,
+      "redeem_gas": 6055132
+    },
+    {
+      "input": "0xB31907a70f083F9B7263545Bd16b13BF87E3bdb6",
+      "output": "0x85aa610377B407bCDe0f84d743A9CBF46E49203e",
+      "deposit_gas": 33308530,
+      "redeem_gas": 4237472
+    },
+    {
+      "input": "0xB31907a70f083F9B7263545Bd16b13BF87E3bdb6",
+      "output": "0xF62849F9A0B5Bf2913b396098F7c7019b51A820a",
+      "deposit_gas": 33308531,
+      "redeem_gas": 6086126
+    },
+    {
+      "input": "0xB31907a70f083F9B7263545Bd16b13BF87E3bdb6",
+      "output": "0xB31907a70f083F9B7263545Bd16b13BF87E3bdb6",
+      "deposit_gas": 33308531,
+      "redeem_gas": 6364744
+    },
+    {
+      "input": "0xB31907a70f083F9B7263545Bd16b13BF87E3bdb6",
+      "output": "0x4eCBEebcef2e3EB36Cb6CbAE04E4E712fFc4752e",
+      "deposit_gas": 33308531,
+      "redeem_gas": 6398476
+    },
+    {
+      "input": "0x4eCBEebcef2e3EB36Cb6CbAE04E4E712fFc4752e",
+      "output": "0x5991A2dF15A8F6A256D3Ec51E99254Cd3fb576A9",
+      "deposit_gas": 32937250,
+      "redeem_gas": 6053260
+    },
+    {
+      "input": "0x4eCBEebcef2e3EB36Cb6CbAE04E4E712fFc4752e",
+      "output": "0x85aa610377B407bCDe0f84d743A9CBF46E49203e",
+      "deposit_gas": 32937250,
+      "redeem_gas": 4237600
+    },
+    {
+      "input": "0x4eCBEebcef2e3EB36Cb6CbAE04E4E712fFc4752e",
+      "output": "0xF62849F9A0B5Bf2913b396098F7c7019b51A820a",
+      "deposit_gas": 32937250,
+      "redeem_gas": 6088128
+    },
+    {
+      "input": "0x4eCBEebcef2e3EB36Cb6CbAE04E4E712fFc4752e",
+      "output": "0xB31907a70f083F9B7263545Bd16b13BF87E3bdb6",
+      "deposit_gas": 32937250,
+      "redeem_gas": 6364873
+    },
+    {
+      "input": "0x4eCBEebcef2e3EB36Cb6CbAE04E4E712fFc4752e",
+      "output": "0x4eCBEebcef2e3EB36Cb6CbAE04E4E712fFc4752e",
+      "deposit_gas": 32937251,
+      "redeem_gas": 6398563
+    }
+  ],
+  "standard_exact_output_query_gas": [
+    212128,
+    252790
+  ],
+  "state_exact_output_query_gas": [
+    348503,
+    405524
+  ],
+  "runtime_bytes": {
+    "UniswapV4StandardExchangeInQueryFacet": 24225,
+    "UniswapV4StandardExchangeOutQueryFacet": 22202,
+    "UniswapV4StandardExchangeOutMultiQueryFacet": 15821,
+    "UniswapV4StandardExchangeInExecutionDelegate": 20983,
+    "UniswapV4StandardExchangeOutExecutionDelegate": 14755
+  },
+  "quote_behavior": "Same exact-input minimum and 1% floor/minimum-one buffer; at most eight interpolation probes within verified bounds then binary fallback; excess budgets are not consumed",
+  "release_gas_suitability_proven": false,
+  "remaining": "Deposits remain 32.9\u201333.3M gas; further integration profiling/chain suitability check needed"
+}

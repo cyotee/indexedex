@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+// Explicit artifacts for components CREATE3-loaded by this base, including focused runs.
+import {AerodromeStandardExchangeInFacet} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeInFacet.sol";
+import {AerodromeStandardExchangeOutFacet} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeOutFacet.sol";
+import {AerodromeStandardExchangeOutQueryFacet} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeOutQueryFacet.sol";
+
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";

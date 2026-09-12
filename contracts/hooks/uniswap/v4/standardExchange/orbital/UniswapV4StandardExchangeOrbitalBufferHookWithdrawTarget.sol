@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib as ExitQuoteLib} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {
@@ -54,7 +55,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookWithdrawTarget is Un
         uint256 a1Min,
         uint256 a2Min,
         uint256 deadline
-    ) external onlyLiquidityOwner nonReentrant returns (uint256 a0, uint256 a1, uint256 a2) {
+    ) external onlyLiquidityRemover nonReentrant returns (uint256 a0, uint256 a1, uint256 a2) {
         return _removeLiquidity(shares, to, a0Min, a1Min, a2Min, deadline);
     }
 
@@ -78,7 +79,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookWithdrawTarget is Un
         uint256 a1Min,
         uint256 a2Min,
         uint256 deadline
-    ) external onlyLiquidityOwner nonReentrant returns (uint256 a0, uint256 a1, uint256 a2) {
+    ) external onlyLiquidityRemover nonReentrant returns (uint256 a0, uint256 a1, uint256 a2) {
         WithdrawFlexibleVars memory w;
         w.shares = shares;
         w.to = to;
@@ -106,7 +107,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookWithdrawTarget is Un
         address to,
         uint256[] calldata amountsMin,
         uint256 deadline
-    ) external onlyLiquidityOwner nonReentrant returns (uint256[] memory amounts) {
+    ) external onlyLiquidityRemover nonReentrant returns (uint256[] memory amounts) {
         uint256 min0 = amountsMin.length > 0 ? amountsMin[0] : 0;
         uint256 min1 = amountsMin.length > 1 ? amountsMin[1] : 0;
         uint256 min2 = amountsMin.length > 2 ? amountsMin[2] : 0;
@@ -136,16 +137,45 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookWithdrawTarget is Un
         address to,
         uint256 amountOutMin,
         uint256 deadline
-    ) external onlyLiquidityOwner nonReentrant returns (uint256 amountOut) {
-        sharesIn;
-        to;
-        amountOutMin;
-        deadline;
-        revert InvalidRoute(tokenOut, address(0));
+    ) external onlyLiquidityRemover nonReentrant returns (uint256 amountOut) {
+        amountOut = _exitSingleAsset(tokenOut, sharesIn, to, deadline);
+        if (amountOut < amountOutMin) revert InsufficientTokenOut();
     }
 
-    function previewExitSingleAssetExactBptIn(address, uint256) external view returns (uint256) {
-        return 0;
+    function previewExitSingleAssetExactBptIn(address tokenOut, uint256 shares) external view returns (uint256) {
+        if (!_isLive() || _resolveBurnTokenOut(tokenOut) == address(0)) return 0;
+        (, uint256 supply) = _previewProtocolMintShares();
+        return ExitQuoteLib.preview(shares, supply, tokenOut);
+    }
+
+    function _exitSingleAsset(address tokenOut, uint256 shares, address to, uint256 deadline)
+        private returns (uint256 amountOut)
+    {
+        address pair = _resolveBurnTokenOut(tokenOut);
+        if (pair == address(0)) revert InvalidRoute(tokenOut, address(0));
+        if (to == address(0)) revert ZeroAddress();
+        uint256 freeBefore = _freeTokenBalance(pair);
+        uint256[3] memory amounts;
+        (amounts[0], amounts[1], amounts[2]) = _removeLiquidityAndSettle(
+            shares, address(this), 0, 0, 0, deadline, false
+        );
+        for (uint8 i; i < 3; ++i) {
+            address input = Repo._tokenAt(Repo._layout(), i);
+            if (input == pair || amounts[i] == 0) continue;
+            _swapExitResidual(input, pair, amounts[i]);
+        }
+        amountOut = _freeTokenBalance(pair) - freeBefore;
+        if (tokenOut != pair && amountOut > 0) amountOut = _bufferToken(pair, amountOut);
+        IERC20(tokenOut).safeTransfer(to, amountOut);
+        _syncVaultReserves();
+    }
+
+    function _swapExitResidual(address tokenIn, address tokenOut, uint256 amountIn) private {
+        uint256 quoted = _previewSwapExactIn(tokenIn, tokenOut, amountIn);
+        if (_seOf(tokenOut) != address(0)) _unwrapExactTokenOut(tokenOut, quoted);
+        else Repo._layout().reserves[tokenOut] -= quoted;
+        _bufferToken(tokenIn, amountIn);
+        _recomputeL2();
     }
 
     function exitSingleAssetExactTokenOut(
@@ -154,7 +184,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookWithdrawTarget is Un
         address to,
         uint256 sharesInMax,
         uint256 deadline
-    ) external onlyLiquidityOwner nonReentrant returns (uint256 sharesIn) {
+    ) external onlyLiquidityRemover nonReentrant returns (uint256 sharesIn) {
         amountOut;
         to;
         sharesInMax;
@@ -166,27 +196,36 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookWithdrawTarget is Un
         return 0;
     }
 
-    /// @dev H10: prop exit of `lpAmount`, convert non-tokenOut legs via swap quotes (no exitSingleAsset*).
+    /// @dev Proportional reserve valuation, distinct from executing a single-asset exit.
     function previewBurnToToken(uint256 lpAmount, address tokenOut)
         external
         view
         returns (uint256 amountOut)
     {
         if (lpAmount == 0 || ERC20Repo._totalSupply() == 0 || !_isLive()) return 0;
-        address resolved_ = _resolveBurnTokenOut(tokenOut);
-        if (resolved_ == address(0)) return 0;
+        address resolved = _resolveBurnTokenOut(tokenOut);
+        if (resolved == address(0)) return 0;
         (uint256 a0, uint256 a1, uint256 a2) = _previewRemoveLiquidity(lpAmount);
         Repo.Layout storage l = Repo._layout();
-        if (resolved_ == l.token0) {
+        if (resolved == l.token0) {
             amountOut = a0 + _tryPreviewSwap(l.token1, l.token0, a1)
                 + _tryPreviewSwap(l.token2, l.token0, a2);
-        } else if (resolved_ == l.token1) {
+        } else if (resolved == l.token1) {
             amountOut = a1 + _tryPreviewSwap(l.token0, l.token1, a0)
                 + _tryPreviewSwap(l.token2, l.token1, a2);
         } else {
             amountOut = a2 + _tryPreviewSwap(l.token0, l.token2, a0)
                 + _tryPreviewSwap(l.token1, l.token2, a1);
         }
+    }
+
+    function _tryPreviewSwap(address tokenIn, address tokenOut, uint256 amountIn)
+        private view returns (uint256)
+    {
+        if (amountIn == 0) return 0;
+        try IUniswapV4SeBufferHook(address(this)).previewSwapExactIn(tokenIn, tokenOut, amountIn)
+            returns (uint256 amountOut) { return amountOut; }
+        catch { return 0; }
     }
 
     function _resolveBurnTokenOut(address tokenOut) private view returns (address) {
@@ -205,17 +244,4 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookWithdrawTarget is Un
         return address(0);
     }
 
-    function _tryPreviewSwap(address tokenIn, address tokenOut, uint256 amountIn)
-        private
-        view
-        returns (uint256)
-    {
-        if (amountIn == 0) return 0;
-        try IUniswapV4SeBufferHook(address(this)).previewSwapExactIn(tokenIn, tokenOut, amountIn)
-        returns (uint256 y) {
-            return y;
-        } catch {
-            return 0;
-        }
-    }
 }

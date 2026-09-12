@@ -1,0 +1,88 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
+import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
+import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {
+    IUniswapV4HookDiamondPackage
+} from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackage.sol";
+
+/**
+ * @title IUniswapV4StandardExchangeOrbitalBufferHookPackage
+ * @notice DFPkg interface for SE Orbital Buffer Hook (hook diamond package).
+ * @dev PkgInit / PkgArgs on interface (Crane rule). Shared LP = ERC20PermitDFPkg facets + MultiAsset vault.
+ *      Deploy: package → registry.deployHookVault → shared hook CREATE2 factory.
+ */
+interface IUniswapV4StandardExchangeOrbitalBufferHookPackage is
+    IUniswapV4HookDiamondPackage,
+    IStandardVaultPkg
+{
+    error ZeroAddress();
+    error SameToken();
+    error SameStandardExchange();
+    error RateProviderWithoutSE();
+    error InvalidSE();
+    /// @notice Remediation min-SE: at least one non-zero standardExchange is required (H7).
+    error MinOneStandardExchange();
+    error InvalidDecimals();
+
+    struct PkgInit {
+        IVaultRegistryDeployment vaultRegistryDeployment;
+        IVaultFeeOracleQuery vaultFeeOracleQuery;
+        IFacet depositFacet;
+        IFacet withdrawFacet;
+        IFacet seFacet;
+        IFacet hooksFacet;
+        /// @dev ERC20PermitDFPkg parity: LP share is the hook diamond.
+        IFacet erc20Facet;
+        IFacet erc5267Facet;
+        IFacet erc2612Facet;
+        IFacet multiAssetBasicVaultFacet;
+        IFacet multiAssetStandardVaultFacet;
+        IFacet multiStepOwnableFacet;
+    }
+
+    /// @notice Binding for one immortal hook instance (salt identity includes SE + RP).
+    /// @dev tickSpacing / sqrtPriceX96 are process/init only — NOT in calcSalt.
+    struct PkgArgs {
+        address poolManager;
+        address feeOracle;
+        address token0;
+        address token1;
+        address token2;
+        uint8 decimals0;
+        uint8 decimals1;
+        uint8 decimals2;
+        address se0;
+        address se1;
+        address se2;
+        address rp0;
+        address rp1;
+        address rp2;
+        int24 tickSpacing;
+        uint160 sqrtPriceX96;
+        /// @notice D9: when true, only MultiStepOwnable owner may add/remove LP.
+        bool ownerOnlyLiquidity;
+        /// @notice MultiStepOwnable initial owner. DETF reserve deploys set this to the DETF diamond.
+        address owner;
+    }
+
+    function VAULT_REGISTRY_DEPLOYMENT() external view returns (IVaultRegistryDeployment);
+    function DEPOSIT_FACET() external view returns (IFacet);
+    function WITHDRAW_FACET() external view returns (IFacet);
+    function SE_FACET() external view returns (IFacet);
+    function HOOKS_FACET() external view returns (IFacet);
+    function PRODUCT_ID() external pure returns (bytes32);
+
+    /// @notice Production Add list applied by finalizeInitialization. Not used at initAccount.
+    function productionFacetCuts() external view returns (IDiamond.FacetCut[] memory);
+
+    /// @notice Product path: package → Vault Registry.deployHookVault → hook factory.
+    function deployVault(PkgArgs memory args, uint256 mineNonce) external returns (address vault);
+
+    /// @notice Gas-risky auto-mine convenience. Prefer deployVault with premined mineNonce.
+    function deployVaultAutoMine(PkgArgs memory args) external returns (address vault);
+}

@@ -1,0 +1,63 @@
+{
+  "status": "applied; validation pending",
+  "files": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol",
+      "before": "1e33d0f7ba1d4466b459190899f67919f3b3793b73be3cadc951e24e4e85811c",
+      "after": "519fa9ced59e1247b040b6df2163e479ec6abc22c9920b0580e53efc7b6e196a"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_RedeemD15Base.sol",
+      "before": "cdefc62bdf607d2bdd7a87382a8fca20ef5d3f5315b6a74cd92e03c0de154156",
+      "after": "f0d55c23eb99dd6ca2b1eb754f98e2fdc24a99c3a98c036b7627d674bd851c55"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_RedeemD15OpenBase.sol",
+      "before": "d148401ab2b8de9263ad2bdee4ceb027eaa138839f9a1f7a846abe35e8bfe335",
+      "after": "0e42b75806a3bdd119d85e509ce3557781ee88eb858bbbd5eaf5df2f56065d0a"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_RedeemD15PolicyBase.sol",
+      "before": "5f8cb7e7827d1047856116e47bf5f5e62213191c0add4260c0ffbbd489bf4428",
+      "after": "247cde4d35435b3c15cafd6db3a1010e2bcf07ac4de4bfcaaf3243238f992b19"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol",
+      "before": "d42a3e580134f272547bd4519883f5aa4a5e9bfc219792aa1595c355cbbdf65a",
+      "after": "1804d571fe225a06e86eee97c57f8f524f680726eaed73cf10cbee4047603f1b"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_RedeemD15Base_Decimals.sol",
+      "before": "de88eef9b5eacf1acd44ab9ebb54b8891c20c3d98e8ce8f42548d59b8c8d3db0",
+      "after": "f8e117f8026902c1cc8278eb702727f423bc14b8858810ba13778e47cfa2ce08"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_RedeemD15OpenBase_Decimals.sol",
+      "before": "16ec8d1012cece733a1bd4ae456c1c8359681cc1f55c2c9ad547b453ad7be8e1",
+      "after": "1063dd6f75ea3f91be2f11d2f898faee68c4a5a4e04a52ce07c2c00c3d2abfaa"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_RedeemD15PolicyBase_Decimals.sol",
+      "before": "410e8c11da50db29a6e59e33a02663c00916abb2d40ec4f30afe68e453c75247",
+      "after": "e77e702d9c223ab025278cfbb70ac924b71977340ab4254805d62c6d04fb787d"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Policy.sol",
+      "before": "ab1162b1034354b4a73cbd3eb4fd69e64316019d0c6316f146aed94a49139b2d",
+      "after": "dc5bbccbfb0a97b973e2da2ab4d596237f3aa0dea4998c705164b83441507aed"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/common/DETFFundedStakingSuite.t.sol",
+      "before": "c629029bacca89651afc151cd879d1512754f9a28f700c897a6ed6a8207384a2",
+      "after": "f9e3b001ba5d37e7f567ffa5465714e5c46850680076ad82d9c8790ec7151fe5"
+    }
+  ],
+  "decisions": [
+    "Unstake only newly claimed initial-bond receipts; preserve preexisting funded sDETF.",
+    "Use 10-unit subsequent D15 bonds within the existing Weighted curve input bound.",
+    "Establish and assert actual premium before testing expansion.",
+    "Orbital price skew now uses shared actual funded DETF helper with nine-decimal amounts.",
+    "Consolidate duplicate D15-9 into stronger existing D22 balance assertions in all inherited variants.",
+    "Add all three actual Pons SE pool suites to consolidated imports."
+  ]
+}

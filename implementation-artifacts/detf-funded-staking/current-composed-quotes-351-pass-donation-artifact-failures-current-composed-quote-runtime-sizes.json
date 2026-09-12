@@ -1,0 +1,34 @@
+{
+  "checked_at_utc": "2026-09-08T06:24:08.999694+00:00",
+  "note": "Run only after successful build for current production sources; not a substitute for actual proxy/delegate validation.",
+  "rows": [
+    {
+      "contract": "UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet",
+      "artifact": "out/UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet.sol/UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet.json",
+      "runtime_bytes": 23098,
+      "eip170_limit": 24576,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4StandardExchangeWeightedBufferHookHooksFacet",
+      "artifact": "out/UniswapV4StandardExchangeWeightedBufferHookHooksFacet.sol/UniswapV4StandardExchangeWeightedBufferHookHooksFacet.json",
+      "runtime_bytes": 22288,
+      "eip170_limit": 24576,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet",
+      "artifact": "out/UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet.sol/UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet.json",
+      "runtime_bytes": 23167,
+      "eip170_limit": 24576,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4StandardExchangeOrbitalBufferHookHooksFacet",
+      "artifact": "out/UniswapV4StandardExchangeOrbitalBufferHookHooksFacet.sol/UniswapV4StandardExchangeOrbitalBufferHookHooksFacet.json",
+      "runtime_bytes": 24516,
+      "eip170_limit": 24576,
+      "within_limit": true
+    }
+  ]
+}

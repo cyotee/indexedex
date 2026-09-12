@@ -5,6 +5,7 @@
 # Catalog: pins, Crane factories, FeeCollector, Manager, TWAP, Uni V4 SE pkg,
 # Morpho Blue SE pkg, CP/Weighted/Curve Quad hook pkgs, unified Uni V4 DETF pkg.
 # No tokens. No Protocol DETF instances.
+# Opt-in: token-staking (Phase 06-08 DFPkg + Phase 08-01 $DTF instance).
 # Simulate each Foundry Stage then broadcast. Never --skip-simulation.
 # =============================================================================
 set -euo pipefail
@@ -43,6 +44,7 @@ export NETWORK_PROFILE="${NETWORK_PROFILE:-anvil_robinhood_main}"
 export CHAIN_ID="${CHAIN_ID:-4663}"
 
 BROADCAST_FLAG="--broadcast"
+BROADCAST_EXPLICIT=0
 FORCE=0
 FROM_PHASE=""
 FROM_STAGE=""
@@ -61,10 +63,16 @@ unified Uni V4 DETF package.
 No tokens. No Protocol DETF instances.
 
 Commands:
-  all     Phases 01–06 architecture catalog, then Phase 09 frontend export
+  all             Phases 01–06 architecture catalog, then Phase 09 frontend export
+  token-staking        Phase 06 Stage 08 TokenStaking DFPkg, then Phase 08 Stage 01
+                       DTF instance (7-day rewardsDuration). Does not notifyRewardAmount.
+                       Same as forge script: simulates unless --broadcast.
+  token-staking-fund   Phase 08 Stage 02: notifyRewardAmount(sender DTF balance).
+                       Same as forge script: simulates unless --broadcast.
 
 Options:
-  --dry-run         Simulate each Stage, do not broadcast
+  --broadcast       Send transactions after a successful simulate
+  --dry-run         Architecture \`all\` only: simulate, do not broadcast
   --rpc-url URL     Broadcast RPC (default Foundry alias robinhood_mainnet)
   --force           FORCE=1 re-run Stages
   --from-phase PP   Resume at Phase PP
@@ -185,8 +193,13 @@ run_stage() {
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    all)
+    all|token-staking|token-staking-fund)
       COMMAND="$1"
+      shift
+      ;;
+    --broadcast)
+      BROADCAST_FLAG="--broadcast"
+      BROADCAST_EXPLICIT=1
       shift
       ;;
     --dry-run)
@@ -237,6 +250,11 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+# token-staking matches forge script: simulate unless --broadcast.
+if [[ "$COMMAND" == "token-staking" || "$COMMAND" == "token-staking-fund" ]] && [[ "$BROADCAST_EXPLICIT" -eq 0 ]]; then
+  BROADCAST_FLAG=""
+fi
+
 log_header "Public Robinhood mainnet (4663) architecture: $COMMAND"
 log_info "SENDER=$DEPLOYER_ADDRESS OUT_DIR=$OUT_DIR_OVERRIDE (no Phase 00)"
 
@@ -249,6 +267,12 @@ fi
 case "$COMMAND" in
   all)
     rh_run_catalog 0 "$FROM_PHASE" "$FROM_STAGE"
+    ;;
+  token-staking)
+    rh_run_token_staking
+    ;;
+  token-staking-fund)
+    rh_run_token_staking_fund
     ;;
   *)
     log_error "Unknown command: $COMMAND"

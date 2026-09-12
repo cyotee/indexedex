@@ -1,6 +1,13 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+// Factory-loaded creation bytecode must be part of a focused build graph.
+import {MorphoBlueERC4626Facet} from "contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueERC4626Facet.sol";
+import {MorphoBlueStandardExchangeInFacet} from "contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeInFacet.sol";
+import {MorphoBlueStandardExchangeOutFacet} from "contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeOutFacet.sol";
+import {MorphoBlueStandardExchangeMarkerFacet} from "contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeMarkerFacet.sol";
+import {MorphoBlueStandardExchangeDFPkg} from "contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeDFPkg.sol";
+
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";

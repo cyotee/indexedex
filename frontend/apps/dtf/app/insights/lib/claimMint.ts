@@ -1,70 +1,49 @@
-import { formatUnits, toFunctionSelector } from 'viem'
+import { formatUnits, type Address } from 'viem'
 
 import { asAddr } from './actionTokens'
 import { insightsDetfHref } from './insightsHref'
-import { isZero } from './tokenLabels'
 
-export const DEPOSIT_CLAIM_SELECTOR = toFunctionSelector(
-  'depositClaim(address,uint256,uint256,address,bool,uint256)',
-)
-export const BUY_CLAIM_SELECTOR = toFunctionSelector(
-  'buyClaim(uint256,uint256,address,bool,uint256)',
-)
-
-export type ClaimMintPath = 'depositClaim' | 'buyClaim' | 'none'
-
-export function hasFacet(addr: string | undefined | null): boolean {
-  return !!addr && !isZero(addr)
-}
-
-export function claimMintPathFromFacets(input: {
-  depositClaimFacet?: string | null
-  buyClaimFacet?: string | null
-}): ClaimMintPath {
-  if (hasFacet(input.depositClaimFacet)) return 'depositClaim'
-  if (hasFacet(input.buyClaimFacet)) return 'buyClaim'
-  return 'none'
-}
-
-/** Prefer loupe facets. Weighted DETFs mint claim via depositClaim; one-vault via buyClaim. */
-export function resolveClaimMintPath(input: {
-  depositClaimFacet?: string | null
-  buyClaimFacet?: string | null
-  weighted?: boolean
-}): ClaimMintPath {
-  const fromFacets = claimMintPathFromFacets(input)
-  if (fromFacets !== 'none') return fromFacets
-  return input.weighted ? 'depositClaim' : 'buyClaim'
-}
-
+/** Directional SY discovery supplies payment routes; raw DETF always supports direct staking. */
 export function collectStakeTokenAddresses(input: {
-  path: ClaimMintPath
   detf?: unknown
-  actionTokens?: readonly unknown[]
-}): `0x${string}`[] {
-  const detf = asAddr(input.detf)
-  if (input.path === 'buyClaim') return detf ? [detf] : []
-  if (input.path === 'none') return detf ? [detf] : []
-
+  stakingToken?: unknown
+  acceptedInputs?: readonly unknown[]
+}): Address[] {
   const seen = new Set<string>()
-  const out: `0x${string}`[] = []
-  const push = (value: unknown) => {
-    const addr = asAddr(value)
-    if (!addr) return
-    const key = addr.toLowerCase()
-    if (seen.has(key)) return
-    seen.add(key)
-    out.push(addr)
+  const out: Address[] = []
+  const staking = asAddr(input.stakingToken)?.toLowerCase()
+  for (const candidate of [input.detf, ...(input.acceptedInputs ?? [])]) {
+    const address = asAddr(candidate)
+    if (!address || address.toLowerCase() === staking || seen.has(address.toLowerCase())) continue
+    seen.add(address.toLowerCase())
+    out.push(address)
   }
-  for (const token of input.actionTokens ?? []) push(token)
-  push(detf)
   return out
 }
 
-export function formatTokenAmount(value: bigint | undefined, decimals = 18, maxFrac = 6): string {
+/** Both previews and writes use this route, including its actual allowance spender. */
+export function stakingExchangeRoute(input: {
+  detf?: Address
+  stakingToken?: Address
+  tokenIn?: Address
+  unstake: boolean
+}) {
+  const { detf, stakingToken, tokenIn, unstake } = input
+  if (!detf || !stakingToken || (!unstake && !tokenIn)) return undefined
+  const direct = unstake || tokenIn?.toLowerCase() === detf.toLowerCase()
+  return {
+    target: direct ? stakingToken : detf,
+    tokenIn: unstake ? stakingToken : tokenIn!,
+    tokenOut: unstake ? detf : stakingToken,
+    needsAllowance: !unstake,
+    requiresLiveReserve: !direct,
+  }
+}
+
+export function formatTokenAmount(value: bigint | undefined, decimals = 9, maxFrac = 6): string {
   if (value == null) return '—'
   const raw = formatUnits(value, decimals)
-  const [whole, frac = ''] = raw.split('.')
+  const [whole, frac] = raw.split('.')
   if (!frac) return whole ?? raw
   const trimmed = frac.slice(0, maxFrac).replace(/0+$/, '')
   return trimmed ? `${whole}.${trimmed}` : (whole ?? raw)

@@ -47,6 +47,7 @@ import {
 import {
     UniswapV4StandardExchangeCurveQuadStableBufferHookPairPoolLib as PairPoolLib
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookPairPoolLib.sol";
+import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 import {
     IUniswapV4HookStagedPairInit
 } from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
@@ -240,6 +241,8 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook is
             tokens: toks,
             standardExchanges: ses,
             rateProviders: rps,
+            tokenDecimals: HookPkgArgsDecimalsLib.tokenDecimals4(toks),
+            seDecimals: HookPkgArgsDecimalsLib.seDecimals4(ses),
             baseAmp: DEFAULT_BASE_AMP,
             ownerOnlyLiquidity: _pkgOwnerOnlyLiquidity(),
             owner: _pkgOwner()
@@ -329,6 +332,8 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook is
         }
         a.ownerOnlyLiquidity = _pkgOwnerOnlyLiquidity();
         a.owner = _pkgOwner();
+        a.tokenDecimals = HookPkgArgsDecimalsLib.tokenDecimals4(a.tokens);
+        a.seDecimals = HookPkgArgsDecimalsLib.seDecimals4(a.standardExchanges);
     }
 
     function _pkgArgs(
@@ -343,6 +348,8 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook is
         a.standardExchanges = ses;
         a.rateProviders = rps;
         a.baseAmp = baseAmp;
+        a.tokenDecimals = HookPkgArgsDecimalsLib.tokenDecimals4(a.tokens);
+        a.seDecimals = HookPkgArgsDecimalsLib.seDecimals4(a.standardExchanges);
         a.ownerOnlyLiquidity = _pkgOwnerOnlyLiquidity();
         a.owner = _pkgOwner();
     }

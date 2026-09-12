@@ -187,15 +187,16 @@ library UniswapV4StandardExchangeOrbitalBufferHookMath {
         uint256 used1Wad,
         uint256 used2Wad
     ) external pure returns (uint256 shares) {
-        if (supply == 0 || R == 0) revert MathDomain();
-        uint256 p0 = sphereSpotWeight(R, r0Wad);
-        uint256 p1 = sphereSpotWeight(R, r1Wad);
-        uint256 p2 = sphereSpotWeight(R, r2Wad);
-        uint256 vBefore = p0 * r0Wad + p1 * r1Wad + p2 * r2Wad;
-        if (vBefore == 0) revert MathDomain();
-        uint256 vIn = p0 * used0Wad + p1 * used1Wad + p2 * used2Wad;
-        shares = (supply * vIn) / vBefore;
-        if (shares == 0) revert MathDomain();
+        return _sphereNavShares(SphereNavArgs({
+            supply: supply,
+            R: R,
+            r0Wad: r0Wad,
+            r1Wad: r1Wad,
+            r2Wad: r2Wad,
+            used0Wad: used0Wad,
+            used1Wad: used1Wad,
+            used2Wad: used2Wad
+        }));
     }
 
     function protocolLpShares(
@@ -374,6 +375,10 @@ library UniswapV4StandardExchangeOrbitalBufferHookMath {
     }
 
     function sphereNavShares(SphereNavArgs memory a) external pure returns (uint256 shares) {
+        return _sphereNavShares(a);
+    }
+
+    function _sphereNavShares(SphereNavArgs memory a) private pure returns (uint256 shares) {
         if (a.supply == 0 || a.R == 0) revert MathDomain();
         uint256 p0 = sphereSpotWeight(a.R, a.r0Wad);
         uint256 p1 = sphereSpotWeight(a.R, a.r1Wad);
@@ -381,7 +386,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookMath {
         uint256 vBefore = p0 * a.r0Wad + p1 * a.r1Wad + p2 * a.r2Wad;
         if (vBefore == 0) revert MathDomain();
         uint256 vIn = p0 * a.used0Wad + p1 * a.used1Wad + p2 * a.used2Wad;
-        shares = (a.supply * vIn) / vBefore;
+        shares = a.supply.fullMulDiv(vIn, vBefore);
         if (shares == 0) revert MathDomain();
     }
 

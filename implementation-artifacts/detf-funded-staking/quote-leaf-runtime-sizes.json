@@ -1,0 +1,56 @@
+{
+  "build": "quote-leaf-build.json",
+  "scope": "Only the ten explicit current facet targets; other facets still need the combined build",
+  "rows": [
+    {
+      "contract": "UniswapV4StandardExchangeInQueryFacet",
+      "bytes": 22529,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4StandardExchangeOutMultiQueryFacet",
+      "bytes": 26794,
+      "within_limit": false
+    },
+    {
+      "contract": "UniswapV3StandardExchangeInQueryFacet",
+      "bytes": 22745,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFacet",
+      "bytes": 16706,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4StandardExchangeWeightedBufferHookHooksFacet",
+      "bytes": 22288,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet",
+      "bytes": 23167,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4StandardExchangeOrbitalBufferHookHooksFacet",
+      "bytes": 24608,
+      "within_limit": false
+    },
+    {
+      "contract": "ERC4626StandardExchangeInFacet",
+      "bytes": 20349,
+      "within_limit": true
+    },
+    {
+      "contract": "StandardExchangeRateProviderFacet",
+      "bytes": 3580,
+      "within_limit": true
+    },
+    {
+      "contract": "WrappedStandardExchangeRateProviderFacet",
+      "bytes": 3844,
+      "within_limit": true
+    }
+  ]
+}

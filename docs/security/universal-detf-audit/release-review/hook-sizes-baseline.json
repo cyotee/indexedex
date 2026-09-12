@@ -1,0 +1,429 @@
+[
+  {
+    "source": "contracts/hooks/uniswap/v4/factory/facets/UniswapV4HookFlagsFacet.sol",
+    "runtimeBytes": 918,
+    "creationBytes": 946,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/orbital/UniswapV4OrbitalSwapHookDFPkg.sol",
+    "runtimeBytes": 17600,
+    "creationBytes": 18550,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/orbital/facets/UniswapV4OrbitalSwapHookHooksFacet.sol",
+    "runtimeBytes": 21266,
+    "creationBytes": 21294,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/orbital/facets/UniswapV4OrbitalSwapHookInitFacet.sol",
+    "runtimeBytes": 0,
+    "creationBytes": 0,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/orbital/facets/UniswapV4OrbitalSwapHookLiquidityFacet.sol",
+    "runtimeBytes": 19583,
+    "creationBytes": 19611,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/stable/quad/balancer/UniswapV4BalancerQuadStableSwapHookDFPkg.sol",
+    "runtimeBytes": 20904,
+    "creationBytes": 21854,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/stable/quad/balancer/facets/UniswapV4BalancerQuadStableSwapHookHooksFacet.sol",
+    "runtimeBytes": 23606,
+    "creationBytes": 23634,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/stable/quad/balancer/facets/UniswapV4BalancerQuadStableSwapHookInitFacet.sol",
+    "runtimeBytes": 0,
+    "creationBytes": 0,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/stable/quad/balancer/facets/UniswapV4BalancerQuadStableSwapHookLiquidityFacet.sol",
+    "runtimeBytes": 23613,
+    "creationBytes": 23641,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/stable/quad/curve/UniswapV4CurveQuadStableSwapHookDFPkg.sol",
+    "runtimeBytes": 20762,
+    "creationBytes": 21712,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/stable/quad/curve/facets/UniswapV4CurveQuadStableSwapHookHooksFacet.sol",
+    "runtimeBytes": 19879,
+    "creationBytes": 19907,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/stable/quad/curve/facets/UniswapV4CurveQuadStableSwapHookInitFacet.sol",
+    "runtimeBytes": 0,
+    "creationBytes": 0,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/stable/quad/curve/facets/UniswapV4CurveQuadStableSwapHookLiquidityFacet.sol",
+    "runtimeBytes": 18284,
+    "creationBytes": 18312,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg.sol",
+    "runtimeBytes": 20118,
+    "creationBytes": 21408,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet.sol",
+    "runtimeBytes": 12952,
+    "creationBytes": 12980,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet.sol",
+    "runtimeBytes": 14266,
+    "creationBytes": 14294,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFacet.sol",
+    "runtimeBytes": 14149,
+    "creationBytes": 14177,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookInitFacet.sol",
+    "runtimeBytes": 0,
+    "creationBytes": 0,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet.sol",
+    "runtimeBytes": 21257,
+    "creationBytes": 21285,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet.sol",
+    "runtimeBytes": 16291,
+    "creationBytes": 16319,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg.sol",
+    "runtimeBytes": 19484,
+    "creationBytes": 20604,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookDepositFacet.sol",
+    "runtimeBytes": 24459,
+    "creationBytes": 24487,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookHooksFacet.sol",
+    "runtimeBytes": 14873,
+    "creationBytes": 14901,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookInitFacet.sol",
+    "runtimeBytes": 0,
+    "creationBytes": 0,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookSeFacet.sol",
+    "runtimeBytes": 8492,
+    "creationBytes": 8520,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookWithdrawFacet.sol",
+    "runtimeBytes": 13670,
+    "creationBytes": 13698,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDFPkg.sol",
+    "runtimeBytes": 22269,
+    "creationBytes": 23474,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositFacet.sol",
+    "runtimeBytes": 34140,
+    "creationBytes": 34168,
+    "runtimePass": false,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositFlexibleFacet.sol",
+    "runtimeBytes": 19162,
+    "creationBytes": 19190,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositZapFacet.sol",
+    "runtimeBytes": 20759,
+    "creationBytes": 20787,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookHooksFacet.sol",
+    "runtimeBytes": 20559,
+    "creationBytes": 20587,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookInitFacet.sol",
+    "runtimeBytes": 0,
+    "creationBytes": 0,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookSeFacet.sol",
+    "runtimeBytes": 14047,
+    "creationBytes": 14075,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookWithdrawFacet.sol",
+    "runtimeBytes": 16164,
+    "creationBytes": 16192,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleStandardExchangeBufferHookDFPkg.sol",
+    "runtimeBytes": 13481,
+    "creationBytes": 14021,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/single/facets/UniswapV4SingleStandardExchangeBufferHookFacet.sol",
+    "runtimeBytes": 7894,
+    "creationBytes": 7922,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/single/facets/UniswapV4SingleStandardExchangeBufferHookInitFacet.sol",
+    "runtimeBytes": 0,
+    "creationBytes": 0,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg.sol",
+    "runtimeBytes": 20709,
+    "creationBytes": 21744,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/facets/UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksFacet.sol",
+    "runtimeBytes": 17699,
+    "creationBytes": 17727,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/facets/UniswapV4StandardExchangeBalancerQuadStableBufferHookInitFacet.sol",
+    "runtimeBytes": 0,
+    "creationBytes": 0,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/facets/UniswapV4StandardExchangeBalancerQuadStableBufferHookLiquidityFacet.sol",
+    "runtimeBytes": 20980,
+    "creationBytes": 21008,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/facets/UniswapV4StandardExchangeBalancerQuadStableBufferHookSeFacet.sol",
+    "runtimeBytes": 18025,
+    "creationBytes": 18053,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg.sol",
+    "runtimeBytes": 22774,
+    "creationBytes": 23979,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet.sol",
+    "runtimeBytes": 22168,
+    "creationBytes": 22196,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet.sol",
+    "runtimeBytes": 19619,
+    "creationBytes": 19647,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookInitFacet.sol",
+    "runtimeBytes": 0,
+    "creationBytes": 0,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookJoinFacet.sol",
+    "runtimeBytes": 26019,
+    "creationBytes": 26047,
+    "runtimePass": false,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacet.sol",
+    "runtimeBytes": 36246,
+    "creationBytes": 36274,
+    "runtimePass": false,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookSeFacet.sol",
+    "runtimeBytes": 21795,
+    "creationBytes": 21823,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol",
+    "runtimeBytes": 24989,
+    "creationBytes": 26194,
+    "runtimePass": false,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookExitFacet.sol",
+    "runtimeBytes": 23098,
+    "creationBytes": 23126,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookHooksFacet.sol",
+    "runtimeBytes": 18429,
+    "creationBytes": 18457,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookInitFacet.sol",
+    "runtimeBytes": 0,
+    "creationBytes": 0,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookJoinFacet.sol",
+    "runtimeBytes": 29648,
+    "creationBytes": 29676,
+    "runtimePass": false,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookJoinFlexibleFacet.sol",
+    "runtimeBytes": 28932,
+    "creationBytes": 28960,
+    "runtimePass": false,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookLiquidityFacet.sol",
+    "runtimeBytes": 40392,
+    "creationBytes": 40420,
+    "runtimePass": false,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookSeFacet.sol",
+    "runtimeBytes": 20936,
+    "creationBytes": 20964,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/weighted/UniswapV4WeightedSwapHookDFPkg.sol",
+    "runtimeBytes": 20003,
+    "creationBytes": 20953,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/weighted/facets/UniswapV4WeightedSwapHookHooksFacet.sol",
+    "runtimeBytes": 11714,
+    "creationBytes": 11742,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/weighted/facets/UniswapV4WeightedSwapHookInitFacet.sol",
+    "runtimeBytes": 0,
+    "creationBytes": 0,
+    "runtimePass": true,
+    "creationPass": true
+  },
+  {
+    "source": "contracts/hooks/uniswap/v4/weighted/facets/UniswapV4WeightedSwapHookLiquidityFacet.sol",
+    "runtimeBytes": 24517,
+    "creationBytes": 24545,
+    "runtimePass": true,
+    "creationPass": true
+  }
+]

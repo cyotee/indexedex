@@ -1,0 +1,139 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
+import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
+import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
+
+import {TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook as TestBase} from
+    "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
+import {
+    IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage as IPkg
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.sol";
+import {
+    IUniswapV4StandardExchangeCurveQuadStableBufferHook as IHook
+} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
+import {IRebasingAwareERC4626DFPkg} from
+    "contracts/protocols/staking/rebasingVault/IRebasingAwareERC4626DFPkg.sol";
+import {RebasingAwareERC4626_Component_FactoryService} from
+    "contracts/protocols/staking/rebasingVault/RebasingAwareERC4626_Component_FactoryService.sol";
+import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
+import {RebasingERC20Harness} from "contracts/test/stubs/RebasingERC20Harness.sol";
+import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+
+contract RebasingAwareERC4626_Buffers_Curve is TestBase {
+    using RebasingAwareERC4626_Component_FactoryService for ICreate3FactoryProxy;
+
+    IERC4626 internal wrapper;
+    RebasingERC20Harness internal underlying;
+
+    function test_F16_curveProcessArgsAcceptsWrapperShareInventory() public {
+        _deployWrapper();
+        IPkg.PkgArgs memory args = _wrapperMixedArgs();
+        bytes memory processed = hookPkg.processArgs(abi.encode(args));
+        assertGt(processed.length, 0);
+        args.tokenDecimals[0] = 18;
+        vm.expectRevert(IPkg.InvalidDecimals.selector);
+        hookPkg.processArgs(abi.encode(args));
+    }
+
+    function test_F16_curveProcessArgsRejectsOrdinaryOverlapAndHighDecimals() public {
+        IPkg.PkgArgs memory overlap = _defaultPkgArgs();
+        overlap.standardExchanges[0] = overlap.tokens[0];
+        overlap.seDecimals[0] = overlap.tokenDecimals[0];
+        vm.expectRevert(IPkg.InvalidSE.selector);
+        hookPkg.processArgs(abi.encode(overlap));
+
+        IPkg.PkgArgs memory high = _defaultPkgArgs();
+        high.tokenDecimals[0] = 19;
+        vm.expectRevert(IPkg.InvalidDecimals.selector);
+        hookPkg.processArgs(abi.encode(high));
+    }
+
+    function test_F16_curveWrapperShareInventoryJoinExit() public {
+        _deployWrapper();
+        _wrapUser(80e18);
+        IPkg.PkgArgs memory args = _wrapperMixedArgs();
+        _deployHookWithArgs(args);
+        uint256 wAmt = IERC20(address(wrapper)).balanceOf(user) / 2;
+        uint256 rawAmt = 50 ether;
+        vm.startPrank(user);
+        IERC20(address(wrapper)).approve(hook, type(uint256).max);
+        token1.approve(hook, type(uint256).max);
+        token2.approve(hook, type(uint256).max);
+        token3.approve(hook, type(uint256).max);
+        uint256[] memory amounts = new uint256[](4);
+        for (uint256 i; i < 4; ++i) {
+            amounts[i] = args.tokens[i] == address(wrapper) ? wAmt : rawAmt;
+        }
+        (uint256 lp,) = IHook(hook).joinProportional(amounts, user, 0, block.timestamp + 1 days);
+        assertGt(lp, 0);
+        uint256 beforeAssets = wrapper.totalAssets();
+        vm.stopPrank();
+        underlying.rebase(address(wrapper), int256(5e18));
+        assertGt(wrapper.totalAssets(), beforeAssets);
+        uint256[] memory mins = new uint256[](4);
+        vm.prank(user);
+        uint256[] memory out = IHook(hook).exitProportional(lp, user, mins, block.timestamp + 1 days);
+        assertGt(out[0] + out[1] + out[2] + out[3], 0);
+    }
+
+    function _deployWrapper() internal {
+        IFacet erc4626F = create3Factory.deployRebasingAwareERC4626Facet();
+        IFacet seF = create3Factory.deployRebasingAwareStandardExchangeFacet();
+        IFacet syF = create3Factory.deployRebasingAwareStandardYieldFacet();
+        IFacet metaF = create3Factory.deployRebasingAwareVaultMetadataFacet();
+        IFacet quoteF = create3Factory.deployRebasingAwareStandardExchangeQuoteFacet();
+        vm.prank(owner);
+        IRebasingAwareERC4626DFPkg wpkg = RebasingAwareERC4626_Component_FactoryService
+            .deployRebasingAwareERC4626DFPkg(
+            indexedexManager,
+            IRebasingAwareERC4626DFPkg.PkgInit({
+                erc20Facet: erc20Facet,
+                rebasingAwareErc4626Facet: erc4626F,
+                diamondFactory: diamondPackageFactory,
+                standardExchangeFacet: seF,
+                standardYieldFacet: syF,
+                vaultMetadataFacet: metaF,
+                transitionQuoteFacet: quoteF,
+                vaultRegistry: IVaultRegistryDeployment(address(indexedexManager))
+            })
+        );
+        underlying = new RebasingERC20Harness("Rebase", "RBS", 18);
+        wrapper = wpkg.deployVault(IERC20Metadata(address(underlying)), 10, bytes32(uint256(13)));
+    }
+
+    function _wrapUser(uint256 assets) internal {
+        underlying.mint(user, assets * 2);
+        vm.startPrank(user);
+        underlying.approve(address(wrapper), type(uint256).max);
+        wrapper.deposit(assets, user);
+        vm.stopPrank();
+    }
+
+    function _wrapperMixedArgs() internal view returns (IPkg.PkgArgs memory args) {
+        args = _defaultPkgArgs();
+        address[4] memory toks = [address(wrapper), address(token1), address(token2), address(token3)];
+        _sort4(toks);
+        address[4] memory ses;
+        for (uint256 i; i < 4; ++i) {
+            if (toks[i] == address(wrapper)) ses[i] = address(wrapper);
+        }
+        args.tokens = toks;
+        args.standardExchanges = ses;
+        args.tokenDecimals = HookPkgArgsDecimalsLib.tokenDecimals4(toks);
+        args.seDecimals = HookPkgArgsDecimalsLib.seDecimals4(ses);
+    }
+
+    function _sort4(address[4] memory toks) private pure {
+        for (uint256 i; i < 4; ++i) {
+            for (uint256 j = i + 1; j < 4; ++j) {
+                if (toks[j] < toks[i]) {
+                    (toks[i], toks[j]) = (toks[j], toks[i]);
+                }
+            }
+        }
+    }
+}

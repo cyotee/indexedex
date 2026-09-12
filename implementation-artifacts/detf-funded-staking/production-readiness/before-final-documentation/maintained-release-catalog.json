@@ -1,0 +1,370 @@
+{
+  "recorded_at_utc": "2026-09-10T17:12:26.369475+00:00",
+  "catalog": "scripts/shell/lib/rh_4663_stages.sh",
+  "catalog_sha256": "fc97cd29d0ad9095add74ccef83094c8d97a4e9e8e355ed4ba12d04e26ab8b5d",
+  "stages": [
+    {
+      "phase": "00",
+      "stage": "01",
+      "script": "scripts/foundry/anvil_robinhood_main/Phase_00_Stage_01_AnvilEnv.s.sol",
+      "source_sha256": {
+        "scripts/foundry/anvil_robinhood_main/Phase_00_Stage_01_AnvilEnv.s.sol": "49571548e81ff094f56d7b7212aca0b35454640820cb024c21afe6d45da138ff",
+        "scripts/foundry/anvil_robinhood_main/Phase_00_Stage_01_AnvilEnv.sol": "8abdc4247b2c8a5eab595634c26b38b37a319e2c72e2c92ec65f8a6d59f7c457"
+      },
+      "local_rehearsal_action": "NOT_RUN_OWNER_FUNDED_ON_LOCAL_FORK_ONLY",
+      "references": []
+    },
+    {
+      "phase": "01",
+      "stage": "01",
+      "script": "scripts/foundry/anvil_robinhood_main/Phase_01_Stage_01_Permit2.s.sol",
+      "source_sha256": {
+        "scripts/foundry/anvil_robinhood_main/Phase_01_Stage_01_Permit2.s.sol": "f8bdb5e05cc94fdb593fd5ba93030b28a70067565ebc169f97b77cee5c60835d",
+        "scripts/foundry/anvil_robinhood_main/Phase_01_Stage_01_Permit2.sol": "167298929f6d936a4cd66efbc94ea451a0b7ad60d420ba5704147a9c8ad07e6e"
+      },
+      "local_rehearsal_action": "UPSTREAM_PIN_REUSE",
+      "references": []
+    },
+    {
+      "phase": "01",
+      "stage": "02",
+      "script": "scripts/foundry/anvil_robinhood_main/Phase_01_Stage_02_Weth.s.sol",
+      "source_sha256": {
+        "scripts/foundry/anvil_robinhood_main/Phase_01_Stage_02_Weth.s.sol": "173674e20ea29a66027cb400f7a265a2202c8fa9fdef4e77437b8810d6ff04fa",
+        "scripts/foundry/anvil_robinhood_main/Phase_01_Stage_02_Weth.sol": "2563f7acff58bd9785b4c6760d1a967d7d84656b85e26d4fe4d6f9bd9a48bb3a"
+      },
+      "local_rehearsal_action": "UPSTREAM_PIN_REUSE",
+      "references": []
+    },
+    {
+      "phase": "01",
+      "stage": "03",
+      "script": "scripts/foundry/anvil_robinhood_main/Phase_01_Stage_03_UniswapV4.s.sol",
+      "source_sha256": {
+        "scripts/foundry/anvil_robinhood_main/Phase_01_Stage_03_UniswapV4.s.sol": "9a905461ef6d5d6bd55943922e702a8ce7640fbecc252081e7938f2e2a94ff03",
+        "scripts/foundry/anvil_robinhood_main/Phase_01_Stage_03_UniswapV4.sol": "c13a3f7f7585b8411c9976daf5f3fa21d560784d517694eeb5dc795486b7ad39"
+      },
+      "local_rehearsal_action": "UPSTREAM_PIN_REUSE",
+      "references": []
+    },
+    {
+      "phase": "02",
+      "stage": "01",
+      "script": "scripts/foundry/anvil_robinhood_main/Phase_02_Stage_01_Create3Factory.s.sol",
+      "source_sha256": {
+        "scripts/foundry/anvil_robinhood_main/Phase_02_Stage_01_Create3Factory.s.sol": "a9daca51cd7a00bacd067c7ff22270c477454f726a49decbab98c47350682ac1",
+        "scripts/foundry/anvil_robinhood_main/Phase_02_Stage_01_Create3Factory.sol": "34c74a3ad3d973de55bfbb20fef93717da49e385237f42ad3f21ce861eb40fab"
+      },
+      "local_rehearsal_action": "FRESH_CORRECTED_DEPLOYMENT",
+      "references": []
+    },
+    {
+      "phase": "02",
+      "stage": "02",
+      "script": "scripts/foundry/anvil_robinhood_main/Phase_02_Stage_02_DiamondPackageFactory.s.sol",
+      "source_sha256": {
+        "scripts/foundry/anvil_robinhood_main/Phase_02_Stage_02_DiamondPackageFactory.s.sol": "3396e03cb1faf6ef514b84934874db34740288171e0e7c864bef30b9c40b2b6e",
+        "scripts/foundry/anvil_robinhood_main/Phase_02_Stage_02_DiamondPackageFactory.sol": "3960d138b680cc68cfd32ff0b40a6173dbeb4adf3156b379956d6869e18b087c"
+      },
+      "local_rehearsal_action": "FRESH_CORRECTED_DEPLOYMENT",
+      "references": [
+        "BoardDFPkg",
+        "BountyBoardDFPkg",
+        "CallTargetRegistryDFPkg",
+        "Create3FactoryDFPkg",
+        "IBountyBoardDFPkg",
+        "ICREATE3DFPkg",
+        "ICallTargetRegistryDFPkg",
+        "TargetRegistryDFPkg"
+      ]
+    },
+    {
+      "phase": "02",
+      "stage": "03",
+      "script": "scripts/foundry/anvil_robinhood_main/Phase_02_Stage_03_HookFactory.s.sol",
+      "source_sha256": {
+        "scripts/foundry/anvil_robinhood_main/Phase_02_Stage_03_HookFactory.s.sol": "5fa7fb90b7d6c0151fcd82fb2a5db15553f76b406fa2546471ef078ffbdd9064",
+        "scripts/foundry/anvil_robinhood_main/Phase_02_Stage_03_HookFactory.sol": "27ed8af0c601df148e9259d444d3d649bcf5145694e50a5085df1f1dc06fd1ec"
+      },
+      "local_rehearsal_action": "FRESH_CORRECTED_DEPLOYMENT",
+      "references": [
+        "HookFactoryService",
+        "UniswapV4HookDiamondPackageCallBackFactory_FactoryService"
+      ]
+    },
+    {
+      "phase": "03",
+      "stage": "01",
+      "script": "scripts/foundry/anvil_robinhood_main/Phase_03_Stage_01_CommonFacets.s.sol",
+      "source_sha256": {
+        "scripts/foundry/anvil_robinhood_main/Phase_03_Stage_01_CommonFacets.s.sol": "73684b590fecd1c02e348e9b783e4c18deb13eaf72d9fdc3046a08687d290187",
+        "scripts/foundry/anvil_robinhood_main/Phase_03_Stage_01_CommonFacets.sol": "23475d898a3c055831668aae5632eccc5a1ac95f989b8a90166039da41891174"
+      },
+      "local_rehearsal_action": "FRESH_CORRECTED_DEPLOYMENT",
+      "references": [
+        "AccessFacetFactoryService",
+        "IntrospectionFacetFactoryService",
+        "VaultComponentFactoryService"
+      ]
+    },
+    {
+      "phase": "04",
+      "stage": "01",
+      "script": "scripts/foundry/anvil_robinhood_main/Phase_04_Stage_01_FeeCollectorAndManager.s.sol",
+      "source_sha256": {
+        "scripts/foundry/anvil_robinhood_main/Phase_04_Stage_01_FeeCollectorAndManager.s.sol": "32cc818fa0cf1d223d3ed5c8bcb769441e8b5a13d4462c665c7ee9c2b4efc4db",
+        "scripts/foundry/anvil_robinhood_main/Phase_04_Stage_01_FeeCollectorAndManager.sol": "4cd624a58672cca427373d5c5dbf51b5cce29cd24d9db085bc7905bde1e63765"
+      },
+      "local_rehearsal_action": "FRESH_CORRECTED_DEPLOYMENT",
+      "references": [
+        "AccessFacetFactoryService",
+        "CollectorDFPkg",
+        "FeeCollectorDFPkg",
+        "FeeCollectorFactoryService",
+        "IFeeCollectorDFPkg",
+        "IIndexedexManagerDFPkg",
+        "IndexedexManagerDFPkg",
+        "IndexedexManagerFactoryService",
+        "ManagerDFPkg"
+      ]
+    },
+    {
+      "phase": "05",
+      "stage": "01",
+      "script": "scripts/foundry/anvil_robinhood_main/Phase_05_Stage_01_SeRateProviderPkg.s.sol",
+      "source_sha256": {
+        "scripts/foundry/anvil_robinhood_main/Phase_05_Stage_01_SeRateProviderPkg.s.sol": "5ec1f82aaa227b88b5bc6a2c42e6d800ddbc670c7b7b8cd90d1f84b74ea45542",
+        "scripts/foundry/anvil_robinhood_main/Phase_05_Stage_01_SeRateProviderPkg.sol": "e12d297f8b575fd35c8396766093027d7c42af8f06fd64e0280e3e9801b708ad"
+      },
+      "local_rehearsal_action": "FRESH_CORRECTED_DEPLOYMENT",
+      "references": [
+        "StandardExchangeRateProviderDFPkg",
+        "StandardExchangeRateProvider_FactoryService"
+      ]
+    },
+    {
+      "phase": "05",
+      "stage": "02",
+      "script": "scripts/foundry/anvil_robinhood_main/Phase_05_Stage_02_UniswapV4TwapOracle.s.sol",
+      "source_sha256": {
+        "scripts/foundry/anvil_robinhood_main/Phase_05_Stage_02_UniswapV4TwapOracle.s.sol": "fe9103a5300ec0d25a8e3e6807639b5b90339e4c8738bc2549cafc1c59e29e22",
+        "scripts/foundry/anvil_robinhood_main/Phase_05_Stage_02_UniswapV4TwapOracle.sol": "b11307d67e02a2e0d0c2730eda082b08c94591c7840c6feeacf253a3ecf033cd"
+      },
+      "local_rehearsal_action": "FRESH_CORRECTED_DEPLOYMENT",
+      "references": [
+        "IUniswapV4MultiPoolTwapOracleDFPkg",
+        "UniswapV4MultiPoolTwapOracleDFPkg",
+        "UniswapV4TwapOracleFactoryService"
+      ]
+    },
+    {
+      "phase": "05",
+      "stage": "03",
+      "script": "scripts/foundry/anvil_robinhood_main/Phase_05_Stage_03_UniswapV4StandardExchangePkg.s.sol",
+      "source_sha256": {
+        "scripts/foundry/anvil_robinhood_main/Phase_05_Stage_03_UniswapV4StandardExchangePkg.s.sol": "77d050e4887008ec299e2611a37fc06a888473ac07796c84e8526ff8481f891b",
+        "scripts/foundry/anvil_robinhood_main/Phase_05_Stage_03_UniswapV4StandardExchangePkg.sol": "3791a83b3b59800ff0fa1b88e2302d20c9687aee4188945862102907ae932e74"
+      },
+      "local_rehearsal_action": "FRESH_CORRECTED_DEPLOYMENT",
+      "references": [
+        "IUniswapV4StandardExchangeDFPkg",
+        "UniswapV4StandardExchangeDFPkg",
+        "UniswapV4_Component_FactoryService"
+      ]
+    },
+    {
+      "phase": "05",
+      "stage": "04",
+      "script": "scripts/foundry/anvil_robinhood_main/Phase_05_Stage_04_UniswapV3StandardExchangePkg.s.sol",
+      "source_sha256": {
+        "scripts/foundry/anvil_robinhood_main/Phase_05_Stage_04_UniswapV3StandardExchangePkg.s.sol": "1bd1fff0db05c44e0e09f8c0dc2c54486dcf815f71ec1e7b417203c44b1f97b2",
+        "scripts/foundry/anvil_robinhood_main/Phase_05_Stage_04_UniswapV3StandardExchangePkg.sol": "ece0f87fd7f2a5579519e71d114e58d9988328e3f692e448507b851fc91ab179"
+      },
+      "local_rehearsal_action": "FRESH_CORRECTED_DEPLOYMENT",
+      "references": [
+        "IUniswapV3StandardExchangeDFPkg",
+        "UniswapV3StandardExchangeDFPkg",
+        "UniswapV3_Component_FactoryService"
+      ]
+    },
+    {
+      "phase": "05",
+      "stage": "05",
+      "script": "scripts/foundry/anvil_robinhood_main/Phase_05_Stage_05_MorphoBlueStandardExchangePkg.s.sol",
+      "source_sha256": {
+        "scripts/foundry/anvil_robinhood_main/Phase_05_Stage_05_MorphoBlueStandardExchangePkg.s.sol": "ed379830a6d0f3442a031cb599eeceee1eeafb4f3d49328de3821216d74a690e",
+        "scripts/foundry/anvil_robinhood_main/Phase_05_Stage_05_MorphoBlueStandardExchangePkg.sol": "39f136254604b3fd4f5d3c5943d4f75c570cc6c88fa87bd405d72aa362042ca7"
+      },
+      "local_rehearsal_action": "FRESH_CORRECTED_DEPLOYMENT",
+      "references": [
+        "IMorphoBlueStandardExchangeDFPkg",
+        "MorphoBlueStandardExchangeDFPkg",
+        "MorphoBlue_Component_FactoryService"
+      ]
+    },
+    {
+      "phase": "05",
+      "stage": "06",
+      "script": "scripts/foundry/anvil_robinhood_main/Phase_05_Stage_06_UniswapV2StandardExchangePkg.s.sol",
+      "source_sha256": {
+        "scripts/foundry/anvil_robinhood_main/Phase_05_Stage_06_UniswapV2StandardExchangePkg.s.sol": "1fba28f0e4063ac3bd240addba6b777189e32f08aed54f09601c74e05763beee",
+        "scripts/foundry/anvil_robinhood_main/Phase_05_Stage_06_UniswapV2StandardExchangePkg.sol": "a4c518ddaac0683baea1597ab8bb025c830fb1c2b47714b3fb826c6455943238"
+      },
+      "local_rehearsal_action": "FRESH_CORRECTED_DEPLOYMENT",
+      "references": [
+        "IUniswapV2StandardExchangeDFPkg",
+        "UniswapV2StandardExchangeDFPkg",
+        "UniswapV2_Component_FactoryService"
+      ]
+    },
+    {
+      "phase": "06",
+      "stage": "01",
+      "script": "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_01_BondNftPkg.s.sol",
+      "source_sha256": {
+        "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_01_BondNftPkg.s.sol": "f9d5ae5cec7dad0c582f0635293718e4f651c1caaa0432ffc7775347d16b5252",
+        "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_01_BondNftPkg.sol": "6739f3a81a792150e228df6bd303e81a5899acfed3c1b8a4f63de4b3de999606"
+      },
+      "local_rehearsal_action": "FRESH_CORRECTED_DEPLOYMENT",
+      "references": [
+        "DETFNFTVaultDFPkg",
+        "DetfComponentFactoryService",
+        "DetfFacetFactoryService",
+        "DetfPkgFactoryService",
+        "IDETFNFTVaultDFPkg",
+        "IUniswapV4DetfBondNFTVaultDFPkg",
+        "UniswapV4DetfBondNFTVaultDFPkg"
+      ]
+    },
+    {
+      "phase": "06",
+      "stage": "02",
+      "script": "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_02_RebasingClaimPkg.s.sol",
+      "source_sha256": {
+        "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_02_RebasingClaimPkg.s.sol": "af7f3c724f955499fb0554afe0aeb4c751700cd4aa7160aedb43b08f11eb7988",
+        "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_02_RebasingClaimPkg.sol": "d1077dd94e2ba2ab328dbf611411616d683633032cd2c2787f4088979ffbb93b"
+      },
+      "local_rehearsal_action": "FRESH_CORRECTED_DEPLOYMENT",
+      "references": [
+        "DetfComponentFactoryService",
+        "DetfFacetFactoryService",
+        "DetfPkgFactoryService",
+        "RebasingClaimTokenDFPkg"
+      ]
+    },
+    {
+      "phase": "06",
+      "stage": "03",
+      "script": "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_03_CpBufferHookPkg.s.sol",
+      "source_sha256": {
+        "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_03_CpBufferHookPkg.s.sol": "d078c99c1a5e043ec3d1af014a3545c528342a5d2539a89ea1e2513ca74b2722",
+        "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_03_CpBufferHookPkg.sol": "9047b3ea8d9d6b3c439b1204d3a8db586a43d53c686336a9d046ada0fa9e21ce"
+      },
+      "local_rehearsal_action": "FRESH_CORRECTED_DEPLOYMENT",
+      "references": [
+        "CpHookDFPkg",
+        "UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg",
+        "UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService"
+      ]
+    },
+    {
+      "phase": "06",
+      "stage": "04",
+      "script": "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_04_WeightedBufferHookPkg.s.sol",
+      "source_sha256": {
+        "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_04_WeightedBufferHookPkg.s.sol": "91714c401601c604bd9508322d6f46001d603ffa577c264ed7a88093570f29b3",
+        "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_04_WeightedBufferHookPkg.sol": "380aeb5e3795d4ed0e4a79f6e327740dfd30524e38dd32f210f62fbe7a1f155b"
+      },
+      "local_rehearsal_action": "FRESH_CORRECTED_DEPLOYMENT",
+      "references": [
+        "UniswapV4StandardExchangeWeightedBufferHookDFPkg",
+        "UniswapV4StandardExchangeWeightedBufferHook_FactoryService",
+        "WeightedHookDFPkg"
+      ]
+    },
+    {
+      "phase": "06",
+      "stage": "05",
+      "script": "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_05_OrbitalBufferHookPkg.s.sol",
+      "source_sha256": {
+        "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_05_OrbitalBufferHookPkg.s.sol": "78b5479991b42da2a9ed5ff67a90c2da85492bd86bfd9535085c4de974b32bad",
+        "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_05_OrbitalBufferHookPkg.sol": "20e40b80738c4468172c6a643dfb2f30905e2f3b5fe7b55ca17e8e064b5410ca"
+      },
+      "local_rehearsal_action": "FRESH_CORRECTED_DEPLOYMENT",
+      "references": [
+        "OrbitalHookDFPkg",
+        "UniswapV4StandardExchangeOrbitalBufferHookDFPkg",
+        "UniswapV4StandardExchangeOrbitalBufferHook_FactoryService"
+      ]
+    },
+    {
+      "phase": "06",
+      "stage": "06",
+      "script": "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_06_CurveQuadBufferHookPkg.s.sol",
+      "source_sha256": {
+        "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_06_CurveQuadBufferHookPkg.s.sol": "132ab64712deea706024773483a794ca7cd6c1a4c2c9c01040ea822e721b6b1b",
+        "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_06_CurveQuadBufferHookPkg.sol": "d234d2cbdb20805ae02fba37ce5305ca4916f240c4471fe8cb8fb53849dc4f78"
+      },
+      "local_rehearsal_action": "FRESH_CORRECTED_DEPLOYMENT",
+      "references": [
+        "QuadHookDFPkg",
+        "UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg",
+        "UniswapV4StandardExchangeCurveQuadStableBufferHook_FactoryService"
+      ]
+    },
+    {
+      "phase": "06",
+      "stage": "07",
+      "script": "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_07_UniswapV4DetfPkg.s.sol",
+      "source_sha256": {
+        "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_07_UniswapV4DetfPkg.s.sol": "34a64b4e579ecdbef7375791c10c7c26f05eddd13ebdc6d607b1fa25fa985c3b",
+        "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_07_UniswapV4DetfPkg.sol": "b6c2ba2a525b5bf41758b2a615e06df774e85eabc2d23fee8649c1b80ae44ec8"
+      },
+      "local_rehearsal_action": "FRESH_CORRECTED_DEPLOYMENT",
+      "references": [
+        "DetfPkgFactoryService",
+        "IRebasingClaimTokenDFPkg",
+        "IUniswapV4DetfBondNFTVaultDFPkg",
+        "IUniswapV4DetfDFPkg",
+        "RebasingClaimTokenDFPkg",
+        "UniswapV4DetfBondNFTVaultDFPkg",
+        "UniswapV4DetfDFPkg",
+        "UniswapV4Detf_Facet_FactoryService",
+        "UniswapV4Detf_Pkg_FactoryService"
+      ]
+    },
+    {
+      "phase": "06",
+      "stage": "09",
+      "script": "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_09_BalancerStableBufferHookPkg.s.sol",
+      "source_sha256": {
+        "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_09_BalancerStableBufferHookPkg.s.sol": "6ecc59594d076d01ee43d06470976dd9e3fae7f05a8604ad59e09b6572bddc1d",
+        "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_09_BalancerStableBufferHookPkg.sol": "3ed4828ea168d537fe3a425c2a87bf2eb69b2500b07efca87190a6b469819fdb"
+      },
+      "local_rehearsal_action": "FRESH_CORRECTED_DEPLOYMENT",
+      "references": [
+        "BalancerHookDFPkg",
+        "UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg",
+        "UniswapV4StandardExchangeBalancerQuadStableBufferHook_FactoryService"
+      ]
+    },
+    {
+      "phase": "09",
+      "stage": "01",
+      "script": "scripts/foundry/anvil_robinhood_main/Phase_09_Stage_01_ExportFrontend.s.sol",
+      "source_sha256": {
+        "scripts/foundry/anvil_robinhood_main/Phase_09_Stage_01_ExportFrontend.s.sol": "87a2bd07eb26984bb1395b2a9cf776ff29af778dadc77be8a03ac036fb12dd06"
+      },
+      "local_rehearsal_action": "ISOLATED_FRONTEND_EXPORT",
+      "references": []
+    }
+  ],
+  "scope": "Chain-4663 architecture catalog: core, manager/collector, dependencies and registered packages; no customer instances or fund seeding. All 30 retained product models have a separate source/artifact and actual-proxy acceptance inventory. Chain-specific providers are verified on their configured fork; this catalog is not a claim that every product model is deployed on Robinhood.",
+  "excluded": [
+    "D60 Balancer-hosted DETF packages",
+    "D66 unfinished Slipstream",
+    "opt-in TokenStaking 06/08 and 08/*",
+    "public broadcast/fund migration"
+  ],
+  "runtime_status": "PENDING_LOCAL_REHEARSAL"
+}

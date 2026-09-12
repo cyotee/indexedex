@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 
+
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
@@ -123,7 +126,7 @@ contract EtherFiWeETHStandardExchangeDFPkg is IEtherFiWeETHStandardExchangeDFPkg
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](10);
+        interfaces = new bytes4[](13);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20Permit).interfaceId;
@@ -134,6 +137,9 @@ contract EtherFiWeETHStandardExchangeDFPkg is IEtherFiWeETHStandardExchangeDFPkg
         interfaces[7] = type(IEtherFiWeETHStandardVault).interfaceId;
         interfaces[8] = type(IEtherFiWeETHRebalance).interfaceId;
         interfaces[9] = type(IEtherFiWeETHStandardVault).interfaceId;
+        interfaces[10] = type(IStandardizedYield).interfaceId;
+        interfaces[11] = type(IStandardExchangeTransitionQuote).interfaceId;
+        interfaces[12] = type(IStandardExchangeExternalQuote).interfaceId;
     }
 
     function facetCuts() public view returns (IDiamond.FacetCut[] memory cuts) {

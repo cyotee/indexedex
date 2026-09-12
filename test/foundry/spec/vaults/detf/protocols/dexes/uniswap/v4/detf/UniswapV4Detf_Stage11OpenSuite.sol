@@ -1,5 +1,12 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {Vm} from "forge-std/Vm.sol";
+import {Math} from "@crane/contracts/utils/Math.sol";
+import {DETFFundedStakingMath} from "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol";
+import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
+import {IStakedDETF, IDETFFundedRewards} from "contracts/interfaces/IStakedDETF.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
@@ -224,45 +231,25 @@ abstract contract UniswapV4Detf_Stage11OpenSuite is
         );
     }
 
-    /// @dev After last user close, Univ3/n-leg pair wrap can be thinner than 20 ether.
-    ///      Donate DETF self-leg (mint leftover) so the LP booking still runs.
+    /// @dev Retire all funded positions, donate, then prove the next bond cannot
+    /// capture protocol LP. Purchases stay within the weighted swap input domain.
     function test_DN16_lastClose_thenDonate_nextBondDoesNotCapture() public override {
         _ensureLiveBond();
-        address bob = makeAddr("dn16bob");
-        address carol = makeAddr("dn16carol");
-        (uint256 bobId,) = _bondAs(bob, 40 ether);
-
-        vm.startPrank(detfUser);
-        detfInfo.mint(_openPairToken(), 20 ether, 0, detfUser, false, _deadline());
-        vm.stopPrank();
-
+        address bob_ = makeAddr("donation last prior holder");
+        address carol_ = makeAddr("donation next holder");
+        (uint256 bobId_,) = _bondAs(bob_, 10 ether);
         vm.warp(block.timestamp + DEFAULT_MIN_LOCK + 1);
-        vm.prank(detfUser);
-        detfInfo.closeBondMature(dnUserBondId, _minOut(), detfUser, _deadline());
-        vm.prank(bob);
-        detfInfo.closeBondMature(bobId, _minOut(), bob, _deadline());
-
-        IDETFNFTVault nft_ = _nft();
-        uint256 donateAmt_ = IERC20(detf).balanceOf(detfUser) / 4;
-        if (donateAmt_ == 0) donateAmt_ = IERC20(detf).balanceOf(detfUser);
-        vm.startPrank(detfUser);
-        IERC20(detf).approve(address(nft_), donateAmt_);
-        uint256 lpOut_ = IDetfNftReserveDonation(address(nft_)).donate(
-            IERC20(detf), donateAmt_, 0, false, _deadline()
-        );
-        vm.stopPrank();
-        assertGt(lpOut_, 0, "DN16 donated LP");
-        uint256 id0AfterDonate_ = nft_.originalSharesOf(DETF_PROTOCOL_BOND_NFT_ID);
-        uint256 lpAfterDonate_ = _lpToken().balanceOf(address(nft_));
-        assertGt(lpAfterDonate_, 0, "DN16 donated LP");
-
-        (uint256 carolId,) = _bondAs(carol, 30 ether);
-        assertGe(nft_.originalSharesOf(DETF_PROTOCOL_BOND_NFT_ID), id0AfterDonate_, "DN16 next bond leaves id0");
-        uint256 carolOrig_ = nft_.originalSharesOf(carolId);
-        uint256 carolAssets_ = nft_.convertToAssets(carolOrig_);
-        uint256 totalLp_ = _lpToken().balanceOf(address(nft_));
-        assertLt(carolAssets_, totalLp_, "DN16 carol does not swallow donated LP");
-        _assertNoJoinableDust();
+        _claimFundedDonationPosition(detfInfo, dnUserBondId, detfUser);
+        _claimFundedDonationPosition(detfInfo, bobId_, bob_);
+        _donatePair(dnDonor, 20 ether);
+        uint256 lp_ = _lpToken().balanceOf(address(_nft())) + _lpToken().balanceOf(detf);
+        assertGt(lp_, 0, "all prior claims preserve donated protocol liquidity");
+        (, uint256 principal_,,) = detfInfo.previewBond(_openPairToken(), 10 ether, DEFAULT_MIN_LOCK);
+        (uint256 nextId_,) = _bondAs(carol_, 10 ether);
+        assertEq(IDetfBondNFT(address(_nft())).positionOf(nextId_).principal, principal_, "next bond only receives its quoted funded purchase");
+        assertGe(_lpToken().balanceOf(address(_nft())) + _lpToken().balanceOf(detf), lp_, "new bond cannot capture old LP");
+        vm.warp(block.timestamp + DEFAULT_MIN_LOCK + 1);
+        _claimFundedDonationPosition(detfInfo, nextId_, carol_);
     }
 
     function test_compound_raises_protocolLp() public {

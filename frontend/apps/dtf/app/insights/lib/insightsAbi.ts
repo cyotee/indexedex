@@ -1,8 +1,9 @@
+import { parseAbi } from 'viem'
+
 /** View surface used on Insights. Single-vault and Curve Quad selectors, allowFailure. */
 export const insightsViewAbi = [
   { type: 'function', name: 'mintThreshold', stateMutability: 'view', inputs: [], outputs: [{ type: 'uint256' }] },
   { type: 'function', name: 'burnThreshold', stateMutability: 'view', inputs: [], outputs: [{ type: 'uint256' }] },
-  { type: 'function', name: 'thresholdMode', stateMutability: 'view', inputs: [], outputs: [{ type: 'uint8' }] },
   { type: 'function', name: 'isReserveLive', stateMutability: 'view', inputs: [], outputs: [{ type: 'bool' }] },
   { type: 'function', name: 'rebasingClaimToken', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
   { type: 'function', name: 'reservePool', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
@@ -89,90 +90,7 @@ export const insightsViewAbi = [
     ],
     outputs: [{ type: 'uint256' }],
   },
-  {
-    type: 'function',
-    name: 'bond',
-    stateMutability: 'nonpayable',
-    inputs: [
-      { name: 'tokenIn', type: 'address' },
-      { name: 'amountIn', type: 'uint256' },
-      { name: 'lockDuration', type: 'uint256' },
-      { name: 'recipient', type: 'address' },
-      { name: 'pretransferred', type: 'bool' },
-      { name: 'deadline', type: 'uint256' },
-    ],
-    outputs: [
-      { name: 'tokenId', type: 'uint256' },
-      { name: 'shares', type: 'uint256' },
-    ],
-  },
-  {
-    type: 'function',
-    name: 'claimRewards',
-    stateMutability: 'nonpayable',
-    inputs: [
-      { name: 'tokenId', type: 'uint256' },
-      { name: 'recipient', type: 'address' },
-    ],
-    outputs: [{ name: 'rewards', type: 'uint256' }],
-  },
-  {
-    type: 'function',
-    name: 'depositClaim',
-    stateMutability: 'nonpayable',
-    inputs: [
-      { name: 'tokenIn', type: 'address' },
-      { name: 'amountIn', type: 'uint256' },
-      { name: 'minClaimOut', type: 'uint256' },
-      { name: 'recipient', type: 'address' },
-      { name: 'pretransferred', type: 'bool' },
-      { name: 'deadline', type: 'uint256' },
-    ],
-    outputs: [{ name: 'claimOut', type: 'uint256' }],
-  },
-  {
-    type: 'function',
-    name: 'buyClaim',
-    stateMutability: 'nonpayable',
-    inputs: [
-      { name: 'detfAmount', type: 'uint256' },
-      { name: 'minClaimOut', type: 'uint256' },
-      { name: 'recipient', type: 'address' },
-      { name: 'pretransferred', type: 'bool' },
-      { name: 'deadline', type: 'uint256' },
-    ],
-    outputs: [{ name: 'claimMinted', type: 'uint256' }],
-  },
-  {
-    type: 'function',
-    name: 'previewBuyClaim',
-    stateMutability: 'view',
-    inputs: [{ name: 'detfAmount', type: 'uint256' }],
-    outputs: [{ name: 'claimMinted', type: 'uint256' }],
-  },
-  {
-    type: 'function',
-    name: 'redeemClaim',
-    stateMutability: 'nonpayable',
-    inputs: [
-      { name: 'claimAmount', type: 'uint256' },
-      { name: 'tokenOut', type: 'address' },
-      { name: 'minOut', type: 'uint256' },
-      { name: 'recipient', type: 'address' },
-      { name: 'deadline', type: 'uint256' },
-    ],
-    outputs: [{ name: 'amountOut', type: 'uint256' }],
-  },
-  {
-    type: 'function',
-    name: 'previewRedeemClaim',
-    stateMutability: 'view',
-    inputs: [
-      { name: 'claimAmount', type: 'uint256' },
-      { name: 'tokenOut', type: 'address' },
-    ],
-    outputs: [{ name: 'amountOut', type: 'uint256' }],
-  },
+
 ] as const
 
 const V4_POOL_KEY_COMPONENTS = [
@@ -237,55 +155,24 @@ export const rebasingClaimAbi = [
     inputs: [{ name: 'account', type: 'address' }],
     outputs: [{ type: 'uint256' }],
   },
-  {
-    type: 'function',
-    name: 'sharesOf',
-    stateMutability: 'view',
-    inputs: [{ name: 'account', type: 'address' }],
-    outputs: [{ type: 'uint256' }],
-  },
-  { type: 'function', name: 'totalShares', stateMutability: 'view', inputs: [], outputs: [{ type: 'uint256' }] },
-  { type: 'function', name: 'redemptionRate', stateMutability: 'view', inputs: [], outputs: [{ type: 'uint256' }] },
   { type: 'function', name: 'detf', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
 ] as const
 
-export const bondNftAbi = [
-  {
-    type: 'function',
-    name: 'claimRewards',
-    stateMutability: 'nonpayable',
-    inputs: [
-      { name: 'tokenId', type: 'uint256' },
-      { name: 'recipient', type: 'address' },
-    ],
-    outputs: [{ name: 'rewards', type: 'uint256' }],
-  },
-  {
-    type: 'function',
-    name: 'pendingRewards',
-    stateMutability: 'view',
-    inputs: [{ name: 'tokenId', type: 'uint256' }],
-    outputs: [{ type: 'uint256' }],
-  },
-  {
-    type: 'function',
-    name: 'ownerOf',
-    stateMutability: 'view',
-    inputs: [{ name: 'tokenId', type: 'uint256' }],
-    outputs: [{ type: 'address' }],
-  },
-  {
-    type: 'function',
-    name: 'unlockTimeOf',
-    stateMutability: 'view',
-    inputs: [{ name: 'tokenId', type: 'uint256' }],
-    outputs: [{ type: 'uint256' }],
-  },
-  {
-    type: 'function',
-    name: 'nextTokenId',
-    stateMutability: 'view',
-    inputs: [],
-    outputs: [{ type: 'uint256' }],
-  },
+export { BOND_NFT_POSITION_ABI as bondNftAbi } from '../../lib/detf/bondNftVault'
+
+/** Directional inputs come from the registered staking SY child. */
+export const standardizedYieldDiscoveryAbi = [
+  { type: 'function', name: 'rawSY', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
+  { type: 'function', name: 'stakingSY', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
+  { type: 'function', name: 'getTokensIn', stateMutability: 'view', inputs: [], outputs: [{ type: 'address[]' }] },
+  { type: 'function', name: 'getTokensOut', stateMutability: 'view', inputs: [], outputs: [{ type: 'address[]' }] },
 ] as const
+
+
+/** V4 per-leg synthetic prices use the hook's quote surface and DETF context. */
+export const detfReservePriceAbi = parseAbi([
+  'function hook() view returns (address)',
+  'function tokens() view returns (address[])',
+  'function creationPairPerDetfWad() view returns (uint256[])',
+  'function previewSynthetic((uint256 detfTotalSupply, uint256 pendingExpansion, uint256 ownedLp, uint256 creationPairPerDetfWad) ctx, address numeraire) view returns (uint256)',
+])

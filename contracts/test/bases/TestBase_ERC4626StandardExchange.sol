@@ -1,5 +1,11 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+// FactoryServices load these artifacts by name during every fixture deployment.
+import {ERC4626StandardExchangeInFacet} from "contracts/vaults/standard/erc4626/ERC4626StandardExchangeInFacet.sol";
+import {ERC4626StandardExchangeOutFacet} from "contracts/vaults/standard/erc4626/ERC4626StandardExchangeOutFacet.sol";
+import {ERC4626StandardExchangeMarkerFacet} from "contracts/vaults/standard/erc4626/ERC4626StandardExchangeMarkerFacet.sol";
+import {ERC4626StandardExchangeDFPkg} from "contracts/vaults/standard/erc4626/ERC4626StandardExchangeDFPkg.sol";
+
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";

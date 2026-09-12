@@ -478,21 +478,42 @@ html:has(.dtf-landing) body::after {
   z-index: 1;
 }
 
-.dtf-landing > .dtf-landing__stake-overlay {
+.dtf-landing > .dtf-landing__migration-dialog {
   position: fixed;
-  inset: 0;
-  z-index: 40;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.25rem;
+  margin: auto;
+  width: min(28rem, calc(100% - 2.5rem));
+  padding-top: 3.5rem;
+  color: var(--text-primary, #e8eef4);
 }
 
-.dtf-landing__stake-dim {
-  position: absolute;
-  inset: 0;
+.dtf-landing__migration-dialog::backdrop {
   background: rgba(5, 12, 29, 0.78);
   backdrop-filter: blur(6px);
+}
+
+.dtf-landing__migration-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.dtf-landing__migration-close:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.dtf-landing__migration-close:focus-visible,
+.dtf-landing__migration-dialog a:focus-visible {
+  outline: 2px solid var(--accent, #8cd6c5);
+  outline-offset: 3px;
 }
 
 .dtf-landing__stake-panel {

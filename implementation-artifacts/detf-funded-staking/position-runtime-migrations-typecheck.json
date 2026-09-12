@@ -1,0 +1,9 @@
+{
+  "status": "IN_MEMORY_DIAGNOSTIC_ONLY",
+  "seconds": 13.336,
+  "exit_code": 0,
+  "errors": [],
+  "pass": true,
+  "canonical_sources_unchanged": true,
+  "input_sha256": "06f12ae6d67a9dd1b4003630d5cbe9890b3ec39cd3ba7e37be6ebce7d9b947cf"
+}

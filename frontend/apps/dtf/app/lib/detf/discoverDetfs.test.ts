@@ -42,14 +42,14 @@ describe('selectDetfsFromVaults', () => {
 })
 
 describe('entriesFromAddresses', () => {
-  it('reads ERC-20 metadata', async () => {
+  it.each([9, 18])('reads the actual %i-decimal ERC-20 metadata', async (decimals) => {
     const readContract = vi.fn().mockImplementation(async ({ functionName }: { functionName: string }) => {
       if (functionName === 'name') return 'My DETF'
       if (functionName === 'symbol') return 'MINE'
-      if (functionName === 'decimals') return 18
+      if (functionName === 'decimals') return decimals
       throw new Error(functionName)
     })
     const [row] = await entriesFromAddresses({ readContract } as never, 46630, [VAULT])
-    expect(row).toMatchObject({ address: VAULT, name: 'My DETF', symbol: 'MINE', decimals: 18 })
+    expect(row).toMatchObject({ address: VAULT, name: 'My DETF', symbol: 'MINE', decimals })
   })
 })

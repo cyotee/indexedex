@@ -1,7 +1,5 @@
 import type { CreateDetfTypeId, CreateSeHostId } from '../detfTypes'
-import { CREATE_DETF_TYPES, isCreateSeHostId } from '../detfTypes'
-
-export type ThresholdChoice = 'policy' | 'open'
+import { CREATE_DETF_TYPES, isCreateSeHostId, usesSlotHosts } from '../detfTypes'
 
 export type CreatePlan = {
   typeId: CreateDetfTypeId | ''
@@ -11,15 +9,16 @@ export type CreatePlan = {
   claimSymbol: string
   bondName: string
   bondSymbol: string
-  mode: ThresholdChoice
   /** Pair per DETF at price index 1 (creationPairPerDetfWad). One string per basket leg. */
   creationPairPerDetf: string[]
   /** Pair per DETF on first bond (openingPairPerDetfWad). Blank or 0 uses the peg. */
   openingPairPerDetf: string[]
-  /** Percent above 1.0 for mint (Policy). "5" → 1.05e18. */
+  /** Percent above 1.0 for primary mint. "5" → 1.05e18. */
   mintBandPct: string
-  /** Percent below 1.0 for burn (Policy). "5" → 0.95e18. */
+  /** Percent below 1.0 for primary burn. "5" → 0.95e18. */
   burnBandPct: string
+  /** Fixed policy: DETF adds liquidity; DETF and the current Fee Collector may redeem when true. */
+  ownerOnlyLiquidity: boolean
   vaults: `0x${string}`[]
   /** Pair-leg weight percents; used by weighted type. */
   weights: string[]
@@ -61,11 +60,11 @@ export function emptyPlan(): CreatePlan {
     claimSymbol: '',
     bondName: '',
     bondSymbol: '',
-    mode: 'policy',
     creationPairPerDetf: ['1'],
     openingPairPerDetf: [''],
     mintBandPct: '5',
     burnBandPct: '5',
+    ownerOnlyLiquidity: true,
     vaults: [],
     weights: [],
     detfWeight: '',
@@ -84,7 +83,7 @@ export function typeMeta(typeId: CreateDetfTypeId | '') {
 export function minVaults(typeId: CreateDetfTypeId | ''): number {
   if (typeId === 'one-vault') return 1
   if (typeId === 'weighted') return 2
-  if (typeId === 'stables') return 2
+  if (typeId === 'stables') return 3
   if (typeId === 'grouped') return 2
   if (typeId === 'cash-buffer') return 2
   return 1
@@ -93,7 +92,7 @@ export function minVaults(typeId: CreateDetfTypeId | ''): number {
 export function maxVaults(typeId: CreateDetfTypeId | ''): number {
   if (typeId === 'one-vault') return 1
   if (typeId === 'weighted') return 7
-  if (typeId === 'stables') return 4
+  if (typeId === 'stables') return 3
   if (typeId === 'grouped') return 8
   if (typeId === 'cash-buffer') return 8
   return 8
@@ -339,10 +338,16 @@ export function validateName(plan: CreatePlan): string | null {
   )
 }
 
+/** Pair tokens in basket order. One-strategy uses `pairToken`. */
+export function planPairTokens(plan: CreatePlan): `0x${string}`[] {
+  if (plan.typeId === 'one-vault') return plan.pairToken ? [plan.pairToken] : []
+  return plan.pairTokens.slice(0, plan.vaults.length).filter((a): a is `0x${string}` => !!a)
+}
+
 export function priceLegCount(plan: CreatePlan): number {
   if (plan.typeId === 'one-vault') return 1
   const n = plan.vaults.length
-  if (plan.typeId === 'stables') return Math.max(n, 2)
+  if (plan.typeId === 'stables') return Math.max(n, 3)
   if (plan.typeId === 'grouped') return Math.max(n, 2)
   if (plan.typeId === 'cash-buffer') return Math.max(n, 3)
   return Math.max(n, 1)
@@ -402,7 +407,6 @@ export function validateGates(plan: CreatePlan): string | null {
       if (openWad == null) return 'First bond must be blank, 0, or pair tokens per DETF.'
     }
   }
-  if (plan.mode === 'open') return null
   const mint = Number(plan.mintBandPct)
   const burn = Number(plan.burnBandPct)
   if (!Number.isFinite(mint) || mint < 0 || mint > 50) return 'Mint line should be 0–50% above 1.'
@@ -433,6 +437,19 @@ export function validateBasket(plan: CreatePlan): string | null {
       : 'Pick the pair token this DETF will mint against.'
   }
   if (plan.typeId === 'cash-buffer' && !plan.cashToken) return 'Pick the cash token burns will return.'
+  if (plan.typeId === 'stables') {
+    for (let i = 0; i < plan.vaults.length; i++) {
+      if (!plan.pairTokens[i]) return 'Pick a pair token for each dollar vault.'
+    }
+    const pairKeys = plan.pairTokens.slice(0, plan.vaults.length).map((a) => a.toLowerCase())
+    if (new Set(pairKeys).size !== pairKeys.length) {
+      return 'Each dollar vault needs a different pair token.'
+    }
+    const vaultKeys = plan.vaults.map((a) => a.toLowerCase())
+    if (new Set(vaultKeys).size !== vaultKeys.length) {
+      return 'Each dollar vault needs a different vault.'
+    }
+  }
   if (plan.typeId === 'weighted') {
     const parts = [plan.detfWeight, ...plan.weights.slice(0, plan.vaults.length)]
     for (const raw of parts) {
@@ -498,8 +515,7 @@ export function parseType(raw: string | null): CreateDetfTypeId | '' {
 export function claimSymbolFrom(symbol: string): string {
   const s = symbol.trim()
   if (!s) return ''
-  if (s.endsWith('IR')) return s
-  return `${s}IR`
+  return `s${s.slice(0, DETF_SYMBOL_MAX - 1)}`
 }
 
 export function bondSymbolFrom(symbol: string): string {
@@ -511,7 +527,7 @@ export function bondSymbolFrom(symbol: string): string {
 export function claimNameFrom(name: string): string {
   const n = name.trim()
   if (!n) return ''
-  return `${n} Claim`
+  return `Staked ${n.slice(0, DETF_NAME_MAX - 7).trimEnd()}`
 }
 
 export function bondNameFrom(name: string): string {
@@ -598,11 +614,14 @@ export function applyType(plan: CreatePlan, typeId: CreatePlan['typeId']): Creat
       next.detfWeight = evenWeightedSplit(minVaults('weighted')).detfWeight
       next.weights = []
     }
-    next.seHosts = next.vaults.map((_, i) => next.seHosts[i] ?? '')
-    next.pairTokens = next.vaults.map((_, i) => next.pairTokens[i] ?? '')
   } else {
     next.weights = []
     next.detfWeight = ''
+  }
+  if (usesSlotHosts(typeId)) {
+    next.seHosts = next.vaults.map((_, i) => next.seHosts[i] ?? '')
+    next.pairTokens = next.vaults.map((_, i) => next.pairTokens[i] ?? '')
+  } else {
     next.seHosts = []
     next.pairTokens = []
   }
@@ -637,22 +656,22 @@ export function serializePlan(plan: CreatePlan): string {
   return JSON.stringify(
     {
       typeId: plan.typeId,
+      ownerOnlyLiquidity: plan.ownerOnlyLiquidity,
       name: plan.name.trim(),
       symbol: plan.symbol.trim(),
       claimName: plan.claimName.trim(),
       claimSymbol: plan.claimSymbol.trim(),
       bondName: plan.bondName.trim(),
       bondSymbol: plan.bondSymbol.trim(),
-      thresholdMode: plan.mode === 'open' ? 1 : 0,
       creationPairPerDetfWad: creationWad,
       openingPairPerDetfWad: openingWad,
-      mintThreshold: plan.mode === 'policy' ? mintWad : '0',
-      burnThreshold: plan.mode === 'policy' ? burnWad : '0',
+      mintThreshold: mintWad,
+      burnThreshold: burnWad,
       vaults: plan.vaults,
       weights: plan.typeId === 'weighted' ? plan.weights.slice(0, plan.vaults.length) : null,
       detfWeight: plan.typeId === 'weighted' ? plan.detfWeight : null,
-      seHosts: plan.typeId === 'weighted' ? plan.seHosts.slice(0, plan.vaults.length) : null,
-      pairTokens: plan.typeId === 'weighted' ? plan.pairTokens.slice(0, plan.vaults.length) : null,
+      seHosts: usesSlotHosts(plan.typeId) ? plan.seHosts.slice(0, plan.vaults.length) : null,
+      pairTokens: usesSlotHosts(plan.typeId) ? plan.pairTokens.slice(0, plan.vaults.length) : null,
       pairToken: plan.typeId === 'one-vault' ? plan.pairToken : null,
       cashToken: plan.typeId === 'cash-buffer' ? plan.cashToken : null,
       seHost: plan.typeId === 'one-vault' ? plan.seHost || null : null,
@@ -662,18 +681,20 @@ export function serializePlan(plan: CreatePlan): string {
   )
 }
 
-export const PLAN_STORAGE_KEY = 'indexedex.createPlan.v2'
+export const PLAN_STORAGE_KEY = 'indexedex.createPlan.v3'
 
 export function loadStoredPlan(): CreatePlan | null {
   if (typeof window === 'undefined') return null
   try {
     const raw = sessionStorage.getItem(PLAN_STORAGE_KEY)
     if (!raw) return null
-    const parsed = JSON.parse(raw) as Partial<CreatePlan>
-    if (!parsed || typeof parsed !== 'object') return null
+    const stored = JSON.parse(raw) as (Partial<CreatePlan> & { mode?: unknown }) | null
+    if (!stored || typeof stored !== 'object') return null
+    const { mode: _retiredMode, ...parsed } = stored
     return {
       ...emptyPlan(),
       ...parsed,
+      ownerOnlyLiquidity: typeof parsed.ownerOnlyLiquidity === 'boolean' ? parsed.ownerOnlyLiquidity : true,
       typeId: parseType(parsed.typeId ?? ''),
       seHost: isCreateSeHostId(String(parsed.seHost ?? '')) ? (parsed.seHost as CreateSeHostId) : '',
       detfWeight: typeof parsed.detfWeight === 'string' ? parsed.detfWeight : '',

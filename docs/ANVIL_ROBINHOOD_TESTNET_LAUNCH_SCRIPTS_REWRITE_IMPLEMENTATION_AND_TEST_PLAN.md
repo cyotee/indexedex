@@ -139,10 +139,7 @@ Family-specific hook/DETF facets stay in that Stage. Shared ERC721 + DETF NFT va
 | 04 | `Phase_06_Stage_04_WeightedBufferHookPkg.s.sol` | `weightedHookPkg` | Weighted buffer hook DFPkg + facets. |
 | 05 | `Phase_06_Stage_05_OrbitalBufferHookPkg.s.sol` | `orbitalHookPkg` | Orbital buffer hook DFPkg + facets. |
 | 06 | `Phase_06_Stage_06_CurveQuadBufferHookPkg.s.sol` | `curveQuadHookPkg` | Curve Quad buffer hook DFPkg + facets. |
-| 07 | `Phase_06_Stage_07_CpDetfPkg.s.sol` | `cpDetfPkg` | CP Single DETF DFPkg + its DETF facets. |
-| 08 | `Phase_06_Stage_08_WeightedDetfPkg.s.sol` | `weightedDetfPkg` | Weighted DETF DFPkg + facets. |
-| 09 | `Phase_06_Stage_09_OrbitalDetfPkg.s.sol` | `orbitalDetfPkg` | Orbital DETF DFPkg + facets. |
-| 10 | `Phase_06_Stage_10_CurveQuadDetfPkg.s.sol` | `curveQuadDetfPkg` | Curve Quad DETF DFPkg + facets. |
+| 07 | `Phase_06_Stage_07_UniswapV4DetfPkg.s.sol` | `uniV4DetfPkg` | Unified Uni V4 DETF DFPkg. One package binds CP / Weighted / Orbital / Quad SE buffer hooks. Family DETF packages (old 06-08…10) are **not** in this catalog. |
 
 Gold: copy `PkgInit` field sets from current `Stage_03_UniV4Packages` / `Stage_03b_OrbitalWeightedPackages`. Registry `deployPkg` / family `FactoryService.deployPkg`.
 

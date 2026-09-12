@@ -226,7 +226,7 @@ abstract contract MultiPairStandardExchangeBufferHookTarget is MultiPairStandard
 
         (uint256 pairIn, bool inIsBuffer) = Repo._resolveToken(address(params.tokenIn));
         if (inIsBuffer) {
-            _reconcileBufferIn(params.amountInScaled18, pairIn, params.router);
+            _reconcileBufferIn(_bufferToRaw(params.amountInScaled18, pairIn), pairIn, params.router);
         }
         // share ↔ share (and after buffer-out path without buffer-in): done
         return (true, params.amountCalculatedRaw);
@@ -462,8 +462,8 @@ abstract contract MultiPairStandardExchangeBufferHookTarget is MultiPairStandard
             vault.removeLiquidity(_buildRemoveLiquidityParams(address(this), 0, remAmts, RemoveLiquidityKind.CUSTOM));
         }
 
-        // amountInScaled18 for STANDARD buffer ≈ raw for 18-decimal tokens (test tokens are 18).
-        Repo._setVirtualBuffer(pairIn, Repo._virtualBuffer(pairIn) + xRaw);
+        // virtualBuffer is Vault scaled18 (init from exactAmountsInScaled18). Add scaled18, not raw.
+        Repo._setVirtualBuffer(pairIn, Repo._virtualBuffer(pairIn) + _liftToScaled18Rated(xRaw, bufferIdx));
         Repo._setHookShareDelta(pairIn, Repo._hookShareDelta(pairIn) + int256(donationRaw));
     }
 

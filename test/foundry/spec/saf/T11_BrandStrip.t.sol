@@ -17,7 +17,8 @@ contract T11_BrandStrip_Test is Test {
             IFacet(address(4)),
             IDiamondPackageCallBackFactory(address(5))
         );
-        assertEq(address(init.erc20Facet), address(1));
+        assertEq(address(init.erc5267Facet), address(2));
+        assertEq(address(init.erc2612Facet), address(3));
         assertEq(address(init.rebasingClaimTokenFacet), address(4));
     }
 

@@ -11,6 +11,7 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
+import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {AaveV3StataStandardExchangeInTarget} from "contracts/protocols/lending/aave/v3.6/AaveV3StataStandardExchangeInTarget.sol";
 
@@ -35,8 +36,10 @@ contract AaveV3StataStandardExchangeInFacet is AaveV3StataStandardExchangeInTarg
      * @inheritdoc IFacet
      */
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](1);
+        interfaces = new bytes4[](3);
         interfaces[0] = type(IStandardExchangeIn).interfaceId;
+        interfaces[1] = type(IStandardExchangeTransitionQuote).interfaceId;
+        interfaces[2] = type(IStandardExchangeExternalQuote).interfaceId;
         return interfaces;
     }
 
@@ -44,9 +47,16 @@ contract AaveV3StataStandardExchangeInFacet is AaveV3StataStandardExchangeInTarg
      * @inheritdoc IFacet
      */
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](2);
+        funcs = new bytes4[](9);
         funcs[0] = IStandardExchangeIn.previewExchangeIn.selector;
         funcs[1] = IStandardExchangeIn.exchangeIn.selector;
+        funcs[2] = IStandardExchangeTransitionQuote.quoteState.selector;
+        funcs[3] = IStandardExchangeTransitionQuote.quoteTransition.selector;
+        funcs[4] = IStandardExchangeTransitionQuote.quoteAssets.selector;
+        funcs[5] = IStandardExchangeTransitionQuote.quoteShareBalance.selector;
+        funcs[6] = IStandardExchangeTransitionQuote.quoteTotalSupply.selector;
+        funcs[7] = IStandardExchangeExternalQuote.quoteExternalExchange.selector;
+        funcs[8] = IStandardExchangeExternalQuote.quoteExternalDeposit.selector;
         return funcs;
     }
 

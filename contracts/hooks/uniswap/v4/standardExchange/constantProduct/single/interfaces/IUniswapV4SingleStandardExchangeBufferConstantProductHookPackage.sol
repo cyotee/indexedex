@@ -21,12 +21,15 @@ interface IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage is IU
     error ZeroAddress();
     error SameToken();
     error RawIsSE();
+    error InvalidDecimals();
 
     struct PkgInit {
         IVaultRegistryDeployment vaultRegistryDeployment;
         IVaultFeeOracleQuery vaultFeeOracleQuery;
         IFacet seFacet;
         IFacet depositFacet;
+        IFacet depositSingleFacet;
+        IFacet depositPreviewFacet;
         IFacet withdrawFacet;
         /// @dev ERC20PermitDFPkg parity: LP share is the hook diamond.
         IFacet erc20Facet;
@@ -44,6 +47,8 @@ interface IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage is IU
         address standardExchange;
         address pairToken;
         address rawToken;
+        uint8 pairTokenDecimals;
+        uint8 rawTokenDecimals;
         /// @notice D9: when true, only MultiStepOwnable owner may add/remove LP.
         bool ownerOnlyLiquidity;
         /// @notice MultiStepOwnable initial owner. DETF reserve deploys set this to the DETF diamond.
@@ -53,6 +58,8 @@ interface IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage is IU
     function VAULT_REGISTRY_DEPLOYMENT() external view returns (IVaultRegistryDeployment);
     function SE_FACET() external view returns (IFacet);
     function DEPOSIT_FACET() external view returns (IFacet);
+    function DEPOSIT_SINGLE_FACET() external view returns (IFacet);
+    function DEPOSIT_PREVIEW_FACET() external view returns (IFacet);
     function WITHDRAW_FACET() external view returns (IFacet);
     function PRODUCT_ID() external pure returns (bytes32);
 

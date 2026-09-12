@@ -1,0 +1,111 @@
+--- a/contracts/protocols/dexes/uniswap/v3/UniswapV3VaultRepo.sol
++++ b/contracts/protocols/dexes/uniswap/v3/UniswapV3VaultRepo.sol
+@@ -19,9 +19,6 @@
+ 
+     struct Storage {
+         Position centerPosition;
+-        address importedPositionManager;
+-        uint256 importedPositionTokenId;
+-        bool importedPositionActive;
+     }
+ 
+     function _layout(bytes32 slot) internal pure returns (Storage storage layout_) {
+@@ -46,28 +43,6 @@
+ 
+     function _createPositionIfNeeded(int24 tickLower_, int24 tickUpper_) internal {
+         _createPositionIfNeeded(_layout(), tickLower_, tickUpper_);
+-    }
+-
+-    /// @notice Record import custody and the converted full-range center.
+-    function _initializeImportedCenter(
+-        Storage storage layout_,
+-        address positionManager_,
+-        uint256 tokenId_,
+-        int24 tickLower_,
+-        int24 tickUpper_
+-    ) internal {
+-        layout_.importedPositionManager = positionManager_;
+-        layout_.importedPositionTokenId = tokenId_;
+-        layout_.importedPositionActive = true;
+-        layout_.centerPosition.tickLower = tickLower_;
+-        layout_.centerPosition.tickUpper = tickUpper_;
+-        layout_.centerPosition.created = true;
+-    }
+-
+-    function _initializeImportedCenter(address positionManager_, uint256 tokenId_, int24 tickLower_, int24 tickUpper_)
+-        internal
+-    {
+-        _initializeImportedCenter(_layout(), positionManager_, tokenId_, tickLower_, tickUpper_);
+     }
+ 
+     function _isPositionCreated(Storage storage layout_) internal view returns (bool) {
+@@ -101,16 +76,4 @@
+         (int24 tickLower_, int24 tickUpper_) = _getPositionTicks();
+         return _getPositionKey(address(this), tickLower_, tickUpper_);
+     }
+-
+-    function _importedPositionManager() internal view returns (address) {
+-        return _layout().importedPositionManager;
+-    }
+-
+-    function _importedPositionTokenId() internal view returns (uint256) {
+-        return _layout().importedPositionTokenId;
+-    }
+-
+-    function _importedPositionActive() internal view returns (bool) {
+-        return _layout().importedPositionActive;
+-    }
+ }
+--- a/contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangePositionImportTarget.sol
++++ b/contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangePositionImportTarget.sol
+@@ -161,9 +161,7 @@
+         );
+ 
+         ManagedTicks memory fullRange = _deriveManagedTicks();
+-        UniswapV3VaultRepo._initializeImportedCenter(
+-            address(positionManager), positionTokenId, fullRange.centerLower, fullRange.centerUpper
+-        );
++        UniswapV3VaultRepo._createPositionIfNeeded(fullRange.centerLower, fullRange.centerUpper);
+ 
+         state.inbound0 = IERC20(token0).balanceOf(address(this)) - state.booked0;
+         state.inbound1 = IERC20(token1).balanceOf(address(this)) - state.booked1;
+--- a/contracts/interfaces/IStandardExchangeInMulti.sol
++++ b/contracts/interfaces/IStandardExchangeInMulti.sol
+@@ -6,7 +6,7 @@
+ interface IStandardExchangeInMulti {
+     /**
+      * @notice Preview the amount of tokenOut that would be received for exchanging multiple tokenIn amounts.
+-     * @param tokenIn The array of input token addresses. Sorted in ascending order.
++     * @param tokenIn Input token addresses in the vault's declared order. V4 uses PoolKey order with WETH as the ERC20 face of a native currency.
+      * @param amountsIn The array of input token amounts corresponding to tokenIn. Must be the same length as tokenIn.
+      * @param tokenOut The output token address.
+      * @return amountOut The amount of tokenOut that would be received.
+@@ -19,7 +19,7 @@
+ 
+     /**
+      * @notice Exchange multiple tokenIn amounts for a single tokenOut amount.
+-     * @param tokenIn The array of input token addresses. Sorted in ascending order.
++     * @param tokenIn Input token addresses in the vault's declared order. V4 uses PoolKey order with WETH as the ERC20 face of a native currency.
+      * @param amountsIn The array of input token amounts corresponding to tokenIn. Must be the same length as tokenIn.
+      * @param tokenOut The output token address.
+      * @param minAmountOut The minimum amount of tokenOut that must be received.
+--- a/contracts/interfaces/IStandardExchangeOutMulti.sol
++++ b/contracts/interfaces/IStandardExchangeOutMulti.sol
+@@ -7,7 +7,7 @@
+     /**
+      * @notice Preview the exact-out dual exit: shares that would be burned to pay `amountsOut`.
+      * @param tokenIn The input token. Must be vault shares (`address(this)`).
+-     * @param tokensOut The two pool currencies, unique, strictly ascending by address.
++     * @param tokensOut The two unique pool currencies in the vault's declared order. V4 uses PoolKey order with WETH as the ERC20 face of a native currency.
+      * @param amountsOut Exact amounts of each `tokensOut` the caller wants to receive.
+      * @return amountIn Shares that would be burned (exact-out). Does not simulate tail-rebalance.
+      */
+@@ -21,7 +21,7 @@
+      * @notice Exact-out dual exit: burn shares to receive exact `amountsOut` of both pool tokens.
+      * @param tokenIn The input token. Must be vault shares (`address(this)`).
+      * @param maxAmountIn Maximum shares the caller is willing to burn. Unused shares are refunded to `msg.sender`.
+-     * @param tokensOut The two pool currencies, unique, strictly ascending by address.
++     * @param tokensOut The two unique pool currencies in the vault's declared order. V4 uses PoolKey order with WETH as the ERC20 face of a native currency.
+      * @param amountsOut Exact amounts of each `tokensOut` that must be received.
+      * @param recipient The address that will receive both output tokens.
+      * @param pretransferred Whether the shares have already been transferred to the vault.

@@ -1,5 +1,8 @@
 # Stage 05 — Shared Natural Supply Expansion Foundation
 
+> **Funded-design supersession (2026-09-07):** This document records earlier requirements or implementation evidence. For the authorized funded DETF refactor, [alignment PRD D32–D55 / §24](../../contracts/vaults/detf/DETF_ALIGNMENT_PRD.md) and the [funded implementation plan](../../contracts/vaults/detf/DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md) take precedence over conflicting Open-mode, LP-claim, rebasing, reward, epoch, decimal, cap and public-route instructions below. Unrelated host behavior remains applicable. Historical completion marks do not certify the funded refactor.
+
+
 ## Agent execution header
 
 | Field | Value |

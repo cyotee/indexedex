@@ -1,0 +1,9 @@
+{
+  "status": "applied; tests have not run",
+  "test_source": "test/foundry/spec/vaults/standard/sy/DualBufferHookNativeSY.t.sol",
+  "sha256": "8038c4ce75317f5dd27c34541c90c63f94f7e89c8a255c227ff7ebc0ca805d99",
+  "suite_source": "test/foundry/spec/vaults/detf/common/DETFFundedStakingSuite.t.sol",
+  "suite_before_sha256": "15a8fa70cc8300163e1854eeac96f78cb859c2202ec2e8113d3c9d71d468b50a",
+  "suite_after_sha256": "4e367b23f38a51c9b346cf5a82d186619679c19e751068e35f19c1e8c3013670",
+  "scope": "Real registered dual-buffer diamond and real ERC4626 SEs. No production changes, no SY success claim. Existing tokenA/tokenB usage fees remain enabled."
+}

@@ -1,0 +1,130 @@
+[
+  {
+    "name": "poolManager",
+    "helper": "_viewPoolManager"
+  },
+  {
+    "name": "feeOracle",
+    "helper": "_viewFeeOracle"
+  },
+  {
+    "name": "permit2",
+    "helper": "_viewPermit2"
+  },
+  {
+    "name": "numTokens",
+    "helper": "_viewNumTokens"
+  },
+  {
+    "name": "tokens",
+    "helper": "_viewTokens"
+  },
+  {
+    "name": "token",
+    "helper": "_viewToken"
+  },
+  {
+    "name": "baseAmp",
+    "helper": "_viewBaseAmp"
+  },
+  {
+    "name": "getCurrentAmp",
+    "helper": "_viewGetCurrentAmp"
+  },
+  {
+    "name": "standardExchange",
+    "helper": "_viewStandardExchange"
+  },
+  {
+    "name": "rateProvider",
+    "helper": "_viewRateProvider"
+  },
+  {
+    "name": "isBuffered",
+    "helper": "_viewIsBuffered"
+  },
+  {
+    "name": "invScale",
+    "helper": "_viewInvScale"
+  },
+  {
+    "name": "ratedScale",
+    "helper": "_viewRatedScale"
+  },
+  {
+    "name": "nativeReserve",
+    "helper": "_viewNativeReserve"
+  },
+  {
+    "name": "nativeReserves",
+    "helper": "_viewNativeReserves"
+  },
+  {
+    "name": "seBalance",
+    "helper": "_viewSeBalance"
+  },
+  {
+    "name": "seClaim",
+    "helper": "_viewSeClaim"
+  },
+  {
+    "name": "ratedBalance",
+    "helper": "_viewRatedBalance"
+  },
+  {
+    "name": "ratedBalances",
+    "helper": "_viewRatedBalances"
+  },
+  {
+    "name": "dexSwapFee",
+    "helper": "_viewDexSwapFee"
+  },
+  {
+    "name": "usageFee",
+    "helper": "_viewUsageFee"
+  },
+  {
+    "name": "feeTo",
+    "helper": "_viewFeeTo"
+  },
+  {
+    "name": "kLast",
+    "helper": "_viewKLast"
+  },
+  {
+    "name": "isFullBook",
+    "helper": "_viewIsFullBook"
+  },
+  {
+    "name": "isLive",
+    "helper": "_viewIsLive"
+  },
+  {
+    "name": "firstJoinMustBeFullBook",
+    "helper": "_viewFirstJoinMustBeFullBook"
+  },
+  {
+    "name": "requiredFirstBondTokens",
+    "helper": "_viewRequiredFirstBondTokens"
+  },
+  {
+    "name": "standardExchangeOf",
+    "helper": "_viewStandardExchangeOf"
+  },
+  {
+    "name": "syntheticNumeraires",
+    "helper": "_viewSyntheticNumeraires"
+  },
+  {
+    "name": "tradingFeeWad",
+    "helper": "_viewTradingFeeWad"
+  },
+  {
+    "name": "pairDoorCount",
+    "helper": "_viewPairDoorCount"
+  },
+  {
+    "name": "ensurePairPools",
+    "helper": "_viewEnsurePairPools"
+  }
+]

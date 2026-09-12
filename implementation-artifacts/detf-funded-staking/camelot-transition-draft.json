@@ -1,0 +1,29 @@
+{
+  "status": "APPLIED_CURRENT_PROXY_VALIDATION_PASSED",
+  "draft": "pending-camelot-transition-target.sol.txt",
+  "draft_sha256": "c1410e0b25b9923d98eeedbd4696625e625356578d2963137e2ceed444388b52",
+  "reference_source": "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeQuoteTarget.sol",
+  "reference_sha256": "51b9c86e807451d6ebca53a324991507fea67f740cd297fd4fca22792c253dda",
+  "preserved": "Existing Camelot quote/usage-fee formulas and 27-decimal SE shares; actual volatile pool configuration.",
+  "protocol_specific_changes": [
+    "Pool owner-fee LP mint uses actual Camelot integer denominator and floor square roots, not Uniswap owner-fee special cases.",
+    "Remove referrer input fees from actual projected pool balances; feeTo equal to pool is a self transfer.",
+    "Preserve the actual Camelot exact-output asset withdrawal behavior: it transfers all zap proceeds. Do not assume that route transfers only the requested minimum.",
+    "LP deposits price against actual pre-payment LP holdings, preserving donated LP and the existing empty-supply guard.",
+    "Router swaps consume input-side pool donations and pay referral fees on both measured input legs; the service retains its existing quoted payout/deposit amount.",
+    "LP pass-through preserves the existing live booked-LP balance guard, including protocol-fee LP minted to the SE."
+  ],
+  "required_before_application": [
+    "Run prepared current-production checkpoint regressions. Correct actual token ordering and post-operation checkpoint defects only after confirmation.",
+    "Review router zap path including pool donations and referral token balance effects.",
+    "Wire an isolated query facet with both interfaces and seven selectors through the existing package/factory/registry; use code-bound deployment salts.",
+    "Update all current constructor callers and facet/package surface tests.",
+    "Validate whole encoded projected state across both assets, feeTo holdings, directional fees, referrer fees, owner fee shares including 16666/16667, LP inputs and exact output.",
+    "Compile/check EIP-170 and actual proxy execution."
+  ],
+  "owner_scope": "No deployment allowlist, new owner economics or Slipstream changes.",
+  "reviewed_existing_behavior": "CamelotV2Service._sortReservesStruct already maps a zero known-token argument to token0; no common zero-token sorting change is needed.",
+  "applied_source": "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeQuoteTarget.sol",
+  "validation_evidence": "camelot-projection-referral-receipts-run.json",
+  "remaining": "Complete repository/default test and deployment acceptance; dedicated provider proxy checks passed."
+}

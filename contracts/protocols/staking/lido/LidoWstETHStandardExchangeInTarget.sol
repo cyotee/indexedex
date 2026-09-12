@@ -1,5 +1,12 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
+import {Math} from "@crane/contracts/utils/Math.sol";
+import {BetterMath} from "@crane/contracts/utils/math/BetterMath.sol";
+import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
+import {LidoWstETHStandardExchangeRepo} from "contracts/protocols/staking/lido/LidoWstETHStandardExchangeRepo.sol";
+
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
@@ -23,7 +30,9 @@ import {LidoWstETHStandardExchangeCommon} from "contracts/protocols/staking/lido
 contract LidoWstETHStandardExchangeInTarget is
     LidoWstETHStandardExchangeCommon,
     ReentrancyLockModifiers,
-    IStandardExchangeIn
+    IStandardExchangeIn,
+    IStandardExchangeTransitionQuote,
+    IStandardExchangeExternalQuote
 {
     using SafeERC20 for IERC20;
 
@@ -130,4 +139,174 @@ contract LidoWstETHStandardExchangeInTarget is
 
         revert InvalidRoute(address(0), address(tokenOut));
     }
+    /// @dev Keep the liquid sleeve, wrapped receipts and pending queue claims
+    /// distinct. A same-transaction Lido submit can change the receipt ratio.
+    struct LidoQuoteState {
+        address exchange;
+        address asset;
+        address holder;
+        uint256 holderShares;
+        uint256 supply;
+        uint256 liquid;
+        uint256 wrapped;
+        uint256 pending;
+        uint256 idleStShares;
+        uint256 pooledEth;
+        uint256 stShares;
+    }
+
+    function quoteState(address asset, address holder) external view returns (bytes memory, uint256) {
+        if (asset != weth() && asset != wstETH()) revert UnsupportedQuoteAsset(asset);
+        IStETH st = IStETH(stETH());
+        LidoQuoteState memory q = LidoQuoteState(
+            address(this), asset, holder, IERC20(address(this)).balanceOf(holder), ERC20Repo._totalSupply(),
+            liquidReserveEth(), IERC20(wstETH()).balanceOf(address(this)),
+            LidoWstETHStandardExchangeRepo._pendingFaceStEthTotal(),
+            st.sharesOf(address(this)), st.getTotalPooledEther(), st.getTotalShares()
+        );
+        return (abi.encode(q), _lidoQuoteAssets(q, q.holderShares));
+    }
+
+    function _readLidoQuote(bytes calldata state) private view returns (LidoQuoteState memory q) {
+        q = abi.decode(state, (LidoQuoteState));
+        if (q.exchange != address(this) || (q.asset != weth() && q.asset != wstETH())) revert InvalidQuoteState();
+    }
+
+    function _lidoPooled(LidoQuoteState memory q, uint256 shares) private pure returns (uint256) {
+        return q.stShares == 0 ? shares : Math.mulDiv(shares, q.pooledEth, q.stShares);
+    }
+
+    function _lidoShares(LidoQuoteState memory q, uint256 assets) private pure returns (uint256) {
+        return q.pooledEth == 0 ? assets : Math.mulDiv(assets, q.stShares, q.pooledEth);
+    }
+
+    function _lidoNav(LidoQuoteState memory q) private pure returns (uint256) {
+        return q.liquid + _lidoPooled(q, q.wrapped) + q.pending;
+    }
+
+    function _lidoQuoteAssets(LidoQuoteState memory q, uint256 shares) private view returns (uint256) {
+        uint256 ethValue = BetterMath._convertToAssetsDown(shares, _lidoNav(q), q.supply, _decimalOffset());
+        return q.asset == weth() ? ethValue : _lidoShares(q, ethValue);
+    }
+
+    function quoteAssets(bytes calldata state, uint256 shares) external view returns (uint256) {
+        return _lidoQuoteAssets(_readLidoQuote(state), shares);
+    }
+
+    function quoteShareBalance(bytes calldata state) external view returns (uint256) {
+        return _readLidoQuote(state).holderShares;
+    }
+
+    function quoteTotalSupply(bytes calldata state) external view returns (uint256) {
+        return _readLidoQuote(state).supply;
+    }
+
+    /// @dev Match the stETH balance delta observed by _securePull, then wrap
+    /// that amount. Idle stETH is not part of the SE's reserve NAV.
+    function _lidoReceiveAndWrap(LidoQuoteState memory q, uint256 amount)
+        private pure returns (uint256 received, uint256 wrapped)
+    {
+        uint256 beforeBalance = _lidoPooled(q, q.idleStShares);
+        q.idleStShares += _lidoShares(q, amount);
+        received = _lidoPooled(q, q.idleStShares) - beforeBalance;
+        if (received > amount) received = amount;
+        wrapped = _lidoShares(q, received);
+        q.idleStShares -= wrapped;
+    }
+
+    function _lidoQuoteDeposit(LidoQuoteState memory q, address token, uint256 amount, bool toHolder)
+        private view returns (uint256 minted)
+    {
+        uint256 beforeNav = _lidoNav(q);
+        uint256 credited;
+        if (token == weth()) {
+            q.liquid += amount;
+            credited = amount;
+        } else if (token == wstETH()) {
+            q.wrapped += amount;
+            credited = _lidoPooled(q, amount);
+        } else if (token == stETH()) {
+            (, uint256 wrapped) = _lidoReceiveAndWrap(q, amount);
+            q.wrapped += wrapped;
+            credited = _lidoPooled(q, wrapped);
+        } else revert UnsupportedQuoteAsset(token);
+        minted = BetterMath._convertToSharesDown(credited, beforeNav, q.supply, _decimalOffset());
+        q.supply += minted;
+        if (toHolder) q.holderShares += minted;
+        address beneficiary = address(VaultFeeOracleQueryAwareRepo._feeOracle().feeTo());
+        if (beneficiary != address(0)) {
+            uint256 fee = BetterMath._percentageOfWAD(minted, VaultFeeOracleQueryAwareRepo._feeOracle().usageFeeOfVault(address(this)));
+            q.supply += fee;
+            if (q.holder == beneficiary) q.holderShares += fee;
+        }
+    }
+
+    function quoteTransition(bytes calldata state, Operation operation, uint256 amount)
+        external view returns (bytes memory, uint256 amountIn, uint256 amountOut, uint256)
+    {
+        LidoQuoteState memory q = _readLidoQuote(state);
+        amountIn = amount;
+        if (operation == Operation.ReceiveShares) {
+            q.holderShares += amount;
+            if (q.holderShares > q.supply) revert InvalidQuoteState();
+            amountOut = amount;
+        } else if (operation == Operation.DepositExactIn) {
+            amountOut = _lidoQuoteDeposit(q, q.asset, amount, true);
+        } else {
+            if (operation == Operation.WithdrawExactOut) {
+                uint256 ethValue = q.asset == weth() ? amount : _lidoPooled(q, amount);
+                amountIn = BetterMath._convertToSharesUp(ethValue, _lidoNav(q), q.supply, _decimalOffset());
+                amountOut = amount;
+            } else amountOut = _lidoQuoteAssets(q, amount);
+            if (amountIn > q.holderShares) revert InsufficientQuoteShares(amountIn, q.holderShares);
+            q.holderShares -= amountIn;
+            q.supply -= amountIn;
+            if (q.asset == weth()) {
+                if (amountOut > q.liquid) revert InsufficientLiquidReserve(amountOut, q.liquid);
+                q.liquid -= amountOut;
+            } else {
+                if (amountOut > q.wrapped) revert InsufficientLockedReserve(amountOut, q.wrapped);
+                q.wrapped -= amountOut;
+            }
+        }
+        return (abi.encode(q), amountIn, amountOut, _lidoQuoteAssets(q, q.holderShares));
+    }
+
+    function quoteExternalDeposit(bytes calldata state, address tokenIn, uint256 amount)
+        external view returns (bytes memory, uint256 minted, uint256)
+    {
+        LidoQuoteState memory q = _readLidoQuote(state);
+        minted = _lidoQuoteDeposit(q, tokenIn, amount, false);
+        return (abi.encode(q), minted, _lidoQuoteAssets(q, q.holderShares));
+    }
+
+    function quoteExternalExchange(bytes calldata state, address tokenIn, uint256 amount)
+        external view returns (bytes memory, uint256 amountOut, uint256)
+    {
+        LidoQuoteState memory q = _readLidoQuote(state);
+        if (tokenIn == q.asset || !_isAsset(tokenIn)) revert InvalidRoute(tokenIn, q.asset);
+        if (q.asset == weth()) {
+            uint256 wrapped;
+            if (tokenIn == wstETH()) {
+                wrapped = amount;
+                amountOut = _lidoPooled(q, amount);
+            } else (amountOut, wrapped) = _lidoReceiveAndWrap(q, amount);
+            if (amountOut > q.liquid) revert InsufficientLiquidReserve(amountOut, q.liquid);
+            q.liquid -= amountOut;
+            q.wrapped += wrapped;
+        } else if (tokenIn == stETH()) {
+            (, amountOut) = _lidoReceiveAndWrap(q, amount);
+        } else {
+            uint256 beforeBalance = _lidoPooled(q, q.idleStShares);
+            uint256 minted = _lidoShares(q, amount);
+            q.stShares += minted;
+            q.pooledEth += amount;
+            q.idleStShares += minted;
+            uint256 stReceived = _lidoPooled(q, q.idleStShares) - beforeBalance;
+            amountOut = _lidoShares(q, stReceived);
+            q.idleStShares -= amountOut;
+        }
+        return (abi.encode(q), amountOut, _lidoQuoteAssets(q, q.holderShares));
+    }
+
 }

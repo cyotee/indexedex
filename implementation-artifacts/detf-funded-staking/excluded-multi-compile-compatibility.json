@@ -1,0 +1,142 @@
+{
+  "scope": "D60 compilation maintenance only; original legacy test assertions retained; no production selector/interface/economic change",
+  "source_snapshot": "/private/tmp/indexedex-detf-funded-staking-20260906/contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf.sol",
+  "original_helper_sha256": "60a275656e7d4ff0c235f1c5394c1ef1b9d50da0b98fe13eb278223fc1d8ba5c",
+  "restored_helpers": [
+    "_assertNoFreeInventory",
+    "_bondNftVault",
+    "_burnToLeg",
+    "_closeMinOut",
+    "_deployDetfN2SameRateAsset",
+    "_deployDetfNMixedRated",
+    "_deployNestedSingleSeDetfLive",
+    "_deployOpenModeDetf",
+    "_deployOpenModeDetfN",
+    "_deployOpenThresholdDetf",
+    "_deployOpenThresholdDetfN",
+    "_deployOuterOverNested",
+    "_feeTo",
+    "_fundNestedDetfShares",
+    "_fundSeShares0",
+    "_fundSharesForInstanceLeg",
+    "_goLiveViaBptBond",
+    "_mintOnLeg",
+    "_warpPastUnlock",
+    "_isKnownSeVault",
+    "_fundSeShares1",
+    "_deploySingleSeDetfPkg"
+  ],
+  "test_only_retired_selector_declarations": [
+    "sellPositionToDetfNft",
+    "buyClaim",
+    "previewBuyClaim",
+    "closeBondMature",
+    "previewCloseBondMature",
+    "redeemClaim",
+    "previewRedeemClaim",
+    "claimLiquidity",
+    "protocolBondOriginalShares",
+    "thresholdMode",
+    "expansionCatchUpMaxSeconds",
+    "expansionCatchUpCapBps",
+    "compoundProtocolRewards"
+  ],
+  "files": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf.sol",
+      "before_sha256": "c48936346346b29656eeb18fa5108bea0d0818be9357d31f419f91fe419190be",
+      "after_sha256": "12f0d427c0a314d7310bba9225823400b7a00ed60597d70c8eeeb26f547594ac"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_MixedRated.t.sol",
+      "before_sha256": "6740c8cbce7487c0b128ba470ed41600eb68e22607e7788933b7e6c6ede78fb9",
+      "after_sha256": "4e8889a9ff57c0d2a9d86305c21c501f562b8d67993beb33ccc65cafb2283418"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_ReserveDonation.t.sol",
+      "before_sha256": "9de338360d9ebd9450650d469d7e6c6a0aa9bff627809bb577be83f4a3fbaec5",
+      "after_sha256": "58afaddfaaa1d847be145a8d5face7948ac8412a28743b84fa6ac7a2bc896627"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_MultiLeg.t.sol",
+      "before_sha256": "e5aa35458ab8f3b45ed33bba97dbcfd9a67156266f74116d5b03603bada53699",
+      "after_sha256": "54e85289f9d3fe655d7123a9e8e606c3613cf60aa2bd093531ff7d72019096b3"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_Donation.t.sol",
+      "before_sha256": "aba4923af9db074de47de1f2846758065d8999251a619d05876f502c81ea4185",
+      "after_sha256": "a1e0fcdf92a3348610a0bd001786fa0cfcf8816a6399b45cd5d789bfbffd1ead"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_Surface.t.sol",
+      "before_sha256": "e1169ae78a673ae0c604b04a8e12c9998274b4b8cc7c8a510684fba97d4ce12a",
+      "after_sha256": "0dadf2dd55ac48f880f9738eec02ceeecd01d5981c8ebdf9dd265b52fe55b3ee"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_PkgArgs.t.sol",
+      "before_sha256": "1fc7735280cdbd4f6bb92c7712d2402b36fe09d7db5002fff0cd687059b2bf61",
+      "after_sha256": "4012e767ff2d7ef4ebc956c633120d6f5a11ac8cdf16201df8192a81f07dc447"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/TestBase_MultiVaultWeightedDetf_Adversarial.sol",
+      "before_sha256": "ec9f92609b8b7179441b0455f0a9de3e846bfd6a9066319f010fcf0e05e6b913",
+      "after_sha256": "74cdd7c038c5f76de4876584a6d4b9682bc5160a78926d1416924f61508b85c5"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_BondClaim.t.sol",
+      "before_sha256": "6ea97dd5e8401b5762281c0a3bf5efc682e40ff4e945376b35adcbcee33a403a",
+      "after_sha256": "32ae68ef2c93221f718a764516797b56c3a3c443957666c879d70d3d6744f441"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_Griefing.t.sol",
+      "before_sha256": "e85f1e7bf8f3aadf901ad799844b40846fff61c95be366b22ca478d918935e1f",
+      "after_sha256": "529595d5b457f6587a7cc40e0a1c0dbe029c8088f86c99c01a177fa437aeb909"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Deploy_Decimals.sol",
+      "before_sha256": "cc7a91f7d6882066fe0ebee1b0ae16eb3fe187fca0282829ab8a90a05cef17b8",
+      "after_sha256": "8ca52953e445394329e863c080eb177a0e942e87d65206d2fbe659f75e9cd1cd"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_MultiLeg_Decimals.sol",
+      "before_sha256": "62e04a1470eef4affd84d5b66869f1b6515f148a5305b82962a22d3bf3849837",
+      "after_sha256": "dbcdcfff57168b87603b3f74de8af9f813d870711d59a8e8a76df4341396656d"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_ReserveDonation_Decimals.sol",
+      "before_sha256": "a8b33bffaec804975cb7261f3dfe749bd7bb92e1b4e816a35fe2e9589660842b",
+      "after_sha256": "192d9678ca7166e20410c6b1db8df155d5ac9ff49a728269ea0c052e8128251e"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_MixedRated_Decimals.sol",
+      "before_sha256": "96aa8f90edfe0e7f287152e98e542256bafe4850d855b9b56e9a539d83b34f46",
+      "after_sha256": "ea45a5ee3543a2e15277fd72928aef78be4e6c7499459199e00b7886ddb428ca"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/adversarial/TestBase_MultiVaultWeightedDetf_Adversarial_Decimals.sol",
+      "before_sha256": "e70d15b501f3478e33f3b80b49ce1081a41ef0a4dc34f89258c20ed46a8e1e70",
+      "after_sha256": "7f7ea43fc68e957413c4f257bf8d9330f1dd2f4486b53b2d468b2db34c3f8eab"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/adversarial/Adversarial_Donation_Decimals.sol",
+      "before_sha256": "6814447828a10ce4d2fdee08114b9dda7f818c5f8e696f2c59b079bcd35ff8df",
+      "after_sha256": "3fef28ae16dd26a73937c8eae620816c139c842e3a6ad600be6c1515f7144dac"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/adversarial/Adversarial_PkgArgs_Decimals.sol",
+      "before_sha256": "2e2ecb66d16074c12d553e43630d4d085556a7cfe24261b17fa865f288c43604",
+      "after_sha256": "b51d83cf8d39cb1922aeb8de59ab4b1aa1fcf4a2e0c2b2d72fcdcf8bc07a13f4"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/adversarial/Adversarial_Griefing_Decimals.sol",
+      "before_sha256": "401ec96b248e0e885ec5f3028fd2a67fd96d5987f3e915104327fe3573baeadd",
+      "after_sha256": "6939b014013ecb49b915e07d29b2280ad546c4a6e2a3af80a8908fbe43c76437"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/adversarial/Adversarial_BondClaim_Decimals.sol",
+      "before_sha256": "91bf569334de8e1d6fee65c2cb2eb913ec133accbc9c34cbfc0e3f9909488962",
+      "after_sha256": "f2f8df44bf541c572b2e5711e52b1a1cb75794b59e9e19a9592f7a2c78f35808"
+    }
+  ],
+  "validation": "pending full repository compile"
+}

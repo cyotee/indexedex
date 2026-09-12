@@ -1,9 +1,10 @@
 'use client';
-import { useEffect, useMemo, useState } from 'react';
-import { WagmiProvider, createConfig, createStorage } from 'wagmi';
-import { injected } from 'wagmi/connectors';
-import { base, baseSepolia, foundry, localhost, sepolia } from 'wagmi/chains';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { WagmiProvider, createConfig, createStorage, useAccount, type State } from 'wagmi';
+import { RainbowKitProvider, connectorsForWallets, darkTheme } from '@rainbow-me/rainbowkit';
+import { injectedWallet, metaMaskWallet, coinbaseWallet, rainbowWallet, walletConnectWallet } from '@rainbow-me/rainbowkit/wallets';
+import { QueryClient, QueryClientProvider, useQueryClient } from '@tanstack/react-query';
+import { walletFirstTransport } from './lib/walletFirstTransport'
 
 import {
   DeploymentEnvironmentContext,
@@ -20,16 +21,8 @@ import {
   NetworkSelectionContext,
   SELECTED_NETWORK_STORAGE_KEY,
 } from '@indexedex/protocol/networkSelection'
-import { robinhood, robinhoodAnvil, robinhoodTestnet, robinhoodTestnetAnvil } from '@indexedex/protocol/runtimeChains'
 import { BrandProvider } from './lib/brandContext'
-import { isLocalRobinhoodTestnet, robinhoodTestnetRpcUrl } from './lib/localRpc'
-import { walletFirstTransport } from './lib/walletFirstTransport'
-
-const queryClient = new QueryClient()
-const localRpcUrl = process.env.NEXT_PUBLIC_LOCAL_RPC_URL ?? 'http://127.0.0.1:8545'
-const baseRpcUrl = process.env.NEXT_PUBLIC_BASE_RPC_URL ?? 'http://127.0.0.1:9545'
-const sepoliaRpcUrl = process.env.NEXT_PUBLIC_SEPOLIA_RPC_URL ?? sepolia.rpcUrls.default.http[0]
-const baseSepoliaRpcUrl = process.env.NEXT_PUBLIC_BASE_SEPOLIA_RPC_URL ?? baseSepolia.rpcUrls.default.http[0]
+import { getWalletChains, isLocalRobinhoodTestnet } from './lib/localRpc'
 
 /** DTF launch target is Robinhood (4663) unless the 46630 Anvil rehearsal env is selected. */
 const envDefaultChain = Number(process.env.NEXT_PUBLIC_DEFAULT_CHAIN_ID)
@@ -40,12 +33,6 @@ const DTF_DEFAULT_CHAIN_ID: CanonicalArtifactChainId =
       ? CHAIN_ID_ROBINHOOD_TESTNET
       : CHAIN_ID_ROBINHOOD
 
-function isLocalSepoliaEnvironment(environment: string): boolean {
-  // Both supersim and single-chain local_testing point sepolia/base-sepolia
-  // wallet reads at the local Anvil/SuperSim RPC endpoints.
-  return environment === 'supersim_sepolia' || environment === 'local_testing'
-}
-
 function resolveDtfEnvironment(): DeploymentEnvironment {
   const raw = process.env.NEXT_PUBLIC_DEFAULT_DEPLOYMENT_ENVIRONMENT
   if (raw && isDeploymentEnvironment(raw)) return raw
@@ -53,13 +40,44 @@ function resolveDtfEnvironment(): DeploymentEnvironment {
 }
 
 function coerceDtfChainId(value: number): CanonicalArtifactChainId {
-  if (value === CHAIN_ID_ROBINHOOD || value === CHAIN_ID_ROBINHOOD_TESTNET) return value
+  if (walletChains.some((chain) => chain.id === value)) return value as CanonicalArtifactChainId
   return DTF_DEFAULT_CHAIN_ID
 }
+
+const walletChains = getWalletChains(DTF_DEFAULT_CHAIN_ID)
+const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID?.trim() ?? ''
+// Installed wallets work without a cloud project. Never initialize WalletConnect
+// with a placeholder ID, or offer a mobile loopback connection on a local fork.
+const wallets = projectId && !isLocalRobinhoodTestnet()
+  ? [metaMaskWallet, rainbowWallet, coinbaseWallet, walletConnectWallet, injectedWallet]
+  : [injectedWallet]
+const config = createConfig({
+  chains: walletChains,
+  connectors: connectorsForWallets([{ groupName: 'Wallets', wallets }], { appName: 'DTF', projectId }),
+  multiInjectedProviderDiscovery: true,
+  ssr: true,
+  storage: createStorage({ key: `dtf-rainbowkit-${isLocalRobinhoodTestnet() ? 'local' : 'public'}-${DTF_DEFAULT_CHAIN_ID}` }),
+  transports: Object.fromEntries(walletChains.map((chain) => [chain.id, walletFirstTransport(chain.id, chain.rpcUrls.default.http[0], getWalletState)])),
+})
+function getWalletState(): State { return config.state }
+
+function WalletQueryBoundary({ children }: { children: React.ReactNode }) {
+  const { status, address, chainId, connector } = useAccount()
+  const client = useQueryClient()
+  useEffect(() => {
+    // Fork and public chain can share an ID. Drop readings from the previous
+    // provider as well as from the previous account/network.
+    void client.resetQueries()
+  }, [client, status, address, chainId, connector?.uid])
+  return children
+}
+const walletTheme = darkTheme({ accentColor: '#4FD44B', accentColorForeground: '#101710', borderRadius: 'medium', fontStack: 'system' })
 
 export function Providers({ children }: { children: React.ReactNode }) {
   // DTF defaults to RH Anvil registry; override with NEXT_PUBLIC_DEFAULT_DEPLOYMENT_ENVIRONMENT.
   const environment = resolveDtfEnvironment()
+  const [queryClient] = useState(() => new QueryClient())
+  const [networkRestored, setNetworkRestored] = useState(false)
   const setEnvironment = () => {}
   const [selectedChainId, setSelectedChainId] =
     useState<CanonicalArtifactChainId>(DTF_DEFAULT_CHAIN_ID)
@@ -75,42 +93,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
     if (Number.isFinite(stored)) {
       setSelectedChainId(coerceDtfChainId(stored))
     }
+    setNetworkRestored(true)
   }, [])
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (networkRestored) {
       window.localStorage.setItem(SELECTED_NETWORK_STORAGE_KEY, String(selectedChainId))
     }
-  }, [selectedChainId])
-
-  const config = useMemo(() => {
-    const useLocalRpc = isLocalSepoliaEnvironment(environment)
-    const rhChain = isLocalRobinhoodTestnet() ? robinhoodAnvil(localRpcUrl) : robinhood
-    const rhTestnetChain = isLocalRobinhoodTestnet()
-      ? robinhoodTestnetAnvil(robinhoodTestnetRpcUrl())
-      : robinhoodTestnet
-
-    return createConfig({
-      chains: [rhChain, rhTestnetChain, sepolia, baseSepolia, foundry, localhost, base],
-      multiInjectedProviderDiscovery: false,
-      ssr: true,
-      storage: createStorage({ key: 'dtf-wagmi-v3' }),
-      connectors: [
-        injected({ target: 'metaMask' }),
-        injected({ target: 'coinbaseWallet' }),
-        injected(),
-      ],
-      transports: {
-        [CHAIN_ID_ROBINHOOD]: walletFirstTransport(rhChain.rpcUrls.default.http[0]),
-        [CHAIN_ID_ROBINHOOD_TESTNET]: walletFirstTransport(rhTestnetChain.rpcUrls.default.http[0]),
-        [foundry.id]: walletFirstTransport(localRpcUrl),
-        [localhost.id]: walletFirstTransport(localRpcUrl),
-        [base.id]: walletFirstTransport(base.rpcUrls.default.http[0]),
-        [sepolia.id]: walletFirstTransport(useLocalRpc ? localRpcUrl : sepoliaRpcUrl),
-        [baseSepolia.id]: walletFirstTransport(useLocalRpc ? baseRpcUrl : baseSepoliaRpcUrl),
-      },
-    })
-  }, [environment])
+  }, [selectedChainId, networkRestored])
 
   return (
     <DeploymentEnvironmentContext.Provider value={{ environment, setEnvironment }}>
@@ -118,7 +108,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <BrandProvider>
           <WagmiProvider config={config}>
             <QueryClientProvider client={queryClient}>
-              {children}
+              <RainbowKitProvider theme={walletTheme} initialChain={selectedChainId} modalSize="compact">
+                <WalletQueryBoundary>{children}</WalletQueryBoundary>
+              </RainbowKitProvider>
             </QueryClientProvider>
           </WagmiProvider>
         </BrandProvider>

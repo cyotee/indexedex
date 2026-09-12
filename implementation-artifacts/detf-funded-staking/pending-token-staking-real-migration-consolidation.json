@@ -1,0 +1,25 @@
+{
+  "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+  "mapping": {
+    "test_setTargetDetf_stores_address/test_migrate_amount_over_reserve_reverts/test_cannot_stake_after_migrate_starts/test_completeWrap_after_partial_migrate/test_completeWrap_only_owner": "test_realMigrationBoundsSlippageAndOwnerChecks: actual DETF target, typed reserve/phase/owner failures, new minimum rollback and exact approval cleanup",
+    "test_reassign_after_wrap": "test_reassignAfterRealFundedMigration: actual wrapped sDETF moves with stake assignment",
+    "test_migrate_wraps_claim_and_users_withdraw_rebasing_share": "existing test_e2e_stake_dtf_migrate_chunks_withdraw_claim: actual funded bond rebase increases wrapping custody and both exact withdrawal previews"
+  },
+  "consolidation": "Remove seven old migration cases plus unused ABI-double contract/helper; two consolidated actual integration cases added and existing chunked lifecycle strengthened. Ordinary staking/reward/Permit2 and independent wrapping-vault cases retained.",
+  "files": [
+    {
+      "path": "test/foundry/spec/protocols/staking/token/TokenStaking.t.sol",
+      "before_sha256": "b69a8f9be74dc0b9cc55860ba615fa097d57d4702d7b4e58ade6c46b1a668a06",
+      "after_sha256": "2b6e7233e61ead973d1648f651bab4baf36e4374781f87d28b42e36a74e0c695"
+    },
+    {
+      "path": "test/foundry/spec/protocols/staking/token/TokenStaking_PonsUv4Detf.t.sol",
+      "before_sha256": "65f34abac5ef04a43152b1a1aacf1823e387cc0b82511af2540f68cd1e3c3041",
+      "after_sha256": "5a4fc26504df070f05e5eadf7bb3d64a7cdc69a52647d1784519e4cfe46bb960"
+    }
+  ],
+  "historical_preparation_status": "prepared; Solidity unchanged",
+  "application_record": "token-staking-real-migration-consolidation.json",
+  "current_status_source": "current-implementation-queue.json and acceptance-progress.json; later edits and validation can supersede the original application hashes.",
+  "pending_owner_approval": false
+}

@@ -1,0 +1,29 @@
+{
+  "status": "SELECTED_FUNCTIONAL_VALIDATION_PASSED",
+  "process_session": null,
+  "scope": "Orbital DETF with two distinct real V4 SE position vaults; existing shared funded binding assertions plus two SE-share inputs through all five declared SY outputs",
+  "initialization": "Both tokens actually funded through standard multi-input entry for each SE; first DETF bond retained",
+  "production_changes_in_this_batch": false,
+  "pending_validation_is_not_green_evidence": false,
+  "path": "test/foundry/spec/vaults/detf/common/claimToken/V4FundedBindings.t.sol",
+  "previous_attempt": {
+    "archive": "orbital-v4-position-missing-artifact-*",
+    "build_seconds": 432.11,
+    "test_seconds": 9.446,
+    "result": "Build passed; setup failed on undeclared TWAP artifact dependency",
+    "assertions_executed": 0
+  },
+  "fixture_correction": "Declared the real V4 SE factory artifact dependency set in the existing production-SE test deployment library; no runtime behavior changed",
+  "latest_validation": {
+    "archive": "v4-cached-withdrawal-and-collector-340-green-*",
+    "build_seconds": 37.678,
+    "test_seconds": 79.889,
+    "passed": 340,
+    "failed": 0,
+    "suites": 44,
+    "coverage": "Four V4 reserves/two liquidity policies, actual LP ownership/payment, funded swap fallback, Fee Collector rotation/internal SY, real V4 position-backed Orbital routes, V3/V4 full-range/transition checks, native buffer SY, packaging and moved SY selectors"
+  },
+  "followup": "Measure per-operation native SY gas separately from the successful ten-combination test",
+  "latest_gas_evidence": "orbital-v4-position-gas-after-cached-withdrawal.json",
+  "remaining_gas_work": "Warm deposits remain 32.9\u201333.3M execution gas; redemptions now 4.24\u20136.40M; further profiling/chain suitability remains."
+}

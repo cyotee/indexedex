@@ -1,0 +1,37 @@
+{
+  "scope": "D60 test compilation only. Historical expected error selectors computed from their unchanged original signatures; no production errors restored or test assertions removed.",
+  "files": [
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_IntegratedDeploy.t.sol",
+      "signatures": [
+        "BondNotMature(uint256)"
+      ],
+      "before_sha256": "29bf3ceeaeec94d3e86fc3133ac41685228acd0a33a0f85c00f251ba02948f27",
+      "after_sha256": "f315aafc976d392eb15a3abf6c09d918d1638c5cfd91b211c3b1a1b7d7f446d1"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/sequences/ComposedStableCommonDetf_Sequences_Decimals.sol",
+      "signatures": [
+        "BondNotMature(uint256)"
+      ],
+      "before_sha256": "ccef277a63b403329dcf6aacdc1e39c34179ea2d5cb7575373e05552912fceb6",
+      "after_sha256": "82949a427393b672aed3004a984ba35a47dc88d621baacf9c8bf956db0fac5e4"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/sequences/ComposedStableCommonDetf_Sequences.t.sol",
+      "signatures": [
+        "BondNotMature(uint256)"
+      ],
+      "before_sha256": "1ecf6c5d09fb6e9e3aa46a44f36cda430a9a79686ce58a6f9650a838ef5249c8",
+      "after_sha256": "f4959508ff0a256cce50befc14a8599879ef41976864f8de6c5a4142e5eeb3de"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/TestBase_ComposedStableCommonDetf_Decimals.sol",
+      "signatures": [
+        "BondNotMature(uint256)"
+      ],
+      "before_sha256": "c03d8c2738166ff37963371ac003f85d851088adf4a4b5379ed68f24702d0652",
+      "after_sha256": "703ab4a6ee8c44c10cf25691787a970c3884590dcfd8a1f6022d68744d861b90"
+    }
+  ]
+}

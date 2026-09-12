@@ -1,0 +1,11 @@
+--- a/contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeInTarget.sol
++++ b/contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeInTarget.sol
+@@ -107,7 +107,7 @@
+         ) {
+             _loadIndexSourceReserves(indexSource, tokenOut);
+             ICamelotFactory camelotFactory = CamelotV2FactoryAwareRepo._camelotV2Factory();
+-            amountOut = CamelotV2Utils._quoteWithdrawSwapWithFee(
++            return CamelotV2Utils._quoteWithdrawSwapWithFee(
+                 // uint256 ownedLPAmount,
+                 amountIn,
+                 // uint256 lpTotalSupply,

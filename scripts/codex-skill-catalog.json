@@ -1,0 +1,342 @@
+{
+  "version": 1,
+  "budget": {
+    "max_entries": 50,
+    "max_description_chars": 160,
+    "max_catalog_chars": 14000
+  },
+  "direct": {
+    "crane-adversarial-testing": "lib/crane/.claude/skills/crane-adversarial-testing",
+    "crane-architecture": "lib/crane/.claude/skills/crane-architecture",
+    "crane-code-style": "lib/crane/.claude/skills/crane-code-style",
+    "crane-deployment": "lib/crane/.claude/skills/crane-deployment",
+    "crane-natspec": "lib/crane/.claude/skills/crane-natspec",
+    "crane-testing": "lib/crane/.claude/skills/crane-testing",
+    "defi-incident-patterns": ".claude/skills/defi-incident-patterns",
+    "docs-to-skills": "lib/crane/.claude/skills/docs-to-skills",
+    "indexedex-adversarial-testing": ".claude/skills/indexedex-adversarial-testing",
+    "indexedex-launch-scripts": ".claude/skills/indexedex-launch-scripts",
+    "indexedex-product-voice": ".claude/skills/indexedex-product-voice",
+    "indexedex-script-orchestration": ".claude/skills/indexedex-script-orchestration",
+    "indexedex-testing": ".claude/skills/indexedex-testing",
+    "indexedex-ui-refactor": ".claude/skills/indexedex-ui-refactor",
+    "indexedex-ui-tx-testing": ".claude/skills/indexedex-ui-tx-testing",
+    "indexedex-uniswap-v4-hook-packages": ".claude/skills/indexedex-uniswap-v4-hook-packages",
+    "skill-authoring": "lib/crane/.claude/skills/skill-authoring",
+    "vercel-react-best-practices": "lib/crane/.claude/skills/vercel-react-best-practices",
+    "web-design-guidelines": "lib/crane/.claude/skills/web-design-guidelines"
+  },
+  "groups": {
+    "aave-v3": {
+      "source": ".claude/skills/aave-v3",
+      "topics": {
+        "aave-v3-architecture": "lib/crane/.claude/skills/aave-v3-architecture",
+        "aave-v3-configuration": "lib/crane/.claude/skills/aave-v3-configuration",
+        "aave-v3-emodes": "lib/crane/.claude/skills/aave-v3-emodes",
+        "aave-v3-flash-loans": "lib/crane/.claude/skills/aave-v3-flash-loans",
+        "aave-v3-pool": "lib/crane/.claude/skills/aave-v3-pool",
+        "aave-v3-stata-token": "lib/crane/.claude/skills/aave-v3-stata-token",
+        "aave-v3-tokens": "lib/crane/.claude/skills/aave-v3-tokens"
+      }
+    },
+    "aave-v4": {
+      "source": ".claude/skills/aave-v4",
+      "topics": {
+        "aave-v4-architecture": "lib/crane/.claude/skills/aave-v4-architecture",
+        "aave-v4-dynamic-config": "lib/crane/.claude/skills/aave-v4-dynamic-config",
+        "aave-v4-hub": "lib/crane/.claude/skills/aave-v4-hub",
+        "aave-v4-liquidation": "lib/crane/.claude/skills/aave-v4-liquidation",
+        "aave-v4-position-manager": "lib/crane/.claude/skills/aave-v4-position-manager",
+        "aave-v4-risk-premium": "lib/crane/.claude/skills/aave-v4-risk-premium",
+        "aave-v4-spoke": "lib/crane/.claude/skills/aave-v4-spoke"
+      }
+    },
+    "aerodrome": {
+      "source": ".claude/skills/aerodrome",
+      "topics": {
+        "aerodrome-architecture": "lib/crane/.claude/skills/aerodrome-architecture",
+        "aerodrome-emissions": "lib/crane/.claude/skills/aerodrome-emissions",
+        "aerodrome-gauge": "lib/crane/.claude/skills/aerodrome-gauge",
+        "aerodrome-pool": "lib/crane/.claude/skills/aerodrome-pool",
+        "aerodrome-rewards": "lib/crane/.claude/skills/aerodrome-rewards",
+        "aerodrome-router": "lib/crane/.claude/skills/aerodrome-router",
+        "aerodrome-voter": "lib/crane/.claude/skills/aerodrome-voter",
+        "aerodrome-voting-escrow": "lib/crane/.claude/skills/aerodrome-voting-escrow",
+        "crane-aerodrome": "lib/crane/.claude/skills/crane-aerodrome"
+      }
+    },
+    "balancer-v3": {
+      "source": ".claude/skills/balancer-v3",
+      "topics": {
+        "balancer-v3-architecture": "lib/crane/.claude/skills/balancer-v3-architecture",
+        "balancer-v3-cow-pool": "lib/crane/.claude/skills/balancer-v3-cow-pool",
+        "balancer-v3-gyro-pool": "lib/crane/.claude/skills/balancer-v3-gyro-pool",
+        "balancer-v3-hooks": "lib/crane/.claude/skills/balancer-v3-hooks",
+        "balancer-v3-pools": "lib/crane/.claude/skills/balancer-v3-pools",
+        "balancer-v3-reclamm-pool": "lib/crane/.claude/skills/balancer-v3-reclamm-pool",
+        "balancer-v3-router": "lib/crane/.claude/skills/balancer-v3-router",
+        "balancer-v3-stable-pool": "lib/crane/.claude/skills/balancer-v3-stable-pool",
+        "balancer-v3-vault": "lib/crane/.claude/skills/balancer-v3-vault",
+        "balancer-v3-weighted-pool": "lib/crane/.claude/skills/balancer-v3-weighted-pool",
+        "crane-balancer": "lib/crane/.claude/skills/crane-balancer"
+      }
+    },
+    "battlechain": {
+      "source": ".claude/skills/battlechain",
+      "topics": {
+        "battlechain-ai-tooling": ".claude/skills/battlechain-ai-tooling",
+        "battlechain-dev-workflow": ".claude/skills/battlechain-dev-workflow",
+        "battlechain-safe-harbor": ".claude/skills/battlechain-safe-harbor"
+      }
+    },
+    "compound-v3": {
+      "source": ".claude/skills/compound-v3",
+      "topics": {
+        "comet-architecture": "lib/crane/.claude/skills/comet-architecture",
+        "comet-bulker": "lib/crane/.claude/skills/comet-bulker",
+        "comet-collateral": "lib/crane/.claude/skills/comet-collateral",
+        "comet-configurator": "lib/crane/.claude/skills/comet-configurator",
+        "comet-core": "lib/crane/.claude/skills/comet-core",
+        "comet-interest-rates": "lib/crane/.claude/skills/comet-interest-rates",
+        "comet-liquidation": "lib/crane/.claude/skills/comet-liquidation",
+        "comet-rewards": "lib/crane/.claude/skills/comet-rewards"
+      }
+    },
+    "euler": {
+      "source": ".claude/skills/euler",
+      "topics": {
+        "euler-evc": "lib/crane/.claude/skills/euler-evc",
+        "euler-evk-architecture": "lib/crane/.claude/skills/euler-evk-architecture",
+        "euler-evk-borrowing": "lib/crane/.claude/skills/euler-evk-borrowing",
+        "euler-evk-liquidation": "lib/crane/.claude/skills/euler-evk-liquidation",
+        "euler-evk-risk": "lib/crane/.claude/skills/euler-evk-risk",
+        "euler-evk-vault": "lib/crane/.claude/skills/euler-evk-vault",
+        "euler-oracle": "lib/crane/.claude/skills/euler-oracle",
+        "euler-periphery": "lib/crane/.claude/skills/euler-periphery"
+      }
+    },
+    "morpho": {
+      "source": ".claude/skills/morpho",
+      "topics": {
+        "crane-morpho": "lib/crane/.claude/skills/crane-morpho",
+        "morpho-architecture": "lib/crane/.claude/skills/morpho-architecture",
+        "morpho-blue-operations": "lib/crane/.claude/skills/morpho-blue-operations",
+        "morpho-vaults": "lib/crane/.claude/skills/morpho-vaults"
+      }
+    },
+    "olympus": {
+      "source": ".claude/skills/olympus",
+      "topics": {
+        "crane-olympus": "lib/crane/.claude/skills/crane-olympus",
+        "olympus-architecture": "lib/crane/.claude/skills/olympus-architecture",
+        "olympus-operations": "lib/crane/.claude/skills/olympus-operations"
+      }
+    },
+    "permit2": {
+      "source": ".claude/skills/permit2",
+      "topics": {
+        "permit2-addresses": "lib/crane/.claude/skills/permit2-addresses",
+        "permit2-allowance-flow": "lib/crane/.claude/skills/permit2-allowance-flow",
+        "permit2-allowance-transfer": "lib/crane/.claude/skills/permit2-allowance-transfer",
+        "permit2-nonce-management": "lib/crane/.claude/skills/permit2-nonce-management",
+        "permit2-router-witness": "lib/crane/.claude/skills/permit2-router-witness",
+        "permit2-sdk": "lib/crane/.claude/skills/permit2-sdk",
+        "permit2-signature-transfer": "lib/crane/.claude/skills/permit2-signature-transfer",
+        "permit2-signature-transfer-contract": "lib/crane/.claude/skills/permit2-signature-transfer-contract",
+        "permit2-types": "lib/crane/.claude/skills/permit2-types",
+        "permit2-wagmi-integration": "lib/crane/.claude/skills/permit2-wagmi-integration"
+      }
+    },
+    "pons": {
+      "source": ".claude/skills/pons",
+      "topics": {
+        "pons-architecture": "lib/crane/.claude/skills/pons-architecture",
+        "pons-integration": "lib/crane/.claude/skills/pons-integration",
+        "pons-operations": "lib/crane/.claude/skills/pons-operations"
+      }
+    },
+    "reliquary": {
+      "source": ".claude/skills/reliquary",
+      "topics": {
+        "reliquary-architecture": "lib/crane/.claude/skills/reliquary-architecture",
+        "reliquary-deployment": "lib/crane/.claude/skills/reliquary-deployment"
+      }
+    },
+    "resupply": {
+      "source": ".claude/skills/resupply",
+      "topics": {
+        "resupply-architecture": "lib/crane/.claude/skills/resupply-architecture",
+        "resupply-governance": "lib/crane/.claude/skills/resupply-governance",
+        "resupply-insurance": "lib/crane/.claude/skills/resupply-insurance",
+        "resupply-lending": "lib/crane/.claude/skills/resupply-lending",
+        "resupply-liquidation": "lib/crane/.claude/skills/resupply-liquidation",
+        "resupply-redemption": "lib/crane/.claude/skills/resupply-redemption",
+        "resupply-rewards": "lib/crane/.claude/skills/resupply-rewards",
+        "resupply-staking": "lib/crane/.claude/skills/resupply-staking"
+      }
+    },
+    "slipstream": {
+      "source": ".claude/skills/slipstream",
+      "topics": {
+        "slipstream-architecture": "lib/crane/.claude/skills/slipstream-architecture",
+        "slipstream-fees": "lib/crane/.claude/skills/slipstream-fees",
+        "slipstream-gauge": "lib/crane/.claude/skills/slipstream-gauge",
+        "slipstream-oracle": "lib/crane/.claude/skills/slipstream-oracle",
+        "slipstream-pool": "lib/crane/.claude/skills/slipstream-pool",
+        "slipstream-position-manager": "lib/crane/.claude/skills/slipstream-position-manager",
+        "slipstream-router": "lib/crane/.claude/skills/slipstream-router",
+        "slipstream-swap": "lib/crane/.claude/skills/slipstream-swap"
+      }
+    },
+    "uniswap-v3": {
+      "source": ".claude/skills/uniswap-v3",
+      "topics": {
+        "uniswap-v3-architecture": "lib/crane/.claude/skills/uniswap-v3-architecture",
+        "uniswap-v3-factory": "lib/crane/.claude/skills/uniswap-v3-factory",
+        "uniswap-v3-oracle": "lib/crane/.claude/skills/uniswap-v3-oracle",
+        "uniswap-v3-pool": "lib/crane/.claude/skills/uniswap-v3-pool",
+        "uniswap-v3-position-manager": "lib/crane/.claude/skills/uniswap-v3-position-manager",
+        "uniswap-v3-positions": "lib/crane/.claude/skills/uniswap-v3-positions",
+        "uniswap-v3-swaps": "lib/crane/.claude/skills/uniswap-v3-swaps",
+        "uniswap-v3-ticks": "lib/crane/.claude/skills/uniswap-v3-ticks"
+      }
+    },
+    "uniswap-v4": {
+      "source": ".claude/skills/uniswap-v4",
+      "topics": {
+        "uniswap-v4-architecture": "lib/crane/.claude/skills/uniswap-v4-architecture",
+        "uniswap-v4-fees": "lib/crane/.claude/skills/uniswap-v4-fees",
+        "uniswap-v4-flash-accounting": "lib/crane/.claude/skills/uniswap-v4-flash-accounting",
+        "uniswap-v4-hooks": "lib/crane/.claude/skills/uniswap-v4-hooks",
+        "uniswap-v4-liquidity": "lib/crane/.claude/skills/uniswap-v4-liquidity",
+        "uniswap-v4-pool-manager": "lib/crane/.claude/skills/uniswap-v4-pool-manager",
+        "uniswap-v4-pools": "lib/crane/.claude/skills/uniswap-v4-pools",
+        "uniswap-v4-swaps": "lib/crane/.claude/skills/uniswap-v4-swaps"
+      }
+    },
+    "voltaire-effect": {
+      "source": ".claude/skills/voltaire-effect",
+      "topics": {
+        "voltaire-effect-architecture": "lib/crane/.claude/skills/voltaire-effect-architecture",
+        "voltaire-effect-contracts": "lib/crane/.claude/skills/voltaire-effect-contracts",
+        "voltaire-effect-crypto": "lib/crane/.claude/skills/voltaire-effect-crypto",
+        "voltaire-effect-error-handling": "lib/crane/.claude/skills/voltaire-effect-error-handling",
+        "voltaire-effect-layers": "lib/crane/.claude/skills/voltaire-effect-layers",
+        "voltaire-effect-overview": "lib/crane/.claude/skills/voltaire-effect-overview",
+        "voltaire-effect-provider": "lib/crane/.claude/skills/voltaire-effect-provider",
+        "voltaire-effect-schemas": "lib/crane/.claude/skills/voltaire-effect-schemas",
+        "voltaire-effect-services": "lib/crane/.claude/skills/voltaire-effect-services",
+        "voltaire-effect-signer": "lib/crane/.claude/skills/voltaire-effect-signer",
+        "voltaire-effect-streaming": "lib/crane/.claude/skills/voltaire-effect-streaming",
+        "voltaire-effect-testing": "lib/crane/.claude/skills/voltaire-effect-testing"
+      }
+    },
+    "wagmi": {
+      "source": ".claude/skills/wagmi",
+      "topics": {
+        "wagmi-config": "lib/crane/.claude/skills/wagmi-config",
+        "wagmi-connectors": "lib/crane/.claude/skills/wagmi-connectors",
+        "wagmi-overview": "lib/crane/.claude/skills/wagmi-overview",
+        "wagmi-react-connect": "lib/crane/.claude/skills/wagmi-react-connect",
+        "wagmi-react-hooks": "lib/crane/.claude/skills/wagmi-react-hooks",
+        "wagmi-react-overview": "lib/crane/.claude/skills/wagmi-react-overview",
+        "wagmi-react-providers": "lib/crane/.claude/skills/wagmi-react-providers",
+        "wagmi-react-read": "lib/crane/.claude/skills/wagmi-react-read",
+        "wagmi-react-write": "lib/crane/.claude/skills/wagmi-react-write",
+        "wagmi-read-contract": "lib/crane/.claude/skills/wagmi-read-contract",
+        "wagmi-transports": "lib/crane/.claude/skills/wagmi-transports",
+        "wagmi-write-contract": "lib/crane/.claude/skills/wagmi-write-contract"
+      }
+    },
+    "tevm": {
+      "source": ".claude/skills/tevm",
+      "topics": {
+        "tevm-account-management": "lib/crane/.claude/skills/tevm-account-management",
+        "tevm-actions": "lib/crane/.claude/skills/tevm-actions",
+        "tevm-contract-deployment": "lib/crane/.claude/skills/tevm-contract-deployment",
+        "tevm-debugging": "lib/crane/.claude/skills/tevm-debugging",
+        "tevm-events": "lib/crane/.claude/skills/tevm-events",
+        "tevm-overview": "lib/crane/.claude/skills/tevm-overview",
+        "tevm-setup": "lib/crane/.claude/skills/tevm-setup"
+      }
+    },
+    "playwright": {
+      "source": ".claude/skills/playwright",
+      "topics": {
+        "playwright-config": ".opencode/skills/playwright-config",
+        "playwright-fixtures": ".opencode/skills/playwright-fixtures",
+        "playwright-overview": ".opencode/skills/playwright-overview",
+        "playwright-webserver": ".opencode/skills/playwright-webserver"
+      }
+    },
+    "ethereum-reference": {
+      "source": ".claude/skills/ethereum-reference",
+      "topics": {
+        "ethskills-addresses": ".claude/skills/ethskills-addresses",
+        "ethskills-audit": ".claude/skills/ethskills-audit",
+        "ethskills-building-blocks": ".claude/skills/ethskills-building-blocks",
+        "ethskills-concepts": ".claude/skills/ethskills-concepts",
+        "ethskills-crops": ".claude/skills/ethskills-crops",
+        "ethskills-gas": ".claude/skills/ethskills-gas",
+        "ethskills-indexing": ".claude/skills/ethskills-indexing",
+        "ethskills-l2s": ".claude/skills/ethskills-l2s",
+        "ethskills-orchestration": ".claude/skills/ethskills-orchestration",
+        "ethskills-protocol": ".claude/skills/ethskills-protocol",
+        "ethskills-qa": ".claude/skills/ethskills-qa",
+        "ethskills-security": ".claude/skills/ethskills-security",
+        "ethskills-ship": ".claude/skills/ethskills-ship",
+        "ethskills-standards": ".claude/skills/ethskills-standards",
+        "ethskills-testing": ".claude/skills/ethskills-testing",
+        "ethskills-tools": ".claude/skills/ethskills-tools",
+        "ethskills-wallets": ".claude/skills/ethskills-wallets"
+      }
+    },
+    "crane-libraries": {
+      "source": ".claude/skills/crane-libraries",
+      "topics": {
+        "crane-access": "lib/crane/.claude/skills/crane-access",
+        "crane-tokens": "lib/crane/.claude/skills/crane-tokens",
+        "crane-utilities": "lib/crane/.claude/skills/crane-utilities"
+      }
+    },
+    "crane-protocol-ports": {
+      "source": ".claude/skills/crane-protocol-ports",
+      "topics": {
+        "crane-camelot": "lib/crane/.claude/skills/crane-camelot",
+        "crane-porting": "lib/crane/.claude/skills/crane-porting",
+        "crane-porting-verification": "lib/crane/.claude/skills/crane-porting-verification",
+        "crane-uniswap": "lib/crane/.claude/skills/crane-uniswap"
+      }
+    },
+    "foundry-tools": {
+      "source": ".claude/skills/foundry-tools",
+      "topics": {
+        "anvil-node": "lib/crane/.claude/skills/anvil-node",
+        "cast-commands": "lib/crane/.claude/skills/cast-commands",
+        "forge-deployment": "lib/crane/.claude/skills/forge-deployment",
+        "forge-fuzz-testing": "lib/crane/.claude/skills/forge-fuzz-testing",
+        "forge-signing": "lib/crane/.claude/skills/forge-signing",
+        "forge-testing": "lib/crane/.claude/skills/forge-testing",
+        "foundry-project": "lib/crane/.claude/skills/foundry-project",
+        "supersim": "lib/crane/.claude/skills/supersim"
+      }
+    },
+    "indexedex-discovery": {
+      "source": ".claude/skills/indexedex-discovery",
+      "topics": {
+        "indexedex-agent-checklist": ".opencode/skills/indexedex-agent-checklist",
+        "indexedex-networks-addresses": ".opencode/skills/indexedex-networks-addresses",
+        "indexedex-overview": ".opencode/skills/indexedex-overview",
+        "indexedex-registry-discovery": ".opencode/skills/indexedex-registry-discovery"
+      }
+    },
+    "indexedex-user-flows": {
+      "source": ".claude/skills/indexedex-user-flows",
+      "topics": {
+        "indexedex-balancer-se-router": ".opencode/skills/indexedex-balancer-se-router",
+        "indexedex-detf-user-flows": ".opencode/skills/indexedex-detf-user-flows",
+        "indexedex-standard-exchange": ".opencode/skills/indexedex-standard-exchange"
+      }
+    }
+  }
+}

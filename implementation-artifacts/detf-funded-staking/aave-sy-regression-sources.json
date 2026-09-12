@@ -1,0 +1,9 @@
+{
+  "status": "applied; build and tests pending",
+  "source": "test/foundry/spec/protocol/lending/aave/cross-version/AaveCrossVersionLoopE2E.t.sol",
+  "before_sha256": "c9572bd52c5adcdf5b2c3410b77001ab9677b3673fdc0198760555562be334c7",
+  "after_sha256": "7204495a4b33858bcf4426f996d15c4c1cb40682ddbba80c92a943de4efed6c6",
+  "suite_before_sha256": "f33b9cdc53e9d8aabcab0915b20f725e0bc2bcbbfb528b20f9b2e3f042b9d44b",
+  "suite_after_sha256": "15a8fa70cc8300163e1854eeac96f78cb859c2202ec2e8113d3c9d71d468b50a",
+  "scope": "Seven assertions added to the existing actual V3/V4 market and registry E2E fixture; no production mutation."
+}

@@ -6,6 +6,7 @@ import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactor
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IMultiStepOwnable} from "@crane/contracts/interfaces/IMultiStepOwnable.sol";
 import {MultiStepOwnableRepo} from "@crane/contracts/access/ERC8023/MultiStepOwnableRepo.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC20Permit} from "@crane/contracts/interfaces/IERC20Permit.sol";
@@ -18,6 +19,7 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {UniswapV4SeBufferHookLegLib} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
@@ -59,6 +61,8 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
     IVaultFeeOracleQuery public immutable VAULT_FEE_ORACLE_QUERY;
     IFacet public immutable DEPOSIT_FACET;
     IFacet public immutable WITHDRAW_FACET;
+    IFacet public immutable DEPOSIT_QUERY_FACET;
+    IFacet public immutable DEPOSIT_ZAP_FACET;
     IFacet public immutable SE_FACET;
     IFacet public immutable HOOKS_FACET;
     IFacet public immutable ERC20_FACET;
@@ -74,7 +78,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
             address(init.vaultRegistryDeployment) == address(0)
                 || address(init.vaultFeeOracleQuery) == address(0)
                 || address(init.depositFacet) == address(0) || address(init.withdrawFacet) == address(0)
-                || address(init.seFacet) == address(0) || address(init.hooksFacet) == address(0)
+                || address(init.seFacet) == address(0) || address(init.depositZapFacet) == address(0) || address(init.depositQueryFacet) == address(0) || address(init.hooksFacet) == address(0)
                 || address(init.erc20Facet) == address(0) || address(init.erc5267Facet) == address(0)
                 || address(init.erc2612Facet) == address(0)
                 || address(init.multiAssetBasicVaultFacet) == address(0)
@@ -87,6 +91,8 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
         VAULT_FEE_ORACLE_QUERY = init.vaultFeeOracleQuery;
         DEPOSIT_FACET = init.depositFacet;
         WITHDRAW_FACET = init.withdrawFacet;
+        DEPOSIT_QUERY_FACET = init.depositQueryFacet;
+        DEPOSIT_ZAP_FACET = init.depositZapFacet;
         SE_FACET = init.seFacet;
         HOOKS_FACET = init.hooksFacet;
         ERC20_FACET = init.erc20Facet;
@@ -133,7 +139,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
         override(IDiamondFactoryPackage, UniswapV4StandardExchangeOrbitalBufferHookInitFacet)
         returns (bytes4[] memory interfaces)
     {
-        interfaces = new bytes4[](12);
+        interfaces = new bytes4[](13);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20Permit).interfaceId;
@@ -146,10 +152,11 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
         interfaces[9] = HOOK_VAULT_TYPE;
         interfaces[10] = type(IUniswapV4SeBufferHook).interfaceId;
         interfaces[11] = type(IDetfReserveQuote).interfaceId;
+        interfaces[12] = type(IStandardizedYield).interfaceId;
     }
 
     function facetAddresses() public view returns (address[] memory facets) {
-        facets = new address[](11);
+        facets = new address[](13);
         facets[0] = address(MULTI_STEP_OWNABLE_FACET);
         facets[1] = address(MULTI_ASSET_BASIC_VAULT_FACET);
         facets[2] = address(MULTI_ASSET_STANDARD_VAULT_FACET);
@@ -161,6 +168,8 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
         facets[8] = address(ERC20_FACET);
         facets[9] = address(ERC5267_FACET);
         facets[10] = address(ERC2612_FACET);
+        facets[11] = address(DEPOSIT_QUERY_FACET);
+        facets[12] = address(DEPOSIT_ZAP_FACET);
     }
 
     function packageMetadata()
@@ -173,67 +182,24 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
         facets = facetAddresses();
     }
 
-    function facetCuts() public view returns (IDiamond.FacetCut[] memory cuts) {
-        cuts = new IDiamond.FacetCut[](4);
-        cuts[0] = IDiamond.FacetCut({
-            facetAddress: address(MULTI_STEP_OWNABLE_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: MULTI_STEP_OWNABLE_FACET.facetFuncs()
-        });
-        cuts[1] = IDiamond.FacetCut({
-            facetAddress: address(MULTI_ASSET_BASIC_VAULT_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: MULTI_ASSET_BASIC_VAULT_FACET.facetFuncs()
-        });
-        cuts[2] = IDiamond.FacetCut({
-            facetAddress: address(MULTI_ASSET_STANDARD_VAULT_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: MULTI_ASSET_STANDARD_VAULT_FACET.facetFuncs()
-        });
-        cuts[3] = IDiamond.FacetCut({
-            facetAddress: address(SELF),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: facetFuncs()
-        });
+    function facetCuts() public view returns (IDiamond.FacetCut[] memory) {
+        return _facetCuts(0, 4);
     }
 
-    function productionFacetCuts() public view returns (IDiamond.FacetCut[] memory cuts) {
-        cuts = new IDiamond.FacetCut[](7);
-        cuts[0] = IDiamond.FacetCut({
-            facetAddress: address(HOOKS_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: HOOKS_FACET.facetFuncs()
-        });
-        cuts[1] = IDiamond.FacetCut({
-            facetAddress: address(DEPOSIT_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: DEPOSIT_FACET.facetFuncs()
-        });
-        cuts[2] = IDiamond.FacetCut({
-            facetAddress: address(WITHDRAW_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: WITHDRAW_FACET.facetFuncs()
-        });
-        cuts[3] = IDiamond.FacetCut({
-            facetAddress: address(SE_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: SE_FACET.facetFuncs()
-        });
-        cuts[4] = IDiamond.FacetCut({
-            facetAddress: address(ERC20_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: ERC20_FACET.facetFuncs()
-        });
-        cuts[5] = IDiamond.FacetCut({
-            facetAddress: address(ERC5267_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: ERC5267_FACET.facetFuncs()
-        });
-        cuts[6] = IDiamond.FacetCut({
-            facetAddress: address(ERC2612_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: ERC2612_FACET.facetFuncs()
-        });
+    function productionFacetCuts() public view returns (IDiamond.FacetCut[] memory) {
+        return _facetCuts(4, 9);
+    }
+
+    function _facetCuts(uint256 offset_, uint256 count_) private view returns (IDiamond.FacetCut[] memory cuts_) {
+        address[] memory facets_ = facetAddresses();
+        cuts_ = new IDiamond.FacetCut[](count_);
+        for (uint256 i; i < count_; ++i) {
+            address facet_ = facets_[offset_ + i];
+            cuts_[i] = IDiamond.FacetCut({
+                facetAddress: facet_, action: IDiamond.FacetCutAction.Add,
+                functionSelectors: IFacet(facet_).facetFuncs()
+            });
+        }
     }
 
     function finalizeInitialization() public override nonReentrant returns (bool) {
@@ -246,20 +212,14 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
             revert ProductDoorsNotLive();
         }
 
-        IDiamond.FacetCut[] memory cuts = new IDiamond.FacetCut[](8);
+        IDiamond.FacetCut[] memory cuts = new IDiamond.FacetCut[](10);
         cuts[0] = IDiamond.FacetCut({
             facetAddress: address(SELF),
             action: IDiamond.FacetCutAction.Remove,
             functionSelectors: facetFuncs()
         });
         IDiamond.FacetCut[] memory adds = productionFacetCuts();
-        cuts[1] = adds[0];
-        cuts[2] = adds[1];
-        cuts[3] = adds[2];
-        cuts[4] = adds[3];
-        cuts[5] = adds[4];
-        cuts[6] = adds[5];
-        cuts[7] = adds[6];
+        for (uint256 i; i < adds.length; ++i) cuts[i + 1] = adds[i];
 
         ERC2535Repo._processFacetCuts(cuts);
         emit IDiamond.DiamondCut(cuts, address(0), "");
@@ -281,7 +241,9 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
     function calcSalt(bytes memory pkgArgs) public pure returns (bytes32 salt) {
         PkgArgs memory a = abi.decode(pkgArgs, (PkgArgs));
         // PRODUCT_ID + pm + feeOracle + tokens[3] + ses[3] + rps[3] — no package/facet addresses.
-        return keccak256(
+        // Nested hash for decimals: flat encode of 17 members plus 3 uint8s is stack-too-deep
+        // without via_ir (forbidden).
+        bytes32 base = keccak256(
             abi.encode(
                 PRODUCT_ID,
                 a.poolManager,
@@ -299,6 +261,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
                 a.owner
             )
         );
+        return keccak256(abi.encode(base, a.decimals0, a.decimals1, a.decimals2));
     }
 
     function updatePkg(address, bytes memory) public pure returns (bool) {
@@ -345,9 +308,9 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
         b.rp0 = a.rp0;
         b.rp1 = a.rp1;
         b.rp2 = a.rp2;
-        b.decimals0 = _readDecimals(a.token0);
-        b.decimals1 = _readDecimals(a.token1);
-        b.decimals2 = _readDecimals(a.token2);
+        b.decimals0 = a.decimals0;
+        b.decimals1 = a.decimals1;
+        b.decimals2 = a.decimals2;
         b.tickSpacing = a.tickSpacing;
         b.sqrtPriceX96 = a.sqrtPriceX96;
         b.ownerOnlyLiquidity = a.ownerOnlyLiquidity;
@@ -355,14 +318,18 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
         Repo._initializeBindings(b);
     }
 
-    function _lpName(address t0, address t1, address t2) private view returns (string memory) {
-        return string.concat(
-            "SE Orbital ", _safeSymbol(t0), "-", _safeSymbol(t1), "-", _safeSymbol(t2)
-        );
+    function _lpName(address t0, address t1, address t2) private pure returns (string memory) {
+        t0;
+        t1;
+        t2;
+        return "SE Orbital Buffer Hook LP";
     }
 
-    function _lpSymbol(address t0, address t1, address t2) private view returns (string memory) {
-        return string.concat("SEORB-", _safeSymbol(t0), "-", _safeSymbol(t1), "-", _safeSymbol(t2));
+    function _lpSymbol(address t0, address t1, address t2) private pure returns (string memory) {
+        t0;
+        t1;
+        t2;
+        return "SEORB-LP";
     }
 
     /// @notice Zero PoolManager inits. Factory still calls this then freezes the proxy.
@@ -423,10 +390,23 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
         _requireSeOwnsToken(a.se0, a.token0);
         _requireSeOwnsToken(a.se1, a.token1);
         _requireSeOwnsToken(a.se2, a.token2);
+        _requireTokenDecimals(a.decimals0, a.token0, a.se0);
+        _requireTokenDecimals(a.decimals1, a.token1, a.se1);
+        _requireTokenDecimals(a.decimals2, a.token2, a.se2);
+    }
+
+    function _requireTokenDecimals(uint8 d, address token, address se) private view {
+        if (UniswapV4SeBufferHookLegLib.isWrapperShareInventory(token, se)) {
+            if (!UniswapV4SeBufferHookLegLib.wrapperShareDecimalsOk(d)) revert InvalidDecimals();
+        } else if (d < 6 || d > 18) {
+            revert InvalidDecimals();
+        }
+        if (token.code.length != 0 && IERC20Metadata(token).decimals() != d) revert InvalidDecimals();
     }
 
     function _requireSeOwnsToken(address se, address token) private view {
         if (se == address(0)) return;
+        if (UniswapV4SeBufferHookLegLib.isWrapperShareInventory(token, se)) return;
         if (se == token) revert InvalidSE();
         try IBasicVault(se).vaultTokens() returns (address[] memory tokens) {
             bool found;
@@ -442,29 +422,4 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
         }
     }
 
-    function _safeSymbol(address token) private view returns (string memory) {
-        try IERC20Metadata(token).symbol() returns (string memory s) {
-            if (bytes(s).length > 0) return s;
-        } catch {}
-        return _addressFragment(token);
-    }
-
-    function _addressFragment(address token) private pure returns (string memory) {
-        bytes16 hexSymbols = "0123456789abcdef";
-        bytes memory b = new bytes(6);
-        uint160 v = uint160(token);
-        for (uint256 i = 0; i < 6; i++) {
-            b[5 - i] = hexSymbols[v & 0xf];
-            v >>= 4;
-        }
-        return string(b);
-    }
-
-    function _readDecimals(address token) private view returns (uint8) {
-        try IERC20Metadata(token).decimals() returns (uint8 d) {
-            return d;
-        } catch {
-            return 18;
-        }
-    }
 }

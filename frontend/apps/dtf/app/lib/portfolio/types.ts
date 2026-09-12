@@ -1,3 +1,4 @@
+import type { BondNftPosition, BondNftClaim } from '../detf/bondNftVault'
 import type { TokenListEntry } from '@indexedex/protocol/tokenlists'
 
 export type TokenBalance = {
@@ -16,16 +17,9 @@ export type BondPosition = {
   kind: 'protocol'
   detf: TokenListEntry
   nftVault: `0x${string}`
-  protocolNftId?: bigint
   claimToken?: `0x${string}`
-  rewardToken?: `0x${string}`
   tokenId: bigint
-  lockInfo?: {
-    sharesAwarded: bigint
-    rewardPerShare: bigint
-    bonusPercentage: bigint
-    unlockTime: bigint
-  }
-  pendingRewards?: bigint
+  position?: BondNftPosition
+  claim?: BondNftClaim
   metadata?: BondNftMetadata
 }

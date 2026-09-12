@@ -60,10 +60,10 @@ import {
     SingleStandardExchangeDETF_Component_FactoryService
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_Component_FactoryService.sol";
 import {
-    ISingleStandardExchangeDETFBonding
+    ISingleStandardExchangeDETFBonding as ICurrentSingleStandardExchangeDETFBonding
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFBondingTarget.sol";
 import {
-    ISingleStandardExchangeDETFInfo
+    ISingleStandardExchangeDETFInfo as ICurrentSingleStandardExchangeDETFInfo
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFInfoTarget.sol";
 import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
@@ -76,6 +76,17 @@ import {
 } from "@crane/contracts/protocols/dexes/balancer/v3/test/bases/TestBase_BalancerV3Vault.sol";
 import {IndexedexTest} from "contracts/test/IndexedexTest.sol";
 import {ResearchTelemetry} from "scripts/foundry/research/harness/ResearchTelemetry.sol";
+
+/// @dev D60 historical research ABI only; retired selectors are not restored.
+interface ISingleStandardExchangeDETFBonding is ICurrentSingleStandardExchangeDETFBonding {
+    function sellPositionToDetfNft(uint256 tokenId, uint256 minimum, address recipient) external returns (uint256);
+}
+
+/// @dev Preserve historical telemetry/calls for excluded-family research compilation.
+interface ISingleStandardExchangeDETFInfo is ICurrentSingleStandardExchangeDETFInfo {
+    function compoundProtocolRewards() external returns (uint256, uint256);
+    function thresholdMode() external view returns (ThresholdMode);
+}
 
 /**
  * @title ResearchFixture_DetfSingleSeUniV2
@@ -514,8 +525,7 @@ contract ResearchFixture_DetfSingleSeUniV2 is ResearchFixture_UniswapV2SeRateMat
 
         IDETFNFTVaultDFPkg.PkgInit memory nftPkgInit = DetfComponentFactoryService.buildDETFNFTVaultPkgInit(
             erc721Facet,
-            erc4626BasicVaultFacet,
-            erc4626StandardVaultFacet,
+            DetfFacetFactoryService.deployDETFFundedBondMetadataFacet(create3Factory),
             detfNFTVaultFacet,
             IVaultFeeOracleQuery(address(indexedexManager)),
             IVaultRegistryDeployment(address(indexedexManager))
@@ -534,6 +544,7 @@ contract ResearchFixture_DetfSingleSeUniV2 is ResearchFixture_UniswapV2SeRateMat
             )
         );
 
+        vm.startPrank(owner);
         ISingleStandardExchangeDETDFPkg.PkgInit memory pkgInit = ISingleStandardExchangeDETDFPkg.PkgInit({
             erc20Facet: erc20Facet,
             erc5267Facet: erc5267Facet,
@@ -541,6 +552,7 @@ contract ResearchFixture_DetfSingleSeUniV2 is ResearchFixture_UniswapV2SeRateMat
             multiAssetBasicVaultFacet: multiAssetBasicVaultFacetDetf,
             multiAssetStandardVaultFacet: multiAssetStandardVaultFacetDetf,
             exchangeInFacet: singleStandardExchangeDetfExchangeInFacet,
+            bondingFacet: create3Factory.deployBondingFacet(),
             feeOracle: IVaultFeeOracleQuery(address(indexedexManager)),
             vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
             balancerV3Router: seRouter,
@@ -549,10 +561,13 @@ contract ResearchFixture_DetfSingleSeUniV2 is ResearchFixture_UniswapV2SeRateMat
             rateProviderPkg: detfRateProviderPkg,
             bondNftVaultPkg: bondNftVaultPkg,
             rebasingClaimTokenPkg: rebasingClaimTokenPkg,
+            syPkg: DetfPkgFactoryService.deployDETFSYComponents(
+                create3Factory, IVaultRegistryDeployment(address(indexedexManager)),
+                IVaultFeeOracleQuery(address(indexedexManager)), erc5267Facet, erc2612Facet
+            ),
             diamondFactory: diamondPackageFactory
         });
 
-        vm.startPrank(owner);
         singleStandardExchangeDetfPkg =
             IVaultRegistryDeployment(address(indexedexManager)).deployPkg(pkgInit);
         vm.stopPrank();
@@ -563,6 +578,7 @@ contract ResearchFixture_DetfSingleSeUniV2 is ResearchFixture_UniswapV2SeRateMat
         internal
         returns (address detf_)
     {
+        require(mode_ == ThresholdMode.Policy, "retired threshold mode");
         ISingleStandardExchangeDETDFPkg.PkgArgs memory args = ISingleStandardExchangeDETDFPkg.PkgArgs({
             name: name_,
             symbol: symbol_,
@@ -573,10 +589,7 @@ contract ResearchFixture_DetfSingleSeUniV2 is ResearchFixture_UniswapV2SeRateMat
             vaultShareWeight: 0,
             mintThreshold: 0,
             burnThreshold: 0,
-            thresholdMode: mode_,
             expansionClosureRatePerSecond: 0,
-            expansionCatchUpMaxSeconds: 0,
-            expansionCatchUpCapBps: 0,
             creator: address(0),
             claimName: "",
             claimSymbol: "",

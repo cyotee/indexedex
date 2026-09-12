@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
@@ -48,7 +51,7 @@ import {
  *      LP supply/balances use ERC20Repo; vaultTokens/reserves use MultiAssetBasicVaultRepo
  *      (pair reserve accounting = virtual SE claim; raw = face inventory).
  */
-abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawTarget {
+abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawTarget is NativeStandardYieldTarget {
     using SafeERC20 for IERC20;
 
     event Deposit(address indexed sender, address indexed to, uint256 amount0, uint256 amount1, uint256 used0, uint256 used1, uint256 lpAmount);
@@ -91,8 +94,11 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
         l.reentrancyStatus = Repo.NOT_ENTERED;
     }
 
-    modifier onlyLiquidityOwner() {
-        UniswapV4HookOwnerOnlyLiquidityLib.enforce(Repo._layout().ownerOnlyLiquidity);
+    modifier onlyLiquidityRemover() {
+        UniswapV4HookOwnerOnlyLiquidityLib.enforceRemoval(
+            Repo._layout().ownerOnlyLiquidity,
+            address(IVaultFeeOracleQuery(Repo._layout().feeOracle).feeTo())
+        );
         _;
     }
 
@@ -178,6 +184,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
         Repo.Layout storage l = Repo._layout();
         uint256 seBal = IERC20(l.standardExchange).balanceOf(address(this));
         if (seBal == 0) return 0;
+        if (l.pairToken == l.standardExchange) return seBal;
         uint256 claim = IStandardExchangeIn(l.standardExchange).previewExchangeIn(
             IERC20(l.standardExchange), seBal, IERC20(l.pairToken)
         );
@@ -293,6 +300,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
     function _bufferPair(uint256 amount) internal returns (uint256 seOut) {
         _requireNonZero(amount);
         Repo.Layout storage l = Repo._layout();
+        if (l.pairToken == l.standardExchange) return amount;
         uint256 minOut = IStandardExchangeIn(l.standardExchange).previewExchangeIn(
             IERC20(l.pairToken), amount, IERC20(l.standardExchange)
         );
@@ -324,6 +332,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
         if (seIn > cap) seIn = cap;
         if (seIn == 0) return 0;
         Repo.Layout storage l = Repo._layout();
+        if (l.pairToken == l.standardExchange) return seIn;
         uint256 minOut;
         try IStandardExchangeIn(l.standardExchange).previewExchangeIn(
             IERC20(l.standardExchange), seIn, IERC20(l.pairToken)
@@ -388,6 +397,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
     function _refundPairDust(address to) internal {
         to;
         Repo.Layout storage l = Repo._layout();
+        if (l.pairToken == l.standardExchange) return;
         for (uint256 i; i < 3; ++i) {
             uint256 bal = IERC20(l.pairToken).balanceOf(address(this));
             if (bal <= Repo.MAX_DUST_WEI) return;
@@ -462,12 +472,14 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
         address to,
         uint256[] calldata amountsMin,
         uint256 deadline
-    ) external onlyLiquidityOwner nonReentrant returns (uint256[] memory amounts) {
+    ) external onlyLiquidityRemover nonReentrant returns (uint256[] memory amounts) {
         uint256 min0 = amountsMin.length > 0 ? amountsMin[0] : 0;
         uint256 min1 = amountsMin.length > 1 ? amountsMin[1] : 0;
+        // The public basket is [raw, pair]; _withdraw consumes pool currency order.
+        Repo.Layout storage l = Repo._layout();
+        if (l.currency0 != l.rawToken) (min0, min1) = (min1, min0);
         (uint256 a0, uint256 a1) = _withdraw(shares, to, min0, min1, deadline);
         amounts = new uint256[](2);
-        Repo.Layout storage l = Repo._layout();
         amounts[0] = l.currency0 == l.rawToken ? a0 : a1;
         amounts[1] = l.currency0 == l.rawToken ? a1 : a0;
     }
@@ -486,7 +498,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
         address to,
         uint256 amountOutMin,
         uint256 deadline
-    ) external onlyLiquidityOwner nonReentrant returns (uint256 amountOut) {
+    ) external onlyLiquidityRemover nonReentrant returns (uint256 amountOut) {
         return _withdrawSingle(sharesIn, tokenOut, to, amountOutMin, deadline);
     }
 
@@ -505,7 +517,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
         address to,
         uint256 sharesInMax,
         uint256 deadline
-    ) external onlyLiquidityOwner nonReentrant returns (uint256 sharesIn) {
+    ) external onlyLiquidityRemover nonReentrant returns (uint256 sharesIn) {
         uint256 previewOut = this.previewWithdrawSingle(sharesInMax, tokenOut);
         if (previewOut < amountOut) revert InsufficientTokenOut();
         uint256 got = _withdrawSingle(sharesInMax, tokenOut, to, amountOut, deadline);
@@ -535,7 +547,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
 
     function withdraw(uint256 lpAmount, address to, uint256 minAmount0, uint256 minAmount1, uint256 deadline)
         external
-        onlyLiquidityOwner
+        onlyLiquidityRemover
         nonReentrant
         returns (uint256 amount0, uint256 amount1)
     {
@@ -548,7 +560,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
         address to,
         uint256 minAmountOut,
         uint256 deadline
-    ) external onlyLiquidityOwner nonReentrant returns (uint256 amountOut) {
+    ) external onlyLiquidityRemover nonReentrant returns (uint256 amountOut) {
         return _withdrawSingle(lpAmount, tokenOut, to, minAmountOut, deadline);
     }
 
@@ -559,7 +571,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
         uint256 minAmountRaw,
         uint256 minAmountSe,
         uint256 deadline
-    ) external onlyLiquidityOwner nonReentrant returns (uint256 amountRaw, uint256 amountSe) {
+    ) external onlyLiquidityRemover nonReentrant returns (uint256 amountRaw, uint256 amountSe) {
         return _withdrawSeShares(lpAmount, to, minAmountRaw, minAmountSe, deadline);
     }
 
@@ -890,4 +902,32 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
     }
 
     // LP ERC-20, IBasicVault, IStandardVault: shared diamond facets only.
+
+    /// @notice The hook is its own native LP share; no external ERC-20 yield token backs it.
+    function yieldToken() external pure override returns (address) { return address(0); }
+
+    function assetInfo() external view override returns (IStandardizedYield.AssetType, address, uint8) {
+        return (IStandardizedYield.AssetType.LIQUIDITY, address(this), 18);
+    }
+
+    /// @notice Existing normalized geometric liquidity per raw LP share, after pending protocol LP fees.
+    function exchangeRate() external view override returns (uint256) {
+        uint256 supply_ = _supplyAfterProtocolMint();
+        return supply_ == 0 ? 1e18 : FullMath.mulDiv(Math.sqrt(_wadProduct()), 1e18, supply_);
+    }
+
+    function getTokensIn() public view override returns (address[] memory tokens_) {
+        Repo.Layout storage l_ = Repo._layout();
+        tokens_ = new address[](3);
+        tokens_[0] = l_.rawToken;
+        tokens_[1] = l_.pairToken;
+        tokens_[2] = l_.standardExchange;
+    }
+
+    function getTokensOut() public view override returns (address[] memory tokens_) {
+        Repo.Layout storage l_ = Repo._layout();
+        tokens_ = new address[](2);
+        tokens_[0] = l_.rawToken;
+        tokens_[1] = l_.pairToken;
+    }
 }

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { parseUnits } from 'viem'
 
-import { claimAfterWrapDisplay, formatTokenAmount, migrationLabel, migrationPending } from './display'
+import { claimAfterWrapDisplay, formatTokenAmount, parsePositiveAmount, migrationLabel, migrationPending } from './display'
 
 describe('token staking display', () => {
   it('formats amounts without trailing zeros', () => {
@@ -24,5 +24,17 @@ describe('token staking display', () => {
     expect(claimAfterWrapDisplay(1, 1n)).toBe('-')
     expect(claimAfterWrapDisplay(2, parseUnits('1.5', 18))).toBe('1.5')
     expect(claimAfterWrapDisplay(2, undefined)).toBe('-')
+  })
+})
+
+
+describe('migration amount precision', () => {
+  it.each(['', '0', '0.000000000', '-1', '1e9', '1.0000000001', ' 1', '.1', '1.'])('rejects invalid or inexact nine-decimal input %s', (input) => {
+    expect(parsePositiveAmount(input, 9)).toBeUndefined()
+  })
+  it('preserves every native unit of DTF and SY without number conversion', () => {
+    expect(parsePositiveAmount('220032706.803999006035614295', 18)).toBe(220032706803999006035614295n)
+    expect(parsePositiveAmount('0.000000001', 9)).toBe(1n)
+    expect(parsePositiveAmount('9'.repeat(90), 18)).toBeUndefined()
   })
 })

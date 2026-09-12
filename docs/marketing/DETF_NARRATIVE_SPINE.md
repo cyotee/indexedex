@@ -7,12 +7,14 @@
 | **Status** | Active — use as source of truth for product education |
 | **Created** | 2026-07-27 |
 | **Owner surfaces** | `/` (compact landing), `/research`, `marketing/research-site/`, `marketing/X_POSTS.md` |
-| **Product law (modes)** | `contracts/vaults/detf/DETF_Threshold_Modes_PRD.md` (**PRODUCT LAW LOCKED**) |
-| **Engineering tracker** | `contracts/vaults/detf/DETF_Threshold_Modes_PROGRESS.md` |
+| **Product law** | `contracts/vaults/detf/DETF_ALIGNMENT_PRD.md` D32–D55 / §24: funded staking, linear bonds, mandatory primary gates with swap fallback |
+| **Engineering tracker** | `contracts/vaults/detf/DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md` |
 | **Frontend roadmap** | `frontend/ROADMAP.md` → landing compact choice page (post-R3) |
 | **Research design** | `frontend/RESEARCH_SECTION_DESIGN.md` |
 
-**Rule:** Do not invent a second public story. Adapt tone by surface; keep claims, disclaimers, and mode language aligned with this file.
+**Rule:** Do not invent a second public story. Adapt tone by surface; keep claims, disclaimers, and route language aligned with this file.
+
+**Refactor scope:** This release implements the approved funded design for Uniswap V4 DETFs. D60 excludes further functional changes to Balancer-hosted DETFs; descriptions of those families below are broader product context, not release-completion claims. D66 defers unfinished Slipstream support; V4 and unrelated SE work continue. Do not claim an existing deployed instance has changed or a Pendle market is live without deployment evidence. D32–D55 supersede the older Policy/Open and LP-claim story; historical changelog entries below describe earlier versions.
 
 ---
 
@@ -28,7 +30,7 @@
 | Economic exposure via **onchain reserve assets** | Legal ownership of offchain stocks / underlyings |
 | Built by the **original developer of Olympus** | “This is OlympusDAO” / “official OHM” |
 | OHM-class **design family**, productized | Guaranteed rebase, “(3,3)” performance, risk-free |
-| Deploy-time **Policy** (price-gated) or **Open** (no price restrictions on mint/burn) | Implying Open still price-gates; “0 thresholds = open” |
+| Price gates choose primary issuance/redemption or a reserve swap | Open as a deployment option; a failed price gate makes the route unavailable |
 
 ---
 
@@ -56,16 +58,21 @@ Users get **ETF-shaped intent** without a discretionary portfolio manager: one E
 
 ### 3.2 Pricing engine = the reserve pool
 
-Mint/burn and synthetic valuation are driven by the **Balancer V3 reserve** (balances, weights, fees, rate providers) — not an off-pool “dashboard ledger” that can disagree with the pool.
+Mint/burn and synthetic valuation are driven by the **reserve pool** (supported Balancer V3 pools or Uniswap V4 buffer hooks, with their balances, weights, fees and rate providers) — not an off-pool “dashboard ledger” that can disagree with the pool.
 
 ### 3.3 Bonding builds protocol-owned depth
 
 Instances deploy **inert**. The first successful bond takes them **live** and deepens **protocol-owned** reserve. Users can participate in bond terms from onchain configuration rather than relying on a human market-maker promise.
 
-### 3.4 Explicit monetary policy (or unrestricted Open)
+### 3.4 One monetary policy with pool trading
 
-- **Policy (default):** seigniorage expands when the synthetic price is **above** the mint threshold and contracts when **below** the burn threshold (defaults commonly ±5% around an abstract 1e18 peg). Inside the band, primary mint/burn stays quiet; secondary markets / the reserve AMM remain the path.  
-- **Open (deploy-time option):** **no price restrictions** on primary mint or burn — users can mint and burn regardless of synthetic price. Fees and seigniorage splits still apply. Do **not** describe Open as “gates always pass” or as still checking thresholds.
+Every new DETF uses price gates. Above the mint threshold, a supported purchase can issue DETF; below the burn threshold, a supported redemption can burn DETF against the protocol's reserve. Otherwise the same route trades through the reserve pool. A price gate alone does not block the user's route. Available liquidity, fees and the user's minimum output still matter.
+
+### 3.4.1 Funded staking and vesting
+
+Stake DETF to receive an equal amount of sDETF. Each sDETF can be unstaked for one DETF held in the staking reserve. Funded rewards can increase the sDETF balance; a change in the pool price cannot reduce those token units. This does not promise a higher market value.
+
+A bond buys discounted DETF that is funded and staked immediately. Purchased principal becomes claimable steadily over the selected period, and staking rewards can be claimed during that period. Both pay sDETF, which the recipient can keep staked or unstake for DETF.
 
 ### 3.5 Immutable, unowned instances
 
@@ -77,7 +84,7 @@ Supported vault-share ↔ DETF routes aim for **preview = execution** (exact whe
 
 ### 3.7 Composable with Standard Exchange vaults
 
-Production DETFs talk to **Standard Exchange** surfaces and Balancer — protocol-opaque legs (Uniswap, Aerodrome, Camelot, Aave Stata, nested DETFs, etc.) without baking venue brands into the DETF product definition.
+Production DETFs talk to **Standard Exchange** surfaces and the configured reserve host — protocol-opaque legs (Uniswap, Aerodrome, Camelot, Aave Stata, nested DETFs, etc.) without baking venue brands into the DETF product definition.
 
 ---
 
@@ -89,29 +96,32 @@ Production DETFs talk to **Standard Exchange** surfaces and Balancer — protoco
 Deploy (inert)  →  First bond (live + protocol reserve)  →  Hold / mint / burn / bond / claim (family-wired)
 ```
 
-| State | User seigniorage mint/burn |
-|-------|----------------------------|
-| **Inert** | Blocked (any mode) |
-| **Live + Policy** | Allowed only outside the synthetic deadband (strict inequalities) |
-| **Live + Open** | Always allowed — **no** synthetic price restrictions |
+| State | Supported purchase/redemption routes |
+|-------|---------------------------------------|
+| **Inert** | Wait for the first bond to establish the reserve |
+| **Live, primary price condition met** | Issue or redeem DETF using the existing pool-priced formula |
+| **Live, primary price condition not met** | Swap through the reserve pool, subject to liquidity and the user's minimum output |
 
 ### 4.2 Core shape (true DETF)
 
-1. **Share token** — the diamond proxy **is** the ERC-20.  
-2. **Reserve** — Balancer V3 pool (typically weighted) including the DETF self-leg and external legs.  
-3. **Bonding** — first bond establishes liveness and protocol-owned depth; further bonds deepen / lock terms per oracle.  
-4. **Primary market** — mint/burn against configured vault shares (exact-in closed form preferred).  
-5. **Threshold mode** — deploy-time `Policy` or `Open` (never inferred from zero thresholds).  
-6. **Claim path (when wired)** — sell bond NFT → protocol; rebasing claim on protocol-owned reserve BPT; redeem burns claim and unwinds toward configured rate asset(s).
+1. **DETF** — the diamond is the nine-decimal ERC-20.
+2. **Reserve** — includes DETF and the configured external assets. LP acquired by DETF operations belongs to the DETF as a whole; bond owners do not own a reserved LP slice.
+3. **Bond** — actual payment and a separate proportional DETF amount add liquidity. The discounted DETF purchase is additionally minted, staked and vested linearly.
+4. **sDETF** — nine-decimal staking receipts backed by held DETF, redeemable one-for-one in token units.
+5. **Rewards** — issuance rewards are funded immediately. Only automatic expansion uses fixed eight-hour periods from the first bond; idle periods settle together in one update.
+6. **Creator and fee recipients** — standing rights produce new, freely unstakable sDETF when rewards are allocated, even after earlier receipts have all been unstaked. The role NFT itself has no redeemable principal.
+7. **SY** — separate static wrappers for raw DETF and staked DETF expose the Pendle interface. Wrapping raw DETF does not stake it. Interface support does not establish a live yield market.
 
 ### 4.3 Typical user routes
 
 | Route | Guidance |
 |-------|----------|
-| Vault share → DETF | Preferred live mint surface |
-| DETF → vault share | Preferred live burn surface |
+| Supported payment → DETF | The standard route chooses primary issuance or a pool swap |
+| DETF → supported output | The standard route chooses primary redemption or a pool swap |
 | Rate asset as direct mint `tokenIn` | Out of scope unless a family zap is documented — usually deposit to SE first |
 | vaultShareᵢ ↔ vaultShareⱼ on DETF | Out of scope — use Balancer / Standard Exchange Router on the reserve |
+| DETF ↔ sDETF | Stake or unstake one-for-one in token units |
+| Bond NFT claims | Claim vested principal and/or staking rewards as sDETF |
 | Non-closed-form exact-out solvers | Should not be marketed as product features |
 
 ### 4.4 What users see as “value”
@@ -123,51 +133,22 @@ Be honest about **where value can come from** without inventing APY:
 - **Fee / seigniorage** mechanics when the family and fee oracle apply them (amounts are not guarantees).  
 - Secondary trading of the DETF share when markets exist.  
 
-**Do not** claim: automatic yield, rebase return, locked APY, or “always above peg.”
+**Do not** promise automatic profit, a fixed rebase return, locked APY or “always above peg.” Distinguish funded token-unit growth from market-price performance.
 
 ---
 
-## 5. Threshold modes (copy law)
+## 5. Price gates and staking (copy law)
 
-Normative product: `DETF_Threshold_Modes_PRD.md` §16. Marketing summary only.
+Normative product: `DETF_ALIGNMENT_PRD.md` D32–D55 / §24. This is a marketing summary.
 
-### 5.1 Modes
-
-| Mode | Public name | Meaning |
-|------|-------------|---------|
-| `Policy` (0) | **Policy** / gated seigniorage | Default. Deadband gates on synthetic price. |
-| `Open` (1) | **Open** | No price restrictions on primary mint/burn |
-
-### 5.2 Defaults and validation
-
-- Zero mint/burn args resolve to **`1.05e18` / `0.95e18`** (stored config; Policy uses them as gates).  
-- **`0` never means Open.** Open is only `thresholdMode = Open`.  
-- After resolve, both modes require **mint threshold > burn threshold** as config validity — **not** an Open price gate.  
-- **Policy** gates use synthetic price. **Open** does **not** gate mint/burn on price at all.
-
-### 5.3 Language patterns
-
-**Good:**
-
-- “Default instances use Policy mode: mint only when the synthetic price is rich, burn only when cheap.”  
-- “Open mode: no price restrictions — mint and burn freely on the primary market.”  
-- “Policy price-gates seigniorage; Open does not.”
-
-**Bad:**
-
-- “Open thresholds” for extreme Policy (`mint=1`, `burn=max`) — that is still **Policy**, dual-path test language only.  
-- Implying Open still checks mint/burn thresholds or “gates always pass” (sounds like a check).  
-- “Peg maintained by thresholds” as a guarantee.
-
-### 5.4 When to mention Open in public
-
-| Condition | Copy stance |
-|-----------|-------------|
-| Modes not yet on listed live product | “Deploy-time Policy or Open option in the DETF packages” (forward-looking, not “this instance is Open”) |
-| Featured fee DETF is Policy | Lead with Policy; footnote Open as package option |
-| Featured fee DETF is Open | Label the instance Open; do not describe it as deadband-gated |
-
-Engineering gate: prefer P1 (Single Standard Exchange DETF) green before asserting Open on in-app featured products.
+- All new DETFs use price gating. There is no Open deployment choice.
+- Default zero threshold arguments resolve to 1.05 and 0.95 in the contract's normalized price unit. The mint threshold must exceed the burn threshold.
+- Primary mint uses a strict above-threshold condition and primary burn a strict below-threshold condition. Equality and the middle band use reserve swaps.
+- Say “This purchase uses the pool” when the route selects a swap; do not label it blocked solely for price.
+- Explain staking as “Deposit DETF, receive sDETF, unstake for an equal number of DETF.” Do not describe it as a claim on LP or a guarantee of dollar value.
+- Explain bonding as “Buy discounted DETF that is staked while it vests. Claim vested principal and staking rewards as sDETF.” Do not instruct users to sell a mature NFT for a new claim token.
+- Creator and fee rights have no redeemable principal, but the sDETF they receive can be unstaked. Never describe these receipts as permanently locked.
+- Do not advertise a Pendle market or newly upgraded live instance based on an implementation plan alone.
 
 ---
 
@@ -175,7 +156,7 @@ Engineering gate: prefer P1 (Single Standard Exchange DETF) green before asserti
 
 Target route: `frontend/apps/dtf/app/page.tsx`.
 
-`/` is a **choice page**, not the full education walk. Policy vs Open, creator-bond detail, vault legs, and research summaries live on `/create`, `/learn`, and `/research/[slug]`.
+`/` is a **choice page**, not the full education walk. Price-route and staking details, creator rights, vault legs, and research summaries live on `/create`, `/learn`, and `/research/[slug]`.
 
 ```text
 First screen — define DETF + one outcome + diagram
@@ -205,10 +186,10 @@ Do **not** restore on `/`: Why DETFs card grid, Policy/Open band, Earn vaults ba
 ### 6.2 How it works (three steps)
 
 1. **Create** — Make a DETF. You pick the rules. It stays off until the first bond.  
-2. **Bond** — Bond means lock money in. That first bond turns the DETF on.  
+2. **Bond** — Buy DETF that is staked while it vests. The first bond turns the DETF on.  
 3. **Use** — Hold the token. Mint more, burn to exit, or trade it.
 
-Policy vs Open is a Create + Learn lesson, not a landing widget. One line (“You pick the rules”) is enough on `/`.
+Price gates and staking are Create + Learn lessons, not a landing widget. One line (“You pick the rules”) is enough on `/`.
 
 ### 6.3 Protocol DETF (fees path)
 
@@ -232,23 +213,23 @@ One line: five short chapters. Link **Full walk →** `/learn`. Do not stack pub
 
 ### 7.1 Flagship note: `/research/detf`
 
-Source module: `frontend/app/content/research/articles/detf.ts`.
+Source module: `frontend/apps/dtf/app/content/research/articles/detf.ts`.
 
 **Required claim set (target):**
 
 1. The DETF diamond is the share ERC-20.  
-2. Reserve pricing lives in a Balancer V3 pool, not an off-pool ledger.  
+2. Reserve pricing lives in the configured Balancer pool or Uniswap V4 buffer hook.  
 3. Instances deploy inert; first successful bond takes them live.  
-4. **Default Policy** gates mint/burn on synthetic thresholds; **Open** has **no price restrictions** on mint/burn.  
+4. Mandatory price gates choose primary issuance/redemption or a reserve swap. Staking pays held DETF one-for-one; funded bond principal vests linearly.  
 5. After deploy, instances are immutable and unowned for normal operation.
 
 **Required not-claiming set:**
 
 - Not a registered securities ETF.  
 - Not legal ownership of offchain underlyings.  
-- Thresholds / modes are not a guarantee of peg or yield.  
+- Thresholds do not guarantee a peg or returns.  
 - No promised APY, rebase return, or “(3,3)” performance.  
-- Open removes price gates only; fees still apply.
+- A rising sDETF token balance does not guarantee rising market value.
 
 **Sections to keep / add:**
 
@@ -256,15 +237,14 @@ Source module: `frontend/app/content/research/articles/detf.ts`.
 |---------|---------|
 | ETF-shaped intent, onchain mechanics | Accessibility |
 | Core shape | Share, reserve, bond, gates, immutability |
-| Policy vs Open | Deploy-time modes (§5) |
+| Price routes and staking | Primary/swap selection, funded sDETF and linear bonds (§5) |
 | How users interact | Routes honesty |
 | Olympus-class design, productized | Provenance without affiliation |
 | Why research matters | Links to companion notes |
 
-### 7.2 Optional follow-on note
+### 7.2 Follow-on education
 
-Slug candidate: `threshold-modes` — “Policy vs Open mint/burn.”  
-Publish after (or when) family wiring is ready to demo; link from landing and staking chrome.
+Explain pool trading, direct staking and a bond's linear principal/reward claims with concrete token amounts. Link to actual supported routes. Keep pending implementation details separate from claims about listed live products.
 
 ### 7.3 Evidence honesty
 
@@ -283,7 +263,7 @@ Use near CTAs, research footers, and social body (not in X hooks).
 ```text
 A DETF is a decentralized ETF product pattern onchain — not a registered securities ETF or fund share.
 Holding DETF or reserve assets is not legal ownership of offchain stocks or other underlyings.
-Mint/burn thresholds and Policy/Open modes do not guarantee peg stability, liquidity, or returns.
+Mint/burn thresholds do not guarantee peg stability, liquidity, or returns.
 There is no promised APY, rebase yield, or “(3,3)” performance.
 Smart-contract and market risk apply. Read docs and research; this is not financial advice.
 ```
@@ -292,18 +272,18 @@ Smart-contract and market risk apply. Read docs and research; this is not financ
 
 ## 9. Surface adaptation guide
 
-| Surface | Tone | Lead with | Modes |
+| Surface | Tone | Lead with | Mechanics |
 |---------|------|-----------|--------|
-| Landing `/` | Conversion + clarity | One outcome + Create / Explore / Learn; $RICH on fees card | Policy/Open on Create + Learn, not a landing widget |
-| `/research/detf` | Educational | How it works + not-claiming | Full Policy/Open section |
-| `/staking` | Product UI | Actions (bond, mint, burn, claim) | Show instance mode when available |
+| Landing `/` | Conversion + clarity | One outcome + Create / Explore / Learn; $RICH on fees card | Price gates and staking on Create + Learn |
+| `/research/detf` | Educational | How it works + not-claiming | Primary/swap routes and funded staking |
+| `/staking` | Product UI | Actions (bond, mint, burn, claim) | Show the actual quoted route and claim amounts |
 | `marketing/research-site/` | Public teaser | Premier product + roadmap | Sync to §5 |
-| `marketing/X_POSTS.md` | Premium long-form | Hook without legal; modes in body | One clear bullet in explainer posts |
+| `marketing/X_POSTS.md` | Premium long-form | Hook without legal; mechanics in body | One clear bullet in explainer posts |
 | Earn `/earn` | Catalog | Strategy vaults; DETF banner out to staking | Do not re-teach full DETF |
 
 ### 9.1 Provenance line (approved)
 
-> Built by the original developer of Olympus. The DETF productizes a familiar design class — reserve-backed seigniorage, bonding into protocol-owned depth, optional mint/burn policy — so many baskets can each be their own monetary unit. A DETF is not OlympusDAO, not the OHM token, and not a claim on any DAO treasury.
+> Built by the original developer of Olympus. The DETF productizes a familiar design class — reserve-backed seigniorage, bonding into protocol-owned depth, pool-priced mint/burn rules — so many baskets can each be their own monetary unit. A DETF is not OlympusDAO, not the OHM token, and not a claim on any DAO treasury.
 
 **Public site campaign tone (static teaser / social, when approved):** lean **new product, not a fork** — “Olympus made the meme; DETFs make the product.” Keep the not-OHM / not-DAO disclaimers in body or footer. Prefer pithy, slightly meme energy on `marketing/research-site/`; keep in-app Research more lab-neutral unless product asks otherwise.
 
@@ -321,9 +301,9 @@ Comms may be **venue-forward** (e.g. Robinhood Chain first → Base + Ethereum) 
 
 A DETF is one onchain share over a multi-asset reserve: bond to go live, mint and burn against pool-priced rules, immutable after deploy.
 
-### 10.2 Elevator with modes (≈40 words)
+### 10.2 Elevator with staking (≈40 words)
 
-A DETF is a reserve-backed share over a real reserve. Default Policy mode price-gates mint and burn; Open mode never does. Not a registered ETF.
+Hold DETF for reserve exposure, stake it for funded sDETF, or buy a discounted bond that stays staked while it vests. Price gates choose primary issuance/redemption or a pool swap.
 
 ### 10.3 Contrast lines
 
@@ -339,9 +319,9 @@ A DETF is a reserve-backed share over a real reserve. Default Policy mode price-
 | Is this an ETF? | Product pattern: onchain reserve-backed share with bond/mint/burn rules. Not a registered securities ETF. |
 | Where does the price come from? | The reserve pool (and rate providers on legs), expressed as a synthetic / fully diluted backing metric for gates. |
 | Why can’t I mint right after deploy? | Instances start inert until the first successful bond. |
-| What is Open mode? | Deploy-time choice: primary mint and burn have **no price restrictions**. Policy is the mode that gates on synthetic price. |
-| Is Open riskier? | Different policy. No deadband dampening of primary seigniorage; still fees and market risk. Not “safer” or “risk-free.” |
-| Who can change thresholds later? | Normal product model: no post-deploy threshold/mode setter; flawed config → new instance. |
+| What happens inside the price band? | The supported purchase/redemption route swaps through the reserve pool. |
+| Can I unstake bond rewards before maturity? | Yes. Claimable rewards pay sDETF, which can be unstaked for DETF; unvested purchased principal remains in the bond. |
+| Who can change thresholds later? | Normal product model: no post-deploy threshold setter; flawed config → new instance. |
 
 ---
 
@@ -351,12 +331,9 @@ Use when preparing landing + research for ship.
 
 ### Content
 
-- [x] This spine accepted as SoT  
-- [x] Update `frontend/app/content/research/articles/detf.ts` claims/sections for Policy vs Open  
-- [ ] Optional `threshold-modes` research article  
-- [x] Sync `marketing/research-site/index.html` mint/burn language to §5  
-- [x] Sync `marketing/X_POSTS.md` explainer bullets to §5  
-- [ ] Point CTAs at real URLs (app + research-site when deployed)
+- [x] Reconcile this spine with the approved funded staking design.
+- [ ] Reconcile active research, external teaser and social copy with §5.
+- [ ] Point CTAs at verified deployed products; distinguish older instances from the new design.
 
 ### UI (R3 shipped; compact `/` 2026-08-21)
 
@@ -368,11 +345,11 @@ Use when preparing landing + research for ship.
 - [x] Public product name is **Protocol DETF** (not deploy package names); e2e matches `Protocol DETF` + staking links  
 - [x] No invented APY/USD; no DualLiquidity first-screen product  
 
-### Product chrome (post Threshold Modes)
+### Product chrome (funded refactor)
 
-- [ ] Display `thresholdMode` + resolved thresholds on DETF info surfaces  
-- [ ] Open instances not described as deadband-gated in UI strings  
-- [ ] Inert copy remains true for both modes  
+- [ ] Confirm threshold displays and the actual quoted primary/swap route.
+- [ ] Confirm direct stake/unstake and principal/reward claim amounts against deployed contracts.
+- [ ] Confirm first-bond liveness and nine-decimal token displays.
 
 ### Evidence (later)
 
@@ -391,9 +368,9 @@ Use when preparing landing + research for ship.
 | `marketing/research-site/` | Static public teaser |
 | `frontend/RESEARCH_SECTION_DESIGN.md` | R1–R5 research + landing IA |
 | `frontend/ROADMAP.md` | Next UI phase (R3) |
-| `frontend/app/content/research/articles/detf.ts` | In-app DETF note |
+| `frontend/apps/dtf/app/content/research/articles/detf.ts` | In-app DETF note |
 | `research/MARKETING_AND_PERFORMANCE_FINDINGS.md` | Measured claims roll-up |
-| `contracts/vaults/detf/DETF_Threshold_Modes_PRD.md` | Normative mode law |
+| `contracts/vaults/detf/DETF_ALIGNMENT_PRD.md` | Normative funded staking law (D32–D55 / §24) |
 | monorepo `AGENTS.md` | DETF role names + family expectations |
 
 ---
@@ -402,9 +379,10 @@ Use when preparing landing + research for ship.
 
 | Date | Note |
 |------|------|
+| 2026-09-07 | Reconciled target product story with funded sDETF, linear bonds, immediate rewards, fixed epochs and mandatory gate-to-swap routes. Historical entries below describe superseded versions. |
 | 2026-08-21 | Landing `/` compact choice page: drop Why grid, Policy/Open band, Earn banner, research catalog, closing strip; $RICH off first-screen CTAs. Spine §6 rewritten. |
 | 2026-08-06 | Public GitHub Pages rewrite: Olympus→DETF product tone; launch map locked to Uni V4 pair / triangle / weighted only. |
 | 2026-07-27 | Initial spine: positioning, desirability, lifecycle, Policy/Open copy law, R3 landing outline, research update targets, disclaimers, copy bank. |
-| 2026-07-27 | Shipped in-app: `frontend/app/content/research/articles/detf.ts` Policy/Open update; R3 landing rewrite on `frontend/app/page.tsx`. |
+| 2026-07-27 | Shipped in-app: `frontend/apps/dtf/app/content/research/articles/detf.ts` Policy/Open update; R3 landing rewrite on `frontend/app/page.tsx`. |
 | 2026-07-27 | Marked R2/R3 shipped in `frontend/ROADMAP.md` + `RESEARCH_SECTION_DESIGN.md`. Synced `marketing/research-site/`, `marketing/X_POSTS.md`, `marketing/README.md` to Policy/Open. |
 | 2026-07-27 | Clarified **Open = no price restrictions** on mint/burn (not “gates always pass”). Updated landing experiment, `detf.ts`, spine §3.4 / §5. |

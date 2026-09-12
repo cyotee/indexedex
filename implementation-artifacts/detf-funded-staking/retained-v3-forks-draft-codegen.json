@@ -1,0 +1,21 @@
+{
+  "status": "DRAFT_CODEGEN_ONLY_NOT_RUNTIME_VALIDATION",
+  "seconds": 49.419,
+  "prepared_records": [
+    "v3-fork-fixture-followup-prepared.json"
+  ],
+  "exit_code": 0,
+  "errors": [],
+  "concrete_suites": {
+    "UniswapV3StandardExchange_Fork_Test": 5,
+    "UniswapV3StandardExchange_Robinhood_Test": 3
+  },
+  "compiled_methods": 8,
+  "compiler_input_sha256": "b889fac825fb5541896bf5ee00df3248200cd83983e04a48073f4c7d61e01cf2",
+  "validation_passed": true,
+  "canonical_sources_unchanged": true,
+  "test_container_runtime_bytes": {
+    "UniswapV3StandardExchange_Fork_Test": 192273,
+    "UniswapV3StandardExchange_Robinhood_Test": 186166
+  }
+}

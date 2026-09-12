@@ -1,0 +1,35 @@
+{
+  "status": "READ_ONLY_SOURCE_REVIEW_RUNTIME_ACCEPTANCE_SEPARATE",
+  "recorded_at_utc": "2026-09-09T01:48:03.540405+00:00",
+  "checks": [
+    "Principal and reward credit require authenticated actual inbound DETF transfer deltas; unsolicited balances are not newly credited income.",
+    "Funded reward allocation reduces gons-per-unit before fee/creator receipt issuance; standing weights do not become redeemable liabilities.",
+    "Full-account withdrawals retire fractional gons and retain released liability as accounted staking dust.",
+    "Bond principal uses fixed linear vesting, rewards subtract remaining principal without hiding a deficit, and claims debit attributed gons before payout.",
+    "Epoch calculation uses whole fixed eight-hour intervals, actual current supply, retained per-epoch floor order and one aggregate mint; zero-eligible intervals still advance the boundary."
+  ],
+  "documentation_correction": "Plan \u00a76.1 now names the actual lastExpansionTimestamp boundary and removes its obsolete instruction to store a second write-only epochAnchor.",
+  "sources": [
+    {
+      "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+      "sha256": "ac8618bcc168f05902ae27da16381bbfed2811ff19cbf992ab07666198c6abe9"
+    },
+    {
+      "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+      "sha256": "0c42d88387a46425ca8634af4f09eee9498f450312dc6ba6415969ebaf3ca92c"
+    },
+    {
+      "path": "contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol",
+      "sha256": "b0d11c2c41eacf10eb23eb1935000f470e59e17da67be294d5fc17aacd354a49"
+    },
+    {
+      "path": "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol",
+      "sha256": "3ec13e4bb20549f5e3055e63212d6518cdc011bb616bab2783e22e5c7a20ba06"
+    },
+    {
+      "path": "contracts/vaults/detf/common/core/DETFEpochNaturalExpansionLib.sol",
+      "sha256": "0a96345afe907f7b07ebf09a19793caec6a70e70b32bb4af3fa1a416b530bebd"
+    }
+  ],
+  "limitations": "Source inspection complements the existing unit/proxy tests and the running complete validation; it is not a formal proof or a substitute for actual integration results."
+}

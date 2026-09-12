@@ -1,0 +1,27 @@
+{
+  "build": {
+    "exit_code": 0,
+    "seconds": 124.433,
+    "command": [
+      "forge",
+      "build",
+      "--offline",
+      "--contracts",
+      "contracts/vaults/detf/common/core"
+    ]
+  },
+  "test": {
+    "exit_code": 1,
+    "seconds": 6.548,
+    "command": [
+      "forge",
+      "test",
+      "--offline",
+      "--contracts",
+      "contracts/vaults/detf/common/core",
+      "-vvv",
+      "--match-test",
+      "test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+    ]
+  }
+}

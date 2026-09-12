@@ -1,0 +1,33 @@
+{
+  "status": "PASS_SEVEN_CUMULATIVE_REUSE_CHECKS",
+  "checks": [
+    {
+      "name": "exact current",
+      "passed": true
+    },
+    {
+      "name": "unchanged deployment/script closure",
+      "passed": true
+    },
+    {
+      "name": "chained unchanged hermetic/provider closure",
+      "passed": true
+    },
+    {
+      "name": "reject source_and_config_sha256",
+      "passed": true
+    },
+    {
+      "name": "reject crane_source_and_config_sha256",
+      "passed": true
+    },
+    {
+      "name": "reject forge_version",
+      "passed": true
+    },
+    {
+      "name": "reject absent executed provenance",
+      "passed": true
+    }
+  ]
+}

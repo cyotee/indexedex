@@ -1,0 +1,301 @@
+{
+  "decision": "Owner D51: all DETFs have price gating, Open is no longer an option.",
+  "rows": [
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_Alignment_D31_ExpansionGate.t.sol",
+      "sha256": "7a92535e0437371189eff81ebebb54b9456f59b4ed74383ac87cd39689d611eb",
+      "old_tests": [
+        "test_D31_4_openDoesNotExpandOnCompound"
+      ],
+      "inherited_only": false,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Alignment_D31_ExpansionGate_B_ALL6.t.sol",
+      "sha256": "b4292634987aae20dcbbafe9c2bf48d18fee62d917939641fc7327d6c6db63bd",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Alignment_D31_ExpansionGate_B_ALL9.t.sol",
+      "sha256": "c897cffbad5c2e21e526eaf04efa122cdbcfc0115190f8cb7c2991e657276318",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Alignment_D31_ExpansionGate_B_P18_R6.t.sol",
+      "sha256": "67f3068d4d28cf8d4f93989d607308afed05cc2de7bf02535b46f489b903bcd3",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Alignment_D31_ExpansionGate_B_P18_R9.t.sol",
+      "sha256": "7b787a095903c029013be443377df27cdff3cca42806818bac743abe6ff60d1b",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Alignment_D31_ExpansionGate_B_P6_R18.t.sol",
+      "sha256": "f7e30d69284f5a1a7ad5e3d638343791e9f12c24ea1346ddf5782504a614c277",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Alignment_D31_ExpansionGate_B_P6_R9.t.sol",
+      "sha256": "6ebbed63a8cbdde6359065256a765308ba51f22794ec4ea0e80a1eab0728866f",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Alignment_D31_ExpansionGate_B_P9_R18.t.sol",
+      "sha256": "c4a55a70551457c21d9db6a465bab4fb1d92563bacfed5e762bb0ebfda228c44",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Alignment_D31_ExpansionGate_B_P9_R6.t.sol",
+      "sha256": "3bbc8c958b1e393db7419b1693ed78d0cf14fe3d4bc2dd5adb4dfb13cba315da",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Alignment_D31_ExpansionGate_Decimals.sol",
+      "sha256": "9824af061b4a491d64e93b95f834dcf91ecbf72782b224f4ab40347b2443e5e3",
+      "old_tests": [
+        "test_D31_4_openDoesNotExpandOnCompound"
+      ],
+      "inherited_only": false,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_Alignment_D31_ExpansionGate.t.sol",
+      "sha256": "97ab94929fafed1339162e77c2a6a86c33166e90dfd12daa99803e0a281fa32a",
+      "old_tests": [
+        "test_D31_4_openDoesNotExpandOnCompound"
+      ],
+      "inherited_only": false,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Alignment_D31_ExpansionGate_B_ALL6.t.sol",
+      "sha256": "c6909bc08cc256415bb070e34b5307cc16f0209e60135a5db8ae62cafb0486ea",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Alignment_D31_ExpansionGate_B_ALL9.t.sol",
+      "sha256": "d3c76ba4e4dc85eb0b7ba1c647cd1df58e689ec9cfa5b222bc70893fd89c3631",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Alignment_D31_ExpansionGate_B_P18_R6.t.sol",
+      "sha256": "5cd779c8f5e096e26eab25acce1e3c14ca59febcb52a454ea33e988a1c7258a8",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Alignment_D31_ExpansionGate_B_P18_R9.t.sol",
+      "sha256": "6d3353301e89f805377f8e34d09fa7961813279082fcea3f95977299eda8f69d",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Alignment_D31_ExpansionGate_B_P6_R18.t.sol",
+      "sha256": "24dc540644527041eda84e8be4e8171527e274446e1af464fcb5c1d40cd96d76",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Alignment_D31_ExpansionGate_B_P6_R9.t.sol",
+      "sha256": "74fe69a735c92422377a0df8d7a1c67e732472d47cd0c54653f5d99582dd1985",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Alignment_D31_ExpansionGate_B_P9_R18.t.sol",
+      "sha256": "a889541560219512c3e465b0e193400110d62526644a81bf20c3ea6a2297026f",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Alignment_D31_ExpansionGate_B_P9_R6.t.sol",
+      "sha256": "83e349f3c2d363bd79f6e110637b5c0e19d4c8822aa25a944464a082253f4b35",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Alignment_D31_ExpansionGate_Decimals.sol",
+      "sha256": "f8f5bf09ae50e0135311b0faea0b5b327b005c547ec133b9e593f368dce5568a",
+      "old_tests": [
+        "test_D31_4_openDoesNotExpandOnCompound"
+      ],
+      "inherited_only": false,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_Alignment_D31_ExpansionGate.t.sol",
+      "sha256": "970d8ce40b32b206884f89877e1014c2761216d36f45ae40b3df6f1a310e549d",
+      "old_tests": [
+        "test_D31_4_openDoesNotExpandOnCompound"
+      ],
+      "inherited_only": false,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_Alignment_D31_ExpansionGate_B_ALL6.t.sol",
+      "sha256": "a0d4954aec9539df304cbffd1a0b0d9bb0c88bb97887efb9a36de0bc56e21320",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_Alignment_D31_ExpansionGate_B_ALL9.t.sol",
+      "sha256": "ff5f850a4723d8e6ac541696b0243530b9b21bb46e0ee0c6091374075a7c6d74",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_Alignment_D31_ExpansionGate_B_P18_R6.t.sol",
+      "sha256": "68ddce5e0919a3a56fc4ea2e181c24bc851c0c3151bae8081123fc31089bac44",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_Alignment_D31_ExpansionGate_B_P18_R9.t.sol",
+      "sha256": "89be92f662d480ce4e0d9eda310317e5cbb435c85a248bf925a162ac03e4921a",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_Alignment_D31_ExpansionGate_B_P6_R18.t.sol",
+      "sha256": "2a1c2e00109801fbee884184abce945c0883d96d704cf5e97e2c42cbc761512a",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_Alignment_D31_ExpansionGate_B_P6_R9.t.sol",
+      "sha256": "1a224f6a7b5ec499ff0df6ea7539329c8dc585bfa15565388819cb22d8cc77d5",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_Alignment_D31_ExpansionGate_B_P9_R18.t.sol",
+      "sha256": "0ec89f2b3d84aaaf835d12762688e61781713e636e2a28cafe8f35f938eee9d1",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_Alignment_D31_ExpansionGate_B_P9_R6.t.sol",
+      "sha256": "72432a8c7ce613392b4999d88bec9340dbb1201966e7a3a72f24ba61c06072b7",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_Alignment_D31_ExpansionGate_Decimals.sol",
+      "sha256": "61ca7f41d19b17fdaf19a322d2c6d3eba8f0ae2e496795667085dafa4ecf3de1",
+      "old_tests": [
+        "test_D31_4_openDoesNotExpandOnCompound"
+      ],
+      "inherited_only": false,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_Alignment_D31_ExpansionGate.t.sol",
+      "sha256": "75050e89a79b2c2f033385a0d2a5cada45d083df65bf59d0a639873bec42e35a",
+      "old_tests": [
+        "test_D31_4_openMintDoesNotExpand"
+      ],
+      "inherited_only": false,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Alignment_D31_ExpansionGate_Decimals.sol",
+      "sha256": "fcd75686033141ec994f91c635c168424f2205ec2a5f79bfe77b9f9db1c4f069",
+      "old_tests": [
+        "test_D31_4_openMintDoesNotExpand"
+      ],
+      "inherited_only": false,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Alignment_D31_ExpansionGate_H6.t.sol",
+      "sha256": "f94ca645be0c0b1063d546d460dd90f92852b3b1f21c5fe88e26f317fdfea489",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Alignment_D31_ExpansionGate_H9.t.sol",
+      "sha256": "1609fa2b564f953895f3b9426e337a58d11f004bf6f5b7f1c084bfe3aa1d53da",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Alignment_D31_ExpansionGate_P18_R6.t.sol",
+      "sha256": "191e2e4367dc71c10bbb0c7ce3df0e2bbf2070113a4f4a77bfba4d3c0e299156",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Alignment_D31_ExpansionGate_P18_R9.t.sol",
+      "sha256": "7c47603695ee2017eefd78061616eec3a5fc149ef7a5c51c8723e081761a3a2c",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Alignment_D31_ExpansionGate_P6_R18.t.sol",
+      "sha256": "3399ead66eae42406a104503fd1ccd0d9bab21bf0c835179a42dd2b389199c0f",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Alignment_D31_ExpansionGate_P6_R9.t.sol",
+      "sha256": "a8fb8bd3f6671a52a8ffa006ad9e37e44e0796302a065ea9db9578e9b71ff083",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Alignment_D31_ExpansionGate_P9_R18.t.sol",
+      "sha256": "02b7f3e1cc3c532bdaa020241f31040d67f455c180b61dc0964712ffd01cef02",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Alignment_D31_ExpansionGate_P9_R6.t.sol",
+      "sha256": "8817cfb639e8b3544e1d313d7ce13a0b452be1ee33c810b79a8959a85753b904",
+      "old_tests": [],
+      "inherited_only": true,
+      "disposition": "Retired requirement: D51 removes Open mode. There is no Open deployment whose expansion can be tested. Funded family tests separately cover mandatory gates and consuming ineligible completed epochs."
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "functional_status": "All ten route combinations passed",
+  "measurement": "Gas used around individual native SY execution calls in a warmed Foundry test; excludes transaction intrinsic gas and preceding previews",
+  "routes": [
+    {
+      "input": "0xAFe3ba6e8565FD2ca9e484419B9fF02959A7CA11",
+      "output": "0x5991A2dF15A8F6A256D3Ec51E99254Cd3fb576A9",
+      "deposit_gas": 58608075,
+      "redeem_gas": 33151180
+    },
+    {
+      "input": "0xAFe3ba6e8565FD2ca9e484419B9fF02959A7CA11",
+      "output": "0x85aa610377B407bCDe0f84d743A9CBF46E49203e",
+      "deposit_gas": 58608074,
+      "redeem_gas": 4237470
+    },
+    {
+      "input": "0xAFe3ba6e8565FD2ca9e484419B9fF02959A7CA11",
+      "output": "0xF62849F9A0B5Bf2913b396098F7c7019b51A820a",
+      "deposit_gas": 58608075,
+      "redeem_gas": 33551311
+    },
+    {
+      "input": "0xAFe3ba6e8565FD2ca9e484419B9fF02959A7CA11",
+      "output": "0xAFe3ba6e8565FD2ca9e484419B9fF02959A7CA11",
+      "deposit_gas": 58608076,
+      "redeem_gas": 33460792
+    },
+    {
+      "input": "0xAFe3ba6e8565FD2ca9e484419B9fF02959A7CA11",
+      "output": "0xf1Ffcb41aDe66Aa11d0C7CaF65612b794a57d40A",
+      "deposit_gas": 58608076,
+      "redeem_gas": 33863662
+    },
+    {
+      "input": "0xf1Ffcb41aDe66Aa11d0C7CaF65612b794a57d40A",
+      "output": "0x5991A2dF15A8F6A256D3Ec51E99254Cd3fb576A9",
+      "deposit_gas": 64950757,
+      "redeem_gas": 33576078
+    },
+    {
+      "input": "0xf1Ffcb41aDe66Aa11d0C7CaF65612b794a57d40A",
+      "output": "0x85aa610377B407bCDe0f84d743A9CBF46E49203e",
+      "deposit_gas": 64950757,
+      "redeem_gas": 4237598
+    },
+    {
+      "input": "0xf1Ffcb41aDe66Aa11d0C7CaF65612b794a57d40A",
+      "output": "0xF62849F9A0B5Bf2913b396098F7c7019b51A820a",
+      "deposit_gas": 64950758,
+      "redeem_gas": 33991915
+    },
+    {
+      "input": "0xf1Ffcb41aDe66Aa11d0C7CaF65612b794a57d40A",
+      "output": "0xAFe3ba6e8565FD2ca9e484419B9fF02959A7CA11",
+      "deposit_gas": 64950757,
+      "redeem_gas": 33887690
+    },
+    {
+      "input": "0xf1Ffcb41aDe66Aa11d0C7CaF65612b794a57d40A",
+      "output": "0xf1Ffcb41aDe66Aa11d0C7CaF65612b794a57d40A",
+      "deposit_gas": 64950758,
+      "redeem_gas": 34302350
+    }
+  ],
+  "finding": "Deposits use 58.6\u201365.0M gas; non-DETF redemptions about 33\u201334.3M, requiring optimization/chain-limit validation before release readiness",
+  "release_gas_suitability_proven": false
+}

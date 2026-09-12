@@ -1,0 +1,35 @@
+{
+  "reason": "First stage simulated successfully but fee estimation failed before broadcast; local head was still pinned. Preserve all attempt artifacts before retry with consistent staged local fees.",
+  "files": [
+    {
+      "original": "implementation-artifacts/detf-funded-staking/current-robinhood-rehearsal-production-readiness/architecture-run.json",
+      "archived": "implementation-artifacts/detf-funded-staking/current-robinhood-rehearsal-production-readiness/before-staged-fee-retry/architecture-run.json",
+      "sha256": "3f57ec45e5e7b5cb706f17aefc10d43ed1bddb9460ffd11d90035a695978ae6a"
+    },
+    {
+      "original": "implementation-artifacts/detf-funded-staking/current-robinhood-rehearsal-production-readiness/architecture.log",
+      "archived": "implementation-artifacts/detf-funded-staking/current-robinhood-rehearsal-production-readiness/before-staged-fee-retry/architecture.log",
+      "sha256": "788929fcb27faf3d20f9a207ba5be3c629a016ec7fcd5f302c2eddf0bffa9803"
+    },
+    {
+      "original": "implementation-artifacts/detf-funded-staking/current-robinhood-rehearsal-production-readiness/deployments/phase01_stage01_permit2.json",
+      "archived": "implementation-artifacts/detf-funded-staking/current-robinhood-rehearsal-production-readiness/before-staged-fee-retry/deployments/phase01_stage01_permit2.json",
+      "sha256": "a7f3f00e29977be21a135faf296b5aed6d045e3c07907f1bb0ea229b4c9cf5f4"
+    },
+    {
+      "original": "implementation-artifacts/detf-funded-staking/current-robinhood-rehearsal-production-readiness/deployments/phase01_stage02_weth.json",
+      "archived": "implementation-artifacts/detf-funded-staking/current-robinhood-rehearsal-production-readiness/before-staged-fee-retry/deployments/phase01_stage02_weth.json",
+      "sha256": "4f0ff3d0259fb0576b64e511eb6a969775deb3af1ecd4375122a9ad0c966895a"
+    },
+    {
+      "original": "implementation-artifacts/detf-funded-staking/current-robinhood-rehearsal-production-readiness/deployments/phase01_stage03_uniswap_v4.json",
+      "archived": "implementation-artifacts/detf-funded-staking/current-robinhood-rehearsal-production-readiness/before-staged-fee-retry/deployments/phase01_stage03_uniswap_v4.json",
+      "sha256": "ae44bc8ad99871b9a24f19864f584dffe373278cc7ff1558c45d61b616f9f733"
+    },
+    {
+      "original": "implementation-artifacts/detf-funded-staking/current-robinhood-rehearsal-production-readiness/deployments/phase02_stage01_create3_factory.json",
+      "archived": "implementation-artifacts/detf-funded-staking/current-robinhood-rehearsal-production-readiness/before-staged-fee-retry/deployments/phase02_stage01_create3_factory.json",
+      "sha256": "2399e86a5aee177fddccf37666b5362cc9be93ea8296f1b044d2a7f5b31bec65"
+    }
+  ]
+}

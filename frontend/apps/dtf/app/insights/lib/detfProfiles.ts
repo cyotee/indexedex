@@ -14,7 +14,6 @@ export type DetfProfile = {
   kicker: string
   blurb: string
   shape: string
-  mintBurn: 'policy' | 'open'
   /** Scripted first bond already ran on this listed instance. */
   firstBonded: boolean
   openedHow: string
@@ -27,11 +26,10 @@ const PROTOCOL_DTF_DETF: DetfProfile = {
   family: 'one-vault',
   kicker: 'Protocol DETF',
   shape: 'One vault',
-  mintBurn: 'policy',
   firstBonded: true,
   openedHow: 'Opened by the first bond: 10 TTWETH, 1 day lock. Later bonds still work.',
   blurb:
-    'One token over one vault: DTF paired with TTWETH. Protocol fees can accrue here. That is not a promised yield. The first bond already opened it. Mint is allowed when the synthetic price is above 1.05. Burn is allowed when it is below 0.95. DTF-CLAIM is the rebasing claim token.',
+    'One token over one vault: DTF paired with TTWETH. Protocol fees can accrue here. That is not a promised yield. The first bond already opened it. Primary issuance and redemption follow the on-chain price thresholds. Exchanges use the reserve pool outside those thresholds. Stake funded DETF for sDETF and unstake it 1:1.',
   legs: [
     {
       role: 'Pair token',
@@ -60,12 +58,11 @@ const DOUBLE_DOLLAR: DetfProfile = {
   family: 'quad',
   kicker: 'Double Dollar',
   shape: 'Three similar vaults, grouped',
-  mintBurn: 'policy',
   firstBonded: true,
   openedHow:
     'Opened by the first bond: 10 TTUSDE, 10 TTUSDG, and 10 TTWETH. Capital token TTUSDG. Later bonds still work.',
   blurb:
-    'One token over three vaults. Each vault holds a pair of test tokens: TTUSDE/TTWETH, TTUSDG/TTWETH, and TTUSDG/TTUSDE. Those are not official dollars. The first bond already opened it. Policy mint and burn apply versus each pair. Burn returns those tokens.',
+    'One token over three vaults. Each vault holds a pair of test tokens: TTUSDE/TTWETH, TTUSDG/TTWETH, and TTUSDG/TTUSDE. Those are not official dollars. The first bond already opened it. Primary mint and burn thresholds apply versus each pair, with reserve swaps outside those thresholds. Supported redemption tokens appear in the route selector.',
   legs: [
     {
       role: 'Pair token',

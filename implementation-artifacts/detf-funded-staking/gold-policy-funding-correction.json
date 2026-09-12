@@ -1,0 +1,25 @@
+{
+  "status": "APPLIED_SELECTED_GOLD_RUNTIME_VALIDATION_PASSED",
+  "rows": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol",
+      "before_sha256": "a197b84efe346ea812052f7c1d7980d286f97073f8631310bf41aba850ba7c9a",
+      "after_sha256": "c900233d956ffd70c11208fa962a7728a0aa4f7ca1f56b812c5a48f296057194"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol",
+      "before_sha256": "0b1b612763b52bbc38ba872ab2b11ea613069398c557000537f5e34b485f69df",
+      "after_sha256": "5d7034f4b12fcacbdacdcf73a8fb1beb093f83aca4ea4955206f9656022aae7a"
+    }
+  ],
+  "scope": "Existing fixtures only; actual funded bond claim before trades and least configured rich launch for non-D31 cases. All test names and final assertions retained.",
+  "runtime_record": "hermetic-remediation-v4-policy-funded-opening.json",
+  "source_sha256": "09abaecc1d0469b94c2d69ce3967bec3884647d06151e67ebb5452e508cdd0cd",
+  "runtime_evidence": {
+    "record": "hermetic-remediation-v4-policy-public-market-split.json",
+    "passed": 438,
+    "failed": 0,
+    "incomplete_suites": 0,
+    "remaining": "The remaining production-provider cases and final complete current-source validation are still required."
+  }
+}

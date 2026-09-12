@@ -4,6 +4,8 @@ pragma solidity ^0.8.0;
 import {FixtureEconomics} from "./FixtureEconomics.sol";
 import {LaunchState} from "./LaunchState.sol";
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
@@ -34,6 +36,8 @@ library Phase_06_Stage_03_CpBufferHookPkg {
         init_.vaultFeeOracleQuery = feeOracle;
         init_.seFacet = seFacet;
         init_.depositFacet = depositFacet;
+        init_.depositSingleFacet = CpHookFS.deployDepositSingleFacet(s.create3Factory);
+        init_.depositPreviewFacet = CpHookFS.deployDepositPreviewFacet(s.create3Factory);
         init_.withdrawFacet = withdrawFacet;
         init_.erc20Facet = s.erc20Facet;
         init_.erc5267Facet = s.erc5267Facet;
@@ -41,10 +45,12 @@ library Phase_06_Stage_03_CpBufferHookPkg {
         init_.multiAssetBasicVaultFacet = s.multiAssetBasicVaultFacet;
         init_.multiAssetStandardVaultFacet = s.multiAssetStandardVaultFacet;
         init_.multiStepOwnableFacet = s.multiStepOwnableFacet;
+        bytes memory initCode_ = type(CpHookDFPkg).creationCode;
+        bytes memory initArgs_ = abi.encode(init_);
         s.cpHookPkg = reg.deployPkg(
-            type(CpHookDFPkg).creationCode,
-            abi.encode(init_),
-            abi.encode(type(ICpHookPkg).name, FixtureEconomics.SALT_NS)._hash()
+            initCode_,
+            initArgs_,
+            ArtifactCreationCode.releaseSalt(abi.encode(type(ICpHookPkg).name, FixtureEconomics.SALT_NS)._hash(), initCode_, initArgs_)
         );
     }
 }

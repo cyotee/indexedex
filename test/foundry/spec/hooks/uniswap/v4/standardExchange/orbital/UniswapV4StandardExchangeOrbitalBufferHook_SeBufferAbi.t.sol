@@ -1,6 +1,21 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
+import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
+import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
+import {StandardExchangeRateProvider_FactoryService} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProvider_FactoryService.sol";
+import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
+import {StandardExchangeRateProviderFacet} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderFacet.sol";
+import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
+import {UniswapV4StandardExchangeOrbitalBufferHookDFPkg} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDFPkg.sol";
+import {UniswapV4StandardExchangeOrbitalBufferHookHooksFacet} from "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookHooksFacet.sol";
+import {UniswapV4StandardExchangeOrbitalBufferHookWithdrawFacet} from "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookWithdrawFacet.sol";
+import {UniswapV4StandardExchangeOrbitalBufferHookDepositFacet} from "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositFacet.sol";
+import {UniswapV4StandardExchangeOrbitalBufferHookDepositQueryFacet} from "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositQueryFacet.sol";
+import {UniswapV4StandardExchangeOrbitalBufferHookDepositZapFacet} from "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositZapFacet.sol";
+import {UniswapV4StandardExchangeOrbitalBufferHookSeFacet} from "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookSeFacet.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {
@@ -122,15 +137,20 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi is TestBase {
         assertGt(s1, 0, "T2.7 pair1");
     }
 
-    function test_T2_8_previewBurnToToken_propRejoin_notExitSingle() public {
+    function test_T2_8_reserveValuationAndExecutableSingleExit() public {
         uint256 lp = _joinFullBook(60 ether, 60 ether, 60 ether);
-        uint256 preview = orbital.previewBurnToToken(lp / 2, address(token1));
+        uint256 preview = orbital.previewBurnToToken(lp / 20, address(token1));
         assertGt(preview, 0, "T2.8 preview");
-        uint256[] memory prop = orbital.previewExitProportional(lp / 2);
+        uint256[] memory prop = orbital.previewExitProportional(lp / 20);
         assertEq(prop.length, 3, "T2.8 prop");
         assertGt(prop[1], 0, "T2.8 pair0 face");
         assertTrue(preview >= prop[1], "T2.8 burn includes pair0 plus converted residual");
-        assertEq(orbital.previewExitSingleAssetExactBptIn(address(token1), lp / 2), 0, "T2.8 no single-asset path");
+        uint256 exitQuote = orbital.previewExitSingleAssetExactBptIn(address(token1), lp / 20);
+        assertGt(exitQuote, 0);
+        uint256 before = token1.balanceOf(user);
+        vm.prank(user);
+        assertEq(orbital.exitSingleAssetExactBptIn(address(token1), lp / 20, user, exitQuote, block.timestamp), exitQuote);
+        assertEq(token1.balanceOf(user) - before, exitQuote);
     }
 
     function test_T2_9_requiredSurface_onLoupe() public view {
@@ -178,6 +198,118 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi is TestBase {
         });
         assertEq(orbital.previewSynthetic(ctx, address(token1)), 0, "T2 synthetic");
         assertEq(orbital.previewSwapExactIn(address(token1), address(token0), 1 ether), 0, "T2 swap");
+    }
+
+    function test_nativeSYMetadataAndInstalledFacetSizes() public {
+        _joinFullBook(300 ether, 300 ether, 300 ether);
+        IStandardizedYield sy = IStandardizedYield(hook);
+        assertTrue(IERC165(hook).supportsInterface(type(IStandardizedYield).interfaceId));
+        assertEq(sy.getTokensIn().length, 5);
+        assertEq(sy.getTokensIn(), sy.getTokensOut());
+        assertEq(sy.yieldToken(), address(0));
+        assertEq(sy.decimals(), 18);
+        (IStandardizedYield.AssetType kind, address asset, uint8 decimals) = sy.assetInfo();
+        assertEq(uint8(kind), uint8(IStandardizedYield.AssetType.LIQUIDITY));
+        assertEq(asset, hook); assertEq(decimals, 18);
+        assertEq(sy.getRewardTokens().length, 0);
+        address[] memory facets = IDiamondLoupe(hook).facetAddresses();
+        for (uint256 i; i < facets.length; ++i) assertLe(facets[i].code.length, 24_576);
+    }
+
+    function test_nativeSYEveryDeclaredRoutePaysItsPreview() public {
+        _joinFullBook(300 ether, 300 ether, 300 ether);
+        _mintSeSharesToUser(se1, token1, 20 ether);
+        _mintSeSharesToUser(se2, token2, 20 ether);
+        IStandardizedYield sy = IStandardizedYield(hook);
+        address[] memory tokens = sy.getTokensIn();
+        vm.startPrank(user);
+        for (uint256 i; i < tokens.length; ++i) {
+            IERC20(tokens[i]).approve(hook, 2 ether);
+            uint256 shares = sy.previewDeposit(tokens[i], 2 ether);
+            assertGt(shares, 0);
+            assertEq(sy.deposit(user, tokens[i], 2 ether, shares), shares, "deposit preview");
+            address out = tokens[(i + 1) % tokens.length];
+            uint256 quoted = sy.previewRedeem(out, shares);
+            uint256 before = IERC20(out).balanceOf(user);
+            assertEq(sy.redeem(user, shares, out, quoted, false), quoted, "redemption preview");
+            assertEq(IERC20(out).balanceOf(user) - before, quoted, "actual payout");
+        }
+        vm.stopPrank();
+    }
+
+    function test_nativeSYSequentialExitProjectsDependentRates() public {
+        // Real funded SEs are required before the rate providers can price a first join.
+        _mintSeSharesToUser(se1, token1, 100 ether);
+        _mintSeSharesToUser(se2, token2, 100 ether);
+        IStandardExchangeRateProviderDFPkg ratePkg =
+            StandardExchangeRateProvider_FactoryService.deployStandardExchangeRateProviderDFPkg(
+                create3Factory,
+                StandardExchangeRateProvider_FactoryService.deployStandardExchangeRateProviderFacet(create3Factory),
+                diamondPackageFactory
+            );
+        IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory args = _argsWithSE(false, true, true);
+        args.rp1 = address(ratePkg.deployRateProvider(IStandardExchange(se1), IERC20(address(token1))));
+        args.rp2 = address(ratePkg.deployRateProvider(IStandardExchange(se2), IERC20(address(token2))));
+        _deployHookWithArgs(args);
+        vm.startPrank(owner);
+        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(se1, 7e16);
+        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(se2, 7e16);
+        vm.stopPrank();
+        vm.startPrank(user);
+        token0.approve(hook, type(uint256).max);
+        token1.approve(hook, type(uint256).max);
+        token2.approve(hook, type(uint256).max);
+        IERC20(se1).approve(hook, type(uint256).max);
+        IERC20(se2).approve(hook, type(uint256).max);
+        vm.stopPrank();
+        uint256 rateBefore = IRateProvider(args.rp1).getRate();
+        uint256 lp = _joinFullBook(300 ether, 300 ether, 300 ether);
+        assertLt(IRateProvider(args.rp1).getRate(), rateBefore, "funded issuance fee changes dependent rate");
+        IStandardizedYield sy = IStandardizedYield(hook);
+        address[] memory outputs = sy.getTokensOut();
+        for (uint256 i; i < outputs.length; ++i) {
+            uint256 amount = lp / 100;
+            uint256 quoted = sy.previewRedeem(outputs[i], amount);
+            assertGt(quoted, 0, "live dependent-rate exit");
+            uint256 before = IERC20(outputs[i]).balanceOf(user);
+            vm.prank(user);
+            assertEq(sy.redeem(user, amount, outputs[i], quoted, false), quoted, "sequential rate projection");
+            assertEq(IERC20(outputs[i]).balanceOf(user) - before, quoted, "funded exit payout");
+        }
+    }
+
+    function test_nativeSYInternalBalanceLimitsAndPriorInventory() public {
+        uint256 lp = _joinFullBook(300 ether, 300 ether, 300 ether);
+        token0.mint(hook, 7 ether); token1.mint(hook, 11 ether); token2.mint(hook, 13 ether);
+        IStandardizedYield sy = IStandardizedYield(hook);
+        uint256 amount = lp / 100;
+        uint256 quoted = sy.previewRedeem(address(token0), amount);
+        vm.startPrank(user);
+        vm.expectRevert(); sy.redeem(user, amount, address(token0), quoted + 1, false);
+        assertEq(sy.balanceOf(user), lp, "failed minimum rolls back burn");
+        sy.transfer(hook, 3 * amount);
+        assertEq(sy.redeem(user, amount, address(token0), quoted, true), quoted);
+        assertEq(sy.balanceOf(hook), 2 * amount, "only requested internal shares burned");
+        vm.stopPrank();
+        assertEq(token0.balanceOf(hook) - orbital.rawReserve(0), 7 ether);
+        assertEq(token1.balanceOf(hook), 11 ether);
+        assertEq(token2.balanceOf(hook), 13 ether);
+    }
+
+    function test_nativeSYFundedYieldRepricesWithoutRebasingAndStillRedeems() public {
+        uint256 lp = _joinFullBook(300 ether, 300 ether, 300 ether);
+        IStandardizedYield sy = IStandardizedYield(hook);
+        uint256 rate = sy.exchangeRate();
+        vm.startPrank(user);
+        token1.approve(address(vault1), 40 ether);
+        vault1.simulateYield(40 ether);
+        vm.stopPrank();
+        assertGt(sy.exchangeRate(), rate);
+        assertEq(sy.balanceOf(user), lp);
+        uint256 quoted = sy.previewRedeem(address(token1), lp / 100);
+        uint256 before = token1.balanceOf(user);
+        vm.prank(user); assertEq(sy.redeem(user, lp / 100, address(token1), quoted, false), quoted);
+        assertEq(token1.balanceOf(user) - before, quoted);
     }
 
     function _joinFullBook(uint256 detfAmt, uint256 pair0Amt, uint256 pair1Amt)

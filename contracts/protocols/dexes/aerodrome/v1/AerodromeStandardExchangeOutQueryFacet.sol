@@ -1,5 +1,11 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {AerodromeStandardExchangeQuoteTarget} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeQuoteTarget.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+import {ConstantProductStandardYieldTarget} from "contracts/vaults/standard/sy/ConstantProductStandardYieldTarget.sol";
+import {NativeStandardYieldSelectors} from "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol";
+
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
@@ -7,19 +13,30 @@ import {
     AerodromeStandardExchangeOutQueryTarget
 } from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeOutQueryTarget.sol";
 
-/// @notice Preview-only exchangeOut surface (Option 1b view/execute split).
-contract AerodromeStandardExchangeOutQueryFacet is AerodromeStandardExchangeOutQueryTarget, IFacet {
+/// @notice Exact-output previews and native SY adapters using the installed standard routes.
+contract AerodromeStandardExchangeOutQueryFacet is AerodromeStandardExchangeOutQueryTarget, AerodromeStandardExchangeQuoteTarget, ConstantProductStandardYieldTarget, IFacet {
     function facetName() public pure returns (string memory name) {
         return type(AerodromeStandardExchangeOutQueryFacet).name;
     }
 
     function facetInterfaces() public pure virtual returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](0);
+        interfaces = new bytes4[](3);
+        interfaces[0] = type(IStandardizedYield).interfaceId;
+        interfaces[1] = type(IStandardExchangeTransitionQuote).interfaceId;
+        interfaces[2] = type(IStandardExchangeExternalQuote).interfaceId;
     }
 
     function facetFuncs() public pure virtual returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](1);
+        funcs = new bytes4[](8);
         funcs[0] = IStandardExchangeOut.previewExchangeOut.selector;
+        funcs[1] = IStandardExchangeTransitionQuote.quoteState.selector;
+        funcs[2] = IStandardExchangeTransitionQuote.quoteAssets.selector;
+        funcs[3] = IStandardExchangeTransitionQuote.quoteShareBalance.selector;
+        funcs[4] = IStandardExchangeTransitionQuote.quoteTotalSupply.selector;
+        funcs[5] = IStandardExchangeTransitionQuote.quoteTransition.selector;
+        funcs[6] = IStandardExchangeExternalQuote.quoteExternalDeposit.selector;
+        funcs[7] = IStandardExchangeExternalQuote.quoteExternalExchange.selector;
+        funcs = NativeStandardYieldSelectors._append(funcs);
     }
 
     function facetMetadata()

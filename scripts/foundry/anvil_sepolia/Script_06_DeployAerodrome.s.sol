@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 
 import {DeploymentBase} from "./DeploymentBase.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
@@ -33,6 +34,8 @@ contract Script_06_DeployAerodrome is DeploymentBase {
     IFacet private erc4626Facet;
     IFacet private erc4626BasicVaultFacet;
     IFacet private erc4626StandardVaultFacet;
+    IFacet private multiAssetBasicVaultFacet;
+    IFacet private multiAssetStandardVaultFacet;
 
     IAerodromePoolFactory private aerodromeFactory;
     IAerodromeStandardExchangeDFPkg private aerodromePkg;
@@ -67,6 +70,8 @@ contract Script_06_DeployAerodrome is DeploymentBase {
         erc4626Facet = IFacet(_readAddress("02_shared_facets.json", "erc4626Facet"));
         erc4626BasicVaultFacet = IFacet(_readAddress("02_shared_facets.json", "erc4626BasicVaultFacet"));
         erc4626StandardVaultFacet = IFacet(_readAddress("02_shared_facets.json", "erc4626StandardVaultFacet"));
+        multiAssetBasicVaultFacet = IFacet(_readAddress("02_shared_facets.json", "multiAssetBasicVaultFacet"));
+        multiAssetStandardVaultFacet = IFacet(_readAddress("02_shared_facets.json", "multiAssetStandardVaultFacet"));
 
         indexedexManager = IIndexedexManagerProxy(_readAddress("03_core_proxies.json", "indexedexManager"));
 
@@ -119,7 +124,7 @@ contract Script_06_DeployAerodrome is DeploymentBase {
             pkgInit_.vaultRegistryDeployment = IVaultRegistryDeployment(address(indexedexManager));
             pkgInit_.permit2 = permit2;
             pkgInit_.aerodromeRouter = aerodromeRouter;
-            pkgInit_.aerodromePoolFactory = aerodromePoolFactory;
+            pkgInit_.aerodromePoolFactory = aerodromeFactory;
             aerodromePkg = Aerodrome_Component_FactoryService.deployAerodromeStandardExchangeDFPkg(
                 IVaultRegistryDeployment(address(indexedexManager)), pkgInit_
             );

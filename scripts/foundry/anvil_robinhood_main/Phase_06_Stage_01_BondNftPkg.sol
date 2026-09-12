@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol";
+
 import {LaunchState} from "./LaunchState.sol";
 
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
@@ -25,11 +27,10 @@ library Phase_06_Stage_01_BondNftPkg {
         IFacet erc721FacetDetf = IFacet(
             s.create3Factory.deployFacet(type(ERC721Facet).creationCode, keccak256("RhMain_ERC721Facet"))
         );
-        IUniswapV4DetfBondNFTVaultDFPkg.PkgInit memory nftPkgInit = DetfComponentFactoryService
+        IDETFNFTVaultDFPkg.PkgInit memory nftPkgInit = DetfComponentFactoryService
             .buildUniswapV4DetfBondNFTVaultPkgInit(
             erc721FacetDetf,
-            s.erc4626BasicVaultFacet,
-            s.erc4626StandardVaultFacet,
+            DetfFacetFactoryService.deployDETFFundedBondMetadataFacet(s.create3Factory),
             detfNFTVaultFacet,
             IVaultFeeOracleQuery(address(s.indexedexManager)),
             IVaultRegistryDeployment(address(s.indexedexManager))

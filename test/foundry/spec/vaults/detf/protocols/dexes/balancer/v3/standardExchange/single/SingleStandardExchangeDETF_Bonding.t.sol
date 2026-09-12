@@ -1,8 +1,11 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {FundedBondLifecycleAssertions} from "contracts/test/bases/FundedBondLifecycleAssertions.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
-import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
+import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
 import {
     TestBase_SingleStandardExchangeDETF
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF.sol";
@@ -11,7 +14,7 @@ import {
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFRepo.sol";
 
 /// @notice Phase 2: first-bond bootstrap + lock clamp rules against production SE vault.
-contract SingleStandardExchangeDETF_Bonding_Test is TestBase_SingleStandardExchangeDETF {
+contract SingleStandardExchangeDETF_Bonding_Test is TestBase_SingleStandardExchangeDETF, FundedBondLifecycleAssertions {
     function test_firstBond_bootstrapsReserveLive() public {
         _assertInert();
         (uint256 tokenId_, uint256 bpt_) = _bootstrapViaFirstBond(alice, 1_000e18);
@@ -22,21 +25,27 @@ contract SingleStandardExchangeDETF_Bonding_Test is TestBase_SingleStandardExcha
         assertTrue(IERC20(detfInfo.reservePool()).totalSupply() > 0, "reserve pool initialized");
     }
 
-    function test_bond_live_unboostedG_and_d4Pot() public {
+    function test_bond_live_unboostedLiquidityAndFundedRewards() public {
         _bootstrapViaFirstBond(alice, 1_000e18);
-        uint256 reserveBefore_ = IERC20(detf).balanceOf(address(vault));
-        uint256 potBefore_ = IERC20(detf).balanceOf(address(_bondNftVault(detf)));
         uint256 seShares_ = _fundSeShares(bob, 200e18);
+        (uint256 principal_, uint256 liquidity_, uint256 rewards_) =
+            detfBonding.previewBond(seShare, seShares_, DEFAULT_MIN_LOCK);
+        IStakedDETF staking_ = IStakedDETF(address(detfInfo.rebasingClaimToken()));
+        uint256 backing_ = IERC20(detf).balanceOf(address(staking_));
+        uint256 reserve_ = IERC20(detf).balanceOf(address(vault));
         vm.startPrank(bob);
         seShare.approve(detf, seShares_);
-        detfBonding.bond(seShare, seShares_, DEFAULT_MIN_LOCK, bob, false, block.timestamp + 1 hours);
+        (uint256 id_,) = detfBonding.bond(seShare, seShares_, DEFAULT_MIN_LOCK, bob, false, block.timestamp + 1 hours);
         vm.stopPrank();
-        uint256 G_ = IERC20(detf).balanceOf(address(vault)) - reserveBefore_;
-        assertTrue(G_ > 0, "G joined");
-        uint256 p_ = IVaultFeeOracleQuery(address(indexedexManager)).seigniorageIncentivePercentageOfVault(detf);
-        uint256 expectedPot_ = (G_ * p_ / 1e18) + (G_ * p_ / 1e18);
-        uint256 potDelta_ = IERC20(detf).balanceOf(address(_bondNftVault(detf))) - potBefore_;
-        assertApproxEqAbs(potDelta_, expectedPot_, 2, "L1+D4 pot");
+        assertGt(liquidity_, 0);
+        assertEq(IERC20(detf).balanceOf(address(vault)) - reserve_, liquidity_, "unboosted liquidity leg");
+        assertEq(
+            IERC20(detf).balanceOf(address(staking_)) - backing_,
+            principal_ + rewards_,
+            "purchase and rewards actually funded"
+        );
+        assertEq(IDetfBondNFT(detfInfo.bondNftVault()).positionOf(id_).principal, principal_);
+        _assertBondPrincipalIsFunded(detf, id_, bob);
     }
 
     function test_bond_revertsIfLockTooShort() public {
@@ -60,39 +69,35 @@ contract SingleStandardExchangeDETF_Bonding_Test is TestBase_SingleStandardExcha
         _assertLive();
     }
 
-    function test_mint_stillGatedByThresholdAfterBootstrap() public {
+    function test_mint_belowThreshold_executesReserveSwap() public {
         _bootstrapViaFirstBond(alice, 1_000e18);
-        // After first bond at peg, synthetic is near 1e18 → mint blocked by 1.05 threshold.
+        assertFalse(detfInfo.isMintingAllowed(), "primary mint remains closed");
         uint256 seShares_ = _fundSeShares(bob, 100e18);
+        uint256 quote_ = detfExchangeIn.previewExchangeIn(seShare, seShares_, IERC20(detf));
+        assertGt(quote_, 0, "funded swap output");
+        uint256 supply_ = IERC20(detf).totalSupply();
         vm.startPrank(bob);
         seShare.approve(detf, seShares_);
-        // May revert MintingNotAllowed if synthetic ≤ threshold (expected post-bootstrap at peg).
-        try detfExchangeIn.exchangeIn(
-            seShare, seShares_, IERC20(detf), 0, bob, false, block.timestamp + 1 hours
-        ) returns (uint256 out_) {
-            // If mint succeeded, synthetic must have been above threshold.
-            assertTrue(out_ > 0, "minted amount");
-            assertTrue(detfInfo.isMintingAllowed() || out_ > 0, "mint path");
-        } catch (bytes memory reason) {
-            // Accept MintingNotAllowed or other threshold guard.
-            assertTrue(reason.length > 0, "reverted with reason");
-        }
+        uint256 out_ =
+            detfExchangeIn.exchangeIn(seShare, seShares_, IERC20(detf), quote_, bob, false, block.timestamp + 1 hours);
         vm.stopPrank();
+        assertEq(out_, quote_);
+        assertEq(IERC20(detf).balanceOf(bob), quote_);
+        assertEq(IERC20(detf).totalSupply(), supply_, "fallback swaps existing DETF");
     }
 
-    function test_sellPositionToDetfNft_revertsBondNotMature() public {
-        (uint256 tokenId_,) = _bootstrapViaFirstBond(alice, 600e18);
-        uint256 unlock_ = _bondNftVault(detf).unlockTimeOf(tokenId_);
-        vm.prank(alice);
-        vm.expectRevert(abi.encodeWithSelector(SingleStandardExchangeDETFRepo.BondNotMature.selector, unlock_));
-        detfBonding.sellPositionToDetfNft(tokenId_, 0, alice);
-    }
-
-    function test_sellPositionToDetfNft_afterMaturity_mints4626() public {
+    function test_newBond_principalRemainsLocked() public {
         (uint256 tokenId_,) = _bootstrapViaFirstBond(alice, 800e18);
-        _warpPastUnlock(detf, tokenId_);
-        vm.prank(alice);
-        uint256 claimMinted_ = detfBonding.sellPositionToDetfNft(tokenId_, 0, alice);
-        assertTrue(claimMinted_ > 0, "claim minted after maturity");
+        _assertBondPrincipalStillLocked(detf, tokenId_, alice);
+    }
+
+    function test_bond_partialVesting_paysFundedStaking() public {
+        (uint256 tokenId_,) = _bootstrapViaFirstBond(alice, 800e18);
+        _assertBondPartialVesting(detf, tokenId_, alice);
+    }
+
+    function test_matureBond_previewEqualsFundedPayment() public {
+        (uint256 tokenId_,) = _bootstrapViaFirstBond(alice, 800e18);
+        _assertBondMaturePreviewEqualsPayment(detf, tokenId_, alice);
     }
 }

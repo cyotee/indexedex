@@ -1,5 +1,8 @@
 # PRD: Uniswap V3 Standard Exchange Vault
 
+> **Current release authority:** [DETF alignment PRD D57–D59 and §24](../../../../vaults/detf/DETF_ALIGNMENT_PRD.md) and the [funded staking/SY implementation plan §7.4](../../../../vaults/detf/DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md) supersede conflicting historical instructions below. Initial activation, including an imported position, requires actual funding in both tokens. Ordinary and imported liquidity use the maximum usable tick range. Share accounting uses proportional ownership and constant-product mathematics over exact deployed token amounts, sleeve balances and earned fees counted once. Subsequent single-token deposits and funded sleeve operations during pool locks remain available. Native Pendle SY and current facet declarations are part of the release; unread caches, unused wing state and unused import metadata are removed. V4 dual inputs follow PoolKey order, with WETH representing a native currency; numeric ERC20 address order cannot reject that mapping. Prior first-single-token, sum-of-assets issuance, unchanged imported ticks, cache-retention and pre-SY selector instructions are historical. Unfinished Slipstream work and its validation are deferred under D66.
+
+
 **Status:** LOCKED for v1 design (implementation not started)  
 **Date:** 2026-07-28  
 **Last clarified:** 2026-07-28 (fee compound / import auth / factory validation / previewImport / empty NFT / post-import organic subsequent deposits)  

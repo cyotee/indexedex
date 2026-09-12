@@ -1,0 +1,31 @@
+{
+  "status": "SELECTED_VALIDATION_PASSED",
+  "session": 95961,
+  "files": [
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewTarget.sol",
+      "sha256": "f373cda1978ddd5e7db56d2245fdad7fcf1fa03741667a21322d05dad833b653"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawTarget.sol",
+      "sha256": "fa55318cd94ceece04df056aa0f07527a84bb8200f8887bbdd4d057b07afb412"
+    },
+    {
+      "path": "test/foundry/spec/vaults/standard/sy/SingleConstantProductHookNativeSY.t.sol",
+      "sha256": "b4c0c0f90e94288cb962dde19b1855c783e811685cb10a0c79bb3da51ed0f026"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+      "sha256": "25ba77c3a5e89aecb581680b7384196c66d4d24439a3ae201c4550a8554a2784"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v2/test/bases/TestBase_UniswapV2StandardExchange.sol",
+      "sha256": "d9a11e80fa214e1cdb1af444d1b60e6484493586588ecda501a58eeaeefcd70e"
+    },
+    {
+      "path": "contracts/vaults/standard/exchange/protocols/morpho/blue/test/bases/TestBase_MorphoBlueStandardExchange.sol",
+      "sha256": "f2a1e58161c408b2500c212bef265a13807cc08e1334fb5612ccb59938c4e6fe"
+    }
+  ],
+  "validation": "v4-native-sy-and-collector-300-green-*; 300 passing tests, zero failures"
+}

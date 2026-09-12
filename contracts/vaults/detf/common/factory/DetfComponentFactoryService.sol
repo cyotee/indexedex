@@ -33,16 +33,14 @@ library DetfComponentFactoryService {
 
     function buildDETFNFTVaultPkgInit(
         IFacet erc721Facet,
-        IFacet erc4626BasicVaultFacet,
-        IFacet erc4626StandardVaultFacet,
+        IFacet metadataFacet,
         IFacet detfNFTVaultFacet,
         IVaultFeeOracleQuery feeOracle,
         IVaultRegistryDeployment vaultRegistryDeployment
     ) internal pure returns (IDETFNFTVaultDFPkg.PkgInit memory pkgInit) {
         pkgInit = IDETFNFTVaultDFPkg.PkgInit({
             erc721Facet: erc721Facet,
-            erc4626BasicVaultFacet: erc4626BasicVaultFacet,
-            erc4626StandardVaultFacet: erc4626StandardVaultFacet,
+            metadataFacet: metadataFacet,
             detfNFTVaultFacet: detfNFTVaultFacet,
             feeOracle: feeOracle,
             vaultRegistryDeployment: vaultRegistryDeployment
@@ -51,16 +49,14 @@ library DetfComponentFactoryService {
 
     function buildUniswapV4DetfBondNFTVaultPkgInit(
         IFacet erc721Facet,
-        IFacet erc4626BasicVaultFacet,
-        IFacet erc4626StandardVaultFacet,
+        IFacet metadataFacet,
         IFacet detfNFTVaultFacet,
         IVaultFeeOracleQuery feeOracle,
         IVaultRegistryDeployment vaultRegistryDeployment
-    ) internal pure returns (IUniswapV4DetfBondNFTVaultDFPkg.PkgInit memory pkgInit) {
-        pkgInit = IUniswapV4DetfBondNFTVaultDFPkg.PkgInit({
+    ) internal pure returns (IDETFNFTVaultDFPkg.PkgInit memory pkgInit) {
+        pkgInit = IDETFNFTVaultDFPkg.PkgInit({
             erc721Facet: erc721Facet,
-            erc4626BasicVaultFacet: erc4626BasicVaultFacet,
-            erc4626StandardVaultFacet: erc4626StandardVaultFacet,
+            metadataFacet: metadataFacet,
             detfNFTVaultFacet: detfNFTVaultFacet,
             feeOracle: feeOracle,
             vaultRegistryDeployment: vaultRegistryDeployment
@@ -90,7 +86,6 @@ library DetfComponentFactoryService {
         IDiamondPackageCallBackFactory diamondFactory
     ) internal pure returns (IRebasingClaimTokenDFPkg.PkgInit memory pkgInit) {
         pkgInit = IRebasingClaimTokenDFPkg.PkgInit({
-            erc20Facet: erc20Facet,
             erc5267Facet: erc5267Facet,
             erc2612Facet: erc2612Facet,
             rebasingClaimTokenFacet: rebasingClaimTokenFacet,

@@ -1,0 +1,895 @@
+{
+  "status": "APPLIED_CASE_MAPPING_RUNTIME_VALIDATION_PENDING",
+  "source_count": 45,
+  "declared_cases_before": 349,
+  "declared_cases_after": 345,
+  "unmapped_removed_cases": [],
+  "inheritance_note": "All retained concrete decimal leaves inherit their migrated abstract cases. Leaf files remain. Execution counts and performance require actual current-source validation.",
+  "coverage_rationale": "Two-token activation replaces invalid single-token initialization, with subsequent single-token routes retained. V4 first-activation execution/preview duplicates are combined in both amount-ratio directions. V3 first-single-token preview cases assert exact rejection and no loss; its positive two-token activation remains in Routes. Existing donation, reentrancy, slippage, lock, native ETH, TWAP, import and nested-holder cases receive funded setups. Native ETH fixtures force WETH to sort after its pair and reject reversed PoolKey arrays.",
+  "rows": [
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_LocalLiquidBuffer.t.sol",
+      "before_sha256": "bfd06e198d909c1b743096f418126fe87e13b5ade269041daafe3950cd86b0bf",
+      "after_sha256": "31302c40c1e77083b9707f49e8d074984da8800933058004f275acff706078cc",
+      "unchanged_declared_cases": [
+        "test_H4_typeDefault20pct",
+        "test_T10_oracleCascade_vaultOverridesType",
+        "test_T12_firstMintBlocked_thenFreeRebalanceCreatesPosition",
+        "test_T14_publicRebalanceBlocked_reverts",
+        "test_T15_withinDeadband_noPoolOpNeeded",
+        "test_T16_outsideDeadband_movesToTarget",
+        "test_T1_idleDeposit_freeNear20pct",
+        "test_T2_blockedDeposit_sleeveNoNestedMint",
+        "test_T3_publicRebalanceAfterBlockedDeposit",
+        "test_T4_blockedAmountOut_paysSleeve",
+        "test_T4d_donationDilutesSharePrice",
+        "test_T4e_positionImportBlocked_reverts",
+        "test_T4f_rebalanceNoSwap",
+        "test_T5_blockedAmountOut_insufficientLocalReserve",
+        "test_T6_blockedDirectSwap_reverts",
+        "test_T7_idleDirectSwap_thenRebalance",
+        "test_T8_previewEqualsExec_freeZapIn",
+        "test_T9_reservesEqualFreePlusDeployed"
+      ],
+      "removed_or_renamed_cases": {
+        "test_T1b_idleDeposit_token0Only_doesNotRequireSleeveAndL": "test_T1b_subsequentSingleTokenDeposit_keepsFullRangeLiquidity"
+      },
+      "new_or_renamed_cases": [
+        "test_T1b_subsequentSingleTokenDeposit_keepsFullRangeLiquidity"
+      ],
+      "declared_count_before": 19,
+      "declared_count_after": 19
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_LocalLiquidBuffer_Decimals.sol",
+      "before_sha256": "9ce9c4f62f4a7390bede28ac47e8d29bbbda883e1ffc34e46c2033ecac4a002c",
+      "after_sha256": "7cd60c63b8c15f004e4ea11caf035e7aebd732686e140c0023f587aaafedb039",
+      "unchanged_declared_cases": [
+        "test_H4_typeDefault20pct",
+        "test_T10_oracleCascade_vaultOverridesType",
+        "test_T12_firstMintBlocked_thenFreeRebalanceCreatesPosition",
+        "test_T14_publicRebalanceBlocked_reverts",
+        "test_T15_withinDeadband_noPoolOpNeeded",
+        "test_T16_outsideDeadband_movesToTarget",
+        "test_T1_idleDeposit_freeNear20pct",
+        "test_T2_blockedDeposit_sleeveNoNestedMint",
+        "test_T3_publicRebalanceAfterBlockedDeposit",
+        "test_T4_blockedAmountOut_paysSleeve",
+        "test_T4d_donationDilutesSharePrice",
+        "test_T4e_positionImportBlocked_reverts",
+        "test_T4f_rebalanceNoSwap",
+        "test_T5_blockedAmountOut_insufficientLocalReserve",
+        "test_T6_blockedDirectSwap_reverts",
+        "test_T7_idleDirectSwap_thenRebalance",
+        "test_T8_previewEqualsExec_freeZapIn",
+        "test_T9_reservesEqualFreePlusDeployed"
+      ],
+      "removed_or_renamed_cases": {
+        "test_T1b_idleDeposit_token0Only_doesNotRequireSleeveAndL": "test_T1b_subsequentSingleTokenDeposit_keepsFullRangeLiquidity"
+      },
+      "new_or_renamed_cases": [
+        "test_T1b_subsequentSingleTokenDeposit_keepsFullRangeLiquidity"
+      ],
+      "declared_count_before": 19,
+      "declared_count_after": 19
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_LocalLiquidBuffer.t.sol",
+      "before_sha256": "9e47210f5c0d56d8900e2dfc2267a62a71754bb69be8f504224555eb0c97ebe5",
+      "after_sha256": "a6b13069a2b15c054350d27f5188705ea522090e675b15e9222f9922dda148bd",
+      "unchanged_declared_cases": [
+        "test_H1_outerUnlock_seDeposit",
+        "test_H3_midSessionAmountOut_cover",
+        "test_H4_typeDefault20pct",
+        "test_T10_oracleCascade_vaultOverridesType",
+        "test_T11_typeDefaultWithoutVaultOverride",
+        "test_T11b_changeTypeDefaultLive",
+        "test_T12_firstMintBlocked_thenFreeRebalanceCreatesPosition",
+        "test_T13_reentrancyBlockedDeposit",
+        "test_T14_publicRebalanceBlocked_reverts",
+        "test_T15_withinDeadband_noUnlockNeeded",
+        "test_T16_outsideDeadband_movesToTarget",
+        "test_T1_idleDeposit_freeNear20pct",
+        "test_T1b_idleDeposit_notFullDeployRefund",
+        "test_T2_inSessionDeposit_sleeveNoNestedUnlock",
+        "test_T3_publicRebalanceAfterBlockedDeposit",
+        "test_T4_blockedAmountOut_paysSleeve",
+        "test_T4b_blockedAmountOut_wrongTokenFree_reverts",
+        "test_T4c_freeAmountOut_alwaysPmNotSleeveFirst",
+        "test_T4d_donationDilutesSharePrice",
+        "test_T4e_positionImportBlocked_reverts",
+        "test_T4f_rebalanceNoSwap",
+        "test_T5_blockedAmountOut_insufficientLocalReserve",
+        "test_T6_blockedDirectSwap_reverts",
+        "test_T7_idleDirectSwap_thenRebalance",
+        "test_T8_previewEqualsExec_freeZapIn",
+        "test_T8b_previewEqualsExec_freeZapIn_withRebalance",
+        "test_T9_reservesEqualFreePlusDeployed"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 27,
+      "declared_count_after": 27
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_LocalLiquidBuffer_Decimals.sol",
+      "before_sha256": "8664e6533852134886c81760bcb2bae1616b70fc078aaf0085963f0ff1491ea2",
+      "after_sha256": "1b5c19ed90eb76105c21ae7aaff9b827cda356e7978e68abec31bc2d2411d632",
+      "unchanged_declared_cases": [
+        "test_H1_outerUnlock_seDeposit",
+        "test_H3_midSessionAmountOut_cover",
+        "test_H4_typeDefault20pct",
+        "test_T10_oracleCascade_vaultOverridesType",
+        "test_T11_typeDefaultWithoutVaultOverride",
+        "test_T11b_changeTypeDefaultLive",
+        "test_T12_firstMintBlocked_thenFreeRebalanceCreatesPosition",
+        "test_T13_reentrancyBlockedDeposit",
+        "test_T14_publicRebalanceBlocked_reverts",
+        "test_T15_withinDeadband_noUnlockNeeded",
+        "test_T16_outsideDeadband_movesToTarget",
+        "test_T1_idleDeposit_freeNear20pct",
+        "test_T1b_idleDeposit_notFullDeployRefund",
+        "test_T2_inSessionDeposit_sleeveNoNestedUnlock",
+        "test_T3_publicRebalanceAfterBlockedDeposit",
+        "test_T4_blockedAmountOut_paysSleeve",
+        "test_T4b_blockedAmountOut_wrongTokenFree_reverts",
+        "test_T4c_freeAmountOut_alwaysPmNotSleeveFirst",
+        "test_T4d_donationDilutesSharePrice",
+        "test_T4e_positionImportBlocked_reverts",
+        "test_T4f_rebalanceNoSwap",
+        "test_T5_blockedAmountOut_insufficientLocalReserve",
+        "test_T6_blockedDirectSwap_reverts",
+        "test_T7_idleDirectSwap_thenRebalance",
+        "test_T8_previewEqualsExec_freeZapIn",
+        "test_T8b_previewEqualsExec_freeZapIn_withRebalance",
+        "test_T9_reservesEqualFreePlusDeployed"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 27,
+      "declared_count_after": 27
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_NativeEthWrap.t.sol",
+      "before_sha256": "1778999d53708c4045312eed06e1a5cb20b74604e323a21c9b193a0a80ae7c5b",
+      "after_sha256": "863d02e2b1a32b03978abcb517d7b84996ad52a9be8749c7008d7bed962b8823",
+      "unchanged_declared_cases": [
+        "test_swap_nativeEthPool_wrapsTakenEthToWeth",
+        "test_zapIn_nativeEthPool_unwrapsWethAndLeavesNoEthDust",
+        "test_zapOut_nativeEthPool_paysWethNotEth"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 3,
+      "declared_count_after": 3
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_NativeEthWrap_Decimals.sol",
+      "before_sha256": "2602bfad2e6946b52ac3758f47e22dba416febc7a25c3700cf8c0cea32e3d97f",
+      "after_sha256": "d8809189875141a8a9c74a613d7f10c443d20a4f86f59b405d694f9c70095827",
+      "unchanged_declared_cases": [
+        "test_swap_nativeEthPool_wrapsTakenEthToWeth",
+        "test_zapIn_nativeEthPool_unwrapsWethAndLeavesNoEthDust",
+        "test_zapOut_nativeEthPool_paysWethNotEth"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 3,
+      "declared_count_after": 3
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Reentrancy.t.sol",
+      "before_sha256": "66198278b60ecb1b383707b5060b70a09db03af710ae3faa5b25255e722da412",
+      "after_sha256": "b0d231ea8978f6c90b386328f0f3f732e75527875c92863f7f3fdb89e25593bf",
+      "unchanged_declared_cases": [
+        "test_C1_reentrancy_exchangeIn_isLocked",
+        "test_C2_reentrancy_exchangeOut_isLocked",
+        "test_C3_reentrancy_import_isLocked",
+        "test_C4_callback_reentry_blocked"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 4,
+      "declared_count_after": 4
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Reentrancy_Decimals.sol",
+      "before_sha256": "d3e191a1c0f19172c4e317342826716575123acb5789c286eeee42d436a7321b",
+      "after_sha256": "9acb22bc4ca7bc9ba27f0cce1a531632f73f0c1f8eeca60870d5571772fb6d70",
+      "unchanged_declared_cases": [
+        "test_C1_reentrancy_exchangeIn_isLocked",
+        "test_C2_reentrancy_exchangeOut_isLocked",
+        "test_C3_reentrancy_import_isLocked",
+        "test_C4_callback_reentry_blocked"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 4,
+      "declared_count_after": 4
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FeeCompound_Decimals.sol",
+      "before_sha256": "8608f78d1067625211ebfdf08fdcf2ae0aea85080b422ddb5f14cc053892e4dc",
+      "after_sha256": "85e7266d4e63d7208ce6555ab247249de67c717a0e95cb062d88c83a702bae63",
+      "unchanged_declared_cases": [
+        "test_d27_subsequentTinyZap_doesNotDiluteIncumbentIntoFees_freeRemainsSleeve"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 1,
+      "declared_count_after": 1
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Import_Decimals.sol",
+      "before_sha256": "98332c8ed8e709cf32ba89c35f8af70fbb5d97b1a3d054fbb9706054b60910ae",
+      "after_sha256": "d3e2882c92573e3aa8ed563e502c4238170c3791836ec1f0719fa3aeff78dbef",
+      "unchanged_declared_cases": [
+        "test_import_happyPath_principalOnly_leavesEmptyNft",
+        "test_import_secondImport_reverts",
+        "test_import_withFees_compoundsCenter",
+        "test_import_withoutApproval_reverts",
+        "test_import_wrongPool_reverts",
+        "test_import_zeroLiquidity_reverts"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 6,
+      "declared_count_after": 6
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchangeDFPkg_Deploy.t.sol",
+      "before_sha256": "55321521d5526239a58a333fe3283a42a4c7f0e416d2332f67d59d9a0840a197",
+      "after_sha256": "a9cf8abdf335ea5c67a556b1fe0f500e85206ebea85d901ea5d2acf55391b4b2",
+      "unchanged_declared_cases": [
+        "test_deployVault_registersAndInitializesPool",
+        "test_deployVault_revertsWhenPoolFactoryMismatch",
+        "test_packageMetadata_matchesExpectedFacets"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 3,
+      "declared_count_after": 3
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchangeDFPkg_Deploy_Decimals.sol",
+      "before_sha256": "e598f42cc5dda618a97ce16a619504b13f70d0a081ffb93e6855f3020bd9a20e",
+      "after_sha256": "cf5b6e29a28ce91ccdf5312544dd99b9829da107ed1d40f0cbf7b4c433b84c6c",
+      "unchanged_declared_cases": [
+        "test_deployVault_registersAndInitializesPool",
+        "test_deployVault_revertsWhenPoolFactoryMismatch",
+        "test_packageMetadata_matchesExpectedFacets"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 3,
+      "declared_count_after": 3
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg_Deploy.t.sol",
+      "before_sha256": "790fecf782a45d9b5a3456ff886f2d57e53b479057341595595f77ffaccadfd9",
+      "after_sha256": "987dc1324b14aa3c2c1629e26a0f441018d45c29dabe1dd4434b84d54315dc29",
+      "unchanged_declared_cases": [
+        "test_deployVault_nativeEthCurrency0_registersVault",
+        "test_deployVault_registersVaultAndInitializesConfig",
+        "test_packageMetadata_matchesExpectedFacets"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 3,
+      "declared_count_after": 3
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeDFPkg_Deploy_Decimals.sol",
+      "before_sha256": "ed772f1bd99a64e090b63d82a0165f15aa1ad84c2a91b16e641bff359308f05d",
+      "after_sha256": "30d04e21170437689548437a5110ca0a930819b180b644a41412164e9bb87899",
+      "unchanged_declared_cases": [
+        "test_deployVault_nativeEthCurrency0_registersVault",
+        "test_deployVault_registersVaultAndInitializesConfig",
+        "test_packageMetadata_matchesExpectedFacets"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 3,
+      "declared_count_after": 3
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeRoutes_Test.t.sol",
+      "before_sha256": "e3890ff9569638e45164467910260388df2027917c64b04a6dfff40a84918a3d",
+      "after_sha256": "1691dc46ffc981fb6a0c97e295d5aa386f8b339090ad05bacd726270b0f0876a",
+      "unchanged_declared_cases": [
+        "test_exchangeIn_direct_token0ToToken1",
+        "test_exchangeIn_direct_token1ToToken0",
+        "test_exchangeIn_zap_pretransferred_true",
+        "test_exchangeIn_zap_reverts_whenMinSharesTooHigh",
+        "test_exchangeIn_zap_secondDeposit_checkpointsAccruedFees_afterRoundTripTrading",
+        "test_exchangeIn_zap_secondDeposit_refreshesReserves_afterExternalPriceMove",
+        "test_exchangeIn_zap_token0ToShares_secondDeposit",
+        "test_exchangeOut_direct_refunds_excess_input",
+        "test_exchangeOut_direct_reverts_whenMaxInputTooLow",
+        "test_exchangeOut_direct_token0ToToken1",
+        "test_exchangeOut_direct_token1ToToken0",
+        "test_exchangeOut_zap_pretransferred_true",
+        "test_exchangeOut_zap_reverts_whenMaxSharesTooLow",
+        "test_exchangeOut_zap_sharesToToken0",
+        "test_exchangeOut_zap_sharesToToken1",
+        "test_previewExchangeIn_direct_matchesExecution_token0ToToken1",
+        "test_previewExchangeIn_zap_secondDeposit_matchesExecution_token0ToShares",
+        "test_previewExchangeIn_zap_secondDeposit_matchesExecution_token1ToShares",
+        "test_previewExchangeOut_direct_matchesExecution_token0ToToken1",
+        "test_previewExchangeOut_zap_matchesExecution_sharesToToken0",
+        "test_previewExchangeOut_zap_matchesExecution_sharesToToken1"
+      ],
+      "removed_or_renamed_cases": {
+        "test_exchangeIn_zap_token0ToShares_firstDeposit": "test_twoTokenActivation_token0Dominant_previewAndExecution",
+        "test_exchangeIn_zap_token1ToShares_firstDeposit": "test_twoTokenActivation_token1Dominant_previewAndExecution",
+        "test_previewExchangeIn_zap_firstDeposit_matchesExecution_token0ToShares": "test_twoTokenActivation_token0Dominant_previewAndExecution",
+        "test_previewExchangeIn_zap_firstDeposit_matchesExecution_token1ToShares": "test_twoTokenActivation_token1Dominant_previewAndExecution"
+      },
+      "new_or_renamed_cases": [
+        "test_twoTokenActivation_token0Dominant_previewAndExecution",
+        "test_twoTokenActivation_token1Dominant_previewAndExecution"
+      ],
+      "declared_count_before": 25,
+      "declared_count_after": 23
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeRoutes_Test_Decimals.sol",
+      "before_sha256": "fed3bc16a797db9b0ae6ced81a29be9e8aa0b5e865ceeee38b07d561149b13c4",
+      "after_sha256": "8ecb17e9006c71d3591396950b40a39389f318438e87afb10ee7a4d25815e306",
+      "unchanged_declared_cases": [
+        "test_exchangeIn_direct_token0ToToken1",
+        "test_exchangeIn_direct_token1ToToken0",
+        "test_exchangeIn_zap_pretransferred_true",
+        "test_exchangeIn_zap_reverts_whenMinSharesTooHigh",
+        "test_exchangeIn_zap_secondDeposit_checkpointsAccruedFees_afterRoundTripTrading",
+        "test_exchangeIn_zap_secondDeposit_refreshesReserves_afterExternalPriceMove",
+        "test_exchangeIn_zap_token0ToShares_secondDeposit",
+        "test_exchangeOut_direct_refunds_excess_input",
+        "test_exchangeOut_direct_reverts_whenMaxInputTooLow",
+        "test_exchangeOut_direct_token0ToToken1",
+        "test_exchangeOut_direct_token1ToToken0",
+        "test_exchangeOut_zap_pretransferred_true",
+        "test_exchangeOut_zap_reverts_whenMaxSharesTooLow",
+        "test_exchangeOut_zap_sharesToToken0",
+        "test_exchangeOut_zap_sharesToToken1",
+        "test_previewExchangeIn_direct_matchesExecution_token0ToToken1",
+        "test_previewExchangeIn_zap_secondDeposit_matchesExecution_token0ToShares",
+        "test_previewExchangeIn_zap_secondDeposit_matchesExecution_token1ToShares",
+        "test_previewExchangeOut_direct_matchesExecution_token0ToToken1",
+        "test_previewExchangeOut_zap_matchesExecution_sharesToToken0",
+        "test_previewExchangeOut_zap_matchesExecution_sharesToToken1"
+      ],
+      "removed_or_renamed_cases": {
+        "test_exchangeIn_zap_token0ToShares_firstDeposit": "test_twoTokenActivation_token0Dominant_previewAndExecution",
+        "test_exchangeIn_zap_token1ToShares_firstDeposit": "test_twoTokenActivation_token1Dominant_previewAndExecution",
+        "test_previewExchangeIn_zap_firstDeposit_matchesExecution_token0ToShares": "test_twoTokenActivation_token0Dominant_previewAndExecution",
+        "test_previewExchangeIn_zap_firstDeposit_matchesExecution_token1ToShares": "test_twoTokenActivation_token1Dominant_previewAndExecution"
+      },
+      "new_or_renamed_cases": [
+        "test_twoTokenActivation_token0Dominant_previewAndExecution",
+        "test_twoTokenActivation_token1Dominant_previewAndExecution"
+      ],
+      "declared_count_before": 25,
+      "declared_count_after": 23
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_Routes.t.sol",
+      "before_sha256": "ca26d2d0bcdbb349dc18fe5fdae299a883f5dbbddb18229be027792ec9adf9c9",
+      "after_sha256": "94efd864fefdaab8191695d3e4385836ba3237afc8360761b0384163b4e881d6",
+      "unchanged_declared_cases": [
+        "test_callbackSpoof_reverts",
+        "test_deadline_reverts",
+        "test_exchangeIn_exactIn_bothDirections",
+        "test_exchangeOut_exactOut_bothDirections",
+        "test_slippage_revertsWithoutPartialMint",
+        "test_unsupportedRoutes_revert",
+        "test_zapIn_subsequentDeposit_addsSameTicks",
+        "test_zapOut_paysMeasuredToken"
+      ],
+      "removed_or_renamed_cases": {
+        "test_zapIn_firstDeposit_createsPositionsAndShares": "test_twoTokenActivation_createsPositionsAndShares"
+      },
+      "new_or_renamed_cases": [
+        "test_twoTokenActivation_createsPositionsAndShares"
+      ],
+      "declared_count_before": 9,
+      "declared_count_after": 9
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_Previews.t.sol",
+      "before_sha256": "01d86da0a761c122d33a6b66b6c0278e1050569fc4f778bc3e74f4244d8eb468",
+      "after_sha256": "c16570c71fc0f7e14b64b259c875a29b18e30cf3b9e7e996a668199e134921e9",
+      "unchanged_declared_cases": [
+        "test_P_IN_01_exactIn_token0_to_token1",
+        "test_P_IN_02_exactIn_token1_to_token0",
+        "test_P_IN_05_zapIn_subsequent_afterFees",
+        "test_P_OUT_01_exactOut_token0_to_token1",
+        "test_P_OUT_02_exactOut_token1_to_token0",
+        "test_P_OUT_03_04_zapOut_bothTokens",
+        "test_P_PRE_01_pretransferred_exactIn"
+      ],
+      "removed_or_renamed_cases": {
+        "test_P_IN_03_zapIn_token0_firstDeposit": "test_P_IN_03_singleToken0ActivationRejected",
+        "test_P_IN_04_zapIn_token1_firstDeposit": "test_P_IN_04_singleToken1ActivationRejected"
+      },
+      "new_or_renamed_cases": [
+        "test_P_IN_03_singleToken0ActivationRejected",
+        "test_P_IN_04_singleToken1ActivationRejected"
+      ],
+      "declared_count_before": 9,
+      "declared_count_after": 9
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Routes_Decimals.sol",
+      "before_sha256": "4ed0d21d2cc22f241664e5bc151f2cce8cb3dceace5863a181f3fe5a74053e1c",
+      "after_sha256": "6c1215b5cd67185e7d153d88407823913f988e24b3202806497fd373c3c35a0d",
+      "unchanged_declared_cases": [
+        "test_callbackSpoof_reverts",
+        "test_deadline_reverts",
+        "test_exchangeIn_exactIn_bothDirections",
+        "test_exchangeOut_exactOut_bothDirections",
+        "test_slippage_revertsWithoutPartialMint",
+        "test_unsupportedRoutes_revert",
+        "test_zapIn_subsequentDeposit_addsSameTicks",
+        "test_zapOut_paysMeasuredToken"
+      ],
+      "removed_or_renamed_cases": {
+        "test_zapIn_firstDeposit_createsPositionsAndShares": "test_twoTokenActivation_createsPositionsAndShares"
+      },
+      "new_or_renamed_cases": [
+        "test_twoTokenActivation_createsPositionsAndShares"
+      ],
+      "declared_count_before": 9,
+      "declared_count_after": 9
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Previews_Decimals.sol",
+      "before_sha256": "064b705e39dc3df29171035b53eb51f57a3ab7a959b98b4e621226299b4478b5",
+      "after_sha256": "72d1e555f8496960e06efae1b7b8a79aafb295e8dfac0ee35e35e0e7a595c421",
+      "unchanged_declared_cases": [
+        "test_P_IN_01_exactIn_token0_to_token1",
+        "test_P_IN_02_exactIn_token1_to_token0",
+        "test_P_IN_05_zapIn_subsequent_afterFees",
+        "test_P_OUT_01_exactOut_token0_to_token1",
+        "test_P_OUT_02_exactOut_token1_to_token0",
+        "test_P_OUT_03_04_zapOut_bothTokens",
+        "test_P_PRE_01_pretransferred_exactIn"
+      ],
+      "removed_or_renamed_cases": {
+        "test_P_IN_03_zapIn_token0_firstDeposit": "test_P_IN_03_singleToken0ActivationRejected",
+        "test_P_IN_04_zapIn_token1_firstDeposit": "test_P_IN_04_singleToken1ActivationRejected"
+      },
+      "new_or_renamed_cases": [
+        "test_P_IN_03_singleToken0ActivationRejected",
+        "test_P_IN_04_singleToken1ActivationRejected"
+      ],
+      "declared_count_before": 9,
+      "declared_count_after": 9
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/TestBase_UniswapV3StandardExchange_Adversarial.sol",
+      "before_sha256": "90a57222cd51c68dff453b724bc358c5c7ef1c37a157c7d2655b6060779233e9",
+      "after_sha256": "8c9fbeb93adc7ee68b1bce59a290e39a0d3be95c98b2699a1f4d7b99e6c4066e",
+      "unchanged_declared_cases": [],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 0,
+      "declared_count_after": 0
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Accounting.t.sol",
+      "before_sha256": "bbf62569b1a79e2abd9385490cd2f42750b4941b4f2efcf93f164ae666894d12",
+      "after_sha256": "ff95b75c35edb129dacdd86126aaea1bed3bc04489bdb0e62cd663cddd48e78a",
+      "unchanged_declared_cases": [
+        "test_E1_roundTrip_zapInOut_conservation",
+        "test_E2_zeroAmountAndDeadline",
+        "test_E3_slippage_atomicNoPartialMint",
+        "test_E4_successPath_residualPolicy"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 4,
+      "declared_count_after": 4
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Donation.t.sol",
+      "before_sha256": "048ec4299e819af8df98319c7353e3cbbc8d69e999cc58c513a95ddfb293a59c",
+      "after_sha256": "db7f822d567b3bacc272fc91abc84628b0aa4bea73de57171eb64eb047722ad7",
+      "unchanged_declared_cases": [
+        "test_A1_donation_doesNotGrantFreeSharesAsPrincipal",
+        "test_A3_feeTiming_tinyZapAfterFees"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 2,
+      "declared_count_after": 2
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_PriceManipulation.t.sol",
+      "before_sha256": "9ee9a5d8716460acac40d0079b29fb9b60fe5d813b398bfa108433e2d14d3e56",
+      "after_sha256": "b42ddfe633dddcbcb1b8f66ada0780130be11c70f664ff8fe5eb341a48161bc5",
+      "unchanged_declared_cases": [
+        "test_B1_spotManip_noUnboundedFreeLunch"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 1,
+      "declared_count_after": 1
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_SecRemediation.t.sol",
+      "before_sha256": "7b934a4fb43b874f9eda9f39e29e2d8d9a292b65318b3431ee2423f5de9e430b",
+      "after_sha256": "1e76a55ca9ac7f6320246e5758fca1f8f070bc3f6e23794ea433f891e30cf205",
+      "unchanged_declared_cases": [
+        "test_A0_donatePair_thenImport_cannotSweepDonation",
+        "test_E6_exchangeOut_swap_fatMax_transferOnlyUsed_doesNotPayBooked",
+        "test_E6_import_doesNotSweepDonatedPairTokens",
+        "test_E6_zapIn_doesNotRefundPriorDonation",
+        "test_E6_zapOut_doesNotSweepOtherUsersShares",
+        "test_I1_zapOut_pretransferred_noShareDelivery_existingSelfShares_revertsOrNoExtract"
+      ],
+      "removed_or_renamed_cases": {
+        "test_A0_donatePair_thenFirstZapIn_cannotRedeemDonation": "test_A0_donatePair_thenTwoTokenActivation_cannotRedeemDonation"
+      },
+      "new_or_renamed_cases": [
+        "test_A0_donatePair_thenTwoTokenActivation_cannotRedeemDonation"
+      ],
+      "declared_count_before": 7,
+      "declared_count_after": 7
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/TestBase_UniswapV3StandardExchange_Adversarial_Decimals.sol",
+      "before_sha256": "ebcbfceefacc9d0bd48e4d7d2d23cb3995b4da9f1f7cea5d2a2f41e9d20fcf2f",
+      "after_sha256": "4a0b73fe7d74fe08bdbc0b8d0f8c78460f4baac77dbd80482370ca9cfb85f6d0",
+      "unchanged_declared_cases": [],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 0,
+      "declared_count_after": 0
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Accounting_Decimals.sol",
+      "before_sha256": "afa718825100cafa7c2dc20a4ffff428d2c12b40271a2fabdcef0ed2d5daf2c0",
+      "after_sha256": "dce7f5965f9d5b34c7ff96ae51288a1fc208b9d7d8b33b4cdbd2f9bb923650e2",
+      "unchanged_declared_cases": [
+        "test_E1_roundTrip_zapInOut_conservation",
+        "test_E2_zeroAmountAndDeadline",
+        "test_E3_slippage_atomicNoPartialMint",
+        "test_E4_successPath_residualPolicy"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 4,
+      "declared_count_after": 4
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Donation_Decimals.sol",
+      "before_sha256": "0bd96a2763ef205cf2bd1ce982eef796b1bc3abc5e474b77387ee7904809eeb8",
+      "after_sha256": "8b34bf69ab0694fd9d9cb756694ab86ad15c446ef1603ca74a3712e8ca10b3d0",
+      "unchanged_declared_cases": [
+        "test_A1_donation_doesNotGrantFreeSharesAsPrincipal",
+        "test_A3_feeTiming_tinyZapAfterFees"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 2,
+      "declared_count_after": 2
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_PriceManipulation_Decimals.sol",
+      "before_sha256": "ed31c2377af4c70297052488e6fbee668dd683ac2cbda090bc2834c692e2e4a2",
+      "after_sha256": "bdf95bb9d1e4862e3aefe412067920ed4af0e4cd0417763a024a2402edfba67e",
+      "unchanged_declared_cases": [
+        "test_B1_spotManip_noUnboundedFreeLunch"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 1,
+      "declared_count_after": 1
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_SecRemediation_Decimals.sol",
+      "before_sha256": "5822596bdb5df3ff0f00439792619a5435b9a4cdfa82aebb0918b6f8cd52cc46",
+      "after_sha256": "a2d499b4a6487c3a888a269f9188b88605d8b8e47919416011d4e87ab33a9da9",
+      "unchanged_declared_cases": [
+        "test_A0_donatePair_thenImport_cannotSweepDonation",
+        "test_E6_exchangeOut_swap_fatMax_transferOnlyUsed_doesNotPayBooked",
+        "test_E6_import_doesNotSweepDonatedPairTokens",
+        "test_E6_zapIn_doesNotRefundPriorDonation",
+        "test_E6_zapOut_doesNotSweepOtherUsersShares",
+        "test_I1_zapOut_pretransferred_noShareDelivery_existingSelfShares_revertsOrNoExtract"
+      ],
+      "removed_or_renamed_cases": {
+        "test_A0_donatePair_thenFirstZapIn_cannotRedeemDonation": "test_A0_donatePair_thenTwoTokenActivation_cannotRedeemDonation"
+      },
+      "new_or_renamed_cases": [
+        "test_A0_donatePair_thenTwoTokenActivation_cannotRedeemDonation"
+      ],
+      "declared_count_before": 7,
+      "declared_count_after": 7
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_MultiJoinExit.t.sol",
+      "before_sha256": "a0caf372095eeefd98d75bb11242da4847279ae75cd87ccad115b86e6b0cb9cf",
+      "after_sha256": "02905894b13631b99ed47d648604c863f22cdf3658cdaf9cad0a0641c06eb7d2",
+      "unchanged_declared_cases": [
+        "test_ME1_lengthNotTwo_reverts_singleZapOutStillWorks",
+        "test_ME2_idleProportionalExit_paysBoth_ticksUnchanged",
+        "test_ME3_unbalancedExit_reverts_noSendNoSwap",
+        "test_ME4_blockedProportional_coverPays_shortRevertsWholeTx",
+        "test_ME5_maxAmountInTooLow_noPartialSend",
+        "test_ME6_previewExitSharesMatchExec_idleAndBlocked",
+        "test_ME7_maxAmountInAboveS_refundsUnusedShares",
+        "test_MJ1_lengthNotTwo_reverts_singleZapInStillWorks",
+        "test_MJ2_idleProportionalJoin_fullRangeL_andSleeve",
+        "test_MJ3_unbalancedJoin_paysBoth_surplusStaysSleeve",
+        "test_MJ4_blockedJoin_mints_noNestedUnlock_laterRebalance",
+        "test_MJ5_pretransferredTrue_noDelivery_noFreeMint",
+        "test_MJ6_unsortedDuplicateNonPoolOrWrongOut_reverts",
+        "test_MJ7_previewJoinSharesMatchExec_idleAndBlocked",
+        "test_MJ8_descendingTokenIn_reverts"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 15,
+      "declared_count_after": 15
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_MultiJoinExit_Decimals.sol",
+      "before_sha256": "caa895b6c26919b8c76f1c7a94eebdc17773a709afc11606b2224c33a4444fe2",
+      "after_sha256": "eb0b13d5365f777731c50e6c44698715ee7e0d18efe3a0234d328c7c7a90b962",
+      "unchanged_declared_cases": [
+        "test_ME1_lengthNotTwo_reverts_singleZapOutStillWorks",
+        "test_ME2_idleProportionalExit_paysBoth_ticksUnchanged",
+        "test_ME3_unbalancedExit_reverts_noSendNoSwap",
+        "test_ME4_blockedProportional_coverPays_shortRevertsWholeTx",
+        "test_ME5_maxAmountInTooLow_noPartialSend",
+        "test_ME6_previewExitSharesMatchExec_idleAndBlocked",
+        "test_ME7_maxAmountInAboveS_refundsUnusedShares",
+        "test_MJ1_lengthNotTwo_reverts_singleZapInStillWorks",
+        "test_MJ2_idleProportionalJoin_fullRangeL_andSleeve",
+        "test_MJ3_unbalancedJoin_paysBoth_surplusStaysSleeve",
+        "test_MJ4_blockedJoin_mints_noNestedUnlock_laterRebalance",
+        "test_MJ5_pretransferredTrue_noDelivery_noFreeMint",
+        "test_MJ6_unsortedDuplicateNonPoolOrWrongOut_reverts",
+        "test_MJ7_previewJoinSharesMatchExec_idleAndBlocked",
+        "test_MJ8_descendingTokenIn_reverts"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 15,
+      "declared_count_after": 15
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_TwapPoke.t.sol",
+      "before_sha256": "ad7e86aab3976fb1e87f671e5320a5d157bacdd02e5caab0a949815dd7e1e785",
+      "after_sha256": "5273eb399bb14ddb25847f377dcbed33e07056d45a8d16fa9a54d2d624180eb5",
+      "unchanged_declared_cases": [
+        "test_H14_vaultTwapOracleAndZapPokesBoundPool",
+        "test_H15_firstWriterMatchesPostTradeTick",
+        "test_H16_pokeRevertFailOpen",
+        "test_H17_transferDoesNotPokeAndForeignUpdateWrites",
+        "test_H27_everyVaultSharesPackageOracle",
+        "test_H28_deployVaultRevertsOnPmMismatch",
+        "test_H29_constructZeroOrMismatchReverts"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 7,
+      "declared_count_after": 7
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_Univ4SeNestedCaller.t.sol",
+      "before_sha256": "7f7746198133874f2f8e04cfa42d59a1ae359db58a053f925cfe3bb5e4e8b33f",
+      "after_sha256": "9b8a62b980807260d73af9b14ba259d53ab3f9fe7f9919e4363279bc023cbbb0",
+      "unchanged_declared_cases": [
+        "test_exchangeIn_shares_contractHolder_afterApprove_succeeds",
+        "test_exchangeIn_shares_contractHolder_zeroAllowance_revertsTransferFromFailed"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 2,
+      "declared_count_after": 2
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_LocalLiquidBuffer_H2.t.sol",
+      "before_sha256": "f9c48af4a27ab65466c77bc3c67b107cfed6531f6ccd9bb3e4dd610651a72bf4",
+      "after_sha256": "4c97cf60dce4d1b657bf928d5030c6b4e42b925182e0ee5589b972faa2cbd3e0",
+      "unchanged_declared_cases": [
+        "test_H2_realBufferHook_midSwap_buffersIntoV4Se"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 1,
+      "declared_count_after": 1
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Griefing.t.sol",
+      "before_sha256": "c2b2277c4aaa4f80ab829e2896b3cf724944415ae102ea323219fcedf2ee70b3",
+      "after_sha256": "382fa322388f925707e4f6ee4088849393aabe12cb6f996e54bbbe99724d620c",
+      "unchanged_declared_cases": [
+        "test_H1_firstDepositOnNewPool_noOverflow"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 1,
+      "declared_count_after": 1
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_TwapPoke_Decimals.sol",
+      "before_sha256": "accb7654204aec94ebb5f80d4181bbc58c1a691b06ce5e2499f1e2ca43642d5d",
+      "after_sha256": "a91eaed2992b82e73b2d0c33b44a00ca9a229cd8ead653ecd0b8217728712a80",
+      "unchanged_declared_cases": [
+        "test_H14_vaultTwapOracleAndZapPokesBoundPool",
+        "test_H15_firstWriterMatchesPostTradeTick",
+        "test_H16_pokeRevertFailOpen",
+        "test_H17_transferDoesNotPokeAndForeignUpdateWrites",
+        "test_H27_everyVaultSharesPackageOracle",
+        "test_H28_deployVaultRevertsOnPmMismatch",
+        "test_H29_constructZeroOrMismatchReverts"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 7,
+      "declared_count_after": 7
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_Univ4SeNestedCaller_Decimals.sol",
+      "before_sha256": "0b538413705bb72a00fabd791754082e085647be405205df775439db8e1b5012",
+      "after_sha256": "c0908040996518e29636ead7ff92fc9d598f9427887fbf32ee71495125c7f0a7",
+      "unchanged_declared_cases": [
+        "test_exchangeIn_shares_contractHolder_afterApprove_succeeds",
+        "test_exchangeIn_shares_contractHolder_zeroAllowance_revertsTransferFromFailed"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 2,
+      "declared_count_after": 2
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_LocalLiquidBuffer_H2_Decimals.sol",
+      "before_sha256": "3192a1de055342a96f3949ee920ee924a21275e88dd101813e6ff01d8a226978",
+      "after_sha256": "6167cbd43eedf233f5a3d2177b0ab6bcb43198ba23a0211be6b581184622fc40",
+      "unchanged_declared_cases": [
+        "test_H2_realBufferHook_midSwap_buffersIntoV4Se"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 1,
+      "declared_count_after": 1
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Griefing_Decimals.sol",
+      "before_sha256": "0fb1da8f5a33e4dc91da58be687e59e915324248e21d507fadc8f3292c590c3b",
+      "after_sha256": "50484a456679af76b6152ccaeb4858eebd7458a7cd73c12b499c8dfe96399632",
+      "unchanged_declared_cases": [
+        "test_H1_firstDepositOnNewPool_noOverflow"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 1,
+      "declared_count_after": 1
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/adversarial/Adversarial_UniswapV4SE_SecurePull.t.sol",
+      "before_sha256": "ba4825c1c81efac4ba6110cdf6024485f5d1d39f5b0a37003db2b5fbc58d2374",
+      "after_sha256": "346856423bf6b943dc87719e3b9c5d6913f1b818a59c0b69205ff2e403ea9014",
+      "unchanged_declared_cases": [
+        "test_A1_donateToken_cannotMintFreeShares",
+        "test_A2_donateSeShares_noFreeMintOrTheft",
+        "test_A3_donatePairToken_cannotMintFreeShares",
+        "test_E1_swapRoundTrip_bounded",
+        "test_E4_holderBalance_notDilutedByOthersSwap",
+        "test_E5_exchangeOut_expiredDeadline_reverts",
+        "test_E5_expiredDeadline_reverts",
+        "test_E5_invalidRoute_unsupportedToken_reverts",
+        "test_E5_zeroAmount_reverts",
+        "test_F1_diamondCut_blocked",
+        "test_H2_exchangeOut_maxInTooLow_balancesUnchanged",
+        "test_H3_exchangeOut_maxInTooLow_noFreeShares",
+        "test_H3_minOutTooHigh_noFreeShares",
+        "test_I1_pretransferred_claimedLeInventory_stillReverts",
+        "test_I1_pretransferred_inventoryNoInCallTransfer_revertsDelta0",
+        "test_I_positive_honestPullMint_succeeds",
+        "test_J1_facetFuncs_coversTargetApi",
+        "test_J2_proxyLoupe_allProductSelectors",
+        "test_J3_proxyCallable_smoke_eachSelector"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 19,
+      "declared_count_after": 19
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/adversarial/Adversarial_UniswapV4SE_E6ImpA0.t.sol",
+      "before_sha256": "4803726998c117f5002b2757f10843f615cd1edda558080bfbc06ed489cdf10b",
+      "after_sha256": "6f45cad43cbf647037d4151b7734d74c2771d497d78e215d3047a68a8a30b987",
+      "unchanged_declared_cases": [
+        "test_A0_donateThenFirstMint_cannotRedeemDonation",
+        "test_A0_dustShare_donation_victimDeposit_noZeroShareAbsorb",
+        "test_E6_exchangeIn_zapOut_fatClaim_doesNotSkimBookedShares",
+        "test_E6_exchangeOut_zap_doesNotSweepOtherUsersShares",
+        "test_E6_exchangeOut_zap_exactUsed_doesNotRefundBookedLeftover",
+        "test_IMP_importPosition_unboundPositionManager_reverts",
+        "test_IMP_importPosition_untrustedOwner_reverts",
+        "test_IMP_importPosition_untrustedPositionManager_reverts"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 8,
+      "declared_count_after": 8
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_SecurePull_Decimals.sol",
+      "before_sha256": "c56bdbcac3a401584bb3ac7c2793560c2e74ac95b58c52830e90e4c6486cdf4d",
+      "after_sha256": "b031a9bd85459a7fb0882007b783a8760406601857ed69b4c478e73caf630c48",
+      "unchanged_declared_cases": [
+        "test_A1_donateToken_cannotMintFreeShares",
+        "test_A2_donateSeShares_noFreeMintOrTheft",
+        "test_A3_donatePairToken_cannotMintFreeShares",
+        "test_E1_swapRoundTrip_bounded",
+        "test_E4_holderBalance_notDilutedByOthersSwap",
+        "test_E5_exchangeOut_expiredDeadline_reverts",
+        "test_E5_expiredDeadline_reverts",
+        "test_E5_invalidRoute_unsupportedToken_reverts",
+        "test_E5_zeroAmount_reverts",
+        "test_F1_diamondCut_blocked",
+        "test_H2_exchangeOut_maxInTooLow_balancesUnchanged",
+        "test_H3_exchangeOut_maxInTooLow_noFreeShares",
+        "test_H3_minOutTooHigh_noFreeShares",
+        "test_I1_pretransferred_claimedLeInventory_stillReverts",
+        "test_I1_pretransferred_inventoryNoInCallTransfer_revertsDelta0",
+        "test_I_positive_honestPullMint_succeeds",
+        "test_J1_facetFuncs_coversTargetApi",
+        "test_J2_proxyLoupe_allProductSelectors",
+        "test_J3_proxyCallable_smoke_eachSelector"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 19,
+      "declared_count_after": 19
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_E6ImpA0_Decimals.sol",
+      "before_sha256": "11f75c6911874a4ff3fc9ff8cd3273b534a93ed98be995ebd323a3af168c97b1",
+      "after_sha256": "43d0e519cd7ad840619f69df53ea30b33c1ec630599d44fada608c8bc68f4c1a",
+      "unchanged_declared_cases": [
+        "test_A0_donateThenFirstMint_cannotRedeemDonation",
+        "test_A0_dustShare_donation_victimDeposit_noZeroShareAbsorb",
+        "test_E6_exchangeIn_zapOut_fatClaim_doesNotSkimBookedShares",
+        "test_E6_exchangeOut_zap_doesNotSweepOtherUsersShares",
+        "test_E6_exchangeOut_zap_exactUsed_doesNotRefundBookedLeftover",
+        "test_IMP_importPosition_unboundPositionManager_reverts",
+        "test_IMP_importPosition_untrustedOwner_reverts",
+        "test_IMP_importPosition_untrustedPositionManager_reverts"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 8,
+      "declared_count_after": 8
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Import_Decimals.sol",
+      "before_sha256": "5ed0d311e1dd907ddd72579141f98e798b43626fcc26a3bfa3c56c383f8e43d1",
+      "after_sha256": "c193e7a6c3098e3874206bf46e19056386f59970e488c5b9e711d8026e149d57",
+      "unchanged_declared_cases": [
+        "test_D2_importWithoutApproval_reverts",
+        "test_D4_secondImport_reverts",
+        "test_H2_zeroLiquidityImport_reverts",
+        "test_H3_emptyNft_cannotSecondImport"
+      ],
+      "removed_or_renamed_cases": {},
+      "new_or_renamed_cases": [],
+      "declared_count_before": 4,
+      "declared_count_after": 4
+    }
+  ],
+  "application_record": "prepared-release-followups-applied.json",
+  "all_current_fixture_hashes_match": true,
+  "subsequent_runtime_migration": {
+    "status": "APPLIED_RUNTIME_RECHECK_RUNNING",
+    "record": "position-runtime-migrations-applied.json",
+    "failure_mapping": "position-runtime-failure-migration-map.json",
+    "note": "This original 45-source case map preserves its first-application hashes. Nine subsequent existing-fixture corrections retain counts and add explicit old/new method mappings."
+  }
+}

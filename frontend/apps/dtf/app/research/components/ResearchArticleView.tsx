@@ -7,9 +7,18 @@ import { MermaidDiagram } from './MermaidDiagram'
 
 import '../../landing.css'
 
+/** Render documented app paths as links without treating ordinary slashes as routes. */
+function LinkedCopy({ text }: { text: string }) {
+  return <>{text.split(/(\/(?:research|staking|create|explore|earn|learn|you)(?:\/[a-z0-9-]+)*)/gi).map((part, i) =>
+    /^\/(?:research|staking|create|explore|earn|learn|you)(?:\/|$)/i.test(part)
+      ? <Link key={i} href={part} className="text-[var(--accent,#4FD44B)] hover:underline">{part}</Link>
+      : <span key={i}>{part}</span>,
+  )}</>
+}
+
 function BulletText({ text }: { text: string }) {
   const parts = text.split(/\*\*/)
-  if (parts.length < 3) return <>{text}</>
+  if (parts.length < 3) return <LinkedCopy text={text} />
   return (
     <>
       {parts.map((part, i) =>
@@ -18,7 +27,7 @@ function BulletText({ text }: { text: string }) {
             {part}
           </strong>
         ) : (
-          <span key={i}>{part}</span>
+          <LinkedCopy key={i} text={part} />
         ),
       )}
     </>
@@ -87,7 +96,7 @@ export function ResearchArticleView({ article }: { article: ResearchArticle }) {
                 key={p.slice(0, 48)}
                 className="mt-3 max-w-2xl text-sm leading-relaxed text-[var(--text-muted,#9aa3b2)]"
               >
-                {p}
+                <LinkedCopy text={p} />
               </p>
             ))}
             {section.bullets && section.bullets.length > 0 ? (

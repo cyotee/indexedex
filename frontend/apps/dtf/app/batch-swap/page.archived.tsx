@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useAccount, useChainId, useConnection, useConnectorClient, usePublicClient, useWalletClient } from 'wagmi'
+import { useAccount, useChainId, useConnectorClient, usePublicClient, useWalletClient } from 'wagmi'
 import { useReadContract, useWriteContract } from 'wagmi'
 import { useSignTypedData } from 'wagmi'
 import { erc20Abi } from 'viem'
@@ -237,7 +237,7 @@ export default function BatchSwapPage() {
   const { address, isConnected } = useAccount()
   const configChainId = useChainId()
   const { selectedChainId } = useSelectedNetwork()
-  const connection = useConnection()
+  const connection = useAccount()
   const connectorId = connection.connector?.id
   const { data: connectorClient } = useConnectorClient()
   const { data: walletClient } = useWalletClient()

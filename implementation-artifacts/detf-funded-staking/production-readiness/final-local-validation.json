@@ -1,0 +1,55 @@
+{
+  "status": "STOPPED_REQUIRES_REVIEW",
+  "provenance": {
+    "recorded_at_utc": "2026-09-11T05:56:24.655518+00:00",
+    "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+    "source_and_config_sha256": "231e505d8379c41deb1905d933d32e2b9974f358f84bce169d056f07d4384c75",
+    "source_and_config_files": 4816,
+    "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+    "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+    "crane_tracked_contract_and_config_diff_sha256": "3bb0f52c1183f2be28ee8a63fab300170f65e989720b5048e21da9c61028cc4d",
+    "crane_source_and_config_sha256": "b45a057611f782040ee29f1fddbbcc8eeba01def2c9341ef01c6bb65f685e123",
+    "crane_source_and_config_files": 14819,
+    "dependency_scope": "Crane Solidity tree, including untracked Solidity and nested vendored libraries/tests, plus Crane Foundry config. Final compiler metadata separately verifies every imported source closure.",
+    "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+    "machine": "macOS-26.6.2-x86_64-i386-64bit",
+    "architecture": "x86_64",
+    "logical_cpus": 16,
+    "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+  },
+  "started_at_utc": "2026-09-11T05:56:24.742368+00:00",
+  "steps": [
+    {
+      "name": "local-receipts",
+      "command": [
+        "python3",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/production-readiness/record-local-release-receipts.py"
+      ],
+      "exit_code": 0,
+      "seconds": 9.215,
+      "changed_fingerprints": [],
+      "log": "implementation-artifacts/detf-funded-staking/production-readiness/final-local-receipts.log",
+      "log_sha256": "6d67a3110c73beac2f05af994cdff4e05d9d7b22c7e1a4f33110138a91165322"
+    },
+    {
+      "name": "local-lifecycle",
+      "command": [
+        "python3",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/production-readiness/run-local-release-rehearsal.py",
+        "lifecycle"
+      ],
+      "exit_code": 1,
+      "seconds": 51.1,
+      "changed_fingerprints": [],
+      "log": "implementation-artifacts/detf-funded-staking/production-readiness/final-local-lifecycle.log",
+      "log_sha256": "68fa945f96b38bb081315efb475da8ec96b3258a5cf6e77d7e9e16350e1a5f34"
+    }
+  ],
+  "predecessor": "production-readiness/post-build-release-core-final-resume5/run.json",
+  "predecessor_stop_resolution": "Runtime checker now recursively validates deployed linked libraries and recognizes exact source-declared ERC721 replacement cuts. Both failed inspection records are preserved. Current read-only core inspection passed.",
+  "runtime_inspection": "production-readiness/corrected-local-core-and-packages.json",
+  "public_broadcast": false,
+  "fund_migration": false,
+  "active_step": "local-lifecycle",
+  "finished_at_utc": "2026-09-11T05:57:25.062414+00:00"
+}

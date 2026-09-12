@@ -1,0 +1,9 @@
+{
+  "source_files": 799,
+  "packages": 45,
+  "affected_test_files": 3090,
+  "declared_test_functions": 6509,
+  "test_contract_declarations": 3277,
+  "files_requiring_update_or_merge": 2536,
+  "note": "Source inventory; final package selection, ABI signatures and field consumers require reconciliation with assembled proxies."
+}

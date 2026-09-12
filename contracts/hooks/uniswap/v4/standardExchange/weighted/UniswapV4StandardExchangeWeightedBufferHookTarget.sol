@@ -20,8 +20,8 @@ import {ModifyLiquidityParams, SwapParams} from
 import {BalanceDelta} from "@crane/contracts/protocols/dexes/uniswap/v4/types/BalanceDelta.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
-import {IRateProvider} from
-    "@crane/contracts/protocols/dexes/balancer/common/interfaces/IRateProvider.sol";
+import {UniswapV4StandardExchangeWeightedBufferHookClaimLib as ClaimLib} from
+    "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookClaimLib.sol";
 import {IAllowanceTransfer} from
     "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
@@ -97,6 +97,14 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
         l.reentrancyStatus = Repo.NOT_ENTERED;
     }
 
+    modifier onlyLiquidityRemover() {
+        UniswapV4HookOwnerOnlyLiquidityLib.enforceRemoval(
+            Repo._layout().ownerOnlyLiquidity,
+            address(IVaultFeeOracleQuery(Repo._layout().feeOracle).feeTo())
+        );
+        _;
+    }
+
     modifier onlyLiquidityOwner() {
         UniswapV4HookOwnerOnlyLiquidityLib.enforce(Repo._layout().ownerOnlyLiquidity);
         _;
@@ -105,6 +113,11 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
     /* ---------------------------------------------------------------------- */
     /*                              binding views                             */
     /* ---------------------------------------------------------------------- */
+
+    /// @notice Fixed direct-liquidity policy selected at deployment.
+    function ownerOnlyLiquidity() external view returns (bool) {
+        return Repo._layout().ownerOnlyLiquidity;
+    }
 
     function poolManager() public view returns (IPoolManager) {
         return IPoolManager(Repo._layout().poolManager);
@@ -182,6 +195,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
         if (se == address(0)) return 0;
         uint256 bal = IERC20(se).balanceOf(address(this));
         if (bal == 0) return 0;
+        if (se == l.tokens[index]) return bal;
         return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), bal, IERC20(l.tokens[index]));
     }
 
@@ -319,17 +333,14 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
         address rp = l.rateProviders[i];
         if (rp != address(0)) {
             uint256 rate = _getRateFailClosed(rp);
-            return (seBal * rate) / Math.RATE_PRECISION;
+            return Math.ratedPairUnits(seBal, rate, l.invScales[i], l.ratedScales[i]);
         }
+        if (se == l.tokens[i]) return seBal;
         return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seBal, IERC20(l.tokens[i]));
     }
 
     function _getRateFailClosed(address provider) internal view returns (uint256 rate) {
-        (bool ok, bytes memory ret) =
-            provider.staticcall(abi.encodeWithSelector(IRateProvider.getRate.selector));
-        if (!ok || ret.length != 32) revert RateProviderFailed();
-        rate = abi.decode(ret, (uint256));
-        if (rate == 0) revert RateProviderFailed();
+        return ClaimLib.getRateFailClosed(provider);
     }
 
     function _invWadAll() internal view returns (uint256[] memory scaled) {
@@ -399,7 +410,10 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
     }
 
     function _measureK() internal view returns (uint8 mode, uint256 k, uint256 rootK) {
-        uint256[] memory inv = _invWadAll();
+        return _measureK(_invWadAll());
+    }
+
+    function _measureK(uint256[] memory inv) internal view returns (uint8 mode, uint256 k, uint256 rootK) {
         if (Math.isFullBookReserves(inv)) {
             mode = 0;
             k = Math.computeV(Repo._layout().weights, inv);
@@ -411,6 +425,19 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
         }
     }
 
+    function _previewSupplyAfterProtocolMint() internal view returns (uint256 supply) {
+        return _previewSupplyAfterProtocolMint(_invWadAll());
+    }
+
+    function _previewSupplyAfterProtocolMint(uint256[] memory inv) internal view returns (uint256 supply) {
+        supply = _totalSupply();
+        (bool feeOn,, uint256 ownerFeeShare,) = _feeOnAndShare();
+        Repo.Layout storage l = Repo._layout();
+        if (!feeOn || l.kLast == 0) return supply;
+        (uint8 mode,, uint256 rootK) = _measureK(inv);
+        if (mode == l.kLastMode) supply += Math.protocolLpShares(supply, rootK, l.kLast, ownerFeeShare);
+    }
+
     function _maybeMintProtocolFee() internal returns (uint256 protocolLp) {
         (bool feeOn, address feeTo_, uint256 ownerFeeShare,) = _feeOnAndShare();
         Repo.Layout storage l = Repo._layout();
@@ -420,6 +447,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
         protocolLp = Math.protocolLpShares(_totalSupply(), rootK, l.kLast, ownerFeeShare);
         if (protocolLp > 0) {
             _mintLp(feeTo_, protocolLp);
+            l.kLast = rootK;
             emit IUniswapV4StandardExchangeWeightedBufferHook.ProtocolFeeMinted(feeTo_, protocolLp);
         }
     }
@@ -440,11 +468,14 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
         Repo.Layout storage l = Repo._layout();
         for (uint8 i; i < l.numTokens; ++i) {
             MultiAssetBasicVaultRepo._updateReserve(IERC20(l.tokens[i]), _nativeAt(i));
+            if (l.standardExchanges[i] != address(0)) {
+                l.rawReserves[i] = IERC20(l.tokens[i]).balanceOf(address(this));
+            }
         }
     }
 
     /// @dev Reserve-delta pull (L-DETF-HOST-UPGRADE). Pull delta only on false;
-    ///      pretransfer credits claimed iff claimed <= U (face surplus; virtual R > B → U = face).
+    ///      pretransfer credits only pair-native funding above its recorded balance.
     function _securePull(IERC20 tokenIn, uint256 claimed, bool pretransferred)
         internal
         returns (uint256 observedDelta)
@@ -454,8 +485,11 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
             _pull(address(tokenIn), claimed);
             return tokenIn.balanceOf(address(this)) - B0;
         }
-        uint256 R = MultiAssetBasicVaultRepo._reserveOfToken(address(tokenIn));
-        uint256 U = B0 >= R ? B0 - R : B0;
+        Repo.Layout storage l = Repo._layout();
+        uint8 i = _tokenIndex(address(tokenIn));
+        uint256 R = l.standardExchanges[i] == address(0)
+            ? MultiAssetBasicVaultRepo._reserveOfToken(address(tokenIn)) : l.rawReserves[i];
+        uint256 U = B0 > R ? B0 - R : 0;
         if (claimed > U) {
             revert ISecurePullErrors.TransferDeltaInsufficient(claimed, U);
         }
@@ -494,12 +528,14 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
             l.rawReserves[i] += amount;
             return 0;
         }
+        if (se == t) return amount;
         uint256 minOut = IStandardExchangeIn(se).previewExchangeIn(IERC20(t), amount, IERC20(se));
         if (minOut == 0) revert BufferFailed();
         IERC20(t).forceApprove(se, amount);
         seOut = IStandardExchangeIn(se).exchangeIn(
             IERC20(t), amount, IERC20(se), minOut, address(this), false, block.timestamp
         );
+        IERC20(t).forceApprove(se, 0);
         if (seOut < minOut) revert BufferFailed();
     }
 
@@ -508,12 +544,18 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
         Repo.Layout storage l = Repo._layout();
         address se = l.standardExchanges[i];
         address t = l.tokens[i];
+        if (se == t) {
+            if (to != address(this)) IERC20(se).safeTransfer(to, seIn);
+            return seIn;
+        }
         uint256 minOut = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seIn, IERC20(t));
-        if (minOut == 0) revert UnwrapFailed();
+        // Sub-asset share dust stays in the reserve for the remaining LP owners.
+        if (minOut == 0) return 0;
         IERC20(se).forceApprove(se, seIn);
         pairOut = IStandardExchangeIn(se).exchangeIn(
             IERC20(se), seIn, IERC20(t), minOut, to, false, block.timestamp
         );
+        IERC20(se).forceApprove(se, 0);
         if (pairOut < minOut) revert UnwrapFailed();
     }
 
@@ -525,12 +567,27 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
         Repo.Layout storage l = Repo._layout();
         address se = l.standardExchanges[i];
         address t = l.tokens[i];
+        if (se == t) {
+            if (to != address(this)) IERC20(t).safeTransfer(to, amountOut);
+            return amountOut;
+        }
         seIn = IStandardExchangeOut(se).previewExchangeOut(IERC20(se), IERC20(t), amountOut);
+        uint256 beforeBalance = IERC20(t).balanceOf(address(this));
         IERC20(se).forceApprove(se, seIn);
-        uint256 got = IStandardExchangeOut(se).exchangeOut(
-            IERC20(se), seIn, IERC20(t), amountOut, to, false, block.timestamp
+        uint256 spent = IStandardExchangeOut(se).exchangeOut(
+            IERC20(se), seIn, IERC20(t), amountOut, address(this), false, block.timestamp
         );
-        if (got < amountOut) revert UnwrapFailed();
+        IERC20(se).forceApprove(se, 0);
+        uint256 received = IERC20(t).balanceOf(address(this)) - beforeBalance;
+        if (spent > seIn || received < amountOut) revert UnwrapFailed();
+        if (to != address(this)) IERC20(t).safeTransfer(to, amountOut);
+        // SE exits can round up or include execution surplus. Retain that value
+        // in the shared reserve while settling exactly the hook's quoted output.
+        uint256 surplus = received - amountOut;
+        if (surplus != 0 && IStandardExchangeIn(se).previewExchangeIn(IERC20(t), surplus, IERC20(se)) != 0) {
+            _bufferToken(i, surplus);
+        }
+        return spent;
     }
 
     /// @dev Buffer-last: binding-index order for used pair-token amounts > 0.
@@ -546,7 +603,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
         address to = msg.sender;
         for (uint8 i; i < l.numTokens; ++i) {
             address se = l.standardExchanges[i];
-            if (se == address(0)) continue;
+            if (se == address(0) || se == l.tokens[i]) continue;
             IERC20 pair_ = IERC20(l.tokens[i]);
             uint256 bal = pair_.balanceOf(address(this));
             if (bal <= Repo.MAX_DUST_WEI) continue;
@@ -574,7 +631,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
         for (uint8 i; i < l.numTokens; ++i) {
             if (pairAmounts[i] == 0) continue;
             address se = l.standardExchanges[i];
-            if (se == address(0)) {
+            if (se == address(0) || se == l.tokens[i]) {
                 invDeltas[i] = pairAmounts[i];
             } else {
                 invDeltas[i] = IStandardExchangeIn(se).previewExchangeIn(

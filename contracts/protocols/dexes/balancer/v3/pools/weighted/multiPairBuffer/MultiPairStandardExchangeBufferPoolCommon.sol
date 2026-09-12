@@ -31,7 +31,13 @@ abstract contract MultiPairStandardExchangeBufferPoolCommon {
     function _liftToScaled18Rated(uint256 rawAmount, uint256 tokenIndex) internal view returns (uint256) {
         if (rawAmount == 0) return 0;
         (uint256 rate, uint256 scalingFactor) = _vaultTokenRateAndScale(tokenIndex);
-        return Math.mulDiv(rawAmount * scalingFactor, rate, 1e18);
+        return Math.mulDiv(rawAmount, scalingFactor * rate, 1e18);
+    }
+
+    /// @dev Convert the Vault's scaled buffer amount back to native transfer units.
+    function _bufferToRaw(uint256 scaled18, uint256 pairIndex) internal view returns (uint256) {
+        (uint256 rate, uint256 scalingFactor) = _vaultTokenRateAndScale(Repo._bufferIndex(pairIndex));
+        return Math.mulDiv(scaled18, 1e18, scalingFactor * rate);
     }
 
     /**

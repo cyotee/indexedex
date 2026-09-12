@@ -1,0 +1,102 @@
+--- a/scripts/foundry/research/uniswapV4/hooks/orbital/ResearchFixture_OrbitalHook.sol
++++ b/scripts/foundry/research/uniswapV4/hooks/orbital/ResearchFixture_OrbitalHook.sol
+@@ -111,46 +111,68 @@
+         }
+     }
+ 
++    struct TelemetrySample {
++        uint256 r0;
++        uint256 r1;
++        uint256 r2;
++        uint256 lpSupply;
++        uint256 bookLp;
++        uint256 radius_;
++        uint256 mid01;
++        uint256 mid10;
++        uint256 midIndex01;
++    }
++
+     function _sampleJson(string memory tag_) internal view returns (string memory) {
+-        uint256 r0 = orbital.reserveOf(address(token0));
+-        uint256 r1 = orbital.reserveOf(address(token1));
+-        uint256 r2 = orbital.reserveOf(address(token2));
+-        uint256 lpSupply = IERC20(hook).totalSupply();
+-        uint256 bookLp = IERC20(hook).balanceOf(user);
+-        uint256 radius_ = orbital.radius();
++        TelemetrySample memory values_;
++        values_.r0 = orbital.reserveOf(address(token0));
++        values_.r1 = orbital.reserveOf(address(token1));
++        values_.r2 = orbital.reserveOf(address(token2));
++        values_.lpSupply = IERC20(hook).totalSupply();
++        values_.bookLp = IERC20(hook).balanceOf(user);
++        values_.radius_ = orbital.radius();
+ 
+         // Raw mid ratios (1e18 scale): r_j / r_i when r_i > 0
+-        uint256 mid01 = r0 > 0 ? (r1 * 1e18) / r0 : 0;
+-        uint256 mid10 = r1 > 0 ? (r0 * 1e18) / r1 : 0;
+-        uint256 midIndex01 = initR0 > 0 && initR1 > 0 && r0 > 0
+-            ? ((r1 * 1e18) / r0) * 1e18 / ((initR1 * 1e18) / initR0)
++        values_.mid01 = values_.r0 > 0 ? (values_.r1 * 1e18) / values_.r0 : 0;
++        values_.mid10 = values_.r1 > 0 ? (values_.r0 * 1e18) / values_.r1 : 0;
++        values_.midIndex01 = initR0 > 0 && initR1 > 0 && values_.r0 > 0
++            ? ((values_.r1 * 1e18) / values_.r0) * 1e18 / ((initR1 * 1e18) / initR0)
+             : 1e18;
+ 
+-        return string.concat(
++        string memory json_ = string.concat(
+             "{",
+             '"step":',
+             ResearchTelemetry.u(step),
+             ',"tag":"',
+             tag_,
+             '","radius":',
+-            ResearchTelemetry.u(radius_),
+-            ',"r0":',
+-            ResearchTelemetry.u(r0),
++            ResearchTelemetry.u(values_.radius_),
++            ',"r0":'
++        );
++        json_ = string.concat(
++            json_,
++            ResearchTelemetry.u(values_.r0),
+             ',"r1":',
+-            ResearchTelemetry.u(r1),
++            ResearchTelemetry.u(values_.r1),
+             ',"r2":',
+-            ResearchTelemetry.u(r2),
++            ResearchTelemetry.u(values_.r2),
+             ',"lpSupply":',
+-            ResearchTelemetry.u(lpSupply),
+-            ',"bookLp":',
+-            ResearchTelemetry.u(bookLp),
++            ResearchTelemetry.u(values_.lpSupply),
++            ',"bookLp":'
++        );
++        json_ = string.concat(
++            json_,
++            ResearchTelemetry.u(values_.bookLp),
+             ',"mid01":',
+-            ResearchTelemetry.u(mid01),
++            ResearchTelemetry.u(values_.mid01),
+             ',"mid10":',
+-            ResearchTelemetry.u(mid10),
++            ResearchTelemetry.u(values_.mid10),
+             ',"midIndex01":',
+-            ResearchTelemetry.u(midIndex01),
+-            ',"initR0":',
++            ResearchTelemetry.u(values_.midIndex01),
++            ',"initR0":'
++        );
++        json_ = string.concat(
++            json_,
+             ResearchTelemetry.u(initR0),
+             ',"initR1":',
+             ResearchTelemetry.u(initR1),
+@@ -160,6 +182,7 @@
+             ResearchTelemetry.u(initLpSupply),
+             "}"
+         );
++        return json_;
+     }
+ 
+     /// @dev Preview vs execution for exact-in; returns (preview, got).

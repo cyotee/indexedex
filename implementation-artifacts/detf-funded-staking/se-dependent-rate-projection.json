@@ -1,0 +1,31 @@
+{
+  "status": "APPLIED_TESTS_AND_HOST_WIRING_PENDING",
+  "recorded_at_utc": "2026-09-08T04:27:42.981644+00:00",
+  "files": [
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderFacet.sol",
+      "before_sha256": "a306e5d74cd76be5cf3996926212b55d9da5a221d17aa3e8e9a6f59ee6932943",
+      "after_sha256": "69f9ef3fe16513038f95e75fad3804df85efdfd52366249797ec7dc99d1ffdea"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol",
+      "before_sha256": "afbfd0584dad1ae27548fa0487d40b2e0be764c7a4a36716a2b20007e212da28",
+      "after_sha256": "f208f80e71a0186f557364651b6f964c7060c2cc645af3d73eead31b2e0b17c5"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderTarget.sol",
+      "before_sha256": "a2e42a14893fdfa8584c48825d5dd5c747f85993f225a746169bf1b39f431b87",
+      "after_sha256": "def627ee15cdbdd366c66b02c328b0f477a087f6e64678149d040cf867dff955"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderFacet.sol",
+      "before_sha256": "7ce0650a6254023b87057c0b13863b7fe0a0a815016ec531424bcc41157312c9",
+      "after_sha256": "beb5f743e174f0a19129781c86dd5c683dc75be95e5542a1315a19d865156f7e"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderDFPkg.sol",
+      "before_sha256": "33031a421acb2d3a01b80ce5d642cc37d1963736d17ffef2cad9694b525d6c41",
+      "after_sha256": "cfeb45f12667115646d1f670f8127ebdf31e6ba6a2e2aced0154d67fb81bc697"
+    }
+  ]
+}

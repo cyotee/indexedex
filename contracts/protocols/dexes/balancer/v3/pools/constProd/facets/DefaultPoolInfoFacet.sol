@@ -23,7 +23,13 @@ import {
     BalancerV3VaultAwareRepo
 } from "@crane/contracts/protocols/dexes/balancer/v3/vault/BalancerV3VaultAwareRepo.sol";
 
-contract DefaultPoolInfoFacet is IFacet, IPoolInfo {
+import {BalancerV3PoolStandardExchangeTarget} from "../../BalancerV3PoolStandardExchangeTarget.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+import {NativeStandardYieldSelectors} from "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol";
+
+contract DefaultPoolInfoFacet is IFacet, IPoolInfo, BalancerV3PoolStandardExchangeTarget {
     /* ---------------------------------------------------------------------- */
     /*                                   IFacet                               */
     /* ---------------------------------------------------------------------- */
@@ -33,17 +39,26 @@ contract DefaultPoolInfoFacet is IFacet, IPoolInfo {
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](1);
+        interfaces = new bytes4[](4);
         interfaces[0] = type(IPoolInfo).interfaceId;
+        interfaces[1] = type(IStandardExchangeIn).interfaceId;
+        interfaces[2] = type(IStandardExchangeOut).interfaceId;
+        interfaces[3] = type(IStandardizedYield).interfaceId;
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](5);
+        funcs = new bytes4[](10);
         funcs[0] = IPoolInfo.getTokens.selector;
         funcs[1] = IPoolInfo.getTokenInfo.selector;
         funcs[2] = IPoolInfo.getCurrentLiveBalances.selector;
         funcs[3] = IPoolInfo.getStaticSwapFeePercentage.selector;
         funcs[4] = IPoolInfo.getAggregateFeePercentages.selector;
+        funcs[5] = IStandardExchangeIn.exchangeIn.selector;
+        funcs[6] = IStandardExchangeIn.previewExchangeIn.selector;
+        funcs[7] = IStandardExchangeOut.exchangeOut.selector;
+        funcs[8] = IStandardExchangeOut.previewExchangeOut.selector;
+        funcs[9] = BalancerV3PoolStandardExchangeTarget.executePoolLiquidity.selector;
+        return NativeStandardYieldSelectors._append(funcs);
     }
 
     function facetMetadata()

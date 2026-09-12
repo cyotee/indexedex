@@ -1,0 +1,204 @@
+{
+  "updated_at_utc": "2026-09-11T05:39:02.784432+00:00",
+  "status": "RUNNING_COMPLETE_STRICT_LIFECYCLE_REHEARSAL",
+  "workspace": "main repository; preserve unrelated changes",
+  "owner_passing_baseline": {
+    "record": "production-readiness/owner-passing-baseline.json",
+    "status": "OWNER_REPORTED_ALL_TESTS_PASS",
+    "tested_fingerprint": "not supplied; observed working tree is not retroactive proof",
+    "build_match": "not supplied; new production change requires fresh P3 build and full validation"
+  },
+  "current_source_provenance": "production-readiness/rehearsal-coverage-source.json",
+  "active_forge_session": null,
+  "active_sequence_record": "current-repository-production-readiness-core-final-sequence.json",
+  "solidity_frozen_until_session_exits": true,
+  "source_change_disposition": "Only the two missing stage-06/09 facet assignments changed Solidity since the passing execution candidate. New script-inclusive full build passes in 132.233 s. Contract, test, dependency and compiler closures are unchanged and explicitly reused. Final current fingerprint: 231e505d8379c41deb1905d933d32e2b9974f358f84bce169d056f07d4384c75",
+  "completed_current_checkpoints": {
+    "rounding_regressions": {
+      "record": "production-readiness/zero-output-final-regressions.json",
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0,
+      "status": "RENEWED_WITHIN_CURRENT_27_REGRESSIONS_AND_FULL_HERMETIC_PASS",
+      "current_record": "production-readiness/corrected-candidate-regressions.json"
+    },
+    "frontend": {
+      "record": "production-readiness/frontend-check.json",
+      "passed": 410,
+      "files": 59,
+      "exit_code": 0,
+      "checks": [
+        "lint",
+        "typecheck",
+        "unit tests"
+      ]
+    },
+    "caller_abi": {
+      "record": "production-readiness/frontend-abi-reconciliation.json",
+      "declarations": 28,
+      "incompatible": 0,
+      "status": "ALL_28_CURRENT_DECLARATIONS_COMPATIBLE_REFRESH_ARTIFACT_FILE_HASHES_AFTER_FINAL_FORGE"
+    },
+    "pinned_rpc_preflight": {
+      "record": "production-readiness/pinned-rpc-preflight.json",
+      "base_block": 45446736,
+      "robinhood_block": 56118361
+    },
+    "storage": {
+      "record": "production-readiness/storage-review.json",
+      "reviewed_fields": 64
+    },
+    "source_manifest": {
+      "record": "production-readiness/release-source-manifest.json",
+      "solidity_and_config_files": 19635,
+      "caller_and_orchestration_files": 643,
+      "frontend_task_start_files_changed": 0
+    },
+    "catalog": {
+      "record": "production-readiness/maintained-release-catalog.json",
+      "maintained_stages": 24,
+      "local_stages_from_phase_02": 20,
+      "runtime_status": "PENDING"
+    },
+    "funding_quote_helpers": {
+      "record": "production-readiness/funding-quote-checks.json",
+      "passed": 8,
+      "catalog_stages": 19,
+      "full_simulation_status": "PENDING"
+    },
+    "ethereum_pins": {
+      "record": "production-readiness/ethereum-pinned-rpc-preflight.json",
+      "blocks": [
+        24000000,
+        25934585
+      ],
+      "status": "AVAILABLE"
+    },
+    "superseded_complete_build": {
+      "record": "before-current-repository-production-readiness-core-final/implementation-full-build.json",
+      "exit_code": 0,
+      "seconds": 15790.852,
+      "accepted_for_current_candidate": false,
+      "reason": "Successful compilation of the pre-fix source; source guard prevented stale tests."
+    },
+    "current_complete_build": {
+      "record": "implementation-full-build.json",
+      "exit_code": 0,
+      "seconds": 132.233,
+      "sources_unchanged": true
+    },
+    "rounding_and_authorization_regressions": {
+      "record": "production-readiness/corrected-candidate-regressions.json",
+      "passed": 27,
+      "failed": 0,
+      "skipped": 0,
+      "status": "PASS_CURRENT_CANDIDATE"
+    },
+    "full_hermetic": {
+      "record": "implementation-hermetic-test.json",
+      "passed": 31305,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 2695,
+      "seconds": 1042.441,
+      "status": "PASS_CURRENT_CANDIDATE"
+    },
+    "provider_forks": {
+      "record": "production-readiness/provider-renewal-core-final/run.json",
+      "passed": 27,
+      "failed": 0,
+      "skipped": 0
+    },
+    "v3_forks": {
+      "record": "v3-retained-live-pool-production-readiness-run.json",
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "remaining_production_readiness": [
+    {
+      "id": "P0",
+      "status": "COMPLETE_OWNER_PROVENANCE_PRESERVED_CURRENT_CANDIDATE_ESTABLISHED"
+    },
+    {
+      "id": "P1",
+      "status": "REVIEW_AND_ALL_REGRESSIONS_PASS_ACTUAL_CORRECTED_CORE_AND_LAUNCH_CHECKS_PENDING"
+    },
+    {
+      "id": "P2",
+      "status": "SOURCE_PAYLOAD_STORAGE_CALLERS_RECONCILED_FINAL_PROXY_EVIDENCE_PENDING"
+    },
+    {
+      "id": "P3",
+      "status": "COMPLETE_MATCHING_BUILD_FULL_HERMETIC_AND_CURRENT_ARTIFACT_CLOSURES"
+    },
+    {
+      "id": "P4",
+      "status": "COMPLETE_ALL_EIGHT_V3_AND_27_PROVIDER_CASES_PASS"
+    },
+    {
+      "id": "P5",
+      "status": "STRICT_LOCAL_ARCHITECTURE_DEPLOYMENT_RUNNING"
+    },
+    {
+      "id": "P6",
+      "status": "FINAL_ACCEPTANCE_MANIFEST_AND_HANDOFF_PENDING"
+    }
+  ],
+  "next_commands_after_active_exit": [
+    "Poll session 80191. It reconciles current artifacts and resumes only local stage 06/09/export, verifies code/receipts, runs all 39 lifecycle cases and the isolated funding quote. Do not duplicate its Forge commands.",
+    "If a step fails, inspect and preserve its exact evidence; fix the confirmed cause and reuse unaffected matching checks.",
+    "After all machine checks pass, refresh artifact-file/source manifests, reconcile every applicable A1\u2013A42 row and parent stage, close findings, produce the final exact release manifest and handoff. No public deployment or migration."
+  ],
+  "process_policy": "One Forge process at a time. Preserve cache/out. Let long solc processes exit; no impatience interruption.",
+  "historical_checkpoint_archive": "production-readiness/before-queue-pr04-reconciliation.json",
+  "earlier_scope_and_evidence_archive": "production-readiness/before-current-implementation-queue.json",
+  "excluded": [
+    "D60 Balancer-hosted DETF functional work",
+    "D66 unfinished Slipstream",
+    "Public deployment and fund migration"
+  ],
+  "readiness": "NOT_YET_ESTABLISHED",
+  "current_source_and_config_sha256": "231e505d8379c41deb1905d933d32e2b9974f358f84bce169d056f07d4384c75",
+  "freeze_scope": "Only the two missing stage-06/09 facet assignments changed Solidity since the passing execution candidate. New script-inclusive full build passes in 132.233 s. Contract, test, dependency and compiler closures are unchanged and explicitly reused. Final current fingerprint: 231e505d8379c41deb1905d933d32e2b9974f358f84bce169d056f07d4384c75",
+  "successor_coordinator": {
+    "session": 55594,
+    "record": "production-readiness/final-sequence-coordinator.json",
+    "status": "REPOSITORY_CHECKS_PASSED_REHEARSAL_AND_ACCEPTANCE_REMAIN"
+  },
+  "superseded_waiting_coordinator": {
+    "session": 54472,
+    "record": "production-readiness/corrected-sequence-coordinator.json",
+    "disposition": "Exited 1 on the expected frozen-source guard; no Forge launched. Recorded as SUPERSEDED_SOURCE_GUARD_REJECTED."
+  },
+  "funding_quote_disposition": "PR-06 corrected the maintained funding simulation and isolated artifact path; eight shell checks and 19-stage catalog parity pass. Full simulation pending.",
+  "local_rehearsal_node": {
+    "session": 14343,
+    "rpc": "http://127.0.0.1:18663",
+    "record": "current-robinhood-rehearsal-production-readiness/strict-node-preflight.json",
+    "status": "CURRENT_CORE_AND_PACKAGES_DEPLOYING_ON_STRICT_LOCAL_NODE",
+    "note": "P3/P4 passed; preserve the active local deployment and occupied labels. No reset or duplicate architecture command."
+  },
+  "post_build_sequence_record": "production-readiness/final-local-validation-resume.json",
+  "post_build_sequence_session": 88349,
+  "local_funding_node": {
+    "session": 21702,
+    "rpc": "http://127.0.0.1:18664",
+    "record": "current-robinhood-rehearsal-production-readiness-funding/node.json",
+    "preflight": "current-robinhood-rehearsal-production-readiness-funding/strict-node-preflight-v2.json",
+    "scope": "Prepared only; the complete quote waits for all 39 lifecycle cases. Preserve this node and label."
+  },
+  "baseline_reconciliation_disposition": {
+    "original_stop": "production-readiness/post-build-release-core-final/run.json",
+    "reason": "Historical temporary checkout and baseline Git object are unavailable.",
+    "resolution": "Reuse archived descriptions for the exact e08b415733e729471779dcb8102529631330ea16 baseline; all 3,112 required paths are present, and current sources are rehashed.",
+    "baseline_evidence": "production-readiness/post-build-release-core-final/prior-reconciliation/current-test-consolidation.json",
+    "baseline_evidence_sha256": "c30d19c8b440e797f564cf51403e3e123aab522469b58d75402ee0fb56d121db"
+  },
+  "accepted_repository_sequence_record": "current-repository-production-readiness-core-final-sequence.json",
+  "repository_sequence_pointer_note": "Provider, V3 and local-release runners consume active_sequence_record as their completed P3 prerequisite. Keep it on the accepted repository run; post_build_sequence_record identifies the active follow-up workflow.",
+  "shell_change_validation_disposition": "PR-07 changes deploy_all.sh only. Solidity/compiler fingerprints are unchanged, so matching production builds, tests and provider/V3 forks are retained. Local deployment and EIP-1559 funding behavior are revalidated, and the final caller source manifest must be refreshed.",
+  "script_only_evidence_reuse": "production-readiness/pr08-script-only-evidence-reuse.json",
+  "next_command": "Poll session 88349. The fork lifecycle compiler is active; preserve it and both local nodes."
+}

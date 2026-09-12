@@ -1,0 +1,36 @@
+{
+  "recorded_at_utc": "2026-09-08T04:21:03.884322+00:00",
+  "status": "APPLIED_VALIDATION_PENDING",
+  "scope": "One shared assertion compares actual output, ownership/supply, aggregate buffered claim and every projected state field against real proxy execution. V3/V4 both directions, three real V2 pools including external LP redemption, and yield-bearing ERC4626 protocol-share payment.",
+  "dependencies": [
+    "prepare-external-se-quote-transition.py",
+    "Provider facet selector wiring and independent controls are still required."
+  ],
+  "files": [
+    {
+      "path": "test/foundry/spec/vaults/standard/TransitionQuoteAssertions.sol",
+      "before_sha256": "d9ffe2f99d27444eb268bd4c5e82eb27c8ebe7db1a9a08b16ebb988fb091d1d6",
+      "after_sha256": "2eab6d35f5cc0661ea6880b2a3a6faff5635e645febc43d2ef6220af82b2fbf0"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_FullRangeBook.t.sol",
+      "before_sha256": "a2b88003127edc3fb38eb885d2358436db8578b32114c4396e95216e07d2aec6",
+      "after_sha256": "4ec127a00697e4cb758adbfdace3bfa04cb34512fc56aca852f2c0af4483ab1b"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_FullRangeBook.t.sol",
+      "before_sha256": "9efc9fbfbaea93701d802fabd38d60d2125683d7aa15708c426480e166d1eea6",
+      "after_sha256": "889dbebb83faf9b7fbc38f46b1830ea4c210433bbc17dc5f2adcbf4dea7fa69d"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v2/UniswapV2StandardExchange_TransitionQuote.t.sol",
+      "before_sha256": "c883f26d6a5a33b85dce010784b95d06d6cafdf27cb12e92b968e512838e1e12",
+      "after_sha256": "e3518b894d4e85c2ae4bef4e8a89a14186e4db753f5ff14b71c66239b00a330d"
+    },
+    {
+      "path": "test/foundry/spec/vaults/standard/erc4626/ERC4626StandardExchange_TransitionQuote.t.sol",
+      "before_sha256": "21196a4214c24234bc1b2431382b35340fbb9a7d93cc3cfbda635242775eb280",
+      "after_sha256": "49af265b2f7bfb10a8b7ae42c45d26df5e62af477b3b52d71d671ce4475c90b9"
+    }
+  ]
+}

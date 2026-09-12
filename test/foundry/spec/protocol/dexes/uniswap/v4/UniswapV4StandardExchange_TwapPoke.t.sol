@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
@@ -155,12 +157,11 @@ contract UniswapV4StandardExchange_TwapPoke is TestBase_UniswapV4StandardExchang
         bytes4 sel = bytes4(keccak256("update((address,address,uint24,int24,address))"));
         vm.mockCallRevert(address(twapOracle), abi.encodeWithSelector(sel), "hostile");
         uint256 amountIn = 5 ether;
-        ERC20PermitMintableStub(_token0()).mint(address(this), amountIn);
-        IERC20(_token0()).approve(address(vault), amountIn);
+        (address[] memory tokens, uint256[] memory amounts) = _fundDualInput(_token0(), amountIn);
         vm.expectEmit(false, false, false, true, address(vault));
         emit UniswapV4StandardExchangeCommon.TwapOracleUpdateFailed(PoolId.unwrap(poolKey.toId()), bytes("hostile"));
-        uint256 shares = vault.exchangeIn(
-            IERC20(_token0()), amountIn, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1 hours
+        uint256 shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
+            tokens, amounts, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1 hours
         );
         assertGt(shares, 0);
         vm.clearMockedCalls();
@@ -258,13 +259,28 @@ contract UniswapV4StandardExchange_TwapPoke is TestBase_UniswapV4StandardExchang
         );
     }
 
+    function _fundDualInput(address token, uint256 amountIn)
+        internal returns (address[] memory tokens, uint256[] memory amounts)
+    {
+        assertEq(token, _token0(), "TWAP fixture starts from token0");
+        tokens = new address[](2);
+        tokens[0] = _token0();
+        tokens[1] = Currency.unwrap(poolKey.currency1);
+        amounts = new uint256[](2);
+        amounts[0] = amountIn;
+        amounts[1] = amountIn;
+        for (uint256 i; i < 2; ++i) {
+            ERC20PermitMintableStub(tokens[i]).mint(address(this), amounts[i]);
+            IERC20(tokens[i]).approve(address(vault), amounts[i]);
+        }
+    }
+
     function _zapIn(address token, uint256 amountIn) internal returns (uint256 shares) {
-        ERC20PermitMintableStub(token).mint(address(this), amountIn);
-        IERC20(token).approve(address(vault), amountIn);
-        shares = vault.exchangeIn(
-            IERC20(token), amountIn, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1 hours
+        (address[] memory tokens, uint256[] memory amounts) = _fundDualInput(token, amountIn);
+        shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
+            tokens, amounts, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1 hours
         );
-        assertGt(shares, 0);
+        assertGt(shares, 0, "funded activation writes TWAP");
     }
 
     function _state()

@@ -1,0 +1,1040 @@
+[
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg_Deploy.t.sol",
+    "line": 89,
+    "kind": "old_deployment_fields",
+    "text": "args.thresholdMode = ThresholdMode.Policy;"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg_Deploy.t.sol",
+    "line": 139,
+    "kind": "retired_calls",
+    "text": "lp.mint(address(this), gift);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg_Deploy.t.sol",
+    "line": 145,
+    "kind": "retired_calls",
+    "text": "assertEq(vault_.originalSharesOf(id0), gift, \"O==0 credits id 0 1:1\");"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg_Deploy.t.sol",
+    "line": 161,
+    "kind": "retired_calls",
+    "text": "lp.mint(address(this), 2e18);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg_Deploy.t.sol",
+    "line": 165,
+    "kind": "retired_calls",
+    "text": "uint256 origBefore = vault_.originalSharesOf(id0);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg_Deploy.t.sol",
+    "line": 171,
+    "kind": "retired_calls",
+    "text": "lp.mint(address(this), gift);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg_Deploy.t.sol",
+    "line": 176,
+    "kind": "retired_calls",
+    "text": "assertEq(vault_.originalSharesOf(id0), origBefore, \"no originalShares mint\");"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Donate.t.sol",
+    "line": 15,
+    "kind": "retired_calls",
+    "text": "uint256 origBefore = nft.originalSharesOf(tokenId);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Donate.t.sol",
+    "line": 21,
+    "kind": "retired_calls",
+    "text": "pairToken.mint(detfUser, donateIn);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Donate.t.sol",
+    "line": 34,
+    "kind": "retired_calls",
+    "text": "assertEq(nft.originalSharesOf(tokenId), origBefore, \"no originalShares mint\");"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_CloseD25Base.sol",
+    "line": 163,
+    "kind": "retired_calls",
+    "text": "pairToken.mint(bonder_, pairAmount_);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Adversarial_Reentrancy.t.sol",
+    "line": 88,
+    "kind": "retired_calls",
+    "text": "hostilePair.mint(detfUser, 10_000_000 ether);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Adversarial_Reentrancy.t.sol",
+    "line": 118,
+    "kind": "retired_calls",
+    "text": "uint256 out_ = hostileInfo.mint("
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ReserveDonationOpenBase.sol",
+    "line": 199,
+    "kind": "retired_calls",
+    "text": "try SimpleMintableERC20(address(tok_)).mint(to_, amount_) {"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ReserveDonationOpenBase.sol",
+    "line": 218,
+    "kind": "retired_calls",
+    "text": "try SimpleMintableERC20(toks_[i]).mint(dnDonor, 10_000 ether) {} catch {"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Dust.t.sol",
+    "line": 25,
+    "kind": "retired_calls",
+    "text": "uint256 origBefore = nft.originalSharesOf(tokenId);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Dust.t.sol",
+    "line": 31,
+    "kind": "retired_calls",
+    "text": "pairToken.mint(detf, 5 ether);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Dust.t.sol",
+    "line": 39,
+    "kind": "retired_calls",
+    "text": "assertEq(nft.originalSharesOf(tokenId), origBefore, \"no originalShares mint\");"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Alignment_CloseD25.t.sol",
+    "line": 43,
+    "kind": "retired_calls",
+    "text": "pair0.mint(bonder_, pairAmount_);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Alignment_CloseD25.t.sol",
+    "line": 44,
+    "kind": "retired_calls",
+    "text": "pair1.mint(bonder_, pairAmount_);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Alignment_CloseD25.t.sol",
+    "line": 45,
+    "kind": "retired_calls",
+    "text": "pair2.mint(bonder_, pairAmount_);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Adversarial_Reentrancy.t.sol",
+    "line": 87,
+    "kind": "retired_calls",
+    "text": "hostilePair.mint(detfUser, 10_000_000 ether);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Adversarial_Reentrancy.t.sol",
+    "line": 116,
+    "kind": "retired_calls",
+    "text": "uint256 out_ = hostileInfo.mint("
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_OriginalPrincipal.t.sol",
+    "line": 60,
+    "kind": "retired_calls",
+    "text": "SimpleMintableERC20(address(lead_)).mint(BONDER, amount_);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_OriginalPrincipal.t.sol",
+    "line": 70,
+    "kind": "retired_calls",
+    "text": "SimpleMintableERC20(tokens_[i_]).mint(BONDER, amounts_[i_]);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_OriginalPrincipal.t.sol",
+    "line": 85,
+    "kind": "retired_calls",
+    "text": "SimpleMintableERC20(address(lead_)).mint(BONDER, 40 ether);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_OriginalPrincipal.t.sol",
+    "line": 129,
+    "kind": "retired_calls",
+    "text": "SimpleMintableERC20(address(lead_)).mint(BONDER, 1 ether);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Close.t.sol",
+    "line": 47,
+    "kind": "retired_calls",
+    "text": "pairToken.mint(address(info), 10 ether);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Alignment_RedeemD15.t.sol",
+    "line": 101,
+    "kind": "retired_calls",
+    "text": "uint256 preview_ = claim_.previewRedeem(redeem_);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Alignment_RedeemD15.t.sol",
+    "line": 127,
+    "kind": "retired_calls",
+    "text": "uint256 origBefore_ = nft_.originalSharesOf(nft_.detfNFTId());"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Alignment_RedeemD15.t.sol",
+    "line": 133,
+    "kind": "retired_calls",
+    "text": "assertGe(nft_.originalSharesOf(nft_.detfNFTId()) + 1, origBefore_, \"D15-3 orig except leftover compound\");"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Alignment_RedeemD15.t.sol",
+    "line": 140,
+    "kind": "retired_calls",
+    "text": "uint256 keepOrig_ = nft_.originalSharesOf(keepBondId);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Alignment_RedeemD15.t.sol",
+    "line": 149,
+    "kind": "retired_calls",
+    "text": "assertEq(nft_.originalSharesOf(keepBondId), keepOrig_, \"D15-4 other originalShares\");"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Alignment_RedeemD15.t.sol",
+    "line": 159,
+    "kind": "retired_calls",
+    "text": "uint256 orig0_ = nft_.originalSharesOf(nft_.detfNFTId());"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Alignment_RedeemD15.t.sol",
+    "line": 212,
+    "kind": "retired_calls",
+    "text": "assertGt(nft_.originalSharesOf(nft_.detfNFTId()), 0, \"D15-6 id0 lpOut\");"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Alignment_RedeemD15.t.sol",
+    "line": 139,
+    "kind": "retired_calls",
+    "text": "uint256 preview_ = _claimTok().previewRedeem(redeem_);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Alignment_CloseD25.t.sol",
+    "line": 20,
+    "kind": "retired_calls",
+    "text": "pair1.mint(alice_, 10_000_000 ether);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Alignment_CloseD25.t.sol",
+    "line": 21,
+    "kind": "retired_calls",
+    "text": "pair1.mint(bob_, 10_000_000 ether);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_ReserveDonation.t.sol",
+    "line": 64,
+    "kind": "retired_calls",
+    "text": "pairToken.mint(detfUser, 1 ether);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Adversarial_Reentrancy.t.sol",
+    "line": 90,
+    "kind": "retired_calls",
+    "text": "hostilePair.mint(detfUser, 10_000_000 ether);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Adversarial_Reentrancy.t.sol",
+    "line": 91,
+    "kind": "retired_calls",
+    "text": "pair0.mint(detfUser, 10_000_000 ether);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Adversarial_Reentrancy.t.sol",
+    "line": 92,
+    "kind": "retired_calls",
+    "text": "pair1.mint(detfUser, 10_000_000 ether);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Adversarial_Reentrancy.t.sol",
+    "line": 93,
+    "kind": "retired_calls",
+    "text": "pair2.mint(detfUser, 10_000_000 ether);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Adversarial_Reentrancy.t.sol",
+    "line": 127,
+    "kind": "retired_calls",
+    "text": "uint256 out_ = hostileInfo.mint("
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_RedeemD15Base.sol",
+    "line": 36,
+    "kind": "retired_calls",
+    "text": "uint256 origBefore_ = nft_.originalSharesOf(nft_.detfNFTId());"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_RedeemD15Base.sol",
+    "line": 42,
+    "kind": "retired_calls",
+    "text": "assertGe(nft_.originalSharesOf(nft_.detfNFTId()) + 1, origBefore_, \"D15-3 orig except leftover compound\");"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_RedeemD15Base.sol",
+    "line": 49,
+    "kind": "retired_calls",
+    "text": "uint256 keepOrig_ = nft_.originalSharesOf(keepBondId);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_RedeemD15Base.sol",
+    "line": 58,
+    "kind": "retired_calls",
+    "text": "assertEq(nft_.originalSharesOf(keepBondId), keepOrig_, \"D15-4 other originalShares\");"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_RedeemD15Base.sol",
+    "line": 78,
+    "kind": "retired_calls",
+    "text": "assertGt(nft_.originalSharesOf(nft_.detfNFTId()), 0, \"D15-6 id0 lpOut\");"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_IoTablesGoldBase.sol",
+    "line": 248,
+    "kind": "retired_calls",
+    "text": "junk_.mint(detf, 5 ether);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Alignment_FeeCreatorClaim.t.sol",
+    "line": 122,
+    "kind": "retired_calls",
+    "text": "pair1.mint(who, 10_000_000 ether);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad.t.sol",
+    "line": 39,
+    "kind": "retired_calls",
+    "text": "pair1.mint(donor_, 10 ether);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Alignment_RedeemD15.t.sol",
+    "line": 158,
+    "kind": "retired_calls",
+    "text": "uint256 orig_ = nft_.originalSharesOf(nft_.detfNFTId());"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ClaimBase.sol",
+    "line": 68,
+    "kind": "retired_calls",
+    "text": "try SimpleMintableERC20(toks_[i]).mint(who, amt) {} catch {"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/adversarial/Adversarial_Reentrancy.t.sol",
+    "line": 88,
+    "kind": "retired_calls",
+    "text": "hostilePair.mint(detfUser, 10_000_000 ether);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/adversarial/Adversarial_Reentrancy.t.sol",
+    "line": 116,
+    "kind": "retired_calls",
+    "text": "uint256 out_ = hostileInfo.mint("
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_ClaimBase_Decimals.sol",
+    "line": 77,
+    "kind": "retired_calls",
+    "text": "try MintableERC20Decimals(toks_[i]).mint(who, fund_) {} catch {"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_IoTablesGoldBase_Decimals.sol",
+    "line": 218,
+    "kind": "retired_calls",
+    "text": "junk_.mint(detf, 5 ether);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Dust_Decimals.sol",
+    "line": 25,
+    "kind": "retired_calls",
+    "text": "uint256 origBefore = nft.originalSharesOf(tokenId);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Dust_Decimals.sol",
+    "line": 31,
+    "kind": "retired_calls",
+    "text": "pairToken.mint(detf, _uPair(5));"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Dust_Decimals.sol",
+    "line": 39,
+    "kind": "retired_calls",
+    "text": "assertEq(nft.originalSharesOf(tokenId), origBefore, \"no originalShares mint\");"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_ReserveDonationOpenBase_Decimals.sol",
+    "line": 121,
+    "kind": "retired_calls",
+    "text": "try MintableERC20Decimals(address(tok_)).mint(to_, amount_) {"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_ReserveDonationOpenBase_Decimals.sol",
+    "line": 140,
+    "kind": "retired_calls",
+    "text": "try SimpleMintableERC20(toks_[i]).mint(dnDonor, _uPair(10_000)) {} catch {"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Donate_Decimals.sol",
+    "line": 15,
+    "kind": "retired_calls",
+    "text": "uint256 origBefore = nft.originalSharesOf(tokenId);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Donate_Decimals.sol",
+    "line": 21,
+    "kind": "retired_calls",
+    "text": "pairToken.mint(detfUser, donateIn);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Donate_Decimals.sol",
+    "line": 34,
+    "kind": "retired_calls",
+    "text": "assertEq(nft.originalSharesOf(tokenId), origBefore, \"no originalShares mint\");"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_RedeemD15Base_Decimals.sol",
+    "line": 36,
+    "kind": "retired_calls",
+    "text": "uint256 origBefore_ = nft_.originalSharesOf(nft_.detfNFTId());"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_RedeemD15Base_Decimals.sol",
+    "line": 42,
+    "kind": "retired_calls",
+    "text": "assertGe(nft_.originalSharesOf(nft_.detfNFTId()) + 1, origBefore_, \"D15-3 orig except leftover compound\");"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_RedeemD15Base_Decimals.sol",
+    "line": 49,
+    "kind": "retired_calls",
+    "text": "uint256 keepOrig_ = nft_.originalSharesOf(keepBondId);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_RedeemD15Base_Decimals.sol",
+    "line": 58,
+    "kind": "retired_calls",
+    "text": "assertEq(nft_.originalSharesOf(keepBondId), keepOrig_, \"D15-4 other originalShares\");"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_RedeemD15Base_Decimals.sol",
+    "line": 78,
+    "kind": "retired_calls",
+    "text": "assertGt(nft_.originalSharesOf(nft_.detfNFTId()), 0, \"D15-6 id0 lpOut\");"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/adversarial/Adversarial_Reentrancy_Decimals.sol",
+    "line": 89,
+    "kind": "retired_calls",
+    "text": "hostilePair.mint(detfUser, _uPair(10_000_000));"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/adversarial/Adversarial_Reentrancy_Decimals.sol",
+    "line": 117,
+    "kind": "retired_calls",
+    "text": "uint256 out_ = hostileInfo.mint("
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_Stage11Helpers.sol",
+    "line": 343,
+    "kind": "retired_calls",
+    "text": "IUniswapV4Detf(instance_).compoundProtocolRewards();"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_Policy.t.sol",
+    "line": 93,
+    "kind": "retired_calls",
+    "text": "info.compoundProtocolRewards();"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_Policy.t.sol",
+    "line": 225,
+    "kind": "retired_calls",
+    "text": "uint256 preview_ = _claimTokOf(d).previewRedeem(redeem_);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+    "line": 155,
+    "kind": "retired_calls",
+    "text": "nft_.sellPositionToDetfNft(tokenId, detfUser, detfUser);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+    "line": 164,
+    "kind": "retired_calls",
+    "text": "uint256 id0Before_ = nft_.originalSharesOf(DETF_PROTOCOL_BOND_NFT_ID);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+    "line": 171,
+    "kind": "retired_calls",
+    "text": "assertEq(nft_.originalSharesOf(tokenId), 0, \"sold originalShares\");"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+    "line": 172,
+    "kind": "retired_calls",
+    "text": "assertEq(nft_.originalSharesOf(DETF_PROTOCOL_BOND_NFT_ID), id0Before_ + principal, \"id0 takes originalShares\");"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+    "line": 182,
+    "kind": "retired_calls",
+    "text": "uint256 pending_ = nft_.pendingRewards(tokenId);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+    "line": 189,
+    "kind": "retired_calls",
+    "text": "assertEq(nft_.pendingRewards(tokenId), 0, \"pending cleared\");"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+    "line": 197,
+    "kind": "retired_calls",
+    "text": "uint256 preview_ = claim_.previewRedeem(redeem_);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+    "line": 244,
+    "kind": "retired_calls",
+    "text": "(uint256 detfIn_, uint256 lpOut_) = info.compoundProtocolRewards();"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+    "line": 254,
+    "kind": "retired_calls",
+    "text": "info.compoundProtocolRewards();"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Stage11Helpers_Decimals.sol",
+    "line": 343,
+    "kind": "retired_calls",
+    "text": "IUniswapV4Detf(instance_).compoundProtocolRewards();"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Policy_Decimals.sol",
+    "line": 93,
+    "kind": "retired_calls",
+    "text": "info.compoundProtocolRewards();"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Policy_Decimals.sol",
+    "line": 225,
+    "kind": "retired_calls",
+    "text": "uint256 preview_ = _claimTokOf(d).previewRedeem(redeem_);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+    "line": 155,
+    "kind": "retired_calls",
+    "text": "nft_.sellPositionToDetfNft(tokenId, detfUser, detfUser);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+    "line": 164,
+    "kind": "retired_calls",
+    "text": "uint256 id0Before_ = nft_.originalSharesOf(DETF_PROTOCOL_BOND_NFT_ID);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+    "line": 171,
+    "kind": "retired_calls",
+    "text": "assertEq(nft_.originalSharesOf(tokenId), 0, \"sold originalShares\");"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+    "line": 172,
+    "kind": "retired_calls",
+    "text": "assertEq(nft_.originalSharesOf(DETF_PROTOCOL_BOND_NFT_ID), id0Before_ + principal, \"id0 takes originalShares\");"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+    "line": 182,
+    "kind": "retired_calls",
+    "text": "uint256 pending_ = nft_.pendingRewards(tokenId);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+    "line": 189,
+    "kind": "retired_calls",
+    "text": "assertEq(nft_.pendingRewards(tokenId), 0, \"pending cleared\");"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+    "line": 197,
+    "kind": "retired_calls",
+    "text": "uint256 preview_ = claim_.previewRedeem(redeem_);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+    "line": 244,
+    "kind": "retired_calls",
+    "text": "(uint256 detfIn_, uint256 lpOut_) = info.compoundProtocolRewards();"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+    "line": 254,
+    "kind": "retired_calls",
+    "text": "info.compoundProtocolRewards();"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ4Se.t.sol",
+    "line": 17,
+    "kind": "retired_calls",
+    "text": "pairToken.mint(address(this), amount);"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ4Se.t.sol",
+    "line": 18,
+    "kind": "retired_calls",
+    "text": "seOther.mint(address(this), amount);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol",
+    "line": 244,
+    "kind": "retired_calls",
+    "text": "wethOut = layoutStruct.detf.claimLiquidity(lpAmount, recipient);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_MorphoBlueSe.sol",
+    "line": 58,
+    "kind": "retired_calls",
+    "text": "pairToken.mint(detfUser, 10_000_000 ether);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol",
+    "line": 98,
+    "kind": "retired_calls",
+    "text": "try pairToken.mint(to_, amount_) {"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ4Se.sol",
+    "line": 62,
+    "kind": "retired_calls",
+    "text": "pairToken.mint(detfUser, 10_000_000 ether);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_ProdSe_Decimals.sol",
+    "line": 229,
+    "kind": "retired_calls",
+    "text": "MintableERC20Decimals(pairA).mint(detfUser, amount * (10 ** uint256(MintableERC20Decimals(pairA).decimals())));"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_ProdSe_Decimals.sol",
+    "line": 230,
+    "kind": "retired_calls",
+    "text": "MintableERC20Decimals(pairB).mint(detfUser, amount * (10 ** uint256(MintableERC20Decimals(pairB).decimals())));"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_Policy.sol",
+    "line": 77,
+    "kind": "retired_calls",
+    "text": "pair0.mint(who, 10_000_000 ether);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_Policy.sol",
+    "line": 78,
+    "kind": "retired_calls",
+    "text": "pair1.mint(who, 10_000_000 ether);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_Policy.sol",
+    "line": 79,
+    "kind": "retired_calls",
+    "text": "pair2.mint(who, 10_000_000 ether);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_Policy.sol",
+    "line": 107,
+    "kind": "retired_calls",
+    "text": "SimpleMintableERC20(address(tok)).mint(detfUser, amount);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_MorphoMix.sol",
+    "line": 61,
+    "kind": "retired_calls",
+    "text": "p0.mint(detfUser, 10_000_000 ether);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_MorphoMix.sol",
+    "line": 62,
+    "kind": "retired_calls",
+    "text": "p1.mint(detfUser, 10_000_000 ether);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Decimals.sol",
+    "line": 72,
+    "kind": "retired_calls",
+    "text": "pair0.mint(detfUser, _u0(10_000_000));"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Decimals.sol",
+    "line": 73,
+    "kind": "retired_calls",
+    "text": "pair1.mint(detfUser, _u1(10_000_000));"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_MorphoMix_Decimals.sol",
+    "line": 61,
+    "kind": "retired_calls",
+    "text": "p0.mint(detfUser, 10_000_000 * (10 ** uint256(p0.decimals())));"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_MorphoMix_Decimals.sol",
+    "line": 62,
+    "kind": "retired_calls",
+    "text": "p1.mint(detfUser, 10_000_000 * (10 ** uint256(p1.decimals())));"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol",
+    "line": 139,
+    "kind": "retired_calls",
+    "text": "pool.mint(address(this), tickLower, tickUpper, liq, abi.encode(address(this)));"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol",
+    "line": 378,
+    "kind": "retired_calls",
+    "text": "IProdSeMintable(t0).mint(address(seeder), _humanUnits(t0, 100_000_000));"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol",
+    "line": 379,
+    "kind": "retired_calls",
+    "text": "IProdSeMintable(t1).mint(address(seeder), _humanUnits(t1, 100_000_000));"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol",
+    "line": 517,
+    "kind": "retired_calls",
+    "text": "IProdSeMintable(tokenA).mint(address(seeder), _humanUnits(tokenA, 1_000_000));"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol",
+    "line": 518,
+    "kind": "retired_calls",
+    "text": "IProdSeMintable(tokenB).mint(address(seeder), _humanUnits(tokenB, 1_000_000));"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ3Se.sol",
+    "line": 69,
+    "kind": "retired_calls",
+    "text": "pairToken.mint(detfUser, 10_000_000 ether);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ3Se.sol",
+    "line": 80,
+    "kind": "retired_calls",
+    "text": "pairToken.mint(address(this), amount_);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ3Se.sol",
+    "line": 81,
+    "kind": "retired_calls",
+    "text": "seOther.mint(address(this), amount_);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_MorphoBlueSe_Decimals.sol",
+    "line": 48,
+    "kind": "retired_calls",
+    "text": "p0.mint(detfUser, 10_000_000 * (10 ** uint256(p0.decimals())));"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_MorphoBlueSe_Decimals.sol",
+    "line": 49,
+    "kind": "retired_calls",
+    "text": "p1.mint(detfUser, 10_000_000 * (10 ** uint256(p1.decimals())));"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol",
+    "line": 134,
+    "kind": "retired_calls",
+    "text": "pairToken.mint(detfUser, 10_000_000 ether);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol",
+    "line": 98,
+    "kind": "retired_calls",
+    "text": "try pairToken.mint(to_, amount_) {"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad.sol",
+    "line": 76,
+    "kind": "retired_calls",
+    "text": "pair0.mint(detfUser, 10_000_000 ether);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad.sol",
+    "line": 77,
+    "kind": "retired_calls",
+    "text": "pair1.mint(detfUser, 10_000_000 ether);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad.sol",
+    "line": 78,
+    "kind": "retired_calls",
+    "text": "pair2.mint(detfUser, 10_000_000 ether);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_ProdSe.sol",
+    "line": 247,
+    "kind": "retired_calls",
+    "text": "SimpleMintableERC20(pair).mint(detfUser, 10_000_000 ether);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_Decimals.sol",
+    "line": 79,
+    "kind": "retired_calls",
+    "text": "pair0.mint(detfUser, _u0(10_000_000));"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_Decimals.sol",
+    "line": 80,
+    "kind": "retired_calls",
+    "text": "pair1.mint(detfUser, _u1(10_000_000));"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_Decimals.sol",
+    "line": 81,
+    "kind": "retired_calls",
+    "text": "pair2.mint(detfUser, _u2(10_000_000));"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Univ4Se_Decimals.sol",
+    "line": 52,
+    "kind": "retired_calls",
+    "text": "p0.mint(detfUser, 10_000_000 * (10 ** uint256(p0.decimals())));"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Univ4Se_Decimals.sol",
+    "line": 53,
+    "kind": "retired_calls",
+    "text": "p1.mint(detfUser, 10_000_000 * (10 ** uint256(p1.decimals())));"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_MorphoBlueSe_Decimals.sol",
+    "line": 52,
+    "kind": "retired_calls",
+    "text": "pairToken.mint(detfUser, _uPair(10_000_000));"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Univ4Se.sol",
+    "line": 52,
+    "kind": "retired_calls",
+    "text": "p0.mint(detfUser, 10_000_000 ether);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Univ4Se.sol",
+    "line": 53,
+    "kind": "retired_calls",
+    "text": "p1.mint(detfUser, 10_000_000 ether);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Univ3Se_Decimals.sol",
+    "line": 56,
+    "kind": "retired_calls",
+    "text": "p0.mint(detfUser, 10_000_000 * (10 ** uint256(p0.decimals())));"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Univ3Se_Decimals.sol",
+    "line": 57,
+    "kind": "retired_calls",
+    "text": "p1.mint(detfUser, 10_000_000 * (10 ** uint256(p1.decimals())));"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_Decimals.sol",
+    "line": 73,
+    "kind": "retired_calls",
+    "text": "pair0.mint(detfUser, _u0(10_000_000));"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_Decimals.sol",
+    "line": 74,
+    "kind": "retired_calls",
+    "text": "pair1.mint(detfUser, _u1(10_000_000));"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_CurveQuad.sol",
+    "line": 49,
+    "kind": "retired_calls",
+    "text": "curvePairs[i].mint(detfUser, 10_000_000 ether);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ3Se_Decimals.sol",
+    "line": 62,
+    "kind": "retired_calls",
+    "text": "pairToken.mint(detfUser, _uPair(10_000_000));"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_Policy.sol",
+    "line": 80,
+    "kind": "retired_calls",
+    "text": "SimpleMintableERC20(address(tok)).mint(detfUser, amount);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_Policy.sol",
+    "line": 99,
+    "kind": "retired_calls",
+    "text": "SimpleMintableERC20(tokenIn).mint(d, chunk_);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ4Se_Decimals.sol",
+    "line": 57,
+    "kind": "retired_calls",
+    "text": "pairToken.mint(detfUser, _uPair(10_000_000));"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol",
+    "line": 178,
+    "kind": "retired_calls",
+    "text": "try SimpleMintableERC20(token_).mint(to_, amount_) {"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted.sol",
+    "line": 70,
+    "kind": "retired_calls",
+    "text": "pair0.mint(detfUser, 10_000_000 ether);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted.sol",
+    "line": 71,
+    "kind": "retired_calls",
+    "text": "pair1.mint(detfUser, 10_000_000 ether);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted.sol",
+    "line": 190,
+    "kind": "retired_calls",
+    "text": "pair0.mint(who, amt);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted.sol",
+    "line": 191,
+    "kind": "retired_calls",
+    "text": "pair1.mint(who, amt);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol",
+    "line": 182,
+    "kind": "retired_calls",
+    "text": "try MintableERC20Decimals(token_).mint(to_, amount_) {"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital.sol",
+    "line": 75,
+    "kind": "retired_calls",
+    "text": "pair0.mint(detfUser, 10_000_000 ether);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital.sol",
+    "line": 76,
+    "kind": "retired_calls",
+    "text": "pair1.mint(detfUser, 10_000_000 ether);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Univ3Se.sol",
+    "line": 56,
+    "kind": "retired_calls",
+    "text": "p0.mint(detfUser, 10_000_000 ether);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Univ3Se.sol",
+    "line": 57,
+    "kind": "retired_calls",
+    "text": "p1.mint(detfUser, 10_000_000 ether);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_ProdSe_Decimals.sol",
+    "line": 244,
+    "kind": "retired_calls",
+    "text": "MintableERC20Decimals(pair).mint("
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Decimals.sol",
+    "line": 156,
+    "kind": "retired_calls",
+    "text": "pairToken.mint(who, pairAmount_);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Decimals.sol",
+    "line": 193,
+    "kind": "retired_calls",
+    "text": "try MintableERC20Decimals(token_).mint(who, amt_) {"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Decimals.sol",
+    "line": 238,
+    "kind": "retired_calls",
+    "text": "pairToken.mint(detfUser, _uPair(10_000_000));"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_ProdSe.sol",
+    "line": 200,
+    "kind": "retired_calls",
+    "text": "SimpleMintableERC20(pairA).mint(detfUser, amount);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_ProdSe.sol",
+    "line": 201,
+    "kind": "retired_calls",
+    "text": "SimpleMintableERC20(pairB).mint(detfUser, amount);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_MorphoBlueSe.sol",
+    "line": 48,
+    "kind": "retired_calls",
+    "text": "p0.mint(detfUser, 10_000_000 ether);"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_MorphoBlueSe.sol",
+    "line": 49,
+    "kind": "retired_calls",
+    "text": "p1.mint(detfUser, 10_000_000 ether);"
+  },
+  {
+    "path": "test/foundry/fork/robinhood_4663/RobinhoodReleaseRehearsal.t.sol",
+    "line": 133,
+    "kind": "retired_calls",
+    "text": "SimpleMintableERC20(input).mint(address(h), 10);"
+  },
+  {
+    "path": "test/foundry/fork/robinhood_4663/RobinhoodReleaseRehearsal.t.sol",
+    "line": 197,
+    "kind": "retired_calls",
+    "text": "SimpleMintableERC20(args.tokens[i]).mint(detfUser, 10_000 ether);"
+  },
+  {
+    "path": "test/foundry/fork/robinhood_4663/RobinhoodReleaseRehearsal.t.sol",
+    "line": 457,
+    "kind": "retired_calls",
+    "text": "SimpleMintableERC20(pairs[i]).mint(detfUser, 1_000_000 ether);"
+  },
+  {
+    "path": "test/foundry/fork/robinhood_4663/RobinhoodReleaseRehearsal.t.sol",
+    "line": 469,
+    "kind": "retired_calls",
+    "text": "SimpleMintableERC20(pair).mint(address(pool), 1_000_000 ether);"
+  },
+  {
+    "path": "test/foundry/fork/robinhood_4663/RobinhoodReleaseRehearsal.t.sol",
+    "line": 470,
+    "kind": "retired_calls",
+    "text": "SimpleMintableERC20(other).mint(address(pool), 1_000_000 ether);"
+  },
+  {
+    "path": "test/foundry/fork/robinhood_4663/RobinhoodReleaseRehearsal.t.sol",
+    "line": 471,
+    "kind": "retired_calls",
+    "text": "pool.mint(address(this));"
+  },
+  {
+    "path": "test/foundry/fork/robinhood_4663/RobinhoodReleaseRehearsal.t.sol",
+    "line": 621,
+    "kind": "retired_calls",
+    "text": "SimpleMintableERC20(tokens_[i_]).mint(address(this), amounts_[i_]);"
+  }
+]

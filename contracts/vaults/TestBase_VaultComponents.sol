@@ -1,6 +1,16 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+// Explicit artifacts for components CREATE3-loaded by this base, including focused runs.
+import {ERC20Facet} from "@crane/contracts/tokens/ERC20/ERC20Facet.sol";
+import {ERC2612Facet} from "@crane/contracts/tokens/ERC2612/ERC2612Facet.sol";
+import {ERC5267Facet} from "@crane/contracts/utils/cryptography/ERC5267/ERC5267Facet.sol";
+import {ERC4626Facet} from "@crane/contracts/tokens/ERC4626/ERC4626Facet.sol";
+import {ERC4626BasedBasicVaultFacet} from "contracts/vaults/basic/ERC4626BasedBasicVaultFacet.sol";
+import {ERC4626StandardVaultFacet} from "contracts/vaults/standard/ERC4626StandardVaultFacet.sol";
+import {MultiAssetBasicVaultFacet} from "contracts/vaults/basic/MultiAssetBasicVaultFacet.sol";
+import {MultiAssetStandardVaultFacet} from "contracts/vaults/standard/MultiAssetStandardVaultFacet.sol";
+
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";

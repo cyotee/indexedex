@@ -1,0 +1,44 @@
+[
+  {
+    "contract": "LidoStandardExchangeProjectionFork",
+    "artifact": "out/LidoService_Fork.t.sol/LidoStandardExchangeProjectionFork.json",
+    "artifact_sha256": "5321a2e956fcac82c95533843088f950161b5c6aae427985d43a91264b4ccab9",
+    "metadata_file": "LidoStandardExchangeProjectionFork.metadata.json",
+    "source_count": 329
+  },
+  {
+    "contract": "EtherFiStandardExchangeProjectionFork",
+    "artifact": "out/EtherFiWeETHStandardExchange_Fork.t.sol/EtherFiStandardExchangeProjectionFork.json",
+    "artifact_sha256": "b0a4b7eb9e2d14617a06c80f8e2961c695c85cae291a2d47f667b326317ada09",
+    "metadata_file": "EtherFiStandardExchangeProjectionFork.metadata.json",
+    "source_count": 303
+  },
+  {
+    "contract": "RocketPoolStandardExchangeProjectionFork",
+    "artifact": "out/RocketPoolRETHStandardExchange_Fork.t.sol/RocketPoolStandardExchangeProjectionFork.json",
+    "artifact_sha256": "a2fcd3af318ca57d091041255a5c87a6aa63dc751d42f23f06d83cf1974a6bae",
+    "metadata_file": "RocketPoolStandardExchangeProjectionFork.metadata.json",
+    "source_count": 304
+  },
+  {
+    "contract": "ERC4626StandardExchange_SfrxETH_ProjectionFork",
+    "artifact": "out/ERC4626StandardExchange_SfrxETH_Fork.t.sol/ERC4626StandardExchange_SfrxETH_ProjectionFork.json",
+    "artifact_sha256": "f28bb9c59c7ddfb483b71b188730aece34023e17db38b4c104d4bf55115e2a1e",
+    "metadata_file": "ERC4626StandardExchange_SfrxETH_ProjectionFork.metadata.json",
+    "source_count": 314
+  },
+  {
+    "contract": "UniswapV3StandardExchange_Fork_Test",
+    "artifact": "out/UniswapV3StandardExchange_Fork.t.sol/UniswapV3StandardExchange_Fork_Test.json",
+    "artifact_sha256": "283700d1042cb2c3d4888d4791a66c63e11fcd650fbc0adc99cc5428b6817e62",
+    "metadata_file": "UniswapV3StandardExchange_Fork_Test.metadata.json",
+    "source_count": 357
+  },
+  {
+    "contract": "UniswapV3StandardExchange_Robinhood_Test",
+    "artifact": "out/UniswapV3StandardExchange_Robinhood.t.sol/UniswapV3StandardExchange_Robinhood_Test.json",
+    "artifact_sha256": "c8c9e47322e90348aedfc26f110048f8ba5b31e3e17fe293ff625d1e943dad83",
+    "metadata_file": "UniswapV3StandardExchange_Robinhood_Test.metadata.json",
+    "source_count": 356
+  }
+]

@@ -1,0 +1,33 @@
+{
+  "checked_at_utc": "2026-09-09T02:17:12.297310+00:00",
+  "rpc": "http://127.0.0.1:18663",
+  "node_info_keys": [
+    "currentBlockNumber",
+    "currentBlockTimestamp",
+    "currentBlockHash",
+    "hardFork",
+    "transactionOrder",
+    "environment",
+    "forkConfig"
+  ],
+  "environment": {
+    "chainId": 4663,
+    "gasLimit": "0x1e84800"
+  },
+  "fork_block": 56118361,
+  "latest_block": 56118361,
+  "latest_block_gas_limit": 1125899906842624,
+  "manager": "0x09682b00D873D913ada0bB69B4D4c9631810d0bc",
+  "manager_owner": "0x72BeA6Fa3E68EF18c87D045Aac7C4Aa5249d933B",
+  "scope": "Read-only local node readiness; no deployment or runtime acceptance.",
+  "verified_launch_limits": {
+    "--port": "18663",
+    "--chain-id": "4663",
+    "--code-size-limit": "24576",
+    "--gas-limit": "32000000",
+    "--fork-block-number": "56118361",
+    "disable_code_size_limit": false
+  },
+  "configured_local_block_gas_limit": 32000000,
+  "block_header_note": "At the untouched fork tip, eth_getBlockByNumber returns the historical upstream header; Anvil environment and launch arguments set the local next-block limit."
+}

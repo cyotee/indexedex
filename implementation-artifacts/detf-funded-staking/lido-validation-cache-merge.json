@@ -1,0 +1,6 @@
+{
+  "status": "merged completed Lido validation metadata into primary; current validated entries win, unrelated primary entries retained",
+  "validated_record": "lido-composed-quote-proxy-green-run.json",
+  "merged_entries": 395,
+  "backup": "cache-before-lido-validation-merge.json"
+}

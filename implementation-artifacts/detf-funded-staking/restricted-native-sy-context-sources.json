@@ -1,0 +1,27 @@
+[
+  {
+    "path": "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol",
+    "before_sha256": "5c288000459e55076d04de4feb939dce90cb25ae8871861bba25bccd0fb02cfe",
+    "after_sha256": "b7202795780d3e7884f5a2dfe92c00c66ff4ab2944442f10ffb76815036e13d0"
+  },
+  {
+    "path": "contracts/hooks/uniswap/v4/libs/UniswapV4HookOwnerOnlyLiquidityLib.sol",
+    "before_sha256": "f3acd93ddd3a7b45a4449a631d95bf7307325f347b335d353c1a75b69237bdd6",
+    "after_sha256": "e888c2841a070721d99acc3622d42a6c38ab56f13c4efffe9425f66a123d0365"
+  },
+  {
+    "path": "test/foundry/spec/vaults/standard/sy/SingleConstantProductHookNativeSY.t.sol",
+    "before_sha256": "ee14fb2b7693faa5066fb98fbb6729703b1a3f02815395da381dc07573e7e364",
+    "after_sha256": "04df67ef2465605a9564192317e295be4da5577fbb123ad5325058cf07d76dde"
+  },
+  {
+    "path": "test/foundry/spec/vaults/standard/sy/WeightedBufferHookNativeSY.t.sol",
+    "before_sha256": "53bbb540b1743dc7641503483e4fdb313f7e6d0090d8ec3ae34bce17dc6c2a48",
+    "after_sha256": "bfaee9ada852cef0b8058688de30bffb51e695f97b6607d46854d649c477376e"
+  },
+  {
+    "path": "test/foundry/spec/vaults/standard/sy/CurveQuadBufferHookNativeSY.t.sol",
+    "before_sha256": "3baf52c0c63c62a5189c1691f0e8d5cc3dc0df0620d1dced0184b9688dfe02a5",
+    "after_sha256": "07c8bfe2fa84de64766b66e1a6093d02a67c11a76887afb7005ce8882114a5df"
+  }
+]

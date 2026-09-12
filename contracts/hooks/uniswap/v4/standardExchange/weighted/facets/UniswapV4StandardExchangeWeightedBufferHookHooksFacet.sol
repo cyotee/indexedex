@@ -8,11 +8,11 @@ import {
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHook.sol";
 import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {
-    UniswapV4StandardExchangeWeightedBufferHookHooksTarget
+    UniswapV4StandardExchangeWeightedBufferHookQuoteTarget
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookHooksTarget.sol";
 
 contract UniswapV4StandardExchangeWeightedBufferHookHooksFacet is
-    UniswapV4StandardExchangeWeightedBufferHookHooksTarget,
+    UniswapV4StandardExchangeWeightedBufferHookQuoteTarget,
     IFacet
 {
     function facetName() public pure returns (string memory) {
@@ -27,7 +27,7 @@ contract UniswapV4StandardExchangeWeightedBufferHookHooksFacet is
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](45);
+        funcs = new bytes4[](48);
         funcs[0] = IHooks.beforeInitialize.selector;
         funcs[1] = IHooks.afterInitialize.selector;
         funcs[2] = IHooks.beforeAddLiquidity.selector;
@@ -73,6 +73,9 @@ contract UniswapV4StandardExchangeWeightedBufferHookHooksFacet is
         funcs[42] = IUniswapV4SeBufferHook.standardExchangeOf.selector;
         funcs[43] = IUniswapV4SeBufferHook.syntheticNumeraires.selector;
         funcs[44] = IUniswapV4SeBufferHook.tradingFeeWad.selector;
+        funcs[45] = this.ownerOnlyLiquidity.selector;
+        funcs[46] = this.previewSwapAfterExchange.selector;
+        funcs[47] = this.previewBondAfterDeposit.selector;
     }
 
     function facetMetadata()

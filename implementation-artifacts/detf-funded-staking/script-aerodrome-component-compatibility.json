@@ -1,0 +1,16 @@
+{
+  "status": "APPLIED_MAINTAINED_SCRIPT_COMPILATION_PASSED",
+  "changes": [
+    {
+      "file": "scripts/foundry/anvil_sepolia/Script_06_DeployAerodrome.s.sol",
+      "change": "Load both MultiAsset facets already exported by stage02; bind PkgInit to the freshly deployed Aerodrome factory instead of the inherited binding that is only set after package deployment."
+    },
+    {
+      "file": "scripts/foundry/base_main/Script_BaseMain_DeployIndexedex.s.sol",
+      "change": "Resolve six undefined facet references through the existing CREATE3 VaultComponentFactoryService when building PkgInit."
+    }
+  ],
+  "validation": "Compilation/current caller wiring only; no public deployment performed.",
+  "evidence": "combined-script-aerodrome-components-failure.json",
+  "compilation_evidence": "maintained-script-294-green.json"
+}

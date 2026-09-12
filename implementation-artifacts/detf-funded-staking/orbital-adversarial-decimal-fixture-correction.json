@@ -1,0 +1,8 @@
+{
+  "recorded_at_utc": "2026-09-08T15:05:22.623608+00:00",
+  "status": "APPLIED_RUNTIME_PENDING",
+  "file": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Adversarial.sol",
+  "failure": "InvalidDecimals during actual registry/hook deployment before the reentrancy test",
+  "correction": "Set all three decimals through HookPkgArgsDecimalsLib.tokenDec, matching the ordinary Orbital fixture and the predicted 9-decimal DETF token.",
+  "assertions": "Preserve actual unlocked callback control, IsLocked selector, unspent nested payment and successful outer exchange."
+}

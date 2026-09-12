@@ -1,10 +1,16 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+
 /* -------------------------------------------------------------------------- */
 /*                                    Crane                                   */
 /* -------------------------------------------------------------------------- */
 
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
+import {EIP712Repo} from "@crane/contracts/utils/cryptography/EIP712/EIP712Repo.sol";
+import {Permit2AwareRepo} from "@crane/contracts/protocols/utils/permit2/aware/Permit2AwareRepo.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IDiamondCut} from "@crane/contracts/interfaces/IDiamondCut.sol";
@@ -17,10 +23,8 @@ import {IERC5267} from "@crane/contracts/interfaces/IERC5267.sol";
 import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
-import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {ERC4626Repo} from "@crane/contracts/tokens/ERC4626/ERC4626Repo.sol";
 import {ERC4626Service} from "@crane/contracts/tokens/ERC4626/ERC4626Service.sol";
-import {Permit2AwareRepo} from "@crane/contracts/protocols/utils/permit2/aware/Permit2AwareRepo.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 
 /* -------------------------------------------------------------------------- */
@@ -199,8 +203,10 @@ contract AaveV3StataStandardExchangeDFPkg is IAaveV3StataStandardExchangeDFPkg {
     // For sketch, the structure is in place. The actual facet wiring happens via the manager.
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        // Approximate - in real DFPkg it aggregates from all included facets
-        interfaces = new bytes4[](8);
+        interfaces = new bytes4[](11);
+        interfaces[9] = type(IStandardExchangeTransitionQuote).interfaceId;
+        interfaces[10] = type(IStandardExchangeExternalQuote).interfaceId;
+        interfaces[8] = type(IStandardizedYield).interfaceId;
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20Permit).interfaceId;
@@ -228,8 +234,17 @@ contract AaveV3StataStandardExchangeDFPkg is IAaveV3StataStandardExchangeDFPkg {
         cuts[8] = IDiamond.FacetCut({ facetAddress: address(AAVE_V3_STATA_MARKER_FACET), action: IDiamond.FacetCutAction.Add, functionSelectors: AAVE_V3_STATA_MARKER_FACET.facetFuncs() });
     }
 
-    function facetAddresses() external view returns (address[] memory facetAddresses_) {
-        facetAddresses_ = new address[](0);
+    function facetAddresses() public view returns (address[] memory facets_) {
+        facets_ = new address[](9);
+        facets_[0] = address(ERC20_FACET);
+        facets_[1] = address(ERC5267_FACET);
+        facets_[2] = address(ERC2612_FACET);
+        facets_[3] = address(ERC4626_FACET);
+        facets_[4] = address(ERC4626_STANDARD_VAULT_FACET);
+        facets_[5] = address(MULTI_ASSET_BASIC_VAULT_FACET);
+        facets_[6] = address(AAVE_V3_STATA_STANDARD_EXCHANGE_IN_FACET);
+        facets_[7] = address(AAVE_V3_STATA_STANDARD_EXCHANGE_OUT_FACET);
+        facets_[8] = address(AAVE_V3_STATA_MARKER_FACET);
     }
 
     function diamondConfig() public view returns (DiamondConfig memory config) {
@@ -243,6 +258,12 @@ contract AaveV3StataStandardExchangeDFPkg is IAaveV3StataStandardExchangeDFPkg {
     function initAccount(bytes memory initArgs) public {
         PkgArgs memory args = abi.decode(initArgs, (PkgArgs));
         uint8 dec = IERC20Metadata(args.stataToken).decimals();
+        string memory name_ = string.concat("IndexedEx ", IERC20Metadata(args.stataToken).name(), " SE");
+        ERC20Repo._initialize(name_, string.concat("ix", IERC20Metadata(args.stataToken).symbol()), dec);
+        EIP712Repo._initialize(name_, "1");
+        VaultFeeOracleQueryAwareRepo._initialize(VAULT_FEE_ORACLE_QUERY);
+        Permit2AwareRepo._initialize(PERMIT2);
+        StandardVaultRepo._initialize(VAULT_FEE_ORACLE_QUERY, vaultFeeTypeIds(), vaultTypes(), keccak256(abi.encode(args.stataToken)));
         // Standard offset is often 0 or configured; use 0 for simplicity here.
         ERC4626Repo._initialize(IERC20(args.stataToken), dec, 0);
         // Also set last total assets if needed for the vault.
@@ -274,10 +295,10 @@ contract AaveV3StataStandardExchangeDFPkg is IAaveV3StataStandardExchangeDFPkg {
         return true;
     }
 
-    function packageMetadata() external pure returns (string memory name_, bytes4[] memory interfaces, address[] memory facets) {
+    function packageMetadata() external view returns (string memory name_, bytes4[] memory interfaces, address[] memory facets) {
         name_ = "AaveV3StataStandardExchangeDFPkg";
         interfaces = facetInterfaces();
-        facets = new address[](0);
+        facets = facetAddresses();
     }
 
     function processArgs(bytes memory pkgArgs) public returns (bytes memory) {

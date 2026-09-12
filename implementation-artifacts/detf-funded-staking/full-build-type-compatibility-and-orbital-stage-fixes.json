@@ -1,0 +1,16 @@
+{
+  "updated_at_utc": "2026-09-08T08:23:56.829932+00:00",
+  "status": "APPLIED_AWAITING_FULL_BUILD_AND_TEST",
+  "compiler_errors_addressed": 15,
+  "maintenance_only": [
+    "ComposedStableCommonDetfCommon: restore virtual on two existing overridable helpers",
+    "SingleSEFundedStaking: use matching existing legacy cast types",
+    "MixedBuffer facet test: preserve historical selector values without modern-interface member access"
+  ],
+  "v4_changes": [
+    "Decimal test base: restore virtual default args",
+    "Orbital launch stage: current code-bound registry package, replay/export/rehearsal wiring and test"
+  ],
+  "scope": "D60 compilation maintenance only; D66 untouched",
+  "shell_syntax": "PASS"
+}

@@ -1,0 +1,14 @@
+{
+  "decision": "D60",
+  "status": "COMPILE_MAINTENANCE_ONLY",
+  "changes": [
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/Adversarial_MixedBuffer_TrustFlag_Decimals.sol",
+      "reason": "Full default build failed on a removed deployment helper after earlier fixture consolidation",
+      "replacement": "Existing _deployDetfN(1,100e18,0.1e18), as already used by the non-decimal Adversarial_MixedBuffer_TrustFlag suite",
+      "production_changes": false,
+      "assertion_changes": false
+    }
+  ],
+  "functional_refactor_resumed": false
+}

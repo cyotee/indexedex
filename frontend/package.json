@@ -7,6 +7,7 @@
     "packages/*"
   ],
   "scripts": {
+    "postinstall": "patch-package --error-on-fail",
     "dev": "npm run dev -w @indexedex/app-dtf",
     "dev:dtf": "npm run dev -w @indexedex/app-dtf",
     "build": "npm run build -w @indexedex/app-dtf",
@@ -18,5 +19,8 @@
     "typecheck": "npm run typecheck -w @indexedex/app-dtf",
     "check": "npm run check -w @indexedex/app-dtf",
     "lint": "npm run lint -w @indexedex/app-dtf"
+  },
+  "devDependencies": {
+    "patch-package": "8.0.1"
   }
 }

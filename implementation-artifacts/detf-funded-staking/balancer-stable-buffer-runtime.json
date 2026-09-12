@@ -1,0 +1,8 @@
+{
+  "UniswapV4StandardExchangeBalancerQuadStableBufferHookQueryFacet": 21505,
+  "UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksFacet": 19945,
+  "UniswapV4StandardExchangeBalancerQuadStableBufferHookSeFacet": 22472,
+  "UniswapV4StandardExchangeBalancerQuadStableBufferHookLiquidityFacet": 24474,
+  "UniswapV4StandardExchangeBalancerQuadStableBufferHookExitFacet": 23117,
+  "UniswapV4StandardExchangeBalancerQuadStableBufferHookInitFacet": 0
+}

@@ -36,12 +36,12 @@ describe('parseContractError', () => {
         message: 'insufficient funds for gas',
         data: '0x3dec0665',
       }),
-    ).toMatch(/pair-side book/i)
+    ).toMatch(/required output/i)
   })
 
   it('maps InsufficientTokenOut', () => {
     expect(parseContractError({ data: '0x3dec0665', message: 'execution reverted' })).toMatch(
-      /could not add that token/i,
+      /required output/i,
     )
   })
 
@@ -56,8 +56,11 @@ describe('parseContractError', () => {
     expect(parseContractError(new Error('NotAuthorized(address)'))).toMatch(/does not own that bond/i)
   })
 
-  it('maps BondNotMature without blocking reward claims in copy', () => {
-    expect(parseContractError(new Error('BondNotMature(uint256)'))).toMatch(/still locked/i)
+  it('maps an older deployment maturity error without assuming the funded bond is cliff-locked', () => {
+    const message = parseContractError(new Error('BondNotMature(uint256)'))
+    expect(message).toMatch(/early principal claim/i)
+    expect(message).toMatch(/claimable amounts/i)
+    expect(message).not.toMatch(/principal cannot|rewards cannot/i)
   })
 
   it('maps an already-initialized pool', () => {

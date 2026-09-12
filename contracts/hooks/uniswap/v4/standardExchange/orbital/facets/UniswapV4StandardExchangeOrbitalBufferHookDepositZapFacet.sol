@@ -5,10 +5,15 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {
     IUniswapV4StandardExchangeOrbitalBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHook.sol";
+import {IUniswapV4SeBufferHook, IUniswapV4SeBufferHookClaimQuote} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {
     UniswapV4StandardExchangeOrbitalBufferHookDepositZapTarget
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDepositZapTarget.sol";
 
+/**
+ * @title UniswapV4StandardExchangeOrbitalBufferHookDepositZapFacet
+ * @notice addLiquidity + depositSingle (zap-in) + previews.
+ */
 contract UniswapV4StandardExchangeOrbitalBufferHookDepositZapFacet is
     UniswapV4StandardExchangeOrbitalBufferHookDepositZapTarget,
     IFacet
@@ -24,8 +29,8 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDepositZapFacet is
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
         funcs = new bytes4[](3);
         funcs[0] = IUniswapV4StandardExchangeOrbitalBufferHook.depositSingle.selector;
-        funcs[1] = IUniswapV4StandardExchangeOrbitalBufferHook.previewDepositSingle.selector;
-        funcs[2] = IUniswapV4StandardExchangeOrbitalBufferHook.previewZapSplit.selector;
+        funcs[1] = IUniswapV4SeBufferHook.joinSingleAssetExactIn.selector;
+        funcs[2] = IUniswapV4SeBufferHook.joinSingleAssetExactOut.selector;
     }
 
     function facetMetadata()

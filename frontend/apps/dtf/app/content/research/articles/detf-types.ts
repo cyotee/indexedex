@@ -2,7 +2,7 @@ import type { ResearchArticle } from '../types'
 
 /**
  * DETF types as basket shapes. Package names stay in sourceNote only.
- * Four live families: one vault, weighted multi-vault, layered like-kind,
+ * Four basket shapes: one vault, weighted multi-vault, layered like-kind,
  * one cash buffer plus vaults. Same DETF verbs on every type.
  */
 export const detfTypesArticle: ResearchArticle = {
@@ -10,30 +10,30 @@ export const detfTypesArticle: ResearchArticle = {
   title: 'DETF types: pick the basket shape',
   summary:
     'A DETF is one token for a basket. The type is the shape of that basket. Bond, mint, and burn stay the same. Pick the type that matches the vaults you want.',
-  date: '2026-08-17',
+  date: '2026-09-07',
   tags: ['detf', 'types', 'product'],
   status: 'published',
   claims: [
-    'There are four DETF types. They change how the basket is laid out, not whether the product is a DETF.',
+    'This note describes four basket shapes. They change how the basket is laid out, not whether the product is a DETF.',
     'Every type is one DETF token over a managed reserve. That token is a claim on a share of the reserve and sits in market liquidity.',
     'Basket legs are vault shares from Earn. Those vaults wrap other protocols. The DETF does not hardcode a venue.',
     'One-vault type: the DETF token plus exactly one vault share.',
     'Fixed-weight type: the DETF token plus several vault shares, each with a set weight.',
     'Grouped type: several similar vaults sit in two grouped pools next to the DETF token, marked two ways.',
-    'Cash-buffer type: the DETF token, one cash token, and vaults that all take and give that cash. Burn returns that cash.',
-    'The first successful bond turns a new DETF on. Creating a DETF also issues an unredeemable creator bond.',
+    'Cash-buffer type: the DETF token, one cash token, and vaults that all take and give that cash. Supported exits return cash or vault shares.',
+    'The first successful bond turns a new DETF on. Creating a DETF also assigns standing creator reward rights.',
   ],
   notClaiming: [
     'No type is a registered securities ETF or fund share.',
     'Type choice does not guarantee a peg, yield, or market depth.',
     'What you can create on a given network depends on what is deployed. This note is the design map, not a live catalog.',
     'Deploy package names in code are not customer titles.',
-    'The creator bond cannot be redeemed for principal. Accrued DETF amounts are not guaranteed.',
+    'The creator bond cannot be redeemed for principal. The received sDETF can be unstaked for DETF; reward amounts are not guaranteed.',
   ],
   relatedProductHref: '/research/detf',
   relatedProductLabel: 'How DETFs work',
   sourceNote:
-    'Four live families under contracts/vaults/detf/: standardExchange/single (SingleStandardExchangeDETF); composed/multi-vault-weighted (MultiVaultWeightedDetf); composed/stable/common (ComposedStableCommonDetf); composed/stable/mixedBuffer (MixedBufferMultiVaultStableDetf). Removed path composed/single is not a product type. Spine: docs/marketing/DETF_NARRATIVE_SPINE.md §2.',
+    'Basket implementations under contracts/vaults/detf/protocols/dexes/balancer/v3/: standardExchange/single, multi-vault-weighted, stable/common and mixedBuffer. Funded lifecycle: DETF_ALIGNMENT_PRD.md D32–D55. This is a design map; available deployments differ. Spine: docs/marketing/DETF_NARRATIVE_SPINE.md §2.',
   sections: [
     {
       heading: 'Start with the basket',
@@ -49,8 +49,8 @@ export const detfTypesArticle: ResearchArticle = {
       ],
       bullets: [
         'Create the DETF, then bond to turn it on. Later you mint, hold, or burn.',
-        'Policy can pause mint and burn near a target price. Open never does. Fees can still apply.',
-        'Creating a DETF issues an unredeemable bond that collects a cut of DETF minted to bond holders, including Policy expansion.',
+        'Price gates choose primary issuance/redemption or a reserve swap. Direct staking and bond claims pay funded sDETF.',
+        'The creator has a standing reward right with no redeemable principal. Its sDETF receipts can be unstaked for DETF.',
         'A bad setup means a new DETF. The design does not get rewritten after it goes live.',
       ],
     },
@@ -82,7 +82,7 @@ export const detfTypesArticle: ResearchArticle = {
       bullets: [
         'You pick the weights at create time. They stay put.',
         'Mint and burn use the vault shares you configured. Deposit into a vault first if you hold the underlying.',
-        'After the reserve is set up, the first bond turns it on.',
+        'The first bond sets up the reserve and turns it on.',
         'Skip this type if the vaults are alike and should share one cash token, or if they should be grouped rather than listed by weight.',
       ],
       diagram: 'multi-vault-weighted',
@@ -107,8 +107,8 @@ export const detfTypesArticle: ResearchArticle = {
       ],
       bullets: [
         'Mint with the cash token or with a vault share.',
-        'Burn returns the cash token only.',
-        'The first bond can turn it on. You put in cash or a vault share. Matching DETF is minted into the reserve.',
+        'Use a supported exit to receive the cash token or a vault share.',
+        'The first bond supplies the required reserve legs and matching DETF. Purchased DETF principal is additionally minted, staked and vested.',
         'Skip this type if the vaults are different assets that need their own weights, or if you want the grouped design above.',
       ],
       diagram: 'mixed-buffer-multi-vault-stable',
@@ -133,7 +133,7 @@ export const detfTypesArticle: ResearchArticle = {
         '**Do I pick a package name?** No. Pick the basket. Package names stay in engineer docs.',
         '**What is a vault share?** A claim on a vault that wraps another protocol. Deposit, receive a vault share, redeem later. Earn lists those vaults.',
         '**Does the type change mint or bond?** No. Those steps stay the same. Inputs can change with the basket.',
-        '**Does the creator still get a bond?** Yes. Creating any DETF issues an unredeemable bond that collects a cut of minted DETF, including Policy expansion.',
+        '**What does the creator receive?** A standing reward right with no redeemable principal. It receives funded sDETF that can be unstaked, even after earlier receipts were fully redeemed.',
         '**Is Protocol DETF a fifth type?** No. It uses the same design so you can take part in protocol fees. Home: /staking.',
         '**Where next?** How DETFs work: /research/detf. Mint or bond: /research/bond-vs-mint. Marking vault shares: /research/rate-providers. Create: /create.',
       ],

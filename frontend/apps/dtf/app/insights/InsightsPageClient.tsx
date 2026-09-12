@@ -88,7 +88,7 @@ export default function InsightsPageClient({ pathAddress }: { pathAddress: strin
           address: selected as `0x${string}`,
           name: 'DETF',
           symbol: 'DETF',
-          decimals: 18,
+          decimals: 9,
           protocolFee: isFeaturedFeeDetfAddress(selectedChainId, environment, selected),
         }
       : undefined)
@@ -105,7 +105,7 @@ export default function InsightsPageClient({ pathAddress }: { pathAddress: strin
         { address: detfAddr, abi: erc20Abi, functionName: 'name' },
         { address: detfAddr, abi: insightsViewAbi, functionName: 'mintThreshold' },
         { address: detfAddr, abi: insightsViewAbi, functionName: 'burnThreshold' },
-        { address: detfAddr, abi: insightsViewAbi, functionName: 'thresholdMode' },
+        { address: detfAddr, abi: erc20Abi, functionName: 'decimals' },
         { address: detfAddr, abi: insightsViewAbi, functionName: 'isReserveLive' },
         { address: detfAddr, abi: insightsViewAbi, functionName: 'rebasingClaimToken' },
         { address: detfAddr, abi: insightsViewAbi, functionName: 'reservePool' },
@@ -132,36 +132,41 @@ export default function InsightsPageClient({ pathAddress }: { pathAddress: strin
       ]
     : []
   const reads = useReadContracts({
-    contracts: insightContracts as UseReadContractsParameters['contracts'],
+    contracts: insightContracts.map((contract) => ({ ...contract, chainId: selectedChainId })) as UseReadContractsParameters['contracts'],
     query: { enabled, refetchInterval: 15_000 },
     allowFailure: true,
   })
 
   const { data: weightedPairTokens } = useReadContract({
+    chainId: selectedChainId,
     address: detfAddr,
     abi: insightsViewAbi,
     functionName: 'pairTokens',
     query: { enabled, retry: 0 },
   })
   const { data: acceptedBondTokens } = useReadContract({
+    chainId: selectedChainId,
     address: detfAddr,
     abi: insightsViewAbi,
     functionName: 'acceptedBondTokens',
     query: { enabled, retry: 0 },
   })
   const { data: vaultShares } = useReadContract({
+    chainId: selectedChainId,
     address: detfAddr,
     abi: insightsViewAbi,
     functionName: 'vaultShares',
     query: { enabled, retry: 0 },
   })
   const { data: standardExchangeVault } = useReadContract({
+    chainId: selectedChainId,
     address: detfAddr,
     abi: insightsViewAbi,
     functionName: 'standardExchangeVault',
     query: { enabled, retry: 0 },
   })
   const { data: standardExchangeVaultShare } = useReadContract({
+    chainId: selectedChainId,
     address: detfAddr,
     abi: insightsViewAbi,
     functionName: 'standardExchangeVaultShare',
@@ -182,6 +187,7 @@ export default function InsightsPageClient({ pathAddress }: { pathAddress: strin
     query: { enabled, retry: 0 },
   })
   const { data: reserveHookRaw } = useReadContract({
+    chainId: selectedChainId,
     address: detfAddr,
     abi: insightsViewAbi,
     functionName: 'reserveHook',
@@ -192,6 +198,7 @@ export default function InsightsPageClient({ pathAddress }: { pathAddress: strin
   const reserveHookFromDetf = asAddr(reserveHookRaw)
 
   const { data: walletBal } = useReadContract({
+    chainId: selectedChainId,
     address: detfAddr,
     abi: erc20Abi,
     functionName: 'balanceOf',
@@ -210,10 +217,11 @@ export default function InsightsPageClient({ pathAddress }: { pathAddress: strin
   const onchainName = result<string>(2)
   const mintThreshold = result<bigint>(3)
   const burnThreshold = result<bigint>(4)
-  const thresholdMode = result<number>(5)
+  const tokenDecimals = result<number>(5)
   const reserveLive = result<boolean>(6)
   const claimFromBundle = asAddr(result<`0x${string}`>(7))
   const { data: claimRaw } = useReadContract({
+    chainId: selectedChainId,
     address: detfAddr,
     abi: insightsViewAbi,
     functionName: 'rebasingClaimToken',
@@ -221,6 +229,7 @@ export default function InsightsPageClient({ pathAddress }: { pathAddress: strin
   })
   const claimToken = claimFromBundle ?? asAddr(claimRaw)
   const { data: claimSymbol } = useReadContract({
+    chainId: selectedChainId,
     address: claimToken,
     abi: rebasingClaimAbi,
     functionName: 'symbol',
@@ -258,6 +267,7 @@ export default function InsightsPageClient({ pathAddress }: { pathAddress: strin
   const seTokenReads = useReadContracts({
     contracts: seList.map((address) => ({
       address,
+      chainId: selectedChainId,
       abi: VAULT_TOKENS_ABI,
       functionName: 'vaultTokens' as const,
     })),
@@ -301,23 +311,14 @@ export default function InsightsPageClient({ pathAddress }: { pathAddress: strin
     const next = detfs[0]?.address
     if (next && next.toLowerCase() !== detfAddr.toLowerCase()) pick(next)
   }, [richBrandUnlisted, detfs, detfAddr, pick])
-  const supplyLabel = totalSupply != null ? formatUnits(totalSupply, detf?.decimals ?? 18) : '—'
+  const supplyLabel = totalSupply != null ? formatUnits(totalSupply, tokenDecimals ?? detf?.decimals ?? 9) : '—'
   const holdLabel =
-    walletBal != null ? formatUnits(walletBal, detf?.decimals ?? 18) : isConnected ? '0' : 'Connect to see'
-  const modeLabel =
-    thresholdMode === 1 ? 'Open' : thresholdMode === 0 ? 'Policy' : profile?.mintBurn === 'open' ? 'Open' : profile ? 'Policy' : '—'
-  const mintLabel = archived
-    ? 'Off'
-    : mintingAllowed != null
-      ? mintingAllowed
-        ? 'Allowed'
-        : 'Blocked'
-      : allLegsMint != null
-        ? allLegsMint
-          ? 'Allowed'
-          : 'Blocked'
-        : '—'
-  const burnLabel = burningAllowed == null ? '—' : burningAllowed ? 'Allowed' : 'Blocked'
+    walletBal != null ? formatUnits(walletBal, tokenDecimals ?? detf?.decimals ?? 9) : isConnected ? '0' : 'Connect to see'
+  const primaryMint = mintingAllowed ?? allLegsMint
+  const mintLabel = archived ? 'Off' : reserveLive === false ? 'First bond needed'
+    : primaryMint == null ? 'Quote route' : primaryMint ? 'Primary issuance' : 'Reserve swap'
+  const burnLabel = reserveLive === false ? 'First bond needed'
+    : burningAllowed == null ? 'Quote route' : burningAllowed ? 'Primary redemption' : 'Reserve swap'
   const reserveHook = reserveHookFromDetf ?? reservePool
   const { reservePoolId, sePoolIds } = useDetfPoolIds({
     chainId: selectedChainId,
@@ -401,7 +402,7 @@ export default function InsightsPageClient({ pathAddress }: { pathAddress: strin
             { role: 'Pair token', address: pair2, meaning: 'Third pair token' },
           ]),
       { role: 'Underlying vault', address: underlyingVault, meaning: 'Standard Exchange the basket holds' },
-      { role: 'Claim token', address: claimToken, meaning: 'Rebasing claim token. Stake to mint it.' },
+      { role: 'Staking token', address: claimToken, meaning: 'sDETF backed 1:1 by funded DETF. Unstake for DETF.' },
       { role: 'Reserve pool', address: reservePool, meaning: 'Market for the DETF token' },
     ]
     if (exchanges) {
@@ -737,7 +738,7 @@ export default function InsightsPageClient({ pathAddress }: { pathAddress: strin
                           ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
                       }}
                     >
-                      Stake {claimSymbol || 'claim token'}
+                      Stake {symbol}
                     </Button>
                   ) : null}
                   <Link href={tradeHref}>
@@ -759,13 +760,13 @@ export default function InsightsPageClient({ pathAddress }: { pathAddress: strin
                 <Stat label="Burn" value={burnLabel} />
               </div>
               <p className="mt-3 text-[11px] text-[var(--text-muted,#9aa3b2)]">
-                Mode {modeLabel}
+                Minting and burning use price thresholds, with reserve-pool swaps outside those thresholds.
                 {reserveLive === true
-                  ? '. Reserve is live.'
+                  ? ' Reserve is live.'
                   : reserveLive === false
-                    ? '. Inert until the first bond.'
+                    ? ' Inert until the first bond.'
                     : profile?.firstBonded
-                      ? '. First bond already opened this DETF on the deploy fork.'
+                      ? ' The first bond has opened this DETF.'
                       : ''}
               </p>
             </Card>
@@ -780,7 +781,6 @@ export default function InsightsPageClient({ pathAddress }: { pathAddress: strin
               claimToken={claimToken}
               claimSymbol={claimSymbol}
               reserveLive={reserveLive}
-              burningAllowed={burningAllowed}
               archived={archived}
               initialTab={actionTab}
               nftVault={bondNftVault ?? protocolNftVault}
@@ -792,8 +792,9 @@ export default function InsightsPageClient({ pathAddress }: { pathAddress: strin
               </p>
               <p className="mt-1 text-sm text-[var(--text-muted,#9aa3b2)]">
                 Synthetic price is the contract price of the DETF token versus a pair, not a dollar
-                price. Policy mint is allowed when that price is above the mint line. Burn is allowed
-                when it is below the burn line. This is a live snapshot, not a history chart.
+                price. Primary issuance requires a price above the mint line; primary redemption
+                requires a price below the burn line. Otherwise the supported route swaps through
+                the reserve. This shows the current contract state.
               </p>
               <div className="mt-4">
                 {!readsReady ? (

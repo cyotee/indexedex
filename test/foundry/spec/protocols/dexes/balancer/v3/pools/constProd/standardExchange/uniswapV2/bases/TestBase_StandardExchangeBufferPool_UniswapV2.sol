@@ -186,6 +186,7 @@ abstract contract TestBase_StandardExchangeBufferPool_UniswapV2 is TestBase_Stan
         pkgInit.multiAssetStandardVaultFacet         = multiAssetStandardVaultFacet;
         pkgInit.uniswapV2StandardExchangeInFacet  = v2ExchangeInFacet;
         pkgInit.uniswapV2StandardExchangeOutFacet = v2ExchangeOutFacet;
+        pkgInit.uniswapV2StandardExchangeQueryFacet = UniswapV2_Component_FactoryService.deployUniswapV2StandardExchangeQueryFacet(create3Factory);
         pkgInit.vaultFeeOracleQuery               = indexedexManager;
         pkgInit.vaultRegistryDeployment           = indexedexManager;
         pkgInit.permit2                           = permit2;

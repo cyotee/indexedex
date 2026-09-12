@@ -1,0 +1,284 @@
+{
+  "recorded_at_utc": "2026-09-10T18:03:36.318575+00:00",
+  "command": [
+    "git",
+    "submodule",
+    "status",
+    "--recursive"
+  ],
+  "exit_code": 0,
+  "dependencies": [
+    {
+      "path": "lib/crane",
+      "revision": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+      "index_relation": "+"
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib",
+      "revision": "c33885dcb1ed8aff311207a1b89c4ef3032c2f65",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts",
+      "revision": "fde1b2abe9e5c27175f5b6f7324bcce6afc3b059",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts",
+      "revision": "7c3f3b886a3b07f065e4b3065ccf1d3f586c42f3",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/lib/@matterlabs/zksync-contracts",
+      "revision": "b8449bf9c819098cc8bfee0549ff5094456be51d",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/lib/forge-std",
+      "revision": "77041d2ce690e692d6e03cc812b57d1ddaa4d505",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/lib/murky",
+      "revision": "5feccd1253d7da820f7cccccdedf64471025455d",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/lib/murky/lib/forge-std",
+      "revision": "e4aef94c1768803a16fe19f7ce8b65defd027cfd",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/lib/murky/lib/openzeppelin-contracts",
+      "revision": "cb2aaaa04a292887c49839cd958b08a83979d746",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/lib/murky/lib/openzeppelin-contracts/lib/erc4626-tests",
+      "revision": "8b1d7c2ac248c33c3506b1bff8321758943c5e11",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/lib/murky/lib/openzeppelin-contracts/lib/forge-std",
+      "revision": "ae570fec082bfe1c1f45b0acca4a2b4f84d345ce",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/lib/murky/lib/openzeppelin-contracts/lib/forge-std/lib/ds-test",
+      "revision": "e282159d5170298eb2455a6c05280ab5a73a4ef0",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/lib/openzeppelin-contracts-upgradeable-v4",
+      "revision": "2d081f24cac1a867f6f73d512f2022e1fa987854",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/lib/openzeppelin-contracts-upgradeable-v4/lib/erc4626-tests",
+      "revision": "8b1d7c2ac248c33c3506b1bff8321758943c5e11",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/lib/openzeppelin-contracts-upgradeable-v4/lib/forge-std",
+      "revision": "c2236853aadb8e2d9909bbecdc490099519b70a4",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/lib/openzeppelin-contracts-upgradeable-v4/lib/forge-std/lib/ds-test",
+      "revision": "6da7dd8f7395f83e1fb6fa88a64ba9a030f85d4f",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/lib/openzeppelin-contracts-v4",
+      "revision": "dc44c9f1a4c3b10af99492eed84f83ed244203f6",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/lib/openzeppelin-contracts-v4/lib/erc4626-tests",
+      "revision": "8b1d7c2ac248c33c3506b1bff8321758943c5e11",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/lib/openzeppelin-contracts-v4/lib/forge-std",
+      "revision": "c2236853aadb8e2d9909bbecdc490099519b70a4",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/lib/openzeppelin-contracts-v4/lib/forge-std/lib/ds-test",
+      "revision": "6da7dd8f7395f83e1fb6fa88a64ba9a030f85d4f",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/createx",
+      "revision": "cbac803268835138f86a69bfe01fcf05a50e0447",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/createx/lib/forge-std",
+      "revision": "155d547c449afa8715f538d69454b83944117811",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/createx/lib/forge-std/lib/ds-test",
+      "revision": "e282159d5170298eb2455a6c05280ab5a73a4ef0",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/createx/lib/openzeppelin-contracts",
+      "revision": "44965d7779f89cc97b8dbc6e473d3931ecd9e4b2",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/createx/lib/openzeppelin-contracts/lib/erc4626-tests",
+      "revision": "8b1d7c2ac248c33c3506b1bff8321758943c5e11",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/createx/lib/openzeppelin-contracts/lib/forge-std",
+      "revision": "c2236853aadb8e2d9909bbecdc490099519b70a4",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/createx/lib/openzeppelin-contracts/lib/forge-std/lib/ds-test",
+      "revision": "6da7dd8f7395f83e1fb6fa88a64ba9a030f85d4f",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/createx/lib/solady",
+      "revision": "88bb5f223ae3d8567229f39d6c19b5d4c7c4a069",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/createx/lib/solady/lib/ds-test",
+      "revision": "9310e879db8ba3ea6d5c6489a579118fd264a3f5",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/forge-std",
+      "revision": "7117c90c8cf6c68e5acce4f09a6b24715cea4de6",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/openzeppelin-contracts",
+      "revision": "fcbae5394ae8ad52d8e580a3477db99814b9d565",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/openzeppelin-contracts/lib/erc4626-tests",
+      "revision": "232ff9ba8194e406967f52ecc5cb52ed764209e9",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/openzeppelin-contracts/lib/forge-std",
+      "revision": "3b20d60d14b343ee4f908cb8079495c07f5e8981",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/openzeppelin-contracts/lib/halmos-cheatcodes",
+      "revision": "7328abe100445fc53885c21d0e713b95293cf14c",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/openzeppelin-contracts-upgradeable",
+      "revision": "aa677e9d28ed78fc427ec47ba2baef2030c58e7c",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/openzeppelin-contracts-upgradeable/lib/erc4626-tests",
+      "revision": "232ff9ba8194e406967f52ecc5cb52ed764209e9",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/openzeppelin-contracts-upgradeable/lib/forge-std",
+      "revision": "3b20d60d14b343ee4f908cb8079495c07f5e8981",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/openzeppelin-contracts-upgradeable/lib/halmos-cheatcodes",
+      "revision": "7328abe100445fc53885c21d0e713b95293cf14c",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts",
+      "revision": "fcbae5394ae8ad52d8e580a3477db99814b9d565",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/lib/erc4626-tests",
+      "revision": "232ff9ba8194e406967f52ecc5cb52ed764209e9",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/lib/forge-std",
+      "revision": "3b20d60d14b343ee4f908cb8079495c07f5e8981",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/openzeppelin-contracts-upgradeable/lib/openzeppelin-contracts/lib/halmos-cheatcodes",
+      "revision": "7328abe100445fc53885c21d0e713b95293cf14c",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/solady",
+      "revision": "acd959aa4bd04720d640bf4e6a5c71037510cc4b",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/battlechain-lib/lib/forge-std",
+      "revision": "0844d7e1fc5e60d77b68e469bff60265f236c398",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/chainlink-local",
+      "revision": "f8c0efe8685660dac07e08f4558f1b578ae991aa",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/chainlink-local/lib/chainlink-ccip",
+      "revision": "0e3e0fc5c0f70f0d50dca66b139142ddf3009294",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/chainlink-local/lib/chainlink-evm",
+      "revision": "86aa5a1d34b20eda8d18fe6eb0e4882948e545ba",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/chainlink-local/lib/forge-std",
+      "revision": "77041d2ce690e692d6e03cc812b57d1ddaa4d505",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/forge-std",
+      "revision": "bf647bd6046f2f7da30d0c2bf435e5c76a780c1b",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/gitlawb-contracts",
+      "revision": "e7cb6313660e9e8f903185f93800236cc35f0e30",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/openzeppelin-contracts",
+      "revision": "a22c8862f3fd80cd2bd5fab703b4e93ef3830040",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/openzeppelin-contracts/lib/erc4626-tests",
+      "revision": "232ff9ba8194e406967f52ecc5cb52ed764209e9",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/openzeppelin-contracts/lib/forge-std",
+      "revision": "1801b0541f4fda118a10798fd3486bb7051c5dd6",
+      "index_relation": " "
+    },
+    {
+      "path": "lib/crane/lib/openzeppelin-contracts/lib/halmos-cheatcodes",
+      "revision": "7328abe100445fc53885c21d0e713b95293cf14c",
+      "index_relation": " "
+    }
+  ],
+  "gitmodules_sha256": "6677fe7e7991be42d38c81b861df9650bab25ccd1fe6681888161fc5b6014462",
+  "limitations": "Revisions supplement the full dirty dependency source hashes and compiler source closures; a clean checkout of these revisions alone omits the recorded Crane authorization fixes."
+}

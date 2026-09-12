@@ -1,0 +1,47 @@
+{
+  "status": "applied; validation pending",
+  "files": [
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_RedeemD15Base.sol",
+      "before": "b3971b905e87c3062af5e50f2e59e14b9623ab7c7d3babc3b84389fcef1aa799",
+      "after": "cdefc62bdf607d2bdd7a87382a8fca20ef5d3f5315b6a74cd92e03c0de154156",
+      "old_test_functions": 6,
+      "new_local_test_functions": 4
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_RedeemD15Base_Decimals.sol",
+      "before": "1950313d9979089dbc8b1b6508e77267b267cc19e1191a0371f6cea689fcbbc7",
+      "after": "de88eef9b5eacf1acd44ab9ebb54b8891c20c3d98e8ce8f42548d59b8c8d3db0",
+      "old_test_functions": 6,
+      "new_local_test_functions": 0
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Alignment_RedeemD15.t.sol",
+      "before": "7779d97d3b431d905368f1b8139ee25cc96a106013b5cd51a301201ac4d5da76",
+      "after": "3c11f5a4af31c3a4d3196548062bff23679120008df0a6ccb92c0586d39f97d6",
+      "old_test_functions": 2,
+      "new_local_test_functions": 0
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Alignment_RedeemD15.t.sol",
+      "before": "69ee5a0d5a5cde87ad31935542765b189848b3746244ffd8f870ac5e10ad8e75",
+      "after": "fba42dfb649519bc9068f811ef0a4488285f105a42d19649ee153317f959197f",
+      "old_test_functions": 1,
+      "new_local_test_functions": 0
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Alignment_RedeemD15.t.sol",
+      "before": "a99a981ca0cda89155d5345f04b8060ca9b162337bb4448b6646bdcf0f289bd5",
+      "after": "f2d30135ccbde6e107eb5d64c14c84cf45c6605e968999c960d453771976d65d",
+      "old_test_functions": 8,
+      "new_local_test_functions": 0
+    }
+  ],
+  "mapping": {
+    "D15_2,D15_3,D15_6,pendingFirst": "partialThenFullUnstakeUsesOnlyFundedBacking; unstakeDoesNotRequireProtocolLpInventory",
+    "D15_4": "unstakePreservesOtherBondPrincipalAndGons",
+    "D15_5": "every reserve and SE leg held by hook/protocol/user is snapshotted and unchanged across all shared unstake cases; no leftover dump exists in funded model",
+    "D15_7": "unstakeSettlesAllDueFundedExpansionFirst",
+    "Weighted/Quad redundant D15_1": "inherited standard interface exact-preview assertion retained"
+  }
+}

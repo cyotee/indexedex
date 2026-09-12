@@ -1,0 +1,87 @@
+{
+  "recorded_at_utc": "2026-09-08T03:55:30.359271+00:00",
+  "status": "PASS",
+  "approval": "v4-close-cleanup-owner-approval.json",
+  "scope": "Current compiled ABI and source checks; assembled-proxy execution remains separately required.",
+  "checks": [
+    {
+      "check": "IUniswapV4Detf retired API absent",
+      "passed": true,
+      "obsolete": [],
+      "artifact": "out/IUniswapV4Detf.sol/IUniswapV4Detf.json"
+    },
+    {
+      "check": "UniswapV4DetfQueryFacet retired API absent",
+      "passed": true,
+      "obsolete": [],
+      "artifact": "out/UniswapV4DetfQueryFacet.sol/UniswapV4DetfQueryFacet.json"
+    },
+    {
+      "check": "UniswapV4DetfExchangeFacet retired API absent",
+      "passed": true,
+      "obsolete": [],
+      "artifact": "out/UniswapV4DetfExchangeFacet.sol/UniswapV4DetfExchangeFacet.json"
+    },
+    {
+      "check": "UniswapV4DetfBondFacet retired API absent",
+      "passed": true,
+      "obsolete": [],
+      "artifact": "out/UniswapV4DetfBondFacet.sol/UniswapV4DetfBondFacet.json"
+    },
+    {
+      "check": "UniswapV4DetfMaintenanceFacet retired API absent",
+      "passed": true,
+      "obsolete": [],
+      "artifact": "out/UniswapV4DetfMaintenanceFacet.sol/UniswapV4DetfMaintenanceFacet.json"
+    },
+    {
+      "check": "UniswapV4DetfClaimFacet retired API absent",
+      "passed": true,
+      "obsolete": [],
+      "artifact": "out/UniswapV4DetfClaimFacet.sol/UniswapV4DetfClaimFacet.json"
+    },
+    {
+      "check": "Canonical PkgArgs omits both mature-close configuration fields",
+      "passed": true,
+      "fields": [
+        "name",
+        "symbol",
+        "hook",
+        "ownerOnlyLiquidity",
+        "creationPairPerDetfWad",
+        "openingPairPerDetfWad",
+        "mintThreshold",
+        "burnThreshold",
+        "expansionClosureRatePerYearWad",
+        "creator",
+        "claimName",
+        "claimSymbol",
+        "bondName",
+        "bondSymbol",
+        "mintRouteMode",
+        "mintRoutes",
+        "burnRouteMode",
+        "burnRoutes",
+        "bondRouteMode",
+        "bondRoutes",
+        "donateRouteMode",
+        "donateRoutes"
+      ]
+    },
+    {
+      "check": "Immutable liquidity policy remains in deployment schema",
+      "passed": true
+    },
+    {
+      "check": "Funded principal/vesting/reward claim surface retained",
+      "passed": true,
+      "missing": []
+    },
+    {
+      "check": "Five obsolete V4 storage members/accessors removed",
+      "passed": true,
+      "remaining": [],
+      "source_sha256": "d1f540f93afaa387290ffa4d663654ce011a96e3f4a713b195b0c8463af7d5a2"
+    }
+  ]
+}

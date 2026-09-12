@@ -1,15 +1,18 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IUniswapV4SeBufferHookClaimQuote} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {
     IUniswapV4StandardExchangeWeightedBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHook.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {
     UniswapV4StandardExchangeWeightedBufferHookJoinFlexibleTarget
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookJoinFlexibleTarget.sol";
 
-/// @notice Flexible SE-share join surface (Option 1d size split from JoinFacet).
+/// @notice Join / deposit liquidity surface (Option 1d size split from LiquidityFacet).
 contract UniswapV4StandardExchangeWeightedBufferHookJoinFlexibleFacet is
     UniswapV4StandardExchangeWeightedBufferHookJoinFlexibleTarget,
     IFacet
@@ -23,13 +26,11 @@ contract UniswapV4StandardExchangeWeightedBufferHookJoinFlexibleFacet is
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](6);
-        funcs[0] = IUniswapV4StandardExchangeWeightedBufferHook.previewJoinProportionalFlexible.selector;
-        funcs[1] = IUniswapV4StandardExchangeWeightedBufferHook.joinProportionalFlexible.selector;
-        funcs[2] = IUniswapV4StandardExchangeWeightedBufferHook.previewJoinSingleAssetExactInFlexible.selector;
-        funcs[3] = IUniswapV4StandardExchangeWeightedBufferHook.joinSingleAssetExactInFlexible.selector;
-        funcs[4] = IUniswapV4StandardExchangeWeightedBufferHook.previewDepositSingleFlexible.selector;
-        funcs[5] = IUniswapV4StandardExchangeWeightedBufferHook.depositSingleFlexible.selector;
+        funcs = new bytes4[](4);
+        funcs[0] = IUniswapV4StandardExchangeWeightedBufferHook.joinProportionalFlexible.selector;
+        funcs[1] = IUniswapV4StandardExchangeWeightedBufferHook.joinSingleAssetExactInFlexible.selector;
+        funcs[2] = IUniswapV4StandardExchangeWeightedBufferHook.depositSingleFlexible.selector;
+        funcs[3] = IUniswapV4SeBufferHook.joinUnbalanced.selector;
     }
 
     function facetMetadata()

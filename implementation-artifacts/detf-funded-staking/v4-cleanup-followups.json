@@ -1,0 +1,42 @@
+{
+  "recorded_at_utc": "2026-09-08T04:20:57.253597+00:00",
+  "status": "APPLIED_VALIDATION_PENDING",
+  "authority": "Owner-approved obsolete close/dead code cleanup and required test consolidation/API migration.",
+  "coverage_mapping": {
+    "retired T7.15 return-only cases": "No executable assertion existed. FoT remains forbidden in product law; real secure-pull/short-delivery money-path tests remain required and retained.",
+    "J1 preview selector": "Retain the same presence assertion on the existing InMultiQuery facet that now exports the standard preview. Final proxy route still covered.",
+    "dead errors/comments": "No current unified V4 production caller uses the three deleted errors; obsolete LP-priced stake/close comments contradicted the funded implementation."
+  },
+  "files": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfRepo.sol",
+      "before_sha256": "d1f540f93afaa387290ffa4d663654ce011a96e3f4a713b195b0c8463af7d5a2",
+      "after_sha256": "d9ee147cc29d9826d2e3602c828e07a1f4af0425a9ff13ed43c8d2ee8bbc54b9"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol",
+      "before_sha256": "147cb43b8c9b43985100a28b4f23099dc0bcfa8e5bc8a13e64069f8785a7e0e3",
+      "after_sha256": "24b3d0c8fcfb584abd5d6c77bcea8199523becc5ed4afc23a8387e1964335f19"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_IoTables.t.sol",
+      "before_sha256": "6b7ed9dff5834680a4c31526705ace632974d8326d5f134a0380d910362fc8c0",
+      "after_sha256": "cc3af39637fc4388c9b6130cee2d088d0f2b0c42483c9ca0acd380dd7cecac20"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_IoTables_Decimals.sol",
+      "before_sha256": "8963d6ace489b8803d4a605d2851fb766f2b01ddb7a065fa0ba0de7a822150fc",
+      "after_sha256": "3096db37c29f71adc903f1600810c64560a2ea14d50012a42037a1dcbf2978a1"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/adversarial/Adversarial_UniswapV4SE_SecurePull.t.sol",
+      "before_sha256": "93b0db56b167cf8b0d087e35f5896caa1aaf3a2b896ee15216f0cd7129708abc",
+      "after_sha256": "ba4825c1c81efac4ba6110cdf6024485f5d1d39f5b0a37003db2b5fbc58d2374"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_SecurePull_Decimals.sol",
+      "before_sha256": "57d83d1638c269cdbef610fce10d31648fa64d76bdbb1594c32808a33b673081",
+      "after_sha256": "c56bdbcac3a401584bb3ac7c2793560c2e74ac95b58c52830e90e4c6486cdf4d"
+    }
+  ]
+}

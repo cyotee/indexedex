@@ -1,0 +1,1101 @@
+{
+  "kind": "discovery only; not coverage or compiler proof",
+  "allowed": [
+    "acceptedBondTokens",
+    "bond",
+    "bondNftVault",
+    "bondRouteMode",
+    "bondRoutes",
+    "burnRouteMode",
+    "burnRoutes",
+    "burnThreshold",
+    "closeRouteMode",
+    "closeRoutes",
+    "completeReserveBondNft",
+    "completeReserveClaim",
+    "creationPairPerDetfWad",
+    "detfNFTVault",
+    "donate",
+    "donateRouteMode",
+    "donateRoutes",
+    "hook",
+    "isBurningAllowed",
+    "isMintingAllowed",
+    "isReserveLive",
+    "isReserveWired",
+    "joinDonatedCapital",
+    "mintRouteMode",
+    "mintRoutes",
+    "mintThreshold",
+    "notifyReserveDonated",
+    "openingPairPerDetfWad",
+    "ownerOnlyLiquidity",
+    "pendingExpansionDetf",
+    "previewBond",
+    "previewFirstBondPayments",
+    "previewJoinDonatedCapital",
+    "rebasingClaimToken",
+    "reservePool",
+    "sweepDust",
+    "syntheticPrice"
+  ],
+  "occurrences": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol",
+      "line": 263,
+      "receiver": "IUniswapV4Detf",
+      "member": "PkgArgs",
+      "source": "args = IUniswapV4Detf.PkgArgs({"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad.sol",
+      "line": 179,
+      "receiver": "IUniswapV4Detf",
+      "member": "IoRoute",
+      "source": "IUniswapV4Detf.IoRoute({token: IERC20(address(pair0)), vault: IStandardExchange(se0)});"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted.sol",
+      "line": 186,
+      "receiver": "IUniswapV4Detf",
+      "member": "IoRoute",
+      "source": "IUniswapV4Detf.IoRoute({token: IERC20(address(pair0)), vault: IStandardExchange(se0)});"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Decimals.sol",
+      "line": 367,
+      "receiver": "IUniswapV4Detf",
+      "member": "PkgArgs",
+      "source": "args = IUniswapV4Detf.PkgArgs({"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg_Deploy.t.sol",
+      "line": 98,
+      "receiver": "IUniswapV4Detf",
+      "member": "IoRoute",
+      "source": "closeRoutes[0] = IUniswapV4Detf.IoRoute({token: IERC20(address(2)), vault: IStandardExchange(address(3))});"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_IoTablesOpenBase.sol",
+      "line": 37,
+      "receiver": "detfInfo",
+      "member": "previewMint",
+      "source": "(uint256 mintGross_,,) = detfInfo.previewMint(IERC20(pair_), mintTokenIn_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_IoTables.t.sol",
+      "line": 131,
+      "receiver": "IUniswapV4Detf",
+      "member": "IoRoute",
+      "source": "args.mintRoutes[0] = IUniswapV4Detf.IoRoute({"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Alignment_FeeCreatorClaim.t.sol",
+      "line": 265,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(DETF_FEE_TO_BOND_NFT_ID, minOut_, feeTo_, deadline_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Alignment_FeeCreatorClaim.t.sol",
+      "line": 268,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(DETF_CREATOR_BOND_NFT_ID, minOut_, feeTo_, deadline_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_CloseD25Base.sol",
+      "line": 85,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "out_ = detfInfo.closeBondMature(tokenId_, minOut_, holder_, deadline_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_CloseD25Base.sol",
+      "line": 151,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(DETF_FEE_TO_BOND_NFT_ID, minOut_, d25Alice, deadline_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_CloseD25Base.sol",
+      "line": 155,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(DETF_CREATOR_BOND_NFT_ID, minOut_, d25Alice, deadline_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_CloseD25Base.sol",
+      "line": 160,
+      "receiver": "detfInfo",
+      "member": "previewCloseBondMature",
+      "source": "uint256[] memory preview_ = detfInfo.previewCloseBondMature(bobId_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ReserveDonationOpenBase.sol",
+      "line": 566,
+      "receiver": "detfInfo",
+      "member": "previewCloseBondMature",
+      "source": "uint256[] memory snap_ = detfInfo.previewCloseBondMature(bobId);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ReserveDonationOpenBase.sol",
+      "line": 578,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "uint256[] memory out_ = detfInfo.closeBondMature(bobId, _minOut(), bob, _deadline());"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ReserveDonationOpenBase.sol",
+      "line": 600,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(dnUserBondId, _minOut(), detfUser, _deadline());"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ReserveDonationOpenBase.sol",
+      "line": 602,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(bobId, _minOut(), bob, _deadline());"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ReserveDonationOpenBase.sol",
+      "line": 664,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "uint256[] memory out_ = detfInfo.closeBondMature(bobId_, _minOut(), bob_, _deadline());"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_IoTables.t.sol",
+      "line": 32,
+      "receiver": "IUniswapV4Detf",
+      "member": "IoRoute",
+      "source": "args.closeRoutes[0] = IUniswapV4Detf.IoRoute({"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_IoTables.t.sol",
+      "line": 66,
+      "receiver": "info",
+      "member": "closeBondMature",
+      "source": "uint256[] memory paid_ = info.closeBondMature("
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_IoTables.t.sol",
+      "line": 123,
+      "receiver": "IUniswapV4Detf",
+      "member": "IoRoute",
+      "source": "args.mintRoutes[0] = IUniswapV4Detf.IoRoute({"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Close.t.sol",
+      "line": 25,
+      "receiver": "IUniswapV4Detf",
+      "member": "IoRoute",
+      "source": "args.closeRoutes[0] = IUniswapV4Detf.IoRoute({"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Close.t.sol",
+      "line": 41,
+      "receiver": "info",
+      "member": "closeBondMature",
+      "source": "uint256[] memory clean = info.closeBondMature("
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Close.t.sol",
+      "line": 52,
+      "receiver": "info",
+      "member": "closeBondMature",
+      "source": "uint256[] memory funded = info.closeBondMature("
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Close.t.sol",
+      "line": 69,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(tokenId, minimums, attacker, block.timestamp + 1 hours);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Close.t.sol",
+      "line": 88,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(tokenId, minimums, detfUser, block.timestamp + 1 hours);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Close.t.sol",
+      "line": 104,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "uint256[] memory paid = detfInfo.closeBondMature("
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Close.t.sol",
+      "line": 139,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "uint256[] memory paid = detfInfo.closeBondMature("
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Deploy.t.sol",
+      "line": 46,
+      "receiver": "IUniswapV4Detf",
+      "member": "IoRoute",
+      "source": "args.closeRoutes[0] = IUniswapV4Detf.IoRoute({"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Deploy.t.sol",
+      "line": 50,
+      "receiver": "IUniswapV4Detf",
+      "member": "IoRoute",
+      "source": "args.closeRoutes[1] = IUniswapV4Detf.IoRoute({"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Alignment_FeeCreatorClaim.t.sol",
+      "line": 276,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(DETF_FEE_TO_BOND_NFT_ID, minOut_, feeTo_, deadline_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Alignment_FeeCreatorClaim.t.sol",
+      "line": 279,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(DETF_CREATOR_BOND_NFT_ID, minOut_, feeTo_, deadline_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Mint.t.sol",
+      "line": 21,
+      "receiver": "detfInfo",
+      "member": "previewMint",
+      "source": "detfInfo.previewMint(IERC20(address(pairToken)), mintIn);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Adversarial_Surface.t.sol",
+      "line": 29,
+      "receiver": "IUniswapV4Detf",
+      "member": "mint",
+      "source": "sels_[2] = IUniswapV4Detf.mint.selector;"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Adversarial_Surface.t.sol",
+      "line": 30,
+      "receiver": "IUniswapV4Detf",
+      "member": "previewMint",
+      "source": "sels_[3] = IUniswapV4Detf.previewMint.selector;"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Adversarial_Surface.t.sol",
+      "line": 31,
+      "receiver": "IUniswapV4Detf",
+      "member": "burn",
+      "source": "sels_[4] = IUniswapV4Detf.burn.selector;"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Adversarial_Surface.t.sol",
+      "line": 32,
+      "receiver": "IUniswapV4Detf",
+      "member": "previewBurn",
+      "source": "sels_[5] = IUniswapV4Detf.previewBurn.selector;"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Adversarial_Surface.t.sol",
+      "line": 34,
+      "receiver": "IUniswapV4Detf",
+      "member": "closeBondMature",
+      "source": "sels_[7] = IUniswapV4Detf.closeBondMature.selector;"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Adversarial_Surface.t.sol",
+      "line": 35,
+      "receiver": "IUniswapV4Detf",
+      "member": "previewCloseBondMature",
+      "source": "sels_[8] = IUniswapV4Detf.previewCloseBondMature.selector;"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Adversarial_Surface.t.sol",
+      "line": 56,
+      "receiver": "IUniswapV4Detf",
+      "member": "thresholdMode",
+      "source": "sels_[29] = IUniswapV4Detf.thresholdMode.selector;"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Adversarial_Surface.t.sol",
+      "line": 67,
+      "receiver": "IUniswapV4Detf",
+      "member": "compoundProtocolRewards",
+      "source": "sels_[40] = IUniswapV4Detf.compoundProtocolRewards.selector;"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Adversarial_Surface.t.sol",
+      "line": 130,
+      "receiver": "IUniswapV4Detf",
+      "member": "mint",
+      "source": "address mintFacet_ = IDiamondLoupe(detf).facetAddress(IUniswapV4Detf.mint.selector);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Adversarial_Surface.t.sol",
+      "line": 162,
+      "receiver": "info_",
+      "member": "thresholdMode",
+      "source": "info_.thresholdMode();"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Adversarial_Surface.t.sol",
+      "line": 171,
+      "receiver": "info_",
+      "member": "previewMint",
+      "source": "info_.previewMint(IERC20(address(pairToken)), 1 ether);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Adversarial_Surface.t.sol",
+      "line": 173,
+      "receiver": "info_",
+      "member": "previewCloseBondMature",
+      "source": "info_.previewCloseBondMature(1);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Adversarial_Surface.t.sol",
+      "line": 206,
+      "receiver": "info_",
+      "member": "compoundProtocolRewards",
+      "source": "info_.compoundProtocolRewards();"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_FeeCreatorClaimBase.sol",
+      "line": 170,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(DETF_FEE_TO_BOND_NFT_ID, minOut_, feeTo_, deadline_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_FeeCreatorClaimBase.sol",
+      "line": 173,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(DETF_CREATOR_BOND_NFT_ID, minOut_, feeTo_, deadline_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_IoTablesGoldBase.sol",
+      "line": 131,
+      "receiver": "IUniswapV4Detf",
+      "member": "IoRoute",
+      "source": "args.mintRoutes[0] = IUniswapV4Detf.IoRoute({"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_IoTablesGoldBase.sol",
+      "line": 173,
+      "receiver": "detfInfo",
+      "member": "previewMint",
+      "source": "(uint256 grossPred_, uint256 userPred_,) = detfInfo.previewMint(IERC20(se), shareAmt_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_IoTablesGoldBase.sol",
+      "line": 322,
+      "receiver": "IUniswapV4Detf",
+      "member": "IoRoute",
+      "source": "rows_[0] = IUniswapV4Detf.IoRoute({"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_IoTablesGoldBase.sol",
+      "line": 326,
+      "receiver": "IUniswapV4Detf",
+      "member": "IoRoute",
+      "source": "rows_[1] = IUniswapV4Detf.IoRoute({token: IERC20(se), vault: IStandardExchange(se)});"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_IoTablesGoldBase.sol",
+      "line": 330,
+      "receiver": "IUniswapV4Detf",
+      "member": "IoRoute",
+      "source": "rows_[w_] = IUniswapV4Detf.IoRoute({"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Stage11OpenSuite.sol",
+      "line": 243,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(dnUserBondId, _minOut(), detfUser, _deadline());"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Stage11OpenSuite.sol",
+      "line": 245,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(bobId, _minOut(), bob, _deadline());"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Adversarial_Surface.t.sol",
+      "line": 29,
+      "receiver": "IUniswapV4Detf",
+      "member": "mint",
+      "source": "sels_[2] = IUniswapV4Detf.mint.selector;"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Adversarial_Surface.t.sol",
+      "line": 30,
+      "receiver": "IUniswapV4Detf",
+      "member": "previewMint",
+      "source": "sels_[3] = IUniswapV4Detf.previewMint.selector;"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Adversarial_Surface.t.sol",
+      "line": 31,
+      "receiver": "IUniswapV4Detf",
+      "member": "burn",
+      "source": "sels_[4] = IUniswapV4Detf.burn.selector;"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Adversarial_Surface.t.sol",
+      "line": 32,
+      "receiver": "IUniswapV4Detf",
+      "member": "previewBurn",
+      "source": "sels_[5] = IUniswapV4Detf.previewBurn.selector;"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Adversarial_Surface.t.sol",
+      "line": 34,
+      "receiver": "IUniswapV4Detf",
+      "member": "closeBondMature",
+      "source": "sels_[7] = IUniswapV4Detf.closeBondMature.selector;"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Adversarial_Surface.t.sol",
+      "line": 35,
+      "receiver": "IUniswapV4Detf",
+      "member": "previewCloseBondMature",
+      "source": "sels_[8] = IUniswapV4Detf.previewCloseBondMature.selector;"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Adversarial_Surface.t.sol",
+      "line": 56,
+      "receiver": "IUniswapV4Detf",
+      "member": "thresholdMode",
+      "source": "sels_[29] = IUniswapV4Detf.thresholdMode.selector;"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Adversarial_Surface.t.sol",
+      "line": 67,
+      "receiver": "IUniswapV4Detf",
+      "member": "compoundProtocolRewards",
+      "source": "sels_[40] = IUniswapV4Detf.compoundProtocolRewards.selector;"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Adversarial_Surface.t.sol",
+      "line": 127,
+      "receiver": "IUniswapV4Detf",
+      "member": "mint",
+      "source": "address mintFacet_ = IDiamondLoupe(detf).facetAddress(IUniswapV4Detf.mint.selector);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Adversarial_Surface.t.sol",
+      "line": 159,
+      "receiver": "info_",
+      "member": "thresholdMode",
+      "source": "info_.thresholdMode();"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Adversarial_Surface.t.sol",
+      "line": 168,
+      "receiver": "info_",
+      "member": "previewMint",
+      "source": "info_.previewMint(IERC20(address(pairToken)), 1 ether);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Adversarial_Surface.t.sol",
+      "line": 170,
+      "receiver": "info_",
+      "member": "previewCloseBondMature",
+      "source": "info_.previewCloseBondMature(1);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Adversarial_Surface.t.sol",
+      "line": 203,
+      "receiver": "info_",
+      "member": "compoundProtocolRewards",
+      "source": "info_.compoundProtocolRewards();"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_ReserveDonation.t.sol",
+      "line": 71,
+      "receiver": "detfInfo",
+      "member": "previewCloseBondMature",
+      "source": "uint256[] memory snap_ = detfInfo.previewCloseBondMature(bobId);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_ReserveDonation.t.sol",
+      "line": 83,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "uint256[] memory out_ = detfInfo.closeBondMature(bobId, _minOut(), bob, _deadline());"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Alignment_FeeCreatorClaim.t.sol",
+      "line": 258,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(DETF_FEE_TO_BOND_NFT_ID, minOut_, feeTo_, deadline_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Alignment_FeeCreatorClaim.t.sol",
+      "line": 261,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(DETF_CREATOR_BOND_NFT_ID, minOut_, feeTo_, deadline_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad.t.sol",
+      "line": 32,
+      "receiver": "info",
+      "member": "closeBondMature",
+      "source": "uint256[] memory clean = info.closeBondMature("
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad.t.sol",
+      "line": 43,
+      "receiver": "info",
+      "member": "closeBondMature",
+      "source": "uint256[] memory funded = info.closeBondMature("
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad.t.sol",
+      "line": 108,
+      "receiver": "info",
+      "member": "closeBondMature",
+      "source": "uint256[] memory paid_ = info.closeBondMature(tokenId, minOut_, detfUser, deadline_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/adversarial/Adversarial_Surface.t.sol",
+      "line": 31,
+      "receiver": "IUniswapV4Detf",
+      "member": "mint",
+      "source": "sels_[2] = IUniswapV4Detf.mint.selector;"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/adversarial/Adversarial_Surface.t.sol",
+      "line": 32,
+      "receiver": "IUniswapV4Detf",
+      "member": "previewMint",
+      "source": "sels_[3] = IUniswapV4Detf.previewMint.selector;"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/adversarial/Adversarial_Surface.t.sol",
+      "line": 33,
+      "receiver": "IUniswapV4Detf",
+      "member": "burn",
+      "source": "sels_[4] = IUniswapV4Detf.burn.selector;"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/adversarial/Adversarial_Surface.t.sol",
+      "line": 34,
+      "receiver": "IUniswapV4Detf",
+      "member": "previewBurn",
+      "source": "sels_[5] = IUniswapV4Detf.previewBurn.selector;"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/adversarial/Adversarial_Surface.t.sol",
+      "line": 36,
+      "receiver": "IUniswapV4Detf",
+      "member": "closeBondMature",
+      "source": "sels_[7] = IUniswapV4Detf.closeBondMature.selector;"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/adversarial/Adversarial_Surface.t.sol",
+      "line": 37,
+      "receiver": "IUniswapV4Detf",
+      "member": "previewCloseBondMature",
+      "source": "sels_[8] = IUniswapV4Detf.previewCloseBondMature.selector;"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/adversarial/Adversarial_Surface.t.sol",
+      "line": 58,
+      "receiver": "IUniswapV4Detf",
+      "member": "thresholdMode",
+      "source": "sels_[29] = IUniswapV4Detf.thresholdMode.selector;"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/adversarial/Adversarial_Surface.t.sol",
+      "line": 69,
+      "receiver": "IUniswapV4Detf",
+      "member": "compoundProtocolRewards",
+      "source": "sels_[40] = IUniswapV4Detf.compoundProtocolRewards.selector;"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/adversarial/Adversarial_Surface.t.sol",
+      "line": 132,
+      "receiver": "IUniswapV4Detf",
+      "member": "mint",
+      "source": "address mintFacet_ = IDiamondLoupe(detf).facetAddress(IUniswapV4Detf.mint.selector);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/adversarial/Adversarial_Surface.t.sol",
+      "line": 164,
+      "receiver": "info_",
+      "member": "thresholdMode",
+      "source": "info_.thresholdMode();"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/adversarial/Adversarial_Surface.t.sol",
+      "line": 173,
+      "receiver": "info_",
+      "member": "previewMint",
+      "source": "info_.previewMint(IERC20(address(pairToken)), 1 ether);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/adversarial/Adversarial_Surface.t.sol",
+      "line": 175,
+      "receiver": "info_",
+      "member": "previewCloseBondMature",
+      "source": "info_.previewCloseBondMature(1);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/adversarial/Adversarial_Surface.t.sol",
+      "line": 210,
+      "receiver": "info_",
+      "member": "compoundProtocolRewards",
+      "source": "info_.compoundProtocolRewards();"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Close_Decimals.sol",
+      "line": 30,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "uint256[] memory paid = detfInfo.closeBondMature("
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_IoTablesGoldBase_Decimals.sol",
+      "line": 131,
+      "receiver": "IUniswapV4Detf",
+      "member": "IoRoute",
+      "source": "args.mintRoutes[0] = IUniswapV4Detf.IoRoute({"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_IoTablesGoldBase_Decimals.sol",
+      "line": 173,
+      "receiver": "detfInfo",
+      "member": "previewMint",
+      "source": "(uint256 grossPred_, uint256 userPred_,) = detfInfo.previewMint(IERC20(se), shareAmt_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_IoTablesGoldBase_Decimals.sol",
+      "line": 286,
+      "receiver": "IUniswapV4Detf",
+      "member": "IoRoute",
+      "source": "rows_[0] = IUniswapV4Detf.IoRoute({"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_IoTablesGoldBase_Decimals.sol",
+      "line": 290,
+      "receiver": "IUniswapV4Detf",
+      "member": "IoRoute",
+      "source": "rows_[1] = IUniswapV4Detf.IoRoute({token: IERC20(se), vault: IStandardExchange(se)});"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_IoTablesGoldBase_Decimals.sol",
+      "line": 294,
+      "receiver": "IUniswapV4Detf",
+      "member": "IoRoute",
+      "source": "rows_[w_] = IUniswapV4Detf.IoRoute({"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Stage11OpenSuite_Decimals.sol",
+      "line": 271,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "try detfInfo.closeBondMature(dnUserBondId, _minOut(), detfUser, _deadline()) {} catch {}"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Stage11OpenSuite_Decimals.sol",
+      "line": 273,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "try detfInfo.closeBondMature(bobId, _minOut(), bob, _deadline()) {} catch {}"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Mint_Decimals.sol",
+      "line": 21,
+      "receiver": "detfInfo",
+      "member": "previewMint",
+      "source": "detfInfo.previewMint(IERC20(address(pairToken)), mintIn);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_ReserveDonationOpenBase_Decimals.sol",
+      "line": 567,
+      "receiver": "detfInfo",
+      "member": "previewCloseBondMature",
+      "source": "uint256[] memory snap_ = detfInfo.previewCloseBondMature(bobId);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_ReserveDonationOpenBase_Decimals.sol",
+      "line": 579,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "uint256[] memory out_ = detfInfo.closeBondMature(bobId, _minOut(), bob, _deadline());"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_ReserveDonationOpenBase_Decimals.sol",
+      "line": 601,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(dnUserBondId, _minOut(), detfUser, _deadline());"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_ReserveDonationOpenBase_Decimals.sol",
+      "line": 603,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(bobId, _minOut(), bob, _deadline());"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_ReserveDonationOpenBase_Decimals.sol",
+      "line": 665,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "uint256[] memory out_ = detfInfo.closeBondMature(bobId_, _minOut(), bob_, _deadline());"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Deploy_Decimals.sol",
+      "line": 34,
+      "receiver": "IUniswapV4Detf",
+      "member": "IoRoute",
+      "source": "args.closeRoutes[0] = IUniswapV4Detf.IoRoute({"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Deploy_Decimals.sol",
+      "line": 38,
+      "receiver": "IUniswapV4Detf",
+      "member": "IoRoute",
+      "source": "args.closeRoutes[1] = IUniswapV4Detf.IoRoute({"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_IoTablesOpenBase_Decimals.sol",
+      "line": 37,
+      "receiver": "detfInfo",
+      "member": "previewMint",
+      "source": "(uint256 mintGross_,,) = detfInfo.previewMint(IERC20(pair_), mintTokenIn_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_CloseD25Base_Decimals.sol",
+      "line": 85,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "out_ = detfInfo.closeBondMature(tokenId_, minOut_, holder_, deadline_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_CloseD25Base_Decimals.sol",
+      "line": 150,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(DETF_FEE_TO_BOND_NFT_ID, minOut_, d25Alice, deadline_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_CloseD25Base_Decimals.sol",
+      "line": 154,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(DETF_CREATOR_BOND_NFT_ID, minOut_, d25Alice, deadline_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_CloseD25Base_Decimals.sol",
+      "line": 159,
+      "receiver": "detfInfo",
+      "member": "previewCloseBondMature",
+      "source": "uint256[] memory preview_ = detfInfo.previewCloseBondMature(bobId_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_FeeCreatorClaimBase_Decimals.sol",
+      "line": 170,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(DETF_FEE_TO_BOND_NFT_ID, minOut_, feeTo_, deadline_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_FeeCreatorClaimBase_Decimals.sol",
+      "line": 173,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(DETF_CREATOR_BOND_NFT_ID, minOut_, feeTo_, deadline_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_IoTables_Decimals.sol",
+      "line": 32,
+      "receiver": "IUniswapV4Detf",
+      "member": "IoRoute",
+      "source": "args.closeRoutes[0] = IUniswapV4Detf.IoRoute({"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_IoTables_Decimals.sol",
+      "line": 66,
+      "receiver": "info",
+      "member": "closeBondMature",
+      "source": "uint256[] memory paid_ = info.closeBondMature("
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_Stage11Helpers.sol",
+      "line": 537,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "out_ = detfInfo.closeBondMature(tokenId_, _minOut(), holder_, _deadline());"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_Policy.t.sol",
+      "line": 36,
+      "receiver": "info",
+      "member": "thresholdMode",
+      "source": "assertEq(uint8(info.thresholdMode()), uint8(ThresholdMode.Policy), \"Policy\");"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_Policy.t.sol",
+      "line": 92,
+      "receiver": "info",
+      "member": "compoundProtocolRewards",
+      "source": "info.compoundProtocolRewards();"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_Policy.t.sol",
+      "line": 402,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(DETF_FEE_TO_BOND_NFT_ID, minOut_, feeTo_, deadline_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_Policy.t.sol",
+      "line": 405,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(DETF_CREATOR_BOND_NFT_ID, minOut_, feeTo_, deadline_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se.t.sol",
+      "line": 133,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "uint256[] memory paid = detfInfo.closeBondMature("
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+      "line": 59,
+      "receiver": "detfInfo",
+      "member": "previewMint",
+      "source": "(uint256 mintGross_,,) = detfInfo.previewMint(IERC20(pair_), mintTokenIn_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+      "line": 237,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(DETF_FEE_TO_BOND_NFT_ID, minOut_, d25Alice, deadline_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+      "line": 239,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(DETF_CREATOR_BOND_NFT_ID, minOut_, d25Alice, deadline_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+      "line": 244,
+      "receiver": "detfInfo",
+      "member": "previewCloseBondMature",
+      "source": "uint256[] memory preview_ = detfInfo.previewCloseBondMature(bobId_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+      "line": 275,
+      "receiver": "info",
+      "member": "compoundProtocolRewards",
+      "source": "(uint256 detfIn_, uint256 lpOut_) = info.compoundProtocolRewards();"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+      "line": 285,
+      "receiver": "info",
+      "member": "compoundProtocolRewards",
+      "source": "info.compoundProtocolRewards();"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+      "line": 340,
+      "receiver": "info_",
+      "member": "closeBondMature",
+      "source": "uint256[] memory closed_ = info_.closeBondMature(firstId_, _minOut(), detfUser, _deadline());"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+      "line": 722,
+      "receiver": "detfInfo",
+      "member": "previewCloseBondMature",
+      "source": "uint256[] memory snap_ = detfInfo.previewCloseBondMature(bobId);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+      "line": 732,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "uint256[] memory out_ = detfInfo.closeBondMature(bobId, _minOut(), bob_, _deadline());"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+      "line": 751,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(dnUserBondId, _minOut(), detfUser, _deadline());"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+      "line": 753,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(bobId, _minOut(), bob_, _deadline());"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+      "line": 796,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "uint256[] memory out_ = detfInfo.closeBondMature(bobId, _minOut(), bob_, _deadline());"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Lifecycle_Decimals.sol",
+      "line": 132,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "uint256[] memory paid = detfInfo.closeBondMature("
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Stage11Helpers_Decimals.sol",
+      "line": 537,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "out_ = detfInfo.closeBondMature(tokenId_, _minOut(), holder_, _deadline());"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Policy_Decimals.sol",
+      "line": 36,
+      "receiver": "info",
+      "member": "thresholdMode",
+      "source": "assertEq(uint8(info.thresholdMode()), uint8(ThresholdMode.Policy), \"Policy\");"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Policy_Decimals.sol",
+      "line": 92,
+      "receiver": "info",
+      "member": "compoundProtocolRewards",
+      "source": "info.compoundProtocolRewards();"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Policy_Decimals.sol",
+      "line": 402,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(DETF_FEE_TO_BOND_NFT_ID, minOut_, feeTo_, deadline_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Policy_Decimals.sol",
+      "line": 405,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(DETF_CREATOR_BOND_NFT_ID, minOut_, feeTo_, deadline_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+      "line": 59,
+      "receiver": "detfInfo",
+      "member": "previewMint",
+      "source": "(uint256 mintGross_,,) = detfInfo.previewMint(IERC20(pair_), mintTokenIn_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+      "line": 237,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(DETF_FEE_TO_BOND_NFT_ID, minOut_, d25Alice, deadline_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+      "line": 239,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(DETF_CREATOR_BOND_NFT_ID, minOut_, d25Alice, deadline_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+      "line": 244,
+      "receiver": "detfInfo",
+      "member": "previewCloseBondMature",
+      "source": "uint256[] memory preview_ = detfInfo.previewCloseBondMature(bobId_);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+      "line": 275,
+      "receiver": "info",
+      "member": "compoundProtocolRewards",
+      "source": "(uint256 detfIn_, uint256 lpOut_) = info.compoundProtocolRewards();"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+      "line": 285,
+      "receiver": "info",
+      "member": "compoundProtocolRewards",
+      "source": "info.compoundProtocolRewards();"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+      "line": 340,
+      "receiver": "info_",
+      "member": "closeBondMature",
+      "source": "uint256[] memory closed_ = info_.closeBondMature(firstId_, _minOut(), detfUser, _deadline());"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+      "line": 722,
+      "receiver": "detfInfo",
+      "member": "previewCloseBondMature",
+      "source": "uint256[] memory snap_ = detfInfo.previewCloseBondMature(bobId);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+      "line": 732,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "uint256[] memory out_ = detfInfo.closeBondMature(bobId, _minOut(), bob_, _deadline());"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+      "line": 751,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(dnUserBondId, _minOut(), detfUser, _deadline());"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+      "line": 753,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature(bobId, _minOut(), bob_, _deadline());"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+      "line": 796,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "uint256[] memory out_ = detfInfo.closeBondMature(bobId, _minOut(), bob_, _deadline());"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_MorphoBlueSe.t.sol",
+      "line": 91,
+      "receiver": "detfInfo",
+      "member": "previewCloseBondMature",
+      "source": "uint256[] memory closeQuote = detfInfo.previewCloseBondMature(bondId);"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_MorphoBlueSe.t.sol",
+      "line": 93,
+      "receiver": "detfInfo",
+      "member": "closeBondMature",
+      "source": "detfInfo.closeBondMature{gas: 30_000_000}(bondId, closeQuote, detfUser, block.timestamp + 1 hours);"
+    }
+  ]
+}

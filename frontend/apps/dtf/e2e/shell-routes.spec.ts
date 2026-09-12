@@ -21,19 +21,16 @@ test.describe('App routes & redirects (DTF)', () => {
     )
   })
 
-  test('landing shows temporary $DTF staking overlay', async ({ walletPage }) => {
+  test('landing shows a dismissible migration completion notice', async ({ walletPage }) => {
     await walletPage.goto('/')
     const overlay = walletPage.getByTestId('token-staking-overlay')
     await expect(overlay).toBeVisible()
-    await expect(overlay.getByRole('heading', { name: 'Stake $DTF' })).toBeVisible()
-    await expect(
-      overlay.getByTestId('token-staking-connect').or(overlay.locator('.dtf-landing__stake-connected')),
-    ).toBeVisible()
-    await expect(overlay.getByText('Reward reserve')).toBeVisible()
-    await expect(overlay.getByText('Your stake', { exact: true })).toBeVisible()
-    await expect(overlay.getByText('$DTF rewards')).toBeVisible()
-    await expect(overlay.getByText('Migration')).toBeVisible()
-    await expect(overlay.getByText('Claim after wrap')).toBeVisible()
+    await expect(overlay.getByRole('heading', { name: 'Migration complete' })).toBeVisible()
+    await expect(overlay.getByText('You can now view your DTF-DETF rewards on the staking page.')).toBeVisible()
+    await overlay.getByRole('button', { name: 'Close migration notice' }).click()
+    await expect(overlay).toHaveCount(0)
+    await walletPage.getByRole('link', { name: 'Join a live DETF' }).click()
+    await expect(walletPage).toHaveURL(/\/explore$/)
   })
 
   test('/protocol shows fee oracle owner', async ({ walletPage }) => {

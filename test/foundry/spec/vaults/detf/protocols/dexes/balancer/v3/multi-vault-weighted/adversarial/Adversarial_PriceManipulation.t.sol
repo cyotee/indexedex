@@ -18,7 +18,7 @@ contract Adversarial_PriceManipulation_Test is TestBase_MultiVaultWeightedDetf_A
     ///      seigniorage as vault-share PnL. That is intentional product surface - not a free drain of
     ///      bonded principal. Hard invariants: victim DETF balance, residual inventory, claim authority.
     function test_B1_skewMintReverseBurn_seigniorageBounds() public {
-        address instance_ = _deployOpenModeDetfN(1); // both gates open when live
+        address instance_ = _deployOpenModeDetfN(1);
         (uint256 aliceTokenId_, uint256 aliceBpt_) = _goLiveViaBptBond(instance_, alice, 2_000e18);
         assertTrue(aliceTokenId_ > 0 && aliceBpt_ > 0, "alice bond principal");
 
@@ -28,7 +28,9 @@ contract Adversarial_PriceManipulation_Test is TestBase_MultiVaultWeightedDetf_A
         assertEq(victimBal_, victimOut_, "victim detf");
 
         address pool_ = IMultiVaultWeightedDetfInfo(instance_).reservePool();
-        uint256 bptBefore_ = IERC20(pool_).balanceOf(instance_);
+        address custody_ = IMultiVaultWeightedDetfInfo(instance_).bondNftVault();
+        uint256 bptBefore_ = IERC20(pool_).balanceOf(custody_);
+        assertGt(bptBefore_, 0, "funded protocol reserve");
 
         dai.mint(attacker, 500_000e18);
         usdc.mint(attacker, 500_000e18);
@@ -40,9 +42,8 @@ contract Adversarial_PriceManipulation_Test is TestBase_MultiVaultWeightedDetf_A
 
         vm.startPrank(attacker);
         seShares[0].approve(instance_, sharesIn_);
-        uint256 detfOut_ = IStandardExchangeIn(instance_).exchangeIn(
-            seShares[0], sharesIn_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours
-        );
+        uint256 detfOut_ = IStandardExchangeIn(instance_)
+            .exchangeIn(seShares[0], sharesIn_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertTrue(detfOut_ > 0, "minted after skew");
 
@@ -50,17 +51,16 @@ contract Adversarial_PriceManipulation_Test is TestBase_MultiVaultWeightedDetf_A
 
         vm.startPrank(attacker);
         IERC20(instance_).approve(instance_, detfOut_);
-        uint256 sharesBack_ = IStandardExchangeIn(instance_).exchangeIn(
-            IERC20(instance_), detfOut_, seShares[0], 0, attacker, false, block.timestamp + 1 hours
-        );
+        uint256 sharesBack_ = IStandardExchangeIn(instance_)
+            .exchangeIn(IERC20(instance_), detfOut_, seShares[0], 0, attacker, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         // Hard safety: victim token balance unchanged (no rebalance theft of balances)
         assertEq(IERC20(instance_).balanceOf(victim), victimBal_, "B1: victim DETF balance intact");
         // Hard safety: attacker cannot pull BPT without claim
         assertEq(IERC20(pool_).balanceOf(attacker), 0, "B1: attacker holds no free BPT");
-        // Bonded principal inventory still on diamond (mint/burn may change free reserve BPT via join/exit)
-        assertTrue(IERC20(pool_).balanceOf(instance_) > 0, "B1: diamond still holds reserve BPT");
+        // The NFT holds protocol-owned LP; purchased bonds hold funded staking.
+        assertGt(IERC20(pool_).balanceOf(custody_), 0, "B1: protocol reserve remains funded");
         // Seigniorage bound: share profit (if any) is finite and sub-linear in size of attack vs bootstrap.
         // Documented intentional risk when both gates open - not unbounded drain of aliceBpt_ principal.
         if (sharesBack_ > sharesIn_) {
@@ -74,7 +74,7 @@ contract Adversarial_PriceManipulation_Test is TestBase_MultiVaultWeightedDetf_A
         _assertNoFreeInventoryStrict(instance_);
         // bpt may move with join/exit; never invent claim authority
         emit log_named_uint("bpt_before", bptBefore_);
-        emit log_named_uint("bpt_after", IERC20(pool_).balanceOf(instance_));
+        emit log_named_uint("bpt_after", IERC20(pool_).balanceOf(custody_));
     }
 
     /// @notice B1b: under default thresholds, deadband often blocks free mint↔burn cycle after mild skew.
@@ -92,41 +92,27 @@ contract Adversarial_PriceManipulation_Test is TestBase_MultiVaultWeightedDetf_A
         assertFalse(mintOk_ && burnOk_, "B1b: mint and burn mutually exclusive under default thresholds");
     }
 
-    /// @notice B3: rate/synthetic moves flip mint/burn gates; cannot mint when disallowed.
-    function test_B3_thresholdGates_blockMintWhenNotAllowed() public {
+    /// @notice D39: a closed primary gate routes the payment through the funded reserve.
+    function test_B3_closedPrimaryMint_executesReserveSwapWithoutIssuance() public {
         address instance_ = _openLiveN1DefaultThresholds();
         IMultiVaultWeightedDetfInfo info_ = IMultiVaultWeightedDetfInfo(instance_);
-
-        // Force synthetic down via seigniorage dilution + rate crash if mint is open
-        dai.mint(alice, 2_000_000e18);
-        usdc.mint(alice, 2_000_000e18);
-
-        // Dilute free DETF if mint allowed
-        for (uint256 i; i < 6 && info_.isMintingAllowed(); ++i) {
-            _mintOnLeg(instance_, 0, bob, 150e18);
-        }
-        for (uint256 k; k < 12 && info_.isMintingAllowed(); ++k) {
-            _swapUnderlying(address(usdc), address(dai), 80_000e18 * (k + 1), alice);
-            if (info_.isMintingAllowed()) {
-                try this._externalMint(instance_, bob, 100e18) {} catch {}
-            }
-        }
-
         uint256 synth_ = info_.syntheticPrice();
-        assertEq(info_.isMintingAllowed(), synth_ > info_.mintThreshold(), "B3 mint coupling");
-        assertEq(info_.isBurningAllowed(), synth_ < info_.burnThreshold(), "B3 burn coupling");
-
-        if (!info_.isMintingAllowed()) {
-            uint256 shares_ = _fundSeSharesLeg(0, attacker, 20e18);
-            vm.startPrank(attacker);
-            seShares[0].approve(instance_, shares_);
-            vm.expectRevert();
-            IStandardExchangeIn(instance_).exchangeIn(
-                seShares[0], shares_, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours
-            );
-            vm.stopPrank();
-            assertEq(seShares[0].balanceOf(instance_), 0, "no residual on blocked mint");
-        }
+        assertEq(info_.isMintingAllowed(), synth_ > info_.mintThreshold(), "primary mint coupling");
+        assertEq(info_.isBurningAllowed(), synth_ < info_.burnThreshold(), "primary burn coupling");
+        assertFalse(info_.isMintingAllowed(), "primary mint closed");
+        uint256 shares_ = _fundSeSharesLeg(0, attacker, 20e18);
+        uint256 quote_ = IStandardExchangeIn(instance_).previewExchangeIn(seShares[0], shares_, IERC20(instance_));
+        assertGt(quote_, 0, "funded fallback quote");
+        uint256 supply_ = IERC20(instance_).totalSupply();
+        vm.startPrank(attacker);
+        seShares[0].approve(instance_, shares_);
+        uint256 received_ = IStandardExchangeIn(instance_)
+            .exchangeIn(seShares[0], shares_, IERC20(instance_), quote_, attacker, false, block.timestamp + 1 hours);
+        vm.stopPrank();
+        assertEq(received_, quote_, "reserve swap matches preview");
+        assertEq(IERC20(instance_).balanceOf(attacker), received_, "existing DETF delivered");
+        assertEq(IERC20(instance_).totalSupply(), supply_, "closed primary mint creates no supply");
+        _assertNoFreeInventoryStrict(instance_);
     }
 
     /// @dev External entry so try/catch works from same contract context.

@@ -1,0 +1,273 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+import {Vm} from "forge-std/Vm.sol";
+import {Math} from "@crane/contracts/utils/Math.sol";
+import {DETFFundedStakingMath} from "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol";
+import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
+import {IStakedDETF, IDETFFundedRewards} from "contracts/interfaces/IStakedDETF.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+
+
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
+import {IDetfNftReserveDonation} from "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol";
+import {DETF_PROTOCOL_BOND_NFT_ID} from "contracts/vaults/detf/common/core/DETFBondNftIds.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {MintableERC20Decimals} from "contracts/test/stubs/MintableERC20Decimals.sol";
+import {IUniswapV4Detf} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
+import {
+    UniV4DetfPretransferHelper_Decimals,
+    TestBase_UniswapV4Detf_Adversarial_Decimals
+} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol";
+import {TestBase_UniswapV4Detf_Decimals} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Decimals.sol";
+import {TestBase_UniswapV4Detf_Policy_Decimals} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol";
+import {UniswapV4Detf_ClaimBase_Decimals} from
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_ClaimBase_Decimals.sol";
+import {UniswapV4Detf_Alignment_CloseD25Base_Decimals} from
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_CloseD25Base_Decimals.sol";
+import {UniswapV4Detf_IoTablesOpenBase_Decimals} from
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_IoTablesOpenBase_Decimals.sol";
+import {UniswapV4Detf_OwnerOnlyLiquidityOpenBase_Decimals} from
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_OwnerOnlyLiquidityOpenBase_Decimals.sol";
+import {UniswapV4Detf_ReserveDonationOpenBase_Decimals} from
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_ReserveDonationOpenBase_Decimals.sol";
+import {UniswapV4Detf_Alignment_CloseD25OpenBase_Decimals} from
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_CloseD25OpenBase_Decimals.sol";
+import {UniswapV4Detf_Alignment_RedeemD15OpenBase_Decimals} from
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_RedeemD15OpenBase_Decimals.sol";
+import {UniswapV4Detf_ClaimOpenBase_Decimals} from
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_ClaimOpenBase_Decimals.sol";
+import {UniswapV4Detf_AdversarialOpenBase_Decimals} from
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_AdversarialOpenBase_Decimals.sol";
+
+/// @notice Decimal Stage 11 Open layer. Fixture TestBase supplies setUp / _firstBond.
+abstract contract UniswapV4Detf_Stage11OpenSuite_Decimals is
+    UniswapV4Detf_IoTablesOpenBase_Decimals,
+    UniswapV4Detf_OwnerOnlyLiquidityOpenBase_Decimals,
+    UniswapV4Detf_ReserveDonationOpenBase_Decimals,
+    UniswapV4Detf_Alignment_CloseD25OpenBase_Decimals,
+    UniswapV4Detf_Alignment_RedeemD15OpenBase_Decimals,
+    UniswapV4Detf_ClaimOpenBase_Decimals,
+    UniswapV4Detf_AdversarialOpenBase_Decimals
+{
+    function setUp()
+        public
+        virtual
+        override(
+            TestBase_UniswapV4Detf_Decimals,
+            TestBase_UniswapV4Detf_Policy_Decimals,
+            TestBase_UniswapV4Detf_Adversarial_Decimals
+        )
+    {
+        TestBase_UniswapV4Detf_Decimals.setUp();
+        _bindStage11OpenActors();
+    }
+
+    function _bindStage11OpenActors() internal {
+        attacker = makeAddr("attacker");
+        victim = makeAddr("victim");
+        aliceAdv = makeAddr("aliceAdv");
+        preHelper = new UniV4DetfPretransferHelper_Decimals();
+        _rebindPairTokenToHook();
+    }
+
+    function _rebindPairTokenToHook() internal {
+        if (address(detfInfo) == address(0)) return;
+        address hook_ = detfInfo.hook();
+        if (hook_ == address(0)) return;
+        address[] memory toks_ = IUniswapV4SeBufferHook(hook_).tokens();
+        address firstPair_;
+        for (uint256 i; i < toks_.length; ++i) {
+            if (toks_[i] == detf) continue;
+            if (firstPair_ == address(0)) firstPair_ = toks_[i];
+            if (toks_[i] == address(pairToken)) {
+                _syncPairDecimals();
+                return;
+            }
+        }
+        if (firstPair_ != address(0)) pairToken = MintableERC20Decimals(firstPair_);
+        _syncPairDecimals();
+    }
+
+    function _nft()
+        internal
+        view
+        virtual
+        override(
+            UniswapV4Detf_ClaimBase_Decimals,
+            UniswapV4Detf_Alignment_CloseD25Base_Decimals,
+            UniswapV4Detf_ReserveDonationOpenBase_Decimals
+        )
+        returns (IDETFNFTVault)
+    {
+        return IDETFNFTVault(detfInfo.bondNftVault());
+    }
+
+    function _deadline()
+        internal
+        view
+        virtual
+        override(
+            TestBase_UniswapV4Detf_Adversarial_Decimals,
+            TestBase_UniswapV4Detf_Policy_Decimals,
+            UniswapV4Detf_Alignment_CloseD25Base_Decimals,
+            UniswapV4Detf_ReserveDonationOpenBase_Decimals
+        )
+        returns (uint256)
+    {
+        return block.timestamp + 1 hours;
+    }
+
+    function _minOut()
+        internal
+        view
+        virtual
+        override(UniswapV4Detf_Alignment_CloseD25Base_Decimals, UniswapV4Detf_ReserveDonationOpenBase_Decimals)
+        returns (uint256[] memory m)
+    {
+        m = new uint256[](IUniswapV4SeBufferHook(detfInfo.hook()).tokens().length);
+    }
+
+    function _uniqueDetfArgs(string memory tag_)
+        internal
+        view
+        virtual
+        override(TestBase_UniswapV4Detf_Adversarial_Decimals, UniswapV4Detf_ReserveDonationOpenBase_Decimals)
+        returns (IUniswapV4Detf.PkgArgs memory args)
+    {
+        uint256 pairCount_ = 1;
+        if (address(detfInfo) != address(0)) {
+            address hook_ = detfInfo.hook();
+            if (hook_ != address(0)) {
+                uint256 n_ = IUniswapV4SeBufferHook(hook_).tokens().length;
+                if (n_ > 1) pairCount_ = n_ - 1;
+            }
+        }
+        args = _nLegDetfArgs(pairCount_);
+        args.name = string.concat("UniV4 DETF ", tag_);
+        args.symbol = string.concat("uv4", tag_);
+    }
+
+    function _fundPair(address to_, uint256 amount_)
+        internal
+        virtual
+        override(TestBase_UniswapV4Detf_Adversarial_Decimals, TestBase_UniswapV4Detf_Policy_Decimals)
+    {
+        TestBase_UniswapV4Detf_Policy_Decimals._fundPair(to_, amount_);
+    }
+
+    function _openPairToken() internal view virtual override returns (IERC20) {
+        if (address(detfInfo) == address(0)) return IERC20(address(pairToken));
+        address hook_ = detfInfo.hook();
+        if (hook_ == address(0)) return IERC20(address(pairToken));
+        address[] memory toks_ = IUniswapV4SeBufferHook(hook_).tokens();
+        address pt_ = address(pairToken);
+        address firstPair_;
+        for (uint256 i; i < toks_.length; ++i) {
+            if (toks_[i] == detf) continue;
+            if (firstPair_ == address(0)) firstPair_ = toks_[i];
+            if (toks_[i] == pt_) return IERC20(pt_);
+        }
+        if (firstPair_ != address(0)) return IERC20(firstPair_);
+        return IERC20(pt_);
+    }
+
+    function _fundHookToken(address token_, address to_, uint256 amount_) internal {
+        _fundToken(token_, to_, amount_);
+    }
+
+    function _fundOpenPair(address to_, uint256 amount_) internal virtual override {
+        _fundToken(address(_openPairToken()), to_, amount_);
+    }
+
+    function _bondAs(address bonder_, uint256 pairAmount_)
+        internal
+        virtual
+        override(UniswapV4Detf_Alignment_CloseD25Base_Decimals, UniswapV4Detf_ReserveDonationOpenBase_Decimals)
+        returns (uint256 tokenId_, uint256 shares_)
+    {
+        // Scale each hook pair to its own decimals (pairAmount_ is native pair units).
+        _fundBondLegs(bonder_, pairAmount_ * 4);
+        address[] memory toks_ = IUniswapV4SeBufferHook(detfInfo.hook()).tokens();
+        IERC20 bondTok_ = _openPairToken();
+        bool bondOk_;
+        for (uint256 i; i < toks_.length; ++i) {
+            if (toks_[i] == detf) continue;
+            vm.prank(bonder_);
+            IERC20(toks_[i]).approve(detf, type(uint256).max);
+            if (toks_[i] == address(bondTok_)) bondOk_ = true;
+        }
+        if (!bondOk_) {
+            for (uint256 j; j < toks_.length; ++j) {
+                if (toks_[j] == detf) continue;
+                bondTok_ = IERC20(toks_[j]);
+                break;
+            }
+        }
+        vm.startPrank(bonder_);
+        (tokenId_, shares_) = detfInfo.bond(
+            bondTok_, pairAmount_, DEFAULT_MIN_LOCK, bonder_, false, _deadline()
+        );
+        vm.stopPrank();
+    }
+
+    function bondAsExternal(address bonder_, uint256 pairAmount_)
+        external
+        returns (uint256 tokenId_, uint256 shares_)
+    {
+        return _bondAs(bonder_, pairAmount_);
+    }
+
+    function donatePairExternal(address from_, uint256 amount_) external returns (uint256) {
+        return _donatePair(from_, amount_);
+    }
+
+    function test_DN5_inert_reverts() public virtual override {
+        _ensureDonor();
+        address inert_ = _deployInstance(_uniqueDetfArgs("dn5"));
+        IDETFNFTVault nft_ = IDETFNFTVault(IUniswapV4Detf(inert_).bondNftVault());
+        IERC20 tok_ = _openPairToken();
+        uint256 amt_ = _uPair(1);
+        _fundOpenPair(dnDonor, amt_);
+        vm.startPrank(dnDonor);
+        tok_.approve(address(nft_), amt_);
+        vm.expectRevert(abi.encodeWithSignature("ReserveNotLive()"));
+        IDetfNftReserveDonation(address(nft_)).donate(tok_, amt_, 0, false, _deadline());
+        vm.stopPrank();
+        assertEq(IDetfNftReserveDonation(address(nft_)).previewDonate(tok_, amt_), 0, "DN5 preview inert");
+    }
+
+    function test_reserveHook_thirdPartyAddReverts() public virtual override {
+        IERC20 tok_ = _openPairToken();
+        uint256 amt_ = _uPair(1);
+        vm.prank(detfUser);
+        vm.expectRevert();
+        IUniswapV4SeBufferHook(reserveHook).joinSingleAssetExactIn(
+            address(tok_), amt_, detfUser, 0, _deadline()
+        );
+    }
+
+    /// @dev Retire all funded positions, donate, then prove the next bond cannot
+    /// capture protocol LP. Purchases stay within the weighted swap input domain.
+    function test_DN16_lastClose_thenDonate_nextBondDoesNotCapture() public virtual override {
+        _ensureLiveBond();
+        address bob_ = makeAddr("donation last prior holder");
+        address carol_ = makeAddr("donation next holder");
+        (uint256 bobId_,) = _bondAs(bob_, _uPair(10));
+        vm.warp(block.timestamp + DEFAULT_MIN_LOCK + 1);
+        _claimFundedDonationPosition(detfInfo, dnUserBondId, detfUser);
+        _claimFundedDonationPosition(detfInfo, bobId_, bob_);
+        _donatePair(dnDonor, _uPair(20));
+        uint256 lp_ = _lpToken().balanceOf(address(_nft())) + _lpToken().balanceOf(detf);
+        assertGt(lp_, 0, "all prior claims preserve donated protocol liquidity");
+        (, uint256 principal_,,) = detfInfo.previewBond(_openPairToken(), _uPair(10), DEFAULT_MIN_LOCK);
+        (uint256 nextId_,) = _bondAs(carol_, _uPair(10));
+        assertEq(IDetfBondNFT(address(_nft())).positionOf(nextId_).principal, principal_, "next bond only receives its quoted funded purchase");
+        assertGe(_lpToken().balanceOf(address(_nft())) + _lpToken().balanceOf(detf), lp_, "new bond cannot capture old LP");
+        vm.warp(block.timestamp + DEFAULT_MIN_LOCK + 1);
+        _claimFundedDonationPosition(detfInfo, nextId_, carol_);
+    }
+}

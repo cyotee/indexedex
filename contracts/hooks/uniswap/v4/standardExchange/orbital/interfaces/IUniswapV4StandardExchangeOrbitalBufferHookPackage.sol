@@ -27,8 +27,11 @@ interface IUniswapV4StandardExchangeOrbitalBufferHookPackage is
     error InvalidSE();
     /// @notice Remediation min-SE: at least one non-zero standardExchange is required (H7).
     error MinOneStandardExchange();
+    error InvalidDecimals();
 
     struct PkgInit {
+        IFacet depositZapFacet;
+        IFacet depositQueryFacet;
         IVaultRegistryDeployment vaultRegistryDeployment;
         IVaultFeeOracleQuery vaultFeeOracleQuery;
         IFacet depositFacet;
@@ -52,6 +55,9 @@ interface IUniswapV4StandardExchangeOrbitalBufferHookPackage is
         address token0;
         address token1;
         address token2;
+        uint8 decimals0;
+        uint8 decimals1;
+        uint8 decimals2;
         address se0;
         address se1;
         address se2;

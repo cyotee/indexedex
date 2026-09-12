@@ -31,6 +31,8 @@ library Phase_06_Stage_05_OrbitalBufferHookPkg {
         IFacet hooksFacet = OrbitalHookFS.deployHooksFacet(s.create3Factory);
         IOrbitalHookPkg.PkgInit memory init_;
         init_.vaultRegistryDeployment = reg;
+        init_.depositQueryFacet = OrbitalHookFS.deployDepositQueryFacet(s.create3Factory);
+        init_.depositZapFacet = OrbitalHookFS.deployDepositZapFacet(s.create3Factory);
         init_.vaultFeeOracleQuery = feeOracle;
         init_.depositFacet = depositFacet;
         init_.withdrawFacet = withdrawFacet;

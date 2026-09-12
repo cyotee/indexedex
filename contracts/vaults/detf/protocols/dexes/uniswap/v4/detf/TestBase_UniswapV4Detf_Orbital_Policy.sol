@@ -49,33 +49,11 @@ abstract contract TestBase_UniswapV4Detf_Orbital_Policy is
     }
 
     function _skewSyntheticDown(address d) internal virtual override {
-        IERC20 tok_ = _mintTokenOf(d);
-        uint256 bal_ = IERC20(d).balanceOf(detfUser);
-        if (bal_ > 1 ether) {
-            uint256 amt_ = bal_ / 2;
-            if (amt_ == 0) amt_ = bal_;
-            vm.prank(detfUser);
-            IERC20(d).transfer(d, amt_);
-            _ownerSwap(d, d, address(tok_), amt_);
-            _ownerSwap(d, d, address(pair1), amt_ / 2);
-            return;
-        }
-        if (IUniswapV4Detf(d).isMintingAllowed()) {
-            try this.mintExternal(d, LIVE_MINT_AMT) {} catch {}
-        }
-        _ownerSwap(d, d, address(tok_), 40 ether);
-        _ownerSwap(d, d, address(pair1), 40 ether);
+        _skewSyntheticDownAmt(d, 80e9);
     }
 
     function _pushSyntheticUp(address d) internal virtual override {
-        IERC20 tok_ = _mintTokenOf(d);
-        try this.donateExternal(d, 80 ether) {} catch {}
-        if (IUniswapV4Detf(d).isMintingAllowed() && IUniswapV4Detf(d).syntheticPrice() > POLICY_MINT_THRESHOLD) {
-            return;
-        }
-        _ownerSwap(d, address(tok_), d, 200 ether);
-        _ownerSwap(d, address(pair1), d, 200 ether);
-        try this.donateExternal(d, 80 ether) {} catch {}
+        _policyBuyFromReserve(d);
     }
 
     function _expectInvalidCreationRate(IUniswapV4Detf.PkgArgs memory args) internal virtual override {

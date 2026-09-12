@@ -7,7 +7,6 @@ import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
-import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 import {IUniswapV4Detf} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
 
@@ -22,8 +21,6 @@ library UniswapV4DetfRepo {
     error InvalidRoute(address tokenIn, address tokenOut);
     error ZeroAmount();
     error DeadlineExpired(uint256 deadline);
-    error MintingNotAllowed(uint256 syntheticPrice, uint256 mintThreshold);
-    error BurningNotAllowed(uint256 syntheticPrice, uint256 burnThreshold);
     error LockDurationTooShort(uint256 lockDuration, uint256 minLockDuration);
     error FirstBondBelowMinimumLiquidity();
     error ClaimTokenNotConfigured();
@@ -32,7 +29,6 @@ library UniswapV4DetfRepo {
     error ReserveBondNftAlreadyWired();
     error ReserveClaimAlreadyWired();
     error ZeroAddress();
-    error BondNotMature(uint256 unlockTime);
 
     bytes32 internal constant STORAGE_SLOT = keccak256(
         abi.encode(uint256(keccak256("vault.detf.uniswap.v4.detf.repo")) - 1)
@@ -49,20 +45,14 @@ library UniswapV4DetfRepo {
         IVaultFeeOracleQuery feeOracle;
         IDETFNFTVault bondNftVault;
         IRebasingClaimToken rebasingClaimToken;
-        uint256 detfNftId;
-        uint256 feeRecipientNftId;
         uint256[] creationPairPerDetfWad;
         uint256[] openingPairPerDetfWad;
         mapping(address pair => uint256 wad) creationOfPair;
         mapping(address pair => uint256 wad) openingOfPair;
         uint256 mintThreshold;
         uint256 burnThreshold;
-        ThresholdMode thresholdMode;
-        uint256 expansionEpochLength;
         uint256 expansionClosureRatePerYearWad;
-        uint256 expansionMaxCatchUpEpochs;
         uint256 lastExpansionTimestamp;
-        uint256 userBondedLp;
         address bondNftVaultPkg;
         address rebasingClaimTokenPkg;
         address creator;
@@ -75,12 +65,10 @@ library UniswapV4DetfRepo {
         IUniswapV4Detf.RouteTableMode mintRouteMode;
         IUniswapV4Detf.RouteTableMode burnRouteMode;
         IUniswapV4Detf.RouteTableMode bondRouteMode;
-        IUniswapV4Detf.RouteTableMode closeRouteMode;
         IUniswapV4Detf.RouteTableMode donateRouteMode;
         Table mintTable;
         Table burnTable;
         Table bondTable;
-        Table closeTable;
         Table donateTable;
     }
 
@@ -97,10 +85,7 @@ library UniswapV4DetfRepo {
     struct PolicyInit {
         uint256 mintThreshold;
         uint256 burnThreshold;
-        ThresholdMode thresholdMode;
-        uint256 expansionEpochLength;
         uint256 expansionClosureRatePerYearWad;
-        uint256 expansionMaxCatchUpEpochs;
     }
 
     function _layoutStruct() internal pure returns (Storage storage layoutStruct_) {
@@ -119,7 +104,6 @@ library UniswapV4DetfRepo {
         s.creationPairPerDetfWad = p_.creationPairPerDetfWad;
         s.openingPairPerDetfWad = p_.openingPairPerDetfWad;
         s.lastExpansionTimestamp = 0;
-        s.userBondedLp = 0;
         s.bondNftVaultPkg = p_.bondNftVaultPkg;
         s.rebasingClaimTokenPkg = p_.rebasingClaimTokenPkg;
         s.creator = p_.creator;
@@ -129,10 +113,7 @@ library UniswapV4DetfRepo {
         Storage storage s = _layoutStruct();
         s.mintThreshold = p_.mintThreshold;
         s.burnThreshold = p_.burnThreshold;
-        s.thresholdMode = p_.thresholdMode;
-        s.expansionEpochLength = p_.expansionEpochLength;
         s.expansionClosureRatePerYearWad = p_.expansionClosureRatePerYearWad;
-        s.expansionMaxCatchUpEpochs = p_.expansionMaxCatchUpEpochs;
     }
 
     function _setChildTokenMetadata(
@@ -166,14 +147,12 @@ library UniswapV4DetfRepo {
         IUniswapV4Detf.RouteTableMode mint_,
         IUniswapV4Detf.RouteTableMode burn_,
         IUniswapV4Detf.RouteTableMode bond_,
-        IUniswapV4Detf.RouteTableMode close_,
         IUniswapV4Detf.RouteTableMode donate_
     ) internal {
         Storage storage s = _layoutStruct();
         s.mintRouteMode = mint_;
         s.burnRouteMode = burn_;
         s.bondRouteMode = bond_;
-        s.closeRouteMode = close_;
         s.donateRouteMode = donate_;
     }
 
@@ -183,11 +162,9 @@ library UniswapV4DetfRepo {
         table_.vaultOf[token_] = vault_;
     }
 
-    function _setBondNft(IDETFNFTVault vault_, uint256 detfNftId_, uint256 feeRecipientNftId_) internal {
+    function _setBondNft(IDETFNFTVault vault_) internal {
         Storage storage s = _layoutStruct();
         s.bondNftVault = vault_;
-        s.detfNftId = detfNftId_;
-        s.feeRecipientNftId = feeRecipientNftId_;
     }
 
     function _setClaim(IRebasingClaimToken claim_) internal {
@@ -200,19 +177,6 @@ library UniswapV4DetfRepo {
         s.isReserveLive = true;
         if (s.lastExpansionTimestamp == 0) {
             s.lastExpansionTimestamp = block.timestamp;
-        }
-    }
-
-    function _addUserBondedLp(uint256 amount_) internal {
-        _layoutStruct().userBondedLp += amount_;
-    }
-
-    function _subUserBondedLp(uint256 amount_) internal {
-        Storage storage s = _layoutStruct();
-        if (amount_ >= s.userBondedLp) {
-            s.userBondedLp = 0;
-        } else {
-            s.userBondedLp -= amount_;
         }
     }
 

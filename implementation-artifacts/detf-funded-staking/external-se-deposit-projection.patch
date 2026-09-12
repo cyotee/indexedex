@@ -1,0 +1,255 @@
+--- contracts/interfaces/IStandardExchangeTransitionQuote.sol
++++ contracts/interfaces/IStandardExchangeTransitionQuote.sol
+@@ -43,6 +43,12 @@
+ /// @dev The returned state includes provider fees and liquidity/sleeve changes.
+ /// This optional quote extension does not alter standard route authorization.
+ interface IStandardExchangeExternalQuote {
++    /// @notice Project a separate recipient minting SE shares from an accepted
++    /// input. The snapshot asset remains the accounting/output asset; input may
++    /// be the other pool currency or the protocol's own receipt/LP token.
++    function quoteExternalDeposit(bytes calldata state, address tokenIn, uint256 amountIn)
++        external view returns (bytes memory nextState, uint256 sharesOut, uint256 holderAssetsAfter);
++
+     function quoteExternalExchange(bytes calldata state, address tokenIn, uint256 amountIn)
+         external view returns (bytes memory nextState, uint256 amountOut, uint256 holderAssetsAfter);
+ }
+--- contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInQueryTarget.sol
++++ contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInQueryTarget.sol
+@@ -56,6 +56,23 @@
+         q.pool.liquidity = _pool().liquidity();
+         state = abi.encode(q);
+         holderAssets = _inventoryAssets(q, q.shares);
++    }
++
++    function quoteExternalDeposit(bytes calldata state, address tokenIn, uint256 amountIn)
++        external view returns (bytes memory nextState, uint256 sharesOut, uint256 holderAssetsAfter)
++    {
++        InventoryQuote memory q = _decodeInventory(state);
++        if (tokenIn != _token0() && tokenIn != _token1()) revert ITransition.UnsupportedQuoteAsset(tokenIn);
++        bool accountingToken0 = q.token0;
++        q.token0 = tokenIn == _token0();
++        if (amountIn != 0) {
++            sharesOut = _inventoryDeposit(q, amountIn);
++            // The mint recipient is separate from the buffered holder.
++            q.shares -= sharesOut;
++            if (q.idle) _inventoryRebalance(q);
++        }
++        q.token0 = accountingToken0;
++        return (abi.encode(q), sharesOut, _inventoryAssets(q, q.shares));
+     }
+ 
+     function quoteExternalExchange(bytes calldata state, address tokenIn, uint256 amountIn)
+--- contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryTarget.sol
++++ contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryTarget.sol
+@@ -12,6 +12,23 @@
+ } from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInBase.sol";
+ 
+ contract UniswapV4StandardExchangeInQueryTarget is UniswapV4StandardExchangeInBase {
++    function quoteExternalDeposit(bytes calldata state, address tokenIn, uint256 amountIn)
++        external view returns (bytes memory nextState, uint256 sharesOut, uint256 holderAssetsAfter)
++    {
++        InventoryQuote memory q = _decodeInventory(state);
++        if (tokenIn != _token0() && tokenIn != _token1()) revert ITransition.UnsupportedQuoteAsset(tokenIn);
++        bool accountingToken0 = q.token0;
++        q.token0 = tokenIn == _token0();
++        if (amountIn != 0) {
++            sharesOut = _inventoryDeposit(q, amountIn);
++            // The mint recipient is separate from the buffered holder.
++            q.shares -= sharesOut;
++            if (q.idle) _inventoryRebalance(q);
++        }
++        q.token0 = accountingToken0;
++        return (abi.encode(q), sharesOut, _inventoryAssets(q, q.shares));
++    }
++
+     function quoteExternalExchange(bytes calldata state, address tokenIn, uint256 amountIn)
+         external view returns (bytes memory nextState, uint256 amountOut, uint256 holderAssetsAfter)
+     {
+--- contracts/vaults/standard/erc4626/ERC4626StandardExchangeQuoteTarget.sol
++++ contracts/vaults/standard/erc4626/ERC4626StandardExchangeQuoteTarget.sol
+@@ -102,6 +102,30 @@
+         if (q.exchange != address(this) || q.vault != address(protocolVault())) revert InvalidQuoteState();
+         q.holderShares = shares_;
+         return _quoteHolderAssets(q);
++    }
++
++    function quoteExternalDeposit(bytes calldata state_, address tokenIn_, uint256 amountIn_)
++        external view returns (bytes memory nextState_, uint256 sharesOut_, uint256 holderAssetsAfter_)
++    {
++        QuoteState memory q = abi.decode(state_, (QuoteState));
++        if (q.exchange != address(this) || q.vault != address(protocolVault())) revert InvalidQuoteState();
++        uint256 added;
++        if (tokenIn_ == q.vault) {
++            (, added) = _vaultTransition(q, Operation.ReceiveShares, amountIn_);
++        } else if (tokenIn_ == _underlying()) {
++            (, added) = _vaultTransition(q, Operation.DepositExactIn, amountIn_);
++        } else revert UnsupportedQuoteAsset(tokenIn_);
++        sharesOut_ = q.supply == 0 || q.vaultShares == 0
++            ? added : Math.mulDiv(added, q.supply, q.vaultShares);
++        q.vaultShares = _vaultShareBalance(q);
++        q.supply += sharesOut_;
++        address feeTo = address(VaultFeeOracleQueryAwareRepo._feeOracle().feeTo());
++        if (feeTo != address(0)) {
++            uint256 fee = Math.mulDiv(sharesOut_, VaultFeeOracleQueryAwareRepo._feeOracle().usageFeeOfVault(address(this)), 1e18);
++            q.supply += fee;
++            if (q.holder == feeTo) q.holderShares += fee;
++        }
++        return (abi.encode(q), sharesOut_, _quoteHolderAssets(q));
+     }
+ 
+     function quoteExternalExchange(bytes calldata state_, address tokenIn_, uint256 amountIn_)
+--- contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeQuoteTarget.sol
++++ contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeQuoteTarget.sol
+@@ -99,6 +99,46 @@
+         return _quoteAssets(_decodeQuote(state_), shares_);
+     }
+ 
++    function quoteExternalDeposit(bytes calldata state_, address tokenIn_, uint256 amountIn_)
++        external view returns (bytes memory nextState_, uint256 sharesOut_, uint256 holderAssetsAfter_)
++    {
++        QuoteState memory q = _decodeQuote(state_);
++        if (tokenIn_ == address(q.pool.pool)) {
++            _calcVaultFee(q.pool, q.vault);
++            if (q.holder == address(VaultFeeOracleQueryAwareRepo._feeOracle().feeTo())) q.holderShares += q.vault.feeShares;
++            sharesOut_ = BetterMath._convertToSharesDown(
++                amountIn_, q.vault.vaultLpReserve, q.vault.vaultTotalShares, ERC4626Repo._decimalOffset()
++            );
++            q.vault.vaultTotalShares += sharesOut_;
++            q.actualLp += amountIn_;
++            q.vault.vaultLpReserve = q.actualLp;
++            q.vault.knownTokenLastOwnedSourceReserve = BetterMath._mulDiv(q.actualLp, q.pool.knownReserve, q.pool.totalSupply);
++            q.vault.opTokenLastOwnedSourceReserve = BetterMath._mulDiv(q.actualLp, q.pool.opposingReserve, q.pool.totalSupply);
++            q.vault.feeShares = 0;
++        } else {
++            if (tokenIn_ != q.pool.token0 && tokenIn_ != q.pool.token1) revert UnsupportedQuoteAsset(tokenIn_);
++            bool flipped = tokenIn_ != q.asset;
++            if (flipped) _flipQuoteAsset(q);
++            (bytes memory projected,, uint256 minted,) = IStandardExchangeTransitionQuote(address(this)).quoteTransition(
++                abi.encode(q), Operation.DepositExactIn, amountIn_
++            );
++            q = abi.decode(projected, (QuoteState));
++            q.holderShares -= minted;
++            sharesOut_ = minted;
++            if (flipped) _flipQuoteAsset(q);
++        }
++        return (abi.encode(q), sharesOut_, _quoteAssets(q, q.holderShares));
++    }
++
++    function _flipQuoteAsset(QuoteState memory q) private pure {
++        q.asset = q.asset == q.pool.token0 ? q.pool.token1 : q.pool.token0;
++        (q.knownBalance, q.opposingBalance) = (q.opposingBalance, q.knownBalance);
++        (q.pool.knownReserve, q.pool.opposingReserve) = (q.pool.opposingReserve, q.pool.knownReserve);
++        (q.pool.knownfeePercent, q.pool.opTokenFeePercent) = (q.pool.opTokenFeePercent, q.pool.knownfeePercent);
++        (q.vault.knownTokenLastOwnedSourceReserve, q.vault.opTokenLastOwnedSourceReserve) =
++            (q.vault.opTokenLastOwnedSourceReserve, q.vault.knownTokenLastOwnedSourceReserve);
++    }
++
+     function quoteExternalExchange(bytes calldata state_, address tokenIn_, uint256 amountIn_)
+         external view returns (bytes memory nextState_, uint256 amountOut_, uint256 holderAssetsAfter_)
+     {
+--- contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeInFacet.sol
++++ contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeInFacet.sol
+@@ -48,7 +48,7 @@
+             bytes4[] memory funcs
+         )
+     {
+-        funcs = new bytes4[](8);
++        funcs = new bytes4[](9);
+ 
+         funcs[0] = IStandardExchangeIn.previewExchangeIn.selector;
+         funcs[1] = IStandardExchangeIn.exchangeIn.selector;
+@@ -58,6 +58,7 @@
+         funcs[5] = IStandardExchangeTransitionQuote.quoteShareBalance.selector;
+         funcs[6] = IStandardExchangeExternalQuote.quoteExternalExchange.selector;
+         funcs[7] = IStandardExchangeTransitionQuote.quoteTotalSupply.selector;
++        funcs[8] = IStandardExchangeExternalQuote.quoteExternalDeposit.selector;
+     }
+ 
+     function facetMetadata()
+--- contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInQueryFacet.sol
++++ contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInQueryFacet.sol
+@@ -25,13 +25,14 @@
+     }
+ 
+     function facetFuncs() public pure override returns (bytes4[] memory funcs) {
+-        funcs = new bytes4[](6);
++        funcs = new bytes4[](7);
+         funcs[0] = IStandardExchangeTransitionQuote.quoteState.selector;
+         funcs[1] = IStandardExchangeTransitionQuote.quoteAssets.selector;
+         funcs[2] = IStandardExchangeTransitionQuote.quoteShareBalance.selector;
+         funcs[3] = IStandardExchangeTransitionQuote.quoteTransition.selector;
+         funcs[4] = IStandardExchangeExternalQuote.quoteExternalExchange.selector;
+         funcs[5] = IStandardExchangeTransitionQuote.quoteTotalSupply.selector;
++        funcs[6] = IStandardExchangeExternalQuote.quoteExternalDeposit.selector;
+     }
+ 
+     function facetMetadata()
+--- contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryFacet.sol
++++ contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryFacet.sol
+@@ -21,12 +21,13 @@
+     }
+ 
+     function facetFuncs() public pure override returns (bytes4[] memory funcs) {
+-        funcs = new bytes4[](5);
++        funcs = new bytes4[](6);
+         funcs[0] = IStandardExchangeTransitionQuote.quoteAssets.selector;
+         funcs[1] = IStandardExchangeTransitionQuote.quoteShareBalance.selector;
+         funcs[2] = IStandardExchangeTransitionQuote.quoteTransition.selector;
+         funcs[3] = IStandardExchangeExternalQuote.quoteExternalExchange.selector;
+         funcs[4] = IStandardExchangeTransitionQuote.quoteTotalSupply.selector;
++        funcs[5] = IStandardExchangeExternalQuote.quoteExternalDeposit.selector;
+     }
+ 
+     function facetMetadata()
+--- contracts/vaults/standard/erc4626/ERC4626StandardExchangeInFacet.sol
++++ contracts/vaults/standard/erc4626/ERC4626StandardExchangeInFacet.sol
+@@ -26,7 +26,7 @@
+     }
+ 
+     function facetFuncs() public pure returns (bytes4[] memory funcs) {
+-        funcs = new bytes4[](8);
++        funcs = new bytes4[](9);
+         funcs[0] = IStandardExchangeIn.previewExchangeIn.selector;
+         funcs[1] = IStandardExchangeIn.exchangeIn.selector;
+         funcs[2] = IStandardExchangeTransitionQuote.quoteState.selector;
+@@ -35,6 +35,7 @@
+         funcs[5] = IStandardExchangeTransitionQuote.quoteShareBalance.selector;
+         funcs[6] = IStandardExchangeExternalQuote.quoteExternalExchange.selector;
+         funcs[7] = IStandardExchangeTransitionQuote.quoteTotalSupply.selector;
++        funcs[8] = IStandardExchangeExternalQuote.quoteExternalDeposit.selector;
+         return NativeStandardYieldSelectors._append(funcs);
+     }
+ 
+--- test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchangeInQueryFacet_IFacet_Test.t.sol
++++ test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchangeInQueryFacet_IFacet_Test.t.sol
+@@ -38,12 +38,13 @@
+     }
+ 
+     function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
+-        controlFuncs = new bytes4[](6);
++        controlFuncs = new bytes4[](7);
+         controlFuncs[0] = IStandardExchangeTransitionQuote.quoteState.selector;
+         controlFuncs[1] = IStandardExchangeTransitionQuote.quoteAssets.selector;
+         controlFuncs[2] = IStandardExchangeTransitionQuote.quoteShareBalance.selector;
+         controlFuncs[3] = IStandardExchangeTransitionQuote.quoteTransition.selector;
+         controlFuncs[4] = IStandardExchangeExternalQuote.quoteExternalExchange.selector;
+         controlFuncs[5] = IStandardExchangeTransitionQuote.quoteTotalSupply.selector;
++        controlFuncs[6] = IStandardExchangeExternalQuote.quoteExternalDeposit.selector;
+     }
+ }
+--- test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryFacet_IFacet_Test.t.sol
++++ test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryFacet_IFacet_Test.t.sol
+@@ -38,11 +38,12 @@
+     }
+ 
+     function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
+-        controlFuncs = new bytes4[](5);
++        controlFuncs = new bytes4[](6);
+         controlFuncs[0] = IStandardExchangeTransitionQuote.quoteAssets.selector;
+         controlFuncs[1] = IStandardExchangeTransitionQuote.quoteShareBalance.selector;
+         controlFuncs[2] = IStandardExchangeTransitionQuote.quoteTransition.selector;
+         controlFuncs[3] = IStandardExchangeExternalQuote.quoteExternalExchange.selector;
+         controlFuncs[4] = IStandardExchangeTransitionQuote.quoteTotalSupply.selector;
++        controlFuncs[5] = IStandardExchangeExternalQuote.quoteExternalDeposit.selector;
+     }
+ }

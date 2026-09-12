@@ -1,4 +1,4 @@
-# Negative Test Coverage Report
+            # Negative Test Coverage Report
 
 This report tracks *missing* and *partial* negative test coverage for the `feature/exactout-variants` worktree.
 

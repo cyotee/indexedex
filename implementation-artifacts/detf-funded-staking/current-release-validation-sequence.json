@@ -1,0 +1,25 @@
+{
+  "steps": [
+    {
+      "script": "run-full-build.py",
+      "exit_code": 0,
+      "seconds": 23393.301
+    },
+    {
+      "script": "run-post-build-followups.py",
+      "exit_code": 0,
+      "seconds": 300.266
+    },
+    {
+      "script": "run-current-hermetic.py",
+      "exit_code": 75,
+      "seconds": 5.277
+    },
+    {
+      "script": "compare-current-hermetic.py",
+      "exit_code": 75,
+      "seconds": 0.498
+    }
+  ],
+  "source_frozen": true
+}

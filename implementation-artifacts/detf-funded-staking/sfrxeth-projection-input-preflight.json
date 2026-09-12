@@ -1,0 +1,104 @@
+{
+  "recorded_at_utc": "2026-09-08T20:22:17.014298+00:00",
+  "block": 24000000,
+  "status": "PUBLIC_INPUT_READS_ONLY_NOT_PROJECTION_EXECUTION",
+  "broadcast": false,
+  "checks": {
+    "full_supply_conversion": true,
+    "deposit_floor": true,
+    "withdraw_ceiling": true,
+    "redeem_floor": true,
+    "virtual_offset_snapshot_rejected": true,
+    "existing_minter_enabled": true
+  },
+  "reward_cycle": {
+    "rewardsCycleEnd": 1766016000,
+    "rewardsCycleLength": 604800,
+    "lastSync": 1765411223,
+    "lastRewardAmount": 45189000000000000000
+  },
+  "calls": [
+    {
+      "target": "0xac3E018457B222d93114458476f3E3416Abbe38F",
+      "signature": "totalAssets()",
+      "argument": null,
+      "value": 59890478423933403107322
+    },
+    {
+      "target": "0xac3E018457B222d93114458476f3E3416Abbe38F",
+      "signature": "totalSupply()",
+      "argument": null,
+      "value": 52365864720603115859337
+    },
+    {
+      "target": "0xac3E018457B222d93114458476f3E3416Abbe38F",
+      "signature": "convertToShares(uint256)",
+      "argument": 59890478423933403107322,
+      "value": 52365864720603115859337
+    },
+    {
+      "target": "0xac3E018457B222d93114458476f3E3416Abbe38F",
+      "signature": "convertToAssets(uint256)",
+      "argument": 52365864720603115859337,
+      "value": 59890478423933403107322
+    },
+    {
+      "target": "0xac3E018457B222d93114458476f3E3416Abbe38F",
+      "signature": "previewDeposit(uint256)",
+      "argument": 1000000000000000000,
+      "value": 874360434223492446
+    },
+    {
+      "target": "0xac3E018457B222d93114458476f3E3416Abbe38F",
+      "signature": "previewWithdraw(uint256)",
+      "argument": 1000000000000000000,
+      "value": 874360434223492447
+    },
+    {
+      "target": "0xac3E018457B222d93114458476f3E3416Abbe38F",
+      "signature": "previewRedeem(uint256)",
+      "argument": 1000000000000000000,
+      "value": 1143693105107262012
+    },
+    {
+      "target": "0xac3E018457B222d93114458476f3E3416Abbe38F",
+      "signature": "convertToShares(uint256)",
+      "argument": 59890478423933403107323,
+      "value": 52365864720603115859337
+    },
+    {
+      "target": "0xac3E018457B222d93114458476f3E3416Abbe38F",
+      "signature": "rewardsCycleEnd()",
+      "argument": null,
+      "value": 1766016000
+    },
+    {
+      "target": "0xac3E018457B222d93114458476f3E3416Abbe38F",
+      "signature": "rewardsCycleLength()",
+      "argument": null,
+      "value": 604800
+    },
+    {
+      "target": "0xac3E018457B222d93114458476f3E3416Abbe38F",
+      "signature": "lastSync()",
+      "argument": null,
+      "value": 1765411223
+    },
+    {
+      "target": "0xac3E018457B222d93114458476f3E3416Abbe38F",
+      "signature": "lastRewardAmount()",
+      "argument": null,
+      "value": 45189000000000000000
+    },
+    {
+      "target": "0xbAFA44EFE7901E04E39Dad13167D089C559c1138",
+      "signature": "submitPaused()",
+      "argument": null,
+      "value": 0
+    }
+  ],
+  "primary_sources": [
+    "https://raw.githubusercontent.com/FraxFinance/frxETH-public/master/src/sfrxETH.sol",
+    "https://raw.githubusercontent.com/corddry/ERC4626/main/src/xERC4626.sol"
+  ]
+}

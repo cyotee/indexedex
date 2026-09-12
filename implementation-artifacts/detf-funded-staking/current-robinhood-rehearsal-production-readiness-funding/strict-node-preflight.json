@@ -1,0 +1,20 @@
+{
+  "checked_at_utc": "2026-09-10T21:16:22.672906+00:00",
+  "status": "FAILED_PREFLIGHT",
+  "rpc": "http://127.0.0.1:18664",
+  "chain_id": 4663,
+  "block_number": 56118361,
+  "block_hash": "0x108ba210e727f1fa6ecea533508dd0266759a0a6a18be55de934552a74f20175",
+  "checks": {
+    "chain_id": true,
+    "pinned_head": true,
+    "fork_pin": true,
+    "block_gas_limit": false,
+    "configured_gas_limit": true,
+    "prague": true,
+    "explicit_runtime_limit": true
+  },
+  "code_size_evidence": "Explicit 24576 Anvil startup flag recorded in node.json; actual runtime deployment acceptance is checked separately.",
+  "public_transactions": false,
+  "local_deployment_transactions": false
+}

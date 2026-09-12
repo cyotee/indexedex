@@ -1,0 +1,69 @@
+--- contracts/vaults/standard/erc4626/ERC4626StandardExchangeInTarget.sol
++++ contracts/vaults/standard/erc4626/ERC4626StandardExchangeInTarget.sol
+@@ -112,9 +112,10 @@
+         // protocolVault → SE (dilution fee) — durable U credit (no free-mint on booked reserve)
+         // amountIn vault tokens **stay** as SE reserve; never refund absolute vault balance.
+         if (address(tokenIn) == address(vault) && address(tokenOut) == address(this)) {
+-            uint256 totalBefore = IERC20(address(vault)).balanceOf(address(this));
+             uint256 actualIn = _securePull(tokenIn, amountIn, pretransferred);
+-            // totalBefore is vault inventory *before* this user's deposit credit
++            // A prepaid receipt is already in the token balance. Exclude only
++            // this credited payment, retaining all other existing reserve.
++            uint256 totalBefore = IERC20(address(vault)).balanceOf(address(this)) - actualIn;
+             amountOut = _convertVaultDeltaToShares(actualIn, totalBefore);
+             if (amountOut < minAmountOut) revert Slippage();
+             _mintWithUsageFee(recipient, amountOut);
+--- contracts/vaults/standard/erc4626/ERC4626StandardExchangeCommon.sol
++++ contracts/vaults/standard/erc4626/ERC4626StandardExchangeCommon.sol
+@@ -107,12 +107,22 @@
+ 
+     /// @dev Protocol vault tokens in for exact user SE shares (protocolVault → SE exact-out).
+     function _previewVaultInForSeOut(uint256 seOut) internal view returns (uint256 vaultIn) {
+-        uint256 supply = ERC20Repo._totalSupply();
+-        uint256 vaultBal = IERC20(address(protocolVault())).balanceOf(address(this));
++        return _vaultInForSeOut(seOut, IERC20(address(protocolVault())).balanceOf(address(this)));
++    }
++
++    function _vaultInForSeOut(uint256 seOut, uint256 vaultBal) internal view returns (uint256 vaultIn) {
++        uint256 supply = ERC20Repo._totalSupply();
+         if (supply == 0 || vaultBal == 0) {
+             return seOut;
+         }
+         return (seOut * vaultBal + supply - 1) / supply;
++    }
++
++    /// @dev Credit at most the caller's maximum from unbooked payment. Booked
++    /// reserve and unclaimed surplus remain backing throughout exact-output minting.
++    function _prepaidCredit(IERC20 token, uint256 maximum) internal view returns (uint256) {
++        uint256 available = token.balanceOf(address(this)) - MultiAssetBasicVaultRepo._reserveOfToken(address(token));
++        return available < maximum ? available : maximum;
+     }
+ 
+     /// @dev Underlying out for exact SE in (unwrap exact-in).
+--- contracts/vaults/standard/erc4626/ERC4626StandardExchangeOutTarget.sol
++++ contracts/vaults/standard/erc4626/ERC4626StandardExchangeOutTarget.sol
+@@ -92,17 +92,17 @@
+ 
+         // protocolVault → SE exact-out — amountIn vault tokens stay as SE reserve
+         if (address(tokenIn) == address(vault) && address(tokenOut) == address(this)) {
+-            amountIn = _previewVaultInForSeOut(amountOut);
++            uint256 prepaid = pretransferred ? _prepaidCredit(tokenIn, maxAmountIn) : 0;
++            uint256 totalBefore = IERC20(address(vault)).balanceOf(address(this)) - prepaid;
++            amountIn = _vaultInForSeOut(amountOut, totalBefore);
+             if (amountIn > maxAmountIn) revert Slippage();
+-
+-            // Snapshot reserve *before* user deposit credit (free-mint safe).
+-            uint256 totalBefore = IERC20(address(vault)).balanceOf(address(this));
+-            _securePull(tokenIn, amountIn, pretransferred);
+-
++            uint256 received = _securePull(tokenIn, amountIn, pretransferred);
++            if (received != amountIn) revert InsufficientDeposit(amountIn, received);
+             uint256 sharesFromDelta = _convertVaultDeltaToShares(amountIn, totalBefore);
+             if (sharesFromDelta < amountOut) revert Slippage();
+             _mintWithUsageFee(recipient, amountOut);
+-            // Pull overshoot already refunded in _securePull; never refund absolute reserve.
++            if (prepaid > amountIn) tokenIn.safeTransfer(msg.sender, prepaid - amountIn);
++            // Only the caller's unused credited payment is refundable.
+             _syncAllExpectedHoldReserves();
+             return amountIn;
+         }

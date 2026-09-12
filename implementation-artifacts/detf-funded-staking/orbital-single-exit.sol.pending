@@ -1,0 +1,142 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IStandardExchangeTransitionQuote as Transition} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {UniswapV4StandardExchangeOrbitalBufferHookRepo as Repo} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookRepo.sol";
+import {UniswapV4StandardExchangeOrbitalBufferHookMath as Math} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookMath.sol";
+import {UniswapV4StandardExchangeOrbitalBufferHookClaimLib as ClaimLib} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookClaimLib.sol";
+
+/// @notice Sequential proportional withdrawal and residual swap quotes for the Orbital LP.
+library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
+    struct Leg {
+        address se;
+        bytes state;
+        uint8 decimals;
+        uint256 rate;
+        uint256 shares;
+        uint256 effective;
+        uint256 withdrawn;
+    }
+
+    function preview(uint256 lp, uint256 supply, address tokenOut) external view returns (uint256 amountOut) {
+        if (lp == 0 || supply == 0 || lp >= supply) return 0;
+        Repo.Layout storage l = Repo._layout();
+        address pair = l.legs.pairOfStandardExchange[tokenOut];
+        bool asShare = pair != address(0);
+        if (!asShare) pair = tokenOut;
+        uint8 outIndex = Repo._indexOf(l, pair);
+        Leg[3] memory legs;
+        for (uint8 i; i < 3; ++i) legs[i] = _withdraw(i, lp, supply);
+        amountOut = legs[outIndex].withdrawn;
+        for (uint8 i; i < 3; ++i) {
+            if (i != outIndex && legs[i].withdrawn != 0) amountOut += _swap(legs, i, outIndex);
+        }
+        if (asShare && amountOut > 0) {
+            (,, amountOut,) = Transition(tokenOut).quoteTransition(
+                legs[outIndex].state, Transition.Operation.DepositExactIn, amountOut
+            );
+        }
+    }
+
+    function _withdraw(uint8 index, uint256 lp, uint256 supply) private view returns (Leg memory leg) {
+        Repo.Layout storage l = Repo._layout();
+        address token = Repo._tokenAt(l, index);
+        leg.se = Repo._seAt(l, index);
+        leg.decimals = Repo._decimalsAt(l, index);
+        if (leg.se == address(0)) {
+            leg.effective = l.reserves[token];
+            leg.withdrawn = leg.effective * lp / supply;
+            leg.effective -= leg.withdrawn;
+        } else {
+            address rp = Repo._rpAt(l, index);
+            if (rp != address(0)) leg.rate = ClaimLib.getRateFailClosed(rp);
+            (leg.state,) = Transition(leg.se).quoteState(token, address(this));
+            leg.shares = Transition(leg.se).quoteShareBalance(leg.state);
+            uint256 removed = leg.shares * lp / supply;
+            if (removed != 0) {
+                (leg.state,, leg.withdrawn,) = Transition(leg.se).quoteTransition(
+                    leg.state, Transition.Operation.RedeemExactIn, removed
+                );
+            }
+            _refresh(leg);
+        }
+    }
+
+    function _refresh(Leg memory leg) private view {
+        leg.shares = Transition(leg.se).quoteShareBalance(leg.state);
+        leg.effective = leg.rate == 0
+            ? Transition(leg.se).quoteAssets(leg.state, leg.shares)
+            : leg.shares * leg.rate / 1e18;
+    }
+
+    function _swap(Leg[3] memory legs, uint8 from, uint8 to) private view returns (uint256 received) {
+        Leg memory input = legs[from];
+        Leg memory output = legs[to];
+        uint256 added = input.withdrawn;
+        bytes memory nextInput;
+        if (input.se != address(0)) {
+            uint256 minted;
+            (nextInput,, minted,) = Transition(input.se).quoteTransition(
+                input.state, Transition.Operation.DepositExactIn, input.withdrawn
+            );
+            // Mirror the family's retained face-to-effective conversion at the
+            // post-withdrawal state, before buffering this residual input.
+            added = input.rate == 0
+                ? Transition(input.se).quoteAssets(input.state, input.shares + minted) - input.effective
+                : minted * input.rate / 1e18;
+        }
+        uint256 faceOut = _sale(legs, from, to, added);
+        received = _receiveOutput(output, faceOut);
+        if (input.se == address(0)) input.effective += input.withdrawn;
+        else {
+            input.state = nextInput;
+            _refresh(input);
+        }
+    }
+
+    function _receiveOutput(Leg memory output, uint256 faceOut) private view returns (uint256 received) {
+        if (output.se == address(0)) {
+            output.effective -= faceOut;
+            received = faceOut;
+        } else {
+            (bytes memory next, uint256 needed, uint256 paid,) = Transition(output.se).quoteTransition(
+                output.state, Transition.Operation.WithdrawExactOut, faceOut
+            );
+            uint256 cap = output.shares > 1 ? output.shares - 1 : 0;
+            if (needed > cap) {
+                (next,, paid,) = Transition(output.se).quoteTransition(
+                    output.state, Transition.Operation.RedeemExactIn, cap
+                );
+                if (paid < faceOut) revert Math.Drain();
+            }
+            output.state = next;
+            received = paid;
+            _refresh(output);
+        }
+    }
+
+    function _sale(Leg[3] memory legs, uint8 from, uint8 to, uint256 added) private view returns (uint256 out) {
+        Repo.Layout storage l = Repo._layout();
+        uint256 x = _toWad(legs[from].effective, legs[from].decimals);
+        uint256 y = _toWad(legs[to].effective, legs[to].decimals);
+        uint8 witness = 3 - from - to;
+        uint256 z = _toWad(legs[witness].effective, legs[witness].decimals);
+        uint256 net = Math.applyTradingFeeNet(
+            _toWad(added, legs[from].decimals), IVaultFeeOracleQuery(l.feeOracle).dexSwapFeeOfVault(address(this))
+        );
+        uint256 outWad = Math.sphereExactInOutWad(l.R, Math.recomputeL2(l.R, x, y, z), x, y, z, net);
+        uint8 decimals = legs[to].decimals;
+        out = decimals <= 18 ? outWad / (10 ** (18 - decimals)) : outWad * (10 ** (decimals - 18));
+        if (legs[to].rate != 0) {
+            uint256 shares = (out * 1e18 + legs[to].rate - 1) / legs[to].rate;
+            out = Transition(legs[to].se).quoteAssets(legs[to].state, shares);
+        }
+        if (out == 0 || out >= legs[to].effective) revert Math.Drain();
+    }
+
+    function _toWad(uint256 amount, uint8 decimals) private pure returns (uint256) {
+        return decimals <= 18 ? amount * (10 ** (18 - decimals)) : amount / (10 ** (decimals - 18));
+    }
+}

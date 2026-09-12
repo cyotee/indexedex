@@ -34,6 +34,9 @@ interface IUniswapV4StandardExchangeWeightedBufferHookPackage is
     error ArrayLengthMismatch();
 
     struct PkgInit {
+        IFacet joinFlexibleFacet;
+        IFacet exitQueryFacet;
+        IFacet joinQueryFacet;
         IVaultRegistryDeployment vaultRegistryDeployment;
         IVaultFeeOracleQuery vaultFeeOracleQuery;
         /// @dev Option 1d: join + exit replace combined liquidityFacet.
@@ -61,6 +64,8 @@ interface IUniswapV4StandardExchangeWeightedBufferHookPackage is
         uint256[] weights;
         address[] standardExchanges;
         address[] rateProviders;
+        uint8[] tokenDecimals;
+        uint8[] seDecimals;
         /// @notice D9: when true, only MultiStepOwnable owner may add/remove LP.
         bool ownerOnlyLiquidity;
         /// @notice MultiStepOwnable initial owner. DETF reserve deploys set this to the DETF diamond.

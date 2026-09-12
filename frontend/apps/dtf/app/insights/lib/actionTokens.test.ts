@@ -5,6 +5,7 @@ import {
   asAddr,
   collectActionTokenAddresses,
   collectSeVaultReadAddresses,
+  tokensForStandardRoute,
 } from './actionTokens'
 
 const P0 = '0xd97e3BCF599A5dbc893387680868d4Ad76E81206' as const
@@ -85,5 +86,22 @@ describe('collectActionTokenAddresses', () => {
   it('marks the vault share in the dropdown label', () => {
     expect(actionTokenOptionLabel({ address: SE, symbol: 'SE-DTF' }, SE)).toBe('SE-DTF (vault token)')
     expect(actionTokenOptionLabel({ address: P0, symbol: 'WETH' }, SE)).toBe('WETH')
+  })
+})
+
+describe('tokensForStandardRoute', () => {
+  const labels = [{ address: P0, symbol: 'IN' }, { address: P1, symbol: 'OUT' }]
+  it('keeps input and output allowlists separate and excludes direct DETF from payment lists', () => {
+    expect(tokensForStandardRoute({ discovered: [P0, SE, P0], labels, exclude: [SE] })).toEqual([labels[0]])
+    expect(tokensForStandardRoute({ discovered: [P1], labels })).toEqual([labels[1]])
+  })
+  it('does not turn metadata candidates into unsupported routes while discovery is missing or empty', () => {
+    expect(tokensForStandardRoute({ discovered: undefined, labels })).toEqual([])
+    expect(tokensForStandardRoute({ discovered: [], labels })).toEqual([])
+  })
+  it('retains a discovered token with a readable address label when symbol metadata is absent', () => {
+    expect(tokensForStandardRoute({ discovered: [ZERO, 'invalid', SE], labels })).toEqual([
+      { address: SE, symbol: `${SE.slice(0, 6)}…${SE.slice(-4)}` },
+    ])
   })
 })

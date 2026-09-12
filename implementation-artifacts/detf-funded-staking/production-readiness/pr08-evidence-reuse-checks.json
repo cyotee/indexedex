@@ -1,0 +1,42 @@
+{
+  "recorded_at_utc": "2026-09-11T05:39:02.782508+00:00",
+  "status": "PASS_ALL_SIX_PROVENANCE_GUARD_CASES",
+  "cases": [
+    {
+      "case": "exact_current",
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "case": "verified_script_only_delta",
+      "expected": true,
+      "actual": true,
+      "passed": true
+    },
+    {
+      "case": "different_contract_or_test_fingerprint",
+      "expected": false,
+      "actual": false,
+      "passed": true
+    },
+    {
+      "case": "different_dependency",
+      "expected": false,
+      "actual": false,
+      "passed": true
+    },
+    {
+      "case": "different_compiler_tool",
+      "expected": false,
+      "actual": false,
+      "passed": true
+    },
+    {
+      "case": "missing_old_provenance",
+      "expected": false,
+      "actual": false,
+      "passed": true
+    }
+  ]
+}

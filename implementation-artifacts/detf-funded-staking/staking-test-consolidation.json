@@ -1,0 +1,219 @@
+[
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_TrustFlags.t.sol",
+    "test": "test_I1_pretransferred_inventoryNoInCallTransfer_revertsDelta0",
+    "action": "replace",
+    "replacement": "test_pretransferredNeverCreditsHeldStakingOrBacking",
+    "reason": "D32/D53: standard funded stake/unstake replaces redeem and LP-valued mintFromNFTSale; the replacement exercises actual registered DETF/staking/NFT proxies instead of mocked issuance."
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_TrustFlags.t.sol",
+    "test": "test_I1_pretransferred_exchangeIn_inventoryNoInCallTransfer_revertsDelta0",
+    "action": "replace",
+    "replacement": "test_pretransferredNeverCreditsHeldStakingOrBacking",
+    "reason": "D32/D53: standard funded stake/unstake replaces redeem and LP-valued mintFromNFTSale; the replacement exercises actual registered DETF/staking/NFT proxies instead of mocked issuance."
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_TrustFlags.t.sol",
+    "test": "test_I1_pretransferred_claimedLeInventory_stillReverts",
+    "action": "replace",
+    "replacement": "test_pretransferredNeverCreditsHeldStakingOrBacking",
+    "reason": "D32/D53: standard funded stake/unstake replaces redeem and LP-valued mintFromNFTSale; the replacement exercises actual registered DETF/staking/NFT proxies instead of mocked issuance."
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_TrustFlags.t.sol",
+    "test": "test_I1_pretransferred_transferBeforeCall_revertsDelta0",
+    "action": "replace",
+    "replacement": "test_pretransferredNeverCreditsHeldStakingOrBacking",
+    "reason": "D32/D53: standard funded stake/unstake replaces redeem and LP-valued mintFromNFTSale; the replacement exercises actual registered DETF/staking/NFT proxies instead of mocked issuance."
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_TrustFlags.t.sol",
+    "test": "test_I2_pretransferred_claimedGtDelta0_reverts",
+    "action": "replace",
+    "replacement": "test_pretransferredNeverCreditsHeldStakingOrBacking",
+    "reason": "D32/D53: standard funded stake/unstake replaces redeem and LP-valued mintFromNFTSale; the replacement exercises actual registered DETF/staking/NFT proxies instead of mocked issuance."
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_TrustFlags.t.sol",
+    "test": "test_I3_residualInventory_cannotFundSecondFreePretransfer",
+    "action": "replace",
+    "replacement": "test_pretransferredNeverCreditsHeldStakingOrBacking",
+    "reason": "D32/D53: standard funded stake/unstake replaces redeem and LP-valued mintFromNFTSale; the replacement exercises actual registered DETF/staking/NFT proxies instead of mocked issuance."
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_TrustFlags.t.sol",
+    "test": "test_redemptionRate_followsPreviewClaimLiquidityZapout",
+    "action": "retire",
+    "replacement": null,
+    "reason": "D32 replaces pool-priced claims with funded DETF redemption at 1:1. A live LP zap-out rate must no longer determine sDETF balances or redemption amounts."
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_TrustFlags.t.sol",
+    "test": "test_I_positive_honestPullRedeem_succeeds",
+    "action": "replace",
+    "replacement": "test_honestPrincipalRoutesLeaveUnsolicitedBackingUnallocated",
+    "reason": "D32/D53: standard funded stake/unstake replaces redeem and LP-valued mintFromNFTSale; the replacement exercises actual registered DETF/staking/NFT proxies instead of mocked issuance."
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Surface.t.sol",
+    "test": "test_J1_claim_targetEqualsFacetFuncs",
+    "action": "merge",
+    "replacement": "test_J1_J2_fundedInterfaceMatchesFacetPackageAndProxy",
+    "reason": "D32/D53: interface-derived control list, package cuts, actual proxy routing, funded principal execution and DETF/NFT-only authorization replace the retired LP-claim surface; test_J2_retiredClaimSelectorsAreAbsent checks removed exports separately."
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Surface.t.sol",
+    "test": "test_J2_claim_loupeWired",
+    "action": "merge",
+    "replacement": "test_J1_J2_fundedInterfaceMatchesFacetPackageAndProxy",
+    "reason": "D32/D53: interface-derived control list, package cuts, actual proxy routing, funded principal execution and DETF/NFT-only authorization replace the retired LP-claim surface; test_J2_retiredClaimSelectorsAreAbsent checks removed exports separately."
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Surface.t.sol",
+    "test": "test_J3_claim_proxySmoke_eachSelector",
+    "action": "replace",
+    "replacement": "test_J3_proxyViewsAuthorizationAndPrincipalRoutes",
+    "reason": "D32/D53: interface-derived control list, package cuts, actual proxy routing, funded principal execution and DETF/NFT-only authorization replace the retired LP-claim surface; test_J2_retiredClaimSelectorsAreAbsent checks removed exports separately."
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_ExactOutput.t.sol",
+    "test": "test_largeReserve_zapSplit_matchesIndependentIntegerRoots",
+    "action": "retain",
+    "replacement": "test_largeReserve_zapSplit_matchesIndependentIntegerRoots",
+    "reason": "Independent CP integer-root vectors remain valid. Removed the unused heavy DETF deployment fixture from this pure regression."
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_ExactOutput.t.sol",
+    "test": "test_exactOutput_coarseReserveLp_matchesPreviewAndMinimalInput",
+    "action": "replace",
+    "replacement": "test_exactOutputNativeLimitsAfterFundedRebase",
+    "reason": "D32 removes LP-priced above/below-unit claim rates. Consolidated funded stake/unstake vectors preserve minimal-input, native-unit accounting and max-input rollback assertions after actual funded rebase; each direction executes only the required amount."
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_ExactOutput.t.sol",
+    "test": "test_exactOutput_aboveUnitRate_executesQuotedInput",
+    "action": "replace",
+    "replacement": "test_exactOutputNativeLimitsAfterFundedRebase",
+    "reason": "D32 removes LP-priced above/below-unit claim rates. Consolidated funded stake/unstake vectors preserve minimal-input, native-unit accounting and max-input rollback assertions after actual funded rebase; each direction executes only the required amount."
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_ExactOutput.t.sol",
+    "test": "test_exactOutput_belowUnitRate_executesQuotedInput",
+    "action": "replace",
+    "replacement": "test_exactOutputNativeLimitsAfterFundedRebase",
+    "reason": "D32 removes LP-priced above/below-unit claim rates. Consolidated funded stake/unstake vectors preserve minimal-input, native-unit accounting and max-input rollback assertions after actual funded rebase; each direction executes only the required amount."
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_ExactOutput.t.sol",
+    "test": "test_exactOutput_aboveUnitRate_maxInputProtectsHolder",
+    "action": "replace",
+    "replacement": "test_exactOutputNativeLimitsAfterFundedRebase",
+    "reason": "D32 removes LP-priced above/below-unit claim rates. Consolidated funded stake/unstake vectors preserve minimal-input, native-unit accounting and max-input rollback assertions after actual funded rebase; each direction executes only the required amount."
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_ExactOutput.t.sol",
+    "test": "test_exactOutput_belowUnitRate_maxInputProtectsHolder",
+    "action": "replace",
+    "replacement": "test_exactOutputNativeLimitsAfterFundedRebase",
+    "reason": "D32 removes LP-priced above/below-unit claim rates. Consolidated funded stake/unstake vectors preserve minimal-input, native-unit accounting and max-input rollback assertions after actual funded rebase; each direction executes only the required amount."
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_ExactOutput.t.sol",
+    "test": "test_exactOutput_aboveUnitRate_previewIsMinimalAtRoundingBoundaries",
+    "action": "replace",
+    "replacement": "test_exactOutputNativeLimitsAfterFundedRebase",
+    "reason": "D32 removes LP-priced above/below-unit claim rates. Consolidated funded stake/unstake vectors preserve minimal-input, native-unit accounting and max-input rollback assertions after actual funded rebase; each direction executes only the required amount."
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_ExactOutput.t.sol",
+    "test": "test_exactOutput_belowUnitRate_previewIsMinimalAtRoundingBoundaries",
+    "action": "replace",
+    "replacement": "test_exactOutputNativeLimitsAfterFundedRebase",
+    "reason": "D32 removes LP-priced above/below-unit claim rates. Consolidated funded stake/unstake vectors preserve minimal-input, native-unit accounting and max-input rollback assertions after actual funded rebase; each direction executes only the required amount."
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Accounting.t.sol",
+    "test": "test_transfer_zeroAmount_beforeFirstClaim",
+    "action": "merge",
+    "replacement": "test_zeroTransfersEmitWithoutAllowanceBeforeAndAfterFunding",
+    "reason": "Preserves zero-transfer/transferFrom events, zero-allowance success and unchanged ownership both before first funding and after real funded claims."
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Accounting.t.sol",
+    "test": "test_transfer_zeroAmount_withLiveBacking",
+    "action": "merge",
+    "replacement": "test_zeroTransfersEmitWithoutAllowanceBeforeAndAfterFunding",
+    "reason": "Same distinct before/after state controls retained in one registered production fixture."
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Accounting.t.sol",
+    "test": "test_accounting_fractionalOnlySupply_remainsOutstanding",
+    "action": "retire",
+    "replacement": "test_reserveTradingCannotReduceFundedPrincipalAndFullExitRetiresOnlyOwnFraction",
+    "reason": "D32 reverses the old retained-fraction-only holder model: full native unstake retires only that holder's gons remainder. Other recipients' gons persist, overdraw remains atomic, the index never resets and a later one-unit stake/unstake succeeds."
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Accounting.t.sol",
+    "test": "test_accounting_sameBlockDonation_updatesLiveRateAndBalance",
+    "action": "replace",
+    "replacement": "test_sameBlockFundedRewardsUpdateGonsButUnsolicitedBackingDoesNot",
+    "reason": "D32: actual paid-bond rewards update K immediately in the same block; unsolicited DETF is excluded from funded balances and accounted backing."
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Accounting.t.sol",
+    "test": "test_accounting_sameBlockDonation_redeemUsesLiveRate",
+    "action": "replace",
+    "replacement": "test_sameBlockFundedRewardsUpdateGonsButUnsolicitedBackingDoesNot; test_exactOutputNativeLimitsAfterFundedRebase",
+    "reason": "Same-block state changes and native redemption amounts are covered without the retired cached spot/LP rate."
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Accounting.t.sol",
+    "test": "test_accounting_fractionalShares_releaseFullPrecisionPrincipal",
+    "action": "replace",
+    "replacement": "test_reserveTradingCannotReduceFundedPrincipalAndFullExitRetiresOnlyOwnFraction",
+    "reason": "Replaces LP principal release with exact funded DETF payout, isolated own-fraction retirement, preserved other-holder gons and unchanged protocol LP."
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Accounting.t.sol",
+    "test": "test_accounting_preClaimBacking_locksToFeeBondAndFirstPurchaseSucceeds",
+    "action": "retire",
+    "replacement": "test_standingRecipientsReceiveNewExpansionAfterAllStakeUnstakes",
+    "reason": "D32/D50 remove locked fee LP principal: standing recipients receive freely unstakable funded sDETF and receive more after fully unstaking. The replacement explicitly tests the new requirement."
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Accounting.t.sol",
+    "test": "test_accounting_lockedFeeBacking_earnsAdditionalRewards",
+    "action": "replace",
+    "replacement": "test_standingRecipientsReceiveNewExpansionAfterAllStakeUnstakes",
+    "reason": "Standing rights persist independently of wallet stake; funded receipts rebase ordinarily and new fee/creator receipts arrive after ordinary-holder rebasing."
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Accounting.t.sol",
+    "test": "test_accounting_zeroInternalMint_revertsWithoutChangingClaims",
+    "action": "retire",
+    "replacement": "test_J2_retiredClaimSelectorsAreAbsent; test_reserveTradingCannotReduceFundedPrincipalAndFullExitRetiresOnlyOwnFraction",
+    "reason": "mintFromNFTSale is removed. Positive one-native-unit direct stake is exactly funded 1:1; zero amount and unauthorized/retired entrypoints cannot create ownership."
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Accounting.t.sol",
+    "test": "test_accounting_zeroValueRedeem_preservesPrincipalAndOwnership",
+    "action": "replace",
+    "replacement": "test_reserveTradingCannotReduceFundedPrincipalAndFullExitRetiresOnlyOwnFraction",
+    "reason": "A positive raw sDETF unit now always redeems one funded DETF unit; reserve trading cannot reduce this payout. Zero redemption and overdraw preserve the ledger."
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Accounting.t.sol",
+    "test": "test_accounting_zeroZap_preservesZeroValuationAndRejectsExactOutput",
+    "action": "retire",
+    "replacement": "test_reserveTradingCannotReduceFundedPrincipalAndFullExitRetiresOnlyOwnFraction",
+    "reason": "The previous zero spot-LP valuation is no longer the sDETF backing model. Actual reserve trading leaves funded principal and K unchanged; native exact-output unstake pays one DETF unit."
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Accounting.t.sol",
+    "test": "test_accounting_zeroZap_mintRevertsWithoutIssuingShares",
+    "action": "retire",
+    "replacement": "test_J2_retiredClaimSelectorsAreAbsent; test_reserveTradingCannotReduceFundedPrincipalAndFullExitRetiresOnlyOwnFraction",
+    "reason": "Retired unfunded NFT-sale mint and spot-zap valuation no longer exist. Exact funded one-unit stake is valid regardless of reserve trading."
+  }
+]

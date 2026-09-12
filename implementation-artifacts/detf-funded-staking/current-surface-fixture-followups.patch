@@ -1,0 +1,458 @@
+--- a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_FacetPackaging.t.sol
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_FacetPackaging.t.sol
+@@ -154,7 +154,7 @@
+         IDiamond.FacetCut[] memory cuts = detfPkg.facetCuts();
+         assertEq(cuts.length, 10, "five shared facets plus five product facets");
+         uint256 count;
+-        bytes4[] memory seen = new bytes4[](48);
++        bytes4[] memory seen = new bytes4[](46);
+         for (uint256 i; i < detfProductFacets.length; ++i) {
+             assertEq(cuts[i + 5].facetAddress, address(detfProductFacets[i]), "package facet order");
+             bytes4[] memory selectors = detfProductFacets[i].facetFuncs();
+@@ -168,7 +168,7 @@
+                 seen[count++] = selectors[j];
+             }
+         }
+-        assertEq(count, 48, "funded product selector count");
++        assertEq(count, 46, "funded product selector count");
+         assertTrue(IERC165(detf).supportsInterface(type(IUniswapV4Detf).interfaceId), "composed DETF interface");
+         assertTrue(
+             IERC165(detf).supportsInterface(type(IStandardExchangeIn).interfaceId), "composed exchange interface"
+@@ -184,12 +184,14 @@
+ 
+     /// @notice Retired product routes cannot bypass the standard exchange or funded staking APIs.
+     function test_splitFacets_retiredProductSelectorsAreAbsent() public view {
+-        bytes4[8] memory retired_ = [
++        bytes4[10] memory retired_ = [
+             bytes4(keccak256("mint(address,uint256,uint256,address,bool,uint256)")),
+             bytes4(keccak256("burn(uint256,address,uint256,address,uint256)")),
+             bytes4(keccak256("previewMint(address,uint256)")),
+             bytes4(keccak256("mintClaim(address,uint256,uint256,address,bool,uint256)")),
+             bytes4(keccak256("thresholdMode()")),
++            bytes4(keccak256("closeRouteMode()")),
++            bytes4(keccak256("closeRoutes()")),
+             bytes4(keccak256("compoundProtocolRewards()")),
+             bytes4(keccak256("compoundProtocolRewardsAtomic()")),
+             bytes4(keccak256("closeBondMature(uint256,uint256[],address,uint256)"))
+--- a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_BondNftPackaging.t.sol
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_BondNftPackaging.t.sol
+@@ -4,7 +4,7 @@
+ import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
+ import {IERC721Errors} from "@crane/contracts/interfaces/IERC721Errors.sol";
+ import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
+-import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
++import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
+ import {TestBase_UniswapV4Detf} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
+ 
+ /// @notice Bond NFT packaging keeps generic ERC721 methods separate from guarded product transfers.
+@@ -13,7 +13,7 @@
+     function test_bondNft_genericErc721AndGuardedTransferRouting() public view {
+         address nft = detfInfo.bondNftVault();
+         IDiamondLoupe loupe = IDiamondLoupe(nft);
+-        address product = loupe.facetAddress(IDETFNFTVault.createPosition.selector);
++        address product = loupe.facetAddress(IDetfBondNFT.createFundedPosition.selector);
+         address erc721 = loupe.facetAddress(IERC721.ownerOf.selector);
+         assertGt(product.code.length, 0, "product facet deployed");
+         assertLe(product.code.length, 24_576, "bond NFT facet runtime limit");
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface.t.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+ 
+ import {Behavior_IFacet} from "@crane/contracts/factories/diamondPkg/Behavior_IFacet.sol";
+ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+@@ -89,7 +91,7 @@
+         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.ownerSwapExactIn.selector), "J1 ownerSwapExactIn");
+         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.ownerSwapExactOut.selector), "J1 ownerSwapExactOut");
+         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.tokens.selector), "J1 tokens");
+-        assertEq(funcs_.length, 46, "J1 SeFacet facetFuncs length");
++        assertEq(funcs_.length, 47, "J1 SeFacet facetFuncs length");
+     }
+ 
+     /// @notice J1: deposit / zap / SE-share multipath money entrypoints are cut.
+@@ -98,8 +100,8 @@
+         bytes4[] memory single_ = depositSingleFacet.facetFuncs();
+         bytes4[] memory preview_ = depositPreviewFacet.facetFuncs();
+         assertEq(dual_.length, 6, "dual deposit selector count");
+-        assertEq(single_.length, 5, "single deposit selector count");
+-        assertEq(preview_.length, 8, "deposit preview selector count");
++        assertEq(single_.length, 7, "single deposit selector count");
++        assertEq(preview_.length, 10, "deposit preview selector count");
+         bytes4[] memory funcs_ = new bytes4[](dual_.length + single_.length + preview_.length);
+         for (uint256 i; i < dual_.length; ++i) funcs_[i] = dual_[i];
+         for (uint256 i; i < single_.length; ++i) funcs_[dual_.length + i] = single_[i];
+@@ -129,7 +131,7 @@
+         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.previewJoinSingleAssetExactIn.selector), "J1 previewJoinSingleAssetExactIn");
+         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.joinSingleAssetExactOut.selector), "J1 joinSingleAssetExactOut");
+         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.previewJoinSingleAssetExactOut.selector), "J1 previewJoinSingleAssetExactOut");
+-        assertEq(funcs_.length, 19, "J1 combined deposit selectors");
++        assertEq(funcs_.length, 23, "J1 combined deposit selectors");
+         for (uint256 i; i < funcs_.length; ++i) {
+             for (uint256 j = i + 1; j < funcs_.length; ++j) {
+                 assertTrue(funcs_[i] != funcs_[j], "deposit selectors are disjoint");
+@@ -147,7 +149,23 @@
+         assertTrue(_contains(funcs_, IHook.withdrawSeShares.selector), "J1 withdrawSeShares");
+         assertTrue(_contains(funcs_, IHook.previewWithdrawSeShares.selector), "J1 previewWithdrawSeShares");
+         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.exitProportional.selector), "J1 exitProportional");
+-        assertEq(funcs_.length, 13, "J1 WithdrawFacet facetFuncs length");
++        assertTrue(_contains(funcs_, IStandardizedYield.deposit.selector), "J1 SY deposit");
++        assertTrue(_contains(funcs_, IStandardizedYield.redeem.selector), "J1 SY redeem");
++        assertTrue(_contains(funcs_, IStandardizedYield.exchangeRate.selector), "J1 SY exchangeRate");
++        assertTrue(_contains(funcs_, IStandardizedYield.yieldToken.selector), "J1 SY yieldToken");
++        assertTrue(_contains(funcs_, IStandardizedYield.assetInfo.selector), "J1 SY assetInfo");
++        assertTrue(_contains(funcs_, IStandardizedYield.getTokensIn.selector), "J1 SY getTokensIn");
++        assertTrue(_contains(funcs_, IStandardizedYield.getTokensOut.selector), "J1 SY getTokensOut");
++        assertTrue(_contains(funcs_, IStandardizedYield.isValidTokenIn.selector), "J1 SY isValidTokenIn");
++        assertTrue(_contains(funcs_, IStandardizedYield.isValidTokenOut.selector), "J1 SY isValidTokenOut");
++        assertTrue(_contains(funcs_, IStandardizedYield.previewDeposit.selector), "J1 SY previewDeposit");
++        assertTrue(_contains(funcs_, IStandardizedYield.previewRedeem.selector), "J1 SY previewRedeem");
++        assertTrue(_contains(funcs_, IStandardizedYield.getRewardTokens.selector), "J1 SY getRewardTokens");
++        assertTrue(_contains(funcs_, IStandardizedYield.accruedRewards.selector), "J1 SY accruedRewards");
++        assertTrue(_contains(funcs_, IStandardizedYield.rewardIndexesCurrent.selector), "J1 SY rewardIndexesCurrent");
++        assertTrue(_contains(funcs_, IStandardizedYield.rewardIndexesStored.selector), "J1 SY rewardIndexesStored");
++        assertTrue(_contains(funcs_, IStandardizedYield.claimRewards.selector), "J1 SY claimRewards");
++        assertEq(funcs_.length, 29, "J1 WithdrawFacet facetFuncs length");
+     }
+ 
+     /* ---------------------------------------------------------------------- */
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualSEBCPHook_Surface.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualSEBCPHook_Surface.t.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+ 
+ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+ import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
+@@ -124,7 +126,23 @@
+         assertTrue(_contains(funcs_, IStandardExchangeOut.exchangeOut.selector), "J1 exchangeOut");
+         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.ownerSwapExactIn.selector), "J1 ownerSwapExactIn");
+         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.ownerSwapExactOut.selector), "J1 ownerSwapExactOut");
+-        assertEq(funcs_.length, 6, "J1 SeFacet facetFuncs length");
++        assertTrue(_contains(funcs_, IStandardizedYield.deposit.selector), "J1 SY deposit");
++        assertTrue(_contains(funcs_, IStandardizedYield.redeem.selector), "J1 SY redeem");
++        assertTrue(_contains(funcs_, IStandardizedYield.exchangeRate.selector), "J1 SY exchangeRate");
++        assertTrue(_contains(funcs_, IStandardizedYield.yieldToken.selector), "J1 SY yieldToken");
++        assertTrue(_contains(funcs_, IStandardizedYield.assetInfo.selector), "J1 SY assetInfo");
++        assertTrue(_contains(funcs_, IStandardizedYield.getTokensIn.selector), "J1 SY getTokensIn");
++        assertTrue(_contains(funcs_, IStandardizedYield.getTokensOut.selector), "J1 SY getTokensOut");
++        assertTrue(_contains(funcs_, IStandardizedYield.isValidTokenIn.selector), "J1 SY isValidTokenIn");
++        assertTrue(_contains(funcs_, IStandardizedYield.isValidTokenOut.selector), "J1 SY isValidTokenOut");
++        assertTrue(_contains(funcs_, IStandardizedYield.previewDeposit.selector), "J1 SY previewDeposit");
++        assertTrue(_contains(funcs_, IStandardizedYield.previewRedeem.selector), "J1 SY previewRedeem");
++        assertTrue(_contains(funcs_, IStandardizedYield.getRewardTokens.selector), "J1 SY getRewardTokens");
++        assertTrue(_contains(funcs_, IStandardizedYield.accruedRewards.selector), "J1 SY accruedRewards");
++        assertTrue(_contains(funcs_, IStandardizedYield.rewardIndexesCurrent.selector), "J1 SY rewardIndexesCurrent");
++        assertTrue(_contains(funcs_, IStandardizedYield.rewardIndexesStored.selector), "J1 SY rewardIndexesStored");
++        assertTrue(_contains(funcs_, IStandardizedYield.claimRewards.selector), "J1 SY claimRewards");
++        assertEq(funcs_.length, 22, "J1 SeFacet facetFuncs length");
+     }
+ 
+     /* ---------------------------------------------------------------------- */
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_Surface.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_Surface.t.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+ 
+ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+ import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
+@@ -26,6 +28,8 @@
+ contract UniswapV4StandardExchangeOrbitalBufferHook_Surface_Test is TestBase {
+     IFacet internal hooksFacet;
+     IFacet internal depositFacet;
++    IFacet internal depositQueryFacet;
++    IFacet internal depositZapFacet;
+     IFacet internal withdrawFacet;
+     IFacet internal seFacet;
+ 
+@@ -33,6 +37,8 @@
+         super.setUp();
+         hooksFacet = PkgFactory.deployHooksFacet(create3Factory);
+         depositFacet = PkgFactory.deployDepositFacet(create3Factory);
++        depositQueryFacet = PkgFactory.deployDepositQueryFacet(create3Factory);
++        depositZapFacet = PkgFactory.deployDepositZapFacet(create3Factory);
+         withdrawFacet = PkgFactory.deployWithdrawFacet(create3Factory);
+         seFacet = PkgFactory.deploySeFacet(create3Factory);
+     }
+@@ -70,7 +76,7 @@
+         assertTrue(_contains(funcs_, IHook.token2.selector), "J1 token2");
+         assertTrue(_contains(funcs_, IHook.standardExchange.selector), "J1 standardExchange");
+         assertTrue(_contains(funcs_, IHook.isBuffered.selector), "J1 isBuffered");
+-        assertTrue(_contains(funcs_, IHook.radius.selector), "J1 radius");
++        assertTrue(_contains(depositQueryFacet.facetFuncs(), IHook.radius.selector), "J1 radius query");
+         assertTrue(_contains(funcs_, IHook.rawReserve.selector), "J1 rawReserve");
+         assertTrue(_contains(funcs_, IHook.seClaim.selector), "J1 seClaim");
+         assertTrue(_contains(funcs_, IHook.effectiveReserve.selector), "J1 effectiveReserve");
+@@ -79,21 +85,25 @@
+         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.tokens.selector), "J1 tokens");
+         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.isLive.selector), "J1 isLive");
+         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.firstJoinMustBeFullBook.selector), "J1 firstJoinMustBeFullBook");
+-        assertEq(funcs_.length, 45, "J1 HooksFacet facetFuncs length");
++        assertEq(funcs_.length, 46, "J1 HooksFacet facetFuncs length");
+     }
+ 
+     function test_J1_deposit_targetSelectors_subseteq_facetFuncs() public view {
+         bytes4[] memory funcs_ = depositFacet.facetFuncs();
++        bytes4[] memory queries_ = depositQueryFacet.facetFuncs();
++        bytes4[] memory zaps_ = depositZapFacet.facetFuncs();
+         assertTrue(_contains(funcs_, IHook.addLiquidity.selector), "J1 addLiquidity");
+-        assertTrue(_contains(funcs_, IHook.depositSingle.selector), "J1 depositSingle");
+-        assertTrue(_contains(funcs_, IHook.previewAddLiquidity.selector), "J1 previewAddLiquidity");
+-        assertTrue(_contains(funcs_, IHook.previewDepositSingle.selector), "J1 previewDepositSingle");
+-        assertTrue(_contains(funcs_, IHook.previewZapSplit.selector), "J1 previewZapSplit");
++        assertTrue(_contains(zaps_, IHook.depositSingle.selector), "J1 depositSingle");
++        assertTrue(_contains(queries_, IHook.previewAddLiquidity.selector), "J1 previewAddLiquidity");
++        assertTrue(_contains(queries_, IHook.previewDepositSingle.selector), "J1 previewDepositSingle");
++        assertTrue(_contains(queries_, IHook.previewZapSplit.selector), "J1 previewZapSplit");
+         assertTrue(_contains(funcs_, IHook.depositFlexible.selector), "J1 depositFlexible");
+-        assertTrue(_contains(funcs_, IHook.previewDepositFlexible.selector), "J1 previewDepositFlexible");
++        assertTrue(_contains(queries_, IHook.previewDepositFlexible.selector), "J1 previewDepositFlexible");
+         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.joinUnbalanced.selector), "J1 joinUnbalanced");
+-        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.joinSingleAssetExactIn.selector), "J1 joinSingleAssetExactIn");
+-        assertEq(funcs_.length, 16, "J1 DepositFacet facetFuncs length");
++        assertTrue(_contains(zaps_, IUniswapV4SeBufferHook.joinSingleAssetExactIn.selector), "J1 joinSingleAssetExactIn");
++        assertEq(funcs_.length, 4, "J1 deposit execution selectors");
++        assertEq(queries_.length, 11, "J1 deposit query selectors");
++        assertEq(zaps_.length, 3, "J1 deposit zap selectors");
+     }
+ 
+     function test_J1_withdraw_targetSelectors_subseteq_facetFuncs() public view {
+@@ -115,7 +125,23 @@
+         assertTrue(_contains(funcs_, IStandardExchangeOut.exchangeOut.selector), "J1 exchangeOut");
+         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.ownerSwapExactIn.selector), "J1 ownerSwapExactIn");
+         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.ownerSwapExactOut.selector), "J1 ownerSwapExactOut");
+-        assertEq(funcs_.length, 6, "J1 SeFacet facetFuncs length");
++        assertTrue(_contains(funcs_, IStandardizedYield.deposit.selector), "J1 SY deposit");
++        assertTrue(_contains(funcs_, IStandardizedYield.redeem.selector), "J1 SY redeem");
++        assertTrue(_contains(funcs_, IStandardizedYield.exchangeRate.selector), "J1 SY exchangeRate");
++        assertTrue(_contains(funcs_, IStandardizedYield.yieldToken.selector), "J1 SY yieldToken");
++        assertTrue(_contains(funcs_, IStandardizedYield.assetInfo.selector), "J1 SY assetInfo");
++        assertTrue(_contains(funcs_, IStandardizedYield.getTokensIn.selector), "J1 SY getTokensIn");
++        assertTrue(_contains(funcs_, IStandardizedYield.getTokensOut.selector), "J1 SY getTokensOut");
++        assertTrue(_contains(funcs_, IStandardizedYield.isValidTokenIn.selector), "J1 SY isValidTokenIn");
++        assertTrue(_contains(funcs_, IStandardizedYield.isValidTokenOut.selector), "J1 SY isValidTokenOut");
++        assertTrue(_contains(funcs_, IStandardizedYield.previewDeposit.selector), "J1 SY previewDeposit");
++        assertTrue(_contains(funcs_, IStandardizedYield.previewRedeem.selector), "J1 SY previewRedeem");
++        assertTrue(_contains(funcs_, IStandardizedYield.getRewardTokens.selector), "J1 SY getRewardTokens");
++        assertTrue(_contains(funcs_, IStandardizedYield.accruedRewards.selector), "J1 SY accruedRewards");
++        assertTrue(_contains(funcs_, IStandardizedYield.rewardIndexesCurrent.selector), "J1 SY rewardIndexesCurrent");
++        assertTrue(_contains(funcs_, IStandardizedYield.rewardIndexesStored.selector), "J1 SY rewardIndexesStored");
++        assertTrue(_contains(funcs_, IStandardizedYield.claimRewards.selector), "J1 SY claimRewards");
++        assertEq(funcs_.length, 22, "J1 SeFacet facetFuncs length");
+     }
+ 
+     /* ---------------------------------------------------------------------- */
+@@ -128,6 +154,8 @@
+ 
+     function test_J2_deposit_facetFuncs_subseteq_loupe_onProxy() public view {
+         _assertFacetFuncsOnLoupe(depositFacet, address(depositFacet));
++        _assertFacetFuncsOnLoupe(depositQueryFacet, address(depositQueryFacet));
++        _assertFacetFuncsOnLoupe(depositZapFacet, address(depositZapFacet));
+     }
+ 
+     function test_J2_withdraw_facetFuncs_subseteq_loupe_onProxy() public view {
+@@ -157,7 +185,7 @@
+         assertEq(proxy_.seClaim(0), 0, "J3 inert seClaim0");
+ 
+         address loupeHooks_ = loupe_.facetAddress(IHook.radius.selector);
+-        assertEq(loupeHooks_, address(hooksFacet), "J3 radius loupe");
++        assertEq(loupeHooks_, address(depositQueryFacet), "J3 radius loupe");
+         assertTrue(loupeHooks_ != hook, "J3 not self-facet");
+ 
+         address loupeDep_ = loupe_.facetAddress(IHook.addLiquidity.selector);
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_StagedInit.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_StagedInit.t.sol
+@@ -486,19 +486,13 @@
+ 
+     function _expectedFinalizeCuts() internal view returns (IDiamond.FacetCut[] memory cuts) {
+         IDiamond.FacetCut[] memory adds = hookPkg.productionFacetCuts();
+-        cuts = new IDiamond.FacetCut[](8);
++        cuts = new IDiamond.FacetCut[](adds.length + 1);
+         cuts[0] = IDiamond.FacetCut({
+             facetAddress: address(hookPkg),
+             action: IDiamond.FacetCutAction.Remove,
+             functionSelectors: IFacet(address(hookPkg)).facetFuncs()
+         });
+-        cuts[1] = adds[0];
+-        cuts[2] = adds[1];
+-        cuts[3] = adds[2];
+-        cuts[4] = adds[3];
+-        cuts[5] = adds[4];
+-        cuts[6] = adds[5];
+-        cuts[7] = adds[6];
++        for (uint256 i; i < adds.length; ++i) cuts[i + 1] = adds[i];
+     }
+ 
+     function _assertKeyEq(PoolKey memory a, PoolKey memory b) internal pure {
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_StagedInit.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_StagedInit.t.sol
+@@ -521,19 +521,13 @@
+ 
+     function _expectedFinalizeCuts() internal view returns (IDiamond.FacetCut[] memory cuts) {
+         IDiamond.FacetCut[] memory adds = hookPkg.productionFacetCuts();
+-        cuts = new IDiamond.FacetCut[](8);
++        cuts = new IDiamond.FacetCut[](adds.length + 1);
+         cuts[0] = IDiamond.FacetCut({
+             facetAddress: address(hookPkg),
+             action: IDiamond.FacetCutAction.Remove,
+             functionSelectors: IFacet(address(hookPkg)).facetFuncs()
+         });
+-        cuts[1] = adds[0];
+-        cuts[2] = adds[1];
+-        cuts[3] = adds[2];
+-        cuts[4] = adds[3];
+-        cuts[5] = adds[4];
+-        cuts[6] = adds[5];
+-        cuts[7] = adds[6];
++        for (uint256 i; i < adds.length; ++i) cuts[i + 1] = adds[i];
+     }
+ 
+     function _assertKeyEq(PoolKey memory a, PoolKey memory b) internal pure {
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_StagedInit.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_StagedInit.t.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
+@@ -80,7 +82,7 @@
+         assertEq(boot[3].facetAddress, address(hookPkg));
+         assertEq(boot[3].functionSelectors.length, 6);
+ 
+-        assertEq(prod.length, 7);
++        assertEq(prod.length, 8);
+         assertEq(prod[0].facetAddress, address(hookPkg.HOOKS_FACET()));
+         assertEq(prod[1].facetAddress, address(hookPkg.LIQUIDITY_FACET()));
+         assertEq(prod[2].facetAddress, address(hookPkg.EXIT_FACET()));
+@@ -88,9 +90,10 @@
+         assertEq(prod[4].facetAddress, address(erc20Facet));
+         assertEq(prod[5].facetAddress, address(erc5267Facet));
+         assertEq(prod[6].facetAddress, address(erc2612Facet));
++        assertEq(prod[7].facetAddress, address(UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg(address(hookPkg)).JOIN_QUERY_FACET()));
+ 
+         bytes4[] memory ifaces = hookPkg.facetInterfaces();
+-        assertEq(ifaces.length, 11);
++        assertEq(ifaces.length, 12);
+     }
+ 
+     function test_S43_deployAlone_noProductDoors() public {
+@@ -376,19 +379,13 @@
+ 
+     function _expectedFinalizeCuts() internal view returns (IDiamond.FacetCut[] memory cuts) {
+         IDiamond.FacetCut[] memory adds = hookPkg.productionFacetCuts();
+-        cuts = new IDiamond.FacetCut[](8);
++        cuts = new IDiamond.FacetCut[](adds.length + 1);
+         cuts[0] = IDiamond.FacetCut({
+             facetAddress: address(hookPkg),
+             action: IDiamond.FacetCutAction.Remove,
+             functionSelectors: IFacet(address(hookPkg)).facetFuncs()
+         });
+-        cuts[1] = adds[0];
+-        cuts[2] = adds[1];
+-        cuts[3] = adds[2];
+-        cuts[4] = adds[3];
+-        cuts[5] = adds[4];
+-        cuts[6] = adds[5];
+-        cuts[7] = adds[6];
++        for (uint256 i; i < adds.length; ++i) cuts[i + 1] = adds[i];
+     }
+ 
+     function _assertKeyEq(PoolKey memory a, PoolKey memory b) internal pure {
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_PackageDecl.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_PackageDecl.t.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+ 
+ import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
+ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+@@ -53,7 +55,7 @@
+ 
+     function test_productionFacetCuts_sevenAdds() public view {
+         IDiamond.FacetCut[] memory cuts = hookPkg.productionFacetCuts();
+-        assertEq(cuts.length, 7);
++        assertEq(cuts.length, 9);
+         assertEq(cuts[0].facetAddress, address(hookPkg.HOOKS_FACET()));
+         assertEq(cuts[1].facetAddress, address(hookPkg.DEPOSIT_FACET()));
+         assertEq(cuts[2].facetAddress, address(hookPkg.WITHDRAW_FACET()));
+@@ -61,6 +63,8 @@
+         assertEq(cuts[4].facetAddress, address(erc20Facet));
+         assertEq(cuts[5].facetAddress, address(erc5267Facet));
+         assertEq(cuts[6].facetAddress, address(erc2612Facet));
++        assertEq(cuts[7].facetAddress, address(UniswapV4StandardExchangeOrbitalBufferHookDFPkg(address(hookPkg)).DEPOSIT_QUERY_FACET()));
++        assertEq(cuts[8].facetAddress, address(UniswapV4StandardExchangeOrbitalBufferHookDFPkg(address(hookPkg)).DEPOSIT_ZAP_FACET()));
+         _assertSelectorsEq(cuts[0].functionSelectors, hookPkg.HOOKS_FACET().facetFuncs());
+         _assertSelectorsEq(cuts[1].functionSelectors, hookPkg.DEPOSIT_FACET().facetFuncs());
+         _assertSelectorsEq(cuts[2].functionSelectors, hookPkg.WITHDRAW_FACET().facetFuncs());
+@@ -68,6 +72,8 @@
+         _assertSelectorsEq(cuts[4].functionSelectors, erc20Facet.facetFuncs());
+         _assertSelectorsEq(cuts[5].functionSelectors, erc5267Facet.facetFuncs());
+         _assertSelectorsEq(cuts[6].functionSelectors, erc2612Facet.facetFuncs());
++        _assertSelectorsEq(cuts[7].functionSelectors, UniswapV4StandardExchangeOrbitalBufferHookDFPkg(address(hookPkg)).DEPOSIT_QUERY_FACET().facetFuncs());
++        _assertSelectorsEq(cuts[8].functionSelectors, UniswapV4StandardExchangeOrbitalBufferHookDFPkg(address(hookPkg)).DEPOSIT_ZAP_FACET().facetFuncs());
+         for (uint256 i; i < cuts.length; ++i) {
+             assertEq(uint256(cuts[i].action), uint256(IDiamond.FacetCutAction.Add));
+         }
+@@ -82,7 +88,7 @@
+ 
+     function test_facetInterfaces_nineProductionIds() public view {
+         bytes4[] memory ids = hookPkg.facetInterfaces();
+-        assertEq(ids.length, 12);
++        assertEq(ids.length, 13);
+         assertEq(ids[0], type(IERC20).interfaceId);
+         assertEq(ids[1], type(IERC20Metadata).interfaceId);
+         assertEq(ids[2], type(IERC20Permit).interfaceId);
+@@ -95,11 +101,12 @@
+         assertEq(ids[9], bytes4(keccak256("UniswapV4StandardExchangeOrbitalBufferHook")));
+         assertEq(ids[10], type(IUniswapV4SeBufferHook).interfaceId);
+         assertEq(ids[11], type(IDetfReserveQuote).interfaceId);
++        assertEq(ids[12], type(IStandardizedYield).interfaceId);
+     }
+ 
+     function test_facetAddresses_ten() public view {
+         address[] memory facets = hookPkg.facetAddresses();
+-        assertEq(facets.length, 11);
++        assertEq(facets.length, 13);
+         assertEq(facets[0], address(multiStepOwnableFacet));
+         assertEq(facets[1], address(multiAssetBasicVaultFacet));
+         assertEq(facets[2], address(multiAssetStandardVaultFacet));
+@@ -111,6 +118,8 @@
+         assertEq(facets[8], address(erc20Facet));
+         assertEq(facets[9], address(erc5267Facet));
+         assertEq(facets[10], address(erc2612Facet));
++        assertEq(facets[11], address(UniswapV4StandardExchangeOrbitalBufferHookDFPkg(address(hookPkg)).DEPOSIT_QUERY_FACET()));
++        assertEq(facets[12], address(UniswapV4StandardExchangeOrbitalBufferHookDFPkg(address(hookPkg)).DEPOSIT_ZAP_FACET()));
+     }
+ 
+     function test_facetFuncs_isS58() public view {
+--- a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Adversarial_Surface.t.sol
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Adversarial_Surface.t.sol
+@@ -92,7 +92,7 @@
+         execution[7] = IQuadHook.depositSingleFlexible.selector;
+         execution[8] = IUniswapV4SeBufferHook.joinUnbalanced.selector;
+         _assertInstalledHookFacet(execution);
+-        bytes4[] memory queries = new bytes4[](26);
++        bytes4[] memory queries = new bytes4[](27);
+         queries[0] = IUniswapV4SeBufferHook.previewJoinProportional.selector;
+         queries[1] = IStandardExchangeMultiAssetLiquidity.previewJoinUnbalanced.selector;
+         queries[2] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactIn.selector;
+@@ -119,6 +119,7 @@
+         queries[23] = IStandardizedYield.rewardIndexesCurrent.selector;
+         queries[24] = IStandardizedYield.rewardIndexesStored.selector;
+         queries[25] = IStandardizedYield.claimRewards.selector;
++        queries[26] = IDetfReserveQuote.previewJoinAfterDeposit.selector;
+         _assertInstalledHookFacet(queries);
+         assertEq(IDiamondLoupe(reserveHook).facetAddress(IUniswapV4SeBufferHookClaimQuote.previewClaimAfterJoin.selector), address(0), "retired LP claim join projection absent");
+         assertEq(IDiamondLoupe(reserveHook).facetAddress(IUniswapV4SeBufferHookClaimExitQuote.previewClaimExit.selector), address(0), "retired LP claim exit projection absent");

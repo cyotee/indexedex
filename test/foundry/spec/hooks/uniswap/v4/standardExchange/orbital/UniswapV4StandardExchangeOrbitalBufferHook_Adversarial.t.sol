@@ -35,6 +35,7 @@ import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {IERC8109Introspection} from "@crane/contracts/interfaces/IERC8109Introspection.sol";
 import {IPostDeployAccountHook} from "@crane/contracts/interfaces/IPostDeployAccountHook.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
+import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {
@@ -379,6 +380,9 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
             token0: address(t0),
             token1: address(t1),
             token2: address(hostile),
+            decimals0: HookPkgArgsDecimalsLib.tokenDec(address(t0)),
+            decimals1: HookPkgArgsDecimalsLib.tokenDec(address(t1)),
+            decimals2: HookPkgArgsDecimalsLib.tokenDec(address(hostile)),
             se0: seLeg0,
             se1: address(0),
             se2: address(0),

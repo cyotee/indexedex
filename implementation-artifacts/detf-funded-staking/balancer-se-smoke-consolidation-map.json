@@ -1,0 +1,55 @@
+{
+  "status": "APPLIED_SOURCE_MAPPING_RUNTIME_VALIDATION_PENDING",
+  "retirements": [
+    {
+      "old_source": "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolPkg_Smoke.t.sol",
+      "old_function": "test_facetAddresses_length",
+      "replacement_source": "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/TestBase_Smoke.t.sol",
+      "replacement_function": "test_facetAddresses_length",
+      "behavior": "Same declaration on actual registered package/proxy; fake SUT removed."
+    },
+    {
+      "old_source": "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolPkg_Smoke.t.sol",
+      "old_function": "test_facetInterfaces_length",
+      "replacement_source": "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/TestBase_Smoke.t.sol",
+      "replacement_function": "test_facetInterfaces_length",
+      "behavior": "Same declaration on actual registered package/proxy; fake SUT removed."
+    },
+    {
+      "old_source": "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolPkg_Smoke.t.sol",
+      "old_function": "test_facetAddresses_matchesInit",
+      "replacement_source": "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/TestBase_Smoke.t.sol",
+      "replacement_function": "test_facetAddresses_matchesInit",
+      "behavior": "Same declaration on actual registered package/proxy; fake SUT removed."
+    },
+    {
+      "old_source": "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolPkg_Smoke.t.sol",
+      "old_function": "test_packageName_notEmpty",
+      "replacement_source": "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/TestBase_Smoke.t.sol",
+      "replacement_function": "test_packageName_notEmpty",
+      "behavior": "Same declaration on actual registered package/proxy; fake SUT removed."
+    },
+    {
+      "old_source": "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolPkg_Smoke.t.sol",
+      "old_function": "test_name_matchesPackageName",
+      "replacement_source": "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/TestBase_Smoke.t.sol",
+      "replacement_function": "test_name_matchesPackageName",
+      "behavior": "Same declaration on actual registered package/proxy; fake SUT removed."
+    },
+    {
+      "old_source": "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolPkg_Smoke.t.sol",
+      "old_function": "test_vaultRegistry_immutable",
+      "replacement_source": "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/TestBase_Smoke.t.sol",
+      "replacement_function": "test_vaultRegistry_immutable",
+      "behavior": "Same declaration on actual registered package/proxy; fake SUT removed."
+    },
+    {
+      "old_source": "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolPkg_Smoke.t.sol",
+      "old_function": "test_balancerV3Vault_immutable",
+      "replacement_source": "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/TestBase_Smoke.t.sol",
+      "replacement_function": "test_balancerV3Vault_immutable",
+      "behavior": "Same declaration on actual registered package/proxy; fake SUT removed."
+    }
+  ],
+  "application_record": "hermetic-followups-validation-remediation-applied.json"
+}

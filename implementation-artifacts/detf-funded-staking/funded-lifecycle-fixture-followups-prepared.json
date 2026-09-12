@@ -1,0 +1,52 @@
+{
+  "status": "APPLIED_RUNTIME_VALIDATION_PENDING",
+  "changes": [
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_CloseD25Base.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/funded-lifecycle-fixture-drafts/UniswapV4Detf_Alignment_CloseD25Base.sol.txt",
+      "before_sha256": "984e04117d53087337d68aa48794cfcecf6cd6986f598c30da550c34301a4980",
+      "after_sha256": "0072d0618944b9c4ab639026d1c2a52e0f99c4eff8983957838d5a2436c7c7a2",
+      "reason": "D25 claims use a later 10%-of-first-payment bond within the retained weighted reserve quote limit; exact principal/reward/custody assertions unchanged."
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ClaimOpenBase.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/funded-lifecycle-fixture-drafts/UniswapV4Detf_ClaimOpenBase.sol.txt",
+      "before_sha256": "366a38801c810b81745f0806c868fb9dbb66db1d738fdeb06297f192a589ef27",
+      "after_sha256": "0835461bd04d511df372b3c9c7893bead1ecee89974aa880d92f8cfe14abb0ee",
+      "reason": "Mature claim test uses a funded later bond below the existing weighted swap input ratio; preserve complete claim assertions."
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ReserveDonationOpenBase.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/funded-lifecycle-fixture-drafts/UniswapV4Detf_ReserveDonationOpenBase.sol.txt",
+      "before_sha256": "fa230d4fef7d6cfc95392d85c9f9f4bcbb5dbd0a20154c32402d56166ec53b08",
+      "after_sha256": "584512bf1e92d6964ded1e06f27e0ec6fc176772ea520fa505213fe14169be97",
+      "reason": "Keep every multi-holder donation/disabled-exit scenario, with funded bond sizes executable under all four retained reserve curves. Preview and execution use the same actual amount."
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_CloseD25Base_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/funded-lifecycle-fixture-drafts/UniswapV4Detf_Alignment_CloseD25Base_Decimals.sol.txt",
+      "before_sha256": "9f2b3a88dacd2752fe088fb3d695ff353a60c0d9f1615109e93c364caaf0bb90",
+      "after_sha256": "5044ba24e65c901a1b1a6c00979652eac628bcf3e2e9e6d70d51c28917156fde",
+      "reason": "D25 claims use a later 10%-of-first-payment bond within the retained weighted reserve quote limit; exact principal/reward/custody assertions unchanged."
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_ClaimOpenBase_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/funded-lifecycle-fixture-drafts/UniswapV4Detf_ClaimOpenBase_Decimals.sol.txt",
+      "before_sha256": "8533ecbd9969afad648aa04a6ef1324d2ee2278a970cb00772a31c3ce9cc34cb",
+      "after_sha256": "54fe47d41e71f7c2ca8c120f8bcf6fc0aafc497bd4b0c26a3e60463bc607d4d7",
+      "reason": "Mature claim test uses a funded later bond below the existing weighted swap input ratio; preserve complete claim assertions."
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_ReserveDonationOpenBase_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/funded-lifecycle-fixture-drafts/UniswapV4Detf_ReserveDonationOpenBase_Decimals.sol.txt",
+      "before_sha256": "da7b25c3d6f4a316913a8f29f09ca23ce0d401139c1470879d2d8bf0aac31618",
+      "after_sha256": "e4bae27b454e91d1e47d828f21aa99aa7e797236511b1d6cfe9849d47afbb367",
+      "reason": "Keep every multi-holder donation/disabled-exit scenario, with funded bond sizes executable under all four retained reserve curves. Preview and execution use the same actual amount."
+    }
+  ],
+  "validation_passed": false,
+  "gate": "Entire active parent4255 exits before applying.",
+  "scope": "Six shared V4 test sources only; no economic formula, fuzz settings, or assertion weakening.",
+  "applied_at_utc": "2026-09-09T08:34:04.631375+00:00",
+  "application_record": "hermetic-followups-validation-remediation-applied.json"
+}

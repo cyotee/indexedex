@@ -53,7 +53,7 @@ export function AmountField({
             placeholder={placeholder}
             disabled={disabled}
             inputMode="decimal"
-            className="flex-1 rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] px-3 py-2 font-mono text-sm tabular-nums text-[var(--text-primary,#EDEDED)] disabled:opacity-50"
+            className="min-w-0 flex-1 rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] px-3 py-2 font-mono text-sm tabular-nums text-[var(--text-primary,#EDEDED)] disabled:opacity-50"
           />
           {typeof balance === 'bigint' ? (
             <Button

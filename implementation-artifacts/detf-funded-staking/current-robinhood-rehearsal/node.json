@@ -1,0 +1,14 @@
+{
+  "started_at_utc": "2026-09-08T06:23:42.314639+00:00",
+  "rpc": "http://127.0.0.1:18663",
+  "upstream_alias": "robinhood_mainnet_alchemy",
+  "fork_block": 56118361,
+  "chain_id": 4663,
+  "code_size_limit": 24576,
+  "block_gas_limit": 32000000,
+  "status": "ready",
+  "scope": "Isolated local fork; remote chain read-only. Existing saved rehearsal state and manifests preserved.",
+  "verified_at_utc": "2026-09-08T06:24:40.654914+00:00",
+  "observed_chain_id": 4663,
+  "observed_fork_block": 56118361
+}

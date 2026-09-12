@@ -1,0 +1,21 @@
+{
+  "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+  "change": "First try the already observed 2.2-WAD price, then every original 1.1-to-2.25 candidate if needed. No synthetic price, funded input, oracle state, gas budget or assertion fabricated. Production code unchanged.",
+  "measurement": "Capture the same Weighted/Quad policy selection on the source immediately before and after applying. Historical 44-case run confirms behavior but includes unrelated cases, so do not compare its entire command time as a policy-only speedup.",
+  "files": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol",
+      "before_sha256": "8f5438411786b43d22a5ad49ac3f75d27b1d267e8d41302c1221a8b0d2f0d3cd",
+      "after_sha256": "9e1d82730c18e01f91460421652cc4db6e9a669505e3fd865411f17d03dece44"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol",
+      "before_sha256": "a97690c51f6fe9e3c601873dbcf06df6a7c093eccf5b3c65ee2d892221369d93",
+      "after_sha256": "294daa005ccadcdea37f0752eb1b2810bd265967919f43016f5433c046a5e696"
+    }
+  ],
+  "historical_preparation_status": "prepared; Solidity unchanged",
+  "application_record": "v4-policy-fast-candidate.json",
+  "current_status_source": "current-implementation-queue.json and acceptance-progress.json; later edits and validation can supersede the original application hashes.",
+  "pending_owner_approval": false
+}

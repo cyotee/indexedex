@@ -1,14 +1,12 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 import {Vm} from "forge-std/Vm.sol";
 import {VM_ADDRESS} from "@crane/contracts/constants/FoundryConstants.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
-import {
-    ISingleStandardExchangeDETDFPkg,
-    SingleStandardExchangeDETDFPkg
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETDFPkg.sol";
+import {ISingleStandardExchangeDETDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETDFPkg.sol";
 
 library SingleStandardExchangeDETF_Pkg_FactoryService {
     using BetterEfficientHashLib for bytes;
@@ -22,12 +20,12 @@ library SingleStandardExchangeDETF_Pkg_FactoryService {
         instance_ = ISingleStandardExchangeDETDFPkg(
             address(
                 vaultRegistry_.deployPkg(
-                    type(SingleStandardExchangeDETDFPkg).creationCode,
+                    ArtifactCreationCode.creationCode("SingleStandardExchangeDETDFPkg.sol:SingleStandardExchangeDETDFPkg"),
                     abi.encode(pkgInit_),
-                    abi.encode(type(SingleStandardExchangeDETDFPkg).name)._hash()
+                    abi.encode("SingleStandardExchangeDETDFPkg")._hash()
                 )
             )
         );
-        vm.label(address(instance_), type(SingleStandardExchangeDETDFPkg).name);
+        vm.label(address(instance_), "SingleStandardExchangeDETDFPkg");
     }
 }

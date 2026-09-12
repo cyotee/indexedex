@@ -5,34 +5,20 @@ import {IPositionManager} from "@crane/contracts/protocols/dexes/uniswap/v4/inte
 
 library UniswapV4PositionRepo {
     bytes32 internal constant STORAGE_SLOT = keccak256("indexedex.protocols.dexes.uniswap.v4.position");
-    bytes32 internal constant LOWER_WING_SALT = keccak256("indexedex.protocols.dexes.uniswap.v4.position.lowerWing");
-    bytes32 internal constant UPPER_WING_SALT = keccak256("indexedex.protocols.dexes.uniswap.v4.position.upperWing");
-
-    enum PositionKind {
-        Center,
-        LowerWing,
-        UpperWing
-    }
 
     struct PositionState {
         int24 tickLower;
         int24 tickUpper;
-        uint128 liquidity;
         bytes32 salt;
         bool created;
     }
 
     struct Storage {
         PositionState centerPosition;
-        PositionState lowerWingPosition;
-        PositionState upperWingPosition;
         IPositionManager importedPositionManager;
         uint256 importedPositionTokenId;
         bool importedPositionActive;
         IPositionManager authorizedPositionManager;
-        uint160 lastSqrtPriceX96;
-        int24 lastTick;
-        uint32 lastTimestamp;
     }
 
     function _layout(bytes32 slot_) internal pure returns (Storage storage layout_) {
@@ -47,32 +33,16 @@ library UniswapV4PositionRepo {
 
     function _initialize(Storage storage layout_, bytes32 salt_) internal {
         layout_.centerPosition.salt = salt_;
-        layout_.lowerWingPosition.salt = LOWER_WING_SALT;
-        layout_.upperWingPosition.salt = UPPER_WING_SALT;
     }
 
     function _initialize(bytes32 salt_) internal {
         _initialize(_layout(), salt_);
     }
 
-    function _position(Storage storage layout_, PositionKind kind_)
-        internal
-        view
-        returns (PositionState storage position_)
-    {
-        if (kind_ == PositionKind.Center) {
-            return layout_.centerPosition;
-        }
-        if (kind_ == PositionKind.LowerWing) {
-            return layout_.lowerWingPosition;
-        }
-        return layout_.upperWingPosition;
-    }
-
-    function _createPositionIfNeeded(Storage storage layout_, PositionKind kind_, int24 tickLower_, int24 tickUpper_)
+    function _createPositionIfNeeded(Storage storage layout_, int24 tickLower_, int24 tickUpper_)
         internal
     {
-        PositionState storage position_ = _position(layout_, kind_);
+        PositionState storage position_ = layout_.centerPosition;
         if (position_.created) {
             return;
         }
@@ -81,8 +51,8 @@ library UniswapV4PositionRepo {
         position_.created = true;
     }
 
-    function _createPositionIfNeeded(PositionKind kind_, int24 tickLower_, int24 tickUpper_) internal {
-        _createPositionIfNeeded(_layout(), kind_, tickLower_, tickUpper_);
+    function _createPositionIfNeeded(int24 tickLower_, int24 tickUpper_) internal {
+        _createPositionIfNeeded(_layout(), tickLower_, tickUpper_);
     }
 
     function _initializeImportedPosition(
@@ -98,10 +68,6 @@ library UniswapV4PositionRepo {
         layout_.centerPosition.tickLower = tickLower_;
         layout_.centerPosition.tickUpper = tickUpper_;
         layout_.centerPosition.created = true;
-        layout_.lowerWingPosition.created = false;
-        layout_.upperWingPosition.created = false;
-        layout_.lowerWingPosition.liquidity = 0;
-        layout_.upperWingPosition.liquidity = 0;
     }
 
     function _initializeImportedPosition(
@@ -113,20 +79,19 @@ library UniswapV4PositionRepo {
         _initializeImportedPosition(_layout(), positionManager_, tokenId_, tickLower_, tickUpper_);
     }
 
+    /// @dev The emptied import NFT remains recorded, but backing uses the managed full-range book.
+    function _finishImportedConversion() internal {
+        Storage storage layout_ = _layout();
+        layout_.importedPositionActive = false;
+        layout_.centerPosition.created = false;
+    }
+
     function _isPositionCreated(Storage storage layout_) internal view returns (bool) {
-        return layout_.centerPosition.created || layout_.lowerWingPosition.created || layout_.upperWingPosition.created;
+        return layout_.centerPosition.created;
     }
 
     function _isPositionCreated() internal view returns (bool) {
         return _isPositionCreated(_layout());
-    }
-
-    function _isPositionCreated(Storage storage layout_, PositionKind kind_) internal view returns (bool) {
-        return _position(layout_, kind_).created;
-    }
-
-    function _isPositionCreated(PositionKind kind_) internal view returns (bool) {
-        return _isPositionCreated(_layout(), kind_);
     }
 
     function _isImportedPosition(Storage storage layout_) internal view returns (bool imported_) {
@@ -153,39 +118,6 @@ library UniswapV4PositionRepo {
         return _importedPositionTokenId(_layout());
     }
 
-    function _liquidity(Storage storage layout_) internal view returns (uint128 liquidity_) {
-        return
-            layout_.centerPosition.liquidity + layout_.lowerWingPosition.liquidity + layout_.upperWingPosition.liquidity;
-    }
-
-    function _liquidity() internal view returns (uint128 liquidity_) {
-        return _liquidity(_layout());
-    }
-
-    function _liquidity(Storage storage layout_, PositionKind kind_) internal view returns (uint128 liquidity_) {
-        return _position(layout_, kind_).liquidity;
-    }
-
-    function _liquidity(PositionKind kind_) internal view returns (uint128 liquidity_) {
-        return _liquidity(_layout(), kind_);
-    }
-
-    function _updateLiquidity(Storage storage layout_, uint128 liquidity_) internal {
-        layout_.centerPosition.liquidity = liquidity_;
-    }
-
-    function _updateLiquidity(uint128 liquidity_) internal {
-        _updateLiquidity(_layout(), liquidity_);
-    }
-
-    function _updateLiquidity(Storage storage layout_, PositionKind kind_, uint128 liquidity_) internal {
-        _position(layout_, kind_).liquidity = liquidity_;
-    }
-
-    function _updateLiquidity(PositionKind kind_, uint128 liquidity_) internal {
-        _updateLiquidity(_layout(), kind_, liquidity_);
-    }
-
     function _positionTicks(Storage storage layout_) internal view returns (int24 tickLower_, int24 tickUpper_) {
         tickLower_ = layout_.centerPosition.tickLower;
         tickUpper_ = layout_.centerPosition.tickUpper;
@@ -195,44 +127,12 @@ library UniswapV4PositionRepo {
         return _positionTicks(_layout());
     }
 
-    function _positionTicks(Storage storage layout_, PositionKind kind_)
-        internal
-        view
-        returns (int24 tickLower_, int24 tickUpper_)
-    {
-        PositionState storage position_ = _position(layout_, kind_);
-        tickLower_ = position_.tickLower;
-        tickUpper_ = position_.tickUpper;
-    }
-
-    function _positionTicks(PositionKind kind_) internal view returns (int24 tickLower_, int24 tickUpper_) {
-        return _positionTicks(_layout(), kind_);
-    }
-
     function _salt(Storage storage layout_) internal view returns (bytes32 salt_) {
         return layout_.centerPosition.salt;
     }
 
     function _salt() internal view returns (bytes32 salt_) {
         return _salt(_layout());
-    }
-
-    function _salt(Storage storage layout_, PositionKind kind_) internal view returns (bytes32 salt_) {
-        return _position(layout_, kind_).salt;
-    }
-
-    function _salt(PositionKind kind_) internal view returns (bytes32 salt_) {
-        return _salt(_layout(), kind_);
-    }
-
-    function _setPoolState(Storage storage layout_, uint160 sqrtPriceX96_, int24 tick_, uint32 timestamp_) internal {
-        layout_.lastSqrtPriceX96 = sqrtPriceX96_;
-        layout_.lastTick = tick_;
-        layout_.lastTimestamp = timestamp_;
-    }
-
-    function _setPoolState(uint160 sqrtPriceX96_, int24 tick_, uint32 timestamp_) internal {
-        _setPoolState(_layout(), sqrtPriceX96_, tick_, timestamp_);
     }
 
     function _setAuthorizedPositionManager(Storage storage layout_, IPositionManager positionManager_) internal {

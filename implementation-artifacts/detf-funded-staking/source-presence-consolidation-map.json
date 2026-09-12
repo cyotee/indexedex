@@ -1,0 +1,40 @@
+{
+  "status": "APPLIED_SOURCE_MAPPING_RUNTIME_VALIDATION_PENDING",
+  "retirements": [
+    {
+      "old_source": "test/foundry/spec/vaults/detf/DetfNestedPush_ProductionPresence.t.sol",
+      "old_function": "test_noProductionNestedExchangeFalse",
+      "reason": "Source text is not a behavioral invariant under approved funded composition. Retain the actual custody and transfer tests.",
+      "replacement_source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_AdversarialOpenBase.sol",
+      "replacement_functions": [
+        "test_T_NEST_1_nestedHappy_pushTrue_hostReservesSync",
+        "test_T_NEST_2_nestedShort_hostRevertsTransferDeltaInsufficient"
+      ]
+    },
+    {
+      "old_source": "test/foundry/spec/vaults/detf/DetfNestedPush_ProductionPresence.t.sol",
+      "old_function": "test_familyCommonsHaveLocalDurablePull",
+      "reason": "Source text is not a behavioral invariant under approved funded composition. Retain the actual custody and transfer tests.",
+      "replacement_source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_AdversarialOpenBase.sol",
+      "replacement_functions": [
+        "test_T_LOCAL_I1_bookedDetf_trueWithoutPushReverts"
+      ]
+    },
+    {
+      "old_source": "test/foundry/spec/vaults/detf/DetfNestedPush_ProductionPresence.t.sol",
+      "old_function": "test_hooksHostDurablePull",
+      "reason": "Source text is not a behavioral invariant under approved funded composition. Retain the actual custody and transfer tests.",
+      "replacement_source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_AdversarialOpenBase.sol",
+      "replacement_functions": [
+        "test_T_NEST_3_nestedI1_bookedHost_trueWithoutPushReverts"
+      ]
+    }
+  ],
+  "additional_reserve_hook_evidence": [
+    "test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_Adversarial.t.sol",
+    "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_Adversarial.t.sol",
+    "test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial.t.sol"
+  ],
+  "acceptance": "Require completed runtime results for replacements; this record itself is not validation.",
+  "application_record": "hermetic-followups-validation-remediation-applied.json"
+}

@@ -1,0 +1,48 @@
+{
+  "recorded_at_utc": "2026-09-11T07:12:32.743208+00:00",
+  "status": "PASS_SEVEN_ADDITIONS_NO_REMOVED_TESTS_39_LIFECYCLE_DECLARATIONS_PRESERVED",
+  "method": "Supplement to historical baseline consolidation: compares exact preserved pre-fix sources, and confirms new file absent from task-start inventory. Declaration counts do not substitute for executed test results.",
+  "rows": [
+    {
+      "source": "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_Liquidity.t.sol",
+      "source_sha256": "cec141f69abca5c67e78bd4d17dd36158f7b9ba475f82da0591c001402b02f48",
+      "before_source": "implementation-artifacts/detf-funded-staking/production-readiness/before-lifecycle-production-fixes/UniswapV4StandardExchangeOrbitalBufferHook_Liquidity.t.sol.txt",
+      "before_sha256": "7840a36b533a321d41d333b50d7d51390dac4936ce6214593ca660cce59f23b8",
+      "added_tests": [
+        "testFuzz_sphereNav_symmetricShares",
+        "test_sphereNav_highPrecisionIntermediateProduct",
+        "test_sphereNav_highPrecisionNativeUnit",
+        "test_sphereNav_zeroInputStillReverts"
+      ],
+      "removed_tests": [],
+      "current_declared_tests": 11
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ3Se_ResidualGas.t.sol",
+      "source_sha256": "dec49dd33724d7568e6e0d9ac3a505ee3bef59177ef6876b0c1e68a4fb1d7d4a",
+      "before_source": null,
+      "before_sha256": null,
+      "added_tests": [
+        "testFuzz_residualSweep_smallAmounts",
+        "test_residualSweep_localRehearsalAmount",
+        "test_residualSweep_nativeUnit"
+      ],
+      "removed_tests": [],
+      "current_declared_tests": 3
+    },
+    {
+      "source": "test/foundry/fork/robinhood_4663/RobinhoodReleaseRehearsal.t.sol",
+      "source_sha256": "46e153ff2e66f8035306a4cf65aa9bb79363ff61132c8d3966003a108c3d722a",
+      "before_source": "implementation-artifacts/detf-funded-staking/production-readiness/before-lifecycle-production-fixes/RobinhoodReleaseRehearsal.t.sol.txt",
+      "before_sha256": "225b088177e01dd994e60bd785b36b81013bb00799c138039233ef9a95a758eb",
+      "added_tests": [],
+      "removed_tests": [],
+      "current_declared_tests": 39
+    }
+  ],
+  "execution_evidence_required": [
+    "production-readiness/lifecycle-production-regressions.json",
+    "implementation-hermetic-test.json",
+    "current-robinhood-rehearsal-production-readiness-lifecycle-fixed/lifecycle-run.json"
+  ]
+}

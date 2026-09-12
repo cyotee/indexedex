@@ -1,5 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 pragma solidity ^0.8.0;
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+
 
 import {IBasePool} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IBasePool.sol";
 import {IPoolInfo} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IPoolInfo.sol";
@@ -201,7 +205,7 @@ contract MixedLegWeightedBufferPoolStandardVaultPkg is BalancerV3BasePoolFactory
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](15);
+        interfaces = new bytes4[](18);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20Metadata).interfaceId ^ type(IERC20).interfaceId;
@@ -217,6 +221,9 @@ contract MixedLegWeightedBufferPoolStandardVaultPkg is BalancerV3BasePoolFactory
         interfaces[12] = type(IBalancerPoolToken).interfaceId;
         interfaces[13] = type(IPoolLiquidity).interfaceId;
         interfaces[14] = type(IHooks).interfaceId;
+            interfaces[15] = type(IStandardExchangeIn).interfaceId;
+        interfaces[16] = type(IStandardExchangeOut).interfaceId;
+        interfaces[17] = type(IStandardizedYield).interfaceId;
     }
 
     function facetAddresses() public view returns (address[] memory facetAddresses_) {

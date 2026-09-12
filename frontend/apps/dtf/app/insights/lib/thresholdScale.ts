@@ -4,8 +4,6 @@ export type ThresholdScale = {
   burnPct: number
   pricePct: number
   mintPct: number
-  /** Mint and burn both allowed regardless of price (Open). */
-  openMode: boolean
   inert: boolean
 }
 
@@ -28,11 +26,10 @@ export function scaleThresholds(
   mint: bigint | undefined,
 ): ThresholdScale {
   if (price == null || price <= BigInt(0)) {
-    return { burnPct: 20, pricePct: 50, mintPct: 80, openMode: false, inert: true }
+    return { burnPct: 20, pricePct: 50, mintPct: 80, inert: true }
   }
   const burnV = burn ?? BigInt(0)
   const mintV = mint ?? WAD
-  const openMode = mintV <= WAD / BigInt(100) && burnV >= WAD * BigInt(99) / BigInt(100)
   const values = [burnV, price, mintV]
   let min = values[0]!
   let max = values[0]!
@@ -49,7 +46,6 @@ export function scaleThresholds(
     burnPct: toPct(burnV, min, span),
     pricePct: toPct(price, min, span),
     mintPct: toPct(mintV, min, span),
-    openMode,
     inert: false,
   }
 }

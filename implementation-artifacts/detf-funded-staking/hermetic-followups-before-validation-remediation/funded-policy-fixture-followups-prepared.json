@@ -1,0 +1,31 @@
+{
+  "status": "PREPARED_NOT_APPLIED",
+  "recorded_at_utc": "2026-09-09T08:14:27.562408+00:00",
+  "gate": "Apply only after the entire active parent session 4255 exits.",
+  "changes": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/funded-policy-fixture-drafts/TestBase_UniswapV4Detf_Policy.sol.txt",
+      "reason": "Preserve fractional purchased DETF for repeated swaps, use an explicit below-peg no-expansion fixture, and establish actual post-expansion gate closure without a fixed-horizon assumption.",
+      "before_sha256": "a4b57a09449f79690bac727aa508921ea20ecac0f51c1f54c46d9ed843e76589",
+      "after_sha256": "a197b84efe346ea812052f7c1d7980d286f97073f8631310bf41aba850ba7c9a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/funded-policy-fixture-drafts/TestBase_UniswapV4Detf_Policy_Decimals.sol.txt",
+      "reason": "Preserve fractional purchased DETF for repeated swaps, use an explicit below-peg no-expansion fixture, and establish actual post-expansion gate closure without a fixed-horizon assumption.",
+      "before_sha256": "09a3e32563fa2b8f5c4fa4bce58c066f2b8ae0c024beadc89538d45742b27d4c",
+      "after_sha256": "0b1b612763b52bbc38ba872ab2b11ea613069398c557000537f5e34b485f69df"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/funded-policy-fixture-drafts/UniswapV4Detf_Weighted.t.sol.txt",
+      "reason": "Use an actual rich launch for the retained custom mint-route membership test; keep both positive A and negative B assertions.",
+      "before_sha256": "e1e42f505b5771af960b973db4c3abd9cafef3af3e616374bfd9ce84b7615822",
+      "after_sha256": "3cf1c20e71b72b67b2f9646f092b98dbe87fc03ab35980cacac6adcb5bb52d72"
+    }
+  ],
+  "validation_passed": false,
+  "scope": "Existing policy fixtures only; production price, reserve and expansion math unchanged. All declarations and final assertions retained.",
+  "required_validation": "Draft typecheck, then actual gold policy/claim cases and provider/decimal policy leaves. Other runtime failures may remain."
+}

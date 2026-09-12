@@ -21,6 +21,9 @@ export const WEIGHTED_HOOK_REQUIRED_FLAGS =
   (1n << 5n) | // BEFORE_DONATE
   (1n << 3n) // BEFORE_SWAP_RETURNS_DELTA
 
+/** Curve-quad SE buffer hook flags match the weighted SE buffer set. */
+export const QUAD_HOOK_REQUIRED_FLAGS = WEIGHTED_HOOK_REQUIRED_FLAGS
+
 export function previewFinalSalt(packageSalt: Hex, mineNonce: bigint): Hex {
   return keccak256(
     encodeAbiParameters(

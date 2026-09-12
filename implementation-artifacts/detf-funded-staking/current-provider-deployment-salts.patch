@@ -1,0 +1,93 @@
+--- contracts/fee/collector/FeeCollectorFactoryService.sol
++++ contracts/fee/collector/FeeCollectorFactoryService.sol
+@@ -35,8 +35,9 @@
+         internal
+         returns (IFacet facet)
+     {
++        bytes memory code_ = ArtifactCreationCode.creationCode("FeeCollectorManagerFacet.sol:FeeCollectorManagerFacet");
+         facet = factory.deployFacet(
+-            ArtifactCreationCode.creationCode("FeeCollectorManagerFacet.sol:FeeCollectorManagerFacet"), abi.encode("FeeCollectorManagerFacet")._hash()
++            code_, ArtifactCreationCode.releaseSalt(abi.encode("FeeCollectorManagerFacet")._hash(), code_, bytes(""))
+         );
+         HEVM.label(address(facet), "FeeCollectorManagerFacet");
+     }
+@@ -86,12 +87,14 @@
+             feeCollectorManagerFacet: feeCollectorManagerFacet
+         });
+ 
++        bytes memory code_ = ArtifactCreationCode.creationCode("FeeCollectorDFPkg.sol:FeeCollectorDFPkg");
++        bytes memory args_ = abi.encode(pkgInitArgs);
++
+         dfpkg = IFeeCollectorDFPkg(
+             address(
+                 factory.deployPackageWithArgs(
+-                    ArtifactCreationCode.creationCode("FeeCollectorDFPkg.sol:FeeCollectorDFPkg"),
+-                    abi.encode(pkgInitArgs),
+-                    abi.encode("FeeCollectorDFPkg", pkgInitArgs)._hash()
++                    code_, args_,
++                    ArtifactCreationCode.releaseSalt(abi.encode("FeeCollectorDFPkg", pkgInitArgs)._hash(), code_, args_)
+                 )
+             )
+         );
+--- contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProvider_FactoryService.sol
++++ contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProvider_FactoryService.sol
+@@ -45,9 +45,9 @@
+         internal
+         returns (IFacet instance)
+     {
++        bytes memory code_ = ArtifactCreationCode.creationCode("StandardExchangeRateProviderFacet.sol:StandardExchangeRateProviderFacet");
+         instance = create3Factory.deployFacet(
+-            ArtifactCreationCode.creationCode("StandardExchangeRateProviderFacet.sol:StandardExchangeRateProviderFacet"),
+-            abi.encode("StandardExchangeRateProviderFacet")._hash()
++            code_, ArtifactCreationCode.releaseSalt(abi.encode("StandardExchangeRateProviderFacet")._hash(), code_, bytes(""))
+         );
+         vm.label(address(instance), "StandardExchangeRateProviderFacet");
+     }
+@@ -56,9 +56,9 @@
+         internal
+         returns (IFacet instance)
+     {
++        bytes memory code_ = ArtifactCreationCode.creationCode("WrappedStandardExchangeRateProviderFacet.sol:WrappedStandardExchangeRateProviderFacet");
+         instance = create3Factory.deployFacet(
+-            ArtifactCreationCode.creationCode("WrappedStandardExchangeRateProviderFacet.sol:WrappedStandardExchangeRateProviderFacet"),
+-            abi.encode("WrappedStandardExchangeRateProviderFacet")._hash()
++            code_, ArtifactCreationCode.releaseSalt(abi.encode("WrappedStandardExchangeRateProviderFacet")._hash(), code_, bytes(""))
+         );
+         vm.label(address(instance), "WrappedStandardExchangeRateProviderFacet");
+     }
+@@ -77,12 +77,14 @@
+                 rateProviderFacet: rateProviderFacet, diamondFactory: diamondFactory
+             });
+ 
++        bytes memory code_ = ArtifactCreationCode.creationCode("StandardExchangeRateProviderDFPkg.sol:StandardExchangeRateProviderDFPkg");
++        bytes memory args_ = abi.encode(pkgInit);
++
+         instance = IStandardExchangeRateProviderDFPkg(
+             address(
+                 create3Factory.deployPackageWithArgs(
+-                    ArtifactCreationCode.creationCode("StandardExchangeRateProviderDFPkg.sol:StandardExchangeRateProviderDFPkg"),
+-                    abi.encode(pkgInit),
+-                    abi.encode("StandardExchangeRateProviderDFPkg")._hash()
++                    code_, args_,
++                    ArtifactCreationCode.releaseSalt(abi.encode("StandardExchangeRateProviderDFPkg")._hash(), code_, args_)
+                 )
+             )
+         );
+@@ -100,12 +102,14 @@
+                 diamondFactory: diamondFactory
+             });
+ 
++        bytes memory code_ = ArtifactCreationCode.creationCode("WrappedStandardExchangeRateProviderDFPkg.sol:WrappedStandardExchangeRateProviderDFPkg");
++        bytes memory args_ = abi.encode(pkgInit);
++
+         instance = IWrappedStandardExchangeRateProviderDFPkg(
+             address(
+                 create3Factory.deployPackageWithArgs(
+-                    ArtifactCreationCode.creationCode("WrappedStandardExchangeRateProviderDFPkg.sol:WrappedStandardExchangeRateProviderDFPkg"),
+-                    abi.encode(pkgInit),
+-                    abi.encode("WrappedStandardExchangeRateProviderDFPkg")._hash()
++                    code_, args_,
++                    ArtifactCreationCode.releaseSalt(abi.encode("WrappedStandardExchangeRateProviderDFPkg")._hash(), code_, args_)
+                 )
+             )
+         );

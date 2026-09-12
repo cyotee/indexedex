@@ -98,10 +98,10 @@ contract MultiVaultWeightedDetf_Reentrancy_Test is TestBase_MultiVaultWeightedDe
             vaultWeights: weights_,
             mintThreshold: 0,
             burnThreshold: 0,
-            thresholdMode: ThresholdMode.Open,
+
             expansionClosureRatePerSecond: 0,
-            expansionCatchUpMaxSeconds: 0,
-            expansionCatchUpCapBps: 0,
+
+
             creator: address(0),
             claimName: "",
             claimSymbol: "",

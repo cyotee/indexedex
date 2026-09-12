@@ -329,7 +329,7 @@ event UserEModeSet(address indexed user, uint8 categoryId);
 ## Reference Files
 
 - `src/contracts/protocol/libraries/logic/EModeLogic.sol` - eMode logic
-- `@crane/contracts/external/aave-v3-origin/contracts/protocol/libraries/configuration/EModeConfiguration.sol` - Bitmap utilities
+- `src/contracts/protocol/libraries/configuration/EModeConfiguration.sol` - Bitmap utilities
 - `src/contracts/protocol/libraries/logic/GenericLogic.sol` - Health factor with eModes
 - `src/contracts/protocol/pool/Pool.sol` - setUserEMode, getUserEMode
 - `src/contracts/protocol/pool/PoolConfigurator.sol` - eMode configuration

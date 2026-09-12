@@ -278,29 +278,13 @@ abstract contract UniswapV2StandardExchangeOutTarget is
             ConstProdReserveVaultRepo._isReserveAssetContained(constProd, address(tokenIn))
                 && address(tokenOut) == address(this)
         ) {
-            // Two-step inverse:
-            //   Step 1: Convert target shares → target LP tokens using the post-deposit
-            //           inverse formula (mirrors exchangeIn Route 6 share accounting).
-            //   Step 2: Convert target LP → amountIn of tokenIn via ZapIn inverse.
             _loadIndexSourceReserves(indexSource, tokenIn);
             UniV2StrategyVault memory vault;
             _loadStrategyVault(vault, tokenIn);
             _calcVaultFee(indexSource, vault);
-            // Correct post-deposit inverse of:
-            //   shares = floor(LP * (S + 10^d) / (R_before + LP + 1))
-            // Solving for LP:
-            //   LP >= ceil(shares * (R_before + 1) / (S + 10^d - shares))
-            uint256 decimalUnit = 10 ** ERC4626Repo._decimalOffset();
-            if (amountOut >= vault.vaultTotalShares + decimalUnit) return 0;
-            uint256 lpTarget;
-            {
-                uint256 numerator = amountOut * (vault.vaultLpReserve + 1);
-                uint256 denominator = vault.vaultTotalShares + decimalUnit - amountOut;
-                lpTarget = numerator / denominator;
-                if (denominator > 0 && numerator % denominator != 0) {
-                    lpTarget += 1;
-                }
-            }
+            uint256 lpTarget = BetterMath._convertToAssetsUp(
+                amountOut, vault.vaultLpReserve, vault.vaultTotalShares, ERC4626Repo._decimalOffset()
+            );
             amountIn = ConstProdUtils._quoteZapInToTargetLPWithFee(
                 // uint256 targetLP,
                 lpTarget,
@@ -691,6 +675,7 @@ abstract contract UniswapV2StandardExchangeOutTarget is
             // Honor pretransferred: false always pulls. Do not credit lastTotal exact-gap (I1).
             amountIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
             ERC4626Repo._setLastTotalAssets(indexSource.pool.balanceOf(address(this)));
+            _checkpointVaultReserves();
 
             uint256 actualShares = BetterMath._convertToSharesDown(
                 // uint256 assets,
@@ -702,7 +687,7 @@ abstract contract UniswapV2StandardExchangeOutTarget is
                 ERC4626Repo._decimalOffset()
             );
 
-            if (actualShares != amountOut) revert AmountOutNotMet(amountOut, actualShares);
+            if (actualShares < amountOut) revert AmountOutNotMet(amountOut, actualShares);
 
             // Update the reserve of the underlying pool token
             // _updateReserve(IERC20(address(indexSource.pool)), indexSource.pool.balanceOf(address(this)));
@@ -781,6 +766,7 @@ abstract contract UniswapV2StandardExchangeOutTarget is
                 // uint256 amount
                 indexSource.pool.balanceOf(address(this))
             );
+            _checkpointVaultReserves();
 
             // Go ahead and terminate further executiuon.
             _syncAllExpectedHoldReserves();
@@ -854,6 +840,7 @@ abstract contract UniswapV2StandardExchangeOutTarget is
             );
 
             // Secure the burn of the underlying pool token
+            if (amountIn > maxAmountIn) revert MaxAmountExceeded(maxAmountIn, amountIn);
             _secureSelfBurn(msg.sender, amountIn, pretransferred);
             _refundExcess(IERC20(address(this)), maxAmountIn, amountIn, pretransferred, msg.sender);
             // Load the router.
@@ -887,6 +874,7 @@ abstract contract UniswapV2StandardExchangeOutTarget is
                 // uint256 amount
                 indexSource.pool.balanceOf(address(this))
             );
+            _checkpointVaultReserves();
 
             _syncAllExpectedHoldReserves();
             return amountIn;
@@ -934,19 +922,9 @@ abstract contract UniswapV2StandardExchangeOutTarget is
         //   LP >= ceil(shares * (R_before + 1) / (S + 10^d - shares))
         //
         // Guard: amountOut must be < S + 10^d (otherwise denominator <= 0).
-        uint256 decimalUnit = 10 ** ERC4626Repo._decimalOffset();
-        require(amountOut < vault.vaultTotalShares + decimalUnit, "amountOut >= totalShares + decimalUnit");
-        uint256 lpTarget;
-        {
-            uint256 numerator = amountOut * (vault.vaultLpReserve + 1);
-            uint256 denominator = vault.vaultTotalShares + decimalUnit - amountOut;
-            lpTarget = numerator / denominator;
-            if (numerator % denominator != 0) {
-                lpTarget += 1;
-            }
-        }
-
-        // Step 2: ZapIn inverse — LP target → amountIn of tokenIn.
+        uint256 lpTarget = BetterMath._convertToAssetsUp(
+            amountOut, vault.vaultLpReserve, vault.vaultTotalShares, ERC4626Repo._decimalOffset()
+        );
         amountIn = ConstProdUtils._quoteZapInToTargetLPWithFee(
             // uint256 targetLP,
             lpTarget,
@@ -1006,25 +984,8 @@ abstract contract UniswapV2StandardExchangeOutTarget is
 
         vault.vaultLpReserve = indexSource.pool.balanceOf(address(this));
         ERC4626Repo._setLastTotalAssets(vault.vaultLpReserve);
+        _checkpointVaultReserves();
 
-        (uint256 ownedReserve0, uint256 ownedReserve1) = ConstProdUtils._quoteWithdrawWithFee(
-            // uint256 ownedLPAmount,
-            vault.vaultLpReserve,
-            // uint256 lpTotalSupply,
-            indexSource.totalSupply,
-            // uint256 totalReserveA,
-            indexSource.knownReserve,
-            // uint256 totalReserveB,
-            indexSource.opposingReserve,
-            // uint256 kLast,
-            indexSource.kLast,
-            // uint256 ownerFeeShare,
-            UNISWAPV2_PROTOCOL_FEE_SHARE,
-            // bool feeOn
-            UniswapV2FactoryAwareRepo._uniswapV2Factory().feeTo() != address(0)
-        );
-        ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token0), ownedReserve0);
-        ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token1), ownedReserve1);
 
         // Mint exactly the requested amountOut to the recipient (not actualShares — the caller
         // specified a target; any rounding surplus stays in the vault, benefiting all holders).

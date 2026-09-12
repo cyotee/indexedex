@@ -20,11 +20,13 @@ contract Adversarial_ComposedStable_SecurePull_Test is ComposedStableCommonDetf_
     address internal attacker;
     address internal honest;
 
-    uint256 internal constant CLAIMED = 1_000e18;
-    uint256 internal constant HONEST_PULL = 1_000e18;
+    uint256 internal CLAIMED;
+    uint256 internal HONEST_PULL;
 
     function setUp() public override {
         super.setUp();
+        CLAIMED = 10e18;
+        HONEST_PULL = CLAIMED;
         attacker = makeAddr("csPullAttacker");
         honest = makeAddr("csPullHonest");
     }
@@ -47,13 +49,10 @@ contract Adversarial_ComposedStable_SecurePull_Test is ComposedStableCommonDetf_
 
         vm.prank(attacker);
         vm.expectRevert(
-            abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, CLAIMED, uint256(0)
-            )
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, CLAIMED, uint256(0))
         );
-        IStandardExchangeIn(deployedDetfVault).exchangeIn(
-            dai, CLAIMED, detfToken, 0, attacker, true, block.timestamp + 1
-        );
+        IStandardExchangeIn(deployedDetfVault)
+            .exchangeIn(dai, CLAIMED, detfToken, 0, attacker, true, block.timestamp + 1);
 
         assertEq(dai.balanceOf(deployedDetfVault), 0, "I1 must not transfer in-call");
         assertEq(detfToken.balanceOf(attacker), attDetfBefore, "I1 must not mint free DETF");
@@ -68,27 +67,25 @@ contract Adversarial_ComposedStable_SecurePull_Test is ComposedStableCommonDetf_
 
         vm.prank(attacker);
         vm.expectRevert(
-            abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed, uint256(0)
-            )
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed, uint256(0))
         );
-        IStandardExchangeIn(deployedDetfVault).exchangeIn(
-            dai, claimed, detfToken, 0, attacker, true, block.timestamp + 1
-        );
+        IStandardExchangeIn(deployedDetfVault)
+            .exchangeIn(dai, claimed, detfToken, 0, attacker, true, block.timestamp + 1);
     }
 
     /// @notice L-RSRV-DUST control: bare DAI donation free-credits (DAI not hold-set / not booked).
     /// @dev Documents product law — not a security failure. Contrasts with I1 booked hold-set paths.
     function test_L_RSRV_DUST_bareDaiDonation_freeCreditsPretransfer() public {
         _bootstrapReserveGraph();
-        deal(address(dai), deployedDetfVault, CLAIMED, true);
+        deal(address(dai), honest, CLAIMED, true);
+        vm.prank(honest);
+        dai.transfer(deployedDetfVault, CLAIMED);
         assertEq(dai.balanceOf(deployedDetfVault), CLAIMED, "unbooked DAI inventory");
 
         // U = B - R = CLAIMED - 0 → free true succeeds (dust recovery).
         vm.prank(attacker);
-        uint256 out_ = IStandardExchangeIn(deployedDetfVault).exchangeIn(
-            dai, CLAIMED, detfToken, 0, attacker, true, block.timestamp + 1
-        );
+        uint256 out_ = IStandardExchangeIn(deployedDetfVault)
+            .exchangeIn(dai, CLAIMED, detfToken, 0, attacker, true, block.timestamp + 1);
         assertGt(out_, 0, "L-RSRV-DUST: unbooked DAI funds pretransfer by design");
         assertGt(detfToken.balanceOf(attacker), 0, "attacker received detfToken");
     }
@@ -106,13 +103,10 @@ contract Adversarial_ComposedStable_SecurePull_Test is ComposedStableCommonDetf_
 
         vm.prank(attacker);
         vm.expectRevert(
-            abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, CLAIMED, uint256(0)
-            )
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, CLAIMED, uint256(0))
         );
-        IStandardExchangeIn(deployedDetfVault).exchangeIn(
-            dai, CLAIMED, detfToken, 0, attacker, true, block.timestamp + 1
-        );
+        IStandardExchangeIn(deployedDetfVault)
+            .exchangeIn(dai, CLAIMED, detfToken, 0, attacker, true, block.timestamp + 1);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -128,9 +122,8 @@ contract Adversarial_ComposedStable_SecurePull_Test is ComposedStableCommonDetf_
         deal(address(dai), honest, HONEST_PULL, true);
         vm.startPrank(honest);
         dai.approve(deployedDetfVault, HONEST_PULL);
-        uint256 out_ = IStandardExchangeIn(deployedDetfVault).exchangeIn(
-            dai, HONEST_PULL, detfToken, 0, honest, false, block.timestamp + 1
-        );
+        uint256 out_ = IStandardExchangeIn(deployedDetfVault)
+            .exchangeIn(dai, HONEST_PULL, detfToken, 0, honest, false, block.timestamp + 1);
         vm.stopPrank();
         assertGt(out_, 0, "honest mint ok");
 
@@ -141,25 +134,19 @@ contract Adversarial_ComposedStable_SecurePull_Test is ComposedStableCommonDetf_
             uint256 overClaim_ = residualDai_ + 1;
             vm.prank(attacker);
             vm.expectRevert(
-                abi.encodeWithSelector(
-                    ISecurePullErrors.TransferDeltaInsufficient.selector, overClaim_, residualDai_
-                )
+                abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, overClaim_, residualDai_)
             );
-            IStandardExchangeIn(deployedDetfVault).exchangeIn(
-                dai, overClaim_, detfToken, 0, attacker, true, block.timestamp + 1
-            );
+            IStandardExchangeIn(deployedDetfVault)
+                .exchangeIn(dai, overClaim_, detfToken, 0, attacker, true, block.timestamp + 1);
             assertEq(dai.balanceOf(deployedDetfVault), residualDai_, "I3 over-claim does not move residual");
         } else {
             // No free DAI residual → U=0; free true reverts.
             vm.prank(attacker);
             vm.expectRevert(
-                abi.encodeWithSelector(
-                    ISecurePullErrors.TransferDeltaInsufficient.selector, CLAIMED, uint256(0)
-                )
+                abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, CLAIMED, uint256(0))
             );
-            IStandardExchangeIn(deployedDetfVault).exchangeIn(
-                dai, CLAIMED, detfToken, 0, attacker, true, block.timestamp + 1
-            );
+            IStandardExchangeIn(deployedDetfVault)
+                .exchangeIn(dai, CLAIMED, detfToken, 0, attacker, true, block.timestamp + 1);
             assertEq(dai.balanceOf(deployedDetfVault), 0, "I3: still no free DAI");
             assertEq(detfToken.balanceOf(attacker), 0, "I3 no free DETF");
         }

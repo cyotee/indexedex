@@ -1,0 +1,31 @@
+{
+  "status": "applied; validation pending",
+  "scope": "Existing real V2/V3/V4/ERC4626 provider suites, user receipts, entire projected state, supply and buffered fee-holder claims",
+  "files": [
+    {
+      "path": "test/foundry/spec/vaults/standard/TransitionQuoteAssertions.sol",
+      "before_sha256": "84efbd95b5b3cac600374446270d624a028350ad02e35edc0f251cce1833a89c",
+      "after_sha256": "5f42d9b7cdd092e025f27ac1d3918e1c4bfd485369b076b841c1fd46ab2fb12a"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_FullRangeBook.t.sol",
+      "before_sha256": "c8ec33e1bff1114246d747d09815fe18ebbee2178a1546dcd18f8e4319b89e48",
+      "after_sha256": "6e1d8edb1f7fd21d4582be6679d55311b17eb15a009a8be0adf26f9771e1912c"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_FullRangeBook.t.sol",
+      "before_sha256": "889dbebb83faf9b7fbc38f46b1830ea4c210433bbc17dc5f2adcbf4dea7fa69d",
+      "after_sha256": "d9743b9fde7144cc7948721948127de48e570fcebda5f82bdc3aaecc58914958"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v2/UniswapV2StandardExchange_TransitionQuote.t.sol",
+      "before_sha256": "e3518b894d4e85c2ae4bef4e8a89a14186e4db753f5ff14b71c66239b00a330d",
+      "after_sha256": "1bef00885cbb09222312ace283b9f37b1659cf9809bb66610bef190eb573a763"
+    },
+    {
+      "path": "test/foundry/spec/vaults/standard/erc4626/ERC4626StandardExchange_TransitionQuote.t.sol",
+      "before_sha256": "169ee833a0fc3b4e2a0090da657b7cf0e644b8e3e11a2dc98883a3fce1f4efa0",
+      "after_sha256": "b5ed3e6cde87bd3a7b4236c5f001e79ab5faf2078ddfc9ec0bef6185cd51f81d"
+    }
+  ]
+}

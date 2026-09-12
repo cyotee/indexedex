@@ -1,0 +1,7 @@
+{
+  "syntax_valid": true,
+  "existing_evidence_rejected": true,
+  "exit_code": 2,
+  "node_record_preserved": true,
+  "stderr": "usage: run-current-rehearsal-node.py [-h] [--label LABEL]\nrun-current-rehearsal-node.py: error: Preserving existing /Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/current-robinhood-rehearsal/node.json; choose a fresh --label\n"
+}

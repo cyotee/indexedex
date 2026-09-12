@@ -1,0 +1,44 @@
+{
+  "evidence": "orbital-cached-claim-81-green-test.log",
+  "measured_calls": {
+    "SY deposit execution gas": [
+      26538730,
+      11452756,
+      11452757,
+      11452758,
+      11452757,
+      11452759,
+      12144345,
+      12144345,
+      12144346,
+      12144347,
+      12144347,
+      11457254
+    ],
+    "SY redeem execution gas": [
+      4237481,
+      6055145,
+      4237485,
+      6086139,
+      6364757,
+      6398490,
+      6053273,
+      4237614,
+      6088142,
+      6364887,
+      6398577
+    ]
+  },
+  "deposit_range": [
+    11452756,
+    26538730
+  ],
+  "redeem_range": [
+    4237481,
+    6398577
+  ],
+  "fixed_counterexample_deposit": 26538730,
+  "transaction_gas_limit_rpc": 32000000,
+  "actual_proxy_call_budget": 31000000,
+  "notes": "Warm real V4-backed fixture, enclosing test includes setup/preview/repeated calls. Fuzz also enforces each call budget; finite coverage does not establish a bound for every possible state or amount."
+}

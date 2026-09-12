@@ -1,0 +1,147 @@
+--- a/test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_Decimals.sol
++++ b/test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_Decimals.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
+ 
+ import {TestBase_MixedBufferMultiVaultStablePool_Decimals} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/bases/TestBase_MixedBufferMultiVaultStablePool_Decimals.sol";
+ 
+@@ -26,10 +28,10 @@
+     function test_M11_walk_deposit_secondVaultSucceeds() public {
+         HostileSE_V3PooStaMix h0 = new HostileSE_V3PooStaMix(IERC20(address(rateAsset)));
+         h0.mintShares(alice, MBMVS_INIT_SHARES * 5);
+-        rateAsset.mint(address(h0), MBMVS_INIT_BUFFER * 5);
+-        rateAsset.mint(alice, MBMVS_INIT_BUFFER * 5);
++        rateAsset.mint(address(h0), _from18(address(rateAsset), MBMVS_INIT_BUFFER) * 5);
++        rateAsset.mint(alice, _from18(address(rateAsset), MBMVS_INIT_BUFFER) * 5);
+         mintSharesForVault(0, alice, MBMVS_INIT_SHARES * 5);
+-        pairToken.mint(alice, MBMVS_INIT_UNPAIRED * 5);
++        pairToken.mint(alice, _from18(address(pairToken), MBMVS_INIT_UNPAIRED) * 5);
+ 
+         address pool = _deployTwoVaultPool(IStandardExchange(address(h0)), IStandardExchange(address(seVault)));
+         _initTwoVaultPool(pool, address(h0), address(seVault));
+@@ -39,7 +41,7 @@
+ 
+         uint256 vBefore = p.virtualBuffer();
+         int256 d1Before = p.hookShareDelta(1);
+-        uint256 amt = 10e18;
++        uint256 amt = _from18(address(rateAsset), 10e18);
+         rateAsset.mint(alice, amt);
+         vm.startPrank(alice);
+         rateAsset.approve(address(router), type(uint256).max);
+@@ -48,7 +50,7 @@
+         );
+         vm.stopPrank();
+         assertGt(out, 0);
+-        assertEq(p.virtualBuffer(), vBefore + amt);
++        assertEq(p.virtualBuffer(), vBefore + 10e18);
+         assertGt(p.hookShareDelta(1), d1Before, "walk deposited into vault1 after vault0 fail");
+     }
+ 
+@@ -56,9 +58,9 @@
+     function test_M11_walk_preSeat_secondVaultSucceeds() public {
+         HostileSE_V3PooStaMix h0 = new HostileSE_V3PooStaMix(IERC20(address(rateAsset)));
+         h0.mintShares(alice, MBMVS_INIT_SHARES * 5);
+-        rateAsset.mint(address(h0), MBMVS_INIT_BUFFER * 5);
++        rateAsset.mint(address(h0), _from18(address(rateAsset), MBMVS_INIT_BUFFER) * 5);
+         mintSharesForVault(0, alice, MBMVS_INIT_SHARES * 5);
+-        pairToken.mint(alice, MBMVS_INIT_UNPAIRED * 5);
++        pairToken.mint(alice, _from18(address(pairToken), MBMVS_INIT_UNPAIRED) * 5);
+ 
+         address pool = _deployTwoVaultPool(IStandardExchange(address(h0)), IStandardExchange(address(seVault)));
+         _initTwoVaultPool(pool, address(h0), address(seVault));
+@@ -85,9 +87,9 @@
+         HostileSE_V3PooStaMix h1 = new HostileSE_V3PooStaMix(IERC20(address(rateAsset)));
+         h0.mintShares(alice, MBMVS_INIT_SHARES * 3);
+         h1.mintShares(alice, MBMVS_INIT_SHARES * 3);
+-        rateAsset.mint(address(h0), MBMVS_INIT_BUFFER * 3);
+-        rateAsset.mint(address(h1), MBMVS_INIT_BUFFER * 3);
+-        pairToken.mint(alice, MBMVS_INIT_UNPAIRED * 3);
++        rateAsset.mint(address(h0), _from18(address(rateAsset), MBMVS_INIT_BUFFER) * 3);
++        rateAsset.mint(address(h1), _from18(address(rateAsset), MBMVS_INIT_BUFFER) * 3);
++        pairToken.mint(alice, _from18(address(pairToken), MBMVS_INIT_UNPAIRED) * 3);
+ 
+         address pool = _deployTwoVaultPool(IStandardExchange(address(h0)), IStandardExchange(address(h1)));
+         _initTwoVaultPool(pool, address(h0), address(h1));
+@@ -95,7 +97,7 @@
+         h0.setFailExchangeIn(true);
+         h1.setFailExchangeIn(true);
+ 
+-        uint256 amt = 5e18;
++        uint256 amt = _from18(address(rateAsset), 5e18);
+         rateAsset.mint(alice, amt);
+         vm.startPrank(alice);
+         rateAsset.approve(address(router), type(uint256).max);
+@@ -112,9 +114,9 @@
+         HostileSE_V3PooStaMix h1 = new HostileSE_V3PooStaMix(IERC20(address(rateAsset)));
+         h0.mintShares(alice, MBMVS_INIT_SHARES * 5);
+         h1.mintShares(alice, MBMVS_INIT_SHARES * 5);
+-        rateAsset.mint(address(h0), MBMVS_INIT_BUFFER * 5);
+-        rateAsset.mint(address(h1), MBMVS_INIT_BUFFER * 5);
+-        pairToken.mint(alice, MBMVS_INIT_UNPAIRED * 5);
++        rateAsset.mint(address(h0), _from18(address(rateAsset), MBMVS_INIT_BUFFER) * 5);
++        rateAsset.mint(address(h1), _from18(address(rateAsset), MBMVS_INIT_BUFFER) * 5);
++        pairToken.mint(alice, _from18(address(pairToken), MBMVS_INIT_UNPAIRED) * 5);
+ 
+         address pool = _deployTwoVaultPool(IStandardExchange(address(h0)), IStandardExchange(address(h1)));
+         _initTwoVaultPool(pool, address(h0), address(h1));
+@@ -177,8 +179,8 @@
+         (IERC20[] memory toks,,,) = bv3Vault.getPoolTokenInfo(pool);
+         uint256[] memory amounts = new uint256[](toks.length);
+         for (uint256 i; i < toks.length; ++i) {
+-            if (address(toks[i]) == address(rateAsset)) amounts[i] = MBMVS_INIT_BUFFER;
+-            else if (address(toks[i]) == address(pairToken)) amounts[i] = MBMVS_INIT_UNPAIRED;
++            if (address(toks[i]) == address(rateAsset)) amounts[i] = _from18(address(rateAsset), MBMVS_INIT_BUFFER);
++            else if (address(toks[i]) == address(pairToken)) amounts[i] = _from18(address(pairToken), MBMVS_INIT_UNPAIRED);
+             else amounts[i] = MBMVS_INIT_SHARES;
+         }
+         router.initialize(pool, toks, amounts, 0, false, bytes(""));
+@@ -237,8 +239,18 @@
+         return true;
+     }
+ 
+-    function previewExchangeIn(IERC20, uint256 amountIn, IERC20) external pure returns (uint256) {
+-        return amountIn;
++    // This hostile dependency keeps 18-decimal shares and the buffer's native asset units.
++    // Its failure switches isolate host routing; amounts still match a funded exchange.
++    function _sharesForAssets(uint256 assets) private view returns (uint256) {
++        return assets * 1e18 / (10 ** IERC20Metadata(address(bufferToken)).decimals());
++    }
++
++    function _assetsForShares(uint256 shares) private view returns (uint256) {
++        return shares * (10 ** IERC20Metadata(address(bufferToken)).decimals()) / 1e18;
++    }
++
++    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20) external view returns (uint256) {
++        return tokenIn == bufferToken ? _sharesForAssets(amountIn) : _assetsForShares(amountIn);
+     }
+ 
+     function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20, uint256, address recipient, bool, uint256)
+@@ -247,13 +259,13 @@
+     {
+         if (failExchangeIn) revert("HostileSE_V3PooStaMix: exchangeIn");
+         tokenIn.transferFrom(msg.sender, address(this), amountIn);
+-        amountOut = amountIn;
++        amountOut = _sharesForAssets(amountIn);
+         balanceOf[recipient] += amountOut;
+         totalSupply += amountOut;
+     }
+ 
+-    function previewExchangeOut(IERC20, IERC20, uint256 amountOut) external pure returns (uint256) {
+-        return amountOut;
++    function previewExchangeOut(IERC20, IERC20, uint256 amountOut) external view returns (uint256) {
++        return _sharesForAssets(amountOut);
+     }
+ 
+     function exchangeOut(
+@@ -266,7 +278,7 @@
+         uint256
+     ) external returns (uint256 amountIn) {
+         if (failExchangeOut) revert("HostileSE_V3PooStaMix: exchangeOut");
+-        amountIn = amountOut;
++        amountIn = _sharesForAssets(amountOut);
+         require(amountIn <= maxAmountIn, "maxIn");
+         balanceOf[msg.sender] -= amountIn;
+         totalSupply -= amountIn;

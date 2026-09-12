@@ -1,0 +1,22 @@
+{
+  "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol",
+  "before_sha256": "d43f3d3dc26ebb558a0aaad68c4d4cc4ed46fde90e0a256bb4b5ab6a3c3b573f",
+  "after_sha256": "f491c5984d19d5210e0ff7dead5f4bf0254005a8bf96ec897ac48d3898e16bd1",
+  "imports": [
+    "import {UniswapV3StandardExchangeDFPkg} from \"contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeDFPkg.sol\";",
+    "import {UniswapV3StandardExchangeInExecutionDelegate} from \"contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInExecutionDelegate.sol\";",
+    "import {UniswapV3StandardExchangeInFacet} from \"contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInFacet.sol\";",
+    "import {UniswapV3StandardExchangeInMultiFacet} from \"contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInMultiFacet.sol\";",
+    "import {UniswapV3StandardExchangeInMultiQueryFacet} from \"contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInMultiQueryFacet.sol\";",
+    "import {UniswapV3StandardExchangeInQueryFacet} from \"contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInQueryFacet.sol\";",
+    "import {UniswapV3StandardExchangeLiquidReserveFacet} from \"contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeLiquidReserveFacet.sol\";",
+    "import {UniswapV3StandardExchangeOutExecutionDelegate} from \"contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutExecutionDelegate.sol\";",
+    "import {UniswapV3StandardExchangeOutFacet} from \"contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutFacet.sol\";",
+    "import {UniswapV3StandardExchangeOutMultiFacet} from \"contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutMultiFacet.sol\";",
+    "import {UniswapV3StandardExchangeOutMultiQueryFacet} from \"contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutMultiQueryFacet.sol\";",
+    "import {UniswapV3StandardExchangeOutQueryFacet} from \"contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutQueryFacet.sol\";",
+    "import {UniswapV3StandardExchangePositionImportFacet} from \"contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangePositionImportFacet.sol\";"
+  ],
+  "reason": "Focused CP/V3 provider setup failed to resolve the factory-loaded InExecutionDelegate artifact. Include the entire actual V3 FactoryService artifact list, without changing deployment logic or economic behavior.",
+  "validation": "pending"
+}

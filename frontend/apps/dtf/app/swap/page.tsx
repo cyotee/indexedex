@@ -1,11 +1,12 @@
 'use client'
 
+import { useConnectModal } from '@rainbow-me/rainbowkit'
+
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import {
   useAccount,
   useChainId,
-  useConnect,
   usePublicClient,
   useSendTransaction,
   useSwitchChain,
@@ -98,7 +99,7 @@ function SwapPageInner() {
 
   const { address, isConnected } = useAccount()
   const walletChainId = useChainId()
-  const { connect, connectors, isPending: isConnectPending } = useConnect()
+  const { openConnectModal, connectModalOpen: isConnectPending } = useConnectModal()
   const { switchChainAsync, isPending: isSwitchPending } = useSwitchChain()
   const { selectedChainId } = useSelectedNetwork()
   const { environment } = useDeploymentEnvironment()
@@ -514,9 +515,8 @@ function SwapPageInner() {
           : null)
 
   const handleConnect = useCallback(() => {
-    const c = connectors[0]
-    if (c) connect({ connector: c })
-  }, [connect, connectors])
+    openConnectModal?.()
+  }, [openConnectModal])
 
   const handleSwitch = useCallback(async () => {
     try {

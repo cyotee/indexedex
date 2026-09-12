@@ -1,0 +1,727 @@
+{
+  "updated_at_utc": "2026-09-10T15:51:36.963251+00:00",
+  "complete": false,
+  "scope": "D60: Balancer DETF compilation maintenance only. D66: unfinished Slipstream owner-deferred and not blocking. Four V4 bindings and other SE work remain.",
+  "note": "Selected overlapping results are not added together or treated as full-plan completion. Referenced evidence paths are relative to this artifact directory.",
+  "rows": [
+    {
+      "id": "A1",
+      "requirement": "Every in-scope DETF and its staking token reports 9 decimals. Stake/unstake uses equal raw amounts; remaining 18-decimal DETF assumptions in bootstrap, pool scaling, supply, rewards and integrations are removed or converted explicitly",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "execution-status.md",
+        "v4-funded-principal-provider-44-green-run.json",
+        "v4-funded-d25-surface-53-green-run.json"
+      ],
+      "remaining": "Selected shared unstaking and caller migrations pass; complete current repository-wide attribution and strict local rehearsal."
+    },
+    {
+      "id": "A2",
+      "requirement": "Deposits and funded rebases never issue more redeemable staking units than held DETF backs. LP value, pending unfunded expansion, unrelated idle balances and repeated reward synchronization cannot manufacture claims",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "execution-status.md"
+      ],
+      "remaining": "Final current-source acceptance selection and repository failure attribution."
+    },
+    {
+      "id": "A3",
+      "requirement": "For an unchanged holder position, the funded rebase index/balance never decreases. Pool swaps, DETF burns and LP valuation changes do not reduce staking inventory. Unstake transfers held DETF 1:1 independently of mint/burn gates",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "execution-status.md",
+        "v4-funded-principal-provider-44-green-run.json",
+        "v4-funded-d25-surface-53-green-run.json"
+      ],
+      "remaining": "Selected shared unstaking and caller migrations pass; complete current repository-wide attribution and strict local rehearsal."
+    },
+    {
+      "id": "A4",
+      "requirement": "Mint/bond capital increases protocol-owned reserve assets. A bond separately mints proportional `G` and joins it with actual payment; this does not consume the vesting allocation. The first bond still initializes the family reserve and opens the DETF. New bond NFTs have no LP-principal redemption entitlement. Protocol reserves and staking backing are conserved independently",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "execution-status.md"
+      ],
+      "remaining": "Final current-source acceptance selection and repository failure attribution."
+    },
+    {
+      "id": "A5",
+      "requirement": "Bond principal equals the existing net-user split of the specified duration-bonus gross quote `U`, while actual received capital equals unboosted payment. The duration multiplier is not double-counted; D3 uses `U` and D4 uses independent `G`. Principal is fixed, minted and funded into staking at purchase",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "execution-status.md"
+      ],
+      "remaining": "Final current-source acceptance selection and repository failure attribution."
+    },
+    {
+      "id": "A6",
+      "requirement": "Original principal vests linearly: no principal is claimable before its elapsed fraction, repeated/partial claims do not reset the clock, and all principal is vested at maturity",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "execution-status.md"
+      ],
+      "remaining": "Final current-source acceptance selection and repository failure attribution."
+    },
+    {
+      "id": "A7",
+      "requirement": "The 100-principal / 110-staked-value halfway example yields 50 claimable principal and 10 independently claimable rewards. Rewards on unvested and vested-but-unclaimed principal are claimable; claiming them does not consume principal or accelerate vesting",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "execution-status.md"
+      ],
+      "remaining": "Final current-source acceptance selection and repository failure attribution."
+    },
+    {
+      "id": "A8",
+      "requirement": "Interleaved rebases, reward-only claims, principal-only claims, combined claims and NFT ownership changes conserve each bond's staking shares and remaining principal. No cross-NFT leakage, double claim, or unrecoverable final principal dust",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "execution-status.md",
+        "v4-funded-principal-provider-44-green-run.json",
+        "v4-funded-d25-surface-53-green-run.json"
+      ],
+      "remaining": "Selected shared unstaking and caller migrations pass; complete current repository-wide attribution and strict local rehearsal."
+    },
+    {
+      "id": "A9",
+      "requirement": "Seigniorage and expansion reach staking backing. Their staking-reward portion benefits ordinary and bond-escrowed staking positions through the same funded index; fee/creator portions separately fund the receipts specified in D40. No duplicate payout through legacy bond reward shares or unintended second LP-compound allocation",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "execution-status.md",
+        "hermetic-remediation-v4-policy-public-market-split.json"
+      ],
+      "remaining": "Current 438-method gold policy/cleanup selection passes, including all 102 dedicated cleanup anchors. Remaining provider/lifecycle integrations, complete repository validation and strict local rehearsal remain required."
+    },
+    {
+      "id": "A10",
+      "requirement": "At each failing primary price threshold, including equality/deadband, mint/buy and burn/sell execute their reserve-swap branches when liquidity and user limits permit. The fallback itself has zero DETF mint/burn; a successful fallback does not revert solely because expansion changed the primary gate result",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "v4-share-composition-192-pass-pons-failures-run.json",
+        "pending-composed-exchange-followups.json",
+        "current-se-package-inventory.json",
+        "all-native-se-and-approved-cleanup-603-pass-size-failures-run.json",
+        "composed-quotes-39-pass-orbital-custody-failures-run.json",
+        "stata-composed-quote-proxy-green-run.json",
+        "lido-composed-quote-proxy-green-run.json",
+        "lido-live-projection-fork-run.json",
+        "uniswap-v2-funded-followups-run.json",
+        "camelot-funded-followups-run.json",
+        "aerodrome-funded-followups-run.json",
+        "erc4626-funded-followups-run.json",
+        "rocket-post-position-live-projection-fork-run.json",
+        "rocket-v4-post-position-live-projection-fork-run.json",
+        "sfrxeth-post-position-live-projection-fork-run.json",
+        "hermetic-remediation-v4-policy-public-market-split.json"
+      ],
+      "remaining": "Current 438-method gold policy/cleanup selection passes, including all 102 dedicated cleanup anchors. Remaining provider/lifecycle integrations, complete repository validation and strict local rehearsal remain required."
+    },
+    {
+      "id": "A11",
+      "requirement": "Preview and execution agree on selected primary/swap route, fees and conservative outputs for the same state. Slippage, allowance, unsupported-route and liquidity failures retain their legitimate failure behavior; arbitrary errors are not swallowed as price-gate fallbacks",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "v4-share-composition-192-pass-pons-failures-run.json",
+        "pending-composed-exchange-followups.json",
+        "current-se-package-inventory.json",
+        "all-native-se-and-approved-cleanup-603-pass-size-failures-run.json",
+        "composed-quotes-39-pass-orbital-custody-failures-run.json",
+        "stata-composed-quote-proxy-green-run.json",
+        "lido-composed-quote-proxy-green-run.json",
+        "lido-live-projection-fork-run.json",
+        "uniswap-v2-funded-followups-run.json",
+        "camelot-funded-followups-run.json",
+        "aerodrome-funded-followups-run.json",
+        "erc4626-funded-followups-run.json",
+        "rocket-post-position-live-projection-fork-run.json",
+        "rocket-v4-post-position-live-projection-fork-run.json",
+        "sfrxeth-post-position-live-projection-fork-run.json",
+        "hermetic-remediation-v4-policy-public-market-split.json"
+      ],
+      "remaining": "Current 438-method gold policy/cleanup selection passes, including all 102 dedicated cleanup anchors. Remaining provider/lifecycle integrations, complete repository validation and strict local rehearsal remain required."
+    },
+    {
+      "id": "A12",
+      "requirement": "Existing SE interfaces remain callable. Pendle-compatible SY entrypoints, internal-balance redemption, metadata and static-share accounting work with nine-decimal DETF/staking tokens and supported underlying decimal combinations. A complete SY staking deposit/reward/redemption round trip preserves backing",
+      "status": "ACTUAL_HERMETIC_FAILURE_REMEDIATION_REQUIRED",
+      "evidence": [
+        "v4-share-composition-192-pass-pons-failures-run.json",
+        "pending-composed-exchange-followups.json",
+        "current-se-package-inventory.json",
+        "all-native-se-and-approved-cleanup-603-pass-size-failures-run.json",
+        "composed-quotes-39-pass-orbital-custody-failures-run.json",
+        "stata-composed-quote-proxy-green-run.json",
+        "lido-composed-quote-proxy-green-run.json",
+        "lido-live-projection-fork-run.json",
+        "uniswap-v2-funded-followups-run.json",
+        "camelot-funded-followups-run.json",
+        "aerodrome-funded-followups-run.json",
+        "erc4626-funded-followups-run.json",
+        "rocket-post-position-live-projection-fork-run.json",
+        "rocket-v4-post-position-live-projection-fork-run.json",
+        "sfrxeth-post-position-live-projection-fork-run.json",
+        "stata-hermetic-followups-prepared.json",
+        "stata-hermetic-draft-typecheck.json",
+        "hermetic-remediation-stata-first-runtime.json",
+        "hermetic-remediation-surfaces-isolated-imports.json"
+      ],
+      "remaining": "Stata 112 cases and package/proxy/staged initialization 136 cases pass after fresh builds. Continue remaining actual V4 policy/provider and Balancer SE fixes, final full validation, retained V3 forks and strict local rehearsal."
+    },
+    {
+      "id": "A13",
+      "requirement": "Ordinary issuance, existing fee parameters and primary burn-to-LP proportionality retain their baseline economics under correct decimal conversion. Principal deposits are excluded from reward detection; fee-only weights cannot create unfunded redeemable principal",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "execution-status.md",
+        "v4-funded-principal-provider-44-green-run.json",
+        "v4-funded-d25-surface-53-green-run.json"
+      ],
+      "remaining": "Selected shared unstaking and caller migrations pass; complete current repository-wide attribution and strict local rehearsal."
+    },
+    {
+      "id": "A14",
+      "requirement": "For a 100-DETF distribution with allocated fee 10 and creator 5, exactly 85 funds the existing positions' rebase and 15 backs newly delivered 10/5 sDETF receipts. Previously held fee/creator sDETF earns the ordinary rebase; this distribution's new receipts do not. Repeated synchronization cannot redistribute the 100 or issue duplicate receipts. Fee payout remains funded and possible when no other staking positions exist",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "execution-status.md",
+        "hermetic-remediation-v4-policy-public-market-split.json"
+      ],
+      "remaining": "Current 438-method gold policy/cleanup selection passes, including all 102 dedicated cleanup anchors. Remaining provider/lifecycle integrations, complete repository validation and strict local rehearsal remain required."
+    },
+    {
+      "id": "A15",
+      "requirement": "Fee/creator receipts transfer and unstake to DETF 1:1 without bond maturity or DETF price-gate restrictions. After either recipient fully redeems to zero sDETF, the next applicable distribution still pays new funded sDETF under that recipient's continuing fee entitlement. Partial redemption and transfer likewise do not cancel that entitlement, and a transferee gains no fee/creator role merely by receiving sDETF",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "execution-status.md",
+        "hermetic-remediation-v4-policy-public-market-split.json"
+      ],
+      "remaining": "Current 438-method gold policy/cleanup selection passes, including all 102 dedicated cleanup anchors. Remaining provider/lifecycle integrations, complete repository validation and strict local rehearsal remain required."
+    },
+    {
+      "id": "A16",
+      "requirement": "First-bond gross DETF is the linear conversion of bonus-adjusted input at the configured initial/opening price, with correct native/WAD/nine-decimal scaling and existing fee splits. At initial price 2 and payment 100 with 20% bonus, gross `U` is 60 DETF. The independent liquidity self-leg remains unboosted. Preview and execution agree; first-bond pricing has no live-pool price impact, and later bonds use the live curve",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "execution-status.md",
+        "hermetic-remediation-v4-policy-public-market-split.json"
+      ],
+      "remaining": "Current 438-method gold policy/cleanup selection passes, including all 102 dedicated cleanup anchors. Remaining provider/lifecycle integrations, complete repository validation and strict local rehearsal remain required."
+    },
+    {
+      "id": "A17",
+      "requirement": "Only automatic expansion follows the fixed 8-hour epochs. Every applicable ordinary/bond issuance distributes its funded seigniorage immediately, including between boundaries, without moving the expansion clock. Principal deposits and unminted expansion cannot manufacture rewards. Neither distribution source can be paid twice. Both rebase eligible stake before issuing their fee/creator receipts; transfers, unstaking and funded bond claims remain available between boundaries",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "execution-status.md",
+        "hermetic-remediation-v4-policy-public-market-split.json"
+      ],
+      "remaining": "Current 438-method gold policy/cleanup selection passes, including all 102 dedicated cleanup anchors. Remaining provider/lifecycle integrations, complete repository validation and strict local rehearsal remain required."
+    },
+    {
+      "id": "A18",
+      "requirement": "Every supported bond principal/reward/close claim transfers only sDETF from the attributable escrow stake. The 100-principal/110-value halfway combined claim pays 60 sDETF. Claiming itself neither mints DETF nor unstakes or liquidates LP; the recipient may separately unstake claimed sDETF to DETF 1:1. No extra bond-specific reward or lock multiplier is applied to the purchased staking position",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "execution-status.md",
+        "v4-funded-principal-provider-44-green-run.json",
+        "v4-funded-d25-surface-53-green-run.json",
+        "hermetic-remediation-v4-policy-public-market-split.json"
+      ],
+      "remaining": "Current 438-method gold policy/cleanup selection passes, including all 102 dedicated cleanup anchors. Remaining provider/lifecycle integrations, complete repository validation and strict local rehearsal remain required."
+    },
+    {
+      "id": "A19",
+      "requirement": "The raw-DETF SY has a separate share-token address. Its deposit/redeem mints/burns SY around acquired/released DETF, including when the DETF leg selects a supply-neutral reserve swap. Existing DETF SE entrypoints remain callable and events distinguish actual SY issuance from DETF swap transfers",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "v4-share-composition-192-pass-pons-failures-run.json",
+        "pending-composed-exchange-followups.json",
+        "current-se-package-inventory.json",
+        "all-native-se-and-approved-cleanup-603-pass-size-failures-run.json",
+        "composed-quotes-39-pass-orbital-custody-failures-run.json",
+        "stata-composed-quote-proxy-green-run.json",
+        "lido-composed-quote-proxy-green-run.json",
+        "lido-live-projection-fork-run.json",
+        "uniswap-v2-funded-followups-run.json",
+        "camelot-funded-followups-run.json",
+        "aerodrome-funded-followups-run.json",
+        "erc4626-funded-followups-run.json",
+        "rocket-post-position-live-projection-fork-run.json",
+        "rocket-v4-post-position-live-projection-fork-run.json",
+        "sfrxeth-post-position-live-projection-fork-run.json"
+      ],
+      "remaining": "Selected provider compatibility checks pass. Complete current full hermetic failure attribution, retained V3 fork migrations, strict local rehearsal and final evidence reconciliation."
+    },
+    {
+      "id": "A20",
+      "requirement": "Staking SY supports direct sDETF, direct DETF and every existing directionally configured DETF input/output route. Discovery, validation and previews match execution; composed routes enforce final minimum outputs and preserve primary/swap selection and existing fees. Direct sDETF/DETF routes preserve funded 1:1 staking without requiring a reserve swap",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "v4-share-composition-192-pass-pons-failures-run.json",
+        "pending-composed-exchange-followups.json",
+        "current-se-package-inventory.json",
+        "all-native-se-and-approved-cleanup-603-pass-size-failures-run.json",
+        "composed-quotes-39-pass-orbital-custody-failures-run.json",
+        "stata-composed-quote-proxy-green-run.json",
+        "lido-composed-quote-proxy-green-run.json",
+        "lido-live-projection-fork-run.json",
+        "uniswap-v2-funded-followups-run.json",
+        "camelot-funded-followups-run.json",
+        "aerodrome-funded-followups-run.json",
+        "erc4626-funded-followups-run.json",
+        "rocket-post-position-live-projection-fork-run.json",
+        "rocket-v4-post-position-live-projection-fork-run.json",
+        "sfrxeth-post-position-live-projection-fork-run.json"
+      ],
+      "remaining": "Selected provider compatibility checks pass. Complete current full hermetic failure attribution, retained V3 fork migrations, strict local rehearsal and final evidence reconciliation."
+    },
+    {
+      "id": "A21",
+      "requirement": "Staking SY reports 9 decimals, non-rebasing balances, DETF accounting metadata and sDETF as its yield token. Its WAD exchange rate converts raw SY to raw DETF entitlement; immediately distributed seigniorage and settled expansion can increase that entitlement without rebasing SY balances or creating a duplicate reward-token claim. Pending unminted expansion is not already-redeemable backing. No Scaled18 metadata or unapproved changes to SE-vault decimals are introduced",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "execution-status.md",
+        "uniswap-v2-funded-followups-run.json",
+        "camelot-funded-followups-run.json",
+        "aerodrome-funded-followups-run.json",
+        "erc4626-funded-followups-run.json",
+        "rocket-post-position-live-projection-fork-run.json",
+        "rocket-v4-post-position-live-projection-fork-run.json",
+        "sfrxeth-post-position-live-projection-fork-run.json"
+      ],
+      "remaining": "Selected provider compatibility checks pass. Complete current full hermetic failure attribution, retained V3 fork migrations, strict local rehearsal and final evidence reconciliation."
+    },
+    {
+      "id": "A22",
+      "requirement": "An ordinary or bond-escrow deposit already present at an expansion boundary participates without time weighting, including a deposit made just before the boundary. A deposit entering in the transaction that processes the due boundary is credited afterward. Due expansion precedes withdrawals. Immediate seigniorage uses the stake present at its own distribution, with the bond's funded position established before its own pot distributes. New fee receipts do not earn their own distribution, and transfers cannot duplicate entitlement",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "execution-status.md"
+      ],
+      "remaining": "Final current-source acceptance selection and repository failure attribution."
+    },
+    {
+      "id": "A23",
+      "requirement": "After all actual sDETF balances are redeemed, standing fee/creator reward rights remain eligible. A later distribution processes their existing weights and pays newly funded sDETF even with zero ordinary staking supply. When only their standing weights remain, the existing calculation distributes between them without an invented fixed ordinary-staker remainder or a no-recipient carry-forward branch; preserve ordinary rounding-dust accounting",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "execution-status.md"
+      ],
+      "remaining": "Final current-source acceptance selection and repository failure attribution."
+    },
+    {
+      "id": "A24",
+      "requirement": "The first successful bond anchors the expansion clock. At hour 25 with three completed intervals and no intervening interaction, process one aggregate eligible expansion mint and distribution, advance through hour 24 and retain hour 32 as the next boundary. No historical distribution replay, hypothetical fee-receipt compounding, duplicate interval payment or distribution of unminted DETF occurs; zero eligible expansion advances completed boundaries without issuing unfunded claims",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "execution-status.md"
+      ],
+      "remaining": "Final current-source acceptance selection and repository failure attribution."
+    },
+    {
+      "id": "A25",
+      "requirement": "A transaction with both due expansion and new issuance settles expansion before the action and distributes the new seigniorage immediately afterward under the required position order. Each source rebases eligible stake before issuing its own fee/creator sDETF. Expansion fee receipts may earn the later seigniorage distribution, but no receipts earn their own distribution. Expansion does not also mint an extra `p * expansion` reward",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "execution-status.md",
+        "hermetic-remediation-v4-policy-public-market-split.json"
+      ],
+      "remaining": "Current 438-method gold policy/cleanup selection passes, including all 102 dedicated cleanup anchors. Remaining provider/lifecycle integrations, complete repository validation and strict local rehearsal remain required."
+    },
+    {
+      "id": "A26",
+      "requirement": "Every refactored DETF deploys with mandatory price gating. Deployment cannot select Open or disable gating through any alternate flag. Preserve configured thresholds, validation, first-bond/staking/claim exemptions and primary mint/burn semantics; failed primary gates use reserve swaps under A10/A11",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "execution-status.md"
+      ],
+      "remaining": "Final current-source acceptance selection and repository failure attribution."
+    },
+    {
+      "id": "A27",
+      "requirement": "Every family calculates expansion over all unsettled completed epochs without a time, epoch-count, supply-relative or absolute amount cap. Seven idle days contribute all 21 completed epochs to one mint/distribution. Cases whose formula output exceeds former per-update caps still mint the full calculated amount. No cap deployment option or equivalent hidden limiter survives, and subsequent calls cannot pay the same interval twice",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "execution-status.md"
+      ],
+      "remaining": "Final current-source acceptance selection and repository failure attribution."
+    },
+    {
+      "id": "A28",
+      "requirement": "The final selector inventory maps every retained fungible mint/burn/stake/unstake/wrap route to SE/SY. Duplicate standalone selectors such as `mintClaim`, `buyClaim` and `redeemClaim` are absent from new deployment exports and supported callers use their standard replacements. Retained NFT-specific operations have a documented need for position/duration arguments and cannot release unvested principal",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "execution-status.md",
+        "v4-funded-principal-provider-44-green-run.json",
+        "v4-funded-d25-surface-53-green-run.json"
+      ],
+      "remaining": "Selected shared unstaking and caller migrations pass; complete current repository-wide attribution and strict local rehearsal."
+    },
+    {
+      "id": "A29",
+      "requirement": "Standard replacements preserve route discovery, previews, received-asset accounting, recipient/approval semantics, slippage, supported exact-out behavior, funded staking and price-gate swap fallback. SE and SY compose the same accounting operations without double minting, double reward distribution or a second bond payout route",
+      "status": "ACTUAL_HERMETIC_FAILURE_REMEDIATION_REQUIRED",
+      "evidence": [
+        "v4-share-composition-192-pass-pons-failures-run.json",
+        "pending-composed-exchange-followups.json",
+        "current-se-package-inventory.json",
+        "all-native-se-and-approved-cleanup-603-pass-size-failures-run.json",
+        "composed-quotes-39-pass-orbital-custody-failures-run.json",
+        "stata-composed-quote-proxy-green-run.json",
+        "lido-composed-quote-proxy-green-run.json",
+        "lido-live-projection-fork-run.json",
+        "position-cleanup-runtime-migrations-run.json",
+        "position-runtime-failure-migration-map.json",
+        "v3-import-storage-followup-applied.json",
+        "uniswap-v2-funded-followups-run.json",
+        "camelot-funded-followups-run.json",
+        "aerodrome-funded-followups-run.json",
+        "erc4626-funded-followups-run.json",
+        "rocket-post-position-live-projection-fork-run.json",
+        "rocket-v4-post-position-live-projection-fork-run.json",
+        "sfrxeth-post-position-live-projection-fork-run.json",
+        "stata-hermetic-followups-prepared.json",
+        "stata-hermetic-draft-typecheck.json",
+        "hermetic-remediation-stata-first-runtime.json",
+        "hermetic-remediation-surfaces-isolated-imports.json"
+      ],
+      "remaining": "Stata 112 cases and package/proxy/staged initialization 136 cases pass after fresh builds. Continue remaining actual V4 policy/provider and Balancer SE fixes, final full validation, retained V3 forks and strict local rehearsal."
+    },
+    {
+      "id": "A30",
+      "requirement": "A field-by-field inventory accounts for every affected storage member as retained with an active purpose, replaced or removed. Unused fields, obsolete layouts and their initialization/getter-only dependencies are removed from the new implementation. All readers/writers use the same revised layout, while required protocol LP custody, staking backing, vesting and standing fee rights remain functional",
+      "status": "APPROVED_CLEANUP_VALIDATED_FINAL_ACCEPTANCE_PENDING",
+      "evidence": [
+        "execution-status.md",
+        "claim-storage-disposition.json",
+        "v4-close-cleanup-owner-approval.json",
+        "approved-v4-close-cleanup.json",
+        "current-funded-storage-readers.json",
+        "approved-close-cleanup-surface.json",
+        "all-native-se-and-approved-cleanup-603-pass-size-failures-run.json",
+        "frontend-approved-close-cleanup-check.json",
+        "current-composed-quotes-351-pass-donation-artifact-failures-run.json",
+        "current-position-storage-disposition.json",
+        "current-source-manifest.json",
+        "obsolete-common-ledger-cleanup-applied.json",
+        "hermetic-remediation-v4-policy-funded-opening.json",
+        "hermetic-remediation-v4-policy-public-market-split.json"
+      ],
+      "remaining": "Current 438-method gold policy/cleanup selection passes, including all 102 dedicated cleanup anchors. Remaining provider/lifecycle integrations, complete repository validation and strict local rehearsal remain required."
+    },
+    {
+      "id": "A31",
+      "requirement": "The redesigned SVG and JSON traits reflect current funded bond state. The 100-principal/110-sDETF halfway example shows 50% vested, 50 sDETF claimable principal, 10 sDETF claimable rewards and 60 sDETF total claimable. After claiming both, it shows 50 DETF remaining principal and zero immediately claimable balance at the same timestamp. Reward-only claims do not change vesting progress or principal",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "execution-status.md"
+      ],
+      "remaining": "Final current-source acceptance selection and repository failure attribution."
+    },
+    {
+      "id": "A32",
+      "requirement": "Representative new, partially vested, partially claimed, fully vested and retained standing-role NFT states render legibly with explicit token units and nine-decimal amounts. SVG/JSON contain no obsolete user LP entitlement, boosted reward-share balance, cliff-only unlock story or unfunded projected reward. Text is escaped and artwork renders without external scripts, fonts or image requests",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "execution-status.md"
+      ],
+      "remaining": "Final current-source acceptance selection and repository failure attribution."
+    },
+    {
+      "id": "A33",
+      "requirement": "Historical Composed requirement, no further functional work: deployment arguments carry opening price and seed ratios through validation, deterministic prediction, initialization and callers. Non-1:1 rich first-bond previews and execution agree on separate linear purchased `U` and unboosted liquidity `G`; later bonds use the live curve.",
+      "status": "EXCLUDED_D60",
+      "evidence": [
+        "requirement-decisions.json"
+      ],
+      "remaining": "Compilation maintenance only; no functional completion gate."
+    },
+    {
+      "id": "A34",
+      "requirement": "V3/V4 ordinary launches and imported positions produce the maximum usable tick range for the actual tick spacing. Imports preserve credited assets through conversion; no narrow imported backing remains.",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "execution-status.md"
+      ],
+      "remaining": "Final current-source acceptance selection and repository failure attribution."
+    },
+    {
+      "id": "A35",
+      "requirement": "For in-scope V3/V4 position vaults, independent exact concentrated-liquidity token amounts plus sleeves and earned fees reconcile to the complete V2-style proportional/constant-product book and SY rate. Fee collection, deployment, withdrawal and locked-pool sleeve operations do not double count assets. Mixed decimals, price movement and rounding are covered.",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "v4-share-composition-192-pass-pons-failures-run.json",
+        "pending-composed-exchange-followups.json",
+        "current-se-package-inventory.json",
+        "all-native-se-and-approved-cleanup-603-pass-size-failures-run.json",
+        "composed-quotes-39-pass-orbital-custody-failures-run.json",
+        "stata-composed-quote-proxy-green-run.json",
+        "lido-composed-quote-proxy-green-run.json",
+        "lido-live-projection-fork-run.json",
+        "position-cleanup-runtime-migrations-run.json",
+        "position-runtime-failure-migration-map.json",
+        "v3-import-storage-followup-applied.json"
+      ],
+      "remaining": "All 333 affected V3/V4 runtime cases pass, resolving all 54 preceding fixture failures. Complete current full repository regression for the subsequent V3 unused-import-metadata cleanup, execute the prepared retained V3 live-pool fork migration, and finish strict local rehearsal and final evidence reconciliation."
+    },
+    {
+      "id": "A36",
+      "requirement": "For in-scope V3/V4 position vaults, initial activation requires both tokens and rejects a one-sided launch atomically. Subsequent single-token deposits and funded sleeve routes work while the underlying pool is locked; previews, credited shares and actual payouts agree.",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "v4-share-composition-192-pass-pons-failures-run.json",
+        "pending-composed-exchange-followups.json",
+        "current-se-package-inventory.json",
+        "all-native-se-and-approved-cleanup-603-pass-size-failures-run.json",
+        "composed-quotes-39-pass-orbital-custody-failures-run.json",
+        "stata-composed-quote-proxy-green-run.json",
+        "lido-composed-quote-proxy-green-run.json",
+        "lido-live-projection-fork-run.json",
+        "position-cleanup-runtime-migrations-run.json",
+        "position-runtime-failure-migration-map.json",
+        "v3-import-storage-followup-applied.json"
+      ],
+      "remaining": "All 333 affected V3/V4 runtime cases pass, resolving all 54 preceding fixture failures. Complete current full repository regression for the subsequent V3 unused-import-metadata cleanup, execute the prepared retained V3 live-pool fork migration, and finish strict local rehearsal and final evidence reconciliation."
+    },
+    {
+      "id": "A37",
+      "requirement": "All four V4 bindings expose the creator-selected immutable liquidity policy in creation/deployment. DETF and hook agree; only DETF directly adds in restricted mode; DETF and the current fee collector may remove their LP under D65, public holders/authorized spenders may do so in public mode, unauthorized spending fails, DETF ownership/privileges persist and public swaps work in both modes.",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "v4-share-composition-192-pass-pons-failures-run.json",
+        "v4-native-sy-and-collector-300-green-run.json",
+        "frontend-current-liquidity-copy-lint.json",
+        "current-composed-quotes-351-pass-donation-artifact-failures-run.json"
+      ],
+      "remaining": "Final current-source combined validation and available local integration environment."
+    },
+    {
+      "id": "A38",
+      "requirement": "Own-reserve LP payment preserves the entire position and uses only proportional non-DETF value. Cover the 20-DETF/100-payment example, multiple distinct payment legs, buffered SE accounting without double counting, foreign-LP rejection and no valuation unwind.",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "v4-share-composition-192-pass-pons-failures-run.json",
+        "v4-native-sy-and-collector-300-green-run.json",
+        "frontend-current-liquidity-copy-lint.json",
+        "current-composed-quotes-351-pass-donation-artifact-failures-run.json"
+      ],
+      "remaining": "Final current-source combined validation and available local integration environment."
+    },
+    {
+      "id": "A39",
+      "requirement": "LP-payment preview/execution settle due expansion before snapshot/funding and agree on duration bonus once, split, funded principal, immediate rewards and linear vesting. No matching `G` is minted and no issuance fee is charged on existing DETF inside the LP. First-bond activation remains intact.",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "v4-share-composition-192-pass-pons-failures-run.json",
+        "v4-native-sy-and-collector-300-green-run.json",
+        "frontend-current-liquidity-copy-lint.json",
+        "current-composed-quotes-351-pass-donation-artifact-failures-run.json"
+      ],
+      "remaining": "Final current-source combined validation and available local integration environment."
+    },
+    {
+      "id": "A40",
+      "requirement": "External LP in both modes remains outside protocol redemption, synthetic-price and expansion calculations until actually received; acquiring LP changes custody exactly once. Actual-receipt, ownership/allowance, donation, preview and conservation controls pass.",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "v4-share-composition-192-pass-pons-failures-run.json",
+        "v4-native-sy-and-collector-300-green-run.json",
+        "frontend-current-liquidity-copy-lint.json",
+        "current-composed-quotes-351-pass-donation-artifact-failures-run.json"
+      ],
+      "remaining": "Final current-source combined validation and available local integration environment.",
+      "source_review": "reserve-owned-liquidity-source-review.json"
+    },
+    {
+      "id": "A41",
+      "requirement": "Production-path Fee Collector redemption works in restricted mode, including after `feeTo()` rotation. The old collector loses special removal authority; neither collector nor another caller can redeem unowned/unapproved LP. Collector additions and ordinary public removals remain restricted.",
+      "status": "IMPLEMENTED_SELECTED_EVIDENCE_FINAL_VALIDATION_PENDING",
+      "evidence": [
+        "v4-share-composition-192-pass-pons-failures-run.json",
+        "v4-native-sy-and-collector-300-green-run.json",
+        "frontend-current-liquidity-copy-lint.json",
+        "current-composed-quotes-351-pass-donation-artifact-failures-run.json"
+      ],
+      "remaining": "Final current-source combined validation and available local integration environment."
+    },
+    {
+      "id": "A42",
+      "requirement": "D66 scope is reflected in the plan, manifests and release gates. Preserve completed Slipstream code, existing functionality/tests and historical validation evidence; no unfinished Slipstream functional work, new tests, fork checks or integration validation is required for release. Only compilation maintenance or compatibility with shared V4 changes may alter Slipstream. No unresolved Slipstream requirement blocks release.",
+      "status": "OWNER_DEFERRED_PRESERVATION_VERIFIED",
+      "evidence": [
+        "requirement-decisions.json",
+        "slipstream-deferral-verification.json"
+      ],
+      "remaining": "Preserve completed code/tests/evidence; no unfinished Slipstream release gate."
+    }
+  ],
+  "latest_checkpoint": {
+    "status": "PASS_SELECTED_POLICY_AND_CLEANUP",
+    "record": "hermetic-remediation-v4-policy-public-market-split.json",
+    "passed": 438,
+    "failed": 0,
+    "complete_plan": false
+  },
+  "latest_completed_checkpoint": {
+    "status": "STATA_REMEDIATION_PASSED",
+    "record": "hermetic-remediation-stata-first-runtime.json",
+    "passed": 112,
+    "failed": 0,
+    "suites": 6,
+    "complete_plan": false
+  },
+  "full_default_build": {
+    "status": "PASS",
+    "record": "implementation-full-build.json",
+    "seconds": 20057.124,
+    "source_sha256": "96d7a3ff1d5d6d8f41f1ff0c7a8dd09419e8243b669dd27700325822edf63dde",
+    "maintained_script_sources": 294,
+    "complete_plan": false
+  },
+  "current_source_followups": {
+    "active_session": 94755,
+    "source_sha256": "8b95fa9d3b840eee0885c252c2c8a20e62a596a5ea9be110235c634e0195a295",
+    "source_frozen": true,
+    "scope": "All 79 checked source corrections are applied. Stata 112 cases pass; current package/proxy surfaces are building. Final full repository validation remains required.",
+    "sequence": "hermetic-remediation-surfaces-isolated-imports.json",
+    "active_validation_record": "hermetic-remediation-balancer-se-current-fixtures.json"
+  },
+  "position_fixture_followups": {
+    "status": "APPLIED_RUNTIME_MIGRATIONS_PASSED_FINAL_REPOSITORY_CHECKS_PENDING",
+    "application_record": "prepared-release-followups-applied.json",
+    "original_fixture_sources": 45,
+    "case_mapping": "position-fixture-case-migration-map.json",
+    "declared_cases_before": 349,
+    "declared_cases_after": 345,
+    "unmapped_removed_cases": 0,
+    "subsequent_runtime_migration": "position-runtime-migrations-applied.json",
+    "resolved_failures": 54,
+    "affected_recheck": {
+      "record": "position-cleanup-runtime-migrations-run.json",
+      "passed": 333,
+      "failed": 0,
+      "suites": 46
+    },
+    "fork_followup": {
+      "record": "v3-fork-fixture-followup-prepared.json",
+      "status": "APPLIED_RUNTIME_VALIDATION_PENDING",
+      "retained_runtime_cases": 8
+    },
+    "remaining": "Execute retained live-pool forks, complete final full repository validation, and finish strict current-package local lifecycle."
+  },
+  "local_provider_followups": {
+    "uniswap-v2": {
+      "record": "uniswap-v2-funded-followups-run.json",
+      "cases": 8,
+      "passed": true
+    },
+    "camelot": {
+      "record": "camelot-funded-followups-run.json",
+      "cases": 22,
+      "passed": true
+    },
+    "aerodrome": {
+      "record": "aerodrome-funded-followups-run.json",
+      "cases": 37,
+      "passed": true
+    },
+    "erc4626": {
+      "record": "erc4626-funded-followups-run.json",
+      "cases": 13,
+      "passed": true
+    }
+  },
+  "position_runtime_checkpoint": {
+    "complete": true,
+    "run": "position-cleanup-funded-followups-run.json",
+    "passed": 1943,
+    "failed": 54,
+    "suites": 265,
+    "required_suites_missing": 0,
+    "migrations": "position-runtime-migrations-applied.json",
+    "current_validation": "position-cleanup-runtime-migrations-run.json",
+    "pending_storage_cleanup": "v3-import-storage-followup-applied.json",
+    "current_product_law_links": "position-product-law-supersession.json",
+    "migration_recheck": {
+      "passed": 333,
+      "failed": 0,
+      "skipped": 0,
+      "suites": 46,
+      "record": "position-cleanup-runtime-migrations-run.json"
+    },
+    "note": "The affected migration recheck is complete; this is not full-plan acceptance. The initial 1943/54 result is retained as historical failure evidence."
+  },
+  "rocket_v3_current_fork": {
+    "status": "PASSED",
+    "record": "rocket-post-position-live-projection-fork-run.json",
+    "passed": 7,
+    "failed": 0,
+    "block": 24000000,
+    "note": "Actual funded collateral burn, deposit fees, queue assignment, soft minimum, custody and size checks."
+  },
+  "rocket_v4_current_fork": {
+    "status": "PASSED",
+    "record": "rocket-v4-post-position-live-projection-fork-run.json",
+    "passed": 7,
+    "failed": 0,
+    "block": 25934585
+  },
+  "sfrxeth_current_fork": {
+    "status": "PASSED",
+    "record": "sfrxeth-post-position-live-projection-fork-run.json",
+    "passed": 4,
+    "failed": 0,
+    "block": 24000000
+  },
+  "current_queue": "current-implementation-queue.json",
+  "history": "acceptance-history-before-final-reconciliation-86a7cd5e7c64.json",
+  "actual_hermetic_findings": "current-implementation-queue.json",
+  "prepared_remediation": {
+    "queue": "current-implementation-queue.json",
+    "records": 12,
+    "sources": 79,
+    "status": "APPLIED_RUNTIME_VALIDATION_PENDING",
+    "runtime_validation": false,
+    "note": "The 79-source batch is applied; all 112 Stata and 136 surface cases pass. Subsequent cleanup and funded public policy fixes have separate source fingerprints. Remaining providers and full acceptance remain required.",
+    "application_record": "hermetic-followups-validation-remediation-applied.json",
+    "application_source_sha256": "533ada6ae25e3d23c56f260129208866fecd6de9b6d28de41a3d6fe314ee2b74"
+  },
+  "completed_full_run": {
+    "source_sha256": "96d7a3ff1d5d6d8f41f1ff0c7a8dd09419e8243b669dd27700325822edf63dde",
+    "passed": 19858,
+    "failed": 7973,
+    "suites": 2699,
+    "attribution": "hermetic-followups-before-validation-remediation/current-hermetic-baseline-attribution.json",
+    "complete": false
+  },
+  "current_runtime_checkpoints": {
+    "stata": "hermetic-remediation-stata-first-runtime.json",
+    "surfaces": "hermetic-remediation-surfaces-isolated-imports.json",
+    "gold": "hermetic-remediation-v4-gold-first-runtime.json",
+    "policy": "hermetic-remediation-v4-policy-funded-opening.json",
+    "policy_followup": "public-policy-fixtures-applied.json",
+    "common_ledger": "obsolete-common-ledger-cleanup-applied.json",
+    "policy_current": "hermetic-remediation-v4-policy-public-market-split.json"
+  },
+  "previous_full_validation": {
+    "status": "RUNNING",
+    "pty": 79172,
+    "record": "current-repository-funded-final-sequence.json",
+    "source_and_config_sha256": "8b95fa9d3b840eee0885c252c2c8a20e62a596a5ea9be110235c634e0195a295",
+    "recompiled_files": 1843,
+    "scope": "Complete production/default tests plus maintained scripts; unfiltered default runtime; exact attribution. Includes all Balancer SE and V4 provider cases.",
+    "preceding_evidence_archive": "before-current-repository-funded-final",
+    "selected_retry": "Two narrowed Balancer builds passed but runtime artifact lookup failed during setup. No functional acceptance credited; use normal production roots.",
+    "owner_approval_pending": false
+  },
+  "latest_remediation": "user-failure-remediation/applied.json",
+  "next_validation": {
+    "status": "AWAITING_OWNER_BUILD_TEST",
+    "command": "python3 implementation-artifacts/detf-funded-staking/run-current-repository-checks.py --label user-failure-remediation",
+    "source_and_config_sha256": "26484c06fffc5dc4aaf6fcaf8054f8dac5448e3b394f1181207cee58f08ca911"
+  },
+  "status": "OWNER_BASELINE_PASS_RECORDED_NEW_SECURITY_FIX_REQUIRES_CURRENT_VALIDATION",
+  "owner_passing_baseline": "production-readiness/owner-passing-baseline.json",
+  "active_plan": "../../contracts/vaults/detf/DETF_PRODUCTION_READINESS_REMAINING_IMPLEMENTATION_PLAN.md"
+}

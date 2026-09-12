@@ -1,0 +1,167 @@
+[
+  {
+    "id": "observation:latestBlock",
+    "result": {
+      "number": "0x34f292d",
+      "hash": "0x5c18a625a411f4618dc9a9562b4bdaeffb0e5a0dfa51aa449be545a51e674ff6",
+      "timestamp": "0x6a9ca7fb"
+    },
+    "error": null
+  },
+  {
+    "id": "manager:hookFactorySlot",
+    "result": "0x0000000000000000000000008bb5fcc67e8cca44dc41dd08a5e2b2b392c22945",
+    "error": null
+  },
+  {
+    "id": "cpHookPkg:packageName()",
+    "result": "UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg",
+    "error": null
+  },
+  {
+    "id": "cpHookPkg:facetAddresses()",
+    "result": [
+      "0xf03fad914ec73b6a7d41cece447656ae97b8b16f",
+      "0xabbf6cca435aed22fb8b7f055d83ff33f35143c9",
+      "0x67ed019ec3f8b77bc51ed1e6403fc90e0abb15be",
+      "0x407a1e8e8799a30c111ccb7358b976fa9a30f876",
+      "0x6b771dd3fa9d577b5a7f3b52eb95234da5fb5e0f",
+      "0x4b84213e58aada1e0747e7a16d7ac07d3721d7b1",
+      "0x81fb72511016b42437fe1ac2d5bdb0ba82f14a35",
+      "0x1d17aca0e0717d90cea916372070a1be4652223f",
+      "0xe3cd0f9f643180d5c0483de0c43813d4282f4524",
+      "0x7061709368d038dc88fe553c649dbba30f50fb49"
+    ],
+    "error": null
+  },
+  {
+    "id": "weightedHookPkg:packageName()",
+    "result": "UniswapV4StandardExchangeWeightedBufferHookDFPkg",
+    "error": null
+  },
+  {
+    "id": "weightedHookPkg:facetAddresses()",
+    "result": [
+      "0xf03fad914ec73b6a7d41cece447656ae97b8b16f",
+      "0xabbf6cca435aed22fb8b7f055d83ff33f35143c9",
+      "0x67ed019ec3f8b77bc51ed1e6403fc90e0abb15be",
+      "0x42f40974fda18a9170f38175f646cbdd2b4272bc",
+      "0xd86ad60d162b6479b063d4a2f458a7472bb884a9",
+      "0x6ee9a94669b308f3ebbab6cd1d74e6e1f852c339",
+      "0xc0c3b0e34edc61ad085c9c86c446ad64a26ce388",
+      "0x455fbd1a701d5a51124d0cd429ff0409bf97bc62",
+      "0x1d17aca0e0717d90cea916372070a1be4652223f",
+      "0xe3cd0f9f643180d5c0483de0c43813d4282f4524",
+      "0x7061709368d038dc88fe553c649dbba30f50fb49"
+    ],
+    "error": null
+  },
+  {
+    "id": "curveQuadHookPkg:packageName()",
+    "result": "UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg",
+    "error": null
+  },
+  {
+    "id": "curveQuadHookPkg:facetAddresses()",
+    "result": [
+      "0xf03fad914ec73b6a7d41cece447656ae97b8b16f",
+      "0xabbf6cca435aed22fb8b7f055d83ff33f35143c9",
+      "0x67ed019ec3f8b77bc51ed1e6403fc90e0abb15be",
+      "0x94d7aefb0c6f5533432281c1c2591a37f422d7dc",
+      "0x46ff95195e1170e798c0f572676059f42170cc91",
+      "0x05104baae2bb980d4ed9cf786e1d1c10a87bbaec",
+      "0xa002c8864b4d1a3f1f98a2ea8eb26b3877dee292",
+      "0x6889fdaad017087173f7bbb39a58964e0b945866",
+      "0x1d17aca0e0717d90cea916372070a1be4652223f",
+      "0xe3cd0f9f643180d5c0483de0c43813d4282f4524",
+      "0x7061709368d038dc88fe553c649dbba30f50fb49"
+    ],
+    "error": null
+  },
+  {
+    "id": "bondNftVaultPkg:packageName()",
+    "result": "DETFNFTVaultDFPkg",
+    "error": null
+  },
+  {
+    "id": "bondNftVaultPkg:facetAddresses()",
+    "result": [
+      "0xde5a691cefe1830e8ff2b65f6657738b0d9b9279",
+      "0x2c88bd365d7c6dcc6bbbdb74a8e1fdd2b4af572e",
+      "0x44cbe64d43c244f104d1fe2ec4f7eb85a0c250af",
+      "0x3ab85813785b43b864f9c171f7ac97d6b76c459b"
+    ],
+    "error": null
+  },
+  {
+    "id": "rebasingClaimTokenPkg:packageName()",
+    "result": "RebasingClaimTokenDFPkg",
+    "error": null
+  },
+  {
+    "id": "rebasingClaimTokenPkg:facetAddresses()",
+    "result": [
+      "0xe3cd0f9f643180d5c0483de0c43813d4282f4524",
+      "0x7061709368d038dc88fe553c649dbba30f50fb49",
+      "0x25e611fb63eb904776678286ef5cbe2a931b4f9a"
+    ],
+    "error": null
+  },
+  {
+    "id": "cpDetfPkg:packageName()",
+    "result": "UniswapV4SingleStandardExchangeDETDFPkg",
+    "error": null
+  },
+  {
+    "id": "cpDetfPkg:facetAddresses()",
+    "result": [
+      "0x1d17aca0e0717d90cea916372070a1be4652223f",
+      "0xe3cd0f9f643180d5c0483de0c43813d4282f4524",
+      "0x7061709368d038dc88fe553c649dbba30f50fb49",
+      "0xabbf6cca435aed22fb8b7f055d83ff33f35143c9",
+      "0x67ed019ec3f8b77bc51ed1e6403fc90e0abb15be",
+      "0x8333749cc7b1f66b5be568257d362aa749497cf0"
+    ],
+    "error": null
+  },
+  {
+    "id": "weightedDetfPkg:packageName()",
+    "result": "UniswapV4StandardExchangeWeightedDETDFPkg",
+    "error": null
+  },
+  {
+    "id": "weightedDetfPkg:facetAddresses()",
+    "result": [
+      "0x1d17aca0e0717d90cea916372070a1be4652223f",
+      "0xe3cd0f9f643180d5c0483de0c43813d4282f4524",
+      "0x7061709368d038dc88fe553c649dbba30f50fb49",
+      "0xabbf6cca435aed22fb8b7f055d83ff33f35143c9",
+      "0x67ed019ec3f8b77bc51ed1e6403fc90e0abb15be",
+      "0x7540f5c3c73a9c5b7ece16ebb4e5a016106d3618",
+      "0x338acfc94a7b725363e7a0ab43189d81a8a19cd6",
+      "0xf6e12fc1614747dc24984d1f765bb36ca389f385",
+      "0x95382f68dc787288cd1f42eb547580b61c080a7d"
+    ],
+    "error": null
+  },
+  {
+    "id": "curveQuadDetfPkg:packageName()",
+    "result": "UniswapV4StandardExchangeCurveQuadStableDETDFPkg",
+    "error": null
+  },
+  {
+    "id": "curveQuadDetfPkg:facetAddresses()",
+    "result": [
+      "0x1d17aca0e0717d90cea916372070a1be4652223f",
+      "0xe3cd0f9f643180d5c0483de0c43813d4282f4524",
+      "0x7061709368d038dc88fe553c649dbba30f50fb49",
+      "0xabbf6cca435aed22fb8b7f055d83ff33f35143c9",
+      "0x67ed019ec3f8b77bc51ed1e6403fc90e0abb15be",
+      "0x86dea8ad2cf4da3349c3ea02e8d7f118c892bd97",
+      "0x618eacb6f809eaae44c3696fe8ee4a7b7308b964",
+      "0x7084026d959fae1b4c633fbb525fa18d42a99004",
+      "0x3e3bbf4d8da9ac93452caaf2a1f7cc42323ecedf"
+    ],
+    "error": null
+  }
+]

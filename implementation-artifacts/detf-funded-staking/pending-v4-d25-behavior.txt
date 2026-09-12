@@ -1,0 +1,110 @@
+/// @notice D32 replaces LP-close accounting with independently funded sDETF claims.
+/// @dev Shared across native-unit and provider fixtures; callers supply actual mature bonds.
+abstract contract V4FundedD25Behavior is Test {
+    struct D25Book {
+        bytes32 custody;
+        uint256 stake;
+        uint256 principal;
+        uint256 rewards;
+    }
+
+    function _d25Custody(IUniswapV4Detf d_, address holder_) private view returns (bytes32 result_) {
+        IERC20 lp_ = IERC20(d_.hook());
+        IStakedDETF stake_ = IStakedDETF(d_.rebasingClaimToken());
+        result_ = keccak256(abi.encode(
+            IERC20(address(d_)).totalSupply(),
+            IERC20(address(d_)).balanceOf(holder_),
+            IERC20(address(d_)).balanceOf(address(stake_)),
+            stake_.stakingState().accountedBacking,
+            lp_.totalSupply(), lp_.balanceOf(address(d_)), lp_.balanceOf(d_.bondNftVault()),
+            lp_.balanceOf(holder_)
+        ));
+        address[] memory tokens_ = IUniswapV4SeBufferHook(address(lp_)).tokens();
+        for (uint256 i_; i_ < tokens_.length; ++i_) {
+            result_ = keccak256(abi.encode(result_, IERC20(tokens_[i_]).balanceOf(holder_)));
+        }
+    }
+
+    function _d25RoleReceipts(IUniswapV4Detf d_) private view returns (bytes32) {
+        IDetfBondNFT nft_ = IDetfBondNFT(d_.bondNftVault());
+        IStakedDETF stake_ = IStakedDETF(d_.rebasingClaimToken());
+        return keccak256(abi.encode(
+            stake_.balanceOf(nft_.ownerOf(DETF_FEE_TO_BOND_NFT_ID)),
+            stake_.balanceOf(nft_.ownerOf(DETF_CREATOR_BOND_NFT_ID)),
+            stake_.stakingState().feeWeight,
+            stake_.stakingState().creatorWeight
+        ));
+    }
+
+    function _assertD25FundedPayout(IUniswapV4Detf d_, uint256 id_, address holder_) internal {
+        IDETFFundedRewards(address(d_)).synchronizeRewards();
+        IDetfBondNFT nft_ = IDetfBondNFT(d_.bondNftVault());
+        IStakedDETF stake_ = IStakedDETF(d_.rebasingClaimToken());
+        DETFFundedStakingMath.BondClaim memory preview_ = nft_.previewClaim(id_);
+        D25Book memory before_ = D25Book({
+            custody: _d25Custody(d_, holder_),
+            stake: stake_.balanceOf(holder_),
+            principal: preview_.principalDue,
+            rewards: preview_.rewardsDue
+        });
+        assertGt(before_.principal, 0, "mature funded principal");
+        assertGt(before_.rewards, 0, "funded staking rewards");
+        vm.prank(holder_);
+        uint256 paidRewards_ = nft_.claimRewards(id_, holder_);
+        assertEq(paidRewards_, before_.rewards, "separate reward preview");
+        assertEq(stake_.balanceOf(holder_) - before_.stake, paidRewards_, "rewards pay sDETF");
+        preview_ = nft_.previewClaim(id_);
+        assertEq(preview_.principalDue, before_.principal, "reward claim preserves principal");
+        assertEq(preview_.rewardsDue, 0, "rewards debited once");
+        vm.prank(holder_);
+        uint256 paidPrincipal_ = nft_.claimPrincipal(id_, holder_);
+        assertEq(paidPrincipal_, before_.principal, "principal preview");
+        assertEq(stake_.balanceOf(holder_) - before_.stake, paidPrincipal_ + paidRewards_, "only sDETF payout");
+        assertEq(_d25Custody(d_, holder_), before_.custody, "claims preserve raw supply backing and reserve custody");
+        assertEq(nft_.ownerOf(id_), address(0), "fully paid NFT retired");
+        vm.expectRevert(abi.encodeWithSelector(IERC721Errors.ERC721NonexistentToken.selector, id_));
+        nft_.positionOf(id_);
+    }
+
+    function _assertD25StandingReceipts(IUniswapV4Detf d_, uint256 id_, address holder_) internal {
+        IDETFFundedRewards(address(d_)).synchronizeRewards();
+        IDetfBondNFT nft_ = IDetfBondNFT(d_.bondNftVault());
+        IStakedDETF stake_ = IStakedDETF(d_.rebasingClaimToken());
+        assertGt(stake_.balanceOf(nft_.ownerOf(DETF_FEE_TO_BOND_NFT_ID)), 0, "fee right already paid funded sDETF");
+        assertGt(stake_.balanceOf(nft_.ownerOf(DETF_CREATOR_BOND_NFT_ID)), 0, "creator right already paid funded sDETF");
+        bytes32 receipts_ = _d25RoleReceipts(d_);
+        bytes32 custody_ = _d25Custody(d_, holder_);
+        vm.prank(holder_);
+        nft_.claimBond(id_, holder_);
+        assertEq(_d25RoleReceipts(d_), receipts_, "claim does not issue fee or creator receipts");
+        assertEq(_d25Custody(d_, holder_), custody_, "no fee-LP rejoin or raw supply change");
+    }
+
+    function _assertD25ReservedPositions(IUniswapV4Detf d_, address holder_) internal {
+        IDetfBondNFT nft_ = IDetfBondNFT(d_.bondNftVault());
+        for (uint256 id_ = DETF_FEE_TO_BOND_NFT_ID; id_ <= DETF_CREATOR_BOND_NFT_ID; ++id_) {
+            vm.expectRevert(abi.encodeWithSelector(DETFFundedBondTarget.ReservedBond.selector, id_));
+            nft_.claimBond(id_, holder_);
+        }
+    }
+
+    function _assertD25FinalClaim(IUniswapV4Detf d_, uint256 id_, address holder_) internal {
+        IDETFFundedRewards(address(d_)).synchronizeRewards();
+        IDetfBondNFT nft_ = IDetfBondNFT(d_.bondNftVault());
+        IStakedDETF stake_ = IStakedDETF(d_.rebasingClaimToken());
+        DETFFundedStakingMath.BondClaim memory preview_ = nft_.previewClaim(id_);
+        bytes32 custody_ = _d25Custody(d_, holder_);
+        bytes32 receipts_ = _d25RoleReceipts(d_);
+        uint256 balance_ = stake_.balanceOf(holder_);
+        vm.prank(holder_);
+        (uint256 principal_, uint256 rewards_) = nft_.claimBond(id_, holder_);
+        assertEq(principal_, preview_.principalDue, "combined principal preview");
+        assertEq(rewards_, preview_.rewardsDue, "combined reward preview");
+        assertGt(principal_, 0, "last purchased principal paid");
+        assertEq(stake_.balanceOf(holder_) - balance_, principal_ + rewards_, "combined funded sDETF payout");
+        assertEq(_d25Custody(d_, holder_), custody_, "last claim retains all reserve liquidity and backing");
+        assertEq(_d25RoleReceipts(d_), receipts_, "last claim does not create fee or creator income");
+        assertEq(nft_.ownerOf(id_), address(0), "last purchased NFT retired");
+        assertGe(IERC20(address(d_)).balanceOf(address(stake_)), stake_.totalSupply(), "remaining staking fully backed");
+    }
+}

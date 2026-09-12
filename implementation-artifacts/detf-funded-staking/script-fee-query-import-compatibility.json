@@ -1,0 +1,12 @@
+{
+  "status": "APPLIED_MAINTAINED_SCRIPT_COMPILATION_PASSED",
+  "files": [
+    "scripts/foundry/anvil_base_main/Script_04_DeployDEXPackages.s.sol",
+    "scripts/foundry/anvil_sepolia/Script_06_DeployAerodrome.s.sol",
+    "scripts/foundry/base_main/Script_BaseMain_DeployIndexedex.s.sol"
+  ],
+  "change": "Add the missing IVaultFeeOracleQuery named import used by the migrated V2 PkgInit callers.",
+  "economic_or_deployment_policy_changes": false,
+  "evidence": "combined-script-fee-query-import-failure.json",
+  "compilation_evidence": "maintained-script-294-green.json"
+}

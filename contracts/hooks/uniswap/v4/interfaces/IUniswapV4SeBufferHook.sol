@@ -141,3 +141,13 @@ interface IUniswapV4SeBufferHook {
         uint256 deadline
     ) external returns (uint256 sharesIn);
 }
+
+/// @notice DETF-denominated reserve claim value after a self-token join.
+interface IUniswapV4SeBufferHookClaimQuote {
+    function previewClaimAfterJoin(uint256 detfIn, uint256 lpAmount) external view returns (uint256 detfValue);
+}
+
+/// @notice Realizable DETF from a proportional reserve exit followed by ordered swaps.
+interface IUniswapV4SeBufferHookClaimExitQuote {
+    function previewClaimExit(uint256 lpAmount) external view returns (uint256 detfValue);
+}

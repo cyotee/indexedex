@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {HermeticRocketStorage} from "contracts/protocols/staking/rocket-pool/test/hermetic/HermeticRocketPoolPorts.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -203,7 +204,7 @@ contract Adversarial_RocketPoolRETH_P0 is TestBase_RocketPoolRETHStandardExchang
         HermeticDepositPool pool2 = new HermeticDepositPool(reth2);
         pool2.setMaxDepositAmount(type(uint256).max);
         vm.prank(owner);
-        vault = rocketPoolSeDFPkg.deployVault(address(reth2), address(hostile), address(pool2));
+        vault = rocketPoolSeDFPkg.deployVault(address(reth2), address(hostile), address(pool2), address(new HermeticRocketStorage(address(reth2), address(pool2))));
     }
 
     /// @dev E1: round-trip W↔S - preview==exec both legs; no extractable profit; residual free inventory ok on sleeve.

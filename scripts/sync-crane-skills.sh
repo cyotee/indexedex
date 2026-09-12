@@ -53,4 +53,5 @@ for dest in "${DESTS[@]}"; do
     fi
   done
 done
+python3 "$ROOT/scripts/sync-codex-skills.py"
 echo "Done. Canonical source remains: lib/crane/.claude/skills/"

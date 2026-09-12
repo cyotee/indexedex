@@ -1,0 +1,19 @@
+{
+  "status": "APPLIED_PROXY_PROJECTION_SUITE_PASSED_SALT_FOLLOWUP_IN_FULL_BUILD",
+  "files": [
+    "contracts/protocols/lending/aave/v3.6/AaveV3StataStandardExchangeInTarget.sol",
+    "contracts/protocols/lending/aave/v3.6/AaveV3StataStandardExchangeInFacet.sol",
+    "test/foundry/spec/vaults/standard/sy/AaveStataNativeSY.t.sol"
+  ],
+  "scope": "Add exact Stata-backed optional projections without changing actual deposit/redemption economics or requiring a deployment capability allowlist. Extend existing actual Stata/SE registry fixture and shared transition assertions.",
+  "remaining": "Apply after active Forge exits; compile, verify all actual cuts/interface declarations and run parity tests; review other accepted SE providers separately.",
+  "applied_at_utc": "2026-09-08T07:53:06.566927+00:00",
+  "validation": {
+    "record": "stata-composed-quote-proxy-green-run.json",
+    "passed": 8,
+    "failed": 0,
+    "build_seconds": 144.243,
+    "test_seconds": 12.784
+  },
+  "deployment_followup": "Code-bound component and package salts now prevent stale CREATE3 namespace reuse; added a real occupied-namespace regression. This final packaging change is in the full build."
+}

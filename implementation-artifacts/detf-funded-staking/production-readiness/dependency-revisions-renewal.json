@@ -1,0 +1,16 @@
+{
+  "checked_at_utc": "2026-09-11T07:17:15.934618+00:00",
+  "status": "PASS_ALL_54_DEPENDENCY_REVISIONS_UNCHANGED",
+  "command": [
+    "git",
+    "submodule",
+    "status",
+    "--recursive"
+  ],
+  "exit_code": 0,
+  "dependencies_checked": 54,
+  "prior_evidence": "dependency-revisions.json",
+  "prior_evidence_sha256": "2b20364198335f7b9a23d92ddf7001b008662d863685f5aa4492cf611c2062c1",
+  "uninitialized": [],
+  "scope": "Revision and gitmodules verification only. Dirty production changes, including the required Crane registry guards, remain bound by the release source manifest."
+}

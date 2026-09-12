@@ -1,0 +1,57 @@
+{
+  "recorded_at_utc": "2026-09-08T04:21:02.678527+00:00",
+  "status": "APPLIED_VALIDATION_PENDING",
+  "scope": "Export the optional external-transition selector on four existing provider facets and declare it on all four actual packages; update independent V3/V4 facet controls. No new deployment package or facet.",
+  "files": [
+    {
+      "path": "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeInFacet.sol",
+      "before_sha256": "a4d5c0e4e781e15e1c5a8978ec5b1546785e40860b056ed1305218544b313af8",
+      "after_sha256": "f59288aca10106a17ec2f3ffd94f100349f1f8b3dd28803904e4d744a66267c1"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInQueryFacet.sol",
+      "before_sha256": "03fed8dadbacc1d84066821ac0fe6d7d9dc33602963d2011a6e8b0884e48b4f9",
+      "after_sha256": "d5601b6f51dd2b7c138f59b31ae3762125291145c6e42017877d892d33593fde"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryFacet.sol",
+      "before_sha256": "418b3fa4c43aa955765cc2ff5abf8e8a2a3ade0204f1081f85875add5bae16ce",
+      "after_sha256": "d0020a913fc965cd30f966085ef6f9acee6859202807592a3333a4e33583e81c"
+    },
+    {
+      "path": "contracts/vaults/standard/erc4626/ERC4626StandardExchangeInFacet.sol",
+      "before_sha256": "9b6b8db957518f7aee5872f8e4cc7946e907c1b7d47f7a1e4c418f9109081795",
+      "after_sha256": "b0c2dc4f69c908600b0d850eb1cba2f948a6b8edafd6121b1260cf23ef05911e"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeDFPkg.sol",
+      "before_sha256": "c67dff4adb6213f63cb43e6adfa66f86c8c06388e1dd736903d2bce3dcfa07e5",
+      "after_sha256": "ef53afbe41ab2133aaac80f1ec575a023e9ac52b76042d98fe2e378db8f93ed7"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeDFPkg.sol",
+      "before_sha256": "3913c64e7901e458cab614893bf1370d0412c0eb6ef400f4af1c46c0bb823219",
+      "after_sha256": "5e313ff976061724b8eb343685903ea5f9b12e90b0a7710ace1ab7cbd10c5919"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol",
+      "before_sha256": "d5f21e8566fc9c4aa7d4d1bd3a26dc9030dfe1818f8ba0ff071dbef308fe1175",
+      "after_sha256": "d0de89fb6c81f51b57928ba7050a509f291501064439925f52246a8c6b8d2da2"
+    },
+    {
+      "path": "contracts/vaults/standard/erc4626/ERC4626StandardExchangeDFPkg.sol",
+      "before_sha256": "2a07c567fae64e8989cdd15fa8d6fbf4a2c9a08dfcc3bef68afeb293c5ce091f",
+      "after_sha256": "292ca2e7413236f63ec89030e481fc3557b5c1d0cd4660590fb540927162171a"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchangeInQueryFacet_IFacet_Test.t.sol",
+      "before_sha256": "ba501ce6fe43ead90279249a7cff6b0898244bfebe2706b83732e2554091cd45",
+      "after_sha256": "f3736b7aaff8063b976fea2ac9ea13541d628c07d44e01ec813152c0427a6f16"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryFacet_IFacet_Test.t.sol",
+      "before_sha256": "0ace5b14fb6acaee104c41c81263d4ecacfa30942fa3e54e1d75e7e6723781f0",
+      "after_sha256": "e3007b89bbdf804b2c078d2dc342eb0edfc8ee1438199cfc0415aa3bfdf98cd2"
+    }
+  ]
+}

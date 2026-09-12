@@ -71,7 +71,7 @@ contract FeeCollectorProxy_Selectors_Test is IndexedexTest {
 
     function test_interfaceId_IFeeCollectorManager() public pure {
         bytes4 expected = IFeeCollectorManager.syncReserve.selector ^ IFeeCollectorManager.syncReserves.selector
-            ^ IFeeCollectorManager.pullFee.selector;
+            ^ IFeeCollectorManager.pullFee.selector ^ IFeeCollectorManager.redeemReserveLiquidity.selector;
         assertEq(
             type(IFeeCollectorManager).interfaceId,
             expected,

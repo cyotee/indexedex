@@ -1,0 +1,12 @@
+{
+  "status": "applied; validation pending",
+  "production": [
+    "contracts/interfaces/IDetfClaimPurchase.sol",
+    "contracts/protocols/staking/token/TokenStakingTarget.sol"
+  ],
+  "test": "test/foundry/spec/protocols/staking/token/TokenStaking_PonsUv4Detf.t.sol",
+  "before_test_sha256": "a0123705c8aa3a8e7d4ce9c55ad445c81893600d513189b4b29b90fc7078a3e8",
+  "after_test_sha256": "65f34abac5ef04a43152b1a1aacf1823e387cc0b82511af2540f68cd1e3c3041",
+  "change": "TokenStaking migration buys raw DETF on its Standard Exchange endpoint, then grants exact approval to sDETF and stakes at the sDETF endpoint. Both approvals cleared afterward; no retired mint selector or DETF-to-staking route retained.",
+  "validation_followup": "Actual Pons/V4 integration and old migration-only ABI stub tests require full caller consolidation; inherited fee tests also under validation."
+}

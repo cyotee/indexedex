@@ -1,5 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 pragma solidity ^0.8.0;
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+
 
 /* -------------------------------------------------------------------------- */
 /*                                 Balancer V3                                */
@@ -216,7 +220,7 @@ contract BalancerV3ConstantProductPoolStandardVaultPkg is
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](13);
+        interfaces = new bytes4[](16);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20Metadata).interfaceId ^ type(IERC20).interfaceId;
@@ -230,6 +234,9 @@ contract BalancerV3ConstantProductPoolStandardVaultPkg is
         interfaces[10] = type(ISwapFeePercentageBounds).interfaceId;
         interfaces[11] = type(IUnbalancedLiquidityInvariantRatioBounds).interfaceId;
         interfaces[12] = type(IBalancerPoolToken).interfaceId;
+        interfaces[13] = type(IStandardExchangeIn).interfaceId;
+        interfaces[14] = type(IStandardExchangeOut).interfaceId;
+        interfaces[15] = type(IStandardizedYield).interfaceId;
         return interfaces;
     }
 

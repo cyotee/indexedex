@@ -1,0 +1,24 @@
+[
+  {
+    "target": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookJoinTarget.sol",
+    "removed": [
+      "previewClaimAfterJoin"
+    ],
+    "reason": "No surviving production caller; D53 retires LP-valued staking claims."
+  },
+  {
+    "target": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDepositTarget.sol",
+    "removed": [
+      "previewClaimAfterJoin"
+    ],
+    "reason": "No surviving production caller; D53 retires LP-valued staking claims."
+  },
+  {
+    "target": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookJoinTarget.sol",
+    "removed": [
+      "previewClaimAfterJoin",
+      "previewClaimExit"
+    ],
+    "reason": "No surviving production caller; D53 retires LP-valued staking claims."
+  }
+]

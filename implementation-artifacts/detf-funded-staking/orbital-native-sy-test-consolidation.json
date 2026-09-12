@@ -1,0 +1,8 @@
+{
+  "file": "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi.t.sol",
+  "before_sha256": "47ea9028caec42e569bf3fde607548dbf868bb38c963eb2a61aa442315208ec8",
+  "after_sha256": "1dd202d4bdeb9ca77c26833afb0f57ace6f3e63af3a1da3689d3ce1d8b93e5b9",
+  "retained": "T2.1\u2013T2.10 and unknown/empty guards",
+  "updated": "T2.8 obsolete zero stub expectation replaced by real single-output preview/payout",
+  "added": "Four consolidated native SY cases including every declared input/output, funded yield, minimum rollback, prior inventory and actual facet runtime"
+}

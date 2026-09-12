@@ -34,6 +34,8 @@ library Phase_06_Stage_03_CpBufferHookPkg {
         init_.vaultFeeOracleQuery = feeOracle;
         init_.seFacet = seFacet;
         init_.depositFacet = depositFacet;
+        init_.depositSingleFacet = CpHookFS.deployDepositSingleFacet(s.create3Factory);
+        init_.depositPreviewFacet = CpHookFS.deployDepositPreviewFacet(s.create3Factory);
         init_.withdrawFacet = withdrawFacet;
         init_.erc20Facet = s.erc20Facet;
         init_.erc5267Facet = s.erc5267Facet;

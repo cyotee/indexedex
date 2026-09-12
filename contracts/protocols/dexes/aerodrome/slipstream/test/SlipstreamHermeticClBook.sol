@@ -227,12 +227,36 @@ contract SlipstreamHermeticClBook is ICLPool {
         return (0, 0);
     }
 
-    function burn(int24, int24, uint128) external pure override returns (uint256, uint256) {
-        return (0, 0);
+    function burn(int24 tickLower, int24 tickUpper, uint128 amount)
+        external
+        override
+        returns (uint256 amount0, uint256 amount1)
+    {
+        return _burnTo(msg.sender, tickLower, tickUpper, amount);
     }
 
-    function burn(int24, int24, uint128, address) external pure override returns (uint256, uint256) {
-        return (0, 0);
+    function burn(int24 tickLower, int24 tickUpper, uint128 amount, address)
+        external
+        override
+        returns (uint256 amount0, uint256 amount1)
+    {
+        return _burnTo(msg.sender, tickLower, tickUpper, amount);
+    }
+
+    function _burnTo(address recipient, int24 tickLower, int24 tickUpper, uint128 amount)
+        internal
+        returns (uint256 amount0, uint256 amount1)
+    {
+        bytes32 key = keccak256(abi.encode(msg.sender, tickLower, tickUpper));
+        uint128 have = _liqOf[key];
+        require(have >= amount, "liq");
+        (amount0, amount1) = SlipstreamUtils._quoteAmountsForLiquidity(_sqrtPriceX96, tickLower, tickUpper, amount);
+        _liqOf[key] = have - amount;
+        if (_tick >= tickLower && _tick < tickUpper && _liquidity >= amount) {
+            _liquidity -= amount;
+        }
+        if (amount0 > 0) IERC20(token0).safeTransfer(recipient, amount0);
+        if (amount1 > 0) IERC20(token1).safeTransfer(recipient, amount1);
     }
 
     function swap(address recipient, bool zeroForOne, int256 amountSpecified, uint160 sqrtPriceLimitX96, bytes calldata data)

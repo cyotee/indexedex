@@ -1,0 +1,855 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
+import {HermeticWETH, HermeticStETH, HermeticWstETH, HermeticWithdrawalQueue} from "contracts/protocols/staking/lido/test/hermetic/HermeticLidoPorts.sol";
+import {LidoWstETH_Component_FactoryService as LidoFactory} from "contracts/protocols/staking/lido/LidoWstETH_Component_FactoryService.sol";
+import {ILidoWstETHStandardExchangeDFPkg} from "contracts/protocols/staking/lido/interfaces/ILidoWstETHStandardExchangeDFPkg.sol";
+import {LidoWstETHStandardExchangeInFacet} from "contracts/protocols/staking/lido/LidoWstETHStandardExchangeInFacet.sol";
+import {LidoWstETHStandardExchangeOutFacet} from "contracts/protocols/staking/lido/LidoWstETHStandardExchangeOutFacet.sol";
+import {LidoWstETHMarkerFacet} from "contracts/protocols/staking/lido/LidoWstETHMarkerFacet.sol";
+import {LidoWstETHRebalanceFacet} from "contracts/protocols/staking/lido/LidoWstETHRebalanceFacet.sol";
+import {LidoWstETHStandardExchangeDFPkg} from "contracts/protocols/staking/lido/LidoWstETHStandardExchangeDFPkg.sol";
+
+import {IDetfNftReserveDonation} from "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol";
+
+import {Test} from "forge-std/Test.sol";
+import {Vm} from "forge-std/Vm.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
+import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
+import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IMultiStepOwnable} from "@crane/contracts/access/ERC8023/IMultiStepOwnable.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IUniswapV4HookLiquidityPolicy} from "contracts/hooks/uniswap/v4/libs/UniswapV4HookOwnerOnlyLiquidityLib.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
+import {IFeeCollectorProxy} from "contracts/interfaces/proxies/IFeeCollectorProxy.sol";
+import {FeeCollectorFactoryService} from "contracts/fee/collector/FeeCollectorFactoryService.sol";
+import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
+import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
+import {DETFFundedStakingMath} from "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol";
+import {IUniswapV4Detf, IUniswapV4DetfDFPkg} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
+import {TestBase_UniswapV4Detf} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
+import {TestBase_UniswapV4Detf_Weighted} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted.sol";
+import {TestBase_UniswapV4Detf_Orbital} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital.sol";
+import {TestBase_UniswapV4Detf_CurveQuad} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_CurveQuad.sol";
+import {DETFFundedStakingArtifacts} from "contracts/test/bases/DETFFundedStakingArtifacts.sol";
+import {SimpleYieldERC4626} from "contracts/test/stubs/SimpleYieldERC4626.sol";
+
+interface IReserveOracleBinding { function feeOracle() external view returns (address); }
+
+/// @dev One set of assertions over real DETF, hook, Fee Collector and SE packages in both policies.
+abstract contract V4ReserveLiquidityBehavior is Test {
+    function _subject() internal view virtual returns (IUniswapV4Detf);
+    function _buyer() internal view virtual returns (address);
+    function _purchase(uint256 amount_) internal virtual returns (uint256, uint256);
+    function _leadPayment() internal view virtual returns (address);
+    function _newCollector(address owner_) internal virtual returns (IFeeCollectorProxy);
+    function _policy() internal pure virtual returns (bool) { return true; }
+    function _deployFallbackInstance() internal virtual returns (address);
+
+    struct FallbackSnapshot {
+        uint256 supply;
+        uint256 funding;
+        uint256 protocolLp;
+        uint256 inputBalance;
+        uint256 outputBalance;
+        uint256 quoted;
+        uint256 pending;
+    }
+
+    function _fallbackArgs(IUniswapV4Detf.PkgArgs memory args_)
+        internal view returns (IUniswapV4Detf.PkgArgs memory)
+    {
+        args_.name = "V4 funded fallback";
+        args_.symbol = "DETF";
+        args_.mintThreshold = 100e18;
+        args_.burnThreshold = 1;
+        args_.expansionClosureRatePerYearWad = 1e18;
+        address pair = _leadPayment();
+        address se = _hook().standardExchangeOf(pair);
+        args_.mintRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
+        args_.mintRoutes = new IUniswapV4Detf.IoRoute[](3);
+        args_.mintRoutes[0] = IUniswapV4Detf.IoRoute(IERC20(pair), IStandardExchange(se));
+        args_.mintRoutes[1] = IUniswapV4Detf.IoRoute(IERC20(se), IStandardExchange(se));
+        args_.mintRoutes[2] = IUniswapV4Detf.IoRoute(IERC20(IStandardizedYield(se).yieldToken()), IStandardExchange(se));
+        args_.donateRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
+        args_.donateRoutes = args_.mintRoutes;
+        args_.bondRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
+        args_.bondRoutes = args_.mintRoutes;
+        return args_;
+    }
+
+    function _activateFallbackInstance() private returns (IUniswapV4Detf subject_) {
+        subject_ = IUniswapV4Detf(_deployFallbackInstance());
+        (address[] memory tokens_, uint256[] memory amounts_) = subject_.previewFirstBondPayments(
+            IERC20(_leadPayment()), 1_000 ether
+        );
+        vm.startPrank(_buyer());
+        for (uint256 i_; i_ < tokens_.length; ++i_) IERC20(tokens_[i_]).approve(address(subject_), amounts_[i_]);
+        subject_.bond(IERC20(_leadPayment()), 1_000 ether, 30 days, _buyer(), false, block.timestamp);
+        vm.stopPrank();
+        assertEq(subject_.ownerOnlyLiquidity(), _policy());
+        assertFalse(subject_.isMintingAllowed(IERC20(_leadPayment())));
+        assertFalse(subject_.isBurningAllowed(IERC20(_leadPayment())));
+    }
+
+    function test_standardMintAndBurnFallbackMatchActualSwapWithoutIssuance() public {
+        IUniswapV4Detf subject_ = _activateFallbackInstance();
+        uint256 acquired_ = _assertFallbackExchange(subject_, IERC20(_leadPayment()), 10 ether, IERC20(address(subject_)));
+        _assertFallbackExchange(subject_, IERC20(address(subject_)), acquired_ / 2, IERC20(_leadPayment()));
+    }
+
+    /// @notice Pair assets here have 18 decimals; even one native nine-decimal
+    /// DETF unit must settle against the actual hook quote in all four bindings.
+    /// The six-decimal zero/first-payable cases live in UniswapV4Detf_Burn_H6.
+    function test_standardFallbackOneNativeUnitThenFullExit() public {
+        IUniswapV4Detf subject_ = _activateFallbackInstance();
+        IERC20 raw_ = IERC20(address(subject_));
+        _assertFallbackExchange(subject_, IERC20(_leadPayment()), 10 ether, raw_);
+        _assertFallbackExchange(subject_, raw_, 1, IERC20(_leadPayment()));
+        _assertFallbackExchange(subject_, raw_, raw_.balanceOf(_buyer()), IERC20(_leadPayment()));
+        assertEq(raw_.balanceOf(_buyer()), 0, "full caller exit after the native-unit boundary");
+    }
+
+    function test_standardFallbackSettlesFundedCatchupBeforeBothDirections() public {
+        IUniswapV4Detf subject_ = _activateFallbackInstance();
+        uint256 acquired_ = _assertFallbackExchange(subject_, IERC20(_leadPayment()), 10 ether, IERC20(address(subject_)));
+        _fundReserveYield(subject_, 3_000 ether);
+        vm.warp(block.timestamp + 25 hours);
+        assertGt(subject_.pendingExpansionDetf(), 0, "real reserve yield funds due epochs");
+        _assertFallbackExchange(subject_, IERC20(_leadPayment()), 10 ether, IERC20(address(subject_)));
+        _fundReserveYield(subject_, 3_000 ether);
+        vm.warp(block.timestamp + 25 hours);
+        assertGt(subject_.pendingExpansionDetf(), 0, "later epochs have funded expansion");
+        _assertFallbackExchange(subject_, IERC20(address(subject_)), acquired_ / 2, IERC20(_leadPayment()));
+    }
+
+    /// @notice A22: stake present one second before the boundary receives its
+    /// funded expansion; a deposit processing that boundary enters afterward.
+    function test_boundaryStakeParticipationAndLateEntryOrdering() public {
+        IUniswapV4Detf subject = _activateFallbackInstance();
+        uint256 acquired = _assertFallbackExchange(subject, IERC20(_leadPayment()), 10 ether, IERC20(address(subject)));
+        uint256 principal = acquired / 3;
+        assertGt(principal, 0);
+        IStakedDETF staking = IStakedDETF(subject.rebasingClaimToken());
+        address early = address(0xEA412);
+        address late = address(0x1A7E);
+        uint256 boundary = block.timestamp + 8 hours;
+        vm.startPrank(_buyer());
+        IERC20(address(subject)).transfer(early, principal);
+        IERC20(address(subject)).transfer(late, principal);
+        vm.stopPrank();
+        _fundReserveYield(subject, 3_000 ether);
+        vm.warp(boundary - 1);
+        vm.startPrank(early);
+        IERC20(address(subject)).approve(address(staking), principal);
+        staking.exchangeIn(IERC20(address(subject)), principal, IERC20(address(staking)), principal, early, false, block.timestamp);
+        vm.stopPrank();
+        assertEq(staking.balanceOf(early), principal, "no time weighting before first boundary");
+        assertEq(subject.pendingExpansionDetf(), 0, "incomplete interval is not funded");
+        vm.warp(boundary);
+        uint256 pending = subject.pendingExpansionDetf();
+        uint256 backing = IERC20(address(subject)).balanceOf(address(staking));
+        assertGt(pending, 0, "real reserve yield funds eligible expansion");
+        vm.startPrank(late);
+        IERC20(address(subject)).approve(address(staking), principal);
+        staking.exchangeIn(IERC20(address(subject)), principal, IERC20(address(staking)), principal, late, false, block.timestamp);
+        vm.stopPrank();
+        assertGt(staking.balanceOf(early), principal, "pre-boundary stake participates");
+        assertEq(staking.balanceOf(late), principal, "boundary-processing deposit enters after distribution");
+        assertEq(IERC20(address(subject)).balanceOf(address(staking)), backing + pending + principal);
+        assertEq(subject.pendingExpansionDetf(), 0, "boundary consumed exactly once");
+        uint256 earlyClaim = staking.balanceOf(early);
+        vm.prank(early);
+        staking.exchangeIn(IERC20(address(staking)), earlyClaim, IERC20(address(subject)), earlyClaim, early, false, block.timestamp);
+        assertEq(staking.balanceOf(early), 0);
+        assertEq(IERC20(address(subject)).balanceOf(early), earlyClaim, "funded reward and principal unstake one-for-one");
+        assertEq(staking.balanceOf(late), principal, "another holder's full exit cannot consume late principal");
+    }
+
+    function _fundReserveYield(IUniswapV4Detf subject_, uint256 amount_) private {
+        IUniswapV4SeBufferHook hook_ = IUniswapV4SeBufferHook(subject_.hook());
+        address[] memory tokens_ = hook_.tokens();
+        vm.startPrank(_buyer());
+        for (uint256 i_; i_ < tokens_.length; ++i_) {
+            address se_ = hook_.standardExchangeOf(tokens_[i_]);
+            if (se_ == address(0)) continue;
+            address protocol_ = IStandardizedYield(se_).yieldToken();
+            IERC20(tokens_[i_]).approve(protocol_, amount_);
+            SimpleYieldERC4626(protocol_).simulateYield(amount_);
+        }
+        vm.stopPrank();
+    }
+
+    function _assertFallbackExchange(IUniswapV4Detf subject_, IERC20 in_, uint256 amount_, IERC20 out_)
+        private returns (uint256 paid_)
+    {
+        IERC20 detf_ = IERC20(address(subject_));
+        IStandardExchangeIn exchange_ = IStandardExchangeIn(address(subject_));
+        address staking_ = subject_.rebasingClaimToken();
+        FallbackSnapshot memory before_ = FallbackSnapshot({
+            supply: detf_.totalSupply(), funding: detf_.balanceOf(staking_),
+            protocolLp: IERC20(subject_.hook()).balanceOf(subject_.bondNftVault()),
+            inputBalance: in_.balanceOf(_buyer()), outputBalance: out_.balanceOf(_buyer()),
+            quoted: exchange_.previewExchangeIn(in_, amount_, out_), pending: subject_.pendingExpansionDetf()
+        });
+        assertGt(before_.quoted, 0, "closed gate has executable swap quote");
+        assertEq(before_.quoted, IUniswapV4SeBufferHook(subject_.hook()).previewSwapExactIn(address(in_), address(out_), amount_));
+        vm.startPrank(_buyer());
+        in_.approve(address(subject_), amount_);
+        vm.expectRevert();
+        exchange_.exchangeIn(in_, amount_, out_, before_.quoted + 1, _buyer(), false, block.timestamp);
+        vm.stopPrank();
+        assertEq(detf_.totalSupply(), before_.supply, "failed minimum rolls back expansion");
+        assertEq(subject_.pendingExpansionDetf(), before_.pending, "failed minimum leaves epochs due");
+        assertEq(in_.balanceOf(_buyer()), before_.inputBalance, "failed minimum restores payment");
+        vm.prank(_buyer());
+        paid_ = exchange_.exchangeIn(in_, amount_, out_, before_.quoted, _buyer(), false, block.timestamp);
+        assertEq(paid_, before_.quoted);
+        assertEq(in_.balanceOf(_buyer()), before_.inputBalance - amount_);
+        assertEq(out_.balanceOf(_buyer()), before_.outputBalance + paid_);
+        assertEq(detf_.totalSupply(), before_.supply + before_.pending, "swap neither mints nor burns DETF");
+        assertEq(detf_.balanceOf(staking_), before_.funding + before_.pending, "only funded expansion reaches staking");
+        assertEq(subject_.pendingExpansionDetf(), 0, "catchup consumed once");
+        assertEq(IERC20(subject_.hook()).balanceOf(subject_.bondNftVault()), before_.protocolLp, "swap does not change owned LP");
+    }
+
+    function _hook() internal view returns (IUniswapV4SeBufferHook) { return IUniswapV4SeBufferHook(_subject().hook()); }
+    function _lp() internal view returns (IERC20) { return IERC20(address(_hook())); }
+    function _oracle() internal view returns (IVaultFeeOracleQuery) { return IVaultFeeOracleQuery(IReserveOracleBinding(address(_hook())).feeOracle()); }
+    function _collector() internal view returns (IFeeCollectorProxy) { return _oracle().feeTo(); }
+    function _admin(address target_) internal view returns (address) { return IMultiStepOwnable(target_).owner(); }
+
+    function _seedFeeLp() internal returns (uint256 amount_) {
+        address oracle_ = address(_oracle());
+        address hook_ = address(_hook());
+        vm.prank(_admin(oracle_));
+        IVaultFeeOracleManager(oracle_).setUsageFeeOfVault(hook_, 0.1e18);
+        _purchase(1_000 ether);
+        address se_ = _hook().standardExchangeOf(_leadPayment());
+        address protocol_ = IStandardizedYield(se_).yieldToken();
+        vm.startPrank(_buyer());
+        IERC20(_leadPayment()).approve(protocol_, 100 ether);
+        SimpleYieldERC4626(protocol_).simulateYield(100 ether);
+        // Weighted/Curve measure fee growth in native SE inventory, not the SE exchange rate.
+        // Fund additional SE shares through the real deposit route; no LP is fabricated.
+        IERC20(_leadPayment()).approve(se_, 10 ether);
+        IStandardExchangeIn(se_).exchangeIn(
+            IERC20(_leadPayment()), 10 ether, IERC20(se_), 0, hook_, false, block.timestamp
+        );
+        vm.stopPrank();
+        _purchase(10 ether); // A real liquidity operation realizes accrued fee LP.
+        amount_ = _lp().balanceOf(address(_collector()));
+        assertGt(amount_, 0, "actual protocol-fee LP must reach collector");
+    }
+
+    function _externalLp() internal returns (uint256 amount_) {
+        amount_ = _seedFeeLp();
+        IFeeCollectorProxy collector_ = _collector();
+        uint256 price_ = _subject().syntheticPrice();
+        uint256 expansion_ = _subject().pendingExpansionDetf();
+        IERC20 lp_ = _lp();
+        address buyer_ = _buyer();
+        vm.prank(_admin(address(collector_)));
+        collector_.pullFee(lp_, amount_, buyer_);
+        assertEq(_lp().balanceOf(_buyer()), amount_);
+        assertEq(_subject().syntheticPrice(), price_, "external LP transfer cannot change protocol backing");
+        assertEq(_subject().pendingExpansionDetf(), expansion_);
+    }
+
+    function test_seShareFallbackComposesActualRedemptionAndSwap() public {
+        IUniswapV4Detf subject_ = _activateFallbackInstance();
+        (IERC20 se_, uint256 shares_) = _fundFallbackShares(subject_);
+        assertFalse(subject_.isMintingAllowed(se_), "exercise reserve fallback");
+        uint256 preview_ = IStandardExchangeIn(address(subject_)).previewExchangeIn(se_, shares_, IERC20(address(subject_)));
+        assertEq(preview_, _actualPostExchangeSwapQuote(subject_, address(se_), se_, shares_), "composed quote equals actual post-redemption reserve state");
+        assertGt(preview_, 0);
+        _assertShareSwapSettlement(subject_, se_, shares_, preview_);
+    }
+
+    function test_customProtocolShareFallbackComposesActualConversionAndSwap() public {
+        IUniswapV4Detf subject = _activateFallbackInstance();
+        (IERC20 input, uint256 shares) = _fundCustomProtocolPayment(subject);
+        address se = IUniswapV4SeBufferHook(subject.hook()).standardExchangeOf(_leadPayment());
+        assertFalse(subject.isMintingAllowed(input));
+        uint256 preview = IStandardExchangeIn(address(subject)).previewExchangeIn(input, shares, IERC20(address(subject)));
+        assertGt(preview, 0, "configured protocol-share route has an executable quote");
+        assertEq(preview, _actualPostExchangeSwapQuote(subject, se, input, shares));
+        _assertShareSwapSettlement(subject, input, shares, preview);
+    }
+
+    function test_customDonationQuoteIncludesWrappingBeforeReserveJoin() public {
+        IUniswapV4Detf subject = _activateFallbackInstance();
+        (IERC20 input, uint256 shares) = _fundCustomProtocolPayment(subject);
+        IDetfNftReserveDonation nft = IDetfNftReserveDonation(subject.bondNftVault());
+        uint256 preview = nft.previewDonate(input, shares);
+        assertGt(preview, 0, "configured donation remains quotable");
+        FallbackSnapshot memory before_;
+        before_.supply = IERC20(address(subject)).totalSupply();
+        before_.funding = IERC20(address(subject)).balanceOf(subject.rebasingClaimToken());
+        before_.protocolLp = IERC20(subject.hook()).balanceOf(address(nft));
+        before_.inputBalance = input.balanceOf(_buyer());
+        vm.startPrank(_buyer());
+        input.approve(address(nft), shares);
+        vm.expectRevert(abi.encodeWithSelector(IStandardExchangeErrors.MinAmountNotMet.selector, preview + 1, preview));
+        nft.donate(input, shares, preview + 1, false, block.timestamp);
+        assertEq(input.balanceOf(_buyer()), before_.inputBalance, "failed minimum rolls back payment");
+        assertEq(IERC20(subject.hook()).balanceOf(address(nft)), before_.protocolLp, "failed minimum rolls back LP custody");
+        vm.recordLogs();
+        uint256 minted = nft.donate(input, shares, preview, false, block.timestamp);
+        vm.stopPrank();
+        assertEq(minted, preview, "LP preview includes custom wrap and reserve join");
+        _assertAcquiredProtocolLp(subject, before_.protocolLp, minted);
+        assertEq(IERC20(address(subject)).totalSupply(), before_.supply, "donation issues no DETF");
+        assertEq(IERC20(address(subject)).balanceOf(subject.rebasingClaimToken()), before_.funding, "donation issues no staking claim");
+    }
+
+    struct CustomBondQuote {
+        uint256 principal;
+        uint256 rewards;
+        uint256 liquidity;
+    }
+
+    function test_customBondQuoteIncludesWrappingBeforeIssuance() public {
+        IUniswapV4Detf subject = _activateFallbackInstance();
+        (IERC20 input, uint256 shares) = _fundCustomProtocolPayment(subject);
+        CustomBondQuote memory quoted;
+        (, quoted.principal, quoted.rewards, quoted.liquidity) = subject.previewBond(input, shares, 30 days);
+        assertGt(quoted.principal, 0);
+        uint256 supply = IERC20(address(subject)).totalSupply();
+        uint256 backing = IERC20(address(subject)).balanceOf(subject.rebasingClaimToken());
+        uint256 owned = IERC20(subject.hook()).balanceOf(subject.bondNftVault());
+        vm.startPrank(_buyer());
+        input.approve(address(subject), shares);
+        vm.recordLogs();
+        (uint256 id, uint256 lpAdded) = subject.bond(input, shares, 30 days, _buyer(), false, block.timestamp);
+        vm.stopPrank();
+        IDetfBondNFT nft = IDetfBondNFT(subject.bondNftVault());
+        assertEq(nft.positionOf(id).principal, quoted.principal, "custom bond preview includes prior SE wrapping");
+        assertEq(nft.positionOf(id).vestingDuration, 30 days);
+        assertEq(nft.previewClaim(id).principalDue, 0);
+        assertEq(IERC20(address(subject)).totalSupply(), supply + quoted.principal + quoted.rewards + quoted.liquidity);
+        assertEq(IERC20(address(subject)).balanceOf(subject.rebasingClaimToken()), backing + quoted.principal + quoted.rewards);
+        _assertAcquiredProtocolLp(subject, owned, lpAdded);
+        assertGt(lpAdded, 0, "ordinary payment adds a matching liquidity leg");
+        assertGt(nft.previewClaim(id).rewardsDue, 0, "new funded bond earns its immediate staking reward");
+    }
+
+    function _assertAcquiredProtocolLp(IUniswapV4Detf subject, uint256 ownedBefore, uint256 joined) private {
+        Vm.Log[] memory logs = vm.getRecordedLogs();
+        address hook = subject.hook();
+        address custody = subject.bondNftVault();
+        uint256 minted;
+        for (uint256 i; i < logs.length; ++i) {
+            if (logs[i].emitter == hook && logs[i].topics.length == 3
+                && logs[i].topics[0] == keccak256("Transfer(address,address,uint256)")
+                && logs[i].topics[1] == bytes32(0)
+                && address(uint160(uint256(logs[i].topics[2]))) == custody) {
+                minted += abi.decode(logs[i].data, (uint256));
+            }
+        }
+        // The retained residual sweep may join additional protocol capital after
+        // the payment join. Reconcile every acquired LP unit with actual mint logs.
+        assertGe(minted, joined, "all quoted payment liquidity reaches protocol custody");
+        assertEq(IERC20(hook).balanceOf(custody), ownedBefore + minted, "custody equals actual LP issuance including residual sweep");
+    }
+
+    function _fundCustomProtocolPayment(IUniswapV4Detf subject) private returns (IERC20 input, uint256 shares) {
+        address pair = _leadPayment();
+        address se = IUniswapV4SeBufferHook(subject.hook()).standardExchangeOf(pair);
+        IERC4626 protocol = IERC4626(IStandardizedYield(se).yieldToken());
+        address oracle = IReserveOracleBinding(subject.hook()).feeOracle();
+        vm.prank(_admin(oracle));
+        IVaultFeeOracleManager(oracle).setUsageFeeOfVault(se, 0.07e18);
+        vm.startPrank(_buyer());
+        IERC20(pair).approve(address(protocol), 10 ether);
+        shares = protocol.deposit(10 ether, _buyer());
+        vm.stopPrank();
+        input = IERC20(address(protocol));
+    }
+
+    function _fundFallbackShares(IUniswapV4Detf subject_) private returns (IERC20 se_, uint256 shares_) {
+        address pair_ = _leadPayment();
+        se_ = IERC20(IUniswapV4SeBufferHook(subject_.hook()).standardExchangeOf(pair_));
+        address oracle_ = IReserveOracleBinding(subject_.hook()).feeOracle();
+        vm.prank(_admin(oracle_));
+        IVaultFeeOracleManager(oracle_).setUsageFeeOfVault(address(se_), 0.07e18);
+        vm.startPrank(_buyer());
+        IERC20(pair_).approve(address(se_), 10 ether);
+        shares_ = IStandardExchangeIn(address(se_)).exchangeIn(
+            IERC20(pair_), 10 ether, se_, 0, _buyer(), false, block.timestamp
+        );
+        vm.stopPrank();
+    }
+
+    function _actualPostExchangeSwapQuote(IUniswapV4Detf subject_, address se_, IERC20 input_, uint256 shares_)
+        private returns (uint256 expected_)
+    {
+        uint256 checkpoint_ = vm.snapshotState();
+        address pair_ = _leadPayment();
+        vm.startPrank(_buyer());
+        input_.approve(se_, shares_);
+        uint256 pairOut_ = IStandardExchangeIn(se_).exchangeIn(input_, shares_, IERC20(pair_), 0, _buyer(), false, block.timestamp);
+        vm.stopPrank();
+        expected_ = IUniswapV4SeBufferHook(subject_.hook()).previewSwapExactIn(pair_, address(subject_), pairOut_);
+        assertTrue(vm.revertToStateAndDelete(checkpoint_));
+    }
+
+    function _assertShareSwapSettlement(IUniswapV4Detf subject_, IERC20 se_, uint256 shares_, uint256 preview_) private {
+        address buyer_ = _buyer();
+        FallbackSnapshot memory before_;
+        before_.supply = IERC20(address(subject_)).totalSupply();
+        before_.protocolLp = IERC20(subject_.hook()).balanceOf(subject_.bondNftVault());
+        before_.funding = IERC20(address(subject_)).balanceOf(subject_.rebasingClaimToken());
+        vm.startPrank(buyer_);
+        se_.approve(address(subject_), shares_);
+        vm.expectRevert();
+        IStandardExchangeIn(address(subject_)).exchangeIn(se_, shares_, IERC20(address(subject_)), preview_ + 1, buyer_, false, block.timestamp);
+        assertEq(se_.balanceOf(buyer_), shares_, "minimum failure restores entire share payment");
+        uint256 paid_ = IStandardExchangeIn(address(subject_)).exchangeIn(se_, shares_, IERC20(address(subject_)), preview_, buyer_, false, block.timestamp);
+        vm.stopPrank();
+        assertEq(paid_, preview_, "exact preview and execution");
+        assertEq(IERC20(address(subject_)).balanceOf(buyer_), paid_, "only acquired DETF paid");
+        assertEq(IERC20(address(subject_)).totalSupply(), before_.supply, "fallback creates no DETF");
+        assertEq(IERC20(address(subject_)).balanceOf(subject_.rebasingClaimToken()), before_.funding, "no staking subsidy");
+        assertEq(IERC20(subject_.hook()).balanceOf(subject_.bondNftVault()), before_.protocolLp, "fallback changes no LP ownership");
+    }
+
+    function test_externallyOwnedLpDonationTransfersWholePositionWithoutStakingIssuance() public {
+        uint256 amount_ = _externalLp();
+        IUniswapV4Detf subject_ = _subject();
+        IERC20 lp_ = _lp();
+        IDetfNftReserveDonation receiver_ = IDetfNftReserveDonation(subject_.bondNftVault());
+        IStakedDETF staking_ = IStakedDETF(subject_.rebasingClaimToken());
+        uint256 owned_ = lp_.balanceOf(address(receiver_));
+        uint256 supply_ = IERC20(address(subject_)).totalSupply();
+        uint256 lpSupply_ = lp_.totalSupply();
+        bytes32 state_ = keccak256(abi.encode(staking_.stakingState()));
+        assertEq(receiver_.previewDonate(lp_, amount_), amount_, "whole LP donation quote");
+        address buyer_ = _buyer();
+        vm.startPrank(buyer_);
+        lp_.approve(address(receiver_), amount_);
+        uint256 received_ = receiver_.donate(lp_, amount_, amount_, false, block.timestamp);
+        vm.stopPrank();
+        assertEq(received_, amount_, "whole external LP received");
+        assertEq(lp_.balanceOf(buyer_), 0, "external ownership transferred");
+        assertEq(lp_.balanceOf(address(receiver_)), owned_ + amount_, "actual protocol custody credited once");
+        assertEq(lp_.totalSupply(), lpSupply_, "gift needs no new LP join or unwind");
+        assertEq(IERC20(address(subject_)).totalSupply(), supply_, "existing LP gift has no DETF issuance");
+        assertEq(keccak256(abi.encode(staking_.stakingState())), state_, "LP gift neither creates staking backing nor purchased principal");
+    }
+
+    function test_publicReserveSwapsRemainAvailableInBothPolicies() public {
+        _purchase(1_000 ether);
+        address hook_ = address(_hook());
+        IERC20 lead_ = IERC20(_leadPayment());
+        IERC20 detf_ = IERC20(address(_subject()));
+        address buyer_ = _buyer();
+        uint256 supply_ = detf_.totalSupply();
+        uint256 before_ = detf_.balanceOf(buyer_);
+        uint256 quote_ = IStandardExchangeIn(hook_).previewExchangeIn(lead_, 1 ether, detf_);
+        assertGt(quote_, 0);
+        vm.startPrank(buyer_);
+        lead_.approve(hook_, 1 ether);
+        uint256 paid_ = IStandardExchangeIn(hook_).exchangeIn(lead_, 1 ether, detf_, quote_, buyer_, false, block.timestamp);
+        vm.stopPrank();
+        assertEq(paid_, quote_);
+        assertEq(detf_.balanceOf(buyer_) - before_, quote_);
+        assertEq(detf_.totalSupply(), supply_, "reserve swap is supply-neutral");
+    }
+
+    function test_lpBondSettlesExpansionBeforeTakingPayment() public {
+        uint256 amount_ = _externalLp();
+        _fundReserveYield(_subject(), 3_000 ether);
+        vm.warp(block.timestamp + 25 hours);
+        assertGt(_subject().pendingExpansionDetf(), 0, "funded yield creates due expansion");
+        (, uint256 principal_, uint256 rewards_,) = _subject().previewBond(_lp(), amount_, 180 days);
+        _assertLpBondFunding(amount_, principal_, rewards_);
+        assertEq(_subject().pendingExpansionDetf(), 0, "catch-up settles once before LP receipt");
+    }
+
+    function test_reservePolicyMatchesHookAndRetainsDetfOwnership() public view {
+        assertEq(_subject().ownerOnlyLiquidity(), _policy());
+        assertEq(IUniswapV4HookLiquidityPolicy(address(_hook())).ownerOnlyLiquidity(), _policy());
+        assertEq(_admin(address(_hook())), address(_subject()));
+    }
+
+    function test_lpCannotReplaceFirstBondActivation() public {
+        address[] memory tokens_ = _subject().acceptedBondTokens();
+        for (uint256 i_; i_ < tokens_.length; ++i_) assertNotEq(tokens_[i_], address(_lp()));
+        IUniswapV4Detf subject_ = _subject();
+        IERC20 lp_ = _lp();
+        address buyer_ = _buyer();
+        vm.expectRevert(); subject_.previewBond(lp_, 1, 180 days);
+        vm.prank(buyer_); vm.expectRevert();
+        subject_.bond(lp_, 1, 180 days, buyer_, false, block.timestamp);
+        assertFalse(_subject().isReserveLive());
+    }
+
+    function test_lpBondValuesDistinctNonDetfLegsAndRetainsWholeInventory() public {
+        uint256 amount_ = _externalLp();
+        uint256 expected_;
+        address[] memory tokens_ = _hook().tokens();
+        uint256[] memory assets_ = _hook().previewExitProportional(amount_);
+        for (uint256 i_; i_ < tokens_.length; ++i_) {
+            if (tokens_[i_] != address(_subject()) && assets_[i_] != 0) {
+                expected_ += _hook().previewSwapExactIn(tokens_[i_], address(_subject()), assets_[i_] * 3 / 2);
+            }
+        }
+        (uint256 gross_, uint256 principal_, uint256 rewards_, uint256 join_) = _subject().previewBond(_lp(), amount_, 180 days);
+        assertEq(gross_, expected_, "each non-DETF leg receives duration bonus once");
+        assertEq(join_, 0, "LP payment supplies its existing liquidity");
+        _assertLpBondFunding(amount_, principal_, rewards_);
+    }
+
+    function _assertLpBondFunding(uint256 amount_, uint256 principal_, uint256 rewards_) private {
+        IERC20 detf_ = IERC20(address(_subject()));
+        uint256 supply_ = detf_.totalSupply() + _subject().pendingExpansionDetf();
+        uint256 lpSupply_ = _lp().totalSupply();
+        uint256 selfLeg_ = detf_.balanceOf(address(_hook()));
+        uint256 owned_ = _lp().balanceOf(_subject().bondNftVault());
+        vm.startPrank(_buyer());
+        _lp().approve(address(_subject()), amount_);
+        (uint256 id_, uint256 acquired_) = _subject().bond(_lp(), amount_, 180 days, _buyer(), false, block.timestamp);
+        vm.stopPrank();
+        assertEq(acquired_, amount_);
+        assertEq(_lp().balanceOf(_buyer()), 0);
+        assertEq(_lp().balanceOf(_subject().bondNftVault()), owned_ + amount_);
+        assertEq(_lp().totalSupply(), lpSupply_, "LP retained without join or unwind");
+        assertEq(detf_.balanceOf(address(_hook())), selfLeg_, "no new liquidity DETF and no self-leg sale");
+        assertEq(detf_.totalSupply(), supply_ + principal_ + rewards_, "seigniorage only on new issuance");
+        IDetfBondNFT nft_ = IDetfBondNFT(_subject().bondNftVault());
+        assertEq(nft_.positionOf(id_).principal, principal_);
+        assertEq(nft_.positionOf(id_).vestingDuration, 180 days);
+        assertEq(nft_.previewClaim(id_).principalDue, 0);
+        assertGt(nft_.previewClaim(id_).rewardsDue, 0, "staking rewards are claimable while vesting");
+        IStakedDETF staked_ = IStakedDETF(_subject().rebasingClaimToken());
+        assertGe(detf_.balanceOf(address(staked_)), staked_.totalSupply());
+    }
+
+    function test_lpBondCannotClaimProtocolOrAnotherWalletsLp() public {
+        uint256 amount_ = _externalLp();
+        address attacker_ = address(0xBAD);
+        IUniswapV4Detf subject_ = _subject();
+        IERC20 lp_ = _lp();
+        vm.startPrank(attacker_);
+        vm.expectRevert(); subject_.bond(lp_, amount_, 180 days, attacker_, false, block.timestamp);
+        vm.expectRevert(); subject_.bond(lp_, amount_, 180 days, attacker_, true, block.timestamp);
+        vm.stopPrank();
+        assertEq(_lp().balanceOf(_buyer()), amount_);
+    }
+
+    function test_currentCollectorRedeemsActualFeeLpWithOwnerAuthorization() public {
+        uint256 amount_ = _seedFeeLp() / 2;
+        uint256[] memory minimum_ = _hook().previewExitProportional(amount_);
+        IFeeCollectorProxy collector_ = _collector();
+        IERC20 lp_ = _lp();
+        address buyer_ = _buyer();
+        vm.prank(buyer_); vm.expectRevert();
+        collector_.redeemReserveLiquidity(lp_, amount_, minimum_, buyer_, block.timestamp);
+        address[] memory tokens_ = _hook().tokens();
+        uint256[] memory balances_ = new uint256[](tokens_.length);
+        for (uint256 i_; i_ < tokens_.length; ++i_) balances_[i_] = IERC20(tokens_[i_]).balanceOf(_buyer());
+        vm.prank(_admin(address(collector_)));
+        uint256[] memory got_ = collector_.redeemReserveLiquidity(lp_, amount_, minimum_, buyer_, block.timestamp);
+        for (uint256 i_; i_ < tokens_.length; ++i_) {
+            assertEq(got_[i_], minimum_[i_], "proportional preview parity");
+            assertEq(IERC20(tokens_[i_]).balanceOf(_buyer()) - balances_[i_], got_[i_]);
+        }
+        assertEq(_lp().allowance(address(collector_), address(_hook())), 0);
+    }
+
+    function test_feeCollectorRotationChangesRestrictedRemovalAuthority() public {
+        uint256 amount_ = _seedFeeLp();
+        IFeeCollectorProxy previous_ = _collector();
+        IFeeCollectorProxy next_ = _newCollector(address(0xFEE2));
+        address oracle_ = address(_oracle());
+        IERC20 lp_ = _lp();
+        address buyer_ = _buyer();
+        uint256[] memory minimum_ = _hook().previewExitProportional(amount_ / 2);
+        vm.prank(_admin(oracle_));
+        IVaultFeeOracleManager(oracle_).setFeeTo(next_);
+        assertEq(address(_collector()), address(next_));
+        if (_policy()) {
+            vm.prank(_admin(address(previous_))); vm.expectRevert();
+            previous_.redeemReserveLiquidity(lp_, amount_ / 2, minimum_, buyer_, block.timestamp);
+        }
+        vm.prank(_admin(address(previous_)));
+        previous_.pullFee(lp_, amount_, address(next_));
+        minimum_ = _hook().previewExitProportional(amount_ / 2);
+        vm.prank(_admin(address(next_)));
+        uint256[] memory got_ = next_.redeemReserveLiquidity(lp_, amount_ / 2, minimum_, buyer_, block.timestamp);
+        assertEq(got_, minimum_);
+        assertEq(_lp().allowance(address(previous_), address(_hook())), 0);
+    }
+
+    function test_internalSYRedemptionUsesCurrentCollectorAfterRotation() public {
+        uint256 amount = _seedFeeLp() / 100;
+        IStandardizedYield sy = IStandardizedYield(address(_hook()));
+        IFeeCollectorProxy previous = _collector();
+        IERC20 lp = _lp();
+        address buyer = _buyer();
+        address output = _leadPayment();
+        vm.prank(_admin(address(previous)));
+        previous.pullFee(lp, amount * 3, address(sy));
+        if (_policy()) {
+            vm.prank(buyer); vm.expectRevert();
+            sy.redeem(buyer, amount, output, 0, true);
+        }
+        _assertCollectorInternalPayout(sy, address(previous), amount, output, buyer);
+        assertEq(sy.balanceOf(address(sy)), amount * 2);
+
+        IFeeCollectorProxy next = _newCollector(address(0xFEE2));
+        address oracle = address(_oracle());
+        vm.prank(_admin(oracle)); IVaultFeeOracleManager(oracle).setFeeTo(next);
+        if (_policy()) {
+            vm.prank(address(previous)); vm.expectRevert();
+            sy.redeem(buyer, amount, output, 0, true);
+        }
+        _assertCollectorInternalPayout(sy, address(next), amount, output, buyer);
+        assertEq(sy.balanceOf(address(sy)), amount);
+        if (_policy()) {
+            vm.prank(buyer); vm.expectRevert();
+            sy.redeem(buyer, amount, output, 0, true);
+        }
+        assertEq(sy.balanceOf(address(sy)), amount, "completed collector call leaves no public authority");
+    }
+
+    function _assertCollectorInternalPayout(
+        IStandardizedYield sy, address collector, uint256 amount, address output, address receiver
+    ) private {
+        uint256 quote = sy.previewRedeem(output, amount);
+        uint256 before = IERC20(output).balanceOf(receiver);
+        vm.prank(collector);
+        assertEq(sy.redeem(receiver, amount, output, quote, true), quote);
+        assertEq(IERC20(output).balanceOf(receiver) - before, quote);
+    }
+
+    function test_directLiquidityOperationsFollowDeploymentPolicy() public {
+        uint256 amount_ = _externalLp() / 2;
+        IUniswapV4SeBufferHook hook_ = _hook();
+        address buyer_ = _buyer();
+        address lead_ = _leadPayment();
+        address collector_ = address(_collector());
+        uint256[] memory minimum_ = new uint256[](hook_.tokens().length);
+        vm.startPrank(buyer_);
+        IERC20(lead_).approve(address(hook_), type(uint256).max);
+        if (_policy()) vm.expectRevert();
+        uint256 added_ = hook_.joinSingleAssetExactIn(lead_, 1 ether, buyer_, 0, block.timestamp);
+        if (!_policy()) assertGt(added_, 0);
+        _lp().approve(address(hook_), amount_);
+        if (_policy()) vm.expectRevert();
+        hook_.exitProportional(amount_, buyer_, minimum_, block.timestamp);
+        vm.stopPrank();
+        // The fee exception authorizes removals only, never additions.
+        if (_policy()) {
+            vm.prank(collector_); vm.expectRevert();
+            hook_.joinSingleAssetExactIn(lead_, 1 ether, collector_, 0, block.timestamp);
+        }
+        _assertApprovedLpTransferDoesNotGrantLiquidityPermission();
+    }
+
+    function _assertApprovedLpTransferDoesNotGrantLiquidityPermission() private {
+        IERC20 lp = _lp();
+        address holder = _buyer();
+        address spender = makeAddr("approved external LP spender");
+        uint256 shares = lp.balanceOf(holder) / 4;
+        assertGt(shares, 0);
+        vm.prank(holder); lp.approve(spender, shares);
+        vm.prank(spender); lp.transferFrom(holder, spender, shares);
+        assertEq(lp.allowance(holder, spender), 0);
+        assertEq(lp.balanceOf(spender), shares);
+        IUniswapV4SeBufferHook hook = _hook();
+        uint256[] memory minimum = hook.previewExitProportional(shares);
+        if (_policy()) {
+            vm.prank(spender); vm.expectRevert();
+            hook.exitProportional(shares, spender, minimum, block.timestamp);
+            assertEq(lp.balanceOf(spender), shares, "LP ownership cannot override restricted removal policy");
+        } else {
+            address[] memory tokens = hook.tokens();
+            uint256[] memory balances = new uint256[](tokens.length);
+            for (uint256 i; i < tokens.length; ++i) balances[i] = IERC20(tokens[i]).balanceOf(spender);
+            vm.prank(spender);
+            uint256[] memory paid = hook.exitProportional(shares, spender, minimum, block.timestamp);
+            assertEq(paid, minimum);
+            assertEq(lp.balanceOf(spender), 0);
+            for (uint256 i; i < tokens.length; ++i) assertEq(IERC20(tokens[i]).balanceOf(spender) - balances[i], paid[i]);
+        }
+    }
+}
+
+contract CpReserveLiquidityTest is TestBase_UniswapV4Detf, V4ReserveLiquidityBehavior, DETFFundedStakingArtifacts {
+    function _installLidoBuffer() private returns (HermeticWstETH wrapped) {
+        HermeticWETH liquid = new HermeticWETH();
+        HermeticStETH staked = new HermeticStETH();
+        wrapped = new HermeticWstETH(staked);
+        HermeticWithdrawalQueue queue = new HermeticWithdrawalQueue(wrapped);
+        ILidoWstETHStandardExchangeDFPkg.PkgInit memory init;
+        init.erc20Facet = erc20Facet;
+        init.erc2612Facet = erc2612Facet;
+        init.erc5267Facet = erc5267Facet;
+        init.erc4626Facet = erc4626Facet;
+        init.erc4626StandardVaultFacet = erc4626StandardVaultFacet;
+        init.multiAssetBasicVaultFacet = multiAssetBasicVaultFacet;
+        init.multiAssetStandardVaultFacet = multiAssetStandardVaultFacet;
+        init.exchangeInFacet = LidoFactory.deployLidoWstETHStandardExchangeInFacet(create3Factory);
+        init.exchangeOutFacet = LidoFactory.deployLidoWstETHStandardExchangeOutFacet(create3Factory);
+        init.markerFacet = LidoFactory.deployLidoWstETHMarkerFacet(create3Factory);
+        init.rebalanceFacet = LidoFactory.deployLidoWstETHRebalanceFacet(create3Factory);
+        init.vaultFeeOracleQuery = indexedexManager;
+        init.vaultRegistryDeployment = indexedexManager;
+        init.permit2 = permit2;
+        vm.startPrank(owner);
+        ILidoWstETHStandardExchangeDFPkg pkg = LidoFactory.deployLidoWstETHStandardExchangeDFPkg(indexedexManager, init);
+        se = pkg.deployVault(address(staked), address(wrapped), address(liquid), address(queue));
+        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(se, 0.07e18);
+        vm.stopPrank();
+        vm.deal(address(this), 200 ether);
+        liquid.deposit{value: 200 ether}();
+        liquid.approve(se, 200 ether);
+        IStandardExchangeIn(se).exchangeIn(IERC20(address(liquid)), 200 ether, IERC20(se), 1, address(this), false, block.timestamp);
+        staked.mint(detfUser, 100 ether);
+        vm.startPrank(detfUser);
+        staked.approve(address(wrapped), 100 ether);
+        wrapped.wrap(100 ether);
+        vm.stopPrank();
+        pairToken = SimpleMintableERC20(address(liquid));
+        IUniswapV4Detf.PkgArgs memory args = _defaultDetfArgs();
+        args.mintThreshold = 100e18;
+        args.burnThreshold = 1;
+        args.mintRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
+        args.mintRoutes = new IUniswapV4Detf.IoRoute[](3);
+        args.mintRoutes[0] = IUniswapV4Detf.IoRoute(IERC20(address(liquid)), IStandardExchange(se));
+        args.mintRoutes[1] = IUniswapV4Detf.IoRoute(IERC20(se), IStandardExchange(se));
+        args.mintRoutes[2] = IUniswapV4Detf.IoRoute(IERC20(address(wrapped)), IStandardExchange(se));
+        args.bondRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
+        args.bondRoutes = args.mintRoutes;
+        detf = _deployHookThenDetf(args);
+        detfInfo = IUniswapV4Detf(detf);
+        detfExchangeIn = IStandardExchangeIn(detf);
+        _setBondTerms(DEFAULT_MIN_LOCK, DEFAULT_MAX_LOCK);
+        vm.deal(detfUser, 1_000 ether);
+        vm.startPrank(detfUser);
+        liquid.deposit{value: 1_000 ether}();
+        liquid.approve(detf, type(uint256).max);
+        liquid.approve(se, type(uint256).max);
+        wrapped.approve(detf, type(uint256).max);
+        IERC20(se).approve(detf, type(uint256).max);
+        vm.stopPrank();
+        _firstBond(100 ether);
+    }
+
+    function test_lidoBufferUsesApprovedPaymentsForFallbackAndFundedBond() public {
+        HermeticWstETH wrapped = _installLidoBuffer();
+        vm.prank(detfUser);
+        uint256 shares = IStandardExchangeIn(se).exchangeIn(IERC20(address(pairToken)), 5 ether, IERC20(se), 1, detfUser, false, block.timestamp);
+        _assertLidoFallback(IERC20(se), shares / 2);
+        _assertLidoFallback(IERC20(address(wrapped)), 1 ether + 17);
+        (, uint256 principal,,) = detfInfo.previewBond(IERC20(address(wrapped)), 2 ether + 29, DEFAULT_MAX_LOCK);
+        vm.prank(detfUser);
+        (uint256 id,) = detfInfo.bond(IERC20(address(wrapped)), 2 ether + 29, DEFAULT_MAX_LOCK, detfUser, false, block.timestamp);
+        assertEq(IDetfBondNFT(detfInfo.bondNftVault()).positionOf(id).principal, principal);
+        assertEq(wrapped.allowance(detf, se), 0, "nested payment allowance cleared");
+        address staking = detfInfo.rebasingClaimToken();
+        assertGe(IERC20(detf).balanceOf(staking), IERC20(staking).totalSupply(), "actual DETF funds staking liabilities");
+    }
+
+    function _assertLidoFallback(IERC20 input, uint256 amount) private {
+        uint256 quote = detfExchangeIn.previewExchangeIn(input, amount, IERC20(detf));
+        assertGt(quote, 0);
+        uint256 supply = IERC20(detf).totalSupply();
+        uint256 beforeBalance = IERC20(detf).balanceOf(detfUser);
+        vm.prank(detfUser);
+        assertEq(detfExchangeIn.exchangeIn(input, amount, IERC20(detf), quote, detfUser, false, block.timestamp), quote);
+        assertEq(IERC20(detf).balanceOf(detfUser) - beforeBalance, quote);
+        assertEq(IERC20(detf).totalSupply(), supply, "fallback trades existing DETF");
+        assertEq(input.allowance(detf, se), 0, "nested payment allowance cleared");
+    }
+
+    function test_deploymentRejectsPolicyMismatchWithActualHook() public {
+        IUniswapV4Detf.PkgArgs memory args_ = _defaultDetfArgs();
+        args_.hook = detfInfo.hook();
+        args_.ownerOnlyLiquidity = !args_.ownerOnlyLiquidity;
+        bytes memory encoded_ = abi.encode(args_);
+        vm.prank(address(indexedexManager));
+        vm.expectRevert(IUniswapV4DetfDFPkg.HookLiquidityPolicyMismatch.selector);
+        detfPkg.processArgs(encoded_);
+    }
+
+    function _deployFallbackInstance() internal override returns (address) { return _deployHookThenDetf(_fallbackArgs(_defaultDetfArgs())); }
+    function _subject() internal view override returns (IUniswapV4Detf) { return detfInfo; }
+    function _buyer() internal view override returns (address) { return detfUser; }
+    function _purchase(uint256 amount_) internal override returns (uint256, uint256) { return _firstBond(amount_); }
+    function _leadPayment() internal view override returns (address) { return address(pairToken); }
+    function _newCollector(address owner_) internal override returns (IFeeCollectorProxy) {
+        return FeeCollectorFactoryService.deployFeeCollector(diamondPackageFactory, feeCollectorDFPkg, owner_);
+    }
+}
+
+contract CpPublicReserveLiquidityTest is CpReserveLiquidityTest {
+    function _policy() internal pure override returns (bool) { return false; }
+    function _defaultDetfArgs() internal view override returns (IUniswapV4Detf.PkgArgs memory args_) {
+        args_ = super._defaultDetfArgs();
+        args_.ownerOnlyLiquidity = false;
+    }
+}
+
+contract WeightedReserveLiquidityTest is TestBase_UniswapV4Detf_Weighted, V4ReserveLiquidityBehavior, DETFFundedStakingArtifacts {
+    function _deployFallbackInstance() internal override returns (address) { return _deployWeightedHookThenDetf(_fallbackArgs(_nLegDetfArgs(2))); }
+    function _subject() internal view override returns (IUniswapV4Detf) { return detfInfo; }
+    function _buyer() internal view override returns (address) { return detfUser; }
+    function _purchase(uint256 amount_) internal override returns (uint256, uint256) { return _firstBond(amount_); }
+    function _leadPayment() internal view override returns (address) { return address(pairToken); }
+    function _newCollector(address owner_) internal override returns (IFeeCollectorProxy) {
+        return FeeCollectorFactoryService.deployFeeCollector(diamondPackageFactory, feeCollectorDFPkg, owner_);
+    }
+}
+
+contract WeightedPublicReserveLiquidityTest is WeightedReserveLiquidityTest {
+    function _policy() internal pure override returns (bool) { return false; }
+    function _defaultDetfArgs() internal view override returns (IUniswapV4Detf.PkgArgs memory args_) {
+        args_ = super._defaultDetfArgs();
+        args_.ownerOnlyLiquidity = false;
+    }
+}
+
+contract OrbitalReserveLiquidityTest is TestBase_UniswapV4Detf_Orbital, V4ReserveLiquidityBehavior, DETFFundedStakingArtifacts {
+    function _deployFallbackInstance() internal override returns (address) { return _deployOrbitalHookThenDetf(_fallbackArgs(_nLegDetfArgs(2))); }
+    function _subject() internal view override returns (IUniswapV4Detf) { return detfInfo; }
+    function _buyer() internal view override returns (address) { return detfUser; }
+    function _purchase(uint256 amount_) internal override returns (uint256, uint256) { return _firstBond(amount_); }
+    function _leadPayment() internal view override returns (address) { return address(pairToken); }
+    function _newCollector(address owner_) internal override returns (IFeeCollectorProxy) {
+        return FeeCollectorFactoryService.deployFeeCollector(diamondPackageFactory, feeCollectorDFPkg, owner_);
+    }
+}
+
+contract OrbitalPublicReserveLiquidityTest is OrbitalReserveLiquidityTest {
+    function _policy() internal pure override returns (bool) { return false; }
+    function _defaultDetfArgs() internal view override returns (IUniswapV4Detf.PkgArgs memory args_) {
+        args_ = super._defaultDetfArgs();
+        args_.ownerOnlyLiquidity = false;
+    }
+}
+
+contract CurveQuadReserveLiquidityTest is TestBase_UniswapV4Detf_CurveQuad, V4ReserveLiquidityBehavior, DETFFundedStakingArtifacts {
+    function _deployFallbackInstance() internal override returns (address) { return _deployCurveHookThenDetf(_fallbackArgs(_nLegDetfArgs(3))); }
+    function _subject() internal view override returns (IUniswapV4Detf) { return detfInfo; }
+    function _buyer() internal view override returns (address) { return detfUser; }
+    function _purchase(uint256 amount_) internal override returns (uint256, uint256) { return _firstBond(amount_); }
+    function _leadPayment() internal view override returns (address) { return address(pairToken); }
+    function _newCollector(address owner_) internal override returns (IFeeCollectorProxy) {
+        return FeeCollectorFactoryService.deployFeeCollector(diamondPackageFactory, feeCollectorDFPkg, owner_);
+    }
+}
+
+contract CurveQuadPublicReserveLiquidityTest is CurveQuadReserveLiquidityTest {
+    function _policy() internal pure override returns (bool) { return false; }
+    function _defaultDetfArgs() internal view override returns (IUniswapV4Detf.PkgArgs memory args_) {
+        args_ = super._defaultDetfArgs();
+        args_.ownerOnlyLiquidity = false;
+    }
+}

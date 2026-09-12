@@ -6,16 +6,20 @@ import {
     IEtherFiWeETHStandardVault
 } from "contracts/protocols/staking/etherfi/interfaces/IEtherFiWeETHStandardVault.sol";
 import {
-    EtherFiWeETHStandardExchangeCommon
-} from "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeCommon.sol";
+    EtherFiWeETHStandardYieldTarget
+} from "contracts/protocols/staking/etherfi/EtherFiWeETHStandardYieldTarget.sol";
 
-contract EtherFiWeETHMarkerFacet is EtherFiWeETHStandardExchangeCommon, IFacet {
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+import {NativeStandardYieldSelectors} from "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol";
+
+contract EtherFiWeETHMarkerFacet is EtherFiWeETHStandardYieldTarget, IFacet {
     function facetName() public pure returns (string memory) {
         return type(EtherFiWeETHMarkerFacet).name;
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](1);
+        interfaces = new bytes4[](2);
+        interfaces[1] = type(IStandardizedYield).interfaceId;
         interfaces[0] = type(IEtherFiWeETHStandardVault).interfaceId;
     }
 
@@ -32,6 +36,7 @@ contract EtherFiWeETHMarkerFacet is EtherFiWeETHStandardExchangeCommon, IFacet {
         funcs[8] = IEtherFiWeETHStandardVault.totalReserveEth.selector;
         funcs[9] = IEtherFiWeETHStandardVault.actualLiquidReservePercentage.selector;
         funcs[10] = IEtherFiWeETHStandardVault.targetLiquidReservePercentage.selector;
+        funcs = NativeStandardYieldSelectors._append(funcs);
     }
 
     function facetMetadata()

@@ -1,0 +1,40 @@
+{
+  "common_source_sha256": "7aa3cb339e21bd9085a6ca8fd4418da1ef52e3578f2c5d9cc52ebe9e84582a59",
+  "facets": [
+    {
+      "contract": "UniswapV4DetfBondFacet",
+      "runtime_bytes": 13819,
+      "under_eip170_limit": true,
+      "runtime_sha256": "120dccd6d44438544af413f8ba31db3ded3ae60fa2cbdc5e3bd5ad503d6b249b",
+      "creation_sha256": "b78b5268e43f65638ea2a2be19bedf879b5214f41a0a502575ff981d3669d7ef"
+    },
+    {
+      "contract": "UniswapV4DetfExchangeFacet",
+      "runtime_bytes": 13229,
+      "under_eip170_limit": true,
+      "runtime_sha256": "2b25a16c430bf2b8e55d098497d016d3de5edfa0e8638c56dd408ab876bddaae",
+      "creation_sha256": "9c55b83be29d1e9870c023643730c5ae69051af3aed14867773d94047df9207c"
+    },
+    {
+      "contract": "UniswapV4DetfClaimFacet",
+      "runtime_bytes": 3449,
+      "under_eip170_limit": true,
+      "runtime_sha256": "593c440c878e133d1eb2211cda243c1b7e521342a589c9fea92dd83c349e6633",
+      "creation_sha256": "f1d784a4b647dd75e92ab05e91538b075f3de4f1cd6165bd76d5cd2fabd764ef"
+    },
+    {
+      "contract": "UniswapV4DetfQueryFacet",
+      "runtime_bytes": 19308,
+      "under_eip170_limit": true,
+      "runtime_sha256": "998c9b485eea9108e73340e0851f4c40840f21a6ce9918b1d15afed6fd4be5e7",
+      "creation_sha256": "df0abef5525e726f5d8f1dfbe6a6c2cbf53af93a2a9e885be93759a0b69c0b1d"
+    },
+    {
+      "contract": "UniswapV4DetfMaintenanceFacet",
+      "runtime_bytes": 12335,
+      "under_eip170_limit": true,
+      "runtime_sha256": "a9b8ce1d084d0a59b891f0539081db548d775d245b65f2a93767061d058d763b",
+      "creation_sha256": "af0c0e380073018a9fc68ee7a5a8720c6c27fcd8bb3e8b52c3723328be3fb00c"
+    }
+  ]
+}

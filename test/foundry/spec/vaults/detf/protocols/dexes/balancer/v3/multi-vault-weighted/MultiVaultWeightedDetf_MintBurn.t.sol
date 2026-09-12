@@ -30,36 +30,39 @@ contract MultiVaultWeightedDetf_MintBurn_Test is TestBase_MultiVaultWeightedDetf
         openEx = IStandardExchangeIn(openDetf);
     }
 
-    function test_mint_doesNotIncreaseReserveDetf_orFeeTo() public {
+    function test_closedPrimaryMint_swapsExistingDetf_withoutIssuance() public {
         _goLiveViaBptBond(openDetf, alice, 2_000e18);
         uint256 reserveDetfBefore_ = IERC20(openDetf).balanceOf(address(vault));
         uint256 feeToBefore_ = IERC20(openDetf).balanceOf(_feeTo());
+        uint256 supplyBefore_ = IERC20(openDetf).totalSupply();
+        assertFalse(openInfo.isMintingAllowed(), "primary mint closed");
 
         uint256 seShares_ = _fundSeShares0(bob, 200e18);
         vm.startPrank(bob);
         seShare0.approve(openDetf, seShares_);
-        uint256 out_ = openEx.exchangeIn(
-            seShare0, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
-        );
+        uint256 out_ =
+            openEx.exchangeIn(seShare0, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         assertTrue(out_ > 0, "minted");
-        assertEq(IERC20(openDetf).balanceOf(address(vault)), reserveDetfBefore_, "D11 no DETF join");
+        assertEq(
+            IERC20(openDetf).balanceOf(address(vault)), reserveDetfBefore_ - out_, "existing reserve DETF pays the swap"
+        );
+        assertEq(IERC20(openDetf).totalSupply(), supplyBefore_, "fallback does not issue DETF");
         assertEq(IERC20(openDetf).balanceOf(_feeTo()), feeToBefore_, "D14 no feeTo mint");
     }
 
     function test_mint_previewEqualsExecution() public {
         _goLiveViaBptBond(openDetf, alice, 1_000e18);
-        assertTrue(openInfo.isMintingAllowed(), "mint open");
+        assertFalse(openInfo.isMintingAllowed(), "primary mint closed; standard route uses reserve swap");
 
         uint256 seShares_ = _fundSeShares0(bob, 200e18);
         uint256 preview_ = openEx.previewExchangeIn(seShare0, seShares_, IERC20(openDetf));
 
         vm.startPrank(bob);
         seShare0.approve(openDetf, seShares_);
-        uint256 out_ = openEx.exchangeIn(
-            seShare0, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
-        );
+        uint256 out_ =
+            openEx.exchangeIn(seShare0, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         assertTrue(out_ > 0, "minted");
@@ -77,8 +80,7 @@ contract MultiVaultWeightedDetf_MintBurn_Test is TestBase_MultiVaultWeightedDetf
         uint256 burnAmt_ = detfBal_ / 2;
         uint256 preview_ = openEx.previewExchangeIn(IERC20(openDetf), burnAmt_, seShare0);
         IERC20(openDetf).approve(openDetf, burnAmt_);
-        uint256 out_ =
-            openEx.exchangeIn(IERC20(openDetf), burnAmt_, seShare0, 0, bob, false, block.timestamp + 1 hours);
+        uint256 out_ = openEx.exchangeIn(IERC20(openDetf), burnAmt_, seShare0, 0, bob, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         assertTrue(out_ > 0, "burned to shares");
@@ -93,9 +95,7 @@ contract MultiVaultWeightedDetf_MintBurn_Test is TestBase_MultiVaultWeightedDetf
         vm.startPrank(bob);
         dai.approve(openDetf, 1e18);
         vm.expectRevert(
-            abi.encodeWithSelector(
-                MultiVaultWeightedDetfRepo.InvalidRoute.selector, address(dai), openDetf
-            )
+            abi.encodeWithSelector(MultiVaultWeightedDetfRepo.InvalidRoute.selector, address(dai), openDetf)
         );
         openEx.exchangeIn(dai, 1e18, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours);
         vm.stopPrank();
@@ -119,9 +119,7 @@ contract MultiVaultWeightedDetf_MintBurn_Test is TestBase_MultiVaultWeightedDetf
         _goLiveViaBptBond(openDetf, alice, 500e18);
         // previewExchangeOut must InvalidRoute (binary search not implemented)
         (bool ok, bytes memory ret) = openDetf.staticcall(
-            abi.encodeWithSignature(
-                "previewExchangeOut(address,address,uint256)", address(seShare0), openDetf, 1e18
-            )
+            abi.encodeWithSignature("previewExchangeOut(address,address,uint256)", address(seShare0), openDetf, 1e18)
         );
         assertFalse(ok, "exact-out preview must revert");
         // Prefer InvalidRoute when bubbled
@@ -130,11 +128,7 @@ contract MultiVaultWeightedDetf_MintBurn_Test is TestBase_MultiVaultWeightedDetf
             assembly {
                 sel := mload(add(ret, 32))
             }
-            assertEq(
-                sel,
-                MultiVaultWeightedDetfRepo.InvalidRoute.selector,
-                "InvalidRoute selector"
-            );
+            assertEq(sel, MultiVaultWeightedDetfRepo.InvalidRoute.selector, "InvalidRoute selector");
         }
     }
 }

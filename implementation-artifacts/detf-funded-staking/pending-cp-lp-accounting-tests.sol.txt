@@ -1,0 +1,33 @@
+    function _fundLpQuoteCaller() private returns (IERC20 lp, uint256 payment) {
+        lp = IERC20(nativeSY.yieldToken());
+        vm.startPrank(nativeUser);
+        payment = nativeSY.redeem(nativeUser, nativeSY.balanceOf(nativeUser) / 5, address(lp), 0, false);
+        lp.transfer(address(this), payment);
+        nativePairA.transfer(address(this), 200 ether);
+        nativePairB.transfer(address(this), 200 ether);
+        nativeSY.transfer(address(this), nativeSY.balanceOf(nativeUser) / 10);
+        vm.stopPrank();
+        nativePairA.approve(address(nativeSY), 10 ether);
+        IStandardExchangeIn(address(nativeSY)).exchangeIn(
+            nativePairA, 10 ether, nativePairB, 0, address(this), false, block.timestamp
+        );
+    }
+
+    function test_lpAccountingSequentialCustodyWithAccruedFees() public {
+        (IERC20 lp,) = _fundLpQuoteCaller();
+        _assertQuoteSequence(address(nativeSY), lp, address(this), 1 ether);
+    }
+
+    function test_lpAccountingExternalDepositsPreserveBothLegsAndDonation() public {
+        (IERC20 lp, uint256 payment) = _fundLpQuoteCaller();
+        _assertExternalDepositQuote(address(nativeSY), nativePairA, lp, 13 ether + 7, nativeUser);
+        _assertExternalDepositQuote(address(nativeSY), nativePairB, lp, 11 ether + 3, nativeUser);
+        lp.transfer(address(nativeSY), payment / 7);
+        _assertExternalDepositQuote(address(nativeSY), lp, lp, payment / 4, nativeUser);
+    }
+
+    function test_lpAccountingExternalConversionsRetainOwnLiquidity() public {
+        (IERC20 lp,) = _fundLpQuoteCaller();
+        _assertExternalExchangeQuote(address(nativeSY), nativePairA, lp, 7 ether + 13);
+        _assertExternalExchangeQuote(address(nativeSY), nativePairB, lp, 5 ether + 17);
+    }

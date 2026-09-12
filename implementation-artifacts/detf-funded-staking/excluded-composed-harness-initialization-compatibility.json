@@ -1,0 +1,11 @@
+{
+  "recorded_at_utc": "2026-09-08T08:31:07.914555+00:00",
+  "status": "APPLIED_AWAITING_FULL_BUILD",
+  "scope": "D60 test fixture compilation maintenance only; existing fixture pattern; no production change or new economics",
+  "files": [
+    "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondingFacet.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeIn.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBurnExchangeIn.t.sol"
+  ]
+}

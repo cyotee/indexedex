@@ -1,0 +1,24 @@
+{
+  "checked_at_utc": "2026-09-10T20:56:11.353249+00:00",
+  "status": "PASS_NATIVE_EXPORT_TOKEN_UNITS",
+  "chain_id": 4663,
+  "block_number": 56118361,
+  "block_hash": "0x108ba210e727f1fa6ecea533508dd0266759a0a6a18be55de934552a74f20175",
+  "mode": "READ_ONLY_LOCAL_FORK_NO_BROADCAST",
+  "tokens": [
+    {
+      "symbol": "WETH",
+      "address": "0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73",
+      "actual_decimals": 18,
+      "export_decimals": 18,
+      "matches": true
+    },
+    {
+      "symbol": "PONS",
+      "address": "0x39dBED3a2bd333467115dE45665cC57F813C4571",
+      "actual_decimals": 18,
+      "export_decimals": 18,
+      "matches": true
+    }
+  ]
+}

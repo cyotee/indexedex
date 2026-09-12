@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {DetfPkgFactoryService} from "contracts/vaults/detf/common/factory/DetfPkgFactoryService.sol";
+
 import {DeploymentBase} from "./DeploymentBase.sol";
 import {RobinhoodCanonicalLib} from "./RobinhoodCanonicalLib.sol";
 
@@ -56,6 +58,7 @@ contract Script_08_DeployFeeDetfPackage is DeploymentBase {
     IFacet private erc5267Facet;
     IFacet private multiAssetBasicVaultFacet;
     IFacet private multiAssetStandardVaultFacet;
+    IFacet private multiStepOwnableFacet;
 
     address private bufferCpHookPkg;
     address private chirDetfPkg;
@@ -94,12 +97,15 @@ contract Script_08_DeployFeeDetfPackage is DeploymentBase {
                         vaultFeeOracleQuery: feeOracle,
                         seFacet: seFacet,
                         depositFacet: depositFacet,
+                        depositSingleFacet: CpFS.deployDepositSingleFacet(create3Factory),
+                        depositPreviewFacet: CpFS.deployDepositPreviewFacet(create3Factory),
                         withdrawFacet: withdrawFacet,
                         erc20Facet: erc20Facet,
                         erc5267Facet: erc5267Facet,
                         erc2612Facet: erc2612Facet,
                         multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
-                        multiAssetStandardVaultFacet: multiAssetStandardVaultFacet
+                        multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
+                        multiStepOwnableFacet: multiStepOwnableFacet
                     })
                 ),
                 abi.encode(type(ICpPkg).name, "AnvilFeeDetf")._hash()
@@ -107,7 +113,7 @@ contract Script_08_DeployFeeDetfPackage is DeploymentBase {
         }
 
         {
-            IFacet productFacet = UniswapV4Detf_Facet_FactoryService.deployUniswapV4DetfFacet(create3Factory);
+            IFacet[5] memory productFacets = UniswapV4Detf_Facet_FactoryService.deployUniswapV4DetfFacets(create3Factory);
             chirDetfPkg = address(
                 UniswapV4Detf_Pkg_FactoryService.deployUniswapV4DetfDFPkg(
                     reg,
@@ -117,11 +123,14 @@ contract Script_08_DeployFeeDetfPackage is DeploymentBase {
                         erc2612Facet: erc2612Facet,
                         multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
                         multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
-                        productFacet: productFacet,
+                        productFacets: productFacets,
                         feeOracle: feeOracle,
                         vaultRegistryDeployment: reg,
                         bondNftVaultPkg: IUniswapV4DetfBondNFTVaultDFPkg(bondNftVaultPkg),
-                        rebasingClaimTokenPkg: IRebasingClaimTokenDFPkg(rebasingClaimTokenPkg)
+                        rebasingClaimTokenPkg: IRebasingClaimTokenDFPkg(rebasingClaimTokenPkg),
+                        syPkg: DetfPkgFactoryService.deployDETFSYComponents(
+                            create3Factory, reg, feeOracle, erc5267Facet, erc2612Facet
+                        )
                     })
                 )
             );
@@ -143,6 +152,7 @@ contract Script_08_DeployFeeDetfPackage is DeploymentBase {
         erc5267Facet = IFacet(_readAddress(CRANE_FOUNDATION_FILE, "erc5267Facet"));
         multiAssetBasicVaultFacet = IFacet(_readAddress(CRANE_FOUNDATION_FILE, "multiAssetBasicVaultFacet"));
         multiAssetStandardVaultFacet = IFacet(_readAddress(CRANE_FOUNDATION_FILE, "multiAssetStandardVaultFacet"));
+        multiStepOwnableFacet = IFacet(_readAddress(CRANE_FOUNDATION_FILE, "multiStepOwnableFacet"));
         bondNftVaultPkg = _readAddress(CHILDREN_FILE, "bondNftVaultPkg");
         rebasingClaimTokenPkg = _readAddress(CHILDREN_FILE, "rebasingClaimTokenPkg");
     }

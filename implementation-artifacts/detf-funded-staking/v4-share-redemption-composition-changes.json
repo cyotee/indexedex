@@ -1,0 +1,69 @@
+{
+  "status": "implemented; validation pending",
+  "files": [
+    {
+      "path": "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol",
+      "before": "456b663ee3538da3a20a9a92c28622ffff19cde3cd82f0dad1b8d65ff70ba482",
+      "after": "96411c8bacbbe04df09064ce7fad2e09468f62424e031830494c11f77ace3d7d"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol",
+      "before": "cfb6d96c5766334c336aecc1dcc9c0c2b7c83a1f3f0b4b01420df223f41b052a",
+      "after": "f1449cbaaf240615b7f31436d27866992fadd5143411795b8670937a6209a15a"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarget.sol",
+      "before": "84aef476eeb06e3210acd3219c62dd74333fcd16fdc90bec7039be12f530d93e",
+      "after": "708e69b7ec396842d1b0e519a664c5890469e98d4d7d687f3db798600a126cfb"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookHooksTarget.sol",
+      "before": "2f8360f67ebafaa2ad9262ab74d328f67e01f03592a25703cb12a61d6cf7e950",
+      "after": "bd8c5c9cdb20c0a33576fe1ba828735bb8438ccb5e47aa9b7c739aa5a97c6413"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget.sol",
+      "before": "0efd74f18617ab4c9b3ef4e60d658dceb25b014d49d0989634f90fa4ae4fb280",
+      "after": "251878b722a35debbc7ba3f6ebcfd8be4c83d688b4983589404d136571e24c98"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookCommon.sol",
+      "before": "151a59310b1262dc2d87672c940dde2b3656989c1b59169c924ab270cc91fb83",
+      "after": "7426c41bc91a21d655d4cdab254e7dc45f2c4dadbefb119c743380d7c82acdb3"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookHooksTarget.sol",
+      "before": "fae8faf2916fb5f4564ca61044f1d007da1a314d91a73ea06973c8c52a8bf376",
+      "after": "04f3e18a7d3090724598d0adbde5717a3cecb2a57cfcf1438bf6f51d52fee9e8"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet.sol",
+      "before": "3d257e959ba0c3c7bb6a84e177502b0be8b80ebf029933bf0b4571784aec2b0e",
+      "after": "bbd140242de5b9ab016e9f91c8985f50203f0b337f7ca39cb2999e84477798e2"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookHooksFacet.sol",
+      "before": "418c0a153b62a40ec0798d172452d2a4e3edffab15fdc4fe1e5e1a06fc112f10",
+      "after": "23b6a979f85904c4a752deabfd132000c1a6830296295f15599e4866dc5a18e9"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet.sol",
+      "before": "69e610fc77486386099838a315aa4e7437ae3129903f571a418ea4a1640d5957",
+      "after": "d65dd26a4361ccb479e4feccc1eb28242cc89501a46e0fe797e8cf6bcaea9df0"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookHooksFacet.sol",
+      "before": "f56c35d03ae78bdbf20f6fb7b8522ddf6730f51a1198ec54b537a789feddceb2",
+      "after": "b87e296addd55cc170e8ef7c42552f1bd2c67df04b850db80b6f8994f0a7b0b1"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol",
+      "before": "5918b3b240e219ad53ca68f446543a03fd0840526ea476b33a55d8a5377c1c45",
+      "after": "2a7ffbde6ea2c6b0be3402ab3537519146abd18b74b4968c1df8602e3788c69e"
+    }
+  ],
+  "open_followups": [
+    "Extra-underlying asset swap transitions",
+    "SE-dependent rate-provider projection where configured"
+  ]
+}

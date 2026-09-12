@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
 import {IReentrancyLock} from "@crane/contracts/access/reentrancy/IReentrancyLock.sol";
@@ -184,6 +186,20 @@ contract Adversarial_Reentrancy_Test is TestBase_UniswapV3StandardExchange_Adver
         hostilePool.mint(address(this), tickLower, tickUpper, liquidity, abi.encode(address(this)));
     }
 
+    function _activateHostileVault(uint256 hostileAmount, uint256 pairAmount, address recipient)
+        internal returns (uint256 shares)
+    {
+        address[] memory tokens = new address[](2);
+        tokens[0] = hostilePool.token0();
+        tokens[1] = hostilePool.token1();
+        uint256[] memory amounts = new uint256[](2);
+        amounts[0] = tokens[0] == address(hostile) ? hostileAmount : pairAmount;
+        amounts[1] = tokens[1] == address(hostile) ? hostileAmount : pairAmount;
+        shares = IStandardExchangeInMulti(address(hostileVault)).exchangeInManyToOne(
+            tokens, amounts, IERC20(address(hostileVault)), 0, recipient, false, block.timestamp + 1
+        );
+    }
+
     function _assertIsLockedProbe(HostileV3Token token_, string memory tag_) internal view {
         assertEq(token_.reentryAttempts(), 1, string.concat(tag_, " reentry attempted"));
         assertFalse(token_.nestedCallSucceeded(), string.concat(tag_, " nested blocked"));
@@ -228,13 +244,12 @@ contract Adversarial_Reentrancy_Test is TestBase_UniswapV3StandardExchange_Adver
         IERC20 tokenHostile = IERC20(address(hostile));
         IERC20 tokenPair = IERC20(h0 == address(hostile) ? h1 : h0);
 
-        // Bootstrap shares via pair token zap so hostile is still paid on zap-out to hostile.
+        hostile.mint(victim, 100 ether);
         pairToken.mint(victim, 100 ether);
         vm.startPrank(victim);
+        tokenHostile.approve(address(hostileVault), type(uint256).max);
         tokenPair.approve(address(hostileVault), type(uint256).max);
-        uint256 shares = hostileVault.exchangeIn(
-            tokenPair, 100 ether, IERC20(address(hostileVault)), 0, victim, false, block.timestamp + 1
-        );
+        uint256 shares = _activateHostileVault(100 ether, 100 ether, victim);
         vm.stopPrank();
         assertGt(shares, 0, "bootstrap shares");
 
@@ -338,12 +353,11 @@ contract Adversarial_Reentrancy_Test is TestBase_UniswapV3StandardExchange_Adver
         hostile.disarm();
     }
 
-    /// @notice C4 - during authenticated mint callback (zap mint), reenter exchangeIn share mint → IsLocked.
+    /// @notice C4 - during authenticated two-token activation mint callback, reenter exchangeIn share mint → IsLocked.
     function test_C4_callback_reentry_blocked() public {
         address h0 = hostilePool.token0();
         address h1 = hostilePool.token1();
         IERC20 tokenIn = IERC20(address(hostile));
-        IERC20 tokenOut = IERC20(address(hostileVault)); // zap-in to shares
 
         // Nested exchangeIn during mint callback payment of hostile to pool.
         bytes memory reentry = abi.encodeCall(
@@ -360,13 +374,10 @@ contract Adversarial_Reentrancy_Test is TestBase_UniswapV3StandardExchange_Adver
         vm.startPrank(attacker);
         tokenIn.approve(address(hostileVault), type(uint256).max);
         IERC20(other).approve(address(hostileVault), type(uint256).max);
-        uint256 shares = hostileVault.exchangeIn(
-            tokenIn, amountIn, tokenOut, 0, attacker, false, block.timestamp + 1
-        );
-        hostileVault.exchangeIn(IERC20(other), amountIn, tokenOut, 0, attacker, false, block.timestamp + 1);
+        uint256 shares = _activateHostileVault(amountIn, 30 ether, attacker);
         vm.stopPrank();
 
-        assertGt(shares, 0, "C4 outer zap completed");
+        assertGt(shares, 0, "C4 outer activation completed");
         assertGe(hostile.reentryAttempts(), 1, "C4 reentry attempted during callback pay");
         assertFalse(hostile.nestedCallSucceeded(), "C4 nested share mint blocked");
         assertEq(hostile.nestedErrorSelector(), IReentrancyLock.IsLocked.selector, "C4 IsLocked");

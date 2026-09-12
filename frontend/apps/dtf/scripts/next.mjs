@@ -3,6 +3,7 @@ import { rm } from 'node:fs/promises'
 import path from 'node:path'
 import { setTimeout as sleep } from 'node:timers/promises'
 import { fileURLToPath } from 'node:url'
+import { createRequire } from 'node:module'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -119,9 +120,10 @@ if (typeof killPort === 'number') {
   }
 }
 
-const nextBin = path.join(frontendDir, 'node_modules', '.bin', process.platform === 'win32' ? 'next.cmd' : 'next')
+const require = createRequire(import.meta.url)
+const nextBin = require.resolve('next/dist/bin/next')
 
-const child = spawn(nextBin, [cmd, ...rest], {
+const child = spawn(process.execPath, [nextBin, cmd, ...rest], {
   stdio: 'inherit',
   env: process.env,
 })

@@ -42,12 +42,16 @@ export async function installInjectedWallet(
     rpcUrl?: string
     chainId?: number
     privateKey?: Hex
+    /** Test-only impersonation on a disposable Anvil fork. */
+    unlockedAddress?: `0x${string}`
   },
 ) {
   const rpcUrl = options?.rpcUrl ?? DEFAULT_E2E_RPC
   const chainId = options?.chainId ?? DEFAULT_E2E_CHAIN_ID
   const privateKey = options?.privateKey ?? ANVIL_ACCOUNT_0.privateKey
-  const account = privateKeyToAccount(privateKey)
+  const account = options?.unlockedAddress
+    ? { address: options.unlockedAddress, type: 'json-rpc' as const }
+    : privateKeyToAccount(privateKey)
 
   const chain = {
     ...sepolia,
@@ -67,20 +71,23 @@ export async function installInjectedWallet(
   })
 
   const bridgeName = `__e2eWalletRequest`
+  let authorized = false
 
   await page.exposeFunction(bridgeName, async (payload: RpcRequest) => {
     const { method, params = [] } = payload
 
     switch (method) {
       case 'eth_requestAccounts':
-      case 'eth_accounts':
+        authorized = true
         return [account.address]
+      case 'eth_accounts':
+        return authorized ? [account.address] : []
       case 'eth_chainId':
         return `0x${chainId.toString(16)}`
       case 'net_version':
         return String(chainId)
       case 'eth_blockNumber':
-        return publicClient.getBlockNumber().then((n) => `0x${n.toString(16)}`)
+        return publicClient.getBlockNumber({ cacheTime: 0 }).then((n) => `0x${n.toString(16)}`)
       case 'eth_getBalance': {
         const [addr, blockTag] = params as [string, string?]
         const bal = await publicClient.getBalance({
@@ -93,13 +100,14 @@ export async function installInjectedWallet(
         const [tx, blockTag] = params as [TransactionRequest, string?]
         const data = await publicClient.call({
           ...tx,
+          account: (tx as TransactionRequest & { from?: `0x${string}` }).from,
           blockTag: (blockTag as any) ?? 'latest',
         } as any)
         return data.data ?? '0x'
       }
       case 'eth_estimateGas': {
         const [tx] = params as [TransactionRequest]
-        const gas = await publicClient.estimateGas(tx as any)
+        const gas = await publicClient.estimateGas({ ...tx, account: (tx as TransactionRequest & { from?: `0x${string}` }).from } as any)
         return `0x${gas.toString(16)}`
       }
       case 'eth_gasPrice': {
@@ -197,7 +205,8 @@ export async function installInjectedWallet(
       const listeners = new Map<string, Set<Listener>>()
 
       const ethereum = {
-        isMetaMask: true,
+        isMetaMask: false,
+        isIndexedexTestWallet: true,
         isCoinbaseWallet: false,
         chainId: chainIdHex,
         networkVersion: String(Number.parseInt(chainIdHex, 16)),
@@ -245,6 +254,19 @@ export async function installInjectedWallet(
         configurable: true,
       })
       ;(window as any).ethereum.providers = [ethereum]
+      const announce = () => window.dispatchEvent(new CustomEvent('eip6963:announceProvider', {
+        detail: {
+          info: {
+            uuid: 'b5edd15a-291c-4c04-a9fd-893c524667ee',
+            name: 'Test Wallet',
+            icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><rect width="32" height="32" fill="%234FD44B"/></svg>',
+            rdns: 'test.indexedex.wallet',
+          },
+          provider: ethereum,
+        },
+      }))
+      window.addEventListener('eip6963:requestProvider', announce)
+      announce()
     },
     {
       bridge: bridgeName,

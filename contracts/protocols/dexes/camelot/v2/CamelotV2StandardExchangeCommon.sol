@@ -55,6 +55,21 @@ contract CamelotV2StandardExchangeCommon is BasicVaultCommon {
         ) = CamelotV2Service._sortReserves(indexSource.pool, knownToken);
     }
 
+    /// @dev Checkpoint actual post-operation LP ownership, in pool token order.
+    /// Forecast protocol-fee dilution is not a second owned reserve balance.
+    function _checkpointVaultReserves() internal {
+        ICamelotPair pool = ICamelotPair(address(ERC4626Repo._reserveAsset()));
+        (uint112 reserve0, uint112 reserve1,,) = pool.getReserves();
+        uint256 supply = pool.totalSupply();
+        uint256 owned = ERC4626Repo._lastTotalAssets();
+        ConstProdReserveVaultRepo._setYieldReserveOfToken(
+            pool.token0(), supply == 0 ? 0 : BetterMath._mulDiv(owned, reserve0, supply)
+        );
+        ConstProdReserveVaultRepo._setYieldReserveOfToken(
+            pool.token1(), supply == 0 ? 0 : BetterMath._mulDiv(owned, reserve1, supply)
+        );
+    }
+
     function _loadStrategyVault(CamelotV2StrategyVault memory vault, IERC20 knownToken) internal view {
         vault.vaultLpReserve = ERC4626Repo._lastTotalAssets();
         vault.vaultTotalShares = ERC20Repo._totalSupply();

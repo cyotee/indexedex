@@ -1,0 +1,27 @@
+{
+  "recorded_at_utc": "2026-09-08T10:06:39.162140+00:00",
+  "status": "INDEPENDENT_INTEGER_SOURCE_COUNTEREXAMPLE_NOT_SUT_EXECUTION",
+  "source": "lib/crane/contracts/external/etherfi/withdrawals/EtherFiRedemptionManager.sol",
+  "functions": [
+    "_redeemWeEth",
+    "_calcRedemption",
+    "previewRedeem"
+  ],
+  "inputs": {
+    "pooled_eth": 13000000000000000000,
+    "total_eeth_shares": 10000000000000000000,
+    "weeth_input": 11,
+    "exit_fee_bps": 100,
+    "treasury_split_bps": 5000
+  },
+  "results": {
+    "eeth_face": 14,
+    "eeth_redemption_shares": 10,
+    "receiver_shares": 9,
+    "execution_eth_out": 11,
+    "shares_to_burn_for_withdrawal": 9,
+    "treasury_fee_shares": 0,
+    "previewRedeem_on_same_redemption_shares": 12
+  },
+  "implication": "The public preview cannot substitute for the exact sequential execution model. This is a tiny raw-unit rounding vector, not live-fork validation or a production change."
+}

@@ -3,7 +3,8 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
-import {IMorpho, MarketParams, Position} from "@crane/contracts/external/morpho/blue/interfaces/IMorpho.sol";
+import {IMorpho, Market, MarketParams, Position} from "@crane/contracts/external/morpho/blue/interfaces/IMorpho.sol";
+import {SharesMathLib} from "@crane/contracts/external/morpho/blue/libraries/SharesMathLib.sol";
 import {MorphoBalancesLib} from
     "@crane/contracts/external/morpho/blue/libraries/periphery/MorphoBalancesLib.sol";
 import {MorphoBlueService} from
@@ -61,14 +62,25 @@ abstract contract MorphoBlueStandardExchangeCommon {
 
     /// @dev Live NAV = idle loanToken + this vault's expected Morpho supply (accrued).
     function _liveNav() internal view returns (uint256) {
-        return _idle() + MorphoBlueService._expectedSupplyAssets(_morpho(), _params(), address(this));
+        return _idle() + _expectedOwnSupplyAssets();
+    }
+
+    function _expectedOwnSupplyAssets() internal view returns (uint256) {
+        IMorpho morpho_ = _morpho();
+        (uint256 assets_, uint256 shares_,,) = morpho_.expectedMarketBalances(_params());
+        uint256 ownShares_ = morpho_.position(MorphoBlueStandardExchangeRepo._marketId(), address(this)).supplyShares;
+        if (morpho_.feeRecipient() == address(this)) {
+            Market memory market_ = morpho_.market(MorphoBlueStandardExchangeRepo._marketId());
+            ownShares_ += shares_ - market_.totalSupplyShares;
+        }
+        return SharesMathLib.toAssetsDown(ownShares_, assets_, shares_);
     }
 
     /// @dev Free Morpho cash usable by this vault: min(our expected supply, market cash).
     function _morphoFreeCash() internal view returns (uint256) {
         IMorpho morpho_ = _morpho();
         MarketParams memory params_ = _params();
-        uint256 expectedSupply_ = MorphoBlueService._expectedSupplyAssets(morpho_, params_, address(this));
+        uint256 expectedSupply_ = _expectedOwnSupplyAssets();
         uint256 totalSupply_ = morpho_.expectedTotalSupplyAssets(params_);
         uint256 totalBorrow_ = morpho_.expectedTotalBorrowAssets(params_);
         uint256 marketCash_ = totalSupply_ > totalBorrow_ ? totalSupply_ - totalBorrow_ : 0;
@@ -223,7 +235,8 @@ abstract contract MorphoBlueStandardExchangeCommon {
         if (needFromMorpho_ > 0) {
             IMorpho morpho_ = _morpho();
             MarketParams memory params_ = _params();
-            uint256 expected_ = MorphoBlueService._expectedSupplyAssets(morpho_, params_, address(this));
+            morpho_.accrueInterest(params_);
+            uint256 expected_ = _expectedOwnSupplyAssets();
             if (needFromMorpho_ >= expected_) {
                 Position memory pos_ = morpho_.position(MorphoBlueStandardExchangeRepo._marketId(), address(this));
                 if (pos_.supplyShares > 0) {

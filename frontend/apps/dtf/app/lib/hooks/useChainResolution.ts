@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
-import { useAccount, useChainId, useConnection, useConnectorClient, useWalletClient } from 'wagmi'
+import { useAccount, useChainId, useConfig, useConnectorClient, useWalletClient } from 'wagmi'
 
 import {
   CHAIN_ID_SEPOLIA,
@@ -40,9 +40,10 @@ export type UseChainResolutionResult = {
 }
 
 export function useChainResolution(fallbackChainId: number = CHAIN_ID_SEPOLIA): UseChainResolutionResult {
+  const config = useConfig()
   const configChainId = useChainId()
   const { address, chainId: accountChainId, isConnected } = useAccount()
-  const connection = useConnection()
+  const connection = useAccount()
   const connectedWalletChainId = useConnectedWalletChainId(isConnected, connection.connector)
   const browserChainId = useBrowserChainId(isConnected)
   const { data: connectorClient } = useConnectorClient()
@@ -92,7 +93,7 @@ export function useChainResolution(fallbackChainId: number = CHAIN_ID_SEPOLIA): 
     address,
     environment,
     selectedChainId,
-    targetChain: resolveAppChain(dataChainId),
+    targetChain: config.chains.find((chain) => chain.id === dataChainId) ?? resolveAppChain(dataChainId),
     chainSources,
   }
 }

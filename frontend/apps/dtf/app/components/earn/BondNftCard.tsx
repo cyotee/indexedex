@@ -5,6 +5,7 @@ import { AddressLink } from '../ui/AddressLink'
 import { Button } from '../ui/Button'
 import { Card } from '../ui/Card'
 import { formatBondAmount } from '../../lib/portfolio/formatBondAmount'
+import { fundedBondClaimAvailability, fundedBondRole } from '../../lib/detf/fundedBondPresentation'
 import type { BondNftMetadata } from '../../lib/portfolio/types'
 
 export type BondNftCardProps = {
@@ -14,14 +15,11 @@ export type BondNftCardProps = {
   chainId: number
   nftVault: `0x${string}`
   claimToken?: `0x${string}`
-  rewardToken?: `0x${string}`
-  unlockTimeLabel: string
-  bonusLabel: string
-  sharesAwarded?: bigint
+  vestingEndLabel: string
+  principal?: bigint
+  claimedPrincipal?: bigint
+  principalDue?: bigint
   pendingRewards?: bigint
-  sharesDecimals?: number
-  rewardDecimals?: number
-  matured: boolean
   actionKeyPending: string | null
   claimKey: string
   redeemKey: string
@@ -32,142 +30,77 @@ export type BondNftCardProps = {
   onRedeem?: () => void
 }
 
-/**
- * Presentational bond NFT card — handlers and discovery stay in Portfolio page.
- * Preserves per-action pending keys and disable rules.
- */
+/** Amounts come from the funded NFT's current position and claim views. */
 export function BondNftCard({
-  kind,
-  symbol,
-  tokenId,
-  chainId,
-  nftVault,
-  claimToken,
-  rewardToken,
-  unlockTimeLabel,
-  bonusLabel,
-  sharesAwarded,
-  pendingRewards,
-  sharesDecimals = 18,
-  rewardDecimals = 18,
-  matured,
-  actionKeyPending,
-  claimKey,
-  redeemKey,
-  isWritePending = false,
-  metadata,
-  onLoadCertificate,
-  onClaim,
-  onRedeem,
+  symbol, tokenId, chainId, nftVault, claimToken, vestingEndLabel,
+  principal, claimedPrincipal, principalDue, pendingRewards,
+  actionKeyPending, claimKey, redeemKey, isWritePending = false,
+  metadata, onLoadCertificate, onClaim, onRedeem,
 }: BondNftCardProps) {
-  const ZERO = BigInt(0)
-  const pending = pendingRewards ?? ZERO
-  const claimDisabled =
-    !pending || pending === ZERO || isWritePending || actionKeyPending === claimKey
-  const redeemDisabled = !matured || isWritePending || actionKeyPending === redeemKey
-
-  const idLabel = tokenId.toString()
-  const titleKind = kind === 'protocol' ? 'Protocol Bond' : 'Bond'
+  const role = fundedBondRole(tokenId)
+  const available = fundedBondClaimAvailability({
+    tokenId, principalDue, rewardsDue: pendingRewards, pending: isWritePending || actionKeyPending != null,
+  })
+  const amounts = [
+    ['Purchased principal', principal, 'DETF'],
+    ['Principal claimed', claimedPrincipal, 'sDETF'],
+    ['Principal available', principalDue, 'sDETF'],
+    ['Staking rewards available', pendingRewards, 'sDETF'],
+  ] as const
 
   return (
     <Card data-testid="bond-nft-card" className="space-y-3">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div className="min-w-0">
           <div className="font-semibold text-[var(--text-primary,#EDEDED)]">
-            {symbol} · {titleKind} #{idLabel}
+            {symbol} · {role ?? 'Bond'} #{tokenId.toString()}
           </div>
           <div className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)]">
-            NFT vault:{' '}
-            <AddressLink chainId={chainId} address={nftVault} />
+            Bond NFT: <AddressLink chainId={chainId} address={nftVault} />
           </div>
-          {claimToken ? (
-            <div className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)]">
-              Claim token:{' '}
-              <AddressLink chainId={chainId} address={claimToken} />
-            </div>
-          ) : null}
-          {rewardToken ? (
-            <div className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)]">
-              Reward token:{' '}
-              <AddressLink chainId={chainId} address={rewardToken} />
-            </div>
-          ) : null}
+          {claimToken ? <div className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)]">
+            Staking token: <AddressLink chainId={chainId} address={claimToken} />
+          </div> : null}
         </div>
-        {onLoadCertificate ? (
-          <Button type="button" variant="secondary" size="sm" onClick={onLoadCertificate}>
-            Load certificate
+        {onLoadCertificate ? <Button type="button" variant="secondary" size="sm" onClick={onLoadCertificate}>
+          Load certificate
+        </Button> : null}
+      </div>
+
+      {role ? <p className="text-sm text-[var(--text-muted,#9aa3b2)]">
+        {role} sDETF receipts arrive directly in the NFT owner’s wallet when rewards are funded.
+        They can be unstaked for DETF, and future funded rewards continue after a full unstake.
+      </p> : <>
+        <p className="text-sm text-[var(--text-muted,#9aa3b2)]">Vesting ends: {vestingEndLabel}</p>
+        <div className="grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
+          {amounts.map(([label, amount, unit]) => <div key={label} className="text-[var(--text-primary,#EDEDED)]">
+            <span className="text-[var(--text-muted,#9aa3b2)]">{label}: </span>
+            <span className="font-mono tabular-nums">{formatBondAmount(amount, 9)} {unit}</span>
+          </div>)}
+        </div>
+        <p className="text-xs text-[var(--text-muted,#9aa3b2)]">
+          Principal unlocks continuously. Staking rewards are claimable during vesting. Both pay sDETF, which unstakes 1:1 for DETF.
+        </p>
+        <div className="flex flex-wrap gap-2">
+          <Button type="button" variant="secondary" size="sm" disabled={!available.rewards || !onClaim}
+            loading={actionKeyPending === claimKey} onClick={onClaim}>
+            {actionKeyPending === claimKey ? 'Claiming…' : 'Claim rewards'}
           </Button>
-        ) : null}
-      </div>
+          <Button type="button" variant="primary" size="sm" disabled={!available.combined || !onRedeem}
+            loading={actionKeyPending === redeemKey} onClick={onRedeem}>
+            {actionKeyPending === redeemKey ? 'Claiming…' : 'Claim available sDETF'}
+          </Button>
+        </div>
+      </>}
 
-      <div className="grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
-        <div className="text-[var(--text-primary,#EDEDED)]">
-          <span className="text-[var(--text-muted,#9aa3b2)]">Unlock time:</span> {unlockTimeLabel}
-        </div>
-        <div className="text-[var(--text-primary,#EDEDED)]">
-          <span className="text-[var(--text-muted,#9aa3b2)]">Bonus:</span> {bonusLabel}
-        </div>
-        <div className="text-[var(--text-primary,#EDEDED)]">
-          <span className="text-[var(--text-muted,#9aa3b2)]">Shares awarded:</span>{' '}
-          <span className="font-mono tabular-nums">{formatBondAmount(sharesAwarded, sharesDecimals)}</span>
-        </div>
-        <div className="text-[var(--text-primary,#EDEDED)]">
-          <span className="text-[var(--text-muted,#9aa3b2)]">Pending rewards:</span>{' '}
-          <span className="font-mono tabular-nums">{formatBondAmount(pendingRewards, rewardDecimals)}</span>
-        </div>
-      </div>
-
-      <div className="flex flex-wrap gap-2">
-          <>
-            <Button
-              type="button"
-              variant="primary"
-              size="sm"
-              disabled={claimDisabled}
-              loading={actionKeyPending === claimKey}
-              onClick={onClaim}
-            >
-              {actionKeyPending === claimKey ? 'Claiming…' : 'Claim rewards'}
-            </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              size="sm"
-              disabled={redeemDisabled}
-              loading={actionKeyPending === redeemKey}
-              onClick={onRedeem}
-              title={matured ? 'Redeem bond' : 'Bond not matured yet'}
-            >
-              {actionKeyPending === redeemKey ? 'Redeeming…' : matured ? 'Redeem' : 'Redeem (locked)'}
-            </Button>
-          </>
-
-      </div>
-
-      {metadata?.image ? (
-        <div>
-          <div className="mb-2 text-xs text-[var(--text-muted,#9aa3b2)]">Certificate image</div>
-          <div className="max-w-full overflow-hidden rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-white">
-            <Image
-              src={metadata.image}
-              alt={metadata.name || `Bond #${idLabel}`}
-              width={800}
-              height={800}
-              unoptimized
-              className="h-auto w-full"
-            />
-          </div>
-        </div>
-      ) : null}
-
-      {metadata?.name ? (
-        <div className="text-sm text-[var(--text-primary,#EDEDED)]">
-          <div className="font-semibold">{metadata.name}</div>
-          {metadata.description ? (
-            <div className="mt-1 text-[var(--text-muted,#9aa3b2)]">{metadata.description}</div>
-          ) : null}
-        </div>
-      ) : null}
+      {metadata?.image ? <div className="max-w-full overflow-hidden rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))]">
+        <Image src={metadata.image} alt={metadata.name || `Bond #${tokenId}`} width={800} height={800}
+          unoptimized className="h-auto w-full" />
+      </div> : null}
+      {metadata?.name ? <div className="text-sm text-[var(--text-primary,#EDEDED)]">
+        <div className="font-semibold">{metadata.name}</div>
+        {metadata.description ? <p className="mt-1 text-[var(--text-muted,#9aa3b2)]">{metadata.description}</p> : null}
+      </div> : null}
     </Card>
   )
 }

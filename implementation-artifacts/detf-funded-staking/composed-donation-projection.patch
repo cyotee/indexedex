@@ -1,0 +1,357 @@
+--- contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol
++++ contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol
+@@ -19,6 +19,11 @@
+     function previewSwapAfterExchange(address tokenIn, address pairToken, address rawTokenOut, uint256 amountIn)
+         external view returns (uint256 amountOut);
+ 
++    /// @notice Quote a custom payment wrapped into newly issued SE shares,
++    /// followed by the family's existing single-asset liquidity join.
++    function previewJoinAfterDeposit(address tokenIn, address pairToken, uint256 amountIn)
++        external view returns (uint256 sharesOut);
++
+     function previewSynthetic(DetfQuoteCtx calldata ctx, address numeraire)
+         external
+         view
+--- contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol
++++ contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol
+@@ -58,6 +58,16 @@
+             (q.state, q.assets, q.heldAssets) = IStandardExchangeExternalQuote(se)
+                 .quoteExternalExchange(q.state, tokenIn, amountIn);
+         }
++        q.heldShares = q.exchange.quoteShareBalance(q.state);
++    }
++
++    function afterExternalDeposit(address se, address pair, address tokenIn, uint256 amountIn, address holder)
++        internal view returns (ExternalQuote memory q)
++    {
++        q.exchange = IStandardExchangeTransitionQuote(se);
++        (q.state,) = q.exchange.quoteState(pair, holder);
++        (q.state, q.assets, q.heldAssets) = IStandardExchangeExternalQuote(se)
++            .quoteExternalDeposit(q.state, tokenIn, amountIn);
+         q.heldShares = q.exchange.quoteShareBalance(q.state);
+     }
+ 
+--- contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewTarget.sol
++++ contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewTarget.sol
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
+ 
++import {UniswapV4SeBufferHookLegLib as LegLib} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
+ import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+@@ -135,6 +136,32 @@
+         saleAmt;
+     }
+ 
++    function previewJoinAfterDeposit(address tokenIn, address pairToken, uint256 amountIn)
++        external view returns (uint256 sharesOut)
++    {
++        Repo.Layout storage l = Repo._layout();
++        if (pairToken != l.pairToken) revert InvalidRoute();
++        LegLib.ExternalQuote memory externalQuote = LegLib.afterExternalDeposit(
++            l.standardExchange, pairToken, tokenIn, amountIn, address(this)
++        );
++        uint256 claim = externalQuote.heldAssets;
++        if (claim == 0 && externalQuote.heldShares > 0) claim = 1;
++        uint256 supply = _supplyAfterExternalDeposit(claim);
++        ZapQuote memory q = _quoteShareZapStateAt(externalQuote.state, externalQuote.assets);
++        (sharesOut,) = _finishDepositQuote(q, supply);
++    }
++
++    function _supplyAfterExternalDeposit(uint256 pairClaim) private view returns (uint256 supply) {
++        Repo.Layout storage l = Repo._layout();
++        supply = ERC20Repo._totalSupply();
++        (bool feeOn,, uint256 ownerShare) = _feeOnAndShare();
++        if (feeOn && l.kLast != 0 && supply > 0) {
++            uint256 k = Math.toWad(IERC20(l.rawToken).balanceOf(address(this)), _decimalsOf(l.rawToken))
++                * Math.toWad(pairClaim, _decimalsOf(l.pairToken));
++            supply += Math.calculateProtocolFee(supply, k, l.kLast, ownerShare);
++        }
++    }
++
+     struct ZapQuote {
+         bytes state;
+         uint256 rawReserve;
+@@ -150,8 +177,14 @@
+     function _quoteDepositSingleState(address tokenIn_, uint256 amountIn_)
+         private view returns (ZapQuote memory q, uint256 minted_, uint256 supply_)
+     {
+-        Repo.Layout storage l = Repo._layout();
+         q = _quoteZapState(tokenIn_, amountIn_);
++        (minted_, supply_) = _finishDepositQuote(q, _supplyAfterProtocolMint());
++    }
++
++    function _finishDepositQuote(ZapQuote memory q, uint256 supply_)
++        private view returns (uint256 minted_, uint256 finalSupply_)
++    {
++        Repo.Layout storage l = Repo._layout();
+         uint256 x_ = _poolOrderX(q.rawReserve, q.pairReserve);
+         uint256 y_ = _poolOrderY(q.rawReserve, q.pairReserve);
+         (uint256 used0_, uint256 used1_) = _clampToReserveRatioFrom(
+@@ -164,7 +197,6 @@
+         );
+         if (claimAfter_ == 0) claimAfter_ = 1;
+         uint256 pairDelta_ = claimAfter_ > q.pairReserve ? claimAfter_ - q.pairReserve : 0;
+-        supply_ = _supplyAfterProtocolMint();
+         minted_ = Math.mintSharesLater(
+             Math.toWad(_poolOrderX(q.rawAdded, pairDelta_), l.decimalsCurrency0),
+             Math.toWad(_poolOrderY(q.rawAdded, pairDelta_), l.decimalsCurrency1),
+@@ -173,7 +205,7 @@
+         q.rawReserve += q.rawAdded;
+         q.pairReserve = claimAfter_;
+         q.pairAdded -= l.currency0 == l.pairToken ? used0_ : used1_;
+-        supply_ += minted_;
++        finalSupply_ = supply_ + minted_;
+     }
+ 
+     function previewClaimAfterJoin(uint256 detfIn, uint256 lpAmount) external view returns (uint256 detfValue) {
+@@ -253,8 +285,14 @@
+     /// The received SE shares are then unwrapped before the existing pair-side zap.
+     function _quoteShareZapState(uint256 shares) private view returns (ZapQuote memory q) {
+         Repo.Layout storage l = Repo._layout();
++        (bytes memory state,) = IStandardExchangeTransitionQuote(l.standardExchange).quoteState(l.pairToken, address(this));
++        return _quoteShareZapStateAt(state, shares);
++    }
++
++    function _quoteShareZapStateAt(bytes memory state, uint256 shares) private view returns (ZapQuote memory q) {
++        Repo.Layout storage l = Repo._layout();
+         IStandardExchangeTransitionQuote quote = IStandardExchangeTransitionQuote(l.standardExchange);
+-        (q.state,) = quote.quoteState(l.pairToken, address(this));
++        q.state = state;
+         (q.state,,,) = quote.quoteTransition(q.state, IStandardExchangeTransitionQuote.Operation.ReceiveShares, shares);
+         uint256 amount;
+         (q.state,, amount, q.pairReserve) = quote.quoteTransition(
+--- contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib.sol
++++ contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib.sol
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
+ 
++import {UniswapV4SeBufferHookLegLib as LegLib} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {IStandardExchangeTransitionQuote as Transition} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+@@ -154,6 +155,20 @@
+         (input.state,, amountIn,) = Transition(tokenIn).quoteTransition(
+             input.state, Transition.Operation.RedeemExactIn, amountIn
+         );
++        _refresh(input);
++        return _depositAtState(legs, index, amountIn);
++    }
++
++    function previewJoinAfterDeposit(address tokenIn, address pairToken, uint256 amountIn)
++        external view returns (uint256)
++    {
++        uint8 index = Repo._indexOf(Repo._layout(), pairToken);
++        Leg[3] memory legs;
++        for (uint8 i; i < 3; ++i) legs[i] = _withdraw(i, 0, 1);
++        Leg memory input = legs[index];
++        LegLib.ExternalQuote memory q = LegLib.afterExternalDeposit(input.se, pairToken, tokenIn, amountIn, address(this));
++        (input.state,,,) = Transition(input.se).quoteTransition(q.state, Transition.Operation.ReceiveShares, q.assets);
++        (input.state,, amountIn,) = Transition(input.se).quoteTransition(input.state, Transition.Operation.RedeemExactIn, q.assets);
+         _refresh(input);
+         return _depositAtState(legs, index, amountIn);
+     }
+--- contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDepositQueryTarget.sol
++++ contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDepositQueryTarget.sol
+@@ -1,11 +1,20 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
+ 
++import {UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib as ExitQuoteLib} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib.sol";
+ import {UniswapV4StandardExchangeOrbitalBufferHookRepo as Repo} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookRepo.sol";
+ import {UniswapV4StandardExchangeOrbitalBufferHookDepositCore} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDepositCore.sol";
+ 
+ /// @notice Read-only liquidity quotes. Shared core retains the accounting and checks.
+ abstract contract UniswapV4StandardExchangeOrbitalBufferHookDepositQueryTarget is UniswapV4StandardExchangeOrbitalBufferHookDepositCore {
++    function previewJoinAfterDeposit(address tokenIn, address pairToken, uint256 amountIn)
++        external view returns (uint256)
++    {
++        if (!_isLive() || amountIn == 0) return 0;
++        _requireZapEligibleOrOwnerMin();
++        return ExitQuoteLib.previewJoinAfterDeposit(tokenIn, pairToken, amountIn);
++    }
++
+     function radius() public view returns (uint256) {
+         return Repo._layout().R;
+     }
+--- contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookJoinQueryTarget.sol
++++ contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookJoinQueryTarget.sol
+@@ -1,10 +1,38 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++import {UniswapV4SeBufferHookLegLib as LegLib} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
++import {UniswapV4StandardExchangeWeightedBufferHookRepo as Repo} from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookRepo.sol";
++import {UniswapV4StandardExchangeWeightedBufferHookMath as Math} from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol";
+ 
+ import {UniswapV4StandardExchangeWeightedBufferHookJoinCore} from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookJoinCore.sol";
+ 
+ /// @notice Read-only liquidity quotes. Shared core retains the accounting and checks.
+ abstract contract UniswapV4StandardExchangeWeightedBufferHookJoinQueryTarget is UniswapV4StandardExchangeWeightedBufferHookJoinCore {
++    function previewJoinAfterDeposit(address tokenIn, address pairToken, uint256 amountIn)
++        external view returns (uint256)
++    {
++        Repo.Layout storage l = Repo._layout();
++        uint8 index = _tokenIndex(pairToken);
++        LegLib.ExternalQuote memory q = LegLib.afterExternalDeposit(l.standardExchanges[index], pairToken, tokenIn, amountIn, address(this));
++        uint256[] memory inv = _invWadAll();
++        inv[index] = Math.scaleTo(q.heldShares, l.invScales[index]);
++        uint256 supply = _projectedJoinSupply(inv);
++        uint256 fee = _feeOracle().dexSwapFeeOfVault(address(this));
++        if (fee >= Math.WAD) revert InvalidFeeWad();
++        return _singleJoinExactInSharesOwnerAware(inv, l.weights, index, Math.scaleTo(q.assets, l.invScales[index]), supply, fee);
++    }
++
++    function _projectedJoinSupply(uint256[] memory inv) private view returns (uint256 supply) {
++        supply = _totalSupply();
++        (bool feeOn,, uint256 ownerShare,) = _feeOnAndShare();
++        Repo.Layout storage l = Repo._layout();
++        if (!feeOn || l.kLast == 0) return supply;
++        bool full = Math.isFullBookReserves(inv);
++        if ((full ? 0 : 1) != l.kLastMode) return supply;
++        uint256 root = full ? Math.computeV(l.weights, inv) : Math.computeInterimK(l.weights, inv);
++        return supply + Math.protocolLpShares(supply, root, l.kLast, ownerShare);
++    }
++
+     function previewJoinProportional(uint256[] calldata amounts)
+         public
+         view
+--- contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookJoinQueryTarget.sol
++++ contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookJoinQueryTarget.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++import {UniswapV4SeBufferHookLegLib as LegLib} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
++import {UniswapV4StandardExchangeCurveQuadStableBufferHookMath as Math} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookMath.sol";
+ 
+ import {NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
+ import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+@@ -13,6 +15,28 @@
+ 
+ /// @notice Read-only liquidity quotes. Shared core retains the accounting and checks.
+ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookJoinQueryTarget is UniswapV4StandardExchangeCurveQuadStableBufferHookJoinCore, NativeStandardYieldTarget {
++    function previewJoinAfterDeposit(address tokenIn, address pairToken, uint256 amountIn)
++        external view returns (uint256)
++    {
++        Repo.Layout storage l = Repo._layout();
++        uint8 index = _tokenIndex(pairToken);
++        LegLib.ExternalQuote memory q = LegLib.afterExternalDeposit(l.standardExchanges[index], pairToken, tokenIn, amountIn, address(this));
++        uint256[4] memory inv = _invWadAll();
++        inv[index] = Math.scaleTo(q.heldShares, l.invScales[index]);
++        uint256 supply = _projectedJoinSupply(inv);
++        uint256 fee = _feeOracle().dexSwapFeeOfVault(address(this));
++        if (fee >= Math.WAD) revert InvalidFeeWad();
++        return Math.singleJoinExactInShares(inv, Math.scaleTo(q.assets, l.invScales[index]), index, _amp(), supply, fee);
++    }
++
++    function _projectedJoinSupply(uint256[4] memory inv) private view returns (uint256 supply) {
++        supply = _totalSupply();
++        (bool feeOn,, uint256 ownerShare,) = _feeOnAndShare();
++        Repo.Layout storage l = Repo._layout();
++        if (!feeOn || l.kLast == 0 || !Math.isFullBookReserves(inv)) return supply;
++        return supply + Math.protocolLpShares(supply, Math.rootK(inv), l.kLast, ownerShare);
++    }
++
+     function previewJoinProportional(uint256[] calldata amounts)
+         public
+         view
+--- contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet.sol
++++ contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet.sol
+@@ -28,7 +28,7 @@
+ 
+     /// @inheritdoc IFacet
+     function facetFuncs() public pure returns (bytes4[] memory funcs) {
+-        funcs = new bytes4[](9);
++        funcs = new bytes4[](10);
+         funcs[0] = IHook.previewDeposit.selector;
+         funcs[1] = IHook.previewDepositSingle.selector;
+         funcs[2] = IHook.previewZapSplit.selector;
+@@ -38,6 +38,7 @@
+         funcs[6] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactIn.selector;
+         funcs[7] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactOut.selector;
+         funcs[8] = IUniswapV4SeBufferHookClaimQuote.previewClaimAfterJoin.selector;
++        funcs[9] = this.previewJoinAfterDeposit.selector;
+     }
+ 
+     /// @inheritdoc IFacet
+--- contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositQueryFacet.sol
++++ contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositQueryFacet.sol
+@@ -27,7 +27,7 @@
+     }
+ 
+     function facetFuncs() public pure returns (bytes4[] memory funcs) {
+-        funcs = new bytes4[](9);
++        funcs = new bytes4[](10);
+         funcs[0] = IUniswapV4StandardExchangeOrbitalBufferHook.previewAddLiquidity.selector;
+         funcs[1] = IUniswapV4StandardExchangeOrbitalBufferHook.previewDepositSingle.selector;
+         funcs[2] = IUniswapV4StandardExchangeOrbitalBufferHook.previewZapSplit.selector;
+@@ -37,6 +37,7 @@
+         funcs[6] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactIn.selector;
+         funcs[7] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactOut.selector;
+         funcs[8] = IUniswapV4StandardExchangeOrbitalBufferHook.radius.selector;
++        funcs[9] = this.previewJoinAfterDeposit.selector;
+     }
+ 
+     function facetMetadata()
+--- contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookJoinQueryFacet.sol
++++ contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookJoinQueryFacet.sol
+@@ -26,7 +26,7 @@
+     }
+ 
+     function facetFuncs() public pure returns (bytes4[] memory funcs) {
+-        funcs = new bytes4[](9);
++        funcs = new bytes4[](10);
+         funcs[0] = IUniswapV4StandardExchangeWeightedBufferHook.previewJoinProportional.selector;
+         funcs[1] = bytes4(keccak256("previewJoinUnbalanced(uint256[])"));
+         funcs[2] = IUniswapV4StandardExchangeWeightedBufferHook.previewJoinSingleAssetExactIn.selector;
+@@ -36,6 +36,7 @@
+         funcs[6] = IUniswapV4StandardExchangeWeightedBufferHook.previewJoinSingleAssetExactInFlexible.selector;
+         funcs[7] = IUniswapV4StandardExchangeWeightedBufferHook.previewDepositSingleFlexible.selector;
+         funcs[8] = IUniswapV4SeBufferHook.previewJoinUnbalanced.selector;
++        funcs[9] = this.previewJoinAfterDeposit.selector;
+     }
+ 
+     function facetMetadata()
+--- contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookJoinQueryFacet.sol
++++ contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookJoinQueryFacet.sol
+@@ -32,7 +32,7 @@
+         interfaces[1] = type(IStandardizedYield).interfaceId;
+     }
+     function facetFuncs() public pure returns (bytes4[] memory funcs) {
+-        funcs = new bytes4[](10);
++        funcs = new bytes4[](11);
+         funcs[0] = IUniswapV4SeBufferHook.previewJoinProportional.selector;
+         funcs[1] = IStandardExchangeMultiAssetLiquidity.previewJoinUnbalanced.selector;
+         funcs[2] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactIn.selector;
+@@ -43,6 +43,7 @@
+         funcs[7] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.previewDepositSingleFlexible.selector;
+         funcs[8] = IUniswapV4SeBufferHook.previewJoinUnbalanced.selector;
+         funcs[9] = IDetfReserveQuote.previewSynthetic.selector;
++        funcs[10] = this.previewJoinAfterDeposit.selector;
+         funcs = NativeStandardYieldSelectors._append(funcs);
+     }
+     function facetMetadata() external pure returns (string memory name_, bytes4[] memory interfaces, bytes4[] memory functions) {
+--- contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol
++++ contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol
+@@ -775,15 +775,10 @@
+         if (address(token) == _hookPairOfVault(v_)) {
+             return _hook().previewJoinSingleAssetExactIn(address(token), amount);
+         }
+-        uint256 shareAmt_ = address(token) == address(v_) ? amount : 0;
+-        if (shareAmt_ == 0) {
+-            try v_.previewExchangeIn(token, amount, IERC20(address(v_))) returns (uint256 sh_) {
+-                shareAmt_ = sh_;
+-            } catch {
+-                return 0;
+-            }
+-        }
+-        return _hook().previewJoinSingleAssetExactIn(address(v_), shareAmt_);
++        if (address(token) == address(v_)) {
++            return _hook().previewJoinSingleAssetExactIn(address(v_), amount);
++        }
++        return IDetfReserveQuote(s.hook).previewJoinAfterDeposit(address(token), _hookPairOfVault(v_), amount);
+     }
+ 
+     function _entryNotifyReserveDonated() internal {

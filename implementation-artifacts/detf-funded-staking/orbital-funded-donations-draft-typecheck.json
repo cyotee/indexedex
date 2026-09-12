@@ -1,0 +1,22 @@
+{
+  "status": "DRAFT_TYPECHECK_ONLY_NOT_RUNTIME_VALIDATION",
+  "seconds": 22.093,
+  "prepared_records": [
+    "orbital-donation-consolidation-prepared.json",
+    "production-se-fixture-followups-prepared.json",
+    "funded-lifecycle-fixture-followups-prepared.json",
+    "funded-policy-fixture-followups-prepared.json",
+    "nested-short-funding-followups-prepared.json"
+  ],
+  "exit_code": 0,
+  "errors": [],
+  "concrete_suites": {
+    "UniswapV4Detf_Weighted": 4,
+    "UniswapV4Detf_Orbital_MorphoBlueSe_ProductLaw": 54,
+    "UniswapV4Detf_Orbital_MorphoMix_ProductLaw": 54
+  },
+  "compiled_methods": 112,
+  "compiler_input_sha256": "dcd674b76a721cba029d1f31d39039d8ae02f6e2d23762e474f280d65cd019af",
+  "validation_passed": true,
+  "canonical_sources_unchanged": true
+}

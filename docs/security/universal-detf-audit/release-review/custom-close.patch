@@ -1,0 +1,110 @@
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol
+@@ -686,7 +686,7 @@
+         Repo._subUserBondedLp(orig_);
+         uint256[] memory withdrawn_ = _exitAndRejoinDetf(lpOut_, tokens_, deadline);
+         if (custom_) {
+-            amountsOut = _payCustomClose(tokens_, minAmountsOut[0], recipient, deadline);
++            amountsOut = _payCustomClose(tokens_, withdrawn_, minAmountsOut[0], recipient, deadline);
+         } else {
+             amountsOut = _payDefaultClose(tokens_, withdrawn_, minAmountsOut, recipient);
+         }
+@@ -733,27 +733,39 @@
+         }
+     }
+ 
+-    function _payCustomClose(address[] memory tokens_, uint256 minOut_, address recipient_, uint256 deadline_)
+-        private
+-        returns (uint256[] memory amountsOut_)
+-    {
++    function _payCustomClose(
++        address[] memory tokens_,
++        uint256[] memory withdrawn_,
++        uint256 minOut_,
++        address recipient_,
++        uint256 deadline_
++    ) private returns (uint256[] memory amountsOut_) {
+         Repo.Storage storage s = Repo._layoutStruct();
+         address closeTok_ = address(s.closeTable.tokens._values()[0]);
++        uint256 proceeds_;
+         for (uint256 k; k < tokens_.length; ++k) {
+             address t_ = tokens_[k];
+-            if (t_ == address(this) || t_ == closeTok_) continue;
+-            uint256 leftover_ = IERC20(t_).balanceOf(address(this));
+-            if (leftover_ == 0) continue;
+-            IERC20(t_).forceApprove(s.hook, leftover_);
+-            _hook().ownerSwapExactIn(t_, closeTok_, leftover_, 0, deadline_);
++            if (t_ == address(this)) continue;
++            uint256 leg_ = withdrawn_[k];
++            if (t_ == closeTok_) {
++                proceeds_ += leg_;
++                continue;
++            }
++            if (leg_ == 0) continue;
++            // Only this bond's withdrawn leg belongs to its closing holder.
++            // Pre-existing inventory remains subject to the R19 dust policy.
++            uint256 before_ = IERC20(closeTok_).balanceOf(address(this));
++            IERC20(t_).forceApprove(s.hook, leg_);
++            _hook().ownerSwapExactIn(t_, closeTok_, leg_, 0, deadline_);
+             IERC20(t_).forceApprove(s.hook, 0);
++            proceeds_ += IERC20(closeTok_).balanceOf(address(this)) - before_;
+         }
+         amountsOut_ = new uint256[](1);
+-        amountsOut_[0] = IERC20(closeTok_).balanceOf(address(this));
+-        if (amountsOut_[0] < minOut_) {
+-            revert IStandardExchangeErrors.MinAmountNotMet(minOut_, amountsOut_[0]);
+-        }
+-        if (amountsOut_[0] > 0) IERC20(closeTok_).safeTransfer(recipient_, amountsOut_[0]);
++        amountsOut_[0] = proceeds_;
++        if (proceeds_ < minOut_) {
++            revert IStandardExchangeErrors.MinAmountNotMet(minOut_, proceeds_);
++        }
++        if (proceeds_ > 0) IERC20(closeTok_).safeTransfer(recipient_, proceeds_);
+     }
+ 
+     function _payDefaultClose(
+--- a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad.t.sol
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad.t.sol
+@@ -10,6 +10,42 @@
+ 
+ /// @notice T8.3 Quad: first bond four legs; Custom close one pair.
+ contract UniswapV4Detf_Quad is TestBase_UniswapV4Detf_Quad {
++    /// @notice Custom settlement must not swap unrelated pair inventory for a closing holder.
++    function test_E6_customClose_doesNotSwapPriorPairInventory() public {
++        IUniswapV4Detf info = IUniswapV4Detf(_deployQuadHookThenDetf(_customClosePair0Args()));
++        vm.startPrank(detfUser);
++        pair0.approve(address(info), type(uint256).max);
++        pair1.approve(address(info), type(uint256).max);
++        (uint256 tokenId,) = info.bond(
++            IERC20(address(pair0)), 80 ether, DEFAULT_MIN_LOCK, detfUser,
++            false, block.timestamp + 1 hours
++        );
++        info.bond(
++            IERC20(address(pair1)), 40 ether, DEFAULT_MIN_LOCK, detfUser,
++            false, block.timestamp + 1 hours
++        );
++        vm.stopPrank();
++        vm.warp(block.timestamp + DEFAULT_MIN_LOCK + 1);
++        uint256 checkpoint = vm.snapshotState();
++        vm.prank(detfUser);
++        uint256[] memory clean = info.closeBondMature(
++            tokenId, new uint256[](1), detfUser, block.timestamp + 1 hours
++        );
++        assertTrue(vm.revertToState(checkpoint));
++
++        address donor = makeAddr("unrelatedQuadInventoryDonor");
++        pair1.mint(donor, 10 ether);
++        vm.prank(donor);
++        pair1.transfer(address(info), 10 ether);
++        uint256 balanceBefore = pair0.balanceOf(detfUser);
++        vm.prank(detfUser);
++        uint256[] memory funded = info.closeBondMature(
++            tokenId, new uint256[](1), detfUser, block.timestamp + 1 hours
++        );
++        assertEq(funded[0], clean[0], "prior pair inventory is not converted into bond proceeds");
++        assertEq(pair0.balanceOf(detfUser) - balanceBefore, clean[0], "only attributed settlement paid");
++    }
++
+     function test_T8_3_firstBond_fourLegs() public {
+         address[] memory toks = IUniswapV4SeBufferHook(reserveHook).tokens();
+         assertEq(toks.length, 4, "quad n=4");

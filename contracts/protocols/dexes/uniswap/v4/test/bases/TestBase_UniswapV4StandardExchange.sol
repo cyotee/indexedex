@@ -122,3 +122,7 @@ contract TestBase_UniswapV4StandardExchange is TestBase_Permit2, TestBase_VaultC
         a.weth = weth;
     }
 }
+
+// FactoryService loads these artifacts by name in focused build graphs.
+import {UniswapV4MultiPoolTwapOracleFacet} from "contracts/oracles/uniswap/v4/twap/UniswapV4MultiPoolTwapOracleFacet.sol";
+import {UniswapV4MultiPoolTwapOracleDFPkg} from "contracts/oracles/uniswap/v4/twap/UniswapV4MultiPoolTwapOracleDFPkg.sol";

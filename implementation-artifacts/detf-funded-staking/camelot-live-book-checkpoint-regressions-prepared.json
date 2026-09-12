@@ -1,0 +1,13 @@
+{
+  "status": "APPLIED_CURRENT_PROXY_VALIDATION_PASSED",
+  "path": "test/foundry/spec/vaults/standard/sy/ConstantProductNativeSY.t.sol",
+  "source_before_sha256": "ef0a7b571fd39ccba367c580e87c00b6ec39c2cd472b48640c2b66bae2135a25",
+  "source_after_sha256": "5d2e008992ddfb937d863dbe81922d417b3fd4ab944e6a049fdbc42c84da5521",
+  "cases": 5,
+  "purpose": "Actual native SY deposit/redemption in both pool asset orders must leave usage-fee checkpoints equal to proportional current pool ownership. Uses existing registry/proxy fixture and live pool balances; no SUT mocks or storage mutation.",
+  "expected_source_finding": "Current Camelot execution writes checkpoints from pre-operation reserves and source ordering. Runtime confirmation is required before any correction.",
+  "ordering": "Apply only after active Forge process exits; preserve current full build/test provenance. Do not claim pass from prepared source.",
+  "additional_case": "LP-to-pair passthrough preview currently calculates amountOut and then falls through to InvalidRoute; check its actual execution and token receipt.",
+  "validation_evidence": "camelot-projection-referral-receipts-run.json",
+  "current_source_sha256": "bfe398e21073a6f4f4048da0ef5748f2e906880e725709aa6978a2c3996b2603"
+}

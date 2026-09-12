@@ -1,506 +1,96 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import type { PublicClient } from 'viem'
-import { usePublicClient, useWriteContract } from 'wagmi'
+import { useMemo } from 'react'
+import { erc20Abi, formatUnits } from 'viem'
+import { useReadContracts } from 'wagmi'
 import { useSearchParams } from 'next/navigation'
-
 import WalletStatusBanner from '../components/WalletStatusBanner'
 import { AddressLink } from '../components/ui/AddressLink'
 import { PageHeader } from '../components/ui/PageHeader'
 import { CHAIN_ID_ROBINHOOD, getAddressArtifacts } from '@indexedex/protocol/addressArtifacts'
-import { isDebugLabEnabled } from '../lib/lab'
 import useChainResolution from '../lib/hooks/useChainResolution'
-import useRouterBytecode from '../lib/hooks/useRouterBytecode'
-import { useStakingContractReads } from '../lib/hooks/useStakingContractReads'
-import { protocolDetfAbi } from '@indexedex/protocol/protocolDetfAbi'
-import { type Address, type TokenListEntry } from '@indexedex/protocol/tokenlists'
-import { loadFeaturedFeeDetfs, loadProtocolDetfsForChain } from '../lib/earn/loadEarnProducts'
+import { type Address } from '@indexedex/protocol/tokenlists'
 import { displayTokenSymbol } from '../lib/customerSymbols'
-import { isArchivedDetf } from '../insights/lib/archivedDetfs'
-import BondSection from './sections/BondSection'
-import BurnChirSection from './sections/BurnChirSection'
-import DetfSelectorSection from './sections/DetfSelectorSection'
-import MintChirSection from './sections/MintChirSection'
-import PriceInfoSection from './sections/PriceInfoSection'
-import SellNftSection from './sections/SellNftSection'
-import StakingDebugPanel from './sections/StakingDebugPanel'
+import { DetfActions } from '../insights/components/DetfActions'
+import { insightsViewAbi, standardizedYieldDiscoveryAbi } from '../insights/lib/insightsAbi'
+import { asAddr, type ActionToken } from '../insights/lib/actionTokens'
+import SyntheticPrices from './sections/SyntheticPrices'
+import MigrationClaimPanel from './sections/MigrationClaimPanel'
+
+const workspaceReadAbi = [...erc20Abi, ...insightsViewAbi, ...standardizedYieldDiscoveryAbi] as const
 
 export type StakingPageClientProps = {
-  /** When true: compact chrome, no StakingDebugPanel (Earn embed). */
   embedMode?: boolean
-  /** Pin DETF address (Earn embed / deep link). */
   fixedDetf?: `0x${string}`
 }
 
-const erc20ApproveAbi = [
-  {
-    type: 'function',
-    name: 'approve',
-    stateMutability: 'nonpayable',
-    inputs: [
-      { name: 'spender', type: 'address' },
-      { name: 'amount', type: 'uint256' },
-    ],
-    outputs: [{ name: '', type: 'bool' }],
-  },
-] as const
-
-export default function StakingPageClient({
-  embedMode = false,
-  fixedDetf,
-}: StakingPageClientProps = {}) {
-  // DETF workspace (mint / bond / sell). DTF launch default chain is Robinhood (4663).
+/** The full workspace and Earn embed use the same standard routes and funded bond actions as Insights. */
+export default function StakingPageClient({ embedMode = false, fixedDetf }: StakingPageClientProps = {}) {
   const chain = useChainResolution(CHAIN_ID_ROBINHOOD)
-  const publicClient = usePublicClient({ chainId: chain.dataChainId }) as PublicClient | undefined
-  const { writeContractAsync, isPending: isWritePending } = useWriteContract()
   const searchParams = useSearchParams()
-  const queryDetf = searchParams?.get('detf') ?? null
+  const platform = useMemo(() => getAddressArtifacts(chain.dataChainId, chain.environment).platform as { protocolDetf?: string; tokenStaking?: string }, [chain.dataChainId, chain.environment])
+  // The staking page is dedicated to the configured protocol DETF. Earn embeds
+  // supply their own fixed product; URL parameters cannot change this page's DETF.
+  const detfAddress = asAddr(embedMode ? fixedDetf : platform.protocolDetf) ?? undefined
 
-  const artifacts = useMemo(() => getAddressArtifacts(chain.dataChainId, chain.environment), [chain.dataChainId, chain.environment])
-  const platform = artifacts.platform as {
-    protocolDetf?: string
-    pairToken?: string
-    rebasingClaimToken?: string
-    weth?: string
-    weth9?: string
-    protocolNftVault?: string
-    reservePool?: string
-    balancerV3StandardExchangeRouter?: `0x${string}`
-    permit2?: `0x${string}`
-  }
-
-  // Wave 2: prefer featured-fee-detfs list; merge protocol DETFs for lab discovery.
-  const detfs = useMemo((): TokenListEntry[] => {
-    const fee = loadFeaturedFeeDetfs(chain.dataChainId, chain.environment, 50)
-    const protocol = loadProtocolDetfsForChain(chain.dataChainId, chain.environment)
-    if (fee.length === 0) return protocol
-    const seen = new Set(fee.map((t) => t.address.toLowerCase()))
-    const rest = protocol.filter((t) => !seen.has(t.address.toLowerCase()))
-    return [...fee, ...rest]
-  }, [chain.dataChainId, chain.environment])
-  const feeDetfs = useMemo(
-    () => loadFeaturedFeeDetfs(chain.dataChainId, chain.environment, 50),
-    [chain.dataChainId, chain.environment],
-  )
-  const detfOptions = useMemo(
-    () =>
-      detfs.map((token) => ({
-        value: token.address,
-        label: token.display || token.name || token.symbol,
-      })),
-    [detfs],
-  )
-  const preferredDetf = useMemo((): Address | '' => {
-    const pinned =
-      fixedDetf ||
-      (queryDetf && /^0x[0-9a-fA-F]{40}$/.test(queryDetf) ? (queryDetf as Address) : '')
-    if (pinned && detfs.some((d) => d.address.toLowerCase() === pinned.toLowerCase())) {
-      return pinned as Address
-    }
-    if (pinned) return pinned as Address
-    // Prefer first featured fee-detf when list is non-empty.
-    if (feeDetfs[0]?.address) return feeDetfs[0].address as Address
-    const platformDetf = platform.protocolDetf
-    if (platformDetf && detfs.some((d) => d.address.toLowerCase() === platformDetf.toLowerCase())) {
-      return platformDetf as Address
-    }
-    return detfs[0]?.address ?? ''
-  }, [detfs, feeDetfs, platform.protocolDetf, fixedDetf, queryDetf])
-  const [selectedDetf, setSelectedDetf] = useState<Address | ''>(() => preferredDetf)
-  const [status, setStatus] = useState('')
-
-  useEffect(() => {
-    setSelectedDetf(preferredDetf)
-    setStatus('')
-  }, [chain.dataChainId, chain.environment, preferredDetf])
-
-  useEffect(() => {
-    if (detfs.length === 0) {
-      setSelectedDetf('')
-      return
-    }
-
-    setSelectedDetf((current) => {
-      if (current && detfs.some((detf) => detf.address.toLowerCase() === current.toLowerCase())) {
-        return current
-      }
-
-      return preferredDetf
-    })
-  }, [detfs, preferredDetf])
-
-  const detfAddress = selectedDetf ? (selectedDetf as `0x${string}`) : undefined
-  const archived = isArchivedDetf(detfAddress)
-  const stakingReads = useStakingContractReads({
-    detfAddress,
-    dataChainId: chain.dataChainId,
-    platform,
-    address: chain.address,
+  const details = useReadContracts({
+    contracts: detfAddress
+      ? (['symbol', 'rebasingClaimToken', 'bondNftVault', 'protocolNFTVault', 'isReserveLive', 'acceptedBondTokens',
+        'mintThreshold', 'burnThreshold', 'rawSY', 'stakingSY'] as const)
+        .map((functionName) => ({ address: detfAddress, abi: workspaceReadAbi, functionName, chainId: chain.dataChainId }))
+      : [],
+    allowFailure: true,
+    query: { enabled: !!detfAddress, refetchInterval: 15_000 },
   })
+  const value = (index: number): unknown => details.data?.[index]?.result
+  const detfSymbol = displayTokenSymbol(typeof value(0) === 'string' ? value(0) as string : undefined) || (embedMode ? 'DETF' : 'DTF-DETF')
+  const stakingToken = asAddr(value(1)) ?? undefined
+  const nftVault = asAddr(value(2)) ?? asAddr(value(3)) ?? undefined
+  const reserveLive = typeof value(4) === 'boolean' ? value(4) as boolean : undefined
+  const bondTokens = useMemo(() => {
+    const raw = details.data?.[5]?.result
+    return Array.isArray(raw) ? raw.map(asAddr).filter((token): token is Address => token != null) : []
+  }, [details.data])
+  const symbols = useReadContracts({
+    contracts: bondTokens.map((token) => ({ address: token, abi: erc20Abi, functionName: 'symbol' as const, chainId: chain.dataChainId })),
+    allowFailure: true,
+    query: { enabled: bondTokens.length > 0 },
+  })
+  const paymentTokens: ActionToken[] = bondTokens.map((address, index) => ({
+    address,
+    symbol: typeof symbols.data?.[index]?.result === 'string'
+      ? displayTokenSymbol(symbols.data[index]!.result as string) : `${address.slice(0, 6)}…${address.slice(-4)}`,
+  }))
+  const price = (index: number) => typeof value(index) === 'bigint' ? formatUnits(value(index) as bigint, 18) : '—'
+  const shellClass = embedMode ? 'text-[var(--text-primary,#EDEDED)]' : 'mx-auto max-w-5xl px-4 text-[var(--text-primary,#EDEDED)] sm:px-6 lg:px-8'
 
-  const routerCandidate = useMemo(() => platform.balancerV3StandardExchangeRouter, [platform.balancerV3StandardExchangeRouter])
-  const { routerAddress, routerHasBytecode, routerBytecodeError } = useRouterBytecode({ publicClient, routerCandidate })
-  const permit2Address = platform.permit2
+  return <div className={shellClass} data-testid={embedMode ? 'detf-workspace-embed-body' : 'detf-workspace-full'}>
+    {!embedMode ? <>
+      <PageHeader title="Protocol DETF" subtitle="Buy DETF, stake it, or purchase a bond that stays staked while its principal vests. Claim principal and staking rewards as sDETF, then unstake it 1:1 for DETF." />
+      <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]">Looking for strategy vaults? <a href="/earn" className="text-[var(--accent,#4FD44B)] hover:underline">Browse Earn</a>.</p>
+    </> : null}
+    <WalletStatusBanner className={embedMode ? 'mt-0' : 'mt-4'} isConnected={chain.isConnected}
+      isUnsupportedChain={chain.isUnsupportedChain} walletMatchesDataChain={chain.walletMatchesDataChain}
+      attachedWalletChainId={chain.attachedWalletChainId} dataChainId={chain.dataChainId} environment={chain.environment} />
+    {!embedMode && asAddr(platform.tokenStaking) && asAddr(platform.protocolDetf) ?
+      <MigrationClaimPanel chainId={chain.dataChainId} staking={asAddr(platform.tokenStaking)!} detf={asAddr(platform.protocolDetf)!} /> : null}
+    {!detfAddress ? <p className="mt-6 text-sm text-[var(--text-muted,#9aa3b2)]">No Protocol DETF is configured on this network.</p> : <div className="mt-5 space-y-4">
 
-  const waitForReceiptAndRefresh = useCallback(async (hash: `0x${string}`, label: string) => {
-    if (!publicClient) {
-      setStatus(`${label} submitted: ${hash}`)
-      return
-    }
-
-    setStatus(`${label} submitted: ${hash}. Waiting for confirmation…`)
-    await publicClient.waitForTransactionReceipt({ hash })
-    await stakingReads.refreshDetfState()
-    setStatus(`${label} confirmed: ${hash}`)
-  }, [publicClient, stakingReads])
-
-  const approveToken = useCallback(async (token: `0x${string}`, spender: `0x${string}`, amount: bigint) => {
-    setStatus('Submitting approval…')
-    const hash = await writeContractAsync({
-      chain: chain.targetChain,
-      account: chain.address,
-      address: token,
-      abi: erc20ApproveAbi,
-      functionName: 'approve',
-      args: [spender, amount],
-    })
-    await waitForReceiptAndRefresh(hash as `0x${string}`, 'Approval')
-  }, [writeContractAsync, chain.targetChain, chain.address, waitForReceiptAndRefresh])
-
-  const handleBondWithWeth = useCallback(async (amount: bigint, lockSeconds: bigint, _wethAsEth?: boolean) => {
-    // DETF bond surface is ERC20-only (rateAsset); ignore native ETH flag.
-    if (!detfAddress || !chain.address || !stakingReads.effectiveWethToken) return
-    if (isArchivedDetf(detfAddress)) {
-      setStatus('Bond is off on this archived DETF.')
-      return
-    }
-    if (!chain.walletMatchesDataChain) {
-      setStatus(`Switch wallet network to chainId ${chain.dataChainId} to bond.`)
-      return
-    }
-
-    await approveToken(stakingReads.effectiveWethToken, detfAddress, amount)
-    setStatus('Bonding with rate asset…')
-    const deadline = BigInt(Math.floor(Date.now() / 1000) + 5 * 60)
-    try {
-      const hash = await writeContractAsync({
-        chain: chain.targetChain,
-        account: chain.address,
-        address: detfAddress,
-        abi: protocolDetfAbi,
-        functionName: 'bond',
-        // pretransferred=false: DETF pulls via transferFrom after ERC-20 approve
-        args: [stakingReads.effectiveWethToken, amount, lockSeconds, chain.address, false, deadline],
-      })
-      await waitForReceiptAndRefresh(hash as `0x${string}`, 'Bond rate asset')
-    } catch (e) {
-      setStatus(`Bond rate asset failed: ${e instanceof Error ? e.message : String(e)}`)
-    }
-  }, [detfAddress, chain, stakingReads.effectiveWethToken, approveToken, writeContractAsync, waitForReceiptAndRefresh])
-
-  const handleBondWithRich = useCallback(async (amount: bigint, lockSeconds: bigint) => {
-    if (!detfAddress || !chain.address || !stakingReads.effectiveRichToken) return
-    if (isArchivedDetf(detfAddress)) {
-      setStatus('Bond is off on this archived DETF.')
-      return
-    }
-    if (!chain.walletMatchesDataChain) {
-      setStatus(`Switch wallet network to chainId ${chain.dataChainId} to bond.`)
-      return
-    }
-
-    await approveToken(stakingReads.effectiveRichToken, detfAddress, amount)
-    setStatus('Bonding with pair token…')
-    const deadline = BigInt(Math.floor(Date.now() / 1000) + 5 * 60)
-    try {
-      const hash = await writeContractAsync({
-        chain: chain.targetChain,
-        account: chain.address,
-        address: detfAddress,
-        abi: protocolDetfAbi,
-        functionName: 'bond',
-        args: [stakingReads.effectiveRichToken, amount, lockSeconds, chain.address, false, deadline],
-      })
-      await waitForReceiptAndRefresh(hash as `0x${string}`, 'Bond pair token')
-    } catch (e) {
-      setStatus(`Bond pair token failed: ${e instanceof Error ? e.message : String(e)}`)
-    }
-  }, [detfAddress, chain, stakingReads.effectiveRichToken, approveToken, writeContractAsync, waitForReceiptAndRefresh])
-
-  const handleSellNft = useCallback(async (tokenId: bigint) => {
-    if (!detfAddress || !chain.address) return
-    if (!chain.walletMatchesDataChain) {
-      setStatus(`Switch wallet network to chainId ${chain.dataChainId} to sell.`)
-      return
-    }
-
-    setStatus('Selling NFT…')
-    const hash = await writeContractAsync({
-      chain: chain.targetChain,
-      account: chain.address,
-      address: detfAddress,
-      abi: protocolDetfAbi,
-      functionName: 'sellNFT',
-      args: [tokenId, chain.address],
-    })
-    await waitForReceiptAndRefresh(hash as `0x${string}`, 'Sell NFT')
-  }, [detfAddress, chain, writeContractAsync, waitForReceiptAndRefresh])
-
-  const shellClass = embedMode
-    ? 'text-[var(--text-primary,#EDEDED)]'
-    : 'mx-auto max-w-5xl px-4 text-[var(--text-primary,#EDEDED)] sm:px-6 lg:px-8'
-
-  const detfSymbol = useMemo(() => {
-    const match = detfs.find(
-      (d) => detfAddress && d.address.toLowerCase() === detfAddress.toLowerCase(),
-    )
-    return displayTokenSymbol(match?.symbol || match?.display) || match?.name || 'DTF-DETF'
-  }, [detfs, detfAddress])
-
-  const addrOrDash = (value: string | undefined) =>
-    value && /^0x[0-9a-fA-F]{40}$/.test(value) ? (value as `0x${string}`) : null
-
-  return (
-    <div className={shellClass} data-testid={embedMode ? 'detf-workspace-embed-body' : 'detf-workspace-full'}>
-      {!embedMode ? (
-        <>
-          <div className="mb-4 rounded-lg border border-[var(--border-accent,rgba(79,212,75,0.35))] bg-[var(--accent-muted,#1A3721)] px-3 py-2 text-sm">
-            Looking for strategy vaults?{' '}
-            <a href="/earn" className="text-[var(--accent,#4FD44B)] hover:underline">
-              Browse Earn
-            </a>
-            . Protocol DETFs use this page for mint, bond, and sell — not the Earn catalog grid.
-          </div>
-          <PageHeader
-            title="Protocol DETF"
-            subtitle="Earn a share of protocol fees through Protocol DETF — a live Decentralized ETF (DETF) instance. Mint or exchange against the reserve, bond for oracle terms, sell to the protocol when ready, and redeem via the claim path. Lock terms come from the fee oracle. Fees may apply; amounts are not guarantees."
-          />
-          <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]">
-            Lifecycle: mint → bond NFT → sell to protocol → claim/redeem. Select an instance below when more
-            than one Protocol DETF is configured.
-          </p>
-        </>
-      ) : null}
-
-      <WalletStatusBanner
-        className={embedMode ? 'mt-0' : 'mt-4'}
-        isConnected={chain.isConnected}
-        isUnsupportedChain={chain.isUnsupportedChain}
-        walletMatchesDataChain={chain.walletMatchesDataChain}
-        attachedWalletChainId={chain.attachedWalletChainId}
-        dataChainId={chain.dataChainId}
-        environment={chain.environment}
-      />
-
-      {detfOptions.length === 0 && !fixedDetf ? (
-        <div className="mt-6 rounded-xl border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-1,#14171f)] p-4">
-          <p className="text-sm text-[var(--text-primary,#EDEDED)]">
-            No Protocol DETF configured on this network.
-          </p>
-          <p className="mt-3 text-xs text-[var(--text-muted,#9aa3b2)]">
-            Check that <code className="text-[var(--text-primary,#EDEDED)]">featured-fee-detfs</code> or{' '}
-            <code className="text-[var(--text-primary,#EDEDED)]">protocol-detfs</code> (or platform{' '}
-            <code className="text-[var(--text-primary,#EDEDED)]">protocolDetf</code>) is present under{' '}
-            <code className="text-[var(--text-primary,#EDEDED)]">app/addresses/</code> for the active chain, and
-            that the app network / deployment environment matches those artifacts. If lists are empty, use
-            committed fixtures or an operator-provided stack — do not deploy from this UI.
-          </p>
+      <div className="rounded-xl border border-[var(--border-subtle,rgba(255,255,255,0.08))] p-4 text-sm">
+        <SyntheticPrices key={`${chain.dataChainId}:${detfAddress}`} detf={detfAddress} chainId={chain.dataChainId} />
+        <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
+          <span>Mint threshold: {price(6)}</span><span>Burn threshold: {price(7)}</span>
         </div>
-      ) : (
-        <div className={embedMode ? 'mt-3 space-y-4' : 'mt-6 space-y-4'}>
-          {!embedMode && !fixedDetf ? (
-            <DetfSelectorSection
-              detfOptions={detfOptions}
-              selectedDetf={selectedDetf}
-              onSelect={(value) => setSelectedDetf(value as Address)}
-              isConnected={chain.isConnected}
-              address={chain.address}
-              attachedWalletChainId={chain.attachedWalletChainId}
-              dataChainId={chain.dataChainId}
-            />
-          ) : null}
-
-          <div className="rounded-xl border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-1,#14171f)] p-4">
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <div>
-                <div className="text-xs text-[var(--text-muted,#9aa3b2)]">DETF (share / proxy)</div>
-                <div className="break-all text-sm text-[var(--text-primary,#EDEDED)]">
-                  {addrOrDash(detfAddress) ? (
-                    <AddressLink chainId={chain.dataChainId} address={detfAddress!} />
-                  ) : (
-                    '—'
-                  )}
-                </div>
-              </div>
-              <div>
-                <div className="text-xs text-[var(--text-muted,#9aa3b2)]">Pair token</div>
-                <div className="break-all text-sm text-[var(--text-primary,#EDEDED)]">
-                  {addrOrDash(stakingReads.pairTokenAddress) ? (
-                    <AddressLink
-                      chainId={chain.dataChainId}
-                      address={stakingReads.pairTokenAddress}
-                    />
-                  ) : (
-                    stakingReads.pairTokenAddress || '—'
-                  )}
-                </div>
-              </div>
-              <div>
-                <div className="text-xs text-[var(--text-muted,#9aa3b2)]">Claim token</div>
-                <div className="break-all text-sm text-[var(--text-primary,#EDEDED)]">
-                  {addrOrDash(stakingReads.rebasingClaimTokenAddress) ? (
-                    <AddressLink
-                      chainId={chain.dataChainId}
-                      address={stakingReads.rebasingClaimTokenAddress}
-                    />
-                  ) : (
-                    stakingReads.rebasingClaimTokenAddress || '—'
-                  )}
-                </div>
-              </div>
-              <div>
-                <div className="text-xs text-[var(--text-muted,#9aa3b2)]">Bond NFT vault</div>
-                <div className="break-all text-sm text-[var(--text-primary,#EDEDED)]">
-                  {addrOrDash(stakingReads.nftVaultAddress) ? (
-                    <AddressLink
-                      chainId={chain.dataChainId}
-                      address={stakingReads.nftVaultAddress}
-                    />
-                  ) : (
-                    stakingReads.nftVaultAddress || '—'
-                  )}
-                </div>
-              </div>
-              <div>
-                <div className="text-xs text-[var(--text-muted,#9aa3b2)]">Reserve pool</div>
-                <div className="break-all text-sm text-[var(--text-primary,#EDEDED)]">
-                  {addrOrDash(stakingReads.reservePoolAddress) ? (
-                    <AddressLink
-                      chainId={chain.dataChainId}
-                      address={stakingReads.reservePoolAddress}
-                    />
-                  ) : (
-                    stakingReads.reservePoolAddress || '—'
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <PriceInfoSection
-            syntheticPriceStatus={stakingReads.syntheticPriceStatus}
-            mintThresholdStatus={stakingReads.mintThresholdStatus}
-            burnThresholdStatus={stakingReads.burnThresholdStatus}
-            syntheticPriceError={stakingReads.syntheticPriceError as Error | undefined}
-            mintingAllowedNow={stakingReads.mintingAllowedNow}
-            burningAllowedNow={stakingReads.burningAllowedNow}
-            availabilityMismatch={stakingReads.availabilityMismatch}
-          />
-
-          {archived ? (
-            <p className="text-sm text-[var(--text-muted,#9aa3b2)]" data-testid="staking-archived-note">
-              This DETF is archived. Mint and bond are off. Burn and sell still work when the
-              contract allows them.
-            </p>
-          ) : null}
-
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <MintChirSection
-              detfAddress={detfAddress}
-              detfSymbol={detfSymbol}
-              rateAssetSymbol="WETH"
-              effectiveWethToken={stakingReads.effectiveWethToken}
-              dataChainId={chain.dataChainId}
-              isConnected={chain.isConnected}
-              walletMatchesDataChain={chain.walletMatchesDataChain}
-              mintingAllowedNow={archived ? false : stakingReads.mintingAllowedNow}
-              routerAddress={routerAddress}
-              routerHasBytecode={routerHasBytecode}
-              permit2Address={permit2Address}
-              address={chain.address}
-              publicClient={publicClient}
-              targetChain={chain.targetChain}
-              writeContractAsync={writeContractAsync}
-              setStatus={setStatus}
-              waitForReceiptAndRefresh={waitForReceiptAndRefresh}
-              wethDecimals={stakingReads.wethDec}
-            />
-
-            <BurnChirSection
-              detfAddress={detfAddress}
-              detfSymbol={detfSymbol}
-              rateAssetSymbol="WETH"
-              effectiveWethToken={stakingReads.effectiveWethToken}
-              dataChainId={chain.dataChainId}
-              isConnected={chain.isConnected}
-              walletMatchesDataChain={chain.walletMatchesDataChain}
-              burningAllowedNow={stakingReads.burningAllowedNow}
-              routerAddress={routerAddress}
-              routerHasBytecode={routerHasBytecode}
-              permit2Address={permit2Address}
-              address={chain.address}
-              publicClient={publicClient}
-              targetChain={chain.targetChain}
-              writeContractAsync={writeContractAsync}
-              setStatus={setStatus}
-              waitForReceiptAndRefresh={waitForReceiptAndRefresh}
-              chirBalance={stakingReads.chirBalance as bigint | undefined}
-              wethDecimals={stakingReads.wethDec}
-            />
-          </div>
-
-          <BondSection
-            isConnected={chain.isConnected}
-            walletMatchesDataChain={chain.walletMatchesDataChain}
-            isWritePending={isWritePending}
-            wethDecimals={stakingReads.wethDec}
-            richDecimals={stakingReads.richDec}
-            wethBalance={stakingReads.wethBalance as bigint | undefined}
-            richBalance={stakingReads.richBalance as bigint | undefined}
-            rateAssetSymbol="WETH"
-            pairTokenSymbol="pair token"
-            onBondWithWeth={handleBondWithWeth}
-            onBondWithRich={handleBondWithRich}
-            disabled={archived}
-            disabledReason="Bond is off on this archived DETF."
-          />
-
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <SellNftSection
-              isConnected={chain.isConnected}
-              walletMatchesDataChain={chain.walletMatchesDataChain}
-              isWritePending={isWritePending}
-              onSell={handleSellNft}
-            />
-            <div className="rounded-xl border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-1,#14171f)] p-4">
-              <div className="text-sm font-medium text-[var(--text-primary,#EDEDED)]">Status</div>
-              <div className="mt-2 break-all text-sm text-[var(--text-muted,#9aa3b2)]">
-                {status || '—'}
-              </div>
-            </div>
-          </div>
-
-          {/* Never mount debug on Earn embed; full page only when lab debug enabled */}
-          {!embedMode && isDebugLabEnabled() ? (
-            <StakingDebugPanel
-              chainSources={chain.chainSources}
-              attachedWalletChainId={chain.attachedWalletChainId}
-              resolvedWalletChainId={chain.resolvedWalletChainId}
-              dataChainId={chain.dataChainId}
-              routerAddress={routerAddress}
-              routerHasBytecode={routerHasBytecode}
-              routerBytecodeError={routerBytecodeError}
-              detfAddress={detfAddress}
-              pairTokenAddress={stakingReads.pairTokenAddress}
-              rebasingClaimTokenAddress={stakingReads.rebasingClaimTokenAddress}
-              reservePoolAddress={stakingReads.reservePoolAddress}
-              nftVaultAddress={stakingReads.nftVaultAddress}
-              status={status}
-            />
-          ) : null}
-        </div>
-      )}
-    </div>
-  )
+        <p className="mt-2 text-[var(--text-muted,#9aa3b2)]">Outside the primary mint or burn threshold, exchanges execute through the reserve pool.</p>
+        <details className="mt-3">
+          <summary className="cursor-pointer">Contract addresses</summary>
+          {([['DETF', detfAddress], ['sDETF', stakingToken], ['Bond NFT', nftVault], ['Raw DETF SY', asAddr(value(8))], ['Staking SY', asAddr(value(9))]] as const)
+            .map(([label, address]) => address ? <div key={label} className="mt-2">{label}: <AddressLink chainId={chain.dataChainId} address={address} /></div> : null)}
+        </details>
+      </div>
+      <DetfActions key={`${chain.dataChainId}:${detfAddress}`} detf={detfAddress} detfSymbol={detfSymbol}
+        pairTokens={paymentTokens} chainId={chain.dataChainId} claimToken={stakingToken} claimSymbol="sDETF"
+        reserveLive={reserveLive} nftVault={nftVault} initialTab={searchParams?.get('tab') ?? undefined} />
+    </div>}
+  </div>
 }

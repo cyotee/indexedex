@@ -1,0 +1,417 @@
+{
+  "updated_at_utc": "2026-09-09T01:39:45.041799+00:00",
+  "workspace": "main repository; no hidden implementation checkout",
+  "active_forge_session": 4255,
+  "solidity_frozen_until_session_exits": true,
+  "in_validation": [
+    "Complete default build plus 294 maintained scripts. Sequential unfiltered hermetic run and exact baseline attribution follow. PTY 4255; preserve source freeze."
+  ],
+  "remaining_release_work": [
+    "Resolve current-source provider/custom-route composition, including the confirmed ERC4626 protocol-receipt accounting-asset route, preserving compatibility without an unapproved capability restriction",
+    "Validate custom-route bond and donation quotes against actual wrapping/execution across all four reserve families and both policies.",
+    "Full default build and complete hermetic suite; attribute failures against recorded non-green baseline",
+    "All 25 native SE issuers represented by 29 proxy suites in prior 603-pass selection; repeat current changed-provider tests and complete final inventory/evidence",
+    "Final current-source storage audit; explicitly approved mature-close removal is already applied",
+    "Current strict-size local Robinhood fork is running; deploy current packages and complete lifecycle rehearsal.",
+    "Final acceptance, consolidation counts/timings and reviewable limitations/report"
+  ],
+  "not_owner_questions": [
+    "Pons fee quote defect",
+    "Legacy test semantic migration",
+    "Provider transition composition implementation"
+  ],
+  "owner_decisions_pending": [],
+  "deferred": "D60 Balancer DETF functional work excluded; D66 unfinished Slipstream owner-deferred, preserve completed changes/tests/evidence.",
+  "latest_completed_run": {
+    "record": "etherfi-live-projection-fork-run.json",
+    "passed": 5,
+    "failed": 0,
+    "cases": 5,
+    "suites": 1
+  },
+  "approved_cleanup": {
+    "record": "v4-close-cleanup-owner-approval.json",
+    "status": "applied; 10 surface checks and selected functional validation passed"
+  },
+  "frontend_validation_session": null,
+  "frontend_validation": {
+    "evidence": "frontend-v2-query-package-check.json",
+    "exit_code": 0,
+    "tests_passed": 410,
+    "files_passed": 59,
+    "seconds": 58.748,
+    "checks": [
+      "lint",
+      "typecheck",
+      "complete app tests"
+    ]
+  },
+  "current_build": {
+    "status": "COMPLETE_FULL_CONTRACTS_DEFAULT_TESTS_AND_MAINTAINED_SCRIPTS_PASS",
+    "previous_default_green": "default-full-build-5638-green.json",
+    "compatibility_record": "script-orbital-research-telemetry-stack-prepared.json",
+    "latest_full_attempt": "combined-script-manager-stack-depth-failure.json",
+    "record": "script-codegen-isolation.json",
+    "isolated_failing_scripts": 5,
+    "passing_isolation_scripts": 289,
+    "maintained_script_green": "maintained-script-294-green.json",
+    "seconds": 23391.542,
+    "source_sha256": "5ea6bc62285fe1ada40f1a30ce59ffcc689475fee1909b4e016c50c4e2205246"
+  },
+  "leaf_compile_cache_note": "Narrow provider validation uses independent warm cache metadata and canonical out/. The active full default build is not interrupted or pruned.",
+  "historical_measured_size_failures": [
+    {
+      "contract": "UniswapV4StandardExchangeInQueryFacet",
+      "bytes": 25124,
+      "over_limit": 548,
+      "prepared_fix": "prepare-v4-query-facet-followups.py",
+      "status": "Applied; superseded by final-query-selector-relocations.json leaf results; combined validation pending"
+    },
+    {
+      "contract": "UniswapV4StandardExchangeCurveQuadStableBufferHookSeFacet",
+      "bytes": 25944,
+      "over_limit": 1368,
+      "prepared_fix": "prepare-curve-quote-target-isolation.py",
+      "status": "Applied; superseded by final-query-selector-relocations.json leaf results; combined validation pending"
+    },
+    {
+      "contract": "UniswapV4StandardExchangeWeightedBufferHookSeFacet",
+      "bytes": 25422,
+      "over_limit": 846,
+      "prepared_fix": "prepare-curve-quote-target-isolation.py (now covers both Weighted and CurveQuad)",
+      "status": "Applied; superseded by final-query-selector-relocations.json leaf results; combined validation pending"
+    }
+  ],
+  "fork_environment": {
+    "local_node": "Ready at localhost:18663, pinned block56118361, chain4663; strict24576-byte EIP-170 and32000000 block gas limit.",
+    "archive_rpc": "robinhood_mainnet_alchemy can serve the saved fork block and actual PoolManager bytecode",
+    "next": "Deploy current rehearsal packages after current Solidity validation.",
+    "node_session": 50169,
+    "record": "current-robinhood-rehearsal/node.json"
+  },
+  "lido_validation": {
+    "record": "lido-composed-quote-proxy-green-run.json",
+    "passed": 8,
+    "failed": 0,
+    "build_seconds": 66.36,
+    "test_seconds": 1.983,
+    "remaining": "Complete final repository and deployment acceptance; current V4 composed-route regressions passed in the 47-pass checkpoint."
+  },
+  "live_lido_fork": {
+    "status": "PASS: all four actual-protocol cases",
+    "source": "test/foundry/fork/eth_main/staking/ethereum/LidoService_Fork.t.sol",
+    "preflight": "lido-fork-preflight.json",
+    "block": 24000000,
+    "record": "lido-live-projection-fork-run.json"
+  },
+  "post_build_followups": {
+    "runner": "run-post-build-followups.py",
+    "status": "PASS_48_CASES_22_SUITES",
+    "then": "Complete default hermetic suite and exact baseline attribution.",
+    "environment_failure_record": "post-build-empty-fork-url-failure.json",
+    "record": "pre-provider-build-checkpoint/post-build-followups.json"
+  },
+  "final_artifact_verification": {
+    "command": "python3 implementation-artifacts/detf-funded-staking/reconcile-funded-selector-manifest.py --require-current",
+    "status": "PASS on the successful default-build source snapshot: 16 current records, zero stale source closures; final post-change rerun still required"
+  },
+  "explicit_script_compilation": {
+    "status": "PASS_BEFORE_CAMELOT_QUERY_CALLER_UPDATE_FINAL_FULL_BUILD_REQUIRED",
+    "reason": "foundry.toml has no script override; default discovery uses script/, while maintained deployment callers are under scripts/foundry/. Imported stage libraries compile through tests but do not cover every caller.",
+    "command": "python3 implementation-artifacts/detf-funded-staking/run-full-build.py --include-scripts",
+    "ordering": "Complete the current contracts/tests/maintained-scripts build, then current-source hermetic tests and local package/lifecycle rehearsal.",
+    "script_sources_discovered": 308,
+    "historical_archive_sources_not_release_callers": 63,
+    "active_or_shared_script_sources": 294,
+    "already_removed_dual_liquidity_historical_sources": 14,
+    "scope_record": "maintained-script-build-scope.json"
+  },
+  "compiled_test_inventory": {
+    "baseline": "compiled-test-inventory-baseline.json",
+    "current_command": "python3 implementation-artifacts/detf-funded-staking/inventory-compiled-tests.py",
+    "current_status": "Complete after the successful full default build",
+    "current_record": "compiled-test-inventory-current.json",
+    "comparison": "compiled-test-consolidation-comparison.json"
+  },
+  "prepared_patch_readiness": {
+    "record": "prepared-provider-and-comment-patch-check.json",
+    "status": "Both patches applied after actual build and test completion",
+    "historical_record": true,
+    "current_prepared_changes": "Separate provider/position follow-ups remain unapplied; use prepared_application_gate."
+  },
+  "etherfi_fork_runner": {
+    "path": "run-etherfi-live-projection-fork.py",
+    "status": "PASS: five actual EtherFi tests at Ethereum block 24000000; all five production components satisfy EIP-170.",
+    "selection": "Five new actual protocol tests at Ethereum block 24000000; existing hermetic coverage remains required",
+    "evidence": "etherfi-live-projection-fork-run.json"
+  },
+  "volatile_se_provider_review": {
+    "record": "volatile-se-provider-source-review.json",
+    "status": "Camelot checkpoint/return fixes and full query component passed all 19 real-proxy cases. Other provider compatibility remains separate."
+  },
+  "script_incremental_runner": {
+    "path": "run-maintained-script-compile.py",
+    "status": "PASS: 1376 files, 602.173 seconds. Complete default contracts/tests plus scripts build remains required.",
+    "purpose": "If another script compiler error occurs, use the independent warm script import-closure check to avoid repeatedly generating all changed test contracts before errors are resolved. Complete contracts/default tests/scripts build remains required."
+  },
+  "camelot_provider_runner": {
+    "path": "run-camelot-provider-checks.py",
+    "status": "PASS: 19 cases",
+    "first": "Completed: five checkpoint regressions failed before correction and passed afterward. Complete current provider run passed 19 cases.",
+    "before_evidence": "camelot-checkpoint-before-run.json",
+    "baseline": "Five failures confirmed before correction; same five pass afterward.",
+    "after_evidence": "camelot-checkpoint-after-run.json",
+    "first_projection_attempt": "Production query/facet/package compiled; test compilation rejected three uncast fractional literals, so no tests ran. Original record preserved.",
+    "latest_completed": "19 cases passed, including exact full-state projections, referral receipts, fee shares, and native SY.",
+    "cache_correction": "Use the same Camelot production source root for build and test on later iterations; the new query facet must be in Forge artifact discovery, and alternating roots caused redundant compilation.",
+    "green_evidence": "camelot-projection-referral-receipts-run.json"
+  },
+  "active_compiler_diagnostic_session": null,
+  "tokenlist_decimal_caller": {
+    "record": "robinhood-testnet-tokenlist-decimals-prepared.json",
+    "status": "APPLIED_COMPILATION_PASSED"
+  },
+  "rocket_provider_runner": {
+    "path": "run-etherfi-live-projection-fork.py --provider rocket",
+    "status": "Prepared only; apply after active validation exits, then build and seven cases at each pinned actual deposit-pool version (14 executions).",
+    "record": "rocket-projection-prepared.json",
+    "fork_blocks": [
+      24000000,
+      25934585
+    ],
+    "diagnostics": {
+      "record": "rocket-projection-prepared.json",
+      "production_source_matches": true,
+      "typecheck_source_matches": true,
+      "runtime_bytes": {
+        "RocketPoolRETHStandardExchangeDFPkg": 10244,
+        "RocketPoolRETHStandardExchangeInFacet": 17290
+      },
+      "cases_per_fork": 7,
+      "actual_executions_pending": 14
+    }
+  },
+  "hermetic_acceptance_report": {
+    "runner": "compare-current-hermetic.py",
+    "output": "acceptance-current-run-anchors.json",
+    "status": "Queued after the completed full current hermetic run; reports failures and missing named tests without automatically closing acceptance criteria."
+  },
+  "erc4626_receipt_followup": {
+    "status": "APPLIED_FOCUSED_RUNTIME_VALIDATION_PENDING",
+    "record": "erc4626-receipt-projection-prepared.json",
+    "compile": "erc4626-receipt-draft-compile.json",
+    "typecheck": "erc4626-receipt-draft-test-typecheck.json",
+    "runtime_validation": "Pending: thirteen hermetic transition cases and four actual sfrxETH fork cases.",
+    "runner": "run-camelot-provider-checks.py --provider erc4626 --label receipt-projections",
+    "selection": "All thirteen existing and new hermetic transition tests, including both fuzz cases; four actual sfrxETH fork cases and final default regression remain required.",
+    "production_runtime_bytes": {
+      "ERC4626StandardExchangeInFacet": 23632,
+      "ERC4626StandardExchangeDFPkg": 9414
+    },
+    "fork_runner": "run-etherfi-live-projection-fork.py --provider sfrxeth",
+    "fork_input_preflight": "sfrxeth-projection-input-preflight.json"
+  },
+  "hermetic_execution_order": {
+    "record": "hermetic-pre-provider-deferral.json",
+    "status": "Intermediate zero-execution deferral retired after application; next complete matching build/hermetic run remains required.",
+    "full_suite_still_required": true
+  },
+  "cp_lp_accounting_followup": {
+    "status": "APPLIED_FOCUSED_RUNTIME_VALIDATION_PENDING",
+    "record": "cp-lp-accounting-prepared.json",
+    "combined_patch": "aerodrome-projection.patch",
+    "production_diagnostic": "aerodrome-draft-compile.json",
+    "typecheck": "aerodrome-draft-test-typecheck.json",
+    "actual_proxy_executions_pending": {
+      "uniswap-v2": 8,
+      "camelot": 22,
+      "aerodrome": 37
+    }
+  },
+  "position_storage_cleanup": {
+    "status": "APPLIED_FOCUSED_RUNTIME_VALIDATION_PENDING",
+    "record": "position-storage-cleanup-prepared.json",
+    "production": "position-cleanup-draft-production.json",
+    "typecheck": "position-cleanup-draft-typecheck.json",
+    "test_sources": 248,
+    "actual_runtime_pending": true,
+    "runner": "run-position-cleanup-checks.py --label funded-final-storage",
+    "remaining_fixture_scope": "45 existing sources; current-source runtime runner includes every retained V3/V4 adversarial suite.",
+    "expected_methods": 1920,
+    "draft_test_codegen": "position-cleanup-draft-test-codegen.json",
+    "runtime_sequence": "run-provider-position-followups.py --label funded-followups",
+    "case_mapping": "position-fixture-case-migration-map.json"
+  },
+  "prepared_followups_application": {
+    "check": "apply-prepared-release-followups.py",
+    "apply_after_parent_exit": "apply-prepared-release-followups.py --apply",
+    "check_record": "prepared-release-followups-check.json",
+    "status": "29 current-source changes and eight diagnostic inputs verified; canonical source freeze preserved.",
+    "full_release_acceptance_still_required": true
+  },
+  "prepared_application": {
+    "command": "python3 implementation-artifacts/detf-funded-staking/apply-prepared-release-followups.py --apply",
+    "gate": "Wait for session 52340 parent completion, matching successful full build, and all current draft diagnostics. Check before/after hashes and preserve visible backups."
+  },
+  "prepared_application_gate": {
+    "runner": "apply-prepared-release-followups.py",
+    "status": "APPLIED_RUNTIME_VALIDATION_IN_PROGRESS",
+    "source_changes": 74,
+    "fixture_sources": 45,
+    "requires": "Existing full validation parent exits; matching successful full build and current exact draft diagnostics. Apply only to checked current files; preserve backups and unrelated changes.",
+    "check": "prepared-release-followups-check.json",
+    "source_coverage": "Every prepared changed source must occur in an exact successful compiler input.",
+    "diagnostics": {
+      "typecheck": {
+        "source_files": 248,
+        "methods": 1920,
+        "seconds": 79.626
+      },
+      "test-codegen": {
+        "source_files": 44,
+        "methods": 356,
+        "seconds": 398.958
+      }
+    },
+    "production_components": 26,
+    "maximum_runtime_bytes": 23163,
+    "application_record": "prepared-release-followups-applied.json"
+  },
+  "focused_followup_sequence": {
+    "runner": "run-provider-position-followups.py --label funded-followups",
+    "status": "STOPPED_AFTER_ACTUAL_POSITION_FAILURES_MIGRATIONS_APPLIED",
+    "requires": "Checked application after existing full build/parent exit",
+    "local_provider_cases": 80,
+    "retained_position_methods": 1920,
+    "pinned_fork_cases": 18,
+    "total_note": "Selected cases can overlap other suites; full default execution and strict local rehearsal remain separate."
+  },
+  "active_handoff_session": 52715,
+  "automatic_handoff": {
+    "record": "checked-followup-handoff.json",
+    "runner": "continue-checked-followups.py",
+    "status": "APPLIED_FOCUSED_RUNTIME_CHECKS_RUNNING",
+    "instruction": "Do not apply separately or launch another Forge. Handoff applies once only after the previous full build and actual focused checks pass, then runs provider-position checks sequentially."
+  },
+  "active_validation_parent_pid": null,
+  "applied_followups": [
+    "aerodrome-projection.patch: exact Aerodrome fee compounding plus retained LP-denominated V2/Camelot/Aerodrome quote routes. Seven Aerodrome and three shared cases prepared (nine shared executions). Do not apply cp-lp-accounting.patch separately; it is consolidated into this patch.",
+    "rocket-projection.patch: exact version-3/version-4 protocol state, explicit validated registry binding and seven actual-fork cases. Production draft compiles (17290/10244 bytes) and tests typecheck; do not apply before session 52340 exits.",
+    "erc4626-receipt-projection.patch: receipt custody, distinct nested ERC4626/SE fees, virtual and proportional no-offset accounting; seven new hermetic plus four actual sfrxETH fork cases typecheck. Production draft compiles (23632/9414 bytes). Apply only after session 52340 exits.",
+    "position-storage-cleanup.patch: nine V3/V4 production sources; remove unread caches and never-created wings, preserve unique PoolKey ordering after the WETH face mapping. All 26 components compile within EIP-170 on updated draft (36.091 seconds); actual tests remain required.",
+    "position-fixture-migrations.patch: forty-five existing V3/V4 base/decimal sources; two-token activation, current interfaces, locked sleeves, native ETH, TWAP, nested callers and secure-pull/booked-inventory/import adversarial fixtures. Existing cases and decimal leaves retained; duplicate initial-activation execution/preview setups consolidated. Latest exact draft checks pending; canonical sources remain frozen."
+  ],
+  "current_provider_checkpoint": {
+    "uniswap-v2": {
+      "cases": 8,
+      "passed": true,
+      "record": "uniswap-v2-funded-followups-run.json"
+    },
+    "camelot": {
+      "cases": 22,
+      "passed": true,
+      "record": "camelot-funded-followups-run.json"
+    },
+    "aerodrome": {
+      "cases": 37,
+      "passed": true,
+      "record": "aerodrome-funded-followups-run.json"
+    },
+    "erc4626": {
+      "cases": 13,
+      "passed": true,
+      "record": "erc4626-funded-followups-run.json"
+    }
+  },
+  "shared_provider_cache_reuse": {
+    "record": "shared-provider-cache-seed.json",
+    "status": "Attempt did not eliminate fixture compilation; unproven automatic seeding removed. No measured speedup claimed."
+  },
+  "position_runtime_followup": {
+    "status": "APPLIED_AFFECTED_RUNTIME_PASSED",
+    "record": "position-runtime-migrations-applied.json",
+    "changed_existing_sources": 9,
+    "previous_result": {
+      "passed": 1943,
+      "failed": 54,
+      "suites": 265,
+      "cases": 1997,
+      "record": "position-cleanup-funded-followups-run.json"
+    },
+    "next": [
+      "Pass all affected position suites with preserved concrete decimal leaves.",
+      "Run seven Rocket v3, seven Rocket v4 and four actual sfrxETH cases.",
+      "Matching complete build/hermetic plus baseline attribution and strict local rehearsal."
+    ],
+    "validation": {
+      "record": "position-cleanup-runtime-migrations-run.json",
+      "passed": 333,
+      "failed": 0,
+      "suites": 46
+    }
+  },
+  "prepared_storage_followup": {
+    "status": "APPLIED_PENDING_FINAL_RUNTIME",
+    "record": "v3-import-storage-followup-applied.json",
+    "sources": 4,
+    "runtime_changes": "Remove unread V3 import metadata and reuse existing center initialization.",
+    "documentation_changes": "Clarify V4 native/WETH PoolKey ordering on both multi-exchange interfaces."
+  },
+  "active_sequence_record": "final-provider-repository-post-position-sequence.json",
+  "current_source_and_config_sha256": "96d7a3ff1d5d6d8f41f1ff0c7a8dd09419e8243b669dd27700325822edf63dde",
+  "completed_pinned_provider_followups": [
+    {
+      "provider": "rocket",
+      "record": "rocket-post-position-live-projection-fork-run.json",
+      "passed": 7
+    },
+    {
+      "provider": "rocket-v4",
+      "record": "rocket-v4-post-position-live-projection-fork-run.json",
+      "passed": 7
+    },
+    {
+      "provider": "sfrxeth",
+      "record": "sfrxeth-post-position-live-projection-fork-run.json",
+      "passed": 4
+    }
+  ],
+  "active_process_chain": [
+    {
+      "pid": 85418,
+      "ppid": 85406,
+      "elapsed": "05:43",
+      "cpu_time": "3:39.98",
+      "pcpu": "0.0",
+      "rss": "7631248",
+      "command": "forge"
+    },
+    {
+      "pid": 85406,
+      "ppid": 84406,
+      "elapsed": "05:49",
+      "cpu_time": "0:03.74",
+      "pcpu": "0.0",
+      "rss": "16928",
+      "command": "python3"
+    },
+    {
+      "pid": 84406,
+      "ppid": 81582,
+      "elapsed": "14:43",
+      "cpu_time": "0:09.39",
+      "pcpu": "0.0",
+      "rss": "21380",
+      "command": "/Users/cyotee/.pyenv/versions/3.10.5/bin/python3"
+    },
+    {
+      "pid": 81582,
+      "ppid": 81581,
+      "elapsed": "01-11:07:15",
+      "cpu_time": "99:55.13",
+      "pcpu": "8.4",
+      "rss": "668004",
+      "command": "/Users/cyotee/.nvm/versions/node/v22.23.1/lib/node_modules/@openai/codex/node_modules/@openai/codex-darwin-x64/vendor/x86_64-apple-darwin/bin/codex"
+    }
+  ]
+}

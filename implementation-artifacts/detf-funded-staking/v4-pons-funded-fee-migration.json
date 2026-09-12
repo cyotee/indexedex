@@ -1,0 +1,26 @@
+{
+  "status": "applied; validation pending",
+  "coverage": "Pons ProductLaw and Policy now inherit the same six independent funded fee tests as other reserve/provider fixtures, restoring current coverage after retired wrappers were consolidated. Removes unused twelve-case legacy helper copies; actual Pons deployment and token funding retained.",
+  "files": [
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_Stage11Helpers.sol",
+      "before_sha256": "791700681172cefb6c9faaea36bade1d4bcbbdab490280401b8e2d7d9fe42eb1",
+      "after_sha256": "27c9a0a42bde2b33bd67b89af654ccfe84363623cb6e99392a535e056bba271b"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_Policy.t.sol",
+      "before_sha256": "fb8d37526eee7ff7ac9813216c1c4303eae5f7543106b9c57d27782803758920",
+      "after_sha256": "b8f5f4082c82916ab28468c0a7c6803e019808f83c5b422dbe1b48f8a8c46774"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Stage11Helpers_Decimals.sol",
+      "before_sha256": "f5c077ab21e2e0ddaac958e61f005f6ad7035063fb72b02522f3dfdf93d259d5",
+      "after_sha256": "8a53c5fe3707ae71d1256278552e8dce03597988d0ee1f1628e61c25e81f850a"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Policy_Decimals.sol",
+      "before_sha256": "fcc1cdaf9cc5a25c8a6105b0c12f9b76fae8fcab406c904f2cf2993d59400d00",
+      "after_sha256": "28f8021ea0d02ba4dc654b3948106d3900f0a34f8c87afbe8b1753014559462f"
+    }
+  ]
+}

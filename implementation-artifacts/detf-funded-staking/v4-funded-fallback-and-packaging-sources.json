@@ -1,0 +1,19 @@
+{
+  "status": "SELECTED_VALIDATION_PASSED",
+  "evidence": "v4-funded-fallback-and-packaging-108-green-*",
+  "tests": 108,
+  "suites": 9,
+  "production_changes_in_this_batch": false,
+  "test_consolidation": "Shared existing reserve behavior in four families and both policies; reused funded-yield helper for LP-payment and fallback catchup; existing packaging suite updated instead of duplicated",
+  "legacy_policy_tests_retired": false,
+  "files": [
+    {
+      "path": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+      "sha256": "9c1258edf1ab3345117c55b06c3411c43739d67baa4641f505578a3a294c0270"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_FacetPackaging.t.sol",
+      "sha256": "fa4df848b46f9abdcdf5a04dc1ac308cae4d75cb90552fac9474acc6c51b0abb"
+    }
+  ]
+}

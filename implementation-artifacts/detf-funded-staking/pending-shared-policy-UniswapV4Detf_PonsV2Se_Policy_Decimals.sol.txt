@@ -1,0 +1,176 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+
+
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
+import {IDetfErrors} from "contracts/interfaces/IDetfErrors.sol";
+import {IFeeCollectorProxy} from "contracts/interfaces/proxies/IFeeCollectorProxy.sol";
+import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
+import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
+import {
+    DETF_CREATOR_BOND_NFT_ID,
+    DETF_FEE_TO_BOND_NFT_ID,
+    DETF_FIRST_USER_BOND_NFT_ID,
+    DETF_PROTOCOL_BOND_NFT_ID
+} from "contracts/vaults/detf/common/core/DETFBondNftIds.sol";
+import {IUniswapV4Detf} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
+import {UniswapV4DetfRepo} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfRepo.sol";
+import {UniswapV4Detf_PonsV2Se_Stage11Helpers_Decimals} from
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Stage11Helpers_Decimals.sol";
+
+/// @notice H_CP_P2 Stage 11 Policy. Full §7.0 Policy IDs. FC names use fixture id H_CP_P2.
+/// @dev No TestBase_UniswapV4Detf inherit (R-5 field clash).
+abstract contract UniswapV4Detf_PonsV2Se_Policy_Decimals is UniswapV4Detf_PonsV2Se_Stage11Helpers_Decimals {
+    function setUp() public override {
+        super.setUp();
+        _bindStage11Actors();
+    }
+
+    function test_T7_8_policy_isMintingAllowed_token() public {
+        _assert_T7_8_policy_isMintingAllowed_token(_deployPolicyLaunchRichLive());
+    }
+
+    function test_policy_mint_blocked_in_deadband_then_allowed_after_push() public {
+        _assert_policy_mint_blocked_in_deadband_then_allowed_after_push(_deployPolicyLaunchRichLive());
+    }
+
+    function test_policy_burn_allowed_when_synthetic_below_burnThreshold() public {
+        _assert_policy_burn_allowed_when_synthetic_below_burnThreshold(_deployPolicyLaunchRichLive());
+    }
+
+    function test_D31_1_policyMint_realizesThenGates() public {
+        _assert_D31_1_policyMint_realizesThenGates(_deployD31LaunchRichLive());
+    }
+
+    function test_D31_2_realizeWouldCloseMint_revertsUnchanged() public {
+        _assert_D31_2_realizeWouldCloseMint_revertsUnchanged(_deployD31LaunchRichLive());
+    }
+
+    function test_D31_3_policyBurn_realizesThenGates() public {
+        _assert_D31_3_policyBurn_realizesThenGates(_deployD31LaunchRichLive());
+    }
+
+    function test_D22_claimUngated() public {
+        address d = _deployPolicyLaunchRichLive();
+        uint256 claimBal_ = _sellAndClaimOn(d, detfUser, 40 ether, 20 ether);
+        IUniswapV4Detf info = IUniswapV4Detf(d);
+        for (uint256 i; i < 40 && info.isMintingAllowed(); ++i) {
+            _skewSyntheticDown(d);
+        }
+        assertFalse(info.isMintingAllowed(), "Policy deadband");
+        uint256 redeem_ = claimBal_ / 4;
+        if (redeem_ == 0) redeem_ = claimBal_;
+        uint256 detfBefore_ = IERC20(d).balanceOf(detfUser);
+        uint256 pairBefore_ = IERC20(launchToken).balanceOf(detfUser);
+        uint256 out_ = _redeemOn(d, detfUser, redeem_);
+        assertGt(out_, 0, "D22 redeem in deadband");
+        assertEq(IERC20(d).balanceOf(detfUser) - detfBefore_, out_);
+        assertEq(IERC20(launchToken).balanceOf(detfUser), pairBefore_, "D22 no pair");
+    }
+
+
+
+    function test_D15_1_previewEqualsExecute() public {
+        address d = _deployPolicyLaunchRichLive();
+        uint256 claimBal_ = _sellAndClaimOn(d, detfUser, 40 ether, 20 ether);
+        uint256 redeem_ = claimBal_ / 2;
+        if (redeem_ == 0) redeem_ = 1;
+        uint256 preview_ = IStandardExchangeIn(address(_claimTokOf(d))).previewExchangeIn(IERC20(address(_claimTokOf(d))), redeem_, IERC20(d));
+        uint256 out_ = _redeemOn(d, detfUser, redeem_);
+        assertEq(out_, preview_, "D15-1 preview==exec");
+    }
+
+    function test_D15_8_nonDetfPayoutForbidden() public {
+        address d = _deployPolicyLaunchRichLive();
+        uint256 claimBal_ = _sellAndClaimOn(d, detfUser, 40 ether, 20 ether);
+        uint256 redeem_ = claimBal_ / 3;
+        if (redeem_ == 0) redeem_ = claimBal_;
+        _assertRedeemPaysDetfOnly(d, detfUser, redeem_);
+    }
+
+
+
+    function test_T1_openingZero_storesAsCreation_firstBondGAtPeg() public {
+        IUniswapV4Detf.PkgArgs memory args = _policyArgs();
+        args = _withTag(args, string.concat("t1", _nextTag()));
+        address d = _deployInstance(args);
+        IUniswapV4Detf info = IUniswapV4Detf(d);
+        uint256[] memory creation_ = info.creationPairPerDetfWad();
+        uint256[] memory opening_ = info.openingPairPerDetfWad();
+        assertTrue(_openingEq(opening_, creation_), "stored opening == creation");
+        assertFalse(info.isReserveLive(), "inert");
+        _firstBondOn(d, FIRST_BOND_AMT);
+        assertTrue(info.isReserveLive(), "live");
+        uint256 g_ = _expectedJoinDetf(FIRST_BOND_AMT, DEFAULT_CREATION_PAIR_PER_DETF);
+        assertApproxEqAbs(_detfReserveInHook(d), g_, 1000, "first-bond G at peg");
+    }
+
+    function test_T2_openingUsesG_creationViewUnchanged() public {
+        IUniswapV4Detf.PkgArgs memory args = _withOpening(_policyArgs(), LAUNCH_RICH_START);
+        args = _withTag(args, string.concat("t2", _nextTag()));
+        address d = _deployInstance(args);
+        IUniswapV4Detf info = IUniswapV4Detf(d);
+        assertTrue(_openingAll(info.creationPairPerDetfWad(), DEFAULT_CREATION_PAIR_PER_DETF), "creation view");
+        assertTrue(_openingAll(info.openingPairPerDetfWad(), LAUNCH_RICH_START), "stored opening");
+        _firstBondOn(d, FIRST_BOND_AMT);
+        assertTrue(info.isReserveLive());
+        uint256 gOpening_ = _expectedJoinDetf(FIRST_BOND_AMT, LAUNCH_RICH_START);
+        uint256 gCreation_ = _expectedJoinDetf(FIRST_BOND_AMT, DEFAULT_CREATION_PAIR_PER_DETF);
+        uint256 raw_ = _detfReserveInHook(d);
+        assertApproxEqAbs(raw_, gOpening_, 1000, "first-bond G uses opening");
+        assertTrue(raw_ != gCreation_, "G is not creation-rate join");
+        assertTrue(_openingAll(info.creationPairPerDetfWad(), DEFAULT_CREATION_PAIR_PER_DETF), "creation unchanged");
+    }
+
+    function test_T5_creationZero_revertsInvalidCreationRate() public {
+        IUniswapV4Detf.PkgArgs memory args = _defaultDetfArgs();
+        args.creationPairPerDetfWad = new uint256[](1);
+        args.creationPairPerDetfWad[0] = 0;
+        args.symbol = "badP2";
+        vm.startPrank(owner);
+        vm.expectRevert();
+        detfPkg.deployVault(args);
+        vm.stopPrank();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}

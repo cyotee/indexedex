@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                   Foundry                                  */
@@ -21,20 +22,9 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
-import {
-    StandardExchangeRateProviderFacet
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderFacet.sol";
-import {
-    IStandardExchangeRateProviderDFPkg,
-    StandardExchangeRateProviderDFPkg
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
-import {
-    WrappedStandardExchangeRateProviderFacet
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderFacet.sol";
-import {
-    IWrappedStandardExchangeRateProviderDFPkg,
-    WrappedStandardExchangeRateProviderDFPkg
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderDFPkg.sol";
+import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
+
+import {IWrappedStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderDFPkg.sol";
 
 /**
  * @title StandardExchangeRateProvider_FactoryService
@@ -55,22 +45,22 @@ library StandardExchangeRateProvider_FactoryService {
         internal
         returns (IFacet instance)
     {
+        bytes memory code_ = ArtifactCreationCode.creationCode("StandardExchangeRateProviderFacet.sol:StandardExchangeRateProviderFacet");
         instance = create3Factory.deployFacet(
-            type(StandardExchangeRateProviderFacet).creationCode,
-            abi.encode(type(StandardExchangeRateProviderFacet).name)._hash()
+            code_, ArtifactCreationCode.releaseSalt(abi.encode("StandardExchangeRateProviderFacet")._hash(), code_, bytes(""))
         );
-        vm.label(address(instance), type(StandardExchangeRateProviderFacet).name);
+        vm.label(address(instance), "StandardExchangeRateProviderFacet");
     }
 
     function deployWrappedStandardExchangeRateProviderFacet(ICreate3FactoryProxy create3Factory)
         internal
         returns (IFacet instance)
     {
+        bytes memory code_ = ArtifactCreationCode.creationCode("WrappedStandardExchangeRateProviderFacet.sol:WrappedStandardExchangeRateProviderFacet");
         instance = create3Factory.deployFacet(
-            type(WrappedStandardExchangeRateProviderFacet).creationCode,
-            abi.encode(type(WrappedStandardExchangeRateProviderFacet).name)._hash()
+            code_, ArtifactCreationCode.releaseSalt(abi.encode("WrappedStandardExchangeRateProviderFacet")._hash(), code_, bytes(""))
         );
-        vm.label(address(instance), type(WrappedStandardExchangeRateProviderFacet).name);
+        vm.label(address(instance), "WrappedStandardExchangeRateProviderFacet");
     }
 
     /* ---------------------------------------------------------------------- */
@@ -87,16 +77,18 @@ library StandardExchangeRateProvider_FactoryService {
                 rateProviderFacet: rateProviderFacet, diamondFactory: diamondFactory
             });
 
+        bytes memory code_ = ArtifactCreationCode.creationCode("StandardExchangeRateProviderDFPkg.sol:StandardExchangeRateProviderDFPkg");
+        bytes memory args_ = abi.encode(pkgInit);
+
         instance = IStandardExchangeRateProviderDFPkg(
             address(
                 create3Factory.deployPackageWithArgs(
-                    type(StandardExchangeRateProviderDFPkg).creationCode,
-                    abi.encode(pkgInit),
-                    abi.encode(type(StandardExchangeRateProviderDFPkg).name)._hash()
+                    code_, args_,
+                    ArtifactCreationCode.releaseSalt(abi.encode("StandardExchangeRateProviderDFPkg")._hash(), code_, args_)
                 )
             )
         );
-        vm.label(address(instance), type(StandardExchangeRateProviderDFPkg).name);
+        vm.label(address(instance), "StandardExchangeRateProviderDFPkg");
     }
 
     function deployWrappedStandardExchangeRateProviderDFPkg(
@@ -110,15 +102,17 @@ library StandardExchangeRateProvider_FactoryService {
                 diamondFactory: diamondFactory
             });
 
+        bytes memory code_ = ArtifactCreationCode.creationCode("WrappedStandardExchangeRateProviderDFPkg.sol:WrappedStandardExchangeRateProviderDFPkg");
+        bytes memory args_ = abi.encode(pkgInit);
+
         instance = IWrappedStandardExchangeRateProviderDFPkg(
             address(
                 create3Factory.deployPackageWithArgs(
-                    type(WrappedStandardExchangeRateProviderDFPkg).creationCode,
-                    abi.encode(pkgInit),
-                    abi.encode(type(WrappedStandardExchangeRateProviderDFPkg).name)._hash()
+                    code_, args_,
+                    ArtifactCreationCode.releaseSalt(abi.encode("WrappedStandardExchangeRateProviderDFPkg")._hash(), code_, args_)
                 )
             )
         );
-        vm.label(address(instance), type(WrappedStandardExchangeRateProviderDFPkg).name);
+        vm.label(address(instance), "WrappedStandardExchangeRateProviderDFPkg");
     }
 }

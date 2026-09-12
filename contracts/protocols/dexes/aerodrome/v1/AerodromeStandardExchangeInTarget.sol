@@ -152,23 +152,7 @@ contract AerodromeStandardExchangeInTarget is
             ConstProdReserveVaultRepo._isReserveAssetContained(constProd, address(tokenIn))
                 && address(tokenOut) == address(this)
         ) {
-            (uint256 reserve0, uint256 reserve1,) = pool.getReserves();
-            address token0 = ConstProdReserveVaultRepo._token0();
-            (uint256 reserveIn, uint256 reserveOut) =
-                ConstProdUtils._sortReserves(address(tokenIn), token0, reserve0, reserve1);
-            uint256 lpTotalSupply = IERC20(address(pool)).totalSupply();
-            uint256 aeroSwapFeePercent = AerodromePoolMetadataRepo._factory(aeroPoolMeta)
-                .getFee(address(pool), AerodromePoolMetadataRepo._isStable(aeroPoolMeta));
-
-            // Calculate LP from user's ZapIn
-            uint256 lpFromZapIn = AerodromeUtils._quoteSwapDepositWithFee(
-                amountIn, lpTotalSupply, reserveIn, reserveOut, aeroSwapFeePercent
-            );
-
-            PreviewState memory state = _calcPreviewState(pool, reserve0, reserve1, lpTotalSupply, aeroSwapFeePercent);
-            return BetterMath._convertToSharesDown(
-                lpFromZapIn, state.vaultLpReserve, state.vaultTotalShares, state.decimalOffset
-            );
+            return _previewZapDeposit(pool, tokenIn, amountIn);
         }
 
         /* ------------------------------------------------------------------ */
@@ -197,6 +181,33 @@ contract AerodromeStandardExchangeInTarget is
             return _previewRoute7ZapOutWithdraw(params);
         }
         revert InvalidRoute(address(tokenIn), address(tokenOut));
+    }
+
+    /// @dev Execution compounds fees first. Both the user zap and share conversion
+    /// must use that same funded post-compound pool and vault state.
+    function _previewZapDeposit(IPool pool_, IERC20 tokenIn_, uint256 amountIn_)
+        internal view returns (uint256)
+    {
+        (uint256 reserve0_, uint256 reserve1_,) = pool_.getReserves();
+        uint256 swapFee_ = AerodromePoolMetadataRepo._factory().getFee(
+            address(pool_), AerodromePoolMetadataRepo._isStable()
+        );
+        PreviewCompoundState memory compounded_ = _previewCompoundState(
+            pool_, reserve0_, reserve1_, IERC20(address(pool_)).totalSupply(), swapFee_
+        );
+        (uint256 reserveIn_, uint256 reserveOut_) = ConstProdUtils._sortReserves(
+            address(tokenIn_), ConstProdReserveVaultRepo._token0(), compounded_.reserve0, compounded_.reserve1
+        );
+        uint256 lpIn_ = AerodromeUtils._quoteSwapDepositWithFee(
+            amountIn_, compounded_.lpTotalSupply, reserveIn_, reserveOut_, swapFee_
+        );
+        uint256 feeLp_ = BetterMath._percentageOfWAD(
+            compounded_.lpMinted, VaultFeeOracleQueryAwareRepo._feeOracle().usageFeeOfVault(address(this))
+        );
+        return BetterMath._convertToSharesDown(
+            lpIn_, IERC20(address(pool_)).balanceOf(address(this)) + compounded_.lpMinted - feeLp_,
+            ERC20Repo._totalSupply(), ERC4626Repo._decimalOffset()
+        );
     }
 
     struct Route7PreviewParams {
@@ -349,6 +360,7 @@ contract AerodromeStandardExchangeInTarget is
         /* ------------------------------------------------------------------ */
 
         if (address(tokenIn) == address(pool) && address(tokenOut) == address(this)) {
+            if (pretransferred) _secureTokenTransfer(tokenIn, amountIn, true);
             _claimAndCompoundFees(_buildCompoundParams(pool, deadline));
 
             VaultState memory vs;
@@ -362,7 +374,7 @@ contract AerodromeStandardExchangeInTarget is
                 : liveBefore;
 
             // Honor pretransferred: false always pulls. Do not credit lastTotal exact-gap.
-            amountIn = _secureTokenTransfer(IERC20(address(pool)), amountIn, pretransferred);
+            if (!pretransferred) amountIn = _secureTokenTransfer(IERC20(address(pool)), amountIn, false);
             amountOut =
                 BetterMath._convertToSharesDown(amountIn, vs.vaultLpReserve, vs.vaultTotalShares, vs.decimalOffset);
             if (amountOut < minAmountOut) revert MinAmountNotMet(minAmountOut, amountOut);
@@ -380,7 +392,7 @@ contract AerodromeStandardExchangeInTarget is
             _claimAndCompoundFees(_buildCompoundParams(pool, deadline));
 
             VaultState memory vs;
-            vs.vaultLpReserve = ERC4626Repo._lastTotalAssets();
+            vs.vaultLpReserve = IERC20(address(pool)).balanceOf(address(this));
             vs.vaultTotalShares = ERC20Repo._totalSupply();
             vs.decimalOffset = ERC4626Repo._decimalOffset();
 
@@ -402,15 +414,16 @@ contract AerodromeStandardExchangeInTarget is
             ConstProdReserveVaultRepo._isReserveAssetContained(constProd, address(tokenIn))
                 && address(tokenOut) == address(this)
         ) {
+            if (pretransferred) _secureTokenTransfer(tokenIn, amountIn, true);
             _claimAndCompoundFees(_buildCompoundParams(pool, deadline));
             // A0: unbooked reserve LP cannot be absorbed into a zap-in share mint.
             if (IERC20(address(pool)).balanceOf(address(this)) != ERC4626Repo._lastTotalAssets()) {
                 revert();
             }
-            amountIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
+            if (!pretransferred) amountIn = _secureTokenTransfer(tokenIn, amountIn, false);
 
             VaultState memory vs;
-            vs.vaultLpReserve = ERC4626Repo._lastTotalAssets();
+            vs.vaultLpReserve = IERC20(address(pool)).balanceOf(address(this));
             vs.vaultTotalShares = ERC20Repo._totalSupply();
             vs.decimalOffset = ERC4626Repo._decimalOffset();
 
@@ -447,7 +460,7 @@ contract AerodromeStandardExchangeInTarget is
             _claimAndCompoundFees(_buildCompoundParams(pool, deadline));
 
             VaultState memory vs;
-            vs.vaultLpReserve = ERC4626Repo._lastTotalAssets();
+            vs.vaultLpReserve = IERC20(address(pool)).balanceOf(address(this));
             vs.vaultTotalShares = ERC20Repo._totalSupply();
             vs.decimalOffset = ERC4626Repo._decimalOffset();
 
@@ -508,33 +521,5 @@ contract AerodromeStandardExchangeInTarget is
         }
     }
 
-    function _withdrawSwapVolatileSafe(
-        IAerodromeRouter aerodromeRouter,
-        IPool pool,
-        IERC20 tokenOut,
-        uint256 lpBurnAmt,
-        address recipient,
-        uint256 deadline
-    ) internal returns (uint256 amountOut) {
-        address opposingToken = ConstProdReserveVaultRepo._opposingToken(address(tokenOut));
-        address swapRecipient = recipient;
-        if (recipient == address(tokenOut) || recipient == opposingToken || recipient == address(pool)) {
-            swapRecipient = address(this);
-        }
 
-        AerodromeService.WithdrawSwapVolatileParams memory params = AerodromeService.WithdrawSwapVolatileParams({
-            aerodromeRouter: aerodromeRouter,
-            pool: pool,
-            factory: AerodromePoolMetadataRepo._factory(),
-            tokenOut: tokenOut,
-            opposingToken: IERC20(opposingToken),
-            lpBurnAmt: lpBurnAmt,
-            recipient: swapRecipient,
-            deadline: deadline
-        });
-        amountOut = AerodromeService._withdrawSwapVolatile(params);
-        if (swapRecipient != recipient) {
-            tokenOut.safeTransfer(recipient, amountOut);
-        }
-    }
 }

@@ -1,7 +1,6 @@
 ---
 name: crane-camelot
 description: This skill should be used when the user asks about "Camelot integration", "Camelot swap", "Camelot liquidity", "Camelot V2", "fee-on-transfer tokens", "asymmetric fees", "directional fees", or needs to interact with Camelot DEX on Arbitrum using Crane's service library.
-license: MIT
 ---
 
 # Crane Camelot V2 Integration
@@ -25,8 +24,8 @@ Camelot pools have **directional fees** - different fees for each swap direction
 // Camelot's getReserves returns fees for each direction
 (uint112 reserve0, uint112 reserve1, uint16 token0feePercent, uint16 token1FeePercent) = pool.getReserves();
 
-// token0feePercent: Fee when swapping token0 -> token1
-// token1FeePercent: Fee when swapping token1 -> token0
+// token0feePercent: Fee when swapping token0 → token1
+// token1FeePercent: Fee when swapping token1 → token0
 ```
 
 ## Quick Start: Execute Swap

@@ -3,82 +3,70 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
-
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
+import {ReentrancyLockRepo} from "@crane/contracts/access/reentrancy/ReentrancyLockRepo.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
-import {AaveCrossVersionLoopExchangeBase} from
-    "contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoopExchangeBase.sol";
-import {CrossVersionLoopExecutor} from "contracts/protocols/lending/aave/cross-version/CrossVersionLoopExecutor.sol";
-import {CrossVersionLoopService} from "contracts/protocols/lending/aave/cross-version/CrossVersionLoopService.sol";
+import {AaveCrossVersionLoopExchangeBase} from "./AaveCrossVersionLoopExchangeBase.sol";
+import {CrossVersionLoopExecutor} from "./CrossVersionLoopExecutor.sol";
+import {CrossVersionLoopService} from "./CrossVersionLoopService.sol";
 
-/**
- * @title AaveCrossVersionLoopExchangeInTarget
- * @author cyotee doge <doge.cyotee>
- * @notice Deposit entry for the cross-version loop vault (PRD decisions 10, 11, 13): `exchangeIn`
- *         takes one pair token, builds the leveraged cross-version position via the executor, and
- *         mints LP-style proportional shares priced off live NAV, with a MINIMUM_LIQUIDITY
- *         first-deposit lock (decision 21). v1 is tokenA-in / A-first.
- */
+/// @notice Canonical tokenA deposit and share redemption at the vault's retained live NAV.
 contract AaveCrossVersionLoopExchangeInTarget is AaveCrossVersionLoopExchangeBase, IStandardExchangeIn {
-    /// @inheritdoc IStandardExchangeIn
+    using SafeERC20 for IERC20;
+
     function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
-        external
-        view
-        returns (uint256 amountOut)
+        external view returns (uint256 amountOut)
     {
+        ReentrancyLockRepo._onlyUnlocked();
         CrossVersionLoopExecutor.Market memory m = _market();
-        if (address(tokenOut) != address(this) || address(tokenIn) != address(m.tokenA)) {
-            revert ExchangeInNotAvailable();
-        }
-        uint256 navBefore = CrossVersionLoopExecutor.navUsd(m);
-        uint256 depositValue = CrossVersionLoopExecutor.valueUsd(m, tokenIn, amountIn);
-        amountOut = CrossVersionLoopService.sharesForDeposit(navBefore, ERC20Repo._totalSupply(), depositValue);
-        if (ERC20Repo._totalSupply() == 0) {
-            amountOut = amountOut > MINIMUM_LIQUIDITY ? amountOut - MINIMUM_LIQUIDITY : 0;
-        }
+        if (address(tokenIn) == address(this) && tokenOut == m.tokenA) return _amountForShares(m, amountIn);
+        if (address(tokenOut) != address(this) || tokenIn != m.tokenA) revert ExchangeInNotAvailable();
+        uint256 supply_ = ERC20Repo._totalSupply();
+        amountOut = CrossVersionLoopService.sharesForDeposit(CrossVersionLoopExecutor.navUsd(m), supply_,
+            CrossVersionLoopExecutor.valueUsd(m, tokenIn, amountIn));
+        if (supply_ == 0) amountOut = amountOut > MINIMUM_LIQUIDITY ? amountOut - MINIMUM_LIQUIDITY : 0;
     }
 
-    /// @inheritdoc IStandardExchangeIn
-    function exchangeIn(
-        IERC20 tokenIn,
-        uint256 amountIn,
-        IERC20 tokenOut,
-        uint256 minAmountOut,
-        address recipient,
-        bool pretransferred,
-        uint256 deadline
-    ) external returns (uint256 amountOut) {
-        if (deadline < block.timestamp) revert DeadlineExceeded(deadline, block.timestamp);
+    function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256 minAmountOut,
+        address recipient, bool pretransferred, uint256 deadline)
+        external nonReentrant returns (uint256 amountOut)
+    {
+        _requireExchange(deadline, amountIn, recipient);
         CrossVersionLoopExecutor.Market memory m = _market();
-        if (address(tokenOut) != address(this) || address(tokenIn) != address(m.tokenA)) {
-            revert ExchangeInNotAvailable();
+        if (address(tokenIn) == address(this) && tokenOut == m.tokenA) {
+            amountOut = _amountForShares(m, amountIn);
+            if (amountOut == 0) revert ZeroLoopAmount();
+            if (amountOut < minAmountOut) revert MinAmountNotMet(minAmountOut, amountOut);
+            _burnWithdrawalShares(amountIn, pretransferred);
+            _withdrawAndPay(m, amountOut, recipient);
+            return amountOut;
         }
+        if (address(tokenOut) != address(this) || tokenIn != m.tokenA) revert ExchangeInNotAvailable();
+        if (pretransferred) revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, 0);
+        return _depositInput(m, amountIn, minAmountOut, recipient);
+    }
 
-        // L-CLAIM-3 / L-GAPS-9: credit claimed only against this-call inbound delta.
-        // Absolute inventory is not delivery. Extra inbound must not grief (no exact-delta lock).
-        uint256 balBefore = tokenIn.balanceOf(address(this));
-        if (!pretransferred) {
-            tokenIn.transferFrom(msg.sender, address(this), amountIn);
-        }
-        uint256 observedDelta = tokenIn.balanceOf(address(this)) - balBefore;
-        if (amountIn > observedDelta) {
-            revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, observedDelta);
-        }
-
-        uint256 navBefore = CrossVersionLoopExecutor.navUsd(m);
-        uint256 supplyBefore = ERC20Repo._totalSupply();
-        uint256 depositValue = CrossVersionLoopExecutor.valueUsd(m, tokenIn, amountIn);
-
-        CrossVersionLoopExecutor.depositLoopAFirst(m, amountIn, _loopConfig());
-
-        amountOut = CrossVersionLoopService.sharesForDeposit(navBefore, supplyBefore, depositValue);
-
-        if (supplyBefore == 0) {
+    function _depositInput(CrossVersionLoopExecutor.Market memory m, uint256 amountIn,
+        uint256 minAmountOut, address recipient) private returns (uint256 amountOut)
+    {
+        IERC20 tokenIn = m.tokenA;
+        uint256 nav_ = CrossVersionLoopExecutor.navUsd(m);
+        uint256 supply_ = ERC20Repo._totalSupply();
+        uint256 before_ = tokenIn.balanceOf(address(this));
+        tokenIn.safeTransferFrom(msg.sender, address(this), amountIn);
+        uint256 received_ = tokenIn.balanceOf(address(this)) - before_;
+        if (received_ < amountIn) revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, received_);
+        amountOut = CrossVersionLoopService.sharesForDeposit(nav_, supply_,
+            CrossVersionLoopExecutor.valueUsd(m, tokenIn, amountIn));
+        if (supply_ == 0) {
+            if (amountOut <= MINIMUM_LIQUIDITY) revert ZeroLoopAmount();
+            amountOut -= MINIMUM_LIQUIDITY;
             ERC20Repo._mint(address(1), MINIMUM_LIQUIDITY);
-            amountOut = amountOut > MINIMUM_LIQUIDITY ? amountOut - MINIMUM_LIQUIDITY : 0;
         }
-
+        if (amountOut == 0) revert ZeroLoopAmount();
         if (amountOut < minAmountOut) revert MinAmountNotMet(minAmountOut, amountOut);
+        CrossVersionLoopExecutor.depositLoopAFirst(m, amountIn, _loopConfig());
         ERC20Repo._mint(recipient, amountOut);
     }
 }

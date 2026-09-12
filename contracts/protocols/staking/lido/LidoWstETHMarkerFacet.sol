@@ -3,15 +3,19 @@ pragma solidity ^0.8.0;
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ILidoWstETHStandardVault} from "contracts/protocols/staking/lido/interfaces/ILidoWstETHStandardVault.sol";
-import {LidoWstETHStandardExchangeCommon} from "contracts/protocols/staking/lido/LidoWstETHStandardExchangeCommon.sol";
+import {LidoWstETHStandardYieldTarget} from "contracts/protocols/staking/lido/LidoWstETHStandardYieldTarget.sol";
 
-contract LidoWstETHMarkerFacet is LidoWstETHStandardExchangeCommon, IFacet {
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+import {NativeStandardYieldSelectors} from "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol";
+
+contract LidoWstETHMarkerFacet is LidoWstETHStandardYieldTarget, IFacet {
     function facetName() public pure returns (string memory) {
         return type(LidoWstETHMarkerFacet).name;
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](1);
+        interfaces = new bytes4[](2);
+        interfaces[1] = type(IStandardizedYield).interfaceId;
         interfaces[0] = type(ILidoWstETHStandardVault).interfaceId;
     }
 
@@ -26,6 +30,7 @@ contract LidoWstETHMarkerFacet is LidoWstETHStandardExchangeCommon, IFacet {
         funcs[6] = ILidoWstETHStandardVault.totalReserveEth.selector;
         funcs[7] = ILidoWstETHStandardVault.actualLiquidReservePercentage.selector;
         funcs[8] = ILidoWstETHStandardVault.targetLiquidReservePercentage.selector;
+        funcs = NativeStandardYieldSelectors._append(funcs);
     }
 
     function facetMetadata()

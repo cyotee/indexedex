@@ -314,8 +314,8 @@ export default function CreatePage() {
                     <h1 className="text-3xl font-bold text-white">Create a DETF</h1>
                     <p className="text-gray-300 mt-2 max-w-lg mx-auto">
                       Connect your wallet to make a DETF. One token. One basket. The basket works
-                      in other apps. You get a bond you cannot cash out. It can collect a cut of
-                      new DETF. The DETF stays off until someone bonds.
+                      in other apps. Creator rewards arrive as sDETF you can unstake for DETF.
+                      The DETF stays off until someone bonds.
                     </p>
                 </div>
             </div>
@@ -327,8 +327,8 @@ export default function CreatePage() {
             <div className="text-center py-8">
                 <h1 className="text-3xl font-bold text-white">Create a DETF</h1>
                 <p className="text-gray-300 mt-2 max-w-xl mx-auto">
-                    Make a DETF. One token. One basket. The basket works in other apps. You get a
-                    bond you cannot cash out. Three steps, then bond later to turn it on.
+                    Make a DETF. One token. One basket. The basket works in other apps. Creator rights
+                    receive funded sDETF. Three steps, then the first bond turns it on.
                 </p>
             </div>
 
@@ -347,8 +347,8 @@ export default function CreatePage() {
                     <p className="text-xs uppercase tracking-wide text-gray-400">3</p>
                     <p className="mt-1 font-medium text-white">Fill and create</p>
                     <p className="mt-1">
-                      Set the mix, then create. You get a bond you cannot cash out. Bond later to
-                      turn it on.
+                      Set the mix, then create. Your standing creator right receives funded sDETF.
+                      Bond later to turn it on.
                     </p>
                 </li>
             </ol>

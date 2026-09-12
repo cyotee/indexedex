@@ -1,0 +1,33 @@
+    function test_publicReserveSwapsRemainAvailableInBothPolicies() public {
+        _purchase(1_000 ether);
+        address hook_ = address(_hook());
+        IERC20 lead_ = IERC20(_leadPayment());
+        IERC20 detf_ = IERC20(address(_subject()));
+        address buyer_ = _buyer();
+        uint256 supply_ = detf_.totalSupply();
+        uint256 before_ = detf_.balanceOf(buyer_);
+        uint256 quote_ = IStandardExchangeIn(hook_).previewExchangeIn(lead_, 1 ether, detf_);
+        assertGt(quote_, 0);
+        vm.startPrank(buyer_);
+        lead_.approve(hook_, 1 ether);
+        uint256 paid_ = IStandardExchangeIn(hook_).exchangeIn(lead_, 1 ether, detf_, quote_, buyer_, false, block.timestamp);
+        vm.stopPrank();
+        assertEq(paid_, quote_);
+        assertEq(detf_.balanceOf(buyer_) - before_, quote_);
+        assertEq(detf_.totalSupply(), supply_, "reserve swap is supply-neutral");
+    }
+
+    function test_lpBondSettlesExpansionBeforeTakingPayment() public {
+        uint256 amount_ = _externalLp();
+        IERC20 lead_ = IERC20(_leadPayment());
+        address protocol_ = IStandardizedYield(_hook().standardExchangeOf(address(lead_))).yieldToken();
+        vm.startPrank(_buyer());
+        lead_.approve(protocol_, 100_000 ether);
+        SimpleYieldERC4626(protocol_).simulateYield(100_000 ether);
+        vm.stopPrank();
+        vm.warp(block.timestamp + 25 hours);
+        assertGt(_subject().pendingExpansionDetf(), 0, "funded yield creates due expansion");
+        (, uint256 principal_, uint256 rewards_,) = _subject().previewBond(_lp(), amount_, 180 days);
+        _assertLpBondFunding(amount_, principal_, rewards_);
+        assertEq(_subject().pendingExpansionDetf(), 0, "catch-up settles once before LP receipt");
+    }

@@ -31,6 +31,7 @@ library Phase_06_Stage_06_CurveQuadBufferHookPkg {
         IFacet hooksFacet = QuadHookFS.deployHooksFacet(s.create3Factory);
         IQuadHookPkg.PkgInit memory init_;
         init_.vaultRegistryDeployment = reg;
+        init_.joinQueryFacet = QuadHookFS.deployJoinQueryFacet(s.create3Factory);
         init_.vaultFeeOracleQuery = feeOracle;
         init_.liquidityFacet = joinFacet;
         init_.exitFacet = exitFacet;

@@ -1,0 +1,11 @@
+{
+  "artifactsChecked": 1,
+  "uniqueSourcesHashed": 59,
+  "findings": [
+    {
+      "artifact": "out/RebasingClaimTokenFacet.sol/RebasingClaimTokenFacet.json",
+      "source": "contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol",
+      "error": "source hash mismatch"
+    }
+  ]
+}

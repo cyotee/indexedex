@@ -24,18 +24,6 @@ export function ThresholdGauge({
     )
   }
 
-  if (scale.openMode) {
-    return (
-      <div
-        className="rounded-xl border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] px-4 py-6 text-sm text-[var(--text-muted,#9aa3b2)]"
-        data-testid="insights-gauge-open"
-      >
-        Open mode. Mint and burn are not blocked by synthetic price.
-        <p className="mt-2 font-mono text-[var(--text-primary,#EDEDED)]">Price {priceLabel}</p>
-      </div>
-    )
-  }
-
   return (
     <div data-testid="insights-gauge">
       <svg viewBox="0 0 100 28" className="h-24 w-full" role="img" aria-label="Mint and burn thresholds versus synthetic price">

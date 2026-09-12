@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib as DepositQuoteLib}
+    from "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
@@ -122,18 +124,6 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
         uint256 amount1;
     }
 
-    /// @dev Stack-safe intermediate for single-asset deposit preview.
-    struct DepositSinglePreview {
-        uint256 amountToSwap;
-        uint256 amountOtherOut;
-        uint256 amountKeptIn;
-        uint256 x;
-        uint256 y;
-        uint256 used0;
-        uint256 used1;
-    }
-
-
     /* views used by deposit/withdraw internals (also on Hooks Facet) */
     function claimSupply0() public view returns (uint256) {
         Repo.Layout storage l = Repo._layout();
@@ -178,6 +168,7 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
     function _claimSupply(address se, address pairToken) internal view returns (uint256) {
         uint256 seBal = IERC20(se).balanceOf(address(this));
         if (seBal == 0) return 0;
+        if (se == pairToken) return seBal;
         return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seBal, IERC20(pairToken));
     }
 
@@ -322,6 +313,7 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
 
     function _buffer(address se, address pairToken, uint256 amount) internal returns (uint256 seOut) {
         _requireNonZero(amount);
+        if (se == pairToken) return amount;
         uint256 minOut = IStandardExchangeIn(se).previewExchangeIn(
             IERC20(pairToken), amount, IERC20(se)
         );
@@ -334,6 +326,7 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
 
     function _unwrap(address se, address pairToken, uint256 seIn) internal returns (uint256 tokenOut) {
         _requireNonZero(seIn);
+        if (se == pairToken) return seIn;
         uint256 minOut = IStandardExchangeIn(se).previewExchangeIn(
             IERC20(se), seIn, IERC20(pairToken)
         );
@@ -350,6 +343,7 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
         returns (uint256 seIn)
     {
         _requireNonZero(tokenOut);
+        if (se == pairToken) return tokenOut;
         seIn = IStandardExchangeOut(se).previewExchangeOut(IERC20(se), IERC20(pairToken), tokenOut);
         uint256 spent = IStandardExchangeOut(se).exchangeOut(
             IERC20(se), seIn, IERC20(pairToken), tokenOut, address(this), false, block.timestamp
@@ -392,10 +386,11 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
 
 
     function _refundPairDust(address token, address to) internal {
+        address se = _seFor(token);
+        if (se == token) return;
         uint256 bal = IERC20(token).balanceOf(address(this));
         if (bal <= Repo.MAX_DUST_WEI) return;
         uint256 excess = bal - Repo.MAX_DUST_WEI;
-        address se = _seFor(token);
         uint256 preview = IStandardExchangeIn(se).previewExchangeIn(
             IERC20(token), excess, IERC20(se)
         );
@@ -673,9 +668,22 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
         uint256 minAmount1,
         uint256 deadline
     ) internal returns (uint256 amount0, uint256 amount1) {
+        return _withdrawAndSettle(lpAmount, to, minAmount0, minAmount1, deadline, true);
+    }
+
+    /// @dev A composed exit retains its own raw withdrawals until the final asset is paid.
+    function _withdrawAndSettle(
+        uint256 lpAmount,
+        address to,
+        uint256 minAmount0,
+        uint256 minAmount1,
+        uint256 deadline,
+        bool refundDust
+    ) internal returns (uint256 amount0, uint256 amount1) {
         _requireDeadline(deadline);
         _requireNonZero(lpAmount);
 
+        {
         _mintProtocolFeeIfNeeded(false);
 
         uint256 supply = ERC20Repo._totalSupply();
@@ -698,9 +706,10 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
             IERC20(l.currency1).safeTransfer(to, amount1);
         }
 
+        }
         if (amount0 < minAmount0 || amount1 < minAmount1) revert InsufficientTokenOut();
         _setKLastPostOp();
-        _refundBothPairDust(msg.sender);
+        if (refundDust) _refundBothPairDust(msg.sender);
         _syncReserves();
         emit IHook.Withdraw(msg.sender, to, lpAmount, amount0, amount1);
     }
@@ -922,6 +931,7 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
         returns (uint256)
     {
         if (seAmount == 0) return 0;
+        if (se == pairToken) return seAmount;
         return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seAmount, IERC20(pairToken));
     }
 
@@ -1059,63 +1069,12 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
         view
         returns (uint256 lpAmount)
     {
-        DepositSinglePreview memory p;
-        (p.amountToSwap, p.amountOtherOut, p.amountKeptIn) = _previewZapSplit(tokenIn, amountIn);
-        _applyZapToClaimsPreview(tokenIn, p);
-        if (p.x == 0 || p.y == 0) return 0;
-        _clampSingleDepositAdds(tokenIn, p);
-        if (p.used0 == 0 || p.used1 == 0) return 0;
-        return _mintSharesFromUsedPreview(p);
-    }
-
-
-    function _applyZapToClaimsPreview(address tokenIn, DepositSinglePreview memory p) private view {
-        Repo.Layout storage l = Repo._layout();
-        uint256 claimInDelta =
-            _previewBufferClaimIn(_seFor(tokenIn), tokenIn, p.amountToSwap);
-        p.x = claimSupplyCurrency0();
-        p.y = claimSupplyCurrency1();
-        if (tokenIn == l.currency0) {
-            p.x += claimInDelta;
-            p.y = p.y > p.amountOtherOut ? p.y - p.amountOtherOut : 0;
-        } else {
-            p.y += claimInDelta;
-            p.x = p.x > p.amountOtherOut ? p.x - p.amountOtherOut : 0;
-        }
-    }
-
-
-    function _clampSingleDepositAdds(address tokenIn, DepositSinglePreview memory p) private view {
-        Repo.Layout storage l = Repo._layout();
-        uint256 add0 = tokenIn == l.currency0 ? p.amountKeptIn : p.amountOtherOut;
-        uint256 add1 = tokenIn == l.currency0 ? p.amountOtherOut : p.amountKeptIn;
-        p.used0 = add0;
-        p.used1 = add1;
-        uint256 ideal1 = (p.used0 * p.y) / p.x;
-        if (ideal1 <= p.used1) p.used1 = ideal1;
-        else p.used0 = (p.used1 * p.x) / p.y;
-    }
-
-
-    function _mintSharesFromUsedPreview(DepositSinglePreview memory p)
-        private
-        view
-        returns (uint256)
-    {
-        Repo.Layout storage l = Repo._layout();
-        return Math.mintSharesLater(
-            Math.toWad(
-                _previewBufferClaimIn(_seFor(l.currency0), l.currency0, p.used0),
-                _decimalsCurrency0()
-            ),
-            Math.toWad(
-                _previewBufferClaimIn(_seFor(l.currency1), l.currency1, p.used1),
-                _decimalsCurrency1()
-            ),
-            Math.toWad(p.x, _decimalsCurrency0()),
-            Math.toWad(p.y, _decimalsCurrency1()),
-            _supplyAfterProtocolMint()
-        );
+        _requireZapEligible();
+        _requireNonZero(amountIn);
+        if (!_isBoundPairToken(tokenIn)) revert InvalidPairToken();
+        (bool supported, uint256 projected) = DepositQuoteLib.preview(tokenIn, amountIn);
+        if (supported) return projected;
+        return DepositQuoteLib.previewLegacy(tokenIn, amountIn, _supplyAfterProtocolMint());
     }
 
 
@@ -1132,14 +1091,18 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
         uint256 seOut0 = (IERC20(se0).balanceOf(address(this)) * lpAmount) / supplyAdj;
         uint256 seOut1 = (IERC20(se1).balanceOf(address(this)) * lpAmount) / supplyAdj;
         if (seOut0 > 0) {
-            amount0 = IStandardExchangeIn(se0).previewExchangeIn(
-                IERC20(se0), seOut0, IERC20(l.currency0)
-            );
+            amount0 = se0 == l.currency0
+                ? seOut0
+                : IStandardExchangeIn(se0).previewExchangeIn(
+                    IERC20(se0), seOut0, IERC20(l.currency0)
+                );
         }
         if (seOut1 > 0) {
-            amount1 = IStandardExchangeIn(se1).previewExchangeIn(
-                IERC20(se1), seOut1, IERC20(l.currency1)
-            );
+            amount1 = se1 == l.currency1
+                ? seOut1
+                : IStandardExchangeIn(se1).previewExchangeIn(
+                    IERC20(se1), seOut1, IERC20(l.currency1)
+                );
         }
     }
 
@@ -1214,12 +1177,12 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookCommon {
         uint256 seOut0 = (IERC20(se0).balanceOf(address(this)) * lpAmount) / supplyAdj;
         uint256 seOut1 = (IERC20(se1).balanceOf(address(this)) * lpAmount) / supplyAdj;
         if (seOut0 > 0) {
-            amount0 = receiveSeShare0
+            amount0 = receiveSeShare0 || se0 == l.currency0
                 ? seOut0
                 : IStandardExchangeIn(se0).previewExchangeIn(IERC20(se0), seOut0, IERC20(l.currency0));
         }
         if (seOut1 > 0) {
-            amount1 = receiveSeShare1
+            amount1 = receiveSeShare1 || se1 == l.currency1
                 ? seOut1
                 : IStandardExchangeIn(se1).previewExchangeIn(IERC20(se1), seOut1, IERC20(l.currency1));
         }

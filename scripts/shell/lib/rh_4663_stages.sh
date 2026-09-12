@@ -18,7 +18,9 @@ rh_stage_script() {
 }
 
 # Catalog order: Phase 00 Stage 01, architecture Stages of 01–06, then Phase 09 export.
-# Stage numbers match 46630. 05-04 (Uni V3 SE) and 06-05 (Orbital hook) stay unused.
+# Stages 05-04/05-06 provide V3/V2 SE; 06-05 provides the current Orbital hook.
+# TokenStaking (06-08 package + 08-01 $DTF instance) is opt-in: rh_run_token_staking.
+# Rebasing-aware ERC4626 (06-10) is included independently of TokenStaking.
 rh_catalog_rows() {
   cat <<'EOF'
 00 01
@@ -33,13 +35,18 @@ rh_catalog_rows() {
 05 01
 05 02
 05 03
+05 04
 05 05
+05 06
 06 01
 06 02
 06 03
 06 04
+06 05
 06 06
 06 07
+06 09
+06 10
 09 01
 EOF
 }
@@ -81,4 +88,33 @@ rh_run_catalog() {
     fi
     run_stage "Phase ${pp} Stage ${ss}" "$(rh_stage_script "$pp" "$ss")"
   done < <(rh_catalog_rows)
+}
+
+# Opt-in: TokenStaking DFPkg then $DTF instance. Not in architecture `all`.
+rh_run_token_staking() {
+  run_stage "Phase 06 Stage 08" "$(rh_stage_script 06 08)"
+  run_stage "Phase 08 Stage 01" "$(rh_stage_script 08 01)"
+}
+
+# Opt-in: notifyRewardAmount(sender $DTF balance). Requires Phase 08 Stage 01 JSON.
+rh_run_token_staking_fund() {
+  run_stage "Phase 08 Stage 02" "$(rh_stage_script 08 02)"
+}
+
+# Separate opt-in instance catalog. The architecture-only rh_catalog_rows stays unchanged.
+rh_fee_accrual_catalog_rows() {
+  cat <<'ROWS'
+01 04
+07 01
+07 02
+07 03
+07 04
+08 03
+08 04
+08 05
+08 06
+08 07
+08 08
+09 02
+ROWS
 }

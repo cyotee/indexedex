@@ -1,0 +1,9 @@
+{
+  "recorded_at_utc": "2026-09-10T17:10:01.244659+00:00",
+  "status": "PASS_PRESERVES_PRIOR_NODE_RECORDS_AND_REJECTS_INVALID_PORT",
+  "default_exit_code": 2,
+  "prior_records_unchanged": true,
+  "invalid_port_exit_code": 2,
+  "new_node_started": false,
+  "script_sha256": "11a90d3ecbff9b42c2e129b879cf88a0c5116da555ee2f1a339fedc3a7485ad8"
+}

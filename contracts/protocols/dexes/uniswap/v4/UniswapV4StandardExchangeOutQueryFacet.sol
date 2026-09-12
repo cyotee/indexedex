@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IStandardExchangeTransitionQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {
@@ -18,8 +19,9 @@ contract UniswapV4StandardExchangeOutQueryFacet is UniswapV4StandardExchangeOutQ
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](1);
+        funcs = new bytes4[](2);
         funcs[0] = IStandardExchangeOut.previewExchangeOut.selector;
+        funcs[1] = IStandardExchangeTransitionQuote.quoteState.selector;
     }
 
     function facetMetadata()

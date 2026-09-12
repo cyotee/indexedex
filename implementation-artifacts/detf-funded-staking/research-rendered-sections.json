@@ -1,0 +1,23 @@
+[
+  {
+    "slug": "detf",
+    "section_count": 8,
+    "missing": [],
+    "product_links": [
+      "/create",
+      "/explore",
+      "/research/bond-vs-mint",
+      "/staking"
+    ]
+  },
+  {
+    "slug": "bond-vs-mint",
+    "section_count": 8,
+    "missing": [],
+    "product_links": [
+      "/create",
+      "/explore",
+      "/staking"
+    ]
+  }
+]

@@ -122,6 +122,9 @@ library UniswapV4StandardExchangeWeightedBufferHookTestDeployLib {
         returns (IUniswapV4StandardExchangeWeightedBufferHookPackage.PkgInit memory init)
     {
         init.vaultRegistryDeployment = IVaultRegistryDeployment(indexedexManager);
+        init.joinQueryFacet = PkgFactory.deployJoinQueryFacet(create3Factory);
+        init.joinFlexibleFacet = PkgFactory.deployJoinFlexibleFacet(create3Factory);
+        init.exitQueryFacet = PkgFactory.deployExitQueryFacet(create3Factory);
         init.vaultFeeOracleQuery = IVaultFeeOracleQuery(indexedexManager);
         init.joinFacet = PkgFactory.deployJoinFacet(create3Factory);
         init.exitFacet = PkgFactory.deployExitFacet(create3Factory);

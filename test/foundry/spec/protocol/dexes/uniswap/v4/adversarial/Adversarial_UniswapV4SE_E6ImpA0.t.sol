@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IUniswapV4StandardExchangeLiquidReserve} from "contracts/protocols/dexes/uniswap/v4/interfaces/IUniswapV4StandardExchangeLiquidReserve.sol";
+
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
@@ -185,7 +189,22 @@ contract Adversarial_UniswapV4SE_E6ImpA0 is TestBase_UniswapV4StandardExchange {
         ERC20PermitMintableStub(token0_).mint(to_, amountIn_);
         vm.startPrank(to_);
         IERC20(token0_).approve(address(vault), amountIn_);
-        shares_ = vault.exchangeIn(IERC20(token0_), amountIn_, IERC20(address(vault)), 0, to_, false, _deadline());
+        if (vault.totalSupply() == 0) {
+            uint256 amount1_ = amountIn_;
+            ERC20PermitMintableStub(_token1()).mint(to_, amount1_);
+            IERC20(_token1()).approve(address(vault), amount1_);
+            address[] memory tokens = new address[](2);
+            tokens[0] = token0_;
+            tokens[1] = _token1();
+            uint256[] memory amounts = new uint256[](2);
+            amounts[0] = amountIn_;
+            amounts[1] = amount1_;
+            shares_ = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
+                tokens, amounts, IERC20(address(vault)), 0, to_, false, _deadline()
+            );
+        } else {
+            shares_ = vault.exchangeIn(IERC20(token0_), amountIn_, IERC20(address(vault)), 0, to_, false, _deadline());
+        }
         vm.stopPrank();
         assertGt(shares_, 0, "minted SE shares");
     }
@@ -381,6 +400,14 @@ contract Adversarial_UniswapV4SE_E6ImpA0 is TestBase_UniswapV4StandardExchange {
         assertGt(vault.balanceOf(DEAD_SHARES_SINK), 0, "A0: dead shares for residual");
         assertEq(vault.balanceOf(attacker), shares_, "A0: attacker user shares");
         assertLt(shares_, vault.totalSupply(), "A0: attacker is not 100% supply");
+        // Activation paid both assets. Independently bound ownership of each leg.
+        IUniswapV4StandardExchangeLiquidReserve book = IUniswapV4StandardExchangeLiquidReserve(address(vault));
+        (uint256 total0, uint256 total1) = book.deployedReserve();
+        total0 += book.localReserve(token0_);
+        total1 += book.localReserve(_token1());
+        assertLe(shares_ * total0, mintIn_ * vault.totalSupply(), "A0: token0 claim excludes donation");
+        assertLe(shares_ * total1, mintIn_ * vault.totalSupply(), "A0: token1 claim limited to payment");
+
 
         vm.startPrank(attacker);
         vault.approve(address(vault), shares_);
@@ -388,8 +415,9 @@ contract Adversarial_UniswapV4SE_E6ImpA0 is TestBase_UniswapV4StandardExchange {
         vm.stopPrank();
 
         uint256 attackerTokAfter_ = IERC20(token0_).balanceOf(attacker);
-        // Spent mintIn_; redeem must not return the donation.
-        assertLe(attackerTokAfter_, attackerTokBefore_ + mintIn_, "A0: no donation extract");
+        // Both deposited assets are worth mintIn_ token0 at the initial human 1:1 price.
+        assertLe(attackerTokAfter_, attackerTokBefore_ + 2 * mintIn_, "A0: recovery limited to both paid assets");
+        assertEq(vault.balanceOf(attacker), 0, "A0: all attacker shares redeemed");
         assertGt(vault.balanceOf(DEAD_SHARES_SINK), 0, "A0: dead shares remain after redeem");
         assertLt(attackerTokAfter_ - attackerTokBefore_, donation_, "A0: did not absorb donation");
     }
@@ -413,13 +441,20 @@ contract Adversarial_UniswapV4SE_E6ImpA0 is TestBase_UniswapV4StandardExchange {
 
         vm.startPrank(victim);
         IERC20(token0_).approve(address(vault), victimIn_);
-        vm.expectRevert(UniswapV4StandardExchangeCommon.UniswapV4Exchange_ZeroAmount.selector);
-        vault.exchangeIn(IERC20(token0_), victimIn_, IERC20(address(vault)), 0, victim, false, _deadline());
+        uint256 quoted = vault.previewExchangeIn(IERC20(token0_), victimIn_, IERC20(address(vault)));
+        if (quoted == 0) {
+            vm.expectRevert(UniswapV4StandardExchangeCommon.UniswapV4Exchange_ZeroAmount.selector);
+            vault.exchangeIn(IERC20(token0_), victimIn_, IERC20(address(vault)), 0, victim, false, _deadline());
+            assertEq(IERC20(token0_).balanceOf(victim), victimTokBefore_, "A0: zero-share payment returned");
+        } else {
+            uint256 received = vault.exchangeIn(IERC20(token0_), victimIn_, IERC20(address(vault)), quoted, victim, false, _deadline());
+            assertEq(received, quoted, "A0: positive quote funds actual shares");
+            assertEq(IERC20(token0_).balanceOf(victim), victimTokBefore_ - victimIn_, "A0: exact funded payment");
+        }
         vm.stopPrank();
 
-        assertEq(IERC20(token0_).balanceOf(victim), victimTokBefore_, "A0: victim tokens returned");
-        assertEq(vault.balanceOf(victim), 0, "A0: no zero-share credit");
+        assertEq(vault.balanceOf(victim), quoted, "A0: no payment without positive shares");
         assertEq(vault.balanceOf(attacker), attackerSharesBefore_, "A0: attacker shares unchanged");
-        assertEq(vault.totalSupply(), supplyBefore_, "A0: supply unchanged");
+        assertEq(vault.totalSupply(), supplyBefore_ + quoted, "A0: only victim shares issued");
     }
 }

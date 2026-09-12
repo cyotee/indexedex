@@ -1,0 +1,63 @@
+{
+  "status": "APPLIED_VALIDATION_PENDING",
+  "recorded_at_utc": "2026-09-08T04:58:02.052434+00:00",
+  "reason": "Actual leaf build measured V4 OutMultiQuery 26,794 bytes and Orbital Hooks 24,608. Put snapshot on existing OutQuery which already uses inventory snapshots for exact withdrawals; move unchanged radius view to an existing smaller query facet. Assembled proxy selectors and behavior remain unchanged.",
+  "files": [
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiQueryTarget.sol",
+      "before_sha256": "ea5f939bc95b20a01f2c6b5d1b59a88491ee9a7d1264aea9dfc75b5fe7be803d",
+      "after_sha256": "df2cfa9942aa4982895df00557de6ac76d8bc8a5199376d7c50b02335638c4c9"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutQueryTarget.sol",
+      "before_sha256": "f21728cae9fa2038c6cfe89649a1a49de502f3e5964e8323275ee804f1a75720",
+      "after_sha256": "32d3e82f543d51686f04651b3b7ec9675452c0a8bcb63149cc483fed67ef66bd"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiQueryFacet.sol",
+      "before_sha256": "58e27b27e746fd4284f6e2bdac0e21e9558b01c3d73c9ed0756d0f0c1f361888",
+      "after_sha256": "138f6165c6d4e286b1098ede53e5ffb4066fde0fc76ae5ac421cfa7894a97efb"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutQueryFacet.sol",
+      "before_sha256": "fe47114a048590edee0e2ed78063bd20a525e9e125a5c691484fba39f4be182e",
+      "after_sha256": "62a36912f4023a673697f8948037a0b0e8df76793af940b71c76c820647c7068"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiQueryFacet_IFacet_Test.t.sol",
+      "before_sha256": "57278adcf087636d4516d7a787be8dddfdaf051c75c56173b7c26d63a33a0ec6",
+      "after_sha256": "29b5fc121f42cbc36081d93978923ac058d0c4a214818f2b208ca389b6492d2a"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookHooksTarget.sol",
+      "before_sha256": "f17b25e8bb045f6645c1fce71e344c89e4f2639bacd4a95dfcd56c0e1ef8c8ef",
+      "after_sha256": "baf8796d17c3af97443e36112bd4bb789bab609356132bfb80df804ea84d2768"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDepositQueryTarget.sol",
+      "before_sha256": "6eab87aaf1a726bd6caeea30157bf3d1f5c42c3b76c504342404b21c7b448644",
+      "after_sha256": "3ddff57138871b714b9f7ae7e0eab960d6bedc8fdd29b3008c5f99f3965bc538"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookHooksFacet.sol",
+      "before_sha256": "00c205f36d2162e27de18d84f4b2771cdd1932f78235cc2fefce224d37a74666",
+      "after_sha256": "c4ded30151a528f298f74112c6b8b00e11458dbfed683f452fbbe7184a386627"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositQueryFacet.sol",
+      "before_sha256": "4688c4484e9e3675c68aa5ac5566401a8d203d67e4cba0cf80df8efdce2fb42d",
+      "after_sha256": "4593e4ef627d68a5362910a8d22305711511184d14b3d60002a350ba29f1ee91"
+    }
+  ],
+  "selected_leaf_validation": {
+    "exit_code": 0,
+    "seconds": 67.148,
+    "runtime_bytes": {
+      "UniswapV4StandardExchangeOutQueryFacet": 23383,
+      "UniswapV4StandardExchangeOutMultiQueryFacet": 15821,
+      "UniswapV4StandardExchangeOrbitalBufferHookHooksFacet": 24516,
+      "UniswapV4StandardExchangeOrbitalBufferHookDepositQueryFacet": 23442
+    },
+    "note": "All four changed relocation facets fit; full current proxy/deployment regression still running."
+  }
+}

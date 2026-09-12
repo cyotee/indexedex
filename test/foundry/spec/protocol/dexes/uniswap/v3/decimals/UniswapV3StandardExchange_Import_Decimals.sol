@@ -1,0 +1,245 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
+import {IUniswapV3Pool} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Pool.sol";
+import {
+    INonfungiblePositionManager
+} from "@crane/contracts/protocols/dexes/uniswap/v3/periphery/interfaces/INonfungiblePositionManager.sol";
+import {
+    NonfungiblePositionManager
+} from "@crane/contracts/protocols/dexes/uniswap/v3/periphery/NonfungiblePositionManager.sol";
+import {
+    IUniswapV3StandardExchangePositionImport
+} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangePositionImportTarget.sol";
+import {
+    TestBase_UniswapV3StandardExchange_Decimals
+} from "contracts/protocols/dexes/uniswap/v3/test/bases/TestBase_UniswapV3StandardExchange_Decimals.sol";
+
+contract MockTokenDescriptor_Dec {
+    function tokenURI(uint256) external pure returns (string memory) {
+        return "";
+    }
+}
+
+/// @notice Position import. pairToken = tokenA. Amounts are raw units via `_u0`/`_u1`.
+abstract contract UniswapV3StandardExchange_Import_Decimals is TestBase_UniswapV3StandardExchange_Decimals {
+    NonfungiblePositionManager internal npm;
+    address internal alice = makeAddr("alice");
+
+    function setUp() public virtual override {
+        super.setUp();
+        _deployPairTokens();
+        pool = _createPoolOneToOne(address(tokenA), address(tokenB), FEE_MEDIUM);
+        _seedExternalLiquidity(pool, 0);
+        vault = _deployVault(pool);
+
+        address descriptor = address(new MockTokenDescriptor_Dec());
+        npm = new NonfungiblePositionManager(address(uniswapV3Factory), address(1), descriptor);
+    }
+
+    function _mintNpmPosition(address recipient, int24 tickLower, int24 tickUpper, uint256 amount0, uint256 amount1)
+        internal
+        returns (uint256 tokenId, uint128 liquidity)
+    {
+        // Callers specify offsets around the human 1:1 spot, which is not tick zero for mixed decimals.
+        (, int24 currentTick,,,,,) = pool.slot0();
+        int24 alignedTick = (currentTick / pool.tickSpacing()) * pool.tickSpacing();
+        tickLower += alignedTick;
+        tickUpper += alignedTick;
+        address token0 = pool.token0();
+        address token1 = pool.token1();
+        _mint(token0, address(this), amount0);
+        _mint(token1, address(this), amount1);
+        IERC20(token0).approve(address(npm), amount0);
+        IERC20(token1).approve(address(npm), amount1);
+
+        (tokenId, liquidity,,) = npm.mint(
+            INonfungiblePositionManager.MintParams({
+                token0: token0,
+                token1: token1,
+                fee: FEE_MEDIUM,
+                tickLower: tickLower,
+                tickUpper: tickUpper,
+                amount0Desired: amount0,
+                amount1Desired: amount1,
+                amount0Min: 0,
+                amount1Min: 0,
+                recipient: recipient,
+                deadline: block.timestamp + 1
+            })
+        );
+    }
+
+    function test_import_happyPath_principalOnly_leavesEmptyNft() public {
+        int24 spacing = pool.tickSpacing();
+        int24 lower = -spacing * 10;
+        int24 upper = spacing * 10;
+        (uint256 tokenId, uint128 liq) = _mintNpmPosition(alice, lower, upper, _u0(50), _u1(50));
+        assertGt(liq, 0);
+
+        IUniswapV3StandardExchangePositionImport importer =
+            IUniswapV3StandardExchangePositionImport(address(vault));
+
+        uint256 preview = importer.previewImportPosition(INonfungiblePositionManager(address(npm)), tokenId);
+
+        vm.startPrank(alice);
+        IERC721(address(npm)).approve(address(vault), tokenId);
+        uint256 shares = importer.importPosition(
+            INonfungiblePositionManager(address(npm)),
+            tokenId,
+            0,
+            alice,
+            alice,
+            block.timestamp + 1
+        );
+        vm.stopPrank();
+
+        assertEq(preview, shares, "P-IMP-01");
+        assertGt(shares, 0);
+        assertEq(IERC20(address(vault)).balanceOf(alice), shares);
+        assertEq(IERC721(address(npm)).ownerOf(tokenId), address(vault));
+        (,,,,,,, uint128 remainingLiq,,,,) = npm.positions(tokenId);
+        assertEq(remainingLiq, 0, "nft empty");
+
+        address token0 = pool.token0();
+        uint256 moreIn = _u0(10);
+        _mint(token0, alice, moreIn);
+        vm.startPrank(alice);
+        IERC20(token0).approve(address(vault), moreIn);
+        uint256 more =
+            vault.exchangeIn(IERC20(token0), moreIn, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
+        vm.stopPrank();
+        assertGt(more, 0);
+    }
+
+    function test_import_withFees_compoundsCenter() public {
+        int24 spacing = pool.tickSpacing();
+        int24 lower = -spacing * 20;
+        int24 upper = spacing * 20;
+        (uint256 tokenId,) = _mintNpmPosition(alice, lower, upper, _u0(80), _u1(80));
+
+        _swapHuman(pool, true, 30_000);
+        _swapHuman(pool, false, 30_000);
+
+        IUniswapV3StandardExchangePositionImport importer =
+            IUniswapV3StandardExchangePositionImport(address(vault));
+        uint256 preview = importer.previewImportPosition(INonfungiblePositionManager(address(npm)), tokenId);
+
+        vm.startPrank(alice);
+        IERC721(address(npm)).approve(address(vault), tokenId);
+        uint256 shares = importer.importPosition(
+            INonfungiblePositionManager(address(npm)), tokenId, 0, alice, alice, block.timestamp + 1
+        );
+        vm.stopPrank();
+
+        assertApproxEqRel(preview, shares, 0.02e18, "P-IMP-02");
+        assertGt(shares, 0);
+    }
+
+    function test_import_secondImport_reverts() public {
+        int24 spacing = pool.tickSpacing();
+        (uint256 tokenId1,) = _mintNpmPosition(alice, -spacing * 5, spacing * 5, _u0(20), _u1(20));
+        (uint256 tokenId2,) = _mintNpmPosition(alice, -spacing * 5, spacing * 5, _u0(20), _u1(20));
+
+        IUniswapV3StandardExchangePositionImport importer =
+            IUniswapV3StandardExchangePositionImport(address(vault));
+
+        vm.startPrank(alice);
+        IERC721(address(npm)).approve(address(vault), tokenId1);
+        importer.importPosition(
+            INonfungiblePositionManager(address(npm)), tokenId1, 0, alice, alice, block.timestamp + 1
+        );
+
+        IERC721(address(npm)).approve(address(vault), tokenId2);
+        vm.expectRevert();
+        importer.importPosition(
+            INonfungiblePositionManager(address(npm)), tokenId2, 0, alice, alice, block.timestamp + 1
+        );
+        vm.stopPrank();
+    }
+
+    function test_import_wrongPool_reverts() public {
+        IUniswapV3Pool other = _createPoolOneToOne(address(tokenA), address(tokenB), 500);
+        _seedExternalLiquidity(other, 0);
+
+        address token0 = other.token0();
+        address token1 = other.token1();
+        uint256 a0 = _uToken(token0, 20);
+        uint256 a1 = _uToken(token1, 20);
+        _mint(token0, address(this), a0);
+        _mint(token1, address(this), a1);
+        IERC20(token0).approve(address(npm), a0);
+        IERC20(token1).approve(address(npm), a1);
+        int24 spacing = other.tickSpacing();
+        (uint256 tokenId,,,) = npm.mint(
+            INonfungiblePositionManager.MintParams({
+                token0: token0,
+                token1: token1,
+                fee: 500,
+                tickLower: -spacing * 10,
+                tickUpper: spacing * 10,
+                amount0Desired: a0,
+                amount1Desired: a1,
+                amount0Min: 0,
+                amount1Min: 0,
+                recipient: alice,
+                deadline: block.timestamp + 1
+            })
+        );
+
+        IUniswapV3StandardExchangePositionImport importer =
+            IUniswapV3StandardExchangePositionImport(address(vault));
+        vm.startPrank(alice);
+        IERC721(address(npm)).approve(address(vault), tokenId);
+        vm.expectRevert();
+        importer.importPosition(
+            INonfungiblePositionManager(address(npm)), tokenId, 0, alice, alice, block.timestamp + 1
+        );
+        vm.stopPrank();
+    }
+
+    function test_import_withoutApproval_reverts() public {
+        int24 spacing = pool.tickSpacing();
+        (uint256 tokenId,) = _mintNpmPosition(alice, -spacing * 5, spacing * 5, _u0(20), _u1(20));
+        IUniswapV3StandardExchangePositionImport importer =
+            IUniswapV3StandardExchangePositionImport(address(vault));
+        vm.prank(alice);
+        vm.expectRevert();
+        importer.importPosition(
+            INonfungiblePositionManager(address(npm)), tokenId, 0, alice, alice, block.timestamp + 1
+        );
+    }
+
+    function test_import_zeroLiquidity_reverts() public {
+        int24 spacing = pool.tickSpacing();
+        (uint256 tokenId, uint128 liq) = _mintNpmPosition(alice, -spacing * 5, spacing * 5, _u0(20), _u1(20));
+        vm.startPrank(alice);
+        npm.decreaseLiquidity(
+            INonfungiblePositionManager.DecreaseLiquidityParams({
+                tokenId: tokenId,
+                liquidity: liq,
+                amount0Min: 0,
+                amount1Min: 0,
+                deadline: block.timestamp + 1
+            })
+        );
+        npm.collect(
+            INonfungiblePositionManager.CollectParams({
+                tokenId: tokenId,
+                recipient: alice,
+                amount0Max: type(uint128).max,
+                amount1Max: type(uint128).max
+            })
+        );
+        IERC721(address(npm)).approve(address(vault), tokenId);
+        IUniswapV3StandardExchangePositionImport importer =
+            IUniswapV3StandardExchangePositionImport(address(vault));
+        vm.expectRevert();
+        importer.importPosition(
+            INonfungiblePositionManager(address(npm)), tokenId, 0, alice, alice, block.timestamp + 1
+        );
+        vm.stopPrank();
+    }
+}

@@ -78,4 +78,5 @@ cache_orbital/
 # Foundry profile-local cache/out (narrow builds)
 cache_*/
 out_*/
+.scratch/
 !research/out/

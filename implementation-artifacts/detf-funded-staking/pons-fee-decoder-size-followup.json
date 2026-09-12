@@ -1,0 +1,7 @@
+{
+  "status": "applied; size/parity validation pending",
+  "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4QuoteService.sol",
+  "before_sha256": "b4e64ae17fca595ed466088e592c94812eca9888c9c220fd5255c6025169e235",
+  "after_sha256": "9ceddede2d34bd0440d3e88ca987388609a3506748218a9b40fa7c970bcfd85e",
+  "reason": "Typed LaunchInfo ABI decoder expanded InQueryFacet to 25281 bytes. Decode the same pinned static layout as words with explicit registered/direction/address/fee checks. Fee economics and pool identity validation remain unchanged."
+}

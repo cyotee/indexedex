@@ -1,5 +1,7 @@
 # PRD: Rocket Pool rETH Standard Exchange Vault
 
+**Current release authority:** the [funded DETF/SY plan](../../../vaults/detf/DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md) adds native Pendle SY and exact composed-route projections while preserving the existing SE routes, fees and inventory rules. Instance deployment requires all four addresses `(rETH, weth, depositPool, rocketStorage)` and validates their registry binding. This supersedes the earlier optional-registry sketch and SE-only surface wording; the historical product design below remains otherwise applicable.
+
 **Date:** 2026-07-25  
 **Status:** Draft for implementation  
 **Package path (target):** `contracts/protocols/staking/rocket-pool/`  
@@ -15,7 +17,7 @@
 - Market: `docs/research/2026-07-21-ethereum-staking-protocols-se-vault-assessment.md` (P0 rETH)
 - Crane RP README: `lib/crane/contracts/protocols/staking/ethereum/rocket-pool/README.md`
 - Fee Oracle: `contracts/oracles/fee/`, liquid reserve % cascade
-- Gold SE surface: `IStandardExchangeIn` / `IStandardExchangeOut` only
+- Standard surfaces: retained `IStandardExchangeIn` / `IStandardExchangeOut`, plus native Pendle `IStandardizedYield` under the current release plan
 - Peer PRDs: ether.fi weETH SE; Lido wstETH SE (reference)
 
 ---
@@ -339,7 +341,7 @@ contracts/protocols/staking/rocket-pool/
 
 **Crane:** reuse `RocketPoolService`, `IRETH`, `IRocketDepositPool`, `IRocketStorage`, `RETHRateProvider`. Extend only if SE needs thin helpers (capacity views). No EigenLayer / minipool ops in SE.
 
-**PkgArgs (sketch):** `rETH`, `weth`, `depositPool` and/or `rocketStorage` (resolve pool via storage keys as Crane service does).
+**PkgArgs:** `rETH`, `weth`, `depositPool`, `rocketStorage`, in that order. Require every address and validate the supplied rETH/deposit pool against RocketStorage. Canonical deployment payloads contain all four fields; a legacy three-address encoding is invalid. The explicit registry supplies the protocol settings for exact v3/v4 deposit-pool projections.
 
 ---
 

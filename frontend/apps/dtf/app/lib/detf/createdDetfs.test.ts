@@ -50,5 +50,6 @@ describe('createdDetfs', () => {
     const first = [entryFromAddress(46630, A, 'ONE')]
     const second = [entryFromAddress(46630, A, 'TWO'), entryFromAddress(46630, B, 'TWO')]
     expect(mergeDetfEntries(first, second).map((row) => row.symbol)).toEqual(['ONE', 'TWO'])
+    expect(first[0]?.decimals).toBe(9)
   })
 })

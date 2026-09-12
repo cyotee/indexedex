@@ -1,0 +1,12 @@
+{
+  "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+  "scope": "Actual local Robinhood fork rehearsal; no production broadcast or deployment performed by migration. Balancer SE rehearsal retained; no excluded Balancer DETF or deferred Slipstream work.",
+  "changes": "9 decimals; native position two-token activation; policy carried to actual hooks with public V4 cases; standard purchase/exit; actual funded mature claim and unstake; actual Fee Collector receives later standing receipts after full prior payout and redeems actual fee LP. Existing transaction gas bounds retained.",
+  "file": "test/foundry/fork/robinhood_4663/RobinhoodReleaseRehearsal.t.sol",
+  "before_sha256": "126a98a877104571ade1a68630123f79ba1685197deef7151f013ca139071290",
+  "after_sha256": "16ae0810f0c3d43cc89e9e0569a5c6320344e0582a44f920912bd585c03912a7",
+  "historical_preparation_status": "prepared; Solidity unchanged",
+  "application_record": "robinhood-funded-rehearsal-migration.json",
+  "current_status_source": "current-implementation-queue.json and acceptance-progress.json; later edits and validation can supersede the original application hashes.",
+  "pending_owner_approval": false
+}

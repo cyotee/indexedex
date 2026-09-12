@@ -9,8 +9,8 @@ import {
 import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
 import {
-    UniswapV4SingleStandardExchangeBufferConstantProductHookDepositTarget as DepositTarget
-} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositTarget.sol";
+    UniswapV4SingleStandardExchangeBufferConstantProductHookDepositCommon as DepositTarget
+} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositCommon.sol";
 
 /**
  * @title UniswapV4SingleStandardExchangeBufferConstantProductHook_SeBufferAbi

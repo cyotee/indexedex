@@ -49,7 +49,7 @@ export function DetfAbout({
         <div>
           <dt className="text-[11px] uppercase tracking-wide text-[var(--text-muted,#9aa3b2)]">Mint and burn</dt>
           <dd className="mt-0.5 text-[var(--text-primary,#EDEDED)]">
-            {profile.mintBurn === 'open' ? 'Open' : 'Policy'}
+            Primary price thresholds; reserve-swap fallback
           </dd>
         </div>
         {profile.firstBonded ? (

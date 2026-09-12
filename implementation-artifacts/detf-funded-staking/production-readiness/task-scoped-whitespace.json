@@ -1,0 +1,43 @@
+{
+  "recorded_at_utc": "2026-09-10T21:52:44.101432+00:00",
+  "status": "PASS_TASK_SCOPED_WHITESPACE",
+  "commands": [
+    {
+      "command": [
+        "git",
+        "-C",
+        ".",
+        "diff",
+        "--check",
+        "--",
+        "contracts/vaults/detf/DETF_FUNDED_STAKING_AND_SY_VALIDATION_REPORT.md",
+        "contracts/vaults/detf/DETF_PRODUCTION_READINESS_REMAINING_IMPLEMENTATION_PLAN.md",
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol",
+        "scripts/foundry/anvil_robinhood_main/Phase_09_Stage_01_ExportFrontend.s.sol",
+        "scripts/foundry/anvil_robinhood_main/README.md",
+        "scripts/foundry/anvil_robinhood_main/Script_SimulateArchitecture.s.sol",
+        "scripts/foundry/anvil_robinhood_main/deploy_all.sh",
+        "test/foundry/fork/robinhood_4663/RobinhoodReleaseRehearsal.t.sol",
+        "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Burn_H6.t.sol"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "command": [
+        "git",
+        "-C",
+        "lib/crane",
+        "diff",
+        "--check",
+        "--",
+        "contracts/registries/facet/FacetRegistryTarget.sol",
+        "contracts/registries/package/DiamondFactoryPackageRegistryTarget.sol"
+      ],
+      "exit_code": 0,
+      "output": ""
+    }
+  ],
+  "scope": "Readiness-modified tracked files only. Repository-wide whitespace warnings in unrelated pre-existing changes are preserved."
+}

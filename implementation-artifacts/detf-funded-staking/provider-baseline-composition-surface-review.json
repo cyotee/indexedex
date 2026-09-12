@@ -1,0 +1,44 @@
+{
+  "status": "SOURCE_FACTS_ONLY_NO_RUNTIME_OR_SCOPE_WAIVER",
+  "baseline_checkout_read_only": "/private/tmp/indexedex-detf-funded-staking-20260906",
+  "baseline_commit": "e08b415733e729471779dcb8102529631330ea16",
+  "sources": [
+    {
+      "label": "weighted_native_hook",
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookSeTarget.sol",
+      "baseline_sha256": "381801f98109ce37a7b621795faec1fa709c74043a4e8ee818e65828acc3b7ac",
+      "current_sha256": "da019f05702a315bc35faa8606545f93430ad152c772692e8eb714bde98e89b0"
+    },
+    {
+      "label": "balancer_native_info",
+      "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/facets/DefaultPoolInfoFacet.sol",
+      "baseline_sha256": "3fa35ce9dca823b33a29887a174b9054be24b69aa0c29ac40774c6f139ef7816",
+      "current_sha256": "f945421124711c38aa9b42d0fd86799a9d56bdd1921156b54eaaddeb905afe63"
+    },
+    {
+      "label": "aave_loop_in",
+      "path": "contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoopExchangeInTarget.sol",
+      "baseline_sha256": "2b83199861c18bc6cfee730fbd4c6dd67b6f759d0370967c84b50a8de7dbe3ab",
+      "current_sha256": "81d0cf5bdcb616c7def30202288df6bd15687f81f0c4f28fce4d217e7bfa30fd"
+    },
+    {
+      "label": "aave_loop_out",
+      "path": "contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoopExchangeOutTarget.sol",
+      "baseline_sha256": "bba83db78ae141849cf7bad3bfc2b60f887dcafb3d363a29b191e1ab5a73326d",
+      "current_sha256": "9f07c1aaeb015b579ccfc7b1234e4e835409bcbe076bc3550ee78e6a4e9c9ade"
+    },
+    {
+      "label": "v4_claim_conversion",
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib.sol",
+      "baseline_sha256": "edda904388e6aa1dfa8ba38dc6d10348f23415db4be8c298d430c92406a90733",
+      "current_sha256": "edda904388e6aa1dfa8ba38dc6d10348f23415db4be8c298d430c92406a90733"
+    }
+  ],
+  "findings": [
+    "Baseline Weighted native-hook Standard Exchange handled swaps; native LP share issuance/redemption through standard routes was added in this refactor. Native SY and those new standard liquidity routes still require their existing acceptance tests.",
+    "Baseline Balancer native DefaultPoolInfoFacet exported five pool-information selectors, without native BPT Standard Exchange issuance selectors. The new native SE/SY surface remains in scope under D60.",
+    "Baseline Aave cross-version loop exposed only tokenA-to-shares exact input and shares-to-tokenA exact output; its exact-input share redemption was added during this refactor.",
+    "Baseline V4 buffered claim valuation already called exact-input SE-share-to-pair preview. Thus an accepted tokenA deposit alone does not establish that Aave loop was a functioning prior V4 buffer provider.",
+    "Do not infer previously supported recursive buffer compositions solely from the current expanded standard surface. Conversely, this source comparison is not runtime proof and does not authorize silently excluding any approved route."
+  ]
+}

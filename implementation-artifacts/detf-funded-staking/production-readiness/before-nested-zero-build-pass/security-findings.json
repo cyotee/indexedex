@@ -1,0 +1,237 @@
+{
+  "recorded_at_utc": "2026-09-10T16:37:53.094993+00:00",
+  "scope": "Internal source and production-proxy regression review; not an independent external audit",
+  "source": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol",
+  "before_sha256": "a43f26a1b79e55450798aaf6f0e023e885006d1ec494e18246fbdda36d36daf5",
+  "candidate_sha256": "6bb606480237e4ef3d63492a936f3d4f7393c51adcf505a4f2dfff821b227047",
+  "findings": [
+    {
+      "id": "PR-01",
+      "severity": "medium",
+      "impact": "A positive DETF primary burn can consume the caller input and protocol LP with a zero final payout when minAmountOut is zero.",
+      "reproduction": "CP deployed through the real manager/DFPkg, 6-decimal pair, first bond 100 pair, buy 20 pair, burn one native DETF unit. Positive LP conversion passes the earlier guard; final proportional exit returns [0,0].",
+      "before_evidence": "zero-output-before.json",
+      "before_trace": "zero-output-before.log",
+      "disposition": "Reject zero final output after the existing minimum check in primary and reserve-swap paths. Existing positive-minimum errors retain priority. Atomic revert restores all nested state. No change to legitimate zero partial NFT claims.",
+      "status": "RESOLVED",
+      "regression_source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Burn_H6.t.sol",
+      "validation": "zero-output-final-regressions.json",
+      "validation_log": "zero-output-final-regressions.log",
+      "current_regression_evidence": "corrected-candidate-regressions.json",
+      "full_matrix_evidence": "../implementation-hermetic-test.json"
+    },
+    {
+      "id": "PR-02",
+      "severity": "medium",
+      "impact": "The first final-output-positive primary burn can revert while reinvesting its unmintable DETF self-leg, contradicting a payable preview.",
+      "before_evidence": "zero-output-after.json",
+      "before_trace": "zero-output-after.log",
+      "reproduction": "The direct first-payable boundary quotes one native pair unit but self-leg join mints zero LP and throws InsufficientLpOut. Seven other focused cases passed.",
+      "disposition": "Check the actual self-leg join preview before the required join. A zero-LP self-leg remains protocol inventory for the existing bounded residual sweep; successful normal joins retain their behavior. Errors from nonzero joins still propagate.",
+      "status": "RESOLVED",
+      "regression": "test_smallPrimaryBurn_firstPayableBoundary",
+      "validation": "zero-output-final-regressions.json",
+      "validation_log": "zero-output-final-regressions.log",
+      "current_regression_evidence": "corrected-candidate-regressions.json",
+      "full_matrix_evidence": "../implementation-hermetic-test.json"
+    },
+    {
+      "id": "PR-03",
+      "severity": "low",
+      "impact": "Reusing the pinned local node runner could overwrite node.json before discovering an existing exclusive log.",
+      "disposition": "Fresh --label support and preflight all historical evidence paths before any record write; node/log use exclusive creation. Occupied servers remain protected.",
+      "status": "RESOLVED",
+      "validation": "node-runner-preservation.json"
+    },
+    {
+      "id": "PR-04",
+      "severity": "high",
+      "impact": "Canonical facet override entrypoints and the canonical package setter omit owner/operator guards. An arbitrary caller can poison factory canonical mappings or preempt a future CREATE3 deployment salt, undermining deployment integrity.",
+      "affected_sources": [
+        "lib/crane/contracts/registries/facet/FacetRegistryTarget.sol",
+        "lib/crane/contracts/registries/package/DiamondFactoryPackageRegistryTarget.sol"
+      ],
+      "before_evidence": "pinned-core-authorization-preflight.json",
+      "reproduction": "At Robinhood block 56118361, read-only eth_call from 0x000000000000000000000000000000000000bad1 successfully called both facet overrides and setCanonicalPackage on the actual deployed factory. The package probe separately verifies that the caller is neither owner, global operator nor function operator. No public transaction was sent; persisted mappings were verified unchanged.",
+      "disposition": "Apply existing onlyOwnerOrOperator to all three mutators; preserve authorized owner/global/function-operator semantics. Regression uses the actual IndexedEx/Crane factory with untouched production initialization and verifies unauthorized/revoked callers leave registry and ownership state unchanged.",
+      "status": "RESOLVED",
+      "regression_source": "test/foundry/spec/manager/CanonicalRegistryAuthorization.t.sol",
+      "deployment_disposition": "Do not reuse the pinned vulnerable factory registry as a release dependency. Deploy a fresh corrected core locally through the maintained bootstrap stages and verify all actual core facet hashes/selectors before package rehearsal. Public core remains unchanged by this work.",
+      "source_provenance": "core-authorization-source.json",
+      "additional_before_evidence": "pinned-package-setter-authorization-preflight.json",
+      "current_regression_evidence": "corrected-candidate-regressions.json",
+      "previous_validation_status": "PRODUCTION_GUARDS_AND_REGRESSIONS_PASS_CORRECTED_LOCAL_CORE_PENDING",
+      "final_validation": [
+        "production-readiness/corrected-local-core-and-packages.json",
+        "current-robinhood-rehearsal-production-readiness/architecture-run.json",
+        "current-robinhood-rehearsal-production-readiness/receipt-manifest.json"
+      ]
+    },
+    {
+      "id": "PR-05",
+      "severity": "low",
+      "impact": "The maintained Phase 09 export writes local rehearsal addresses and empty token lists into the application public-chain bindings by default.",
+      "affected_source": "scripts/foundry/anvil_robinhood_main/Phase_09_Stage_01_ExportFrontend.s.sol",
+      "disposition": "Add optional FRONTEND_ADDRESS_EXPORT_DIR and set it to the isolated rehearsal evidence tree. Preserve the existing public export default for authorized release publication; preserve all current application bindings during local validation.",
+      "status": "RESOLVED",
+      "before_source": "Phase_09_Stage_01_ExportFrontend.before.sol.txt",
+      "previous_validation_status": "SCRIPT_BUILD_PASS_LOCAL_EXPORT_VERIFICATION_PENDING",
+      "final_validation": [
+        "production-readiness/corrected-local-core-and-packages.json",
+        "current-robinhood-rehearsal-production-readiness/architecture-run.json",
+        "current-robinhood-rehearsal-production-readiness/receipt-manifest.json"
+      ]
+    },
+    {
+      "id": "PR-06",
+      "severity": "low",
+      "impact": "The architecture funding simulation omitted catalog stage 06/09 and the shell quote read the default broadcast directory even when an isolated directory was configured. This can understate or misattribute a deployment funding estimate. Empty or incomplete transaction records were also accepted.",
+      "affected_sources": [
+        "scripts/foundry/anvil_robinhood_main/Script_SimulateArchitecture.s.sol",
+        "scripts/foundry/anvil_robinhood_main/deploy_all.sh"
+      ],
+      "disposition": "Include every maintained Phase 02\u201306 architecture stage in order; honor absolute/relative FOUNDRY_BROADCAST; reject empty or missing/nonpositive gas limits. Preserve previous default output behavior.",
+      "status": "EIGHT_QUOTE_CHECKS_AND_19_STAGE_PARITY_PASS_FULL_SIMULATION_PENDING",
+      "validation": "funding-quote-checks.json",
+      "before_sources": [
+        "Script_SimulateArchitecture.s.sol.before-funding-quote.txt",
+        "deploy_all.sh.before-funding-quote.txt"
+      ]
+    },
+    {
+      "id": "PR-07",
+      "severity": "low",
+      "impact": "Staged local deployment simulation used EIP-1559 even though its broadcast used legacy fees; an Anvil fee-history metadata error prevented the first broadcast.",
+      "affected_sources": [
+        "scripts/foundry/anvil_robinhood_main/deploy_all.sh"
+      ],
+      "before_evidence": "../current-robinhood-rehearsal-production-readiness/before-staged-fee-retry/architecture.log",
+      "before_source": "deploy_all.sh.before-staged-fees.txt",
+      "disposition": "Build simulation and broadcast from the same legacy-fee arguments for staged localhost commands. Preserve EIP-1559 behavior for simulate/stagesimulate funding quotes and default public commands.",
+      "status": "SIX_COMMAND_BUILDER_CASES_PASS_LOCAL_DEPLOYMENT_AND_FUNDING_PENDING",
+      "validation": "staged-local-fee-checks.json"
+    },
+    {
+      "id": "PR-08",
+      "severity": "medium",
+      "impact": "The maintained Balancer stable hook launch stage omitted the mandatory exit and query facet addresses, so its package constructor rejects the deployment with ZeroAddress. The aggregate architecture funding simulation shares the same incomplete initializer.",
+      "affected_sources": [
+        "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_09_BalancerStableBufferHookPkg.sol"
+      ],
+      "before_source": "Phase_06_Stage_09_BalancerStableBufferHookPkg.before-facet-wiring.sol.txt",
+      "before_evidence": "../current-robinhood-rehearsal-production-readiness/before-facet-wiring-retry/architecture.log",
+      "disposition": "Deploy both production facets through the existing FactoryService and populate the current PkgInit fields. Preserve the constructor validation and all successful prior local stages.",
+      "status": "COMPLETE_BUILD_PASS_LOCAL_STAGE_AND_FUNDING_PENDING",
+      "before_sha256": "3ed4828ea168d537fe3a425c2a87bf2eb69b2500b07efca87190a6b469819fdb",
+      "current_sha256": "5e4cc781704853dc002f07422225ebef0b2f8e775bd64b1d6036a9ae0a100f19",
+      "build_evidence": "../implementation-full-build.json",
+      "execution_evidence_reuse": "pr08-script-only-evidence-reuse.json"
+    },
+    {
+      "id": "PR-09",
+      "severity": "medium",
+      "status": "PRODUCTION_FIX_AND_REGRESSIONS_IMPLEMENTED_VALIDATION_PENDING",
+      "impact": "Residual sweeping exhausts a 30M-gas user transaction by repeatedly halving amounts that already fail with zero LP, blocking later CP/V3 bonds.",
+      "affected_sources": [
+        "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol"
+      ],
+      "before_evidence": "lifecycle-runtime-traces-local-rpc/run.json",
+      "before_trace": "lifecycle-runtime-traces-local-rpc/traces.log",
+      "reproduction": "test_cp_v3: second funded 10-pair bond reaches a 1197351233-unit residual. Twenty-four zero-amount unbalanced retries followed by repeated InsufficientLpOut single joins exhaust gas.",
+      "disposition": "Stop reducing already-unmintable inputs on exact zero-amount/zero-LP errors or a zero-LP result; preserve upper-domain retries, zeroed approvals and existing funded wrap/parking. Retain original 30M lifecycle bound. The completed regression run also exposed nested UniswapV3Exchange_ZeroAmount retries; recognize both native V3/V4 zero-amount selectors without changing retry behavior for upper-domain errors.",
+      "regression_source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ3Se_ResidualGas.t.sol",
+      "source_hashes": [
+        {
+          "source": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol",
+          "before_source": "implementation-artifacts/detf-funded-staking/production-readiness/before-lifecycle-production-fixes/UniswapV4DetfCommon.sol.txt",
+          "before_sha256": "7aa3cb339e21bd9085a6ca8fd4418da1ef52e3578f2c5d9cc52ebe9e84582a59",
+          "current_sha256": "2ac0dc4a98b89204e378972397a15d4c2f15ed73a9559068ced0532f5dac0ada"
+        }
+      ],
+      "regression_source_sha256": "dec49dd33724d7568e6e0d9ac3a505ee3bef59177ef6876b0c1e68a4fb1d7d4a",
+      "required_validation": [
+        "production-readiness/lifecycle-production-regressions.json",
+        "implementation-hermetic-test.json",
+        "current-robinhood-rehearsal-production-readiness-lifecycle-fixed/lifecycle-run.json"
+      ],
+      "followup_reproduction": {
+        "record": "current-repository-production-readiness-lifecycle-nav-stack-sequence.json",
+        "build_exit_code": 0,
+        "build_seconds": 9253.252,
+        "regressions": {
+          "passed": 5,
+          "failed": 2,
+          "skipped": 0
+        },
+        "cause": "Nested UniswapV3Exchange_ZeroAmount was not recognized by residual termination; it repeated ~1.55M-gas calls until out of gas.",
+        "correction": "Recognize the native V3/V4 zero-amount selectors as unmintable nested input/output. Keep upper-domain retries and all seven regression cases unchanged.",
+        "evidence": "production-readiness/before-nested-zero-error-fix/lifecycle-production-regressions.log"
+      }
+    },
+    {
+      "id": "PR-10",
+      "severity": "medium",
+      "status": "PRODUCTION_FIX_AND_REGRESSIONS_IMPLEMENTED_VALIDATION_PENDING",
+      "impact": "Orbital NAV share calculation overflows an intermediate supply-times-value product for valid high-precision native V2 SE balances, reverting funded staking fee receipt transfers and quotes.",
+      "affected_sources": [
+        "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookMath.sol"
+      ],
+      "before_evidence": "lifecycle-runtime-traces-local-rpc/run.json",
+      "before_trace": "lifecycle-runtime-traces-local-rpc/traces.log",
+      "reproduction": "test_orbital_v2: collector pullFee triggers staking synchronization and Orbital NAV quote with approximately 5e28 share balances; intermediate product exceeds uint256 while the final quotient fits.",
+      "disposition": "Route both unchanged external overloads through the existing packed SphereNavArgs shape and one private helper using fullMulDiv. Preserve floor rounding and zero-share rejection, and avoid the scalar-overload stack-depth failure without viaIR.",
+      "regression_source": "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_Liquidity.t.sol",
+      "source_hashes": [
+        {
+          "source": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookMath.sol",
+          "before_source": "implementation-artifacts/detf-funded-staking/production-readiness/before-lifecycle-production-fixes/UniswapV4StandardExchangeOrbitalBufferHookMath.sol.txt",
+          "before_sha256": "5ebf01f81560d7d9cd0b46a82aca72bc794828e87c4c34f16b6cb147ec30177d",
+          "current_sha256": "a92618f9a0e38687d6097c0bdc25894abd4de9e0c33bc011d98b6fcb82185516"
+        }
+      ],
+      "regression_source_sha256": "cec141f69abca5c67e78bd4d17dd36158f7b9ba475f82da0591c001402b02f48",
+      "required_validation": [
+        "production-readiness/lifecycle-production-regressions.json",
+        "implementation-hermetic-test.json",
+        "current-robinhood-rehearsal-production-readiness-lifecycle-fixed/lifecycle-run.json"
+      ]
+    }
+  ],
+  "limitations": [
+    {
+      "id": "D60-H9",
+      "scope": "excluded Balancer-hosted DETF",
+      "disposition": "Earlier H9 payable-domain fuzz correction changed tests only. It is not a production redemption fix or approval to deploy that family. Exclude Balancer-hosted DETFs from the release manifest."
+    },
+    {
+      "id": "D66",
+      "scope": "unfinished Slipstream",
+      "disposition": "Deferred by owner; preserve completed work and do not include unfinished deployment gates."
+    }
+  ],
+  "reviewed_topics": [
+    "Native-unit conversions, primary/fallback output boundaries and wrapper atomicity",
+    "Held backing, gons liabilities, ordinary and allocation dust, exact final exits",
+    "Per-NFT principal vesting, independently claimable rewards and authenticated ownership",
+    "8-hour epoch settlement before participation changes and one aggregate catch-up",
+    "Funded distribution before fee/creator receipt issuance and standing-weight continuity",
+    "Measured pulls, pretransfer rejection, external approvals and cross-call reentrancy",
+    "Protocol versus external LP custody, own-LP bond valuation and current Fee Collector authorization",
+    "Bounded residual sweep, real SE quotes and protocol-only dust ownership",
+    "Immutable package arguments, staged ownership/self-leg checks, distinct child namespaces and route discovery",
+    "CREATE3 canonical facet and package registry authorization, installed factory facets and salt preemption"
+  ],
+  "runtime_requirement": "Final full hermetic evidence and all-four-binding proxy/lifecycle cases are required before acceptance closure.",
+  "updated_at_utc": "2026-09-11T09:31:05.226425+00:00",
+  "fixture_corrections": [
+    {
+      "id": "LC-01",
+      "status": "IMPLEMENTED_VALIDATION_PENDING",
+      "scope": "four Quad local fee-LP lifecycle cases",
+      "cause": "Growth-based protocol LP fees require actual geometric inventory growth; the previous lifecycle did not establish it.",
+      "disposition": "Supply actual externally purchased SE shares to the reserve before the later bond. Preserve every fee LP, custody, liability and 30M gas assertion.",
+      "reference": "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_Fees.t.sol:test_growth_kLast_protocolMintToFeeTo"
+    }
+  ],
+  "current_source_provenance": "rehearsal-coverage-source.json"
+}

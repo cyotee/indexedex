@@ -1,0 +1,530 @@
+[
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+    "test": "test_deployVault_success",
+    "old_file_sha256": "9f5bf3f4f3d80d5ea01016093bcc180bde821c9e270c42057d2e82a808d08332",
+    "disposition": "update/merge",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+      "test": "test_positionPrincipalIsFundedOnceAndNotDerivedFromProtocolLp",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+    "test": "test_initializeDETFNFT_zeroPrincipal_and_addRemoveOneToOne",
+    "old_file_sha256": "9f5bf3f4f3d80d5ea01016093bcc180bde821c9e270c42057d2e82a808d08332",
+    "disposition": "update/merge",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+      "test": "test_reservedRolesHaveNoPurchasedPrincipalAndCreatorFallbackPersists",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+    "test": "test_sellPositionToDetfNft_revertsBondNotMature_untilUnlock",
+    "old_file_sha256": "9f5bf3f4f3d80d5ea01016093bcc180bde821c9e270c42057d2e82a808d08332",
+    "disposition": "update/merge",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+      "test": "test_ownerOperatorAndTransferPreserveRemainingVesting",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+    "test": "test_redeemPosition_onlyOwner_and_eoaReverts",
+    "old_file_sha256": "9f5bf3f4f3d80d5ea01016093bcc180bde821c9e270c42057d2e82a808d08332",
+    "disposition": "update/merge",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+      "test": "test_ownerOperatorAndTransferPreserveRemainingVesting",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+    "test": "test_reservedIds_wire_0_1_2_userStartsAt3",
+    "old_file_sha256": "9f5bf3f4f3d80d5ea01016093bcc180bde821c9e270c42057d2e82a808d08332",
+    "disposition": "update/merge",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+      "test": "test_reservedRolesHaveNoPurchasedPrincipalAndCreatorFallbackPersists",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+    "test": "test_creatorZero_mints_id2_to_feeTo",
+    "old_file_sha256": "9f5bf3f4f3d80d5ea01016093bcc180bde821c9e270c42057d2e82a808d08332",
+    "disposition": "update/merge",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+      "test": "test_reservedRolesHaveNoPurchasedPrincipalAndCreatorFallbackPersists",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+    "test": "test_addEffectiveSharesOnly_noOriginalShares_ids1and2",
+    "old_file_sha256": "9f5bf3f4f3d80d5ea01016093bcc180bde821c9e270c42057d2e82a808d08332",
+    "disposition": "update/merge",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+      "test": "test_reservedRolesCannotClaimPurchasedEscrow",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+    "test": "test_sellAndRedeem_revert_ids1and2",
+    "old_file_sha256": "9f5bf3f4f3d80d5ea01016093bcc180bde821c9e270c42057d2e82a808d08332",
+    "disposition": "update/merge",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+      "test": "test_reservedRolesCannotClaimPurchasedEscrow",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+    "test": "test_initializeDETFNFT_id0_is_valid_not_unwired",
+    "old_file_sha256": "9f5bf3f4f3d80d5ea01016093bcc180bde821c9e270c42057d2e82a808d08332",
+    "disposition": "update/merge",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+      "test": "test_reservedInitializationAndPositionFundingAreDetfOnly",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+    "test": "test_addEffectiveSharesOnly_reverts_on_protocol_or_user",
+    "old_file_sha256": "9f5bf3f4f3d80d5ea01016093bcc180bde821c9e270c42057d2e82a808d08332",
+    "disposition": "update/merge",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+      "test": "test_reservedInitializationAndPositionFundingAreDetfOnly",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+    "test": "test_processArgs_reverts_whenNotRegistry",
+    "old_file_sha256": "9f5bf3f4f3d80d5ea01016093bcc180bde821c9e270c42057d2e82a808d08332",
+    "disposition": "update/merge",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+      "test": "test_packageArgumentProcessingRequiresRegistry",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVault_Surface.t.sol",
+    "test": "test_J1_bond_targetEqualsFacetFuncs",
+    "old_file_sha256": "b66b5672f5193d7dec378998775d9b0bb7977f0b92a108c4878d5624a25040c2",
+    "disposition": "update/merge",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVault_Surface.t.sol",
+      "test": "test_J1_J2_fundedControlsMatchFacetCutsAndAssembledProxy",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVault_Surface.t.sol",
+    "test": "test_J2_bond_loupeWired",
+    "old_file_sha256": "b66b5672f5193d7dec378998775d9b0bb7977f0b92a108c4878d5624a25040c2",
+    "disposition": "update/merge",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVault_Surface.t.sol",
+      "test": "test_J1_J2_fundedControlsMatchFacetCutsAndAssembledProxy",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVault_Surface.t.sol",
+    "test": "test_J3_bond_proxySmoke_eachSelector",
+    "old_file_sha256": "b66b5672f5193d7dec378998775d9b0bb7977f0b92a108c4878d5624a25040c2",
+    "disposition": "update/merge",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVault_Surface.t.sol",
+      "test": "test_J3_guardedTransferOverloadsKeepPositionAndRejectCustodyDestinations",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVault.t.sol",
+    "test": "test_createPosition_sharesRecorded",
+    "old_file_sha256": "293ea878760c19c19610481a4f07cfe1dbe7f19704ebc7d909551072750ae14b",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+      "test": "test_positionPrincipalIsFundedOnceAndNotDerivedFromProtocolLp",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVault.t.sol",
+    "test": "test_createPosition_unlockTimeSet",
+    "old_file_sha256": "293ea878760c19c19610481a4f07cfe1dbe7f19704ebc7d909551072750ae14b",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+      "test": "test_ownerOperatorAndTransferPreserveRemainingVesting",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVault.t.sol",
+    "test": "test_sellNFT_valueCalculation",
+    "old_file_sha256": "293ea878760c19c19610481a4f07cfe1dbe7f19704ebc7d909551072750ae14b",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+      "test": "test_positionPrincipalIsFundedOnceAndNotDerivedFromProtocolLp",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVault.t.sol",
+    "test": "test_sellNFT_transferToDETFNFT",
+    "old_file_sha256": "293ea878760c19c19610481a4f07cfe1dbe7f19704ebc7d909551072750ae14b",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+      "test": "test_ownerOperatorAndTransferPreserveRemainingVesting",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVault.t.sol",
+    "test": "test_detfNFT_alwaysUnlocked",
+    "old_file_sha256": "293ea878760c19c19610481a4f07cfe1dbe7f19704ebc7d909551072750ae14b",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+      "test": "test_reservedRolesHaveNoPurchasedPrincipalAndCreatorFallbackPersists",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVault.t.sol",
+    "test": "test_detfNFT_cannotBeRedeemed",
+    "old_file_sha256": "293ea878760c19c19610481a4f07cfe1dbe7f19704ebc7d909551072750ae14b",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+      "test": "test_reservedRolesCannotClaimPurchasedEscrow",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVault.t.sol",
+    "test": "test_detfNFT_accumulatesWithoutNewBond",
+    "old_file_sha256": "293ea878760c19c19610481a4f07cfe1dbe7f19704ebc7d909551072750ae14b",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+      "test": "test_rewardOnlyClaimIsImmediateAndDoesNotUnlockPrincipal",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVault.t.sol",
+    "test": "test_rewardPerShare_accumulation",
+    "old_file_sha256": "293ea878760c19c19610481a4f07cfe1dbe7f19704ebc7d909551072750ae14b",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+      "test": "test_rewardOnlyClaimIsImmediateAndDoesNotUnlockPrincipal",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVault.t.sol",
+    "test": "test_earnedRewards_calculation",
+    "old_file_sha256": "293ea878760c19c19610481a4f07cfe1dbe7f19704ebc7d909551072750ae14b",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+      "test": "test_rewardOnlyClaimIsImmediateAndDoesNotUnlockPrincipal",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVault.t.sol",
+    "test": "test_claimRewards_updatesDebt",
+    "old_file_sha256": "293ea878760c19c19610481a4f07cfe1dbe7f19704ebc7d909551072750ae14b",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+      "test": "test_rewardOnlyClaimIsImmediateAndDoesNotUnlockPrincipal",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVault.t.sol",
+    "test": "test_isLocked_beforeExpiry",
+    "old_file_sha256": "293ea878760c19c19610481a4f07cfe1dbe7f19704ebc7d909551072750ae14b",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+      "test": "test_ownerOperatorAndTransferPreserveRemainingVesting",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVault.t.sol",
+    "test": "test_isLocked_afterExpiry",
+    "old_file_sha256": "293ea878760c19c19610481a4f07cfe1dbe7f19704ebc7d909551072750ae14b",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+      "test": "test_ownerOperatorAndTransferPreserveRemainingVesting",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVault.t.sol",
+    "test": "test_redeem_requiresUnlock",
+    "old_file_sha256": "293ea878760c19c19610481a4f07cfe1dbe7f19704ebc7d909551072750ae14b",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+      "test": "test_ownerOperatorAndTransferPreserveRemainingVesting",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVault_N10Conversion.t.sol",
+    "test": "test_N10_emptyOL_isOneToOne",
+    "old_file_sha256": "f1d7c61f0709dce6ac21857c5d4765bd8593be2308254c097340e4ee5bf52ac2",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+      "test": "test_reservedRolesHaveNoPurchasedPrincipalAndCreatorFallbackPersists",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVault_N10Conversion.t.sol",
+    "test": "test_N10_userDoesNotAbsorbId0Share",
+    "old_file_sha256": "f1d7c61f0709dce6ac21857c5d4765bd8593be2308254c097340e4ee5bf52ac2",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol",
+      "test": "test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVault_N10Conversion.t.sol",
+    "test": "test_N10_decimalOffsetStillOn",
+    "old_file_sha256": "f1d7c61f0709dce6ac21857c5d4765bd8593be2308254c097340e4ee5bf52ac2",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+      "test": "test_positionPrincipalIsFundedOnceAndNotDerivedFromProtocolLp",
+      "decision": "D33/D36: no virtual ERC-4626 offset on bond LP; native nine-decimal purchased principal is fully funded and independently staked."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVault_N10Conversion.t.sol",
+    "test": "test_N10_depositConversion_floorsFractionalShares",
+    "old_file_sha256": "f1d7c61f0709dce6ac21857c5d4765bd8593be2308254c097340e4ee5bf52ac2",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+      "test": "test_positionPrincipalIsFundedOnceAndNotDerivedFromProtocolLp",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVault_N10Conversion.t.sol",
+    "test": "test_N10_closeClaimDoNotFeedEffectiveShares",
+    "old_file_sha256": "f1d7c61f0709dce6ac21857c5d4765bd8593be2308254c097340e4ee5bf52ac2",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+      "test": "test_positionPrincipalIsFundedOnceAndNotDerivedFromProtocolLp",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenRedemption.t.sol",
+    "test": "test_balanceOf_computedFromShares",
+    "old_file_sha256": "320a3627585e550f25f17950eefc431a5acd46d93fb50408b37b5a3869b2a3b1",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Accounting.t.sol",
+      "test": "test_sameBlockFundedRewardsUpdateGonsButUnsolicitedBackingDoesNot",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenRedemption.t.sol",
+    "test": "test_balanceOf_changesWithRate",
+    "old_file_sha256": "320a3627585e550f25f17950eefc431a5acd46d93fb50408b37b5a3869b2a3b1",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Accounting.t.sol",
+      "test": "test_sameBlockFundedRewardsUpdateGonsButUnsolicitedBackingDoesNot",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenRedemption.t.sol",
+    "test": "test_totalSupply_computedFromTotalShares",
+    "old_file_sha256": "320a3627585e550f25f17950eefc431a5acd46d93fb50408b37b5a3869b2a3b1",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Accounting.t.sol",
+      "test": "test_sameBlockFundedRewardsUpdateGonsButUnsolicitedBackingDoesNot",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenRedemption.t.sol",
+    "test": "test_redemptionRate_atPeg",
+    "old_file_sha256": "320a3627585e550f25f17950eefc431a5acd46d93fb50408b37b5a3869b2a3b1",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Accounting.t.sol",
+      "test": "test_reserveTradingCannotReduceFundedPrincipalAndFullExitRetiresOnlyOwnFraction",
+      "decision": "D32-D35/D42: direct funded stake redemption is 1:1 DETF, independent of pool peg or primary price gate. Old spec-only branch/spot assertions are superseded."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenRedemption.t.sol",
+    "test": "test_redemptionRate_abovePeg",
+    "old_file_sha256": "320a3627585e550f25f17950eefc431a5acd46d93fb50408b37b5a3869b2a3b1",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Accounting.t.sol",
+      "test": "test_reserveTradingCannotReduceFundedPrincipalAndFullExitRetiresOnlyOwnFraction",
+      "decision": "D32-D35/D42: direct funded stake redemption is 1:1 DETF, independent of pool peg or primary price gate. Old spec-only branch/spot assertions are superseded."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenRedemption.t.sol",
+    "test": "test_redemptionRate_belowPeg",
+    "old_file_sha256": "320a3627585e550f25f17950eefc431a5acd46d93fb50408b37b5a3869b2a3b1",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Accounting.t.sol",
+      "test": "test_reserveTradingCannotReduceFundedPrincipalAndFullExitRetiresOnlyOwnFraction",
+      "decision": "D32-D35/D42: direct funded stake redemption is 1:1 DETF, independent of pool peg or primary price gate. Old spec-only branch/spot assertions are superseded."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenRedemption.t.sol",
+    "test": "test_redemption_allowedBelowBurnThreshold",
+    "old_file_sha256": "320a3627585e550f25f17950eefc431a5acd46d93fb50408b37b5a3869b2a3b1",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Accounting.t.sol",
+      "test": "test_reserveTradingCannotReduceFundedPrincipalAndFullExitRetiresOnlyOwnFraction",
+      "decision": "D32-D35/D42: direct funded stake redemption is 1:1 DETF, independent of pool peg or primary price gate. Old spec-only branch/spot assertions are superseded."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenRedemption.t.sol",
+    "test": "test_redemption_blockedAboveBurnThreshold",
+    "old_file_sha256": "320a3627585e550f25f17950eefc431a5acd46d93fb50408b37b5a3869b2a3b1",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Accounting.t.sol",
+      "test": "test_reserveTradingCannotReduceFundedPrincipalAndFullExitRetiresOnlyOwnFraction",
+      "decision": "D32-D35/D42: direct funded stake redemption is 1:1 DETF, independent of pool peg or primary price gate. Old spec-only branch/spot assertions are superseded."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenRedemption.t.sol",
+    "test": "test_redemption_sharesToWeth",
+    "old_file_sha256": "320a3627585e550f25f17950eefc431a5acd46d93fb50408b37b5a3869b2a3b1",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Accounting.t.sol",
+      "test": "test_reserveTradingCannotReduceFundedPrincipalAndFullExitRetiresOnlyOwnFraction",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenRedemption.t.sol",
+    "test": "test_redemption_wethOutput",
+    "old_file_sha256": "320a3627585e550f25f17950eefc431a5acd46d93fb50408b37b5a3869b2a3b1",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Accounting.t.sol",
+      "test": "test_reserveTradingCannotReduceFundedPrincipalAndFullExitRetiresOnlyOwnFraction",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenRedemption.t.sol",
+    "test": "test_redemption_partialAllowed",
+    "old_file_sha256": "320a3627585e550f25f17950eefc431a5acd46d93fb50408b37b5a3869b2a3b1",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Accounting.t.sol",
+      "test": "test_reserveTradingCannotReduceFundedPrincipalAndFullExitRetiresOnlyOwnFraction",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenRedemption.t.sol",
+    "test": "test_convertToShares_roundTrip",
+    "old_file_sha256": "320a3627585e550f25f17950eefc431a5acd46d93fb50408b37b5a3869b2a3b1",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol",
+      "test": "testFuzz_paidRewardsAndStakeChangesKeepEveryUnitFunded",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenRedemption.t.sol",
+    "test": "testFuzz_conversion_roundTrip",
+    "old_file_sha256": "320a3627585e550f25f17950eefc431a5acd46d93fb50408b37b5a3869b2a3b1",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol",
+      "test": "testFuzz_paidRewardsAndStakeChangesKeepEveryUnitFunded",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenRedemption.t.sol",
+    "test": "test_internalShareGranularity_smallAmountProducesNonZeroInternalShares",
+    "old_file_sha256": "320a3627585e550f25f17950eefc431a5acd46d93fb50408b37b5a3869b2a3b1",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol",
+      "test": "testFuzz_paidRewardsAndStakeChangesKeepEveryUnitFunded",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenRedemption.t.sol",
+    "test": "test_internalPrecision_redeemAndTransferCycleRetainsMoreGranularity",
+    "old_file_sha256": "320a3627585e550f25f17950eefc431a5acd46d93fb50408b37b5a3869b2a3b1",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol",
+      "test": "testFuzz_paidRewardsAndStakeChangesKeepEveryUnitFunded",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  },
+  {
+    "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenRedemption.t.sol",
+    "test": "test_transfer_movesShares",
+    "old_file_sha256": "320a3627585e550f25f17950eefc431a5acd46d93fb50408b37b5a3869b2a3b1",
+    "disposition": "retire superseded spec-only or duplicate model",
+    "replacement": {
+      "path": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Accounting.t.sol",
+      "test": "test_zeroTransfersEmitWithoutAllowanceBeforeAndAfterFunding",
+      "decision": "D32-D41: funded gons, fixed principal, linear vesting and sDETF payout replace LP/effective-share valuation."
+    }
+  }
+]

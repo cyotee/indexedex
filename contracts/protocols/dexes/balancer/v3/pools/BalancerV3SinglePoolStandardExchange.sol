@@ -10,6 +10,14 @@ import {IRouterCommon} from "@crane/contracts/external/balancer/v3/interfaces/co
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 
+import {IVault} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IVault.sol";
+import {IBasePool} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IBasePool.sol";
+import {PoolData, Rounding, TokenType} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/VaultTypes.sol";
+import {BasePoolMath} from "@crane/contracts/external/balancer/v3/vault/contracts/BasePoolMath.sol";
+import {PoolDataLib} from "@crane/contracts/external/balancer/v3/vault/contracts/lib/PoolDataLib.sol";
+import {PoolConfigLib} from "@crane/contracts/external/balancer/v3/vault/contracts/lib/PoolConfigLib.sol";
+import {ScalingHelpers} from "@crane/contracts/external/balancer/v3/solidity-utils/contracts/helpers/ScalingHelpers.sol";
+
 contract BalancerV3SinglePoolStandardExchange is IStandardExchange {
     using BetterSafeERC20 for IERC20;
 
@@ -268,53 +276,41 @@ contract BalancerV3SinglePoolStandardExchange is IStandardExchange {
         );
     }
 
-    function _queryAddLiquidityUnbalanced(uint256[] memory amountsIn_) internal view returns (uint256 amountOut_) {
-        (bool success, bytes memory data) = address(router).staticcall(
-            abi.encodeWithSelector(IRouter.queryAddLiquidityUnbalanced.selector, pool, amountsIn_, address(this), "")
-        );
-        require(success, "query add liquidity failed");
-        amountOut_ = abi.decode(data, (uint256));
+    /// @dev Balancer simulation entrypoints are non-static. Onchain previews use the same
+    /// pool math, live balances, yield-fee adjustment and directional rounding as the Vault.
+    function _quotePoolData(bool adding_) internal view returns (PoolData memory d_) {
+        IVault vault_ = IVault(address(IRouterCommon(address(router)).getVault()));
+        d_ = vault_.getPoolData(pool);
+        if (!adding_) return d_;
+        (,,uint256[] memory raw_,uint256[] memory lastLive_) = vault_.getPoolTokenInfo(pool);
+        uint256 fee_ = PoolConfigLib.getAggregateYieldFeePercentage(d_.poolConfigBits);
+        bool yield_ = fee_ != 0 && !PoolConfigLib.isPoolInRecoveryMode(d_.poolConfigBits);
+        for (uint256 i_; i_ < raw_.length; ++i_) {
+            PoolDataLib.updateRawAndLiveBalance(d_, i_, raw_[i_], Rounding.ROUND_UP);
+            if (yield_ && d_.tokenInfo[i_].paysYieldFees && d_.tokenInfo[i_].tokenType == TokenType.WITH_RATE) {
+                uint256 due_ = PoolDataLib._computeYieldFeesDue(d_, lastLive_[i_], i_, fee_);
+                if (due_ != 0) PoolDataLib.updateRawAndLiveBalance(d_, i_, raw_[i_] - due_, Rounding.ROUND_UP);
+            }
+        }
     }
-
-    function _queryAddLiquiditySingleTokenExactOut(IERC20 tokenIn_, uint256 amountOut_)
-        internal
-        view
-        returns (uint256 amountIn_)
-    {
-        (bool success, bytes memory data) = address(router).staticcall(
-            abi.encodeWithSelector(
-                IRouter.queryAddLiquiditySingleTokenExactOut.selector, pool, tokenIn_, amountOut_, address(this), ""
-            )
-        );
-        require(success, "query single token add failed");
-        amountIn_ = abi.decode(data, (uint256));
+    function _queryAddLiquidityUnbalanced(uint256[] memory amounts_) internal view returns (uint256 out_) {
+        PoolData memory d_ = _quotePoolData(true);
+        for (uint256 i_; i_ < amounts_.length; ++i_) amounts_[i_] = ScalingHelpers.toScaled18ApplyRateRoundDown(amounts_[i_], d_.decimalScalingFactors[i_], d_.tokenRates[i_]);
+        (out_,) = BasePoolMath.computeAddLiquidityUnbalanced(d_.balancesLiveScaled18, amounts_, bptToken.totalSupply(), PoolConfigLib.getStaticSwapFeePercentage(d_.poolConfigBits), IBasePool(pool));
     }
-
-    function _queryRemoveLiquiditySingleTokenExactIn(uint256 amountIn_, IERC20 tokenOut_)
-        internal
-        view
-        returns (uint256 amountOut_)
-    {
-        (bool success, bytes memory data) = address(router).staticcall(
-            abi.encodeWithSelector(
-                IRouter.queryRemoveLiquiditySingleTokenExactIn.selector, pool, amountIn_, tokenOut_, address(this), ""
-            )
-        );
-        require(success, "query single token remove failed");
-        amountOut_ = abi.decode(data, (uint256));
+    function _queryAddLiquiditySingleTokenExactOut(IERC20 token_, uint256 amount_) internal view returns (uint256 in_) {
+        PoolData memory d_ = _quotePoolData(true); uint256 index_ = _tokenIndexPlusOne[address(token_)] - 1;
+        (in_,) = BasePoolMath.computeAddLiquiditySingleTokenExactOut(d_.balancesLiveScaled18, index_, amount_, bptToken.totalSupply(), PoolConfigLib.getStaticSwapFeePercentage(d_.poolConfigBits), IBasePool(pool));
+        return ScalingHelpers.toRawUndoRateRoundUp(in_, d_.decimalScalingFactors[index_], d_.tokenRates[index_]);
     }
-
-    function _queryRemoveLiquiditySingleTokenExactOut(IERC20 tokenOut_, uint256 amountOut_)
-        internal
-        view
-        returns (uint256 amountIn_)
-    {
-        (bool success, bytes memory data) = address(router).staticcall(
-            abi.encodeWithSelector(
-                IRouter.queryRemoveLiquiditySingleTokenExactOut.selector, pool, tokenOut_, amountOut_, address(this), ""
-            )
-        );
-        require(success, "query exact out remove failed");
-        amountIn_ = abi.decode(data, (uint256));
+    function _queryRemoveLiquiditySingleTokenExactIn(uint256 amount_, IERC20 token_) internal view returns (uint256 out_) {
+        PoolData memory d_ = _quotePoolData(false); uint256 index_ = _tokenIndexPlusOne[address(token_)] - 1;
+        (out_,) = BasePoolMath.computeRemoveLiquiditySingleTokenExactIn(d_.balancesLiveScaled18, index_, amount_, bptToken.totalSupply(), PoolConfigLib.getStaticSwapFeePercentage(d_.poolConfigBits), IBasePool(pool));
+        return ScalingHelpers.toRawUndoRateRoundDown(out_, d_.decimalScalingFactors[index_], d_.tokenRates[index_]);
+    }
+    function _queryRemoveLiquiditySingleTokenExactOut(IERC20 token_, uint256 amount_) internal view returns (uint256 in_) {
+        PoolData memory d_ = _quotePoolData(false); uint256 index_ = _tokenIndexPlusOne[address(token_)] - 1;
+        uint256 live_ = ScalingHelpers.toScaled18ApplyRateRoundUp(amount_, d_.decimalScalingFactors[index_], d_.tokenRates[index_]);
+        (in_,) = BasePoolMath.computeRemoveLiquiditySingleTokenExactOut(d_.balancesLiveScaled18, index_, live_, bptToken.totalSupply(), PoolConfigLib.getStaticSwapFeePercentage(d_.poolConfigBits), IBasePool(pool));
     }
 }

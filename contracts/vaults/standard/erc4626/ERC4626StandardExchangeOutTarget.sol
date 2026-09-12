@@ -92,19 +92,7 @@ contract ERC4626StandardExchangeOutTarget is
 
         // protocolVault → SE exact-out — amountIn vault tokens stay as SE reserve
         if (address(tokenIn) == address(vault) && address(tokenOut) == address(this)) {
-            amountIn = _previewVaultInForSeOut(amountOut);
-            if (amountIn > maxAmountIn) revert Slippage();
-
-            // Snapshot reserve *before* user deposit credit (free-mint safe).
-            uint256 totalBefore = IERC20(address(vault)).balanceOf(address(this));
-            _securePull(tokenIn, amountIn, pretransferred);
-
-            uint256 sharesFromDelta = _convertVaultDeltaToShares(amountIn, totalBefore);
-            if (sharesFromDelta < amountOut) revert Slippage();
-            _mintWithUsageFee(recipient, amountOut);
-            // Pull overshoot already refunded in _securePull; never refund absolute reserve.
-            _syncAllExpectedHoldReserves();
-            return amountIn;
+            return _receiptForExactShares(tokenIn, maxAmountIn, amountOut, recipient, pretransferred);
         }
 
         // SE → protocolVault exact-out — burn only amountIn (self-burn when pretransferred).
@@ -131,5 +119,25 @@ contract ERC4626StandardExchangeOutTarget is
         }
 
         revert UnsupportedRoute();
+    }
+
+    function _receiptForExactShares(
+        IERC20 receipt,
+        uint256 maximum,
+        uint256 shares,
+        address recipient,
+        bool pretransferred
+    ) internal returns (uint256 required) {
+        uint256 prepaid = pretransferred ? _prepaidCredit(receipt, maximum) : 0;
+        uint256 totalBefore = receipt.balanceOf(address(this)) - prepaid;
+        required = _vaultInForSeOut(shares, totalBefore);
+        if (required > maximum) revert Slippage();
+        uint256 received = _securePull(receipt, required, pretransferred);
+        if (received != required) revert InsufficientDeposit(required, received);
+        if (_convertVaultDeltaToShares(required, totalBefore) < shares) revert Slippage();
+        _mintWithUsageFee(recipient, shares);
+        // Only the caller's unused credited payment is refundable.
+        if (prepaid > required) receipt.safeTransfer(msg.sender, prepaid - required);
+        _syncAllExpectedHoldReserves();
     }
 }

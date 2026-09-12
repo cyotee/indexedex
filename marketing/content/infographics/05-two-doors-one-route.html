@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Price gates pick the path</title>
+    <link rel="stylesheet" href="board.css" />
+  </head>
+  <body>
+    <article class="board" id="board">
+      <div class="top">
+        <div>
+          <p class="eyebrow">Mint and burn</p>
+          <h1>Price gates pick the path</h1>
+          <p class="lede">
+            Every new DETF has a mint line and a burn line. The same purchase or redemption
+            route stays open. The gate chooses how it fills.
+          </p>
+        </div>
+        <p class="brand">IndexedEx</p>
+      </div>
+      <div class="rail">
+        <section class="rail-seg burn">
+          <p class="kicker">Below the burn line</p>
+          <h2>Redeem</h2>
+          <p>A supported exit can burn DETF against the assets behind the token.</p>
+        </section>
+        <section class="rail-seg swap">
+          <p class="kicker">In the band</p>
+          <h2>Swap</h2>
+          <p>The same route trades through the reserve pool. Equality uses this path too.</p>
+        </section>
+        <section class="rail-seg mint">
+          <p class="kicker">Above the mint line</p>
+          <h2>Issue</h2>
+          <p>A supported purchase can mint new DETF.</p>
+        </section>
+      </div>
+      <div class="price-bar" aria-hidden="true"></div>
+      <p class="axis"><span>Lower contract price</span><span>Higher contract price</span></p>
+      <p class="note">A price gate does not block the route. Liquidity, fees, and your minimum output still apply.</p>
+    </article>
+  </body>
+</html>

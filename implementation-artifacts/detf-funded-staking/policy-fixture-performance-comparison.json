@@ -1,0 +1,34 @@
+{
+  "recorded_at_utc": "2026-09-08T04:24:50.283422+00:00",
+  "status": "14_CASES_PASS_BEFORE_AND_AFTER",
+  "before_evidence": "policy-fixture-before.json",
+  "after_evidence": "policy-fixture-after.json",
+  "changed_cases": [
+    {
+      "contract": "UniswapV4Detf_Weighted_Alignment_RedeemD15",
+      "test": "test_D15_unstakeSettlesAllDueFundedExpansionFirst",
+      "gas": 54784522,
+      "before_gas": 1258009414,
+      "reduction_percent": 95.65
+    },
+    {
+      "contract": "UniswapV4Detf_Quad_Alignment_RedeemD15",
+      "test": "test_D15_unstakeSettlesAllDueFundedExpansionFirst",
+      "gas": 60931751,
+      "before_gas": 1283472269,
+      "reduction_percent": 95.25
+    }
+  ],
+  "unchanged_cases": 12,
+  "build_before_seconds": 9.498,
+  "build_after_seconds": 893.454,
+  "test_command_before_seconds": 15.02,
+  "test_command_after_seconds": 27.624,
+  "forge_suite_before_seconds": 6.82,
+  "forge_suite_after_seconds": 6.52,
+  "limitations": [
+    "Before build was cache-skipped; after build compiled 38 files. These are not comparable compile-speed measurements.",
+    "Overall test command wall time increased despite sharply lower fixture EVM work; no full-suite speedup is claimed.",
+    "Same production source, assertions, test selection, profile and fuzz settings. Candidate order preserves the entire original fallback list."
+  ]
+}

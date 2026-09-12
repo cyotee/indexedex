@@ -1,60 +1,23 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { erc20Abi, formatUnits, parseUnits } from 'viem'
+import { erc20Abi, parseUnits } from 'viem'
 import { useAccount, useBalance, usePublicClient, useReadContract, useSwitchChain, useWriteContract } from 'wagmi'
-
 import { CHAIN_ID_ANVIL, CHAIN_ID_LOCALHOST } from '@indexedex/protocol/addressArtifacts'
 
 import { AddressLink } from '../../components/ui/AddressLink'
 import { AmountField } from '../../components/ui/AmountField'
 import { Button } from '../../components/ui/Button'
 import { Tabs, TabPanel } from '../../components/ui/Tabs'
-import {
-  ETH_PAY,
-  WETH9_DEPOSIT_ABI,
-  type EthWrapWrite,
-  isEthPay,
-  settlePayToken,
-  withEthPayOption,
-} from '../../lib/ethPay'
+import { ETH_PAY, WETH9_DEPOSIT_ABI, type EthWrapWrite, isEthPay, settlePayToken, withEthPayOption } from '../../lib/ethPay'
 import { parseContractError } from '../../lib/tx/parseContractError'
 import { actionTokenOptionLabel, type ActionToken } from '../lib/actionTokens'
-import { diamondLoupeAbi, insightsViewAbi, rebasingClaimAbi } from '../lib/insightsAbi'
-import {
-  BUY_CLAIM_SELECTOR,
-  DEPOSIT_CLAIM_SELECTOR,
-  collectStakeTokenAddresses,
-  formatTokenAmount,
-  resolveClaimMintPath,
-} from '../lib/claimMint'
-const inputClass =
-  'mt-1 w-full rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] px-3 py-2 text-sm text-[var(--text-primary,#EDEDED)]'
+import { insightsViewAbi, rebasingClaimAbi, standardizedYieldDiscoveryAbi } from '../lib/insightsAbi'
+import { collectStakeTokenAddresses, formatTokenAmount, stakingExchangeRoute } from '../lib/claimMint'
 
-function deadline(): bigint {
-  return BigInt(Math.floor(Date.now() / 1000) + 20 * 60)
-}
+const inputClass = 'mt-1 w-full rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] px-3 py-2 text-sm text-[var(--text-primary,#EDEDED)]'
 
-function parseAmount(raw: string, decimals: number): bigint | undefined {
-  if (!raw.trim()) return undefined
-  try {
-    return parseUnits(raw.trim(), decimals)
-  } catch {
-    return undefined
-  }
-}
-
-export function DetfStaking({
-  detf,
-  detfSymbol,
-  claimToken,
-  claimSymbol,
-  pairTokens,
-  vaultShare,
-  weth,
-  chainId,
-  reserveLive,
-}: {
+export function DetfStaking({ detf, detfSymbol, claimToken, claimSymbol, pairTokens, vaultShare, weth, chainId, reserveLive }: {
   detf?: `0x${string}`
   detfSymbol: string
   claimToken?: `0x${string}`
@@ -71,448 +34,155 @@ export function DetfStaking({
   const { switchChainAsync } = useSwitchChain()
   const localWallet = walletChainId === CHAIN_ID_ANVIL || walletChainId === CHAIN_ID_LOCALHOST
   const walletMatches = isConnected && (walletChainId === chainId || localWallet)
-
   const [tab, setTab] = useState('stake')
   const [token, setToken] = useState('')
   const [amount, setAmount] = useState('')
   const [status, setStatus] = useState('')
   const [pendingLeg, setPendingLeg] = useState<'approve' | 'stake' | 'unstake' | null>(null)
-  const [approvedSpend, setApprovedSpend] = useState(0n)
 
-  const { data: depositFacet } = useReadContract({
-    address: detf,
-    abi: diamondLoupeAbi,
-    functionName: 'facetAddress',
-    args: [DEPOSIT_CLAIM_SELECTOR],
-    query: { enabled: !!detf, retry: 0 },
+  const { data: stakingSY } = useReadContract({
+    address: detf, abi: standardizedYieldDiscoveryAbi, functionName: 'stakingSY',
+    query: { enabled: !!detf },
   })
-  const { data: buyFacet } = useReadContract({
-    address: detf,
-    abi: diamondLoupeAbi,
-    functionName: 'facetAddress',
-    args: [BUY_CLAIM_SELECTOR],
-    query: { enabled: !!detf, retry: 0 },
+  const { data: acceptedInputs } = useReadContract({
+    address: stakingSY, abi: standardizedYieldDiscoveryAbi, functionName: 'getTokensIn',
+    query: { enabled: !!stakingSY },
   })
-  const { data: weightedM } = useReadContract({
-    address: detf,
-    abi: insightsViewAbi,
-    functionName: 'm',
-    query: { enabled: !!detf, retry: 0 },
-  })
-  const path = resolveClaimMintPath({
-    depositClaimFacet: depositFacet,
-    buyClaimFacet: buyFacet,
-    weighted: (weightedM != null && Number(weightedM) >= 1) || pairTokens.length > 1,
-  })
-
-  const { data: claimName } = useReadContract({
-    address: claimToken,
-    abi: rebasingClaimAbi,
-    functionName: 'name',
-    query: { enabled: !!claimToken },
-  })
-  const { data: claimOnchainSymbol } = useReadContract({
-    address: claimToken,
-    abi: rebasingClaimAbi,
-    functionName: 'symbol',
-    query: { enabled: !!claimToken },
-  })
-  const { data: claimSupply } = useReadContract({
-    address: claimToken,
-    abi: rebasingClaimAbi,
-    functionName: 'totalSupply',
-    query: { enabled: !!claimToken, refetchInterval: 15_000 },
-  })
-  const { data: claimBalance } = useReadContract({
-    address: claimToken,
-    abi: rebasingClaimAbi,
-    functionName: 'balanceOf',
-    args: address ? [address] : undefined,
-    query: { enabled: !!claimToken && !!address, refetchInterval: 15_000 },
-  })
-
-  const liveClaimSymbol = claimOnchainSymbol || (claimSymbol && claimSymbol !== 'claim' ? claimSymbol : '')
-  const claimLabel = liveClaimSymbol || 'claim token'
-
-  const stakeAddrs = useMemo(
-    () =>
-      collectStakeTokenAddresses({
-        path,
-        detf,
-        actionTokens: pairTokens.map((t) => t.address),
-      }),
-    [path, detf, pairTokens],
-  )
-  const stakeTokens: ActionToken[] = useMemo(() => {
-    const listed = stakeAddrs.map((addr) => {
-      if (detf && addr.toLowerCase() === detf.toLowerCase()) {
-        return { address: addr, symbol: detfSymbol }
-      }
-      const known = pairTokens.find((t) => t.address.toLowerCase() === addr.toLowerCase())
-      return known ?? { address: addr, symbol: addr.slice(0, 6) }
+  const { data: claimName } = useReadContract({ chainId, address: claimToken, abi: rebasingClaimAbi, functionName: 'name', query: { enabled: !!claimToken } })
+  const { data: claimOnchainSymbol } = useReadContract({ chainId, address: claimToken, abi: rebasingClaimAbi, functionName: 'symbol', query: { enabled: !!claimToken } })
+  const { data: claimDecimals } = useReadContract({ chainId, address: claimToken, abi: erc20Abi, functionName: 'decimals', query: { enabled: !!claimToken } })
+  const { data: claimSupply, refetch: refreshSupply } = useReadContract({ chainId, address: claimToken, abi: rebasingClaimAbi, functionName: 'totalSupply', query: { enabled: !!claimToken, refetchInterval: 15_000 } })
+  const { data: claimBalance, refetch: refreshClaimBalance } = useReadContract({ chainId, address: claimToken, abi: rebasingClaimAbi, functionName: 'balanceOf', args: address ? [address] : undefined, query: { enabled: !!claimToken && !!address, refetchInterval: 15_000 } })
+  const claimLabel = claimOnchainSymbol || (claimSymbol && claimSymbol !== 'claim' ? claimSymbol : 'sDETF')
+  const stakeTokens = useMemo(() => {
+    const listed = collectStakeTokenAddresses({ detf, stakingToken: claimToken, acceptedInputs }).map((addr): ActionToken => {
+      if (addr.toLowerCase() === detf?.toLowerCase()) return { address: addr, symbol: detfSymbol }
+      return pairTokens.find((t) => t.address.toLowerCase() === addr.toLowerCase()) ?? { address: addr, symbol: addr.slice(0, 6) }
     })
-    return path === 'depositClaim'
-      ? withEthPayOption(listed, weth, { address: ETH_PAY, symbol: 'ETH' })
-      : listed
-  }, [stakeAddrs, detf, detfSymbol, pairTokens, path, weth])
+    return withEthPayOption(listed, weth, { address: ETH_PAY, symbol: 'ETH' })
+  }, [detf, claimToken, acceptedInputs, detfSymbol, pairTokens, weth])
 
   useEffect(() => {
-    if (stakeTokens.length === 0) return
-    const ok = stakeTokens.some((t) => t.address.toLowerCase() === token.toLowerCase())
-    if (!ok) setToken(stakeTokens[0]!.address)
+    if (!stakeTokens.some((t) => t.address.toLowerCase() === token.toLowerCase())) setToken(stakeTokens[0]?.address ?? '')
   }, [stakeTokens, token])
-
   const tokenAddr = (token || stakeTokens[0]?.address || '') as `0x${string}` | ''
-  const tokenMeta = stakeTokens.find((t) => t.address.toLowerCase() === tokenAddr.toLowerCase()) ?? stakeTokens[0]
+  const tokenMeta = stakeTokens.find((t) => t.address.toLowerCase() === tokenAddr.toLowerCase())
   const payEth = tab === 'stake' && isEthPay(tokenAddr)
   const settledIn = settlePayToken(tokenAddr, weth)
-
-  useEffect(() => {
-    setApprovedSpend(0n)
-  }, [tokenAddr, detf, address, tab])
-
-  const spendToken = tab === 'unstake' ? claimToken : payEth ? settledIn || undefined : tokenAddr || undefined
-  const { data: tokenDecimals } = useReadContract({
-    address: payEth ? undefined : spendToken,
-    abi: erc20Abi,
-    functionName: 'decimals',
-    query: { enabled: !!spendToken && !payEth },
+  const route = stakingExchangeRoute({ detf, stakingToken: claimToken, tokenIn: settledIn || undefined, unstake: tab === 'unstake' })
+  const spendToken = route?.tokenIn
+  const { data: tokenDecimals } = useReadContract({ chainId, address: spendToken, abi: erc20Abi, functionName: 'decimals', query: { enabled: !!spendToken && !payEth } })
+  const decimals = payEth ? 18 : tokenDecimals
+  let parsed: bigint | undefined
+  try { if (amount.trim() && decimals != null) parsed = parseUnits(amount.trim(), Number(decimals)) } catch { /* Await valid native units. */ }
+  const { data: ethBalance, refetch: refreshEthBalance } = useBalance({ address, chainId, query: { enabled: payEth && !!address } })
+  const { data: tokenBalance, refetch: refreshTokenBalance } = useReadContract({ chainId, address: spendToken, abi: erc20Abi, functionName: 'balanceOf', args: address ? [address] : undefined, query: { enabled: !!spendToken && !!address && !payEth } })
+  const balance = payEth ? ethBalance?.value : tokenBalance
+  const { data: allowance, refetch: refreshAllowance } = useReadContract({
+    address: spendToken, abi: erc20Abi, functionName: 'allowance',
+    args: address && route ? [address, route.target] : undefined,
+    query: { enabled: !!spendToken && !!address && !!route?.needsAllowance },
   })
-  const decimals = payEth || tokenDecimals == null ? 18 : Number(tokenDecimals)
-  const parsed = parseAmount(amount, decimals)
-
-  const { data: ethBal } = useBalance({
-    address,
-    chainId,
-    query: { enabled: payEth && !!address },
+  const { data: preview, refetch: refreshPreview } = useReadContract({
+    address: route?.target, abi: insightsViewAbi, functionName: 'previewExchangeIn',
+    args: route && parsed != null && parsed > 0n ? [route.tokenIn, parsed, route.tokenOut] : undefined,
+    query: { enabled: !!route && parsed != null && parsed > 0n, retry: 0, refetchInterval: 15_000 },
   })
-  const { data: erc20Bal } = useReadContract({
-    address: payEth ? undefined : spendToken,
-    abi: erc20Abi,
-    functionName: 'balanceOf',
-    args: address ? [address] : undefined,
-    query: { enabled: !!spendToken && !!address && !payEth },
-  })
-  const balance = payEth ? ethBal?.value : erc20Bal
-  const { data: allowance, refetch: refetchAllowance } = useReadContract({
-    address: spendToken,
-    abi: erc20Abi,
-    functionName: 'allowance',
-    args: address && detf ? [address, detf] : undefined,
-    query: { enabled: tab === 'stake' && !!spendToken && !!address && !!detf },
-  })
-  const { data: previewBuy } = useReadContract({
-    address: detf,
-    abi: insightsViewAbi,
-    functionName: 'previewBuyClaim',
-    args: parsed && parsed > 0n ? [parsed] : undefined,
-    query: {
-      enabled: tab === 'stake' && path === 'buyClaim' && !!detf && parsed != null && parsed > 0n,
-      retry: 0,
-    },
-  })
-  const { data: previewRedeem } = useReadContract({
-    address: detf,
-    abi: insightsViewAbi,
-    functionName: 'previewRedeemClaim',
-    args: parsed && parsed > 0n && detf ? [parsed, detf] : undefined,
-    query: {
-      enabled: tab === 'unstake' && !!detf && parsed != null && parsed > 0n,
-      retry: 0,
-    },
-  })
-
-  const covered = allowance != null && allowance >= (parsed ?? 0n) ? allowance : approvedSpend
-  const needApprove = !payEth && tab === 'stake' && parsed != null && parsed > 0n && covered < parsed
-  const canSign = isConnected && walletMatches && !!detf && !!address && pendingLeg == null
-  const inert = reserveLive === false
-  const noClaim = !claimToken
+  const needApprove = !payEth && route?.needsAllowance && parsed != null && parsed > 0n && (allowance ?? 0n) < parsed
+  const blockedCopy = !isConnected ? 'Connect a wallet to sign.'
+    : !walletMatches ? `Switch the wallet to chain ${chainId}.`
+      : !claimToken ? 'Reading the staking token…'
+        : reserveLive === false && route?.requiresLiveReserve ? 'Payment-token staking opens after the first bond. Direct DETF staking remains available.'
+          : null
+  const ready = !blockedCopy && !!route && !!address && pendingLeg == null && parsed != null && parsed > 0n && preview != null && preview > 0n && balance != null && balance >= parsed
 
   async function writeOnWallet(params: Parameters<typeof writeContractAsync>[0] | EthWrapWrite) {
-    if (typeof walletChainId === 'number' && walletChainId !== chainId && !localWallet) {
-      await switchChainAsync({ chainId })
-    }
-    const { chain: _chain, chainId: _cid, ...rest } = params as typeof params & {
-      chain?: unknown
-      chainId?: number
-    }
-    const next = (localWallet ? rest : params) as Parameters<typeof writeContractAsync>[0]
-    return writeContractAsync(next)
+    if (typeof walletChainId === 'number' && walletChainId !== chainId && !localWallet) await switchChainAsync({ chainId })
+    const { chain: _chain, chainId: _cid, ...rest } = params as typeof params & { chain?: unknown; chainId?: number }
+    return writeContractAsync((localWallet ? rest : params) as Parameters<typeof writeContractAsync>[0])
   }
-
   async function wait(hash: `0x${string}`, label: string) {
     setStatus(`${label} submitted.`)
-    if (publicClient) {
-      const receipt = await publicClient.waitForTransactionReceipt({ hash })
-      if (receipt.status === 'reverted') throw new Error('Transaction reverted')
-      setStatus(`${label} confirmed.`)
-    }
+    if (!publicClient) throw new Error('Connection unavailable while waiting for confirmation')
+    const receipt = await publicClient.waitForTransactionReceipt({ hash })
+    if (receipt.status === 'reverted') throw new Error('Transaction reverted')
+    setStatus(`${label} confirmed.`)
   }
-
   async function approve() {
-    if (!detf || !spendToken || parsed == null || !address) return
+    if (!route || !spendToken || parsed == null || parsed <= 0n || !address) return
     setPendingLeg('approve')
-    setStatus('')
     try {
-      const hash = await writeOnWallet({
-        account: address,
-        address: spendToken,
-        abi: erc20Abi,
-        functionName: 'approve',
-        args: [detf, parsed],
-      })
+      const hash = await writeOnWallet({ account: address, address: spendToken, abi: erc20Abi, functionName: 'approve', args: [route.target, parsed] })
       await wait(hash, 'Approve')
-      setApprovedSpend(parsed)
-      await refetchAllowance()
-      setStatus('Approved. Stake next.')
-    } catch (e) {
-      setStatus(parseContractError(e))
-    } finally {
-      setPendingLeg(null)
-    }
+      await refreshAllowance()
+    } catch (error) { setStatus(parseContractError(error)) } finally { setPendingLeg(null) }
   }
-
-  async function stake() {
-    if (!detf || !spendToken || parsed == null || !address) return
-    setPendingLeg('stake')
-    setStatus('')
+  async function exchange() {
+    if (!ready || !route || !spendToken || parsed == null || !address || !publicClient) return
+    setPendingLeg(tab === 'unstake' ? 'unstake' : 'stake')
     try {
       if (payEth && weth) {
-        const wrapHash = await writeOnWallet({
-          account: address,
-          address: weth,
-          abi: WETH9_DEPOSIT_ABI,
-          functionName: 'deposit',
-          value: parsed,
-        })
-        await wait(wrapHash, 'Wrap')
-        const coveredNow = allowance != null && allowance >= parsed ? allowance : approvedSpend
-        if (coveredNow < parsed) {
-          const appr = await writeOnWallet({
-            account: address,
-            address: spendToken,
-            abi: erc20Abi,
-            functionName: 'approve',
-            args: [detf, parsed],
-          })
-          await wait(appr, 'Approve')
-          setApprovedSpend(parsed)
-          await refetchAllowance()
+        const hash = await writeOnWallet({ account: address, address: weth, abi: WETH9_DEPOSIT_ABI, functionName: 'deposit', value: parsed })
+        await wait(hash, 'Wrap')
+      }
+      if (route.needsAllowance) {
+        const current = await publicClient.readContract({ address: spendToken, abi: erc20Abi, functionName: 'allowance', args: [address, route.target] })
+        if (current < parsed) {
+          const hash = await writeOnWallet({ account: address, address: spendToken, abi: erc20Abi, functionName: 'approve', args: [route.target, parsed] })
+          await wait(hash, 'Approve')
         }
       }
-      const minOut = previewBuy != null && previewBuy > 0n ? (previewBuy * 99n) / 100n : 0n
-      const hash =
-        path === 'buyClaim'
-          ? await writeOnWallet({
-              account: address,
-              address: detf,
-              abi: insightsViewAbi,
-              functionName: 'buyClaim',
-              args: [parsed, minOut, address, false, deadline()],
-            })
-          : await writeOnWallet({
-              account: address,
-              address: detf,
-              abi: insightsViewAbi,
-              functionName: 'depositClaim',
-              args: [spendToken, parsed, minOut, address, false, deadline()],
-            })
-      await wait(hash, 'Stake')
-    } catch (e) {
-      setStatus(parseContractError(e))
-    } finally {
-      setPendingLeg(null)
-    }
-  }
-
-  async function unstake() {
-    if (!detf || parsed == null || !address) return
-    setPendingLeg('unstake')
-    setStatus('')
-    try {
-      const minOut = previewRedeem != null && previewRedeem > 0n ? (previewRedeem * 99n) / 100n : 0n
+      const quoted = await publicClient.readContract({ address: route.target, abi: insightsViewAbi, functionName: 'previewExchangeIn', args: [route.tokenIn, parsed, route.tokenOut] })
+      if (quoted <= 0n) throw new Error('No positive staking quote is available')
+      const minimum = route.requiresLiveReserve ? (quoted * 99n / 100n || 1n) : quoted
       const hash = await writeOnWallet({
-        account: address,
-        address: detf,
-        abi: insightsViewAbi,
-        functionName: 'redeemClaim',
-        args: [parsed, detf, minOut, address, deadline()],
+        account: address, address: route.target, abi: insightsViewAbi, functionName: 'exchangeIn',
+        args: [route.tokenIn, parsed, route.tokenOut, minimum, address, false, BigInt(Math.floor(Date.now() / 1000) + 20 * 60)],
       })
-      await wait(hash, 'Unstake')
-    } catch (e) {
-      setStatus(parseContractError(e))
-    } finally {
-      setPendingLeg(null)
-    }
+      await wait(hash, tab === 'unstake' ? 'Unstake' : 'Stake')
+      await Promise.allSettled([refreshSupply(), refreshClaimBalance(), refreshTokenBalance(), refreshEthBalance(), refreshAllowance(), refreshPreview()])
+    } catch (error) { setStatus(parseContractError(error)) } finally { setPendingLeg(null) }
   }
 
   if (!detf) return null
-
-  const blockedCopy = !isConnected
-    ? 'Connect a wallet to sign.'
-    : !walletMatches
-      ? `Switch the wallet to chain ${chainId}.`
-      : inert
-        ? 'Staking opens after the first bond. The reserve is still inert.'
-        : noClaim
-          ? 'This DETF has no claim token yet.'
-          : null
-
-  const buyClaimOnly = path === 'buyClaim'
-
   return (
     <div data-testid="detf-staking">
       <p className="text-sm text-[var(--text-muted,#9aa3b2)]">
-        Stake pays {buyClaimOnly ? detfSymbol : `a token this DETF accepts, or ${detfSymbol}`} and
-        mints the rebasing claim token. That is not minting {detfSymbol}. Unstake burns claim and
-        pays {detfSymbol}. Amounts are not guaranteed.
+        Stake {detfSymbol} to receive an equal amount of {claimLabel}. Rewards add to your staked balance when they are funded.
+        Unstake one {claimLabel} for one {detfSymbol}. You can also pay with a supported token using the quote below.
       </p>
-
       {claimToken ? (
         <div className="mt-4 rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))] p-3" data-testid="insights-claim-card">
-          <p className="text-[11px] uppercase tracking-wide text-[var(--text-muted,#9aa3b2)]">
-            Claim token
-          </p>
-          <p className="mt-1 text-sm text-[var(--text-primary,#EDEDED)]">
-            {claimLabel}
-            {claimName ? <span className="text-[var(--text-muted,#9aa3b2)]"> · {claimName}</span> : null}
-          </p>
+          <p className="text-[11px] uppercase tracking-wide text-[var(--text-muted,#9aa3b2)]">Staking token</p>
+          <p className="mt-1 text-sm">{claimLabel}{claimName ? ` · ${claimName}` : ''}</p>
           <p className="mt-2 font-mono text-[11px] text-[var(--text-muted,#9aa3b2)]">
-            Supply {formatTokenAmount(claimSupply)}
-            {' · '}
-            You hold{' '}
-            {claimBalance != null ? formatTokenAmount(claimBalance) : isConnected ? '0' : 'Connect to see'}
-            {' · '}
-            <span data-testid="insights-claim-address">
-              <AddressLink chainId={chainId} address={claimToken} display="full" />
-            </span>
+            Supply {formatTokenAmount(claimSupply, claimDecimals ?? 9)} · You hold {claimBalance != null ? formatTokenAmount(claimBalance, claimDecimals ?? 9) : isConnected ? '0' : 'Connect to see'} ·{' '}
+            <span data-testid="insights-claim-address"><AddressLink chainId={chainId} address={claimToken} display="full" /></span>
           </p>
         </div>
-      ) : (
-        <p className="mt-3 text-sm text-[var(--text-muted,#9aa3b2)]" data-testid="insights-claim-card">
-          {inert ? 'Claim token appears after the first bond.' : 'This DETF has no claim token yet.'}
-        </p>
-      )}
-
-      <div className="mt-4">
-        <Tabs
-          tabs={[
-            { id: 'stake', label: 'Stake' },
-            { id: 'unstake', label: 'Unstake' },
-          ]}
-          active={tab}
-          onChange={setTab}
-        />
-      </div>
-
+      ) : <p className="mt-3 text-sm" data-testid="insights-claim-card">Reading the staking token…</p>}
+      <div className="mt-4"><Tabs tabs={[{ id: 'stake', label: 'Stake' }, { id: 'unstake', label: 'Unstake' }]} active={tab} onChange={setTab} /></div>
       <TabPanel when="stake" active={tab}>
-        {buyClaimOnly ? (
-          <p className="mt-2 text-xs text-[var(--text-muted,#9aa3b2)]">
-            This DETF mints claim from {detfSymbol} only. Mint first if you hold a pair or vault
-            token.
-          </p>
-        ) : (
-          <label className="block text-sm text-[var(--text-primary,#EDEDED)]">
-            Pay with
-            <select
-              className={inputClass}
-              value={tokenAddr}
-              onChange={(e) => setToken(e.target.value)}
-              data-testid="detf-stake-token"
-            >
-              {stakeTokens.length === 0 ? (
-                <option value="">Reading tokens…</option>
-              ) : (
-                stakeTokens.map((t) => (
-                  <option key={t.address} value={t.address}>
-                    {isEthPay(t.address)
-                      ? 'ETH'
-                      : detf && t.address.toLowerCase() === detf.toLowerCase()
-                        ? t.symbol
-                        : actionTokenOptionLabel(t, vaultShare)}
-                  </option>
-                ))
-              )}
-            </select>
-          </label>
-        )}
-        <AmountField
-          className="mt-4"
-          label="Pay"
-          symbol={buyClaimOnly ? detfSymbol : tokenMeta?.symbol}
-          value={amount}
-          onChange={setAmount}
-          decimals={decimals}
-          balance={typeof balance === 'bigint' ? balance : undefined}
-          data-testid="detf-stake-amount"
-        />
-        <p className="mt-2 text-xs text-[var(--text-muted,#9aa3b2)]">
-          Preview:{' '}
-          {previewBuy != null
-            ? `${formatUnits(previewBuy, 18)} ${claimLabel}`
-            : 'No quote. The contract mints claim after it joins the reserve.'}
-        </p>
-        {blockedCopy ? <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]">{blockedCopy}</p> : null}
-        <div className="mt-4 flex flex-wrap gap-2">
-          {needApprove ? (
-            <Button
-              type="button"
-              onClick={() => void approve()}
-              disabled={!canSign || parsed == null || inert || noClaim}
-              loading={pendingLeg === 'approve'}
-              data-testid="detf-stake-approve"
-            >
-              Approve {tokenMeta?.symbol ?? 'token'}
-            </Button>
-          ) : (
-            <Button
-              type="button"
-              onClick={() => void stake()}
-              disabled={!canSign || parsed == null || inert || noClaim}
-              loading={pendingLeg === 'stake'}
-              data-testid="detf-stake"
-            >
-              Stake {claimLabel}
-            </Button>
-          )}
+        <label className="block text-sm">Pay with
+          <select className={inputClass} value={tokenAddr} onChange={(event) => setToken(event.target.value)} data-testid="detf-stake-token">
+            {stakeTokens.map((item) => <option key={item.address} value={item.address}>{isEthPay(item.address) ? 'ETH' : item.address.toLowerCase() === detf.toLowerCase() ? item.symbol : actionTokenOptionLabel(item, vaultShare)}</option>)}
+          </select>
+        </label>
+        <AmountField className="mt-4" label="Pay" symbol={tokenMeta?.symbol} value={amount} onChange={setAmount} decimals={decimals ?? 9} balance={balance} data-testid="detf-stake-amount" />
+        <p className="mt-2 text-xs">Preview: {tab === 'stake' && preview != null ? `${formatTokenAmount(preview, claimDecimals ?? 9)} ${claimLabel}` : 'Enter an amount for a quote.'}</p>
+        {blockedCopy ? <p className="mt-2 text-sm">{blockedCopy}</p> : null}
+        <div className="mt-4">
+          {needApprove ? <Button type="button" onClick={() => void approve()} disabled={!ready} loading={pendingLeg === 'approve'} data-testid="detf-stake-approve">Approve {tokenMeta?.symbol ?? 'token'}</Button>
+            : <Button type="button" onClick={() => void exchange()} disabled={!ready} loading={pendingLeg === 'stake'} data-testid="detf-stake">Stake {claimLabel}</Button>}
         </div>
       </TabPanel>
-
       <TabPanel when="unstake" active={tab}>
-        <AmountField
-          className="mt-4"
-          label="Burn"
-          symbol={claimLabel}
-          value={amount}
-          onChange={setAmount}
-          decimals={decimals}
-          balance={typeof balance === 'bigint' ? balance : undefined}
-          data-testid="detf-unstake-amount"
-        />
-        <p className="mt-2 text-xs text-[var(--text-muted,#9aa3b2)]">
-          Preview:{' '}
-          {previewRedeem != null
-            ? `${formatUnits(previewRedeem, 18)} ${detfSymbol}`
-            : `Pays ${detfSymbol}. No quote until the contract can read it.`}
-        </p>
-        {blockedCopy ? <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]">{blockedCopy}</p> : null}
-        <Button
-          type="button"
-          className="mt-4"
-          onClick={() => void unstake()}
-          disabled={!canSign || parsed == null || inert || noClaim}
-          loading={pendingLeg === 'unstake'}
-          data-testid="detf-unstake"
-        >
-          Unstake {claimLabel}
-        </Button>
+        <AmountField className="mt-4" label="Unstake" symbol={claimLabel} value={amount} onChange={setAmount} decimals={claimDecimals ?? 9} balance={claimBalance} data-testid="detf-unstake-amount" />
+        <p className="mt-2 text-xs">Preview: {tab === 'unstake' && preview != null ? `${formatTokenAmount(preview, 9)} ${detfSymbol}` : 'Enter an amount for a quote.'}</p>
+        {blockedCopy ? <p className="mt-2 text-sm">{blockedCopy}</p> : null}
+        <Button type="button" className="mt-4" onClick={() => void exchange()} disabled={!ready} loading={pendingLeg === 'unstake'} data-testid="detf-unstake">Unstake {claimLabel}</Button>
       </TabPanel>
-
-      {status ? (
-        <p className="mt-3 text-xs text-[var(--text-muted,#9aa3b2)]" data-testid="detf-staking-status">
-          {status}
-        </p>
-      ) : null}
+      {status ? <p className="mt-3 text-xs" data-testid="detf-staking-status">{status}</p> : null}
     </div>
   )
 }

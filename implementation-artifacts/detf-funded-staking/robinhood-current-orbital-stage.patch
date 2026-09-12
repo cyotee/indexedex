@@ -1,0 +1,246 @@
+--- /dev/null
++++ scripts/foundry/anvil_robinhood_main/Phase_06_Stage_05_OrbitalBufferHookPkg.sol
+@@ -0,0 +1,56 @@
++// SPDX-License-Identifier: BSL-1.1
++pragma solidity ^0.8.0;
++
++import {FixtureEconomics} from "./FixtureEconomics.sol";
++import {LaunchState} from "./LaunchState.sol";
++
++import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
++
++import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
++import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
++import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
++import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
++import {
++    IUniswapV4StandardExchangeOrbitalBufferHookPackage as IOrbitalHookPkg
++} from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHookPackage.sol";
++import {
++    UniswapV4StandardExchangeOrbitalBufferHookDFPkg as OrbitalHookDFPkg
++} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDFPkg.sol";
++import {
++    UniswapV4StandardExchangeOrbitalBufferHook_FactoryService as OrbitalHookFS
++} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_FactoryService.sol";
++
++/// @title Phase_06_Stage_05_OrbitalBufferHookPkg
++library Phase_06_Stage_05_OrbitalBufferHookPkg {
++    using BetterEfficientHashLib for bytes;
++
++    function execute(LaunchState storage s) internal {
++        IVaultRegistryDeployment reg = IVaultRegistryDeployment(address(s.indexedexManager));
++        IVaultFeeOracleQuery feeOracle = IVaultFeeOracleQuery(address(s.indexedexManager));
++        IFacet depositFacet = OrbitalHookFS.deployDepositFacet(s.create3Factory);
++        IFacet withdrawFacet = OrbitalHookFS.deployWithdrawFacet(s.create3Factory);
++        IFacet seFacet = OrbitalHookFS.deploySeFacet(s.create3Factory);
++        IFacet hooksFacet = OrbitalHookFS.deployHooksFacet(s.create3Factory);
++        IOrbitalHookPkg.PkgInit memory init_;
++        init_.vaultRegistryDeployment = reg;
++        init_.depositQueryFacet = OrbitalHookFS.deployDepositQueryFacet(s.create3Factory);
++        init_.depositZapFacet = OrbitalHookFS.deployDepositZapFacet(s.create3Factory);
++        init_.vaultFeeOracleQuery = feeOracle;
++        init_.depositFacet = depositFacet;
++        init_.withdrawFacet = withdrawFacet;
++        init_.seFacet = seFacet;
++        init_.hooksFacet = hooksFacet;
++        init_.erc20Facet = s.erc20Facet;
++        init_.erc5267Facet = s.erc5267Facet;
++        init_.erc2612Facet = s.erc2612Facet;
++        init_.multiAssetBasicVaultFacet = s.multiAssetBasicVaultFacet;
++        init_.multiAssetStandardVaultFacet = s.multiAssetStandardVaultFacet;
++        init_.multiStepOwnableFacet = s.multiStepOwnableFacet;
++        bytes memory code = type(OrbitalHookDFPkg).creationCode;
++        bytes memory args = abi.encode(init_);
++        s.orbitalHookPkg = reg.deployPkg(
++            code, args,
++            ArtifactCreationCode.releaseSalt(abi.encode(type(IOrbitalHookPkg).name, FixtureEconomics.SALT_NS)._hash(), code, args)
++        );
++    }
++}
+--- /dev/null
++++ scripts/foundry/anvil_robinhood_main/Phase_06_Stage_05_OrbitalBufferHookPkg.s.sol
+@@ -0,0 +1,23 @@
++// SPDX-License-Identifier: BSL-1.1
++pragma solidity ^0.8.0;
++
++import {LaunchStageBase} from "./LaunchStageBase.sol";
++import {Phase_06_Stage_05_OrbitalBufferHookPkg as OrbitalHookLib} from "./Phase_06_Stage_05_OrbitalBufferHookPkg.sol";
++
++/// @title Phase_06_Stage_05_OrbitalBufferHookPkg
++/// @notice Resolve the current component set through implementation-sensitive CREATE3 salts.
++contract Phase_06_Stage_05_OrbitalBufferHookPkg is LaunchStageBase {
++    function run() external {
++        _start("Phase 06 Stage 05: Orbital buffer hook pkg");
++        // Address records alone cannot establish release freshness.
++        _requireCreate3(s);
++        _requireCommonFacets(s);
++        _requireManager(s);
++        _broadcast();
++        OrbitalHookLib.execute(s);
++        vm.stopBroadcast();
++        _exportPkg("p0605", FILE_06_05, "orbitalHookPkg", s.orbitalHookPkg);
++        _logAddress("orbitalHookPkg:", s.orbitalHookPkg);
++        _logComplete("Phase 06 Stage 05");
++    }
++}
+--- scripts/foundry/anvil_robinhood_main/LaunchState.sol
++++ scripts/foundry/anvil_robinhood_main/LaunchState.sol
+@@ -56,6 +56,7 @@
+     address rebasingClaimTokenPkg;
+     address uniV4DetfPkg;
+     address weightedHookPkg;
++    address orbitalHookPkg;
+     address curveQuadHookPkg;
+     IFacet tokenStakingFacet;
+     IFacet rebasingAwareErc4626Facet;
+--- scripts/foundry/anvil_robinhood_main/LaunchIo.sol
++++ scripts/foundry/anvil_robinhood_main/LaunchIo.sol
+@@ -47,6 +47,7 @@
+     string internal constant FILE_06_02 = "phase06_stage02_rebasing_claim_pkg.json";
+     string internal constant FILE_06_03 = "phase06_stage03_cp_buffer_hook_pkg.json";
+     string internal constant FILE_06_04 = "phase06_stage04_weighted_buffer_hook_pkg.json";
++    string internal constant FILE_06_05 = "phase06_stage05_orbital_buffer_hook_pkg.json";
+     string internal constant FILE_06_06 = "phase06_stage06_curve_quad_buffer_hook_pkg.json";
+     string internal constant FILE_06_07 = "phase06_stage07_uniswap_v4_detf_pkg.json";
+     string internal constant FILE_06_08 = "phase06_stage08_token_staking_pkg.json";
+@@ -307,6 +308,7 @@
+         _exportPkg("p0602", FILE_06_02, "rebasingClaimTokenPkg", s.rebasingClaimTokenPkg);
+         _exportPkg("p0603", FILE_06_03, "cpHookPkg", s.cpHookPkg);
+         _exportPkg("p0604", FILE_06_04, "weightedHookPkg", s.weightedHookPkg);
++        _exportPkg("p0605", FILE_06_05, "orbitalHookPkg", s.orbitalHookPkg);
+         _exportPkg("p0606", FILE_06_06, "curveQuadHookPkg", s.curveQuadHookPkg);
+         _exportPkg("p0607", FILE_06_07, "uniV4DetfPkg", s.uniV4DetfPkg);
+     }
+@@ -329,6 +331,8 @@
+         require(_hasCode(s.cpHookPkg), "run Phase 06 Stage 03 first");
+         s.weightedHookPkg = _loadAddr(FILE_06_04, "weightedHookPkg");
+         require(_hasCode(s.weightedHookPkg), "run Phase 06 Stage 04 first");
++        s.orbitalHookPkg = _loadAddr(FILE_06_05, "orbitalHookPkg");
++        require(_hasCode(s.orbitalHookPkg), "run Phase 06 Stage 05 first");
+         s.curveQuadHookPkg = _loadAddr(FILE_06_06, "curveQuadHookPkg");
+         require(_hasCode(s.curveQuadHookPkg), "run Phase 06 Stage 06 first");
+         s.uniV4DetfPkg = _loadAddr(FILE_06_07, "uniV4DetfPkg");
+--- scripts/foundry/anvil_robinhood_main/Phase_09_Stage_01_ExportFrontend.s.sol
++++ scripts/foundry/anvil_robinhood_main/Phase_09_Stage_01_ExportFrontend.s.sol
+@@ -66,6 +66,7 @@
+         }
+         json = vm.serializeAddress("p", "cpHookPkg", s.cpHookPkg);
+         json = vm.serializeAddress("p", "weightedHookPkg", s.weightedHookPkg);
++        json = vm.serializeAddress("p", "orbitalHookPkg", s.orbitalHookPkg);
+         json = vm.serializeAddress("p", "curveQuadHookPkg", s.curveQuadHookPkg);
+         json = vm.serializeAddress("p", "uniV4DetfPkg", s.uniV4DetfPkg);
+         json = vm.serializeAddress("p", "bondNftVaultPkg", s.bondNftVaultPkg);
+--- scripts/foundry/anvil_robinhood_main/Script_SimulateArchitecture.s.sol
++++ scripts/foundry/anvil_robinhood_main/Script_SimulateArchitecture.s.sol
+@@ -19,6 +19,7 @@
+ import {Phase_06_Stage_02_RebasingClaimPkg} from "./Phase_06_Stage_02_RebasingClaimPkg.sol";
+ import {Phase_06_Stage_03_CpBufferHookPkg} from "./Phase_06_Stage_03_CpBufferHookPkg.sol";
+ import {Phase_06_Stage_04_WeightedBufferHookPkg} from "./Phase_06_Stage_04_WeightedBufferHookPkg.sol";
++import {Phase_06_Stage_05_OrbitalBufferHookPkg} from "./Phase_06_Stage_05_OrbitalBufferHookPkg.sol";
+ import {Phase_06_Stage_06_CurveQuadBufferHookPkg} from "./Phase_06_Stage_06_CurveQuadBufferHookPkg.sol";
+ import {Phase_06_Stage_07_UniswapV4DetfPkg} from "./Phase_06_Stage_07_UniswapV4DetfPkg.sol";
+ 
+@@ -50,6 +51,7 @@
+         Phase_06_Stage_02_RebasingClaimPkg.execute(s);
+         Phase_06_Stage_03_CpBufferHookPkg.execute(s);
+         Phase_06_Stage_04_WeightedBufferHookPkg.execute(s);
++        Phase_06_Stage_05_OrbitalBufferHookPkg.execute(s);
+         Phase_06_Stage_06_CurveQuadBufferHookPkg.execute(s);
+         Phase_06_Stage_07_UniswapV4DetfPkg.execute(s);
+         vm.stopBroadcast();
+--- scripts/shell/lib/rh_4663_stages.sh
++++ scripts/shell/lib/rh_4663_stages.sh
+@@ -18,7 +18,7 @@
+ }
+ 
+ # Catalog order: Phase 00 Stage 01, architecture Stages of 01–06, then Phase 09 export.
+-# Stage 05-06 adds the mainnet V2 SE. Stage 06-05 (Orbital hook) stays unused.
++# Stages 05-04/05-06 provide V3/V2 SE; 06-05 provides the current Orbital hook.
+ # TokenStaking (06-08 package + 08-01 $DTF instance) is opt-in: rh_run_token_staking.
+ rh_catalog_rows() {
+   cat <<'EOF'
+@@ -41,6 +41,7 @@
+ 06 02
+ 06 03
+ 06 04
++06 05
+ 06 06
+ 06 07
+ 06 09
+--- scripts/foundry/anvil_robinhood_main/deploy_all.sh
++++ scripts/foundry/anvil_robinhood_main/deploy_all.sh
+@@ -100,7 +100,7 @@
+   rehearse-packages  Deploy release packages using the existing mainnet core on
+                      local Anvil. Isolates manifests and broadcasts under
+                      REHEARSAL_DIR (default .scratch/robinhood-mainnet-rehearsal).
+-  rehearse-lifecycle Run the 31 hook/backend integration cases against
++  rehearse-lifecycle Run the hook/backend integration matrix against
+                      the packages already deployed by rehearse-packages.
+                      Rehearsal defaults to the configured mainnet Alchemy alias.
+   token-staking      Phase 06 Stage 08 TokenStaking DFPkg, then Phase 08 Stage 01
+@@ -589,7 +589,7 @@
+   local pp ss
+   while read -r pp ss; do
+     case "$pp $ss" in
+-      '05 03'|'05 04'|'05 05'|'05 06'|'06 01'|'06 02'|'06 03'|'06 04'|'06 06'|'06 07'|'06 09') ;;
++      '05 03'|'05 04'|'05 05'|'05 06'|'06 01'|'06 02'|'06 03'|'06 04'|'06 05'|'06 06'|'06 07'|'06 09') ;;
+       *) continue ;;
+     esac
+     rh_should_run_stage "$pp" "$ss" "$FROM_PHASE" "${FROM_STAGE:-00}" || continue
+--- scripts/foundry/anvil_robinhood_main/README.md
++++ scripts/foundry/anvil_robinhood_main/README.md
+@@ -40,6 +40,7 @@
+ | 06 | 02 | `Phase_06_Stage_02_RebasingClaimPkg.s.sol` | Rebasing claim DFPkg |
+ | 06 | 03 | `Phase_06_Stage_03_CpBufferHookPkg.s.sol` | CP buffer hook DFPkg |
+ | 06 | 04 | `Phase_06_Stage_04_WeightedBufferHookPkg.s.sol` | Weighted buffer hook DFPkg |
++| 06 | 05 | `Phase_06_Stage_05_OrbitalBufferHookPkg.s.sol` | Orbital buffer hook DFPkg |
+ | 06 | 06 | `Phase_06_Stage_06_CurveQuadBufferHookPkg.s.sol` | Curve Quad buffer hook DFPkg |
+ | 06 | 07 | `Phase_06_Stage_07_UniswapV4DetfPkg.s.sol` | Unified Uni V4 DETF DFPkg |
+ | 09 | 01 | `Phase_09_Stage_01_ExportFrontend.s.sol` | Frontend `chain/4663/` export. No txs |
+@@ -59,9 +60,9 @@
+ bash scripts/shell/robinhood_main.sh token-staking-fund --broadcast
+ ```
+ 
+-Stage numbers match 46630. 05-04 (Uni V3 SE) and 06-05 (Orbital hook) stay unused.
++Stage numbers match 46630. V2/V3/V4 SE packages and all four V4 DETF reserve-hook families have current package stages.
+ 
+-Not in this catalog: minter facade, test tokens, Uni V3 rehearsal or SE package, Orbital hook, old family DETF packages, SE vault instances, Protocol DETF instances.
++Not in this catalog: minter facade, test tokens, old family DETF packages, SE vault instances, Protocol DETF instances.
+ 
+ ## Shells
+ 
+--- test/foundry/fork/robinhood_4663/RobinhoodReleaseRehearsal.t.sol
++++ test/foundry/fork/robinhood_4663/RobinhoodReleaseRehearsal.t.sol
+@@ -577,31 +577,10 @@
+         return _finalizeAndDeploy(args, predicted, tokens);
+     }
+ 
+-    function _currentOrbitalPackage() private returns (IOrbitalPkg pkg) {
+-        IOrbitalPkg.PkgInit memory init;
+-        init.vaultRegistryDeployment = IVaultRegistryDeployment(address(indexedexManager));
+-        init.vaultFeeOracleQuery = IVaultFeeOracleQuery(address(indexedexManager));
+-        vm.startPrank(owner);
+-        init.depositFacet = OrbitalFactory.deployDepositFacet(create3Factory);
+-        init.depositQueryFacet = OrbitalFactory.deployDepositQueryFacet(create3Factory);
+-        init.depositZapFacet = OrbitalFactory.deployDepositZapFacet(create3Factory);
+-        init.withdrawFacet = OrbitalFactory.deployWithdrawFacet(create3Factory);
+-        init.seFacet = OrbitalFactory.deploySeFacet(create3Factory);
+-        init.hooksFacet = OrbitalFactory.deployHooksFacet(create3Factory);
+-        vm.stopPrank();
+-        init.erc20Facet = _commonFacet(".erc20Facet");
+-        init.erc5267Facet = _commonFacet(".erc5267Facet");
+-        init.erc2612Facet = _commonFacet(".erc2612Facet");
+-        init.multiAssetBasicVaultFacet = _commonFacet(".multiAssetBasicVaultFacet");
+-        init.multiAssetStandardVaultFacet = _commonFacet(".multiAssetStandardVaultFacet");
+-        init.multiStepOwnableFacet = _commonFacet(".multiStepOwnableFacet");
+-        return OrbitalFactory.deployPackage(init.vaultRegistryDeployment, owner, init, keccak256("funded.rehearsal.orbital"));
+-    }
+-
+     function _deployOrbital(IUniswapV4Detf.PkgArgs memory args) private returns (address) {
+         address predicted = _predictDetf(args);
+         (address[] memory tokens, address[] memory ses) = _sorted(predicted);
+-        IOrbitalPkg pkg = _currentOrbitalPackage();
++        IOrbitalPkg pkg = IOrbitalPkg(_pin("phase06_stage05_orbital_buffer_hook_pkg.json", ".orbitalHookPkg", true));
+         IOrbitalPkg.PkgArgs memory h;
+         h.poolManager = address(pm);
+         h.feeOracle = address(indexedexManager);

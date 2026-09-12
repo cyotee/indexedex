@@ -24,7 +24,7 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Math is Test {
     function test_getD_matchesStableMath_balanced() public pure {
         uint256 baseAmp = 100;
         uint256 amp = baseAmp * Math.AMP_PRECISION; // 100_000
-        uint256[4] memory xp = [uint256(1e18), 1e18, 1e18, 1e18];
+        uint256[] memory xp = _balances4(1e18, 1e18, 1e18, 1e18);
         uint256 d = Math.getD(xp, amp);
 
         uint256[] memory bal = new uint256[](4);
@@ -39,7 +39,7 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Math is Test {
 
     function test_quoteExactInRated_positiveOut() public pure {
         uint256 amp = 100 * Math.AMP_PRECISION;
-        uint256[4] memory xp = [uint256(100e18), 100e18, 100e18, 100e18];
+        uint256[] memory xp = _balances4(100e18, 100e18, 100e18, 100e18);
         uint256 out = Math.quoteExactInRated(xp, 0, 1, 1e18, amp);
         assertGt(out, 0);
         // Near-peg stable: out slightly below 1e18 (favor protocol -1 wei style)
@@ -49,16 +49,20 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Math is Test {
 
     function test_quoteExactOutRated_positiveIn() public pure {
         uint256 amp = 100 * Math.AMP_PRECISION;
-        uint256[4] memory xp = [uint256(100e18), 100e18, 100e18, 100e18];
+        uint256[] memory xp = _balances4(100e18, 100e18, 100e18, 100e18);
         uint256 amountIn = Math.quoteExactOutRated(xp, 0, 1, 1e18, amp);
         assertGt(amountIn, 0);
         assertGe(amountIn, 1e18);
         assertLe(amountIn, 1.01e18);
     }
 
-    function test_firstMintShares_geoMean() public pure {
-        uint256[4] memory inv = [uint256(100e18), 100e18, 100e18, 100e18];
-        uint256 shares = Math.firstMintShares(inv);
+    function test_firstMintShares_normalizedInvariant() public pure {
+        uint256[] memory inv = _balances4(100e18, 100e18, 100e18, 100e18);
+        uint256 shares = Math.firstMintShares(inv, 100 * Math.AMP_PRECISION);
         assertEq(shares, 100e18 - Math.MINIMUM_LIQUIDITY);
+    }
+    function _balances4(uint256 a, uint256 b, uint256 c, uint256 d) internal pure returns (uint256[] memory out) {
+        out = new uint256[](4);
+        out[0] = a; out[1] = b; out[2] = c; out[3] = d;
     }
 }

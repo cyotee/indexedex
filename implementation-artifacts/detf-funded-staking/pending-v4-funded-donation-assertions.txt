@@ -1,0 +1,78 @@
+/// @dev Independent custody assertions shared by native-unit and provider donation fixtures.
+abstract contract V4FundedDonationAssertions is Test {
+    struct DnLiveSnap {
+        uint256 principal;
+        uint256 positionGons;
+        uint256 supply;
+        uint256 protocolLp;
+        uint256 userDetf;
+        uint256 backing;
+        bytes32 stakingState;
+    }
+
+    function _fundedDonationSnapshot(IUniswapV4Detf info_, uint256 id_, address user_)
+        internal view returns (DnLiveSnap memory s_)
+    {
+        IDetfBondNFT nft_ = IDetfBondNFT(info_.bondNftVault());
+        IStakedDETF staking_ = IStakedDETF(info_.rebasingClaimToken());
+        DETFFundedStakingMath.BondPosition memory p_ = nft_.positionOf(id_);
+        s_.principal = p_.principal;
+        s_.positionGons = p_.gons;
+        s_.supply = IERC20(address(info_)).totalSupply();
+        s_.protocolLp = IERC20(info_.hook()).balanceOf(address(nft_)) + IERC20(info_.hook()).balanceOf(address(info_));
+        s_.userDetf = IERC20(address(info_)).balanceOf(user_);
+        s_.backing = IERC20(address(info_)).balanceOf(address(staking_));
+        s_.stakingState = keccak256(abi.encode(staking_.stakingState()));
+    }
+
+    function _assertFundedDonationOnly(IUniswapV4Detf info_, uint256 id_, address user_, DnLiveSnap memory before_, uint256 lp_)
+        internal view
+    {
+        DnLiveSnap memory after_ = _fundedDonationSnapshot(info_, id_, user_);
+        assertGt(lp_, 0, "donation returns acquired LP");
+        assertGe(after_.protocolLp, before_.protocolLp + lp_, "actual protocol custody includes donation and any swept LP");
+        assertEq(after_.principal, before_.principal, "reserve gift cannot change purchased principal");
+        assertEq(after_.positionGons, before_.positionGons, "reserve gift cannot mint staking ownership");
+        assertEq(after_.supply, before_.supply, "reserve donation issues no DETF");
+        assertEq(after_.backing, before_.backing, "reserve gift is separate from funded staking backing");
+        assertEq(after_.stakingState, before_.stakingState, "donation preserves funded ledger and standing rights");
+    }
+
+    function _claimFundedDonationPosition(IUniswapV4Detf info_, uint256 id_, address holder_) internal returns (uint256 paid_) {
+        IDETFFundedRewards(address(info_)).synchronizeRewards();
+        IDetfBondNFT nft_ = IDetfBondNFT(info_.bondNftVault());
+        IStakedDETF receipt_ = IStakedDETF(info_.rebasingClaimToken());
+        DETFFundedStakingMath.BondClaim memory quote_ = nft_.previewClaim(id_);
+        uint256 lpBefore_ = IERC20(info_.hook()).balanceOf(address(nft_)) + IERC20(info_.hook()).balanceOf(address(info_));
+        uint256 before_ = receipt_.balanceOf(holder_);
+        vm.prank(holder_);
+        (uint256 principal_, uint256 rewards_) = nft_.claimBond(id_, holder_);
+        assertEq(principal_, quote_.principal, "donated reserve cannot alter principal preview");
+        assertEq(rewards_, quote_.rewards, "funded reward preview equals execution");
+        paid_ = principal_ + rewards_;
+        assertGt(paid_, 0, "funded payout");
+        assertEq(receipt_.balanceOf(holder_) - before_, paid_, "only funded sDETF paid");
+        assertEq(IERC20(info_.hook()).balanceOf(address(nft_)) + IERC20(info_.hook()).balanceOf(address(info_)), lpBefore_, "bond claim retains entire protocol LP");
+    }
+
+    function _donationUnstake(IUniswapV4Detf info_, address holder_) internal returns (uint256 amount_) {
+        IStakedDETF receipt_ = IStakedDETF(info_.rebasingClaimToken());
+        amount_ = receipt_.balanceOf(holder_);
+        uint256 rawBefore_ = IERC20(address(info_)).balanceOf(holder_);
+        vm.prank(holder_);
+        uint256 out_ = receipt_.exchangeIn(IERC20(address(receipt_)), amount_, IERC20(address(info_)), amount_, holder_, false, block.timestamp);
+        assertEq(out_, amount_, "exact held-DETF unstake");
+        assertEq(IERC20(address(info_)).balanceOf(holder_) - rawBefore_, amount_, "funded raw payout");
+    }
+
+    function _assertDonationStanding(IUniswapV4Detf info_, address oracle_) internal view {
+        IStakedDETF receipt_ = IStakedDETF(info_.rebasingClaimToken());
+        IStakedDETF.StakingState memory s_ = receipt_.stakingState();
+        (, uint256 f_, uint256 c_) = IVaultFeeOracleQuery(oracle_).seigniorageSplitOfVault(address(info_));
+        uint256 target_ = Math.mulDiv(s_.totalGons, 1e18, 1e18 - f_ - c_);
+        assertGe(s_.feeWeight, Math.mulDiv(target_, f_, 1e18), "standing fee weight is topped up and never reduced");
+        assertGe(s_.creatorWeight, Math.mulDiv(target_, c_, 1e18), "standing creator weight is topped up and never reduced");
+        assertGe(s_.accountedBacking, receipt_.totalSupply(), "actual funded liability");
+        assertGe(IERC20(address(info_)).balanceOf(address(receipt_)), s_.accountedBacking, "actual raw backing covers accounted funding");
+    }
+}

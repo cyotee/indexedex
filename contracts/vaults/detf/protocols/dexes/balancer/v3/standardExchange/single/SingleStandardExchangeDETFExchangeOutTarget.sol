@@ -2,78 +2,31 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
-import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
-import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
-import {
-    SingleStandardExchangeDETFCommon
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFCommon.sol";
-import {
-    SingleStandardExchangeDETFRepo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFRepo.sol";
+import {SingleStandardExchangeDETFCommon} from "./SingleStandardExchangeDETFCommon.sol";
+import {SingleStandardExchangeDETFRepo as Repo} from "./SingleStandardExchangeDETFRepo.sol";
 
-/// @title SingleStandardExchangeDETFExchangeOutTarget
-/// @notice Exact-in burn of DETF to vault shares (and optional SE redeem). Uses exchangeIn surface
-///         for burn (tokenIn = self) as peer DETFs do; exchangeOut reserved for closed-form inverse.
+/// @notice Exact-input DETF redemption helper shared by standard direct and unstaking routes.
 abstract contract SingleStandardExchangeDETFExchangeOutTarget is SingleStandardExchangeDETFCommon {
     using BetterSafeERC20 for IERC20;
 
-    /// @dev Burn path also lives on exchangeIn when tokenIn is DETF — implement here as helper.
-    function _burnDetfExactIn(
-        uint256 detfIn_,
-        IERC20 tokenOut_,
-        uint256 minOut_,
-        address recipient_,
-        bool pretransferred_,
-        uint256 deadline_
-    ) internal returns (uint256 amountOut_) {
+    /// @dev Consumes only input already acquired by this operation. Snapshot precedes the burn.
+    function _burnHeldDetf(uint256 amount_, IERC20 out_, uint256 min_, address to_, uint256 deadline_)
+        internal returns (uint256)
+    {
         _requireReserveLive();
-        _requireActive(deadline_, detfIn_);
-        _updateExpansionMintOnRewards();
-        if (!_isBurningAllowed()) {
-            SingleStandardExchangeDETFRepo.Storage storage s0 = SingleStandardExchangeDETFRepo._layoutStruct();
-            revert SingleStandardExchangeDETFRepo.BurningNotAllowed(_syntheticPrice(), s0.burnThreshold);
-        }
-        if (recipient_ == address(0)) recipient_ = msg.sender;
-
-        SingleStandardExchangeDETFRepo.Storage storage s = SingleStandardExchangeDETFRepo._layoutStruct();
-        // Delta-safe detfToken pull: pretransfer without inbound delta cannot free-extract
-        // diamond inventory (L-GAPS-9; mirrors MultiVault burn fix).
-        uint256 actualIn_ = _pullToken(IERC20(address(this)), detfIn_, pretransferred_);
-        // Compute BPT claim against pre-burn supply so previewExchangeIn matches execution.
-        uint256 bptIn_ = _bptForDetfShares(actualIn_);
-        _burnDetf(address(this), actualIn_);
-
-        (uint256 detfLeg_, uint256 vaultSharesOut_) = _exitReserveProportional(bptIn_);
-
-        // Exit already returned DETF ERC20 to this diamond (tokens that were in the pool).
-        // Redeposit that leg so the burn pays out vault-share side only — do NOT mint extra DETF.
-        if (detfLeg_ > 0) {
-            _joinReserveDetfOnly(detfLeg_);
-        }
-
-        if (address(tokenOut_) == address(s.standardExchangeVaultShare)) {
-            s.standardExchangeVaultShare.safeTransfer(recipient_, vaultSharesOut_);
-            amountOut_ = vaultSharesOut_;
-        } else if (_isAllowlistedTokenIn(tokenOut_)) {
-            amountOut_ = _nestedExchangeInPush(
-                IStandardExchangeIn(address(s.standardExchangeVault)),
-                s.standardExchangeVaultShare,
-                vaultSharesOut_,
-                tokenOut_,
-                minOut_,
-                recipient_,
-                deadline_
-            );
+        if (!_isAllowlistedTokenIn(out_)) revert Repo.UnsupportedRoute(IERC20(address(this)), out_);
+        Repo.Storage storage s_ = Repo._layoutStruct();
+        uint256 shares_;
+        if (_isBurningAllowed()) {
+            uint256 lp_ = _bptForDetfShares(amount_, false);
+            _burnDetf(address(this), amount_);
+            uint256 detfLeg_;
+            (detfLeg_, shares_) = _exitReserveProportional(lp_);
+            if (detfLeg_ != 0) _joinReserveDetfOnly(detfLeg_);
         } else {
-            revert SingleStandardExchangeDETFRepo.UnsupportedRoute(IERC20(address(this)), tokenOut_);
+            shares_ = _reserveSwap(s_.reservePool, IERC20(address(this)), s_.standardExchangeVaultShare, amount_, 0);
         }
-
-        if (amountOut_ < minOut_) {
-            revert IStandardExchangeErrors.MinAmountNotMet(minOut_, amountOut_);
-        }
-        _syncAllExpectedHoldReserves();
+        return _sendVaultShares(shares_, out_, min_, to_, deadline_);
     }
-
-    // `_joinReserveDetfOnly` lives on SingleStandardExchangeDETFCommon (returns bptOut).
 }

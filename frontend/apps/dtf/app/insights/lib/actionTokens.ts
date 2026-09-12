@@ -95,3 +95,19 @@ export function actionTokenOptionLabel(token: ActionToken, vaultShare?: string |
   }
   return symbol
 }
+
+/** Canonical directional discovery is authoritative, including an empty list. Candidate metadata supplies labels only. */
+export function tokensForStandardRoute(input: {
+  discovered: readonly unknown[] | undefined
+  labels: readonly ActionToken[]
+  exclude?: readonly unknown[]
+}): ActionToken[] {
+  const skip = excludeSet(input.exclude)
+  const addresses: `0x${string}`[] = []
+  pushAll(addresses, new Set(), input.discovered)
+  return addresses.filter((address) => !skip.has(address.toLowerCase())).map((address) => ({
+    address,
+    symbol: input.labels.find((token) => token.address.toLowerCase() === address.toLowerCase())?.symbol
+      || `${address.slice(0, 6)}…${address.slice(-4)}`,
+  }))
+}

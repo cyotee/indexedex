@@ -1,0 +1,28 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+import * as AffectedSuite0 from "test/foundry/spec/oracles/fee/VaultFeeOracle_BondTermsFallback.t.sol";
+import * as AffectedSuite1 from "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol";
+import * as AffectedSuite2 from "test/foundry/spec/vaults/detf/common/core/DETFEpochNaturalExpansionLib.t.sol";
+import * as AffectedSuite3 from "test/foundry/spec/vaults/detf/common/core/DETFFundedStakingMath.t.sol";
+import * as AffectedSuite4 from "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Deploy.t.sol";
+import * as AffectedSuite5 from "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Alignment_RedeemD15.t.sol";
+import * as AffectedSuite6 from "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Policy.t.sol";
+import * as AffectedSuite7 from "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Policy.t.sol";
+import * as AffectedSuite8 from "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Orbital_Policy_B_ALL6.t.sol";
+import * as AffectedSuite9 from "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Orbital_Policy_B_ALL9.t.sol";
+import * as AffectedSuite10 from "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Orbital_Policy_B_P18_R6.t.sol";
+import * as AffectedSuite11 from "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Orbital_Policy_B_P18_R9.t.sol";
+import * as AffectedSuite12 from "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Orbital_Policy_B_P6_R18.t.sol";
+import * as AffectedSuite13 from "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Orbital_Policy_B_P6_R9.t.sol";
+import * as AffectedSuite14 from "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Orbital_Policy_B_P9_R18.t.sol";
+import * as AffectedSuite15 from "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Orbital_Policy_B_P9_R6.t.sol";
+import * as AffectedSuite16 from "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Weighted_Policy_B_ALL6.t.sol";
+import * as AffectedSuite17 from "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Weighted_Policy_B_ALL9.t.sol";
+import * as AffectedSuite18 from "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Weighted_Policy_B_P18_R6.t.sol";
+import * as AffectedSuite19 from "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Weighted_Policy_B_P18_R9.t.sol";
+import * as AffectedSuite20 from "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Weighted_Policy_B_P6_R18.t.sol";
+import * as AffectedSuite21 from "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Weighted_Policy_B_P6_R9.t.sol";
+import * as AffectedSuite22 from "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Weighted_Policy_B_P9_R18.t.sol";
+import * as AffectedSuite23 from "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Weighted_Policy_B_P9_R6.t.sol";
+import * as AffectedSuite24 from "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol";
+import * as DualHookPackage from "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg.sol";

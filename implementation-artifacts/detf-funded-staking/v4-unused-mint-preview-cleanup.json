@@ -1,0 +1,16 @@
+{
+  "status": "applied; validation pending",
+  "files": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol",
+      "before": "2a7ffbde6ea2c6b0be3402ab3537519146abd18b74b4968c1df8602e3788c69e",
+      "after": "4641b206c72312a6dafc95093e35c3949f814c658a16f67d6c01ff70e351095c"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfQueryTarget.sol",
+      "before": "f1d5a9110740253634656479c2fb6a0ad5384aa01d8582d48e1e1866554fe9e4",
+      "after": "580bcfff6827bedf40ce3b6a6dc221e195500ef8e2741cb2cc819a10efe00093"
+    }
+  ],
+  "reason": "All internal callers consume only gross issuance and/or the final user amount. Remove the discarded hypothetical SE mint and LP join preview left over from the retired standalone mint preview. Existing pair valuation, branch selection, family issuance curve and fee split remain unchanged. No storage/close-configuration fields are touched."
+}

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IFeeCollectorManager} from "contracts/interfaces/IFeeCollectorManager.sol";
@@ -19,6 +21,20 @@ contract FeeCollectorManagerTarget is MultiStepOwnableModifiers, IFeeCollectorMa
     /* -------------------------------------------------------------------------- */
     /*                            IFeeCollectorManager                            */
     /* -------------------------------------------------------------------------- */
+
+    /// @inheritdoc IFeeCollectorManager
+    function redeemReserveLiquidity(
+        IERC20 reserveLp, uint256 amount, uint256[] calldata amountsMin, address recipient, uint256 deadline
+    ) external onlyOwner returns (uint256[] memory amounts) {
+        reserveLp.forceApprove(address(reserveLp), amount);
+        amounts = IUniswapV4SeBufferHook(address(reserveLp)).exitProportional(amount, recipient, amountsMin, deadline);
+        reserveLp.forceApprove(address(reserveLp), 0);
+        syncReserve(reserveLp);
+        if (recipient == address(this)) {
+            address[] memory underlying = IUniswapV4SeBufferHook(address(reserveLp)).tokens();
+            for (uint256 i; i < underlying.length; ++i) syncReserve(IERC20(underlying[i]));
+        }
+    }
 
     // tag::syncReserve(address)[]
     /**

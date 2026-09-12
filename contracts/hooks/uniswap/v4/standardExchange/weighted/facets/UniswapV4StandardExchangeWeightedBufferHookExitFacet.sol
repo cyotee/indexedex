@@ -20,29 +20,19 @@ contract UniswapV4StandardExchangeWeightedBufferHookExitFacet is
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](1);
-        interfaces[0] = type(IDetfReserveQuote).interfaceId;
+        interfaces = new bytes4[](0);
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](17);
-        funcs[0] = IUniswapV4StandardExchangeWeightedBufferHook.previewExitProportional.selector;
-        funcs[1] = IUniswapV4StandardExchangeWeightedBufferHook.exitProportional.selector;
-        funcs[2] = IUniswapV4StandardExchangeWeightedBufferHook.previewExitSingleAssetExactBptIn.selector;
-        funcs[3] = IUniswapV4StandardExchangeWeightedBufferHook.exitSingleAssetExactBptIn.selector;
-        funcs[4] = IUniswapV4StandardExchangeWeightedBufferHook.previewExitSingleAssetExactTokenOut.selector;
-        funcs[5] = IUniswapV4StandardExchangeWeightedBufferHook.exitSingleAssetExactTokenOut.selector;
-        funcs[6] = IUniswapV4StandardExchangeWeightedBufferHook.previewWithdrawSingle.selector;
-        funcs[7] = IUniswapV4StandardExchangeWeightedBufferHook.withdrawSingle.selector;
-        funcs[8] = IUniswapV4StandardExchangeWeightedBufferHook.previewWithdrawSingleExactOut.selector;
-        funcs[9] = IUniswapV4StandardExchangeWeightedBufferHook.withdrawSingleExactOut.selector;
-        funcs[10] = IUniswapV4StandardExchangeWeightedBufferHook.previewExitProportionalFlexible.selector;
-        funcs[11] = IUniswapV4StandardExchangeWeightedBufferHook.exitProportionalFlexible.selector;
-        funcs[12] = IUniswapV4StandardExchangeWeightedBufferHook.previewExitSingleAssetExactBptInFlexible.selector;
-        funcs[13] = IUniswapV4StandardExchangeWeightedBufferHook.exitSingleAssetExactBptInFlexible.selector;
-        funcs[14] = IUniswapV4StandardExchangeWeightedBufferHook.previewWithdrawSingleFlexible.selector;
-        funcs[15] = IUniswapV4StandardExchangeWeightedBufferHook.withdrawSingleFlexible.selector;
-        funcs[16] = IDetfReserveQuote.previewBurnToToken.selector;
+        funcs = new bytes4[](8);
+        funcs[0] = IUniswapV4StandardExchangeWeightedBufferHook.exitProportional.selector;
+        funcs[1] = IUniswapV4StandardExchangeWeightedBufferHook.exitSingleAssetExactBptIn.selector;
+        funcs[2] = IUniswapV4StandardExchangeWeightedBufferHook.exitSingleAssetExactTokenOut.selector;
+        funcs[3] = IUniswapV4StandardExchangeWeightedBufferHook.withdrawSingle.selector;
+        funcs[4] = IUniswapV4StandardExchangeWeightedBufferHook.withdrawSingleExactOut.selector;
+        funcs[5] = IUniswapV4StandardExchangeWeightedBufferHook.exitProportionalFlexible.selector;
+        funcs[6] = IUniswapV4StandardExchangeWeightedBufferHook.exitSingleAssetExactBptInFlexible.selector;
+        funcs[7] = IUniswapV4StandardExchangeWeightedBufferHook.withdrawSingleFlexible.selector;
     }
 
     function facetMetadata()

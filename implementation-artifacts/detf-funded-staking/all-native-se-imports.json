@@ -1,0 +1,11 @@
+{
+  "status": "APPLIED_VALIDATION_PENDING",
+  "target": "test/foundry/spec/vaults/detf/common/DETFFundedStakingSuite.t.sol",
+  "imports": [
+    "import {UniswapV2NativeSYTest} from \"test/foundry/spec/vaults/standard/sy/ConstantProductNativeSY.t.sol\";",
+    "import {RebasingClaimTokenDFPkg_Deploy_Test} from \"test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg_Deploy.t.sol\";",
+    "import {AaveStataNativeSYTest} from \"test/foundry/spec/vaults/standard/sy/AaveStataNativeSY.t.sol\";",
+    "import {LidoNativeSYTest} from \"test/foundry/spec/vaults/standard/sy/LiquidStakingNativeSY.t.sol\";"
+  ],
+  "reason": "Ensure all 25 issuer packages and 29 proxy suites are discoverable by the consolidated native SE selection."
+}

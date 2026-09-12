@@ -1,0 +1,38 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IUniswapV3Pool} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Pool.sol";
+import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
+import {
+    TestBase_UniswapV3StandardExchange_Adversarial_Decimals
+} from "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/TestBase_UniswapV3StandardExchange_Adversarial_Decimals.sol";
+
+/// @notice Griefing. pairToken = tokenA. Amounts are raw units via `_uToken`.
+abstract contract Adversarial_Griefing_Decimals_ProDexUniV3 is TestBase_UniswapV3StandardExchange_Adversarial_Decimals {
+    function test_H1_firstDepositOnNewPool_noOverflow() public {
+        IUniswapV3Pool p = _createPoolOneToOne(address(tokenA), address(tokenB), 500);
+        _seedExternalLiquidity(p, 0);
+        address v = uniswapV3StandardExchangeDFPkg.deployVault(p);
+        address token0 = p.token0();
+        uint256 amountIn = _uToken(token0, 20);
+        _mint(token0, attacker, amountIn);
+        _mint(p.token1(), attacker, _uToken(p.token1(), 20));
+        vm.startPrank(attacker);
+        IERC20(token0).approve(v, type(uint256).max);
+        IERC20(p.token1()).approve(v, type(uint256).max);
+        address[] memory tokens = new address[](2);
+        tokens[0] = token0;
+        tokens[1] = p.token1();
+        uint256[] memory amounts = new uint256[](2);
+        amounts[0] = _uToken(token0, 20);
+        amounts[1] = _uToken(p.token1(), 20);
+        uint256 shares = IStandardExchangeInMulti(v).exchangeInManyToOne(
+            tokens, amounts, IERC20(v), 0, attacker, false, block.timestamp + 1
+        );
+        vm.stopPrank();
+        assertGt(shares, 0);
+    }
+}

@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {IRocketStorage} from "@crane/contracts/protocols/staking/ethereum/rocket-pool/interfaces/IRocketStorage.sol";
 
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
@@ -74,12 +77,12 @@ contract RocketPoolRETHStandardExchangeDFPkg is IRocketPoolRETHStandardExchangeD
         PERMIT2 = pkgInit.permit2;
     }
 
-    function deployVault(address rETH_, address weth_, address depositPool_) public returns (address vault) {
-        if (rETH_ == address(0) || weth_ == address(0) || depositPool_ == address(0)) {
+    function deployVault(address rETH_, address weth_, address depositPool_, address rocketStorage_) public returns (address vault) {
+        if (rETH_ == address(0) || weth_ == address(0) || depositPool_ == address(0) || rocketStorage_ == address(0)) {
             revert ZeroAddress();
         }
         vault = VAULT_REGISTRY_DEPLOYMENT.deployVault(
-            SELF, abi.encode(PkgArgs({rETH: rETH_, weth: weth_, depositPool: depositPool_}))
+            SELF, abi.encode(PkgArgs({rETH: rETH_, weth: weth_, depositPool: depositPool_, rocketStorage: rocketStorage_}))
         );
     }
 
@@ -106,7 +109,7 @@ contract RocketPoolRETHStandardExchangeDFPkg is IRocketPoolRETHStandardExchangeD
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](9);
+        interfaces = new bytes4[](12);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20Permit).interfaceId;
@@ -116,6 +119,9 @@ contract RocketPoolRETHStandardExchangeDFPkg is IRocketPoolRETHStandardExchangeD
         interfaces[6] = type(IStandardExchangeOut).interfaceId;
         interfaces[7] = type(IRocketPoolRETHStandardVault).interfaceId;
         interfaces[8] = type(IRocketPoolRETHRebalance).interfaceId;
+        interfaces[9] = type(IStandardizedYield).interfaceId;
+        interfaces[10] = type(IStandardExchangeTransitionQuote).interfaceId;
+        interfaces[11] = type(IStandardExchangeExternalQuote).interfaceId;
     }
 
     function facetCuts() public view returns (IDiamond.FacetCut[] memory cuts) {
@@ -203,7 +209,7 @@ contract RocketPoolRETHStandardExchangeDFPkg is IRocketPoolRETHStandardExchangeD
         StandardVaultRepo._initialize(VAULT_FEE_ORACLE_QUERY, vaultFeeTypeIds(), vaultTypes(), contentsId);
         VaultFeeOracleQueryAwareRepo._initialize(VAULT_FEE_ORACLE_QUERY);
         Permit2AwareRepo._initialize(PERMIT2);
-        RocketPoolRETHStandardExchangeRepo._initialize(args.rETH, args.weth, args.depositPool);
+        RocketPoolRETHStandardExchangeRepo._initialize(args.rETH, args.weth, args.depositPool, args.rocketStorage);
     }
 
     function postDeploy(address) public pure returns (bool) {
@@ -220,7 +226,16 @@ contract RocketPoolRETHStandardExchangeDFPkg is IRocketPoolRETHStandardExchangeD
         facets = new address[](0);
     }
 
-    function processArgs(bytes memory pkgArgs) public pure returns (bytes memory) {
+    function processArgs(bytes memory pkgArgs) public view returns (bytes memory) {
+        PkgArgs memory args = abi.decode(pkgArgs, (PkgArgs));
+        if (keccak256(pkgArgs) != keccak256(abi.encode(args))) revert InvalidPackageArguments();
+        if (args.rETH == address(0) || args.weth == address(0) || args.depositPool == address(0)
+            || args.rocketStorage == address(0)) revert ZeroAddress();
+        IRocketStorage registry = IRocketStorage(args.rocketStorage);
+        if (registry.getAddress(keccak256("contract.addressrocketTokenRETH")) != args.rETH
+            || registry.getAddress(keccak256("contract.addressrocketDepositPool")) != args.depositPool) {
+            revert InvalidProtocolBinding();
+        }
         return pkgArgs;
     }
 

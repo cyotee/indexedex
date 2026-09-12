@@ -1,0 +1,5 @@
+{
+  "status": "applied; reproduction pending",
+  "path": "test/foundry/spec/vaults/standard/erc4626/ERC4626StandardExchange_TransitionQuote.t.sol",
+  "reason": "Custom donation trace confirms prepaid protocol receipt is incorrectly included in pre-mint backing. Exact-output companion verifies required input and refund without touching existing reserves."
+}

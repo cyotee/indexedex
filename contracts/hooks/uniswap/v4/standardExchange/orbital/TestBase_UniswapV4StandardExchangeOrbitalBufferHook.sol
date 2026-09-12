@@ -48,6 +48,7 @@ import {
 import {
     UniswapV4StandardExchangeOrbitalBufferHook_FactoryService as PkgFactory
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_FactoryService.sol";
+import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 import {
     UniswapV4StandardExchangeOrbitalBufferHookPairPoolLib as PairPoolLib
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookPairPoolLib.sol";
@@ -143,6 +144,8 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook is TestBas
             IVaultRegistryDeployment(address(indexedexManager)),
             owner,
             IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgInit({
+                depositQueryFacet: PkgFactory.deployDepositQueryFacet(create3Factory),
+                depositZapFacet: PkgFactory.deployDepositZapFacet(create3Factory),
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
                 depositFacet: depositFacet,
@@ -207,6 +210,9 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook is TestBas
             token0: address(token0),
             token1: address(token1),
             token2: address(token2),
+            decimals0: HookPkgArgsDecimalsLib.tokenDec(address(token0)),
+            decimals1: HookPkgArgsDecimalsLib.tokenDec(address(token1)),
+            decimals2: HookPkgArgsDecimalsLib.tokenDec(address(token2)),
             se0: se0,
             se1: address(0),
             se2: address(0),
@@ -240,6 +246,9 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook is TestBas
             token0: address(token0),
             token1: address(token1),
             token2: address(token2),
+            decimals0: HookPkgArgsDecimalsLib.tokenDec(address(token0)),
+            decimals1: HookPkgArgsDecimalsLib.tokenDec(address(token1)),
+            decimals2: HookPkgArgsDecimalsLib.tokenDec(address(token2)),
             se0: address(0),
             se1: address(0),
             se2: address(0),
@@ -259,6 +268,9 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook is TestBas
         returns (IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory a)
     {
         a = _argsZeroSE();
+        a.decimals0 = HookPkgArgsDecimalsLib.tokenDec(a.token0);
+        a.decimals1 = HookPkgArgsDecimalsLib.tokenDec(a.token1);
+        a.decimals2 = HookPkgArgsDecimalsLib.tokenDec(a.token2);
         if (b0) a.se0 = se0;
         if (b1) a.se1 = se1;
         if (b2) a.se2 = se2;

@@ -5,6 +5,7 @@ import {FixedPoint} from
     "@crane/contracts/external/balancer/v3/solidity-utils/contracts/math/FixedPoint.sol";
 import {WeightedMath} from
     "@crane/contracts/external/balancer/v3/solidity-utils/contracts/math/WeightedMath.sol";
+import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
 
 /**
  * @title UniswapV4StandardExchangeWeightedBufferHookMath
@@ -46,8 +47,20 @@ library UniswapV4StandardExchangeWeightedBufferHookMath {
 
     /// @dev baseScale = 10^(36 - decimals) so scaleTo(a, baseScale) → 1e18-normalized when rate=1e18.
     function baseScaleFromDecimals(uint8 decimals) internal pure returns (uint256) {
-        if (decimals < 6 || decimals > 18) revert MathDomain();
+        if (decimals < 6 || decimals > 36) revert MathDomain();
         return 10 ** (36 - uint256(decimals));
+    }
+
+    /// @notice Convert raw SE shares using a WAD rate of whole pair tokens per whole share.
+    /// @dev Validated decimal scales are powers of ten. Combining the denominator before
+    ///      mulDiv avoids intermediate rounding and supports shares with more than 18 decimals.
+    function ratedPairUnits(uint256 shares_, uint256 rate_, uint256 invScale_, uint256 ratedScale_)
+        external pure returns (uint256)
+    {
+        uint256 denominator_ = invScale_ <= ratedScale_
+            ? RATE_PRECISION * (ratedScale_ / invScale_)
+            : RATE_PRECISION / (invScale_ / ratedScale_);
+        return FullMath.mulDiv(shares_, rate_, denominator_);
     }
 
     function scaleTo(uint256 amount, uint256 rate) internal pure returns (uint256) {

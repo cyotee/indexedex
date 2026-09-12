@@ -1,0 +1,66 @@
+{
+  "command": [
+    "forge",
+    "test",
+    "--offline",
+    "--match-contract",
+    "^(CanonicalRegistryAuthorizationTest|UniswapV4Detf_Burn_H6|(Cp|Weighted|Orbital|CurveQuad)(Public)?ReserveLiquidityTest)$",
+    "--match-test",
+    "^(test(Fuzz)?_canonical|test(Fuzz)?_small|test_T7_9_|test_standardFallbackOneNativeUnitThenFullExit)",
+    "-vvv"
+  ],
+  "provenance": {
+    "recorded_at_utc": "2026-09-11T04:09:37.046533+00:00",
+    "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+    "source_and_config_sha256": "2dab3ca0e3307eef624b38fee597f569513a1b6c699207fcbd642b8fb19c1ff5",
+    "source_and_config_files": 4816,
+    "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+    "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+    "crane_tracked_contract_and_config_diff_sha256": "3bb0f52c1183f2be28ee8a63fab300170f65e989720b5048e21da9c61028cc4d",
+    "crane_source_and_config_sha256": "b45a057611f782040ee29f1fddbbcc8eeba01def2c9341ef01c6bb65f685e123",
+    "crane_source_and_config_files": 14819,
+    "dependency_scope": "Crane Solidity tree, including untracked Solidity and nested vendored libraries/tests, plus Crane Foundry config. Final compiler metadata separately verifies every imported source closure.",
+    "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+    "machine": "macOS-26.6.2-x86_64-i386-64bit",
+    "architecture": "x86_64",
+    "logical_cpus": 16,
+    "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+  },
+  "prior_full_build": "implementation-full-build.json",
+  "seconds": 51.704,
+  "exit_code": 0,
+  "passed": 27,
+  "failed": 0,
+  "skipped": 0,
+  "expected_suites": {
+    "CanonicalRegistryAuthorizationTest": 8,
+    "UniswapV4Detf_Burn_H6": 11,
+    "CpReserveLiquidityTest": 1,
+    "CpPublicReserveLiquidityTest": 1,
+    "WeightedReserveLiquidityTest": 1,
+    "WeightedPublicReserveLiquidityTest": 1,
+    "OrbitalReserveLiquidityTest": 1,
+    "OrbitalPublicReserveLiquidityTest": 1,
+    "CurveQuadReserveLiquidityTest": 1,
+    "CurveQuadPublicReserveLiquidityTest": 1
+  },
+  "executed_suites": {
+    "CanonicalRegistryAuthorizationTest": 8,
+    "CpPublicReserveLiquidityTest": 1,
+    "WeightedReserveLiquidityTest": 1,
+    "CurveQuadPublicReserveLiquidityTest": 1,
+    "WeightedPublicReserveLiquidityTest": 1,
+    "CpReserveLiquidityTest": 1,
+    "CurveQuadReserveLiquidityTest": 1,
+    "OrbitalPublicReserveLiquidityTest": 1,
+    "OrbitalReserveLiquidityTest": 1,
+    "UniswapV4Detf_Burn_H6": 11
+  },
+  "changed_fingerprints": [],
+  "log_sha256": "2a3a6fa8cec7b9259758378920f64c39833488ba22b8bd168ab7d6120e5c1567",
+  "explicitly_empty_rpc_environment_keys": [
+    "ALCHEMY_KEY",
+    "INFURA_KEY"
+  ],
+  "validation_passed": true
+}

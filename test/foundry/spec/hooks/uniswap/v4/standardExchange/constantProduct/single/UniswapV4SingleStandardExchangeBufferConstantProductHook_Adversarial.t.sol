@@ -27,6 +27,7 @@ import {ModifyLiquidityParams} from
     "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
 import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
 import {IDiamondCut} from "@crane/contracts/interfaces/IDiamondCut.sol";
+import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 
 /**
  * @title Adversarial DoD: catalog A–H residual + I1/I3 pretransfer (O16 / N1–N4 mapped).
@@ -296,6 +297,8 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
                 standardExchange: se2,
                 pairToken: address(pairToken),
                 rawToken: address(hostile),
+                pairTokenDecimals: HookPkgArgsDecimalsLib.tokenDec(address(pairToken)),
+                rawTokenDecimals: address(hostile).code.length == 0 ? uint8(18) : HookPkgArgsDecimalsLib.tokenDec(address(hostile)),
                 ownerOnlyLiquidity: _pkgOwnerOnlyLiquidity(),
                 owner: _pkgOwner()
             });

@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 
 /// @title IDetfNftReserveDonation
-/// @notice Public donate on production Bond NFT (`detf/common/bondNft`). Not leftover UniV4DetfBondNft. Not Composed NFT.
+/// @notice Public reserve donation on the shared funded Bond NFT used by every DETF family.
 interface IDetfNftReserveDonation {
     /// @notice `amountIn` is the observed inbound delta of `token` (not the caller's claimed amount).
     event ReserveDonated(address indexed donor, address indexed token, uint256 amountIn, uint256 lpOut);
@@ -39,7 +39,7 @@ interface IDetfNftReserveDonation {
 }
 
 /// @title IDetfReserveDonation
-/// @notice DETF-side join for Bond NFT `donate`. Public donate is on the NFT, not leftover UniV4DetfBondNft.
+/// @notice DETF-side join for Bond NFT `donate`. Public donate is on the funded NFT.
 /// @dev `onlyBondNft` on join / notify. Does not mint DETF. Does not realize expansion (D31).
 interface IDetfReserveDonation {
     /// @notice True after the family's first bond / reserve bootstrap.
@@ -57,6 +57,6 @@ interface IDetfReserveDonation {
         view
         returns (uint256 lpOut);
 
-    /// @notice D2 top-up only, after the NFT credits id 0. `msg.sender` must be the Bond NFT.
+    /// @notice Complete reserve synchronization after protocol LP arrives. `msg.sender` must be the Bond NFT.
     function notifyReserveDonated() external;
 }

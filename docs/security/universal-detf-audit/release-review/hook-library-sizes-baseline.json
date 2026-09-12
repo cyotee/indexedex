@@ -1,0 +1,67 @@
+{
+  "UniswapV4BalancerQuadStableSwapHookMath": {
+    "source": "contracts/hooks/uniswap/v4/stable/quad/balancer/UniswapV4BalancerQuadStableSwapHookMath.sol",
+    "runtimeBytes": 5204,
+    "artifact": "out/UniswapV4BalancerQuadStableSwapHookMath.sol/UniswapV4BalancerQuadStableSwapHookMath.json"
+  },
+  "UniswapV4CurveQuadStableSwapHookMath": {
+    "source": "contracts/hooks/uniswap/v4/stable/quad/curve/UniswapV4CurveQuadStableSwapHookMath.sol",
+    "runtimeBytes": 4422,
+    "artifact": "out/UniswapV4CurveQuadStableSwapHookMath.sol/UniswapV4CurveQuadStableSwapHookMath.json"
+  },
+  "UniswapV4SingleStandardExchangeBufferConstantProductHookMath": {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookMath.sol",
+    "runtimeBytes": 2871,
+    "artifact": "out/UniswapV4SingleStandardExchangeBufferConstantProductHookMath.sol/UniswapV4SingleStandardExchangeBufferConstantProductHookMath.json"
+  },
+  "UniswapV4SingleStandardExchangeBufferConstantProductHookPullLib": {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookPullLib.sol",
+    "runtimeBytes": 3123,
+    "artifact": "out/UniswapV4SingleStandardExchangeBufferConstantProductHookPullLib.sol/UniswapV4SingleStandardExchangeBufferConstantProductHookPullLib.json"
+  },
+  "UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib": {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib.sol",
+    "runtimeBytes": 1692,
+    "artifact": "out/UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib.sol/UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib.json"
+  },
+  "UniswapV4DualStandardExchangeBufferConstantProductHookClaimLib": {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookClaimLib.sol",
+    "runtimeBytes": 1692,
+    "artifact": "out/UniswapV4DualStandardExchangeBufferConstantProductHookClaimLib.sol/UniswapV4DualStandardExchangeBufferConstantProductHookClaimLib.json"
+  },
+  "UniswapV4DualStandardExchangeBufferConstantProductHookMath": {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookMath.sol",
+    "runtimeBytes": 2871,
+    "artifact": "out/UniswapV4DualStandardExchangeBufferConstantProductHookMath.sol/UniswapV4DualStandardExchangeBufferConstantProductHookMath.json"
+  },
+  "UniswapV4DualStandardExchangeBufferConstantProductHookPullLib": {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookPullLib.sol",
+    "runtimeBytes": 3123,
+    "artifact": "out/UniswapV4DualStandardExchangeBufferConstantProductHookPullLib.sol/UniswapV4DualStandardExchangeBufferConstantProductHookPullLib.json"
+  },
+  "UniswapV4StandardExchangeOrbitalBufferHookMath": {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookMath.sol",
+    "runtimeBytes": 7035,
+    "artifact": "out/UniswapV4StandardExchangeOrbitalBufferHookMath.sol/UniswapV4StandardExchangeOrbitalBufferHookMath.json"
+  },
+  "UniswapV4StandardExchangeCurveQuadStableBufferHookMath": {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookMath.sol",
+    "runtimeBytes": 8970,
+    "artifact": "out/UniswapV4StandardExchangeCurveQuadStableBufferHookMath.sol/UniswapV4StandardExchangeCurveQuadStableBufferHookMath.json"
+  },
+  "UniswapV4StandardExchangeWeightedBufferHookMath": {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol",
+    "runtimeBytes": 10131,
+    "artifact": "out/UniswapV4StandardExchangeWeightedBufferHookMath.sol/UniswapV4StandardExchangeWeightedBufferHookMath.json"
+  },
+  "UniswapV4StandardExchangeWeightedBufferHookLiquidityLib": {
+    "source": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookLiquidityLib.sol",
+    "runtimeBytes": 4032,
+    "artifact": "out/UniswapV4StandardExchangeWeightedBufferHookLiquidityLib.sol/UniswapV4StandardExchangeWeightedBufferHookLiquidityLib.json"
+  },
+  "UniswapV4WeightedSwapHookMath": {
+    "source": "contracts/hooks/uniswap/v4/weighted/UniswapV4WeightedSwapHookMath.sol",
+    "runtimeBytes": 9940,
+    "artifact": "out/UniswapV4WeightedSwapHookMath.sol/UniswapV4WeightedSwapHookMath.json"
+  }
+}

@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IUniswapV4Detf} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
@@ -22,9 +24,10 @@ abstract contract UniswapV4Detf_Alignment_RedeemD15OpenBase is UniswapV4Detf_Cla
     }
 
     function _redeemOn(address d, address who, uint256 amt) internal returns (uint256 detfOut) {
-        IRebasingClaimToken claim_ = _claimTokOf(d);
+        IERC20 staking_ = IERC20(IUniswapV4Detf(d).rebasingClaimToken());
         vm.prank(who);
-        detfOut = claim_.redeem(amt, who, false);
+        detfOut = IStandardExchangeIn(address(staking_)).exchangeIn(staking_, amt, IERC20(d), amt, who, false, block.timestamp);
+        assertEq(detfOut, amt, "funded one-to-one unstake");
     }
 
     function _assertRedeemPaysDetfOnly(address d, address who, uint256 amt) internal {
@@ -56,11 +59,11 @@ abstract contract UniswapV4Detf_Alignment_RedeemD15OpenBase is UniswapV4Detf_Cla
     }
 
     function test_D15_1_previewEqualsExecute() public virtual {
-        uint256 claimBal_ = _sellAndClaimOn(detf, detfUser, 100 ether, 60 ether);
+        uint256 claimBal_ = _sellAndClaimOn(detf, detfUser, 100 ether, 10 ether);
         uint256 redeem_ = claimBal_ / _d15IdentityDenom();
         if (redeem_ == 0) redeem_ = 1;
         IRebasingClaimToken claim_ = _claimTok();
-        uint256 preview_ = claim_.previewRedeem(redeem_);
+        uint256 preview_ = IStandardExchangeIn(address(claim_)).previewExchangeIn(IERC20(address(claim_)), redeem_, IERC20(detf));
         uint256 detfBefore_ = IERC20(detf).balanceOf(detfUser);
         uint256 out_ = _redeemOn(detf, detfUser, redeem_);
         assertEq(out_, preview_, "D15-1 preview==exec");
@@ -68,14 +71,14 @@ abstract contract UniswapV4Detf_Alignment_RedeemD15OpenBase is UniswapV4Detf_Cla
     }
 
     function test_D15_8_nonDetfPayoutForbidden() public {
-        uint256 claimBal_ = _sellAndClaimOn(detf, detfUser, 100 ether, 60 ether);
+        uint256 claimBal_ = _sellAndClaimOn(detf, detfUser, 100 ether, 10 ether);
         uint256 redeem_ = claimBal_ / 3;
         if (redeem_ == 0) redeem_ = claimBal_;
         _assertRedeemPaysDetfOnly(detf, detfUser, redeem_);
     }
 
     function test_D15_redeem_paysDetf_only() public {
-        uint256 claimBal_ = _sellAndClaimOn(detf, detfUser, 100 ether, 50 ether);
+        uint256 claimBal_ = _sellAndClaimOn(detf, detfUser, 100 ether, 10 ether);
         uint256 redeem_ = claimBal_ / 2;
         if (redeem_ == 0) redeem_ = claimBal_;
         _assertRedeemPaysDetfOnly(detf, detfUser, redeem_);

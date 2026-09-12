@@ -1,0 +1,15 @@
+{
+  "status": "applied; regression validation pending",
+  "path": "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeCommon.sol",
+  "before_sha256": "9875ecce733638dc9202f6eb1e5345b29ee36ce00457ddd249630a96974ad279",
+  "after_sha256": "5b8ec06c3bbe123848fec7b38f743d5f0733d28a5f86c66d7b93c9680d7332ec",
+  "trace_evidence": {
+    "case": "Adversarial_MixedBuffer_P0_Test.test_B1_reserveFallback_mintBurn_boundsSafety",
+    "requested_amount1": 8841219542414946,
+    "router_transferred_amount1": 8841219542414945,
+    "preview_input": 106541199074757214666,
+    "execution_required_input": 106541199074757214667
+  },
+  "diff": "--- contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeCommon.sol\n+++ contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeCommon.sol\n@@ -747,16 +747,22 @@\n             return 0;\n         }\n \n+        // Execution passes the precomputed proportional amounts to Router.addLiquidity,\n+        // which applies its own proportional floor again before transferring either token.\n+        (uint256 amount0_, uint256 amount1_) = _proportionalDeposit(\n+            poolState.reserve0, poolState.reserve1, amounts.proportional0, amounts.proportional1\n+        );\n+\n         lpFromProportional = ConstProdUtils._depositQuote(\n-            amounts.proportional0,\n-            amounts.proportional1,\n+            amount0_,\n+            amount1_,\n             poolState.lpTotalSupply,\n             poolState.reserve0,\n             poolState.reserve1\n         );\n \n-        poolState.reserve0 += amounts.proportional0;\n-        poolState.reserve1 += amounts.proportional1;\n+        poolState.reserve0 += amount0_;\n+        poolState.reserve1 += amount1_;\n         poolState.lpTotalSupply += lpFromProportional;\n     }\n \n",
+  "preserved": "Actual execution, fee fractions, deposit/zap equations and exact-output slippage bounds. Preview alone now accounts for the router transfer floors."
+}

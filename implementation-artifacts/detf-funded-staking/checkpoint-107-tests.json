@@ -1,0 +1,29 @@
+{
+  "build": {
+    "exit_code": 0,
+    "seconds": 161.226,
+    "command": [
+      "forge",
+      "build",
+      "--offline",
+      "--contracts",
+      "contracts/vaults/detf/common/core"
+    ]
+  },
+  "test": {
+    "exit_code": 0,
+    "seconds": 19.759,
+    "command": [
+      "forge",
+      "test",
+      "--offline",
+      "--contracts",
+      "contracts/vaults/detf/common/core",
+      "-vvv"
+    ]
+  },
+  "tests_passed": 107,
+  "tests_failed": 0,
+  "suites": 14,
+  "scope": "Prior 99-test checkpoint plus Multi-vault Weighted funded staking and consolidated shared Balancer fixture. Other families and full release validation incomplete."
+}

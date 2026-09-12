@@ -1,0 +1,48 @@
+{
+  "provenance": {
+    "recorded_at_utc": "2026-09-08T04:03:52.892117+00:00",
+    "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+    "source_and_config_sha256": "e7a1f4db06627ce566bbd083b7b69a0ddf021a3e95f79435fadf76e53c398206",
+    "source_and_config_files": 4813,
+    "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+    "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+    "crane_tracked_contract_and_config_diff_sha256": "284fd75764cb255d1e527eef38fd51e65fca73e8ebb11b7465965e8dfeb2122c",
+    "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+    "machine": "macOS-26.6.2-x86_64-i386-64bit",
+    "architecture": "x86_64",
+    "logical_cpus": 16,
+    "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+  },
+  "foundry_environment": {
+    "FOUNDRY_PROFILE": "default",
+    "FOUNDRY_TEST": "test/foundry/spec/vaults/detf/common/DETFFundedStakingSuite.t.sol",
+    "FOUNDRY_SCRIPT": "contracts/vaults/detf/common/core"
+  },
+  "build": {
+    "exit_code": 0,
+    "seconds": 9.498,
+    "command": [
+      "forge",
+      "build",
+      "--offline",
+      "--contracts",
+      "contracts/vaults/detf/common/core"
+    ]
+  },
+  "test": {
+    "exit_code": 0,
+    "seconds": 15.02,
+    "command": [
+      "forge",
+      "test",
+      "--offline",
+      "--contracts",
+      "contracts/vaults/detf/common/core",
+      "-vvv",
+      "--match-test",
+      "^test_D15_",
+      "--match-contract",
+      "^UniswapV4Detf_(Weighted|Quad)_Alignment_RedeemD15$"
+    ]
+  }
+}

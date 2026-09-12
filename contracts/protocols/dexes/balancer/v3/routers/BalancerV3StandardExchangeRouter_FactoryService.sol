@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+import {IBalancerV3StandardExchangeRouterDFPkg} from "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterDFPkg.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                   Foundry                                  */
@@ -19,17 +21,7 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol";
 
-import "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterExactInQueryFacet.sol";
-import "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterExactInSwapFacet.sol";
-import "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterExactOutQueryFacet.sol";
-import "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterExactOutSwapFacet.sol";
-import "contracts/protocols/dexes/balancer/v3/routers/batch/BalancerV3StandardExchangeBatchRouterExactInFacet.sol";
-import "contracts/protocols/dexes/balancer/v3/routers/batch/BalancerV3StandardExchangeBatchRouterExactOutFacet.sol";
-import "contracts/protocols/dexes/balancer/v3/routers/prepay/BalancerV3StandardExchangeRouterPrepayFacet.sol";
-import "contracts/protocols/dexes/balancer/v3/routers/prepay/BalancerV3StandardExchangeRouterPrepayHooksFacet.sol";
-import "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterDFPkg.sol";
 import "contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol";
-import {BalancerV3StandardExchangeRouterPermit2WitnessFacet} from "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterPermit2WitnessFacet.sol";
 
 library BalancerV3StandardExchangeRouter_FactoryService {
     using BetterEfficientHashLib for bytes;
@@ -41,10 +33,10 @@ library BalancerV3StandardExchangeRouter_FactoryService {
         returns (IFacet facet)
     {
         facet = create3Factory.deployFacet(
-            type(BalancerV3StandardExchangeRouterExactInQueryFacet).creationCode,
-            abi.encode(type(BalancerV3StandardExchangeRouterExactInQueryFacet).name)._hash()
+            ArtifactCreationCode.creationCode("BalancerV3StandardExchangeRouterExactInQueryFacet.sol:BalancerV3StandardExchangeRouterExactInQueryFacet"),
+            abi.encode("BalancerV3StandardExchangeRouterExactInQueryFacet")._hash()
         );
-        vm.label(address(facet), type(BalancerV3StandardExchangeRouterExactInQueryFacet).name);
+        vm.label(address(facet), "BalancerV3StandardExchangeRouterExactInQueryFacet");
     }
 
     function deployBalancerV3StandardExchangeRouterExactInSwapFacet(ICreate3FactoryProxy create3Factory)
@@ -52,10 +44,10 @@ library BalancerV3StandardExchangeRouter_FactoryService {
         returns (IFacet facet)
     {
         facet = create3Factory.deployFacet(
-            type(BalancerV3StandardExchangeRouterExactInSwapFacet).creationCode,
-            abi.encode(type(BalancerV3StandardExchangeRouterExactInSwapFacet).name)._hash()
+            ArtifactCreationCode.creationCode("BalancerV3StandardExchangeRouterExactInSwapFacet.sol:BalancerV3StandardExchangeRouterExactInSwapFacet"),
+            abi.encode("BalancerV3StandardExchangeRouterExactInSwapFacet")._hash()
         );
-        vm.label(address(facet), type(BalancerV3StandardExchangeRouterExactInSwapFacet).name);
+        vm.label(address(facet), "BalancerV3StandardExchangeRouterExactInSwapFacet");
     }
 
     function deployBalancerV3StandardExchangeRouterExactOutQueryFacet(ICreate3FactoryProxy create3Factory)
@@ -63,10 +55,10 @@ library BalancerV3StandardExchangeRouter_FactoryService {
         returns (IFacet facet)
     {
         facet = create3Factory.deployFacet(
-            type(BalancerV3StandardExchangeRouterExactOutQueryFacet).creationCode,
-            abi.encode(type(BalancerV3StandardExchangeRouterExactOutQueryFacet).name)._hash()
+            ArtifactCreationCode.creationCode("BalancerV3StandardExchangeRouterExactOutQueryFacet.sol:BalancerV3StandardExchangeRouterExactOutQueryFacet"),
+            abi.encode("BalancerV3StandardExchangeRouterExactOutQueryFacet")._hash()
         );
-        vm.label(address(facet), type(BalancerV3StandardExchangeRouterExactOutQueryFacet).name);
+        vm.label(address(facet), "BalancerV3StandardExchangeRouterExactOutQueryFacet");
     }
 
     function deployBalancerV3StandardExchangeRouterExactOutSwapFacet(ICreate3FactoryProxy create3Factory)
@@ -74,10 +66,10 @@ library BalancerV3StandardExchangeRouter_FactoryService {
         returns (IFacet facet)
     {
         facet = create3Factory.deployFacet(
-            type(BalancerV3StandardExchangeRouterExactOutSwapFacet).creationCode,
-            abi.encode(type(BalancerV3StandardExchangeRouterExactOutSwapFacet).name)._hash()
+            ArtifactCreationCode.creationCode("BalancerV3StandardExchangeRouterExactOutSwapFacet.sol:BalancerV3StandardExchangeRouterExactOutSwapFacet"),
+            abi.encode("BalancerV3StandardExchangeRouterExactOutSwapFacet")._hash()
         );
-        vm.label(address(facet), type(BalancerV3StandardExchangeRouterExactOutSwapFacet).name);
+        vm.label(address(facet), "BalancerV3StandardExchangeRouterExactOutSwapFacet");
     }
 
     function deployBalancerV3StandardExchangeBatchRouterExactInFacet(ICreate3FactoryProxy create3Factory)
@@ -85,10 +77,10 @@ library BalancerV3StandardExchangeRouter_FactoryService {
         returns (IFacet facet)
     {
         facet = create3Factory.deployFacet(
-            type(BalancerV3StandardExchangeBatchRouterExactInFacet).creationCode,
-            abi.encode(type(BalancerV3StandardExchangeBatchRouterExactInFacet).name)._hash()
+            ArtifactCreationCode.creationCode("BalancerV3StandardExchangeBatchRouterExactInFacet.sol:BalancerV3StandardExchangeBatchRouterExactInFacet"),
+            abi.encode("BalancerV3StandardExchangeBatchRouterExactInFacet")._hash()
         );
-        vm.label(address(facet), type(BalancerV3StandardExchangeBatchRouterExactInFacet).name);
+        vm.label(address(facet), "BalancerV3StandardExchangeBatchRouterExactInFacet");
     }
 
     function deployBalancerV3StandardExchangeBatchRouterExactOutFacet(ICreate3FactoryProxy create3Factory)
@@ -96,10 +88,10 @@ library BalancerV3StandardExchangeRouter_FactoryService {
         returns (IFacet facet)
     {
         facet = create3Factory.deployFacet(
-            type(BalancerV3StandardExchangeBatchRouterExactOutFacet).creationCode,
-            abi.encode(type(BalancerV3StandardExchangeBatchRouterExactOutFacet).name)._hash()
+            ArtifactCreationCode.creationCode("BalancerV3StandardExchangeBatchRouterExactOutFacet.sol:BalancerV3StandardExchangeBatchRouterExactOutFacet"),
+            abi.encode("BalancerV3StandardExchangeBatchRouterExactOutFacet")._hash()
         );
-        vm.label(address(facet), type(BalancerV3StandardExchangeBatchRouterExactOutFacet).name);
+        vm.label(address(facet), "BalancerV3StandardExchangeBatchRouterExactOutFacet");
     }
 
     function deployBalancerV3StandardExchangeRouterPrepayFacet(ICreate3FactoryProxy create3Factory)
@@ -107,10 +99,10 @@ library BalancerV3StandardExchangeRouter_FactoryService {
         returns (IFacet facet)
     {
         facet = create3Factory.deployFacet(
-            type(BalancerV3StandardExchangeRouterPrepayFacet).creationCode,
-            abi.encode(type(BalancerV3StandardExchangeRouterPrepayFacet).name)._hash()
+            ArtifactCreationCode.creationCode("BalancerV3StandardExchangeRouterPrepayFacet.sol:BalancerV3StandardExchangeRouterPrepayFacet"),
+            abi.encode("BalancerV3StandardExchangeRouterPrepayFacet")._hash()
         );
-        vm.label(address(facet), type(BalancerV3StandardExchangeRouterPrepayFacet).name);
+        vm.label(address(facet), "BalancerV3StandardExchangeRouterPrepayFacet");
     }
 
     function deployBalancerV3StandardExchangeRouterPrepayHooksFacet(ICreate3FactoryProxy create3Factory)
@@ -118,10 +110,10 @@ library BalancerV3StandardExchangeRouter_FactoryService {
         returns (IFacet facet)
     {
         facet = create3Factory.deployFacet(
-            type(BalancerV3StandardExchangeRouterPrepayHooksFacet).creationCode,
-            abi.encode(type(BalancerV3StandardExchangeRouterPrepayHooksFacet).name)._hash()
+            ArtifactCreationCode.creationCode("BalancerV3StandardExchangeRouterPrepayHooksFacet.sol:BalancerV3StandardExchangeRouterPrepayHooksFacet"),
+            abi.encode("BalancerV3StandardExchangeRouterPrepayHooksFacet")._hash()
         );
-        vm.label(address(facet), type(BalancerV3StandardExchangeRouterPrepayHooksFacet).name);
+        vm.label(address(facet), "BalancerV3StandardExchangeRouterPrepayHooksFacet");
     }
 
     function deployBalancerV3StandardExchangeRouterPermit2WitnessFacet(ICreate3FactoryProxy create3Factory)
@@ -129,10 +121,10 @@ library BalancerV3StandardExchangeRouter_FactoryService {
         returns (IFacet facet)
     {
         facet = create3Factory.deployFacet(
-            type(BalancerV3StandardExchangeRouterPermit2WitnessFacet).creationCode,
-            abi.encode(type(BalancerV3StandardExchangeRouterPermit2WitnessFacet).name)._hash()
+            ArtifactCreationCode.creationCode("BalancerV3StandardExchangeRouterPermit2WitnessFacet.sol:BalancerV3StandardExchangeRouterPermit2WitnessFacet"),
+            abi.encode("BalancerV3StandardExchangeRouterPermit2WitnessFacet")._hash()
         );
-        vm.label(address(facet), type(BalancerV3StandardExchangeRouterPermit2WitnessFacet).name);
+        vm.label(address(facet), "BalancerV3StandardExchangeRouterPermit2WitnessFacet");
     }
 
     function deployBalancerV3StandardExchangeRouterDFPkg(
@@ -142,13 +134,13 @@ library BalancerV3StandardExchangeRouter_FactoryService {
         instance = IBalancerV3StandardExchangeRouterDFPkg(
             address(
                 create3Factory.deployPackageWithArgs(
-                    type(BalancerV3StandardExchangeRouterDFPkg).creationCode,
+                    ArtifactCreationCode.creationCode("BalancerV3StandardExchangeRouterDFPkg.sol:BalancerV3StandardExchangeRouterDFPkg"),
                     abi.encode(pkgInit),
-                    abi.encode(type(BalancerV3StandardExchangeRouterDFPkg).name)._hash()
+                    abi.encode("BalancerV3StandardExchangeRouterDFPkg")._hash()
                 )
             )
         );
-        vm.label(address(instance), type(BalancerV3StandardExchangeRouterDFPkg).name);
+        vm.label(address(instance), "BalancerV3StandardExchangeRouterDFPkg");
     }
 
     // function deployBalancerV3StandardExchangeRouterDFPkg(

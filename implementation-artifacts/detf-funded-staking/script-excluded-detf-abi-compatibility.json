@@ -1,0 +1,14 @@
+{
+  "status": "APPLIED_MAINTAINED_SCRIPT_COMPILATION_PASSED",
+  "scope": "D60 compilation maintenance only; no excluded family lifecycle acceptance claimed.",
+  "files": [
+    "scripts/foundry/local_testing/anvil_single/Script_12_DeployScenario3Overlay.s.sol",
+    "scripts/foundry/research/detf/singleSe/ResearchFixture_DetfSingleSeUniV2.sol"
+  ],
+  "changes": [
+    "Supply the shared package bonding facet and SY component dependencies through existing CREATE3/registry helpers.",
+    "Remove arguments absent from the current package ABI; historical research refuses Open instead of silently discarding that requested policy.",
+    "Keep old research sale/compound/telemetry signatures in local historical interfaces; no production selector is restored or new excluded-family economic behavior implemented."
+  ],
+  "compilation_evidence": "maintained-script-294-green.json"
+}

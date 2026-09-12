@@ -1,0 +1,35 @@
+{
+  "checked_at_utc": "2026-09-08T06:49:03.363611+00:00",
+  "source": "deployments/anvil_robinhood_main",
+  "all_core_contracts_present": true,
+  "contracts": [
+    {
+      "manifest": "phase04_stage01_fee_collector_and_manager.json",
+      "key": "indexedexManager",
+      "address": "0x09682b00D873D913ada0bB69B4D4c9631810d0bc",
+      "bytes": 370,
+      "manifest_sha256": "9d8f004245819e387c835122654e60673ece5122806a5a414891ae8de5219bb7"
+    },
+    {
+      "manifest": "phase02_stage01_create3_factory.json",
+      "key": "create3Factory",
+      "address": "0xD7786b10BC8Bc97dc7651CAb7B97086c8b227882",
+      "bytes": 6744,
+      "manifest_sha256": "7546bac3ac0c67b91bf2dc50253e7d2a61a7e5f70a82d07202d2cc24bfb7d884"
+    },
+    {
+      "manifest": "phase02_stage02_diamond_package_factory.json",
+      "key": "diamondPackageFactory",
+      "address": "0x976949aB55830fA4794bF40C88ea7D7567931003",
+      "bytes": 10403,
+      "manifest_sha256": "7517dc647a94de59306a65dd8ed94f679299f12b6008f9a6e6cf701f15a1a26a"
+    },
+    {
+      "manifest": "phase02_stage03_hook_factory.json",
+      "key": "hookFactory",
+      "address": "0x8BB5FCC67e8CCa44DC41dd08A5e2b2B392C22945",
+      "bytes": 11719,
+      "manifest_sha256": "f0b42a334cb5bddaf22bc4ee97d9966de6757f8e20ec27080eb80fbab15a747e"
+    }
+  ]
+}

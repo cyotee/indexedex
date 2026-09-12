@@ -1,0 +1,133 @@
+{
+  "status": "CODEGEN_ONLY_NOT_RUNTIME_VALIDATION",
+  "passed": true,
+  "exit_code": 0,
+  "seconds": 143.661,
+  "errors": [],
+  "contracts": {
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib.sol:UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib": {
+      "runtime_bytes": 14240,
+      "test_methods": 0
+    },
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositFacet.sol:UniswapV4StandardExchangeOrbitalBufferHookDepositFacet": {
+      "runtime_bytes": 22293,
+      "test_methods": 0
+    },
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositFlexibleFacet.sol:UniswapV4StandardExchangeOrbitalBufferHookDepositFlexibleFacet": {
+      "runtime_bytes": 19995,
+      "test_methods": 0
+    },
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositQueryFacet.sol:UniswapV4StandardExchangeOrbitalBufferHookDepositQueryFacet": {
+      "runtime_bytes": 18535,
+      "test_methods": 0
+    },
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositZapFacet.sol:UniswapV4StandardExchangeOrbitalBufferHookDepositZapFacet": {
+      "runtime_bytes": 17824,
+      "test_methods": 0
+    },
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookSeFacet.sol:UniswapV4StandardExchangeOrbitalBufferHookSeFacet": {
+      "runtime_bytes": 22346,
+      "test_methods": 0
+    },
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookWithdrawFacet.sol:UniswapV4StandardExchangeOrbitalBufferHookWithdrawFacet": {
+      "runtime_bytes": 21410,
+      "test_methods": 0
+    },
+    "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolHookFacet.sol:MixedLegWeightedBufferPoolHookFacet": {
+      "runtime_bytes": 18031,
+      "test_methods": 0
+    },
+    "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeHookFacet.sol:MultiPairStandardExchangeHookFacet": {
+      "runtime_bytes": 16970,
+      "test_methods": 0
+    },
+    "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInQueryFacet.sol:UniswapV3StandardExchangeInQueryFacet": {
+      "runtime_bytes": 23342,
+      "test_methods": 0
+    },
+    "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutFacet.sol:UniswapV3StandardExchangeOutFacet": {
+      "runtime_bytes": 22418,
+      "test_methods": 0
+    },
+    "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutQueryFacet.sol:UniswapV3StandardExchangeOutQueryFacet": {
+      "runtime_bytes": 21964,
+      "test_methods": 0
+    },
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_ALL6.t.sol:CommonBufferMultiVault_RoutingAndWalk_B_ALL6": {
+      "runtime_bytes": 588205,
+      "test_methods": 5
+    },
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_ALL6.t.sol:MixedLegWeightedBufferPool_B_ALL6": {
+      "runtime_bytes": 594592,
+      "test_methods": 16
+    },
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_ALL6.t.sol:MultiPairStandardExchangeBufferPool_B_ALL6": {
+      "runtime_bytes": 588423,
+      "test_methods": 12
+    },
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Weighted_ProductLaw_B_ALL6.t.sol:UniswapV4Detf_Weighted_ProductLaw_B_ALL6": {
+      "runtime_bytes": 501026,
+      "test_methods": 52
+    },
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ3Se_Policy.t.sol:UniswapV4Detf_Cp_Univ3Se_Policy": {
+      "runtime_bytes": 416514,
+      "test_methods": 19
+    },
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ4Se.t.sol:UniswapV4Detf_Cp_Univ4Se": {
+      "runtime_bytes": 347827,
+      "test_methods": 8
+    },
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_Univ4Se_ProductLaw.t.sol:UniswapV4Detf_Orbital_Univ4Se_ProductLaw": {
+      "runtime_bytes": 480985,
+      "test_methods": 54
+    },
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Cp_Univ3Se_ProductLaw_P6_R18.t.sol:UniswapV4Detf_Cp_Univ3Se_ProductLaw_P6_R18": {
+      "runtime_bytes": 470048,
+      "test_methods": 52
+    },
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Weighted_MorphoMix_Policy_B_ALL6.t.sol:UniswapV4Detf_Weighted_MorphoMix_Policy_B_ALL6": {
+      "runtime_bytes": 492548,
+      "test_methods": 19
+    }
+  },
+  "source_sha256": {
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositFacet.sol": "376e62bd9ed4afb1f9895cb4b34659649d40b7fbeb75f5339422c17cd0ac6dbc",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_Decimals.sol": "60b21b7fdc59baba979b6eee3ac525889821275e27aa745979365afd7d324e19",
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositQueryFacet.sol": "47029c11daf449dea328713820ec2451da19e8de44b4bcf020d693c3cb3a87d1",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Weighted_ProductLaw_B_ALL6.t.sol": "5aeef53a56891b40c3f34da94d4b0a26ce5994d4271b5c4f8062341ad9edd499",
+    "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutQueryFacet.sol": "1ef626911143f903ba4c1c57ba1ee95e0aa03e7420fc93e5bd4e1d9054bc53d2",
+    "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolHookTarget.sol": "f3fef987e93fcd9dda4c30470e811a7f80eec1590f971291a2dd5064c66e5964",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_Decimals.sol": "429f2d9e4bdd4b735f30dc6c84c2ce417f2305879ccb801338eb44f3d084ca40",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Stage11OpenSuite_Decimals.sol": "f8200e48f49777cf943e889fdad1d9f1a39e60704a56610b803e6338acc80629",
+    "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferHookTarget.sol": "65a484de96b79cfa79d6efdf8a59cf499cd2d97076e39a31ff66b0113fe1bd08",
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositZapFacet.sol": "93f10c549ab5f01612f64846ca6cfac47d222fbfae30db2ccb9395d619790d71",
+    "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInQueryFacet.sol": "8fffa7858f8627cb740bee5645ad94cfb3868ee2490396e7b4d6e999fd746971",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_Univ4Se_ProductLaw.t.sol": "2de885ae286a6541b5760816395b422b71e02f5041f59f3ffa268136f2e5e159",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_Decimals.sol": "4993e733717fe4047dc535ce2059cde89f4fedb231f03bfda7446beeff8daddb",
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositFlexibleFacet.sol": "320ae50ff9e917804fec9ff34d26a59efac4fcece88f1aacb80025a91fb33510",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Weighted_MorphoMix_Policy_B_ALL6.t.sol": "4ac21ca5bac8333dd4ae32f9e371556f03eb11d221fb300141bbfca035b2a8d8",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_ALL6.t.sol": "b1eea685d64ff720f1e7e2b2f0e68ab0c81512e43a2c2ee2ac49773b303e4ce6",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ3Se_Policy.t.sol": "774e4eb0de058692515f0f117d05c0223f2dc1c4a457fd6b5366bbadb6b591ec",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Cp_Univ3Se_ProductLaw_P6_R18.t.sol": "e0cf1c61f77c63fbcfce9b524c4578f0d95204696e4c3a10388ee320c6b75c1c",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol": "cd73c370725328245887334eccb3ab63db707c6edd63c6357931e06ea69ac84f",
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookWithdrawFacet.sol": "2bc9f2a53c1897aaeab825569395c13b9df033a36b763e336442b2c2befb354b",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol": "3dd6aa0555d7a71b82dd3c36807853588ad5d825f90ef443d14a2c8ba86f82a6",
+    "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInQueryTarget.sol": "ad82618ab3b5c0d67d1489c731929718abbc7ef71a116d0eabfc7e61307a0799",
+    "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutFacet.sol": "fd4c7a39bd86364d2e72e2f0175efd49706ae60b9d5ce74c5dda90b6c4506f45",
+    "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeHookFacet.sol": "9796f11fff24c3de11330f52f1d89bef7edd9ef5a4e76ac3edb089e40afd7b02",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Stage11OpenSuite.sol": "a7df66e79a8fbafd4e744b62c421dbd8e0b6c516c9d00d28961357dcc65cd277",
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookSeFacet.sol": "b81dbebb50629d0df931bebb39948d1e44ee376002a71382cd64b0d187ab537a",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ4Se.t.sol": "82d6aabef2d750402be9dbe8fda5fbd410d1eeccdb76a6b1e109f8ef23f850f9",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ3Se_Decimals.sol": "e8ac1428f738cdf4790a5ac59d89b8224103e83a189acbdf2e39e12681f3c8c9",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_ALL6.t.sol": "8db0903044ce96ec69c81d06123b3d2529f968d367b81d63601e1951604889a1",
+    "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolCommon.sol": "4bfd5121a5971a92953fd7594487fe5050810683b037ce43708e17e326ab73ea",
+    "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPoolCommon.sol": "1e78f72147a9870774efbb9a25a418ac9cc6d320b03e78d3f1524b2b99c4f10d",
+    "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutBase.sol": "e03642114e83d6190fa561aed3daf08aafd6ef29e5a2daf05c9319182613950f",
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookCommon.sol": "a0844c5113e2ac26d1f87c17135a4adb4bc88f044749f176b4b0750408efeb56",
+    "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolHookFacet.sol": "ebcc51b009c9927bf79f1f647bd8a690af9e3f54f3c5762ccb3f5be5d76ae224",
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib.sol": "38f75595ec699f5802ba9da3d5b04ced92e79da1dd010dcd4caa46bea2d394f9",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_ALL6.t.sol": "c2c25e9dee8c2334d19b218d0927acb44c01ed8bd1ff9ef862defefc1c4c0566"
+  },
+  "sources_unchanged": true,
+  "compiler_input_sha256": "e20bbd875ee24c825e82a53b6d92bab0da4409bb9078f149e14495fa679b3cb7"
+}

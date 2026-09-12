@@ -1,0 +1,19 @@
+{
+  "status": "PREPARED_NOT_APPLIED",
+  "finding": "The existing E1 test requests only one output unit through exchangeOut; it does not redeem all minted shares despite its round-trip name.",
+  "correction": "A separate holder performs two-token activation; the attacker pays only token0, redeems every acquired share through exact-input exchangeIn, and checks actual recovery and zero remaining shares.",
+  "coverage": "Same base and inherited decimal cases; no test, fuzz setting, or conservation bound removed.",
+  "changes": [
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Accounting.t.sol",
+      "before_sha256": "ff95b75c35edb129dacdd86126aaea1bed3bc04489bdb0e62cd663cddd48e78a",
+      "after_sha256": "2c6ff8e64dec61890c0c547a59416d92df78ba9119a9496c822626e1bf2c6dd2"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Accounting_Decimals.sol",
+      "before_sha256": "dce7f5965f9d5b34c7ff96ae51288a1fc208b9d7d8b33b4cdbd2f9bb923650e2",
+      "after_sha256": "c4c6e6272bfd2cee82f58c08b9b68b375458ae57f3afe991fc377676e318b5c8"
+    }
+  ],
+  "application_gate": "Wait for active validation PTY 52715 to exit. Preserve its actual results, then apply these exact current-file changes and run the retained E1 cases before final complete validation."
+}

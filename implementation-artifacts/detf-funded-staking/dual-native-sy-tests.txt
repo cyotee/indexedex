@@ -1,0 +1,64 @@
+    function test_dualNativeSYMetadataAndRuntime() public view {
+        IStandardizedYield sy = IStandardizedYield(hook);
+        assertTrue(IERC165(hook).supportsInterface(type(IStandardizedYield).interfaceId));
+        assertEq(sy.decimals(), 18); assertEq(sy.yieldToken(), address(0));
+        (IStandardizedYield.AssetType kind, address host, uint8 decimals) = sy.assetInfo();
+        assertEq(uint8(kind), uint8(IStandardizedYield.AssetType.LIQUIDITY));
+        assertEq(host, hook); assertEq(decimals, 18);
+        assertEq(sy.getTokensIn().length, 4);
+        assertEq(sy.getTokensIn(), sy.getTokensOut());
+        assertEq(sy.getRewardTokens().length, 0);
+        assertGt(sy.exchangeRate(), 0);
+        address[] memory facets = IDiamondLoupe(hook).facetAddresses();
+        for (uint256 i; i < facets.length; ++i) assertLe(facets[i].code.length, 24_576);
+    }
+
+    function test_dualNativeSYEveryDeclaredRouteMatchesPreviewAndActualPayout() public {
+        IStandardizedYield sy = IStandardizedYield(hook);
+        vm.startPrank(user);
+        tokenA.approve(seA, 20 ether);
+        tokenB.approve(seB, 20 ether);
+        IStandardExchangeIn(seA).exchangeIn(tokenA, 20 ether, IERC20(seA), 0, user, false, block.timestamp);
+        IStandardExchangeIn(seB).exchangeIn(tokenB, 20 ether, IERC20(seB), 0, user, false, block.timestamp);
+        address[] memory inputs = sy.getTokensIn();
+        for (uint256 i; i < inputs.length; ++i) {
+            IERC20(inputs[i]).approve(hook, 2 ether);
+            uint256 shares = sy.previewDeposit(inputs[i], 2 ether);
+            assertGt(shares, 0);
+            assertEq(sy.deposit(user, inputs[i], 2 ether, shares), shares, "SY deposit preview");
+            address output = inputs[(i + 1) % inputs.length];
+            uint256 quoted = sy.previewRedeem(output, shares);
+            uint256 before = IERC20(output).balanceOf(user);
+            assertEq(sy.redeem(user, shares, output, quoted, false), quoted, "SY redeem preview");
+            assertEq(IERC20(output).balanceOf(user) - before, quoted, "actual payout token");
+        }
+        vm.stopPrank();
+    }
+
+    function test_dualNativeSYInternalRedemptionAndLimits() public {
+        IStandardizedYield sy = IStandardizedYield(hook);
+        vm.startPrank(user);
+        uint256 supply = sy.totalSupply();
+        uint256 amount = sy.balanceOf(user) / 100;
+        uint256 quoted = sy.previewRedeem(address(tokenA), amount);
+        vm.expectRevert(); sy.redeem(user, amount, address(tokenA), quoted + 1, false);
+        assertEq(sy.totalSupply(), supply);
+        sy.transfer(hook, amount * 3);
+        assertEq(sy.redeem(user, amount, address(tokenA), quoted, true), quoted);
+        assertEq(sy.balanceOf(hook), amount * 2, "unrequested internal shares retained");
+        vm.stopPrank();
+    }
+
+    function test_dualNativeSYFundedYieldChangesRateWithoutRebasingShares() public {
+        IStandardizedYield sy = IStandardizedYield(hook);
+        uint256 rate = sy.exchangeRate();
+        uint256 shares = sy.balanceOf(user);
+        vm.startPrank(user);
+        tokenA.approve(address(vaultA), 100 ether);
+        vaultA.simulateYield(100 ether);
+        vm.stopPrank();
+        assertGt(sy.exchangeRate(), rate);
+        assertEq(sy.balanceOf(user), shares);
+        assertEq(sy.claimRewards(user).length, 0);
+    }
+

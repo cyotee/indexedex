@@ -1,0 +1,245 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {MintSplit} from "contracts/vaults/detf/common/core/DETFMintSplit.sol";
+
+import {IUniswapV4HookLiquidityPolicy} from "contracts/hooks/uniswap/v4/libs/UniswapV4HookOwnerOnlyLiquidityLib.sol";
+
+
+import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
+import {UniswapV4DetfRepo as Repo} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfRepo.sol";
+import {AddressSet, AddressSetRepo} from "@crane/contracts/utils/collections/sets/AddressSetRepo.sol";
+
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
+import {DETFChildSYRepo} from "contracts/vaults/detf/common/sy/DETFChildSYRepo.sol";
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
+import {IUniswapV4Detf} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
+import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
+import {UniswapV4DetfTarget} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol";
+
+/// @notice Query entrypoints for the universal DETF diamond.
+abstract contract UniswapV4DetfQueryTarget is UniswapV4DetfTarget {
+    using AddressSetRepo for AddressSet;
+    /// @notice Registered static wrapper holding raw DETF.
+    function rawSY() external view returns (address) { return DETFChildSYRepo._layoutStruct().rawSY; }
+
+    /// @notice Registered static wrapper holding funded staking gons.
+    function stakingSY() external view returns (address) { return DETFChildSYRepo._layoutStruct().stakingSY; }
+
+    /// @notice Quote the funded index after due expansion and the proposed mint's seigniorage.
+    /// @dev This hypothetical state is confined to previews; stored balances and rates remain funded only.
+    function previewStakingGonsPerUnit(IERC20 tokenIn_, uint256 amountIn_) external view returns (uint256) {
+        uint256[] memory rewards_ = new uint256[](2);
+        rewards_[0] = _pendingExpansionDetf();
+        address staking_ = _entryRebasingClaimToken();
+        if (amountIn_ != 0 && address(tokenIn_) != address(this) && address(tokenIn_) != staking_) {
+            (uint256 gross_,) = _entryPreviewMint(tokenIn_, amountIn_);
+            rewards_[1] = _splitMintedDetf(gross_).inventoryDetf;
+        }
+        return IStakedDETF(staking_).previewDistributions(rewards_).gonsPerUnit;
+    }
+
+    /// @notice Returns the configured reserve hook.
+    function hook() external view returns (address) {
+        return _entryHook();
+    }
+
+    /// @notice Returns the actual immutable policy verified by the deployment package.
+    function ownerOnlyLiquidity() external view returns (bool) {
+        return IUniswapV4HookLiquidityPolicy(_entryHook()).ownerOnlyLiquidity();
+    }
+
+    /// @notice Returns the hook address used as the reserve LP token.
+    function reservePool() external view returns (address) {
+        return _entryReservePool();
+    }
+
+    /// @notice Reports whether the first bond has activated the reserve.
+    function isReserveLive() external view returns (bool) {
+        return _entryIsReserveLive();
+    }
+
+    /// @notice Reports whether both child NFT and claim-token vaults are deployed.
+    function isReserveWired() external view returns (bool) {
+        return _entryIsReserveWired();
+    }
+
+    /// @notice Returns the immutable token-to-vault routes accepted for minting.
+    function mintRoutes() external view returns (IUniswapV4Detf.IoRoute[] memory) {
+        return _entryMintRoutes();
+    }
+
+    /// @notice Returns the immutable token-to-vault routes accepted for burning.
+    function burnRoutes() external view returns (IUniswapV4Detf.IoRoute[] memory) {
+        return _entryBurnRoutes();
+    }
+
+    /// @notice Returns the immutable token-to-vault routes accepted for bonding.
+    function bondRoutes() external view returns (IUniswapV4Detf.IoRoute[] memory) {
+        return _entryBondRoutes();
+    }
+
+    /// @notice Returns the immutable routes used to pay mature bond closes.
+    function closeRoutes() external view returns (IUniswapV4Detf.IoRoute[] memory) {
+        return _entryCloseRoutes();
+    }
+
+    /// @notice Returns the immutable token-to-vault routes accepted for donations.
+    function donateRoutes() external view returns (IUniswapV4Detf.IoRoute[] memory) {
+        return _entryDonateRoutes();
+    }
+
+    /// @notice Returns the configured default or custom mint-route mode.
+    function mintRouteMode() external view returns (IUniswapV4Detf.RouteTableMode) {
+        return _entryMintRouteMode();
+    }
+
+    /// @notice Returns the configured default or custom burn-route mode.
+    function burnRouteMode() external view returns (IUniswapV4Detf.RouteTableMode) {
+        return _entryBurnRouteMode();
+    }
+
+    /// @notice Returns the configured default or custom bond-route mode.
+    function bondRouteMode() external view returns (IUniswapV4Detf.RouteTableMode) {
+        return _entryBondRouteMode();
+    }
+
+    /// @notice Returns the configured default or custom mature-close mode.
+    function closeRouteMode() external view returns (IUniswapV4Detf.RouteTableMode) {
+        return _entryCloseRouteMode();
+    }
+
+    /// @notice Returns the configured default or custom donation-route mode.
+    function donateRouteMode() external view returns (IUniswapV4Detf.RouteTableMode) {
+        return _entryDonateRouteMode();
+    }
+
+    /// @notice Returns the creation rates for the configured non-DETF reserve legs.
+    function creationPairPerDetfWad() external view returns (uint256[] memory) {
+        return _entryCreationPairPerDetfWad();
+    }
+
+    /// @notice Returns the opening rates used to size first-bond reserve legs.
+    function openingPairPerDetfWad() external view returns (uint256[] memory) {
+        return _entryOpeningPairPerDetfWad();
+    }
+
+    /// @notice Returns the stored mint threshold in WAD precision.
+    function mintThreshold() external view returns (uint256) {
+        return _entryMintThreshold();
+    }
+
+    /// @notice Returns the stored burn threshold in WAD precision.
+    function burnThreshold() external view returns (uint256) {
+        return _entryBurnThreshold();
+    }
+
+    /// @notice Quotes the current synthetic DETF price from the configured hook.
+    function syntheticPrice() external view returns (uint256) {
+        return _entrySyntheticPrice();
+    }
+
+    /// @notice Quotes the unrealized natural expansion in DETF units.
+    function pendingExpansionDetf() external view returns (uint256) {
+        return _entryPendingExpansionDetf();
+    }
+
+    /// @notice Returns the deployed bond NFT vault address.
+    function bondNftVault() external view returns (address) {
+        return _entryBondNftVault();
+    }
+
+    /// @notice Returns the bond NFT vault through the shared DETF inventory interface.
+    function detfNFTVault() external view returns (IDETFNFTVault) {
+        return _entryDetfNFTVault();
+    }
+
+    /// @notice Returns the deployed rebasing claim-token address.
+    function rebasingClaimToken() external view returns (address) {
+        return _entryRebasingClaimToken();
+    }
+
+    /// @notice Quote purchased DETF, vested principal, funded rewards and new liquidity DETF.
+    /// @dev Reserve-LP quotes retain the complete position and always return zero liquidity DETF.
+    function previewBond(IERC20 tokenIn_, uint256 amountIn_, uint256 lockDuration_) external view
+        returns (uint256 purchasedDetf_, uint256 principalDetf_, uint256 rewardsDetf_, uint256 liquidityDetf_)
+    {
+        uint256 duration_ = _effectiveLockDuration(lockDuration_);
+        if (amountIn_ == 0) revert Repo.ZeroAmount();
+        Repo.Storage storage s_ = Repo._layoutStruct();
+        if (address(tokenIn_) == s_.hook) {
+            purchasedDetf_ = _quoteReserveLpBond(amountIn_, duration_);
+        } else {
+            address pair_;
+            uint256 pairEq_;
+            if (!s_.isReserveLive) {
+                pair_ = _firstBondPair(address(tokenIn_));
+                pairEq_ = _pairEq(IStandardExchange(_hook().standardExchangeOf(pair_)), tokenIn_, amountIn_);
+            } else {
+                if (!s_.bondTable.tokens._contains(address(tokenIn_))) {
+                    revert Repo.InvalidRoute(address(tokenIn_), address(this));
+                }
+                IStandardExchange vault_ = s_.bondTable.vaultOf[address(tokenIn_)];
+                pair_ = _hookPairOfVault(vault_);
+                pairEq_ = _pairEq(vault_, tokenIn_, amountIn_);
+            }
+            purchasedDetf_ = _quoteBondPurchase(pair_, pairEq_, duration_);
+            liquidityDetf_ = _quoteBondG(pair_, pairEq_);
+        }
+        MintSplit memory split_ = _splitBondDetf(purchasedDetf_, liquidityDetf_);
+        principalDetf_ = split_.userDetf;
+        rewardsDetf_ = split_.inventoryDetf;
+    }
+
+    /// @notice Returns all token addresses accepted by the bond route table.
+    function acceptedBondTokens() external view returns (address[] memory tokens_) {
+        return _entryAcceptedBondTokens();
+    }
+
+    /// @notice Reports whether the mint threshold and, when supplied, the token route permit minting.
+    function isMintingAllowed() external view returns (bool) {
+        return _entryIsMintingAllowed();
+    }
+
+    /// @notice Reports whether the mint threshold and, when supplied, the token route permit minting.
+    function isMintingAllowed(IERC20 tokenIn) external view returns (bool) {
+        return _entryIsMintingAllowed(tokenIn);
+    }
+
+    /// @notice Reports whether the burn threshold and, when supplied, the token route permit burning.
+    function isBurningAllowed() external view returns (bool) {
+        return _entryIsBurningAllowed();
+    }
+
+    /// @notice Reports whether the burn threshold and, when supplied, the token route permit burning.
+    function isBurningAllowed(IERC20 tokenOut) external view returns (bool) {
+        return _entryIsBurningAllowed(tokenOut);
+    }
+
+    /// @notice Quotes an input token amount in its configured vault's reserve-pair units.
+    function peekPairEq(address vault_, address tokenIn_, uint256 amountIn_) external view returns (uint256) {
+        return _entryPeekPairEq(vault_, tokenIn_, amountIn_);
+    }
+
+    /// @notice Quotes the configured exact-input exchange route without changing reserve state.
+    function previewExchangeIn(IERC20 tokenIn_, uint256 amountIn_, IERC20 tokenOut_)
+        external
+        view
+        returns (uint256 amountOut_)
+    {
+        return _entryPreviewExchangeIn(tokenIn_, amountIn_, tokenOut_);
+    }
+
+    /// @notice Quotes physical reserve LP produced by an accepted donation input.
+    function previewJoinDonatedCapital(IERC20 token, uint256 amount) external view returns (uint256 lpOut) {
+        return _entryPreviewJoinDonatedCapital(token, amount);
+    }
+
+
+    function previewFirstBondPayments(IERC20 tokenIn_, uint256 amount_)
+        external view returns (address[] memory tokens_, uint256[] memory amounts_)
+    {
+        return _entryPreviewFirstBondPayments(tokenIn_, amount_);
+    }
+}

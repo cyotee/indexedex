@@ -1,0 +1,11 @@
+{
+  "checked_at_utc": "2026-09-09T12:24:12.116249+00:00",
+  "scope": "Read-only fork readiness during full build; no deployment or acceptance awarded.",
+  "chain_id": 4663,
+  "fork_block": 56118361,
+  "manager_owner": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+  "environment_limits": {
+    "gasLimit": "0x1e84800",
+    "gasPrice": "0x14abd659"
+  }
+}

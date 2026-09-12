@@ -1,0 +1,13 @@
+{
+  "status": "complete native-matrix comparison; full default suite performance not established",
+  "before_run": "mixed-native-matrix-funded-run.json",
+  "after_run": "mixed-consolidation-and-new-adapter-regressions-run.json",
+  "same_passing_native_matrix_entrypoints": 103,
+  "same_decimal_book_invocations": 824,
+  "matrix_gas_before": 492909845419,
+  "matrix_gas_after": 132595866477,
+  "matrix_gas_reduction_percent": 73.1,
+  "selected_test_seconds_before": 547.551,
+  "selected_test_seconds_after": 174.012,
+  "caveat": "After run includes 23 additional tests and a one-unit Aero preview correction; concurrent unchanged baseline remains active. These are focused observations, not full-suite or cold-build comparisons."
+}

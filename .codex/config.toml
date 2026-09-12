@@ -1,0 +1,17 @@
+# IndexedEx project defaults. Loaded by Codex when this repo is trusted.
+# Shared instructions: ../AGENTS.md -> ../CLAUDE.md.
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+# Match the repo's Grok Playwright integration for UI and transaction testing.
+[mcp_servers.playwright]
+command = "npx"
+args = ["-y", "@playwright/mcp@latest"]
+enabled = true
+startup_timeout_sec = 60
+[mcp_servers.higgsfield]
+url = "https://mcp.higgsfield.ai/mcp"
+
+[mcp_servers.voltaire]
+url = "https://voltaire.tevm.sh/mcp"
+

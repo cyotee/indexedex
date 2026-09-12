@@ -1,0 +1,9 @@
+{
+  "status": "APPLIED_RUNNER_FIX_RETRY_PENDING",
+  "failure": "Forge interpreted the explicitly empty FOUNDRY_ETH_RPC_URL as an IPC path and failed before any tests executed.",
+  "original_exit_code": 1,
+  "original_seconds": 69.509,
+  "correction": "Unset direct Forge fork-setting variables. Keep endpoint credentials explicitly empty. No repository .env/.env.local or inherited direct fork-setting names were present.",
+  "source_or_compiler_changes": false,
+  "failure_evidence": "post-build-empty-fork-url-failure.json"
+}

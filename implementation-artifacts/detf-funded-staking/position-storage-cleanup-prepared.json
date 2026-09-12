@@ -1,0 +1,67 @@
+{
+  "status": "PREPARED_NOT_APPLIED",
+  "authority": "Owner-required unused storage/dead-code cleanup, plan section 8.1 and approved V3/V4 full-range deployment. Shared-source search confirms no dependency from excluded or deferred products.",
+  "removed": [
+    "V3/V4 unread lastSqrtPriceX96/lastTick/lastTimestamp",
+    "V3/V4 write-only cached liquidity and refresh calls",
+    "V4 never-created wing positions, salts, enum routing and redundant fee/burn traversals",
+    "V4 zero-only wing plan members",
+    "Four obsolete V3 import scratch fields; external position ABI decode structure preserved"
+  ],
+  "preserved": [
+    "Maximum usable full-range center",
+    "Actual live pool/position-manager liquidity and fee math",
+    "Imported-position custody and authorization",
+    "Sleeve and locked-pool operation",
+    "Existing proxy tests, including independent absent-wing assertions",
+    "No Slipstream or Balancer DETF edits; no live upgrades"
+  ],
+  "changes": [
+    {
+      "path": "contracts/protocols/dexes/uniswap/v3/UniswapV3VaultRepo.sol",
+      "before_sha256": "f5026a97e4a9cc0da3a5cc05de95b528395af3a49f231254808fbe9a612af0e0",
+      "after_sha256": "4aa8e001ae138ca8e126e86b8165f1d6c1cdf7c53d108cd30e157f5a2d743242"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4PositionRepo.sol",
+      "before_sha256": "49a4cae811105d964256e0e81478fac5bfa333ad9243c1cb8ed4f9ba5fa547c5",
+      "after_sha256": "5cdccf9aec1d0a0817450b7f98a21254fcf2061ed0bf7ee711e33c44eb04fe26"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeCommon.sol",
+      "before_sha256": "7d45ec5ebeafe5b74351aead8d74c4640e55879b88a4e5ebcd722546b551549b",
+      "after_sha256": "4d1f9d99da8e51613ec50bcc49a8fdde0c93167454904ffb65fe30612771257a"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangePositionImportTarget.sol",
+      "before_sha256": "8ef76c59e4a8864ce4015e74de7bc8f5d50e530ff438443081237dc34ade1149",
+      "after_sha256": "b6891fe3c50f3fca32478934587ab565cf0489ee7c1d21363b2fc248da0ee57b"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeCommon.sol",
+      "before_sha256": "228674b7646645414abbad5309d83a25756b430dc915ed5b1d2f7df5dd9143a4",
+      "after_sha256": "107f55508296c893a651b23003b9ffcf78d21c5f342b74c821bc855c1e743ab3"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInBase.sol",
+      "before_sha256": "54148cd00f6ef11a6a4b4281eb68c8968b2331295b5e19d546b3869ff208fde7",
+      "after_sha256": "62e78f9ca392510c43c2bb35f90bbf1a64dd87e08819c1c45fef751317c7bccc"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutExecutionDelegate.sol",
+      "before_sha256": "b84f6064bfa5a3926716eccd0904d1d0e6ce339470ddcde56d493f54679d2a3d",
+      "after_sha256": "01ecbde64b225e2ea67b174d259c995a05cdbee115d884c7afb90b02237269f9"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiTarget.sol",
+      "before_sha256": "e3f0ab1b875642087e07f2ea8d0920447207bfd1a24e010104ae33e306367130",
+      "after_sha256": "35a302fd9d18ae3df96085ca1080daedf1769df550208eb142a46815b306d8bc"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangePositionImportTarget.sol",
+      "before_sha256": "b8738ac17ab9f5f4af6740e9c6d78ab8964297ea525d7392b760d84657022775",
+      "after_sha256": "6d5790562e1cd2123f212193962e648b8340dc7069915f725e136fa30e9c1ad8"
+    }
+  ],
+  "validation": "Pending independent draft compilation, existing full-range/import/fee/lock tests and final release build."
+}

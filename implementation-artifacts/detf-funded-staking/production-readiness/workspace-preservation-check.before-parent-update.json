@@ -1,0 +1,61 @@
+{
+  "checked_at_utc": "2026-09-10T18:15:36.448180+00:00",
+  "baseline": "owner-passing-baseline.json",
+  "task_start_files_checked": 5365,
+  "missing": [],
+  "changed": [
+    {
+      "path": "contracts/vaults/detf/DETF_FUNDED_STAKING_AND_SY_VALIDATION_REPORT.md",
+      "before_sha256": "a4013d9590e98672b5d20a3234c8be2ca76d136ecdb928e1d1fc7311b479b326",
+      "current_sha256": "cde76c71cf8feb8eba05ef3006c60bcccd84eda63485055b2c2b76e3991e910c"
+    },
+    {
+      "path": "contracts/vaults/detf/DETF_PRODUCTION_READINESS_REMAINING_IMPLEMENTATION_PLAN.md",
+      "before_sha256": "e5feb3dbfbf1a9eb8ed17a01dfb2b5150d8c4af31c9fd4eca40172ad85b729c9",
+      "current_sha256": "a837cb6d7afc3c8b19a79efb03dc3acf5b3b4176e98a90cb78f23b48941a4ac1"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol",
+      "before_sha256": "a43f26a1b79e55450798aaf6f0e023e885006d1ec494e18246fbdda36d36daf5",
+      "current_sha256": "6bb606480237e4ef3d63492a936f3d4f7393c51adcf505a4f2dfff821b227047"
+    },
+    {
+      "path": "scripts/foundry/anvil_robinhood_main/Phase_09_Stage_01_ExportFrontend.s.sol",
+      "before_sha256": "20a4f3fa7ab69c8faa438dc15440af228e35231c12497f088672280dd369916e",
+      "current_sha256": "87a2bd07eb26984bb1395b2a9cf776ff29af778dadc77be8a03ac036fb12dd06"
+    },
+    {
+      "path": "scripts/foundry/anvil_robinhood_main/README.md",
+      "before_sha256": "c400e86ebd94e853a30e7f57af168ff1c38f0f8ec09fac5f28768b7725e35910",
+      "current_sha256": "07f67b06227cdddac0579f4bf1d04b5da4d23a29942a74e8bf6dc409d80d836d"
+    },
+    {
+      "path": "scripts/foundry/anvil_robinhood_main/Script_SimulateArchitecture.s.sol",
+      "before_sha256": "fc18244ff54a34f3f6c6b663c466b831ccef8cbe498483dc7e9174118bd1eeee",
+      "current_sha256": "e8c0273cf8ae3c19b1bc9e7076889375d7d6ee0f2f78a0fc31ebf65dc11a9859"
+    },
+    {
+      "path": "scripts/foundry/anvil_robinhood_main/deploy_all.sh",
+      "before_sha256": "4c78281d752816cf8a5232e1759396e0e23730ecfe28cb533534a9976aa889e1",
+      "current_sha256": "882e7788095870a726e180516f4103e9d228fa365d5a8804fd9efb4ec3c6da78"
+    },
+    {
+      "path": "test/foundry/fork/robinhood_4663/RobinhoodReleaseRehearsal.t.sol",
+      "before_sha256": "a661ff882423a4b67b660b3fb5abbb272b18563529ae50cc4e6414eb8a52b112",
+      "current_sha256": "181c03d1a26663816608c136dd681bbd5593d3d8ec6a5a65bc92007abd8d19ec"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+      "before_sha256": "7f0baa09086de5f0a1c661af2d6c554207341badd9a87db40344e1420b43ae8c",
+      "current_sha256": "69744e12b0d2641d6216a3187f75daccd2bc85b57803380e4266bde430163f3a"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Burn_H6.t.sol",
+      "before_sha256": "c0ac3ca9afaf6cb75feed519d2128081a1fa2a25fa58ef64ed6d64d96d2927a4",
+      "current_sha256": "bb6ead03cb6b3d45e4f2a5c27ed6d1c596dc531333b91a7973a041a17e7415f9"
+    }
+  ],
+  "unexpected_changes": [],
+  "status": "PASS_TASK_START_FILES_PRESERVED",
+  "scope": "All files captured at task start. Intended readiness edits retain original copies. New evidence/tests are separately inventoried. The two intended Crane edits have independent before-copies and hashes in production-and-launch-fixes.json."
+}

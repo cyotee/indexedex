@@ -10,6 +10,16 @@ import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 
+/// @notice Exact supply predicate, including fractional internal claim shares.
+interface IRebasingClaimTokenSupply {
+    function hasOutstandingShares() external view returns (bool);
+}
+
+interface IRebasingClaimTokenMintQuote {
+    function previewMintFromNFTSale(uint256 assets, uint256 totalAssetsBefore, uint256 backingAfter)
+        external view returns (uint256 rebasingClaimMinted);
+}
+
 /**
  * @title IRebasingClaimToken
  * @author cyotee doge <not_cyotee@proton.me>

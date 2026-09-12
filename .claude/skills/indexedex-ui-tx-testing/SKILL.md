@@ -1,12 +1,6 @@
 ---
 name: indexedex-ui-tx-testing
-description: >-
-  Runs IndexedEx/DTF frontend transactions through the UI with Playwright
-  injected wallets (not MetaMask) and verifies on-chain effects. Use when the
-  user asks to "test UI txs", "e2e bond", "live swap UI", "Playwright staking",
-  "verify deposit through UI", "DTF e2e", "Robinhood Anvil UI", "click through
-  money path", or after frontend money-path changes. DO NOT use for Foundry
-  contract tests (crane-testing / indexedex-testing) or pure copy/IA smoke without txs.
+description: "Test IndexedEx frontend money paths with Playwright injected wallets and verify Robinhood Anvil onchain effects."
 license: MIT
 ---
 

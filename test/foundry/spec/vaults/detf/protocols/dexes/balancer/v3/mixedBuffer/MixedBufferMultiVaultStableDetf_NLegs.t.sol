@@ -14,46 +14,46 @@ import {
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfBondingTarget.sol";
 
 contract MixedBufferMultiVaultStableDetf_NLegs_Test is TestBase_MixedBufferMultiVaultStableDetf {
-    function test_n1_full_lifecycle() public {
-        address d = _deployOpenThresholdDetfN(1);
+    function test_n1_full_lifecycle() public virtual {
+        address d = _deployDetfN(1, 1e15, 1e14);
         _bootstrapDefault(d, alice);
-        uint256 m1 = _mintDetfFromBuffer(d, bob, 50e18);
+        uint256 m1 = _mintDetfFromBuffer(d, bob, _fixtureAmount(50e18));
         uint256 m2 = _mintDetfFromVaultShare(d, 0, bob, 50e18);
         assertTrue(m1 > 0 && m2 > 0, "mints");
         uint256 burnOut = _burnDetfToBuffer(d, bob, m1 / 2);
         assertTrue(burnOut > 0, "burn");
 
-        _fundBuffer(bob, 80e18);
+        _fundBuffer(bob, _fixtureAmount(80e18));
         vm.startPrank(bob);
-        IERC20(address(dai)).approve(d, 80e18);
+        IERC20(address(_fixtureBufferToken())).approve(d, _fixtureAmount(80e18));
         (uint256 tid,) = IMixedBufferMultiVaultStableDetfBonding(d).bond(
-            IERC20(address(dai)), 80e18, DEFAULT_MIN_LOCK, bob, false, block.timestamp + 1 hours
+            IERC20(address(_fixtureBufferToken())), _fixtureAmount(80e18), DEFAULT_MIN_LOCK, bob, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertTrue(tid > 0, "bond");
         _assertNoFreeInventory(d);
     }
 
-    function test_n2_multi_protocol_lifecycle() public {
+    function test_n2_multi_protocol_lifecycle() public virtual {
         // N=2 multi-pool Aerodrome SE legs sharing DAI buffer.
-        address d = _deployOpenThresholdDetfN(2);
+        address d = _deployDetfN(2, 1e15, 1e14);
         _bootstrapDefault(d, alice);
         assertEq(IMixedBufferMultiVaultStableDetfInfo(d).vaultCount(), 2);
-        _mintDetfFromBuffer(d, bob, 40e18);
+        _mintDetfFromBuffer(d, bob, _fixtureAmount(40e18));
         _mintDetfFromVaultShare(d, 0, bob, 40e18);
         _mintDetfFromVaultShare(d, 1, bob, 40e18);
         _assertNoFreeInventory(d);
     }
 
-    function test_n3_smoke() public {
-        address d = _deployOpenThresholdDetfN(3);
+    function test_n3_smoke() public virtual {
+        address d = _deployDetfN(3, 1e15, 1e14);
         _bootstrapDefault(d, alice);
-        _mintDetfFromBuffer(d, bob, 30e18);
-        _fundBuffer(bob, 50e18);
+        _mintDetfFromBuffer(d, bob, _fixtureAmount(30e18));
+        _fundBuffer(bob, _fixtureAmount(50e18));
         vm.startPrank(bob);
-        IERC20(address(dai)).approve(d, 50e18);
+        IERC20(address(_fixtureBufferToken())).approve(d, _fixtureAmount(50e18));
         (uint256 tid,) = IMixedBufferMultiVaultStableDetfBonding(d).bond(
-            IERC20(address(dai)), 50e18, DEFAULT_MIN_LOCK, bob, false, block.timestamp + 1 hours
+            IERC20(address(_fixtureBufferToken())), _fixtureAmount(50e18), DEFAULT_MIN_LOCK, bob, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
         assertTrue(tid > 0, "bond n3");

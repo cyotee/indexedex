@@ -1,0 +1,10 @@
+{
+  "status": "39 passed, 6 failed; production parity issues remain",
+  "green": "Both SAF suites, rich primary ordinary issuance, Quad funded claim/inventory tests, independent T7.10 bond U/G, and 18 donation cases.",
+  "failures": [
+    "4 native pair donation previews return zero because the DETF first previews a fresh SE share mint, then quotes receiving/redeeming those shares against an unchanged SE supply. Actual SE-share donation passes.",
+    "T7.7 SE-share fallback purchase quotes 9066796519 native DETF but executes 9066109688; external share redemption changes the buffered SE state before the reserve swap. Keep exact equality and fix composition.",
+    "T7.18 still expects removed claimLiquidity/previewClaimLiquidity selectors; should require their absence."
+  ],
+  "evidence": "v4-mint-donation-first-runtime-run.json"
+}

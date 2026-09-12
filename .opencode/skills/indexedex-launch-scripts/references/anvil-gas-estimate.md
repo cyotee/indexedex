@@ -92,7 +92,7 @@ The Solidity script wraps the txs to quote in **one** `startBroadcast` / `stopBr
 
 `scripts/foundry/anvil_robinhood_main/Script_SimulateArchitecture.s.sol`
 
-It calls Stage **libraries** `execute()` (groups 01–03). No tokens. No DETF instances.
+It calls Stage **libraries** `execute()` (Phases 02–06 architecture catalog). No tokens. No DETF instances.
 Do not run after a completed staged `all` on the same Anvil (CREATE3 / CREATE2 collision).
 
 Staged `all` on this tree is a **different** path: it still simulates then broadcasts, and on localhost it appends `--legacy --gas-price 2000000000` plus `--slow --gas-estimate-multiplier 300`. That is an Anvil `feeHistory` workaround, **not** the funding quote.

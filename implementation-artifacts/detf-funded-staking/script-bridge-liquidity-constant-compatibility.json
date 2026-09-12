@@ -1,0 +1,6 @@
+{
+  "status": "APPLIED_MAINTAINED_SCRIPT_COMPILATION_PASSED",
+  "source": "scripts/foundry/public_sepolia/base/Script_13_SeedBalancerVaultTokenPoolLiquidity.s.sol",
+  "fix": "Bind the missing INITIAL_LIQUIDITY constant to the existing BridgeTokenPlanning constant, matching the preceding Stage 10 liquidity amount. Preserve existing Stage 13 formulas and unrelated work.",
+  "compilation_evidence": "maintained-script-294-green.json"
+}

@@ -1,0 +1,124 @@
+{
+  "recorded_at_utc": "2026-09-08T09:24:45.940924+00:00",
+  "status": "SOURCE_REVIEW_REQUIRES_TARGETED_COMPATIBILITY_VALIDATION",
+  "owner_decision_needed": false,
+  "facts": [
+    {
+      "source": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProcessArgsLib.sol",
+      "fact": "Custom rows accept a bound SE whose vaultTokens list the token and whose standard token-to-share preview succeeds; no transition capability requirement."
+    },
+    {
+      "source": "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol",
+      "fact": "New composed deposit and external swap projections currently call provider transition state and external projection directly."
+    },
+    {
+      "source": "contracts/protocols/lending/aave/v3.6/AaveV3StataStandardExchangeInTarget.sol",
+      "fact": "Current Stata SE implements transition and external-deposit/exchange projections. Eight actual proxy tests passed; the later code-bound salt regression awaits full validation."
+    },
+    {
+      "source": "contracts/protocols/staking/lido/LidoWstETHStandardExchangeCommon.sol",
+      "fact": "Lido SE implements transition/external projections for WETH/wstETH accounting and existing payment conversions. Eight actual proxy tests and four real-Lido fractional full-state comparison cases passed; V4 composed-route regressions await execution."
+    }
+  ],
+  "required_followup": "Verify accepted configured routes with real existing SE packages and preserve them without introducing a deployment allowlist. A missing optional extension must not silently become a new restriction. Implement the needed exact provider accounting or a justified compatible projection path, with preview/execution tests.",
+  "scope": "Other SE work remains authorized; do not expand excluded Balancer DETF or deferred Slipstream work.",
+  "stata_followup": {
+    "status": "PASS: eight projection cases plus current occupied-namespace regression",
+    "record": "stata-composed-quote-proxy-green-run.json"
+  },
+  "remaining_source_review": [
+    {
+      "area": "V4 default SE-share fallback as well as custom tokens",
+      "reason": "_entryPreviewMint invokes previewSwapAfterExchange for any non-pair token, including the SE share itself. afterExternalExchange currently requires quoteState/quoteTransition, so review must include providers lacking the base transition extension, not only externalDeposit."
+    },
+    {
+      "area": "Lido/EtherFi/RocketPool SEs",
+      "reason": "Actual receipt/inventory conversions, virtual-offset shares, usage-fee minting, and provider-specific liquidity behavior must be preserved. Source inspection alone has not established a correct generic projection; do not add a capability allowlist or claim parity without actual tests."
+    },
+    {
+      "area": "Other native SE issuers used as bound V4 buffers",
+      "reason": "Audit accepted directions and existing capability fallbacks. Camelot/Aerodrome pools, native hook shares and Balancer SE pools have distinct accounting; unrelated Balancer SE scope is retained under D60."
+    },
+    {
+      "area": "ERC4626 nested backing",
+      "reason": "Current optional snapshot supports native quote capability or verified canonical virtual balances. Preserve existing ordinary route acceptance for other already accepted ERC4626 implementations; no unapproved constructor capability restriction."
+    },
+    {
+      "area": "ERC4626 protocol-receipt accounting asset",
+      "reason": "Confirmed retained standard entrypoints accept SE shares <-> protocolVault shares, while current ERC4626 quoteState accepts only the underlying asset. A V4 binding whose non-rebasing pair is the protocol receipt can therefore hit UnsupportedQuoteAsset on new composed paths. Preserve this actual route as well as reviewing opaque underlying accounting. No generic approximation or constructor restriction has been implemented.",
+      "sources": [
+        "contracts/vaults/standard/erc4626/ERC4626StandardExchangeInTarget.sol",
+        "contracts/vaults/standard/erc4626/ERC4626StandardExchangeQuoteTarget.sol"
+      ]
+    }
+  ],
+  "constraint": "This is engineering compatibility work, not a reopened product decision. Do not weaken final output limits, invent a provider state model, or silently restrict existing routes.",
+  "lido_followup": {
+    "status": "PASS: eight SE proxy cases, four actual Lido fork cases and V4 fallback/funded-bond cases in both CP liquidity modes",
+    "records": [
+      "lido-composed-quote-proxy-green-run.json",
+      "lido-live-projection-fork-run.json"
+    ],
+    "fork_block": 24000000
+  },
+  "nested_payment_followup": {
+    "status": "PASS: current V4 Lido regressions in both policies",
+    "record": "v4-nested-standard-payment-compatibility.json"
+  },
+  "etherfi_prepared_followup": {
+    "status": "PASS: five actual-protocol full-state projection cases",
+    "record": "etherfi-composed-quotes-prepared.json",
+    "preflight": "etherfi-projection-input-preflight.json",
+    "preflight_result": "All six public protocol input calls succeeded at Ethereum block 24,000,000, including the actual manager binding and seven-word fee/bucket tuple. This is not projection execution evidence.",
+    "evidence": "etherfi-live-projection-fork-run.json"
+  },
+  "volatile_se_review": {
+    "record": "volatile-se-provider-source-review.json",
+    "status": "Camelot validated; Aerodrome source review remains open",
+    "changes_applied": true
+  },
+  "camelot_followup": {
+    "status": "PASS: 19 actual proxy cases; five confirmed defects before correction pass afterward",
+    "evidence": "camelot-projection-referral-receipts-run.json",
+    "runtime_bytes": {
+      "CamelotV2StandardExchangeQueryFacet": 16335,
+      "CamelotV2StandardExchangeInFacet": 20243,
+      "CamelotV2StandardExchangeOutFacet": 15061,
+      "CamelotV2StandardExchangeDFPkg": 14827
+    }
+  },
+  "rocket_prepared_followup": {
+    "status": "PREPARED_NOT_APPLIED",
+    "record": "rocket-projection-prepared.json",
+    "preflight": "rocket-projection-input-preflight.json",
+    "finding": "Pinned Ethereum uses deposit-pool v3; local canonical port is v4. Exact draft models both custody paths, deposit fee/minimum, queue-invariant capacity and burn collateral. Required protocol registry is explicitly permitted by the existing Rocket Pool deployment PRD sketch.",
+    "diagnostics": "Current draft source matches successful production compile (17290-byte input facet, 10244-byte package) and seven-case typecheck. Both actual fork executions remain pending.",
+    "fork_blocks": [
+      24000000,
+      25934585
+    ]
+  },
+  "erc4626_receipt_prepared_followup": {
+    "status": "PREPARED_NOT_APPLIED",
+    "record": "erc4626-receipt-projection-prepared.json",
+    "fact": "Prepared receipt custody, virtual and no-offset proportional models, nested IERC4626 versus SE fees. Draft compiles at 23632 bytes for the input facet; seven new hermetic and four actual sfrxETH fork methods typecheck. Execution pending.",
+    "remaining": "Opaque ERC4626 and native IERC4626-versus-SE operation semantics remain separate review items."
+  },
+  "baseline_surface_review": {
+    "record": "provider-baseline-composition-surface-review.json",
+    "status": "Baseline sources inspected; distinguish existing compatibility from newly standardized liquidity surfaces. No acceptance waived."
+  },
+  "sfrxeth_followup": {
+    "status": "PREPARED_NOT_APPLIED",
+    "record": "erc4626-receipt-projection-prepared.json",
+    "preflight": "sfrxeth-projection-input-preflight.json",
+    "facts": "Six public-input checks pass at block 24000000, confirming proportional no-offset conversions and enabled existing ETH minter. Four new actual-protocol cases typecheck; execution remains pending.",
+    "runner": "run-etherfi-live-projection-fork.py --provider sfrxeth"
+  },
+  "cp_lp_accounting_followup": {
+    "status": "PREPARED_NOT_APPLIED",
+    "record": "cp-lp-accounting-prepared.json",
+    "finding": "V2/Camelot/Aerodrome retained SE routes accept LP payments and SE-to-LP redemptions. Draft quotes now use actual LP custody and preserve canonical underlying fee bookkeeping; external underlying-to-LP conversion keeps protocol ownership separate.",
+    "diagnostics": "Four affected components compile within EIP-170; three shared real-proxy methods typecheck. Actual execution pending."
+  }
+}

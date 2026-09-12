@@ -4,6 +4,8 @@ pragma solidity ^0.8.0;
 import {FixtureEconomics} from "./FixtureEconomics.sol";
 import {LaunchState} from "./LaunchState.sol";
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
@@ -32,6 +34,7 @@ library Phase_06_Stage_06_CurveQuadBufferHookPkg {
         IFacet hooksFacet = QuadHookFS.deployHooksFacet(s.create3Factory);
         IQuadHookPkg.PkgInit memory init_;
         init_.vaultRegistryDeployment = reg;
+        init_.joinQueryFacet = QuadHookFS.deployJoinQueryFacet(s.create3Factory);
         init_.vaultFeeOracleQuery = feeOracle;
         init_.liquidityFacet = joinFacet;
         init_.exitFacet = exitFacet;
@@ -43,10 +46,12 @@ library Phase_06_Stage_06_CurveQuadBufferHookPkg {
         init_.multiAssetBasicVaultFacet = s.multiAssetBasicVaultFacet;
         init_.multiAssetStandardVaultFacet = s.multiAssetStandardVaultFacet;
         init_.multiStepOwnableFacet = s.multiStepOwnableFacet;
+        bytes memory initCode_ = type(QuadHookDFPkg).creationCode;
+        bytes memory initArgs_ = abi.encode(init_);
         s.curveQuadHookPkg = reg.deployPkg(
-            type(QuadHookDFPkg).creationCode,
-            abi.encode(init_),
-            abi.encode(type(IQuadHookPkg).name, FixtureEconomics.SALT_NS)._hash()
+            initCode_,
+            initArgs_,
+            ArtifactCreationCode.releaseSalt(abi.encode(type(IQuadHookPkg).name, FixtureEconomics.SALT_NS)._hash(), initCode_, initArgs_)
         );
     }
 }

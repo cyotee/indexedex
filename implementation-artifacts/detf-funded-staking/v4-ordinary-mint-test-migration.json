@@ -1,0 +1,26 @@
+{
+  "status": "applied; validation pending",
+  "coverage": "T7.6 rich primary ordinary gross/net floors, exact reward custody and zero additional G. T7.7 actual SE share-to-pair conversion, exact inverse and branch-aware standard preview/execution. All native decimal fixtures retained.",
+  "files": [
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Mint.t.sol",
+      "before_sha256": "28484c6f30db8304671d0918c3300c440b802d4479446337929ce027193fc5e6",
+      "after_sha256": "79bf990d1813000b5508aa23221bb1ae7bbb710da754d6f97dcb11285baa355f"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_IoTablesGoldBase.sol",
+      "before_sha256": "c4450968dd68e67bcf9c6d38d13fa075b7b5193e17ecfd976e03e37143507c98",
+      "after_sha256": "d9d9465bcfca718d6b3a49e7825a0b8eb422e9b8066d1132ae311348da9c1000"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Mint_Decimals.sol",
+      "before_sha256": "38aad98bcefffa00b6e13d781e260b3585424c02dd6d04da799059fc9a684376",
+      "after_sha256": "74ba911986a35aef9821a2df9466ae9925bc94bb738b3c42eeaed6f8bdeef04f"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_IoTablesGoldBase_Decimals.sol",
+      "before_sha256": "df10e10deda209f0512d290b93823faa6be614294d1445eb8c26df1881d4222b",
+      "after_sha256": "1a4b981bc7175a34baeb5f4571f8c276dd570a605a3dd28159d22dcd037e89ad"
+    }
+  ]
+}

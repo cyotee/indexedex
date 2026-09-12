@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
 import {IUniswapV3Pool} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Pool.sol";
@@ -16,6 +18,21 @@ contract UniswapV3StandardExchange_Previews_Test is TestBase_UniswapV3StandardEx
     IUniswapV3Pool internal pool;
     IStandardExchangeProxy internal vault;
     address internal alice = makeAddr("alice");
+
+    /// @dev Caller has already funded/approved token0 and is pranking as alice.
+    function _activateWithFundedToken0(uint256 amount0, uint256 amount1) internal returns (uint256 shares) {
+        ERC20PermitMintableStub(pool.token1()).mint(alice, amount1);
+        IERC20(pool.token1()).approve(address(vault), amount1);
+        address[] memory tokens = new address[](2);
+        tokens[0] = pool.token0();
+        tokens[1] = pool.token1();
+        uint256[] memory amounts = new uint256[](2);
+        amounts[0] = amount0;
+        amounts[1] = amount1;
+        shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
+            tokens, amounts, IERC20(address(vault)), 0, alice, false, block.timestamp + 1
+        );
+    }
 
     function setUp() public override {
         super.setUp();
@@ -58,35 +75,34 @@ contract UniswapV3StandardExchange_Previews_Test is TestBase_UniswapV3StandardEx
         assertEq(preview, executed, "P-IN-02");
     }
 
-    function test_P_IN_03_zapIn_token0_firstDeposit() public {
-        address token0 = pool.token0();
-        uint256 amountIn = 50 ether;
-        uint256 preview = vault.previewExchangeIn(IERC20(token0), amountIn, IERC20(address(vault)));
-
-        ERC20PermitMintableStub(token0).mint(alice, amountIn);
+    function test_P_IN_03_singleToken0ActivationRejected() public {
+        address token = pool.token0();
+        uint256 amount = 50 ether;
+        assertEq(vault.previewExchangeIn(IERC20(token), amount, IERC20(address(vault))), 0, "one token cannot activate");
+        ERC20PermitMintableStub(token).mint(alice, amount);
         vm.startPrank(alice);
-        IERC20(token0).approve(address(vault), amountIn);
-        uint256 executed =
-            vault.exchangeIn(IERC20(token0), amountIn, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
+        IERC20(token).approve(address(vault), amount);
+        uint256 balanceBefore = IERC20(token).balanceOf(alice);
+        vm.expectRevert(bytes4(keccak256("UniswapV3Exchange_ZeroAmount()")));
+        vault.exchangeIn(IERC20(token), amount, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
         vm.stopPrank();
-
-        // Multi-step Uni V3 zap rounding can differ by a few wei vs closed-form plan.
-        assertApproxEqAbs(preview, executed, 10, "P-IN-03");
+        assertEq(IERC20(address(vault)).totalSupply(), 0, "no unbacked initial shares");
+        assertEq(IERC20(token).balanceOf(alice), balanceBefore, "failed activation returns input");
     }
 
-    function test_P_IN_04_zapIn_token1_firstDeposit() public {
-        address token1 = pool.token1();
-        uint256 amountIn = 50 ether;
-        uint256 preview = vault.previewExchangeIn(IERC20(token1), amountIn, IERC20(address(vault)));
-
-        ERC20PermitMintableStub(token1).mint(alice, amountIn);
+    function test_P_IN_04_singleToken1ActivationRejected() public {
+        address token = pool.token1();
+        uint256 amount = 50 ether;
+        assertEq(vault.previewExchangeIn(IERC20(token), amount, IERC20(address(vault))), 0, "one token cannot activate");
+        ERC20PermitMintableStub(token).mint(alice, amount);
         vm.startPrank(alice);
-        IERC20(token1).approve(address(vault), amountIn);
-        uint256 executed =
-            vault.exchangeIn(IERC20(token1), amountIn, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
+        IERC20(token).approve(address(vault), amount);
+        uint256 balanceBefore = IERC20(token).balanceOf(alice);
+        vm.expectRevert(bytes4(keccak256("UniswapV3Exchange_ZeroAmount()")));
+        vault.exchangeIn(IERC20(token), amount, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
         vm.stopPrank();
-
-        assertApproxEqAbs(preview, executed, 10, "P-IN-04");
+        assertEq(IERC20(address(vault)).totalSupply(), 0, "no unbacked initial shares");
+        assertEq(IERC20(token).balanceOf(alice), balanceBefore, "failed activation returns input");
     }
 
     function test_P_IN_05_zapIn_subsequent_afterFees() public {
@@ -96,7 +112,7 @@ contract UniswapV3StandardExchange_Previews_Test is TestBase_UniswapV3StandardEx
 
         vm.startPrank(alice);
         IERC20(token0).approve(address(vault), type(uint256).max);
-        vault.exchangeIn(IERC20(token0), bootstrap, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
+        _activateWithFundedToken0(bootstrap, 100 ether);
         vm.stopPrank();
 
         // Accrue fees via external round-trip swaps against the vault's positions.
@@ -158,7 +174,7 @@ contract UniswapV3StandardExchange_Previews_Test is TestBase_UniswapV3StandardEx
         vm.startPrank(alice);
         IERC20(token0).approve(address(vault), type(uint256).max);
         uint256 shares =
-            vault.exchangeIn(IERC20(token0), amountIn, IERC20(address(vault)), 0, alice, false, block.timestamp + 1);
+            _activateWithFundedToken0(amountIn, 100 ether);
 
         // Request a modest amount out; preview shares then execute.
         uint256 want0 = 1 ether;

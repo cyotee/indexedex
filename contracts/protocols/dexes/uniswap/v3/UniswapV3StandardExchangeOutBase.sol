@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {Math} from "@crane/contracts/utils/Math.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
 
@@ -41,7 +42,7 @@ abstract contract UniswapV3StandardExchangeOutBase is UniswapV3StandardExchangeC
             return 0;
         }
 
-        if (!canOpenBoundPoolOps() || !UniswapV3VaultRepo._isPositionCreated()) {
+        if (!canOpenBoundPoolOps()) {
             (uint256 reserve0, uint256 reserve1) = _totalVaultReservesForShareMath();
             uint256 reserveOut = tokenOut == _token0() ? reserve0 : reserve1;
             if (reserveOut == 0) return 0;
@@ -49,28 +50,52 @@ abstract contract UniswapV3StandardExchangeOutBase is UniswapV3StandardExchangeC
             return sharesRequired > totalShares ? totalShares : sharesRequired;
         }
 
+        // A one-asset sleeve has a linear withdrawal quote and needs no pool search.
+        if (_getPositionLiquidityFromPool() == 0) {
+            (uint256 free0, uint256 free1) = _freeBalancesForShareMath();
+            bool token0 = tokenOut == _token0();
+            if ((token0 ? free1 : free0) == 0) {
+                uint256 reserve = token0 ? free0 : free1;
+                if (desiredAmountOut >= reserve) return totalShares;
+                return _bufferedWithdrawalShares(
+                    Math.mulDiv(desiredAmountOut, totalShares, reserve, Math.Rounding.Ceil), totalShares
+                );
+            }
+        }
+
         uint256 low = 1;
         uint256 high = totalShares;
+        uint256 below;
+        uint256 above = _quoteZapOutAmount(tokenOut, high, totalShares);
+        if (above < desiredAmountOut) return totalShares;
+        uint256 probes;
 
         while (low < high) {
             uint256 mid = low + (high - low) / 2;
+            // Interpolate within forward-verified bounds before falling back to
+            // bisection. Both paths retain the minimum sufficient share amount.
+            if (above > below && probes < 8) {
+                mid = low - 1 + Math.mulDiv(desiredAmountOut - below, high - low + 1, above - below);
+                mid = Math.max(low, Math.min(mid, high - 1));
+                ++probes;
+            }
             uint256 amountOut = _quoteZapOutAmount(tokenOut, mid, totalShares);
             if (amountOut >= desiredAmountOut) {
                 high = mid;
+                above = amountOut;
             } else {
                 low = mid + 1;
+                below = amountOut;
             }
         }
 
-        if (high < totalShares) {
-            uint256 buffer = high / 100;
-            if (buffer == 0) {
-                buffer = 1;
-            }
-            uint256 buffered = high + buffer;
-            return buffered > totalShares ? totalShares : buffered;
-        }
-        return high;
+        return _bufferedWithdrawalShares(high, totalShares);
+    }
+
+    function _bufferedWithdrawalShares(uint256 shares, uint256 supply) private pure returns (uint256) {
+        if (shares >= supply) return supply;
+        uint256 buffer = Math.max(shares / 100, 1);
+        return buffer > supply - shares ? supply : shares + buffer;
     }
 
     function _quoteZapOutAmount(address tokenOut, uint256 sharesBurned, uint256 totalShares)
@@ -83,8 +108,8 @@ abstract contract UniswapV3StandardExchangeOutBase is UniswapV3StandardExchangeC
         amount0 += (free0 * sharesBurned) / totalShares;
         amount1 += (free1 * sharesBurned) / totalShares;
         if (tokenOut == _token0()) {
-            return amount0 + (amount1 > 0 ? _quoteSwap(_token1(), _token0(), amount1) : 0);
+            return amount0 + (amount1 > 0 ? _quoteSwapAfterWithdrawal(amount1, false, sharesBurned, totalShares) : 0);
         }
-        return amount1 + (amount0 > 0 ? _quoteSwap(_token0(), _token1(), amount0) : 0);
+        return amount1 + (amount0 > 0 ? _quoteSwapAfterWithdrawal(amount0, true, sharesBurned, totalShares) : 0);
     }
 }

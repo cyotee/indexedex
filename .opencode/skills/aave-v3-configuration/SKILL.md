@@ -390,6 +390,6 @@ event ReserveInterestRateDataChanged(address indexed asset, address indexed stra
 
 - `src/contracts/protocol/pool/PoolConfigurator.sol` - Configuration contract
 - `src/contracts/protocol/pool/DefaultReserveInterestRateStrategyV2.sol` - Interest rate strategy
-- `@crane/contracts/external/aave-v3-origin/contracts/protocol/libraries/configuration/ReserveConfiguration.sol` - Bitmap library
+- `src/contracts/protocol/libraries/configuration/ReserveConfiguration.sol` - Bitmap library
 - `src/contracts/protocol/libraries/logic/ConfiguratorLogic.sol` - Configuration logic
 - `src/contracts/protocol/libraries/types/ConfiguratorInputTypes.sol` - Input types

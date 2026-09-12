@@ -1,0 +1,413 @@
+{
+  "recorded_at_utc": "2026-09-11T12:15:14.415643+00:00",
+  "provenance": {
+    "recorded_at_utc": "2026-09-11T12:15:14.318938+00:00",
+    "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+    "source_and_config_sha256": "187b03242b92380b8696be84a5d3f55a74ba4a140012b67820a4bee70cd7b2fe",
+    "source_and_config_files": 4817,
+    "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+    "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+    "crane_tracked_contract_and_config_diff_sha256": "3bb0f52c1183f2be28ee8a63fab300170f65e989720b5048e21da9c61028cc4d",
+    "crane_source_and_config_sha256": "b45a057611f782040ee29f1fddbbcc8eeba01def2c9341ef01c6bb65f685e123",
+    "crane_source_and_config_files": 14819,
+    "dependency_scope": "Crane Solidity tree, including untracked Solidity and nested vendored libraries/tests, plus Crane Foundry config. Final compiler metadata separately verifies every imported source closure.",
+    "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+    "machine": "macOS-26.6.2-x86_64-i386-64bit",
+    "architecture": "x86_64",
+    "logical_cpus": 16,
+    "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+  },
+  "status": "PASS_REUSED_IDENTICAL_VISUAL_EVIDENCE",
+  "renderer_test": "DETFFundedBondMetadataTest.test_exportRepresentativeRendererArtifacts",
+  "current_runtime_log": "implementation-hermetic-test.log",
+  "prior_visual_review": "bond-artwork/rendered/visual-check.json",
+  "method": "Reuse visual review only when the current Solidity exports are byte-identical.",
+  "fixtures": [
+    {
+      "fixture": "new",
+      "svg_sha256": "55a9894aea187e83ff993a3512119662e6a6358ee7bec39b5f5d5d09b5674ca9",
+      "json_sha256": "979262dcc434f942c26677959033c31e8d5214b414a65593ceee1ae1cb815ef0",
+      "matches_reviewed_output": true,
+      "prior_browser_loaded": true,
+      "self_contained_svg": true,
+      "traits": [
+        {
+          "trait_type": "DETF name",
+          "value": "Basket <&\" example"
+        },
+        {
+          "trait_type": "DETF symbol",
+          "value": "BASKET"
+        },
+        {
+          "trait_type": "Role",
+          "value": "Staked DETF bond"
+        },
+        {
+          "trait_type": "Purchased DETF",
+          "value": "100.000000000"
+        },
+        {
+          "trait_type": "Remaining DETF principal",
+          "value": "100.000000000"
+        },
+        {
+          "trait_type": "Claimed DETF principal",
+          "value": "0.000000000"
+        },
+        {
+          "trait_type": "Claimable principal sDETF",
+          "value": "0.000000000"
+        },
+        {
+          "trait_type": "Claimable rewards sDETF",
+          "value": "0.000000000"
+        },
+        {
+          "trait_type": "Total claimable sDETF",
+          "value": "0.000000000"
+        },
+        {
+          "trait_type": "Vesting start",
+          "display_type": "date",
+          "value": 1000
+        },
+        {
+          "trait_type": "Vesting end",
+          "display_type": "date",
+          "value": 1100
+        },
+        {
+          "trait_type": "Vesting status",
+          "value": "Vesting"
+        },
+        {
+          "trait_type": "Seconds remaining",
+          "value": "100"
+        }
+      ]
+    },
+    {
+      "fixture": "halfway",
+      "svg_sha256": "6b81d9f8b1f4cfe707fd219eb9bfda298961bee88e962584175eca59bb30875e",
+      "json_sha256": "a30b7fd7434acd40fdabdecb0c838d95ba14dd9c06c7f977e1db305ef9eed4d6",
+      "matches_reviewed_output": true,
+      "prior_browser_loaded": true,
+      "self_contained_svg": true,
+      "traits": [
+        {
+          "trait_type": "DETF name",
+          "value": "Basket <&\" example"
+        },
+        {
+          "trait_type": "DETF symbol",
+          "value": "BASKET"
+        },
+        {
+          "trait_type": "Role",
+          "value": "Staked DETF bond"
+        },
+        {
+          "trait_type": "Purchased DETF",
+          "value": "100.000000000"
+        },
+        {
+          "trait_type": "Remaining DETF principal",
+          "value": "100.000000000"
+        },
+        {
+          "trait_type": "Claimed DETF principal",
+          "value": "0.000000000"
+        },
+        {
+          "trait_type": "Claimable principal sDETF",
+          "value": "50.000000000"
+        },
+        {
+          "trait_type": "Claimable rewards sDETF",
+          "value": "10.000000000"
+        },
+        {
+          "trait_type": "Total claimable sDETF",
+          "value": "60.000000000"
+        },
+        {
+          "trait_type": "Vesting start",
+          "display_type": "date",
+          "value": 1000
+        },
+        {
+          "trait_type": "Vesting end",
+          "display_type": "date",
+          "value": 1100
+        },
+        {
+          "trait_type": "Vesting status",
+          "value": "Vesting"
+        },
+        {
+          "trait_type": "Seconds remaining",
+          "value": "50"
+        }
+      ]
+    },
+    {
+      "fixture": "principal-and-rewards-claimed",
+      "svg_sha256": "4f2f9d3ef8af4af6b1dff3c833b4799e38b12624a6b8459303604c679eecbad1",
+      "json_sha256": "4a2f27aef3a337aae4bee9a028cb7db789859088984c8585dc1c7ccc5a8fd8e9",
+      "matches_reviewed_output": true,
+      "prior_browser_loaded": true,
+      "self_contained_svg": true,
+      "traits": [
+        {
+          "trait_type": "DETF name",
+          "value": "Basket <&\" example"
+        },
+        {
+          "trait_type": "DETF symbol",
+          "value": "BASKET"
+        },
+        {
+          "trait_type": "Role",
+          "value": "Staked DETF bond"
+        },
+        {
+          "trait_type": "Purchased DETF",
+          "value": "100.000000000"
+        },
+        {
+          "trait_type": "Remaining DETF principal",
+          "value": "50.000000000"
+        },
+        {
+          "trait_type": "Claimed DETF principal",
+          "value": "50.000000000"
+        },
+        {
+          "trait_type": "Claimable principal sDETF",
+          "value": "0.000000000"
+        },
+        {
+          "trait_type": "Claimable rewards sDETF",
+          "value": "0.000000000"
+        },
+        {
+          "trait_type": "Total claimable sDETF",
+          "value": "0.000000000"
+        },
+        {
+          "trait_type": "Vesting start",
+          "display_type": "date",
+          "value": 1000
+        },
+        {
+          "trait_type": "Vesting end",
+          "display_type": "date",
+          "value": 1100
+        },
+        {
+          "trait_type": "Vesting status",
+          "value": "Vesting"
+        },
+        {
+          "trait_type": "Seconds remaining",
+          "value": "50"
+        }
+      ]
+    },
+    {
+      "fixture": "reward-only-claimed",
+      "svg_sha256": "bd87aa3f227a46e7452ab5f9ba80f738f91af29ce5d2d2a6ed8a761beb1f641f",
+      "json_sha256": "4e8401be9c2202604523073bc0d9a58b338e5daa49302d684b5e1e61b22a869e",
+      "matches_reviewed_output": true,
+      "prior_browser_loaded": true,
+      "self_contained_svg": true,
+      "traits": [
+        {
+          "trait_type": "DETF name",
+          "value": "Basket <&\" example"
+        },
+        {
+          "trait_type": "DETF symbol",
+          "value": "BASKET"
+        },
+        {
+          "trait_type": "Role",
+          "value": "Staked DETF bond"
+        },
+        {
+          "trait_type": "Purchased DETF",
+          "value": "100.000000000"
+        },
+        {
+          "trait_type": "Remaining DETF principal",
+          "value": "100.000000000"
+        },
+        {
+          "trait_type": "Claimed DETF principal",
+          "value": "0.000000000"
+        },
+        {
+          "trait_type": "Claimable principal sDETF",
+          "value": "50.000000000"
+        },
+        {
+          "trait_type": "Claimable rewards sDETF",
+          "value": "0.000000000"
+        },
+        {
+          "trait_type": "Total claimable sDETF",
+          "value": "50.000000000"
+        },
+        {
+          "trait_type": "Vesting start",
+          "display_type": "date",
+          "value": 1000
+        },
+        {
+          "trait_type": "Vesting end",
+          "display_type": "date",
+          "value": 1100
+        },
+        {
+          "trait_type": "Vesting status",
+          "value": "Vesting"
+        },
+        {
+          "trait_type": "Seconds remaining",
+          "value": "50"
+        }
+      ]
+    },
+    {
+      "fixture": "fully-vested",
+      "svg_sha256": "98e92f43fa741ab697aacc34ad6abd72b3c6fa725ffce9ac19b369bcf3aa729c",
+      "json_sha256": "3f1abd12b1f4ed27172e0a27cbadc8c91ec4504ecdbbd912131ba33cfa342163",
+      "matches_reviewed_output": true,
+      "prior_browser_loaded": true,
+      "self_contained_svg": true,
+      "traits": [
+        {
+          "trait_type": "DETF name",
+          "value": "Basket <&\" example"
+        },
+        {
+          "trait_type": "DETF symbol",
+          "value": "BASKET"
+        },
+        {
+          "trait_type": "Role",
+          "value": "Staked DETF bond"
+        },
+        {
+          "trait_type": "Purchased DETF",
+          "value": "100.000000000"
+        },
+        {
+          "trait_type": "Remaining DETF principal",
+          "value": "100.000000000"
+        },
+        {
+          "trait_type": "Claimed DETF principal",
+          "value": "0.000000000"
+        },
+        {
+          "trait_type": "Claimable principal sDETF",
+          "value": "100.000000000"
+        },
+        {
+          "trait_type": "Claimable rewards sDETF",
+          "value": "10.000000000"
+        },
+        {
+          "trait_type": "Total claimable sDETF",
+          "value": "110.000000000"
+        },
+        {
+          "trait_type": "Vesting start",
+          "display_type": "date",
+          "value": 1000
+        },
+        {
+          "trait_type": "Vesting end",
+          "display_type": "date",
+          "value": 1100
+        },
+        {
+          "trait_type": "Vesting status",
+          "value": "Fully vested"
+        },
+        {
+          "trait_type": "Seconds remaining",
+          "value": "0"
+        }
+      ]
+    },
+    {
+      "fixture": "role-0",
+      "svg_sha256": "6b8e9652c43c063f7402fa3d86962d8e5078961df00b4c6556a430bb7ab0bee8",
+      "json_sha256": "25c559cb3f541c8e9dff6ee32415a28aa3782e4fb3bff88cec012cd497268298",
+      "matches_reviewed_output": true,
+      "prior_browser_loaded": true,
+      "self_contained_svg": true,
+      "traits": [
+        {
+          "trait_type": "DETF name",
+          "value": "Example basket"
+        },
+        {
+          "trait_type": "DETF symbol",
+          "value": "DETF"
+        },
+        {
+          "trait_type": "Role",
+          "value": "Protocol reserve"
+        }
+      ]
+    },
+    {
+      "fixture": "role-1",
+      "svg_sha256": "2d30e77131352a70b6e3f0051d83e5fa11d4180b43fe25975760dcf1516f4a65",
+      "json_sha256": "e084d5a2169efcae9ea7301dc52941e6304910d3c601969c077b18bc8e6d3dd7",
+      "matches_reviewed_output": true,
+      "prior_browser_loaded": true,
+      "self_contained_svg": true,
+      "traits": [
+        {
+          "trait_type": "DETF name",
+          "value": "Example basket"
+        },
+        {
+          "trait_type": "DETF symbol",
+          "value": "DETF"
+        },
+        {
+          "trait_type": "Role",
+          "value": "Protocol fee recipient"
+        }
+      ]
+    },
+    {
+      "fixture": "role-2",
+      "svg_sha256": "2c5c7c4a6387b7a906c568f10f3324236435ec0570b9d81e28078ccf95be34e0",
+      "json_sha256": "0e057378111fef5e47106f4107fb5dbe9b1f0065f919fca2f0794fa51dbbd451",
+      "matches_reviewed_output": true,
+      "prior_browser_loaded": true,
+      "self_contained_svg": true,
+      "traits": [
+        {
+          "trait_type": "DETF name",
+          "value": "Example basket"
+        },
+        {
+          "trait_type": "DETF symbol",
+          "value": "DETF"
+        },
+        {
+          "trait_type": "Role",
+          "value": "Creator recipient"
+        }
+      ]
+    }
+  ]
+}

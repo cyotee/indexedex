@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 import {Vm} from "forge-std/Vm.sol";
 import {VM_ADDRESS} from "@crane/contracts/constants/FoundryConstants.sol";
@@ -8,20 +9,8 @@ import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
-import {
-    EtherFiWeETHStandardExchangeInFacet
-} from "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeInFacet.sol";
-import {
-    EtherFiWeETHStandardExchangeOutFacet
-} from "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeOutFacet.sol";
-import {EtherFiWeETHMarkerFacet} from "contracts/protocols/staking/etherfi/EtherFiWeETHMarkerFacet.sol";
-import {EtherFiWeETHRebalanceFacet} from "contracts/protocols/staking/etherfi/EtherFiWeETHRebalanceFacet.sol";
-import {
-    IEtherFiWeETHStandardExchangeDFPkg
-} from "contracts/protocols/staking/etherfi/interfaces/IEtherFiWeETHStandardExchangeDFPkg.sol";
-import {
-    EtherFiWeETHStandardExchangeDFPkg
-} from "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeDFPkg.sol";
+
+import {IEtherFiWeETHStandardExchangeDFPkg} from "contracts/protocols/staking/etherfi/interfaces/IEtherFiWeETHStandardExchangeDFPkg.sol";
 
 library EtherFiWeETH_Component_FactoryService {
     using BetterEfficientHashLib for bytes;
@@ -32,51 +21,41 @@ library EtherFiWeETH_Component_FactoryService {
         internal
         returns (IFacet instance)
     {
-        instance = create3Factory.deployFacet(
-            type(EtherFiWeETHStandardExchangeInFacet).creationCode,
-            abi.encode(type(EtherFiWeETHStandardExchangeInFacet).name)._hash()
-        );
-        vm.label(address(instance), type(EtherFiWeETHStandardExchangeInFacet).name);
+        bytes memory code = ArtifactCreationCode.creationCode("EtherFiWeETHStandardExchangeInFacet.sol:EtherFiWeETHStandardExchangeInFacet");
+        instance = create3Factory.deployFacet(code, ArtifactCreationCode.releaseSalt(abi.encode("EtherFiWeETHStandardExchangeInFacet")._hash(), code, ""));
+        vm.label(address(instance), "EtherFiWeETHStandardExchangeInFacet");
     }
 
     function deployEtherFiWeETHStandardExchangeOutFacet(ICreate3FactoryProxy create3Factory)
         internal
         returns (IFacet instance)
     {
-        instance = create3Factory.deployFacet(
-            type(EtherFiWeETHStandardExchangeOutFacet).creationCode,
-            abi.encode(type(EtherFiWeETHStandardExchangeOutFacet).name)._hash()
-        );
-        vm.label(address(instance), type(EtherFiWeETHStandardExchangeOutFacet).name);
+        bytes memory code = ArtifactCreationCode.creationCode("EtherFiWeETHStandardExchangeOutFacet.sol:EtherFiWeETHStandardExchangeOutFacet");
+        instance = create3Factory.deployFacet(code, ArtifactCreationCode.releaseSalt(abi.encode("EtherFiWeETHStandardExchangeOutFacet")._hash(), code, ""));
+        vm.label(address(instance), "EtherFiWeETHStandardExchangeOutFacet");
     }
 
     function deployEtherFiWeETHMarkerFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
-        instance = create3Factory.deployFacet(
-            type(EtherFiWeETHMarkerFacet).creationCode, abi.encode(type(EtherFiWeETHMarkerFacet).name)._hash()
-        );
-        vm.label(address(instance), type(EtherFiWeETHMarkerFacet).name);
+        bytes memory code = ArtifactCreationCode.creationCode("EtherFiWeETHMarkerFacet.sol:EtherFiWeETHMarkerFacet");
+        instance = create3Factory.deployFacet(code, ArtifactCreationCode.releaseSalt(abi.encode("EtherFiWeETHMarkerFacet")._hash(), code, ""));
+        vm.label(address(instance), "EtherFiWeETHMarkerFacet");
     }
 
     function deployEtherFiWeETHRebalanceFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
-        instance = create3Factory.deployFacet(
-            type(EtherFiWeETHRebalanceFacet).creationCode, abi.encode(type(EtherFiWeETHRebalanceFacet).name)._hash()
-        );
-        vm.label(address(instance), type(EtherFiWeETHRebalanceFacet).name);
+        bytes memory code = ArtifactCreationCode.creationCode("EtherFiWeETHRebalanceFacet.sol:EtherFiWeETHRebalanceFacet");
+        instance = create3Factory.deployFacet(code, ArtifactCreationCode.releaseSalt(abi.encode("EtherFiWeETHRebalanceFacet")._hash(), code, ""));
+        vm.label(address(instance), "EtherFiWeETHRebalanceFacet");
     }
 
     function deployEtherFiWeETHStandardExchangeDFPkg(
         IIndexedexManagerProxy indexedexManager,
         IEtherFiWeETHStandardExchangeDFPkg.PkgInit memory pkgInit
     ) internal returns (IEtherFiWeETHStandardExchangeDFPkg instance) {
-        instance = IEtherFiWeETHStandardExchangeDFPkg(
-            address(
-                IVaultRegistryDeployment(address(indexedexManager)).deployPkg(
-                    type(EtherFiWeETHStandardExchangeDFPkg).creationCode,
-                    abi.encode(pkgInit),
-                    abi.encode(type(EtherFiWeETHStandardExchangeDFPkg).name)._hash()
-                )
-            )
-        );
-        vm.label(address(instance), type(EtherFiWeETHStandardExchangeDFPkg).name);
+        bytes memory code = ArtifactCreationCode.creationCode("EtherFiWeETHStandardExchangeDFPkg.sol:EtherFiWeETHStandardExchangeDFPkg");
+        bytes memory args = abi.encode(pkgInit);
+        instance = IEtherFiWeETHStandardExchangeDFPkg(IVaultRegistryDeployment(address(indexedexManager)).deployPkg(
+            code, args, ArtifactCreationCode.releaseSalt(abi.encode("EtherFiWeETHStandardExchangeDFPkg")._hash(), code, args)
+        ));
+        vm.label(address(instance), "EtherFiWeETHStandardExchangeDFPkg");
     }
 }

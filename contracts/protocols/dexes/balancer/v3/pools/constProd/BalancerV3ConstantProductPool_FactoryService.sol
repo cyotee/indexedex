@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                   Foundry                                  */
@@ -18,18 +19,7 @@ import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamo
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 
 // Balancer V3 facets from Crane
-import {
-    BalancerV3VaultAwareFacet
-} from "@crane/contracts/protocols/dexes/balancer/v3/vault/BalancerV3VaultAwareFacet.sol";
-import {
-    BalancerV3PoolTokenFacet
-} from "@crane/contracts/protocols/dexes/balancer/v3/vault/BetterBalancerV3PoolTokenFacet.sol";
-import {
-    BalancerV3AuthenticationFacet
-} from "@crane/contracts/protocols/dexes/balancer/v3/vault/BalancerV3AuthenticationFacet.sol";
-import {
-    BalancerV3ConstantProductPoolFacet
-} from "@crane/contracts/protocols/dexes/balancer/v3/pool-constProd/BalancerV3ConstantProductPoolFacet.sol";
+
 import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
 
 /* -------------------------------------------------------------------------- */
@@ -38,10 +28,7 @@ import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IV
 
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
-import {
-    IBalancerV3ConstantProductPoolStandardVaultPkg,
-    BalancerV3ConstantProductPoolStandardVaultPkg
-} from "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPoolStandardVaultPkg.sol";
+import {IBalancerV3ConstantProductPoolStandardVaultPkg} from "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPoolStandardVaultPkg.sol";
 
 /**
  * @title BalancerV3ConstantProductPool_FactoryService
@@ -62,24 +49,24 @@ library BalancerV3ConstantProductPool_FactoryService {
 
     function deployBalancerV3VaultAwareFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
         instance = create3Factory.deployFacet(
-            type(BalancerV3VaultAwareFacet).creationCode, abi.encode(type(BalancerV3VaultAwareFacet).name)._hash()
+            ArtifactCreationCode.creationCode("BalancerV3VaultAwareFacet.sol:BalancerV3VaultAwareFacet"), abi.encode("BalancerV3VaultAwareFacet")._hash()
         );
-        vm.label(address(instance), type(BalancerV3VaultAwareFacet).name);
+        vm.label(address(instance), "BalancerV3VaultAwareFacet");
     }
 
     function deployBalancerV3PoolTokenFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
         instance = create3Factory.deployFacet(
-            type(BalancerV3PoolTokenFacet).creationCode, abi.encode(type(BalancerV3PoolTokenFacet).name)._hash()
+            ArtifactCreationCode.creationCode("BetterBalancerV3PoolTokenFacet.sol:BalancerV3PoolTokenFacet"), abi.encode("BalancerV3PoolTokenFacet")._hash()
         );
-        vm.label(address(instance), type(BalancerV3PoolTokenFacet).name);
+        vm.label(address(instance), "BalancerV3PoolTokenFacet");
     }
 
     function deployBalancerV3AuthenticationFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
         instance = create3Factory.deployFacet(
-            type(BalancerV3AuthenticationFacet).creationCode,
-            abi.encode(type(BalancerV3AuthenticationFacet).name)._hash()
+            ArtifactCreationCode.creationCode("BalancerV3AuthenticationFacet.sol:BalancerV3AuthenticationFacet"),
+            abi.encode("BalancerV3AuthenticationFacet")._hash()
         );
-        vm.label(address(instance), type(BalancerV3AuthenticationFacet).name);
+        vm.label(address(instance), "BalancerV3AuthenticationFacet");
     }
 
     function deployBalancerV3ConstantProductPoolFacet(ICreate3FactoryProxy create3Factory)
@@ -87,10 +74,10 @@ library BalancerV3ConstantProductPool_FactoryService {
         returns (IFacet instance)
     {
         instance = create3Factory.deployFacet(
-            type(BalancerV3ConstantProductPoolFacet).creationCode,
-            abi.encode(type(BalancerV3ConstantProductPoolFacet).name)._hash()
+            ArtifactCreationCode.creationCode("BalancerV3ConstantProductPoolFacet.sol:BalancerV3ConstantProductPoolFacet"),
+            abi.encode("BalancerV3ConstantProductPoolFacet")._hash()
         );
-        vm.label(address(instance), type(BalancerV3ConstantProductPoolFacet).name);
+        vm.label(address(instance), "BalancerV3ConstantProductPoolFacet");
     }
 
     /* ---------------------------------------------------------------------- */
@@ -104,13 +91,13 @@ library BalancerV3ConstantProductPool_FactoryService {
         instance = IBalancerV3ConstantProductPoolStandardVaultPkg(
             address(
                 vaultRegistry.deployPkg(
-                    type(BalancerV3ConstantProductPoolStandardVaultPkg).creationCode,
+                    ArtifactCreationCode.creationCode("BalancerV3ConstantProductPoolStandardVaultPkg.sol:BalancerV3ConstantProductPoolStandardVaultPkg"),
                     abi.encode(pkgInit),
-                    abi.encode(type(BalancerV3ConstantProductPoolStandardVaultPkg).name)._hash()
+                    abi.encode("BalancerV3ConstantProductPoolStandardVaultPkg")._hash()
                 )
             )
         );
-        vm.label(address(instance), type(BalancerV3ConstantProductPoolStandardVaultPkg).name);
+        vm.label(address(instance), "BalancerV3ConstantProductPoolStandardVaultPkg");
     }
 
     /* ---------------------------------------------------------------------- */

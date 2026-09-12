@@ -6,6 +6,7 @@ import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3
 import {TestBase_IFacet} from "@crane/contracts/factories/diamondPkg/TestBase_IFacet.sol";
 import {CraneTest} from "@crane/contracts/test/CraneTest.sol";
 
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
 import {
     UniswapV3StandardExchangeInMultiQueryFacet
@@ -31,12 +32,14 @@ contract UniswapV3StandardExchangeInMultiQueryFacet_IFacet_Test is CraneTest, Te
     }
 
     function controlFacetInterfaces() public pure override returns (bytes4[] memory controlInterfaces) {
-        controlInterfaces = new bytes4[](1);
+        controlInterfaces = new bytes4[](2);
         controlInterfaces[0] = type(IStandardExchangeInMulti).interfaceId;
+        controlInterfaces[1] = type(IStandardExchangeIn).interfaceId;
     }
 
     function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
-        controlFuncs = new bytes4[](1);
+        controlFuncs = new bytes4[](2);
         controlFuncs[0] = IStandardExchangeInMulti.previewExchangeInManyToOne.selector;
+        controlFuncs[1] = IStandardExchangeIn.previewExchangeIn.selector;
     }
 }

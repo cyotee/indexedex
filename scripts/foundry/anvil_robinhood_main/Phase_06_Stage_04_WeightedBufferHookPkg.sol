@@ -4,6 +4,8 @@ pragma solidity ^0.8.0;
 import {FixtureEconomics} from "./FixtureEconomics.sol";
 import {LaunchState} from "./LaunchState.sol";
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
@@ -32,6 +34,9 @@ library Phase_06_Stage_04_WeightedBufferHookPkg {
         IFacet hooksFacet = WeightedHookFS.deployHooksFacet(s.create3Factory);
         IWeightedHookPkg.PkgInit memory init_;
         init_.vaultRegistryDeployment = reg;
+        init_.joinQueryFacet = WeightedHookFS.deployJoinQueryFacet(s.create3Factory);
+        init_.joinFlexibleFacet = WeightedHookFS.deployJoinFlexibleFacet(s.create3Factory);
+        init_.exitQueryFacet = WeightedHookFS.deployExitQueryFacet(s.create3Factory);
         init_.vaultFeeOracleQuery = feeOracle;
         init_.joinFacet = joinFacet;
         init_.exitFacet = exitFacet;
@@ -43,10 +48,12 @@ library Phase_06_Stage_04_WeightedBufferHookPkg {
         init_.multiAssetBasicVaultFacet = s.multiAssetBasicVaultFacet;
         init_.multiAssetStandardVaultFacet = s.multiAssetStandardVaultFacet;
         init_.multiStepOwnableFacet = s.multiStepOwnableFacet;
+        bytes memory initCode_ = type(WeightedHookDFPkg).creationCode;
+        bytes memory initArgs_ = abi.encode(init_);
         s.weightedHookPkg = reg.deployPkg(
-            type(WeightedHookDFPkg).creationCode,
-            abi.encode(init_),
-            abi.encode(type(IWeightedHookPkg).name, FixtureEconomics.SALT_NS)._hash()
+            initCode_,
+            initArgs_,
+            ArtifactCreationCode.releaseSalt(abi.encode(type(IWeightedHookPkg).name, FixtureEconomics.SALT_NS)._hash(), initCode_, initArgs_)
         );
     }
 }

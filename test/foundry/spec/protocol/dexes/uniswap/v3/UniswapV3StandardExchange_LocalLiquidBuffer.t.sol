@@ -8,6 +8,7 @@ import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v3/libraries/Ti
 import {ONE_WAD} from "@crane/contracts/constants/Constants.sol";
 
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {
     TestBase_UniswapV3StandardExchange
@@ -77,7 +78,8 @@ contract UniswapV3StandardExchange_LocalLiquidBuffer_Test is TestBase_UniswapV3S
         _assertFreeWithinDeadband(0.2e18);
     }
 
-    function test_T1b_idleDeposit_token0Only_doesNotRequireSleeveAndL() public {
+    function test_T1b_subsequentSingleTokenDeposit_keepsFullRangeLiquidity() public {
+        _bootstrapDeposit(20 ether);
         uint256 amountIn = 50 ether;
         ERC20PermitMintableStub(_token0()).mint(address(this), amountIn);
         IERC20(_token0()).approve(address(vault), amountIn);
@@ -85,12 +87,11 @@ contract UniswapV3StandardExchange_LocalLiquidBuffer_Test is TestBase_UniswapV3S
             IERC20(_token0()), amountIn, IERC20(address(vault)), 0, address(this), false, _deadline()
         );
         assertGt(shares, 0, "T1b: shares");
-        (uint256 dep0, uint256 dep1) = liquid.deployedReserve();
-        // Full-range L needs both tokens; token0-only must not require 20% + in-range L.
-        assertTrue(dep0 + dep1 == 0 || liquid.actualLiquidReservePercentage(_token0()) != 0.2e18);
+        assertGt(_centerLiquidity(), 0, "T1b: full-range position retained");
     }
 
     function test_T2_blockedDeposit_sleeveNoNestedMint() public {
+        _bootstrapDeposit(20 ether);
         uint256 amountIn = 5 ether;
         address t0 = _token0();
         ERC20PermitMintableStub(t0).mint(address(lockCaller), amountIn);
@@ -106,9 +107,7 @@ contract UniswapV3StandardExchange_LocalLiquidBuffer_Test is TestBase_UniswapV3S
 
     function test_T3_publicRebalanceAfterBlockedDeposit() public {
         test_T2_blockedDeposit_sleeveNoNestedMint();
-        ERC20PermitMintableStub(_token1()).mint(address(this), 5 ether);
-        IERC20(_token1()).approve(address(vault), 5 ether);
-        vault.exchangeIn(IERC20(_token1()), 5 ether, IERC20(address(vault)), 0, address(this), false, _deadline());
+        _bootstrapDepositAmounts(5 ether, 10 ether);
         liquid.rebalanceLiquidReserve();
         _assertFreeWithinDeadband(0.2e18);
     }
@@ -168,6 +167,7 @@ contract UniswapV3StandardExchange_LocalLiquidBuffer_Test is TestBase_UniswapV3S
     }
 
     function test_T8_previewEqualsExec_freeZapIn() public {
+        _bootstrapDeposit(20 ether);
         uint256 amountIn = 3 ether;
         uint256 preview = vault.previewExchangeIn(IERC20(_token0()), amountIn, IERC20(address(vault)));
         ERC20PermitMintableStub(_token0()).mint(address(this), amountIn);
@@ -200,11 +200,14 @@ contract UniswapV3StandardExchange_LocalLiquidBuffer_Test is TestBase_UniswapV3S
         IERC20(_token0()).approve(address(vault), amount0);
         IERC20(_token1()).approve(address(vault), amount1);
         vm.stopPrank();
-        lockCaller.runExchangeIn(
-            address(vault), IERC20(_token0()), amount0, IERC20(address(vault)), 0, address(this), false, _deadline()
-        );
-        lockCaller.runExchangeIn(
-            address(vault), IERC20(_token1()), amount1, IERC20(address(vault)), 0, address(this), false, _deadline()
+        address[] memory tokens = new address[](2);
+        tokens[0] = _token0();
+        tokens[1] = _token1();
+        uint256[] memory amounts = new uint256[](2);
+        amounts[0] = amount0;
+        amounts[1] = amount1;
+        lockCaller.runExchangeInManyToOne(
+            address(vault), tokens, amounts, IERC20(address(vault)), 0, address(this), false, _deadline()
         );
         assertEq(_centerLiquidity(), 0, "T12: no L while blocked");
         liquid.rebalanceLiquidReserve();
@@ -251,17 +254,23 @@ contract UniswapV3StandardExchange_LocalLiquidBuffer_Test is TestBase_UniswapV3S
     }
 
     function _bootstrapDeposit(uint256 amountIn) internal returns (uint256 shares) {
-        ERC20PermitMintableStub(_token0()).mint(address(this), amountIn);
-        ERC20PermitMintableStub(_token1()).mint(address(this), amountIn);
-        IERC20(_token0()).approve(address(vault), amountIn);
-        IERC20(_token1()).approve(address(vault), amountIn);
-        uint256 shares0 = vault.exchangeIn(
-            IERC20(_token0()), amountIn, IERC20(address(vault)), 0, address(this), false, _deadline()
+        return _bootstrapDepositAmounts(amountIn, amountIn);
+    }
+
+    function _bootstrapDepositAmounts(uint256 amount0, uint256 amount1) internal returns (uint256 shares) {
+        ERC20PermitMintableStub(_token0()).mint(address(this), amount0);
+        ERC20PermitMintableStub(_token1()).mint(address(this), amount1);
+        IERC20(_token0()).approve(address(vault), amount0);
+        IERC20(_token1()).approve(address(vault), amount1);
+        address[] memory tokens = new address[](2);
+        tokens[0] = _token0();
+        tokens[1] = _token1();
+        uint256[] memory amounts = new uint256[](2);
+        amounts[0] = amount0;
+        amounts[1] = amount1;
+        shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
+            tokens, amounts, IERC20(address(vault)), 0, address(this), false, _deadline()
         );
-        uint256 shares1 = vault.exchangeIn(
-            IERC20(_token1()), amountIn, IERC20(address(vault)), 0, address(this), false, _deadline()
-        );
-        shares = shares0 + shares1;
         assertGt(shares, 0, "bootstrap");
     }
 

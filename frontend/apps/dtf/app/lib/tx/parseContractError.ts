@@ -71,7 +71,7 @@ export function parseContractError(err: unknown): string {
 
   // Revert data first. Wallets often label a hard revert as "not enough ETH for gas".
   if (/0x3dec0665|InsufficientTokenOut/i.test(blob)) {
-    return 'Mint could not add that token to the reserve. Bond still works. The pair-side book cannot take more of this token right now.'
+    return 'The reserve could not provide the required output. Refresh the quote and check the amount and available liquidity.'
   }
 
   if (/0x7939f424|TransferFromFailed/i.test(blob)) {
@@ -79,7 +79,7 @@ export function parseContractError(err: unknown): string {
   }
 
   if (/0x000cd769|MintingNotAllowed/i.test(blob)) {
-    return 'Mint is blocked by Policy. Synthetic price is below the mint line.'
+    return 'This deployment rejected primary minting under its price rules. Refresh the available routes.'
   }
 
   if (/0x28ccf317|ReserveNotLive/i.test(blob)) {
@@ -91,7 +91,7 @@ export function parseContractError(err: unknown): string {
   }
 
   if (/BondNotMature/i.test(blob)) {
-    return 'This bond is still locked. Rewards can be claimed; principal cannot be cashed out yet.'
+    return 'This deployment rejected an early principal claim. Check the bond vesting and claimable amounts.'
   }
 
   if (/insufficient funds|insufficient balance|exceeds balance/i.test(raw)) {

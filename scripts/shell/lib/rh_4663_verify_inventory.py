@@ -50,6 +50,9 @@ SKIP_JSON_KEYS = PIN_KEYS | {
     "uiWallet",
     "networkProfile",
     "rpcUrl",
+    "releaseIdentifier",
+    "constructorFingerprint",
+    "implFingerprint",
 }
 
 # Diamonds / factories that are not (only) in the CREATE3 facet/package registries.
@@ -86,6 +89,14 @@ JSON_NAME = {
     "multiAssetStandardVaultFacet": "MultiAssetStandardVaultFacet",
     "multiStepOwnableFacet": "MultiStepOwnableFacet",
     "operableFacet": "OperableFacet",
+    "rebasingAwareErc4626Facet": "RebasingAwareERC4626Facet",
+    "rebasingAwareSeFacet": "RebasingAwareStandardExchangeFacet",
+    "rebasingAwareSyFacet": "RebasingAwareStandardYieldFacet",
+    "rebasingAwareMetadataFacet": "RebasingAwareVaultMetadataFacet",
+    "rebasingAwareQuoteFacet": "RebasingAwareStandardExchangeQuoteFacet",
+    "rebasingAwareErc4626Pkg": "RebasingAwareERC4626DFPkg",
+    "tokenStakingFacet": "TokenStakingFacet",
+    "tokenStakingPkg": "TokenStakingDFPkg",
 }
 
 DECL_RE = re.compile(

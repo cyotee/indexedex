@@ -1,0 +1,45 @@
+{
+  "provenance": {
+    "recorded_at_utc": "2026-09-08T07:07:32.752123+00:00",
+    "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+    "source_and_config_sha256": "05ee5eb7e23a5e2151baabbcb206edf357cd0db18167e15f940db6b19d8a1f88",
+    "source_and_config_files": 4812,
+    "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+    "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+    "crane_tracked_contract_and_config_diff_sha256": "284fd75764cb255d1e527eef38fd51e65fca73e8ebb11b7465965e8dfeb2122c",
+    "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+    "machine": "macOS-26.6.2-x86_64-i386-64bit",
+    "architecture": "x86_64",
+    "logical_cpus": 16,
+    "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+  },
+  "command": [
+    "forge",
+    "build",
+    "--offline",
+    "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderFacet.sol",
+    "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderFacet.sol",
+    "contracts/vaults/standard/erc4626/ERC4626StandardExchangeInFacet.sol",
+    "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeInFacet.sol",
+    "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInQueryFacet.sol",
+    "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryFacet.sol",
+    "contracts/vaults/standard/erc4626/ERC4626StandardExchangeOutFacet.sol",
+    "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFacet.sol",
+    "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet.sol",
+    "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookJoinQueryFacet.sol",
+    "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookHooksFacet.sol",
+    "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookJoinQueryFacet.sol",
+    "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet.sol",
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositQueryFacet.sol",
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookHooksFacet.sol",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfQueryFacet.sol"
+  ],
+  "scope": "Selected provider facets only; not full build or validation",
+  "environment": {
+    "FOUNDRY_PROFILE": "default",
+    "FOUNDRY_TEST": "contracts/interfaces",
+    "FOUNDRY_SCRIPT": "contracts/interfaces"
+  },
+  "exit_code": 1,
+  "seconds": 53.64
+}

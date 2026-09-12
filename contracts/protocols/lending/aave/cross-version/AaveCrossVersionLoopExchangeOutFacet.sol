@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {NativeStandardYieldSelectors} from "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
@@ -18,14 +20,16 @@ contract AaveCrossVersionLoopExchangeOutFacet is AaveCrossVersionLoopExchangeOut
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](1);
+        interfaces = new bytes4[](2);
         interfaces[0] = type(IStandardExchangeOut).interfaceId;
+        interfaces[1] = type(IStandardizedYield).interfaceId;
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
         funcs = new bytes4[](2);
         funcs[0] = IStandardExchangeOut.previewExchangeOut.selector;
         funcs[1] = IStandardExchangeOut.exchangeOut.selector;
+        funcs = NativeStandardYieldSelectors._append(funcs);
     }
 
     function facetMetadata()

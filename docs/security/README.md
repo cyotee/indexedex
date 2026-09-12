@@ -1,5 +1,7 @@
 # IndexedEx security audit program
 
+The new [Universal DETF security audit PRD](./UNIVERSAL_DETF_SECURITY_AUDIT_PRD.md) is a draft for reviewing the universal Uniswap V4 DETF with the protocol's Single Standard Exchange Buffer Constant Product hook and its dependencies. Its deliverable is an audit report for owner review; remediation planning follows that review. The program below records the earlier audit workflow and evidence.
+
 Stage 1 review (reports only) that uses the installed audit / adversarial / CROPS / sharp-edges / spec-compliance / incident skills, then hands a work-package backlog to a Stage 2 agent that writes a **parallel remediation PRD**.
 
 | Document | Role |

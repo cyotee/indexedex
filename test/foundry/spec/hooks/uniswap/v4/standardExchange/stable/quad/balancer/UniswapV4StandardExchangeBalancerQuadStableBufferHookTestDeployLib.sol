@@ -119,6 +119,8 @@ library UniswapV4StandardExchangeBalancerQuadStableBufferHookTestDeployLib {
         init.vaultRegistryDeployment = IVaultRegistryDeployment(indexedexManager);
         init.vaultFeeOracleQuery = IVaultFeeOracleQuery(indexedexManager);
         init.liquidityFacet = PkgFactory.deployLiquidityFacet(create3Factory);
+        init.exitFacet = PkgFactory.deployExitFacet(create3Factory);
+        init.queryFacet = PkgFactory.deployQueryFacet(create3Factory);
         init.seFacet = PkgFactory.deploySeFacet(create3Factory);
         init.hooksFacet = PkgFactory.deployHooksFacet(create3Factory);
         init.erc20Facet = vf.erc20Facet;

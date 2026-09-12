@@ -27,6 +27,7 @@ import {TestBase_UniswapV4Detf} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {SimpleYieldERC4626} from "contracts/test/stubs/SimpleYieldERC4626.sol";
+import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 
 /// @dev Non-SUT hook-shape harness: DETF self-leg plus a pair with `standardExchangeOf == 0`.
 contract BarePairHookHarness {
@@ -112,14 +113,7 @@ abstract contract UniswapV4Detf_IoTablesGoldBase is TestBase_UniswapV4Detf {
 
         uint256 userBefore = IERC20(custom_).balanceOf(detfUser);
         vm.startPrank(detfUser);
-        uint256 minted_ = info.mint(
-            IERC20(address(pairToken)),
-            5 ether,
-            0,
-            detfUser,
-            false,
-            block.timestamp + 1 hours
-        );
+        uint256 minted_ = IStandardExchangeIn(address(info)).exchangeIn(IERC20(address(pairToken)), 5 ether, IERC20(address(info)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(minted_, 0, "custom mint");
         assertEq(IERC20(custom_).balanceOf(detfUser) - userBefore, minted_, "user DETF");
@@ -176,20 +170,24 @@ abstract contract UniswapV4Detf_IoTablesGoldBase is TestBase_UniswapV4Detf {
         uint256 swapQuote_ = IUniswapV4SeBufferHook(reserveHook).previewSwapExactIn(
             address(pairToken), detf, boosted_
         );
-        (uint256 grossPred_, uint256 userPred_,) = detfInfo.previewMint(IERC20(se), shareAmt_);
-        assertEq(grossPred_, swapQuote_, "Gross = previewSwapExactIn(pair, detf, pairEq*(1+p))");
+        uint256 userPred_ = IStandardExchangeIn(detf).previewExchangeIn(IERC20(se), shareAmt_, IERC20(detf));
+        uint256 expected_;
+        if (detfInfo.isMintingAllowed(IERC20(se))) expected_ = Math.mulDiv(swapQuote_, ONE_WAD - p_, ONE_WAD);
+        else {
+            uint256 checkpoint_ = vm.snapshotState();
+            vm.prank(detfUser);
+            uint256 actualPair_ = IStandardExchangeIn(se).exchangeIn(
+                IERC20(se), shareAmt_, IERC20(address(pairToken)), pairEq_, detfUser, false, block.timestamp
+            );
+            expected_ = IUniswapV4SeBufferHook(reserveHook).previewSwapExactIn(address(pairToken), detf, actualPair_);
+            assertTrue(vm.revertToStateAndDelete(checkpoint_));
+        }
+        assertEq(userPred_, expected_, "SE share conversion feeds the selected primary or swap route");
         assertGt(userPred_, 0, "user preview");
 
         uint256 detfBefore_ = IERC20(detf).balanceOf(detfUser);
         vm.startPrank(detfUser);
-        uint256 userDetf_ = detfInfo.mint(
-            IERC20(se),
-            shareAmt_,
-            0,
-            detfUser,
-            false,
-            block.timestamp + 1 hours
-        );
+        uint256 userDetf_ = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(se), shareAmt_, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertEq(userDetf_, userPred_, "preview==exec");
         assertEq(IERC20(detf).balanceOf(detfUser) - detfBefore_, userDetf_, "user DETF");
@@ -240,14 +238,8 @@ abstract contract UniswapV4Detf_IoTablesGoldBase is TestBase_UniswapV4Detf {
         assertEq(loupe_.facetAddress(IDetf.pairToken.selector), address(0), "no pairToken()");
         assertEq(loupe_.facetAddress(IDetf.rateAsset.selector), address(0), "no rateAsset()");
         assertEq(loupe_.facetAddress(IDetf.underlyingVault.selector), address(0), "no underlyingVault()");
-        assertTrue(
-            loupe_.facetAddress(IDetf.claimLiquidity.selector) != address(0),
-            "claimLiquidity cut"
-        );
-        assertTrue(
-            loupe_.facetAddress(IDetf.previewClaimLiquidity.selector) != address(0),
-            "previewClaimLiquidity cut"
-        );
+        assertEq(loupe_.facetAddress(IDetf.claimLiquidity.selector), address(0), "retired LP claim selector absent");
+        assertEq(loupe_.facetAddress(IDetf.previewClaimLiquidity.selector), address(0), "retired LP claim selector absent");
     }
 
     /// @notice T7.21: Seed a non-joinable leftover; mint still succeeds; public `sweepDust` no-ops or clears joinable dust.
@@ -256,14 +248,7 @@ abstract contract UniswapV4Detf_IoTablesGoldBase is TestBase_UniswapV4Detf {
         junk_.mint(detf, 5 ether);
         _firstBond(80 ether);
         vm.startPrank(detfUser);
-        uint256 minted_ = detfInfo.mint(
-            IERC20(address(pairToken)),
-            10 ether,
-            0,
-            detfUser,
-            false,
-            block.timestamp + 1 hours
-        );
+        uint256 minted_ = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(minted_, 0, "mint despite non-joinable leftover");
         assertEq(junk_.balanceOf(detf), 5 ether, "junk leftover remains");
@@ -280,7 +265,6 @@ abstract contract UniswapV4Detf_IoTablesGoldBase is TestBase_UniswapV4Detf {
     /// @dev Hook only (predicted DETF etched then cleared). Caller sets Custom tables on `args` first.
     function _deployCpHookOnly(IUniswapV4Detf.PkgArgs memory args) internal virtual returns (address predicted_) {
         predicted_ = _predictDetf(args);
-        vm.etch(predicted_, address(pairToken).code);
         IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs memory hArgs =
             IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs({
                 poolManager: address(pm),
@@ -288,6 +272,8 @@ abstract contract UniswapV4Detf_IoTablesGoldBase is TestBase_UniswapV4Detf {
                 standardExchange: se,
                 pairToken: address(pairToken),
                 rawToken: predicted_,
+                pairTokenDecimals: HookPkgArgsDecimalsLib.tokenDec(address(pairToken)),
+                rawTokenDecimals: predicted_.code.length == 0 ? uint8(9) : HookPkgArgsDecimalsLib.tokenDec(predicted_),
                 ownerOnlyLiquidity: true,
                 owner: predicted_
             });
@@ -296,7 +282,6 @@ abstract contract UniswapV4Detf_IoTablesGoldBase is TestBase_UniswapV4Detf {
         IUniswapV4HookStagedPairInit init = IUniswapV4HookStagedPairInit(reserveHook);
         init.deployPair(predicted_, address(pairToken));
         require(init.finalizeInitialization(), "finalize");
-        vm.etch(predicted_, "");
         args.hook = reserveHook;
     }
 

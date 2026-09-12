@@ -1,0 +1,25 @@
+{
+  "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+  "coverage": "Pons native and payment-decimal fixtures use shared actual funded claim/unstake/custody controls, retain real reserve/SE allowance checks and branch-aware burn supply. Weighted Morpho lifecycle uses gold funded mature-claim helper with actual prior mint/burn retained.",
+  "files": [
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se.t.sol",
+      "before_sha256": "e8e1d642f144c0c16564be321631e0bc631ab9276382b5cea87352f860cb7c8a",
+      "after_sha256": "b16d28fdf46128fa223efe35cfa892c5d3884b32d631bf321a9d54317b44971e"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Lifecycle_Decimals.sol",
+      "before_sha256": "7347493e677e0c3c3486159a35b9edc74b145a61eefaf14911e9db6e353f6476",
+      "after_sha256": "64d143ab8237613494ae48108c36bff0a8e22319709156266a44c5a096d4582a"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_MorphoBlueSe.t.sol",
+      "before_sha256": "5c238b41d833643f1c3c3fbc9250c3ad1d15b7f1af0d4a96bbc58987da9d03ef",
+      "after_sha256": "d9ce02c754f58234f3acc1cb8633e1b649be12927dd5bad9c79baf215b16ad5a"
+    }
+  ],
+  "historical_preparation_status": "prepared; Solidity unchanged",
+  "application_record": "v4-remaining-provider-claim-migration.json",
+  "current_status_source": "current-implementation-queue.json and acceptance-progress.json; later edits and validation can supersede the original application hashes.",
+  "pending_owner_approval": false
+}

@@ -1,0 +1,37 @@
+{
+  "status": "applied; tests and build validation pending",
+  "rows": [
+    {
+      "source": "contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoopExchangeBase.sol",
+      "before_sha256": "0c564ef3695f1f82abaaaf89ba5cc089f6da1226daf340d9f39eb9fd0f71c9c8",
+      "after_sha256": "99cd94eca8857716466416596b647347f3581df5fb2eb3dc72dbb87d872e816a"
+    },
+    {
+      "source": "contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoopExchangeInTarget.sol",
+      "before_sha256": "2b83199861c18bc6cfee730fbd4c6dd67b6f759d0370967c84b50a8de7dbe3ab",
+      "after_sha256": "81d0cf5bdcb616c7def30202288df6bd15687f81f0c4f28fce4d217e7bfa30fd"
+    },
+    {
+      "source": "contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoopExchangeOutTarget.sol",
+      "before_sha256": "bba83db78ae141849cf7bad3bfc2b60f887dcafb3d363a29b191e1ab5a73326d",
+      "after_sha256": "9f07c1aaeb015b579ccfc7b1234e4e835409bcbe076bc3550ee78e6a4e9c9ade"
+    },
+    {
+      "source": "contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoopExchangeOutFacet.sol",
+      "before_sha256": "15a991faceb124bdf0f29161c924bb063bf2f73756f915456dc0c815e2b4f571",
+      "after_sha256": "cae76f6b2d0b822051297d62e14b89e953a3414672aec2cdee2f54d628b5a7f9"
+    },
+    {
+      "source": "contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoopDFPkg.sol",
+      "before_sha256": "8392b327eaab349c64ae4b33476838e6788247d9bb9a78cc730d8322443dea3c",
+      "after_sha256": "543ba7d920fec1f422de1a29aa20136f11259f1e832b1205529569def251c1d2"
+    },
+    {
+      "source": "contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoopRebalanceTarget.sol",
+      "before_sha256": "a7a9e73208b45d77315230817adce0fc3215117dc4b56e5de7413029cec24f88",
+      "after_sha256": "ec4f97dbe265699a1e2d7fff6bc0f788b72cb4cf2752b1f93a15c5f373439208"
+    }
+  ],
+  "preserved": "18-decimal shares, actual V3/V4 NAV, A-first issuance, V3 freeable collateral limit, no withdrawal borrowing, existing fee behavior.",
+  "new": "Canonical exact-input share redemption, native SY, shared exchange/rebalance lock, positive exact-output share rounding and actual withdrawal funding checks."
+}

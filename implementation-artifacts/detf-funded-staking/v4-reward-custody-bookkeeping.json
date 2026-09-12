@@ -1,0 +1,13 @@
+{
+  "finding": "After replacing retired compoundProtocolRewards with synchronizeRewards, five preserved I1/I2/I3 pretransfer regressions showed existing idle balances were no longer recorded as reserved. The normal unassigned-surplus pretransfer rule itself was unchanged.",
+  "fix": "After outer reward synchronization, record current held balances through the existing reserve-sync helper. Nested callbacks while the DETF is locked still return without modifying in-progress input accounting. No LP join or new selector.",
+  "tests": "Both existing adversarial bases explicitly compare recorded reserves with held idle inventory and prove protocol LP is unchanged before exercising no-transfer/short-transfer attacks.",
+  "validation": {
+    "evidence": "v4-bookkeeping-policy-376-green-*",
+    "passed": 376,
+    "failed": 0,
+    "suites": 50,
+    "build_seconds": 373.279,
+    "test_command_seconds": 83.384
+  }
+}

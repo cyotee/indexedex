@@ -1,0 +1,60 @@
+{
+  "status": "PASS_UNCHANGED_NON_REHEARSAL_SOURCE_CLOSURES",
+  "recorded_at_utc": "2026-09-11T05:59:15.766188+00:00",
+  "provenance": {
+    "recorded_at_utc": "2026-09-11T05:59:12.104992+00:00",
+    "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+    "source_and_config_sha256": "be6990fe2e95aec308d401ad16720175a83d64eafbf0c805f174c8885f1ae22e",
+    "source_and_config_files": 4816,
+    "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+    "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+    "crane_tracked_contract_and_config_diff_sha256": "3bb0f52c1183f2be28ee8a63fab300170f65e989720b5048e21da9c61028cc4d",
+    "crane_source_and_config_sha256": "b45a057611f782040ee29f1fddbbcc8eeba01def2c9341ef01c6bb65f685e123",
+    "crane_source_and_config_files": 14819,
+    "dependency_scope": "Crane Solidity tree, including untracked Solidity and nested vendored libraries/tests, plus Crane Foundry config. Final compiler metadata separately verifies every imported source closure.",
+    "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+    "machine": "macOS-26.6.2-x86_64-i386-64bit",
+    "architecture": "x86_64",
+    "logical_cpus": 16,
+    "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+  },
+  "prior_provenance": {
+    "recorded_at_utc": "2026-09-11T05:40:01.008573+00:00",
+    "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+    "source_and_config_sha256": "231e505d8379c41deb1905d933d32e2b9974f358f84bce169d056f07d4384c75",
+    "source_and_config_files": 4816,
+    "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+    "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+    "crane_tracked_contract_and_config_diff_sha256": "3bb0f52c1183f2be28ee8a63fab300170f65e989720b5048e21da9c61028cc4d",
+    "crane_source_and_config_sha256": "b45a057611f782040ee29f1fddbbcc8eeba01def2c9341ef01c6bb65f685e123",
+    "crane_source_and_config_files": 14819,
+    "dependency_scope": "Crane Solidity tree, including untracked Solidity and nested vendored libraries/tests, plus Crane Foundry config. Final compiler metadata separately verifies every imported source closure.",
+    "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+    "machine": "macOS-26.6.2-x86_64-i386-64bit",
+    "architecture": "x86_64",
+    "logical_cpus": 16,
+    "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+  },
+  "changed_sources": [
+    {
+      "path": "test/foundry/fork/robinhood_4663/RobinhoodReleaseRehearsal.t.sol",
+      "before_sha256": "181c03d1a26663816608c136dd681bbd5593d3d8ec6a5a65bc92007abd8d19ec",
+      "current_sha256": "225b088177e01dd994e60bd785b36b81013bb00799c138039233ef9a95a758eb"
+    }
+  ],
+  "reverse_import_closure": [
+    "test/foundry/fork/robinhood_4663/RobinhoodReleaseRehearsal.t.sol"
+  ],
+  "files_verified": 19635,
+  "production_contract_changes": 0,
+  "hermetic_test_changes": 0,
+  "script_changes": 0,
+  "dependency_changes": 0,
+  "compiler_configuration_changes": 0,
+  "source_inventory": "production-readiness/before-rehearsal-import-fix/release-source-manifest.json",
+  "change": "Add the missing named interface import used by retained fee-LP assertions; no assertion, gas bound, test case, route, or production code changes.",
+  "required_renewal": [
+    "Compile and execute the entire 39-case local lifecycle; failed harness compilation is preserved and not reused."
+  ],
+  "earlier_bridge": "production-readiness/pr08-script-only-evidence-reuse.json"
+}
