@@ -21,7 +21,7 @@ The IndexedEx link opens in the current tab; the @Indexedex X link opens in a ne
 | Ignored Build Step | `bash ../../scripts/vercel-ignore-build.sh indexedex` | `bash ../../scripts/vercel-ignore-build.sh dtf` |
 | Domains | `indexedex.com` | Existing DTF domains, including `downto.finance` and `app.downto.finance` |
 
-Enable access to files outside each Root Directory for the shared source, assets and npm workspace. Output tracing is rooted at `frontend/`. Preserve symlinks when checking out the repository. Use each app's checked-in `vercel.json` without conflicting project overrides. Changes to the shared IndexedEx source or protocol package trigger builds for both projects.
+Enable access to files outside each Root Directory for the shared source, assets and npm workspace. Output tracing is rooted at the repository root so Vercel resolves each app and its shared runtime dependencies correctly. Preserve symlinks when checking out the repository. Use each app's checked-in `vercel.json` without conflicting project overrides. Changes to the shared IndexedEx source or protocol package trigger builds for both projects.
 
 ## Publishing
 
