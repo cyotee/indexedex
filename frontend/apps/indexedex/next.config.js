@@ -6,7 +6,8 @@ const dtfDevelopment = process.env.INDEXEDEX_DTF_DEV === 'true'
 const nextConfig = {
   distDir: dtfDevelopment ? '.next-dtf' : '.next',
   env: { NEXT_PUBLIC_SITE_DEPLOYMENT: dtfDevelopment ? 'dtf' : 'indexedex' },
-  experimental: { outputFileTracingRoot: path.resolve(__dirname, '../..') },
+  // Vercel resolves relativeAppDir from the repository root when packaging functions.
+  experimental: { outputFileTracingRoot: path.resolve(__dirname, '../../..') },
   transpilePackages: ['@indexedex/protocol'],
   webpack: (config) => {
     // Wallet connectors need the SDK's browser entry during SSR as well.
