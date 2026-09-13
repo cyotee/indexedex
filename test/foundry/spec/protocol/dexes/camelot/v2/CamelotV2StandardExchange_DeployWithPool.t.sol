@@ -10,7 +10,7 @@ import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20Permit
 import {
     TestBase_CamelotV2StandardExchange
 } from "contracts/protocols/dexes/camelot/v2/TestBase_CamelotV2StandardExchange.sol";
-import {ICamelotV2StandardExchangeDFPkg} from "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeDFPkg.sol";
+import {ICamelotV2StandardExchangeDFPkg} from "contracts/protocols/dexes/camelot/v2/ICamelotV2StandardExchangeDFPkg.sol";
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
 import {CamelotPair} from "@crane/contracts/protocols/dexes/camelot/v2/stubs/CamelotPair.sol";
 

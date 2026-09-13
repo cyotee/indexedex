@@ -7,7 +7,7 @@ import {VM_ADDRESS} from '@crane/contracts/constants/FoundryConstants.sol';
 import {BetterEfficientHashLib} from '@crane/contracts/utils/BetterEfficientHashLib.sol';
 
 import {IVaultRegistryDeployment} from 'contracts/interfaces/IVaultRegistryDeployment.sol';
-import {IComposedStableCommonDetfDFPkg} from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfDFPkg.sol';
+import {IComposedStableCommonDetfDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/IComposedStableCommonDetfDFPkg.sol";
 
 library ComposedStableCommonDetf_Pkg_FactoryService {
     using BetterEfficientHashLib for bytes;

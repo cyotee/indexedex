@@ -5,7 +5,7 @@ import {TestBase_AaveCrossVersionLoop_Decimals} from
     "contracts/test/bases/TestBase_AaveCrossVersionLoop_Decimals.sol";
 
 /// @notice Combo `P6_R9`: pair tokenA 6 / tokenB 9.
-contract TestBase_AaveCrossVersionLoop_P6_R9 is TestBase_AaveCrossVersionLoop_Decimals {
+abstract contract TestBase_AaveCrossVersionLoop_P6_R9 is TestBase_AaveCrossVersionLoop_Decimals {
     function _tokenADecimals() internal pure override returns (uint8) { return 6; }
     function _tokenBDecimals() internal pure override returns (uint8) { return 9; }
 }

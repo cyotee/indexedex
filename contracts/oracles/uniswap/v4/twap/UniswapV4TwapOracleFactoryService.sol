@@ -10,7 +10,7 @@ import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamo
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 
 import {IUniswapV4MultiPoolTwapOracleDFPkg} from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4MultiPoolTwapOracleDFPkg.sol";
-import {UniswapV4TwapAdapterFactory} from "contracts/oracles/uniswap/v4/twap/UniswapV4TwapAdapterFactory.sol";
+import {IUniswapV4TwapAdapterFactory} from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4TwapAdapterFactory.sol";
 
 library UniswapV4TwapOracleFactoryService {
     using BetterEfficientHashLib for bytes;
@@ -50,9 +50,9 @@ library UniswapV4TwapOracleFactoryService {
 
     function deployUniswapV4TwapAdapterFactory(ICreate3FactoryProxy create3Factory)
         internal
-        returns (UniswapV4TwapAdapterFactory instance)
+        returns (IUniswapV4TwapAdapterFactory instance)
     {
-        instance = UniswapV4TwapAdapterFactory(
+        instance = IUniswapV4TwapAdapterFactory(
             create3Factory.create3(
                 ArtifactCreationCode.creationCode("UniswapV4TwapAdapterFactory.sol:UniswapV4TwapAdapterFactory"),
                 abi.encode("UniswapV4TwapAdapterFactory")._hash()

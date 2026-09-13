@@ -7,7 +7,7 @@ import {VM_ADDRESS} from '@crane/contracts/constants/FoundryConstants.sol';
 import {ICreate3FactoryProxy} from '@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol';
 import {BetterEfficientHashLib} from '@crane/contracts/utils/BetterEfficientHashLib.sol';
 
-import {IRebasingDETFTokenDFPkg} from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenDFPkg.sol';
+import {IRebasingDETFTokenDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/IRebasingDETFTokenDFPkg.sol";
 
 library RebasingDETFToken_Pkg_FactoryService {
     using BetterEfficientHashLib for bytes;

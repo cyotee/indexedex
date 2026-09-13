@@ -11,9 +11,9 @@ import {IOperable} from "@crane/contracts/interfaces/IOperable.sol";
 import {AccessFacetFactoryService} from "@crane/contracts/access/AccessFacetFactoryService.sol";
 
 import {FeeCollectorFactoryService} from "contracts/fee/collector/FeeCollectorFactoryService.sol";
-import {IFeeCollectorDFPkg} from "contracts/fee/collector/FeeCollectorDFPkg.sol";
+import {IFeeCollectorDFPkg} from "contracts/fee/collector/IFeeCollectorDFPkg.sol";
 import {IndexedexManagerFactoryService} from "contracts/manager/IndexedexManagerFactoryService.sol";
-import {IIndexedexManagerDFPkg} from "contracts/manager/IndexedexManagerDFPkg.sol";
+import {IIndexedexManagerDFPkg} from "contracts/manager/IIndexedexManagerDFPkg.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";

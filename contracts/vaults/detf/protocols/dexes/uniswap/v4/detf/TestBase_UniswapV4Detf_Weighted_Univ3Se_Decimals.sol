@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
-import {PoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol";
 import {IUniswapV3Factory} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Factory.sol";
 import {IUniswapV3Pool} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Pool.sol";
 
@@ -34,7 +35,11 @@ abstract contract TestBase_UniswapV4Detf_Weighted_Univ3Se_Decimals is TestBase_U
         pairB = address(new MintableERC20Decimals("Pair1", "P1", _rateDecimals()));
         MintableERC20Decimals rate0 = new MintableERC20Decimals("Rate", "RATE", 18);
         MintableERC20Decimals rate1 = new MintableERC20Decimals("Rate", "RATE", 18);
-        pm = IPoolManager(address(new PoolManager(address(this))));
+        pm = IPoolManager(address(IPoolManager(create3Factory.create3WithArgs(
+            ArtifactCreationCode.creationCode(create3Factory, "PoolManager.sol:PoolManager"),
+            abi.encode(address(this)),
+            keccak256("TestBase_UniswapV4Detf_Weighted_Univ3Se_Decimals_PoolManager")
+        ))));
 
         univ3Factory = SeLib.newUniv3Factory();
         SeLib.Univ3SePkg memory v3pkg;

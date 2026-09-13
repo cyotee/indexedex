@@ -9,7 +9,7 @@ import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExch
 import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
 import {DETFFundedStakingMath as Math} from "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol";
 import {TestBase_MixedBufferMultiVaultStableDetf} from "./TestBase_MixedBufferMultiVaultStableDetf.sol";
-import {IMixedBufferMultiVaultStableDetfInfo} from "./MixedBufferMultiVaultStableDetfInfoTarget.sol";
+import {IMixedBufferMultiVaultStableDetfInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfInfo.sol";
 
 /// @notice Real decimal token books; funded package deployments and lifecycle helpers are shared.
 abstract contract TestBase_MixedBufferMultiVaultStableDetf_Decimals is

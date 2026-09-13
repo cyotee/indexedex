@@ -103,6 +103,7 @@ The local `fee-accrual-*` commands use the existing local Anvil instance and reu
 
 ```bash
 export RPC_URL=http://127.0.0.1:8545
+export DEPLOYER_ADDRESS=0x72BeA6Fa3E68EF18c87D045Aac7C4Aa5249d933B
 export FEE_ACCRUAL_CONFIG="$PWD/.scratch/fee-accrual/run.json"
 export FEE_ACCRUAL_RUN_DIR="$PWD/.scratch/fee-accrual/deployments"
 bash scripts/shell/anvil_robinhood_main.sh fee-accrual-preflight
@@ -114,9 +115,153 @@ bash scripts/shell/anvil_robinhood_main.sh fee-accrual-migrate --broadcast
 bash scripts/shell/anvil_robinhood_main.sh fee-accrual-verify
 ```
 
-The package command copies and checks existing core/common-facet/TWAP manifests, builds current artifacts, then runs only 05-01, 05-03, 06-01, 06-02, 06-04, 06-07 and 06-10. It never runs core deployment stages. All signer accounts are impersonated on Anvil; ERC20 funding must already be present. A gas-only ETH top-up is permitted for an empty signer account.
+The package command copies and checks existing core/common-facet/TWAP manifests, builds current artifacts, then runs only 05-01, 05-03, 06-01, 06-02, 06-04, 06-07 and 06-10. It never runs core deployment stages. Every fee-accrual command requires `DEPLOYER_ADDRESS`; each stage checks it against its configured manager owner, bootstrap actor or staking owner and passes it as Forge's sender. A mismatch fails instead of silently selecting another account. The selected account is impersonated only by the Anvil runner; ERC20 funding must already be present. A gas-only ETH top-up is permitted for an empty signer account.
+
+### Full public deployment, initialization and migration
+
+`fee-accrual-launch --broadcast` runs the complete dependency sequence through the
+existing public shell: validate reused core; build/deploy the seven prerequisite
+package stages; resolve their addresses from confirmed records; deploy liquidity
+and custody SEs, rate providers, weighted reserve hook, bond NFT child and DETF;
+seed liquidity; purchase the first bond; configure the migration adapter; migrate
+all staking deposits/rewards; reconcile receipts and verify completion. The
+liquidity SE seed precedes DETF construction because the provider must have a
+positive rate. The existing core and staking contracts are reused.
+
+From the repository root, with `DEPLOYER_ADDRESS` already set:
+
+```bash
+bash scripts/shell/robinhood_main.sh fee-accrual-launch --broadcast
+```
+
+The shell uses the existing Foundry sender/signing convention and resolves
+`robinhood_mainnet` from `foundry.toml`. No additional keystore or RPC environment
+variable is required. The default config is
+`scripts/foundry/anvil_robinhood_main/fee_accrual_launch.robinhood.json`, and records
+are written under `deployments/robinhood_main_fee_accrual/`. Paths are resolved
+from the repository root. Environment overrides remain optional for isolated runs.
+
+The checked-in launch config preserves the approved rehearsal economics: 60/20/20,
++10 custody decimals, 100x opening benchmarks, 10% annual closure, 0.001 WETH and
+a maximum 363 DTF total bootstrap budget. Its five unresolved package addresses
+are filled automatically from this run's confirmed package manifests, without
+changing the economic fields. The sender must already hold the bootstrap WETH
+and DTF, plus ETH for gas. These are separate from staking-held funds. Buying DTF
+from another pool is not performed by the launcher.
+
+If the sender needs the full 0.001 WETH, wrap ETH first (simulation then signed
+transaction). Do not repeat this if the sender already has enough WETH:
+
+```bash
+cast call 0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73 'deposit()' \
+  --value 0.001ether --from "$DEPLOYER_ADDRESS" --rpc-url robinhood_mainnet &&
+cast send 0x0Bd7D308f8E1639FAb988df18A8011f41EAcAD73 'deposit()' \
+  --value 0.001ether --from "$DEPLOYER_ADDRESS" --rpc-url robinhood_mainnet
+```
+
+If Stage 07-04 stops with `Liquidity seed: insufficient funding`, check the
+bootstrap actor's token balances. Native ETH does not satisfy the WETH balance
+check. For a zero WETH balance before seeding, the wrap command above funds the
+entire 0.001 WETH launch budget: Stage 07-04 consumes 0.000000001 WETH and the
+first bond consumes the remaining 0.000999999 WETH. Keep the configured DTF
+budget and ETH for gas in the same wallet; staking-held tokens are not bootstrap
+funding.
+
+After funding, resume the full launch with the original command:
+
+```bash
+bash scripts/shell/robinhood_main.sh fee-accrual-launch --broadcast
+```
+
+When the package stages and 07-01 through 07-03 have confirmed journal entries,
+the next broadcast is 07-04. Earlier deployment stages are rechecked without
+broadcasting; the remaining DETF deployment, first bond and complete staking
+migration then proceed with simulation before each broadcast. Keep the original
+run directories, configs, scripts and receipt journals. Do not use `--force`,
+delete the journal or change its hashes to resume a funding-only failure.
+
+Core manifests default to `deployments/anvil_robinhood_main`; despite the legacy
+directory name, their pinned addresses are validated against the config and live
+contracts. Set `FEE_ACCRUAL_CORE_DIR` if the maintained core records are elsewhere.
+The launcher does not run the architecture `all` command or any core creation stage.
+
+The run root contains `packages/` and `composition/`, each with its own immutable
+configuration identity and receipt journal. The resolved config is
+`packages/fee-accrual-config.resolved.json`. Every broadcast has a separate
+successful simulation and Forge's normal simulation; no `--skip-simulation` is
+used. The DETF construction stage uses the rehearsed 100% gas multiplier; other
+stages use 150%. All broadcasts use `--slow`. A failure stops the full sequence.
+Confirmed liquidity seed and first-bond stages are never replayed. Partial
+broadcast failures require receipt reconciliation before resuming.
+
+#### Recovering from the migration deadline failure
+
+The September 13 runner prepared 59 calls before Forge's RPC simulation, all
+with the same 30-minute deadline. Stage 08-07 now prepares at most four calls
+per invocation. Both shells simulate, broadcast and reconcile each batch before
+requesting the next batch from fresh live state. The configured deadline and
+slippage protection remain unchanged. A failed batch stops the command; it is
+not retried automatically.
+
+Forge was also waiting on Sourcify metadata while identifying trace addresses,
+between script execution and RPC simulation. Fee-accrual invocations now use
+`--offline` to decode traces from local artifacts without explorer lookups.
+RPC reads, normal simulation, signing and broadcast remain enabled. This requires
+the configured compiler to be installed locally (as it already is for a resumed
+deployment). See [Foundry's external trace identifier](https://github.com/foundry-rs/foundry/blob/v1.5.1/crates/evm/traces/src/identifier/external.rs).
+
+Validated on a fork at Robinhood block 62182884: all 59 migration transactions
+completed across 15 batches, receipt deltas reconciled, principal weights stayed
+unchanged, and Stage 08-08 confirmed Wrapped staking with zero remaining reserve.
+A 45-minute pause between batches confirmed fresh deadlines on continuation.
+The first corrected batch also passed normal simulation against public mainnet.
+The 34 Python runner and receipt tests passed.
+
+For a run created with the original scripts, first reconcile the reviewed script
+update, then continue migration:
+
+```bash
+bash scripts/shell/robinhood_main.sh fee-accrual-reconcile &&
+bash scripts/shell/robinhood_main.sh fee-accrual-migrate --broadcast
+```
+
+Reconciliation submits no transactions. It accepts only the exact reviewed old
+and new script hashes listed in `scripts/shell/lib/rh_4663_fee_accrual_script_update.json`,
+requires unchanged network/config/core identities, rechecks every saved receipt
+and its canonical block, and backs up each original journal before recording the
+update. It is idempotent once both journals use the current scripts. Deployment
+manifests, config hashes and confirmed stage receipts are retained.
+
+A pre-migration snapshot is provisional while staking remains open. Retrying
+before the first migration refreshes that snapshot, preserving its prior values.
+The first confirmed batch establishes the reserve and principal baseline from
+its fresh quote and matching onchain event deltas. Subsequent batches must
+reconcile against that baseline and preserve principal allocation weights.
+An unjournaled migration remains an error; changing the script identity does not
+adopt unrecorded conversions. If any transactions were partially broadcast,
+reconcile their receipts before attempting another batch.
+
+For individual steps, use `fee-accrual-packages`, `fee-accrual-prepare`, and
+`fee-accrual-migrate`, each with `--broadcast`. They default to the same package
+and composition directories used by the full launch. Prepare and migrate load
+the resolved config automatically. `fee-accrual-verify` checks completion without
+submitting transactions:
+
+```bash
+bash scripts/shell/robinhood_main.sh fee-accrual-verify
+```
+
+`DEPLOYER_ADDRESS` must equal the configured and live owner for the stage.
+The public path uses live fees, simulates before each broadcast, and reconciles
+receipts and migration events. A failed simulation, broadcast or reconciliation
+stops the sequence. Existing journals retain their source fingerprint; reconcile
+prior evidence before resuming after script changes.
+
+### Composition and bootstrap stages
 
 Prepare deploys registered SEs and rate providers, initializes the liquidity SE in 07-04 with both WETH and DTF, then deploys the three-leg weighted reserve and unified `DTF-DETF` and executes the first bond. This seed is required for the WETH route to produce a positive preview during DETF construction. Its actual token inputs are deducted from the configured total bootstrap budgets; it does not increase them. The funding actor receives the seed SE shares. WETH and DTF mint/bond/donation routes are explicit; the burn route outputs DTF through custody. Initial provider rates may be zero before the SEs hold shares; post-bootstrap validation requires positive rates. Bootstrap limits are simulated and checked afterward; the existing `bond` ABI does not accept an atomic minimum-share parameter. Do not describe that script check as an onchain slippage guarantee.
+
+Stage 08-03 deploys the deterministic bond NFT child through its registered package in a separate transaction before deploying the parent DETF. The parent reuses that child and still initializes its reserved NFTs, sDETF and both SY wrappers atomically. The stage verifies the final child binding. This keeps the parent below Robinhood's 32-million execution-gas limit without changing DETF bytecode. The runner imports `phase06_stage01_bond_nft_pkg.json` from `FEE_ACCRUAL_PACKAGE_DIR` (default: the sibling `packages` directory) if the composition directory lacks it. Use `--gas-estimate-multiplier 100` for this stage, including public execution; the local fee-accrual runner applies it automatically. The child call has an explicit 8-million-gas budget, so reducing the stage multiplier does not underfund its constructor and registry work. A larger multiplier can produce a parent transaction gas limit above the chain limit even when execution fits. Simulation remains required.
 
 Stage 08-05 deploys the owner-approved standalone `TokenStakingMigrationAdapter` with `new` and constructor arguments, reusing actual DETF and its existing static staking SY. It sets that adapter as the historical staking target while phase remains Staking, or validates an already configured adapter. It exports `phase08_stage05_staking_migration_adapter.json`; the protocol DETF address remains unchanged.
 

@@ -10,6 +10,7 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {Behavior_IFacet} from "@crane/contracts/factories/diamondPkg/Behavior_IFacet.sol";
 
 import {TestBase_RebasingAwareERC4626} from
     "contracts/protocols/staking/rebasingVault/TestBase_RebasingAwareERC4626.sol";
@@ -33,6 +34,36 @@ import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManage
 
 contract RebasingAwareERC4626_Packaging is TestBase_RebasingAwareERC4626 {
     uint256 constant MAX_RUNTIME = 24_576;
+
+    /// @notice Compare every installed function against compiler-generated ABI signatures.
+    function test_PKG02_completeFacetAbiAndLoupeMatrix() public {
+        IFacet[6] memory facets = [erc20Facet, rebasingAwareErc4626Facet, standardExchangeFacet,
+            standardYieldFacet, vaultMetadataFacet, transitionQuoteFacet];
+        for (uint256 i; i < facets.length; ++i) {
+            IFacet facet = facets[i];
+            string memory name = facet.facetName();
+            string memory artifact = vm.readFile(string.concat("out/", name, ".sol/", name, ".json"));
+            string[] memory signatures = vm.parseJsonKeys(artifact, ".methodIdentifiers");
+            bytes4[] memory expected = new bytes4[](signatures.length - 4);
+            uint256 count;
+            for (uint256 j; j < signatures.length; ++j) {
+                bytes4 selector = bytes4(keccak256(bytes(signatures[j])));
+                if (selector == IFacet.facetName.selector || selector == IFacet.facetFuncs.selector
+                    || selector == IFacet.facetInterfaces.selector || selector == IFacet.facetMetadata.selector) continue;
+                expected[count++] = selector;
+                assertEq(IDiamondLoupe(address(vault)).facetAddress(selector), address(facet), signatures[j]);
+            }
+            assertEq(count, expected.length);
+            assertTrue(Behavior_IFacet.areValid_IFacet_facetFuncs(facet, expected, facet.facetFuncs()));
+            (string memory metaName, bytes4[] memory interfaces, bytes4[] memory selectors) = facet.facetMetadata();
+            assertTrue(Behavior_IFacet.areValid_IFacet_facetMetadata(facet, metaName, interfaces, selectors));
+            for (uint256 j; j < interfaces.length; ++j) {
+                assertTrue(IERC165(address(vault)).supportsInterface(interfaces[j]));
+            }
+        }
+        assertEq(IDiamondLoupe(address(vault)).facetAddress(bytes4(0xffffffff)), address(0));
+        assertFalse(IERC165(address(vault)).supportsInterface(bytes4(0xffffffff)));
+    }
 
     function test_PKG03_registeredPackageAndVault() public view {
         assertTrue(IVaultRegistryVaultPackageQuery(address(indexedexManager)).isPackage(address(pkg)));

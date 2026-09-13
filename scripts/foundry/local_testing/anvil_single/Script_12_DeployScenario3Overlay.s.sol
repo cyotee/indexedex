@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {LocalTestingDeploymentBase} from "../shared/LocalTestingDeploymentBase.sol";
 import {ManifestEntry} from "../shared/ManifestEntry.sol";
 
@@ -12,11 +14,8 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {IVault as IBalancerVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
-import {
-    WeightedPoolFactory
-} from "@crane/contracts/external/balancer/v3/pool-weighted/contracts/WeightedPoolFactory.sol";
+import {IWeightedPoolFactory} from "contracts/interfaces/IWeightedPoolFactory.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
-import {PoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
 import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
 import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
@@ -24,7 +23,6 @@ import {LiquidityAmounts} from "@crane/contracts/protocols/dexes/uniswap/v4/libr
 import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/TickMath.sol";
 import {TokenConfig, TokenType} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/VaultTypes.sol";
 import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
-import {ERC721Facet} from "@crane/contracts/tokens/ERC721/ERC721Facet.sol";
 
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
@@ -33,15 +31,9 @@ import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExch
 import {
     IBalancerV3StandardExchangeRouterProxy
 } from "contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol";
-import {
-    IBalancerV3ConstantProductPoolStandardVaultPkg
-} from "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPoolStandardVaultPkg.sol";
-import {
-    IStandardExchangeRateProviderDFPkg
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
-import {
-    IUniswapV4StandardExchangeDFPkg
-} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol";
+import {IBalancerV3ConstantProductPoolStandardVaultPkg} from "contracts/protocols/dexes/balancer/v3/pools/constProd/IBalancerV3ConstantProductPoolStandardVaultPkg.sol";
+import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
+import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/IUniswapV4StandardExchangeDFPkg.sol";
 import {
     UniswapV4_Component_FactoryService
 } from "contracts/protocols/dexes/uniswap/v4/UniswapV4_Component_FactoryService.sol";
@@ -58,21 +50,17 @@ import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFacto
 import {DetfFacetFactoryService} from "contracts/vaults/detf/common/factory/DetfFacetFactoryService.sol";
 import {DetfComponentFactoryService} from "contracts/vaults/detf/common/factory/DetfComponentFactoryService.sol";
 import {DetfPkgFactoryService} from "contracts/vaults/detf/common/factory/DetfPkgFactoryService.sol";
-import {
-    ISingleStandardExchangeDETDFPkg
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETDFPkg.sol";
+import {ISingleStandardExchangeDETDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETDFPkg.sol";
 import {
     SingleStandardExchangeDETF_Component_FactoryService
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_Component_FactoryService.sol";
-import {
-    ISingleStandardExchangeDETFInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFInfoTarget.sol";
+import {ISingleStandardExchangeDETFInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFInfo.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/common/factory/nft/IDetfSelfNftInventoryDFPkg.sol";
-import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
-import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol";
+import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/IDETFNFTVaultDFPkg.sol";
 import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 
-import {UniswapV4LiquiditySeeder} from "../../shared/UniswapV4LiquiditySeeder.sol";
+import {IUniswapV4LiquiditySeeder} from "scripts/foundry/shared/IUniswapV4LiquiditySeeder.sol";
 
 /// @title Script_12_DeployScenario3Overlay
 /// @notice Deploys Scenario 3: SingleStandardExchangeDETF + Uni V4 SE leg + outer Balancer WETH/DETF pool.
@@ -111,7 +99,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
 
     IBalancerVault private balancerV3Vault;
     IBalancerV3StandardExchangeRouterProxy private balancerV3StandardExchangeRouter;
-    WeightedPoolFactory private weightedPoolFactory;
+    IWeightedPoolFactory private weightedPoolFactory;
     IStandardExchangeRateProviderDFPkg private rateProviderPkg;
     IBalancerV3ConstantProductPoolStandardVaultPkg private balConstProdPkg;
     IPermit2 private permit2;
@@ -139,7 +127,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
     ISingleStandardExchangeDETDFPkg private inventoryDetfPkg;
     IPoolManager private poolManager;
     IUniswapV4MultiPoolTwapOracle private twapOracle;
-    UniswapV4LiquiditySeeder private liquiditySeeder;
+    IUniswapV4LiquiditySeeder private liquiditySeeder;
 
     address private pairToken;
     address private inventoryDetf;
@@ -240,7 +228,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         (address weightedPoolFactoryAddr, bool hasWeightedPoolFactory) =
             _readAddressSafe(ARTIFACT_FILE, "weightedPoolFactory");
         if (hasWeightedPoolFactory && weightedPoolFactoryAddr != address(0) && weightedPoolFactoryAddr.code.length > 0) {
-            weightedPoolFactory = WeightedPoolFactory(weightedPoolFactoryAddr);
+            weightedPoolFactory = IWeightedPoolFactory(weightedPoolFactoryAddr);
         }
 
         (address detfPkgAddr, ) = _readAddressSafe(ARTIFACT_FILE, "inventoryDetfPkg");
@@ -257,7 +245,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         }
         (address seederAddr, ) = _readAddressSafe(ARTIFACT_FILE, "liquiditySeeder");
         if (seederAddr != address(0) && seederAddr.code.length > 0) {
-            liquiditySeeder = UniswapV4LiquiditySeeder(seederAddr);
+            liquiditySeeder = IUniswapV4LiquiditySeeder(seederAddr);
         }
 
         return true;
@@ -266,13 +254,13 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
     function _deployWeightedPoolFactoryIfNeeded() internal {
         (address existingFactory, bool hasExistingFactory) = _readAddressSafe(ARTIFACT_FILE, "weightedPoolFactory");
         if (hasExistingFactory && existingFactory != address(0) && existingFactory.code.length > 0) {
-            weightedPoolFactory = WeightedPoolFactory(existingFactory);
+            weightedPoolFactory = IWeightedPoolFactory(existingFactory);
             return;
         }
 
-        weightedPoolFactory = WeightedPoolFactory(
+        weightedPoolFactory = IWeightedPoolFactory(
             create3Factory.create3WithArgs(
-                type(WeightedPoolFactory).creationCode,
+                ArtifactCreationCode.creationCode(create3Factory, "WeightedPoolFactory.sol:WeightedPoolFactory"),
                 abi.encode(address(balancerV3Vault), uint32(365 days), "Factory v1", "Pool v1"),
                 keccak256("LocalTestingScenario3WeightedPoolFactory")
             )
@@ -299,7 +287,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
 
         erc721Facet = IFacet(
             create3Factory.deployFacet(
-                type(ERC721Facet).creationCode,
+                ArtifactCreationCode.creationCode(create3Factory, "ERC721Facet.sol:ERC721Facet"),
                 keccak256("LocalTestingScenario3_ERC721Facet")
             )
         );
@@ -312,7 +300,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         } else {
             poolManager = IPoolManager(
                 create3Factory.create3WithArgs(
-                    type(PoolManager).creationCode,
+                    ArtifactCreationCode.creationCode(create3Factory, "PoolManager.sol:PoolManager"),
                     abi.encode(owner),
                     keccak256("LocalTestingScenario3PoolManager")
                 )
@@ -328,11 +316,11 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
 
         (address existingSeeder, bool hasSeeder) = _readAddressSafe(ARTIFACT_FILE, "liquiditySeeder");
         if (hasSeeder && existingSeeder != address(0) && existingSeeder.code.length > 0) {
-            liquiditySeeder = UniswapV4LiquiditySeeder(existingSeeder);
+            liquiditySeeder = IUniswapV4LiquiditySeeder(existingSeeder);
         } else {
-            liquiditySeeder = UniswapV4LiquiditySeeder(
+            liquiditySeeder = IUniswapV4LiquiditySeeder(
                 create3Factory.create3WithArgs(
-                    type(UniswapV4LiquiditySeeder).creationCode,
+                    ArtifactCreationCode.creationCode(create3Factory, "UniswapV4LiquiditySeeder.sol:UniswapV4LiquiditySeeder"),
                     abi.encode(poolManager),
                     keccak256("LocalTestingScenario3LiquiditySeeder")
                 )
@@ -342,7 +330,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
 
     function _seedWethRichPool() internal {
         PoolKey memory poolKey = _buildPoolKey();
-        PoolManager(address(poolManager)).initialize(poolKey, TickMath.getSqrtPriceAtTick(0));
+        IPoolManager(address(poolManager)).initialize(poolKey, TickMath.getSqrtPriceAtTick(0));
 
         weth.deposit{value: INITIAL_WETH_DEPOSIT}();
         IERC20(address(weth)).transfer(address(liquiditySeeder), INITIAL_WETH_DEPOSIT);

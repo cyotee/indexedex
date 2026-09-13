@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IComposedStableCommonDetfDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/IComposedStableCommonDetfDFPkg.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC20Permit} from "@crane/contracts/interfaces/IERC20Permit.sol";
@@ -15,8 +17,7 @@ import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balance
 import {
     PoolRoleAccounts, TokenConfig, TokenType
 } from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/VaultTypes.sol";
-import {WeightedPoolFactory} from
-    "@crane/contracts/external/balancer/v3/pool-weighted/contracts/WeightedPoolFactory.sol";
+import {IWeightedPoolFactory} from "contracts/interfaces/IWeightedPoolFactory.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {EIP712Repo} from "@crane/contracts/utils/cryptography/EIP712/EIP712Repo.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
@@ -37,7 +38,7 @@ import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
-import {IDETFSYDFPkg} from "contracts/vaults/detf/common/sy/DETFSYDFPkg.sol";
+import {IDETFSYDFPkg} from "contracts/vaults/detf/common/sy/IDETFSYDFPkg.sol";
 import {DETFSYDeploymentLib} from "contracts/vaults/detf/common/sy/DETFSYDeploymentLib.sol";
 import {DETFChildTokenMetadata} from "contracts/vaults/detf/common/DETFChildTokenMetadata.sol";
 import {VaultFeeType} from "contracts/interfaces/VaultFeeTypes.sol";
@@ -50,11 +51,9 @@ import {
 import {
     BalancerV3StandardExchangeRouterAwareRepo
 } from "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterAwareRepo.sol";
-import {
-    IStandardExchangeRateProviderDFPkg
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
+import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/common/factory/nft/IDetfSelfNftInventoryDFPkg.sol";
-import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol";
 import {IComposedStableCommonDetfBonding} from "contracts/interfaces/IComposedStableCommonDetfBonding.sol";
 import {IComposedStableCommonDetfInfo} from "./IComposedStableCommonDetfInfo.sol";
 import {ComposedStableCommonDetfRepo as Repo} from "./ComposedStableCommonDetfRepo.sol";
@@ -65,56 +64,7 @@ import {
 } from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 import {DETFNaturalExpansionLib} from "contracts/vaults/detf/common/core/DETFNaturalExpansionLib.sol";
 
-interface IComposedStableCommonDetfDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
-    error NotCalledByRegistry(address caller);
-    error InvalidPackageArguments();
-    struct PkgInit {
-        IFacet erc20Facet;
-        IFacet erc5267Facet;
-        IFacet erc2612Facet;
-        IFacet multiAssetBasicVaultFacet;
-        IFacet multiAssetStandardVaultFacet;
-        IFacet composedStableCommonDetfBondingFacet;
-        IFacet composedStableCommonDetfExchangeInFacet;
-        IFacet composedStableCommonDetfExchangeOutQueryFacet;
-        IFacet rebasingDetfTokenPricingFacet;
-        IVaultRegistryDeployment vaultRegistryDeployment;
-        IVaultFeeOracleQuery feeOracle;
-        IBalancerV3StandardExchangeRouterProxy balancerV3Router;
-        IVault balancerV3Vault;
-        WeightedPoolFactory weightedPoolFactory;
-        IDetfSelfNftInventoryDFPkg bondNftVaultPkg;
-        IRebasingClaimTokenDFPkg rebasingClaimTokenPkg;
-        IDETFSYDFPkg syPkg;
-    }
-    struct PkgArgs {
-        string name;
-        string symbol;
-        IStablePool stablePool;
-        IStablePool commonPool;
-        IERC20 rateAsset;
-        IStandardExchangeIn stablePoolExitPricer;
-        IStandardExchangeIn commonPoolExitPricer;
-        uint256[3] reserveWeights; // DETF, stable BPT, common BPT; retain the configured host weights.
-        // Whole stable/common BPT per whole purchased DETF, each scaled by 1e18.
-        uint256[2] openingDetfPrices;
-        // Proportional native seed amounts: DETF (9), stable BPT (18), common BPT (18).
-        uint256[3] reserveSeedAmounts;
-        uint256 reserveSwapFeePercentage;
-        uint256 mintThreshold;
-        uint256 burnThreshold;
-        uint256 expansionClosureRatePerSecond;
-        Repo.RouteConfig[] routes;
-        address creator;
-        string claimName;
-        string claimSymbol;
-        string bondName;
-        string bondSymbol;
-        string reserveName;
-        string reserveSymbol;
-    }
-    function deployVault(PkgArgs memory args) external returns (address);
-}
+
 contract ComposedStableCommonDetfDFPkg is IComposedStableCommonDetfDFPkg {
     using BetterEfficientHashLib for bytes;
     bytes32 private constant DEPLOY_SLOT = keccak256("detf.composed.stable.common.pkg.pending-deployment");
@@ -133,7 +83,7 @@ contract ComposedStableCommonDetfDFPkg is IComposedStableCommonDetfDFPkg {
     IVaultFeeOracleQuery private immutable FEE_ORACLE;
     IBalancerV3StandardExchangeRouterProxy private immutable BALANCER_V3_ROUTER;
     IVault private immutable BALANCER_V3_VAULT;
-    WeightedPoolFactory private immutable WEIGHTED_POOL_FACTORY;
+    IWeightedPoolFactory private immutable WEIGHTED_POOL_FACTORY;
     IDetfSelfNftInventoryDFPkg private immutable BOND_NFT_VAULT_PKG;
     IRebasingClaimTokenDFPkg private immutable REBASING_CLAIM_TOKEN_PKG;
     IDETFSYDFPkg private immutable SY_PKG;

@@ -11,8 +11,7 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
-import {AaveCrossVersionLoopDFPkg} from
-    "contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoopDFPkg.sol";
+import {IAaveCrossVersionLoopDFPkg} from "contracts/protocols/lending/aave/cross-version/IAaveCrossVersionLoopDFPkg.sol";
 
 /**
  * @title AaveCrossVersionLoop_Component_FactoryService
@@ -61,9 +60,9 @@ library AaveCrossVersionLoop_Component_FactoryService {
     /// @notice Deploys + registers the DFPkg through the VaultRegistry (via the IndexedexManager).
     function deployCrossVersionLoopDFPkg(
         IIndexedexManagerProxy indexedexManager,
-        AaveCrossVersionLoopDFPkg.PkgInit memory pkgInit
-    ) internal returns (AaveCrossVersionLoopDFPkg instance) {
-        instance = AaveCrossVersionLoopDFPkg(
+        IAaveCrossVersionLoopDFPkg.PkgInit memory pkgInit
+    ) internal returns (IAaveCrossVersionLoopDFPkg instance) {
+        instance = IAaveCrossVersionLoopDFPkg(
             address(
                 IVaultRegistryDeployment(address(indexedexManager)).deployPkg(
                     ArtifactCreationCode.creationCode("AaveCrossVersionLoopDFPkg.sol:AaveCrossVersionLoopDFPkg"),

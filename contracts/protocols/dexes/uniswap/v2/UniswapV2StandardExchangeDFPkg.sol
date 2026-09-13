@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+
+import {IUniswapV2StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v2/IUniswapV2StandardExchangeDFPkg.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 
 /* -------------------------------------------------------------------------- */
@@ -61,62 +63,7 @@ import {ConstProdReserveVaultRepo} from "contracts/vaults/ConstProdReserveVaultR
 import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
 import {ConstProdUtils} from "@crane/contracts/utils/math/ConstProdUtils.sol";
 
-interface IUniswapV2StandardExchangeDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
-    struct PkgInit {
-        IFacet erc20Facet;
-        IFacet erc5267Facet;
-        IFacet erc2612Facet;
-        IFacet erc4626Facet;
-        // IFacet erc4626BasicVaultFacet;
-        IFacet multiAssetBasicVaultFacet;
-        // IFacet erc4626StandardVaultFacet;
-        IFacet multiAssetStandardVaultFacet;
-        IFacet uniswapV2StandardExchangeInFacet;
-        IFacet uniswapV2StandardExchangeOutFacet;
-        IFacet uniswapV2StandardExchangeQueryFacet;
-        IVaultFeeOracleQuery vaultFeeOracleQuery;
-        IVaultRegistryDeployment vaultRegistryDeployment;
-        IPermit2 permit2;
-        IUniswapV2Factory uniswapV2Factory;
-        IUniswapV2Router uniswapV2Router;
-    }
 
-    struct PkgArgs {
-        IUniswapV2Pair reserveAsset;
-    }
-
-    struct DeployWithPoolResult {
-        bool pairExists;
-        uint256 proportionalA;
-        uint256 proportionalB;
-        uint256 expectedLP;
-    }
-
-    struct DeployWithPoolParams {
-        IERC20 tokenA;
-        uint256 tokenAAmount;
-        IERC20 tokenB;
-        uint256 tokenBAmount;
-        address recipient;
-    }
-
-    error NotCalledByRegistry(address caller);
-
-    error PairCreationFailed();
-
-    error RecipientRequiredForDeposit();
-
-    function deployVault(IUniswapV2Pair pool) external returns (address vault);
-
-    function deployVault(IERC20 tokenA, uint256 tokenAAmount, IERC20 tokenB, uint256 tokenBAmount, address recipient)
-        external
-        returns (address vault);
-
-    function previewDeployVault(IERC20 tokenA, uint256 tokenAAmount, IERC20 tokenB, uint256 tokenBAmount)
-        external
-        view
-        returns (DeployWithPoolResult memory result);
-}
 
 contract UniswapV2StandardExchangeDFPkg is IUniswapV2StandardExchangeDFPkg {
     using BetterMath for uint256;

@@ -27,6 +27,11 @@ contract TaxedERC20Harness {
         emit Transfer(address(0), to, amount);
     }
 
+    function setTaxBps(uint256 value) external {
+        require(value <= 10_000, "invalid tax");
+        taxBps = value;
+    }
+
     function approve(address spender, uint256 amount) external returns (bool) {
         allowance[msg.sender][spender] = amount;
         emit Approval(msg.sender, spender, amount);

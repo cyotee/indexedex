@@ -18,10 +18,9 @@ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.so
 import {StakedDETFTarget} from "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol";
 import {DETFFundedStakingMath as StakingMath} from "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol";
 import {TestBase_UniswapV4Detf} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
-import {DETFFundedStakingArtifacts} from "contracts/test/bases/DETFFundedStakingArtifacts.sol";
 
 /// @notice Production factory and funded child integration; no mocked DETF/NFT accounting.
-contract RebasingClaimTokenDFPkg_Deploy_Test is TestBase_UniswapV4Detf, DETFFundedStakingArtifacts {
+contract RebasingClaimTokenDFPkg_Deploy_Test is TestBase_UniswapV4Detf {
     function test_existingERC4626SEExposesNativeSYMetadata() public view {
         IStandardizedYield native_ = IStandardizedYield(se);
         assertEq(IERC20Metadata(se).decimals(), 18, "existing SE unit stays unchanged");

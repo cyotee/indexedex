@@ -125,8 +125,11 @@ abstract contract UniswapV4Detf_Alignment_RedeemD15Base is UniswapV4Detf_Alignme
         _warpMatureOf(d_, id_);
         _d10SellToClaimOn(d_, id_, detfUser);
         if (premium_) {
-            for (uint256 i_; i_ < 16 && IUniswapV4Detf(d_).syntheticPrice() <= 1e18; ++i_) _pushSyntheticUp(d_);
-            assertGt(IUniswapV4Detf(d_).syntheticPrice(), 1e18, "actual reserve premium before epoch");
+            uint256 threshold_ = IUniswapV4Detf(d_).mintThreshold();
+            for (uint256 i_; i_ < 16 && IUniswapV4Detf(d_).syntheticPrice() <= threshold_; ++i_) {
+                _pushSyntheticUp(d_);
+            }
+            assertGt(IUniswapV4Detf(d_).syntheticPrice(), threshold_, "actual reserve premium above mint threshold before epoch");
         }
         return (IUniswapV4Detf(d_), detfUser, keepId_);
     }

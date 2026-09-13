@@ -9,9 +9,7 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
 import {Math} from "@crane/contracts/utils/Math.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
-import {
-    ISingleStandardExchangeDETFInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFInfoTarget.sol";
+import {ISingleStandardExchangeDETFInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFInfo.sol";
 
 /// @notice L1 property fuzz for SingleStandardExchangeDETF (Wave 1B).
 /// forge-config: default.fuzz.runs = 64

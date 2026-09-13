@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IAllowanceTransfer} from "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
@@ -36,10 +38,8 @@ import {PonsV2LauncherToken} from
     "@crane/contracts/protocols/launchpads/ponsFamily/v2/PonsV2LauncherToken.sol";
 import {PonsV2BondingCurve} from
     "@crane/contracts/protocols/launchpads/ponsFamily/v2/PonsV2BondingCurve.sol";
-import {
-    GraduationPhase,
-    IPonsV2LaunchFactory
-} from "@crane/contracts/protocols/launchpads/ponsFamily/v2/interfaces/ILaunchpadV2.sol";
+import {GraduationPhase} from "@crane/contracts/protocols/launchpads/ponsFamily/v2/interfaces/ILaunchpadV2.sol";
+import {IPonsV2LaunchFactory} from "@crane/contracts/protocols/launchpads/ponsFamily/v2/interfaces/ILaunchpadV2.sol";
 
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
@@ -145,7 +145,7 @@ abstract contract TestBase_UniswapV4StandardExchange_PonsV2 is TestBase_UniswapV
         bytes memory hookArgs =
             abi.encode(IPoolManager(address(poolManager)), ponsV2FeeEscrow, ponsV2FeeSink, ponsV2Owner);
         (address predictedHook, bytes32 hookSalt) =
-            HookMiner.find(address(this), MEME_HOOK_FLAGS, type(PonsV2MemeHook).creationCode, hookArgs);
+            HookMiner.find(address(this), MEME_HOOK_FLAGS, ArtifactCreationCode.creationCode(create3Factory, "PonsV2MemeHook.sol:PonsV2MemeHook"), hookArgs);
         ponsV2MemeHook = new PonsV2MemeHook{salt: hookSalt}(
             IPoolManager(address(poolManager)), ponsV2FeeEscrow, ponsV2FeeSink, ponsV2Owner
         );

@@ -1,8 +1,9 @@
 'use client'
 
 import { useMemo } from 'react'
-import { erc20Abi, formatUnits } from 'viem'
-import { useReadContracts } from 'wagmi'
+import { erc20Abi, formatUnits, type PublicClient } from 'viem'
+import { useAccount, usePublicClient, useReadContracts } from 'wagmi'
+import { useQuery } from '@tanstack/react-query'
 import { useSearchParams } from 'next/navigation'
 import WalletStatusBanner from '../components/WalletStatusBanner'
 import { AddressLink } from '../components/ui/AddressLink'
@@ -16,6 +17,8 @@ import { insightsViewAbi, standardizedYieldDiscoveryAbi } from '../insights/lib/
 import { asAddr, type ActionToken } from '../insights/lib/actionTokens'
 import SyntheticPrices from './sections/SyntheticPrices'
 import MigrationClaimPanel from './sections/MigrationClaimPanel'
+import { readProtocolDetf } from '../lib/tokenStaking/migration'
+import { Button } from '../components/ui/Button'
 
 const workspaceReadAbi = [...erc20Abi, ...insightsViewAbi, ...standardizedYieldDiscoveryAbi] as const
 
@@ -27,11 +30,23 @@ export type StakingPageClientProps = {
 /** The full workspace and Earn embed use the same standard routes and funded bond actions as Insights. */
 export default function StakingPageClient({ embedMode = false, fixedDetf }: StakingPageClientProps = {}) {
   const chain = useChainResolution(CHAIN_ID_ROBINHOOD)
+  const wallet = useAccount()
+  const client = usePublicClient({ chainId: chain.dataChainId }) as PublicClient | undefined
   const searchParams = useSearchParams()
-  const platform = useMemo(() => getAddressArtifacts(chain.dataChainId, chain.environment).platform as { protocolDetf?: string; tokenStaking?: string }, [chain.dataChainId, chain.environment])
-  // The staking page is dedicated to the configured protocol DETF. Earn embeds
-  // supply their own fixed product; URL parameters cannot change this page's DETF.
-  const detfAddress = asAddr(embedMode ? fixedDetf : platform.protocolDetf) ?? undefined
+  const platform = useMemo(() => getAddressArtifacts(chain.dataChainId, chain.environment).platform as { tokenStaking?: string }, [chain.dataChainId, chain.environment])
+  const stakingAddress = asAddr(platform.tokenStaking)
+  const wrongNetwork = chain.isConnected && !chain.walletMatchesDataChain
+  const discovery = useQuery({
+    queryKey: ['protocol-detf-discovery', chain.dataChainId, chain.environment, stakingAddress,
+      wallet.address, wallet.chainId, wallet.status, wallet.connector?.uid],
+    queryFn: () => readProtocolDetf(client!, stakingAddress!),
+    enabled: !embedMode && !!stakingAddress && !!client && !wrongNetwork,
+    retry: false, staleTime: 0, refetchInterval: 15_000,
+  })
+  // URL parameters and stale rehearsal catalogs cannot select another product.
+  // Earn embeds continue to supply their own fixed product.
+  const detfAddress = embedMode ? asAddr(fixedDetf) ?? undefined
+    : !wrongNetwork && !discovery.isError ? discovery.data ?? undefined : undefined
 
   const details = useReadContracts({
     contracts: detfAddress
@@ -66,15 +81,21 @@ export default function StakingPageClient({ embedMode = false, fixedDetf }: Stak
 
   return <div className={shellClass} data-testid={embedMode ? 'detf-workspace-embed-body' : 'detf-workspace-full'}>
     {!embedMode ? <>
-      <PageHeader title="Protocol DETF" subtitle="Buy DETF, stake it, or purchase a bond that stays staked while its principal vests. Claim principal and staking rewards as sDETF, then unstake it 1:1 for DETF." />
+      <PageHeader title="DTF-DETF staking" subtitle="View your migrated DTF position, claim staking tokens, or purchase a DTF-DETF bond." />
       <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]">Looking for strategy vaults? <a href="/earn" className="text-[var(--accent,#4FD44B)] hover:underline">Browse Earn</a>.</p>
     </> : null}
     <WalletStatusBanner className={embedMode ? 'mt-0' : 'mt-4'} isConnected={chain.isConnected}
       isUnsupportedChain={chain.isUnsupportedChain} walletMatchesDataChain={chain.walletMatchesDataChain}
       attachedWalletChainId={chain.attachedWalletChainId} dataChainId={chain.dataChainId} environment={chain.environment} />
-    {!embedMode && asAddr(platform.tokenStaking) && asAddr(platform.protocolDetf) ?
-      <MigrationClaimPanel chainId={chain.dataChainId} staking={asAddr(platform.tokenStaking)!} detf={asAddr(platform.protocolDetf)!} /> : null}
-    {!detfAddress ? <p className="mt-6 text-sm text-[var(--text-muted,#9aa3b2)]">No Protocol DETF is configured on this network.</p> : <div className="mt-5 space-y-4">
+    {!embedMode && stakingAddress && detfAddress ?
+      <MigrationClaimPanel chainId={chain.dataChainId} staking={stakingAddress} detf={detfAddress} /> : null}
+    {!detfAddress ? <div className="mt-6 text-sm text-[var(--text-muted,#9aa3b2)]" data-testid="staking-discovery-status">
+      {wrongNetwork ? <p>Switch your wallet to the selected network to view DTF-DETF.</p>
+        : discovery.isError ? <div role="alert"><p>Could not load DTF-DETF from the current network.</p>
+          <Button onClick={() => void discovery.refetch()} disabled={discovery.isFetching}>Retry</Button></div>
+        : !embedMode && stakingAddress && discovery.isPending ? <p>Loading DTF-DETF…</p>
+        : <p>DTF-DETF migration has not been configured on this network.</p>}
+    </div> : <div className="mt-5 space-y-4" data-testid="staking-detf" data-detf={detfAddress}>
 
       <div className="rounded-xl border border-[var(--border-subtle,rgba(255,255,255,0.08))] p-4 text-sm">
         <SyntheticPrices key={`${chain.dataChainId}:${detfAddress}`} detf={detfAddress} chainId={chain.dataChainId} />

@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
-import {SingleStandardExchangeDETFExchangeInFacet} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFExchangeInFacet.sol";
-import {SingleStandardExchangeDETFBondingFacet} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFBondingFacet.sol";
+
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {TestBase_FundedBalancerDETF} from "contracts/test/bases/TestBase_FundedBalancerDETF.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
-import {WeightedPoolFactory} from
-    "@crane/contracts/external/balancer/v3/pool-weighted/contracts/WeightedPoolFactory.sol";
-import {ERC721Facet} from "@crane/contracts/tokens/ERC721/ERC721Facet.sol";
+import {IWeightedPoolFactory} from "contracts/interfaces/IWeightedPoolFactory.sol";
+
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
@@ -20,37 +20,23 @@ import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeplo
 import {
     IBalancerV3StandardExchangeRouterProxy
 } from "contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol";
-import {
-    TestBase_BalancerV3StandardExchangeRouter
-} from "contracts/protocols/dexes/balancer/v3/routers/TestBase_BalancerV3StandardExchangeRouter.sol";
-import {
-    IStandardExchangeRateProviderDFPkg,
-    StandardExchangeRateProviderDFPkg
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
-import {
-    StandardExchangeRateProviderFacet
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderFacet.sol";
+
+import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
+
 import {DetfFacetFactoryService} from "contracts/vaults/detf/common/factory/DetfFacetFactoryService.sol";
 import {DetfPkgFactoryService} from "contracts/vaults/detf/common/factory/DetfPkgFactoryService.sol";
 import {DetfComponentFactoryService} from "contracts/vaults/detf/common/factory/DetfComponentFactoryService.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/common/factory/nft/IDetfSelfNftInventoryDFPkg.sol";
-import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol";
-import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
+import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/IDETFNFTVaultDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol";
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
-import {
-    ISingleStandardExchangeDETDFPkg,
-    SingleStandardExchangeDETDFPkg
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETDFPkg.sol";
+import {ISingleStandardExchangeDETDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETDFPkg.sol";
 import {
     SingleStandardExchangeDETF_Component_FactoryService
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_Component_FactoryService.sol";
-import {
-    ISingleStandardExchangeDETFBonding
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFBondingTarget.sol";
-import {
-    ISingleStandardExchangeDETFInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFInfoTarget.sol";
-import {IDETFSYDFPkg} from "contracts/vaults/detf/common/sy/DETFSYDFPkg.sol";
+import {ISingleStandardExchangeDETFBonding} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFBonding.sol";
+import {ISingleStandardExchangeDETFInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFInfo.sol";
+import {IDETFSYDFPkg} from "contracts/vaults/detf/common/sy/IDETFSYDFPkg.sol";
 import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
 import {DETFNaturalExpansionLib} from "contracts/vaults/detf/common/core/DETFNaturalExpansionLib.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
@@ -111,7 +97,6 @@ abstract contract TestBase_SingleStandardExchangeDETF is TestBase_FundedBalancer
     using SingleStandardExchangeDETF_Component_FactoryService for ICreate3FactoryProxy;
     using SingleStandardExchangeDETF_Component_FactoryService for IVaultRegistryDeployment;
 
-
     function _warpPastUnlock(address instance_, uint256 tokenId_) internal {
         address nft_ = ISingleStandardExchangeDETFInfo(instance_).bondNftVault();
         uint256 unlock_ = IDetfBondNFT(nft_).positionOf(tokenId_).startTimestamp
@@ -154,9 +139,6 @@ abstract contract TestBase_SingleStandardExchangeDETF is TestBase_FundedBalancer
         detfExchangeIn = IStandardExchangeIn(detf);
     }
 
-
-
-
     function _singleSePkgInit(IRebasingClaimTokenDFPkg claimPkg_)
         internal
         view
@@ -174,7 +156,7 @@ abstract contract TestBase_SingleStandardExchangeDETF is TestBase_FundedBalancer
             vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
             balancerV3Router: IBalancerV3StandardExchangeRouterProxy(address(seRouter)),
             balancerV3Vault: IVault(address(vault)),
-            weightedPoolFactory: WeightedPoolFactory(testPoolFactory),
+            weightedPoolFactory: IWeightedPoolFactory(testPoolFactory),
             rateProviderPkg: rateProviderPkg,
             bondNftVaultPkg: bondNftVaultPkg,
             rebasingClaimTokenPkg: claimPkg_,
@@ -190,7 +172,7 @@ abstract contract TestBase_SingleStandardExchangeDETF is TestBase_FundedBalancer
         vm.startPrank(owner);
         vm.expectRevert();
         IVaultRegistryDeployment(address(indexedexManager)).deployPkg(
-            type(SingleStandardExchangeDETDFPkg).creationCode,
+            ArtifactCreationCode.creationCode(create3Factory, "SingleStandardExchangeDETDFPkg.sol:SingleStandardExchangeDETDFPkg"),
             abi.encode(pkgInit),
             keccak256("SingleSE_M12_zero_claim")
         );
@@ -259,7 +241,6 @@ abstract contract TestBase_SingleStandardExchangeDETF is TestBase_FundedBalancer
         assertTrue(detfInfo.bondNftVault() != address(0), "bond nft vault missing");
     }
 
-
     function _bootstrapDetf(address instance_, address bonder_, uint256 amount_) internal returns (uint256 id_) {
         uint256 shares_ = _fundSeShares(bonder_, amount_);
         vm.startPrank(bonder_);
@@ -299,7 +280,6 @@ abstract contract TestBase_SingleStandardExchangeDETF is TestBase_FundedBalancer
             burnThreshold: 0,
 
         expansionClosureRatePerSecond: 0,
-
 
             creator: address(0),
             claimName: "",

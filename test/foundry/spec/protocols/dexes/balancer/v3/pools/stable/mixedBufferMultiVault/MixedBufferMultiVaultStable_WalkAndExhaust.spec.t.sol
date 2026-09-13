@@ -7,9 +7,7 @@ import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {
     IMixedBufferMultiVaultStablePool
 } from "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/IMixedBufferMultiVaultStablePool.sol";
-import {
-    IMixedBufferMultiVaultStablePoolPkg
-} from "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolStandardVaultPkg.sol";
+import {IMixedBufferMultiVaultStablePoolPkg} from "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/IMixedBufferMultiVaultStablePoolPkg.sol";
 import {
     TestBase_MixedBufferMultiVaultStablePool
 } from "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/bases/TestBase_MixedBufferMultiVaultStablePool.sol";

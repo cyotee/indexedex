@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import {FeeAccrualStageBase} from "./FeeAccrualStageBase.sol";
 import {Phase_07_Stage_03_FeeAccrualRateProviders as Providers} from "./Phase_07_Stage_03_FeeAccrualRateProviders.sol";
 import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
-import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
+import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
 
 contract Phase_07_Stage_03_FeeAccrualRateProviders is FeeAccrualStageBase {
     function run() external {

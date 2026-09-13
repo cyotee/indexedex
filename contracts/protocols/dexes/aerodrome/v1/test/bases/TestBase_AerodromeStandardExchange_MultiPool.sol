@@ -24,7 +24,7 @@ import {
  * @dev Provides balanced (1:1), unbalanced (10:1), and extreme (100:1) pool configurations
  *      for comprehensive testing across different liquidity scenarios.
  */
-contract TestBase_AerodromeStandardExchange_MultiPool is TestBase_AerodromeStandardExchange {
+abstract contract TestBase_AerodromeStandardExchange_MultiPool is TestBase_AerodromeStandardExchange {
     /* ---------------------------------------------------------------------- */
     /*                               Constants                                */
     /* ---------------------------------------------------------------------- */

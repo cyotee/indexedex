@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IERC4626StandardExchangeDFPkg} from "contracts/vaults/standard/erc4626/IERC4626StandardExchangeDFPkg.sol";
+
 import {IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {IStandardExchangeTransitionQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 
@@ -35,32 +37,7 @@ import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVa
 import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
 import {IERC4626StandardExchange} from "contracts/vaults/standard/erc4626/IERC4626StandardExchange.sol";
 
-interface IERC4626StandardExchangeDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
-    error NotCalledByRegistry(address caller);
-    error ZeroProtocolVault();
 
-    struct PkgInit {
-        IFacet erc20Facet;
-        IFacet erc5267Facet;
-        IFacet erc2612Facet;
-        IFacet erc4626Facet;
-        IFacet erc4626StandardVaultFacet;
-        IFacet multiAssetBasicVaultFacet;
-        IFacet multiAssetStandardVaultFacet;
-        IFacet exchangeInFacet;
-        IFacet exchangeOutFacet;
-        IFacet markerFacet;
-        IVaultFeeOracleQuery vaultFeeOracleQuery;
-        IVaultRegistryDeployment vaultRegistryDeployment;
-        IPermit2 permit2;
-    }
-
-    struct PkgArgs {
-        address protocolVault;
-    }
-
-    function deployVault(IERC4626 protocolVault) external returns (address vault);
-}
 
 /**
  * @title ERC4626StandardExchangeDFPkg

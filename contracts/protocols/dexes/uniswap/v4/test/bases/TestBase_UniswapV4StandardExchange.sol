@@ -1,16 +1,19 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
+import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
+
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
-import {PoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol";
 import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol";
 import {WETH9} from "@crane/contracts/protocols/tokens/wrappers/weth/v9/WETH9.sol";
 import {TestBase_Permit2} from "@crane/contracts/protocols/utils/permit2/test/bases/TestBase_Permit2.sol";
 import {TestBase_VaultComponents} from "contracts/vaults/TestBase_VaultComponents.sol";
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
-import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol";
+import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/IUniswapV4StandardExchangeDFPkg.sol";
 import {
     UniswapV4_Component_FactoryService
 } from "contracts/protocols/dexes/uniswap/v4/UniswapV4_Component_FactoryService.sol";
@@ -27,7 +30,7 @@ import {
     IUniswapV4StandardExchangeLiquidReserve
 } from "contracts/protocols/dexes/uniswap/v4/interfaces/IUniswapV4StandardExchangeLiquidReserve.sol";
 
-contract TestBase_UniswapV4StandardExchange is TestBase_Permit2, TestBase_VaultComponents {
+abstract contract TestBase_UniswapV4StandardExchange is TestBase_Permit2, TestBase_VaultComponents {
     using UniswapV4_Component_FactoryService for ICreate3FactoryProxy;
     using UniswapV4_Component_FactoryService for IFacet;
     using UniswapV4_Component_FactoryService for IIndexedexManagerProxy;
@@ -35,7 +38,7 @@ contract TestBase_UniswapV4StandardExchange is TestBase_Permit2, TestBase_VaultC
 
     uint256 internal constant DEFAULT_V4_LIQUID_RESERVE_PCT = 0.2e18;
 
-    PoolManager internal poolManager;
+    IPoolManager internal poolManager;
     IWETH internal weth;
     IFacet internal uniswapV4StandardExchangeInFacet;
     IFacet internal uniswapV4StandardExchangeInQueryFacet;
@@ -59,7 +62,11 @@ contract TestBase_UniswapV4StandardExchange is TestBase_Permit2, TestBase_VaultC
         if (address(weth) == address(0)) {
             weth = IWETH(address(new WETH9()));
         }
-        poolManager = new PoolManager(address(this));
+        poolManager = IPoolManager(create3Factory.create3WithArgs(
+            ArtifactCreationCode.creationCode(create3Factory, "PoolManager.sol:PoolManager"),
+            abi.encode(address(this)),
+            keccak256("TestBase_UniswapV4StandardExchange_PoolManager")
+        ));
         twapOracleFacet = create3Factory.deployUniswapV4MultiPoolTwapOracleFacet();
         twapOraclePkg =
             create3Factory.deployUniswapV4MultiPoolTwapOracleDFPkg(twapOracleFacet, diamondPackageFactory);
@@ -124,5 +131,3 @@ contract TestBase_UniswapV4StandardExchange is TestBase_Permit2, TestBase_VaultC
 }
 
 // FactoryService loads these artifacts by name in focused build graphs.
-import {UniswapV4MultiPoolTwapOracleFacet} from "contracts/oracles/uniswap/v4/twap/UniswapV4MultiPoolTwapOracleFacet.sol";
-import {UniswapV4MultiPoolTwapOracleDFPkg} from "contracts/oracles/uniswap/v4/twap/UniswapV4MultiPoolTwapOracleDFPkg.sol";

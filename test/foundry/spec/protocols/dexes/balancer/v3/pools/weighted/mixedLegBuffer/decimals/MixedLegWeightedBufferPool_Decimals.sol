@@ -15,9 +15,7 @@ import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {
     IMixedLegWeightedBufferPool
 } from "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/IMixedLegWeightedBufferPool.sol";
-import {
-    IMixedLegWeightedBufferPoolPkg
-} from "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolStandardVaultPkg.sol";
+import {IMixedLegWeightedBufferPoolPkg} from "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/IMixedLegWeightedBufferPoolPkg.sol";
 
 /**
  * @title MixedLegWeightedBufferPoolSpec

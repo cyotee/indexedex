@@ -22,7 +22,7 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 // import {DeployedAddressesRepo} from "@crane/contracts/script/DeployedAddressesRepo.sol";
 // import {AddressSet, AddressSetRepo} from "@crane/contracts/utils/collections/sets/AddressSetRepo.sol";
 
-import {IIndexedexManagerDFPkg} from "contracts/manager/IndexedexManagerDFPkg.sol";
+import {IIndexedexManagerDFPkg} from "contracts/manager/IIndexedexManagerDFPkg.sol";
 
 library IndexedexManagerFactoryService {
     using BetterEfficientHashLib for bytes;

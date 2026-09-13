@@ -11,12 +11,11 @@ import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {IDetfNftReserveDonation} from "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol";
 import {DETFFundedBondTarget} from "contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol";
-import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol";
+import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/IDETFNFTVaultDFPkg.sol";
 import {DETFFundedStakingMath as Math} from "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol";
 import {TestBase_UniswapV4Detf} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
-import {DETFFundedStakingArtifacts} from "contracts/test/bases/DETFFundedStakingArtifacts.sol";
 /// @notice Registered funded-NFT lifecycle, authorization and standing-role regressions.
-contract DETFNFTVaultDFPkg_Deploy_Test is TestBase_UniswapV4Detf, DETFFundedStakingArtifacts {
+contract DETFNFTVaultDFPkg_Deploy_Test is TestBase_UniswapV4Detf {
     function _nft() private view returns (IDetfBondNFT) { return IDetfBondNFT(detfInfo.bondNftVault()); }
     function _stake() private view returns (IStakedDETF) { return IStakedDETF(detfInfo.rebasingClaimToken()); }
 

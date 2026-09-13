@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
-import {PoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol";
 import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
 import {SwapParams} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
@@ -23,7 +24,6 @@ import {TestBase_ERC4626StandardExchange} from "contracts/test/bases/TestBase_ER
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {SimpleYieldERC4626} from "contracts/test/stubs/SimpleYieldERC4626.sol";
 import {WrapperExactOutRouter} from "contracts/test/stubs/WrapperExactOutRouter.sol";
-import {RateProviderMock} from "contracts/test/balancer/v3/RateProviderMock.sol";
 
 import {
     IUniswapV4HookDiamondPackageCallBackFactory
@@ -133,7 +133,11 @@ abstract contract TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook
         se3 = _deployERC4626SE(address(vault3));
         seA = se0;
 
-        pm = IPoolManager(address(new PoolManager(address(this))));
+        pm = IPoolManager(address(IPoolManager(create3Factory.create3WithArgs(
+            ArtifactCreationCode.creationCode(create3Factory, "PoolManager.sol:PoolManager"),
+            abi.encode(address(this)),
+            keccak256("TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook_PoolManager")
+        ))));
 
         (hookFactory, hookPkg) = DeployLib.deployFactoryAndPackage(
             create3Factory,

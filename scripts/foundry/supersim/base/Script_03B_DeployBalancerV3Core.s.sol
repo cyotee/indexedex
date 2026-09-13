@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.30;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {DeploymentBase} from "../../anvil_base_main/DeploymentBase.sol";
 
 import {BASE_SEPOLIA} from "@crane/contracts/constants/networks/BASE_SEPOLIA.sol";
@@ -18,47 +20,8 @@ import {
 import {CREATE3} from "@crane/contracts/external/balancer/v3/solidity-utils/contracts/solmate/CREATE3.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 
-import {BasicAuthorizerMock} from "@crane/contracts/protocols/dexes/balancer/v3/test/mocks/BasicAuthorizerMock.sol";
-import {
-    BalancerV3VaultDFPkg,
-    IBalancerV3VaultDFPkg
-} from "@crane/contracts/protocols/dexes/balancer/v3/vault/diamond/BalancerV3VaultDFPkg.sol";
-import {
-    BalancerV3RouterDFPkg,
-    IBalancerV3RouterDFPkg
-} from "@crane/contracts/protocols/dexes/balancer/v3/router/diamond/BalancerV3RouterDFPkg.sol";
-import {VaultTransientFacet} from "@crane/contracts/protocols/dexes/balancer/v3/vault/diamond/facets/VaultTransientFacet.sol";
-import {VaultSwapFacet} from "@crane/contracts/protocols/dexes/balancer/v3/vault/diamond/facets/VaultSwapFacet.sol";
-import {VaultLiquidityFacet} from "@crane/contracts/protocols/dexes/balancer/v3/vault/diamond/facets/VaultLiquidityFacet.sol";
-import {VaultBufferFacet} from "@crane/contracts/protocols/dexes/balancer/v3/vault/diamond/facets/VaultBufferFacet.sol";
-import {VaultPoolTokenFacet} from "@crane/contracts/protocols/dexes/balancer/v3/vault/diamond/facets/VaultPoolTokenFacet.sol";
-import {VaultQueryFacet} from "@crane/contracts/protocols/dexes/balancer/v3/vault/diamond/facets/VaultQueryFacet.sol";
-import {VaultRegistrationFacet} from "@crane/contracts/protocols/dexes/balancer/v3/vault/diamond/facets/VaultRegistrationFacet.sol";
-import {VaultAdminFacet} from "@crane/contracts/protocols/dexes/balancer/v3/vault/diamond/facets/VaultAdminFacet.sol";
-import {VaultRecoveryFacet} from "@crane/contracts/protocols/dexes/balancer/v3/vault/diamond/facets/VaultRecoveryFacet.sol";
-import {RouterSwapFacet} from "@crane/contracts/protocols/dexes/balancer/v3/router/diamond/facets/RouterSwapFacet.sol";
-import {
-    RouterAddLiquidityFacet
-} from "@crane/contracts/protocols/dexes/balancer/v3/router/diamond/facets/RouterAddLiquidityFacet.sol";
-import {
-    RouterRemoveLiquidityFacet
-} from "@crane/contracts/protocols/dexes/balancer/v3/router/diamond/facets/RouterRemoveLiquidityFacet.sol";
-import {
-    RouterInitializeFacet
-} from "@crane/contracts/protocols/dexes/balancer/v3/router/diamond/facets/RouterInitializeFacet.sol";
-import {
-    RouterCommonFacet
-} from "@crane/contracts/protocols/dexes/balancer/v3/router/diamond/facets/RouterCommonFacet.sol";
-import {BatchSwapFacet} from "@crane/contracts/protocols/dexes/balancer/v3/router/diamond/facets/BatchSwapFacet.sol";
-import {
-    BufferRouterFacet
-} from "@crane/contracts/protocols/dexes/balancer/v3/router/diamond/facets/BufferRouterFacet.sol";
-import {
-    CompositeLiquidityERC4626Facet
-} from "@crane/contracts/protocols/dexes/balancer/v3/router/diamond/facets/CompositeLiquidityERC4626Facet.sol";
-import {
-    CompositeLiquidityNestedFacet
-} from "@crane/contracts/protocols/dexes/balancer/v3/router/diamond/facets/CompositeLiquidityNestedFacet.sol";
+import {IBalancerV3VaultDFPkg} from "@crane/contracts/protocols/dexes/balancer/v3/vault/diamond/BalancerV3VaultDFPkg.sol";
+import {IBalancerV3RouterDFPkg} from "@crane/contracts/protocols/dexes/balancer/v3/router/diamond/BalancerV3RouterDFPkg.sol";
 
 contract Script_03B_DeployBalancerV3Core is DeploymentBase {
     using BetterEfficientHashLib for bytes;
@@ -117,7 +80,7 @@ contract Script_03B_DeployBalancerV3Core is DeploymentBase {
         _deployVaultPackage();
 
         balancerAuthorizer = _deployCreate3(
-            type(BasicAuthorizerMock).creationCode,
+            ArtifactCreationCode.creationCode(create3Factory, "lib/crane/contracts/protocols/dexes/balancer/v3/test/mocks/BasicAuthorizerMock.sol:BasicAuthorizerMock"),
             _salt("BaseSepoliaBalancerV3Authorizer")
         );
 
@@ -179,32 +142,32 @@ contract Script_03B_DeployBalancerV3Core is DeploymentBase {
         vaultPkg = IBalancerV3VaultDFPkg(
             address(
                 create3Factory.deployPackageWithArgs(
-                    type(BalancerV3VaultDFPkg).creationCode,
+                    ArtifactCreationCode.creationCode(create3Factory, "BalancerV3VaultDFPkg.sol:BalancerV3VaultDFPkg"),
                     abi.encode(
                         IBalancerV3VaultDFPkg.PkgInit({
                             vaultTransientFacet: _deployFacet(
-                                type(VaultTransientFacet).creationCode, type(VaultTransientFacet).name
+                                ArtifactCreationCode.creationCode(create3Factory, "VaultTransientFacet.sol:VaultTransientFacet"), "VaultTransientFacet"
                             ),
-                            vaultSwapFacet: _deployFacet(type(VaultSwapFacet).creationCode, type(VaultSwapFacet).name),
+                            vaultSwapFacet: _deployFacet(ArtifactCreationCode.creationCode(create3Factory, "VaultSwapFacet.sol:VaultSwapFacet"), "VaultSwapFacet"),
                             vaultLiquidityFacet: _deployFacet(
-                                type(VaultLiquidityFacet).creationCode, type(VaultLiquidityFacet).name
+                                ArtifactCreationCode.creationCode(create3Factory, "VaultLiquidityFacet.sol:VaultLiquidityFacet"), "VaultLiquidityFacet"
                             ),
-                            vaultBufferFacet: _deployFacet(type(VaultBufferFacet).creationCode, type(VaultBufferFacet).name),
+                            vaultBufferFacet: _deployFacet(ArtifactCreationCode.creationCode(create3Factory, "VaultBufferFacet.sol:VaultBufferFacet"), "VaultBufferFacet"),
                             vaultPoolTokenFacet: _deployFacet(
-                                type(VaultPoolTokenFacet).creationCode, type(VaultPoolTokenFacet).name
+                                ArtifactCreationCode.creationCode(create3Factory, "VaultPoolTokenFacet.sol:VaultPoolTokenFacet"), "VaultPoolTokenFacet"
                             ),
-                            vaultQueryFacet: _deployFacet(type(VaultQueryFacet).creationCode, type(VaultQueryFacet).name),
+                            vaultQueryFacet: _deployFacet(ArtifactCreationCode.creationCode(create3Factory, "VaultQueryFacet.sol:VaultQueryFacet"), "VaultQueryFacet"),
                             vaultRegistrationFacet: _deployFacet(
-                                type(VaultRegistrationFacet).creationCode, type(VaultRegistrationFacet).name
+                                ArtifactCreationCode.creationCode(create3Factory, "VaultRegistrationFacet.sol:VaultRegistrationFacet"), "VaultRegistrationFacet"
                             ),
-                            vaultAdminFacet: _deployFacet(type(VaultAdminFacet).creationCode, type(VaultAdminFacet).name),
+                            vaultAdminFacet: _deployFacet(ArtifactCreationCode.creationCode(create3Factory, "VaultAdminFacet.sol:VaultAdminFacet"), "VaultAdminFacet"),
                             vaultRecoveryFacet: _deployFacet(
-                                type(VaultRecoveryFacet).creationCode, type(VaultRecoveryFacet).name
+                                ArtifactCreationCode.creationCode(create3Factory, "VaultRecoveryFacet.sol:VaultRecoveryFacet"), "VaultRecoveryFacet"
                             ),
                             diamondFactory: diamondPackageFactory
                         })
                     ),
-                    _salt(type(BalancerV3VaultDFPkg).name)
+                    _salt("BalancerV3VaultDFPkg")
                 )
             )
         );
@@ -214,38 +177,38 @@ contract Script_03B_DeployBalancerV3Core is DeploymentBase {
         routerPkg = IBalancerV3RouterDFPkg(
             address(
                 create3Factory.deployPackageWithArgs(
-                    type(BalancerV3RouterDFPkg).creationCode,
+                    ArtifactCreationCode.creationCode(create3Factory, "BalancerV3RouterDFPkg.sol:BalancerV3RouterDFPkg"),
                     abi.encode(
                         IBalancerV3RouterDFPkg.PkgInit({
-                            routerSwapFacet: _deployFacet(type(RouterSwapFacet).creationCode, type(RouterSwapFacet).name),
+                            routerSwapFacet: _deployFacet(ArtifactCreationCode.creationCode(create3Factory, "RouterSwapFacet.sol:RouterSwapFacet"), "RouterSwapFacet"),
                             routerAddLiquidityFacet: _deployFacet(
-                                type(RouterAddLiquidityFacet).creationCode, type(RouterAddLiquidityFacet).name
+                                ArtifactCreationCode.creationCode(create3Factory, "RouterAddLiquidityFacet.sol:RouterAddLiquidityFacet"), "RouterAddLiquidityFacet"
                             ),
                             routerRemoveLiquidityFacet: _deployFacet(
-                                type(RouterRemoveLiquidityFacet).creationCode, type(RouterRemoveLiquidityFacet).name
+                                ArtifactCreationCode.creationCode(create3Factory, "RouterRemoveLiquidityFacet.sol:RouterRemoveLiquidityFacet"), "RouterRemoveLiquidityFacet"
                             ),
                             routerInitializeFacet: _deployFacet(
-                                type(RouterInitializeFacet).creationCode, type(RouterInitializeFacet).name
+                                ArtifactCreationCode.creationCode(create3Factory, "RouterInitializeFacet.sol:RouterInitializeFacet"), "RouterInitializeFacet"
                             ),
                             routerCommonFacet: _deployFacet(
-                                type(RouterCommonFacet).creationCode, type(RouterCommonFacet).name
+                                ArtifactCreationCode.creationCode(create3Factory, "RouterCommonFacet.sol:RouterCommonFacet"), "RouterCommonFacet"
                             ),
-                            batchSwapFacet: _deployFacet(type(BatchSwapFacet).creationCode, type(BatchSwapFacet).name),
+                            batchSwapFacet: _deployFacet(ArtifactCreationCode.creationCode(create3Factory, "BatchSwapFacet.sol:BatchSwapFacet"), "BatchSwapFacet"),
                             bufferRouterFacet: _deployFacet(
-                                type(BufferRouterFacet).creationCode, type(BufferRouterFacet).name
+                                ArtifactCreationCode.creationCode(create3Factory, "BufferRouterFacet.sol:BufferRouterFacet"), "BufferRouterFacet"
                             ),
                             compositeLiquidityERC4626Facet: _deployFacet(
-                                type(CompositeLiquidityERC4626Facet).creationCode,
-                                type(CompositeLiquidityERC4626Facet).name
+                                ArtifactCreationCode.creationCode(create3Factory, "CompositeLiquidityERC4626Facet.sol:CompositeLiquidityERC4626Facet"),
+                                "CompositeLiquidityERC4626Facet"
                             ),
                             compositeLiquidityNestedFacet: _deployFacet(
-                                type(CompositeLiquidityNestedFacet).creationCode,
-                                type(CompositeLiquidityNestedFacet).name
+                                ArtifactCreationCode.creationCode(create3Factory, "CompositeLiquidityNestedFacet.sol:CompositeLiquidityNestedFacet"),
+                                "CompositeLiquidityNestedFacet"
                             ),
                             diamondFactory: diamondPackageFactory
                         })
                     ),
-                    _salt(type(BalancerV3RouterDFPkg).name)
+                    _salt("BalancerV3RouterDFPkg")
                 )
             )
         );

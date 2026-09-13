@@ -10,9 +10,7 @@ import {
 import {
     MixedBufferMultiVaultStableDetf_Pkg_FactoryService
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_Pkg_FactoryService.sol";
-import {
-    IMixedBufferMultiVaultStableDetfDFPkg
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfDFPkg.sol";
+import {IMixedBufferMultiVaultStableDetfDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfDFPkg.sol";
 
 library MixedBufferMultiVaultStableDetf_Component_FactoryService {
     function deployExchangeInFacet(ICreate3FactoryProxy factory_) internal returns (IFacet facet_) {

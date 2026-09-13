@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {PoolSeedLib} from "scripts/foundry/anvil_robinhood_testnet/PoolSeedLib.sol";
 import {TransitionQuoteAssertions} from "test/foundry/spec/vaults/standard/TransitionQuoteAssertions.sol";
 import {IStandardExchangeTransitionQuote as ITransition} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
@@ -37,10 +39,8 @@ import {
 import {
     IUniswapV4StandardExchangePositionImport
 } from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInTarget.sol";
-import {
-    IUniswapV4StandardExchangeDFPkg,
-    UniswapV4StandardExchangeDFPkg
-} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol";
+import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/IUniswapV4StandardExchangeDFPkg.sol";
+
 import {
     UniswapV4_Component_FactoryService
 } from "contracts/protocols/dexes/uniswap/v4/UniswapV4_Component_FactoryService.sol";
@@ -827,7 +827,7 @@ contract UniswapV4StandardExchange_FullRangeBook is TestBase_UniswapV4StandardEx
         IUniswapV4StandardExchangeDFPkg boundPkg_ = IUniswapV4StandardExchangeDFPkg(
             address(
                 IVaultRegistryDeployment(address(indexedexManager)).deployPkg(
-                    type(UniswapV4StandardExchangeDFPkg).creationCode,
+                    ArtifactCreationCode.creationCode(create3Factory, "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol:UniswapV4StandardExchangeDFPkg"),
                     abi.encode(pkgInit_),
                     keccak256("UniswapV4StandardExchangeDFPkg.boundPM.fr6")
                 )
@@ -883,30 +883,6 @@ import {PositionDescriptor} from "@crane/contracts/protocols/dexes/uniswap/v4/Po
 import {IWETH9} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/external/IWETH9.sol";
 
 import {Actions} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Actions.sol";
-
-import {UniswapV4StandardExchangeOutFacet} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutFacet.sol";
-
-import {UniswapV4StandardExchangeOutExecutionDelegate} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutExecutionDelegate.sol";
-
-import {UniswapV4StandardExchangePositionImportFacet} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangePositionImportFacet.sol";
-
-import {UniswapV4StandardExchangeLiquidReserveFacet} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeLiquidReserveFacet.sol";
-
-import {UniswapV4StandardExchangeOutMultiFacet} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiFacet.sol";
-
-import {UniswapV4StandardExchangeInQueryFacet} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryFacet.sol";
-
-import {UniswapV4StandardExchangeInFacet} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInFacet.sol";
-
-import {UniswapV4StandardExchangeOutQueryFacet} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutQueryFacet.sol";
-
-import {UniswapV4StandardExchangeInMultiFacet} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInMultiFacet.sol";
-
-import {UniswapV4StandardExchangeInExecutionDelegate} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInExecutionDelegate.sol";
-
-import {UniswapV4StandardExchangeInMultiQueryFacet} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInMultiQueryFacet.sol";
-
-import {UniswapV4StandardExchangeOutMultiQueryFacet} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiQueryFacet.sol";
 
 import {LiquidityAmounts as ReferenceLiquidityAmounts} from "@crane/contracts/protocols/dexes/uniswap/v3/periphery/libraries/LiquidityAmounts.sol";
 

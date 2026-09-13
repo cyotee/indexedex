@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IRebasingDETFTokenDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/IRebasingDETFTokenDFPkg.sol";
+
 import {IFacet} from '@crane/contracts/interfaces/IFacet.sol';
 import {IDiamondFactoryPackage} from '@crane/contracts/interfaces/IDiamondFactoryPackage.sol';
 import {IDiamondPackageCallBackFactory} from '@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol';
@@ -22,33 +24,7 @@ import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol'
 import {IStandardExchangeOut} from 'contracts/interfaces/IStandardExchangeOut.sol';
 import {RebasingDETFTokenRepo} from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenRepo.sol';
 
-interface IRebasingDETFTokenDFPkg is IDiamondFactoryPackage {
-    struct PkgInit {
-        IFacet erc20Facet;
-        IFacet erc5267Facet;
-        IFacet erc2612Facet;
-        IFacet multiStepOwnableFacet;
-        IFacet rebasingDetfTokenFacet;
-        IDiamondPackageCallBackFactory diamondFactory;
-    }
 
-    struct PkgArgs {
-        IDETF detf;
-        IDETFNFTVault nftVault;
-        IERC20 rateAsset;
-        uint256 detfNFTId;
-        address owner;
-        bytes32 optionalSalt;
-    }
-
-    function deployToken(
-        IDETF detf,
-        IDETFNFTVault nftVault,
-        IERC20 rateAsset,
-        uint256 detfNFTId,
-        address owner
-    ) external returns (address tokenAddress);
-}
 
 contract RebasingDETFTokenDFPkg is IRebasingDETFTokenDFPkg {
     using BetterEfficientHashLib for bytes;

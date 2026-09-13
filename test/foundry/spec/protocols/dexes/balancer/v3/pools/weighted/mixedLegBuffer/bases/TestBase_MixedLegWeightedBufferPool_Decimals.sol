@@ -20,9 +20,7 @@ import {
 
 import {IMixedLegWeightedBufferPool} from
     "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/IMixedLegWeightedBufferPool.sol";
-import {
-    IMixedLegWeightedBufferPoolPkg
-} from "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolStandardVaultPkg.sol";
+import {IMixedLegWeightedBufferPoolPkg} from "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/IMixedLegWeightedBufferPoolPkg.sol";
 import {
     MixedLegWeightedBufferPool_FactoryService
 } from "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPool_FactoryService.sol";

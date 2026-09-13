@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 pragma solidity ^0.8.0;
+
+import {IMixedBufferMultiVaultStablePoolPkg} from "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/IMixedBufferMultiVaultStablePoolPkg.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
@@ -74,49 +76,9 @@ import {
 import {
     MixedBufferMultiVaultStablePoolRepo
 } from "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolRepo.sol";
-import {
-    IStandardExchangeRateProviderDFPkg
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
+import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
 
-interface IMixedBufferMultiVaultStablePoolPkg is IDiamondFactoryPackage, IStandardVaultPkg {
-    /**
-     * @dev T = unpairedCount + 1 + vaultCount, require U>=1, 1<=N<=3, 3<=T<=5 and vaultCount in 1..3.
-     * @dev amplificationParameter: raw amp fixed at deploy. Balancer address-sorted tokens.
-     * @dev unpairedRateProviders / vaultShareRateProviders: address(0) => STANDARD; non-zero => WITH_RATE.
-     *      Package NEVER auto-deploys default SE rate providers (L17).
-     */
-    struct PkgInit {
-        IFacet basicVaultFacet;
-        IFacet standardVaultFacet;
-        IFacet balancerV3VaultAwareFacet;
-        IFacet betterBalancerV3PoolTokenFacet;
-        IFacet defaultPoolInfoFacet;
-        IFacet standardSwapFeePercentageBoundsFacet;
-        IFacet unbalancedLiquidityInvariantRatioBoundsFacet;
-        IFacet balancerV3AuthenticationFacet;
-        IFacet bufferPoolFacet;
-        IFacet poolLiquidityFacet;
-        IFacet hookFacet;
-        IVaultRegistryDeployment vaultRegistry;
-        IVaultFeeOracleQuery vaultFeeOracle;
-        IVault balancerV3Vault;
-        IDiamondPackageCallBackFactory diamondFactory;
-        IStandardExchangeRateProviderDFPkg rateProviderPkg; // optional; never auto-used on zero args
-    }
 
-    struct PkgArgs {
-        uint8 unpairedCount;
-        IERC20[] unpairedTokens;
-        IRateProvider[] unpairedRateProviders;
-        IERC20 bufferToken;
-        uint8 vaultCount;
-        IStandardExchange[] standardExchangeVaults;
-        IRateProvider[] vaultShareRateProviders;
-        uint256 amplificationParameter;
-    }
-
-    function deployPool(PkgArgs calldata args) external returns (address pool);
-}
 
 contract MixedBufferMultiVaultStablePoolStandardVaultPkg is
     BalancerV3BasePoolFactory,

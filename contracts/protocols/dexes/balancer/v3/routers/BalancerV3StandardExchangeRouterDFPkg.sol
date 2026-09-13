@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IBalancerV3StandardExchangeRouterDFPkg} from "contracts/protocols/dexes/balancer/v3/routers/IBalancerV3StandardExchangeRouterDFPkg.sol";
+
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IDiamondCut} from "@crane/contracts/interfaces/IDiamondCut.sol";
 import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
@@ -41,23 +43,7 @@ import {
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {IBalancerV3StandardExchangeRouterPermit2Witness} from "contracts/interfaces/IBalancerV3StandardExchangeRouterPermit2Witness.sol";
 
-interface IBalancerV3StandardExchangeRouterDFPkg is IDiamondFactoryPackage {
-    struct PkgInit {
-        IFacet senderGuardFacet;
-        IFacet balancerV3StandardExchangeRouterExactInQueryFacet;
-        IFacet balancerV3StandardExchangeRouterExactOutQueryFacet;
-        IFacet balancerV3StandardExchangeRouterExactInSwapFacet;
-        IFacet balancerV3StandardExchangeRouterExactOutSwapFacet;
-        IFacet balancerV3StandardExchangeRouterPrepayFacet;
-        IFacet balancerV3StandardExchangeRouterPrepayHooksFacet;
-        IFacet balancerV3StandardExchangeBatchRouterExactInFacet;
-        IFacet balancerV3StandardExchangeBatchRouterExactOutFacet;
-        IFacet balancerV3StandardExchangePermit2WitnessFacet;
-        IVault balancerV3Vault;
-        IPermit2 permit2;
-        IWETH weth;
-    }
-}
+
 
 contract BalancerV3StandardExchangeRouterDFPkg is IBalancerV3StandardExchangeRouterDFPkg {
     using BetterEfficientHashLib for bytes;

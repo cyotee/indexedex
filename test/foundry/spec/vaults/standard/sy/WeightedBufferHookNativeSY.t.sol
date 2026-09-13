@@ -11,9 +11,8 @@ import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interf
 import {Math} from "@crane/contracts/utils/Math.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {TestBase_UniswapV4StandardExchangeWeightedBufferHook} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/TestBase_UniswapV4StandardExchangeWeightedBufferHook.sol";
-import {DETFFundedStakingArtifacts} from "contracts/test/bases/DETFFundedStakingArtifacts.sol";
 
-contract WeightedBufferHookNativeSYTest is TestBase_UniswapV4StandardExchangeWeightedBufferHook, DETFFundedStakingArtifacts {
+contract WeightedBufferHookNativeSYTest is TestBase_UniswapV4StandardExchangeWeightedBufferHook {
     IStandardizedYield private sy_;
 
     function setUp() public override {
@@ -145,7 +144,7 @@ contract WeightedBufferHookNativeSYTest is TestBase_UniswapV4StandardExchangeWei
     }
 }
 
-contract WeightedBufferHookRestrictedSYTest is TestBase_UniswapV4StandardExchangeWeightedBufferHook, DETFFundedStakingArtifacts {
+contract WeightedBufferHookRestrictedSYTest is TestBase_UniswapV4StandardExchangeWeightedBufferHook {
     function _pkgOwnerOnlyLiquidity() internal pure override returns (bool) { return true; }
     function _pkgOwner() internal view override returns (address) { return user; }
 

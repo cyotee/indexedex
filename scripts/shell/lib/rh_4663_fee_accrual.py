@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Local-only identity and receipt checks for the existing Phase/Stage runner."""
+"""Identity and receipt checks for the local and explicitly selected public runners."""
 import hashlib
 import json
 import os
@@ -20,9 +20,31 @@ CORE = {
     'weth': '0x0bd7d308f8e1639fab988df18a8011f41eacad73',
 }
 
+PACKAGE_MANIFESTS = {
+    'uniswapV4Se': ('phase05_stage03_uniswap_v4_standard_exchange_pkg.json', 'uniV4SePkg'),
+    'rebasingAwareErc4626': ('phase06_stage10_rebasing_aware_erc4626_pkg.json', 'rebasingAwareErc4626Pkg'),
+    'rateProvider': ('phase05_stage01_se_rate_provider_pkg.json', 'rateProviderPkg'),
+    'weightedHook': ('phase06_stage04_weighted_buffer_hook_pkg.json', 'weightedHookPkg'),
+    'detf': ('phase06_stage07_uniswap_v4_detf_pkg.json', 'uniV4DetfPkg'),
+}
+
+def resolve_package_config(config, manifests):
+    result = {**config, 'packages': {}}
+    for key, (filename, field) in PACKAGE_MANIFESTS.items():
+        manifest = manifests[filename]
+        require(manifest['chainId'] == 4663, f'Wrong package manifest chain: {filename}')
+        address = manifest[field]
+        require_sender(address, address)  # Reject empty/zero/malformed package addresses.
+        result['packages'][key] = address
+    require_complete(result)
+    return result
+
 def require(condition, message):
     if not condition:
         raise ValueError(message)
+
+class MissingStageError(ValueError):
+    """Distinguish a new stage from a recorded stage whose receipts are invalid."""
 
 def local_url(value):
     u = urllib.parse.urlsplit(value)
@@ -31,15 +53,27 @@ def local_url(value):
             'Fee accrual requires an explicit loopback Anvil RPC')
     return value
 
+def public_url(value):
+    u = urllib.parse.urlsplit(value)
+    require(u.scheme == 'https' and u.hostname and not u.username and not u.password,
+            'Public fee accrual requires an HTTPS RPC without embedded credentials')
+    return value
+
+def require_sender(sender, expected):
+    require(isinstance(sender, str) and len(sender) == 42 and sender.startswith('0x')
+            and all(c in '0123456789abcdefABCDEF' for c in sender[2:])
+            and int(sender[2:], 16) != 0, 'Set a valid DEPLOYER_ADDRESS')
+    require(sender.lower() == expected.lower(), 'DEPLOYER_ADDRESS must match the configured staking owner')
+
 class NoRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, request, fp, code, message, headers, new_url):
-        raise ValueError('Anvil RPC redirects are forbidden')
+        raise ValueError('Deployment RPC redirects are forbidden')
 
 
 def rpc(url, method, params=None):
     request = urllib.request.Request(url, json.dumps({
         'jsonrpc': '2.0', 'id': 1, 'method': method, 'params': params or []
-    }).encode(), {'Content-Type': 'application/json'})
+    }).encode(), {'Content-Type': 'application/json', 'User-Agent': 'IndexedEx-deployment/1.0'})
     with urllib.request.build_opener(urllib.request.ProxyHandler({}), NoRedirect()).open(request, timeout=60) as response:
         data = json.load(response)
     require('error' not in data, f'{method} failed: {data.get("error", {}).get("message", "RPC error")}')
@@ -54,14 +88,33 @@ def write_json(path, value):
     temp.write_text(json.dumps(value, indent=2) + '\n')
     temp.replace(path)
 
-def identity(url, config, raw):
+def validate_script_transition(previous, current, transition):
+    require({k: v for k, v in previous.items() if k != 'scriptSourceSha256'} ==
+            {k: v for k, v in current.items() if k != 'scriptSourceSha256'},
+            'Only the reviewed script update may change; network/config/core must match')
+    require(previous['scriptSourceSha256'] == transition['from'] and
+            current['scriptSourceSha256'] == transition['to'], 'Unreviewed script update')
+
+def refresh_pre_migration_snapshot(journal, phase, remaining, principal):
+    if any('migration' in item for item in journal['stages']):
+        return
+    require(phase == 0, 'Cannot adopt an unjournaled migration')
+    previous = {key: journal[key] for key in ('initialReserve', 'initialPrincipal')}
+    if previous != {'initialReserve': remaining, 'initialPrincipal': principal}:
+        journal.setdefault('preMigrationSnapshots', []).append(previous)
+    journal.update(initialReserve=remaining, initialPrincipal=principal, migrationStarted=True)
+
+def identity(url, config, raw, public=False):
     require(config.get('version') == 1 and config.get('chainId') == 4663, 'Wrong config version/chain')
     require(int(rpc(url, 'eth_chainId'), 16) == 4663, 'Wrong RPC chain')
-    node = rpc(url, 'anvil_nodeInfo')
-    require(node['environment']['chainId'] == 4663, 'Wrong Anvil chain')
-    metadata = rpc(url, 'anvil_metadata')
-    fork = metadata.get('forkedNetwork') or {}
-    require(fork.get('forkBlockNumber') == config['forkBlockNumber'], 'Fork block mismatch')
+    if public:
+        metadata = {'instanceId': 'public-4663'}
+    else:
+        node = rpc(url, 'anvil_nodeInfo')
+        require(node['environment']['chainId'] == 4663, 'Wrong Anvil chain')
+        metadata = rpc(url, 'anvil_metadata')
+        fork = metadata.get('forkedNetwork') or {}
+        require(fork.get('forkBlockNumber') == config['forkBlockNumber'], 'Fork block mismatch')
     block = rpc(url, 'eth_getBlockByNumber', [hex(config['forkBlockNumber']), False])
     require(block['hash'].lower() == config['forkBlockHash'].lower(), 'Fork hash mismatch')
     fingerprints = {}
@@ -78,7 +131,8 @@ def identity(url, config, raw):
     digest = hashlib.sha256()
     sources = sorted((source_root / 'scripts/foundry/anvil_robinhood_main').glob('*.sol'))
     sources += [Path(__file__).resolve(), Path(__file__).with_name('rh_4663_stages.sh'),
-                source_root / 'scripts/foundry/anvil_robinhood_main/deploy_all.sh']
+                source_root / 'scripts/foundry/anvil_robinhood_main/deploy_all.sh',
+                source_root / 'scripts/shell/robinhood_main.sh']
     for source in sources:
         digest.update(str(source.relative_to(source_root)).encode())
         digest.update(source.read_bytes())
@@ -129,28 +183,84 @@ def verify_migration_events(events, quotes, target, before_remaining, live_remai
 
 
 def main():
+    public = sys.argv[1:2] == ['--public']
+    if public:
+        del sys.argv[1]
     mode = sys.argv[1]
-    url = local_url(os.environ['RPC_URL'])
+    url = (public_url if public else local_url)(os.environ['RPC_URL'])
     raw = Path(os.environ['FEE_ACCRUAL_CONFIG']).read_bytes()
     config = json.loads(raw)
+    if public:
+        require_sender(os.environ.get('DEPLOYER_ADDRESS'), config['stakingOwner'])
     if mode == 'ready':
         require_complete(config)
         for key, address in config['packages'].items():
             require(rpc(url, 'eth_getCode', [address, 'latest']) != '0x', f'Deploy prerequisite package through its existing stage: {key}')
     output = Path(os.environ['OUT_DIR_OVERRIDE']).resolve()
-    require('.scratch' in output.parts, 'Fee accrual outputs must be isolated under .scratch')
+    if not public:
+        require('.scratch' in output.parts, 'Fee accrual outputs must be isolated under .scratch')
     output.mkdir(parents=True, exist_ok=True)
     journal_path = output / 'fee-accrual-journal.json'
-    current = identity(url, config, raw)
+    current = identity(url, config, raw, public=public)
     if journal_path.exists():
         journal = json.loads(journal_path.read_text())
-        require(journal['identity'] == current, 'Anvil/config/core changed; use a new run directory')
+        if mode == 'reconcile-scripts':
+            if journal['identity'] == current:
+                print('Journal already uses the current scripts')
+                return
+            transition = json.loads(Path(__file__).with_name('rh_4663_fee_accrual_script_update.json').read_text())
+            validate_script_transition(journal['identity'], current, transition)
+            for entry in journal['stages']:
+                for saved in entry['receipts']:
+                    receipt = rpc(url, 'eth_getTransactionReceipt', [saved['transactionHash']])
+                    require(receipt and int(receipt['status'], 16) == 1 and
+                            receipt['blockHash'] == saved['blockHash'] and
+                            receipt['blockNumber'] == saved['blockNumber'], 'Saved receipt mismatch')
+                    block = rpc(url, 'eth_getBlockByNumber', [receipt['blockNumber'], False])
+                    require(block['hash'] == receipt['blockHash'], 'Saved receipt is not canonical')
+            backup = output / f'fee-accrual-journal.before-{transition["from"]}.json'
+            require(not backup.exists(), 'Script-update backup already exists; inspect before continuing')
+            write_json(backup, journal)
+            journal.setdefault('scriptUpdates', []).append(transition)
+            journal['identity'] = current
+            write_json(journal_path, journal)
+            print('Verified existing receipts and recorded reviewed script update; original journal backed up')
+            return
+        require(journal['identity'] == current, 'Network/config/scripts/core changed; reconcile before continuing')
     else:
+        require(mode != 'reconcile-scripts', 'No existing journal to reconcile')
         journal = {'identity': current, 'stages': [], 'initialReserve': int(call(url, config['tokenStaking'], 'reserveRemaining()'), 16),
                    'initialPrincipal': int(call(url, config['tokenStaking'], 'totalSupply()'), 16)}
     if mode in ('preflight', 'ready'):
         write_json(journal_path, journal)
-        print('Verified local Anvil identity, existing core, owners and fee collector')
+        print('Verified network identity, existing core, owners and fee collector')
+    elif mode == 'launch-config':
+        # Package pins are resolved from confirmed receipts after their deployment.
+        require_complete({**config, 'packages': {}})
+        for expected in (config['managerOwner'], config['bootstrap']['actor']):
+            require_sender(os.environ.get('DEPLOYER_ADDRESS'), expected)
+        print('Verified launch decisions and DEPLOYER_ADDRESS for every signer role')
+    elif mode == 'pin-packages':
+        needed = {'05-01', '05-03', '06-01', '06-02', '06-04', '06-07', '06-10'}
+        require(needed <= {item['stage'] for item in journal['stages']}, 'Missing confirmed package stages')
+        for item in journal['stages']:
+            for saved in item['receipts']:
+                receipt = rpc(url, 'eth_getTransactionReceipt', [saved['transactionHash']])
+                require(receipt and int(receipt['status'], 16) == 1 and receipt['blockHash'] == saved['blockHash'],
+                        'Package receipt no longer matches')
+                block = rpc(url, 'eth_getBlockByNumber', [receipt['blockNumber'], False])
+                require(block['hash'] == receipt['blockHash'], 'Package receipt is not canonical')
+        manifests = {filename: json.loads((output / filename).read_text())
+                     for filename, _ in PACKAGE_MANIFESTS.values()}
+        resolved = resolve_package_config(config, manifests)
+        for address in resolved['packages'].values():
+            require(rpc(url, 'eth_getCode', [address, 'latest']) != '0x', 'Resolved package has no code')
+        destination = output / 'fee-accrual-config.resolved.json'
+        if destination.exists():
+            require(json.loads(destination.read_text()) == resolved, 'Resolved config changed; reconcile before continuing')
+        else:
+            write_json(destination, resolved)
+        print(f'Confirmed package addresses exported to {destination}')
     elif mode == 'receipts':
         stage, path = sys.argv[2:4]
         broadcast = json.loads(Path(path).read_text())
@@ -185,17 +295,27 @@ def main():
                       if log['address'].lower() == config['tokenStaking'].lower() and log['topics'][0] == topic]
             quote = json.loads((output / 'phase08_stage07_staking_principal_migration.json').read_text())
             target = '0x' + call(url, config['tokenStaking'], 'targetDetf()')[-40:]
-            previous_remaining = journal['stages'][-1]['reserveRemaining'] if journal['stages'] else journal['initialReserve']
-            record['migration'] = verify_migration_events(events, quote.get('chunks', [quote]), target,
+            chunks = quote.get('chunks', [quote])
+            prior_migrations = [item for item in journal['stages'] if 'migration' in item]
+            # Before cutover, ordinary deposits/withdrawals can change the reserve.
+            # Establish the actual baseline from the first confirmed migration,
+            # whose event must exactly match its fresh simulated reserve delta.
+            previous_remaining = prior_migrations[-1]['reserveRemaining'] if prior_migrations else quote_uint(chunks[0]['beforeRemaining'])
+            record['migration'] = verify_migration_events(events, chunks, target,
                                                          previous_remaining, record['reserveRemaining'])
             principal = int(call(url, config['tokenStaking'], 'totalSupply()'), 16)
+            if not prior_migrations:
+                require(principal == quote_uint(chunks[0]['principalBefore']), 'Principal changed since first migration quote')
+                journal.setdefault('preMigrationSnapshots', []).append({key: journal[key] for key in ('initialReserve', 'initialPrincipal')})
+                journal.update(initialReserve=previous_remaining, initialPrincipal=principal)
             require(principal == journal['initialPrincipal'], 'Principal weights changed during migration')
         journal['stages'].append(record)
         write_json(journal_path, journal)
         print(f'Confirmed {len(confirmed)} transaction receipts for {stage}')
     elif mode == 'stage-complete':
         records = [item for item in journal['stages'] if item['stage'] == sys.argv[2]]
-        require(records, 'Stage has no confirmed journal entry')
+        if not records:
+            raise MissingStageError('Stage has no confirmed journal entry')
         for entry in records:
             for saved in entry['receipts']:
                 receipt = rpc(url, 'eth_getTransactionReceipt', [saved['transactionHash']])
@@ -204,13 +324,8 @@ def main():
     elif mode == 'begin-migration':
         remaining = int(call(url, config['tokenStaking'], 'reserveRemaining()'), 16)
         principal = int(call(url, config['tokenStaking'], 'totalSupply()'), 16)
-        if not journal.get('migrationStarted'):
-            require(not any('migration' in item for item in journal['stages']), 'Migration journal needs reconciliation')
-            require(int(call(url, config['tokenStaking'], 'phase()'), 16) == 0, 'Cannot adopt an unjournaled migration')
-            journal['initialReserve'] = remaining
-            journal['initialPrincipal'] = principal
-            journal['migrationStarted'] = True
-            write_json(journal_path, journal)
+        refresh_pre_migration_snapshot(journal, int(call(url, config['tokenStaking'], 'phase()'), 16), remaining, principal)
+        write_json(journal_path, journal)
         converted = sum(item.get('migration', {}).get('amountIn', 0) for item in journal['stages'])
         require(remaining + converted == journal['initialReserve'], 'Migration reserve changed outside recorded chunks')
         require(principal == journal['initialPrincipal'], 'Migration allocation weights changed')
@@ -230,6 +345,9 @@ def main():
 if __name__ == '__main__':
     try:
         main()
+    except MissingStageError as error:
+        print(f'Fee accrual stopped: {error}', file=sys.stderr)
+        sys.exit(3)
     except Exception as error:
         print(f'Fee accrual stopped: {error}', file=sys.stderr)
         sys.exit(1)

@@ -5,9 +5,7 @@ import {TestBase_MultiVaultWeightedDetf_Adversarial_Decimals} from "test/foundry
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
-import {
-    IMultiVaultWeightedDetfInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfInfoTarget.sol";
+import {IMultiVaultWeightedDetfInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfInfo.sol";
 
 /// @notice E1 conservation round-trip; E4 soft non-dilution of existing holder balances.
 /// @dev Deferred P2: E2 (multi-leg dust after burn - covered residual-clean in MultiLeg/FeeNonDilution matrix),

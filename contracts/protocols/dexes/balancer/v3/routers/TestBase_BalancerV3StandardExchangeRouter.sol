@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
-import {IAerodromeStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeDFPkg.sol";
+
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+import {IAerodromeStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/v1/IAerodromeStandardExchangeDFPkg.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 
@@ -21,9 +23,7 @@ import {IERC20 as OZIERC20} from "@crane/contracts/interfaces/IERC20.sol";
 /* -------------------------------------------------------------------------- */
 
 import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
-import {
-    WeightedPoolFactory
-} from "@crane/contracts/external/balancer/v3/pool-weighted/contracts/WeightedPoolFactory.sol";
+import {IWeightedPoolFactory} from "contracts/interfaces/IWeightedPoolFactory.sol";
 import {TokenConfig, PoolRoleAccounts} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/VaultTypes.sol";
 import {
     CastingHelpers
@@ -42,7 +42,7 @@ import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balance
 import {
     TestBase_BalancerV3Vault
 } from "@crane/contracts/protocols/dexes/balancer/v3/test/bases/TestBase_BalancerV3Vault.sol";
-import {SenderGuardFacet} from "@crane/contracts/protocols/dexes/balancer/v3/vault/SenderGuardFacet.sol";
+
 import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol";
 import {IRouter} from "@crane/contracts/interfaces/protocols/dexes/aerodrome/IRouter.sol";
 import {IPool} from "@crane/contracts/interfaces/protocols/dexes/aerodrome/IPool.sol";
@@ -68,16 +68,12 @@ import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExch
 import {
     IBalancerV3StandardExchangeRouterProxy
 } from "contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol";
-import {
-    IBalancerV3StandardExchangeRouterDFPkg
-} from "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterDFPkg.sol";
+import {IBalancerV3StandardExchangeRouterDFPkg} from "contracts/protocols/dexes/balancer/v3/routers/IBalancerV3StandardExchangeRouterDFPkg.sol";
 import {
     BalancerV3StandardExchangeRouter_FactoryService
 } from "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouter_FactoryService.sol";
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
-import {
-    IAerodromeStandardExchangeDFPkg
-} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeDFPkg.sol";
+import {IAerodromeStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/v1/IAerodromeStandardExchangeDFPkg.sol";
 import {
     Aerodrome_Component_FactoryService
 } from "contracts/protocols/dexes/aerodrome/v1/Aerodrome_Component_FactoryService.sol";
@@ -90,7 +86,7 @@ import {
  *      - Strategy vault deposits/withdrawals
  *      - Combined vault + swap operations
  */
-contract TestBase_BalancerV3StandardExchangeRouter is TestBase_BalancerV3Vault, IndexedexTest {
+abstract contract TestBase_BalancerV3StandardExchangeRouter is TestBase_BalancerV3Vault, IndexedexTest {
     using BetterEfficientHashLib for bytes;
     using CastingHelpers for address[];
     using FixedPoint for uint256;
@@ -211,7 +207,7 @@ contract TestBase_BalancerV3StandardExchangeRouter is TestBase_BalancerV3Vault, 
 
     function _deployRouterFacets() internal virtual {
         // Deploy SenderGuardFacet directly
-        senderGuardFacet = create3Factory.deployFacet(type(SenderGuardFacet).creationCode, keccak256("SenderGuardFacet"));
+        senderGuardFacet = create3Factory.deployFacet(ArtifactCreationCode.creationCode(create3Factory, "SenderGuardFacet.sol:SenderGuardFacet"), keccak256("SenderGuardFacet"));
         vm.label(address(senderGuardFacet), "SenderGuardFacet");
 
         exactInQueryFacet = create3Factory.deployBalancerV3StandardExchangeRouterExactInQueryFacet();
@@ -296,7 +292,7 @@ contract TestBase_BalancerV3StandardExchangeRouter is TestBase_BalancerV3Vault, 
     function _createPoolFactory() internal virtual returns (address) {
         // bytes32 salt = keccak256("IndexedexBalancerV3WeightedPoolFactory");
         bytes32 salt = abi.encodePacked("IndexedexBalancerV3WeightedPoolFactory")._hash();
-        bytes memory initCode = type(WeightedPoolFactory).creationCode;
+        bytes memory initCode = ArtifactCreationCode.creationCode(create3Factory, "WeightedPoolFactory.sol:WeightedPoolFactory");
         bytes memory initArgs = abi.encode(IVault(address(vault)), uint32(365 days), "Factory v1", "Pool v1");
 
         address factory = create3Factory.create3WithArgs(initCode, initArgs, salt);
@@ -337,7 +333,7 @@ contract TestBase_BalancerV3StandardExchangeRouter is TestBase_BalancerV3Vault, 
         PoolRoleAccounts memory roleAccounts = _poolRoleAccounts(poolCreator);
         bytes32 salt = _poolSalt(name, symbol, poolCreator);
 
-        newPool = WeightedPoolFactory(testPoolFactory).create(
+        newPool = IWeightedPoolFactory(testPoolFactory).create(
             name,
             symbol,
             tokenConfigs,

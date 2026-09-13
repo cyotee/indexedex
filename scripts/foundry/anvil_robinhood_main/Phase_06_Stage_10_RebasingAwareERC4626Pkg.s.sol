@@ -11,6 +11,8 @@ contract Phase_06_Stage_10_RebasingAwareERC4626Pkg is LaunchStageBase {
     function run() external {
         _start("Phase 06 Stage 10: Rebasing-aware ERC4626 pkg");
         _requireDiamondFactory(s);
+        _requireCommonFacets(s);
+        _requireManager(s);
         string[] memory skipKeys = new string[](6);
         skipKeys[0] = "rebasingAwareErc4626Pkg";
         skipKeys[1] = "rebasingAwareErc4626Facet";
@@ -18,11 +20,12 @@ contract Phase_06_Stage_10_RebasingAwareERC4626Pkg is LaunchStageBase {
         skipKeys[3] = "rebasingAwareSyFacet";
         skipKeys[4] = "rebasingAwareMetadataFacet";
         skipKeys[5] = "rebasingAwareQuoteFacet";
+        bool current;
         if (_shouldSkipStage(FILE_06_10, skipKeys)) {
             _loadRebasingAwareERC4626Pkg(s);
-        } else {
-            _requireCommonFacets(s);
-            _requireManager(s);
+            current = RebasingAwarePkgLib.isCurrent(s);
+        }
+        if (!current) {
             _broadcast();
             RebasingAwarePkgLib.execute(s);
             vm.stopBroadcast();

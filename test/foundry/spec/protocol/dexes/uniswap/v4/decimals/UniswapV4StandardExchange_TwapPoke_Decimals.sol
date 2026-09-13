@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -15,10 +17,7 @@ import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExch
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IUniswapV4StandardExchangeLiquidReserve} from
     "contracts/protocols/dexes/uniswap/v4/interfaces/IUniswapV4StandardExchangeLiquidReserve.sol";
-import {
-    IUniswapV4StandardExchangeDFPkg,
-    UniswapV4StandardExchangeDFPkg
-} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol";
+import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/IUniswapV4StandardExchangeDFPkg.sol";
 import {UniswapV4_Component_FactoryService} from
     "contracts/protocols/dexes/uniswap/v4/UniswapV4_Component_FactoryService.sol";
 import {UniswapV4StandardExchangeCommon} from
@@ -165,18 +164,37 @@ abstract contract UniswapV4StandardExchange_TwapPoke_Decimals is UniswapV4SeDeci
         assertEq(liquid2.twapOracle().poolManager(), address(poolManager));
     }
 
+    /// @dev Preserve constructor revert data while loading the production package from its artifact.
+    function deployPackageForConstructorValidation(bytes memory creationCode_, bytes memory constructorArgs_)
+        external
+        returns (address deployed_)
+    {
+        bytes memory initCode_ = bytes.concat(creationCode_, constructorArgs_);
+        assembly ("memory-safe") {
+            deployed_ := create(0, add(initCode_, 32), mload(initCode_))
+            if iszero(deployed_) {
+                let free_ := mload(0x40)
+                returndatacopy(free_, 0, returndatasize())
+                revert(free_, returndatasize())
+            }
+        }
+    }
+
     function test_H29_constructZeroOrMismatchReverts() public {
+        bytes memory creationCode_ = ArtifactCreationCode.creationCode(
+            "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol:UniswapV4StandardExchangeDFPkg"
+        );
         IUniswapV4StandardExchangeDFPkg.PkgInit memory pkgInit = _copyPkgInit();
         pkgInit.twapOracle = IUniswapV4MultiPoolTwapOracle(address(0));
         vm.expectRevert(IUniswapV4StandardExchangeDFPkg.ZeroTwapOracle.selector);
-        new UniswapV4StandardExchangeDFPkg(pkgInit);
+        this.deployPackageForConstructorValidation(creationCode_, abi.encode(pkgInit));
 
         FlipTwapOracleDecimals flip = new FlipTwapOracleDecimals();
         flip.setPm(address(uint160(address(poolManager)) + 1));
         pkgInit = _copyPkgInit();
         pkgInit.twapOracle = IUniswapV4MultiPoolTwapOracle(address(flip));
         vm.expectRevert(IUniswapV4StandardExchangeDFPkg.TwapOraclePoolManagerMismatch.selector);
-        new UniswapV4StandardExchangeDFPkg(pkgInit);
+        this.deployPackageForConstructorValidation(creationCode_, abi.encode(pkgInit));
     }
 
     function test_H28_deployVaultRevertsOnPmMismatch() public {
@@ -188,7 +206,7 @@ abstract contract UniswapV4StandardExchange_TwapPoke_Decimals is UniswapV4SeDeci
         IUniswapV4StandardExchangeDFPkg hostilePkg = IUniswapV4StandardExchangeDFPkg(
             address(
                 IVaultRegistryDeployment(address(indexedexManager)).deployPkg(
-                    type(UniswapV4StandardExchangeDFPkg).creationCode,
+                    ArtifactCreationCode.creationCode(create3Factory, "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol:UniswapV4StandardExchangeDFPkg"),
                     abi.encode(pkgInit),
                     keccak256("UniswapV4StandardExchangeDFPkg.hostileTwap.decimals")
                 )

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 pragma solidity ^0.8.0;
 
+import {IWrappedStandardExchangeRateProvider} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/IWrappedStandardExchangeRateProvider.sol";
+
 import {IStandardExchangeTransitionQuote, IStandardExchangeRateQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -15,11 +17,7 @@ import {
 	WrappedStandardExchangeRateProviderRepo
 } from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderRepo.sol";
 
-interface IWrappedStandardExchangeRateProvider is IRateProvider {
-	function rateSubject() external view returns (IERC4626);
-	function standardExchange() external view returns (IStandardExchangeIn);
-	function rateTarget() external view returns (IERC20);
-}
+
 
 contract WrappedStandardExchangeRateProviderTarget is IWrappedStandardExchangeRateProvider {
 	using BetterMath for uint256;

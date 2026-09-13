@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 pragma solidity ^0.8.0;
 
+import {IWrappedStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/IWrappedStandardExchangeRateProviderDFPkg.sol";
+
 import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
@@ -15,30 +17,12 @@ import {IStandardExchangeTransitionQuote, IStandardExchangeRateQuote} from "cont
 import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
 
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
-import {
-	IWrappedStandardExchangeRateProvider
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderTarget.sol";
+import {IWrappedStandardExchangeRateProvider} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/IWrappedStandardExchangeRateProvider.sol";
 import {
 	WrappedStandardExchangeRateProviderRepo
 } from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderRepo.sol";
 
-interface IWrappedStandardExchangeRateProviderDFPkg is IDiamondFactoryPackage {
-	struct PkgInit {
-		IFacet rateProviderFacet;
-		IDiamondPackageCallBackFactory diamondFactory;
-	}
 
-	struct PkgArgs {
-		IERC4626 rateSubject;
-		IStandardExchangeIn standardExchange;
-		IERC20 rateTarget;
-	}
-
-	function deployRateProvider(IERC4626 rateSubject, IStandardExchangeIn standardExchange, IERC20 rateTarget)
-		external
-		returns (IRateProvider rateProviderAddress);
-
-}
 
 contract WrappedStandardExchangeRateProviderDFPkg is IWrappedStandardExchangeRateProviderDFPkg {
 	using BetterEfficientHashLib for bytes;

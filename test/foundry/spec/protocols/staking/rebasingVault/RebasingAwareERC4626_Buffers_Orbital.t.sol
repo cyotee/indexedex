@@ -17,9 +17,17 @@ import {
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHook.sol";
 import {IRebasingAwareERC4626DFPkg} from
     "contracts/protocols/staking/rebasingVault/IRebasingAwareERC4626DFPkg.sol";
+import {IRebasingAwareERC4626} from
+    "contracts/protocols/staking/rebasingVault/IRebasingAwareERC4626.sol";
 import {RebasingAwareERC4626_Component_FactoryService} from
     "contracts/protocols/staking/rebasingVault/RebasingAwareERC4626_Component_FactoryService.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
+import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
+import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
+import {IVaultRegistryDisableManager} from "contracts/interfaces/IVaultRegistryDisableManager.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeTransitionQuote} from
+    "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {RebasingERC20Harness} from "contracts/test/stubs/RebasingERC20Harness.sol";
 
 contract RebasingAwareERC4626_Buffers_Orbital is TestBase {
@@ -58,24 +66,123 @@ contract RebasingAwareERC4626_Buffers_Orbital is TestBase {
         _ensureProductDoorsAndFinalize(wHook, address(wrapper), address(token1), address(token2));
         hook = wHook;
         orbital = IHook(wHook);
-        uint256 wAmt = IERC20(address(wrapper)).balanceOf(user) / 2;
+        uint256 wAmt = _wadNative(address(wrapper), 50 ether);
         vm.startPrank(user);
         IERC20(address(wrapper)).approve(wHook, type(uint256).max);
         token1.approve(wHook, type(uint256).max);
         token2.approve(wHook, type(uint256).max);
-        (uint256 lp,,,) =
-            orbital.addLiquidity(wAmt, 50 ether, 50 ether, user, 0, block.timestamp + 1 hours, "");
+        (uint256 lp,,,) = orbital.depositFlexible(
+            wAmt,
+            true,
+            50 ether,
+            false,
+            50 ether,
+            false,
+            user,
+            1,
+            block.timestamp + 1 hours
+        );
         assertGt(lp, 0);
         uint256 beforeAssets = wrapper.totalAssets();
         vm.stopPrank();
         underlying.rebase(address(wrapper), int256(5e18));
         assertGt(wrapper.totalAssets(), beforeAssets);
         vm.prank(user);
-        (uint256 a0, uint256 a1, uint256 a2) =
-            orbital.removeLiquidity(lp, user, 0, 0, 0, block.timestamp + 1 hours);
+        (uint256 a0, uint256 a1, uint256 a2) = orbital.withdrawFlexible(
+            lp, user, true, false, false, 0, 0, 0, block.timestamp + 1 hours
+        );
         assertGt(a0, 0);
         assertGt(a1, 0);
         assertGt(a2, 0);
+    }
+
+    function test_F16_orbitalWrapperShareInventoryQuoteSwap() public {
+        _deployWrapper();
+        _wrapUser(200e18);
+        IPkg.PkgArgs memory args = _wrapperLeg0Args();
+        address wHook = _deployBootstrapOnly(args);
+        _ensureProductDoorsAndFinalize(wHook, address(wrapper), address(token1), address(token2));
+        hook = wHook;
+        orbital = IHook(wHook);
+        uint256 wAmt = _wadNative(address(wrapper), 80 ether);
+        vm.startPrank(user);
+        IERC20(address(wrapper)).approve(wHook, type(uint256).max);
+        IERC20(address(wrapper)).approve(address(swapRouter), type(uint256).max);
+        token1.approve(wHook, type(uint256).max);
+        token2.approve(wHook, type(uint256).max);
+        (uint256 lp,,,) = orbital.depositFlexible(
+            wAmt, true, 80 ether, false, 80 ether, false, user, 1, block.timestamp + 1 hours
+        );
+        assertGt(lp, 0);
+        vm.stopPrank();
+
+        uint256 swapIn = IERC20(address(wrapper)).balanceOf(user) / 8;
+        uint256 pred = orbital.previewSwapExactIn(address(wrapper), address(token1), swapIn);
+        assertGt(pred, 0);
+        uint256 before = token1.balanceOf(user);
+        _swapExactIn(address(wrapper), address(token1), swapIn);
+        assertGt(token1.balanceOf(user) - before, 0);
+    }
+
+    function test_F16_orbitalAmendmentMatrixLiveHook() public {
+        _deployWrapper();
+        _wrapUser(200e18);
+        IPkg.PkgArgs memory args = _wrapperLeg0Args();
+        address wHook = _deployBootstrapOnly(args);
+        _ensureProductDoorsAndFinalize(wHook, address(wrapper), address(token1), address(token2));
+        hook = wHook;
+        orbital = IHook(wHook);
+        uint256 wAmt = _wadNative(address(wrapper), 80 ether);
+        vm.startPrank(user);
+        IERC20(address(wrapper)).approve(wHook, type(uint256).max);
+        token1.approve(wHook, type(uint256).max);
+        token2.approve(wHook, type(uint256).max);
+        (uint256 lp,,,) = orbital.depositFlexible(
+            wAmt, true, 80 ether, false, 80 ether, false, user, 1, block.timestamp + 1 hours
+        );
+        assertGt(lp, 0);
+        vm.stopPrank();
+
+        (bytes memory qState,) = IStandardExchangeTransitionQuote(address(wrapper)).quoteState(
+            address(underlying), wHook
+        );
+        uint256 sample = IERC20(address(wrapper)).balanceOf(wHook) / 10;
+        uint256 stale = IStandardExchangeTransitionQuote(address(wrapper)).quoteAssets(qState, sample);
+        underlying.rebase(address(wrapper), int256(5e18));
+        assertTrue(wrapper.convertToAssets(sample) != stale);
+        underlying.rebase(address(wrapper), -int256(1e18));
+        underlying.mint(address(wrapper), 2e18);
+
+        vm.prank(owner);
+        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(wHook, 1e16);
+        assertEq(IStandardVault(address(wrapper)).vaultFeeTypeIds(), bytes32(0));
+
+        vm.prank(user);
+        vm.expectRevert(IRebasingAwareERC4626.AssetPretransferNotSupported.selector);
+        IStandardExchangeIn(address(wrapper)).exchangeIn(
+            IERC20(address(underlying)), 1e18, IERC20(address(wrapper)), 0, user, true, block.timestamp
+        );
+
+        underlying.setRebaseOnTransfer(int256(1e18), address(wrapper));
+        vm.startPrank(user);
+        underlying.approve(address(wrapper), type(uint256).max);
+        vm.expectRevert();
+        wrapper.deposit(1e18, user);
+        vm.stopPrank();
+        underlying.setRebaseOnTransfer(0, address(0));
+        vm.prank(user);
+        assertGt(wrapper.deposit(1e18, user), 0);
+
+        vm.prank(owner);
+        IVaultRegistryDisableManager(address(indexedexManager)).setVaultAddressDisabled(address(wrapper), true);
+        vm.prank(user);
+        vm.expectRevert();
+        wrapper.deposit(1e18, user);
+        vm.prank(user);
+        (uint256 a0, uint256 a1, uint256 a2) = orbital.withdrawFlexible(
+            lp / 2, user, true, false, false, 0, 0, 0, block.timestamp + 1 hours
+        );
+        assertGt(a0 + a1 + a2, 0);
     }
 
     function _deployWrapper() internal {
@@ -116,5 +223,12 @@ contract RebasingAwareERC4626_Buffers_Orbital is TestBase {
         args.token0 = address(wrapper);
         args.se0 = address(wrapper);
         args.decimals0 = IERC20Metadata(address(wrapper)).decimals();
+    }
+
+    function _wadNative(address token, uint256 wad18) internal view returns (uint256) {
+        uint8 d = IERC20Metadata(token).decimals();
+        if (d == 18) return wad18;
+        if (d > 18) return wad18 * (10 ** (d - 18));
+        return wad18 / (10 ** (18 - d));
     }
 }

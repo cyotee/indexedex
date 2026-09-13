@@ -5,9 +5,7 @@ import {TestBase_MultiVaultWeightedDetf_Decimals} from "contracts/vaults/detf/pr
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
-import {
-    IMultiVaultWeightedDetfInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfInfoTarget.sol";
+import {IMultiVaultWeightedDetfInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfInfo.sol";
 
 /// @notice Fee destinations + non-dilution style checks on production multi-vault weighted DETF.
 abstract contract MultiVaultWeightedDetf_FeeNonDilution_Decimals is TestBase_MultiVaultWeightedDetf_Decimals {

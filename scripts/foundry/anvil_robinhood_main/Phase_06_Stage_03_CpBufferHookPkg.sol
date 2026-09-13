@@ -13,9 +13,7 @@ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.so
 import {
     IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage as ICpHookPkg
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.sol";
-import {
-    UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg as CpHookDFPkg
-} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg.sol";
+
 import {
     UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService as CpHookFS
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService.sol";
@@ -45,7 +43,7 @@ library Phase_06_Stage_03_CpBufferHookPkg {
         init_.multiAssetBasicVaultFacet = s.multiAssetBasicVaultFacet;
         init_.multiAssetStandardVaultFacet = s.multiAssetStandardVaultFacet;
         init_.multiStepOwnableFacet = s.multiStepOwnableFacet;
-        bytes memory initCode_ = type(CpHookDFPkg).creationCode;
+        bytes memory initCode_ = ArtifactCreationCode.creationCode(s.create3Factory, "UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg.sol:UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg");
         bytes memory initArgs_ = abi.encode(init_);
         s.cpHookPkg = reg.deployPkg(
             initCode_,

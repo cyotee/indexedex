@@ -8,6 +8,9 @@ import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchang
 import {IRateProvider} from
     "@crane/contracts/protocols/dexes/balancer/common/interfaces/IRateProvider.sol";
 
+import {UniswapV4StandardExchangeCurveQuadStableBufferHookRepo as Repo} from "./UniswapV4StandardExchangeCurveQuadStableBufferHookRepo.sol";
+import {UniswapV4StandardExchangeCurveQuadStableBufferHookMath as Math} from "./UniswapV4StandardExchangeCurveQuadStableBufferHookMath.sol";
+
 /**
  * @title UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib
  * @notice SE buffer / unwrap + claim / rate helpers (external lib keeps diamond under EIP-170).
@@ -21,6 +24,31 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib {
     error UnwrapFailed();
     error RateProviderFailed();
     error SeInvertUnavailable();
+
+    function ratedPairUnits(uint8 i) external view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        address se = l.standardExchanges[i];
+        if (se == address(0)) {
+            return IERC20(l.tokens[i]).balanceOf(address(this));
+        }
+        uint256 seBal = IERC20(se).balanceOf(address(this));
+        if (seBal == 0) return 0;
+        address rp = l.rateProviders[i];
+        if (rp != address(0)) {
+            uint256 rate = _getRateFailClosed(rp);
+            return (seBal * rate) / Math.RATE_PRECISION;
+        }
+        if (se == l.tokens[i]) return seBal;
+        return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seBal, IERC20(l.tokens[i]));
+    }
+
+    function _getRateFailClosed(address provider) private view returns (uint256 rate) {
+        (bool ok, bytes memory ret) =
+            provider.staticcall(abi.encodeWithSelector(IRateProvider.getRate.selector));
+        if (!ok || ret.length != 32) revert RateProviderFailed();
+        rate = abi.decode(ret, (uint256));
+        if (rate == 0) revert RateProviderFailed();
+    }
 
     function getRateFailClosed(address rp) external view returns (uint256 rate) {
         if (rp == address(0)) return 0;

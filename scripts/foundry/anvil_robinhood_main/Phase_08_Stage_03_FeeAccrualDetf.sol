@@ -3,6 +3,10 @@ pragma solidity ^0.8.0;
 
 import {FixtureEconomics} from "./FixtureEconomics.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
+import {DETFChildTokenMetadata} from "contracts/vaults/detf/common/DETFChildTokenMetadata.sol";
+import {IUniswapV4DetfBondNFTVaultDFPkg} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/IUniswapV4DetfBondNFTVaultDFPkg.sol";
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
@@ -30,6 +34,7 @@ library Phase_08_Stage_03_FeeAccrualDetf {
         address custodyVault;
         address liquidityProvider;
         address custodyProvider;
+        IUniswapV4DetfBondNFTVaultDFPkg bondNftPkg;
     }
 
     struct Prepared {
@@ -104,9 +109,28 @@ library Phase_08_Stage_03_FeeAccrualDetf {
             require(init.finalizeInitialization(), "Fee DETF: hook not finalized");
         }
         args.hook = p.hook;
-        if (p.detf.code.length == 0) require(d.detfPkg.deployVault(args) == p.detf, "Fee DETF: prediction mismatch");
+        if (p.detf.code.length == 0) {
+            // Separate broadcast transaction: the parent reuses this exact deterministic child.
+            // Atomic parent + all children exceeds Robinhood's 32M execution-gas limit.
+            address bondChild = deployBondChild(d, args, p);
+            require(d.detfPkg.deployVault(args) == p.detf, "Fee DETF: prediction mismatch");
+            require(IUniswapV4Detf(p.detf).bondNftVault() == bondChild, "Fee DETF: bond child mismatch");
+        }
         require(IVaultRegistryVaultQuery(d.manager).isVault(p.detf), "Fee DETF: unregistered vault");
         require(IUniswapV4Detf(p.detf).hook() == p.hook, "Fee DETF: wrong hook");
         return p.detf;
+    }
+
+    function deployBondChild(Dependencies memory d, IUniswapV4Detf.PkgArgs memory args, Prepared memory p)
+        internal returns (address)
+    {
+        require(IVaultRegistryVaultPackageQuery(d.manager).isPackage(address(d.bondNftPkg)), "Fee DETF: unregistered bond package");
+        // Explicit transaction budget preserves child headroom when the large parent uses
+        // the 100% estimate multiplier needed to remain below the chain execution limit.
+        return d.bondNftPkg.deployVault{gas: 8_000_000}(
+            DETFChildTokenMetadata.resolveBondName(args.bondName, args.name),
+            DETFChildTokenMetadata.resolveBondSymbol(args.bondSymbol, args.symbol),
+            IDetf(p.detf), IERC20(p.hook)
+        );
     }
 }

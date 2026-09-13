@@ -27,8 +27,7 @@ import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balance
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
-import {IBalancerV3ConstantProductPoolStandardVaultPkg} from
-    "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPoolStandardVaultPkg.sol";
+import {IBalancerV3ConstantProductPoolStandardVaultPkg} from "contracts/protocols/dexes/balancer/v3/pools/constProd/IBalancerV3ConstantProductPoolStandardVaultPkg.sol";
 
 /// @title Script_17_DeployWethTtcPools
 /// @notice Deploys WETH/TTC pools across UniV2, Aerodrome (volatile), and Balancer V3 ConstProd.

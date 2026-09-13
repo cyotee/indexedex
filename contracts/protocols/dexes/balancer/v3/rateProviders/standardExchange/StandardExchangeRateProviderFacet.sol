@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IStandardExchangeRateProvider} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProvider.sol";
+
 /* -------------------------------------------------------------------------- */
 /*                                 Balancer V3                                */
 /* -------------------------------------------------------------------------- */
@@ -29,10 +31,7 @@ import {
     StandardExchangeRateProviderRepo
 } from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderRepo.sol";
 
-interface IStandardExchangeRateProvider is IRateProvider {
-    function reserveVault() external view returns (IStandardExchange);
-    function rateTarget() external view returns (IERC20);
-}
+
 
 contract StandardExchangeRateProviderFacet is IStandardExchangeRateProvider, IFacet {
     using BetterSafeERC20 for IERC20Metadata;

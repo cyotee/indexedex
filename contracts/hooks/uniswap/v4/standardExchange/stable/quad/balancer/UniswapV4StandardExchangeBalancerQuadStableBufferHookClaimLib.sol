@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {UniswapV4StandardExchangeBalancerQuadStableBufferHookRepo as Repo} from "./UniswapV4StandardExchangeBalancerQuadStableBufferHookRepo.sol";
+import {UniswapV4StandardExchangeBalancerQuadStableBufferHookMath as Math} from "./UniswapV4StandardExchangeBalancerQuadStableBufferHookMath.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
@@ -22,8 +25,29 @@ library UniswapV4StandardExchangeBalancerQuadStableBufferHookClaimLib {
     error RateProviderFailed();
     error SeInvertUnavailable();
 
+    function ratedPairUnits(uint8 i) external view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        address se = l.standardExchanges[i];
+        if (se == address(0)) {
+            return IERC20(l.tokens[i]).balanceOf(address(this));
+        }
+        uint256 seBal = IERC20(se).balanceOf(address(this));
+        if (seBal == 0) return 0;
+        address rp = l.rateProviders[i];
+        if (rp != address(0)) {
+            uint256 rate = _readRate(rp);
+            return (seBal * rate) / Math.RATE_PRECISION;
+        }
+        if (se == l.tokens[i]) return seBal;
+        return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seBal, IERC20(l.tokens[i]));
+    }
+
     function getRateFailClosed(address rp) external view returns (uint256 rate) {
         if (rp == address(0)) return 0;
+        return _readRate(rp);
+    }
+
+    function _readRate(address rp) private view returns (uint256 rate) {
         (bool ok, bytes memory data) =
             rp.staticcall(abi.encodeWithSelector(IRateProvider.getRate.selector));
         if (!ok || data.length != 32) revert RateProviderFailed();

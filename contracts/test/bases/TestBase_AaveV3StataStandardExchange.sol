@@ -5,31 +5,26 @@ import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPer
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
-import {IndexedexTest} from "contracts/test/IndexedexTest.sol";
-import {BetterPermit2} from "@crane/contracts/protocols/utils/permit2/BetterPermit2.sol";
+
 import {TestBase_Permit2} from "@crane/contracts/protocols/utils/permit2/test/bases/TestBase_Permit2.sol";
 import {TestBase_VaultComponents} from "contracts/vaults/TestBase_VaultComponents.sol";
-import {
-    IAaveV3StataStandardExchangeDFPkg,
-    AaveV3StataStandardExchangeDFPkg
-} from "contracts/protocols/lending/aave/v3.6/AaveV3StataStandardExchangeDFPkg.sol";
+import {IAaveV3StataStandardExchangeDFPkg} from "contracts/protocols/lending/aave/v3.6/IAaveV3StataStandardExchangeDFPkg.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
 import {
     AaveV3Stata_Component_FactoryService
 } from "contracts/protocols/lending/aave/v3.6/AaveV3Stata_Component_FactoryService.sol";
 
-import {StataTokenV2} from "@crane/contracts/protocols/lending/aave/v3.6/extensions/stata-token/StataTokenV2.sol";
 import {IStataTokenFactory} from "@crane/contracts/protocols/lending/aave/v3.6/extensions/stata-token/interfaces/IStataTokenFactory.sol";
 import {IPool} from "@crane/contracts/protocols/lending/aave/v3.6/interfaces/IPool.sol";
-import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
+
 import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
 
 /**
  * @title TestBase_AaveV3StataStandardExchange
  * @notice Test base for the Aave v3.6 Stata Standard Exchange Vault.
  */
-contract TestBase_AaveV3StataStandardExchange is TestBase_Permit2, TestBase_VaultComponents {
+abstract contract TestBase_AaveV3StataStandardExchange is TestBase_Permit2, TestBase_VaultComponents {
     using AaveV3Stata_Component_FactoryService for ICreate3FactoryProxy;
     using AaveV3Stata_Component_FactoryService for IIndexedexManagerProxy;
 

@@ -5,7 +5,7 @@ import {TestBase_AaveCrossVersionLoop_Decimals} from
     "contracts/test/bases/TestBase_AaveCrossVersionLoop_Decimals.sol";
 
 /// @notice Combo `P18_R6`: pair tokenA 18 / tokenB 6. Full clone (gold 18+6 is PARTIAL).
-contract TestBase_AaveCrossVersionLoop_P18_R6 is TestBase_AaveCrossVersionLoop_Decimals {
+abstract contract TestBase_AaveCrossVersionLoop_P18_R6 is TestBase_AaveCrossVersionLoop_Decimals {
     function _tokenADecimals() internal pure override returns (uint8) { return 18; }
     function _tokenBDecimals() internal pure override returns (uint8) { return 6; }
 }

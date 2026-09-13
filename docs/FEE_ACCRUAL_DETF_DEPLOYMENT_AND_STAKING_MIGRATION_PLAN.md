@@ -538,3 +538,30 @@ wallet used port 18545 while app HTTP access to port 8545 was blocked. No contra
 deployed for these tests and each test restored its disposable snapshot. No persistent
 user position was withdrawn. See `frontend/apps/dtf/STAKING_MIGRATION_UI.md` for the flow
 and reproducible commands. This validates these UI paths, not the whole public launch.
+
+
+## 2026-09-13 rehearsal: staged bond child for the execution-gas limit
+
+The current parent plus all children costs 34,049,995 gas on the reuse-only fork.
+Robinhood ArbGasInfo `getGasAccountingParams()` at block 62,009,735 reports a
+32,000,000 maximum execution-gas limit. Bytecode size compliance does not imply
+transaction gas compliance.
+
+Within existing stage 08-03, deploy the exact deterministic bond NFT child through
+its registered package before the parent transaction. Its metadata, parent and LP
+bindings must match the parent's ordinary post-deployment arguments. The parent
+then reuses that child, initializes reserved NFTs, and creates sDETF and both SYs
+normally. Verify the final `bondNftVault()` matches the predeployed child. Preserve
+resumability and verify prior partial stage receipts before continuing.
+
+The confirmed disposable-fork probe consumed 4,991,479 gas for the child and
+29,289,533 gas for the unchanged parent (estimated gas limit 30,717,455). Use a
+100% estimate multiplier for stage 08-03; never raise the execution-gas or code-size
+limits to make it pass. Import the confirmed 06-01 bond package manifest into the
+composition run. sDETF cannot be predeployed because it validates the parent token's
+decimals. No deployed protocol contract or product economics change is needed.
+
+The bond-child transaction uses an explicit 8,000,000 gas budget. A 100% multiplier
+alone underfunded that child in the persistent rehearsal even though the parent
+estimate fit. The final Forge simulation records 8,000,000 for the child and
+31,120,128 for the parent. Preserve both simulation and per-transaction limits.

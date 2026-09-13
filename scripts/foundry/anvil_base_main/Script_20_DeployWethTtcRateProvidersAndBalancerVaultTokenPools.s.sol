@@ -21,10 +21,8 @@ import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balance
 /* -------------------------------------------------------------------------- */
 
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
-import {IStandardExchangeRateProviderDFPkg} from
-    "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
-import {IBalancerV3ConstantProductPoolStandardVaultPkg} from
-    "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPoolStandardVaultPkg.sol";
+import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
+import {IBalancerV3ConstantProductPoolStandardVaultPkg} from "contracts/protocols/dexes/balancer/v3/pools/constProd/IBalancerV3ConstantProductPoolStandardVaultPkg.sol";
 
 /// @title Script_20_DeployWethTtcRateProvidersAndBalancerVaultTokenPools
 /// @notice Deploys StandardExchange rate providers and Balancer V3 vault-token pools for WETH/TTC vaults.

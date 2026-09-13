@@ -3,6 +3,8 @@ pragma solidity ^0.8.0;
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 
 
+import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {MintableERC20Decimals} from "contracts/test/stubs/MintableERC20Decimals.sol";
@@ -45,6 +47,31 @@ abstract contract UniswapV4Detf_Orbital_Univ3Se_Lifecycle_Decimals is TestBase_U
         vm.stopPrank();
         assertApproxEqAbs(amountOut, preview, 1, "previewBurn==exec");
     }
+    /// @notice Users can process due epochs and claim directly within the existing gas budget.
+    function test_H_OR_GV3_claimProcessesUnsettledEpochsWithinGasBudget() public {
+        (uint256 tokenId,) = _firstBond(_bondIn());
+        uint256 amount_ = _mintIn();
+        vm.prank(detfUser);
+        IStandardExchangeIn(address(detfInfo)).exchangeIn(
+            IERC20(address(pairToken)), amount_, IERC20(detf), 0, detfUser, false, block.timestamp + 1 hours
+        );
+        IDetfBondNFT nft_ = IDetfBondNFT(detfInfo.bondNftVault());
+        uint256 principal_ = nft_.positionOf(tokenId).principal;
+        vm.warp(nft_.positionOf(tokenId).startTimestamp + nft_.positionOf(tokenId).vestingDuration);
+        // Read-only previews do not settle epochs; the claim must perform that work.
+        uint256 pending_ = detfInfo.pendingExpansionDetf();
+        uint256 supply_ = IERC20(detf).totalSupply();
+        IERC20 staking_ = IERC20(detfInfo.rebasingClaimToken());
+        uint256 before_ = staking_.balanceOf(detfUser);
+        vm.prank(detfUser);
+        (uint256 paidPrincipal_, uint256 rewards_) = nft_.claimBond{gas: 30_000_000}(tokenId, detfUser);
+        assertEq(paidPrincipal_, principal_, "all matured principal paid");
+        assertEq(staking_.balanceOf(detfUser) - before_, paidPrincipal_ + rewards_, "exact funded payout");
+        assertEq(IERC20(detf).totalSupply(), supply_ + pending_, "only due expansion changes supply");
+        assertEq(detfInfo.pendingExpansionDetf(), 0, "claim consumes completed epochs");
+        assertEq(nft_.ownerOf(tokenId), address(0), "fully claimed bond retired");
+    }
+
     function test_H_OR_GV3_close() public {
         (uint256 tokenId,) = _firstBond(_bondIn());
         vm.startPrank(detfUser);

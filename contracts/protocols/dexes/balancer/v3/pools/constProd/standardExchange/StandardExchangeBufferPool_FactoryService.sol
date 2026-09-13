@@ -26,7 +26,7 @@ import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IV
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 
-import {IStandardExchangeBufferPoolPkg} from "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolStandardVaultPkg.sol";
+import {IStandardExchangeBufferPoolPkg} from "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPoolPkg.sol";
 
 /**
  * @title StandardExchangeBufferPool_FactoryService

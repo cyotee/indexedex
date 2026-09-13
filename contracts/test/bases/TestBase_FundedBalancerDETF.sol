@@ -1,25 +1,26 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
-import {ERC721Facet} from "@crane/contracts/tokens/ERC721/ERC721Facet.sol";
+
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {TestBase_BalancerV3StandardExchangeRouter} from "contracts/protocols/dexes/balancer/v3/routers/TestBase_BalancerV3StandardExchangeRouter.sol";
-import {IStandardExchangeRateProviderDFPkg, StandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
-import {StandardExchangeRateProviderFacet} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderFacet.sol";
+import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
+
 import {DetfFacetFactoryService} from "contracts/vaults/detf/common/factory/DetfFacetFactoryService.sol";
 import {DetfPkgFactoryService} from "contracts/vaults/detf/common/factory/DetfPkgFactoryService.sol";
 import {DetfComponentFactoryService} from "contracts/vaults/detf/common/factory/DetfComponentFactoryService.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/common/factory/nft/IDetfSelfNftInventoryDFPkg.sol";
-import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol";
-import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
-import {IDETFSYDFPkg} from "contracts/vaults/detf/common/sy/DETFSYDFPkg.sol";
+import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/IDETFNFTVaultDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol";
+import {IDETFSYDFPkg} from "contracts/vaults/detf/common/sy/IDETFSYDFPkg.sol";
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
-import {DETFFundedStakingArtifacts} from "contracts/test/bases/DETFFundedStakingArtifacts.sol";
 
 /// @notice Shared real Balancer/router and funded DETF child-package fixture.
-abstract contract TestBase_FundedBalancerDETF is TestBase_BalancerV3StandardExchangeRouter, DETFFundedStakingArtifacts {
+abstract contract TestBase_FundedBalancerDETF is TestBase_BalancerV3StandardExchangeRouter {
     using DetfFacetFactoryService for ICreate3FactoryProxy;
     using DetfPkgFactoryService for ICreate3FactoryProxy;
     using DetfPkgFactoryService for IVaultRegistryDeployment;
@@ -48,14 +49,14 @@ abstract contract TestBase_FundedBalancerDETF is TestBase_BalancerV3StandardExch
     function _deployRateProviderPkg() internal {
         IFacet rateProviderFacet = IFacet(
             create3Factory.deployFacet(
-                type(StandardExchangeRateProviderFacet).creationCode,
+                ArtifactCreationCode.creationCode(create3Factory, "StandardExchangeRateProviderFacet.sol:StandardExchangeRateProviderFacet"),
                 keccak256("FundedBalancerDETF_RateProviderFacet")
             )
         );
         rateProviderPkg = IStandardExchangeRateProviderDFPkg(
             address(
                 create3Factory.deployPackageWithArgs(
-                    type(StandardExchangeRateProviderDFPkg).creationCode,
+                    ArtifactCreationCode.creationCode(create3Factory, "StandardExchangeRateProviderDFPkg.sol:StandardExchangeRateProviderDFPkg"),
                     abi.encode(
                         IStandardExchangeRateProviderDFPkg.PkgInit({
                             rateProviderFacet: rateProviderFacet,
@@ -73,7 +74,7 @@ abstract contract TestBase_FundedBalancerDETF is TestBase_BalancerV3StandardExch
         detfNFTVaultFacet = create3Factory.deployDETFNFTVaultFacet();
         erc721Facet = IFacet(
             create3Factory.deployFacet(
-                type(ERC721Facet).creationCode, keccak256("FundedBalancerDETF_ERC721Facet")
+                ArtifactCreationCode.creationCode(create3Factory, "ERC721Facet.sol:ERC721Facet"), keccak256("FundedBalancerDETF_ERC721Facet")
             )
         );
 

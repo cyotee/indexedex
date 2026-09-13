@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 
 import {TestBase_RebasingAwareERC4626} from
@@ -126,14 +127,35 @@ contract RebasingAwareERC4626_Adversarial is TestBase_RebasingAwareERC4626 {
     }
 
     function test_ADV08_taxedOutboundFailsClosed() public {
-        TaxedERC20Harness taxed = new TaxedERC20Harness("Tax", "TAX", 18, 100);
+        TaxedERC20Harness taxed = new TaxedERC20Harness("Tax", "TAX", 18, 0);
         IERC4626 wrapped = pkg.deployVault(IERC20Metadata(address(taxed)), 10, bytes32(uint256(44)));
         taxed.mint(alice, 100e18);
         vm.startPrank(alice);
         taxed.approve(address(wrapped), type(uint256).max);
-        vm.expectRevert();
         wrapped.deposit(10e18, alice);
         vm.stopPrank();
+        taxed.setTaxBps(100);
+        uint256 snap = vm.snapshotState();
+        for (uint256 route; route < 5; ++route) {
+            vm.prank(alice);
+            wrapped.transfer(address(wrapped), 2e28);
+            vm.expectRevert(abi.encodeWithSelector(
+                IRebasingAwareERC4626.AssetSupplyChangedDuringTransfer.selector, 100e18, 100e18 - 1e16));
+            vm.prank(alice);
+            if (route == 0) wrapped.redeem(1e28, bob, alice);
+            else if (route == 1) wrapped.withdraw(1e18, bob, alice);
+            else if (route == 2) IStandardExchangeIn(address(wrapped)).exchangeIn(
+                IERC20(address(wrapped)), 1e28, IERC20(address(taxed)), 0, bob, true, block.timestamp);
+            else if (route == 3) IStandardExchangeOut(address(wrapped)).exchangeOut(
+                IERC20(address(wrapped)), 2e28, IERC20(address(taxed)), 1e18, bob, true, block.timestamp);
+            else IStandardizedYield(address(wrapped)).redeem(bob, 1e28, address(taxed), 0, true);
+            assertEq(wrapped.totalSupply(), 1e29);
+            assertEq(wrapped.balanceOf(alice), 8e28);
+            assertEq(wrapped.balanceOf(address(wrapped)), 2e28, "failed payout consumed public shares/refund");
+            assertEq(taxed.balanceOf(address(wrapped)), 10e18);
+            assertEq(taxed.balanceOf(bob), 0);
+            assertTrue(vm.revertToState(snap));
+        }
     }
 
     function test_ADV09_unauthorizedDiamondCutReverts() public {

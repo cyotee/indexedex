@@ -5,9 +5,7 @@ import {TestBase_MultiVaultWeightedDetf_Decimals} from "contracts/vaults/detf/pr
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
-import {
-    IMultiVaultWeightedDetfInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfInfoTarget.sol";
+import {IMultiVaultWeightedDetfInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfInfo.sol";
 import {InvariantAssertLib} from "contracts/test/invariant/InvariantAssertLib.sol";
 import {
     Handler_MultiVaultWeightedDetf_Decimals as Handler_MultiVaultWeightedDetf,

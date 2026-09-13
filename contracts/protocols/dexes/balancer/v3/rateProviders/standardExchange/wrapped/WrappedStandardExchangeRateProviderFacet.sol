@@ -5,10 +5,8 @@ import {IStandardExchangeTransitionQuote, IStandardExchangeRateQuote} from "cont
 import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 
-import {
-	WrappedStandardExchangeRateProviderTarget,
-	IWrappedStandardExchangeRateProvider
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderTarget.sol";
+import {WrappedStandardExchangeRateProviderTarget} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderTarget.sol";
+import {IWrappedStandardExchangeRateProvider} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/IWrappedStandardExchangeRateProvider.sol";
 
 contract WrappedStandardExchangeRateProviderFacet is WrappedStandardExchangeRateProviderTarget, IFacet {
 	function facetName() public pure returns (string memory name_) {

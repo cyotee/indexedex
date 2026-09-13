@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
+
 /* -------------------------------------------------------------------------- */
 /*                                 Balancer V3                                */
 /* -------------------------------------------------------------------------- */
@@ -30,27 +32,7 @@ import {
     StandardExchangeRateProviderRepo
 } from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderRepo.sol";
 
-interface IStandardExchangeRateProviderDFPkg is IDiamondFactoryPackage {
-    struct PkgInit {
-        IFacet rateProviderFacet;
-        IDiamondPackageCallBackFactory diamondFactory;
-    }
 
-    struct PkgArgs {
-        IStandardExchange reserveVault;
-        /// @dev Optional share subject for rate quotes; address(0) → vault address (self-share SE vaults).
-        IERC20 rateSubject;
-        IERC20 rateTarget;
-    }
-
-    function deployRateProvider(IStandardExchange reserveVault, IERC20 rateTarget)
-        external
-        returns (IRateProvider rateProviderAddress);
-
-    function deployRateProvider(IStandardExchange reserveVault, IERC20 rateSubject, IERC20 rateTarget)
-        external
-        returns (IRateProvider rateProviderAddress);
-}
 
 contract StandardExchangeRateProviderDFPkg is IStandardExchangeRateProviderDFPkg {
     using BetterEfficientHashLib for bytes;

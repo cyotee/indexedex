@@ -14,15 +14,11 @@ import {
 import {
     ILegacySingleStandardExchangeDETFBonding as ISingleStandardExchangeDETFBonding
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF.sol";
-import {
-    ISingleStandardExchangeDETFBonding as ISingleStandardExchangeDETFBondingSelectorSource
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFBondingTarget.sol";
+import {ISingleStandardExchangeDETFBonding as ISingleStandardExchangeDETFBondingSelectorSource} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFBonding.sol";
 import {
     ILegacySingleStandardExchangeDETFInfo as ISingleStandardExchangeDETFInfo
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF.sol";
-import {
-    ISingleStandardExchangeDETFInfo as ISingleStandardExchangeDETFInfoSelectorSource
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFInfoTarget.sol";
+import {ISingleStandardExchangeDETFInfo as ISingleStandardExchangeDETFInfoSelectorSource} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFInfo.sol";
 import {
     SingleStandardExchangeDETFRepo
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFRepo.sol";

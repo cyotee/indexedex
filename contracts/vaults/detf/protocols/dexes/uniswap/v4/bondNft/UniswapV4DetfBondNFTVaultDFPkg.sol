@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
-import {DETFNFTVaultDFPkg, IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol";
+import {IUniswapV4DetfBondNFTVaultDFPkg} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/IUniswapV4DetfBondNFTVaultDFPkg.sol";
 
-/// @notice V4 factory schema uses the common funded bond package.
-interface IUniswapV4DetfBondNFTVaultDFPkg is IDETFNFTVaultDFPkg {}
+import {DETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol";
+import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/IDETFNFTVaultDFPkg.sol";
+
+
 
 /// @notice V4 deployment binding; accounting and selector cuts are shared across families.
 contract UniswapV4DetfBondNFTVaultDFPkg is DETFNFTVaultDFPkg {

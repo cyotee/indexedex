@@ -3,7 +3,6 @@ pragma solidity ^0.8.0;
 import {V4FundedPolicyAssertions} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 
-
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
 import {IStakedDETF, IDETFFundedRewards} from "contracts/interfaces/IStakedDETF.sol";
@@ -24,7 +23,7 @@ import {
     UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService as CpHookFactory
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService.sol";
 import {MintableERC20Decimals} from "contracts/test/stubs/MintableERC20Decimals.sol";
-import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
+
 import {
     IUniswapV4Detf,
     IUniswapV4DetfDFPkg
@@ -415,13 +414,9 @@ abstract contract TestBase_UniswapV4Detf_Policy_Decimals is TestBase_UniswapV4De
         vm.stopPrank();
     }
 
-
-
     function _pushSyntheticUp(address d) internal virtual {
         _policyBuyFromReserve(d);
     }
-
-
 
     function donateExternal(address d, uint256 amt) external {
         _donateMintToken(d, amt);

@@ -1,14 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
-/* -------------------------------------------------------------------------- */
-/*                                    Crane                                   */
-/* -------------------------------------------------------------------------- */
-
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
-import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
-import {IDiamondCut} from "@crane/contracts/interfaces/IDiamondCut.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC20Permit} from "@crane/contracts/interfaces/IERC20Permit.sol";
@@ -21,22 +15,13 @@ import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {EIP712Repo} from "@crane/contracts/utils/cryptography/EIP712/EIP712Repo.sol";
 import {Permit2AwareRepo} from "@crane/contracts/protocols/utils/permit2/aware/Permit2AwareRepo.sol";
-
-/* -------------------------------------------------------------------------- */
-/*                                  Indexedex                                 */
-/* -------------------------------------------------------------------------- */
-
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
-import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {VaultTypeUtils} from "contracts/registries/vault/VaultTypeUtils.sol";
-import {
-    VaultFeeType,
-    VaultFeeTypeIds
-} from "contracts/interfaces/VaultFeeTypes.sol";
+import {VaultFeeType} from "contracts/interfaces/VaultFeeTypes.sol";
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
@@ -44,36 +29,9 @@ import {SlipstreamPoolAwareRepo} from "contracts/protocols/dexes/aerodrome/slips
 import {SlipstreamFactoryAwareRepo} from "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamFactoryAwareRepo.sol";
 import {SlipstreamVaultRepo} from "contracts/vaults/slipstream/SlipstreamVaultRepo.sol";
 
-/**
- * @title ISlipstreamStandardExchangeDFPkg - Interface for Slipstream Standard Exchange Diamond Factory Package.
- * @author cyotee doge <doge.cyotee>
- */
-interface ISlipstreamStandardExchangeDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
+import {ISlipstreamStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/slipstream/ISlipstreamStandardExchangeDFPkg.sol";
 
-    error NotCalledByRegistry(address caller);
-    error InvalidPoolFactory(address poolFactory, address expectedFactory);
 
-    struct PkgInit {
-        IFacet erc20Facet;
-        IFacet erc5267Facet;
-        IFacet erc2612Facet;
-        IFacet multiAssetBasicVaultFacet;
-        IFacet multiAssetStandardVaultFacet;
-        IFacet slipstreamStandardExchangeInFacet;
-        IFacet slipstreamStandardExchangeOutFacet;
-        IVaultFeeOracleQuery vaultFeeOracleQuery;
-        IVaultRegistryDeployment vaultRegistryDeployment;
-        IPermit2 permit2;
-        ICLFactory slipstreamFactory;
-    }
-
-    struct PkgArgs {
-        ICLPool pool;
-        uint24 widthMultiplier;
-    }
-
-    function deployVault(ICLPool pool, uint24 widthMultiplier) external returns (address vault);
-}
 
 /**
  * @title SlipstreamStandardExchangeDFPkg - Diamond Factory Package for Slipstream Standard Exchange Vaults.

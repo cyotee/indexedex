@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
-import {UniswapV4CurveQuadStableSwapHookLiquidityFacet} from "contracts/hooks/uniswap/v4/stable/quad/curve/facets/UniswapV4CurveQuadStableSwapHookLiquidityFacet.sol";
-import {UniswapV4CurveQuadStableSwapHookHooksFacet} from "contracts/hooks/uniswap/v4/stable/quad/curve/facets/UniswapV4CurveQuadStableSwapHookHooksFacet.sol";
 
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -33,7 +31,7 @@ library UniswapV4CurveQuadStableSwapHook_FactoryService {
 
     function deployHooksFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         facet = create3Factory.deployFacet(
-            type(UniswapV4CurveQuadStableSwapHookHooksFacet).creationCode /* unlinked artifact; type().creationCode required */,
+            ArtifactCreationCode.creationCode(create3Factory, "UniswapV4CurveQuadStableSwapHookHooksFacet.sol:UniswapV4CurveQuadStableSwapHookHooksFacet"),
             abi.encode("UniswapV4CurveQuadStableSwapHookHooksFacet")._hash()
         );
         vm.label(address(facet), "UniswapV4CurveQuadStableSwapHookHooksFacet");
@@ -41,7 +39,7 @@ library UniswapV4CurveQuadStableSwapHook_FactoryService {
 
     function deployLiquidityFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         facet = create3Factory.deployFacet(
-            type(UniswapV4CurveQuadStableSwapHookLiquidityFacet).creationCode /* unlinked artifact; type().creationCode required */,
+            ArtifactCreationCode.creationCode(create3Factory, "UniswapV4CurveQuadStableSwapHookLiquidityFacet.sol:UniswapV4CurveQuadStableSwapHookLiquidityFacet"),
             abi.encode("UniswapV4CurveQuadStableSwapHookLiquidityFacet")._hash()
         );
         vm.label(address(facet), "UniswapV4CurveQuadStableSwapHookLiquidityFacet");

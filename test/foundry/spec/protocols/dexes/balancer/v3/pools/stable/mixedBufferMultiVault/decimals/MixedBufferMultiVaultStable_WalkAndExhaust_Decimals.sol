@@ -11,9 +11,7 @@ import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {
     IMixedBufferMultiVaultStablePool
 } from "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/IMixedBufferMultiVaultStablePool.sol";
-import {
-    IMixedBufferMultiVaultStablePoolPkg
-} from "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolStandardVaultPkg.sol";
+import {IMixedBufferMultiVaultStablePoolPkg} from "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/IMixedBufferMultiVaultStablePoolPkg.sol";
 
 /**
  * @notice M11 walk: first vault fails SE I/O, second succeeds; AllVaultsExhausted when all fail.

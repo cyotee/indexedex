@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import {FeeAccrualStageBase} from "./FeeAccrualStageBase.sol";
 import {Phase_07_Stage_01_FeeAccrualLiquiditySe as Liquidity} from "./Phase_07_Stage_01_FeeAccrualLiquiditySe.sol";
 import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
-import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol";
+import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/IUniswapV4StandardExchangeDFPkg.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 

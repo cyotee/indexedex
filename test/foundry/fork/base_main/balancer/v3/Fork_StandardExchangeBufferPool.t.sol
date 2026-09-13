@@ -41,9 +41,7 @@ import {IStandardExchangeProxy} from 'contracts/interfaces/proxies/IStandardExch
 import {
     IStandardExchangeBufferPool
 } from 'contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPool.sol';
-import {
-    IStandardExchangeBufferPoolPkg
-} from 'contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolStandardVaultPkg.sol';
+import {IStandardExchangeBufferPoolPkg} from "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPoolPkg.sol";
 import {
     StandardExchangeBufferPool_FactoryService
 } from 'contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPool_FactoryService.sol';

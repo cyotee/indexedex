@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {PonsV4QuoteAssertions} from "test/foundry/spec/protocols/dexes/uniswap/v4/pons/UniswapV4StandardExchange_PonsV2Pool.t.sol";
 import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -139,7 +141,7 @@ abstract contract UniswapV4StandardExchange_PonsV2Pool_Decimals is UniswapV4SeDe
         bytes memory hookArgs =
             abi.encode(IPoolManager(address(poolManager)), ponsV2FeeEscrow, ponsV2FeeSink, ponsV2Owner);
         (address predictedHook, bytes32 hookSalt) =
-            HookMiner.find(address(this), MEME_HOOK_FLAGS, type(PonsV2MemeHook).creationCode, hookArgs);
+            HookMiner.find(address(this), MEME_HOOK_FLAGS, ArtifactCreationCode.creationCode(create3Factory, "lib/crane/contracts/protocols/launchpads/ponsFamily/v2/hooks/PonsV2MemeHook.sol:PonsV2MemeHook"), hookArgs);
         ponsV2MemeHook = new PonsV2MemeHook{salt: hookSalt}(
             IPoolManager(address(poolManager)), ponsV2FeeEscrow, ponsV2FeeSink, ponsV2Owner
         );

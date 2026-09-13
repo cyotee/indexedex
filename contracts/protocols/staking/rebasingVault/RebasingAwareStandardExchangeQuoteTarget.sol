@@ -61,7 +61,7 @@ contract RebasingAwareStandardExchangeQuoteTarget is
             return (abi.encode(q), 0, 0, RebasingAwareERC4626Common.holderValue(q.holderShares, book));
         }
         if (operation == Operation.ReceiveShares) {
-            if (q.holderShares + amount < q.holderShares || q.holderShares + amount > q.supply) {
+            if (amount > q.supply - q.holderShares) {
                 revert InvalidQuoteState();
             }
             q.holderShares += amount;

@@ -1,19 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
-import {RebasingAwareERC4626DFPkg} from
-    "contracts/protocols/staking/rebasingVault/RebasingAwareERC4626DFPkg.sol";
-import {RebasingAwareERC4626Facet} from
-    "contracts/protocols/staking/rebasingVault/RebasingAwareERC4626Facet.sol";
-import {RebasingAwareStandardExchangeFacet} from
-    "contracts/protocols/staking/rebasingVault/RebasingAwareStandardExchangeFacet.sol";
-import {RebasingAwareStandardYieldFacet} from
-    "contracts/protocols/staking/rebasingVault/RebasingAwareStandardYieldFacet.sol";
-import {RebasingAwareVaultMetadataFacet} from
-    "contracts/protocols/staking/rebasingVault/RebasingAwareVaultMetadataFacet.sol";
-import {RebasingAwareStandardExchangeQuoteFacet} from
-    "contracts/protocols/staking/rebasingVault/RebasingAwareStandardExchangeQuoteFacet.sol";
-
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 import {Vm} from "forge-std/Vm.sol";

@@ -10,6 +10,7 @@ import { AmountField } from '../../components/ui/AmountField'
 import { Button } from '../../components/ui/Button'
 import { Tabs, TabPanel } from '../../components/ui/Tabs'
 import { ETH_PAY, WETH9_DEPOSIT_ABI, type EthWrapWrite, isEthPay, settlePayToken, withEthPayOption } from '../../lib/ethPay'
+import { chainDeadline } from '../../lib/tx/chainDeadline'
 import { parseContractError } from '../../lib/tx/parseContractError'
 import { actionTokenOptionLabel, type ActionToken } from '../lib/actionTokens'
 import { insightsViewAbi, rebasingClaimAbi, standardizedYieldDiscoveryAbi } from '../lib/insightsAbi'
@@ -137,7 +138,7 @@ export function DetfStaking({ detf, detfSymbol, claimToken, claimSymbol, pairTok
       const minimum = route.requiresLiveReserve ? (quoted * 99n / 100n || 1n) : quoted
       const hash = await writeOnWallet({
         account: address, address: route.target, abi: insightsViewAbi, functionName: 'exchangeIn',
-        args: [route.tokenIn, parsed, route.tokenOut, minimum, address, false, BigInt(Math.floor(Date.now() / 1000) + 20 * 60)],
+        args: [route.tokenIn, parsed, route.tokenOut, minimum, address, false, await chainDeadline(publicClient)],
       })
       await wait(hash, tab === 'unstake' ? 'Unstake' : 'Stake')
       await Promise.allSettled([refreshSupply(), refreshClaimBalance(), refreshTokenBalance(), refreshEthBalance(), refreshAllowance(), refreshPreview()])

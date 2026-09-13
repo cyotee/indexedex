@@ -5,9 +5,7 @@ import {TestBase_SingleStandardExchangeDETF_Decimals} from "contracts/vaults/det
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
-import {
-    ISingleStandardExchangeDETFInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFInfoTarget.sol";
+import {ISingleStandardExchangeDETFInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFInfo.sol";
 import {
     Handler_SingleStandardExchangeDETF_Decimals as Handler_SingleStandardExchangeDETF,
     ISingleSeDetfInvHost_Decimals

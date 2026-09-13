@@ -118,3 +118,76 @@ rh_fee_accrual_catalog_rows() {
 09 02
 ROWS
 }
+
+
+# Artifact preparation and reuse-only manifests shared by both 4663 shells.
+build_rehearsal_artifacts() {
+  # FactoryServices load facets from artifacts. Build their implementations before scripts.
+  local source
+  local sources=(
+    contracts/utils/foundry/CraneFactoryArtifactSeed.sol
+    contracts/utils/foundry/UniswapV4DetfFactoryArtifactSeed.sol
+  )
+  while IFS= read -r source; do
+    sources+=("$source")
+  done < <(
+    cd "$REPO_ROOT"
+    rg --files \
+      contracts/hooks/uniswap/v4/libs \
+      contracts/hooks/uniswap/v4/standardExchange/constantProduct/single \
+      contracts/hooks/uniswap/v4/standardExchange/weighted \
+      contracts/hooks/uniswap/v4/standardExchange/orbital \
+      contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve \
+      contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer \
+      contracts/vaults/detf/protocols/dexes/uniswap/v4/detf \
+      contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft \
+      contracts/vaults/detf/common/claimToken \
+      contracts/vaults/detf/common/bondNft \
+      contracts/vaults/detf/common/sy \
+      contracts/vaults/standard/sy \
+      contracts/fee/collector \
+      contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange \
+      contracts/vaults/standard/erc4626 \
+      contracts/vaults/standard/exchange/protocols/morpho/blue \
+      contracts/protocols/dexes/uniswap/v2 \
+      contracts/protocols/dexes/uniswap/v3 \
+      contracts/protocols/dexes/uniswap/v4 \
+      | rg '(Facet|DFPkg|ExecutionDelegate|ClaimLib|ExitQuoteLib|LegLib)\.sol$' \
+      | sort
+  )
+  log_info "Building production artifacts for the package rehearsal"
+  run_forge_cmd forge build "${sources[@]}"
+}
+
+rh_fee_accrual_copy_core() {
+  local seed="${FEE_ACCRUAL_CORE_DIR:-${REHEARSAL_CORE_DIR:-$REPO_ROOT/deployments/anvil_robinhood_main}}" file key actual expected
+  local files=(phase01_stage01_permit2.json phase01_stage02_weth.json
+    phase01_stage03_uniswap_v4.json phase02_stage01_create3_factory.json
+    phase02_stage02_diamond_package_factory.json phase02_stage03_hook_factory.json
+    phase03_stage01_common_facets.json phase04_stage01_fee_collector_and_manager.json
+    phase05_stage02_uniswap_v4_twap_oracle.json)
+  for file in "${files[@]}"; do
+    [[ -f "$seed/$file" ]] || { echo "Missing existing core manifest: $file" >&2; return 1; }
+    jq -e '.chainId == 4663' "$seed/$file" >/dev/null || return 1
+  done
+  while read -r file key; do
+    actual="$(jq -er --arg key "$key" '.[$key]' "$seed/$file")" || return $?
+    expected="$(jq -er --arg key "$key" '.[$key]' "$FEE_ACCRUAL_CONFIG")" || return $?
+    [[ "$(printf '%s' "$actual" | tr '[:upper:]' '[:lower:]')" == "$(printf '%s' "$expected" | tr '[:upper:]' '[:lower:]')" ]] || {
+      echo "Existing manifest does not match configured $key" >&2; return 1;
+    }
+  done <<'CORE'
+phase02_stage01_create3_factory.json create3Factory
+phase02_stage02_diamond_package_factory.json diamondPackageFactory
+phase02_stage03_hook_factory.json hookFactory
+phase04_stage01_fee_collector_and_manager.json indexedexManager
+phase04_stage01_fee_collector_and_manager.json feeCollector
+CORE
+  for file in "${files[@]}"; do
+    if [[ -f "$OUT_DIR_OVERRIDE/$file" ]]; then
+      cmp -s "$seed/$file" "$OUT_DIR_OVERRIDE/$file" || { echo "Conflicting core manifest: $file" >&2; return 1; }
+    else
+      cp "$seed/$file" "$OUT_DIR_OVERRIDE/$file"
+    fi
+  done
+}

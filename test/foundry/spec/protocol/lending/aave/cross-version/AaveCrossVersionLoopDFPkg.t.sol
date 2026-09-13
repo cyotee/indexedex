@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
@@ -16,10 +18,7 @@ import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeplo
 
 import {TestBase_AaveCrossVersionLoopV3Market} from
     "contracts/test/bases/TestBase_AaveCrossVersionLoopV3Market.sol";
-import {
-    AaveCrossVersionLoopDFPkg,
-    IAaveCrossVersionLoopDFPkg
-} from "contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoopDFPkg.sol";
+import {IAaveCrossVersionLoopDFPkg} from "contracts/protocols/lending/aave/cross-version/IAaveCrossVersionLoopDFPkg.sol";
 
 /// @dev Minimal VaultRegistry stub that records the deployVault call and returns a sentinel.
 contract _MockRegistry is IVaultRegistryDeployment {
@@ -53,7 +52,7 @@ contract _MockRegistry is IVaultRegistryDeployment {
  *         versions) and that a valid pair is routed through the VaultRegistry deployment path.
  */
 contract AaveCrossVersionLoopDFPkg_Test is TestBase_AaveCrossVersionLoopV3Market {
-    AaveCrossVersionLoopDFPkg internal dfpkg;
+    IAaveCrossVersionLoopDFPkg internal dfpkg;
     _MockRegistry internal registry;
 
     function _deployDFPkg() internal {
@@ -82,12 +81,12 @@ contract AaveCrossVersionLoopDFPkg_Test is TestBase_AaveCrossVersionLoopV3Market
 
         // Deploy via CREATE3 factory per standards (never `new` for DFPkgs).
         // This exercises the package deployment path even for this isolated logic test.
-        dfpkg = AaveCrossVersionLoopDFPkg(
+        dfpkg = IAaveCrossVersionLoopDFPkg(
             address(
                 create3Factory.deployPackageWithArgs(
-                    type(AaveCrossVersionLoopDFPkg).creationCode,
+                    ArtifactCreationCode.creationCode(create3Factory, "contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoopDFPkg.sol:AaveCrossVersionLoopDFPkg"),
                     abi.encode(pkgInit),
-                    keccak256(abi.encode(type(AaveCrossVersionLoopDFPkg).name))
+                    keccak256(abi.encode("AaveCrossVersionLoopDFPkg"))
                 )
             )
         );

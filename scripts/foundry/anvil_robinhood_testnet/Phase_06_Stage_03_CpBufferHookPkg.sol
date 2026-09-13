@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {FixtureEconomics} from "./FixtureEconomics.sol";
 import {LaunchState} from "./LaunchState.sol";
 
@@ -11,9 +13,7 @@ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.so
 import {
     IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage as ICpHookPkg
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.sol";
-import {
-    UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg as CpHookDFPkg
-} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg.sol";
+
 import {
     UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService as CpHookFS
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService.sol";
@@ -44,7 +44,7 @@ library Phase_06_Stage_03_CpBufferHookPkg {
         init_.multiAssetStandardVaultFacet = s.multiAssetStandardVaultFacet;
         init_.multiStepOwnableFacet = s.multiStepOwnableFacet;
         s.cpHookPkg = reg.deployPkg(
-            type(CpHookDFPkg).creationCode,
+            ArtifactCreationCode.creationCode(s.create3Factory, "UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg.sol:UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg"),
             abi.encode(init_),
             abi.encode(type(ICpHookPkg).name, FixtureEconomics.SALT_NS)._hash()
         );

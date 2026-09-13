@@ -19,19 +19,6 @@ import {IVaultRegistryVaultQuery} from "contracts/interfaces/IVaultRegistryVault
 import {IVaultRegistryVaultPackageQuery} from "contracts/interfaces/IVaultRegistryVaultPackageQuery.sol";
 import {IVaultRegistryDisableManager} from "contracts/interfaces/IVaultRegistryDisableManager.sol";
 
-import {RebasingAwareERC4626Facet} from
-    "contracts/protocols/staking/rebasingVault/RebasingAwareERC4626Facet.sol";
-import {RebasingAwareStandardExchangeFacet} from
-    "contracts/protocols/staking/rebasingVault/RebasingAwareStandardExchangeFacet.sol";
-import {RebasingAwareStandardYieldFacet} from
-    "contracts/protocols/staking/rebasingVault/RebasingAwareStandardYieldFacet.sol";
-import {RebasingAwareVaultMetadataFacet} from
-    "contracts/protocols/staking/rebasingVault/RebasingAwareVaultMetadataFacet.sol";
-import {RebasingAwareStandardExchangeQuoteFacet} from
-    "contracts/protocols/staking/rebasingVault/RebasingAwareStandardExchangeQuoteFacet.sol";
-import {RebasingAwareERC4626DFPkg} from
-    "contracts/protocols/staking/rebasingVault/RebasingAwareERC4626DFPkg.sol";
-
 abstract contract TestBase_RebasingAwareERC4626 is IndexedexTest {
     using VaultComponentFactoryService for ICreate3FactoryProxy;
     using RebasingAwareERC4626_Component_FactoryService for ICreate3FactoryProxy;

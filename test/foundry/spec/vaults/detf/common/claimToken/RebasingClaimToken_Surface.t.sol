@@ -13,11 +13,10 @@ import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {StakedDETFTarget} from "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol";
 import {TestBase_UniswapV4Detf} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
-import {DETFFundedStakingArtifacts} from "contracts/test/bases/DETFFundedStakingArtifacts.sol";
 
 /// @notice Catalog J1-J3 on the registered DETF's real staking child.
 /// @dev Controls come from the product interfaces independently of facetFuncs().
-contract RebasingClaimToken_Surface_Test is TestBase_UniswapV4Detf, DETFFundedStakingArtifacts {
+contract RebasingClaimToken_Surface_Test is TestBase_UniswapV4Detf {
     function _controls() private pure returns (bytes4[] memory s_) {
         s_ = new bytes4[](19);
         s_[0] = IERC20.totalSupply.selector;

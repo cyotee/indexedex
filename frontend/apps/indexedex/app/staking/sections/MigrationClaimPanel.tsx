@@ -158,7 +158,7 @@ function Position({ chainId, staking, detf }: Props) {
 
   return <section className="mt-6 rounded-2xl border border-[var(--accent,#4FD44B)]/30 bg-[var(--surface-1,#131820)] p-4 sm:p-6" aria-labelledby="migration-title" data-testid="migration-position">
     <h2 id="migration-title" className="text-xl font-semibold">Your migrated DTF stake</h2>
-    <p className={`${muted} mt-2`}>Your deposits and remaining staking rewards moved together into DTF-DETF. Claim staking SY, a receipt for your staked position, then redeem it for sDETF. You can redeem now or later.</p>
+    <p className={`${muted} mt-2`}>Deposits and remaining staking rewards migrate together into DTF-DETF. After migration, claim staking SY, a receipt for your staked position, then redeem it for sDETF. You can redeem immediately or hold the SY for later.</p>
     {!isConnected ? <Button className="mt-4" onClick={openConnectModal}>Connect wallet to view your position</Button> : !connected ?
       <p role="status" className="mt-4">Switch your wallet to the selected network to view and claim your position.</p> :
       position.isError ? <div role="alert" className="mt-4"><p>Could not load the migrated position from your wallet’s network. Check its RPC connection and the deployed contracts.</p><Button variant="secondary" className="mt-2" onClick={() => void position.refetch()}>Retry</Button></div> :

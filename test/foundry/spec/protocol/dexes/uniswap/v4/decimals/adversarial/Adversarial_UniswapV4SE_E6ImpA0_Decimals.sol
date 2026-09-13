@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {IUniswapV4StandardExchangeLiquidReserve} from "contracts/protocols/dexes/uniswap/v4/interfaces/IUniswapV4StandardExchangeLiquidReserve.sol";
 
 import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
@@ -17,12 +19,10 @@ import {PositionInfo} from "@crane/contracts/protocols/dexes/uniswap/v4/librarie
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
-import {UniswapV4StandardExchangeDFPkg} from
-    "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol";
+
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {IBasicVault} from "contracts/vaults/basic/IBasicVault.sol";
-import {IUniswapV4StandardExchangeDFPkg} from
-    "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol";
+import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/IUniswapV4StandardExchangeDFPkg.sol";
 import {IUniswapV4StandardExchangePositionImport} from
     "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInTarget.sol";
 import {UniswapV4StandardExchangeInBase} from
@@ -300,7 +300,7 @@ abstract contract Adversarial_UniswapV4SE_E6ImpA0_Decimals is UniswapV4SeDecimal
         IUniswapV4StandardExchangeDFPkg boundPkg_ = IUniswapV4StandardExchangeDFPkg(
             address(
                 IVaultRegistryDeployment(address(indexedexManager)).deployPkg(
-                    type(UniswapV4StandardExchangeDFPkg).creationCode,
+                    ArtifactCreationCode.creationCode(create3Factory, "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol:UniswapV4StandardExchangeDFPkg"),
                     abi.encode(_boundPmPkgInit(positionManager_)),
                     keccak256("UniswapV4StandardExchangeDFPkg.boundPM.secFix.decimals")
                 )
@@ -332,7 +332,6 @@ abstract contract Adversarial_UniswapV4SE_E6ImpA0_Decimals is UniswapV4SeDecimal
         total1 += book.localReserve(_token1());
         assertLe(shares_ * total0, mintIn_ * vault.totalSupply(), "A0: token0 claim excludes donation");
         assertLe(shares_ * total1, _u1(1) * vault.totalSupply(), "A0: token1 claim limited to payment");
-
 
         vm.startPrank(attacker);
         vault.approve(address(vault), shares_);

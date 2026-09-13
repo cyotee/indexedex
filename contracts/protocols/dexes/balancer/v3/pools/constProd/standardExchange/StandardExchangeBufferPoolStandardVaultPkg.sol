@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 pragma solidity ^0.8.0;
+
+import {IStandardExchangeBufferPoolPkg} from "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPoolPkg.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
@@ -89,41 +91,13 @@ import {IStandardExchangeBufferPool} from
     "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPool.sol";
 import {StandardExchangeBufferPoolRepo} from
     "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolRepo.sol";
-import {
-    IStandardExchangeRateProviderDFPkg
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
+import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                 Interface                                  */
 /* -------------------------------------------------------------------------- */
 
-interface IStandardExchangeBufferPoolPkg is IDiamondFactoryPackage, IStandardVaultPkg {
-    struct PkgInit {
-        IFacet basicVaultFacet;
-        IFacet standardVaultFacet;
-        IFacet balancerV3VaultAwareFacet;
-        IFacet betterBalancerV3PoolTokenFacet;
-        IFacet defaultPoolInfoFacet;
-        IFacet standardSwapFeePercentageBoundsFacet;
-        IFacet unbalancedLiquidityInvariantRatioBoundsFacet;
-        IFacet balancerV3AuthenticationFacet;
-        IFacet bufferPoolFacet;
-        IFacet poolLiquidityFacet;
-        IFacet hookFacet;
-        IVaultRegistryDeployment vaultRegistry;
-        IVaultFeeOracleQuery vaultFeeOracle;
-        IVault balancerV3Vault;
-        IDiamondPackageCallBackFactory diamondFactory;
-        IStandardExchangeRateProviderDFPkg rateProviderPkg;
-    }
 
-    struct PkgArgs {
-        IERC20 tta;
-        IStandardExchange standardExchangeVault;
-    }
-
-    function deployPool(IStandardExchange seVault, IERC20 tta) external returns (address pool);
-}
 
 /* -------------------------------------------------------------------------- */
 /*                                 Contract                                   */

@@ -323,20 +323,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
 
     /// @dev Pair-token units for swap rating (pre WAD scale).
     function _ratedPairUnits(uint8 i) internal view returns (uint256) {
-        Repo.Layout storage l = Repo._layout();
-        address se = l.standardExchanges[i];
-        if (se == address(0)) {
-            return l.rawReserves[i];
-        }
-        uint256 seBal = IERC20(se).balanceOf(address(this));
-        if (seBal == 0) return 0;
-        address rp = l.rateProviders[i];
-        if (rp != address(0)) {
-            uint256 rate = _getRateFailClosed(rp);
-            return Math.ratedPairUnits(seBal, rate, l.invScales[i], l.ratedScales[i]);
-        }
-        if (se == l.tokens[i]) return seBal;
-        return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seBal, IERC20(l.tokens[i]));
+        return ClaimLib.ratedPairUnits(i);
     }
 
     function _getRateFailClosed(address provider) internal view returns (uint256 rate) {

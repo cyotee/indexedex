@@ -13,9 +13,7 @@ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.so
 import {
     IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage as IQuadHookPkg
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.sol";
-import {
-    UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg as QuadHookDFPkg
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg.sol";
+
 import {
     UniswapV4StandardExchangeCurveQuadStableBufferHook_FactoryService as QuadHookFS
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_FactoryService.sol";
@@ -46,7 +44,7 @@ library Phase_06_Stage_06_CurveQuadBufferHookPkg {
         init_.multiAssetBasicVaultFacet = s.multiAssetBasicVaultFacet;
         init_.multiAssetStandardVaultFacet = s.multiAssetStandardVaultFacet;
         init_.multiStepOwnableFacet = s.multiStepOwnableFacet;
-        bytes memory initCode_ = type(QuadHookDFPkg).creationCode;
+        bytes memory initCode_ = ArtifactCreationCode.creationCode(s.create3Factory, "UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg.sol:UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg");
         bytes memory initArgs_ = abi.encode(init_);
         s.curveQuadHookPkg = reg.deployPkg(
             initCode_,

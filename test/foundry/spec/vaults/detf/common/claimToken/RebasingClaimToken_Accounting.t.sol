@@ -8,11 +8,10 @@ import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
 import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
 import {StakedDETFTarget} from "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol";
 import {TestBase_UniswapV4Detf} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
-import {DETFFundedStakingArtifacts} from "contracts/test/bases/DETFFundedStakingArtifacts.sol";
 
 /// @notice Funded replacements for the old spot/LP-valued claim accounting regressions.
 /// @dev Transactions use registered DETF/staking/NFT proxies; no storage overrides or SUT mocks.
-contract RebasingClaimToken_Accounting is TestBase_UniswapV4Detf, DETFFundedStakingArtifacts {
+contract RebasingClaimToken_Accounting is TestBase_UniswapV4Detf {
     function _staking() private view returns (IStakedDETF) {
         return IStakedDETF(detfInfo.rebasingClaimToken());
     }

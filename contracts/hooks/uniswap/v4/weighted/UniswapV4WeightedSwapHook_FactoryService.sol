@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
-import {UniswapV4WeightedSwapHookLiquidityFacet} from "contracts/hooks/uniswap/v4/weighted/facets/UniswapV4WeightedSwapHookLiquidityFacet.sol";
-import {UniswapV4WeightedSwapHookHooksFacet} from "contracts/hooks/uniswap/v4/weighted/facets/UniswapV4WeightedSwapHookHooksFacet.sol";
 
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -33,7 +31,7 @@ library UniswapV4WeightedSwapHook_FactoryService {
 
     function deployHooksFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         facet = create3Factory.deployFacet(
-            type(UniswapV4WeightedSwapHookHooksFacet).creationCode /* unlinked artifact; type().creationCode required */,
+            ArtifactCreationCode.creationCode(create3Factory, "UniswapV4WeightedSwapHookHooksFacet.sol:UniswapV4WeightedSwapHookHooksFacet"),
             abi.encode("UniswapV4WeightedSwapHookHooksFacet")._hash()
         );
         vm.label(address(facet), "UniswapV4WeightedSwapHookHooksFacet");
@@ -41,7 +39,7 @@ library UniswapV4WeightedSwapHook_FactoryService {
 
     function deployLiquidityFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         facet = create3Factory.deployFacet(
-            type(UniswapV4WeightedSwapHookLiquidityFacet).creationCode /* unlinked artifact; type().creationCode required */,
+            ArtifactCreationCode.creationCode(create3Factory, "UniswapV4WeightedSwapHookLiquidityFacet.sol:UniswapV4WeightedSwapHookLiquidityFacet"),
             abi.encode("UniswapV4WeightedSwapHookLiquidityFacet")._hash()
         );
         vm.label(address(facet), "UniswapV4WeightedSwapHookLiquidityFacet");

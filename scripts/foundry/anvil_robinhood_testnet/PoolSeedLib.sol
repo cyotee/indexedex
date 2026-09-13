@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {FixtureEconomics} from "./FixtureEconomics.sol";
 
 import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
@@ -14,7 +16,7 @@ import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey
 import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
 import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/TickMath.sol";
 import {LiquidityAmounts} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/LiquidityAmounts.sol";
-import {UniswapV4LiquiditySeeder} from "scripts/foundry/shared/UniswapV4LiquiditySeeder.sol";
+import {IUniswapV4LiquiditySeeder} from "scripts/foundry/shared/IUniswapV4LiquiditySeeder.sol";
 import {ROBINHOOD_TESTNET} from "@crane/contracts/constants/networks/ROBINHOOD_TESTNET.sol";
 
 interface IWeth9 {
@@ -39,7 +41,7 @@ library PoolSeedLib {
 
     function ensureSeeder(ICreate3FactoryProxy factory, IPoolManager pm) internal returns (address seeder) {
         seeder = ICreate3Factory(address(factory)).create3WithArgs(
-            type(UniswapV4LiquiditySeeder).creationCode,
+            ArtifactCreationCode.creationCode(factory, "UniswapV4LiquiditySeeder.sol:UniswapV4LiquiditySeeder"),
             abi.encode(pm),
             keccak256(abi.encode(FixtureEconomics.SALT_NS, "V4LiquiditySeeder"))
         );
@@ -75,7 +77,7 @@ library PoolSeedLib {
             amount0,
             amount1
         );
-        UniswapV4LiquiditySeeder(seeder).addLiquidity(key, -span, span, liq);
+        IUniswapV4LiquiditySeeder(seeder).addLiquidity(key, -span, span, liq);
     }
 
     /// @notice Seed the SE's own full-range book before any one-token DETF intake.

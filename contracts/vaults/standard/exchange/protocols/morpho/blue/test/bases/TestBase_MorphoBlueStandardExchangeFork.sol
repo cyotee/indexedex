@@ -7,8 +7,8 @@ import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
-import {IMorpho, Id, MarketParams, Market} from
-    "@crane/contracts/external/morpho/blue/interfaces/IMorpho.sol";
+import {Id, MarketParams, Market} from "@crane/contracts/external/morpho/blue/interfaces/IMorpho.sol";
+import {IMorpho} from "@crane/contracts/external/morpho/blue/interfaces/IMorpho.sol";
 import {MorphoBalancesLib} from
     "@crane/contracts/external/morpho/blue/libraries/periphery/MorphoBalancesLib.sol";
 import {TestBase_Permit2} from "@crane/contracts/protocols/utils/permit2/test/bases/TestBase_Permit2.sol";

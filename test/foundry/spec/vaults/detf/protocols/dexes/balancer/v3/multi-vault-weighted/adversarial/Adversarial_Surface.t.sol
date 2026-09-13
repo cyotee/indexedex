@@ -13,15 +13,11 @@ import {
 import {
     ILegacyMultiVaultWeightedDetfBonding as IMultiVaultWeightedDetfBonding
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf.sol";
-import {
-    IMultiVaultWeightedDetfBonding as IMultiVaultWeightedDetfBondingSelectorSource
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfBondingTarget.sol";
+import {IMultiVaultWeightedDetfBonding as IMultiVaultWeightedDetfBondingSelectorSource} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfBonding.sol";
 import {
     ILegacyMultiVaultWeightedDetfInfo as IMultiVaultWeightedDetfInfo
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf.sol";
-import {
-    IMultiVaultWeightedDetfInfo as IMultiVaultWeightedDetfInfoSelectorSource
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfInfoTarget.sol";
+import {IMultiVaultWeightedDetfInfo as IMultiVaultWeightedDetfInfoSelectorSource} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfInfo.sol";
 
 /**
  * @title Adversarial_Surface_Test

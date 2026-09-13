@@ -370,13 +370,13 @@ contract RocketPoolStandardExchangeProjectionFork is RocketPoolRETHStandardExcha
         args.rocketStorage = address(0);
         vm.expectRevert(IRocketPoolRETHStandardExchangeDFPkg.ZeroAddress.selector);
         pkg.processArgs(abi.encode(args));
-        assertLe(vm.getDeployedCode("RocketPoolRETHStandardExchangeInFacet.sol:RocketPoolRETHStandardExchangeInFacet").length, 24_576);
-        assertLe(vm.getDeployedCode("RocketPoolRETHStandardExchangeDFPkg.sol:RocketPoolRETHStandardExchangeDFPkg").length, 24_576);
+        assertLe(address(pkg).code.length, 24_576);
         IFacet occupied = create3Factory.deployFacet(
             ArtifactCreationCode.creationCode("ERC20Facet.sol:ERC20Facet"),
             keccak256(abi.encode("RocketPoolRETHStandardExchangeInFacet"))
         );
         IFacet current = RocketPoolRETH_Component_FactoryService.deployRocketPoolRETHStandardExchangeInFacet(create3Factory);
+        assertLe(address(current).code.length, 24_576);
         assertNotEq(address(current), address(occupied), "occupied legacy salt cannot select stale quote code");
         assertEq(current.facetName(), "RocketPoolRETHStandardExchangeInFacet");
     }

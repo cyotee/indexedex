@@ -16,10 +16,8 @@ import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {
     IUniswapV3StandardExchangeLiquidReserve
 } from "contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3StandardExchangeLiquidReserve.sol";
-import {
-    UniswapV3StandardExchangeDFPkg,
-    IUniswapV3StandardExchangeDFPkg
-} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeDFPkg.sol";
+import {UniswapV3StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeDFPkg.sol";
+import {IUniswapV3StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v3/IUniswapV3StandardExchangeDFPkg.sol";
 import {
     TestBase_UniswapV3StandardExchange
 } from "contracts/protocols/dexes/uniswap/v3/test/bases/TestBase_UniswapV3StandardExchange.sol";

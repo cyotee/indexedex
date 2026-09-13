@@ -261,7 +261,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksTarg
     function _mapPairInToRatedWad(uint8 i, uint256 pairAmount) internal view returns (uint256) {
         Repo.Layout storage l = Repo._layout();
         address se = l.standardExchanges[i];
-        if (se == address(0)) {
+        if (se == address(0) || se == l.tokens[i]) {
             return Math.scaleTo(pairAmount, l.ratedScales[i]);
         }
         // Buffer preview → shares → pair units (rate or claim) → rated WAD

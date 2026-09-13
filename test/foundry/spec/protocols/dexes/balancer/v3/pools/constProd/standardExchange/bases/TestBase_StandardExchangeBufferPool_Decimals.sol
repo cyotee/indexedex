@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
-import {IAerodromeStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeDFPkg.sol";
+
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+import {IAerodromeStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/v1/IAerodromeStandardExchangeDFPkg.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                 Balancer V3                                */
@@ -53,30 +55,20 @@ import {MintableERC20Decimals} from "contracts/test/stubs/MintableERC20Decimals.
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
-import {
-    IAerodromeStandardExchangeDFPkg
-} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeDFPkg.sol";
+import {IAerodromeStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/v1/IAerodromeStandardExchangeDFPkg.sol";
 import {
     Aerodrome_Component_FactoryService
 } from "contracts/protocols/dexes/aerodrome/v1/Aerodrome_Component_FactoryService.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
-import {
-    IStandardExchangeRateProviderDFPkg,
-    StandardExchangeRateProviderDFPkg
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
-import {
-    StandardExchangeRateProviderFacet
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderFacet.sol";
+import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
 
 /* Buffer Pool specific */
 import {IStandardExchangeBufferPool} from
     "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPool.sol";
-import {
-    IStandardExchangeBufferPoolPkg,
-    StandardExchangeBufferPoolStandardVaultPkg
-} from "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolStandardVaultPkg.sol";
+import {IStandardExchangeBufferPoolPkg} from "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPoolPkg.sol";
+
 import {
     StandardExchangeBufferPool_FactoryService
 } from "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPool_FactoryService.sol";
@@ -317,7 +309,7 @@ abstract contract TestBase_StandardExchangeBufferPool_Decimals is TestBase_Balan
         // Deploy the rate provider facet.
         IFacet rateProviderFacet = IFacet(
             create3Factory.deployFacet(
-                type(StandardExchangeRateProviderFacet).creationCode,
+                ArtifactCreationCode.creationCode(create3Factory, "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderFacet.sol:StandardExchangeRateProviderFacet"),
                 keccak256("StandardExchangeRateProviderFacet")
             )
         );
@@ -331,7 +323,7 @@ abstract contract TestBase_StandardExchangeBufferPool_Decimals is TestBase_Balan
         seRateProviderPkg = IStandardExchangeRateProviderDFPkg(
             address(
                 create3Factory.deployPackageWithArgs(
-                    type(StandardExchangeRateProviderDFPkg).creationCode,
+                    ArtifactCreationCode.creationCode(create3Factory, "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol:StandardExchangeRateProviderDFPkg"),
                     abi.encode(rpPkgInit),
                     keccak256("StandardExchangeRateProviderDFPkg")
                 )

@@ -13,9 +13,7 @@ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.so
 import {
     IUniswapV4StandardExchangeOrbitalBufferHookPackage as IOrbitalHookPkg
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHookPackage.sol";
-import {
-    UniswapV4StandardExchangeOrbitalBufferHookDFPkg as OrbitalHookDFPkg
-} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDFPkg.sol";
+
 import {
     UniswapV4StandardExchangeOrbitalBufferHook_FactoryService as OrbitalHookFS
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_FactoryService.sol";
@@ -46,7 +44,7 @@ library Phase_06_Stage_05_OrbitalBufferHookPkg {
         init_.multiAssetBasicVaultFacet = s.multiAssetBasicVaultFacet;
         init_.multiAssetStandardVaultFacet = s.multiAssetStandardVaultFacet;
         init_.multiStepOwnableFacet = s.multiStepOwnableFacet;
-        bytes memory code = type(OrbitalHookDFPkg).creationCode;
+        bytes memory code = ArtifactCreationCode.creationCode(s.create3Factory, "UniswapV4StandardExchangeOrbitalBufferHookDFPkg.sol:UniswapV4StandardExchangeOrbitalBufferHookDFPkg");
         bytes memory args = abi.encode(init_);
         s.orbitalHookPkg = reg.deployPkg(
             code, args,

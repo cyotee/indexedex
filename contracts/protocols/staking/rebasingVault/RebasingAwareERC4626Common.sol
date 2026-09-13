@@ -99,6 +99,12 @@ library RebasingAwareERC4626Common {
         }
     }
 
+    function requireReceiver(address receiver, bool assetOutput) internal view {
+        if (receiver == address(0) || (assetOutput && receiver == address(this))) {
+            revert IRebasingAwareERC4626.InvalidReceiver(receiver);
+        }
+    }
+
     /* ---------------------------------------------------------------------- */
     /*                         Full-precision conversion                      */
     /* ---------------------------------------------------------------------- */
@@ -247,6 +253,7 @@ library RebasingAwareERC4626Common {
     }
 
     function totalAssets() internal view returns (uint256) {
+        requireUnlocked();
         return RebasingAwareERC4626Repo._asset().balanceOf(address(this));
     }
 
@@ -324,13 +331,10 @@ library RebasingAwareERC4626Common {
     }
 
     function assertEntryCapacity(Book memory book, uint256 assetsIn, uint256 sharesMinted) internal pure {
-        if (book.assets + assetsIn < book.assets || book.assets + assetsIn == type(uint256).max) {
+        if (assetsIn > type(uint256).max - 1 - book.assets) {
             revert IRebasingAwareERC4626.NumericDomainExceeded();
         }
-        if (
-            book.supply + sharesMinted < book.supply
-                || book.supply + sharesMinted > type(uint256).max - book.virtualShares
-        ) {
+        if (sharesMinted > type(uint256).max - book.virtualShares - book.supply) {
             revert IRebasingAwareERC4626.NumericDomainExceeded();
         }
     }
@@ -344,6 +348,7 @@ library RebasingAwareERC4626Common {
         returns (uint256 shares)
     {
         if (assets == 0) revert IRebasingAwareERC4626.ZeroOperationAmount();
+        requireReceiver(receiver, false);
         requireInboundEnabled();
         Book memory book = liveBook();
         if (book.assets == 0 && book.supply > 0) {
@@ -372,6 +377,7 @@ library RebasingAwareERC4626Common {
         returns (uint256 assets)
     {
         if (shares == 0) revert IRebasingAwareERC4626.ZeroOperationAmount();
+        requireReceiver(receiver, false);
         requireInboundEnabled();
         Book memory book = liveBook();
         if (book.assets == 0 && book.supply > 0) {

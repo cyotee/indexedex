@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {Script} from "forge-std/Script.sol";
 import {console2} from "forge-std/console2.sol";
 
@@ -11,10 +13,8 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
-import {ERC20Facet} from "@crane/contracts/tokens/ERC20/ERC20Facet.sol";
-import {ERC2612Facet} from "@crane/contracts/tokens/ERC2612/ERC2612Facet.sol";
-import {ERC5267Facet} from "@crane/contracts/utils/cryptography/ERC5267/ERC5267Facet.sol";
-import {ERC20PermitDFPkg, IERC20PermitDFPkg} from "@crane/contracts/tokens/ERC20/ERC20PermitDFPkg.sol";
+
+import {IERC20PermitDFPkg} from "@crane/contracts/tokens/ERC20/ERC20PermitDFPkg.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 
 contract Script_DeployRichToken is Script {
@@ -99,25 +99,25 @@ contract Script_DeployRichToken is Script {
 
     function _deployFacets() internal {
         erc20Facet = IFacet(
-            create3Factory.deployFacet(type(ERC20Facet).creationCode, abi.encode(type(ERC20Facet).name)._hash())
+            create3Factory.deployFacet(ArtifactCreationCode.creationCode(create3Factory, "ERC20Facet.sol:ERC20Facet"), abi.encode("ERC20Facet")._hash())
         );
         erc2612Facet = IFacet(
-            create3Factory.deployFacet(type(ERC2612Facet).creationCode, abi.encode(type(ERC2612Facet).name)._hash())
+            create3Factory.deployFacet(ArtifactCreationCode.creationCode(create3Factory, "ERC2612Facet.sol:ERC2612Facet"), abi.encode("ERC2612Facet")._hash())
         );
         erc5267Facet = IFacet(
-            create3Factory.deployFacet(type(ERC5267Facet).creationCode, abi.encode(type(ERC5267Facet).name)._hash())
+            create3Factory.deployFacet(ArtifactCreationCode.creationCode(create3Factory, "ERC5267Facet.sol:ERC5267Facet"), abi.encode("ERC5267Facet")._hash())
         );
 
-        vm.label(address(erc20Facet), type(ERC20Facet).name);
-        vm.label(address(erc2612Facet), type(ERC2612Facet).name);
-        vm.label(address(erc5267Facet), type(ERC5267Facet).name);
+        vm.label(address(erc20Facet), "ERC20Facet");
+        vm.label(address(erc2612Facet), "ERC2612Facet");
+        vm.label(address(erc5267Facet), "ERC5267Facet");
     }
 
     function _deployPackage() internal {
         erc20PermitPkg = IERC20PermitDFPkg(
             address(
                 create3Factory.deployPackageWithArgs(
-                    type(ERC20PermitDFPkg).creationCode,
+                    ArtifactCreationCode.creationCode(create3Factory, "ERC20PermitDFPkg.sol:ERC20PermitDFPkg"),
                     abi.encode(
                         IERC20PermitDFPkg.PkgInit({
                             erc20Facet: erc20Facet,
@@ -125,12 +125,12 @@ contract Script_DeployRichToken is Script {
                             erc2612Facet: erc2612Facet
                         })
                     ),
-                    abi.encode(type(ERC20PermitDFPkg).name)._hash()
+                    abi.encode("ERC20PermitDFPkg")._hash()
                 )
             )
         );
 
-        vm.label(address(erc20PermitPkg), type(ERC20PermitDFPkg).name);
+        vm.label(address(erc20PermitPkg), "ERC20PermitDFPkg");
     }
 
     function _deployToken() internal {

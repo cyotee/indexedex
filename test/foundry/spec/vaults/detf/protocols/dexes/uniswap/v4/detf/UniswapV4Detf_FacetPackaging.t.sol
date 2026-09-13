@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IUniswapV4DetfDFPkg} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
 import {DetfFacetFactoryService} from "contracts/vaults/detf/common/factory/DetfFacetFactoryService.sol";
 import {DetfPkgFactoryService} from "contracts/vaults/detf/common/factory/DetfPkgFactoryService.sol";
-import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol";
 import {LaunchState} from "scripts/foundry/anvil_robinhood_main/LaunchState.sol";
 import {Phase_06_Stage_07_UniswapV4DetfPkg} from "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_07_UniswapV4DetfPkg.sol";
 import {UniswapV4Detf_Pkg_FactoryService} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Pkg_FactoryService.sol";
@@ -23,10 +25,9 @@ import {
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4DetfSelfCall.sol";
 import {UniswapV4DetfRepo} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfRepo.sol";
 import {TestBase_UniswapV4Detf} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
-import {DETFFundedStakingArtifacts} from "contracts/test/bases/DETFFundedStakingArtifacts.sol";
 
 /// @notice Real CREATE3 facets and manager-deployed package must satisfy size and routing gates.
-contract UniswapV4Detf_FacetPackaging is TestBase_UniswapV4Detf, DETFFundedStakingArtifacts {
+contract UniswapV4Detf_FacetPackaging is TestBase_UniswapV4Detf {
     LaunchState private releaseState;
 
     function test_releaseStage_currentDependenciesResolveCurrentPackage() public {
@@ -82,14 +83,16 @@ contract UniswapV4Detf_FacetPackaging is TestBase_UniswapV4Detf, DETFFundedStaki
 
     /// @notice Existing type-name deployments cannot shadow the current claim implementation.
     function test_releaseSalt_legacyFacetDoesNotShadowCurrentFacet() public {
-        string memory artifact = "RebasingClaimTokenFacet.sol:RebasingClaimTokenFacet";
-        IFacet legacy = create3Factory.deployFacet(
-            vm.getCode("ERC20Facet.sol:ERC20Facet"), keccak256(abi.encode("RebasingClaimTokenFacet"))
+        bytes memory expectedRuntime = vm.parseJsonBytes(
+            vm.readFile("out/RebasingClaimTokenFacet.sol/RebasingClaimTokenFacet.json"), ".deployedBytecode.object"
         );
-        assertTrue(address(legacy).codehash != keccak256(vm.getDeployedCode(artifact)), "occupied slot has different code");
+        IFacet legacy = create3Factory.deployFacet(
+            ArtifactCreationCode.creationCode(create3Factory, "lib/crane/contracts/tokens/ERC20/ERC20Facet.sol:ERC20Facet"), keccak256(abi.encode("RebasingClaimTokenFacet"))
+        );
+        assertTrue(address(legacy).codehash != keccak256(expectedRuntime), "occupied slot has different code");
         IFacet current = DetfFacetFactoryService.deployRebasingClaimTokenFacet(create3Factory);
         assertTrue(address(current) != address(legacy), "release does not reuse the legacy salt");
-        assertEq(address(current).code, vm.getDeployedCode(artifact), "current implementation installed");
+        assertEq(address(current).code, expectedRuntime, "current implementation installed");
         assertEq(
             address(DetfFacetFactoryService.deployRebasingClaimTokenFacet(create3Factory)),
             address(current), "identical release remains idempotent"
@@ -106,7 +109,7 @@ contract UniswapV4Detf_FacetPackaging is TestBase_UniswapV4Detf, DETFFundedStaki
         assertEq(address(unchanged), address(detfPkg), "same code and constructor reuse package");
 
         IFacet replacement = create3Factory.deployFacet(
-            vm.getCode("UniswapV4DetfBondFacet.sol:UniswapV4DetfBondFacet"),
+            ArtifactCreationCode.creationCode(create3Factory, "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfBondFacet.sol:UniswapV4DetfBondFacet"),
             keccak256(abi.encode("UniswapV4DetfBondFacet", "release constructor regression"))
         );
         init.productFacets[1] = replacement;
@@ -138,13 +141,27 @@ contract UniswapV4Detf_FacetPackaging is TestBase_UniswapV4Detf, DETFFundedStaki
 
     /// @notice Every independently deployed product facet fits the EVM's hard bytecode limits.
     function test_splitFacets_deployedRuntimeAndInitcodeFitLimits() public {
+        bytes[5] memory initcodes = [
+            ArtifactCreationCode.creationCode(create3Factory, "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfExchangeFacet.sol:UniswapV4DetfExchangeFacet"),
+            ArtifactCreationCode.creationCode(create3Factory, "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfBondFacet.sol:UniswapV4DetfBondFacet"),
+            ArtifactCreationCode.creationCode(create3Factory, "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfMaintenanceFacet.sol:UniswapV4DetfMaintenanceFacet"),
+            ArtifactCreationCode.creationCode(create3Factory, "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfClaimFacet.sol:UniswapV4DetfClaimFacet"),
+            ArtifactCreationCode.creationCode(create3Factory, "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfQueryFacet.sol:UniswapV4DetfQueryFacet")
+        ];
+        string[5] memory names = [
+            "UniswapV4DetfExchangeFacet",
+            "UniswapV4DetfBondFacet",
+            "UniswapV4DetfMaintenanceFacet",
+            "UniswapV4DetfClaimFacet",
+            "UniswapV4DetfQueryFacet"
+        ];
         for (uint256 i; i < detfProductFacets.length; ++i) {
             IFacet facet = detfProductFacets[i];
             uint256 runtimeSize = address(facet).code.length;
             assertGt(runtimeSize, 0, "facet deployed through CREATE3");
             assertLe(runtimeSize, 24_576, facet.facetName());
-            string memory name = facet.facetName();
-            assertLe(vm.getCode(string.concat(name, ".sol:", name)).length, 49_152, "facet initcode limit");
+            assertEq(facet.facetName(), names[i], "artifact matches deployed facet");
+            assertLe(initcodes[i].length, 49_152, "facet initcode limit");
         }
         assertLe(address(detfPkg).code.length, 24_576, "package runtime limit");
     }

@@ -10,9 +10,7 @@ import {
 import {
     SingleStandardExchangeDETF_Pkg_FactoryService
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_Pkg_FactoryService.sol";
-import {
-    ISingleStandardExchangeDETDFPkg
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETDFPkg.sol";
+import {ISingleStandardExchangeDETDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETDFPkg.sol";
 
 library SingleStandardExchangeDETF_Component_FactoryService {
     using SingleStandardExchangeDETF_Facet_FactoryService for ICreate3FactoryProxy;

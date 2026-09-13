@@ -1,26 +1,13 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
-// Explicit artifacts for components CREATE3-loaded by this base, including focused runs.
-import {FeeCollectorManagerFacet} from "contracts/fee/collector/FeeCollectorManagerFacet.sol";
-import {FeeCollectorSingleTokenPushFacet} from "contracts/fee/collector/FeeCollectorSingleTokenPushFacet.sol";
-import {VaultFeeOracleManagerFacet} from "contracts/oracles/fee/VaultFeeOracleManagerFacet.sol";
-import {VaultFeeOracleQueryFacet} from "contracts/oracles/fee/VaultFeeOracleQueryFacet.sol";
-import {VaultRegistryDeploymentFacet} from "contracts/registries/vault/VaultRegistryDeploymentFacet.sol";
-import {VaultRegistryDisableManagerFacet} from "contracts/registries/vault/VaultRegistryDisableManagerFacet.sol";
-import {VaultRegistryDisableQueryFacet} from "contracts/registries/vault/VaultRegistryDisableQueryFacet.sol";
-import {VaultRegistryVaultManagerFacet} from "contracts/registries/vault/VaultRegistryVaultManagerFacet.sol";
-import {VaultRegistryVaultPackageManagerFacet} from "contracts/registries/vault/VaultRegistryVaultPackageManagerFacet.sol";
-import {VaultRegistryVaultPackageQueryFacet} from "contracts/registries/vault/VaultRegistryVaultPackageQueryFacet.sol";
-import {VaultRegistryVaultQueryFacet} from "contracts/registries/vault/VaultRegistryVaultQueryFacet.sol";
-
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IOperable} from "@crane/contracts/interfaces/IOperable.sol";
-import {IFeeCollectorDFPkg} from "contracts/fee/collector/FeeCollectorDFPkg.sol";
+import {IFeeCollectorDFPkg} from "contracts/fee/collector/IFeeCollectorDFPkg.sol";
 import {IFeeCollectorProxy} from "contracts/interfaces/proxies/IFeeCollectorProxy.sol";
-import {IIndexedexManagerDFPkg} from "contracts/manager/IndexedexManagerDFPkg.sol";
+import {IIndexedexManagerDFPkg} from "contracts/manager/IIndexedexManagerDFPkg.sol";
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
 import {AccessFacetFactoryService} from "@crane/contracts/access/AccessFacetFactoryService.sol";
 import {IntrospectionFacetFactoryService} from "@crane/contracts/introspection/IntrospectionFacetFactoryService.sol";
@@ -28,7 +15,7 @@ import {IndexedexManagerFactoryService} from "contracts/manager/IndexedexManager
 import {CraneTest} from "@crane/contracts/test/CraneTest.sol";
 import {FeeCollectorFactoryService} from "contracts/fee/collector/FeeCollectorFactoryService.sol";
 
-contract IndexedexTest is CraneTest {
+abstract contract IndexedexTest is CraneTest {
     using AccessFacetFactoryService for ICreate3FactoryProxy;
     using IntrospectionFacetFactoryService for ICreate3FactoryProxy;
     using FeeCollectorFactoryService for ICreate3FactoryProxy;

@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import {DeploymentBase} from "./DeploymentBase.sol";
 import {IUniswapV2Pair} from "@crane/contracts/interfaces/protocols/dexes/uniswap/v2/IUniswapV2Pair.sol";
-import {IUniswapV2StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeDFPkg.sol";
+import {IUniswapV2StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v2/IUniswapV2StandardExchangeDFPkg.sol";
 
 /// @title Script_07_DeployStrategyVaults
 /// @notice Deploys strategy vaults for each UniV2 pool

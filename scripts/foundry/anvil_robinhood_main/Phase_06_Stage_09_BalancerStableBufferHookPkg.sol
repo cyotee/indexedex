@@ -13,9 +13,7 @@ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.so
 import {
     IUniswapV4StandardExchangeBalancerQuadStableBufferHookPackage as IBalancerHookPkg
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/interfaces/IUniswapV4StandardExchangeBalancerQuadStableBufferHookPackage.sol";
-import {
-    UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg as BalancerHookDFPkg
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg.sol";
+
 import {
     UniswapV4StandardExchangeBalancerQuadStableBufferHook_FactoryService as BalancerHookFS
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_FactoryService.sol";
@@ -44,7 +42,7 @@ library Phase_06_Stage_09_BalancerStableBufferHookPkg {
         init_.erc2612Facet = s.erc2612Facet;
         init_.multiAssetBasicVaultFacet = s.multiAssetBasicVaultFacet;
         init_.multiAssetStandardVaultFacet = s.multiAssetStandardVaultFacet;
-        bytes memory initCode_ = type(BalancerHookDFPkg).creationCode;
+        bytes memory initCode_ = ArtifactCreationCode.creationCode(s.create3Factory, "UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg.sol:UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg");
         bytes memory initArgs_ = abi.encode(init_);
         pkg = reg.deployPkg(
             initCode_,

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {FixtureEconomics} from "./FixtureEconomics.sol";
 import {LaunchState} from "./LaunchState.sol";
 
@@ -8,11 +10,8 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IOperable} from "@crane/contracts/interfaces/IOperable.sol";
 import {IERC20MintBurn} from "@crane/contracts/interfaces/IERC20MintBurn.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
-import {ERC20MintBurnOwnableFacet} from "@crane/contracts/tokens/ERC20/ERC20MintBurnOwnableFacet.sol";
-import {
-    IERC20MintBurnOwnableOperableDFPkg,
-    ERC20MintBurnOwnableOperableDFPkg
-} from "@crane/contracts/tokens/ERC20/ERC20MintBurnOwnableOperableDFPkg.sol";
+
+import {IERC20MintBurnOwnableOperableDFPkg} from "@crane/contracts/tokens/ERC20/IERC20MintBurnOwnableOperableDFPkg.sol";
 
 /// @title Phase_07_Stage_01_CoreTestTokens
 /// @notice Token DFPkg if needed. Mintable DTF, TTUSDG, TTUSDE, TTWETH. Authorize facade. Premint.
@@ -34,8 +33,8 @@ library Phase_07_Stage_01_CoreTestTokens {
     function _ensureTokenPkg(LaunchState storage s) private returns (IERC20MintBurnOwnableOperableDFPkg tokenPkg) {
         if (_live(s.tokenPkg)) return IERC20MintBurnOwnableOperableDFPkg(s.tokenPkg);
         IFacet mintBurnOwnableFacet = s.create3Factory.deployFacet(
-            type(ERC20MintBurnOwnableFacet).creationCode,
-            abi.encode(type(ERC20MintBurnOwnableFacet).name, FixtureEconomics.SALT_NS)._hash()
+            ArtifactCreationCode.creationCode(s.create3Factory, "ERC20MintBurnOwnableFacet.sol:ERC20MintBurnOwnableFacet"),
+            abi.encode("ERC20MintBurnOwnableFacet", FixtureEconomics.SALT_NS)._hash()
         );
         IERC20MintBurnOwnableOperableDFPkg.PkgInit memory pkgInit;
         pkgInit.erc20Facet = s.erc20Facet;
@@ -48,9 +47,9 @@ library Phase_07_Stage_01_CoreTestTokens {
         tokenPkg = IERC20MintBurnOwnableOperableDFPkg(
             address(
                 s.create3Factory.deployPackageWithArgs(
-                    type(ERC20MintBurnOwnableOperableDFPkg).creationCode,
+                    ArtifactCreationCode.creationCode(s.create3Factory, "ERC20MintBurnOwnableOperableDFPkg.sol:ERC20MintBurnOwnableOperableDFPkg"),
                     abi.encode(pkgInit),
-                    abi.encode(type(ERC20MintBurnOwnableOperableDFPkg).name, FixtureEconomics.SALT_NS)._hash()
+                    abi.encode("ERC20MintBurnOwnableOperableDFPkg", FixtureEconomics.SALT_NS)._hash()
                 )
             )
         );

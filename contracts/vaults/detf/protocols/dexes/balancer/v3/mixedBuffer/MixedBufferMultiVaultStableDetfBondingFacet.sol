@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
-import {MixedBufferMultiVaultStableDetfBondingTarget, IMixedBufferMultiVaultStableDetfBonding} from "./MixedBufferMultiVaultStableDetfBondingTarget.sol";
+import {MixedBufferMultiVaultStableDetfBondingTarget} from "./MixedBufferMultiVaultStableDetfBondingTarget.sol";
+import {IMixedBufferMultiVaultStableDetfBonding} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfBonding.sol";
 
 
 /// @notice Assembled funded DETF surface; function lists share one canonical implementation.

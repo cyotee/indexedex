@@ -10,7 +10,7 @@ import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeplo
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 
-import {IERC4626StandardExchangeDFPkg} from "contracts/vaults/standard/erc4626/ERC4626StandardExchangeDFPkg.sol";
+import {IERC4626StandardExchangeDFPkg} from "contracts/vaults/standard/erc4626/IERC4626StandardExchangeDFPkg.sol";
 
 library ERC4626StandardExchange_Component_FactoryService {
     using BetterEfficientHashLib for bytes;

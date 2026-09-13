@@ -1,0 +1,46 @@
+{
+  "configHash": "0x711c124542accd49211e09a778a8cbfe85a840b39af68df2b87efa6c7a396579",
+  "receiptVerified": false,
+  "chunks": [
+    {
+      "afterRemaining": "153710538270316037923232103",
+      "amountIn": "90723464400000000000",
+      "beforeRemaining": "153710628993780437923232103",
+      "claimOut": 256540628,
+      "deadline": 1789329977,
+      "minClaimOut": 255257924,
+      "principalBefore": "151970245906850316916647706",
+      "sharesOut": 2565406280000000000
+    },
+    {
+      "afterRemaining": "153710424865985537923232103",
+      "amountIn": "113404330500000000000",
+      "beforeRemaining": "153710538270316037923232103",
+      "claimOut": 256442404,
+      "deadline": 1789329977,
+      "minClaimOut": 255160191,
+      "principalBefore": "151970245906850316916647706",
+      "sharesOut": 2564424040000000000
+    },
+    {
+      "afterRemaining": "153710283110572412923232103",
+      "amountIn": "141755413125000000000",
+      "beforeRemaining": "153710424865985537923232103",
+      "claimOut": 256350108,
+      "deadline": 1789329977,
+      "minClaimOut": 255068357,
+      "principalBefore": "151970245906850316916647706",
+      "sharesOut": 2563501080000000000
+    },
+    {
+      "afterRemaining": "153710105916306006673232103",
+      "amountIn": "177194266406250000000",
+      "beforeRemaining": "153710283110572412923232103",
+      "claimOut": 256263067,
+      "deadline": 1789329977,
+      "minClaimOut": 254981751,
+      "principalBefore": "151970245906850316916647706",
+      "sharesOut": 2562630670000000000
+    }
+  ]
+}

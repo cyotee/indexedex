@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/IDETFNFTVaultDFPkg.sol";
+
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
@@ -21,29 +23,7 @@ import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol
 import {IDetfNftReserveDonation} from "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol";
 import {DETFFundedBondRepo} from "contracts/vaults/detf/common/bondNft/DETFFundedBondRepo.sol";
 
-/// @notice Factory schema for fresh funded-bond deployments.
-interface IDETFNFTVaultDFPkg is IDiamondFactoryPackage {
-    struct PkgInit {
-        IFacet erc721Facet;
-        IFacet metadataFacet;
-        IFacet detfNFTVaultFacet;
-        IVaultFeeOracleQuery feeOracle;
-        IVaultRegistryDeployment vaultRegistryDeployment;
-    }
 
-    struct PkgArgs {
-        string name;
-        string symbol;
-        IDetf detf;
-        IERC20 lpToken;
-    }
-
-    error NotCalledByRegistry(address caller);
-    error InvalidPackageArguments();
-
-    function deployVault(string memory name_, string memory symbol_, IDetf detf_, IERC20 lpToken_)
-        external returns (address);
-}
 
 /// @title DETFNFTVaultDFPkg
 /// @notice Registered NFT package with a minimal funded vesting ledger and protocol LP custody.

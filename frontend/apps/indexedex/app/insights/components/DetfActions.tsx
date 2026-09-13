@@ -39,6 +39,7 @@ import {
 } from '../../lib/ethPay'
 import { asBondClaim, asBondPosition, requireFundedBondSupport } from '../../lib/detf/bondNftVault'
 import { FUNDED_BOND_ABI, V4_BOND_PREVIEW_ABI, fundedBondArgs, resolveBondRoute } from '../../lib/detf/bondRoute'
+import { chainDeadline } from '../../lib/tx/chainDeadline'
 import { parseContractError } from '../../lib/tx/parseContractError'
 import { isArchivedDetf } from '../lib/archivedDetfs'
 import { isInsightsActionTab } from '../lib/insightsHref'
@@ -63,10 +64,6 @@ export type { ActionToken }
 
 const inputClass =
   'mt-1 w-full rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] px-3 py-2 text-sm text-[var(--text-primary,#EDEDED)]'
-
-function deadline(): bigint {
-  return BigInt(Math.floor(Date.now() / 1000) + 20 * 60)
-}
 
 function parseAmount(raw: string, decimals: number): bigint | undefined {
   if (!raw.trim()) return undefined
@@ -516,7 +513,7 @@ export function DetfActions({
             })) as bigint)
           : null
       const minOut = await freshMinimum(detf, parsedBurn, spendToken)
-      const args = [detf, parsedBurn, spendToken, minOut, address, false, deadline()] as const
+      const args = [detf, parsedBurn, spendToken, minOut, address, false, await chainDeadline(publicClient)] as const
       if (publicClient) {
         await publicClient.simulateContract({
           account: address,
@@ -559,7 +556,7 @@ export function DetfActions({
       await wrapEth()
       if (payEth) await approveWethIfNeeded()
       const minOut = await freshMinimum(spendToken, parsed, detf)
-      const args = [spendToken, parsed, detf, minOut, address, false, deadline()] as const
+      const args = [spendToken, parsed, detf, minOut, address, false, await chainDeadline(publicClient)] as const
       if (publicClient) {
         await publicClient.simulateContract({
           account: address,
@@ -610,7 +607,7 @@ export function DetfActions({
       const route = await readBondRoute()
       await wrapEth()
       if (payEth) await approveWethIfNeeded()
-      const args = fundedBondArgs(route, { token: spendToken, amount: parsed, duration: oracleLock, recipient: address, deadline: deadline() })
+      const args = fundedBondArgs(route, { token: spendToken, amount: parsed, duration: oracleLock, recipient: address, deadline: await chainDeadline(publicClient) })
       await publicClient.simulateContract({ account: address, address: detf, abi: FUNDED_BOND_ABI, functionName: 'bond', args })
       const hash = await writeOnWallet({ account: address, address: detf, abi: FUNDED_BOND_ABI, functionName: 'bond', args })
       await wait(hash, 'Bond')

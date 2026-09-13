@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 import {TestBase_FundedBalancerDETF} from "contracts/test/bases/TestBase_FundedBalancerDETF.sol";
 import {FundedBondLifecycleAssertions} from "contracts/test/bases/FundedBondLifecycleAssertions.sol";
 import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
@@ -23,25 +25,18 @@ import {IERC20MintBurn} from "@crane/contracts/interfaces/IERC20MintBurn.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {IStablePool} from "@crane/contracts/external/balancer/v3/interfaces/contracts/pool-stable/IStablePool.sol";
 import {IRouter} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IRouter.sol";
-import {StablePoolFactory} from "@crane/contracts/external/balancer/v3/pool-stable/contracts/StablePoolFactory.sol";
-import {
-    WeightedPoolFactory
-} from "@crane/contracts/external/balancer/v3/pool-weighted/contracts/WeightedPoolFactory.sol";
+import {IStablePoolFactory} from "contracts/interfaces/IStablePoolFactory.sol";
+import {IWeightedPoolFactory} from "contracts/interfaces/IWeightedPoolFactory.sol";
 import {IOperable} from "@crane/contracts/interfaces/IOperable.sol";
-import {OperableFacet} from "@crane/contracts/access/operable/OperableFacet.sol";
-import {
-    IERC20MintBurnOwnableOperableDFPkg,
-    ERC20MintBurnOwnableOperableDFPkg
-} from "@crane/contracts/tokens/ERC20/ERC20MintBurnOwnableOperableDFPkg.sol";
-import {ERC20MintBurnOwnableFacet} from "@crane/contracts/tokens/ERC20/ERC20MintBurnOwnableFacet.sol";
+
+import {IERC20MintBurnOwnableOperableDFPkg} from "@crane/contracts/tokens/ERC20/IERC20MintBurnOwnableOperableDFPkg.sol";
+
 import {TokenConfig, PoolRoleAccounts} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/VaultTypes.sol";
 import {IWeightedPool} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IWeightedPool.sol";
 
 import {IDETF} from "contracts/interfaces/IDETF.sol";
 import {IComposedStableCommonDetfBondNFTVault} from "contracts/interfaces/IComposedStableCommonDetfBondNFTVault.sol";
-import {
-    ILegacyComposedStableCommonDetfBonding as IComposedStableCommonDetfBonding
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenTarget.sol";
+import {ILegacyComposedStableCommonDetfBonding as IComposedStableCommonDetfBonding} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ILegacyComposedStableCommonDetfBonding.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
@@ -51,12 +46,7 @@ import {IVaultRegistryVaultQuery} from "contracts/interfaces/IVaultRegistryVault
 import {
     IBalancerV3StandardExchangeRouterProxy
 } from "contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol";
-import {
-    TestBase_BalancerV3StandardExchangeRouter
-} from "contracts/protocols/dexes/balancer/v3/routers/TestBase_BalancerV3StandardExchangeRouter.sol";
-import {
-    BalancerV3SinglePoolStandardExchange
-} from "contracts/protocols/dexes/balancer/v3/pools/BalancerV3SinglePoolStandardExchange.sol";
+
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
 import {
     ComposedStableCommonDetfRepo
@@ -64,34 +54,28 @@ import {
 import {
     ComposedStableCommonDetf_Component_FactoryService
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_Component_FactoryService.sol";
-import {
-    IComposedStableCommonDetfDFPkg
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfDFPkg.sol";
+import {IComposedStableCommonDetfDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/IComposedStableCommonDetfDFPkg.sol";
 import {
     ComposedStableCommonDetf_Facet_FactoryService
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_Facet_FactoryService.sol";
 import {
     ComposedStableCommonDetf_Pkg_FactoryService
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_Pkg_FactoryService.sol";
-import {
-    IComposedStableCommonDetfBondNFTVaultDFPkg
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondNFTVaultDFPkg.sol";
+import {IComposedStableCommonDetfBondNFTVaultDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/IComposedStableCommonDetfBondNFTVaultDFPkg.sol";
 import {
     ComposedStableCommonDetfBondNFTVault_Facet_FactoryService
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondNFTVault_Facet_FactoryService.sol";
 import {
     ComposedStableCommonDetfBondNFTVault_Pkg_FactoryService
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondNFTVault_Pkg_FactoryService.sol";
-import {
-    IRebasingDETFTokenDFPkg
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenDFPkg.sol";
+import {IRebasingDETFTokenDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/IRebasingDETFTokenDFPkg.sol";
 import {
     RebasingDETFToken_Facet_FactoryService
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFToken_Facet_FactoryService.sol";
 import {
     RebasingDETFToken_Pkg_FactoryService
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFToken_Pkg_FactoryService.sol";
-import {ERC721Facet} from "@crane/contracts/tokens/ERC721/ERC721Facet.sol";
+
 import {IMultiStepOwnable} from "@crane/contracts/interfaces/IMultiStepOwnable.sol";
 import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
@@ -132,8 +116,8 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_FundedBalanc
     IRebasingClaimToken internal rebasingDetfToken;
     IDetf internal detf;
 
-    StablePoolFactory internal stablePoolFactory;
-    StablePoolFactory internal commonPoolFactory;
+    IStablePoolFactory internal stablePoolFactory;
+    IStablePoolFactory internal commonPoolFactory;
     IStablePool internal stablePool;
     IStablePool internal commonPool;
     IWeightedPool internal reservePool;
@@ -311,7 +295,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_FundedBalanc
         init_.feeOracle = IVaultFeeOracleQuery(address(indexedexManager));
         init_.balancerV3Router = IBalancerV3StandardExchangeRouterProxy(address(seRouter));
         init_.balancerV3Vault = IVault(address(vault));
-        init_.weightedPoolFactory = WeightedPoolFactory(testPoolFactory);
+        init_.weightedPoolFactory = IWeightedPoolFactory(testPoolFactory);
         init_.bondNftVaultPkg = bondNftVaultPkg;
         init_.rebasingClaimTokenPkg = rebasingClaimTokenPkg;
         init_.syPkg = syPkg;
@@ -437,7 +421,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_FundedBalanc
     function _deployCompanions() internal {
         erc721Facet = IFacet(
             create3Factory.deployFacet(
-                type(ERC721Facet).creationCode, keccak256("ComposedStableCommonDetf_Integrated_ERC721Facet")
+                ArtifactCreationCode.creationCode(create3Factory, "lib/crane/contracts/tokens/ERC721/ERC721Facet.sol:ERC721Facet"), keccak256("ComposedStableCommonDetf_Integrated_ERC721Facet")
             )
         );
         bondNFTVaultFacet = create3Factory.deployComposedStableCommonDetfBondNFTVaultFacet();
@@ -532,12 +516,12 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_FundedBalanc
     function _deployDetfToken() internal {
         operableFacet = IFacet(
             create3Factory.deployFacet(
-                type(OperableFacet).creationCode, keccak256("ComposedStableCommonDetf_Integrated_OperableFacet")
+                ArtifactCreationCode.creationCode(create3Factory, "lib/crane/contracts/access/operable/OperableFacet.sol:OperableFacet"), keccak256("ComposedStableCommonDetf_Integrated_OperableFacet")
             )
         );
         erc20MintBurnOwnableFacet = IFacet(
             create3Factory.deployFacet(
-                type(ERC20MintBurnOwnableFacet).creationCode,
+                ArtifactCreationCode.creationCode(create3Factory, "lib/crane/contracts/tokens/ERC20/ERC20MintBurnOwnableFacet.sol:ERC20MintBurnOwnableFacet"),
                 keccak256("ComposedStableCommonDetf_Integrated_ERC20MintBurnOwnableFacet")
             )
         );
@@ -555,7 +539,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_FundedBalanc
         detfTokenPkg = IERC20MintBurnOwnableOperableDFPkg(
             address(
                 create3Factory.deployPackageWithArgs(
-                    type(ERC20MintBurnOwnableOperableDFPkg).creationCode,
+                    ArtifactCreationCode.creationCode(create3Factory, "lib/crane/contracts/tokens/ERC20/ERC20MintBurnOwnableOperableDFPkg.sol:ERC20MintBurnOwnableOperableDFPkg"),
                     abi.encode(pkgInit),
                     keccak256("ComposedStableCommonDetf_Integrated_DETFTokenPkg")
                 )
@@ -620,7 +604,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_FundedBalanc
         PoolRoleAccounts memory roleAccounts;
         roleAccounts.poolCreator = owner;
 
-        poolAddress_ = WeightedPoolFactory(testPoolFactory)
+        poolAddress_ = IWeightedPoolFactory(testPoolFactory)
             .create(
                 "Reserve DETF Pool",
                 "rDETF",
@@ -636,10 +620,10 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_FundedBalanc
         vm.label(poolAddress_, "ReserveDetfPool");
     }
 
-    function _deployStablePoolFactory(string memory saltLabel_) internal returns (StablePoolFactory factory_) {
-        factory_ = StablePoolFactory(
+    function _deployStablePoolFactory(string memory saltLabel_) internal returns (IStablePoolFactory factory_) {
+        factory_ = IStablePoolFactory(
             create3Factory.create3WithArgs(
-                type(StablePoolFactory).creationCode,
+                ArtifactCreationCode.creationCode(create3Factory, "lib/crane/contracts/external/balancer/v3/pool-stable/contracts/StablePoolFactory.sol:StablePoolFactory"),
                 abi.encode(vault, uint32(365 days), "Factory v1", "Pool v1"),
                 keccak256(bytes(saltLabel_))
             )
@@ -647,7 +631,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_FundedBalanc
     }
 
     function _createStablePool(
-        StablePoolFactory factory_,
+        IStablePoolFactory factory_,
         StablePoolSpec memory spec_,
         TokenConfig[] memory tokenConfigs_
     ) internal returns (address poolAddress_) {
@@ -695,7 +679,7 @@ contract ComposedStableCommonDetf_IntegratedDeploy_Test is TestBase_FundedBalanc
     {
         adapter_ = IStandardExchangeIn(
             create3Factory.create3WithArgs(
-                type(BalancerV3SinglePoolStandardExchange).creationCode,
+                ArtifactCreationCode.creationCode(create3Factory, "contracts/protocols/dexes/balancer/v3/pools/BalancerV3SinglePoolStandardExchange.sol:BalancerV3SinglePoolStandardExchange"),
                 abi.encode(IRouter(address(router)), pool_, bptToken_, poolTokens_),
                 keccak256(bytes(saltLabel_))
             )

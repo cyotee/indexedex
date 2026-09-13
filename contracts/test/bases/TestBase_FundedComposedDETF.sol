@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
@@ -7,8 +9,8 @@ import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IV
 import {IRouter} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IRouter.sol";
 import {TokenConfig, TokenType, PoolRoleAccounts} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/VaultTypes.sol";
 import {IStablePool} from "@crane/contracts/external/balancer/v3/interfaces/contracts/pool-stable/IStablePool.sol";
-import {StablePoolFactory} from "@crane/contracts/external/balancer/v3/pool-stable/contracts/StablePoolFactory.sol";
-import {WeightedPoolFactory} from "@crane/contracts/external/balancer/v3/pool-weighted/contracts/WeightedPoolFactory.sol";
+import {IStablePoolFactory} from "contracts/interfaces/IStablePoolFactory.sol";
+import {IWeightedPoolFactory} from "contracts/interfaces/IWeightedPoolFactory.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
@@ -16,8 +18,8 @@ import {IComposedStableCommonDetfBonding} from "contracts/interfaces/IComposedSt
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IBalancerV3StandardExchangeRouterProxy} from "contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol";
-import {BalancerV3SinglePoolStandardExchange} from "contracts/protocols/dexes/balancer/v3/pools/BalancerV3SinglePoolStandardExchange.sol";
-import {IComposedStableCommonDetfDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfDFPkg.sol";
+
+import {IComposedStableCommonDetfDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/IComposedStableCommonDetfDFPkg.sol";
 import {IComposedStableCommonDetfInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/IComposedStableCommonDetfInfo.sol";
 import {ComposedStableCommonDetfRepo as Repo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfRepo.sol";
 import {ComposedStableCommonDetf_Pkg_FactoryService as Pkgs} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_Pkg_FactoryService.sol";
@@ -49,13 +51,13 @@ abstract contract TestBase_FundedComposedDETF is TestBase_FundedBalancerDETF {
         p_.rebasingDetfTokenPricingFacet = create3Factory.deployRebasingDetfTokenPricingFacet();
         p_.vaultRegistryDeployment = IVaultRegistryDeployment(address(indexedexManager)); p_.feeOracle = IVaultFeeOracleQuery(address(indexedexManager));
         p_.balancerV3Router = IBalancerV3StandardExchangeRouterProxy(address(seRouter)); p_.balancerV3Vault = IVault(address(vault));
-        p_.weightedPoolFactory = WeightedPoolFactory(testPoolFactory); p_.bondNftVaultPkg = bondNftVaultPkg;
+        p_.weightedPoolFactory = IWeightedPoolFactory(testPoolFactory); p_.bondNftVaultPkg = bondNftVaultPkg;
         p_.rebasingClaimTokenPkg = rebasingClaimTokenPkg; p_.syPkg = syPkg;
         vm.startPrank(owner); composedPkg = IVaultRegistryDeployment(address(indexedexManager)).deployComposedStableCommonDetfDFPkg(p_); vm.stopPrank();
         _useComposed(_deployComposed(100e18, 0.1e18));
     }
     function _deployInnerPools() internal {
-        StablePoolFactory factory_ = StablePoolFactory(create3Factory.create3WithArgs(type(StablePoolFactory).creationCode,
+        IStablePoolFactory factory_ = IStablePoolFactory(create3Factory.create3WithArgs(ArtifactCreationCode.creationCode(create3Factory, "StablePoolFactory.sol:StablePoolFactory"),
             abi.encode(vault, uint32(365 days), "Factory v1", "Pool v1"), keccak256("FundedComposedStableFactory")));
         IERC20[] memory tokens_ = new IERC20[](2); tokens_[0] = IERC20(address(daiUsdcVault)); tokens_[1] = weth;
         if (address(tokens_[0]) > address(tokens_[1])) (tokens_[0], tokens_[1]) = (tokens_[1], tokens_[0]);
@@ -70,7 +72,7 @@ abstract contract TestBase_FundedComposedDETF is TestBase_FundedBalancerDETF {
         _seedInnerPools(tokens_);
     }
     function _poolAdapter(address pool_, IERC20[] memory tokens_) internal returns (IStandardExchangeIn) {
-        return IStandardExchangeIn(create3Factory.create3WithArgs(type(BalancerV3SinglePoolStandardExchange).creationCode,
+        return IStandardExchangeIn(create3Factory.create3WithArgs(ArtifactCreationCode.creationCode(create3Factory, "BalancerV3SinglePoolStandardExchange.sol:BalancerV3SinglePoolStandardExchange"),
             abi.encode(IRouter(address(router)), pool_, IERC20(pool_), tokens_), keccak256(abi.encode("funded-composed-adapter",pool_))));
     }
     function _seedInnerPools(IERC20[] memory tokens_) internal {

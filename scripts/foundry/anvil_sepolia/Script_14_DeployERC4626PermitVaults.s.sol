@@ -10,7 +10,7 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
-import {IERC4626PermitDFPkg} from "@crane/contracts/tokens/ERC4626/ERC4626PermitDFPkg.sol";
+import {IERC4626PermitDFPkg} from "@crane/contracts/tokens/ERC4626/IERC4626PermitDFPkg.sol";
 
 /// @title Script_14_DeployERC4626PermitVaults
 /// @notice Deploys ERC4626 vaults for each test token (TTA, TTB, TTC) using ERC4626PermitDFPkg

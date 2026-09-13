@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
@@ -12,10 +14,7 @@ import {IAaveOracle as IAaveOracleV4} from
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
-import {
-    AaveCrossVersionLoopDFPkg,
-    IAaveCrossVersionLoopDFPkg
-} from "contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoopDFPkg.sol";
+import {IAaveCrossVersionLoopDFPkg} from "contracts/protocols/lending/aave/cross-version/IAaveCrossVersionLoopDFPkg.sol";
 import {TestBase_AaveCrossVersionLoopV3Market_Decimals} from
     "contracts/test/bases/TestBase_AaveCrossVersionLoopV3Market_Decimals.sol";
 
@@ -47,7 +46,7 @@ contract _MockRegistryDecimals is IVaultRegistryDeployment {
 
 /// @notice DFPkg pair-validation money paths on each two-token combo. pairToken = tokenA.
 abstract contract AaveCrossVersionLoopDFPkg_Decimals is TestBase_AaveCrossVersionLoopV3Market_Decimals {
-    AaveCrossVersionLoopDFPkg internal dfpkg;
+    IAaveCrossVersionLoopDFPkg internal dfpkg;
     _MockRegistryDecimals internal registry;
 
     function _deployDFPkg() internal {
@@ -74,12 +73,12 @@ abstract contract AaveCrossVersionLoopDFPkg_Decimals is TestBase_AaveCrossVersio
             permit2: IPermit2(address(0))
         });
 
-        dfpkg = AaveCrossVersionLoopDFPkg(
+        dfpkg = IAaveCrossVersionLoopDFPkg(
             address(
                 create3Factory.deployPackageWithArgs(
-                    type(AaveCrossVersionLoopDFPkg).creationCode,
+                    ArtifactCreationCode.creationCode(create3Factory, "contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoopDFPkg.sol:AaveCrossVersionLoopDFPkg"),
                     abi.encode(pkgInit),
-                    keccak256(abi.encode(type(AaveCrossVersionLoopDFPkg).name, _tokenADecimals(), _tokenBDecimals()))
+                    keccak256(abi.encode("AaveCrossVersionLoopDFPkg", _tokenADecimals(), _tokenBDecimals()))
                 )
             )
         );

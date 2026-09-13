@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IRouter} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IRouter.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
@@ -11,9 +13,6 @@ import {
 
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
-import {
-    BalancerV3SinglePoolStandardExchange
-} from "contracts/protocols/dexes/balancer/v3/pools/BalancerV3SinglePoolStandardExchange.sol";
 
 /// @dev Same-tx helper: push `used` then claim a fat max (E6). Atomic so a blocked refund reverts the push.
 contract SinglePoolE6Helper_V3PooConSta {
@@ -70,7 +69,7 @@ abstract contract Adversarial_BalancerV3SinglePoolSE_Decimals is TestBase_Balanc
         poolTokens_[1] = IERC20(daiUsdc8020WeightedPoolTokens[1]);
         adapter_ = IStandardExchange(
             create3Factory.create3WithArgs(
-                type(BalancerV3SinglePoolStandardExchange).creationCode,
+                ArtifactCreationCode.creationCode(create3Factory, "contracts/protocols/dexes/balancer/v3/pools/BalancerV3SinglePoolStandardExchange.sol:BalancerV3SinglePoolStandardExchange"),
                 abi.encode(
                     IRouter(address(router)),
                     address(daiUsdc8020WeightedPool),

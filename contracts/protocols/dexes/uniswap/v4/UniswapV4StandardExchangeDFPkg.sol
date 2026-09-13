@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/IUniswapV4StandardExchangeDFPkg.sol";
+
 import {IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {IStandardExchangeTransitionQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 
@@ -61,43 +63,7 @@ import {
     UniswapV4TwapOracleAwareRepo
 } from "contracts/oracles/uniswap/v4/twap/aware/UniswapV4TwapOracleAwareRepo.sol";
 
-interface IUniswapV4StandardExchangeDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
-    error NotCalledByRegistry(address caller);
-    error ZeroTwapOracle();
-    error ZeroWeth();
-    error TwapOraclePoolManagerMismatch();
 
-    struct PkgInit {
-        IFacet erc20Facet;
-        IFacet erc5267Facet;
-        IFacet erc2612Facet;
-        IFacet multiAssetBasicVaultFacet;
-        IFacet multiAssetStandardVaultFacet;
-        IFacet uniswapV4StandardExchangeInFacet;
-        IFacet uniswapV4StandardExchangeInQueryFacet;
-        IFacet uniswapV4StandardExchangePositionImportFacet;
-        IFacet uniswapV4StandardExchangeOutFacet;
-        IFacet uniswapV4StandardExchangeOutQueryFacet;
-        IFacet uniswapV4StandardExchangeLiquidReserveFacet;
-        IFacet uniswapV4StandardExchangeInMultiFacet;
-        IFacet uniswapV4StandardExchangeInMultiQueryFacet;
-        IFacet uniswapV4StandardExchangeOutMultiFacet;
-        IFacet uniswapV4StandardExchangeOutMultiQueryFacet;
-        IVaultFeeOracleQuery vaultFeeOracleQuery;
-        IVaultRegistryDeployment vaultRegistryDeployment;
-        IPermit2 permit2;
-        IPoolManager poolManager;
-        IPositionManager positionManager;
-        IUniswapV4MultiPoolTwapOracle twapOracle;
-        IWETH weth;
-    }
-
-    struct PkgArgs {
-        PoolKey poolKey;
-    }
-
-    function deployVault(PoolKey memory poolKey) external returns (address vault);
-}
 
 contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
     using BetterEfficientHashLib for bytes;

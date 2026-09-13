@@ -14,12 +14,10 @@ import {WrappedStandardExchangeRateProviderFacet} from "contracts/protocols/dexe
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
-import {IERC4626PermitDFPkg} from "@crane/contracts/tokens/ERC4626/ERC4626PermitDFPkg.sol";
+import {IERC4626PermitDFPkg} from "@crane/contracts/tokens/ERC4626/IERC4626PermitDFPkg.sol";
 
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
-import {
-    IWrappedStandardExchangeRateProviderDFPkg
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderDFPkg.sol";
+import {IWrappedStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/IWrappedStandardExchangeRateProviderDFPkg.sol";
 import {
     StandardExchangeRateProvider_FactoryService
 } from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProvider_FactoryService.sol";

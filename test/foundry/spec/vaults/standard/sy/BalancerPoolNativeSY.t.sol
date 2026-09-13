@@ -13,7 +13,7 @@ import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchang
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
 import {TokenConfig, TokenType} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/VaultTypes.sol";
-import {IBalancerV3ConstantProductPoolStandardVaultPkg} from "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPoolStandardVaultPkg.sol";
+import {IBalancerV3ConstantProductPoolStandardVaultPkg} from "contracts/protocols/dexes/balancer/v3/pools/constProd/IBalancerV3ConstantProductPoolStandardVaultPkg.sol";
 import {BalancerV3ConstantProductPool_FactoryService} from "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPool_FactoryService.sol";
 import {BalancerV3PoolStandardExchangeTarget} from "contracts/protocols/dexes/balancer/v3/pools/BalancerV3PoolStandardExchangeTarget.sol";
 
@@ -23,9 +23,8 @@ import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balance
 
 interface IMintableSYPayment { function mint(address recipient, uint256 amount) external; }
 
-import {DETFFundedStakingArtifacts} from "contracts/test/bases/DETFFundedStakingArtifacts.sol";
 
-abstract contract BalancerPoolNativeSYBehavior is Test, DETFFundedStakingArtifacts {
+abstract contract BalancerPoolNativeSYBehavior is Test {
     function _nativePool() internal view virtual returns (address);
     function _nativeActor() internal view virtual returns (address);
     function _nativeVault() internal view virtual returns (IVault);

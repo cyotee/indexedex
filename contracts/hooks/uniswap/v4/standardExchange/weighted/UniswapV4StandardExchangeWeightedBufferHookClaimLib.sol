@@ -5,6 +5,10 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {UniswapV4StandardExchangeWeightedBufferHookRepo as Repo} from
+    "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookRepo.sol";
+import {UniswapV4StandardExchangeWeightedBufferHookMath as Math} from
+    "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol";
 import {IRateProvider} from
     "@crane/contracts/protocols/dexes/balancer/common/interfaces/IRateProvider.sol";
 
@@ -22,13 +26,34 @@ library UniswapV4StandardExchangeWeightedBufferHookClaimLib {
     error RateProviderFailed();
     error SeInvertUnavailable();
 
-    function getRateFailClosed(address rp) external view returns (uint256 rate) {
+    function ratedPairUnits(uint8 i) external view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        address se = l.standardExchanges[i];
+        if (se == address(0)) {
+            return l.rawReserves[i];
+        }
+        uint256 seBal = IERC20(se).balanceOf(address(this));
+        if (seBal == 0) return 0;
+        address rp = l.rateProviders[i];
+        if (rp != address(0)) {
+            uint256 rate = _readRate(rp);
+            return Math.ratedPairUnits(seBal, rate, l.invScales[i], l.ratedScales[i]);
+        }
+        if (se == l.tokens[i]) return seBal;
+        return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seBal, IERC20(l.tokens[i]));
+    }
+
+    function _readRate(address rp) private view returns (uint256 rate) {
         if (rp == address(0)) return 0;
         (bool ok, bytes memory data) =
             rp.staticcall(abi.encodeWithSelector(IRateProvider.getRate.selector));
         if (!ok || data.length != 32) revert RateProviderFailed();
         rate = abi.decode(data, (uint256));
         if (rate == 0) revert RateProviderFailed();
+    }
+
+    function getRateFailClosed(address provider) external view returns (uint256) {
+        return _readRate(provider);
     }
 
     /// @dev Live claim of SE shares → pair token units (fee-inclusive preview).

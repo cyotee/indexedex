@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
@@ -80,18 +82,14 @@ import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexMan
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
-import {
-    IUniswapV3StandardExchangeDFPkg
-} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeDFPkg.sol";
+import {IUniswapV3StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v3/IUniswapV3StandardExchangeDFPkg.sol";
 import {
     UniswapV3_Component_FactoryService
 } from "contracts/protocols/dexes/uniswap/v3/UniswapV3_Component_FactoryService.sol";
 import {
     IUniswapV3StandardExchangeLiquidReserve
 } from "contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3StandardExchangeLiquidReserve.sol";
-import {
-    IUniswapV4StandardExchangeDFPkg
-} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol";
+import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/IUniswapV4StandardExchangeDFPkg.sol";
 import {
     UniswapV4_Component_FactoryService
 } from "contracts/protocols/dexes/uniswap/v4/UniswapV4_Component_FactoryService.sol";
@@ -732,7 +730,7 @@ library UniswapV4DetfProductionSeDeployLib {
 
         bytes memory hookArgs = abi.encode(pm, s.feeEscrow, ponsV2FeeSink, ponsV2Owner);
         (address predictedHook, bytes32 hookSalt) =
-            HookMiner.find(address(this), MEME_HOOK_FLAGS, type(PonsV2MemeHook).creationCode, hookArgs);
+            HookMiner.find(address(this), MEME_HOOK_FLAGS, ArtifactCreationCode.creationCode("PonsV2MemeHook.sol:PonsV2MemeHook"), hookArgs);
         s.memeHook = new PonsV2MemeHook{salt: hookSalt}(pm, s.feeEscrow, ponsV2FeeSink, ponsV2Owner);
         require(address(s.memeHook) == predictedHook, "hook address mismatch");
 
@@ -957,34 +955,5 @@ library UniswapV4DetfProductionSeDeployLib {
 }
 
 // Explicit artifact dependencies for the real V4 SE stack deployed above.
-import {UniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol";
-import {UniswapV4StandardExchangeInExecutionDelegate} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInExecutionDelegate.sol";
-import {UniswapV4StandardExchangeInFacet} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInFacet.sol";
-import {UniswapV4StandardExchangeInMultiFacet} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInMultiFacet.sol";
-import {UniswapV4StandardExchangeInMultiQueryFacet} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInMultiQueryFacet.sol";
-import {UniswapV4StandardExchangeInQueryFacet} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryFacet.sol";
-import {UniswapV4StandardExchangeLiquidReserveFacet} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeLiquidReserveFacet.sol";
-import {UniswapV4StandardExchangeOutExecutionDelegate} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutExecutionDelegate.sol";
-import {UniswapV4StandardExchangeOutFacet} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutFacet.sol";
-import {UniswapV4StandardExchangeOutMultiFacet} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiFacet.sol";
-import {UniswapV4StandardExchangeOutMultiQueryFacet} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiQueryFacet.sol";
-import {UniswapV4StandardExchangeOutQueryFacet} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutQueryFacet.sol";
-import {UniswapV4StandardExchangePositionImportFacet} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangePositionImportFacet.sol";
-import {UniswapV4MultiPoolTwapOracleDFPkg} from "contracts/oracles/uniswap/v4/twap/UniswapV4MultiPoolTwapOracleDFPkg.sol";
-import {UniswapV4MultiPoolTwapOracleFacet} from "contracts/oracles/uniswap/v4/twap/UniswapV4MultiPoolTwapOracleFacet.sol";
-import {UniswapV4TwapAdapterFactory} from "contracts/oracles/uniswap/v4/twap/UniswapV4TwapAdapterFactory.sol";
 
 // Explicit artifact dependencies for the V3 production-SE deployment path.
-import {UniswapV3StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeDFPkg.sol";
-import {UniswapV3StandardExchangeInExecutionDelegate} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInExecutionDelegate.sol";
-import {UniswapV3StandardExchangeInFacet} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInFacet.sol";
-import {UniswapV3StandardExchangeInMultiFacet} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInMultiFacet.sol";
-import {UniswapV3StandardExchangeInMultiQueryFacet} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInMultiQueryFacet.sol";
-import {UniswapV3StandardExchangeInQueryFacet} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInQueryFacet.sol";
-import {UniswapV3StandardExchangeLiquidReserveFacet} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeLiquidReserveFacet.sol";
-import {UniswapV3StandardExchangeOutExecutionDelegate} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutExecutionDelegate.sol";
-import {UniswapV3StandardExchangeOutFacet} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutFacet.sol";
-import {UniswapV3StandardExchangeOutMultiFacet} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutMultiFacet.sol";
-import {UniswapV3StandardExchangeOutMultiQueryFacet} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutMultiQueryFacet.sol";
-import {UniswapV3StandardExchangeOutQueryFacet} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutQueryFacet.sol";
-import {UniswapV3StandardExchangePositionImportFacet} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangePositionImportFacet.sol";

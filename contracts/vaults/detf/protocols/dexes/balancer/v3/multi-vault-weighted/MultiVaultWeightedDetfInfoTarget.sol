@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IMultiVaultWeightedDetfInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfInfo.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {ReentrancyLockRepo} from "@crane/contracts/access/reentrancy/ReentrancyLockRepo.sol";
@@ -10,29 +12,7 @@ import {DETFChildSYRepo} from "contracts/vaults/detf/common/sy/DETFChildSYRepo.s
 import {MultiVaultWeightedDetfCommon} from "./MultiVaultWeightedDetfCommon.sol";
 import {MultiVaultWeightedDetfRepo as Repo} from "./MultiVaultWeightedDetfRepo.sol";
 
-interface IMultiVaultWeightedDetfInfo is IDETFFundedRewards, IDETFStandardizedYield, IDETFStakingPreview {
-    function vaultCount() external view returns (uint256);
-    function underlyingVaults() external view returns (address[] memory);
-    function vaultShares() external view returns (address[] memory);
-    function weights() external view returns (uint256, uint256[] memory);
-    function rateProvider(uint256 i) external view returns (address);
-    function rateAsset(uint256 i) external view returns (address);
-    function rateAssets() external view returns (address[] memory);
-    event ThresholdsSet(uint256 mintThreshold, uint256 burnThreshold);
-    function isReserveLive() external view returns (bool);
-    function reservePool() external view returns (address);
-    function syntheticPrice() external view returns (uint256);
-    function mintThreshold() external view returns (uint256);
-    function burnThreshold() external view returns (uint256);
-    function isMintingAllowed() external view returns (bool);
-    function isBurningAllowed() external view returns (bool);
-    function bondNftVault() external view returns (address);
-    function rebasingClaimToken() external view returns (address);
-    function lastExpansionTimestamp() external view returns (uint256);
-    function epochAnchor() external view returns (uint256);
-    function expansionClosureRatePerSecond() external view returns (uint256);
-    function pendingExpansionDetf() external view returns (uint256);
-}
+
 
 abstract contract MultiVaultWeightedDetfInfoTarget is MultiVaultWeightedDetfCommon, IMultiVaultWeightedDetfInfo {
     function previewJoinDonatedCapital(IERC20 token_, uint256 amount_) external view returns (uint256) {

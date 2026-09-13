@@ -11,7 +11,7 @@ import {IUniswapV2Pair} from "@crane/contracts/interfaces/protocols/dexes/uniswa
 import {WETH9} from "@crane/contracts/protocols/tokens/wrappers/weth/v9/WETH9.sol";
 import {IERC20MinterFacade} from "@crane/contracts/tokens/ERC20/IERC20MinterFacade.sol";
 
-import {IUniswapV2StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeDFPkg.sol";
+import {IUniswapV2StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v2/IUniswapV2StandardExchangeDFPkg.sol";
 
 /// @title Script_10_DeployScenario1Overlay
 /// @notice Deploys the minimal Scenario 1 graph: UniV2 TTA/TTB and TTB/WETH pools plus their vaults

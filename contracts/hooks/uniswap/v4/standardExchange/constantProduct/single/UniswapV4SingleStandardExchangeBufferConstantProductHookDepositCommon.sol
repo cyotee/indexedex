@@ -347,6 +347,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
     function _unwrapExactPairOut(uint256 pairOut) internal returns (uint256 seIn) {
         _requireNonZero(pairOut);
         Repo.Layout storage l = Repo._layout();
+        if (l.pairToken == l.standardExchange) return pairOut;
         uint256 cap = _spendableSeShares();
         if (cap == 0) {
             if (Repo._layout().ownerOnlyLiquidity) return 0;
@@ -379,10 +380,19 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
     }
 
     function _unwrapPairLeavingDust(uint256 pairWant) internal returns (uint256 pairGot) {
-        uint256 pairBefore = IERC20(Repo._layout().pairToken).balanceOf(address(this));
+        Repo.Layout storage l = Repo._layout();
+        if (l.pairToken == l.standardExchange) {
+            uint256 cap = _spendableSeShares();
+            if (pairWant == 0 || pairWant > cap) {
+                if (l.ownerOnlyLiquidity) return 0;
+                revert InsufficientTokenOut();
+            }
+            return pairWant;
+        }
+        uint256 pairBefore = IERC20(l.pairToken).balanceOf(address(this));
         _unwrapExactPairOut(pairWant);
-        pairGot = IERC20(Repo._layout().pairToken).balanceOf(address(this)) - pairBefore;
-        if (pairGot == 0 && !Repo._layout().ownerOnlyLiquidity) revert InsufficientTokenOut();
+        pairGot = IERC20(l.pairToken).balanceOf(address(this)) - pairBefore;
+        if (pairGot == 0 && !l.ownerOnlyLiquidity) revert InsufficientTokenOut();
     }
 
     function _refundPairDust(address to) internal {
@@ -845,11 +855,15 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         uint256 yBefore = reserveCurrency1();
         // Back out free pair / raw still sitting as add legs before buffer.
         // add0/add1 are in currency order regardless of which token funded the zap.
+        // Identity (pair == se): pulled pair shares already sit in `_seClaim()`, so
+        // back them out the same way unused raw is backed out.
+        bool identity = l.pairToken == l.standardExchange;
+        uint256 seClaim = _seClaim();
         if (l.currency0 == l.rawToken) {
             xBefore = IERC20(l.rawToken).balanceOf(address(this)) - add0;
-            yBefore = _seClaim();
+            yBefore = identity && seClaim >= add1 ? seClaim - add1 : seClaim;
         } else {
-            xBefore = _seClaim();
+            xBefore = identity && seClaim >= add0 ? seClaim - add0 : seClaim;
             yBefore = IERC20(l.rawToken).balanceOf(address(this)) - add1;
         }
 

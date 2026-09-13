@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
 import {FixedPointMathLib} from "@crane/contracts/utils/FixedPointMathLib.sol";
 import {FullMath} from "@crane/contracts/protocols/dexes/uniswap/libraries/FullMath.sol";
@@ -31,10 +33,8 @@ import {IUniswapV4StandardExchangeLiquidReserve} from
     "contracts/protocols/dexes/uniswap/v4/interfaces/IUniswapV4StandardExchangeLiquidReserve.sol";
 import {IUniswapV4StandardExchangePositionImport} from
     "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInTarget.sol";
-import {
-    IUniswapV4StandardExchangeDFPkg,
-    UniswapV4StandardExchangeDFPkg
-} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol";
+import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/IUniswapV4StandardExchangeDFPkg.sol";
+
 import {UniswapV4_Component_FactoryService} from
     "contracts/protocols/dexes/uniswap/v4/UniswapV4_Component_FactoryService.sol";
 import {PoolManagerUnlockSeCaller} from
@@ -357,7 +357,7 @@ abstract contract UniswapV4StandardExchange_FullRangeBook_Decimals is UniswapV4S
         IUniswapV4StandardExchangeDFPkg boundPkg_ = IUniswapV4StandardExchangeDFPkg(
             address(
                 IVaultRegistryDeployment(address(indexedexManager)).deployPkg(
-                    type(UniswapV4StandardExchangeDFPkg).creationCode,
+                    ArtifactCreationCode.creationCode(create3Factory, "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol:UniswapV4StandardExchangeDFPkg"),
                     abi.encode(pkgInit_),
                     keccak256("UniswapV4StandardExchangeDFPkg.boundPM.fr6.decimals")
                 )

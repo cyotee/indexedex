@@ -12,9 +12,8 @@ import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interf
 import {Math} from "@crane/contracts/utils/Math.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook.sol";
-import {DETFFundedStakingArtifacts} from "contracts/test/bases/DETFFundedStakingArtifacts.sol";
 
-contract BalancerStableBufferHookNativeSYTest is TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook, DETFFundedStakingArtifacts {
+contract BalancerStableBufferHookNativeSYTest is TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook {
     IStandardizedYield private sy_;
 
     function setUp() public override {

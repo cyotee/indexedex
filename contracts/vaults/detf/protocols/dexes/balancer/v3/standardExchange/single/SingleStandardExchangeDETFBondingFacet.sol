@@ -8,8 +8,10 @@ import {IDETFStandardizedYield, IDETFStakingPreview} from "contracts/interfaces/
 import {DETFBalancerReserveSwapTarget} from "contracts/vaults/detf/protocols/dexes/balancer/v3/common/DETFBalancerReserveSwapTarget.sol";
 import {SingleStandardExchangeDETFExchangeInTarget} from "./SingleStandardExchangeDETFExchangeInTarget.sol";
 import {SingleStandardExchangeDETFExchangeInQueryTarget} from "./SingleStandardExchangeDETFExchangeInQueryTarget.sol";
-import {SingleStandardExchangeDETFBondingTarget, ISingleStandardExchangeDETFBonding} from "./SingleStandardExchangeDETFBondingTarget.sol";
-import {SingleStandardExchangeDETFInfoTarget, ISingleStandardExchangeDETFInfo} from "./SingleStandardExchangeDETFInfoTarget.sol";
+import {SingleStandardExchangeDETFBondingTarget} from "./SingleStandardExchangeDETFBondingTarget.sol";
+import {ISingleStandardExchangeDETFBonding} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFBonding.sol";
+import {SingleStandardExchangeDETFInfoTarget} from "./SingleStandardExchangeDETFInfoTarget.sol";
+import {ISingleStandardExchangeDETFInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFInfo.sol";
 
 contract SingleStandardExchangeDETFBondingFacet is IFacet,
     SingleStandardExchangeDETFExchangeInQueryTarget,

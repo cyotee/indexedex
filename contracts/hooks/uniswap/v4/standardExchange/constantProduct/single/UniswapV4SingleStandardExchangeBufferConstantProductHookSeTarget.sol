@@ -445,6 +445,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
     function _unwrapExactPairOut(uint256 pairOut) internal returns (uint256 seIn) {
         _requireNonZero(pairOut);
         Repo.Layout storage l = Repo._layout();
+        if (l.pairToken == l.standardExchange) return pairOut;
         uint256 cap = _spendableSeShares();
         if (cap == 0) revert InsufficientTokenOut();
         try IStandardExchangeOut(l.standardExchange).previewExchangeOut(
@@ -475,9 +476,15 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
     }
 
     function _unwrapPairLeavingDust(uint256 pairWant) internal returns (uint256 pairGot) {
-        uint256 pairBefore = IERC20(Repo._layout().pairToken).balanceOf(address(this));
+        Repo.Layout storage l = Repo._layout();
+        if (l.pairToken == l.standardExchange) {
+            uint256 cap = _spendableSeShares();
+            if (pairWant == 0 || pairWant > cap) revert InsufficientTokenOut();
+            return pairWant;
+        }
+        uint256 pairBefore = IERC20(l.pairToken).balanceOf(address(this));
         _unwrapExactPairOut(pairWant);
-        pairGot = IERC20(Repo._layout().pairToken).balanceOf(address(this)) - pairBefore;
+        pairGot = IERC20(l.pairToken).balanceOf(address(this)) - pairBefore;
         if (pairGot == 0) revert InsufficientTokenOut();
     }
 

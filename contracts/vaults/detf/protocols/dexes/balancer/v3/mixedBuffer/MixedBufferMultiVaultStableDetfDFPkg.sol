@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IMixedBufferMultiVaultStableDetfDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfDFPkg.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC20Permit} from "@crane/contracts/interfaces/IERC20Permit.sol";
@@ -31,7 +33,7 @@ import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
 import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
-import {IDETFSYDFPkg} from "contracts/vaults/detf/common/sy/DETFSYDFPkg.sol";
+import {IDETFSYDFPkg} from "contracts/vaults/detf/common/sy/IDETFSYDFPkg.sol";
 import {DETFSYDeploymentLib} from "contracts/vaults/detf/common/sy/DETFSYDeploymentLib.sol";
 import {DETFChildTokenMetadata} from "contracts/vaults/detf/common/DETFChildTokenMetadata.sol";
 import {VaultFeeType} from "contracts/interfaces/VaultFeeTypes.sol";
@@ -45,76 +47,22 @@ import {
     BalancerV3StandardExchangeRouterAwareRepo
 } from "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterAwareRepo.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/common/factory/nft/IDetfSelfNftInventoryDFPkg.sol";
-import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
-import {
-    IMixedBufferMultiVaultStablePoolPkg
-} from "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolStandardVaultPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol";
+import {IMixedBufferMultiVaultStablePoolPkg} from "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/IMixedBufferMultiVaultStablePoolPkg.sol";
 import {
     IMixedBufferMultiVaultStablePool
 } from "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/IMixedBufferMultiVaultStablePool.sol";
 import {
     MixedBufferMultiVaultStableDetfRepo
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfRepo.sol";
-import {
-    IMixedBufferMultiVaultStableDetfBonding
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfBondingTarget.sol";
-import {
-    IMixedBufferMultiVaultStableDetfInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfInfoTarget.sol";
+import {IMixedBufferMultiVaultStableDetfBonding} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfBonding.sol";
+import {IMixedBufferMultiVaultStableDetfInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfInfo.sol";
 import {
     DETFThresholdPolicy
 } from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 import {DETFNaturalExpansionLib} from "contracts/vaults/detf/common/core/DETFNaturalExpansionLib.sol";
 
-/// @title IMixedBufferMultiVaultStableDetfDFPkg
-interface IMixedBufferMultiVaultStableDetfDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
-    error NotCalledByRegistry(address caller);
 
-    struct PkgInit {
-        IFacet erc20Facet;
-        IFacet erc5267Facet;
-        IFacet erc2612Facet;
-        IFacet multiAssetBasicVaultFacet;
-        IFacet multiAssetStandardVaultFacet;
-        IFacet exchangeInFacet;
-        IFacet bondingFacet;
-        IFacet infoFacet;
-        IVaultFeeOracleQuery feeOracle;
-        IVaultRegistryDeployment vaultRegistryDeployment;
-        IBalancerV3StandardExchangeRouterProxy balancerV3Router;
-        IVault balancerV3Vault;
-        IMixedBufferMultiVaultStablePoolPkg mixedBufferPoolPkg;
-        IDetfSelfNftInventoryDFPkg bondNftVaultPkg;
-        IRebasingClaimTokenDFPkg rebasingClaimTokenPkg;
-        IDETFSYDFPkg syPkg;
-        IDiamondPackageCallBackFactory diamondFactory;
-    }
-
-    /// @dev Per-instance args. `standardExchangeVaults.length` = N in [1,3].
-    /// @dev `vaultShareRateProviders.length == N`; address(0) => STANDARD share leg.
-    /// @dev No buffer RP, no DETF RP, no auto-deployed default share RPs.
-    /// @dev Mandatory thresholds and uncapped epoch closure rate are fixed at deployment.
-    struct PkgArgs {
-        string name;
-        string symbol;
-        IERC20 bufferToken;
-        IStandardExchange[] standardExchangeVaults;
-        IRateProvider[] vaultShareRateProviders;
-        uint256 amplificationParameter;
-        uint256 mintThreshold; // 0 → 1.05e18
-        uint256 burnThreshold; // 0 → 0.95e18
-        uint256 expansionClosureRatePerSecond; // 0 → default
-        address creator; // D26; 0 → feeTo owns id 2 (D21)
-        string claimName;
-        string claimSymbol;
-        string bondName;
-        string bondSymbol;
-        string reserveName;
-        string reserveSymbol;
-    }
-
-    function deployVault(PkgArgs memory args) external returns (address vault);
-}
 
 /// @title MixedBufferMultiVaultStableDetfDFPkg
 /// @notice Immutable/unowned DETF package: DETF unpaired + bufferToken + N SE vault shares in MixedBuffer stable reserve.

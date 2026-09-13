@@ -13,7 +13,7 @@ import {IUniswapV3Factory} from "@crane/contracts/protocols/dexes/uniswap/v3/int
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
 
-import {IUniswapV3StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeDFPkg.sol";
+import {IUniswapV3StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v3/IUniswapV3StandardExchangeDFPkg.sol";
 
 library UniswapV3_Component_FactoryService {
     using BetterEfficientHashLib for bytes;

@@ -4,22 +4,16 @@ pragma solidity ^0.8.0;
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
-import {TestBase_UniswapV2} from "@crane/contracts/protocols/dexes/uniswap/v2/test/bases/TestBase_UniswapV2.sol";
-import {IndexedexTest} from "contracts/test/IndexedexTest.sol";
-import {BetterPermit2} from "@crane/contracts/protocols/utils/permit2/BetterPermit2.sol";
+
 import {TestBase_Permit2} from "@crane/contracts/protocols/utils/permit2/test/bases/TestBase_Permit2.sol";
 
 import {IRouter} from "@crane/contracts/protocols/dexes/aerodrome/v1/interfaces/IRouter.sol";
 // import {TestBase_Aerodrome} from "@crane/contracts/protocols/dexes/aerodrome/v1/test/bases/TestBase_Aerodrome.sol";
-import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
-import {Pool} from "@crane/contracts/protocols/dexes/aerodrome/v1/stubs/Pool.sol";
+
 import {TestBase_CamelotV2} from "@crane/contracts/protocols/dexes/camelot/v2/test/bases/TestBase_CamelotV2.sol";
-import {IndexedexTest} from "contracts/test/IndexedexTest.sol";
+
 import {TestBase_VaultComponents} from "contracts/vaults/TestBase_VaultComponents.sol";
-import {
-    ICamelotV2StandardExchangeDFPkg,
-    CamelotV2StandardExchangeDFPkg
-} from "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeDFPkg.sol";
+import {ICamelotV2StandardExchangeDFPkg} from "contracts/protocols/dexes/camelot/v2/ICamelotV2StandardExchangeDFPkg.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
@@ -29,7 +23,7 @@ import {
     CamelotV2_Component_FactoryService
 } from "contracts/protocols/dexes/camelot/v2/CamelotV2_Component_FactoryService.sol";
 
-contract TestBase_CamelotV2StandardExchange is TestBase_Permit2, TestBase_CamelotV2, TestBase_VaultComponents {
+abstract contract TestBase_CamelotV2StandardExchange is TestBase_Permit2, TestBase_CamelotV2, TestBase_VaultComponents {
     using CamelotV2_Component_FactoryService for ICreate3FactoryProxy;
     // using CamelotV2_Component_FactoryService for IDiamondPackageCallBackFactory;
     // using CamelotV2_Component_FactoryService for IVaultRegistryDeployment;

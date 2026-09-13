@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
-import {MixedBufferMultiVaultStableDetfInfoFacet} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfInfoFacet.sol";
-import {MixedBufferMultiVaultStableDetfBondingFacet} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfBondingFacet.sol";
-import {MixedBufferMultiVaultStableDetfExchangeInFacet} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeInFacet.sol";
+
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -25,37 +24,21 @@ import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeplo
 import {
     IBalancerV3StandardExchangeRouterProxy
 } from "contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol";
-import {
-    IMixedBufferMultiVaultStablePoolPkg
-} from "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolStandardVaultPkg.sol";
+import {IMixedBufferMultiVaultStablePoolPkg} from "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/IMixedBufferMultiVaultStablePoolPkg.sol";
 import {
     MixedBufferMultiVaultStablePool_FactoryService
 } from "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePool_FactoryService.sol";
 import {
     BalancerV3ConstantProductPool_FactoryService
 } from "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPool_FactoryService.sol";
-import {
-    DefaultPoolInfoFacet
-} from "contracts/protocols/dexes/balancer/v3/pools/constProd/facets/DefaultPoolInfoFacet.sol";
-import {
-    StandardSwapFeePercentageBoundsFacet
-} from "contracts/protocols/dexes/balancer/v3/pools/constProd/facets/StandardSwapFeePercentageBoundsFacet.sol";
-import {
-    StandardUnbalancedLiquidityInvariantRatioBoundsFacet
-} from "contracts/protocols/dexes/balancer/v3/pools/constProd/facets/StandardUnbalancedLiquidityInvariantRatioBoundsFacet.sol";
+
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
-import {
-    IMixedBufferMultiVaultStableDetfDFPkg
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfDFPkg.sol";
+import {IMixedBufferMultiVaultStableDetfDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfDFPkg.sol";
 import {
     MixedBufferMultiVaultStableDetf_Component_FactoryService
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_Component_FactoryService.sol";
-import {
-    IMixedBufferMultiVaultStableDetfBonding
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfBondingTarget.sol";
-import {
-    IMixedBufferMultiVaultStableDetfInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfInfoTarget.sol";
+import {IMixedBufferMultiVaultStableDetfBonding} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfBonding.sol";
+import {IMixedBufferMultiVaultStableDetfInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfInfo.sol";
 import {TestBase_FundedBalancerDETF} from "contracts/test/bases/TestBase_FundedBalancerDETF.sol";
 /// @notice Actual Mixed Buffer pool, DETF and Aerodrome SE legs with shared funded child packages.
 abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_FundedBalancerDETF {
@@ -153,10 +136,10 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_FundedBal
         balancerV3AuthenticationFacet =
             BalancerV3ConstantProductPool_FactoryService.deployBalancerV3AuthenticationFacet(create3Factory);
 
-        defaultPoolInfoFacet = IFacet(create3Factory.deployFacet(type(DefaultPoolInfoFacet).creationCode, keccak256("FundedMixed_DefaultPoolInfoFacet")));
-        standardSwapFeePercentageBoundsFacet = IFacet(create3Factory.deployFacet(type(StandardSwapFeePercentageBoundsFacet).creationCode, keccak256("FundedMixed_StandardSwapFeePercentageBoundsFacet")));
+        defaultPoolInfoFacet = IFacet(create3Factory.deployFacet(ArtifactCreationCode.creationCode(create3Factory, "DefaultPoolInfoFacet.sol:DefaultPoolInfoFacet"), keccak256("FundedMixed_DefaultPoolInfoFacet")));
+        standardSwapFeePercentageBoundsFacet = IFacet(create3Factory.deployFacet(ArtifactCreationCode.creationCode(create3Factory, "StandardSwapFeePercentageBoundsFacet.sol:StandardSwapFeePercentageBoundsFacet"), keccak256("FundedMixed_StandardSwapFeePercentageBoundsFacet")));
         unbalancedLiquidityInvariantRatioBoundsFacet =
-            IFacet(create3Factory.deployFacet(type(StandardUnbalancedLiquidityInvariantRatioBoundsFacet).creationCode, keccak256("FundedMixed_StandardUnbalancedLiquidityInvariantRatioBoundsFacet")));
+            IFacet(create3Factory.deployFacet(ArtifactCreationCode.creationCode(create3Factory, "StandardUnbalancedLiquidityInvariantRatioBoundsFacet.sol:StandardUnbalancedLiquidityInvariantRatioBoundsFacet"), keccak256("FundedMixed_StandardUnbalancedLiquidityInvariantRatioBoundsFacet")));
 
         mbmvsBufferPoolFacet =
             MixedBufferMultiVaultStablePool_FactoryService.deployMixedBufferMultiVaultStablePoolFacet(create3Factory);

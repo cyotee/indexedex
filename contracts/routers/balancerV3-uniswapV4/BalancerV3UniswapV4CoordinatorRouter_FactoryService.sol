@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
-import {BalancerV3UniswapV4CoordinatorRouterQueryFacet} from "contracts/routers/balancerV3-uniswapV4/facets/BalancerV3UniswapV4CoordinatorRouterQueryFacet.sol";
-import {BalancerV3UniswapV4CoordinatorRouterExactInFacet} from "contracts/routers/balancerV3-uniswapV4/facets/BalancerV3UniswapV4CoordinatorRouterExactInFacet.sol";
 
 import {Vm} from "forge-std/Vm.sol";
 import {VM_ADDRESS} from "@crane/contracts/constants/FoundryConstants.sol";
@@ -27,7 +25,7 @@ library BalancerV3UniswapV4CoordinatorRouter_FactoryService {
 
     function deployExactInFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         facet = create3Factory.deployFacet(
-            type(BalancerV3UniswapV4CoordinatorRouterExactInFacet).creationCode /* unlinked artifact; type().creationCode required */,
+            ArtifactCreationCode.creationCode(create3Factory, "BalancerV3UniswapV4CoordinatorRouterExactInFacet.sol:BalancerV3UniswapV4CoordinatorRouterExactInFacet"),
             abi.encode("BalancerV3UniswapV4CoordinatorRouterExactInFacet")._hash()
         );
         vm.label(address(facet), "BalancerV3UniswapV4CoordinatorRouterExactInFacet");
@@ -35,7 +33,7 @@ library BalancerV3UniswapV4CoordinatorRouter_FactoryService {
 
     function deployQueryFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         facet = create3Factory.deployFacet(
-            type(BalancerV3UniswapV4CoordinatorRouterQueryFacet).creationCode /* unlinked artifact; type().creationCode required */,
+            ArtifactCreationCode.creationCode(create3Factory, "BalancerV3UniswapV4CoordinatorRouterQueryFacet.sol:BalancerV3UniswapV4CoordinatorRouterQueryFacet"),
             abi.encode("BalancerV3UniswapV4CoordinatorRouterQueryFacet")._hash()
         );
         vm.label(address(facet), "BalancerV3UniswapV4CoordinatorRouterQueryFacet");

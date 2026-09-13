@@ -12,6 +12,7 @@ contract ReentrantERC20Harness {
 
     address public reenterTarget;
     bytes public reenterPayload;
+    bool public callbackOnTransfer;
 
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approval(address indexed owner, address indexed spender, uint256 value);
@@ -33,6 +34,10 @@ contract ReentrantERC20Harness {
         reenterPayload = payload;
     }
 
+    function setCallbackOnTransfer(bool enabled) external {
+        callbackOnTransfer = enabled;
+    }
+
     function approve(address spender, uint256 amount) external returns (bool) {
         allowance[msg.sender][spender] = amount;
         emit Approval(msg.sender, spender, amount);
@@ -41,6 +46,7 @@ contract ReentrantERC20Harness {
 
     function transfer(address to, uint256 amount) external returns (bool) {
         _move(msg.sender, to, amount);
+        if (callbackOnTransfer) _callback();
         return true;
     }
 
@@ -50,11 +56,15 @@ contract ReentrantERC20Harness {
             allowance[from][msg.sender] = allowed - amount;
         }
         _move(from, to, amount);
+        _callback();
+        return true;
+    }
+
+    function _callback() private {
         if (reenterTarget != address(0) && reenterPayload.length > 0) {
             (bool ok,) = reenterTarget.call(reenterPayload);
             require(ok, "reenter-failed");
         }
-        return true;
     }
 
     function _move(address from, address to, uint256 amount) internal {

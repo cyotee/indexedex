@@ -54,7 +54,7 @@ abstract contract UniswapV4BalancerStableLiquidityUnitsCore is Target {
         for (uint256 i; i < amounts.length; ++i) {
             if (amounts[i] == 0) continue;
             address se = l.standardExchanges[i];
-            inv[i] = flags[i] || se == address(0) ? amounts[i]
+            inv[i] = flags[i] || se == address(0) || se == l.tokens[i] ? amounts[i]
                 : IStandardExchangeIn(se).previewExchangeIn(IERC20(l.tokens[i]), amounts[i], IERC20(se));
         }
     }

@@ -7,7 +7,7 @@ import {FundedRewardAssertions} from "contracts/test/bases/FundedRewardAssertion
 import {FundedBondCloseAssertions} from "contracts/test/bases/FundedBondCloseAssertions.sol";
 import {FundedBalancerEpochAssertions} from "contracts/test/bases/FundedBalancerEpochAssertions.sol";
 import {FundedReserveDonationAssertions} from "contracts/test/bases/FundedReserveDonationAssertions.sol";
-import {IComposedStableCommonDetfDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfDFPkg.sol";
+import {IComposedStableCommonDetfDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/IComposedStableCommonDetfDFPkg.sol";
 import {ComposedStableCommonDetfRepo as OpeningRepo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfRepo.sol";
 import {IComposedStableCommonDetfBonding} from "contracts/interfaces/IComposedStableCommonDetfBonding.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";

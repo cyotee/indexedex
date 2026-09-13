@@ -1,12 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
-// Explicit dependencies keep factory-loaded bytecode available in focused builds.
-import {DETFFundedBondMetadataFacet} from "contracts/vaults/detf/common/bondNft/DETFFundedBondMetadataFacet.sol";
-import {DETFSYFacet} from "contracts/vaults/detf/common/sy/DETFSYFacet.sol";
-import {DETFNFTVaultFacet} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultFacet.sol";
-import {UniswapV4DetfBondNFTVaultFacet} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultFacet.sol";
-import {RebasingClaimTokenFacet} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenFacet.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                   Foundry                                  */

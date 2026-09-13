@@ -36,7 +36,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookMath {
     /* ---------------------------------------------------------------------- */
 
     function baseScaleFromDecimals(uint8 decimals) internal pure returns (uint256) {
-        if (decimals < 6 || decimals > 18) revert MathDomain();
+        if (decimals < 6 || decimals > 36) revert MathDomain();
         return 10 ** (36 - uint256(decimals));
     }
 

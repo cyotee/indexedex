@@ -24,8 +24,7 @@ import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balance
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
-import {IBalancerV3ConstantProductPoolStandardVaultPkg} from
-    "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPoolStandardVaultPkg.sol";
+import {IBalancerV3ConstantProductPoolStandardVaultPkg} from "contracts/protocols/dexes/balancer/v3/pools/constProd/IBalancerV3ConstantProductPoolStandardVaultPkg.sol";
 
 /// @title Script_09_DeployBalancerConstProdPools
 /// @notice Deploys 3 Balancer V3 constant-product pools (as vault-proxies) for (ttA/ttB), (ttA/ttC), (ttB/ttC)

@@ -33,9 +33,7 @@ import {
 import {
     IBalancerV3StandardExchangeRouterPrepayHooks
 } from "contracts/interfaces/IBalancerV3StandardExchangeRouterPrepayHooks.sol";
-import {
-    IBalancerV3StandardExchangeRouterDFPkg
-} from "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterDFPkg.sol";
+import {IBalancerV3StandardExchangeRouterDFPkg} from "contracts/protocols/dexes/balancer/v3/routers/IBalancerV3StandardExchangeRouterDFPkg.sol";
 import {
     BalancerV3StandardExchangeRouterRepo
 } from "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterRepo.sol";

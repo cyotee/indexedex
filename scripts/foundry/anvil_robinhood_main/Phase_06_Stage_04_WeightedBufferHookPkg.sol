@@ -13,9 +13,7 @@ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.so
 import {
     IUniswapV4StandardExchangeWeightedBufferHookPackage as IWeightedHookPkg
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHookPackage.sol";
-import {
-    UniswapV4StandardExchangeWeightedBufferHookDFPkg as WeightedHookDFPkg
-} from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol";
+
 import {
     UniswapV4StandardExchangeWeightedBufferHook_FactoryService as WeightedHookFS
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_FactoryService.sol";
@@ -48,7 +46,7 @@ library Phase_06_Stage_04_WeightedBufferHookPkg {
         init_.multiAssetBasicVaultFacet = s.multiAssetBasicVaultFacet;
         init_.multiAssetStandardVaultFacet = s.multiAssetStandardVaultFacet;
         init_.multiStepOwnableFacet = s.multiStepOwnableFacet;
-        bytes memory initCode_ = type(WeightedHookDFPkg).creationCode;
+        bytes memory initCode_ = ArtifactCreationCode.creationCode(s.create3Factory, "UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol:UniswapV4StandardExchangeWeightedBufferHookDFPkg");
         bytes memory initArgs_ = abi.encode(init_);
         s.weightedHookPkg = reg.deployPkg(
             initCode_,

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IDETFSYDFPkg} from "contracts/vaults/detf/common/sy/IDETFSYDFPkg.sol";
+
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
@@ -20,28 +22,7 @@ import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
 import {DETFSYRepo} from "contracts/vaults/detf/common/sy/DETFSYRepo.sol";
 
-/// @notice Registered deployment schema for separate raw-DETF and staking SY instances.
-interface IDETFSYDFPkg is IDiamondFactoryPackage {
-    struct PkgInit {
-        IFacet erc5267Facet;
-        IFacet erc2612Facet;
-        IFacet syFacet;
-        IVaultFeeOracleQuery feeOracle;
-        IVaultRegistryDeployment vaultRegistryDeployment;
-    }
 
-    struct PkgArgs {
-        IERC20 detf;
-        IStakedDETF staking;
-        bool isStaking;
-        string name;
-        string symbol;
-        address[] tokensIn;
-        address[] tokensOut;
-    }
-
-    function deployVault(PkgArgs memory args_) external returns (address);
-}
 
 /// @title DETFSYDFPkg
 /// @notice Registered immutable SY deployment. Underlying DETF economics charge route fees once.

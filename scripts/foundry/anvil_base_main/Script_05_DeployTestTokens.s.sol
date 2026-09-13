@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {DeploymentBase} from "./DeploymentBase.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
@@ -9,12 +11,10 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 
 import {IERC20MintBurn} from "@crane/contracts/interfaces/IERC20MintBurn.sol";
 import {IOperable} from "@crane/contracts/interfaces/IOperable.sol";
-import {IERC20MintBurnOwnableOperableDFPkg, ERC20MintBurnOwnableOperableDFPkg} from
-    "@crane/contracts/tokens/ERC20/ERC20MintBurnOwnableOperableDFPkg.sol";
-import {ERC20MintBurnOwnableFacet} from "@crane/contracts/tokens/ERC20/ERC20MintBurnOwnableFacet.sol";
+import {IERC20MintBurnOwnableOperableDFPkg} from "@crane/contracts/tokens/ERC20/IERC20MintBurnOwnableOperableDFPkg.sol";
+
 import {IERC20MinterFacade} from "@crane/contracts/tokens/ERC20/IERC20MinterFacade.sol";
-import {ERC20MinterFacadeFacetDFPkg, IERC20MinterFacadeFacetDFPkg} from
-    "@crane/contracts/tokens/ERC20/ERC20MinterFacadeFacetDFPkg.sol";
+import {IERC20MinterFacadeFacetDFPkg} from "@crane/contracts/tokens/ERC20/ERC20MinterFacadeFacetDFPkg.sol";
 
 /// @title Script_05_DeployTestTokens
 /// @notice Deploys test tokens (TTA, TTB, TTC) for testing
@@ -82,8 +82,8 @@ contract Script_05_DeployTestTokens is DeploymentBase {
 
         // Deploy the ERC20MintBurnOwnableFacet (not a shared facet)
         IFacet mintBurnOwnableFacet = create3Factory.deployFacet(
-            type(ERC20MintBurnOwnableFacet).creationCode,
-            abi.encode(type(ERC20MintBurnOwnableFacet).name)._hash()
+            ArtifactCreationCode.creationCode(create3Factory, "ERC20MintBurnOwnableFacet.sol:ERC20MintBurnOwnableFacet"),
+            abi.encode("ERC20MintBurnOwnableFacet")._hash()
         );
 
         // Build package init using shared facets
@@ -99,9 +99,9 @@ contract Script_05_DeployTestTokens is DeploymentBase {
         IERC20MintBurnOwnableOperableDFPkg tokenPkg = IERC20MintBurnOwnableOperableDFPkg(
             address(
                 create3Factory.deployPackageWithArgs(
-                    type(ERC20MintBurnOwnableOperableDFPkg).creationCode,
+                    ArtifactCreationCode.creationCode(create3Factory, "ERC20MintBurnOwnableOperableDFPkg.sol:ERC20MintBurnOwnableOperableDFPkg"),
                     abi.encode(pkgInit),
-                    abi.encode(type(ERC20MintBurnOwnableOperableDFPkg).name)._hash()
+                    abi.encode("ERC20MintBurnOwnableOperableDFPkg")._hash()
                 )
             )
         );
@@ -155,8 +155,8 @@ contract Script_05_DeployTestTokens is DeploymentBase {
         IERC20MinterFacadeFacetDFPkg facadePkg = IERC20MinterFacadeFacetDFPkg(
             address(
                 create3Factory.deployPackage(
-                    type(ERC20MinterFacadeFacetDFPkg).creationCode,
-                    abi.encode(type(ERC20MinterFacadeFacetDFPkg).name)._hash()
+                    ArtifactCreationCode.creationCode(create3Factory, "ERC20MinterFacadeFacetDFPkg.sol:ERC20MinterFacadeFacetDFPkg"),
+                    abi.encode("ERC20MinterFacadeFacetDFPkg")._hash()
                 )
             )
         );

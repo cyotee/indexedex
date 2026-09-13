@@ -6,9 +6,7 @@ import {TestBase_MultiVaultWeightedDetf_Adversarial_Decimals} from "test/foundry
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
-import {
-    IMultiVaultWeightedDetfInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfInfoTarget.sol";
+import {IMultiVaultWeightedDetfInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfInfo.sol";
 
 /// @notice F1–F4 access control / immutability.
 abstract contract Adversarial_Access_Decimals is TestBase_MultiVaultWeightedDetf_Adversarial_Decimals {

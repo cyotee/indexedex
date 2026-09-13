@@ -11,9 +11,8 @@ import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactor
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
-import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
-import {IUniswapV4DetfBondNFTVaultDFPkg} from
-    "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol";
+import {IUniswapV4DetfBondNFTVaultDFPkg} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/IUniswapV4DetfBondNFTVaultDFPkg.sol";
 import {
     IUniswapV4DetfDFPkg
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
@@ -61,7 +60,13 @@ library Phase_06_Stage_07_UniswapV4DetfPkg {
     function _requireCurrentDependency(address pkg_, string memory name_, string memory facetName_) private view {
         IDiamondFactoryPackage pkg = IDiamondFactoryPackage(pkg_);
         require(keccak256(bytes(pkg.packageName())) == keccak256(bytes(name_)), "Phase 06-07: wrong dependency package");
-        bytes memory expected = Vm(VM_ADDRESS).getDeployedCode(string.concat(facetName_, ".sol:", facetName_));
+        // These dependency facets have no library links or immutable constructor values.
+        // Read their artifacts directly so release validation needs no implementation imports.
+        Vm vm_ = Vm(VM_ADDRESS);
+        string memory artifact_ = vm_.readFile(
+            string.concat(vm_.projectRoot(), "/out/", facetName_, ".sol/", facetName_, ".json")
+        );
+        bytes memory expected = vm_.parseJsonBytes(artifact_, ".deployedBytecode.object");
         require(expected.length != 0, "Phase 06-07: missing dependency artifact");
         bytes32 expectedHash = keccak256(expected);
         address[] memory facets = pkg.facetAddresses();

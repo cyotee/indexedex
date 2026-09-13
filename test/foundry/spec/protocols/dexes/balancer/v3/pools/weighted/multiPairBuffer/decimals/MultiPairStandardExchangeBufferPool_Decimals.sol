@@ -13,9 +13,7 @@ import {IPoolLiquidity} from "@crane/contracts/interfaces/protocols/dexes/balanc
 import {
     IMultiPairStandardExchangeBufferPool
 } from "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/IMultiPairStandardExchangeBufferPool.sol";
-import {
-    IMultiPairStandardExchangeBufferPoolPkg
-} from "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPoolStandardVaultPkg.sol";
+import {IMultiPairStandardExchangeBufferPoolPkg} from "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/IMultiPairStandardExchangeBufferPoolPkg.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
 

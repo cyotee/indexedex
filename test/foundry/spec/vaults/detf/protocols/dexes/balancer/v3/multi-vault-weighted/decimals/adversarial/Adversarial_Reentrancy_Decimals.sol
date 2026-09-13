@@ -4,9 +4,7 @@ pragma solidity ^0.8.0;
 import {TestBase_MultiVaultWeightedDetf_Adversarial_Decimals} from "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/adversarial/TestBase_MultiVaultWeightedDetf_Adversarial_Decimals.sol";
 
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
-import {
-    IMultiVaultWeightedDetfDFPkg
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfDFPkg.sol";
+import {IMultiVaultWeightedDetfDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfDFPkg.sol";
 
 /// @notice C1–C3: hostile vaultShare is rejected at PkgArgs (WP-SEC-PKG-MV-001).
 /// @dev TransferFrom reentry via a configured hostile share is unreachable after the deploy gate.

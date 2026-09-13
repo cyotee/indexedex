@@ -11,9 +11,7 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IVaultRegistryVaultQuery} from "contracts/interfaces/IVaultRegistryVaultQuery.sol";
-import {
-    IComposedStableCommonDetfDFPkg
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfDFPkg.sol";
+import {IComposedStableCommonDetfDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/IComposedStableCommonDetfDFPkg.sol";
 
 contract ComposedStableCommonDetfDFPkg_Deploy_Test is TestBase_ComposedFundedRoutes {
     function test_packageMetadata_matchesExpectedFacets() public view {

@@ -22,6 +22,8 @@ import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote} from
     "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {RebasingAwareERC4626Repo} from
     "contracts/protocols/staking/rebasingVault/RebasingAwareERC4626Repo.sol";
+import {RebasingAwareERC4626Common} from
+    "contracts/protocols/staking/rebasingVault/RebasingAwareERC4626Common.sol";
 
 contract RebasingAwareVaultMetadataTarget is IBasicVault, IStandardVault {
     function vaultTokens() public view returns (address[] memory tokens_) {
@@ -30,12 +32,14 @@ contract RebasingAwareVaultMetadataTarget is IBasicVault, IStandardVault {
     }
 
     function reserveOfToken(address token) public view returns (uint256 reserve_) {
+        RebasingAwareERC4626Common.requireUnlocked();
         address asset_ = address(RebasingAwareERC4626Repo._asset());
         if (token != asset_) revert IStandardExchangeErrors.UnknownReserve(token);
         return IERC20(asset_).balanceOf(address(this));
     }
 
     function reserves() public view returns (uint256[] memory reserves_) {
+        RebasingAwareERC4626Common.requireUnlocked();
         reserves_ = new uint256[](1);
         reserves_[0] = RebasingAwareERC4626Repo._asset().balanceOf(address(this));
     }

@@ -3,7 +3,7 @@ import { createPublicClient, http, erc20Abi, formatUnits, parseUnits, decodeFunc
 import { installInjectedWallet } from './wallet/injectWallet'
 import { connectInjectedWallet, prepareLocalChain } from './helpers/connect'
 import { tokenStakingAbi } from '../app/lib/tokenStaking/abi'
-import { migrationRouteAbi } from '../app/lib/tokenStaking/migration'
+import { migrationRouteAbi, readProtocolDetf } from '../app/lib/tokenStaking/migration'
 import platform from '../../../packages/protocol/src/addresses/chain/4663/platform.json'
 
 // Explicit opt-in: ONLY a disposable copy of the already migrated node.
@@ -11,8 +11,8 @@ import platform from '../../../packages/protocol/src/addresses/chain/4663/platfo
 const rpcUrl = process.env.E2E_MIGRATION_RPC_URL
 const holder = process.env.E2E_MIGRATION_HOLDER as Address | undefined
 const staking = platform.tokenStaking as Address
-const sy = platform.stakingSY as Address
-const sdetf = platform.rebasingClaimToken as Address
+let sy: Address
+let sdetf: Address
 const client = createPublicClient({ transport: http(rpcUrl ?? 'http://127.0.0.1:18545') })
 async function rpc(method: string, params: unknown[] = []) {
   const res = await fetch(rpcUrl!, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }) })
@@ -32,6 +32,10 @@ test.describe('Migrated staking on a disposable fork', () => {
     expect(url.port).not.toBe('8545')
     expect(await client.getChainId()).toBe(4663)
     expect(await client.readContract({ address: staking, abi: tokenStakingAbi, functionName: 'phase' })).toBe(2)
+    const detf = await readProtocolDetf(client, staking)
+    expect(detf).toBeTruthy()
+    sy = await client.readContract({ address: detf!, abi: migrationRouteAbi, functionName: 'stakingSY' })
+    sdetf = await client.readContract({ address: detf!, abi: migrationRouteAbi, functionName: 'rebasingClaimToken' })
     snapshot = await rpc('evm_snapshot')
     await rpc('anvil_impersonateAccount', [holder])
     await rpc('anvil_setBalance', [holder, '0x8ac7230489e80000'])
@@ -40,8 +44,8 @@ test.describe('Migrated staking on a disposable fork', () => {
     if (snapshot) expect(await rpc('evm_revert', [snapshot])).toBe(true)
   })
 
-  test('partial and full claims, delayed SY redemption, precision and wallet rejection', async ({ page }) => {
-    test.setTimeout(180_000)
+  test('claims, delayed redemption, unstaking and restaking use the migrated product', async ({ page }) => {
+    test.setTimeout(240_000)
     const stakeBefore = await stakeBalance()
     const syBefore = await balance(sy)
     expect(stakeBefore).toBeGreaterThan(parseUnits('100', 18))
@@ -50,8 +54,9 @@ test.describe('Migrated staking on a disposable fork', () => {
     await connectInjectedWallet(page)
     // Connected reads must not depend on the app's HTTP endpoint.
     await page.route('http://127.0.0.1:8545/**', route => route.abort())
-    await page.goto('/staking')
+    await page.goto(`/staking?detf=${platform.protocolDetf}`)
     const panel = page.getByTestId('migration-position')
+    await expect(page.getByTestId('staking-detf')).toHaveAttribute('data-detf', (await readProtocolDetf(client, staking))!)
     await expect(panel.getByTestId('migration-complete')).toBeVisible({ timeout: 60_000 })
     const claim = panel.getByTestId('migration-claim')
     const input = panel.getByTestId('migration-claim-amount-input')
@@ -146,6 +151,36 @@ test.describe('Migrated staking on a disposable fork', () => {
     expect(decoded.args?.[4]).toBe(false)
     expect((await client.getTransactionReceipt({ hash: redeemHash })).status).toBe('success')
     await expect(panel.getByTestId('migration-empty')).toBeVisible()
+
+    // The redeemed real sDETF must work in the staking controls on this same page.
+    const detf = (await readProtocolDetf(client, staking))!
+    const amount = parseUnits('0.001', 9)
+    const detfBefore = await balance(detf)
+    const claimBefore = await balance(sdetf)
+    await page.getByRole('button', { name: 'Stake', exact: true }).click()
+    const controls = page.getByTestId('detf-staking')
+    await controls.getByRole('button', { name: 'Unstake', exact: true }).click()
+    await controls.getByTestId('detf-unstake-amount-input').fill('0.001')
+    await expect(controls.getByTestId('detf-unstake')).toBeEnabled()
+    await controls.getByTestId('detf-unstake').click()
+    await expect(controls.getByTestId('detf-staking-status')).toHaveText('Unstake confirmed.')
+    expect(await balance(detf)).toBe(detfBefore + amount)
+    expect(await balance(sdetf)).toBe(claimBefore - amount)
+
+    await controls.getByRole('button', { name: 'Stake', exact: true }).click()
+    await controls.getByTestId('detf-stake-token').selectOption(detf)
+    await controls.getByTestId('detf-stake-amount-input').fill('0.001')
+    const approval = controls.getByTestId('detf-stake-approve')
+    if (await approval.isVisible()) {
+      await expect(approval).toBeEnabled()
+      await approval.click()
+      await expect(controls.getByTestId('detf-staking-status')).toHaveText('Approve confirmed.')
+    }
+    await expect(controls.getByTestId('detf-stake')).toBeEnabled()
+    await controls.getByTestId('detf-stake').click()
+    await expect(controls.getByTestId('detf-staking-status')).toHaveText('Stake confirmed.')
+    expect(await balance(detf)).toBe(detfBefore)
+    expect(await balance(sdetf)).toBe(claimBefore)
   })
 
   test('disconnected and empty wallet states have no enabled claim action', async ({ page }) => {
@@ -175,10 +210,10 @@ test.describe('Migrated staking on a disposable fork', () => {
       eth.request = (args: { method: string }) => args.method === 'eth_call'
         ? Promise.reject(new Error('Selected wallet RPC unavailable')) : request(args)
     })
-    await expect(panel.getByText('Could not load the migrated position from your wallet’s network.', { exact: false })).toBeVisible({ timeout: 30_000 })
+    await expect(page.getByTestId('staking-discovery-status')).toContainText('Could not load DTF-DETF', { timeout: 30_000 })
     await expect(panel.getByTestId('migration-claim')).toHaveCount(0)
     await page.evaluate(() => (window as any).__restoreMigrationRPC())
-    await panel.getByRole('button', { name: 'Retry', exact: true }).click()
+    await page.getByTestId('staking-discovery-status').getByRole('button', { name: 'Retry', exact: true }).click()
     await expect(panel.getByTestId('migration-complete')).toBeVisible()
     await panel.getByTestId('migration-claim-amount-input').fill('100')
     await page.evaluate(() => {
@@ -196,7 +231,7 @@ test.describe('Migrated staking on a disposable fork', () => {
       eth.request = (args: { method: string }) => args.method === 'eth_chainId' ? Promise.resolve('0x1') : request(args)
       eth.emit('chainChanged', '0x1')
     })
-    await expect(panel.getByText('Switch your wallet to the selected network to view and claim your position.')).toBeVisible()
+    await expect(page.getByTestId('staking-discovery-status')).toContainText('Switch your wallet to the selected network')
     await expect(panel.getByTestId('migration-claim')).toHaveCount(0)
   })
 

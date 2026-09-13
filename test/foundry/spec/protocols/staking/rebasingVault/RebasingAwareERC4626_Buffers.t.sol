@@ -26,10 +26,18 @@ import {RebasingAwareERC4626_Component_FactoryService} from
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
+import {IVaultRegistryDisableManager} from "contracts/interfaces/IVaultRegistryDisableManager.sol";
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {RebasingERC20Harness} from "contracts/test/stubs/RebasingERC20Harness.sol";
 import {
     IStandardExchangeTransitionQuote
 } from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {SwapParams} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
+import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/TickMath.sol";
+import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
+import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
+import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
+import {WrapperExactOutRouter} from "contracts/test/stubs/WrapperExactOutRouter.sol";
 
 contract RebasingAwareERC4626_Buffers is TestBase_UniswapV4SingleStandardExchangeBufferConstantProductHook {
     using RebasingAwareERC4626_Component_FactoryService for ICreate3FactoryProxy;
@@ -92,6 +100,170 @@ contract RebasingAwareERC4626_Buffers is TestBase_UniswapV4SingleStandardExchang
         underlying.rebase(address(wrapper), int256(5e18));
         assertGt(wrapper.totalAssets(), before);
         assertEq(IStandardVault(address(wrapper)).vaultFeeTypeIds(), bytes32(0));
+    }
+
+    function test_F16_cpWrapperShareInventoryQuoteSwap() public {
+        _deployWrapper();
+        _wrapUser(80e18);
+        _deployWrapperHook();
+        uint256 shares = IERC20(address(wrapper)).balanceOf(user);
+        rawToken.mint(user, 50 ether);
+        vm.startPrank(user);
+        rawToken.approve(address(wrapperHook), type(uint256).max);
+        IERC20(address(wrapper)).approve(address(wrapperHook), type(uint256).max);
+        (uint256 lp,,) =
+            wrapperHook.depositWithSeShares(10 ether, shares / 2, user, 0, block.timestamp + 1 hours);
+        assertGt(lp, 0);
+        vm.stopPrank();
+
+        uint256 rawIn = 1 ether;
+        uint256 predShares = IStandardExchangeIn(address(wrapperHook)).previewExchangeIn(
+            IERC20(address(rawToken)), rawIn, IERC20(address(wrapper))
+        );
+        assertGt(predShares, 0);
+        uint256 shareBefore = IERC20(address(wrapper)).balanceOf(user);
+        vm.prank(user);
+        uint256 gotShares = IStandardExchangeIn(address(wrapperHook)).exchangeIn(
+            IERC20(address(rawToken)),
+            rawIn,
+            IERC20(address(wrapper)),
+            0,
+            user,
+            false,
+            block.timestamp + 1 hours
+        );
+        assertEq(gotShares, predShares);
+        assertEq(IERC20(address(wrapper)).balanceOf(user) - shareBefore, gotShares);
+
+        uint256 shareIn = gotShares / 2;
+        uint256 predRaw = IStandardExchangeIn(address(wrapperHook)).previewExchangeIn(
+            IERC20(address(wrapper)), shareIn, IERC20(address(rawToken))
+        );
+        assertGt(predRaw, 0);
+        uint256 rawBefore = rawToken.balanceOf(user);
+        vm.prank(user);
+        uint256 gotRaw = IStandardExchangeIn(address(wrapperHook)).exchangeIn(
+            IERC20(address(wrapper)),
+            shareIn,
+            IERC20(address(rawToken)),
+            0,
+            user,
+            false,
+            block.timestamp + 1 hours
+        );
+        assertEq(gotRaw, predRaw);
+        assertEq(rawToken.balanceOf(user) - rawBefore, gotRaw);
+
+        WrapperExactOutRouter swapRouter = new WrapperExactOutRouter(pm);
+        PoolKey memory key = PoolKey({
+            currency0: Currency.wrap(wrapperHook.currency0()),
+            currency1: Currency.wrap(wrapperHook.currency1()),
+            fee: 0,
+            tickSpacing: 60,
+            hooks: IHooks(address(wrapperHook))
+        });
+        bool zeroForOne = wrapperHook.currency0() == address(rawToken);
+        uint256 v4In = 5e17;
+        uint256 v4Pred = wrapperHook.previewSwapExactIn(zeroForOne, v4In);
+        assertGt(v4Pred, 0);
+        address outTok = zeroForOne ? wrapperHook.currency1() : wrapperHook.currency0();
+        uint256 outBefore = IERC20(outTok).balanceOf(user);
+        vm.startPrank(user);
+        rawToken.approve(address(swapRouter), type(uint256).max);
+        IERC20(address(wrapper)).approve(address(swapRouter), type(uint256).max);
+        swapRouter.swapExactIn(
+            key,
+            SwapParams({
+                zeroForOne: zeroForOne,
+                amountSpecified: -int256(v4In),
+                sqrtPriceLimitX96: zeroForOne ? TickMath.MIN_SQRT_PRICE + 1 : TickMath.MAX_SQRT_PRICE - 1
+            }),
+            ""
+        );
+        vm.stopPrank();
+        assertGt(IERC20(outTok).balanceOf(user) - outBefore, 0);
+    }
+
+    function test_F16_cpAmendmentMatrixLiveHook() public {
+        _deployWrapper();
+        _wrapUser(80e18);
+        _deployWrapperHook();
+
+        vm.prank(user);
+        vm.expectRevert();
+        IStandardExchangeIn(address(wrapperHook)).exchangeIn(
+            IERC20(address(rawToken)), 1 ether, IERC20(address(wrapper)), 0, user, false, block.timestamp + 1 hours
+        );
+
+        uint256 shares = IERC20(address(wrapper)).balanceOf(user);
+        rawToken.mint(user, 80 ether);
+        vm.startPrank(user);
+        rawToken.approve(address(wrapperHook), type(uint256).max);
+        IERC20(address(wrapper)).approve(address(wrapperHook), type(uint256).max);
+        (uint256 lp,,) =
+            wrapperHook.depositWithSeShares(20 ether, shares / 2, user, 0, block.timestamp + 1 hours);
+        assertGt(lp, 0);
+        vm.stopPrank();
+
+        (bytes memory qState,) = IStandardExchangeTransitionQuote(address(wrapper)).quoteState(
+            address(underlying), address(wrapperHook)
+        );
+        assertEq(qState.length, 288);
+        uint256 sample = IERC20(address(wrapper)).balanceOf(address(wrapperHook)) / 10;
+        uint256 staleAssets =
+            IStandardExchangeTransitionQuote(address(wrapper)).quoteAssets(qState, sample);
+
+        uint256 beforePos = wrapper.totalAssets();
+        underlying.rebase(address(wrapper), int256(5e18));
+        assertGt(wrapper.totalAssets(), beforePos);
+        uint256 liveAssets = wrapper.convertToAssets(sample);
+        assertTrue(liveAssets != staleAssets);
+
+        uint256 beforeNeg = wrapper.totalAssets();
+        underlying.rebase(address(wrapper), -int256(1e18));
+        assertLt(wrapper.totalAssets(), beforeNeg);
+
+        uint256 donated = 3e18;
+        underlying.mint(address(wrapper), donated);
+        assertEq(wrapper.totalAssets(), underlying.balanceOf(address(wrapper)));
+
+        vm.prank(owner);
+        IVaultFeeOracleManager(address(indexedexManager)).setDefaultUsageFee(1e16);
+        vm.prank(owner);
+        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(address(wrapperHook), 1e16);
+        assertEq(IStandardVault(address(wrapper)).vaultFeeTypeIds(), bytes32(0));
+        assertEq(IStandardVault(address(wrapperHook)).vaultFeeTypeIds(), bytes32(0));
+
+        vm.prank(user);
+        vm.expectRevert(IRebasingAwareERC4626.AssetPretransferNotSupported.selector);
+        IStandardExchangeIn(address(wrapper)).exchangeIn(
+            IERC20(address(underlying)), 1e18, IERC20(address(wrapper)), 0, user, true, block.timestamp
+        );
+
+        underlying.setRebaseOnTransfer(int256(1e18), address(wrapper));
+        vm.startPrank(user);
+        underlying.approve(address(wrapper), type(uint256).max);
+        vm.expectRevert();
+        wrapper.deposit(1e18, user);
+        vm.stopPrank();
+        underlying.setRebaseOnTransfer(0, address(0));
+        vm.prank(user);
+        assertGt(wrapper.deposit(1e18, user), 0);
+
+        vm.prank(owner);
+        IVaultRegistryDisableManager(address(indexedexManager)).setVaultAddressDisabled(
+            address(wrapper), true
+        );
+        vm.prank(user);
+        vm.expectRevert(
+            abi.encodeWithSelector(IVaultRegistryDisableQuery.VaultDisabled.selector, address(wrapper))
+        );
+        wrapper.deposit(1e18, user);
+        vm.prank(user);
+        (uint256 rawOut, uint256 seOut) =
+            wrapperHook.withdrawSeShares(lp / 2, user, 0, 0, block.timestamp + 1 hours);
+        assertGt(rawOut, 0);
+        assertGt(seOut, 0);
     }
 
     function test_F16_zeroWrapperFeesWithOuterFee() public {

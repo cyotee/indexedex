@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {UniswapV4StandardExchangeBalancerQuadStableBufferHookClaimLib as ClaimLib} from "./UniswapV4StandardExchangeBalancerQuadStableBufferHookClaimLib.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
@@ -304,20 +306,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
 
     /// @dev Pair-token units for swap rating (pre WAD scale). Raw = live face; SE = seBal×rate or claim.
     function _ratedPairUnits(uint8 i) internal view returns (uint256) {
-        Repo.Layout storage l = Repo._layout();
-        address se = l.standardExchanges[i];
-        if (se == address(0)) {
-            return IERC20(l.tokens[i]).balanceOf(address(this));
-        }
-        uint256 seBal = IERC20(se).balanceOf(address(this));
-        if (seBal == 0) return 0;
-        address rp = l.rateProviders[i];
-        if (rp != address(0)) {
-            uint256 rate = _getRateFailClosed(rp);
-            return (seBal * rate) / Math.RATE_PRECISION;
-        }
-        if (se == l.tokens[i]) return seBal;
-        return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seBal, IERC20(l.tokens[i]));
+        return ClaimLib.ratedPairUnits(i);
     }
 
     function _getRateFailClosed(address provider) internal view returns (uint256 rate) {

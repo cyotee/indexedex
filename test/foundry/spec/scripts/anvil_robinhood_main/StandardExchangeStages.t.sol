@@ -17,8 +17,8 @@ import {IUniswapV3Pool} from "@crane/contracts/protocols/dexes/uniswap/v3/interf
 import {TestBase_VaultComponents} from "contracts/vaults/TestBase_VaultComponents.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {IVaultRegistryVaultQuery} from "contracts/interfaces/IVaultRegistryVaultQuery.sol";
-import {IUniswapV2StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeDFPkg.sol";
-import {IUniswapV3StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeDFPkg.sol";
+import {IUniswapV2StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v2/IUniswapV2StandardExchangeDFPkg.sol";
+import {IUniswapV3StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v3/IUniswapV3StandardExchangeDFPkg.sol";
 import {LaunchState} from "scripts/foundry/anvil_robinhood_main/LaunchState.sol";
 import {RobinhoodCanonicalLib} from "scripts/foundry/anvil_robinhood_main/RobinhoodCanonicalLib.sol";
 import {Phase_05_Stage_04_UniswapV3StandardExchangePkg as V3Stage} from "scripts/foundry/anvil_robinhood_main/Phase_05_Stage_04_UniswapV3StandardExchangePkg.sol";

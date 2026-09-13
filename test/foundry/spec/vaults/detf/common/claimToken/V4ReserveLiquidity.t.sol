@@ -10,6 +10,8 @@ import {LidoWstETHMarkerFacet} from "contracts/protocols/staking/lido/LidoWstETH
 import {LidoWstETHRebalanceFacet} from "contracts/protocols/staking/lido/LidoWstETHRebalanceFacet.sol";
 import {LidoWstETHStandardExchangeDFPkg} from "contracts/protocols/staking/lido/LidoWstETHStandardExchangeDFPkg.sol";
 
+import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
+
 import {IDetfNftReserveDonation} from "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol";
 
 import {Test} from "forge-std/Test.sol";
@@ -35,13 +37,13 @@ import {TestBase_UniswapV4Detf} from "contracts/vaults/detf/protocols/dexes/unis
 import {TestBase_UniswapV4Detf_Weighted} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted.sol";
 import {TestBase_UniswapV4Detf_Orbital} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital.sol";
 import {TestBase_UniswapV4Detf_CurveQuad} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_CurveQuad.sol";
-import {DETFFundedStakingArtifacts} from "contracts/test/bases/DETFFundedStakingArtifacts.sol";
 import {SimpleYieldERC4626} from "contracts/test/stubs/SimpleYieldERC4626.sol";
 
 interface IReserveOracleBinding { function feeOracle() external view returns (address); }
 
 /// @dev One set of assertions over real DETF, hook, Fee Collector and SE packages in both policies.
 abstract contract V4ReserveLiquidityBehavior is Test {
+    bool private expansionFallback;
     function _subject() internal view virtual returns (IUniswapV4Detf);
     function _buyer() internal view virtual returns (address);
     function _purchase(uint256 amount_) internal virtual returns (uint256, uint256);
@@ -65,7 +67,9 @@ abstract contract V4ReserveLiquidityBehavior is Test {
     {
         args_.name = "V4 funded fallback";
         args_.symbol = "DETF";
-        args_.mintThreshold = 100e18;
+        // Expansion tests need a reachable gate within the Orbital fixed-radius domain.
+        // Ordinary fallback tests retain their deliberately wide deadband.
+        args_.mintThreshold = expansionFallback ? 2e18 : 100e18;
         args_.burnThreshold = 1;
         args_.expansionClosureRatePerYearWad = 1e18;
         address pair = _leadPayment();
@@ -115,13 +119,14 @@ abstract contract V4ReserveLiquidityBehavior is Test {
     }
 
     function test_standardFallbackSettlesFundedCatchupBeforeBothDirections() public {
+        expansionFallback = true;
         IUniswapV4Detf subject_ = _activateFallbackInstance();
         uint256 acquired_ = _assertFallbackExchange(subject_, IERC20(_leadPayment()), 10 ether, IERC20(address(subject_)));
-        _fundReserveYield(subject_, 3_000 ether);
+        _fundExpansionPremium(subject_);
         vm.warp(block.timestamp + 25 hours);
         assertGt(subject_.pendingExpansionDetf(), 0, "real reserve yield funds due epochs");
         _assertFallbackExchange(subject_, IERC20(_leadPayment()), 10 ether, IERC20(address(subject_)));
-        _fundReserveYield(subject_, 3_000 ether);
+        _fundExpansionPremium(subject_);
         vm.warp(block.timestamp + 25 hours);
         assertGt(subject_.pendingExpansionDetf(), 0, "later epochs have funded expansion");
         _assertFallbackExchange(subject_, IERC20(address(subject_)), acquired_ / 2, IERC20(_leadPayment()));
@@ -130,6 +135,7 @@ abstract contract V4ReserveLiquidityBehavior is Test {
     /// @notice A22: stake present one second before the boundary receives its
     /// funded expansion; a deposit processing that boundary enters afterward.
     function test_boundaryStakeParticipationAndLateEntryOrdering() public {
+        expansionFallback = true;
         IUniswapV4Detf subject = _activateFallbackInstance();
         uint256 acquired = _assertFallbackExchange(subject, IERC20(_leadPayment()), 10 ether, IERC20(address(subject)));
         uint256 principal = acquired / 3;
@@ -142,7 +148,7 @@ abstract contract V4ReserveLiquidityBehavior is Test {
         IERC20(address(subject)).transfer(early, principal);
         IERC20(address(subject)).transfer(late, principal);
         vm.stopPrank();
-        _fundReserveYield(subject, 3_000 ether);
+        _fundExpansionPremium(subject);
         vm.warp(boundary - 1);
         vm.startPrank(early);
         IERC20(address(subject)).approve(address(staking), principal);
@@ -168,6 +174,56 @@ abstract contract V4ReserveLiquidityBehavior is Test {
         assertEq(staking.balanceOf(early), 0);
         assertEq(IERC20(address(subject)).balanceOf(early), earlyClaim, "funded reward and principal unstake one-for-one");
         assertEq(staking.balanceOf(late), principal, "another holder's full exit cannot consume late principal");
+    }
+
+    /// @dev Find a real, caller-funded yield payment just above the expansion gate.
+    /// Settlement then closes enough premium for the lead trade to use its fallback.
+    function _fundExpansionPremium(IUniswapV4Detf subject_) private {
+        uint256 target_ = subject_.mintThreshold() + subject_.mintThreshold() / 100_000;
+        uint256 low_;
+        uint256 high_ = 1_000_000 ether;
+        uint256 snapshot_ = vm.snapshotState();
+        _fundReserveYield(subject_, high_);
+        assertGt(_leadSyntheticPrice(subject_), target_, "funding budget reaches expansion threshold");
+        vm.revertToState(snapshot_);
+        // Sub-microtoken precision is ample relative to the deliberately small premium.
+        while (high_ - low_ > 1e9) {
+            uint256 mid_ = low_ + (high_ - low_) / 2;
+            _fundReserveYield(subject_, mid_);
+            if (_leadSyntheticPrice(subject_) >= target_) {
+                high_ = mid_;
+            } else {
+                low_ = mid_;
+            }
+            vm.revertToState(snapshot_);
+        }
+        vm.deleteStateSnapshot(snapshot_);
+        _fundReserveYield(subject_, high_);
+        assertGt(_leadSyntheticPrice(subject_), subject_.mintThreshold(), "funded price clears expansion gate");
+    }
+
+    /// @dev The legacy syntheticPrice getter follows the first sorted leg, which
+    /// need not be the payment leg used by these fallback assertions.
+    function _leadSyntheticPrice(IUniswapV4Detf subject_) private view returns (uint256) {
+        address hook_ = subject_.hook();
+        address[] memory tokens_ = IUniswapV4SeBufferHook(hook_).tokens();
+        uint256[] memory creation_ = subject_.creationPairPerDetfWad();
+        uint256 pairIndex_;
+        for (uint256 i_; i_ < tokens_.length; ++i_) {
+            if (tokens_[i_] == address(subject_)) continue;
+            if (tokens_[i_] == _leadPayment()) {
+                IDetfReserveQuote.DetfQuoteCtx memory ctx_ = IDetfReserveQuote.DetfQuoteCtx({
+                    detfTotalSupply: IERC20(address(subject_)).totalSupply() * 1e9,
+                    pendingExpansion: 0,
+                    ownedLp: IERC20(hook_).balanceOf(address(subject_))
+                        + IERC20(hook_).balanceOf(subject_.bondNftVault()),
+                    creationPairPerDetfWad: creation_[pairIndex_]
+                });
+                return IDetfReserveQuote(hook_).previewSynthetic(ctx_, tokens_[i_]);
+            }
+            pairIndex_++;
+        }
+        revert("missing lead payment leg");
     }
 
     function _fundReserveYield(IUniswapV4Detf subject_, uint256 amount_) private {
@@ -681,7 +737,7 @@ abstract contract V4ReserveLiquidityBehavior is Test {
     }
 }
 
-contract CpReserveLiquidityTest is TestBase_UniswapV4Detf, V4ReserveLiquidityBehavior, DETFFundedStakingArtifacts {
+contract CpReserveLiquidityTest is TestBase_UniswapV4Detf, V4ReserveLiquidityBehavior {
     function _installLidoBuffer() private returns (HermeticWstETH wrapped) {
         HermeticWETH liquid = new HermeticWETH();
         HermeticStETH staked = new HermeticStETH();
@@ -797,7 +853,7 @@ contract CpPublicReserveLiquidityTest is CpReserveLiquidityTest {
     }
 }
 
-contract WeightedReserveLiquidityTest is TestBase_UniswapV4Detf_Weighted, V4ReserveLiquidityBehavior, DETFFundedStakingArtifacts {
+contract WeightedReserveLiquidityTest is TestBase_UniswapV4Detf_Weighted, V4ReserveLiquidityBehavior {
     function _deployFallbackInstance() internal override returns (address) { return _deployWeightedHookThenDetf(_fallbackArgs(_nLegDetfArgs(2))); }
     function _subject() internal view override returns (IUniswapV4Detf) { return detfInfo; }
     function _buyer() internal view override returns (address) { return detfUser; }
@@ -816,7 +872,7 @@ contract WeightedPublicReserveLiquidityTest is WeightedReserveLiquidityTest {
     }
 }
 
-contract OrbitalReserveLiquidityTest is TestBase_UniswapV4Detf_Orbital, V4ReserveLiquidityBehavior, DETFFundedStakingArtifacts {
+contract OrbitalReserveLiquidityTest is TestBase_UniswapV4Detf_Orbital, V4ReserveLiquidityBehavior {
     function _deployFallbackInstance() internal override returns (address) { return _deployOrbitalHookThenDetf(_fallbackArgs(_nLegDetfArgs(2))); }
     function _subject() internal view override returns (IUniswapV4Detf) { return detfInfo; }
     function _buyer() internal view override returns (address) { return detfUser; }
@@ -835,7 +891,7 @@ contract OrbitalPublicReserveLiquidityTest is OrbitalReserveLiquidityTest {
     }
 }
 
-contract CurveQuadReserveLiquidityTest is TestBase_UniswapV4Detf_CurveQuad, V4ReserveLiquidityBehavior, DETFFundedStakingArtifacts {
+contract CurveQuadReserveLiquidityTest is TestBase_UniswapV4Detf_CurveQuad, V4ReserveLiquidityBehavior {
     function _deployFallbackInstance() internal override returns (address) { return _deployCurveHookThenDetf(_fallbackArgs(_nLegDetfArgs(3))); }
     function _subject() internal view override returns (IUniswapV4Detf) { return detfInfo; }
     function _buyer() internal view override returns (address) { return detfUser; }

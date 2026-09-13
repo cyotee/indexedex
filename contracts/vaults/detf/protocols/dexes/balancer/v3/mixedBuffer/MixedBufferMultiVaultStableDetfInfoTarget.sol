@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IMixedBufferMultiVaultStableDetfInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfInfo.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {ReentrancyLockRepo} from "@crane/contracts/access/reentrancy/ReentrancyLockRepo.sol";
@@ -10,31 +12,7 @@ import {DETFChildSYRepo} from "contracts/vaults/detf/common/sy/DETFChildSYRepo.s
 import {MixedBufferMultiVaultStableDetfCommon} from "./MixedBufferMultiVaultStableDetfCommon.sol";
 import {MixedBufferMultiVaultStableDetfRepo as Repo} from "./MixedBufferMultiVaultStableDetfRepo.sol";
 
-interface IMixedBufferMultiVaultStableDetfInfo is IDETFFundedRewards, IDETFStandardizedYield, IDETFStakingPreview {
-    function vaultCount() external view returns (uint256);
-    function underlyingVaults() external view returns (address[] memory);
-    function vaultShares() external view returns (address[] memory);
-    function rateProvider(uint256 i) external view returns (address);
-    function bufferToken() external view returns (address);
-    function amplificationParameter() external view returns (uint256);
-    function detfIndex() external view returns (uint256);
-    function bufferIndex() external view returns (uint256);
-    function shareIndex(uint256 i) external view returns (uint256);
-    event ThresholdsSet(uint256 mintThreshold, uint256 burnThreshold);
-    function isReserveLive() external view returns (bool);
-    function reservePool() external view returns (address);
-    function syntheticPrice() external view returns (uint256);
-    function mintThreshold() external view returns (uint256);
-    function burnThreshold() external view returns (uint256);
-    function isMintingAllowed() external view returns (bool);
-    function isBurningAllowed() external view returns (bool);
-    function bondNftVault() external view returns (address);
-    function rebasingClaimToken() external view returns (address);
-    function lastExpansionTimestamp() external view returns (uint256);
-    function epochAnchor() external view returns (uint256);
-    function expansionClosureRatePerSecond() external view returns (uint256);
-    function pendingExpansionDetf() external view returns (uint256);
-}
+
 
 abstract contract MixedBufferMultiVaultStableDetfInfoTarget is MixedBufferMultiVaultStableDetfCommon, IMixedBufferMultiVaultStableDetfInfo {
     function vaultCount() external view returns (uint256) {

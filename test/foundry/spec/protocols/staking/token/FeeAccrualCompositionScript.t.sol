@@ -39,6 +39,24 @@ import {TestBase_FeeAccrualComposition} from "contracts/test/bases/TestBase_FeeA
 
 /// @notice Fee-accrual deployment and migration script integration tests.
 contract FeeAccrualCompositionScript is TestBase_FeeAccrualComposition {
+    function test_composition_reusesBondChildDeployedBeforeParent() public {
+        Composition.Dependencies memory dependencies_ = _dependencies();
+        IUniswapV4Detf.PkgArgs memory args_ = _compositionArgs();
+        args_.name = "Staged DTF-DETF";
+        Composition.Prepared memory prepared_ = Composition.prepare(dependencies_, args_);
+        assertEq(prepared_.detf.code.length, 0);
+        vm.startPrank(owner);
+        address child_ = Composition.deployBondChild(dependencies_, args_, prepared_);
+        assertGt(child_.code.length, 0);
+        assertEq(prepared_.detf.code.length, 0);
+        assertEq(Composition.deployBondChild(dependencies_, args_, prepared_), child_);
+        address parent_ = Composition.execute(dependencies_, args_, prepared_);
+        assertEq(parent_, prepared_.detf);
+        assertEq(IUniswapV4Detf(parent_).bondNftVault(), child_);
+        assertEq(Composition.execute(dependencies_, args_, prepared_), parent_);
+        vm.stopPrank();
+    }
+
     function test_composition_seedThenBootstrapWithCustodyAndProviders() public {
         _bootstrap();
         assertTrue(detfInfo.isReserveLive());

@@ -565,44 +565,6 @@ prepare_package_rehearsal() {
   cast rpc anvil_setBalance "$SENDER" 0xd3c21bcecceda1000000 --rpc-url "$RPC_URL" >/dev/null
 }
 
-build_rehearsal_artifacts() {
-  # FactoryServices load facets from artifacts. Build their implementations before scripts.
-  local source
-  local sources=(
-    contracts/utils/foundry/CraneFactoryArtifactSeed.sol
-    contracts/utils/foundry/UniswapV4DetfFactoryArtifactSeed.sol
-  )
-  while IFS= read -r source; do
-    sources+=("$source")
-  done < <(
-    cd "$REPO_ROOT"
-    rg --files \
-      contracts/hooks/uniswap/v4/libs \
-      contracts/hooks/uniswap/v4/standardExchange/constantProduct/single \
-      contracts/hooks/uniswap/v4/standardExchange/weighted \
-      contracts/hooks/uniswap/v4/standardExchange/orbital \
-      contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve \
-      contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer \
-      contracts/vaults/detf/protocols/dexes/uniswap/v4/detf \
-      contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft \
-      contracts/vaults/detf/common/claimToken \
-      contracts/vaults/detf/common/bondNft \
-      contracts/vaults/detf/common/sy \
-      contracts/vaults/standard/sy \
-      contracts/fee/collector \
-      contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange \
-      contracts/vaults/standard/erc4626 \
-      contracts/vaults/standard/exchange/protocols/morpho/blue \
-      contracts/protocols/dexes/uniswap/v2 \
-      contracts/protocols/dexes/uniswap/v3 \
-      contracts/protocols/dexes/uniswap/v4 \
-      | rg '(Facet|DFPkg|ExecutionDelegate|ClaimLib|ExitQuoteLib|LegLib)\.sol$' \
-      | sort
-  )
-  log_info "Building production artifacts for the package rehearsal"
-  run_forge_cmd forge build "${sources[@]}"
-}
-
 run_package_rehearsal() {
   build_rehearsal_artifacts
   local pp ss
@@ -674,11 +636,16 @@ rh_fee_accrual_check() {
 
 rh_fee_accrual_stage() {
   local pp="$1" ss="$2" signer="$3" mode="$4" script basename record
+  [[ "$(printf '%s' "$DEPLOYER_ADDRESS" | tr '[:upper:]' '[:lower:]')" == "$(printf '%s' "$signer" | tr '[:upper:]' '[:lower:]')" ]] || {
+    echo "DEPLOYER_ADDRESS must match the configured signer for stage $pp-$ss ($signer)" >&2; return 1;
+  }
   script="$(rh_stage_script "$pp" "$ss")"
   basename="$(basename "$script")"
   record="$FOUNDRY_BROADCAST/$basename/4663/run-latest.json"
-  export DEPLOYER_ADDRESS="$signer" SENDER="$signer" OWNER="$signer" PRIVATE_KEY=0
-  local args=(forge script "$script" --rpc-url "$RPC_URL" --sender "$signer" --unlocked --legacy --gas-price 2000000000)
+  export SENDER="$DEPLOYER_ADDRESS" OWNER="$DEPLOYER_ADDRESS" PRIVATE_KEY=0
+  local args=(forge script "$script" --rpc-url "$RPC_URL" --sender "$DEPLOYER_ADDRESS" --unlocked --legacy --gas-price 2000000000)
+  # Use local artifacts for traces; RPC simulation and broadcast remain enabled.
+  args+=(--offline)
   if [[ "$mode" == broadcast ]] && rh_fee_accrual_check stage-complete "$pp-$ss" >/dev/null 2>&1; then
     # Migration chunks intentionally share a stage and must continue from the live balance.
     if [[ "$pp-$ss" == 07-04 ]]; then
@@ -698,7 +665,11 @@ rh_fee_accrual_stage() {
     if [[ "$(cast balance "$signer" --rpc-url "$RPC_URL")" == 0 ]]; then
       cast rpc --rpc-url "$RPC_URL" anvil_setBalance "$signer" 0x8ac7230489e80000 >/dev/null
     fi
-    args+=(--broadcast --slow --gas-estimate-multiplier 150)
+    # Parent DETF deploy estimates ~30.7M after its bond NFT is staged separately.
+    # A 150% multiplier exceeds Robinhood's 32M execution limit despite a valid transaction.
+    local gas_multiplier=150
+    [[ "$pp-$ss" != 08-03 ]] || gas_multiplier=100
+    args+=(--broadcast --slow --gas-estimate-multiplier "$gas_multiplier")
     # A stale run-latest file must never certify a later failed command.
     local before_hash=""
     [[ ! -f "$record" ]] || before_hash="$(shasum -a 256 "$record")"
@@ -714,6 +685,9 @@ rh_fee_accrual_stage() {
 }
 
 rh_run_fee_accrual() {
+  [[ -n "${DEPLOYER_ADDRESS:-}" ]] || {
+    echo "Fee accrual commands require DEPLOYER_ADDRESS" >&2; return 1;
+  }
   [[ -n "${FEE_ACCRUAL_CONFIG:-}" && -f "$FEE_ACCRUAL_CONFIG" ]] || {
     echo "Set FEE_ACCRUAL_CONFIG to the reviewed run JSON" >&2; return 1;
   }
@@ -765,6 +739,16 @@ PACKAGES
   rh_fee_accrual_check ready || return $?
   bootstrap_actor="$(jq -er '.bootstrap.actor' "$FEE_ACCRUAL_CONFIG")"
   if [[ "$COMMAND" == fee-accrual-prepare ]]; then
+    # The parent package's bond-NFT child is deployed in its own transaction.
+    # Preserve the confirmed package manifest when using a separate composition journal.
+    local bond_manifest=phase06_stage01_bond_nft_pkg.json
+    if [[ ! -f "$OUT_DIR_OVERRIDE/$bond_manifest" ]]; then
+      local package_dir="${FEE_ACCRUAL_PACKAGE_DIR:-$(dirname "$OUT_DIR_OVERRIDE")/packages}"
+      [[ -f "$package_dir/$bond_manifest" ]] || {
+        echo "Missing confirmed bond package manifest; set FEE_ACCRUAL_PACKAGE_DIR" >&2; return 1;
+      }
+      cp "$package_dir/$bond_manifest" "$OUT_DIR_OVERRIDE/$bond_manifest"
+    fi
     # Registered package prerequisites use the existing architecture stages. Their verified
     # addresses must be pinned in the run config before creating any composition products.
     rh_fee_accrual_stage 07 01 "$manager_owner" broadcast || return $?
@@ -786,12 +770,13 @@ PACKAGES
     rh_fee_accrual_check begin-migration || return $?
     local remaining
     remaining="$(rh_fee_accrual_check remaining)" || return $?
-    if [[ "$remaining" != 0 ]]; then
-      # The shared stage sizes, quotes and records at most maxChunks native migration calls.
+    while [[ "$remaining" != 0 ]]; do
+      local before_remaining="$remaining"
+      # Each batch uses fresh live state and is reconciled before continuing.
       rh_fee_accrual_stage 08 07 "$staking_owner" broadcast || return $?
       remaining="$(rh_fee_accrual_check remaining)" || return $?
-      [[ "$remaining" == 0 ]] || { echo "Chunk limit reached; migration remains resumable" >&2; return 1; }
-    fi
+      [[ "$remaining" != "$before_remaining" ]] || { echo "Migration made no progress; stopped" >&2; return 1; }
+    done
     rh_fee_accrual_stage 08 08 "$staking_owner" read || return $?
     rh_fee_accrual_check verify || return $?
   fi
@@ -799,38 +784,6 @@ PACKAGES
 }
 
 # Read existing core/common-facet manifests only; verify exact configured identities before use.
-rh_fee_accrual_copy_core() {
-  local seed="${REHEARSAL_CORE_DIR:-$REPO_ROOT/deployments/anvil_robinhood_main}" file key actual expected
-  local files=(phase01_stage01_permit2.json phase01_stage02_weth.json
-    phase01_stage03_uniswap_v4.json phase02_stage01_create3_factory.json
-    phase02_stage02_diamond_package_factory.json phase02_stage03_hook_factory.json
-    phase03_stage01_common_facets.json phase04_stage01_fee_collector_and_manager.json
-    phase05_stage02_uniswap_v4_twap_oracle.json)
-  for file in "${files[@]}"; do
-    [[ -f "$seed/$file" ]] || { echo "Missing existing core manifest: $file" >&2; return 1; }
-    jq -e '.chainId == 4663' "$seed/$file" >/dev/null || return 1
-  done
-  while read -r file key; do
-    actual="$(jq -er --arg key "$key" '.[$key]' "$seed/$file")" || return $?
-    expected="$(jq -er --arg key "$key" '.[$key]' "$FEE_ACCRUAL_CONFIG")" || return $?
-    [[ "$(printf '%s' "$actual" | tr '[:upper:]' '[:lower:]')" == "$(printf '%s' "$expected" | tr '[:upper:]' '[:lower:]')" ]] || {
-      echo "Existing manifest does not match configured $key" >&2; return 1;
-    }
-  done <<'CORE'
-phase02_stage01_create3_factory.json create3Factory
-phase02_stage02_diamond_package_factory.json diamondPackageFactory
-phase02_stage03_hook_factory.json hookFactory
-phase04_stage01_fee_collector_and_manager.json indexedexManager
-phase04_stage01_fee_collector_and_manager.json feeCollector
-CORE
-  for file in "${files[@]}"; do
-    if [[ -f "$OUT_DIR_OVERRIDE/$file" ]]; then
-      cmp -s "$seed/$file" "$OUT_DIR_OVERRIDE/$file" || { echo "Conflicting core manifest: $file" >&2; return 1; }
-    else
-      cp "$seed/$file" "$OUT_DIR_OVERRIDE/$file"
-    fi
-  done
-}
 
 
 ARGS=()

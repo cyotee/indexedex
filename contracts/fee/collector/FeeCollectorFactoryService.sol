@@ -10,7 +10,7 @@ import {IFeeCollectorProxy} from "contracts/interfaces/proxies/IFeeCollectorProx
 import {Vm as FoundryVM} from "forge-std/Vm.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 
-import {IFeeCollectorDFPkg} from "contracts/fee/collector/FeeCollectorDFPkg.sol";
+import {IFeeCollectorDFPkg} from "contracts/fee/collector/IFeeCollectorDFPkg.sol";
 
 // tag::FeeCollectorFactoryService[]
 /**

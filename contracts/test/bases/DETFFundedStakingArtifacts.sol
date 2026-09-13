@@ -43,8 +43,8 @@ import {UniswapV4StandardExchangeWeightedBufferHookDFPkg} from "contracts/hooks/
 import {UniswapV4StandardExchangeOrbitalBufferHookDFPkg} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDFPkg.sol";
 import {UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg.sol";
 
-/// @notice Compile the actual factory-loaded components for focused funded-staking tests.
-/// @dev Declaring runtime artifact dependencies avoids importing unrelated integration suites.
+/// @notice Standalone compile seed for factory-loaded funded-staking components.
+/// @dev Build this source before focused tests; TestBases must not import or inherit it.
 abstract contract DETFFundedStakingArtifacts {}
 
 import {BalancerV3VaultAwareFacet} from "@crane/contracts/protocols/dexes/balancer/v3/vault/BalancerV3VaultAwareFacet.sol";

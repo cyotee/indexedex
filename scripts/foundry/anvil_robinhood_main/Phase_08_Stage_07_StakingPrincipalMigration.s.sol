@@ -13,6 +13,10 @@ contract Phase_08_Stage_07_StakingPrincipalMigration is FeeAccrualStageBase {
         uint256 ttl = vm.parseJsonUint(feeConfig, ".migration.deadlineSeconds");
         uint256 maxChunks = vm.parseJsonUint(feeConfig, ".migration.maxChunks");
         require(maximum > 0 && slippage < 10000 && ttl > 0 && maxChunks > 0, "Migration: invalid limits");
+        // Forge collects every transaction before its RPC simulation. Keep each
+        // invocation short enough to simulate and sign within the configured TTL.
+        // The shell reconciles this batch before requesting the next live quote.
+        if (maxChunks > 4) maxChunks = 4;
         string memory chunks;
         uint256 count;
         while (staking.reserveRemaining() != 0 && count < maxChunks) {
@@ -50,6 +54,7 @@ contract Phase_08_Stage_07_StakingPrincipalMigration is FeeAccrualStageBase {
         vm.serializeUint(obj, "deadline", deadline);
         vm.serializeUint(obj, "claimOut", result.claimOut);
         vm.serializeUint(obj, "sharesOut", result.sharesOut);
+        vm.serializeUint(obj, "principalBefore", result.beforeState.principal);
         vm.serializeUint(obj, "beforeRemaining", result.beforeState.remaining);
         return vm.serializeUint(obj, "afterRemaining", result.afterState.remaining);
     }

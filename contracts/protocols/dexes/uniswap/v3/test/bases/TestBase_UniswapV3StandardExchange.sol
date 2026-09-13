@@ -1,20 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 // Compile each artifact loaded by the canonical fixture FactoryService.
-import {UniswapV3StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeDFPkg.sol";
-import {UniswapV3StandardExchangeInExecutionDelegate} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInExecutionDelegate.sol";
-import {UniswapV3StandardExchangeInFacet} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInFacet.sol";
-import {UniswapV3StandardExchangeInMultiFacet} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInMultiFacet.sol";
-import {UniswapV3StandardExchangeInMultiQueryFacet} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInMultiQueryFacet.sol";
-import {UniswapV3StandardExchangeInQueryFacet} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInQueryFacet.sol";
-import {UniswapV3StandardExchangeLiquidReserveFacet} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeLiquidReserveFacet.sol";
-import {UniswapV3StandardExchangeOutExecutionDelegate} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutExecutionDelegate.sol";
-import {UniswapV3StandardExchangeOutFacet} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutFacet.sol";
-import {UniswapV3StandardExchangeOutMultiFacet} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutMultiFacet.sol";
-import {UniswapV3StandardExchangeOutMultiQueryFacet} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutMultiQueryFacet.sol";
-import {UniswapV3StandardExchangeOutQueryFacet} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutQueryFacet.sol";
-import {UniswapV3StandardExchangePositionImportFacet} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangePositionImportFacet.sol";
-
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
@@ -36,9 +22,7 @@ import {TestBase_VaultComponents} from "contracts/vaults/TestBase_VaultComponent
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
-import {
-    IUniswapV3StandardExchangeDFPkg
-} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeDFPkg.sol";
+import {IUniswapV3StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v3/IUniswapV3StandardExchangeDFPkg.sol";
 import {
     UniswapV3_Component_FactoryService
 } from "contracts/protocols/dexes/uniswap/v3/UniswapV3_Component_FactoryService.sol";
@@ -50,7 +34,7 @@ import {
  * @title TestBase_UniswapV3StandardExchange
  * @notice Gold TestBase: CREATE3 facets + manager-registry DFPkg + hermetic Uni V3 factory/pools.
  */
-contract TestBase_UniswapV3StandardExchange is
+abstract contract TestBase_UniswapV3StandardExchange is
     TestBase_Permit2,
     TestBase_VaultComponents,
     IUniswapV3MintCallback,

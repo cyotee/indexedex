@@ -1,10 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
-import {UniswapV4DualStandardExchangeBufferConstantProductHookWithdrawFacet} from "contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookWithdrawFacet.sol";
-import {UniswapV4DualStandardExchangeBufferConstantProductHookSeFacet} from "contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookSeFacet.sol";
-import {UniswapV4DualStandardExchangeBufferConstantProductHookHooksFacet} from "contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookHooksFacet.sol";
-import {UniswapV4DualStandardExchangeBufferConstantProductHookDepositFacet} from "contracts/hooks/uniswap/v4/standardExchange/dual/facets/UniswapV4DualStandardExchangeBufferConstantProductHookDepositFacet.sol";
 
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -34,7 +30,7 @@ library UniswapV4DualStandardExchangeBufferConstantProductHook_FactoryService {
 
     function deployHooksFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         facet = create3Factory.deployFacet(
-            type(UniswapV4DualStandardExchangeBufferConstantProductHookHooksFacet).creationCode /* unlinked artifact; type().creationCode required */,
+            ArtifactCreationCode.creationCode(create3Factory, "UniswapV4DualStandardExchangeBufferConstantProductHookHooksFacet.sol:UniswapV4DualStandardExchangeBufferConstantProductHookHooksFacet"),
             abi.encode("UniswapV4DualStandardExchangeBufferConstantProductHookHooksFacet")._hash()
         );
         vm.label(address(facet), "UniswapV4DualStandardExchangeBufferConstantProductHookHooksFacet");
@@ -42,7 +38,7 @@ library UniswapV4DualStandardExchangeBufferConstantProductHook_FactoryService {
 
     function deployDepositFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         facet = create3Factory.deployFacet(
-            type(UniswapV4DualStandardExchangeBufferConstantProductHookDepositFacet).creationCode /* unlinked artifact; type().creationCode required */,
+            ArtifactCreationCode.creationCode(create3Factory, "UniswapV4DualStandardExchangeBufferConstantProductHookDepositFacet.sol:UniswapV4DualStandardExchangeBufferConstantProductHookDepositFacet"),
             abi.encode("UniswapV4DualStandardExchangeBufferConstantProductHookDepositFacet")._hash()
         );
         vm.label(address(facet), "UniswapV4DualStandardExchangeBufferConstantProductHookDepositFacet");
@@ -50,7 +46,7 @@ library UniswapV4DualStandardExchangeBufferConstantProductHook_FactoryService {
 
     function deployWithdrawFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         facet = create3Factory.deployFacet(
-            type(UniswapV4DualStandardExchangeBufferConstantProductHookWithdrawFacet).creationCode /* unlinked artifact; type().creationCode required */,
+            ArtifactCreationCode.creationCode(create3Factory, "UniswapV4DualStandardExchangeBufferConstantProductHookWithdrawFacet.sol:UniswapV4DualStandardExchangeBufferConstantProductHookWithdrawFacet"),
             abi.encode("UniswapV4DualStandardExchangeBufferConstantProductHookWithdrawFacet")._hash()
         );
         vm.label(address(facet), "UniswapV4DualStandardExchangeBufferConstantProductHookWithdrawFacet");
@@ -58,7 +54,7 @@ library UniswapV4DualStandardExchangeBufferConstantProductHook_FactoryService {
 
     function deploySeFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         facet = create3Factory.deployFacet(
-            type(UniswapV4DualStandardExchangeBufferConstantProductHookSeFacet).creationCode /* unlinked artifact; type().creationCode required */,
+            ArtifactCreationCode.creationCode(create3Factory, "UniswapV4DualStandardExchangeBufferConstantProductHookSeFacet.sol:UniswapV4DualStandardExchangeBufferConstantProductHookSeFacet"),
             abi.encode("UniswapV4DualStandardExchangeBufferConstantProductHookSeFacet")._hash()
         );
         vm.label(address(facet), "UniswapV4DualStandardExchangeBufferConstantProductHookSeFacet");

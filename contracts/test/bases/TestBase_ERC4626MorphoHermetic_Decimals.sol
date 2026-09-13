@@ -3,7 +3,8 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
-import {IMorpho, MarketParams, Id} from "@crane/contracts/external/morpho/blue/interfaces/IMorpho.sol";
+import {MarketParams, Id} from "@crane/contracts/external/morpho/blue/interfaces/IMorpho.sol";
+import {IMorpho} from "@crane/contracts/external/morpho/blue/interfaces/IMorpho.sol";
 import {Morpho} from "@crane/contracts/external/morpho/blue/Morpho.sol";
 import {OracleMock} from "@crane/contracts/external/morpho/blue/mocks/OracleMock.sol";
 import {ERC20Mock} from "@crane/contracts/external/morpho/blue/mocks/ERC20Mock.sol";

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
-import {IAerodromeStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeDFPkg.sol";
+
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+import {IAerodromeStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/v1/IAerodromeStandardExchangeDFPkg.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                 Balancer V3                                */
@@ -52,42 +54,26 @@ import {IndexedexTest} from "contracts/test/IndexedexTest.sol";
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
-import {
-    IAerodromeStandardExchangeDFPkg
-} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeDFPkg.sol";
+import {IAerodromeStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/v1/IAerodromeStandardExchangeDFPkg.sol";
 import {
     Aerodrome_Component_FactoryService
 } from "contracts/protocols/dexes/aerodrome/v1/Aerodrome_Component_FactoryService.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
-import {
-    IStandardExchangeRateProviderDFPkg,
-    StandardExchangeRateProviderDFPkg
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
-import {
-    StandardExchangeRateProviderFacet
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderFacet.sol";
+import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
 
 /* Buffer Pool specific */
 import {IStandardExchangeBufferPool} from
     "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPool.sol";
-import {
-    IStandardExchangeBufferPoolPkg,
-    StandardExchangeBufferPoolStandardVaultPkg
-} from "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolStandardVaultPkg.sol";
+import {IStandardExchangeBufferPoolPkg} from "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPoolPkg.sol";
+
 import {
     StandardExchangeBufferPool_FactoryService
 } from "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPool_FactoryService.sol";
 import {
     BalancerV3ConstantProductPool_FactoryService
 } from "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPool_FactoryService.sol";
-import {DefaultPoolInfoFacet} from
-    "contracts/protocols/dexes/balancer/v3/pools/constProd/facets/DefaultPoolInfoFacet.sol";
-import {StandardSwapFeePercentageBoundsFacet} from
-    "contracts/protocols/dexes/balancer/v3/pools/constProd/facets/StandardSwapFeePercentageBoundsFacet.sol";
-import {StandardUnbalancedLiquidityInvariantRatioBoundsFacet} from
-    "contracts/protocols/dexes/balancer/v3/pools/constProd/facets/StandardUnbalancedLiquidityInvariantRatioBoundsFacet.sol";
 
 /**
  * @title TestBase_StandardExchangeBufferPool
@@ -271,7 +257,7 @@ abstract contract TestBase_StandardExchangeBufferPool is TestBase_BalancerV3Vaul
         // Deploy the rate provider facet.
         IFacet rateProviderFacet = IFacet(
             create3Factory.deployFacet(
-                type(StandardExchangeRateProviderFacet).creationCode,
+                ArtifactCreationCode.creationCode(create3Factory, "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderFacet.sol:StandardExchangeRateProviderFacet"),
                 keccak256("StandardExchangeRateProviderFacet")
             )
         );
@@ -285,7 +271,7 @@ abstract contract TestBase_StandardExchangeBufferPool is TestBase_BalancerV3Vaul
         seRateProviderPkg = IStandardExchangeRateProviderDFPkg(
             address(
                 create3Factory.deployPackageWithArgs(
-                    type(StandardExchangeRateProviderDFPkg).creationCode,
+                    ArtifactCreationCode.creationCode(create3Factory, "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol:StandardExchangeRateProviderDFPkg"),
                     abi.encode(rpPkgInit),
                     keccak256("StandardExchangeRateProviderDFPkg")
                 )
@@ -486,14 +472,14 @@ abstract contract TestBase_StandardExchangeBufferPool is TestBase_BalancerV3Vaul
         balancerV3AuthenticationFacet = create3Factory.deployBalancerV3AuthenticationFacet();
 
         // Use the same CREATE3 deployment path for these retained protocol facets.
-        defaultPoolInfoFacet = create3Factory.deployFacet(vm.getCode("DefaultPoolInfoFacet.sol:DefaultPoolInfoFacet"), keccak256(abi.encode("DefaultPoolInfoFacet")));
+        defaultPoolInfoFacet = create3Factory.deployFacet(ArtifactCreationCode.creationCode(create3Factory, "contracts/protocols/dexes/balancer/v3/pools/constProd/facets/DefaultPoolInfoFacet.sol:DefaultPoolInfoFacet"), keccak256(abi.encode("DefaultPoolInfoFacet")));
         vm.label(address(defaultPoolInfoFacet), "DefaultPoolInfoFacet");
 
-        standardSwapFeePercentageBoundsFacet = create3Factory.deployFacet(vm.getCode("StandardSwapFeePercentageBoundsFacet.sol:StandardSwapFeePercentageBoundsFacet"), keccak256(abi.encode("StandardSwapFeePercentageBoundsFacet")));
+        standardSwapFeePercentageBoundsFacet = create3Factory.deployFacet(ArtifactCreationCode.creationCode(create3Factory, "contracts/protocols/dexes/balancer/v3/pools/constProd/facets/StandardSwapFeePercentageBoundsFacet.sol:StandardSwapFeePercentageBoundsFacet"), keccak256(abi.encode("StandardSwapFeePercentageBoundsFacet")));
         vm.label(address(standardSwapFeePercentageBoundsFacet), "StandardSwapFeePercentageBoundsFacet");
 
         unbalancedLiquidityInvariantRatioBoundsFacet =
-            create3Factory.deployFacet(vm.getCode("StandardUnbalancedLiquidityInvariantRatioBoundsFacet.sol:StandardUnbalancedLiquidityInvariantRatioBoundsFacet"), keccak256(abi.encode("StandardUnbalancedLiquidityInvariantRatioBoundsFacet")));
+            create3Factory.deployFacet(ArtifactCreationCode.creationCode(create3Factory, "contracts/protocols/dexes/balancer/v3/pools/constProd/facets/StandardUnbalancedLiquidityInvariantRatioBoundsFacet.sol:StandardUnbalancedLiquidityInvariantRatioBoundsFacet"), keccak256(abi.encode("StandardUnbalancedLiquidityInvariantRatioBoundsFacet")));
         vm.label(
             address(unbalancedLiquidityInvariantRatioBoundsFacet), "StandardUnbalancedLiquidityInvariantRatioBoundsFacet"
         );

@@ -69,6 +69,7 @@ contract RebasingAwareStandardExchangeTarget is
         if (!assetIn && !shareIn) {
             revert IStandardExchangeErrors.InvalidRoute(address(tokenIn), address(tokenOut));
         }
+        RebasingAwareERC4626Common.requireReceiver(recipient, shareIn);
         RebasingAwareERC4626Common.requireDeadline(deadline);
         if (assetIn && pretransferred) {
             revert IRebasingAwareERC4626.AssetPretransferNotSupported();
@@ -99,6 +100,7 @@ contract RebasingAwareStandardExchangeTarget is
         if (!assetIn && !shareIn) {
             revert IStandardExchangeErrors.InvalidRoute(address(tokenIn), address(tokenOut));
         }
+        RebasingAwareERC4626Common.requireReceiver(recipient, shareIn);
         RebasingAwareERC4626Common.requireDeadline(deadline);
         if (assetIn && pretransferred) {
             revert IRebasingAwareERC4626.AssetPretransferNotSupported();

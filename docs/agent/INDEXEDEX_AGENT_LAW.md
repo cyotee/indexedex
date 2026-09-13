@@ -293,23 +293,30 @@ forge fmt
 
 ### FactoryService creation bytecode (LOCKED — project law)
 
-IndexedEx FactoryServices load creation bytecode from `out/` via `ArtifactCreationCode.creationCode("File.sol:ContractName")` (`vm.getCode`). They do **not** import Facet/DFPkg implementations solely for `type().creationCode`. That cut is the compile-time win: editing a production implementation no longer invalidates the FactoryService compile unit or the TestBase / script fan-out.
+IndexedEx Foundry deployment helpers load creation bytecode from `out/` via `ArtifactCreationCode.creationCode("File.sol:ContractName")`. The loader reads artifact JSON directly, so the implementation does not need to be in the consumer's current compilation graph for artifact lookup. Use `ArtifactCreationCode.creationCode(create3Factory, "File.sol:ContractName")` when bytecode has external-library link references; this overload recursively deploys and links those libraries through CREATE3 using salts bound to their fully linked bytecode. Helpers must not import Facet/DFPkg implementations solely for bytecode, artifact discovery, or `type().name`. Use interfaces for types and literal artifact names for loading. Genuine inheritance and implementation-specific tests retain their dependencies.
 
 **After any production contract change, run `forge build` then `forge test` (or `forge script`). Do not run `forge test` first and assume Foundry rebuilt the deployed bytecode.**
 
 ```bash
-# After editing facets / DFPkgs / targets / Crane seed targets:
-forge build
-forge test --match-path 'test/foundry/spec/...'
+# Refresh affected artifacts, then test an exact file or suite directory:
+python3 scripts/forge-artifacts.py test contracts/path/EditedTarget.sol \
+  --test-root test/foundry/spec/path/RelevantTest.t.sol -- -vv
+
+# Seed runtime artifacts required by a particular consumer as well:
+python3 scripts/forge-artifacts.py build contracts/path/EditedTarget.sol \
+  --consumer 'test/foundry/spec/path/RelevantTest.t.sol'
 ```
 
-- `forge build` compiles `src = 'contracts'`, including `contracts/utils/foundry/CraneFactoryArtifactSeed.sol` (the compile root for Crane implementations those services deploy).
+- The helper executes `forge build` with explicit source roots. It parses **current** imports to find affected concrete implementations, follows runtime artifact strings and existing artifact link references, and excludes TestBases/tests/scripts as independent build roots. It keeps the active profile, `out/`, and `cache_forge/`. See [ARTIFACT_BUILDS.md](../testing/ARTIFACT_BUILDS.md).
+- The `test` subcommand builds first, then limits compilation roots through `--skip` while keeping configured source/test paths and the cache unchanged. This normally skips Forge 1.5.1's preliminary ABI compilation used by nonempty test filters. Do not change `FOUNDRY_TEST` for iteration: that invalidates the shared cache. Repeat `--test-root` to select several files/directories; pass optional test arguments after `--`. Selecting the existing fork profile remains required for fork tests; no package profiles are introduced.
+- Full `forge build` remains valid. An unrestricted build also includes the test tree; `forge build --skip test --skip script` still includes TestBases located under `src = 'contracts'`. Do not mistake either for a narrowly targeted build.
 - `forge test` does **not** reliably refresh those artifacts when the test graph no longer imports the implementation. Tests then CREATE3-deploy whatever is already in `out/`.
-- A `forge build` is also required when artifacts are missing (empty worktree `out/`, deleted cache, or a command that skips compiling `contracts/`).
-- Missing artifact: `vm.getCode` reverts (no matching artifact). That is expected. Do not deploy empty bytecode.
+- A build is also required when artifacts are missing. After the mandatory warm worktree seed, use `--consumer` to prepare a selected test/script's runtime artifacts; `--all-artifacts` prepares literal runtime artifacts across the project.
+- Missing, empty, malformed, or unresolved artifact bytecode must revert. Do not deploy empty bytecode or add implementation imports merely to repair artifact lookup.
 - Do not delete `CraneFactoryArtifactSeed.sol`. Do not import it from TestBases or FactoryServices.
 - Worktree seed (`cache_forge/` + `out/` from a warm checkout) stays in force; `out/` is load-bearing for FactoryService deploys. Seeded `out/` is **stale** the moment you edit production source: `forge build` again before test.
 - Crane FactoryServices (`AccessFacetFactoryService`, `IntrospectionFacetFactoryService`) still embed `type().creationCode` (out of this bytecode path). IndexedEx FactoryServices do not.
+- Live onchain deployment and address-prediction code cannot use Foundry cheatcodes. `UniswapV4TwapAdapterFactory` and the callback factory's proxy init hash retain `type().creationCode`; their runtime behavior and address derivation must remain consistent.
 
 ## Architecture: 3-Tier Diamond Deployment
 

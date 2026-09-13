@@ -29,6 +29,7 @@ contract RebasingAwareERC4626_LaunchCompatibility is TestBase_RebasingAwareERC46
         vm.startPrank(owner);
         RebasingStage.execute(launchState);
         address first = launchState.rebasingAwareErc4626Pkg;
+        assertTrue(RebasingStage.isCurrent(launchState));
         RebasingStage.execute(launchState);
         vm.stopPrank();
         assertEq(launchState.rebasingAwareErc4626Pkg, first);
@@ -42,6 +43,43 @@ contract RebasingAwareERC4626_LaunchCompatibility is TestBase_RebasingAwareERC46
         assertTrue(address(launchState.rebasingAwareQuoteFacet).code.length > 0);
         IERC4626 launched = IRebasingAwareERC4626DFPkg(first).deployVault(IERC20Metadata(address(asset)));
         assertEq(IStandardizedYield(address(launched)).yieldToken(), address(asset));
+    }
+
+    function test_PKG05_freshnessChecksBuildAndConstructorDependencies() public {
+        IOperable(address(create3Factory)).setOperator(owner, true);
+        launchState.create3Factory = create3Factory;
+        launchState.diamondPackageFactory = diamondPackageFactory;
+        launchState.indexedexManager = indexedexManager;
+        launchState.erc20Facet = erc20Facet;
+        vm.startPrank(owner);
+        RebasingStage.execute(launchState);
+        vm.stopPrank();
+        address correctPackage = launchState.rebasingAwareErc4626Pkg;
+        assertTrue(RebasingStage.isCurrent(launchState));
+        uint256 snap = vm.snapshotState();
+
+        launchState.rebasingAwareSeFacet = erc20Facet;
+        assertFalse(RebasingStage.isCurrent(launchState), "live wrong facet accepted");
+        assertTrue(vm.revertToState(snap));
+        launchState.rebasingAwareErc4626Pkg = address(erc20Facet);
+        assertFalse(RebasingStage.isCurrent(launchState), "live wrong package accepted");
+        assertTrue(vm.revertToState(snap));
+        launchState.erc20Facet = rebasingAwareErc4626Facet;
+        assertFalse(RebasingStage.isCurrent(launchState), "changed constructor dependency accepted");
+        assertTrue(vm.revertToState(snap));
+        launchState.rebasingAwareReleaseId = "old-release";
+        assertFalse(RebasingStage.isCurrent(launchState), "old release accepted");
+        assertTrue(vm.revertToState(snap));
+        launchState.rebasingAwareConstructorFingerprint = bytes32(uint256(1));
+        assertFalse(RebasingStage.isCurrent(launchState), "stale constructor fingerprint accepted");
+        assertTrue(vm.revertToState(snap));
+        launchState.rebasingAwareImplFingerprint = bytes32(uint256(1));
+        assertFalse(RebasingStage.isCurrent(launchState), "stale implementation fingerprint accepted");
+        vm.startPrank(owner);
+        RebasingStage.execute(launchState);
+        vm.stopPrank();
+        assertEq(launchState.rebasingAwareErc4626Pkg, correctPackage);
+        assertTrue(RebasingStage.isCurrent(launchState));
     }
 
     function test_oldTwoAddressManifestIsNotComplete() public view {

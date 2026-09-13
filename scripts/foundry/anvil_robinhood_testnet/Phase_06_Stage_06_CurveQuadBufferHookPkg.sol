@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {FixtureEconomics} from "./FixtureEconomics.sol";
 import {LaunchState} from "./LaunchState.sol";
 
@@ -11,9 +13,7 @@ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.so
 import {
     IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage as IQuadHookPkg
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.sol";
-import {
-    UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg as QuadHookDFPkg
-} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg.sol";
+
 import {
     UniswapV4StandardExchangeCurveQuadStableBufferHook_FactoryService as QuadHookFS
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_FactoryService.sol";
@@ -44,7 +44,7 @@ library Phase_06_Stage_06_CurveQuadBufferHookPkg {
         init_.multiAssetStandardVaultFacet = s.multiAssetStandardVaultFacet;
         init_.multiStepOwnableFacet = s.multiStepOwnableFacet;
         s.curveQuadHookPkg = reg.deployPkg(
-            type(QuadHookDFPkg).creationCode,
+            ArtifactCreationCode.creationCode(s.create3Factory, "UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg.sol:UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg"),
             abi.encode(init_),
             abi.encode(type(IQuadHookPkg).name, FixtureEconomics.SALT_NS)._hash()
         );

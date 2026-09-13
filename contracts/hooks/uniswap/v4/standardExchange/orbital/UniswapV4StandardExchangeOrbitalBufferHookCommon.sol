@@ -1988,6 +1988,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
     function _freeTokenBalance(address token) internal view returns (uint256 free) {
         uint256 bal = IERC20(token).balanceOf(address(this));
         if (_seOf(token) != address(0)) {
+            if (_seOf(token) == token) return 0;
             // Buffered leg: free face balance is never book (SE shares are book).
             return bal;
         }

@@ -21,10 +21,8 @@ import {UniV2Router02} from "@crane/contracts/protocols/dexes/uniswap/v2/stubs/U
 import {MintableERC20Decimals} from "contracts/test/stubs/MintableERC20Decimals.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
-import {
-    IUniswapV2StandardExchangeDFPkg,
-    UniswapV2StandardExchangeDFPkg
-} from "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeDFPkg.sol";
+import {IUniswapV2StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v2/IUniswapV2StandardExchangeDFPkg.sol";
+import {UniswapV2StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeDFPkg.sol";
 import {
     UniswapV2_Component_FactoryService
 } from "contracts/protocols/dexes/uniswap/v2/UniswapV2_Component_FactoryService.sol";

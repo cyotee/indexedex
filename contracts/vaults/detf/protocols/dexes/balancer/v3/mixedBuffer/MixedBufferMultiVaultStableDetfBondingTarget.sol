@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+
+import {IMixedBufferMultiVaultStableDetfBonding} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfBonding.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
@@ -8,21 +10,7 @@ import {MintSplit} from "contracts/vaults/detf/common/core/DETFMintSplit.sol";
 import {MixedBufferMultiVaultStableDetfCommon} from "./MixedBufferMultiVaultStableDetfCommon.sol";
 import {MixedBufferMultiVaultStableDetfRepo as Repo} from "./MixedBufferMultiVaultStableDetfRepo.sol";
 
-interface IMixedBufferMultiVaultStableDetfBonding {
-    function bond(IERC20 tokenIn, uint256 amountIn, uint256 duration, address recipient, bool prepaid, uint256 deadline)
-        external returns (uint256 tokenId, uint256 protocolLpAdded);
-    function bootstrapFirstBond(uint256 buffer, uint256[] calldata amounts, uint256 duration, address recipient, uint256 deadline)
-        external returns (uint256 tokenId, uint256 protocolLpAdded, uint256 purchasedPrincipal);
-    function previewBond(IERC20 tokenIn, uint256 amountIn, uint256 duration)
-        external view returns (uint256 principal, uint256 liquidityDetf, uint256 rewardPot);
-    function previewBootstrapFirstBond(uint256 buffer, uint256[] calldata amounts, uint256 duration)
-        external view returns (uint256 principal, uint256 liquidityDetf, uint256 rewardPot);
-    function acceptedBondTokens() external view returns (address[] memory);
-    function joinDonatedCapital(IERC20 token, uint256 amount, uint256 deadline) external returns (uint256);
-    function previewJoinDonatedCapital(IERC20 token, uint256 amount) external view returns (uint256);
-    function notifyReserveDonated() external;
-    function donate(IERC20 token, uint256 amount, bool prepaid) external;
-}
+
 
 /// @notice Bond principal is funded in staking escrow; every acquired reserve LP belongs to the DETF.
 abstract contract MixedBufferMultiVaultStableDetfBondingTarget is MixedBufferMultiVaultStableDetfCommon, IMixedBufferMultiVaultStableDetfBonding {

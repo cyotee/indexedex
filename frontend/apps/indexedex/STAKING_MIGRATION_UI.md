@@ -1,17 +1,22 @@
-> Landing overlay update (2026-09-12): the original temporary $DTF staking form is restored for the pre-migration release. IndexedEx shows it directly; DTF shows the domain announcement first. The form reads the legacy contract phase and supports RainbowKit connection, approval, staking, rewards and withdrawal while phase 0 is active. Once wrapped, it links to the migration-claim UI described below. The landing no longer says “Migration complete” unconditionally.
-
 # Migrated staking UI
 
-`/staking` includes the original DTF staking position above the general DTF-DETF
-workspace. The local 4663 platform and tokenlists now reference the verified
-DTF-DETF deployment from block 60445063. The migration adapter is not a DETF entry.
-This export represents the existing local rehearsal, not a public deployment.
+Both apps share `apps/indexedex/app`. The staking overlay is removed from both
+landing pages. DTF retains the domain announcement; dismissing it reveals the
+normal landing page. IndexedEx opens directly on its landing page.
+
+`/staking` discovers DTF-DETF from the existing staking contract's migration
+adapter on the selected provider. It verifies the adapter belongs to that staking
+contract and uses its actual DETF address for prices, bonds and claims. It does
+not use the old `platform.protocolDetf` catalog address or a URL-supplied DETF.
+This works with both a local fork and public mainnet despite their shared chain ID.
+An unset migration target displays an unconfigured state, and failed discovery
+removes actionable controls until the provider can be read again.
 
 ## User actions
 
 1. Connect an installed wallet through RainbowKit. The page discovers the original
    staking contract's phase, target and claim vault through that wallet's provider.
-2. In Wrapped phase, the page checks `targetDetf().detfToken()` against the catalog
+2. In Wrapped phase, the page checks `targetDetf().detfToken()` against the discovered
    DETF, the claim vault's asset against the DETF's staking SY, and that SY's yield
    token against the actual sDETF. Missing or incompatible contracts disable claims.
 3. Claim part or all of the original stake with native `withdrawClaim(stakeAmount)`.
@@ -53,18 +58,20 @@ real historical holder only inside that disposable fork.
 Example, with the persistent rehearsal still at the verified block:
 
 ```sh
-anvil --fork-url http://127.0.0.1:8545 --fork-block-number 60445063 --chain-id 4663 --port 18545 --host 127.0.0.1
+anvil --fork-url http://127.0.0.1:8545 --fork-block-number 62009895 --chain-id 4663 --port 18545 --host 127.0.0.1
 ```
 
 From `frontend/apps/indexedex`, in a separate shell:
 
 ```sh
 E2E_SKIP_WEBSERVER=1 \
+E2E_BASE_URL=http://127.0.0.1:3002 \
+E2E_RPC_URL=http://127.0.0.1:18545 \
 E2E_MIGRATION_RPC_URL=http://127.0.0.1:18545 \
 E2E_MIGRATION_HOLDER=0x47b5337eacaa1756a47198978418b95a87bcd902 \
-npx playwright test e2e/staking-migration-live.spec.ts e2e/rainbowkit.spec.ts e2e/connected-wallet.spec.ts
+npx playwright test e2e/staking-migration-live.spec.ts e2e/staking-bond-live.spec.ts --workers=1
 
-npx vitest run app/lib/tokenStaking app/lib/walletFirstTransport.test.ts
+npx vitest run app/lib/tokenStaking app/lib/walletFirstTransport.test.ts app/lib/detf/bondRoute.test.ts app/lib/tx/parseContractError.test.ts
 npm run typecheck
 ```
 
@@ -79,6 +86,35 @@ wallet or signing key. Real extension popup behavior remains a manual wallet che
 
 Verified 2026-09-11: typecheck passed; 24 focused unit tests and all 17 browser tests passed.
 
+
+## September 13 update
+
+The old overlay and catalog address were still present after the latest contract
+rehearsal. Earlier UI verification did not establish compatibility with that new
+deployment. This update removes the staking overlay and discovers the actual
+product from the staking adapter through the selected wallet provider.
+
+Transaction deadlines now use the latest block timestamp from that provider,
+so advancing the rehearsal clock does not expire new staking transactions.
+The intentionally small bootstrap liquidity also limits bond purchase size:
+`MaxInRatio()` now explains that the amount must be reduced. The live bond test
+uses 0.00001 WETH and verifies payment, NFT ownership and funded escrow balances.
+
+Verification uses both existing development servers (IndexedEx 3002, DTF 3003)
+and a disposable fork on 18545 of the completed migration at block 62009895.
+The extended claim test redeems after advancing time 90 days, then unstakes and
+restakes the real product and checks exact token balance changes. The browser's
+clock is not overridden. Both synthetic prices are compared independently to
+onchain quotes, and the DTF announcement is checked on desktop and mobile.
+
+Verified September 13: both app typechecks passed; 45 focused unit tests passed;
+12 DTF announcement checks passed on desktop/mobile. Both apps passed the live
+migration claim/redemption/stake/unstake flow and bond purchase. Additional
+browser checks passed for both prices, disconnected/empty wallets, provider
+failure, account changes and wrong networks. The original Anvil metadata,
+including its instance ID, block/hash and snapshots, remained unchanged.
+These are local development-server checks; this update has not been published
+or verified in a Vercel production build.
 
 ## Synthetic prices
 

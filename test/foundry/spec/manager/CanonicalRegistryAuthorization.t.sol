@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {IndexedexTest} from "contracts/test/IndexedexTest.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
@@ -8,7 +10,6 @@ import {IOperable} from "@crane/contracts/interfaces/IOperable.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IFacetRegistry} from "@crane/contracts/registries/facet/IFacetRegistry.sol";
 import {ICREATE3DFPkg} from "@crane/contracts/factories/create3/Create3FactoryDFPkg.sol";
-import {ERC165Facet} from "@crane/contracts/introspection/ERC165/ERC165Facet.sol";
 
 /// @notice The actual IndexedEx deployment core must protect every canonical-registry write.
 contract CanonicalRegistryAuthorizationTest is IndexedexTest {
@@ -18,7 +19,7 @@ contract CanonicalRegistryAuthorizationTest is IndexedexTest {
     function setUp() public override {
         super.setUp();
         outsider = makeAddr("canonical-registry-outsider");
-        facetCode = type(ERC165Facet).creationCode;
+        facetCode = ArtifactCreationCode.creationCode(create3Factory, "lib/crane/contracts/introspection/ERC165/ERC165Facet.sol:ERC165Facet");
     }
 
     function test_canonicalFacetOverride_rejectsUnauthorizedCallerAtomically() public {

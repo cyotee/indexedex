@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
-import {UniswapV4BalancerQuadStableSwapHookLiquidityFacet} from "contracts/hooks/uniswap/v4/stable/quad/balancer/facets/UniswapV4BalancerQuadStableSwapHookLiquidityFacet.sol";
-import {UniswapV4BalancerQuadStableSwapHookHooksFacet} from "contracts/hooks/uniswap/v4/stable/quad/balancer/facets/UniswapV4BalancerQuadStableSwapHookHooksFacet.sol";
 
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -33,7 +31,7 @@ library UniswapV4BalancerQuadStableSwapHook_FactoryService {
 
     function deployHooksFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         facet = create3Factory.deployFacet(
-            type(UniswapV4BalancerQuadStableSwapHookHooksFacet).creationCode /* unlinked artifact; type().creationCode required */,
+            ArtifactCreationCode.creationCode(create3Factory, "UniswapV4BalancerQuadStableSwapHookHooksFacet.sol:UniswapV4BalancerQuadStableSwapHookHooksFacet"),
             abi.encode("UniswapV4BalancerQuadStableSwapHookHooksFacet")._hash()
         );
         vm.label(address(facet), "UniswapV4BalancerQuadStableSwapHookHooksFacet");
@@ -41,7 +39,7 @@ library UniswapV4BalancerQuadStableSwapHook_FactoryService {
 
     function deployLiquidityFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         facet = create3Factory.deployFacet(
-            type(UniswapV4BalancerQuadStableSwapHookLiquidityFacet).creationCode /* unlinked artifact; type().creationCode required */,
+            ArtifactCreationCode.creationCode(create3Factory, "UniswapV4BalancerQuadStableSwapHookLiquidityFacet.sol:UniswapV4BalancerQuadStableSwapHookLiquidityFacet"),
             abi.encode("UniswapV4BalancerQuadStableSwapHookLiquidityFacet")._hash()
         );
         vm.label(address(facet), "UniswapV4BalancerQuadStableSwapHookLiquidityFacet");

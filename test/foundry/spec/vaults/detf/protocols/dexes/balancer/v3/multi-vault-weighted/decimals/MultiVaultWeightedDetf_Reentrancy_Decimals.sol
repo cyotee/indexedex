@@ -7,9 +7,7 @@ import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExch
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {MockERC20} from "@crane/contracts/test/mocks/MockERC20.sol";
 import {TestBase_MultiVaultWeightedDetf_Decimals} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf_Decimals.sol";
-import {
-    IMultiVaultWeightedDetfDFPkg
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfDFPkg.sol";
+import {IMultiVaultWeightedDetfDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfDFPkg.sol";
 import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 
 /// @dev Hostile share: transferFrom re-enters DETF, then ALWAYS completes transfer so probe state persists.

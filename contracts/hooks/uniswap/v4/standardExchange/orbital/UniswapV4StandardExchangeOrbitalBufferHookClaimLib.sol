@@ -142,6 +142,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
         returns (uint256)
     {
         if (sharesOut == 0 || se == address(0)) return 0;
+        if (se == token) return sharesOut;
         return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), sharesOut, IERC20(token));
     }
 

@@ -316,6 +316,7 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
 
     function _pendingExpansionDetf() internal view returns (uint256) {
         Repo.Storage storage s = Repo._layoutStruct();
+        if (!_hasCompletedExpansionEpoch(s)) return 0;
         DETFEpochNaturalExpansionLib.AccrualInput memory in_;
         in_.isLive = s.isReserveLive;
         in_.spotSyntheticPrice = _highestSyntheticPrice();
@@ -350,7 +351,7 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
 
     function _realizeExpansionIfNeeded() internal returns (uint256 mintAmount_) {
         Repo.Storage storage s = Repo._layoutStruct();
-        if (!s.isReserveLive) return 0;
+        if (!_hasCompletedExpansionEpoch(s)) return 0;
         DETFEpochNaturalExpansionLib.AccrualInput memory in_;
         in_.isLive = true;
         in_.spotSyntheticPrice = _highestSyntheticPrice();
@@ -368,6 +369,13 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
             _fundStakingRewards(mintAmount_);
             emit IUniswapV4Detf.NaturalSupplyExpanded(mintAmount_, in_.spotSyntheticPrice, newTs_);
         }
+    }
+
+    /// @dev Incomplete or already-consumed epochs cannot mint. Avoid expensive nested
+    /// reserve liquidation quotes on repeated staking and bond-claim synchronization.
+    function _hasCompletedExpansionEpoch(Repo.Storage storage s) private view returns (bool) {
+        return s.isReserveLive && block.timestamp > s.lastExpansionTimestamp
+            && block.timestamp - s.lastExpansionTimestamp >= DETFEpochNaturalExpansionLib.EPOCH;
     }
 
     /// @dev Expansion and issuance seigniorage are separate actual DETF funding transfers.
@@ -621,7 +629,7 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
     /// division, so the deposit quantum exceeds the value of one redeemed share.
     function _parkUnmintablePairDust(address pair_, uint256 amount_) private returns (bool) {
         address se_ = IUniswapV4SeBufferHook(Repo._layoutStruct().hook).standardExchangeOf(pair_);
-        if (se_ == address(0)) return false;
+        if (se_ == address(0) || se_ == pair_) return false;
         try IStandardExchangeIn(se_).previewExchangeIn(IERC20(pair_), amount_, IERC20(se_)) returns (uint256 shares_) {
             if (shares_ != 0) return false;
         } catch {
@@ -645,7 +653,7 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
     function _wrapAndParkPair(address pair_) internal {
         Repo.Storage storage s = Repo._layoutStruct();
         address se_ = IUniswapV4SeBufferHook(s.hook).standardExchangeOf(pair_);
-        if (se_ == address(0)) return;
+        if (se_ == address(0) || se_ == pair_) return;
         uint256 amt_ = IERC20(pair_).balanceOf(address(this));
         if (amt_ > 10) amt_ -= 10;
         for (uint256 i; i < 16 && amt_ > 0; ++i) {
@@ -667,6 +675,7 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
 
     function _entrySweepPairToShare(address se_, address pair_, uint256 amount_) internal returns (uint256 shares_) {
         if (msg.sender != address(this)) revert Repo.NotAuthorized(msg.sender);
+        if (se_ == pair_) return 0;
         IERC20(pair_).forceApprove(se_, amount_);
         shares_ = IStandardExchangeIn(se_)
             .exchangeIn(IERC20(pair_), amount_, IERC20(se_), 0, address(this), false, block.timestamp + 1);

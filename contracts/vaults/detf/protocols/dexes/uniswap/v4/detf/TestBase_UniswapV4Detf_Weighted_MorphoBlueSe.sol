@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
-import {PoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol";
 import {MarketParams} from "@crane/contracts/external/morpho/blue/interfaces/IMorpho.sol";
 
 import {TestBase_ERC4626StandardExchange} from "contracts/test/bases/TestBase_ERC4626StandardExchange.sol";
@@ -33,7 +34,11 @@ abstract contract TestBase_UniswapV4Detf_Weighted_MorphoBlueSe is TestBase_Unisw
         pairToken = new SimpleMintableERC20("Etch", "ETCH");
         pairA = address(new SimpleMintableERC20("Pair0", "P0"));
         pairB = address(new SimpleMintableERC20("Pair1", "P1"));
-        pm = IPoolManager(address(new PoolManager(address(this))));
+        pm = IPoolManager(address(IPoolManager(create3Factory.create3WithArgs(
+            ArtifactCreationCode.creationCode(create3Factory, "PoolManager.sol:PoolManager"),
+            abi.encode(address(this)),
+            keccak256("TestBase_UniswapV4Detf_Weighted_MorphoBlueSe_PoolManager")
+        ))));
 
         morphoStack = SeLib.deployMorphoStack(_craneCtx());
         (se0, morphoMarket0) = SeLib.createMarketAndDeployVault(morphoStack, pairA, owner);

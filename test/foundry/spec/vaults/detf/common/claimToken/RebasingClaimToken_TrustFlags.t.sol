@@ -7,11 +7,10 @@ import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
 import {StakedDETFTarget} from "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {TestBase_UniswapV4Detf} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
-import {DETFFundedStakingArtifacts} from "contracts/test/bases/DETFFundedStakingArtifacts.sol";
 
 /// @notice Catalog I1/I2/I3 using real paid bonds and the funded staking proxy.
 /// @dev Covers both standard exact-input and exact-output routes in both directions.
-contract RebasingClaimToken_TrustFlags_Test is TestBase_UniswapV4Detf, DETFFundedStakingArtifacts {
+contract RebasingClaimToken_TrustFlags_Test is TestBase_UniswapV4Detf {
     IStakedDETF private staking_;
     uint256 private liquid_;
 

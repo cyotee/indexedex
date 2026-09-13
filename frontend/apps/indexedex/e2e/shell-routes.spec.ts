@@ -21,13 +21,9 @@ test.describe('App routes & redirects (DTF)', () => {
     )
   })
 
-  test('landing shows the temporary staking overlay', async ({ walletPage }) => {
+  test('landing is usable without the temporary staking overlay', async ({ walletPage }) => {
     await walletPage.goto('/')
     const overlay = walletPage.getByTestId('token-staking-overlay')
-    await expect(overlay).toBeVisible()
-    await expect(overlay.getByRole('heading', { name: 'Stake $DTF' })).toBeVisible()
-    await expect(overlay.getByText('Stake $DTF while we prepare the protocol DETF.', { exact: false })).toBeVisible()
-    await overlay.getByRole('button', { name: 'Close staking overlay' }).click()
     await expect(overlay).toHaveCount(0)
     await walletPage.getByRole('link', { name: 'Join a live DETF' }).click()
     await expect(walletPage).toHaveURL(/\/explore$/)

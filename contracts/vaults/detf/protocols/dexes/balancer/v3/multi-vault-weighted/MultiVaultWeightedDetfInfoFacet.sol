@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
-import {MultiVaultWeightedDetfInfoTarget, IMultiVaultWeightedDetfInfo} from "./MultiVaultWeightedDetfInfoTarget.sol";
-import {IMultiVaultWeightedDetfBonding} from "./MultiVaultWeightedDetfBondingTarget.sol";
+import {MultiVaultWeightedDetfInfoTarget} from "./MultiVaultWeightedDetfInfoTarget.sol";
+import {IMultiVaultWeightedDetfInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfInfo.sol";
+import {IMultiVaultWeightedDetfBonding} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfBonding.sol";
 import {IDETFFundedRewards} from "contracts/interfaces/IStakedDETF.sol";
 import {IDETFStandardizedYield, IDETFStakingPreview} from "contracts/interfaces/IDETFStandardizedYield.sol";
 

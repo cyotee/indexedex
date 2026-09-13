@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {Script} from "forge-std/Script.sol";
 import {console2} from "forge-std/console2.sol";
 
@@ -16,27 +18,12 @@ import {ISuperChainBridgeTokenRegistry} from "@crane/contracts/interfaces/ISuper
 import {ITokenTransferRelayer} from "@crane/contracts/interfaces/ITokenTransferRelayer.sol";
 import {BASE_SEPOLIA} from "@crane/contracts/constants/networks/BASE_SEPOLIA.sol";
 import {ETHEREUM_SEPOLIA} from "@crane/contracts/constants/networks/ETHEREUM_SEPOLIA.sol";
-import {
-    ApprovedMessageSenderRegistryFacet
-} from "@crane/contracts/protocols/l2s/superchain/registries/message/sender/ApprovedMessageSenderRegistryFacet.sol";
-import {
-    IApprovedMessageSenderRegistryDFPkg,
-    ApprovedMessageSenderRegistryDFPkg
-} from "@crane/contracts/protocols/l2s/superchain/registries/message/sender/ApprovedMessageSenderRegistryDFPkg.sol";
-import {
-    SuperChainBridgeTokenRegistryFacet
-} from "@crane/contracts/protocols/l2s/superchain/registries/token/bridge/SuperChainBridgeTokenRegistryFacet.sol";
-import {
-    ISuperChainBridgeTokenRegistryDFPkg,
-    SuperChainBridgeTokenRegistryDFPkg
-} from "@crane/contracts/protocols/l2s/superchain/registries/token/bridge/SuperChainBridgeTokenRegistryDFPkg.sol";
-import {
-    TokenTransferRelayerFacet
-} from "@crane/contracts/protocols/l2s/superchain/relayers/token/TokenTransferRelayerFacet.sol";
-import {
-    ITokenTransferRelayerDFPkg,
-    TokenTransferRelayerDFPkg
-} from "@crane/contracts/protocols/l2s/superchain/relayers/token/TokenTransferRelayerDFPkg.sol";
+
+import {IApprovedMessageSenderRegistryDFPkg} from "@crane/contracts/protocols/l2s/superchain/registries/message/sender/ApprovedMessageSenderRegistryDFPkg.sol";
+
+import {ISuperChainBridgeTokenRegistryDFPkg} from "@crane/contracts/protocols/l2s/superchain/registries/token/bridge/SuperChainBridgeTokenRegistryDFPkg.sol";
+
+import {ITokenTransferRelayerDFPkg} from "@crane/contracts/protocols/l2s/superchain/relayers/token/TokenTransferRelayerDFPkg.sol";
 
 import {SuperSimManifestLib} from "./SuperSimManifestLib.sol";
 
@@ -106,7 +93,7 @@ contract Script_24_DeploySuperchainBridgeInfra is Script {
 
     function _deployApprovedRegistry() internal returns (IApprovedMessageSenderRegistry registry) {
         IFacet registryFacet = _deployFacet(
-            type(ApprovedMessageSenderRegistryFacet).creationCode, type(ApprovedMessageSenderRegistryFacet).name
+            ArtifactCreationCode.creationCode(create3Factory, "ApprovedMessageSenderRegistryFacet.sol:ApprovedMessageSenderRegistryFacet"), "ApprovedMessageSenderRegistryFacet"
         );
         IFacet ownableFacet = IFacetRegistry(address(create3Factory)).canonicalFacet(type(IMultiStepOwnable).interfaceId);
         IFacet operableFacet = IFacetRegistry(address(create3Factory)).canonicalFacet(type(IOperable).interfaceId);
@@ -119,9 +106,9 @@ contract Script_24_DeploySuperchainBridgeInfra is Script {
 
         IApprovedMessageSenderRegistryDFPkg dfpkg = IApprovedMessageSenderRegistryDFPkg(
             _deployWithArgs(
-                type(ApprovedMessageSenderRegistryDFPkg).creationCode,
+                ArtifactCreationCode.creationCode(create3Factory, "ApprovedMessageSenderRegistryDFPkg.sol:ApprovedMessageSenderRegistryDFPkg"),
                 abi.encode(pkgInitArgs),
-                keccak256(abi.encode(type(ApprovedMessageSenderRegistryDFPkg).name, pkgInitArgs))
+                keccak256(abi.encode("ApprovedMessageSenderRegistryDFPkg", pkgInitArgs))
             )
         );
 
@@ -137,7 +124,7 @@ contract Script_24_DeploySuperchainBridgeInfra is Script {
         IFacet operableFacet = IFacetRegistry(address(create3Factory)).canonicalFacet(type(IOperable).interfaceId);
 
         IFacet registryFacet = _deployFacet(
-            type(SuperChainBridgeTokenRegistryFacet).creationCode, type(SuperChainBridgeTokenRegistryFacet).name
+            ArtifactCreationCode.creationCode(create3Factory, "SuperChainBridgeTokenRegistryFacet.sol:SuperChainBridgeTokenRegistryFacet"), "SuperChainBridgeTokenRegistryFacet"
         );
 
         ISuperChainBridgeTokenRegistryDFPkg.PkgInit memory pkgInitArgs = ISuperChainBridgeTokenRegistryDFPkg.PkgInit({
@@ -148,9 +135,9 @@ contract Script_24_DeploySuperchainBridgeInfra is Script {
 
         ISuperChainBridgeTokenRegistryDFPkg dfpkg = ISuperChainBridgeTokenRegistryDFPkg(
             _deployWithArgs(
-                type(SuperChainBridgeTokenRegistryDFPkg).creationCode,
+                ArtifactCreationCode.creationCode(create3Factory, "SuperChainBridgeTokenRegistryDFPkg.sol:SuperChainBridgeTokenRegistryDFPkg"),
                 abi.encode(pkgInitArgs),
-                keccak256(abi.encode(type(SuperChainBridgeTokenRegistryDFPkg).name, pkgInitArgs))
+                keccak256(abi.encode("SuperChainBridgeTokenRegistryDFPkg", pkgInitArgs))
             )
         );
 
@@ -163,7 +150,7 @@ contract Script_24_DeploySuperchainBridgeInfra is Script {
 
     function _deployRelayer(IApprovedMessageSenderRegistry registry) internal returns (ITokenTransferRelayer relayer) {
         IFacet ownableFacet = IFacetRegistry(address(create3Factory)).canonicalFacet(type(IMultiStepOwnable).interfaceId);
-        IFacet relayerFacet = _deployFacet(type(TokenTransferRelayerFacet).creationCode, type(TokenTransferRelayerFacet).name);
+        IFacet relayerFacet = _deployFacet(ArtifactCreationCode.creationCode(create3Factory, "TokenTransferRelayerFacet.sol:TokenTransferRelayerFacet"), "TokenTransferRelayerFacet");
 
         ITokenTransferRelayerDFPkg.PkgInit memory pkgInitArgs = ITokenTransferRelayerDFPkg.PkgInit({
             ownableFacet: ownableFacet,
@@ -173,9 +160,9 @@ contract Script_24_DeploySuperchainBridgeInfra is Script {
 
         ITokenTransferRelayerDFPkg dfpkg = ITokenTransferRelayerDFPkg(
             _deployWithArgs(
-                type(TokenTransferRelayerDFPkg).creationCode,
+                ArtifactCreationCode.creationCode(create3Factory, "TokenTransferRelayerDFPkg.sol:TokenTransferRelayerDFPkg"),
                 abi.encode(pkgInitArgs),
-                keccak256(abi.encode(type(TokenTransferRelayerDFPkg).name, pkgInitArgs))
+                keccak256(abi.encode("TokenTransferRelayerDFPkg", pkgInitArgs))
             )
         );
 

@@ -15,8 +15,7 @@ import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchang
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
-import {IAaveCrossVersionLoopDFPkg, AaveCrossVersionLoopDFPkg} from
-    "contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoopDFPkg.sol";
+import {IAaveCrossVersionLoopDFPkg} from "contracts/protocols/lending/aave/cross-version/IAaveCrossVersionLoopDFPkg.sol";
 import {AaveCrossVersionLoop_Component_FactoryService} from
     "contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoop_Component_FactoryService.sol";
 import {AaveV36Service} from "contracts/protocols/lending/aave/cross-version/AaveV36Service.sol";
@@ -47,7 +46,7 @@ abstract contract AaveCrossVersionLoopE2E_Decimals is TestBase_AaveCrossVersionL
         IFacet rebalFacet = create3Factory.deployRebalanceFacet();
         IFacet markerFacet = create3Factory.deployMarkerFacet();
 
-        AaveCrossVersionLoopDFPkg.PkgInit memory pkgInit = IAaveCrossVersionLoopDFPkg.PkgInit({
+        IAaveCrossVersionLoopDFPkg.PkgInit memory pkgInit = IAaveCrossVersionLoopDFPkg.PkgInit({
             erc20Facet: erc20Facet,
             erc5267Facet: erc5267Facet,
             erc2612Facet: erc2612Facet,
@@ -69,7 +68,7 @@ abstract contract AaveCrossVersionLoopE2E_Decimals is TestBase_AaveCrossVersionL
         });
 
         vm.prank(owner);
-        AaveCrossVersionLoopDFPkg dfpkg = indexedexManager.deployCrossVersionLoopDFPkg(pkgInit);
+        IAaveCrossVersionLoopDFPkg dfpkg = indexedexManager.deployCrossVersionLoopDFPkg(pkgInit);
 
         vm.prank(owner);
         vault = dfpkg.deployVault(tokenA, tokenB);

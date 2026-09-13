@@ -6,11 +6,10 @@ import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
 import {IStakedDETF, IDETFFundedRewards} from "contracts/interfaces/IStakedDETF.sol";
 import {DETFFundedStakingMath as Math} from "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol";
 import {TestBase_UniswapV4Detf} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
-import {DETFFundedStakingArtifacts} from "contracts/test/bases/DETFFundedStakingArtifacts.sol";
 
 /// @notice Funded accounting sequences against the actual DETF, staking and NFT proxies.
 /// @dev Actors obtain DETF only through paid bonds. No direct storage writes or mocked issuance.
-contract FundedStakingSequenceTest is TestBase_UniswapV4Detf, DETFFundedStakingArtifacts {
+contract FundedStakingSequenceTest is TestBase_UniswapV4Detf {
     IStakedDETF private staking_;
     IDetfBondNFT private bonds_;
     address[3] private actors_;

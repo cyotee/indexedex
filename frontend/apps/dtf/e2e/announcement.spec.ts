@@ -25,23 +25,20 @@ test('landing reassures users, stays on DTF and keeps the background inert', asy
 })
 
 for (const method of ['close', 'continue', 'escape']) {
-  test(`${method} advances from the domain announcement to staking`, async ({ page }) => {
+  test(`${method} closes the domain announcement to reveal the landing page`, async ({ page }) => {
     await page.goto('/')
     await expect(notice(page)).toBeVisible()
     if (method === 'escape') await page.keyboard.press('Escape')
     else await page.getByRole('button', { name: method === 'close' ? 'Close domain announcement' : 'Continue using DTF' }).click()
     await expect(notice(page)).toHaveCount(0)
-    await expect(page.getByRole('dialog', { name: 'Stake $DTF' })).toBeVisible()
-    expect(await page.evaluate(() => document.body.style.overflow)).toBe('hidden')
-    await page.getByRole('button', { name: 'Close staking overlay' }).click()
+    await expect(page.getByTestId('token-staking-overlay')).toHaveCount(0)
     expect(await page.evaluate(() => document.body.style.overflow)).not.toBe('hidden')
     await expect(page).toHaveURL(`${baseURL}/`)
     await page.reload()
     await expect(notice(page)).toBeVisible()
     await expect(page.getByTestId('token-staking-overlay')).toHaveCount(0)
     await page.getByRole('button', { name: 'Close domain announcement' }).click()
-    await expect(page.getByRole('dialog', { name: 'Stake $DTF' })).toBeVisible()
-    await page.getByRole('button', { name: 'Close staking overlay' }).click()
+    await expect(page.getByTestId('token-staking-overlay')).toHaveCount(0)
     await page.getByRole('link', { name: 'Join a live DETF' }).click()
     await expect(page).toHaveURL(`${baseURL}/explore`)
     await page.getByRole('banner').getByRole('link', { name: /IndexedEx/ }).click()
@@ -50,7 +47,7 @@ for (const method of ['close', 'continue', 'escape']) {
     const response = await page.goto('/staking')
     expect(response?.status()).toBe(200)
     await expect(notice(page)).toHaveCount(0)
-    await expect(page.locator('body')).toContainText('Protocol DETF')
+    await expect(page.locator('body')).toContainText('DTF-DETF staking')
   })
 }
 
@@ -79,7 +76,6 @@ test('an old saved dismissal cannot skip the domain announcement', async ({ page
   await expect(notice(page)).toBeVisible()
   await page.getByRole('button', { name: 'Continue using DTF' }).click()
   await expect(notice(page)).toHaveCount(0)
-  await expect(page.getByRole('dialog', { name: 'Stake $DTF' })).toBeVisible()
-  await page.getByRole('button', { name: 'Close staking overlay' }).click()
+  await expect(page.getByTestId('token-staking-overlay')).toHaveCount(0)
   await expect(page.getByRole('link', { name: 'Join a live DETF' })).toBeVisible()
 })

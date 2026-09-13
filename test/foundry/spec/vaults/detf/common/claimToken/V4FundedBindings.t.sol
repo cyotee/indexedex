@@ -16,7 +16,6 @@ import {IUniswapV4Detf} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/d
 import {TestBase_UniswapV4Detf_Weighted} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted.sol";
 import {TestBase_UniswapV4Detf_Orbital} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital.sol";
 import {TestBase_UniswapV4Detf_CurveQuad} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_CurveQuad.sol";
-import {DETFFundedStakingArtifacts} from "contracts/test/bases/DETFFundedStakingArtifacts.sol";
 
 /// @dev Integration assertions shared without inheriting another executable suite.
 abstract contract V4FundedBindingBehavior is Test {
@@ -169,7 +168,7 @@ abstract contract V4FundedBindingBehavior is Test {
     }
 }
 
-contract WeightedFundedBindingTest is TestBase_UniswapV4Detf_Weighted, V4FundedBindingBehavior, DETFFundedStakingArtifacts {
+contract WeightedFundedBindingTest is TestBase_UniswapV4Detf_Weighted, V4FundedBindingBehavior {
     function _hookPackage() internal view override returns (address) { return address(weightedHookPkg); }
     function _subject() internal view override returns (IUniswapV4Detf) { return detfInfo; }
     function _buyer() internal view override returns (address) { return detfUser; }
@@ -177,7 +176,7 @@ contract WeightedFundedBindingTest is TestBase_UniswapV4Detf_Weighted, V4FundedB
     function _leadPayment() internal view override returns (address) { return address(pairToken); }
 }
 
-contract OrbitalFundedBindingTest is TestBase_UniswapV4Detf_Orbital, V4FundedBindingBehavior, DETFFundedStakingArtifacts {
+contract OrbitalFundedBindingTest is TestBase_UniswapV4Detf_Orbital, V4FundedBindingBehavior {
     function _hookPackage() internal view override returns (address) { return address(orbitalHookPkg); }
     function _subject() internal view override returns (IUniswapV4Detf) { return detfInfo; }
     function _buyer() internal view override returns (address) { return detfUser; }
@@ -185,7 +184,7 @@ contract OrbitalFundedBindingTest is TestBase_UniswapV4Detf_Orbital, V4FundedBin
     function _leadPayment() internal view override returns (address) { return address(pairToken); }
 }
 
-contract CurveQuadFundedBindingTest is TestBase_UniswapV4Detf_CurveQuad, V4FundedBindingBehavior, DETFFundedStakingArtifacts {
+contract CurveQuadFundedBindingTest is TestBase_UniswapV4Detf_CurveQuad, V4FundedBindingBehavior {
     function _hookPackage() internal view override returns (address) { return address(curveHookPkg); }
     function _subject() internal view override returns (IUniswapV4Detf) { return detfInfo; }
     function _buyer() internal view override returns (address) { return detfUser; }
@@ -206,7 +205,7 @@ import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol"
 import {TestBase_UniswapV4Detf_Orbital_Univ4Se} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Univ4Se.sol";
 
 /// @notice The same funded bond/SY behavior backed by two actual V4 full-range position vaults.
-contract OrbitalV4PositionFundedBindingTest is TestBase_UniswapV4Detf_Orbital_Univ4Se, V4FundedBindingBehavior, DETFFundedStakingArtifacts {
+contract OrbitalV4PositionFundedBindingTest is TestBase_UniswapV4Detf_Orbital_Univ4Se, V4FundedBindingBehavior {
     function setUp() public override {
         super.setUp();
         _activatePositionVault(se0, sePoolKey0);

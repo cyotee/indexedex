@@ -1,13 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
-import {UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFacet} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFacet.sol";
-import {UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet.sol";
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
-// Explicit dependencies keep factory-loaded bytecode available in focused builds.
-import {UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg.sol";
-import {UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet.sol";
-import {UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet.sol";
-import {UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet.sol";
 
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -30,7 +23,7 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService 
     Vm constant vm = Vm(VM_ADDRESS);
 
     function deploySeFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
-        bytes memory initCode_ = type(UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet).creationCode /* unlinked artifact; type().creationCode required */;
+        bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet.sol:UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet");
         facet = create3Factory.deployFacet(
             initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet")._hash(), initCode_, bytes(""))
         );
@@ -38,7 +31,7 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService 
     }
 
     function deployDepositFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
-        bytes memory initCode_ = type(UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet).creationCode /* unlinked artifact; type().creationCode required */;
+        bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet.sol:UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet");
         facet = create3Factory.deployFacet(
             initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet")._hash(), initCode_, bytes(""))
         );
@@ -46,7 +39,7 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService 
     }
 
     function deployDepositSingleFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
-        bytes memory initCode_ = type(UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFacet).creationCode /* unlinked artifact; type().creationCode required */;
+        bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFacet.sol:UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFacet");
         facet = create3Factory.deployFacet(
             initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFacet")._hash(), initCode_, bytes(""))
         );
@@ -54,7 +47,7 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService 
     }
 
     function deployDepositPreviewFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
-        bytes memory initCode_ = type(UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet).creationCode /* unlinked artifact; type().creationCode required */;
+        bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet.sol:UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet");
         facet = create3Factory.deployFacet(
             initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet")._hash(), initCode_, bytes(""))
         );
@@ -62,7 +55,7 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService 
     }
 
     function deployWithdrawFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
-        bytes memory initCode_ = type(UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet).creationCode /* unlinked artifact; type().creationCode required */;
+        bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet.sol:UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet");
         facet = create3Factory.deployFacet(
             initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet")._hash(), initCode_, bytes(""))
         );

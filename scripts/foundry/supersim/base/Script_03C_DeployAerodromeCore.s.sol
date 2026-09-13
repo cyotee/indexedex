@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.30;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {DeploymentBase} from "../../anvil_base_main/DeploymentBase.sol";
 
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
@@ -9,11 +11,6 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 
 import {IRouter as IAerodromeRouter} from "@crane/contracts/interfaces/protocols/dexes/aerodrome/IRouter.sol";
 import {IPoolFactory as IAerodromePoolFactory} from "@crane/contracts/interfaces/protocols/dexes/aerodrome/IPoolFactory.sol";
-
-import {Pool as AerodromePool} from "@crane/contracts/protocols/dexes/aerodrome/v1/stubs/Pool.sol";
-import {PoolFactory as AerodromePoolFactory} from "@crane/contracts/protocols/dexes/aerodrome/v1/stubs/factories/PoolFactory.sol";
-import {FactoryRegistry as AerodromeFactoryRegistry} from "@crane/contracts/protocols/dexes/aerodrome/v1/stubs/factories/FactoryRegistry.sol";
-import {Router as AerodromeRouter} from "@crane/contracts/protocols/dexes/aerodrome/v1/stubs/Router.sol";
 
 contract Script_03C_DeployAerodromeCore is DeploymentBase {
     using BetterEfficientHashLib for bytes;
@@ -48,18 +45,18 @@ contract Script_03C_DeployAerodromeCore is DeploymentBase {
         require(address(weth).code.length > 0, "Base Sepolia WETH9 missing");
 
         deployedAerodromePoolImplementation = _deployCreate3(
-            type(AerodromePool).creationCode,
+            ArtifactCreationCode.creationCode(create3Factory, "lib/crane/contracts/protocols/dexes/aerodrome/v1/stubs/Pool.sol:Pool"),
             _salt("BaseSepoliaAerodromePoolImplementation")
         );
 
         deployedAerodromeFactory = _deployWithArgs(
-            type(AerodromePoolFactory).creationCode,
+            ArtifactCreationCode.creationCode(create3Factory, "PoolFactory.sol:PoolFactory"),
             abi.encode(deployedAerodromePoolImplementation),
             _salt("BaseSepoliaAerodromePoolFactory")
         );
 
         deployedAerodromeFactoryRegistry = _deployWithArgs(
-            type(AerodromeFactoryRegistry).creationCode,
+            ArtifactCreationCode.creationCode(create3Factory, "FactoryRegistry.sol:FactoryRegistry"),
             abi.encode(
                 deployedAerodromeFactory,
                 deployedAerodromeFactory,
@@ -70,7 +67,7 @@ contract Script_03C_DeployAerodromeCore is DeploymentBase {
         );
 
         deployedAerodromeRouter = _deployWithArgs(
-            type(AerodromeRouter).creationCode,
+            ArtifactCreationCode.creationCode(create3Factory, "lib/crane/contracts/protocols/dexes/aerodrome/v1/stubs/Router.sol:Router"),
             abi.encode(
                 address(0),
                 deployedAerodromeFactoryRegistry,

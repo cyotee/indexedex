@@ -3,9 +3,7 @@ pragma solidity ^0.8.0;
 
 import {TestBase_MultiVaultWeightedDetf_Decimals} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf_Decimals.sol";
 
-import {
-    IMultiVaultWeightedDetfInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfInfoTarget.sol";
+import {IMultiVaultWeightedDetfInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfInfo.sol";
 
 /// @notice Deploy + first BPT bond → live for every N in 1..7.
 abstract contract MultiVaultWeightedDetf_NRange_Decimals is TestBase_MultiVaultWeightedDetf_Decimals {

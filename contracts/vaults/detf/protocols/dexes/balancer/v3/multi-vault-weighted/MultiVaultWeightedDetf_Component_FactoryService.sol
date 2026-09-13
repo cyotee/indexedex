@@ -10,9 +10,7 @@ import {
 import {
     MultiVaultWeightedDetf_Pkg_FactoryService
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_Pkg_FactoryService.sol";
-import {
-    IMultiVaultWeightedDetfDFPkg
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfDFPkg.sol";
+import {IMultiVaultWeightedDetfDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfDFPkg.sol";
 
 library MultiVaultWeightedDetf_Component_FactoryService {
     function deployExchangeInFacet(ICreate3FactoryProxy factory_) internal returns (IFacet facet_) {

@@ -28,7 +28,8 @@ import {IBasicVault} from "contracts/vaults/basic/IBasicVault.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {
     IStandardExchangeTransitionQuote,
-    IStandardExchangeExternalQuote
+    IStandardExchangeExternalQuote,
+    IStandardExchangeRateQuote
 } from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {IRebasingAwareERC4626} from
     "contracts/protocols/staking/rebasingVault/IRebasingAwareERC4626.sol";
@@ -142,7 +143,7 @@ contract RebasingAwareERC4626DFPkg is IRebasingAwareERC4626DFPkg {
 
     function facetInterfaces() public view returns (bytes4[] memory interfaces) {
         bytes4[] memory erc20Ifaces = ERC20_FACET.facetInterfaces();
-        interfaces = new bytes4[](erc20Ifaces.length + 8);
+        interfaces = new bytes4[](erc20Ifaces.length + 9);
         uint256 i;
         for (; i < erc20Ifaces.length; ++i) {
             interfaces[i] = erc20Ifaces[i];
@@ -154,7 +155,8 @@ contract RebasingAwareERC4626DFPkg is IRebasingAwareERC4626DFPkg {
         interfaces[i++] = type(IStandardExchangeTransitionQuote).interfaceId;
         interfaces[i++] = type(IStandardExchangeExternalQuote).interfaceId;
         interfaces[i++] = type(IBasicVault).interfaceId;
-        interfaces[i] = type(IStandardVault).interfaceId;
+        interfaces[i++] = type(IStandardVault).interfaceId;
+        interfaces[i] = type(IStandardExchangeRateQuote).interfaceId;
     }
 
     function packageMetadata()
@@ -214,6 +216,7 @@ contract RebasingAwareERC4626DFPkg is IRebasingAwareERC4626DFPkg {
         if (address(decodedArgs.asset) == address(0)) {
             revert NoAsset();
         }
+        _requireCode(address(decodedArgs.asset));
         if (bytes(decodedArgs.name).length == 0 && bytes(decodedArgs.symbol).length == 0) {
             revert NoNameAndSymbol();
         }

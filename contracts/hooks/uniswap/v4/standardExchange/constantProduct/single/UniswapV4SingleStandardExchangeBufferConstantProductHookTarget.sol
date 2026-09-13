@@ -358,6 +358,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookTarget
     function _unwrapExactPairOut(uint256 pairOut) internal returns (uint256 seIn) {
         _requireNonZero(pairOut);
         Repo.Layout storage l = Repo._layout();
+        if (l.pairToken == l.standardExchange) return pairOut;
         uint256 cap = _spendableSeShares();
         if (cap == 0) revert InsufficientTokenOut();
         try IStandardExchangeOut(l.standardExchange).previewExchangeOut(
@@ -388,9 +389,15 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookTarget
     }
 
     function _unwrapPairLeavingDust(uint256 pairWant) internal returns (uint256 pairGot) {
-        uint256 pairBefore = IERC20(Repo._layout().pairToken).balanceOf(address(this));
+        Repo.Layout storage l = Repo._layout();
+        if (l.pairToken == l.standardExchange) {
+            uint256 cap = _spendableSeShares();
+            if (pairWant == 0 || pairWant > cap) revert InsufficientTokenOut();
+            return pairWant;
+        }
+        uint256 pairBefore = IERC20(l.pairToken).balanceOf(address(this));
         _unwrapExactPairOut(pairWant);
-        pairGot = IERC20(Repo._layout().pairToken).balanceOf(address(this)) - pairBefore;
+        pairGot = IERC20(l.pairToken).balanceOf(address(this)) - pairBefore;
         if (pairGot == 0) revert InsufficientTokenOut();
     }
 
@@ -1142,24 +1149,25 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookTarget
         uint256 xBefore = reserveCurrency0();
         uint256 yBefore = reserveCurrency1();
         // Back out free pair / raw still sitting as add legs before buffer.
+        bool identity = l.pairToken == l.standardExchange;
+        uint256 seClaim = _seClaim();
         if (l.currency0 == l.rawToken) {
             // raw leg on hook as free raw; pair leg may be free pair from swap out or kept pair
             if (tokenIn == l.rawToken) {
                 xBefore = IERC20(l.rawToken).balanceOf(address(this)) - add0;
-                // pair out from swap is free pair not yet in seClaim
-                yBefore = _seClaim();
+                yBefore = identity && seClaim >= add1 ? seClaim - add1 : seClaim;
             } else {
                 // tokenIn pair: kept pair free; otherOut raw already in raw bal
                 xBefore = IERC20(l.rawToken).balanceOf(address(this)) - add1;
-                yBefore = _seClaim();
+                yBefore = identity && seClaim >= add1 ? seClaim - add1 : seClaim;
             }
         } else {
             if (tokenIn == l.rawToken) {
                 yBefore = IERC20(l.rawToken).balanceOf(address(this)) - add0;
-                xBefore = _seClaim();
+                xBefore = identity && seClaim >= add0 ? seClaim - add0 : seClaim;
             } else {
                 yBefore = IERC20(l.rawToken).balanceOf(address(this)) - add1;
-                xBefore = _seClaim();
+                xBefore = identity && seClaim >= add0 ? seClaim - add0 : seClaim;
             }
         }
 
@@ -1506,6 +1514,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookTarget
     function _previewUnwrapSe(uint256 seAmount) internal view returns (uint256) {
         if (seAmount == 0) return 0;
         Repo.Layout storage l = Repo._layout();
+        if (l.pairToken == l.standardExchange) return seAmount;
         return IStandardExchangeIn(l.standardExchange).previewExchangeIn(
             IERC20(l.standardExchange), seAmount, IERC20(l.pairToken)
         );

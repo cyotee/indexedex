@@ -18,9 +18,11 @@ Generic Foundry skills (`forge-testing` mock sections) are **subordinate** to Cr
 
 ## `forge build` before `forge test` (LOCKED)
 
-IndexedEx FactoryServices load creation bytecode from `out/` via `ArtifactCreationCode` (`vm.getCode`). They do not import Facet/DFPkg implementations for `type().creationCode`. Editing production source does not recompile FactoryService or TestBases that only `using` it.
+IndexedEx FactoryServices load creation bytecode directly from `out/` artifact JSON via `ArtifactCreationCode`. The factory-aware overload recursively deploys and links external libraries. Keep Facet/DFPkg implementation imports and artifact-seed inheritance out of deployment helpers; import standalone interfaces instead. Editing an implementation then does not invalidate helpers that reference it only by artifact ID.
 
 After any production contract change, run **`forge build` then `forge test`** (same for `forge script`). `forge test` alone can CREATE3-deploy stale `out/` bytecode. Full text: root `CLAUDE.md` item 10 and agent law § FactoryService creation bytecode.
+
+For incremental work, use `python3 scripts/forge-artifacts.py test contracts/path/EditedTarget.sol --test-root test/foundry/spec/path/RelevantTest.t.sol -- -vv`. It refreshes concrete descendants and runtime artifacts before selecting test roots with `--skip`. Repeat `--test-root` for multiple suites. Keep configured project paths stable: changing `FOUNDRY_TEST` invalidates the shared cache. See [artifact build workflow](../../../docs/testing/ARTIFACT_BUILDS.md).
 
 ## Production-first (IndexedEx)
 

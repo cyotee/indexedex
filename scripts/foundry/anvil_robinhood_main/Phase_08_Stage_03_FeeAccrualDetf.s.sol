@@ -5,6 +5,7 @@ import {FeeAccrualStageBase} from "./FeeAccrualStageBase.sol";
 import {FixtureEconomics} from "./FixtureEconomics.sol";
 import {Phase_08_Stage_03_FeeAccrualDetf as Composition} from "./Phase_08_Stage_03_FeeAccrualDetf.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IUniswapV4DetfBondNFTVaultDFPkg} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/IUniswapV4DetfBondNFTVaultDFPkg.sol";
 import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {IUniswapV4Detf, IUniswapV4DetfDFPkg} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
@@ -33,6 +34,9 @@ contract Phase_08_Stage_03_FeeAccrualDetf is FeeAccrualStageBase {
         d.diamondFactory = IDiamondPackageCallBackFactory(_configAddress(".diamondPackageFactory"));
         d.hookFactory = IUniswapV4HookDiamondPackageCallBackFactory(_configAddress(".hookFactory"));
         d.detfPkg = IUniswapV4DetfDFPkg(_configAddress(".packages.detf"));
+        string memory bondManifest = vm.readFile(_artifactPath("phase06_stage01_bond_nft_pkg.json"));
+        require(vm.parseJsonUint(bondManifest, ".chainId") == block.chainid, "Fee DETF: bond package chain");
+        d.bondNftPkg = IUniswapV4DetfBondNFTVaultDFPkg(vm.parseJsonAddress(bondManifest, ".bondNftVaultPkg"));
         d.hookPkg = IUniswapV4StandardExchangeWeightedBufferHookPackage(_configAddress(".packages.weightedHook"));
         d.dtf = dtf;
         d.weth = wethToken;

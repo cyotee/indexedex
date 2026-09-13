@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
-import {TokenStakingDFPkg} from "contracts/protocols/staking/token/TokenStakingDFPkg.sol";
-import {TokenStakingFacet} from "contracts/protocols/staking/token/TokenStakingFacet.sol";
 
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 

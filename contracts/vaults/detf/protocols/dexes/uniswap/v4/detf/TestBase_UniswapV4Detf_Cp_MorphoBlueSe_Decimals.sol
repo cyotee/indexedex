@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
-import {PoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol";
 import {MarketParams} from "@crane/contracts/external/morpho/blue/interfaces/IMorpho.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {TestBase_ERC4626StandardExchange} from "contracts/test/bases/TestBase_ERC4626StandardExchange.sol";
@@ -32,7 +33,11 @@ abstract contract TestBase_UniswapV4Detf_Cp_MorphoBlueSe_Decimals is TestBase_Un
 
         pairToken = new MintableERC20Decimals("Pair", "PAIR", _pairDecimals());
         detfDecimalsStub = new MintableERC20Decimals("DetfStub", "DSTUB", 18);
-        pm = IPoolManager(address(new PoolManager(address(this))));
+        pm = IPoolManager(address(IPoolManager(create3Factory.create3WithArgs(
+            ArtifactCreationCode.creationCode(create3Factory, "PoolManager.sol:PoolManager"),
+            abi.encode(address(this)),
+            keccak256("TestBase_UniswapV4Detf_Cp_MorphoBlueSe_Decimals_PoolManager")
+        ))));
 
         morphoStack = SeLib.deployMorphoStack(_craneCtx());
         (se, morphoMarket) = SeLib.createMarketAndDeployVault(morphoStack, address(pairToken), owner);

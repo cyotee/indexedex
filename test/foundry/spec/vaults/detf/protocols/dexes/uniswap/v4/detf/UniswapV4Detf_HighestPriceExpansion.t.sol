@@ -117,6 +117,37 @@ contract UniswapV4Detf_HighestPriceExpansionTest is TestBase_UniswapV4Detf_Weigh
         assertEq(IERC20(detf).totalSupply(), s_.supply + s_.expected);
     }
 
+    function test_incompleteAndConsumedEpochsDoNotValueReserve() public {
+        _launch(1e18, 1e18, 1.05e18);
+        _assertNoExpansionReserveValuation();
+        vm.warp(anchor + 8 hours - 1);
+        _assertNoExpansionReserveValuation();
+        vm.warp(anchor + 8 hours);
+        uint256 pending_ = detfInfo.pendingExpansionDetf();
+        assertGt(pending_, 0, "exact boundary remains eligible");
+        assertEq(IDETFFundedRewards(detf).synchronizeRewards(), pending_);
+        _assertNoExpansionReserveValuation();
+        vm.warp(anchor + 16 hours - 1);
+        _assertNoExpansionReserveValuation();
+        vm.warp(anchor + 16 hours);
+        assertGt(detfInfo.pendingExpansionDetf(), 0, "next boundary was not consumed early");
+    }
+
+    function _assertNoExpansionReserveValuation() private {
+        address hook_ = detfInfo.hook();
+        vm.startStateDiffRecording();
+        assertEq(detfInfo.pendingExpansionDetf(), 0);
+        assertEq(IDETFFundedRewards(detf).synchronizeRewards(), 0);
+        Vm.AccountAccess[] memory accesses_ = vm.stopAndReturnStateDiff();
+        assertGt(accesses_.length, 0, "record actual synchronization calls");
+        for (uint256 i_; i_ < accesses_.length; ++i_) {
+            if (accesses_[i_].account == hook_ && accesses_[i_].data.length >= 4) {
+                assertNotEq(bytes4(accesses_[i_].data), IDetfReserveQuote.previewSynthetic.selector,
+                    "no reserve valuation without a completed epoch");
+            }
+        }
+    }
+
     function test_secondLegAloneTriggersExpansionAndKeepsRouteGates() public {
         _launch(1_000e18, 1e18, 1.05e18);
         (address[] memory pairs_, uint256[] memory prices_) = _prices();
