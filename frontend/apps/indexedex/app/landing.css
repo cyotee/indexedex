@@ -609,6 +609,7 @@ html:has(.dtf-landing) body::after {
 
 .dtf-landing__nav {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
@@ -634,7 +635,11 @@ html:has(.dtf-landing) body::after {
 }
 
 .dtf-landing__links {
-  display: none;
+  display: flex;
+  flex-wrap: wrap;
+  flex-basis: 100%;
+  justify-content: center;
+  order: 1;
   gap: 1.75rem;
   font-size: 0.92rem;
   color: color-mix(in srgb, var(--text-primary, #e8eef4) 72%, transparent);
@@ -646,7 +651,8 @@ html:has(.dtf-landing) body::after {
 
 @media (min-width: 768px) {
   .dtf-landing__links {
-    display: flex;
+    flex-basis: auto;
+    order: 0;
   }
 }
 

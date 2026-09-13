@@ -79,6 +79,7 @@ export default function HomePage() {
         </Link>
         <nav className="dtf-landing__links" aria-label="Primary">
           <Link href={appPath('/explore')}>Explore</Link>
+          <Link href={appPath('/staking')}>Staking</Link>
           <Link href={appPath('/create')}>Create</Link>
           <Link href={appPath('/learn')}>Learn</Link>
         </nav>
