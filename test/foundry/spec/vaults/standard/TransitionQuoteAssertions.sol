@@ -1,0 +1,147 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {Test} from "forge-std/Test.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
+import {IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {IStandardExchangeTransitionQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+
+abstract contract TransitionQuoteAssertions is Test {
+    struct Step {
+        bytes state;
+        uint256 input;
+        uint256 output;
+        uint256 claim;
+    }
+
+    function _assertExternalExchangeQuote(address exchange, IERC20 tokenIn, IERC20 asset, uint256 amount)
+        internal
+    {
+        assertTrue(IERC165(exchange).supportsInterface(type(IStandardExchangeExternalQuote).interfaceId), "actual package declares external quote capability");
+        IStandardExchangeTransitionQuote quote = IStandardExchangeTransitionQuote(exchange);
+        (bytes memory state,) = quote.quoteState(address(asset), address(this));
+        (bytes memory projected, uint256 output, uint256 claim) =
+            IStandardExchangeExternalQuote(exchange).quoteExternalExchange(state, address(tokenIn), amount);
+        uint256 heldShares = IERC20(exchange).balanceOf(address(this));
+        uint256 supply = IERC20(exchange).totalSupply();
+        uint256 beforeAssets = asset.balanceOf(address(this));
+        tokenIn.approve(exchange, amount);
+        uint256 actual = IStandardExchangeIn(exchange).exchangeIn(
+            tokenIn, amount, asset, output, address(this), false, block.timestamp
+        );
+        assertEq(actual, output, "external payment conversion output");
+        assertEq(asset.balanceOf(address(this)) - beforeAssets, output, "external conversion receipt");
+        assertEq(IERC20(exchange).balanceOf(address(this)), heldShares, "buffered SE shares remain owned");
+        assertEq(IERC20(exchange).totalSupply(), supply, "external conversion does not issue SE shares");
+        (bytes memory actualState, uint256 actualClaim) = quote.quoteState(address(asset), address(this));
+        assertEq(actualClaim, claim, "post-external-conversion buffered claim");
+        _assertProjectedState(actualState, projected);
+    }
+
+    function _assertExternalDepositQuote(
+        address exchange, IERC20 tokenIn, IERC20 asset, uint256 amount, address holder
+    ) internal {
+        assertTrue(IERC165(exchange).supportsInterface(type(IStandardExchangeExternalQuote).interfaceId));
+        IStandardExchangeTransitionQuote quote = IStandardExchangeTransitionQuote(exchange);
+        (bytes memory state,) = quote.quoteState(address(asset), holder);
+        Step memory step;
+        (step.state, step.output, step.claim) = IStandardExchangeExternalQuote(exchange)
+            .quoteExternalDeposit(state, address(tokenIn), amount);
+        address recipient = makeAddr("external SE mint recipient");
+        uint256 beforeShares = IERC20(exchange).balanceOf(recipient);
+        tokenIn.approve(exchange, amount);
+        assertEq(IStandardExchangeIn(exchange).exchangeIn(
+            tokenIn, amount, IERC20(exchange), step.output, recipient, false, block.timestamp
+        ), step.output, "external mint return equals projection");
+        assertEq(IERC20(exchange).balanceOf(recipient) - beforeShares, step.output, "funded user share receipt");
+        assertEq(IERC20(exchange).totalSupply(), quote.quoteTotalSupply(step.state), "external mint includes issued fee shares");
+        assertEq(IERC20(exchange).balanceOf(holder), quote.quoteShareBalance(step.state), "buffered holder and fee attribution");
+        (bytes memory actual, uint256 claim) = quote.quoteState(address(asset), holder);
+        assertEq(claim, step.claim, "post-mint buffered asset claim");
+        _assertProjectedState(actual, step.state);
+    }
+
+    function _assertQuoteSequence(address exchange_, IERC20 asset_, address holder_, uint256 unit_) internal {
+        IStandardExchangeTransitionQuote quote_ = IStandardExchangeTransitionQuote(exchange_);
+        (bytes memory state_, uint256 claim_) = quote_.quoteState(address(asset_), holder_);
+        assertEq(claim_, _liveClaim(exchange_, asset_, holder_), "initial aggregate claim");
+        IStandardExchangeTransitionQuote.Operation[4] memory ops_ = [
+            IStandardExchangeTransitionQuote.Operation.DepositExactIn,
+            IStandardExchangeTransitionQuote.Operation.WithdrawExactOut,
+            IStandardExchangeTransitionQuote.Operation.DepositExactIn,
+            IStandardExchangeTransitionQuote.Operation.RedeemExactIn
+        ];
+        uint256[4] memory amounts_ = [31 * unit_ + 7, 3 * unit_ + 1, 17 * unit_ + 11, unit_ + 3];
+        Step[4] memory steps_;
+        // Quote the entire sequence before any execution changes the real vault.
+        for (uint256 i; i < 4; ++i) {
+            (steps_[i].state, steps_[i].input, steps_[i].output, steps_[i].claim) =
+                quote_.quoteTransition(state_, ops_[i], amounts_[i]);
+            state_ = steps_[i].state;
+        }
+        vm.startPrank(holder_);
+        asset_.approve(exchange_, type(uint256).max);
+        IERC20(exchange_).approve(exchange_, type(uint256).max);
+        vm.stopPrank();
+        for (uint256 i; i < 4; ++i) {
+            _executeQuotedStep(exchange_, asset_, holder_, ops_[i], amounts_[i], steps_[i]);
+            (bytes memory actualState_, uint256 actualClaim_) = quote_.quoteState(address(asset_), holder_);
+            assertEq(actualClaim_, steps_[i].claim, "post-operation aggregate claim");
+            assertEq(actualClaim_, _liveClaim(exchange_, asset_, holder_), "public conversion agrees");
+            _assertProjectedState(actualState_, steps_[i].state);
+            assertEq(quote_.quoteTotalSupply(steps_[i].state), IERC20(exchange_).totalSupply(), "projected issued supply");
+        }
+        _assertShareReceipt(exchange_, asset_, holder_);
+    }
+
+    function _assertShareReceipt(address exchange, IERC20 asset, address holder) internal {
+        IStandardExchangeTransitionQuote quote = IStandardExchangeTransitionQuote(exchange);
+        address receiver = makeAddr("se quote receipt holder");
+        uint256 shares = IERC20(exchange).balanceOf(holder) / 20;
+        assertGt(shares, 0, "receipt test uses actually funded shares");
+        uint256 supply = IERC20(exchange).totalSupply();
+        (bytes memory state,) = quote.quoteState(address(asset), receiver);
+        (bytes memory projected,,, uint256 projectedClaim) = quote.quoteTransition(
+            state, IStandardExchangeTransitionQuote.Operation.ReceiveShares, shares
+        );
+        vm.prank(holder); IERC20(exchange).transfer(receiver, shares);
+        (bytes memory actual, uint256 actualClaim) = quote.quoteState(address(asset), receiver);
+        _assertProjectedState(actual, projected);
+        assertEq(actualClaim, projectedClaim, "received shares retain the actual backing claim");
+        assertEq(IERC20(exchange).totalSupply(), supply, "share transfer cannot issue supply");
+        vm.prank(receiver); IERC20(exchange).transfer(holder, shares);
+    }
+
+    function _assertProjectedState(bytes memory actual, bytes memory projected) internal pure virtual {
+        assertEq(actual, projected, "every projected state field matches execution");
+    }
+
+    function _executeQuotedStep(
+        address exchange_, IERC20 asset_, address holder_,
+        IStandardExchangeTransitionQuote.Operation op_, uint256 amount_, Step memory step_
+    ) private {
+        bool deposit_ = op_ == IStandardExchangeTransitionQuote.Operation.DepositExactIn;
+        uint256 before_ = asset_.balanceOf(holder_);
+        vm.prank(holder_);
+        if (op_ == IStandardExchangeTransitionQuote.Operation.WithdrawExactOut) {
+            assertEq(IStandardExchangeOut(exchange_).exchangeOut(
+                IERC20(exchange_), step_.input, asset_, amount_, holder_, false, block.timestamp
+            ), step_.input, "exact-output share charge");
+        } else {
+            assertEq(IStandardExchangeIn(exchange_).exchangeIn(
+                deposit_ ? asset_ : IERC20(exchange_), amount_,
+                deposit_ ? IERC20(exchange_) : asset_, step_.output, holder_, false, block.timestamp
+            ), step_.output, "exact-input output");
+        }
+        if (deposit_) assertEq(before_ - asset_.balanceOf(holder_), step_.input, "deposit asset charge");
+        else assertEq(asset_.balanceOf(holder_) - before_, step_.output, "actual withdrawal receipt");
+    }
+
+    function _liveClaim(address exchange_, IERC20 asset_, address holder_) private view returns (uint256) {
+        uint256 shares_ = IERC20(exchange_).balanceOf(holder_);
+        return shares_ == 0 ? 0 : IStandardExchangeIn(exchange_).previewExchangeIn(IERC20(exchange_), shares_, asset_);
+    }
+}

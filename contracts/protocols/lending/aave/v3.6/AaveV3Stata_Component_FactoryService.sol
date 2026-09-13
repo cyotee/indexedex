@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                   Foundry                                  */
@@ -20,19 +21,8 @@ import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexMan
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {IStataTokenFactory} from "@crane/contracts/protocols/lending/aave/v3.6/extensions/stata-token/interfaces/IStataTokenFactory.sol";
-import {
-    AaveV3StataStandardExchangeInFacet
-} from "contracts/protocols/lending/aave/v3.6/AaveV3StataStandardExchangeInFacet.sol";
-import {
-    AaveV3StataStandardExchangeOutFacet
-} from "contracts/protocols/lending/aave/v3.6/AaveV3StataStandardExchangeOutFacet.sol";
-import {
-    AaveV3StataMarkerFacet
-} from "contracts/protocols/lending/aave/v3.6/AaveV3StataMarkerFacet.sol";
-import {
-    IAaveV3StataStandardExchangeDFPkg,
-    AaveV3StataStandardExchangeDFPkg
-} from "contracts/protocols/lending/aave/v3.6/AaveV3StataStandardExchangeDFPkg.sol";
+
+import {IAaveV3StataStandardExchangeDFPkg} from "contracts/protocols/lending/aave/v3.6/IAaveV3StataStandardExchangeDFPkg.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 
 library AaveV3Stata_Component_FactoryService {
@@ -45,49 +35,45 @@ library AaveV3Stata_Component_FactoryService {
         internal
         returns (IFacet instance)
     {
+        bytes memory code = ArtifactCreationCode.creationCode("AaveV3StataStandardExchangeInFacet.sol:AaveV3StataStandardExchangeInFacet");
         instance = create3Factory.deployFacet(
-            type(AaveV3StataStandardExchangeInFacet).creationCode,
-            abi.encode(type(AaveV3StataStandardExchangeInFacet).name)._hash()
+            code, ArtifactCreationCode.releaseSalt(abi.encode("AaveV3StataStandardExchangeInFacet")._hash(), code, bytes(""))
         );
-        vm.label(address(instance), type(AaveV3StataStandardExchangeInFacet).name);
+        vm.label(address(instance), "AaveV3StataStandardExchangeInFacet");
     }
 
     function deployAaveV3StataStandardExchangeOutFacet(ICreate3FactoryProxy create3Factory)
         internal
         returns (IFacet instance)
     {
+        bytes memory code = ArtifactCreationCode.creationCode("AaveV3StataStandardExchangeOutFacet.sol:AaveV3StataStandardExchangeOutFacet");
         instance = create3Factory.deployFacet(
-            type(AaveV3StataStandardExchangeOutFacet).creationCode,
-            abi.encode(type(AaveV3StataStandardExchangeOutFacet).name)._hash()
+            code, ArtifactCreationCode.releaseSalt(abi.encode("AaveV3StataStandardExchangeOutFacet")._hash(), code, bytes(""))
         );
-        vm.label(address(instance), type(AaveV3StataStandardExchangeOutFacet).name);
+        vm.label(address(instance), "AaveV3StataStandardExchangeOutFacet");
     }
 
     function deployAaveV3StataMarkerFacet(ICreate3FactoryProxy create3Factory)
         internal
         returns (IFacet instance)
     {
+        bytes memory code = ArtifactCreationCode.creationCode("AaveV3StataMarkerFacet.sol:AaveV3StataMarkerFacet");
         instance = create3Factory.deployFacet(
-            type(AaveV3StataMarkerFacet).creationCode,
-            abi.encode(type(AaveV3StataMarkerFacet).name)._hash()
+            code, ArtifactCreationCode.releaseSalt(abi.encode("AaveV3StataMarkerFacet")._hash(), code, bytes(""))
         );
-        vm.label(address(instance), type(AaveV3StataMarkerFacet).name);
+        vm.label(address(instance), "AaveV3StataMarkerFacet");
     }
 
     function deployAaveV3StataStandardExchangeDFPkgFromVaultRegistry(
         IVaultRegistryDeployment vaultRegistry,
         IAaveV3StataStandardExchangeDFPkg.PkgInit memory pkgInit
     ) internal returns (IAaveV3StataStandardExchangeDFPkg instance) {
-        instance = IAaveV3StataStandardExchangeDFPkg(
-            address(
-                vaultRegistry.deployPkg(
-                    type(AaveV3StataStandardExchangeDFPkg).creationCode,
-                    abi.encode(pkgInit),
-                    abi.encode(type(AaveV3StataStandardExchangeDFPkg).name)._hash()
-                )
-            )
-        );
-        vm.label(address(instance), type(AaveV3StataStandardExchangeDFPkg).name);
+        bytes memory code = ArtifactCreationCode.creationCode("AaveV3StataStandardExchangeDFPkg.sol:AaveV3StataStandardExchangeDFPkg");
+        bytes memory args = abi.encode(pkgInit);
+        instance = IAaveV3StataStandardExchangeDFPkg(address(vaultRegistry.deployPkg(
+            code, args, ArtifactCreationCode.releaseSalt(abi.encode("AaveV3StataStandardExchangeDFPkg")._hash(), code, args)
+        )));
+        vm.label(address(instance), "AaveV3StataStandardExchangeDFPkg");
     }
 
     function deployAaveV3StataStandardExchangeDFPkg(

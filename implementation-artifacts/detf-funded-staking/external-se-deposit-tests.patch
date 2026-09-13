@@ -1,0 +1,126 @@
+--- test/foundry/spec/vaults/standard/TransitionQuoteAssertions.sol
++++ test/foundry/spec/vaults/standard/TransitionQuoteAssertions.sol
+@@ -39,6 +39,29 @@
+         (bytes memory actualState, uint256 actualClaim) = quote.quoteState(address(asset), address(this));
+         assertEq(actualClaim, claim, "post-external-conversion buffered claim");
+         _assertProjectedState(actualState, projected);
++    }
++
++    function _assertExternalDepositQuote(
++        address exchange, IERC20 tokenIn, IERC20 asset, uint256 amount, address holder
++    ) internal {
++        assertTrue(IERC165(exchange).supportsInterface(type(IStandardExchangeExternalQuote).interfaceId));
++        IStandardExchangeTransitionQuote quote = IStandardExchangeTransitionQuote(exchange);
++        (bytes memory state,) = quote.quoteState(address(asset), holder);
++        Step memory step;
++        (step.state, step.output, step.claim) = IStandardExchangeExternalQuote(exchange)
++            .quoteExternalDeposit(state, address(tokenIn), amount);
++        address recipient = makeAddr("external SE mint recipient");
++        uint256 beforeShares = IERC20(exchange).balanceOf(recipient);
++        tokenIn.approve(exchange, amount);
++        assertEq(IStandardExchangeIn(exchange).exchangeIn(
++            tokenIn, amount, IERC20(exchange), step.output, recipient, false, block.timestamp
++        ), step.output, "external mint return equals projection");
++        assertEq(IERC20(exchange).balanceOf(recipient) - beforeShares, step.output, "funded user share receipt");
++        assertEq(IERC20(exchange).totalSupply(), quote.quoteTotalSupply(step.state), "external mint includes issued fee shares");
++        assertEq(IERC20(exchange).balanceOf(holder), quote.quoteShareBalance(step.state), "buffered holder and fee attribution");
++        (bytes memory actual, uint256 claim) = quote.quoteState(address(asset), holder);
++        assertEq(claim, step.claim, "post-mint buffered asset claim");
++        _assertProjectedState(actual, step.state);
+     }
+ 
+     function _assertQuoteSequence(address exchange_, IERC20 asset_, address holder_, uint256 unit_) internal {
+--- test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_FullRangeBook.t.sol
++++ test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_FullRangeBook.t.sol
+@@ -68,6 +68,16 @@
+             abi.decode(projected, (UniswapV3StandardExchangeInQueryTarget.InventoryQuote));
+         q.liquidityDelta = 0; // A fresh snapshot uses the now-current tick storage as its anchor.
+         assertEq(actual, abi.encode(q), "projected inventory and pool state match execution");
++    }
++
++    function test_externalDepositTransition_preservesFundedHolderBook() public {
++        _dualJoin(10_000_000 ether, 10_000_000 ether);
++        for (uint256 i; i < 2; ++i) {
++            IERC20 input = IERC20(i == 0 ? _token0() : _token1());
++            IERC20 asset = IERC20(i == 0 ? _token1() : _token0());
++            ERC20PermitMintableStub(address(input)).mint(address(this), 1_000 ether);
++            _assertExternalDepositQuote(address(vault), input, asset, 1_000 ether, address(this));
++        }
+     }
+ 
+     function test_externalSwapTransition_preservesFundedHolderBook() public {
+--- test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_FullRangeBook.t.sol
++++ test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_FullRangeBook.t.sol
+@@ -249,6 +249,16 @@
+         assertEq(vault.exchangeIn(IERC20(address(tokenA)), 1 ether, IERC20(address(vault)), quote, receiver, false, _deadline()), quote);
+     }
+ 
++    function test_externalDepositTransition_preservesFundedHolderBook() public {
++        _dualJoin(10_000_000 ether, 10_000_000 ether);
++        for (uint256 i; i < 2; ++i) {
++            IERC20 input = IERC20(i == 0 ? _token0() : _token1());
++            IERC20 asset = IERC20(i == 0 ? _token1() : _token0());
++            ERC20PermitMintableStub(address(input)).mint(address(this), 1_000 ether);
++            _assertExternalDepositQuote(address(vault), input, asset, 1_000 ether, address(this));
++        }
++    }
++
+     function test_externalSwapTransition_preservesFundedHolderBook() public {
+         _dualJoin(10_000_000 ether, 10_000_000 ether);
+         for (uint256 i; i < 2; ++i) {
+--- test/foundry/spec/protocol/dexes/uniswap/v2/UniswapV2StandardExchange_TransitionQuote.t.sol
++++ test/foundry/spec/protocol/dexes/uniswap/v2/UniswapV2StandardExchange_TransitionQuote.t.sol
+@@ -24,6 +24,27 @@
+         }
+     }
+ 
++    function test_externalDepositTransition_rawAndLpWithFundedFees() public {
++        for (uint256 i; i < 3; ++i) {
++            IStandardExchangeProxy se = _getVault(PoolConfig(i));
++            IUniswapV2Pair pool = _getPool(PoolConfig(i));
++            address holder = address(indexedexManager.feeTo());
++            uint256 lp = pool.balanceOf(address(this)) / 100;
++            IERC20(address(pool)).approve(address(se), lp);
++            se.exchangeIn(IERC20(address(pool)), lp, IERC20(address(se)), 1, holder, false, _deadline());
++            vm.prank(owner);
++            IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(address(se), 7e16);
++            IERC20 asset = IERC20(pool.token1());
++            IERC20 input = IERC20(pool.token0());
++            deal(address(input), address(this), 10_000 ether);
++            deal(address(asset), address(this), 10_000 ether);
++            // Exercise the accounting asset, opposing asset, and already-funded LP payment.
++            _assertExternalDepositQuote(address(se), asset, asset, 1 ether, holder);
++            _assertExternalDepositQuote(address(se), input, asset, 1 ether, holder);
++            _assertExternalDepositQuote(address(se), IERC20(address(pool)), asset, lp / 10, holder);
++        }
++    }
++
+     function testFuzz_transitionSequence(uint8 pool_, bool token1_, bool feeOn_, bool feeHolder_) public {
+         PoolConfig config_ = PoolConfig(bound(pool_, 0, 2));
+         IStandardExchangeProxy se_ = _getVault(config_);
+--- test/foundry/spec/vaults/standard/erc4626/ERC4626StandardExchange_TransitionQuote.t.sol
++++ test/foundry/spec/vaults/standard/erc4626/ERC4626StandardExchange_TransitionQuote.t.sol
+@@ -96,6 +96,23 @@
+         vault.deposit(100 ether, address(this));
+     }
+ 
++    function test_externalDepositTransition_underlyingAndReceiptWithFundedFees() public {
++        MintableERC20Decimals asset = new MintableERC20Decimals("Asset", "ASSET", 18);
++        SimpleYieldERC4626 vault = new SimpleYieldERC4626(asset);
++        address se = _deployERC4626SE(address(vault));
++        address holder = address(indexedexManager.feeTo());
++        asset.mint(address(this), 10_000 ether);
++        asset.approve(se, 1_000 ether);
++        IStandardExchangeIn(se).exchangeIn(IERC20(address(asset)), 1_000 ether, IERC20(se), 1, holder, false, block.timestamp);
++        vm.prank(owner);
++        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(se, 7e16);
++        asset.approve(address(vault), 200 ether);
++        uint256 payment = vault.deposit(100 ether, address(this));
++        vault.simulateYield(100 ether);
++        _assertExternalDepositQuote(se, IERC20(address(vault)), IERC20(address(asset)), payment, holder);
++        _assertExternalDepositQuote(se, IERC20(address(asset)), IERC20(address(asset)), 10 ether, holder);
++    }
++
+     function testFuzz_transitionSequence(uint8 decimals_, uint64 yield_, bool feeOn_, bool feeHolder_) public {
+         uint8 dec_ = uint8(bound(decimals_, 6, 18));
+         uint256 unit_ = 10 ** uint256(dec_);

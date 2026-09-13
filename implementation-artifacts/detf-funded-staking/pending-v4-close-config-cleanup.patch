@@ -1,0 +1,896 @@
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol
+@@ -51,8 +51,6 @@
+         IoRoute[] burnRoutes;
+         RouteTableMode bondRouteMode;
+         IoRoute[] bondRoutes;
+-        RouteTableMode closeRouteMode;
+-        IoRoute[] closeRoutes;
+         RouteTableMode donateRouteMode;
+         IoRoute[] donateRoutes;
+     }
+@@ -82,7 +80,6 @@
+ 
+     function bondRoutes() external view returns (IoRoute[] memory);
+ 
+-    function closeRoutes() external view returns (IoRoute[] memory);
+ 
+     function donateRoutes() external view returns (IoRoute[] memory);
+ 
+@@ -92,7 +89,6 @@
+ 
+     function bondRouteMode() external view returns (RouteTableMode);
+ 
+-    function closeRouteMode() external view returns (RouteTableMode);
+ 
+     function donateRouteMode() external view returns (RouteTableMode);
+ 
+@@ -176,7 +172,7 @@
+     error HookOwnerMismatch();
+     error HookLiquidityPolicyMismatch();
+     error BarePairForbidden();
+-    error InvalidCloseRoutes();
++    error InvalidPackageArguments();
+     error DuplicateRoute(address token);
+     error InvalidCreationRate();
+     error InvalidRouteTable();
+@@ -187,7 +183,7 @@
+         IFacet erc2612Facet;
+         IFacet multiAssetBasicVaultFacet;
+         IFacet multiAssetStandardVaultFacet;
+-        // Fixed order: exchange, bond/close, maintenance, claim/wiring, query.
++        // Fixed order: exchange, bond, maintenance, claim/wiring, query.
+         IFacet[5] productFacets;
+         IVaultFeeOracleQuery feeOracle;
+         IVaultRegistryDeployment vaultRegistryDeployment;
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfRepo.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfRepo.sol
+@@ -7,7 +7,6 @@
+ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+ import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
+ import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
+-import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
+ import {IUniswapV4Detf} from
+     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
+ 
+@@ -49,8 +48,6 @@
+         IVaultFeeOracleQuery feeOracle;
+         IDETFNFTVault bondNftVault;
+         IRebasingClaimToken rebasingClaimToken;
+-        uint256 detfNftId;
+-        uint256 feeRecipientNftId;
+         uint256[] creationPairPerDetfWad;
+         uint256[] openingPairPerDetfWad;
+         mapping(address pair => uint256 wad) creationOfPair;
+@@ -60,7 +57,6 @@
+         uint256 expansionClosureRatePerYearWad;
+         uint256 epochAnchor;
+         uint256 lastExpansionTimestamp;
+-        uint256 userBondedLp;
+         address bondNftVaultPkg;
+         address rebasingClaimTokenPkg;
+         address creator;
+@@ -73,12 +69,10 @@
+         IUniswapV4Detf.RouteTableMode mintRouteMode;
+         IUniswapV4Detf.RouteTableMode burnRouteMode;
+         IUniswapV4Detf.RouteTableMode bondRouteMode;
+-        IUniswapV4Detf.RouteTableMode closeRouteMode;
+         IUniswapV4Detf.RouteTableMode donateRouteMode;
+         Table mintTable;
+         Table burnTable;
+         Table bondTable;
+-        Table closeTable;
+         Table donateTable;
+     }
+ 
+@@ -114,7 +108,6 @@
+         s.creationPairPerDetfWad = p_.creationPairPerDetfWad;
+         s.openingPairPerDetfWad = p_.openingPairPerDetfWad;
+         s.lastExpansionTimestamp = 0;
+-        s.userBondedLp = 0;
+         s.bondNftVaultPkg = p_.bondNftVaultPkg;
+         s.rebasingClaimTokenPkg = p_.rebasingClaimTokenPkg;
+         s.creator = p_.creator;
+@@ -158,14 +151,12 @@
+         IUniswapV4Detf.RouteTableMode mint_,
+         IUniswapV4Detf.RouteTableMode burn_,
+         IUniswapV4Detf.RouteTableMode bond_,
+-        IUniswapV4Detf.RouteTableMode close_,
+         IUniswapV4Detf.RouteTableMode donate_
+     ) internal {
+         Storage storage s = _layoutStruct();
+         s.mintRouteMode = mint_;
+         s.burnRouteMode = burn_;
+         s.bondRouteMode = bond_;
+-        s.closeRouteMode = close_;
+         s.donateRouteMode = donate_;
+     }
+ 
+@@ -175,11 +166,9 @@
+         table_.vaultOf[token_] = vault_;
+     }
+ 
+-    function _setBondNft(IDETFNFTVault vault_, uint256 detfNftId_, uint256 feeRecipientNftId_) internal {
++    function _setBondNft(IDETFNFTVault vault_) internal {
+         Storage storage s = _layoutStruct();
+         s.bondNftVault = vault_;
+-        s.detfNftId = detfNftId_;
+-        s.feeRecipientNftId = feeRecipientNftId_;
+     }
+ 
+     function _setClaim(IRebasingClaimToken claim_) internal {
+@@ -195,19 +184,6 @@
+         }
+     }
+ 
+-    function _addUserBondedLp(uint256 amount_) internal {
+-        _layoutStruct().userBondedLp += amount_;
+-    }
+-
+-    function _subUserBondedLp(uint256 amount_) internal {
+-        Storage storage s = _layoutStruct();
+-        if (amount_ >= s.userBondedLp) {
+-            s.userBondedLp = 0;
+-        } else {
+-            s.userBondedLp -= amount_;
+-        }
+-    }
+-
+     function _routesOf(Table storage table_) internal view returns (IUniswapV4Detf.IoRoute[] memory rows_) {
+         address[] storage toks_ = table_.tokens._values();
+         rows_ = new IUniswapV4Detf.IoRoute[](toks_.length);
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol
+@@ -84,10 +84,6 @@
+         return Repo._routesOf(Repo._layoutStruct().bondTable);
+     }
+ 
+-    function _entryCloseRoutes() internal view returns (IUniswapV4Detf.IoRoute[] memory) {
+-        return Repo._routesOf(Repo._layoutStruct().closeTable);
+-    }
+-
+     function _entryDonateRoutes() internal view returns (IUniswapV4Detf.IoRoute[] memory) {
+         return Repo._routesOf(Repo._layoutStruct().donateTable);
+     }
+@@ -102,10 +98,6 @@
+ 
+     function _entryBondRouteMode() internal view returns (IUniswapV4Detf.RouteTableMode) {
+         return Repo._layoutStruct().bondRouteMode;
+-    }
+-
+-    function _entryCloseRouteMode() internal view returns (IUniswapV4Detf.RouteTableMode) {
+-        return Repo._layoutStruct().closeRouteMode;
+     }
+ 
+     function _entryDonateRouteMode() internal view returns (IUniswapV4Detf.RouteTableMode) {
+@@ -833,7 +825,7 @@
+         address feeTo_ = address(s.feeOracle.feeTo());
+         address creator_ = s.creator;
+         detfNftId_ = bondVault_.initializeReservedBondNfts(feeTo_, creator_);
+-        Repo._setBondNft(bondVault_, detfNftId_, DETF_FEE_TO_BOND_NFT_ID);
++        Repo._setBondNft(bondVault_);
+         emit IUniswapV4Detf.ReserveBondNftWired(s.hook, address(bondVault_), detfNftId_, DETF_FEE_TO_BOND_NFT_ID);
+         return address(bondVault_);
+     }
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfQueryTarget.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfQueryTarget.sol
+@@ -81,10 +81,6 @@
+     }
+ 
+     /// @notice Returns the immutable routes used to pay mature bond closes.
+-    function closeRoutes() external view returns (IUniswapV4Detf.IoRoute[] memory) {
+-        return _entryCloseRoutes();
+-    }
+-
+     /// @notice Returns the immutable token-to-vault routes accepted for donations.
+     function donateRoutes() external view returns (IUniswapV4Detf.IoRoute[] memory) {
+         return _entryDonateRoutes();
+@@ -106,10 +102,6 @@
+     }
+ 
+     /// @notice Returns the configured default or custom mature-close mode.
+-    function closeRouteMode() external view returns (IUniswapV4Detf.RouteTableMode) {
+-        return _entryCloseRouteMode();
+-    }
+-
+     /// @notice Returns the configured default or custom donation-route mode.
+     function donateRouteMode() external view returns (IUniswapV4Detf.RouteTableMode) {
+         return _entryDonateRouteMode();
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfQueryFacet.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfQueryFacet.sol
+@@ -21,7 +21,7 @@
+ 
+     /// @inheritdoc UniswapV4DetfFacet
+     function facetFuncs() public pure override returns (bytes4[] memory funcs_) {
+-        funcs_ = new bytes4[](37);
++        funcs_ = new bytes4[](35);
+         funcs_[0] = IStandardExchangeIn.previewExchangeIn.selector;
+         funcs_[1] = IUniswapV4Detf.hook.selector;
+         funcs_[2] = IUniswapV4Detf.reservePool.selector;
+@@ -30,34 +30,32 @@
+         funcs_[5] = IUniswapV4Detf.mintRoutes.selector;
+         funcs_[6] = IUniswapV4Detf.burnRoutes.selector;
+         funcs_[7] = IUniswapV4Detf.bondRoutes.selector;
+-        funcs_[8] = IUniswapV4Detf.closeRoutes.selector;
+-        funcs_[9] = IUniswapV4Detf.donateRoutes.selector;
+-        funcs_[10] = IUniswapV4Detf.mintRouteMode.selector;
+-        funcs_[11] = IUniswapV4Detf.burnRouteMode.selector;
+-        funcs_[12] = IUniswapV4Detf.bondRouteMode.selector;
+-        funcs_[13] = IUniswapV4Detf.closeRouteMode.selector;
+-        funcs_[14] = IUniswapV4Detf.donateRouteMode.selector;
+-        funcs_[15] = IUniswapV4Detf.creationPairPerDetfWad.selector;
+-        funcs_[16] = IUniswapV4Detf.openingPairPerDetfWad.selector;
+-        funcs_[17] = IUniswapV4Detf.mintThreshold.selector;
+-        funcs_[18] = IUniswapV4Detf.burnThreshold.selector;
+-        funcs_[19] = IUniswapV4Detf.syntheticPrice.selector;
+-        funcs_[20] = IUniswapV4Detf.pendingExpansionDetf.selector;
+-        funcs_[21] = IUniswapV4Detf.bondNftVault.selector;
+-        funcs_[22] = IUniswapV4Detf.detfNFTVault.selector;
+-        funcs_[23] = IUniswapV4Detf.rebasingClaimToken.selector;
+-        funcs_[24] = IUniswapV4Detf.acceptedBondTokens.selector;
+-        funcs_[25] = bytes4(keccak256("isMintingAllowed()"));
+-        funcs_[26] = bytes4(keccak256("isMintingAllowed(address)"));
+-        funcs_[27] = bytes4(keccak256("isBurningAllowed()"));
+-        funcs_[28] = bytes4(keccak256("isBurningAllowed(address)"));
+-        funcs_[29] = IUniswapV4Detf.previewJoinDonatedCapital.selector;
+-        funcs_[30] = IUniswapV4DetfSelfCall.peekPairEq.selector;
+-        funcs_[31] = IDETFStakingPreview.previewStakingGonsPerUnit.selector;
+-        funcs_[32] = IDETFStandardizedYield.rawSY.selector;
+-        funcs_[33] = IDETFStandardizedYield.stakingSY.selector;
+-        funcs_[34] = IUniswapV4Detf.previewFirstBondPayments.selector;
+-        funcs_[35] = IUniswapV4Detf.ownerOnlyLiquidity.selector;
+-        funcs_[36] = IUniswapV4Detf.previewBond.selector;
++        funcs_[8] = IUniswapV4Detf.donateRoutes.selector;
++        funcs_[9] = IUniswapV4Detf.mintRouteMode.selector;
++        funcs_[10] = IUniswapV4Detf.burnRouteMode.selector;
++        funcs_[11] = IUniswapV4Detf.bondRouteMode.selector;
++        funcs_[12] = IUniswapV4Detf.donateRouteMode.selector;
++        funcs_[13] = IUniswapV4Detf.creationPairPerDetfWad.selector;
++        funcs_[14] = IUniswapV4Detf.openingPairPerDetfWad.selector;
++        funcs_[15] = IUniswapV4Detf.mintThreshold.selector;
++        funcs_[16] = IUniswapV4Detf.burnThreshold.selector;
++        funcs_[17] = IUniswapV4Detf.syntheticPrice.selector;
++        funcs_[18] = IUniswapV4Detf.pendingExpansionDetf.selector;
++        funcs_[19] = IUniswapV4Detf.bondNftVault.selector;
++        funcs_[20] = IUniswapV4Detf.detfNFTVault.selector;
++        funcs_[21] = IUniswapV4Detf.rebasingClaimToken.selector;
++        funcs_[22] = IUniswapV4Detf.acceptedBondTokens.selector;
++        funcs_[23] = bytes4(keccak256("isMintingAllowed()"));
++        funcs_[24] = bytes4(keccak256("isMintingAllowed(address)"));
++        funcs_[25] = bytes4(keccak256("isBurningAllowed()"));
++        funcs_[26] = bytes4(keccak256("isBurningAllowed(address)"));
++        funcs_[27] = IUniswapV4Detf.previewJoinDonatedCapital.selector;
++        funcs_[28] = IUniswapV4DetfSelfCall.peekPairEq.selector;
++        funcs_[29] = IDETFStakingPreview.previewStakingGonsPerUnit.selector;
++        funcs_[30] = IDETFStandardizedYield.rawSY.selector;
++        funcs_[31] = IDETFStandardizedYield.stakingSY.selector;
++        funcs_[32] = IUniswapV4Detf.previewFirstBondPayments.selector;
++        funcs_[33] = IUniswapV4Detf.ownerOnlyLiquidity.selector;
++        funcs_[34] = IUniswapV4Detf.previewBond.selector;
+     }
+ }
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfDFPkg.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfDFPkg.sol
+@@ -194,9 +194,15 @@
+         config_ = DiamondConfig({facetCuts: facetCuts(), interfaces: facetInterfaces()});
+     }
+ 
++    /// @dev Reject removed fields and noncanonical payloads instead of silently reinterpreting them.
++    function _decodeArgs(bytes memory encoded_) private pure returns (IUniswapV4Detf.PkgArgs memory args_) {
++        args_ = abi.decode(encoded_, (IUniswapV4Detf.PkgArgs));
++        if (keccak256(encoded_) != keccak256(abi.encode(args_))) revert InvalidPackageArguments();
++    }
++
+     /// @dev Salt ignores `hook` so TestBase can CREATE2-predict the DETF before the hook exists.
+     function calcSalt(bytes memory pkgArgs) public pure returns (bytes32 salt_) {
+-        IUniswapV4Detf.PkgArgs memory args = abi.decode(pkgArgs, (IUniswapV4Detf.PkgArgs));
++        IUniswapV4Detf.PkgArgs memory args = _decodeArgs(pkgArgs);
+         args.hook = address(0);
+         return keccak256(abi.encode(args));
+     }
+@@ -205,10 +211,9 @@
+         if (msg.sender != address(VAULT_REGISTRY_DEPLOYMENT)) {
+             revert NotCalledByRegistry(msg.sender);
+         }
+-        IUniswapV4Detf.PkgArgs memory args = abi.decode(pkgArgs, (IUniswapV4Detf.PkgArgs));
++        IUniswapV4Detf.PkgArgs memory args = _decodeArgs(pkgArgs);
+         ArgsLib.requireHookShape(args.hook);
+         ArgsLib.requireLiquidityPolicy(args.hook, args.ownerOnlyLiquidity);
+-        ArgsLib.requireCustomClose(args);
+         return pkgArgs;
+     }
+ 
+@@ -217,11 +222,10 @@
+     }
+ 
+     function initAccount(bytes memory initArgs) public {
+-        IUniswapV4Detf.PkgArgs memory args = abi.decode(initArgs, (IUniswapV4Detf.PkgArgs));
++        IUniswapV4Detf.PkgArgs memory args = _decodeArgs(initArgs);
+         ArgsLib.requireHookShape(args.hook);
+         ArgsLib.requireLiquidityPolicy(args.hook, args.ownerOnlyLiquidity);
+         ArgsLib.requireDetfSelfLegAndOwner(args.hook, address(this));
+-        ArgsLib.requireCustomClose(args);
+ 
+         address[] memory hookTokens_ = IUniswapV4SeBufferHook(args.hook).tokens();
+         uint256 pairCount_ = hookTokens_.length - 1;
+@@ -267,7 +271,6 @@
+             args.mintRouteMode,
+             args.burnRouteMode,
+             args.bondRouteMode,
+-            args.closeRouteMode,
+             args.donateRouteMode
+         );
+         ArgsLib.storeHookSetsAndRates(args.hook, address(this), args.creationPairPerDetfWad, opening_);
+@@ -279,27 +282,22 @@
+     function _storeTables(IUniswapV4Detf.PkgArgs memory args) private {
+         Repo.Storage storage s = Repo._layoutStruct();
+         if (args.mintRouteMode == IUniswapV4Detf.RouteTableMode.Custom) {
+-            ArgsLib.storeCustomTable(args.hook, address(this), args.mintRoutes, s.mintTable, false, false);
++            ArgsLib.storeCustomTable(address(this), args.mintRoutes, s.mintTable);
+         } else {
+             ArgsLib.storeDefaultInbound(args.hook, address(this), s.mintTable);
+         }
+         if (args.burnRouteMode == IUniswapV4Detf.RouteTableMode.Custom) {
+-            ArgsLib.storeCustomTable(args.hook, address(this), args.burnRoutes, s.burnTable, false, false);
++            ArgsLib.storeCustomTable(address(this), args.burnRoutes, s.burnTable);
+         } else {
+             ArgsLib.storeDefaultInbound(args.hook, address(this), s.burnTable);
+         }
+         if (args.bondRouteMode == IUniswapV4Detf.RouteTableMode.Custom) {
+-            ArgsLib.storeCustomTable(args.hook, address(this), args.bondRoutes, s.bondTable, false, false);
++            ArgsLib.storeCustomTable(address(this), args.bondRoutes, s.bondTable);
+         } else {
+             ArgsLib.storeDefaultInbound(args.hook, address(this), s.bondTable);
+         }
+-        if (args.closeRouteMode == IUniswapV4Detf.RouteTableMode.Custom) {
+-            ArgsLib.storeCustomTable(args.hook, address(this), args.closeRoutes, s.closeTable, true, false);
+-        } else {
+-            ArgsLib.storeDefaultClose(args.hook, address(this), s.closeTable);
+-        }
+         if (args.donateRouteMode == IUniswapV4Detf.RouteTableMode.Custom) {
+-            ArgsLib.storeCustomTable(args.hook, address(this), args.donateRoutes, s.donateTable, false, true);
++            ArgsLib.storeCustomTable(address(this), args.donateRoutes, s.donateTable);
+             ArgsLib.requireDonateSubset();
+         } else {
+             ArgsLib.storeDonateUnion();
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProcessArgsLib.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProcessArgsLib.sol
+@@ -48,17 +48,6 @@
+         }
+     }
+ 
+-    function requireCustomClose(IUniswapV4Detf.PkgArgs memory args) internal view {
+-        if (args.closeRouteMode != IUniswapV4Detf.RouteTableMode.Custom) return;
+-        if (args.closeRoutes.length != 1) revert IUniswapV4DetfDFPkg.InvalidCloseRoutes();
+-        IUniswapV4Detf.IoRoute memory row_ = args.closeRoutes[0];
+-        address token_ = address(row_.token);
+-        address vault_ = address(row_.vault);
+-        if (token_ == address(0) || vault_ == address(0)) revert IUniswapV4DetfDFPkg.ZeroAddress();
+-        address se_ = IUniswapV4SeBufferHook(args.hook).standardExchangeOf(token_);
+-        if (se_ != vault_ || se_ == address(0)) revert IUniswapV4DetfDFPkg.InvalidCloseRoutes();
+-    }
+-
+     function requireDetfSelfLegAndOwner(address hook_, address detf_) internal view {
+         address[] memory tokens_ = IUniswapV4SeBufferHook(hook_).tokens();
+         uint256 hits_;
+@@ -157,33 +146,17 @@
+         }
+     }
+ 
+-    function storeDefaultClose(address hook_, address detf_, Repo.Table storage table_) internal {
+-        address[] memory tokens_ = IUniswapV4SeBufferHook(hook_).tokens();
+-        for (uint256 i; i < tokens_.length; ++i) {
+-            address t_ = tokens_[i];
+-            if (t_ == detf_) continue;
+-            address se_ = IUniswapV4SeBufferHook(hook_).standardExchangeOf(t_);
+-            Repo._addRoute(table_, t_, IStandardExchange(se_));
+-        }
+-    }
+-
+     function storeCustomTable(
+-        address hook_,
+         address detf_,
+         IUniswapV4Detf.IoRoute[] memory rows_,
+-        Repo.Table storage table_,
+-        bool closeTable_,
+-        bool donateTable_
++        Repo.Table storage table_
+     ) internal {
+         for (uint256 i; i < rows_.length; ++i) {
+             address token_ = address(rows_[i].token);
+             address vault_ = address(rows_[i].vault);
+-            _requireCustomRow(hook_, detf_, token_, vault_, closeTable_);
++            _requireCustomRow(detf_, token_, vault_);
+             if (table_.tokens._contains(token_)) revert IUniswapV4DetfDFPkg.DuplicateRoute(token_);
+             Repo._addRoute(table_, token_, IStandardExchange(vault_));
+-        }
+-        if (donateTable_) {
+-            // subset vs mint∪bond is checked after both inbound tables are stored
+         }
+     }
+ 
+@@ -213,23 +186,14 @@
+     }
+ 
+     function _requireCustomRow(
+-        address hook_,
+         address detf_,
+         address token_,
+-        address vault_,
+-        bool closeTable_
++        address vault_
+     ) private view {
+         if (token_ == address(0) || vault_ == address(0)) revert IUniswapV4DetfDFPkg.ZeroAddress();
+         if (token_ == detf_) revert IUniswapV4DetfDFPkg.InvalidRouteTable();
+         Repo.Storage storage s = Repo._layoutStruct();
+         if (!s.hookStandardExchanges._contains(vault_)) revert IUniswapV4DetfDFPkg.InvalidRouteTable();
+-        if (closeTable_) {
+-            if (!s.hookPairTokens._contains(token_)) revert IUniswapV4DetfDFPkg.InvalidCloseRoutes();
+-            if (IUniswapV4SeBufferHook(hook_).standardExchangeOf(token_) != vault_) {
+-                revert IUniswapV4DetfDFPkg.InvalidCloseRoutes();
+-            }
+-            return;
+-        }
+         if (token_ == vault_) {
+             _requireShareRoute(IStandardExchange(vault_));
+             return;
+--- a/contracts/test/bases/TestBase_UniswapV4Detf_PonsV2Se.sol
++++ b/contracts/test/bases/TestBase_UniswapV4Detf_PonsV2Se.sol
+@@ -247,8 +247,7 @@
+             burnRoutes: new IUniswapV4Detf.IoRoute[](0),
+             bondRouteMode: IUniswapV4Detf.RouteTableMode.Default,
+             bondRoutes: new IUniswapV4Detf.IoRoute[](0),
+-            closeRouteMode: IUniswapV4Detf.RouteTableMode.Default,
+-            closeRoutes: new IUniswapV4Detf.IoRoute[](0),
++
+             donateRouteMode: IUniswapV4Detf.RouteTableMode.Default,
+             donateRoutes: new IUniswapV4Detf.IoRoute[](0)
+         });
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol
+@@ -281,8 +281,7 @@
+             burnRoutes: new IUniswapV4Detf.IoRoute[](0),
+             bondRouteMode: IUniswapV4Detf.RouteTableMode.Default,
+             bondRoutes: new IUniswapV4Detf.IoRoute[](0),
+-            closeRouteMode: IUniswapV4Detf.RouteTableMode.Default,
+-            closeRoutes: new IUniswapV4Detf.IoRoute[](0),
++
+             donateRouteMode: IUniswapV4Detf.RouteTableMode.Default,
+             donateRoutes: new IUniswapV4Detf.IoRoute[](0)
+         });
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad.sol
+@@ -169,14 +169,10 @@
+         }
+     }
+ 
+-    function _customClosePair0Args() internal view returns (IUniswapV4Detf.PkgArgs memory args) {
++    function _fundedClaimArgs() internal view returns (IUniswapV4Detf.PkgArgs memory args) {
+         args = _nLegDetfArgs(3);
+-        args.name = "QCustomClose";
+-        args.symbol = "qClose1";
+-        args.closeRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
+-        args.closeRoutes = new IUniswapV4Detf.IoRoute[](1);
+-        args.closeRoutes[0] =
+-            IUniswapV4Detf.IoRoute({token: IERC20(address(pair0)), vault: IStandardExchange(se0)});
++        args.name = "QFundedClaim";
++        args.symbol = "qClaim";
+     }
+ 
+     function _firstBond(uint256 pairAmount_) internal virtual override returns (uint256 tokenId, uint256 shares) {
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Decimals.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Decimals.sol
+@@ -385,8 +385,7 @@
+             burnRoutes: new IUniswapV4Detf.IoRoute[](0),
+             bondRouteMode: IUniswapV4Detf.RouteTableMode.Default,
+             bondRoutes: new IUniswapV4Detf.IoRoute[](0),
+-            closeRouteMode: IUniswapV4Detf.RouteTableMode.Default,
+-            closeRoutes: new IUniswapV4Detf.IoRoute[](0),
++
+             donateRouteMode: IUniswapV4Detf.RouteTableMode.Default,
+             donateRoutes: new IUniswapV4Detf.IoRoute[](0)
+         });
+--- a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_IoTables.t.sol
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_IoTables.t.sol
+@@ -22,22 +22,13 @@
+     UniswapV4Detf_IoTablesGoldBase,
+     UniswapV4Detf_IoTablesOpenBase
+ {
+-    /// @notice T7.11: Retained configuration cannot alter funded sDETF claims or release protocol LP.
+-    function test_T7_11_customClose_leftoverOwnerSwap() public {
++    /// @notice T7.11: Funded sDETF claims retain protocol LP without a separate close configuration.
++    function test_T7_11_fundedClaim_retainsProtocolLp() public {
+         IUniswapV4Detf.PkgArgs memory args = _defaultDetfArgs();
+-        args.name = "CustomClose1";
+-        args.symbol = "CC1";
+-        args.closeRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
+-        args.closeRoutes = new IUniswapV4Detf.IoRoute[](1);
+-        args.closeRoutes[0] = IUniswapV4Detf.IoRoute({
+-            token: IERC20(address(pairToken)),
+-            vault: IStandardExchange(se)
+-        });
++        args.name = "FundedClaimInstance";
++        args.symbol = "FC1";
+         address custom_ = _deployHookThenDetf(args);
+         IUniswapV4Detf info = IUniswapV4Detf(custom_);
+-        IUniswapV4Detf.IoRoute[] memory close_ = info.closeRoutes();
+-        assertEq(close_.length, 1, "custom close length 1");
+-        assertEq(address(close_[0].token), address(pairToken), "close-route pair");
+         _approveUserForDetf(custom_);
+ 
+         vm.startPrank(detfUser);
+--- a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Close.t.sol
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Close.t.sol
+@@ -23,12 +23,7 @@
+     /// @notice Funded claims cannot consume unrelated settlement inventory held by the DETF.
+     function test_E6_fundedClaim_doesNotPayPriorSettlementInventory() public {
+         IUniswapV4Detf.PkgArgs memory args = _defaultDetfArgs();
+-        args.name = "CustomCloseInventory";
+-        args.closeRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
+-        args.closeRoutes = new IUniswapV4Detf.IoRoute[](1);
+-        args.closeRoutes[0] = IUniswapV4Detf.IoRoute({
+-            token: IERC20(address(pairToken)), vault: IStandardExchange(se)
+-        });
++        args.name = "FundedClaimInventory";
+         IUniswapV4Detf info = IUniswapV4Detf(_deployHookThenDetf(args));
+         vm.startPrank(detfUser);
+         pairToken.approve(address(info), type(uint256).max);
+--- a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Deploy.t.sol
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Deploy.t.sol
+@@ -3,12 +3,12 @@
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
+-import {IUniswapV4Detf} from
++import {IUniswapV4Detf, IUniswapV4DetfDFPkg} from
+     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
+ import {TestBase_UniswapV4Detf} from
+     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
+ 
+-/// @notice T7.1 Dual revert, custom close length, deploy wiring.
++/// @notice T7.1 Deployment wiring and rejection of obsolete payload encoding.
+ contract UniswapV4Detf_Deploy is TestBase_UniswapV4Detf {
+     function test_T7_1_dualHook_reverts() public {
+         address dual_ = _deployDualHook();
+@@ -22,39 +22,12 @@
+         vm.stopPrank();
+     }
+ 
+-    function test_T7_1_customCloseLengthNotOne_reverts() public {
+-        IUniswapV4Detf.PkgArgs memory args = _defaultDetfArgs();
+-        args.name = "CloseLen0";
+-        args.symbol = "CL0";
+-        args.closeRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
+-        args.closeRoutes = new IUniswapV4Detf.IoRoute[](0);
+-        address predicted_ = _predictDetf(args);
+-        // hook already bound to setUp DETF; deploy a second hook for this predicted address
+-        vm.startPrank(owner);
+-        vm.expectRevert();
+-        detfPkg.deployVault(args);
+-        vm.stopPrank();
+-        predicted_;
+-    }
+-
+-    function test_T7_1_customCloseLengthTwo_reverts() public {
+-        IUniswapV4Detf.PkgArgs memory args = _defaultDetfArgs();
+-        args.name = "CloseLen2";
+-        args.symbol = "CL2";
+-        args.closeRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
+-        args.closeRoutes = new IUniswapV4Detf.IoRoute[](2);
+-        args.closeRoutes[0] = IUniswapV4Detf.IoRoute({
+-            token: IERC20(address(pairToken)),
+-            vault: IStandardExchange(se)
+-        });
+-        args.closeRoutes[1] = IUniswapV4Detf.IoRoute({
+-            token: IERC20(se),
+-            vault: IStandardExchange(se)
+-        });
+-        vm.startPrank(owner);
+-        vm.expectRevert();
+-        detfPkg.deployVault(args);
+-        vm.stopPrank();
++    function test_deploymentRejectsNoncanonicalPayload() public {
++        bytes memory canonical_ = abi.encode(_defaultDetfArgs());
++        detfPkg.calcSalt(canonical_);
++        bytes memory obsolete_ = bytes.concat(canonical_, bytes32(0));
++        vm.expectRevert(IUniswapV4DetfDFPkg.InvalidPackageArguments.selector);
++        detfPkg.calcSalt(obsolete_);
+     }
+ 
+     function test_deploy_inert_until_first_bond() public {
+--- a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad.t.sol
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad.t.sol
+@@ -14,7 +14,7 @@
+ contract UniswapV4Detf_Quad is TestBase_UniswapV4Detf_Quad {
+     /// @notice Custom settlement must not swap unrelated pair inventory for a closing holder.
+     function test_E6_customClose_doesNotSwapPriorPairInventory() public {
+-        IUniswapV4Detf info = IUniswapV4Detf(_deployQuadHookThenDetf(_customClosePair0Args()));
++        IUniswapV4Detf info = IUniswapV4Detf(_deployQuadHookThenDetf(_fundedClaimArgs()));
+         vm.startPrank(detfUser);
+         pair0.approve(address(info), type(uint256).max);
+         pair1.approve(address(info), type(uint256).max);
+@@ -64,14 +64,10 @@
+         _assertNoJoinableDust();
+     }
+ 
+-    function test_T8_3_customClose_onePair() public {
+-        IUniswapV4Detf.PkgArgs memory args = _customClosePair0Args();
++    function test_T8_3_fundedClaim_retainsWholeReserve() public {
++        IUniswapV4Detf.PkgArgs memory args = _fundedClaimArgs();
+         address customDetf = _deployQuadHookThenDetf(args);
+         IUniswapV4Detf info = IUniswapV4Detf(customDetf);
+-        IUniswapV4Detf.IoRoute[] memory close_ = info.closeRoutes();
+-        assertEq(close_.length, 1, "custom close length 1");
+-        assertEq(address(close_[0].token), address(pair0), "close pair0");
+-        assertEq(uint8(info.closeRouteMode()), uint8(IUniswapV4Detf.RouteTableMode.Custom), "custom");
+ 
+         vm.startPrank(detfUser);
+         IERC20(address(pair0)).approve(customDetf, type(uint256).max);
+--- a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/adversarial/Adversarial_Surface.t.sol
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/adversarial/Adversarial_Surface.t.sol
+@@ -24,7 +24,7 @@
+     function _surfacePayment() internal view virtual returns (IERC20);
+ 
+     function _controlSelectors() internal pure returns (bytes4[] memory s_) {
+-        s_ = new bytes4[](48);
++        s_ = new bytes4[](46);
+         s_[0] = IStandardExchangeIn.exchangeIn.selector;
+         s_[1] = IStandardExchangeIn.previewExchangeIn.selector;
+         s_[2] = IUniswapV4Detf.bond.selector;
+@@ -39,40 +39,38 @@
+         s_[11] = IUniswapV4Detf.mintRoutes.selector;
+         s_[12] = IUniswapV4Detf.burnRoutes.selector;
+         s_[13] = IUniswapV4Detf.bondRoutes.selector;
+-        s_[14] = IUniswapV4Detf.closeRoutes.selector;
+-        s_[15] = IUniswapV4Detf.donateRoutes.selector;
+-        s_[16] = IUniswapV4Detf.mintRouteMode.selector;
+-        s_[17] = IUniswapV4Detf.burnRouteMode.selector;
+-        s_[18] = IUniswapV4Detf.bondRouteMode.selector;
+-        s_[19] = IUniswapV4Detf.closeRouteMode.selector;
+-        s_[20] = IUniswapV4Detf.donateRouteMode.selector;
+-        s_[21] = IUniswapV4Detf.creationPairPerDetfWad.selector;
+-        s_[22] = IUniswapV4Detf.openingPairPerDetfWad.selector;
+-        s_[23] = IUniswapV4Detf.mintThreshold.selector;
+-        s_[24] = IUniswapV4Detf.burnThreshold.selector;
+-        s_[25] = IUniswapV4Detf.syntheticPrice.selector;
+-        s_[26] = IUniswapV4Detf.pendingExpansionDetf.selector;
+-        s_[27] = IUniswapV4Detf.bondNftVault.selector;
+-        s_[28] = IUniswapV4Detf.detfNFTVault.selector;
+-        s_[29] = IUniswapV4Detf.rebasingClaimToken.selector;
+-        s_[30] = IUniswapV4Detf.acceptedBondTokens.selector;
+-        s_[31] = bytes4(keccak256("isMintingAllowed()"));
+-        s_[32] = bytes4(keccak256("isMintingAllowed(address)"));
+-        s_[33] = bytes4(keccak256("isBurningAllowed()"));
+-        s_[34] = bytes4(keccak256("isBurningAllowed(address)"));
+-        s_[35] = IUniswapV4Detf.joinDonatedCapital.selector;
+-        s_[36] = IUniswapV4Detf.previewJoinDonatedCapital.selector;
+-        s_[37] = IUniswapV4Detf.notifyReserveDonated.selector;
+-        s_[38] = IUniswapV4Detf.completeReserveBondNft.selector;
+-        s_[39] = IUniswapV4Detf.completeReserveClaim.selector;
+-        s_[40] = IUniswapV4DetfSelfCall.peekPairEq.selector;
+-        s_[41] = IUniswapV4DetfSelfCall.sweepDustAtomic.selector;
+-        s_[42] = IUniswapV4DetfSelfCall.sweepPairToShare.selector;
+-        s_[43] = IDETFFundedRewards.synchronizeRewards.selector;
+-        s_[44] = IDETFStakingPreview.previewStakingGonsPerUnit.selector;
+-        s_[45] = IDETFStandardizedYield.rawSY.selector;
+-        s_[46] = IDETFStandardizedYield.stakingSY.selector;
+-        s_[47] = IUniswapV4Detf.previewFirstBondPayments.selector;
++        s_[14] = IUniswapV4Detf.donateRoutes.selector;
++        s_[15] = IUniswapV4Detf.mintRouteMode.selector;
++        s_[16] = IUniswapV4Detf.burnRouteMode.selector;
++        s_[17] = IUniswapV4Detf.bondRouteMode.selector;
++        s_[18] = IUniswapV4Detf.donateRouteMode.selector;
++        s_[19] = IUniswapV4Detf.creationPairPerDetfWad.selector;
++        s_[20] = IUniswapV4Detf.openingPairPerDetfWad.selector;
++        s_[21] = IUniswapV4Detf.mintThreshold.selector;
++        s_[22] = IUniswapV4Detf.burnThreshold.selector;
++        s_[23] = IUniswapV4Detf.syntheticPrice.selector;
++        s_[24] = IUniswapV4Detf.pendingExpansionDetf.selector;
++        s_[25] = IUniswapV4Detf.bondNftVault.selector;
++        s_[26] = IUniswapV4Detf.detfNFTVault.selector;
++        s_[27] = IUniswapV4Detf.rebasingClaimToken.selector;
++        s_[28] = IUniswapV4Detf.acceptedBondTokens.selector;
++        s_[29] = bytes4(keccak256("isMintingAllowed()"));
++        s_[30] = bytes4(keccak256("isMintingAllowed(address)"));
++        s_[31] = bytes4(keccak256("isBurningAllowed()"));
++        s_[32] = bytes4(keccak256("isBurningAllowed(address)"));
++        s_[33] = IUniswapV4Detf.joinDonatedCapital.selector;
++        s_[34] = IUniswapV4Detf.previewJoinDonatedCapital.selector;
++        s_[35] = IUniswapV4Detf.notifyReserveDonated.selector;
++        s_[36] = IUniswapV4Detf.completeReserveBondNft.selector;
++        s_[37] = IUniswapV4Detf.completeReserveClaim.selector;
++        s_[38] = IUniswapV4DetfSelfCall.peekPairEq.selector;
++        s_[39] = IUniswapV4DetfSelfCall.sweepDustAtomic.selector;
++        s_[40] = IUniswapV4DetfSelfCall.sweepPairToShare.selector;
++        s_[41] = IDETFFundedRewards.synchronizeRewards.selector;
++        s_[42] = IDETFStakingPreview.previewStakingGonsPerUnit.selector;
++        s_[43] = IDETFStandardizedYield.rawSY.selector;
++        s_[44] = IDETFStandardizedYield.stakingSY.selector;
++        s_[45] = IUniswapV4Detf.previewFirstBondPayments.selector;
+     }
+ 
+     function test_J1_facetFuncs_coversTargetApi() public view {
+@@ -105,7 +103,7 @@
+     }
+ 
+     function _assertRetiredSelectorsAbsent(address proxy_) private view {
+-        bytes4[11] memory retired_ = [
++        bytes4[13] memory retired_ = [
+             bytes4(keccak256("mint(address,uint256,uint256,address,bool,uint256)")),
+             bytes4(keccak256("previewMint(address,uint256)")),
+             bytes4(keccak256("burn(uint256,address,uint256,address,uint256)")),
+@@ -116,7 +114,9 @@
+             bytes4(keccak256("compoundProtocolRewardsAtomic()")),
+             bytes4(keccak256("claimLiquidity(uint256,address)")),
+             bytes4(keccak256("previewClaimLiquidity(uint256)")),
+-            bytes4(keccak256("thresholdMode()"))
++            bytes4(keccak256("thresholdMode()")),
++            bytes4(keccak256("closeRoutes()")),
++            bytes4(keccak256("closeRouteMode()"))
+         ];
+         for (uint256 i_; i_ < retired_.length; ++i_) {
+             assertEq(IDiamondLoupe(proxy_).facetAddress(retired_[i_]), address(0), "retired selector is absent");
+@@ -135,8 +135,6 @@
+         assertTrue(info_.rebasingClaimToken() != address(0));
+         info_.ownerOnlyLiquidity();
+         info_.mintRoutes(); info_.burnRoutes(); info_.bondRoutes(); info_.donateRoutes();
+-        // These inert configuration getters remain until the separately recorded cleanup approval.
+-        info_.closeRoutes(); info_.closeRouteMode();
+         info_.mintRouteMode(); info_.burnRouteMode(); info_.bondRouteMode(); info_.donateRouteMode();
+         info_.creationPairPerDetfWad(); info_.openingPairPerDetfWad();
+         assertGt(info_.mintThreshold(), info_.burnThreshold());
+--- a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Deploy_Decimals.sol
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Deploy_Decimals.sol
+@@ -8,43 +8,8 @@
+ import {TestBase_UniswapV4Detf_Decimals} from
+     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Decimals.sol";
+ 
+-/// @notice T7.1 Dual revert, custom close length, deploy wiring.
++/// @notice T7.1 Deployment wiring and rejection of obsolete payload encoding.
+ abstract contract UniswapV4Detf_Deploy_Decimals is TestBase_UniswapV4Detf_Decimals {
+-    function test_T7_1_customCloseLengthNotOne_reverts() public {
+-        IUniswapV4Detf.PkgArgs memory args = _defaultDetfArgs();
+-        args.name = "CloseLen0";
+-        args.symbol = "CL0";
+-        args.closeRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
+-        args.closeRoutes = new IUniswapV4Detf.IoRoute[](0);
+-        address predicted_ = _predictDetf(args);
+-        // hook already bound to setUp DETF; deploy a second hook for this predicted address
+-        vm.startPrank(owner);
+-        vm.expectRevert();
+-        detfPkg.deployVault(args);
+-        vm.stopPrank();
+-        predicted_;
+-    }
+-
+-    function test_T7_1_customCloseLengthTwo_reverts() public {
+-        IUniswapV4Detf.PkgArgs memory args = _defaultDetfArgs();
+-        args.name = "CloseLen2";
+-        args.symbol = "CL2";
+-        args.closeRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
+-        args.closeRoutes = new IUniswapV4Detf.IoRoute[](2);
+-        args.closeRoutes[0] = IUniswapV4Detf.IoRoute({
+-            token: IERC20(address(pairToken)),
+-            vault: IStandardExchange(se)
+-        });
+-        args.closeRoutes[1] = IUniswapV4Detf.IoRoute({
+-            token: IERC20(se),
+-            vault: IStandardExchange(se)
+-        });
+-        vm.startPrank(owner);
+-        vm.expectRevert();
+-        detfPkg.deployVault(args);
+-        vm.stopPrank();
+-    }
+-
+     function test_deploy_inert_until_first_bond() public {
+         assertFalse(detfInfo.isReserveLive(), "inert");
+         assertTrue(detfInfo.isReserveWired(), "nft+claim wired");
+--- a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_IoTables_Decimals.sol
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_IoTables_Decimals.sol
+@@ -22,22 +22,13 @@
+     UniswapV4Detf_IoTablesGoldBase_Decimals,
+     UniswapV4Detf_IoTablesOpenBase_Decimals
+ {
+-    /// @notice T7.11: Retained configuration cannot alter funded sDETF claims or release protocol LP.
+-    function test_T7_11_customClose_leftoverOwnerSwap() public {
++    /// @notice T7.11: Funded sDETF claims retain protocol LP without a separate close configuration.
++    function test_T7_11_fundedClaim_retainsProtocolLp() public {
+         IUniswapV4Detf.PkgArgs memory args = _defaultDetfArgs();
+-        args.name = "CustomClose1";
+-        args.symbol = "CC1";
+-        args.closeRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
+-        args.closeRoutes = new IUniswapV4Detf.IoRoute[](1);
+-        args.closeRoutes[0] = IUniswapV4Detf.IoRoute({
+-            token: IERC20(address(pairToken)),
+-            vault: IStandardExchange(se)
+-        });
++        args.name = "FundedClaimInstance";
++        args.symbol = "FC1";
+         address custom_ = _deployHookThenDetf(args);
+         IUniswapV4Detf info = IUniswapV4Detf(custom_);
+-        IUniswapV4Detf.IoRoute[] memory close_ = info.closeRoutes();
+-        assertEq(close_.length, 1, "custom close length 1");
+-        assertEq(address(close_[0].token), address(pairToken), "close-route pair");
+         _approveUserForDetf(custom_);
+ 
+         vm.startPrank(detfUser);
+--- a/test/foundry/spec/protocols/staking/token/TokenStaking_PonsUv4Detf.t.sol
++++ b/test/foundry/spec/protocols/staking/token/TokenStaking_PonsUv4Detf.t.sol
+@@ -27,10 +27,8 @@
+  * @title TokenStaking_PonsUv4Detf
+  * @notice E2E: Pons v2 DTF/WETH pool → Uni V4 SE → Single SE buffer CP hook DETF
+  *         (Custom I/O WETH + DTF) → TokenStaking deposit/reward = DTF.
+- * @dev Launch token is `$DTF` (hook pair). Claim `rateAsset()` is that pair
+- *      (`completeReserveClaim` binds `hookPairTokens[0]`). Close Custom is one
+- *      hook-pair row (PRD: custom close length 1); mint/bond/burn/donate list
+- *      both WETH and DTF.
++ * @dev Funded staking is backed by raw DETF; mint/bond/burn/donate routes list
++ *      both WETH and the launch token. Bond claims pay sDETF without an asset-selecting close.
+  */
+ contract TokenStaking_PonsUv4Detf is TestBase_UniswapV4Detf_PonsV2Se {
+     using VaultComponentFactoryService for ICreate3FactoryProxy;
+@@ -50,10 +48,6 @@
+         args.bondRoutes = routes_;
+         args.donateRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
+         args.donateRoutes = routes_;
+-        args.closeRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
+-        args.closeRoutes = new IUniswapV4Detf.IoRoute[](1);
+-        args.closeRoutes[0] =
+-            IUniswapV4Detf.IoRoute({token: IERC20(launchToken), vault: IStandardExchange(address(ponsSe))});
+     }
+ 
+     function setUp() public override {
+@@ -120,9 +114,6 @@
+         _assertRoutesHaveWethAndDtf(detfInfo.burnRoutes());
+         _assertRoutesHaveWethAndDtf(detfInfo.bondRoutes());
+         _assertRoutesHaveWethAndDtf(detfInfo.donateRoutes());
+-        IUniswapV4Detf.IoRoute[] memory close_ = detfInfo.closeRoutes();
+-        assertEq(close_.length, 1, "custom close is one hook pair");
+-        assertEq(address(close_[0].token), launchToken, "close token is DTF pair");
+     }
+ 
+     function test_stakingBacking_is_nativeDetf() public view {
+--- a/frontend/apps/dtf/app/create/lib/detfAbi.ts
++++ b/frontend/apps/dtf/app/create/lib/detfAbi.ts
+@@ -39,8 +39,6 @@
+   { name: 'burnRoutes', type: 'tuple[]', components: IO_ROUTE_COMPONENTS },
+   { name: 'bondRouteMode', type: 'uint8' },
+   { name: 'bondRoutes', type: 'tuple[]', components: IO_ROUTE_COMPONENTS },
+-  { name: 'closeRouteMode', type: 'uint8' },
+-  { name: 'closeRoutes', type: 'tuple[]', components: IO_ROUTE_COMPONENTS },
+   { name: 'donateRouteMode', type: 'uint8' },
+   { name: 'donateRoutes', type: 'tuple[]', components: IO_ROUTE_COMPONENTS },
+ ] as const
+--- a/frontend/apps/dtf/app/create/lib/detfDeploy.ts
++++ b/frontend/apps/dtf/app/create/lib/detfDeploy.ts
+@@ -58,8 +58,6 @@
+   burnRoutes: { token: Address; vault: Address }[]
+   bondRouteMode: number
+   bondRoutes: { token: Address; vault: Address }[]
+-  closeRouteMode: number
+-  closeRoutes: { token: Address; vault: Address }[]
+   donateRouteMode: number
+   donateRoutes: { token: Address; vault: Address }[]
+ }
+@@ -209,8 +207,6 @@
+     burnRoutes: none,
+     bondRouteMode: ROUTE_TABLE_DEFAULT,
+     bondRoutes: none,
+-    closeRouteMode: ROUTE_TABLE_DEFAULT,
+-    closeRoutes: none,
+     donateRouteMode: ROUTE_TABLE_DEFAULT,
+     donateRoutes: none,
+   }
+--- a/frontend/apps/dtf/app/create/lib/detfDeploy.test.ts
++++ b/frontend/apps/dtf/app/create/lib/detfDeploy.test.ts
+@@ -56,7 +56,8 @@
+     expect(args).not.toHaveProperty('expansionMaxCatchUpEpochs')
+     expect(args.mintRouteMode).toBe(ROUTE_TABLE_DEFAULT)
+     expect(args.mintRoutes).toEqual([])
+-    expect(args.closeRouteMode).toBe(ROUTE_TABLE_DEFAULT)
++    expect(args).not.toHaveProperty('closeRouteMode')
++    expect(args).not.toHaveProperty('closeRoutes')
+     expect(args.creator).toBe(CREATOR)
+     expect(encodeUniV4DetfPkgArgs(args).startsWith('0x')).toBe(true)
+   })

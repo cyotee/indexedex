@@ -11,7 +11,7 @@ Test scope & location
 - When extending an existing module (e.g., `BalancerV38020WeightedPoolMath`), add tests to the same test file to keep math logic collocated.
 
 Policy checks
-- Add tests asserting repository-level policies when feasible (e.g., test that deployed vault `symbol()=="DETF"` and `decimals()==18`).
+- Add tests asserting repository-level policies when feasible (e.g., test that deployed vault `symbol()=="DETF"` and `decimals()==9`).
 
 CI
 - CI must run `forge build` and hermetic `forge test` and fail the PR if those fail.

@@ -46,7 +46,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookExitTarget i
         address to,
         uint256 sharesInMax,
         uint256 deadline
-    ) public onlyLiquidityOwner nonReentrant returns (uint256 sharesIn) {
+    ) public onlyLiquidityRemover nonReentrant returns (uint256 sharesIn) {
         sharesIn = _exitSingleAssetExactTokenOut(tokenOut, amountOut, to, sharesInMax, deadline);
     }
 
@@ -64,7 +64,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookExitTarget i
         address to,
         uint256 sharesInMax,
         uint256 deadline
-    ) public onlyLiquidityOwner nonReentrant returns (uint256 sharesIn) {
+    ) public onlyLiquidityRemover nonReentrant returns (uint256 sharesIn) {
         sharesIn = _exitSingleAssetExactTokenOut(tokenOut, amountOut, to, sharesInMax, deadline);
     }
 
@@ -171,7 +171,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookExitTarget i
         address to,
         uint256[] calldata amountsMin,
         uint256 deadline
-    ) public onlyLiquidityOwner nonReentrant returns (uint256[] memory amounts) {
+    ) public onlyLiquidityRemover nonReentrant returns (uint256[] memory amounts) {
         _requireDeadline(deadline);
         if (to == address(0)) revert ZeroAddress();
         if (shares == 0) revert ZeroAmount();
@@ -231,7 +231,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookExitTarget i
         address to,
         uint256 amountOutMin,
         uint256 deadline
-    ) public onlyLiquidityOwner nonReentrant returns (uint256 amountOut) {
+    ) public onlyLiquidityRemover nonReentrant returns (uint256 amountOut) {
         amountOut = _exitSingleAssetExactBptIn(tokenOut, sharesIn, to, amountOutMin, deadline);
     }
 
@@ -241,7 +241,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookExitTarget i
         address to,
         uint256 amountOutMin,
         uint256 deadline
-    ) public onlyLiquidityOwner nonReentrant returns (uint256 amountOut) {
+    ) public onlyLiquidityRemover nonReentrant returns (uint256 amountOut) {
         amountOut = _exitSingleAssetExactBptIn(tokenOut, sharesIn, to, amountOutMin, deadline);
     }
 
@@ -361,7 +361,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookExitTarget i
         bool[] calldata receiveSeShare,
         uint256[] calldata amountsMin,
         uint256 deadline
-    ) public onlyLiquidityOwner nonReentrant returns (uint256[] memory amounts) {
+    ) public onlyLiquidityRemover nonReentrant returns (uint256[] memory amounts) {
         _requireDeadline(deadline);
         if (to == address(0)) revert ZeroAddress();
         if (shares == 0) revert ZeroAmount();
@@ -459,7 +459,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookExitTarget i
         address to,
         uint256 amountOutMin,
         uint256 deadline
-    ) public onlyLiquidityOwner nonReentrant returns (uint256 amountOut) {
+    ) public onlyLiquidityRemover nonReentrant returns (uint256 amountOut) {
         amountOut = _exitSingleAssetExactBptInFlexible(
             tokenOut, sharesIn, receiveSeShare, to, amountOutMin, deadline
         );
@@ -472,7 +472,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookExitTarget i
         address to,
         uint256 amountOutMin,
         uint256 deadline
-    ) public onlyLiquidityOwner nonReentrant returns (uint256 amountOut) {
+    ) public onlyLiquidityRemover nonReentrant returns (uint256 amountOut) {
         amountOut = _exitSingleAssetExactBptInFlexible(
             tokenOut, sharesIn, receiveSeShare, to, amountOutMin, deadline
         );

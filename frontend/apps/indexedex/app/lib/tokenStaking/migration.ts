@@ -2,6 +2,7 @@ import { erc20Abi, parseAbi, zeroAddress, type Address, type PublicClient } from
 import { tokenStakingAbi, TOKEN_STAKING_PHASE } from './abi'
 
 export const migrationRouteAbi = parseAbi([
+  'function staking() view returns (address)',
   'function detfToken() view returns (address)',
   'function stakingSY() view returns (address)',
   'function rebasingClaimToken() view returns (address)',
@@ -11,6 +12,22 @@ export const migrationRouteAbi = parseAbi([
   'function redeem(address receiver, uint256 shares, address tokenOut, uint256 minimum, bool internalBalance) returns (uint256)',
 ])
 const same = (a: Address, b: Address) => a.toLowerCase() === b.toLowerCase() && a !== zeroAddress
+
+/** Discover the protocol product from the existing staking contract on this RPC.
+ * Forks and public mainnet share a chain ID; catalog addresses cannot identify a migration. */
+export async function readProtocolDetf(client: PublicClient, staking: Address) {
+  const blockNumber = await client.getBlockNumber({ cacheTime: 0 })
+  const target = await client.readContract({ address: staking, abi: tokenStakingAbi, functionName: 'targetDetf', blockNumber })
+  if (target === zeroAddress) return null
+  const [detf, source] = await Promise.all([
+    client.readContract({ address: target, abi: migrationRouteAbi, functionName: 'detfToken', blockNumber }),
+    client.readContract({ address: target, abi: migrationRouteAbi, functionName: 'staking', blockNumber }),
+  ])
+  if (!same(source, staking) || detf === zeroAddress || same(detf, target)) {
+    throw new Error('The migration adapter does not identify this staking contract’s DTF-DETF.')
+  }
+  return detf
+}
 
 /** Discover bindings on the selected provider, never treat the adapter as a DETF.
  * Read a consistent block; a missing/incompatible deployment is an error, not a zero balance. */

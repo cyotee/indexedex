@@ -1,0 +1,16 @@
+{
+  "package": "contracts/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleStandardExchangeBufferHookDFPkg.sol",
+  "classification": "non_share_issuing_swap_adapter",
+  "sy_at_package_address": false,
+  "reason": "The package installs no ERC-20 or LP facets. It forwards pair-token/SE-share swaps; wrapper() identifies the existing SE token. SY belongs to that share-issuing SE. Adding SY tokens at the swap-hook address would create a new economic product outside the adapter scope.",
+  "evidence": [
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleStandardExchangeBufferHookDFPkg.sol",
+      "sha256": "ccbbf91da9f8ab58d7535450eaab975f0b44484fe829f3bf631129da5f88278f"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/single/interfaces/IUniswapV4SingleStandardExchangeBufferHook.sol",
+      "sha256": "dbe4f5e3ee37bfe2495c8951c8e2822e80f29763b68b8aa614a109aeb691778b"
+    }
+  ]
+}

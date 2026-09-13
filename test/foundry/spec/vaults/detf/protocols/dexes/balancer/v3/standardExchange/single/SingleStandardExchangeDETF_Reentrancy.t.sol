@@ -9,15 +9,9 @@ import {MockERC20} from "@crane/contracts/test/mocks/MockERC20.sol";
 import {
     TestBase_SingleStandardExchangeDETF
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF.sol";
-import {
-    ISingleStandardExchangeDETDFPkg
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETDFPkg.sol";
-import {
-    ISingleStandardExchangeDETFBonding
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFBondingTarget.sol";
-import {
-    ISingleStandardExchangeDETFInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFInfoTarget.sol";
+import {ISingleStandardExchangeDETDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETDFPkg.sol";
+import {ISingleStandardExchangeDETFBonding} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFBonding.sol";
+import {ISingleStandardExchangeDETFInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFInfo.sol";
 import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 
 /// @dev Hostile share token: on transferFrom, re-enters target then ALWAYS completes the transfer
@@ -129,10 +123,10 @@ contract SingleStandardExchangeDETF_Reentrancy_Test is TestBase_SingleStandardEx
             vaultShareWeight: 0,
             mintThreshold: 0,
             burnThreshold: 0,
-            thresholdMode: ThresholdMode.Open,
+
         expansionClosureRatePerSecond: 0,
-        expansionCatchUpMaxSeconds: 0,
-        expansionCatchUpCapBps: 0,
+
+
             creator: address(0),
             claimName: "",
             claimSymbol: "",

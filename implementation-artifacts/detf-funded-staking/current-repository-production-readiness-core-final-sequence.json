@@ -1,0 +1,110 @@
+{
+  "status": "REPOSITORY_CHECKS_PASSED_REHEARSAL_AND_ACCEPTANCE_REMAIN",
+  "provenance": {
+    "recorded_at_utc": "2026-09-10T20:27:12.663139+00:00",
+    "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+    "source_and_config_sha256": "2dab3ca0e3307eef624b38fee597f569513a1b6c699207fcbd642b8fb19c1ff5",
+    "source_and_config_files": 4816,
+    "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+    "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+    "crane_tracked_contract_and_config_diff_sha256": "3bb0f52c1183f2be28ee8a63fab300170f65e989720b5048e21da9c61028cc4d",
+    "crane_source_and_config_sha256": "b45a057611f782040ee29f1fddbbcc8eeba01def2c9341ef01c6bb65f685e123",
+    "crane_source_and_config_files": 14819,
+    "dependency_scope": "Crane Solidity tree, including untracked Solidity and nested vendored libraries/tests, plus Crane Foundry config. Final compiler metadata separately verifies every imported source closure.",
+    "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+    "machine": "macOS-26.6.2-x86_64-i386-64bit",
+    "architecture": "x86_64",
+    "logical_cpus": 16,
+    "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+  },
+  "steps": [
+    {
+      "name": "full-build",
+      "command": [
+        "python3",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/run-full-build.py",
+        "--include-scripts"
+      ],
+      "exit_code": 0,
+      "seconds": 27737.786,
+      "sources_unchanged": true,
+      "changed_fingerprints": []
+    },
+    {
+      "name": "readiness-regressions",
+      "command": [
+        "python3",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/run-production-readiness-regressions.py"
+      ],
+      "exit_code": 0,
+      "seconds": 63.555,
+      "sources_unchanged": true,
+      "changed_fingerprints": []
+    },
+    {
+      "name": "full-hermetic",
+      "command": [
+        "python3",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/run-current-hermetic.py"
+      ],
+      "exit_code": 0,
+      "seconds": 1060.505,
+      "sources_unchanged": true,
+      "changed_fingerprints": []
+    },
+    {
+      "name": "baseline-attribution",
+      "command": [
+        "python3",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/compare-current-hermetic.py"
+      ],
+      "exit_code": 0,
+      "seconds": 6.732,
+      "sources_unchanged": true,
+      "changed_fingerprints": []
+    }
+  ],
+  "started_at_utc": "2026-09-10T20:27:12.886424+00:00",
+  "archive": "before-current-repository-production-readiness-core-final",
+  "archived_evidence": [
+    {
+      "path": "implementation-full-build.json",
+      "sha256": "83ca9b472f7903a2233c58b6a56742dfd0f65f6c18fa9758585617e87e7ee177"
+    },
+    {
+      "path": "implementation-full-build.log",
+      "sha256": "31169d2c5f6b75adc47a1018aa0dde86a307268a97e757232123c55c571811d3"
+    },
+    {
+      "path": "implementation-hermetic-start.json",
+      "sha256": "79c63e2032f5ee64e0722fc862d2b792c3e1f7f20fd52795d2988b64cf7fdb13"
+    },
+    {
+      "path": "implementation-hermetic-test.json",
+      "sha256": "896e0696a3c8ce457d2a57f44365ea05fcb79b4f3e7870a3741ad4897fc1d26a"
+    },
+    {
+      "path": "implementation-hermetic-test.log",
+      "sha256": "5f34d3e821b1432c0963c1a6670eeb9b21f0db1c4e605682b2af3586a3b3e631"
+    },
+    {
+      "path": "current-hermetic-baseline-attribution.json",
+      "sha256": "5113f4cd97cba9a6298d3810622d0a22deba9951278f4ed7f84e5761253c5913"
+    },
+    {
+      "path": "acceptance-current-run-anchors.json",
+      "sha256": "63a74f593acd634249d8d665483d1b7465917a2bdf6d3765097d656fa24f2657"
+    },
+    {
+      "path": "maintained-script-build-scope.json",
+      "sha256": "68f6e2fbbdf0df1569b0e9f7c4f9378ce28bb033aaa99f448e91a855063b7ec6"
+    },
+    {
+      "path": "final-provider-repository-post-position-sequence.json",
+      "sha256": "92faa8127a824f4176679fc3e9c5ef21f9857d04723633bb8b6011316cb2e36a"
+    }
+  ],
+  "scope": "Full default contracts/tests plus maintained scripts; unfiltered default hermetic tests; exact baseline and owner-scope attribution.",
+  "limitations": "D60 failures remain reported. No result automatically closes acceptance or substitutes for the strict local rehearsal.",
+  "finished_at_utc": "2026-09-11T04:28:22.032940+00:00"
+}

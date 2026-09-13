@@ -1,0 +1,253 @@
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenRepo.sol:19: * @title RebasingClaimTokenRepo
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenRepo.sol:33:library RebasingClaimTokenRepo {
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:26:import {RebasingClaimTokenRepo} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenRepo.sol";
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:31: * @title RebasingClaimTokenTarget
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:45:contract RebasingClaimTokenTarget is IDetfErrors, ReentrancyLockModifiers, MultiStepOwnableModifiers, IRebasingClaimToken {
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:47:    using RebasingClaimTokenRepo for RebasingClaimTokenRepo.Storage;
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:94:        return _protocolNftZapOut(RebasingClaimTokenRepo._layoutStruct());
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:106:        RebasingClaimTokenRepo.Storage storage layoutStruct = RebasingClaimTokenRepo._layoutStruct();
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:108:        return RebasingClaimTokenRepo._sharesToBalance(layoutStruct.sharesOf[account], rate);
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:115:        return RebasingClaimTokenRepo._internalSharesToExternal(RebasingClaimTokenRepo._sharesOf(account));
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:122:        return RebasingClaimTokenRepo._internalSharesToExternal(RebasingClaimTokenRepo._totalShares());
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:126:        return RebasingClaimTokenRepo._totalShares() != 0;
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:133:        return _getCurrentRedemptionRate(RebasingClaimTokenRepo._layoutStruct());
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:138:        return RebasingClaimTokenRepo._layoutStruct().pendingRedeemDetfOut;
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:145:        return address(RebasingClaimTokenRepo._layoutStruct().detf);
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:152:        RebasingClaimTokenRepo._setDetf(IDetf(detf_));
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:159:        return RebasingClaimTokenRepo._layoutStruct().detfNFTId;
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:166:        return RebasingClaimTokenRepo._layoutStruct().rateAsset;
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:173:        uint256 rate = _getCurrentRedemptionRate(RebasingClaimTokenRepo._layoutStruct());
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:174:        return RebasingClaimTokenRepo._internalSharesToExternal(RebasingClaimTokenRepo._balanceToShares(rebasingClaimAmount, rate));
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:181:        uint256 rate = _getCurrentRedemptionRate(RebasingClaimTokenRepo._layoutStruct());
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:182:        uint256 internalShares = RebasingClaimTokenRepo._externalSharesToInternal(shares);
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:183:        return RebasingClaimTokenRepo._sharesToBalance(internalShares, rate);
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:190:        RebasingClaimTokenRepo.Storage storage layoutStruct = RebasingClaimTokenRepo._layoutStruct();
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:192:        uint256 shares = RebasingClaimTokenRepo._balanceToShares(rebasingClaimAmount, quote.rate);
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:207:        if (address(tokenOut) != address(RebasingClaimTokenRepo._layoutStruct().rateAsset)) {
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:211:        RebasingClaimTokenRepo.Storage storage layoutStruct = RebasingClaimTokenRepo._layoutStruct();
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:213:        uint256 shares = RebasingClaimTokenRepo._balanceToShares(amountIn, quote.rate);
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:228:        if (address(tokenOut) != address(RebasingClaimTokenRepo._layoutStruct().rateAsset)) {
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:232:        RedemptionQuote memory quote = _redemptionQuote(RebasingClaimTokenRepo._layoutStruct());
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:243:        uint256 balanceShares = Math.mulDiv(amountOut_, RebasingClaimTokenRepo._shareUnit(), q.rate, Math.Rounding.Ceil);
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:245:        return Math.mulDiv(shares, q.rate, RebasingClaimTokenRepo._shareUnit(), Math.Rounding.Ceil);
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:248:    function _redemptionQuote(RebasingClaimTokenRepo.Storage storage s) internal view returns (RedemptionQuote memory q) {
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:260:        q.rate = Math.mulDiv(q.backing, RebasingClaimTokenRepo._shareUnit(), q.totalInternalShares);
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:269:        uint256 balanceValue = RebasingClaimTokenRepo._sharesToBalance(shares, q.rate);
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:322:        RebasingClaimTokenRepo.Storage storage layoutStruct = RebasingClaimTokenRepo._layoutStruct();
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:328:        RebasingClaimTokenRepo.Storage storage layoutStruct, address from, address to, uint256 amount, uint256 rate
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:330:        uint256 shares = RebasingClaimTokenRepo._balanceToShares(amount, rate);
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:336:                RebasingClaimTokenRepo._internalSharesToExternal(shares),
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:337:                RebasingClaimTokenRepo._internalSharesToExternal(layoutStruct.sharesOf[from])
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:340:        uint256 availableBalance = RebasingClaimTokenRepo._sharesToBalance(layoutStruct.sharesOf[from], rate);
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:344:        RebasingClaimTokenRepo._transferShares(layoutStruct, from, to, shares);
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:356:        uint256 supply = RebasingClaimTokenRepo._totalShares();
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:358:            ? RebasingClaimTokenRepo._externalSharesToInternal(assets)
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:361:        uint256 rate = Math.mulDiv(backingAfter, RebasingClaimTokenRepo._shareUnit(), supply + issued);
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:362:        return RebasingClaimTokenRepo._sharesToBalance(issued, rate);
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:377:        RebasingClaimTokenRepo.Storage storage layoutStruct = RebasingClaimTokenRepo._layoutStruct();
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:382:            ? RebasingClaimTokenRepo._externalSharesToInternal(assets)
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:386:        RebasingClaimTokenRepo._mintShares(layoutStruct, recipient, internalShares);
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:389:        rebasingClaimMinted = RebasingClaimTokenRepo._sharesToBalance(internalShares, rate);
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:393:            recipient, assets, RebasingClaimTokenRepo._internalSharesToExternal(internalShares), rebasingClaimMinted
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:412:        RebasingClaimTokenRepo.Storage storage layoutStruct = RebasingClaimTokenRepo._layoutStruct();
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:435:        RebasingClaimTokenRepo.Storage storage layoutStruct = RebasingClaimTokenRepo._layoutStruct();
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:465:        RebasingClaimTokenRepo.Storage storage layoutStruct = RebasingClaimTokenRepo._layoutStruct();
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:507:        RebasingClaimTokenRepo.Storage storage layoutStruct = RebasingClaimTokenRepo._layoutStruct();
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:509:        uint256 internalSharesBurned = RebasingClaimTokenRepo._balanceToShares(rebasingClaimAmount, rate);
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:521:                RebasingClaimTokenRepo._internalSharesToExternal(internalSharesBurned),
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:522:                RebasingClaimTokenRepo._internalSharesToExternal(layoutStruct.sharesOf[burnFrom])
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:527:        RebasingClaimTokenRepo._burnShares(layoutStruct, burnFrom, internalSharesBurned);
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:529:        sharesBurned = RebasingClaimTokenRepo._internalSharesToExternal(internalSharesBurned);
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:543:        RebasingClaimTokenRepo.Storage storage layoutStruct = RebasingClaimTokenRepo._layoutStruct();
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:548:            RebasingClaimTokenRepo._setCachedRedemptionRate(layoutStruct, newRate);
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:565:        RebasingClaimTokenRepo.Storage storage layoutStruct_,
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:578:    function _getCurrentRedemptionRate(RebasingClaimTokenRepo.Storage storage layoutStruct_) internal view returns (uint256) {
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:582:    function _executeRedeem(RebasingClaimTokenRepo.Storage storage layoutStruct_, uint256 rebasingClaimAmount_, address recipient_, RedemptionQuote memory quote)
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:586:        uint256 shares = RebasingClaimTokenRepo._balanceToShares(rebasingClaimAmount_, quote.rate);
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:590:                RebasingClaimTokenRepo._internalSharesToExternal(shares),
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:591:                RebasingClaimTokenRepo._internalSharesToExternal(layoutStruct_.sharesOf[address(this)])
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:604:        RebasingClaimTokenRepo._burnShares(layoutStruct_, address(this), shares);
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:619:        RebasingClaimTokenRepo.Storage storage layoutStruct, uint256 amount, bool pretransferred, uint256 rate
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:628:    function _calcCurrentRedemptionRate(RebasingClaimTokenRepo.Storage storage layoutStruct_) internal view returns (uint256 rate) {
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:636:        rate = Math.mulDiv(zapout_, RebasingClaimTokenRepo._shareUnit(), totalShares_);
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:640:    function _protocolNftZapOut(RebasingClaimTokenRepo.Storage storage layoutStruct_)
+contracts/vaults/detf/common/claimToken/RebasingClaimTokenTarget.sol:663:    function _reserveShareZapOut(RebasingClaimTokenRepo.Storage storage layoutStruct_, uint256 lpAmount_)
+contracts/vaults/detf/common/bondNft/DETFNFTVaultService.sol:12:import {DETFNFTVaultRepo} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultRepo.sol";
+contracts/vaults/detf/common/bondNft/DETFNFTVaultService.sol:15: * @title DETFNFTVaultService
+contracts/vaults/detf/common/bondNft/DETFNFTVaultService.sol:20:library DETFNFTVaultService {
+contracts/vaults/detf/common/bondNft/DETFNFTVaultService.sol:63:        DETFNFTVaultRepo.Storage storage layout_,
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:38:import {DETFNFTVaultRepo} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultRepo.sol";
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:39:import {DETFNFTVaultCommon} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultCommon.sol";
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:40:import {DETFNFTVaultService} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultService.sol";
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:44: * @title DETFNFTVaultTarget
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:51:contract DETFNFTVaultTarget is
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:52:    DETFNFTVaultCommon,
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:58:    using DETFNFTVaultRepo for DETFNFTVaultRepo.Storage;
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:107:        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:111:        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:117:        DETFNFTVaultRepo._createPosition(
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:145:        return DETFNFTVaultRepo._reservedIdsWired();
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:149:        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:154:        DETFNFTVaultRepo._setDETFNFTId(layoutStruct, tokenId);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:155:        DETFNFTVaultRepo._setProtocolNftInitialized(layoutStruct, true);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:160:        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:171:            DETFNFTVaultRepo._setDETFNFTId(layoutStruct, protocolId);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:172:            DETFNFTVaultRepo._setProtocolNftInitialized(layoutStruct, true);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:193:        DETFNFTVaultRepo._setReservedIdsWired(layoutStruct, true);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:213:        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:229:        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:233:        uint256 lpAmount = DETFNFTVaultRepo._convertToAssets(layoutStruct, layoutStruct.originalSharesOf[tokenId]);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:234:        DETFNFTVaultRepo._removePosition(layoutStruct, tokenId);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:259:        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:269:        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:273:        DETFNFTVaultRepo._removePosition(layoutStruct, tokenId);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:288:        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:293:        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:304:    function _harvestRewardsInternal(DETFNFTVaultRepo.Storage storage layoutStruct_, uint256 tokenId_, address recipient_)
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:309:        DETFNFTVaultService.HarvestParams memory params = DETFNFTVaultService.HarvestParams({
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:316:        DETFNFTVaultService.HarvestResult memory result = DETFNFTVaultService._calcHarvestRewards(params);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:325:        DETFNFTVaultService._executeHarvestTransfer(layoutStruct_, tokenId_, recipient_, rewards_);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:336:        if (tokenId != DETFNFTVaultRepo._detfNFTId()) {
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:340:        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:341:        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:342:        DETFNFTVaultRepo._addToPosition(layoutStruct, tokenId, shares);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:353:        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:354:        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:355:        DETFNFTVaultRepo._addEffectiveSharesOnly(layoutStruct, tokenId, shares);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:360:        if (tokenId != DETFNFTVaultRepo._detfNFTId()) {
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:364:        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:365:        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:366:        DETFNFTVaultRepo._removeFromPosition(layoutStruct, tokenId, shares);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:378:        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:407:        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:411:        DETFNFTVaultRepo._removePosition(layoutStruct, tokenId);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:414:        DETFNFTVaultRepo._addToPosition(layoutStruct, layoutStruct.detfNFTId, principalShares);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:437:        return DETFNFTVaultRepo._earned(tokenId);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:444:        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:446:        uint256 originalShares = DETFNFTVaultRepo._originalSharesOf(layoutStruct, tokenId);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:447:        uint256 effectiveShares = DETFNFTVaultRepo._effectiveSharesOf(layoutStruct, tokenId);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:448:        uint256 bonusMultiplier = DETFNFTVaultRepo._bonusMultiplierOf(layoutStruct, tokenId);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:455:        info.unlockTime = DETFNFTVaultRepo._unlockTimeOf(layoutStruct, tokenId);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:462:        uint256 originalShares = DETFNFTVaultRepo._originalSharesOf(tokenId);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:464:        return DETFNFTVaultRepo._generateTokenURI(tokenId);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:471:        return DETFNFTVaultRepo._totalShares();
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:478:        return DETFNFTVaultRepo._rewardPerShares();
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:485:        return DETFNFTVaultRepo._detf();
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:492:        return DETFNFTVaultRepo._lpToken();
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:499:        return DETFNFTVaultRepo._rewardToken();
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:506:        return DETFNFTVaultRepo._detfNFTId();
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:524:        return DETFNFTVaultRepo._originalSharesOf(tokenId);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:528:        return DETFNFTVaultRepo._totalOriginalShares();
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:535:        return DETFNFTVaultRepo._effectiveSharesOf(tokenId);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:542:        return DETFNFTVaultRepo._unlockTimeOf(tokenId);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:549:        uint256 unlockTime = DETFNFTVaultRepo._unlockTimeOf(tokenId);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:557:        return DETFNFTVaultRepo._convertToShares(lpAmount);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:573:        return DETFNFTVaultRepo._convertToAssets(shares);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:580:        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:590:        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:627:        if (msg.sender != address(DETFNFTVaultRepo._detf())) {
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:663:        address detf_ = address(DETFNFTVaultRepo._detf());
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:665:        if (address(token) == address(DETFNFTVaultRepo._lpToken())) {
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:688:        IDetf detf_ = DETFNFTVaultRepo._detf();
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:691:        IERC20 lp_ = DETFNFTVaultRepo._lpToken();
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:759:            if (address(token_) == address(DETFNFTVaultRepo._detf())) {
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:760:                booked_ = DETFNFTVaultRepo._lastRewardTokenBalance();
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:796:        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:797:        uint256 shares_ = DETFNFTVaultRepo._convertToSharesAtLpReserve(layoutStruct, lpOut_, lpBefore_);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:799:        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:801:        DETFNFTVaultRepo._addToPosition(layoutStruct, protocolId_, shares_);
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:856:        if (to == address(DETFNFTVaultRepo._detf())) {
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:863:        if (to == address(DETFNFTVaultRepo._detf())) {
+contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol:870:        if (to == address(DETFNFTVaultRepo._detf())) {
+contracts/vaults/detf/common/bondNft/DETFNFTVaultRepo.sol:54: * @title DETFNFTVaultRepo
+contracts/vaults/detf/common/bondNft/DETFNFTVaultRepo.sol:64:library DETFNFTVaultRepo {
+contracts/vaults/detf/common/bondNft/DETFNFTVaultCommon.sol:18:import {DETFNFTVaultRepo} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultRepo.sol";
+contracts/vaults/detf/common/bondNft/DETFNFTVaultCommon.sol:25: * @title DETFNFTVaultCommon
+contracts/vaults/detf/common/bondNft/DETFNFTVaultCommon.sol:33:abstract contract DETFNFTVaultCommon is IDetfErrors {
+contracts/vaults/detf/common/bondNft/DETFNFTVaultCommon.sol:34:    using DETFNFTVaultRepo for DETFNFTVaultRepo.Storage;
+contracts/vaults/detf/common/bondNft/DETFNFTVaultCommon.sol:77:    function _validateLockDuration(DETFNFTVaultRepo.Storage storage, uint256 lockDuration_) internal view {
+contracts/vaults/detf/common/bondNft/DETFNFTVaultCommon.sol:113:        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+contracts/vaults/detf/common/bondNft/DETFNFTVaultCommon.sol:129:        return tokenId_ == DETFNFTVaultRepo._detfNFTId();
+contracts/vaults/detf/common/bondNft/DETFNFTVaultCommon.sol:133:        if (!DETFNFTVaultRepo._reservedIdsWired()) return false;
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:38:import {DETFNFTVaultRepo} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultRepo.sol";
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:39:import {DETFNFTVaultCommon} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultCommon.sol";
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:40:import {DETFNFTVaultService} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultService.sol";
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:52:    DETFNFTVaultCommon,
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:58:    using DETFNFTVaultRepo for DETFNFTVaultRepo.Storage;
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:107:        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:111:        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:117:        DETFNFTVaultRepo._createPosition(
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:145:        return DETFNFTVaultRepo._reservedIdsWired();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:149:        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:154:        DETFNFTVaultRepo._setDETFNFTId(layoutStruct, tokenId);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:155:        DETFNFTVaultRepo._setProtocolNftInitialized(layoutStruct, true);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:160:        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:171:            DETFNFTVaultRepo._setDETFNFTId(layoutStruct, protocolId);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:172:            DETFNFTVaultRepo._setProtocolNftInitialized(layoutStruct, true);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:193:        DETFNFTVaultRepo._setReservedIdsWired(layoutStruct, true);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:213:        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:229:        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:233:        uint256 lpAmount = DETFNFTVaultRepo._convertToAssets(layoutStruct, layoutStruct.originalSharesOf[tokenId]);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:234:        DETFNFTVaultRepo._removePosition(layoutStruct, tokenId);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:259:        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:269:        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:273:        DETFNFTVaultRepo._removePosition(layoutStruct, tokenId);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:287:        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:296:        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:307:    function _harvestRewardsInternal(DETFNFTVaultRepo.Storage storage layoutStruct_, uint256 tokenId_, address recipient_)
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:312:        DETFNFTVaultService.HarvestParams memory params = DETFNFTVaultService.HarvestParams({
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:319:        DETFNFTVaultService.HarvestResult memory result = DETFNFTVaultService._calcHarvestRewards(params);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:328:        DETFNFTVaultService._executeHarvestTransfer(layoutStruct_, tokenId_, recipient_, rewards_);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:339:        if (tokenId != DETFNFTVaultRepo._detfNFTId() && tokenId != DETF_FEE_TO_BOND_NFT_ID) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:344:        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:345:        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:346:        DETFNFTVaultRepo._addToPosition(layoutStruct, tokenId, shares);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:357:        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:358:        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:359:        DETFNFTVaultRepo._addEffectiveSharesOnly(layoutStruct, tokenId, shares);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:364:        if (tokenId != DETFNFTVaultRepo._detfNFTId()) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:368:        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:369:        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:370:        DETFNFTVaultRepo._removeFromPosition(layoutStruct, tokenId, shares);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:382:        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:411:        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:415:        DETFNFTVaultRepo._removePosition(layoutStruct, tokenId);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:418:        DETFNFTVaultRepo._addToPosition(layoutStruct, layoutStruct.detfNFTId, principalShares);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:441:        return DETFNFTVaultRepo._earned(tokenId);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:448:        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:450:        uint256 originalShares = DETFNFTVaultRepo._originalSharesOf(layoutStruct, tokenId);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:451:        uint256 effectiveShares = DETFNFTVaultRepo._effectiveSharesOf(layoutStruct, tokenId);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:452:        uint256 bonusMultiplier = DETFNFTVaultRepo._bonusMultiplierOf(layoutStruct, tokenId);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:459:        info.unlockTime = DETFNFTVaultRepo._unlockTimeOf(layoutStruct, tokenId);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:466:        uint256 originalShares = DETFNFTVaultRepo._originalSharesOf(tokenId);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:468:        return DETFNFTVaultRepo._generateTokenURI(tokenId);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:475:        return DETFNFTVaultRepo._totalShares();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:482:        return DETFNFTVaultRepo._rewardPerShares();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:489:        return DETFNFTVaultRepo._detf();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:496:        return DETFNFTVaultRepo._lpToken();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:503:        return DETFNFTVaultRepo._rewardToken();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:510:        return DETFNFTVaultRepo._detfNFTId();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:528:        return DETFNFTVaultRepo._originalSharesOf(tokenId);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:532:        return DETFNFTVaultRepo._totalOriginalShares();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:539:        return DETFNFTVaultRepo._effectiveSharesOf(tokenId);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:546:        return DETFNFTVaultRepo._unlockTimeOf(tokenId);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:553:        uint256 unlockTime = DETFNFTVaultRepo._unlockTimeOf(tokenId);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:561:        return DETFNFTVaultRepo._convertToShares(lpAmount);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:577:        return DETFNFTVaultRepo._convertToAssets(shares);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:584:        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:594:        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:631:        if (msg.sender != address(DETFNFTVaultRepo._detf())) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:667:        address detf_ = address(DETFNFTVaultRepo._detf());
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:669:        if (address(token) == address(DETFNFTVaultRepo._lpToken())) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:692:        IDetf detf_ = DETFNFTVaultRepo._detf();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:695:        IERC20 lp_ = DETFNFTVaultRepo._lpToken();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:735:        if (DETFNFTVaultRepo._totalOriginalShares() == 0) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:770:            if (address(token_) == address(DETFNFTVaultRepo._detf())) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:771:                booked_ = DETFNFTVaultRepo._lastRewardTokenBalance();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:807:        DETFNFTVaultRepo.Storage storage layoutStruct = DETFNFTVaultRepo._layoutStruct();
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:808:        uint256 shares_ = DETFNFTVaultRepo._convertToSharesAtLpReserve(layoutStruct, lpOut_, lpBefore_);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:810:        DETFNFTVaultRepo._updateGlobalRewards(layoutStruct);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:812:        DETFNFTVaultRepo._addToPosition(layoutStruct, protocolId_, shares_);
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:869:        if (to == address(DETFNFTVaultRepo._detf())) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:876:        if (to == address(DETFNFTVaultRepo._detf())) {
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultTarget.sol:883:        if (to == address(DETFNFTVaultRepo._detf())) {

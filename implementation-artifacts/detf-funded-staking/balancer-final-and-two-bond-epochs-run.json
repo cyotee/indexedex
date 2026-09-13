@@ -1,0 +1,27 @@
+{
+  "build": {
+    "exit_code": 0,
+    "seconds": 143.219,
+    "command": [
+      "forge",
+      "build",
+      "--offline",
+      "--contracts",
+      "contracts/vaults/detf/common/core"
+    ]
+  },
+  "test": {
+    "exit_code": 0,
+    "seconds": 5.279,
+    "command": [
+      "forge",
+      "test",
+      "--offline",
+      "--contracts",
+      "contracts/vaults/detf/common/core",
+      "-vvv",
+      "--match-test",
+      "test_finalFundedClaim|PositiveEpochCatchup"
+    ]
+  }
+}

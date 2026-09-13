@@ -127,6 +127,7 @@ contract UniswapV4StandardExchange_MultiJoinExit is TestBase_UniswapV4StandardEx
     }
 
     function test_MJ1_lengthNotTwo_reverts_singleZapInStillWorks() public {
+        _join(4 ether, 4 ether);
         address[] memory one = new address[](1);
         one[0] = _token0();
         uint256[] memory oneAmt = new uint256[](1);

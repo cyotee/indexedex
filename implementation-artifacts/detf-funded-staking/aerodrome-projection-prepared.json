@@ -1,0 +1,44 @@
+{
+  "status": "PREPARED_NOT_APPLIED",
+  "reason": "Preserve accepted V4 buffer compositions for the existing volatile Aerodrome SE without a capability allowlist.",
+  "changes": [
+    {
+      "path": "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeQuoteTarget.sol",
+      "before_sha256": "51b9c86e807451d6ebca53a324991507fea67f740cd297fd4fca22792c253dda",
+      "after_sha256": "ce798d9fe12ecdac633c262363466e583fce9e50ecd342be14de118b047006fb"
+    },
+    {
+      "path": "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeQuoteTarget.sol",
+      "before_sha256": "c1410e0b25b9923d98eeedbd4696625e625356578d2963137e2ceed444388b52",
+      "after_sha256": "2540c9cd1deadda2ddcda76117f1e8fbf0b875a0853ceee3c41156dfb091dbb1"
+    },
+    {
+      "path": "test/foundry/spec/vaults/standard/sy/ConstantProductNativeSY.t.sol",
+      "before_sha256": "bfe398e21073a6f4f4048da0ef5748f2e906880e725709aa6978a2c3996b2603",
+      "after_sha256": "beba16da83e73279e12276d29c863cc2390f338cdc72dee38eaf23d82ae6214a"
+    },
+    {
+      "path": "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeQuoteTarget.sol",
+      "before_sha256": null,
+      "after_sha256": "9b8aafaa067ea11df1cbe04d18eff190c8f4378ba3599b4d5af59ea882de9ded"
+    },
+    {
+      "path": "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeOutQueryFacet.sol",
+      "before_sha256": "45523e3cfc64bc80583d9a758aa29c61f6e0a004e1a206952d136ee87851d774",
+      "after_sha256": "715612c04564d802cb4da86290b4deab557289b2f06519989fd4676d73b4b98e"
+    },
+    {
+      "path": "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeDFPkg.sol",
+      "before_sha256": "7b0725a508537282ca85fb68af3977b171498c998b29f61bcd1df83ed147d26c",
+      "after_sha256": "affa5cc27f2098afdd725388a9c94a3c83e4cce3f634eb4024c3ea560bd673fa"
+    },
+    {
+      "path": "contracts/protocols/dexes/aerodrome/v1/Aerodrome_Component_FactoryService.sol",
+      "before_sha256": "c8bec1dd0026425a1a1f495292a7b54e34b840bcf66ef22d3646a3dad4d3306d",
+      "after_sha256": "f24159a4a5d3597201438cde865d9f37398ac28c6ea4cc973e25313a94998741"
+    }
+  ],
+  "scope": "Aerodrome existing query facet, package declarations, code-bound factory salts; retained LP accounting routes for V2/Camelot/Aerodrome with consolidated existing production-proxy fixtures. No PkgArgs/PkgInit or execution economics change.",
+  "validation": "Pending compilation, EIP-170 measurement, exact full-state proxy sequences and existing native SY regression cases. If the existing query facet exceeds EIP-170, split the quote selectors through the existing package/registry architecture.",
+  "source_freeze": "Do not apply until release validation session 52340 and every child Forge process have exited."
+}

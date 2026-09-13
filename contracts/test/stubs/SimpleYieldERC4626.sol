@@ -1,19 +1,93 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {MintableERC20Decimals} from "contracts/test/stubs/MintableERC20Decimals.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
+import {Math} from "@crane/contracts/utils/Math.sol";
+import {IStandardExchangeTransitionQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 
 /**
  * @title SimpleYieldERC4626
  * @notice Minimal ERC-4626 with controllable yield for hermetic SE tests (non-SUT harness).
  * @dev Interest is modeled by increasing totalAssets via `simulateYield` without minting shares
  *      — real pro-rata growth path for convertToAssets / previewRedeem.
+ *      Asset may be non-18 decimals (`MintableERC20Decimals`). Vault shares stay 18-dec
+ *      `SimpleMintableERC20`.
  */
-contract SimpleYieldERC4626 is SimpleMintableERC20 {
-    SimpleMintableERC20 public immutable assetToken;
+contract SimpleYieldERC4626 is SimpleMintableERC20, IStandardExchangeTransitionQuote {
+    MintableERC20Decimals public immutable assetToken;
     uint256 public totalAssetsStored;
 
-    constructor(SimpleMintableERC20 asset_) SimpleMintableERC20("Simple Yield Vault", "sYLD") {
+    struct QuoteState {
+        address vault;
+        uint256 assets;
+        uint256 shares;
+        uint256 holderShares;
+    }
+
+    function quoteState(address asset_, address holder_)
+        external view returns (bytes memory state_, uint256 holderAssets_)
+    {
+        if (asset_ != address(assetToken)) revert UnsupportedQuoteAsset(asset_);
+        QuoteState memory q = QuoteState(address(this), totalAssetsStored, totalSupply, balanceOf[holder_]);
+        return (abi.encode(q), _quoteAssets(q, q.holderShares));
+    }
+
+    function quoteTransition(bytes calldata state_, Operation operation_, uint256 amount_)
+        external view returns (bytes memory nextState_, uint256 amountIn_, uint256 amountOut_, uint256 holderAssetsAfter_)
+    {
+        QuoteState memory q = abi.decode(state_, (QuoteState));
+        if (q.vault != address(this)) revert InvalidQuoteState();
+        amountIn_ = amount_;
+        if (operation_ == Operation.ReceiveShares) {
+            q.holderShares += amount_;
+            if (q.holderShares > q.shares) revert InvalidQuoteState();
+            return (abi.encode(q), amount_, amount_, _quoteAssets(q, q.holderShares));
+        }
+        if (operation_ == Operation.DepositExactIn) {
+            amountOut_ = q.shares == 0 || q.assets == 0 ? amount_ : Math.mulDiv(amount_, q.shares, q.assets);
+            q.assets += amount_;
+            q.shares += amountOut_;
+            q.holderShares += amountOut_;
+        } else {
+            if (operation_ == Operation.WithdrawExactOut) {
+                amountIn_ = q.shares == 0 || q.assets == 0
+                    ? amount_ : Math.mulDiv(amount_, q.shares, q.assets, Math.Rounding.Ceil);
+                amountOut_ = amount_;
+            } else {
+                amountOut_ = _quoteAssets(q, amount_);
+            }
+            if (amountIn_ > q.holderShares) revert InsufficientQuoteShares(amountIn_, q.holderShares);
+            q.assets -= amountOut_;
+            q.shares -= amountIn_;
+            q.holderShares -= amountIn_;
+        }
+        return (abi.encode(q), amountIn_, amountOut_, _quoteAssets(q, q.holderShares));
+    }
+
+    function _quoteAssets(QuoteState memory q, uint256 shares_) private pure returns (uint256) {
+        return q.shares == 0 ? shares_ : Math.mulDiv(shares_, q.assets, q.shares);
+    }
+
+    function quoteAssets(bytes calldata state_, uint256 shares_) external view returns (uint256) {
+        QuoteState memory q = abi.decode(state_, (QuoteState));
+        if (q.vault != address(this)) revert InvalidQuoteState();
+        return _quoteAssets(q, shares_);
+    }
+
+    function quoteTotalSupply(bytes calldata state_) external view returns (uint256) {
+        QuoteState memory q = abi.decode(state_, (QuoteState));
+        if (q.vault != address(this)) revert InvalidQuoteState();
+        return q.shares;
+    }
+
+    function quoteShareBalance(bytes calldata state_) external view returns (uint256) {
+        QuoteState memory q = abi.decode(state_, (QuoteState));
+        if (q.vault != address(this)) revert InvalidQuoteState();
+        return q.holderShares;
+    }
+
+    constructor(MintableERC20Decimals asset_) SimpleMintableERC20("Simple Yield Vault", "sYLD") {
         assetToken = asset_;
     }
 

@@ -1,0 +1,12 @@
+{
+  "recorded_at_utc": "2026-09-08T03:29:27.023843+00:00",
+  "command": [
+    "npm",
+    "run",
+    "check"
+  ],
+  "cwd": "frontend/apps/dtf",
+  "exit_code": 0,
+  "seconds": 183.679,
+  "scope": "Current lint, typecheck and complete app tests after removing approved close payload fields and ABI components."
+}

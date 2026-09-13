@@ -1,0 +1,79 @@
+{
+  "at_utc": "2026-09-07T07:11:48.335327+00:00",
+  "baseline": "e08b415733e729471779dcb8102529631330ea16",
+  "status": "focused checkpoint; implementation remains incomplete",
+  "passed": 99,
+  "failed": 0,
+  "skipped": 0,
+  "suites": 13,
+  "run": {
+    "build": {
+      "exit_code": 0,
+      "seconds": 403.16,
+      "command": [
+        "forge",
+        "build",
+        "--offline",
+        "--contracts",
+        "contracts/vaults/detf/common/core"
+      ]
+    },
+    "test": {
+      "exit_code": 0,
+      "seconds": 26.511,
+      "command": [
+        "forge",
+        "test",
+        "--offline",
+        "--contracts",
+        "contracts/vaults/detf/common/core",
+        "-vvv"
+      ]
+    }
+  },
+  "scope": [
+    "shared staking/issuance/epoch math",
+    "metadata renderer",
+    "V4 CP production child integration",
+    "V4 Weighted/Orbital/Curve funded bond and SY integration",
+    "Balancer Single SE integration",
+    "native SY on ERC4626/UniswapV2/CamelotV2/Aerodrome"
+  ],
+  "not_covered": [
+    "Multi weighted migration is in progress and was not in this build graph",
+    "MixedBuffer and ComposedStable migration not yet implemented",
+    "remaining SE packages",
+    "full legacy test/caller migration",
+    "full release suite"
+  ],
+  "runtime_bytes": {
+    "RebasingClaimTokenFacet": 10201,
+    "UniswapV4DetfDFPkg": 19441,
+    "UniswapV4StandardExchangeWeightedBufferHookDFPkg": 22940,
+    "UniswapV4StandardExchangeWeightedBufferHookJoinFacet": 33042,
+    "UniswapV4StandardExchangeWeightedBufferHookExitFacet": 24616,
+    "UniswapV4StandardExchangeOrbitalBufferHookDepositFacet": 38677,
+    "UniswapV4StandardExchangeCurveQuadStableBufferHookJoinFacet": 31215,
+    "UniswapV2StandardExchangeInFacet": 23227,
+    "UniswapV2StandardExchangeOutFacet": 22852,
+    "CamelotV2StandardExchangeInFacet": 20460,
+    "AerodromeStandardExchangeInFacet": 21355,
+    "AerodromeStandardExchangeOutQueryFacet": 18064,
+    "ERC4626StandardExchangeInFacet": 16406
+  },
+  "remaining_oversize_hook_components": {
+    "UniswapV4StandardExchangeWeightedBufferHookJoinFacet": 33042,
+    "UniswapV4StandardExchangeWeightedBufferHookExitFacet": 24616,
+    "UniswapV4StandardExchangeOrbitalBufferHookDepositFacet": 38677,
+    "UniswapV4StandardExchangeCurveQuadStableBufferHookJoinFacet": 31215
+  },
+  "source_sha256": {
+    "test/foundry/spec/vaults/detf/common/DETFFundedStakingSuite.t.sol": "d3de1e79812e1b7cdef6d75c39a9ced62c4e645eb8be6ac599d4e5c83c43a99b",
+    "test/foundry/spec/vaults/detf/common/claimToken/V4FundedBindings.t.sol": "d40785f667915ad13436dc4a3a167850daafd73fc7627ae0cc34d4b37e3cb63e",
+    "test/foundry/spec/vaults/standard/sy/ConstantProductNativeSY.t.sol": "0811862f4a0d879be8f881449025a2738abd99f18990108967cbaac76fd4ba7f",
+    "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol": "5c288000459e55076d04de4feb939dce90cb25ae8871861bba25bccd0fb02cfe",
+    "contracts/vaults/standard/sy/ConstantProductStandardYieldTarget.sol": "64e85987cd1059b31d44858e0564e79c58b6669180ecc0f4cd3fac6608cc7bf3",
+    "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol": "ac8618bcc168f05902ae27da16381bbfed2811ff19cbf992ab07666198c6abe9",
+    "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderFacet.sol": "a306e5d74cd76be5cf3996926212b55d9da5a221d17aa3e8e9a6f59ee6932943"
+  }
+}

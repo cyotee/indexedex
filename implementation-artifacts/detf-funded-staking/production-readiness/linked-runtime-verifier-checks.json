@@ -1,0 +1,40 @@
+{
+  "status": "PASS_EIGHT_RUNTIME_VERIFIER_CHECKS",
+  "checked_at_utc": "2026-09-11T06:06:36.920457+00:00",
+  "checker_sha256": "51617da227ae5e68339f17797bbf3a0dd1b96598eef8810471dc49bd8704c22d",
+  "checks": [
+    {
+      "name": "recursively verifies linked bytecode and exact library self address",
+      "passed": true
+    },
+    {
+      "name": "rejects changed linked library executable",
+      "passed": true
+    },
+    {
+      "name": "rejects stale linked library source",
+      "passed": true
+    },
+    {
+      "name": "rejects wrong library self guard address",
+      "passed": true
+    },
+    {
+      "name": "rejects inconsistent repeated links",
+      "passed": true
+    },
+    {
+      "name": "rejects zero linked library",
+      "passed": true
+    },
+    {
+      "name": "rejects undeclared linker placeholders",
+      "passed": true
+    },
+    {
+      "name": "rejects runtime length mismatch before substitutions",
+      "passed": true
+    }
+  ],
+  "scope": "Verifier regressions; additional to production tests, not counted as Solidity test cases."
+}

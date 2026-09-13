@@ -1,0 +1,16 @@
+{
+  "status": "applied; validation pending",
+  "mapping": "T01 five old selector tests consolidate to three actual funded child tests: independent current selectors, callable views and 9-decimal funded units, absent retired sale/rate/NAV selectors. Reuses registered V4 gold fixture; removes fake DETF address and three unnecessary token deployments. T11 verifies surviving funded package fields and preserves alias compatibility test.",
+  "files": [
+    {
+      "path": "test/foundry/spec/saf/T01_FacetSelectors.t.sol",
+      "before_sha256": "ee9c42600541d92299363314dc1a2ece8d7640b1e274185ad02bb2981e9a3844",
+      "after_sha256": "a6bb104dc7ed85bd9df3c6bc03669964e496cc383e40c03b5af1b643b11e4a20"
+    },
+    {
+      "path": "test/foundry/spec/saf/T11_BrandStrip.t.sol",
+      "before_sha256": "8c57d22d4ecccf7b38bdbe0229cdd91b3a12a70bf84c041a5b51d1b460dad532",
+      "after_sha256": "c11896afb651db97524c0ff7986ae011dd8879abde41a5e4e698ec78b4d630e6"
+    }
+  ]
+}

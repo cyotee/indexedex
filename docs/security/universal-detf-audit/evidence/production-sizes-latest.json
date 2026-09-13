@@ -1,0 +1,100 @@
+[
+  {
+    "contract": "UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg",
+    "runtimeBytes": 20118,
+    "creationBytesWithoutArguments": 21408,
+    "runtimePass": true,
+    "creationBasePass": true
+  },
+  {
+    "contract": "UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet",
+    "runtimeBytes": 12952,
+    "creationBytesWithoutArguments": 12980,
+    "runtimePass": true,
+    "creationBasePass": true
+  },
+  {
+    "contract": "UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet",
+    "runtimeBytes": 14266,
+    "creationBytesWithoutArguments": 14294,
+    "runtimePass": true,
+    "creationBasePass": true
+  },
+  {
+    "contract": "UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFacet",
+    "runtimeBytes": 14149,
+    "creationBytesWithoutArguments": 14177,
+    "runtimePass": true,
+    "creationBasePass": true
+  },
+  {
+    "contract": "UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet",
+    "runtimeBytes": 21257,
+    "creationBytesWithoutArguments": 21285,
+    "runtimePass": true,
+    "creationBasePass": true
+  },
+  {
+    "contract": "UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet",
+    "runtimeBytes": 16291,
+    "creationBytesWithoutArguments": 16319,
+    "runtimePass": true,
+    "creationBasePass": true
+  },
+  {
+    "contract": "RebasingClaimTokenFacet",
+    "runtimeBytes": 11884,
+    "creationBytesWithoutArguments": 11912,
+    "runtimePass": true,
+    "creationBasePass": true
+  },
+  {
+    "contract": "UniswapV4DetfBondNFTVaultFacet",
+    "runtimeBytes": 23958,
+    "creationBytesWithoutArguments": 23986,
+    "runtimePass": true,
+    "creationBasePass": true
+  },
+  {
+    "contract": "UniswapV4DetfBondFacet",
+    "runtimeBytes": 18680,
+    "creationBytesWithoutArguments": 18708,
+    "runtimePass": true,
+    "creationBasePass": true
+  },
+  {
+    "contract": "UniswapV4DetfClaimFacet",
+    "runtimeBytes": 17058,
+    "creationBytesWithoutArguments": 17086,
+    "runtimePass": true,
+    "creationBasePass": true
+  },
+  {
+    "contract": "UniswapV4DetfDFPkg",
+    "runtimeBytes": 18072,
+    "creationBytesWithoutArguments": 19189,
+    "runtimePass": true,
+    "creationBasePass": true
+  },
+  {
+    "contract": "UniswapV4DetfExchangeFacet",
+    "runtimeBytes": 15033,
+    "creationBytesWithoutArguments": 15061,
+    "runtimePass": true,
+    "creationBasePass": true
+  },
+  {
+    "contract": "UniswapV4DetfMaintenanceFacet",
+    "runtimeBytes": 14810,
+    "creationBytesWithoutArguments": 14838,
+    "runtimePass": true,
+    "creationBasePass": true
+  },
+  {
+    "contract": "UniswapV4DetfQueryFacet",
+    "runtimeBytes": 15235,
+    "creationBytesWithoutArguments": 15263,
+    "runtimePass": true,
+    "creationBasePass": true
+  }
+]

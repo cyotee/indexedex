@@ -6,16 +6,20 @@ import {
     IRocketPoolRETHStandardVault
 } from "contracts/protocols/staking/rocket-pool/interfaces/IRocketPoolRETHStandardVault.sol";
 import {
-    RocketPoolRETHStandardExchangeCommon
-} from "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeCommon.sol";
+    RocketPoolRETHStandardYieldTarget
+} from "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardYieldTarget.sol";
 
-contract RocketPoolRETHMarkerFacet is RocketPoolRETHStandardExchangeCommon, IFacet {
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+import {NativeStandardYieldSelectors} from "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol";
+
+contract RocketPoolRETHMarkerFacet is RocketPoolRETHStandardYieldTarget, IFacet {
     function facetName() public pure returns (string memory) {
         return type(RocketPoolRETHMarkerFacet).name;
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](1);
+        interfaces = new bytes4[](2);
+        interfaces[1] = type(IStandardizedYield).interfaceId;
         interfaces[0] = type(IRocketPoolRETHStandardVault).interfaceId;
     }
 
@@ -29,6 +33,7 @@ contract RocketPoolRETHMarkerFacet is RocketPoolRETHStandardExchangeCommon, IFac
         funcs[5] = IRocketPoolRETHStandardVault.totalReserveEth.selector;
         funcs[6] = IRocketPoolRETHStandardVault.actualLiquidReservePercentage.selector;
         funcs[7] = IRocketPoolRETHStandardVault.targetLiquidReservePercentage.selector;
+        funcs = NativeStandardYieldSelectors._append(funcs);
     }
 
     function facetMetadata()

@@ -1,0 +1,38 @@
+{
+  "status": "Retired from this work by D60: Balancer-hosted DETFs are excluded except compilation maintenance.",
+  "baseline": "e08b415733e729471779dcb8102529631330ea16",
+  "finding": "Multi Weighted and Mixed Buffer previously pulled reserve BPT into LP-principal positions without minting DETF. New P-funded bonds require a DETF valuation not provided by that old branch.",
+  "current_prototype": "Historical provisional omission; no further Balancer route decision or functional refactor in this work. V4 own-reserve LP payment is separately accepted in D62\u2013D64.",
+  "rows": [
+    {
+      "source": "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFBondingTarget.sol",
+      "baseline_lp_payment_branch_matches": []
+    },
+    {
+      "source": "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfBondingTarget.sol",
+      "baseline_lp_payment_branch_matches": [
+        {
+          "line": 170,
+          "text": "if (address(tokenIn_) == address(s.reserveBpt)) {"
+        },
+        {
+          "line": 262,
+          "text": "tokens_[0] = address(s.reserveBpt);"
+        }
+      ]
+    },
+    {
+      "source": "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfBondingTarget.sol",
+      "baseline_lp_payment_branch_matches": [
+        {
+          "line": 195,
+          "text": "if (address(tokenIn_) == address(s.reserveBpt)) {"
+        },
+        {
+          "line": 269,
+          "text": "tokens_[uint256(s.vaultCount) + 1] = address(s.reserveBpt);"
+        }
+      ]
+    }
+  ]
+}

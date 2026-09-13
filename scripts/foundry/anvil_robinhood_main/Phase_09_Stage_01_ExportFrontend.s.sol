@@ -14,7 +14,7 @@ contract Phase_09_Stage_01_ExportFrontend is LaunchStageBase {
         _start("Phase 09 Stage 01: Export frontend");
         RobinhoodCanonicalLib.requireCanonicalPins();
         _loadPhasePriorForExport(s);
-        vm.createDir(FRONTEND_DIR, true);
+        vm.createDir(_frontendDir(), true);
         _writePlatform();
         _writeBaseTokens();
         _writeEmptyList("strategy-vaults.tokenlist.json", "IndexedEx Robinhood Strategy Vaults");
@@ -23,8 +23,13 @@ contract Phase_09_Stage_01_ExportFrontend is LaunchStageBase {
         _logComplete("Phase 09 Stage 01");
     }
 
-    function _frontendPath(string memory file) internal pure returns (string memory) {
-        return string.concat(FRONTEND_DIR, "/", file);
+    /// @dev Local release rehearsals export into their isolated evidence directory.
+    function _frontendDir() internal view returns (string memory) {
+        return vm.envOr("FRONTEND_ADDRESS_EXPORT_DIR", FRONTEND_DIR);
+    }
+
+    function _frontendPath(string memory file) internal view returns (string memory) {
+        return string.concat(_frontendDir(), "/", file);
     }
 
     function _writePlatform() internal {
@@ -47,6 +52,10 @@ contract Phase_09_Stage_01_ExportFrontend is LaunchStageBase {
         json = vm.serializeAddress("p", "twapOracle", address(s.twapOracle));
         json = vm.serializeAddress("p", "twapAdapterFactory", s.twapAdapterFactory);
         json = vm.serializeAddress("p", "uniV4SePkg", address(s.uniV4SePkg));
+        json = vm.serializeAddress("p", "uniV2SePkg", s.uniV2SePkg);
+        json = vm.serializeAddress("p", "uniV3SePkg", s.uniV3SePkg);
+        json = vm.serializeAddress("p", "uniswapV2Factory", RobinhoodCanonicalLib.v2Factory());
+        json = vm.serializeAddress("p", "uniswapV2Router", RobinhoodCanonicalLib.v2Router());
         json = vm.serializeAddress("p", "morphoBlueSePkg", s.morphoBlueSePkg);
         address morpho_ = RobinhoodCanonicalLib.morpho();
         if (_hasCode(morpho_)) {
@@ -62,10 +71,12 @@ contract Phase_09_Stage_01_ExportFrontend is LaunchStageBase {
         }
         json = vm.serializeAddress("p", "cpHookPkg", s.cpHookPkg);
         json = vm.serializeAddress("p", "weightedHookPkg", s.weightedHookPkg);
+        json = vm.serializeAddress("p", "orbitalHookPkg", s.orbitalHookPkg);
         json = vm.serializeAddress("p", "curveQuadHookPkg", s.curveQuadHookPkg);
         json = vm.serializeAddress("p", "uniV4DetfPkg", s.uniV4DetfPkg);
         json = vm.serializeAddress("p", "bondNftVaultPkg", s.bondNftVaultPkg);
         json = vm.serializeAddress("p", "rebasingClaimTokenPkg", s.rebasingClaimTokenPkg);
+        json = vm.serializeAddress("p", "rebasingAwareErc4626Pkg", s.rebasingAwareErc4626Pkg);
         json = vm.serializeAddress("p", "deployer", deployer);
         json = vm.serializeAddress("p", "owner", owner);
         json = vm.serializeAddress("p", "uiWallet", uiWallet);

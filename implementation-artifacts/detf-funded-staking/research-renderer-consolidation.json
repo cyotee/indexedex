@@ -1,0 +1,14 @@
+[
+  {
+    "removed": "frontend/apps/dtf/app/research/components/DetfView.tsx",
+    "sha256": "6407008e3466d6dc8b55bbb6f5204e3058ca41b1d051990cccacc45bf7926888",
+    "replacement": "frontend/apps/dtf/app/research/components/ResearchArticleView.tsx",
+    "reason": "Heading-specific renderers omitted new funded-staking sections. The shared renderer displays every article section and retains app links, lists and disclosures."
+  },
+  {
+    "removed": "frontend/apps/dtf/app/research/components/BondVsMintView.tsx",
+    "sha256": "cd4327e2e2a53d5726c4ecf46e0d76f78cececb85a904de7f8df0ae8c537686e",
+    "replacement": "frontend/apps/dtf/app/research/components/ResearchArticleView.tsx",
+    "reason": "Heading-specific renderers omitted new funded-staking sections. The shared renderer displays every article section and retains app links, lists and disclosures."
+  }
+]

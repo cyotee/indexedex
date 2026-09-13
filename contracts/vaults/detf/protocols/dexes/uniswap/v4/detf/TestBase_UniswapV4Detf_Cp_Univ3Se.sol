@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
-import {PoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol";
 import {IUniswapV3Factory} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Factory.sol";
 import {IUniswapV3Pool} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Pool.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
@@ -40,7 +42,11 @@ abstract contract TestBase_UniswapV4Detf_Cp_Univ3Se is TestBase_UniswapV4Detf {
 
         pairToken = new SimpleMintableERC20("Pair", "PAIR");
         seOther = new SimpleMintableERC20("Rate", "RATE");
-        pm = IPoolManager(address(new PoolManager(address(this))));
+        pm = IPoolManager(address(IPoolManager(create3Factory.create3WithArgs(
+            ArtifactCreationCode.creationCode(create3Factory, "PoolManager.sol:PoolManager"),
+            abi.encode(address(this)),
+            keccak256("TestBase_UniswapV4Detf_Cp_Univ3Se_PoolManager")
+        ))));
 
         univ3Factory = SeLib.newUniv3Factory();
         SeLib.Univ3SePkg memory v3pkg;
@@ -51,6 +57,7 @@ abstract contract TestBase_UniswapV4Detf_Cp_Univ3Se is TestBase_UniswapV4Detf {
         );
         SeLib.seedUniv3Pool(univ3Pool);
         se = SeLib.deployUniv3Vault(v3pkg.pkg, univ3Pool);
+        _seedBothSeAssets();
 
         _deployHookFactoryAndPkg();
         _deployBondNftVaultPkg();
@@ -70,6 +77,26 @@ abstract contract TestBase_UniswapV4Detf_Cp_Univ3Se is TestBase_UniswapV4Detf {
         pairToken.approve(se, type(uint256).max);
         IERC20(se).approve(detf, type(uint256).max);
         vm.stopPrank();
+        SeLib.activatePositionVault(se, mintToken, detfUser, address(0));
+    }
+
+    /// @dev V3 SE activation requires both assets; later DETF routes remain single-token.
+    function _seedBothSeAssets() private {
+        uint256 amount_ = 10_000 ether;
+        pairToken.mint(address(this), amount_);
+        seOther.mint(address(this), amount_);
+        pairToken.approve(se, amount_);
+        seOther.approve(se, amount_);
+        address[] memory tokens_ = new address[](2);
+        tokens_[0] = univ3Pool.token0();
+        tokens_[1] = univ3Pool.token1();
+        uint256[] memory amounts_ = new uint256[](2);
+        amounts_[0] = amount_;
+        amounts_[1] = amount_;
+        uint256 issued_ = IStandardExchangeInMulti(se).exchangeInManyToOne(
+            tokens_, amounts_, IERC20(se), 1, address(this), false, block.timestamp + 1 hours
+        );
+        assertGt(issued_, 0, "both assets activate underlying V3 SE");
     }
 
     function _craneCtx() internal view returns (SeLib.CraneCtx memory ctx) {
@@ -120,7 +147,7 @@ abstract contract TestBase_UniswapV4Detf_Cp_Univ3Se is TestBase_UniswapV4Detf {
             address se_ = IUniswapV4SeBufferHook(hook_).standardExchangeOf(toks[i]);
             if (se_ != address(0) && IERC20(se_).balanceOf(detf) > 0) needSweep = true;
         }
-        if (needSweep) detfInfo.sweepDust();
+        if (needSweep) detfInfo.sweepDust{gas: 30_000_000}();
         assertEq(IERC20(hook_).balanceOf(detf), 0, "R19 hook LP");
         for (uint256 i; i < toks.length; ++i) {
             uint256 bal = IERC20(toks[i]).balanceOf(detf);

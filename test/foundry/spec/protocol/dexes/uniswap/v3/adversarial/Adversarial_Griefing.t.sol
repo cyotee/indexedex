@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
 import {IUniswapV3Pool} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Pool.sol";
@@ -17,10 +19,18 @@ contract Adversarial_Griefing_Test is TestBase_UniswapV3StandardExchange_Adversa
         address v = uniswapV3StandardExchangeDFPkg.deployVault(p);
         address token0 = p.token0();
         ERC20PermitMintableStub(token0).mint(attacker, 20 ether);
+        ERC20PermitMintableStub(p.token1()).mint(attacker, 20 ether);
         vm.startPrank(attacker);
         IERC20(token0).approve(v, type(uint256).max);
-        uint256 shares = IStandardExchangeProxy(v).exchangeIn(
-            IERC20(token0), 20 ether, IERC20(v), 0, attacker, false, block.timestamp + 1
+        IERC20(p.token1()).approve(v, type(uint256).max);
+        address[] memory tokens = new address[](2);
+        tokens[0] = token0;
+        tokens[1] = p.token1();
+        uint256[] memory amounts = new uint256[](2);
+        amounts[0] = 20 ether;
+        amounts[1] = 20 ether;
+        uint256 shares = IStandardExchangeInMulti(v).exchangeInManyToOne(
+            tokens, amounts, IERC20(v), 0, attacker, false, block.timestamp + 1
         );
         vm.stopPrank();
         assertGt(shares, 0);

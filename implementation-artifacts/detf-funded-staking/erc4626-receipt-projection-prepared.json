@@ -1,0 +1,46 @@
+{
+  "status": "PREPARED_NOT_APPLIED",
+  "changes": [
+    {
+      "path": "contracts/vaults/standard/erc4626/ERC4626StandardExchangeQuoteTarget.sol",
+      "before_sha256": "af89710289dfcdc6f3930a96b2843168ac017b619d24787274e0e1e2bcb32b37",
+      "after_sha256": "ab6ebda031a1e3f32cf1f5890a2fbd0024c0290264fccdb221e105c380be0fd8"
+    },
+    {
+      "path": "test/foundry/fork/eth_main/vaults/standard/erc4626/ERC4626StandardExchange_SfrxETH_Fork.t.sol",
+      "before_sha256": "298d2ab2d5d64f3912a214f0df156096b283e68e8951ecd0e91b1d98e2eab018",
+      "after_sha256": "4cb1408ec16359b714314dfec4747408824edbf99dd9042dcdaa6c8999c5d056"
+    },
+    {
+      "path": "test/foundry/spec/vaults/standard/erc4626/ERC4626StandardExchange_TransitionQuote.t.sol",
+      "before_sha256": "b5ed3e6cde87bd3a7b4236c5f001e79ab5faf2078ddfc9ec0bef6185cd51f81d",
+      "after_sha256": "0ae9bd73800a0180ba48f02b18e9a1bbe5628b2a370432bee490a2cddeecaa50"
+    }
+  ],
+  "scope": "Retained protocol-receipt accounting route and actual transfer custody; no new storage, selectors, deployment arguments or execution economics.",
+  "tests": "Seven additions to the existing actual-proxy transition suite, covering virtual/no-offset snapshots, exact-output receipt surplus, nested IERC4626-vs-SE fees, and decimal/yield/fee-recipient fuzzing; four actual sfrxETH fork cases at block 24000000.",
+  "limitations": "Native nested IERC4626-vs-StandardExchange semantics and noncanonical opaque vault projection remain separate review items. This patch does not establish arbitrary ERC4626 projection support.",
+  "validation": "Pending production compilation, code-size check and actual proxy execution after session 52340 exits.",
+  "diagnostics": {
+    "production": {
+      "record": "erc4626-receipt-draft-compile.json",
+      "source_matches_prepared_patch": true,
+      "compiler_input_sha256": "3ca61e417087f6117fb66e8a113430e582712e7138b56ffd49b30f2c805172a2",
+      "errors": [],
+      "runtime_bytes": {
+        "ERC4626StandardExchangeDFPkg": 9414,
+        "ERC4626StandardExchangeInFacet": 23632
+      },
+      "method_count": 0
+    },
+    "typecheck": {
+      "record": "erc4626-receipt-draft-test-typecheck.json",
+      "source_matches_prepared_patch": true,
+      "compiler_input_sha256": "8c10a4ceae2d0af1c7dac3b9a6977bdc73af87a9ea7396c30efc88e94c77b48f",
+      "errors": [],
+      "runtime_bytes": null,
+      "method_count": 11
+    }
+  },
+  "public_protocol_input_preflight": "sfrxeth-projection-input-preflight.json"
+}

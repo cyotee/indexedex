@@ -1,6 +1,6 @@
 ---
 name: indexedex-testing
-description: This skill should be used when writing or reviewing IndexedEx Foundry tests, TestBases, mocks, vm.mockCall, IndexedexTest, vault DFPkg deploy, Standard Exchange tests, DETF tests, fork tests, or when an agent is tempted to mock vaults/manager/registry. Prefer production code over mocks.
+description: "Write or review IndexedEx production-first Foundry tests, TestBases, registry deployment and SE/DETF coverage."
 license: MIT
 ---
 
@@ -15,6 +15,14 @@ IndexedEx layers a **vault registry + manager** on Crane. Tests must use the sam
 3. This skill + root `CLAUDE.md` then [`docs/agent/INDEXEDEX_AGENT_LAW.md`](../../../docs/agent/INDEXEDEX_AGENT_LAW.md) (DETF roles, **token policy**). **No** root `AGENTS.md`.
 
 Generic Foundry skills (`forge-testing` mock sections) are **subordinate** to Crane + this skill.
+
+## `forge build` before `forge test` (LOCKED)
+
+IndexedEx FactoryServices load creation bytecode directly from `out/` artifact JSON via `ArtifactCreationCode`. The factory-aware overload recursively deploys and links external libraries. Keep Facet/DFPkg implementation imports and artifact-seed inheritance out of deployment helpers; import standalone interfaces instead. Editing an implementation then does not invalidate helpers that reference it only by artifact ID.
+
+After any production contract change, run **`forge build` then `forge test`** (same for `forge script`). `forge test` alone can CREATE3-deploy stale `out/` bytecode. Full text: root `CLAUDE.md` item 10 and agent law § FactoryService creation bytecode.
+
+For incremental work, use `python3 scripts/forge-artifacts.py test contracts/path/EditedTarget.sol --test-root test/foundry/spec/path/RelevantTest.t.sol -- -vv`. It refreshes concrete descendants and runtime artifacts before selecting test roots with `--skip`. Repeat `--test-root` for multiple suites. Keep configured project paths stable: changing `FOUNDRY_TEST` invalidates the shared cache. See [artifact build workflow](../../../docs/testing/ARTIFACT_BUILDS.md).
 
 ## Production-first (IndexedEx)
 
@@ -154,6 +162,7 @@ Do not mix live addresses with hermetic protocol ports in one base without an ex
 - [ ] Inbound credit uses measured **delta**, not absolute balance + claimed amount
 - [ ] Token policy (do not re-ask): FoT forbidden; rebasing **underlyings** forbidden (`rebasingClaimToken` is a protocol product); non-18 decimals allowed (scale to 18); pause/blacklist accepted; no `PkgArgs` allowlist
 - [ ] `--match-test` prefixes unique enough (or `--match-contract` the suite); do not treat colliding extras as this change
+- [ ] After production contract edits: `forge build` then `forge test` (FactoryService reads `out/`; tests can deploy stale bytecode)
 
 ## Token policy (LOCKED)
 

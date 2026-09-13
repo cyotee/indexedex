@@ -12,6 +12,7 @@ import {
 import {
     UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService as CpHookFactory
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService.sol";
+import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 import {
     IUniswapV4Detf,
     IUniswapV4DetfDFPkg
@@ -59,7 +60,9 @@ library UniswapV4DetfHookPremineLib {
                 standardExchange: standardExchange,
                 pairToken: pairToken,
                 rawToken: predictedDetf,
-                ownerOnlyLiquidity: true,
+                pairTokenDecimals: HookPkgArgsDecimalsLib.tokenDec(pairToken),
+                rawTokenDecimals: predictedDetf.code.length == 0 ? uint8(9) : HookPkgArgsDecimalsLib.tokenDec(predictedDetf),
+                ownerOnlyLiquidity: args.ownerOnlyLiquidity,
                 owner: predictedDetf
             });
         mineNonce = premineCpHook(hookFactory, hookPkg, hArgs);

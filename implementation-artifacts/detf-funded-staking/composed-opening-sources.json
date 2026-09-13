@@ -1,0 +1,52 @@
+{
+  "requirement": "D56 / A33",
+  "encoding": "openingDetfPrices: WAD whole stable/common BPT per whole purchased DETF; reserveSeedAmounts: native [DETF, stable BPT, common BPT]. Seed scale anchored to stable payment, common rounds down; G minted once.",
+  "validation": "pending",
+  "files": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfDFPkg.sol",
+      "before_sha256": "304fee7311a5dd222cbc5bb28985073dee73fd848e1a658bfd50308d35e4a3db",
+      "after_sha256": "05cda56c395c2c12ee5ac280e3c8fe4ba246007e3c1e95c4409469e1a4b4a092"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfRepo.sol",
+      "before_sha256": "cd429c1483895c64af0276504e0fb4be7c6a67dd7c8de052fc8ba245d9ad70ea",
+      "after_sha256": "ec1d35c8a9338c5032a914cb8988fc342a221b9b8d1504a9b11bab713a071c6a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol",
+      "before_sha256": "a48db9610081ad1f8789a61d54df5960ebeee3920c5afbe27005e958eff0395c",
+      "after_sha256": "1efb2136665039ca30fa9a840d884280737bc38ec7b9ab15c1b77a1e10b27a4d"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondingFacet.sol",
+      "before_sha256": "f962294d06296a9c779884e5d0fab63972ab1c1dd5cbbdb48c114d98064276fa",
+      "after_sha256": "8ed38889f81caa5cf33410f486abb4d1974c7bc006d739a83c0ee0c8522c824b"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/IComposedStableCommonDetfInfo.sol",
+      "before_sha256": "2b8796d7c8103e8178daf47dd4ae7847e257fcc396936e2a98c5f777fc150ac5",
+      "after_sha256": "06600d2167611b244dc52ea4f1e535228b6a61c7d104ef8f8417824caf6288fd"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenPricingTarget.sol",
+      "before_sha256": "68441cabd6adbc88a3ac18471e7baa68afb2b48c57640df0d4fec9371caeac4f",
+      "after_sha256": "31d4abc9a5bb6f0235941d0f7f4c7e3b08212e709b91d3ef9f0424894f5fa7ad"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenPricingFacet.sol",
+      "before_sha256": "933d4b604c34e2ec44db2c8326b842cd9de520af090e5ca58ac94a0601cef456",
+      "after_sha256": "38c3b92ea236f3cc8c106ac8d870f937b10887cb2dfebf11d81f3c3f83e5ee0c"
+    },
+    {
+      "path": "contracts/test/bases/TestBase_FundedComposedDETF.sol",
+      "before_sha256": "b900590a7060540c31b93d6df8f3d1f455b2c4f4abaf5d25723fa0f486ba1f4b",
+      "after_sha256": "f055330da659d624ab675fcb547e4d759fe2a6f86cf7c2df8917708a203f92c9"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol",
+      "before_sha256": "0f66c0ec3b519c159b90b7b872977578b12a54e25e853f3e8058a85093226aca",
+      "after_sha256": "cc0db23a63503326e8817af311177a2bae5f1d0846f6167cdcdba5d5d81279e8"
+    }
+  ]
+}

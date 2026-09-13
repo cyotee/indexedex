@@ -1,0 +1,17 @@
+{
+  "status": "APPLIED_RUNTIME_VALIDATION_PENDING",
+  "gate": "Entire active validation parent4255 exits before applying.",
+  "changes": [
+    {
+      "path": "test/foundry/spec/vaults/detf/DetfNestedPush_ProductionPresence.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/DetfNestedPush_ProductionPresence.t.sol.txt",
+      "before_sha256": "73f05cf7f26f46c635c6afd2f6f8c9d63030d647731f3e6779fab8481fa336cd",
+      "after_sha256": "8765ad1653df3875f4ff6a36c46937574910abc18a23bbad0fe708727b3a2a05",
+      "reason": "Replace obsolete source-string/blanket false-flag checks with retained actual transfer, booked-inventory, short-payment and custody regressions; no runtime test removed."
+    }
+  ],
+  "validation_passed": false,
+  "scope": "Shared test consolidation; preserve historical source in before-file archive, excluded Balancer DETF and Slipstream runtime tests unchanged.",
+  "applied_at_utc": "2026-09-09T08:34:04.631375+00:00",
+  "application_record": "hermetic-followups-validation-remediation-applied.json"
+}

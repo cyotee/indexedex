@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 /* -------------------------------------------------------------------------- */
 /*                                    Crane                                   */
 /* -------------------------------------------------------------------------- */
@@ -22,15 +24,13 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 /* -------------------------------------------------------------------------- */
 
 import {TestBase_BaseFork} from "test/foundry/fork/base_main/TestBase_BaseFork.sol";
-import {IndexedexTest} from "contracts/test/IndexedexTest.sol";
+
 import {TestBase_VaultComponents} from "contracts/vaults/TestBase_VaultComponents.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
-import {
-    ISlipstreamStandardExchangeDFPkg,
-    SlipstreamStandardExchangeDFPkg
-} from "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeDFPkg.sol";
+import {ISlipstreamStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/slipstream/ISlipstreamStandardExchangeDFPkg.sol";
+
 import {
     Slipstream_Component_FactoryService
 } from "contracts/protocols/dexes/aerodrome/slipstream/Slipstream_Component_FactoryService.sol";
@@ -231,17 +231,17 @@ contract TestBase_SlipstreamFork is TestBase_BaseFork, TestBase_Permit2, TestBas
         // Use vault registry deployment to deploy the DFPkg
         // This follows the same pattern as Aerodrome via IVaultRegistryDeployment
         IVaultRegistryDeployment vaultRegistry = IVaultRegistryDeployment(address(indexedexManager));
-        bytes32 salt = abi.encode(type(SlipstreamStandardExchangeDFPkg).name)._hash();
+        bytes32 salt = abi.encode("SlipstreamStandardExchangeDFPkg")._hash();
 
         // address dfPkgAddr = vaultRegistry.deployPkg(
-        //     type(SlipstreamStandardExchangeDFPkg).creationCode,
+        //     ArtifactCreationCode.creationCode(create3Factory, "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeDFPkg.sol:SlipstreamStandardExchangeDFPkg"),
         //     abi.encode(pkgInit),
         //     salt
         // );
 
         slipstreamStandardExchangeDFPkg = ISlipstreamStandardExchangeDFPkg(
             vaultRegistry.deployPkg(
-                type(SlipstreamStandardExchangeDFPkg).creationCode,
+                ArtifactCreationCode.creationCode(create3Factory, "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeDFPkg.sol:SlipstreamStandardExchangeDFPkg"),
                 abi.encode(pkgInit),
                 salt
             )

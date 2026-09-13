@@ -1,0 +1,31 @@
+{
+  "name": "Example basket DETF Bond #3",
+  "description": "Funded DETF purchase with linear principal vesting. Staking rewards are claimable during vesting.",
+  "image": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MjAgNDQwIj48cmVjdCB3aWR0aD0iNTIwIiBoZWlnaHQ9IjQ0MCIgcng9IjIwIiBmaWxsPSIjMTAxYjJhIi8+PGcgZmlsbD0iI2U1ZjNlZiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSIxNiI+PHRleHQgeD0iMzIiIHk9IjQyIiBmb250LXNpemU9IjIxIj5FeGFtcGxlIGJhc2tldCAoREVURik8L3RleHQ+PHRleHQgeD0iMzIiIHk9IjczIiBmaWxsPSIjOGRlMGM1Ij5ERVRGIEJvbmQgIzM8L3RleHQ+PHJlY3QgeD0iMzIiIHk9Ijk0IiB3aWR0aD0iNDU2IiBoZWlnaHQ9IjEwIiByeD0iNSIgZmlsbD0iIzMwNDczZiIvPjxyZWN0IHg9IjMyIiB5PSI5NCIgd2lkdGg9IjAiIGhlaWdodD0iMTAiIHJ4PSI1IiBmaWxsPSIjOGRlMGM1Ii8+PHRleHQgeD0iMzIiIHk9IjEzMiI+MCUgdmVzdGVkPC90ZXh0Pjx0ZXh0IHg9IjQ4OCIgeT0iMTMyIiB0ZXh0LWFuY2hvcj0iZW5kIj4zMCBkYXlzIHJlbWFpbmluZzwvdGV4dD48dGV4dCB4PSIzMiIgeT0iMTY4IiBmaWxsPSIjYjljYmM2Ij5QdXJjaGFzZWQ8L3RleHQ+PHRleHQgeD0iNDg4IiB5PSIxNjgiIHRleHQtYW5jaG9yPSJlbmQiPjEwMCBERVRGPC90ZXh0Pjx0ZXh0IHg9IjMyIiB5PSIyMTAiIGZpbGw9IiNiOWNiYzYiPlJlbWFpbmluZyBwcmluY2lwYWw8L3RleHQ+PHRleHQgeD0iNDg4IiB5PSIyMTAiIHRleHQtYW5jaG9yPSJlbmQiPjEwMCBERVRGPC90ZXh0Pjx0ZXh0IHg9IjMyIiB5PSIyNTIiIGZpbGw9IiNiOWNiYzYiPkNsYWltYWJsZSBwcmluY2lwYWw8L3RleHQ+PHRleHQgeD0iNDg4IiB5PSIyNTIiIHRleHQtYW5jaG9yPSJlbmQiPjAgc0RFVEY8L3RleHQ+PHRleHQgeD0iMzIiIHk9IjI5NCIgZmlsbD0iI2I5Y2JjNiI+Q2xhaW1hYmxlIHJld2FyZHM8L3RleHQ+PHRleHQgeD0iNDg4IiB5PSIyOTQiIHRleHQtYW5jaG9yPSJlbmQiPjAgc0RFVEY8L3RleHQ+PHRleHQgeD0iMzIiIHk9IjMzNiIgZmlsbD0iI2I5Y2JjNiI+VG90YWwgY2xhaW1hYmxlPC90ZXh0Pjx0ZXh0IHg9IjQ4OCIgeT0iMzM2IiB0ZXh0LWFuY2hvcj0iZW5kIj4wIHNERVRGPC90ZXh0Pjx0ZXh0IHg9IjMyIiB5PSI0MDAiIGZpbGw9IiM4ZGUwYzUiPkNsYWltcyBwYXkgc0RFVEYuIFVuc3Rha2UgZm9yIERFVEYuPC90ZXh0PjwvZz48L3N2Zz4=",
+  "attributes": [
+    {
+      "trait_type": "Vested percentage",
+      "value": 0
+    },
+    {
+      "trait_type": "Purchased",
+      "value": "100 DETF"
+    },
+    {
+      "trait_type": "Remaining principal",
+      "value": "100 DETF"
+    },
+    {
+      "trait_type": "Claimable principal",
+      "value": "0 sDETF"
+    },
+    {
+      "trait_type": "Claimable rewards",
+      "value": "0 sDETF"
+    },
+    {
+      "trait_type": "Total claimable",
+      "value": "0 sDETF"
+    }
+  ]
+}

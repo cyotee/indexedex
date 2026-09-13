@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IAllowanceTransfer} from "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
@@ -36,12 +38,11 @@ import {PonsV2LauncherToken} from
     "@crane/contracts/protocols/launchpads/ponsFamily/v2/PonsV2LauncherToken.sol";
 import {PonsV2BondingCurve} from
     "@crane/contracts/protocols/launchpads/ponsFamily/v2/PonsV2BondingCurve.sol";
-import {
-    GraduationPhase,
-    IPonsV2LaunchFactory
-} from "@crane/contracts/protocols/launchpads/ponsFamily/v2/interfaces/ILaunchpadV2.sol";
+import {GraduationPhase} from "@crane/contracts/protocols/launchpads/ponsFamily/v2/interfaces/ILaunchpadV2.sol";
+import {IPonsV2LaunchFactory} from "@crane/contracts/protocols/launchpads/ponsFamily/v2/interfaces/ILaunchpadV2.sol";
 
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
 import {
     TestBase_UniswapV4StandardExchange
 } from "contracts/protocols/dexes/uniswap/v4/test/bases/TestBase_UniswapV4StandardExchange.sol";
@@ -98,6 +99,26 @@ abstract contract TestBase_UniswapV4StandardExchange_PonsV2 is TestBase_UniswapV
         vm.label(address(ponsSe), "UniV4Se_ponsV2");
     }
 
+    /// @dev Activate the SE with actual graduated launch tokens and wrapped ETH before single-token routes.
+    function _activatePonsSe() internal {
+        uint256 quote_ = 0.001 ether;
+        _wrapWeth(address(this), quote_);
+        address[] memory tokens_ = ponsSe.vaultTokens();
+        uint256[] memory amounts_ = new uint256[](2);
+        for (uint256 i; i < tokens_.length; ++i) {
+            amounts_[i] = tokens_[i] == launchToken ? 10_000 ether : quote_;
+            IERC20(tokens_[i]).approve(address(ponsSe), amounts_[i]);
+        }
+        uint256 preview_ = IStandardExchangeInMulti(address(ponsSe)).previewExchangeInManyToOne(
+            tokens_, amounts_, IERC20(address(ponsSe))
+        );
+        uint256 issued_ = IStandardExchangeInMulti(address(ponsSe)).exchangeInManyToOne(
+            tokens_, amounts_, IERC20(address(ponsSe)), preview_, address(this), false, _deadline()
+        );
+        assertGt(issued_, 0, "two-token Pons SE activation");
+        assertEq(issued_, preview_, "Pons activation preview equals execution");
+    }
+
     /// @notice Deploy the real pons v2 stack against this TestBase's PoolManager / Permit2 / WETH.
     function _deployPonsV2OnIndexedExPoolManager() internal {
         ponsV2Owner = makeAddr("ponsV2Owner");
@@ -124,7 +145,7 @@ abstract contract TestBase_UniswapV4StandardExchange_PonsV2 is TestBase_UniswapV
         bytes memory hookArgs =
             abi.encode(IPoolManager(address(poolManager)), ponsV2FeeEscrow, ponsV2FeeSink, ponsV2Owner);
         (address predictedHook, bytes32 hookSalt) =
-            HookMiner.find(address(this), MEME_HOOK_FLAGS, type(PonsV2MemeHook).creationCode, hookArgs);
+            HookMiner.find(address(this), MEME_HOOK_FLAGS, ArtifactCreationCode.creationCode(create3Factory, "PonsV2MemeHook.sol:PonsV2MemeHook"), hookArgs);
         ponsV2MemeHook = new PonsV2MemeHook{salt: hookSalt}(
             IPoolManager(address(poolManager)), ponsV2FeeEscrow, ponsV2FeeSink, ponsV2Owner
         );

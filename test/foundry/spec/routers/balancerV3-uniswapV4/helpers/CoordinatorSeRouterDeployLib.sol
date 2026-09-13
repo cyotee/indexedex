@@ -8,9 +8,7 @@ import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
 import {SenderGuardFacet} from "@crane/contracts/protocols/dexes/balancer/v3/vault/SenderGuardFacet.sol";
-import {
-    IBalancerV3StandardExchangeRouterDFPkg
-} from "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterDFPkg.sol";
+import {IBalancerV3StandardExchangeRouterDFPkg} from "contracts/protocols/dexes/balancer/v3/routers/IBalancerV3StandardExchangeRouterDFPkg.sol";
 import {
     IBalancerV3StandardExchangeRouterProxy
 } from "contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol";

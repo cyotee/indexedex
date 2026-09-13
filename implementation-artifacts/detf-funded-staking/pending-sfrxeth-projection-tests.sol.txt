@@ -1,0 +1,52 @@
+import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
+import {TransitionQuoteAssertions} from "test/foundry/spec/vaults/standard/TransitionQuoteAssertions.sol";
+
+/// @notice Exact sequential quotes against the existing deployed sfrxETH vault.
+contract ERC4626StandardExchange_SfrxETH_ProjectionFork is
+    TestBase_ERC4626StandardExchange, TransitionQuoteAssertions
+{
+    IERC4626 constant RECEIPT = IERC4626(0xac3E018457B222d93114458476f3E3416Abbe38F);
+    IERC20 constant ASSET = IERC20(0x5E8422345238F34275888049021821E8E08CAa1f);
+    IfrxETHMinter constant MINTER = IfrxETHMinter(0xbAFA44EFE7901E04E39Dad13167D089C559c1138);
+    address internal exchange;
+
+    function setUp() public override {
+        vm.createSelectFork(vm.rpcUrl("ethereum_mainnet_alchemy"), 24_000_000);
+        TestBase_ERC4626StandardExchange.setUp();
+        exchange = _deployERC4626SE(address(RECEIPT));
+        vm.deal(address(this), 1_001 ether);
+        MINTER.submit{value: 1_000 ether}();
+        ASSET.approve(exchange, type(uint256).max);
+        ASSET.approve(address(RECEIPT), type(uint256).max);
+        RECEIPT.deposit(200 ether, address(this));
+        IStandardExchangeIn(exchange).exchangeIn(ASSET, 100 ether, IERC20(exchange), 1, address(this), false, block.timestamp);
+        vm.prank(owner);
+        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(exchange, 7e16);
+    }
+
+    function test_sfrxProjectionSequentialUnderlyingAndReceipt() public {
+        uint256 snapshot = vm.snapshotState();
+        _assertQuoteSequence(exchange, ASSET, address(this), 1 ether);
+        assertTrue(vm.revertToState(snapshot));
+        _assertQuoteSequence(exchange, IERC20(address(RECEIPT)), address(this), 1 ether);
+    }
+
+    function test_sfrxProjectionExternalDepositsAndFeeReceipts() public {
+        address holder = address(indexedexManager.feeTo());
+        IERC20(exchange).transfer(holder, 10 ether);
+        _assertExternalDepositQuote(exchange, ASSET, ASSET, 10 ether + 7, holder);
+        _assertExternalDepositQuote(exchange, IERC20(address(RECEIPT)), ASSET, 7 ether + 11, holder);
+        _assertExternalDepositQuote(exchange, ASSET, IERC20(address(RECEIPT)), 5 ether + 17, holder);
+    }
+
+    function test_sfrxProjectionExternalConversionBothDirections() public {
+        _assertExternalExchangeQuote(exchange, ASSET, IERC20(address(RECEIPT)), 10 ether + 7);
+        _assertExternalExchangeQuote(exchange, IERC20(address(RECEIPT)), ASSET, 7 ether + 11);
+    }
+
+    function test_sfrxProjectionRewardCycleCatchup() public {
+        uint256 boundary = IsfrxETH(address(RECEIPT)).rewardsCycleEnd();
+        vm.warp(boundary + 1);
+        _assertQuoteSequence(exchange, ASSET, address(this), 1 ether);
+    }
+}

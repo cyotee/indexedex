@@ -4,7 +4,7 @@
 # (and [mcp] max_output_bytes). Other keys may be ignored — keep global UI/models in ~/.grok/config.toml.
 
 # -----------------------------------------------------------------------------
-# MCP — Playwright only (effective) for this repo
+# MCP — Playwright (e2e), Higgsfield, and Voltaire. Meshy stays off.
 #
 # Cursor/global MCP entries in ~/.cursor/mcp.json are NOT deleted (Godot and
 # other machines stay intact). Grok still *discovers* those servers from compat
@@ -100,3 +100,18 @@ disabled = [
   "godot-development",
   "accelerator-usage",
 ]
+[mcp_servers.higgsfield]
+command = "npx"
+args = ["-y", "mcp-remote", "https://mcp.higgsfield.ai/mcp"]
+startup_timeout_sec = 120
+enabled = true
+
+[mcp_servers.meshy]
+command = "npx"
+args = ["-y", "@meshy-ai/meshy-mcp-server"]
+enabled = false
+
+[mcp_servers.voltaire]
+url = "https://voltaire.tevm.sh/mcp"
+enabled = true
+

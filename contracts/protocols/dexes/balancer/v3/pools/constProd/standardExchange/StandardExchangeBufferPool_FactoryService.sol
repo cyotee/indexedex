@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                   Foundry                                  */
@@ -24,19 +25,8 @@ import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IV
 
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
-import {
-    StandardExchangeBufferPoolFacet
-} from "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolFacet.sol";
-import {
-    StandardExchangeBufferPoolLiquidityFacet
-} from "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolLiquidityFacet.sol";
-import {
-    StandardExchangeHookFacet
-} from "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeHookFacet.sol";
-import {
-    StandardExchangeBufferPoolStandardVaultPkg,
-    IStandardExchangeBufferPoolPkg
-} from "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolStandardVaultPkg.sol";
+
+import {IStandardExchangeBufferPoolPkg} from "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPoolPkg.sol";
 
 /**
  * @title StandardExchangeBufferPool_FactoryService
@@ -55,26 +45,26 @@ library StandardExchangeBufferPool_FactoryService {
 
     function deployBufferPoolFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
         instance = create3Factory.deployFacet(
-            type(StandardExchangeBufferPoolFacet).creationCode,
-            abi.encode(type(StandardExchangeBufferPoolFacet).name)._hash()
+            ArtifactCreationCode.creationCode("StandardExchangeBufferPoolFacet.sol:StandardExchangeBufferPoolFacet"),
+            abi.encode("StandardExchangeBufferPoolFacet")._hash()
         );
-        vm.label(address(instance), type(StandardExchangeBufferPoolFacet).name);
+        vm.label(address(instance), "StandardExchangeBufferPoolFacet");
     }
 
     function deployPoolLiquidityFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
         instance = create3Factory.deployFacet(
-            type(StandardExchangeBufferPoolLiquidityFacet).creationCode,
-            abi.encode(type(StandardExchangeBufferPoolLiquidityFacet).name)._hash()
+            ArtifactCreationCode.creationCode("StandardExchangeBufferPoolLiquidityFacet.sol:StandardExchangeBufferPoolLiquidityFacet"),
+            abi.encode("StandardExchangeBufferPoolLiquidityFacet")._hash()
         );
-        vm.label(address(instance), type(StandardExchangeBufferPoolLiquidityFacet).name);
+        vm.label(address(instance), "StandardExchangeBufferPoolLiquidityFacet");
     }
 
     function deployHookFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
         instance = create3Factory.deployFacet(
-            type(StandardExchangeHookFacet).creationCode,
-            abi.encode(type(StandardExchangeHookFacet).name)._hash()
+            ArtifactCreationCode.creationCode("StandardExchangeHookFacet.sol:StandardExchangeHookFacet"),
+            abi.encode("StandardExchangeHookFacet")._hash()
         );
-        vm.label(address(instance), type(StandardExchangeHookFacet).name);
+        vm.label(address(instance), "StandardExchangeHookFacet");
     }
 
     /* ---------------------------------------------------------------------- */
@@ -88,13 +78,13 @@ library StandardExchangeBufferPool_FactoryService {
         instance = IStandardExchangeBufferPoolPkg(
             address(
                 vaultRegistry.deployPkg(
-                    type(StandardExchangeBufferPoolStandardVaultPkg).creationCode,
+                    ArtifactCreationCode.creationCode("StandardExchangeBufferPoolStandardVaultPkg.sol:StandardExchangeBufferPoolStandardVaultPkg"),
                     abi.encode(pkgInit),
-                    abi.encode(type(StandardExchangeBufferPoolStandardVaultPkg).name)._hash()
+                    abi.encode("StandardExchangeBufferPoolStandardVaultPkg")._hash()
                 )
             )
         );
-        vm.label(address(instance), type(StandardExchangeBufferPoolStandardVaultPkg).name);
+        vm.label(address(instance), "StandardExchangeBufferPoolStandardVaultPkg");
     }
 
     /* ---------------------------------------------------------------------- */

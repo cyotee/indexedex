@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib as DepositQuoteLib}
+    from "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {
@@ -289,6 +291,8 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookDepositT
         UniswapV4SeBufferHookLegLib.LegKind kind = _classify(tokenIn);
         if (kind == UniswapV4SeBufferHookLegLib.LegKind.Unknown) return 0;
         if (kind == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange) {
+            (bool supported, uint256 projected) = DepositQuoteLib.preview(tokenIn, amountIn);
+            if (supported) return projected;
             address pair = Repo._layout().legs.pairOfStandardExchange[tokenIn];
             uint256 pairOut = IStandardExchangeIn(tokenIn).previewExchangeIn(
                 IERC20(tokenIn), amountIn, IERC20(pair)
@@ -439,6 +443,8 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookDepositT
             tokenIn = isSe ? l.legs.standardExchangeOf[l.currency1] : l.currency1;
         }
         if (isSe) {
+            (bool supported, uint256 projected) = DepositQuoteLib.preview(tokenIn, amountIn);
+            if (supported) return projected;
             address pair = l.legs.pairOfStandardExchange[tokenIn];
             uint256 pairOut = IStandardExchangeIn(tokenIn).previewExchangeIn(
                 IERC20(tokenIn), amountIn, IERC20(pair)

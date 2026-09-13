@@ -1,0 +1,10 @@
+{
+  "scope": "D60 test declaration compilation maintenance; original assertions retained",
+  "files": [
+    "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/TestBase_ComposedStableCommonDetf_Components.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/adversarial/Adversarial_Surface.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/adversarial/Adversarial_ComposedStable_GE.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_GE_Decimals.sol"
+  ],
+  "validation": "pending default full build"
+}

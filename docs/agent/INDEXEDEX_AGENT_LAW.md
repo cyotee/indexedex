@@ -76,7 +76,7 @@ Use **role names**, never product token brands, in contracts, interfaces, storag
 | Vault share of that SE vault | `vaultShare` / `standardExchangeVaultShare` | Often the vault address itself |
 | DETF diamond share | `detfToken` / `address(this)` | This proxy is the ERC-20 |
 | Reserve pool / BPT | `reservePool` / `reserveBpt` | Balancer V3 pool + BPT |
-| Rebasing claim token | `rebasingClaimToken` / `IRebasingClaimToken` | Claim on protocol-owned reserve BPT |
+| Funded staking token | `rebasingClaimToken` / `IStakedDETF` | Nine-decimal sDETF, redeemable 1:1 from held DETF |
 
 **Anti-patterns (do not reintroduce):** `RICH`, `RICHIR`, `richToken`, `wethRichVault`, `mintWithWeth`, `wethAsEth` on generic DETF surfaces.
 
@@ -94,7 +94,7 @@ Universal. Applies to every SE, DETF, hook, router, and DFPkg that takes an IERC
 |-------|------|
 | **Fee-on-transfer** | **Forbidden** as `rateAsset`, `pairToken`, or any configured underlying. Never a product claim. Never ship `test_L2_FoT_credits_actualIn`. Pull helpers may still credit **observed inbound delta** (I1 / L-CLAIM-3) — that is accounting robustness, **not** FoT support. |
 | **Rebasing underlyings** | **Forbidden** as `rateAsset`, `pairToken`, or any configured underlying (no raw `stETH`-style `balanceOf` rebase). Official wrap faces (`wstETH`, `weETH`, `rETH`, Aave Stata / static aToken) are the required LST / lending faces. **`rebasingClaimToken` is a protocol-issued claim product**, not an underlying — it remains allowed. |
-| **Non-18 decimals** | **Allowed.** Scale amounts to 18 decimals for internal consistency. Do not reject USDC / USDT / WBTC-class decimals and do not invent a decimals allowlist. |
+| **Non-18 decimals** | **Allowed.** Normalize where the price adapter requires WAD; retain native units at token boundaries. DETF, sDETF and their SY wrappers use 9 decimals; unrelated SE shares retain their decimals. Do not reject USDC / USDT / WBTC-class decimals and do not invent a decimals allowlist. |
 | **Pause / blacklist** | **Accepted risk.** Issuer freeze is out of protocol scope. Do not add pause / blacklist detection or `PkgArgs` rejection. |
 | **Enforcement** | **Docs + tests only.** No DFPkg `processArgs` allowlist. Proof: `test_L2_FoT_forbidden` with a **real FoT token as the configured token**, not a mock SUT. Official LST / Stata faces are out of that test’s scope. |
 
@@ -102,7 +102,7 @@ Agents must not invent FoT economics, a token allowlist, or a “this family sup
 
 ## DETF families — common expectations (mandatory for agents)
 
-Apply these to **any** DETF work under `contracts/vaults/detf/**`. Normative product law is this section, code NatSpec, **family PRDs co-located with package code**, and shared cross-family law under `docs/detf/` (compound/expansion PRD + PROGRAM + threshold plans).
+Apply these to **any** DETF work under `contracts/vaults/detf/**`. The owner-approved [`DETF_ALIGNMENT_PRD.md`](../../contracts/vaults/detf/DETF_ALIGNMENT_PRD.md) **D32–D66 / §24** and [`funded staking implementation and test plan`](../../contracts/vaults/detf/DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md) supersede conflicting earlier decisions, family PRDs, NatSpec and shared programs under `docs/detf/`. D60 excludes further Balancer-hosted DETF functionality from this release; compilation maintenance remains allowed. D66 defers unfinished Slipstream work and its release gates while preserving completed functionality, tests and evidence. Unrelated Balancer SE and shared V4 work remain in scope. The following describes that target design; it is not evidence that implementation or deployment is complete.
 
 ### Product docs vs public docs (LOCKED)
 
@@ -117,16 +117,16 @@ Family-specific compound/expansion **stage plans** for Balancer families current
 ### What a DETF is
 
 - A **true DETF**: the diamond **is** the share ERC-20; seigniorage mint/burn is against a **reserve that includes a DETF self-leg** (Balancer V3 weighted/stable pool + BPT, or Uni V4 Single SE Buffer CP hook + fungible LP, or family-equivalent).
-- **Not** a pure pro-rata “shares ∝ BPT/LP” vault unless a specific route explicitly uses proportional principal accounting (bond/claim unwind helpers).
+- Raw DETF issuance retains the reserve-host quote and fee formulas. Primary redemption maps burnt DETF proportionally to actual protocol-owned LP and outstanding DETF supply; sDETF unstaking instead pays held DETF directly.
 - **Opacity:** production DETF code talks only to `IStandardExchange*` / share ERC-20 / reserve host ABI (Balancer vault/router or Uni V4 CP buffer hook). Do **not** import concrete Uni/Aero/Camelot/Aave **vault** types into DETF production sources beyond host plumbing. Nested SE vaults (including DETF-as-vault) are allowed and must stay opaque.
 
 ### Families (when to use which)
 
 | Family | Path | Use when |
 |--------|------|----------|
-| Single Standard Exchange (Balancer) | `detf/protocols/dexes/balancer/v3/standardExchange/single/` | Exactly **one** SE vault + DETF **Balancer weighted** reserve (BPT principal) |
+| Single Standard Exchange (Balancer) | `detf/protocols/dexes/balancer/v3/standardExchange/single/` | Exactly **one** SE vault + DETF **Balancer weighted** reserve (protocol-owned BPT) |
 | Composed stable multi | `detf/protocols/dexes/balancer/v3/stable/common/` | Multiple SE vaults with **like-kind** rate targets (stable-style composition) |
-| Mixed-buffer multi-vault stable | `detf/protocols/dexes/balancer/v3/mixedBuffer/` | Multiple SE vaults sharing one **bufferToken** (rateAsset) in a **MixedBuffer MultiVault Stable** reserve; mint buffer or vaultShare → DETF; burn DETF → buffer only; live via permissionless `bootstrapFirstBond` |
+| Mixed-buffer multi-vault stable | `detf/protocols/dexes/balancer/v3/mixedBuffer/` | Multiple SE vaults sharing one **bufferToken** (rateAsset) in a **MixedBuffer MultiVault Stable** reserve; mint buffer or vaultShare → DETF; burn DETF → supported buffer or vault-share routes; live via permissionless `bootstrapFirstBond` |
 | Multi-vault weighted | `detf/protocols/dexes/balancer/v3/multi-vault-weighted/` | Multiple SE vaults that must keep **distinct** valuations in a **weighted** reserve |
 | **Uni V4 DETF (unified)** | `detf/protocols/dexes/uniswap/v4/detf/` | One DFPkg (`UniswapV4DetfDFPkg` / `IUniswapV4Detf`) bound to **one** of four buffer **hooks** (CP, Orbital, Weighted, Curve Quad). `PkgArgs.hook` + route tables. Bond NFT under `…/uniswap/v4/bondNft/`. Law: [`DETF_INSTANCE_IO_ROUTING_PRD.md`](../../contracts/vaults/detf/DETF_INSTANCE_IO_ROUTING_PRD.md) §16 + [`UNIFIED_DETF_DEPRECATION_TEST_COVERAGE_PRD.md`](../../contracts/vaults/detf/UNIFIED_DETF_DEPRECATION_TEST_COVERAGE_PRD.md). Family Uni V4 DETF diamonds are deleted |
 
@@ -136,102 +136,78 @@ Family-specific compound/expansion **stage plans** for Balancer families current
 
 ### Governance and immutability
 
-- DETF **instances are immutable and unowned** after deploy: no instance owner, no diamondCut, no admin pause surface on the diamond for normal operation.
-- Flawed config → abandon instance; ship a new package/args. Prefer deploy-time wiring only (bond NFT, claim token, rate providers, reserve pool) inside DFPkg `postDeploy`.
-- **Fees / bond terms / seigniorage incentive:** **Vault Fee Oracle** (`feeOracle` on manager) where peer DETFs already do.
-- **Mint/burn thresholds + mode:** deploy-time only via **`PkgArgs` → resolve → instance storage** — **not** the fee oracle. See **Pricing and mint/burn gates** below.
-- **Protocol compound rules + natural expansion rate/caps:** deploy-time only via **`PkgArgs` → resolve → instance storage** — **not** the fee oracle. See **Protocol seigniorage compound + natural supply expansion** below.
+- DETF instances are immutable and unowned after deploy: no normal-operation owner, diamondCut or admin pause. Flawed configuration requires a new instance.
+- Wire the reserve, funded staking token, bond NFT and separate raw/staking SY wrappers during registered package deployment.
+- Preserve the fee oracle as the source of usage fees, duration terms and issuance/standing reward fractions. Thresholds and the retained expansion closure rate are deployment parameters.
+- Every DETF uses strict price gating with reserve-swap fallback. Remove Open mode and its configuration. Epoch length is fixed at eight hours; remove configurable supply, rebase, catch-up and mint caps.
 
-### Liveness (inert → live)
+### Liveness and first bond
 
-- Deploy **inert**. Mint/burn of user DETF against vault shares is blocked until live (`isReserveLive` / equivalent).
-- Live is established by a **first successful bond** that creates protocol reserve (family-specific):
-  - **Single SE DETF (Balancer):** first bond with SE vault shares (mints DETF self-leg into pool + joins shares; BPT principal on bond NFT).
-  - **Uni V4 DETF (unified):** **permissionless** first bond that joins **hook LP** at deploy-time **creation rate** (pair capital + minted DETF self-leg; LP principal on bond NFT). Same live rule for CP / Orbital / Weighted / Quad hooks. See DETF I/O routing §16.
-  - **Multi-vault weighted:** first bond of **reserve BPT** (user may obtain BPT via `initializeReserve` / join that mints DETF **only into the pool**, not open seigniorage mint).
-  - **Mixed-buffer multi-vault stable:** permissionless `bootstrapFirstBond` (multi-asset non-DETF legs + rate-scaled peg DETF self-seed + reserve init; BPT principal on bond NFT).
-- Do not invent a second product “bootstrap mode.” Speak **inert / pre-live** vs **live**.
+- Deploy inert. The first successful family bond/bootstrap supplies actual payment and a separately minted proportional DETF self-leg to the reserve, establishes liveness and anchors the epoch clock.
+- The same purchase additionally mints the purchased DETF principal and stakes it for the bond. User bond positions have no claim on held LP. All LP acquired by DETF operations belongs to the DETF as a whole, including authorized NFT custody; external LP stays external property.
+- Retain family bootstrap routes: Single SE first bond; V4 configured first-bond joins; Multi-vault `initializeReserve` with non-DETF legs; Mixed Buffer `bootstrapFirstBond`; Composed Stable initialization with its inner BPT legs.
+- Use the existing initial-price parameter on a linear first-bond curve, including V4's existing opening override/creation fallback. A family lacking that parameter requires an explicit requirement resolution; do not invent a seed valuation.
 
-### Pricing and mint/burn gates
+### Pricing and primary/swap selection
 
-**Normative source:** this section + core lib [`contracts/vaults/detf/common/core/DETFThresholdPolicy.sol`](contracts/vaults/detf/common/core/DETFThresholdPolicy.sol) (and threshold plan under [`docs/detf/DETFThresholdPolicy_Threshold_Modes_IMPLEMENTATION_AND_TEST_PLAN.md`](docs/detf/DETFThresholdPolicy_Threshold_Modes_IMPLEMENTATION_AND_TEST_PLAN.md)). Threshold mode product law is **LOCKED** in code and AGENTS; do not invent a separate off-tree Threshold Modes PRD path.
+- The reserve host and existing rate providers remain the pricing engine. Preserve ordinary issuance, fee and reserve-withdrawal equations. Do not invent an off-pool FX ledger.
+- Synthetic prices and percentages remain WAD; raw DETF, sDETF and their SY tokens use 9 decimals. Hook and pool adapters convert once at their documented boundary.
+- Zero threshold arguments resolve through `DETFThresholdPolicy` to the existing defaults (`1.05e18` mint, `0.95e18` burn). Require mint threshold greater than burn threshold; no post-deploy setter.
+- After settling due expansion, primary mint requires synthetic strictly above its threshold; primary burn requires synthetic strictly below its threshold. Equality uses the reserve swap. `isMintingAllowed` and `isBurningAllowed` describe primary issuance/redemption eligibility, not availability of the standard exchange route.
+- A failed price condition explicitly selects the existing reserve-pool swap. It does not revert solely for price, mint/burn DETF supply, create an issuance reward pot or add a fallback surcharge. Genuine route, liquidity, authorization, deadline and slippage failures still revert.
+- Previews project the same due expansion and choose the same branch. A first bond, direct DETF/sDETF stake/unstake and NFT claims are not price gated.
+- Primary burn uses `floor(DETF in * actual protocol-owned LP / actual outstanding DETF supply)`, after expansion and before burning. Supply includes DETF in pools and staking custody. Do not subtract fictitious bond-owner LP liabilities or count external LP.
 
-- **Pricing engine = reserve host** (Balancer pool balances/weights/fees/rate providers, or Uni V4 CP buffer hook effective reserves / LP). Do **not** introduce an off-pool multi-asset FX “numeraire” ledger.
-- **Synthetic price:** fully diluted backing from owned reserve principal (BPT or hook LP) claim on reserve inventory (rate-scaled / zap-out-to-numeraire as family defines), ÷ DETF `totalSupply`, abstract **1e18 peg** (Policy narrative). Include principal held by bond NFT vault when peers do. **All mint/burn threshold gates use synthetic** — never spot alone.
-- **Deploy-time `ThresholdMode`:** explicit field on `PkgArgs` / instance storage — **`Policy` (default)** vs **`Open`**. **Never** infer Open from `0` thresholds. Omitted / zero mode → Policy.
-- **Defaults:** `mintThreshold = 0` and `burnThreshold = 0` resolve to **`1.05e18` / `0.95e18`** via `DETFThresholdPolicy` (both modes). Resolved values are **stored** for getters under Open as well; Open gates **ignore** them.
-- **Source of truth:** mode + thresholds from **`PkgArgs` → resolve → instance storage only**. Fee oracle does **not** set, override, or mutate mode or thresholds.
-- **Validation (after resolve, both modes):** `mintThreshold > burnThreshold`; invalid mode reverts at deploy/init. No post-deploy setter.
-- **Policy gates (when live):** mint iff `synthetic > mintThreshold`; burn iff `synthetic < burnThreshold`; **equality = deadband** (neither). First bond / bootstrap remains **synthetically ungated** (both modes).
-- **Realize then gate (D31):** live mint, live burn, `redeemClaim`, and `closeBondMature` **realize pending expansion first** (Policy), then recompute synthetic from minted `totalSupply`, then apply the mint/burn gate. A post-realize fail **reverts the whole tx** (expansion does not stick). That can block the mint/burn that triggered realize — desired. Views count pending expansion in the denominator so they match. Donate does not realize. Open: realize is a no-op.
-- **Open gates (when live):** threshold gates **always pass**. Open does **not** change the route set (e.g. MixedBuffer still burns **buffer only**), fees, seigniorage split, or inert→live rules. Do not advertise a peg for Open instances.
-- **Info surface:** `thresholdMode()`, live-coupled `isMintingAllowed()` / `isBurningAllowed()` (and stored threshold getters).
-- **Shipped:** F1–F5 implement Policy/Open; F6 `IDetf` documents the shared DETF surface (formerly `IProtocolDETF`). **Legacy dual-token SeigniorageDETF** product under `contracts/vaults/seigniorage/` is **REMOVED** (not a true DETF family). The former DualLiquidity pro-rata BPT vault is **deleted** (alignment D1). Pure SE vaults remain out of this PRD.
-- Seigniorage mint shape (live): quote DETF from weighted-pool math for vault-share (or family-defined) input; apply usage fee + seigniorage split (`DETFUsageFeeLib` / peer mint split); join reserve; leave free DETF with user / feeTo / protocol as peers do.
+### Immediate rewards and epoch expansion
 
-### Protocol seigniorage compound + natural supply expansion
+- Preserve the ordinary issuance split. Every DETF issuance allocates its seigniorage reward immediately to funded staking; reward minting/distribution does not recursively charge itself.
+- Bonds preserve the unboosted proportional liquidity quote `G`. Apply the full existing duration multiplier once to actual payment to quote purchased `U`; do not stack an ordinary issuance uplift. Purchased principal is `floor((1-p)*U)` and the reward pot is `floor(p*U) + floor(p*G)`. Join only actual payment plus the separately minted `G`.
+- Only automatic expansion uses epochs: first-bond anchor, fixed eight-hour boundaries, all completed intervals in one aggregate mint/distribution, no historical compounding and no catch-up cap. Preserve each reserve family's premium-closure math and eligibility conditions; advance completed boundaries even when expansion is zero.
+- V4 automatic expansion uses the highest non-DETF synthetic price, with each leg normalized by its own creation price against the same current supply and reserve LP. Any leg strictly above the configured mint threshold qualifies (positive premium above peg is still required). Use that maximum in one expansion calculation; do not sum per-leg expansions. Preview, settlement and the expansion event agree on the maximum. Primary mint/burn gates remain specific to the input/output route. Owner clarification: `DETF_ALIGNMENT_PRD.md` §24.3.2, 2026-09-11.
+- Settle due rewards before changing participation through exchange, staking, transfers, SY, bonding or claims. Stake present at the due boundary participates, including a deposit just before it. The transaction's new stake after settlement does not participate retroactively. Count only actually minted and funded DETF.
+- Fund and stake a bond's purchased principal before its own immediate reward allocation. For an ordinary composed mint-and-stake route, distribute its issuance reward before staking the user's new principal.
+- Rebase eligible ordinary stake first, then issue fully funded, freely transferable and unstakable sDETF to fee/creator recipients. New receipts do not earn their own distribution; previously held receipts are ordinary stake for later distributions.
+- Fee/creator standing weights persist after all their sDETF is unstaked. Preserve top-up-only weight algebra. Reserved role NFTs hold distribution rights, not redeemable principal; transferring receipt tokens does not transfer those rights.
 
-**Normative PRD:** [`docs/detf/DETF_Protocol_Compound_And_Supply_Expansion_PRD.md`](docs/detf/DETF_Protocol_Compound_And_Supply_Expansion_PRD.md) (**LOCKED**). Program index / stages: [`DETF_Protocol_Compound_And_Supply_Expansion_PROGRAM.md`](docs/detf/DETF_Protocol_Compound_And_Supply_Expansion_PROGRAM.md). Shared libs: [`DETFProtocolCompoundLib.sol`](contracts/vaults/detf/common/core/DETFProtocolCompoundLib.sol), [`DETFNaturalExpansionLib.sol`](contracts/vaults/detf/common/core/DETFNaturalExpansionLib.sol).
+### Standard user routes and donations
 
-Apply to **true DETFs** in scope (Balancer Single SE, multi-vault weighted, mixed-buffer, composed stable common, **unified Uni V4 DETF** on CP / Orbital / Weighted / Curve Quad buffer hooks). **Out:** removed single-vault DETF residue, `contracts/vaults/seigniorage/`, dual DETF stubs (deleted) unless re-supported. Uni V4 Curve Quad / Weighted hooks use **per-route** synthetics and **all-legs-rich** expansion (no whole-DETF `rateAsset` numeraire) — unified DETF + hook PRDs win over the generic single-synthetic wording above.
+- Consolidate fungible routes under `IStandardExchangeIn`, `IStandardExchangeOut` and Pendle `IStandardizedYield`. Retain specialized NFT operations that require a duration or position ID. Remove parallel aliases such as `mintClaim`.
+- Raw DETF SY is separately backed 1:1 by raw DETF and does not automatically stake. Staking SY has static shares backed by attributed sDETF gons. Both use 9 decimals and expose only supported directional routes.
+- Each SE native SY preserves its actual asset/share model, decimals, fees and existing external reward handling. Use proportional accounting value per share, not a trade-sized quote. A position vault with no single whole-book liquidity unit needs an explicit valuation policy; `yieldToken() == address(0)` alone does not define its rate.
+- Direct staking mints sDETF only against actual DETF received and unstaking pays the same native number of DETF units from custody. Reserve LP is not involved.
+- Reserve donations remain permissionless where specified, acquire protocol-owned LP and do not mint user DETF or create bond principal. Remove per-bond LP shares and donation allocation to such shares.
+- Keep family route discovery directional and truthful. Cross-vault-share trading uses the reserve/SE router unless explicitly supported. Preserve closed-form preview/execution parity and reject unsupported exact-output routes.
 
-**Protocol compound (detf-owned bond NFT only):**
+### Funded staking and linear bonds
 
-- Capital-backed seigniorage inventory accrues on the bond NFT reward ledger. **User** and **fee-recipient** positions: **claimable free DETF** while locked (`claimRewards` / pending) — do **not** auto-compound them in v1.
-- **Detf-owned NFT** pending reward DETF is **auto-compounded** into the reserve via **single-sided DETF join** (self-leg only); credit BPT to detf-owned principal. Weight skew accepted in v1.
-- **Lazy** on DETF touch points that already update rewards (mint inventory, bond, etc.) **plus** required public **`compoundProtocolRewards()`** (or family-equivalent). No keeper.
-- Join failure is **best-effort**: do not fail the whole user touch solely because join reverts; leave pending for next touch / public compound; reward debt must stay consistent.
-- When rebasing claim is wired: protocol compound **must** increase detf-owned BPT so claim redemption rate **can rise**.
-
-**Natural supply expansion (Policy only):**
-
-- While **live + `thresholdMode == Policy` + synthetic mint-allowed** (`synthetic > mintThreshold`), mint free DETF **without** external capital into the bond reward vault (**mint-on-update** → same `rewardPerShares` ledger as seigniorage). **Open = never expands.**
-- Formula shape: **premium-closure** via `DETFNaturalExpansionLib` (deploy-time rate / catch-up caps from **`PkgArgs` → resolve → storage only** — not fee oracle; no post-deploy setter).
-- Distribution: **same effective-share weights** as seigniorage inventory rewards. Free unlocked DETF holders get none unless they hold a bond.
-- Protocol’s expansion share compounds via the Phase 1 path. Users claim expansion while locked like other rewards. Preview pending consistent with claim after update.
-- No keeper. Idle catch-up respects deploy-time caps.
-
-**Do not** invent balanced multi-leg protocol compound, user auto-compound, or expansion under Open without a PRD revision.
-
-### User routes (defaults)
-
-- Prefer **configured vault shares ↔ DETF** on the DETF surface (exact-in closed form).
-- **Reserve donation (D29):** permissionless `donate` on the Bond NFT. No DETF mint. **Common `DETFNFTVault`:** new originalShares to **id 0 only** (N4). **Unified Uni V4 Bond NFT:** R12a unassigned LP when `totalOriginalShares > 0` ([`DETF_INSTANCE_IO_ROUTING_PRD.md`](../../contracts/vaults/detf/DETF_INSTANCE_IO_ROUTING_PRD.md)). DETF diamond executes the host join (`onlyBondNft`). `IDetf.donate` forwards. Donation process: [`DETF_RESERVE_DONATION_PRD.md`](../../contracts/vaults/detf/DETF_RESERVE_DONATION_PRD.md).
-- **RateAsset as mint `tokenIn` on the DETF** is legal **iff** `{rateAsset, vault}` is a resolved mint or bond row and closed-form R14 holds (I/O routing PRD). Otherwise out of scope: user deposits into the SE vault first, then uses shares.
-- **vaultShareᵢ ↔ vaultShareⱼ on the DETF** is out of scope: use Balancer / Standard Exchange Router on the reserve pool.
-- Routes that need **binary search / gas-heavy exact-out solvers** should **revert** with **`InvalidRoute`** on new families (do not introduce `UnsupportedRoute` on new surfaces; Balancer Single SE may still emit legacy `UnsupportedRoute` until a cleanup). Do not ship approximate solvers “for convenience.”
-- **Preview/execution:** closed-form routes must share one quote path; tests assert **exact** preview == execution when possible (document ≤ few-wei only if Balancer multi-leg proportional exit forces it).
-
-### Bonding and rebasing claim
-
-- **Full bond NFT vault** is the default v1 shape: user bond positions + protocol NFT + fee-recipient NFT wiring as peer families.
-- Bond lock terms from oracle: **revert if lock < min**; **clamp to max** if longer (bonus at max). Use `DETFBondNFTMathLib` / `DETFBondLifecycleLib`.
-- `acceptedBondTokens()` must list what the family accepts (at least reserve BPT and/or vault shares per PRD).
-- **Sell NFT → protocol (rebasing claim) — DETF-wide standard (LOCKED):** bond holders **must not** sell their bond for rebasing claim until the bond is **mature** (`block.timestamp >= unlockTime`). Pre-maturity sell **reverts**. At maturity the holder may **close** (principal out in family settlement assets) **or** **sell → rebasing claim** (migrate principal LP/BPT to protocol + mint claim). While locked, rewards remain claimable free DETF via `claimRewards` (not a principal exit). **First family adopter:** Uni V4 Standard Exchange Orbital DETF (`…/uniswap/v4/standardExchange/orbital/`). **Mint / bond / burn / claim / close** for every true DETF: [`DETF_ALIGNMENT_PRD.md`](../../contracts/vaults/detf/DETF_ALIGNMENT_PRD.md) D1–D31. **Reserve donation** is D29. **Mature close (D25)** is a **basket** of non-DETF legs + rejoin DETF to id 0 (does not burn it; does not consolidate to one `tokenOut`). DualLiquidity is **deleted** (alignment D1), not a live family.
-- **Claim redeem (D15):** **DETF only.** Realize expansion first (D31). Quote = id 0 pending + **zap-out to DETF** of that holder’s id 0 LP slice (post-withdraw residual, same trading fee as public swaps). Harvest **all** id 0 pending toward `owed`. If still short: prop withdraw, buy DETF on the residual book **largest leftover first by DETF-buying power** (snapshot once; exact-in dump a too-small leg, then next), owner host swap (D30), rejoin leftover to id 0 (`lpOut > 0` even at hook MIN). Last exit: skip the buy; do not send pair to the redeemer.
-- Wire claim package in DFPkg `postDeploy` when the family requires claim (role-named `IRebasingClaimToken` / `RebasingClaimTokenDFPkg`).
+- The staking reserve holds actual DETF sufficient for every aggregate liability. Its gons conversion can stay flat or increase balances only when funded. Pool-price changes cannot reduce sDETF units. Track principal, allocation dust, ordinary rebase dust and unsolicited balances separately.
+- Preserve minimum lock validation and maximum duration clamp from the existing duration formula. Each purchased NFT records funded principal, claimed principal, attributed staking gons, start and duration; it records no LP entitlement.
+- Principal vests linearly. Principal-only, rewards-only and combined claims pay sDETF. Rewards are claimable while principal is still vesting. A final claim retires only that position's residual fraction and burns the fully paid NFT.
+- An NFT's benefits are its discounted DETF purchase and staking while vesting. Do not retain a separate LP reward or bonus-share distribution ledger.
+- Reserved NFT IDs 0/1/2 represent protocol/fee/creator roles, not purchased bonds. Fee and creator payments are ordinary sDETF that recipients may immediately unstake for DETF, even after previously redeeming all their receipts.
+- Full account unstaking pays every displayed unit and retires only its own fraction. It never resets the staking index, clears another holder's gons or grants unsolicited custody to the next depositor.
+- SVG/JSON must describe purchased principal, linear vesting, claimable sDETF rewards and standing role rights. Remove LP-backed redemption, cliff-only claim and invented APY language.
 
 ### Deploy path (same as vault packages)
 
 - Facets: CREATE3 + `*FactoryService` / `DetfFacetFactoryService` / family `*_Facet_FactoryService`.
 - DETF DFPkg: **Vault Registry / manager** (`indexedexManager.deployPkg` / typed `deploy*DFPkg`). **Never** `new` DFPkg/facets; never bypass registry for registered vault packages.
 - `PkgInit` / `PkgArgs` **on the interface**, not the contract (Crane rule).
-- **Uni V4 SE DETF peg vs opening:** `creationPairPerDetfWad` is the synthetic 1.0 (Policy mint/burn and expansion). `openingPairPerDetfWad` is pair per DETF on empty-book first bond (`0` → creation). After `isReserveLive`, mint/bond quotes use the live curve. Do not impersonate the DETF or hook `depositSingle` as the diamond to fake launch-rich. Law: `UNISWAP_V4_SE_DETF_PEG_AND_OPENING_PRICE_PRD.md`.
+- **Uni V4 SE DETF peg vs opening:** `creationPairPerDetfWad` is the synthetic 1.0 (mandatory primary gates and expansion). `openingPairPerDetfWad` is pair per DETF on empty-book first bond (`0` → creation). After `isReserveLive`, mint/bond quotes use the live curve. Do not impersonate the DETF or hook `depositSingle` as the diamond to fake launch-rich. Law: `UNISWAP_V4_SE_DETF_PEG_AND_OPENING_PRICE_PRD.md`.
 - Shared helpers: `contracts/vaults/detf/common/core/*`, `detf/common/factory/*`, bond NFT packages, `StandardExchangeRateProviderDFPkg`, Balancer `WeightedPoolFactory`.
 
 ### Testing expectations (DETF-specific)
 
-Production-first rules in this file and `indexedex-testing` apply. Additionally for DETFs:
+Production-first rules and `indexedex-testing` apply. The funded implementation plan §11 and PRD A1–A42 are the acceptance matrix, subject to D60 and D66.
 
-1. **No mocks of SUT:** DETF diamond, facets, DFPkg, manager, registry, fee oracle, attached SE vaults under test.
-2. **Gold TestBases:** inherit `CraneTest` → `IndexedexTest` → vault components / Balancer SE router or protocol SE TestBases; mirror `TestBase_SingleStandardExchangeDETF` / family `TestBase_*` patterns.
-3. **Real SE legs:** deploy production SE vaults (Aerodrome/Camelot hermetic ports, fork Uni V4, nested true DETF as matrix rows). Crane `*/stubs/` protocol ports are **not** “mocks.”
-4. **Allowed non-SUT harnesses:** mintable ERC20 for funding; **reentrancy hostile ERC20** as configured vault share only for attack tests (see Single SE + MultiVault reentrancy suites); never a fake Standard Exchange for lifecycle.
-5. **Cover at least:** inert deploy; first-bond → live; pre-live mint blocked; mint/burn with **preview == execution**; threshold gates; route rejects (`InvalidRoute` / family equivalent); bond lock clamp; **pre-maturity sell→claim reverts**; **post-maturity** sell → claim and/or maturity close (when in scope); residual free inventory zero on success (BPT on diamond may remain); nested reentrancy hits `IsLocked`.
-6. **Price movement:** for threshold tests under **default** mint/burn thresholds, drive synthetic via **real underlying pool trades** (and seigniorage dilution where needed) so both mint-allowed and burn-allowed regimes are exercised — do not only use open-threshold deploys as the sole proof.
-7. **Matrix:** when attaching many SE types, equal-priority production providers (not one preferred mock).
-8. **Protocol compound:** lazy + public `compoundProtocolRewards`; detf-owned BPT ↑; user claim free DETF while locked; join-failure best-effort + retry; claim rate path when claim is wired.
-9. **Natural expansion (Policy):** expands only when live + mint-allowed synthetic; Open never expands; pending == claim after update; protocol expansion share compounds; catch-up caps.
+1. Use real registered diamonds, facets, DFPkgs, manager, registry, fee oracle and attached SEs. Inherit the existing Crane → Indexedex → protocol TestBase hierarchy. Protocol ports and funding tokens are acceptable; mock SUTs are not.
+2. Cover all four in-scope V4 DETF bindings and every in-scope SE share issuer: metadata, installed/retired selectors, runtime size, first bond, actual liquidity plus separately funded principal, standard/SY routes and exact-output limits. Balancer-hosted DETFs have no functional completion gate under D60; unfinished Slipstream tests, forks and integration checks are deferred under D66.
+3. Exercise strict threshold equality/deadband and both primary/swap regimes with real pool trades. Verify fallback preserves supply and adds no issuance pot, while genuine failures remain atomic.
+4. Prove actual custody backs gons liabilities; 1:1 full/partial unstaking; funded upward/flat rebases; unsolicited balance separation; linear principal and early reward claims; multiple-NFT fraction isolation and owner/operator transfers.
+5. Exercise immediate reward ordering, rebase-before-fee-receipts, persistent standing recipients after complete unstaking, just-before-boundary stake, post-boundary new stake, fixed 25-hour/seven-day catch-up and zero expansion. No Open mode, configurable caps or hypothetical unfunded accrual.
+6. Keep decimal, reentrancy, allowance, pretransfer, callback, slippage, deadline and unsupported-route regressions. Never impersonate a production SUT to create a convenient market state.
+7. Consolidate identical arithmetic and duplicate deployment suites, mapping every retired assertion to preserved coverage or a superseding decision. Keep distinct family and security integrations; do not reduce fuzz/depth or substitute mocks for speed.
+8. Build before tests because FactoryServices load artifact creation code. Run focused checks during work and the full hermetic/relevant integration release checks. Report comparable build/test timing and test-contract counts; fewer files alone do not prove a speedup.
 
 ### Key reference paths
 
@@ -240,13 +216,13 @@ contracts/vaults/detf/common/core/                    # shared math/lifecycle li
 contracts/vaults/detf/common/factory/                 # facet/pkg factory helpers, NFT interfaces
 contracts/vaults/detf/common/bondNft/                 # DETFNFTVault (shared bond NFT package)
 contracts/vaults/detf/common/claimToken/              # RebasingClaimToken package
-contracts/vaults/detf/common/inventory/               # NFT inventory policy interfaces
+contracts/vaults/detf/common/inventory/               # legacy inventory surfaces pending reader audit
 contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/  # Single SE DETF + TestBase
 contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/     # multi-leg weighted DETF
 contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/            # multi-vault stable + claim packages
 contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/              # mixed-buffer multi-vault stable
 contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/           # unified Uni V4 DETF DFPkg (+ I/O routing §16)
-contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/        # Uni V4 Bond NFT (R12a)
+contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/        # Uni V4 funded bond NFT
 contracts/hooks/uniswap/v4/standardExchange/                    # CP / Orbital / Weighted / Quad buffer hooks (not DETF diamonds)
 docs/detf/                                            # shared compound + expansion + threshold programs (public/process)
 docs/detf/balancer/v3/<family-path>/                  # historical family compound/expansion stage plans
@@ -283,12 +259,14 @@ For detailed architecture, see [docs/CODEBASE_MAP.md](docs/CODEBASE_MAP.md) (ref
 
 Do **not** add package-specific Foundry profiles. Focus with `--match-path` / `--match-contract`. **`via_ir` is forbidden.**
 
+After **any** production contract edit, run `forge build` **before** `forge test` / `forge script`. See **FactoryService creation bytecode** below. Do not treat `forge test` as a substitute for that build.
+
 ```bash
-# Build
+# After production contract edits: build first so FactoryService reads current out/
 forge build
 forge build --sizes         # with contract size output
 
-# Hermetic (default profile → test/foundry/spec)
+# Hermetic (default profile → test/foundry/spec) — only after a current forge build
 forge test
 forge test -vvv             # verbose output
 forge test -vvvv            # full stack trace
@@ -313,6 +291,33 @@ forge fmt
 # Do not use a bare `anvil --fork-url` for either path.
 ```
 
+### FactoryService creation bytecode (LOCKED — project law)
+
+IndexedEx Foundry deployment helpers load creation bytecode from `out/` via `ArtifactCreationCode.creationCode("File.sol:ContractName")`. The loader reads artifact JSON directly, so the implementation does not need to be in the consumer's current compilation graph for artifact lookup. Use `ArtifactCreationCode.creationCode(create3Factory, "File.sol:ContractName")` when bytecode has external-library link references; this overload recursively deploys and links those libraries through CREATE3 using salts bound to their fully linked bytecode. Helpers must not import Facet/DFPkg implementations solely for bytecode, artifact discovery, or `type().name`. Use interfaces for types and literal artifact names for loading. Genuine inheritance and implementation-specific tests retain their dependencies.
+
+**After any production contract change, run `forge build` then `forge test` (or `forge script`). Do not run `forge test` first and assume Foundry rebuilt the deployed bytecode.**
+
+```bash
+# Refresh affected artifacts, then test an exact file or suite directory:
+python3 scripts/forge-artifacts.py test contracts/path/EditedTarget.sol \
+  --test-root test/foundry/spec/path/RelevantTest.t.sol -- -vv
+
+# Seed runtime artifacts required by a particular consumer as well:
+python3 scripts/forge-artifacts.py build contracts/path/EditedTarget.sol \
+  --consumer 'test/foundry/spec/path/RelevantTest.t.sol'
+```
+
+- The helper executes `forge build` with explicit source roots. It parses **current** imports to find affected concrete implementations, follows runtime artifact strings and existing artifact link references, and excludes TestBases/tests/scripts as independent build roots. It keeps the active profile, `out/`, and `cache_forge/`. See [ARTIFACT_BUILDS.md](../testing/ARTIFACT_BUILDS.md).
+- The `test` subcommand builds first, then limits compilation roots through `--skip` while keeping configured source/test paths and the cache unchanged. This normally skips Forge 1.5.1's preliminary ABI compilation used by nonempty test filters. Do not change `FOUNDRY_TEST` for iteration: that invalidates the shared cache. Repeat `--test-root` to select several files/directories; pass optional test arguments after `--`. Selecting the existing fork profile remains required for fork tests; no package profiles are introduced.
+- Full `forge build` remains valid. An unrestricted build also includes the test tree; `forge build --skip test --skip script` still includes TestBases located under `src = 'contracts'`. Do not mistake either for a narrowly targeted build.
+- `forge test` does **not** reliably refresh those artifacts when the test graph no longer imports the implementation. Tests then CREATE3-deploy whatever is already in `out/`.
+- A build is also required when artifacts are missing. After the mandatory warm worktree seed, use `--consumer` to prepare a selected test/script's runtime artifacts; `--all-artifacts` prepares literal runtime artifacts across the project.
+- Missing, empty, malformed, or unresolved artifact bytecode must revert. Do not deploy empty bytecode or add implementation imports merely to repair artifact lookup.
+- Do not delete `CraneFactoryArtifactSeed.sol`. Do not import it from TestBases or FactoryServices.
+- Worktree seed (`cache_forge/` + `out/` from a warm checkout) stays in force; `out/` is load-bearing for FactoryService deploys. Seeded `out/` is **stale** the moment you edit production source: `forge build` again before test.
+- Crane FactoryServices (`AccessFacetFactoryService`, `IntrospectionFacetFactoryService`) still embed `type().creationCode` (out of this bytecode path). IndexedEx FactoryServices do not.
+- Live onchain deployment and address-prediction code cannot use Foundry cheatcodes. `UniswapV4TwapAdapterFactory` and the callback factory's proxy init hash retain `type().creationCode`; their runtime behavior and address derivation must remain consistent.
+
 ## Architecture: 3-Tier Diamond Deployment
 
 **Facets -> Packages -> Proxies**
@@ -330,16 +335,19 @@ High-level reminder:
 // WRONG
 MyContract c = new MyContract();
 
-// CORRECT (via FactoryService or directly on create3Factory)
+// CORRECT — IndexedEx FactoryService (creation bytecode from out/)
 myFacet = create3Factory.deployFacet(
-    type(MyFacet).creationCode,
-    abi.encode(type(MyFacet).name)._hash()
+    ArtifactCreationCode.creationCode("MyFacet.sol:MyFacet"),
+    abi.encode("MyFacet")._hash()
 );
+
+// CORRECT — Crane FactoryService still uses type().creationCode
+// (AccessFacetFactoryService, IntrospectionFacetFactoryService)
 ```
 
 FactoryService libraries (Crane + IndexedEx):
-- Crane core: `AccessFacetFactoryService`, `IntrospectionFacetFactoryService` (in Crane).
-- IndexedEx core: `IndexedexManagerFactoryService`, `FeeCollectorFactoryService`, `VaultComponentFactoryService`.
+- Crane core: `AccessFacetFactoryService`, `IntrospectionFacetFactoryService` (in Crane). Those still embed `type().creationCode`.
+- IndexedEx core: `IndexedexManagerFactoryService`, `FeeCollectorFactoryService`, `VaultComponentFactoryService` (artifact bytecode via `ArtifactCreationCode`).
 - Protocol: `*_Component_FactoryService.sol` (e.g. `CamelotV2_Component_FactoryService`).
 
 **Always start with the Crane `crane-deployment` skill + `CraneTest` / `InitDevService`.**

@@ -1,20 +1,12 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 import {Vm} from "forge-std/Vm.sol";
 import {VM_ADDRESS} from "@crane/contracts/constants/FoundryConstants.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
-import {
-    MixedBufferMultiVaultStableDetfExchangeInFacet
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeInFacet.sol";
-import {
-    MixedBufferMultiVaultStableDetfBondingFacet
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfBondingFacet.sol";
-import {
-    MixedBufferMultiVaultStableDetfInfoFacet
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfInfoFacet.sol";
 
 library MixedBufferMultiVaultStableDetf_Facet_FactoryService {
     using BetterEfficientHashLib for bytes;
@@ -27,11 +19,11 @@ library MixedBufferMultiVaultStableDetf_Facet_FactoryService {
     {
         instance = IFacet(
             create3Factory.deployFacet(
-                type(MixedBufferMultiVaultStableDetfExchangeInFacet).creationCode,
-                abi.encode(type(MixedBufferMultiVaultStableDetfExchangeInFacet).name)._hash()
+                ArtifactCreationCode.creationCode("MixedBufferMultiVaultStableDetfExchangeInFacet.sol:MixedBufferMultiVaultStableDetfExchangeInFacet"),
+                abi.encode("MixedBufferMultiVaultStableDetfExchangeInFacet")._hash()
             )
         );
-        vm.label(address(instance), type(MixedBufferMultiVaultStableDetfExchangeInFacet).name);
+        vm.label(address(instance), "MixedBufferMultiVaultStableDetfExchangeInFacet");
     }
 
     function deployMixedBufferMultiVaultStableDetfBondingFacet(ICreate3FactoryProxy create3Factory)
@@ -40,11 +32,11 @@ library MixedBufferMultiVaultStableDetf_Facet_FactoryService {
     {
         instance = IFacet(
             create3Factory.deployFacet(
-                type(MixedBufferMultiVaultStableDetfBondingFacet).creationCode,
-                abi.encode(type(MixedBufferMultiVaultStableDetfBondingFacet).name)._hash()
+                ArtifactCreationCode.creationCode("MixedBufferMultiVaultStableDetfBondingFacet.sol:MixedBufferMultiVaultStableDetfBondingFacet"),
+                abi.encode("MixedBufferMultiVaultStableDetfBondingFacet")._hash()
             )
         );
-        vm.label(address(instance), type(MixedBufferMultiVaultStableDetfBondingFacet).name);
+        vm.label(address(instance), "MixedBufferMultiVaultStableDetfBondingFacet");
     }
 
     function deployMixedBufferMultiVaultStableDetfInfoFacet(ICreate3FactoryProxy create3Factory)
@@ -53,10 +45,10 @@ library MixedBufferMultiVaultStableDetf_Facet_FactoryService {
     {
         instance = IFacet(
             create3Factory.deployFacet(
-                type(MixedBufferMultiVaultStableDetfInfoFacet).creationCode,
-                abi.encode(type(MixedBufferMultiVaultStableDetfInfoFacet).name)._hash()
+                ArtifactCreationCode.creationCode("MixedBufferMultiVaultStableDetfInfoFacet.sol:MixedBufferMultiVaultStableDetfInfoFacet"),
+                abi.encode("MixedBufferMultiVaultStableDetfInfoFacet")._hash()
             )
         );
-        vm.label(address(instance), type(MixedBufferMultiVaultStableDetfInfoFacet).name);
+        vm.label(address(instance), "MixedBufferMultiVaultStableDetfInfoFacet");
     }
 }

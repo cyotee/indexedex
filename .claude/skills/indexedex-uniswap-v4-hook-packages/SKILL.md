@@ -1,13 +1,6 @@
 ---
 name: indexedex-uniswap-v4-hook-packages
-description: >
-  Guides implementation of IndexedEx Uniswap V4 Hook Diamond Packages (IUniswapV4HookDiamondPackage),
-  package→Vault Registry→hook factory deploy, CREATE2 flag mining, salt without package address,
-  HookFlags facet, immutable postDeploy diamonds, and production-first tests. Use when building or
-  reviewing "V4 hook package", "UniswapV4HookDiamondPackage", "deployHookVault", "requiredHookFlags",
-  "hook diamond factory", "mineNonce", Single SE Buffer CP Hook package, or any new hook DFPkg under
-  contracts/hooks/uniswap/v4/. DO NOT use for monomorph CREATE3 hooks (legacy weighted/orbital/quad)
-  unless migrating them; DO NOT use vault DiamondPackageCallBackFactory salt law for V4 flag addresses.
+description: "Implement IndexedEx V4 hook DFPkgs: registry deployment, CREATE2 flag mining, salts, immutable diamonds and tests."
 license: MIT
 ---
 

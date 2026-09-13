@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IStandardExchangeTransitionQuote as Transition} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {
@@ -172,57 +174,139 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookWithdraw
         return 0;
     }
 
+    struct ExitState {
+        address pair;
+        bool asShare;
+        bool outIs0;
+        uint256 beforeOut;
+    }
+
     function _exitSingleAsset(address tokenOut, uint256 sharesIn, address to, uint256 deadline)
-        internal
-        returns (uint256 amountOut)
+        internal returns (uint256 amountOut)
     {
+        if (to == address(0)) revert ZeroAddress();
         UniswapV4SeBufferHookLegLib.LegKind kind = _classify(tokenOut);
         if (kind == UniswapV4SeBufferHookLegLib.LegKind.Unknown) revert InvalidRoute();
         Repo.Layout storage l = Repo._layout();
-        if (kind == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange) {
-            tokenOut = l.legs.pairOfStandardExchange[tokenOut];
+        ExitState memory state;
+        state.asShare = kind == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange;
+        state.pair = state.asShare ? l.legs.pairOfStandardExchange[tokenOut] : tokenOut;
+        state.outIs0 = state.pair == l.currency0;
+        if (!state.outIs0 && state.pair != l.currency1) revert InvalidRoute();
+
+        state.beforeOut = IERC20(state.pair).balanceOf(address(this));
+        (uint256 a0, uint256 a1) = _withdrawAndSettle(sharesIn, address(this), 0, 0, deadline, false);
+        uint256 residual = state.outIs0 ? a1 : a0;
+        if (residual > 0) {
+            uint256 extra = _previewSwapExactIn(!state.outIs0, residual);
+            if (extra > 0) _executeBookSwap(!state.outIs0, residual, extra, address(this));
+            else IERC20(state.outIs0 ? l.currency1 : l.currency0).safeTransfer(msg.sender, residual);
         }
-        (uint256 a0, uint256 a1) = _withdraw(sharesIn, address(this), 0, 0, deadline);
-        bool outIs0 = tokenOut == l.currency0;
-        if (!outIs0 && tokenOut != l.currency1) revert InvalidRoute();
-        if (outIs0) {
-            if (a1 > 0) {
-                uint256 extra = _previewSwapExactIn(false, a1);
-                if (extra > 0) _executeBookSwap(false, a1, extra, address(this));
-            }
-            amountOut = IERC20(l.currency0).balanceOf(address(this));
-            IERC20(l.currency0).safeTransfer(to, amountOut);
-        } else {
-            if (a0 > 0) {
-                uint256 extra = _previewSwapExactIn(true, a0);
-                if (extra > 0) _executeBookSwap(true, a0, extra, address(this));
-            }
-            amountOut = IERC20(l.currency1).balanceOf(address(this));
-            IERC20(l.currency1).safeTransfer(to, amountOut);
-        }
+        // Credit actual operation proceeds, including rounding surplus, but no prior inventory.
+        amountOut = IERC20(state.pair).balanceOf(address(this)) - state.beforeOut;
+        if (state.asShare && amountOut > 0) amountOut = _buffer(tokenOut, state.pair, amountOut);
+        IERC20(tokenOut).safeTransfer(to, amountOut);
+        _syncReserves();
+    }
+
+    struct ExitQuoteLeg {
+        address se;
+        bytes state;
+        uint256 assets;
+        uint256 withdrawn;
     }
 
     function _previewExitSingleAsset(address tokenOut, uint256 sharesIn)
-        internal
-        view
-        returns (uint256 amountOut)
+        internal view returns (uint256 amountOut)
     {
         UniswapV4SeBufferHookLegLib.LegKind kind = _classify(tokenOut);
         if (kind == UniswapV4SeBufferHookLegLib.LegKind.Unknown) return 0;
         Repo.Layout storage l = Repo._layout();
-        if (kind == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange) {
-            tokenOut = l.legs.pairOfStandardExchange[tokenOut];
+        bool asShare = kind == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange;
+        address pair = asShare ? l.legs.pairOfStandardExchange[tokenOut] : tokenOut;
+        bool outIs0 = pair == l.currency0;
+        if (!outIs0 && pair != l.currency1) return 0;
+        address other = outIs0 ? l.currency1 : l.currency0;
+        if (ClaimLib.supportsTransitionQuote(_seFor(pair), pair, address(this))
+            && ClaimLib.supportsTransitionQuote(_seFor(other), other, address(this))) {
+            return _previewSequentialExit(pair, other, sharesIn, asShare);
         }
+        amountOut = _previewFallbackExit(pair, other, sharesIn, outIs0);
+        if (asShare && amountOut > 0) {
+            amountOut = IStandardExchangeIn(tokenOut).previewExchangeIn(IERC20(pair), amountOut, IERC20(tokenOut));
+        }
+    }
+
+    function _previewFallbackExit(address pair, address other, uint256 sharesIn, bool outIs0)
+        private view returns (uint256)
+    {
+        // The residual trade uses the remaining share book after proportional withdrawal.
         (uint256 a0, uint256 a1) = _previewWithdraw(sharesIn);
-        if (tokenOut == l.currency0) {
-            uint256 extra = a1 == 0 ? 0 : _previewSwapExactIn(false, a1);
-            return a0 + extra;
+        uint256 residual = outIs0 ? a1 : a0;
+        uint256 claimIn = residual == 0 ? 0 : _previewBufferClaimIn(_seFor(other), other, residual);
+        return (outIs0 ? a0 : a1) + _exitSaleQuote(
+            other, pair, claimIn, _remainingClaim(other, sharesIn), _remainingClaim(pair, sharesIn)
+        );
+    }
+
+    function _remainingClaim(address pair, uint256 lpAmount) private view returns (uint256) {
+        address se = _seFor(pair);
+        uint256 held = IERC20(se).balanceOf(address(this));
+        uint256 removed = FullMath.mulDiv(held, lpAmount, _supplyAfterProtocolMint());
+        return _claimOfSe(se, pair, held - removed);
+    }
+
+    function _previewSequentialExit(address pair, address other, uint256 sharesIn, bool asShare)
+        private view returns (uint256 amountOut)
+    {
+        uint256 supply = _supplyAfterProtocolMint();
+        ExitQuoteLeg memory output = _previewWithdrawLeg(pair, sharesIn, supply);
+        ExitQuoteLeg memory input = _previewWithdrawLeg(other, sharesIn, supply);
+        amountOut = output.withdrawn;
+        if (input.withdrawn > 0) {
+            uint256 assetsAfter;
+            (,,, assetsAfter) = Transition(input.se).quoteTransition(
+                input.state, Transition.Operation.DepositExactIn, input.withdrawn
+            );
+            uint256 addedClaim = assetsAfter > input.assets ? assetsAfter - input.assets : 0;
+            uint256 extra = _exitSaleQuote(other, pair, addedClaim, input.assets, output.assets);
+            if (extra > 0) {
+                uint256 received;
+                (output.state,, received, output.assets) = Transition(output.se).quoteTransition(
+                    output.state, Transition.Operation.WithdrawExactOut, extra
+                );
+                amountOut += received;
+            }
         }
-        if (tokenOut == l.currency1) {
-            uint256 extra = a0 == 0 ? 0 : _previewSwapExactIn(true, a0);
-            return a1 + extra;
+        if (asShare && amountOut > 0) {
+            (,, amountOut,) = Transition(output.se).quoteTransition(
+                output.state, Transition.Operation.DepositExactIn, amountOut
+            );
         }
-        return 0;
+    }
+
+    function _previewWithdrawLeg(address pair, uint256 sharesIn, uint256 supply)
+        private view returns (ExitQuoteLeg memory leg)
+    {
+        leg.se = _seFor(pair);
+        (leg.state, leg.assets) = Transition(leg.se).quoteState(pair, address(this));
+        uint256 seOut = FullMath.mulDiv(IERC20(leg.se).balanceOf(address(this)), sharesIn, supply);
+        if (seOut > 0) {
+            (leg.state,, leg.withdrawn, leg.assets) = Transition(leg.se).quoteTransition(
+                leg.state, Transition.Operation.RedeemExactIn, seOut
+            );
+        }
+    }
+
+    function _exitSaleQuote(address tokenIn, address tokenOut, uint256 claimIn, uint256 reserveIn, uint256 reserveOut)
+        private view returns (uint256)
+    {
+        if (claimIn == 0 || reserveIn == 0 || reserveOut == 0) return 0;
+        uint8 decimalsIn = _decimalsOf(tokenIn);
+        uint8 decimalsOut = _decimalsOf(tokenOut);
+        return Math.fromWadFloor(Math.saleQuote(
+            Math.toWad(claimIn, decimalsIn), Math.toWad(reserveIn, decimalsIn), Math.toWad(reserveOut, decimalsOut)
+        ), decimalsOut);
     }
 
 }

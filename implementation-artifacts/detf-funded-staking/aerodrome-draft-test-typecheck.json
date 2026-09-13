@@ -1,0 +1,91 @@
+{
+  "status": "DRAFT_DIAGNOSTIC_ONLY_NOT_RUNTIME_VALIDATION",
+  "kind": "typecheck",
+  "seconds": 10.968,
+  "exit_code": 0,
+  "errors": [],
+  "source_freeze_preserved": true,
+  "compiler_input_sha256": "1f23bdba612c18a24b480e2ae7bf910aedab4a5e95c4861355d57cd145b82d85",
+  "settings": {
+    "remappings": [
+      "forge-std/=lib/crane/lib/forge-std/src/",
+      "@crane/=lib/crane/",
+      "contracts/solady/=lib/crane/contracts/external/solady/",
+      "contracts/external/solady/=lib/crane/contracts/external/solady/",
+      "contracts/protocols/launchpads/uniswap/continuous-clearing/=lib/crane/contracts/protocols/launchpads/uniswap/continuous-clearing/",
+      "tests/=lib/crane/test/foundry/spec/protocols/lending/aave/v4/",
+      "battlechain-lib/=lib/crane/lib/battlechain-lib/src/",
+      "@battlechain-contracts/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/src/",
+      "@chainlink/contracts-ccip/=lib/crane/lib/chainlink-local/lib/chainlink-ccip/chains/evm/",
+      "@chainlink/contracts/=lib/crane/lib/chainlink-local/lib/chainlink-evm/contracts/",
+      "@chainlink/local/src/=lib/crane/lib/chainlink-local/src/",
+      "@matterlabs/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/lib/",
+      "@openzeppelin/contracts-upgradeable/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/openzeppelin-contracts-upgradeable/contracts/",
+      "@openzeppelin/contracts/=lib/crane/contracts/external/openzeppelin-contracts/",
+      "@openzeppelin/contracts@4.8.3/=lib/crane/lib/chainlink-local/src/vendor/openzeppelin-solidity/v4.8.3/contracts/",
+      "@openzeppelin/contracts@5.0.2/=lib/crane/lib/chainlink-local/src/vendor/openzeppelin-solidity/v5.0.2/contracts/",
+      "@oz/=lib/crane/lib/openzeppelin-contracts/",
+      "@ozu/=lib/crane/contracts/external/openzeppelin-upgradeable/",
+      "@solady/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/solady/src/",
+      "battlechain-contracts/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/",
+      "battlechain-lib-mocks/=lib/crane/lib/battlechain-lib/test/mocks/",
+      "battlechain-safe-harbor-contracts/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/",
+      "chainlink-ccip/=lib/crane/lib/chainlink-local/lib/chainlink-ccip/chains/evm/contracts/vendor/optimism/interop-lib/v0/src/",
+      "chainlink-evm/=lib/crane/lib/chainlink-local/lib/chainlink-evm/",
+      "chainlink-local/=lib/crane/lib/chainlink-local/src/",
+      "clones/=lib/crane/contracts/external/clones-with-immutable-args/",
+      "crane/=lib/crane/",
+      "createx/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/createx/src/",
+      "ds-test/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/createx/lib/forge-std/lib/ds-test/src/",
+      "erc4626-tests/=lib/crane/contracts/external/erc4626-tests/",
+      "gitlawb-contracts/=lib/crane/lib/gitlawb-contracts/",
+      "halmos-cheatcodes/=lib/crane/lib/openzeppelin-contracts/lib/halmos-cheatcodes/src/",
+      "hardhat/=node_modules/hardhat/",
+      "l1-contracts/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/l1-contracts/contracts/",
+      "l2-contracts/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/l2-contracts/contracts/",
+      "murky/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/lib/murky/",
+      "openzeppelin-contracts-upgradeable-v4/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/lib/openzeppelin-contracts-upgradeable-v4/",
+      "openzeppelin-contracts-upgradeable/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/openzeppelin-contracts-upgradeable/",
+      "openzeppelin-contracts-v4/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/lib/openzeppelin-contracts-v4/",
+      "openzeppelin-contracts/=lib/crane/lib/openzeppelin-contracts/",
+      "openzeppelin/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/createx/lib/openzeppelin-contracts/contracts/",
+      "solady/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/solady/src/",
+      "solmate/=lib/crane/contracts/external/solmate/",
+      "system-contracts/=lib/crane/lib/battlechain-lib/lib/battlechain-safe-harbor-contracts/lib/battlechain-contracts/system-contracts/contracts/",
+      "lib/battlechain-lib/:src/=lib/crane/lib/battlechain-lib/src/"
+    ],
+    "optimizer": {
+      "enabled": true,
+      "runs": 1
+    },
+    "metadata": {
+      "useLiteralContent": false,
+      "bytecodeHash": "ipfs",
+      "appendCBOR": true
+    },
+    "outputSelection": {
+      "test/foundry/spec/vaults/standard/sy/ConstantProductNativeSY.t.sol": {
+        "*": [
+          "abi"
+        ]
+      }
+    },
+    "evmVersion": "prague",
+    "viaIR": false,
+    "libraries": {}
+  },
+  "proposed_cases": [
+    "test_aeroProjectionCompoundPaysActualLpWithoutIssuingSeFees",
+    "test_aeroProjectionDonationRemainsBackingBeforeLpPayment",
+    "test_aeroProjectionExternalDepositsAndLiveLpPayment",
+    "test_aeroProjectionExternalLpBurnIncludesPoolHeldLpAndUnsyncedTokens",
+    "test_aeroProjectionExternalSwapsAndLpRedemptionPreserveOwnShares",
+    "test_aeroProjectionSelectorsAndComponentSizes",
+    "test_aeroProjectionSequentialBothAssetsAndCompoundedLpFees",
+    "test_lpAccountingExternalConversionsRetainOwnLiquidity",
+    "test_lpAccountingExternalDepositsPreserveBothLegsAndDonation",
+    "test_lpAccountingSequentialCustodyWithAccruedFees"
+  ],
+  "expected_case_count": 10,
+  "all_expected_methods_typechecked": true
+}

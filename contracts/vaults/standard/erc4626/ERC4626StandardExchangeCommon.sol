@@ -107,12 +107,22 @@ abstract contract ERC4626StandardExchangeCommon is IERC4626StandardExchange {
 
     /// @dev Protocol vault tokens in for exact user SE shares (protocolVault → SE exact-out).
     function _previewVaultInForSeOut(uint256 seOut) internal view returns (uint256 vaultIn) {
+        return _vaultInForSeOut(seOut, IERC20(address(protocolVault())).balanceOf(address(this)));
+    }
+
+    function _vaultInForSeOut(uint256 seOut, uint256 vaultBal) internal view returns (uint256 vaultIn) {
         uint256 supply = ERC20Repo._totalSupply();
-        uint256 vaultBal = IERC20(address(protocolVault())).balanceOf(address(this));
         if (supply == 0 || vaultBal == 0) {
             return seOut;
         }
         return (seOut * vaultBal + supply - 1) / supply;
+    }
+
+    /// @dev Credit at most the caller's maximum from unbooked payment. Booked
+    /// reserve and unclaimed surplus remain backing throughout exact-output minting.
+    function _prepaidCredit(IERC20 token, uint256 maximum) internal view returns (uint256) {
+        uint256 available = token.balanceOf(address(this)) - MultiAssetBasicVaultRepo._reserveOfToken(address(token));
+        return available < maximum ? available : maximum;
     }
 
     /// @dev Underlying out for exact SE in (unwrap exact-in).

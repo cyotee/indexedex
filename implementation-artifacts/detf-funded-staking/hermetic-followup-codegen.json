@@ -1,0 +1,19 @@
+{
+  "status": "DRAFT_CODEGEN_ONLY_NOT_RUNTIME_VALIDATION",
+  "seconds": 252.929,
+  "exit_code": 0,
+  "errors": [],
+  "concrete_suites": {
+    "AaveV3StataStandardExchange_RealTest": {
+      "methods": 21,
+      "test_container_runtime_bytes": 511569
+    },
+    "UniswapV4Detf_Cp_Univ4Se_ProductLaw": {
+      "methods": 54,
+      "test_container_runtime_bytes": 450622
+    }
+  },
+  "compiler_input_sha256": "921df8d30ace0a154fbb66e7b1025a25852dcbe2ba39be785ba05d5c165e16be",
+  "validation_passed": true,
+  "canonical_sources_unchanged": true
+}

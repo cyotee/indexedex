@@ -1,0 +1,27 @@
+{
+  "build": {
+    "exit_code": 0,
+    "seconds": 94.682,
+    "command": [
+      "forge",
+      "build",
+      "--offline",
+      "--contracts",
+      "contracts/vaults/detf/common/core"
+    ]
+  },
+  "test": {
+    "exit_code": 0,
+    "seconds": 5.407,
+    "command": [
+      "forge",
+      "test",
+      "--offline",
+      "--contracts",
+      "contracts/vaults/detf/common/core",
+      "-vvv",
+      "--match-test",
+      "test_finalFundedClaim|test_standingRecipientsExit"
+    ]
+  }
+}

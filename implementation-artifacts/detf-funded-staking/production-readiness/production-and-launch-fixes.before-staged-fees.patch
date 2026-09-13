@@ -1,0 +1,144 @@
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol
+@@ -459,6 +459,8 @@
+         if (amountOut_ < minAmountOut_) {
+             revert IStandardExchangeErrors.MinAmountNotMet(minAmountOut_, amountOut_);
+         }
++        // Positive LP can still round to no recipient asset. Preserve the user's input.
++        if (amountOut_ == 0) revert Repo.ZeroAmount();
+         _rejoinExitDetf(exitAmts_, deadline_);
+         _returnLeftoverLp();
+         _trySweepDust();
+@@ -481,6 +483,7 @@
+             );
+         }
+         if (out_ < minimum_) revert IStandardExchangeErrors.MinAmountNotMet(minimum_, out_);
++        if (out_ == 0) revert Repo.ZeroAmount();
+         _syncAllExpectedHoldReserves();
+     }
+ 
+@@ -500,6 +503,9 @@
+                 uint256 have_ = IERC20(address(this)).balanceOf(address(this));
+                 uint256 joinAmt_ = amounts_[i] < have_ ? amounts_[i] : have_;
+                 if (joinAmt_ == 0) continue;
++                // An otherwise payable exit must not fail on an unmintable self-leg.
++                // The residual sweep below retains/reinvests this protocol inventory.
++                if (_hook().previewJoinSingleAssetExactIn(address(this), joinAmt_) == 0) continue;
+                 IERC20(address(this)).forceApprove(Repo._layoutStruct().hook, joinAmt_);
+                 _hook().joinSingleAssetExactIn(address(this), joinAmt_, _bondLpHolder(), 0, deadline_);
+                 IERC20(address(this)).forceApprove(Repo._layoutStruct().hook, 0);
+--- a/lib/crane/contracts/registries/facet/FacetRegistryTarget.sol
++++ b/lib/crane/contracts/registries/facet/FacetRegistryTarget.sol
+@@ -14,6 +14,7 @@
+ 
+     function deployCanonicalFacetOverride(bytes calldata initCode, bytes32 salt, bytes4 interfaceId)
+         external
++        onlyOwnerOrOperator
+         returns (IFacet facet)
+     {
+         facet = FacetRegistryService._deployFacet(initCode, salt);
+@@ -34,7 +35,7 @@
+         bytes calldata initArgs,
+         bytes32 salt,
+         bytes4 interfaceId
+-    ) external returns (IFacet facet) {
++    ) external onlyOwnerOrOperator returns (IFacet facet) {
+         facet = FacetRegistryService._deployFacet(initCode, initArgs, salt);
+         FacetRegistryRepo._setCanonicalFacet(interfaceId, facet);
+         return facet;
+--- a/lib/crane/contracts/registries/package/DiamondFactoryPackageRegistryTarget.sol
++++ b/lib/crane/contracts/registries/package/DiamondFactoryPackageRegistryTarget.sol
+@@ -60,7 +60,11 @@
+         return true;
+     }
+ 
+-    function setCanonicalPackage(bytes4 interfaceId, IDiamondFactoryPackage package) external returns (bool) {
++    function setCanonicalPackage(bytes4 interfaceId, IDiamondFactoryPackage package)
++        external
++        onlyOwnerOrOperator
++        returns (bool)
++    {
+         DiamondFactoryPackageRegistryRepo._setCanonicalPackage(interfaceId, package);
+         return true;
+     }
+--- a/scripts/foundry/anvil_robinhood_main/Phase_09_Stage_01_ExportFrontend.s.sol
++++ b/scripts/foundry/anvil_robinhood_main/Phase_09_Stage_01_ExportFrontend.s.sol
+@@ -14,7 +14,7 @@
+         _start("Phase 09 Stage 01: Export frontend");
+         RobinhoodCanonicalLib.requireCanonicalPins();
+         _loadPhasePriorForExport(s);
+-        vm.createDir(FRONTEND_DIR, true);
++        vm.createDir(_frontendDir(), true);
+         _writePlatform();
+         _writeBaseTokens();
+         _writeEmptyList("strategy-vaults.tokenlist.json", "IndexedEx Robinhood Strategy Vaults");
+@@ -23,8 +23,13 @@
+         _logComplete("Phase 09 Stage 01");
+     }
+ 
+-    function _frontendPath(string memory file) internal pure returns (string memory) {
+-        return string.concat(FRONTEND_DIR, "/", file);
++    /// @dev Local release rehearsals export into their isolated evidence directory.
++    function _frontendDir() internal view returns (string memory) {
++        return vm.envOr("FRONTEND_ADDRESS_EXPORT_DIR", FRONTEND_DIR);
++    }
++
++    function _frontendPath(string memory file) internal view returns (string memory) {
++        return string.concat(_frontendDir(), "/", file);
+     }
+ 
+     function _writePlatform() internal {
+--- a/scripts/foundry/anvil_robinhood_main/Script_SimulateArchitecture.s.sol
++++ b/scripts/foundry/anvil_robinhood_main/Script_SimulateArchitecture.s.sol
+@@ -22,6 +22,7 @@
+ import {Phase_06_Stage_05_OrbitalBufferHookPkg} from "./Phase_06_Stage_05_OrbitalBufferHookPkg.sol";
+ import {Phase_06_Stage_06_CurveQuadBufferHookPkg} from "./Phase_06_Stage_06_CurveQuadBufferHookPkg.sol";
+ import {Phase_06_Stage_07_UniswapV4DetfPkg} from "./Phase_06_Stage_07_UniswapV4DetfPkg.sol";
++import {Phase_06_Stage_09_BalancerStableBufferHookPkg} from "./Phase_06_Stage_09_BalancerStableBufferHookPkg.sol";
+ 
+ /// @title Script_SimulateArchitecture
+ /// @notice One Foundry script wrapping architecture library execute() for a 4663 gas quote.
+@@ -54,6 +55,7 @@
+         Phase_06_Stage_05_OrbitalBufferHookPkg.execute(s);
+         Phase_06_Stage_06_CurveQuadBufferHookPkg.execute(s);
+         Phase_06_Stage_07_UniswapV4DetfPkg.execute(s);
++        Phase_06_Stage_09_BalancerStableBufferHookPkg.execute(s);
+         vm.stopBroadcast();
+ 
+         _exportArchitecture(s);
+--- a/scripts/foundry/anvil_robinhood_main/deploy_all.sh
++++ b/scripts/foundry/anvil_robinhood_main/deploy_all.sh
+@@ -270,15 +270,20 @@
+     data = json.load(f)
+ total = 0
+ n = 0
+-for tx in data.get("transactions") or []:
++transactions = data.get("transactions") or []
++if not transactions:
++    raise SystemExit("No simulated transactions; refusing an empty funding quote")
++for tx in transactions:
+     inner = tx.get("transaction") or {}
+     gas = inner.get("gas")
+     if gas is None:
+-        continue
++        raise SystemExit("Missing transaction gas limit; funding quote is incomplete")
+     if isinstance(gas, str):
+         gas_i = int(gas, 16) if gas.startswith("0x") else int(gas)
+     else:
+         gas_i = int(gas)
++    if gas_i <= 0:
++        raise SystemExit("Nonpositive transaction gas limit; funding quote is invalid")
+     total += gas_i
+     n += 1
+ print(f"{n} {total}")
+@@ -286,7 +291,9 @@
+ }
+ 
+ quote_simulate_funding() {
+-  local json_path="$REPO_ROOT/broadcast/Script_SimulateArchitecture.s.sol/${CHAIN_ID}/dry-run/run-latest.json"
++  local broadcast_dir="${FOUNDRY_BROADCAST:-$REPO_ROOT/broadcast}"
++  [[ "$broadcast_dir" = /* ]] || broadcast_dir="$REPO_ROOT/$broadcast_dir"
++  local json_path="$broadcast_dir/Script_SimulateArchitecture.s.sol/${CHAIN_ID}/dry-run/run-latest.json"
+   local src="${ANVIL_FORK_URL:-$RPC_URL}"
+   local counts n_tx gas_sum pay_per_gas cost_wei buffer_bps fund_wei
+   buffer_bps="${FUND_ETH_BUFFER_BPS:-2500}"

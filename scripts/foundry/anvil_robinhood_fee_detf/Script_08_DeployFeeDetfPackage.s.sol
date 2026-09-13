@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
+import {DetfPkgFactoryService} from "contracts/vaults/detf/common/factory/DetfPkgFactoryService.sol";
+
 import {DeploymentBase} from "./DeploymentBase.sol";
 import {RobinhoodCanonicalLib} from "./RobinhoodCanonicalLib.sol";
 
@@ -12,17 +16,14 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
-import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
-import {IUniswapV4DetfBondNFTVaultDFPkg} from
-    "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol";
+import {IUniswapV4DetfBondNFTVaultDFPkg} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/IUniswapV4DetfBondNFTVaultDFPkg.sol";
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
 
 import {
     IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage as ICpPkg
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.sol";
-import {
-    UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg as CpDFPkg
-} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg.sol";
+
 import {
     UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService as CpFS
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService.sol";
@@ -56,6 +57,7 @@ contract Script_08_DeployFeeDetfPackage is DeploymentBase {
     IFacet private erc5267Facet;
     IFacet private multiAssetBasicVaultFacet;
     IFacet private multiAssetStandardVaultFacet;
+    IFacet private multiStepOwnableFacet;
 
     address private bufferCpHookPkg;
     address private chirDetfPkg;
@@ -87,19 +89,22 @@ contract Script_08_DeployFeeDetfPackage is DeploymentBase {
             IFacet depositFacet = CpFS.deployDepositFacet(create3Factory);
             IFacet withdrawFacet = CpFS.deployWithdrawFacet(create3Factory);
             bufferCpHookPkg = reg.deployPkg(
-                type(CpDFPkg).creationCode,
+                ArtifactCreationCode.creationCode(create3Factory, "UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg.sol:UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg"),
                 abi.encode(
                     ICpPkg.PkgInit({
                         vaultRegistryDeployment: reg,
                         vaultFeeOracleQuery: feeOracle,
                         seFacet: seFacet,
                         depositFacet: depositFacet,
+                        depositSingleFacet: CpFS.deployDepositSingleFacet(create3Factory),
+                        depositPreviewFacet: CpFS.deployDepositPreviewFacet(create3Factory),
                         withdrawFacet: withdrawFacet,
                         erc20Facet: erc20Facet,
                         erc5267Facet: erc5267Facet,
                         erc2612Facet: erc2612Facet,
                         multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
-                        multiAssetStandardVaultFacet: multiAssetStandardVaultFacet
+                        multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
+                        multiStepOwnableFacet: multiStepOwnableFacet
                     })
                 ),
                 abi.encode(type(ICpPkg).name, "AnvilFeeDetf")._hash()
@@ -107,7 +112,7 @@ contract Script_08_DeployFeeDetfPackage is DeploymentBase {
         }
 
         {
-            IFacet productFacet = UniswapV4Detf_Facet_FactoryService.deployUniswapV4DetfFacet(create3Factory);
+            IFacet[5] memory productFacets = UniswapV4Detf_Facet_FactoryService.deployUniswapV4DetfFacets(create3Factory);
             chirDetfPkg = address(
                 UniswapV4Detf_Pkg_FactoryService.deployUniswapV4DetfDFPkg(
                     reg,
@@ -117,11 +122,14 @@ contract Script_08_DeployFeeDetfPackage is DeploymentBase {
                         erc2612Facet: erc2612Facet,
                         multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
                         multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
-                        productFacet: productFacet,
+                        productFacets: productFacets,
                         feeOracle: feeOracle,
                         vaultRegistryDeployment: reg,
                         bondNftVaultPkg: IUniswapV4DetfBondNFTVaultDFPkg(bondNftVaultPkg),
-                        rebasingClaimTokenPkg: IRebasingClaimTokenDFPkg(rebasingClaimTokenPkg)
+                        rebasingClaimTokenPkg: IRebasingClaimTokenDFPkg(rebasingClaimTokenPkg),
+                        syPkg: DetfPkgFactoryService.deployDETFSYComponents(
+                            create3Factory, reg, feeOracle, erc5267Facet, erc2612Facet
+                        )
                     })
                 )
             );
@@ -143,6 +151,7 @@ contract Script_08_DeployFeeDetfPackage is DeploymentBase {
         erc5267Facet = IFacet(_readAddress(CRANE_FOUNDATION_FILE, "erc5267Facet"));
         multiAssetBasicVaultFacet = IFacet(_readAddress(CRANE_FOUNDATION_FILE, "multiAssetBasicVaultFacet"));
         multiAssetStandardVaultFacet = IFacet(_readAddress(CRANE_FOUNDATION_FILE, "multiAssetStandardVaultFacet"));
+        multiStepOwnableFacet = IFacet(_readAddress(CRANE_FOUNDATION_FILE, "multiStepOwnableFacet"));
         bondNftVaultPkg = _readAddress(CHILDREN_FILE, "bondNftVaultPkg");
         rebasingClaimTokenPkg = _readAddress(CHILDREN_FILE, "rebasingClaimTokenPkg");
     }

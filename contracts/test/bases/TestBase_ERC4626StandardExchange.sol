@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+// FactoryServices load these artifacts by name during every fixture deployment.
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
@@ -8,9 +9,7 @@ import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
 import {TestBase_Permit2} from "@crane/contracts/protocols/utils/permit2/test/bases/TestBase_Permit2.sol";
 import {TestBase_VaultComponents} from "contracts/vaults/TestBase_VaultComponents.sol";
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
-import {
-    IERC4626StandardExchangeDFPkg
-} from "contracts/vaults/standard/erc4626/ERC4626StandardExchangeDFPkg.sol";
+import {IERC4626StandardExchangeDFPkg} from "contracts/vaults/standard/erc4626/IERC4626StandardExchangeDFPkg.sol";
 import {
     ERC4626StandardExchange_Component_FactoryService
 } from "contracts/vaults/standard/erc4626/ERC4626StandardExchange_Component_FactoryService.sol";
@@ -19,7 +18,7 @@ import {
  * @title TestBase_ERC4626StandardExchange
  * @notice Deploys generic ERC-4626 SE facets + DFPkg via IndexedEx registry path.
  */
-contract TestBase_ERC4626StandardExchange is TestBase_Permit2, TestBase_VaultComponents {
+abstract contract TestBase_ERC4626StandardExchange is TestBase_Permit2, TestBase_VaultComponents {
     using ERC4626StandardExchange_Component_FactoryService for ICreate3FactoryProxy;
     using ERC4626StandardExchange_Component_FactoryService for IIndexedexManagerProxy;
 

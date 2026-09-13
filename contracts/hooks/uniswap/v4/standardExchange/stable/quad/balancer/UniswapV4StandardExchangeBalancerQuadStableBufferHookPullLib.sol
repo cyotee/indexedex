@@ -16,43 +16,33 @@ library UniswapV4StandardExchangeBalancerQuadStableBufferHookPullLib {
 
     address internal constant PERMIT2 = 0x000000000022D473030F116dDEE9F6B43aC78BA3;
 
-    function pull(address token, address from, uint256 amount) external {
+    error InvalidTransferAmount();
+    error InvalidN();
+
+    function pull(address token, address from, uint256 amount) external { _pull(token, from, amount); }
+
+    function _pull(address token, address from, uint256 amount) private {
         if (amount == 0) return;
-        uint256 allowance = IERC20(token).allowance(from, address(this));
-        if (allowance >= amount) {
+        uint256 beforeBalance = IERC20(token).balanceOf(address(this));
+        if (IERC20(token).allowance(from, address(this)) >= amount) {
             IERC20(token).safeTransferFrom(from, address(this), amount);
-            return;
+        } else {
+            if (amount > type(uint160).max) revert InvalidTransferAmount();
+            IAllowanceTransfer(PERMIT2).transferFrom(from, address(this), uint160(amount), token);
         }
-        IAllowanceTransfer(PERMIT2).transferFrom(from, address(this), uint160(amount), token);
+        if (IERC20(token).balanceOf(address(this)) - beforeBalance != amount) revert InvalidTransferAmount();
     }
 
-    function pullMany(address[4] memory tokens, address from, uint256[4] memory amounts) external {
-        for (uint256 i; i < 4; ++i) {
-            uint256 amount = amounts[i];
-            if (amount == 0) continue;
-            address token = tokens[i];
-            uint256 allowance = IERC20(token).allowance(from, address(this));
-            if (allowance >= amount) {
-                IERC20(token).safeTransferFrom(from, address(this), amount);
-            } else {
-                IAllowanceTransfer(PERMIT2).transferFrom(from, address(this), uint160(amount), token);
-            }
-        }
+    function pullMany(address[] memory tokens, address from, uint256[] memory amounts) external {
+        _pullMany(tokens, from, amounts);
     }
 
     function pullManyDynamic(address[] memory tokens, address from, uint256[] memory amounts) external {
-        uint256 n = tokens.length;
-        require(amounts.length == n, "len");
-        for (uint256 i; i < n; ++i) {
-            uint256 amount = amounts[i];
-            if (amount == 0) continue;
-            address token = tokens[i];
-            uint256 allowance = IERC20(token).allowance(from, address(this));
-            if (allowance >= amount) {
-                IERC20(token).safeTransferFrom(from, address(this), amount);
-            } else {
-                IAllowanceTransfer(PERMIT2).transferFrom(from, address(this), uint160(amount), token);
-            }
-        }
+        _pullMany(tokens, from, amounts);
+    }
+
+    function _pullMany(address[] memory tokens, address from, uint256[] memory amounts) private {
+        if (tokens.length != amounts.length) revert InvalidN();
+        for (uint256 i; i < tokens.length; ++i) _pull(tokens[i], from, amounts[i]);
     }
 }

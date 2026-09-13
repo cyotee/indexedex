@@ -1,0 +1,19 @@
+{
+  "status": "DRAFT_TYPECHECK_ONLY_NOT_RUNTIME_VALIDATION",
+  "seconds": 22.822,
+  "prepared_records": [
+    "funded-lifecycle-fixture-followups-prepared.json"
+  ],
+  "exit_code": 0,
+  "errors": [],
+  "concrete_suites": {
+    "UniswapV4Detf_Weighted_Alignment_CloseD25": 4,
+    "UniswapV4Detf_Weighted_Claim": 3,
+    "UniswapV4Detf_Weighted_ReserveDonation": 20,
+    "UniswapV4Detf_Weighted_ProductLaw_B_ALL6": 52
+  },
+  "compiled_methods": 79,
+  "compiler_input_sha256": "600c6b90668b89259c70acf6ebeccd59589bd3b65f4e9b678c6739db980fbe51",
+  "validation_passed": true,
+  "canonical_sources_unchanged": true
+}

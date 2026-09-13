@@ -13,6 +13,20 @@ import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol'
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
 import {ComposedStableCommonDetfRepo} from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfRepo.sol';
 import {RebasingDETFTokenPricingTarget} from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenPricingTarget.sol';
+import {IStablePool} from '@crane/contracts/external/balancer/v3/interfaces/contracts/pool-stable/IStablePool.sol';
+import {IWeightedPool as CurrentWeightedPool} from '@crane/contracts/external/balancer/v3/interfaces/contracts/pool-weighted/IWeightedPool.sol';
+import {IStakedDETF} from 'contracts/interfaces/IStakedDETF.sol';
+
+import {IComposedStableCommonDetfInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/IComposedStableCommonDetfInfo.sol";
+import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
+
+/// @dev Historical test declarations only; production interface IDs and selectors are unchanged.
+interface ILegacyComposedStableCommonDetfInfo is IComposedStableCommonDetfInfo {
+    function thresholdMode() external view returns (ThresholdMode);
+    function expansionCatchUpMaxSeconds() external view returns (uint256);
+    function expansionCatchUpCapBps() external view returns (uint256);
+    function compoundProtocolRewards() external returns (uint256 detfIn, uint256 bptOut);
+}
 
 contract RebasingDETFTokenPricingHarness is RebasingDETFTokenPricingTarget {
     function initializePricing(
@@ -29,20 +43,22 @@ contract RebasingDETFTokenPricingHarness is RebasingDETFTokenPricingTarget {
         uint256 stablePoolBptIndex_,
         uint256 commonPoolBptIndex_
     ) external {
-        ComposedStableCommonDetfRepo._initializePricing(
-            reservePool_,
-            bondNftVault_,
-            rebasingDetfToken_,
-            detfToken_,
-            stablePoolBpt_,
-            commonPoolBpt_,
-            rateAsset_,
-            stablePoolExitPricer_,
-            commonPoolExitPricer_,
-            detfIndex_,
-            stablePoolBptIndex_,
-            commonPoolBptIndex_
-        );
+        // D60 compilation maintenance: initialize only surviving fixture fields.
+        // The production DETF is now address(this); the historical separate token
+        // argument does not restore the removed LP-backed pricing implementation.
+        detfToken_;
+        ComposedStableCommonDetfRepo.Storage storage s_ = ComposedStableCommonDetfRepo._layoutStruct();
+        s_.reservePool = CurrentWeightedPool(address(reservePool_));
+        s_.bondNftVault = bondNftVault_;
+        s_.rebasingDetfToken = IStakedDETF(address(rebasingDetfToken_));
+        s_.stablePool = IStablePool(address(stablePoolBpt_));
+        s_.commonPool = IStablePool(address(commonPoolBpt_));
+        s_.rateAsset = rateAsset_;
+        s_.stablePoolExitPricer = stablePoolExitPricer_;
+        s_.commonPoolExitPricer = commonPoolExitPricer_;
+        s_.detfIndex = detfIndex_;
+        s_.stablePoolBptIndex = stablePoolBptIndex_;
+        s_.commonPoolBptIndex = commonPoolBptIndex_;
     }
 }
 

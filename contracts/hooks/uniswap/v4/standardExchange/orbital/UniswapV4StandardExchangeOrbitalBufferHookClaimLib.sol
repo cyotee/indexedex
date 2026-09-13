@@ -18,6 +18,41 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
     error SeInvertUnavailable();
     error InsufficientTokenOut();
 
+    /// @dev Immutable inputs to repeated previews against one unchanged SE book.
+    struct BufferClaimQuote {
+        address se;
+        address token;
+        uint256 rate;
+        uint256 heldShares;
+        uint256 heldClaim;
+    }
+
+    function bufferClaimQuote(address se, address rp, address token, address hook)
+        internal view returns (BufferClaimQuote memory quote)
+    {
+        quote.se = se;
+        quote.token = token;
+        if (rp != address(0)) quote.rate = getRateFailClosed(rp);
+        else if (se != address(0)) {
+            quote.heldShares = IERC20(se).balanceOf(hook);
+            quote.heldClaim = seClaimOf(se, token, quote.heldShares);
+        }
+    }
+
+    function previewBufferClaimIn(BufferClaimQuote memory quote, uint256 amountInRaw)
+        internal view returns (uint256)
+    {
+        if (amountInRaw == 0 || quote.se == address(0)) return 0;
+        if (quote.se == quote.token) return amountInRaw;
+        uint256 sharesOut = IStandardExchangeIn(quote.se).previewExchangeIn(
+            IERC20(quote.token), amountInRaw, IERC20(quote.se)
+        );
+        if (sharesOut == 0) return 0;
+        if (quote.rate != 0) return (sharesOut * quote.rate) / 1e18;
+        uint256 afterClaim = seClaimOf(quote.se, quote.token, quote.heldShares + sharesOut);
+        return afterClaim > quote.heldClaim ? afterClaim - quote.heldClaim : 0;
+    }
+
     function getRateFailClosed(address rp) internal view returns (uint256 rate) {
         if (rp == address(0)) return 0;
         (bool ok, bytes memory data) = rp.staticcall(abi.encodeWithSelector(IRateProvider.getRate.selector));
@@ -29,6 +64,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
     /// @notice SE claim of `seBal` shares → pool token (unwrap preview; fee-inclusive).
     function seClaimOf(address se, address token, uint256 seBal) internal view returns (uint256) {
         if (se == address(0) || seBal == 0) return 0;
+        if (se == token) return seBal;
         return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seBal, IERC20(token));
     }
 
@@ -58,6 +94,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
         address hook
     ) internal view returns (uint256 dInNative) {
         if (amountInRaw == 0 || se == address(0)) return 0;
+        if (se == token) return amountInRaw;
         uint256 sharesOut =
             IStandardExchangeIn(se).previewExchangeIn(IERC20(token), amountInRaw, IERC20(se));
         if (sharesOut == 0) return 0;
@@ -105,6 +142,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
         returns (uint256)
     {
         if (sharesOut == 0 || se == address(0)) return 0;
+        if (se == token) return sharesOut;
         return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), sharesOut, IERC20(token));
     }
 
@@ -115,6 +153,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
         returns (uint256 sharesIn)
     {
         if (amountOutNative == 0) return 0;
+        if (se == token) return amountOutNative;
         try IStandardExchangeOut(se).previewExchangeOut(IERC20(se), IERC20(token), amountOutNative)
         returns (uint256 seIn) {
             return seIn;

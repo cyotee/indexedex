@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+// Compile each artifact loaded by the canonical fixture FactoryService.
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
@@ -21,9 +22,7 @@ import {TestBase_VaultComponents} from "contracts/vaults/TestBase_VaultComponent
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
-import {
-    IUniswapV3StandardExchangeDFPkg
-} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeDFPkg.sol";
+import {IUniswapV3StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v3/IUniswapV3StandardExchangeDFPkg.sol";
 import {
     UniswapV3_Component_FactoryService
 } from "contracts/protocols/dexes/uniswap/v3/UniswapV3_Component_FactoryService.sol";
@@ -35,7 +34,7 @@ import {
  * @title TestBase_UniswapV3StandardExchange
  * @notice Gold TestBase: CREATE3 facets + manager-registry DFPkg + hermetic Uni V3 factory/pools.
  */
-contract TestBase_UniswapV3StandardExchange is
+abstract contract TestBase_UniswapV3StandardExchange is
     TestBase_Permit2,
     TestBase_VaultComponents,
     IUniswapV3MintCallback,

@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
-import {PoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 
@@ -40,7 +41,11 @@ abstract contract TestBase_UniswapV4Detf_Cp_Univ4Se is TestBase_UniswapV4Detf {
 
         pairToken = new SimpleMintableERC20("Pair", "PAIR");
         seOther = new SimpleMintableERC20("Rate", "RATE");
-        pm = IPoolManager(address(new PoolManager(address(this))));
+        pm = IPoolManager(address(IPoolManager(create3Factory.create3WithArgs(
+            ArtifactCreationCode.creationCode(create3Factory, "PoolManager.sol:PoolManager"),
+            abi.encode(address(this)),
+            keccak256("TestBase_UniswapV4Detf_Cp_Univ4Se_PoolManager")
+        ))));
         weth = SeLib.newWeth();
 
         SeLib.Univ4SePkg memory v4pkg = SeLib.deployUniv4SePkg(_craneCtx(), pm, weth);
@@ -65,6 +70,7 @@ abstract contract TestBase_UniswapV4Detf_Cp_Univ4Se is TestBase_UniswapV4Detf {
         pairToken.approve(se, type(uint256).max);
         IERC20(se).approve(detf, type(uint256).max);
         vm.stopPrank();
+        SeLib.activatePositionVault(se, mintToken, detfUser, address(weth));
     }
 
     function _craneCtx() internal view returns (SeLib.CraneCtx memory ctx) {
@@ -115,7 +121,7 @@ abstract contract TestBase_UniswapV4Detf_Cp_Univ4Se is TestBase_UniswapV4Detf {
             address se_ = IUniswapV4SeBufferHook(hook_).standardExchangeOf(toks[i]);
             if (se_ != address(0) && IERC20(se_).balanceOf(detf) > 0) needSweep = true;
         }
-        if (needSweep) detfInfo.sweepDust();
+        if (needSweep) detfInfo.sweepDust{gas: 30_000_000}();
         assertEq(IERC20(hook_).balanceOf(detf), 0, "R19 hook LP");
         for (uint256 i; i < toks.length; ++i) {
             uint256 bal = IERC20(toks[i]).balanceOf(detf);

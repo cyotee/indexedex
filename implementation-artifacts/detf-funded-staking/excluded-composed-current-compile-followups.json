@@ -1,0 +1,10 @@
+{
+  "status": "APPLIED_AWAITING_FULL_BUILD",
+  "scope": "D60 compilation maintenance only",
+  "changes": [
+    "Legacy harness sale and LP-claim calls use existing historical interface casts",
+    "Legacy standard preview calls use IStandardExchangeIn casts after selector relocation",
+    "Legacy package child-address assertions retain the exact configured fixture addresses after obsolete argument-member removal"
+  ],
+  "note": "Historical runtime expectations remain; this does not claim those excluded tests pass."
+}

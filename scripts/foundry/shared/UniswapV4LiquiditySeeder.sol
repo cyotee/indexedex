@@ -3,13 +3,13 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
-import {IUnlockCallback} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/callback/IUnlockCallback.sol";
+import {IUniswapV4LiquiditySeeder} from "scripts/foundry/shared/IUniswapV4LiquiditySeeder.sol";
 import {BalanceDelta, BalanceDeltaLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/types/BalanceDelta.sol";
 import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
 import {ModifyLiquidityParams} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
 
-contract UniswapV4LiquiditySeeder is IUnlockCallback {
+contract UniswapV4LiquiditySeeder is IUniswapV4LiquiditySeeder {
     using BalanceDeltaLibrary for BalanceDelta;
 
     IPoolManager internal immutable poolManager;

@@ -1,0 +1,29 @@
+{
+  "status": "PREPARED_NOT_APPLIED",
+  "finding": "Current V3 import drains the NFT and creates a directly vault-owned full-range pool position. Three metadata fields and their private readers have no callers outside their own repository. They are not operational NFT position bindings.",
+  "correction": "Remove the three fields, unused readers and metadata initializer; reuse _createPositionIfNeeded for the same full-range center. Retain NFT custody, authorization, external positions ABI layout, actual funded import accounting, fee collection and pool position ownership.",
+  "prior_record_correction": "The V3 retention explanation in current-position-storage-disposition.json was incorrect; record the actual call graph. V4 context is separately read during import settlement and remains required.",
+  "application_gate": "Wait for the current affected-suite run PTY 10263 to exit, then apply current hashes and build before rerunning V3 import/full-range cases.",
+  "changes": [
+    {
+      "path": "contracts/protocols/dexes/uniswap/v3/UniswapV3VaultRepo.sol",
+      "before_sha256": "4aa8e001ae138ca8e126e86b8165f1d6c1cdf7c53d108cd30e157f5a2d743242",
+      "after_sha256": "4e36478f32eef7cbc63477148034d59345dd1002680f193f585771db7be0afa6"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangePositionImportTarget.sol",
+      "before_sha256": "b6891fe3c50f3fca32478934587ab565cf0489ee7c1d21363b2fc248da0ee57b",
+      "after_sha256": "cb80aa19514d4de00c85555aecdc9c5a2741b9126fc5659acf536127c6977bbf"
+    },
+    {
+      "path": "contracts/interfaces/IStandardExchangeInMulti.sol",
+      "before_sha256": "0f31805f1250d57b5bd0633572409f1a50d67e0effcfcc909548f539d63f56ef",
+      "after_sha256": "58ae3f303b6fe59ab0ee8a33616096ac415c03cd52ba62f5608029cdfb43156e"
+    },
+    {
+      "path": "contracts/interfaces/IStandardExchangeOutMulti.sol",
+      "before_sha256": "c03404fed97271d10c3ba5dfdcb3e119c344b8fe7f1e0db1f96411af5b54d234",
+      "after_sha256": "1f806d4eb10f7546bf33ed9a8bdcb6dd7b1798065942e09b03b7bba98ff75409"
+    }
+  ]
+}

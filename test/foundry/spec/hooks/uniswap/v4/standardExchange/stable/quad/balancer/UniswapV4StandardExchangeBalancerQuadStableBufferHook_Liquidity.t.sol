@@ -108,23 +108,21 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Liquidity is Test
         assertGt(out, 0);
     }
 
-    function test_invalidRoute_omitPaths() public {
+    function test_unbalanced_and_exactOutput_liquidity_executes() public {
         _firstMintEqual(200 ether);
-        vm.expectRevert(IUniswapV4StandardExchangeBalancerQuadStableBufferHook.InvalidRoute.selector);
-        quad.previewJoinUnbalanced(new uint256[](4));
-        vm.expectRevert(IUniswapV4StandardExchangeBalancerQuadStableBufferHook.InvalidRoute.selector);
-        quad.joinUnbalanced(new uint256[](4), user, 0, block.timestamp + 1);
-        vm.expectRevert(IUniswapV4StandardExchangeBalancerQuadStableBufferHook.InvalidRoute.selector);
-        quad.previewJoinSingleAssetExactOut(address(token1), 1e18);
-        vm.expectRevert(IUniswapV4StandardExchangeBalancerQuadStableBufferHook.InvalidRoute.selector);
-        quad.joinSingleAssetExactOut(address(token1), 1e18, user, type(uint256).max, block.timestamp + 1);
-        vm.expectRevert(IUniswapV4StandardExchangeBalancerQuadStableBufferHook.InvalidRoute.selector);
-        quad.previewExitSingleAssetExactTokenOut(address(token1), 1e18);
-        vm.expectRevert(IUniswapV4StandardExchangeBalancerQuadStableBufferHook.InvalidRoute.selector);
-        quad.exitSingleAssetExactTokenOut(address(token1), 1e18, user, type(uint256).max, block.timestamp + 1);
-        vm.expectRevert(IUniswapV4StandardExchangeBalancerQuadStableBufferHook.InvalidRoute.selector);
-        quad.previewWithdrawSingleExactOut(address(token1), 1e18);
-        vm.expectRevert(IUniswapV4StandardExchangeBalancerQuadStableBufferHook.InvalidRoute.selector);
-        quad.withdrawSingleExactOut(address(token1), 1e18, user, type(uint256).max, block.timestamp + 1);
+        uint256[] memory amounts = new uint256[](4);
+        amounts[1] = 20 ether;
+        uint256 quote = quad.previewJoinUnbalanced(amounts);
+        vm.prank(user);
+        assertEq(quad.joinUnbalanced(amounts, user, quote, block.timestamp), quote);
+        uint256 required = quad.previewJoinSingleAssetExactOut(address(token1), 1 ether);
+        vm.prank(user);
+        assertEq(quad.joinSingleAssetExactOut(address(token1), 1 ether, user, required, block.timestamp), required);
+        uint256 burned = quad.previewExitSingleAssetExactTokenOut(address(token1), 1 ether);
+        vm.prank(user);
+        assertEq(quad.exitSingleAssetExactTokenOut(address(token1), 1 ether, user, burned, block.timestamp), burned);
+        burned = quad.previewWithdrawSingleExactOut(address(token1), 1 ether);
+        vm.prank(user);
+        assertEq(quad.withdrawSingleExactOut(address(token1), 1 ether, user, burned, block.timestamp), burned);
     }
 }

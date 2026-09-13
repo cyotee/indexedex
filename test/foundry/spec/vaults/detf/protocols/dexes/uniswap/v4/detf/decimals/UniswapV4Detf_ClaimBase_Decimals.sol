@@ -1,0 +1,141 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
+import {IStakedDETF, IDETFFundedRewards} from "contracts/interfaces/IStakedDETF.sol";
+import {DETFFundedStakingMath} from "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol";
+
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+
+
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
+import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
+import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {MintableERC20Decimals} from "contracts/test/stubs/MintableERC20Decimals.sol";
+import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
+import {
+    DETF_PROTOCOL_BOND_NFT_ID
+} from "contracts/vaults/detf/common/core/DETFBondNftIds.sol";
+import {
+    IUniswapV4Detf
+} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
+import {TestBase_UniswapV4Detf_Policy_Decimals} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol";
+
+/**
+ * @title UniswapV4Detf_ClaimBase
+ * @notice Shared owner-authorized funded bond-claim helpers. No extra setUp deployment.
+ * @dev Remaining legacy interface consumers are migrated separately; these helpers use funded NFT methods.
+ */
+abstract contract UniswapV4Detf_ClaimBase_Decimals is TestBase_UniswapV4Detf_Policy_Decimals {
+    function _nft() internal view virtual returns (IDETFNFTVault) {
+        return IDETFNFTVault(detfInfo.bondNftVault());
+    }
+
+    function _nftOf(address d) internal view returns (IDETFNFTVault) {
+        return IDETFNFTVault(IUniswapV4Detf(d).bondNftVault());
+    }
+
+    function _claimTok() internal view returns (IRebasingClaimToken) {
+        return IRebasingClaimToken(detfInfo.rebasingClaimToken());
+    }
+
+    function _claimTokOf(address d) internal view returns (IRebasingClaimToken) {
+        return IRebasingClaimToken(IUniswapV4Detf(d).rebasingClaimToken());
+    }
+
+    function _lpOf(address d) internal view returns (IERC20) {
+        return IERC20(IUniswapV4Detf(d).hook());
+    }
+
+    function _minOutOf(address d) internal view returns (uint256[] memory m) {
+        m = new uint256[](IUniswapV4SeBufferHook(IUniswapV4Detf(d).hook()).tokens().length);
+    }
+
+    function _setPfc(address d) internal {
+        vm.startPrank(owner);
+        try IVaultFeeOracleManager(address(indexedexManager)).setSeigniorageIncentivePercentageOfVault(d, 5e16) {}
+        catch {}
+        try IVaultFeeOracleManager(address(indexedexManager)).setSeignioragePotSharesOfVault(d, 12e16, 28e16) {}
+        catch {}
+        vm.stopPrank();
+    }
+
+    function _fundActorForDetf(address d, address who, uint256 amt) internal {
+        IERC20 lead_ = _leadPairOf(d);
+        uint8 md_ = 18;
+        try MintableERC20Decimals(address(lead_)).decimals() returns (uint8 got_) {
+            md_ = got_;
+        } catch {}
+        uint256 human_ = md_ == 0 ? amt : amt / (10 ** uint256(md_));
+        if (human_ == 0) human_ = 1;
+        address[] memory toks_ = IUniswapV4SeBufferHook(IUniswapV4Detf(d).hook()).tokens();
+        for (uint256 i; i < toks_.length; ++i) {
+            if (toks_[i] == d) continue;
+            uint256 fund_ = _tokenHumanAmt(toks_[i], human_);
+            try MintableERC20Decimals(toks_[i]).mint(who, fund_) {} catch {
+                uint256 have_ = IERC20(toks_[i]).balanceOf(who);
+                deal(toks_[i], who, have_ + fund_);
+            }
+            vm.prank(who);
+            IERC20(toks_[i]).approve(d, type(uint256).max);
+        }
+    }
+
+    function _leadPairOf(address d) internal view returns (IERC20 tok) {
+        address[] memory toks_ = IUniswapV4SeBufferHook(IUniswapV4Detf(d).hook()).tokens();
+        for (uint256 i; i < toks_.length; ++i) {
+            if (toks_[i] == address(pairToken)) return IERC20(toks_[i]);
+        }
+        for (uint256 j; j < toks_.length; ++j) {
+            if (toks_[j] != d) return IERC20(toks_[j]);
+        }
+        return IERC20(address(pairToken));
+    }
+
+    function _liveMintOn(address d, address who, uint256 amt) internal virtual returns (uint256 userDetf) {
+        _fundActorForDetf(d, who, amt);
+        IERC20 tok_ = _leadPairOf(d);
+        vm.startPrank(who);
+        tok_.approve(d, amt);
+        userDetf = IStandardExchangeIn(d).exchangeIn(tok_, amt, IERC20(d), 0, who, false, block.timestamp + 1 hours);
+        vm.stopPrank();
+    }
+
+    function _bondOn(address d, address who, uint256 amt) internal virtual returns (uint256 tokenId, uint256 shares) {
+        _fundActorForDetf(d, who, amt);
+        IERC20 tok_ = _leadPairOf(d);
+        vm.startPrank(who);
+        tok_.approve(d, amt);
+        (tokenId, shares) = IUniswapV4Detf(d).bond(tok_, amt, DEFAULT_MIN_LOCK, who, false, block.timestamp + 1 hours);
+        vm.stopPrank();
+    }
+
+    /// @notice D10 replacement: the actual bond owner claims funded principal and rewards as sDETF.
+    function _d10SellToClaimOn(address d, uint256 tokenId, address seller)
+        internal returns (uint256 principal, uint256 claimMinted)
+    {
+        IDETFFundedRewards(d).synchronizeRewards();
+        IDetfBondNFT nft_ = IDetfBondNFT(IUniswapV4Detf(d).bondNftVault());
+        IERC20 staking_ = IERC20(IUniswapV4Detf(d).rebasingClaimToken());
+        uint256 before_ = staking_.balanceOf(seller);
+        uint256 lp_ = _lpOf(d).balanceOf(address(nft_));
+        vm.prank(seller);
+        uint256 rewards_;
+        (principal, rewards_) = nft_.claimBond(tokenId, seller);
+        claimMinted = principal + rewards_;
+        assertEq(staking_.balanceOf(seller) - before_, claimMinted, "funded sDETF claim");
+        assertEq(_lpOf(d).balanceOf(address(nft_)), lp_, "claim retains protocol LP");
+    }
+
+    function _warpMature(uint256 tokenId) internal {
+        _warpMatureOf(detf, tokenId);
+    }
+
+    function _warpMatureOf(address d, uint256 tokenId) internal {
+        DETFFundedStakingMath.BondPosition memory position_ = IDetfBondNFT(IUniswapV4Detf(d).bondNftVault()).positionOf(tokenId);
+        uint256 unlock_ = position_.startTimestamp + position_.vestingDuration;
+        if (block.timestamp < unlock_) vm.warp(unlock_);
+    }
+}

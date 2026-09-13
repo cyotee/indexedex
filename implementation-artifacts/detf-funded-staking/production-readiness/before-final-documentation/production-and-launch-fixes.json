@@ -1,0 +1,52 @@
+{
+  "recorded_at_utc": "2026-09-11T05:42:12.893213+00:00",
+  "scope": "Only production/maintained-launch changes made in this readiness task, relative to their saved pre-edit files. Test and evidence tooling changes are tracked separately. This is not a clean-HEAD patch and must not erase pre-existing workspace changes.",
+  "patch": "production-and-launch-fixes.patch",
+  "patch_sha256": "f7da2beab9cfe0fddf6a0046ec22c2e7bc3d5703684a228db4762b6202ee9958",
+  "sources": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol",
+      "before_source": "UniswapV4DetfTarget.before.sol.txt",
+      "before_sha256": "a43f26a1b79e55450798aaf6f0e023e885006d1ec494e18246fbdda36d36daf5",
+      "current_sha256": "6bb606480237e4ef3d63492a936f3d4f7393c51adcf505a4f2dfff821b227047"
+    },
+    {
+      "path": "lib/crane/contracts/registries/facet/FacetRegistryTarget.sol",
+      "before_source": "FacetRegistryTarget.before.sol.txt",
+      "before_sha256": "de42e0c707419bf2de520c9ead5680f51738b66af57e97f3521f002524bf8f71",
+      "current_sha256": "18d0ff32963ca7f31fdb9bf0f89d592d3b1aefb7472c6537c31528c9e28f5884"
+    },
+    {
+      "path": "lib/crane/contracts/registries/package/DiamondFactoryPackageRegistryTarget.sol",
+      "before_source": "DiamondFactoryPackageRegistryTarget.before.sol.txt",
+      "before_sha256": "9f23a58ae9dc7fc302708a0598a5ca44b5e49f573cdca6c201d2e16ee98ae6a9",
+      "current_sha256": "dd1fbea78943706a76da64062093f4f9da7be2b17b192795096dc922e8f53ef8"
+    },
+    {
+      "path": "scripts/foundry/anvil_robinhood_main/Phase_09_Stage_01_ExportFrontend.s.sol",
+      "before_source": "Phase_09_Stage_01_ExportFrontend.before.sol.txt",
+      "before_sha256": "20a4f3fa7ab69c8faa438dc15440af228e35231c12497f088672280dd369916e",
+      "current_sha256": "87a2bd07eb26984bb1395b2a9cf776ff29af778dadc77be8a03ac036fb12dd06"
+    },
+    {
+      "path": "scripts/foundry/anvil_robinhood_main/Script_SimulateArchitecture.s.sol",
+      "before_source": "Script_SimulateArchitecture.s.sol.before-funding-quote.txt",
+      "before_sha256": "fc18244ff54a34f3f6c6b663c466b831ccef8cbe498483dc7e9174118bd1eeee",
+      "current_sha256": "e8c0273cf8ae3c19b1bc9e7076889375d7d6ee0f2f78a0fc31ebf65dc11a9859"
+    },
+    {
+      "path": "scripts/foundry/anvil_robinhood_main/deploy_all.sh",
+      "before_source": "deploy_all.sh.before-funding-quote.txt",
+      "before_sha256": "4c78281d752816cf8a5232e1759396e0e23730ecfe28cb533534a9976aa889e1",
+      "current_sha256": "2d48b7a570d32dd1b7143a04eafece2e744b97e4e5a58a7f26a181912e6e305f"
+    },
+    {
+      "path": "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_09_BalancerStableBufferHookPkg.sol",
+      "before_source": "Phase_06_Stage_09_BalancerStableBufferHookPkg.before-facet-wiring.sol.txt",
+      "before_sha256": "3ed4828ea168d537fe3a425c2a87bf2eb69b2500b07efca87190a6b469819fdb",
+      "current_sha256": "5e4cc781704853dc002f07422225ebef0b2f8e775bd64b1d6036a9ae0a100f19"
+    }
+  ],
+  "validation_status": "Complete normal build including all 294 maintained scripts passed after PR-08 (132.233 s, three recompiled sources). 31,305 hermetic, 27 targeted and 35 pinned fork cases reused through explicit unchanged execution source closures. Final local stage/lifecycle/funding pending.",
+  "touched_source_whitespace_check": "PASS: git diff --check for local touched files and both Crane registry targets."
+}

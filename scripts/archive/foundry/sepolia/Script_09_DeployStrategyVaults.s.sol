@@ -3,9 +3,9 @@ pragma solidity ^0.8.0;
 
 import {DeploymentBase} from "./DeploymentBase.sol";
 import {IUniswapV2Pair} from "@crane/contracts/interfaces/protocols/dexes/uniswap/v2/IUniswapV2Pair.sol";
-import {IUniswapV2StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeDFPkg.sol";
+import {IUniswapV2StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v2/IUniswapV2StandardExchangeDFPkg.sol";
 import {IPool} from "@crane/contracts/interfaces/protocols/dexes/aerodrome/IPool.sol";
-import {IAerodromeStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeDFPkg.sol";
+import {IAerodromeStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/v1/IAerodromeStandardExchangeDFPkg.sol";
 
 contract Script_09_DeployStrategyVaults is DeploymentBase {
     IUniswapV2StandardExchangeDFPkg private uniV2Pkg;

@@ -1,0 +1,20 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {Adversarial_Reentrancy_Decimals_DexBalV3Mul} from "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/adversarial/Adversarial_Reentrancy_Decimals.sol";
+
+/// @notice Book `B_P18_R6`. pairToken 18-dec; one other raw leg 6-dec; remaining 18-dec.
+/// @dev Remaining-18: B_P18_R6 is 18,6,18 not homogeneous rest. vaultShare / detfToken / claim / Bond NFT stay 18.
+contract Adversarial_Reentrancy_B_P18_R6 is Adversarial_Reentrancy_Decimals_DexBalV3Mul {
+    function _pairDecimals() internal pure override returns (uint8) {
+        return 18;
+    }
+
+    function _rateDecimals() internal pure override returns (uint8) {
+        return 6;
+    }
+
+    function _restDecimals() internal pure override returns (uint8) {
+        return 18;
+    }
+}

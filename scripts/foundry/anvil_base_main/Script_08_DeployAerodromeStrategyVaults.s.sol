@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import {DeploymentBase} from "./DeploymentBase.sol";
 
-import {IAerodromeStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeDFPkg.sol";
+import {IAerodromeStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/v1/IAerodromeStandardExchangeDFPkg.sol";
 import {IPool} from "@crane/contracts/interfaces/protocols/dexes/aerodrome/IPool.sol";
 
 /// @title Script_08_DeployAerodromeStrategyVaults

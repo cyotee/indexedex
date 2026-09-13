@@ -1,0 +1,66 @@
+{
+  "recorded_at_utc": "2026-09-08T15:01:59.736716+00:00",
+  "status": "COMPILED_CURRENT_DEFAULT_BUILD_COUNTS_NOT_RUNTIME_ACCEPTANCE",
+  "baseline": "compiled-test-inventory-baseline.json",
+  "current": "compiled-test-inventory-current.json",
+  "scope_comparison": [
+    {
+      "scope": "D60_BALANCER_DETF_EXCLUDED",
+      "baseline": {
+        "contracts": 954,
+        "compiled_methods": 7213,
+        "artifact_file_bytes": 2924331657,
+        "largest_runtime_bytes": 661689
+      },
+      "current": {
+        "contracts": 540,
+        "compiled_methods": 3445,
+        "artifact_file_bytes": 1756382154,
+        "largest_runtime_bytes": 689855
+      }
+    },
+    {
+      "scope": "D66_DEFERRED_PRESERVE_EXISTING",
+      "baseline": {
+        "contracts": 29,
+        "compiled_methods": 265,
+        "artifact_file_bytes": 22498990,
+        "largest_runtime_bytes": 189690
+      },
+      "current": {
+        "contracts": 29,
+        "compiled_methods": 265,
+        "artifact_file_bytes": 23108005,
+        "largest_runtime_bytes": 189908
+      }
+    },
+    {
+      "scope": "IN_SCOPE_OR_SHARED_DEPENDENCY",
+      "baseline": {
+        "contracts": 2090,
+        "compiled_methods": 29085,
+        "artifact_file_bytes": 3887284764,
+        "largest_runtime_bytes": 750403
+      },
+      "current": {
+        "contracts": 2130,
+        "compiled_methods": 27529,
+        "artifact_file_bytes": 4263509966,
+        "largest_runtime_bytes": 812269
+      }
+    }
+  ],
+  "interpretation": "Total concrete contracts decrease from3073 to2699, but in-scope/shared contracts increase from2090 to2130. D60 changes completed before exclusion are separated; existing D66 contracts are preserved. Fewer total artifacts are not evidence of an in-scope speedup. Current full test runtime remains unmeasured.",
+  "largest_current": {
+    "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_PonsMix_ProductLaw.t.sol",
+    "contract": "UniswapV4Detf_Weighted_PonsMix_ProductLaw",
+    "compiler": "0.8.35",
+    "scope": "IN_SCOPE_OR_SHARED_DEPENDENCY",
+    "artifact": "UniswapV4Detf_Weighted_PonsMix_ProductLaw.t.sol/UniswapV4Detf_Weighted_PonsMix_ProductLaw.json",
+    "artifact_sha256": "181ba39365938c35c95e5f02540f4b32dbfd78736821b67097fe79ae6a28947e",
+    "artifact_file_bytes": 4268683,
+    "runtime_bytes": 812269,
+    "compiled_test_or_invariant_methods": 54,
+    "documented_baseline_network_exclusion": false
+  }
+}

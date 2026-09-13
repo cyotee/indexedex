@@ -17,6 +17,12 @@ import {
 
 /// @notice Preview-only exchangeOut surface (Option 1b).
 abstract contract UniswapV4StandardExchangeOutQueryTarget is UniswapV4StandardExchangeOutBase {
+    function quoteState(address asset, address holder) external view returns (bytes memory state, uint256 holderAssets) {
+        InventoryQuote memory q = _inventorySnapshot(asset, holder);
+        state = abi.encode(q);
+        holderAssets = _inventoryAssets(q, q.shares);
+    }
+
     function previewExchangeOut(IERC20 tokenIn, IERC20 tokenOut, uint256 amountOut)
         external
         view

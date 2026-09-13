@@ -1,0 +1,136 @@
+{
+  "recorded_at_utc": "2026-09-08T03:25:28.945263+00:00",
+  "approval": "v4-close-cleanup-owner-approval.json",
+  "status": "APPLIED_VALIDATION_PENDING",
+  "files": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol",
+      "before_sha256": "fabb48f2d160eeba774275fcab84a2fe63b76b476822841bfcace926ffcc73c9",
+      "after_sha256": "77e676b326d7782434c885a9b227523b38d5314dde4dc9ddc5093a6511cd8cf2"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfRepo.sol",
+      "before_sha256": "c4495f0f3d490e17cb3be47fd9f96e5736df6b646f017d4f5cad3e87586bb164",
+      "after_sha256": "d1f540f93afaa387290ffa4d663654ce011a96e3f4a713b195b0c8463af7d5a2"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol",
+      "before_sha256": "4641b206c72312a6dafc95093e35c3949f814c658a16f67d6c01ff70e351095c",
+      "after_sha256": "147cb43b8c9b43985100a28b4f23099dc0bcfa8e5bc8a13e64069f8785a7e0e3"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfQueryTarget.sol",
+      "before_sha256": "580bcfff6827bedf40ce3b6a6dc221e195500ef8e2741cb2cc819a10efe00093",
+      "after_sha256": "813c14e4edab5117f49b5bbf9c22e67bba3a256c870d47b4c58cac5e93a42a62"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfQueryFacet.sol",
+      "before_sha256": "61e8184d9b35166c344c1376fc85ab556ba0583420f7cc9b9627d10cbb2a6212",
+      "after_sha256": "c569005cf90f80df78513af6bbdbe765fa44cc8a8988d45fa822af5bb673507f"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfDFPkg.sol",
+      "before_sha256": "5e4e57fee571f01bbe6b57fdd00d938e276d59e79cdeea9915b36ed1d778bb88",
+      "after_sha256": "bb1d445020e7c5d3d836528ff14a6bdab8291f13c23e8a9bb1d9cdba46603c54"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProcessArgsLib.sol",
+      "before_sha256": "fad943bb76469966c0f2f128baba8b1f602c94ef0687c49bfa063784c6b80f55",
+      "after_sha256": "4bb0df4482d12f7c3df21a8b18d807b3e006d6064860141d6914fb7dc359aaf8"
+    },
+    {
+      "path": "contracts/test/bases/TestBase_UniswapV4Detf_PonsV2Se.sol",
+      "before_sha256": "624d6017cf4f25879a3b61efa6e7d8eef80b48f92e139c564ba11bb10d84a40f",
+      "after_sha256": "ddd5cada6db78752ed6787386ccb872401be7d6a855d55aa3619f6b199012a33"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol",
+      "before_sha256": "0e33aaba293407a3147d6836cf8918aadcf24cfad79d1619518cf4fdac7da656",
+      "after_sha256": "c4534531e6356bbc3251529a38c491268c48ef8ab887f28a8d084074f2ffd627"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad.sol",
+      "before_sha256": "11ce580e96150b542d5c50eba18f857c3d7980ebcce454c595237f5b381ec9b4",
+      "after_sha256": "94028dd0ef65d59b753cc4b036d91d8238c7075d014474fed9ae5981d16c03c7"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Decimals.sol",
+      "before_sha256": "cf745a66f06d5bceacadfb36eebcedf4f0bf1a74ff5db46a3bd351992720d939",
+      "after_sha256": "85ea80899e3a8fc6873d2c02912905e29bab18b09576c0d8604c9477c61b9a3e"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_IoTables.t.sol",
+      "before_sha256": "7a8944b88045433826f838328656ad293871758a671329e4cc0f90ec2864054f",
+      "after_sha256": "6b7ed9dff5834680a4c31526705ace632974d8326d5f134a0380d910362fc8c0"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Close.t.sol",
+      "before_sha256": "b20c0d18a1c86f7eac8819bb099c6f5bd28c304ab0c17916fba4e9ae494338b7",
+      "after_sha256": "c4401d8f0857030eb8a19961ad76e68612b5c5bc532df2c35f178dda42c0085d"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Deploy.t.sol",
+      "before_sha256": "bfd0558c6e7bf83d2969c67abd7c7c8b93af89aa7f8a092a9613606122f26847",
+      "after_sha256": "e9ad58374e3626ca9d6f35f46f6b7174d273f5ac5c6f6b02bb9b55285d9f7929"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad.t.sol",
+      "before_sha256": "cc825d3c91a11a2b3b1ccca693041eef40901f91e567b0e62b2b1cb44b1648db",
+      "after_sha256": "fd01af8a99b1381cb9a25d6a63113e63b164e341ced12ef29c4c294218855d44"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/adversarial/Adversarial_Surface.t.sol",
+      "before_sha256": "7fc148f69e6ad78ce71287ae3deda95a274786a01b2a08ce0fe1758694213fdf",
+      "after_sha256": "afa30b75ab32d4f9acd3c342c440cb9a3d13acea3d1a828afb556e70dfe6c3aa"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Deploy_Decimals.sol",
+      "before_sha256": "babc6035e6eec754d08c98a7b883b40f1b1f0fc30e156cca3a0b67824b58610c",
+      "after_sha256": "d787199a7b79ee7e27ba41e3a9aefcce11162569d0b366a68dc84b0bba635298"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_IoTables_Decimals.sol",
+      "before_sha256": "353c6a5685d79d1f53e3d2ce8be5c092b8608b6475500ef2481156c4ae8a533d",
+      "after_sha256": "8963d6ace489b8803d4a605d2851fb766f2b01ddb7a065fa0ba0de7a822150fc"
+    },
+    {
+      "path": "test/foundry/spec/protocols/staking/token/TokenStaking_PonsUv4Detf.t.sol",
+      "before_sha256": "5a4fc26504df070f05e5eadf7bb3d64a7cdc69a52647d1784519e4cfe46bb960",
+      "after_sha256": "976ec446ce999685a6cf9b5212d5f9d6d58ceac36537637a9b65db252ef3f95a"
+    },
+    {
+      "path": "frontend/apps/dtf/app/create/lib/detfAbi.ts",
+      "before_sha256": "cc2614d2fb09654427c8ab641daa30f2fe63d66701f2a35726bd8b91e51cc24d",
+      "after_sha256": "03496348c99ea78b706a50dfc2e4fde0fb6f78a91dbc5b8558799688e2051265"
+    },
+    {
+      "path": "frontend/apps/dtf/app/create/lib/detfDeploy.ts",
+      "before_sha256": "d7ab33b9e0dada3f5a29cb402dbbed021723b435d8531a08a2023b26ce44d991",
+      "after_sha256": "7b5369c98d452dd83ce4bedee6089943ef369575f1599b7e6e599e1fc8b8d67b"
+    },
+    {
+      "path": "frontend/apps/dtf/app/create/lib/detfDeploy.test.ts",
+      "before_sha256": "be88479876d5397b95a0e97b0b4b79dd6d9fe9288d539cfb7d253be21ac9afec",
+      "after_sha256": "62d296f9b600136950bdd42b29a795cf5b1d757d8fe1de709331442ecd705356"
+    }
+  ],
+  "removed_storage": [
+    "detfNftId",
+    "feeRecipientNftId",
+    "userBondedLp",
+    "closeRouteMode",
+    "closeTable"
+  ],
+  "removed_proxy_getters": [
+    "closeRoutes()",
+    "closeRouteMode()"
+  ],
+  "current_product_selectors": 46,
+  "query_facet_selectors": 35,
+  "coverage_mapping": {
+    "customCloseLengthNotOne/customCloseLengthTwo": "Retired field validation is obsolete; canonical payload rejection and 13 removed-selector negatives cover current deployment/API requirements. Native repetitions retired; native inert/wiring assertions retained.",
+    "T7.11/T8.3": "Retain real funded claim/unstake and whole protocol-LP custody assertions; remove only obsolete configuration assertions.",
+    "Standing roles": "Retain reserved-role initialization and wiring event; remove unused stored copies of fixed role IDs."
+  },
+  "preserved": "Funded bond claim/vesting/reward code, standard staking/exchange/SY exits, D60 Balancer DETF exclusion, D66 Slipstream deferral, unrelated working-tree changes."
+}

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 import {Vm} from "forge-std/Vm.sol";
 import {VM_ADDRESS} from "@crane/contracts/constants/FoundryConstants.sol";
@@ -7,19 +8,8 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
-import {
-    CommonBufferMultiVaultWeightedPoolFacet
-} from "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolFacet.sol";
-import {
-    CommonBufferMultiVaultWeightedPoolLiquidityFacet
-} from "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolLiquidityFacet.sol";
-import {
-    CommonBufferMultiVaultWeightedPoolHookFacet
-} from "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolHookFacet.sol";
-import {
-    CommonBufferMultiVaultWeightedPoolStandardVaultPkg,
-    ICommonBufferMultiVaultWeightedPoolPkg
-} from "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolStandardVaultPkg.sol";
+
+import {ICommonBufferMultiVaultWeightedPoolPkg} from "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/ICommonBufferMultiVaultWeightedPoolPkg.sol";
 
 library CommonBufferMultiVaultWeightedPool_FactoryService {
     using BetterEfficientHashLib for bytes;
@@ -32,10 +22,10 @@ library CommonBufferMultiVaultWeightedPool_FactoryService {
         returns (IFacet instance)
     {
         instance = create3Factory.deployFacet(
-            type(CommonBufferMultiVaultWeightedPoolFacet).creationCode,
-            abi.encode(type(CommonBufferMultiVaultWeightedPoolFacet).name)._hash()
+            ArtifactCreationCode.creationCode("CommonBufferMultiVaultWeightedPoolFacet.sol:CommonBufferMultiVaultWeightedPoolFacet"),
+            abi.encode("CommonBufferMultiVaultWeightedPoolFacet")._hash()
         );
-        vm.label(address(instance), type(CommonBufferMultiVaultWeightedPoolFacet).name);
+        vm.label(address(instance), "CommonBufferMultiVaultWeightedPoolFacet");
     }
 
     function deployCommonBufferMultiVaultLiquidityFacet(ICreate3FactoryProxy create3Factory)
@@ -43,10 +33,10 @@ library CommonBufferMultiVaultWeightedPool_FactoryService {
         returns (IFacet instance)
     {
         instance = create3Factory.deployFacet(
-            type(CommonBufferMultiVaultWeightedPoolLiquidityFacet).creationCode,
-            abi.encode(type(CommonBufferMultiVaultWeightedPoolLiquidityFacet).name)._hash()
+            ArtifactCreationCode.creationCode("CommonBufferMultiVaultWeightedPoolLiquidityFacet.sol:CommonBufferMultiVaultWeightedPoolLiquidityFacet"),
+            abi.encode("CommonBufferMultiVaultWeightedPoolLiquidityFacet")._hash()
         );
-        vm.label(address(instance), type(CommonBufferMultiVaultWeightedPoolLiquidityFacet).name);
+        vm.label(address(instance), "CommonBufferMultiVaultWeightedPoolLiquidityFacet");
     }
 
     function deployCommonBufferMultiVaultHookFacet(ICreate3FactoryProxy create3Factory)
@@ -54,10 +44,10 @@ library CommonBufferMultiVaultWeightedPool_FactoryService {
         returns (IFacet instance)
     {
         instance = create3Factory.deployFacet(
-            type(CommonBufferMultiVaultWeightedPoolHookFacet).creationCode,
-            abi.encode(type(CommonBufferMultiVaultWeightedPoolHookFacet).name)._hash()
+            ArtifactCreationCode.creationCode("CommonBufferMultiVaultWeightedPoolHookFacet.sol:CommonBufferMultiVaultWeightedPoolHookFacet"),
+            abi.encode("CommonBufferMultiVaultWeightedPoolHookFacet")._hash()
         );
-        vm.label(address(instance), type(CommonBufferMultiVaultWeightedPoolHookFacet).name);
+        vm.label(address(instance), "CommonBufferMultiVaultWeightedPoolHookFacet");
     }
 
     function deployCommonBufferMultiVaultPoolPkg(
@@ -67,12 +57,12 @@ library CommonBufferMultiVaultWeightedPool_FactoryService {
         instance = ICommonBufferMultiVaultWeightedPoolPkg(
             address(
                 vaultRegistry.deployPkg(
-                    type(CommonBufferMultiVaultWeightedPoolStandardVaultPkg).creationCode,
+                    ArtifactCreationCode.creationCode("CommonBufferMultiVaultWeightedPoolStandardVaultPkg.sol:CommonBufferMultiVaultWeightedPoolStandardVaultPkg"),
                     abi.encode(pkgInit),
-                    abi.encode(type(CommonBufferMultiVaultWeightedPoolStandardVaultPkg).name)._hash()
+                    abi.encode("CommonBufferMultiVaultWeightedPoolStandardVaultPkg")._hash()
                 )
             )
         );
-        vm.label(address(instance), type(CommonBufferMultiVaultWeightedPoolStandardVaultPkg).name);
+        vm.label(address(instance), "CommonBufferMultiVaultWeightedPoolStandardVaultPkg");
     }
 }

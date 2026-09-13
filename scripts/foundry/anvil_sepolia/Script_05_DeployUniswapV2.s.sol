@@ -15,7 +15,7 @@ import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexMan
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 
 import {UniswapV2_Component_FactoryService} from "contracts/protocols/dexes/uniswap/v2/UniswapV2_Component_FactoryService.sol";
-import {IUniswapV2StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeDFPkg.sol";
+import {IUniswapV2StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v2/IUniswapV2StandardExchangeDFPkg.sol";
 
 contract Script_05_DeployUniswapV2 is DeploymentBase {
     using UniswapV2_Component_FactoryService for ICreate3FactoryProxy;
@@ -91,6 +91,7 @@ contract Script_05_DeployUniswapV2 is DeploymentBase {
                 multiAssetStandardVaultFacet,
                 create3Factory.deployUniswapV2StandardExchangeInFacet(),
                 create3Factory.deployUniswapV2StandardExchangeOutFacet(),
+                create3Factory.deployUniswapV2StandardExchangeQueryFacet(),
                 indexedexManager,
                 indexedexManager,
                 permit2,

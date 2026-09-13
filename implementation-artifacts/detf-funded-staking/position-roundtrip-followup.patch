@@ -1,0 +1,81 @@
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Accounting.t.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Accounting.t.sol
+@@ -12,20 +12,31 @@
+ contract Adversarial_Accounting_Test is TestBase_UniswapV3StandardExchange_Adversarial {
+     function test_E1_roundTrip_zapInOut_conservation() public {
+         address token0 = pool.token0();
+-        ERC20PermitMintableStub(token0).mint(attacker, 100 ether);
++        uint256 deposit = 100 ether;
++        // A separate holder provides both activation assets. The attacker pays only token0.
++        ERC20PermitMintableStub(token0).mint(victim, deposit);
++        vm.startPrank(victim);
++        IERC20(token0).approve(address(vault), type(uint256).max);
++        _activateWithFundedToken0(victim, deposit, 100 ether);
++        vm.stopPrank();
++
++        ERC20PermitMintableStub(token0).mint(attacker, deposit);
++        uint256 beforePayment = IERC20(token0).balanceOf(attacker);
+         vm.startPrank(attacker);
+         IERC20(token0).approve(address(vault), type(uint256).max);
+-        uint256 shares =
+-            _activateWithFundedToken0(attacker, 100 ether, 100 ether);
+-        uint256 balBefore = IERC20(token0).balanceOf(attacker);
+-        vault.exchangeOut(
++        uint256 shares = vault.exchangeIn(
++            IERC20(token0), deposit, IERC20(address(vault)), 0, attacker, false, block.timestamp + 1
++        );
++        vault.approve(address(vault), shares);
++        uint256 beforeRedemption = IERC20(token0).balanceOf(attacker);
++        uint256 recovered = vault.exchangeIn(
+             IERC20(address(vault)), shares, IERC20(token0), 1, attacker, false, block.timestamp + 1
+         );
+         vm.stopPrank();
+-        uint256 recovered = IERC20(token0).balanceOf(attacker) - balBefore;
+-        // Fees/slippage on wing path; recovery should be positive and not exceed deposit.
++        assertEq(vault.balanceOf(attacker), 0, "all attacker shares redeemed");
++        assertEq(IERC20(token0).balanceOf(attacker) - beforeRedemption, recovered, "actual recovery");
+         assertGt(recovered, 0);
+-        assertLe(recovered, 100 ether);
++        assertLe(IERC20(token0).balanceOf(attacker), beforePayment, "round trip cannot exceed payment");
+         _assertNoUnexpectedFreeInventory(1 ether);
+     }
+ 
+--- a/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Accounting_Decimals.sol
++++ b/test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Accounting_Decimals.sol
+@@ -13,19 +13,30 @@
+     function test_E1_roundTrip_zapInOut_conservation() public {
+         address token0 = pool.token0();
+         uint256 deposit = _u0(100);
++        // A separate holder provides both activation assets. The attacker pays only token0.
++        _mint(token0, victim, deposit);
++        vm.startPrank(victim);
++        IERC20(token0).approve(address(vault), type(uint256).max);
++        _activateWithFundedToken0(victim, deposit, _u1(100));
++        vm.stopPrank();
++
+         _mint(token0, attacker, deposit);
++        uint256 beforePayment = IERC20(token0).balanceOf(attacker);
+         vm.startPrank(attacker);
+         IERC20(token0).approve(address(vault), type(uint256).max);
+-        uint256 shares =
+-            _activateWithFundedToken0(attacker, deposit, _u1(100));
+-        uint256 balBefore = IERC20(token0).balanceOf(attacker);
+-        vault.exchangeOut(
++        uint256 shares = vault.exchangeIn(
++            IERC20(token0), deposit, IERC20(address(vault)), 0, attacker, false, block.timestamp + 1
++        );
++        vault.approve(address(vault), shares);
++        uint256 beforeRedemption = IERC20(token0).balanceOf(attacker);
++        uint256 recovered = vault.exchangeIn(
+             IERC20(address(vault)), shares, IERC20(token0), 1, attacker, false, block.timestamp + 1
+         );
+         vm.stopPrank();
+-        uint256 recovered = IERC20(token0).balanceOf(attacker) - balBefore;
++        assertEq(vault.balanceOf(attacker), 0, "all attacker shares redeemed");
++        assertEq(IERC20(token0).balanceOf(attacker) - beforeRedemption, recovered, "actual recovery");
+         assertGt(recovered, 0);
+-        assertLe(recovered, deposit);
++        assertLe(IERC20(token0).balanceOf(attacker), beforePayment, "round trip cannot exceed payment");
+         _assertNoUnexpectedFreeInventory(_u0(1));
+     }
+ 

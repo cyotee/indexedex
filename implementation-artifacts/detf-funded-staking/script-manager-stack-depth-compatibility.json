@@ -1,0 +1,8 @@
+{
+  "status": "APPLIED_MAINTAINED_SCRIPT_COMPILATION_PASSED",
+  "source": "scripts/foundry/base_main/Script_BaseMain_DeployIndexedex.s.sol",
+  "fix": "Populate the existing manager PkgInit memory object sequentially instead of retaining ten facet locals alongside the constructor literal. Preserve every facet and deployment order.",
+  "compiler": "Default profile, optimizer and no-viaIR settings retained.",
+  "validation_order": "Use independent warm maintained-script import-closure compilation to resolve remaining script errors, then the complete contracts/default-tests/scripts build and runtime checks.",
+  "compilation_evidence": "maintained-script-294-green.json"
+}

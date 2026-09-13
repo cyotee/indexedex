@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IUniswapV4TwapAdapterFactory} from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4TwapAdapterFactory.sol";
+
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
 import {PoolId} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolId.sol";
 import {
@@ -13,21 +15,7 @@ import {
     UniswapV4TwapAggregatorV3Adapter
 } from "contracts/oracles/uniswap/v4/twap/UniswapV4TwapAggregatorV3Adapter.sol";
 
-contract UniswapV4TwapAdapterFactory {
-    error AdapterDeployFailed();
-
-    event MorphoAdapterCreated(
-        address adapter,
-        address oracle,
-        bytes32 poolId,
-        uint32 secondsAgo,
-        bool collateralIsCurrency0,
-        uint32 maxWriteAge
-    );
-    event AggregatorV3AdapterCreated(
-        address adapter, address oracle, bytes32 poolId, uint32 secondsAgo, bool invert, uint32 maxWriteAge
-    );
-
+contract UniswapV4TwapAdapterFactory is IUniswapV4TwapAdapterFactory {
     function createMorphoOracle(
         IUniswapV4MultiPoolTwapOracle oracle,
         PoolKey calldata key,

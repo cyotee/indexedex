@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
 import {SafeTransferLib} from "@crane/contracts/tokens/ERC20/utils/SafeTransferLib.sol";
@@ -92,6 +94,22 @@ contract UniswapV4StandardExchange_Univ4SeNestedCaller_Test is TestBase_UniswapV
     Univ4SeNestedShareHolder internal holder;
     PoolKey internal poolKey;
 
+    function _mintInitialShares() internal returns (uint256 shares) {
+        tokenA.mint(address(this), 10 ether);
+        tokenB.mint(address(this), 10 ether);
+        tokenA.approve(address(vault), 10 ether);
+        tokenB.approve(address(vault), 10 ether);
+        address[] memory tokens = new address[](2);
+        tokens[0] = Currency.unwrap(poolKey.currency0);
+        tokens[1] = Currency.unwrap(poolKey.currency1);
+        uint256[] memory amounts = new uint256[](2);
+        amounts[0] = tokens[0] == address(tokenA) ? 10 ether : 10 ether;
+        amounts[1] = tokens[1] == address(tokenA) ? 10 ether : 10 ether;
+        shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
+            tokens, amounts, IERC20(address(vault)), 0, address(this), false, _deadline()
+        );
+    }
+
     function setUp() public override {
         super.setUp();
         tokenA = new ERC20PermitMintableStub("Token A", "TKNA", 18, address(this), 0);
@@ -134,12 +152,7 @@ contract UniswapV4StandardExchange_Univ4SeNestedCaller_Test is TestBase_UniswapV
     }
 
     function test_exchangeIn_shares_contractHolder_zeroAllowance_revertsTransferFromFailed() public {
-        uint256 amountIn = 10 ether;
-        tokenA.mint(address(this), amountIn);
-        tokenA.approve(address(vault), amountIn);
-        uint256 shares = IStandardExchangeIn(address(vault)).exchangeIn(
-            IERC20(address(tokenA)), amountIn, IERC20(address(vault)), 0, address(this), false, _deadline()
-        );
+        uint256 shares = _mintInitialShares();
         assertGt(shares, 0, "minted shares");
 
         IERC20(address(vault)).transfer(address(holder), shares);
@@ -151,12 +164,7 @@ contract UniswapV4StandardExchange_Univ4SeNestedCaller_Test is TestBase_UniswapV
     }
 
     function test_exchangeIn_shares_contractHolder_afterApprove_succeeds() public {
-        uint256 amountIn = 10 ether;
-        tokenA.mint(address(this), amountIn);
-        tokenA.approve(address(vault), amountIn);
-        uint256 shares = IStandardExchangeIn(address(vault)).exchangeIn(
-            IERC20(address(tokenA)), amountIn, IERC20(address(vault)), 0, address(this), false, _deadline()
-        );
+        uint256 shares = _mintInitialShares();
         assertGt(shares, 0, "minted shares");
 
         IERC20(address(vault)).transfer(address(holder), shares);

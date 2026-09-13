@@ -1,0 +1,40 @@
+{
+  "status": "APPLIED_CURRENT_PROXY_VALIDATION_PASSED",
+  "files": [
+    {
+      "path": "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeQuoteTarget.sol",
+      "before_sha256": null,
+      "after_sha256": "c1410e0b25b9923d98eeedbd4696625e625356578d2963137e2ceed444388b52"
+    },
+    {
+      "path": "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeQueryFacet.sol",
+      "before_sha256": null,
+      "after_sha256": "b382f6b1174385046c2a048251f24bcf5f06ca9fcbc8fe73b463ecabccd8aa3a"
+    },
+    {
+      "path": "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeDFPkg.sol",
+      "before_sha256": "e8792ece4fa580e4f3f36bb34d0784cead0505364e0f922db06484237deba7bf",
+      "after_sha256": "e4b1b6310fb20f303cac5e0b8c7fca727aa07eb926d2ae038b9a1a0d233a1ec2"
+    },
+    {
+      "path": "contracts/protocols/dexes/camelot/v2/CamelotV2_Component_FactoryService.sol",
+      "before_sha256": "a986780b2e33b6a15505121a3d9378c44df62cd450cacc686cc9b6edfd619aa2",
+      "after_sha256": "ba2a4affb321dfff9ba4124672649242666c6294576ad68c28252b277440188e"
+    },
+    {
+      "path": "contracts/protocols/dexes/camelot/v2/TestBase_CamelotV2StandardExchange.sol",
+      "before_sha256": "e263c5d85d3de9c07c62289ea18e7a4926da1b5b0f09bcf58a48a8db2aad664e",
+      "after_sha256": "5b9e7ba2dce794e8f6d1d05f8925be732e6d88cfaef1b18f2b9846060cbd40f5"
+    },
+    {
+      "path": "scripts/foundry/anvil_base_main/Script_04_DeployDEXPackages.s.sol",
+      "before_sha256": "3aab3838da10a44ac4a74248b836db52415580e28b6bc9cc5f1181bb21bfad90",
+      "after_sha256": "eaa5489f1c7586d5a821b428a60cd9bc3e5c916cbd57b7eb6331548704883c49"
+    }
+  ],
+  "wiring": "Dedicated query target/facet, two interfaces/seven selectors, 9 package facets and 14 interfaces. Existing 27-decimal native SE and user PkgArgs remain unchanged. All three facets and package bind code/constructor to release salts.",
+  "before_application": "Confirm and fix the existing checkpoint/LP-preview defects using actual proxy regressions; finish projection tests and review protocol fee/zap behavior. Refresh this patch if its recorded source hashes change.",
+  "scope": "No Slipstream or Balancer DETF edits. Constructor changes concern this Camelot SE query component only.",
+  "prerequisite_evidence": "camelot-checkpoint-after-run.json",
+  "validation_evidence": "camelot-projection-referral-receipts-run.json"
+}

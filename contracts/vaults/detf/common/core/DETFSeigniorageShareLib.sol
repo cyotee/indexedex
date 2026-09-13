@@ -38,8 +38,12 @@ library DETFSeigniorageShareLib {
         uint256 feeToEff_ = vault_.effectiveSharesOf(DETF_FEE_TO_BOND_NFT_ID);
         uint256 creatorEff_ = vault_.effectiveSharesOf(DETF_CREATOR_BOND_NFT_ID);
         uint256 totalEff_ = vault_.totalShares();
-        uint256 others_ = totalEff_ - feeToEff_ - creatorEff_;
-        (uint256 dF_, uint256 dC_) = _topUpDeltas(others_, feeToEff_, creatorEff_, f_, c_);
+        // Locked feeTo principal earns its own rewards in addition to the fee
+        // allocation; it must not satisfy or displace that allocation.
+        uint256 feeToPrincipal_ = vault_.originalSharesOf(DETF_FEE_TO_BOND_NFT_ID);
+        uint256 feeWeight_ = feeToEff_ - feeToPrincipal_;
+        uint256 others_ = totalEff_ - feeWeight_ - creatorEff_;
+        (uint256 dF_, uint256 dC_) = _topUpDeltas(others_, feeWeight_, creatorEff_, f_, c_);
         if (dF_ > 0) {
             vault_.addEffectiveSharesOnly(DETF_FEE_TO_BOND_NFT_ID, dF_);
         }

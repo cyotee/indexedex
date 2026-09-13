@@ -6,7 +6,9 @@
 **Premier product:** **create your own DETFs** from many package types.  
 **Define early:** DETF = **Decentralized ETF** (the D is decentralized — not a registered securities ETF).  
 **Protocol DETF:** how you earn a share of protocol fees — same DETF design, not a “separate product.”  
-**Narrative SoT:** [`docs/marketing/DETF_NARRATIVE_SPINE.md`](../docs/marketing/DETF_NARRATIVE_SPINE.md) (hierarchy, Policy vs Open, disclaimers).  
+**Draft status:** These templates now describe the approved funded refactor. Verify deployment and market availability before publishing; updating this file does not publish any post.
+
+**Narrative SoT:** [`docs/marketing/DETF_NARRATIVE_SPINE.md`](../docs/marketing/DETF_NARRATIVE_SPINE.md) (hierarchy, funded staking and price routes, disclaimers).  
 **Chain story:** Robinhood Chain first → Base + Ethereum next → other EVM chains later.
 
 **Format:** X Premium long posts. Each piece is **one post**, not a thread.  
@@ -44,7 +46,7 @@ Each post below is paste-ready. **`---`** = approximate expand fold (delete befo
 | Economic exposure via **onchain reserve assets** | “You own the stock / underlying security via DETF” |
 | Built by the **original developer of Olympus** | “This is OlympusDAO” / “official OHM” |
 | Bond → protocol-owned reserve; mint/burn from **pool-priced rules** | Guaranteed APY, “(3,3)” returns, risk-free |
-| **Policy** price-gates mint/burn; **Open** = no price restrictions | Implying Open still checks thresholds; “0 thresholds = Open” |
+| Mandatory price gates choose primary issuance/redemption or a reserve swap | Open as a new deployment option; treating failed price conditions as a route block |
 | Immutable unowned DETF instances after deploy | Admin can mint / pause / rebalance for you |
 | Research + roadmap; product going live in phases | “Live trading now” unless addresses are public |
 | Tags = “building with / same problem space as” | Tags = “partnered with / endorsed by” (unless true) |
@@ -105,7 +107,7 @@ It is:
 • a share ERC-20 (the diamond *is* the token)
 • a real multi-asset reserve on Balancer V3
 • bonding that deepens protocol-owned liquidity
-• mint & burn: Policy price-gates by default, or deploy-time Open with no price restrictions
+• mandatory primary price gates with reserve-swap fallback
 
 First home: Robinhood Chain (@RobinhoodCrypto).
 Reserve engine: weighted multi-asset pools on @Balancer.
@@ -145,7 +147,7 @@ Onchain mechanics are stricter:
 1) The diamond is the share ERC-20 — you don’t get a claim wrapper and a separate fund share story.
 2) The reserve lives in a @Balancer V3 weighted pool. Pricing engine = the pool, not an off-pool FX ledger.
 3) Instances deploy *inert*. The first successful bond takes them *live* and deepens protocol-owned reserve.
-4) Mint/burn modes (deploy-time): **Policy** (default) — mint only when synthetic price is above the mint threshold; burn only below the burn threshold (e.g. ±5% deadband). **Open** — no price restrictions on mint or burn; fees still apply. Zero thresholds never mean Open.
+4) Supported purchases and redemptions use primary issuance/redemption when the price condition is met and a reserve swap otherwise. Stake DETF one-for-one for sDETF; bonds buy discounted DETF that is staked while principal vests.
 5) After deploy: unowned. No instance owner, no diamondCut, no admin pause surface for normal operation. Flawed config → abandon the instance and ship a new package.
 
 What a DETF is not:
@@ -196,7 +198,7 @@ That’s the DETF (Decentralized ETF) on IndexedEx:
 
 • multi-leg (or single-leg) onchain reserves
 • bond → protocol-owned depth
-• mint/burn: Policy price-gates, or Open with no price restrictions
+• mandatory primary price gates with reserve-swap fallback
 • immutable instances after deploy
 
 Building toward @RobinhoodCrypto’s chain as product home — Orbit-class L2 stack with @arbitrum tech under the hood — because market-linked ERC-20s and crypto rails coexist there. Sector baskets, market×ETH units, and simple single-leg demos all map cleanly onto one pattern: reserve-backed seigniorage shares priced from @Balancer multi-asset reserves.
@@ -242,7 +244,7 @@ A DETF packages the opposite workflow:
 • choose reserve legs (via Standard Exchange vaults — protocol-opaque composition)
 • bond to establish protocol-owned reserve and go live
 • hold the DETF share as the monetary unit of that reserve
-• mint/burn under deploy-time Policy (price-gated) or Open (no price restrictions) — no discretionary “manager rebalance”
+• pool-priced purchase/redemption routes, funded sDETF and linearly vesting bonds
 
 Agents (and agent wallets) get a clean surface: deploy, bond, hold, exit closed-form routes. Humans get the same surface without becoming a professional LP.
 
@@ -285,7 +287,7 @@ Conceptual map (marketing, not 1:1 code cosplay):
 • Protocol token as money → DETF share *is* the currency of that reserve  
 • Treasury / reserves → @Balancer V3 weighted reserve (transparent pool)  
 • Bonding → POL → bond NFT + first bond → live  
-• Seigniorage policy → Policy thresholds on synthetic price, or Open with no price gates  
+• rewards → funded staking, immediate issuance allocations and eight-hour automatic expansion
 • One global unit → many DETFs — one monetary unit per basket  
 
 Tagline we stand behind: **Launch your own OHM.**
@@ -315,7 +317,7 @@ No guaranteed rebase yield. No “(3,3)” performance claims. Open mechanics. N
 Three horizons. One product.
 DETF — then the liquidity graph expands.
 ---
-IndexedEx ships modular DeFi vault infrastructure. Premier product is the DETF: decentralized ETF pattern — reserve-backed share, bond, mint/burn rules with Policy or Open modes (reserves on @Balancer-class multi-asset pools).
+IndexedEx ships modular DeFi vault infrastructure. Premier product is the DETF: decentralized ETF pattern — reserve-backed share, bond, funded staking and primary price gates with reserve-swap fallback (reserves on @Balancer-class multi-asset pools).
 
 Horizon 1 — Now: Robinhood Chain (@RobinhoodCrypto)
 Product home for flagship DETF research demos and first public infrastructure. Multi-asset reserve narrative leads.
@@ -398,11 +400,11 @@ Research: [RESEARCH_URL]
 
 ```
 TradFi: ETF = basket + fund complex + prospectus.
-Onchain: DETF = basket + reserve pool + mint/burn rules (Policy or Open).
+Onchain: DETF = basket + reserve pool + primary price gates with reserve-swap fallback.
 ---
 Same *shape* of user intent. Completely different trust model.
 
-DETF (IndexedEx): diamond share, @Balancer V3 reserve, bond → live, Policy/Open modes, immutable after deploy.
+DETF (IndexedEx): diamond share, @Balancer V3 reserve, bond → live, funded staking and reserve-swap fallback, immutable after deploy.
 First home: Robinhood Chain (@RobinhoodCrypto) → then Base + Ethereum.
 
 [RESEARCH_URL]
@@ -468,7 +470,7 @@ IndexedEx ships modular vault infrastructure. Premier product: the DETF.
 • diamond share ERC-20
 • @Balancer V3 multi-asset reserves
 • first bond → live
-• mint/burn: Policy price-gates by default; Open has no price restrictions
+• mandatory primary price gates with reserve-swap fallback
 • immutable, unowned instances after deploy
 
 Built by the original developer of Olympus.
@@ -496,7 +498,7 @@ A DETF (IndexedEx) is:
 • a share ERC-20 (the diamond is the token)
 • a @Balancer V3 weighted reserve as the pricing engine
 • bonding into protocol-owned depth; first bond takes the instance live
-• Policy (default): mint when synthetic > mint threshold; burn when synthetic < burn threshold — or Open: no price restrictions on mint/burn
+• mandatory primary price gates with reserve-swap fallback
 • no instance owner after deploy
 
 A DETF is not:
@@ -542,7 +544,7 @@ That’s the DETF — @Balancer-backed reserve, immutable after deploy. [RESEARC
 | “Do I own the stock?” | “You hold onchain assets in a transparent reserve. That is not legal title to offchain securities.” |
 | “Is this Olympus?” | “Built by Olympus’s original developer. Not OlympusDAO / not the OHM token. DETF generalizes the *class* of design.” |
 | “APY?” | “No invented APY. Live fee-make and depth get measured when routes are public — not promised in ads.” |
-| “What’s Open mode?” | “Deploy-time choice: primary mint and burn have no price restrictions. Policy is the mode that gates on synthetic price. Fees still apply.” |
+| “What happens inside the price band?” | “The supported route swaps through the reserve pool. Liquidity, fees and your minimum output still apply.” |
 | “When Base/ETH?” | “Immediate multi-chain path after first product home: Base + Ethereum. Other EVMs later via deterministic deploy.” |
 | Peer replies from `@vimenprotocol` / index builders | Thank + one-line shared frame: “baskets as first-class onchain objects — we add bond + seigniorage policy.” |
 

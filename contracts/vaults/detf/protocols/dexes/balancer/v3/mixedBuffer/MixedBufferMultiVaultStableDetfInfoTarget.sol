@@ -1,72 +1,26 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IMixedBufferMultiVaultStableDetfInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfInfo.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
-import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
-import {
-    MixedBufferMultiVaultStableDetfCommon
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfCommon.sol";
-import {
-    MixedBufferMultiVaultStableDetfRepo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfRepo.sol";
+import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
+import {ReentrancyLockRepo} from "@crane/contracts/access/reentrancy/ReentrancyLockRepo.sol";
+import {IStakedDETF, IDETFFundedRewards} from "contracts/interfaces/IStakedDETF.sol";
+import {IDETFStandardizedYield, IDETFStakingPreview} from "contracts/interfaces/IDETFStandardizedYield.sol";
+import {DETFChildSYRepo} from "contracts/vaults/detf/common/sy/DETFChildSYRepo.sol";
+import {MixedBufferMultiVaultStableDetfCommon} from "./MixedBufferMultiVaultStableDetfCommon.sol";
+import {MixedBufferMultiVaultStableDetfRepo as Repo} from "./MixedBufferMultiVaultStableDetfRepo.sol";
 
-interface IMixedBufferMultiVaultStableDetfInfo {
-    /// @notice Emitted once at init with resolved mint/burn thresholds (PRD §16.4).
-    event ThresholdModeSet(ThresholdMode mode, uint256 mintThreshold, uint256 burnThreshold);
 
-    function isReserveLive() external view returns (bool);
-    function vaultCount() external view returns (uint256);
-    function underlyingVaults() external view returns (address[] memory);
-    function vaultShares() external view returns (address[] memory);
-    function bufferToken() external view returns (address);
-    function amplificationParameter() external view returns (uint256);
-    function rateProvider(uint256 i) external view returns (address);
-    function reservePool() external view returns (address);
-    function syntheticPrice() external view returns (uint256);
-    function mintThreshold() external view returns (uint256);
-    function burnThreshold() external view returns (uint256);
-    function thresholdMode() external view returns (ThresholdMode);
-    function isMintingAllowed() external view returns (bool);
-    function isBurningAllowed() external view returns (bool);
-    function bondNftVault() external view returns (address);
-    function rebasingClaimToken() external view returns (address);
-    function detfIndex() external view returns (uint256);
-    function bufferIndex() external view returns (uint256);
-    function shareIndex(uint256 i) external view returns (uint256);
 
-    /// @notice Last timestamp at which expansion mint advanced the accrual clock (0 if never live).
-    function lastExpansionTimestamp() external view returns (uint256);
-
-    /// @notice Resolved deploy-time expansion closure rate per second (1e18 fixed point).
-    function expansionClosureRatePerSecond() external view returns (uint256);
-
-    /// @notice Resolved deploy-time expansion catch-up max seconds.
-    function expansionCatchUpMaxSeconds() external view returns (uint256);
-
-    /// @notice Resolved deploy-time expansion catch-up cap in bps of totalSupply.
-    function expansionCatchUpCapBps() external view returns (uint256);
-
-    /// @notice Update expansion + bond rewards and attempt detf-NFT reward → single-sided DETF join → BPT to detf NFT.
-    /// @dev Required public surface (PRD Phase 1 + Phase 2 expansion catch-up). Permissionless; no keeper.
-    ///      Best-effort: returns (0,0) when nothing to compound or join fails (pending left intact).
-    function compoundProtocolRewards() external returns (uint256 detfIn, uint256 bptOut);
-}
-
-abstract contract MixedBufferMultiVaultStableDetfInfoTarget is
-    MixedBufferMultiVaultStableDetfCommon,
-    IMixedBufferMultiVaultStableDetfInfo
-{
-    function isReserveLive() external view returns (bool) {
-        return MixedBufferMultiVaultStableDetfRepo._layoutStruct().isReserveLive;
-    }
-
+abstract contract MixedBufferMultiVaultStableDetfInfoTarget is MixedBufferMultiVaultStableDetfCommon, IMixedBufferMultiVaultStableDetfInfo {
     function vaultCount() external view returns (uint256) {
-        return MixedBufferMultiVaultStableDetfRepo._layoutStruct().vaultCount;
+        return Repo._layoutStruct().vaultCount;
     }
 
     function underlyingVaults() external view returns (address[] memory out_) {
-        MixedBufferMultiVaultStableDetfRepo.Storage storage s =
-            MixedBufferMultiVaultStableDetfRepo._layoutStruct();
+        Repo.Storage storage s = Repo._layoutStruct();
         out_ = new address[](s.vaultCount);
         for (uint256 i; i < s.vaultCount; ++i) {
             out_[i] = address(s.underlyingVaults[i]);
@@ -74,92 +28,77 @@ abstract contract MixedBufferMultiVaultStableDetfInfoTarget is
     }
 
     function vaultShares() external view returns (address[] memory out_) {
-        MixedBufferMultiVaultStableDetfRepo.Storage storage s =
-            MixedBufferMultiVaultStableDetfRepo._layoutStruct();
+        Repo.Storage storage s = Repo._layoutStruct();
         out_ = new address[](s.vaultCount);
         for (uint256 i; i < s.vaultCount; ++i) {
             out_[i] = address(s.vaultShares[i]);
         }
     }
 
+    function rateProvider(uint256 i) external view returns (address) {
+        return address(Repo._layoutStruct().vaultShareRateProviders[i]);
+    }
+
     function bufferToken() external view returns (address) {
-        return address(MixedBufferMultiVaultStableDetfRepo._layoutStruct().bufferToken);
+        return address(Repo._layoutStruct().bufferToken);
     }
 
     function amplificationParameter() external view returns (uint256) {
-        return MixedBufferMultiVaultStableDetfRepo._layoutStruct().amplificationParameter;
-    }
-
-    function rateProvider(uint256 i) external view returns (address) {
-        return address(MixedBufferMultiVaultStableDetfRepo._layoutStruct().vaultShareRateProviders[i]);
-    }
-
-    function reservePool() external view returns (address) {
-        return MixedBufferMultiVaultStableDetfRepo._layoutStruct().reservePool;
-    }
-
-    function syntheticPrice() external view returns (uint256) {
-        return _syntheticPrice();
-    }
-
-    function mintThreshold() external view returns (uint256) {
-        return MixedBufferMultiVaultStableDetfRepo._layoutStruct().mintThreshold;
-    }
-
-    function burnThreshold() external view returns (uint256) {
-        return MixedBufferMultiVaultStableDetfRepo._layoutStruct().burnThreshold;
-    }
-
-    function thresholdMode() external view returns (ThresholdMode) {
-        return MixedBufferMultiVaultStableDetfRepo._layoutStruct().thresholdMode;
-    }
-
-    function isMintingAllowed() external view returns (bool) {
-        return _isMintingAllowed();
-    }
-
-    function isBurningAllowed() external view returns (bool) {
-        return _isBurningAllowed();
-    }
-
-    function bondNftVault() external view returns (address) {
-        return address(MixedBufferMultiVaultStableDetfRepo._layoutStruct().bondNftVault);
-    }
-
-    function rebasingClaimToken() external view returns (address) {
-        return address(MixedBufferMultiVaultStableDetfRepo._layoutStruct().rebasingClaimToken);
+        return Repo._layoutStruct().amplificationParameter;
     }
 
     function detfIndex() external view returns (uint256) {
-        return MixedBufferMultiVaultStableDetfRepo._layoutStruct().detfIndex;
+        return Repo._layoutStruct().detfIndex;
     }
 
     function bufferIndex() external view returns (uint256) {
-        return MixedBufferMultiVaultStableDetfRepo._layoutStruct().bufferIndex;
+        return Repo._layoutStruct().bufferIndex;
     }
 
     function shareIndex(uint256 i) external view returns (uint256) {
-        return MixedBufferMultiVaultStableDetfRepo._layoutStruct().shareIndexes[i];
+        return Repo._layoutStruct().shareIndexes[i];
     }
 
-    function lastExpansionTimestamp() external view returns (uint256) {
-        return MixedBufferMultiVaultStableDetfRepo._layoutStruct().lastExpansionTimestamp;
+    function isReserveLive() external view returns (bool) { return Repo._layoutStruct().isReserveLive; }
+    function reservePool() external view returns (address) { return Repo._layoutStruct().reservePool; }
+    function syntheticPrice() external view returns (uint256) { return _syntheticPrice(); }
+    function mintThreshold() external view returns (uint256) { return Repo._layoutStruct().mintThreshold; }
+    function burnThreshold() external view returns (uint256) { return Repo._layoutStruct().burnThreshold; }
+    function isMintingAllowed() external view returns (bool) { return _isMintingAllowed(); }
+    function isBurningAllowed() external view returns (bool) { return _isBurningAllowed(); }
+    function bondNftVault() external view returns (address) { return address(Repo._layoutStruct().bondNftVault); }
+    function rebasingClaimToken() external view returns (address) { return address(Repo._layoutStruct().rebasingClaimToken); }
+    function lastExpansionTimestamp() external view returns (uint256) { return Repo._layoutStruct().lastExpansionTimestamp; }
+    function epochAnchor() external view returns (uint256) { return Repo._layoutStruct().epochAnchor; }
+    function expansionClosureRatePerSecond() external view returns (uint256) { return Repo._layoutStruct().expansionClosureRatePerSecond; }
+    function pendingExpansionDetf() external view returns (uint256) { return _pendingExpansionDetf(); }
+    function rawSY() external view returns (address) { return DETFChildSYRepo._layoutStruct().rawSY; }
+    function stakingSY() external view returns (address) { return DETFChildSYRepo._layoutStruct().stakingSY; }
+
+    /// @dev Only wired children may compose an already-settled outer operation.
+    function synchronizeRewards() external returns (uint256 minted_) {
+        if (ReentrancyLockRepo._isLocked()) {
+            Repo.Storage storage s_ = Repo._layoutStruct();
+            if (msg.sender != address(s_.rebasingClaimToken) && msg.sender != address(s_.bondNftVault)) {
+                revert Repo.NotAuthorized(msg.sender);
+            }
+            return 0;
+        }
+        ReentrancyLockRepo._lock();
+        minted_ = _updateExpansionMintOnRewards();
+        ReentrancyLockRepo._unlock();
     }
 
-    function expansionClosureRatePerSecond() external view returns (uint256) {
-        return MixedBufferMultiVaultStableDetfRepo._layoutStruct().expansionClosureRatePerSecond;
-    }
-
-    function expansionCatchUpMaxSeconds() external view returns (uint256) {
-        return MixedBufferMultiVaultStableDetfRepo._layoutStruct().expansionCatchUpMaxSeconds;
-    }
-
-    function expansionCatchUpCapBps() external view returns (uint256) {
-        return MixedBufferMultiVaultStableDetfRepo._layoutStruct().expansionCatchUpCapBps;
-    }
-
-    /// @inheritdoc IMixedBufferMultiVaultStableDetfInfo
-    function compoundProtocolRewards() external nonReentrant returns (uint256 detfIn, uint256 bptOut) {
-        return _tryCompoundProtocolRewards();
+    function previewStakingGonsPerUnit(IERC20 in_, uint256 amount_) external view returns (uint256) {
+        uint256[] memory rewards_ = new uint256[](2);
+        rewards_[0] = _pendingExpansionDetf();
+        Repo.Storage storage s_ = Repo._layoutStruct();
+        if (
+            amount_ != 0 && address(in_) != address(this) && address(in_) != address(s_.rebasingClaimToken)
+                && _previewPrimaryMint()
+        ) {
+            rewards_[1] = _splitMintedDetf(_quoteOrdinaryDetf(in_, amount_)).inventoryDetf;
+        }
+        return IStakedDETF(address(s_.rebasingClaimToken)).previewDistributions(rewards_).gonsPerUnit;
     }
 }

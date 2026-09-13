@@ -20,10 +20,8 @@ import {UniV2Router02} from "@crane/contracts/protocols/dexes/uniswap/v2/stubs/U
 
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
-import {
-    IUniswapV2StandardExchangeDFPkg,
-    UniswapV2StandardExchangeDFPkg
-} from "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeDFPkg.sol";
+import {IUniswapV2StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v2/IUniswapV2StandardExchangeDFPkg.sol";
+import {UniswapV2StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeDFPkg.sol";
 import {
     UniswapV2_Component_FactoryService
 } from "contracts/protocols/dexes/uniswap/v2/UniswapV2_Component_FactoryService.sol";
@@ -186,6 +184,7 @@ abstract contract TestBase_StandardExchangeBufferPool_UniswapV2 is TestBase_Stan
         pkgInit.multiAssetStandardVaultFacet         = multiAssetStandardVaultFacet;
         pkgInit.uniswapV2StandardExchangeInFacet  = v2ExchangeInFacet;
         pkgInit.uniswapV2StandardExchangeOutFacet = v2ExchangeOutFacet;
+        pkgInit.uniswapV2StandardExchangeQueryFacet = UniswapV2_Component_FactoryService.deployUniswapV2StandardExchangeQueryFacet(create3Factory);
         pkgInit.vaultFeeOracleQuery               = indexedexManager;
         pkgInit.vaultRegistryDeployment           = indexedexManager;
         pkgInit.permit2                           = permit2;

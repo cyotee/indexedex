@@ -17,6 +17,7 @@ import {TestBase_UniswapV4Detf} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
 import {TestBase_UniswapV4Detf_Weighted} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted.sol";
+import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 import {
     TestBase_UniswapV4Detf_Adversarial,
     UniV4DetfPretransferHelper
@@ -90,7 +91,6 @@ abstract contract TestBase_UniswapV4Detf_Weighted_Adversarial is
         address seB_
     ) internal returns (address predicted_) {
         predicted_ = _predictDetf(args);
-        vm.etch(predicted_, address(pair0).code);
         address[] memory toks = new address[](3);
         toks[0] = predicted_;
         toks[1] = pairA_;
@@ -116,7 +116,9 @@ abstract contract TestBase_UniswapV4Detf_Weighted_Adversarial is
                 weights: w,
                 standardExchanges: ses,
                 rateProviders: rps,
-                ownerOnlyLiquidity: true,
+                tokenDecimals: HookPkgArgsDecimalsLib.tokenDecimals(toks, predicted_),
+                seDecimals: HookPkgArgsDecimalsLib.seDecimals(ses),
+                ownerOnlyLiquidity: args.ownerOnlyLiquidity,
                 owner: predicted_
             });
         uint256 mineNonce = WeightedFactory.findMineNonce(hookFactory, weightedHookPkg, hArgs);
@@ -126,7 +128,6 @@ abstract contract TestBase_UniswapV4Detf_Weighted_Adversarial is
         init.deployPair(toks[0], toks[2]);
         init.deployPair(toks[1], toks[2]);
         require(init.finalizeInitialization(), "finalize hostile");
-        vm.etch(predicted_, "");
         args.hook = hook_;
         vm.label(hook_, "hostileWeightedHook");
     }

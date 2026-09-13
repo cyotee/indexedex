@@ -1,0 +1,22 @@
+{
+  "status": "applied; validation pending",
+  "files": [
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4QuoteService.sol",
+      "before": "c90d0ae144554314f14e9281f86a382f19962a426db8eb2d16e0c44f138271a2",
+      "after": "b4e64ae17fca595ed466088e592c94812eca9888c9c220fd5255c6025169e235"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeCommon.sol",
+      "before": "01475cffe74f7aeaffbf4dc0e7507acb8a8475393825af13303b40239c88dfbe",
+      "after": "228674b7646645414abbad5309d83a25756b430dc915ed5b1d2f7df5dd9143a4"
+    }
+  ],
+  "reference": "Pinned Crane PonsV2MemeHook._afterSwap and immutable launches(poolId) terms; two independent floors on unspecified swap leg; no fixture fee disabling.",
+  "validation_required": [
+    "Pons existing donation and primary burn exact-preview tests",
+    "Actual external SE-share redemption projection",
+    "All in-scope V4 SE/hook proxy facet and delegate EIP-170 limits",
+    "Direct exact-input and exact-output swaps including nonzero creator tax"
+  ]
+}

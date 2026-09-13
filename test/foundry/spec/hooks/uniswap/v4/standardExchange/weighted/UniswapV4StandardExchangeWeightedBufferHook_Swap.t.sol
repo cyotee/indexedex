@@ -15,6 +15,27 @@ import {RateProviderMock} from "contracts/test/balancer/v3/RateProviderMock.sol"
 contract UniswapV4StandardExchangeWeightedBufferHook_Swap is
     TestBase_UniswapV4StandardExchangeWeightedBufferHook
 {
+    function test_exactOutput_after_buffer_yield_settles_pair_units() public {
+        _firstMintEqual(1000 ether);
+        token0.mint(address(this), 100 ether);
+        token0.approve(address(vault0), 100 ether);
+        vault0.simulateYield(100 ether);
+        uint256 amountOut = 1 ether;
+        uint256 requiredShares = IStandardExchangeOut(se0).previewExchangeOut(IERC20(se0), IERC20(address(token0)), amountOut);
+        assertLt(requiredShares, amountOut, "accrued SE share value exceeds one pair unit");
+        uint256 quotedInput = weighted.previewSwapExactOut(address(token1), address(token0), amountOut);
+        uint256 beforeOut = token0.balanceOf(user);
+        uint256 beforeIn = token1.balanceOf(user);
+        vm.prank(user);
+        uint256 spent = IStandardExchangeOut(hook).exchangeOut(
+            IERC20(address(token1)), quotedInput, IERC20(address(token0)), amountOut, user, false, block.timestamp + 1
+        );
+        assertEq(spent, quotedInput);
+        assertEq(beforeIn - token1.balanceOf(user), spent);
+        assertEq(token0.balanceOf(user) - beforeOut, amountOut);
+        assertEq(IERC20(se0).allowance(hook, se0), 0);
+    }
+
     function test_swapExactIn_v4Door_afterFirstMint() public {
         _firstMintEqual(100 ether);
         uint256 amountIn = 1 ether;

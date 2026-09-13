@@ -1,0 +1,79 @@
+*** Begin Patch
+*** Update File: /Users/cyotee/Development/projects-defi/daosys/lib/indexedex/test/foundry/spec/vaults/detf/common/claimToken/V4FundedBindings.t.sol
+@@
+ import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
++import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+@@
+-    function _positionShareSyRoundTrip(IStandardizedYield sy_, IERC20 in_, uint256 amount_, IERC20 out_) private {
++    function testFuzz_bindingPositionShareDepositWithinChainGasLimit(bool second_, uint96 amountSeed_) public {
++        _purchase(1_000 ether);
++        IERC20 input_ = IERC20(second_ ? se1 : se0);
++        uint256 available_ = input_.balanceOf(address(this));
++        uint256 amount_ = bound(uint256(amountSeed_), available_ / 100_000, available_ / 100);
++        input_.transfer(detfUser, amount_);
++        _positionShareSyRoundTrip(IStandardizedYield(detfInfo.hook()), input_, amount_, IERC20(detf));
++    }
++
++    function test_bindingV4LpPaymentKeepsBufferAssetsAndFitsChainGasBudget() public {
++        _purchase(1_000 ether);
++        IStandardizedYield sy_ = IStandardizedYield(detfInfo.hook());
++        IERC20 input_ = IERC20(se0);
++        uint256 amount_ = input_.balanceOf(address(this)) / 1_000;
++        input_.transfer(detfUser, amount_);
++        uint256 minimum_ = sy_.previewDeposit(address(input_), amount_);
++        vm.startPrank(detfUser);
++        input_.approve(address(sy_), amount_);
++        uint256 lp_ = _measuredPositionSyDeposit(sy_, input_, amount_, minimum_);
++        vm.stopPrank();
++        _assertV4PositionLpBond(sy_, lp_);
++    }
++
++    function _quoteV4PositionLpBond(IStandardizedYield lp_, uint256 amount_)
++        private view returns (uint256 principal_, uint256 rewards_)
++    {
++        IUniswapV4SeBufferHook reserve_ = IUniswapV4SeBufferHook(address(lp_));
++        address[] memory tokens_ = reserve_.tokens();
++        uint256[] memory assets_ = reserve_.previewExitProportional(amount_);
++        uint256 expected_;
++        for (uint256 i_; i_ < tokens_.length; ++i_) {
++            if (tokens_[i_] != detf && assets_[i_] != 0) {
++                expected_ += reserve_.previewSwapExactIn(tokens_[i_], detf, assets_[i_] * 3 / 2);
++            }
++        }
++        uint256 gross_;
++        uint256 join_;
++        (gross_, principal_, rewards_, join_) =
++            detfInfo.previewBond(IERC20(address(lp_)), amount_, 180 days);
++        assertEq(gross_, expected_, "V4 buffers valued once, self-leg excluded, bonus once");
++        assertEq(join_, 0);
++    }
++
++    function _assertV4PositionLpBond(IStandardizedYield lp_, uint256 amount_) private {
++        (uint256 principal_, uint256 rewards_) = _quoteV4PositionLpBond(lp_, amount_);
++        uint256[4] memory before_ = [
++            IERC20(detf).totalSupply(), lp_.totalSupply(),
++            IERC20(detf).balanceOf(address(lp_)), lp_.balanceOf(detfInfo.bondNftVault())
++        ];
++        vm.startPrank(detfUser);
++        lp_.approve(detf, amount_);
++        (uint256 id_, uint256 acquired_) = detfInfo.bond{gas: 31_000_000}(
++            IERC20(address(lp_)), amount_, 180 days, detfUser, false, block.timestamp
++        );
++        vm.stopPrank();
++        assertEq(acquired_, amount_);
++        assertEq(lp_.balanceOf(detfUser), 0);
++        assertEq(lp_.balanceOf(detfInfo.bondNftVault()), before_[3] + amount_);
++        assertEq(lp_.totalSupply(), before_[1], "received LP retained without another join or unwind");
++        assertEq(IERC20(detf).balanceOf(address(lp_)), before_[2], "existing DETF inventory retained");
++        assertEq(IERC20(detf).totalSupply(), before_[0] + principal_ + rewards_);
++        assertEq(_positions().positionOf(id_).principal, principal_);
++        assertEq(_positions().previewClaim(id_).principalDue, 0);
++        assertGt(_positions().previewClaim(id_).rewardsDue, 0);
++        assertGe(IERC20(detf).balanceOf(address(_stake())), _stake().totalSupply());
++    }
++
++    function _positionShareSyRoundTrip(IStandardizedYield sy_, IERC20 in_, uint256 amount_, IERC20 out_) private {
+@@
+-        amount_ = sy_.redeem(detfUser, shares_, address(out_), minimum_, false);
++        amount_ = sy_.redeem{gas: 31_000_000}(detfUser, shares_, address(out_), minimum_, false);
+*** End Patch

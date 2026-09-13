@@ -1,7 +1,6 @@
 ---
 name: crane-uniswap
 description: This skill should be used when the user asks about "Uniswap integration", "Uniswap V2 swap", "Uniswap V2 liquidity", "UniswapV2Service", "Uniswap V3", "Uniswap V4", "concentrated liquidity", or needs to interact with Uniswap DEX using Crane's service libraries.
-license: MIT
 ---
 
 # Crane Uniswap Integration

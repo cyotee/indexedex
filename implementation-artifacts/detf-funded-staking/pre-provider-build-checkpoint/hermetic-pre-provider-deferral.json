@@ -1,0 +1,10 @@
+{
+  "active": true,
+  "status": "DEFERRED_NOT_EXECUTED",
+  "source_and_config_sha256": "5ea6bc62285fe1ada40f1a30ce59ffcc689475fee1909b4e016c50c4e2205246",
+  "reason": "Aerodrome, Rocket Pool and ERC4626 provider source fixes are prepared while the current build is running. Finish that build and its focused integration checks without interruption, then apply and validate the provider fixes before the full default hermetic suite. Avoid repeating the complete suite on a known intermediate source snapshot.",
+  "required_followup": "After the provider changes and a matching successful full build, run the complete default hermetic suite and exact baseline comparison with no reduced selection, fuzz settings or compiler settings.",
+  "validation_passed": false,
+  "not_a_scope_deferral": true,
+  "executed_cases": 0
+}

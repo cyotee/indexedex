@@ -10,41 +10,34 @@ import {
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeBufferConstantProductHook.sol";
 import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 
+/// @title UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet
+/// @notice Diamond metadata and selector routing for CP proportional deposit operations.
 contract UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet is
     UniswapV4SingleStandardExchangeBufferConstantProductHookDepositTarget,
     IFacet
 {
+    /// @inheritdoc IFacet
     function facetName() public pure returns (string memory) {
         return type(UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet).name;
     }
 
+    /// @inheritdoc IFacet
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
         interfaces = new bytes4[](0);
     }
 
+    /// @inheritdoc IFacet
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](19);
+        funcs = new bytes4[](6);
         funcs[0] = IHook.deposit.selector;
-        funcs[1] = IHook.depositSingle.selector;
-        funcs[2] = IHook.depositWithPermit2Signature.selector;
-        funcs[3] = IHook.depositWithPermit2Allowance.selector;
-        funcs[4] = IHook.depositSingleWithPermit2Signature.selector;
-        funcs[5] = IHook.depositSingleWithPermit2Allowance.selector;
-        funcs[6] = IHook.previewDeposit.selector;
-        funcs[7] = IHook.previewDepositSingle.selector;
-        funcs[8] = IHook.previewZapSplit.selector;
-        funcs[9] = IHook.depositWithSeShares.selector;
-        funcs[10] = IHook.previewDepositWithSeShares.selector;
-        funcs[11] = IUniswapV4SeBufferHook.joinProportional.selector;
-        funcs[12] = IUniswapV4SeBufferHook.previewJoinProportional.selector;
-        funcs[13] = IUniswapV4SeBufferHook.joinUnbalanced.selector;
-        funcs[14] = IUniswapV4SeBufferHook.previewJoinUnbalanced.selector;
-        funcs[15] = IUniswapV4SeBufferHook.joinSingleAssetExactIn.selector;
-        funcs[16] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactIn.selector;
-        funcs[17] = IUniswapV4SeBufferHook.joinSingleAssetExactOut.selector;
-        funcs[18] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactOut.selector;
+        funcs[1] = IHook.depositWithPermit2Signature.selector;
+        funcs[2] = IHook.depositWithPermit2Allowance.selector;
+        funcs[3] = IHook.depositWithSeShares.selector;
+        funcs[4] = IUniswapV4SeBufferHook.joinProportional.selector;
+        funcs[5] = IUniswapV4SeBufferHook.joinUnbalanced.selector;
     }
 
+    /// @inheritdoc IFacet
     function facetMetadata()
         external
         pure

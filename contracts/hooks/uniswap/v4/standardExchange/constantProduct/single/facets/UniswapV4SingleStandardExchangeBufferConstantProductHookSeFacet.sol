@@ -69,7 +69,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet is
     }
 
     function _b() private pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](26);
+        funcs = new bytes4[](27);
         funcs[0] = IHook.reserveCurrency0.selector;
         funcs[1] = IHook.reserveCurrency1.selector;
         funcs[2] = IUniswapV4SeBufferHook.isLive.selector;
@@ -96,6 +96,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet is
         funcs[23] = IUniswapV4SeBufferHook.previewSwapExactIn.selector;
         funcs[24] = IUniswapV4SeBufferHook.previewSwapExactOut.selector;
         funcs[25] = IDetfReserveQuote.previewSynthetic.selector;
+        funcs[26] = this.ownerOnlyLiquidity.selector;
     }
 
     function facetMetadata()

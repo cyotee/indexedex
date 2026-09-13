@@ -1,0 +1,175 @@
+{
+  "status": "APPLIED_SELECTED_RUNTIME_VALIDATION_PASSED",
+  "approval": "v4-close-cleanup-owner-approval.json",
+  "retirements": [
+    {
+      "old_source": "test/foundry/spec/saf/T10_DeadMembers.t.sol",
+      "old_function": "test_harvestParams_mathOnlyFields",
+      "reason": "The old LP-harvest struct shape and compound dust gate have no production caller under funded staking. These checks preserve deleted functionality only; current funded custody, reward and epoch behavior is covered separately.",
+      "current_test_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+          "function": "test_positionPrincipalIsFundedOnceAndNotDerivedFromProtocolLp"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+          "function": "test_rewardOnlyClaimIsImmediateAndDoesNotUnlockPrincipal"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFFundedStakingMath.t.sol",
+          "function": "testFuzz_fundedRebaseConservation"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFEpochNaturalExpansionLib.t.sol",
+          "function": "test_sevenDaysIncludesAll21EpochsWithoutCompounding"
+        }
+      ]
+    },
+    {
+      "old_source": "test/foundry/spec/saf/T10_DeadMembers.t.sol",
+      "old_function": "test_redeemParams_noTokenId",
+      "reason": "The old LP-harvest struct shape and compound dust gate have no production caller under funded staking. These checks preserve deleted functionality only; current funded custody, reward and epoch behavior is covered separately.",
+      "current_test_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+          "function": "test_positionPrincipalIsFundedOnceAndNotDerivedFromProtocolLp"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+          "function": "test_rewardOnlyClaimIsImmediateAndDoesNotUnlockPrincipal"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFFundedStakingMath.t.sol",
+          "function": "testFuzz_fundedRebaseConservation"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFEpochNaturalExpansionLib.t.sol",
+          "function": "test_sevenDaysIncludesAll21EpochsWithoutCompounding"
+        }
+      ]
+    },
+    {
+      "old_source": "test/foundry/spec/vaults/detf/common/core/DETFProtocolCompoundLib.t.sol",
+      "old_function": "test_isCompoundable_zeroIsFalse",
+      "reason": "The old LP-harvest struct shape and compound dust gate have no production caller under funded staking. These checks preserve deleted functionality only; current funded custody, reward and epoch behavior is covered separately.",
+      "current_test_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+          "function": "test_positionPrincipalIsFundedOnceAndNotDerivedFromProtocolLp"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+          "function": "test_rewardOnlyClaimIsImmediateAndDoesNotUnlockPrincipal"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFFundedStakingMath.t.sol",
+          "function": "testFuzz_fundedRebaseConservation"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFEpochNaturalExpansionLib.t.sol",
+          "function": "test_sevenDaysIncludesAll21EpochsWithoutCompounding"
+        }
+      ]
+    },
+    {
+      "old_source": "test/foundry/spec/vaults/detf/common/core/DETFProtocolCompoundLib.t.sol",
+      "old_function": "test_isCompoundable_dustBoundary",
+      "reason": "The old LP-harvest struct shape and compound dust gate have no production caller under funded staking. These checks preserve deleted functionality only; current funded custody, reward and epoch behavior is covered separately.",
+      "current_test_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+          "function": "test_positionPrincipalIsFundedOnceAndNotDerivedFromProtocolLp"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+          "function": "test_rewardOnlyClaimIsImmediateAndDoesNotUnlockPrincipal"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFFundedStakingMath.t.sol",
+          "function": "testFuzz_fundedRebaseConservation"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFEpochNaturalExpansionLib.t.sol",
+          "function": "test_sevenDaysIncludesAll21EpochsWithoutCompounding"
+        }
+      ]
+    },
+    {
+      "old_source": "test/foundry/spec/vaults/detf/common/core/DETFProtocolCompoundLib.t.sol",
+      "old_function": "test_isCompoundable_aboveDust",
+      "reason": "The old LP-harvest struct shape and compound dust gate have no production caller under funded staking. These checks preserve deleted functionality only; current funded custody, reward and epoch behavior is covered separately.",
+      "current_test_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+          "function": "test_positionPrincipalIsFundedOnceAndNotDerivedFromProtocolLp"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+          "function": "test_rewardOnlyClaimIsImmediateAndDoesNotUnlockPrincipal"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFFundedStakingMath.t.sol",
+          "function": "testFuzz_fundedRebaseConservation"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFEpochNaturalExpansionLib.t.sol",
+          "function": "test_sevenDaysIncludesAll21EpochsWithoutCompounding"
+        }
+      ]
+    },
+    {
+      "old_source": "test/foundry/spec/vaults/detf/common/core/DETFProtocolCompoundLib.t.sol",
+      "old_function": "test_isCompoundable_customDust",
+      "reason": "The old LP-harvest struct shape and compound dust gate have no production caller under funded staking. These checks preserve deleted functionality only; current funded custody, reward and epoch behavior is covered separately.",
+      "current_test_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+          "function": "test_positionPrincipalIsFundedOnceAndNotDerivedFromProtocolLp"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+          "function": "test_rewardOnlyClaimIsImmediateAndDoesNotUnlockPrincipal"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFFundedStakingMath.t.sol",
+          "function": "testFuzz_fundedRebaseConservation"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFEpochNaturalExpansionLib.t.sol",
+          "function": "test_sevenDaysIncludesAll21EpochsWithoutCompounding"
+        }
+      ]
+    },
+    {
+      "old_source": "test/foundry/spec/vaults/detf/common/core/DETFProtocolCompoundLib.t.sol",
+      "old_function": "test_defaultDust_matchesUnaryGate",
+      "reason": "The old LP-harvest struct shape and compound dust gate have no production caller under funded staking. These checks preserve deleted functionality only; current funded custody, reward and epoch behavior is covered separately.",
+      "current_test_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+          "function": "test_positionPrincipalIsFundedOnceAndNotDerivedFromProtocolLp"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+          "function": "test_rewardOnlyClaimIsImmediateAndDoesNotUnlockPrincipal"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFFundedStakingMath.t.sol",
+          "function": "testFuzz_fundedRebaseConservation"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFEpochNaturalExpansionLib.t.sol",
+          "function": "test_sevenDaysIncludesAll21EpochsWithoutCompounding"
+        }
+      ]
+    }
+  ],
+  "application_record": "obsolete-common-ledger-cleanup-applied.json",
+  "runtime_evidence": {
+    "record": "hermetic-remediation-v4-policy-public-market-split.json",
+    "cleanup_anchor_cases": 102,
+    "cleanup_anchor_failures": 0,
+    "complete_selected_batch_passed": true,
+    "remaining": "Final complete current-source validation and reconciliation."
+  }
+}

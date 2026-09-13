@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IFacetRegistry} from "@crane/contracts/interfaces/IFacetRegistry.sol";
@@ -9,7 +11,6 @@ import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {IERC8109Introspection} from "@crane/contracts/interfaces/IERC8109Introspection.sol";
 import {IPostDeployAccountHook} from "@crane/contracts/interfaces/IPostDeployAccountHook.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
-import {PoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol";
 import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
 import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
@@ -48,6 +49,7 @@ import {
 import {
     UniswapV4StandardExchangeOrbitalBufferHook_FactoryService as PkgFactory
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_FactoryService.sol";
+import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 import {
     UniswapV4StandardExchangeOrbitalBufferHookPairPoolLib as PairPoolLib
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookPairPoolLib.sol";
@@ -118,7 +120,11 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook is TestBas
         se2 = _deployERC4626SE(address(vault2));
         require(se0 != se1 && se1 != se2 && se0 != se2, "se distinct");
 
-        pm = IPoolManager(address(new PoolManager(address(this))));
+        pm = IPoolManager(address(IPoolManager(create3Factory.create3WithArgs(
+            ArtifactCreationCode.creationCode(create3Factory, "PoolManager.sol:PoolManager"),
+            abi.encode(address(this)),
+            keccak256("TestBase_UniswapV4StandardExchangeOrbitalBufferHook_PoolManager")
+        ))));
 
         IFacet hookFlagsFacet = HookFactoryService.deployUniswapV4HookFlagsFacet(create3Factory);
         IFacetRegistry facetReg = IFacetRegistry(address(create3Factory));
@@ -143,6 +149,8 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook is TestBas
             IVaultRegistryDeployment(address(indexedexManager)),
             owner,
             IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgInit({
+                depositQueryFacet: PkgFactory.deployDepositQueryFacet(create3Factory),
+                depositZapFacet: PkgFactory.deployDepositZapFacet(create3Factory),
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
                 depositFacet: depositFacet,
@@ -207,6 +215,9 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook is TestBas
             token0: address(token0),
             token1: address(token1),
             token2: address(token2),
+            decimals0: HookPkgArgsDecimalsLib.tokenDec(address(token0)),
+            decimals1: HookPkgArgsDecimalsLib.tokenDec(address(token1)),
+            decimals2: HookPkgArgsDecimalsLib.tokenDec(address(token2)),
             se0: se0,
             se1: address(0),
             se2: address(0),
@@ -240,6 +251,9 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook is TestBas
             token0: address(token0),
             token1: address(token1),
             token2: address(token2),
+            decimals0: HookPkgArgsDecimalsLib.tokenDec(address(token0)),
+            decimals1: HookPkgArgsDecimalsLib.tokenDec(address(token1)),
+            decimals2: HookPkgArgsDecimalsLib.tokenDec(address(token2)),
             se0: address(0),
             se1: address(0),
             se2: address(0),
@@ -259,6 +273,9 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook is TestBas
         returns (IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory a)
     {
         a = _argsZeroSE();
+        a.decimals0 = HookPkgArgsDecimalsLib.tokenDec(a.token0);
+        a.decimals1 = HookPkgArgsDecimalsLib.tokenDec(a.token1);
+        a.decimals2 = HookPkgArgsDecimalsLib.tokenDec(a.token2);
         if (b0) a.se0 = se0;
         if (b1) a.se1 = se1;
         if (b2) a.se2 = se2;

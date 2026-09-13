@@ -79,10 +79,7 @@ File names: `LaunchIo.sol`. Skip keys: implementation plan. Extra keys still hyd
 | `phase06_stage04_weighted_buffer_hook_pkg.json` | `weightedHookPkg` | |
 | `phase06_stage05_orbital_buffer_hook_pkg.json` | `orbitalHookPkg` | |
 | `phase06_stage06_curve_quad_buffer_hook_pkg.json` | `curveQuadHookPkg` | |
-| `phase06_stage07_cp_detf_pkg.json` | `cpDetfPkg` | |
-| `phase06_stage08_weighted_detf_pkg.json` | `weightedDetfPkg` | |
-| `phase06_stage09_orbital_detf_pkg.json` | `orbitalDetfPkg` | |
-| `phase06_stage10_curve_quad_detf_pkg.json` | `curveQuadDetfPkg` | |
+| `phase06_stage07_uniswap_v4_detf_pkg.json` | `uniV4DetfPkg` | Unified Uni V4 DETF DFPkg. Binds any in-scope SE buffer hook. |
 | `phase07_stage01_core_test_tokens.json` | `DTF`, `TTUSDG`, `TTUSDE`, `TTWETH` | `tokenPkg` |
 | `phase07_stage02_mag7_test_tokens.json` | `TTNVDA`, `TTMSFT`, `TTAAPL` | `TTGOOGL`, `TTAMZN`, `TTMETA`, `TTTSLA` |
 | `phase07_stage03_uni_v4_se_dtf_weth.json` | `seRichWeth` | `rpRichWeth`, `v4Seeder` |
@@ -128,10 +125,11 @@ Writer: `_writePlatform()`. Consumers: `getAddressArtifacts(…).platform` (Inde
 | `uniV4SePkg` | Uni V4 SE DFPkg |
 | `uniV3SePkg` | Uni V3 SE DFPkg (package only; no 07 instances) |
 | `morphoBlueSePkg` | Morpho Blue SE DFPkg (package only; no 07 instances) |
-| `cpHookPkg` / `cpDetfPkg` | CP buffer hook + CP DETF DFPkg |
-| `weightedHookPkg` / `weightedDetfPkg` | Weighted |
-| `orbitalHookPkg` / `orbitalDetfPkg` | Orbital |
-| `curveQuadHookPkg` / `curveQuadDetfPkg` | Curve Quad |
+| `cpHookPkg` | CP buffer hook DFPkg |
+| `weightedHookPkg` | Weighted buffer hook DFPkg |
+| `orbitalHookPkg` | Orbital buffer hook DFPkg |
+| `curveQuadHookPkg` | Curve Quad buffer hook DFPkg |
+| `uniV4DetfPkg` | Unified Uni V4 DETF DFPkg (binds any of the SE buffer hooks) |
 | `bondNftVaultPkg` | Bond NFT DFPkg |
 | `rebasingClaimTokenPkg` | Rebasing claim **package** (not an instance) |
 

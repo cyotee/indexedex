@@ -14,9 +14,7 @@ import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balance
 import {
     StandardExchangeRateProvider_FactoryService
 } from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProvider_FactoryService.sol";
-import {
-    IStandardExchangeRateProviderDFPkg
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
+import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
 
 /// @title Script_06_DeployRateProvider
 /// @notice SE share -> WETH rate provider for optional oracle paths (CP DETF does not require RP in PkgArgs).

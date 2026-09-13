@@ -1,0 +1,11 @@
+{
+  "recorded_at_utc": "2026-09-08T15:04:37.050733+00:00",
+  "passed": 47,
+  "failed": 1,
+  "suites": 22,
+  "cases": 48,
+  "command_seconds": 98.421,
+  "forge_suite_seconds": 25.48,
+  "failure": "Orbital adversarial fixture leaves all three mandatory hook token decimal arguments unset. Use the same canonical decimal helper as the ordinary Orbital fixture.",
+  "passing": "Lido-backed V4 fallback/bond in both policies, all custom quote/custody cases, current Stata salt, main Orbital launch stage, remaining migrated reentrancy controls."
+}

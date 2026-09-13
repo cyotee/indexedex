@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
 import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {IUnlockCallback} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/callback/IUnlockCallback.sol";
@@ -266,13 +267,9 @@ contract UniswapV4StandardExchangeRoutes_Test is TestBase_UniswapV4StandardExcha
         _test_previewExchangeOut_direct_matchesExecution(true);
     }
 
-    function test_previewExchangeIn_zap_firstDeposit_matchesExecution_token0ToShares() public {
-        _test_previewExchangeIn_zap_firstDeposit_matchesExecution(true);
-    }
 
-    function test_previewExchangeIn_zap_firstDeposit_matchesExecution_token1ToShares() public {
-        _test_previewExchangeIn_zap_firstDeposit_matchesExecution(false);
-    }
+
+
 
     function test_previewExchangeIn_zap_secondDeposit_matchesExecution_token0ToShares() public {
         _test_previewExchangeIn_zap_secondDeposit_matchesExecution(true);
@@ -336,24 +333,18 @@ contract UniswapV4StandardExchangeRoutes_Test is TestBase_UniswapV4StandardExcha
         assertGe(tokenOut.balanceOf(recipient), desiredAmountOut, "recipient refunded exact out");
     }
 
-    function test_exchangeIn_zap_token0ToShares_firstDeposit() public {
+    function test_twoTokenActivation_token0Dominant_previewAndExecution() public {
         _test_exchangeIn_zap_firstDeposit(true);
     }
 
-    function test_exchangeIn_zap_token1ToShares_firstDeposit() public {
+    function test_twoTokenActivation_token1Dominant_previewAndExecution() public {
         _test_exchangeIn_zap_firstDeposit(false);
     }
 
     function test_exchangeIn_zap_token0ToShares_secondDeposit() public {
         IERC20 vaultToken = IERC20(address(vault));
-        uint256 bootstrapAmount = 1e18;
-
         ERC20PermitMintableStub t0 = _tokenStub(_token0Address());
-        t0.mint(address(this), bootstrapAmount);
-        t0.approve(address(vault), bootstrapAmount);
-        uint256 bootstrapShares = vault.exchangeIn(
-            IERC20(_token0Address()), bootstrapAmount, vaultToken, 0, address(this), false, _deadline()
-        );
+        uint256 bootstrapShares = _bootstrapShares();
         assertGt(bootstrapShares, 0, "bootstrap shares");
 
         uint256 amountIn = 1e18;
@@ -376,6 +367,7 @@ contract UniswapV4StandardExchangeRoutes_Test is TestBase_UniswapV4StandardExcha
     }
 
     function test_exchangeIn_zap_reverts_whenMinSharesTooHigh() public {
+        _bootstrapShares();
         IERC20 vaultToken = IERC20(address(vault));
         uint256 amountIn = 1e18;
 
@@ -396,6 +388,7 @@ contract UniswapV4StandardExchangeRoutes_Test is TestBase_UniswapV4StandardExcha
     ///         Credits `claimed` when `claimed <= U = B - R` (unbooked surplus after push).
     ///         I1 booked free inventory without new push is covered by adversarial secure-pull suite.
     function test_exchangeIn_zap_pretransferred_true() public {
+        _bootstrapShares();
         IERC20 vaultToken = IERC20(address(vault));
         uint256 amountIn = 1e18;
         address recipient = makeAddr("zapInPretransferredRecipient");
@@ -542,62 +535,40 @@ contract UniswapV4StandardExchangeRoutes_Test is TestBase_UniswapV4StandardExcha
         assertEq(actualIn, preview, "preview exact out matches execution");
     }
 
-    function _test_exchangeIn_zap_firstDeposit(bool token0ToShares) internal {
-        IERC20 tokenIn = token0ToShares ? IERC20(_token0Address()) : IERC20(_token1Address());
-        IERC20 vaultToken = IERC20(address(vault));
-        ERC20PermitMintableStub inputStub = _tokenStub(address(tokenIn));
-
-        uint256 amountIn = 1e18;
-        address recipient = makeAddr(token0ToShares ? "zapRecipient0" : "zapRecipient1");
-
-        inputStub.mint(address(this), amountIn);
-        inputStub.approve(address(vault), amountIn);
-
-        uint256 preview = vault.previewExchangeIn(tokenIn, amountIn, vaultToken);
-        assertGt(preview, 0, "preview shares first deposit");
-
-        uint256 sharesOut = vault.exchangeIn(tokenIn, amountIn, vaultToken, 0, recipient, false, _deadline());
-
-        assertGt(sharesOut, 0, "shares out first deposit");
-        assertEq(vault.balanceOf(recipient), sharesOut, "recipient first deposit shares");
-        assertEq(vault.totalSupply(), sharesOut, "total supply first deposit");
-        // Single-sided sleeve mint: deposited token has free+deployed inventory; the other may remain 0.
-        address deposited = address(tokenIn);
-        assertGt(vault.reserveOfToken(deposited), 0, "vault reserve of deposited token");
-        assertGt(
-            vault.reserveOfToken(_token0Address()) + vault.reserveOfToken(_token1Address()), 0, "vault total reserves"
+    function _test_exchangeIn_zap_firstDeposit(bool token0Dominant) internal {
+        address[] memory tokens = new address[](2);
+        tokens[0] = _token0Address();
+        tokens[1] = _token1Address();
+        uint256[] memory amounts = new uint256[](2);
+        amounts[0] = token0Dominant ? 2 ether : 1 ether;
+        amounts[1] = token0Dominant ? 1 ether : 2 ether;
+        address recipient = makeAddr(token0Dominant ? "firstToken0Dominant" : "firstToken1Dominant");
+        for (uint256 i; i < 2; ++i) {
+            _tokenStub(tokens[i]).mint(address(this), amounts[i]);
+            IERC20(tokens[i]).approve(address(vault), amounts[i]);
+        }
+        uint256 preview = IStandardExchangeInMulti(address(vault)).previewExchangeInManyToOne(
+            tokens, amounts, IERC20(address(vault))
         );
+        uint256 shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
+            tokens, amounts, IERC20(address(vault)), preview, recipient, false, _deadline()
+        );
+        assertGt(shares, 0, "two-token initial shares");
+        assertEq(shares, preview, "activation preview equals execution");
+        assertEq(vault.balanceOf(recipient), shares, "activation recipient shares");
+        assertEq(vault.totalSupply(), shares, "activation total supply");
+        assertGt(vault.reserveOfToken(tokens[0]), 0, "activation token0 reserve");
+        assertGt(vault.reserveOfToken(tokens[1]), 0, "activation token1 reserve");
     }
 
-    function _test_previewExchangeIn_zap_firstDeposit_matchesExecution(bool token0ToShares) internal {
-        IERC20 tokenIn = token0ToShares ? IERC20(_token0Address()) : IERC20(_token1Address());
-        IERC20 vaultToken = IERC20(address(vault));
-        ERC20PermitMintableStub inputStub = _tokenStub(address(tokenIn));
 
-        uint256 amountIn = 1e18;
-        address recipient = makeAddr(token0ToShares ? "previewZapInFirst0" : "previewZapInFirst1");
-
-        uint256 preview = vault.previewExchangeIn(tokenIn, amountIn, vaultToken);
-        assertGt(preview, 0, "preview zap-in first deposit");
-
-        inputStub.mint(address(this), amountIn);
-        inputStub.approve(address(vault), amountIn);
-
-        uint256 actualShares = vault.exchangeIn(tokenIn, amountIn, vaultToken, 0, recipient, false, _deadline());
-
-        assertApproxEqAbs(actualShares, preview, 10, "preview zap-in first deposit matches execution");
-    }
 
     function _test_previewExchangeIn_zap_secondDeposit_matchesExecution(bool token0ToShares) internal {
         IERC20 tokenIn = token0ToShares ? IERC20(_token0Address()) : IERC20(_token1Address());
         IERC20 vaultToken = IERC20(address(vault));
         ERC20PermitMintableStub inputStub = _tokenStub(address(tokenIn));
 
-        uint256 bootstrapAmount = 2e18;
-        ERC20PermitMintableStub t0 = _tokenStub(_token0Address());
-        t0.mint(address(this), bootstrapAmount);
-        t0.approve(address(vault), bootstrapAmount);
-        vault.exchangeIn(IERC20(_token0Address()), bootstrapAmount, vaultToken, 0, address(this), false, _deadline());
+        _bootstrapShares();
 
         uint256 amountIn = 1e18;
         address recipient = makeAddr(token0ToShares ? "previewZapInSecond0" : "previewZapInSecond1");
@@ -655,15 +626,21 @@ contract UniswapV4StandardExchangeRoutes_Test is TestBase_UniswapV4StandardExcha
         assertGe(tokenOut.balanceOf(recipient), desiredAmountOut, "recipient zap out tokens");
     }
 
-    function _bootstrapShares() internal returns (uint256 bootstrapShares) {
-        IERC20 vaultToken = IERC20(address(vault));
-        uint256 bootstrapAmount = 2e18;
 
-        ERC20PermitMintableStub t0 = _tokenStub(_token0Address());
-        t0.mint(address(this), bootstrapAmount);
-        t0.approve(address(vault), bootstrapAmount);
-        bootstrapShares = vault.exchangeIn(
-            IERC20(_token0Address()), bootstrapAmount, vaultToken, 0, address(this), false, _deadline()
+
+    function _bootstrapShares() internal returns (uint256 bootstrapShares) {
+        address[] memory tokens = new address[](2);
+        tokens[0] = _token0Address();
+        tokens[1] = _token1Address();
+        uint256[] memory amounts = new uint256[](2);
+        amounts[0] = 2 ether;
+        amounts[1] = 2 ether;
+        for (uint256 i; i < 2; ++i) {
+            _tokenStub(tokens[i]).mint(address(this), amounts[i]);
+            IERC20(tokens[i]).approve(address(vault), amounts[i]);
+        }
+        bootstrapShares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
+            tokens, amounts, IERC20(address(vault)), 0, address(this), false, _deadline()
         );
     }
 

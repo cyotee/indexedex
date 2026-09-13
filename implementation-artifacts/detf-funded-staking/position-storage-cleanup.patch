@@ -1,0 +1,911 @@
+--- a/contracts/protocols/dexes/uniswap/v3/UniswapV3VaultRepo.sol
++++ b/contracts/protocols/dexes/uniswap/v3/UniswapV3VaultRepo.sol
+@@ -14,15 +14,11 @@
+     struct Position {
+         int24 tickLower;
+         int24 tickUpper;
+-        uint128 liquidity;
+         bool created;
+     }
+ 
+     struct Storage {
+         Position centerPosition;
+-        uint160 lastSqrtPriceX96;
+-        int24 lastTick;
+-        uint32 lastTimestamp;
+         address importedPositionManager;
+         uint256 importedPositionTokenId;
+         bool importedPositionActive;
+@@ -66,7 +62,6 @@
+         layout_.centerPosition.tickLower = tickLower_;
+         layout_.centerPosition.tickUpper = tickUpper_;
+         layout_.centerPosition.created = true;
+-        layout_.centerPosition.liquidity = 0;
+     }
+ 
+     function _initializeImportedCenter(address positionManager_, uint256 tokenId_, int24 tickLower_, int24 tickUpper_)
+@@ -97,14 +92,6 @@
+         return _getPositionTicks(_layout());
+     }
+ 
+-    function _updatePositionLiquidity(Storage storage layout_, uint128 liquidity_) internal {
+-        layout_.centerPosition.liquidity = liquidity_;
+-    }
+-
+-    function _updatePositionLiquidity(uint128 liquidity_) internal {
+-        _updatePositionLiquidity(_layout(), liquidity_);
+-    }
+-
+     /// @dev Canonical Uniswap V3 position key (no salt).
+     function _getPositionKey(address owner_, int24 tickLower_, int24 tickUpper_) internal pure returns (bytes32) {
+         return keccak256(abi.encodePacked(owner_, tickLower_, tickUpper_));
+@@ -113,13 +100,6 @@
+     function _getOwnPositionKey() internal view returns (bytes32) {
+         (int24 tickLower_, int24 tickUpper_) = _getPositionTicks();
+         return _getPositionKey(address(this), tickLower_, tickUpper_);
+-    }
+-
+-    function _setPoolState(uint160 sqrtPriceX96_, int24 tick_, uint32 timestamp_) internal {
+-        Storage storage layout_ = _layout();
+-        layout_.lastSqrtPriceX96 = sqrtPriceX96_;
+-        layout_.lastTick = tick_;
+-        layout_.lastTimestamp = timestamp_;
+     }
+ 
+     function _importedPositionManager() internal view returns (address) {
+--- a/contracts/protocols/dexes/uniswap/v4/UniswapV4PositionRepo.sol
++++ b/contracts/protocols/dexes/uniswap/v4/UniswapV4PositionRepo.sol
+@@ -5,34 +5,20 @@
+ 
+ library UniswapV4PositionRepo {
+     bytes32 internal constant STORAGE_SLOT = keccak256("indexedex.protocols.dexes.uniswap.v4.position");
+-    bytes32 internal constant LOWER_WING_SALT = keccak256("indexedex.protocols.dexes.uniswap.v4.position.lowerWing");
+-    bytes32 internal constant UPPER_WING_SALT = keccak256("indexedex.protocols.dexes.uniswap.v4.position.upperWing");
+-
+-    enum PositionKind {
+-        Center,
+-        LowerWing,
+-        UpperWing
+-    }
+ 
+     struct PositionState {
+         int24 tickLower;
+         int24 tickUpper;
+-        uint128 liquidity;
+         bytes32 salt;
+         bool created;
+     }
+ 
+     struct Storage {
+         PositionState centerPosition;
+-        PositionState lowerWingPosition;
+-        PositionState upperWingPosition;
+         IPositionManager importedPositionManager;
+         uint256 importedPositionTokenId;
+         bool importedPositionActive;
+         IPositionManager authorizedPositionManager;
+-        uint160 lastSqrtPriceX96;
+-        int24 lastTick;
+-        uint32 lastTimestamp;
+     }
+ 
+     function _layout(bytes32 slot_) internal pure returns (Storage storage layout_) {
+@@ -47,32 +33,16 @@
+ 
+     function _initialize(Storage storage layout_, bytes32 salt_) internal {
+         layout_.centerPosition.salt = salt_;
+-        layout_.lowerWingPosition.salt = LOWER_WING_SALT;
+-        layout_.upperWingPosition.salt = UPPER_WING_SALT;
+     }
+ 
+     function _initialize(bytes32 salt_) internal {
+         _initialize(_layout(), salt_);
+     }
+ 
+-    function _position(Storage storage layout_, PositionKind kind_)
+-        internal
+-        view
+-        returns (PositionState storage position_)
+-    {
+-        if (kind_ == PositionKind.Center) {
+-            return layout_.centerPosition;
+-        }
+-        if (kind_ == PositionKind.LowerWing) {
+-            return layout_.lowerWingPosition;
+-        }
+-        return layout_.upperWingPosition;
+-    }
+-
+-    function _createPositionIfNeeded(Storage storage layout_, PositionKind kind_, int24 tickLower_, int24 tickUpper_)
++    function _createPositionIfNeeded(Storage storage layout_, int24 tickLower_, int24 tickUpper_)
+         internal
+     {
+-        PositionState storage position_ = _position(layout_, kind_);
++        PositionState storage position_ = layout_.centerPosition;
+         if (position_.created) {
+             return;
+         }
+@@ -81,8 +51,8 @@
+         position_.created = true;
+     }
+ 
+-    function _createPositionIfNeeded(PositionKind kind_, int24 tickLower_, int24 tickUpper_) internal {
+-        _createPositionIfNeeded(_layout(), kind_, tickLower_, tickUpper_);
++    function _createPositionIfNeeded(int24 tickLower_, int24 tickUpper_) internal {
++        _createPositionIfNeeded(_layout(), tickLower_, tickUpper_);
+     }
+ 
+     function _initializeImportedPosition(
+@@ -98,10 +68,6 @@
+         layout_.centerPosition.tickLower = tickLower_;
+         layout_.centerPosition.tickUpper = tickUpper_;
+         layout_.centerPosition.created = true;
+-        layout_.lowerWingPosition.created = false;
+-        layout_.upperWingPosition.created = false;
+-        layout_.lowerWingPosition.liquidity = 0;
+-        layout_.upperWingPosition.liquidity = 0;
+     }
+ 
+     function _initializeImportedPosition(
+@@ -118,23 +84,14 @@
+         Storage storage layout_ = _layout();
+         layout_.importedPositionActive = false;
+         layout_.centerPosition.created = false;
+-        layout_.centerPosition.liquidity = 0;
+     }
+ 
+     function _isPositionCreated(Storage storage layout_) internal view returns (bool) {
+-        return layout_.centerPosition.created || layout_.lowerWingPosition.created || layout_.upperWingPosition.created;
++        return layout_.centerPosition.created;
+     }
+ 
+     function _isPositionCreated() internal view returns (bool) {
+         return _isPositionCreated(_layout());
+-    }
+-
+-    function _isPositionCreated(Storage storage layout_, PositionKind kind_) internal view returns (bool) {
+-        return _position(layout_, kind_).created;
+-    }
+-
+-    function _isPositionCreated(PositionKind kind_) internal view returns (bool) {
+-        return _isPositionCreated(_layout(), kind_);
+     }
+ 
+     function _isImportedPosition(Storage storage layout_) internal view returns (bool imported_) {
+@@ -161,39 +118,6 @@
+         return _importedPositionTokenId(_layout());
+     }
+ 
+-    function _liquidity(Storage storage layout_) internal view returns (uint128 liquidity_) {
+-        return
+-            layout_.centerPosition.liquidity + layout_.lowerWingPosition.liquidity + layout_.upperWingPosition.liquidity;
+-    }
+-
+-    function _liquidity() internal view returns (uint128 liquidity_) {
+-        return _liquidity(_layout());
+-    }
+-
+-    function _liquidity(Storage storage layout_, PositionKind kind_) internal view returns (uint128 liquidity_) {
+-        return _position(layout_, kind_).liquidity;
+-    }
+-
+-    function _liquidity(PositionKind kind_) internal view returns (uint128 liquidity_) {
+-        return _liquidity(_layout(), kind_);
+-    }
+-
+-    function _updateLiquidity(Storage storage layout_, uint128 liquidity_) internal {
+-        layout_.centerPosition.liquidity = liquidity_;
+-    }
+-
+-    function _updateLiquidity(uint128 liquidity_) internal {
+-        _updateLiquidity(_layout(), liquidity_);
+-    }
+-
+-    function _updateLiquidity(Storage storage layout_, PositionKind kind_, uint128 liquidity_) internal {
+-        _position(layout_, kind_).liquidity = liquidity_;
+-    }
+-
+-    function _updateLiquidity(PositionKind kind_, uint128 liquidity_) internal {
+-        _updateLiquidity(_layout(), kind_, liquidity_);
+-    }
+-
+     function _positionTicks(Storage storage layout_) internal view returns (int24 tickLower_, int24 tickUpper_) {
+         tickLower_ = layout_.centerPosition.tickLower;
+         tickUpper_ = layout_.centerPosition.tickUpper;
+@@ -203,44 +127,12 @@
+         return _positionTicks(_layout());
+     }
+ 
+-    function _positionTicks(Storage storage layout_, PositionKind kind_)
+-        internal
+-        view
+-        returns (int24 tickLower_, int24 tickUpper_)
+-    {
+-        PositionState storage position_ = _position(layout_, kind_);
+-        tickLower_ = position_.tickLower;
+-        tickUpper_ = position_.tickUpper;
+-    }
+-
+-    function _positionTicks(PositionKind kind_) internal view returns (int24 tickLower_, int24 tickUpper_) {
+-        return _positionTicks(_layout(), kind_);
+-    }
+-
+     function _salt(Storage storage layout_) internal view returns (bytes32 salt_) {
+         return layout_.centerPosition.salt;
+     }
+ 
+     function _salt() internal view returns (bytes32 salt_) {
+         return _salt(_layout());
+-    }
+-
+-    function _salt(Storage storage layout_, PositionKind kind_) internal view returns (bytes32 salt_) {
+-        return _position(layout_, kind_).salt;
+-    }
+-
+-    function _salt(PositionKind kind_) internal view returns (bytes32 salt_) {
+-        return _salt(_layout(), kind_);
+-    }
+-
+-    function _setPoolState(Storage storage layout_, uint160 sqrtPriceX96_, int24 tick_, uint32 timestamp_) internal {
+-        layout_.lastSqrtPriceX96 = sqrtPriceX96_;
+-        layout_.lastTick = tick_;
+-        layout_.lastTimestamp = timestamp_;
+-    }
+-
+-    function _setPoolState(uint160 sqrtPriceX96_, int24 tick_, uint32 timestamp_) internal {
+-        _setPoolState(_layout(), sqrtPriceX96_, tick_, timestamp_);
+     }
+ 
+     function _setAuthorizedPositionManager(Storage storage layout_, IPositionManager positionManager_) internal {
+--- a/contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeCommon.sol
++++ b/contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeCommon.sol
+@@ -472,13 +472,6 @@
+         return _amountsForLiquidityAtPrice(sqrtPriceX96, tickLower, tickUpper, liquidityToBurn);
+     }
+ 
+-    function _updateManagedPositionLiquidities() internal {
+-        if (!UniswapV3VaultRepo._isPositionCreated()) {
+-            return;
+-        }
+-        UniswapV3VaultRepo._updatePositionLiquidity(_getPositionLiquidityFromPool());
+-    }
+-
+     function _collectManagedFees() internal {
+         _requireCanOpenBoundPoolOps();
+         if (!UniswapV3VaultRepo._isPositionCreated()) {
+@@ -718,7 +711,6 @@
+     }
+ 
+     function _emitRebalanceEvent(uint256 liquidPct) internal {
+-        _updateManagedPositionLiquidities();
+         _syncVaultReserves();
+         (uint256 free0, uint256 free1) = _freeBalances();
+         (uint256 deployed0, uint256 deployed1) = _deployedAmounts();
+@@ -748,7 +740,6 @@
+         }
+ 
+         _mintManagedLiquidity(managedTicks, plan);
+-        _updateManagedPositionLiquidities();
+         return true;
+     }
+ 
+@@ -788,7 +779,6 @@
+         }
+         (int24 tickLower, int24 tickUpper) = UniswapV3VaultRepo._getPositionTicks();
+         _burnAndCollectLiquidity(tickLower, tickUpper, liquidityToBurn);
+-        _updateManagedPositionLiquidities();
+         return true;
+     }
+ 
+@@ -806,7 +796,6 @@
+         }
+         (int24 tickLower, int24 tickUpper) = UniswapV3VaultRepo._getPositionTicks();
+         _burnAndCollectLiquidity(tickLower, tickUpper, liquidityToBurn);
+-        _updateManagedPositionLiquidities();
+     }
+ 
+     /// @dev Separate frame so zap-out `_swap` does not hit stack-too-deep.
+--- a/contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangePositionImportTarget.sol
++++ b/contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangePositionImportTarget.sol
+@@ -67,10 +67,6 @@
+         uint256 booked1;
+         uint256 inbound0;
+         uint256 inbound1;
+-        uint160 sqrtPriceX96;
+-        uint128 remintLiquidity;
+-        uint256 amount0Used;
+-        uint256 amount1Used;
+     }
+ 
+     function previewImportPosition(INonfungiblePositionManager positionManager, uint256 positionTokenId)
+@@ -128,7 +124,6 @@
+         ERC20Repo._mint(recipient, sharesOut);
+         _syncVaultReserves();
+         _rebalanceLiquidReserveBestEffort();
+-        _updateManagedPositionLiquidities();
+     }
+ 
+     /// @dev Exit the NFT to the sleeve, select full-range ticks, and credit only actual inbound assets.
+--- a/contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeCommon.sol
++++ b/contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeCommon.sol
+@@ -92,9 +92,7 @@
+     }
+ 
+     function _supportsInventoryQuote() internal view returns (bool) {
+-        return UniswapV4QuoteService._supportsProjectedHook(_poolKey()) && !UniswapV4PositionRepo._isImportedPosition()
+-            && _currentLiquidity(UniswapV4PositionRepo.PositionKind.LowerWing) == 0
+-            && _currentLiquidity(UniswapV4PositionRepo.PositionKind.UpperWing) == 0;
++        return UniswapV4QuoteService._supportsProjectedHook(_poolKey()) && !UniswapV4PositionRepo._isImportedPosition();
+     }
+ 
+     function _inventorySnapshot(address asset, address holder) internal view returns (InventoryQuote memory q) {
+@@ -106,8 +104,8 @@
+         q.supply = IERC20(address(this)).totalSupply();
+         q.shares = IERC20(address(this)).balanceOf(holder);
+         (q.free0, q.free1) = _freeBalances();
+-        (q.fees0, q.fees1) = _collectablePositionFees(UniswapV4PositionRepo.PositionKind.Center);
+-        q.positionLiquidity = _currentLiquidity(UniswapV4PositionRepo.PositionKind.Center);
++        (q.fees0, q.fees1) = _collectablePositionFees();
++        q.positionLiquidity = _currentLiquidity();
+         ManagedTicks memory ticks = _managedTicks();
+         q.lower = ticks.centerLower;
+         q.upper = ticks.centerUpper;
+@@ -279,16 +277,10 @@
+     struct ManagedTicks {
+         int24 centerLower;
+         int24 centerUpper;
+-        int24 lowerWingLower;
+-        int24 lowerWingUpper;
+-        int24 upperWingLower;
+-        int24 upperWingUpper;
+     }
+ 
+     struct ManagedLiquidityPlan {
+         uint128 centerLiquidity;
+-        uint128 lowerWingLiquidity;
+-        uint128 upperWingLiquidity;
+         uint256 amount0Used;
+         uint256 amount1Used;
+     }
+@@ -296,8 +288,6 @@
+     struct ManagedLiquidityBudgets {
+         uint256 centerBudget0;
+         uint256 centerBudget1;
+-        uint256 upperWingBudget0;
+-        uint256 lowerWingBudget1;
+     }
+ 
+     error UniswapV4Exchange_InvalidCallbackCaller(address caller);
+@@ -438,16 +428,13 @@
+         return StateLibrary.getSlot0(_poolManager(), _poolId());
+     }
+ 
+-    function _positionInfo(UniswapV4PositionRepo.PositionKind kind)
++    function _positionInfo()
+         internal
+         view
+         returns (uint128 liquidity, uint256 feeGrowthInside0LastX128, uint256 feeGrowthInside1LastX128)
+     {
+         if (UniswapV4PositionRepo._isImportedPosition()) {
+-            if (kind != UniswapV4PositionRepo.PositionKind.Center) {
+-                return (0, 0, 0);
+-            }
+-            (int24 lower, int24 upper) = UniswapV4PositionRepo._positionTicks(kind);
++            (int24 lower, int24 upper) = UniswapV4PositionRepo._positionTicks();
+             (, feeGrowthInside0LastX128, feeGrowthInside1LastX128) = StateLibrary.getPositionInfo(
+                 _poolManager(), _poolId(), address(UniswapV4PositionRepo._importedPositionManager()),
+                 lower, upper, bytes32(UniswapV4PositionRepo._importedPositionTokenId())
+@@ -457,61 +444,32 @@
+             return (liquidity, feeGrowthInside0LastX128, feeGrowthInside1LastX128);
+         }
+ 
+-        if (!UniswapV4PositionRepo._isPositionCreated(kind)) {
++        if (!UniswapV4PositionRepo._isPositionCreated()) {
+             return (0, 0, 0);
+         }
+ 
+-        (int24 tickLower, int24 tickUpper) = UniswapV4PositionRepo._positionTicks(kind);
++        (int24 tickLower, int24 tickUpper) = UniswapV4PositionRepo._positionTicks();
+         return StateLibrary.getPositionInfo(
+-            _poolManager(), _poolId(), address(this), tickLower, tickUpper, UniswapV4PositionRepo._salt(kind)
++            _poolManager(), _poolId(), address(this), tickLower, tickUpper, UniswapV4PositionRepo._salt()
+         );
+     }
+ 
+     function _currentLiquidity() internal view returns (uint128 liquidity) {
+-        liquidity = _currentLiquidity(UniswapV4PositionRepo.PositionKind.Center)
+-            + _currentLiquidity(UniswapV4PositionRepo.PositionKind.LowerWing)
+-            + _currentLiquidity(UniswapV4PositionRepo.PositionKind.UpperWing);
+-    }
+-
+-    function _currentLiquidity(UniswapV4PositionRepo.PositionKind kind) internal view returns (uint128 liquidity) {
+-        (liquidity,,) = _positionInfo(kind);
+-    }
+-
+-    function _refreshStoredLiquidity() internal returns (uint128 liquidity) {
+-        uint128 centerLiquidity = _currentLiquidity(UniswapV4PositionRepo.PositionKind.Center);
+-        uint128 lowerWingLiquidity = _currentLiquidity(UniswapV4PositionRepo.PositionKind.LowerWing);
+-        uint128 upperWingLiquidity = _currentLiquidity(UniswapV4PositionRepo.PositionKind.UpperWing);
+-
+-        UniswapV4PositionRepo._updateLiquidity(UniswapV4PositionRepo.PositionKind.Center, centerLiquidity);
+-        UniswapV4PositionRepo._updateLiquidity(UniswapV4PositionRepo.PositionKind.LowerWing, lowerWingLiquidity);
+-        UniswapV4PositionRepo._updateLiquidity(UniswapV4PositionRepo.PositionKind.UpperWing, upperWingLiquidity);
+-
+-        liquidity = centerLiquidity + lowerWingLiquidity + upperWingLiquidity;
+-    }
+-
+-    function _positionAmounts() internal view returns (uint256 amount0, uint256 amount1) {
+-        (uint256 centerAmount0, uint256 centerAmount1) = _positionAmounts(UniswapV4PositionRepo.PositionKind.Center);
+-        (uint256 lowerWingAmount0, uint256 lowerWingAmount1) =
+-            _positionAmounts(UniswapV4PositionRepo.PositionKind.LowerWing);
+-        (uint256 upperWingAmount0, uint256 upperWingAmount1) =
+-            _positionAmounts(UniswapV4PositionRepo.PositionKind.UpperWing);
+-
+-        amount0 = centerAmount0 + lowerWingAmount0 + upperWingAmount0;
+-        amount1 = centerAmount1 + lowerWingAmount1 + upperWingAmount1;
+-    }
+-
+-    function _positionAmounts(UniswapV4PositionRepo.PositionKind kind)
++        (liquidity,,) = _positionInfo();
++    }
++
++    function _positionAmounts()
+         internal
+         view
+         returns (uint256 amount0, uint256 amount1)
+     {
+-        if (!UniswapV4PositionRepo._isPositionCreated(kind)) {
++        if (!UniswapV4PositionRepo._isPositionCreated()) {
+             return (0, 0);
+         }
+ 
+         (uint160 sqrtPriceX96, int24 tick,,) = _slot0();
+-        (int24 tickLower, int24 tickUpper) = UniswapV4PositionRepo._positionTicks(kind);
+-        uint128 liquidity = _currentLiquidity(kind);
++        (int24 tickLower, int24 tickUpper) = UniswapV4PositionRepo._positionTicks();
++        uint128 liquidity = _currentLiquidity();
+         if (liquidity == 0) {
+             return (0, 0);
+         }
+@@ -552,11 +510,7 @@
+     function _managedTicks() internal view returns (ManagedTicks memory managedTicks) {
+         if (UniswapV4PositionRepo._isImportedPosition()) {
+             (managedTicks.centerLower, managedTicks.centerUpper) =
+-                UniswapV4PositionRepo._positionTicks(UniswapV4PositionRepo.PositionKind.Center);
+-            managedTicks.lowerWingLower = managedTicks.centerLower;
+-            managedTicks.lowerWingUpper = managedTicks.centerLower;
+-            managedTicks.upperWingLower = managedTicks.centerUpper;
+-            managedTicks.upperWingUpper = managedTicks.centerUpper;
++                UniswapV4PositionRepo._positionTicks();
+             return managedTicks;
+         }
+ 
+@@ -565,11 +519,7 @@
+         }
+ 
+         (managedTicks.centerLower, managedTicks.centerUpper) =
+-            UniswapV4PositionRepo._positionTicks(UniswapV4PositionRepo.PositionKind.Center);
+-        (managedTicks.lowerWingLower, managedTicks.lowerWingUpper) =
+-            UniswapV4PositionRepo._positionTicks(UniswapV4PositionRepo.PositionKind.LowerWing);
+-        (managedTicks.upperWingLower, managedTicks.upperWingUpper) =
+-            UniswapV4PositionRepo._positionTicks(UniswapV4PositionRepo.PositionKind.UpperWing);
++            UniswapV4PositionRepo._positionTicks();
+     }
+ 
+     function _managedLiquidityPlan(ManagedTicks memory managedTicks, uint256 available0, uint256 available1)
+@@ -602,8 +552,6 @@
+         // D30: 100% of deployable inventory to the full-range center. Wings stay unused.
+         budgets.centerBudget0 = available0;
+         budgets.centerBudget1 = available1;
+-        budgets.upperWingBudget0 = 0;
+-        budgets.lowerWingBudget1 = 0;
+     }
+ 
+     function _setCenterPlan(
+@@ -628,33 +576,19 @@
+     }
+ 
+     function _quoteManagedWithdrawal(uint256 sharesBurned, uint256 totalShares)
+-        internal
+-        view
+-        returns (uint256 amount0, uint256 amount1)
++        internal view returns (uint256 amount0, uint256 amount1)
+     {
+         (uint160 sqrtPriceX96, int24 tick,,) = _slot0();
+-        (uint256 centerAmount0, uint256 centerAmount1) = _quotePositionWithdrawal(
+-            sqrtPriceX96, tick, UniswapV4PositionRepo.PositionKind.Center, sharesBurned, totalShares
+-        );
+-        (uint256 lowerWingAmount0, uint256 lowerWingAmount1) = _quotePositionWithdrawal(
+-            sqrtPriceX96, tick, UniswapV4PositionRepo.PositionKind.LowerWing, sharesBurned, totalShares
+-        );
+-        (uint256 upperWingAmount0, uint256 upperWingAmount1) = _quotePositionWithdrawal(
+-            sqrtPriceX96, tick, UniswapV4PositionRepo.PositionKind.UpperWing, sharesBurned, totalShares
+-        );
+-
+-        amount0 = centerAmount0 + lowerWingAmount0 + upperWingAmount0;
+-        amount1 = centerAmount1 + lowerWingAmount1 + upperWingAmount1;
++        return _quotePositionWithdrawal(sqrtPriceX96, tick, sharesBurned, totalShares);
+     }
+ 
+     function _quotePositionWithdrawal(
+         uint160 sqrtPriceX96,
+         int24 tick,
+-        UniswapV4PositionRepo.PositionKind kind,
+         uint256 sharesBurned,
+         uint256 totalShares
+     ) internal view returns (uint256 amount0, uint256 amount1) {
+-        uint128 currentLiquidity = _currentLiquidity(kind);
++        uint128 currentLiquidity = _currentLiquidity();
+         if (currentLiquidity == 0 || totalShares == 0) {
+             return (0, 0);
+         }
+@@ -664,7 +598,7 @@
+             return (0, 0);
+         }
+ 
+-        (int24 tickLower, int24 tickUpper) = UniswapV4PositionRepo._positionTicks(kind);
++        (int24 tickLower, int24 tickUpper) = UniswapV4PositionRepo._positionTicks();
+         return _amountsForLiquidityAtPrice(sqrtPriceX96, tick, tickLower, tickUpper, liquidityToBurn);
+     }
+ 
+@@ -691,19 +625,17 @@
+ 
+     function _freeBalancesForShareMath() internal view returns (uint256 free0, uint256 free1) {
+         (free0, free1) = _freeBalances();
+-        for (uint256 i; i < 3; ++i) {
+-            (uint256 fee0, uint256 fee1) = _collectablePositionFees(UniswapV4PositionRepo.PositionKind(i));
+-            free0 += fee0;
+-            free1 += fee1;
+-        }
+-    }
+-
+-    function _collectablePositionFees(UniswapV4PositionRepo.PositionKind kind)
++        (uint256 fee0, uint256 fee1) = _collectablePositionFees();
++        free0 += fee0;
++        free1 += fee1;
++    }
++
++    function _collectablePositionFees()
+         internal view returns (uint256 fee0, uint256 fee1)
+     {
+-        (uint128 liquidity, uint256 last0, uint256 last1) = _positionInfo(kind);
++        (uint128 liquidity, uint256 last0, uint256 last1) = _positionInfo();
+         if (liquidity == 0) return (0, 0);
+-        (int24 lower, int24 upper) = UniswapV4PositionRepo._positionTicks(kind);
++        (int24 lower, int24 upper) = UniswapV4PositionRepo._positionTicks();
+         (uint256 growth0, uint256 growth1) = StateLibrary.getFeeGrowthInside(_poolManager(), _poolId(), lower, upper);
+         unchecked {
+             fee0 = FullMath.mulDiv(growth0 - last0, liquidity, uint256(1) << 128);
+@@ -715,25 +647,22 @@
+     /// Views include uncollected fees even while the PoolManager is locked.
+     function _collectManagedFeesIfIdle() internal {
+         if (!canOpenPoolManagerUnlock()) return;
+-        for (uint256 i; i < 3; ++i) {
+-            UniswapV4PositionRepo.PositionKind kind = UniswapV4PositionRepo.PositionKind(i);
+-            (uint256 fee0, uint256 fee1) = _collectablePositionFees(kind);
+-            if (fee0 == 0 && fee1 == 0) continue;
+-            if (UniswapV4PositionRepo._isImportedPosition()) {
+-                bytes[] memory params = new bytes[](2);
+-                params[0] = abi.encode(UniswapV4PositionRepo._importedPositionTokenId(), uint256(0), uint128(0), uint128(0), bytes(""));
+-                params[1] = abi.encode(_currency0(), _currency1(), address(this));
+-                UniswapV4PositionRepo._importedPositionManager().modifyLiquidities(
+-                    abi.encode(abi.encodePacked(uint8(Actions.DECREASE_LIQUIDITY), uint8(Actions.TAKE_PAIR)), params),
+-                    block.timestamp
+-                );
+-            } else {
+-                (int24 lower, int24 upper) = UniswapV4PositionRepo._positionTicks(kind);
+-                _executeUnlock(OperationParams({
+-                    op: Operation.RemoveLiquidity, zeroForOne: false, amountSpecified: 0,
+-                    tickLower: lower, tickUpper: upper, liquidity: 0, salt: UniswapV4PositionRepo._salt(kind)
+-                }));
+-            }
++        (uint256 fee0, uint256 fee1) = _collectablePositionFees();
++        if (fee0 == 0 && fee1 == 0) return;
++        if (UniswapV4PositionRepo._isImportedPosition()) {
++            bytes[] memory params = new bytes[](2);
++            params[0] = abi.encode(UniswapV4PositionRepo._importedPositionTokenId(), uint256(0), uint128(0), uint128(0), bytes(""));
++            params[1] = abi.encode(_currency0(), _currency1(), address(this));
++            UniswapV4PositionRepo._importedPositionManager().modifyLiquidities(
++                abi.encode(abi.encodePacked(uint8(Actions.DECREASE_LIQUIDITY), uint8(Actions.TAKE_PAIR)), params),
++                block.timestamp
++            );
++        } else {
++            (int24 lower, int24 upper) = UniswapV4PositionRepo._positionTicks();
++            _executeUnlock(OperationParams({
++                op: Operation.RemoveLiquidity, zeroForOne: false, amountSpecified: 0,
++                tickLower: lower, tickUpper: upper, liquidity: 0, salt: UniswapV4PositionRepo._salt()
++            }));
+         }
+     }
+ 
+@@ -882,7 +811,6 @@
+     }
+ 
+     function _emitRebalanceEvent(uint256 liquidPct) internal {
+-        _refreshStoredLiquidity();
+         _syncVaultReserves();
+         (uint256 free0, uint256 free1) = _freeBalances();
+         (uint256 deployed0, uint256 deployed1) = _deployedAmounts();
+@@ -924,7 +852,7 @@
+                 tickLower: managedTicks.centerLower,
+                 tickUpper: managedTicks.centerUpper,
+                 liquidity: plan.centerLiquidity,
+-                salt: UniswapV4PositionRepo._salt(UniswapV4PositionRepo.PositionKind.Center)
++                salt: UniswapV4PositionRepo._salt()
+             })
+         );
+         moved = true;
+@@ -932,7 +860,7 @@
+ 
+     function _deployExcessImported(uint256 excess0, uint256 excess1) internal returns (bool moved) {
+         (int24 tickLower, int24 tickUpper) =
+-            UniswapV4PositionRepo._positionTicks(UniswapV4PositionRepo.PositionKind.Center);
++            UniswapV4PositionRepo._positionTicks();
+         (uint160 sqrtPriceX96,,,) = _slot0();
+         uint128 liquidity = LiquidityAmounts.getLiquidityForAmounts(
+             sqrtPriceX96,
+@@ -981,7 +909,7 @@
+         }
+ 
+         if (UniswapV4PositionRepo._isImportedPosition()) {
+-            uint128 liq = _currentLiquidity(UniswapV4PositionRepo.PositionKind.Center);
++            uint128 liq = _currentLiquidity();
+             uint128 toBurn = uint128((uint256(liq) * burnShares) / scale);
+             if (toBurn == 0) {
+                 return false;
+@@ -990,16 +918,16 @@
+             return true;
+         }
+ 
+-        if (_burnManagedLiquidityFraction(UniswapV4PositionRepo.PositionKind.Center, burnShares, scale)) {
++        if (_burnManagedLiquidityFraction(burnShares, scale)) {
+             moved = true;
+         }
+     }
+ 
+-    function _burnManagedLiquidityFraction(UniswapV4PositionRepo.PositionKind kind, uint256 burnShares, uint256 scale)
++    function _burnManagedLiquidityFraction(uint256 burnShares, uint256 scale)
+         internal
+         returns (bool)
+     {
+-        uint128 currentLiquidity = _currentLiquidity(kind);
++        uint128 currentLiquidity = _currentLiquidity();
+         if (currentLiquidity == 0) {
+             return false;
+         }
+@@ -1007,7 +935,7 @@
+         if (liquidityToBurn == 0) {
+             return false;
+         }
+-        (int24 tickLower, int24 tickUpper) = UniswapV4PositionRepo._positionTicks(kind);
++        (int24 tickLower, int24 tickUpper) = UniswapV4PositionRepo._positionTicks();
+         _executeUnlock(
+             OperationParams({
+                 op: Operation.RemoveLiquidity,
+@@ -1016,7 +944,7 @@
+                 tickLower: tickLower,
+                 tickUpper: tickUpper,
+                 liquidity: liquidityToBurn,
+-                salt: UniswapV4PositionRepo._salt(kind)
++                salt: UniswapV4PositionRepo._salt()
+             })
+         );
+         return true;
+@@ -1028,7 +956,7 @@
+         }
+         // D30: center only. Wings are not created.
+         UniswapV4PositionRepo._createPositionIfNeeded(
+-            UniswapV4PositionRepo.PositionKind.Center, managedTicks.centerLower, managedTicks.centerUpper
++            managedTicks.centerLower, managedTicks.centerUpper
+         );
+     }
+ 
+@@ -1193,8 +1121,8 @@
+         internal view returns (uint256)
+     {
+         if (amountIn == 0) return 0;
+-        (int24 lower, int24 upper) = UniswapV4PositionRepo._positionTicks(UniswapV4PositionRepo.PositionKind.Center);
+-        uint128 removed = uint128(FullMath.mulDiv(_currentLiquidity(UniswapV4PositionRepo.PositionKind.Center), sharesBurned, totalShares));
++        (int24 lower, int24 upper) = UniswapV4PositionRepo._positionTicks();
++        uint128 removed = uint128(FullMath.mulDiv(_currentLiquidity(), sharesBurned, totalShares));
+         UniswapV4Quoter.SwapQuoteResult memory quote = UniswapV4Quoter.quoteExactInputAfterLiquidityChange(
+             UniswapV4Quoter.SwapQuoteParams({
+                 manager: _poolManager(), key: _poolKey(), zeroForOne: zeroForOne, amount: amountIn,
+@@ -1249,27 +1177,24 @@
+     }
+ 
+     /**
+-     * @dev One full-range center. Wings unused (zero-width placeholders).
++     * @dev One full-range center; live pool state is authoritative.
+      *      Rebalance never recasts ticks.
+      */
+     function _deriveManagedTicks() internal view returns (ManagedTicks memory managedTicks) {
+         int24 tickSpacing = UniswapV4PoolKeyAwareRepo._tickSpacing();
+         managedTicks.centerLower = TickMath.minUsableTick(tickSpacing);
+         managedTicks.centerUpper = TickMath.maxUsableTick(tickSpacing);
+-        managedTicks.lowerWingLower = managedTicks.centerLower;
+-        managedTicks.lowerWingUpper = managedTicks.centerLower;
+-        managedTicks.upperWingLower = managedTicks.centerUpper;
+-        managedTicks.upperWingUpper = managedTicks.centerUpper;
+     }
+ 
+     /**
+-     * @dev D41/D42: Multi arrays must be exactly the two PoolKey currencies, unique, strictly ascending.
++     * @dev D41/D42: Multi arrays follow PoolKey order with native ETH represented by WETH.
++     *      The WETH face need not sort before currency1; exact identity/order rejects duplicates.
+      */
+     function _isDualPoolCurrencies(address[] calldata tokens) internal view returns (bool) {
+         if (tokens.length != 2) {
+             return false;
+         }
+-        if (tokens[0] >= tokens[1]) {
++        if (tokens[0] == tokens[1]) {
+             return false;
+         }
+         return tokens[0] == _token0() && tokens[1] == _token1();
+@@ -1305,7 +1230,7 @@
+         if (sharesBurned == 0 || totalShares == 0) {
+             return;
+         }
+-        uint128 currentLiquidity = _currentLiquidity(UniswapV4PositionRepo.PositionKind.Center);
++        uint128 currentLiquidity = _currentLiquidity();
+         if (currentLiquidity == 0) {
+             return;
+         }
+@@ -1318,7 +1243,7 @@
+             return;
+         }
+         (int24 tickLower, int24 tickUpper) =
+-            UniswapV4PositionRepo._positionTicks(UniswapV4PositionRepo.PositionKind.Center);
++            UniswapV4PositionRepo._positionTicks();
+         _executeUnlock(
+             OperationParams({
+                 op: Operation.RemoveLiquidity,
+@@ -1327,7 +1252,7 @@
+                 tickLower: tickLower,
+                 tickUpper: tickUpper,
+                 liquidity: liquidityToBurn,
+-                salt: UniswapV4PositionRepo._salt(UniswapV4PositionRepo.PositionKind.Center)
++                salt: UniswapV4PositionRepo._salt()
+             })
+         );
+     }
+--- a/contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInBase.sol
++++ b/contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInBase.sol
+@@ -190,9 +190,7 @@
+         uint256 otherBefore = IERC20(otherToken).balanceOf(address(this));
+         uint256 outBefore = IERC20(tokenOut).balanceOf(address(this));
+ 
+-        _burnPositionLiquidity(UniswapV4PositionRepo.PositionKind.Center, sharesBurned, totalShares);
+-        _burnPositionLiquidity(UniswapV4PositionRepo.PositionKind.LowerWing, sharesBurned, totalShares);
+-        _burnPositionLiquidity(UniswapV4PositionRepo.PositionKind.UpperWing, sharesBurned, totalShares);
++        _burnPositionLiquidity(sharesBurned, totalShares);
+ 
+         {
+             uint256 removedOther = IERC20(otherToken).balanceOf(address(this)) - otherBefore;
+@@ -204,8 +202,6 @@
+             }
+         }
+ 
+-        _refreshStoredLiquidity();
+-
+         amountOut = (IERC20(tokenOut).balanceOf(address(this)) - outBefore) + freeOutShare;
+         {
+             uint256 bal = IERC20(tokenOut).balanceOf(address(this));
+@@ -219,10 +215,10 @@
+         _rebalanceLiquidReserveBestEffort();
+     }
+ 
+-    function _burnPositionLiquidity(UniswapV4PositionRepo.PositionKind kind, uint256 sharesBurned, uint256 totalShares)
+-        internal
+-    {
+-        uint128 currentLiquidity = _currentLiquidity(kind);
++    function _burnPositionLiquidity(uint256 sharesBurned, uint256 totalShares)
++        internal
++    {
++        uint128 currentLiquidity = _currentLiquidity();
+         if (currentLiquidity == 0) {
+             return;
+         }
+@@ -233,9 +229,6 @@
+         }
+ 
+         if (UniswapV4PositionRepo._isImportedPosition()) {
+-            if (kind != UniswapV4PositionRepo.PositionKind.Center) {
+-                return;
+-            }
+ 
+             bytes memory actions = abi.encodePacked(uint8(Actions.DECREASE_LIQUIDITY), uint8(Actions.TAKE_PAIR));
+             bytes[] memory params = new bytes[](2);
+@@ -252,8 +245,8 @@
+             return;
+         }
+ 
+-        (int24 tickLower, int24 tickUpper) = UniswapV4PositionRepo._positionTicks(kind);
+-        _removeLiquidity(tickLower, tickUpper, liquidityToBurn, UniswapV4PositionRepo._salt(kind));
++        (int24 tickLower, int24 tickUpper) = UniswapV4PositionRepo._positionTicks();
++        _removeLiquidity(tickLower, tickUpper, liquidityToBurn, UniswapV4PositionRepo._salt());
+     }
+ 
+     /**
+--- a/contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutExecutionDelegate.sol
++++ b/contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutExecutionDelegate.sol
+@@ -113,9 +113,7 @@
+         uint256 otherBefore = IERC20(otherToken).balanceOf(address(this));
+         uint256 outBefore = IERC20(tokenOut).balanceOf(address(this));
+ 
+-        _burnPositionLiquidity(UniswapV4PositionRepo.PositionKind.Center, sharesBurned, totalShares);
+-        _burnPositionLiquidity(UniswapV4PositionRepo.PositionKind.LowerWing, sharesBurned, totalShares);
+-        _burnPositionLiquidity(UniswapV4PositionRepo.PositionKind.UpperWing, sharesBurned, totalShares);
++        _burnPositionLiquidity(sharesBurned, totalShares);
+ 
+         {
+             uint256 removedOther = IERC20(otherToken).balanceOf(address(this)) - otherBefore;
+@@ -136,17 +134,15 @@
+                 );
+             }
+         }
+-
+-        _refreshStoredLiquidity();
+         actualOut = (IERC20(tokenOut).balanceOf(address(this)) - outBefore) + freeOutShare;
+         uint256 bal = IERC20(tokenOut).balanceOf(address(this));
+         if (actualOut > bal) actualOut = bal;
+     }
+ 
+-    function _burnPositionLiquidity(UniswapV4PositionRepo.PositionKind kind, uint256 sharesBurned, uint256 totalShares)
++    function _burnPositionLiquidity(uint256 sharesBurned, uint256 totalShares)
+         internal
+     {
+-        uint128 currentLiquidity = _currentLiquidity(kind);
++        uint128 currentLiquidity = _currentLiquidity();
+         if (currentLiquidity == 0) {
+             return;
+         }
+@@ -157,9 +153,6 @@
+         }
+ 
+         if (UniswapV4PositionRepo._isImportedPosition()) {
+-            if (kind != UniswapV4PositionRepo.PositionKind.Center) {
+-                return;
+-            }
+ 
+             bytes memory actions = abi.encodePacked(uint8(Actions.DECREASE_LIQUIDITY), uint8(Actions.TAKE_PAIR));
+             bytes[] memory params = new bytes[](2);
+@@ -176,7 +169,7 @@
+             return;
+         }
+ 
+-        (int24 tickLower, int24 tickUpper) = UniswapV4PositionRepo._positionTicks(kind);
++        (int24 tickLower, int24 tickUpper) = UniswapV4PositionRepo._positionTicks();
+         _executeUnlock(
+             OperationParams({
+                 op: Operation.RemoveLiquidity,
+@@ -185,7 +178,7 @@
+                 tickLower: tickLower,
+                 tickUpper: tickUpper,
+                 liquidity: liquidityToBurn,
+-                salt: UniswapV4PositionRepo._salt(kind)
++                salt: UniswapV4PositionRepo._salt()
+             })
+         );
+     }
+--- a/contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiTarget.sol
++++ b/contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiTarget.sol
+@@ -85,7 +85,6 @@
+         _collectManagedFeesIfIdle();
+         // D3: idle dual exit uses PoolManager even if the sleeve would cover.
+         _burnCenterLiquidityForShares(state.sharesToBurn, state.totalShares);
+-        _refreshStoredLiquidity();
+         uint256 bal0 = IERC20(_token0()).balanceOf(address(this));
+         uint256 bal1 = IERC20(_token1()).balanceOf(address(this));
+         if (bal0 < state.amount0) {
+--- a/contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangePositionImportTarget.sol
++++ b/contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangePositionImportTarget.sol
+@@ -91,7 +91,6 @@
+         if (residual > 0) ERC20Repo._mint(DEAD_SHARES_SINK, residual);
+         ERC20Repo._mint(recipient, sharesOut);
+         _rebalanceLiquidReserveBestEffort();
+-        _refreshStoredLiquidity();
+         _syncVaultReserves();
+     }
+ 

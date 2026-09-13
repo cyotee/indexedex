@@ -1,0 +1,37 @@
+{
+  "status": "applied; validation pending",
+  "files": [
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+      "before": "fe65ebf5acdc59d725ae9eeaa52d7311369df9eb7603889810711d803fb79dab",
+      "after": "c3f544f15e6f4e72a5fdf34292679abd86f4b7b3dc2868c019869e1172ed3177"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_Stage11Helpers.sol",
+      "before": "283aa02566dc97ecfbca5f22a0b2acaf95e30a8873e54fdd058a7a66f95a3abe",
+      "after": "5aeef7849f8658994e4301347b9f9835f70690a811ad553c74ed5d72ee10ac8d"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+      "before": "016e63e57a1c5a20218356fa1f431749d5f816179af62c1cfe0fa6b219966fd1",
+      "after": "2f9958454cb56df18279a3bdade32b36fefcfa3d3136c808422b87e9e6ed49f2"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Stage11Helpers_Decimals.sol",
+      "before": "a16ad6e1c2352b202f479565dada29b4aba450940a787d68d1a5da738da0a962",
+      "after": "649aeadfc1e3a725fe5692cbe0cc7bad03896927fe081f28432b7bfbdf313e79"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg_Deploy.t.sol",
+      "before": "485abc5f09c7441aad9be18ac3e0f6ae34e4cd341ca312248cbaf48da5a03478",
+      "after": "c708eb10692c94855b7a7fccea9c667da0f33d5fb8af086487993fb6d6a5c6d6"
+    }
+  ],
+  "rationale": [
+    "Use typed position existence checks; the deployed Crane ERC721 ownerOf returns zero after burn.",
+    "Raw-price manipulation unstaking consumes only its newly claimed funded bond, preserving previously claimed staking receipts.",
+    "Pons opening-at-creation can still produce a premium; establish the no-premium test state through actual reserve swaps.",
+    "Acquire actual DETF before the locked-manager self-leg donation.",
+    "SE booked reserve includes deployed liquidity; prepayment surplus is measured against its face component."
+  ]
+}

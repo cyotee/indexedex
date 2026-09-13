@@ -1,5 +1,10 @@
 # Product Requirements Document (PRD)
 
+> **Current V4 close cleanup:** The owner explicitly approved removing `closeRouteMode` / `closeRoutes`, their getters and obsolete storage. New V4 deployments have mint, burn, bond and donation configuration only. Purchased bonds pay funded sDETF through principal/reward/combined claims; standard staking/exchange/SY exits remain. Historical close-configuration instructions below are superseded by the [funded plan](DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md) and its recorded owner approval. Balancer DETF exclusion (D60) and Slipstream deferral (D66) remain in force.
+
+> **Funded-design supersession (2026-09-07):** This document records earlier requirements or implementation evidence. For the authorized funded DETF refactor, [alignment PRD D32–D55 / §24](DETF_ALIGNMENT_PRD.md) and the [funded implementation plan](DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md) take precedence over conflicting Open-mode, LP-claim, rebasing, reward, epoch, decimal, cap and public-route instructions below. Unrelated host behavior remains applicable. Historical completion marks do not certify the funded refactor.
+
+
 ## Title
 
 **DETF instance I/O routing** — deploy-time mint, burn, bond, close, and donate route tables; Uni V4 hook quote + ABI unification (§15)
@@ -1276,7 +1281,7 @@ Do not invent a fourth path. If a case is not listed, it is **InvalidRoute** or 
 | | Legacy hook names in §15.12 deleted table |
 | | `via_ir`; SUT mocks |
 
-Deploy order: hook DFPkg (CREATE3-predicted DETF address as DETF currency **and** hook owner) → DETF DFPkg (`indexedexManager.deploy*DFPkg`) → Bond NFT + claim in `postDeploy` as peers do. Never `new` facets/DFPkgs.
+Deploy order: hook DFPkg (CREATE3-predicted DETF address as DETF currency **and** hook owner) → DETF DFPkg (`indexedexManager.deploy*DFPkg`) → Bond NFT + claim in `postDeploy` as peers do. Never `new` facets/DFPkgs. Hook init does not read ERC-20 metadata; token/SE decimals come from hook `PkgArgs`.
 
 `IDetf` single-leg getters (`pairToken()`, `rateAsset()`, `underlyingVault()`) are **not** this package’s discovery API (n can be > 1). Discovery is `hook.tokens()`, `hook.standardExchangeOf`, and the route-table getters. Keep `IDetf` for donate forwarder, thresholds, `acceptedBondTokens`, `detfNFTVault`, `rebasingClaimToken`. Do not implement `mintWithRateAsset`. `reservePool()` returns `hook` (same alias as today’s CP `reserveHook`).
 

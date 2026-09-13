@@ -1,0 +1,90 @@
+*** Begin Patch
+*** Update File: /private/tmp/indexedex-detf-funded-staking-impl/contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol
+@@
+         facets = facetAddresses();
+     }
+ 
+-    function facetCuts() public view returns (IDiamond.FacetCut[] memory cuts) {
+-        cuts = new IDiamond.FacetCut[](4);
+-        cuts[0] = IDiamond.FacetCut({
+-            facetAddress: address(MULTI_STEP_OWNABLE_FACET),
+-            action: IDiamond.FacetCutAction.Add,
+-            functionSelectors: MULTI_STEP_OWNABLE_FACET.facetFuncs()
+-        });
+-        cuts[1] = IDiamond.FacetCut({
+-            facetAddress: address(MULTI_ASSET_BASIC_VAULT_FACET),
+-            action: IDiamond.FacetCutAction.Add,
+-            functionSelectors: MULTI_ASSET_BASIC_VAULT_FACET.facetFuncs()
+-        });
+-        cuts[2] = IDiamond.FacetCut({
+-            facetAddress: address(MULTI_ASSET_STANDARD_VAULT_FACET),
+-            action: IDiamond.FacetCutAction.Add,
+-            functionSelectors: MULTI_ASSET_STANDARD_VAULT_FACET.facetFuncs()
+-        });
+-        cuts[3] = IDiamond.FacetCut({
+-            facetAddress: address(SELF),
+-            action: IDiamond.FacetCutAction.Add,
+-            functionSelectors: facetFuncs()
+-        });
+-    }
+-
+-    function productionFacetCuts() public view returns (IDiamond.FacetCut[] memory cuts) {
+-        cuts = new IDiamond.FacetCut[](7);
+-        cuts[0] = IDiamond.FacetCut({
+-            facetAddress: address(HOOKS_FACET),
+-            action: IDiamond.FacetCutAction.Add,
+-            functionSelectors: HOOKS_FACET.facetFuncs()
+-        });
+-        cuts[1] = IDiamond.FacetCut({
+-            facetAddress: address(JOIN_FACET),
+-            action: IDiamond.FacetCutAction.Add,
+-            functionSelectors: JOIN_FACET.facetFuncs()
+-        });
+-        cuts[2] = IDiamond.FacetCut({
+-            facetAddress: address(EXIT_FACET),
+-            action: IDiamond.FacetCutAction.Add,
+-            functionSelectors: EXIT_FACET.facetFuncs()
+-        });
+-        cuts[3] = IDiamond.FacetCut({
+-            facetAddress: address(SE_FACET),
+-            action: IDiamond.FacetCutAction.Add,
+-            functionSelectors: SE_FACET.facetFuncs()
+-        });
+-        cuts[4] = IDiamond.FacetCut({
+-            facetAddress: address(ERC20_FACET),
+-            action: IDiamond.FacetCutAction.Add,
+-            functionSelectors: ERC20_FACET.facetFuncs()
+-        });
+-        cuts[5] = IDiamond.FacetCut({
+-            facetAddress: address(ERC5267_FACET),
+-            action: IDiamond.FacetCutAction.Add,
+-            functionSelectors: ERC5267_FACET.facetFuncs()
+-        });
+-        cuts[6] = IDiamond.FacetCut({
+-            facetAddress: address(ERC2612_FACET),
+-            action: IDiamond.FacetCutAction.Add,
+-            functionSelectors: ERC2612_FACET.facetFuncs()
+-        });
++    function facetCuts() public view returns (IDiamond.FacetCut[] memory) {
++        return _facetCuts(0, 4);
++    }
++
++    function productionFacetCuts() public view returns (IDiamond.FacetCut[] memory) {
++        return _facetCuts(4, 7);
++    }
++
++    /// @dev Both deployment stages use the canonical facet order, preserving every selector.
++    function _facetCuts(uint256 offset_, uint256 count_) private view returns (IDiamond.FacetCut[] memory cuts_) {
++        address[] memory facets_ = facetAddresses();
++        cuts_ = new IDiamond.FacetCut[](count_);
++        for (uint256 i; i < count_; ++i) {
++            address facet_ = facets_[offset_ + i];
++            cuts_[i] = IDiamond.FacetCut({
++                facetAddress: facet_, action: IDiamond.FacetCutAction.Add,
++                functionSelectors: IFacet(facet_).facetFuncs()
++            });
++        }
+     }
+ 
+     function finalizeInitialization() public override nonReentrant returns (bool) {
+*** End Patch

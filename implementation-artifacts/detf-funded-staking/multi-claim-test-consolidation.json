@@ -1,0 +1,363 @@
+{
+  "decision": "D32/D35/D53 and plan 11.1.1 replace mature LP-position sale/redeemClaim with fully funded sDETF claims and Standard Exchange 1:1 unstaking. Native-decimal reserve-route coverage and actual pending LP-only purchases remain.",
+  "validation": "aerodrome-funded-exact-output-and-claims-run.json",
+  "retired_files": 10,
+  "rows": [
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_Claim.t.sol",
+      "sha256": "a23443f84dce6ba96acf5ec60cd802424caa98ed2d7a57704c006115b5c1e00b",
+      "old_test": "test_claimToken_wiredOnDeploy",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiNativeMetadataAndRegisteredChildSYs"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_Claim.t.sol",
+      "sha256": "a23443f84dce6ba96acf5ec60cd802424caa98ed2d7a57704c006115b5c1e00b",
+      "old_test": "test_sellNFT_mintsClaim_thenRedeemToRateAsset",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiHalfwayClaimAndUnstakeDoNotWithdrawLP",
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_Claim.t.sol",
+      "sha256": "a23443f84dce6ba96acf5ec60cd802424caa98ed2d7a57704c006115b5c1e00b",
+      "old_test": "test_redeemClaim_unconfiguredRateAsset_reverts",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+        "contracts/test/bases/FundedBondCloseAssertions.sol#_assertHostStakeRoundTrip"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_Claim.t.sol",
+      "sha256": "a23443f84dce6ba96acf5ec60cd802424caa98ed2d7a57704c006115b5c1e00b",
+      "old_test": "test_redeemClaim_withoutClaimInventory_reverts",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+        "contracts/test/bases/FundedBondCloseAssertions.sol#_assertClaimedStakeUnstakes"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_ALL6.t.sol",
+      "sha256": "f87972150901ce6af388ad7fba334992a5db6878a66659bc1b505a858686676a",
+      "old_test": "test_claimToken_wiredOnDeploy",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiNativeMetadataAndRegisteredChildSYs"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_ALL6.t.sol",
+      "sha256": "f87972150901ce6af388ad7fba334992a5db6878a66659bc1b505a858686676a",
+      "old_test": "test_sellNFT_mintsClaim_thenRedeemToRateAsset",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiHalfwayClaimAndUnstakeDoNotWithdrawLP",
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_ALL6.t.sol",
+      "sha256": "f87972150901ce6af388ad7fba334992a5db6878a66659bc1b505a858686676a",
+      "old_test": "test_redeemClaim_unconfiguredRateAsset_reverts",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+        "contracts/test/bases/FundedBondCloseAssertions.sol#_assertHostStakeRoundTrip"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_ALL6.t.sol",
+      "sha256": "f87972150901ce6af388ad7fba334992a5db6878a66659bc1b505a858686676a",
+      "old_test": "test_redeemClaim_withoutClaimInventory_reverts",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+        "contracts/test/bases/FundedBondCloseAssertions.sol#_assertClaimedStakeUnstakes"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_ALL9.t.sol",
+      "sha256": "32ce8a6e4337d9844ef0e9a79151e9a7e8a55970f407cbc267fc098b4376e902",
+      "old_test": "test_claimToken_wiredOnDeploy",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiNativeMetadataAndRegisteredChildSYs"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_ALL9.t.sol",
+      "sha256": "32ce8a6e4337d9844ef0e9a79151e9a7e8a55970f407cbc267fc098b4376e902",
+      "old_test": "test_sellNFT_mintsClaim_thenRedeemToRateAsset",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiHalfwayClaimAndUnstakeDoNotWithdrawLP",
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_ALL9.t.sol",
+      "sha256": "32ce8a6e4337d9844ef0e9a79151e9a7e8a55970f407cbc267fc098b4376e902",
+      "old_test": "test_redeemClaim_unconfiguredRateAsset_reverts",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+        "contracts/test/bases/FundedBondCloseAssertions.sol#_assertHostStakeRoundTrip"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_ALL9.t.sol",
+      "sha256": "32ce8a6e4337d9844ef0e9a79151e9a7e8a55970f407cbc267fc098b4376e902",
+      "old_test": "test_redeemClaim_withoutClaimInventory_reverts",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+        "contracts/test/bases/FundedBondCloseAssertions.sol#_assertClaimedStakeUnstakes"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_P18_R6.t.sol",
+      "sha256": "ae1e382501a8e61163ab3ff1071d5ef72532fc161a25a97a913839778936022b",
+      "old_test": "test_claimToken_wiredOnDeploy",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiNativeMetadataAndRegisteredChildSYs"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_P18_R6.t.sol",
+      "sha256": "ae1e382501a8e61163ab3ff1071d5ef72532fc161a25a97a913839778936022b",
+      "old_test": "test_sellNFT_mintsClaim_thenRedeemToRateAsset",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiHalfwayClaimAndUnstakeDoNotWithdrawLP",
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_P18_R6.t.sol",
+      "sha256": "ae1e382501a8e61163ab3ff1071d5ef72532fc161a25a97a913839778936022b",
+      "old_test": "test_redeemClaim_unconfiguredRateAsset_reverts",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+        "contracts/test/bases/FundedBondCloseAssertions.sol#_assertHostStakeRoundTrip"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_P18_R6.t.sol",
+      "sha256": "ae1e382501a8e61163ab3ff1071d5ef72532fc161a25a97a913839778936022b",
+      "old_test": "test_redeemClaim_withoutClaimInventory_reverts",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+        "contracts/test/bases/FundedBondCloseAssertions.sol#_assertClaimedStakeUnstakes"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_P18_R9.t.sol",
+      "sha256": "13117ceab6fcd38a8a1172a72845285a00c6af9e81f39ef609eec9d541184cde",
+      "old_test": "test_claimToken_wiredOnDeploy",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiNativeMetadataAndRegisteredChildSYs"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_P18_R9.t.sol",
+      "sha256": "13117ceab6fcd38a8a1172a72845285a00c6af9e81f39ef609eec9d541184cde",
+      "old_test": "test_sellNFT_mintsClaim_thenRedeemToRateAsset",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiHalfwayClaimAndUnstakeDoNotWithdrawLP",
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_P18_R9.t.sol",
+      "sha256": "13117ceab6fcd38a8a1172a72845285a00c6af9e81f39ef609eec9d541184cde",
+      "old_test": "test_redeemClaim_unconfiguredRateAsset_reverts",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+        "contracts/test/bases/FundedBondCloseAssertions.sol#_assertHostStakeRoundTrip"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_P18_R9.t.sol",
+      "sha256": "13117ceab6fcd38a8a1172a72845285a00c6af9e81f39ef609eec9d541184cde",
+      "old_test": "test_redeemClaim_withoutClaimInventory_reverts",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+        "contracts/test/bases/FundedBondCloseAssertions.sol#_assertClaimedStakeUnstakes"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_P6_R18.t.sol",
+      "sha256": "225ad906c59e39283cbad37e15475ca3ff0389ec3db07dc0c910e856b9ea15a9",
+      "old_test": "test_claimToken_wiredOnDeploy",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiNativeMetadataAndRegisteredChildSYs"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_P6_R18.t.sol",
+      "sha256": "225ad906c59e39283cbad37e15475ca3ff0389ec3db07dc0c910e856b9ea15a9",
+      "old_test": "test_sellNFT_mintsClaim_thenRedeemToRateAsset",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiHalfwayClaimAndUnstakeDoNotWithdrawLP",
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_P6_R18.t.sol",
+      "sha256": "225ad906c59e39283cbad37e15475ca3ff0389ec3db07dc0c910e856b9ea15a9",
+      "old_test": "test_redeemClaim_unconfiguredRateAsset_reverts",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+        "contracts/test/bases/FundedBondCloseAssertions.sol#_assertHostStakeRoundTrip"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_P6_R18.t.sol",
+      "sha256": "225ad906c59e39283cbad37e15475ca3ff0389ec3db07dc0c910e856b9ea15a9",
+      "old_test": "test_redeemClaim_withoutClaimInventory_reverts",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+        "contracts/test/bases/FundedBondCloseAssertions.sol#_assertClaimedStakeUnstakes"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_P6_R9.t.sol",
+      "sha256": "5c61623ac6fd9b34c61a4f81472b27f412867e9f9060024b6568c01b93149353",
+      "old_test": "test_claimToken_wiredOnDeploy",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiNativeMetadataAndRegisteredChildSYs"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_P6_R9.t.sol",
+      "sha256": "5c61623ac6fd9b34c61a4f81472b27f412867e9f9060024b6568c01b93149353",
+      "old_test": "test_sellNFT_mintsClaim_thenRedeemToRateAsset",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiHalfwayClaimAndUnstakeDoNotWithdrawLP",
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_P6_R9.t.sol",
+      "sha256": "5c61623ac6fd9b34c61a4f81472b27f412867e9f9060024b6568c01b93149353",
+      "old_test": "test_redeemClaim_unconfiguredRateAsset_reverts",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+        "contracts/test/bases/FundedBondCloseAssertions.sol#_assertHostStakeRoundTrip"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_P6_R9.t.sol",
+      "sha256": "5c61623ac6fd9b34c61a4f81472b27f412867e9f9060024b6568c01b93149353",
+      "old_test": "test_redeemClaim_withoutClaimInventory_reverts",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+        "contracts/test/bases/FundedBondCloseAssertions.sol#_assertClaimedStakeUnstakes"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_P9_R18.t.sol",
+      "sha256": "3cd68d443937b14bb2b284f85de9bfc1db7363d8dcfd95129b0f37e7aeb1f25b",
+      "old_test": "test_claimToken_wiredOnDeploy",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiNativeMetadataAndRegisteredChildSYs"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_P9_R18.t.sol",
+      "sha256": "3cd68d443937b14bb2b284f85de9bfc1db7363d8dcfd95129b0f37e7aeb1f25b",
+      "old_test": "test_sellNFT_mintsClaim_thenRedeemToRateAsset",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiHalfwayClaimAndUnstakeDoNotWithdrawLP",
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_P9_R18.t.sol",
+      "sha256": "3cd68d443937b14bb2b284f85de9bfc1db7363d8dcfd95129b0f37e7aeb1f25b",
+      "old_test": "test_redeemClaim_unconfiguredRateAsset_reverts",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+        "contracts/test/bases/FundedBondCloseAssertions.sol#_assertHostStakeRoundTrip"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_P9_R18.t.sol",
+      "sha256": "3cd68d443937b14bb2b284f85de9bfc1db7363d8dcfd95129b0f37e7aeb1f25b",
+      "old_test": "test_redeemClaim_withoutClaimInventory_reverts",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+        "contracts/test/bases/FundedBondCloseAssertions.sol#_assertClaimedStakeUnstakes"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_P9_R6.t.sol",
+      "sha256": "ee8f5f0fa6099fd58e2d9584d24f84049fbde2a1c9e598e303cf5d5cd3626ed1",
+      "old_test": "test_claimToken_wiredOnDeploy",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiNativeMetadataAndRegisteredChildSYs"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_P9_R6.t.sol",
+      "sha256": "ee8f5f0fa6099fd58e2d9584d24f84049fbde2a1c9e598e303cf5d5cd3626ed1",
+      "old_test": "test_sellNFT_mintsClaim_thenRedeemToRateAsset",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiHalfwayClaimAndUnstakeDoNotWithdrawLP",
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_P9_R6.t.sol",
+      "sha256": "ee8f5f0fa6099fd58e2d9584d24f84049fbde2a1c9e598e303cf5d5cd3626ed1",
+      "old_test": "test_redeemClaim_unconfiguredRateAsset_reverts",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+        "contracts/test/bases/FundedBondCloseAssertions.sol#_assertHostStakeRoundTrip"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_B_P9_R6.t.sol",
+      "sha256": "ee8f5f0fa6099fd58e2d9584d24f84049fbde2a1c9e598e303cf5d5cd3626ed1",
+      "old_test": "test_redeemClaim_withoutClaimInventory_reverts",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+        "contracts/test/bases/FundedBondCloseAssertions.sol#_assertClaimedStakeUnstakes"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_Decimals.sol",
+      "sha256": "9e6d50a68aad18eea4bb52ad24550f548d8296b31a5e063854a105eab2f748b9",
+      "old_test": "test_claimToken_wiredOnDeploy",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiNativeMetadataAndRegisteredChildSYs"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_Decimals.sol",
+      "sha256": "9e6d50a68aad18eea4bb52ad24550f548d8296b31a5e063854a105eab2f748b9",
+      "old_test": "test_sellNFT_mintsClaim_thenRedeemToRateAsset",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiHalfwayClaimAndUnstakeDoNotWithdrawLP",
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_Decimals.sol",
+      "sha256": "9e6d50a68aad18eea4bb52ad24550f548d8296b31a5e063854a105eab2f748b9",
+      "old_test": "test_redeemClaim_unconfiguredRateAsset_reverts",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+        "contracts/test/bases/FundedBondCloseAssertions.sol#_assertHostStakeRoundTrip"
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Claim_Decimals.sol",
+      "sha256": "9e6d50a68aad18eea4bb52ad24550f548d8296b31a5e063854a105eab2f748b9",
+      "old_test": "test_redeemClaim_withoutClaimInventory_reverts",
+      "replacements": [
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+        "contracts/test/bases/FundedBondCloseAssertions.sol#_assertClaimedStakeUnstakes"
+      ]
+    }
+  ],
+  "bootstrap_disposition": {
+    "source": "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf.sol",
+    "helper": "_goLiveViaBptBond",
+    "sha256": "fd7c2fca59fa8ceb7985ebaa802f9e9a61f87b7bd96e053a99442602fd0ee34c",
+    "actual_behavior": "Despite the old helper name, it funds every SE-share leg and calls initializeReserve. These claim tests do not exercise LP-only bond payments."
+  }
+}

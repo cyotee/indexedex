@@ -1,0 +1,12 @@
+[
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_Decimals.sol",
+    "before_sha256": "e8895df943e702daa3b3aea8309c4f66963e32080dbd2ab126a2c45cfa1d9f71",
+    "after_sha256": "4a328bc552743b6a1b6d626661bb66731a27a9456a3990d3b89f65fdef9d9625"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_H9.t.sol",
+    "before_sha256": "063eec9fa0be7b7b8be88abf958db5b765d91970427958911307b9ca14cff8f6",
+    "after_sha256": "2c4584bd53ac91fe734988167369549ce1a28861026e38fe2c5b0edf74c56204"
+  }
+]

@@ -5,6 +5,7 @@ Public go-to-market materials for **DETFs** (Decentralized ETF product pattern).
 | Path | Purpose |
 |------|---------|
 | [`../docs/marketing/DETF_NARRATIVE_SPINE.md`](../docs/marketing/DETF_NARRATIVE_SPINE.md) | Canonical product claims (modes, disclaimers) |
+| [`content/`](./content/) | X education stills, loops, and visual references. Ideas: [`content/IDEAS.md`](./content/IDEAS.md) |
 | [`X_POSTS.md`](./X_POSTS.md) | X Premium long-form posts |
 | [`X_ACCOUNTS_TO_TAG.md`](./X_ACCOUNTS_TO_TAG.md) | Who to @, tiers, anti-patterns |
 | [`research-site/`](./research-site/) | Static public teaser (not deployed via GitHub Pages) |

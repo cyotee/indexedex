@@ -7,6 +7,7 @@ import {IStandardExchangeBufferPool} from
     "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPool.sol";
 import {TestBase_StandardExchangeBufferPool} from
     "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/bases/TestBase_StandardExchangeBufferPool.sol";
+import {DETFDecimalScaleLib} from "contracts/vaults/detf/common/core/DETFDecimalScaleLib.sol";
 
 /**
  * @title Behavior_StandardExchangeBufferPool_Swap_SharesToTTA
@@ -137,12 +138,19 @@ abstract contract Behavior_StandardExchangeBufferPool_Swap_SharesToTTA is Test {
             "swap_sharesToTTA: actual TTA returns to baseline"
         );
 
-        // (d) virtualTTA decreased by exactly Y_TTA (amountOut, 18-decimal TTA).
-        assertEq(
-            p.virtualTTA(),
-            vtPre - amountOut,
-            "swap_sharesToTTA: virtualTTA -= Y_TTA"
-        );
+        // (d) virtualTTA is Vault scaled18 (amountOutScaled18). amountOut is native TTA;
+        //     nativeToWad(raw) = floor(scaled18 / 10^k) * 10^k, so it can be up to
+        //     10^(18-decimals)-1 below the scaled18 the pool subtracted.
+        {
+            address ttaAddr = address(tb.tta());
+            uint256 scaleStep = DETFDecimalScaleLib.nativeToWad(ttaAddr, 1);
+            assertApproxEqAbs(
+                p.virtualTTA(),
+                vtPre - DETFDecimalScaleLib.nativeToWad(ttaAddr, amountOut),
+                scaleStep > 0 ? scaleStep - 1 : 0,
+                "swap_sharesToTTA: virtualTTA -= Y_TTA scaled18"
+            );
+        }
 
         // (e) hookSharesDelta decreased by S (shares redeemed by the hook during pre-seat).
         //     Net actual shares balance change:

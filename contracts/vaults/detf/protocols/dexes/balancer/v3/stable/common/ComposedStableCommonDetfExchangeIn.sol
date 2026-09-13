@@ -1,332 +1,79 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
-
-
-import {IFacet} from '@crane/contracts/interfaces/IFacet.sol';
-import {IERC20} from '@crane/contracts/interfaces/IERC20.sol';
-import {ReentrancyLockModifiers} from '@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol';
-import {BetterSafeERC20} from '@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol';
-import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
-import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
-import {IStandardExchangeProxy} from 'contracts/interfaces/proxies/IStandardExchangeProxy.sol';
-import {ComposedStableCommonDetfRepo} from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfRepo.sol';
-import {ComposedStableCommonDetfCommon} from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol';
-import {
-    IComposedStableCommonDetfInfo
-} from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/IComposedStableCommonDetfInfo.sol';
-import {ThresholdMode} from 'contracts/vaults/detf/common/core/DETFThresholdPolicy.sol';
-
-contract ComposedStableCommonDetfExchangeIn is
-    ComposedStableCommonDetfCommon,
-    ReentrancyLockModifiers,
-    IStandardExchangeIn,
-    IComposedStableCommonDetfInfo,
-    IFacet
-{
+import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
+import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
+import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
+import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
+import {ComposedStableCommonDetfCommon} from "./ComposedStableCommonDetfCommon.sol";
+import {ComposedStableCommonDetfRepo as Repo} from "./ComposedStableCommonDetfRepo.sol";
+contract ComposedStableCommonDetfExchangeIn is ComposedStableCommonDetfCommon, ReentrancyLockModifiers, IFacet {
     using BetterSafeERC20 for IERC20;
-
-    function mintThreshold() external view returns (uint256) {
-        return ComposedStableCommonDetfRepo._mintThreshold();
-    }
-
-    function burnThreshold() external view returns (uint256) {
-        return ComposedStableCommonDetfRepo._burnThreshold();
-    }
-
-    function thresholdMode() external view returns (ThresholdMode) {
-        return ComposedStableCommonDetfRepo._thresholdMode();
-    }
-
-    function isMintingAllowed() external view returns (bool) {
-        return _isMintingAllowed();
-    }
-
-    function isBurningAllowed() external view returns (bool) {
-        return _isBurningAllowed();
-    }
-
-    function lastExpansionTimestamp() external view returns (uint256) {
-        return ComposedStableCommonDetfRepo._lastExpansionTimestamp();
-    }
-
-    function expansionClosureRatePerSecond() external view returns (uint256) {
-        return ComposedStableCommonDetfRepo._expansionClosureRatePerSecond();
-    }
-
-    function expansionCatchUpMaxSeconds() external view returns (uint256) {
-        return ComposedStableCommonDetfRepo._expansionCatchUpMaxSeconds();
-    }
-
-    function expansionCatchUpCapBps() external view returns (uint256) {
-        return ComposedStableCommonDetfRepo._expansionCatchUpCapBps();
-    }
-
-    /// @inheritdoc IComposedStableCommonDetfInfo
-    function compoundProtocolRewards() external returns (uint256 detfIn, uint256 bptOut) {
-        return _tryCompoundProtocolRewards();
-    }
-
-    /**
-     * @param tokenIn The token provided to the vault for an exchange.
-     * @param amountIn The amount of `tokenIn` the users wishes to exchange for `tokenOut`.
-     * @param tokenOut The token the caller wishes to receive in exchange for `tokenIn`.
-     * @return amountOut The amount of `tokenOut` the caller will receive in exchange for `amountIn` of `tokenIn`.
-     * @custom:selector 0x89d61912
-     */
-    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
-        external
-        view
-        returns (uint256 amountOut) {
-        if (amountIn == 0) {
-            return 0;
-        }
-
-        IERC20 detfToken = ComposedStableCommonDetfRepo._detfToken();
-        address claim_ = address(ComposedStableCommonDetfRepo._rebasingDetfToken());
-        if (address(tokenOut) == claim_ || address(tokenIn) == claim_) {
-            revert InvalidRoute(address(tokenIn), address(tokenOut));
-        }
-        if (address(tokenOut) == address(detfToken) && address(tokenIn) != address(detfToken)) {
-            uint256 syntheticPrice = _syntheticDetfEthPrice();
-            if (!_isMintingAllowed(syntheticPrice)) {
-                revert MintingNotAllowed(syntheticPrice, ComposedStableCommonDetfRepo._mintThreshold());
-            }
-
-            (RoutedPoolSelection memory selection,, uint256 poolBptOut) = _previewRoutedPoolBpt(tokenIn, amountIn);
-            return _previewMintSplit(poolBptOut, selection.depositToStablePool).userDetfOut;
-        }
-
-        if (address(tokenIn) == address(detfToken) && address(tokenOut) != address(detfToken)) {
-            uint256 syntheticPrice = _syntheticDetfEthPrice();
-            if (!_isBurningAllowed(syntheticPrice)) {
-                revert BurningNotAllowed(syntheticPrice, ComposedStableCommonDetfRepo._burnThreshold());
-            }
-
-            _requireReservePoolInitialized();
-            uint256 bptIn_ = _bptForDetfShares(amountIn);
-            amountOut = _previewExitSettle(bptIn_, tokenOut);
-            return amountOut;
-        }
-
-        revert InvalidRoute(address(tokenIn), address(tokenOut));
-    }
-
-    function _accrueMintInventory(
-        ComposedStableCommonDetfRepo.Storage storage layoutStruct_,
-        uint256 reservePoolBptOut_,
-        uint256 inventoryDetfOut_
-    ) internal {
-        IDETFNFTVault bondNftVault = ComposedStableCommonDetfRepo._bondNftVault(layoutStruct_);
-        if (address(bondNftVault) == address(0)) {
-            revert ExchangeInNotAvailable();
-        }
-
-        // D11: live mint LP may join non-DETF capital; do not mint originalShares (NAV change).
-        reservePoolBptOut_;
-
-        if (inventoryDetfOut_ > 0) {
-            _mintDetf(address(bondNftVault), inventoryDetfOut_);
-        }
-    }
-
-    function _executeReservePoolSwapExactIn(ExactInUnwindSelection memory selection_, uint256 exactAmountIn_, uint256 deadline_)
-        internal
-        returns (uint256 poolBptAmountOut_)
+    function exchangeIn(IERC20 in_, uint256 amount_, IERC20 out_, uint256 minimum_, address to_, bool prepaid_, uint256 deadline_)
+        external nonReentrant returns (uint256 received_)
     {
-        ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
-        IERC20 detfToken = ComposedStableCommonDetfRepo._detfToken(layoutStruct);
-
-        _approvePermit2Spend(detfToken, exactAmountIn_, false);
-
-        poolBptAmountOut_ = ComposedStableCommonDetfRepo._balancerV3Router(layoutStruct).swapSingleTokenExactIn(
-            address(ComposedStableCommonDetfRepo._reservePool(layoutStruct)),
-            detfToken,
-            IStandardExchangeProxy(address(0)),
-            selection_.poolBptToken,
-            IStandardExchangeProxy(address(0)),
-            exactAmountIn_,
-            0,
-            deadline_,
-            false,
-            ''
-        );
-    }
-
-    function _executeMintRoute(IStandardExchangeIn.InArgs memory args_) internal returns (uint256 amountOut_) {
-        _ensureReservedBondNftsWired();
+        _requireActive(deadline_, amount_);
+        if (in_ == out_) revert InvalidRoute(address(in_), address(out_));
+        if (to_ == address(0)) to_ = msg.sender;
         _updateExpansionMintOnRewards();
-        uint256 syntheticPrice = _syntheticDetfEthPrice();
-        if (!_isMintingAllowed(syntheticPrice)) {
-            revert MintingNotAllowed(syntheticPrice, ComposedStableCommonDetfRepo._mintThreshold());
-        }
-
-        RoutedPoolSelection memory selection = _selectRoutingPath(args_.tokenIn);
-        ComposedStableCommonDetfRepo.RouteConfig storage route = ComposedStableCommonDetfRepo._routeAt(
-            ComposedStableCommonDetfRepo._layoutStruct(), selection.routeIndex
-        );
-
-        uint256 actualIn = _secureTokenTransfer(args_.tokenIn, args_.amountIn, args_.pretransferred);
-        uint256 poolBptOut =
-            _executeRoutedEntryToPoolBptShared(route, selection, args_.tokenIn, actualIn, args_.deadline);
-
-        MintSplit memory mintSplit = _previewMintSplit(poolBptOut, selection.depositToStablePool);
-
-        amountOut_ = mintSplit.userDetfOut;
-        if (amountOut_ < args_.minAmountOut) {
-            revert SlippageExceeded(args_.minAmountOut, amountOut_);
-        }
-
-        ComposedStableCommonDetfRepo.Storage storage layoutStruct = ComposedStableCommonDetfRepo._layoutStruct();
-        uint256 reservePoolBptOut = _depositIntoReservePoolShared(layoutStruct, selection, poolBptOut, args_.deadline);
-
-        _accrueMintInventory(layoutStruct, reservePoolBptOut, mintSplit.inventoryDetfOut);
-        _mintDetf(args_.recipient == address(0) ? msg.sender : args_.recipient, amountOut_);
-        // Lazy protocol seigniorage compound (best-effort; never fails user mint).
-        _tryCompoundProtocolRewards();
+        IERC20 staking_ = IERC20(address(Repo._layoutStruct().rebasingDetfToken));
+        if (in_ == staking_) {
+            _secureTokenTransfer(in_, amount_, prepaid_);
+            IStakedDETF(address(staking_)).exchangeIn(staking_, amount_, IERC20(address(this)), amount_, address(this), false, deadline_);
+            if (address(out_) == address(this)) { received_ = amount_; out_.safeTransfer(to_, received_); }
+            else received_ = _burnHeld(amount_, out_, to_, deadline_);
+        } else if (out_ == staking_) {
+            uint256 raw_ = address(in_) == address(this) ? _secureTokenTransfer(in_, amount_, prepaid_) : _acquireDetf(in_, amount_, prepaid_, deadline_);
+            IERC20(address(this)).forceApprove(address(staking_), raw_);
+            received_ = IStakedDETF(address(staking_)).exchangeIn(IERC20(address(this)), raw_, staking_, minimum_, to_, false, deadline_);
+            IERC20(address(this)).forceApprove(address(staking_), 0);
+        } else if (address(in_) == address(this)) {
+            received_ = _burnHeld(_secureTokenTransfer(in_, amount_, prepaid_), out_, to_, deadline_);
+        } else if (address(out_) == address(this)) {
+            received_ = _acquireDetf(in_, amount_, prepaid_, deadline_); out_.safeTransfer(to_, received_);
+        } else revert InvalidRoute(address(in_), address(out_));
+        if (received_ < minimum_) revert SlippageExceeded(minimum_, received_);
         _syncAllExpectedHoldReserves();
     }
-
-    function _executeBurnRoute(IStandardExchangeIn.InArgs memory args_) internal returns (uint256 amountOut_) {
+    function _acquireDetf(IERC20 in_, uint256 amount_, bool prepaid_, uint256 deadline_) internal returns (uint256) {
         _requireReservePoolInitialized();
-        _updateExpansionMintOnRewards();
-
-        uint256 syntheticPrice = _syntheticDetfEthPrice();
-        if (!_isBurningAllowed(syntheticPrice)) {
-            revert BurningNotAllowed(syntheticPrice, ComposedStableCommonDetfRepo._burnThreshold());
-        }
-
-        if (!_isFamilyBurnToken(args_.tokenOut)) {
-            revert InvalidRoute(address(args_.tokenIn), address(args_.tokenOut));
-        }
-
-        uint256 actualIn = _secureTokenTransfer(args_.tokenIn, args_.amountIn, args_.pretransferred);
-        uint256 bptIn_ = _bptForDetfShares(actualIn);
-        if (bptIn_ == 0) revert ZeroAmount();
-        _burnDetf(address(this), actualIn);
-
-        amountOut_ = _exitRedepositSettle(
-            bptIn_,
-            args_.tokenOut,
-            args_.minAmountOut,
-            args_.recipient == address(0) ? msg.sender : args_.recipient,
-            args_.deadline
-        );
-        _syncAllExpectedHoldReserves();
+        bool primary_ = _isMintingAllowed();
+        (RoutedPoolSelection memory route_, uint256 bpt_) = _collectRoutedBpt(in_, amount_, prepaid_, deadline_);
+        if (!primary_) return _reserveSwap(address(Repo._layoutStruct().reservePool), route_.poolBptToken, IERC20(address(this)), bpt_, 0);
+        MintSplit memory split_ = _previewMintSplit(bpt_, route_.depositToStablePool);
+        _joinReserve(0, route_.depositToStablePool ? bpt_ : 0, route_.depositToStablePool ? 0 : bpt_, false);
+        _mintDetf(address(this), split_.userDetfOut);
+        _fundStakingRewards(split_.inventoryDetfOut);
+        return split_.userDetfOut;
     }
-
-    /**
-     * @param tokenIn The token provided to the vault for an exchange.
-     * @param amountIn The amount of `tokenIn` the users wishes to exchange for `tokenOut`.
-     * @param tokenOut The token the caller wishes to receive in exchange for `tokenIn`.
-     * @param minAmountOut The minimum amount of `tokenOut` the caller is willing to accept.
-     * @param recipient The address to receive the `tokenOut` tokens.
-     * @param pretransferred Whether the `tokenIn` tokens have already been transferred to the vault.
-     * @return amountOut The amount of `tokenOut` the caller has received in exchange for `amountIn` of `tokenIn`.
-     * @custom:selector 0x05562cc8
-     */
-    function exchangeIn(
-        IERC20 tokenIn,
-        uint256 amountIn,
-        IERC20 tokenOut,
-        uint256 minAmountOut,
-        address recipient,
-        bool pretransferred,
-        uint256 deadline
-    ) external nonReentrant returns (uint256 amountOut) {
-        if (block.timestamp > deadline) {
-            revert DeadlineExceeded(deadline, block.timestamp);
+    function _burnHeld(uint256 amount_, IERC20 out_, address to_, uint256 deadline_) internal returns (uint256 received_) {
+        _requireReservePoolInitialized();
+        if (!_isFamilyBurnToken(out_)) revert InvalidRoute(address(this), address(out_));
+        if (_isBurningAllowed()) {
+            uint256 lp_ = _bptForDetfShares(amount_, false);
+            if (lp_ == 0) revert ZeroAmount();
+            _burnDetf(address(this), amount_);
+            (uint256 self_, uint256 stable_, uint256 common_) = _exitReserveProportional(lp_);
+            if (self_ != 0) _joinReserve(self_, 0, 0, false);
+            return _consolidatePoolBptsToTokenOut(stable_, common_, out_, to_, deadline_);
         }
-        if (amountIn == 0) {
-            revert ZeroAmount();
-        }
-
-        IERC20 detfToken = ComposedStableCommonDetfRepo._detfToken();
-        address claim_ = address(ComposedStableCommonDetfRepo._rebasingDetfToken());
-        if (address(tokenOut) == claim_ || address(tokenIn) == claim_) {
-            revert InvalidRoute(address(tokenIn), address(tokenOut));
-        }
-        if (address(tokenOut) == address(detfToken) && address(tokenIn) != address(detfToken)) {
-            return _executeMintRoute(
-                IStandardExchangeIn.InArgs({
-                    tokenIn: tokenIn,
-                    amountIn: amountIn,
-                    tokenOut: tokenOut,
-                    minAmountOut: minAmountOut,
-                    recipient: recipient,
-                    pretransferred: pretransferred,
-                    deadline: deadline
-                })
-            );
-        }
-
-        if (address(tokenIn) == address(detfToken) && address(tokenOut) != address(detfToken)) {
-            return _executeBurnRoute(
-                IStandardExchangeIn.InArgs({
-                    tokenIn: tokenIn,
-                    amountIn: amountIn,
-                    tokenOut: tokenOut,
-                    minAmountOut: minAmountOut,
-                    recipient: recipient,
-                    pretransferred: pretransferred,
-                    deadline: deadline
-                })
-            );
-        }
-
-        revert InvalidRoute(address(tokenIn), address(tokenOut));
+        ExactInUnwindSelection memory path_ = _selectExactInExit(out_, amount_);
+        received_ = _reserveSwap(address(Repo._layoutStruct().reservePool), IERC20(address(this)), path_.poolBptToken, amount_, 0);
+        return _deliverExit(path_, received_, out_, to_, deadline_);
     }
-
-    function facetName() external pure returns (string memory name_) {
-        return type(ComposedStableCommonDetfExchangeIn).name;
+    function facetName() public pure returns (string memory) { return type(ComposedStableCommonDetfExchangeIn).name; }
+    function facetInterfaces() public pure returns (bytes4[] memory a_) {
+        a_ = new bytes4[](1);
+        a_[0] = type(IStandardExchangeIn).interfaceId;
     }
-
-    function facetInterfaces() external pure returns (bytes4[] memory interfaces_) {
-        interfaces_ = new bytes4[](2);
-        interfaces_[0] = type(IStandardExchangeIn).interfaceId;
-        interfaces_[1] = type(IComposedStableCommonDetfInfo).interfaceId;
+    function facetFuncs() public pure returns (bytes4[] memory a_) {
+        a_ = new bytes4[](2);
+        a_[0] = IStandardExchangeIn.exchangeIn.selector;
+        a_[1] = this.executeReserveSwap.selector;
     }
-
-    function facetFuncs() external pure returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](13);
-        funcs_[0] = IStandardExchangeIn.previewExchangeIn.selector;
-        funcs_[1] = IStandardExchangeIn.exchangeIn.selector;
-        funcs_[2] = IComposedStableCommonDetfInfo.mintThreshold.selector;
-        funcs_[3] = IComposedStableCommonDetfInfo.burnThreshold.selector;
-        funcs_[4] = IComposedStableCommonDetfInfo.thresholdMode.selector;
-        funcs_[5] = IComposedStableCommonDetfInfo.isMintingAllowed.selector;
-        funcs_[6] = IComposedStableCommonDetfInfo.isBurningAllowed.selector;
-        funcs_[7] = IComposedStableCommonDetfInfo.lastExpansionTimestamp.selector;
-        funcs_[8] = IComposedStableCommonDetfInfo.expansionClosureRatePerSecond.selector;
-        funcs_[9] = IComposedStableCommonDetfInfo.expansionCatchUpMaxSeconds.selector;
-        funcs_[10] = IComposedStableCommonDetfInfo.expansionCatchUpCapBps.selector;
-        funcs_[11] = IComposedStableCommonDetfInfo.compoundProtocolRewards.selector;
-        funcs_[12] = bytes4(keccak256('compoundProtocolRewardsAtomic()'));
-    }
-
-    function facetMetadata()
-        external
-        pure
-        returns (string memory name_, bytes4[] memory interfaces_, bytes4[] memory functions_)
-    {
-        name_ = type(ComposedStableCommonDetfExchangeIn).name;
-
-        interfaces_ = new bytes4[](2);
-        interfaces_[0] = type(IStandardExchangeIn).interfaceId;
-        interfaces_[1] = type(IComposedStableCommonDetfInfo).interfaceId;
-
-        functions_ = new bytes4[](13);
-        functions_[0] = IStandardExchangeIn.previewExchangeIn.selector;
-        functions_[1] = IStandardExchangeIn.exchangeIn.selector;
-        functions_[2] = IComposedStableCommonDetfInfo.mintThreshold.selector;
-        functions_[3] = IComposedStableCommonDetfInfo.burnThreshold.selector;
-        functions_[4] = IComposedStableCommonDetfInfo.thresholdMode.selector;
-        functions_[5] = IComposedStableCommonDetfInfo.isMintingAllowed.selector;
-        functions_[6] = IComposedStableCommonDetfInfo.isBurningAllowed.selector;
-        functions_[7] = IComposedStableCommonDetfInfo.lastExpansionTimestamp.selector;
-        functions_[8] = IComposedStableCommonDetfInfo.expansionClosureRatePerSecond.selector;
-        functions_[9] = IComposedStableCommonDetfInfo.expansionCatchUpMaxSeconds.selector;
-        functions_[10] = IComposedStableCommonDetfInfo.expansionCatchUpCapBps.selector;
-        functions_[11] = IComposedStableCommonDetfInfo.compoundProtocolRewards.selector;
-        functions_[12] = bytes4(keccak256('compoundProtocolRewardsAtomic()'));
+    function facetMetadata() external pure returns (string memory, bytes4[] memory, bytes4[] memory) {
+        return (facetName(), facetInterfaces(), facetFuncs());
     }
 }

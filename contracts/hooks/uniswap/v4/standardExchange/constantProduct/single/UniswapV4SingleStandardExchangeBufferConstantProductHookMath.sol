@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {ConstProdUtils} from "@crane/contracts/utils/math/ConstProdUtils.sol";
+import {FixedPointMathLib} from "@crane/contracts/utils/FixedPointMathLib.sol";
 import {
     UniswapV4SingleStandardExchangeBufferConstantProductHookRepo as Repo
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookRepo.sol";
@@ -12,6 +13,7 @@ import {
  */
 library UniswapV4SingleStandardExchangeBufferConstantProductHookMath {
     using ConstProdUtils for uint256;
+    error MathDomain();
 
     function toWad(uint256 amount, uint8 decimals) external pure returns (uint256) {
         if (decimals == 18) return amount;
@@ -59,9 +61,28 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookMath {
         pure
         returns (uint256)
     {
-        return ConstProdUtils._swapDepositSaleAmt(
-            amountIn, saleReserve, Repo.TRADING_FEE_PERCENT, Repo.TRADING_FEE_DENOMINATOR
-        );
+        if (amountIn <= 1e32 && saleReserve <= 1e32) {
+            return ConstProdUtils._swapDepositSaleAmt(
+                amountIn, saleReserve, Repo.TRADING_FEE_PERCENT, Repo.TRADING_FEE_DENOMINATOR
+            );
+        }
+        if (saleReserve == 0) return amountIn / 2;
+        uint256 denominator = Repo.TRADING_FEE_DENOMINATOR;
+        if (amountIn > type(uint256).max / (4 * denominator)
+            || saleReserve > type(uint256).max / (4 * denominator)) revert MathDomain();
+        uint256 net = denominator - Repo.TRADING_FEE_PERCENT;
+        uint256 linear = (denominator + net) * saleReserve;
+        uint256 scaledReserve = denominator * saleReserve;
+        uint256 lo;
+        uint256 hi = amountIn;
+        // Solve net*x*x + (denominator+net)*reserve*x <= denominator*reserve*amount.
+        // Division with a 512-bit numerator avoids squaring a large reserve.
+        while (lo < hi) {
+            uint256 mid = lo + (hi - lo + 1) / 2;
+            if (mid <= FixedPointMathLib.fullMulDiv(amountIn, scaledReserve, linear + net * mid)) lo = mid;
+            else hi = mid - 1;
+        }
+        return lo;
     }
 
     function calculateProtocolFee(

@@ -1,0 +1,64 @@
+{
+  "scope": "Four unified V4 DETF reserve bindings; Balancer-hosted DETFs excluded; unfinished Slipstream deferred by D66",
+  "current_user_decision": "Restricted LP removals may be performed by the current oracle feeTo Fee Collector; additions remain DETF-only",
+  "current_solidity_run": "Focused build then tests: Weighted/Quad policy and activated CP/V3 provider lifecycle; validation pending",
+  "validated_frontend": {
+    "check": "npm run check",
+    "test_files": 59,
+    "passed_tests": 410,
+    "logs": [
+      "reserve-policy-frontend-check.log",
+      "reserve-policy-and-lp-preview-frontend-check.log"
+    ]
+  },
+  "prepared_not_applied": [],
+  "followup_checks": [
+    "Retain verified Robinhood 32M transaction limit and successful Orbital 31M bounded-call matrix/fuzz/fixed-counterexample evidence; finite tests do not prove all-state bounds",
+    "Complete V4 legacy API/test migration and consolidation, preserving distinct provider/decimal cases",
+    "Repair excluded-family fixture compilation within maintenance-only scope and finish the default repository build",
+    "Finish in-scope native-SY integration and final selector/storage inventories; reconcile the now-applied owner-approved close cleanup and its selected evidence",
+    "Complete relevant fork/UI checks, full repository test attribution, performance comparison and reviewable delivery"
+  ],
+  "not_complete": true,
+  "latest_completed_checkpoint": {
+    "archive": "v4-bookkeeping-policy-376-green-*",
+    "build_seconds": 373.279,
+    "test_seconds": 83.384,
+    "passed": 376,
+    "failed": 0,
+    "suites": 50,
+    "coverage": "Retained 343 V4/SY/collector cases plus 23 migrated adversarial tests and ten funded CP policy tests. Includes observed reserve-bookkeeping enforcement and explicit/implicit uncapped epoch settlement."
+  },
+  "validated_selected_solidity": [
+    "DETF PkgArgs and actual hook ownerOnlyLiquidity agreement",
+    "live Fee Collector removal permission, separate addition gate",
+    "Fee Collector owner-operated proportional redemption",
+    "own-reserve LP payments using non-DETF per-leg quote, G=0, exact LP custody",
+    "previewBond and accepted LP discovery",
+    "four-family/two-policy shared production-path tests"
+  ],
+  "latest_completed_attempt": {
+    "archive": "v4-bookkeeping-policy-376-green-*",
+    "build_seconds": 373.279,
+    "test_seconds": 83.384,
+    "passed": 376,
+    "failed": 0,
+    "suites": 50,
+    "coverage": "Retained 343 V4/SY/collector cases plus 23 migrated adversarial tests and ten funded CP policy tests. Includes observed reserve-bookkeeping enforcement and explicit/implicit uncapped epoch settlement."
+  },
+  "latest_full_build": {
+    "archive": "main-full-build-v4-retired-close-preview-failure.*",
+    "build_seconds": 102.864,
+    "exit_code": 1,
+    "first_error": "Retired previewCloseBondMature in Quad production-SE helper; funded replacement applied, validation pending"
+  },
+  "status": "Historical selected checkpoint; current-implementation-queue.json is authoritative for active execution",
+  "approval_resolution": {
+    "record": "v4-close-cleanup-owner-approval.json",
+    "owner_question_pending": false
+  },
+  "historical_engineering_findings": [
+    "Real V4 position-backed Orbital SY deposits still measure 32.9\u201333.3M warm execution gas after withdrawal quote optimization; redemptions now 4.24\u20136.40M. Further integration profiling and chain suitability validation remain."
+  ],
+  "current_engineering_note": "Historical gas finding repaired; retained 31M-budget regression and finite fuzz evidence in orbital-v4-position-gas-after-cached-claim.json. Current post-wrap/provider integration and full release validation remain open."
+}

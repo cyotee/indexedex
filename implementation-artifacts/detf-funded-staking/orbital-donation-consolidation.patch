@@ -1,0 +1,88 @@
+--- a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_MorphoBlueSe_ProductLaw.t.sol
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_MorphoBlueSe_ProductLaw.t.sol
+@@ -1,8 +1,6 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
+ 
+-import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+-import {IDetfNftReserveDonation} from "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol";
+ import {IUniswapV4Detf} from
+     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
+ import {TestBase_UniswapV4Detf} from
+@@ -54,32 +52,4 @@
+     function _baseArgs() internal override returns (IUniswapV4Detf.PkgArgs memory) {
+         return _nLegDetfArgs(2);
+     }
+-
+-    bool internal _morphoDetfDonate;
+-
+-    function test_DN13_burn_afterDonate_usesDonatedLp() public override {
+-        _morphoDetfDonate = true;
+-        super.test_DN13_burn_afterDonate_usesDonatedLp();
+-        _morphoDetfDonate = false;
+-    }
+-
+-    function test_DN14_closeAfterDonate_userBasketUnchanged() public override {
+-        _morphoDetfDonate = true;
+-        super.test_DN14_closeAfterDonate_userBasketUnchanged();
+-        _morphoDetfDonate = false;
+-    }
+-
+-    function _donatePair(address from_, uint256 amount_) internal override returns (uint256 lpOut_) {
+-        if (!_morphoDetfDonate) {
+-            return super._donatePair(from_, amount_);
+-        }
+-        uint256 amt_ = amount_ > 2 ether ? 2 ether : amount_;
+-        uint256 have_ = IERC20(detf).balanceOf(from_);
+-        if (have_ < amt_) deal(detf, from_, amt_, true);
+-        address nft_ = address(_nft());
+-        vm.startPrank(from_);
+-        IERC20(detf).approve(nft_, amt_);
+-        lpOut_ = IDetfNftReserveDonation(nft_).donate(IERC20(detf), amt_, 0, false, _deadline());
+-        vm.stopPrank();
+-    }
+ }
+--- a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_MorphoMix_ProductLaw.t.sol
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_MorphoMix_ProductLaw.t.sol
+@@ -1,8 +1,6 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
+ 
+-import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+-import {IDetfNftReserveDonation} from "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol";
+ import {IUniswapV4Detf} from
+     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
+ import {TestBase_UniswapV4Detf} from
+@@ -54,32 +52,4 @@
+     function _baseArgs() internal override returns (IUniswapV4Detf.PkgArgs memory) {
+         return _nLegDetfArgs(2);
+     }
+-
+-    bool internal _morphoDetfDonate;
+-
+-    function test_DN13_burn_afterDonate_usesDonatedLp() public override {
+-        _morphoDetfDonate = true;
+-        super.test_DN13_burn_afterDonate_usesDonatedLp();
+-        _morphoDetfDonate = false;
+-    }
+-
+-    function test_DN14_closeAfterDonate_userBasketUnchanged() public override {
+-        _morphoDetfDonate = true;
+-        super.test_DN14_closeAfterDonate_userBasketUnchanged();
+-        _morphoDetfDonate = false;
+-    }
+-
+-    function _donatePair(address from_, uint256 amount_) internal override returns (uint256 lpOut_) {
+-        if (!_morphoDetfDonate) {
+-            return super._donatePair(from_, amount_);
+-        }
+-        uint256 amt_ = amount_ > 2 ether ? 2 ether : amount_;
+-        uint256 have_ = IERC20(detf).balanceOf(from_);
+-        if (have_ < amt_) deal(detf, from_, amt_, true);
+-        address nft_ = address(_nft());
+-        vm.startPrank(from_);
+-        IERC20(detf).approve(nft_, amt_);
+-        lpOut_ = IDetfNftReserveDonation(nft_).donate(IERC20(detf), amt_, 0, false, _deadline());
+-        vm.stopPrank();
+-    }
+ }

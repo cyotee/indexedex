@@ -7,7 +7,7 @@ interface IStandardExchangeOutMulti {
     /**
      * @notice Preview the exact-out dual exit: shares that would be burned to pay `amountsOut`.
      * @param tokenIn The input token. Must be vault shares (`address(this)`).
-     * @param tokensOut The two pool currencies, unique, strictly ascending by address.
+     * @param tokensOut The two unique pool currencies in the vault's declared order. V4 uses PoolKey order with WETH as the ERC20 face of a native currency.
      * @param amountsOut Exact amounts of each `tokensOut` the caller wants to receive.
      * @return amountIn Shares that would be burned (exact-out). Does not simulate tail-rebalance.
      */
@@ -21,7 +21,7 @@ interface IStandardExchangeOutMulti {
      * @notice Exact-out dual exit: burn shares to receive exact `amountsOut` of both pool tokens.
      * @param tokenIn The input token. Must be vault shares (`address(this)`).
      * @param maxAmountIn Maximum shares the caller is willing to burn. Unused shares are refunded to `msg.sender`.
-     * @param tokensOut The two pool currencies, unique, strictly ascending by address.
+     * @param tokensOut The two unique pool currencies in the vault's declared order. V4 uses PoolKey order with WETH as the ERC20 face of a native currency.
      * @param amountsOut Exact amounts of each `tokensOut` that must be received.
      * @param recipient The address that will receive both output tokens.
      * @param pretransferred Whether the shares have already been transferred to the vault.

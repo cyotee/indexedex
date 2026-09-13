@@ -1,6 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 pragma solidity ^0.8.0;
 
+import {IMultiPairStandardExchangeBufferPoolPkg} from "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/IMultiPairStandardExchangeBufferPoolPkg.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+
+
 import {IBasePool} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IBasePool.sol";
 import {IPoolInfo} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IPoolInfo.sol";
 import {IPoolLiquidity} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IPoolLiquidity.sol";
@@ -66,46 +72,9 @@ import {IMultiPairStandardExchangeBufferPool} from
     "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/IMultiPairStandardExchangeBufferPool.sol";
 import {MultiPairStandardExchangeBufferPoolRepo} from
     "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPoolRepo.sol";
-import {
-    IStandardExchangeRateProviderDFPkg
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
+import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
 
-interface IMultiPairStandardExchangeBufferPoolPkg is IDiamondFactoryPackage, IStandardVaultPkg {
-    /**
-     * @dev weights: length == 2 * pairCount, in Balancer address-sorted order of
-     *      the final pool token list (bufferToken[i] and vaultShare[i] for each pair,
-     *      sorted by address). Each weight >= 1e16; sum == 1e18.
-     * @dev rateProviders: address(0) deploys default SE rate provider for (vault, bufferToken).
-     */
-    struct PkgInit {
-        IFacet basicVaultFacet;
-        IFacet standardVaultFacet;
-        IFacet balancerV3VaultAwareFacet;
-        IFacet betterBalancerV3PoolTokenFacet;
-        IFacet defaultPoolInfoFacet;
-        IFacet standardSwapFeePercentageBoundsFacet;
-        IFacet unbalancedLiquidityInvariantRatioBoundsFacet;
-        IFacet balancerV3AuthenticationFacet;
-        IFacet bufferPoolFacet;
-        IFacet poolLiquidityFacet;
-        IFacet hookFacet;
-        IVaultRegistryDeployment vaultRegistry;
-        IVaultFeeOracleQuery vaultFeeOracle;
-        IVault balancerV3Vault;
-        IDiamondPackageCallBackFactory diamondFactory;
-        IStandardExchangeRateProviderDFPkg rateProviderPkg;
-    }
 
-    struct PkgArgs {
-        uint8 pairCount;
-        IERC20[] bufferTokens;
-        IStandardExchange[] standardExchangeVaults;
-        IRateProvider[] rateProviders;
-        uint256[] weights;
-    }
-
-    function deployPool(PkgArgs calldata args) external returns (address pool);
-}
 
 contract MultiPairStandardExchangeBufferPoolStandardVaultPkg is
     BalancerV3BasePoolFactory,
@@ -202,7 +171,7 @@ contract MultiPairStandardExchangeBufferPoolStandardVaultPkg is
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](15);
+        interfaces = new bytes4[](18);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20Metadata).interfaceId ^ type(IERC20).interfaceId;
@@ -218,6 +187,9 @@ contract MultiPairStandardExchangeBufferPoolStandardVaultPkg is
         interfaces[12] = type(IBalancerPoolToken).interfaceId;
         interfaces[13] = type(IPoolLiquidity).interfaceId;
         interfaces[14] = type(IHooks).interfaceId;
+            interfaces[15] = type(IStandardExchangeIn).interfaceId;
+        interfaces[16] = type(IStandardExchangeOut).interfaceId;
+        interfaces[17] = type(IStandardizedYield).interfaceId;
     }
 
     function facetAddresses() public view returns (address[] memory facetAddresses_) {

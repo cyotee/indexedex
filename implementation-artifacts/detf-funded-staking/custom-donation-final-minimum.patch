@@ -1,0 +1,26 @@
+--- test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol
++++ test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol
+@@ -4,6 +4,7 @@
+ 
+ import {Test} from "forge-std/Test.sol";
+ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
++import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
+ import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
+ import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+@@ -267,9 +268,14 @@
+         before_.supply = IERC20(address(subject)).totalSupply();
+         before_.funding = IERC20(address(subject)).balanceOf(subject.rebasingClaimToken());
+         before_.protocolLp = IERC20(subject.hook()).balanceOf(address(nft));
++        before_.inputBalance = input.balanceOf(_buyer());
+         vm.startPrank(_buyer());
+         input.approve(address(nft), shares);
+-        uint256 minted = nft.donate(input, shares, 0, false, block.timestamp);
++        vm.expectRevert(abi.encodeWithSelector(IStandardExchangeErrors.MinAmountNotMet.selector, preview + 1, preview));
++        nft.donate(input, shares, preview + 1, false, block.timestamp);
++        assertEq(input.balanceOf(_buyer()), before_.inputBalance, "failed minimum rolls back payment");
++        assertEq(IERC20(subject.hook()).balanceOf(address(nft)), before_.protocolLp, "failed minimum rolls back LP custody");
++        uint256 minted = nft.donate(input, shares, preview, false, block.timestamp);
+         vm.stopPrank();
+         assertEq(minted, preview, "LP preview includes custom wrap and reserve join");
+         assertEq(IERC20(subject.hook()).balanceOf(address(nft)), before_.protocolLp + minted);

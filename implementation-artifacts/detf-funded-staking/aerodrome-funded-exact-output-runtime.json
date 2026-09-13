@@ -1,0 +1,20 @@
+{
+  "validation": "aerodrome-funded-exact-output-and-claims-run.json",
+  "facets": [
+    {
+      "facet": "AerodromeStandardExchangeInFacet",
+      "runtime_bytes": 21835,
+      "runtime_sha256": "3b02aaa9031d8d77ca2da20b2ad1114de34de97951829bb4a2a57051e333987c"
+    },
+    {
+      "facet": "AerodromeStandardExchangeOutFacet",
+      "runtime_bytes": 19199,
+      "runtime_sha256": "71ba7b7ca2f8539c75ff9f68eca47cd3be225d28d49189701d411e3ced4876a0"
+    },
+    {
+      "facet": "AerodromeStandardExchangeOutQueryFacet",
+      "runtime_bytes": 13627,
+      "runtime_sha256": "c71c236ee7536449701dbe1c3435439eb2d85ddf1d9f23a6728a5abda0f6f5f2"
+    }
+  ]
+}

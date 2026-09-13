@@ -1,0 +1,21 @@
+{
+  "status": "applied; validation pending",
+  "reason": "Observed prepaid protocol-share donation minted against reserve including its own payment. Preserve existing issuance algebra, exclude credited payment, and refund only unused credited exact-output maximum.",
+  "files": [
+    {
+      "path": "contracts/vaults/standard/erc4626/ERC4626StandardExchangeInTarget.sol",
+      "before_sha256": "b9cc65cf52c55eed886fd389bcaf3fb85702a55781cbee746835f1f52dba6427",
+      "after_sha256": "ed0b8e3831e019a375b45d8dafcf57ae5e69f7c0f5f9c64b47fd409b3b7e104f"
+    },
+    {
+      "path": "contracts/vaults/standard/erc4626/ERC4626StandardExchangeCommon.sol",
+      "before_sha256": "7454e6d2403cfa302eac67ae82b880cf3ddd50c71ad2e39a341fab6d28c79067",
+      "after_sha256": "944a8f82b5ac4c0d114faa3c280c9f9e0300cfd3e8792bcb36b6231d302a09eb"
+    },
+    {
+      "path": "contracts/vaults/standard/erc4626/ERC4626StandardExchangeOutTarget.sol",
+      "before_sha256": "83584d668512485f328e053fa868dc08a91971a0e737ca15d484e3780433c444",
+      "after_sha256": "581cbc8d12a923b0e900189c0f94700ac763d29da9d9b99b5834ff9fd3391cc0"
+    }
+  ]
+}

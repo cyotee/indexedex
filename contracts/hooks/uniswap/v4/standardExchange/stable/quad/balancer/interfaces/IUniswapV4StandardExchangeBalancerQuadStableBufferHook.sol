@@ -6,12 +6,11 @@ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.so
 
 /**
  * @title IUniswapV4StandardExchangeBalancerQuadStableBufferHook
- * @notice Public product surface: 4-asset Balancer StableMath book with ≥1 SE buffer legs.
+ * @notice Public product surface: 2–5 asset Balancer StableMath book with ≥1 SE buffer legs.
  * @dev LP ERC-20 + EIP-2612 + vault discovery via shared diamond facets (not redeclared here).
  *      Canonical SE In/Out selectors live on IStandardExchangeIn / IStandardExchangeOut.
  *      Multi-token liquidity also on IStandardExchangeMultiAssetLiquidity (1:1 with this surface).
  *      No permit2Data on join ABI — transferFrom if allowance else Permit2 AllowanceTransfer.
- *      Phase 0 OMIT: joinSingleAssetExactOut / exitSingleAssetExactTokenOut / joinUnbalanced → InvalidRoute.
  */
 interface IUniswapV4StandardExchangeBalancerQuadStableBufferHook {
     error InvalidRoute();
@@ -20,14 +19,14 @@ interface IUniswapV4StandardExchangeBalancerQuadStableBufferHook {
         address indexed sender,
         address indexed to,
         uint256 shares,
-        int256[4] deltas,
+        int256[] deltas,
         uint256 protocolSharesMinted
     );
     event Exit(
         address indexed sender,
         address indexed to,
         uint256 shares,
-        int256[4] deltas,
+        int256[] deltas,
         uint256 protocolSharesMinted
     );
     event DepositSingle(

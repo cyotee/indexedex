@@ -1,0 +1,10 @@
+{
+  "recorded_at_utc": "2026-09-09T02:19:05.619101+00:00",
+  "status": "APPLIED_SHELL_SYNTAX_VALID_NODE_LIMITS_MATCH",
+  "source": "scripts/foundry/anvil_robinhood_main/deploy_all.sh",
+  "sha256": "4c78281d752816cf8a5232e1759396e0e23730ecfe28cb533534a9976aa889e1",
+  "change": "Use EIP-170 24576-byte limit in local Robinhood node launch helper; preserve existing Forge script-container allowance and 32M node gas limit.",
+  "existing_node_evidence": "current-robinhood-rehearsal/current-node-readiness.json",
+  "active_solidity_and_config_sha256": "96d7a3ff1d5d6d8f41f1ff0c7a8dd09419e8243b669dd27700325822edf63dde",
+  "note": "Shell-only maintenance does not change the active Solidity/compiler input. Existing node is untouched; current package/lifecycle rehearsal remains pending."
+}

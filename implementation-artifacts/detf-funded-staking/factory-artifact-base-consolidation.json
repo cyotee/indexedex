@@ -1,0 +1,49 @@
+{
+  "reason": "An Aerodrome-only test selection exposed runtime artifact dependencies only imported by other funded suites. Place each actual facet dependency in its owning TestBase, remove duplicate seed imports, retain CREATE3/registry deployment.",
+  "rows": [
+    {
+      "base": "contracts/test/IndexedexTest.sol",
+      "artifacts": [
+        "FeeCollectorManagerFacet",
+        "FeeCollectorSingleTokenPushFacet",
+        "VaultFeeOracleManagerFacet",
+        "VaultFeeOracleQueryFacet",
+        "VaultRegistryDeploymentFacet",
+        "VaultRegistryDisableManagerFacet",
+        "VaultRegistryDisableQueryFacet",
+        "VaultRegistryVaultManagerFacet",
+        "VaultRegistryVaultPackageManagerFacet",
+        "VaultRegistryVaultPackageQueryFacet",
+        "VaultRegistryVaultQueryFacet"
+      ],
+      "before_sha256": "71ca641678322a3b7bb2b0cc53880c4bcccf81cfdd92abeb5c09b3bbdb7b4ed7",
+      "after_sha256": "6bd4515000ec25996c85553b82c13a009528f52e0297e53861670ff028fcf069"
+    },
+    {
+      "base": "contracts/vaults/TestBase_VaultComponents.sol",
+      "artifacts": [
+        "ERC20Facet",
+        "ERC2612Facet",
+        "ERC5267Facet",
+        "ERC4626Facet",
+        "ERC4626BasedBasicVaultFacet",
+        "ERC4626StandardVaultFacet",
+        "MultiAssetBasicVaultFacet",
+        "MultiAssetStandardVaultFacet"
+      ],
+      "before_sha256": "3ff39af3c47e9f7bb78d211817aa7e826a35bf9d9593d536213b0df6649acb88",
+      "after_sha256": "ce02b73aace21951ed8c69fd9168be99cb66f30c1c1b453380a02bd2df300119"
+    },
+    {
+      "base": "contracts/protocols/dexes/aerodrome/v1/test/bases/TestBase_AerodromeStandardExchange.sol",
+      "artifacts": [
+        "AerodromeStandardExchangeInFacet",
+        "AerodromeStandardExchangeOutFacet",
+        "AerodromeStandardExchangeOutQueryFacet"
+      ],
+      "before_sha256": "7b2750f69dd249440352aca878255c0c3a4395a628dd623e44800b65e1630b51",
+      "after_sha256": "25be0a65bdf0aeb02dee1ae0c54718865b178882a712850f0b9e5ca1e269449b"
+    }
+  ],
+  "validation": "aerodrome-exact-output-before-fix-run.json: build passed; all six actual test bodies ran, removing the earlier artifact setup failure."
+}

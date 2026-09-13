@@ -1,0 +1,133 @@
+{
+  "status": "APPLIED_SELECTED_GOLD_RUNTIME_VALIDATION_PASSED",
+  "recorded_at_utc": "2026-09-09T09:16:39.254804+00:00",
+  "before": {
+    "recorded_at_utc": "2026-09-09T09:16:38.985006+00:00",
+    "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+    "source_and_config_sha256": "09abaecc1d0469b94c2d69ce3967bec3884647d06151e67ebb5452e508cdd0cd",
+    "source_and_config_files": 4812,
+    "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+    "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+    "crane_tracked_contract_and_config_diff_sha256": "284fd75764cb255d1e527eef38fd51e65fca73e8ebb11b7465965e8dfeb2122c",
+    "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+    "machine": "macOS-26.6.2-x86_64-i386-64bit",
+    "architecture": "x86_64",
+    "logical_cpus": 16,
+    "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+  },
+  "after": {
+    "recorded_at_utc": "2026-09-09T09:27:44.269088+00:00",
+    "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+    "source_and_config_sha256": "8b95fa9d3b840eee0885c252c2c8a20e62a596a5ea9be110235c634e0195a295",
+    "source_and_config_files": 4812,
+    "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+    "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+    "crane_tracked_contract_and_config_diff_sha256": "284fd75764cb255d1e527eef38fd51e65fca73e8ebb11b7465965e8dfeb2122c",
+    "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+    "machine": "macOS-26.6.2-x86_64-i386-64bit",
+    "architecture": "x86_64",
+    "logical_cpus": 16,
+    "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+  },
+  "changes": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Policy.sol",
+      "before_sha256": "dc5bbccbfb0a97b973e2da2ab4d596237f3aa0dea4998c705164b83441507aed",
+      "after_sha256": "ad3847bc3243fe39aa553c9f7b7226dad015a6ae7c72f094649db54d754b0ff1"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol",
+      "before_sha256": "c900233d956ffd70c11208fa962a7728a0aa4f7ca1f56b812c5a48f296057194",
+      "after_sha256": "54a77b4ccbe37e0c14e80b57e12bb0809b003677f70e8a233f92bde9afca9a59"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol",
+      "before_sha256": "5d7034f4b12fcacbdacdcf73a8fb1beb093f83aca4ea4955206f9656022aae7a",
+      "after_sha256": "af472045b1a3eb21156854c53cafa0e6bde0bcf2ca268d96c94e39e31dc139fb"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_Policy.sol",
+      "before_sha256": "a2fe92a22180467671e26cfc8fde4260ceb507f951027b9fab307296d7c8ed0e",
+      "after_sha256": "a8ebed65095a89dd50f5ccafd820a55f131f86e7d7c6ad4ddc1a116fccd97866"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_Policy.sol",
+      "before_sha256": "b4899504e7d6d999d87997d4a4ea2f0c73586050dd00436156d210f22a8aaa5b",
+      "after_sha256": "e0926fa2f423befc787d1c91c5d42735179a19a58c9cdf59c2c2329cd99ef8db"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Alignment_FeeCreatorClaim.t.sol",
+      "before_sha256": "8cbd62921d0894ae91d845a0a0006f2e7d54b74e246562e8c32811853f1fccbb",
+      "after_sha256": "3d8245b1cf527ddd7230e48126b6f5011a9fe4fb421f9c3de79f5bd82a753ab0"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Alignment_RedeemD15.t.sol",
+      "before_sha256": "3c11f5a4af31c3a4d3196548062bff23679120008df0a6ccb92c0586d39f97d6",
+      "after_sha256": "a7e4731de168c208f28e746c9a64f573553f20363ae9e2bc3469e46d5b343955"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Claim.t.sol",
+      "before_sha256": "30bd52f0b30949359ec056c0affbb6aeca55989dbb31ae86d88530a082bf472f",
+      "after_sha256": "ec71b1d64fb5be5166b4876b39c51e787b6794fa373762790c893cfb17ed3f86"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_OpeningPrice.t.sol",
+      "before_sha256": "1b7e55658cd13ae5fc30452db412ba27943b54f531ad37b7768ac01671037308",
+      "after_sha256": "62a13aa77da241e01ff7bea6b9dc4ff94178d823c7896bb9cd76552ccef9bb4d"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Policy.t.sol",
+      "before_sha256": "0000bdec668de4f389cc59dc19a9a9d0434b64e5971179882a556ead6b1dee23",
+      "after_sha256": "59b22673a5427e97bc6635d903330252ed4a4b32b141b63e993be05b1a489d58"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_MorphoBlueSe_Policy.t.sol",
+      "before_sha256": "86e552940e46efbfc3c974a0ecc5a0e01586e97d1b60a6f653e55854041f40ae",
+      "after_sha256": "9b123d2d48a58172f1699384784d35723cb36f2822210f0ed969ed4e3382d5f1"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_MorphoMix_Policy.t.sol",
+      "before_sha256": "314b023fc60d5ba127294af97dfe9fb3a56d642dffa8c8e0a07dfcf1335e93c7",
+      "after_sha256": "66d45aeb6ddbc2e0f4791d799784859c5fd4fd04299ce4c433becde2972be772"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_PonsMix_Policy.t.sol",
+      "before_sha256": "801f224672467dabd54229355683eb1859c3ca7b8f559c2f40dd43409437a30f",
+      "after_sha256": "8383b75faa94a96b562760b7a9ed904ef4dd035db913c417d069850f410cb63e"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_PonsV1Se_Policy.t.sol",
+      "before_sha256": "e3c8c76995e4f62787a66dc2acfcc55287d586431945f62741514f9768d73bb4",
+      "after_sha256": "77c1ccc80deca0dd1c0cdade704d7453b8c51b4b26e03142ccdd2703e658301f"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_PonsV2Se_Policy.t.sol",
+      "before_sha256": "5bbe2575eec0c41f11d9fdf843a6a1377c17d7a57cd649b3d4b43b5a8b7962af",
+      "after_sha256": "ba481027482685509dcdacfb6ad3f7eda37f289aee0440a125c5f97475abc30c"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_Univ3Se_Policy.t.sol",
+      "before_sha256": "cd2ef18d68885a95c089d5161b06b42f6f1f6c98ed5fef9e9adb53bd6b46d099",
+      "after_sha256": "fb82da1b434ed321dcf873fe9a1b8569bf5c6814e1cbba186ded7a9edfb11af1"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_Univ4Se_Policy.t.sol",
+      "before_sha256": "a179c06ec7041249d26cda0e44526c612bd408825825f9e4d514a7205483054b",
+      "after_sha256": "273a8da4f60c75af3512d96a04f8430339bc408113ba8e3e0cbfca647be86f85"
+    }
+  ],
+  "retired_declarations": [],
+  "scope": "Existing V4 native and decimal policy fixtures; public swaps with real user payments replace SUT impersonation and oversized donations. No product formulas or D60/D66 functionality changed.",
+  "correction": "Source review confirmed reserve-pair gates remain distinct. All seven T8.4 methods and their asymmetric-gate assertions are retained via a shared actual-public-trade helper. The initial draft retirement assumption was corrected before compilation or acceptance.",
+  "stack_followup": {
+    "failed_build_record": "hermetic-remediation-v4-policy-public-market.json",
+    "change": "Extract exact public swap custody assertions to a smaller shared function; no compiler relaxation."
+  },
+  "runtime_evidence": {
+    "record": "hermetic-remediation-v4-policy-public-market-split.json",
+    "passed": 438,
+    "failed": 0,
+    "incomplete_suites": 0,
+    "remaining": "The remaining production-provider cases and final complete current-source validation are still required."
+  }
+}

@@ -5,9 +5,7 @@ import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {
     TestBase_MultiVaultWeightedDetf_Adversarial
 } from "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/TestBase_MultiVaultWeightedDetf_Adversarial.sol";
-import {
-    IMultiVaultWeightedDetfDFPkg
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfDFPkg.sol";
+import {IMultiVaultWeightedDetfDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfDFPkg.sol";
 
 /// @notice C1–C3: hostile vaultShare is rejected at PkgArgs (WP-SEC-PKG-MV-001).
 /// @dev TransferFrom reentry via a configured hostile share is unreachable after the deploy gate.

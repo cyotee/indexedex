@@ -5,6 +5,7 @@
 # Catalog: pins, Crane factories, FeeCollector, Manager, TWAP, Uni V4 SE pkg,
 # Morpho Blue SE pkg, CP/Weighted/Curve Quad hook pkgs, unified Uni V4 DETF pkg.
 # No tokens. No Protocol DETF instances.
+# Opt-in: token-staking (Phase 06-08 DFPkg + Phase 08-01 $DTF instance).
 # Simulate each Foundry Stage then broadcast. Never --skip-simulation.
 # =============================================================================
 set -euo pipefail
@@ -43,6 +44,7 @@ export NETWORK_PROFILE="${NETWORK_PROFILE:-anvil_robinhood_main}"
 export CHAIN_ID="${CHAIN_ID:-4663}"
 
 BROADCAST_FLAG="--broadcast"
+BROADCAST_EXPLICIT=0
 FORCE=0
 FROM_PHASE=""
 FROM_STAGE=""
@@ -61,10 +63,27 @@ unified Uni V4 DETF package.
 No tokens. No Protocol DETF instances.
 
 Commands:
-  all     Phases 01–06 architecture catalog, then Phase 09 frontend export
+  all             Phases 01–06 architecture catalog, then Phase 09 frontend export
+  token-staking        Phase 06 Stage 08 TokenStaking DFPkg, then Phase 08 Stage 01
+                       DTF instance (7-day rewardsDuration). Does not notifyRewardAmount.
+                       Same as forge script: simulates unless --broadcast.
+  token-staking-fund   Phase 08 Stage 02: notifyRewardAmount(sender DTF balance).
+                       Same as forge script: simulates unless --broadcast.
+  fee-accrual-preflight Read-only validation of the prepared fee-accrual deployment.
+  fee-accrual-reconcile Verify receipts and record the reviewed deadline-script update (no broadcast).
+  fee-accrual-launch   Packages, composition, first bond and full staking migration.
+                       Uses the checked-in launch config and default deployment directory.
+                       Requires funded WETH/DTF, DEPLOYER_ADDRESS and --broadcast.
+  fee-accrual-packages Deploy prerequisite packages through the existing core, then export pins.
+  fee-accrual-prepare  Deploy SEs, providers, reserve hook, DETF and purchase the first bond.
+  fee-accrual-migrate   Adapter, snapshot, combined deposits/rewards migration, verification.
+                       Requires DEPLOYER_ADDRESS and --broadcast. DETF must be bootstrapped.
+                       Defaults to the full launch's resolved config and composition records.
+  fee-accrual-verify    Read-only final state and migration receipt reconciliation.
 
 Options:
-  --dry-run         Simulate each Stage, do not broadcast
+  --broadcast       Send transactions after a successful simulate
+  --dry-run         Architecture \`all\` only: simulate, do not broadcast
   --rpc-url URL     Broadcast RPC (default Foundry alias robinhood_mainnet)
   --force           FORCE=1 re-run Stages
   --from-phase PP   Resume at Phase PP
@@ -183,10 +202,176 @@ run_stage() {
   run_forge_with_retries "${bcast_cmd[@]}"
 }
 
+# Public migration uses the same sender/signing convention as the existing public stages.
+fee_accrual_check() {
+  python3 "$REPO_ROOT/scripts/shell/lib/rh_4663_fee_accrual.py" --public "$@"
+}
+
+fee_accrual_stage() {
+  local pp="$1" ss="$2" mode="$3" script record before_hash="" multiplier=150
+  [[ "$pp-$ss" != 08-03 ]] || multiplier=100
+  script="$(rh_stage_script "$pp" "$ss")"
+  record="$FOUNDRY_BROADCAST/$(basename "$script")/4663/run-latest.json"
+  local args=() line
+  while IFS= read -r line; do
+    args+=("$line")
+  done < <(forge_script_base "$script")
+  args+=(--gas-estimate-multiplier "$multiplier")
+  # Skip explorer/Sourcify trace lookups that consume transaction deadlines.
+  # --offline still performs RPC execution, simulation and broadcast.
+  args+=(--offline)
+  if [[ "$mode" == broadcast && "$pp-$ss" != 08-07 ]]; then
+    local prior_status=0
+    fee_accrual_check stage-complete "$pp-$ss" >/dev/null 2>&1 || prior_status=$?
+    if [[ "$prior_status" == 0 ]]; then
+      # Confirmed money stages must never seed liquidity or buy a second first bond.
+      if [[ "$pp-$ss" == 07-04 || "$pp-$ss" == 08-04 ]]; then return; fi
+      run_forge_cmd "${args[@]}"
+      return
+    elif [[ "$prior_status" != 3 ]]; then
+      log_error "Prior stage receipt validation failed for $pp-$ss; reconcile before continuing"
+      return "$prior_status"
+    fi
+  fi
+  if [[ "$mode" == read ]]; then
+    run_forge_cmd "${args[@]}"
+    return
+  fi
+  # Do not automatically retry a money stage after partial submission. Reconcile first.
+  run_forge_cmd "${args[@]}" || return $?
+  [[ ! -f "$record" ]] || before_hash="$(shasum -a 256 "$record")"
+  run_forge_cmd "${args[@]}" --broadcast --slow || return $?
+  [[ -f "$record" && "$(shasum -a 256 "$record")" != "$before_hash" ]] || {
+    log_error "No fresh broadcast record; reconcile before continuing"; return 1;
+  }
+  fee_accrual_check receipts "$pp-$ss" "$record"
+}
+
+run_fee_accrual() {
+  local default_root="$REPO_ROOT/deployments/robinhood_main_fee_accrual"
+  case "$COMMAND" in
+    fee-accrual-launch|fee-accrual-preflight|fee-accrual-reconcile)
+      export FEE_ACCRUAL_RUN_DIR="${FEE_ACCRUAL_RUN_DIR:-$default_root}"
+      export FEE_ACCRUAL_CONFIG="${FEE_ACCRUAL_CONFIG:-$RH_FOUNDRY_DIR/fee_accrual_launch.robinhood.json}"
+      ;;
+    fee-accrual-packages)
+      export FEE_ACCRUAL_RUN_DIR="${FEE_ACCRUAL_RUN_DIR:-$default_root/packages}"
+      export FEE_ACCRUAL_CONFIG="${FEE_ACCRUAL_CONFIG:-$RH_FOUNDRY_DIR/fee_accrual_launch.robinhood.json}"
+      ;;
+    *)
+      export FEE_ACCRUAL_RUN_DIR="${FEE_ACCRUAL_RUN_DIR:-$default_root/composition}"
+      export FEE_ACCRUAL_PACKAGE_DIR="${FEE_ACCRUAL_PACKAGE_DIR:-$(dirname "$FEE_ACCRUAL_RUN_DIR")/packages}"
+      export FEE_ACCRUAL_CONFIG="${FEE_ACCRUAL_CONFIG:-$FEE_ACCRUAL_PACKAGE_DIR/fee-accrual-config.resolved.json}"
+      ;;
+  esac
+  [[ -f "$FEE_ACCRUAL_CONFIG" ]] || {
+    log_error "Missing fee-accrual config: $FEE_ACCRUAL_CONFIG (run fee-accrual-launch for the full deployment)"; return 1;
+  }
+  [[ "$FORCE" == 0 && -z "$FROM_PHASE$FROM_STAGE" ]] || {
+    log_error "Fee accrual uses its receipt journal; --force and stage skipping are unsupported"; return 1;
+  }
+  if [[ "$COMMAND" != fee-accrual-preflight && "$COMMAND" != fee-accrual-verify && "$COMMAND" != fee-accrual-reconcile ]]; then
+    [[ "$BROADCAST_EXPLICIT" == 1 && "$BROADCAST_FLAG" == --broadcast ]] || {
+      log_error "$COMMAND requires explicit --broadcast"; return 1;
+    }
+  fi
+  export OUT_DIR_OVERRIDE="$FEE_ACCRUAL_RUN_DIR"
+  export FOUNDRY_BROADCAST="$OUT_DIR_OVERRIDE/broadcast"
+  # Prevent PRIVATE_KEY from overriding --sender inside DeploymentBase._broadcast().
+  export PRIVATE_KEY=0 OWNER="$DEPLOYER_ADDRESS" SENDER="$DEPLOYER_ADDRESS"
+  if [[ "$COMMAND" == fee-accrual-reconcile ]]; then
+    OUT_DIR_OVERRIDE="$FEE_ACCRUAL_RUN_DIR/packages" fee_accrual_check reconcile-scripts || return $?
+    OUT_DIR_OVERRIDE="$FEE_ACCRUAL_RUN_DIR/composition" \
+      FEE_ACCRUAL_CONFIG="$FEE_ACCRUAL_RUN_DIR/packages/fee-accrual-config.resolved.json" \
+      fee_accrual_check reconcile-scripts
+    return $?
+  fi
+  if [[ "$COMMAND" == fee-accrual-launch ]]; then
+    # Separate immutable config/journal identities before and after package-address resolution.
+    local root="$FEE_ACCRUAL_RUN_DIR"
+    FEE_ACCRUAL_RUN_DIR="$root/packages" bash "$SCRIPT_DIR/robinhood_main.sh" fee-accrual-packages --broadcast || return $?
+    export FEE_ACCRUAL_CONFIG="$root/packages/fee-accrual-config.resolved.json"
+    export FEE_ACCRUAL_PACKAGE_DIR="$root/packages"
+    FEE_ACCRUAL_RUN_DIR="$root/composition" bash "$SCRIPT_DIR/robinhood_main.sh" fee-accrual-prepare --broadcast || return $?
+    FEE_ACCRUAL_RUN_DIR="$root/composition" bash "$SCRIPT_DIR/robinhood_main.sh" fee-accrual-migrate --broadcast
+    return $?
+  fi
+  fee_accrual_check preflight || return $?
+  if [[ "$COMMAND" == fee-accrual-packages ]]; then
+    fee_accrual_check launch-config || return $?
+    fee_accrual_stage 01 04 read || return $?
+    rh_fee_accrual_copy_core || return $?
+    build_rehearsal_artifacts || return $?
+    run_forge_cmd forge build contracts/protocols/staking/rebasingVault/*.sol || return $?
+    local pp ss
+    while read -r pp ss; do
+      fee_accrual_stage "$pp" "$ss" broadcast || return $?
+    done <<'PACKAGES'
+05 01
+05 03
+06 01
+06 02
+06 04
+06 07
+06 10
+PACKAGES
+    fee_accrual_check pin-packages
+    return
+  fi
+  if [[ "$COMMAND" == fee-accrual-preflight ]]; then
+    fee_accrual_stage 01 04 read
+    return
+  fi
+  fee_accrual_check ready || return $?
+  if [[ "$COMMAND" == fee-accrual-prepare ]]; then
+    fee_accrual_check launch-config || return $?
+    local package_dir="${FEE_ACCRUAL_PACKAGE_DIR:?Set FEE_ACCRUAL_PACKAGE_DIR}" manifest=phase06_stage01_bond_nft_pkg.json
+    if [[ -f "$OUT_DIR_OVERRIDE/$manifest" ]]; then
+      cmp -s "$package_dir/$manifest" "$OUT_DIR_OVERRIDE/$manifest" || { log_error "Conflicting bond package manifest"; return 1; }
+    else
+      cp "$package_dir/$manifest" "$OUT_DIR_OVERRIDE/$manifest" || return $?
+    fi
+    fee_accrual_stage 07 01 broadcast || return $?
+    fee_accrual_stage 07 02 broadcast || return $?
+    fee_accrual_stage 07 03 broadcast || return $?
+    fee_accrual_stage 07 04 broadcast || return $?
+    fee_accrual_stage 08 03 broadcast || return $?
+    fee_accrual_stage 08 04 broadcast || return $?
+    fee_accrual_stage 09 02 read
+    return
+  elif [[ "$COMMAND" == fee-accrual-verify ]]; then
+    fee_accrual_stage 08 08 read && fee_accrual_check verify
+    return
+  fi
+  local configured_target actual_detf remaining
+  configured_target="$(cast call "$(jq -er '.tokenStaking' "$FEE_ACCRUAL_CONFIG")" 'targetDetf()(address)' --rpc-url "$RPC_URL")"
+  actual_detf="$(jq -er '.feeDetf' "$OUT_DIR_OVERRIDE/phase08_stage03_fee_accrual_detf.json")"
+  if [[ "$(printf '%s' "$configured_target" | tr '[:upper:]' '[:lower:]')" == "$(printf '%s' "$actual_detf" | tr '[:upper:]' '[:lower:]')" || "$configured_target" == 0x0000000000000000000000000000000000000000 ]]; then
+    fee_accrual_stage 08 05 broadcast || return $?
+  else
+    fee_accrual_stage 08 05 read || return $?
+  fi
+  fee_accrual_stage 08 06 read || return $?
+  fee_accrual_check begin-migration || return $?
+  remaining="$(fee_accrual_check remaining)" || return $?
+  while [[ "$remaining" != 0 ]]; do
+    local before_remaining="$remaining"
+    fee_accrual_stage 08 07 broadcast || return $?
+    remaining="$(fee_accrual_check remaining)" || return $?
+    [[ "$remaining" != "$before_remaining" ]] || { log_error "Migration made no progress; stopped"; return 1; }
+  done
+  fee_accrual_stage 08 08 read && fee_accrual_check verify
+}
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    all)
+    all|token-staking|token-staking-fund|fee-accrual-preflight|fee-accrual-packages|fee-accrual-prepare|fee-accrual-launch|fee-accrual-migrate|fee-accrual-verify|fee-accrual-reconcile)
       COMMAND="$1"
+      shift
+      ;;
+    --broadcast)
+      BROADCAST_FLAG="--broadcast"
+      BROADCAST_EXPLICIT=1
       shift
       ;;
     --dry-run)
@@ -237,6 +422,11 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+# token-staking matches forge script: simulate unless --broadcast.
+if [[ "$COMMAND" == "token-staking" || "$COMMAND" == "token-staking-fund" ]] && [[ "$BROADCAST_EXPLICIT" -eq 0 ]]; then
+  BROADCAST_FLAG=""
+fi
+
 log_header "Public Robinhood mainnet (4663) architecture: $COMMAND"
 log_info "SENDER=$DEPLOYER_ADDRESS OUT_DIR=$OUT_DIR_OVERRIDE (no Phase 00)"
 
@@ -249,6 +439,15 @@ fi
 case "$COMMAND" in
   all)
     rh_run_catalog 0 "$FROM_PHASE" "$FROM_STAGE"
+    ;;
+  token-staking)
+    rh_run_token_staking
+    ;;
+  token-staking-fund)
+    rh_run_token_staking_fund
+    ;;
+  fee-accrual-*)
+    run_fee_accrual
     ;;
   *)
     log_error "Unknown command: $COMMAND"

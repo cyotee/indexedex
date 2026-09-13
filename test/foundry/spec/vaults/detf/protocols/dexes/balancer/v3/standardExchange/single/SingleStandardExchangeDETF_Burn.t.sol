@@ -6,12 +6,8 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {
     TestBase_SingleStandardExchangeDETF
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF.sol";
-import {
-    ISingleStandardExchangeDETFBonding
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFBondingTarget.sol";
-import {
-    ISingleStandardExchangeDETFInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFInfoTarget.sol";
+import {ISingleStandardExchangeDETFBonding} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFBonding.sol";
+import {ISingleStandardExchangeDETFInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFInfo.sol";
 
 /// @notice Phase 4: burn DETF → vault shares after open-threshold bootstrap + mint.
 contract SingleStandardExchangeDETF_Burn_Test is TestBase_SingleStandardExchangeDETF {

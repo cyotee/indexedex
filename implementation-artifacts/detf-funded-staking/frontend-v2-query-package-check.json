@@ -1,0 +1,11 @@
+{
+  "command": [
+    "npm",
+    "run",
+    "check"
+  ],
+  "cwd": "frontend/apps/dtf",
+  "exit_code": 0,
+  "seconds": 58.748,
+  "change": "Current compiled V2 package ABI with explicit query facet dependency; other exported ABIs and deployment addresses preserved."
+}

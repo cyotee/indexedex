@@ -8,11 +8,11 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IOperable} from "@crane/contracts/interfaces/IOperable.sol";
 
 import {FeeCollectorFactoryService} from "contracts/fee/collector/FeeCollectorFactoryService.sol";
-import {IFeeCollectorDFPkg} from "contracts/fee/collector/FeeCollectorDFPkg.sol";
+import {IFeeCollectorDFPkg} from "contracts/fee/collector/IFeeCollectorDFPkg.sol";
 import {IFeeCollectorProxy} from "contracts/interfaces/proxies/IFeeCollectorProxy.sol";
 
 import {IndexedexManagerFactoryService} from "contracts/manager/IndexedexManagerFactoryService.sol";
-import {IIndexedexManagerDFPkg} from "contracts/manager/IndexedexManagerDFPkg.sol";
+import {IIndexedexManagerDFPkg} from "contracts/manager/IIndexedexManagerDFPkg.sol";
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
 import {AccessFacetFactoryService} from "@crane/contracts/access/AccessFacetFactoryService.sol";
 

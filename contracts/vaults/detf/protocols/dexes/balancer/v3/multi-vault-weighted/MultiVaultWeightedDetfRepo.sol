@@ -6,8 +6,7 @@ import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balance
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
-import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
-import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
+import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
 
 /// @title MultiVaultWeightedDetfRepo
 /// @notice Diamond storage for MultiVaultWeightedDetf. Role names only.
@@ -50,28 +49,24 @@ library MultiVaultWeightedDetfRepo {
         uint256 weightDetf;
         uint256 detfIndex;
         address reservePool;
-        IERC20 reserveBpt;
         uint256 mintThreshold;
         uint256 burnThreshold;
-        ThresholdMode thresholdMode;
         IVaultFeeOracleQuery feeOracle;
         IDETFNFTVault bondNftVault;
-        uint256 detfNftId;
-        uint256 feeRecipientNftId;
-        IRebasingClaimToken rebasingClaimToken;
-        // Phase 2 natural expansion (resolved deploy-time; no post-deploy setter).
+        IStakedDETF rebasingClaimToken;
+        // Fixed epoch expansion; resolved rate is immutable after deployment.
         uint256 expansionClosureRatePerSecond;
-        uint256 expansionCatchUpMaxSeconds;
-        uint256 expansionCatchUpCapBps;
-        uint256 lastExpansionTimestamp; // seeded at live transition or first accrual
+        uint256 lastExpansionTimestamp;
+        uint256 epochAnchor;
     }
 
-    function _layoutStruct() internal pure returns (Storage storage layoutStruct_) {
-        bytes32 slot_ = STORAGE_SLOT;
+    function _layoutStruct(bytes32 slot_) internal pure returns (Storage storage layoutStruct_) {
         assembly {
             layoutStruct_.slot := slot_
         }
     }
+
+    function _layoutStruct() internal pure returns (Storage storage) { return _layoutStruct(STORAGE_SLOT); }
 
     struct InitParams {
         uint8 vaultCount;
@@ -86,18 +81,13 @@ library MultiVaultWeightedDetfRepo {
         address reservePool;
         uint256 mintThreshold;
         uint256 burnThreshold;
-        ThresholdMode thresholdMode;
         IVaultFeeOracleQuery feeOracle;
         IDETFNFTVault bondNftVault;
-        uint256 detfNftId;
-        IRebasingClaimToken rebasingClaimToken;
+        IStakedDETF rebasingClaimToken;
         uint256 expansionClosureRatePerSecond;
-        uint256 expansionCatchUpMaxSeconds;
-        uint256 expansionCatchUpCapBps;
     }
 
-    function _initialize(InitParams memory p) internal {
-        Storage storage s = _layoutStruct();
+    function _initialize(Storage storage s, InitParams memory p) internal {
         if (s.vaultCount != 0) revert AlreadyInitialized();
         uint8 vaultCount_ = p.vaultCount;
         if (vaultCount_ == 0 || vaultCount_ > MAX_VAULTS) revert InvalidVaultCount(vaultCount_);
@@ -111,17 +101,12 @@ library MultiVaultWeightedDetfRepo {
         s.weightDetf = p.weightDetf;
         s.detfIndex = p.detfIndex;
         s.reservePool = p.reservePool;
-        s.reserveBpt = IERC20(p.reservePool);
         s.mintThreshold = p.mintThreshold;
         s.burnThreshold = p.burnThreshold;
-        s.thresholdMode = p.thresholdMode;
         s.feeOracle = p.feeOracle;
         s.bondNftVault = p.bondNftVault;
-        s.detfNftId = p.detfNftId;
         s.rebasingClaimToken = p.rebasingClaimToken;
         s.expansionClosureRatePerSecond = p.expansionClosureRatePerSecond;
-        s.expansionCatchUpMaxSeconds = p.expansionCatchUpMaxSeconds;
-        s.expansionCatchUpCapBps = p.expansionCatchUpCapBps;
         s.lastExpansionTimestamp = 0;
 
         for (uint256 i; i < vaultCount_; ++i) {
@@ -134,16 +119,18 @@ library MultiVaultWeightedDetfRepo {
         }
     }
 
-    function _setReserveLive() internal {
-        Storage storage s = _layoutStruct();
+    function _initialize(InitParams memory p) internal { _initialize(_layoutStruct(), p); }
+
+    function _setReserveLive(Storage storage s) internal {
+        if (s.isReserveLive) revert AlreadyLive();
         s.isReserveLive = true;
-        // Seed expansion clock at live so accrual window starts from first-bond, not deploy.
-        if (s.lastExpansionTimestamp == 0) {
-            s.lastExpansionTimestamp = block.timestamp;
-        }
+        s.epochAnchor = block.timestamp;
+        s.lastExpansionTimestamp = block.timestamp;
     }
 
-    function _setRebasingClaimToken(IRebasingClaimToken token_) internal {
+    function _setReserveLive() internal { _setReserveLive(_layoutStruct()); }
+
+    function _setRebasingClaimToken(IStakedDETF token_) internal {
         _layoutStruct().rebasingClaimToken = token_;
     }
 

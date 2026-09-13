@@ -15,9 +15,7 @@ contract MultiVaultWeightedDetf_Liveness_Test is TestBase_MultiVaultWeightedDetf
         vm.startPrank(alice);
         seShare0.approve(detf, seShares_);
         vm.expectRevert();
-        detfExchangeIn.exchangeIn(
-            seShare0, seShares_, IERC20(detf), 0, alice, false, block.timestamp + 1 hours
-        );
+        detfExchangeIn.exchangeIn(seShare0, seShares_, IERC20(detf), 0, alice, false, block.timestamp + 1 hours);
         vm.stopPrank();
     }
 
@@ -43,10 +41,9 @@ contract MultiVaultWeightedDetf_Liveness_Test is TestBase_MultiVaultWeightedDetf
         assertTrue(IERC20(detfInfo.reservePool()).totalSupply() > 0, "pool supply");
     }
 
-    function test_acceptedBondTokens_includesBptAndShares() public view {
+    function test_acceptedBondTokens_includesConfiguredShares() public view {
         address[] memory tokens_ = detfBonding.acceptedBondTokens();
-        assertEq(tokens_.length, 2, "bpt + 1 share");
-        assertEq(tokens_[0], detfInfo.reservePool(), "bpt first");
-        assertEq(tokens_[1], address(seShare0), "share");
+        assertEq(tokens_.length, 1, "one configured share payment");
+        assertEq(tokens_[0], address(seShare0), "share");
     }
 }

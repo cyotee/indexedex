@@ -6,12 +6,8 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {
     TestBase_MultiVaultWeightedDetf_Adversarial
 } from "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/TestBase_MultiVaultWeightedDetf_Adversarial.sol";
-import {
-    IMultiVaultWeightedDetfInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfInfoTarget.sol";
-import {
-    IMultiVaultWeightedDetfBonding
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfBondingTarget.sol";
+import {ILegacyMultiVaultWeightedDetfInfo as IMultiVaultWeightedDetfInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf.sol";
+import {ILegacyMultiVaultWeightedDetfBonding as IMultiVaultWeightedDetfBonding} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf.sol";
 
 /// @notice A1–A3 donation / inflation: direct transfers cannot mint free DETF or steal bond principal.
 /// @dev Deferred P2: A4 (dust first-bond/initializeReserve grief - min amounts or later users still mint),

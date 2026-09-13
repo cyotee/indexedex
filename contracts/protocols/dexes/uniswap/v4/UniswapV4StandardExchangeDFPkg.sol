@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/IUniswapV4StandardExchangeDFPkg.sol";
+
+import {IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {IStandardExchangeTransitionQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+
 /* -------------------------------------------------------------------------- */
 /*                                    Crane                                   */
 /* -------------------------------------------------------------------------- */
@@ -8,6 +13,7 @@ pragma solidity ^0.8.0;
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC20Permit} from "@crane/contracts/interfaces/IERC20Permit.sol";
@@ -57,43 +63,7 @@ import {
     UniswapV4TwapOracleAwareRepo
 } from "contracts/oracles/uniswap/v4/twap/aware/UniswapV4TwapOracleAwareRepo.sol";
 
-interface IUniswapV4StandardExchangeDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
-    error NotCalledByRegistry(address caller);
-    error ZeroTwapOracle();
-    error ZeroWeth();
-    error TwapOraclePoolManagerMismatch();
 
-    struct PkgInit {
-        IFacet erc20Facet;
-        IFacet erc5267Facet;
-        IFacet erc2612Facet;
-        IFacet multiAssetBasicVaultFacet;
-        IFacet multiAssetStandardVaultFacet;
-        IFacet uniswapV4StandardExchangeInFacet;
-        IFacet uniswapV4StandardExchangeInQueryFacet;
-        IFacet uniswapV4StandardExchangePositionImportFacet;
-        IFacet uniswapV4StandardExchangeOutFacet;
-        IFacet uniswapV4StandardExchangeOutQueryFacet;
-        IFacet uniswapV4StandardExchangeLiquidReserveFacet;
-        IFacet uniswapV4StandardExchangeInMultiFacet;
-        IFacet uniswapV4StandardExchangeInMultiQueryFacet;
-        IFacet uniswapV4StandardExchangeOutMultiFacet;
-        IFacet uniswapV4StandardExchangeOutMultiQueryFacet;
-        IVaultFeeOracleQuery vaultFeeOracleQuery;
-        IVaultRegistryDeployment vaultRegistryDeployment;
-        IPermit2 permit2;
-        IPoolManager poolManager;
-        IPositionManager positionManager;
-        IUniswapV4MultiPoolTwapOracle twapOracle;
-        IWETH weth;
-    }
-
-    struct PkgArgs {
-        PoolKey poolKey;
-    }
-
-    function deployVault(PoolKey memory poolKey) external returns (address vault);
-}
 
 contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
     using BetterEfficientHashLib for bytes;
@@ -175,7 +145,7 @@ contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](12);
+        interfaces = new bytes4[](15);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20).interfaceId ^ type(IERC20Metadata).interfaceId;
@@ -188,6 +158,9 @@ contract UniswapV4StandardExchangeDFPkg is IUniswapV4StandardExchangeDFPkg {
         interfaces[9] = type(IUniswapV4StandardExchangeLiquidReserve).interfaceId;
         interfaces[10] = type(IStandardExchangeInMulti).interfaceId;
         interfaces[11] = type(IStandardExchangeOutMulti).interfaceId;
+        interfaces[12] = type(IStandardExchangeTransitionQuote).interfaceId;
+        interfaces[13] = type(IStandardizedYield).interfaceId;
+        interfaces[14] = type(IStandardExchangeExternalQuote).interfaceId;
     }
 
     function packageName() public pure override returns (string memory) {

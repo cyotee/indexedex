@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
@@ -25,10 +29,7 @@ import {
 import {
     IUniswapV4StandardExchangeLiquidReserve
 } from "contracts/protocols/dexes/uniswap/v4/interfaces/IUniswapV4StandardExchangeLiquidReserve.sol";
-import {
-    IUniswapV4StandardExchangeDFPkg,
-    UniswapV4StandardExchangeDFPkg
-} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol";
+import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/IUniswapV4StandardExchangeDFPkg.sol";
 import {
     UniswapV4_Component_FactoryService
 } from "contracts/protocols/dexes/uniswap/v4/UniswapV4_Component_FactoryService.sol";
@@ -155,12 +156,11 @@ contract UniswapV4StandardExchange_TwapPoke is TestBase_UniswapV4StandardExchang
         bytes4 sel = bytes4(keccak256("update((address,address,uint24,int24,address))"));
         vm.mockCallRevert(address(twapOracle), abi.encodeWithSelector(sel), "hostile");
         uint256 amountIn = 5 ether;
-        ERC20PermitMintableStub(_token0()).mint(address(this), amountIn);
-        IERC20(_token0()).approve(address(vault), amountIn);
+        (address[] memory tokens, uint256[] memory amounts) = _fundDualInput(_token0(), amountIn);
         vm.expectEmit(false, false, false, true, address(vault));
         emit UniswapV4StandardExchangeCommon.TwapOracleUpdateFailed(PoolId.unwrap(poolKey.toId()), bytes("hostile"));
-        uint256 shares = vault.exchangeIn(
-            IERC20(_token0()), amountIn, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1 hours
+        uint256 shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
+            tokens, amounts, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1 hours
         );
         assertGt(shares, 0);
         vm.clearMockedCalls();
@@ -211,18 +211,37 @@ contract UniswapV4StandardExchange_TwapPoke is TestBase_UniswapV4StandardExchang
         assertEq(liquid2.twapOracle().poolManager(), address(poolManager));
     }
 
+    /// @dev Preserve constructor revert data while loading the production package from its artifact.
+    function deployPackageForConstructorValidation(bytes memory creationCode_, bytes memory constructorArgs_)
+        external
+        returns (address deployed_)
+    {
+        bytes memory initCode_ = bytes.concat(creationCode_, constructorArgs_);
+        assembly ("memory-safe") {
+            deployed_ := create(0, add(initCode_, 32), mload(initCode_))
+            if iszero(deployed_) {
+                let free_ := mload(0x40)
+                returndatacopy(free_, 0, returndatasize())
+                revert(free_, returndatasize())
+            }
+        }
+    }
+
     function test_H29_constructZeroOrMismatchReverts() public {
+        bytes memory creationCode_ = ArtifactCreationCode.creationCode(
+            "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol:UniswapV4StandardExchangeDFPkg"
+        );
         IUniswapV4StandardExchangeDFPkg.PkgInit memory pkgInit = _copyPkgInit();
         pkgInit.twapOracle = IUniswapV4MultiPoolTwapOracle(address(0));
         vm.expectRevert(IUniswapV4StandardExchangeDFPkg.ZeroTwapOracle.selector);
-        new UniswapV4StandardExchangeDFPkg(pkgInit);
+        this.deployPackageForConstructorValidation(creationCode_, abi.encode(pkgInit));
 
         FlipTwapOracle flip = new FlipTwapOracle();
         flip.setPm(address(uint160(address(poolManager)) + 1));
         pkgInit = _copyPkgInit();
         pkgInit.twapOracle = IUniswapV4MultiPoolTwapOracle(address(flip));
         vm.expectRevert(IUniswapV4StandardExchangeDFPkg.TwapOraclePoolManagerMismatch.selector);
-        new UniswapV4StandardExchangeDFPkg(pkgInit);
+        this.deployPackageForConstructorValidation(creationCode_, abi.encode(pkgInit));
     }
 
     function test_H28_deployVaultRevertsOnPmMismatch() public {
@@ -234,7 +253,7 @@ contract UniswapV4StandardExchange_TwapPoke is TestBase_UniswapV4StandardExchang
         IUniswapV4StandardExchangeDFPkg hostilePkg = IUniswapV4StandardExchangeDFPkg(
             address(
                 IVaultRegistryDeployment(address(indexedexManager)).deployPkg(
-                    type(UniswapV4StandardExchangeDFPkg).creationCode,
+                    ArtifactCreationCode.creationCode(create3Factory, "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol:UniswapV4StandardExchangeDFPkg"),
                     abi.encode(pkgInit),
                     keccak256("UniswapV4StandardExchangeDFPkg.hostileTwap")
                 )
@@ -258,13 +277,28 @@ contract UniswapV4StandardExchange_TwapPoke is TestBase_UniswapV4StandardExchang
         );
     }
 
+    function _fundDualInput(address token, uint256 amountIn)
+        internal returns (address[] memory tokens, uint256[] memory amounts)
+    {
+        assertEq(token, _token0(), "TWAP fixture starts from token0");
+        tokens = new address[](2);
+        tokens[0] = _token0();
+        tokens[1] = Currency.unwrap(poolKey.currency1);
+        amounts = new uint256[](2);
+        amounts[0] = amountIn;
+        amounts[1] = amountIn;
+        for (uint256 i; i < 2; ++i) {
+            ERC20PermitMintableStub(tokens[i]).mint(address(this), amounts[i]);
+            IERC20(tokens[i]).approve(address(vault), amounts[i]);
+        }
+    }
+
     function _zapIn(address token, uint256 amountIn) internal returns (uint256 shares) {
-        ERC20PermitMintableStub(token).mint(address(this), amountIn);
-        IERC20(token).approve(address(vault), amountIn);
-        shares = vault.exchangeIn(
-            IERC20(token), amountIn, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1 hours
+        (address[] memory tokens, uint256[] memory amounts) = _fundDualInput(token, amountIn);
+        shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
+            tokens, amounts, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1 hours
         );
-        assertGt(shares, 0);
+        assertGt(shares, 0, "funded activation writes TWAP");
     }
 
     function _state()

@@ -1,0 +1,22 @@
+{
+  "cases": 19185,
+  "mismatches": 0,
+  "bit_sizes": [
+    8,
+    32,
+    64,
+    128,
+    192
+  ],
+  "curve_shapes": [
+    "linear",
+    "plateau",
+    "quadratic",
+    "sqrt",
+    "piecewise"
+  ],
+  "seed": 20260907,
+  "max_search_iterations": 200,
+  "seconds": 7.637,
+  "scope": "Independent integer lower-bound reference versus bounded interpolation. Supplemental algorithm evidence; actual production proxy validation is recorded separately."
+}

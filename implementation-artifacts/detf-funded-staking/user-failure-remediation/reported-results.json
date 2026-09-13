@@ -1,0 +1,7 @@
+{
+  "source": "owner-reported full test footer",
+  "passed": 28775,
+  "failed": 1362,
+  "scope": "D60 Balancer-hosted DETF excluded; Balancer SE and V4 DETF in scope",
+  "validation": "pending fixes and owner-run build/test"
+}

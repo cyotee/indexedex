@@ -14,13 +14,17 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IAaveV3StataStandardVault} from "contracts/interfaces/IAaveV3StataStandardVault.sol";
 import {AaveV3StataMarkerTarget} from "contracts/protocols/lending/aave/v3.6/AaveV3StataMarkerTarget.sol";
 
+import {AaveV3StataStandardYieldTarget} from "./AaveV3StataStandardYieldTarget.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+import {NativeStandardYieldSelectors} from "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol";
+
 // tag::AaveV3StataMarkerFacet[]
 /**
  * @title AaveV3StataMarkerFacet - IFacet declaration for the Stata marker.
  * @notice Provides the `stataToken()` marker function so that the interface ID
  *         can be used as a vault fee type for usage fee overrides.
  */
-contract AaveV3StataMarkerFacet is AaveV3StataMarkerTarget, IFacet {
+contract AaveV3StataMarkerFacet is AaveV3StataMarkerTarget, AaveV3StataStandardYieldTarget, IFacet {
     /* ---------------------------------------------------------------------- */
     /*                                 IFacet                                 */
     /* ---------------------------------------------------------------------- */
@@ -36,7 +40,8 @@ contract AaveV3StataMarkerFacet is AaveV3StataMarkerTarget, IFacet {
      * @inheritdoc IFacet
      */
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](1);
+        interfaces = new bytes4[](2);
+        interfaces[1] = type(IStandardizedYield).interfaceId;
         interfaces[0] = type(IAaveV3StataStandardVault).interfaceId;
         return interfaces;
     }
@@ -47,7 +52,7 @@ contract AaveV3StataMarkerFacet is AaveV3StataMarkerTarget, IFacet {
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
         funcs = new bytes4[](1);
         funcs[0] = IAaveV3StataStandardVault.stataToken.selector;
-        return funcs;
+        return NativeStandardYieldSelectors._append(funcs);
     }
 
     /**

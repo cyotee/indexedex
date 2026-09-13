@@ -35,9 +35,10 @@ contract FeeCollectorManagerFacet_IFacet_Test is CraneTest, TestBase_IFacet {
     }
 
     function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
-        controlFuncs = new bytes4[](3);
+        controlFuncs = new bytes4[](4);
         controlFuncs[0] = IFeeCollectorManager.syncReserve.selector;
         controlFuncs[1] = IFeeCollectorManager.syncReserves.selector;
         controlFuncs[2] = IFeeCollectorManager.pullFee.selector;
+        controlFuncs[3] = IFeeCollectorManager.redeemReserveLiquidity.selector;
     }
 }

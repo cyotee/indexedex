@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+
+import {IStandardExchangeTransitionQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
@@ -110,7 +113,7 @@ contract MorphoBlueStandardExchangeDFPkg is IMorphoBlueStandardExchangeDFPkg {
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](10);
+        interfaces = new bytes4[](12);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20Permit).interfaceId;
@@ -121,6 +124,8 @@ contract MorphoBlueStandardExchangeDFPkg is IMorphoBlueStandardExchangeDFPkg {
         interfaces[7] = type(IMorphoBlueStandardExchange).interfaceId;
         interfaces[8] = type(IBasicVault).interfaceId;
         interfaces[9] = type(IStandardVault).interfaceId;
+        interfaces[10] = type(IStandardExchangeTransitionQuote).interfaceId;
+        interfaces[11] = type(IStandardizedYield).interfaceId;
     }
 
     function facetCuts() public view returns (IDiamond.FacetCut[] memory cuts) {

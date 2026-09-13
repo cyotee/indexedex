@@ -1,0 +1,198 @@
+{
+  "recorded_at_utc": "2026-09-08T15:42:30.271221+00:00",
+  "policy": "Preserve preparation payloads/hashes as historical evidence. A matching applied record resolves preparation status, not final acceptance; no application or validation result is inferred solely from a filename. Current engineering work and explicit approval are authoritative in the queue/approval/acceptance records.",
+  "rows": [
+    {
+      "preparation": "pending-all-native-se-imports.json",
+      "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+      "application": "all-native-se-imports.json",
+      "application_status": "APPLIED_VALIDATION_PENDING"
+    },
+    {
+      "preparation": "pending-composed-exchange-followups.json",
+      "status": "Current provider fixes passed selected runtime tests; remaining accepted-provider compatibility and full acceptance still open"
+    },
+    {
+      "preparation": "pending-lp-bond-route.json",
+      "status": "Retired from this work by D60: Balancer-hosted DETFs are excluded except compilation maintenance."
+    },
+    {
+      "preparation": "pending-pons-fixture-followups.json",
+      "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+      "application": "pons-fixture-followups.json",
+      "application_status": "applied; validation pending"
+    },
+    {
+      "preparation": "pending-pons-pool-quote-tests.json",
+      "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+      "application": "pons-pool-quote-tests.json",
+      "application_status": "applied; validation pending"
+    },
+    {
+      "preparation": "pending-pons-product-funded-migration.json",
+      "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+      "application": "pons-product-funded-migration.json",
+      "application_status": "applied; validation pending"
+    },
+    {
+      "preparation": "pending-restricted-fee-lp.json",
+      "status": "RESOLVED by owner"
+    },
+    {
+      "preparation": "pending-robinhood-funded-rehearsal-migration.json",
+      "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+      "application": "robinhood-funded-rehearsal-migration.json",
+      "application_status": "applied; validation pending"
+    },
+    {
+      "preparation": "pending-shared-funded-policy-migration.json",
+      "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+      "application": "shared-funded-policy-migration.json",
+      "application_status": "applied; validation pending"
+    },
+    {
+      "preparation": "pending-token-staking-real-migration-consolidation.json",
+      "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+      "application": "token-staking-real-migration-consolidation.json",
+      "application_status": "applied; validation pending"
+    },
+    {
+      "preparation": "pending-v4-claim-layer-migration.json",
+      "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+      "application": "v4-claim-layer-migration.json",
+      "application_status": "applied; validation pending"
+    },
+    {
+      "preparation": "pending-v4-close-funded-migration.json",
+      "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+      "application": "v4-close-funded-migration.json",
+      "application_status": "HISTORICAL_MIGRATION_APPLIED_AND_SUPERSEDED_BY_OWNER_APPROVED_CLEANUP"
+    },
+    {
+      "preparation": "pending-v4-current-caller-migration.json",
+      "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+      "application": "v4-current-caller-migration.json",
+      "application_status": "applied; validation pending"
+    },
+    {
+      "preparation": "pending-v4-custom-funded-claim-migration.json",
+      "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+      "application": "v4-custom-funded-claim-migration.json",
+      "application_status": "applied; validation pending"
+    },
+    {
+      "preparation": "pending-v4-d25-funded-consolidation.json",
+      "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+      "application": "v4-d25-funded-consolidation.json",
+      "application_status": "applied; validation pending"
+    },
+    {
+      "preparation": "pending-v4-fee-funded-consolidation.json",
+      "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+      "application": "v4-fee-funded-consolidation.json",
+      "application_status": "applied; validation pending"
+    },
+    {
+      "preparation": "pending-v4-funded-donation-migration.json",
+      "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+      "application": "v4-funded-donation-migration.json",
+      "application_status": "applied; validation pending"
+    },
+    {
+      "preparation": "pending-v4-funded-unstake-migration.json",
+      "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+      "application": "v4-funded-unstake-migration.json",
+      "application_status": "applied; validation pending"
+    },
+    {
+      "preparation": "pending-v4-io-funded-bond-migration.json",
+      "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+      "application": "v4-io-funded-bond-migration.json",
+      "application_status": "applied; validation pending"
+    },
+    {
+      "preparation": "pending-v4-nleg-policy-migration.json",
+      "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+      "application": "v4-nleg-policy-migration.json",
+      "application_status": "applied; validation pending"
+    },
+    {
+      "preparation": "pending-v4-original-principal-consolidation.json",
+      "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+      "application": "v4-original-principal-consolidation.json",
+      "application_status": "applied; validation pending"
+    },
+    {
+      "preparation": "pending-v4-policy-base-migration.json",
+      "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+      "application": "v4-policy-base-migration.json",
+      "application_status": "applied; validation pending"
+    },
+    {
+      "preparation": "pending-v4-policy-fast-candidate.json",
+      "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+      "application": "v4-policy-fast-candidate.json",
+      "application_status": "applied; equivalent-policy validation and comparable warm timing pending"
+    },
+    {
+      "preparation": "pending-v4-pons-funded-fee-migration.json",
+      "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+      "application": "v4-pons-funded-fee-migration.json",
+      "application_status": "applied; validation pending"
+    },
+    {
+      "preparation": "pending-v4-pons-hook-quotes.json",
+      "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+      "application": "v4-pons-hook-quotes.json",
+      "application_status": "applied; validation pending"
+    },
+    {
+      "preparation": "pending-v4-provider-funded-lifecycle-migration.json",
+      "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+      "application": "v4-provider-funded-lifecycle-migration.json",
+      "application_status": "applied; validation pending"
+    },
+    {
+      "preparation": "pending-v4-remaining-provider-claim-migration.json",
+      "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+      "application": "v4-remaining-provider-claim-migration.json",
+      "application_status": "applied; validation pending"
+    },
+    {
+      "preparation": "pending-v4-standard-test-call-migration-gas-options.json",
+      "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+      "application": "v4-standard-test-call-migration-gas-options.json",
+      "application_status": "applied; validation pending"
+    },
+    {
+      "preparation": "pending-v4-standard-test-call-migration.json",
+      "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+      "application": "v4-standard-test-call-migration.json",
+      "application_status": "applied; validation pending"
+    },
+    {
+      "preparation": "pending-v4-standard-test-preview-migration-gas-options.json",
+      "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+      "application": "v4-standard-test-preview-migration-gas-options.json",
+      "application_status": "applied; validation pending"
+    },
+    {
+      "preparation": "pending-v4-standard-test-preview-migration.json",
+      "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+      "application": "v4-standard-test-preview-migration.json",
+      "application_status": "applied; validation pending"
+    },
+    {
+      "preparation": "pending-v4-surface-test-consolidation.json",
+      "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+      "application": "v4-surface-test-consolidation.json",
+      "application_status": "applied; validation pending"
+    },
+    {
+      "preparation": "pending-v4-unused-mint-preview-cleanup.json",
+      "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+      "application": "v4-unused-mint-preview-cleanup.json",
+      "application_status": "applied; validation pending"
+    }
+  ]
+}

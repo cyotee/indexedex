@@ -1,6 +1,12 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
+import {IDETFSYDFPkg} from "contracts/vaults/detf/common/sy/IDETFSYDFPkg.sol";
+
+import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/IDETFNFTVaultDFPkg.sol";
+
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -10,7 +16,7 @@ import {IERC8109Introspection} from "@crane/contracts/interfaces/IERC8109Introsp
 import {IPostDeployAccountHook} from "@crane/contracts/interfaces/IPostDeployAccountHook.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IFacetRegistry} from "@crane/contracts/interfaces/IFacetRegistry.sol";
-import {ERC721Facet} from "@crane/contracts/tokens/ERC721/ERC721Facet.sol";
+
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 
@@ -23,9 +29,8 @@ import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPoli
 import {DetfComponentFactoryService} from "contracts/vaults/detf/common/factory/DetfComponentFactoryService.sol";
 import {DetfFacetFactoryService} from "contracts/vaults/detf/common/factory/DetfFacetFactoryService.sol";
 import {DetfPkgFactoryService} from "contracts/vaults/detf/common/factory/DetfPkgFactoryService.sol";
-import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
-import {IUniswapV4DetfBondNFTVaultDFPkg} from
-    "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol";
+import {IUniswapV4DetfBondNFTVaultDFPkg} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/IUniswapV4DetfBondNFTVaultDFPkg.sol";
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
 import {
     IUniswapV4HookStagedPairInit
@@ -51,6 +56,7 @@ import {UniswapV4Detf_Facet_FactoryService} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Facet_FactoryService.sol";
 import {UniswapV4Detf_Pkg_FactoryService} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Pkg_FactoryService.sol";
+import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 import {
     TestBase_UniswapV4StandardExchange_PonsV2
 } from "contracts/test/bases/TestBase_UniswapV4StandardExchange_PonsV2.sol";
@@ -75,11 +81,12 @@ abstract contract TestBase_UniswapV4Detf_PonsV2Se is TestBase_UniswapV4StandardE
     IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage internal hookPkg;
     address internal reserveHook;
 
-    IFacet internal detfProductFacet;
+    IFacet[5] internal detfProductFacets;
     IFacet internal detfNFTVaultFacet;
     IFacet internal erc721FacetDetf;
     IUniswapV4DetfBondNFTVaultDFPkg internal bondNftVaultPkg;
     IRebasingClaimTokenDFPkg internal rebasingClaimTokenPkg;
+    IDETFSYDFPkg internal syPkg;
     IUniswapV4DetfDFPkg internal detfPkg;
 
     address internal detf;
@@ -89,6 +96,7 @@ abstract contract TestBase_UniswapV4Detf_PonsV2Se is TestBase_UniswapV4StandardE
 
     function setUp() public virtual override {
         TestBase_UniswapV4StandardExchange_PonsV2.setUp();
+        _activatePonsSe();
 
         _deployHookFactoryAndCpPkg();
         _deployBondNftVaultPkg();
@@ -142,6 +150,8 @@ abstract contract TestBase_UniswapV4Detf_PonsV2Se is TestBase_UniswapV4StandardE
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
                 seFacet: seFacet,
                 depositFacet: depositFacet,
+                depositSingleFacet: CpHookFactory.deployDepositSingleFacet(create3Factory),
+                depositPreviewFacet: CpHookFactory.deployDepositPreviewFacet(create3Factory),
                 withdrawFacet: withdrawFacet,
                 erc20Facet: erc20Facet,
                 erc5267Facet: erc5267Facet,
@@ -157,13 +167,12 @@ abstract contract TestBase_UniswapV4Detf_PonsV2Se is TestBase_UniswapV4StandardE
     function _deployBondNftVaultPkg() internal {
         detfNFTVaultFacet = create3Factory.deployUniswapV4DetfBondNFTVaultFacet();
         erc721FacetDetf = IFacet(
-            create3Factory.deployFacet(type(ERC721Facet).creationCode, keccak256("PonsUv4Detf_ERC721Facet"))
+            create3Factory.deployFacet(ArtifactCreationCode.creationCode(create3Factory, "ERC721Facet.sol:ERC721Facet"), keccak256("PonsUv4Detf_ERC721Facet"))
         );
-        IUniswapV4DetfBondNFTVaultDFPkg.PkgInit memory nftPkgInit = DetfComponentFactoryService
+        IDETFNFTVaultDFPkg.PkgInit memory nftPkgInit = DetfComponentFactoryService
             .buildUniswapV4DetfBondNFTVaultPkgInit(
             erc721FacetDetf,
-            erc4626BasicVaultFacet,
-            erc4626StandardVaultFacet,
+            DetfFacetFactoryService.deployDETFFundedBondMetadataFacet(create3Factory),
             detfNFTVaultFacet,
             IVaultFeeOracleQuery(address(indexedexManager)),
             IVaultRegistryDeployment(address(indexedexManager))
@@ -184,18 +193,29 @@ abstract contract TestBase_UniswapV4Detf_PonsV2Se is TestBase_UniswapV4StandardE
     }
 
     function _deployDetfPkg() internal {
-        detfProductFacet = UniswapV4Detf_Facet_FactoryService.deployUniswapV4DetfFacet(create3Factory);
+        IFacet syFacet_ = create3Factory.deployDETFSYFacet();
+        vm.startPrank(owner);
+        syPkg = DetfPkgFactoryService.deployDETFSYDFPkg(
+            IVaultRegistryDeployment(address(indexedexManager)), IDETFSYDFPkg.PkgInit({
+                erc5267Facet: erc5267Facet, erc2612Facet: erc2612Facet, syFacet: syFacet_,
+                feeOracle: IVaultFeeOracleQuery(address(indexedexManager)),
+                vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager))
+            })
+        );
+        vm.stopPrank();
+        detfProductFacets = UniswapV4Detf_Facet_FactoryService.deployUniswapV4DetfFacets(create3Factory);
         IUniswapV4DetfDFPkg.PkgInit memory pkgInit = IUniswapV4DetfDFPkg.PkgInit({
             erc20Facet: erc20Facet,
             erc5267Facet: erc5267Facet,
             erc2612Facet: erc2612Facet,
             multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
             multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
-            productFacet: detfProductFacet,
+            productFacets: detfProductFacets,
             feeOracle: IVaultFeeOracleQuery(address(indexedexManager)),
             vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
             bondNftVaultPkg: bondNftVaultPkg,
-            rebasingClaimTokenPkg: rebasingClaimTokenPkg
+            rebasingClaimTokenPkg: rebasingClaimTokenPkg,
+            syPkg: syPkg
         });
         vm.startPrank(owner);
         detfPkg = UniswapV4Detf_Pkg_FactoryService.deployUniswapV4DetfDFPkg(
@@ -204,21 +224,19 @@ abstract contract TestBase_UniswapV4Detf_PonsV2Se is TestBase_UniswapV4StandardE
         vm.stopPrank();
     }
 
-    function _defaultDetfArgs() internal view returns (IUniswapV4Detf.PkgArgs memory args) {
+    function _defaultDetfArgs() internal view virtual returns (IUniswapV4Detf.PkgArgs memory args) {
         uint256[] memory creation_ = new uint256[](1);
         creation_[0] = DEFAULT_CREATION_PAIR_PER_DETF;
         args = IUniswapV4Detf.PkgArgs({
             name: "Pons V2 SE UniV4 DETF",
             symbol: "ponsUv4DETF",
             hook: address(0),
+            ownerOnlyLiquidity: true,
             creationPairPerDetfWad: creation_,
             openingPairPerDetfWad: new uint256[](0),
             mintThreshold: 0,
             burnThreshold: 0,
-            thresholdMode: ThresholdMode.Open,
-            expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
-            expansionMaxCatchUpEpochs: 0,
             creator: address(0),
             claimName: "",
             claimSymbol: "",
@@ -230,8 +248,7 @@ abstract contract TestBase_UniswapV4Detf_PonsV2Se is TestBase_UniswapV4StandardE
             burnRoutes: new IUniswapV4Detf.IoRoute[](0),
             bondRouteMode: IUniswapV4Detf.RouteTableMode.Default,
             bondRoutes: new IUniswapV4Detf.IoRoute[](0),
-            closeRouteMode: IUniswapV4Detf.RouteTableMode.Default,
-            closeRoutes: new IUniswapV4Detf.IoRoute[](0),
+
             donateRouteMode: IUniswapV4Detf.RouteTableMode.Default,
             donateRoutes: new IUniswapV4Detf.IoRoute[](0)
         });
@@ -247,7 +264,6 @@ abstract contract TestBase_UniswapV4Detf_PonsV2Se is TestBase_UniswapV4StandardE
 
     function _deployHookThenDetf(IUniswapV4Detf.PkgArgs memory args) internal returns (address detf_) {
         address predicted_ = _predictDetf(args);
-        vm.etch(predicted_, address(weth).code);
         IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs memory hArgs =
             IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs({
                 poolManager: address(poolManager),
@@ -255,7 +271,9 @@ abstract contract TestBase_UniswapV4Detf_PonsV2Se is TestBase_UniswapV4StandardE
                 standardExchange: address(ponsSe),
                 pairToken: launchToken,
                 rawToken: predicted_,
-                ownerOnlyLiquidity: true,
+                pairTokenDecimals: HookPkgArgsDecimalsLib.tokenDec(launchToken),
+                rawTokenDecimals: predicted_.code.length == 0 ? uint8(9) : HookPkgArgsDecimalsLib.tokenDec(predicted_),
+                ownerOnlyLiquidity: args.ownerOnlyLiquidity,
                 owner: predicted_
             });
         uint256 mineNonce = CpHookFactory.findMineNonce(hookFactory, hookPkg, hArgs);
@@ -263,7 +281,6 @@ abstract contract TestBase_UniswapV4Detf_PonsV2Se is TestBase_UniswapV4StandardE
         IUniswapV4HookStagedPairInit init = IUniswapV4HookStagedPairInit(reserveHook);
         init.deployPair(predicted_, launchToken);
         require(init.finalizeInitialization(), "finalize");
-        vm.etch(predicted_, "");
         args.hook = reserveHook;
         vm.startPrank(owner);
         detf_ = detfPkg.deployVault(args);

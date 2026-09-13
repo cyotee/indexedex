@@ -20,8 +20,7 @@ import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balance
 /* -------------------------------------------------------------------------- */
 
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
-import {IStandardExchangeRateProviderDFPkg} from
-    "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
+import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
 
 /// @title Script_11_DeployStandardExchangeRateProviders
 /// @notice Deploys StandardExchangeRateProvider instances for each Standard Exchange vault.

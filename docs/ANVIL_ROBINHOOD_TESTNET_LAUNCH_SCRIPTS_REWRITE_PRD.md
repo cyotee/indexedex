@@ -158,7 +158,7 @@ Order is dependency order. Numbers may gain a Stage if we split further; do not 
 | 06 | 01 | Bond NFT package |
 | 06 | 02 | Rebasing claim package |
 | 06 | 03+ | One Stage per Hook DFPkg type (CP buffer, Weighted buffer, Orbital buffer, Curve Quad buffer, …) |
-| 06 | then | One Stage per DETF package (CP, Weighted, Orbital, Curve Quad, …) |
+| 06 | then | One Stage: unified Uni V4 DETF package (`uniV4DetfPkg`). Family DETF packages are not in this catalog. |
 | 07 | 01 | Core test tokens (`DTF`, `TTUSDG`, `TTUSDE`, `TTWETH`) + facade mint |
 | 07 | 02 | Mag7 test tokens (`TTNVDA` … `TTTSLA`) |
 | 07 | then | Uni V4 SE **instances** required by Phase 08 (`DTF`/`TTWETH`, three USD SEs). No Morpho or Uni V3 SE instances. |
@@ -189,7 +189,7 @@ Current `all` runs: `00 01 02 03 03b 03c 03d 04 04b 05 06t 06e 09`. One shell wi
 | Morpho / Uni V3 rehearsal hosts | Phase 01 Stages 04–05 |
 | Bond NFT + rebasing claim pkgs | Phase 06 Stages 01–02 |
 | Family hook DFPkgs | Phase 06, one Stage per hook type |
-| CP / Weighted / Orbital / Curve Quad DETF pkgs | Phase 06, one Stage per DETF package |
+| Unified Uni V4 DETF pkg | Phase 06 Stage 07 (`uniV4DetfPkg`) |
 | Core four tokens | Phase 07 Stage 01 |
 | Mag7 tokens | Phase 07 Stage 02 |
 | Uni V4 SE instances | Phase 07 SE Stages |

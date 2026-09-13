@@ -1,0 +1,69 @@
+{
+  "recorded_at_utc": "2026-09-11T05:19:15.116660+00:00",
+  "status": "MATCHING_FINAL_DEFAULT_BUILD_AND_FULL_RUNTIME_COUNTS",
+  "baseline": "compiled-test-inventory-baseline.json",
+  "current": "compiled-test-inventory-current.json",
+  "scope_comparison": [
+    {
+      "scope": "D60_BALANCER_DETF_EXCLUDED",
+      "baseline": {
+        "contracts": 954,
+        "compiled_methods": 7213,
+        "artifact_file_bytes": 2924331657,
+        "largest_runtime_bytes": 661689
+      },
+      "current": {
+        "contracts": 540,
+        "compiled_methods": 3489,
+        "artifact_file_bytes": 1792209438,
+        "largest_runtime_bytes": 690172
+      }
+    },
+    {
+      "scope": "D66_DEFERRED_PRESERVE_EXISTING",
+      "baseline": {
+        "contracts": 29,
+        "compiled_methods": 265,
+        "artifact_file_bytes": 22498990,
+        "largest_runtime_bytes": 189690
+      },
+      "current": {
+        "contracts": 29,
+        "compiled_methods": 265,
+        "artifact_file_bytes": 23110021,
+        "largest_runtime_bytes": 189932
+      }
+    },
+    {
+      "scope": "IN_SCOPE_OR_SHARED_DEPENDENCY",
+      "baseline": {
+        "contracts": 2090,
+        "compiled_methods": 29085,
+        "artifact_file_bytes": 3887284764,
+        "largest_runtime_bytes": 750403
+      },
+      "current": {
+        "contracts": 2126,
+        "compiled_methods": 27551,
+        "artifact_file_bytes": 4265286951,
+        "largest_runtime_bytes": 815621
+      }
+    }
+  ],
+  "interpretation": "Compiled contracts: 3073 to 2695; methods: 36563 to 31305. All 31305 current methods executed and passed in the unfiltered default run. In-scope/shared contract count increased; excluded historical changes are reported separately. Different snapshots, compilation cache states, test scopes and prior failures prevent a controlled full-suite speedup claim. Current complete build 27719.527 s; test command 1042.441 s. The identical 14-case fixture comparison measures lower EVM setup gas in two cases but higher command wall time.",
+  "current_summary": {
+    "compiled_test_contracts": 2695,
+    "compiled_test_or_invariant_methods": 31305,
+    "scope_contract_counts": {
+      "IN_SCOPE_OR_SHARED_DEPENDENCY": 2126,
+      "D66_DEFERRED_PRESERVE_EXISTING": 29,
+      "D60_BALANCER_DETF_EXCLUDED": 540
+    },
+    "documented_network_exclusion_contracts": 0,
+    "largest_runtime_bytes": 815621,
+    "total_test_artifact_file_bytes": 6080606410
+  },
+  "runtime_evidence": "implementation-hermetic-test.json",
+  "controlled_comparison": "policy-fixture-performance-comparison.json",
+  "archived_prior_comparison": "production-readiness/compiled-test-consolidation-comparison.before-final.json"
+}

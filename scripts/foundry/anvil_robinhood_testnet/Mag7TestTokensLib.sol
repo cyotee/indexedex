@@ -9,7 +9,7 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20MintBurn} from "@crane/contracts/interfaces/IERC20MintBurn.sol";
 import {
     IERC20MintBurnOwnableOperableDFPkg
-} from "@crane/contracts/tokens/ERC20/ERC20MintBurnOwnableOperableDFPkg.sol";
+} from "@crane/contracts/tokens/ERC20/IERC20MintBurnOwnableOperableDFPkg.sol";
 
 /// @title Mag7TestTokensLib
 /// @notice Mag7 mintable stand-ins. Facade is a global operator. 1e6 of each plus TTWETH to deployer.

@@ -34,34 +34,29 @@ contract MultiVaultWeightedDetf_Fuzz_Test is TestBase_MultiVaultWeightedDetf {
         uint256 lpAmount_ = bound(lpSeed, 50e18, 200e18);
 
         uint256 sharesIn_ = _fundSeSharesLeg(0, actorB, lpAmount_);
-        vm.assume(sharesIn_ > 1e15);
+        assertGt(sharesIn_, 0, "funded SE shares");
 
         vm.startPrank(actorB);
         seShares[0].approve(instance_, sharesIn_);
-        uint256 detfOut_ = IStandardExchangeIn(instance_).exchangeIn(
-            seShares[0], sharesIn_, IERC20(instance_), 0, actorB, false, block.timestamp + 1 hours
-        );
+        uint256 detfOut_ = IStandardExchangeIn(instance_)
+            .exchangeIn(seShares[0], sharesIn_, IERC20(instance_), 0, actorB, false, block.timestamp + 1 hours);
         vm.stopPrank();
-        // Need meaningful DETF so burn path does not hit dust underflows in pool math.
-        vm.assume(detfOut_ > 1e12);
+        // DETF has nine decimals; bound the burn to the actual funded output.
+        assertGe(detfOut_, 10, "funded DETF supports a partial burn");
 
         // Partial burn only (avoid full-exit edge dust).
-        uint256 burnAmt_ = bound(burnSeed, 1e12, detfOut_ / 2);
-        if (burnAmt_ == 0) return;
+        uint256 burnAmt_ = bound(burnSeed, detfOut_ / 10, detfOut_ / 2);
         uint256 sharesBefore_ = seShares[0].balanceOf(actorB);
 
         vm.startPrank(actorB);
         IERC20(instance_).approve(instance_, burnAmt_);
-        try IStandardExchangeIn(instance_).exchangeIn(
-            IERC20(instance_), burnAmt_, seShares[0], 0, actorB, false, block.timestamp + 1 hours
-        ) returns (uint256 sharesBack_) {
-            vm.stopPrank();
-            assertLe(sharesBack_, sharesIn_, "P-CONS: sharesBack <= sharesIn");
-            assertEq(seShares[0].balanceOf(actorB), sharesBefore_ + sharesBack_, "shares credited");
-        } catch {
-            vm.stopPrank();
-            // Dust / threshold reverts are acceptable; residual still clean.
-        }
+        uint256 sharesBack_ = IStandardExchangeIn(instance_)
+            .exchangeIn(IERC20(instance_), burnAmt_, seShares[0], 0, actorB, false, block.timestamp + 1 hours);
+        vm.stopPrank();
+        assertGt(sharesBack_, 0, "partial burn executes");
+        assertLe(sharesBack_, sharesIn_, "P-CONS: sharesBack <= sharesIn");
+        assertEq(seShares[0].balanceOf(actorB), sharesBefore_ + sharesBack_, "shares credited");
+        assertEq(IERC20(instance_).balanceOf(actorB), detfOut_ - burnAmt_, "funded DETF debited");
         _assertNoFreeInventory(instance_);
     }
 

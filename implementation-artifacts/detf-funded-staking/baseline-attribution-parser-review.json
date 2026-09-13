@@ -1,0 +1,8 @@
+{
+  "recorded_at_utc": "2026-09-08T09:55:04.199613+00:00",
+  "status": "PARSER_CHECKED_AGAINST_PRESERVED_BASELINE",
+  "source": "baseline-hermetic-failure-index.json",
+  "recovered_setup_or_invariant_names": 141,
+  "unparsed_baseline_failure_names": 0,
+  "change": "Current attribution reconstructs exact setup/invariant names from preserved result lines, avoiding null-identity collisions. Historical evidence is unchanged. Current full-suite results remain pending."
+}

@@ -1,23 +1,24 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {DeploymentBase} from "./DeploymentBase.sol";
 import {FixtureEconomics} from "./FixtureEconomics.sol";
 
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
-import {ERC721Facet} from "@crane/contracts/tokens/ERC721/ERC721Facet.sol";
 
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
-import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol";
+import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/IDETFNFTVaultDFPkg.sol";
 import {DetfComponentFactoryService} from "contracts/vaults/detf/common/factory/DetfComponentFactoryService.sol";
 import {DetfFacetFactoryService} from "contracts/vaults/detf/common/factory/DetfFacetFactoryService.sol";
 import {DetfPkgFactoryService} from "contracts/vaults/detf/common/factory/DetfPkgFactoryService.sol";
-import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol";
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
 
 /// @title Script_07_DeployFeeDetfChildren
@@ -102,12 +103,11 @@ contract Script_07_DeployFeeDetfChildren is DeploymentBase {
     function _deployBondNftVaultPkg() internal {
         IFacet detfNFTVaultFacet = create3Factory.deployDETFNFTVaultFacet();
         IFacet erc721FacetDetf =
-            IFacet(create3Factory.deployFacet(type(ERC721Facet).creationCode, keccak256("FeeDetf_ERC721Facet")));
+            IFacet(create3Factory.deployFacet(ArtifactCreationCode.creationCode(create3Factory, "ERC721Facet.sol:ERC721Facet"), keccak256("FeeDetf_ERC721Facet")));
 
         IDETFNFTVaultDFPkg.PkgInit memory nftPkgInit = DetfComponentFactoryService.buildDETFNFTVaultPkgInit(
             erc721FacetDetf,
-            erc4626BasicVaultFacet,
-            erc4626StandardVaultFacet,
+            DetfFacetFactoryService.deployDETFFundedBondMetadataFacet(create3Factory),
             detfNFTVaultFacet,
             IVaultFeeOracleQuery(indexedexManager),
             IVaultRegistryDeployment(indexedexManager)

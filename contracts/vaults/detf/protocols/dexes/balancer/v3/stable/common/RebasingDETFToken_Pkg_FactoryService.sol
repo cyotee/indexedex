@@ -1,15 +1,13 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 import {Vm} from 'forge-std/Vm.sol';
 import {VM_ADDRESS} from '@crane/contracts/constants/FoundryConstants.sol';
 import {ICreate3FactoryProxy} from '@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol';
 import {BetterEfficientHashLib} from '@crane/contracts/utils/BetterEfficientHashLib.sol';
 
-import {
-    IRebasingDETFTokenDFPkg,
-    RebasingDETFTokenDFPkg
-} from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenDFPkg.sol';
+import {IRebasingDETFTokenDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/IRebasingDETFTokenDFPkg.sol";
 
 library RebasingDETFToken_Pkg_FactoryService {
     using BetterEfficientHashLib for bytes;
@@ -23,12 +21,12 @@ library RebasingDETFToken_Pkg_FactoryService {
         instance_ = IRebasingDETFTokenDFPkg(
             address(
                 create3Factory.deployPackageWithArgs(
-                    type(RebasingDETFTokenDFPkg).creationCode,
+                    ArtifactCreationCode.creationCode("RebasingDETFTokenDFPkg.sol:RebasingDETFTokenDFPkg"),
                     abi.encode(pkgInit_),
-                    abi.encode(type(RebasingDETFTokenDFPkg).name)._hash()
+                    abi.encode("RebasingDETFTokenDFPkg")._hash()
                 )
             )
         );
-        vm.label(address(instance_), type(RebasingDETFTokenDFPkg).name);
+        vm.label(address(instance_), "RebasingDETFTokenDFPkg");
     }
 }

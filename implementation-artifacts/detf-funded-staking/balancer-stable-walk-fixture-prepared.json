@@ -1,0 +1,17 @@
+{
+  "status": "APPLIED_RUNTIME_VALIDATION_PENDING",
+  "gate": "Wait for entire validation parent4255 exit before applying.",
+  "changes": [
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/balancer-se-fixture-followup-drafts/MixedBufferMultiVaultStable_WalkAndExhaust_Decimals.sol.txt",
+      "before_sha256": "0ebe0a4e43979a1c35e98348ee1210f6a15824928e5c99b2506f29dc6381da7a",
+      "after_sha256": "d9598591cf2e5a60fae1bc77896e17d5e5c82214c2afc41d0bebd96e655d7bf0",
+      "reason": "Normalize both stable-pool initial token legs and retain honest 18-decimal share/native-buffer conversions in the existing hostile routing dependency."
+    }
+  ],
+  "validation_passed": false,
+  "scope": "Existing Balancer SE walk/exhaust tests only; no Balancer DETF or Slipstream change.",
+  "applied_at_utc": "2026-09-09T08:34:04.631375+00:00",
+  "application_record": "hermetic-followups-validation-remediation-applied.json"
+}

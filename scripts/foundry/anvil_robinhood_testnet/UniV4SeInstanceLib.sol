@@ -11,7 +11,7 @@ import {IERC20MintBurn} from "@crane/contracts/interfaces/IERC20MintBurn.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
-import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol";
+import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/IUniswapV4StandardExchangeDFPkg.sol";
 
 /// @title UniV4SeInstanceLib
 /// @notice Required `DTF`/`TTWETH` SE plus the three SEs that feed `TTDOL-Q`.
@@ -28,11 +28,11 @@ library UniV4SeInstanceLib {
         address ttweth = s.ttWETH;
         // TTDOL-Q 3/3: each RP rates shares → the pairToken that SE actually holds.
         (s.seUsdeWeth, s.rpUsdeWeth) =
-            _poolSeRp(s, seeder, s.ttUSDE, ttweth, s.ttUSDE, FixtureEconomics.WETH_POOL_SEED);
+            _poolSeRp(s, owner_, seeder, s.ttUSDE, ttweth, s.ttUSDE, FixtureEconomics.WETH_POOL_SEED);
         (s.seUsdgUsde, s.rpUsdgUsde) =
-            _poolSeRp(s, seeder, s.ttUSDG, s.ttUSDE, s.ttUSDG, FixtureEconomics.TT_TT_SEED);
+            _poolSeRp(s, owner_, seeder, s.ttUSDG, s.ttUSDE, s.ttUSDG, FixtureEconomics.TT_TT_SEED);
         (s.seUsdgWeth, s.rpUsdgWeth) =
-            _poolSeRp(s, seeder, s.ttUSDG, ttweth, ttweth, FixtureEconomics.WETH_POOL_SEED);
+            _poolSeRp(s, owner_, seeder, s.ttUSDG, ttweth, ttweth, FixtureEconomics.WETH_POOL_SEED);
         deployTtrichWeth(s, owner_);
     }
 
@@ -50,11 +50,12 @@ library UniV4SeInstanceLib {
         _topUp(s.ttWETH, owner_);
         _topUp(s.ttRICH, owner_);
         (s.seRichWeth, s.rpRichWeth) =
-            _poolSeRp(s, seeder, s.ttRICH, s.ttWETH, s.ttRICH, FixtureEconomics.WETH_POOL_SEED);
+            _poolSeRp(s, owner_, seeder, s.ttRICH, s.ttWETH, s.ttRICH, FixtureEconomics.WETH_POOL_SEED);
     }
 
     function _poolSeRp(
         LaunchState storage s,
+        address receiver,
         address seeder,
         address tokenA,
         address tokenB,
@@ -64,6 +65,7 @@ library UniV4SeInstanceLib {
         PoolKey memory key = PoolSeedLib.buildKey(tokenA, tokenB);
         PoolSeedLib.initAndSeed(IPoolManager(RobinhoodCanonicalLib.poolManager()), seeder, key, seed, seed);
         se = s.uniV4SePkg.deployVault(key);
+        PoolSeedLib.activateStandardExchange(se, key, seed, receiver);
         rp = address(s.rateProviderPkg.deployRateProvider(IStandardExchange(se), IERC20(pairToken)));
     }
 

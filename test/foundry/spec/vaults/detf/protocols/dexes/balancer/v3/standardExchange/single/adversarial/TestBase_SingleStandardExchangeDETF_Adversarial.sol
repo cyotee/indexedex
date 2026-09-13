@@ -9,15 +9,9 @@ import {DetfReentryTarget} from "contracts/test/adversarial/DetfReentryTarget.so
 import {
     TestBase_SingleStandardExchangeDETF
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF.sol";
-import {
-    ISingleStandardExchangeDETDFPkg
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETDFPkg.sol";
-import {
-    ISingleStandardExchangeDETFBonding
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFBondingTarget.sol";
-import {
-    ISingleStandardExchangeDETFInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFInfoTarget.sol";
+import {ISingleStandardExchangeDETDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETDFPkg.sol";
+import {ISingleStandardExchangeDETFBonding} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFBonding.sol";
+import {ISingleStandardExchangeDETFInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFInfo.sol";
 import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 
 /// @title TestBase_SingleStandardExchangeDETF_Adversarial
@@ -68,10 +62,10 @@ abstract contract TestBase_SingleStandardExchangeDETF_Adversarial is TestBase_Si
             vaultShareWeight: 0,
             mintThreshold: mintArg_,
             burnThreshold: burnArg_,
-            thresholdMode: mode_,
+
             expansionClosureRatePerSecond: 0,
-            expansionCatchUpMaxSeconds: 0,
-            expansionCatchUpCapBps: 0,
+
+
             creator: address(0),
             claimName: "",
             claimSymbol: "",

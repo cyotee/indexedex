@@ -21,9 +21,7 @@ import {TestBase_VaultComponents} from "contracts/vaults/TestBase_VaultComponent
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
-import {
-    ISlipstreamStandardExchangeDFPkg
-} from "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeDFPkg.sol";
+import {ISlipstreamStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/slipstream/ISlipstreamStandardExchangeDFPkg.sol";
 import {
     Slipstream_Component_FactoryService
 } from "contracts/protocols/dexes/aerodrome/slipstream/Slipstream_Component_FactoryService.sol";
@@ -38,7 +36,7 @@ contract SlipstreamFactoryStub {}
  * @title TestBase_SlipstreamStandardExchange
  * @notice Gold TestBase: CREATE3 facets + manager-registry DFPkg + hermetic CL book.
  */
-contract TestBase_SlipstreamStandardExchange is TestBase_Permit2, TestBase_VaultComponents {
+abstract contract TestBase_SlipstreamStandardExchange is TestBase_Permit2, TestBase_VaultComponents {
     using Slipstream_Component_FactoryService for ICreate3FactoryProxy;
     using Slipstream_Component_FactoryService for IIndexedexManagerProxy;
 

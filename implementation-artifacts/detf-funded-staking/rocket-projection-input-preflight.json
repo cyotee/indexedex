@@ -1,0 +1,227 @@
+{
+  "recorded_at_utc": "2026-09-08T18:33:44.672260+00:00",
+  "block": 24000000,
+  "chain": "0x1",
+  "broadcast": false,
+  "bindings": {
+    "rocketDepositPool": "0xdd3f50f8a6cafbe9b31a427582963f465e745af8",
+    "rocketTokenRETH": "0xae78736cd615f374d3085123a210448e74fc6393",
+    "rocketDAOProtocolSettingsDeposit": "0xd846aa34caef083dc4797d75096f60b6e08b7418",
+    "rocketDAOProtocolSettingsNetwork": "0x89682e5f9bf69c909fc5e21a06495ac35e3671ab",
+    "rocketNetworkBalances": "0x6cc65bf618f55ce2433f9d8d827fc44117d81399",
+    "rocketMinipoolQueue": "0x9e966733e3e9bfa56af95f762921859417cf6faa"
+  },
+  "native_balances": {
+    "rocketTokenRETH": "0x504babde"
+  },
+  "calls": [
+    {
+      "target": "0x1d8f8f00cfa6758d7bE78336684788Fb0ee0Fa46",
+      "signature": "getAddress(bytes32)",
+      "argument": "65dd923ddfc8d8ae6088f80077201d2403cbd565f0ba25e09841e2799ec90bb2",
+      "raw": "0x000000000000000000000000dd3f50f8a6cafbe9b31a427582963f465e745af8",
+      "words": [
+        1263098960894183301992034231222453047073346706168
+      ]
+    },
+    {
+      "target": "0x1d8f8f00cfa6758d7bE78336684788Fb0ee0Fa46",
+      "signature": "getAddress(bytes32)",
+      "argument": "e3744443225bff7cc22028be036b80de58057d65a3fdca0a3df329f525e31ccc",
+      "raw": "0x000000000000000000000000ae78736cd615f374d3085123a210448e74fc6393",
+      "words": [
+        996050538495118299096582895562516634314123010963
+      ]
+    },
+    {
+      "target": "0x1d8f8f00cfa6758d7bE78336684788Fb0ee0Fa46",
+      "signature": "getAddress(bytes32)",
+      "argument": "876d8a498b5341a6b5897a8239bfb0347e2b8d81fe9401d355c1e4b0ecebedaa",
+      "raw": "0x000000000000000000000000d846aa34caef083dc4797d75096f60b6e08b7418",
+      "words": [
+        1234717885714883141235740111159036287065315308568
+      ]
+    },
+    {
+      "target": "0x1d8f8f00cfa6758d7bE78336684788Fb0ee0Fa46",
+      "signature": "getAddress(bytes32)",
+      "argument": "282fd49dacaf2128d6f069f81013ec59ae7081a236fbad29f69dd2383662ce5c",
+      "raw": "0x00000000000000000000000089682e5f9bf69c909fc5e21a06495ac35e3671ab",
+      "words": [
+        784455052802801737975222641972954347900373463467
+      ]
+    },
+    {
+      "target": "0x1d8f8f00cfa6758d7bE78336684788Fb0ee0Fa46",
+      "signature": "getAddress(bytes32)",
+      "argument": "7630e125f1c009e5fc974f6dae77c6d5b1802979b36e6d7145463c21782af01e",
+      "raw": "0x0000000000000000000000006cc65bf618f55ce2433f9d8d827fc44117d81399",
+      "words": [
+        620994561758941253269750145687873090018940031897
+      ]
+    },
+    {
+      "target": "0x1d8f8f00cfa6758d7bE78336684788Fb0ee0Fa46",
+      "signature": "getAddress(bytes32)",
+      "argument": "7f602045a039da8ac7709e3205cd54db6d7d9a1113dff494a3b44d1caba908ca",
+      "raw": "0x0000000000000000000000009e966733e3e9bfa56af95f762921859417cf6faa",
+      "words": [
+        905374643792746369830535844010652495656503963562
+      ]
+    },
+    {
+      "target": "0xdd3f50f8a6cafbe9b31a427582963f465e745af8",
+      "signature": "version()",
+      "argument": "",
+      "raw": "0x0000000000000000000000000000000000000000000000000000000000000003",
+      "words": [
+        3
+      ]
+    },
+    {
+      "target": "0xdd3f50f8a6cafbe9b31a427582963f465e745af8",
+      "signature": "getBalance()",
+      "argument": "",
+      "raw": "0x000000000000000000000000000000000000000000000000085d3f8cc25d42c2",
+      "words": [
+        602707798926377666
+      ]
+    },
+    {
+      "target": "0xdd3f50f8a6cafbe9b31a427582963f465e745af8",
+      "signature": "getMaximumDepositAmount()",
+      "argument": "",
+      "raw": "0x0000000000000000000000000000000000000000000004ad93b958048752bd3e",
+      "words": [
+        22091397292201073622334
+      ]
+    },
+    {
+      "target": "0xdd3f50f8a6cafbe9b31a427582963f465e745af8",
+      "signature": "getExcessBalance()",
+      "argument": "",
+      "raw": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "words": [
+        0
+      ]
+    },
+    {
+      "target": "0xae78736cd615f374d3085123a210448e74fc6393",
+      "signature": "getTotalCollateral()",
+      "argument": "",
+      "raw": "0x00000000000000000000000000000000000000000000000000000000504babde",
+      "words": [
+        1347136478
+      ]
+    },
+    {
+      "target": "0xae78736cd615f374d3085123a210448e74fc6393",
+      "signature": "getEthValue(uint256)",
+      "argument": "0000000000000000000000000000000000000000000000000de0b6b3a7640000",
+      "raw": "0x0000000000000000000000000000000000000000000000000ffea3bd5952f282",
+      "words": [
+        1152538588296180354
+      ]
+    },
+    {
+      "target": "0xae78736cd615f374d3085123a210448e74fc6393",
+      "signature": "getRethValue(uint256)",
+      "argument": "0000000000000000000000000000000000000000000000000de0b6b3a7640000",
+      "raw": "0x0000000000000000000000000000000000000000000000000c0a82fe867c032f",
+      "words": [
+        867649907911820079
+      ]
+    },
+    {
+      "target": "0xd846aa34caef083dc4797d75096f60b6e08b7418",
+      "signature": "getDepositEnabled()",
+      "argument": "",
+      "raw": "0x0000000000000000000000000000000000000000000000000000000000000001",
+      "words": [
+        1
+      ]
+    },
+    {
+      "target": "0xd846aa34caef083dc4797d75096f60b6e08b7418",
+      "signature": "getAssignDepositsEnabled()",
+      "argument": "",
+      "raw": "0x0000000000000000000000000000000000000000000000000000000000000001",
+      "words": [
+        1
+      ]
+    },
+    {
+      "target": "0xd846aa34caef083dc4797d75096f60b6e08b7418",
+      "signature": "getMinimumDeposit()",
+      "argument": "",
+      "raw": "0x000000000000000000000000000000000000000000000000002386f26fc10000",
+      "words": [
+        10000000000000000
+      ]
+    },
+    {
+      "target": "0xd846aa34caef083dc4797d75096f60b6e08b7418",
+      "signature": "getDepositFee()",
+      "argument": "",
+      "raw": "0x0000000000000000000000000000000000000000000000000001c6bf52634000",
+      "words": [
+        500000000000000
+      ]
+    },
+    {
+      "target": "0xd846aa34caef083dc4797d75096f60b6e08b7418",
+      "signature": "getMaximumDepositPoolSize()",
+      "argument": "",
+      "raw": "0x0000000000000000000000000000000000000000000003cfc82e37e9a7400000",
+      "words": [
+        18000000000000000000000
+      ]
+    },
+    {
+      "target": "0x89682e5f9bf69c909fc5e21a06495ac35e3671ab",
+      "signature": "getTargetRethCollateralRate()",
+      "argument": "",
+      "raw": "0x000000000000000000000000000000000000000000000000002386f26fc10000",
+      "words": [
+        10000000000000000
+      ]
+    },
+    {
+      "target": "0x89682e5f9bf69c909fc5e21a06495ac35e3671ab",
+      "signature": "getRethDepositDelay()",
+      "argument": "",
+      "raw": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "words": [
+        0
+      ]
+    },
+    {
+      "target": "0x6cc65bf618f55ce2433f9d8d827fc44117d81399",
+      "signature": "getTotalETHBalance()",
+      "argument": "",
+      "raw": "0x00000000000000000000000000000000000000000000590077c4f3b5ad614927",
+      "words": [
+        420299247266145996196135
+      ]
+    },
+    {
+      "target": "0x6cc65bf618f55ce2433f9d8d827fc44117d81399",
+      "signature": "getTotalRETHSupply()",
+      "argument": "",
+      "raw": "0x000000000000000000000000000000000000000000004d38f1019f4c5d9ea565",
+      "words": [
+        364672603185878870697317
+      ]
+    },
+    {
+      "target": "0x9e966733e3e9bfa56af95f762921859417cf6faa",
+      "signature": "getEffectiveCapacity()",
+      "argument": "",
+      "raw": "0x0000000000000000000000000000000000000000000000ddd3e85fa7a2700000",
+      "words": [
+        4092000000000000000000
+      ]
+    }
+  ],
+  "status": "PUBLIC_INPUT_READS_ONLY_NOT_PROJECTION_VALIDATION"
+}

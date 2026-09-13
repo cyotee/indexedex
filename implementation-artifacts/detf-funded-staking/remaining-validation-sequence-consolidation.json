@@ -1,0 +1,37 @@
+{
+  "recorded_at_utc": "2026-09-09T10:48:15.336692+00:00",
+  "status": "SUPERSEDED_BY_ACTIVE_COMPLETE_SOURCE_BUILD_AND_UNFILTERED_RUN",
+  "basis": "Owner-requested test consolidation and required final unfiltered validation. The prior chained run stopped before either provider or retained-fork command started.",
+  "source_changes": false,
+  "preliminary_group": "v4-provider-precheck",
+  "selected_sources": 52,
+  "coverage": [
+    "All 25 native reserve/provider money-path bindings, complete suites",
+    "All seven Weighted provider policy suites using the shared public-trade helper",
+    "CP V3, Orbital V4 and Quad mixed-provider policy suites",
+    "Five native funded product-law suites covering short payments and actual donation paths",
+    "All eight gold Weighted decimal ProductLaw suites",
+    "One mixed-decimal provider lifecycle/product-law suite per reserve family"
+  ],
+  "required_final_coverage": "All 477 production-provider source files and all other default suites still execute in the final unfiltered repository run. No test was removed, skipped, or changed; no fuzz setting or release criterion was reduced.",
+  "sequence": [
+    "Finish current Balancer SE build/runtime and resolve its actual failures",
+    "Build and run all methods in the 52-source provider precheck; resolve actual failures",
+    "Run all eight retained V3 actual-pool fork cases",
+    "Matching complete build including maintained scripts, unfiltered default tests, exact scope/baseline attribution",
+    "Strict local Robinhood current-package deployment and all 39 lifecycle cases",
+    "Final manifests, consolidation timings and acceptance closure"
+  ],
+  "reason": "Avoid compiling and executing the entire provider matrix twice immediately before the required full repository run. Preliminary results cannot close complete-family acceptance.",
+  "warm_metadata_seeding": "The proposed provider-precheck cache chain was not executed. The prepared retained V3 fork runner now guards completion of the full sequence and seeds its separate cache from the matching successful full build. It uses complete production source roots, retains all eight cases and builds before testing. Preserve canonical out/cache_forge; no speedup is inferred.",
+  "precheck_executed": false,
+  "superseding_record": "current-repository-funded-final-sequence.json",
+  "reason_for_change": "Both narrowed Balancer builds passed but runtime setup failed on artifact lookup. Use normal complete source roots for the already-required full repository validation; do not perform another broad narrowed recompile or omit any runtime coverage.",
+  "current_sequence": [
+    "Complete active full build with maintained scripts, unfiltered tests, exact attribution",
+    "Resolve actual in-scope failures",
+    "Eight retained V3 fork cases using complete production roots",
+    "Current packages and all 39 strict local Robinhood lifecycle cases",
+    "Final manifests, measurements and acceptance reconciliation"
+  ]
+}

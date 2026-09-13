@@ -107,7 +107,7 @@ contract CamelotV2StandardExchangeInTarget is
         ) {
             _loadIndexSourceReserves(indexSource, tokenOut);
             ICamelotFactory camelotFactory = CamelotV2FactoryAwareRepo._camelotV2Factory();
-            amountOut = CamelotV2Utils._quoteWithdrawSwapWithFee(
+            return CamelotV2Utils._quoteWithdrawSwapWithFee(
                 // uint256 ownedLPAmount,
                 amountIn,
                 // uint256 lpTotalSupply,
@@ -550,27 +550,7 @@ contract CamelotV2StandardExchangeInTarget is
                 // uint256 amount
                 vault.vaultLpReserve
             );
-            ICamelotFactory camelotFactory = CamelotV2FactoryAwareRepo._camelotV2Factory();
-            // Calculated the owned reserves of the LP token reserves.
-            (uint256 ownedReserve0, uint256 ownedReserve1) = ConstProdUtils._quoteWithdrawWithFee(
-                // uint256 ownedLPAmount,
-                vault.vaultLpReserve,
-                // uint256 lpTotalSupply,
-                indexSource.totalSupply,
-                // uint256 totalReserveA,
-                indexSource.knownReserve,
-                // uint256 totalReserveB,
-                indexSource.opposingReserve,
-                // uint256 kLast,
-                indexSource.kLast,
-                // uint256 ownerFeeShare,
-                camelotFactory.ownerFeeShare(),
-                // bool feeOn
-                camelotFactory.feeTo() != address(0)
-            );
-            // Store the owned reserves for yield tracking.
-            ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token0), ownedReserve0);
-            ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token1), ownedReserve1);
+            _checkpointVaultReserves();
             // Mint the shares to the recipient.
             ERC20Repo._mint(
                 // address account,
@@ -647,29 +627,7 @@ contract CamelotV2StandardExchangeInTarget is
                 // uint256 amount
                 vault.vaultLpReserve
             );
-            ICamelotFactory camelotFactory = CamelotV2FactoryAwareRepo._camelotV2Factory();
-            // Calculated the owned reserves of the LP token reserves.
-            (uint256 ownedReserve0, uint256 ownedReserve1) = ConstProdUtils._quoteWithdrawWithFee(
-                // uint256 ownedLPAmount,
-                vault.vaultLpReserve,
-                // uint256 lpTotalSupply,
-                indexSource.totalSupply,
-                // uint256 totalReserveA,
-                indexSource.knownReserve,
-                // uint256 totalReserveB,
-                indexSource.opposingReserve,
-                // uint256 kLast,
-                indexSource.kLast,
-                // uint256 ownerFeeShare,
-                camelotFactory.ownerFeeShare(),
-                // bool feeOn
-                camelotFactory.feeTo() != address(0)
-            );
-            // Store the owned reserves for yield tracking.
-            // _setYieldReserveOfToken(address(indexSource.token0), ownedReserve0);
-            // _setYieldReserveOfToken(address(indexSource.token1), ownedReserve1);
-            ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token0), ownedReserve0);
-            ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token1), ownedReserve1);
+            _checkpointVaultReserves();
             _syncAllExpectedHoldReserves();
             return amountOut;
         }
@@ -748,27 +706,7 @@ contract CamelotV2StandardExchangeInTarget is
                 // uint256 amount
                 vault.vaultLpReserve
             );
-            ICamelotFactory camelotFactory = CamelotV2FactoryAwareRepo._camelotV2Factory();
-            // Calculated the owned reserves of the LP token reserves.
-            (uint256 ownedReserve0, uint256 ownedReserve1) = ConstProdUtils._quoteWithdrawWithFee(
-                // uint256 ownedLPAmount,
-                vault.vaultLpReserve,
-                // uint256 lpTotalSupply,
-                indexSource.totalSupply,
-                // uint256 totalReserveA,
-                indexSource.knownReserve,
-                // uint256 totalReserveB,
-                indexSource.opposingReserve,
-                // uint256 kLast,
-                indexSource.kLast,
-                // uint256 ownerFeeShare,
-                camelotFactory.ownerFeeShare(),
-                // bool feeOn
-                camelotFactory.feeTo() != address(0)
-            );
-            // Store the owned reserves for yield tracking.
-            ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token0), ownedReserve0);
-            ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token1), ownedReserve1);
+            _checkpointVaultReserves();
             // Mint the shares to the recipient.
             ERC20Repo._mint(
                 // address account,
@@ -854,29 +792,7 @@ contract CamelotV2StandardExchangeInTarget is
                 // uint256 amount
                 vault.vaultLpReserve
             );
-            ICamelotFactory camelotFactory = CamelotV2FactoryAwareRepo._camelotV2Factory();
-            // Calculated the owned reserves of the LP token reserves.
-            (uint256 ownedReserve0, uint256 ownedReserve1) = ConstProdUtils._quoteWithdrawWithFee(
-                // uint256 ownedLPAmount,
-                vault.vaultLpReserve,
-                // uint256 lpTotalSupply,
-                indexSource.totalSupply,
-                // uint256 totalReserveA,
-                indexSource.knownReserve,
-                // uint256 totalReserveB,
-                indexSource.opposingReserve,
-                // uint256 kLast,
-                indexSource.kLast,
-                // uint256 ownerFeeShare,
-                camelotFactory.ownerFeeShare(),
-                // bool feeOn
-                camelotFactory.feeTo() != address(0)
-            );
-            // Store the owned reserves for yield tracking.
-            // _setYieldReserveOfToken(address(indexSource.token0), ownedReserve0);
-            // _setYieldReserveOfToken(address(indexSource.token1), ownedReserve1);
-            ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token0), ownedReserve0);
-            ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token1), ownedReserve1);
+            _checkpointVaultReserves();
             // Go ahead and terminate further execution.
             _syncAllExpectedHoldReserves();
             return amountOut;

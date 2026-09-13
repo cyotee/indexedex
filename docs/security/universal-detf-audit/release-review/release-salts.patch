@@ -1,0 +1,833 @@
+--- a/contracts/utils/foundry/ArtifactCreationCode.sol
++++ b/contracts/utils/foundry/ArtifactCreationCode.sol
+@@ -24,6 +24,17 @@
+         return bytecode_;
+     }
+ 
++    /// @notice Bind a type-name namespace to the implementation and constructor.
++    /// @dev CREATE3 itself reuses occupied salts without checking their code.
++    ///      Product component deployments use this salt; instance salts do not.
++    function releaseSalt(bytes32 namespace_, bytes memory initCode_, bytes memory initArgs_)
++        internal
++        pure
++        returns (bytes32)
++    {
++        return keccak256(abi.encode(namespace_, keccak256(initCode_), keccak256(initArgs_)));
++    }
++
+     function _containsUnlinkedPlaceholder(bytes memory bytecode_) private pure returns (bool) {
+         uint256 n_ = bytecode_.length;
+         if (n_ < 3) {
+--- a/contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService.sol
++++ b/contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService.sol
+@@ -28,41 +28,41 @@
+     Vm constant vm = Vm(VM_ADDRESS);
+ 
+     function deploySeFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
++        bytes memory initCode_ = type(UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet).creationCode /* unlinked artifact; type().creationCode required */;
+         facet = create3Factory.deployFacet(
+-            type(UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet).creationCode /* unlinked artifact; type().creationCode required */,
+-            abi.encode("UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet")._hash()
++            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet")._hash(), initCode_, bytes(""))
+         );
+         vm.label(address(facet), "UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet");
+     }
+ 
+     function deployDepositFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
++        bytes memory initCode_ = type(UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet).creationCode /* unlinked artifact; type().creationCode required */;
+         facet = create3Factory.deployFacet(
+-            type(UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet).creationCode /* unlinked artifact; type().creationCode required */,
+-            abi.encode("UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet")._hash()
++            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet")._hash(), initCode_, bytes(""))
+         );
+         vm.label(address(facet), "UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet");
+     }
+ 
+     function deployDepositSingleFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
++        bytes memory initCode_ = type(UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFacet).creationCode /* unlinked artifact; type().creationCode required */;
+         facet = create3Factory.deployFacet(
+-            type(UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFacet).creationCode /* unlinked artifact; type().creationCode required */,
+-            abi.encode("UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFacet")._hash()
++            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFacet")._hash(), initCode_, bytes(""))
+         );
+         vm.label(address(facet), "UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFacet");
+     }
+ 
+     function deployDepositPreviewFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
++        bytes memory initCode_ = type(UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet).creationCode /* unlinked artifact; type().creationCode required */;
+         facet = create3Factory.deployFacet(
+-            type(UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet).creationCode /* unlinked artifact; type().creationCode required */,
+-            abi.encode("UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet")._hash()
++            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet")._hash(), initCode_, bytes(""))
+         );
+         vm.label(address(facet), "UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet");
+     }
+ 
+     function deployWithdrawFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
++        bytes memory initCode_ = type(UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet).creationCode /* unlinked artifact; type().creationCode required */;
+         facet = create3Factory.deployFacet(
+-            type(UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet).creationCode /* unlinked artifact; type().creationCode required */,
+-            abi.encode("UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet")._hash()
++            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet")._hash(), initCode_, bytes(""))
+         );
+         vm.label(address(facet), "UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet");
+     }
+@@ -73,12 +73,14 @@
+         IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgInit memory init,
+         bytes32 salt
+     ) internal returns (IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage pkg) {
++        bytes memory initCode_ = ArtifactCreationCode.creationCode("UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg.sol:UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg");
++        bytes memory initArgs_ = abi.encode(init);
+         vm.prank(owner);
+         pkg = IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage(
+             registry.deployPkg(
+-                ArtifactCreationCode.creationCode("UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg.sol:UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg"),
+-                abi.encode(init),
+-                salt
++                initCode_,
++                initArgs_,
++                ArtifactCreationCode.releaseSalt(salt, initCode_, initArgs_)
+             )
+         );
+         vm.label(address(pkg), "UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg");
+--- a/contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_FactoryService.sol
++++ b/contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_FactoryService.sol
+@@ -32,25 +32,25 @@
+     Vm constant vm = Vm(VM_ADDRESS);
+ 
+     function deployHooksFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
++        bytes memory initCode_ = type(UniswapV4StandardExchangeWeightedBufferHookHooksFacet).creationCode /* unlinked artifact; type().creationCode required */;
+         facet = create3Factory.deployFacet(
+-            type(UniswapV4StandardExchangeWeightedBufferHookHooksFacet).creationCode /* unlinked artifact; type().creationCode required */,
+-            abi.encode("UniswapV4StandardExchangeWeightedBufferHookHooksFacet")._hash()
++            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeWeightedBufferHookHooksFacet")._hash(), initCode_, bytes(""))
+         );
+         vm.label(address(facet), "UniswapV4StandardExchangeWeightedBufferHookHooksFacet");
+     }
+ 
+     function deployJoinFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
++        bytes memory initCode_ = type(UniswapV4StandardExchangeWeightedBufferHookJoinFacet).creationCode /* unlinked artifact; type().creationCode required */;
+         facet = create3Factory.deployFacet(
+-            type(UniswapV4StandardExchangeWeightedBufferHookJoinFacet).creationCode /* unlinked artifact; type().creationCode required */,
+-            abi.encode("UniswapV4StandardExchangeWeightedBufferHookJoinFacet")._hash()
++            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeWeightedBufferHookJoinFacet")._hash(), initCode_, bytes(""))
+         );
+         vm.label(address(facet), "UniswapV4StandardExchangeWeightedBufferHookJoinFacet");
+     }
+ 
+     function deployExitFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
++        bytes memory initCode_ = type(UniswapV4StandardExchangeWeightedBufferHookExitFacet).creationCode /* unlinked artifact; type().creationCode required */;
+         facet = create3Factory.deployFacet(
+-            type(UniswapV4StandardExchangeWeightedBufferHookExitFacet).creationCode /* unlinked artifact; type().creationCode required */,
+-            abi.encode("UniswapV4StandardExchangeWeightedBufferHookExitFacet")._hash()
++            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeWeightedBufferHookExitFacet")._hash(), initCode_, bytes(""))
+         );
+         vm.label(address(facet), "UniswapV4StandardExchangeWeightedBufferHookExitFacet");
+     }
+@@ -61,9 +61,9 @@
+     }
+ 
+     function deploySeFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
++        bytes memory initCode_ = type(UniswapV4StandardExchangeWeightedBufferHookSeFacet).creationCode /* unlinked artifact; type().creationCode required */;
+         facet = create3Factory.deployFacet(
+-            type(UniswapV4StandardExchangeWeightedBufferHookSeFacet).creationCode /* unlinked artifact; type().creationCode required */,
+-            abi.encode("UniswapV4StandardExchangeWeightedBufferHookSeFacet")._hash()
++            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeWeightedBufferHookSeFacet")._hash(), initCode_, bytes(""))
+         );
+         vm.label(address(facet), "UniswapV4StandardExchangeWeightedBufferHookSeFacet");
+     }
+@@ -74,12 +74,14 @@
+         IUniswapV4StandardExchangeWeightedBufferHookPackage.PkgInit memory init,
+         bytes32 salt
+     ) internal returns (IUniswapV4StandardExchangeWeightedBufferHookPackage pkg) {
++        bytes memory initCode_ = ArtifactCreationCode.creationCode("UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol:UniswapV4StandardExchangeWeightedBufferHookDFPkg");
++        bytes memory initArgs_ = abi.encode(init);
+         vm.prank(owner);
+         pkg = IUniswapV4StandardExchangeWeightedBufferHookPackage(
+             registry.deployPkg(
+-                ArtifactCreationCode.creationCode("UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol:UniswapV4StandardExchangeWeightedBufferHookDFPkg"),
+-                abi.encode(init),
+-                salt
++                initCode_,
++                initArgs_,
++                ArtifactCreationCode.releaseSalt(salt, initCode_, initArgs_)
+             )
+         );
+         vm.label(address(pkg), "UniswapV4StandardExchangeWeightedBufferHookDFPkg");
+--- a/contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_FactoryService.sol
++++ b/contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_FactoryService.sol
+@@ -32,33 +32,33 @@
+     Vm constant vm = Vm(VM_ADDRESS);
+ 
+     function deployHooksFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
++        bytes memory initCode_ = type(UniswapV4StandardExchangeOrbitalBufferHookHooksFacet).creationCode /* unlinked artifact; type().creationCode required */;
+         facet = create3Factory.deployFacet(
+-            type(UniswapV4StandardExchangeOrbitalBufferHookHooksFacet).creationCode /* unlinked artifact; type().creationCode required */,
+-            abi.encode("UniswapV4StandardExchangeOrbitalBufferHookHooksFacet")._hash()
++            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeOrbitalBufferHookHooksFacet")._hash(), initCode_, bytes(""))
+         );
+         vm.label(address(facet), "UniswapV4StandardExchangeOrbitalBufferHookHooksFacet");
+     }
+ 
+     function deployDepositFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
++        bytes memory initCode_ = type(UniswapV4StandardExchangeOrbitalBufferHookDepositFacet).creationCode /* unlinked artifact; type().creationCode required */;
+         facet = create3Factory.deployFacet(
+-            type(UniswapV4StandardExchangeOrbitalBufferHookDepositFacet).creationCode /* unlinked artifact; type().creationCode required */,
+-            abi.encode("UniswapV4StandardExchangeOrbitalBufferHookDepositFacet")._hash()
++            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeOrbitalBufferHookDepositFacet")._hash(), initCode_, bytes(""))
+         );
+         vm.label(address(facet), "UniswapV4StandardExchangeOrbitalBufferHookDepositFacet");
+     }
+ 
+     function deployWithdrawFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
++        bytes memory initCode_ = type(UniswapV4StandardExchangeOrbitalBufferHookWithdrawFacet).creationCode /* unlinked artifact; type().creationCode required */;
+         facet = create3Factory.deployFacet(
+-            type(UniswapV4StandardExchangeOrbitalBufferHookWithdrawFacet).creationCode /* unlinked artifact; type().creationCode required */,
+-            abi.encode("UniswapV4StandardExchangeOrbitalBufferHookWithdrawFacet")._hash()
++            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeOrbitalBufferHookWithdrawFacet")._hash(), initCode_, bytes(""))
+         );
+         vm.label(address(facet), "UniswapV4StandardExchangeOrbitalBufferHookWithdrawFacet");
+     }
+ 
+     function deploySeFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
++        bytes memory initCode_ = type(UniswapV4StandardExchangeOrbitalBufferHookSeFacet).creationCode /* unlinked artifact; type().creationCode required */;
+         facet = create3Factory.deployFacet(
+-            type(UniswapV4StandardExchangeOrbitalBufferHookSeFacet).creationCode /* unlinked artifact; type().creationCode required */,
+-            abi.encode("UniswapV4StandardExchangeOrbitalBufferHookSeFacet")._hash()
++            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeOrbitalBufferHookSeFacet")._hash(), initCode_, bytes(""))
+         );
+         vm.label(address(facet), "UniswapV4StandardExchangeOrbitalBufferHookSeFacet");
+     }
+@@ -69,10 +69,14 @@
+         IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgInit memory init,
+         bytes32 salt
+     ) internal returns (IUniswapV4StandardExchangeOrbitalBufferHookPackage pkg) {
++        bytes memory initCode_ = ArtifactCreationCode.creationCode("UniswapV4StandardExchangeOrbitalBufferHookDFPkg.sol:UniswapV4StandardExchangeOrbitalBufferHookDFPkg");
++        bytes memory initArgs_ = abi.encode(init);
+         vm.prank(owner);
+         pkg = IUniswapV4StandardExchangeOrbitalBufferHookPackage(
+             registry.deployPkg(
+-                ArtifactCreationCode.creationCode("UniswapV4StandardExchangeOrbitalBufferHookDFPkg.sol:UniswapV4StandardExchangeOrbitalBufferHookDFPkg"), abi.encode(init), salt
++                initCode_,
++                initArgs_,
++                ArtifactCreationCode.releaseSalt(salt, initCode_, initArgs_)
+             )
+         );
+         vm.label(address(pkg), "UniswapV4StandardExchangeOrbitalBufferHookDFPkg");
+--- a/contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_FactoryService.sol
++++ b/contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_FactoryService.sol
+@@ -32,25 +32,25 @@
+     Vm constant vm = Vm(VM_ADDRESS);
+ 
+     function deployHooksFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
++        bytes memory initCode_ = type(UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet).creationCode /* unlinked artifact; type().creationCode required */;
+         facet = create3Factory.deployFacet(
+-            type(UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet).creationCode /* unlinked artifact; type().creationCode required */,
+-            abi.encode("UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet")._hash()
++            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet")._hash(), initCode_, bytes(""))
+         );
+         vm.label(address(facet), "UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet");
+     }
+ 
+     function deployJoinFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
++        bytes memory initCode_ = type(UniswapV4StandardExchangeCurveQuadStableBufferHookJoinFacet).creationCode /* unlinked artifact; type().creationCode required */;
+         facet = create3Factory.deployFacet(
+-            type(UniswapV4StandardExchangeCurveQuadStableBufferHookJoinFacet).creationCode /* unlinked artifact; type().creationCode required */,
+-            abi.encode("UniswapV4StandardExchangeCurveQuadStableBufferHookJoinFacet")._hash()
++            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeCurveQuadStableBufferHookJoinFacet")._hash(), initCode_, bytes(""))
+         );
+         vm.label(address(facet), "UniswapV4StandardExchangeCurveQuadStableBufferHookJoinFacet");
+     }
+ 
+     function deployExitFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
++        bytes memory initCode_ = type(UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet).creationCode /* unlinked artifact; type().creationCode required */;
+         facet = create3Factory.deployFacet(
+-            type(UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet).creationCode /* unlinked artifact; type().creationCode required */,
+-            abi.encode("UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet")._hash()
++            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet")._hash(), initCode_, bytes(""))
+         );
+         vm.label(address(facet), "UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet");
+     }
+@@ -61,9 +61,9 @@
+     }
+ 
+     function deploySeFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
++        bytes memory initCode_ = type(UniswapV4StandardExchangeCurveQuadStableBufferHookSeFacet).creationCode /* unlinked artifact; type().creationCode required */;
+         facet = create3Factory.deployFacet(
+-            type(UniswapV4StandardExchangeCurveQuadStableBufferHookSeFacet).creationCode /* unlinked artifact; type().creationCode required */,
+-            abi.encode("UniswapV4StandardExchangeCurveQuadStableBufferHookSeFacet")._hash()
++            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeCurveQuadStableBufferHookSeFacet")._hash(), initCode_, bytes(""))
+         );
+         vm.label(address(facet), "UniswapV4StandardExchangeCurveQuadStableBufferHookSeFacet");
+     }
+@@ -74,12 +74,14 @@
+         IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgInit memory init,
+         bytes32 salt
+     ) internal returns (IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage pkg) {
++        bytes memory initCode_ = ArtifactCreationCode.creationCode("UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg.sol:UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg");
++        bytes memory initArgs_ = abi.encode(init);
+         vm.prank(owner);
+         pkg = IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage(
+             registry.deployPkg(
+-                ArtifactCreationCode.creationCode("UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg.sol:UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg"),
+-                abi.encode(init),
+-                salt
++                initCode_,
++                initArgs_,
++                ArtifactCreationCode.releaseSalt(salt, initCode_, initArgs_)
+             )
+         );
+         vm.label(address(pkg), "UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg");
+--- a/contracts/vaults/detf/common/factory/DetfFacetFactoryService.sol
++++ b/contracts/vaults/detf/common/factory/DetfFacetFactoryService.sol
+@@ -38,15 +38,18 @@
+         internal
+         returns (IFacet instance)
+     {
++        bytes memory initCode_ = ArtifactCreationCode.creationCode("UniswapV4DetfBondNFTVaultFacet.sol:UniswapV4DetfBondNFTVaultFacet");
+         instance = create3Factory.deployFacet(
+-            ArtifactCreationCode.creationCode("UniswapV4DetfBondNFTVaultFacet.sol:UniswapV4DetfBondNFTVaultFacet"),
+-            abi.encode("UniswapV4DetfBondNFTVaultFacet")._hash()
++            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4DetfBondNFTVaultFacet")._hash(), initCode_, bytes(""))
+         );
+         vm.label(address(instance), "UniswapV4DetfBondNFTVaultFacet");
+     }
+ 
+     function deployRebasingClaimTokenFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
+-        instance = create3Factory.deployFacet(ArtifactCreationCode.creationCode("RebasingClaimTokenFacet.sol:RebasingClaimTokenFacet"), abi.encode("RebasingClaimTokenFacet")._hash());
++        bytes memory initCode_ = ArtifactCreationCode.creationCode("RebasingClaimTokenFacet.sol:RebasingClaimTokenFacet");
++        instance = create3Factory.deployFacet(
++            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("RebasingClaimTokenFacet")._hash(), initCode_, bytes(""))
++        );
+         vm.label(address(instance), "RebasingClaimTokenFacet");
+     }
+ 
+--- a/contracts/vaults/detf/common/factory/DetfPkgFactoryService.sol
++++ b/contracts/vaults/detf/common/factory/DetfPkgFactoryService.sol
+@@ -54,12 +54,14 @@
+         IVaultRegistryDeployment vaultRegistry,
+         IUniswapV4DetfDFPkg.PkgInit memory pkgInit
+     ) internal returns (IUniswapV4DetfDFPkg instance) {
++        bytes memory initCode_ = ArtifactCreationCode.creationCode("UniswapV4DetfDFPkg.sol:UniswapV4DetfDFPkg");
++        bytes memory initArgs_ = abi.encode(pkgInit);
+         instance = IUniswapV4DetfDFPkg(
+             address(
+                 vaultRegistry.deployPkg(
+-                    ArtifactCreationCode.creationCode("UniswapV4DetfDFPkg.sol:UniswapV4DetfDFPkg"),
+-                    abi.encode(pkgInit),
+-                    abi.encode("UniswapV4DetfDFPkg")._hash()
++                    initCode_,
++                    initArgs_,
++                    ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4DetfDFPkg")._hash(), initCode_, initArgs_)
+                 )
+             )
+         );
+@@ -70,12 +72,14 @@
+         IVaultRegistryDeployment vaultRegistry,
+         IUniswapV4DetfBondNFTVaultDFPkg.PkgInit memory pkgInit
+     ) internal returns (IUniswapV4DetfBondNFTVaultDFPkg instance) {
++        bytes memory initCode_ = ArtifactCreationCode.creationCode("UniswapV4DetfBondNFTVaultDFPkg.sol:UniswapV4DetfBondNFTVaultDFPkg");
++        bytes memory initArgs_ = abi.encode(pkgInit);
+         instance = IUniswapV4DetfBondNFTVaultDFPkg(
+             address(
+                 vaultRegistry.deployPkg(
+-                    ArtifactCreationCode.creationCode("UniswapV4DetfBondNFTVaultDFPkg.sol:UniswapV4DetfBondNFTVaultDFPkg"),
+-                    abi.encode(pkgInit),
+-                    abi.encode("UniswapV4DetfBondNFTVaultDFPkg")._hash()
++                    initCode_,
++                    initArgs_,
++                    ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4DetfBondNFTVaultDFPkg")._hash(), initCode_, initArgs_)
+                 )
+             )
+         );
+@@ -102,12 +106,14 @@
+         internal
+         returns (IRebasingClaimTokenDFPkg instance)
+     {
++        bytes memory initCode_ = ArtifactCreationCode.creationCode("RebasingClaimTokenDFPkg.sol:RebasingClaimTokenDFPkg");
++        bytes memory initArgs_ = abi.encode(pkgInit);
+         instance = IRebasingClaimTokenDFPkg(
+             address(
+                 create3Factory.deployPackageWithArgs(
+-                    ArtifactCreationCode.creationCode("RebasingClaimTokenDFPkg.sol:RebasingClaimTokenDFPkg"),
+-                    abi.encode(pkgInit),
+-                    abi.encode("RebasingClaimTokenDFPkg")._hash()
++                    initCode_,
++                    initArgs_,
++                    ArtifactCreationCode.releaseSalt(abi.encode("RebasingClaimTokenDFPkg")._hash(), initCode_, initArgs_)
+                 )
+             )
+         );
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Facet_FactoryService.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Facet_FactoryService.sol
+@@ -30,9 +30,9 @@
+         internal
+         returns (IFacet instance)
+     {
++        bytes memory initCode_ = ArtifactCreationCode.creationCode("UniswapV4DetfExchangeFacet.sol:UniswapV4DetfExchangeFacet");
+         instance = create3Factory.deployFacet(
+-            ArtifactCreationCode.creationCode("UniswapV4DetfExchangeFacet.sol:UniswapV4DetfExchangeFacet"),
+-            abi.encode("UniswapV4DetfExchangeFacet")._hash()
++            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4DetfExchangeFacet")._hash(), initCode_, bytes(""))
+         );
+         vm.label(address(instance), "UniswapV4DetfExchangeFacet");
+     }
+@@ -41,9 +41,9 @@
+         internal
+         returns (IFacet instance)
+     {
++        bytes memory initCode_ = ArtifactCreationCode.creationCode("UniswapV4DetfBondFacet.sol:UniswapV4DetfBondFacet");
+         instance = create3Factory.deployFacet(
+-            ArtifactCreationCode.creationCode("UniswapV4DetfBondFacet.sol:UniswapV4DetfBondFacet"),
+-            abi.encode("UniswapV4DetfBondFacet")._hash()
++            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4DetfBondFacet")._hash(), initCode_, bytes(""))
+         );
+         vm.label(address(instance), "UniswapV4DetfBondFacet");
+     }
+@@ -52,9 +52,9 @@
+         internal
+         returns (IFacet instance)
+     {
++        bytes memory initCode_ = ArtifactCreationCode.creationCode("UniswapV4DetfMaintenanceFacet.sol:UniswapV4DetfMaintenanceFacet");
+         instance = create3Factory.deployFacet(
+-            ArtifactCreationCode.creationCode("UniswapV4DetfMaintenanceFacet.sol:UniswapV4DetfMaintenanceFacet"),
+-            abi.encode("UniswapV4DetfMaintenanceFacet")._hash()
++            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4DetfMaintenanceFacet")._hash(), initCode_, bytes(""))
+         );
+         vm.label(address(instance), "UniswapV4DetfMaintenanceFacet");
+     }
+@@ -63,9 +63,9 @@
+         internal
+         returns (IFacet instance)
+     {
++        bytes memory initCode_ = ArtifactCreationCode.creationCode("UniswapV4DetfClaimFacet.sol:UniswapV4DetfClaimFacet");
+         instance = create3Factory.deployFacet(
+-            ArtifactCreationCode.creationCode("UniswapV4DetfClaimFacet.sol:UniswapV4DetfClaimFacet"),
+-            abi.encode("UniswapV4DetfClaimFacet")._hash()
++            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4DetfClaimFacet")._hash(), initCode_, bytes(""))
+         );
+         vm.label(address(instance), "UniswapV4DetfClaimFacet");
+     }
+@@ -74,9 +74,9 @@
+         internal
+         returns (IFacet instance)
+     {
++        bytes memory initCode_ = ArtifactCreationCode.creationCode("UniswapV4DetfQueryFacet.sol:UniswapV4DetfQueryFacet");
+         instance = create3Factory.deployFacet(
+-            ArtifactCreationCode.creationCode("UniswapV4DetfQueryFacet.sol:UniswapV4DetfQueryFacet"),
+-            abi.encode("UniswapV4DetfQueryFacet")._hash()
++            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4DetfQueryFacet")._hash(), initCode_, bytes(""))
+         );
+         vm.label(address(instance), "UniswapV4DetfQueryFacet");
+     }
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Pkg_FactoryService.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Pkg_FactoryService.sol
+@@ -17,12 +17,14 @@
+         IVaultRegistryDeployment vaultRegistry_,
+         IUniswapV4DetfDFPkg.PkgInit memory pkgInit_
+     ) internal returns (IUniswapV4DetfDFPkg instance_) {
++        bytes memory initCode_ = ArtifactCreationCode.creationCode("UniswapV4DetfDFPkg.sol:UniswapV4DetfDFPkg");
++        bytes memory initArgs_ = abi.encode(pkgInit_);
+         instance_ = IUniswapV4DetfDFPkg(
+             address(
+                 vaultRegistry_.deployPkg(
+-                    ArtifactCreationCode.creationCode("UniswapV4DetfDFPkg.sol:UniswapV4DetfDFPkg"),
+-                    abi.encode(pkgInit_),
+-                    abi.encode("UniswapV4DetfDFPkg")._hash()
++                    initCode_,
++                    initArgs_,
++                    ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4DetfDFPkg")._hash(), initCode_, initArgs_)
+                 )
+             )
+         );
+--- a/scripts/foundry/anvil_robinhood_main/Phase_06_Stage_03_CpBufferHookPkg.sol
++++ b/scripts/foundry/anvil_robinhood_main/Phase_06_Stage_03_CpBufferHookPkg.sol
+@@ -3,6 +3,8 @@
+ 
+ import {FixtureEconomics} from "./FixtureEconomics.sol";
+ import {LaunchState} from "./LaunchState.sol";
++
++import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+ 
+ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
+@@ -43,10 +45,12 @@
+         init_.multiAssetBasicVaultFacet = s.multiAssetBasicVaultFacet;
+         init_.multiAssetStandardVaultFacet = s.multiAssetStandardVaultFacet;
+         init_.multiStepOwnableFacet = s.multiStepOwnableFacet;
++        bytes memory initCode_ = type(CpHookDFPkg).creationCode;
++        bytes memory initArgs_ = abi.encode(init_);
+         s.cpHookPkg = reg.deployPkg(
+-            type(CpHookDFPkg).creationCode,
+-            abi.encode(init_),
+-            abi.encode(type(ICpHookPkg).name, FixtureEconomics.SALT_NS)._hash()
++            initCode_,
++            initArgs_,
++            ArtifactCreationCode.releaseSalt(abi.encode(type(ICpHookPkg).name, FixtureEconomics.SALT_NS)._hash(), initCode_, initArgs_)
+         );
+     }
+ }
+--- a/scripts/foundry/anvil_robinhood_main/Phase_06_Stage_04_WeightedBufferHookPkg.sol
++++ b/scripts/foundry/anvil_robinhood_main/Phase_06_Stage_04_WeightedBufferHookPkg.sol
+@@ -3,6 +3,8 @@
+ 
+ import {FixtureEconomics} from "./FixtureEconomics.sol";
+ import {LaunchState} from "./LaunchState.sol";
++
++import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+ 
+ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
+@@ -43,10 +45,12 @@
+         init_.multiAssetBasicVaultFacet = s.multiAssetBasicVaultFacet;
+         init_.multiAssetStandardVaultFacet = s.multiAssetStandardVaultFacet;
+         init_.multiStepOwnableFacet = s.multiStepOwnableFacet;
++        bytes memory initCode_ = type(WeightedHookDFPkg).creationCode;
++        bytes memory initArgs_ = abi.encode(init_);
+         s.weightedHookPkg = reg.deployPkg(
+-            type(WeightedHookDFPkg).creationCode,
+-            abi.encode(init_),
+-            abi.encode(type(IWeightedHookPkg).name, FixtureEconomics.SALT_NS)._hash()
++            initCode_,
++            initArgs_,
++            ArtifactCreationCode.releaseSalt(abi.encode(type(IWeightedHookPkg).name, FixtureEconomics.SALT_NS)._hash(), initCode_, initArgs_)
+         );
+     }
+ }
+--- a/scripts/foundry/anvil_robinhood_main/Phase_06_Stage_06_CurveQuadBufferHookPkg.sol
++++ b/scripts/foundry/anvil_robinhood_main/Phase_06_Stage_06_CurveQuadBufferHookPkg.sol
+@@ -3,6 +3,8 @@
+ 
+ import {FixtureEconomics} from "./FixtureEconomics.sol";
+ import {LaunchState} from "./LaunchState.sol";
++
++import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+ 
+ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
+@@ -43,10 +45,12 @@
+         init_.multiAssetBasicVaultFacet = s.multiAssetBasicVaultFacet;
+         init_.multiAssetStandardVaultFacet = s.multiAssetStandardVaultFacet;
+         init_.multiStepOwnableFacet = s.multiStepOwnableFacet;
++        bytes memory initCode_ = type(QuadHookDFPkg).creationCode;
++        bytes memory initArgs_ = abi.encode(init_);
+         s.curveQuadHookPkg = reg.deployPkg(
+-            type(QuadHookDFPkg).creationCode,
+-            abi.encode(init_),
+-            abi.encode(type(IQuadHookPkg).name, FixtureEconomics.SALT_NS)._hash()
++            initCode_,
++            initArgs_,
++            ArtifactCreationCode.releaseSalt(abi.encode(type(IQuadHookPkg).name, FixtureEconomics.SALT_NS)._hash(), initCode_, initArgs_)
+         );
+     }
+ }
+--- a/scripts/foundry/anvil_robinhood_main/Phase_06_Stage_01_BondNftPkg.s.sol
++++ b/scripts/foundry/anvil_robinhood_main/Phase_06_Stage_01_BondNftPkg.s.sol
+@@ -5,20 +5,17 @@
+ import {Phase_06_Stage_01_BondNftPkg as BondNftLib} from "./Phase_06_Stage_01_BondNftPkg.sol";
+ 
+ /// @title Phase_06_Stage_01_BondNftPkg
+-/// @notice Skip key: `bondNftVaultPkg`.
++/// @notice Resolve the current component set through implementation-sensitive CREATE3 salts.
+ contract Phase_06_Stage_01_BondNftPkg is LaunchStageBase {
+     function run() external {
+         _start("Phase 06 Stage 01: Bond NFT pkg");
+-        if (_shouldSkipStage(FILE_06_01, _skipKeys("bondNftVaultPkg"))) {
+-            s.bondNftVaultPkg = _loadAddr(FILE_06_01, "bondNftVaultPkg");
+-        } else {
+-            _requireCreate3(s);
+-            _requireCommonFacets(s);
+-            _requireManager(s);
+-            _broadcast();
+-            BondNftLib.execute(s);
+-            vm.stopBroadcast();
+-        }
++        // Address records alone cannot establish release freshness.
++        _requireCreate3(s);
++        _requireCommonFacets(s);
++        _requireManager(s);
++        _broadcast();
++        BondNftLib.execute(s);
++        vm.stopBroadcast();
+         _exportPkg("p0601", FILE_06_01, "bondNftVaultPkg", s.bondNftVaultPkg);
+         _logAddress("bondNftVaultPkg:", s.bondNftVaultPkg);
+         _logComplete("Phase 06 Stage 01");
+--- a/scripts/foundry/anvil_robinhood_main/Phase_06_Stage_02_RebasingClaimPkg.s.sol
++++ b/scripts/foundry/anvil_robinhood_main/Phase_06_Stage_02_RebasingClaimPkg.s.sol
+@@ -5,19 +5,16 @@
+ import {Phase_06_Stage_02_RebasingClaimPkg as ClaimLib} from "./Phase_06_Stage_02_RebasingClaimPkg.sol";
+ 
+ /// @title Phase_06_Stage_02_RebasingClaimPkg
+-/// @notice Skip key: `rebasingClaimTokenPkg`.
++/// @notice Resolve the current component set through implementation-sensitive CREATE3 salts.
+ contract Phase_06_Stage_02_RebasingClaimPkg is LaunchStageBase {
+     function run() external {
+         _start("Phase 06 Stage 02: Rebasing claim pkg");
+-        if (_shouldSkipStage(FILE_06_02, _skipKeys("rebasingClaimTokenPkg"))) {
+-            s.rebasingClaimTokenPkg = _loadAddr(FILE_06_02, "rebasingClaimTokenPkg");
+-        } else {
+-            _requireDiamondFactory(s);
+-            _requireCommonFacets(s);
+-            _broadcast();
+-            ClaimLib.execute(s);
+-            vm.stopBroadcast();
+-        }
++        // Address records alone cannot establish release freshness.
++        _requireDiamondFactory(s);
++        _requireCommonFacets(s);
++        _broadcast();
++        ClaimLib.execute(s);
++        vm.stopBroadcast();
+         _exportPkg("p0602", FILE_06_02, "rebasingClaimTokenPkg", s.rebasingClaimTokenPkg);
+         _logAddress("rebasingClaimTokenPkg:", s.rebasingClaimTokenPkg);
+         _logComplete("Phase 06 Stage 02");
+--- a/scripts/foundry/anvil_robinhood_main/Phase_06_Stage_03_CpBufferHookPkg.s.sol
++++ b/scripts/foundry/anvil_robinhood_main/Phase_06_Stage_03_CpBufferHookPkg.s.sol
+@@ -5,20 +5,17 @@
+ import {Phase_06_Stage_03_CpBufferHookPkg as CpHookLib} from "./Phase_06_Stage_03_CpBufferHookPkg.sol";
+ 
+ /// @title Phase_06_Stage_03_CpBufferHookPkg
+-/// @notice Skip key: `cpHookPkg`.
++/// @notice Resolve the current component set through implementation-sensitive CREATE3 salts.
+ contract Phase_06_Stage_03_CpBufferHookPkg is LaunchStageBase {
+     function run() external {
+         _start("Phase 06 Stage 03: CP buffer hook pkg");
+-        if (_shouldSkipStage(FILE_06_03, _skipKeys("cpHookPkg"))) {
+-            s.cpHookPkg = _loadAddr(FILE_06_03, "cpHookPkg");
+-        } else {
+-            _requireCreate3(s);
+-            _requireCommonFacets(s);
+-            _requireManager(s);
+-            _broadcast();
+-            CpHookLib.execute(s);
+-            vm.stopBroadcast();
+-        }
++        // Address records alone cannot establish release freshness.
++        _requireCreate3(s);
++        _requireCommonFacets(s);
++        _requireManager(s);
++        _broadcast();
++        CpHookLib.execute(s);
++        vm.stopBroadcast();
+         _exportPkg("p0603", FILE_06_03, "cpHookPkg", s.cpHookPkg);
+         _logAddress("cpHookPkg:", s.cpHookPkg);
+         _logComplete("Phase 06 Stage 03");
+--- a/scripts/foundry/anvil_robinhood_main/Phase_06_Stage_04_WeightedBufferHookPkg.s.sol
++++ b/scripts/foundry/anvil_robinhood_main/Phase_06_Stage_04_WeightedBufferHookPkg.s.sol
+@@ -5,20 +5,17 @@
+ import {Phase_06_Stage_04_WeightedBufferHookPkg as WeightedHookLib} from "./Phase_06_Stage_04_WeightedBufferHookPkg.sol";
+ 
+ /// @title Phase_06_Stage_04_WeightedBufferHookPkg
+-/// @notice Skip key: `weightedHookPkg`.
++/// @notice Resolve the current component set through implementation-sensitive CREATE3 salts.
+ contract Phase_06_Stage_04_WeightedBufferHookPkg is LaunchStageBase {
+     function run() external {
+         _start("Phase 06 Stage 04: Weighted buffer hook pkg");
+-        if (_shouldSkipStage(FILE_06_04, _skipKeys("weightedHookPkg"))) {
+-            s.weightedHookPkg = _loadAddr(FILE_06_04, "weightedHookPkg");
+-        } else {
+-            _requireCreate3(s);
+-            _requireCommonFacets(s);
+-            _requireManager(s);
+-            _broadcast();
+-            WeightedHookLib.execute(s);
+-            vm.stopBroadcast();
+-        }
++        // Address records alone cannot establish release freshness.
++        _requireCreate3(s);
++        _requireCommonFacets(s);
++        _requireManager(s);
++        _broadcast();
++        WeightedHookLib.execute(s);
++        vm.stopBroadcast();
+         _exportPkg("p0604", FILE_06_04, "weightedHookPkg", s.weightedHookPkg);
+         _logAddress("weightedHookPkg:", s.weightedHookPkg);
+         _logComplete("Phase 06 Stage 04");
+--- a/scripts/foundry/anvil_robinhood_main/Phase_06_Stage_06_CurveQuadBufferHookPkg.s.sol
++++ b/scripts/foundry/anvil_robinhood_main/Phase_06_Stage_06_CurveQuadBufferHookPkg.s.sol
+@@ -5,20 +5,17 @@
+ import {Phase_06_Stage_06_CurveQuadBufferHookPkg as QuadHookLib} from "./Phase_06_Stage_06_CurveQuadBufferHookPkg.sol";
+ 
+ /// @title Phase_06_Stage_06_CurveQuadBufferHookPkg
+-/// @notice Skip key: `curveQuadHookPkg`.
++/// @notice Resolve the current component set through implementation-sensitive CREATE3 salts.
+ contract Phase_06_Stage_06_CurveQuadBufferHookPkg is LaunchStageBase {
+     function run() external {
+         _start("Phase 06 Stage 06: Curve Quad buffer hook pkg");
+-        if (_shouldSkipStage(FILE_06_06, _skipKeys("curveQuadHookPkg"))) {
+-            s.curveQuadHookPkg = _loadAddr(FILE_06_06, "curveQuadHookPkg");
+-        } else {
+-            _requireCreate3(s);
+-            _requireCommonFacets(s);
+-            _requireManager(s);
+-            _broadcast();
+-            QuadHookLib.execute(s);
+-            vm.stopBroadcast();
+-        }
++        // Address records alone cannot establish release freshness.
++        _requireCreate3(s);
++        _requireCommonFacets(s);
++        _requireManager(s);
++        _broadcast();
++        QuadHookLib.execute(s);
++        vm.stopBroadcast();
+         _exportPkg("p0606", FILE_06_06, "curveQuadHookPkg", s.curveQuadHookPkg);
+         _logAddress("curveQuadHookPkg:", s.curveQuadHookPkg);
+         _logComplete("Phase 06 Stage 06");
+--- a/scripts/foundry/anvil_robinhood_main/Phase_06_Stage_07_UniswapV4DetfPkg.s.sol
++++ b/scripts/foundry/anvil_robinhood_main/Phase_06_Stage_07_UniswapV4DetfPkg.s.sol
+@@ -6,23 +6,20 @@
+ import {Phase_06_Stage_07_UniswapV4DetfPkg as UniV4DetfLib} from "./Phase_06_Stage_07_UniswapV4DetfPkg.sol";
+ 
+ /// @title Phase_06_Stage_07_UniswapV4DetfPkg
+-/// @notice Skip key: `uniV4DetfPkg`.
++/// @notice Resolve the current component set through implementation-sensitive CREATE3 salts.
+ contract Phase_06_Stage_07_UniswapV4DetfPkg is LaunchStageBase {
+     function run() external {
+         _start("Phase 06 Stage 07: UniswapV4Detf pkg");
+         RobinhoodCanonicalLib.requireCanonicalPins();
+-        if (_shouldSkipStage(FILE_06_07, _skipKeys("uniV4DetfPkg"))) {
+-            s.uniV4DetfPkg = _loadAddr(FILE_06_07, "uniV4DetfPkg");
+-        } else {
+-            _requireCreate3(s);
+-            _requireCommonFacets(s);
+-            _requireManager(s);
+-            s.bondNftVaultPkg = _loadAddr(FILE_06_01, "bondNftVaultPkg");
+-            s.rebasingClaimTokenPkg = _loadAddr(FILE_06_02, "rebasingClaimTokenPkg");
+-            _broadcast();
+-            UniV4DetfLib.execute(s);
+-            vm.stopBroadcast();
+-        }
++        // Address records alone cannot establish release freshness.
++        _requireCreate3(s);
++        _requireCommonFacets(s);
++        _requireManager(s);
++        s.bondNftVaultPkg = _loadAddr(FILE_06_01, "bondNftVaultPkg");
++        s.rebasingClaimTokenPkg = _loadAddr(FILE_06_02, "rebasingClaimTokenPkg");
++        _broadcast();
++        UniV4DetfLib.execute(s);
++        vm.stopBroadcast();
+         _exportPkg("p0607", FILE_06_07, "uniV4DetfPkg", s.uniV4DetfPkg);
+         _logAddress("uniV4DetfPkg:", s.uniV4DetfPkg);
+         _logComplete("Phase 06 Stage 07");
+--- a/scripts/foundry/anvil_robinhood_main/Phase_06_Stage_07_UniswapV4DetfPkg.sol
++++ b/scripts/foundry/anvil_robinhood_main/Phase_06_Stage_07_UniswapV4DetfPkg.sol
+@@ -3,6 +3,9 @@
+ 
+ import {LaunchState} from "./LaunchState.sol";
+ 
++import {Vm} from "forge-std/Vm.sol";
++import {VM_ADDRESS} from "@crane/contracts/constants/FoundryConstants.sol";
++import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
+ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+ import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
+ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+@@ -25,6 +28,12 @@
+     function execute(LaunchState storage s) internal {
+         require(_live(s.bondNftVaultPkg), "Phase 06-07: bondNftVaultPkg");
+         require(_live(s.rebasingClaimTokenPkg), "Phase 06-07: rebasingClaimTokenPkg");
++        _requireCurrentDependency(
++            s.bondNftVaultPkg, "UniswapV4DetfBondNFTVaultDFPkg", "UniswapV4DetfBondNFTVaultFacet"
++        );
++        _requireCurrentDependency(
++            s.rebasingClaimTokenPkg, "RebasingClaimTokenDFPkg", "RebasingClaimTokenFacet"
++        );
+         IVaultRegistryDeployment reg = IVaultRegistryDeployment(address(s.indexedexManager));
+         IFacet[5] memory productFacets = UniswapV4Detf_Facet_FactoryService.deployUniswapV4DetfFacets(s.create3Factory);
+         IUniswapV4DetfDFPkg.PkgInit memory init_ = IUniswapV4DetfDFPkg.PkgInit({
+@@ -42,6 +51,20 @@
+         s.uniV4DetfPkg = address(UniswapV4Detf_Pkg_FactoryService.deployUniswapV4DetfDFPkg(reg, init_));
+     }
+ 
++    /// @dev Fail before product deployment if a skipped dependency still has old code.
++    function _requireCurrentDependency(address pkg_, string memory name_, string memory facetName_) private view {
++        IDiamondFactoryPackage pkg = IDiamondFactoryPackage(pkg_);
++        require(keccak256(bytes(pkg.packageName())) == keccak256(bytes(name_)), "Phase 06-07: wrong dependency package");
++        bytes memory expected = Vm(VM_ADDRESS).getDeployedCode(string.concat(facetName_, ".sol:", facetName_));
++        require(expected.length != 0, "Phase 06-07: missing dependency artifact");
++        bytes32 expectedHash = keccak256(expected);
++        address[] memory facets = pkg.facetAddresses();
++        for (uint256 i; i < facets.length; ++i) {
++            if (facets[i].codehash == expectedHash) return;
++        }
++        revert("Phase 06-07: stale dependency facet; run 06-01 and 06-02");
++    }
++
+     function _live(address a) private view returns (bool) {
+         return a != address(0) && a.code.length > 0;
+     }
+--- a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_FacetPackaging.t.sol
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_FacetPackaging.t.sol
+@@ -1,6 +1,11 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
+ 
++import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
++import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
++import {IUniswapV4DetfDFPkg} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
++import {DetfFacetFactoryService} from "contracts/vaults/detf/common/factory/DetfFacetFactoryService.sol";
++import {UniswapV4Detf_Pkg_FactoryService} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Pkg_FactoryService.sol";
+ import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
+ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+ import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
+@@ -16,6 +21,60 @@
+ 
+ /// @notice Real CREATE3 facets and manager-deployed package must satisfy size and routing gates.
+ contract UniswapV4Detf_FacetPackaging is TestBase_UniswapV4Detf {
++    /// @notice Existing type-name deployments cannot shadow the current claim implementation.
++    function test_releaseSalt_legacyFacetDoesNotShadowCurrentFacet() public {
++        string memory artifact = "RebasingClaimTokenFacet.sol:RebasingClaimTokenFacet";
++        IFacet legacy = create3Factory.deployFacet(
++            vm.getCode(artifact), keccak256(abi.encode("RebasingClaimTokenFacet"))
++        );
++        IFacet current = DetfFacetFactoryService.deployRebasingClaimTokenFacet(create3Factory);
++        assertTrue(address(current) != address(legacy), "release does not reuse the legacy salt");
++        assertEq(address(current).code, vm.getDeployedCode(artifact), "current implementation installed");
++        assertEq(
++            address(DetfFacetFactoryService.deployRebasingClaimTokenFacet(create3Factory)),
++            address(current), "identical release remains idempotent"
++        );
++    }
++
++    /// @notice A different valid facet binding creates a new package and preserves the previous one.
++    function test_releaseSalt_constructorChangeCreatesNewPackage() public {
++        IUniswapV4DetfDFPkg.PkgInit memory init = _releasePkgInit();
++        IVaultRegistryDeployment reg = IVaultRegistryDeployment(address(indexedexManager));
++        vm.startPrank(owner);
++        IUniswapV4DetfDFPkg unchanged = UniswapV4Detf_Pkg_FactoryService.deployUniswapV4DetfDFPkg(reg, init);
++        vm.stopPrank();
++        assertEq(address(unchanged), address(detfPkg), "same code and constructor reuse package");
++
++        IFacet replacement = create3Factory.deployFacet(
++            vm.getCode("UniswapV4DetfBondFacet.sol:UniswapV4DetfBondFacet"),
++            keccak256(abi.encode("UniswapV4DetfBondFacet", "release constructor regression"))
++        );
++        init.productFacets[1] = replacement;
++        vm.startPrank(owner);
++        IUniswapV4DetfDFPkg changed = UniswapV4Detf_Pkg_FactoryService.deployUniswapV4DetfDFPkg(reg, init);
++        IUniswapV4DetfDFPkg repeated = UniswapV4Detf_Pkg_FactoryService.deployUniswapV4DetfDFPkg(reg, init);
++        vm.stopPrank();
++        assertTrue(address(changed) != address(detfPkg), "constructor change gets a new package");
++        assertEq(address(repeated), address(changed), "new constructor also remains idempotent");
++        assertEq(changed.facetCuts()[6].facetAddress, address(replacement), "new immutable facet binding");
++        assertEq(detfPkg.facetCuts()[6].facetAddress, address(detfProductFacets[1]), "old package remains intact");
++    }
++
++    function _releasePkgInit() private view returns (IUniswapV4DetfDFPkg.PkgInit memory) {
++        return IUniswapV4DetfDFPkg.PkgInit({
++            erc20Facet: erc20Facet,
++            erc5267Facet: erc5267Facet,
++            erc2612Facet: erc2612Facet,
++            multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
++            multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
++            productFacets: detfProductFacets,
++            feeOracle: IVaultFeeOracleQuery(address(indexedexManager)),
++            vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
++            bondNftVaultPkg: bondNftVaultPkg,
++            rebasingClaimTokenPkg: rebasingClaimTokenPkg
++        });
++    }
++
+     /// @notice Every independently deployed product facet fits the EVM's hard bytecode limits.
+     function test_splitFacets_deployedRuntimeAndInitcodeFitLimits() public {
+         for (uint256 i; i < detfProductFacets.length; ++i) {

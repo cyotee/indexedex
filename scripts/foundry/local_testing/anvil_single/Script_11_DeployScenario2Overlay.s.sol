@@ -9,8 +9,8 @@ import {TokenConfig, TokenType} from "@crane/contracts/interfaces/protocols/dexe
 import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
 
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
-import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
-import {IBalancerV3ConstantProductPoolStandardVaultPkg} from "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPoolStandardVaultPkg.sol";
+import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
+import {IBalancerV3ConstantProductPoolStandardVaultPkg} from "contracts/protocols/dexes/balancer/v3/pools/constProd/IBalancerV3ConstantProductPoolStandardVaultPkg.sol";
 
 /// @title Script_11_DeployScenario2Overlay
 /// @notice Deploys Scenario 2: rate providers and Balancer const-prod pools on top of Scenario 1 UniV2 vaults.

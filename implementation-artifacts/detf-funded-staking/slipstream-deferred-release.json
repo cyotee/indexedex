@@ -1,0 +1,226 @@
+{
+  "decision": "D66",
+  "source": "Explicit owner release scope decision",
+  "status": "OWNER_DEFERRED_NOT_BLOCKING",
+  "reason": "Robinhood deployment targets Uniswap V4",
+  "scope": "Defer all unfinished Slipstream work from this release by owner decision. Robinhood targets Uniswap V4. Preserve completed Slipstream changes, existing functionality, tests and validation evidence. Permit only compilation maintenance or compatibility edits required by shared V4 changes; no pending Slipstream functional, full-range/import conversion, accounting, native SY, deployment/UI, test, fork or integration completion gate remains. Shared V4 work and other approved scope continue; no unresolved release requirement is created.",
+  "acceptance": {
+    "A34": "V3/V4 only",
+    "A35": "V3/V4 only",
+    "A36": "V3/V4 only",
+    "A42": "Preservation and removal of unfinished Slipstream release gates"
+  },
+  "pending_questions": [],
+  "release_blocker": false,
+  "preserved_files": [
+    {
+      "path": "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamFactoryAwareRepo.sol",
+      "sha256": "af5b2a4ed08659cd87fcd72117c156f0af25d76c63b42e8612d85b4c1e947966"
+    },
+    {
+      "path": "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamPoolAwareRepo.sol",
+      "sha256": "4aaaa4cc87736ad09bccb076862fbe18157b2861232db19b5320d3ce47d64354"
+    },
+    {
+      "path": "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeCommon.sol",
+      "sha256": "7566ae5d776815f64b653b8e15adc4e3a15f1838bd3c6aa39f87357a9d58a965"
+    },
+    {
+      "path": "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeDFPkg.sol",
+      "sha256": "86a5ea98076d3d3faed171979d3925b6ca2c6cc564f5046d48dfde61ba96bffb"
+    },
+    {
+      "path": "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeInFacet.sol",
+      "sha256": "3cd1aae2b67060b9f26e5544594a9cdb115181f572ec1fef0214e11134891410"
+    },
+    {
+      "path": "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeInTarget.sol",
+      "sha256": "0a135048ed1cfb2d55e23d221c36209b0d8e251c405249cc5e528a9b633bb4ae"
+    },
+    {
+      "path": "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeOutFacet.sol",
+      "sha256": "fe28b81d95c58d6e0798a9a7d084e38a2dd9b13d9f5dc2f4d28fa5d50195a3e3"
+    },
+    {
+      "path": "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeOutTarget.sol",
+      "sha256": "4b4cdd513c5a481c0df0547ce337b868e2d704206ef72fe25282a6c2f514a176"
+    },
+    {
+      "path": "contracts/protocols/dexes/aerodrome/slipstream/Slipstream_Component_FactoryService.sol",
+      "sha256": "6d5081f86c821a2cb154d72b82e36761e5863a13daf82c94fdd5ffb911fdd4a4"
+    },
+    {
+      "path": "contracts/protocols/dexes/aerodrome/slipstream/test/SlipstreamHermeticClBook.sol",
+      "sha256": "4db08bd39df2f7dc060ad89191e78bb5186588324ae9d2e35ae64fda3d5491d4"
+    },
+    {
+      "path": "contracts/protocols/dexes/aerodrome/slipstream/test/bases/TestBase_SlipstreamStandardExchange.sol",
+      "sha256": "35c4c31208046e167fab6064fef6cb032d6c9763cecedd8393be573d9ea5339e"
+    },
+    {
+      "path": "contracts/protocols/dexes/aerodrome/slipstream/test/bases/TestBase_SlipstreamStandardExchange_Decimals.sol",
+      "sha256": "1fd1b00b1abface713fca0c75f47e01850b04c7baa826dc35cdba9d2879009ae"
+    },
+    {
+      "path": "contracts/protocols/dexes/aerodrome/slipstream/test/bases/TestBase_SlipstreamStandardExchange_H6.sol",
+      "sha256": "2001df348c9646236f509fa8ed56a7f132dc28556f0e7b6dac24fe5fac24a6a9"
+    },
+    {
+      "path": "contracts/protocols/dexes/aerodrome/slipstream/test/bases/TestBase_SlipstreamStandardExchange_H9.sol",
+      "sha256": "6a46a11d7938c38a79061f6f31369bd3000f1d73b040e977de3d39e6a0b7e4bc"
+    },
+    {
+      "path": "contracts/protocols/dexes/aerodrome/slipstream/test/bases/TestBase_SlipstreamStandardExchange_P18_R6.sol",
+      "sha256": "4591470c4b45ec41a5ecbaa41e30498062baa0e137c10a9c31b8170731808265"
+    },
+    {
+      "path": "contracts/protocols/dexes/aerodrome/slipstream/test/bases/TestBase_SlipstreamStandardExchange_P18_R9.sol",
+      "sha256": "9dc72b169d40a4cb77a803cc8f05b5f99af4ca71b20d1f11c5f76908f476f8ae"
+    },
+    {
+      "path": "contracts/protocols/dexes/aerodrome/slipstream/test/bases/TestBase_SlipstreamStandardExchange_P6_R18.sol",
+      "sha256": "711a11a18150dbc0b9b35fa6bb538400a38a4c331cf545712cd5dbb0a96f0c47"
+    },
+    {
+      "path": "contracts/protocols/dexes/aerodrome/slipstream/test/bases/TestBase_SlipstreamStandardExchange_P6_R9.sol",
+      "sha256": "e378fcec142a009f1349673364c1c0b2036bc6a1f462e7efada7519c661181c8"
+    },
+    {
+      "path": "contracts/protocols/dexes/aerodrome/slipstream/test/bases/TestBase_SlipstreamStandardExchange_P9_R18.sol",
+      "sha256": "6c1be538d2a9055040e97a8583840552c4729b138ad0d05d02f5aa60ea76f90b"
+    },
+    {
+      "path": "contracts/protocols/dexes/aerodrome/slipstream/test/bases/TestBase_SlipstreamStandardExchange_P9_R6.sol",
+      "sha256": "13c33259bae609f4b519698a6eae1d0d7e877cf155b77311614ca1df5e8e3d93"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeInFacet_IFacet_Test.t.sol",
+      "sha256": "eb020e308b88c1464f8d2a8d1182da2d1142a53fe1ab2e09f4e59b8178bac2bb"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeOutFacet_IFacet_Test.t.sol",
+      "sha256": "0a85a9c0637bb3bf64bf3fb5a1533d15b7575b6792650729a24558d336531c0e"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeRoutes_Test.t.sol",
+      "sha256": "239b1692704abeb561377a3d64f8fe7b9605e23db3ed52031c07d7d378d6574c"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchange_Routes.t.sol",
+      "sha256": "67f47dd4c14bc024ed2641600612d379bc0221b238bf8dbfe0a7b79d5b5137ed"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/adversarial/Adversarial_SlipstreamSE_E6IJ.t.sol",
+      "sha256": "da81f37d7a7e8197129de3e45016c5952825b6c92ee84e6924572c93d77917d6"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/decimals/Adversarial_SlipstreamSE_E6IJ_Decimals.sol",
+      "sha256": "c12c5fa3a0a6f1715cb1496aa81b479fa551754d2f9ffad76217208c281ae95c"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/decimals/Adversarial_SlipstreamSE_E6IJ_H6.t.sol",
+      "sha256": "ae6ac7f8569351f32bc2b20d1dff198abacab8c3c0a9ea5e221fb2ee5f0ad514"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/decimals/Adversarial_SlipstreamSE_E6IJ_H9.t.sol",
+      "sha256": "2a521e59874bdc667b35abcc90cbd77b9461b9897661fc1b6246cf943b02a816"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/decimals/Adversarial_SlipstreamSE_E6IJ_P18_R6.t.sol",
+      "sha256": "6d6188800714d5975c898a3849d992584431bc88174077b0d760fe99fcc169be"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/decimals/Adversarial_SlipstreamSE_E6IJ_P18_R9.t.sol",
+      "sha256": "e211d6d63fa355c060fa4c5419610ca0757bbd0897df507fd03fc59662fc2c96"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/decimals/Adversarial_SlipstreamSE_E6IJ_P6_R18.t.sol",
+      "sha256": "a03aba52a2b9d030a49da25d99a97cdc1b6f2189fe32d916cfc07f1ddcc5f8b3"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/decimals/Adversarial_SlipstreamSE_E6IJ_P6_R9.t.sol",
+      "sha256": "5df5a6aca36dbe67e6b1869c8a7eb1d648b860d5196b89ecc8f809f0ae0bb4db"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/decimals/Adversarial_SlipstreamSE_E6IJ_P9_R18.t.sol",
+      "sha256": "13d6b21b26902e347d92232e0fb785dac5c63f1854b4658a4c85594e5b60f456"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/decimals/Adversarial_SlipstreamSE_E6IJ_P9_R6.t.sol",
+      "sha256": "40a1af0a03f253ee0d350d5cc9889a49d076f2e6cbea594393f5946cbd3eaf63"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/decimals/SlipstreamStandardExchangeRoutes_Test_Decimals.sol",
+      "sha256": "1388b14013eaeb7f8f909b4f0b8a5d528460a8482fa229318c753c0c91a55756"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/decimals/SlipstreamStandardExchangeRoutes_Test_H6.t.sol",
+      "sha256": "0cf7895e6f855c0bc57d24d2b34c6228e483d26032e2a7c485b4d066abf02317"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/decimals/SlipstreamStandardExchangeRoutes_Test_H9.t.sol",
+      "sha256": "8cdac786d48a120c44aa18e1f972821dc08d8fcc9c0c1216e2fb59ddbdeb2f02"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/decimals/SlipstreamStandardExchangeRoutes_Test_P18_R6.t.sol",
+      "sha256": "2742f8d2d7ff4a2c1b2d32c19172255c4ba933ce3be7619cabc05f3aefada8e0"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/decimals/SlipstreamStandardExchangeRoutes_Test_P18_R9.t.sol",
+      "sha256": "f196ec210cf0768b564030740deb9b9d31f41c9edd3957db23cb2b093bfcd96a"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/decimals/SlipstreamStandardExchangeRoutes_Test_P6_R18.t.sol",
+      "sha256": "dc30ebc27803b5ad4b98d49da7af8f83864356610e5fc3b4c1025770f53641e6"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/decimals/SlipstreamStandardExchangeRoutes_Test_P6_R9.t.sol",
+      "sha256": "d0e7c6b724e7253d9dc5bfad37d6e9f30d94527b49560eef6e973c2de7d25b51"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/decimals/SlipstreamStandardExchangeRoutes_Test_P9_R18.t.sol",
+      "sha256": "7204dd307e0407acd877f2262fe60d432a5db181a33609918865d685259a17cf"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/decimals/SlipstreamStandardExchangeRoutes_Test_P9_R6.t.sol",
+      "sha256": "607753a2242d227b290c00feb1f41eaee8d87b2e5f83bdcf0ee9013704292d74"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/decimals/SlipstreamStandardExchange_Routes_Decimals.sol",
+      "sha256": "bdfeb91e9cafc79c7571f04ad424d3c8680e1b58b84c141260b1475399abd15a"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/decimals/SlipstreamStandardExchange_Routes_H6.t.sol",
+      "sha256": "176994b5d7e31a2482ab366b26c6be0e3da8948cdfbcce0bc9d30c9634dbc97c"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/decimals/SlipstreamStandardExchange_Routes_H9.t.sol",
+      "sha256": "572d070ef094d06a2d85240e6c20fd7784a850c139d423f99ecb909bc66cf0fd"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/decimals/SlipstreamStandardExchange_Routes_P18_R6.t.sol",
+      "sha256": "78c84c7a2407f89d535bd90dbf50cda53576ab337bb51b0b9b7ad11a1c8d835a"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/decimals/SlipstreamStandardExchange_Routes_P18_R9.t.sol",
+      "sha256": "676077dacb1f1aa0a6c93a422bf8a43fa08645380ddcd926d7935e059e0007b1"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/decimals/SlipstreamStandardExchange_Routes_P6_R18.t.sol",
+      "sha256": "c63a0f5532265729df4f6c5e63540e8b54f6a5a5e22c42a01d5bea4369c46d03"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/decimals/SlipstreamStandardExchange_Routes_P6_R9.t.sol",
+      "sha256": "1b59eb842a72a73b038559f93c39cde6387d1f8da596d110ab3e29233975612e"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/decimals/SlipstreamStandardExchange_Routes_P9_R18.t.sol",
+      "sha256": "d9371c4a333083e67a6d8cacf4d599cb75bd0d00358413eda5bf75fa2a6ec9cd"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/aerodrome/slipstream/decimals/SlipstreamStandardExchange_Routes_P9_R6.t.sol",
+      "sha256": "faf4a23198a913cc79f9f04fa2b7fa63a24b0e71ef15f4b901c8c34611a4c605"
+    }
+  ],
+  "historical_evidence": "Existing logs, source-manifest and completed validation records are retained; deferral does not assert unimplemented functionality passed."
+}

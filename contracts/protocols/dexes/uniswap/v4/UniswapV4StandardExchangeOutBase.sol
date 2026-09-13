@@ -5,6 +5,7 @@ pragma solidity ^0.8.0;
 /*                                    Crane                                   */
 /* -------------------------------------------------------------------------- */
 
+import {Math} from "@crane/contracts/utils/Math.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
 
@@ -63,12 +64,22 @@ abstract contract UniswapV4StandardExchangeOutBase is
             return sharesRequired > totalShares ? totalShares : sharesRequired;
         }
 
-        if (!UniswapV4PositionRepo._isPositionCreated() && !UniswapV4PositionRepo._isImportedPosition()) {
-            (uint256 reserve0, uint256 reserve1) = _totalVaultReserves();
-            uint256 reserveOut = tokenOut == _token0() ? reserve0 : reserve1;
-            if (reserveOut == 0) return 0;
-            sharesRequired = (desiredAmountOut * totalShares + reserveOut - 1) / reserveOut;
-            return sharesRequired > totalShares ? totalShares : sharesRequired;
+        if (_supportsInventoryQuote()) {
+            return _inventorySharesIn(_inventorySnapshot(tokenOut, address(this)), desiredAmountOut);
+        }
+
+        // Retain the original quote for hooked, imported and multi-position pools.
+        // A one-asset sleeve has a linear withdrawal quote and needs no pool search.
+        if (_currentLiquidity() == 0) {
+            (uint256 free0, uint256 free1) = _freeBalancesForShareMath();
+            bool token0 = tokenOut == _token0();
+            if ((token0 ? free1 : free0) == 0) {
+                uint256 reserve = token0 ? free0 : free1;
+                if (desiredAmountOut >= reserve) return totalShares;
+                return _bufferedInventoryShares(
+                    Math.mulDiv(desiredAmountOut, totalShares, reserve, Math.Rounding.Ceil), totalShares
+                );
+            }
         }
 
         uint256 low = 1;
@@ -85,15 +96,7 @@ abstract contract UniswapV4StandardExchangeOutBase is
             }
         }
 
-        if (high < totalShares) {
-            uint256 buffer = high / 100;
-            if (buffer == 0) {
-                buffer = 1;
-            }
-            uint256 buffered = high + buffer;
-            return buffered > totalShares ? totalShares : buffered;
-        }
-        return high;
+        return _bufferedInventoryShares(high, totalShares);
     }
 
     function _quoteZapOutAmount(address tokenOut, uint256 sharesBurned, uint256 totalShares)
@@ -102,12 +105,12 @@ abstract contract UniswapV4StandardExchangeOutBase is
         returns (uint256 amountOut)
     {
         (uint256 amount0, uint256 amount1) = _quoteManagedWithdrawal(sharesBurned, totalShares);
-        (uint256 free0, uint256 free1) = _freeBalances();
+        (uint256 free0, uint256 free1) = _freeBalancesForShareMath();
         amount0 += (free0 * sharesBurned) / totalShares;
         amount1 += (free1 * sharesBurned) / totalShares;
         if (tokenOut == _token0()) {
-            return amount0 + (amount1 > 0 ? _quoteSwapIn(amount1, false) : 0);
+            return amount0 + (amount1 > 0 ? _quoteSwapAfterWithdrawal(amount1, false, sharesBurned, totalShares) : 0);
         }
-        return amount1 + (amount0 > 0 ? _quoteSwapIn(amount0, true) : 0);
+        return amount1 + (amount0 > 0 ? _quoteSwapAfterWithdrawal(amount0, true, sharesBurned, totalShares) : 0);
     }
 }

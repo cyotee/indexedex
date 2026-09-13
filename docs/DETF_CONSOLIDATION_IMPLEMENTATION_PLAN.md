@@ -1,5 +1,7 @@
 # DETF Consolidation Implementation Plan
 
+> **Funded DETF release update (2026-09-09):** The [alignment PRD D32–D66 / §24](../contracts/vaults/detf/DETF_ALIGNMENT_PRD.md) and [funded implementation plan](../contracts/vaults/detf/DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md) govern current DETF work in the main repository. References below to the old `DETFNFTVault{Target,Common,Repo,Service}`, `DETFBondLifecycleLib` and `DETFProtocolCompoundLib` are historical: that unused cluster was removed under explicit owner approval. The active [funded bond target](../contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol) preserves funded principal, linear vesting, staking rewards and standard exits. D60 excludes further Balancer DETF functionality; D66 defers unfinished Slipstream work. Other content and historical audit evidence remain unchanged.
+
 ## Objective
 
 Consolidate the current DETF families into a layered architecture that reuses shared lifecycle, accounting, and planning modules while preserving real topology differences.

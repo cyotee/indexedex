@@ -1,0 +1,14 @@
+{
+  "command": [
+    "npm",
+    "run",
+    "lint",
+    "--",
+    "--file",
+    "app/create/CreateWizard.tsx",
+    "--file",
+    "app/create/lib/detfDeploy.ts"
+  ],
+  "exit_code": 0,
+  "seconds": 23.906
+}

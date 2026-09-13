@@ -1,0 +1,20 @@
+[
+  {
+    "alias": "base_mainnet_alchemy",
+    "block": 45446736,
+    "recorded_at_utc": "2026-09-10T15:44:58.557332+00:00",
+    "status": "AVAILABLE",
+    "hash": "0xc2d95408840e9c377c2dd578be5e807085975e295e68f48bdc1f014b770904e0",
+    "number": "0x2b57650",
+    "gasLimit": "0x17d78400"
+  },
+  {
+    "alias": "robinhood_mainnet_alchemy",
+    "block": 56118361,
+    "recorded_at_utc": "2026-09-10T15:44:58.794755+00:00",
+    "status": "AVAILABLE",
+    "hash": "0x108ba210e727f1fa6ecea533508dd0266759a0a6a18be55de934552a74f20175",
+    "number": "0x3584c59",
+    "gasLimit": "0x4000000000000"
+  }
+]

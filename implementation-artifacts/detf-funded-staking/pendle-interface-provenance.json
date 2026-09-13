@@ -1,0 +1,18 @@
+{
+  "upstream_revision": "bdbe57b3952961a9d5ab44b8c3ba5e6f5844df05",
+  "upstream_interface_url": "https://raw.githubusercontent.com/pendle-finance/pendle-core-v2-public/bdbe57b3952961a9d5ab44b8c3ba5e6f5844df05/contracts/interfaces/IStandardizedYield.sol",
+  "upstream_commit_url": "https://github.com/pendle-finance/pendle-core-v2-public/commit/bdbe57b3952961a9d5ab44b8c3ba5e6f5844df05",
+  "upstream_sha256": "d03b8cc393308fcc8f66588896dd1ee6a9ac0cfd4dbd0ff10a0a64a1f3ad803e",
+  "local_path": "lib/crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol",
+  "local_sha256": "3696ff447383860a12fb18c50ac33bb498c92e48ceb1e5113417dc8850ddfad8",
+  "interface_body_matches_excluding_imports_comments_whitespace": true,
+  "local_crane_revision": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+  "verification": "Compared actual local file bytes with the immutable upstream file; no dependency files modified.",
+  "preexisting_modified_crane_files": [
+    {
+      "path": "lib/crane/contracts/utils/math/UniswapV3Quoter.sol",
+      "sha256": "9a75e9ffb6e10e9690dbd21eef067ba129c2c1bdfe99a3da846c3dfb08ed1d93",
+      "note": "Pre-existing dependency modification preserved; no dependency edits by this implementation."
+    }
+  ]
+}

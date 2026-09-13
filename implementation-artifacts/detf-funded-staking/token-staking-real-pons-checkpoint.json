@@ -1,0 +1,7 @@
+{
+  "time": "2026-09-08T01:17:27.752830+00:00",
+  "result": "32 passed, 0 failed, 2 suites",
+  "coverage": "25 ordinary staking tests and 7 real Pons/V4 tests; exact standard purchase then funded stake, actual rebase through another bond, chunked wrapping, slippage atomic rollback, approval cleanup, ownership, reassignment and withdrawals.",
+  "activation": "Real graduated launch tokens plus wrapped ETH seed both SE assets, matching D59; subsequent DETF routes remain single-token.",
+  "evidence": "token-staking-real-pons-32-green-run.json"
+}

@@ -1,15 +1,14 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {FixtureEconomics} from "./FixtureEconomics.sol";
 import {LaunchState} from "./LaunchState.sol";
 
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {IERC20MinterFacade} from "@crane/contracts/tokens/ERC20/IERC20MinterFacade.sol";
-import {
-    ERC20MinterFacadeFacetDFPkg,
-    IERC20MinterFacadeFacetDFPkg
-} from "@crane/contracts/tokens/ERC20/ERC20MinterFacadeFacetDFPkg.sol";
+import {IERC20MinterFacadeFacetDFPkg} from "@crane/contracts/tokens/ERC20/ERC20MinterFacadeFacetDFPkg.sol";
 
 /// @title Phase_04_Stage_02_Erc20MinterFacade
 /// @notice Minter Facade diamond/package only. No test tokens.
@@ -20,8 +19,8 @@ library Phase_04_Stage_02_Erc20MinterFacade {
         IERC20MinterFacadeFacetDFPkg facadePkg = IERC20MinterFacadeFacetDFPkg(
             address(
                 s.create3Factory.deployPackage(
-                    type(ERC20MinterFacadeFacetDFPkg).creationCode,
-                    abi.encode(type(ERC20MinterFacadeFacetDFPkg).name, FixtureEconomics.SALT_NS)._hash()
+                    ArtifactCreationCode.creationCode(s.create3Factory, "ERC20MinterFacadeFacetDFPkg.sol:ERC20MinterFacadeFacetDFPkg"),
+                    abi.encode("ERC20MinterFacadeFacetDFPkg", FixtureEconomics.SALT_NS)._hash()
                 )
             )
         );

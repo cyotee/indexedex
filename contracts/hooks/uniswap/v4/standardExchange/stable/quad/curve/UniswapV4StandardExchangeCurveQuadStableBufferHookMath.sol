@@ -36,7 +36,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookMath {
     /* ---------------------------------------------------------------------- */
 
     function baseScaleFromDecimals(uint8 decimals) internal pure returns (uint256) {
-        if (decimals < 6 || decimals > 18) revert MathDomain();
+        if (decimals < 6 || decimals > 36) revert MathDomain();
         return 10 ** (36 - uint256(decimals));
     }
 
@@ -163,10 +163,26 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookMath {
             }
         }
 
+        // Divide by the smallest balances first. Dividing by a large balance
+        // before the small ones can truncate D_P to a few integer units and
+        // materially change the invariant of an imbalanced book.
+        _sortBalances(xp);
         uint256 Ann = amp * N_TOKENS;
         D = _getDNewton(xp, S, Ann);
         if (D != 0) return D;
         return _getDBisect(xp, S, Ann);
+    }
+
+    function _sortBalances(uint256[4] memory balances) private pure {
+        for (uint256 i = 1; i < N_TOKENS; ++i) {
+            uint256 value = balances[i];
+            uint256 j = i;
+            while (j > 0 && balances[j - 1] > value) {
+                balances[j] = balances[j - 1];
+                --j;
+            }
+            balances[j] = value;
+        }
     }
 
     function _dP(uint256[4] memory xp, uint256 D) private pure returns (bool ok, uint256 D_P) {
@@ -199,6 +215,9 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookMath {
             D = FixedPointMathLib.fullMulDiv(numA + D_P * N_TOKENS, D, den);
             if (D > Dprev) {
                 if (D - Dprev <= 1) return D;
+                // From the sum upper bound, Newton descends toward the root. A larger
+                // upward step signals integer oscillation; finish with bounded bisection.
+                return 0;
             } else if (Dprev - D <= 1) {
                 return D;
             }
@@ -206,19 +225,14 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookMath {
         return 0;
     }
 
-    /// @dev Compare Ann*S/A + D  vs  Ann*D/A + D*D_P. True if D is above the root.
+    /// @dev Compare Ann*S/A + D with Ann*D/A + D_P. True if D is above the root.
     function _dTooHigh(uint256[4] memory xp, uint256 S, uint256 Ann, uint256 D) private pure returns (bool) {
         (bool ok, uint256 D_P) = _dP(xp, D);
         if (!ok) return true;
         uint256 left = (Ann * S) / AMP_PRECISION + D;
         uint256 annD = (Ann * D) / AMP_PRECISION;
         if (left < annD) return true;
-        uint256 lhs = left - annD;
-        if (D_P == 0) return false;
-        uint256 q = lhs / D_P;
-        if (q < D) return true;
-        if (q > D) return false;
-        return false;
+        return D_P > left - annD;
     }
 
     function _getDBisect(uint256[4] memory xp, uint256 S, uint256 Ann) private pure returns (uint256 D) {
@@ -252,9 +266,10 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookMath {
         uint256 Ann = amp * N_TOKENS;
         uint256 c = D;
         uint256 S_;
-        uint256 _x;
-
+        uint256[4] memory balances;
+        uint256 count;
         for (uint256 k; k < N_TOKENS; ++k) {
+            uint256 _x;
             if (k == i) {
                 _x = x;
             } else if (k != j) {
@@ -264,7 +279,12 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookMath {
             }
             if (_x == 0) revert InvariantFailed();
             S_ += _x;
-            c = (c * D) / (_x * N_TOKENS);
+            balances[count++] = _x;
+        }
+        // The unused zero sorts first; preserve precision in the same order as getD.
+        _sortBalances(balances);
+        for (uint256 k = 1; k < N_TOKENS; ++k) {
+            c = FixedPointMathLib.fullMulDiv(c, D, balances[k] * N_TOKENS);
         }
         c = (c * D * AMP_PRECISION) / (Ann * N_TOKENS);
         uint256 b = S_ + (D * AMP_PRECISION) / Ann;
@@ -304,10 +324,11 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookMath {
         if (i == j || i >= N_TOKENS || j >= N_TOKENS) revert InvariantFailed();
         if (xp[i] == 0 || xp[j] == 0) revert InvariantFailed();
 
-        uint256 D = _getD(xp, amp);
+        // Preserve the pre-swap invariant across both integer root roundings.
+        uint256 D = _getD(xp, amp) + 1;
         uint256 yOutNew = _getY(i, j, xp[i] + amountInRatedNet, xp, amp, D);
         if (yOutNew >= xp[j]) revert InvariantFailed();
-        amountOutRated = xp[j] - yOutNew;
+        amountOutRated = xp[j] - yOutNew - 1;
         if (amountOutRated == 0) revert ZeroAmount();
     }
 
@@ -323,12 +344,12 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookMath {
         if (xp[i] == 0 || xp[j] == 0) revert InvariantFailed();
         if (amountOutRated >= xp[j]) revert InvariantFailed();
 
-        uint256 D = _getD(xp, amp);
+        uint256 D = _getD(xp, amp) + 1;
         uint256 yOutNew = xp[j] - amountOutRated;
         if (yOutNew == 0) revert InvariantFailed();
         uint256 xInNew = _getY(j, i, yOutNew, xp, amp, D);
         if (xInNew <= xp[i]) revert InvariantFailed();
-        amountInRatedNet = xInNew - xp[i];
+        amountInRatedNet = xInNew - xp[i] + 1;
         if (amountInRatedNet == 0) revert ZeroAmount();
     }
 

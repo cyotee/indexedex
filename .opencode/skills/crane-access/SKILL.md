@@ -1,7 +1,6 @@
 ---
 name: crane-access
 description: This skill should be used when the user asks about "access control", "onlyOwner", "onlyOperator", "ownership transfer", "MultiStepOwnable", "ERC8023", "operable pattern", "function-level permissions", "reentrancy protection", "reentrancy lock", or needs to restrict function access in Crane Diamond contracts.
-license: MIT
 ---
 
 # Crane Access Control Components

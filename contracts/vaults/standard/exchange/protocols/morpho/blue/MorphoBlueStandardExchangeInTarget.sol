@@ -5,15 +5,15 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
 import {
-    MorphoBlueStandardExchangeCommon
-} from "contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeCommon.sol";
+    MorphoBlueStandardExchangeQuoteTarget
+} from "contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeQuoteTarget.sol";
 
 /**
  * @title MorphoBlueStandardExchangeInTarget
  * @notice Exact-in routes: loanToken → SE and SE → loanToken only.
  */
 contract MorphoBlueStandardExchangeInTarget is
-    MorphoBlueStandardExchangeCommon,
+    MorphoBlueStandardExchangeQuoteTarget,
     ReentrancyLockModifiers,
     IStandardExchangeIn
 {

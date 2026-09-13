@@ -1,0 +1,45 @@
+{
+  "status": "CODEGEN_ONLY_NOT_RUNTIME_VALIDATION",
+  "passed": true,
+  "exit_code": 0,
+  "seconds": 4.74,
+  "errors": [],
+  "contracts": {
+    "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInQueryFacet.sol:UniswapV3StandardExchangeInQueryFacet": {
+      "runtime_bytes": 23343,
+      "test_methods": 0
+    },
+    "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutFacet.sol:UniswapV3StandardExchangeOutFacet": {
+      "runtime_bytes": 22418,
+      "test_methods": 0
+    },
+    "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutQueryFacet.sol:UniswapV3StandardExchangeOutQueryFacet": {
+      "runtime_bytes": 21965,
+      "test_methods": 0
+    }
+  },
+  "source_sha256": {
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Stage11OpenSuite_Decimals.sol": "f8200e48f49777cf943e889fdad1d9f1a39e60704a56610b803e6338acc80629",
+    "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutQueryFacet.sol": "1ef626911143f903ba4c1c57ba1ee95e0aa03e7420fc93e5bd4e1d9054bc53d2",
+    "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPoolCommon.sol": "1e78f72147a9870774efbb9a25a418ac9cc6d320b03e78d3f1524b2b99c4f10d",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol": "cd73c370725328245887334eccb3ab63db707c6edd63c6357931e06ea69ac84f",
+    "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolHookTarget.sol": "f3fef987e93fcd9dda4c30470e811a7f80eec1590f971291a2dd5064c66e5964",
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookCommon.sol": "a0844c5113e2ac26d1f87c17135a4adb4bc88f044749f176b4b0750408efeb56",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ4Se.t.sol": "82d6aabef2d750402be9dbe8fda5fbd410d1eeccdb76a6b1e109f8ef23f850f9",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_Decimals.sol": "429f2d9e4bdd4b735f30dc6c84c2ce417f2305879ccb801338eb44f3d084ca40",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_Decimals.sol": "60b21b7fdc59baba979b6eee3ac525889821275e27aa745979365afd7d324e19",
+    "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInQueryTarget.sol": "f510cbb38648b0278bdc9d670f280bfcfcd9a7a7c14103517aee263c5207b05f",
+    "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInQueryFacet.sol": "8fffa7858f8627cb740bee5645ad94cfb3868ee2490396e7b4d6e999fd746971",
+    "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolCommon.sol": "4bfd5121a5971a92953fd7594487fe5050810683b037ce43708e17e326ab73ea",
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib.sol": "38f75595ec699f5802ba9da3d5b04ced92e79da1dd010dcd4caa46bea2d394f9",
+    "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutFacet.sol": "fd4c7a39bd86364d2e72e2f0175efd49706ae60b9d5ce74c5dda90b6c4506f45",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Stage11OpenSuite.sol": "a7df66e79a8fbafd4e744b62c421dbd8e0b6c516c9d00d28961357dcc65cd277",
+    "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferHookTarget.sol": "65a484de96b79cfa79d6efdf8a59cf499cd2d97076e39a31ff66b0113fe1bd08",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ3Se_Decimals.sol": "e8ac1428f738cdf4790a5ac59d89b8224103e83a189acbdf2e39e12681f3c8c9",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol": "3dd6aa0555d7a71b82dd3c36807853588ad5d825f90ef443d14a2c8ba86f82a6",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_Decimals.sol": "4993e733717fe4047dc535ce2059cde89f4fedb231f03bfda7446beeff8daddb",
+    "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutBase.sol": "386efd3aeaeab085189c3521f050aff90e686443894c88c9f194823cf22b2917"
+  },
+  "sources_unchanged": true,
+  "compiler_input_sha256": "f38507ca70d466aa8600e08441c01acebd55c034e985989edc2d8b3d36fa15ae"
+}

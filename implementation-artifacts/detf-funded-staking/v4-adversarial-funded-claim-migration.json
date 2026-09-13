@@ -1,0 +1,16 @@
+{
+  "scope": "Both existing adversarial bases: standard mint/burn endpoints, funded owner NFT claims and 1:1 unstaking after registry disable, protocol LP retained. Original inbound credit assertions preserved.",
+  "validation": "pending focused build/test",
+  "files": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol",
+      "before_sha256": "680cfba8e06cd4f95fcdc464ebcdbd30ad31cfc255546faf8911cb1cbfeba529",
+      "after_sha256": "e0f55c8f3748710d1823e18d55c696b4bf84f0fa1ef5629c649e01afaccf7b82"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol",
+      "before_sha256": "3905d788f9d3c3278bfab3e1ba76962cbf929c709cf246cc7d39b461c01bf6c2",
+      "after_sha256": "f9a22136c269d06ab363d2e90839a874e1613b2d5093f02bf3efa969a990b230"
+    }
+  ]
+}

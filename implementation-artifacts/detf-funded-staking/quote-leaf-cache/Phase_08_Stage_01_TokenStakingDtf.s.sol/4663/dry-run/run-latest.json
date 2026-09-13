@@ -1,0 +1,7 @@
+{
+  "transactions": [
+    {
+      "rpc": "https://rpc.mainnet.chain.robinhood.com"
+    }
+  ]
+}

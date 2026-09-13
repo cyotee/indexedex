@@ -1,0 +1,30 @@
+{
+  "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+  "files": [
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg_Deploy.t.sol",
+      "before": "d17ddb84d57ee1add271097b8e53b53c504a94ed015f66a08069adfe9a647f42",
+      "after": "485abc5f09c7441aad9be18ac3e0f6ae34e4cd341ca312248cbaf48da5a03478"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Dust.t.sol",
+      "before": "5028e9669c4627f8ee47699cee34f3cfb97d3c4fccd529192ce8a73f50eb1cd7",
+      "after": "7732f304c5008437fbb7ae010cefae56f45088448984f0b70ac581adcd87d5d8"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Donate.t.sol",
+      "before": "4d730adae6442e5ea7f962bdf008ba961352783bdd924e2f9ca4f0e705fb6726",
+      "after": "18ac0e9b452a912f5de6e4ca4462490aedcbd2fcc1f25156d939c0975afd6c03"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Adversarial_Reentrancy.t.sol",
+      "before": "0cb6478727883bc340e94a53e7f0a7cbc747a8614438984238c8e2454fca7563",
+      "after": "2362eb79c7e090def048202f17a736ed219ab825e1611f3d2a904c0c8920c610"
+    }
+  ],
+  "mapping": "Legacy fake-DETF/fake-LP child package tests consolidated into two actual-parent deployment/activation cases; legitimate whole external LP donation validated by all four reserve bindings and both policies. T7.13/T7.20 now assert immutable purchased principal, actual protocol LP and unchanged funded staking. Quad hostile-token callback retains exact IsLocked check through standard purchase.",
+  "historical_preparation_status": "prepared; Solidity unchanged",
+  "application_record": "v4-current-caller-migration.json",
+  "current_status_source": "current-implementation-queue.json and acceptance-progress.json; later edits and validation can supersede the original application hashes.",
+  "pending_owner_approval": false
+}

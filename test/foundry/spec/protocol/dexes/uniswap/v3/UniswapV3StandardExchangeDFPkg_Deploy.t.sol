@@ -16,10 +16,8 @@ import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {
     IUniswapV3StandardExchangeLiquidReserve
 } from "contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3StandardExchangeLiquidReserve.sol";
-import {
-    UniswapV3StandardExchangeDFPkg,
-    IUniswapV3StandardExchangeDFPkg
-} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeDFPkg.sol";
+import {UniswapV3StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeDFPkg.sol";
+import {IUniswapV3StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v3/IUniswapV3StandardExchangeDFPkg.sol";
 import {
     TestBase_UniswapV3StandardExchange
 } from "contracts/protocols/dexes/uniswap/v3/test/bases/TestBase_UniswapV3StandardExchange.sol";
@@ -39,7 +37,7 @@ contract UniswapV3StandardExchangeDFPkg_Deploy_Test is TestBase_UniswapV3Standar
             UniswapV3StandardExchangeDFPkg(address(uniswapV3StandardExchangeDFPkg)).packageMetadata();
 
         assertEq(name_, type(UniswapV3StandardExchangeDFPkg).name, "package name");
-        assertEq(interfaces.length, 12, "interface count");
+        assertEq(interfaces.length, 15, "interface count");
         assertEq(facets.length, 15, "facet count");
         assertEq(facets[0], address(erc20Facet), "erc20");
         assertEq(facets[5], address(uniswapV3StandardExchangeInFacet), "in");

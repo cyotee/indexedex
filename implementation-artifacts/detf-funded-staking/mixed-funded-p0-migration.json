@@ -1,0 +1,144 @@
+{
+  "status": "validated: 43 tests across six suites passed",
+  "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/adversarial/Adversarial_MixedBuffer_P0.t.sol",
+  "before_sha256": "8084293e2ce0a5cfd70bc264e9235201b88b18e032a454bc8504ef2ea79203ff",
+  "after_sha256": "61cf5bb74c9fafaee9e1d975cf492d1d48ca89a7d5a23a99a2a30b0e47e7d788",
+  "cases": [
+    {
+      "old_test": "test_E5_zeroAmount_reverts",
+      "funded_test": "test_E5_zeroAmount_reverts",
+      "disposition": "Retained security concern on the canonical funded route. Removed LP-sale/unbacked claim APIs become actual NFT claims or 1:1 Standard Exchange unstaking. Native DETF uses nine decimals; protocol LP custody is the NFT vault. Mandatory fallback paths execute without old gate skips. Reentry uses a real production SE and a hostile underlying ERC20."
+    },
+    {
+      "old_test": "test_E5_expiredDeadline_reverts",
+      "funded_test": "test_E5_expiredDeadline_reverts",
+      "disposition": "Retained security concern on the canonical funded route. Removed LP-sale/unbacked claim APIs become actual NFT claims or 1:1 Standard Exchange unstaking. Native DETF uses nine decimals; protocol LP custody is the NFT vault. Mandatory fallback paths execute without old gate skips. Reentry uses a real production SE and a hostile underlying ERC20."
+    },
+    {
+      "old_test": "test_H3_minOutTooHigh_leavesNoInventory",
+      "funded_test": "test_H3_minOutTooHigh_leavesNoInventory",
+      "disposition": "Retained security concern on the canonical funded route. Removed LP-sale/unbacked claim APIs become actual NFT claims or 1:1 Standard Exchange unstaking. Native DETF uses nine decimals; protocol LP custody is the NFT vault. Mandatory fallback paths execute without old gate skips. Reentry uses a real production SE and a hostile underlying ERC20."
+    },
+    {
+      "old_test": "test_preLive_mint_reverts",
+      "funded_test": "test_preLive_mint_reverts",
+      "disposition": "Retained security concern on the canonical funded route. Removed LP-sale/unbacked claim APIs become actual NFT claims or 1:1 Standard Exchange unstaking. Native DETF uses nine decimals; protocol LP custody is the NFT vault. Mandatory fallback paths execute without old gate skips. Reentry uses a real production SE and a hostile underlying ERC20."
+    },
+    {
+      "old_test": "test_A1_donateBuffer_cannotMintFreeDetf",
+      "funded_test": "test_A1_donateBuffer_cannotMintFreeDetf",
+      "disposition": "Retained security concern on the canonical funded route. Removed LP-sale/unbacked claim APIs become actual NFT claims or 1:1 Standard Exchange unstaking. Native DETF uses nine decimals; protocol LP custody is the NFT vault. Mandatory fallback paths execute without old gate skips. Reentry uses a real production SE and a hostile underlying ERC20."
+    },
+    {
+      "old_test": "test_A1_donateVaultShares_cannotMintFreeDetf",
+      "funded_test": "test_A1_donateVaultShares_cannotMintFreeDetf",
+      "disposition": "Retained security concern on the canonical funded route. Removed LP-sale/unbacked claim APIs become actual NFT claims or 1:1 Standard Exchange unstaking. Native DETF uses nine decimals; protocol LP custody is the NFT vault. Mandatory fallback paths execute without old gate skips. Reentry uses a real production SE and a hostile underlying ERC20."
+    },
+    {
+      "old_test": "test_A2_donateDetfToDiamond_noTheft",
+      "funded_test": "test_A2_donateDetfToDiamond_noTheft",
+      "disposition": "Retained security concern on the canonical funded route. Removed LP-sale/unbacked claim APIs become actual NFT claims or 1:1 Standard Exchange unstaking. Native DETF uses nine decimals; protocol LP custody is the NFT vault. Mandatory fallback paths execute without old gate skips. Reentry uses a real production SE and a hostile underlying ERC20."
+    },
+    {
+      "old_test": "test_A3_D2_redeemWithoutClaim_noBptDrain",
+      "funded_test": "test_A3_D2_unstakeWithoutReceipt_noBptOrBackingDrain",
+      "disposition": "Retained security concern on the canonical funded route. Removed LP-sale/unbacked claim APIs become actual NFT claims or 1:1 Standard Exchange unstaking. Native DETF uses nine decimals; protocol LP custody is the NFT vault. Mandatory fallback paths execute without old gate skips. Reentry uses a real production SE and a hostile underlying ERC20."
+    },
+    {
+      "old_test": "test_D2_sellPosition_nonOwner_reverts",
+      "funded_test": "test_D2_claimBond_nonOwner_reverts",
+      "disposition": "Retained security concern on the canonical funded route. Removed LP-sale/unbacked claim APIs become actual NFT claims or 1:1 Standard Exchange unstaking. Native DETF uses nine decimals; protocol LP custody is the NFT vault. Mandatory fallback paths execute without old gate skips. Reentry uses a real production SE and a hostile underlying ERC20."
+    },
+    {
+      "old_test": "test_D3_doubleSell_secondReverts",
+      "funded_test": "test_D3_finalClaim_cannotPayTwice",
+      "disposition": "Retained security concern on the canonical funded route. Removed LP-sale/unbacked claim APIs become actual NFT claims or 1:1 Standard Exchange unstaking. Native DETF uses nine decimals; protocol LP custody is the NFT vault. Mandatory fallback paths execute without old gate skips. Reentry uses a real production SE and a hostile underlying ERC20."
+    },
+    {
+      "old_test": "test_D3_doubleRedeem_overClaim_reverts",
+      "funded_test": "test_D3_unstake_overRemainingReceipt_reverts",
+      "disposition": "Retained security concern on the canonical funded route. Removed LP-sale/unbacked claim APIs become actual NFT claims or 1:1 Standard Exchange unstaking. Native DETF uses nine decimals; protocol LP custody is the NFT vault. Mandatory fallback paths execute without old gate skips. Reentry uses a real production SE and a hostile underlying ERC20."
+    },
+    {
+      "old_test": "test_D5_lockClamp_minRevert_maxOk",
+      "funded_test": "test_D5_lockClamp_minRevert_maxOk",
+      "disposition": "Retained security concern on the canonical funded route. Removed LP-sale/unbacked claim APIs become actual NFT claims or 1:1 Standard Exchange unstaking. Native DETF uses nine decimals; protocol LP custody is the NFT vault. Mandatory fallback paths execute without old gate skips. Reentry uses a real production SE and a hostile underlying ERC20."
+    },
+    {
+      "old_test": "test_D6_redeemBoundedByClaimAndInventory",
+      "funded_test": "test_D6_unstakePaysExactlyHeldDetfAndLeavesProtocolLp",
+      "disposition": "Retained security concern on the canonical funded route. Removed LP-sale/unbacked claim APIs become actual NFT claims or 1:1 Standard Exchange unstaking. Native DETF uses nine decimals; protocol LP custody is the NFT vault. Mandatory fallback paths execute without old gate skips. Reentry uses a real production SE and a hostile underlying ERC20."
+    },
+    {
+      "old_test": "test_F2_bondNftVault_createPosition_onlyOwner",
+      "funded_test": "test_F2_createFundedPosition_onlyDetf",
+      "disposition": "Retained security concern on the canonical funded route. Removed LP-sale/unbacked claim APIs become actual NFT claims or 1:1 Standard Exchange unstaking. Native DETF uses nine decimals; protocol LP custody is the NFT vault. Mandatory fallback paths execute without old gate skips. Reentry uses a real production SE and a hostile underlying ERC20."
+    },
+    {
+      "old_test": "test_F3_claim_mintFromNFTSale_onlyOwner",
+      "funded_test": "test_F3_fundRewards_onlyDetf",
+      "disposition": "Retained security concern on the canonical funded route. Removed LP-sale/unbacked claim APIs become actual NFT claims or 1:1 Standard Exchange unstaking. Native DETF uses nine decimals; protocol LP custody is the NFT vault. Mandatory fallback paths execute without old gate skips. Reentry uses a real production SE and a hostile underlying ERC20."
+    },
+    {
+      "old_test": "test_F3_claim_burnShares_onlyOwner",
+      "funded_test": "test_F3_retireEscrowDust_onlyBondNft",
+      "disposition": "Retained security concern on the canonical funded route. Removed LP-sale/unbacked claim APIs become actual NFT claims or 1:1 Standard Exchange unstaking. Native DETF uses nine decimals; protocol LP custody is the NFT vault. Mandatory fallback paths execute without old gate skips. Reentry uses a real production SE and a hostile underlying ERC20."
+    },
+    {
+      "old_test": "test_F1_diamondCut_notCallableByAttacker",
+      "funded_test": "test_F1_diamondCut_notCallableByAttacker",
+      "disposition": "Retained security concern on the canonical funded route. Removed LP-sale/unbacked claim APIs become actual NFT claims or 1:1 Standard Exchange unstaking. Native DETF uses nine decimals; protocol LP custody is the NFT vault. Mandatory fallback paths execute without old gate skips. Reentry uses a real production SE and a hostile underlying ERC20."
+    },
+    {
+      "old_test": "test_F4_noSetWeightsOrThresholds",
+      "funded_test": "test_F4_noSetWeightsOrThresholds",
+      "disposition": "Retained security concern on the canonical funded route. Removed LP-sale/unbacked claim APIs become actual NFT claims or 1:1 Standard Exchange unstaking. Native DETF uses nine decimals; protocol LP custody is the NFT vault. Mandatory fallback paths execute without old gate skips. Reentry uses a real production SE and a hostile underlying ERC20."
+    },
+    {
+      "old_test": "test_C1_reenterBond_duringBootstrap_hitsIsLocked",
+      "funded_test": "test_C1_reenterBond_duringBootstrap_hitsIsLocked",
+      "disposition": "Retained security concern on the canonical funded route. Removed LP-sale/unbacked claim APIs become actual NFT claims or 1:1 Standard Exchange unstaking. Native DETF uses nine decimals; protocol LP custody is the NFT vault. Mandatory fallback paths execute without old gate skips. Reentry uses a real production SE and a hostile underlying ERC20."
+    },
+    {
+      "old_test": "test_C2_reenterExchangeIn_duringMint_hitsIsLocked",
+      "funded_test": "test_C2_reenterExchangeIn_duringBufferMint_hitsIsLocked",
+      "disposition": "Retained security concern on the canonical funded route. Removed LP-sale/unbacked claim APIs become actual NFT claims or 1:1 Standard Exchange unstaking. Native DETF uses nine decimals; protocol LP custody is the NFT vault. Mandatory fallback paths execute without old gate skips. Reentry uses a real production SE and a hostile underlying ERC20."
+    },
+    {
+      "old_test": "test_C3_mintReenterBond_hitsIsLocked",
+      "funded_test": "test_C3_bufferMintReenterBond_hitsIsLocked",
+      "disposition": "Retained security concern on the canonical funded route. Removed LP-sale/unbacked claim APIs become actual NFT claims or 1:1 Standard Exchange unstaking. Native DETF uses nine decimals; protocol LP custody is the NFT vault. Mandatory fallback paths execute without old gate skips. Reentry uses a real production SE and a hostile underlying ERC20."
+    },
+    {
+      "old_test": "test_E1_mintThenPartialBurn_conservation",
+      "funded_test": "test_E1_mintThenPartialBurn_conservation",
+      "disposition": "Retained security concern on the canonical funded route. Removed LP-sale/unbacked claim APIs become actual NFT claims or 1:1 Standard Exchange unstaking. Native DETF uses nine decimals; protocol LP custody is the NFT vault. Mandatory fallback paths execute without old gate skips. Reentry uses a real production SE and a hostile underlying ERC20."
+    },
+    {
+      "old_test": "test_E4_holderBalance_notDilutedByOthersMint",
+      "funded_test": "test_E4_holderBalance_notDilutedByOthersMint",
+      "disposition": "Retained security concern on the canonical funded route. Removed LP-sale/unbacked claim APIs become actual NFT claims or 1:1 Standard Exchange unstaking. Native DETF uses nine decimals; protocol LP custody is the NFT vault. Mandatory fallback paths execute without old gate skips. Reentry uses a real production SE and a hostile underlying ERC20."
+    },
+    {
+      "old_test": "test_B3_thresholdGates_coupleToSynthetic",
+      "funded_test": "test_B3_thresholdGates_coupleToSynthetic",
+      "disposition": "Retained security concern on the canonical funded route. Removed LP-sale/unbacked claim APIs become actual NFT claims or 1:1 Standard Exchange unstaking. Native DETF uses nine decimals; protocol LP custody is the NFT vault. Mandatory fallback paths execute without old gate skips. Reentry uses a real production SE and a hostile underlying ERC20."
+    },
+    {
+      "old_test": "test_B1_openThresholds_mintBurn_boundsSafety",
+      "funded_test": "test_B1_reserveFallback_mintBurn_boundsSafety",
+      "disposition": "Retained security concern on the canonical funded route. Removed LP-sale/unbacked claim APIs become actual NFT claims or 1:1 Standard Exchange unstaking. Native DETF uses nine decimals; protocol LP custody is the NFT vault. Mandatory fallback paths execute without old gate skips. Reentry uses a real production SE and a hostile underlying ERC20."
+    },
+    {
+      "old_test": "test_H2_redeemClaim_minOutFail_claimUnchanged",
+      "funded_test": "test_H2_unstake_minOutFail_receiptAndBackingUnchanged",
+      "disposition": "Retained security concern on the canonical funded route. Removed LP-sale/unbacked claim APIs become actual NFT claims or 1:1 Standard Exchange unstaking. Native DETF uses nine decimals; protocol LP custody is the NFT vault. Mandatory fallback paths execute without old gate skips. Reentry uses a real production SE and a hostile underlying ERC20."
+    },
+    {
+      "old_test": "test_G1_outerActivity_doesNotBrickInner",
+      "funded_test": "test_G1_outerActivity_doesNotBrickInner",
+      "disposition": "Retained security concern on the canonical funded route. Removed LP-sale/unbacked claim APIs become actual NFT claims or 1:1 Standard Exchange unstaking. Native DETF uses nine decimals; protocol LP custody is the NFT vault. Mandatory fallback paths execute without old gate skips. Reentry uses a real production SE and a hostile underlying ERC20."
+    }
+  ],
+  "validation": "mixed-funded-security-run.json"
+}

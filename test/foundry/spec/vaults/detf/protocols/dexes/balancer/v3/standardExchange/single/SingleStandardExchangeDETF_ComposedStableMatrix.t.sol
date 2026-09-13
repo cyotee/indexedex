@@ -4,8 +4,7 @@ pragma solidity ^0.8.0;
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
-import {WeightedPoolFactory} from
-    "@crane/contracts/external/balancer/v3/pool-weighted/contracts/WeightedPoolFactory.sol";
+import {IWeightedPoolFactory} from "contracts/interfaces/IWeightedPoolFactory.sol";
 import {ERC721Facet} from "@crane/contracts/tokens/ERC721/ERC721Facet.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 
@@ -16,10 +15,8 @@ import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeplo
 import {
     IBalancerV3StandardExchangeRouterProxy
 } from "contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol";
-import {
-    IStandardExchangeRateProviderDFPkg,
-    StandardExchangeRateProviderDFPkg
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
+import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
+import {StandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
 import {
     StandardExchangeRateProviderFacet
 } from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderFacet.sol";
@@ -27,21 +24,15 @@ import {DetfFacetFactoryService} from "contracts/vaults/detf/common/factory/Detf
 import {DetfPkgFactoryService} from "contracts/vaults/detf/common/factory/DetfPkgFactoryService.sol";
 import {DetfComponentFactoryService} from "contracts/vaults/detf/common/factory/DetfComponentFactoryService.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/common/factory/nft/IDetfSelfNftInventoryDFPkg.sol";
-import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol";
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
-import {
-    ISingleStandardExchangeDETDFPkg
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETDFPkg.sol";
+import {ISingleStandardExchangeDETDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETDFPkg.sol";
 import {
     SingleStandardExchangeDETF_Component_FactoryService
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_Component_FactoryService.sol";
-import {
-    ISingleStandardExchangeDETFBonding
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFBondingTarget.sol";
+import {ISingleStandardExchangeDETFBonding} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFBonding.sol";
 import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
-import {
-    ISingleStandardExchangeDETFInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFInfoTarget.sol";
+import {ISingleStandardExchangeDETFInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFInfo.sol";
 import {
     ComposedStableCommonDetf_IntegratedDeploy_Test
 } from "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_IntegratedDeploy.t.sol";
@@ -73,196 +64,71 @@ contract SingleStandardExchangeDETF_ComposedStableMatrix_Test is ComposedStableC
             ISingleStandardExchangeDETFBonding outerBonding_
         )
     {
-        IFacet multiBasic_ = VaultComponentFactoryService.deployMultiAssetBasicVaultFacet(create3Factory);
-        IFacet multiStd_ = VaultComponentFactoryService.deployMultiAssetStandardVaultFacet(create3Factory);
-        IFacet exchangeInFacet_ =
-            SingleStandardExchangeDETF_Component_FactoryService.deployExchangeInFacet(create3Factory);
-        IFacet rateFacet_ = IFacet(
-            create3Factory.deployFacet(
-                type(StandardExchangeRateProviderFacet).creationCode, keccak256("SSE_DETF_CS_RP")
-            )
-        );
-        IStandardExchangeRateProviderDFPkg ratePkg_ = IStandardExchangeRateProviderDFPkg(
-            address(
-                create3Factory.deployPackageWithArgs(
-                    type(StandardExchangeRateProviderDFPkg).creationCode,
-                    abi.encode(
-                        IStandardExchangeRateProviderDFPkg.PkgInit({
-                            rateProviderFacet: rateFacet_, diamondFactory: diamondPackageFactory
-                        })
-                    ),
-                    keccak256("SSE_DETF_CS_RP_PKG")
-                )
-            )
-        );
-        IFacet nftFacet_ = DetfFacetFactoryService.deployDETFNFTVaultFacet(create3Factory);
-        IFacet erc721_ =
-            IFacet(create3Factory.deployFacet(type(ERC721Facet).creationCode, keccak256("SSE_DETF_CS_721")));
-        IFacet erc4626Basic_ = VaultComponentFactoryService.deployERC4626BasedBasicVaultFacet(create3Factory);
-        IFacet erc4626Std_ = VaultComponentFactoryService.deployERC4626StandardVaultFacet(create3Factory);
-        IFacet claimFacet_ = DetfFacetFactoryService.deployRebasingClaimTokenFacet(create3Factory);
-        IRebasingClaimTokenDFPkg claimPkg_ = DetfPkgFactoryService.deployRebasingClaimTokenDFPkg(
-            create3Factory,
-            DetfComponentFactoryService.buildRebasingClaimTokenPkgInit(
-                erc20Facet, erc5267Facet, erc2612Facet, claimFacet_, diamondPackageFactory
-            )
-        );
-
-        vm.startPrank(owner);
-        IDetfSelfNftInventoryDFPkg bondPkg_ = DetfPkgFactoryService.deployDETFNFTVaultDFPkg(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            DetfComponentFactoryService.buildDETFNFTVaultPkgInit(
-                erc721_,
-                erc4626Basic_,
-                erc4626Std_,
-                nftFacet_,
-                IVaultFeeOracleQuery(address(indexedexManager)),
-                IVaultRegistryDeployment(address(indexedexManager))
-            )
-        );
+        ISingleStandardExchangeDETDFPkg.PkgInit memory init_ = _outerPkgInit();
+        vm.prank(owner);
         ISingleStandardExchangeDETDFPkg outerPkg_ = SingleStandardExchangeDETF_Component_FactoryService.deployPkg(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            _outerPkgInit(multiBasic_, multiStd_, exchangeInFacet_, ratePkg_, bondPkg_, claimPkg_)
+            IVaultRegistryDeployment(address(indexedexManager)), init_
         );
-
-        outerDetf_ = indexedexManager.deployVault(
-            IStandardVaultPkg(address(outerPkg_)),
-            abi.encode(
-                ISingleStandardExchangeDETDFPkg.PkgArgs({
-                    name: "Outer DETF over ComposedStable",
-                    symbol: "oCSDETF",
-                    standardExchangeVault: IStandardExchangeProxy(deployedDetfVault),
-                    standardExchangeVaultShare: detfToken,
-                    // Nested composed burn path is not SE-rate-provider-quotable; abstract 1:1 reserve.
-                    rateTarget: IERC20(address(0)),
-                    detfWeight: 0,
-                    vaultShareWeight: 0,
-                    mintThreshold: 0,
-                    burnThreshold: 0,
-                    thresholdMode: ThresholdMode.Open,
-                expansionClosureRatePerSecond: 0,
-                expansionCatchUpMaxSeconds: 0,
-                expansionCatchUpCapBps: 0,
-                    creator: address(0),
-                    claimName: "",
-                    claimSymbol: "",
-                    bondName: "",
-                    bondSymbol: "",
-                    reserveName: "",
-                    reserveSymbol: ""
-                })
-            )
-        );
-        vm.stopPrank();
-
+        ISingleStandardExchangeDETDFPkg.PkgArgs memory args_;
+        args_.name = "Outer DETF over ComposedStable";
+        args_.symbol = "oCSDETF";
+        args_.standardExchangeVault = IStandardExchangeProxy(deployedDetfVault);
+        args_.standardExchangeVaultShare = detfToken;
+        vm.prank(owner);
+        outerDetf_ = indexedexManager.deployVault(IStandardVaultPkg(address(outerPkg_)), abi.encode(args_));
         outerInfo_ = ISingleStandardExchangeDETFInfo(outerDetf_);
         outerBonding_ = ISingleStandardExchangeDETFBonding(outerDetf_);
     }
 
-    function _outerPkgInit(
-        IFacet multiBasic_,
-        IFacet multiStd_,
-        IFacet exchangeInFacet_,
-        IStandardExchangeRateProviderDFPkg ratePkg_,
-        IDetfSelfNftInventoryDFPkg bondPkg_,
-        IRebasingClaimTokenDFPkg claimPkg_
-    ) private view returns (ISingleStandardExchangeDETDFPkg.PkgInit memory pkgInit_) {
-        pkgInit_ = ISingleStandardExchangeDETDFPkg.PkgInit({
-            erc20Facet: erc20Facet,
-            erc5267Facet: erc5267Facet,
-            erc2612Facet: erc2612Facet,
-            multiAssetBasicVaultFacet: multiBasic_,
-            multiAssetStandardVaultFacet: multiStd_,
-            exchangeInFacet: exchangeInFacet_,
-            feeOracle: IVaultFeeOracleQuery(address(indexedexManager)),
-            vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
-            balancerV3Router: IBalancerV3StandardExchangeRouterProxy(address(seRouter)),
-            balancerV3Vault: IVault(address(vault)),
-            weightedPoolFactory: WeightedPoolFactory(testPoolFactory),
-            rateProviderPkg: ratePkg_,
-            bondNftVaultPkg: bondPkg_,
-            rebasingClaimTokenPkg: claimPkg_,
-            diamondFactory: diamondPackageFactory
-        });
+    function _outerPkgInit() private returns (ISingleStandardExchangeDETDFPkg.PkgInit memory pkgInit_) {
+        pkgInit_.erc20Facet = erc20Facet;
+        pkgInit_.erc5267Facet = erc5267Facet;
+        pkgInit_.erc2612Facet = erc2612Facet;
+        pkgInit_.multiAssetBasicVaultFacet = multiAssetBasicVaultFacet;
+        pkgInit_.multiAssetStandardVaultFacet = multiAssetStandardVaultFacet;
+        pkgInit_.exchangeInFacet =
+            SingleStandardExchangeDETF_Component_FactoryService.deployExchangeInFacet(create3Factory);
+        pkgInit_.bondingFacet = SingleStandardExchangeDETF_Component_FactoryService.deployBondingFacet(create3Factory);
+        pkgInit_.feeOracle = IVaultFeeOracleQuery(address(indexedexManager));
+        pkgInit_.vaultRegistryDeployment = IVaultRegistryDeployment(address(indexedexManager));
+        pkgInit_.balancerV3Router = IBalancerV3StandardExchangeRouterProxy(address(seRouter));
+        pkgInit_.balancerV3Vault = IVault(address(vault));
+        pkgInit_.weightedPoolFactory = IWeightedPoolFactory(testPoolFactory);
+        pkgInit_.rateProviderPkg = rateProviderPkg;
+        pkgInit_.bondNftVaultPkg = bondNftVaultPkg;
+        pkgInit_.rebasingClaimTokenPkg = rebasingClaimTokenPkg;
+        pkgInit_.syPkg = syPkg;
+        pkgInit_.diamondFactory = diamondPackageFactory;
     }
 
     function test_matrix_composedStable_outerFirstBondAndInnerStillServes() public {
-        _bootstrapReserveGraph();
-
-        // Mint composed detf shares via production SE entry.
-        uint256 amountIn = 2_000e18;
-        deal(address(dai), address(this), amountIn, true);
-        dai.approve(deployedDetfVault, amountIn);
-        uint256 composedShares = IStandardExchangeIn(deployedDetfVault).exchangeIn(
-            dai, amountIn, detfToken, 0, address(this), false, block.timestamp + 1
-        );
-        assertTrue(composedShares > 0, "composed shares");
-
-        (address outerDetf_, ISingleStandardExchangeDETFInfo outerInfo_, ISingleStandardExchangeDETFBonding outerBonding_)
-        = _deployOuterOverComposed();
-
-        assertFalse(outerInfo_.isReserveLive(), "outer starts inert");
-        assertEq(outerInfo_.standardExchangeVault(), deployedDetfVault);
-        assertEq(outerInfo_.standardExchangeVaultShare(), address(detfToken));
-
-        // Use a substantial share of minted composed DETF so both outer reserve legs clear Balancer mins.
-        uint256 bondIn_ = composedShares / 4;
-        if (bondIn_ < 1e18) bondIn_ = composedShares;
-        require(bondIn_ > 0, "bond amount");
-
-        // Sanity: rate provider must return non-zero before first bond join.
-        address rateSubject_ = outerInfo_.standardExchangeVaultShare();
-        assertTrue(IERC20(rateSubject_).totalSupply() > 0, "composed share supply");
-
-        detfToken.approve(outerDetf_, bondIn_);
-        (uint256 tokenId_,) =
-            outerBonding_.bond(detfToken, bondIn_, MIN_LOCK, address(this), false, block.timestamp + 1 hours);
-        assertTrue(tokenId_ > 0);
-        assertTrue(outerInfo_.isReserveLive(), "outer live after first bond");
-        assertEq(detfToken.balanceOf(outerDetf_), 0, "residual composed shares after bond");
-        assertEq(IERC20(outerDetf_).balanceOf(outerDetf_), 0, "residual free outer detf after bond");
-
-        // Acquire more composed shares for outer mint (bond may have spent first batch).
-        IStandardExchangeIn outerEx_ = IStandardExchangeIn(outerDetf_);
-        assertTrue(outerInfo_.isMintingAllowed(), "outer mint gate open");
-        // Keep outer single-sided join small vs reserve (avoid Balancer MaxInRatio).
-        uint256 moreCompose = 200e18;
-        deal(address(dai), address(this), moreCompose, true);
-        dai.approve(deployedDetfVault, moreCompose);
-        uint256 mintIn_ = IStandardExchangeIn(deployedDetfVault).exchangeIn(
-            dai, moreCompose, detfToken, 0, address(this), false, block.timestamp + 1
-        );
-        if (mintIn_ > 5e17) mintIn_ = 5e17;
-        require(mintIn_ > 0, "need composed shares for mint");
-        detfToken.approve(outerDetf_, mintIn_);
-        uint256 mintOut_ = outerEx_.exchangeIn(
-            detfToken, mintIn_, IERC20(outerDetf_), 0, address(this), false, block.timestamp + 1 hours
-        );
-        assertTrue(mintOut_ > 0, "outer mint");
-        assertEq(detfToken.balanceOf(outerDetf_), 0, "residual composed shares after mint");
-        assertEq(IERC20(outerDetf_).balanceOf(outerDetf_), 0, "residual free outer detf after mint");
-
-        // Outer burn back to composed shares (burnThreshold=max).
-        assertTrue(outerInfo_.isBurningAllowed(), "outer burn gate open");
-        uint256 burnIn_ = mintOut_ / 2;
-        require(burnIn_ > 0, "burn amount");
-        IERC20(outerDetf_).approve(outerDetf_, burnIn_);
-        uint256 burnOut_ = outerEx_.exchangeIn(
-            IERC20(outerDetf_), burnIn_, detfToken, 0, address(this), false, block.timestamp + 1 hours
-        );
-        assertTrue(burnOut_ > 0, "outer burn to composed shares");
-        assertEq(detfToken.balanceOf(outerDetf_), 0, "residual composed shares after burn");
-        assertEq(IERC20(outerDetf_).balanceOf(outerDetf_), 0, "residual free outer detf after burn");
-
-        // Double composition: inner still serves direct users.
-        uint256 moreIn = 100e18;
-        deal(address(dai), alice, moreIn, true);
-        vm.startPrank(alice);
-        dai.approve(deployedDetfVault, moreIn);
-        uint256 innerOut = IStandardExchangeIn(deployedDetfVault).exchangeIn(
-            dai, moreIn, detfToken, 0, alice, false, block.timestamp + 1
-        );
-        vm.stopPrank();
-        assertTrue(innerOut > 0, "inner still serves");
+        uint256 raw_ = _buyFixtureRaw(address(this));
+        (address outer_, ISingleStandardExchangeDETFInfo info_, ISingleStandardExchangeDETFBonding bonds_) =
+            _deployOuterOverComposed();
+        assertFalse(info_.isReserveLive());
+        assertEq(info_.standardExchangeVault(), deployedDetfVault);
+        assertEq(info_.standardExchangeVaultShare(), address(detfToken));
+        uint256 input_ = raw_ / 4;
+        assertGt(input_, 0);
+        detfToken.approve(outer_, input_);
+        (uint256 id_,) = bonds_.bond(detfToken, input_, MIN_LOCK, address(this), false, block.timestamp);
+        assertTrue(info_.isReserveLive());
+        _assertBondPrincipalIsFunded(outer_, id_, address(this));
+        uint256 mintIn_ = _reserveTokenBudget(info_.reservePool(), detfToken);
+        assertGt(mintIn_, 0);
+        assertLe(mintIn_, detfToken.balanceOf(address(this)));
+        detfToken.approve(outer_, mintIn_);
+        uint256 minted_ = IStandardExchangeIn(outer_)
+            .exchangeIn(detfToken, mintIn_, IERC20(outer_), 0, address(this), false, block.timestamp);
+        assertGt(minted_, 1);
+        uint256 burned_ = minted_ / 2;
+        IERC20(outer_).approve(outer_, burned_);
+        uint256 returned_ = IStandardExchangeIn(outer_)
+            .exchangeIn(IERC20(outer_), burned_, detfToken, 0, address(this), false, block.timestamp);
+        assertGt(returned_, 0);
+        assertEq(IERC20(outer_).balanceOf(address(this)), minted_ - burned_);
+        assertEq(detfToken.balanceOf(outer_), 0);
+        assertEq(IERC20(outer_).balanceOf(outer_), 0);
+        assertGt(_buyFixtureRaw(alice), 0, "inner still serves direct users");
     }
 }

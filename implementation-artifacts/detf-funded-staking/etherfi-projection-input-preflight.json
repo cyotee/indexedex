@@ -1,0 +1,70 @@
+{
+  "recorded_at_utc": "2026-09-08T10:51:06.497517+00:00",
+  "alias": "ethereum_mainnet_alchemy",
+  "block": 24000000,
+  "broadcast": false,
+  "chain": "0x1",
+  "calls": [
+    {
+      "target": "0x35fA164735182de50811E8e2E824cFb9B6118ac2",
+      "signature": "totalShares()",
+      "argument": null,
+      "raw": "0x00000000000000000000000000000000000000000002584f3f3fb0dfad5937d5",
+      "words": [
+        2834881740059432837527509
+      ]
+    },
+    {
+      "target": "0x308861A430be4cce5502d0A12724771Fc6DaF216",
+      "signature": "getTotalPooledEther()",
+      "argument": null,
+      "raw": "0x000000000000000000000000000000000000000000028a7e9c33e7cd96ee8d3c",
+      "words": [
+        3071873759213320707935548
+      ]
+    },
+    {
+      "target": "0x308861A430be4cce5502d0A12724771Fc6DaF216",
+      "signature": "totalValueInLp()",
+      "argument": null,
+      "raw": "0x0000000000000000000000000000000000000000000018df3da235986b19ebcb",
+      "words": [
+        117454860688420004031435
+      ]
+    },
+    {
+      "target": "0x308861A430be4cce5502d0A12724771Fc6DaF216",
+      "signature": "etherFiRedemptionManager()",
+      "argument": null,
+      "raw": "0x000000000000000000000000dadef1ffbfeaab4f68a9fd181395f68b4e4e7ae0",
+      "words": [
+        1249531834561684952922271403476809238580671970016
+      ]
+    },
+    {
+      "target": "0xDadEf1fFBFeaAB4f68A9fD181395F68b4e4E7Ae0",
+      "signature": "tokenToRedemptionInfo(address)",
+      "argument": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+      "raw": "0x000000000000000000000000000000000000000000000000000000007735940000000000000000000000000000000000000000000000000000000000773545e000000000000000000000000000000000000000000000000000000000693c7bd70000000000000000000000000000000000000000000000000000000000005a6c00000000000000000000000000000000000000000000000000000000000003e8000000000000000000000000000000000000000000000000000000000000001e0000000000000000000000000000000000000000000000000000000000000064",
+      "words": [
+        2000000000,
+        1999980000,
+        1765571543,
+        23148,
+        1000,
+        30,
+        100
+      ]
+    },
+    {
+      "target": "0xDadEf1fFBFeaAB4f68A9fD181395F68b4e4E7Ae0",
+      "signature": "treasury()",
+      "argument": null,
+      "raw": "0x0000000000000000000000000c83eae1fe72c390a02e426572854931eeff93ba",
+      "words": [
+        71449748047553974330751736782758306921798669242
+      ]
+    }
+  ],
+  "status": "PUBLIC_INPUT_READS_ONLY_NOT_PROJECTION_VALIDATION"
+}

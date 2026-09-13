@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ICamelotV2StandardExchangeDFPkg} from "contracts/protocols/dexes/camelot/v2/ICamelotV2StandardExchangeDFPkg.sol";
+import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+
 /* -------------------------------------------------------------------------- */
 /*                                    Crane                                   */
 /* -------------------------------------------------------------------------- */
@@ -55,62 +59,7 @@ import {ConstProdReserveVaultRepo} from "contracts/vaults/ConstProdReserveVaultR
 import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
 import {ConstProdUtils} from "@crane/contracts/utils/math/ConstProdUtils.sol";
 
-interface ICamelotV2StandardExchangeDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
-    error NotCalledByRegistry(address caller);
 
-    error PoolMustNotBeStable(ICamelotPair pool);
-
-    error ZeroAmountForNonZeroRecipient();
-
-    error InsufficientLiquidity();
-
-    struct PkgInit {
-        IFacet erc20Facet;
-        IFacet erc2612Facet;
-        IFacet erc5267Facet;
-        IFacet erc4626Facet;
-        // IFacet erc4626BasicVaultFacet;
-        IFacet multiAssetBasicVaultFacet;
-        // IFacet erc4626StandardVaultFacet;
-        IFacet multiAssetStandardVaultFacet;
-        IFacet camelotV2StandardExchangeInFacet;
-        IFacet camelotV2StandardExchangeOutFacet;
-        IVaultFeeOracleQuery vaultFeeOracleQuery;
-        IVaultRegistryDeployment vaultRegistryDeployment;
-        IPermit2 permit2;
-        ICamelotFactory camelotV2Factory;
-        ICamelotV2Router camelotV2Router;
-    }
-
-    struct PkgArgs {
-        ICamelotPair reserveAsset;
-    }
-
-    struct PreviewDeployVaultResult {
-        bool pairExists;
-        uint256 proportionalA;
-        uint256 proportionalB;
-        /// @dev Upper-bound estimate; actual LP minted will be slightly less due to Camelot's `_mintFee()`.
-        uint256 expectedLP;
-    }
-
-    event PairCreated(address indexed tokenA, address indexed tokenB, address pair);
-
-    event VaultDeployedWithDeposit(
-        address indexed vault, address indexed pair, address indexed recipient, uint256 lpAmount, uint256 vaultShares
-    );
-
-    function deployVault(ICamelotPair pool) external returns (address vault);
-
-    function deployVault(IERC20 tokenA, uint256 tokenAAmount, IERC20 tokenB, uint256 tokenBAmount, address recipient)
-        external
-        returns (address vault);
-
-    function previewDeployVault(IERC20 tokenA, uint256 tokenAAmount, IERC20 tokenB, uint256 tokenBAmount)
-        external
-        view
-        returns (PreviewDeployVaultResult memory result);
-}
 
 contract CamelotV2StandardExchangeDFPkg is ICamelotV2StandardExchangeDFPkg {
     using BetterEfficientHashLib for bytes;
@@ -129,6 +78,7 @@ contract CamelotV2StandardExchangeDFPkg is ICamelotV2StandardExchangeDFPkg {
     IFacet immutable MULTI_ASSET_STANDARD_VAULT_FACET;
     IFacet immutable CAMELOT_V2_STANDARD_EXCHANGE_IN_FACET;
     IFacet immutable CAMELOT_V2_STANDARD_EXCHANGE_OUT_FACET;
+    IFacet immutable CAMELOT_V2_STANDARD_EXCHANGE_QUERY_FACET;
     IVaultFeeOracleQuery immutable VAULT_FEE_ORACLE_QUERY;
     IVaultRegistryDeployment immutable VAULT_REGISTRY_DEPLOYMENT;
     IPermit2 immutable PERMIT2;
@@ -147,6 +97,7 @@ contract CamelotV2StandardExchangeDFPkg is ICamelotV2StandardExchangeDFPkg {
         MULTI_ASSET_STANDARD_VAULT_FACET = pkgInit.multiAssetStandardVaultFacet;
         CAMELOT_V2_STANDARD_EXCHANGE_IN_FACET = pkgInit.camelotV2StandardExchangeInFacet;
         CAMELOT_V2_STANDARD_EXCHANGE_OUT_FACET = pkgInit.camelotV2StandardExchangeOutFacet;
+        CAMELOT_V2_STANDARD_EXCHANGE_QUERY_FACET = pkgInit.camelotV2StandardExchangeQueryFacet;
         VAULT_FEE_ORACLE_QUERY = pkgInit.vaultFeeOracleQuery;
         VAULT_REGISTRY_DEPLOYMENT = pkgInit.vaultRegistryDeployment;
         PERMIT2 = pkgInit.permit2;
@@ -432,7 +383,7 @@ contract CamelotV2StandardExchangeDFPkg is ICamelotV2StandardExchangeDFPkg {
     }
 
     function facetAddresses() public view returns (address[] memory facetAddresses_) {
-        facetAddresses_ = new address[](8);
+        facetAddresses_ = new address[](9);
         facetAddresses_[0] = address(ERC20_FACET);
         facetAddresses_[1] = address(ERC5267_FACET);
         facetAddresses_[2] = address(ERC2612_FACET);
@@ -443,11 +394,12 @@ contract CamelotV2StandardExchangeDFPkg is ICamelotV2StandardExchangeDFPkg {
         facetAddresses_[5] = address(MULTI_ASSET_STANDARD_VAULT_FACET);
         facetAddresses_[6] = address(CAMELOT_V2_STANDARD_EXCHANGE_IN_FACET);
         facetAddresses_[7] = address(CAMELOT_V2_STANDARD_EXCHANGE_OUT_FACET);
+        facetAddresses_[8] = address(CAMELOT_V2_STANDARD_EXCHANGE_QUERY_FACET);
         return facetAddresses_;
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](11);
+        interfaces = new bytes4[](14);
 
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
@@ -460,6 +412,9 @@ contract CamelotV2StandardExchangeDFPkg is ICamelotV2StandardExchangeDFPkg {
         interfaces[8] = type(IStandardExchangeIn).interfaceId;
         interfaces[9] = type(IStandardExchangeOut).interfaceId;
         interfaces[10] = type(IVaultFeeOracleQueryAware).interfaceId;
+        interfaces[11] = type(IStandardizedYield).interfaceId;
+        interfaces[12] = type(IStandardExchangeTransitionQuote).interfaceId;
+        interfaces[13] = type(IStandardExchangeExternalQuote).interfaceId;
         return interfaces;
     }
 
@@ -474,7 +429,7 @@ contract CamelotV2StandardExchangeDFPkg is ICamelotV2StandardExchangeDFPkg {
     }
 
     function facetCuts() public view returns (IDiamond.FacetCut[] memory facetCuts_) {
-        facetCuts_ = new IDiamond.FacetCut[](8);
+        facetCuts_ = new IDiamond.FacetCut[](9);
 
         facetCuts_[0] = IDiamond.FacetCut({
             // address facetAddress;
@@ -555,6 +510,11 @@ contract CamelotV2StandardExchangeDFPkg is ICamelotV2StandardExchangeDFPkg {
             action: IDiamond.FacetCutAction.Add,
             // bytes4[] functionSelectors;
             functionSelectors: CAMELOT_V2_STANDARD_EXCHANGE_OUT_FACET.facetFuncs()
+        });
+        facetCuts_[8] = IDiamond.FacetCut({
+            facetAddress: address(CAMELOT_V2_STANDARD_EXCHANGE_QUERY_FACET),
+            action: IDiamond.FacetCutAction.Add,
+            functionSelectors: CAMELOT_V2_STANDARD_EXCHANGE_QUERY_FACET.facetFuncs()
         });
     }
 

@@ -1,0 +1,6797 @@
+{
+  "recorded_at_utc": "2026-09-09T07:11:34.818809+00:00",
+  "status": "CURRENT_ARTIFACT_INVENTORY_FINAL_BUILD_AND_PROXY_RECONCILIATION_PENDING",
+  "scope": "Shared funded staking/bond/SY and unified V4 facets/packages; Balancer DETF exclusion and Slipstream deferral preserved. ABI lists include inherited methods beyond each installed cut; actual proxy exports must be checked against facetFuncs and DFPkg cuts in production-path tests.",
+  "replacements": [
+    {
+      "old": "Standalone fungible mint/burn",
+      "new": "exchangeIn(tokenIn,amountIn,tokenOut,minAmountOut,recipient,pretransferred,deadline); token pair selects direction",
+      "owner": "DETF diamond",
+      "preserved": "Mandatory primary gate selects issuance/redemption or actual reserve swap; standard previews use same route."
+    },
+    {
+      "old": "mintClaim/buyClaim/redeemClaim and standalone stake/unstake",
+      "new": "IStandardExchangeIn and IStandardExchangeOut with DETF/sDETF or configured composed route",
+      "owner": "DETF and sDETF diamonds",
+      "preserved": "Actually held DETF funds 1:1 direct stake/unstake; output limits apply to final output."
+    },
+    {
+      "old": "LP-valued NFT mintFromNFTSale, sale and close variants",
+      "new": "claimPrincipal(tokenId,to), claimRewards(tokenId,to), claimBond(tokenId,to)",
+      "owner": "Funded bond NFT diamond",
+      "preserved": "Transfer attributable escrow sDETF; principal vests linearly; rewards remain separately claimable. No LP unwind."
+    },
+    {
+      "old": "LP-dependent rebasing rate/cache refresh",
+      "new": "stakingState/gonsOf and funded reward synchronization",
+      "owner": "sDETF diamond / authorized DETF reward entry",
+      "preserved": "Funded index and backing only; no spot NAV rebase."
+    },
+    {
+      "old": "No Pendle surface",
+      "new": "Pendle deposit/redeem, previews, directional discovery, exchangeRate, assetInfo/yieldToken and reward methods",
+      "owner": "Separate raw-DETF and static staking SY diamonds; native SE adapters at existing SE share addresses",
+      "preserved": "Nine decimals for DETF wrappers; actual existing decimals for other SE shares."
+    },
+    {
+      "old": "closeRouteMode/closeRoutes PkgArgs, getters and storage",
+      "new": null,
+      "owner": "Removed from V4 new deployment schemas, callers, selectors and storage",
+      "preserved": "Ordinary output route tables and funded NFT claims remain."
+    }
+  ],
+  "rows": [
+    {
+      "contract": "DETFFundedBondMetadataFacet",
+      "source": "contracts/vaults/detf/common/bondNft/DETFFundedBondMetadataFacet.sol",
+      "source_sha256": "a46775313e9e949ddbdfd843e91a18533dac035b00290b04662268f59a8f7d07",
+      "artifact": "out/DETFFundedBondMetadataFacet.sol/DETFFundedBondMetadataFacet.json",
+      "artifact_sha256": "017d3a6446038c0a82fcd9e1a5ac40d77fe894332de53defbc4d56d4eb40de1e",
+      "runtime_bytes": 9675,
+      "direct_inheritance": [
+        "DETFFundedBondMetadataTarget, IFacet "
+      ],
+      "compiled_signatures": [
+        {
+          "signature": "facetFuncs()",
+          "selector": "0x574a4cff"
+        },
+        {
+          "signature": "facetInterfaces()",
+          "selector": "0x2ea80826"
+        },
+        {
+          "signature": "facetMetadata()",
+          "selector": "0xf10d7a75"
+        },
+        {
+          "signature": "facetName()",
+          "selector": "0x5b6f4d01"
+        },
+        {
+          "signature": "name()",
+          "selector": "0x06fdde03"
+        },
+        {
+          "signature": "symbol()",
+          "selector": "0x95d89b41"
+        },
+        {
+          "signature": "tokenURI(uint256)",
+          "selector": "0xc87b56dd"
+        }
+      ],
+      "abi_entrypoints": [
+        {
+          "name": "facetFuncs",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "selectors_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetInterfaces",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "ids_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetMetadata",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            },
+            {
+              "name": "",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetName",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            }
+          ]
+        },
+        {
+          "name": "symbol",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            }
+          ]
+        },
+        {
+          "name": "tokenURI",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "tokenId_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            }
+          ]
+        }
+      ],
+      "source_kind": "deployable facet or package",
+      "compiler_source_check": {
+        "checked_sources": 27,
+        "matches_current_source": true,
+        "mismatches": []
+      }
+    },
+    {
+      "contract": "DETFNFTVaultDFPkg",
+      "source": "contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol",
+      "source_sha256": "65e1d2e195ae029b748ba24dcee9160a60a6932f1bae02e21c0cd3d689f10149",
+      "artifact": "out/DETFNFTVaultDFPkg.sol/DETFNFTVaultDFPkg.json",
+      "artifact_sha256": "b33a3caf4c6b0953e9585784a68f722b61a73ae0efb6ad07e95bbfc4625e817b",
+      "runtime_bytes": 6436,
+      "direct_inheritance": [
+        "IDETFNFTVaultDFPkg, IStandardVaultPkg "
+      ],
+      "compiled_signatures": [
+        {
+          "signature": "calcSalt(bytes)",
+          "selector": "0xd82be56e"
+        },
+        {
+          "signature": "deployVault(string,string,address,address)",
+          "selector": "0x16c51f4b"
+        },
+        {
+          "signature": "diamondConfig()",
+          "selector": "0x65d375b3"
+        },
+        {
+          "signature": "facetAddresses()",
+          "selector": "0x52ef6b2c"
+        },
+        {
+          "signature": "facetCuts()",
+          "selector": "0xa4b3ad35"
+        },
+        {
+          "signature": "facetInterfaces()",
+          "selector": "0x2ea80826"
+        },
+        {
+          "signature": "initAccount(bytes)",
+          "selector": "0x870d4838"
+        },
+        {
+          "signature": "name()",
+          "selector": "0x06fdde03"
+        },
+        {
+          "signature": "packageMetadata()",
+          "selector": "0xf45469e7"
+        },
+        {
+          "signature": "packageName()",
+          "selector": "0xabc8b346"
+        },
+        {
+          "signature": "postDeploy(address)",
+          "selector": "0x70068fcf"
+        },
+        {
+          "signature": "processArgs(bytes)",
+          "selector": "0x87c3adb3"
+        },
+        {
+          "signature": "updatePkg(address,bytes)",
+          "selector": "0xa9089235"
+        },
+        {
+          "signature": "vaultDeclaration()",
+          "selector": "0xf4efa66f"
+        },
+        {
+          "signature": "vaultFeeTypeIds()",
+          "selector": "0x6a4d3f12"
+        },
+        {
+          "signature": "vaultTypes()",
+          "selector": "0x36abf3dc"
+        }
+      ],
+      "abi_entrypoints": [
+        {
+          "name": "calcSalt",
+          "stateMutability": "pure",
+          "inputs": [
+            {
+              "name": "args_",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ]
+        },
+        {
+          "name": "deployVault",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "name_",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "symbol_",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "detf_",
+              "type": "address",
+              "internalType": "contract IDetf"
+            },
+            {
+              "name": "lpToken_",
+              "type": "address",
+              "internalType": "contract IERC20"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "diamondConfig",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "tuple",
+              "internalType": "struct IDiamondFactoryPackage.DiamondConfig",
+              "components": [
+                {
+                  "name": "facetCuts",
+                  "type": "tuple[]",
+                  "internalType": "struct IDiamond.FacetCut[]",
+                  "components": [
+                    {
+                      "name": "facetAddress",
+                      "type": "address",
+                      "internalType": "address"
+                    },
+                    {
+                      "name": "action",
+                      "type": "uint8",
+                      "internalType": "enum IDiamond.FacetCutAction"
+                    },
+                    {
+                      "name": "functionSelectors",
+                      "type": "bytes4[]",
+                      "internalType": "bytes4[]"
+                    }
+                  ]
+                },
+                {
+                  "name": "interfaces",
+                  "type": "bytes4[]",
+                  "internalType": "bytes4[]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "facetAddresses",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "facets_",
+              "type": "address[]",
+              "internalType": "address[]"
+            }
+          ]
+        },
+        {
+          "name": "facetCuts",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "cuts_",
+              "type": "tuple[]",
+              "internalType": "struct IDiamond.FacetCut[]",
+              "components": [
+                {
+                  "name": "facetAddress",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "action",
+                  "type": "uint8",
+                  "internalType": "enum IDiamond.FacetCutAction"
+                },
+                {
+                  "name": "functionSelectors",
+                  "type": "bytes4[]",
+                  "internalType": "bytes4[]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "facetInterfaces",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "interfaces_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "initAccount",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "args_",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": []
+        },
+        {
+          "name": "name",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            }
+          ]
+        },
+        {
+          "name": "packageMetadata",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            },
+            {
+              "name": "",
+              "type": "address[]",
+              "internalType": "address[]"
+            }
+          ]
+        },
+        {
+          "name": "packageName",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            }
+          ]
+        },
+        {
+          "name": "postDeploy",
+          "stateMutability": "pure",
+          "inputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ]
+        },
+        {
+          "name": "processArgs",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "args_",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ]
+        },
+        {
+          "name": "updatePkg",
+          "stateMutability": "pure",
+          "inputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ]
+        },
+        {
+          "name": "vaultDeclaration",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "tuple",
+              "internalType": "struct IStandardVaultPkg.VaultPkgDeclaration",
+              "components": [
+                {
+                  "name": "name",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "vaultFeeTypeIds",
+                  "type": "bytes32",
+                  "internalType": "bytes32"
+                },
+                {
+                  "name": "vaultTypes",
+                  "type": "bytes4[]",
+                  "internalType": "bytes4[]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "vaultFeeTypeIds",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "ids_",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ]
+        },
+        {
+          "name": "vaultTypes",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        }
+      ],
+      "source_kind": "deployable facet or package",
+      "compiler_source_check": {
+        "checked_sources": 67,
+        "matches_current_source": true,
+        "mismatches": []
+      }
+    },
+    {
+      "contract": "DETFNFTVaultFacet",
+      "source": "contracts/vaults/detf/common/bondNft/DETFNFTVaultFacet.sol",
+      "source_sha256": "35a3bc99e5bbb7ee6a57638b4717c01bcbbcffa365fb54931c1edc4f4139d909",
+      "artifact": "out/DETFNFTVaultFacet.sol/DETFNFTVaultFacet.json",
+      "artifact_sha256": "aea4ce7799b2d63459133070c77574d56cc38a6455766a460bc1d3fdc8d33b4d",
+      "runtime_bytes": 16513,
+      "direct_inheritance": [
+        "DETFFundedBondTarget, IFacet "
+      ],
+      "compiled_signatures": [
+        {
+          "signature": "claimBond(uint256,address)",
+          "selector": "0x084c59ae"
+        },
+        {
+          "signature": "claimPrincipal(uint256,address)",
+          "selector": "0xf400c743"
+        },
+        {
+          "signature": "claimRewards(uint256,address)",
+          "selector": "0x6c7b69cb"
+        },
+        {
+          "signature": "contentsId()",
+          "selector": "0xf5ee7c5b"
+        },
+        {
+          "signature": "createFundedPosition(uint256,uint256,address)",
+          "selector": "0x0a528e5b"
+        },
+        {
+          "signature": "detf()",
+          "selector": "0x8a91f8bc"
+        },
+        {
+          "signature": "donate(address,address,uint256,uint256,bool,uint256)",
+          "selector": "0x27c76759"
+        },
+        {
+          "signature": "donate(address,uint256,uint256,bool,uint256)",
+          "selector": "0x85eb9aab"
+        },
+        {
+          "signature": "donateWithPermit2Allowance(address,uint256,uint256,uint256)",
+          "selector": "0x0ed4fd8f"
+        },
+        {
+          "signature": "donateWithPermit2Signature(address,uint256,uint256,uint256,bytes)",
+          "selector": "0x9430e218"
+        },
+        {
+          "signature": "facetFuncs()",
+          "selector": "0x574a4cff"
+        },
+        {
+          "signature": "facetInterfaces()",
+          "selector": "0x2ea80826"
+        },
+        {
+          "signature": "facetMetadata()",
+          "selector": "0xf10d7a75"
+        },
+        {
+          "signature": "facetName()",
+          "selector": "0x5b6f4d01"
+        },
+        {
+          "signature": "initializeReservedBondNfts(address,address)",
+          "selector": "0x2bd949e3"
+        },
+        {
+          "signature": "lpToken()",
+          "selector": "0x5fcbd285"
+        },
+        {
+          "signature": "positionOf(uint256)",
+          "selector": "0x46f96023"
+        },
+        {
+          "signature": "previewClaim(uint256)",
+          "selector": "0xae648e90"
+        },
+        {
+          "signature": "previewDonate(address,uint256)",
+          "selector": "0x3d9f5912"
+        },
+        {
+          "signature": "reservedBondNftsWired()",
+          "selector": "0x1b552ac9"
+        },
+        {
+          "signature": "safeTransferFrom(address,address,uint256)",
+          "selector": "0x42842e0e"
+        },
+        {
+          "signature": "safeTransferFrom(address,address,uint256,bytes)",
+          "selector": "0xb88d4fde"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd"
+        },
+        {
+          "signature": "transferHeldToken(address,address,uint256)",
+          "selector": "0x3ec90986"
+        },
+        {
+          "signature": "vaultConfig()",
+          "selector": "0x7cc34bb4"
+        },
+        {
+          "signature": "vaultFeeTypeIds()",
+          "selector": "0x6a4d3f12"
+        },
+        {
+          "signature": "vaultTypes()",
+          "selector": "0x36abf3dc"
+        }
+      ],
+      "abi_entrypoints": [
+        {
+          "name": "claimBond",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "tokenId_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "recipient_",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "principal_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "rewards_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "claimPrincipal",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "tokenId_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "recipient_",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "principal_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "claimRewards",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "tokenId_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "recipient_",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "rewards_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "contentsId",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ]
+        },
+        {
+          "name": "createFundedPosition",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "principal_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "duration_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "recipient_",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "tokenId_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "detf",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "donate",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "donor",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "contract IERC20"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "minLpOut",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "pretransferred",
+              "type": "bool",
+              "internalType": "bool"
+            },
+            {
+              "name": "deadline",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "lpOut",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "donate",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "contract IERC20"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "minLpOut",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "pretransferred",
+              "type": "bool",
+              "internalType": "bool"
+            },
+            {
+              "name": "deadline",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "lpOut",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "donateWithPermit2Allowance",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "contract IERC20"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "minLpOut",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "deadline",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "lpOut",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "donateWithPermit2Signature",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "contract IERC20"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "minLpOut",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "deadline",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "permit2Data",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "lpOut",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "facetFuncs",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "funcs_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetInterfaces",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "interfaces_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetMetadata",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            },
+            {
+              "name": "",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetName",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            }
+          ]
+        },
+        {
+          "name": "initializeReservedBondNfts",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "feeTo_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "creator_",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "lpToken",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "contract IERC20"
+            }
+          ]
+        },
+        {
+          "name": "positionOf",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "tokenId_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "tuple",
+              "internalType": "struct DETFFundedStakingMath.BondPosition",
+              "components": [
+                {
+                  "name": "principal",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "claimedPrincipal",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "stakingGons",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "startTimestamp",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "vestingDuration",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "previewClaim",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "tokenId_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "claim_",
+              "type": "tuple",
+              "internalType": "struct DETFFundedStakingMath.BondClaim",
+              "components": [
+                {
+                  "name": "vestedPrincipal",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "principalRemaining",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "principalDue",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "rewardsDue",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "previewDonate",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "contract IERC20"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "lpOut",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "reservedBondNftsWired",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ]
+        },
+        {
+          "name": "safeTransferFrom",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "from_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "to_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "tokenId_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": []
+        },
+        {
+          "name": "safeTransferFrom",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "from_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "to_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "tokenId_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "data_",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": []
+        },
+        {
+          "name": "transferFrom",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "from_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "to_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "tokenId_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": []
+        },
+        {
+          "name": "transferHeldToken",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "token_",
+              "type": "address",
+              "internalType": "contract IERC20"
+            },
+            {
+              "name": "to_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "amount_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": []
+        },
+        {
+          "name": "vaultConfig",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "config_",
+              "type": "tuple",
+              "internalType": "struct IStandardVault.VaultConfig",
+              "components": [
+                {
+                  "name": "vaultFeeTypeIds",
+                  "type": "bytes32",
+                  "internalType": "bytes32"
+                },
+                {
+                  "name": "contentsId",
+                  "type": "bytes32",
+                  "internalType": "bytes32"
+                },
+                {
+                  "name": "vaultTypes",
+                  "type": "bytes4[]",
+                  "internalType": "bytes4[]"
+                },
+                {
+                  "name": "tokens",
+                  "type": "address[]",
+                  "internalType": "address[]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "vaultFeeTypeIds",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ]
+        },
+        {
+          "name": "vaultTypes",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        }
+      ],
+      "source_kind": "deployable facet or package",
+      "compiler_source_check": {
+        "checked_sources": 79,
+        "matches_current_source": true,
+        "mismatches": []
+      }
+    },
+    {
+      "contract": "RebasingClaimTokenDFPkg",
+      "source": "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol",
+      "source_sha256": "95cf5571e2dd1ba5c5cceae9827cdbee2d852dda0ec138405a9d72c2184ba83a",
+      "artifact": "out/RebasingClaimTokenDFPkg.sol/RebasingClaimTokenDFPkg.json",
+      "artifact_sha256": "4bef04b50a29672f177a5fabd1ca72a5e4bf0a50f6fe5c53b93ce7bf02d9356c",
+      "runtime_bytes": 6306,
+      "direct_inheritance": [
+        "IRebasingClaimTokenDFPkg "
+      ],
+      "compiled_signatures": [
+        {
+          "signature": "calcSalt(bytes)",
+          "selector": "0xd82be56e"
+        },
+        {
+          "signature": "deployToken(address,address,address,string,string)",
+          "selector": "0x4b55e70c"
+        },
+        {
+          "signature": "diamondConfig()",
+          "selector": "0x65d375b3"
+        },
+        {
+          "signature": "facetAddresses()",
+          "selector": "0x52ef6b2c"
+        },
+        {
+          "signature": "facetCuts()",
+          "selector": "0xa4b3ad35"
+        },
+        {
+          "signature": "facetInterfaces()",
+          "selector": "0x2ea80826"
+        },
+        {
+          "signature": "initAccount(bytes)",
+          "selector": "0x870d4838"
+        },
+        {
+          "signature": "packageMetadata()",
+          "selector": "0xf45469e7"
+        },
+        {
+          "signature": "packageName()",
+          "selector": "0xabc8b346"
+        },
+        {
+          "signature": "postDeploy(address)",
+          "selector": "0x70068fcf"
+        },
+        {
+          "signature": "processArgs(bytes)",
+          "selector": "0x87c3adb3"
+        },
+        {
+          "signature": "updatePkg(address,bytes)",
+          "selector": "0xa9089235"
+        }
+      ],
+      "abi_entrypoints": [
+        {
+          "name": "calcSalt",
+          "stateMutability": "pure",
+          "inputs": [
+            {
+              "name": "pkgArgs_",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ]
+        },
+        {
+          "name": "deployToken",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "detf_",
+              "type": "address",
+              "internalType": "contract IDetf"
+            },
+            {
+              "name": "nftVault_",
+              "type": "address",
+              "internalType": "contract IDETFNFTVault"
+            },
+            {
+              "name": "feeOracle_",
+              "type": "address",
+              "internalType": "contract IVaultFeeOracleQuery"
+            },
+            {
+              "name": "name_",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "symbol_",
+              "type": "string",
+              "internalType": "string"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "tokenAddress_",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "diamondConfig",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "tuple",
+              "internalType": "struct IDiamondFactoryPackage.DiamondConfig",
+              "components": [
+                {
+                  "name": "facetCuts",
+                  "type": "tuple[]",
+                  "internalType": "struct IDiamond.FacetCut[]",
+                  "components": [
+                    {
+                      "name": "facetAddress",
+                      "type": "address",
+                      "internalType": "address"
+                    },
+                    {
+                      "name": "action",
+                      "type": "uint8",
+                      "internalType": "enum IDiamond.FacetCutAction"
+                    },
+                    {
+                      "name": "functionSelectors",
+                      "type": "bytes4[]",
+                      "internalType": "bytes4[]"
+                    }
+                  ]
+                },
+                {
+                  "name": "interfaces",
+                  "type": "bytes4[]",
+                  "internalType": "bytes4[]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "facetAddresses",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "facets_",
+              "type": "address[]",
+              "internalType": "address[]"
+            }
+          ]
+        },
+        {
+          "name": "facetCuts",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "cuts_",
+              "type": "tuple[]",
+              "internalType": "struct IDiamond.FacetCut[]",
+              "components": [
+                {
+                  "name": "facetAddress",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "action",
+                  "type": "uint8",
+                  "internalType": "enum IDiamond.FacetCutAction"
+                },
+                {
+                  "name": "functionSelectors",
+                  "type": "bytes4[]",
+                  "internalType": "bytes4[]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "facetInterfaces",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "interfaces_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "initAccount",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "initArgs_",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": []
+        },
+        {
+          "name": "packageMetadata",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "name_",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "interfaces_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            },
+            {
+              "name": "facets_",
+              "type": "address[]",
+              "internalType": "address[]"
+            }
+          ]
+        },
+        {
+          "name": "packageName",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            }
+          ]
+        },
+        {
+          "name": "postDeploy",
+          "stateMutability": "pure",
+          "inputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ]
+        },
+        {
+          "name": "processArgs",
+          "stateMutability": "pure",
+          "inputs": [
+            {
+              "name": "pkgArgs_",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ]
+        },
+        {
+          "name": "updatePkg",
+          "stateMutability": "pure",
+          "inputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ]
+        }
+      ],
+      "source_kind": "deployable facet or package",
+      "compiler_source_check": {
+        "checked_sources": 56,
+        "matches_current_source": true,
+        "mismatches": []
+      }
+    },
+    {
+      "contract": "RebasingClaimTokenFacet",
+      "source": "contracts/vaults/detf/common/claimToken/RebasingClaimTokenFacet.sol",
+      "source_sha256": "9b95ffb2ec06f8c6fe58c4d72b6c5bba494b705f30867ce2a62ca11bee2bef67",
+      "artifact": "out/RebasingClaimTokenFacet.sol/RebasingClaimTokenFacet.json",
+      "artifact_sha256": "9658c836bb64e7500ee2b57c643f5f744334d7353b4ac375ddc9d26eeb59f283",
+      "runtime_bytes": 10201,
+      "direct_inheritance": [
+        "StakedDETFTarget, IFacet "
+      ],
+      "compiled_signatures": [
+        {
+          "signature": "allowance(address,address)",
+          "selector": "0xdd62ed3e"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3"
+        },
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231"
+        },
+        {
+          "signature": "decimals()",
+          "selector": "0x313ce567"
+        },
+        {
+          "signature": "detf()",
+          "selector": "0x8a91f8bc"
+        },
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063"
+        },
+        {
+          "signature": "exchangeOut(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xbbac8477"
+        },
+        {
+          "signature": "facetFuncs()",
+          "selector": "0x574a4cff"
+        },
+        {
+          "signature": "facetInterfaces()",
+          "selector": "0x2ea80826"
+        },
+        {
+          "signature": "facetMetadata()",
+          "selector": "0xf10d7a75"
+        },
+        {
+          "signature": "facetName()",
+          "selector": "0x5b6f4d01"
+        },
+        {
+          "signature": "fundRewards(uint256)",
+          "selector": "0x93707a19"
+        },
+        {
+          "signature": "gonsOf(address)",
+          "selector": "0x79a67521"
+        },
+        {
+          "signature": "name()",
+          "selector": "0x06fdde03"
+        },
+        {
+          "signature": "previewDistributions(uint256[])",
+          "selector": "0xe2c0a539"
+        },
+        {
+          "signature": "previewExchangeIn(address,uint256,address)",
+          "selector": "0x89d61912"
+        },
+        {
+          "signature": "previewExchangeOut(address,address,uint256)",
+          "selector": "0xdb149bc5"
+        },
+        {
+          "signature": "retireEscrowDust(uint256)",
+          "selector": "0x2cd2af81"
+        },
+        {
+          "signature": "stakingState()",
+          "selector": "0xe082f1d4"
+        },
+        {
+          "signature": "symbol()",
+          "selector": "0x95d89b41"
+        },
+        {
+          "signature": "totalSupply()",
+          "selector": "0x18160ddd"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd"
+        }
+      ],
+      "abi_entrypoints": [
+        {
+          "name": "allowance",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "owner_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "spender_",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "approve",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "spender_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "amount_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ]
+        },
+        {
+          "name": "balanceOf",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "owner_",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "decimals",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint8",
+              "internalType": "uint8"
+            }
+          ]
+        },
+        {
+          "name": "detf",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "exchangeIn",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "tokenIn_",
+              "type": "address",
+              "internalType": "contract IERC20"
+            },
+            {
+              "name": "amountIn_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "tokenOut_",
+              "type": "address",
+              "internalType": "contract IERC20"
+            },
+            {
+              "name": "minAmountOut_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "recipient_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "pretransferred_",
+              "type": "bool",
+              "internalType": "bool"
+            },
+            {
+              "name": "deadline_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "amountOut_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "exchangeOut",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "tokenIn_",
+              "type": "address",
+              "internalType": "contract IERC20"
+            },
+            {
+              "name": "maxAmountIn_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "tokenOut_",
+              "type": "address",
+              "internalType": "contract IERC20"
+            },
+            {
+              "name": "amountOut_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "recipient_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "pretransferred_",
+              "type": "bool",
+              "internalType": "bool"
+            },
+            {
+              "name": "deadline_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "amountIn_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "facetFuncs",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "funcs_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetInterfaces",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "interfaces_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetMetadata",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "name_",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "interfaces_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            },
+            {
+              "name": "functions_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetName",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            }
+          ]
+        },
+        {
+          "name": "fundRewards",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "amount_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "stakingGrowth_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "feeReceipt_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "creatorReceipt_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "gonsOf",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "account_",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            }
+          ]
+        },
+        {
+          "name": "previewDistributions",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "rewards_",
+              "type": "uint256[]",
+              "internalType": "uint256[]"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "state_",
+              "type": "tuple",
+              "internalType": "struct IStakedDETF.StakingState",
+              "components": [
+                {
+                  "name": "totalGons",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "gonsPerUnit",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "accountedBacking",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "allocationDust",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "stakingDust",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "feeWeight",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "creatorWeight",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "previewExchangeIn",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "tokenIn_",
+              "type": "address",
+              "internalType": "contract IERC20"
+            },
+            {
+              "name": "amountIn_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "tokenOut_",
+              "type": "address",
+              "internalType": "contract IERC20"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "previewExchangeOut",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "tokenIn_",
+              "type": "address",
+              "internalType": "contract IERC20"
+            },
+            {
+              "name": "tokenOut_",
+              "type": "address",
+              "internalType": "contract IERC20"
+            },
+            {
+              "name": "amountOut_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "retireEscrowDust",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "gons_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": []
+        },
+        {
+          "name": "stakingState",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "state_",
+              "type": "tuple",
+              "internalType": "struct IStakedDETF.StakingState",
+              "components": [
+                {
+                  "name": "totalGons",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "gonsPerUnit",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "accountedBacking",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "allocationDust",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "stakingDust",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "feeWeight",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "creatorWeight",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "symbol",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            }
+          ]
+        },
+        {
+          "name": "totalSupply",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "transfer",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "to_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "amount_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ]
+        },
+        {
+          "name": "transferFrom",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "from_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "to_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "amount_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ]
+        }
+      ],
+      "source_kind": "deployable facet or package",
+      "compiler_source_check": {
+        "checked_sources": 58,
+        "matches_current_source": true,
+        "mismatches": []
+      }
+    },
+    {
+      "contract": "DETFSYDFPkg",
+      "source": "contracts/vaults/detf/common/sy/DETFSYDFPkg.sol",
+      "source_sha256": "9f3f65477a77e1ed4046f1fcb85e75c7f466a03252a2bd5349a8ee2fae914139",
+      "artifact": "out/DETFSYDFPkg.sol/DETFSYDFPkg.json",
+      "artifact_sha256": "34bc12eeac883fd8203d118f7d0224d26ed0f6366b552a4fdaebd6ab88f557ce",
+      "runtime_bytes": 7623,
+      "direct_inheritance": [
+        "IDETFSYDFPkg, IStandardVaultPkg "
+      ],
+      "compiled_signatures": [
+        {
+          "signature": "calcSalt(bytes)",
+          "selector": "0xd82be56e"
+        },
+        {
+          "signature": "deployVault((address,address,bool,string,string,address[],address[]))",
+          "selector": "0x6ae1222e"
+        },
+        {
+          "signature": "diamondConfig()",
+          "selector": "0x65d375b3"
+        },
+        {
+          "signature": "facetAddresses()",
+          "selector": "0x52ef6b2c"
+        },
+        {
+          "signature": "facetCuts()",
+          "selector": "0xa4b3ad35"
+        },
+        {
+          "signature": "facetInterfaces()",
+          "selector": "0x2ea80826"
+        },
+        {
+          "signature": "initAccount(bytes)",
+          "selector": "0x870d4838"
+        },
+        {
+          "signature": "name()",
+          "selector": "0x06fdde03"
+        },
+        {
+          "signature": "packageMetadata()",
+          "selector": "0xf45469e7"
+        },
+        {
+          "signature": "packageName()",
+          "selector": "0xabc8b346"
+        },
+        {
+          "signature": "postDeploy(address)",
+          "selector": "0x70068fcf"
+        },
+        {
+          "signature": "processArgs(bytes)",
+          "selector": "0x87c3adb3"
+        },
+        {
+          "signature": "updatePkg(address,bytes)",
+          "selector": "0xa9089235"
+        },
+        {
+          "signature": "vaultDeclaration()",
+          "selector": "0xf4efa66f"
+        },
+        {
+          "signature": "vaultFeeTypeIds()",
+          "selector": "0x6a4d3f12"
+        },
+        {
+          "signature": "vaultTypes()",
+          "selector": "0x36abf3dc"
+        }
+      ],
+      "abi_entrypoints": [
+        {
+          "name": "calcSalt",
+          "stateMutability": "pure",
+          "inputs": [
+            {
+              "name": "args_",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ]
+        },
+        {
+          "name": "deployVault",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "args_",
+              "type": "tuple",
+              "internalType": "struct IDETFSYDFPkg.PkgArgs",
+              "components": [
+                {
+                  "name": "detf",
+                  "type": "address",
+                  "internalType": "contract IERC20"
+                },
+                {
+                  "name": "staking",
+                  "type": "address",
+                  "internalType": "contract IStakedDETF"
+                },
+                {
+                  "name": "isStaking",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "name",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "symbol",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "tokensIn",
+                  "type": "address[]",
+                  "internalType": "address[]"
+                },
+                {
+                  "name": "tokensOut",
+                  "type": "address[]",
+                  "internalType": "address[]"
+                }
+              ]
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "diamondConfig",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "tuple",
+              "internalType": "struct IDiamondFactoryPackage.DiamondConfig",
+              "components": [
+                {
+                  "name": "facetCuts",
+                  "type": "tuple[]",
+                  "internalType": "struct IDiamond.FacetCut[]",
+                  "components": [
+                    {
+                      "name": "facetAddress",
+                      "type": "address",
+                      "internalType": "address"
+                    },
+                    {
+                      "name": "action",
+                      "type": "uint8",
+                      "internalType": "enum IDiamond.FacetCutAction"
+                    },
+                    {
+                      "name": "functionSelectors",
+                      "type": "bytes4[]",
+                      "internalType": "bytes4[]"
+                    }
+                  ]
+                },
+                {
+                  "name": "interfaces",
+                  "type": "bytes4[]",
+                  "internalType": "bytes4[]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "facetAddresses",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "facets_",
+              "type": "address[]",
+              "internalType": "address[]"
+            }
+          ]
+        },
+        {
+          "name": "facetCuts",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "cuts_",
+              "type": "tuple[]",
+              "internalType": "struct IDiamond.FacetCut[]",
+              "components": [
+                {
+                  "name": "facetAddress",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "action",
+                  "type": "uint8",
+                  "internalType": "enum IDiamond.FacetCutAction"
+                },
+                {
+                  "name": "functionSelectors",
+                  "type": "bytes4[]",
+                  "internalType": "bytes4[]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "facetInterfaces",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "ids_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "initAccount",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "args_",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": []
+        },
+        {
+          "name": "name",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            }
+          ]
+        },
+        {
+          "name": "packageMetadata",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            },
+            {
+              "name": "",
+              "type": "address[]",
+              "internalType": "address[]"
+            }
+          ]
+        },
+        {
+          "name": "packageName",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            }
+          ]
+        },
+        {
+          "name": "postDeploy",
+          "stateMutability": "pure",
+          "inputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ]
+        },
+        {
+          "name": "processArgs",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "args_",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ]
+        },
+        {
+          "name": "updatePkg",
+          "stateMutability": "pure",
+          "inputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ]
+        },
+        {
+          "name": "vaultDeclaration",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "tuple",
+              "internalType": "struct IStandardVaultPkg.VaultPkgDeclaration",
+              "components": [
+                {
+                  "name": "name",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "vaultFeeTypeIds",
+                  "type": "bytes32",
+                  "internalType": "bytes32"
+                },
+                {
+                  "name": "vaultTypes",
+                  "type": "bytes4[]",
+                  "internalType": "bytes4[]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "vaultFeeTypeIds",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ]
+        },
+        {
+          "name": "vaultTypes",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        }
+      ],
+      "source_kind": "deployable facet or package",
+      "compiler_source_check": {
+        "checked_sources": 55,
+        "matches_current_source": true,
+        "mismatches": []
+      }
+    },
+    {
+      "contract": "DETFSYFacet",
+      "source": "contracts/vaults/detf/common/sy/DETFSYFacet.sol",
+      "source_sha256": "e9795021407f57090615d1d175ea8b70cc87b54e33788b811d6b0639d9c0733b",
+      "artifact": "out/DETFSYFacet.sol/DETFSYFacet.json",
+      "artifact_sha256": "420f90bd84d13ef7b73a964c839f3780f82cbca3920a9f594f2347384a61d238",
+      "runtime_bytes": 13195,
+      "direct_inheritance": [
+        "DETFSYTarget, IFacet "
+      ],
+      "compiled_signatures": [
+        {
+          "signature": "accruedRewards(address)",
+          "selector": "0x128fced1"
+        },
+        {
+          "signature": "allowance(address,address)",
+          "selector": "0xdd62ed3e"
+        },
+        {
+          "signature": "approve(address,uint256)",
+          "selector": "0x095ea7b3"
+        },
+        {
+          "signature": "assetInfo()",
+          "selector": "0xa40bee50"
+        },
+        {
+          "signature": "balanceOf(address)",
+          "selector": "0x70a08231"
+        },
+        {
+          "signature": "claimRewards(address)",
+          "selector": "0xef5cfb8c"
+        },
+        {
+          "signature": "contentsId()",
+          "selector": "0xf5ee7c5b"
+        },
+        {
+          "signature": "decimals()",
+          "selector": "0x313ce567"
+        },
+        {
+          "signature": "deposit(address,address,uint256,uint256)",
+          "selector": "0x20e8c565"
+        },
+        {
+          "signature": "exchangeRate()",
+          "selector": "0x3ba0b9a9"
+        },
+        {
+          "signature": "facetFuncs()",
+          "selector": "0x574a4cff"
+        },
+        {
+          "signature": "facetInterfaces()",
+          "selector": "0x2ea80826"
+        },
+        {
+          "signature": "facetMetadata()",
+          "selector": "0xf10d7a75"
+        },
+        {
+          "signature": "facetName()",
+          "selector": "0x5b6f4d01"
+        },
+        {
+          "signature": "getRewardTokens()",
+          "selector": "0xc4f59f9b"
+        },
+        {
+          "signature": "getTokensIn()",
+          "selector": "0x213cae63"
+        },
+        {
+          "signature": "getTokensOut()",
+          "selector": "0x071bc3c9"
+        },
+        {
+          "signature": "isValidTokenIn(address)",
+          "selector": "0xfa5a4f06"
+        },
+        {
+          "signature": "isValidTokenOut(address)",
+          "selector": "0x784367d6"
+        },
+        {
+          "signature": "name()",
+          "selector": "0x06fdde03"
+        },
+        {
+          "signature": "previewDeposit(address,uint256)",
+          "selector": "0xb8f82b26"
+        },
+        {
+          "signature": "previewRedeem(address,uint256)",
+          "selector": "0xcbe52ae3"
+        },
+        {
+          "signature": "redeem(address,uint256,address,uint256,bool)",
+          "selector": "0x769f8e5d"
+        },
+        {
+          "signature": "rewardIndexesCurrent()",
+          "selector": "0xf8b2f991"
+        },
+        {
+          "signature": "rewardIndexesStored()",
+          "selector": "0xda88ecb4"
+        },
+        {
+          "signature": "symbol()",
+          "selector": "0x95d89b41"
+        },
+        {
+          "signature": "totalSupply()",
+          "selector": "0x18160ddd"
+        },
+        {
+          "signature": "transfer(address,uint256)",
+          "selector": "0xa9059cbb"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd"
+        },
+        {
+          "signature": "vaultConfig()",
+          "selector": "0x7cc34bb4"
+        },
+        {
+          "signature": "vaultFeeTypeIds()",
+          "selector": "0x6a4d3f12"
+        },
+        {
+          "signature": "vaultTypes()",
+          "selector": "0x36abf3dc"
+        },
+        {
+          "signature": "yieldToken()",
+          "selector": "0x76d5de85"
+        }
+      ],
+      "abi_entrypoints": [
+        {
+          "name": "accruedRewards",
+          "stateMutability": "pure",
+          "inputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256[]",
+              "internalType": "uint256[]"
+            }
+          ]
+        },
+        {
+          "name": "allowance",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "owner_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "spender_",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "approve",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "spender_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "amount_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ]
+        },
+        {
+          "name": "assetInfo",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint8",
+              "internalType": "enum IStandardizedYield.AssetType"
+            },
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "",
+              "type": "uint8",
+              "internalType": "uint8"
+            }
+          ]
+        },
+        {
+          "name": "balanceOf",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "account_",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "claimRewards",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "user_",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "amounts_",
+              "type": "uint256[]",
+              "internalType": "uint256[]"
+            }
+          ]
+        },
+        {
+          "name": "contentsId",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ]
+        },
+        {
+          "name": "decimals",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint8",
+              "internalType": "uint8"
+            }
+          ]
+        },
+        {
+          "name": "deposit",
+          "stateMutability": "payable",
+          "inputs": [
+            {
+              "name": "receiver_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "tokenIn_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "amount_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "minimum_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "shares_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "exchangeRate",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "facetFuncs",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "funcs_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetInterfaces",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "ids_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetMetadata",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            },
+            {
+              "name": "",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetName",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            }
+          ]
+        },
+        {
+          "name": "getRewardTokens",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address[]",
+              "internalType": "address[]"
+            }
+          ]
+        },
+        {
+          "name": "getTokensIn",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address[]",
+              "internalType": "address[]"
+            }
+          ]
+        },
+        {
+          "name": "getTokensOut",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address[]",
+              "internalType": "address[]"
+            }
+          ]
+        },
+        {
+          "name": "isValidTokenIn",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "token_",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ]
+        },
+        {
+          "name": "isValidTokenOut",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "token_",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ]
+        },
+        {
+          "name": "name",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            }
+          ]
+        },
+        {
+          "name": "previewDeposit",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "tokenIn_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "amount_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "previewRedeem",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "tokenOut_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "shares_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "redeem",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "receiver_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "shares_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "tokenOut_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "minimum_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "internalBalance_",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "amountOut_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "rewardIndexesCurrent",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256[]",
+              "internalType": "uint256[]"
+            }
+          ]
+        },
+        {
+          "name": "rewardIndexesStored",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256[]",
+              "internalType": "uint256[]"
+            }
+          ]
+        },
+        {
+          "name": "symbol",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            }
+          ]
+        },
+        {
+          "name": "totalSupply",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "transfer",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "to_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "amount_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ]
+        },
+        {
+          "name": "transferFrom",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "from_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "to_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "amount_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ]
+        },
+        {
+          "name": "vaultConfig",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "tuple",
+              "internalType": "struct IStandardVault.VaultConfig",
+              "components": [
+                {
+                  "name": "vaultFeeTypeIds",
+                  "type": "bytes32",
+                  "internalType": "bytes32"
+                },
+                {
+                  "name": "contentsId",
+                  "type": "bytes32",
+                  "internalType": "bytes32"
+                },
+                {
+                  "name": "vaultTypes",
+                  "type": "bytes4[]",
+                  "internalType": "bytes4[]"
+                },
+                {
+                  "name": "tokens",
+                  "type": "address[]",
+                  "internalType": "address[]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "vaultFeeTypeIds",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ]
+        },
+        {
+          "name": "vaultTypes",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "yieldToken",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        }
+      ],
+      "source_kind": "deployable facet or package",
+      "compiler_source_check": {
+        "checked_sources": 58,
+        "matches_current_source": true,
+        "mismatches": []
+      }
+    },
+    {
+      "contract": "UniswapV4DetfBondFacet",
+      "source": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfBondFacet.sol",
+      "source_sha256": "b43cd657dbd08c8361cf60f78b4818c4ecdeb0d981ab0ff77f4c5db86327ac3e",
+      "artifact": "out/UniswapV4DetfBondFacet.sol/UniswapV4DetfBondFacet.json",
+      "artifact_sha256": "368e8bc8a616492f12bd7039acbfbb0bfad8d8941793c76de38dd329b64a1211",
+      "runtime_bytes": 13819,
+      "direct_inheritance": [
+        "UniswapV4DetfFacet, UniswapV4DetfBondTarget "
+      ],
+      "compiled_signatures": [
+        {
+          "signature": "bond(address,uint256,uint256,address,bool,uint256)",
+          "selector": "0x7a3b1181"
+        },
+        {
+          "signature": "facetFuncs()",
+          "selector": "0x574a4cff"
+        },
+        {
+          "signature": "facetInterfaces()",
+          "selector": "0x2ea80826"
+        },
+        {
+          "signature": "facetMetadata()",
+          "selector": "0xf10d7a75"
+        },
+        {
+          "signature": "facetName()",
+          "selector": "0x5b6f4d01"
+        }
+      ],
+      "abi_entrypoints": [
+        {
+          "name": "bond",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "tokenIn",
+              "type": "address",
+              "internalType": "contract IERC20"
+            },
+            {
+              "name": "amountIn",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "lockDuration",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "recipient",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "pretransferred",
+              "type": "bool",
+              "internalType": "bool"
+            },
+            {
+              "name": "deadline",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "tokenId",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "shares",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "facetFuncs",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "funcs_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetInterfaces",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "interfaces_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetMetadata",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "name_",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "interfaces_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            },
+            {
+              "name": "funcs_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetName",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            }
+          ]
+        }
+      ],
+      "source_kind": "deployable facet or package",
+      "compiler_source_check": {
+        "checked_sources": 116,
+        "matches_current_source": true,
+        "mismatches": []
+      }
+    },
+    {
+      "contract": "UniswapV4DetfClaimFacet",
+      "source": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfClaimFacet.sol",
+      "source_sha256": "67c3e9720b95a45b21623799a903e0ed1e63460040b70c3923cd76767fccca8b",
+      "artifact": "out/UniswapV4DetfClaimFacet.sol/UniswapV4DetfClaimFacet.json",
+      "artifact_sha256": "7fb53f1cb689caca3d4fc9c018b18ea1e3725c4664a4273cae5ef5f0702086b2",
+      "runtime_bytes": 3449,
+      "direct_inheritance": [
+        "UniswapV4DetfFacet, UniswapV4DetfClaimTarget "
+      ],
+      "compiled_signatures": [
+        {
+          "signature": "completeReserveBondNft()",
+          "selector": "0x11941b88"
+        },
+        {
+          "signature": "completeReserveClaim()",
+          "selector": "0xdde448b0"
+        },
+        {
+          "signature": "facetFuncs()",
+          "selector": "0x574a4cff"
+        },
+        {
+          "signature": "facetInterfaces()",
+          "selector": "0x2ea80826"
+        },
+        {
+          "signature": "facetMetadata()",
+          "selector": "0xf10d7a75"
+        },
+        {
+          "signature": "facetName()",
+          "selector": "0x5b6f4d01"
+        }
+      ],
+      "abi_entrypoints": [
+        {
+          "name": "completeReserveBondNft",
+          "stateMutability": "nonpayable",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "bondNftVault_",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "completeReserveClaim",
+          "stateMutability": "nonpayable",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "rebasingClaimToken_",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "facetFuncs",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "funcs_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetInterfaces",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "interfaces_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetMetadata",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "name_",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "interfaces_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            },
+            {
+              "name": "funcs_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetName",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            }
+          ]
+        }
+      ],
+      "source_kind": "deployable facet or package",
+      "compiler_source_check": {
+        "checked_sources": 116,
+        "matches_current_source": true,
+        "mismatches": []
+      }
+    },
+    {
+      "contract": "UniswapV4DetfDFPkg",
+      "source": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfDFPkg.sol",
+      "source_sha256": "bb1d445020e7c5d3d836528ff14a6bdab8291f13c23e8a9bb1d9cdba46603c54",
+      "artifact": "out/UniswapV4DetfDFPkg.sol/UniswapV4DetfDFPkg.json",
+      "artifact_sha256": "4bf31ac8f39ffc3fb2480a1df59ce527e918b292e020f315477cc0b860722ab8",
+      "runtime_bytes": 18871,
+      "direct_inheritance": [
+        "IUniswapV4DetfDFPkg "
+      ],
+      "compiled_signatures": [
+        {
+          "signature": "calcSalt(bytes)",
+          "selector": "0xd82be56e"
+        },
+        {
+          "signature": "deployVault((string,string,address,bool,uint256[],uint256[],uint256,uint256,uint256,address,string,string,string,string,uint8,(address,address)[],uint8,(address,address)[],uint8,(address,address)[],uint8,(address,address)[]))",
+          "selector": "0xbde15b8e"
+        },
+        {
+          "signature": "diamondConfig()",
+          "selector": "0x65d375b3"
+        },
+        {
+          "signature": "facetAddresses()",
+          "selector": "0x52ef6b2c"
+        },
+        {
+          "signature": "facetCuts()",
+          "selector": "0xa4b3ad35"
+        },
+        {
+          "signature": "facetInterfaces()",
+          "selector": "0x2ea80826"
+        },
+        {
+          "signature": "initAccount(bytes)",
+          "selector": "0x870d4838"
+        },
+        {
+          "signature": "name()",
+          "selector": "0x06fdde03"
+        },
+        {
+          "signature": "packageMetadata()",
+          "selector": "0xf45469e7"
+        },
+        {
+          "signature": "packageName()",
+          "selector": "0xabc8b346"
+        },
+        {
+          "signature": "postDeploy(address)",
+          "selector": "0x70068fcf"
+        },
+        {
+          "signature": "processArgs(bytes)",
+          "selector": "0x87c3adb3"
+        },
+        {
+          "signature": "updatePkg(address,bytes)",
+          "selector": "0xa9089235"
+        },
+        {
+          "signature": "vaultDeclaration()",
+          "selector": "0xf4efa66f"
+        },
+        {
+          "signature": "vaultFeeTypeIds()",
+          "selector": "0x6a4d3f12"
+        },
+        {
+          "signature": "vaultTypes()",
+          "selector": "0x36abf3dc"
+        }
+      ],
+      "abi_entrypoints": [
+        {
+          "name": "calcSalt",
+          "stateMutability": "pure",
+          "inputs": [
+            {
+              "name": "pkgArgs",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "salt_",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ]
+        },
+        {
+          "name": "deployVault",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "args",
+              "type": "tuple",
+              "internalType": "struct IUniswapV4Detf.PkgArgs",
+              "components": [
+                {
+                  "name": "name",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "symbol",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "hook",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "ownerOnlyLiquidity",
+                  "type": "bool",
+                  "internalType": "bool"
+                },
+                {
+                  "name": "creationPairPerDetfWad",
+                  "type": "uint256[]",
+                  "internalType": "uint256[]"
+                },
+                {
+                  "name": "openingPairPerDetfWad",
+                  "type": "uint256[]",
+                  "internalType": "uint256[]"
+                },
+                {
+                  "name": "mintThreshold",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "burnThreshold",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "expansionClosureRatePerYearWad",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "creator",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "claimName",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "claimSymbol",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "bondName",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "bondSymbol",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "mintRouteMode",
+                  "type": "uint8",
+                  "internalType": "enum IUniswapV4Detf.RouteTableMode"
+                },
+                {
+                  "name": "mintRoutes",
+                  "type": "tuple[]",
+                  "internalType": "struct IUniswapV4Detf.IoRoute[]",
+                  "components": [
+                    {
+                      "name": "token",
+                      "type": "address",
+                      "internalType": "contract IERC20"
+                    },
+                    {
+                      "name": "vault",
+                      "type": "address",
+                      "internalType": "contract IStandardExchange"
+                    }
+                  ]
+                },
+                {
+                  "name": "burnRouteMode",
+                  "type": "uint8",
+                  "internalType": "enum IUniswapV4Detf.RouteTableMode"
+                },
+                {
+                  "name": "burnRoutes",
+                  "type": "tuple[]",
+                  "internalType": "struct IUniswapV4Detf.IoRoute[]",
+                  "components": [
+                    {
+                      "name": "token",
+                      "type": "address",
+                      "internalType": "contract IERC20"
+                    },
+                    {
+                      "name": "vault",
+                      "type": "address",
+                      "internalType": "contract IStandardExchange"
+                    }
+                  ]
+                },
+                {
+                  "name": "bondRouteMode",
+                  "type": "uint8",
+                  "internalType": "enum IUniswapV4Detf.RouteTableMode"
+                },
+                {
+                  "name": "bondRoutes",
+                  "type": "tuple[]",
+                  "internalType": "struct IUniswapV4Detf.IoRoute[]",
+                  "components": [
+                    {
+                      "name": "token",
+                      "type": "address",
+                      "internalType": "contract IERC20"
+                    },
+                    {
+                      "name": "vault",
+                      "type": "address",
+                      "internalType": "contract IStandardExchange"
+                    }
+                  ]
+                },
+                {
+                  "name": "donateRouteMode",
+                  "type": "uint8",
+                  "internalType": "enum IUniswapV4Detf.RouteTableMode"
+                },
+                {
+                  "name": "donateRoutes",
+                  "type": "tuple[]",
+                  "internalType": "struct IUniswapV4Detf.IoRoute[]",
+                  "components": [
+                    {
+                      "name": "token",
+                      "type": "address",
+                      "internalType": "contract IERC20"
+                    },
+                    {
+                      "name": "vault",
+                      "type": "address",
+                      "internalType": "contract IStandardExchange"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "outputs": [
+            {
+              "name": "vault",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "diamondConfig",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "config_",
+              "type": "tuple",
+              "internalType": "struct IDiamondFactoryPackage.DiamondConfig",
+              "components": [
+                {
+                  "name": "facetCuts",
+                  "type": "tuple[]",
+                  "internalType": "struct IDiamond.FacetCut[]",
+                  "components": [
+                    {
+                      "name": "facetAddress",
+                      "type": "address",
+                      "internalType": "address"
+                    },
+                    {
+                      "name": "action",
+                      "type": "uint8",
+                      "internalType": "enum IDiamond.FacetCutAction"
+                    },
+                    {
+                      "name": "functionSelectors",
+                      "type": "bytes4[]",
+                      "internalType": "bytes4[]"
+                    }
+                  ]
+                },
+                {
+                  "name": "interfaces",
+                  "type": "bytes4[]",
+                  "internalType": "bytes4[]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "facetAddresses",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "facetAddresses_",
+              "type": "address[]",
+              "internalType": "address[]"
+            }
+          ]
+        },
+        {
+          "name": "facetCuts",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "facetCuts_",
+              "type": "tuple[]",
+              "internalType": "struct IDiamond.FacetCut[]",
+              "components": [
+                {
+                  "name": "facetAddress",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "action",
+                  "type": "uint8",
+                  "internalType": "enum IDiamond.FacetCutAction"
+                },
+                {
+                  "name": "functionSelectors",
+                  "type": "bytes4[]",
+                  "internalType": "bytes4[]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "facetInterfaces",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "interfaces_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "initAccount",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "initArgs",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": []
+        },
+        {
+          "name": "name",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            }
+          ]
+        },
+        {
+          "name": "packageMetadata",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "name_",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "interfaces_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            },
+            {
+              "name": "facets_",
+              "type": "address[]",
+              "internalType": "address[]"
+            }
+          ]
+        },
+        {
+          "name": "packageName",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            }
+          ]
+        },
+        {
+          "name": "postDeploy",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "expectedProxy",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ]
+        },
+        {
+          "name": "processArgs",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "pkgArgs",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "processedPkgArgs_",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ]
+        },
+        {
+          "name": "updatePkg",
+          "stateMutability": "pure",
+          "inputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ]
+        },
+        {
+          "name": "vaultDeclaration",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "declaration_",
+              "type": "tuple",
+              "internalType": "struct IStandardVaultPkg.VaultPkgDeclaration",
+              "components": [
+                {
+                  "name": "name",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "vaultFeeTypeIds",
+                  "type": "bytes32",
+                  "internalType": "bytes32"
+                },
+                {
+                  "name": "vaultTypes",
+                  "type": "bytes4[]",
+                  "internalType": "bytes4[]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "vaultFeeTypeIds",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "vaultFeeTypeIds_",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ]
+        },
+        {
+          "name": "vaultTypes",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "typeIDs_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        }
+      ],
+      "source_kind": "deployable facet or package",
+      "compiler_source_check": {
+        "checked_sources": 103,
+        "matches_current_source": true,
+        "mismatches": []
+      }
+    },
+    {
+      "contract": "UniswapV4DetfExchangeFacet",
+      "source": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfExchangeFacet.sol",
+      "source_sha256": "ea3311c0f6f60f69b3e1d84baec587c39d08b93e87cb5480bba3db43c3165026",
+      "artifact": "out/UniswapV4DetfExchangeFacet.sol/UniswapV4DetfExchangeFacet.json",
+      "artifact_sha256": "ad492c961781c03ca2a699b856870b1b92476c980ec592101b8d66628942a4db",
+      "runtime_bytes": 13229,
+      "direct_inheritance": [
+        "UniswapV4DetfFacet, UniswapV4DetfExchangeTarget "
+      ],
+      "compiled_signatures": [
+        {
+          "signature": "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+          "selector": "0xd02d3063"
+        },
+        {
+          "signature": "facetFuncs()",
+          "selector": "0x574a4cff"
+        },
+        {
+          "signature": "facetInterfaces()",
+          "selector": "0x2ea80826"
+        },
+        {
+          "signature": "facetMetadata()",
+          "selector": "0xf10d7a75"
+        },
+        {
+          "signature": "facetName()",
+          "selector": "0x5b6f4d01"
+        }
+      ],
+      "abi_entrypoints": [
+        {
+          "name": "exchangeIn",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "tokenIn_",
+              "type": "address",
+              "internalType": "contract IERC20"
+            },
+            {
+              "name": "amountIn_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "tokenOut_",
+              "type": "address",
+              "internalType": "contract IERC20"
+            },
+            {
+              "name": "minAmountOut_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "recipient_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "pretransferred_",
+              "type": "bool",
+              "internalType": "bool"
+            },
+            {
+              "name": "deadline_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "amountOut_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "facetFuncs",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "funcs_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetInterfaces",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "interfaces_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetMetadata",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "name_",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "interfaces_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            },
+            {
+              "name": "funcs_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetName",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            }
+          ]
+        }
+      ],
+      "source_kind": "deployable facet or package",
+      "compiler_source_check": {
+        "checked_sources": 116,
+        "matches_current_source": true,
+        "mismatches": []
+      }
+    },
+    {
+      "contract": "UniswapV4DetfFacet",
+      "source": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfFacet.sol",
+      "source_sha256": "5aaeae263fd93891e497394369789c8de7171d655b93064e1fd0ca96f25bdd6c",
+      "artifact": "out/UniswapV4DetfFacet.sol/UniswapV4DetfFacet.json",
+      "artifact_sha256": "b70695d2229d1c41530c83d1eb8a48a89984b2f03fd7f797b5041381df758d12",
+      "runtime_bytes": 0,
+      "direct_inheritance": [
+        "IFacet "
+      ],
+      "compiled_signatures": [
+        {
+          "signature": "facetFuncs()",
+          "selector": "0x574a4cff"
+        },
+        {
+          "signature": "facetInterfaces()",
+          "selector": "0x2ea80826"
+        },
+        {
+          "signature": "facetMetadata()",
+          "selector": "0xf10d7a75"
+        },
+        {
+          "signature": "facetName()",
+          "selector": "0x5b6f4d01"
+        }
+      ],
+      "abi_entrypoints": [
+        {
+          "name": "facetFuncs",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetInterfaces",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "interfaces_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetMetadata",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "name_",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "interfaces_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            },
+            {
+              "name": "funcs_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetName",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            }
+          ]
+        }
+      ],
+      "source_kind": "abstract metadata base; inherited by active facets",
+      "compiler_source_check": {
+        "checked_sources": 3,
+        "matches_current_source": true,
+        "mismatches": []
+      }
+    },
+    {
+      "contract": "UniswapV4DetfMaintenanceFacet",
+      "source": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfMaintenanceFacet.sol",
+      "source_sha256": "601d8cacc90d9cb45eba7b34dc9f3c4a477b7d77e6bdc032096d1732537a3e89",
+      "artifact": "out/UniswapV4DetfMaintenanceFacet.sol/UniswapV4DetfMaintenanceFacet.json",
+      "artifact_sha256": "f3a45d54dc54ad3f503167fcbf4d0374bda688fc1dba5964d585560314de04ec",
+      "runtime_bytes": 12166,
+      "direct_inheritance": [
+        "UniswapV4DetfFacet, UniswapV4DetfMaintenanceTarget "
+      ],
+      "compiled_signatures": [
+        {
+          "signature": "donate(address,uint256,bool)",
+          "selector": "0x0f5f2ea4"
+        },
+        {
+          "signature": "facetFuncs()",
+          "selector": "0x574a4cff"
+        },
+        {
+          "signature": "facetInterfaces()",
+          "selector": "0x2ea80826"
+        },
+        {
+          "signature": "facetMetadata()",
+          "selector": "0xf10d7a75"
+        },
+        {
+          "signature": "facetName()",
+          "selector": "0x5b6f4d01"
+        },
+        {
+          "signature": "joinDonatedCapital(address,uint256,uint256)",
+          "selector": "0x588bc426"
+        },
+        {
+          "signature": "notifyReserveDonated()",
+          "selector": "0x8d3ae940"
+        },
+        {
+          "signature": "sweepDust()",
+          "selector": "0xa53df2e2"
+        },
+        {
+          "signature": "sweepDustAtomic()",
+          "selector": "0xecc823dc"
+        },
+        {
+          "signature": "sweepPairToShare(address,address,uint256)",
+          "selector": "0x81b5eeca"
+        },
+        {
+          "signature": "synchronizeRewards()",
+          "selector": "0x0910d5ea"
+        }
+      ],
+      "abi_entrypoints": [
+        {
+          "name": "donate",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "contract IERC20"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "pretransferred",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ],
+          "outputs": []
+        },
+        {
+          "name": "facetFuncs",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "funcs_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetInterfaces",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "interfaces_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetMetadata",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "name_",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "interfaces_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            },
+            {
+              "name": "funcs_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetName",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            }
+          ]
+        },
+        {
+          "name": "joinDonatedCapital",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "contract IERC20"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "deadline",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "lpOut",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "notifyReserveDonated",
+          "stateMutability": "nonpayable",
+          "inputs": [],
+          "outputs": []
+        },
+        {
+          "name": "sweepDust",
+          "stateMutability": "nonpayable",
+          "inputs": [],
+          "outputs": []
+        },
+        {
+          "name": "sweepDustAtomic",
+          "stateMutability": "nonpayable",
+          "inputs": [],
+          "outputs": []
+        },
+        {
+          "name": "sweepPairToShare",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "se_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "pair_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "amount_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "shares_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "synchronizeRewards",
+          "stateMutability": "nonpayable",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "minted_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        }
+      ],
+      "source_kind": "deployable facet or package",
+      "compiler_source_check": {
+        "checked_sources": 116,
+        "matches_current_source": true,
+        "mismatches": []
+      }
+    },
+    {
+      "contract": "UniswapV4DetfQueryFacet",
+      "source": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfQueryFacet.sol",
+      "source_sha256": "c569005cf90f80df78513af6bbdbe765fa44cc8a8988d45fa822af5bb673507f",
+      "artifact": "out/UniswapV4DetfQueryFacet.sol/UniswapV4DetfQueryFacet.json",
+      "artifact_sha256": "7452920e45e2ad9422e89ae77317704f6dee17c61c4208343d5a289d616cf353",
+      "runtime_bytes": 19308,
+      "direct_inheritance": [
+        "UniswapV4DetfFacet, UniswapV4DetfQueryTarget "
+      ],
+      "compiled_signatures": [
+        {
+          "signature": "acceptedBondTokens()",
+          "selector": "0xd7cb29d0"
+        },
+        {
+          "signature": "bondNftVault()",
+          "selector": "0x9c54eea2"
+        },
+        {
+          "signature": "bondRouteMode()",
+          "selector": "0x7dfe0293"
+        },
+        {
+          "signature": "bondRoutes()",
+          "selector": "0xeb8660dc"
+        },
+        {
+          "signature": "burnRouteMode()",
+          "selector": "0x674bd742"
+        },
+        {
+          "signature": "burnRoutes()",
+          "selector": "0xa575b122"
+        },
+        {
+          "signature": "burnThreshold()",
+          "selector": "0x4f6d38d0"
+        },
+        {
+          "signature": "creationPairPerDetfWad()",
+          "selector": "0x0e52fe80"
+        },
+        {
+          "signature": "detfNFTVault()",
+          "selector": "0x2be8656f"
+        },
+        {
+          "signature": "donateRouteMode()",
+          "selector": "0x24d44167"
+        },
+        {
+          "signature": "donateRoutes()",
+          "selector": "0xd23b7b31"
+        },
+        {
+          "signature": "facetFuncs()",
+          "selector": "0x574a4cff"
+        },
+        {
+          "signature": "facetInterfaces()",
+          "selector": "0x2ea80826"
+        },
+        {
+          "signature": "facetMetadata()",
+          "selector": "0xf10d7a75"
+        },
+        {
+          "signature": "facetName()",
+          "selector": "0x5b6f4d01"
+        },
+        {
+          "signature": "hook()",
+          "selector": "0x7f5a7c7b"
+        },
+        {
+          "signature": "isBurningAllowed()",
+          "selector": "0xe76af32e"
+        },
+        {
+          "signature": "isBurningAllowed(address)",
+          "selector": "0x9520b23e"
+        },
+        {
+          "signature": "isMintingAllowed()",
+          "selector": "0x2b481883"
+        },
+        {
+          "signature": "isMintingAllowed(address)",
+          "selector": "0xe03c65c4"
+        },
+        {
+          "signature": "isReserveLive()",
+          "selector": "0x6553aead"
+        },
+        {
+          "signature": "isReserveWired()",
+          "selector": "0xc7b57783"
+        },
+        {
+          "signature": "mintRouteMode()",
+          "selector": "0x7ae5f561"
+        },
+        {
+          "signature": "mintRoutes()",
+          "selector": "0x27415d21"
+        },
+        {
+          "signature": "mintThreshold()",
+          "selector": "0x9c8dead2"
+        },
+        {
+          "signature": "openingPairPerDetfWad()",
+          "selector": "0x6789692c"
+        },
+        {
+          "signature": "ownerOnlyLiquidity()",
+          "selector": "0xfe884e28"
+        },
+        {
+          "signature": "peekPairEq(address,address,uint256)",
+          "selector": "0xc8a3fe0b"
+        },
+        {
+          "signature": "pendingExpansionDetf()",
+          "selector": "0x0aee1940"
+        },
+        {
+          "signature": "previewBond(address,uint256,uint256)",
+          "selector": "0x7d54bc82"
+        },
+        {
+          "signature": "previewExchangeIn(address,uint256,address)",
+          "selector": "0x89d61912"
+        },
+        {
+          "signature": "previewFirstBondPayments(address,uint256)",
+          "selector": "0xc0cadedd"
+        },
+        {
+          "signature": "previewJoinDonatedCapital(address,uint256)",
+          "selector": "0x85358493"
+        },
+        {
+          "signature": "previewStakingGonsPerUnit(address,uint256)",
+          "selector": "0xda345f76"
+        },
+        {
+          "signature": "rawSY()",
+          "selector": "0xebecb84e"
+        },
+        {
+          "signature": "rebasingClaimToken()",
+          "selector": "0x705caed9"
+        },
+        {
+          "signature": "reservePool()",
+          "selector": "0x0266f044"
+        },
+        {
+          "signature": "stakingSY()",
+          "selector": "0xd0c7cd72"
+        },
+        {
+          "signature": "syntheticPrice()",
+          "selector": "0x1afdb693"
+        }
+      ],
+      "abi_entrypoints": [
+        {
+          "name": "acceptedBondTokens",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "tokens_",
+              "type": "address[]",
+              "internalType": "address[]"
+            }
+          ]
+        },
+        {
+          "name": "bondNftVault",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "bondRouteMode",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint8",
+              "internalType": "enum IUniswapV4Detf.RouteTableMode"
+            }
+          ]
+        },
+        {
+          "name": "bondRoutes",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "tuple[]",
+              "internalType": "struct IUniswapV4Detf.IoRoute[]",
+              "components": [
+                {
+                  "name": "token",
+                  "type": "address",
+                  "internalType": "contract IERC20"
+                },
+                {
+                  "name": "vault",
+                  "type": "address",
+                  "internalType": "contract IStandardExchange"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "burnRouteMode",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint8",
+              "internalType": "enum IUniswapV4Detf.RouteTableMode"
+            }
+          ]
+        },
+        {
+          "name": "burnRoutes",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "tuple[]",
+              "internalType": "struct IUniswapV4Detf.IoRoute[]",
+              "components": [
+                {
+                  "name": "token",
+                  "type": "address",
+                  "internalType": "contract IERC20"
+                },
+                {
+                  "name": "vault",
+                  "type": "address",
+                  "internalType": "contract IStandardExchange"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "burnThreshold",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "creationPairPerDetfWad",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256[]",
+              "internalType": "uint256[]"
+            }
+          ]
+        },
+        {
+          "name": "detfNFTVault",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "contract IDETFNFTVault"
+            }
+          ]
+        },
+        {
+          "name": "donateRouteMode",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint8",
+              "internalType": "enum IUniswapV4Detf.RouteTableMode"
+            }
+          ]
+        },
+        {
+          "name": "donateRoutes",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "tuple[]",
+              "internalType": "struct IUniswapV4Detf.IoRoute[]",
+              "components": [
+                {
+                  "name": "token",
+                  "type": "address",
+                  "internalType": "contract IERC20"
+                },
+                {
+                  "name": "vault",
+                  "type": "address",
+                  "internalType": "contract IStandardExchange"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "facetFuncs",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "funcs_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetInterfaces",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "interfaces_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetMetadata",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "name_",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "interfaces_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            },
+            {
+              "name": "funcs_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetName",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            }
+          ]
+        },
+        {
+          "name": "hook",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "isBurningAllowed",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "tokenOut",
+              "type": "address",
+              "internalType": "contract IERC20"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ]
+        },
+        {
+          "name": "isBurningAllowed",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ]
+        },
+        {
+          "name": "isMintingAllowed",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ]
+        },
+        {
+          "name": "isMintingAllowed",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "tokenIn",
+              "type": "address",
+              "internalType": "contract IERC20"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ]
+        },
+        {
+          "name": "isReserveLive",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ]
+        },
+        {
+          "name": "isReserveWired",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ]
+        },
+        {
+          "name": "mintRouteMode",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint8",
+              "internalType": "enum IUniswapV4Detf.RouteTableMode"
+            }
+          ]
+        },
+        {
+          "name": "mintRoutes",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "tuple[]",
+              "internalType": "struct IUniswapV4Detf.IoRoute[]",
+              "components": [
+                {
+                  "name": "token",
+                  "type": "address",
+                  "internalType": "contract IERC20"
+                },
+                {
+                  "name": "vault",
+                  "type": "address",
+                  "internalType": "contract IStandardExchange"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "mintThreshold",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "openingPairPerDetfWad",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256[]",
+              "internalType": "uint256[]"
+            }
+          ]
+        },
+        {
+          "name": "ownerOnlyLiquidity",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ]
+        },
+        {
+          "name": "peekPairEq",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "vault_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "tokenIn_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "amountIn_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "pendingExpansionDetf",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "previewBond",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "tokenIn_",
+              "type": "address",
+              "internalType": "contract IERC20"
+            },
+            {
+              "name": "amountIn_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "lockDuration_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "purchasedDetf_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "principalDetf_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "rewardsDetf_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "liquidityDetf_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "previewExchangeIn",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "tokenIn_",
+              "type": "address",
+              "internalType": "contract IERC20"
+            },
+            {
+              "name": "amountIn_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "tokenOut_",
+              "type": "address",
+              "internalType": "contract IERC20"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "amountOut_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "previewFirstBondPayments",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "tokenIn_",
+              "type": "address",
+              "internalType": "contract IERC20"
+            },
+            {
+              "name": "amount_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "tokens_",
+              "type": "address[]",
+              "internalType": "address[]"
+            },
+            {
+              "name": "amounts_",
+              "type": "uint256[]",
+              "internalType": "uint256[]"
+            }
+          ]
+        },
+        {
+          "name": "previewJoinDonatedCapital",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "contract IERC20"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "lpOut",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "previewStakingGonsPerUnit",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "tokenIn_",
+              "type": "address",
+              "internalType": "contract IERC20"
+            },
+            {
+              "name": "amountIn_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "rawSY",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "rebasingClaimToken",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "reservePool",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "stakingSY",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "syntheticPrice",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        }
+      ],
+      "source_kind": "deployable facet or package",
+      "compiler_source_check": {
+        "checked_sources": 123,
+        "matches_current_source": true,
+        "mismatches": []
+      }
+    },
+    {
+      "contract": "UniswapV4DetfBondNFTVaultDFPkg",
+      "source": "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg.sol",
+      "source_sha256": "61664f3561efce547e999e9bb5653046019aaf37145da24b62c27eefdd313408",
+      "artifact": "out/UniswapV4DetfBondNFTVaultDFPkg.sol/UniswapV4DetfBondNFTVaultDFPkg.json",
+      "artifact_sha256": "d17bd9cbcff421fd5d1405c6b85bc904ebdb5d5f169c432be5678746ab7a5b96",
+      "runtime_bytes": 6448,
+      "direct_inheritance": [
+        "DETFNFTVaultDFPkg "
+      ],
+      "compiled_signatures": [
+        {
+          "signature": "calcSalt(bytes)",
+          "selector": "0xd82be56e"
+        },
+        {
+          "signature": "deployVault(string,string,address,address)",
+          "selector": "0x16c51f4b"
+        },
+        {
+          "signature": "diamondConfig()",
+          "selector": "0x65d375b3"
+        },
+        {
+          "signature": "facetAddresses()",
+          "selector": "0x52ef6b2c"
+        },
+        {
+          "signature": "facetCuts()",
+          "selector": "0xa4b3ad35"
+        },
+        {
+          "signature": "facetInterfaces()",
+          "selector": "0x2ea80826"
+        },
+        {
+          "signature": "initAccount(bytes)",
+          "selector": "0x870d4838"
+        },
+        {
+          "signature": "name()",
+          "selector": "0x06fdde03"
+        },
+        {
+          "signature": "packageMetadata()",
+          "selector": "0xf45469e7"
+        },
+        {
+          "signature": "packageName()",
+          "selector": "0xabc8b346"
+        },
+        {
+          "signature": "postDeploy(address)",
+          "selector": "0x70068fcf"
+        },
+        {
+          "signature": "processArgs(bytes)",
+          "selector": "0x87c3adb3"
+        },
+        {
+          "signature": "updatePkg(address,bytes)",
+          "selector": "0xa9089235"
+        },
+        {
+          "signature": "vaultDeclaration()",
+          "selector": "0xf4efa66f"
+        },
+        {
+          "signature": "vaultFeeTypeIds()",
+          "selector": "0x6a4d3f12"
+        },
+        {
+          "signature": "vaultTypes()",
+          "selector": "0x36abf3dc"
+        }
+      ],
+      "abi_entrypoints": [
+        {
+          "name": "calcSalt",
+          "stateMutability": "pure",
+          "inputs": [
+            {
+              "name": "args_",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ]
+        },
+        {
+          "name": "deployVault",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "name_",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "symbol_",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "detf_",
+              "type": "address",
+              "internalType": "contract IDetf"
+            },
+            {
+              "name": "lpToken_",
+              "type": "address",
+              "internalType": "contract IERC20"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "diamondConfig",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "tuple",
+              "internalType": "struct IDiamondFactoryPackage.DiamondConfig",
+              "components": [
+                {
+                  "name": "facetCuts",
+                  "type": "tuple[]",
+                  "internalType": "struct IDiamond.FacetCut[]",
+                  "components": [
+                    {
+                      "name": "facetAddress",
+                      "type": "address",
+                      "internalType": "address"
+                    },
+                    {
+                      "name": "action",
+                      "type": "uint8",
+                      "internalType": "enum IDiamond.FacetCutAction"
+                    },
+                    {
+                      "name": "functionSelectors",
+                      "type": "bytes4[]",
+                      "internalType": "bytes4[]"
+                    }
+                  ]
+                },
+                {
+                  "name": "interfaces",
+                  "type": "bytes4[]",
+                  "internalType": "bytes4[]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "facetAddresses",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "facets_",
+              "type": "address[]",
+              "internalType": "address[]"
+            }
+          ]
+        },
+        {
+          "name": "facetCuts",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "cuts_",
+              "type": "tuple[]",
+              "internalType": "struct IDiamond.FacetCut[]",
+              "components": [
+                {
+                  "name": "facetAddress",
+                  "type": "address",
+                  "internalType": "address"
+                },
+                {
+                  "name": "action",
+                  "type": "uint8",
+                  "internalType": "enum IDiamond.FacetCutAction"
+                },
+                {
+                  "name": "functionSelectors",
+                  "type": "bytes4[]",
+                  "internalType": "bytes4[]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "facetInterfaces",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "interfaces_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "initAccount",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "args_",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": []
+        },
+        {
+          "name": "name",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            }
+          ]
+        },
+        {
+          "name": "packageMetadata",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            },
+            {
+              "name": "",
+              "type": "address[]",
+              "internalType": "address[]"
+            }
+          ]
+        },
+        {
+          "name": "packageName",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            }
+          ]
+        },
+        {
+          "name": "postDeploy",
+          "stateMutability": "pure",
+          "inputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ]
+        },
+        {
+          "name": "processArgs",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "args_",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ]
+        },
+        {
+          "name": "updatePkg",
+          "stateMutability": "pure",
+          "inputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ]
+        },
+        {
+          "name": "vaultDeclaration",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "tuple",
+              "internalType": "struct IStandardVaultPkg.VaultPkgDeclaration",
+              "components": [
+                {
+                  "name": "name",
+                  "type": "string",
+                  "internalType": "string"
+                },
+                {
+                  "name": "vaultFeeTypeIds",
+                  "type": "bytes32",
+                  "internalType": "bytes32"
+                },
+                {
+                  "name": "vaultTypes",
+                  "type": "bytes4[]",
+                  "internalType": "bytes4[]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "vaultFeeTypeIds",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "ids_",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ]
+        },
+        {
+          "name": "vaultTypes",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        }
+      ],
+      "source_kind": "deployable facet or package",
+      "compiler_source_check": {
+        "checked_sources": 68,
+        "matches_current_source": true,
+        "mismatches": []
+      }
+    },
+    {
+      "contract": "UniswapV4DetfBondNFTVaultFacet",
+      "source": "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultFacet.sol",
+      "source_sha256": "8e6276f54cc60afa5d402fd2f76feadf8d5b022e5dd4028939f6832c15e69fa6",
+      "artifact": "out/UniswapV4DetfBondNFTVaultFacet.sol/UniswapV4DetfBondNFTVaultFacet.json",
+      "artifact_sha256": "1dbb32c84cb5006453b4d59f13f190b65d3920447c99d7c2afce9fbffaefd38f",
+      "runtime_bytes": 16525,
+      "direct_inheritance": [
+        "DETFNFTVaultFacet "
+      ],
+      "compiled_signatures": [
+        {
+          "signature": "claimBond(uint256,address)",
+          "selector": "0x084c59ae"
+        },
+        {
+          "signature": "claimPrincipal(uint256,address)",
+          "selector": "0xf400c743"
+        },
+        {
+          "signature": "claimRewards(uint256,address)",
+          "selector": "0x6c7b69cb"
+        },
+        {
+          "signature": "contentsId()",
+          "selector": "0xf5ee7c5b"
+        },
+        {
+          "signature": "createFundedPosition(uint256,uint256,address)",
+          "selector": "0x0a528e5b"
+        },
+        {
+          "signature": "detf()",
+          "selector": "0x8a91f8bc"
+        },
+        {
+          "signature": "donate(address,address,uint256,uint256,bool,uint256)",
+          "selector": "0x27c76759"
+        },
+        {
+          "signature": "donate(address,uint256,uint256,bool,uint256)",
+          "selector": "0x85eb9aab"
+        },
+        {
+          "signature": "donateWithPermit2Allowance(address,uint256,uint256,uint256)",
+          "selector": "0x0ed4fd8f"
+        },
+        {
+          "signature": "donateWithPermit2Signature(address,uint256,uint256,uint256,bytes)",
+          "selector": "0x9430e218"
+        },
+        {
+          "signature": "facetFuncs()",
+          "selector": "0x574a4cff"
+        },
+        {
+          "signature": "facetInterfaces()",
+          "selector": "0x2ea80826"
+        },
+        {
+          "signature": "facetMetadata()",
+          "selector": "0xf10d7a75"
+        },
+        {
+          "signature": "facetName()",
+          "selector": "0x5b6f4d01"
+        },
+        {
+          "signature": "initializeReservedBondNfts(address,address)",
+          "selector": "0x2bd949e3"
+        },
+        {
+          "signature": "lpToken()",
+          "selector": "0x5fcbd285"
+        },
+        {
+          "signature": "positionOf(uint256)",
+          "selector": "0x46f96023"
+        },
+        {
+          "signature": "previewClaim(uint256)",
+          "selector": "0xae648e90"
+        },
+        {
+          "signature": "previewDonate(address,uint256)",
+          "selector": "0x3d9f5912"
+        },
+        {
+          "signature": "reservedBondNftsWired()",
+          "selector": "0x1b552ac9"
+        },
+        {
+          "signature": "safeTransferFrom(address,address,uint256)",
+          "selector": "0x42842e0e"
+        },
+        {
+          "signature": "safeTransferFrom(address,address,uint256,bytes)",
+          "selector": "0xb88d4fde"
+        },
+        {
+          "signature": "transferFrom(address,address,uint256)",
+          "selector": "0x23b872dd"
+        },
+        {
+          "signature": "transferHeldToken(address,address,uint256)",
+          "selector": "0x3ec90986"
+        },
+        {
+          "signature": "vaultConfig()",
+          "selector": "0x7cc34bb4"
+        },
+        {
+          "signature": "vaultFeeTypeIds()",
+          "selector": "0x6a4d3f12"
+        },
+        {
+          "signature": "vaultTypes()",
+          "selector": "0x36abf3dc"
+        }
+      ],
+      "abi_entrypoints": [
+        {
+          "name": "claimBond",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "tokenId_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "recipient_",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "principal_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "rewards_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "claimPrincipal",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "tokenId_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "recipient_",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "principal_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "claimRewards",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "tokenId_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "recipient_",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "rewards_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "contentsId",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ]
+        },
+        {
+          "name": "createFundedPosition",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "principal_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "duration_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "recipient_",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "tokenId_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "detf",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "address"
+            }
+          ]
+        },
+        {
+          "name": "donate",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "donor",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "contract IERC20"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "minLpOut",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "pretransferred",
+              "type": "bool",
+              "internalType": "bool"
+            },
+            {
+              "name": "deadline",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "lpOut",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "donate",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "contract IERC20"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "minLpOut",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "pretransferred",
+              "type": "bool",
+              "internalType": "bool"
+            },
+            {
+              "name": "deadline",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "lpOut",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "donateWithPermit2Allowance",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "contract IERC20"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "minLpOut",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "deadline",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "lpOut",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "donateWithPermit2Signature",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "contract IERC20"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "minLpOut",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "deadline",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "permit2Data",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "lpOut",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "facetFuncs",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "funcs_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetInterfaces",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "interfaces_",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetMetadata",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            },
+            {
+              "name": "",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            },
+            {
+              "name": "",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        },
+        {
+          "name": "facetName",
+          "stateMutability": "pure",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "string",
+              "internalType": "string"
+            }
+          ]
+        },
+        {
+          "name": "initializeReservedBondNfts",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "feeTo_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "creator_",
+              "type": "address",
+              "internalType": "address"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "lpToken",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "address",
+              "internalType": "contract IERC20"
+            }
+          ]
+        },
+        {
+          "name": "positionOf",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "tokenId_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "",
+              "type": "tuple",
+              "internalType": "struct DETFFundedStakingMath.BondPosition",
+              "components": [
+                {
+                  "name": "principal",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "claimedPrincipal",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "stakingGons",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "startTimestamp",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "vestingDuration",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "previewClaim",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "tokenId_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "claim_",
+              "type": "tuple",
+              "internalType": "struct DETFFundedStakingMath.BondClaim",
+              "components": [
+                {
+                  "name": "vestedPrincipal",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "principalRemaining",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "principalDue",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                },
+                {
+                  "name": "rewardsDue",
+                  "type": "uint256",
+                  "internalType": "uint256"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "previewDonate",
+          "stateMutability": "view",
+          "inputs": [
+            {
+              "name": "token",
+              "type": "address",
+              "internalType": "contract IERC20"
+            },
+            {
+              "name": "amount",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": [
+            {
+              "name": "lpOut",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ]
+        },
+        {
+          "name": "reservedBondNftsWired",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bool",
+              "internalType": "bool"
+            }
+          ]
+        },
+        {
+          "name": "safeTransferFrom",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "from_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "to_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "tokenId_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": []
+        },
+        {
+          "name": "safeTransferFrom",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "from_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "to_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "tokenId_",
+              "type": "uint256",
+              "internalType": "uint256"
+            },
+            {
+              "name": "data_",
+              "type": "bytes",
+              "internalType": "bytes"
+            }
+          ],
+          "outputs": []
+        },
+        {
+          "name": "transferFrom",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "from_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "to_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "tokenId_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": []
+        },
+        {
+          "name": "transferHeldToken",
+          "stateMutability": "nonpayable",
+          "inputs": [
+            {
+              "name": "token_",
+              "type": "address",
+              "internalType": "contract IERC20"
+            },
+            {
+              "name": "to_",
+              "type": "address",
+              "internalType": "address"
+            },
+            {
+              "name": "amount_",
+              "type": "uint256",
+              "internalType": "uint256"
+            }
+          ],
+          "outputs": []
+        },
+        {
+          "name": "vaultConfig",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "config_",
+              "type": "tuple",
+              "internalType": "struct IStandardVault.VaultConfig",
+              "components": [
+                {
+                  "name": "vaultFeeTypeIds",
+                  "type": "bytes32",
+                  "internalType": "bytes32"
+                },
+                {
+                  "name": "contentsId",
+                  "type": "bytes32",
+                  "internalType": "bytes32"
+                },
+                {
+                  "name": "vaultTypes",
+                  "type": "bytes4[]",
+                  "internalType": "bytes4[]"
+                },
+                {
+                  "name": "tokens",
+                  "type": "address[]",
+                  "internalType": "address[]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "vaultFeeTypeIds",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes32",
+              "internalType": "bytes32"
+            }
+          ]
+        },
+        {
+          "name": "vaultTypes",
+          "stateMutability": "view",
+          "inputs": [],
+          "outputs": [
+            {
+              "name": "",
+              "type": "bytes4[]",
+              "internalType": "bytes4[]"
+            }
+          ]
+        }
+      ],
+      "source_kind": "deployable facet or package",
+      "compiler_source_check": {
+        "checked_sources": 80,
+        "matches_current_source": true,
+        "mismatches": []
+      }
+    }
+  ],
+  "runtime_wiring_tests": [
+    "test/foundry/spec/vaults/detf/common/claimToken/V4FundedBindings.t.sol",
+    "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Surface.t.sol",
+    "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVault_Surface.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_FacetPackaging.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_BondNftPackaging.t.sol"
+  ],
+  "cleanup_evidence": "approved-close-cleanup-surface.json"
+}

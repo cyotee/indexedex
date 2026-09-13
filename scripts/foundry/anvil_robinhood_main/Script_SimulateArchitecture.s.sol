@@ -12,13 +12,18 @@ import {Phase_04_Stage_01_FeeCollectorAndManager} from "./Phase_04_Stage_01_FeeC
 import {Phase_05_Stage_01_SeRateProviderPkg} from "./Phase_05_Stage_01_SeRateProviderPkg.sol";
 import {Phase_05_Stage_02_UniswapV4TwapOracle} from "./Phase_05_Stage_02_UniswapV4TwapOracle.sol";
 import {Phase_05_Stage_03_UniswapV4StandardExchangePkg} from "./Phase_05_Stage_03_UniswapV4StandardExchangePkg.sol";
+import {Phase_05_Stage_04_UniswapV3StandardExchangePkg} from "./Phase_05_Stage_04_UniswapV3StandardExchangePkg.sol";
+import {Phase_05_Stage_06_UniswapV2StandardExchangePkg} from "./Phase_05_Stage_06_UniswapV2StandardExchangePkg.sol";
 import {Phase_05_Stage_05_MorphoBlueStandardExchangePkg} from "./Phase_05_Stage_05_MorphoBlueStandardExchangePkg.sol";
 import {Phase_06_Stage_01_BondNftPkg} from "./Phase_06_Stage_01_BondNftPkg.sol";
 import {Phase_06_Stage_02_RebasingClaimPkg} from "./Phase_06_Stage_02_RebasingClaimPkg.sol";
 import {Phase_06_Stage_03_CpBufferHookPkg} from "./Phase_06_Stage_03_CpBufferHookPkg.sol";
 import {Phase_06_Stage_04_WeightedBufferHookPkg} from "./Phase_06_Stage_04_WeightedBufferHookPkg.sol";
+import {Phase_06_Stage_05_OrbitalBufferHookPkg} from "./Phase_06_Stage_05_OrbitalBufferHookPkg.sol";
 import {Phase_06_Stage_06_CurveQuadBufferHookPkg} from "./Phase_06_Stage_06_CurveQuadBufferHookPkg.sol";
 import {Phase_06_Stage_07_UniswapV4DetfPkg} from "./Phase_06_Stage_07_UniswapV4DetfPkg.sol";
+import {Phase_06_Stage_09_BalancerStableBufferHookPkg} from "./Phase_06_Stage_09_BalancerStableBufferHookPkg.sol";
+import {Phase_06_Stage_10_RebasingAwareERC4626Pkg} from "./Phase_06_Stage_10_RebasingAwareERC4626Pkg.sol";
 
 /// @title Script_SimulateArchitecture
 /// @notice One Foundry script wrapping architecture library execute() for a 4663 gas quote.
@@ -41,13 +46,18 @@ contract Script_SimulateArchitecture is LaunchIo {
         Phase_05_Stage_01_SeRateProviderPkg.execute(s);
         Phase_05_Stage_02_UniswapV4TwapOracle.execute(s);
         Phase_05_Stage_03_UniswapV4StandardExchangePkg.execute(s);
+        Phase_05_Stage_04_UniswapV3StandardExchangePkg.execute(s);
         Phase_05_Stage_05_MorphoBlueStandardExchangePkg.execute(s);
+        Phase_05_Stage_06_UniswapV2StandardExchangePkg.execute(s);
         Phase_06_Stage_01_BondNftPkg.execute(s);
         Phase_06_Stage_02_RebasingClaimPkg.execute(s);
         Phase_06_Stage_03_CpBufferHookPkg.execute(s);
         Phase_06_Stage_04_WeightedBufferHookPkg.execute(s);
+        Phase_06_Stage_05_OrbitalBufferHookPkg.execute(s);
         Phase_06_Stage_06_CurveQuadBufferHookPkg.execute(s);
         Phase_06_Stage_07_UniswapV4DetfPkg.execute(s);
+        Phase_06_Stage_09_BalancerStableBufferHookPkg.execute(s);
+        Phase_06_Stage_10_RebasingAwareERC4626Pkg.execute(s);
         vm.stopBroadcast();
 
         _exportArchitecture(s);
@@ -56,6 +66,8 @@ contract Script_SimulateArchitecture is LaunchIo {
         _logAddress("IndexedexManager:", address(s.indexedexManager));
         _logAddress("twapOracle:", address(s.twapOracle));
         _logAddress("uniV4SePkg:", address(s.uniV4SePkg));
+        _logAddress("uniV3SePkg:", s.uniV3SePkg);
+        _logAddress("uniV2SePkg:", s.uniV2SePkg);
         _logAddress("morphoBlueSePkg:", s.morphoBlueSePkg);
         _logAddress("uniV4DetfPkg:", s.uniV4DetfPkg);
         _logComplete("SimulateArchitecture 02-06");

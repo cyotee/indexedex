@@ -1,97 +1,52 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
-
-import {MintSplit} from "contracts/vaults/detf/common/core/DETFMintSplit.sol";
-
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
-import {
-    MultiVaultWeightedDetfExchangeInTarget
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeInTarget.sol";
-import {
-    MultiVaultWeightedDetfRepo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfRepo.sol";
+import {MultiVaultWeightedDetfExchangeInTarget} from "./MultiVaultWeightedDetfExchangeInTarget.sol";
+import {MultiVaultWeightedDetfRepo as Repo} from "./MultiVaultWeightedDetfRepo.sol";
 
-/// @title MultiVaultWeightedDetfExchangeQueryTarget
-/// @notice Closed-form previews for vaultShare↔DETF. Exact-out / binary-search routes revert InvalidRoute.
-/// @dev Preview for reserve BPT → configured rateAsset is view-only (claim pricing); public exchangeIn of BPT remains InvalidRoute.
+/// @notice Previews select the same branch after due expansion as execution.
 abstract contract MultiVaultWeightedDetfExchangeQueryTarget is MultiVaultWeightedDetfExchangeInTarget {
-    function previewExchangeIn(IERC20 tokenIn_, uint256 amountIn_, IERC20 tokenOut_)
-        public
-        view
-        virtual
-        returns (uint256 amountOut_)
-    {
-        if (amountIn_ == 0) return 0;
+    error MaximumInputExceeded(uint256 maximum, uint256 required);
 
-        MultiVaultWeightedDetfRepo.Storage storage s = MultiVaultWeightedDetfRepo._layoutStruct();
-
-        // View-only quote: reserve BPT → configured rateAsset (used by rebasing claim rate calc).
-        if (address(tokenIn_) == address(s.reserveBpt)) {
-            (bool foundRa_, uint256 leg_) = MultiVaultWeightedDetfRepo._findRateAssetLeg(tokenOut_);
-            if (!foundRa_) {
-                revert MultiVaultWeightedDetfRepo.InvalidRoute(address(tokenIn_), address(tokenOut_));
-            }
-            return _previewBptToRateAsset(amountIn_, leg_);
-        }
-
-        // Burn DETF → vault share
-        if (address(tokenIn_) == address(this)) {
-            (bool found_, uint256 legIndex_) = MultiVaultWeightedDetfRepo._findVaultShareIndex(tokenOut_);
-            if (!found_) {
-                revert MultiVaultWeightedDetfRepo.InvalidRoute(address(tokenIn_), address(tokenOut_));
-            }
-            return _previewBurnDetfToVaultShare(amountIn_, legIndex_);
-        }
-
-        // Mint vault share → DETF
-        if (address(tokenOut_) == address(this)) {
-            (bool found_, uint256 legIndex_) = MultiVaultWeightedDetfRepo._findVaultShareIndex(tokenIn_);
-            if (!found_) {
-                revert MultiVaultWeightedDetfRepo.InvalidRoute(address(tokenIn_), address(tokenOut_));
-            }
-            MintSplit memory split_ = _splitMintedDetf(_quoteDetfOutForVaultShares(legIndex_, amountIn_));
-            return split_.userDetf;
-        }
-
-        revert MultiVaultWeightedDetfRepo.InvalidRoute(address(tokenIn_), address(tokenOut_));
+    function _directStakingRoute(IERC20 in_, IERC20 out_) internal view returns (bool) {
+        address staking_ = address(Repo._layoutStruct().rebasingClaimToken);
+        return (address(in_) == address(this) && address(out_) == staking_)
+            || (address(in_) == staking_ && address(out_) == address(this));
     }
 
-    /// @dev Proportional BPT claim on target vault leg, then SE vault preview to rateAsset.
-    function _previewBptToRateAsset(uint256 bptIn_, uint256 legIndex_)
-        internal
-        view
-        returns (uint256 rateAssetOut_)
-    {
-        MultiVaultWeightedDetfRepo.Storage storage s = MultiVaultWeightedDetfRepo._layoutStruct();
-        uint256 bptSupply_ = IERC20(s.reservePool).totalSupply();
-        if (bptSupply_ == 0 || bptIn_ == 0) return 0;
-        (,, uint256[] memory balancesRaw_,) = _reserveVault().getPoolTokenInfo(s.reservePool);
-        uint256 vaultSharesOut_ = balancesRaw_[s.vaultShareIndexes[legIndex_]] * bptIn_ / bptSupply_;
-        if (vaultSharesOut_ == 0) return 0;
-        return s.underlyingVaults[legIndex_].previewExchangeIn(
-            s.vaultShares[legIndex_], vaultSharesOut_, s.rateAssets[legIndex_]
-        );
+    function previewExchangeIn(IERC20 in_, uint256 amount_, IERC20 out_) public view virtual returns (uint256) {
+        if (_directStakingRoute(in_, out_)) return amount_;
+        if (address(in_) == address(out_)) revert Repo.InvalidRoute(address(in_), address(out_));
+        _requireReserveLive();
+        address staking_ = address(Repo._layoutStruct().rebasingClaimToken);
+        if (address(in_) == address(this) || address(in_) == staking_) {
+            (bool found_, uint256 leg_) = Repo._findVaultShareIndex(out_);
+            if (!found_) revert Repo.InvalidRoute(address(in_), address(out_));
+            return _previewPrimaryBurn()
+                ? _previewBptUnwind(leg_, _bptForDetfShares(amount_, true))
+                : _quoteReserveSwap(leg_, true, amount_);
+        }
+        if (address(out_) == address(this) || address(out_) == staking_) {
+            (bool found_, uint256 leg_) = Repo._findVaultShareIndex(in_);
+            if (!found_) revert Repo.InvalidRoute(address(in_), address(out_));
+            return _previewPrimaryMint()
+                ? _splitMintedDetf(_quoteDetfOutForVaultShares(leg_, amount_)).userDetf
+                : _quoteReserveSwap(leg_, false, amount_);
+        }
+        revert Repo.InvalidRoute(address(in_), address(out_));
     }
 
-    /// @dev Exact-out requires inverse curve search — not gas-efficient closed form in v1.
-    function previewExchangeOut(IERC20 tokenIn_, IERC20 tokenOut_, uint256 /* amountOut_ */ )
-        public
-        pure
-        virtual
-        returns (uint256)
-    {
-        revert MultiVaultWeightedDetfRepo.InvalidRoute(address(tokenIn_), address(tokenOut_));
+    function previewExchangeOut(IERC20 in_, IERC20 out_, uint256 amount_) public view virtual returns (uint256) {
+        if (!_directStakingRoute(in_, out_)) revert Repo.InvalidRoute(address(in_), address(out_));
+        return amount_;
     }
 
+    /// @dev Direct stake/unstake has an exact inverse; reserve routes retain the family's exact-in surface.
     function exchangeOut(
-        IERC20 tokenIn_,
-        IERC20 tokenOut_,
-        uint256 /* amountOut_ */,
-        uint256 /* maxAmountIn_ */,
-        address /* recipient_ */,
-        bool /* pretransferred_ */,
-        uint256 /* deadline_ */
-    ) public pure virtual returns (uint256) {
-        revert MultiVaultWeightedDetfRepo.InvalidRoute(address(tokenIn_), address(tokenOut_));
+        IERC20 in_, uint256 maximum_, IERC20 out_, uint256 amount_, address to_, bool prepaid_, uint256 deadline_
+    ) public virtual returns (uint256) {
+        if (!_directStakingRoute(in_, out_)) revert Repo.InvalidRoute(address(in_), address(out_));
+        if (amount_ > maximum_) revert MaximumInputExceeded(maximum_, amount_);
+        return exchangeIn(in_, amount_, out_, amount_, to_, prepaid_, deadline_);
     }
 }

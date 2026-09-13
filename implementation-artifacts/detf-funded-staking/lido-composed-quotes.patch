@@ -1,0 +1,385 @@
+--- contracts/protocols/staking/lido/LidoWstETHStandardExchangeInTarget.sol
++++ contracts/protocols/staking/lido/LidoWstETHStandardExchangeInTarget.sol
+@@ -1,5 +1,12 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
++import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
++import {Math} from "@crane/contracts/utils/Math.sol";
++import {BetterMath} from "@crane/contracts/utils/math/BetterMath.sol";
++import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
++import {LidoWstETHStandardExchangeRepo} from "contracts/protocols/staking/lido/LidoWstETHStandardExchangeRepo.sol";
++
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
+@@ -23,7 +30,9 @@
+ contract LidoWstETHStandardExchangeInTarget is
+     LidoWstETHStandardExchangeCommon,
+     ReentrancyLockModifiers,
+-    IStandardExchangeIn
++    IStandardExchangeIn,
++    IStandardExchangeTransitionQuote,
++    IStandardExchangeExternalQuote
+ {
+     using SafeERC20 for IERC20;
+ 
+@@ -130,4 +139,174 @@
+ 
+         revert InvalidRoute(address(0), address(tokenOut));
+     }
++    /// @dev Keep the liquid sleeve, wrapped receipts and pending queue claims
++    /// distinct. A same-transaction Lido submit can change the receipt ratio.
++    struct LidoQuoteState {
++        address exchange;
++        address asset;
++        address holder;
++        uint256 holderShares;
++        uint256 supply;
++        uint256 liquid;
++        uint256 wrapped;
++        uint256 pending;
++        uint256 idleStShares;
++        uint256 pooledEth;
++        uint256 stShares;
++    }
++
++    function quoteState(address asset, address holder) external view returns (bytes memory, uint256) {
++        if (asset != weth() && asset != wstETH()) revert UnsupportedQuoteAsset(asset);
++        IStETH st = IStETH(stETH());
++        LidoQuoteState memory q = LidoQuoteState(
++            address(this), asset, holder, IERC20(address(this)).balanceOf(holder), ERC20Repo._totalSupply(),
++            liquidReserveEth(), IERC20(wstETH()).balanceOf(address(this)),
++            LidoWstETHStandardExchangeRepo._pendingFaceStEthTotal(),
++            st.sharesOf(address(this)), st.getTotalPooledEther(), st.getTotalShares()
++        );
++        return (abi.encode(q), _lidoQuoteAssets(q, q.holderShares));
++    }
++
++    function _readLidoQuote(bytes calldata state) private view returns (LidoQuoteState memory q) {
++        q = abi.decode(state, (LidoQuoteState));
++        if (q.exchange != address(this) || (q.asset != weth() && q.asset != wstETH())) revert InvalidQuoteState();
++    }
++
++    function _lidoPooled(LidoQuoteState memory q, uint256 shares) private pure returns (uint256) {
++        return q.stShares == 0 ? shares : Math.mulDiv(shares, q.pooledEth, q.stShares);
++    }
++
++    function _lidoShares(LidoQuoteState memory q, uint256 assets) private pure returns (uint256) {
++        return q.pooledEth == 0 ? assets : Math.mulDiv(assets, q.stShares, q.pooledEth);
++    }
++
++    function _lidoNav(LidoQuoteState memory q) private pure returns (uint256) {
++        return q.liquid + _lidoPooled(q, q.wrapped) + q.pending;
++    }
++
++    function _lidoQuoteAssets(LidoQuoteState memory q, uint256 shares) private view returns (uint256) {
++        uint256 ethValue = BetterMath._convertToAssetsDown(shares, _lidoNav(q), q.supply, _decimalOffset());
++        return q.asset == weth() ? ethValue : _lidoShares(q, ethValue);
++    }
++
++    function quoteAssets(bytes calldata state, uint256 shares) external view returns (uint256) {
++        return _lidoQuoteAssets(_readLidoQuote(state), shares);
++    }
++
++    function quoteShareBalance(bytes calldata state) external view returns (uint256) {
++        return _readLidoQuote(state).holderShares;
++    }
++
++    function quoteTotalSupply(bytes calldata state) external view returns (uint256) {
++        return _readLidoQuote(state).supply;
++    }
++
++    /// @dev Match the stETH balance delta observed by _securePull, then wrap
++    /// that amount. Idle stETH is not part of the SE's reserve NAV.
++    function _lidoReceiveAndWrap(LidoQuoteState memory q, uint256 amount)
++        private pure returns (uint256 received, uint256 wrapped)
++    {
++        uint256 beforeBalance = _lidoPooled(q, q.idleStShares);
++        q.idleStShares += _lidoShares(q, amount);
++        received = _lidoPooled(q, q.idleStShares) - beforeBalance;
++        if (received > amount) received = amount;
++        wrapped = _lidoShares(q, received);
++        q.idleStShares -= wrapped;
++    }
++
++    function _lidoQuoteDeposit(LidoQuoteState memory q, address token, uint256 amount, bool toHolder)
++        private view returns (uint256 minted)
++    {
++        uint256 beforeNav = _lidoNav(q);
++        uint256 credited;
++        if (token == weth()) {
++            q.liquid += amount;
++            credited = amount;
++        } else if (token == wstETH()) {
++            q.wrapped += amount;
++            credited = _lidoPooled(q, amount);
++        } else if (token == stETH()) {
++            (, uint256 wrapped) = _lidoReceiveAndWrap(q, amount);
++            q.wrapped += wrapped;
++            credited = _lidoPooled(q, wrapped);
++        } else revert UnsupportedQuoteAsset(token);
++        minted = BetterMath._convertToSharesDown(credited, beforeNav, q.supply, _decimalOffset());
++        q.supply += minted;
++        if (toHolder) q.holderShares += minted;
++        address beneficiary = address(VaultFeeOracleQueryAwareRepo._feeOracle().feeTo());
++        if (beneficiary != address(0)) {
++            uint256 fee = BetterMath._percentageOfWAD(minted, VaultFeeOracleQueryAwareRepo._feeOracle().usageFeeOfVault(address(this)));
++            q.supply += fee;
++            if (q.holder == beneficiary) q.holderShares += fee;
++        }
++    }
++
++    function quoteTransition(bytes calldata state, Operation operation, uint256 amount)
++        external view returns (bytes memory, uint256 amountIn, uint256 amountOut, uint256)
++    {
++        LidoQuoteState memory q = _readLidoQuote(state);
++        amountIn = amount;
++        if (operation == Operation.ReceiveShares) {
++            q.holderShares += amount;
++            if (q.holderShares > q.supply) revert InvalidQuoteState();
++            amountOut = amount;
++        } else if (operation == Operation.DepositExactIn) {
++            amountOut = _lidoQuoteDeposit(q, q.asset, amount, true);
++        } else {
++            if (operation == Operation.WithdrawExactOut) {
++                uint256 ethValue = q.asset == weth() ? amount : _lidoPooled(q, amount);
++                amountIn = BetterMath._convertToSharesUp(ethValue, _lidoNav(q), q.supply, _decimalOffset());
++                amountOut = amount;
++            } else amountOut = _lidoQuoteAssets(q, amount);
++            if (amountIn > q.holderShares) revert InsufficientQuoteShares(amountIn, q.holderShares);
++            q.holderShares -= amountIn;
++            q.supply -= amountIn;
++            if (q.asset == weth()) {
++                if (amountOut > q.liquid) revert InsufficientLiquidReserve(amountOut, q.liquid);
++                q.liquid -= amountOut;
++            } else {
++                if (amountOut > q.wrapped) revert InsufficientLockedReserve(amountOut, q.wrapped);
++                q.wrapped -= amountOut;
++            }
++        }
++        return (abi.encode(q), amountIn, amountOut, _lidoQuoteAssets(q, q.holderShares));
++    }
++
++    function quoteExternalDeposit(bytes calldata state, address tokenIn, uint256 amount)
++        external view returns (bytes memory, uint256 minted, uint256)
++    {
++        LidoQuoteState memory q = _readLidoQuote(state);
++        minted = _lidoQuoteDeposit(q, tokenIn, amount, false);
++        return (abi.encode(q), minted, _lidoQuoteAssets(q, q.holderShares));
++    }
++
++    function quoteExternalExchange(bytes calldata state, address tokenIn, uint256 amount)
++        external view returns (bytes memory, uint256 amountOut, uint256)
++    {
++        LidoQuoteState memory q = _readLidoQuote(state);
++        if (tokenIn == q.asset || !_isAsset(tokenIn)) revert InvalidRoute(tokenIn, q.asset);
++        if (q.asset == weth()) {
++            uint256 wrapped;
++            if (tokenIn == wstETH()) {
++                wrapped = amount;
++                amountOut = _lidoPooled(q, amount);
++            } else (amountOut, wrapped) = _lidoReceiveAndWrap(q, amount);
++            if (amountOut > q.liquid) revert InsufficientLiquidReserve(amountOut, q.liquid);
++            q.liquid -= amountOut;
++            q.wrapped += wrapped;
++        } else if (tokenIn == stETH()) {
++            (, amountOut) = _lidoReceiveAndWrap(q, amount);
++        } else {
++            uint256 beforeBalance = _lidoPooled(q, q.idleStShares);
++            uint256 minted = _lidoShares(q, amount);
++            q.stShares += minted;
++            q.pooledEth += amount;
++            q.idleStShares += minted;
++            uint256 stReceived = _lidoPooled(q, q.idleStShares) - beforeBalance;
++            amountOut = _lidoShares(q, stReceived);
++            q.idleStShares -= amountOut;
++        }
++        return (abi.encode(q), amountOut, _lidoQuoteAssets(q, q.holderShares));
++    }
++
+ }
+--- contracts/protocols/staking/lido/LidoWstETHStandardExchangeInFacet.sol
++++ contracts/protocols/staking/lido/LidoWstETHStandardExchangeInFacet.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
++
+ 
+ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+@@ -11,15 +13,24 @@
+     }
+ 
+     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
+-        interfaces = new bytes4[](1);
++        interfaces = new bytes4[](3);
+         interfaces[0] = type(IStandardExchangeIn).interfaceId;
++        interfaces[1] = type(IStandardExchangeTransitionQuote).interfaceId;
++        interfaces[2] = type(IStandardExchangeExternalQuote).interfaceId;
+     }
+ 
+     function facetFuncs() public pure returns (bytes4[] memory funcs) {
+-        funcs = new bytes4[](3);
++        funcs = new bytes4[](10);
+         funcs[0] = IStandardExchangeIn.previewExchangeIn.selector;
+         funcs[1] = IStandardExchangeIn.exchangeIn.selector;
+         funcs[2] = this.exchangeInEth.selector;
++        funcs[3] = IStandardExchangeTransitionQuote.quoteState.selector;
++        funcs[4] = IStandardExchangeTransitionQuote.quoteAssets.selector;
++        funcs[5] = IStandardExchangeTransitionQuote.quoteShareBalance.selector;
++        funcs[6] = IStandardExchangeTransitionQuote.quoteTotalSupply.selector;
++        funcs[7] = IStandardExchangeTransitionQuote.quoteTransition.selector;
++        funcs[8] = IStandardExchangeExternalQuote.quoteExternalDeposit.selector;
++        funcs[9] = IStandardExchangeExternalQuote.quoteExternalExchange.selector;
+     }
+ 
+     function facetMetadata()
+--- contracts/protocols/staking/lido/LidoWstETHStandardExchangeDFPkg.sol
++++ contracts/protocols/staking/lido/LidoWstETHStandardExchangeDFPkg.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
++
+ 
+ import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+@@ -107,7 +109,7 @@
+     }
+ 
+     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
+-        interfaces = new bytes4[](11);
++        interfaces = new bytes4[](13);
+         interfaces[0] = type(IERC20).interfaceId;
+         interfaces[1] = type(IERC20Metadata).interfaceId;
+         interfaces[2] = type(IERC20Permit).interfaceId;
+@@ -119,6 +121,8 @@
+         interfaces[8] = type(ILidoWstETHRebalance).interfaceId;
+         interfaces[9] = type(ILidoWstETHStandardVault).interfaceId;
+         interfaces[10] = type(IStandardizedYield).interfaceId;
++        interfaces[11] = type(IStandardExchangeTransitionQuote).interfaceId;
++        interfaces[12] = type(IStandardExchangeExternalQuote).interfaceId;
+     }
+ 
+     function facetCuts() public view returns (IDiamond.FacetCut[] memory cuts) {
+--- contracts/protocols/staking/lido/LidoWstETH_Component_FactoryService.sol
++++ contracts/protocols/staking/lido/LidoWstETH_Component_FactoryService.sol
+@@ -21,10 +21,8 @@
+         internal
+         returns (IFacet instance)
+     {
+-        instance = create3Factory.deployFacet(
+-            ArtifactCreationCode.creationCode("LidoWstETHStandardExchangeInFacet.sol:LidoWstETHStandardExchangeInFacet"),
+-            abi.encode("LidoWstETHStandardExchangeInFacet")._hash()
+-        );
++        bytes memory code = ArtifactCreationCode.creationCode("LidoWstETHStandardExchangeInFacet.sol:LidoWstETHStandardExchangeInFacet");
++        instance = create3Factory.deployFacet(code, ArtifactCreationCode.releaseSalt(abi.encode("LidoWstETHStandardExchangeInFacet")._hash(), code, ""));
+         vm.label(address(instance), "LidoWstETHStandardExchangeInFacet");
+     }
+ 
+@@ -32,24 +30,20 @@
+         internal
+         returns (IFacet instance)
+     {
+-        instance = create3Factory.deployFacet(
+-            ArtifactCreationCode.creationCode("LidoWstETHStandardExchangeOutFacet.sol:LidoWstETHStandardExchangeOutFacet"),
+-            abi.encode("LidoWstETHStandardExchangeOutFacet")._hash()
+-        );
++        bytes memory code = ArtifactCreationCode.creationCode("LidoWstETHStandardExchangeOutFacet.sol:LidoWstETHStandardExchangeOutFacet");
++        instance = create3Factory.deployFacet(code, ArtifactCreationCode.releaseSalt(abi.encode("LidoWstETHStandardExchangeOutFacet")._hash(), code, ""));
+         vm.label(address(instance), "LidoWstETHStandardExchangeOutFacet");
+     }
+ 
+     function deployLidoWstETHMarkerFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
+-        instance = create3Factory.deployFacet(
+-            ArtifactCreationCode.creationCode("LidoWstETHMarkerFacet.sol:LidoWstETHMarkerFacet"), abi.encode("LidoWstETHMarkerFacet")._hash()
+-        );
++        bytes memory code = ArtifactCreationCode.creationCode("LidoWstETHMarkerFacet.sol:LidoWstETHMarkerFacet");
++        instance = create3Factory.deployFacet(code, ArtifactCreationCode.releaseSalt(abi.encode("LidoWstETHMarkerFacet")._hash(), code, ""));
+         vm.label(address(instance), "LidoWstETHMarkerFacet");
+     }
+ 
+     function deployLidoWstETHRebalanceFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
+-        instance = create3Factory.deployFacet(
+-            ArtifactCreationCode.creationCode("LidoWstETHRebalanceFacet.sol:LidoWstETHRebalanceFacet"), abi.encode("LidoWstETHRebalanceFacet")._hash()
+-        );
++        bytes memory code = ArtifactCreationCode.creationCode("LidoWstETHRebalanceFacet.sol:LidoWstETHRebalanceFacet");
++        instance = create3Factory.deployFacet(code, ArtifactCreationCode.releaseSalt(abi.encode("LidoWstETHRebalanceFacet")._hash(), code, ""));
+         vm.label(address(instance), "LidoWstETHRebalanceFacet");
+     }
+ 
+@@ -57,15 +51,11 @@
+         IIndexedexManagerProxy indexedexManager,
+         ILidoWstETHStandardExchangeDFPkg.PkgInit memory pkgInit
+     ) internal returns (ILidoWstETHStandardExchangeDFPkg instance) {
+-        instance = ILidoWstETHStandardExchangeDFPkg(
+-            address(
+-                IVaultRegistryDeployment(address(indexedexManager)).deployPkg(
+-                    ArtifactCreationCode.creationCode("LidoWstETHStandardExchangeDFPkg.sol:LidoWstETHStandardExchangeDFPkg"),
+-                    abi.encode(pkgInit),
+-                    abi.encode("LidoWstETHStandardExchangeDFPkg")._hash()
+-                )
+-            )
+-        );
++        bytes memory code = ArtifactCreationCode.creationCode("LidoWstETHStandardExchangeDFPkg.sol:LidoWstETHStandardExchangeDFPkg");
++        bytes memory args = abi.encode(pkgInit);
++        instance = ILidoWstETHStandardExchangeDFPkg(IVaultRegistryDeployment(address(indexedexManager)).deployPkg(
++            code, args, ArtifactCreationCode.releaseSalt(abi.encode("LidoWstETHStandardExchangeDFPkg")._hash(), code, args)
++        ));
+         vm.label(address(instance), "LidoWstETHStandardExchangeDFPkg");
+     }
+ }
+--- test/foundry/spec/vaults/standard/sy/LiquidStakingNativeSY.t.sol
++++ test/foundry/spec/vaults/standard/sy/LiquidStakingNativeSY.t.sol
+@@ -1,5 +1,9 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++import {TransitionQuoteAssertions} from "test/foundry/spec/vaults/standard/TransitionQuoteAssertions.sol";
++import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
++import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
++
+ import {Test} from "forge-std/Test.sol";
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
+@@ -86,7 +90,38 @@
+     }
+ }
+ 
+-contract LidoNativeSYTest is TestBase_LidoWstETHStandardExchange, LiquidStakingSYBehavior {
++contract LidoNativeSYTest is TestBase_LidoWstETHStandardExchange, LiquidStakingSYBehavior, TransitionQuoteAssertions {
++    function _seedLidoQuoteBook() private {
++        vm.prank(owner);
++        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(seVault, 0.07e18);
++        _seedVaultInventory(200 ether, 200 ether);
++        _dealWeth(address(this), 100 ether);
++        _mintWstViaSt(address(this), 100 ether);
++    }
++
++    function test_lidoLiquidSleeveSequenceProjectsFundedFeesAndShares() public {
++        _seedLidoQuoteBook();
++        _assertQuoteSequence(seVault, IERC20(address(hermeticWeth)), address(this), 1 ether);
++    }
++
++    function test_lidoWrappedReceiptSequenceProjectsCompleteReserve() public {
++        _seedLidoQuoteBook();
++        _assertQuoteSequence(seVault, IERC20(address(hermeticWstEth)), address(this), 1 ether);
++    }
++
++    function test_lidoExternalWrappedDepositPreservesBufferedHolderAndFeeRecipient() public {
++        _seedLidoQuoteBook();
++        address feeRecipient = address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo());
++        _assertExternalDepositQuote(seVault, IERC20(address(hermeticWstEth)), IERC20(address(hermeticWeth)), 7 ether + 19, address(this));
++        _assertExternalDepositQuote(seVault, IERC20(address(hermeticWeth)), IERC20(address(hermeticWstEth)), 3 ether + 11, feeRecipient);
++    }
++
++    function test_lidoExternalConversionsPreserveFundedSEInventory() public {
++        _seedLidoQuoteBook();
++        _assertExternalExchangeQuote(seVault, IERC20(address(hermeticWstEth)), IERC20(address(hermeticWeth)), 3 ether + 17);
++        _assertExternalExchangeQuote(seVault, IERC20(address(hermeticWeth)), IERC20(address(hermeticWstEth)), 7 ether + 29);
++    }
++
+     function _subject() internal view override returns (address) { return seVault; }
+     function _yield() internal view override returns (address) { return address(hermeticWstEth); }
+     function _wrappedEth() internal view override returns (address) { return address(hermeticWeth); }

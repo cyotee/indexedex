@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 import {Vm} from "forge-std/Vm.sol";
 import {VM_ADDRESS} from "@crane/contracts/constants/FoundryConstants.sol";
@@ -8,20 +9,8 @@ import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
-import {
-    RocketPoolRETHStandardExchangeInFacet
-} from "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeInFacet.sol";
-import {
-    RocketPoolRETHStandardExchangeOutFacet
-} from "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeOutFacet.sol";
-import {RocketPoolRETHMarkerFacet} from "contracts/protocols/staking/rocket-pool/RocketPoolRETHMarkerFacet.sol";
-import {RocketPoolRETHRebalanceFacet} from "contracts/protocols/staking/rocket-pool/RocketPoolRETHRebalanceFacet.sol";
-import {
-    IRocketPoolRETHStandardExchangeDFPkg
-} from "contracts/protocols/staking/rocket-pool/interfaces/IRocketPoolRETHStandardExchangeDFPkg.sol";
-import {
-    RocketPoolRETHStandardExchangeDFPkg
-} from "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeDFPkg.sol";
+
+import {IRocketPoolRETHStandardExchangeDFPkg} from "contracts/protocols/staking/rocket-pool/interfaces/IRocketPoolRETHStandardExchangeDFPkg.sol";
 
 library RocketPoolRETH_Component_FactoryService {
     using BetterEfficientHashLib for bytes;
@@ -32,55 +21,45 @@ library RocketPoolRETH_Component_FactoryService {
         internal
         returns (IFacet instance)
     {
-        instance = create3Factory.deployFacet(
-            type(RocketPoolRETHStandardExchangeInFacet).creationCode,
-            abi.encode(type(RocketPoolRETHStandardExchangeInFacet).name)._hash()
-        );
-        vm.label(address(instance), type(RocketPoolRETHStandardExchangeInFacet).name);
+        bytes memory code = ArtifactCreationCode.creationCode("RocketPoolRETHStandardExchangeInFacet.sol:RocketPoolRETHStandardExchangeInFacet");
+        instance = create3Factory.deployFacet(code, keccak256(abi.encode("RocketPoolRETHStandardExchangeInFacet", keccak256(code))));
+        vm.label(address(instance), "RocketPoolRETHStandardExchangeInFacet");
     }
 
     function deployRocketPoolRETHStandardExchangeOutFacet(ICreate3FactoryProxy create3Factory)
         internal
         returns (IFacet instance)
     {
-        instance = create3Factory.deployFacet(
-            type(RocketPoolRETHStandardExchangeOutFacet).creationCode,
-            abi.encode(type(RocketPoolRETHStandardExchangeOutFacet).name)._hash()
-        );
-        vm.label(address(instance), type(RocketPoolRETHStandardExchangeOutFacet).name);
+        bytes memory code = ArtifactCreationCode.creationCode("RocketPoolRETHStandardExchangeOutFacet.sol:RocketPoolRETHStandardExchangeOutFacet");
+        instance = create3Factory.deployFacet(code, keccak256(abi.encode("RocketPoolRETHStandardExchangeOutFacet", keccak256(code))));
+        vm.label(address(instance), "RocketPoolRETHStandardExchangeOutFacet");
     }
 
     function deployRocketPoolRETHMarkerFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
-        instance = create3Factory.deployFacet(
-            type(RocketPoolRETHMarkerFacet).creationCode, abi.encode(type(RocketPoolRETHMarkerFacet).name)._hash()
-        );
-        vm.label(address(instance), type(RocketPoolRETHMarkerFacet).name);
+        bytes memory code = ArtifactCreationCode.creationCode("RocketPoolRETHMarkerFacet.sol:RocketPoolRETHMarkerFacet");
+        instance = create3Factory.deployFacet(code, keccak256(abi.encode("RocketPoolRETHMarkerFacet", keccak256(code))));
+        vm.label(address(instance), "RocketPoolRETHMarkerFacet");
     }
 
     function deployRocketPoolRETHRebalanceFacet(ICreate3FactoryProxy create3Factory)
         internal
         returns (IFacet instance)
     {
-        instance = create3Factory.deployFacet(
-            type(RocketPoolRETHRebalanceFacet).creationCode,
-            abi.encode(type(RocketPoolRETHRebalanceFacet).name)._hash()
-        );
-        vm.label(address(instance), type(RocketPoolRETHRebalanceFacet).name);
+        bytes memory code = ArtifactCreationCode.creationCode("RocketPoolRETHRebalanceFacet.sol:RocketPoolRETHRebalanceFacet");
+        instance = create3Factory.deployFacet(code, keccak256(abi.encode("RocketPoolRETHRebalanceFacet", keccak256(code))));
+        vm.label(address(instance), "RocketPoolRETHRebalanceFacet");
     }
 
     function deployRocketPoolRETHStandardExchangeDFPkg(
         IIndexedexManagerProxy indexedexManager,
         IRocketPoolRETHStandardExchangeDFPkg.PkgInit memory pkgInit
     ) internal returns (IRocketPoolRETHStandardExchangeDFPkg instance) {
-        instance = IRocketPoolRETHStandardExchangeDFPkg(
-            address(
-                IVaultRegistryDeployment(address(indexedexManager)).deployPkg(
-                    type(RocketPoolRETHStandardExchangeDFPkg).creationCode,
-                    abi.encode(pkgInit),
-                    abi.encode(type(RocketPoolRETHStandardExchangeDFPkg).name)._hash()
-                )
-            )
-        );
-        vm.label(address(instance), type(RocketPoolRETHStandardExchangeDFPkg).name);
+        bytes memory code = ArtifactCreationCode.creationCode("RocketPoolRETHStandardExchangeDFPkg.sol:RocketPoolRETHStandardExchangeDFPkg");
+        bytes memory arguments = abi.encode(pkgInit);
+        bytes32 releaseSalt = keccak256(abi.encode("RocketPoolRETHStandardExchangeDFPkg", keccak256(code), keccak256(arguments)));
+        instance = IRocketPoolRETHStandardExchangeDFPkg(address(
+            IVaultRegistryDeployment(address(indexedexManager)).deployPkg(code, arguments, releaseSalt)
+        ));
+        vm.label(address(instance), "RocketPoolRETHStandardExchangeDFPkg");
     }
 }

@@ -1,0 +1,103 @@
+{
+  "status": "applied; validation pending",
+  "rows": [
+    {
+      "source": "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/TestBase_MixedBufferMultiVaultStableDetf.sol",
+      "before_sha256": "6e3f491a646e8b31cde509855bbbe31a0f63f58321501820392246794a7b40ee",
+      "after_sha256": "fa14a53b26ca7bed969d3e3a670125eb311264d9d9b065db69120d3c8cea65f4"
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_Deploy.t.sol",
+      "before_sha256": "59857492ea7803f6652ae995c553d42774ea34683244eeee0cea8f92d9890cda",
+      "after_sha256": "59857492ea7803f6652ae995c553d42774ea34683244eeee0cea8f92d9890cda"
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_Bootstrap.t.sol",
+      "before_sha256": "26c91ecd2de3e04d2e0930af4de9b81b42febbdd1c90fc1b433c9ed82f86dbb7",
+      "after_sha256": "d77fb7ba33cc1bc495d353da301e7ac6b352cfb8935910a847293e2479974e3a"
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_Mint.t.sol",
+      "before_sha256": "80b2ef122e83a56f068105b830ad216db4db03bd0900b8a64469e6fc9d132b18",
+      "after_sha256": "281c8c2fe15d81302a1391bbe8998508502ec45c1e39a3487e44373bcbf91525"
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_Burn.t.sol",
+      "before_sha256": "da7ac1a5d0dbde41fd3f22cbc7538bc3d14e6c9835ebaf3124e4d4bbadd7b49c",
+      "after_sha256": "6d06a6fc81ad567418c7c14407a2cf1e6f055e90b0a43f867c86ea970f679b95"
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_NLegs.t.sol",
+      "before_sha256": "fd4afe115bf878930cd8e436fe0e1379a6587c9dc06dd89ee4fce98968262a15",
+      "after_sha256": "9725317785b694217ad4364f7e938bb954dfce98f729ae899c8edfc8f6efa0b9"
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_Guards.t.sol",
+      "before_sha256": "86b4ad1eb8318ba267a7a78cc862681071a4d91b20c7987ee43cced5aa75fc8d",
+      "after_sha256": "a8300e82d9d45cdbf57941698f782b16aca45a97fe6131c1ed9f81700e1b8cf1"
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_Routes.t.sol",
+      "before_sha256": "af77e77784193d1dbd07944900675bca056d992ecf69d9c97e95ddc2f81941df",
+      "after_sha256": "ae5e24d3a70a220cdc185ffc68ec97925ad83ceb1bf064e0605a027969ae02ca"
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_RateProviders.t.sol",
+      "before_sha256": "766b9583112df6263848901e130760aff425870dafbc8f3e7a25eebab24a6d88",
+      "after_sha256": "c740d11877bb8ae8ca8b8d1781ae1b2b23d7ef85844d420c396320ee59f1f104"
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_Pricing.t.sol",
+      "before_sha256": "c4a2ecbaaaf2ef23cf9ec88992935cc4c527b2920f0cda11400ee27ce0d2d83c",
+      "after_sha256": "76cb7037810d14fde2d980026bb27cf6c11eb62e1e9ed2bf9ad18eac8851cffe"
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_PriceShift.t.sol",
+      "before_sha256": "6ec8570f7ef560ffd95e599cba1b83db74affbc833dd432865b7cc3dcf78dff2",
+      "after_sha256": "75451bd88734f45fc929ef02b86691a080427f37beae8dd1920dd8e17b8600ea"
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_Nested.t.sol",
+      "before_sha256": "d7701dca9b912df2e8119bdfad9893675b33c8dbd092c75bd519d655b0e39020",
+      "after_sha256": "4e18217421c9adcf90ff0bc947972f2049be0f58abd0a23e3cf3b5e7a5dad95d"
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_NestedPush.t.sol",
+      "before_sha256": "0c8f0b13bccacf173b30fd2c4e063e9721dc62f710779c46849514d693f25b6d",
+      "after_sha256": "4b2ca62b258af3eac7f74bfd2f7bebbc23c86e273eb697a9df325073adc63ea7"
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_ReserveDonation.t.sol",
+      "before_sha256": "2991408298300d4e519f9fd8203f8719a4bb0de204d698bd0a3f0247c8bbf61e",
+      "after_sha256": "fc9fa03f0fa751216ec1ce5f82be11b2329f19c1982ea51eadc65cd26d9347e1"
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_Reentrancy.t.sol",
+      "before_sha256": "fa28c237a00d7236483f4deab463bbc7876ac6575a2740c957341f47f6b873b9",
+      "after_sha256": "fe2b0af3da92602df998719a1855375bad56c11a57015946247f9c753306bbfa"
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/adversarial/TestBase_MixedBufferMultiVaultStableDetf_Adversarial.sol",
+      "before_sha256": "bd3ba6152394d7471457f99d8a835721613652a32c1d3fa6f7828824c8543d74",
+      "after_sha256": "d2c6f8860d708747f16faa7d921f948ffeea3827b3cf4ef4591e0c1cc4c6839a"
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/adversarial/Adversarial_MixedBuffer_P0.t.sol",
+      "before_sha256": "61cf5bb74c9fafaee9e1d975cf492d1d48ca89a7d5a23a99a2a30b0e47e7d788",
+      "after_sha256": "dfd491569c9d321cad93e30d03da1777c7ce2bb6e016c86fc46e0b9f899abb11"
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/adversarial/Adversarial_MixedBuffer_A0.t.sol",
+      "before_sha256": "7baa5676af19ba7f47b88a28d24925fc94a81bcd1d87b24e689a0501c1a79a84",
+      "after_sha256": "a1281d02aea146ddb73ac5ca4cf4cbb0b93550ca02d2cc87cd137ba5e066e082"
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_NestedPush.t.sol",
+      "before_sha256": "4b2ca62b258af3eac7f74bfd2f7bebbc23c86e273eb697a9df325073adc63ea7",
+      "after_sha256": "3b856efc5fc7147c53ce22b5660b0a0d40790df9db1b048ddca2eae8c39a82cd"
+    }
+  ],
+  "failure_evidence": "mixed-native-nested-full-trace-test.log",
+  "cause": "A six-decimal first payment of 1000e18 normalized to 1e33 and overflowed the StableMath iteration. The eight-book funded lifecycle already passed with actual native payments.",
+  "preserved": "WAD price thresholds, actual underlying reserve-skew magnitudes, all assertions, raw nine-decimal DETF amounts and full production deployments."
+}

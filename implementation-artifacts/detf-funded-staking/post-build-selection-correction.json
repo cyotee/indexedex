@@ -1,0 +1,9 @@
+{
+  "status": "APPLIED_RETRY_PENDING",
+  "previous_forge_exit_code": 0,
+  "previous_executed_tests": 0,
+  "validation_passed": false,
+  "reason": "End-anchored name filter selected no test signatures despite verified concrete compiled ABI methods. Remove the anchors and require an actual result for each of the eight named regressions.",
+  "configured_filters": "All default match/no-match filters were unset; no inherited filter overrides.",
+  "source_or_compiler_changes": false
+}

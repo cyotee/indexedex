@@ -1,0 +1,217 @@
+{
+  "status": "read-only inventory; no test retirement or unit conversion applied",
+  "files": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol",
+      "sha256": "b615b670b864576b6471c3f8d914f9e335f2270a8d0e42f32f3047168cde63bc",
+      "references": [
+        {
+          "line": 318,
+          "source": "function _expectedJoinDetf(uint256 pairAmount_, uint256 opening_) internal pure returns (uint256) {"
+        },
+        {
+          "line": 424,
+          "source": "_skewSyntheticDownAmt(d, 80 ether);"
+        },
+        {
+          "line": 427,
+          "source": "function _skewSyntheticDownAmt(address d, uint256 detfAmt) internal {"
+        },
+        {
+          "line": 436,
+          "source": "function _ensureFreeDetf(address d, uint256 amt) internal {"
+        },
+        {
+          "line": 529,
+          "source": "_skewSyntheticDownAmt(d, 400 ether);"
+        },
+        {
+          "line": 533,
+          "source": "_ensureFreeDetf(d, LIVE_MINT_AMT);"
+        },
+        {
+          "line": 625,
+          "source": "_skewSyntheticDownAmt(d, 400 ether);"
+        },
+        {
+          "line": 632,
+          "source": "_ensureFreeDetf(d, LIVE_MINT_AMT);"
+        },
+        {
+          "line": 699,
+          "source": "uint256 g_ = _expectedJoinDetf(FIRST_BOND_AMT, DEFAULT_CREATION_PAIR_PER_DETF);"
+        },
+        {
+          "line": 709,
+          "source": "uint256 gOpening_ = _expectedJoinDetf(FIRST_BOND_AMT, LAUNCH_RICH_START);"
+        },
+        {
+          "line": 710,
+          "source": "uint256 gCreation_ = _expectedJoinDetf(FIRST_BOND_AMT, DEFAULT_CREATION_PAIR_PER_DETF);"
+        }
+      ]
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol",
+      "sha256": "8406cdb873721d17ae071cc4dc7e7e77404c5a1a52854146ca6e4e35da909c06",
+      "references": [
+        {
+          "line": 378,
+          "source": "function _expectedJoinDetf(uint256 pairAmount_, uint256 opening_) internal view returns (uint256) {"
+        },
+        {
+          "line": 500,
+          "source": "_skewSyntheticDownAmt(d, 80 ether);"
+        },
+        {
+          "line": 503,
+          "source": "function _skewSyntheticDownAmt(address d, uint256 detfAmt) internal {"
+        },
+        {
+          "line": 512,
+          "source": "function _ensureFreeDetf(address d, uint256 amt) internal {"
+        },
+        {
+          "line": 614,
+          "source": "_skewSyntheticDownAmt(d, 400 ether);"
+        },
+        {
+          "line": 618,
+          "source": "_ensureFreeDetf(d, 10 ether);"
+        },
+        {
+          "line": 716,
+          "source": "_skewSyntheticDownAmt(d, 400 ether);"
+        },
+        {
+          "line": 723,
+          "source": "_ensureFreeDetf(d, 10 ether);"
+        },
+        {
+          "line": 790,
+          "source": "uint256 g_ = _expectedJoinDetf(_firstBondAmt(), DEFAULT_CREATION_PAIR_PER_DETF);"
+        },
+        {
+          "line": 800,
+          "source": "uint256 gOpening_ = _expectedJoinDetf(_firstBondAmt(), LAUNCH_RICH_START);"
+        },
+        {
+          "line": 801,
+          "source": "uint256 gCreation_ = _expectedJoinDetf(_firstBondAmt(), DEFAULT_CREATION_PAIR_PER_DETF);"
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_Stage11Helpers.sol",
+      "sha256": "2accaf339567dbf934c6aee3c0bc85d8b13ec8413cd8826dee5924364777f908",
+      "references": [
+        {
+          "line": 578,
+          "source": "_skewSyntheticDownAmt(d, 80 ether);"
+        },
+        {
+          "line": 581,
+          "source": "function _skewSyntheticDownAmt(address d, uint256 detfAmt) internal {"
+        },
+        {
+          "line": 590,
+          "source": "function _ensureFreeDetf(address d, uint256 amt) internal {"
+        },
+        {
+          "line": 679,
+          "source": "function _expectedJoinDetf(uint256 pairAmount_, uint256 opening_) internal pure returns (uint256) {"
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_Policy.t.sol",
+      "sha256": "d5cc76e826e50b2474c7d2d0bee95dc3f6f0c3737abe9873830a6f34511a5d15",
+      "references": [
+        {
+          "line": 82,
+          "source": "_skewSyntheticDownAmt(d, 400 ether);"
+        },
+        {
+          "line": 85,
+          "source": "_ensureFreeDetf(d, LIVE_MINT_AMT);"
+        },
+        {
+          "line": 162,
+          "source": "_skewSyntheticDownAmt(d, 400 ether);"
+        },
+        {
+          "line": 168,
+          "source": "_ensureFreeDetf(d, LIVE_MINT_AMT);"
+        },
+        {
+          "line": 254,
+          "source": "uint256 g_ = _expectedJoinDetf(FIRST_BOND_AMT, DEFAULT_CREATION_PAIR_PER_DETF);"
+        },
+        {
+          "line": 267,
+          "source": "uint256 gOpening_ = _expectedJoinDetf(FIRST_BOND_AMT, LAUNCH_RICH_START);"
+        },
+        {
+          "line": 268,
+          "source": "uint256 gCreation_ = _expectedJoinDetf(FIRST_BOND_AMT, DEFAULT_CREATION_PAIR_PER_DETF);"
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Stage11Helpers_Decimals.sol",
+      "sha256": "46beff73b8ffa97a30cf92e4ff4d0ac33f36ba57d589cb5744f839bac69bfa40",
+      "references": [
+        {
+          "line": 578,
+          "source": "_skewSyntheticDownAmt(d, 80 ether);"
+        },
+        {
+          "line": 581,
+          "source": "function _skewSyntheticDownAmt(address d, uint256 detfAmt) internal {"
+        },
+        {
+          "line": 590,
+          "source": "function _ensureFreeDetf(address d, uint256 amt) internal {"
+        },
+        {
+          "line": 679,
+          "source": "function _expectedJoinDetf(uint256 pairAmount_, uint256 opening_) internal pure returns (uint256) {"
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Policy_Decimals.sol",
+      "sha256": "a24c475dde2dbbefa1597681b313d54c7c34c38e464672008a09dc6caa26f1d8",
+      "references": [
+        {
+          "line": 82,
+          "source": "_skewSyntheticDownAmt(d, 400 ether);"
+        },
+        {
+          "line": 85,
+          "source": "_ensureFreeDetf(d, LIVE_MINT_AMT);"
+        },
+        {
+          "line": 162,
+          "source": "_skewSyntheticDownAmt(d, 400 ether);"
+        },
+        {
+          "line": 168,
+          "source": "_ensureFreeDetf(d, LIVE_MINT_AMT);"
+        },
+        {
+          "line": 254,
+          "source": "uint256 g_ = _expectedJoinDetf(FIRST_BOND_AMT, DEFAULT_CREATION_PAIR_PER_DETF);"
+        },
+        {
+          "line": 267,
+          "source": "uint256 gOpening_ = _expectedJoinDetf(FIRST_BOND_AMT, LAUNCH_RICH_START);"
+        },
+        {
+          "line": 268,
+          "source": "uint256 gCreation_ = _expectedJoinDetf(FIRST_BOND_AMT, DEFAULT_CREATION_PAIR_PER_DETF);"
+        }
+      ]
+    }
+  ]
+}

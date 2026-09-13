@@ -1,0 +1,17 @@
+{
+  "checked_at_utc": "2026-09-11T07:06:59.370325+00:00",
+  "status": "PASS_STRICT_NODE_PREFLIGHT_NO_DEPLOYMENT",
+  "rpc": "http://127.0.0.1:18665",
+  "chain_id": 4663,
+  "head": 56118361,
+  "block_hash": "0x108ba210e727f1fa6ecea533508dd0266759a0a6a18be55de934552a74f20175",
+  "hardfork": "Prague",
+  "code_size_limit": 24576,
+  "code_size_evidence": "Explicit --code-size-limit 24576 in exclusively recorded maintained node command; actual EIP-170 deployment acceptance remains pending.",
+  "public_transactions": 0,
+  "local_release_transactions": 0,
+  "note": "Fresh isolated candidate rehearsal; older 18663 node and receipts preserved. The pinned upstream block retains its upstream gas limit; anvil_nodeInfo verifies the 32M limit for newly mined local blocks, which receipts must confirm.",
+  "pinned_upstream_block_gas_limit": 1125899906842624,
+  "configured_local_block_gas_limit": 32000000,
+  "block_gas_limit": 32000000
+}

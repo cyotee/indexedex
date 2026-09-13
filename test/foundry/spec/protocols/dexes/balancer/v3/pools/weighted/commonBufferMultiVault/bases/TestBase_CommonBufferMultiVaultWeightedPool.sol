@@ -17,9 +17,7 @@ import {
 
 import {ICommonBufferMultiVaultWeightedPool} from
     "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/ICommonBufferMultiVaultWeightedPool.sol";
-import {
-    ICommonBufferMultiVaultWeightedPoolPkg
-} from "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolStandardVaultPkg.sol";
+import {ICommonBufferMultiVaultWeightedPoolPkg} from "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/ICommonBufferMultiVaultWeightedPoolPkg.sol";
 import {
     CommonBufferMultiVaultWeightedPool_FactoryService
 } from "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPool_FactoryService.sol";

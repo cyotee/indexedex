@@ -1,0 +1,8 @@
+{
+  "status": "APPLIED_VALIDATION_PENDING",
+  "recorded_at_utc": "2026-09-08T04:33:23.359390+00:00",
+  "path": "contracts/vaults/standard/erc4626/ERC4626StandardExchangeQuoteTarget.sol",
+  "before_sha256": "39805ba7626b44450e1e7c5d202575623efd02c17c01f7cfb4c3eef42817197f",
+  "after_sha256": "f896e6062268363a402f2ff9cd3e91795d782aa5f4f8bd4c86db54353ca34492",
+  "scope": "Optional exact virtual-balance projection for canonical ERC4626 providers; preserve native provider transition implementations when available. Execution acceptance is unchanged. Validate real Crane vault and MetaMorpho provider with accrued fees; arbitrary noncanonical models still require their own exact transition capability."
+}

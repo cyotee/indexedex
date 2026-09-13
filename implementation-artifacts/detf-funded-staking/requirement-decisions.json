@@ -1,0 +1,85 @@
+{
+  "source": "Owner clarification in active implementation conversation",
+  "accepted": {
+    "D56": "Historical Composed decision; further functional work excluded by D60",
+    "D57": "V3/V4/Slipstream maximum usable tick range for ordinary launches and converted imports; unfinished Slipstream obligations subsequently deferred by D66",
+    "D58": "V2 proportional/constant-product accounting with exact CL deployed amounts, sleeve balances and earned fees counted once",
+    "D59": "Both tokens required for activation; later single-token deposits and locked-pool sleeve operation retained",
+    "D60": "Balancer-hosted DETFs excluded; compilation maintenance only; retire Balancer LP-payment question",
+    "D61": "Immutable creator-selected ownerOnlyLiquidity in DETF/UI/hook; restrict additions and removals when true; DETF remains owner; swaps public",
+    "D62": "Own V4 reserve LP payment: retain whole LP; value only distinct non-DETF entitlements, including buffered assets once",
+    "D63": "Settle expansion before LP snapshot/receipt; bonus once; funded bond; G=0; seigniorage only on new issuance",
+    "D64": "Only actual protocol-owned LP counts for redemptions, synthetic price and expansion in either permission mode",
+    "D65": "Owner approved restricted LP redemption through current feeTo Fee Collector; live oracle lookup supports rotation; additions remain DETF-only; LP ownership/approval enforced.",
+    "D66": "Defer all unfinished Slipstream work from this release by owner decision. Robinhood targets Uniswap V4. Preserve completed Slipstream changes, existing functionality, tests and validation evidence. Permit only compilation maintenance or compatibility edits required by shared V4 changes; no pending Slipstream functional, full-range/import conversion, accounting, native SY, deployment/UI, test, fork or integration completion gate remains. Shared V4 work and other approved scope continue; no unresolved release requirement is created."
+  },
+  "implementation_status": "In progress in main. Balancer DETF functional work stopped (D60); unfinished Slipstream explicitly owner-deferred (D66), with no unresolved release requirement. Approved V4 and other in-scope SE work continue.",
+  "open_product_questions": [],
+  "deferred_release_requirements": {
+    "Slipstream": {
+      "decision": "D66",
+      "status": "OWNER_DEFERRED_NOT_BLOCKING",
+      "open_question": false,
+      "preserve_completed": true
+    }
+  },
+  "latest_validation": {
+    "record": "hermetic-remediation-v4-policy-public-market-split.json",
+    "passed": 438,
+    "failed": 0,
+    "expected_methods": 438,
+    "incomplete_suites": 0,
+    "build_seconds": 1185.534,
+    "test_seconds": 220.246
+  },
+  "retained_broad_green_checkpoint": {
+    "archive": "v4-bookkeeping-policy-376-green-*",
+    "build_seconds": 373.279,
+    "test_seconds": 83.384,
+    "passed": 376,
+    "failed": 0,
+    "suites": 50,
+    "coverage": "Retained 343 V4/SY/collector cases plus 23 migrated adversarial tests and ten funded CP policy tests. Includes observed reserve-bookkeeping enforcement and explicit/implicit uncapped epoch settlement."
+  },
+  "latest_green_checkpoint": {
+    "archive": "stata-composed-quote-proxy-green-*",
+    "passed": 8,
+    "failed": 0,
+    "suites": 1,
+    "build_seconds": 144.243,
+    "test_seconds": 12.784,
+    "coverage": "Real Stata/SE proxy native SY, exact-output and complete projected transition/external deposit state. Subsequent occupied-namespace deployment regression is in current full build."
+  },
+  "cleanup_approval": {
+    "status": "OWNER_APPROVED_APPLIED_SELECTED_VALIDATION_PASSED",
+    "record": "v4-close-cleanup-owner-approval.json",
+    "additional_unused_common_ledger": {
+      "record": "obsolete-common-ledger-cleanup-applied.json",
+      "removed_files": 6,
+      "removed_storage_members": 17,
+      "dedicated_runtime_anchors_passed": 102
+    }
+  },
+  "active_validation": {
+    "session_id": 45846,
+    "scope": "Sequential remaining Balancer SE, V4 provider/gold decimal lifecycle and retained V3 fork batches; source frozen until the whole shell exits."
+  },
+  "engineering_implementation_notes": {
+    "quote_size": "Existing UniswapV4SeBufferHookLegLib shares view-only composed quote operations through linked library calls. V2 projected query selectors move to a dedicated UniswapV2StandardExchangeQueryFacet with explicit package initialization/cuts/factory wiring. No economic formula, deployment size limit or product route is relaxed.",
+    "evidence": "current-external-deposit-quote-leaf-sizes.json",
+    "validation": "Current integrated projection checks pass except four corrected Orbital custody assertions; all narrow sizes pass. Current full build includes final cleanup and Stata packaging follow-up."
+  },
+  "historical_preparations": "historical-pending-record-reconciliation.json links 30 stale pending preparations to their recorded applications; current queue and acceptance remain authoritative.",
+  "updated_at_utc": "2026-09-09T09:53:45.086322+00:00",
+  "active_full_validation": {
+    "status": "RUNNING",
+    "pty": 79172,
+    "record": "current-repository-funded-final-sequence.json",
+    "source_and_config_sha256": "8b95fa9d3b840eee0885c252c2c8a20e62a596a5ea9be110235c634e0195a295",
+    "recompiled_files": 1843,
+    "scope": "Complete production/default tests plus maintained scripts; unfiltered default runtime; exact attribution. Includes all Balancer SE and V4 provider cases.",
+    "preceding_evidence_archive": "before-current-repository-funded-final",
+    "selected_retry": "Two narrowed Balancer builds passed but runtime artifact lookup failed during setup. No functional acceptance credited; use normal production roots.",
+    "owner_approval_pending": false
+  }
+}

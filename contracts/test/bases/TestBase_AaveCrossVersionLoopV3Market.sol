@@ -32,7 +32,7 @@ import {TestBase_AaveCrossVersionLoopV4Market} from
  *         orchestration is already `new`-based (portable). Reserve listing of our tokens is added
  *         in a follow-up; this base proves the V3 market stands up.
  */
-contract TestBase_AaveCrossVersionLoopV3Market is TestBase_AaveCrossVersionLoopV4Market, DefaultMarketInput {
+abstract contract TestBase_AaveCrossVersionLoopV3Market is TestBase_AaveCrossVersionLoopV4Market, DefaultMarketInput {
     IPool internal v36Pool;
     address internal v36AddressesProvider;
     address internal v36PoolConfigurator;

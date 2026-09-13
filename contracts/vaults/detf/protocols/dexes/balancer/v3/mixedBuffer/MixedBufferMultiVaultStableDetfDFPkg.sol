@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IMixedBufferMultiVaultStableDetfDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfDFPkg.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC20Permit} from "@crane/contracts/interfaces/IERC20Permit.sol";
@@ -28,7 +30,11 @@ import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeplo
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
-import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
+import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
+import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IDETFSYDFPkg} from "contracts/vaults/detf/common/sy/IDETFSYDFPkg.sol";
+import {DETFSYDeploymentLib} from "contracts/vaults/detf/common/sy/DETFSYDeploymentLib.sol";
 import {DETFChildTokenMetadata} from "contracts/vaults/detf/common/DETFChildTokenMetadata.sol";
 import {VaultFeeType} from "contracts/interfaces/VaultFeeTypes.sol";
 import {VaultTypeUtils} from "contracts/registries/vault/VaultTypeUtils.sol";
@@ -41,86 +47,22 @@ import {
     BalancerV3StandardExchangeRouterAwareRepo
 } from "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterAwareRepo.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/common/factory/nft/IDetfSelfNftInventoryDFPkg.sol";
-import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
-import {
-    IMixedBufferMultiVaultStablePoolPkg
-} from "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolStandardVaultPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol";
+import {IMixedBufferMultiVaultStablePoolPkg} from "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/IMixedBufferMultiVaultStablePoolPkg.sol";
 import {
     IMixedBufferMultiVaultStablePool
 } from "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/IMixedBufferMultiVaultStablePool.sol";
 import {
     MixedBufferMultiVaultStableDetfRepo
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfRepo.sol";
+import {IMixedBufferMultiVaultStableDetfBonding} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfBonding.sol";
+import {IMixedBufferMultiVaultStableDetfInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfInfo.sol";
 import {
-    IMixedBufferMultiVaultStableDetfBonding
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfBondingTarget.sol";
-import {
-    IMixedBufferMultiVaultStableDetfInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfInfoTarget.sol";
-import {
-    DETFThresholdPolicy,
-    ThresholdMode
+    DETFThresholdPolicy
 } from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 import {DETFNaturalExpansionLib} from "contracts/vaults/detf/common/core/DETFNaturalExpansionLib.sol";
 
-/// @title IMixedBufferMultiVaultStableDetfDFPkg
-interface IMixedBufferMultiVaultStableDetfDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
-    error NotCalledByRegistry(address caller);
 
-    struct PkgInit {
-        IFacet erc20Facet;
-        IFacet erc5267Facet;
-        IFacet erc2612Facet;
-        IFacet multiAssetBasicVaultFacet;
-        IFacet multiAssetStandardVaultFacet;
-        IFacet exchangeInFacet;
-        IFacet bondingFacet;
-        IFacet infoFacet;
-        IVaultFeeOracleQuery feeOracle;
-        IVaultRegistryDeployment vaultRegistryDeployment;
-        IBalancerV3StandardExchangeRouterProxy balancerV3Router;
-        IVault balancerV3Vault;
-        IMixedBufferMultiVaultStablePoolPkg mixedBufferPoolPkg;
-        IDetfSelfNftInventoryDFPkg bondNftVaultPkg;
-        IRebasingClaimTokenDFPkg rebasingClaimTokenPkg;
-        IDiamondPackageCallBackFactory diamondFactory;
-    }
-
-    /// @dev Per-instance args. `standardExchangeVaults.length` = N in [1,3].
-    /// @dev `vaultShareRateProviders.length == N`; address(0) => STANDARD share leg.
-    /// @dev No buffer RP, no DETF RP, no auto-deployed default share RPs.
-    /// @dev Trailing `thresholdMode`: 0 = Policy (default); 1 = Open. Never infer Open from zeros.
-    /// @dev Trailing expansion fields (zeros → `DETFNaturalExpansionLib` defaults). Deploy-time only.
-    ///
-    /// # PkgArgs field order (Stage 08 + D26)
-    /// 1 name, 2 symbol, 3 bufferToken, 4 standardExchangeVaults, 5 vaultShareRateProviders,
-    /// 6 amplificationParameter, 7 mintThreshold, 8 burnThreshold, 9 thresholdMode,
-    /// 10 expansionClosureRatePerSecond, 11 expansionCatchUpMaxSeconds, 12 expansionCatchUpCapBps,
-    /// 13 creator (D26; 0 → feeTo owns id 2, D21)
-    struct PkgArgs {
-        string name;
-        string symbol;
-        IERC20 bufferToken;
-        IStandardExchange[] standardExchangeVaults;
-        IRateProvider[] vaultShareRateProviders;
-        uint256 amplificationParameter;
-        uint256 mintThreshold; // 0 → 1.05e18
-        uint256 burnThreshold; // 0 → 0.95e18
-        ThresholdMode thresholdMode; // trailing; 0 = Policy
-        uint256 expansionClosureRatePerSecond; // 0 → default
-        uint256 expansionCatchUpMaxSeconds; // 0 → default
-        uint256 expansionCatchUpCapBps; // 0 → default
-        address creator; // D26; 0 → feeTo owns id 2 (D21)
-        string claimName;
-        string claimSymbol;
-        string bondName;
-        string bondSymbol;
-        string reserveName;
-        string reserveSymbol;
-    }
-
-    function deployVault(PkgArgs memory args) external returns (address vault);
-}
 
 /// @title MixedBufferMultiVaultStableDetfDFPkg
 /// @notice Immutable/unowned DETF package: DETF unpaired + bufferToken + N SE vault shares in MixedBuffer stable reserve.
@@ -142,10 +84,7 @@ contract MixedBufferMultiVaultStableDetfDFPkg is IMixedBufferMultiVaultStableDet
         uint256 amplificationParameter;
         uint256 mintThreshold;
         uint256 burnThreshold;
-        ThresholdMode thresholdMode;
         uint256 expansionClosureRatePerSecond;
-        uint256 expansionCatchUpMaxSeconds;
-        uint256 expansionCatchUpCapBps;
         address creator;
         string claimName;
         string claimSymbol;
@@ -170,6 +109,7 @@ contract MixedBufferMultiVaultStableDetfDFPkg is IMixedBufferMultiVaultStableDet
     IMixedBufferMultiVaultStablePoolPkg immutable MIXED_BUFFER_POOL_PKG;
     IDetfSelfNftInventoryDFPkg immutable BOND_NFT_VAULT_PKG;
     IRebasingClaimTokenDFPkg immutable REBASING_CLAIM_TOKEN_PKG;
+    IDETFSYDFPkg immutable SY_PKG;
     IDiamondPackageCallBackFactory immutable DIAMOND_FACTORY;
 
     constructor(PkgInit memory pkgInit) {
@@ -188,6 +128,7 @@ contract MixedBufferMultiVaultStableDetfDFPkg is IMixedBufferMultiVaultStableDet
         MIXED_BUFFER_POOL_PKG = pkgInit.mixedBufferPoolPkg;
         BOND_NFT_VAULT_PKG = pkgInit.bondNftVaultPkg;
         REBASING_CLAIM_TOKEN_PKG = pkgInit.rebasingClaimTokenPkg;
+        SY_PKG = pkgInit.syPkg;
         DIAMOND_FACTORY = pkgInit.diamondFactory;
     }
 
@@ -237,7 +178,7 @@ contract MixedBufferMultiVaultStableDetfDFPkg is IMixedBufferMultiVaultStableDet
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces_) {
-        interfaces_ = new bytes4[](9);
+        interfaces_ = new bytes4[](10);
         interfaces_[0] = type(IERC20).interfaceId;
         interfaces_[1] = type(IERC20Metadata).interfaceId;
         interfaces_[2] = type(IERC20Permit).interfaceId;
@@ -247,6 +188,7 @@ contract MixedBufferMultiVaultStableDetfDFPkg is IMixedBufferMultiVaultStableDet
         interfaces_[6] = type(IStandardExchangeIn).interfaceId;
         interfaces_[7] = type(IMixedBufferMultiVaultStableDetfBonding).interfaceId;
         interfaces_[8] = type(IMixedBufferMultiVaultStableDetfInfo).interfaceId;
+        interfaces_[9] = type(IStandardExchangeOut).interfaceId;
     }
 
     function packageMetadata()
@@ -293,7 +235,9 @@ contract MixedBufferMultiVaultStableDetfDFPkg is IMixedBufferMultiVaultStableDet
         if (msg.sender != address(VAULT_REGISTRY_DEPLOYMENT)) {
             revert NotCalledByRegistry(msg.sender);
         }
-        _validateArgs(abi.decode(pkgArgs, (PkgArgs)));
+        PkgArgs memory args = abi.decode(pkgArgs, (PkgArgs));
+        require(keccak256(pkgArgs) == keccak256(abi.encode(args)), "noncanonical DETF args");
+        _validateArgs(args);
         return pkgArgs;
     }
 
@@ -303,11 +247,12 @@ contract MixedBufferMultiVaultStableDetfDFPkg is IMixedBufferMultiVaultStableDet
 
     function initAccount(bytes memory initArgs) public {
         PkgArgs memory args = abi.decode(initArgs, (PkgArgs));
+        require(keccak256(initArgs) == keccak256(abi.encode(args)), "noncanonical DETF args");
         _validateArgs(args);
 
         uint256 n_ = args.standardExchangeVaults.length;
 
-        ERC20Repo._initialize(args.name, args.symbol, 18);
+        ERC20Repo._initialize(args.name, args.symbol, 9);
         EIP712Repo._initialize(args.name, "1");
         BalancerV3StandardExchangeRouterAwareRepo._initialize(BALANCER_V3_ROUTER);
         BalancerV3VaultAwareRepo._initialize(BALANCER_V3_VAULT);
@@ -322,14 +267,9 @@ contract MixedBufferMultiVaultStableDetfDFPkg is IMixedBufferMultiVaultStableDet
             FEE_ORACLE, vaultFeeTypeIds(), vaultTypes(), abi.encode(contents_)._hash()
         );
 
-        DETFThresholdPolicy.requireValidThresholdMode(args.thresholdMode);
         (uint256 mint_, uint256 burn_) =
             DETFThresholdPolicy.resolveAndRequireValidThresholds(args.mintThreshold, args.burnThreshold);
-        (uint256 expRate_, uint256 expCatchUpSec_, uint256 expCapBps_) = DETFNaturalExpansionLib.resolveExpansionParams(
-            args.expansionClosureRatePerSecond,
-            args.expansionCatchUpMaxSeconds,
-            args.expansionCatchUpCapBps
-        );
+        uint256 expRate_ = DETFNaturalExpansionLib.resolveClosureRate(args.expansionClosureRatePerSecond);
 
         DeployConfig storage cfg = _deployConfig();
         cfg.vaultCount = uint8(n_);
@@ -337,10 +277,7 @@ contract MixedBufferMultiVaultStableDetfDFPkg is IMixedBufferMultiVaultStableDet
         cfg.amplificationParameter = args.amplificationParameter;
         cfg.mintThreshold = mint_;
         cfg.burnThreshold = burn_;
-        cfg.thresholdMode = args.thresholdMode;
         cfg.expansionClosureRatePerSecond = expRate_;
-        cfg.expansionCatchUpMaxSeconds = expCatchUpSec_;
-        cfg.expansionCatchUpCapBps = expCapBps_;
         cfg.creator = args.creator;
         cfg.claimName = args.claimName;
         cfg.claimSymbol = args.claimSymbol;
@@ -370,10 +307,14 @@ contract MixedBufferMultiVaultStableDetfDFPkg is IMixedBufferMultiVaultStableDet
         (address reservePool_, uint256 detfIndex_, uint256 bufferIndex_, uint256[] memory shareIndexes_) =
             _createMixedBufferReservePool(cfg);
         IDETFNFTVault bondVault_ = _deployBondNftVault(reservePool_);
-        uint256 detfNftId_ = _tryInitDetfNft(bondVault_);
-        IRebasingClaimToken claimToken_ = _deployRebasingClaimToken(cfg, bondVault_, detfNftId_);
-        _initBasicVaultTokens(cfg, reservePool_);
-        _initFamilyRepo(cfg, reservePool_, detfIndex_, bufferIndex_, shareIndexes_, bondVault_, detfNftId_, claimToken_);
+        IDetfBondNFT(address(bondVault_)).initializeReservedBondNfts(address(FEE_ORACLE.feeTo()), cfg.creator);
+        IStakedDETF claimToken_ = _deployRebasingClaimToken(cfg, bondVault_);
+        _initBasicVaultTokens(cfg, reservePool_, address(claimToken_));
+        _initFamilyRepo(cfg, reservePool_, detfIndex_, bufferIndex_, shareIndexes_, bondVault_, claimToken_);
+        address[] memory routes_ = new address[](uint256(cfg.vaultCount) + 1);
+        routes_[0] = address(cfg.bufferToken);
+        for (uint256 i; i < cfg.vaultCount; ++i) routes_[i + 1] = address(cfg.vaultShares[i]);
+        DETFSYDeploymentLib._deploy(SY_PKG, claimToken_, routes_, routes_);
     }
 
     function _validateArgs(PkgArgs memory args) internal pure {
@@ -440,57 +381,37 @@ contract MixedBufferMultiVaultStableDetfDFPkg is IMixedBufferMultiVaultStableDet
                 DETFChildTokenMetadata.resolveBondName(_deployConfig().bondName, ERC20Repo._name()),
                 DETFChildTokenMetadata.resolveBondSymbol(_deployConfig().bondSymbol, ERC20Repo._symbol()),
                 IDetf(detf_),
-                IERC20(reservePool_),
-                IERC20(detf_),
-                0,
-                detf_
+                IERC20(reservePool_)
             )
         );
     }
 
-    function _tryInitDetfNft(IDETFNFTVault bondVault_) private returns (uint256 detfNftId_) {
-        address feeTo_ = address(FEE_ORACLE.feeTo());
-        address creator_ = _deployConfig().creator;
-        try bondVault_.initializeReservedBondNfts(feeTo_, creator_) returns (uint256 id_) {
-            detfNftId_ = id_;
-        } catch {
-            try bondVault_.initializeDETFNFT() returns (uint256 id2_) {
-                detfNftId_ = id2_;
-            } catch {
-                detfNftId_ = 0;
-            }
-        }
-    }
-
     function _deployRebasingClaimToken(
         DeployConfig storage cfg,
-        IDETFNFTVault bondVault_,
-        uint256 detfNftId_
-    ) private returns (IRebasingClaimToken claimToken_) {
-        // Claim rateAsset / payout boundary = bufferToken (family rateAsset).
+        IDETFNFTVault bondVault_
+    ) private returns (IStakedDETF claimToken_) {
         address detf_ = address(this);
-        claimToken_ = IRebasingClaimToken(
+        claimToken_ = IStakedDETF(
             REBASING_CLAIM_TOKEN_PKG.deployToken(
                 IDetf(detf_),
                 bondVault_,
-                cfg.bufferToken,
-                detfNftId_,
-                detf_,
+                FEE_ORACLE,
                 DETFChildTokenMetadata.resolveClaimName(cfg.claimName, ERC20Repo._name()),
                 DETFChildTokenMetadata.resolveClaimSymbol(cfg.claimSymbol, ERC20Repo._symbol())
             )
         );
     }
 
-    function _initBasicVaultTokens(DeployConfig storage cfg, address reservePool_) private {
-        // DETF + buffer + N vault shares + reserve BPT
-        address[] memory vaultTokens_ = new address[](uint256(cfg.vaultCount) + 3);
+    function _initBasicVaultTokens(DeployConfig storage cfg, address reservePool_, address staking_) private {
+        // DETF + buffer + N vault shares + reserve BPT + funded staking
+        address[] memory vaultTokens_ = new address[](uint256(cfg.vaultCount) + 4);
         vaultTokens_[0] = address(this);
         vaultTokens_[1] = address(cfg.bufferToken);
         for (uint256 i; i < cfg.vaultCount; ++i) {
             vaultTokens_[i + 2] = address(cfg.vaultShares[i]);
         }
         vaultTokens_[cfg.vaultCount + 2] = reservePool_;
+        vaultTokens_[cfg.vaultCount + 3] = staking_;
         MultiAssetBasicVaultRepo._initialize(vaultTokens_);
     }
 
@@ -501,8 +422,7 @@ contract MixedBufferMultiVaultStableDetfDFPkg is IMixedBufferMultiVaultStableDet
         uint256 bufferIndex_,
         uint256[] memory shareIndexes_,
         IDETFNFTVault bondVault_,
-        uint256 detfNftId_,
-        IRebasingClaimToken claimToken_
+        IStakedDETF claimToken_
     ) private {
         MixedBufferMultiVaultStableDetfRepo.InitParams memory p;
         p.vaultCount = cfg.vaultCount;
@@ -514,14 +434,10 @@ contract MixedBufferMultiVaultStableDetfDFPkg is IMixedBufferMultiVaultStableDet
         p.amplificationParameter = cfg.amplificationParameter;
         p.mintThreshold = cfg.mintThreshold;
         p.burnThreshold = cfg.burnThreshold;
-        p.thresholdMode = cfg.thresholdMode;
         p.feeOracle = FEE_ORACLE;
         p.bondNftVault = bondVault_;
-        p.detfNftId = detfNftId_;
         p.rebasingClaimToken = claimToken_;
         p.expansionClosureRatePerSecond = cfg.expansionClosureRatePerSecond;
-        p.expansionCatchUpMaxSeconds = cfg.expansionCatchUpMaxSeconds;
-        p.expansionCatchUpCapBps = cfg.expansionCatchUpCapBps;
 
         uint256 n_ = cfg.vaultCount;
         p.vaults = new IStandardExchange[](n_);
@@ -534,8 +450,6 @@ contract MixedBufferMultiVaultStableDetfDFPkg is IMixedBufferMultiVaultStableDet
         }
         MixedBufferMultiVaultStableDetfRepo._initialize(p);
         // Emit once after storage write with resolved thresholds (PRD §16.4).
-        emit IMixedBufferMultiVaultStableDetfInfo.ThresholdModeSet(
-            cfg.thresholdMode, cfg.mintThreshold, cfg.burnThreshold
-        );
+        emit IMixedBufferMultiVaultStableDetfInfo.ThresholdsSet(cfg.mintThreshold, cfg.burnThreshold);
     }
 }

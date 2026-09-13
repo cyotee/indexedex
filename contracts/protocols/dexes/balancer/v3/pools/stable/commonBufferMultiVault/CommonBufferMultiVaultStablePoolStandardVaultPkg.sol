@@ -1,6 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 pragma solidity ^0.8.0;
 
+import {ICommonBufferMultiVaultStablePoolPkg} from "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/ICommonBufferMultiVaultStablePoolPkg.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+
+
 import {IBasePool} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IBasePool.sol";
 import {IPoolInfo} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IPoolInfo.sol";
 import {IPoolLiquidity} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IPoolLiquidity.sol";
@@ -68,46 +74,9 @@ import {
 import {
     CommonBufferMultiVaultStablePoolRepo
 } from "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolRepo.sol";
-import {
-    IStandardExchangeRateProviderDFPkg
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
+import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
 
-interface ICommonBufferMultiVaultStablePoolPkg is IDiamondFactoryPackage, IStandardVaultPkg {
-    /**
-     * @dev T = 1 + vaultCount, require 1 <= vaultCount <= 3 (2 <= T <= 4).
-     * @dev vaultShareRateProviders: address(0) => STANDARD; non-zero => WITH_RATE.
-     *      Package NEVER auto-deploys default SE rate providers.
-     * @dev amplificationParameter: raw amp (1–50000), fixed at deploy (no post-deploy updates).
-     */
-    struct PkgInit {
-        IFacet basicVaultFacet;
-        IFacet standardVaultFacet;
-        IFacet balancerV3VaultAwareFacet;
-        IFacet betterBalancerV3PoolTokenFacet;
-        IFacet defaultPoolInfoFacet;
-        IFacet standardSwapFeePercentageBoundsFacet;
-        IFacet unbalancedLiquidityInvariantRatioBoundsFacet;
-        IFacet balancerV3AuthenticationFacet;
-        IFacet bufferPoolFacet;
-        IFacet poolLiquidityFacet;
-        IFacet hookFacet;
-        IVaultRegistryDeployment vaultRegistry;
-        IVaultFeeOracleQuery vaultFeeOracle;
-        IVault balancerV3Vault;
-        IDiamondPackageCallBackFactory diamondFactory;
-        IStandardExchangeRateProviderDFPkg rateProviderPkg; // optional; never auto-used on zero args
-    }
 
-    struct PkgArgs {
-        IERC20 bufferToken;
-        uint8 vaultCount;
-        IStandardExchange[] standardExchangeVaults;
-        IRateProvider[] vaultShareRateProviders;
-        uint256 amplificationParameter;
-    }
-
-    function deployPool(PkgArgs calldata args) external returns (address pool);
-}
 
 contract CommonBufferMultiVaultStablePoolStandardVaultPkg is
     BalancerV3BasePoolFactory,
@@ -201,7 +170,7 @@ contract CommonBufferMultiVaultStablePoolStandardVaultPkg is
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](15);
+        interfaces = new bytes4[](18);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20Metadata).interfaceId ^ type(IERC20).interfaceId;
@@ -217,6 +186,9 @@ contract CommonBufferMultiVaultStablePoolStandardVaultPkg is
         interfaces[12] = type(IBalancerPoolToken).interfaceId;
         interfaces[13] = type(IPoolLiquidity).interfaceId;
         interfaces[14] = type(IHooks).interfaceId;
+            interfaces[15] = type(IStandardExchangeIn).interfaceId;
+        interfaces[16] = type(IStandardExchangeOut).interfaceId;
+        interfaces[17] = type(IStandardizedYield).interfaceId;
     }
 
     function facetAddresses() public view returns (address[] memory facetAddresses_) {
@@ -393,16 +365,37 @@ contract CommonBufferMultiVaultStablePoolStandardVaultPkg is
     function _vaultAcceptsAndProducesBuffer(IStandardExchange vault, IERC20 buffer) internal view returns (bool) {
         IERC20 share = IERC20(address(vault));
         if (_tokenListContainsVault(address(vault), address(buffer))) return true;
-        try vault.previewExchangeIn(buffer, 1e18, share) returns (uint256 minted) {
-            if (minted == 0) return false;
-        } catch {
-            return false;
+        // Probe 1 whole token (10**decimals), not 1e18: 1e18 of a 6-dec token is 1e12
+        // human units and reverts MaxInRatio / TransferFromFailed on typical SE books.
+        if (!_previewBufferIn(vault, buffer, share, _bufferQuoteAmount(buffer))) {
+            if (!_previewBufferIn(vault, buffer, share, 1e18)) return false;
         }
         try vault.previewExchangeOut(share, buffer, 1e15) returns (uint256 sharesIn) {
             return sharesIn > 0;
         } catch {
             return false;
         }
+    }
+
+    function _previewBufferIn(IStandardExchange vault, IERC20 buffer, IERC20 share, uint256 amt)
+        private
+        view
+        returns (bool)
+    {
+        try vault.previewExchangeIn(buffer, amt, share) returns (uint256 minted) {
+            return minted > 0;
+        } catch {
+            return false;
+        }
+    }
+
+    /// @dev 1 whole token in native units. 1e18 of a 6/9-dec buffer is not a valid probe.
+    function _bufferQuoteAmount(IERC20 buffer) internal view returns (uint256 amt) {
+        uint8 d = 18;
+        try IERC20Metadata(address(buffer)).decimals() returns (uint8 got) {
+            if (got > 0 && got <= 36) d = got;
+        } catch {}
+        amt = 10 ** uint256(d);
     }
 
     function _tokenListContainsVault(address vault, address buffer) internal view returns (bool) {

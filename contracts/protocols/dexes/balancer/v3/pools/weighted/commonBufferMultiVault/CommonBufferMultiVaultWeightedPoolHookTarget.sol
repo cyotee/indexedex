@@ -259,7 +259,7 @@ abstract contract CommonBufferMultiVaultWeightedPoolHookTarget is CommonBufferMu
 
         (ICommonBufferMultiVaultWeightedPool.TokenKind kindIn,) = Repo._resolveToken(address(params.tokenIn));
         if (kindIn == ICommonBufferMultiVaultWeightedPool.TokenKind.Buffer) {
-            _reconcileBufferIn(params.amountInScaled18, params.router);
+            _reconcileBufferIn(_bufferToRaw(params.amountInScaled18), params.router);
         }
         return (true, params.amountCalculatedRaw);
     }
@@ -336,12 +336,14 @@ abstract contract CommonBufferMultiVaultWeightedPoolHookTarget is CommonBufferMu
         }
 
         IVault vault = IVault(_balancerV3Vault());
-        uint256 yBufferRaw = _quoteBufferOut(
+        uint256 yBufferScaled18 = _quoteBufferOut(
             params, pool, vault, balIn, balOut, Repo._weight(params.indexIn), Repo._weight(params.indexOut)
         );
-        if (yBufferRaw > x) {
-            revert ICommonBufferMultiVaultWeightedPool.VirtualBufferUnderflow(x, yBufferRaw);
+        if (yBufferScaled18 > x) {
+            revert ICommonBufferMultiVaultWeightedPool.VirtualBufferUnderflow(x, yBufferScaled18);
         }
+        uint256 yBufferRaw = _bufferToRaw(yBufferScaled18);
+        if (yBufferRaw == 0) revert ICommonBufferMultiVaultWeightedPool.PoolBufferSideExhausted();
 
         uint8[] memory order = _rankRedeem(params.balancesScaled18);
         for (uint256 r; r < order.length; ++r) {
@@ -449,7 +451,8 @@ abstract contract CommonBufferMultiVaultWeightedPoolHookTarget is CommonBufferMu
     /// @dev L21: deposit swap/LP buffer amount; L25 residual cleared at init via onAfterInitialize.
     function _reconcileBufferIn(uint256 xRaw, address seRouter) internal {
         if (xRaw == 0) return;
-        _depositPhysicalBuffer(xRaw, seRouter, true, xRaw);
+        uint256 xScaled18 = _liftToScaled18Rated(xRaw, Repo._bufferIndex());
+        _depositPhysicalBuffer(xRaw, seRouter, true, xScaled18);
     }
 
     function _depositPhysicalBuffer(uint256 amount, address seRouter, bool bumpVirtual, uint256 virtualBump)

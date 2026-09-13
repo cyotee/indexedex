@@ -1,0 +1,62 @@
+[
+  {
+    "source": "contracts/vaults/detf/DETF_PRODUCTION_READINESS_REMAINING_IMPLEMENTATION_PLAN.md",
+    "archive": "DETF_PRODUCTION_READINESS_REMAINING_IMPLEMENTATION_PLAN.md",
+    "sha256": "c33e3781850a66310610dff9c01458190ba05d58fc3e575b2662189a536d1ddb"
+  },
+  {
+    "source": "contracts/vaults/detf/DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "archive": "DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "sha256": "5630a164c6c9d857c1997b315aa1d10783123741c3745b8a5ad03779ac1a07a1"
+  },
+  {
+    "source": "contracts/vaults/detf/DETF_FUNDED_STAKING_AND_SY_VALIDATION_REPORT.md",
+    "archive": "DETF_FUNDED_STAKING_AND_SY_VALIDATION_REPORT.md",
+    "sha256": "fa661d9ffd33b4ebf8094ab898fc6e6be70afd185f3ce77398205096a6b922b4"
+  },
+  {
+    "source": "implementation-artifacts/detf-funded-staking/acceptance-progress.json",
+    "archive": "acceptance-progress.json",
+    "sha256": "972381bf411710eeb5d0f1ec452e7c3e6246d4d2157c806a71d370faf3b47924"
+  },
+  {
+    "source": "implementation-artifacts/detf-funded-staking/current-implementation-queue.json",
+    "archive": "current-implementation-queue.json",
+    "sha256": "59e47ccb568b7230002494ba479c5a2493d4ad5615aa85f811e3a4550c2ed71c"
+  },
+  {
+    "source": "implementation-artifacts/detf-funded-staking/execution-status.md",
+    "archive": "execution-status.md",
+    "sha256": "df80a78999be5552cc274e3cb969e5a1eded159a8d03681a3beeabd3a23bc878"
+  },
+  {
+    "source": "implementation-artifacts/detf-funded-staking/current-funded-selector-manifest.json",
+    "archive": "current-funded-selector-manifest.json",
+    "sha256": "cdd4191a57c7b4e098a632fcd98d8b83d9db14bd919c04d9d17dff9d8b697608"
+  },
+  {
+    "source": "implementation-artifacts/detf-funded-staking/production-readiness/SECURITY_REVIEW.md",
+    "archive": "SECURITY_REVIEW.md",
+    "sha256": "29e3fd5068a6eee5fe59917f451ed09681146ebab7432326a385ba80469af1f7"
+  },
+  {
+    "source": "implementation-artifacts/detf-funded-staking/production-readiness/PUBLIC_DEPLOYMENT_RUNBOOK.md",
+    "archive": "PUBLIC_DEPLOYMENT_RUNBOOK.md",
+    "sha256": "60efad959c0d6f1ff0e61dcd3eb6e816af1076647b884d97b5fdf62fc5d256f7"
+  },
+  {
+    "source": "implementation-artifacts/detf-funded-staking/production-readiness/security-findings.json",
+    "archive": "security-findings.json",
+    "sha256": "a32066b21d67aeceda75d13b1f22b5c79b2044376ac4824c2a70fa4de0e86fc8"
+  },
+  {
+    "source": "implementation-artifacts/detf-funded-staking/production-readiness/production-and-launch-fixes.json",
+    "archive": "production-and-launch-fixes.json",
+    "sha256": "820ea5c489d7034d76d94e9f7137d63ff0b04cd0441ad654ef350a938bb20281"
+  },
+  {
+    "source": "implementation-artifacts/detf-funded-staking/production-readiness/workspace-preservation-check.json",
+    "archive": "workspace-preservation-check.json",
+    "sha256": "67fc5b73d839a92c4c539feab5b25783d6f1709456663fb368d37095e5ec1b49"
+  }
+]

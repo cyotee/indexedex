@@ -1,0 +1,151 @@
+{
+  "status": "READ_ONLY_IMPORT_USAGE_REVIEW_NOT_APPLIED",
+  "scope": "Three current V4 DETF sources only; preserve canonical Solidity until active runtime parent exits. Verify no transitive import consumers before removing unused names.",
+  "rows": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol",
+      "sha256": "ffc7d165f33828fbb75431aaa87dc6830988c22334953fc27c58f510c502e8a0",
+      "unused_local_imports": [
+        {
+          "source": "@crane/contracts/interfaces/IDiamondLoupe.sol",
+          "unused_names": [
+            "IDiamondLoupe"
+          ]
+        },
+        {
+          "source": "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol",
+          "unused_names": [
+            "IUniswapV4SeBufferHookClaimExitQuote"
+          ]
+        },
+        {
+          "source": "@crane/contracts/utils/math/BetterMath.sol",
+          "unused_names": [
+            "BetterMath"
+          ]
+        },
+        {
+          "source": "@crane/contracts/interfaces/IStandardExchangeErrors.sol",
+          "unused_names": [
+            "IStandardExchangeErrors"
+          ]
+        },
+        {
+          "source": "contracts/interfaces/IDETFNFTVault.sol",
+          "unused_names": [
+            "IDETFNFTVault"
+          ]
+        },
+        {
+          "source": "contracts/interfaces/IRebasingClaimToken.sol",
+          "unused_names": [
+            "IRebasingClaimTokenSupply"
+          ]
+        },
+        {
+          "source": "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol",
+          "unused_names": [
+            "ThresholdMode"
+          ]
+        },
+        {
+          "source": "contracts/vaults/detf/common/core/DETFProtocolCompoundLib.sol",
+          "unused_names": [
+            "DETFProtocolCompoundLib"
+          ]
+        },
+        {
+          "source": "contracts/vaults/detf/common/core/DETFBondLifecycleLib.sol",
+          "unused_names": [
+            "DETFBondLifecycleLib"
+          ]
+        },
+        {
+          "source": "contracts/vaults/detf/common/core/DETFBondNftIds.sol",
+          "unused_names": [
+            "DETF_CREATOR_BOND_NFT_ID",
+            "DETF_FEE_TO_BOND_NFT_ID"
+          ]
+        },
+        {
+          "source": "contracts/vaults/detf/common/inventory/IDetfSelfNftInventoryPolicy.sol",
+          "unused_names": [
+            "IDetfSelfNftInventoryPolicy"
+          ]
+        },
+        {
+          "source": "contracts/interfaces/IDetfErrors.sol",
+          "unused_names": [
+            "IDetfErrors"
+          ]
+        },
+        {
+          "source": "contracts/interfaces/IDetfBondNFT.sol",
+          "unused_names": [
+            "IDetfBondNFT"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol",
+      "sha256": "2d461a2bb3a761c24166ffe1a3bd6667ba833c8d984e15549fa33b266472118f",
+      "unused_local_imports": [
+        {
+          "source": "@crane/contracts/utils/math/BetterMath.sol",
+          "unused_names": [
+            "BetterMath"
+          ]
+        },
+        {
+          "source": "contracts/interfaces/IRebasingClaimToken.sol",
+          "unused_names": [
+            "IRebasingClaimTokenMintQuote"
+          ]
+        },
+        {
+          "source": "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol",
+          "unused_names": [
+            "IUniswapV4SeBufferHookClaimQuote"
+          ]
+        },
+        {
+          "source": "contracts/vaults/detf/common/core/DETFBondNFTMathLib.sol",
+          "unused_names": [
+            "DETFBondNFTMathLib"
+          ]
+        },
+        {
+          "source": "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol",
+          "unused_names": [
+            "ThresholdMode"
+          ]
+        },
+        {
+          "source": "contracts/vaults/detf/common/core/DETFBondLifecycleLib.sol",
+          "unused_names": [
+            "DETFBondLifecycleLib"
+          ]
+        },
+        {
+          "source": "contracts/vaults/detf/common/inventory/IDetfSelfNftInventoryPolicy.sol",
+          "unused_names": [
+            "IDetfSelfNftInventoryPolicy"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfQueryTarget.sol",
+      "sha256": "f051752cca5f28bb13d363dca795fd888541fbc4620c537ef6647c875d6f64d2",
+      "unused_local_imports": [
+        {
+          "source": "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol",
+          "unused_names": [
+            "ThresholdMode"
+          ]
+        }
+      ]
+    }
+  ]
+}

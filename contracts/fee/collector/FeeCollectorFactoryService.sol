@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 import {VM_ADDRESS} from "@crane/contracts/constants/FoundryConstants.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -8,9 +9,8 @@ import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamo
 import {IFeeCollectorProxy} from "contracts/interfaces/proxies/IFeeCollectorProxy.sol";
 import {Vm as FoundryVM} from "forge-std/Vm.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
-import {FeeCollectorManagerFacet} from "contracts/fee/collector/FeeCollectorManagerFacet.sol";
-import {FeeCollectorSingleTokenPushFacet} from "contracts/fee/collector/FeeCollectorSingleTokenPushFacet.sol";
-import {IFeeCollectorDFPkg, FeeCollectorDFPkg} from "contracts/fee/collector/FeeCollectorDFPkg.sol";
+
+import {IFeeCollectorDFPkg} from "contracts/fee/collector/IFeeCollectorDFPkg.sol";
 
 // tag::FeeCollectorFactoryService[]
 /**
@@ -35,10 +35,11 @@ library FeeCollectorFactoryService {
         internal
         returns (IFacet facet)
     {
+        bytes memory code_ = ArtifactCreationCode.creationCode("FeeCollectorManagerFacet.sol:FeeCollectorManagerFacet");
         facet = factory.deployFacet(
-            type(FeeCollectorManagerFacet).creationCode, abi.encode(type(FeeCollectorManagerFacet).name)._hash()
+            code_, ArtifactCreationCode.releaseSalt(abi.encode("FeeCollectorManagerFacet")._hash(), code_, bytes(""))
         );
-        HEVM.label(address(facet), type(FeeCollectorManagerFacet).name);
+        HEVM.label(address(facet), "FeeCollectorManagerFacet");
     }
 
     // end::deployFeeCollectorManagerFacet(address)[]
@@ -54,10 +55,10 @@ library FeeCollectorFactoryService {
         returns (IFacet facet)
     {
         facet = factory.deployFacet(
-            type(FeeCollectorSingleTokenPushFacet).creationCode,
-            abi.encode(type(FeeCollectorSingleTokenPushFacet).name)._hash()
+            ArtifactCreationCode.creationCode("FeeCollectorSingleTokenPushFacet.sol:FeeCollectorSingleTokenPushFacet"),
+            abi.encode("FeeCollectorSingleTokenPushFacet")._hash()
         );
-        HEVM.label(address(facet), type(FeeCollectorSingleTokenPushFacet).name);
+        HEVM.label(address(facet), "FeeCollectorSingleTokenPushFacet");
     }
 
     // end::deployFeeCollectorSingleTokenPushFacet(address)[]
@@ -86,16 +87,18 @@ library FeeCollectorFactoryService {
             feeCollectorManagerFacet: feeCollectorManagerFacet
         });
 
+        bytes memory code_ = ArtifactCreationCode.creationCode("FeeCollectorDFPkg.sol:FeeCollectorDFPkg");
+        bytes memory args_ = abi.encode(pkgInitArgs);
+
         dfpkg = IFeeCollectorDFPkg(
             address(
                 factory.deployPackageWithArgs(
-                    type(FeeCollectorDFPkg).creationCode,
-                    abi.encode(pkgInitArgs),
-                    abi.encode(type(FeeCollectorDFPkg).name, pkgInitArgs)._hash()
+                    code_, args_,
+                    ArtifactCreationCode.releaseSalt(abi.encode("FeeCollectorDFPkg", pkgInitArgs)._hash(), code_, args_)
                 )
             )
         );
-        HEVM.label(address(dfpkg), type(FeeCollectorDFPkg).name);
+        HEVM.label(address(dfpkg), "FeeCollectorDFPkg");
     }
 
     // end::deployFeeCollectorDFPkg(address_address_address_address_address)[]

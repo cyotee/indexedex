@@ -1,0 +1,1150 @@
+{
+  "status": "RUNTIME_FAILED_REQUIRES_REVIEW",
+  "group": "balancer-se",
+  "provenance": {
+    "recorded_at_utc": "2026-09-09T09:52:36.861563+00:00",
+    "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+    "source_and_config_sha256": "8b95fa9d3b840eee0885c252c2c8a20e62a596a5ea9be110235c634e0195a295",
+    "source_and_config_files": 4812,
+    "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+    "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+    "crane_tracked_contract_and_config_diff_sha256": "284fd75764cb255d1e527eef38fd51e65fca73e8ebb11b7465965e8dfeb2122c",
+    "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+    "machine": "macOS-26.6.2-x86_64-i386-64bit",
+    "architecture": "x86_64",
+    "logical_cpus": 16,
+    "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+  },
+  "started_at_utc": "2026-09-09T09:52:36.983704+00:00",
+  "test_sources": [
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/adversarial/Adversarial_BalancerV3SinglePoolSE.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget_LPAdd.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget_LPProportional.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget_PostSwap.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget_PreSeat.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget_Registration.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPool.invariant.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPool.spec.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolCommon.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolLiquidityTarget.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolPkg_Smoke.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolRepo.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolTarget.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPool_RateTracking.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/TestBase_Smoke.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/comparative/StandardExchangeBufferPool_Comparative.spec.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_H6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_H9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_P18_R6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_P18_R9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_P6_R18.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_P6_R9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_P9_R18.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_P9_R6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_H6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_H9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_P18_R6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_P18_R9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_P6_R18.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_P6_R9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_P9_R18.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_P9_R6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_H6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_H9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_P18_R6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_P18_R9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_P6_R18.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_P6_R9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_P9_R18.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_P9_R6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/adversarial/Adversarial_BalancerV3SinglePoolSE_H6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/adversarial/Adversarial_BalancerV3SinglePoolSE_H9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/adversarial/Adversarial_BalancerV3SinglePoolSE_P18_R6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/adversarial/Adversarial_BalancerV3SinglePoolSE_P18_R9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/adversarial/Adversarial_BalancerV3SinglePoolSE_P6_R18.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/adversarial/Adversarial_BalancerV3SinglePoolSE_P6_R9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/adversarial/Adversarial_BalancerV3SinglePoolSE_P9_R18.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/adversarial/Adversarial_BalancerV3SinglePoolSE_P9_R6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_H6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_H9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_P18_R6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_P18_R9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_P6_R18.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_P6_R9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_P9_R18.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_P9_R6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_H6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_H9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_P18_R6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_P18_R9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_P6_R18.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_P6_R9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_P9_R18.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_P9_R6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/uniswapV2/StandardExchangeBufferPool_UniswapV2.spec.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePool.spec.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStable_WalkAndExhaust.spec.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/adversarial/Adversarial_CommonBufferMultiVaultStable_P0.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_ALL6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_ALL9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_P18_R6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_P18_R9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_P6_R18.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_P6_R9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_P9_R18.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_P9_R6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/formula/CommonBufferMultiVaultStable_FormulaEquivalence.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePool.invariant.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePool.spec.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStable_MultiProtocol.spec.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStable_RateProviders.spec.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStable_WalkAndExhaust.spec.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/adversarial/Adversarial_MixedBufferMultiVaultStable_P0.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_ALL6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_ALL9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_P18_R6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_P18_R9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_P6_R18.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_P6_R9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_P9_R18.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_P9_R6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/formula/MixedBufferMultiVaultStable_FormulaEquivalence.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPool.invariant.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPool.spec.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVault_RoutingAndWalk.spec.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVault_Scale.spec.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/adversarial/Adversarial_CommonBufferMultiVault_P0.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_ALL6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_ALL9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_P18_R6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_P18_R9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_P6_R18.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_P6_R9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_P9_R18.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_P9_R6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPool.invariant.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPool.spec.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_CrossConfig.spec.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_LP.spec.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_P4_Smoke.spec.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_PairOnly.spec.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_UnpairedOnly.spec.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_UnpairedWithRate.spec.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_Validation.spec.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/adversarial/Adversarial_MixedLeg_P0.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/comparative/MixedLegBuffer_Comparative.spec.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_ALL6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_ALL9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_P18_R6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_P18_R9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_P6_R18.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_P6_R9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_P9_R18.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_P9_R6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_ALL6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_ALL9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_P18_R6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_P18_R9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_P6_R18.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_P6_R9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_P9_R18.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_P9_R6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairBuffer_CrossPair.spec.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPool.invariant.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPool.spec.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/adversarial/Adversarial_MultiPairBuffer_P0.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/comparative/MultiPairBuffer_Comparative.spec.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_ALL6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_ALL9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_P18_R6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_P18_R9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_P6_R18.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_P6_R9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_P9_R18.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_P9_R6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_ALL6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_ALL9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_P18_R6.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_P18_R9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_P6_R18.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_P6_R9.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_P9_R18.t.sol",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_P9_R6.t.sol",
+    "test/foundry/spec/protocol/dexes/balancer/v3/WrappedStandardExchangeRateProvider.t.sol"
+  ],
+  "explicitly_empty_rpc_environment_keys": [
+    "ALCHEMY_KEY",
+    "INFURA_KEY"
+  ],
+  "scope": "Complete selected existing suites, including inherited tests; no reduced fuzz runs, profiles, viaIR, or artifact clearing. Final unfiltered default validation remains required.",
+  "build": {
+    "command": [
+      "forge",
+      "build",
+      "--offline",
+      "--contracts",
+      "contracts/protocols/dexes/balancer/v3/pools"
+    ],
+    "exit_code": 0,
+    "seconds": 2315.566,
+    "log": "hermetic-remediation-balancer-se-current-fixtures-build.log",
+    "log_sha256": "c88a083fe02f514d4aa08b79ca6fedc3a4cfc05cab17e461376a3a471993547f"
+  },
+  "expected_compiled_suites": {
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/adversarial/Adversarial_BalancerV3SinglePoolSE.t.sol:Adversarial_BalancerV3SinglePoolSE_Test": 5,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget_LPAdd.t.sol:HookLPAddTest": 4,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget_LPProportional.t.sol:HookLPProportionalTest": 2,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget_PostSwap.t.sol:HookPostSwapTest": 1,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget_PreSeat.t.sol:HookPreSeatTest": 1,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget_Registration.t.sol:HookRegistrationTest": 9,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPool.invariant.t.sol:StandardExchangeBufferPoolInvariant": 8,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPool.spec.t.sol:StandardExchangeBufferPoolSpec": 22,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolCommon.t.sol:StandardExchangeBufferPoolCommonTest": 6,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolLiquidityTarget.t.sol:StandardExchangeBufferPoolLiquidityTargetTest": 4,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolRepo.t.sol:StandardExchangeBufferPoolRepoTest": 3,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolTarget.t.sol:StandardExchangeBufferPoolTargetTest": 9,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPool_RateTracking.t.sol:StandardExchangeBufferPool_RateTrackingTest": 8,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/TestBase_Smoke.t.sol:TestBase_Smoke": 16,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/comparative/StandardExchangeBufferPool_Comparative.spec.t.sol:StandardExchangeBufferPool_Comparative_Spec": 6,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_H6.t.sol:StandardExchangeBufferPoolTarget_H6": 9,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_H9.t.sol:StandardExchangeBufferPoolTarget_H9": 9,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_P18_R6.t.sol:StandardExchangeBufferPoolTarget_P18_R6": 9,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_P18_R9.t.sol:StandardExchangeBufferPoolTarget_P18_R9": 9,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_P6_R18.t.sol:StandardExchangeBufferPoolTarget_P6_R18": 9,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_P6_R9.t.sol:StandardExchangeBufferPoolTarget_P6_R9": 9,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_P9_R18.t.sol:StandardExchangeBufferPoolTarget_P9_R18": 9,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_P9_R6.t.sol:StandardExchangeBufferPoolTarget_P9_R6": 9,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_H6.t.sol:StandardExchangeBufferPool_H6": 22,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_H9.t.sol:StandardExchangeBufferPool_H9": 22,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_P18_R6.t.sol:StandardExchangeBufferPool_P18_R6": 22,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_P18_R9.t.sol:StandardExchangeBufferPool_P18_R9": 22,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_P6_R18.t.sol:StandardExchangeBufferPool_P6_R18": 22,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_P6_R9.t.sol:StandardExchangeBufferPool_P6_R9": 22,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_P9_R18.t.sol:StandardExchangeBufferPool_P9_R18": 22,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_P9_R6.t.sol:StandardExchangeBufferPool_P9_R6": 22,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_H6.t.sol:StandardExchangeBufferPool_RateTracking_H6": 8,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_H9.t.sol:StandardExchangeBufferPool_RateTracking_H9": 8,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_P18_R6.t.sol:StandardExchangeBufferPool_RateTracking_P18_R6": 8,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_P18_R9.t.sol:StandardExchangeBufferPool_RateTracking_P18_R9": 8,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_P6_R18.t.sol:StandardExchangeBufferPool_RateTracking_P6_R18": 8,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_P6_R9.t.sol:StandardExchangeBufferPool_RateTracking_P6_R9": 8,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_P9_R18.t.sol:StandardExchangeBufferPool_RateTracking_P9_R18": 8,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_P9_R6.t.sol:StandardExchangeBufferPool_RateTracking_P9_R6": 8,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/adversarial/Adversarial_BalancerV3SinglePoolSE_H6.t.sol:Adversarial_BalancerV3SinglePoolSE_H6": 5,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/adversarial/Adversarial_BalancerV3SinglePoolSE_H9.t.sol:Adversarial_BalancerV3SinglePoolSE_H9": 5,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/adversarial/Adversarial_BalancerV3SinglePoolSE_P18_R6.t.sol:Adversarial_BalancerV3SinglePoolSE_P18_R6": 5,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/adversarial/Adversarial_BalancerV3SinglePoolSE_P18_R9.t.sol:Adversarial_BalancerV3SinglePoolSE_P18_R9": 5,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/adversarial/Adversarial_BalancerV3SinglePoolSE_P6_R18.t.sol:Adversarial_BalancerV3SinglePoolSE_P6_R18": 5,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/adversarial/Adversarial_BalancerV3SinglePoolSE_P6_R9.t.sol:Adversarial_BalancerV3SinglePoolSE_P6_R9": 5,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/adversarial/Adversarial_BalancerV3SinglePoolSE_P9_R18.t.sol:Adversarial_BalancerV3SinglePoolSE_P9_R18": 5,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/adversarial/Adversarial_BalancerV3SinglePoolSE_P9_R6.t.sol:Adversarial_BalancerV3SinglePoolSE_P9_R6": 5,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_H6.t.sol:StandardExchangeBufferPool_Comparative_H6": 6,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_H9.t.sol:StandardExchangeBufferPool_Comparative_H9": 6,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_P18_R6.t.sol:StandardExchangeBufferPool_Comparative_P18_R6": 6,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_P18_R9.t.sol:StandardExchangeBufferPool_Comparative_P18_R9": 6,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_P6_R18.t.sol:StandardExchangeBufferPool_Comparative_P6_R18": 6,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_P6_R9.t.sol:StandardExchangeBufferPool_Comparative_P6_R9": 6,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_P9_R18.t.sol:StandardExchangeBufferPool_Comparative_P9_R18": 6,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_P9_R6.t.sol:StandardExchangeBufferPool_Comparative_P9_R6": 6,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_H6.t.sol:StandardExchangeBufferPool_UniswapV2_H6": 22,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_H9.t.sol:StandardExchangeBufferPool_UniswapV2_H9": 22,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_P18_R6.t.sol:StandardExchangeBufferPool_UniswapV2_P18_R6": 22,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_P18_R9.t.sol:StandardExchangeBufferPool_UniswapV2_P18_R9": 22,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_P6_R18.t.sol:StandardExchangeBufferPool_UniswapV2_P6_R18": 22,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_P6_R9.t.sol:StandardExchangeBufferPool_UniswapV2_P6_R9": 22,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_P9_R18.t.sol:StandardExchangeBufferPool_UniswapV2_P9_R18": 22,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_P9_R6.t.sol:StandardExchangeBufferPool_UniswapV2_P9_R6": 22,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/uniswapV2/StandardExchangeBufferPool_UniswapV2.spec.t.sol:StandardExchangeBufferPool_UniswapV2_Spec": 22,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePool.spec.t.sol:CommonBufferMultiVaultStablePoolSpec": 16,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePool.spec.t.sol:CommonBufferMultiVaultStable_N2": 6,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePool.spec.t.sol:CommonBufferMultiVaultStable_N3": 3,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStable_WalkAndExhaust.spec.t.sol:CommonBufferMultiVaultStable_WalkAndExhaust": 4,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/adversarial/Adversarial_CommonBufferMultiVaultStable_P0.t.sol:Adversarial_CommonBufferMultiVaultStable_P0": 8,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_ALL6.t.sol:CommonBufferMultiVaultStable_WalkAndExhaust_B_ALL6": 4,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_ALL9.t.sol:CommonBufferMultiVaultStable_WalkAndExhaust_B_ALL9": 4,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_P18_R6.t.sol:CommonBufferMultiVaultStable_WalkAndExhaust_B_P18_R6": 4,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_P18_R9.t.sol:CommonBufferMultiVaultStable_WalkAndExhaust_B_P18_R9": 4,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_P6_R18.t.sol:CommonBufferMultiVaultStable_WalkAndExhaust_B_P6_R18": 4,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_P6_R9.t.sol:CommonBufferMultiVaultStable_WalkAndExhaust_B_P6_R9": 4,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_P9_R18.t.sol:CommonBufferMultiVaultStable_WalkAndExhaust_B_P9_R18": 4,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_P9_R6.t.sol:CommonBufferMultiVaultStable_WalkAndExhaust_B_P9_R6": 4,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/formula/CommonBufferMultiVaultStable_FormulaEquivalence.t.sol:CommonBufferMultiVaultStable_FormulaEquivalence": 5,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePool.invariant.t.sol:MixedBufferMultiVaultStablePoolInvariant": 4,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePool.spec.t.sol:MixedBufferMultiVaultStablePoolSpec": 21,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePool.spec.t.sol:MixedBufferMultiVaultStable_C1_Spec": 2,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePool.spec.t.sol:MixedBufferMultiVaultStable_C2_Spec": 2,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePool.spec.t.sol:MixedBufferMultiVaultStable_C3_Spec": 2,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePool.spec.t.sol:MixedBufferMultiVaultStable_C4_Spec": 2,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStable_MultiProtocol.spec.t.sol:MixedBufferMultiVaultStable_AerodromeMatrix": 1,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStable_MultiProtocol.spec.t.sol:MixedBufferMultiVaultStable_UniV2MatrixRow": 3,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStable_RateProviders.spec.t.sol:MixedBufferMultiVaultStable_RateProviders": 4,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStable_WalkAndExhaust.spec.t.sol:MixedBufferMultiVaultStable_WalkAndExhaust": 4,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/adversarial/Adversarial_MixedBufferMultiVaultStable_P0.t.sol:Adversarial_MixedBufferMultiVaultStable_P0": 7,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_ALL6.t.sol:MixedBufferMultiVaultStable_WalkAndExhaust_B_ALL6": 4,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_ALL9.t.sol:MixedBufferMultiVaultStable_WalkAndExhaust_B_ALL9": 4,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_P18_R6.t.sol:MixedBufferMultiVaultStable_WalkAndExhaust_B_P18_R6": 4,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_P18_R9.t.sol:MixedBufferMultiVaultStable_WalkAndExhaust_B_P18_R9": 4,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_P6_R18.t.sol:MixedBufferMultiVaultStable_WalkAndExhaust_B_P6_R18": 4,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_P6_R9.t.sol:MixedBufferMultiVaultStable_WalkAndExhaust_B_P6_R9": 4,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_P9_R18.t.sol:MixedBufferMultiVaultStable_WalkAndExhaust_B_P9_R18": 4,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_P9_R6.t.sol:MixedBufferMultiVaultStable_WalkAndExhaust_B_P9_R6": 4,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/formula/MixedBufferMultiVaultStable_FormulaEquivalence.t.sol:MixedBufferMultiVaultStable_FormulaEquivalence": 3,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPool.invariant.t.sol:CommonBufferMultiVaultWeightedPoolInvariant": 3,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPool.spec.t.sol:CommonBufferMultiVaultWeightedPoolSpec": 14,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPool.spec.t.sol:CommonBufferMultiVault_N2": 4,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPool.spec.t.sol:CommonBufferMultiVault_Unpaired": 3,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVault_RoutingAndWalk.spec.t.sol:CommonBufferMultiVault_RoutingAndWalk": 5,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVault_RoutingAndWalk.spec.t.sol:CommonBufferMultiVault_WalkAndExhaust": 3,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVault_Scale.spec.t.sol:CommonBufferMultiVault_N3": 1,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVault_Scale.spec.t.sol:CommonBufferMultiVault_T8": 1,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/adversarial/Adversarial_CommonBufferMultiVault_P0.t.sol:Adversarial_CommonBufferMultiVault_P0": 7,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_ALL6.t.sol:CommonBufferMultiVault_RoutingAndWalk_B_ALL6": 5,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_ALL9.t.sol:CommonBufferMultiVault_RoutingAndWalk_B_ALL9": 5,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_P18_R6.t.sol:CommonBufferMultiVault_RoutingAndWalk_B_P18_R6": 5,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_P18_R9.t.sol:CommonBufferMultiVault_RoutingAndWalk_B_P18_R9": 5,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_P6_R18.t.sol:CommonBufferMultiVault_RoutingAndWalk_B_P6_R18": 5,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_P6_R9.t.sol:CommonBufferMultiVault_RoutingAndWalk_B_P6_R9": 5,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_P9_R18.t.sol:CommonBufferMultiVault_RoutingAndWalk_B_P9_R18": 5,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_P9_R6.t.sol:CommonBufferMultiVault_RoutingAndWalk_B_P9_R6": 5,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPool.invariant.t.sol:MixedLegWeightedBufferPoolInvariant": 3,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPool.spec.t.sol:MixedLegWeightedBufferPoolSpec": 16,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_CrossConfig.spec.t.sol:MixedLeg_CrossConfig_U0P2": 7,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_CrossConfig.spec.t.sol:MixedLeg_CrossConfig_U2P2": 5,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_LP.spec.t.sol:MixedLeg_LPSpec": 2,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_P4_Smoke.spec.t.sol:MixedLeg_P4_Smoke": 5,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_P4_Smoke.spec.t.sol:MixedLeg_T8_U4P2_Smoke": 2,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_PairOnly.spec.t.sol:MixedLeg_PairOnlySpec": 3,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_UnpairedOnly.spec.t.sol:MixedLeg_UnpairedOnlySpec": 2,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_UnpairedWithRate.spec.t.sol:MixedLeg_UnpairedWithRateSpec": 3,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_Validation.spec.t.sol:MixedLeg_ValidationSpec": 7,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/adversarial/Adversarial_MixedLeg_P0.t.sol:Adversarial_MixedLeg_P0": 10,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/comparative/MixedLegBuffer_Comparative.spec.t.sol:MixedLegBuffer_Comparative": 4,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_ALL6.t.sol:MixedLegWeightedBufferPool_B_ALL6": 16,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_ALL9.t.sol:MixedLegWeightedBufferPool_B_ALL9": 16,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_P18_R6.t.sol:MixedLegWeightedBufferPool_B_P18_R6": 16,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_P18_R9.t.sol:MixedLegWeightedBufferPool_B_P18_R9": 16,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_P6_R18.t.sol:MixedLegWeightedBufferPool_B_P6_R18": 16,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_P6_R9.t.sol:MixedLegWeightedBufferPool_B_P6_R9": 16,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_P9_R18.t.sol:MixedLegWeightedBufferPool_B_P9_R18": 16,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_P9_R6.t.sol:MixedLegWeightedBufferPool_B_P9_R6": 16,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_ALL6.t.sol:MixedLeg_P4_Smoke_B_ALL6": 5,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_ALL9.t.sol:MixedLeg_P4_Smoke_B_ALL9": 5,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_P18_R6.t.sol:MixedLeg_P4_Smoke_B_P18_R6": 5,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_P18_R9.t.sol:MixedLeg_P4_Smoke_B_P18_R9": 5,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_P6_R18.t.sol:MixedLeg_P4_Smoke_B_P6_R18": 5,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_P6_R9.t.sol:MixedLeg_P4_Smoke_B_P6_R9": 5,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_P9_R18.t.sol:MixedLeg_P4_Smoke_B_P9_R18": 5,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_P9_R6.t.sol:MixedLeg_P4_Smoke_B_P9_R6": 5,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairBuffer_CrossPair.spec.t.sol:MultiPairBuffer_CrossPair": 8,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairBuffer_CrossPair.spec.t.sol:MultiPairBuffer_P4_Smoke": 3,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPool.invariant.t.sol:MultiPairStandardExchangeBufferPoolInvariant": 2,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPool.spec.t.sol:MultiPairStandardExchangeBufferPoolSpec": 12,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/adversarial/Adversarial_MultiPairBuffer_P0.t.sol:Adversarial_MultiPairBuffer_P0": 10,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/comparative/MultiPairBuffer_Comparative.spec.t.sol:MultiPairBuffer_Comparative": 2,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_ALL6.t.sol:MultiPairBuffer_CrossPair_B_ALL6": 8,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_ALL9.t.sol:MultiPairBuffer_CrossPair_B_ALL9": 8,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_P18_R6.t.sol:MultiPairBuffer_CrossPair_B_P18_R6": 8,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_P18_R9.t.sol:MultiPairBuffer_CrossPair_B_P18_R9": 8,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_P6_R18.t.sol:MultiPairBuffer_CrossPair_B_P6_R18": 8,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_P6_R9.t.sol:MultiPairBuffer_CrossPair_B_P6_R9": 8,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_P9_R18.t.sol:MultiPairBuffer_CrossPair_B_P9_R18": 8,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_P9_R6.t.sol:MultiPairBuffer_CrossPair_B_P9_R6": 8,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_ALL6.t.sol:MultiPairStandardExchangeBufferPool_B_ALL6": 12,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_ALL9.t.sol:MultiPairStandardExchangeBufferPool_B_ALL9": 12,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_P18_R6.t.sol:MultiPairStandardExchangeBufferPool_B_P18_R6": 12,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_P18_R9.t.sol:MultiPairStandardExchangeBufferPool_B_P18_R9": 12,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_P6_R18.t.sol:MultiPairStandardExchangeBufferPool_B_P6_R18": 12,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_P6_R9.t.sol:MultiPairStandardExchangeBufferPool_B_P6_R9": 12,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_P9_R18.t.sol:MultiPairStandardExchangeBufferPool_B_P9_R18": 12,
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_P9_R6.t.sol:MultiPairStandardExchangeBufferPool_B_P9_R6": 12,
+    "test/foundry/spec/protocol/dexes/balancer/v3/WrappedStandardExchangeRateProvider.t.sol:WrappedStandardExchangeRateProvider_Test": 3
+  },
+  "test": {
+    "command": [
+      "forge",
+      "test",
+      "--offline",
+      "--contracts",
+      "contracts/protocols/dexes/balancer/v3/pools",
+      "--match-contract",
+      "^(Adversarial_BalancerV3SinglePoolSE_H6|Adversarial_BalancerV3SinglePoolSE_H9|Adversarial_BalancerV3SinglePoolSE_P18_R6|Adversarial_BalancerV3SinglePoolSE_P18_R9|Adversarial_BalancerV3SinglePoolSE_P6_R18|Adversarial_BalancerV3SinglePoolSE_P6_R9|Adversarial_BalancerV3SinglePoolSE_P9_R18|Adversarial_BalancerV3SinglePoolSE_P9_R6|Adversarial_BalancerV3SinglePoolSE_Test|Adversarial_CommonBufferMultiVaultStable_P0|Adversarial_CommonBufferMultiVault_P0|Adversarial_MixedBufferMultiVaultStable_P0|Adversarial_MixedLeg_P0|Adversarial_MultiPairBuffer_P0|CommonBufferMultiVaultStablePoolSpec|CommonBufferMultiVaultStable_FormulaEquivalence|CommonBufferMultiVaultStable_N2|CommonBufferMultiVaultStable_N3|CommonBufferMultiVaultStable_WalkAndExhaust|CommonBufferMultiVaultStable_WalkAndExhaust_B_ALL6|CommonBufferMultiVaultStable_WalkAndExhaust_B_ALL9|CommonBufferMultiVaultStable_WalkAndExhaust_B_P18_R6|CommonBufferMultiVaultStable_WalkAndExhaust_B_P18_R9|CommonBufferMultiVaultStable_WalkAndExhaust_B_P6_R18|CommonBufferMultiVaultStable_WalkAndExhaust_B_P6_R9|CommonBufferMultiVaultStable_WalkAndExhaust_B_P9_R18|CommonBufferMultiVaultStable_WalkAndExhaust_B_P9_R6|CommonBufferMultiVaultWeightedPoolInvariant|CommonBufferMultiVaultWeightedPoolSpec|CommonBufferMultiVault_N2|CommonBufferMultiVault_N3|CommonBufferMultiVault_RoutingAndWalk|CommonBufferMultiVault_RoutingAndWalk_B_ALL6|CommonBufferMultiVault_RoutingAndWalk_B_ALL9|CommonBufferMultiVault_RoutingAndWalk_B_P18_R6|CommonBufferMultiVault_RoutingAndWalk_B_P18_R9|CommonBufferMultiVault_RoutingAndWalk_B_P6_R18|CommonBufferMultiVault_RoutingAndWalk_B_P6_R9|CommonBufferMultiVault_RoutingAndWalk_B_P9_R18|CommonBufferMultiVault_RoutingAndWalk_B_P9_R6|CommonBufferMultiVault_T8|CommonBufferMultiVault_Unpaired|CommonBufferMultiVault_WalkAndExhaust|HookLPAddTest|HookLPProportionalTest|HookPostSwapTest|HookPreSeatTest|HookRegistrationTest|MixedBufferMultiVaultStablePoolInvariant|MixedBufferMultiVaultStablePoolSpec|MixedBufferMultiVaultStable_AerodromeMatrix|MixedBufferMultiVaultStable_C1_Spec|MixedBufferMultiVaultStable_C2_Spec|MixedBufferMultiVaultStable_C3_Spec|MixedBufferMultiVaultStable_C4_Spec|MixedBufferMultiVaultStable_FormulaEquivalence|MixedBufferMultiVaultStable_RateProviders|MixedBufferMultiVaultStable_UniV2MatrixRow|MixedBufferMultiVaultStable_WalkAndExhaust|MixedBufferMultiVaultStable_WalkAndExhaust_B_ALL6|MixedBufferMultiVaultStable_WalkAndExhaust_B_ALL9|MixedBufferMultiVaultStable_WalkAndExhaust_B_P18_R6|MixedBufferMultiVaultStable_WalkAndExhaust_B_P18_R9|MixedBufferMultiVaultStable_WalkAndExhaust_B_P6_R18|MixedBufferMultiVaultStable_WalkAndExhaust_B_P6_R9|MixedBufferMultiVaultStable_WalkAndExhaust_B_P9_R18|MixedBufferMultiVaultStable_WalkAndExhaust_B_P9_R6|MixedLegBuffer_Comparative|MixedLegWeightedBufferPoolInvariant|MixedLegWeightedBufferPoolSpec|MixedLegWeightedBufferPool_B_ALL6|MixedLegWeightedBufferPool_B_ALL9|MixedLegWeightedBufferPool_B_P18_R6|MixedLegWeightedBufferPool_B_P18_R9|MixedLegWeightedBufferPool_B_P6_R18|MixedLegWeightedBufferPool_B_P6_R9|MixedLegWeightedBufferPool_B_P9_R18|MixedLegWeightedBufferPool_B_P9_R6|MixedLeg_CrossConfig_U0P2|MixedLeg_CrossConfig_U2P2|MixedLeg_LPSpec|MixedLeg_P4_Smoke|MixedLeg_P4_Smoke_B_ALL6|MixedLeg_P4_Smoke_B_ALL9|MixedLeg_P4_Smoke_B_P18_R6|MixedLeg_P4_Smoke_B_P18_R9|MixedLeg_P4_Smoke_B_P6_R18|MixedLeg_P4_Smoke_B_P6_R9|MixedLeg_P4_Smoke_B_P9_R18|MixedLeg_P4_Smoke_B_P9_R6|MixedLeg_PairOnlySpec|MixedLeg_T8_U4P2_Smoke|MixedLeg_UnpairedOnlySpec|MixedLeg_UnpairedWithRateSpec|MixedLeg_ValidationSpec|MultiPairBuffer_Comparative|MultiPairBuffer_CrossPair|MultiPairBuffer_CrossPair_B_ALL6|MultiPairBuffer_CrossPair_B_ALL9|MultiPairBuffer_CrossPair_B_P18_R6|MultiPairBuffer_CrossPair_B_P18_R9|MultiPairBuffer_CrossPair_B_P6_R18|MultiPairBuffer_CrossPair_B_P6_R9|MultiPairBuffer_CrossPair_B_P9_R18|MultiPairBuffer_CrossPair_B_P9_R6|MultiPairBuffer_P4_Smoke|MultiPairStandardExchangeBufferPoolInvariant|MultiPairStandardExchangeBufferPoolSpec|MultiPairStandardExchangeBufferPool_B_ALL6|MultiPairStandardExchangeBufferPool_B_ALL9|MultiPairStandardExchangeBufferPool_B_P18_R6|MultiPairStandardExchangeBufferPool_B_P18_R9|MultiPairStandardExchangeBufferPool_B_P6_R18|MultiPairStandardExchangeBufferPool_B_P6_R9|MultiPairStandardExchangeBufferPool_B_P9_R18|MultiPairStandardExchangeBufferPool_B_P9_R6|StandardExchangeBufferPoolCommonTest|StandardExchangeBufferPoolInvariant|StandardExchangeBufferPoolLiquidityTargetTest|StandardExchangeBufferPoolRepoTest|StandardExchangeBufferPoolSpec|StandardExchangeBufferPoolTargetTest|StandardExchangeBufferPoolTarget_H6|StandardExchangeBufferPoolTarget_H9|StandardExchangeBufferPoolTarget_P18_R6|StandardExchangeBufferPoolTarget_P18_R9|StandardExchangeBufferPoolTarget_P6_R18|StandardExchangeBufferPoolTarget_P6_R9|StandardExchangeBufferPoolTarget_P9_R18|StandardExchangeBufferPoolTarget_P9_R6|StandardExchangeBufferPool_Comparative_H6|StandardExchangeBufferPool_Comparative_H9|StandardExchangeBufferPool_Comparative_P18_R6|StandardExchangeBufferPool_Comparative_P18_R9|StandardExchangeBufferPool_Comparative_P6_R18|StandardExchangeBufferPool_Comparative_P6_R9|StandardExchangeBufferPool_Comparative_P9_R18|StandardExchangeBufferPool_Comparative_P9_R6|StandardExchangeBufferPool_Comparative_Spec|StandardExchangeBufferPool_H6|StandardExchangeBufferPool_H9|StandardExchangeBufferPool_P18_R6|StandardExchangeBufferPool_P18_R9|StandardExchangeBufferPool_P6_R18|StandardExchangeBufferPool_P6_R9|StandardExchangeBufferPool_P9_R18|StandardExchangeBufferPool_P9_R6|StandardExchangeBufferPool_RateTrackingTest|StandardExchangeBufferPool_RateTracking_H6|StandardExchangeBufferPool_RateTracking_H9|StandardExchangeBufferPool_RateTracking_P18_R6|StandardExchangeBufferPool_RateTracking_P18_R9|StandardExchangeBufferPool_RateTracking_P6_R18|StandardExchangeBufferPool_RateTracking_P6_R9|StandardExchangeBufferPool_RateTracking_P9_R18|StandardExchangeBufferPool_RateTracking_P9_R6|StandardExchangeBufferPool_UniswapV2_H6|StandardExchangeBufferPool_UniswapV2_H9|StandardExchangeBufferPool_UniswapV2_P18_R6|StandardExchangeBufferPool_UniswapV2_P18_R9|StandardExchangeBufferPool_UniswapV2_P6_R18|StandardExchangeBufferPool_UniswapV2_P6_R9|StandardExchangeBufferPool_UniswapV2_P9_R18|StandardExchangeBufferPool_UniswapV2_P9_R6|StandardExchangeBufferPool_UniswapV2_Spec|TestBase_Smoke|WrappedStandardExchangeRateProvider_Test)$",
+      "-vvv"
+    ],
+    "exit_code": 1,
+    "seconds": 32.579,
+    "log": "hermetic-remediation-balancer-se-current-fixtures-test.log",
+    "log_sha256": "615fa05e2fac74e54f48ba33f65734a1b9de5611de321dd6dd4eeb0bc585173b",
+    "passed": 61,
+    "failed": 154,
+    "actual_suites": {
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/adversarial/Adversarial_BalancerV3SinglePoolSE_H6.t.sol:Adversarial_BalancerV3SinglePoolSE_H6": 5,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/adversarial/Adversarial_BalancerV3SinglePoolSE_P6_R18.t.sol:Adversarial_BalancerV3SinglePoolSE_P6_R18": 5,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/adversarial/Adversarial_BalancerV3SinglePoolSE.t.sol:Adversarial_BalancerV3SinglePoolSE_Test": 5,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/adversarial/Adversarial_BalancerV3SinglePoolSE_H9.t.sol:Adversarial_BalancerV3SinglePoolSE_H9": 5,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/adversarial/Adversarial_BalancerV3SinglePoolSE_P18_R6.t.sol:Adversarial_BalancerV3SinglePoolSE_P18_R6": 5,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/adversarial/Adversarial_BalancerV3SinglePoolSE_P6_R9.t.sol:Adversarial_BalancerV3SinglePoolSE_P6_R9": 5,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/adversarial/Adversarial_BalancerV3SinglePoolSE_P18_R9.t.sol:Adversarial_BalancerV3SinglePoolSE_P18_R9": 5,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/adversarial/Adversarial_BalancerV3SinglePoolSE_P9_R18.t.sol:Adversarial_BalancerV3SinglePoolSE_P9_R18": 5,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_P9_R18.t.sol:MixedLeg_P4_Smoke_B_P9_R18": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_UnpairedWithRate.spec.t.sol:MixedLeg_UnpairedWithRateSpec": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/comparative/MixedLegBuffer_Comparative.spec.t.sol:MixedLegBuffer_Comparative": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_ALL9.t.sol:MultiPairStandardExchangeBufferPool_B_ALL9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_P18_R9.t.sol:StandardExchangeBufferPoolTarget_P18_R9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_P6_R9.t.sol:MixedLeg_P4_Smoke_B_P6_R9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/adversarial/Adversarial_CommonBufferMultiVault_P0.t.sol:Adversarial_CommonBufferMultiVault_P0": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_P9_R6.t.sol:MixedLeg_P4_Smoke_B_P9_R6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVault_Scale.spec.t.sol:CommonBufferMultiVault_N3": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_ALL6.t.sol:MultiPairBuffer_CrossPair_B_ALL6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_ALL9.t.sol:CommonBufferMultiVaultStable_WalkAndExhaust_B_ALL9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/adversarial/Adversarial_BalancerV3SinglePoolSE_P9_R6.t.sol:Adversarial_BalancerV3SinglePoolSE_P9_R6": 5,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStable_MultiProtocol.spec.t.sol:MixedBufferMultiVaultStable_UniV2MatrixRow": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_P9_R6.t.sol:MixedLegWeightedBufferPool_B_P9_R6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/comparative/MultiPairBuffer_Comparative.spec.t.sol:MultiPairBuffer_Comparative": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePool.spec.t.sol:CommonBufferMultiVaultStable_N2": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_P9_R6.t.sol:StandardExchangeBufferPool_P9_R6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_Validation.spec.t.sol:MixedLeg_ValidationSpec": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPool.invariant.t.sol:MixedLegWeightedBufferPoolInvariant": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_P18_R6.t.sol:MultiPairStandardExchangeBufferPool_B_P18_R6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_PairOnly.spec.t.sol:MixedLeg_PairOnlySpec": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_P6_R18.t.sol:StandardExchangeBufferPoolTarget_P6_R18": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVault_Scale.spec.t.sol:CommonBufferMultiVault_T8": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairBuffer_CrossPair.spec.t.sol:MultiPairBuffer_CrossPair": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_P18_R6.t.sol:CommonBufferMultiVaultStable_WalkAndExhaust_B_P18_R6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_ALL9.t.sol:MultiPairBuffer_CrossPair_B_ALL9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/adversarial/Adversarial_MixedBufferMultiVaultStable_P0.t.sol:Adversarial_MixedBufferMultiVaultStable_P0": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/adversarial/Adversarial_CommonBufferMultiVaultStable_P0.t.sol:Adversarial_CommonBufferMultiVaultStable_P0": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStable_RateProviders.spec.t.sol:MixedBufferMultiVaultStable_RateProviders": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_CrossConfig.spec.t.sol:MixedLeg_CrossConfig_U0P2": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairBuffer_CrossPair.spec.t.sol:MultiPairBuffer_P4_Smoke": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePool.spec.t.sol:CommonBufferMultiVaultStable_N3": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPool.spec.t.sol:MixedLegWeightedBufferPoolSpec": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPool_RateTracking.t.sol:StandardExchangeBufferPool_RateTrackingTest": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePool.invariant.t.sol:MixedBufferMultiVaultStablePoolInvariant": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget_PreSeat.t.sol:HookPreSeatTest": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/adversarial/Adversarial_MixedLeg_P0.t.sol:Adversarial_MixedLeg_P0": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_P6_R9.t.sol:StandardExchangeBufferPoolTarget_P6_R9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_UnpairedOnly.spec.t.sol:MixedLeg_UnpairedOnlySpec": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_P18_R9.t.sol:CommonBufferMultiVaultStable_WalkAndExhaust_B_P18_R9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_P18_R9.t.sol:MultiPairStandardExchangeBufferPool_B_P18_R9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_P18_R6.t.sol:MultiPairBuffer_CrossPair_B_P18_R6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_P9_R18.t.sol:MultiPairStandardExchangeBufferPool_B_P9_R18": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_P4_Smoke.spec.t.sol:MixedLeg_T8_U4P2_Smoke": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStable_WalkAndExhaust.spec.t.sol:MixedBufferMultiVaultStable_WalkAndExhaust": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_CrossConfig.spec.t.sol:MixedLeg_CrossConfig_U2P2": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_P6_R18.t.sol:StandardExchangeBufferPool_Comparative_P6_R18": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/formula/CommonBufferMultiVaultStable_FormulaEquivalence.t.sol:CommonBufferMultiVaultStable_FormulaEquivalence": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget_Registration.t.sol:HookRegistrationTest": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_ALL6.t.sol:MixedLegWeightedBufferPool_B_ALL6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_H6.t.sol:StandardExchangeBufferPool_RateTracking_H6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePool.spec.t.sol:MixedBufferMultiVaultStablePoolSpec": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/adversarial/Adversarial_MultiPairBuffer_P0.t.sol:Adversarial_MultiPairBuffer_P0": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_P9_R18.t.sol:StandardExchangeBufferPoolTarget_P9_R18": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_P18_R9.t.sol:MultiPairBuffer_CrossPair_B_P18_R9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_P6_R9.t.sol:MultiPairBuffer_CrossPair_B_P6_R9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_P6_R18.t.sol:MultiPairStandardExchangeBufferPool_B_P6_R18": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_P6_R18.t.sol:CommonBufferMultiVaultStable_WalkAndExhaust_B_P6_R18": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_P9_R6.t.sol:MultiPairStandardExchangeBufferPool_B_P9_R6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_ALL6.t.sol:MixedLeg_P4_Smoke_B_ALL6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_ALL6.t.sol:MixedBufferMultiVaultStable_WalkAndExhaust_B_ALL6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_LP.spec.t.sol:MixedLeg_LPSpec": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_P6_R9.t.sol:StandardExchangeBufferPool_Comparative_P6_R9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStable_WalkAndExhaust.spec.t.sol:CommonBufferMultiVaultStable_WalkAndExhaust": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPool.invariant.t.sol:StandardExchangeBufferPoolInvariant": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_ALL9.t.sol:MixedLegWeightedBufferPool_B_ALL9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePool.spec.t.sol:MixedBufferMultiVaultStable_C1_Spec": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_H9.t.sol:StandardExchangeBufferPool_RateTracking_H9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePool.spec.t.sol:CommonBufferMultiVaultStablePoolSpec": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_P6_R9.t.sol:CommonBufferMultiVaultStable_WalkAndExhaust_B_P6_R9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_P9_R6.t.sol:StandardExchangeBufferPoolTarget_P9_R6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_P9_R18.t.sol:MultiPairBuffer_CrossPair_B_P9_R18": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_P6_R9.t.sol:MultiPairStandardExchangeBufferPool_B_P6_R9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget_LPAdd.t.sol:HookLPAddTest": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_P6_R18.t.sol:MultiPairBuffer_CrossPair_B_P6_R18": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_ALL9.t.sol:MixedLeg_P4_Smoke_B_ALL9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_P4_Smoke.spec.t.sol:MixedLeg_P4_Smoke": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_ALL9.t.sol:MixedBufferMultiVaultStable_WalkAndExhaust_B_ALL9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_P9_R18.t.sol:StandardExchangeBufferPool_Comparative_P9_R18": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_ALL6.t.sol:CommonBufferMultiVaultStable_WalkAndExhaust_B_ALL6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPool.spec.t.sol:StandardExchangeBufferPoolSpec": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_P18_R6.t.sol:MixedLegWeightedBufferPool_B_P18_R6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolLiquidityTarget.t.sol:StandardExchangeBufferPoolLiquidityTargetTest": 4,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolRepo.t.sol:StandardExchangeBufferPoolRepoTest": 3,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePool.spec.t.sol:MixedBufferMultiVaultStable_C2_Spec": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_P18_R6.t.sol:StandardExchangeBufferPool_RateTracking_P18_R6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/comparative/StandardExchangeBufferPool_Comparative.spec.t.sol:StandardExchangeBufferPool_Comparative_Spec": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_P18_R6.t.sol:MixedBufferMultiVaultStable_WalkAndExhaust_B_P18_R6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_P9_R18.t.sol:CommonBufferMultiVaultStable_WalkAndExhaust_B_P9_R18": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget_LPProportional.t.sol:HookLPProportionalTest": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_P18_R6.t.sol:MixedLeg_P4_Smoke_B_P18_R6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_P9_R6.t.sol:MultiPairBuffer_CrossPair_B_P9_R6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_P6_R9.t.sol:MixedBufferMultiVaultStable_WalkAndExhaust_B_P6_R9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget_PostSwap.t.sol:HookPostSwapTest": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/uniswapV2/StandardExchangeBufferPool_UniswapV2.spec.t.sol:StandardExchangeBufferPool_UniswapV2_Spec": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_H9.t.sol:StandardExchangeBufferPool_H9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_P9_R6.t.sol:StandardExchangeBufferPool_Comparative_P9_R6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_P6_R18.t.sol:MixedLegWeightedBufferPool_B_P6_R18": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePool.spec.t.sol:MixedBufferMultiVaultStable_C3_Spec": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_P18_R9.t.sol:MixedLegWeightedBufferPool_B_P18_R9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolTarget.t.sol:StandardExchangeBufferPoolTargetTest": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_P18_R9.t.sol:StandardExchangeBufferPool_RateTracking_P18_R9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_H6.t.sol:StandardExchangeBufferPool_Comparative_H6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_P18_R9.t.sol:MixedBufferMultiVaultStable_WalkAndExhaust_B_P18_R9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_P18_R9.t.sol:MixedLeg_P4_Smoke_B_P18_R9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_P6_R18.t.sol:StandardExchangeBufferPool_UniswapV2_P6_R18": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPool.invariant.t.sol:MultiPairStandardExchangeBufferPoolInvariant": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_P9_R18.t.sol:MixedBufferMultiVaultStable_WalkAndExhaust_B_P9_R18": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_P9_R6.t.sol:CommonBufferMultiVaultStable_WalkAndExhaust_B_P9_R6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_P9_R6.t.sol:MixedBufferMultiVaultStable_WalkAndExhaust_B_P9_R6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_H6.t.sol:StandardExchangeBufferPool_UniswapV2_H6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_P18_R6.t.sol:StandardExchangeBufferPool_P18_R6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_H6.t.sol:StandardExchangeBufferPool_H6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_P6_R9.t.sol:MixedLegWeightedBufferPool_B_P6_R9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePool.spec.t.sol:MixedBufferMultiVaultStable_C4_Spec": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_H6.t.sol:StandardExchangeBufferPoolTarget_H6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_P6_R18.t.sol:StandardExchangeBufferPool_RateTracking_P6_R18": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_H9.t.sol:StandardExchangeBufferPool_Comparative_H9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_P9_R18.t.sol:MixedLegWeightedBufferPool_B_P9_R18": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_P6_R18.t.sol:MixedBufferMultiVaultStable_WalkAndExhaust_B_P6_R18": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_P6_R18.t.sol:MixedLeg_P4_Smoke_B_P6_R18": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_P6_R9.t.sol:StandardExchangeBufferPool_UniswapV2_P6_R9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPool.spec.t.sol:MultiPairStandardExchangeBufferPoolSpec": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPool.invariant.t.sol:CommonBufferMultiVaultWeightedPoolInvariant": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_P9_R6.t.sol:StandardExchangeBufferPool_UniswapV2_P9_R6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_P6_R18.t.sol:StandardExchangeBufferPool_P6_R18": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_H9.t.sol:StandardExchangeBufferPool_UniswapV2_H9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/formula/MixedBufferMultiVaultStable_FormulaEquivalence.t.sol:MixedBufferMultiVaultStable_FormulaEquivalence": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_P18_R9.t.sol:StandardExchangeBufferPool_P18_R9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_P9_R18.t.sol:StandardExchangeBufferPool_UniswapV2_P9_R18": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_P6_R9.t.sol:StandardExchangeBufferPool_P6_R9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_P6_R9.t.sol:StandardExchangeBufferPool_RateTracking_P6_R9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_H9.t.sol:StandardExchangeBufferPoolTarget_H9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_P18_R6.t.sol:StandardExchangeBufferPool_Comparative_P18_R6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_ALL6.t.sol:MultiPairStandardExchangeBufferPool_B_ALL6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_P9_R6.t.sol:StandardExchangeBufferPool_RateTracking_P9_R6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/TestBase_Smoke.t.sol:TestBase_Smoke": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_P9_R18.t.sol:StandardExchangeBufferPool_RateTracking_P9_R18": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPool.spec.t.sol:CommonBufferMultiVaultWeightedPoolSpec": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_P18_R6.t.sol:StandardExchangeBufferPool_UniswapV2_P18_R6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_P18_R6.t.sol:StandardExchangeBufferPoolTarget_P18_R6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_P18_R9.t.sol:StandardExchangeBufferPool_UniswapV2_P18_R9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStable_MultiProtocol.spec.t.sol:MixedBufferMultiVaultStable_AerodromeMatrix": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_P18_R9.t.sol:StandardExchangeBufferPool_Comparative_P18_R9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_P9_R18.t.sol:StandardExchangeBufferPool_P9_R18": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_P18_R9.t.sol:CommonBufferMultiVault_RoutingAndWalk_B_P18_R9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_P18_R6.t.sol:CommonBufferMultiVault_RoutingAndWalk_B_P18_R6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_P6_R9.t.sol:CommonBufferMultiVault_RoutingAndWalk_B_P6_R9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPool.spec.t.sol:CommonBufferMultiVault_Unpaired": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVault_RoutingAndWalk.spec.t.sol:CommonBufferMultiVault_RoutingAndWalk": 1,
+      "test/foundry/spec/protocol/dexes/balancer/v3/WrappedStandardExchangeRateProvider.t.sol:WrappedStandardExchangeRateProvider_Test": 3,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVault_RoutingAndWalk.spec.t.sol:CommonBufferMultiVault_WalkAndExhaust": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPool.spec.t.sol:CommonBufferMultiVault_N2": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_P6_R18.t.sol:CommonBufferMultiVault_RoutingAndWalk_B_P6_R18": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_ALL6.t.sol:CommonBufferMultiVault_RoutingAndWalk_B_ALL6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_P9_R18.t.sol:CommonBufferMultiVault_RoutingAndWalk_B_P9_R18": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_ALL9.t.sol:CommonBufferMultiVault_RoutingAndWalk_B_ALL9": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_P9_R6.t.sol:CommonBufferMultiVault_RoutingAndWalk_B_P9_R6": 1,
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolCommon.t.sol:StandardExchangeBufferPoolCommonTest": 6
+    },
+    "missing_or_incomplete_suites": {
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget_LPAdd.t.sol:HookLPAddTest": {
+        "expected": 4,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget_LPProportional.t.sol:HookLPProportionalTest": {
+        "expected": 2,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget_Registration.t.sol:HookRegistrationTest": {
+        "expected": 9,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPool.invariant.t.sol:StandardExchangeBufferPoolInvariant": {
+        "expected": 8,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPool.spec.t.sol:StandardExchangeBufferPoolSpec": {
+        "expected": 22,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolTarget.t.sol:StandardExchangeBufferPoolTargetTest": {
+        "expected": 9,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPool_RateTracking.t.sol:StandardExchangeBufferPool_RateTrackingTest": {
+        "expected": 8,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/TestBase_Smoke.t.sol:TestBase_Smoke": {
+        "expected": 16,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/comparative/StandardExchangeBufferPool_Comparative.spec.t.sol:StandardExchangeBufferPool_Comparative_Spec": {
+        "expected": 6,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_H6.t.sol:StandardExchangeBufferPoolTarget_H6": {
+        "expected": 9,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_H9.t.sol:StandardExchangeBufferPoolTarget_H9": {
+        "expected": 9,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_P18_R6.t.sol:StandardExchangeBufferPoolTarget_P18_R6": {
+        "expected": 9,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_P18_R9.t.sol:StandardExchangeBufferPoolTarget_P18_R9": {
+        "expected": 9,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_P6_R18.t.sol:StandardExchangeBufferPoolTarget_P6_R18": {
+        "expected": 9,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_P6_R9.t.sol:StandardExchangeBufferPoolTarget_P6_R9": {
+        "expected": 9,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_P9_R18.t.sol:StandardExchangeBufferPoolTarget_P9_R18": {
+        "expected": 9,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPoolTarget_P9_R6.t.sol:StandardExchangeBufferPoolTarget_P9_R6": {
+        "expected": 9,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_H6.t.sol:StandardExchangeBufferPool_H6": {
+        "expected": 22,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_H9.t.sol:StandardExchangeBufferPool_H9": {
+        "expected": 22,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_P18_R6.t.sol:StandardExchangeBufferPool_P18_R6": {
+        "expected": 22,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_P18_R9.t.sol:StandardExchangeBufferPool_P18_R9": {
+        "expected": 22,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_P6_R18.t.sol:StandardExchangeBufferPool_P6_R18": {
+        "expected": 22,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_P6_R9.t.sol:StandardExchangeBufferPool_P6_R9": {
+        "expected": 22,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_P9_R18.t.sol:StandardExchangeBufferPool_P9_R18": {
+        "expected": 22,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_P9_R6.t.sol:StandardExchangeBufferPool_P9_R6": {
+        "expected": 22,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_H6.t.sol:StandardExchangeBufferPool_RateTracking_H6": {
+        "expected": 8,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_H9.t.sol:StandardExchangeBufferPool_RateTracking_H9": {
+        "expected": 8,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_P18_R6.t.sol:StandardExchangeBufferPool_RateTracking_P18_R6": {
+        "expected": 8,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_P18_R9.t.sol:StandardExchangeBufferPool_RateTracking_P18_R9": {
+        "expected": 8,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_P6_R18.t.sol:StandardExchangeBufferPool_RateTracking_P6_R18": {
+        "expected": 8,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_P6_R9.t.sol:StandardExchangeBufferPool_RateTracking_P6_R9": {
+        "expected": 8,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_P9_R18.t.sol:StandardExchangeBufferPool_RateTracking_P9_R18": {
+        "expected": 8,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/StandardExchangeBufferPool_RateTracking_P9_R6.t.sol:StandardExchangeBufferPool_RateTracking_P9_R6": {
+        "expected": 8,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_H6.t.sol:StandardExchangeBufferPool_Comparative_H6": {
+        "expected": 6,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_H9.t.sol:StandardExchangeBufferPool_Comparative_H9": {
+        "expected": 6,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_P18_R6.t.sol:StandardExchangeBufferPool_Comparative_P18_R6": {
+        "expected": 6,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_P18_R9.t.sol:StandardExchangeBufferPool_Comparative_P18_R9": {
+        "expected": 6,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_P6_R18.t.sol:StandardExchangeBufferPool_Comparative_P6_R18": {
+        "expected": 6,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_P6_R9.t.sol:StandardExchangeBufferPool_Comparative_P6_R9": {
+        "expected": 6,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_P9_R18.t.sol:StandardExchangeBufferPool_Comparative_P9_R18": {
+        "expected": 6,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/comparative/StandardExchangeBufferPool_Comparative_P9_R6.t.sol:StandardExchangeBufferPool_Comparative_P9_R6": {
+        "expected": 6,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_H6.t.sol:StandardExchangeBufferPool_UniswapV2_H6": {
+        "expected": 22,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_H9.t.sol:StandardExchangeBufferPool_UniswapV2_H9": {
+        "expected": 22,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_P18_R6.t.sol:StandardExchangeBufferPool_UniswapV2_P18_R6": {
+        "expected": 22,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_P18_R9.t.sol:StandardExchangeBufferPool_UniswapV2_P18_R9": {
+        "expected": 22,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_P6_R18.t.sol:StandardExchangeBufferPool_UniswapV2_P6_R18": {
+        "expected": 22,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_P6_R9.t.sol:StandardExchangeBufferPool_UniswapV2_P6_R9": {
+        "expected": 22,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_P9_R18.t.sol:StandardExchangeBufferPool_UniswapV2_P9_R18": {
+        "expected": 22,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/uniswapV2/StandardExchangeBufferPool_UniswapV2_P9_R6.t.sol:StandardExchangeBufferPool_UniswapV2_P9_R6": {
+        "expected": 22,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/uniswapV2/StandardExchangeBufferPool_UniswapV2.spec.t.sol:StandardExchangeBufferPool_UniswapV2_Spec": {
+        "expected": 22,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePool.spec.t.sol:CommonBufferMultiVaultStablePoolSpec": {
+        "expected": 16,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePool.spec.t.sol:CommonBufferMultiVaultStable_N2": {
+        "expected": 6,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePool.spec.t.sol:CommonBufferMultiVaultStable_N3": {
+        "expected": 3,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStable_WalkAndExhaust.spec.t.sol:CommonBufferMultiVaultStable_WalkAndExhaust": {
+        "expected": 4,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/adversarial/Adversarial_CommonBufferMultiVaultStable_P0.t.sol:Adversarial_CommonBufferMultiVaultStable_P0": {
+        "expected": 8,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_ALL6.t.sol:CommonBufferMultiVaultStable_WalkAndExhaust_B_ALL6": {
+        "expected": 4,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_ALL9.t.sol:CommonBufferMultiVaultStable_WalkAndExhaust_B_ALL9": {
+        "expected": 4,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_P18_R6.t.sol:CommonBufferMultiVaultStable_WalkAndExhaust_B_P18_R6": {
+        "expected": 4,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_P18_R9.t.sol:CommonBufferMultiVaultStable_WalkAndExhaust_B_P18_R9": {
+        "expected": 4,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_P6_R18.t.sol:CommonBufferMultiVaultStable_WalkAndExhaust_B_P6_R18": {
+        "expected": 4,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_P6_R9.t.sol:CommonBufferMultiVaultStable_WalkAndExhaust_B_P6_R9": {
+        "expected": 4,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_P9_R18.t.sol:CommonBufferMultiVaultStable_WalkAndExhaust_B_P9_R18": {
+        "expected": 4,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_P9_R6.t.sol:CommonBufferMultiVaultStable_WalkAndExhaust_B_P9_R6": {
+        "expected": 4,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/formula/CommonBufferMultiVaultStable_FormulaEquivalence.t.sol:CommonBufferMultiVaultStable_FormulaEquivalence": {
+        "expected": 5,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePool.invariant.t.sol:MixedBufferMultiVaultStablePoolInvariant": {
+        "expected": 4,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePool.spec.t.sol:MixedBufferMultiVaultStablePoolSpec": {
+        "expected": 21,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePool.spec.t.sol:MixedBufferMultiVaultStable_C1_Spec": {
+        "expected": 2,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePool.spec.t.sol:MixedBufferMultiVaultStable_C2_Spec": {
+        "expected": 2,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePool.spec.t.sol:MixedBufferMultiVaultStable_C3_Spec": {
+        "expected": 2,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePool.spec.t.sol:MixedBufferMultiVaultStable_C4_Spec": {
+        "expected": 2,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStable_MultiProtocol.spec.t.sol:MixedBufferMultiVaultStable_UniV2MatrixRow": {
+        "expected": 3,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStable_RateProviders.spec.t.sol:MixedBufferMultiVaultStable_RateProviders": {
+        "expected": 4,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStable_WalkAndExhaust.spec.t.sol:MixedBufferMultiVaultStable_WalkAndExhaust": {
+        "expected": 4,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/adversarial/Adversarial_MixedBufferMultiVaultStable_P0.t.sol:Adversarial_MixedBufferMultiVaultStable_P0": {
+        "expected": 7,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_ALL6.t.sol:MixedBufferMultiVaultStable_WalkAndExhaust_B_ALL6": {
+        "expected": 4,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_ALL9.t.sol:MixedBufferMultiVaultStable_WalkAndExhaust_B_ALL9": {
+        "expected": 4,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_P18_R6.t.sol:MixedBufferMultiVaultStable_WalkAndExhaust_B_P18_R6": {
+        "expected": 4,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_P18_R9.t.sol:MixedBufferMultiVaultStable_WalkAndExhaust_B_P18_R9": {
+        "expected": 4,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_P6_R18.t.sol:MixedBufferMultiVaultStable_WalkAndExhaust_B_P6_R18": {
+        "expected": 4,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_P6_R9.t.sol:MixedBufferMultiVaultStable_WalkAndExhaust_B_P6_R9": {
+        "expected": 4,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_P9_R18.t.sol:MixedBufferMultiVaultStable_WalkAndExhaust_B_P9_R18": {
+        "expected": 4,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/MixedBufferMultiVaultStable_WalkAndExhaust_B_P9_R6.t.sol:MixedBufferMultiVaultStable_WalkAndExhaust_B_P9_R6": {
+        "expected": 4,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/formula/MixedBufferMultiVaultStable_FormulaEquivalence.t.sol:MixedBufferMultiVaultStable_FormulaEquivalence": {
+        "expected": 3,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPool.invariant.t.sol:CommonBufferMultiVaultWeightedPoolInvariant": {
+        "expected": 3,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPool.spec.t.sol:CommonBufferMultiVaultWeightedPoolSpec": {
+        "expected": 14,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPool.spec.t.sol:CommonBufferMultiVault_N2": {
+        "expected": 4,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPool.spec.t.sol:CommonBufferMultiVault_Unpaired": {
+        "expected": 3,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVault_RoutingAndWalk.spec.t.sol:CommonBufferMultiVault_RoutingAndWalk": {
+        "expected": 5,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVault_RoutingAndWalk.spec.t.sol:CommonBufferMultiVault_WalkAndExhaust": {
+        "expected": 3,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/adversarial/Adversarial_CommonBufferMultiVault_P0.t.sol:Adversarial_CommonBufferMultiVault_P0": {
+        "expected": 7,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_ALL6.t.sol:CommonBufferMultiVault_RoutingAndWalk_B_ALL6": {
+        "expected": 5,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_ALL9.t.sol:CommonBufferMultiVault_RoutingAndWalk_B_ALL9": {
+        "expected": 5,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_P18_R6.t.sol:CommonBufferMultiVault_RoutingAndWalk_B_P18_R6": {
+        "expected": 5,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_P18_R9.t.sol:CommonBufferMultiVault_RoutingAndWalk_B_P18_R9": {
+        "expected": 5,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_P6_R18.t.sol:CommonBufferMultiVault_RoutingAndWalk_B_P6_R18": {
+        "expected": 5,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_P6_R9.t.sol:CommonBufferMultiVault_RoutingAndWalk_B_P6_R9": {
+        "expected": 5,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_P9_R18.t.sol:CommonBufferMultiVault_RoutingAndWalk_B_P9_R18": {
+        "expected": 5,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_B_P9_R6.t.sol:CommonBufferMultiVault_RoutingAndWalk_B_P9_R6": {
+        "expected": 5,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPool.invariant.t.sol:MixedLegWeightedBufferPoolInvariant": {
+        "expected": 3,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPool.spec.t.sol:MixedLegWeightedBufferPoolSpec": {
+        "expected": 16,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_CrossConfig.spec.t.sol:MixedLeg_CrossConfig_U0P2": {
+        "expected": 7,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_CrossConfig.spec.t.sol:MixedLeg_CrossConfig_U2P2": {
+        "expected": 5,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_LP.spec.t.sol:MixedLeg_LPSpec": {
+        "expected": 2,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_P4_Smoke.spec.t.sol:MixedLeg_P4_Smoke": {
+        "expected": 5,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_P4_Smoke.spec.t.sol:MixedLeg_T8_U4P2_Smoke": {
+        "expected": 2,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_PairOnly.spec.t.sol:MixedLeg_PairOnlySpec": {
+        "expected": 3,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_UnpairedOnly.spec.t.sol:MixedLeg_UnpairedOnlySpec": {
+        "expected": 2,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_UnpairedWithRate.spec.t.sol:MixedLeg_UnpairedWithRateSpec": {
+        "expected": 3,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLeg_Validation.spec.t.sol:MixedLeg_ValidationSpec": {
+        "expected": 7,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/adversarial/Adversarial_MixedLeg_P0.t.sol:Adversarial_MixedLeg_P0": {
+        "expected": 10,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/comparative/MixedLegBuffer_Comparative.spec.t.sol:MixedLegBuffer_Comparative": {
+        "expected": 4,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_ALL6.t.sol:MixedLegWeightedBufferPool_B_ALL6": {
+        "expected": 16,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_ALL9.t.sol:MixedLegWeightedBufferPool_B_ALL9": {
+        "expected": 16,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_P18_R6.t.sol:MixedLegWeightedBufferPool_B_P18_R6": {
+        "expected": 16,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_P18_R9.t.sol:MixedLegWeightedBufferPool_B_P18_R9": {
+        "expected": 16,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_P6_R18.t.sol:MixedLegWeightedBufferPool_B_P6_R18": {
+        "expected": 16,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_P6_R9.t.sol:MixedLegWeightedBufferPool_B_P6_R9": {
+        "expected": 16,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_P9_R18.t.sol:MixedLegWeightedBufferPool_B_P9_R18": {
+        "expected": 16,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_B_P9_R6.t.sol:MixedLegWeightedBufferPool_B_P9_R6": {
+        "expected": 16,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_ALL6.t.sol:MixedLeg_P4_Smoke_B_ALL6": {
+        "expected": 5,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_ALL9.t.sol:MixedLeg_P4_Smoke_B_ALL9": {
+        "expected": 5,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_P18_R6.t.sol:MixedLeg_P4_Smoke_B_P18_R6": {
+        "expected": 5,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_P18_R9.t.sol:MixedLeg_P4_Smoke_B_P18_R9": {
+        "expected": 5,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_P6_R18.t.sol:MixedLeg_P4_Smoke_B_P6_R18": {
+        "expected": 5,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_P6_R9.t.sol:MixedLeg_P4_Smoke_B_P6_R9": {
+        "expected": 5,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_P9_R18.t.sol:MixedLeg_P4_Smoke_B_P9_R18": {
+        "expected": 5,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLeg_P4_Smoke_B_P9_R6.t.sol:MixedLeg_P4_Smoke_B_P9_R6": {
+        "expected": 5,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairBuffer_CrossPair.spec.t.sol:MultiPairBuffer_CrossPair": {
+        "expected": 8,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairBuffer_CrossPair.spec.t.sol:MultiPairBuffer_P4_Smoke": {
+        "expected": 3,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPool.invariant.t.sol:MultiPairStandardExchangeBufferPoolInvariant": {
+        "expected": 2,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPool.spec.t.sol:MultiPairStandardExchangeBufferPoolSpec": {
+        "expected": 12,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/adversarial/Adversarial_MultiPairBuffer_P0.t.sol:Adversarial_MultiPairBuffer_P0": {
+        "expected": 10,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/comparative/MultiPairBuffer_Comparative.spec.t.sol:MultiPairBuffer_Comparative": {
+        "expected": 2,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_ALL6.t.sol:MultiPairBuffer_CrossPair_B_ALL6": {
+        "expected": 8,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_ALL9.t.sol:MultiPairBuffer_CrossPair_B_ALL9": {
+        "expected": 8,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_P18_R6.t.sol:MultiPairBuffer_CrossPair_B_P18_R6": {
+        "expected": 8,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_P18_R9.t.sol:MultiPairBuffer_CrossPair_B_P18_R9": {
+        "expected": 8,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_P6_R18.t.sol:MultiPairBuffer_CrossPair_B_P6_R18": {
+        "expected": 8,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_P6_R9.t.sol:MultiPairBuffer_CrossPair_B_P6_R9": {
+        "expected": 8,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_P9_R18.t.sol:MultiPairBuffer_CrossPair_B_P9_R18": {
+        "expected": 8,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairBuffer_CrossPair_B_P9_R6.t.sol:MultiPairBuffer_CrossPair_B_P9_R6": {
+        "expected": 8,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_ALL6.t.sol:MultiPairStandardExchangeBufferPool_B_ALL6": {
+        "expected": 12,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_ALL9.t.sol:MultiPairStandardExchangeBufferPool_B_ALL9": {
+        "expected": 12,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_P18_R6.t.sol:MultiPairStandardExchangeBufferPool_B_P18_R6": {
+        "expected": 12,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_P18_R9.t.sol:MultiPairStandardExchangeBufferPool_B_P18_R9": {
+        "expected": 12,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_P6_R18.t.sol:MultiPairStandardExchangeBufferPool_B_P6_R18": {
+        "expected": 12,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_P6_R9.t.sol:MultiPairStandardExchangeBufferPool_B_P6_R9": {
+        "expected": 12,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_P9_R18.t.sol:MultiPairStandardExchangeBufferPool_B_P9_R18": {
+        "expected": 12,
+        "reported": 1
+      },
+      "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_B_P9_R6.t.sol:MultiPairStandardExchangeBufferPool_B_P9_R6": {
+        "expected": 12,
+        "reported": 1
+      }
+    },
+    "validation_passed": false
+  },
+  "finished_at_utc": "2026-09-09T10:31:49.747399+00:00",
+  "sources_unchanged": true
+}

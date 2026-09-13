@@ -1,13 +1,16 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+// Factory-loaded creation bytecode must be part of a focused build graph.
+
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
-import {IMorpho, MarketParams} from "@crane/contracts/external/morpho/blue/interfaces/IMorpho.sol";
+import {MarketParams} from "@crane/contracts/external/morpho/blue/interfaces/IMorpho.sol";
+import {IMorpho} from "@crane/contracts/external/morpho/blue/interfaces/IMorpho.sol";
 import {MorphoBalancesLib} from
     "@crane/contracts/external/morpho/blue/libraries/periphery/MorphoBalancesLib.sol";
 import {MorphoBlueService} from
@@ -34,7 +37,7 @@ import {
  * @dev Parent setUp order: Permit2, VaultComponents (IndexedEx stack), MorphoBlue (`new Morpho` + createMarket),
  *      then facets + `vm.prank(owner)` registry deploy on the already-created market.
  */
-contract TestBase_MorphoBlueStandardExchange is
+abstract contract TestBase_MorphoBlueStandardExchange is
     TestBase_Permit2,
     TestBase_VaultComponents,
     TestBase_MorphoBlue

@@ -32,14 +32,13 @@ contract UniswapV4StandardExchangeWeightedBufferHookSeFacet is
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](7);
+        funcs = new bytes4[](6);
         funcs[0] = IStandardExchangeIn.previewExchangeIn.selector;
         funcs[1] = IStandardExchangeIn.exchangeIn.selector;
         funcs[2] = IStandardExchangeOut.previewExchangeOut.selector;
         funcs[3] = IStandardExchangeOut.exchangeOut.selector;
         funcs[4] = IUniswapV4StandardExchangeWeightedBufferHook.ownerSwapExactIn.selector;
         funcs[5] = IUniswapV4StandardExchangeWeightedBufferHook.ownerSwapExactOut.selector;
-        funcs[6] = IDetfReserveQuote.previewSynthetic.selector;
     }
 
     function facetMetadata()

@@ -1,0 +1,21 @@
+{
+  "checked_at_utc": "2026-09-10T17:52:02.009578+00:00",
+  "status": "CONFIRMED_UNAUTHORIZED_CANONICAL_PACKAGE_MUTATION_IN_ETH_CALL",
+  "rpc_alias": "robinhood_mainnet_alchemy",
+  "chain_id": 4663,
+  "block": 56118361,
+  "block_hash": "0x108ba210e727f1fa6ecea533508dd0266759a0a6a18be55de934552a74f20175",
+  "factory": "0xD7786b10BC8Bc97dc7651CAb7B97086c8b227882",
+  "caller": "0x000000000000000000000000000000000000bad1",
+  "owner": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+  "global_operator": false,
+  "function_operator": false,
+  "signature": "setCanonicalPackage(bytes4,address)",
+  "interface_id": "0xfeed1234",
+  "replacement_registered_package": "0x6da3688d6c4f34da6e1aa2504c6f83409189bf3c",
+  "simulated_return": true,
+  "persisted_mapping_before": "0x0000000000000000000000000000000000000000",
+  "persisted_mapping_after": "0x0000000000000000000000000000000000000000",
+  "public_transaction_sent": false,
+  "note": "eth_call succeeded for an unauthorized caller. Its simulated storage write is discarded by RPC, so the public mapping is unchanged. The source setter writes this mapping without an authorization guard."
+}

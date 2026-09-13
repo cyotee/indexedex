@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
-import {PoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
@@ -27,6 +28,7 @@ import {
 import {
     IUniswapV4Detf
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
+import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 import {TestBase_UniswapV4Detf} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
 
@@ -58,7 +60,11 @@ abstract contract TestBase_UniswapV4Detf_Quad is TestBase_UniswapV4Detf {
         se1 = _deployERC4626SE(address(new SimpleYieldERC4626(pair1)));
         se2 = _deployERC4626SE(address(new SimpleYieldERC4626(pair2)));
         se = se0;
-        pm = IPoolManager(address(new PoolManager(address(this))));
+        pm = IPoolManager(address(IPoolManager(create3Factory.create3WithArgs(
+            ArtifactCreationCode.creationCode(create3Factory, "PoolManager.sol:PoolManager"),
+            abi.encode(address(this)),
+            keccak256("TestBase_UniswapV4Detf_Quad_PoolManager")
+        ))));
 
         _deployHookFactory();
         _deployQuadHookPkg();
@@ -94,6 +100,7 @@ abstract contract TestBase_UniswapV4Detf_Quad is TestBase_UniswapV4Detf {
             IVaultRegistryDeployment(address(indexedexManager)),
             owner,
             IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgInit({
+                joinQueryFacet: QuadFactory.deployJoinQueryFacet(create3Factory),
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
                 liquidityFacet: joinFacet,
@@ -113,7 +120,6 @@ abstract contract TestBase_UniswapV4Detf_Quad is TestBase_UniswapV4Detf {
 
     function _deployQuadHookThenDetf(IUniswapV4Detf.PkgArgs memory args) internal virtual returns (address detf_) {
         address predicted_ = _predictDetf(args);
-        vm.etch(predicted_, address(pair0).code);
         address[4] memory toks;
         toks[0] = predicted_;
         toks[1] = address(pair0);
@@ -135,8 +141,10 @@ abstract contract TestBase_UniswapV4Detf_Quad is TestBase_UniswapV4Detf {
                 tokens: toks,
                 standardExchanges: ses,
                 rateProviders: rps,
+                tokenDecimals: HookPkgArgsDecimalsLib.tokenDecimals4(toks, predicted_),
+                seDecimals: HookPkgArgsDecimalsLib.seDecimals4(ses),
                 baseAmp: QUAD_BASE_AMP,
-                ownerOnlyLiquidity: true,
+                ownerOnlyLiquidity: args.ownerOnlyLiquidity,
                 owner: predicted_
             });
         uint256 mineNonce = QuadFactory.findMineNonce(hookFactory, quadHookPkg, hArgs);
@@ -149,7 +157,6 @@ abstract contract TestBase_UniswapV4Detf_Quad is TestBase_UniswapV4Detf {
         init.deployPair(toks[1], toks[3]);
         init.deployPair(toks[2], toks[3]);
         require(init.finalizeInitialization(), "finalize");
-        vm.etch(predicted_, "");
         args.hook = reserveHook;
         vm.startPrank(owner);
         detf_ = detfPkg.deployVault(args);
@@ -167,14 +174,10 @@ abstract contract TestBase_UniswapV4Detf_Quad is TestBase_UniswapV4Detf {
         }
     }
 
-    function _customClosePair0Args() internal view returns (IUniswapV4Detf.PkgArgs memory args) {
+    function _fundedClaimArgs() internal view returns (IUniswapV4Detf.PkgArgs memory args) {
         args = _nLegDetfArgs(3);
-        args.name = "QCustomClose";
-        args.symbol = "qClose1";
-        args.closeRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
-        args.closeRoutes = new IUniswapV4Detf.IoRoute[](1);
-        args.closeRoutes[0] =
-            IUniswapV4Detf.IoRoute({token: IERC20(address(pair0)), vault: IStandardExchange(se0)});
+        args.name = "QFundedClaim";
+        args.symbol = "qClaim";
     }
 
     function _firstBond(uint256 pairAmount_) internal virtual override returns (uint256 tokenId, uint256 shares) {

@@ -1,0 +1,16 @@
+{
+  "status": "CURRENT_AUTHORITY_LINKS_APPLIED",
+  "files": [
+    "contracts/protocols/dexes/uniswap/v3/UNISWAP_V3_STANDARD_EXCHANGE_FULL_RANGE_DEPLOYED_BOOK_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "contracts/protocols/dexes/uniswap/v3/UNISWAP_V3_STANDARD_EXCHANGE_FULL_RANGE_DEPLOYED_BOOK_PRD.md",
+    "contracts/protocols/dexes/uniswap/v3/UNISWAP_V3_STANDARD_EXCHANGE_VAULT_PLAN.md",
+    "contracts/protocols/dexes/uniswap/v3/UNISWAP_V3_STANDARD_EXCHANGE_VAULT_PRD.md",
+    "contracts/protocols/dexes/uniswap/v4/UNISWAP_V4_STANDARD_EXCHANGE_FULL_RANGE_DEPLOYED_BOOK_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "contracts/protocols/dexes/uniswap/v4/UNISWAP_V4_STANDARD_EXCHANGE_FULL_RANGE_DEPLOYED_BOOK_PRD.md",
+    "contracts/protocols/dexes/uniswap/v4/UNISWAP_V4_STANDARD_EXCHANGE_LOCAL_LIQUID_BUFFER_IMPLEMENTATION_AND_TEST_PLAN.md",
+    "contracts/protocols/dexes/uniswap/v4/UNISWAP_V4_STANDARD_EXCHANGE_LOCAL_LIQUID_BUFFER_PRD.md",
+    "contracts/protocols/dexes/uniswap/v4/UNISWAP_V4_STANDARD_EXCHANGE_VAULT_PLAN.md"
+  ],
+  "purpose": "Preserve historical designs while making the approved two-token/full-range/proportional-book/native-SY release law unambiguous at each V3/V4 package document entry point.",
+  "release_scope_unchanged": true
+}

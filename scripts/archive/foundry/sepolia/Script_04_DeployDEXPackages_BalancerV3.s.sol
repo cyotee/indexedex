@@ -16,20 +16,17 @@ import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeplo
 
 import {BalancerV3StandardExchangeRouter_FactoryService} from
     "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouter_FactoryService.sol";
-import {IBalancerV3StandardExchangeRouterDFPkg} from
-    "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterDFPkg.sol";
+import {IBalancerV3StandardExchangeRouterDFPkg} from "contracts/protocols/dexes/balancer/v3/routers/IBalancerV3StandardExchangeRouterDFPkg.sol";
 import {IBalancerV3StandardExchangeRouterProxy} from
     "contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol";
 
 import {StandardExchangeRateProvider_FactoryService} from
     "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProvider_FactoryService.sol";
-import {IStandardExchangeRateProviderDFPkg} from
-    "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
+import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
 
 import {BalancerV3ConstantProductPool_FactoryService} from
     "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPool_FactoryService.sol";
-import {IBalancerV3ConstantProductPoolStandardVaultPkg} from
-    "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPoolStandardVaultPkg.sol";
+import {IBalancerV3ConstantProductPoolStandardVaultPkg} from "contracts/protocols/dexes/balancer/v3/pools/constProd/IBalancerV3ConstantProductPoolStandardVaultPkg.sol";
 
 import {DefaultPoolInfoFacet} from
     "contracts/protocols/dexes/balancer/v3/pools/constProd/facets/DefaultPoolInfoFacet.sol";

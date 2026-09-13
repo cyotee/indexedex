@@ -1,0 +1,43 @@
+{
+  "recorded_at_utc": "2026-09-08T10:01:13.825976+00:00",
+  "status": "SOURCE_REVIEW_ONLY_NO_NEW_PROVIDER_CODE_OR_DEPLOYMENT_ARGUMENTS_APPLIED",
+  "owner_decision_needed": false,
+  "scope": "Preserve accepted V4 nested SE routes and native SE behavior; D60/D66 unchanged.",
+  "rocket_pool": {
+    "exchange": "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeCommon.sol",
+    "protocol_sources": [
+      "lib/crane/contracts/external/rocketpool/contract/token/RocketTokenRETH.sol",
+      "lib/crane/contracts/external/rocketpool/contract/deposit/RocketDepositPool.sol",
+      "lib/crane/contracts/external/rocketpool/contract/RocketBase.sol"
+    ],
+    "facts": [
+      "rETH conversions use RocketNetworkBalances oracle totals, which ordinary deposit/burn does not update. Do not incorrectly use actual ERC20 totalSupply as the conversion denominator.",
+      "WETH-to-SE issuance credits the incoming WETH first, mints user/usage-fee shares, then soft-stakes excess toward the liquid target. Capacity, minimum deposit, disabled deposits and deposit fees can change the resulting book.",
+      "RocketDepositPool deposits mint getRethValue(amount minus floor(amount times depositFee/WAD)). getMaximumDepositAmount exposes capacity but not the fee or minimum.",
+      "Current three-field SE PkgArgs expose rETH, WETH and depositPool. RocketBase stores RocketStorage internally, with no public getter. No additional deployment argument has been selected or applied.",
+      "WETH payouts can burn held rETH; collateral includes rETH contract ETH plus excess deposit-pool ETH. Projecting sequential deposits and burns requires actual capacity/collateral economics, not an assumed unchanged share rate.",
+      "Existing HermeticDepositPool uses optional depositFeeBps, a capacity setter and disabled-deposit getter behavior; these are external protocol-shaped test ports, not the SE SUT."
+    ]
+  },
+  "etherfi": {
+    "exchange": "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeCommon.sol",
+    "protocol_sources": [
+      "lib/crane/contracts/external/etherfi/core/EETH.sol",
+      "lib/crane/contracts/external/etherfi/core/WeETH.sol",
+      "lib/crane/contracts/external/etherfi/core/LiquidityPool.sol",
+      "lib/crane/contracts/external/etherfi/withdrawals/EtherFiRedemptionManager.sol",
+      "lib/crane/contracts/external/etherfi/governance/rate-limiting/libraries/BucketLimiter.sol"
+    ],
+    "facts": [
+      "NAV is WETH plus held weETH converted to ETH plus pending withdrawal face; idle eETH is excluded. Track idle eETH separately for transfer/wrap rounding.",
+      "WETH-to-SE mints shares before staking excess. The split repeats once if the updated sleeve remains above target plus a ten-percent target band.",
+      "Live deposit increases pooled ETH and mints floor(amount times existing shares/pooled ETH). The SE measures its eETH balance delta and wraps that delta, so existing idle eETH and fractional rounding matter.",
+      "Live EETH exposes totalShares and shares(account). Existing HermeticEETH instead has a fixed virtual getTotalShares and nonrebasing ERC20 balances; HermeticWeETH carries a configurable fixed conversion rate. Do not mistake these two external protocol models for each other.",
+      "Optional instant redemption tries five-percent gross headroom (minimum one wei), caps by held weETH, checks canRedeem and retries the bare shortfall. Failure can legitimately leave an insufficient WETH sleeve.",
+      "Actual manager previewRedeem is not the exact multi-rounding execution formula. _calcRedemption floors sharesForAmount, floors fee-adjusted receiver shares, converts to assets, ceilings withdrawal shares, then separately floors treasury fee shares.",
+      "Actual manager tokenToRedemptionInfo returns a static Limit of four uint64 fields plus three uint16 fee/low-watermark values. The bucket scale is 1e12; projected consumption rounds ETH face up to bucket units. Liquidity and low watermark change with pooled ETH and redemptions.",
+      "HermeticRedemptionManager intentionally treats weETH amount as one-to-one ETH face in redeemWeEth even though its canRedeem receives converted face. Tests of live fractional execution must use actual protocol evidence, not assume this stub reproduces canonical fee rounding."
+    ]
+  },
+  "next_validation": "Complete the active full build and the prepared V4/Lido/Stata/Orbital/reentrancy follow-up selection. Any further provider implementation needs actual proxy sequences and appropriate real-protocol evidence; no generic guessed projection or deployment allowlist has been introduced."
+}

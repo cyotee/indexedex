@@ -1,15 +1,13 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20MintBurn} from "@crane/contracts/interfaces/IERC20MintBurn.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
-import {OperableFacet} from "@crane/contracts/access/operable/OperableFacet.sol";
-import {ERC20MintBurnOwnableFacet} from "@crane/contracts/tokens/ERC20/ERC20MintBurnOwnableFacet.sol";
-import {
-    IERC20MintBurnOwnableOperableDFPkg,
-    ERC20MintBurnOwnableOperableDFPkg
-} from "@crane/contracts/tokens/ERC20/ERC20MintBurnOwnableOperableDFPkg.sol";
+
+import {IERC20MintBurnOwnableOperableDFPkg} from "@crane/contracts/tokens/ERC20/IERC20MintBurnOwnableOperableDFPkg.sol";
 
 import {TestBase_VaultComponents} from "contracts/vaults/TestBase_VaultComponents.sol";
 
@@ -22,7 +20,7 @@ import {TestBase_VaultComponents} from "contracts/vaults/TestBase_VaultComponent
  * @dev Local Aave V3.6 + V4 markets are wired by subclasses (see plan: Crane V4 setup/Base +
  *      V3 AaveV3BatchOrchestration), enabling deterministic profitable-loop tests with tunable rates.
  */
-contract TestBase_AaveCrossVersionLoop is TestBase_VaultComponents {
+abstract contract TestBase_AaveCrossVersionLoop is TestBase_VaultComponents {
     IFacet internal operableFacet;
     IFacet internal erc20MintBurnOwnableFacet;
 
@@ -48,12 +46,12 @@ contract TestBase_AaveCrossVersionLoop is TestBase_VaultComponents {
     function _deployTestTokenPkg() internal {
         operableFacet = IFacet(
             create3Factory.deployFacet(
-                type(OperableFacet).creationCode, keccak256("AaveCrossVersionLoop_OperableFacet")
+                ArtifactCreationCode.creationCode(create3Factory, "OperableFacet.sol:OperableFacet"), keccak256("AaveCrossVersionLoop_OperableFacet")
             )
         );
         erc20MintBurnOwnableFacet = IFacet(
             create3Factory.deployFacet(
-                type(ERC20MintBurnOwnableFacet).creationCode,
+                ArtifactCreationCode.creationCode(create3Factory, "ERC20MintBurnOwnableFacet.sol:ERC20MintBurnOwnableFacet"),
                 keccak256("AaveCrossVersionLoop_ERC20MintBurnOwnableFacet")
             )
         );
@@ -71,7 +69,7 @@ contract TestBase_AaveCrossVersionLoop is TestBase_VaultComponents {
         testTokenPkg = IERC20MintBurnOwnableOperableDFPkg(
             address(
                 create3Factory.deployPackageWithArgs(
-                    type(ERC20MintBurnOwnableOperableDFPkg).creationCode,
+                    ArtifactCreationCode.creationCode(create3Factory, "ERC20MintBurnOwnableOperableDFPkg.sol:ERC20MintBurnOwnableOperableDFPkg"),
                     abi.encode(pkgInit),
                     keccak256("AaveCrossVersionLoop_TestTokenPkg")
                 )

@@ -1,0 +1,581 @@
+ M .claude/skills/indexedex-adversarial-testing/SKILL.md
+ M .claude/skills/indexedex-launch-scripts/SKILL.md
+ M .claude/skills/indexedex-launch-scripts/references/frontend-export.md
+ M .claude/skills/indexedex-testing/SKILL.md
+ M .claude/skills/permit2-router-witness/SKILL.md
+ M .github/copilot-instructions.md
+ M .grok/skills/indexedex-adversarial-testing/SKILL.md
+ M .grok/skills/indexedex-launch-scripts/SKILL.md
+ M .grok/skills/indexedex-launch-scripts/references/frontend-export.md
+ M .grok/skills/indexedex-testing/SKILL.md
+ M .grok/skills/indexedex-ui-tx-testing/references/dtf-e2e-runbook.md
+ M .opencode/skills/indexedex-adversarial-testing/SKILL.md
+ M .opencode/skills/indexedex-launch-scripts/SKILL.md
+ M .opencode/skills/indexedex-launch-scripts/references/frontend-export.md
+ M .opencode/skills/indexedex-testing/SKILL.md
+ M .opencode/skills/permit2-router-witness/SKILL.md
+ M CLAUDE.md
+ M contracts/fee/collector/FeeCollectorFactoryService.sol
+ M contracts/hooks/uniswap/v4/factory/UniswapV4HookDiamondPackageCallBackFactory_FactoryService.sol
+ M contracts/hooks/uniswap/v4/orbital/UniswapV4OrbitalSwapHook_FactoryService.sol
+ M contracts/hooks/uniswap/v4/stable/quad/balancer/UniswapV4BalancerQuadStableSwapHook_FactoryService.sol
+ M contracts/hooks/uniswap/v4/stable/quad/curve/UniswapV4CurveQuadStableSwapHook_FactoryService.sol
+ M contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/TestBase_UniswapV4SingleStandardExchangeBufferConstantProductHook.sol
+ M contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg.sol
+ M contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarget.sol
+ M contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService.sol
+ M contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.sol
+ M contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHook_FactoryService.sol
+ M contracts/hooks/uniswap/v4/standardExchange/orbital/TestBase_UniswapV4StandardExchangeOrbitalBufferHook.sol
+ M contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDFPkg.sol
+ M contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookHooksTarget.sol
+ M contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_FactoryService.sol
+ M contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHookPackage.sol
+ M contracts/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleStandardExchangeBufferHook_FactoryService.sol
+ M contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook.sol
+ M contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg.sol
+ M contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookRepo.sol
+ M contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_FactoryService.sol
+ M contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/interfaces/IUniswapV4StandardExchangeBalancerQuadStableBufferHookPackage.sol
+ M contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook.sol
+ M contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg.sol
+ M contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookRepo.sol
+ M contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookSeTarget.sol
+ M contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_FactoryService.sol
+ M contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.sol
+ M contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol
+ M contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookSeTarget.sol
+ M contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_FactoryService.sol
+ M contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHookPackage.sol
+ M contracts/hooks/uniswap/v4/weighted/UniswapV4WeightedSwapHook_FactoryService.sol
+ M contracts/manager/IndexedexManagerFactoryService.sol
+ M contracts/oracles/uniswap/v4/twap/UniswapV4TwapOracleFactoryService.sol
+ M contracts/protocols/dexes/aerodrome/slipstream/Slipstream_Component_FactoryService.sol
+ M contracts/protocols/dexes/aerodrome/slipstream/test/SlipstreamHermeticClBook.sol
+ M contracts/protocols/dexes/aerodrome/v1/Aerodrome_Component_FactoryService.sol
+ M contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPool_FactoryService.sol
+ M contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget.sol
+ M contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolCommon.sol
+ M contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolRepo.sol
+ M contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPool_FactoryService.sol
+ M contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolCommon.sol
+ M contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolHookTarget.sol
+ M contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolStandardVaultPkg.sol
+ M contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePool_FactoryService.sol
+ M contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolCommon.sol
+ M contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolHookTarget.sol
+ M contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolStandardVaultPkg.sol
+ M contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePool_FactoryService.sol
+ M contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolCommon.sol
+ M contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolHookTarget.sol
+ M contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolStandardVaultPkg.sol
+ M contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPool_FactoryService.sol
+ M contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPool_FactoryService.sol
+ M contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferHookTarget.sol
+ M contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPoolCommon.sol
+ M contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPool_FactoryService.sol
+ M contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProvider_FactoryService.sol
+ M contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouter_FactoryService.sol
+ M contracts/protocols/dexes/camelot/v2/CamelotV2_Component_FactoryService.sol
+ M contracts/protocols/dexes/uniswap/v2/UniswapV2_Component_FactoryService.sol
+ M contracts/protocols/dexes/uniswap/v3/UniswapV3_Component_FactoryService.sol
+ M contracts/protocols/dexes/uniswap/v4/UniswapV4_Component_FactoryService.sol
+ M contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoop_Component_FactoryService.sol
+ M contracts/protocols/lending/aave/v3.6/AaveV3Stata_Component_FactoryService.sol
+ M contracts/protocols/staking/etherfi/EtherFiWeETH_Component_FactoryService.sol
+ M contracts/protocols/staking/lido/LidoWstETH_Component_FactoryService.sol
+ M contracts/protocols/staking/rocket-pool/RocketPoolRETH_Component_FactoryService.sol
+ M contracts/routers/balancerV3-uniswapV4/BalancerV3UniswapV4CoordinatorRouter_FactoryService.sol
+ M contracts/test/bases/TestBase_UniswapV4Detf_PonsV2Se.sol
+ M contracts/test/stubs/ShortRedeemERC4626.sol
+ M contracts/test/stubs/SimpleMintableERC20.sol
+ M contracts/test/stubs/SimpleYieldERC4626.sol
+ M contracts/test/stubs/UnderConsumeERC4626.sol
+ M contracts/test/stubs/WrapperExactOutRouter.sol
+ M contracts/vaults/VaultComponentFactoryService.sol
+ M contracts/vaults/detf/DETF_INSTANCE_IO_ROUTING_PRD.md
+ M contracts/vaults/detf/common/factory/DetfFacetFactoryService.sol
+ M contracts/vaults/detf/common/factory/DetfPkgFactoryService.sol
+ M contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_Facet_FactoryService.sol
+ M contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_Pkg_FactoryService.sol
+ M contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_Facet_FactoryService.sol
+ M contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_Pkg_FactoryService.sol
+ M contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondNFTVault_Facet_FactoryService.sol
+ M contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondNFTVault_Pkg_FactoryService.sol
+ M contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_Facet_FactoryService.sol
+ M contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_Pkg_FactoryService.sol
+ M contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFToken_Facet_FactoryService.sol
+ M contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFToken_Pkg_FactoryService.sol
+ M contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_Facet_FactoryService.sol
+ M contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_Pkg_FactoryService.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_PonsV1Se.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Adversarial.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_ProdSe.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_Adversarial.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_Policy.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_ProdSe.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_Adversarial.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_ProdSe.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Facet_FactoryService.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Pkg_FactoryService.sol
+ M contracts/vaults/detf/protocols/dexes/uniswap/v4/standardExchange/UniswapV4DetfHookPremineLib.sol
+ M contracts/vaults/standard/erc4626/ERC4626StandardExchange_Component_FactoryService.sol
+ M contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlue_Component_FactoryService.sol
+ M deployments/anvil_robinhood_testnet/phase01_stage04_uniswap_v3.json
+ M deployments/anvil_robinhood_testnet/phase01_stage05_morpho_blue.json
+ M deployments/anvil_robinhood_testnet/phase02_stage01_create3_factory.json
+ M deployments/anvil_robinhood_testnet/phase02_stage02_diamond_package_factory.json
+ M deployments/anvil_robinhood_testnet/phase02_stage03_hook_factory.json
+ M deployments/anvil_robinhood_testnet/phase03_stage01_common_facets.json
+ M deployments/anvil_robinhood_testnet/phase04_stage01_fee_collector_and_manager.json
+ M deployments/anvil_robinhood_testnet/phase04_stage02_erc20_minter_facade.json
+ M deployments/anvil_robinhood_testnet/phase05_stage01_se_rate_provider_pkg.json
+ D deployments/anvil_robinhood_testnet/phase05_stage02_uniswap_v4_standard_exchange_pkg.json
+ M deployments/anvil_robinhood_testnet/phase05_stage02_uniswap_v4_twap_oracle.json
+ D deployments/anvil_robinhood_testnet/phase05_stage03_uniswap_v3_standard_exchange_pkg.json
+ M deployments/anvil_robinhood_testnet/phase05_stage03_uniswap_v4_standard_exchange_pkg.json
+ D deployments/anvil_robinhood_testnet/phase05_stage04_morpho_blue_standard_exchange_pkg.json
+ M deployments/anvil_robinhood_testnet/phase05_stage04_uniswap_v3_standard_exchange_pkg.json
+ M deployments/anvil_robinhood_testnet/phase05_stage05_morpho_blue_standard_exchange_pkg.json
+ M deployments/anvil_robinhood_testnet/phase06_stage01_bond_nft_pkg.json
+ M deployments/anvil_robinhood_testnet/phase06_stage02_rebasing_claim_pkg.json
+ M deployments/anvil_robinhood_testnet/phase06_stage03_cp_buffer_hook_pkg.json
+ M deployments/anvil_robinhood_testnet/phase06_stage04_weighted_buffer_hook_pkg.json
+ M deployments/anvil_robinhood_testnet/phase06_stage05_orbital_buffer_hook_pkg.json
+ M deployments/anvil_robinhood_testnet/phase06_stage06_curve_quad_buffer_hook_pkg.json
+ D deployments/anvil_robinhood_testnet/phase06_stage07_cp_detf_pkg.json
+ D deployments/anvil_robinhood_testnet/phase06_stage08_weighted_detf_pkg.json
+ D deployments/anvil_robinhood_testnet/phase06_stage09_orbital_detf_pkg.json
+ D deployments/anvil_robinhood_testnet/phase06_stage10_curve_quad_detf_pkg.json
+ M deployments/anvil_robinhood_testnet/phase07_stage01_core_test_tokens.json
+ M deployments/anvil_robinhood_testnet/phase07_stage02_mag7_test_tokens.json
+ M deployments/anvil_robinhood_testnet/phase07_stage03_uni_v4_se_dtf_weth.json
+ M deployments/anvil_robinhood_testnet/phase07_stage04_uni_v4_se_usd.json
+ M deployments/anvil_robinhood_testnet/phase08_stage01_fee_detf.json
+ D deployments/anvil_robinhood_testnet/phase08_stage02_ttdol_q.json
+ D deployments/anvil_robinhood_testnet/phase09_stage01_export_frontend.json
+ M docs/ANVIL_ROBINHOOD_MAIN_ARCHITECTURE_PHASE_STAGE_PRD.md
+ M docs/ANVIL_ROBINHOOD_TESTNET_LAUNCH_SCRIPTS_REWRITE_IMPLEMENTATION_AND_TEST_PLAN.md
+ M docs/ANVIL_ROBINHOOD_TESTNET_LAUNCH_SCRIPTS_REWRITE_PRD.md
+ M docs/CODEBASE_MAP.md
+ M docs/NEGATIVE_TEST_COVERAGE_REPORT.md
+ M docs/agent/AGENT_NAVIGATION_INDEX.md
+ M docs/agent/INDEXEDEX_AGENT_LAW.md
+ M docs/agent/SKILL_CATALOG.md
+ M docs/ci.md
+ D docs/nested_liquidity_pools_balancer_v3_custom.markdown
+ D docs/nested_liquidity_pools_balancer_v3_custom_diagram.markdown
+ D docs/nested_liquidity_pools_balancer_v3_detf_configs.markdown
+ D docs/nested_liquidity_pools_balancer_v3_dual_const_prod.markdown
+ D docs/nested_liquidity_pools_balancer_v3_dual_pools.markdown
+ D docs/nested_liquidity_pools_balancer_v3_fixed_syntax.markdown
+ D docs/nested_liquidity_pools_balancer_v3_new_svs.markdown
+ D docs/nested_liquidity_pools_balancer_v3_no_user_vault.markdown
+ D docs/nested_liquidity_pools_balancer_v3_reinstated_dex.markdown
+ D docs/nested_liquidity_pools_balancer_v3_stable_pools.markdown
+ D "docs/nested_liquidity_pools_balancer_v3_with_token_c (1).markdown"
+ D docs/nested_liquidity_pools_balancer_v3_with_token_c.markdown
+ M docs/security/README.md
+ M foundry.toml
+ M frontend/apps/dtf/app/create/CreateWizard.tsx
+ M frontend/apps/dtf/app/create/DetfDeployPanel.tsx
+ M frontend/apps/dtf/app/create/FirstBondClient.tsx
+ M frontend/apps/dtf/app/create/detfTypes.ts
+ M frontend/apps/dtf/app/create/lib/createPlan.test.ts
+ M frontend/apps/dtf/app/create/lib/createPlan.ts
+ M frontend/apps/dtf/app/create/lib/detfAbi.ts
+ M frontend/apps/dtf/app/create/lib/detfDeploy.test.ts
+ M frontend/apps/dtf/app/create/lib/detfDeploy.ts
+ M frontend/apps/dtf/app/create/lib/hookMine.test.ts
+ M frontend/apps/dtf/app/create/lib/hookMine.ts
+ M frontend/apps/dtf/app/create/lib/sePlatform.ts
+ M frontend/apps/dtf/app/create/lib/seTx.test.ts
+ M frontend/apps/dtf/app/create/lib/seTx.ts
+ M frontend/apps/dtf/app/create/stables/page.tsx
+ M lib/crane
+ M scripts/foundry/anvil_robinhood_fee_detf/Script_09_DeployChirInstance.s.sol
+ M scripts/foundry/anvil_robinhood_main/LaunchIo.sol
+ M scripts/foundry/anvil_robinhood_main/LaunchState.sol
+ M scripts/foundry/anvil_robinhood_main/README.md
+ M scripts/foundry/anvil_robinhood_main/RobinhoodCanonicalLib.sol
+ M scripts/foundry/anvil_robinhood_main/deploy_all.sh
+ M scripts/foundry/anvil_robinhood_main/public_mainnet_stage_commands.txt
+ M scripts/foundry/anvil_robinhood_testnet/ProtocolDetfInstanceLib.sol
+ M scripts/shell/lib/rh_46630_stages.sh
+ M scripts/shell/lib/rh_4663_stages.sh
+ M scripts/shell/robinhood_main.sh
+ M scripts/sync-crane-skills.sh
+ M test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial.t.sol
+ M test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_Deploy.t.sol
+ M test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_StagedInit.t.sol
+ M test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_Adversarial.t.sol
+ M test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_Deploy.t.sol
+ M test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_StagedInit.t.sol
+ M test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_Deploy.t.sol
+ M test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_Scale.t.sol
+ M test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_Deploy.t.sol
+ M test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_Scale.t.sol
+ M test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/TestBase_UniswapV4StandardExchangeWeightedBufferHook.sol
+ M test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_Deploy.t.sol
+ M test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_N8.t.sol
+ M test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_Scale.t.sol
+ M test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_LocalLiquidBuffer_H2.t.sol
+ M test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange_Real.t.sol
+ M test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/behaviors/Behavior_StandardExchangeBufferPool_LP_AddUnbalanced.sol
+ M test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/behaviors/Behavior_StandardExchangeBufferPool_Swap_SharesToTTA.sol
+ M test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/behaviors/Behavior_StandardExchangeBufferPool_Swap_TTAtoShares.sol
+ M test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_Alignment_RedeemD15.t.sol
+ M test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_Alignment_RedeemD15.t.sol
+ M test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_Alignment_RedeemD15.t.sol
+ M test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_Alignment_RedeemD15.t.sol
+ M test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_IoTablesGoldBase.sol
+?? .agents/skills/
+?? .codex/config.toml
+?? AGENTS.md
+?? contracts/hooks/uniswap/v4/orbital/TestBase_UniswapV4OrbitalSwapHook_B_ALL6.sol
+?? contracts/hooks/uniswap/v4/orbital/TestBase_UniswapV4OrbitalSwapHook_B_ALL9.sol
+?? contracts/hooks/uniswap/v4/orbital/TestBase_UniswapV4OrbitalSwapHook_B_P18_R6.sol
+?? contracts/hooks/uniswap/v4/orbital/TestBase_UniswapV4OrbitalSwapHook_B_P18_R9.sol
+?? contracts/hooks/uniswap/v4/orbital/TestBase_UniswapV4OrbitalSwapHook_B_P6_R18.sol
+?? contracts/hooks/uniswap/v4/orbital/TestBase_UniswapV4OrbitalSwapHook_B_P6_R9.sol
+?? contracts/hooks/uniswap/v4/orbital/TestBase_UniswapV4OrbitalSwapHook_B_P9_R18.sol
+?? contracts/hooks/uniswap/v4/orbital/TestBase_UniswapV4OrbitalSwapHook_B_P9_R6.sol
+?? contracts/hooks/uniswap/v4/orbital/TestBase_UniswapV4OrbitalSwapHook_Decimals.sol
+?? contracts/hooks/uniswap/v4/stable/quad/balancer/TestBase_UniswapV4BalancerQuadStableSwapHook_B_ALL6.sol
+?? contracts/hooks/uniswap/v4/stable/quad/balancer/TestBase_UniswapV4BalancerQuadStableSwapHook_B_ALL9.sol
+?? contracts/hooks/uniswap/v4/stable/quad/balancer/TestBase_UniswapV4BalancerQuadStableSwapHook_B_P18_R6.sol
+?? contracts/hooks/uniswap/v4/stable/quad/balancer/TestBase_UniswapV4BalancerQuadStableSwapHook_B_P18_R9.sol
+?? contracts/hooks/uniswap/v4/stable/quad/balancer/TestBase_UniswapV4BalancerQuadStableSwapHook_B_P6_R18.sol
+?? contracts/hooks/uniswap/v4/stable/quad/balancer/TestBase_UniswapV4BalancerQuadStableSwapHook_B_P6_R9.sol
+?? contracts/hooks/uniswap/v4/stable/quad/balancer/TestBase_UniswapV4BalancerQuadStableSwapHook_B_P9_R18.sol
+?? contracts/hooks/uniswap/v4/stable/quad/balancer/TestBase_UniswapV4BalancerQuadStableSwapHook_B_P9_R6.sol
+?? contracts/hooks/uniswap/v4/stable/quad/balancer/TestBase_UniswapV4BalancerQuadStableSwapHook_Decimals.sol
+?? contracts/hooks/uniswap/v4/stable/quad/curve/TestBase_UniswapV4CurveQuadStableSwapHook_B_ALL6.sol
+?? contracts/hooks/uniswap/v4/stable/quad/curve/TestBase_UniswapV4CurveQuadStableSwapHook_B_ALL9.sol
+?? contracts/hooks/uniswap/v4/stable/quad/curve/TestBase_UniswapV4CurveQuadStableSwapHook_B_P18_R6.sol
+?? contracts/hooks/uniswap/v4/stable/quad/curve/TestBase_UniswapV4CurveQuadStableSwapHook_B_P18_R9.sol
+?? contracts/hooks/uniswap/v4/stable/quad/curve/TestBase_UniswapV4CurveQuadStableSwapHook_B_P6_R18.sol
+?? contracts/hooks/uniswap/v4/stable/quad/curve/TestBase_UniswapV4CurveQuadStableSwapHook_B_P6_R9.sol
+?? contracts/hooks/uniswap/v4/stable/quad/curve/TestBase_UniswapV4CurveQuadStableSwapHook_B_P9_R18.sol
+?? contracts/hooks/uniswap/v4/stable/quad/curve/TestBase_UniswapV4CurveQuadStableSwapHook_B_P9_R6.sol
+?? contracts/hooks/uniswap/v4/stable/quad/curve/TestBase_UniswapV4CurveQuadStableSwapHook_Decimals.sol
+?? contracts/hooks/uniswap/v4/standardExchange/UNISWAP_V4_SE_BUFFER_HOOK_PKGARGS_DECIMALS_IMPLEMENTATION_AND_TEST_PLAN.md
+?? contracts/hooks/uniswap/v4/standardExchange/UNISWAP_V4_SE_BUFFER_HOOK_PKGARGS_DECIMALS_PRD.md
+?? contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/TestBase_UniswapV4SingleStandardExchangeBufferConstantProductHook_Decimals.sol
+?? contracts/hooks/uniswap/v4/standardExchange/orbital/TestBase_UniswapV4StandardExchangeOrbitalBufferHook_B_ALL6.sol
+?? contracts/hooks/uniswap/v4/standardExchange/orbital/TestBase_UniswapV4StandardExchangeOrbitalBufferHook_B_ALL9.sol
+?? contracts/hooks/uniswap/v4/standardExchange/orbital/TestBase_UniswapV4StandardExchangeOrbitalBufferHook_B_P18_R6.sol
+?? contracts/hooks/uniswap/v4/standardExchange/orbital/TestBase_UniswapV4StandardExchangeOrbitalBufferHook_B_P18_R9.sol
+?? contracts/hooks/uniswap/v4/standardExchange/orbital/TestBase_UniswapV4StandardExchangeOrbitalBufferHook_B_P6_R18.sol
+?? contracts/hooks/uniswap/v4/standardExchange/orbital/TestBase_UniswapV4StandardExchangeOrbitalBufferHook_B_P6_R9.sol
+?? contracts/hooks/uniswap/v4/standardExchange/orbital/TestBase_UniswapV4StandardExchangeOrbitalBufferHook_B_P9_R18.sol
+?? contracts/hooks/uniswap/v4/standardExchange/orbital/TestBase_UniswapV4StandardExchangeOrbitalBufferHook_B_P9_R6.sol
+?? contracts/hooks/uniswap/v4/standardExchange/orbital/TestBase_UniswapV4StandardExchangeOrbitalBufferHook_Decimals.sol
+?? contracts/hooks/uniswap/v4/standardExchange/single/TestBase_UniswapV4SingleStandardExchangeBufferHook_Decimals.sol
+?? contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook_B_ALL6.sol
+?? contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook_B_ALL9.sol
+?? contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook_B_P18_R6.sol
+?? contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook_B_P18_R9.sol
+?? contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook_B_P6_R18.sol
+?? contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook_B_P6_R9.sol
+?? contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook_B_P9_R18.sol
+?? contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook_B_P9_R6.sol
+?? contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook_Decimals.sol
+?? contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook_B_ALL6.sol
+?? contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook_B_ALL9.sol
+?? contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook_B_P18_R6.sol
+?? contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook_B_P18_R9.sol
+?? contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook_B_P6_R18.sol
+?? contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook_B_P6_R9.sol
+?? contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook_B_P9_R18.sol
+?? contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook_B_P9_R6.sol
+?? contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook_Decimals.sol
+?? contracts/hooks/uniswap/v4/weighted/TestBase_UniswapV4WeightedSwapHook_B_ALL6.sol
+?? contracts/hooks/uniswap/v4/weighted/TestBase_UniswapV4WeightedSwapHook_B_ALL9.sol
+?? contracts/hooks/uniswap/v4/weighted/TestBase_UniswapV4WeightedSwapHook_B_P18_R6.sol
+?? contracts/hooks/uniswap/v4/weighted/TestBase_UniswapV4WeightedSwapHook_B_P18_R9.sol
+?? contracts/hooks/uniswap/v4/weighted/TestBase_UniswapV4WeightedSwapHook_B_P6_R18.sol
+?? contracts/hooks/uniswap/v4/weighted/TestBase_UniswapV4WeightedSwapHook_B_P6_R9.sol
+?? contracts/hooks/uniswap/v4/weighted/TestBase_UniswapV4WeightedSwapHook_B_P9_R18.sol
+?? contracts/hooks/uniswap/v4/weighted/TestBase_UniswapV4WeightedSwapHook_B_P9_R6.sol
+?? contracts/hooks/uniswap/v4/weighted/TestBase_UniswapV4WeightedSwapHook_Decimals.sol
+?? contracts/hooks/uniswap/v4/weighted/TestBase_UniswapV4WeightedSwapHook_H6.sol
+?? contracts/hooks/uniswap/v4/weighted/TestBase_UniswapV4WeightedSwapHook_H9.sol
+?? contracts/hooks/uniswap/v4/weighted/TestBase_UniswapV4WeightedSwapHook_P18_R6.sol
+?? contracts/hooks/uniswap/v4/weighted/TestBase_UniswapV4WeightedSwapHook_P18_R9.sol
+?? contracts/hooks/uniswap/v4/weighted/TestBase_UniswapV4WeightedSwapHook_P6_R18.sol
+?? contracts/hooks/uniswap/v4/weighted/TestBase_UniswapV4WeightedSwapHook_P6_R9.sol
+?? contracts/hooks/uniswap/v4/weighted/TestBase_UniswapV4WeightedSwapHook_P9_R18.sol
+?? contracts/hooks/uniswap/v4/weighted/TestBase_UniswapV4WeightedSwapHook_P9_R6.sol
+?? contracts/interfaces/IDetfClaimPurchase.sol
+?? contracts/interfaces/ITokenStaking.sol
+?? contracts/protocols/dexes/aerodrome/slipstream/test/bases/TestBase_SlipstreamStandardExchange_Decimals.sol
+?? contracts/protocols/dexes/aerodrome/slipstream/test/bases/TestBase_SlipstreamStandardExchange_H6.sol
+?? contracts/protocols/dexes/aerodrome/slipstream/test/bases/TestBase_SlipstreamStandardExchange_H9.sol
+?? contracts/protocols/dexes/aerodrome/slipstream/test/bases/TestBase_SlipstreamStandardExchange_P18_R6.sol
+?? contracts/protocols/dexes/aerodrome/slipstream/test/bases/TestBase_SlipstreamStandardExchange_P18_R9.sol
+?? contracts/protocols/dexes/aerodrome/slipstream/test/bases/TestBase_SlipstreamStandardExchange_P6_R18.sol
+?? contracts/protocols/dexes/aerodrome/slipstream/test/bases/TestBase_SlipstreamStandardExchange_P6_R9.sol
+?? contracts/protocols/dexes/aerodrome/slipstream/test/bases/TestBase_SlipstreamStandardExchange_P9_R18.sol
+?? contracts/protocols/dexes/aerodrome/slipstream/test/bases/TestBase_SlipstreamStandardExchange_P9_R6.sol
+?? contracts/protocols/dexes/aerodrome/v1/test/bases/TestBase_AerodromeStandardExchange_Decimals.sol
+?? contracts/protocols/dexes/aerodrome/v1/test/bases/TestBase_AerodromeStandardExchange_H6.sol
+?? contracts/protocols/dexes/aerodrome/v1/test/bases/TestBase_AerodromeStandardExchange_H9.sol
+?? contracts/protocols/dexes/aerodrome/v1/test/bases/TestBase_AerodromeStandardExchange_P18_R6.sol
+?? contracts/protocols/dexes/aerodrome/v1/test/bases/TestBase_AerodromeStandardExchange_P18_R9.sol
+?? contracts/protocols/dexes/aerodrome/v1/test/bases/TestBase_AerodromeStandardExchange_P6_R18.sol
+?? contracts/protocols/dexes/aerodrome/v1/test/bases/TestBase_AerodromeStandardExchange_P6_R9.sol
+?? contracts/protocols/dexes/aerodrome/v1/test/bases/TestBase_AerodromeStandardExchange_P9_R18.sol
+?? contracts/protocols/dexes/aerodrome/v1/test/bases/TestBase_AerodromeStandardExchange_P9_R6.sol
+?? contracts/protocols/dexes/camelot/v2/test/
+?? contracts/protocols/dexes/uniswap/v2/test/bases/TestBase_UniswapV2StandardExchange_Decimals.sol
+?? contracts/protocols/dexes/uniswap/v3/test/bases/TestBase_UniswapV3StandardExchange_Decimals.sol
+?? contracts/protocols/dexes/uniswap/v3/test/bases/TestBase_UniswapV3StandardExchange_H6.sol
+?? contracts/protocols/dexes/uniswap/v3/test/bases/TestBase_UniswapV3StandardExchange_H9.sol
+?? contracts/protocols/dexes/uniswap/v3/test/bases/TestBase_UniswapV3StandardExchange_P18_R6.sol
+?? contracts/protocols/dexes/uniswap/v3/test/bases/TestBase_UniswapV3StandardExchange_P18_R9.sol
+?? contracts/protocols/dexes/uniswap/v3/test/bases/TestBase_UniswapV3StandardExchange_P6_R18.sol
+?? contracts/protocols/dexes/uniswap/v3/test/bases/TestBase_UniswapV3StandardExchange_P6_R9.sol
+?? contracts/protocols/dexes/uniswap/v3/test/bases/TestBase_UniswapV3StandardExchange_P9_R18.sol
+?? contracts/protocols/dexes/uniswap/v3/test/bases/TestBase_UniswapV3StandardExchange_P9_R6.sol
+?? contracts/protocols/dexes/uniswap/v4/test/bases/TestBase_UniswapV4StandardExchange_Decimals.sol
+?? contracts/protocols/dexes/uniswap/v4/test/bases/TestBase_UniswapV4StandardExchange_H6.sol
+?? contracts/protocols/dexes/uniswap/v4/test/bases/TestBase_UniswapV4StandardExchange_H9.sol
+?? contracts/protocols/dexes/uniswap/v4/test/bases/TestBase_UniswapV4StandardExchange_P18_R6.sol
+?? contracts/protocols/dexes/uniswap/v4/test/bases/TestBase_UniswapV4StandardExchange_P18_R9.sol
+?? contracts/protocols/dexes/uniswap/v4/test/bases/TestBase_UniswapV4StandardExchange_P6_R18.sol
+?? contracts/protocols/dexes/uniswap/v4/test/bases/TestBase_UniswapV4StandardExchange_P6_R9.sol
+?? contracts/protocols/dexes/uniswap/v4/test/bases/TestBase_UniswapV4StandardExchange_P9_R18.sol
+?? contracts/protocols/dexes/uniswap/v4/test/bases/TestBase_UniswapV4StandardExchange_P9_R6.sol
+?? contracts/protocols/staking/rebasingVault/
+?? contracts/protocols/staking/token/
+?? contracts/test/bases/TestBase_AaveCrossVersionLoopV3Market_Decimals.sol
+?? contracts/test/bases/TestBase_AaveCrossVersionLoop_Decimals.sol
+?? contracts/test/bases/TestBase_AaveCrossVersionLoop_H6.sol
+?? contracts/test/bases/TestBase_AaveCrossVersionLoop_H9.sol
+?? contracts/test/bases/TestBase_AaveCrossVersionLoop_P18_R6.sol
+?? contracts/test/bases/TestBase_AaveCrossVersionLoop_P18_R9.sol
+?? contracts/test/bases/TestBase_AaveCrossVersionLoop_P6_R18.sol
+?? contracts/test/bases/TestBase_AaveCrossVersionLoop_P6_R9.sol
+?? contracts/test/bases/TestBase_AaveCrossVersionLoop_P9_R18.sol
+?? contracts/test/bases/TestBase_AaveCrossVersionLoop_P9_R6.sol
+?? contracts/test/bases/TestBase_AaveV3StataStandardExchange_Decimals.sol
+?? contracts/test/bases/TestBase_AaveV3StataStandardExchange_U6.sol
+?? contracts/test/bases/TestBase_AaveV3StataStandardExchange_U9.sol
+?? contracts/test/bases/TestBase_ERC4626MorphoHermetic_Decimals.sol
+?? contracts/test/bases/TestBase_ERC4626StandardExchange_Decimals.sol
+?? contracts/test/bases/TestBase_ERC4626StandardExchange_U6.sol
+?? contracts/test/bases/TestBase_ERC4626StandardExchange_U9.sol
+?? contracts/test/bases/TestBase_UniswapV4Detf_PonsV2Se_Decimals.sol
+?? contracts/test/libs/
+?? contracts/test/stubs/MintableERC20Decimals.sol
+?? contracts/utils/
+?? contracts/vaults/detf/common/core/DETFDecimalScaleLib.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/TestBase_MixedBufferMultiVaultStableDetf_B_ALL6.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/TestBase_MixedBufferMultiVaultStableDetf_B_ALL9.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/TestBase_MixedBufferMultiVaultStableDetf_B_P18_R6.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/TestBase_MixedBufferMultiVaultStableDetf_B_P18_R9.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/TestBase_MixedBufferMultiVaultStableDetf_B_P6_R18.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/TestBase_MixedBufferMultiVaultStableDetf_B_P6_R9.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/TestBase_MixedBufferMultiVaultStableDetf_B_P9_R18.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/TestBase_MixedBufferMultiVaultStableDetf_B_P9_R6.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/TestBase_MixedBufferMultiVaultStableDetf_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf_B_ALL6.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf_B_ALL9.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf_B_P18_R6.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf_B_P18_R9.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf_B_P6_R18.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf_B_P6_R9.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf_B_P9_R18.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf_B_P9_R6.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/TestBase_ComposedStableCommonDetf_B_ALL6.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/TestBase_ComposedStableCommonDetf_B_ALL9.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/TestBase_ComposedStableCommonDetf_B_P18_R6.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/TestBase_ComposedStableCommonDetf_B_P18_R9.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/TestBase_ComposedStableCommonDetf_B_P6_R18.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/TestBase_ComposedStableCommonDetf_B_P6_R9.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/TestBase_ComposedStableCommonDetf_B_P9_R18.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/TestBase_ComposedStableCommonDetf_B_P9_R6.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/TestBase_ComposedStableCommonDetf_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF_H6.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF_H9.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF_P18_R6.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF_P18_R9.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF_P6_R18.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF_P6_R9.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF_P9_R18.sol
+?? contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF_P9_R6.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_MorphoBlueSe_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_PonsV1Se_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ3Se_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ4Se_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_H6.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_H9.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_MorphoBlueSe_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_MorphoMix_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_PonsMix_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_PonsV1Se_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_PonsV2Se_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_ProdSe_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Univ3Se_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Univ4Se_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_P18_R6.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_P18_R9.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_P6_R18.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_P6_R9.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_P9_R18.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_P9_R6.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_MorphoBlueSe_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_MorphoMix_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_PonsMix_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_PonsV1Se_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_PonsV2Se_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_ProdSe_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_Univ3Se_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_Univ4Se_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_MorphoBlueSe_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_MorphoMix_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_PonsMix_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_PonsV1Se_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_PonsV2Se_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_ProdSe_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_Univ3Se_Decimals.sol
+?? contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_Univ4Se_Decimals.sol
+?? contracts/vaults/standard/exchange/protocols/morpho/blue/test/bases/TestBase_MorphoBlueStandardExchange_Decimals.sol
+?? contracts/vaults/standard/exchange/protocols/morpho/blue/test/bases/TestBase_MorphoBlueStandardExchange_U6.sol
+?? contracts/vaults/standard/exchange/protocols/morpho/blue/test/bases/TestBase_MorphoBlueStandardExchange_U9.sol
+?? deployments/anvil_robinhood_main/phase06_stage08_token_staking_pkg.json
+?? deployments/anvil_robinhood_main/phase08_stage01_token_staking_dtf.json
+?? deployments/anvil_robinhood_main/phase08_stage02_token_staking_notify.json
+?? deployments/anvil_robinhood_testnet/phase06_stage07_uniswap_v4_detf_pkg.json
+?? docs/factory-service-artifact-creation-bytecode.md
+?? docs/factory-service-artifact-creation-bytecode.plan.md
+?? docs/security/UNIVERSAL_DETF_SECURITY_AUDIT_PRD.md
+?? docs/security/universal-detf-audit/
+?? docs/testing/non-18-decimal-token-test-coverage.md
+?? docs/testing/non-18-decimal-token-test-coverage.plan.md
+?? scripts/foundry/anvil_robinhood_main/Phase_06_Stage_08_TokenStakingPkg.s.sol
+?? scripts/foundry/anvil_robinhood_main/Phase_06_Stage_08_TokenStakingPkg.sol
+?? scripts/foundry/anvil_robinhood_main/Phase_08_Stage_01_TokenStakingDtf.s.sol
+?? scripts/foundry/anvil_robinhood_main/Phase_08_Stage_01_TokenStakingDtf.sol
+?? scripts/foundry/anvil_robinhood_main/Phase_08_Stage_02_TokenStakingNotifyRewards.s.sol
+?? scripts/foundry/anvil_robinhood_main/Phase_08_Stage_02_TokenStakingNotifyRewards.sol
+?? scripts/foundry/anvil_robinhood_main/TOKEN_STAKING.md
+?? scripts/gen_non18_decimals_24_26.py
+?? scripts/gen_univ4_detf_cp_decimals.py
+?? scripts/sync-codex-skills.py
+?? test/foundry/spec/hooks/uniswap/v4/orbital/decimals/
+?? test/foundry/spec/hooks/uniswap/v4/stable/quad/balancer/decimals/
+?? test/foundry/spec/hooks/uniswap/v4/stable/quad/curve/decimals/
+?? test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/decimals/
+?? test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/TestBase_UniswapV4DualSEBCPHook_D_U18_U6.sol
+?? test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/TestBase_UniswapV4DualSEBCPHook_D_U18_U9.sol
+?? test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/TestBase_UniswapV4DualSEBCPHook_D_U6_U18.sol
+?? test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/TestBase_UniswapV4DualSEBCPHook_D_U6_U6.sol
+?? test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/TestBase_UniswapV4DualSEBCPHook_D_U6_U9.sol
+?? test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/TestBase_UniswapV4DualSEBCPHook_D_U9_U18.sol
+?? test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/TestBase_UniswapV4DualSEBCPHook_D_U9_U6.sol
+?? test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/TestBase_UniswapV4DualSEBCPHook_D_U9_U9.sol
+?? test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/TestBase_UniswapV4DualSEBCPHook_Decimals.sol
+?? test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/decimals/
+?? test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/decimals/
+?? test/foundry/spec/hooks/uniswap/v4/standardExchange/single/decimals/
+?? test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/decimals/
+?? test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/decimals/
+?? test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/TestBase_UniswapV4StandardExchangeWeightedBufferHook_Decimals.sol
+?? test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/decimals/
+?? test/foundry/spec/hooks/uniswap/v4/weighted/decimals/
+?? test/foundry/spec/oracles/uniswap/v4/twap/decimals/
+?? test/foundry/spec/protocol/dexes/aerodrome/v1/decimals/
+?? test/foundry/spec/protocol/dexes/camelot/v2/decimals/
+?? test/foundry/spec/protocol/dexes/uniswap/v2/decimals/
+?? test/foundry/spec/protocol/dexes/uniswap/v3/decimals/
+?? test/foundry/spec/protocol/dexes/uniswap/v4/decimals/
+?? test/foundry/spec/protocol/lending/aave/cross-version/decimals/
+?? test/foundry/spec/protocol/lending/aave/v3.6/decimals/
+?? test/foundry/spec/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchange_Routes.t.sol
+?? test/foundry/spec/protocols/dexes/aerodrome/slipstream/decimals/
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/bases/TestBase_StandardExchangeBufferPool_Decimals.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/bases/TestBase_StandardExchangeBufferPool_UniV2_Decimals.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/comparative/bases/TestBase_StandardExchangeBufferPool_Comparative_Decimals.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/decimals/
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/uniswapV2/bases/TestBase_StandardExchangeBufferPool_UniswapV2_Decimals.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/bases/TestBase_CommonBufferMultiVaultStablePool_B_ALL6.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/bases/TestBase_CommonBufferMultiVaultStablePool_B_ALL9.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/bases/TestBase_CommonBufferMultiVaultStablePool_B_P18_R6.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/bases/TestBase_CommonBufferMultiVaultStablePool_B_P18_R9.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/bases/TestBase_CommonBufferMultiVaultStablePool_B_P6_R18.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/bases/TestBase_CommonBufferMultiVaultStablePool_B_P6_R9.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/bases/TestBase_CommonBufferMultiVaultStablePool_B_P9_R18.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/bases/TestBase_CommonBufferMultiVaultStablePool_B_P9_R6.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/bases/TestBase_CommonBufferMultiVaultStablePool_Decimals.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/bases/TestBase_MixedBufferMultiVaultStablePool_B_ALL6.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/bases/TestBase_MixedBufferMultiVaultStablePool_B_ALL9.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/bases/TestBase_MixedBufferMultiVaultStablePool_B_P18_R6.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/bases/TestBase_MixedBufferMultiVaultStablePool_B_P18_R9.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/bases/TestBase_MixedBufferMultiVaultStablePool_B_P6_R18.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/bases/TestBase_MixedBufferMultiVaultStablePool_B_P6_R9.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/bases/TestBase_MixedBufferMultiVaultStablePool_B_P9_R18.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/bases/TestBase_MixedBufferMultiVaultStablePool_B_P9_R6.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/bases/TestBase_MixedBufferMultiVaultStablePool_Decimals.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/decimals/
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/bases/TestBase_CommonBufferMultiVaultWeightedPool_B_ALL6.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/bases/TestBase_CommonBufferMultiVaultWeightedPool_B_ALL9.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/bases/TestBase_CommonBufferMultiVaultWeightedPool_B_P18_R6.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/bases/TestBase_CommonBufferMultiVaultWeightedPool_B_P18_R9.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/bases/TestBase_CommonBufferMultiVaultWeightedPool_B_P6_R18.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/bases/TestBase_CommonBufferMultiVaultWeightedPool_B_P6_R9.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/bases/TestBase_CommonBufferMultiVaultWeightedPool_B_P9_R18.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/bases/TestBase_CommonBufferMultiVaultWeightedPool_B_P9_R6.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/bases/TestBase_CommonBufferMultiVaultWeightedPool_Decimals.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/bases/TestBase_MixedLegWeightedBufferPool_B_ALL6.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/bases/TestBase_MixedLegWeightedBufferPool_B_ALL9.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/bases/TestBase_MixedLegWeightedBufferPool_B_P18_R6.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/bases/TestBase_MixedLegWeightedBufferPool_B_P18_R9.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/bases/TestBase_MixedLegWeightedBufferPool_B_P6_R18.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/bases/TestBase_MixedLegWeightedBufferPool_B_P6_R9.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/bases/TestBase_MixedLegWeightedBufferPool_B_P9_R18.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/bases/TestBase_MixedLegWeightedBufferPool_B_P9_R6.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/bases/TestBase_MixedLegWeightedBufferPool_Decimals.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/bases/TestBase_MultiPairStandardExchangeBufferPool_B_ALL6.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/bases/TestBase_MultiPairStandardExchangeBufferPool_B_ALL9.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/bases/TestBase_MultiPairStandardExchangeBufferPool_B_P18_R6.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/bases/TestBase_MultiPairStandardExchangeBufferPool_B_P18_R9.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/bases/TestBase_MultiPairStandardExchangeBufferPool_B_P6_R18.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/bases/TestBase_MultiPairStandardExchangeBufferPool_B_P6_R9.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/bases/TestBase_MultiPairStandardExchangeBufferPool_B_P9_R18.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/bases/TestBase_MultiPairStandardExchangeBufferPool_B_P9_R6.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/bases/TestBase_MultiPairStandardExchangeBufferPool_Decimals.sol
+?? test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/
+?? test/foundry/spec/protocols/dexes/uniswap/v4/pons/decimals/
+?? test/foundry/spec/protocols/staking/
+?? test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/
+?? test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/
+?? test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/
+?? test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/
+?? test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/
+?? test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/
+?? test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/
+?? test/foundry/spec/vaults/standard-exchange/adversarial/decimals/
+?? test/foundry/spec/vaults/standard/erc4626/decimals/
+?? test/foundry/spec/vaults/standard/exchange/protocols/morpho/blue/decimals/

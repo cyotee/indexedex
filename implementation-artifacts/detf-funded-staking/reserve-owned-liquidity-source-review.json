@@ -1,0 +1,103 @@
+{
+  "reviewed_at_utc": "2026-09-09T13:19:04.639558+00:00",
+  "status": "SOURCE_REVIEW_COMPLETE_CURRENT_FULL_RUNTIME_PENDING",
+  "criterion": "A40",
+  "conclusion": "The shared LP numerator sums only actual DETF and bond-custodian balances, avoids double counting when custody aliases the DETF, and supplies primary redemption and both synthetic/expansion quote contexts. All four reserve families value the passed ownedLp. Liquidity permissions do not affect the numerator.",
+  "source_rows": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol",
+      "sha256": "ea0c5182b1fc55ec21ae54e9dd3f534146e5c0b248221a749d82dbcfbdcf1789",
+      "anchors": [
+        {
+          "line": 94,
+          "source": "function _protocolLp() internal view returns (uint256) {"
+        },
+        {
+          "line": 178,
+          "source": "function _quoteCtx(address pair_, bool previewSettlement_)"
+        },
+        {
+          "line": 321,
+          "source": "function _syntheticPriceView() internal view returns (uint256) {"
+        }
+      ]
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol",
+      "sha256": "a43f26a1b79e55450798aaf6f0e023e885006d1ec494e18246fbdda36d36daf5",
+      "anchors": [
+        {
+          "line": 401,
+          "source": "uint256 lpOut_ = Math.mulDiv(detfIn, _protocolLp(), supply_);"
+        },
+        {
+          "line": 454,
+          "source": "uint256 lpOut_ = Math.mulDiv(detfIn_, _protocolLp(), supply_);"
+        }
+      ]
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarget.sol",
+      "sha256": "87e7967b4e91152febb2bbeeb13257fe4f1fa74f4cf9f23c36b04f64f804b7f1",
+      "anchors": [
+        {
+          "line": 236,
+          "source": "function previewSynthetic(IDetfReserveQuote.DetfQuoteCtx calldata ctx, address numeraire)"
+        },
+        {
+          "line": 246,
+          "source": "uint256 pairOut = IDetfReserveQuote(address(this)).previewBurnToToken(ctx.ownedLp, out_);"
+        }
+      ]
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookExitQueryTarget.sol",
+      "sha256": "a9b5b51330a8c8ca42e6256db59e719e128a29c37b296a8e9babae2ab0fb4a92",
+      "anchors": [
+        {
+          "line": 87,
+          "source": "function previewSynthetic(IDetfReserveQuote.DetfQuoteCtx calldata ctx, address numeraire)"
+        },
+        {
+          "line": 102,
+          "source": "uint256 pairOut = IDetfReserveQuote(address(this)).previewBurnToToken(ctx.ownedLp, out_);"
+        }
+      ]
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookHooksTarget.sol",
+      "sha256": "baf8796d17c3af97443e36112bd4bb789bab609356132bfb80df804ea84d2768",
+      "anchors": [
+        {
+          "line": 399,
+          "source": "function previewSynthetic(IDetfReserveQuote.DetfQuoteCtx calldata ctx, address numeraire)"
+        },
+        {
+          "line": 410,
+          "source": "uint256 pairOut = IDetfReserveQuote(address(this)).previewBurnToToken(ctx.ownedLp, out_);"
+        }
+      ]
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookJoinQueryTarget.sol",
+      "sha256": "096630cca1cdd352c5de44cfd15e6b9d8152d525cd590da31cea37df511f34c1",
+      "anchors": [
+        {
+          "line": 100,
+          "source": "function previewSynthetic(IDetfReserveQuote.DetfQuoteCtx calldata ctx, address numeraire)"
+        },
+        {
+          "line": 115,
+          "source": "uint256 pairOut = IDetfReserveQuote(address(this)).previewBurnToToken(ctx.ownedLp, out_);"
+        }
+      ]
+    }
+  ],
+  "runtime_anchors": [
+    "test_externallyOwnedLpDonationTransfersWholePositionWithoutStakingIssuance",
+    "test_lpBondValuesDistinctNonDetfLegsAndRetainsWholeInventory",
+    "test_lpBondCannotClaimProtocolOrAnotherWalletsLp",
+    "test_directLiquidityOperationsFollowDeploymentPolicy"
+  ],
+  "limitations": "Source inspection supplements the maintained runtime tests; this is not a completed runtime result or an acceptance waiver."
+}

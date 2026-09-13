@@ -1,0 +1,98 @@
+{
+  "archived_at_utc": "2026-09-11T05:38:24.945362+00:00",
+  "reason": "PR-08 failed stage 06/09 before broadcast. Preserve all successful local deployments and actual broadcast receipts in place; resume only 06/09 and isolated export.",
+  "files": [
+    {
+      "path": "before-facet-wiring-retry/architecture-run.json",
+      "sha256": "25f48128c759cdedd68c685341595aa2fedb454eba96d4c37caa1c017b539bfb"
+    },
+    {
+      "path": "before-facet-wiring-retry/architecture.log",
+      "sha256": "b0201be59d02fd846afbec6b2f7d5141c21d8c6ca6d91bd2bb7f1171b5f2ff5d"
+    },
+    {
+      "path": "before-facet-wiring-retry/deployments/phase01_stage01_permit2.json",
+      "sha256": "a7f3f00e29977be21a135faf296b5aed6d045e3c07907f1bb0ea229b4c9cf5f4"
+    },
+    {
+      "path": "before-facet-wiring-retry/deployments/phase01_stage02_weth.json",
+      "sha256": "4f0ff3d0259fb0576b64e511eb6a969775deb3af1ecd4375122a9ad0c966895a"
+    },
+    {
+      "path": "before-facet-wiring-retry/deployments/phase01_stage03_uniswap_v4.json",
+      "sha256": "ae44bc8ad99871b9a24f19864f584dffe373278cc7ff1558c45d61b616f9f733"
+    },
+    {
+      "path": "before-facet-wiring-retry/deployments/phase02_stage01_create3_factory.json",
+      "sha256": "2399e86a5aee177fddccf37666b5362cc9be93ea8296f1b044d2a7f5b31bec65"
+    },
+    {
+      "path": "before-facet-wiring-retry/deployments/phase02_stage02_diamond_package_factory.json",
+      "sha256": "4fd1f7cf386b3aa94f230965864b8fb5c86e3205f08491b7336424e9eac9542d"
+    },
+    {
+      "path": "before-facet-wiring-retry/deployments/phase02_stage03_hook_factory.json",
+      "sha256": "b1ab2ba335533c154e5bd200221e604ede725c4db4f62f1770560ec87621c651"
+    },
+    {
+      "path": "before-facet-wiring-retry/deployments/phase03_stage01_common_facets.json",
+      "sha256": "b2b8051743cefae34a6a645d27d89adde290c29c57e0feaaf6113b560808029e"
+    },
+    {
+      "path": "before-facet-wiring-retry/deployments/phase04_stage01_fee_collector_and_manager.json",
+      "sha256": "06784aa055fb68273e7eadf4365a39d8ffd81661db17b39639c16322b3d913db"
+    },
+    {
+      "path": "before-facet-wiring-retry/deployments/phase05_stage01_se_rate_provider_pkg.json",
+      "sha256": "4ab6e22d19f9d474d2ef382a1079fe6f88f109b586ea2b3cdb5fab062765c330"
+    },
+    {
+      "path": "before-facet-wiring-retry/deployments/phase05_stage02_uniswap_v4_twap_oracle.json",
+      "sha256": "8cf3d3e4885ec2164c1cee8b26cef655e19e8cdab1349b1a0af2d4e19b1dc446"
+    },
+    {
+      "path": "before-facet-wiring-retry/deployments/phase05_stage03_uniswap_v4_standard_exchange_pkg.json",
+      "sha256": "6ceda210de7d09e6ae37609f117cdfc23d9e722f470d15d91ee7522f01199682"
+    },
+    {
+      "path": "before-facet-wiring-retry/deployments/phase05_stage04_uniswap_v3_standard_exchange_pkg.json",
+      "sha256": "57ffe21d5bfba6ecf8a3e821820469a9a42b52bc16b61bc8b4679a90619dcb01"
+    },
+    {
+      "path": "before-facet-wiring-retry/deployments/phase05_stage05_morpho_blue_standard_exchange_pkg.json",
+      "sha256": "253772e7588d3969c845fc4ced4ba2506e995d9cc195cf8d2934f51d8e0a0738"
+    },
+    {
+      "path": "before-facet-wiring-retry/deployments/phase05_stage06_uniswap_v2_standard_exchange_pkg.json",
+      "sha256": "fcce6222f9220aea35b0b5c626a8e2f16e842c8d1b078bb6fa9c5bafcaa79687"
+    },
+    {
+      "path": "before-facet-wiring-retry/deployments/phase06_stage01_bond_nft_pkg.json",
+      "sha256": "d5a1e5790e2cde402e21763b14fdc94f4556d55f07e7d5d3700d732299ef35b9"
+    },
+    {
+      "path": "before-facet-wiring-retry/deployments/phase06_stage02_rebasing_claim_pkg.json",
+      "sha256": "d6b232d93996601fe83e17ab57d00f90e00022b21198f229c193ddd97ae3e03c"
+    },
+    {
+      "path": "before-facet-wiring-retry/deployments/phase06_stage03_cp_buffer_hook_pkg.json",
+      "sha256": "11f8f8013b557edeb0f45f4bbb0d99d7b1210b536348ed724e27468c8efcfd52"
+    },
+    {
+      "path": "before-facet-wiring-retry/deployments/phase06_stage04_weighted_buffer_hook_pkg.json",
+      "sha256": "cf6e6e3bf08156df77e0858c71799b2badc0589fe7fdee0724e16219b05e1632"
+    },
+    {
+      "path": "before-facet-wiring-retry/deployments/phase06_stage05_orbital_buffer_hook_pkg.json",
+      "sha256": "9b071ea34d0c42d6ea1fd29a1f0cd7887a11a5225716349796cff9f31f514974"
+    },
+    {
+      "path": "before-facet-wiring-retry/deployments/phase06_stage06_curve_quad_buffer_hook_pkg.json",
+      "sha256": "3ef24aa763977a46f7a76ede1735e876a6680f3d8859333830f7fa505de55fa8"
+    },
+    {
+      "path": "before-facet-wiring-retry/deployments/phase06_stage07_uniswap_v4_detf_pkg.json",
+      "sha256": "c62d6d0ae6b3b48a638fe7a292fa6c6981929acd65fec1fb0dce54c4fce5cc57"
+    }
+  ]
+}

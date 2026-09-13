@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 /* -------------------------------------------------------------------------- */
 /*                                 Balancer V3                                */
 /* -------------------------------------------------------------------------- */
@@ -38,25 +40,16 @@ import {IndexedexTest} from "contracts/test/IndexedexTest.sol";
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
-import {
-    IUniswapV2StandardExchangeDFPkg
-} from "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeDFPkg.sol";
+import {IUniswapV2StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v2/IUniswapV2StandardExchangeDFPkg.sol";
 import {
     UniswapV2_Component_FactoryService
 } from "contracts/protocols/dexes/uniswap/v2/UniswapV2_Component_FactoryService.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
-import {
-    IStandardExchangeRateProviderDFPkg,
-    StandardExchangeRateProviderDFPkg
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
-import {
-    StandardExchangeRateProviderFacet
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderFacet.sol";
-import {
-    IBalancerV3ConstantProductPoolStandardVaultPkg
-} from "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPoolStandardVaultPkg.sol";
+import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
+
+import {IBalancerV3ConstantProductPoolStandardVaultPkg} from "contracts/protocols/dexes/balancer/v3/pools/constProd/IBalancerV3ConstantProductPoolStandardVaultPkg.sol";
 import {
     BalancerV3ConstantProductPool_FactoryService
 } from "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPool_FactoryService.sol";
@@ -272,6 +265,7 @@ contract ResearchFixture_UniswapV2SeRateMatrix is TestBase_BalancerV3Vault, Inde
         pkgInit.multiAssetStandardVaultFacet = multiAssetStandardVaultFacet;
         pkgInit.uniswapV2StandardExchangeInFacet = v2In;
         pkgInit.uniswapV2StandardExchangeOutFacet = v2Out;
+        pkgInit.uniswapV2StandardExchangeQueryFacet = UniswapV2_Component_FactoryService.deployUniswapV2StandardExchangeQueryFacet(create3Factory);
         pkgInit.vaultFeeOracleQuery = indexedexManager;
         pkgInit.vaultRegistryDeployment = indexedexManager;
         pkgInit.permit2 = permit2;
@@ -316,7 +310,7 @@ contract ResearchFixture_UniswapV2SeRateMatrix is TestBase_BalancerV3Vault, Inde
     function _deployRateProviders() internal {
         IFacet rateProviderFacet = IFacet(
             create3Factory.deployFacet(
-                type(StandardExchangeRateProviderFacet).creationCode,
+                ArtifactCreationCode.creationCode(create3Factory, "StandardExchangeRateProviderFacet.sol:StandardExchangeRateProviderFacet"),
                 keccak256("Research_StandardExchangeRateProviderFacet_WethUsdc")
             )
         );
@@ -327,7 +321,7 @@ contract ResearchFixture_UniswapV2SeRateMatrix is TestBase_BalancerV3Vault, Inde
         seRateProviderPkg = IStandardExchangeRateProviderDFPkg(
             address(
                 create3Factory.deployPackageWithArgs(
-                    type(StandardExchangeRateProviderDFPkg).creationCode,
+                    ArtifactCreationCode.creationCode(create3Factory, "StandardExchangeRateProviderDFPkg.sol:StandardExchangeRateProviderDFPkg"),
                     abi.encode(rpInit),
                     keccak256("Research_StandardExchangeRateProviderDFPkg_WethUsdc")
                 )

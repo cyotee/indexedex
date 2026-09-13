@@ -638,17 +638,36 @@ contract UniswapV2StandardExchange_InOutInvariant is TestBase_UniswapV2StandardE
         assertGe(IERC20(address(tokenOut)).balanceOf(recipient), desiredOut, "Route7: recipient got >= desiredOut");
     }
 
-    /**
-     * @dev SKIPPED - Route 7 exchangeOut does not enforce maxAmountIn: it burns the exact
-     *      computed share count regardless of the caller-supplied maxAmountIn value.
-     *      This is a pre-existing behavior in the Route 7 implementation; adding a
-     *      MaxAmountExceeded check to Route 7 is a separate fix outside the scope of this PR.
-     *
-     *      The execution-vs-preview test (test_route7_exchangeOut_matchesPreview) confirms
-     *      that the preview correctly predicts the number of shares burned.
-     */
-    function testSkip_route7_exchangeOut_revertsWhenMaxInsufficient() public pure {
-        // See NatSpec above - Route 7 does not enforce maxAmountIn.
+    function test_route7_exchangeOut_revertsWhenMaxInsufficient() public {
+        IStandardExchangeProxy vault = _seedVault(PoolConfig.Balanced, 100);
+        IERC20 vaultToken = IERC20(address(vault));
+        IERC20 tokenOut = IERC20(_getPool(PoolConfig.Balanced).token0());
+        uint256 desiredOut = vault.previewExchangeIn(vaultToken, vault.balanceOf(address(this)) / 4, tokenOut);
+        uint256 required = vault.previewExchangeOut(vaultToken, tokenOut, desiredOut);
+        assertGt(required, 1);
+        uint256 sharesBefore = vault.balanceOf(address(this));
+        uint256 supplyBefore = vault.totalSupply();
+        IERC20(address(vault)).approve(address(vault), required);
+        vm.expectRevert(abi.encodeWithSelector(IStandardExchangeErrors.MaxAmountExceeded.selector, required - 1, required));
+        vault.exchangeOut(vaultToken, required - 1, tokenOut, desiredOut, address(this), false, _deadline());
+        assertEq(vault.balanceOf(address(this)), sharesBefore);
+        assertEq(vault.totalSupply(), supplyBefore);
+    }
+
+    function test_route6_exchangeOut_targetExceedsExistingSupply() public {
+        IStandardExchangeProxy vault = _seedVault(PoolConfig.Balanced, 100);
+        IERC20 tokenIn = IERC20(_getPool(PoolConfig.Balanced).token1());
+        uint256 target = vault.totalSupply() * 2 + 17;
+        uint256 required = vault.previewExchangeOut(tokenIn, IERC20(address(vault)), target);
+        assertGt(required, 0);
+        deal(address(tokenIn), address(this), required);
+        tokenIn.approve(address(vault), required);
+        address recipient = makeAddr("large exact output recipient");
+        uint256 charged = vault.exchangeOut(
+            tokenIn, required, IERC20(address(vault)), target, recipient, false, _deadline()
+        );
+        assertEq(charged, required);
+        assertEq(vault.balanceOf(recipient), target);
     }
 
     function testFuzz_route7_inOutInvariant(uint256 sharesIn) public {

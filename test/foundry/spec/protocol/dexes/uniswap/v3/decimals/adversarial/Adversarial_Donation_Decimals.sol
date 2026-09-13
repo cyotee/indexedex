@@ -1,0 +1,64 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {
+    TestBase_UniswapV3StandardExchange_Adversarial_Decimals
+} from "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/TestBase_UniswapV3StandardExchange_Adversarial_Decimals.sol";
+
+/// @notice Donation. pairToken = tokenA. Amounts are raw units via `_u0`.
+abstract contract Adversarial_Donation_Decimals_ProDexUniV3 is TestBase_UniswapV3StandardExchange_Adversarial_Decimals {
+    function test_A1_donation_doesNotGrantFreeSharesAsPrincipal() public {
+        address token0 = pool.token0();
+        uint256 victimIn = _u0(100);
+        _mint(token0, victim, victimIn);
+        vm.startPrank(victim);
+        IERC20(token0).approve(address(vault), type(uint256).max);
+        uint256 shares =
+            _activateWithFundedToken0(victim, victimIn, _u1(100));
+        vm.stopPrank();
+
+        uint256 donate_ = _u0(50);
+        _mint(token0, attacker, donate_);
+        vm.prank(attacker);
+        IERC20(token0).transfer(address(vault), donate_);
+
+        uint256 attackerIn = _u0(1);
+        _mint(token0, attacker, attackerIn);
+        vm.startPrank(attacker);
+        IERC20(token0).approve(address(vault), type(uint256).max);
+        uint256 attackerShares =
+            vault.exchangeIn(IERC20(token0), attackerIn, IERC20(address(vault)), 0, attacker, false, block.timestamp + 1);
+        vm.stopPrank();
+
+        assertLt(attackerShares, shares / 5, "donation not free-minted to attacker");
+        assertEq(IERC20(address(vault)).balanceOf(victim), shares);
+    }
+
+    function test_A3_feeTiming_tinyZapAfterFees() public {
+        address token0 = pool.token0();
+        uint256 victimIn = _u0(200);
+        _mint(token0, victim, victimIn);
+        vm.startPrank(victim);
+        IERC20(token0).approve(address(vault), type(uint256).max);
+        uint256 incumbent =
+            _activateWithFundedToken0(victim, victimIn, _u1(200));
+        vm.stopPrank();
+
+        _swapHuman(pool, true, 40_000);
+        _swapHuman(pool, false, 40_000);
+
+        uint256 attackerIn = _u0(1);
+        _mint(token0, attacker, attackerIn);
+        vm.startPrank(attacker);
+        IERC20(token0).approve(address(vault), type(uint256).max);
+        uint256 attackerShares =
+            vault.exchangeIn(IERC20(token0), attackerIn, IERC20(address(vault)), 0, attacker, false, block.timestamp + 1);
+        vm.stopPrank();
+
+        assertLt(attackerShares, incumbent / 20, "attacker only own principal");
+        assertEq(IERC20(address(vault)).balanceOf(victim), incumbent);
+    }
+}

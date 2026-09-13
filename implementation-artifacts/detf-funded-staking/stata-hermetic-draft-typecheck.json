@@ -1,0 +1,19 @@
+{
+  "recorded_at_utc": "2026-09-09T07:22:59.380715+00:00",
+  "status": "DRAFT_TYPECHECK_ONLY_NOT_RUNTIME_VALIDATION",
+  "seconds": 20.31,
+  "exit_code": 0,
+  "errors": [],
+  "concrete_suites": {
+    "AaveV3StataStandardExchange_RealTest": 21,
+    "Adversarial_AaveV3StataSE_SecurePull": 19,
+    "AaveV3StataStandardExchange_Real_U6": 21,
+    "AaveV3StataStandardExchange_Real_U9": 21,
+    "Adversarial_AaveV3StataSE_SecurePull_U6": 15,
+    "Adversarial_AaveV3StataSE_SecurePull_U9": 15
+  },
+  "compiled_methods": 112,
+  "compiler_input_sha256": "c880a7d11316ee337faeec65083c76c073cd6a5aca5ff961310e75e075ad988e",
+  "source_freeze_preserved": true,
+  "validation_passed": true
+}

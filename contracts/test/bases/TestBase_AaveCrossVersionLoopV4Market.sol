@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IAccessManager} from
     "@crane/contracts/external/openzeppelin-contracts/access/manager/IAccessManager.sol";
@@ -10,8 +12,7 @@ import {ISpoke} from "@crane/contracts/protocols/lending/aave/v4/spoke/interface
 import {IAaveOracle as IAaveOracleV4} from
     "@crane/contracts/protocols/lending/aave/v4/spoke/interfaces/IAaveOracle.sol";
 import {AaveOracle} from "@crane/contracts/protocols/lending/aave/v4/spoke/AaveOracle.sol";
-import {HubInstance} from "@crane/contracts/protocols/lending/aave/v4/hub/instances/HubInstance.sol";
-import {SpokeInstance} from "@crane/contracts/protocols/lending/aave/v4/spoke/instances/SpokeInstance.sol";
+
 import {IAssetInterestRateStrategy} from
     "@crane/contracts/protocols/lending/aave/v4/hub/interfaces/IAssetInterestRateStrategy.sol";
 import {WETH9} from "@crane/contracts/protocols/tokens/wrappers/weth/v9/WETH9.sol";
@@ -34,11 +35,11 @@ import {TestBase_AaveCrossVersionLoop} from "contracts/test/bases/TestBase_AaveC
  * @title TestBase_AaveCrossVersionLoopV4Market
  * @author cyotee doge <doge.cyotee>
  * @notice Stands up a local Aave V4 market (1 Hub + 1 Spoke) listing the two pair test tokens, using
- *         Crane's deploy orchestration but feeding `type(HubInstance/SpokeInstance).creationCode`
- *         instead of `vm.getCode` (which isn't portable into this project). Rates/caps/collateral
+ *         Crane's deploy orchestration with Hub/Spoke creation bytecode loaded from build artifacts.
+ *         Rates/caps/collateral
  *         factors are fully configurable, enabling deterministic profitable-loop tests.
  */
-contract TestBase_AaveCrossVersionLoopV4Market is TestBase_AaveCrossVersionLoop {
+abstract contract TestBase_AaveCrossVersionLoopV4Market is TestBase_AaveCrossVersionLoop {
     // CREATE2 factory used by Crane's deploy orchestration (etched in-place for tests).
     // Named distinctly to avoid shadowing forge-std's CREATE2_FACTORY.
     address internal constant AAVE_V4_CREATE2_FACTORY = 0x914d7Fec6aaC8cd542e72Bca78B30650d45643d7;
@@ -68,15 +69,15 @@ contract TestBase_AaveCrossVersionLoopV4Market is TestBase_AaveCrossVersionLoop 
         }
         WETH9 weth = new WETH9();
 
-        // 2. Deploy a 1-hub / 1-spoke env with compile-time bytecode (portable; no vm.getCode).
+        // 2. Deploy a 1-hub / 1-spoke env with creation bytecode from the preceding artifact build.
         TestTypes.TestEnvReport memory report = AaveV4TestOrchestration.deployTestEnv({
             admin: address(this),
             treasuryAdmin: address(this),
             hubCount: 1,
             spokeCount: 1,
             nativeWrapper: address(weth),
-            hubBytecode: type(HubInstance).creationCode,
-            spokeBytecode: type(SpokeInstance).creationCode,
+            hubBytecode: ArtifactCreationCode.creationCode(create3Factory, "HubInstance.sol:HubInstance"),
+            spokeBytecode: ArtifactCreationCode.creationCode(create3Factory, "SpokeInstance.sol:SpokeInstance"),
             salt: keccak256("indexedex.aave.cross-version.v4")
         });
 

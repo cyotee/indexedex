@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ILegacyComposedStableCommonDetfBonding} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ILegacyComposedStableCommonDetfBonding.sol";
+
 import {IERC20Events} from '@crane/contracts/interfaces/IERC20Events.sol';
 import {ONE_WAD} from '@crane/contracts/constants/Constants.sol';
 import {IERC20} from '@crane/contracts/interfaces/IERC20.sol';
@@ -21,6 +23,8 @@ import {IDetfErrors} from 'contracts/interfaces/IDetfErrors.sol';
 import {IDETFNFTVault} from 'contracts/interfaces/IDETFNFTVault.sol';
 import {IComposedStableCommonDetfBonding} from 'contracts/interfaces/IComposedStableCommonDetfBonding.sol';
 import {RebasingDETFTokenRepo} from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenRepo.sol';
+
+
 
 contract RebasingDETFTokenTarget is IDetfErrors, ReentrancyLockModifiers, MultiStepOwnableModifiers, IRebasingClaimToken {
     using BetterSafeERC20 for IERC20;
@@ -356,7 +360,7 @@ contract RebasingDETFTokenTarget is IDetfErrors, ReentrancyLockModifiers, MultiS
 
         _requireSupportedExchangePath(layoutStruct_, tokenIn_, tokenOut_);
 
-        amountOut_ = IComposedStableCommonDetfBonding(address(layoutStruct_.detf)).previewRedeemClaim(
+        amountOut_ = ILegacyComposedStableCommonDetfBonding(address(layoutStruct_.detf)).previewRedeemClaim(
             amountIn_, _configuredCommonToken(layoutStruct_)
         );
     }
@@ -421,7 +425,7 @@ contract RebasingDETFTokenTarget is IDetfErrors, ReentrancyLockModifiers, MultiS
         // DETF.redeemClaim burns via burnShares (pretransferred on this claim token) and
         // unwinds protocol-bond originalShares only. Do not burn locally first.
         // D15: claim redeem pays DETF only (bond vault reward token), not rateAsset.
-        amountOut_ = IComposedStableCommonDetfBonding(address(layoutStruct_.detf)).redeemClaim(
+        amountOut_ = ILegacyComposedStableCommonDetfBonding(address(layoutStruct_.detf)).redeemClaim(
             rebasingClaimAmount_,
             layoutStruct_.nftVault.rewardToken(),
             0,

@@ -1,0 +1,44 @@
+{
+  "status": "PASS_NINE_PACKAGE_CUT_VERIFIER_CHECKS",
+  "checked_at_utc": "2026-09-11T06:23:11.714668+00:00",
+  "checker_sha256": "51617da227ae5e68339f17797bbf3a0dd1b96598eef8810471dc49bd8704c22d",
+  "checks": [
+    {
+      "name": "accepts the declared funded ERC721 replacements",
+      "passed": true
+    },
+    {
+      "name": "rejects duplicate selectors within one Add cut",
+      "passed": true
+    },
+    {
+      "name": "rejects duplicate Add across cuts",
+      "passed": true
+    },
+    {
+      "name": "rejects replacement without previous installed selectors",
+      "passed": true
+    },
+    {
+      "name": "rejects same-target replacement",
+      "passed": true
+    },
+    {
+      "name": "rejects replacement in an unrelated package",
+      "passed": true
+    },
+    {
+      "name": "rejects replacement by an unrelated facet",
+      "passed": true
+    },
+    {
+      "name": "rejects duplicate selectors within Replace",
+      "passed": true
+    },
+    {
+      "name": "rejects replacement selectors missing from compiled ABI",
+      "passed": true
+    }
+  ],
+  "scope": "Actual inspector loop; synthetic verifier inputs, not Solidity test counts."
+}

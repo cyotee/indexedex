@@ -1,0 +1,61 @@
+{
+  "status": "CODEGEN_ONLY_NOT_RUNTIME_VALIDATION",
+  "passed": false,
+  "exit_code": 0,
+  "seconds": 47.752,
+  "errors": [],
+  "contracts": {
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfBondFacet.sol:UniswapV4DetfBondFacet": {
+      "runtime_bytes": 13819,
+      "test_methods": 0
+    },
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfClaimFacet.sol:UniswapV4DetfClaimFacet": {
+      "runtime_bytes": 3449,
+      "test_methods": 0
+    },
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfExchangeFacet.sol:UniswapV4DetfExchangeFacet": {
+      "runtime_bytes": 13229,
+      "test_methods": 0
+    },
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfFacet.sol:UniswapV4DetfFacet": {
+      "runtime_bytes": 0,
+      "test_methods": 0
+    },
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfMaintenanceFacet.sol:UniswapV4DetfMaintenanceFacet": {
+      "runtime_bytes": 12335,
+      "test_methods": 0
+    },
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfQueryFacet.sol:UniswapV4DetfQueryFacet": {
+      "runtime_bytes": 19308,
+      "test_methods": 0
+    },
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Policy.t.sol:UniswapV4Detf_Quad_Policy": {
+      "runtime_bytes": 379763,
+      "test_methods": 10
+    },
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Quad_Policy_B_ALL6.t.sol:UniswapV4Detf_Quad_Policy_B_ALL6": {
+      "runtime_bytes": 405895,
+      "test_methods": 19
+    }
+  },
+  "source_sha256": {
+    "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_Decimals.sol": "e87fa1790818d2fcbc98af837c6c5240daea94819768ce2de2d621ccee2ddc68",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfExchangeFacet.sol": "ea3311c0f6f60f69b3e1d84baec587c39d08b93e87cb5480bba3db43c3165026",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol": "32c487f68e7c2ad4a6ee063eb9482e2e549180f9c97a822c32ff39651afea697",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfBondFacet.sol": "b43cd657dbd08c8361cf60f78b4818c4ecdeb0d981ab0ff77f4c5db86327ac3e",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfMaintenanceFacet.sol": "601d8cacc90d9cb45eba7b34dc9f3c4a477b7d77e6bdc032096d1732537a3e89",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol": "54604b2ca768524ca308badf25a7846962cdb73c549e684872dfd2f442ec1936",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_Decimals.sol": "3499bd49374e9ada154a743419cfd2941c356677e04ab6a5001de02eac61f94f",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Policy.t.sol": "62fafbe7c18ee94f507affe60e4e512e425c9b989fcda60c9a2000d1db6df840",
+    "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/fuzz/MultiVaultWeightedDetf_Fuzz.t.sol": "8fb8b3970144bfe01e651f9dd0369bb1be51a665d46047f1a69587f491cf1e33",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfClaimFacet.sol": "67c3e9720b95a45b21623799a903e0ed1e63460040b70c3923cd76767fccca8b",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfFacet.sol": "5aaeae263fd93891e497394369789c8de7171d655b93064e1fd0ca96f25bdd6c",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Quad_Policy_B_ALL6.t.sol": "3feb3eaf9a0d0c3a0f91d55651dbae6742f27a048936491e60ace83823c54f73",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_Decimals.sol": "be9a39f391569666041cc4d56cd85e38e72f59afdf254cf35fe35a39667cd508",
+    "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/fuzz/MultiVaultWeightedDetf_Fuzz_Decimals.sol": "2eb2f19d448f4a4c6e1f0f84e4e4360274a95e457691704453aa6d03a6c48630",
+    "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/fuzz/SingleStandardExchangeDETF_Fuzz.t.sol": "4547e50b8ec4ace47985433917987b2c68cbe5e939225326f17d39cf9e3900c6",
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfQueryFacet.sol": "c569005cf90f80df78513af6bbdbe765fa44cc8a8988d45fa822af5bb673507f"
+  },
+  "sources_unchanged": true,
+  "compiler_input_sha256": "f47b9f5fa09d53dc4e65114d757c64a6cb4d305691907bcbb13e47966d69f8f0"
+}

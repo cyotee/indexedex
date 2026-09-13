@@ -1,0 +1,21 @@
+{
+  "status": "DRAFT_CODEGEN_ONLY_NOT_RUNTIME_VALIDATION",
+  "seconds": 213.328,
+  "exit_code": 0,
+  "errors": [
+    "CompilerError: Stack too deep. Try compiling with `--via-ir` (cli) or the equivalent `viaIR: true` (standard JSON) while enabling the optimizer. Otherwise, try removing local variables.\n   --> contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol:423:108:\n    |\n423 |         uint256 quote = IStandardExchangeInMulti(vault).previewExchangeInManyToOne(tokens, amounts, IERC20(vault));\n    |                                                                                                            ^^^^^\n\n"
+  ],
+  "concrete_suites": {
+    "AaveV3StataStandardExchange_RealTest": {
+      "methods": 21,
+      "test_container_runtime_bytes": 0
+    },
+    "UniswapV4Detf_Cp_Univ4Se_ProductLaw": {
+      "methods": 54,
+      "test_container_runtime_bytes": 0
+    }
+  },
+  "compiler_input_sha256": "efa5c62d6c9cad39f5bda3b7fb404a118f2667ec9bdfb9128be8113a298f95a5",
+  "validation_passed": false,
+  "canonical_sources_unchanged": true
+}

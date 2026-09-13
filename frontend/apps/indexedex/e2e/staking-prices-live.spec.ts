@@ -1,14 +1,18 @@
 import { createPublicClient, http, erc20Abi, parseAbi, formatUnits, type Address } from 'viem'
 import { test, expect, DEFAULT_E2E_RPC } from './wallet/fixture'
 import { connectInjectedWallet, prepareLocalChain } from './helpers/connect'
+import { readProtocolDetf } from '../app/lib/tokenStaking/migration'
 import platform from '../../../packages/protocol/src/addresses/chain/4663/platform.json'
 
 /** Read-only verification against the existing deployment. No transactions or node resets. */
 test('both synthetic prices match their onchain legs and remain visible together', async ({ walletPage: page }) => {
   test.skip(process.env.E2E_LIVE_PRICES !== '1', 'Opt in against the existing local deployment.')
   const client = createPublicClient({ transport: http(DEFAULT_E2E_RPC) })
-  const detf = platform.protocolDetf as Address
-  const hook = platform.reserveHook as Address
+  const detf = (await readProtocolDetf(client, platform.tokenStaking as Address))!
+  expect(detf).toBeTruthy()
+  const bindingAbi = parseAbi(['function hook() view returns (address)', 'function bondNftVault() view returns (address)'])
+  const hook = await client.readContract({ address: detf, abi: bindingAbi, functionName: 'hook' })
+  const bondNftVault = await client.readContract({ address: detf, abi: bindingAbi, functionName: 'bondNftVault' })
   const abi = parseAbi([
     'function syntheticPrice() view returns (uint256)',
     'function creationPairPerDetfWad() view returns (uint256[])',
@@ -25,7 +29,7 @@ test('both synthetic prices match their onchain legs and remain visible together
     client.readContract({ address: detf, abi, functionName: 'creationPairPerDetfWad', blockNumber }),
     client.readContract({ address: detf, abi: erc20Abi, functionName: 'totalSupply', blockNumber }),
     client.readContract({ address: hook, abi: erc20Abi, functionName: 'balanceOf', args: [detf], blockNumber }),
-    client.readContract({ address: hook, abi: erc20Abi, functionName: 'balanceOf', args: [platform.bondNftVault as Address], blockNumber }),
+    client.readContract({ address: hook, abi: erc20Abi, functionName: 'balanceOf', args: [bondNftVault], blockNumber }),
     client.readContract({ address: detf, abi, functionName: 'mintThreshold', blockNumber }),
     client.readContract({ address: detf, abi, functionName: 'burnThreshold', blockNumber }),
     client.readContract({ address: detf, abi, functionName: 'syntheticPrice', blockNumber }),

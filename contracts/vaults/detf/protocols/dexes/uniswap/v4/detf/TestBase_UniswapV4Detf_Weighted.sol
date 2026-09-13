@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
-import {PoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
@@ -27,6 +28,7 @@ import {
 import {
     IUniswapV4Detf
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
+import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 import {TestBase_UniswapV4Detf} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
 
@@ -52,7 +54,11 @@ abstract contract TestBase_UniswapV4Detf_Weighted is TestBase_UniswapV4Detf {
         se0 = _deployERC4626SE(address(new SimpleYieldERC4626(pair0)));
         se1 = _deployERC4626SE(address(new SimpleYieldERC4626(pair1)));
         se = se0;
-        pm = IPoolManager(address(new PoolManager(address(this))));
+        pm = IPoolManager(address(IPoolManager(create3Factory.create3WithArgs(
+            ArtifactCreationCode.creationCode(create3Factory, "PoolManager.sol:PoolManager"),
+            abi.encode(address(this)),
+            keccak256("TestBase_UniswapV4Detf_Weighted_PoolManager")
+        ))));
 
         _deployHookFactory();
         _deployWeightedHookPkg();
@@ -87,6 +93,9 @@ abstract contract TestBase_UniswapV4Detf_Weighted is TestBase_UniswapV4Detf {
             IVaultRegistryDeployment(address(indexedexManager)),
             owner,
             IUniswapV4StandardExchangeWeightedBufferHookPackage.PkgInit({
+                joinQueryFacet: WeightedFactory.deployJoinQueryFacet(create3Factory),
+                joinFlexibleFacet: WeightedFactory.deployJoinFlexibleFacet(create3Factory),
+                exitQueryFacet: WeightedFactory.deployExitQueryFacet(create3Factory),
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
                 joinFacet: joinFacet,
@@ -110,7 +119,6 @@ abstract contract TestBase_UniswapV4Detf_Weighted is TestBase_UniswapV4Detf {
         returns (address predicted_)
     {
         predicted_ = _predictDetf(args);
-        vm.etch(predicted_, address(pair0).code);
         address[] memory toks = new address[](3);
         toks[0] = predicted_;
         toks[1] = address(pair0);
@@ -136,7 +144,9 @@ abstract contract TestBase_UniswapV4Detf_Weighted is TestBase_UniswapV4Detf {
                 weights: w,
                 standardExchanges: ses,
                 rateProviders: rps,
-                ownerOnlyLiquidity: true,
+                tokenDecimals: HookPkgArgsDecimalsLib.tokenDecimals(toks, predicted_),
+                seDecimals: HookPkgArgsDecimalsLib.seDecimals(ses),
+                ownerOnlyLiquidity: args.ownerOnlyLiquidity,
                 owner: predicted_
             });
         uint256 mineNonce = WeightedFactory.findMineNonce(hookFactory, weightedHookPkg, hArgs);
@@ -146,7 +156,6 @@ abstract contract TestBase_UniswapV4Detf_Weighted is TestBase_UniswapV4Detf {
         init.deployPair(toks[0], toks[2]);
         init.deployPair(toks[1], toks[2]);
         require(init.finalizeInitialization(), "finalize");
-        vm.etch(predicted_, "");
         args.hook = reserveHook;
         vm.label(reserveHook, "weightedReserveHook");
     }

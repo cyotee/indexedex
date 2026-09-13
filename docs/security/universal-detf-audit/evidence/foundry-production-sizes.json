@@ -1,0 +1,667 @@
+[
+  {
+    "contract": "UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg",
+    "runtimeBytes": 20118,
+    "creationBytesWithoutArguments": 21408,
+    "links": {}
+  },
+  {
+    "contract": "UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet",
+    "runtimeBytes": 12952,
+    "creationBytesWithoutArguments": 12980,
+    "links": {
+      "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookMath.sol": {
+        "UniswapV4SingleStandardExchangeBufferConstantProductHookMath": [
+          {
+            "start": 3339,
+            "length": 20
+          },
+          {
+            "start": 4930,
+            "length": 20
+          },
+          {
+            "start": 5079,
+            "length": 20
+          },
+          {
+            "start": 5564,
+            "length": 20
+          },
+          {
+            "start": 5590,
+            "length": 20
+          },
+          {
+            "start": 5743,
+            "length": 20
+          },
+          {
+            "start": 6503,
+            "length": 20
+          },
+          {
+            "start": 6644,
+            "length": 20
+          },
+          {
+            "start": 6785,
+            "length": 20
+          },
+          {
+            "start": 6908,
+            "length": 20
+          },
+          {
+            "start": 7030,
+            "length": 20
+          },
+          {
+            "start": 8194,
+            "length": 20
+          },
+          {
+            "start": 8220,
+            "length": 20
+          },
+          {
+            "start": 8366,
+            "length": 20
+          }
+        ]
+      },
+      "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookPullLib.sol": {
+        "UniswapV4SingleStandardExchangeBufferConstantProductHookPullLib": [
+          {
+            "start": 773,
+            "length": 20
+          },
+          {
+            "start": 1200,
+            "length": 20
+          },
+          {
+            "start": 1328,
+            "length": 20
+          },
+          {
+            "start": 1617,
+            "length": 20
+          },
+          {
+            "start": 2235,
+            "length": 20
+          },
+          {
+            "start": 2472,
+            "length": 20
+          },
+          {
+            "start": 2614,
+            "length": 20
+          },
+          {
+            "start": 2726,
+            "length": 20
+          },
+          {
+            "start": 2941,
+            "length": 20
+          }
+        ]
+      }
+    }
+  },
+  {
+    "contract": "UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet",
+    "runtimeBytes": 14120,
+    "creationBytesWithoutArguments": 14148,
+    "links": {
+      "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib.sol": {
+        "UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib": [
+          {
+            "start": 10238,
+            "length": 20
+          }
+        ]
+      },
+      "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookMath.sol": {
+        "UniswapV4SingleStandardExchangeBufferConstantProductHookMath": [
+          {
+            "start": 2127,
+            "length": 20
+          },
+          {
+            "start": 2290,
+            "length": 20
+          },
+          {
+            "start": 2633,
+            "length": 20
+          },
+          {
+            "start": 2659,
+            "length": 20
+          },
+          {
+            "start": 2805,
+            "length": 20
+          },
+          {
+            "start": 2951,
+            "length": 20
+          },
+          {
+            "start": 3097,
+            "length": 20
+          },
+          {
+            "start": 3500,
+            "length": 20
+          },
+          {
+            "start": 3526,
+            "length": 20
+          },
+          {
+            "start": 3674,
+            "length": 20
+          },
+          {
+            "start": 3840,
+            "length": 20
+          },
+          {
+            "start": 3975,
+            "length": 20
+          },
+          {
+            "start": 5544,
+            "length": 20
+          },
+          {
+            "start": 5570,
+            "length": 20
+          },
+          {
+            "start": 5725,
+            "length": 20
+          },
+          {
+            "start": 6277,
+            "length": 20
+          },
+          {
+            "start": 6419,
+            "length": 20
+          },
+          {
+            "start": 6536,
+            "length": 20
+          },
+          {
+            "start": 6682,
+            "length": 20
+          },
+          {
+            "start": 7598,
+            "length": 20
+          },
+          {
+            "start": 7900,
+            "length": 20
+          },
+          {
+            "start": 8138,
+            "length": 20
+          },
+          {
+            "start": 8164,
+            "length": 20
+          },
+          {
+            "start": 8190,
+            "length": 20
+          },
+          {
+            "start": 8569,
+            "length": 20
+          },
+          {
+            "start": 8721,
+            "length": 20
+          },
+          {
+            "start": 8747,
+            "length": 20
+          },
+          {
+            "start": 8773,
+            "length": 20
+          },
+          {
+            "start": 10508,
+            "length": 20
+          },
+          {
+            "start": 10657,
+            "length": 20
+          },
+          {
+            "start": 11294,
+            "length": 20
+          },
+          {
+            "start": 11444,
+            "length": 20
+          },
+          {
+            "start": 11594,
+            "length": 20
+          },
+          {
+            "start": 11736,
+            "length": 20
+          },
+          {
+            "start": 11762,
+            "length": 20
+          },
+          {
+            "start": 12029,
+            "length": 20
+          },
+          {
+            "start": 12179,
+            "length": 20
+          },
+          {
+            "start": 12329,
+            "length": 20
+          },
+          {
+            "start": 12471,
+            "length": 20
+          },
+          {
+            "start": 12497,
+            "length": 20
+          }
+        ]
+      }
+    }
+  },
+  {
+    "contract": "UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFacet",
+    "runtimeBytes": 14388,
+    "creationBytesWithoutArguments": 14416,
+    "links": {
+      "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib.sol": {
+        "UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib": [
+          {
+            "start": 8288,
+            "length": 20
+          }
+        ]
+      },
+      "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookMath.sol": {
+        "UniswapV4SingleStandardExchangeBufferConstantProductHookMath": [
+          {
+            "start": 2294,
+            "length": 20
+          },
+          {
+            "start": 3726,
+            "length": 20
+          },
+          {
+            "start": 3875,
+            "length": 20
+          },
+          {
+            "start": 4480,
+            "length": 20
+          },
+          {
+            "start": 4622,
+            "length": 20
+          },
+          {
+            "start": 4648,
+            "length": 20
+          },
+          {
+            "start": 4674,
+            "length": 20
+          },
+          {
+            "start": 5063,
+            "length": 20
+          },
+          {
+            "start": 5215,
+            "length": 20
+          },
+          {
+            "start": 5241,
+            "length": 20
+          },
+          {
+            "start": 5527,
+            "length": 20
+          },
+          {
+            "start": 8901,
+            "length": 20
+          },
+          {
+            "start": 9051,
+            "length": 20
+          },
+          {
+            "start": 9201,
+            "length": 20
+          },
+          {
+            "start": 9343,
+            "length": 20
+          },
+          {
+            "start": 9369,
+            "length": 20
+          },
+          {
+            "start": 9636,
+            "length": 20
+          },
+          {
+            "start": 9786,
+            "length": 20
+          },
+          {
+            "start": 9936,
+            "length": 20
+          },
+          {
+            "start": 10078,
+            "length": 20
+          },
+          {
+            "start": 10104,
+            "length": 20
+          },
+          {
+            "start": 11403,
+            "length": 20
+          },
+          {
+            "start": 11544,
+            "length": 20
+          },
+          {
+            "start": 11685,
+            "length": 20
+          },
+          {
+            "start": 11808,
+            "length": 20
+          },
+          {
+            "start": 11930,
+            "length": 20
+          }
+        ]
+      },
+      "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookPullLib.sol": {
+        "UniswapV4SingleStandardExchangeBufferConstantProductHookPullLib": [
+          {
+            "start": 462,
+            "length": 20
+          },
+          {
+            "start": 845,
+            "length": 20
+          },
+          {
+            "start": 1058,
+            "length": 20
+          },
+          {
+            "start": 1385,
+            "length": 20
+          },
+          {
+            "start": 2018,
+            "length": 20
+          }
+        ]
+      }
+    }
+  },
+  {
+    "contract": "UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet",
+    "runtimeBytes": 21257,
+    "creationBytesWithoutArguments": 21285,
+    "links": {
+      "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib.sol": {
+        "UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib": [
+          {
+            "start": 15315,
+            "length": 20
+          },
+          {
+            "start": 16095,
+            "length": 20
+          }
+        ]
+      },
+      "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookMath.sol": {
+        "UniswapV4SingleStandardExchangeBufferConstantProductHookMath": [
+          {
+            "start": 6221,
+            "length": 20
+          },
+          {
+            "start": 6371,
+            "length": 20
+          },
+          {
+            "start": 6521,
+            "length": 20
+          },
+          {
+            "start": 6663,
+            "length": 20
+          },
+          {
+            "start": 6689,
+            "length": 20
+          },
+          {
+            "start": 6956,
+            "length": 20
+          },
+          {
+            "start": 7106,
+            "length": 20
+          },
+          {
+            "start": 7256,
+            "length": 20
+          },
+          {
+            "start": 7398,
+            "length": 20
+          },
+          {
+            "start": 7424,
+            "length": 20
+          },
+          {
+            "start": 10930,
+            "length": 20
+          },
+          {
+            "start": 11080,
+            "length": 20
+          },
+          {
+            "start": 11230,
+            "length": 20
+          },
+          {
+            "start": 11372,
+            "length": 20
+          },
+          {
+            "start": 11398,
+            "length": 20
+          },
+          {
+            "start": 11550,
+            "length": 20
+          },
+          {
+            "start": 11700,
+            "length": 20
+          },
+          {
+            "start": 11850,
+            "length": 20
+          },
+          {
+            "start": 11993,
+            "length": 20
+          },
+          {
+            "start": 12125,
+            "length": 20
+          }
+        ]
+      }
+    }
+  },
+  {
+    "contract": "UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet",
+    "runtimeBytes": 16291,
+    "creationBytesWithoutArguments": 16319,
+    "links": {
+      "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib.sol": {
+        "UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib": [
+          {
+            "start": 10513,
+            "length": 20
+          }
+        ]
+      },
+      "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookMath.sol": {
+        "UniswapV4SingleStandardExchangeBufferConstantProductHookMath": [
+          {
+            "start": 5681,
+            "length": 20
+          },
+          {
+            "start": 6354,
+            "length": 20
+          },
+          {
+            "start": 6380,
+            "length": 20
+          },
+          {
+            "start": 6406,
+            "length": 20
+          },
+          {
+            "start": 6539,
+            "length": 20
+          },
+          {
+            "start": 6659,
+            "length": 20
+          },
+          {
+            "start": 7035,
+            "length": 20
+          },
+          {
+            "start": 7061,
+            "length": 20
+          },
+          {
+            "start": 7087,
+            "length": 20
+          },
+          {
+            "start": 7220,
+            "length": 20
+          },
+          {
+            "start": 7340,
+            "length": 20
+          },
+          {
+            "start": 9907,
+            "length": 20
+          },
+          {
+            "start": 10056,
+            "length": 20
+          },
+          {
+            "start": 10757,
+            "length": 20
+          }
+        ]
+      }
+    }
+  },
+  {
+    "contract": "RebasingClaimTokenFacet",
+    "runtimeBytes": 11890,
+    "creationBytesWithoutArguments": 11918,
+    "links": {}
+  },
+  {
+    "contract": "UniswapV4DetfBondNFTVaultFacet",
+    "runtimeBytes": 23958,
+    "creationBytesWithoutArguments": 23986,
+    "links": {}
+  },
+  {
+    "contract": "UniswapV4DetfBondFacet",
+    "runtimeBytes": 18680,
+    "creationBytesWithoutArguments": 18708,
+    "links": {}
+  },
+  {
+    "contract": "UniswapV4DetfClaimFacet",
+    "runtimeBytes": 17116,
+    "creationBytesWithoutArguments": 17144,
+    "links": {}
+  },
+  {
+    "contract": "UniswapV4DetfDFPkg",
+    "runtimeBytes": 18072,
+    "creationBytesWithoutArguments": 19189,
+    "links": {}
+  },
+  {
+    "contract": "UniswapV4DetfExchangeFacet",
+    "runtimeBytes": 15033,
+    "creationBytesWithoutArguments": 15061,
+    "links": {}
+  },
+  {
+    "contract": "UniswapV4DetfMaintenanceFacet",
+    "runtimeBytes": 14810,
+    "creationBytesWithoutArguments": 14838,
+    "links": {}
+  },
+  {
+    "contract": "UniswapV4DetfQueryFacet",
+    "runtimeBytes": 15235,
+    "creationBytesWithoutArguments": 15263,
+    "links": {}
+  }
+]

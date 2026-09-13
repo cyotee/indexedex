@@ -41,6 +41,64 @@ abstract contract StandardExchangeBufferPoolCommon {
         if (rate == 0) revert IStandardExchangeBufferPool.RateProviderZero();
     }
 
+    /**
+     * @dev TTA is TokenType.STANDARD. Vault scaled18 = raw * scalingFactor * rate / 1e18
+     *      with rate = 1e18, so scaled18 = raw * 10^(18-decimals). virtualTTA is stored in
+     *      scaled18. ERC-20 / SE vault calls take raw native units.
+     */
+    function _vaultTtaRateAndScale() internal view returns (uint256 rate, uint256 scalingFactor) {
+        (uint256[] memory scalingFactors, uint256[] memory rates) =
+            IVault(address(BalancerV3VaultAwareRepo._balancerV3Vault())).getPoolTokenRates(address(this));
+        uint256 ttaIdx = Repo._ttaIndex();
+        rate = rates[ttaIdx];
+        scalingFactor = scalingFactors[ttaIdx];
+        if (rate == 0) rate = 1e18;
+        if (scalingFactor == 0) scalingFactor = 1;
+    }
+
+    function _ttaToScaled18(uint256 raw) internal view returns (uint256) {
+        if (raw == 0) return 0;
+        (uint256 rate, uint256 scalingFactor) = _vaultTtaRateAndScale();
+        // Vault: (raw * scalingFactor).mulDown(rate) = raw * scale * rate / 1e18.
+        return Math.mulDiv(raw, scalingFactor * rate, 1e18);
+    }
+
+    function _ttaToRaw(uint256 scaled18) internal view returns (uint256) {
+        if (scaled18 == 0) return 0;
+        (uint256 rate, uint256 scalingFactor) = _vaultTtaRateAndScale();
+        uint256 denom = scalingFactor * rate;
+        if (denom == 0) return 0;
+        // Same as Vault toRawUndoRateRoundDown (floor) without FixedPoint.divDown's `* 1e18` 0x11.
+        return Math.mulDiv(scaled18, 1e18, denom);
+    }
+
+    /**
+     * @dev Raw TTA Balancer will charge as amountInRaw for a DONATION of `desiredRaw`:
+     *        scaled      = floor(desiredRaw * scalingFactor * rate / 1e18)
+     *        amountInRaw = ceil (scaled * 1e18 / (scalingFactor * rate))
+     *      Identity for 18-dec STANDARD TTA. For 6/9-dec TTA this matches the Vault's
+     *      donate round-trip so settle credit equals the debit.
+     */
+    function _bv3TtaDonationRaw(uint256 desiredRaw) internal view returns (uint256) {
+        if (desiredRaw == 0) return 0;
+        (uint256 rate, uint256 scalingFactor) = _vaultTtaRateAndScale();
+        uint256 denom = scalingFactor * rate;
+        uint256 scaled = Math.mulDiv(desiredRaw, denom, 1e18);
+        return Math.mulDiv(scaled, 1e18, denom, Math.Rounding.Ceil);
+    }
+
+    /**
+     * @dev Raw TTA Balancer will return as amountOutRaw for a removeLiquidity CUSTOM
+     *      given `ttaRaw` as minAmountsOut (same round-trip as `_bv3SharesRemoveOutRaw`).
+     */
+    function _bv3TtaRemoveOutRaw(uint256 ttaRaw) internal view returns (uint256) {
+        if (ttaRaw == 0) return 0;
+        (uint256 rate, uint256 scalingFactor) = _vaultTtaRateAndScale();
+        uint256 denom = scalingFactor * rate;
+        uint256 scaled = Math.mulDiv(ttaRaw, denom, 1e18, Math.Rounding.Ceil);
+        return Math.mulDiv(scaled, 1e18, denom);
+    }
+
     /* ----- Effective weights ----- */
 
     /**
@@ -95,7 +153,7 @@ abstract contract StandardExchangeBufferPoolCommon {
     function _liftSharesToScaled18Rated(uint256 rawShares) internal view returns (uint256) {
         if (rawShares == 0) return 0;
         (uint256 rate, uint256 scalingFactor) = _vaultSharesRateAndScale();
-        return Math.mulDiv(rawShares * scalingFactor, rate, 1e18);
+        return Math.mulDiv(rawShares, scalingFactor * rate, 1e18);
     }
 
     /* ----- Balancer V3 raw<->scaled18 round-trip mirrors (moved from the hook target,
@@ -110,7 +168,7 @@ abstract contract StandardExchangeBufferPoolCommon {
         if (desiredRaw == 0) return 0;
         (uint256 rate, uint256 scalingFactor) = _vaultSharesRateAndScale();
         uint256 denom = scalingFactor * rate;
-        uint256 scaled = (desiredRaw * denom) / 1e18;
+        uint256 scaled = Math.mulDiv(desiredRaw, denom, 1e18);
         return Math.mulDiv(scaled, 1e18, denom, Math.Rounding.Ceil);
     }
 
@@ -125,6 +183,6 @@ abstract contract StandardExchangeBufferPoolCommon {
         (uint256 rate, uint256 scalingFactor) = _vaultSharesRateAndScale();
         uint256 denom = scalingFactor * rate;
         uint256 scaled = Math.mulDiv(sRaw, denom, 1e18, Math.Rounding.Ceil);
-        return (scaled * 1e18) / denom;
+        return Math.mulDiv(scaled, 1e18, denom);
     }
 }

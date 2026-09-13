@@ -1,0 +1,30 @@
+{
+  "status": "applied; native caller runtime pending",
+  "files": [
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Dust_Decimals.sol",
+      "before": "94ccddf6082d6848cedee424ec594c43c54d3ab60c8a39910ab4b0a6c40056e3",
+      "after": "18316bd57c4226b72d334a52bd8e57e435235ecd3ddb059d7bf28f95a0d23e48"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Donate_Decimals.sol",
+      "before": "9d3c260be8ef0fd94ab8c7b11870bc50bf54d66672a065bbcf3b3b85fe850b0a",
+      "after": "d8f72ac38255dde8e797f311b6d4caabda3e513f58ad93d0740d6d90ab9b688b"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ReserveDonationBase.sol",
+      "before": "ac700bb8fb69da776aa63a454a0bc3cab22d08bff109b39491b310255be14ff8",
+      "after": "82f648f11a2e1471b0a6a95792f2672bc75235e9d8c2a1211ed72d0c25a11491"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_ReserveDonationBase_Decimals.sol",
+      "before": "cbf0eb5b5aff4718b58f96f45199d9b237741f76ad27172626337c44de5f6c05",
+      "after": "fd3fc5a333cd92cf5ecb92589cec76e43596904ef0c9133b8047d45239c7cce5"
+    }
+  ],
+  "removed_placeholders": [
+    "DN3 return-only",
+    "DN15 return-only"
+  ],
+  "replacement_evidence": "v4-share-composition-192-pass-pons-failures: eight real reserve bindings pass whole external LP donation and unchanged funded ownership; root DN1 conservation retained"
+}

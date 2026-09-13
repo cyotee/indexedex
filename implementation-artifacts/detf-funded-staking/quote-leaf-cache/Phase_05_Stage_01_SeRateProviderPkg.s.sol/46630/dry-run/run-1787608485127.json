@@ -1,0 +1,10 @@
+{
+  "transactions": [
+    {
+      "rpc": "https://rpc.testnet.chain.robinhood.com"
+    },
+    {
+      "rpc": "https://rpc.testnet.chain.robinhood.com"
+    }
+  ]
+}

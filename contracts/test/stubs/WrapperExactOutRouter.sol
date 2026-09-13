@@ -79,9 +79,9 @@ contract WrapperExactOutRouter is IUnlockCallback {
             // exact-in: settle specified input, swap, take output
             uint256 amountIn = uint256(-data.params.amountSpecified);
             _settle(inputCurrency, data.sender, amountIn);
-            BalanceDelta delta = manager.swap(data.key, data.params, data.hookData);
+            BalanceDelta deltaInner = manager.swap(data.key, data.params, data.hookData);
             _takeCredit(outputCurrency, data.sender);
-            return abi.encode(delta);
+            return abi.encode(deltaInner);
         }
 
         // exact-out: settle max input first so hook can take amountIn during beforeSwap

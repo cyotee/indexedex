@@ -10,6 +10,27 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {RateProviderMock} from "contracts/test/balancer/v3/RateProviderMock.sol";
 
 contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Swap is TestBase {
+    function test_exactOutput_after_buffer_yield_settles_pair_units() public {
+        _firstMintEqual(1000 ether);
+        token0.mint(address(this), 100 ether);
+        token0.approve(address(vault0), 100 ether);
+        vault0.simulateYield(100 ether);
+        uint256 amountOut = 1 ether;
+        uint256 requiredShares = IStandardExchangeOut(se0).previewExchangeOut(IERC20(se0), IERC20(address(token0)), amountOut);
+        assertLt(requiredShares, amountOut, "accrued SE share value exceeds one pair unit");
+        uint256 quotedInput = quad.previewSwapExactOut(address(token1), address(token0), amountOut);
+        uint256 beforeOut = token0.balanceOf(user);
+        uint256 beforeIn = token1.balanceOf(user);
+        vm.prank(user);
+        uint256 spent = IStandardExchangeOut(hook).exchangeOut(
+            IERC20(address(token1)), quotedInput, IERC20(address(token0)), amountOut, user, false, block.timestamp + 1
+        );
+        assertEq(spent, quotedInput);
+        assertEq(beforeIn - token1.balanceOf(user), spent);
+        assertEq(token0.balanceOf(user) - beforeOut, amountOut);
+        assertEq(IERC20(se0).allowance(hook, se0), 0);
+    }
+
     function test_swapExactIn_onePair_previewEqualsExec() public {
         _firstMintEqual(1_000 ether);
         uint256 amountIn = 5 ether;
@@ -130,5 +151,14 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Swap is TestBase {
         uint256 b1 = token1.balanceOf(user);
         _swapExactIn(address(token0), address(token1), amountIn);
         assertEq(token1.balanceOf(user) - b1, preview);
+
+        uint256 required = quad.previewSwapExactOut(address(token0), address(token1), 1 ether);
+        assertLt(required, 2 ether, "rate inverse remains in native pair units");
+        assertGe(quad.previewSwapExactIn(address(token0), address(token1), required), 1 ether);
+        uint256 beforeIn = token0.balanceOf(user);
+        b1 = token1.balanceOf(user);
+        _swapExactOut(address(token0), address(token1), 1 ether);
+        assertEq(beforeIn - token0.balanceOf(user), required);
+        assertEq(token1.balanceOf(user) - b1, 1 ether);
     }
 }

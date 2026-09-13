@@ -6,7 +6,7 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 interface IStandardExchangeInMulti {
     /**
      * @notice Preview the amount of tokenOut that would be received for exchanging multiple tokenIn amounts.
-     * @param tokenIn The array of input token addresses. Sorted in ascending order.
+     * @param tokenIn Input token addresses in the vault's declared order. V4 uses PoolKey order with WETH as the ERC20 face of a native currency.
      * @param amountsIn The array of input token amounts corresponding to tokenIn. Must be the same length as tokenIn.
      * @param tokenOut The output token address.
      * @return amountOut The amount of tokenOut that would be received.
@@ -19,7 +19,7 @@ interface IStandardExchangeInMulti {
 
     /**
      * @notice Exchange multiple tokenIn amounts for a single tokenOut amount.
-     * @param tokenIn The array of input token addresses. Sorted in ascending order.
+     * @param tokenIn Input token addresses in the vault's declared order. V4 uses PoolKey order with WETH as the ERC20 face of a native currency.
      * @param amountsIn The array of input token amounts corresponding to tokenIn. Must be the same length as tokenIn.
      * @param tokenOut The output token address.
      * @param minAmountOut The minimum amount of tokenOut that must be received.

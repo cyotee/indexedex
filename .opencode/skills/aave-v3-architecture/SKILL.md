@@ -300,6 +300,6 @@ Liquidator → Pool.liquidationCall() → LiquidationLogic.executeLiquidationCal
 
 - `src/contracts/protocol/pool/Pool.sol` - Main Pool contract
 - `src/contracts/protocol/pool/PoolConfigurator.sol` - Configuration contract
-- `@crane/contracts/external/aave-v3-origin/contracts/protocol/libraries/types/DataTypes.sol` - Core data structures
-- `@crane/contracts/external/aave-v3-origin/contracts/interfaces/IPool.sol` - Pool interface
+- `src/contracts/protocol/libraries/types/DataTypes.sol` - Core data structures
+- `src/contracts/interfaces/IPool.sol` - Pool interface
 - `src/contracts/interfaces/IPoolAddressesProvider.sol` - Registry interface

@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {UniswapV4StandardExchangeOrbitalBufferHookMath as HookMath} from
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookMath.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {
     TestBase_UniswapV4StandardExchangeOrbitalBufferHook
@@ -15,6 +18,45 @@ import {
 contract UniswapV4StandardExchangeOrbitalBufferHook_LiquidityTest is
     TestBase_UniswapV4StandardExchangeOrbitalBufferHook
 {
+    function test_sphereNav_highPrecisionIntermediateProduct() public pure {
+        _assertSymmetricNavShares(1e28, 1e27);
+    }
+
+    function test_sphereNav_highPrecisionNativeUnit() public pure {
+        _assertSymmetricNavShares(1e28, 1);
+    }
+
+    function testFuzz_sphereNav_symmetricShares(uint256 reserve_, uint256 input_) public view {
+        reserve_ = bound(reserve_, 1e27, 1e30);
+        input_ = bound(input_, 1, reserve_);
+        _assertSymmetricNavShares(reserve_, input_);
+    }
+
+    function test_sphereNav_zeroInputStillReverts() public {
+        vm.expectRevert(HookMath.MathDomain.selector);
+        HookMath.sphereNavShares(3e28, 4e28, 1e28, 1e28, 1e28, 0, 0, 0);
+        HookMath.SphereNavArgs memory args_ = HookMath.SphereNavArgs({
+            supply: 3e28, R: 4e28, r0Wad: 1e28, r1Wad: 1e28, r2Wad: 1e28,
+            used0Wad: 0, used1Wad: 0, used2Wad: 0
+        });
+        vm.expectRevert(HookMath.MathDomain.selector);
+        HookMath.sphereNavShares(args_);
+    }
+
+    function _assertSymmetricNavShares(uint256 reserve_, uint256 input_) internal pure {
+        // Equal reserves and equal deposits preserve equal ownership. With one
+        // LP unit per reserve unit, the three deposits must mint 3 * input.
+        assertEq(
+            HookMath.sphereNavShares(3 * reserve_, 4 * reserve_, reserve_, reserve_, reserve_, input_, input_, input_),
+            3 * input_, "scalar NAV conserves symmetric ownership"
+        );
+        HookMath.SphereNavArgs memory args_ = HookMath.SphereNavArgs({
+            supply: 3 * reserve_, R: 4 * reserve_, r0Wad: reserve_, r1Wad: reserve_, r2Wad: reserve_,
+            used0Wad: input_, used1Wad: input_, used2Wad: input_
+        });
+        assertEq(HookMath.sphereNavShares(args_), 3 * input_, "packed NAV conserves symmetric ownership");
+    }
+
     function test_firstMint_twoLegs_setsR() public {
         (uint256 shares, uint256 u0, uint256 u1, uint256 u2) =
             _addLiquidity(100 ether, 100 ether, 0);

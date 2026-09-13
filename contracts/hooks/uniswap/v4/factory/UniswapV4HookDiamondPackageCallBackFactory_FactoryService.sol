@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 pragma solidity ^0.8.24;
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -7,18 +8,9 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 import {VM_ADDRESS} from "@crane/contracts/constants/FoundryConstants.sol";
 import {Vm} from "forge-std/Vm.sol";
 
-import {
-    IUniswapV4HookDiamondPackage
-} from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackage.sol";
-import {
-    IUniswapV4HookDiamondPackageCallBackFactory
-} from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackageCallBackFactory.sol";
-import {
-    UniswapV4HookDiamondPackageCallBackFactory
-} from "contracts/hooks/uniswap/v4/factory/UniswapV4HookDiamondPackageCallBackFactory.sol";
-import {
-    UniswapV4HookFlagsFacet
-} from "contracts/hooks/uniswap/v4/factory/facets/UniswapV4HookFlagsFacet.sol";
+import {IUniswapV4HookDiamondPackage} from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackage.sol";
+import {IUniswapV4HookDiamondPackageCallBackFactory} from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackageCallBackFactory.sol";
+
 import {
     UniswapV4HookDiamondCreate2Lib as Create2Lib
 } from "contracts/hooks/uniswap/v4/factory/libs/UniswapV4HookDiamondCreate2Lib.sol";
@@ -40,9 +32,9 @@ library UniswapV4HookDiamondPackageCallBackFactory_FactoryService {
         returns (IFacet hookFlagsFacet)
     {
         hookFlagsFacet = create3Factory.deployFacet(
-            type(UniswapV4HookFlagsFacet).creationCode, abi.encode(type(UniswapV4HookFlagsFacet).name)._hash()
+            ArtifactCreationCode.creationCode("UniswapV4HookFlagsFacet.sol:UniswapV4HookFlagsFacet"), abi.encode("UniswapV4HookFlagsFacet")._hash()
         );
-        vm.label(address(hookFlagsFacet), type(UniswapV4HookFlagsFacet).name);
+        vm.label(address(hookFlagsFacet), "UniswapV4HookFlagsFacet");
     }
 
     function deployUniswapV4HookDiamondPackageCallBackFactory(
@@ -51,12 +43,12 @@ library UniswapV4HookDiamondPackageCallBackFactory_FactoryService {
     ) internal returns (IUniswapV4HookDiamondPackageCallBackFactory factory) {
         factory = IUniswapV4HookDiamondPackageCallBackFactory(
             create3Factory.create3WithArgs(
-                type(UniswapV4HookDiamondPackageCallBackFactory).creationCode,
+                ArtifactCreationCode.creationCode("UniswapV4HookDiamondPackageCallBackFactory.sol:UniswapV4HookDiamondPackageCallBackFactory"),
                 abi.encode(initArgs),
-                abi.encode(type(UniswapV4HookDiamondPackageCallBackFactory).name)._hash()
+                abi.encode("UniswapV4HookDiamondPackageCallBackFactory")._hash()
             )
         );
-        vm.label(address(factory), type(UniswapV4HookDiamondPackageCallBackFactory).name);
+        vm.label(address(factory), "UniswapV4HookDiamondPackageCallBackFactory");
     }
 
     /// @notice Low-level factory deploy (no vault registry). Prefer package → registry.deployHookVault in products.

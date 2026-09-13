@@ -1,0 +1,20 @@
+{
+  "status": "DRAFT_TYPECHECK_ONLY_NOT_RUNTIME_VALIDATION",
+  "seconds": 8.421,
+  "prepared_records": [
+    "obsolete-common-ledger-cleanup-prepared.json"
+  ],
+  "exit_code": 0,
+  "errors": [],
+  "concrete_suites": {
+    "VaultFeeOracle_BondTermsFallback_Test": 17,
+    "DETFNFTVaultDFPkg_Deploy_Test": 9,
+    "DETFEpochNaturalExpansionLibTest": 7,
+    "DETFFundedStakingMathTest": 11,
+    "UniswapV4Detf_PonsV2Se_ProductLaw": 58
+  },
+  "compiled_methods": 102,
+  "compiler_input_sha256": "bb6f5167942462dc92be6eb30f3ab631633c5bb23ff6ae58721b05bc5b8b1dc6",
+  "validation_passed": true,
+  "canonical_sources_unchanged": true
+}

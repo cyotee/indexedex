@@ -1,0 +1,8 @@
+{
+  "status": "applied; validation pending",
+  "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Adversarial_Surface.t.sol",
+  "before_sha256": "6ad6da367789fb7bffd35bc101295f3b708dfa9e80d8dc5221d995e81bf8d1d8",
+  "after_sha256": "6970f3f62cc6b6090b16da78abd7a71a279426a71b485088d121abe955c44b6f",
+  "reason": "Old test expected two retired LP-backed claim projections on one unsplit join facet. Current package splits nine execution selectors and 26 quote/native-SY selectors. The same existing test now checks both exact independently enumerated facet surfaces and absence of the two retired projections.",
+  "prior_evidence": "v4-surface-retired-claim-projection-failure-run.json: 12 pass, one obsolete control failure"
+}

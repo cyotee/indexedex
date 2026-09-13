@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IFacetRegistry} from "@crane/contracts/interfaces/IFacetRegistry.sol";
@@ -21,6 +23,7 @@ import {ModifyLiquidityParams, SwapParams} from "@crane/contracts/protocols/dexe
 import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/TickMath.sol";
 import {LiquidityAmounts} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/LiquidityAmounts.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
+import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
@@ -154,6 +157,7 @@ contract UniswapV4StandardExchange_LocalLiquidBuffer_H2 is TestBase_UniswapV4Sta
         seVault = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(sePoolKey));
         liquid = IUniswapV4StandardExchangeLiquidReserve(address(seVault));
         assertTrue(liquid.canOpenPoolManagerUnlock(), "SE idle at deploy");
+        _activateUnderlyingSe();
 
         // --- Real Single SE Buffer CP hook package with SE = this V4 vault ---
         IFacet hookFlagsFacet = HookFactoryService.deployUniswapV4HookFlagsFacet(create3Factory);
@@ -182,6 +186,8 @@ contract UniswapV4StandardExchange_LocalLiquidBuffer_H2 is TestBase_UniswapV4Sta
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
                 seFacet: seFacet,
                 depositFacet: depositFacet,
+                depositSingleFacet: PkgFactory.deployDepositSingleFacet(create3Factory),
+                depositPreviewFacet: PkgFactory.deployDepositPreviewFacet(create3Factory),
                 withdrawFacet: withdrawFacet,
                 erc20Facet: erc20Facet,
                 erc5267Facet: erc5267Facet,
@@ -200,6 +206,8 @@ contract UniswapV4StandardExchange_LocalLiquidBuffer_H2 is TestBase_UniswapV4Sta
                 standardExchange: address(seVault),
                 pairToken: address(pairToken),
                 rawToken: address(rawToken),
+                pairTokenDecimals: HookPkgArgsDecimalsLib.tokenDec(address(pairToken)),
+                rawTokenDecimals: address(rawToken).code.length == 0 ? uint8(18) : HookPkgArgsDecimalsLib.tokenDec(address(rawToken)),
                 ownerOnlyLiquidity: false,
                 owner: owner
             });
@@ -274,6 +282,23 @@ contract UniswapV4StandardExchange_LocalLiquidBuffer_H2 is TestBase_UniswapV4Sta
         assertGt(seVault.balanceOf(hook), seSharesHookBefore, "hook holds more SE shares after buffer-last");
         // After outer unlock ends, SE gate is free again.
         assertTrue(liquid.canOpenPoolManagerUnlock(), "PM idle after swap");
+    }
+
+    function _activateUnderlyingSe() internal {
+        pairToken.mint(address(this), 100 ether);
+        seOtherToken.mint(address(this), 100 ether);
+        pairToken.approve(address(seVault), 100 ether);
+        seOtherToken.approve(address(seVault), 100 ether);
+        address[] memory tokens = new address[](2);
+        tokens[0] = Currency.unwrap(sePoolKey.currency0);
+        tokens[1] = Currency.unwrap(sePoolKey.currency1);
+        uint256[] memory amounts = new uint256[](2);
+        amounts[0] = tokens[0] == address(pairToken) ? 100 ether : 100 ether;
+        amounts[1] = tokens[1] == address(pairToken) ? 100 ether : 100 ether;
+        uint256 shares = IStandardExchangeInMulti(address(seVault)).exchangeInManyToOne(
+            tokens, amounts, IERC20(address(seVault)), 0, address(this), false, block.timestamp + 1 hours
+        );
+        assertGt(shares, 0, "two-token SE activation before hook liquidity");
     }
 
     function _amountForCurrency(address currency, uint256 amtRaw, uint256 amtPair) internal view returns (uint256) {

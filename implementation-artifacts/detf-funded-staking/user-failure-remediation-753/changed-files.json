@@ -1,0 +1,560 @@
+[
+  {
+    "path": "contracts/test/bases/FundedBondLifecycleAssertions.sol",
+    "before_sha256": null,
+    "current_sha256": "281877022e258769437de3ebcdb2f962363c6b01baee1ff6a78520f2cdf2776c",
+    "new_file": true
+  },
+  {
+    "path": "contracts/test/bases/TestBase_ComposedFundedRoutes.sol",
+    "before_sha256": null,
+    "current_sha256": "89cb65cab68ad5f30d3f94f5c7a3ad05037cd4efa84fa736c2070ccf8a4328db",
+    "new_file": true
+  },
+  {
+    "path": "contracts/test/stubs/HostileCallbackERC20.sol",
+    "before_sha256": null,
+    "current_sha256": "561c9cb33fad0af60202c9872728d8db602180b55b8b2e4f6e858b13b87b56e1",
+    "new_file": true
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf.sol",
+    "before_sha256": "61a94387a55a385a83b808a306e1d71f52d1dd02586db8dcc8df4e5e904bfe9d",
+    "current_sha256": "0804acb4deafb837895c279077ab4ce61418f8a3c94535a39e6f7b1af411f6c2",
+    "new_file": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf_Decimals.sol",
+    "before_sha256": "9f6efbc144258acd690881ef9c95ebe22a138a4998dff91d22e6d0dfe15b2923",
+    "current_sha256": "5f314ab2aa4592a862cff56edce59c437b0a5c2cc44e6fca21a713ce14305bb6",
+    "new_file": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/TestBase_ComposedStableCommonDetf_Decimals.sol",
+    "before_sha256": "dbff558998710fb08616601b9fdd6c5547b4ab0ddb590817674f2ecdbaa5476e",
+    "current_sha256": "d54d24d04005feed1643706826892fcc4cf9207c1d91717b1ee3a8b804a52523",
+    "new_file": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF_Decimals.sol",
+    "before_sha256": "c6982bfca64d5fe14d0c5da49ad12e7fa5a84453de4b981fa6b76b97d9f26b7e",
+    "current_sha256": "277c19256872a482c5c1d8fff9b60fcc742091589eb7557cb4f024ac813bb67e",
+    "new_file": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol",
+    "before_sha256": "3dd6aa0555d7a71b82dd3c36807853588ad5d825f90ef443d14a2c8ba86f82a6",
+    "current_sha256": "edd3a8f65af1c88aaf11ba360e5d2a7d167c0c94ac5dffc0843a30d26736e145",
+    "new_file": false
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol",
+    "before_sha256": "ea0c5182b1fc55ec21ae54e9dd3f534146e5c0b248221a749d82dbcfbdcf1789",
+    "current_sha256": "7aa3cb339e21bd9085a6ca8fd4418da1ef52e3578f2c5d9cc52ebe9e84582a59",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_Decimals.sol",
+    "before_sha256": "60b21b7fdc59baba979b6eee3ac525889821275e27aa745979365afd7d324e19",
+    "current_sha256": "eaa0b0583e87358a8a6149a6d18ce9c943a312abf7592878b83e95e4a5052b93",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_Decimals.sol",
+    "before_sha256": "4993e733717fe4047dc535ce2059cde89f4fedb231f03bfda7446beeff8daddb",
+    "current_sha256": "bf033b8b41cb2489ef4d9eabb01052eb257bd913f48e645aa43becfd125231e2",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeInFacet_IFacet_Test.t.sol",
+    "before_sha256": "2532ac1577d633e96f31f7f8f291c6707dee6b1fda4b9c17f49374dcaafb2455",
+    "current_sha256": "0f97cdad546a5373666bee3ebf4e3c7916255d62780c924ffa228b8ec51c6f24",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_Bonding.t.sol",
+    "before_sha256": "167b97ba3b82e2f820a8e573a9801ab61762c2de91e88705eaa4ed0abfa769c4",
+    "current_sha256": "c4514f9df8e3f871b9cba4f19351e723eadaa09665fe2ff694aac58064aff018",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_Liveness.t.sol",
+    "before_sha256": "9a50ab4a0e8759f1f11c60ce11f8a30f48805642d340b883235fd47421313158",
+    "current_sha256": "5b8f247fe73de61859d8b94ba5950c05deeac74ea472a8fa2b2c20f80aef7080",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/adversarial/Adversarial_MixedBuffer_TrustFlag.t.sol",
+    "before_sha256": "03314da48553d9bbd521faed92c7cf4c9a30a4b44ea6a3d455512d53430797c1",
+    "current_sha256": "7570fe34f99fc0d2ca71e57d4fdcd1c0db9fd4a29a2e4235e6793f8e545058d4",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/adversarial/Adversarial_MixedBuffer_TrustFlag_Decimals.sol",
+    "before_sha256": "85f7c5506753e17df18e486d4262ae2ac61714f50630b92e4542b1837d7eaf3c",
+    "current_sha256": "fdc7f1777d27bc30b4c211bfe58cb0d8621e50e248c7a0c6e5d5a70b236cbc2f",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeInFacet_IFacet_Test.t.sol",
+    "before_sha256": "93f8ace58d63ff36fa456c8d9d805706b84618ec67cd8e8523feb45d52cd8226",
+    "current_sha256": "449273b5e61c922fd88bca889c4e667391f59b455ee2a35be6219152381d1b0b",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_Bonding.t.sol",
+    "before_sha256": "48eb60a6fdf91debbbcccf33b1ab2fa382ba2500855c20e691e7559526e63024",
+    "current_sha256": "745fd29a81704cb9b96d81fcb6a75bfd7395b607dc4fce63d2be74d93029ce54",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_Liveness.t.sol",
+    "before_sha256": "9fdb46dd6637c2c7525df017cae8402d7d3306e05b292b58071c855b74fcc917",
+    "current_sha256": "f1c7613cc31fa5ee9eb1be39d0cb7a6eb9b323e72f7e18dbced4188fbb74f625",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_MintBurn.t.sol",
+    "before_sha256": "1dd66d16f37760ecfbc40d84cd422650b6ae0ba754bb14b82d1dd77eb0754e28",
+    "current_sha256": "0b84ecc8631c7303f850721989c1c346904b6e7e8819dc9006554bbce7085780",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_MixedRated.t.sol",
+    "before_sha256": "4e8889a9ff57c0d2a9d86305c21c501f562b8d67993beb33ccc65cafb2283418",
+    "current_sha256": "572c297e6e7819e6ddc27b9b9c7f25eba12499cd6c84738d2ddd1a9fd01ec99a",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_MultiLeg.t.sol",
+    "before_sha256": "54e85289f9d3fe655d7123a9e8e606c3613cf60aa2bd093531ff7d72019096b3",
+    "current_sha256": "151a25d7d110a31dbfe9f0731f9ec33d5de3f7d4e2c982356c80a8b41c37c8d4",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_Nested.t.sol",
+    "before_sha256": "eade7f8cc6b6f89662cd20e27f9d021eb97148af88c45ecd7d2dd6cb39f8c505",
+    "current_sha256": "782eb39c6cb5003067d14f3daaf20676abffb833200f49c78ca013d5bb0eb4b4",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_ReserveDonation.t.sol",
+    "before_sha256": "58afaddfaaa1d847be145a8d5face7948ac8412a28743b84fa6ac7a2bc896627",
+    "current_sha256": "8b6e632db97a7fab40f028f8ca76c0dbfcc3b06330c538d034f51cecf686d351",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_BondClaim.t.sol",
+    "before_sha256": "32ae68ef2c93221f718a764516797b56c3a3c443957666c879d70d3d6744f441",
+    "current_sha256": "ac7a3c80ba52cd08f85ae7aff52525561c4c43a31785ced8c256bae6f6de051d",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_Griefing.t.sol",
+    "before_sha256": "529595d5b457f6587a7cc40e0a1c0dbe029c8088f86c99c01a177fa437aeb909",
+    "current_sha256": "f0450ba4d025b477a6fc704d31018623ae4d057cdc6ee83bfaf9b9eb62fbc4ff",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_Nested.t.sol",
+    "before_sha256": "f79021357ea835c205cd72403eab2f7a97f59cc962553dcfade73427f3395762",
+    "current_sha256": "f9defadb367733c9a9c43af480bfcef24e54d0537e0f146583425c98f6fd97a1",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_PriceManipulation.t.sol",
+    "before_sha256": "6429c3dd58eb770a5daa41c177a4fb2313106e836c601a314635837a6be5d7bc",
+    "current_sha256": "5b08026329b738d7a152da46669ae4c77f650a7f1518b7aeea35b17ea202615a",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_Surface.t.sol",
+    "before_sha256": "59bdfa1baead0192d74871391b0b4a548bc4639e01a448e990084e11fee4000d",
+    "current_sha256": "2f549a7bedb7c194a2223780aac8db73f9d9ebae9c0cc72677fc6f24ab698cd1",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_TrustFlags.t.sol",
+    "before_sha256": "7ce2d060a79a4335cd3b061e670f43f6a75590cb1350d092e695229bbc1387ff",
+    "current_sha256": "1a9aa961c4e36462d7cf2fcada700c261853f9c2626b57f985eafda1d001ad00",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Bonding_Decimals.sol",
+    "before_sha256": "ee45f2d5deaba0bbc7937dea93a35f9aa81765fc80e1dc12c697550f02c0a622",
+    "current_sha256": "3c6bc5461ae4d5db2a31099f110667d1c684aabf653b66de96a7f1933a6d1bc5",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Deploy_Decimals.sol",
+    "before_sha256": "2287b17a674f9f369d1c7cf3f2f45f38b7d11467442d57b1f9eeb94ad8c07c7b",
+    "current_sha256": "167eeed1facd16c6152aa6cc1bacd302ab2afc5bb34b90ef74f2f9da3eca41a1",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Liveness_Decimals.sol",
+    "before_sha256": "0f5f5a974421b1b07eefb57d186353b19f18271ea1985f9365b0ba8f2e0c7cea",
+    "current_sha256": "2eb9265a4149137f97d81effddcb8421d21ed0432a301d1cfd0c6a112ee0a9cd",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_MintBurn_Decimals.sol",
+    "before_sha256": "8d1308be3fe2674c800da94af6edfdc6922c5f57ab5319ed820d9c4d6189a143",
+    "current_sha256": "e6d1d0174eb90710313c155a70ef06a7dbc1836927b5f8d5af56f0d67354de98",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_MixedRated_Decimals.sol",
+    "before_sha256": "ea45a5ee3543a2e15277fd72928aef78be4e6c7499459199e00b7886ddb428ca",
+    "current_sha256": "e7f43bf300717dee28631879c7500a8d6cb01a6b43cfbdc7003c402714c50d8a",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_MultiLeg_Decimals.sol",
+    "before_sha256": "dbcdcfff57168b87603b3f74de8af9f813d870711d59a8e8a76df4341396656d",
+    "current_sha256": "99d655c29ae43580681c896c466aedd5b75fd6dbe28515b5af30cc691cc91c87",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Nested_Decimals.sol",
+    "before_sha256": "f924091b9b335df2524218b45604a3db1c7bb08faea366588286f40fe461cf3e",
+    "current_sha256": "5f354b971867d74d60279cd33c5eb6f49818aafc42e4c00c2124c50dfe4339af",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_PriceShift_Decimals.sol",
+    "before_sha256": "495364f191ad9b3f92bf6abf9b9d1c53491549879f5db6d0351f057edddd9b55",
+    "current_sha256": "046b27544ed03a4bf811295dfec2d78112c1a7f736feaf3831786eff7d059023",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_ReserveDonation_Decimals.sol",
+    "before_sha256": "192d9678ca7166e20410c6b1db8df155d5ac9ff49a728269ea0c052e8128251e",
+    "current_sha256": "8737a699e1051e9f24a413e35f45829d4338d56264e6daf7e0aaba0b6fac882b",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/adversarial/Adversarial_BondClaim_Decimals.sol",
+    "before_sha256": "f2f8df44bf541c572b2e5711e52b1a1cb75794b59e9e19a9592f7a2c78f35808",
+    "current_sha256": "2c5165874e5174948a9bd81ff8ff86dc4ad4a210b295942b98a971bd3fb5fe96",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/adversarial/Adversarial_Griefing_Decimals.sol",
+    "before_sha256": "6939b014013ecb49b915e07d29b2280ad546c4a6e2a3af80a8908fbe43c76437",
+    "current_sha256": "54de2f9f77ed79004571a9e3d972666337571e6b938966ca4cf6dfc3c127afb2",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/adversarial/Adversarial_Nested_Decimals.sol",
+    "before_sha256": "7516410c49ac36b9a7490605572bcdd0ee10020397e5179207d05c82c9deefec",
+    "current_sha256": "3a0bd89cde443214e085d5f74cc0d833029b254793039606ddee6cbad484959c",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/adversarial/Adversarial_PriceManipulation_Decimals.sol",
+    "before_sha256": "90e89cd956b8dca3c31582243247a604fff1df546ca17efda1a6d07897f7d50b",
+    "current_sha256": "0028c724a4cc9e28775956ee202bd247289e0159effccb09cc5c505ca9fc06e7",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/adversarial/Adversarial_TrustFlags_Decimals.sol",
+    "before_sha256": "f2113fc19e8dfbcc1bab58c5f84a0fdf0c26b50a2ea879620434f6c0557b7eb0",
+    "current_sha256": "ed986a092d57059e02ea94f7634ebcd137aa8418e0f59ef497706a58c657ba94",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/fuzz/MultiVaultWeightedDetf_Fuzz_Decimals.sol",
+    "before_sha256": "89f873ab761e43581e793e2ceb1c7f7ff0c650087ff05c4308072fc49f9a5d8f",
+    "current_sha256": "1573a597efcb0424c3eb5fe0010c9317822e8b60093a4d7018f9bdb993474927",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/fuzz/MultiVaultWeightedDetf_Fuzz.t.sol",
+    "before_sha256": "c0292186a0959783b874e51a88b20be40cd80995b6b0b5524ef83ace4b7c7fbc",
+    "current_sha256": "9f49a9ac29e378e3d4eed079f5712765561b7b8fb5de6cf83e2fe3ae223fc500",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondingFacet.t.sol",
+    "before_sha256": "8b62ddf19cb265e16d3380e2fc071b2d8cc901408394d3c6075868307830e549",
+    "current_sha256": "20137354510f6dcc610a8414bedb30518bb3b41ec64a8d5e844debc1d3fed429",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBurnExchangeIn.t.sol",
+    "before_sha256": "c0ab8e3399835d5007489571ef81d60b07111b9e004ba284e34eff6b5921b532",
+    "current_sha256": "fbe400ae7fdca25478354438c59a9d0ad4406c791d9e651d24ff85854e87958f",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfDFPkg_Deploy.t.sol",
+    "before_sha256": "caa0e7b178c5b90b6821b7008a3c34beb59615603963bfb3eb57172f81d6ddbd",
+    "current_sha256": "d888efec516d52936874133d601e0fc383c9a0aa309dfec8b64e3dc7b7cabbbe",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeIn.t.sol",
+    "before_sha256": "1c61712e0bf412d45fa9463c539ec7ef0d656e0c7b0b2bdab2d38f21993c6a96",
+    "current_sha256": "cab3e37e9d39ae107a13d6ca609ef5ed22f6ec4379c3ecbe22c7074b7a07c1bb",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.t.sol",
+    "before_sha256": "b56bd9feccc48e70be7cac2dcad2902a24d908d106be91ec49cd177a8fe96113",
+    "current_sha256": "9cfedc8b8c0ab6f381587ee2a8ceee19be636e66620b36fb56f04fa103024e62",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_IntegratedDeploy.t.sol",
+    "before_sha256": "0a003ecbdf8305270ce5444d893eea2e0af3610357d637483d6126219133b8ca",
+    "current_sha256": "993f1eea47c5d69bcdf43b48a2a761e0a925011f37020afd1a30d0fbe8a1208e",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_NestedPush.t.sol",
+    "before_sha256": "e691cc7dabb2896b09855772c65d2cd7b15d5f746867e8670046a0be6ed71d3c",
+    "current_sha256": "3409f37f1b62c103594c93deed78c505d7b83ff2d4727d7961b5da4e4049aaf1",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenPricingFacet_IFacet_Test.t.sol",
+    "before_sha256": "6c001af8a7a91470767675d6339713ff762c410e36699224094c9c7c34044359",
+    "current_sha256": "4fbcfa48a2ccfeb9c85877f74e3b27a49b3c6ecf78f7885f17f823933969ffdf",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenPricingTarget.t.sol",
+    "before_sha256": "81ac48f1632599239950494362f2a6c1cf2c5419eacf96fbdcb10dc4aea2ea72",
+    "current_sha256": "6d86c2c433582f8eb069bda0dbaa9096e3703c7be04f4599542347c78c126098",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/adversarial/Adversarial_ComposedStable_GE.t.sol",
+    "before_sha256": "98656c5f7cedd279e788a9e4e5f2620fc37606e68c05cb1590f707b6648f054f",
+    "current_sha256": "320adef5c02b38291b76ce38a289a2a76faba9c09f9e8092eca5ba120cf5b9f8",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/adversarial/Adversarial_ComposedStable_P0.t.sol",
+    "before_sha256": "609fc09f0d8cf0285dbadf57b0e6fb9cbf1bdc9bcc04ae2844bd375e19bb0db8",
+    "current_sha256": "7b9399d5d49f7508da50522ef867aa7cd42f07fa3b2898fcd67314c86e2117d1",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/adversarial/Adversarial_ComposedStable_SecRemediation.t.sol",
+    "before_sha256": "01f850a8aafa1a9150df1815441724352261eac0b0c40cdff9ca8540fc25cd7a",
+    "current_sha256": "5e4575dcf8c638e2adfbe14344bee9a0ac4b4bd6a0ebd8ca0822578c1d06dd48",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/adversarial/Adversarial_ComposedStable_SecurePull.t.sol",
+    "before_sha256": "0f8973e02cacd479f730fa2b801f895b2ef63d41cc02b141ec40a3b8c09a1cec",
+    "current_sha256": "3e7546814d02b5abbb25abe8efb9c6267652813c93aca95add6adf41bb6a347d",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/adversarial/Adversarial_Surface.t.sol",
+    "before_sha256": "c595fe426eb64ebd08c0b3c80856f567ca91eb2fb35b03db411f8634c4678498",
+    "current_sha256": "b6a697c6d54b69145a54664b28867217b2291eb32fb0f178e560e9ae7e1ca72f",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_IntegratedDeploy_Decimals.sol",
+    "before_sha256": "7673d216e9d971624d5caef544e3d7bc46de2b47526a694157d56d47d7087f3d",
+    "current_sha256": "9ff9c11b3cbe2f1737724dde3f8c5cf9046da221c16ea1b1ed882a71b2c2f336",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_NestedPush_Decimals.sol",
+    "before_sha256": "68d12c2e471fd070a2ab3b7199961d95bfeba092c5b05cd39246ab718aa63963",
+    "current_sha256": "bb40cdf01b79069e26fd1ad25ffe14fb10acaa7d16aba625453d4eaf93e79999",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_GE_Decimals.sol",
+    "before_sha256": "371b9c6783d58fb978fc49e98d1fe2af8a2a289d31bfbe437cd7d97d94203be4",
+    "current_sha256": "56aad3c69e35575f74315634318c4c5f4beea0c4641d20bed1c390fe3f1f3209",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_P0_Decimals.sol",
+    "before_sha256": "0dcc965872eea69546a1b6f6697b2956cb45dea543b06b4e0901f2c19aa8123c",
+    "current_sha256": "e2608dd507702eea0babba26eb6fc96711591b50115deec75e76db48f635dfeb",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_SecRemediation_Decimals.sol",
+    "before_sha256": "e471a154c7e7430e270b225a2f3aabc1ab8561fd6514aeb1664e45e482f0dfb3",
+    "current_sha256": "5c57a0e3435f0102011ca5e81e5d0e36089cf5debb5a2aa6cf31541d2f0ce384",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_SecurePull_Decimals.sol",
+    "before_sha256": "7787ff3329e0836e4237d3d1455a5bf0a4b0fd147ebce874a4c4862671414a92",
+    "current_sha256": "6dc399d0a3bfc611f643ac89d256b6cae5b54e80c149910909b2ddb8de87dc6b",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/sequences/ComposedStableCommonDetf_Sequences_Decimals.sol",
+    "before_sha256": "157ab20510971918c6687db6222d440b0de1a7aced9e9847acbb19e901e36fb3",
+    "current_sha256": "cc9092ec260e58f47e4e7e59abd2a59b02665613f1d8721b8a37fe0be89c5224",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/sequences/ComposedStableCommonDetf_Sequences.t.sol",
+    "before_sha256": "257e4ac5735dec58828c56201129d0c2cf2b241a69009c6f16e369416e7bdef1",
+    "current_sha256": "76878f9589d41d132ee2e94e2656885d1c7bb46b581e4a20abeec0e83c0e9254",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_Bonding.t.sol",
+    "before_sha256": "079afe20dd3e85adf9e428f5473fd8f64628088547a960aca61805621888009d",
+    "current_sha256": "2bc80ed7b9fdf66974b0943c2b74e3737abc2ac97fa58e35bb6b35ab089cc7ba",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_ComposedStableMatrix.t.sol",
+    "before_sha256": "e3528e43b3dbe4398909e328db7f92ba1cc15bd6271061d610aa96471c345eb3",
+    "current_sha256": "bec276dcf838b422ef0506ab010c7239d578ccb04cc96e8296a6a1e061f43d7c",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_Deploy.t.sol",
+    "before_sha256": "db7a36e7194ffb7db58e76a5531673304f7c2b280cb03174e20365b155ede77a",
+    "current_sha256": "9a288bc569721ae5ea7b75f559342d06755b4134ebfde9da19af235b3cffde03",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_Disable.t.sol",
+    "before_sha256": "5b4dfa4fa35b49a298b4ec0aed5dec76f65d316cbc024990d2ebcf98f2d079a3",
+    "current_sha256": "c43160ef2208423cadf7ad197ae48a715983c2d5159646b00ae0ca18d03f015a",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_Info.t.sol",
+    "before_sha256": "9f0f998c51fab9de511421df7ae7207e010108b72088d0ce9ad6bceac3b9fd07",
+    "current_sha256": "ab270add10540e37292e632b4206edb6fecac996a06c0c66bd8bf9679fdb8a07",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_Mint.t.sol",
+    "before_sha256": "877a5e0b83be2be0ee2e93a0b1ba56e8b5b3b7c6005af4b4f21d29c3e666e52d",
+    "current_sha256": "c025ad3fe77f3de1f80763df20d8711cc69a1fad9d0e5671ecc62c22bbaf5040",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_Requirements.t.sol",
+    "before_sha256": "d404b79b8c14b93fa842c0ee6af994a5e1ccf3a851471434701ddb705bbcd761",
+    "current_sha256": "fbd5f6e679d6988a17611c8ebde231ef74f5db27b4cc47c2e1ee25a50820b653",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_ReserveDonation.t.sol",
+    "before_sha256": "80a5b66f08f69f965ed913f8dd4c8dcc96b850e7390cf5c76819ced8ebf97fd7",
+    "current_sha256": "c049ec20cbfaafb70c207da7128a58d88ed7ed49999873c26c1c3f0dc0f814b3",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/adversarial/Adversarial_A0Crops.t.sol",
+    "before_sha256": "715941acf512269c7b890704b4b800f12d5be895c740f537c28e3cb89fc3671b",
+    "current_sha256": "d10a3484246461ba5b0f4ed58c8676102a9a25e9cb53edd385916138c532b036",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/adversarial/Adversarial_SingleSE_P0.t.sol",
+    "before_sha256": "6685760a5202d12844f46e6f3f7b2be8de4e9dcd39519de4d69b65ce225a29a2",
+    "current_sha256": "54ed83b0c812cec7e8acd5707ddfb1452a94176041e15aa2b48b59307507bf90",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/adversarial/Adversarial_Surface.t.sol",
+    "before_sha256": "42d6e0078b25c014e555396fdcc975488e2217fb4332edf949cf62007fd86af2",
+    "current_sha256": "d51b99b2628b88c08b294c69e09a396d7ab4da12c6c506ca99b841a48a72870e",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/adversarial/Adversarial_TrustFlag.t.sol",
+    "before_sha256": "32db4b139ecd52a1e7687ad55ae508039a9f00fb93eccaf5712f4e14496770bd",
+    "current_sha256": "7b09d5ccf74abe2f2bd22dd8dfcb6930f81b5495e11fae6e95b044f4ecc49f18",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Bonding_Decimals.sol",
+    "before_sha256": "eb1e7745ac70a9a8f522784ff6dbe8169b7ac603afd58947f945a5b51ad84e5f",
+    "current_sha256": "bbb48c4e8b1870b2f86f6cade9984092af3589d969aa6d34512397e750ecb5e1",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_ComposedStableMatrix_Decimals.sol",
+    "before_sha256": "5f250f4ecc9c62ff93b9e96991b8968f8cb9326564edd2d28b30e58def3e6ff0",
+    "current_sha256": "ed5bbec331cfaac07c042340373564229cb2888c64e19ed6fef899f3d0d12489",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Deploy_Decimals.sol",
+    "before_sha256": "a8b187b2b58b508517123e540b6e4b0dc3412b0e3bd91420226b8094102497e7",
+    "current_sha256": "719bafc403b7a7e60665d724af81c39578726a735e8ae004aeef5a92073adf0a",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Disable_Decimals.sol",
+    "before_sha256": "f9440b577211a859e08ebd00229dd1af914a942e46773a658f51b7174b3f8d5b",
+    "current_sha256": "fabddfb20626ad525fd1023d4fb97d282e7ffe3a5af8bd11fd4f4376f243d94b",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Info_Decimals.sol",
+    "before_sha256": "39fc54f2639e7532849a3178222cf7ae45f0cfd96a7a6741eb8661eb5bf2c5b5",
+    "current_sha256": "0f18856fc91932691b655d138a35668782d6d1e5e8ac7de964e4cbcad0bde8ea",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Mint_Decimals.sol",
+    "before_sha256": "e8272c3a7ce3ecc97b3676fb711359f136b6212cc5d9af0ebd50fc3ab3cb7d92",
+    "current_sha256": "d80168dea27599e32115babab76cf13084ca0b7b0755d99e4ee2e2e150737a5d",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Requirements_Decimals.sol",
+    "before_sha256": "c7d8665d79ed9dce0fe10366c98915b4f1576c04a86aad6c69f9f2b08475d819",
+    "current_sha256": "d2af78ca5a1ba99db53017b3fdcca88c0973b1ac7cb71b82e565a570e0e0abf2",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_ReserveDonation_Decimals.sol",
+    "before_sha256": "a9e1204500064e4fbe23d40a2918782f7fcbe8c09b22dc9ff79a26dea150ae71",
+    "current_sha256": "c023cae98d2f5d5991676b06f7a4b7ceef4e6992b6b8643a133306f8491304fe",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/adversarial/Adversarial_A0Crops_Decimals.sol",
+    "before_sha256": "4910174488f61bb5bdac783db6af0f9ad5fd4ce7411cbb94a3e042ce8bc2f98f",
+    "current_sha256": "736d3aaebd33a52258fec115e7ccf5f364374fe4174499b5ccd80ba4449d83d1",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/adversarial/Adversarial_SingleSE_P0_Decimals.sol",
+    "before_sha256": "60c9eb033f260b34c6922a0117a1d0d0c4030382c95fdb1415df4d6f38ab46af",
+    "current_sha256": "7cbf046ec454d74bf7fafeaaabeb3b51be3cb3f086fb399f2ca9037dbf755455",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/adversarial/Adversarial_TrustFlag_Decimals.sol",
+    "before_sha256": "be819f8297427ad0e7fe6b1c362066eb7ac1e8cebd295afbd66b854d6fd2b267",
+    "current_sha256": "3c486314aba67ae3f33f1f84f9b34835bb0406078a1dace7da70619e9661c1eb",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_Decimals.sol",
+    "before_sha256": "a81d0707f558e52e0ce416001bd69ef9342efff0ad5566e871cde8fbc4388e8a",
+    "current_sha256": "e8895df943e702daa3b3aea8309c4f66963e32080dbd2ab126a2c45cfa1d9f71",
+    "new_file": false
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/fuzz/SingleStandardExchangeDETF_Fuzz.t.sol",
+    "before_sha256": "fd28aef39c3623530d54692c2d7f06f5b4d4917593236273452cb625436bd2d9",
+    "current_sha256": "300b31fb19de2481a0a318f950cee707109219e97f26eee136bc8d4f0cac321d",
+    "new_file": false
+  }
+]

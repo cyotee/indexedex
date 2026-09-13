@@ -86,40 +86,10 @@ abstract contract TestBase_UniswapV4Detf_Weighted_Policy is
         vm.stopPrank();
     }
 
-    function _ownerSwap(address d, address tokenIn, address tokenOut, uint256 amount)
-        internal
-        virtual
-        override
-    {
-        address hook_ = IUniswapV4Detf(d).hook();
-        uint256 left_ = amount;
-        for (uint256 i; i < 16 && left_ > 0; ++i) {
-            uint256 chunk_ = left_ > 8 ether ? 8 ether : left_;
-            if (tokenIn != d) {
-                SimpleMintableERC20(tokenIn).mint(d, chunk_);
-            }
-            vm.startPrank(d);
-            IERC20(tokenIn).approve(hook_, chunk_);
-            try IUniswapV4SeBufferHook(hook_).ownerSwapExactIn(
-                tokenIn, tokenOut, chunk_, 0, _deadline()
-            ) {
-                left_ -= chunk_;
-            } catch {
-                vm.stopPrank();
-                if (chunk_ <= 1 ether) break;
-                left_ = chunk_ / 2;
-                continue;
-            }
-            vm.stopPrank();
-        }
-    }
+
 
     function _pushSyntheticUp(address d) internal virtual override {
-        _donatePair(d, IERC20(address(pair0)), 50 ether);
-        _donatePair(d, IERC20(address(pair1)), 50 ether);
-        if (IUniswapV4Detf(d).isMintingAllowed()) return;
-        _ownerSwap(d, address(pair0), d, 80 ether);
-        _ownerSwap(d, address(pair1), d, 80 ether);
+        _policyBuyFromReserve(d);
     }
 
     function _burnOn(address d, uint256 detfIn, IERC20 tokenOut)
@@ -142,19 +112,7 @@ abstract contract TestBase_UniswapV4Detf_Weighted_Policy is
     }
 
     function _skewSyntheticDown(address d) internal virtual override {
-        uint256 bal_ = IERC20(d).balanceOf(detfUser);
-        if (bal_ > 1 ether) {
-            uint256 amt_ = bal_ / 5;
-            if (amt_ == 0) amt_ = bal_;
-            vm.prank(detfUser);
-            IERC20(d).transfer(d, amt_);
-            _ownerSwap(d, d, address(pair0), amt_ / 2 + 1);
-            _ownerSwap(d, d, address(pair1), amt_ / 2 + 1);
-            return;
-        }
-        if (IUniswapV4Detf(d).isMintingAllowed()) {
-            try this.mintExternal(d, LIVE_MINT_AMT) {} catch {}
-        }
+        _skewSyntheticDownAmt(d, 80e9);
     }
 
     function _burnAllowedToken(address d) internal view returns (IERC20 tok) {

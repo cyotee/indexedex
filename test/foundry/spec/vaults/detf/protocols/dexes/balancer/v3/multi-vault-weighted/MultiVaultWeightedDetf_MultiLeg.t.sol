@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {FundedBondLifecycleAssertions} from "contracts/test/bases/FundedBondLifecycleAssertions.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
@@ -8,18 +10,18 @@ import {
     TestBase_MultiVaultWeightedDetf
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf.sol";
 import {
-    IMultiVaultWeightedDetfBonding
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfBondingTarget.sol";
+    ILegacyMultiVaultWeightedDetfBonding as IMultiVaultWeightedDetfBonding
+} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf.sol";
 import {
-    IMultiVaultWeightedDetfInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfInfoTarget.sol";
+    ILegacyMultiVaultWeightedDetfInfo as IMultiVaultWeightedDetfInfo
+} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf.sol";
 import {
     MultiVaultWeightedDetfRepo
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfRepo.sol";
 import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 
 /// @notice Multi-leg mint/burn/claim matrix: N=2..3 lifecycle; same/disparate rateAssets; each leg.
-contract MultiVaultWeightedDetf_MultiLeg_Test is TestBase_MultiVaultWeightedDetf {
+contract MultiVaultWeightedDetf_MultiLeg_Test is TestBase_MultiVaultWeightedDetf, FundedBondLifecycleAssertions {
     function test_n2_mintBurn_eachLeg() public {
         address instance_ = _deployOpenThresholdDetfN(2);
         _goLiveViaBptBond(instance_, alice, 800e18);
@@ -55,71 +57,29 @@ contract MultiVaultWeightedDetf_MultiLeg_Test is TestBase_MultiVaultWeightedDetf
         }
     }
 
-    function test_n2_disparateRateAssets_claimRedeem_each() public {
-        // rated legs: rateAsset0=dai, rateAsset1=weth
+    function test_n2_disparateRateAssets_fundedBondPayout() public {
         address instance_ = _deployDetfN(2, 0, 0, true, ThresholdMode.Open);
         (uint256 tokenId_,) = _goLiveViaBptBond(instance_, alice, 1_000e18);
-
-        IMultiVaultWeightedDetfBonding bonding_ = IMultiVaultWeightedDetfBonding(instance_);
-        IMultiVaultWeightedDetfInfo info_ = IMultiVaultWeightedDetfInfo(instance_);
-        address[] memory ras_ = info_.rateAssets();
-        assertTrue(ras_[0] != ras_[1], "disparate rate assets");
-
-        _warpPastUnlock(instance_, tokenId_);
-        vm.prank(alice);
-        uint256 claimMinted_ = bonding_.sellPositionToDetfNft(tokenId_, 0, alice);
-        assertTrue(claimMinted_ > 0, "claim minted");
-
-        uint256 claimBal_ = IRebasingClaimToken(info_.rebasingClaimToken()).balanceOf(alice);
-        assertTrue(claimBal_ > 0, "claim bal");
-        uint256 redeemAmt_ = claimBal_ / 10;
-        if (redeemAmt_ == 0) redeemAmt_ = claimBal_;
-        _redeemDetfAndAssert(bonding_, instance_, alice, redeemAmt_);
+        address[] memory rates_ = IMultiVaultWeightedDetfInfo(instance_).rateAssets();
+        assertTrue(rates_[0] != rates_[1], "disparate rate assets");
+        _assertBondMaturePreviewEqualsPayment(instance_, tokenId_, alice);
+        _assertFundedUnstake(instance_, alice, _fundedBondStaking(instance_).balanceOf(alice) / 10);
         _assertNoFreeInventory(instance_);
     }
 
-    function _redeemDetfAndAssert(
-        IMultiVaultWeightedDetfBonding bonding_,
-        address instance_,
-        address user_,
-        uint256 redeemAmt_
-    ) private {
-        uint256 before_ = IERC20(instance_).balanceOf(user_);
-        vm.prank(user_);
-        uint256 out_ = bonding_.redeemClaim(redeemAmt_, IERC20(instance_), 0, user_, block.timestamp + 1 hours);
-        assertTrue(out_ > 0, "redeem DETF");
-        assertEq(IERC20(instance_).balanceOf(user_) - before_, out_, "DETF received");
-    }
-
-    function test_n2_sameRateAsset_twoDistinctLegs_claimRedeem() public {
+    function test_n2_sameRateAsset_distinctLegs_fundedBondPayout() public {
         address instance_ = _deployDetfN2SameRateAsset(0, 0, ThresholdMode.Open);
         (uint256 tokenId_,) = _goLiveViaBptBond(instance_, alice, 900e18);
-
         IMultiVaultWeightedDetfInfo info_ = IMultiVaultWeightedDetfInfo(instance_);
         address[] memory vaults_ = info_.underlyingVaults();
         assertTrue(vaults_[0] != vaults_[1], "distinct vaults");
-        address[] memory ras_ = info_.rateAssets();
-        assertEq(ras_[0], ras_[1], "same rateAsset address");
-        assertEq(ras_[0], address(dai), "both dai-rated");
-
-        // Mint on each leg
-        _mintOnLeg(instance_, 0, bob, 120e18);
-        _mintOnLeg(instance_, 1, bob, 120e18);
-
-        IMultiVaultWeightedDetfBonding bonding_ = IMultiVaultWeightedDetfBonding(instance_);
-        _warpPastUnlock(instance_, tokenId_);
-        vm.prank(alice);
-        uint256 minted_ = bonding_.sellPositionToDetfNft(tokenId_, 0, alice);
-        assertTrue(minted_ > 0, "claim");
-
-        uint256 claimBal_ = IRebasingClaimToken(info_.rebasingClaimToken()).balanceOf(alice);
-        uint256 redeemAmt_ = claimBal_ / 10;
-        if (redeemAmt_ == 0) redeemAmt_ = claimBal_;
-        uint256 before_ = IERC20(instance_).balanceOf(alice);
-        vm.prank(alice);
-        uint256 out_ = bonding_.redeemClaim(redeemAmt_, IERC20(instance_), 0, alice, block.timestamp + 1 hours);
-        assertTrue(out_ > 0, "redeem DETF");
-        assertEq(IERC20(instance_).balanceOf(alice) - before_, out_, "DETF payout");
+        address[] memory rates_ = info_.rateAssets();
+        assertEq(rates_[0], rates_[1], "shared rate asset");
+        assertTrue(rates_[0] != address(0));
+        assertGt(_mintOnLeg(instance_, 0, bob, 120e18), 0);
+        assertGt(_mintOnLeg(instance_, 1, bob, 120e18), 0);
+        _assertBondMaturePreviewEqualsPayment(instance_, tokenId_, alice);
+        _assertFundedUnstake(instance_, alice, _fundedBondStaking(instance_).balanceOf(alice) / 10);
         _assertNoFreeInventory(instance_);
     }
 
@@ -132,9 +92,8 @@ contract MultiVaultWeightedDetf_MultiLeg_Test is TestBase_MultiVaultWeightedDetf
             address share_ = IMultiVaultWeightedDetfInfo(instance_).vaultShares()[leg];
             vm.startPrank(bob);
             IERC20(share_).approve(instance_, shares_);
-            (uint256 tokenId_, uint256 principal_) = IMultiVaultWeightedDetfBonding(instance_).bond(
-                IERC20(share_), shares_, DEFAULT_MIN_LOCK, bob, false, block.timestamp + 1 hours
-            );
+            (uint256 tokenId_, uint256 principal_) = IMultiVaultWeightedDetfBonding(instance_)
+                .bond(IERC20(share_), shares_, DEFAULT_MIN_LOCK, bob, false, block.timestamp + 1 hours);
             vm.stopPrank();
             assertTrue(tokenId_ > 0 && principal_ > 0, "share bond");
         }

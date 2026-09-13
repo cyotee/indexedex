@@ -1,0 +1,64 @@
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol
+@@ -567,13 +567,15 @@
+         _goLive(500 ether);
+         uint256 dust_ = 10 ether;
+         _fundPair(detfUser, dust_ * 2);
++        uint256 before_ = IERC20(address(pairToken)).balanceOf(se);
+         vm.prank(detfUser);
+         pairToken.transfer(se, dust_);
+-        uint256 Rh = IBasicVault(se).reserveOfToken(address(pairToken));
+-        uint256 Bh = IERC20(address(pairToken)).balanceOf(se);
+-        uint256 U = Bh >= Rh ? Bh - Rh : 0;
+-        assertTrue(U > 0, "need surplus");
+-        uint256 claimOver_ = U + 1;
++        uint256 funded_ = IERC20(address(pairToken)).balanceOf(se);
++        assertEq(funded_ - before_, dust_, "actual short payment delivered");
++        uint256 receipts_ = IERC20(se).balanceOf(detfUser);
++        // Position reserveOfToken includes deployed liquidity and is not a
++        // liquid-balance checkpoint. Claim one more than the actual delivery.
++        uint256 claimOver_ = dust_ + 1;
+         vm.expectRevert();
+         IStandardExchangeIn(se).exchangeIn(
+             IERC20(address(pairToken)),
+@@ -584,6 +586,8 @@
+             true,
+             _deadline()
+         );
++        assertEq(IERC20(se).balanceOf(detfUser), receipts_, "short payment mints no receipt");
++        assertEq(IERC20(address(pairToken)).balanceOf(se), funded_, "failed claim preserves actual custody");
+     }
+ 
+     function _assertT_NEST_3() internal {
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol
+@@ -567,13 +567,15 @@
+         _goLive(_uPair(500));
+         uint256 dust_ = _uPair(10);
+         _fundPair(detfUser, dust_ * 2);
++        uint256 before_ = IERC20(address(pairToken)).balanceOf(se);
+         vm.prank(detfUser);
+         pairToken.transfer(se, dust_);
+-        uint256 Rh = IBasicVault(se).reserveOfToken(address(pairToken));
+-        uint256 Bh = IERC20(address(pairToken)).balanceOf(se);
+-        uint256 U = Bh >= Rh ? Bh - Rh : 0;
+-        assertTrue(U > 0, "need surplus");
+-        uint256 claimOver_ = U + 1;
++        uint256 funded_ = IERC20(address(pairToken)).balanceOf(se);
++        assertEq(funded_ - before_, dust_, "actual short payment delivered");
++        uint256 receipts_ = IERC20(se).balanceOf(detfUser);
++        // Position reserveOfToken includes deployed liquidity and is not a
++        // liquid-balance checkpoint. Claim one more than the actual delivery.
++        uint256 claimOver_ = dust_ + 1;
+         vm.expectRevert();
+         IStandardExchangeIn(se).exchangeIn(
+             IERC20(address(pairToken)),
+@@ -584,6 +586,8 @@
+             true,
+             _deadline()
+         );
++        assertEq(IERC20(se).balanceOf(detfUser), receipts_, "short payment mints no receipt");
++        assertEq(IERC20(address(pairToken)).balanceOf(se), funded_, "failed claim preserves actual custody");
+     }
+ 
+     function _assertT_NEST_3() internal {

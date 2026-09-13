@@ -601,6 +601,7 @@ contract CamelotV2StandardExchangeOutTarget is
             if (actualShares != amountOut) revert AmountOutNotMet(amountOut, actualShares);
 
             ERC4626Repo._setLastTotalAssets(indexSource.pool.balanceOf(address(this)));
+            _checkpointVaultReserves();
 
             // Mint exactly the requested amountOut to the recipient
             ERC20Repo._mint(
@@ -676,6 +677,7 @@ contract CamelotV2StandardExchangeOutTarget is
                 // uint256 amount
                 indexSource.pool.balanceOf(address(this))
             );
+            _checkpointVaultReserves();
 
             // Go ahead and terminate further executiuon.
             _syncAllExpectedHoldReserves();
@@ -782,6 +784,7 @@ contract CamelotV2StandardExchangeOutTarget is
                 // uint256 amount
                 indexSource.pool.balanceOf(address(this))
             );
+            _checkpointVaultReserves();
 
             _syncAllExpectedHoldReserves();
             return amountIn;

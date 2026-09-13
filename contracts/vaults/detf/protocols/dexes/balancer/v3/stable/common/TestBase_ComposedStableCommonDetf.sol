@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
-import {ERC721Facet} from '@crane/contracts/tokens/ERC721/ERC721Facet.sol';
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {ICreate3FactoryProxy} from '@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol';
 import {IERC20} from '@crane/contracts/interfaces/IERC20.sol';
 import {IFacet} from '@crane/contracts/interfaces/IFacet.sol';
@@ -17,18 +18,14 @@ import {TestBase_VaultComponents} from 'contracts/vaults/TestBase_VaultComponent
 import {
     ComposedStableCommonDetf_Component_FactoryService
 } from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_Component_FactoryService.sol';
-import {
-    IComposedStableCommonDetfBondNFTVaultDFPkg
-} from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondNFTVaultDFPkg.sol';
+import {IComposedStableCommonDetfBondNFTVaultDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/IComposedStableCommonDetfBondNFTVaultDFPkg.sol";
 import {
     ComposedStableCommonDetfBondNFTVault_Facet_FactoryService
 } from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondNFTVault_Facet_FactoryService.sol';
 import {
     ComposedStableCommonDetfBondNFTVault_Pkg_FactoryService
 } from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondNFTVault_Pkg_FactoryService.sol';
-import {
-    IRebasingDETFTokenDFPkg
-} from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenDFPkg.sol';
+import {IRebasingDETFTokenDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/IRebasingDETFTokenDFPkg.sol";
 import {
     RebasingDETFToken_Facet_FactoryService
 } from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFToken_Facet_FactoryService.sol';
@@ -134,7 +131,7 @@ abstract contract TestBase_ComposedStableCommonDetf is TestBase_VaultComponents 
 
         erc721Facet = IFacet(
             create3Factory.deployFacet(
-                type(ERC721Facet).creationCode, keccak256('ComposedStableCommonDetf_TestBase_ERC721Facet')
+                ArtifactCreationCode.creationCode(create3Factory, "ERC721Facet.sol:ERC721Facet"), keccak256('ComposedStableCommonDetf_TestBase_ERC721Facet')
             )
         );
         bondNFTVaultFacet = create3Factory.deployComposedStableCommonDetfBondNFTVaultFacet();

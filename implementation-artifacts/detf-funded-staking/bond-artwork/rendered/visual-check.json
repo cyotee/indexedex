@@ -1,0 +1,106 @@
+[
+  {
+    "name": "new",
+    "loaded": true,
+    "box": {
+      "x": 32,
+      "y": 125.4375,
+      "width": 520,
+      "height": 440
+    },
+    "svg_sha256": "55a9894aea187e83ff993a3512119662e6a6358ee7bec39b5f5d5d09b5674ca9",
+    "json_sha256": "979262dcc434f942c26677959033c31e8d5214b414a65593ceee1ae1cb815ef0",
+    "review": "Rendered and visually reviewed in gallery: labels and values legible; no clipping; principal, reward and standing-role states agree with the Solidity fixture."
+  },
+  {
+    "name": "halfway",
+    "loaded": true,
+    "box": {
+      "x": 572,
+      "y": 125.4375,
+      "width": 520,
+      "height": 440
+    },
+    "svg_sha256": "6b81d9f8b1f4cfe707fd219eb9bfda298961bee88e962584175eca59bb30875e",
+    "json_sha256": "a30b7fd7434acd40fdabdecb0c838d95ba14dd9c06c7f977e1db305ef9eed4d6",
+    "review": "Rendered and visually reviewed in gallery: labels and values legible; no clipping; principal, reward and standing-role states agree with the Solidity fixture."
+  },
+  {
+    "name": "principal-and-rewards-claimed",
+    "loaded": true,
+    "box": {
+      "x": 32,
+      "y": 460.4375,
+      "width": 520,
+      "height": 440
+    },
+    "svg_sha256": "4f2f9d3ef8af4af6b1dff3c833b4799e38b12624a6b8459303604c679eecbad1",
+    "json_sha256": "4a2f27aef3a337aae4bee9a028cb7db789859088984c8585dc1c7ccc5a8fd8e9",
+    "review": "Rendered and visually reviewed in gallery: labels and values legible; no clipping; principal, reward and standing-role states agree with the Solidity fixture."
+  },
+  {
+    "name": "reward-only-claimed",
+    "loaded": true,
+    "box": {
+      "x": 572,
+      "y": 460.4375,
+      "width": 520,
+      "height": 440
+    },
+    "svg_sha256": "bd87aa3f227a46e7452ab5f9ba80f738f91af29ce5d2d2a6ed8a761beb1f641f",
+    "json_sha256": "4e8401be9c2202604523073bc0d9a58b338e5daa49302d684b5e1e61b22a869e",
+    "review": "Rendered and visually reviewed in gallery: labels and values legible; no clipping; principal, reward and standing-role states agree with the Solidity fixture."
+  },
+  {
+    "name": "fully-vested",
+    "loaded": true,
+    "box": {
+      "x": 32,
+      "y": 230.4375,
+      "width": 520,
+      "height": 440
+    },
+    "svg_sha256": "98e92f43fa741ab697aacc34ad6abd72b3c6fa725ffce9ac19b369bcf3aa729c",
+    "json_sha256": "3f1abd12b1f4ed27172e0a27cbadc8c91ec4504ecdbbd912131ba33cfa342163",
+    "review": "Rendered and visually reviewed in gallery: labels and values legible; no clipping; principal, reward and standing-role states agree with the Solidity fixture."
+  },
+  {
+    "name": "role-0",
+    "loaded": true,
+    "box": {
+      "x": 572,
+      "y": 230.4375,
+      "width": 520,
+      "height": 440
+    },
+    "svg_sha256": "6b8e9652c43c063f7402fa3d86962d8e5078961df00b4c6556a430bb7ab0bee8",
+    "json_sha256": "25c559cb3f541c8e9dff6ee32415a28aa3782e4fb3bff88cec012cd497268298",
+    "review": "Rendered and visually reviewed in gallery: labels and values legible; no clipping; principal, reward and standing-role states agree with the Solidity fixture."
+  },
+  {
+    "name": "role-1",
+    "loaded": true,
+    "box": {
+      "x": 32,
+      "y": 460.4375,
+      "width": 520,
+      "height": 440
+    },
+    "svg_sha256": "2d30e77131352a70b6e3f0051d83e5fa11d4180b43fe25975760dcf1516f4a65",
+    "json_sha256": "e084d5a2169efcae9ea7301dc52941e6304910d3c601969c077b18bc8e6d3dd7",
+    "review": "Rendered and visually reviewed in gallery: labels and values legible; no clipping; principal, reward and standing-role states agree with the Solidity fixture."
+  },
+  {
+    "name": "role-2",
+    "loaded": true,
+    "box": {
+      "x": 572,
+      "y": 460.4375,
+      "width": 520,
+      "height": 440
+    },
+    "svg_sha256": "2c5c7c4a6387b7a906c568f10f3324236435ec0570b9d81e28078ccf95be34e0",
+    "json_sha256": "0e057378111fef5e47106f4107fb5dbe9b1f0065f919fca2f0794fa51dbbd451",
+    "review": "Rendered and visually reviewed in gallery: labels and values legible; no clipping; principal, reward and standing-role states agree with the Solidity fixture."
+  }
+]

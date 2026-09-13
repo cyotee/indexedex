@@ -14,8 +14,8 @@ import {IPool as IAerodromePool} from "@crane/contracts/interfaces/protocols/dex
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
-import {IUniswapV2StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeDFPkg.sol";
-import {IAerodromeStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeDFPkg.sol";
+import {IUniswapV2StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v2/IUniswapV2StandardExchangeDFPkg.sol";
+import {IAerodromeStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/v1/IAerodromeStandardExchangeDFPkg.sol";
 
 /// @title Script_18_DeployWethTtcVaults
 /// @notice Deploys UniV2 + Aerodrome Standard Exchange vaults for the WETH/TTC pools.

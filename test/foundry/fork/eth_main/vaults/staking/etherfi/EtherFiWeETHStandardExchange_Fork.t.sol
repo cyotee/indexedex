@@ -1,5 +1,9 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {TransitionQuoteAssertions} from "test/foundry/spec/vaults/standard/TransitionQuoteAssertions.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -275,5 +279,68 @@ contract EtherFiWeETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_Va
         // Hermetic claim is covered in core; fork may have no finalized vault requests.
         seRebalance.rebalance(); // claim any finalized
         assertTrue(true);
+    }
+}
+
+/// @notice Whole projected provider states compared with live EtherFi execution.
+/// An unavailable archive endpoint fails setup; these cases cannot silently pass.
+contract EtherFiStandardExchangeProjectionFork is EtherFiWeETHStandardExchange_Fork_Test, TransitionQuoteAssertions {
+    function setUp() public override {
+        vm.createSelectFork("ethereum_mainnet_alchemy", 24_000_000);
+        super.setUp();
+        assertGt(seVault.code.length, 0, "actual registry SE");
+        vm.prank(owner);
+        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(seVault, 0.07e18);
+        vm.deal(address(this), 1_000 ether);
+        IWETH(payable(WETH)).deposit{value: 600 ether}();
+        IEtherFiLiquidityPool(LIQUIDITY_POOL).deposit{value: 400 ether}();
+        uint256 received = IERC20(EETH).balanceOf(address(this));
+        IERC20(EETH).approve(WEETH, received);
+        IWeETH(WEETH).wrap(received);
+        IERC20(WETH).approve(seVault, 200 ether);
+        seIn.exchangeIn(IERC20(WETH), 200 ether, IERC20(seVault), 1, address(this), false, block.timestamp);
+        IERC20(WEETH).approve(seVault, 100 ether);
+        seIn.exchangeIn(IERC20(WEETH), 100 ether, IERC20(seVault), 1, address(this), false, block.timestamp);
+        assertGt(IWeETH(WEETH).getEETHByWeETH(1e18), 1e18, "actual fractional rate");
+    }
+
+    function test_etherFiLiveSequentialLiquidAndWrappedBooks() public {
+        _assertQuoteSequence(seVault, IERC20(WETH), address(this), 1 ether);
+        _assertQuoteSequence(seVault, IERC20(WEETH), address(this), 1 ether);
+    }
+
+    function test_etherFiLiveExternalDepositAndStandingFeeRecipient() public {
+        _assertExternalDepositQuote(seVault, IERC20(WETH), IERC20(WEETH), 7 ether + 19, address(this));
+        address beneficiary = address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo());
+        _assertExternalDepositQuote(seVault, IERC20(WEETH), IERC20(WETH), 3 ether + 11, beneficiary);
+    }
+
+    function test_etherFiLiveExternalStakingAndLiquidConversion() public {
+        _assertExternalExchangeQuote(seVault, IERC20(WEETH), IERC20(WETH), 3 ether + 17);
+        _assertExternalExchangeQuote(seVault, IERC20(WETH), IERC20(WEETH), 7 ether + 29);
+    }
+
+    function test_etherFiLiveRebasingReceiptRounding() public {
+        vm.deal(address(this), 5 ether);
+        IEtherFiLiquidityPool(LIQUIDITY_POOL).deposit{value: 5 ether}();
+        _assertExternalDepositQuote(seVault, IERC20(EETH), IERC20(WETH), IERC20(EETH).balanceOf(address(this)) / 2, address(this));
+        _assertExternalExchangeQuote(seVault, IERC20(EETH), IERC20(WEETH), IERC20(EETH).balanceOf(address(this)) / 2);
+    }
+
+    function test_etherFiLiveInstantRedemptionProjectsFeesAndGlobalShares() public {
+        // This consumes the whole sleeve and exercises the actual redemption
+        // manager's fee/share burn before comparing the complete next state.
+        uint256 amount = etherFiSe.liquidReserveEth() + 2 ether;
+        IStandardExchangeTransitionQuote quotes = IStandardExchangeTransitionQuote(seVault);
+        (bytes memory beforeState,) = quotes.quoteState(WETH, address(this));
+        (bytes memory nextState, uint256 required,,) = quotes.quoteTransition(
+            beforeState, IStandardExchangeTransitionQuote.Operation.WithdrawExactOut, amount
+        );
+        uint256 beforeBalance = IERC20(WETH).balanceOf(address(this));
+        uint256 spent = seOut.exchangeOut(IERC20(seVault), required, IERC20(WETH), amount, address(this), false, block.timestamp);
+        assertEq(spent, required, "exact output required shares");
+        assertEq(IERC20(WETH).balanceOf(address(this)) - beforeBalance, amount, "actual payout");
+        (bytes memory actual,) = quotes.quoteState(WETH, address(this));
+        assertEq(nextState, actual, "whole live state including instant redemption fees");
     }
 }

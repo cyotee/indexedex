@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
-import {ERC721Facet} from "@crane/contracts/tokens/ERC721/ERC721Facet.sol";
+
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 
 import {IComposedStableCommonDetfBondNFTVault} from "contracts/interfaces/IComposedStableCommonDetfBondNFTVault.sol";
@@ -15,9 +17,7 @@ import {TestBase_VaultComponents} from "contracts/vaults/TestBase_VaultComponent
 import {
     ComposedStableCommonDetf_Component_FactoryService
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_Component_FactoryService.sol";
-import {
-    IComposedStableCommonDetfBondNFTVaultDFPkg
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondNFTVaultDFPkg.sol";
+import {IComposedStableCommonDetfBondNFTVaultDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/IComposedStableCommonDetfBondNFTVaultDFPkg.sol";
 import {
     ComposedStableCommonDetfBondNFTVault_Facet_FactoryService
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondNFTVault_Facet_FactoryService.sol";
@@ -74,7 +74,7 @@ contract ComposedStableCommonDetfBondNFTVaultDFPkg_Deploy_Test is TestBase_Vault
 
         erc721Facet = IFacet(
             create3Factory.deployFacet(
-                type(ERC721Facet).creationCode, keccak256("ComposedStableCommonDetfBondNFTVault_ERC721Facet")
+                ArtifactCreationCode.creationCode(create3Factory, "lib/crane/contracts/tokens/ERC721/ERC721Facet.sol:ERC721Facet"), keccak256("ComposedStableCommonDetfBondNFTVault_ERC721Facet")
             )
         );
         bondNFTVaultFacet = create3Factory.deployComposedStableCommonDetfBondNFTVaultFacet();

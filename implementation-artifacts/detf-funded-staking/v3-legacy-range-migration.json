@@ -1,0 +1,9 @@
+{
+  "status": "APPLIED_VALIDATION_PENDING",
+  "recorded_at_utc": "2026-09-08T04:47:29.780401+00:00",
+  "mapping": {
+    "test_FR5_singleTokenFirstMint_thenDualDepositMintsFullRangeL": "D59: reject one-sided activation, preserve payment, activate both tokens, retain later one-sided deposits",
+    "test_FR6_importedNftTicksNotRewritten": "D57: actual imported narrow liquidity is removed and redeployed across maximum usable ticks"
+  },
+  "scope": "V3 only; no deferred Slipstream changes"
+}

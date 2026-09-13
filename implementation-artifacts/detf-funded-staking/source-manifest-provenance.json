@@ -1,0 +1,8 @@
+{
+  "initial": "source-manifest.json",
+  "current": "current-source-manifest.json",
+  "active_funded_storage": "current-funded-storage-readers.json",
+  "package_models": "current-se-package-inventory.json",
+  "owner_approved_removed_surface": "approved-close-cleanup-surface.json",
+  "note": "Initial discovery rows containing retired selectors/fields are historical. Current records and explicit D60/D66 scope govern completion."
+}

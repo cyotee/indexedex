@@ -1,0 +1,7 @@
+{
+  "recorded_at_utc": "2026-09-08T22:09:57.533181+00:00",
+  "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/NET_MORPHO_USDG_BALANCER_STABLE_DETF_PRD.md",
+  "scope": "Compatibility documentation only. Preserve the independent NET composition, source observations, calibration questions and owner choices; add no NET release gate.",
+  "correction": "Replace obsolete shared ThresholdMode/LP-close/DETF reward claims with mandatory primary gates and fallback, funded sDETF linear principal and reward claims, fixed eight-hour expansion and standard exchange/SY exits. Link the current owner-approved common requirements.",
+  "code_changes": false
+}

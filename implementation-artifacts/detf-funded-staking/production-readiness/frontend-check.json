@@ -1,0 +1,12 @@
+{
+  "command": [
+    "npm",
+    "--prefix",
+    "frontend/apps/dtf",
+    "run",
+    "check"
+  ],
+  "exit_code": 0,
+  "seconds": 28.7062805040041,
+  "package_sha256": "31c9ab9701b7340cb96927386c2806fd215a56d4002e14044c045a0e824e05a7"
+}

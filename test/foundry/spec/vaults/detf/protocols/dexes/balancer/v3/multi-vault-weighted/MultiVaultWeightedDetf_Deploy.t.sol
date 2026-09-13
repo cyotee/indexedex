@@ -1,133 +1,57 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
-import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
-import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
-import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
-import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
-import {
-    TestBase_MultiVaultWeightedDetf
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf.sol";
-import {
-    IMultiVaultWeightedDetfDFPkg
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfDFPkg.sol";
-import {
-    IMultiVaultWeightedDetfInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfInfoTarget.sol";
-import {
-    DETFThresholdPolicy,
-    ThresholdMode
-} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
+import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
+import {TestBase_MultiVaultWeightedDetf} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf.sol";
+import {IMultiVaultWeightedDetfDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfDFPkg.sol";
+import {IMultiVaultWeightedDetfInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfInfo.sol";
+import {DETFThresholdPolicy} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 
 contract MultiVaultWeightedDetf_Deploy_Test is TestBase_MultiVaultWeightedDetf {
     function test_deploy_inert_n1() public view {
         _assertInert(detf);
         assertEq(detfInfo.vaultCount(), 1, "vault count");
         assertTrue(detfInfo.reservePool() != address(0), "reserve pool");
-        assertEq(detfInfo.underlyingVaults()[0], address(seVault0), "vault0");
-        (uint256 wDetf_, uint256[] memory vw_) = detfInfo.weights();
-        assertTrue(wDetf_ > 0, "detf weight");
-        assertTrue(vw_[0] > 0, "vault weight");
-        assertEq(wDetf_ + vw_[0], 1e18, "weights sum");
-        assertEq(detfInfo.mintThreshold(), DETFThresholdPolicy.DEFAULT_MINT_THRESHOLD, "default mint threshold");
-        assertEq(detfInfo.burnThreshold(), DETFThresholdPolicy.DEFAULT_BURN_THRESHOLD, "default burn threshold");
-        assertEq(uint8(detfInfo.thresholdMode()), uint8(ThresholdMode.Policy), "default mode Policy");
-        assertFalse(detfInfo.isMintingAllowed(), "inert mint false");
-        assertFalse(detfInfo.isBurningAllowed(), "inert burn false");
+        assertEq(detfInfo.underlyingVaults()[0], address(seVaults[0]), "vault0");
+        (uint256 weight_, uint256[] memory weights_) = detfInfo.weights();
+        assertGt(weight_, 0, "detf weight");
+        assertGt(weights_[0], 0, "vault weight");
+        assertEq(weight_ + weights_[0], 1e18, "weights sum");
+        assertEq(detfInfo.mintThreshold(), DETFThresholdPolicy.DEFAULT_MINT_THRESHOLD);
+        assertEq(detfInfo.burnThreshold(), DETFThresholdPolicy.DEFAULT_BURN_THRESHOLD);
+        assertFalse(detfInfo.isMintingAllowed());
+        assertFalse(detfInfo.isBurningAllowed());
+        assertEq(IERC20Metadata(detf).decimals(), 9);
+        assertEq(IERC20Metadata(detfInfo.rebasingClaimToken()).decimals(), 9);
+        assertEq(IERC20Metadata(detfInfo.rawSY()).decimals(), 9);
+        assertEq(IERC20Metadata(detfInfo.stakingSY()).decimals(), 9);
     }
 
     function test_deploy_n2_disparate_rateAssets() public {
-        address d2 = _deployDetfN2(0, 0);
-        assertFalse(IMultiVaultWeightedDetfInfo(d2).isReserveLive(), "inert");
-        assertEq(IMultiVaultWeightedDetfInfo(d2).vaultCount(), 2, "n=2");
-        address[] memory ras = IMultiVaultWeightedDetfInfo(d2).rateAssets();
-        assertEq(ras[0], address(rateAsset0), "rate0");
-        assertEq(ras[1], address(rateAsset1), "rate1");
+        address instance_ = _deployDetfN(2, 0, 0, true);
+        IMultiVaultWeightedDetfInfo info_ = IMultiVaultWeightedDetfInfo(instance_);
+        _assertInert(instance_);
+        assertEq(info_.vaultCount(), 2);
+        address[] memory assets_ = info_.rateAssets();
+        assertEq(assets_[0], address(rateAssets[0]));
+        assertEq(assets_[1], address(rateAssets[1]));
+        assertTrue(assets_[0] != assets_[1], "actual disparate rate assets");
     }
 
     function test_deploy_reverts_invalid_weights() public {
-        IStandardExchangeProxy[] memory vaults_ = new IStandardExchangeProxy[](1);
-        IERC20[] memory shares_ = new IERC20[](1);
-        IRateProvider[] memory rps_ = new IRateProvider[](1);
-        IERC20[] memory ras_ = new IERC20[](1);
-        uint256[] memory weights_ = new uint256[](1);
-        vaults_[0] = seVault0;
-        shares_[0] = seShare0;
-        ras_[0] = rateAsset0;
-        weights_[0] = 10e16;
-
-        IMultiVaultWeightedDetfDFPkg.PkgArgs memory args = IMultiVaultWeightedDetfDFPkg.PkgArgs({
-            name: "bad",
-            symbol: "bad",
-            vaults: vaults_,
-            vaultShares: shares_,
-            rateProviders: rps_,
-            rateAssets: ras_,
-            weightDetf: 80e16,
-            vaultWeights: weights_,
-            mintThreshold: 0,
-            burnThreshold: 0,
-            thresholdMode: ThresholdMode.Policy,
-            expansionClosureRatePerSecond: 0,
-            expansionCatchUpMaxSeconds: 0,
-            expansionCatchUpCapBps: 0,
-            creator: address(0),
-            claimName: "",
-            claimSymbol: "",
-            bondName: "",
-            bondSymbol: "",
-            reserveName: "",
-            reserveSymbol: ""
-        });
-
-        vm.startPrank(owner);
+        IMultiVaultWeightedDetfDFPkg.PkgArgs memory args_ = _buildPkgArgs(1, 0, 0, true);
+        args_.weightDetf = 0.8e18;
+        args_.vaultWeights[0] = 0.1e18;
         vm.expectRevert();
-        indexedexManager.deployVault(IStandardVaultPkg(address(multiVaultWeightedDetfPkg)), abi.encode(args));
-        vm.stopPrank();
+        _deployWithArgs(args_);
     }
 
     function test_deploy_reverts_duplicate_vault() public {
-        IStandardExchangeProxy[] memory vaults_ = new IStandardExchangeProxy[](2);
-        IERC20[] memory shares_ = new IERC20[](2);
-        IRateProvider[] memory rps_ = new IRateProvider[](2);
-        IERC20[] memory ras_ = new IERC20[](2);
-        uint256[] memory weights_ = new uint256[](2);
-        vaults_[0] = seVault0;
-        vaults_[1] = seVault0;
-        shares_[0] = seShare0;
-        shares_[1] = seShare0;
-        ras_[0] = rateAsset0;
-        ras_[1] = rateAsset0;
-        weights_[0] = 10e16;
-        weights_[1] = 10e16;
-
-        IMultiVaultWeightedDetfDFPkg.PkgArgs memory args = IMultiVaultWeightedDetfDFPkg.PkgArgs({
-            name: "dup",
-            symbol: "dup",
-            vaults: vaults_,
-            vaultShares: shares_,
-            rateProviders: rps_,
-            rateAssets: ras_,
-            weightDetf: 80e16,
-            vaultWeights: weights_,
-            mintThreshold: 0,
-            burnThreshold: 0,
-            thresholdMode: ThresholdMode.Policy,
-            expansionClosureRatePerSecond: 0,
-            expansionCatchUpMaxSeconds: 0,
-            expansionCatchUpCapBps: 0,
-            creator: address(0),
-            claimName: "",
-            claimSymbol: "",
-            bondName: "",
-            bondSymbol: "",
-            reserveName: "",
-            reserveSymbol: ""
-        });
-
-        vm.startPrank(owner);
+        IMultiVaultWeightedDetfDFPkg.PkgArgs memory args_ = _buildPkgArgs(2, 0, 0, true);
+        args_.vaults[1] = args_.vaults[0];
+        args_.vaultShares[1] = args_.vaultShares[0];
+        args_.rateAssets[1] = args_.rateAssets[0];
         vm.expectRevert();
-        indexedexManager.deployVault(IStandardVaultPkg(address(multiVaultWeightedDetfPkg)), abi.encode(args));
-        vm.stopPrank();
+        _deployWithArgs(args_);
     }
 }

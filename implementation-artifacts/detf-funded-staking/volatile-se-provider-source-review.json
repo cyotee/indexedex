@@ -1,0 +1,86 @@
+{
+  "recorded_at_utc": "2026-09-08T14:21:15.331768+00:00",
+  "status": "CAMELOT_VALIDATED_AERODROME_SOURCE_REVIEW_OPEN",
+  "scope": "Camelot and Aerodrome SE compatibility; not excluded Balancer DETFs or deferred Slipstream",
+  "facts": [
+    {
+      "path": "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeDFPkg.sol",
+      "line": 580,
+      "finding": "Current deployment rejects stableSwap pools. Projection work need only preserve the existing volatile-pool acceptance."
+    },
+    {
+      "path": "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeDFPkg.sol",
+      "line": 558,
+      "finding": "Current deployment rejects stable pools. This is an existing policy, not a new proposed allowlist."
+    },
+    {
+      "path": "lib/crane/contracts/protocols/dexes/camelot/v2/stubs/CamelotPair.sol",
+      "line": 154,
+      "finding": "Actual volatile protocol LP mint uses the Camelot sqrt and ownerFeeShare denominator. The shared ConstProdUtils helper special-cases owner shares 16666/16667 as Uniswap, so a general Camelot projection must reproduce the actual pool formula instead of blindly substituting constants."
+    },
+    {
+      "path": "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeInTarget.sol",
+      "line": 722,
+      "finding": "Swap/zap execution passes the current vault feeTo as Camelot referrer. Factory referrersFeeShare can cause input tokens to leave pool reserves; projecting all swap fees as retained reserves is not generally exact."
+    },
+    {
+      "path": "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeInTarget.sol",
+      "line": 753,
+      "finding": "Current post-zap checkpoint code uses the pre-operation indexSource snapshot and writes the known/opposing values under token0/token1 without reordering. The analogous withdrawal block starts at line859. This differs from the updated Uniswap V2 quote model. A simple source clone is insufficient; compare actual sequences in both asset orders with nonzero usage fees before choosing the correction."
+    },
+    {
+      "path": "test/foundry/spec/vaults/standard/sy/ConstantProductNativeSY.t.sol",
+      "line": 333,
+      "finding": "Existing CamelotV2NativeSYTest is the canonical real registry/proxy fixture for adding focused projection or checkpoint regressions; keep existing tests."
+    }
+  ],
+  "current_artifact_sizes_for_planning_only": {
+    "CamelotV2StandardExchangeInFacet": 20608,
+    "CamelotV2StandardExchangeOutFacet": 14508,
+    "AerodromeStandardExchangeInFacet": 21984,
+    "AerodromeStandardExchangeOutFacet": 19340,
+    "AerodromeStandardExchangeOutQueryFacet": 13809
+  },
+  "source_changes_applied": true,
+  "source_patch_prepared": true,
+  "next": "Camelot 19-case validation is complete. Assess remaining Aerodrome compatibility independently.",
+  "prepared_artifacts": [
+    "camelot-live-book-checkpoint-regressions-prepared.json",
+    "camelot-live-book-checkpoint-correction-prepared.json",
+    "camelot-lp-passthrough-preview-return.patch",
+    "camelot-transition-draft.json",
+    "camelot-projection-wiring-prepared.json",
+    "camelot-projection-tests-prepared.json"
+  ],
+  "additional_review": [
+    {
+      "path": "lib/crane/contracts/protocols/dexes/camelot/v2/services/CamelotV2Service.sol",
+      "line": 282,
+      "finding": "The existing _sortReservesStruct already maps a zero known token to token0. No sorting-default change is needed."
+    },
+    {
+      "path": "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeInTarget.sol",
+      "line": 110,
+      "finding": "The LP-to-pair preview branch computes amountOut but does not return it, then falls through to InvalidRoute. A fifth actual-proxy regression and isolated missing-return correction are prepared."
+    },
+    {
+      "path": "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeOutTarget.sol",
+      "line": 769,
+      "finding": "The exact-output asset withdrawal transfers all actual zap proceeds. The projection draft preserves this behavior rather than assuming it transfers only the requested minimum."
+    },
+    {
+      "path": "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeCommon.sol",
+      "line": 439,
+      "finding": "Aero compounds claimed fees plus saved excess, pays usage fees in LP tokens and keeps SE supply unchanged. A future projection can reuse the existing compound math but must track pool LP fee indexes and excess across transitions."
+    },
+    {
+      "path": "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeCommon.sol",
+      "line": 681,
+      "finding": "Existing _previewCompoundState models post-compound reserves and LP supply, with reusable internal _previewApplyProportionalDeposit/_previewApplySwapDepositWithFee. It currently loads live claimable fees/excess, so repeated projected transitions need state-backed inputs instead of repeatedly rereading live state."
+    }
+  ],
+  "camelot_validation": {
+    "evidence": "camelot-projection-referral-receipts-run.json",
+    "passed": 19
+  }
+}

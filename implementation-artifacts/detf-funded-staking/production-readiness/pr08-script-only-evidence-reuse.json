@@ -1,0 +1,101 @@
+{
+  "recorded_at_utc": "2026-09-11T05:34:26.485377+00:00",
+  "status": "PASS_UNCHANGED_EXECUTION_SOURCE_CLOSURES",
+  "prior_provenance": {
+    "recorded_at_utc": "2026-09-11T05:12:59.444328+00:00",
+    "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+    "source_and_config_sha256": "2dab3ca0e3307eef624b38fee597f569513a1b6c699207fcbd642b8fb19c1ff5",
+    "source_and_config_files": 4816,
+    "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+    "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+    "crane_tracked_contract_and_config_diff_sha256": "3bb0f52c1183f2be28ee8a63fab300170f65e989720b5048e21da9c61028cc4d",
+    "crane_source_and_config_sha256": "b45a057611f782040ee29f1fddbbcc8eeba01def2c9341ef01c6bb65f685e123",
+    "crane_source_and_config_files": 14819,
+    "dependency_scope": "Crane Solidity tree, including untracked Solidity and nested vendored libraries/tests, plus Crane Foundry config. Final compiler metadata separately verifies every imported source closure.",
+    "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+    "machine": "macOS-26.6.2-x86_64-i386-64bit",
+    "architecture": "x86_64",
+    "logical_cpus": 16,
+    "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+  },
+  "provenance": {
+    "recorded_at_utc": "2026-09-11T05:34:08.737010+00:00",
+    "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+    "source_and_config_sha256": "231e505d8379c41deb1905d933d32e2b9974f358f84bce169d056f07d4384c75",
+    "source_and_config_files": 4816,
+    "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+    "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+    "crane_tracked_contract_and_config_diff_sha256": "3bb0f52c1183f2be28ee8a63fab300170f65e989720b5048e21da9c61028cc4d",
+    "crane_source_and_config_sha256": "b45a057611f782040ee29f1fddbbcc8eeba01def2c9341ef01c6bb65f685e123",
+    "crane_source_and_config_files": 14819,
+    "dependency_scope": "Crane Solidity tree, including untracked Solidity and nested vendored libraries/tests, plus Crane Foundry config. Final compiler metadata separately verifies every imported source closure.",
+    "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+    "machine": "macOS-26.6.2-x86_64-i386-64bit",
+    "architecture": "x86_64",
+    "logical_cpus": 16,
+    "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+  },
+  "source_inventory": {
+    "path": "production-readiness/before-pr08-script-fix/release-source-manifest.json",
+    "sha256": "b9e166f8fe52fb869fb69ec3d5aa3a3dfe5d02387fe0eefc492aea8d75ab627b",
+    "files_verified": 19635
+  },
+  "changed_sources": [
+    {
+      "path": "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_09_BalancerStableBufferHookPkg.sol",
+      "before_sha256": "3ed4828ea168d537fe3a425c2a87bf2eb69b2500b07efca87190a6b469819fdb",
+      "current_sha256": "5e4cc781704853dc002f07422225ebef0b2f8e775bd64b1d6036a9ae0a100f19"
+    }
+  ],
+  "reverse_import_closure": [
+    "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_09_BalancerStableBufferHookPkg.s.sol",
+    "scripts/foundry/anvil_robinhood_main/Phase_06_Stage_09_BalancerStableBufferHookPkg.sol",
+    "scripts/foundry/anvil_robinhood_main/Script_SimulateArchitecture.s.sol"
+  ],
+  "production_contract_changes": 0,
+  "test_changes": 0,
+  "dependency_changes": 0,
+  "compiler_configuration_changes": 0,
+  "reused_execution_evidence": [
+    {
+      "path": "current-repository-production-readiness-core-final-sequence.json",
+      "sha256": "1489cbb738cc856ed9bb7a02def3e643b005703bcfafb1203b3d20ef4d419d67"
+    },
+    {
+      "path": "production-readiness/before-pr08-script-fix/implementation-full-build.json",
+      "sha256": "5b778be6384817766d63b911f4e06e133310918a3901db13bef4960e301f921f",
+      "treatment": "Prior complete build retained; a fresh full build including maintained scripts is required."
+    },
+    {
+      "path": "implementation-hermetic-test.json",
+      "sha256": "515b0bba3454b08d0871b2c1b8b59b62eef6e41772ccf0a5d8d1599d51fdfa9f"
+    },
+    {
+      "path": "acceptance-current-run-anchors.json",
+      "sha256": "282dec92f7909f49e2025efa6b6ef18738837d2385e73f5a2ebc1168b63a4151"
+    },
+    {
+      "path": "production-readiness/corrected-candidate-regressions.json",
+      "sha256": "f751a8509de2f19d93ee31656a41e732f2861a8a0982282a5992f68f23d644f3"
+    },
+    {
+      "path": "production-readiness/provider-renewal-core-final/run.json",
+      "sha256": "2ed613ed6d747bead9f71a3eb955dca362c16482fd3ada83498c75b60f531f2e"
+    },
+    {
+      "path": "v3-retained-live-pool-production-readiness-run.json",
+      "sha256": "890fb566b5b30338f56e70b9e5accdf808ebf5b08096bba357c788e79ad69b53"
+    },
+    {
+      "path": "production-readiness/renderer-evidence-reuse.json",
+      "sha256": "ecf8658c2c5757246c650a9a11b529ea257cd45f15138c6a833ca455afcdb5fe"
+    }
+  ],
+  "required_renewal": [
+    "Normal complete forge build of changed launch library and both maintained script entrypoints",
+    "Resume failed local stage 06/09 and isolated export; verify actual packages/receipts",
+    "All 39 local lifecycle cases",
+    "Complete aggregate EIP-1559 funding simulation"
+  ],
+  "limitations": "This is source-closure evidence reuse, not a claim that old commands ran on a later script fingerprint. Original executed records retain their provenance and logs. The two launch scripts require fresh validation."
+}

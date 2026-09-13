@@ -1,0 +1,14 @@
+{
+  "recorded_at_utc": "2026-09-08T14:54:16.496606+00:00",
+  "exit_code": 0,
+  "seconds": 20580.773,
+  "compiled_files": 5638,
+  "actual_command": [
+    "forge",
+    "build",
+    "--offline"
+  ],
+  "scope_clarification": "Default configured contracts and test roots; this does not establish compilation of all maintained scripts/foundry callers. The original runner was loaded with a broader scope label before its on-disk correction. Original evidence is preserved unchanged.",
+  "explicit_script_build_still_required": true,
+  "next": "Focused post-build followups are running as session47173."
+}

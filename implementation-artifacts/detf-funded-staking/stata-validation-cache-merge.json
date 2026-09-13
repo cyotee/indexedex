@@ -1,0 +1,6 @@
+{
+  "recorded_at_utc": "2026-09-08T08:00:09.189765+00:00",
+  "source": "stata-validation-cache",
+  "copied_validated_entries": 561,
+  "policy": "Merge completed current-source default-profile build metadata back to the broad warm cache; preserve other entries and all artifacts. No cache deletion, hash manufacture or compiler setting changes."
+}

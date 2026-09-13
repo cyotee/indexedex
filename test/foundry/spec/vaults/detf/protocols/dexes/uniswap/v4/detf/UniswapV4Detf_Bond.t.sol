@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
@@ -23,14 +25,7 @@ contract UniswapV4Detf_Bond is TestBase_UniswapV4Detf {
     function test_preLive_mint_reverts() public {
         vm.startPrank(detfUser);
         vm.expectRevert();
-        detfInfo.mint(
-            IERC20(address(pairToken)),
-            1 ether,
-            0,
-            detfUser,
-            false,
-            block.timestamp + 1 hours
-        );
+        IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), 1 ether, IERC20(address(detfInfo)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
     }
 }

@@ -1,6 +1,11 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
+import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {Vm} from "forge-std/Vm.sol";
 import {VM_ADDRESS} from "@crane/contracts/constants/FoundryConstants.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -77,18 +82,14 @@ import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexMan
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
-import {
-    IUniswapV3StandardExchangeDFPkg
-} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeDFPkg.sol";
+import {IUniswapV3StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v3/IUniswapV3StandardExchangeDFPkg.sol";
 import {
     UniswapV3_Component_FactoryService
 } from "contracts/protocols/dexes/uniswap/v3/UniswapV3_Component_FactoryService.sol";
 import {
     IUniswapV3StandardExchangeLiquidReserve
 } from "contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3StandardExchangeLiquidReserve.sol";
-import {
-    IUniswapV4StandardExchangeDFPkg
-} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol";
+import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/IUniswapV4StandardExchangeDFPkg.sol";
 import {
     UniswapV4_Component_FactoryService
 } from "contracts/protocols/dexes/uniswap/v4/UniswapV4_Component_FactoryService.sol";
@@ -110,6 +111,8 @@ import {
 import {
     MorphoBlue_Component_FactoryService
 } from "contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlue_Component_FactoryService.sol";
+import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
+import {Math} from "@crane/contracts/utils/Math.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 
 interface IProdSeMintable {
@@ -127,14 +130,10 @@ contract ProdSeMockTokenDescriptor {
 contract Univ3LiquiditySeeder is IUniswapV3MintCallback {
     function seedFullRange(IUniswapV3Pool pool, uint128 liquidity) external {
         int24 tickSpacing = pool.tickSpacing();
-        int24 tickLower = (-887220 / tickSpacing) * tickSpacing;
-        int24 tickUpper = (887220 / tickSpacing) * tickSpacing;
-        if (tickLower >= tickUpper) {
-            tickLower = -tickSpacing * 1000;
-            tickUpper = tickSpacing * 1000;
-        }
-        uint128 liq = liquidity < 1e18 ? 50_000_000e18 : liquidity;
-        pool.mint(address(this), tickLower, tickUpper, liq, abi.encode(address(this)));
+        int24 tickLower = TickMathV4.minUsableTick(tickSpacing);
+        int24 tickUpper = TickMathV4.maxUsableTick(tickSpacing);
+        require(liquidity > 0, "funded seed liquidity");
+        pool.mint(address(this), tickLower, tickUpper, liquidity, abi.encode(address(this)));
     }
 
     function uniswapV3MintCallback(uint256 amount0Owed, uint256 amount1Owed, bytes calldata data)
@@ -365,15 +364,74 @@ library UniswapV4DetfProductionSeDeployLib {
     {
         (address token0, address token1) = tokenA < tokenB ? (tokenA, tokenB) : (tokenB, tokenA);
         pool = IUniswapV3Pool(factory.createPool(token0, token1, fee));
-        pool.initialize(uint160(uint256(1) << 96));
+        pool.initialize(_oneToOneHumanSqrtPrice(token0, token1));
         vm.label(address(pool), "V3Pool");
     }
 
     function seedUniv3Pool(IUniswapV3Pool pool) internal {
         Univ3LiquiditySeeder seeder = new Univ3LiquiditySeeder();
-        IProdSeMintable(pool.token0()).mint(address(seeder), 100_000_000 ether);
-        IProdSeMintable(pool.token1()).mint(address(seeder), 100_000_000 ether);
-        seeder.seedFullRange(pool, 50_000_000e18);
+        address t0 = pool.token0();
+        address t1 = pool.token1();
+        IProdSeMintable(t0).mint(address(seeder), _humanUnits(t0, 100_000_000));
+        IProdSeMintable(t1).mint(address(seeder), _humanUnits(t1, 100_000_000));
+        (uint160 sqrtPrice,,,,,,) = pool.slot0();
+        uint128 liquidity = LiquidityAmounts.getLiquidityForAmounts(
+            sqrtPrice,
+            TickMathV4.getSqrtPriceAtTick(TickMathV4.minUsableTick(pool.tickSpacing())),
+            TickMathV4.getSqrtPriceAtTick(TickMathV4.maxUsableTick(pool.tickSpacing())),
+            _humanUnits(t0, 50_000_000), _humanUnits(t1, 50_000_000)
+        );
+        seeder.seedFullRange(pool, liquidity);
+    }
+
+    /// @dev Activate existing V3/V4 SEs before a DETF can make later one-token deposits.
+    /// Generic test assets are minted; real Pons payment tokens come from the
+    /// fixture's existing purchases and WETH is actually wrapped from ETH.
+    function activatePositionVault(address vault, address payment, address payer, address weth) internal {
+        (IStandardizedYield.AssetType kind,,) = IStandardizedYield(vault).assetInfo();
+        if (kind != IStandardizedYield.AssetType.LIQUIDITY || IERC20(vault).totalSupply() != 0) return;
+        address[] memory discovered = IStandardizedYield(vault).getTokensIn();
+        address[] memory tokens = new address[](2);
+        uint256 found;
+        for (uint256 i; i < discovered.length; ++i) {
+            if (discovered[i] == vault) continue;
+            require(found < 2, "two position currencies");
+            tokens[found++] = discovered[i];
+        }
+        require(found == 2 && (tokens[0] == payment || tokens[1] == payment), "position payment leg");
+        uint256 paymentIndex = tokens[0] == payment ? 0 : 1;
+        uint256[] memory amounts = new uint256[](2);
+        amounts[paymentIndex] = Math.min(_humanUnits(payment, 100), IERC20(payment).balanceOf(payer) / 100);
+        address other = tokens[1 - paymentIndex];
+        amounts[1 - paymentIndex] = IStandardExchangeIn(vault).previewExchangeIn(
+            IERC20(payment), amounts[paymentIndex], IERC20(other)
+        );
+        require(amounts[0] > 0 && amounts[1] > 0, "fund both position legs");
+        if (other == weth) {
+            vm.deal(payer, payer.balance + amounts[1 - paymentIndex]);
+            vm.prank(payer);
+            IWETH(other).deposit{value: amounts[1 - paymentIndex]}();
+        } else {
+            IProdSeMintable(other).mint(payer, amounts[1 - paymentIndex]);
+        }
+        _activateFundedPosition(vault, tokens, amounts, payer);
+    }
+
+    /// @dev Keep the funded two-token deposit and exact custody checks together.
+    function _activateFundedPosition(
+        address vault, address[] memory tokens, uint256[] memory amounts, address payer
+    ) private {
+        address seedHolder = address(uint160(uint256(keccak256("production-position-seed-holder"))));
+        vm.startPrank(payer);
+        IERC20(tokens[0]).approve(vault, type(uint256).max);
+        IERC20(tokens[1]).approve(vault, type(uint256).max);
+        uint256 quote = IStandardExchangeInMulti(vault).previewExchangeInManyToOne(tokens, amounts, IERC20(vault));
+        uint256 minted = IStandardExchangeInMulti(vault).exchangeInManyToOne(
+            tokens, amounts, IERC20(vault), quote, seedHolder, false, block.timestamp + 1 hours
+        );
+        vm.stopPrank();
+        require(minted > 0 && minted == quote, "position activation quote/execution");
+        require(IERC20(vault).balanceOf(seedHolder) == minted, "external seed shares");
     }
 
     function deployUniv3Vault(IUniswapV3StandardExchangeDFPkg pkg, IUniswapV3Pool pool)
@@ -489,23 +547,39 @@ library UniswapV4DetfProductionSeDeployLib {
         });
     }
 
+    /// @dev 1 human token0 = 1 human token1. Tick 0 when both tokens are 18-dec.
+    function _oneToOneHumanSqrtPrice(address token0, address token1) internal view returns (uint160) {
+        uint256 sqrt1 = Math.sqrt(_humanUnits(token1, 1));
+        uint256 sqrt0 = Math.sqrt(_humanUnits(token0, 1));
+        return uint160((sqrt1 << 96) / sqrt0);
+    }
+
+    function _humanUnits(address token, uint256 human) internal view returns (uint256) {
+        return human * (10 ** uint256(IERC20Metadata(token).decimals()));
+    }
+
     function initAndSeedUniv4Pool(IPoolManager pm, address tokenA, address tokenB)
         internal
         returns (PoolKey memory key)
     {
         key = genericV4PoolKey(tokenA, tokenB);
-        pm.initialize(key, TickMathV4.getSqrtPriceAtTick(0));
+        address t0 = Currency.unwrap(key.currency0);
+        address t1 = Currency.unwrap(key.currency1);
+        uint160 sqrtP = _oneToOneHumanSqrtPrice(t0, t1);
+        pm.initialize(key, sqrtP);
         Univ4LiquiditySeeder seeder = new Univ4LiquiditySeeder(pm);
-        IProdSeMintable(tokenA).mint(address(seeder), 1_000_000 ether);
-        IProdSeMintable(tokenB).mint(address(seeder), 1_000_000 ether);
-        int24 tickLower = -120;
-        int24 tickUpper = 120;
+        IProdSeMintable(tokenA).mint(address(seeder), _humanUnits(tokenA, 1_000_000));
+        IProdSeMintable(tokenB).mint(address(seeder), _humanUnits(tokenB, 1_000_000));
+        int24 spacing = GENERIC_V4_TICK_SPACING;
+        int24 center = (TickMathV4.getTickAtSqrtPrice(sqrtP) / spacing) * spacing;
+        int24 tickLower = center - (2 * spacing);
+        int24 tickUpper = center + (2 * spacing);
         uint128 liq = LiquidityAmounts.getLiquidityForAmounts(
-            TickMathV4.getSqrtPriceAtTick(0),
+            sqrtP,
             TickMathV4.getSqrtPriceAtTick(tickLower),
             TickMathV4.getSqrtPriceAtTick(tickUpper),
-            100_000 ether,
-            100_000 ether
+            _humanUnits(t0, 100_000),
+            _humanUnits(t1, 100_000)
         );
         seeder.addLiquidity(key, tickLower, tickUpper, liq);
     }
@@ -656,7 +730,7 @@ library UniswapV4DetfProductionSeDeployLib {
 
         bytes memory hookArgs = abi.encode(pm, s.feeEscrow, ponsV2FeeSink, ponsV2Owner);
         (address predictedHook, bytes32 hookSalt) =
-            HookMiner.find(address(this), MEME_HOOK_FLAGS, type(PonsV2MemeHook).creationCode, hookArgs);
+            HookMiner.find(address(this), MEME_HOOK_FLAGS, ArtifactCreationCode.creationCode("PonsV2MemeHook.sol:PonsV2MemeHook"), hookArgs);
         s.memeHook = new PonsV2MemeHook{salt: hookSalt}(pm, s.feeEscrow, ponsV2FeeSink, ponsV2Owner);
         require(address(s.memeHook) == predictedHook, "hook address mismatch");
 
@@ -879,3 +953,7 @@ library UniswapV4DetfProductionSeDeployLib {
         vm.label(vault, "MorphoBlueSe");
     }
 }
+
+// Explicit artifact dependencies for the real V4 SE stack deployed above.
+
+// Explicit artifact dependencies for the V3 production-SE deployment path.

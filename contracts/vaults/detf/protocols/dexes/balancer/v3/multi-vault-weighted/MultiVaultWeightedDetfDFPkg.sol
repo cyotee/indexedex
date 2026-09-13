@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IMultiVaultWeightedDetfDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfDFPkg.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC20Permit} from "@crane/contracts/interfaces/IERC20Permit.sol";
@@ -15,8 +17,7 @@ import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balance
 import {
     PoolRoleAccounts, TokenConfig, TokenType
 } from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/VaultTypes.sol";
-import {WeightedPoolFactory} from
-    "@crane/contracts/external/balancer/v3/pool-weighted/contracts/WeightedPoolFactory.sol";
+import {IWeightedPoolFactory} from "contracts/interfaces/IWeightedPoolFactory.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {EIP712Repo} from "@crane/contracts/utils/cryptography/EIP712/EIP712Repo.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
@@ -34,7 +35,11 @@ import {IVaultRegistryVaultQuery} from "contracts/interfaces/IVaultRegistryVault
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
-import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
+import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
+import {IDETFSYDFPkg} from "contracts/vaults/detf/common/sy/IDETFSYDFPkg.sol";
+import {DETFSYDeploymentLib} from "contracts/vaults/detf/common/sy/DETFSYDeploymentLib.sol";
 import {DETFChildTokenMetadata} from "contracts/vaults/detf/common/DETFChildTokenMetadata.sol";
 import {VaultFeeType} from "contracts/interfaces/VaultFeeTypes.sol";
 import {VaultTypeUtils} from "contracts/registries/vault/VaultTypeUtils.sol";
@@ -46,91 +51,20 @@ import {
 import {
     BalancerV3StandardExchangeRouterAwareRepo
 } from "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterAwareRepo.sol";
-import {
-    IStandardExchangeRateProviderDFPkg
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
+import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/common/factory/nft/IDetfSelfNftInventoryDFPkg.sol";
-import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol";
 import {
     MultiVaultWeightedDetfRepo
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfRepo.sol";
+import {IMultiVaultWeightedDetfBonding} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfBonding.sol";
+import {IMultiVaultWeightedDetfInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfInfo.sol";
 import {
-    IMultiVaultWeightedDetfBonding
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfBondingTarget.sol";
-import {
-    IMultiVaultWeightedDetfInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfInfoTarget.sol";
-import {
-    DETFThresholdPolicy,
-    ThresholdMode
+    DETFThresholdPolicy
 } from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 import {DETFNaturalExpansionLib} from "contracts/vaults/detf/common/core/DETFNaturalExpansionLib.sol";
 
-/// @title IMultiVaultWeightedDetfDFPkg
-interface IMultiVaultWeightedDetfDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
-    error NotCalledByRegistry(address caller);
-    error UnregisteredVault(address vault);
-    error InvalidVaultShare(uint256 index, address vault, address vaultShare);
 
-    struct PkgInit {
-        IFacet erc20Facet;
-        IFacet erc5267Facet;
-        IFacet erc2612Facet;
-        IFacet multiAssetBasicVaultFacet;
-        IFacet multiAssetStandardVaultFacet;
-        IFacet exchangeInFacet;
-        IFacet bondingFacet;
-        IFacet infoFacet;
-        IVaultFeeOracleQuery feeOracle;
-        IVaultRegistryDeployment vaultRegistryDeployment;
-        IBalancerV3StandardExchangeRouterProxy balancerV3Router;
-        IVault balancerV3Vault;
-        WeightedPoolFactory weightedPoolFactory;
-        IStandardExchangeRateProviderDFPkg rateProviderPkg;
-        IDetfSelfNftInventoryDFPkg bondNftVaultPkg;
-        IRebasingClaimTokenDFPkg rebasingClaimTokenPkg;
-        IDiamondPackageCallBackFactory diamondFactory;
-    }
-
-    /// @dev Per-instance args. Arrays must share length N in [1,7].
-    /// @dev `vaultShares[i]` must be the registered SE share of `vaults[i]` (the vault diamond ERC-20).
-    /// @dev `address(0)` does **not** alias to `vaults[i]`. Hostile or missing share reverts.
-    /// @dev `rateProviders`/`rateAssets` zero = unrated leg.
-    /// @dev `weightDetf + sum(vaultWeights) == 1e18`; each weight > 0. Zero weightDetf not allowed.
-    /// @dev Trailing `thresholdMode`: 0 = Policy (default); 1 = Open. Never infer Open from zeros.
-    /// @dev Trailing expansion fields (zeros → `DETFNaturalExpansionLib` defaults). Deploy-time only.
-    ///
-    /// # PkgArgs field order (Stage 07 — mirror Stage 06)
-    /// 1 name, 2 symbol, 3 vaults, 4 vaultShares, 5 rateProviders, 6 rateAssets,
-    /// 7 weightDetf, 8 vaultWeights, 9 mintThreshold, 10 burnThreshold, 11 thresholdMode,
-    /// 12 expansionClosureRatePerSecond, 13 expansionCatchUpMaxSeconds, 14 expansionCatchUpCapBps,
-    /// 15 creator (D26; 0 → feeTo owns id 2 (D21))
-    struct PkgArgs {
-        string name;
-        string symbol;
-        IStandardExchangeProxy[] vaults;
-        IERC20[] vaultShares;
-        IRateProvider[] rateProviders;
-        IERC20[] rateAssets;
-        uint256 weightDetf;
-        uint256[] vaultWeights;
-        uint256 mintThreshold; // 0 → 1.05e18
-        uint256 burnThreshold; // 0 → 0.95e18
-        ThresholdMode thresholdMode; // trailing; 0 = Policy
-        uint256 expansionClosureRatePerSecond; // 0 → default
-        uint256 expansionCatchUpMaxSeconds; // 0 → default
-        uint256 expansionCatchUpCapBps; // 0 → default
-        address creator; // D26; 0 → feeTo owns id 2 (D21)
-        string claimName;
-        string claimSymbol;
-        string bondName;
-        string bondSymbol;
-        string reserveName;
-        string reserveSymbol;
-    }
-
-    function deployVault(PkgArgs memory args) external returns (address vault);
-}
 
 /// @title MultiVaultWeightedDetfDFPkg
 /// @notice Immutable/unowned DETF package: self + N Standard Exchange vault shares in weighted reserve.
@@ -153,10 +87,7 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
         uint256[7] vaultWeights;
         uint256 mintThreshold;
         uint256 burnThreshold;
-        ThresholdMode thresholdMode;
         uint256 expansionClosureRatePerSecond;
-        uint256 expansionCatchUpMaxSeconds;
-        uint256 expansionCatchUpCapBps;
         address creator;
         string claimName;
         string claimSymbol;
@@ -178,10 +109,11 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
     IVaultRegistryDeployment immutable VAULT_REGISTRY_DEPLOYMENT;
     IBalancerV3StandardExchangeRouterProxy immutable BALANCER_V3_ROUTER;
     IVault immutable BALANCER_V3_VAULT;
-    WeightedPoolFactory immutable WEIGHTED_POOL_FACTORY;
+    IWeightedPoolFactory immutable WEIGHTED_POOL_FACTORY;
     IStandardExchangeRateProviderDFPkg immutable RATE_PROVIDER_PKG;
     IDetfSelfNftInventoryDFPkg immutable BOND_NFT_VAULT_PKG;
     IRebasingClaimTokenDFPkg immutable REBASING_CLAIM_TOKEN_PKG;
+    IDETFSYDFPkg immutable SY_PKG;
     IDiamondPackageCallBackFactory immutable DIAMOND_FACTORY;
 
     constructor(PkgInit memory pkgInit) {
@@ -201,6 +133,7 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
         RATE_PROVIDER_PKG = pkgInit.rateProviderPkg;
         BOND_NFT_VAULT_PKG = pkgInit.bondNftVaultPkg;
         REBASING_CLAIM_TOKEN_PKG = pkgInit.rebasingClaimTokenPkg;
+        SY_PKG = pkgInit.syPkg;
         DIAMOND_FACTORY = pkgInit.diamondFactory;
     }
 
@@ -250,7 +183,7 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces_) {
-        interfaces_ = new bytes4[](9);
+        interfaces_ = new bytes4[](10);
         interfaces_[0] = type(IERC20).interfaceId;
         interfaces_[1] = type(IERC20Metadata).interfaceId;
         interfaces_[2] = type(IERC20Permit).interfaceId;
@@ -260,6 +193,7 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
         interfaces_[6] = type(IStandardExchangeIn).interfaceId;
         interfaces_[7] = type(IMultiVaultWeightedDetfBonding).interfaceId;
         interfaces_[8] = type(IMultiVaultWeightedDetfInfo).interfaceId;
+        interfaces_[9] = type(IStandardExchangeOut).interfaceId;
     }
 
     function packageMetadata()
@@ -307,6 +241,7 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
             revert NotCalledByRegistry(msg.sender);
         }
         PkgArgs memory args = abi.decode(pkgArgs, (PkgArgs));
+        if (keccak256(pkgArgs) != keccak256(abi.encode(args))) revert InvalidPackageArguments();
         uint256 n_ = args.vaults.length;
         if (args.vaultShares.length != n_) {
             revert MultiVaultWeightedDetfRepo.InvalidVaultCount(n_);
@@ -332,6 +267,7 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
 
     function initAccount(bytes memory initArgs) public {
         PkgArgs memory args = abi.decode(initArgs, (PkgArgs));
+        if (keccak256(initArgs) != keccak256(abi.encode(args))) revert InvalidPackageArguments();
         uint256 n_ = args.vaults.length;
         if (n_ == 0 || n_ > _MAX_VAULTS) revert MultiVaultWeightedDetfRepo.InvalidVaultCount(n_);
         if (
@@ -360,7 +296,7 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
         }
         if (sum_ != _ONE) revert MultiVaultWeightedDetfRepo.InvalidWeights();
 
-        ERC20Repo._initialize(args.name, args.symbol, 18);
+        ERC20Repo._initialize(args.name, args.symbol, 9);
         EIP712Repo._initialize(args.name, "1");
         BalancerV3StandardExchangeRouterAwareRepo._initialize(BALANCER_V3_ROUTER);
         BalancerV3VaultAwareRepo._initialize(BALANCER_V3_VAULT);
@@ -374,29 +310,19 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
             FEE_ORACLE, vaultFeeTypeIds(), vaultTypes(), abi.encode(contents_)._hash()
         );
 
-        DETFThresholdPolicy.requireValidThresholdMode(args.thresholdMode);
         (uint256 mint_, uint256 burn_) =
             DETFThresholdPolicy.resolveAndRequireValidThresholds(args.mintThreshold, args.burnThreshold);
-        (uint256 expRate_, uint256 expCatchUpSec_, uint256 expCapBps_) = DETFNaturalExpansionLib.resolveExpansionParams(
-            args.expansionClosureRatePerSecond,
-            args.expansionCatchUpMaxSeconds,
-            args.expansionCatchUpCapBps
-        );
+        uint256 expRate_ = DETFNaturalExpansionLib.resolveClosureRate(args.expansionClosureRatePerSecond);
 
         DeployConfig storage cfg = _deployConfig();
         cfg.vaultCount = uint8(n_);
         cfg.weightDetf = args.weightDetf;
         cfg.mintThreshold = mint_;
         cfg.burnThreshold = burn_;
-        cfg.thresholdMode = args.thresholdMode;
         cfg.expansionClosureRatePerSecond = expRate_;
-        cfg.expansionCatchUpMaxSeconds = expCatchUpSec_;
-        cfg.expansionCatchUpCapBps = expCapBps_;
         for (uint256 i; i < n_; ++i) {
             cfg.vaults[i] = args.vaults[i];
-            cfg.vaultShares[i] = address(args.vaultShares[i]) == address(0)
-                ? IERC20(address(args.vaults[i]))
-                : args.vaultShares[i];
+            cfg.vaultShares[i] = args.vaultShares[i];
             cfg.rateProviders[i] = args.rateProviders[i];
             cfg.rateAssets[i] = args.rateAssets[i];
             cfg.vaultWeights[i] = args.vaultWeights[i];
@@ -424,33 +350,25 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
         _deployRateProviders(cfg);
         (address reservePool_, uint256 detfIndex_, uint256[] memory shareIndexes_) = _createWeightedReservePool(cfg);
         IDETFNFTVault bondVault_ = _deployBondNftVault(reservePool_);
-        uint256 detfNftId_ = _tryInitDetfNft(bondVault_);
-        IRebasingClaimToken claimToken_ = _deployRebasingClaimToken(cfg, bondVault_, detfNftId_);
-        _initBasicVaultTokens(cfg, reservePool_);
-        _initFamilyRepo(cfg, reservePool_, detfIndex_, shareIndexes_, bondVault_, detfNftId_, claimToken_);
+        IDetfBondNFT(address(bondVault_)).initializeReservedBondNfts(address(FEE_ORACLE.feeTo()), cfg.creator);
+        IStakedDETF claimToken_ = _deployRebasingClaimToken(cfg, bondVault_);
+        _initBasicVaultTokens(cfg, reservePool_, address(claimToken_));
+        _initFamilyRepo(cfg, reservePool_, detfIndex_, shareIndexes_, bondVault_, claimToken_);
+        address[] memory routes_ = new address[](cfg.vaultCount);
+        for (uint256 i; i < cfg.vaultCount; ++i) routes_[i] = address(cfg.vaultShares[i]);
+        DETFSYDeploymentLib._deploy(SY_PKG, claimToken_, routes_, routes_);
     }
 
     function _deployRebasingClaimToken(
         DeployConfig storage cfg,
-        IDETFNFTVault bondVault_,
-        uint256 detfNftId_
-    ) private returns (IRebasingClaimToken claimToken_) {
-        // Prefer first configured rateAsset for claim token pricing surface; unrated-only deploys use address(0).
-        IERC20 rateAsset_ = IERC20(address(0));
-        for (uint256 i; i < cfg.vaultCount; ++i) {
-            if (address(cfg.rateAssets[i]) != address(0)) {
-                rateAsset_ = cfg.rateAssets[i];
-                break;
-            }
-        }
+        IDETFNFTVault bondVault_
+    ) private returns (IStakedDETF claimToken_) {
         address detf_ = address(this);
-        claimToken_ = IRebasingClaimToken(
+        claimToken_ = IStakedDETF(
             REBASING_CLAIM_TOKEN_PKG.deployToken(
                 IDetf(detf_),
                 bondVault_,
-                rateAsset_,
-                detfNftId_,
-                detf_,
+                FEE_ORACLE,
                 DETFChildTokenMetadata.resolveClaimName(cfg.claimName, ERC20Repo._name()),
                 DETFChildTokenMetadata.resolveClaimSymbol(cfg.claimSymbol, ERC20Repo._symbol())
             )
@@ -570,36 +488,20 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
                 DETFChildTokenMetadata.resolveBondName(_deployConfig().bondName, ERC20Repo._name()),
                 DETFChildTokenMetadata.resolveBondSymbol(_deployConfig().bondSymbol, ERC20Repo._symbol()),
                 IDetf(detf_),
-                IERC20(reservePool_),
-                IERC20(detf_),
-                0,
-                detf_
+                IERC20(reservePool_)
             )
         );
     }
 
-    function _tryInitDetfNft(IDETFNFTVault bondVault_) private returns (uint256 detfNftId_) {
-        address feeTo_ = address(FEE_ORACLE.feeTo());
-        address creator_ = _deployConfig().creator;
-        try bondVault_.initializeReservedBondNfts(feeTo_, creator_) returns (uint256 id_) {
-            detfNftId_ = id_;
-        } catch {
-            try bondVault_.initializeDETFNFT() returns (uint256 id2_) {
-                detfNftId_ = id2_;
-            } catch {
-                detfNftId_ = 0;
-            }
-        }
-    }
-
-    function _initBasicVaultTokens(DeployConfig storage cfg, address reservePool_) private {
-        // DETF + N vault shares + reserve BPT
-        address[] memory vaultTokens_ = new address[](uint256(cfg.vaultCount) + 2);
+    function _initBasicVaultTokens(DeployConfig storage cfg, address reservePool_, address staking_) private {
+        // DETF + configured vault shares + reserve LP + funded staking token
+        address[] memory vaultTokens_ = new address[](uint256(cfg.vaultCount) + 3);
         vaultTokens_[0] = address(this);
         for (uint256 i; i < cfg.vaultCount; ++i) {
             vaultTokens_[i + 1] = address(cfg.vaultShares[i]);
         }
         vaultTokens_[cfg.vaultCount + 1] = reservePool_;
+        vaultTokens_[cfg.vaultCount + 2] = staking_;
         MultiAssetBasicVaultRepo._initialize(vaultTokens_);
     }
 
@@ -609,8 +511,7 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
         uint256 detfIndex_,
         uint256[] memory shareIndexes_,
         IDETFNFTVault bondVault_,
-        uint256 detfNftId_,
-        IRebasingClaimToken claimToken_
+        IStakedDETF claimToken_
     ) private {
         MultiVaultWeightedDetfRepo.InitParams memory p;
         p.vaultCount = cfg.vaultCount;
@@ -620,20 +521,14 @@ contract MultiVaultWeightedDetfDFPkg is IMultiVaultWeightedDetfDFPkg {
         p.reservePool = reservePool_;
         p.mintThreshold = cfg.mintThreshold;
         p.burnThreshold = cfg.burnThreshold;
-        p.thresholdMode = cfg.thresholdMode;
         p.feeOracle = FEE_ORACLE;
         p.bondNftVault = bondVault_;
-        p.detfNftId = detfNftId_;
         p.rebasingClaimToken = claimToken_;
         p.expansionClosureRatePerSecond = cfg.expansionClosureRatePerSecond;
-        p.expansionCatchUpMaxSeconds = cfg.expansionCatchUpMaxSeconds;
-        p.expansionCatchUpCapBps = cfg.expansionCatchUpCapBps;
         _copyLegsToInitParams(cfg, p);
         MultiVaultWeightedDetfRepo._initialize(p);
         // Emit once after storage write with resolved thresholds (PRD §16.4).
-        emit IMultiVaultWeightedDetfInfo.ThresholdModeSet(
-            cfg.thresholdMode, cfg.mintThreshold, cfg.burnThreshold
-        );
+        emit IMultiVaultWeightedDetfInfo.ThresholdsSet(cfg.mintThreshold, cfg.burnThreshold);
     }
 
     function _copyLegsToInitParams(DeployConfig storage cfg, MultiVaultWeightedDetfRepo.InitParams memory p)

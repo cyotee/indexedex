@@ -54,7 +54,7 @@ abstract contract UniswapV3StandardExchangeInBase is UniswapV3StandardExchangeCo
         uint256 amount1Added = tokenIn == _token1() ? amountIn : 0;
         uint256 totalSharesBefore = IERC20(address(this)).totalSupply();
 
-        (uint256 total0, uint256 total1) = _totalVaultReserves();
+        (uint256 total0, uint256 total1) = _totalVaultReservesForShareMath();
         uint256 reserve0Before = total0 - amount0Added;
         uint256 reserve1Before = total1 - amount1Added;
 
@@ -65,7 +65,7 @@ abstract contract UniswapV3StandardExchangeInBase is UniswapV3StandardExchangeCo
         if (sharesOut < minSharesOut) revert UniswapV3ExchangeIn_SlippageExceeded();
 
         if (totalSharesBefore == 0) {
-            uint256 residual = reserve0Before + reserve1Before;
+            uint256 residual = _initialResidualShares(amount0Added, amount1Added, reserve0Before, reserve1Before, sharesOut);
             if (residual > 0) {
                 ERC20Repo._mint(DEAD_SHARES_SINK, residual);
             }
@@ -107,7 +107,7 @@ abstract contract UniswapV3StandardExchangeInBase is UniswapV3StandardExchangeCo
         _collectIfIdle();
 
         uint256 totalSharesBefore = IERC20(address(this)).totalSupply();
-        (uint256 total0, uint256 total1) = _totalVaultReserves();
+        (uint256 total0, uint256 total1) = _totalVaultReservesForShareMath();
         uint256 reserve0Before = total0 - amount0Added;
         uint256 reserve1Before = total1 - amount1Added;
 
@@ -118,7 +118,7 @@ abstract contract UniswapV3StandardExchangeInBase is UniswapV3StandardExchangeCo
         if (sharesOut < minSharesOut) revert UniswapV3ExchangeIn_SlippageExceeded();
 
         if (totalSharesBefore == 0) {
-            uint256 residual = reserve0Before + reserve1Before;
+            uint256 residual = _initialResidualShares(amount0Added, amount1Added, reserve0Before, reserve1Before, sharesOut);
             if (residual > 0) {
                 ERC20Repo._mint(DEAD_SHARES_SINK, residual);
             }
@@ -162,9 +162,9 @@ abstract contract UniswapV3StandardExchangeInBase is UniswapV3StandardExchangeCo
         amount0 += (free0 * sharesBurned) / totalShares;
         amount1 += (free1 * sharesBurned) / totalShares;
         if (tokenOut == _token0()) {
-            return amount0 + (amount1 > 0 ? _quoteSwap(_token1(), _token0(), amount1) : 0);
+            return amount0 + (amount1 > 0 ? _quoteSwapAfterWithdrawal(amount1, false, sharesBurned, totalShares) : 0);
         }
-        return amount1 + (amount0 > 0 ? _quoteSwap(_token0(), _token1(), amount0) : 0);
+        return amount1 + (amount0 > 0 ? _quoteSwapAfterWithdrawal(amount0, true, sharesBurned, totalShares) : 0);
     }
 
     function _previewZapOutExactIn(address tokenOut, uint256 sharesBurned) internal view returns (uint256 amountOut) {
@@ -176,9 +176,6 @@ abstract contract UniswapV3StandardExchangeInBase is UniswapV3StandardExchangeCo
             return 0;
         }
         if (!canOpenBoundPoolOps()) {
-            return _quoteSleeveZapOutAmount(tokenOut, sharesBurned, totalShares);
-        }
-        if (!UniswapV3VaultRepo._isPositionCreated()) {
             return _quoteSleeveZapOutAmount(tokenOut, sharesBurned, totalShares);
         }
         return _quoteZapOutAmount(tokenOut, sharesBurned, totalShares);

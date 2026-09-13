@@ -11,9 +11,7 @@ import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {IMultiPairStandardExchangeBufferPool} from
     "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/IMultiPairStandardExchangeBufferPool.sol";
-import {
-    IMultiPairStandardExchangeBufferPoolPkg
-} from "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPoolStandardVaultPkg.sol";
+import {IMultiPairStandardExchangeBufferPoolPkg} from "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/IMultiPairStandardExchangeBufferPoolPkg.sol";
 import {
     TestBase_MultiPairStandardExchangeBufferPool
 } from "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/bases/TestBase_MultiPairStandardExchangeBufferPool.sol";

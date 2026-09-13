@@ -1,0 +1,15 @@
+{
+  "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+  "target": "test/foundry/spec/vaults/detf/common/DETFFundedStakingSuite.t.sol",
+  "imports": [
+    "import {UniswapV2NativeSYTest} from \"test/foundry/spec/vaults/standard/sy/ConstantProductNativeSY.t.sol\";",
+    "import {RebasingClaimTokenDFPkg_Deploy_Test} from \"test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg_Deploy.t.sol\";",
+    "import {AaveStataNativeSYTest} from \"test/foundry/spec/vaults/standard/sy/AaveStataNativeSY.t.sol\";",
+    "import {LidoNativeSYTest} from \"test/foundry/spec/vaults/standard/sy/LiquidStakingNativeSY.t.sol\";"
+  ],
+  "reason": "Ensure all 25 issuer packages and 29 proxy suites are discoverable by the consolidated native SE selection.",
+  "historical_preparation_status": "prepared; apply after active Solidity build/test exits",
+  "application_record": "all-native-se-imports.json",
+  "current_status_source": "current-implementation-queue.json and acceptance-progress.json; later edits and validation can supersede the original application hashes.",
+  "pending_owner_approval": false
+}

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
 import {
@@ -14,7 +16,7 @@ contract Adversarial_PriceManipulation_Test is TestBase_UniswapV3StandardExchang
         vm.startPrank(victim);
         IERC20(token0).approve(address(vault), type(uint256).max);
         uint256 shares =
-            vault.exchangeIn(IERC20(token0), 100 ether, IERC20(address(vault)), 0, victim, false, block.timestamp + 1);
+            _activateWithFundedToken0(victim, 100 ether, 100 ether);
         vm.stopPrank();
 
         // Moderate external skew (not enough to break zap quote limits).

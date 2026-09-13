@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                   Foundry                                  */
@@ -15,16 +16,8 @@ import {VM_ADDRESS} from "@crane/contracts/constants/FoundryConstants.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
-import {
-    SlipstreamStandardExchangeInFacet
-} from "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeInFacet.sol";
-import {
-    SlipstreamStandardExchangeOutFacet
-} from "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeOutFacet.sol";
-import {
-    ISlipstreamStandardExchangeDFPkg,
-    SlipstreamStandardExchangeDFPkg
-} from "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeDFPkg.sol";
+
+import {ISlipstreamStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/slipstream/ISlipstreamStandardExchangeDFPkg.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
 
@@ -44,10 +37,10 @@ library Slipstream_Component_FactoryService {
         returns (IFacet instance)
     {
         instance = create3Factory.deployFacet(
-            type(SlipstreamStandardExchangeInFacet).creationCode,
-            abi.encode(type(SlipstreamStandardExchangeInFacet).name)._hash()
+            ArtifactCreationCode.creationCode("SlipstreamStandardExchangeInFacet.sol:SlipstreamStandardExchangeInFacet"),
+            abi.encode("SlipstreamStandardExchangeInFacet")._hash()
         );
-        vm.label(address(instance), type(SlipstreamStandardExchangeInFacet).name);
+        vm.label(address(instance), "SlipstreamStandardExchangeInFacet");
     }
 
     function deploySlipstreamStandardExchangeOutFacet(ICreate3FactoryProxy create3Factory)
@@ -55,10 +48,10 @@ library Slipstream_Component_FactoryService {
         returns (IFacet instance)
     {
         instance = create3Factory.deployFacet(
-            type(SlipstreamStandardExchangeOutFacet).creationCode,
-            abi.encode(type(SlipstreamStandardExchangeOutFacet).name)._hash()
+            ArtifactCreationCode.creationCode("SlipstreamStandardExchangeOutFacet.sol:SlipstreamStandardExchangeOutFacet"),
+            abi.encode("SlipstreamStandardExchangeOutFacet")._hash()
         );
-        vm.label(address(instance), type(SlipstreamStandardExchangeOutFacet).name);
+        vm.label(address(instance), "SlipstreamStandardExchangeOutFacet");
     }
 
     function deploySlipstreamStandardExchangeDFPkgFromVaultRegistry(
@@ -68,13 +61,13 @@ library Slipstream_Component_FactoryService {
         instance = ISlipstreamStandardExchangeDFPkg(
             address(
                 vaultRegistry.deployPkg(
-                    type(SlipstreamStandardExchangeDFPkg).creationCode,
+                    ArtifactCreationCode.creationCode("SlipstreamStandardExchangeDFPkg.sol:SlipstreamStandardExchangeDFPkg"),
                     abi.encode(pkgInit),
-                    abi.encode(type(SlipstreamStandardExchangeDFPkg).name)._hash()
+                    abi.encode("SlipstreamStandardExchangeDFPkg")._hash()
                 )
             )
         );
-        vm.label(address(instance), type(SlipstreamStandardExchangeDFPkg).name);
+        vm.label(address(instance), "SlipstreamStandardExchangeDFPkg");
     }
 
     function deploySlipstreamStandardExchangeDFPkg(

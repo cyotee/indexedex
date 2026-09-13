@@ -1,0 +1,39 @@
+{
+  "status": "DRAFT_TYPECHECK_ONLY_NOT_RUNTIME_VALIDATION",
+  "seconds": 61.568,
+  "prepared_records": [
+    "production-se-fixture-followups-prepared.json"
+  ],
+  "exit_code": 0,
+  "errors": [],
+  "concrete_suites": {
+    "UniswapV4Detf_Orbital_MorphoMix_ProductLaw": 54,
+    "UniswapV4Detf_Orbital_PonsMix_ProductLaw": 54,
+    "UniswapV4Detf_Orbital_PonsV1Se_ProductLaw": 54,
+    "UniswapV4Detf_Orbital_PonsV2Se_ProductLaw": 54,
+    "UniswapV4Detf_Orbital_Univ3Se_ProductLaw": 54,
+    "UniswapV4Detf_Orbital_Univ4Se_ProductLaw": 54,
+    "UniswapV4Detf_Weighted_MorphoMix_ProductLaw": 54,
+    "UniswapV4Detf_Weighted_PonsMix_ProductLaw": 54,
+    "UniswapV4Detf_Weighted_PonsV1Se_ProductLaw": 54,
+    "UniswapV4Detf_Weighted_PonsV2Se_ProductLaw": 54,
+    "UniswapV4Detf_Weighted_Univ3Se_ProductLaw": 54,
+    "UniswapV4Detf_Weighted_Univ4Se_ProductLaw": 54,
+    "UniswapV4Detf_Orbital_MorphoMix_ProductLaw_B_ALL6": 52,
+    "UniswapV4Detf_Orbital_PonsMix_ProductLaw_B_P18_R6": 52,
+    "UniswapV4Detf_Orbital_PonsV1Se_ProductLaw_B_P18_R6": 52,
+    "UniswapV4Detf_Orbital_PonsV2Se_ProductLaw_B_P18_R6": 52,
+    "UniswapV4Detf_Orbital_Univ3Se_ProductLaw_B_ALL6": 52,
+    "UniswapV4Detf_Orbital_Univ4Se_ProductLaw_B_ALL6": 52,
+    "UniswapV4Detf_Weighted_MorphoMix_ProductLaw_B_ALL6": 52,
+    "UniswapV4Detf_Weighted_PonsMix_ProductLaw_B_P18_R6": 52,
+    "UniswapV4Detf_Weighted_PonsV1Se_ProductLaw_B_P18_R6": 52,
+    "UniswapV4Detf_Weighted_PonsV2Se_ProductLaw_B_P18_R6": 52,
+    "UniswapV4Detf_Weighted_Univ3Se_ProductLaw_B_ALL6": 52,
+    "UniswapV4Detf_Weighted_Univ4Se_ProductLaw_B_ALL6": 52
+  },
+  "compiled_methods": 1272,
+  "compiler_input_sha256": "215be6aa55f2409ad328c5b4dc2083ef939e4a11c946174517d38bbf46937a0c",
+  "validation_passed": true,
+  "canonical_sources_unchanged": true
+}

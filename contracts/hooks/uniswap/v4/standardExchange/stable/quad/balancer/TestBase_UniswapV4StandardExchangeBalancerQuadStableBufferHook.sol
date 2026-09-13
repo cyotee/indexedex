@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
-import {PoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol";
 import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
 import {SwapParams} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
@@ -23,7 +24,6 @@ import {TestBase_ERC4626StandardExchange} from "contracts/test/bases/TestBase_ER
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {SimpleYieldERC4626} from "contracts/test/stubs/SimpleYieldERC4626.sol";
 import {WrapperExactOutRouter} from "contracts/test/stubs/WrapperExactOutRouter.sol";
-import {RateProviderMock} from "contracts/test/balancer/v3/RateProviderMock.sol";
 
 import {
     IUniswapV4HookDiamondPackageCallBackFactory
@@ -46,6 +46,7 @@ import {
 import {
     UniswapV4StandardExchangeBalancerQuadStableBufferHookPairPoolLib as PairPoolLib
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookPairPoolLib.sol";
+import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 import {
     IUniswapV4HookStagedPairInit
 } from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
@@ -132,7 +133,11 @@ abstract contract TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook
         se3 = _deployERC4626SE(address(vault3));
         seA = se0;
 
-        pm = IPoolManager(address(new PoolManager(address(this))));
+        pm = IPoolManager(address(IPoolManager(create3Factory.create3WithArgs(
+            ArtifactCreationCode.creationCode(create3Factory, "PoolManager.sol:PoolManager"),
+            abi.encode(address(this)),
+            keccak256("TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook_PoolManager")
+        ))));
 
         (hookFactory, hookPkg) = DeployLib.deployFactoryAndPackage(
             create3Factory,
@@ -178,7 +183,7 @@ abstract contract TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook
                 != address(0)
         ) {
             _ensureProductDoorsAndFinalize(
-                hook, args.tokens[0], args.tokens[1], args.tokens[2], args.tokens[3]
+                hook, args.tokens
             );
         }
         quad = IUniswapV4StandardExchangeBalancerQuadStableBufferHook(hook);
@@ -235,19 +240,18 @@ abstract contract TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook
         return IUniswapV4StandardExchangeBalancerQuadStableBufferHookPackage.PkgArgs({
             poolManager: address(pm),
             feeOracle: address(indexedexManager),
-            tokens: toks,
-            standardExchanges: ses,
-            rateProviders: rps,
+            tokens: _dynamic(toks),
+            standardExchanges: _dynamic(ses),
+            rateProviders: _dynamic(rps),
+            tokenDecimals: HookPkgArgsDecimalsLib.tokenDecimals(_dynamic(toks)),
+            seDecimals: HookPkgArgsDecimalsLib.seDecimals(_dynamic(ses)),
             baseAmp: DEFAULT_BASE_AMP
         });
     }
 
     function _firstMintEqual(uint256 amountEach) internal returns (uint256 shares) {
-        uint256[] memory amounts = new uint256[](4);
-        amounts[0] = amountEach;
-        amounts[1] = amountEach;
-        amounts[2] = amountEach;
-        amounts[3] = amountEach;
+        uint256[] memory amounts = new uint256[](quad.numTokens());
+        for (uint256 i; i < amounts.length; ++i) amounts[i] = amountEach;
         vm.prank(user);
         (shares,) = quad.joinProportional(amounts, user, 0, block.timestamp + 1 days);
     }
@@ -258,10 +262,10 @@ abstract contract TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook
 
     function _assertAllDoorsLive() internal view {
         address[] memory toks = quad.tokens();
-        assertEq(toks.length, 4);
-        assertEq(quad.pairDoorCount(), 6);
-        for (uint256 i; i < 4; ++i) {
-            for (uint256 j = i + 1; j < 4; ++j) {
+        assertEq(toks.length, quad.numTokens());
+        assertEq(quad.pairDoorCount(), toks.length * (toks.length - 1) / 2);
+        for (uint256 i; i < toks.length; ++i) {
+            for (uint256 j = i + 1; j < toks.length; ++j) {
                 PoolKey memory key = PairPoolLib.pairKey(toks[i], toks[j], 1, IHooks(hook));
                 assertTrue(PairPoolLib.isPoolLive(pm, key), "door live");
             }
@@ -307,6 +311,9 @@ abstract contract TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook
         a.poolManager = address(pm);
         a.feeOracle = address(indexedexManager);
         a.baseAmp = DEFAULT_BASE_AMP;
+        a.tokens = new address[](4);
+        a.standardExchanges = new address[](4);
+        a.rateProviders = new address[](4);
         a.tokens[0] = address(token0);
         a.tokens[1] = address(token1);
         a.tokens[2] = address(token2);
@@ -315,6 +322,8 @@ abstract contract TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook
         for (uint8 i; i < seCount; ++i) {
             a.standardExchanges[i] = sesAll[i];
         }
+        a.tokenDecimals = HookPkgArgsDecimalsLib.tokenDecimals(a.tokens);
+        a.seDecimals = HookPkgArgsDecimalsLib.seDecimals(a.standardExchanges);
     }
 
     function _pkgArgs(
@@ -325,10 +334,12 @@ abstract contract TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook
     ) internal view returns (IUniswapV4StandardExchangeBalancerQuadStableBufferHookPackage.PkgArgs memory a) {
         a.poolManager = address(pm);
         a.feeOracle = address(indexedexManager);
-        a.tokens = toks;
-        a.standardExchanges = ses;
-        a.rateProviders = rps;
+        a.tokens = _dynamic(toks);
+        a.standardExchanges = _dynamic(ses);
+        a.rateProviders = _dynamic(rps);
         a.baseAmp = baseAmp;
+        a.tokenDecimals = HookPkgArgsDecimalsLib.tokenDecimals(a.tokens);
+        a.seDecimals = HookPkgArgsDecimalsLib.seDecimals(a.standardExchanges);
     }
 
     function _setDexFee(uint256 feeWad) internal {
@@ -360,4 +371,17 @@ abstract contract TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook
         vm.prank(user);
         quad.depositSingle(address(token1), 5 ether, user, 0, block.timestamp + 1 hours);
     }
+    function _dynamic(address[4] memory fixedTokens) internal pure returns (address[] memory out) {
+        out = new address[](4);
+        for (uint256 i; i < 4; ++i) out[i] = fixedTokens[i];
+    }
+
+    function _ensureProductDoorsAndFinalize(address hook_, address[] memory activeTokens) internal {
+        IUniswapV4HookStagedPairInit init = IUniswapV4HookStagedPairInit(hook_);
+        for (uint256 i; i < activeTokens.length; ++i) {
+            for (uint256 j = i + 1; j < activeTokens.length; ++j) init.deployPair(activeTokens[i], activeTokens[j]);
+        }
+        require(init.finalizeInitialization(), "finalize");
+    }
+
 }

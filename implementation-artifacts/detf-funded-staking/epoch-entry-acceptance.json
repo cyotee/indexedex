@@ -1,0 +1,14 @@
+{
+  "status": "applied; validation pending",
+  "path": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+  "criteria": [
+    "A2",
+    "A3",
+    "A17",
+    "A22",
+    "A25"
+  ],
+  "scope": "One inherited production-path case across four V4 reserves and both liquidity policies; existing fixture and actual yield funding.",
+  "before_sha256": "ef23b7b8d264e20ddac696bcc12dda7744cb863a60e839276a823d3284a0e395",
+  "after_sha256": "e751128234fed434b634fd2adec8e90b5b56790a64803d4f88526aaf203d855f"
+}

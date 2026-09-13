@@ -1,0 +1,975 @@
+{
+  "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+  "files": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol",
+      "before_sha256": "154fa535096e63fdf64ad1ca863bd8e8414f45c0a42e5704f16ce162e4e9b932",
+      "after_sha256": "3de24c5e4927b3a0fb0214e63784888493c0f13e623642fe6f80d442f1ee7cb1",
+      "mapping": [
+        "Shared owner-authorized funded principal/reward claim, NFT retirement, exact held-DETF unstake, actual custody conservation."
+      ]
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Decimals.sol",
+      "before_sha256": "34bc4d1e05b1d303be872bcae9f6b8acf5933880474c84d691da8b0741d98ec1",
+      "after_sha256": "5e301dcef422bfe4b4e5d66ed9a6032f4657cc6db4a12ca5ffc22311ad7a333d",
+      "mapping": [
+        "Shared owner-authorized funded principal/reward claim, NFT retirement, exact held-DETF unstake, actual custody conservation."
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_MorphoBlueSe.t.sol",
+      "before_sha256": "1074370ee07c267333557b8c880ba14d509855d7f4b453f89e95130c2edcaf13",
+      "after_sha256": "8d64dd79a8a1afd908d522c597c853263b1454258ed38f82d0c48463ec178841",
+      "mapping": [
+        {
+          "test": "test_H_CP_MB_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_PonsV1Se.t.sol",
+      "before_sha256": "e65ae96f80c318de498e9dc37c8cf39f6af544481ff395b7ef27f6bc7b733649",
+      "after_sha256": "66b02df92d69e5849c90379a8ad25d7a10baa183ba788e563bd67bb620c70232",
+      "mapping": [
+        {
+          "test": "test_H_CP_P1_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ3Se.t.sol",
+      "before_sha256": "531835296ef0044eaac7c359f2ebe18e5937d078990df82947029e7949d92d60",
+      "after_sha256": "548114b081f3cd472f4c033896eba70854be7ee906c2f2bdd2330a432d320f4d",
+      "mapping": [
+        {
+          "test": "test_H_CP_GV3_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ4Se.t.sol",
+      "before_sha256": "e34ca1a55f955dc7f90e64090605d49f9034a7e70af31f9ddc63813fd31a1c2c",
+      "after_sha256": "d2e4749f6d96979f873bcb614610c9da542a57006f5d60f4494365b60919dede",
+      "mapping": [
+        {
+          "test": "test_H_CP_GV4_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_MorphoBlueSe.t.sol",
+      "before_sha256": "2191f3c514a1a4d5a6a382a34a09f2226fb49e64a537462601a9b1f11ab94349",
+      "after_sha256": "1dc18901b01d375d4b0ddee59dc67a5f213dc67f02d863300c253bbbbfe7e18a",
+      "mapping": [
+        {
+          "test": "test_H_OR_MB_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_MorphoMix.t.sol",
+      "before_sha256": "36d7e7fb0bfff2b7e8c214c539077e7970427e383ef18fdd257d60908b5c37b3",
+      "after_sha256": "f2cdb2713b33ca5555d9cbeed71d96515f16f742a0cfb6df7e79650db65f6714",
+      "mapping": [
+        {
+          "test": "test_M_OR_MBGV4_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_PonsMix.t.sol",
+      "before_sha256": "d4d142ef73ac590b2c201996557ee9b92a01723ee54957e7bbc9022e27904676",
+      "after_sha256": "c90ce9f4618f743b2f83c491605cbda3b62991ac4fcf5e8332674ee30596ad00",
+      "mapping": [
+        {
+          "test": "test_M_OR_P1P2_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_PonsV1Se.t.sol",
+      "before_sha256": "8c1a83d73f5c6fc37ac9c2c86512d14b9f415b6e0673e1f6348aaac510f721e6",
+      "after_sha256": "ca5d5d22bba81669ef3a7b30a7eeabdac79a3fcb4542582b822744e262d82dbd",
+      "mapping": [
+        {
+          "test": "test_H_OR_P1_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_PonsV2Se.t.sol",
+      "before_sha256": "f92fb05aa9693490ab4a6b9d654ee52a8550270934719a94070feea30c165ee8",
+      "after_sha256": "476a6077145ff63b6cc3eb088c98ce03a80c11560d1ccf610d39a2730058db2d",
+      "mapping": [
+        {
+          "test": "test_H_OR_P2_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_Univ3Se.t.sol",
+      "before_sha256": "257fee0bc18ddbd151f640cfd92d49e55293c75641a07dabc940ab614587d0a4",
+      "after_sha256": "07eed72bc066fe498e4d35668b99e6f48c8d67525f75ec0dd5bf225e5de97694",
+      "mapping": [
+        {
+          "test": "test_H_OR_GV3_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_Univ4Se.t.sol",
+      "before_sha256": "41c9a378b4d84e080b87c8357bece8cf6d773c40bd22acb2c7aab08acf947d18",
+      "after_sha256": "97d871ffa52609c3914a3c2ef6d708047808b45dff0f93b33384c549692d2652",
+      "mapping": [
+        {
+          "test": "test_H_OR_GV4_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Quad_MorphoBlueSe.t.sol",
+      "before_sha256": "e0e8fc655a23097f0bad00cc9dbc8641f8ee64e8bf7856c0e7a8f9a5255759ac",
+      "after_sha256": "fd9afd503a1dbd075c350a10e6329b003021207464a6d0e52e0333675af48b7b",
+      "mapping": [
+        {
+          "test": "test_H_QD_MB_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Quad_MorphoMix.t.sol",
+      "before_sha256": "a7be37d37c6fc6e7bb34f9206301376a170c106936251ffec5ac92a0a3d45f6c",
+      "after_sha256": "66717448505611ca5c79182c0d2932bff1225560c232677055da5eb45032dc92",
+      "mapping": [
+        {
+          "test": "test_M_QD_MBGV4P1_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Quad_PonsMix.t.sol",
+      "before_sha256": "1a56e969c0efa6b31dba91c6c42c96868fa5d7b73005fee96086b86f429f5776",
+      "after_sha256": "7b3febd35bee26173296ba9544a5f1c5275372edc6ff4af05d0634c8757db0d6",
+      "mapping": [
+        {
+          "test": "test_M_QD_P1P2G4_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Quad_PonsV1Se.t.sol",
+      "before_sha256": "87fcf93c385f46db899a5b440dd2fac63a8b456018d7a828cba52c65301d525e",
+      "after_sha256": "d84e1d15e51e500620753d3a974c935931d468c8f098f461e11001b32f9e630d",
+      "mapping": [
+        {
+          "test": "test_H_QD_P1_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Quad_PonsV2Se.t.sol",
+      "before_sha256": "284c4236b22a498f7f0851c93ed1b0f432f05da32ce055c295bf6eef8233a8c6",
+      "after_sha256": "d6a6a9cd4d26fa79a84edbfc18440f8a98e4f0bc27d3cae8f6af02ccff3ad02f",
+      "mapping": [
+        {
+          "test": "test_H_QD_P2_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Quad_Univ3Se.t.sol",
+      "before_sha256": "db58ecad63b1b53dd2ed468324d4bbdf1b1e3b87b4618c9323010f3278dddc15",
+      "after_sha256": "4cd45e7f1e6d0473e8bb97fa11b2d2f747e356c468a9e1a216fc57576e4fd80b",
+      "mapping": [
+        {
+          "test": "test_H_QD_GV3_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Quad_Univ4Se.t.sol",
+      "before_sha256": "1d71b27c175bdaccef602ae3ded9ebb710320d427cc3978750d8f3c09c1eed33",
+      "after_sha256": "14b702ab9d51d4fefb8d5ccc8066cd209c2b0b9328cc3f2f977a4f892dfc7e6f",
+      "mapping": [
+        {
+          "test": "test_H_QD_GV4_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_MorphoBlueSe.t.sol",
+      "before_sha256": "5cab2ea25cb76fe132ddf8f703ea4cb1d42291dd203110ca7fca8f5aca3232ab",
+      "after_sha256": "5c238b41d833643f1c3c3fbc9250c3ad1d15b7f1af0d4a96bbc58987da9d03ef",
+      "mapping": [
+        {
+          "test": "test_H_WE_MB_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_MorphoMix.t.sol",
+      "before_sha256": "57dd663358791cbdafbe5a986edb2c812f91fe4ad8ace9283458334b7625b6a6",
+      "after_sha256": "f16cd45f9e30c45e71e21bcf223906a45754162b048e1fa0e2b796fc0c404ded",
+      "mapping": [
+        {
+          "test": "test_M_WE_MBGV4_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_PonsMix.t.sol",
+      "before_sha256": "cf105d001cf6ce2df0dd2cc36a5c774945ca1a9919658adeb8cf3ce5503e5bee",
+      "after_sha256": "7a70e72bc9eceaa50916b5a76bbcf60d6bace42e134bda9dfc476c6957f20aee",
+      "mapping": [
+        {
+          "test": "test_M_WE_P1P2_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_PonsV1Se.t.sol",
+      "before_sha256": "226b4815315f65cee78ddb793cb2362921617de8dcfa0688f59bc2eb52cb2124",
+      "after_sha256": "9a44f60f8ea680e615e10c63ecb1e633c7fb2040d4b765a85ffca95427965483",
+      "mapping": [
+        {
+          "test": "test_H_WE_P1_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_PonsV2Se.t.sol",
+      "before_sha256": "7b9f93bc71d504d4e461de1c861f49846600099e739dbd81d5c687261fa87352",
+      "after_sha256": "b600b39bbecf175b91aaa74f4fdf569c2bad3209b1b5a720f00035f6e53b1be2",
+      "mapping": [
+        {
+          "test": "test_H_WE_P2_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_Univ3Se.t.sol",
+      "before_sha256": "21a029e39312f7c4a71d4558241fddec38c2dc9ad865c39858148d250f3d191b",
+      "after_sha256": "23b83cb1031987d1337c59ff57227dcf10bb1595730270da7706364fa22c37b0",
+      "mapping": [
+        {
+          "test": "test_H_WE_GV3_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_Univ4Se.t.sol",
+      "before_sha256": "bcb3c89aa809675ed2c1da224bea6f9cda99908ffbb3e7df6eaff6393fe64453",
+      "after_sha256": "04e1798b3940771b5a7d33fd2b858e3ec334657343d0f0ddc582c10084cae4cf",
+      "mapping": [
+        {
+          "test": "test_H_WE_GV4_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Cp_MorphoBlueSe_Lifecycle_Decimals.sol",
+      "before_sha256": "4f0e581504ddc39d549c389055f0e60a31e90a91e9b633914a14bbade8b6aa12",
+      "after_sha256": "5c683ce98dad7f185183d7a45ff1be35f1de912f1864319242b9c74051b02ea2",
+      "mapping": [
+        {
+          "test": "test_H_CP_MB_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Cp_PonsV1Se_Lifecycle_Decimals.sol",
+      "before_sha256": "dfaaaa29de6a33456f2cca8b3a8ef69bd26d8f2165716f2356834423b003abab",
+      "after_sha256": "9b52822ba07e9b1e1fa79584ba4e923768eb7e7f4067e82c1af1b3fe09dc37cb",
+      "mapping": [
+        {
+          "test": "test_H_CP_P1_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Cp_Univ3Se_Lifecycle_Decimals.sol",
+      "before_sha256": "b13e986ddfdfaae46fa069d3982264f8f48f1043e78f59b46db671dd8d5ae2bc",
+      "after_sha256": "5c722a4f6af874e0db35db0780f1e08f527ff91c2d932c92a6680384b29c8d7d",
+      "mapping": [
+        {
+          "test": "test_H_CP_GV3_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Cp_Univ4Se_Lifecycle_Decimals.sol",
+      "before_sha256": "c84865bb087158d4d3768c14d307c48c9834651d3f435130625c3fc7f5ff6362",
+      "after_sha256": "63c445ee0d0b0d303eaa72e8b471e0284bb14bc2b9787f662b232119e58c5282",
+      "mapping": [
+        {
+          "test": "test_H_CP_GV4_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Orbital_MorphoBlueSe_Lifecycle_Decimals.sol",
+      "before_sha256": "e7fa491bfa2cdf477b938b6bd4072ea82634334ab0a51eb4225fd05d241a9272",
+      "after_sha256": "04eecbec42b93f062091551b4deb45a6cde81ce1fc1d8206a6839ced8ba3ea75",
+      "mapping": [
+        {
+          "test": "test_H_OR_MB_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Orbital_MorphoMix_Lifecycle_Decimals.sol",
+      "before_sha256": "08788346edf28b2b9edd574d963f65725d1f9a3dd90ac9d583e9f4c6355c5ccf",
+      "after_sha256": "16759d8d4120b5ca7a8aeb6092f5b34c5ed0a6fb2db4f9e3467502518ac98bf5",
+      "mapping": [
+        {
+          "test": "test_H_OR_Mix_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Orbital_PonsMix_Lifecycle_Decimals.sol",
+      "before_sha256": "d60410e7150b522b14cc3c5dd25372e029b35b074de7d2c63e42d9e8ef3e1ff3",
+      "after_sha256": "0aabdaef19fb01eece571d405e7cd7435f605f75f799f29856553146728b0b6d",
+      "mapping": [
+        {
+          "test": "test_H_OR_PonsMix_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Orbital_PonsV1Se_Lifecycle_Decimals.sol",
+      "before_sha256": "2a6d3c95bb5923b93911eb8b7a7357ae72d528d9b879d2970b7b32c0dc9fbf24",
+      "after_sha256": "0240ee12776fc08c6abedcd07e1f43c14ed7f1aeec98c88172e92844b52ba014",
+      "mapping": [
+        {
+          "test": "test_H_OR_P1_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Orbital_PonsV2Se_Lifecycle_Decimals.sol",
+      "before_sha256": "dcb3626986109f248996700283ee2f5018c6b137bd8330a11fe17c34f8344515",
+      "after_sha256": "91c30268c15bd13d54bcf12d83dd3fa5620849f913f1c41271607a8e5bf55d98",
+      "mapping": [
+        {
+          "test": "test_H_OR_P2_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Orbital_Univ3Se_Lifecycle_Decimals.sol",
+      "before_sha256": "1f7acd8154a75c8665b5961aa4e1612a4338e40b6970ba0f959fd4cef27d092e",
+      "after_sha256": "637c9bf22d1c272de1c4c9d9f76e03767ac9c9413e4118075a67e35ab3398cd4",
+      "mapping": [
+        {
+          "test": "test_H_OR_GV3_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Orbital_Univ4Se_Lifecycle_Decimals.sol",
+      "before_sha256": "d0e699097a97ababda70f92d56e1b6b1f1b28d5d97fb7fddd1ea3af1a74460c6",
+      "after_sha256": "75e4f7778a78fe1c5019bab4214ba1a656f3054eeb03d2542fafa27790265de1",
+      "mapping": [
+        {
+          "test": "test_H_OR_GV4_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Quad_MorphoBlueSe_Lifecycle_Decimals.sol",
+      "before_sha256": "572d0669bb3b93d0b6648c92d3c5de971ae3f8c0a0b55b54bd405502d6d3ca73",
+      "after_sha256": "1985e5c3989161302b03b1e890b1c4937b588c84948088cd7060575d42e677e6",
+      "mapping": [
+        {
+          "test": "test_H_QD_MB_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Quad_MorphoMix_Lifecycle_Decimals.sol",
+      "before_sha256": "b597aa5a7473e768e93b64b983ed02de406b42a711815a42deadbb46a0810d67",
+      "after_sha256": "0837da00db7c20462f77bdd3b789a2ba8484c358b15a66431ec9d54dd2d54c3f",
+      "mapping": [
+        {
+          "test": "test_H_QD_Mix_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Quad_PonsMix_Lifecycle_Decimals.sol",
+      "before_sha256": "705bc07863408a0a4ebafcb1cdb467f76b2954bf99ae55d1588a137bf2bbf56f",
+      "after_sha256": "f7e38c6e8af7adff7e18cfbb3a9025d0acf6cf6134fc004b9a1d30c8a1ec53d0",
+      "mapping": [
+        {
+          "test": "test_H_QD_PonsMix_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Quad_PonsV1Se_Lifecycle_Decimals.sol",
+      "before_sha256": "d4fa820e258fed53a895d96f7abadb21beb88d232fe1f72058dc82d2c4d0a601",
+      "after_sha256": "9b42884ba3c9ab9df6dfdb4dd64f4b832cdbf035c8c788fd3638351c514c11f2",
+      "mapping": [
+        {
+          "test": "test_H_QD_P1_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Quad_PonsV2Se_Lifecycle_Decimals.sol",
+      "before_sha256": "d9126318b7603f2f1daa6a69a6c2ef7795019769dea7994c95bdcb969809fc11",
+      "after_sha256": "5b0f5c761d438545b6cbb854e111ce045d5d001b71ea30d64854038b69012db5",
+      "mapping": [
+        {
+          "test": "test_H_QD_P2_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Quad_Univ3Se_Lifecycle_Decimals.sol",
+      "before_sha256": "10fb4f615a5ea370a16c744181a1334633b83ec91c3b42472861d8f4c8574fd2",
+      "after_sha256": "57cec944a52be0fc4f6176afe134ca89b99251542b72439767f25d7517730285",
+      "mapping": [
+        {
+          "test": "test_H_QD_GV3_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Quad_Univ4Se_Lifecycle_Decimals.sol",
+      "before_sha256": "5f519654af657e6bbdf2c4c06324b3c401324b7f18b2198ecbccbb0fb50c645d",
+      "after_sha256": "ee3ea198e74c5c2d77c84da09113365be26b7f79c4454d39b9ce1a0612fc955c",
+      "mapping": [
+        {
+          "test": "test_H_QD_GV4_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Weighted_MorphoBlueSe_Lifecycle_Decimals.sol",
+      "before_sha256": "a9621ff88f98a84874e8fa3bce1c59a2eaf2ee98c63463ddb39129bcc813a88d",
+      "after_sha256": "ab444f513015718b74bf134395aba63dd6ecac052e2cbfa168f127295056c76a",
+      "mapping": [
+        {
+          "test": "test_H_WE_MB_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Weighted_MorphoMix_Lifecycle_Decimals.sol",
+      "before_sha256": "f41b1c4003cc2fd3cba6c76db2ef6868be3e6e7ff34600823ae5c583967391ad",
+      "after_sha256": "39fbc0dbe60f104aa294097f8bff5e49162df2d666067b0b7d8f8c1eff2f902c",
+      "mapping": [
+        {
+          "test": "test_H_WE_Mix_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Weighted_PonsMix_Lifecycle_Decimals.sol",
+      "before_sha256": "ff66b89874f812f272b37448d8801c631143c85b6050e07c3580c63d354188ac",
+      "after_sha256": "919d53da236745cd05570dbee2885a10e8166ac6c640b4ca5a93b94d89f44c62",
+      "mapping": [
+        {
+          "test": "test_H_WE_PonsMix_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Weighted_PonsV1Se_Lifecycle_Decimals.sol",
+      "before_sha256": "2fd5c744e931e3231b4042daa6c33347b33b4ade3b846fc0b5aec0e6c326c923",
+      "after_sha256": "c37016038b748df54ef12404c0420d70587da56cf8eb8124178380910e290990",
+      "mapping": [
+        {
+          "test": "test_H_WE_P1_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Weighted_PonsV2Se_Lifecycle_Decimals.sol",
+      "before_sha256": "c9dc02a62330b80c911253550fe2acb74a8de6c5e28d0fc91c017de7f1ba4da9",
+      "after_sha256": "cfc33522bed5e1aa4efa502a9ee1addea16ee89a0d5ecbe6487db3cb2885f3a3",
+      "mapping": [
+        {
+          "test": "test_H_WE_P2_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Weighted_Univ3Se_Lifecycle_Decimals.sol",
+      "before_sha256": "cf43d424683ef236254233e5ec8b6489c9c3ed8dca4fd9f1a2803960dd107c9f",
+      "after_sha256": "7545db89d1fcf6d7db087d877c9994b034de4d44a1a434e7dd5d58d5c57621be",
+      "mapping": [
+        {
+          "test": "test_H_WE_GV3_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Weighted_Univ4Se_Lifecycle_Decimals.sol",
+      "before_sha256": "0d457966c703b8a489f6e1edd2e5c34f28d23dc14de99102da25460e8cb26a8a",
+      "after_sha256": "12a9243490a36c7dcc0927d4cde30986b0de70a4d443c71db8d9ff5f971cf47f",
+      "mapping": [
+        {
+          "test": "test_H_WE_GV4_close",
+          "retired_expectations": [
+            "reserve basket paid to bond owner",
+            "zero DETF basket slot",
+            "original LP shares cleared"
+          ],
+          "replacement": "Funded mature principal plus independently funded rewards paid as sDETF, NFT retirement, exact 1:1 DETF redemption, unchanged protocol LP; provider setup and R19/allowance diagnostics retained."
+        },
+        {
+          "burn_supply": "No epoch elapses between the fixture mint and burn; actual selected primary branch burns supply, reserve-swap fallback is supply-neutral."
+        }
+      ]
+    }
+  ],
+  "historical_preparation_status": "prepared; no Solidity edits",
+  "application_record": "v4-provider-funded-lifecycle-migration.json",
+  "current_status_source": "current-implementation-queue.json and acceptance-progress.json; later edits and validation can supersede the original application hashes.",
+  "pending_owner_approval": false
+}

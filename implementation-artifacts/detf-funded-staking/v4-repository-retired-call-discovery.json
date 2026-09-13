@@ -1,0 +1,348 @@
+{
+  "recorded_at_utc": "2026-09-08T00:55:00.055736+00:00",
+  "scope": "Repository-wide explicit V4 interface callers; excludes comments and literals. Discovery only, not a compiler or dynamic-call proof. Inherited types without explicit interface name may require further migration.",
+  "calls": [
+    {
+      "path": "test/foundry/fork/robinhood_4663/RobinhoodReleaseRehearsal.t.sol",
+      "line": 538,
+      "receiver": "detfInfo",
+      "method": "previewMint"
+    },
+    {
+      "path": "test/foundry/fork/robinhood_4663/RobinhoodReleaseRehearsal.t.sol",
+      "line": 540,
+      "receiver": "detfInfo",
+      "method": "mint"
+    },
+    {
+      "path": "test/foundry/fork/robinhood_4663/RobinhoodReleaseRehearsal.t.sol",
+      "line": 542,
+      "receiver": "detfInfo",
+      "method": "previewBurn"
+    },
+    {
+      "path": "test/foundry/fork/robinhood_4663/RobinhoodReleaseRehearsal.t.sol",
+      "line": 544,
+      "receiver": "detfInfo",
+      "method": "burn"
+    },
+    {
+      "path": "test/foundry/fork/robinhood_4663/RobinhoodReleaseRehearsal.t.sol",
+      "line": 546,
+      "receiver": "detfInfo",
+      "method": "previewCloseBondMature"
+    },
+    {
+      "path": "test/foundry/fork/robinhood_4663/RobinhoodReleaseRehearsal.t.sol",
+      "line": 548,
+      "receiver": "detfInfo",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_IoTablesOpenBase.sol",
+      "line": 37,
+      "receiver": "detfInfo",
+      "method": "previewMint"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ReserveDonationOpenBase.sol",
+      "line": 566,
+      "receiver": "detfInfo",
+      "method": "previewCloseBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ReserveDonationOpenBase.sol",
+      "line": 578,
+      "receiver": "detfInfo",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ReserveDonationOpenBase.sol",
+      "line": 600,
+      "receiver": "detfInfo",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ReserveDonationOpenBase.sol",
+      "line": 602,
+      "receiver": "detfInfo",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ReserveDonationOpenBase.sol",
+      "line": 664,
+      "receiver": "detfInfo",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_IoTables.t.sol",
+      "line": 66,
+      "receiver": "info",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_IoTablesGoldBase.sol",
+      "line": 173,
+      "receiver": "detfInfo",
+      "method": "previewMint"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Stage11OpenSuite.sol",
+      "line": 243,
+      "receiver": "detfInfo",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Stage11OpenSuite.sol",
+      "line": 245,
+      "receiver": "detfInfo",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad.t.sol",
+      "line": 32,
+      "receiver": "info",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad.t.sol",
+      "line": 43,
+      "receiver": "info",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad.t.sol",
+      "line": 108,
+      "receiver": "info",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_IoTablesGoldBase_Decimals.sol",
+      "line": 173,
+      "receiver": "detfInfo",
+      "method": "previewMint"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Stage11OpenSuite_Decimals.sol",
+      "line": 271,
+      "receiver": "detfInfo",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Stage11OpenSuite_Decimals.sol",
+      "line": 273,
+      "receiver": "detfInfo",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_ReserveDonationOpenBase_Decimals.sol",
+      "line": 567,
+      "receiver": "detfInfo",
+      "method": "previewCloseBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_ReserveDonationOpenBase_Decimals.sol",
+      "line": 579,
+      "receiver": "detfInfo",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_ReserveDonationOpenBase_Decimals.sol",
+      "line": 601,
+      "receiver": "detfInfo",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_ReserveDonationOpenBase_Decimals.sol",
+      "line": 603,
+      "receiver": "detfInfo",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_ReserveDonationOpenBase_Decimals.sol",
+      "line": 665,
+      "receiver": "detfInfo",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_IoTablesOpenBase_Decimals.sol",
+      "line": 37,
+      "receiver": "detfInfo",
+      "method": "previewMint"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_IoTables_Decimals.sol",
+      "line": 66,
+      "receiver": "info",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_Stage11Helpers.sol",
+      "line": 349,
+      "receiver": "IUniswapV4Detf(instance_)",
+      "method": "compoundProtocolRewards"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_Policy.t.sol",
+      "line": 36,
+      "receiver": "info",
+      "method": "thresholdMode"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_Policy.t.sol",
+      "line": 92,
+      "receiver": "info",
+      "method": "compoundProtocolRewards"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_Policy.t.sol",
+      "line": 402,
+      "receiver": "detfInfo",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_Policy.t.sol",
+      "line": 405,
+      "receiver": "detfInfo",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+      "line": 61,
+      "receiver": "detfInfo",
+      "method": "previewMint"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+      "line": 212,
+      "receiver": "info",
+      "method": "compoundProtocolRewards"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+      "line": 222,
+      "receiver": "info",
+      "method": "compoundProtocolRewards"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+      "line": 277,
+      "receiver": "info_",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+      "line": 659,
+      "receiver": "detfInfo",
+      "method": "previewCloseBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+      "line": 669,
+      "receiver": "detfInfo",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+      "line": 688,
+      "receiver": "detfInfo",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+      "line": 690,
+      "receiver": "detfInfo",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+      "line": 733,
+      "receiver": "detfInfo",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Stage11Helpers_Decimals.sol",
+      "line": 349,
+      "receiver": "IUniswapV4Detf(instance_)",
+      "method": "compoundProtocolRewards"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Policy_Decimals.sol",
+      "line": 36,
+      "receiver": "info",
+      "method": "thresholdMode"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Policy_Decimals.sol",
+      "line": 92,
+      "receiver": "info",
+      "method": "compoundProtocolRewards"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Policy_Decimals.sol",
+      "line": 402,
+      "receiver": "detfInfo",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Policy_Decimals.sol",
+      "line": 405,
+      "receiver": "detfInfo",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+      "line": 61,
+      "receiver": "detfInfo",
+      "method": "previewMint"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+      "line": 212,
+      "receiver": "info",
+      "method": "compoundProtocolRewards"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+      "line": 222,
+      "receiver": "info",
+      "method": "compoundProtocolRewards"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+      "line": 277,
+      "receiver": "info_",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+      "line": 659,
+      "receiver": "detfInfo",
+      "method": "previewCloseBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+      "line": 669,
+      "receiver": "detfInfo",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+      "line": 688,
+      "receiver": "detfInfo",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+      "line": 690,
+      "receiver": "detfInfo",
+      "method": "closeBondMature"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+      "line": 733,
+      "receiver": "detfInfo",
+      "method": "closeBondMature"
+    }
+  ]
+}

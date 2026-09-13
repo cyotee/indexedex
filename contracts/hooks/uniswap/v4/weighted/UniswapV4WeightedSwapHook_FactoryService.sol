@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -8,27 +9,13 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 import {VM_ADDRESS} from "@crane/contracts/constants/FoundryConstants.sol";
 import {Vm} from "forge-std/Vm.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
-import {
-    IUniswapV4HookDiamondPackage
-} from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackage.sol";
-import {
-    IUniswapV4HookDiamondPackageCallBackFactory
-} from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackageCallBackFactory.sol";
+import {IUniswapV4HookDiamondPackage} from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackage.sol";
+import {IUniswapV4HookDiamondPackageCallBackFactory} from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackageCallBackFactory.sol";
 import {
     UniswapV4HookDiamondPackageCallBackFactory_FactoryService as HookFactoryService
 } from "contracts/hooks/uniswap/v4/factory/UniswapV4HookDiamondPackageCallBackFactory_FactoryService.sol";
-import {
-    UniswapV4WeightedSwapHookHooksFacet
-} from "contracts/hooks/uniswap/v4/weighted/facets/UniswapV4WeightedSwapHookHooksFacet.sol";
-import {
-    UniswapV4WeightedSwapHookLiquidityFacet
-} from "contracts/hooks/uniswap/v4/weighted/facets/UniswapV4WeightedSwapHookLiquidityFacet.sol";
-import {
-    UniswapV4WeightedSwapHookDFPkg
-} from "contracts/hooks/uniswap/v4/weighted/UniswapV4WeightedSwapHookDFPkg.sol";
-import {
-    IUniswapV4WeightedSwapHookPackage
-} from "contracts/hooks/uniswap/v4/weighted/interfaces/IUniswapV4WeightedSwapHookPackage.sol";
+
+import {IUniswapV4WeightedSwapHookPackage} from "contracts/hooks/uniswap/v4/weighted/interfaces/IUniswapV4WeightedSwapHookPackage.sol";
 
 /**
  * @title UniswapV4WeightedSwapHook_FactoryService
@@ -44,18 +31,18 @@ library UniswapV4WeightedSwapHook_FactoryService {
 
     function deployHooksFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         facet = create3Factory.deployFacet(
-            type(UniswapV4WeightedSwapHookHooksFacet).creationCode,
-            abi.encode(type(UniswapV4WeightedSwapHookHooksFacet).name)._hash()
+            ArtifactCreationCode.creationCode(create3Factory, "UniswapV4WeightedSwapHookHooksFacet.sol:UniswapV4WeightedSwapHookHooksFacet"),
+            abi.encode("UniswapV4WeightedSwapHookHooksFacet")._hash()
         );
-        vm.label(address(facet), type(UniswapV4WeightedSwapHookHooksFacet).name);
+        vm.label(address(facet), "UniswapV4WeightedSwapHookHooksFacet");
     }
 
     function deployLiquidityFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         facet = create3Factory.deployFacet(
-            type(UniswapV4WeightedSwapHookLiquidityFacet).creationCode,
-            abi.encode(type(UniswapV4WeightedSwapHookLiquidityFacet).name)._hash()
+            ArtifactCreationCode.creationCode(create3Factory, "UniswapV4WeightedSwapHookLiquidityFacet.sol:UniswapV4WeightedSwapHookLiquidityFacet"),
+            abi.encode("UniswapV4WeightedSwapHookLiquidityFacet")._hash()
         );
-        vm.label(address(facet), type(UniswapV4WeightedSwapHookLiquidityFacet).name);
+        vm.label(address(facet), "UniswapV4WeightedSwapHookLiquidityFacet");
     }
 
     function deployPackage(
@@ -67,10 +54,10 @@ library UniswapV4WeightedSwapHook_FactoryService {
         vm.prank(owner);
         pkg = IUniswapV4WeightedSwapHookPackage(
             registry.deployPkg(
-                type(UniswapV4WeightedSwapHookDFPkg).creationCode, abi.encode(init), salt
+                ArtifactCreationCode.creationCode("UniswapV4WeightedSwapHookDFPkg.sol:UniswapV4WeightedSwapHookDFPkg"), abi.encode(init), salt
             )
         );
-        vm.label(address(pkg), type(UniswapV4WeightedSwapHookDFPkg).name);
+        vm.label(address(pkg), "UniswapV4WeightedSwapHookDFPkg");
     }
 
     function findMineNonce(

@@ -9,6 +9,7 @@ import {
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHookPackage.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {SimpleYieldERC4626} from "contracts/test/stubs/SimpleYieldERC4626.sol";
+import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 
 /**
  * @title UniswapV4StandardExchangeWeightedBufferHook_N8
@@ -66,6 +67,8 @@ contract UniswapV4StandardExchangeWeightedBufferHook_N8 is
         }
         a.ownerOnlyLiquidity = _pkgOwnerOnlyLiquidity();
         a.owner = _pkgOwner();
+        a.tokenDecimals = HookPkgArgsDecimalsLib.tokenDecimals(a.tokens);
+        a.seDecimals = HookPkgArgsDecimalsLib.seDecimals(a.standardExchanges);
 
         _deployHookWithArgs(a);
         for (uint256 i; i < 8; ++i) {

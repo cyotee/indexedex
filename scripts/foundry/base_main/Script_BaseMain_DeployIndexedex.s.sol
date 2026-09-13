@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+
 import {Script} from "forge-std/Script.sol";
 import {console2} from "forge-std/console2.sol";
 
@@ -23,8 +26,6 @@ import {IntrospectionFacetFactoryService} from "@crane/contracts/introspection/I
 import {IRouter as IAerodromeRouter} from "@crane/contracts/interfaces/protocols/dexes/aerodrome/IRouter.sol";
 import {IPoolFactory as IAerodromePoolFactory} from "@crane/contracts/interfaces/protocols/dexes/aerodrome/IPoolFactory.sol";
 
-import {SenderGuardFacet} from "@crane/contracts/protocols/dexes/balancer/v3/vault/SenderGuardFacet.sol";
-
 /* -------------------------------------------------------------------------- */
 /*                                 Balancer V3                                */
 /* -------------------------------------------------------------------------- */
@@ -36,21 +37,21 @@ import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IV
 /* -------------------------------------------------------------------------- */
 
 import {FeeCollectorFactoryService} from "contracts/fee/collector/FeeCollectorFactoryService.sol";
-import {IFeeCollectorDFPkg} from "contracts/fee/collector/FeeCollectorDFPkg.sol";
+import {IFeeCollectorDFPkg} from "contracts/fee/collector/IFeeCollectorDFPkg.sol";
 import {IFeeCollectorProxy} from "contracts/interfaces/proxies/IFeeCollectorProxy.sol";
 
 import {IndexedexManagerFactoryService} from "contracts/manager/IndexedexManagerFactoryService.sol";
-import {IIndexedexManagerDFPkg} from "contracts/manager/IndexedexManagerDFPkg.sol";
+import {IIndexedexManagerDFPkg} from "contracts/manager/IIndexedexManagerDFPkg.sol";
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
 
 import {Aerodrome_Component_FactoryService} from "contracts/protocols/dexes/aerodrome/v1/Aerodrome_Component_FactoryService.sol";
-import {IAerodromeStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeDFPkg.sol";
+import {IAerodromeStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/v1/IAerodromeStandardExchangeDFPkg.sol";
 
 import {BalancerV3StandardExchangeRouter_FactoryService} from "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouter_FactoryService.sol";
-import {IBalancerV3StandardExchangeRouterDFPkg} from "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterDFPkg.sol";
+import {IBalancerV3StandardExchangeRouterDFPkg} from "contracts/protocols/dexes/balancer/v3/routers/IBalancerV3StandardExchangeRouterDFPkg.sol";
 import {IBalancerV3StandardExchangeRouterProxy} from "contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol";
 
 /**
@@ -194,36 +195,20 @@ contract Script_BaseMain_DeployIndexedex is Script {
         internal
         returns (IIndexedexManagerProxy indexedexManager)
     {
-        IFacet vaultFeeOracleQueryFacet = create3Factory.deployVaultFeeOracleQueryFacet();
-        IFacet vaultFeeOracleManagerFacet = create3Factory.deployVaultFeeOracleManagerFacet();
-        IFacet operableFacet = create3Factory.deployOperableFacet();
-
-        IFacet vaultRegistryDeploymentFacet = create3Factory.deployVaultRegistryDeploymentFacet();
-        IFacet vaultRegistryVaultManagerFacet = create3Factory.deployVaultRegistryVaultManagerFacet();
-        IFacet vaultRegistryVaultPackageManagerFacet = create3Factory.deployVaultRegistryVaultPackageManagerFacet();
-        IFacet vaultRegistryVaultPackageQueryFacet = create3Factory.deployVaultRegistryVaultPackageQueryFacet();
-        IFacet vaultRegistryVaultQueryFacet = create3Factory.deployVaultRegistryVaultQueryFacet();
-
-        IFacet vaultRegistryDisableQueryFacet = create3Factory.deployVaultRegistryDisableQueryFacet();
-
-        IFacet vaultRegistryDisableManagerFacet = create3Factory.deployVaultRegistryDisableManagerFacet();
-
-        IIndexedexManagerDFPkg indexedexManagerDFPkg = create3Factory.deployIndexedexManagerDFPkg(
-            IIndexedexManagerDFPkg.PkgInit({
-                diamondCutFacet: diamondCutFacet,
-                multiStepOwnableFacet: multiStepOwnableFacet,
-                vaultFeeQueryFacet: vaultFeeOracleQueryFacet,
-                vaultFeeManagerFacet: vaultFeeOracleManagerFacet,
-                operableFacet: operableFacet,
-                vaultRegistryDeploymentFacet: vaultRegistryDeploymentFacet,
-                vaultRegistryVaultManagerFacet: vaultRegistryVaultManagerFacet,
-                vaultRegistryVaultPackageManagerFacet: vaultRegistryVaultPackageManagerFacet,
-                vaultRegistryVaultPackageQueryFacet: vaultRegistryVaultPackageQueryFacet,
-                vaultRegistryVaultQueryFacet: vaultRegistryVaultQueryFacet,
-                vaultRegistryDisableQueryFacet: vaultRegistryDisableQueryFacet,
-                vaultRegistryDisableManagerFacet: vaultRegistryDisableManagerFacet
-            })
-            );
+        IIndexedexManagerDFPkg.PkgInit memory init_;
+        init_.diamondCutFacet = diamondCutFacet;
+        init_.multiStepOwnableFacet = multiStepOwnableFacet;
+        init_.vaultFeeQueryFacet = create3Factory.deployVaultFeeOracleQueryFacet();
+        init_.vaultFeeManagerFacet = create3Factory.deployVaultFeeOracleManagerFacet();
+        init_.operableFacet = create3Factory.deployOperableFacet();
+        init_.vaultRegistryDeploymentFacet = create3Factory.deployVaultRegistryDeploymentFacet();
+        init_.vaultRegistryVaultManagerFacet = create3Factory.deployVaultRegistryVaultManagerFacet();
+        init_.vaultRegistryVaultPackageManagerFacet = create3Factory.deployVaultRegistryVaultPackageManagerFacet();
+        init_.vaultRegistryVaultPackageQueryFacet = create3Factory.deployVaultRegistryVaultPackageQueryFacet();
+        init_.vaultRegistryVaultQueryFacet = create3Factory.deployVaultRegistryVaultQueryFacet();
+        init_.vaultRegistryDisableQueryFacet = create3Factory.deployVaultRegistryDisableQueryFacet();
+        init_.vaultRegistryDisableManagerFacet = create3Factory.deployVaultRegistryDisableManagerFacet();
+        IIndexedexManagerDFPkg indexedexManagerDFPkg = create3Factory.deployIndexedexManagerDFPkg(init_);
 
         indexedexManager = diamondPackageFactory.deployIndexedexManager(
             create3Factory,
@@ -245,12 +230,12 @@ contract Script_BaseMain_DeployIndexedex is Script {
         // Use the Aerodrome factory service to avoid stack-too-deep.
         {
             IAerodromeStandardExchangeDFPkg.PkgInit memory pkgInit_;
-            pkgInit_.erc20Facet = erc20Facet;
-            pkgInit_.erc2612Facet = erc2612Facet;
-            pkgInit_.erc5267Facet = erc5267Facet;
-            pkgInit_.erc4626Facet = erc4626Facet;
-            pkgInit_.multiAssetBasicVaultFacet = multiAssetBasicVaultFacet;
-            pkgInit_.multiAssetStandardVaultFacet = multiAssetStandardVaultFacet;
+            pkgInit_.erc20Facet = create3Factory.deployERC20Facet();
+            pkgInit_.erc2612Facet = create3Factory.deployERC2612Facet();
+            pkgInit_.erc5267Facet = create3Factory.deployERC5267Facet();
+            pkgInit_.erc4626Facet = create3Factory.deployERC4626Facet();
+            pkgInit_.multiAssetBasicVaultFacet = create3Factory.deployMultiAssetBasicVaultFacet();
+            pkgInit_.multiAssetStandardVaultFacet = create3Factory.deployMultiAssetStandardVaultFacet();
             pkgInit_.aerodromeStandardExchangeInFacet = create3Factory.deployAerodromeStandardExchangeInFacet();
             pkgInit_.aerodromeStandardExchangeOutFacet = create3Factory.deployAerodromeStandardExchangeOutFacet();
             pkgInit_.aerodromeStandardExchangeOutQueryFacet = create3Factory.deployAerodromeStandardExchangeOutQueryFacet();
@@ -306,13 +291,13 @@ contract Script_BaseMain_DeployIndexedex is Script {
             pkgInit.balancerV3StandardExchangeBatchRouterExactOutFacet = create3Factory.deployBalancerV3StandardExchangeBatchRouterExactOutFacet();
             pkgInit.balancerV3StandardExchangeRouterPrepayFacet = create3Factory.deployBalancerV3StandardExchangeRouterPrepayFacet();
             pkgInit.balancerV3StandardExchangeRouterPrepayHooksFacet = create3Factory.deployBalancerV3StandardExchangeRouterPrepayHooksFacet();
-            pkgInit.balancerV3StandardExchangeRouterPermit2WitnessFacet = create3Factory.deployBalancerV3StandardExchangeRouterPermit2WitnessFacet();
+            pkgInit.balancerV3StandardExchangePermit2WitnessFacet = create3Factory.deployBalancerV3StandardExchangeRouterPermit2WitnessFacet();
             pkgInit.balancerV3Vault = balancerV3Vault;
             pkgInit.permit2 = permit2;
             pkgInit.weth = weth;
         }
 
-        balRouterPkg = create3Factory.deployBalancerV3StandardExchangeRouterDFPkg(
+        seRouterDFPkg = create3Factory.deployBalancerV3StandardExchangeRouterDFPkg(
             pkgInit
         );
 
@@ -321,8 +306,8 @@ contract Script_BaseMain_DeployIndexedex is Script {
 
     function _deploySenderGuardFacet(ICreate3FactoryProxy create3Factory_) internal returns (IFacet facet) {
         facet = create3Factory_.deployFacet(
-            type(SenderGuardFacet).creationCode,
-            abi.encode(type(SenderGuardFacet).name)._hash()
+            ArtifactCreationCode.creationCode(create3Factory, "SenderGuardFacet.sol:SenderGuardFacet"),
+            abi.encode("SenderGuardFacet")._hash()
         );
     }
 }

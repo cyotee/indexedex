@@ -8,6 +8,8 @@ import {
 } from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
 import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
+import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
+import {SimpleYieldERC4626} from "contracts/test/stubs/SimpleYieldERC4626.sol";
 
 /// @notice Harness holding AddressSets so Stage 00 tests drive the production lib.
 contract UniswapV4SeBufferHookLegLibHarness {
@@ -116,6 +118,19 @@ contract UniswapV4SeBufferHookLegLibTest is Test {
             abi.encodeWithSelector(UniswapV4SeBufferHookLegLib.PairSeOverlap.selector, pair1, pair1)
         );
         harness.addPairSe(pair1, pair1);
+    }
+
+    function test_addPairSe_wrapperShareInventory_allowsOverlap() public {
+        SimpleMintableERC20 underlying = new SimpleMintableERC20("U", "U");
+        SimpleYieldERC4626 wrapper = new SimpleYieldERC4626(underlying);
+        harness.addPairSe(address(wrapper), address(wrapper));
+        assertTrue(harness.pairContains(address(wrapper)));
+        assertTrue(harness.seContains(address(wrapper)));
+        assertEq(harness.standardExchangeOf(address(wrapper)), address(wrapper));
+        assertEq(
+            uint256(harness.classify(address(wrapper))),
+            uint256(UniswapV4SeBufferHookLegLib.LegKind.Pair)
+        );
     }
 
     function test_addPairSe_secondLeg_ok() public {

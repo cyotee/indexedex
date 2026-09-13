@@ -7,6 +7,7 @@ import {IStandardExchangeBufferPool} from
     "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPool.sol";
 import {TestBase_StandardExchangeBufferPool} from
     "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/bases/TestBase_StandardExchangeBufferPool.sol";
+import {DETFDecimalScaleLib} from "contracts/vaults/detf/common/core/DETFDecimalScaleLib.sol";
 
 /**
  * @title Behavior_StandardExchangeBufferPool_LP_AddUnbalanced
@@ -167,10 +168,10 @@ abstract contract Behavior_StandardExchangeBufferPool_LP_AddUnbalanced is Test {
         assertGt(bptOut, 0, "lpAdd_unbalanced_both: no BPT minted");
         assertEq(tPost, tPre + bptOut, "lpAdd_unbalanced_both: total supply mismatch");
 
-        // (b) virtualTTA grew by ttaIn (STANDARD token, scaled18 == raw for 18-decimal TTA).
+        // (b) virtualTTA grew by ttaIn in Vault scaled18 (raw * 10^(18-decimals)).
         assertApproxEqAbs(
             p.virtualTTA(),
-            vtPre + ttaIn,
+            vtPre + DETFDecimalScaleLib.nativeToWad(address(tb.tta()), ttaIn),
             1e9,
             "lpAdd_unbalanced_both: virtualTTA must grow by ttaIn"
         );

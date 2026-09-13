@@ -1,6 +1,6 @@
 ---
 name: indexedex-ui-refactor
-description: Indexedex frontend deployment-environment and artifact-registry refactor. Use when switching the UI between live Sepolia and local supersim_sepolia, updating address artifact loading, changing wagmi transports, or touching the deployment environment toggle, address registry, or chain-id resolution helpers.
+description: "IndexedEx frontend environment switching, deployment artifacts, address registries, chain IDs and wagmi transports."
 ---
 
 # Indexedex UI Refactor

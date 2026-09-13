@@ -1,0 +1,19 @@
+{
+  "recorded_at_utc": "2026-09-11T12:39:31.312298+00:00",
+  "status": "PASS_CURRENT_CONSOLIDATION_AND_RUNTIME_COUNTS",
+  "compiled_contracts": 2696,
+  "compiled_methods": 31312,
+  "executed_passed": 31312,
+  "failed": 0,
+  "skipped": 0,
+  "scope_method_counts": {
+    "IN_SCOPE_OR_SHARED_DEPENDENCY": 27558,
+    "D66_DEFERRED_PRESERVE_EXISTING": 265,
+    "D60_BALANCER_DETF_EXCLUDED": 3489
+  },
+  "compiled_inventory": "compiled-test-inventory-current.json",
+  "source_reconciliation": "current-test-consolidation.json",
+  "new_tests": "production-readiness/lifecycle-test-additions.json",
+  "runtime": "implementation-hermetic-test.json",
+  "limitations": "Overlapping focused counts are not summed. Earlier baseline includes excluded families and existing workspace changes. Timing differences are not a controlled full-suite speedup measurement."
+}

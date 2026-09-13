@@ -1,0 +1,97 @@
+{
+  "recorded_at_utc": "2026-09-08T03:55:30.629255+00:00",
+  "scope": "Current compiled V4 SE facets, execution delegates and package; run only after successful current-source build.",
+  "rows": [
+    {
+      "contract": "UniswapV4StandardExchangeDFPkg",
+      "artifact": "out/UniswapV4StandardExchangeDFPkg.sol/UniswapV4StandardExchangeDFPkg.json",
+      "runtime_bytes": 13229,
+      "eip170_limit": 24576,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4StandardExchangeInExecutionDelegate",
+      "artifact": "out/UniswapV4StandardExchangeInExecutionDelegate.sol/UniswapV4StandardExchangeInExecutionDelegate.json",
+      "runtime_bytes": 20983,
+      "eip170_limit": 24576,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4StandardExchangeInFacet",
+      "artifact": "out/UniswapV4StandardExchangeInFacet.sol/UniswapV4StandardExchangeInFacet.json",
+      "runtime_bytes": 20338,
+      "eip170_limit": 24576,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4StandardExchangeInMultiFacet",
+      "artifact": "out/UniswapV4StandardExchangeInMultiFacet.sol/UniswapV4StandardExchangeInMultiFacet.json",
+      "runtime_bytes": 20971,
+      "eip170_limit": 24576,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4StandardExchangeInMultiQueryFacet",
+      "artifact": "out/UniswapV4StandardExchangeInMultiQueryFacet.sol/UniswapV4StandardExchangeInMultiQueryFacet.json",
+      "runtime_bytes": 20151,
+      "eip170_limit": 24576,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4StandardExchangeInQueryFacet",
+      "artifact": "out/UniswapV4StandardExchangeInQueryFacet.sol/UniswapV4StandardExchangeInQueryFacet.json",
+      "runtime_bytes": 25124,
+      "eip170_limit": 24576,
+      "within_limit": false
+    },
+    {
+      "contract": "UniswapV4StandardExchangeLiquidReserveFacet",
+      "artifact": "out/UniswapV4StandardExchangeLiquidReserveFacet.sol/UniswapV4StandardExchangeLiquidReserveFacet.json",
+      "runtime_bytes": 18458,
+      "eip170_limit": 24576,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4StandardExchangeOutExecutionDelegate",
+      "artifact": "out/UniswapV4StandardExchangeOutExecutionDelegate.sol/UniswapV4StandardExchangeOutExecutionDelegate.json",
+      "runtime_bytes": 14755,
+      "eip170_limit": 24576,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4StandardExchangeOutFacet",
+      "artifact": "out/UniswapV4StandardExchangeOutFacet.sol/UniswapV4StandardExchangeOutFacet.json",
+      "runtime_bytes": 20148,
+      "eip170_limit": 24576,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4StandardExchangeOutMultiFacet",
+      "artifact": "out/UniswapV4StandardExchangeOutMultiFacet.sol/UniswapV4StandardExchangeOutMultiFacet.json",
+      "runtime_bytes": 20867,
+      "eip170_limit": 24576,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4StandardExchangeOutMultiQueryFacet",
+      "artifact": "out/UniswapV4StandardExchangeOutMultiQueryFacet.sol/UniswapV4StandardExchangeOutMultiQueryFacet.json",
+      "runtime_bytes": 15821,
+      "eip170_limit": 24576,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4StandardExchangeOutQueryFacet",
+      "artifact": "out/UniswapV4StandardExchangeOutQueryFacet.sol/UniswapV4StandardExchangeOutQueryFacet.json",
+      "runtime_bytes": 23133,
+      "eip170_limit": 24576,
+      "within_limit": true
+    },
+    {
+      "contract": "UniswapV4StandardExchangePositionImportFacet",
+      "artifact": "out/UniswapV4StandardExchangePositionImportFacet.sol/UniswapV4StandardExchangePositionImportFacet.json",
+      "runtime_bytes": 20896,
+      "eip170_limit": 24576,
+      "within_limit": true
+    }
+  ]
+}

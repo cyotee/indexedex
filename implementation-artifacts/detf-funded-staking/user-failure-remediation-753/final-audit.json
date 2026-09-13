@@ -1,0 +1,17 @@
+{
+  "unique_tests": 4255,
+  "passed": 4255,
+  "failures": [],
+  "family_counts": {
+    "Mixed Buffer DETF": 378,
+    "Single SE DETF": 1030,
+    "Multi-Vault Weighted DETF": 1169,
+    "Uniswap V4 DETF": 646,
+    "Composed Stable DETF": 808,
+    "Weighted buffer pools": 224
+  },
+  "conservation_fuzz_variants": 18,
+  "conservation_fuzz_executions": 385,
+  "source_files": 93,
+  "source_hash_drift": []
+}

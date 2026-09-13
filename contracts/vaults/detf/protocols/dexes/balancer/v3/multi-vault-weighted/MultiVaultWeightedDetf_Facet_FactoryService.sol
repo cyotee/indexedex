@@ -1,20 +1,12 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 import {Vm} from "forge-std/Vm.sol";
 import {VM_ADDRESS} from "@crane/contracts/constants/FoundryConstants.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
-import {
-    MultiVaultWeightedDetfExchangeInFacet
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeInFacet.sol";
-import {
-    MultiVaultWeightedDetfBondingFacet
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfBondingFacet.sol";
-import {
-    MultiVaultWeightedDetfInfoFacet
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfInfoFacet.sol";
 
 library MultiVaultWeightedDetf_Facet_FactoryService {
     using BetterEfficientHashLib for bytes;
@@ -27,11 +19,11 @@ library MultiVaultWeightedDetf_Facet_FactoryService {
     {
         instance = IFacet(
             create3Factory.deployFacet(
-                type(MultiVaultWeightedDetfExchangeInFacet).creationCode,
-                abi.encode(type(MultiVaultWeightedDetfExchangeInFacet).name)._hash()
+                ArtifactCreationCode.creationCode("MultiVaultWeightedDetfExchangeInFacet.sol:MultiVaultWeightedDetfExchangeInFacet"),
+                abi.encode("MultiVaultWeightedDetfExchangeInFacet")._hash()
             )
         );
-        vm.label(address(instance), type(MultiVaultWeightedDetfExchangeInFacet).name);
+        vm.label(address(instance), "MultiVaultWeightedDetfExchangeInFacet");
     }
 
     function deployMultiVaultWeightedDetfBondingFacet(ICreate3FactoryProxy create3Factory)
@@ -40,11 +32,11 @@ library MultiVaultWeightedDetf_Facet_FactoryService {
     {
         instance = IFacet(
             create3Factory.deployFacet(
-                type(MultiVaultWeightedDetfBondingFacet).creationCode,
-                abi.encode(type(MultiVaultWeightedDetfBondingFacet).name)._hash()
+                ArtifactCreationCode.creationCode("MultiVaultWeightedDetfBondingFacet.sol:MultiVaultWeightedDetfBondingFacet"),
+                abi.encode("MultiVaultWeightedDetfBondingFacet")._hash()
             )
         );
-        vm.label(address(instance), type(MultiVaultWeightedDetfBondingFacet).name);
+        vm.label(address(instance), "MultiVaultWeightedDetfBondingFacet");
     }
 
     function deployMultiVaultWeightedDetfInfoFacet(ICreate3FactoryProxy create3Factory)
@@ -53,10 +45,10 @@ library MultiVaultWeightedDetf_Facet_FactoryService {
     {
         instance = IFacet(
             create3Factory.deployFacet(
-                type(MultiVaultWeightedDetfInfoFacet).creationCode,
-                abi.encode(type(MultiVaultWeightedDetfInfoFacet).name)._hash()
+                ArtifactCreationCode.creationCode("MultiVaultWeightedDetfInfoFacet.sol:MultiVaultWeightedDetfInfoFacet"),
+                abi.encode("MultiVaultWeightedDetfInfoFacet")._hash()
             )
         );
-        vm.label(address(instance), type(MultiVaultWeightedDetfInfoFacet).name);
+        vm.label(address(instance), "MultiVaultWeightedDetfInfoFacet");
     }
 }

@@ -408,7 +408,7 @@ event BorrowAllowanceDelegated(address indexed fromUser, address indexed toUser,
 - `src/contracts/protocol/tokenization/AToken.sol` - aToken implementation
 - `src/contracts/protocol/tokenization/VariableDebtToken.sol` - Debt token implementation
 - `src/contracts/protocol/tokenization/base/ScaledBalanceTokenBase.sol` - Scaled balance base
-- `@crane/contracts/external/aave-v3-origin/contracts/protocol/tokenization/base/IncentivizedERC20.sol` - ERC20 with incentives
+- `src/contracts/protocol/tokenization/base/IncentivizedERC20.sol` - ERC20 with incentives
 - `src/contracts/protocol/libraries/math/WadRayMath.sol` - Math library
-- `@crane/contracts/external/aave-v3-origin/contracts/extensions/stata-token/interfaces/IAToken.sol` - aToken interface
-- `@crane/contracts/external/aave-v3-origin/contracts/interfaces/IVariableDebtToken.sol` - Debt token interface
+- `src/contracts/interfaces/IAToken.sol` - aToken interface
+- `src/contracts/interfaces/IVariableDebtToken.sol` - Debt token interface

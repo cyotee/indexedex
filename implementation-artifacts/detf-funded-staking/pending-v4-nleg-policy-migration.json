@@ -1,0 +1,45 @@
+{
+  "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+  "files": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_Policy.sol",
+      "before_sha256": "da1b9b5a52a5be6aef427921de876a540fa3e1d4441b431d805a55f36c0ef98f",
+      "after_sha256": "b4899504e7d6d999d87997d4a4ea2f0c73586050dd00436156d210f22a8aaa5b",
+      "coverage_mapping": [
+        "Use the shared funded, nine-decimal public reserve swaps for price skew."
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Policy.t.sol",
+      "before_sha256": "1a837df68a0d3462af7fa03d47043f65e41941bd8642877d81b73cb89f6ba9f4",
+      "after_sha256": "1b72fb1d13880a3aada90ccba6578ccf8744390474884b67c618c830b359554e",
+      "coverage_mapping": [
+        "Inherited test_policy_burn_allowed_when_synthetic_below_burnThreshold now executes the shared funded policy assertion in this actual family fixture.",
+        "Inherited test_D31_3_policyBurn_realizesThenGates now executes the shared funded policy assertion in this actual family fixture.",
+        "T8.4 retains two simultaneous distinct per-leg gates; A issues through the standard route and B executes a supply-neutral swap, with preview and rollback checks for both."
+      ]
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_Policy.sol",
+      "before_sha256": "9a177906f97c6ab4512282a90612434e0104324ca8921e5c981fb79c51ad80a9",
+      "after_sha256": "a2fe92a22180467671e26cfc8fde4260ceb507f951027b9fab307296d7c8ed0e",
+      "coverage_mapping": [
+        "Use the shared funded, nine-decimal public reserve swaps for price skew."
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Policy.t.sol",
+      "before_sha256": "a6af74a87dea1f60949162c3af0aad76aa483256d18cddf5aaa14b57efbf30a8",
+      "after_sha256": "62fafbe7c18ee94f507affe60e4e512e425c9b989fcda60c9a2000d1db6df840",
+      "coverage_mapping": [
+        "Inherited test_policy_burn_allowed_when_synthetic_below_burnThreshold now executes the shared funded policy assertion in this actual family fixture.",
+        "Inherited test_D31_3_policyBurn_realizesThenGates now executes the shared funded policy assertion in this actual family fixture.",
+        "Inherited test_policy_mint_blocked_in_deadband_then_allowed_after_push now executes the shared funded policy assertion in this actual family fixture."
+      ]
+    }
+  ],
+  "historical_preparation_status": "prepared; Solidity unchanged",
+  "application_record": "v4-nleg-policy-migration.json",
+  "current_status_source": "current-implementation-queue.json and acceptance-progress.json; later edits and validation can supersede the original application hashes.",
+  "pending_owner_approval": false
+}

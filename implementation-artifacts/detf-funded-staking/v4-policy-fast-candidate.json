@@ -1,0 +1,17 @@
+{
+  "status": "applied; equivalent-policy validation and comparable warm timing pending",
+  "change": "First try the already observed 2.2-WAD price, then every original 1.1-to-2.25 candidate if needed. No synthetic price, funded input, oracle state, gas budget or assertion fabricated. Production code unchanged.",
+  "measurement": "Capture the same Weighted/Quad policy selection on the source immediately before and after applying. Historical 44-case run confirms behavior but includes unrelated cases, so do not compare its entire command time as a policy-only speedup.",
+  "files": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol",
+      "before_sha256": "519fa9ced59e1247b040b6df2163e479ec6abc22c9920b0580e53efc7b6e196a",
+      "after_sha256": "a4b57a09449f79690bac727aa508921ea20ecac0f51c1f54c46d9ed843e76589"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol",
+      "before_sha256": "1804d571fe225a06e86eee97c57f8f524f680726eaed73cf10cbee4047603f1b",
+      "after_sha256": "09a3e32563fa2b8f5c4fa4bce58c066f2b8ae0c024beadc89538d45742b27d4c"
+    }
+  ]
+}

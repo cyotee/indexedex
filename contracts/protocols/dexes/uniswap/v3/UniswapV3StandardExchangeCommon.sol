@@ -6,6 +6,8 @@ pragma solidity ^0.8.0;
 /* -------------------------------------------------------------------------- */
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {Math} from "@crane/contracts/utils/Math.sol";
+import {FixedPointMathLib} from "@crane/contracts/utils/FixedPointMathLib.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IUniswapV3Pool} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Pool.sol";
 import {
@@ -226,6 +228,23 @@ abstract contract UniswapV3StandardExchangeCommon is
         return quote.amountOut;
     }
 
+    function _quoteSwapAfterWithdrawal(uint256 amountIn, bool zeroForOne, uint256 sharesBurned, uint256 totalShares)
+        internal view returns (uint256)
+    {
+        if (amountIn == 0) return 0;
+        (int24 lower, int24 upper) = UniswapV3VaultRepo._getPositionTicks();
+        uint128 removed = uint128(FullMath.mulDiv(_getPositionLiquidityFromPool(), sharesBurned, totalShares));
+        UniswapV3Quoter.SwapQuoteResult memory quote = UniswapV3Quoter.quoteExactInputAfterLiquidityChange(
+            UniswapV3Quoter.SwapQuoteParams({
+                pool: _pool(), zeroForOne: zeroForOne, amount: amountIn,
+                sqrtPriceLimitX96: zeroForOne ? TickMath.MIN_SQRT_RATIO + 1 : TickMath.MAX_SQRT_RATIO - 1,
+                maxSteps: 0
+            }),
+            UniswapV3Quoter.LiquidityChange(lower, upper, -int128(removed))
+        );
+        return quote.amountOut;
+    }
+
     function _quoteSwapOut(address tokenIn, address tokenOut, uint256 amountOut)
         internal
         view
@@ -294,15 +313,11 @@ abstract contract UniswapV3StandardExchangeCommon is
     }
 
     /**
-     * @dev Share mint/burn view SoT (D9 + D24). Idle: D9 plus collectable center fees
-     *      (stored `tokensOwed` plus unpoked feeGrowthInside). Matches post-`_collectManagedFees` D9.
-     *      Blocked: D9 only (cannot collect).
+     * @dev Share pricing includes stored and unpoked fees in both lock states.
+     *      Collection changes where the assets sit, not their ownership.
      */
     function _totalVaultReservesForShareMath() internal view returns (uint256 reserve0, uint256 reserve1) {
         (reserve0, reserve1) = _totalVaultReserves();
-        if (!canOpenBoundPoolOps()) {
-            return (reserve0, reserve1);
-        }
         (uint256 owed0, uint256 owed1) = _collectableCenterFees();
         reserve0 += owed0;
         reserve1 += owed1;
@@ -310,9 +325,6 @@ abstract contract UniswapV3StandardExchangeCommon is
 
     function _freeBalancesForShareMath() internal view returns (uint256 free0, uint256 free1) {
         (free0, free1) = _freeBalances();
-        if (!canOpenBoundPoolOps()) {
-            return (free0, free1);
-        }
         (uint256 owed0, uint256 owed1) = _collectableCenterFees();
         free0 += owed0;
         free1 += owed1;
@@ -390,7 +402,7 @@ abstract contract UniswapV3StandardExchangeCommon is
         (managedTicks.centerLower, managedTicks.centerUpper) = UniswapV3VaultRepo._getPositionTicks();
     }
 
-    /// @dev One full-range center. Import uses stored NFT ticks.
+    /// @dev Ordinary and imported books use the same maximum usable range.
     function _deriveManagedTicks() internal view returns (ManagedTicks memory managedTicks) {
         int24 tickSpacing = _pool().tickSpacing();
         managedTicks.centerLower = TickMath.minUsableTick(tickSpacing);
@@ -458,13 +470,6 @@ abstract contract UniswapV3StandardExchangeCommon is
 
         (int24 tickLower, int24 tickUpper) = UniswapV3VaultRepo._getPositionTicks();
         return _amountsForLiquidityAtPrice(sqrtPriceX96, tickLower, tickUpper, liquidityToBurn);
-    }
-
-    function _updateManagedPositionLiquidities() internal {
-        if (!UniswapV3VaultRepo._isPositionCreated()) {
-            return;
-        }
-        UniswapV3VaultRepo._updatePositionLiquidity(_getPositionLiquidityFromPool());
     }
 
     function _collectManagedFees() internal {
@@ -597,6 +602,9 @@ abstract contract UniswapV3StandardExchangeCommon is
         UniswapV3VaultRepo._createPositionIfNeeded(managedTicks.centerLower, managedTicks.centerUpper);
     }
 
+    /// @dev A single-token contribution buys growth in sqrt(x*y). A book with
+    /// only one asset accepts more of that asset; adding its missing asset also
+    /// requires a contribution to the existing reserve, establishing a ratio.
     function _sharesOutForDeposit(
         uint256 amount0Added,
         uint256 amount1Added,
@@ -604,26 +612,42 @@ abstract contract UniswapV3StandardExchangeCommon is
         uint256 reserve0Before,
         uint256 reserve1Before
     ) internal pure returns (uint256 sharesOut) {
-        if (amount0Added == 0 && amount1Added == 0) {
-            return 0;
-        }
+        if (amount0Added == 0 && amount1Added == 0) return 0;
         if (totalSharesBefore == 0) {
-            return amount0Added + amount1Added;
+            if (amount0Added == 0 || amount1Added == 0) return 0;
+            return FixedPointMathLib.mulSqrt(amount0Added, amount1Added);
         }
-        if (amount0Added > 0 && amount1Added == 0) {
-            if (reserve0Before == 0) {
-                return amount0Added;
-            }
-            return (amount0Added * totalSharesBefore) / reserve0Before;
+        if (reserve0Before == 0 && reserve1Before == 0) return 0;
+        if (reserve0Before == 0) return Math.mulDiv(amount1Added, totalSharesBefore, reserve1Before);
+        if (reserve1Before == 0) return Math.mulDiv(amount0Added, totalSharesBefore, reserve0Before);
+        if (amount0Added != 0 && amount1Added != 0) {
+            return Math.min(
+                Math.mulDiv(amount0Added, totalSharesBefore, reserve0Before),
+                Math.mulDiv(amount1Added, totalSharesBefore, reserve1Before)
+            );
         }
-        if (amount1Added > 0 && amount0Added == 0) {
-            if (reserve1Before == 0) {
-                return amount1Added;
-            }
-            return (amount1Added * totalSharesBefore) / reserve1Before;
-        }
-        return
-            ConstProdUtils._depositQuote(amount0Added, amount1Added, totalSharesBefore, reserve0Before, reserve1Before);
+        uint256 beforeInvariant = FixedPointMathLib.mulSqrt(reserve0Before, reserve1Before);
+        // Round the denominator up, including when the product needs 512 bits.
+        if (Math.mulDiv(reserve0Before, reserve1Before, beforeInvariant) != beforeInvariant
+            || mulmod(reserve0Before, reserve1Before, beforeInvariant) != 0) ++beforeInvariant;
+        uint256 afterInvariant = FixedPointMathLib.mulSqrt(reserve0Before + amount0Added, reserve1Before + amount1Added);
+        if (afterInvariant <= beforeInvariant) return 0;
+        return Math.mulDiv(totalSharesBefore, afterInvariant - beforeInvariant, beforeInvariant);
+    }
+
+    /// @dev Empty-supply inventory stays with the sink. Its share weight covers
+    /// each contributed asset separately, without assigning unlike tokens a price.
+    function _initialResidualShares(uint256 added0, uint256 added1, uint256 reserve0, uint256 reserve1, uint256 shares)
+        internal pure returns (uint256)
+    {
+        uint256 weight0 = reserve0 == 0 ? 0 : Math.mulDiv(reserve0, shares, added0, Math.Rounding.Ceil);
+        uint256 weight1 = reserve1 == 0 ? 0 : Math.mulDiv(reserve1, shares, added1, Math.Rounding.Ceil);
+        return Math.max(weight0, weight1);
+    }
+
+    function _quoteInitialShares(uint256 amount0, uint256 amount1) internal view returns (uint256) {
+        (uint256 reserve0, uint256 reserve1) = _freeBalances();
+        return _sharesOutForDeposit(amount0, amount1, 0, reserve0, reserve1);
     }
 
     function _rebalanceLiquidReserveBestEffort() internal {
@@ -687,7 +711,6 @@ abstract contract UniswapV3StandardExchangeCommon is
     }
 
     function _emitRebalanceEvent(uint256 liquidPct) internal {
-        _updateManagedPositionLiquidities();
         _syncVaultReserves();
         (uint256 free0, uint256 free1) = _freeBalances();
         (uint256 deployed0, uint256 deployed1) = _deployedAmounts();
@@ -717,7 +740,6 @@ abstract contract UniswapV3StandardExchangeCommon is
         }
 
         _mintManagedLiquidity(managedTicks, plan);
-        _updateManagedPositionLiquidities();
         return true;
     }
 
@@ -757,7 +779,6 @@ abstract contract UniswapV3StandardExchangeCommon is
         }
         (int24 tickLower, int24 tickUpper) = UniswapV3VaultRepo._getPositionTicks();
         _burnAndCollectLiquidity(tickLower, tickUpper, liquidityToBurn);
-        _updateManagedPositionLiquidities();
         return true;
     }
 
@@ -775,7 +796,6 @@ abstract contract UniswapV3StandardExchangeCommon is
         }
         (int24 tickLower, int24 tickUpper) = UniswapV3VaultRepo._getPositionTicks();
         _burnAndCollectLiquidity(tickLower, tickUpper, liquidityToBurn);
-        _updateManagedPositionLiquidities();
     }
 
     /// @dev Separate frame so zap-out `_swap` does not hit stack-too-deep.
@@ -868,6 +888,10 @@ abstract contract UniswapV3StandardExchangeCommon is
     function _secureShareDelivery(uint256 amountIn, bool pretransferred) internal returns (uint256 actualIn) {
         IERC20 vaultShare = IERC20(address(this));
         uint256 b0 = vaultShare.balanceOf(address(this));
+        if (msg.sender == address(this)) {
+            if (amountIn > b0) revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, b0);
+            return amountIn;
+        }
         if (!pretransferred) {
             vaultShare.safeTransferFrom(msg.sender, address(this), amountIn);
             return vaultShare.balanceOf(address(this)) - b0;

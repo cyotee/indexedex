@@ -9,9 +9,7 @@ import {IFeeCompounding} from "contracts/interfaces/IFeeCompounding.sol";
 import {
     TestBase_AerodromeStandardExchange
 } from "contracts/protocols/dexes/aerodrome/v1/test/bases/TestBase_AerodromeStandardExchange.sol";
-import {
-    IAerodromeStandardExchangeDFPkg
-} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeDFPkg.sol";
+import {IAerodromeStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/v1/IAerodromeStandardExchangeDFPkg.sol";
 
 /**
  * @title AerodromeStandardExchange_FeeCompound_Test

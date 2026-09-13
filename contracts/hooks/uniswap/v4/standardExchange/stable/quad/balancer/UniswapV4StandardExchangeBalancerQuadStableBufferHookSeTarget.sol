@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {UniswapV4BufferHookLiquidityRouteLib as LiquidityRoute} from "contracts/hooks/uniswap/v4/libs/UniswapV4BufferHookLiquidityRouteLib.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
@@ -17,7 +18,7 @@ import {
 
 /**
  * @title UniswapV4StandardExchangeBalancerQuadStableBufferHookSeTarget
- * @notice SE In/Out swap-only surface (rated StableSwap book, internal settle).
+ * @notice Standard Exchange swaps and native liquidity routes.
  * @dev MultiAssetLiquidity selectors live on LiquidityFacet (same functions as product join/exit).
  *      L-GAPS-11: pretransfer credits only in-window delta (ISecurePullErrors) — leftover not free-spent.
  */
@@ -33,6 +34,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookSeTarget 
         view
         returns (uint256 amountOut)
     {
+        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) { return LiquidityRoute.previewIn(tokenIn, amountIn, tokenOut); }
         return _previewSwapExactIn(address(tokenIn), address(tokenOut), amountIn);
     }
 
@@ -44,7 +46,20 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookSeTarget 
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external nonReentrant returns (uint256 amountOut) {
+    ) external returns (uint256 amountOut) {
+        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return LiquidityRoute.exchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
+        return _swapExchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
+    }
+
+    function _swapExchangeIn(
+        IERC20 tokenIn,
+        uint256 amountIn,
+        IERC20 tokenOut,
+        uint256 minAmountOut,
+        address recipient,
+        bool pretransferred,
+        uint256 deadline
+    ) internal nonReentrant returns (uint256 amountOut) {
         _requireDeadline(deadline);
         if (amountIn == 0) revert ZeroAmount();
         if (recipient == address(0)) revert ZeroAddress();
@@ -55,7 +70,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookSeTarget 
         _tokenIndex(tout);
 
         // Quote on pre-intake book, then fund (L-GAPS-11 delta gate — no free leftover credit).
-        amountOut = _previewSwapExactIn(tin, tout, amountIn);
+        amountOut = _previewSwapExactInFunded(tin, tout, amountIn, pretransferred);
         if (amountOut < minAmountOut) revert Slippage();
 
         _securePull(IERC20(tin), amountIn, pretransferred);
@@ -84,6 +99,7 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookSeTarget 
         view
         returns (uint256 amountIn)
     {
+        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) { return LiquidityRoute.previewOut(tokenIn, tokenOut, amountOut); }
         return _previewSwapExactOut(address(tokenIn), address(tokenOut), amountOut);
     }
 
@@ -95,7 +111,20 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookSeTarget 
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external nonReentrant returns (uint256 amountIn) {
+    ) external returns (uint256 amountIn) {
+        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return LiquidityRoute.exchangeOut(tokenIn, maxAmountIn, tokenOut, amountOut, recipient, pretransferred, deadline);
+        return _swapExchangeOut(tokenIn, maxAmountIn, tokenOut, amountOut, recipient, pretransferred, deadline);
+    }
+
+    function _swapExchangeOut(
+        IERC20 tokenIn,
+        uint256 maxAmountIn,
+        IERC20 tokenOut,
+        uint256 amountOut,
+        address recipient,
+        bool pretransferred,
+        uint256 deadline
+    ) internal nonReentrant returns (uint256 amountIn) {
         _requireDeadline(deadline);
         if (amountOut == 0) revert ZeroAmount();
         if (recipient == address(0)) revert ZeroAddress();

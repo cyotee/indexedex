@@ -1,0 +1,27 @@
+{
+  "status": "HISTORICAL_MIGRATION_APPLIED_AND_SUPERSEDED_BY_OWNER_APPROVED_CLEANUP",
+  "coverage_mapping": {
+    "E6": "Prior unrelated DETF-held inventory cannot increase funded principal/reward payout or pay reserve assets. The temporary inert close configuration was subsequently removed under explicit owner approval.",
+    "unauthorized/previous/current holder": "Existing three independent authority and recipient cases retained on funded NFT claimBond; fixed principal/gons and LP custody asserted.",
+    "T7.12": "Existing CP and all native-unit wrappers reuse exact funded mature claim and 1:1 unstake; no LP-basket close."
+  },
+  "files": [
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Close.t.sol",
+      "before_sha256": "0174d4513392f820d4748d2fac1057246787c8f2e646bd525d1eb9112dab1cfa",
+      "after_sha256": "b20c0d18a1c86f7eac8819bb099c6f5bd28c304ab0c17916fba4e9ae494338b7"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Close_Decimals.sol",
+      "before_sha256": "55cf3f68ff72970e016b07f98cb610f6c9d5b26b993975b5474836b9d12b8774",
+      "after_sha256": "682c8a85c26a8d522a85f71989040ced9f3b8ff49e1a81667df2a096534bb9f7"
+    }
+  ],
+  "historical_status": "applied; validation pending",
+  "approval_resolution": {
+    "record": "v4-close-cleanup-owner-approval.json",
+    "remaining_approval_question": false,
+    "applied_cleanup": "approved-v4-close-cleanup.json",
+    "selected_validation": "current-composed-quotes-351-pass-donation-artifact-failures-run.json"
+  }
+}

@@ -47,9 +47,14 @@ contract Adversarial_SecRemediation_Test is TestBase_UniswapV3StandardExchange_A
         ERC20PermitMintableStub(pairToken).mint(actor, amountIn);
         vm.startPrank(actor);
         IERC20(pairToken).approve(address(vault), amountIn);
-        shares = vault.exchangeIn(
-            IERC20(pairToken), amountIn, IERC20(address(vault)), 0, actor, false, _deadline()
-        );
+        if (IERC20(address(vault)).totalSupply() == 0) {
+            assertEq(pairToken, pool.token0(), "activation fixture token0 funding");
+            shares = _activateWithFundedToken0(actor, amountIn, amountIn);
+        } else {
+            shares = vault.exchangeIn(
+                IERC20(pairToken), amountIn, IERC20(address(vault)), 0, actor, false, _deadline()
+            );
+        }
         vm.stopPrank();
     }
 
@@ -248,7 +253,7 @@ contract Adversarial_SecRemediation_Test is TestBase_UniswapV3StandardExchange_A
 
     /// @notice A0: donate pairToken before first zap-in; redeem cannot take the donation.
     /// @dev Anti-theater: donate before live; donator ≠ attacker; must redeem; call proxy.
-    function test_A0_donatePair_thenFirstZapIn_cannotRedeemDonation() public {
+    function test_A0_donatePair_thenTwoTokenActivation_cannotRedeemDonation() public {
         address pairToken = pool.token0();
         assertEq(IERC20(address(vault)).totalSupply(), 0, "A0: empty supply");
 
@@ -261,9 +266,7 @@ contract Adversarial_SecRemediation_Test is TestBase_UniswapV3StandardExchange_A
 
         vm.startPrank(attacker);
         IERC20(pairToken).approve(address(vault), zapIn_);
-        uint256 shares_ = vault.exchangeIn(
-            IERC20(pairToken), zapIn_, IERC20(address(vault)), 0, attacker, false, _deadline()
-        );
+        uint256 shares_ = _activateWithFundedToken0(attacker, zapIn_, 10 ether);
         vm.stopPrank();
 
         assertGt(shares_, 0, "A0: first zap minted");

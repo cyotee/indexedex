@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {LaunchState} from "./LaunchState.sol";
 
 import {InitDevService} from "@crane/contracts/InitDevService.sol";
@@ -16,12 +18,9 @@ import {IDiamondFactoryPackageRegistry} from "@crane/contracts/registries/packag
 import {ICallTargetRegistryQuery} from "@crane/contracts/interfaces/ICallTargetRegistryQuery.sol";
 import {ICallTargetRegistryManagement} from "@crane/contracts/interfaces/ICallTargetRegistryManagement.sol";
 import {Create3Factory} from "@crane/contracts/factories/create3/Create3Factory.sol";
-import {ICREATE3DFPkg, Create3FactoryDFPkg} from "@crane/contracts/factories/create3/Create3FactoryDFPkg.sol";
-import {
-    ICallTargetRegistryDFPkg,
-    CallTargetRegistryDFPkg
-} from "@crane/contracts/registries/target/CallTargetRegistryDFPkg.sol";
-import {IBountyBoardDFPkg, BountyBoardDFPkg} from "@crane/contracts/bounties/BountyBoardDFPkg.sol";
+import {ICREATE3DFPkg} from "@crane/contracts/factories/create3/Create3FactoryDFPkg.sol";
+import {ICallTargetRegistryDFPkg} from "@crane/contracts/registries/target/CallTargetRegistryDFPkg.sol";
+import {IBountyBoardDFPkg} from "@crane/contracts/bounties/BountyBoardDFPkg.sol";
 import {IBountyCommon} from "@crane/contracts/bounties/common/IBountyCommon.sol";
 import {ISingleFinalBounty} from "@crane/contracts/bounties/single/ISingleFinalBounty.sol";
 import {IMilestoneBounty} from "@crane/contracts/bounties/milestone/IMilestoneBounty.sol";
@@ -35,10 +34,10 @@ import {VM_ADDRESS} from "@crane/contracts/constants/FoundryConstants.sol";
 library Phase_02_Stage_02_DiamondPackageFactory {
     Vm internal constant vm = Vm(VM_ADDRESS);
 
-    bytes32 internal constant CREATE3_FACTORY_PACKAGE_SALT = keccak256(abi.encode(type(Create3FactoryDFPkg).name));
+    bytes32 internal constant CREATE3_FACTORY_PACKAGE_SALT = keccak256(abi.encode("Create3FactoryDFPkg"));
     bytes32 internal constant CALL_TARGET_REGISTRY_PACKAGE_SALT =
-        keccak256(abi.encode(type(CallTargetRegistryDFPkg).name));
-    bytes32 internal constant BOUNTY_BOARD_PACKAGE_SALT = keccak256(abi.encode(type(BountyBoardDFPkg).name));
+        keccak256(abi.encode("CallTargetRegistryDFPkg"));
+    bytes32 internal constant BOUNTY_BOARD_PACKAGE_SALT = keccak256(abi.encode("BountyBoardDFPkg"));
 
     function execute(LaunchState storage s) internal {
         ICreate3FactoryProxy factory = s.create3Factory;
@@ -47,7 +46,7 @@ library Phase_02_Stage_02_DiamondPackageFactory {
 
         IDiamondFactoryPackage create3DFPkg_ = IDiamondFactoryPackage(
             factory.deployCanonicalPackageWithArgs(
-                type(Create3FactoryDFPkg).creationCode,
+                ArtifactCreationCode.creationCode(s.create3Factory, "Create3FactoryDFPkg.sol:Create3FactoryDFPkg"),
                 abi.encode(
                     ICREATE3DFPkg.PkgInit({
                         diamondCutFacet: IFacetRegistry(address(factory)).canonicalFacet(type(IDiamondCut).interfaceId),
@@ -71,12 +70,12 @@ library Phase_02_Stage_02_DiamondPackageFactory {
                 type(ICREATE3DFPkg).interfaceId
             )
         );
-        vm.label(address(create3DFPkg_), type(Create3FactoryDFPkg).name);
+        vm.label(address(create3DFPkg_), "Create3FactoryDFPkg");
         Create3Factory(payable(address(factory))).initFactory();
 
         IDiamondFactoryPackage callTargetRegistryDFPkg_ = IDiamondFactoryPackage(
             factory.deployCanonicalPackageWithArgs(
-                type(CallTargetRegistryDFPkg).creationCode,
+                ArtifactCreationCode.creationCode(s.create3Factory, "CallTargetRegistryDFPkg.sol:CallTargetRegistryDFPkg"),
                 abi.encode(
                     ICallTargetRegistryDFPkg.PkgInit({
                         diamondCutFacet: IFacetRegistry(address(factory)).canonicalFacet(type(IDiamondCut).interfaceId),
@@ -93,11 +92,11 @@ library Phase_02_Stage_02_DiamondPackageFactory {
                 type(ICallTargetRegistryDFPkg).interfaceId
             )
         );
-        vm.label(address(callTargetRegistryDFPkg_), type(CallTargetRegistryDFPkg).name);
+        vm.label(address(callTargetRegistryDFPkg_), "CallTargetRegistryDFPkg");
 
         IDiamondFactoryPackage bountyBoardDFPkg_ = IDiamondFactoryPackage(
             factory.deployCanonicalPackageWithArgs(
-                type(BountyBoardDFPkg).creationCode,
+                ArtifactCreationCode.creationCode(s.create3Factory, "BountyBoardDFPkg.sol:BountyBoardDFPkg"),
                 abi.encode(
                     IBountyBoardDFPkg.PkgInit({
                         diamondCutFacet: IFacetRegistry(address(factory)).canonicalFacet(type(IDiamondCut).interfaceId),
@@ -120,6 +119,6 @@ library Phase_02_Stage_02_DiamondPackageFactory {
                 type(IBountyBoardDFPkg).interfaceId
             )
         );
-        vm.label(address(bountyBoardDFPkg_), type(BountyBoardDFPkg).name);
+        vm.label(address(bountyBoardDFPkg_), "BountyBoardDFPkg");
     }
 }

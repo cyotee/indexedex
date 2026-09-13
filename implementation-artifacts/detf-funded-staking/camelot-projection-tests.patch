@@ -1,0 +1,128 @@
+--- a/test/foundry/spec/vaults/standard/sy/ConstantProductNativeSY.t.sol
++++ b/test/foundry/spec/vaults/standard/sy/ConstantProductNativeSY.t.sol
+@@ -2,6 +2,10 @@
+ pragma solidity ^0.8.0;
+ 
+ import {Test} from "forge-std/Test.sol";
++import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
++import {CamelotFactory} from "@crane/contracts/protocols/dexes/camelot/v2/stubs/CamelotFactory.sol";
++import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
++import {TransitionQuoteAssertions} from "test/foundry/spec/vaults/standard/TransitionQuoteAssertions.sol";
+ import {ICamelotPair} from "@crane/contracts/interfaces/protocols/dexes/camelot/v2/ICamelotPair.sol";
+ import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+@@ -332,7 +336,113 @@
+     }
+ }
+ 
+-contract CamelotV2NativeSYTest is TestBase_CamelotV2StandardExchange, ConstantProductNativeSYBehavior {
++contract CamelotV2NativeSYTest is TestBase_CamelotV2StandardExchange, ConstantProductNativeSYBehavior, TransitionQuoteAssertions {
++    function test_camelotProjectionSelectorsUseCurrentQueryFacet() public view {
++        address exchange_ = address(nativeSY);
++        bytes4[7] memory selectors_ = [
++            IStandardExchangeTransitionQuote.quoteState.selector,
++            IStandardExchangeTransitionQuote.quoteTransition.selector,
++            IStandardExchangeTransitionQuote.quoteAssets.selector,
++            IStandardExchangeTransitionQuote.quoteShareBalance.selector,
++            IStandardExchangeTransitionQuote.quoteTotalSupply.selector,
++            IStandardExchangeExternalQuote.quoteExternalDeposit.selector,
++            IStandardExchangeExternalQuote.quoteExternalExchange.selector
++        ];
++        for (uint256 i; i < selectors_.length; ++i) {
++            assertEq(IDiamondLoupe(exchange_).facetAddress(selectors_[i]), address(camelotV2StandardExchangeQueryFacet));
++        }
++        assertTrue(IERC165(exchange_).supportsInterface(type(IStandardExchangeTransitionQuote).interfaceId));
++        assertTrue(IERC165(exchange_).supportsInterface(type(IStandardExchangeExternalQuote).interfaceId));
++        assertGt(address(camelotV2StandardExchangeQueryFacet).code.length, 0);
++        assertLe(address(camelotV2StandardExchangeQueryFacet).code.length, 24_576);
++        assertLe(address(camelotV2StandardExchangeInFacet).code.length, 24_576);
++        assertLe(address(camelotV2StandardExchangeOutFacet).code.length, 24_576);
++    }
++
++    function test_camelotProjectionBothAssetsWithReferralAndHalfOwnerFee() public { _camelotProjectionSequences(50_000); }
++    function test_camelotProjectionBothAssetsWithReferralAnd16666OwnerFee() public { _camelotProjectionSequences(16_666); }
++    function test_camelotProjectionBothAssetsWithReferralAnd16667OwnerFee() public { _camelotProjectionSequences(16_667); }
++
++    function _camelotProjectionConfigureFees(uint256 ownerShare_) private {
++        address beneficiary_ = address(indexedexManager.feeTo());
++        vm.prank(owner);
++        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(address(nativeSY), 7e16);
++        vm.startPrank(camelotV2Factory.owner());
++        CamelotFactory(address(camelotV2Factory)).setOwnerFeeShare(ownerShare_);
++        CamelotFactory(address(camelotV2Factory)).setReferrerFeeShare(beneficiary_, 20_000);
++        vm.stopPrank();
++        ICamelotPair pool_ = ICamelotPair(nativeSY.yieldToken());
++        vm.prank(camelotV2Factory.feePercentOwner());
++        pool_.setFeePercent(300, 900);
++    }
++
++    function _camelotProjectionSequences(uint256 ownerShare_) private {
++        _camelotProjectionConfigureFees(ownerShare_);
++        uint256 saved_ = vm.snapshotState();
++        _assertQuoteSequence(address(nativeSY), nativePairA, nativeUser, 1 ether);
++        assertTrue(vm.revertToState(saved_));
++        _assertQuoteSequence(address(nativeSY), nativePairB, nativeUser, 1 ether);
++    }
++
++    function test_camelotProjectionFeeRecipientReceivesOnlyActualIssuedFees() public {
++        _camelotProjectionConfigureFees(16_667);
++        address beneficiary_ = address(indexedexManager.feeTo());
++        uint256 shares_ = nativeSY.balanceOf(nativeUser) / 10;
++        vm.startPrank(nativeUser);
++        nativePairA.transfer(beneficiary_, 100 ether);
++        nativeSY.transfer(beneficiary_, shares_);
++        vm.stopPrank();
++        _assertQuoteSequence(address(nativeSY), nativePairA, beneficiary_, 1 ether);
++    }
++
++    function _camelotProjectionFundCaller() private returns (IERC20 lp_, uint256 amount_) {
++        lp_ = IERC20(nativeSY.yieldToken());
++        vm.startPrank(nativeUser);
++        amount_ = nativeSY.redeem(nativeUser, nativeSY.balanceOf(nativeUser) / 10, address(lp_), 0, false);
++        lp_.transfer(address(this), amount_);
++        nativePairA.transfer(address(this), 100 ether);
++        nativePairB.transfer(address(this), 100 ether);
++        nativeSY.transfer(address(this), nativeSY.balanceOf(nativeUser) / 10);
++        vm.stopPrank();
++        assertGt(nativeSY.balanceOf(address(this)), 0, "projection holder has funded SE inventory");
++    }
++
++    function test_camelotProjectionExternalDepositsKeepAccountingLegAndLpPayment() public {
++        _camelotProjectionConfigureFees(16_666);
++        (IERC20 lp_, uint256 payment_) = _camelotProjectionFundCaller();
++        _assertExternalDepositQuote(address(nativeSY), nativePairA, nativePairB, 13 ether + 7, nativeUser);
++        _assertExternalDepositQuote(address(nativeSY), nativePairB, nativePairA, 11 ether + 3, address(indexedexManager.feeTo()));
++        _assertExternalDepositQuote(address(nativeSY), lp_, nativePairA, payment_ / 4, nativeUser);
++    }
++
++    function test_camelotProjectionExternalLpAndDirectionalConversionsPreserveHeldShares() public {
++        _camelotProjectionConfigureFees(16_667);
++        (IERC20 lp_, uint256 payment_) = _camelotProjectionFundCaller();
++        _assertExternalExchangeQuote(address(nativeSY), lp_, nativePairA, payment_ / 4);
++        _assertExternalExchangeQuote(address(nativeSY), nativePairB, nativePairA, 7 ether + 13);
++        _assertExternalExchangeQuote(address(nativeSY), nativePairA, nativePairB, 5 ether + 17);
++    }
++
++    function test_camelotProjectionPoolDonationsFollowMeasuredInputs() public {
++        _camelotProjectionConfigureFees(16_667);
++        _camelotProjectionFundCaller();
++        address pool_ = nativeSY.yieldToken();
++        nativePairA.transfer(pool_, 1 ether / 3 + 7);
++        nativePairB.transfer(pool_, 1 ether / 5 + 11);
++        _assertExternalExchangeQuote(address(nativeSY), nativePairA, nativePairB, 5 ether + 17);
++        nativePairA.transfer(pool_, 1 ether / 7 + 3);
++        nativePairB.transfer(pool_, 1 ether / 11 + 5);
++        _assertExternalDepositQuote(address(nativeSY), nativePairA, nativePairB, 7 ether + 13, nativeUser);
++    }
++
++    function test_camelotProjectionLpDonationRemainsBackingBeforeLpPayment() public {
++        _camelotProjectionConfigureFees(16_666);
++        (IERC20 lp_, uint256 payment_) = _camelotProjectionFundCaller();
++        lp_.transfer(address(nativeSY), payment_ / 7);
++        _assertExternalDepositQuote(address(nativeSY), lp_, nativePairA, payment_ / 4, nativeUser);
++    }
++
++
+     function test_camelotLpPassThroughPreviewMatchesExecution() public {
+         address lp_ = nativeSY.yieldToken();
+         vm.startPrank(nativeUser);

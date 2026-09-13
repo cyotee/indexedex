@@ -1,0 +1,22 @@
+{
+  "command": [
+    "forge",
+    "test",
+    "--match-contract",
+    "^RobinhoodReleaseRehearsalTest$",
+    "--match-test",
+    "^test_(cp_v3|orbital_v2|quad_morpho)$",
+    "--threads",
+    "1",
+    "--offline",
+    "--etherscan-api-key",
+    "",
+    "-vvvv"
+  ],
+  "exit_code": 0,
+  "seconds": 604.0866453479975,
+  "status": "NO_TESTS_DISCOVERED_NOT_A_PASS",
+  "passed": 0,
+  "failed": 0,
+  "explanation": "The diagnostic match-test regex was anchored before the function signature parentheses; it excluded all cases. This was not a contract failure or proof of a cache discovery defect."
+}

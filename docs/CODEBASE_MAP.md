@@ -173,7 +173,7 @@ Crane owns **framework ports** (Morpho, Olympus, Aave vendor trees, etc.) under 
 | Specs | `test/foundry/spec/` |
 | Fork / debug | `test/foundry/fork/`, `test/foundry/debug/` |
 
-**Rules:** production-first; no mocks of SUT (vaults, DETF, manager, registry, fee oracle, facets, DFPkgs). Hermetic = default `forge test`; fork = `FOUNDRY_PROFILE=fork`. Skills: `crane-testing`, `indexedex-testing`, adversarial twins.
+**Rules:** production-first; no mocks of SUT (vaults, DETF, manager, registry, fee oracle, facets, DFPkgs). Hermetic = default `forge test`; fork = `FOUNDRY_PROFILE=fork`. After production contract edits: **`forge build` then `forge test`** (IndexedEx FactoryServices load creation bytecode from `out/`; `forge test` alone can deploy stale artifacts). Skills: `crane-testing`, `indexedex-testing`, adversarial twins.
 
 ## Frontend
 

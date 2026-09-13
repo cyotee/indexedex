@@ -8,6 +8,9 @@ import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchang
 import {IRateProvider} from
     "@crane/contracts/protocols/dexes/balancer/common/interfaces/IRateProvider.sol";
 
+import {UniswapV4StandardExchangeCurveQuadStableBufferHookRepo as Repo} from "./UniswapV4StandardExchangeCurveQuadStableBufferHookRepo.sol";
+import {UniswapV4StandardExchangeCurveQuadStableBufferHookMath as Math} from "./UniswapV4StandardExchangeCurveQuadStableBufferHookMath.sol";
+
 /**
  * @title UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib
  * @notice SE buffer / unwrap + claim / rate helpers (external lib keeps diamond under EIP-170).
@@ -22,6 +25,31 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib {
     error RateProviderFailed();
     error SeInvertUnavailable();
 
+    function ratedPairUnits(uint8 i) external view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        address se = l.standardExchanges[i];
+        if (se == address(0)) {
+            return IERC20(l.tokens[i]).balanceOf(address(this));
+        }
+        uint256 seBal = IERC20(se).balanceOf(address(this));
+        if (seBal == 0) return 0;
+        address rp = l.rateProviders[i];
+        if (rp != address(0)) {
+            uint256 rate = _getRateFailClosed(rp);
+            return (seBal * rate) / Math.RATE_PRECISION;
+        }
+        if (se == l.tokens[i]) return seBal;
+        return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seBal, IERC20(l.tokens[i]));
+    }
+
+    function _getRateFailClosed(address provider) private view returns (uint256 rate) {
+        (bool ok, bytes memory ret) =
+            provider.staticcall(abi.encodeWithSelector(IRateProvider.getRate.selector));
+        if (!ok || ret.length != 32) revert RateProviderFailed();
+        rate = abi.decode(ret, (uint256));
+        if (rate == 0) revert RateProviderFailed();
+    }
+
     function getRateFailClosed(address rp) external view returns (uint256 rate) {
         if (rp == address(0)) return 0;
         (bool ok, bytes memory data) =
@@ -33,6 +61,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib {
 
     function seClaimOf(address se, address pairToken, uint256 seAmount) external view returns (uint256) {
         if (seAmount == 0 || se == address(0)) return 0;
+        if (se == pairToken) return seAmount;
         return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seAmount, IERC20(pairToken));
     }
 
@@ -42,6 +71,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib {
         returns (uint256 sharesOut)
     {
         if (amountInRaw == 0 || se == address(0)) return 0;
+        if (se == pairToken) return amountInRaw;
         return IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), amountInRaw, IERC20(se));
     }
 
@@ -51,6 +81,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib {
         returns (uint256 amountOut)
     {
         if (seAmount == 0 || se == address(0)) return 0;
+        if (se == pairToken) return seAmount;
         return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seAmount, IERC20(pairToken));
     }
 
@@ -60,6 +91,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib {
         returns (uint256 sharesIn)
     {
         if (amountOutNative == 0) return 0;
+        if (se == pairToken) return amountOutNative;
         try IStandardExchangeOut(se).previewExchangeOut(IERC20(se), IERC20(pairToken), amountOutNative)
         returns (uint256 seIn) {
             return seIn;
@@ -73,16 +105,42 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib {
         view
         returns (uint256 amountInRaw)
     {
-        if (sharesOut == 0) return 0;
-        try IStandardExchangeOut(se).previewExchangeOut(IERC20(pairToken), IERC20(se), sharesOut)
-        returns (uint256 pairIn) {
-            return pairIn;
-        } catch {
-            revert SeInvertUnavailable();
-        }
+        return bufferInputForShares(se, pairToken, sharesOut);
     }
 
-    function buffer(address se, address pairToken, uint256 amountInRaw) external returns (uint256 sharesOut) {
+    /// @dev Invert the public deposit quote for SEs without a pair -> shares exact-out route.
+    ///      The returned input is verified to mint the required shares; rounding favors the reserve.
+    function bufferInputForShares(address se, address pairToken, uint256 sharesOut)
+        internal view returns (uint256)
+    {
+        if (sharesOut == 0) return 0;
+        uint256 high;
+        try IStandardExchangeOut(se).previewExchangeOut(IERC20(pairToken), IERC20(se), sharesOut)
+        returns (uint256 quoted) {
+            high = quoted;
+        } catch {}
+        if (high != 0 && IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), high, IERC20(se)) >= sharesOut) {
+            return high;
+        }
+        if (high == 0) high = sharesOut;
+        uint256 low;
+        while (IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), high, IERC20(se)) < sharesOut) {
+            low = high;
+            if (high > type(uint256).max / 2) revert SeInvertUnavailable();
+            high *= 2;
+        }
+        while (high - low > 1) {
+            uint256 mid = low + (high - low) / 2;
+            if (IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), mid, IERC20(se)) >= sharesOut) {
+                high = mid;
+            } else {
+                low = mid;
+            }
+        }
+        return high;
+    }
+
+    function buffer(address se, address pairToken, uint256 amountInRaw) public returns (uint256 sharesOut) {
         if (amountInRaw == 0) return 0;
         uint256 minOut =
             IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), amountInRaw, IERC20(se));
@@ -98,6 +156,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib {
             false,
             block.timestamp
         );
+        IERC20(pairToken).forceApprove(se, 0);
         uint256 delta = IERC20(se).balanceOf(address(this)) - balBefore;
         if (delta > sharesOut) sharesOut = delta;
         if (sharesOut < minOut) revert BufferFailed();
@@ -115,6 +174,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib {
         amountOut = IStandardExchangeIn(se).exchangeIn(
             IERC20(se), seAmount, IERC20(pairToken), minOut, to, false, block.timestamp
         );
+        IERC20(se).forceApprove(se, 0);
         if (amountOut < minOut) revert UnwrapFailed();
     }
 
@@ -124,11 +184,20 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib {
     {
         if (amountOut == 0) return 0;
         seIn = IStandardExchangeOut(se).previewExchangeOut(IERC20(se), IERC20(pairToken), amountOut);
+        uint256 beforeBalance = IERC20(pairToken).balanceOf(address(this));
         IERC20(se).forceApprove(se, seIn);
-        uint256 got = IStandardExchangeOut(se).exchangeOut(
-            IERC20(se), seIn, IERC20(pairToken), amountOut, to, false, block.timestamp
+        uint256 spent = IStandardExchangeOut(se).exchangeOut(
+            IERC20(se), seIn, IERC20(pairToken), amountOut, address(this), false, block.timestamp
         );
-        if (got < amountOut) revert UnwrapFailed();
+        IERC20(se).forceApprove(se, 0);
+        uint256 received = IERC20(pairToken).balanceOf(address(this)) - beforeBalance;
+        if (spent > seIn || received < amountOut) revert UnwrapFailed();
+        if (to != address(this)) IERC20(pairToken).safeTransfer(to, amountOut);
+        uint256 surplus = received - amountOut;
+        if (surplus != 0 && IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), surplus, IERC20(se)) != 0) {
+            buffer(se, pairToken, surplus);
+        }
+        return spent;
     }
 
     function previewBufferClaimIn(address se, address pairToken, uint256 amountInRaw, address hook)

@@ -12,6 +12,8 @@ import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey
 import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
 import {PoolId, PoolIdLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolId.sol";
 import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/TickMath.sol";
+import {Hooks} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Hooks.sol";
+import {CustomRevert} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/CustomRevert.sol";
 import {Proxy} from "@crane/contracts/proxies/Proxy.sol";
 import {Vm} from "forge-std/Vm.sol";
 
@@ -35,11 +37,15 @@ import {
     UniswapV4SingleStandardExchangeBufferConstantProductHookPairPoolLib as PairPoolLib
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookPairPoolLib.sol";
 import {
+    UniswapV4SingleStandardExchangeBufferConstantProductHookBeforeInitializeLib as BeforeInitializeLib
+} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookBeforeInitializeLib.sol";
+import {
     UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarget as SeTarget
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarget.sol";
 import {
     UniswapV4SingleStandardExchangeBufferConstantProductHookInitFacet
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookInitFacet.sol";
+import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 import {
     UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg.sol";
@@ -69,21 +75,25 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_StagedInit_Tes
         _assertSelectorEq(cuts[3].functionSelectors, IFacet(address(hookPkg)).facetFuncs());
     }
 
-    function test_productionFacetCuts_sixAdds() public view {
+    function test_productionFacetCuts_eightAdds() public view {
         IDiamond.FacetCut[] memory cuts = hookPkg.productionFacetCuts();
-        assertEq(cuts.length, 6);
+        assertEq(cuts.length, 8);
         assertEq(cuts[0].facetAddress, address(hookPkg.SE_FACET()));
         assertEq(cuts[1].facetAddress, address(hookPkg.DEPOSIT_FACET()));
         assertEq(cuts[2].facetAddress, address(hookPkg.WITHDRAW_FACET()));
         assertEq(cuts[3].facetAddress, address(erc20Facet));
         assertEq(cuts[4].facetAddress, address(erc5267Facet));
         assertEq(cuts[5].facetAddress, address(erc2612Facet));
+        assertEq(cuts[6].facetAddress, address(hookPkg.DEPOSIT_SINGLE_FACET()));
+        assertEq(cuts[7].facetAddress, address(hookPkg.DEPOSIT_PREVIEW_FACET()));
         _assertSelectorEq(cuts[0].functionSelectors, hookPkg.SE_FACET().facetFuncs());
         _assertSelectorEq(cuts[1].functionSelectors, hookPkg.DEPOSIT_FACET().facetFuncs());
         _assertSelectorEq(cuts[2].functionSelectors, hookPkg.WITHDRAW_FACET().facetFuncs());
         _assertSelectorEq(cuts[3].functionSelectors, erc20Facet.facetFuncs());
         _assertSelectorEq(cuts[4].functionSelectors, erc5267Facet.facetFuncs());
         _assertSelectorEq(cuts[5].functionSelectors, erc2612Facet.facetFuncs());
+        _assertSelectorEq(cuts[6].functionSelectors, hookPkg.DEPOSIT_SINGLE_FACET().facetFuncs());
+        _assertSelectorEq(cuts[7].functionSelectors, hookPkg.DEPOSIT_PREVIEW_FACET().facetFuncs());
     }
 
     function test_facetCuts_ne_productionFacetCuts() public view {
@@ -294,21 +304,41 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_StagedInit_Tes
         assertTrue(init.finalizeInitialization());
     }
 
-    function test_deployPair_revertsIfAlreadyInitializedByExtraKey() public {
+    /// @notice A rejected alternate key must leave the canonical product deployable.
+    function test_deployPair_succeedsAfterRejectedExtraKey() public {
         (address h, IUniswapV4HookStagedPairInit init, address t0, address t1) = _freshBootstrap();
         PoolKey memory extra = PairPoolLib.pairKey(t0, t1, 120, IHooks(h));
+        _expectInvalidTickSpacing(h);
+        vm.prank(address(0x5110));
         pm.initialize(extra, TickMath.getSqrtPriceAtTick(0));
-        vm.expectRevert(SeTarget.AlreadyInitialized.selector);
+        assertFalse(PairPoolLib.isPoolLive(pm, extra), "rejected key remains uninitialized");
         init.deployPair(t0, t1);
+        assertTrue(init.isPairPoolLive(t0, t1), "canonical product still deployable");
+        assertTrue(init.finalizeInitialization(), "canonical product still finalizable");
     }
 
-    function test_finalize_extraTickSpacingDoesNotCount() public {
+    /// @notice Every valid V4 spacing other than the product spacing is rejected atomically.
+    function testFuzz_beforeInitialize_rejectsNonProductSpacing(uint24 spacingSeed) public {
         (address h, IUniswapV4HookStagedPairInit init, address t0, address t1) = _freshBootstrap();
-        PoolKey memory extra = PairPoolLib.pairKey(t0, t1, 120, IHooks(h));
+        int24 spacing = int24(uint24(bound(uint256(spacingSeed), 1, uint256(uint24(TickMath.MAX_TICK_SPACING)))));
+        if (spacing == PairPoolLib.PRODUCT_TICK_SPACING) spacing = 61;
+        PoolKey memory extra = PairPoolLib.pairKey(t0, t1, spacing, IHooks(h));
+        _expectInvalidTickSpacing(h);
         pm.initialize(extra, TickMath.getSqrtPriceAtTick(0));
         assertFalse(init.isPairPoolLive(t0, t1));
-        vm.expectRevert(IUniswapV4HookStagedPairInit.ProductDoorsNotLive.selector);
-        init.finalizeInitialization();
+        assertFalse(PairPoolLib.isPoolLive(pm, extra));
+        init.deployPair(t0, t1);
+        assertTrue(init.finalizeInitialization());
+    }
+
+    function _expectInvalidTickSpacing(address h) internal {
+        vm.expectRevert(abi.encodeWithSelector(
+            CustomRevert.WrappedError.selector,
+            h,
+            IHooks.beforeInitialize.selector,
+            abi.encodeWithSelector(BeforeInitializeLib.InvalidPoolTickSpacing.selector),
+            abi.encodePacked(Hooks.HookCallFailed.selector)
+        ));
     }
 
     function test_permissionless_strangerMayDoorAndFinalize() public {
@@ -446,6 +476,8 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_StagedInit_Tes
             standardExchange: se_,
             pairToken: pair_,
             rawToken: raw_,
+            pairTokenDecimals: HookPkgArgsDecimalsLib.tokenDec(pair_),
+            rawTokenDecimals: raw_.code.length == 0 ? uint8(18) : HookPkgArgsDecimalsLib.tokenDec(raw_),
             ownerOnlyLiquidity: _pkgOwnerOnlyLiquidity(),
             owner: _pkgOwner()
         });
@@ -453,7 +485,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_StagedInit_Tes
 
     function _expectedFinalizeCuts() internal view returns (IDiamond.FacetCut[] memory cuts) {
         IDiamond.FacetCut[] memory adds = hookPkg.productionFacetCuts();
-        cuts = new IDiamond.FacetCut[](7);
+        cuts = new IDiamond.FacetCut[](9);
         cuts[0] = IDiamond.FacetCut({
             facetAddress: address(hookPkg),
             action: IDiamond.FacetCutAction.Remove,
@@ -465,6 +497,8 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_StagedInit_Tes
         cuts[4] = adds[3];
         cuts[5] = adds[4];
         cuts[6] = adds[5];
+        cuts[7] = adds[6];
+        cuts[8] = adds[7];
     }
 
     function _assertKeyEq(PoolKey memory a, PoolKey memory b) internal pure {

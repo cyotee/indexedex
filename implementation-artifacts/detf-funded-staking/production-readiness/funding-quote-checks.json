@@ -1,0 +1,80 @@
+{
+  "status": "PASS",
+  "recorded_at_utc": "2026-09-11T07:10:18.554920+00:00",
+  "source_sha256": {
+    "scripts/foundry/anvil_robinhood_main/deploy_all.sh": "a3412be07142f7fa5ccab6811fdec81e176ddcfaa59693dcda91933c24073754",
+    "scripts/foundry/anvil_robinhood_main/Script_SimulateArchitecture.s.sol": "e8c0273cf8ae3c19b1bc9e7076889375d7d6ee0f2f78a0fc31ebf65dc11a9859",
+    "scripts/shell/lib/rh_4663_stages.sh": "fc97cd29d0ad9095add74ccef83094c8d97a4e9e8e355ed4ba12d04e26ab8b5d"
+  },
+  "cases": [
+    {
+      "case": "absolute",
+      "exit_code": 0,
+      "gas_limit_sum": 60,
+      "cost_wei": 9000,
+      "buffered_wei": 11250
+    },
+    {
+      "case": "relative",
+      "exit_code": 0,
+      "gas_limit_sum": 60,
+      "cost_wei": 9000,
+      "buffered_wei": 11250
+    },
+    {
+      "case": "default",
+      "exit_code": 0,
+      "gas_limit_sum": 60,
+      "cost_wei": 9000,
+      "buffered_wei": 11250
+    },
+    {
+      "case": "missing-file",
+      "exit_code": 1,
+      "incomplete_quote_rejected": true
+    },
+    {
+      "case": "empty",
+      "exit_code": 1,
+      "incomplete_quote_rejected": true
+    },
+    {
+      "case": "missing-gas",
+      "exit_code": 1,
+      "incomplete_quote_rejected": true
+    },
+    {
+      "case": "zero-gas",
+      "exit_code": 1,
+      "incomplete_quote_rejected": true
+    },
+    {
+      "case": "negative-gas",
+      "exit_code": 1,
+      "incomplete_quote_rejected": true
+    }
+  ],
+  "catalog_phases_02_through_06_in_exact_order": [
+    "Phase_02_Stage_01_Create3Factory",
+    "Phase_02_Stage_02_DiamondPackageFactory",
+    "Phase_02_Stage_03_HookFactory",
+    "Phase_03_Stage_01_CommonFacets",
+    "Phase_04_Stage_01_FeeCollectorAndManager",
+    "Phase_05_Stage_01_SeRateProviderPkg",
+    "Phase_05_Stage_02_UniswapV4TwapOracle",
+    "Phase_05_Stage_03_UniswapV4StandardExchangePkg",
+    "Phase_05_Stage_04_UniswapV3StandardExchangePkg",
+    "Phase_05_Stage_05_MorphoBlueStandardExchangePkg",
+    "Phase_05_Stage_06_UniswapV2StandardExchangePkg",
+    "Phase_06_Stage_01_BondNftPkg",
+    "Phase_06_Stage_02_RebasingClaimPkg",
+    "Phase_06_Stage_03_CpBufferHookPkg",
+    "Phase_06_Stage_04_WeightedBufferHookPkg",
+    "Phase_06_Stage_05_OrbitalBufferHookPkg",
+    "Phase_06_Stage_06_CurveQuadBufferHookPkg",
+    "Phase_06_Stage_07_UniswapV4DetfPkg",
+    "Phase_06_Stage_09_BalancerStableBufferHookPkg"
+  ],
+  "bash_syntax_exit_code": 0,
+  "scope": "Actual quote helper path and arithmetic plus actual catalog membership; fee RPC stubbed only for deterministic arithmetic. Full current local simulation remains required."
+}

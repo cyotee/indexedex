@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 import {Vm} from "forge-std/Vm.sol";
 import {VM_ADDRESS} from "@crane/contracts/constants/FoundryConstants.sol";
@@ -7,18 +8,9 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
-import {
-    UniswapV4MultiPoolTwapOracleFacet
-} from "contracts/oracles/uniswap/v4/twap/UniswapV4MultiPoolTwapOracleFacet.sol";
-import {
-    IUniswapV4MultiPoolTwapOracleDFPkg
-} from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4MultiPoolTwapOracleDFPkg.sol";
-import {
-    UniswapV4MultiPoolTwapOracleDFPkg
-} from "contracts/oracles/uniswap/v4/twap/UniswapV4MultiPoolTwapOracleDFPkg.sol";
-import {
-    UniswapV4TwapAdapterFactory
-} from "contracts/oracles/uniswap/v4/twap/UniswapV4TwapAdapterFactory.sol";
+
+import {IUniswapV4MultiPoolTwapOracleDFPkg} from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4MultiPoolTwapOracleDFPkg.sol";
+import {IUniswapV4TwapAdapterFactory} from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4TwapAdapterFactory.sol";
 
 library UniswapV4TwapOracleFactoryService {
     using BetterEfficientHashLib for bytes;
@@ -30,10 +22,10 @@ library UniswapV4TwapOracleFactoryService {
         returns (IFacet instance)
     {
         instance = create3Factory.deployFacet(
-            type(UniswapV4MultiPoolTwapOracleFacet).creationCode,
-            abi.encode(type(UniswapV4MultiPoolTwapOracleFacet).name)._hash()
+            ArtifactCreationCode.creationCode("UniswapV4MultiPoolTwapOracleFacet.sol:UniswapV4MultiPoolTwapOracleFacet"),
+            abi.encode("UniswapV4MultiPoolTwapOracleFacet")._hash()
         );
-        vm.label(address(instance), type(UniswapV4MultiPoolTwapOracleFacet).name);
+        vm.label(address(instance), "UniswapV4MultiPoolTwapOracleFacet");
     }
 
     function deployUniswapV4MultiPoolTwapOracleDFPkg(
@@ -47,25 +39,25 @@ library UniswapV4TwapOracleFactoryService {
         instance = IUniswapV4MultiPoolTwapOracleDFPkg(
             address(
                 create3Factory.deployPackageWithArgs(
-                    type(UniswapV4MultiPoolTwapOracleDFPkg).creationCode,
+                    ArtifactCreationCode.creationCode("UniswapV4MultiPoolTwapOracleDFPkg.sol:UniswapV4MultiPoolTwapOracleDFPkg"),
                     abi.encode(pkgInit),
-                    abi.encode(type(UniswapV4MultiPoolTwapOracleDFPkg).name)._hash()
+                    abi.encode("UniswapV4MultiPoolTwapOracleDFPkg")._hash()
                 )
             )
         );
-        vm.label(address(instance), type(UniswapV4MultiPoolTwapOracleDFPkg).name);
+        vm.label(address(instance), "UniswapV4MultiPoolTwapOracleDFPkg");
     }
 
     function deployUniswapV4TwapAdapterFactory(ICreate3FactoryProxy create3Factory)
         internal
-        returns (UniswapV4TwapAdapterFactory instance)
+        returns (IUniswapV4TwapAdapterFactory instance)
     {
-        instance = UniswapV4TwapAdapterFactory(
+        instance = IUniswapV4TwapAdapterFactory(
             create3Factory.create3(
-                type(UniswapV4TwapAdapterFactory).creationCode,
-                abi.encode(type(UniswapV4TwapAdapterFactory).name)._hash()
+                ArtifactCreationCode.creationCode("UniswapV4TwapAdapterFactory.sol:UniswapV4TwapAdapterFactory"),
+                abi.encode("UniswapV4TwapAdapterFactory")._hash()
             )
         );
-        vm.label(address(instance), type(UniswapV4TwapAdapterFactory).name);
+        vm.label(address(instance), "UniswapV4TwapAdapterFactory");
     }
 }

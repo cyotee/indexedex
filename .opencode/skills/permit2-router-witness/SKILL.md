@@ -1,4 +1,3 @@
-````skill
 ---
 name: permit2-router-witness
 description: This skill should be used when the user asks about Permit2 witness signatures for Balancer V3 router swaps, typed-data construction, nonce/deadline handling, or needs the router’s canonical witness type string/typehash.
@@ -79,5 +78,3 @@ Witness(address owner,address pool,address tokenIn,address tokenInVault,address 
 - `contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterPermit2WitnessFacet.sol`
 - `contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterDFPkg.sol`
 - `frontend/app/swap/page.tsx`
-
-````

@@ -1,0 +1,17 @@
+{
+  "files": [
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ3Se.t.sol",
+      "before_sha256": "548114b081f3cd472f4c033896eba70854be7ee906c2f2bdd2330a432d320f4d",
+      "after_sha256": "85f6bffbb40507ac3ef70f214af0c7b727bc2d85a6dc3e3864b41fa0873f4153",
+      "mapping": "Three duplicated fundedSe wrappers consolidated into their existing mint/burn/close lifecycle tests; all inherit explicit two-token activation. Additional staking quote test uses actually claimed DETF and the canonical staking token standard route."
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ3Se.sol",
+      "before_sha256": "ac27510f0da6d07f75a9c1059199321e75f9582618d1d8604b9ba8d7ddd06e3c",
+      "after_sha256": "1e3923cb4e787c8707c02662bbbe72dc762f061b3e4450ef263ba8be21a74852",
+      "mapping": "Move the existing successful explicit two-asset SE funding into its canonical fixture, eliminating duplicate cold/unfunded lifecycle wrappers."
+    }
+  ],
+  "validation": "pending"
+}

@@ -9,12 +9,12 @@ import {
 /// @notice WP-SEC-DETF-CS-A0-001: MixedBuffer first-bond / first-mint cannot drain pre-seeded inventory.
 /// @dev Donate before live. Do not count L-RSRV-DUST same-tx self-push as A0. Calls the production proxy.
 contract Adversarial_MixedBuffer_A0_Test is TestBase_MixedBufferMultiVaultStableDetf_Adversarial {
-    function test_A0_mb_donatedBuffer_bootstrapDoesNotStealOthersSeed() public {
-        address instance_ = _deployOpenThresholdDetfN(1);
+    function test_A0_mb_donatedBuffer_bootstrapDoesNotStealOthersSeed() public virtual {
+        address instance_ = _deployDetfN(1, 100e18, 0.1e18);
         _assertInert(instance_);
         IERC20 buffer_ = _bufferOf(instance_);
 
-        uint256 donated_ = 250e18;
+        uint256 donated_ = _fixtureAmount(250e18);
         _fundBuffer(attacker, donated_);
         vm.prank(attacker);
         buffer_.transfer(instance_, donated_);

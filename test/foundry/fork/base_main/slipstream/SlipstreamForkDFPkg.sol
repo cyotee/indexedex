@@ -16,10 +16,8 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 /*                                 Indexedex                                   */
 /* -------------------------------------------------------------------------- */
 
-import {
-    ISlipstreamStandardExchangeDFPkg,
-    SlipstreamStandardExchangeDFPkg
-} from "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeDFPkg.sol";
+import {ISlipstreamStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/slipstream/ISlipstreamStandardExchangeDFPkg.sol";
+import {SlipstreamStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeDFPkg.sol";
 
 /**
  * @title SlipstreamForkDFPkg

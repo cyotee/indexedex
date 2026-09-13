@@ -16,15 +16,10 @@ import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol'
 import {IDetf} from 'contracts/interfaces/detf/IDetf.sol';
 import {IVaultFeeOracleQuery} from 'contracts/interfaces/IVaultFeeOracleQuery.sol';
 import {IVaultRegistryDeployment} from 'contracts/interfaces/IVaultRegistryDeployment.sol';
-import {
-    IComposedStableCommonDetfBondNFTVaultDFPkg
-} from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondNFTVaultDFPkg.sol';
-import {
-    ComposedStableCommonDetfDFPkg,
-    IComposedStableCommonDetfDFPkg
-} from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfDFPkg.sol';
+import {IComposedStableCommonDetfBondNFTVaultDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/IComposedStableCommonDetfBondNFTVaultDFPkg.sol";
+import {IComposedStableCommonDetfDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/IComposedStableCommonDetfDFPkg.sol";
 import {ComposedStableCommonDetfRepo} from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfRepo.sol';
-import {IRebasingDETFTokenDFPkg} from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenDFPkg.sol';
+import {IRebasingDETFTokenDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/IRebasingDETFTokenDFPkg.sol";
 import {ThresholdMode} from 'contracts/vaults/detf/common/core/DETFThresholdPolicy.sol';
 
 library ComposedStableCommonDetf_Component_FactoryService {
@@ -100,15 +95,15 @@ library ComposedStableCommonDetf_Component_FactoryService {
         pure
         returns (IComposedStableCommonDetfDFPkg.PkgInit memory pkgInit_)
     {
-        pkgInit_ = IComposedStableCommonDetfDFPkg.PkgInit({
-            multiAssetBasicVaultFacet: facets_.multiAssetBasicVaultFacet,
-            multiAssetStandardVaultFacet: facets_.multiAssetStandardVaultFacet,
-            composedStableCommonDetfBondingFacet: facets_.bondingFacet,
-            composedStableCommonDetfExchangeInFacet: facets_.exchangeInFacet,
-            composedStableCommonDetfExchangeOutQueryFacet: facets_.exchangeOutQueryFacet,
-            rebasingDetfTokenPricingFacet: facets_.pricingFacet,
-            vaultRegistryDeployment: infra_.vaultRegistryDeployment
-        });
+        // D60 compilation compatibility for historical callers only.
+        // Newly required fields remain unset; this helper does not complete the excluded launch refactor.
+        pkgInit_.multiAssetBasicVaultFacet = facets_.multiAssetBasicVaultFacet;
+        pkgInit_.multiAssetStandardVaultFacet = facets_.multiAssetStandardVaultFacet;
+        pkgInit_.composedStableCommonDetfBondingFacet = facets_.bondingFacet;
+        pkgInit_.composedStableCommonDetfExchangeInFacet = facets_.exchangeInFacet;
+        pkgInit_.composedStableCommonDetfExchangeOutQueryFacet = facets_.exchangeOutQueryFacet;
+        pkgInit_.rebasingDetfTokenPricingFacet = facets_.pricingFacet;
+        pkgInit_.vaultRegistryDeployment = infra_.vaultRegistryDeployment;
     }
 
     function buildPkgArgs(ComposedStableCommonDetfPricingConfig memory config_)
@@ -116,33 +111,18 @@ library ComposedStableCommonDetf_Component_FactoryService {
         pure
         returns (IComposedStableCommonDetfDFPkg.PkgArgs memory pkgArgs_)
     {
-        pkgArgs_ = IComposedStableCommonDetfDFPkg.PkgArgs({
-            reservePool: config_.reservePool,
-            bondNftVault: config_.bondNftVault,
-            rebasingDetfToken: config_.rebasingDetfToken,
-            detfToken: config_.detfToken,
-            stablePoolBpt: config_.stablePoolBpt,
-            commonPoolBpt: config_.commonPoolBpt,
-            rateAsset: config_.rateAsset,
-            stablePoolExitPricer: config_.stablePoolExitPricer,
-            commonPoolExitPricer: config_.commonPoolExitPricer,
-            permit2: config_.permit2,
-            balancerV3Router: config_.balancerV3Router,
-            stablePool: config_.stablePool,
-            commonPool: config_.commonPool,
-            reservePoolEntryRouter: config_.reservePoolEntryRouter,
-            detfIndex: config_.detfIndex,
-            stablePoolBptIndex: config_.stablePoolBptIndex,
-            commonPoolBptIndex: config_.commonPoolBptIndex,
-            mintThreshold: config_.mintThreshold,
-            burnThreshold: config_.burnThreshold,
-            routes: config_.routes,
-            thresholdMode: config_.thresholdMode,
-            expansionClosureRatePerSecond: config_.expansionClosureRatePerSecond,
-            expansionCatchUpMaxSeconds: config_.expansionCatchUpMaxSeconds,
-            expansionCatchUpCapBps: config_.expansionCatchUpCapBps,
-            creator: config_.creator
-        });
+        // D60 compilation compatibility for historical callers only.
+        // Newly required fields remain unset; this helper does not complete the excluded launch refactor.
+        pkgArgs_.rateAsset = config_.rateAsset;
+        pkgArgs_.stablePoolExitPricer = config_.stablePoolExitPricer;
+        pkgArgs_.commonPoolExitPricer = config_.commonPoolExitPricer;
+        pkgArgs_.stablePool = config_.stablePool;
+        pkgArgs_.commonPool = config_.commonPool;
+        pkgArgs_.mintThreshold = config_.mintThreshold;
+        pkgArgs_.burnThreshold = config_.burnThreshold;
+        pkgArgs_.routes = config_.routes;
+        pkgArgs_.expansionClosureRatePerSecond = config_.expansionClosureRatePerSecond;
+        pkgArgs_.creator = config_.creator;
     }
 
     function buildRebasingDetfTokenPkgInit(

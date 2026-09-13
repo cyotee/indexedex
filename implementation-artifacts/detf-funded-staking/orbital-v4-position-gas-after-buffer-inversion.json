@@ -1,0 +1,50 @@
+{
+  "SY deposit execution gas": {
+    "values": [
+      12504683,
+      12504682,
+      12504683,
+      12504683,
+      12504683,
+      13298440,
+      13298440,
+      13298440,
+      13298440,
+      13298441
+    ],
+    "minimum": 12504682,
+    "maximum": 13298441
+  },
+  "SY redeem execution gas": {
+    "values": [
+      6055132,
+      4237472,
+      6086126,
+      6364744,
+      6398476,
+      6053260,
+      4237600,
+      6088128,
+      6364873,
+      6398563
+    ],
+    "minimum": 4237472,
+    "maximum": 6398563
+  },
+  "Standard exact-output quote gas": {
+    "values": [
+      212128,
+      252790
+    ],
+    "minimum": 212128,
+    "maximum": 252790
+  },
+  "State-based exact-output quote gas": {
+    "values": [
+      348503,
+      405524
+    ],
+    "minimum": 348503,
+    "maximum": 405524
+  }
+}

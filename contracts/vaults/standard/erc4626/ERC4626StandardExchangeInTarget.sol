@@ -8,7 +8,7 @@ import {ERC4626Service} from "@crane/contracts/tokens/ERC4626/ERC4626Service.sol
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
-import {ERC4626StandardExchangeCommon} from "contracts/vaults/standard/erc4626/ERC4626StandardExchangeCommon.sol";
+import {ERC4626StandardExchangeQuoteTarget} from "contracts/vaults/standard/erc4626/ERC4626StandardExchangeQuoteTarget.sol";
 
 /**
  * @title ERC4626StandardExchangeInTarget
@@ -18,7 +18,7 @@ import {ERC4626StandardExchangeCommon} from "contracts/vaults/standard/erc4626/E
  *      Every money route end-syncs expected-hold reserves after refunds.
  */
 contract ERC4626StandardExchangeInTarget is
-    ERC4626StandardExchangeCommon,
+    ERC4626StandardExchangeQuoteTarget,
     ReentrancyLockModifiers,
     IStandardExchangeIn
 {
@@ -112,9 +112,10 @@ contract ERC4626StandardExchangeInTarget is
         // protocolVault → SE (dilution fee) — durable U credit (no free-mint on booked reserve)
         // amountIn vault tokens **stay** as SE reserve; never refund absolute vault balance.
         if (address(tokenIn) == address(vault) && address(tokenOut) == address(this)) {
-            uint256 totalBefore = IERC20(address(vault)).balanceOf(address(this));
             uint256 actualIn = _securePull(tokenIn, amountIn, pretransferred);
-            // totalBefore is vault inventory *before* this user's deposit credit
+            // A prepaid receipt is already in the token balance. Exclude only
+            // this credited payment, retaining all other existing reserve.
+            uint256 totalBefore = IERC20(address(vault)).balanceOf(address(this)) - actualIn;
             amountOut = _convertVaultDeltaToShares(actualIn, totalBefore);
             if (amountOut < minAmountOut) revert Slippage();
             _mintWithUsageFee(recipient, amountOut);

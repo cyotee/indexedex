@@ -1,0 +1,444 @@
+{
+  "counts": {
+    "suites": 9,
+    "passed_tests": 60,
+    "failed_tests": 0,
+    "skipped_tests": 0,
+    "total_fuzz_cases": 12482,
+    "partial_burn_fuzz_cases": 4162
+  },
+  "cases": [
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/fuzz/SingleStandardExchangeDETF_Fuzz.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_Test",
+      "status": "PASS",
+      "test": "testFuzz_holderBalance_notDilutedByOthersMint(uint256,uint256)",
+      "runs": 64
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/fuzz/SingleStandardExchangeDETF_Fuzz.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_Test",
+      "status": "PASS",
+      "test": "testFuzz_mintThenPartialBurn_conservation(uint256,uint256)",
+      "runs": 64
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/fuzz/SingleStandardExchangeDETF_Fuzz.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_Test",
+      "status": "PASS",
+      "test": "testFuzz_zeroPreview(uint256)",
+      "runs": 64
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P9_R6.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P9_R6",
+      "status": "PASS",
+      "test": "testFuzz_holderBalance_notDilutedByOthersMint(uint256,uint256)",
+      "runs": 512
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P9_R6.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P9_R6",
+      "status": "PASS",
+      "test": "testFuzz_mintThenPartialBurn_conservation(uint256,uint256)",
+      "runs": 512
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P9_R6.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P9_R6",
+      "status": "PASS",
+      "test": "testFuzz_zeroPreview(uint256)",
+      "runs": 512
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P9_R6.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P9_R6",
+      "status": "PASS",
+      "test": "test_partialBurn_maxPayment_maxBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P9_R6.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P9_R6",
+      "status": "PASS",
+      "test": "test_partialBurn_maxPayment_minBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P9_R6.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P9_R6",
+      "status": "PASS",
+      "test": "test_partialBurn_minPayment_maxBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P9_R6.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P9_R6",
+      "status": "PASS",
+      "test": "test_partialBurn_minPayment_minBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_H9.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_H9",
+      "status": "PASS",
+      "test": "testFuzz_holderBalance_notDilutedByOthersMint(uint256,uint256)",
+      "runs": 512
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_H9.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_H9",
+      "status": "PASS",
+      "test": "testFuzz_mintThenPartialBurn_conservation(uint256,uint256)",
+      "runs": 513
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_H9.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_H9",
+      "status": "PASS",
+      "test": "testFuzz_zeroPreview(uint256)",
+      "runs": 512
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_H9.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_H9",
+      "status": "PASS",
+      "test": "test_partialBurn_maxPayment_maxBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_H9.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_H9",
+      "status": "PASS",
+      "test": "test_partialBurn_maxPayment_minBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_H9.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_H9",
+      "status": "PASS",
+      "test": "test_partialBurn_minPayment_maxBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_H9.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_H9",
+      "status": "PASS",
+      "test": "test_partialBurn_minPayment_minBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_H9.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_H9",
+      "status": "PASS",
+      "test": "test_regression_partialBurn_nonzeroPayout()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P18_R9.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P18_R9",
+      "status": "PASS",
+      "test": "testFuzz_holderBalance_notDilutedByOthersMint(uint256,uint256)",
+      "runs": 512
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P18_R9.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P18_R9",
+      "status": "PASS",
+      "test": "testFuzz_mintThenPartialBurn_conservation(uint256,uint256)",
+      "runs": 512
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P18_R9.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P18_R9",
+      "status": "PASS",
+      "test": "testFuzz_zeroPreview(uint256)",
+      "runs": 512
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P18_R9.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P18_R9",
+      "status": "PASS",
+      "test": "test_partialBurn_maxPayment_maxBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P18_R9.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P18_R9",
+      "status": "PASS",
+      "test": "test_partialBurn_maxPayment_minBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P18_R9.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P18_R9",
+      "status": "PASS",
+      "test": "test_partialBurn_minPayment_maxBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P18_R9.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P18_R9",
+      "status": "PASS",
+      "test": "test_partialBurn_minPayment_minBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P6_R18.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P6_R18",
+      "status": "PASS",
+      "test": "testFuzz_holderBalance_notDilutedByOthersMint(uint256,uint256)",
+      "runs": 512
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P6_R18.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P6_R18",
+      "status": "PASS",
+      "test": "testFuzz_mintThenPartialBurn_conservation(uint256,uint256)",
+      "runs": 512
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P6_R18.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P6_R18",
+      "status": "PASS",
+      "test": "testFuzz_zeroPreview(uint256)",
+      "runs": 512
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P6_R18.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P6_R18",
+      "status": "PASS",
+      "test": "test_partialBurn_maxPayment_maxBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P6_R18.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P6_R18",
+      "status": "PASS",
+      "test": "test_partialBurn_maxPayment_minBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P6_R18.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P6_R18",
+      "status": "PASS",
+      "test": "test_partialBurn_minPayment_maxBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P6_R18.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P6_R18",
+      "status": "PASS",
+      "test": "test_partialBurn_minPayment_minBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_H6.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_H6",
+      "status": "PASS",
+      "test": "testFuzz_holderBalance_notDilutedByOthersMint(uint256,uint256)",
+      "runs": 512
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_H6.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_H6",
+      "status": "PASS",
+      "test": "testFuzz_mintThenPartialBurn_conservation(uint256,uint256)",
+      "runs": 513
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_H6.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_H6",
+      "status": "PASS",
+      "test": "testFuzz_zeroPreview(uint256)",
+      "runs": 512
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_H6.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_H6",
+      "status": "PASS",
+      "test": "test_partialBurn_maxPayment_maxBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_H6.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_H6",
+      "status": "PASS",
+      "test": "test_partialBurn_maxPayment_minBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_H6.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_H6",
+      "status": "PASS",
+      "test": "test_partialBurn_minPayment_maxBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_H6.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_H6",
+      "status": "PASS",
+      "test": "test_partialBurn_minPayment_minBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P18_R6.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P18_R6",
+      "status": "PASS",
+      "test": "testFuzz_holderBalance_notDilutedByOthersMint(uint256,uint256)",
+      "runs": 512
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P18_R6.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P18_R6",
+      "status": "PASS",
+      "test": "testFuzz_mintThenPartialBurn_conservation(uint256,uint256)",
+      "runs": 512
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P18_R6.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P18_R6",
+      "status": "PASS",
+      "test": "testFuzz_zeroPreview(uint256)",
+      "runs": 512
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P18_R6.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P18_R6",
+      "status": "PASS",
+      "test": "test_partialBurn_maxPayment_maxBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P18_R6.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P18_R6",
+      "status": "PASS",
+      "test": "test_partialBurn_maxPayment_minBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P18_R6.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P18_R6",
+      "status": "PASS",
+      "test": "test_partialBurn_minPayment_maxBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P18_R6.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P18_R6",
+      "status": "PASS",
+      "test": "test_partialBurn_minPayment_minBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P9_R18.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P9_R18",
+      "status": "PASS",
+      "test": "testFuzz_holderBalance_notDilutedByOthersMint(uint256,uint256)",
+      "runs": 512
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P9_R18.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P9_R18",
+      "status": "PASS",
+      "test": "testFuzz_mintThenPartialBurn_conservation(uint256,uint256)",
+      "runs": 512
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P9_R18.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P9_R18",
+      "status": "PASS",
+      "test": "testFuzz_zeroPreview(uint256)",
+      "runs": 512
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P9_R18.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P9_R18",
+      "status": "PASS",
+      "test": "test_partialBurn_maxPayment_maxBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P9_R18.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P9_R18",
+      "status": "PASS",
+      "test": "test_partialBurn_maxPayment_minBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P9_R18.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P9_R18",
+      "status": "PASS",
+      "test": "test_partialBurn_minPayment_maxBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P9_R18.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P9_R18",
+      "status": "PASS",
+      "test": "test_partialBurn_minPayment_minBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P6_R9.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P6_R9",
+      "status": "PASS",
+      "test": "testFuzz_holderBalance_notDilutedByOthersMint(uint256,uint256)",
+      "runs": 512
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P6_R9.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P6_R9",
+      "status": "PASS",
+      "test": "testFuzz_mintThenPartialBurn_conservation(uint256,uint256)",
+      "runs": 512
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P6_R9.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P6_R9",
+      "status": "PASS",
+      "test": "testFuzz_zeroPreview(uint256)",
+      "runs": 512
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P6_R9.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P6_R9",
+      "status": "PASS",
+      "test": "test_partialBurn_maxPayment_maxBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P6_R9.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P6_R9",
+      "status": "PASS",
+      "test": "test_partialBurn_maxPayment_minBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P6_R9.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P6_R9",
+      "status": "PASS",
+      "test": "test_partialBurn_minPayment_maxBurn()",
+      "runs": null
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_P6_R9.t.sol",
+      "contract": "SingleStandardExchangeDETF_Fuzz_P6_R9",
+      "status": "PASS",
+      "test": "test_partialBurn_minPayment_minBurn()",
+      "runs": null
+    }
+  ],
+  "source_files": [
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_Decimals.sol",
+      "before_sha256": "e8895df943e702daa3b3aea8309c4f66963e32080dbd2ab126a2c45cfa1d9f71",
+      "after_sha256": "4a328bc552743b6a1b6d626661bb66731a27a9456a3990d3b89f65fdef9d9625"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_H9.t.sol",
+      "before_sha256": "063eec9fa0be7b7b8be88abf958db5b765d91970427958911307b9ca14cff8f6",
+      "after_sha256": "2c4584bd53ac91fe734988167369549ce1a28861026e38fe2c5b0edf74c56204"
+    }
+  ]
+}

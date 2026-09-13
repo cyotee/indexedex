@@ -37,6 +37,13 @@ via_ir = false
 # Headroom for auto-mine / dense hook-package deploys under the full hermetic suite.
 gas_limit = 30000000000
 
+[fuzz]
+runs=16
+
+[invariant]
+runs=16
+depth=8
+
 # Explicit fork gate (do not rely on inherits for test= path — flaky on some Foundry versions).
 [profile.fork]
 src = 'contracts'

@@ -7,10 +7,9 @@ import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExch
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
-import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 
 /// @title SingleStandardExchangeDETFRepo
-/// @notice Diamond storage for SingleStandardExchangeDETF. Role names only — no product tickers.
+/// @notice Diamond storage for SingleStandardExchangeDETF. Protocol reserve wiring, funded child addresses and fixed epoch clock.
 library SingleStandardExchangeDETFRepo {
     error AlreadyInitialized();
     error ReservePoolNotInitialized();
@@ -44,41 +43,33 @@ library SingleStandardExchangeDETFRepo {
         uint256 vaultShareWeight;
         uint256 mintThreshold;
         uint256 burnThreshold;
-        ThresholdMode thresholdMode;
         IVaultFeeOracleQuery feeOracle;
         IDETFNFTVault bondNftVault;
-        uint256 detfNftId;
-        uint256 feeRecipientNftId;
         IRebasingClaimToken rebasingClaimToken;
         // Phase 2 natural expansion (resolved deploy-time; no post-deploy setter).
         uint256 expansionClosureRatePerSecond;
-        uint256 expansionCatchUpMaxSeconds;
-        uint256 expansionCatchUpCapBps;
-        uint256 lastExpansionTimestamp; // seeded at live transition or first accrual
+        uint256 epochAnchor;
+        uint256 lastExpansionTimestamp; // last completed eight-hour boundary
     }
 
-    /// @dev Packed trailing threshold + fee/NFT + expansion wiring to avoid stack-too-deep in `_initialize`.
+    /// @dev Deployment configuration for thresholds, fees and funded rewards.
     struct ThresholdAndFeeInit {
         uint256 mintThreshold;
         uint256 burnThreshold;
-        ThresholdMode thresholdMode;
         IVaultFeeOracleQuery feeOracle;
         IDETFNFTVault bondNftVault;
-        uint256 detfNftId;
-        uint256 feeRecipientNftId;
         uint256 expansionClosureRatePerSecond;
-        uint256 expansionCatchUpMaxSeconds;
-        uint256 expansionCatchUpCapBps;
     }
 
-    function _layoutStruct() internal pure returns (Storage storage layoutStruct_) {
-        bytes32 slot_ = STORAGE_SLOT;
+    function _layoutStruct(bytes32 slot_) internal pure returns (Storage storage layoutStruct_) {
         assembly {
             layoutStruct_.slot := slot_
         }
     }
 
-    /// @dev Core wiring args + `ThresholdAndFeeInit` (mint/burn/mode + feeOracle + NFT ids).
+    function _layoutStruct() internal pure returns (Storage storage) { return _layoutStruct(STORAGE_SLOT); }
+
+    /// @dev Initialize fresh reserve wiring; the first successful bond starts the epoch clock.
     function _initialize(
         IStandardExchangeProxy seVault_,
         IERC20 seShare_,
@@ -107,24 +98,18 @@ library SingleStandardExchangeDETFRepo {
         s.vaultShareWeight = vaultShareWeight_;
         s.mintThreshold = thresholdsAndFee_.mintThreshold;
         s.burnThreshold = thresholdsAndFee_.burnThreshold;
-        s.thresholdMode = thresholdsAndFee_.thresholdMode;
         s.feeOracle = thresholdsAndFee_.feeOracle;
         s.bondNftVault = thresholdsAndFee_.bondNftVault;
-        s.detfNftId = thresholdsAndFee_.detfNftId;
-        s.feeRecipientNftId = thresholdsAndFee_.feeRecipientNftId;
         s.expansionClosureRatePerSecond = thresholdsAndFee_.expansionClosureRatePerSecond;
-        s.expansionCatchUpMaxSeconds = thresholdsAndFee_.expansionCatchUpMaxSeconds;
-        s.expansionCatchUpCapBps = thresholdsAndFee_.expansionCatchUpCapBps;
         s.lastExpansionTimestamp = 0;
     }
 
     function _setReserveLive() internal {
         Storage storage s = _layoutStruct();
+        if (s.isReserveLive) revert AlreadyInitialized();
         s.isReserveLive = true;
-        // Seed expansion clock at live so accrual window starts from first-bond, not deploy.
-        if (s.lastExpansionTimestamp == 0) {
-            s.lastExpansionTimestamp = block.timestamp;
-        }
+        s.epochAnchor = block.timestamp;
+        s.lastExpansionTimestamp = block.timestamp;
     }
 
     function _setRebasingClaimToken(IRebasingClaimToken token_) internal {

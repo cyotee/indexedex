@@ -1,0 +1,66 @@
+{
+  "status": "APPLIED_IMPLEMENTATION_AND_VALIDATION_IN_PROGRESS",
+  "recorded_at_utc": "2026-09-08T04:22:00.179418+00:00",
+  "files": [
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget.sol",
+      "before_sha256": "a8569e80ddadff7b0f4818b450d403a8a6f450559a39ab620c26c6cdb802ab7d",
+      "after_sha256": "23d73b1e1be6a0a62523befc12754cb11ee2939fc9543ac25215882d9722ab6e"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/facets/UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet.sol",
+      "before_sha256": "9da231027f01730b2b16e83d9387c07b316eb444e9975381cded24fb51366e45",
+      "after_sha256": "c08c8b2a3832df82282e63268f7224830c61fa169e3b7262e33afc454bae969e"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarget.sol",
+      "before_sha256": "708e69b7ec396842d1b0e519a664c5890469e98d4d7d687f3db798600a126cfb",
+      "after_sha256": "b8285b1f158b136a12a08c4e9237363f08ba2b11f9129ad96b1d82df084b32c4"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet.sol",
+      "before_sha256": "bbd140242de5b9ab016e9f91c8985f50203f0b337f7ca39cb2999e84477798e2",
+      "after_sha256": "e58a0ffe56d1ae4b462c8ccb97c2e699fdb8285df535aba95d3530874135ae05"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookHooksTarget.sol",
+      "before_sha256": "eedf87348cca53d7d3c77e4c16accd79b1f7c030ab7b69d04f7f0fcd55be7b5f",
+      "after_sha256": "b94564f9c2c8bb5fed4e0ed5368deef97be7fd7e4fdcf2ae45035a15e00762eb"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/facets/UniswapV4StandardExchangeWeightedBufferHookHooksFacet.sol",
+      "before_sha256": "8062217b8669551b2d478ccbd8cda55117e9b7a1f61a7e728a5db113d99f130a",
+      "after_sha256": "587edc14643616071fab8320d62ed5c76829793e77f9fa4ead658fea55979147"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookCommon.sol",
+      "before_sha256": "7426c41bc91a21d655d4cdab254e7dc45f2c4dadbefb119c743380d7c82acdb3",
+      "after_sha256": "7cb2d209facabf77ab9ba2907d0666472d56ba1804963f7063f9c0320be149c1"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookHooksTarget.sol",
+      "before_sha256": "04f3e18a7d3090724598d0adbde5717a3cecb2a57cfcf1438bf6f51d52fee9e8",
+      "after_sha256": "f17b25e8bb045f6645c1fce71e344c89e4f2639bacd4a95dfcd56c0e1ef8c8ef"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookHooksFacet.sol",
+      "before_sha256": "b87e296addd55cc170e8ef7c42552f1bd2c67df04b850db80b6f8994f0a7b0b1",
+      "after_sha256": "00c205f36d2162e27de18d84f4b2771cdd1932f78235cc2fefce224d37a74666"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol",
+      "before_sha256": "96411c8bacbbe04df09064ce7fad2e09468f62424e031830494c11f77ace3d7d",
+      "after_sha256": "abba36cd6c4e944a5da7878441a461e239f8799ecb3afceea7db0a573ca91565"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol",
+      "before_sha256": "f1449cbaaf240615b7f31436d27866992fadd5143411795b8670937a6209a15a",
+      "after_sha256": "bc149c4946ae18bff607af3be69fb043a2bba9f3611126f59b2da27fe0513dfa"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol",
+      "before_sha256": "24b3d0c8fcfb584abd5d6c77bcea8199523becc5ed4afc23a8387e1964335f19",
+      "after_sha256": "5863be189220cdb6f8b3ce6346bf9222e4953559fea9d6b53554b80b25d6cc13"
+    }
+  ]
+}

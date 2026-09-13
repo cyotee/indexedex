@@ -122,7 +122,7 @@ Inventory after liquidity:
   free A/C on hook is dust only (refunded after liquidity ops)
 
 Rated balances for SWAPS (when RP set on SE leg) — pair-token scale only (Q25):
-  b_A_rated = ratedScale_A( seBal_A * getRate(RP_A) / 1e18 )   // SE valued as A
+  b_A_rated = ratedScale_A( ratedPairUnits(seBal_A, getRate(RP_A), shareDecimals_A, pairDecimals_A) )   // SE valued as A
   b_B_rated = ratedScale_B( face_B )
   b_C_rated = ratedScale_C( claim_C )                            // no RP → SE claim
   b_D_rated = ratedScale_D( face_D )
@@ -294,7 +294,7 @@ When full book is live, join/exit/swap **math structure** should match Balancer 
 | D7a | Minimum SE | **At least one** `standardExchange[i] != 0`** — zero-SE binding **reverts** at deploy/init |
 | D7b | Distinct SEs | **When non-zero, SE addresses must be pairwise distinct** |
 | D8 | Rate provider slots | **Optional per SE leg only** — `rateProvider[i]` non-zero **only if** `standardExchange[i] != 0`; else must be `address(0)` |
-| D8a | Rate provider purpose | Balancer `IRateProvider.getRate()` @ 1e18 = **pair-token units per SE share** for that leg’s pair token. **Swap valuation only** (D20–D22). Must **match** the pair token for that SE (config hygiene + validation where enforceable) |
+| D8a | Rate provider purpose | Balancer `IRateProvider.getRate()` @ 1e18 = **whole pair tokens per whole SE share** for that leg’s pair token. **Swap valuation only** (D20–D22). Must **match** the pair token for that SE (config hygiene + validation where enforceable) |
 | D9 | Binding | Set-once at diamond init: `tokens[n]`, `weights[n]`, `standardExchange[n]`, `rateProvider[n]`. **`poolManager` + `feeOracle` from factory immutables** (Q11) — same for every hook from that factory; copied onto instance at deploy. Permit2 = well-known constant (not binding arg) |
 | D10 | Token validation | Non-zero; **pairwise distinct**; **strict address ascending**; decimals in **[6, 18]** (weighted peer); standard ERC-20 + USDT-style SafeERC20. Fee-on-transfer / rebasing **unsupported**. **No native ETH** |
 | D11 | SE validation (when non-zero) | `token_i ∈ SE_i.vaultTokens()`; `token_i != address(SE_i)`; SE exposes closed-form **token ↔ SE** buffer and unwrap routes with preview == execution; **D7b** distinctness |
@@ -314,9 +314,9 @@ When full book is live, join/exit/swap **math structure** should match Balancer 
 |---|----------|--------|
 | D20 | AMM model | **Balancer WeightedMath** on **rated** balances for **swaps** (and swap previews / SE In/Out swap paths). **Not** StableSwap / Orbital / CP |
 | D21 | Native inventory SoT (Q26) | **Book = live balances of inventory assets.** Raw leg: intentional face tracked in Repo and expected to match `token.balanceOf(hook)` for that inventory (donations of **inventory** assets **dilute** LPs). Buffered leg: **`IERC20(SE_i).balanceOf(hook)` is the book** — SE share donations **dilute** LPs; free pair-token dust on buffered legs is **not** native reserve. Stray unrelated ERC-20s **ignored**. Repo may cache last intentional amounts for events/accounting, but **views, LP algebra, growth, and swap composition re-read live inventory balances** when the next step needs post-inventory state (O10) |
-| D22 | Rated balance (swaps **only**) | For each leg \(i\), compute **pair-token units** then scale with **pair-token** `baseScale` (Q25): **(a)** raw → face; **(b)** buffered + RP → `seBal * getRate() / 1e18` (**fail-closed**); **(c)** buffered + no RP → SE **claim** via fee-inclusive unwrap preview. **Do not** also multiply claim by RP. **Do not** use free pair-token `token.balanceOf(hook)` for buffered legs. **Never used for LP mint/burn / kLast** |
+| D22 | Rated balance (swaps **only**) | For each leg \(i\), compute **pair-token units** then scale with **pair-token** `baseScale` (Q25): **(a)** raw → face; **(b)** buffered + RP → `floor(seBal * getRate() * 10^pairDecimals / (1e18 * 10^shareDecimals))` (**fail-closed**; the rate is whole pair tokens per whole share); **(c)** buffered + no RP → SE **claim** via fee-inclusive unwrap preview. **Do not** also multiply claim by RP. **Do not** use free pair-token `token.balanceOf(hook)` for buffered legs. **Never used for LP mint/burn / kLast** |
 | D23 | LP domain (Q7) | **All liquidity ops** (join/exit/first-mint/`kLast`/one-token aliases): **inventory only** — raw face or **live SE share balances**. **No** `getRate()`. **No** live claim in LP algebra. User-facing deposit/withdraw amounts are **pair tokens** at the edge (buffer/unwrap). **SE yield / RP changes do not mint or burn LP** and do not rewrite ownership. Taxable unbalanced join fees use inventory-domain Balancer taxable logic |
-| D23a | Dual WAD scales (Q20 / Q25) | Two maps: **(1) Inventory WAD** — `invScale_i = 10^(36 - invDecimals_i)` where raw legs use pair-token `decimals()`, SE legs use **`IERC20(SE_i).decimals()`** (share token). Used for join/exit/`V_inv`/`kLast`. **(2) Rated WAD** — `ratedScale_i = 10^(36 - pairDecimals_i)` where **every** leg uses that leg’s **pair-token** `decimals()`. Used only after pairUnits are in pair-token space (face / claim / seBal×rate). Fail if any used `decimals()` out of **[6, 18]** or reverts. **No** claim/RP inside inventory scale |
+| D23a | Dual WAD scales (Q20 / Q25) | Two maps: **(1) Inventory WAD** — `invScale_i = 10^(36 - invDecimals_i)` where raw legs use pair-token `decimals()`, SE legs use **`IERC20(SE_i).decimals()`** (share token). Used for join/exit/`V_inv`/`kLast`. **(2) Rated WAD** — `ratedScale_i = 10^(36 - pairDecimals_i)` where **every** leg uses that leg’s **pair-token** `decimals()`. Used only after pairUnits are in pair-token space (face / claim / seBal×rate). Pair-token decimals remain **[6, 18]**; buffered SE share decimals may be **[6, 36]**. Reject out-of-range values, reverting metadata, or supplied decimals that differ from live metadata. Predicted raw DETF addresses may lack code during staged initialization. This owner-approved extension retains the custody wrapper’s +10 offset (18-decimal DTF → 28-decimal shares). **No** claim/RP inside inventory scale |
 | D24 | Growth measure domain | \(k\) / `kLast` on **inventory-domain** weighted product (or partial interim) — face WAD and **share** WAD via **inventory** scales — **not** claim, **not** RP, **not** pair-token mark-to-market. SE yield that increases claim without changing share balance does **not** by itself update \(V\) for growth until inventory moves |
 | D25 | Yield in **swap** price | Re-read **live** SE share balances + claim and/or rate each **swap** quote; SE profit / rate moves **swap** mid without a swap. LP token supply/ownership unchanged until a liquidity op |
 | D26 | Swap ratio caps | Balancer **`_MAX_IN_RATIO` / `_MAX_OUT_RATIO` = 30%** of **rated** trade-leg balances |
@@ -457,7 +457,7 @@ Former “residual opens.” Product law below; implementation plan freezes only
 | # | Topic | Locked value |
 |---|--------|--------------|
 | **Q19** | MultiAssetLiquidity ABI | **Mirror hook liquidity surface 1:1** (names, args, returns). Thin shared Target facade |
-| **Q20** | Inventory WAD | Per-leg inventory-asset `IERC20.decimals()` → `invScale = 10^(36-decimals)`; SE legs use **share token** decimals; band **[6,18]** (superseded for dual-scale detail by Q25) |
+| **Q20** | Inventory WAD | Per-leg inventory-asset `IERC20.decimals()` → `invScale = 10^(36-decimals)`; SE legs use **share token** decimals; raw pair-token band **[6,18]**, buffered share band **[6,36]** (owner-approved custody offset extension; dual-scale detail in Q25) |
 | **Q21** | D42a exact-out **exit** | Phase 0 Crane audit: **ship if closed-form else omit v1** — no search. Does **not** cover join exact-BPT-out (Q27) |
 | **Q22** | Partial seed order | Weighted §4.7 on inventory; **binding-index ascending**; floor per leg before next |
 | **Q23** | Event fields | **D72b** field lists (join/exit deltas, one-token events, ProtocolFeeMinted, EnsurePairPools) |
@@ -535,7 +535,8 @@ RATE_PRECISION = 1e18
 //     SE:    invDecimals = IERC20(SE).decimals()          // SHARE token
 //   ratedScale[i] = 10^(36 - pairDecimals[i])
 //     always pair-token IERC20.decimals() for leg i
-//   Fail if decimals out of [6,18] or decimals() reverts
+//   Pair decimals: [6,18]. Buffered share decimals: [6,36].
+//   Reject reverting metadata or supplied/live metadata mismatch.
 
 // --- NATIVE inventory (LP, kLast, full-book floors) — Q26 live book ---
 for i in 0..n-1:
@@ -562,8 +563,8 @@ for i in 0..n-1:
   if standardExchange[i] == 0:
       pairUnits = native[i]                          // face (pair-token units)
   else if rateProvider[i] != 0:
-      rate = IRateProvider(rateProvider[i]).getRate() // fail-closed; pair-token per share
-      pairUnits = native_shares[i] * rate / 1e18     // RP IS share→token conversion
+      rate = IRateProvider(rateProvider[i]).getRate() // fail-closed; whole pair tokens per whole share
+      pairUnits = floor(native_shares[i] * rate * 10^pairDecimals[i] / (1e18 * 10^shareDecimals[i]))
   else:
       pairUnits = claim[i]                           // SE claim, no RP (pair-token units)
 

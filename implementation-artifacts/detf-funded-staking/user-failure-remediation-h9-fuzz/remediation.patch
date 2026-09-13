@@ -1,0 +1,99 @@
+--- a/test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_Decimals.sol
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_Decimals.sol
+@@ -6,6 +6,8 @@
+ } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF_Decimals.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
++import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
++import {Math} from "@crane/contracts/utils/Math.sol";
+ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+ import {
+     ISingleStandardExchangeDETFInfo
+@@ -29,6 +31,7 @@
+         assertTrue(ISingleStandardExchangeDETFInfo(instance_).isReserveLive(), "live");
+     }
+ 
++    /// forge-config: default.fuzz.runs = 512
+     function testFuzz_mintThenPartialBurn_conservation(uint256 lpSeed, uint256 burnSeed) public {
+         // The fixture scales seed and payment together for low-decimal books.
+         address instance_ = _openLive();
+@@ -45,18 +48,53 @@
+         // DETF has nine decimals; bound the burn to the actual funded output.
+         assertGe(detfOut_, 10, "funded DETF supports a partial burn");
+ 
+-        uint256 burnAmt_ = bound(burnSeed, detfOut_ / 10, detfOut_ / 2);
++        uint256 burnAmt_ = _boundPartialBurn(instance_, detfOut_, burnSeed);
+         uint256 sharesBefore_ = seShare.balanceOf(actorB);
+         vm.startPrank(actorB);
+         IERC20(instance_).approve(instance_, burnAmt_);
+         uint256 sharesBack_ = IStandardExchangeIn(instance_)
+-            .exchangeIn(IERC20(instance_), burnAmt_, seShare, 0, actorB, false, block.timestamp + 1 hours);
++            .exchangeIn(IERC20(instance_), burnAmt_, seShare, 1, actorB, false, block.timestamp + 1 hours);
+         vm.stopPrank();
+         assertGt(sharesBack_, 0, "partial burn executes");
+         assertLe(sharesBack_, sharesIn_, "P-CONS: sharesBack <= sharesIn");
+         assertEq(seShare.balanceOf(actorB), sharesBefore_ + sharesBack_, "shares credited");
+         assertEq(IERC20(instance_).balanceOf(actorB), detfOut_ - burnAmt_, "funded DETF debited");
+         _assertNoFreeInventory(instance_);
++    }
++
++    function _boundPartialBurn(address instance_, uint256 detfOut_, uint256 seed_) internal view returns (uint256) {
++        ISingleStandardExchangeDETFInfo info_ = ISingleStandardExchangeDETFInfo(instance_);
++        assertTrue(info_.isBurningAllowed(), "fixture supports primary burn");
++        IERC20 reserve_ = IERC20(info_.reservePool());
++        (IERC20[] memory tokens_,, uint256[] memory balances_,) =
++            IVault(address(vault)).getPoolTokenInfo(address(reserve_));
++        uint256 reserveShares_ = balances_[address(tokens_[0]) == address(seShare) ? 0 : 1];
++
++        // Invert DETF -> protocol LP -> SE shares with upward rounding. Target two
++        // native SE shares so the rated proportional exit has a rounding margin.
++        // A percentage of a nonzero DETF balance alone can still pay zero SE shares.
++        uint256 lpNeeded_ = Math.mulDiv(2, reserve_.totalSupply(), reserveShares_, Math.Rounding.Ceil);
++        uint256 ownedLp_ = reserve_.balanceOf(instance_) + reserve_.balanceOf(info_.bondNftVault());
++        uint256 minBurn_ = Math.mulDiv(lpNeeded_, IERC20(instance_).totalSupply(), ownedLp_, Math.Rounding.Ceil);
++        minBurn_ = Math.max(minBurn_, detfOut_ / 10);
++        assertLe(minBurn_, detfOut_ / 2, "funded position supports a payable partial burn");
++        return bound(seed_, minBurn_, detfOut_ / 2);
++    }
++
++    function test_partialBurn_minPayment_minBurn() public {
++        testFuzz_mintThenPartialBurn_conservation(0, 0);
++    }
++
++    function test_partialBurn_minPayment_maxBurn() public {
++        testFuzz_mintThenPartialBurn_conservation(0, type(uint256).max);
++    }
++
++    function test_partialBurn_maxPayment_minBurn() public {
++        testFuzz_mintThenPartialBurn_conservation(type(uint256).max, 0);
++    }
++
++    function test_partialBurn_maxPayment_maxBurn() public {
++        testFuzz_mintThenPartialBurn_conservation(type(uint256).max, type(uint256).max);
+     }
+ 
+     function testFuzz_holderBalance_notDilutedByOthersMint(uint256 aLp, uint256 bLp) public {
+--- a/test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_H9.t.sol
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_H9.t.sol
+@@ -1,12 +1,20 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
+ 
+-import {SingleStandardExchangeDETF_Fuzz_Decimals} from "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_Decimals.sol";
++import {
++    SingleStandardExchangeDETF_Fuzz_Decimals
++} from "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_Decimals.sol";
+ 
+ /// @notice Combo `H9`. pairToken 9-dec; rateAsset 9-dec.
+ /// @dev After Aerodrome pool address sort, token0/token1 may swap; roles stay pairToken vs rateAsset.
+ ///      vaultShare / detfToken / rebasingClaimToken / Bond NFT stay 18.
+ contract SingleStandardExchangeDETF_Fuzz_H9 is SingleStandardExchangeDETF_Fuzz_Decimals {
++    function test_regression_partialBurn_nonzeroPayout() public {
++        testFuzz_mintThenPartialBurn_conservation(
++            311507608686055850945166038, 602087665428321155436574337695299180608222456751846
++        );
++    }
++
+     function _pairDecimals() internal pure override returns (uint8) {
+         return 9;
+     }

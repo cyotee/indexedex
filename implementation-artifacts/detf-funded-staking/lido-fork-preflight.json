@@ -1,0 +1,20 @@
+[
+  {
+    "action": "block-number",
+    "block": "latest",
+    "exit_code": 0,
+    "result": "25931559"
+  },
+  {
+    "action": "call",
+    "block": 24000000,
+    "exit_code": 0,
+    "result": "8755615943858640985744738 [8.755e24]"
+  },
+  {
+    "action": "call",
+    "block": 24000000,
+    "exit_code": 0,
+    "result": "7167142425482519722039905 [7.167e24]"
+  }
+]

@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IDETF} from "contracts/interfaces/IDETF.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
-import {IComposedStableCommonDetfBonding} from "contracts/interfaces/IComposedStableCommonDetfBonding.sol";
+import {ILegacyComposedStableCommonDetfBonding as IComposedStableCommonDetfBonding} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ILegacyComposedStableCommonDetfBonding.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {
     ComposedStableCommonDetf_IntegratedDeploy_Test
@@ -25,107 +26,74 @@ contract Adversarial_ComposedStable_P0_Test is ComposedStableCommonDetf_Integrat
         victim = makeAddr("victim");
     }
 
-    function test_E5_zeroAmount_mintPreviewZero() public view {
+    function test_E5_zeroAmount_principalPreviewZero() public view {
         assertEq(
-            IStandardExchangeIn(deployedDetfVault).previewExchangeIn(dai, 0, detfToken),
-            0,
-            "E5 zero preview"
+            IStandardExchangeIn(deployedDetfVault).previewExchangeIn(detfToken, 0, IERC20(address(rebasingDetfToken))),
+            0
         );
     }
 
     function test_E5_expiredDeadline_reverts() public {
         _bootstrapReserveGraph();
-        deal(address(dai), attacker, 1_000e18, true);
+        deal(address(dai), attacker, 10e18, true);
         vm.startPrank(attacker);
-        dai.approve(deployedDetfVault, 1_000e18);
+        dai.approve(deployedDetfVault, 10e18);
         vm.expectRevert();
-        IStandardExchangeIn(deployedDetfVault).exchangeIn(
-            dai, 1_000e18, detfToken, 0, attacker, false, block.timestamp - 1
-        );
+        IStandardExchangeIn(deployedDetfVault)
+            .exchangeIn(dai, 10e18, detfToken, 0, attacker, false, block.timestamp - 1);
         vm.stopPrank();
     }
 
     function test_A1_donateDai_cannotMintFreeDetf() public {
         _bootstrapReserveGraph();
-        deal(address(dai), attacker, 500e18, true);
+        deal(address(dai), attacker, 5e18, true);
         uint256 attDetfBefore_ = detfToken.balanceOf(attacker);
         vm.prank(attacker);
-        dai.transfer(deployedDetfVault, 500e18);
+        dai.transfer(deployedDetfVault, 5e18);
         assertEq(detfToken.balanceOf(attacker), attDetfBefore_, "A1: no free DETF from donation");
     }
 
-    function test_A3_D2_redeemWithoutClaim_noPrincipalDrain() public {
+    function test_A3_D2_unstakeWithoutBalance_noPrincipalDrain() public {
         _bootstrapReserveGraph();
-        address pool_ = IDETF(deployedDetfVault).reservePool();
-        uint256 bptBefore_ = IERC20(pool_).balanceOf(deployedDetfVault);
-
-        vm.prank(attacker);
-        vm.expectRevert();
-        rebasingDetfToken.redeem(1e18, attacker, false);
-
-        assertEq(IERC20(pool_).balanceOf(deployedDetfVault), bptBefore_, "D2/A3: BPT intact");
+        uint256 lp_ = IERC20(address(reservePool)).balanceOf(address(bondNFTVault));
+        _assertFundedUnstakeRejected(deployedDetfVault, attacker, 1, detfToken, 0);
+        assertEq(IERC20(address(reservePool)).balanceOf(address(bondNFTVault)), lp_);
     }
 
-    function test_D3_doubleRedeemClaim_secondReverts() public {
-        _bootstrapReserveGraph();
-        deal(address(dai), alice, 2_000e18, true);
-        vm.startPrank(alice);
-        dai.approve(deployedDetfVault, 2_000e18);
-        (uint256 tokenId_,) = IComposedStableCommonDetfBonding(deployedDetfVault).bond(
-            dai, 1_000e18, 30 days, alice, block.timestamp + 1
-        );
-        _warpPastUnlock(tokenId_);
-        uint256 claim_ = IComposedStableCommonDetfBonding(deployedDetfVault).sellPositionToDetfNft(tokenId_, 0, alice);
-        uint256 part_ = claim_ / 2;
-        if (part_ == 0) part_ = claim_;
-        rebasingDetfToken.redeem(part_, alice, false);
-        uint256 left_ = rebasingDetfToken.balanceOf(alice);
-        vm.expectRevert();
-        rebasingDetfToken.redeem(left_ + 1e18, alice, false);
-        vm.stopPrank();
+    function test_D3_doubleUnstake_secondReverts() public {
+        uint256 id_ = _buyFixtureBond(alice);
+        _assertBondMaturePreviewEqualsPayment(deployedDetfVault, id_, alice);
+        _assertFundedUnstake(deployedDetfVault, alice, _fundedBondStaking(deployedDetfVault).balanceOf(alice));
+        _assertFundedUnstakeRejected(deployedDetfVault, alice, 1, detfToken, 0);
     }
 
-    function test_H2_redeemClaim_failLeavesClaim() public {
-        _bootstrapReserveGraph();
-        deal(address(dai), alice, 2_000e18, true);
-        vm.startPrank(alice);
-        dai.approve(deployedDetfVault, 2_000e18);
-        (uint256 tokenId_,) = IComposedStableCommonDetfBonding(deployedDetfVault).bond(
-            dai, 1_000e18, 30 days, alice, block.timestamp + 1
-        );
-        _warpPastUnlock(tokenId_);
-        uint256 claim_ = IComposedStableCommonDetfBonding(deployedDetfVault).sellPositionToDetfNft(tokenId_, 0, alice);
-        uint256 before_ = rebasingDetfToken.balanceOf(alice);
-        // Over-redeem reverts; claim balance must be unchanged (D15 DETF-only redeem).
-        vm.expectRevert();
-        rebasingDetfToken.redeem(before_ + 1, alice, false);
-        assertEq(rebasingDetfToken.balanceOf(alice), before_, "H2: claim unchanged after fail");
-        claim_;
-        vm.stopPrank();
+    function test_H2_failedUnstake_leavesFundedBalance() public {
+        uint256 id_ = _buyFixtureBond(alice);
+        _assertBondMaturePreviewEqualsPayment(deployedDetfVault, id_, alice);
+        uint256 amount_ = _fundedBondStaking(deployedDetfVault).balanceOf(alice);
+        _assertFundedUnstakeRejected(deployedDetfVault, alice, amount_, detfToken, amount_ + 1);
+        _assertFundedUnstake(deployedDetfVault, alice, amount_);
     }
 
     function test_H3_minOutTooHigh_leavesNoStrandedMint() public {
         _bootstrapReserveGraph();
-        deal(address(dai), attacker, 1_000e18, true);
-        uint256 preview_ =
-            IStandardExchangeIn(deployedDetfVault).previewExchangeIn(dai, 1_000e18, detfToken);
+        deal(address(dai), attacker, 10e18, true);
+        uint256 preview_ = IStandardExchangeIn(deployedDetfVault).previewExchangeIn(dai, 10e18, detfToken);
         vm.startPrank(attacker);
-        dai.approve(deployedDetfVault, 1_000e18);
+        dai.approve(deployedDetfVault, 10e18);
         vm.expectRevert();
-        IStandardExchangeIn(deployedDetfVault).exchangeIn(
-            dai, 1_000e18, detfToken, preview_ + 1e18, attacker, false, block.timestamp + 1
-        );
+        IStandardExchangeIn(deployedDetfVault)
+            .exchangeIn(dai, 10e18, detfToken, preview_ + 1e18, attacker, false, block.timestamp + 1);
         vm.stopPrank();
         // no free detf minted to attacker on fail
         assertEq(detfToken.balanceOf(attacker), 0, "H3: no detf on fail");
     }
 
-    function test_F2_bondNft_createPosition_onlyOwner() public {
-        _bootstrapReserveGraph();
-        IDETFNFTVault bond_ = IDETFNFTVault(IDETF(deployedDetfVault).bondNftVault());
+    function test_F2_bondNft_createFundedPosition_onlyDetf() public {
+        IDetfBondNFT nft_ = IDetfBondNFT(address(bondNFTVault));
         vm.prank(attacker);
-        vm.expectRevert();
-        bond_.createPosition(1e18, 30 days, attacker);
+        vm.expectRevert(abi.encodeWithSignature("NotAuthorized(address)", attacker));
+        nft_.createFundedPosition(1e9, 30 days, attacker);
     }
 
     function test_F1_diamondCut_blocked() public {
@@ -138,40 +106,20 @@ contract Adversarial_ComposedStable_P0_Test is ComposedStableCommonDetf_Integrat
     }
 
     function test_E4_holderBalance_notDilutedByOthersMint() public {
-        _bootstrapReserveGraph();
-        deal(address(dai), victim, 2_000e18, true);
-        deal(address(dai), attacker, 2_000e18, true);
-        vm.startPrank(victim);
-        dai.approve(deployedDetfVault, 1_000e18);
-        uint256 out_ = IStandardExchangeIn(deployedDetfVault).exchangeIn(
-            dai, 1_000e18, detfToken, 0, victim, false, block.timestamp + 1
-        );
-        vm.stopPrank();
-        uint256 victimBal_ = detfToken.balanceOf(victim);
-        assertTrue(out_ > 0 && victimBal_ > 0, "victim holds");
-
-        vm.startPrank(attacker);
-        dai.approve(deployedDetfVault, 500e18);
-        IStandardExchangeIn(deployedDetfVault).exchangeIn(
-            dai, 500e18, detfToken, 0, attacker, false, block.timestamp + 1
-        );
-        vm.stopPrank();
-        assertEq(detfToken.balanceOf(victim), victimBal_, "E4: victim balance unchanged");
+        uint256 paid_ = _buyFixtureRaw(victim);
+        assertGt(paid_, 0);
+        uint256 before_ = detfToken.balanceOf(victim);
+        assertGt(_buyFixtureRaw(attacker), 0);
+        assertEq(detfToken.balanceOf(victim), before_);
     }
 
     function test_A2_donateDetfToken_noTheft() public {
-        _bootstrapReserveGraph();
-        deal(address(dai), attacker, 2_000e18, true);
-        vm.startPrank(attacker);
-        dai.approve(deployedDetfVault, 1_000e18);
-        uint256 minted_ = IStandardExchangeIn(deployedDetfVault).exchangeIn(
-            dai, 1_000e18, detfToken, 0, attacker, false, block.timestamp + 1
-        );
-        uint256 donate_ = minted_ / 2;
-        if (donate_ == 0) donate_ = minted_;
-        detfToken.transfer(deployedDetfVault, donate_);
-        vm.stopPrank();
-        assertEq(detfToken.balanceOf(deployedDetfVault), donate_, "donated detf idle");
-        assertEq(detfToken.balanceOf(victim), 0, "victim not credited");
+        uint256 paid_ = _buyFixtureRaw(attacker);
+        uint256 donated_ = paid_ / 2;
+        assertGt(donated_, 0);
+        vm.prank(attacker);
+        detfToken.transfer(deployedDetfVault, donated_);
+        assertEq(detfToken.balanceOf(deployedDetfVault), donated_);
+        assertEq(detfToken.balanceOf(victim), 0);
     }
 }

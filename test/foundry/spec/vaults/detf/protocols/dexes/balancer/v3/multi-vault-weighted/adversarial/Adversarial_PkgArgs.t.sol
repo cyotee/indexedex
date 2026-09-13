@@ -8,12 +8,8 @@ import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {
     TestBase_MultiVaultWeightedDetf_Adversarial
 } from "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/TestBase_MultiVaultWeightedDetf_Adversarial.sol";
-import {
-    IMultiVaultWeightedDetfDFPkg
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfDFPkg.sol";
-import {
-    IMultiVaultWeightedDetfInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfInfoTarget.sol";
+import {IMultiVaultWeightedDetfDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfDFPkg.sol";
+import {ILegacyMultiVaultWeightedDetfInfo as IMultiVaultWeightedDetfInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf.sol";
 import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 
 /// @notice WP-SEC-PKG-MV-001: processArgs locks vaultShares[i] to the registered SE share.
@@ -88,7 +84,7 @@ contract Adversarial_PkgArgs_Test is TestBase_MultiVaultWeightedDetf_Adversarial
         args.weightDetf = 80e16;
         args.mintThreshold = 0;
         args.burnThreshold = 0;
-        args.thresholdMode = ThresholdMode.Open;
+
         args.name = "PKG Hostile MVW";
         args.symbol = "pkgH";
     }

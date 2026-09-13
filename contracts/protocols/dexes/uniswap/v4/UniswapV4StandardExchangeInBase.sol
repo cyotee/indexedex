@@ -69,18 +69,6 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
         _createManagedPositionsIfNeededCommon(managedTicks);
     }
 
-    function _quoteImportedPositionShares(PositionInfo info, uint128 liquidity)
-        internal
-        view
-        returns (uint256 sharesOut)
-    {
-        (uint160 sqrtPriceX96, int24 currentTick,,) = _slot0();
-        (uint256 amount0Used, uint256 amount1Used) =
-            _amountsForLiquidityAtPrice(sqrtPriceX96, currentTick, info.tickLower(), info.tickUpper(), liquidity);
-
-        sharesOut = _quoteSharesOut(amount0Used, amount1Used, 0);
-    }
-
     function _executeDirectSwapIn(address tokenIn, uint256 amountIn, address recipient)
         internal
         returns (uint256 amountOut)
@@ -113,11 +101,6 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
             return _quoteSleeveZapOutAmount(tokenOut, sharesBurned, totalShares);
         }
 
-        if (!UniswapV4PositionRepo._isPositionCreated() && !UniswapV4PositionRepo._isImportedPosition()) {
-            // Free but no position: pro-rata free inventory only.
-            return _quoteSleeveZapOutAmount(tokenOut, sharesBurned, totalShares);
-        }
-
         return _quoteZapOutAmount(tokenOut, sharesBurned, totalShares);
     }
 
@@ -128,13 +111,13 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
     {
         (uint256 amount0, uint256 amount1) = _quoteManagedWithdrawal(sharesBurned, totalShares);
         // Also credit pro-rata free sleeve on burn (totals include free).
-        (uint256 free0, uint256 free1) = _freeBalances();
+        (uint256 free0, uint256 free1) = _freeBalancesForShareMath();
         amount0 += (free0 * sharesBurned) / totalShares;
         amount1 += (free1 * sharesBurned) / totalShares;
         if (tokenOut == _token0()) {
-            return amount0 + (amount1 > 0 ? _quoteSwapIn(amount1, false) : 0);
+            return amount0 + (amount1 > 0 ? _quoteSwapAfterWithdrawal(amount1, false, sharesBurned, totalShares) : 0);
         }
-        return amount1 + (amount0 > 0 ? _quoteSwapIn(amount0, true) : 0);
+        return amount1 + (amount0 > 0 ? _quoteSwapAfterWithdrawal(amount0, true, sharesBurned, totalShares) : 0);
     }
 
     /// @dev Pro-rata claim on free+deployed of `tokenOut` only (blocked sleeve path / free-only inventory).
@@ -195,6 +178,7 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
         uint256 minAmountOut,
         address recipient
     ) internal returns (uint256 amountOut) {
+        _collectManagedFeesIfIdle();
         bool outIsToken0 = tokenOut == _token0();
         address otherToken = outIsToken0 ? _token1() : _token0();
 
@@ -206,9 +190,7 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
         uint256 otherBefore = IERC20(otherToken).balanceOf(address(this));
         uint256 outBefore = IERC20(tokenOut).balanceOf(address(this));
 
-        _burnPositionLiquidity(UniswapV4PositionRepo.PositionKind.Center, sharesBurned, totalShares);
-        _burnPositionLiquidity(UniswapV4PositionRepo.PositionKind.LowerWing, sharesBurned, totalShares);
-        _burnPositionLiquidity(UniswapV4PositionRepo.PositionKind.UpperWing, sharesBurned, totalShares);
+        _burnPositionLiquidity(sharesBurned, totalShares);
 
         {
             uint256 removedOther = IERC20(otherToken).balanceOf(address(this)) - otherBefore;
@@ -219,8 +201,6 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
                 _swapExactIn(!outIsToken0, otherForUser);
             }
         }
-
-        _refreshStoredLiquidity();
 
         amountOut = (IERC20(tokenOut).balanceOf(address(this)) - outBefore) + freeOutShare;
         {
@@ -235,10 +215,10 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
         _rebalanceLiquidReserveBestEffort();
     }
 
-    function _burnPositionLiquidity(UniswapV4PositionRepo.PositionKind kind, uint256 sharesBurned, uint256 totalShares)
+    function _burnPositionLiquidity(uint256 sharesBurned, uint256 totalShares)
         internal
     {
-        uint128 currentLiquidity = _currentLiquidity(kind);
+        uint128 currentLiquidity = _currentLiquidity();
         if (currentLiquidity == 0) {
             return;
         }
@@ -249,9 +229,6 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
         }
 
         if (UniswapV4PositionRepo._isImportedPosition()) {
-            if (kind != UniswapV4PositionRepo.PositionKind.Center) {
-                return;
-            }
 
             bytes memory actions = abi.encodePacked(uint8(Actions.DECREASE_LIQUIDITY), uint8(Actions.TAKE_PAIR));
             bytes[] memory params = new bytes[](2);
@@ -268,8 +245,8 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
             return;
         }
 
-        (int24 tickLower, int24 tickUpper) = UniswapV4PositionRepo._positionTicks(kind);
-        _removeLiquidity(tickLower, tickUpper, liquidityToBurn, UniswapV4PositionRepo._salt(kind));
+        (int24 tickLower, int24 tickUpper) = UniswapV4PositionRepo._positionTicks();
+        _removeLiquidity(tickLower, tickUpper, liquidityToBurn, UniswapV4PositionRepo._salt());
     }
 
     /**
@@ -301,6 +278,8 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
             revert UniswapV4Exchange_ZeroAmount();
         }
 
+        _collectManagedFeesIfIdle();
+
         uint256 amount0Added = tokenIn == _token0() ? amountIn : 0;
         uint256 amount1Added = tokenIn == _token1() ? amountIn : 0;
         uint256 totalSharesBefore = IERC20(address(this)).totalSupply();
@@ -318,7 +297,7 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
 
         // A0: residual inventory at empty supply is represented by dead shares, not first-minter NAV.
         if (totalSharesBefore == 0) {
-            uint256 residual = reserve0Before + reserve1Before;
+            uint256 residual = _initialResidualShares(amount0Added, amount1Added, reserve0Before, reserve1Before, sharesOut);
             if (residual > 0) {
                 ERC20Repo._mint(DEAD_SHARES_SINK, residual);
             }
@@ -366,6 +345,8 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
             revert UniswapV4Exchange_ZeroAmount();
         }
 
+        _collectManagedFeesIfIdle();
+
         uint256 totalSharesBefore = IERC20(address(this)).totalSupply();
         (uint256 total0, uint256 total1) = _totalVaultReserves();
         uint256 reserve0Before = total0 - amount0Added;
@@ -378,7 +359,7 @@ abstract contract UniswapV4StandardExchangeInBase is UniswapV4StandardExchangeCo
         if (sharesOut < minSharesOut) revert UniswapV4ExchangeIn_SlippageExceeded();
 
         if (totalSharesBefore == 0) {
-            uint256 residual = reserve0Before + reserve1Before;
+            uint256 residual = _initialResidualShares(amount0Added, amount1Added, reserve0Before, reserve1Before, sharesOut);
             if (residual > 0) {
                 ERC20Repo._mint(DEAD_SHARES_SINK, residual);
             }

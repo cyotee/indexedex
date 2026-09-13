@@ -1,0 +1,25 @@
+{
+  "change": "Reuse holder balance, existing SE claim and rate across immutable-book input inversion probes; exact forward quote and minimum-input search retained.",
+  "source_sha256": {
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookCommon.sol": "151a59310b1262dc2d87672c940dde2b3656989c1b59169c924ab270cc91fb83",
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookClaimLib.sol": "d2a5982cd2986d70058e36b316450c2c17d05868c71ea17fe912e143327d526f",
+    "test/foundry/spec/vaults/detf/common/claimToken/V4FundedBindings.t.sol": "184f9e724bb29074c01fc2dbb7bd0dd95ca1304f08969fd09c78d8e6ef31db7e"
+  },
+  "fixed_counterexample": [
+    false,
+    16222
+  ],
+  "call_gas_budget": 31000000,
+  "focused_validation": {
+    "artifact": "orbital-cached-claim-81-green-run.json",
+    "passed": 81,
+    "failed": 0,
+    "suites": 10
+  },
+  "broader_validation": {
+    "artifact": "v4-cached-orbital-343-green-run.json",
+    "passed": 343,
+    "failed": 0,
+    "suites": 44
+  }
+}

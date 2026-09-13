@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IUniswapV4Detf} from
@@ -56,7 +58,7 @@ contract UniswapV4Detf_Cp_PonsV1Se_ProductLaw is
         _buyLaunchFor(detfUser, 30 ether);
         vm.startPrank(detfUser);
         IERC20(mintToken).approve(detf, type(uint256).max);
-        detfInfo.mint(IERC20(mintToken), 10 ether, 0, detfUser, false, _deadline());
+        IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(mintToken), 10 ether, IERC20(address(detfInfo)), 0, detfUser, false, _deadline());
         vm.stopPrank();
     }
 }

@@ -12,9 +12,7 @@ import {
     IBalancerV3StandardExchangeRouterPrepay
 } from "contracts/interfaces/IBalancerV3StandardExchangeRouterPrepay.sol";
 
-import {
-    IBalancerV3StandardExchangeRouterDFPkg
-} from "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterDFPkg.sol";
+import {IBalancerV3StandardExchangeRouterDFPkg} from "contracts/protocols/dexes/balancer/v3/routers/IBalancerV3StandardExchangeRouterDFPkg.sol";
 
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";

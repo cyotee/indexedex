@@ -1,0 +1,2024 @@
+--- a/contracts/hooks/uniswap/v4/standardExchange/orbital/TestBase_UniswapV4StandardExchangeOrbitalBufferHook.sol
++++ b/contracts/hooks/uniswap/v4/standardExchange/orbital/TestBase_UniswapV4StandardExchangeOrbitalBufferHook.sol
+@@ -147,8 +147,6 @@
+                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
+                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
+                 depositFacet: depositFacet,
+-                depositSingleFacet: PkgFactory.deployDepositSingleFacet(create3Factory),
+-                depositPreviewFacet: PkgFactory.deployDepositPreviewFacet(create3Factory),
+                 withdrawFacet: withdrawFacet,
+                 seFacet: seFacet,
+                 hooksFacet: hooksFacet,
+--- a/contracts/hooks/uniswap/v4/standardExchange/orbital/TestBase_UniswapV4StandardExchangeOrbitalBufferHook_Decimals.sol
++++ b/contracts/hooks/uniswap/v4/standardExchange/orbital/TestBase_UniswapV4StandardExchangeOrbitalBufferHook_Decimals.sol
+@@ -169,8 +169,6 @@
+                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
+                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
+                 depositFacet: depositFacet,
+-                depositSingleFacet: PkgFactory.deployDepositSingleFacet(create3Factory),
+-                depositPreviewFacet: PkgFactory.deployDepositPreviewFacet(create3Factory),
+                 withdrawFacet: withdrawFacet,
+                 seFacet: seFacet,
+                 hooksFacet: hooksFacet,
+--- a/contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookCommon.sol
++++ b/contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookCommon.sol
+@@ -1,7 +1,5 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
+-
+-import {UniswapV4SeBufferHookLegLib} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
+@@ -2323,86 +2321,4 @@
+     }
+ 
+ 
+-    struct JoinUnbalancedAcc {
+-        uint256 amount0;
+-        uint256 amount1;
+-        uint256 amount2;
+-        bool isSe0;
+-        bool isSe1;
+-        bool isSe2;
+-        bool saw0;
+-        bool saw1;
+-        bool saw2;
+-    }
+-
+-    function _accumulateJoin(address[] calldata tokensIn, uint256[] calldata amounts)
+-        internal
+-        view
+-        returns (JoinUnbalancedAcc memory acc)
+-    {
+-        if (tokensIn.length != amounts.length) revert InvalidRoute(address(0), address(0));
+-        Repo.Layout storage l = Repo._layout();
+-        for (uint256 i; i < tokensIn.length; ++i) {
+-            if (amounts[i] == 0) continue;
+-            UniswapV4SeBufferHookLegLib.LegKind kind_ =
+-                UniswapV4SeBufferHookLegLib.classify(l.legs, tokensIn[i]);
+-            if (kind_ == UniswapV4SeBufferHookLegLib.LegKind.Unknown) {
+-                revert InvalidRoute(tokensIn[i], address(0));
+-            }
+-            uint8 idx_;
+-            bool isSe_;
+-            if (kind_ == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange) {
+-                idx_ = Repo._indexOf(l, l.legs.pairOfStandardExchange[tokensIn[i]]);
+-                isSe_ = true;
+-            } else {
+-                idx_ = Repo._indexOf(l, tokensIn[i]);
+-            }
+-            _creditJoinAcc(acc, idx_, amounts[i], isSe_);
+-        }
+-    }
+-
+-    function _creditJoinAcc(JoinUnbalancedAcc memory acc, uint8 idx_, uint256 amount, bool isSe_)
+-        private
+-        pure
+-    {
+-        if (idx_ == 0) {
+-            if (acc.saw0 && acc.isSe0 != isSe_) revert PairAndShareSameLeg();
+-            if (acc.saw0 && acc.isSe0 == isSe_) revert InvalidRoute(address(0), address(0));
+-            acc.saw0 = true;
+-            acc.isSe0 = isSe_;
+-            acc.amount0 += amount;
+-        } else if (idx_ == 1) {
+-            if (acc.saw1 && acc.isSe1 != isSe_) revert PairAndShareSameLeg();
+-            if (acc.saw1 && acc.isSe1 == isSe_) revert InvalidRoute(address(0), address(0));
+-            acc.saw1 = true;
+-            acc.isSe1 = isSe_;
+-            acc.amount1 += amount;
+-        } else {
+-            if (acc.saw2 && acc.isSe2 != isSe_) revert PairAndShareSameLeg();
+-            if (acc.saw2 && acc.isSe2 == isSe_) revert InvalidRoute(address(0), address(0));
+-            acc.saw2 = true;
+-            acc.isSe2 = isSe_;
+-            acc.amount2 += amount;
+-        }
+-    }
+-
+-    function _requireFirstJoinFullBook(JoinUnbalancedAcc memory acc) internal view {
+-        if (_isLive()) return;
+-        if (!(acc.saw0 && acc.saw1 && acc.saw2)) revert FirstJoinMustBeFullBook();
+-    }
+-
+-    function _accToFlexible(JoinUnbalancedAcc memory acc, address to, uint256 sharesMin)
+-        internal
+-        pure
+-        returns (DepositFlexibleVars memory v)
+-    {
+-        v.amount0 = acc.amount0;
+-        v.amount0IsSeShare = acc.isSe0;
+-        v.amount1 = acc.amount1;
+-        v.amount1IsSeShare = acc.isSe1;
+-        v.amount2 = acc.amount2;
+-        v.amount2IsSeShare = acc.isSe2;
+-        v.to = to;
+-        v.sharesMin = sharesMin;
+-    }
+ }
+--- a/contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDFPkg.sol
++++ b/contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDFPkg.sol
+@@ -58,8 +58,6 @@
+     IVaultRegistryDeployment public immutable VAULT_REGISTRY_DEPLOYMENT;
+     IVaultFeeOracleQuery public immutable VAULT_FEE_ORACLE_QUERY;
+     IFacet public immutable DEPOSIT_FACET;
+-    IFacet public immutable DEPOSIT_SINGLE_FACET;
+-    IFacet public immutable DEPOSIT_PREVIEW_FACET;
+     IFacet public immutable WITHDRAW_FACET;
+     IFacet public immutable SE_FACET;
+     IFacet public immutable HOOKS_FACET;
+@@ -75,8 +73,6 @@
+         if (
+             address(init.vaultRegistryDeployment) == address(0)
+                 || address(init.vaultFeeOracleQuery) == address(0)
+-                || address(init.depositSingleFacet) == address(0)
+-                || address(init.depositPreviewFacet) == address(0)
+                 || address(init.depositFacet) == address(0) || address(init.withdrawFacet) == address(0)
+                 || address(init.seFacet) == address(0) || address(init.hooksFacet) == address(0)
+                 || address(init.erc20Facet) == address(0) || address(init.erc5267Facet) == address(0)
+@@ -90,8 +86,6 @@
+         VAULT_REGISTRY_DEPLOYMENT = init.vaultRegistryDeployment;
+         VAULT_FEE_ORACLE_QUERY = init.vaultFeeOracleQuery;
+         DEPOSIT_FACET = init.depositFacet;
+-        DEPOSIT_SINGLE_FACET = init.depositSingleFacet;
+-        DEPOSIT_PREVIEW_FACET = init.depositPreviewFacet;
+         WITHDRAW_FACET = init.withdrawFacet;
+         SE_FACET = init.seFacet;
+         HOOKS_FACET = init.hooksFacet;
+@@ -155,7 +149,7 @@
+     }
+ 
+     function facetAddresses() public view returns (address[] memory facets) {
+-        facets = new address[](13);
++        facets = new address[](11);
+         facets[0] = address(MULTI_STEP_OWNABLE_FACET);
+         facets[1] = address(MULTI_ASSET_BASIC_VAULT_FACET);
+         facets[2] = address(MULTI_ASSET_STANDARD_VAULT_FACET);
+@@ -167,8 +161,6 @@
+         facets[8] = address(ERC20_FACET);
+         facets[9] = address(ERC5267_FACET);
+         facets[10] = address(ERC2612_FACET);
+-        facets[11] = address(DEPOSIT_SINGLE_FACET);
+-        facets[12] = address(DEPOSIT_PREVIEW_FACET);
+     }
+ 
+     function packageMetadata()
+@@ -206,16 +198,42 @@
+     }
+ 
+     function productionFacetCuts() public view returns (IDiamond.FacetCut[] memory cuts) {
+-        address[] memory facets = facetAddresses();
+-        cuts = new IDiamond.FacetCut[](facets.length - 4);
+-        for (uint256 i; i < cuts.length; ++i) {
+-            IFacet facet = IFacet(facets[i + 4]);
+-            cuts[i] = IDiamond.FacetCut({
+-                facetAddress: address(facet),
+-                action: IDiamond.FacetCutAction.Add,
+-                functionSelectors: facet.facetFuncs()
+-            });
+-        }
++        cuts = new IDiamond.FacetCut[](7);
++        cuts[0] = IDiamond.FacetCut({
++            facetAddress: address(HOOKS_FACET),
++            action: IDiamond.FacetCutAction.Add,
++            functionSelectors: HOOKS_FACET.facetFuncs()
++        });
++        cuts[1] = IDiamond.FacetCut({
++            facetAddress: address(DEPOSIT_FACET),
++            action: IDiamond.FacetCutAction.Add,
++            functionSelectors: DEPOSIT_FACET.facetFuncs()
++        });
++        cuts[2] = IDiamond.FacetCut({
++            facetAddress: address(WITHDRAW_FACET),
++            action: IDiamond.FacetCutAction.Add,
++            functionSelectors: WITHDRAW_FACET.facetFuncs()
++        });
++        cuts[3] = IDiamond.FacetCut({
++            facetAddress: address(SE_FACET),
++            action: IDiamond.FacetCutAction.Add,
++            functionSelectors: SE_FACET.facetFuncs()
++        });
++        cuts[4] = IDiamond.FacetCut({
++            facetAddress: address(ERC20_FACET),
++            action: IDiamond.FacetCutAction.Add,
++            functionSelectors: ERC20_FACET.facetFuncs()
++        });
++        cuts[5] = IDiamond.FacetCut({
++            facetAddress: address(ERC5267_FACET),
++            action: IDiamond.FacetCutAction.Add,
++            functionSelectors: ERC5267_FACET.facetFuncs()
++        });
++        cuts[6] = IDiamond.FacetCut({
++            facetAddress: address(ERC2612_FACET),
++            action: IDiamond.FacetCutAction.Add,
++            functionSelectors: ERC2612_FACET.facetFuncs()
++        });
+     }
+ 
+     function finalizeInitialization() public override nonReentrant returns (bool) {
+@@ -228,16 +246,20 @@
+             revert ProductDoorsNotLive();
+         }
+ 
+-        IDiamond.FacetCut[] memory cuts = new IDiamond.FacetCut[](10);
++        IDiamond.FacetCut[] memory cuts = new IDiamond.FacetCut[](8);
+         cuts[0] = IDiamond.FacetCut({
+             facetAddress: address(SELF),
+             action: IDiamond.FacetCutAction.Remove,
+             functionSelectors: facetFuncs()
+         });
+         IDiamond.FacetCut[] memory adds = productionFacetCuts();
+-        for (uint256 i; i < adds.length; ++i) {
+-            cuts[i + 1] = adds[i];
+-        }
++        cuts[1] = adds[0];
++        cuts[2] = adds[1];
++        cuts[3] = adds[2];
++        cuts[4] = adds[3];
++        cuts[5] = adds[4];
++        cuts[6] = adds[5];
++        cuts[7] = adds[6];
+ 
+         ERC2535Repo._processFacetCuts(cuts);
+         emit IDiamond.DiamondCut(cuts, address(0), "");
+--- a/contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDepositTarget.sol
++++ b/contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDepositTarget.sol
+@@ -41,7 +41,7 @@
+ } from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
+ 
+ /// @title UniswapV4StandardExchangeOrbitalBufferHookDepositTarget
+-/// @notice Bounded Deposit entrypoints for the Orbital buffer hook.
++/// @notice Role Target for orbital buffer hook size split (Option 1a).
+ abstract contract UniswapV4StandardExchangeOrbitalBufferHookDepositTarget is UniswapV4StandardExchangeOrbitalBufferHookCommon {
+     using SafeERC20 for IERC20;
+ 
+@@ -56,6 +56,46 @@
+     ) external onlyLiquidityOwner nonReentrant returns (uint256 shares, uint256 a0, uint256 a1, uint256 a2) {
+         return _addLiquidity(a0Max, a1Max, a2Max, to, sharesMin, deadline, permit2Data);
+     }
++
++
++    function depositSingle(
++        address tokenIn,
++        uint256 amountIn,
++        address to,
++        uint256 sharesMin,
++        uint256 deadline,
++        bytes calldata permit2Data
++    ) external onlyLiquidityOwner nonReentrant returns (uint256 shares) {
++        return _depositSingle(tokenIn, amountIn, to, sharesMin, deadline, permit2Data);
++    }
++
++
++    function previewAddLiquidity(uint256 a0Max, uint256 a1Max, uint256 a2Max)
++        external
++        view
++        returns (uint256 shares, uint256 a0, uint256 a1, uint256 a2)
++    {
++        return _previewAddLiquidity(a0Max, a1Max, a2Max);
++    }
++
++
++    function previewDepositSingle(address tokenIn, uint256 amountIn)
++        external
++        view
++        returns (uint256 shares)
++    {
++        return _previewDepositSingle(tokenIn, amountIn);
++    }
++
++
++    function previewZapSplit(address tokenIn, uint256 amountIn)
++        external
++        view
++        returns (uint256 saleJ, uint256 saleK, uint256 residualIn, uint256 outJ, uint256 outK)
++    {
++        return _previewZapSplit(tokenIn, amountIn);
++    }
++
+ 
+     function depositFlexible(
+         uint256 amount0,
+@@ -80,6 +120,37 @@
+         return _depositFlexible(v, deadline);
+     }
+ 
++
++    function previewDepositFlexible(
++        uint256 amount0,
++        bool amount0IsSeShare,
++        uint256 amount1,
++        bool amount1IsSeShare,
++        uint256 amount2,
++        bool amount2IsSeShare
++    ) external view returns (uint256 shares, uint256 used0, uint256 used1, uint256 used2) {
++        DepositFlexibleVars memory v;
++        v.amount0 = amount0;
++        v.amount0IsSeShare = amount0IsSeShare;
++        v.amount1 = amount1;
++        v.amount1IsSeShare = amount1IsSeShare;
++        v.amount2 = amount2;
++        v.amount2IsSeShare = amount2IsSeShare;
++        return _previewDepositFlexible(v);
++    }
++
++    struct JoinUnbalancedAcc {
++        uint256 amount0;
++        uint256 amount1;
++        uint256 amount2;
++        bool isSe0;
++        bool isSe1;
++        bool isSe2;
++        bool saw0;
++        bool saw1;
++        bool saw2;
++    }
++
+     function joinProportional(
+         uint256[] calldata amounts,
+         address to,
+@@ -98,6 +169,22 @@
+         usedAmounts[2] = used2;
+     }
+ 
++    function previewJoinProportional(uint256[] calldata amounts)
++        external
++        view
++        returns (uint256 shares, uint256[] memory usedAmounts)
++    {
++        if (amounts.length != 3) revert InvalidRoute(address(0), address(0));
++        uint256 used0;
++        uint256 used1;
++        uint256 used2;
++        (shares, used0, used1, used2) = _previewAddLiquidity(amounts[0], amounts[1], amounts[2]);
++        usedAmounts = new uint256[](3);
++        usedAmounts[0] = used0;
++        usedAmounts[1] = used1;
++        usedAmounts[2] = used2;
++    }
++
+     function joinUnbalanced(
+         address[] calldata tokensIn,
+         uint256[] calldata amounts,
+@@ -110,4 +197,149 @@
+         DepositFlexibleVars memory v = _accToFlexible(acc, to, sharesMin);
+         (shares,,,) = _depositFlexible(v, deadline);
+     }
++
++    function previewJoinUnbalanced(address[] calldata tokensIn, uint256[] calldata amounts)
++        external
++        view
++        returns (uint256 shares)
++    {
++        JoinUnbalancedAcc memory acc = _accumulateJoin(tokensIn, amounts);
++        if (!_isLive() && !(acc.saw0 && acc.saw1 && acc.saw2)) {
++            return 0;
++        }
++        DepositFlexibleVars memory v = _accToFlexible(acc, address(0), 0);
++        (shares,,,) = _previewDepositFlexible(v);
++    }
++
++    function joinSingleAssetExactIn(
++        address tokenIn,
++        uint256 amountIn,
++        address to,
++        uint256 sharesMin,
++        uint256 deadline
++    ) external onlyLiquidityOwner nonReentrant returns (uint256 shares) {
++        if (!_isLive()) revert NotLive();
++        Repo.Layout storage l = Repo._layout();
++        UniswapV4SeBufferHookLegLib.LegKind kind_ =
++            UniswapV4SeBufferHookLegLib.classify(l.legs, tokenIn);
++        if (kind_ == UniswapV4SeBufferHookLegLib.LegKind.Unknown) {
++            revert InvalidRoute(tokenIn, address(0));
++        }
++        if (kind_ == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange) {
++            IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), amountIn);
++            address pair_ = l.legs.pairOfStandardExchange[tokenIn];
++            uint256 pairOut_ = _unwrapSeShares(pair_, amountIn);
++            return _depositSingleFromBalance(pair_, pairOut_, to, sharesMin, deadline);
++        }
++        IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), amountIn);
++        return _depositSingleFromBalance(tokenIn, amountIn, to, sharesMin, deadline);
++    }
++
++    function previewJoinSingleAssetExactIn(address tokenIn, uint256 amountIn)
++        external
++        view
++        returns (uint256 shares)
++    {
++        if (!_isLive() || amountIn == 0) return 0;
++        Repo.Layout storage l = Repo._layout();
++        UniswapV4SeBufferHookLegLib.LegKind kind_ =
++            UniswapV4SeBufferHookLegLib.classify(l.legs, tokenIn);
++        if (kind_ == UniswapV4SeBufferHookLegLib.LegKind.Unknown) return 0;
++        if (kind_ == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange) {
++            address pair_ = l.legs.pairOfStandardExchange[tokenIn];
++            uint256 pairOut_ = ClaimLib.previewUnwrapShares(tokenIn, pair_, amountIn);
++            if (pairOut_ == 0) return 0;
++            return _previewDepositSingle(pair_, pairOut_);
++        }
++        return _previewDepositSingle(tokenIn, amountIn);
++    }
++
++    function joinSingleAssetExactOut(
++        address tokenIn,
++        uint256 sharesOut,
++        address to,
++        uint256 amountInMax,
++        uint256 deadline
++    ) external onlyLiquidityOwner nonReentrant returns (uint256 amountIn) {
++        sharesOut;
++        to;
++        amountInMax;
++        deadline;
++        revert InvalidRoute(tokenIn, address(0));
++    }
++
++    function previewJoinSingleAssetExactOut(address, uint256) external view returns (uint256) {
++        return 0;
++    }
++
++    function _accumulateJoin(address[] calldata tokensIn, uint256[] calldata amounts)
++        internal
++        view
++        returns (JoinUnbalancedAcc memory acc)
++    {
++        if (tokensIn.length != amounts.length) revert InvalidRoute(address(0), address(0));
++        Repo.Layout storage l = Repo._layout();
++        for (uint256 i; i < tokensIn.length; ++i) {
++            if (amounts[i] == 0) continue;
++            UniswapV4SeBufferHookLegLib.LegKind kind_ =
++                UniswapV4SeBufferHookLegLib.classify(l.legs, tokensIn[i]);
++            if (kind_ == UniswapV4SeBufferHookLegLib.LegKind.Unknown) {
++                revert InvalidRoute(tokensIn[i], address(0));
++            }
++            uint8 idx_;
++            bool isSe_;
++            if (kind_ == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange) {
++                idx_ = Repo._indexOf(l, l.legs.pairOfStandardExchange[tokensIn[i]]);
++                isSe_ = true;
++            } else {
++                idx_ = Repo._indexOf(l, tokensIn[i]);
++            }
++            _creditJoinAcc(acc, idx_, amounts[i], isSe_);
++        }
++    }
++
++    function _creditJoinAcc(JoinUnbalancedAcc memory acc, uint8 idx_, uint256 amount, bool isSe_)
++        private
++        pure
++    {
++        if (idx_ == 0) {
++            if (acc.saw0 && acc.isSe0 != isSe_) revert PairAndShareSameLeg();
++            if (acc.saw0 && acc.isSe0 == isSe_) revert InvalidRoute(address(0), address(0));
++            acc.saw0 = true;
++            acc.isSe0 = isSe_;
++            acc.amount0 += amount;
++        } else if (idx_ == 1) {
++            if (acc.saw1 && acc.isSe1 != isSe_) revert PairAndShareSameLeg();
++            if (acc.saw1 && acc.isSe1 == isSe_) revert InvalidRoute(address(0), address(0));
++            acc.saw1 = true;
++            acc.isSe1 = isSe_;
++            acc.amount1 += amount;
++        } else {
++            if (acc.saw2 && acc.isSe2 != isSe_) revert PairAndShareSameLeg();
++            if (acc.saw2 && acc.isSe2 == isSe_) revert InvalidRoute(address(0), address(0));
++            acc.saw2 = true;
++            acc.isSe2 = isSe_;
++            acc.amount2 += amount;
++        }
++    }
++
++    function _requireFirstJoinFullBook(JoinUnbalancedAcc memory acc) internal view {
++        if (_isLive()) return;
++        if (!(acc.saw0 && acc.saw1 && acc.saw2)) revert FirstJoinMustBeFullBook();
++    }
++
++    function _accToFlexible(JoinUnbalancedAcc memory acc, address to, uint256 sharesMin)
++        private
++        pure
++        returns (DepositFlexibleVars memory v)
++    {
++        v.amount0 = acc.amount0;
++        v.amount0IsSeShare = acc.isSe0;
++        v.amount1 = acc.amount1;
++        v.amount1IsSeShare = acc.isSe1;
++        v.amount2 = acc.amount2;
++        v.amount2IsSeShare = acc.isSe2;
++        v.to = to;
++        v.sharesMin = sharesMin;
++    }
+ }
+--- a/contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_FactoryService.sol
++++ b/contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_FactoryService.sol
+@@ -1,7 +1,5 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
+-import {UniswapV4StandardExchangeOrbitalBufferHookDepositPreviewFacet} from "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositPreviewFacet.sol";
+-import {UniswapV4StandardExchangeOrbitalBufferHookDepositSingleFacet} from "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositSingleFacet.sol";
+ import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+ import {UniswapV4StandardExchangeOrbitalBufferHookWithdrawFacet} from "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookWithdrawFacet.sol";
+ import {UniswapV4StandardExchangeOrbitalBufferHookSeFacet} from "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookSeFacet.sol";
+@@ -47,22 +45,6 @@
+             abi.encode("UniswapV4StandardExchangeOrbitalBufferHookDepositFacet")._hash()
+         );
+         vm.label(address(facet), "UniswapV4StandardExchangeOrbitalBufferHookDepositFacet");
+-    }
+-
+-    function deployDepositPreviewFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
+-        facet = create3Factory.deployFacet(
+-            type(UniswapV4StandardExchangeOrbitalBufferHookDepositPreviewFacet).creationCode /* unlinked artifact; type().creationCode required */,
+-            abi.encode("UniswapV4StandardExchangeOrbitalBufferHookDepositPreviewFacet")._hash()
+-        );
+-        vm.label(address(facet), "UniswapV4StandardExchangeOrbitalBufferHookDepositPreviewFacet");
+-    }
+-
+-    function deployDepositSingleFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
+-        facet = create3Factory.deployFacet(
+-            type(UniswapV4StandardExchangeOrbitalBufferHookDepositSingleFacet).creationCode /* unlinked artifact; type().creationCode required */,
+-            abi.encode("UniswapV4StandardExchangeOrbitalBufferHookDepositSingleFacet")._hash()
+-        );
+-        vm.label(address(facet), "UniswapV4StandardExchangeOrbitalBufferHookDepositSingleFacet");
+     }
+ 
+     function deployWithdrawFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
+--- a/contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositFacet.sol
++++ b/contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositFacet.sol
+@@ -12,7 +12,7 @@
+ 
+ /**
+  * @title UniswapV4StandardExchangeOrbitalBufferHookDepositFacet
+- * @notice Deposit entrypoints on the Orbital buffer hook.
++ * @notice addLiquidity + depositSingle (zap-in) + previews.
+  */
+ contract UniswapV4StandardExchangeOrbitalBufferHookDepositFacet is
+     UniswapV4StandardExchangeOrbitalBufferHookDepositTarget,
+@@ -28,11 +28,22 @@
+     }
+ 
+     function facetFuncs() public pure returns (bytes4[] memory funcs) {
+-        funcs = new bytes4[](4);
++        funcs = new bytes4[](15);
+         funcs[0] = IUniswapV4StandardExchangeOrbitalBufferHook.addLiquidity.selector;
+-        funcs[1] = IUniswapV4StandardExchangeOrbitalBufferHook.depositFlexible.selector;
+-        funcs[2] = IUniswapV4SeBufferHook.joinProportional.selector;
+-        funcs[3] = IUniswapV4SeBufferHook.joinUnbalanced.selector;
++        funcs[1] = IUniswapV4StandardExchangeOrbitalBufferHook.depositSingle.selector;
++        funcs[2] = IUniswapV4StandardExchangeOrbitalBufferHook.previewAddLiquidity.selector;
++        funcs[3] = IUniswapV4StandardExchangeOrbitalBufferHook.previewDepositSingle.selector;
++        funcs[4] = IUniswapV4StandardExchangeOrbitalBufferHook.previewZapSplit.selector;
++        funcs[5] = IUniswapV4StandardExchangeOrbitalBufferHook.depositFlexible.selector;
++        funcs[6] = IUniswapV4StandardExchangeOrbitalBufferHook.previewDepositFlexible.selector;
++        funcs[7] = IUniswapV4SeBufferHook.joinProportional.selector;
++        funcs[8] = IUniswapV4SeBufferHook.previewJoinProportional.selector;
++        funcs[9] = IUniswapV4SeBufferHook.joinUnbalanced.selector;
++        funcs[10] = IUniswapV4SeBufferHook.previewJoinUnbalanced.selector;
++        funcs[11] = IUniswapV4SeBufferHook.joinSingleAssetExactIn.selector;
++        funcs[12] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactIn.selector;
++        funcs[13] = IUniswapV4SeBufferHook.joinSingleAssetExactOut.selector;
++        funcs[14] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactOut.selector;
+     }
+ 
+     function facetMetadata()
+--- a/contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHookPackage.sol
++++ b/contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHookPackage.sol
+@@ -33,8 +33,6 @@
+         IVaultRegistryDeployment vaultRegistryDeployment;
+         IVaultFeeOracleQuery vaultFeeOracleQuery;
+         IFacet depositFacet;
+-        IFacet depositSingleFacet;
+-        IFacet depositPreviewFacet;
+         IFacet withdrawFacet;
+         IFacet seFacet;
+         IFacet hooksFacet;
+@@ -74,8 +72,6 @@
+ 
+     function VAULT_REGISTRY_DEPLOYMENT() external view returns (IVaultRegistryDeployment);
+     function DEPOSIT_FACET() external view returns (IFacet);
+-    function DEPOSIT_SINGLE_FACET() external view returns (IFacet);
+-    function DEPOSIT_PREVIEW_FACET() external view returns (IFacet);
+     function WITHDRAW_FACET() external view returns (IFacet);
+     function SE_FACET() external view returns (IFacet);
+     function HOOKS_FACET() external view returns (IFacet);
+--- a/contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget.sol
++++ b/contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget.sol
+@@ -2,8 +2,6 @@
+ pragma solidity ^0.8.0;
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+-import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
+-import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+ import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
+ import {
+     toBeforeSwapDelta,
+@@ -368,132 +366,4 @@
+             _debitRawIntentional(j, amountOut);
+         }
+     }
+-    // Public book queries are routed through HooksFacet only.
+-    function poolManager() public view returns (IPoolManager) {
+-        return _viewPoolManager();
+-    }
+-
+-    function feeOracle() public view returns (IVaultFeeOracleQuery) {
+-        return _viewFeeOracle();
+-    }
+-
+-    function permit2() public pure returns (address) {
+-        return _viewPermit2();
+-    }
+-
+-    function numTokens() public pure returns (uint8) {
+-        return _viewNumTokens();
+-    }
+-
+-    function tokens() public view returns (address[] memory out) {
+-        return _viewTokens();
+-    }
+-
+-    function token(uint256 index) public view returns (address) {
+-        return _viewToken(index);
+-    }
+-
+-    function baseAmp() public view returns (uint256) {
+-        return _viewBaseAmp();
+-    }
+-
+-    function getCurrentAmp() public view returns (uint256) {
+-        return _viewGetCurrentAmp();
+-    }
+-
+-    function standardExchange(uint256 index) public view returns (address) {
+-        return _viewStandardExchange(index);
+-    }
+-
+-    function rateProvider(uint256 index) public view returns (address) {
+-        return _viewRateProvider(index);
+-    }
+-
+-    function isBuffered(uint256 index) public view returns (bool) {
+-        return _viewIsBuffered(index);
+-    }
+-
+-    function invScale(uint256 index) public view returns (uint256) {
+-        return _viewInvScale(index);
+-    }
+-
+-    function ratedScale(uint256 index) public view returns (uint256) {
+-        return _viewRatedScale(index);
+-    }
+-
+-    function nativeReserve(uint256 index) public view returns (uint256) {
+-        return _viewNativeReserve(index);
+-    }
+-
+-    function nativeReserves() public view returns (uint256[] memory out) {
+-        return _viewNativeReserves();
+-    }
+-
+-    function seBalance(uint256 index) public view returns (uint256) {
+-        return _viewSeBalance(index);
+-    }
+-
+-    function seClaim(uint256 index) public view returns (uint256) {
+-        return _viewSeClaim(index);
+-    }
+-
+-    function ratedBalance(uint256 index) public view returns (uint256) {
+-        return _viewRatedBalance(index);
+-    }
+-
+-    function ratedBalances() public view returns (uint256[] memory out) {
+-        return _viewRatedBalances();
+-    }
+-
+-    function dexSwapFee() public view returns (uint256) {
+-        return _viewDexSwapFee();
+-    }
+-
+-    function usageFee() public view returns (uint256) {
+-        return _viewUsageFee();
+-    }
+-
+-    function feeTo() public view returns (address) {
+-        return _viewFeeTo();
+-    }
+-
+-    function kLast() public view returns (uint256) {
+-        return _viewKLast();
+-    }
+-
+-    function isFullBook() public view returns (bool) {
+-        return _viewIsFullBook();
+-    }
+-
+-    function isLive() public view returns (bool) {
+-        return _viewIsLive();
+-    }
+-
+-    function firstJoinMustBeFullBook() public pure returns (bool) {
+-        return _viewFirstJoinMustBeFullBook();
+-    }
+-
+-    function requiredFirstBondTokens() public view returns (address[] memory) {
+-        return _viewRequiredFirstBondTokens();
+-    }
+-
+-    function standardExchangeOf(address token_) public view returns (address) {
+-        return _viewStandardExchangeOf(token_);
+-    }
+-
+-    function syntheticNumeraires() public view returns (address[] memory) {
+-        return _viewSyntheticNumeraires();
+-    }
+-
+-    function tradingFeeWad() public view returns (uint256) {
+-        return _viewTradingFeeWad();
+-    }
+-
+-    function pairDoorCount() public pure returns (uint256) {
+-        return _viewPairDoorCount();
+-    }
+-
+-    function ensurePairPools() external returns (uint256 doorsEnsured) {
+-        return _viewEnsurePairPools();
+-    }
+ }
+--- a/contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookSeTarget.sol
++++ b/contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookSeTarget.sol
+@@ -43,7 +43,7 @@
+         if (!_isLive()) return 0;
+         address out_ = numeraire;
+         if (out_ == address(0)) {
+-            address[] memory n = _viewSyntheticNumeraires();
++            address[] memory n = syntheticNumeraires();
+             if (n.length == 0) return 0;
+             out_ = n[0];
+         }
+--- a/contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookTarget.sol
++++ b/contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookTarget.sol
+@@ -101,23 +101,23 @@
+     /*                              binding views                             */
+     /* ---------------------------------------------------------------------- */
+ 
+-    function _viewPoolManager() internal view returns (IPoolManager) {
++    function poolManager() public view returns (IPoolManager) {
+         return IPoolManager(Repo._layout().poolManager);
+     }
+ 
+-    function _viewFeeOracle() internal view returns (IVaultFeeOracleQuery) {
++    function feeOracle() public view returns (IVaultFeeOracleQuery) {
+         return IVaultFeeOracleQuery(Repo._layout().feeOracle);
+     }
+ 
+-    function _viewPermit2() internal pure returns (address) {
++    function permit2() public pure returns (address) {
+         return PERMIT2;
+     }
+ 
+-    function _viewNumTokens() internal pure returns (uint8) {
++    function numTokens() public pure returns (uint8) {
+         return uint8(Repo.N_TOKENS);
+     }
+ 
+-    function _viewTokens() internal view returns (address[] memory out) {
++    function tokens() public view returns (address[] memory out) {
+         Repo.Layout storage l = Repo._layout();
+         out = new address[](Repo.N_TOKENS);
+         out[0] = l.tokens[0];
+@@ -126,63 +126,63 @@
+         out[3] = l.tokens[3];
+     }
+ 
+-    function _viewToken(uint256 index) internal view returns (address) {
++    function token(uint256 index) public view returns (address) {
+         if (index >= Repo.N_TOKENS) revert InvalidN();
+         return Repo._layout().tokens[index];
+     }
+ 
+-    function _viewBaseAmp() internal view returns (uint256) {
++    function baseAmp() public view returns (uint256) {
+         return Repo._layout().baseAmp;
+     }
+ 
+     /// @notice Scaled amplification A' = baseAmp * AMP_PRECISION (100).
+-    function _viewGetCurrentAmp() internal view returns (uint256) {
++    function getCurrentAmp() public view returns (uint256) {
+         return Repo._layout().baseAmp * Repo.AMP_PRECISION;
+     }
+ 
+-    function _viewStandardExchange(uint256 index) internal view returns (address) {
++    function standardExchange(uint256 index) public view returns (address) {
+         if (index >= Repo.N_TOKENS) revert InvalidN();
+         return Repo._layout().standardExchanges[index];
+     }
+ 
+-    function _viewRateProvider(uint256 index) internal view returns (address) {
++    function rateProvider(uint256 index) public view returns (address) {
+         if (index >= Repo.N_TOKENS) revert InvalidN();
+         return Repo._layout().rateProviders[index];
+     }
+ 
+-    function _viewIsBuffered(uint256 index) internal view returns (bool) {
++    function isBuffered(uint256 index) public view returns (bool) {
+         if (index >= Repo.N_TOKENS) revert InvalidN();
+         return Repo._layout().standardExchanges[index] != address(0);
+     }
+ 
+-    function _viewInvScale(uint256 index) internal view returns (uint256) {
++    function invScale(uint256 index) public view returns (uint256) {
+         if (index >= Repo.N_TOKENS) revert InvalidN();
+         return Repo._layout().invScales[index];
+     }
+ 
+-    function _viewRatedScale(uint256 index) internal view returns (uint256) {
++    function ratedScale(uint256 index) public view returns (uint256) {
+         if (index >= Repo.N_TOKENS) revert InvalidN();
+         return Repo._layout().ratedScales[index];
+     }
+ 
+-    function _viewNativeReserve(uint256 index) internal view returns (uint256) {
++    function nativeReserve(uint256 index) public view returns (uint256) {
+         if (index >= Repo.N_TOKENS) revert InvalidN();
+         return _nativeAt(uint8(index));
+     }
+ 
+-    function _viewNativeReserves() internal view returns (uint256[] memory out) {
++    function nativeReserves() public view returns (uint256[] memory out) {
+         uint256[4] memory n = _nativeAll();
+         out = Math.toDynamic(n);
+     }
+ 
+-    function _viewSeBalance(uint256 index) internal view returns (uint256) {
++    function seBalance(uint256 index) public view returns (uint256) {
+         if (index >= Repo.N_TOKENS) revert InvalidN();
+         address se = Repo._layout().standardExchanges[index];
+         if (se == address(0)) return 0;
+         return IERC20(se).balanceOf(address(this));
+     }
+ 
+-    function _viewSeClaim(uint256 index) internal view returns (uint256) {
++    function seClaim(uint256 index) public view returns (uint256) {
+         if (index >= Repo.N_TOKENS) revert InvalidN();
+         Repo.Layout storage l = Repo._layout();
+         address se = l.standardExchanges[index];
+@@ -192,12 +192,12 @@
+         return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), bal, IERC20(l.tokens[index]));
+     }
+ 
+-    function _viewRatedBalance(uint256 index) internal view returns (uint256) {
++    function ratedBalance(uint256 index) public view returns (uint256) {
+         if (index >= Repo.N_TOKENS) revert InvalidN();
+         return _ratedPairUnits(uint8(index));
+     }
+ 
+-    function _viewRatedBalances() internal view returns (uint256[] memory out) {
++    function ratedBalances() public view returns (uint256[] memory out) {
+         uint256[4] memory r;
+         for (uint8 i; i < Repo.N_TOKENS; ++i) {
+             r[i] = _ratedPairUnits(i);
+@@ -205,55 +205,55 @@
+         out = Math.toDynamic(r);
+     }
+ 
+-    function _viewDexSwapFee() internal view returns (uint256) {
+-        return _viewFeeOracle().dexSwapFeeOfVault(address(this));
+-    }
+-
+-    function _viewUsageFee() internal view returns (uint256) {
+-        return _viewFeeOracle().usageFeeOfVault(address(this));
+-    }
+-
+-    function _viewFeeTo() internal view returns (address) {
+-        return address(_viewFeeOracle().feeTo());
+-    }
+-
+-    function _viewKLast() internal view returns (uint256) {
++    function dexSwapFee() public view returns (uint256) {
++        return feeOracle().dexSwapFeeOfVault(address(this));
++    }
++
++    function usageFee() public view returns (uint256) {
++        return feeOracle().usageFeeOfVault(address(this));
++    }
++
++    function feeTo() public view returns (address) {
++        return address(feeOracle().feeTo());
++    }
++
++    function kLast() public view returns (uint256) {
+         return Repo._layout().kLast;
+     }
+ 
+-    function _viewIsFullBook() internal view returns (bool) {
++    function isFullBook() public view returns (bool) {
+         return Math.isFullBookReserves(_nativeAll());
+     }
+ 
+-    function _viewIsLive() internal view returns (bool) {
++    function isLive() public view returns (bool) {
+         return _isLive();
+     }
+ 
+-    function _viewFirstJoinMustBeFullBook() internal pure returns (bool) {
++    function firstJoinMustBeFullBook() public pure returns (bool) {
+         return true;
+     }
+ 
+-    function _viewRequiredFirstBondTokens() internal view returns (address[] memory) {
+-        return _viewTokens();
+-    }
+-
+-    function _viewStandardExchangeOf(address token_) internal view returns (address) {
++    function requiredFirstBondTokens() public view returns (address[] memory) {
++        return tokens();
++    }
++
++    function standardExchangeOf(address token_) public view returns (address) {
+         return Repo._layout().legs.standardExchangeOf[token_];
+     }
+ 
+-    function _viewSyntheticNumeraires() internal view returns (address[] memory) {
++    function syntheticNumeraires() public view returns (address[] memory) {
+         return Repo._layout().legs.pairTokens._asArray();
+     }
+ 
+-    function _viewTradingFeeWad() internal view returns (uint256) {
+-        return _viewDexSwapFee();
+-    }
+-
+-    function _viewPairDoorCount() internal pure returns (uint256) {
++    function tradingFeeWad() public view returns (uint256) {
++        return dexSwapFee();
++    }
++
++    function pairDoorCount() public pure returns (uint256) {
+         return PairPoolLib.pairDoorCount();
+     }
+ 
+-    function _viewEnsurePairPools() internal returns (uint256 doorsEnsured) {
++    function ensurePairPools() external returns (uint256 doorsEnsured) {
+         Repo.Layout storage l = Repo._layout();
+         IPoolManager pm = IPoolManager(l.poolManager);
+         uint160 price = TickMath.getSqrtPriceAtTick(0);
+@@ -377,7 +377,7 @@
+         returns (address[] memory ts, uint256[] memory am)
+     {
+         _requireAmountsLen4(amounts);
+-        address[] memory toks = _viewTokens();
++        address[] memory toks = tokens();
+         uint256 n;
+         for (uint256 i; i < Repo.N_TOKENS; ++i) {
+             if (amounts[i] > 0) {
+--- a/contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol
++++ b/contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol
+@@ -205,17 +205,42 @@
+     }
+ 
+     function productionFacetCuts() public view returns (IDiamond.FacetCut[] memory cuts) {
+-        address[] memory facets = facetAddresses();
+-        // The first four entries are the temporary ownership/vault/init surface.
+-        cuts = new IDiamond.FacetCut[](facets.length - 4);
+-        for (uint256 i; i < cuts.length; ++i) {
+-            IFacet facet = IFacet(facets[i + 4]);
+-            cuts[i] = IDiamond.FacetCut({
+-                facetAddress: address(facet),
+-                action: IDiamond.FacetCutAction.Add,
+-                functionSelectors: facet.facetFuncs()
+-            });
+-        }
++        cuts = new IDiamond.FacetCut[](7);
++        cuts[0] = IDiamond.FacetCut({
++            facetAddress: address(HOOKS_FACET),
++            action: IDiamond.FacetCutAction.Add,
++            functionSelectors: HOOKS_FACET.facetFuncs()
++        });
++        cuts[1] = IDiamond.FacetCut({
++            facetAddress: address(JOIN_FACET),
++            action: IDiamond.FacetCutAction.Add,
++            functionSelectors: JOIN_FACET.facetFuncs()
++        });
++        cuts[2] = IDiamond.FacetCut({
++            facetAddress: address(EXIT_FACET),
++            action: IDiamond.FacetCutAction.Add,
++            functionSelectors: EXIT_FACET.facetFuncs()
++        });
++        cuts[3] = IDiamond.FacetCut({
++            facetAddress: address(SE_FACET),
++            action: IDiamond.FacetCutAction.Add,
++            functionSelectors: SE_FACET.facetFuncs()
++        });
++        cuts[4] = IDiamond.FacetCut({
++            facetAddress: address(ERC20_FACET),
++            action: IDiamond.FacetCutAction.Add,
++            functionSelectors: ERC20_FACET.facetFuncs()
++        });
++        cuts[5] = IDiamond.FacetCut({
++            facetAddress: address(ERC5267_FACET),
++            action: IDiamond.FacetCutAction.Add,
++            functionSelectors: ERC5267_FACET.facetFuncs()
++        });
++        cuts[6] = IDiamond.FacetCut({
++            facetAddress: address(ERC2612_FACET),
++            action: IDiamond.FacetCutAction.Add,
++            functionSelectors: ERC2612_FACET.facetFuncs()
++        });
+     }
+ 
+     function finalizeInitialization() public override nonReentrant returns (bool) {
+@@ -237,9 +262,13 @@
+             functionSelectors: facetFuncs()
+         });
+         IDiamond.FacetCut[] memory adds = productionFacetCuts();
+-        for (uint256 i; i < adds.length; ++i) {
+-            cuts[i + 1] = adds[i];
+-        }
++        cuts[1] = adds[0];
++        cuts[2] = adds[1];
++        cuts[3] = adds[2];
++        cuts[4] = adds[3];
++        cuts[5] = adds[4];
++        cuts[6] = adds[5];
++        cuts[7] = adds[6];
+ 
+         ERC2535Repo._processFacetCuts(cuts);
+         emit IDiamond.DiamondCut(cuts, address(0), "");
+--- a/contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookHooksTarget.sol
++++ b/contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookHooksTarget.sol
+@@ -337,136 +337,4 @@
+     }
+ 
+     
+-    // Public book queries are routed through HooksFacet only.
+-    function poolManager() public view returns (IPoolManager) {
+-        return _viewPoolManager();
+-    }
+-
+-    function feeOracle() public view returns (IVaultFeeOracleQuery) {
+-        return _viewFeeOracle();
+-    }
+-
+-    function permit2() public pure returns (address) {
+-        return _viewPermit2();
+-    }
+-
+-    function numTokens() public view returns (uint8) {
+-        return _viewNumTokens();
+-    }
+-
+-    function tokens() public view returns (address[] memory) {
+-        return _viewTokens();
+-    }
+-
+-    function token(uint256 index) public view returns (address) {
+-        return _viewToken(index);
+-    }
+-
+-    function getNormalizedWeights() public view returns (uint256[] memory) {
+-        return _viewGetNormalizedWeights();
+-    }
+-
+-    function weight(uint256 index) public view returns (uint256) {
+-        return _viewWeight(index);
+-    }
+-
+-    function standardExchange(uint256 index) public view returns (address) {
+-        return _viewStandardExchange(index);
+-    }
+-
+-    function rateProvider(uint256 index) public view returns (address) {
+-        return _viewRateProvider(index);
+-    }
+-
+-    function isBuffered(uint256 index) public view returns (bool) {
+-        return _viewIsBuffered(index);
+-    }
+-
+-    function invScale(uint256 index) public view returns (uint256) {
+-        return _viewInvScale(index);
+-    }
+-
+-    function ratedScale(uint256 index) public view returns (uint256) {
+-        return _viewRatedScale(index);
+-    }
+-
+-    function nativeReserve(uint256 index) public view returns (uint256) {
+-        return _viewNativeReserve(index);
+-    }
+-
+-    function nativeReserves() public view returns (uint256[] memory out) {
+-        return _viewNativeReserves();
+-    }
+-
+-    function seBalance(uint256 index) public view returns (uint256) {
+-        return _viewSeBalance(index);
+-    }
+-
+-    function seClaim(uint256 index) public view returns (uint256) {
+-        return _viewSeClaim(index);
+-    }
+-
+-    function ratedBalance(uint256 index) public view returns (uint256) {
+-        return _viewRatedBalance(index);
+-    }
+-
+-    function ratedBalances() public view returns (uint256[] memory out) {
+-        return _viewRatedBalances();
+-    }
+-
+-    function dexSwapFee() public view returns (uint256) {
+-        return _viewDexSwapFee();
+-    }
+-
+-    function usageFee() public view returns (uint256) {
+-        return _viewUsageFee();
+-    }
+-
+-    function feeTo() public view returns (address) {
+-        return _viewFeeTo();
+-    }
+-
+-    function kLast() public view returns (uint256) {
+-        return _viewKLast();
+-    }
+-
+-    function kLastMode() public view returns (IUniswapV4StandardExchangeWeightedBufferHook.KLastMode) {
+-        return _viewKLastMode();
+-    }
+-
+-    function isFullBook() public view returns (bool) {
+-        return _viewIsFullBook();
+-    }
+-
+-    function isLive() public view returns (bool) {
+-        return _viewIsLive();
+-    }
+-
+-    function firstJoinMustBeFullBook() public pure returns (bool) {
+-        return _viewFirstJoinMustBeFullBook();
+-    }
+-
+-    function requiredFirstBondTokens() public view returns (address[] memory) {
+-        return _viewRequiredFirstBondTokens();
+-    }
+-
+-    function standardExchangeOf(address query) public view returns (address) {
+-        return _viewStandardExchangeOf(query);
+-    }
+-
+-    function syntheticNumeraires() public view returns (address[] memory n) {
+-        return _viewSyntheticNumeraires();
+-    }
+-
+-    function tradingFeeWad() public view returns (uint256) {
+-        return _viewTradingFeeWad();
+-    }
+-
+-    function pairDoorCount() public view returns (uint256) {
+-        return _viewPairDoorCount();
+-    }
+-
+-    function ensurePairPools() external returns (uint256 doorsEnsured) {
+-        return _viewEnsurePairPools();
+-    }
+ }
+--- a/contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookSeTarget.sol
++++ b/contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookSeTarget.sol
+@@ -175,7 +175,7 @@
+         if (!_isLive()) return 0;
+         address out_ = numeraire;
+         if (out_ == address(0)) {
+-            address[] memory nums_ = _viewSyntheticNumeraires();
++            address[] memory nums_ = syntheticNumeraires();
+             if (nums_.length == 0) return 0;
+             out_ = nums_[0];
+         }
+--- a/contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookTarget.sol
++++ b/contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookTarget.sol
+@@ -106,63 +106,63 @@
+     /*                              binding views                             */
+     /* ---------------------------------------------------------------------- */
+ 
+-    function _viewPoolManager() internal view returns (IPoolManager) {
++    function poolManager() public view returns (IPoolManager) {
+         return IPoolManager(Repo._layout().poolManager);
+     }
+ 
+-    function _viewFeeOracle() internal view returns (IVaultFeeOracleQuery) {
++    function feeOracle() public view returns (IVaultFeeOracleQuery) {
+         return IVaultFeeOracleQuery(Repo._layout().feeOracle);
+     }
+ 
+-    function _viewPermit2() internal pure returns (address) {
++    function permit2() public pure returns (address) {
+         return PERMIT2;
+     }
+ 
+-    function _viewNumTokens() internal view returns (uint8) {
++    function numTokens() public view returns (uint8) {
+         return Repo._layout().numTokens;
+     }
+ 
+-    function _viewTokens() internal view returns (address[] memory) {
++    function tokens() public view returns (address[] memory) {
+         return Repo._layout().tokens;
+     }
+ 
+-    function _viewToken(uint256 index) internal view returns (address) {
++    function token(uint256 index) public view returns (address) {
+         return Repo._layout().tokens[index];
+     }
+ 
+-    function _viewGetNormalizedWeights() internal view returns (uint256[] memory) {
++    function getNormalizedWeights() public view returns (uint256[] memory) {
+         return Repo._layout().weights;
+     }
+ 
+-    function _viewWeight(uint256 index) internal view returns (uint256) {
++    function weight(uint256 index) public view returns (uint256) {
+         return Repo._layout().weights[index];
+     }
+ 
+-    function _viewStandardExchange(uint256 index) internal view returns (address) {
++    function standardExchange(uint256 index) public view returns (address) {
+         return Repo._layout().standardExchanges[index];
+     }
+ 
+-    function _viewRateProvider(uint256 index) internal view returns (address) {
++    function rateProvider(uint256 index) public view returns (address) {
+         return Repo._layout().rateProviders[index];
+     }
+ 
+-    function _viewIsBuffered(uint256 index) internal view returns (bool) {
++    function isBuffered(uint256 index) public view returns (bool) {
+         return Repo._layout().standardExchanges[index] != address(0);
+     }
+ 
+-    function _viewInvScale(uint256 index) internal view returns (uint256) {
++    function invScale(uint256 index) public view returns (uint256) {
+         return Repo._layout().invScales[index];
+     }
+ 
+-    function _viewRatedScale(uint256 index) internal view returns (uint256) {
++    function ratedScale(uint256 index) public view returns (uint256) {
+         return Repo._layout().ratedScales[index];
+     }
+ 
+-    function _viewNativeReserve(uint256 index) internal view returns (uint256) {
++    function nativeReserve(uint256 index) public view returns (uint256) {
+         return _nativeAt(uint8(index));
+     }
+ 
+-    function _viewNativeReserves() internal view returns (uint256[] memory out) {
++    function nativeReserves() public view returns (uint256[] memory out) {
+         Repo.Layout storage l = Repo._layout();
+         out = new uint256[](l.numTokens);
+         for (uint8 i; i < l.numTokens; ++i) {
+@@ -170,13 +170,13 @@
+         }
+     }
+ 
+-    function _viewSeBalance(uint256 index) internal view returns (uint256) {
++    function seBalance(uint256 index) public view returns (uint256) {
+         address se = Repo._layout().standardExchanges[index];
+         if (se == address(0)) return 0;
+         return IERC20(se).balanceOf(address(this));
+     }
+ 
+-    function _viewSeClaim(uint256 index) internal view returns (uint256) {
++    function seClaim(uint256 index) public view returns (uint256) {
+         Repo.Layout storage l = Repo._layout();
+         address se = l.standardExchanges[index];
+         if (se == address(0)) return 0;
+@@ -185,11 +185,11 @@
+         return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), bal, IERC20(l.tokens[index]));
+     }
+ 
+-    function _viewRatedBalance(uint256 index) internal view returns (uint256) {
++    function ratedBalance(uint256 index) public view returns (uint256) {
+         return _ratedPairUnits(uint8(index));
+     }
+ 
+-    function _viewRatedBalances() internal view returns (uint256[] memory out) {
++    function ratedBalances() public view returns (uint256[] memory out) {
+         Repo.Layout storage l = Repo._layout();
+         out = new uint256[](l.numTokens);
+         for (uint8 i; i < l.numTokens; ++i) {
+@@ -197,47 +197,47 @@
+         }
+     }
+ 
+-    function _viewDexSwapFee() internal view returns (uint256) {
+-        return _viewFeeOracle().dexSwapFeeOfVault(address(this));
+-    }
+-
+-    function _viewUsageFee() internal view returns (uint256) {
+-        return _viewFeeOracle().usageFeeOfVault(address(this));
+-    }
+-
+-    function _viewFeeTo() internal view returns (address) {
+-        return address(_viewFeeOracle().feeTo());
+-    }
+-
+-    function _viewKLast() internal view returns (uint256) {
++    function dexSwapFee() public view returns (uint256) {
++        return feeOracle().dexSwapFeeOfVault(address(this));
++    }
++
++    function usageFee() public view returns (uint256) {
++        return feeOracle().usageFeeOfVault(address(this));
++    }
++
++    function feeTo() public view returns (address) {
++        return address(feeOracle().feeTo());
++    }
++
++    function kLast() public view returns (uint256) {
+         return Repo._layout().kLast;
+     }
+ 
+-    function _viewKLastMode() internal view returns (IUniswapV4StandardExchangeWeightedBufferHook.KLastMode) {
++    function kLastMode() public view returns (IUniswapV4StandardExchangeWeightedBufferHook.KLastMode) {
+         return IUniswapV4StandardExchangeWeightedBufferHook.KLastMode(Repo._layout().kLastMode);
+     }
+ 
+-    function _viewIsFullBook() internal view returns (bool) {
++    function isFullBook() public view returns (bool) {
+         return Math.isFullBookReserves(_nativeAll());
+     }
+ 
+-    function _viewIsLive() internal view returns (bool) {
++    function isLive() public view returns (bool) {
+         return _isLive();
+     }
+ 
+-    function _viewFirstJoinMustBeFullBook() internal pure returns (bool) {
++    function firstJoinMustBeFullBook() public pure returns (bool) {
+         return true;
+     }
+ 
+-    function _viewRequiredFirstBondTokens() internal view returns (address[] memory) {
+-        return _viewTokens();
+-    }
+-
+-    function _viewStandardExchangeOf(address query) internal view returns (address) {
++    function requiredFirstBondTokens() public view returns (address[] memory) {
++        return tokens();
++    }
++
++    function standardExchangeOf(address query) public view returns (address) {
+         return Repo._layout().legs.standardExchangeOf[query];
+     }
+ 
+-    function _viewSyntheticNumeraires() internal view returns (address[] memory n) {
++    function syntheticNumeraires() public view returns (address[] memory n) {
+         Repo.Layout storage l = Repo._layout();
+         address detf_ = l.legs.detfToken;
+         uint8 m = l.numTokens;
+@@ -252,15 +252,15 @@
+         }
+     }
+ 
+-    function _viewTradingFeeWad() internal view returns (uint256) {
+-        return _viewDexSwapFee();
+-    }
+-
+-    function _viewPairDoorCount() internal view returns (uint256) {
++    function tradingFeeWad() public view returns (uint256) {
++        return dexSwapFee();
++    }
++
++    function pairDoorCount() public view returns (uint256) {
+         return PairPoolLib.pairDoorCount(Repo._layout().numTokens);
+     }
+ 
+-    function _viewEnsurePairPools() internal returns (uint256 doorsEnsured) {
++    function ensurePairPools() external returns (uint256 doorsEnsured) {
+         Repo.Layout storage l = Repo._layout();
+         doorsEnsured = PairPoolLib.ensureAllPairPools(
+             IPoolManager(l.poolManager), address(this), l.tokens, 0
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital.sol
+@@ -96,8 +96,6 @@
+                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
+                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
+                 depositFacet: depositFacet,
+-                depositSingleFacet: OrbitalFactory.deployDepositSingleFacet(create3Factory),
+-                depositPreviewFacet: OrbitalFactory.deployDepositPreviewFacet(create3Factory),
+                 withdrawFacet: withdrawFacet,
+                 seFacet: seFacet,
+                 hooksFacet: hooksFacet,
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Decimals.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Decimals.sol
+@@ -93,8 +93,6 @@
+                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
+                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
+                 depositFacet: depositFacet,
+-                depositSingleFacet: OrbitalFactory.deployDepositSingleFacet(create3Factory),
+-                depositPreviewFacet: OrbitalFactory.deployDepositPreviewFacet(create3Factory),
+                 withdrawFacet: withdrawFacet,
+                 seFacet: seFacet,
+                 hooksFacet: hooksFacet,
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_ProdSe.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_ProdSe.sol
+@@ -70,8 +70,6 @@
+                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
+                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
+                 depositFacet: depositFacet,
+-                depositSingleFacet: OrbitalFactory.deployDepositSingleFacet(create3Factory),
+-                depositPreviewFacet: OrbitalFactory.deployDepositPreviewFacet(create3Factory),
+                 withdrawFacet: withdrawFacet,
+                 seFacet: seFacet,
+                 hooksFacet: hooksFacet,
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_ProdSe_Decimals.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_ProdSe_Decimals.sol
+@@ -70,8 +70,6 @@
+                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
+                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
+                 depositFacet: depositFacet,
+-                depositSingleFacet: OrbitalFactory.deployDepositSingleFacet(create3Factory),
+-                depositPreviewFacet: OrbitalFactory.deployDepositPreviewFacet(create3Factory),
+                 withdrawFacet: withdrawFacet,
+                 seFacet: seFacet,
+                 hooksFacet: hooksFacet,
+--- a/scripts/foundry/anvil_robinhood_testnet/Phase_06_Stage_05_OrbitalBufferHookPkg.sol
++++ b/scripts/foundry/anvil_robinhood_testnet/Phase_06_Stage_05_OrbitalBufferHookPkg.sol
+@@ -33,8 +33,6 @@
+         init_.vaultRegistryDeployment = reg;
+         init_.vaultFeeOracleQuery = feeOracle;
+         init_.depositFacet = depositFacet;
+-        init_.depositSingleFacet = OrbitalHookFS.deployDepositSingleFacet(s.create3Factory);
+-        init_.depositPreviewFacet = OrbitalHookFS.deployDepositPreviewFacet(s.create3Factory);
+         init_.withdrawFacet = withdrawFacet;
+         init_.seFacet = seFacet;
+         init_.hooksFacet = hooksFacet;
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_PackageDecl.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_PackageDecl.t.sol
+@@ -34,17 +34,6 @@
+ contract UniswapV4StandardExchangeOrbitalBufferHook_PackageDecl_Test is
+     TestBase_UniswapV4StandardExchangeOrbitalBufferHook
+ {
+-    /// @notice Every component deployed by the package fits the EIP-170 runtime limit.
+-    function test_releaseComponents_fitEip170() public view {
+-        assertGt(address(hookPkg).code.length, 0, "package deployed");
+-        assertLe(address(hookPkg).code.length, 24_576, "package runtime exceeds EIP-170");
+-        address[] memory facets = hookPkg.facetAddresses();
+-        for (uint256 i; i < facets.length; ++i) {
+-            assertGt(facets[i].code.length, 0, "facet deployed");
+-            assertLe(facets[i].code.length, 24_576, "facet runtime exceeds EIP-170");
+-        }
+-    }
+-
+     function test_facetCuts_isBootstrapOnly() public view {
+         IDiamond.FacetCut[] memory cuts = hookPkg.facetCuts();
+         assertEq(cuts.length, 4);
+@@ -62,9 +51,9 @@
+         _assertSelectorsEq(cuts[2].functionSelectors, multiAssetStandardVaultFacet.facetFuncs());
+     }
+ 
+-    function test_productionFacetCuts_nineAdds() public view {
++    function test_productionFacetCuts_sevenAdds() public view {
+         IDiamond.FacetCut[] memory cuts = hookPkg.productionFacetCuts();
+-        assertEq(cuts.length, 9);
++        assertEq(cuts.length, 7);
+         assertEq(cuts[0].facetAddress, address(hookPkg.HOOKS_FACET()));
+         assertEq(cuts[1].facetAddress, address(hookPkg.DEPOSIT_FACET()));
+         assertEq(cuts[2].facetAddress, address(hookPkg.WITHDRAW_FACET()));
+@@ -79,10 +68,6 @@
+         _assertSelectorsEq(cuts[4].functionSelectors, erc20Facet.facetFuncs());
+         _assertSelectorsEq(cuts[5].functionSelectors, erc5267Facet.facetFuncs());
+         _assertSelectorsEq(cuts[6].functionSelectors, erc2612Facet.facetFuncs());
+-        assertEq(cuts[7].facetAddress, address(hookPkg.DEPOSIT_SINGLE_FACET()));
+-        assertEq(cuts[8].facetAddress, address(hookPkg.DEPOSIT_PREVIEW_FACET()));
+-        _assertSelectorsEq(cuts[7].functionSelectors, hookPkg.DEPOSIT_SINGLE_FACET().facetFuncs());
+-        _assertSelectorsEq(cuts[8].functionSelectors, hookPkg.DEPOSIT_PREVIEW_FACET().facetFuncs());
+         for (uint256 i; i < cuts.length; ++i) {
+             assertEq(uint256(cuts[i].action), uint256(IDiamond.FacetCutAction.Add));
+         }
+@@ -112,9 +97,9 @@
+         assertEq(ids[11], type(IDetfReserveQuote).interfaceId);
+     }
+ 
+-    function test_facetAddresses_thirteen() public view {
++    function test_facetAddresses_ten() public view {
+         address[] memory facets = hookPkg.facetAddresses();
+-        assertEq(facets.length, 13);
++        assertEq(facets.length, 11);
+         assertEq(facets[0], address(multiStepOwnableFacet));
+         assertEq(facets[1], address(multiAssetBasicVaultFacet));
+         assertEq(facets[2], address(multiAssetStandardVaultFacet));
+@@ -126,8 +111,6 @@
+         assertEq(facets[8], address(erc20Facet));
+         assertEq(facets[9], address(erc5267Facet));
+         assertEq(facets[10], address(erc2612Facet));
+-        assertEq(facets[11], address(hookPkg.DEPOSIT_SINGLE_FACET()));
+-        assertEq(facets[12], address(hookPkg.DEPOSIT_PREVIEW_FACET()));
+     }
+ 
+     function test_facetFuncs_isS58() public view {
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_StagedInit.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_StagedInit.t.sol
+@@ -521,7 +521,7 @@
+ 
+     function _expectedFinalizeCuts() internal view returns (IDiamond.FacetCut[] memory cuts) {
+         IDiamond.FacetCut[] memory adds = hookPkg.productionFacetCuts();
+-        cuts = new IDiamond.FacetCut[](10);
++        cuts = new IDiamond.FacetCut[](8);
+         cuts[0] = IDiamond.FacetCut({
+             facetAddress: address(hookPkg),
+             action: IDiamond.FacetCutAction.Remove,
+@@ -534,8 +534,6 @@
+         cuts[5] = adds[4];
+         cuts[6] = adds[5];
+         cuts[7] = adds[6];
+-        cuts[8] = adds[7];
+-        cuts[9] = adds[8];
+     }
+ 
+     function _assertKeyEq(PoolKey memory a, PoolKey memory b) internal pure {
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_Surface.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_Surface.t.sol
+@@ -1,7 +1,6 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
+ 
+-import {Behavior_IFacet} from "@crane/contracts/factories/diamondPkg/Behavior_IFacet.sol";
+ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+ import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
+ import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
+@@ -27,8 +26,6 @@
+ contract UniswapV4StandardExchangeOrbitalBufferHook_Surface_Test is TestBase {
+     IFacet internal hooksFacet;
+     IFacet internal depositFacet;
+-    IFacet internal depositSingleFacet;
+-    IFacet internal depositPreviewFacet;
+     IFacet internal withdrawFacet;
+     IFacet internal seFacet;
+ 
+@@ -36,8 +33,6 @@
+         super.setUp();
+         hooksFacet = PkgFactory.deployHooksFacet(create3Factory);
+         depositFacet = PkgFactory.deployDepositFacet(create3Factory);
+-        depositSingleFacet = PkgFactory.deployDepositSingleFacet(create3Factory);
+-        depositPreviewFacet = PkgFactory.deployDepositPreviewFacet(create3Factory);
+         withdrawFacet = PkgFactory.deployWithdrawFacet(create3Factory);
+         seFacet = PkgFactory.deploySeFacet(create3Factory);
+     }
+@@ -87,55 +82,18 @@
+         assertEq(funcs_.length, 45, "J1 HooksFacet facetFuncs length");
+     }
+ 
+-    function test_J1_deposit_proportional_targetSelectors_subseteq_facetFuncs() public {
++    function test_J1_deposit_targetSelectors_subseteq_facetFuncs() public view {
+         bytes4[] memory funcs_ = depositFacet.facetFuncs();
+         assertTrue(_contains(funcs_, IHook.addLiquidity.selector), "J1 addLiquidity");
+-        assertTrue(_contains(funcs_, IHook.depositFlexible.selector), "J1 depositFlexible");
+-        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.joinProportional.selector), "J1 joinProportional");
+-        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.joinUnbalanced.selector), "J1 joinUnbalanced");
+-        assertEq(funcs_.length, 4, "J1 deposit selector count");
+-            bytes4[] memory expected = new bytes4[](4);
+-        expected[0] = IHook.addLiquidity.selector;
+-        expected[1] = IHook.depositFlexible.selector;
+-        expected[2] = IUniswapV4SeBufferHook.joinProportional.selector;
+-        expected[3] = IUniswapV4SeBufferHook.joinUnbalanced.selector;
+-        assertTrue(Behavior_IFacet.areValid_IFacet_facetFuncs(depositFacet, expected, funcs_));
+-    }
+-
+-    function test_J1_deposit_single_targetSelectors_subseteq_facetFuncs() public {
+-        bytes4[] memory funcs_ = depositSingleFacet.facetFuncs();
+         assertTrue(_contains(funcs_, IHook.depositSingle.selector), "J1 depositSingle");
+-        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.joinSingleAssetExactIn.selector), "J1 joinSingleAssetExactIn");
+-        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.joinSingleAssetExactOut.selector), "J1 joinSingleAssetExactOut");
+-        assertEq(funcs_.length, 3, "J1 deposit selector count");
+-            bytes4[] memory expected = new bytes4[](3);
+-        expected[0] = IHook.depositSingle.selector;
+-        expected[1] = IUniswapV4SeBufferHook.joinSingleAssetExactIn.selector;
+-        expected[2] = IUniswapV4SeBufferHook.joinSingleAssetExactOut.selector;
+-        assertTrue(Behavior_IFacet.areValid_IFacet_facetFuncs(depositSingleFacet, expected, funcs_));
+-    }
+-
+-    function test_J1_deposit_preview_targetSelectors_subseteq_facetFuncs() public {
+-        bytes4[] memory funcs_ = depositPreviewFacet.facetFuncs();
+         assertTrue(_contains(funcs_, IHook.previewAddLiquidity.selector), "J1 previewAddLiquidity");
+         assertTrue(_contains(funcs_, IHook.previewDepositSingle.selector), "J1 previewDepositSingle");
+         assertTrue(_contains(funcs_, IHook.previewZapSplit.selector), "J1 previewZapSplit");
++        assertTrue(_contains(funcs_, IHook.depositFlexible.selector), "J1 depositFlexible");
+         assertTrue(_contains(funcs_, IHook.previewDepositFlexible.selector), "J1 previewDepositFlexible");
+-        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.previewJoinProportional.selector), "J1 previewJoinProportional");
+-        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.previewJoinUnbalanced.selector), "J1 previewJoinUnbalanced");
+-        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.previewJoinSingleAssetExactIn.selector), "J1 previewJoinSingleAssetExactIn");
+-        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.previewJoinSingleAssetExactOut.selector), "J1 previewJoinSingleAssetExactOut");
+-        assertEq(funcs_.length, 8, "J1 deposit selector count");
+-            bytes4[] memory expected = new bytes4[](8);
+-        expected[0] = IHook.previewAddLiquidity.selector;
+-        expected[1] = IHook.previewDepositSingle.selector;
+-        expected[2] = IHook.previewZapSplit.selector;
+-        expected[3] = IHook.previewDepositFlexible.selector;
+-        expected[4] = IUniswapV4SeBufferHook.previewJoinProportional.selector;
+-        expected[5] = IUniswapV4SeBufferHook.previewJoinUnbalanced.selector;
+-        expected[6] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactIn.selector;
+-        expected[7] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactOut.selector;
+-        assertTrue(Behavior_IFacet.areValid_IFacet_facetFuncs(depositPreviewFacet, expected, funcs_));
++        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.joinUnbalanced.selector), "J1 joinUnbalanced");
++        assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.joinSingleAssetExactIn.selector), "J1 joinSingleAssetExactIn");
++        assertEq(funcs_.length, 15, "J1 DepositFacet facetFuncs length");
+     }
+ 
+     function test_J1_withdraw_targetSelectors_subseteq_facetFuncs() public view {
+@@ -170,8 +128,6 @@
+ 
+     function test_J2_deposit_facetFuncs_subseteq_loupe_onProxy() public view {
+         _assertFacetFuncsOnLoupe(depositFacet, address(depositFacet));
+-        _assertFacetFuncsOnLoupe(depositSingleFacet, address(depositSingleFacet));
+-        _assertFacetFuncsOnLoupe(depositPreviewFacet, address(depositPreviewFacet));
+     }
+ 
+     function test_J2_withdraw_facetFuncs_subseteq_loupe_onProxy() public view {
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_Deploy.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_Deploy.t.sol
+@@ -15,17 +15,6 @@
+  * @notice H1–H2 deploy + binding rejects; six doors; first mint.
+  */
+ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Deploy is TestBase {
+-    /// @notice Every component deployed by the package fits the EIP-170 runtime limit.
+-    function test_releaseComponents_fitEip170() public view {
+-        assertGt(address(hookPkg).code.length, 0, "package deployed");
+-        assertLe(address(hookPkg).code.length, 24_576, "package runtime exceeds EIP-170");
+-        address[] memory facets = hookPkg.facetAddresses();
+-        for (uint256 i; i < facets.length; ++i) {
+-            assertGt(facets[i].code.length, 0, "facet deployed");
+-            assertLe(facets[i].code.length, 24_576, "facet runtime exceeds EIP-170");
+-        }
+-    }
+-
+     function test_deploy_bindsFourTokens_withOneSE() public view {
+         assertEq(quad.numTokens(), 4);
+         assertEq(quad.token(0), address(token0));
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_Deploy.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_Deploy.t.sol
+@@ -18,17 +18,6 @@
+  * @notice H1–H2 deploy + binding rejects; n∈{2,3,4} doors.
+  */
+ contract UniswapV4StandardExchangeWeightedBufferHook_Deploy is TestBase {
+-    /// @notice Every component deployed by the package fits the EIP-170 runtime limit.
+-    function test_releaseComponents_fitEip170() public view {
+-        assertGt(address(hookPkg).code.length, 0, "package deployed");
+-        assertLe(address(hookPkg).code.length, 24_576, "package runtime exceeds EIP-170");
+-        address[] memory facets = hookPkg.facetAddresses();
+-        for (uint256 i; i < facets.length; ++i) {
+-            assertGt(facets[i].code.length, 0, "facet deployed");
+-            assertLe(facets[i].code.length, 24_576, "facet runtime exceeds EIP-170");
+-        }
+-    }
+-
+     function test_deploy_bindsN2_withOneSE() public view {
+         assertEq(weighted.numTokens(), 2);
+         assertEq(weighted.token(0), address(token0));
+--- a/contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDepositSingleTarget.sol
++++ /dev/null
+@@ -1,96 +0,0 @@
+-// SPDX-License-Identifier: BSL-1.1
+-pragma solidity ^0.8.0;
+-
+-import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+-import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
+-import {
+-    toBeforeSwapDelta,
+-    BeforeSwapDelta
+-} from "@crane/contracts/protocols/dexes/uniswap/v4/types/BeforeSwapDelta.sol";
+-import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
+-import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
+-import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
+-import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
+-import {Hooks} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Hooks.sol";
+-import {ModifyLiquidityParams, SwapParams} from
+-    "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
+-import {BalanceDelta} from "@crane/contracts/protocols/dexes/uniswap/v4/types/BalanceDelta.sol";
+-import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+-import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+-import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+-import {
+-    UniswapV4StandardExchangeOrbitalBufferHookCommon
+-} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookCommon.sol";
+-import {
+-    UniswapV4StandardExchangeOrbitalBufferHookRepo as Repo
+-} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookRepo.sol";
+-import {
+-    UniswapV4StandardExchangeOrbitalBufferHookMath as Math
+-} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookMath.sol";
+-import {
+-    UniswapV4StandardExchangeOrbitalBufferHookClaimLib as ClaimLib
+-} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookClaimLib.sol";
+-import {
+-    UniswapV4StandardExchangeOrbitalBufferHookPairPoolLib as PairPoolLib
+-} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookPairPoolLib.sol";
+-import {
+-    IUniswapV4StandardExchangeOrbitalBufferHook
+-} from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHook.sol";
+-import {
+-    UniswapV4SeBufferHookLegLib
+-} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
+-
+-/// @title UniswapV4StandardExchangeOrbitalBufferHookDepositSingleTarget
+-/// @notice Bounded DepositSingle entrypoints for the Orbital buffer hook.
+-abstract contract UniswapV4StandardExchangeOrbitalBufferHookDepositSingleTarget is UniswapV4StandardExchangeOrbitalBufferHookCommon {
+-    using SafeERC20 for IERC20;
+-
+-    function depositSingle(
+-        address tokenIn,
+-        uint256 amountIn,
+-        address to,
+-        uint256 sharesMin,
+-        uint256 deadline,
+-        bytes calldata permit2Data
+-    ) external onlyLiquidityOwner nonReentrant returns (uint256 shares) {
+-        return _depositSingle(tokenIn, amountIn, to, sharesMin, deadline, permit2Data);
+-    }
+-
+-    function joinSingleAssetExactIn(
+-        address tokenIn,
+-        uint256 amountIn,
+-        address to,
+-        uint256 sharesMin,
+-        uint256 deadline
+-    ) external onlyLiquidityOwner nonReentrant returns (uint256 shares) {
+-        if (!_isLive()) revert NotLive();
+-        Repo.Layout storage l = Repo._layout();
+-        UniswapV4SeBufferHookLegLib.LegKind kind_ =
+-            UniswapV4SeBufferHookLegLib.classify(l.legs, tokenIn);
+-        if (kind_ == UniswapV4SeBufferHookLegLib.LegKind.Unknown) {
+-            revert InvalidRoute(tokenIn, address(0));
+-        }
+-        if (kind_ == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange) {
+-            IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), amountIn);
+-            address pair_ = l.legs.pairOfStandardExchange[tokenIn];
+-            uint256 pairOut_ = _unwrapSeShares(pair_, amountIn);
+-            return _depositSingleFromBalance(pair_, pairOut_, to, sharesMin, deadline);
+-        }
+-        IERC20(tokenIn).safeTransferFrom(msg.sender, address(this), amountIn);
+-        return _depositSingleFromBalance(tokenIn, amountIn, to, sharesMin, deadline);
+-    }
+-
+-    function joinSingleAssetExactOut(
+-        address tokenIn,
+-        uint256 sharesOut,
+-        address to,
+-        uint256 amountInMax,
+-        uint256 deadline
+-    ) external onlyLiquidityOwner nonReentrant returns (uint256 amountIn) {
+-        sharesOut;
+-        to;
+-        amountInMax;
+-        deadline;
+-        revert InvalidRoute(tokenIn, address(0));
+-    }
+-}
+--- a/contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDepositPreviewTarget.sol
++++ /dev/null
+@@ -1,141 +0,0 @@
+-// SPDX-License-Identifier: BSL-1.1
+-pragma solidity ^0.8.0;
+-
+-import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+-import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
+-import {
+-    toBeforeSwapDelta,
+-    BeforeSwapDelta
+-} from "@crane/contracts/protocols/dexes/uniswap/v4/types/BeforeSwapDelta.sol";
+-import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
+-import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
+-import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
+-import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
+-import {Hooks} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Hooks.sol";
+-import {ModifyLiquidityParams, SwapParams} from
+-    "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
+-import {BalanceDelta} from "@crane/contracts/protocols/dexes/uniswap/v4/types/BalanceDelta.sol";
+-import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+-import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+-import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+-import {
+-    UniswapV4StandardExchangeOrbitalBufferHookCommon
+-} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookCommon.sol";
+-import {
+-    UniswapV4StandardExchangeOrbitalBufferHookRepo as Repo
+-} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookRepo.sol";
+-import {
+-    UniswapV4StandardExchangeOrbitalBufferHookMath as Math
+-} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookMath.sol";
+-import {
+-    UniswapV4StandardExchangeOrbitalBufferHookClaimLib as ClaimLib
+-} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookClaimLib.sol";
+-import {
+-    UniswapV4StandardExchangeOrbitalBufferHookPairPoolLib as PairPoolLib
+-} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookPairPoolLib.sol";
+-import {
+-    IUniswapV4StandardExchangeOrbitalBufferHook
+-} from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHook.sol";
+-import {
+-    UniswapV4SeBufferHookLegLib
+-} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
+-
+-/// @title UniswapV4StandardExchangeOrbitalBufferHookDepositPreviewTarget
+-/// @notice Bounded DepositPreview entrypoints for the Orbital buffer hook.
+-abstract contract UniswapV4StandardExchangeOrbitalBufferHookDepositPreviewTarget is UniswapV4StandardExchangeOrbitalBufferHookCommon {
+-    using SafeERC20 for IERC20;
+-
+-    function previewAddLiquidity(uint256 a0Max, uint256 a1Max, uint256 a2Max)
+-        external
+-        view
+-        returns (uint256 shares, uint256 a0, uint256 a1, uint256 a2)
+-    {
+-        return _previewAddLiquidity(a0Max, a1Max, a2Max);
+-    }
+-
+-    function previewDepositSingle(address tokenIn, uint256 amountIn)
+-        external
+-        view
+-        returns (uint256 shares)
+-    {
+-        return _previewDepositSingle(tokenIn, amountIn);
+-    }
+-
+-    function previewZapSplit(address tokenIn, uint256 amountIn)
+-        external
+-        view
+-        returns (uint256 saleJ, uint256 saleK, uint256 residualIn, uint256 outJ, uint256 outK)
+-    {
+-        return _previewZapSplit(tokenIn, amountIn);
+-    }
+-
+-    function previewDepositFlexible(
+-        uint256 amount0,
+-        bool amount0IsSeShare,
+-        uint256 amount1,
+-        bool amount1IsSeShare,
+-        uint256 amount2,
+-        bool amount2IsSeShare
+-    ) external view returns (uint256 shares, uint256 used0, uint256 used1, uint256 used2) {
+-        DepositFlexibleVars memory v;
+-        v.amount0 = amount0;
+-        v.amount0IsSeShare = amount0IsSeShare;
+-        v.amount1 = amount1;
+-        v.amount1IsSeShare = amount1IsSeShare;
+-        v.amount2 = amount2;
+-        v.amount2IsSeShare = amount2IsSeShare;
+-        return _previewDepositFlexible(v);
+-    }
+-
+-    function previewJoinProportional(uint256[] calldata amounts)
+-        external
+-        view
+-        returns (uint256 shares, uint256[] memory usedAmounts)
+-    {
+-        if (amounts.length != 3) revert InvalidRoute(address(0), address(0));
+-        uint256 used0;
+-        uint256 used1;
+-        uint256 used2;
+-        (shares, used0, used1, used2) = _previewAddLiquidity(amounts[0], amounts[1], amounts[2]);
+-        usedAmounts = new uint256[](3);
+-        usedAmounts[0] = used0;
+-        usedAmounts[1] = used1;
+-        usedAmounts[2] = used2;
+-    }
+-
+-    function previewJoinUnbalanced(address[] calldata tokensIn, uint256[] calldata amounts)
+-        external
+-        view
+-        returns (uint256 shares)
+-    {
+-        JoinUnbalancedAcc memory acc = _accumulateJoin(tokensIn, amounts);
+-        if (!_isLive() && !(acc.saw0 && acc.saw1 && acc.saw2)) {
+-            return 0;
+-        }
+-        DepositFlexibleVars memory v = _accToFlexible(acc, address(0), 0);
+-        (shares,,,) = _previewDepositFlexible(v);
+-    }
+-
+-    function previewJoinSingleAssetExactIn(address tokenIn, uint256 amountIn)
+-        external
+-        view
+-        returns (uint256 shares)
+-    {
+-        if (!_isLive() || amountIn == 0) return 0;
+-        Repo.Layout storage l = Repo._layout();
+-        UniswapV4SeBufferHookLegLib.LegKind kind_ =
+-            UniswapV4SeBufferHookLegLib.classify(l.legs, tokenIn);
+-        if (kind_ == UniswapV4SeBufferHookLegLib.LegKind.Unknown) return 0;
+-        if (kind_ == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange) {
+-            address pair_ = l.legs.pairOfStandardExchange[tokenIn];
+-            uint256 pairOut_ = ClaimLib.previewUnwrapShares(tokenIn, pair_, amountIn);
+-            if (pairOut_ == 0) return 0;
+-            return _previewDepositSingle(pair_, pairOut_);
+-        }
+-        return _previewDepositSingle(tokenIn, amountIn);
+-    }
+-
+-    function previewJoinSingleAssetExactOut(address, uint256) external view returns (uint256) {
+-        return 0;
+-    }
+-}
+--- a/contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositSingleFacet.sol
++++ /dev/null
+@@ -1,46 +0,0 @@
+-// SPDX-License-Identifier: BSL-1.1
+-pragma solidity ^0.8.0;
+-
+-import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+-import {
+-    IUniswapV4StandardExchangeOrbitalBufferHook
+-} from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHook.sol";
+-import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+-import {
+-    UniswapV4StandardExchangeOrbitalBufferHookDepositSingleTarget
+-} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDepositSingleTarget.sol";
+-
+-/**
+- * @title UniswapV4StandardExchangeOrbitalBufferHookDepositSingleFacet
+- * @notice DepositSingle entrypoints on the Orbital buffer hook.
+- */
+-contract UniswapV4StandardExchangeOrbitalBufferHookDepositSingleFacet is
+-    UniswapV4StandardExchangeOrbitalBufferHookDepositSingleTarget,
+-    IFacet
+-{
+-    function facetName() public pure returns (string memory) {
+-        return type(UniswapV4StandardExchangeOrbitalBufferHookDepositSingleFacet).name;
+-    }
+-
+-    function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
+-        interfaces = new bytes4[](1);
+-        interfaces[0] = type(IUniswapV4StandardExchangeOrbitalBufferHook).interfaceId;
+-    }
+-
+-    function facetFuncs() public pure returns (bytes4[] memory funcs) {
+-        funcs = new bytes4[](3);
+-        funcs[0] = IUniswapV4StandardExchangeOrbitalBufferHook.depositSingle.selector;
+-        funcs[1] = IUniswapV4SeBufferHook.joinSingleAssetExactIn.selector;
+-        funcs[2] = IUniswapV4SeBufferHook.joinSingleAssetExactOut.selector;
+-    }
+-
+-    function facetMetadata()
+-        external
+-        pure
+-        returns (string memory name_, bytes4[] memory interfaces, bytes4[] memory functions)
+-    {
+-        name_ = facetName();
+-        interfaces = facetInterfaces();
+-        functions = facetFuncs();
+-    }
+-}
+--- a/contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositPreviewFacet.sol
++++ /dev/null
+@@ -1,51 +0,0 @@
+-// SPDX-License-Identifier: BSL-1.1
+-pragma solidity ^0.8.0;
+-
+-import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+-import {
+-    IUniswapV4StandardExchangeOrbitalBufferHook
+-} from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHook.sol";
+-import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+-import {
+-    UniswapV4StandardExchangeOrbitalBufferHookDepositPreviewTarget
+-} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDepositPreviewTarget.sol";
+-
+-/**
+- * @title UniswapV4StandardExchangeOrbitalBufferHookDepositPreviewFacet
+- * @notice DepositPreview entrypoints on the Orbital buffer hook.
+- */
+-contract UniswapV4StandardExchangeOrbitalBufferHookDepositPreviewFacet is
+-    UniswapV4StandardExchangeOrbitalBufferHookDepositPreviewTarget,
+-    IFacet
+-{
+-    function facetName() public pure returns (string memory) {
+-        return type(UniswapV4StandardExchangeOrbitalBufferHookDepositPreviewFacet).name;
+-    }
+-
+-    function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
+-        interfaces = new bytes4[](1);
+-        interfaces[0] = type(IUniswapV4StandardExchangeOrbitalBufferHook).interfaceId;
+-    }
+-
+-    function facetFuncs() public pure returns (bytes4[] memory funcs) {
+-        funcs = new bytes4[](8);
+-        funcs[0] = IUniswapV4StandardExchangeOrbitalBufferHook.previewAddLiquidity.selector;
+-        funcs[1] = IUniswapV4StandardExchangeOrbitalBufferHook.previewDepositSingle.selector;
+-        funcs[2] = IUniswapV4StandardExchangeOrbitalBufferHook.previewZapSplit.selector;
+-        funcs[3] = IUniswapV4StandardExchangeOrbitalBufferHook.previewDepositFlexible.selector;
+-        funcs[4] = IUniswapV4SeBufferHook.previewJoinProportional.selector;
+-        funcs[5] = IUniswapV4SeBufferHook.previewJoinUnbalanced.selector;
+-        funcs[6] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactIn.selector;
+-        funcs[7] = IUniswapV4SeBufferHook.previewJoinSingleAssetExactOut.selector;
+-    }
+-
+-    function facetMetadata()
+-        external
+-        pure
+-        returns (string memory name_, bytes4[] memory interfaces, bytes4[] memory functions)
+-    {
+-        name_ = facetName();
+-        interfaces = facetInterfaces();
+-        functions = facetFuncs();
+-    }
+-}

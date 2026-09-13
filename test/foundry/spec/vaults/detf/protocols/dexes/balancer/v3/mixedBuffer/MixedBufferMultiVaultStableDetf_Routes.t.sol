@@ -6,27 +6,23 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {
     TestBase_MixedBufferMultiVaultStableDetf
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/TestBase_MixedBufferMultiVaultStableDetf.sol";
-import {
-    IMixedBufferMultiVaultStableDetfInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfInfoTarget.sol";
-import {
-    IMixedBufferMultiVaultStableDetfBonding
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfBondingTarget.sol";
+import {IMixedBufferMultiVaultStableDetfInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfInfo.sol";
+import {IMixedBufferMultiVaultStableDetfBonding} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfBonding.sol";
 import {
     MixedBufferMultiVaultStableDetfRepo
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfRepo.sol";
 
 contract MixedBufferMultiVaultStableDetf_Routes_Test is TestBase_MixedBufferMultiVaultStableDetf {
-    function setUp() public override {
+    function setUp() public virtual override {
         super.setUp();
-        detf = _deployOpenThresholdDetfN(2);
+        detf = _deployDetfN(2, 0, 0);
         detfInfo = IMixedBufferMultiVaultStableDetfInfo(detf);
         detfBonding = IMixedBufferMultiVaultStableDetfBonding(detf);
         detfExchangeIn = IStandardExchangeIn(detf);
         _bootstrapDefault(detf, alice);
     }
 
-    function test_share_to_share_InvalidRoute() public {
+    function test_share_to_share_InvalidRoute() public virtual {
         uint256 s0_ = _fundVaultShares(0, bob, 50e18);
         vm.startPrank(bob);
         seShares[0].approve(detf, s0_);
@@ -37,28 +33,28 @@ contract MixedBufferMultiVaultStableDetf_Routes_Test is TestBase_MixedBufferMult
         vm.stopPrank();
     }
 
-    function test_unconfigured_token_InvalidRoute() public {
-        _fundBuffer(bob, 10e18);
-        // usdc is not buffer for this DETF (buffer=dai) and not a vault share
+    function test_unconfigured_token_InvalidRoute() public virtual {
+        _fundBuffer(bob, _fixtureAmount(10e18));
+        // The other raw SE leg is neither this DETF buffer nor an accepted vault share.
         vm.startPrank(bob);
-        IERC20(address(usdc)).approve(detf, 10e18);
-        // mint usdc to bob first
+        IERC20(legTokenB[0]).approve(detf, _fixtureAmount(10e18));
+        // Fund the actual other raw leg before exercising the unsupported route.
         vm.stopPrank();
-        _mintToken(address(usdc), bob, 10e18);
+        _mintToken(legTokenB[0], bob, _fixtureAmount(10e18));
         vm.startPrank(bob);
-        IERC20(address(usdc)).approve(detf, 10e18);
+        IERC20(legTokenB[0]).approve(detf, _fixtureAmount(10e18));
         vm.expectRevert();
         detfExchangeIn.exchangeIn(
-            IERC20(address(usdc)), 10e18, IERC20(detf), 0, bob, false, block.timestamp + 1 hours
+            IERC20(legTokenB[0]), _fixtureAmount(10e18), IERC20(detf), 0, bob, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
     }
 
-    function test_exactOut_InvalidRoute() public {
+    function test_exactOut_InvalidRoute() public virtual {
         // exact-out is not a closed-form route; diamond previewExchangeOut must revert.
         (bool ok,) = detf.call(
             abi.encodeWithSignature(
-                "previewExchangeOut(address,address,uint256)", address(dai), detf, uint256(1e18)
+                "previewExchangeOut(address,address,uint256)", address(_fixtureBufferToken()), detf, uint256(1e9)
             )
         );
         assertFalse(ok, "expected InvalidRoute revert");

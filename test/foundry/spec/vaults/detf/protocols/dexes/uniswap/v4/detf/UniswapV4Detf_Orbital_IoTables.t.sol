@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
@@ -104,14 +106,7 @@ contract UniswapV4Detf_Orbital_IoTables is
 
         uint256 userBefore = IERC20(custom_).balanceOf(detfUser);
         vm.startPrank(detfUser);
-        uint256 minted_ = info.mint(
-            IERC20(address(pair0)),
-            5 ether,
-            0,
-            detfUser,
-            false,
-            block.timestamp + 1 hours
-        );
+        uint256 minted_ = IStandardExchangeIn(address(info)).exchangeIn(IERC20(address(pair0)), 5 ether, IERC20(address(info)), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertGt(minted_, 0, "custom mint");
         assertEq(IERC20(custom_).balanceOf(detfUser) - userBefore, minted_, "user DETF");

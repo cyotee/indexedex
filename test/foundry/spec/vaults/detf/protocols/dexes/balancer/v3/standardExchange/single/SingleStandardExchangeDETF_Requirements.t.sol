@@ -4,18 +4,13 @@ pragma solidity ^0.8.0;
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
-import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
+import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
 import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
-import {DETFBondNFTMathLib} from "contracts/vaults/detf/common/core/DETFBondNFTMathLib.sol";
 import {
     TestBase_SingleStandardExchangeDETF
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF.sol";
-import {
-    ISingleStandardExchangeDETFBonding
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFBondingTarget.sol";
-import {
-    ISingleStandardExchangeDETFInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFInfoTarget.sol";
+import {ISingleStandardExchangeDETFBonding} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFBonding.sol";
+import {ISingleStandardExchangeDETFInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFInfo.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 
 /// @notice PRD requirement assertions on production Aerodrome SE attachment.
@@ -55,8 +50,7 @@ contract SingleStandardExchangeDETF_Requirements_Test is TestBase_SingleStandard
 
         assertTrue(userOut_ > 0, "user mint");
         uint256 usage_ = IVaultFeeOracleQuery(address(indexedexManager)).usageFeeOfVault(openDetf);
-        uint256 seign_ =
-            IVaultFeeOracleQuery(address(indexedexManager)).seigniorageIncentivePercentageOfVault(openDetf);
+        uint256 seign_ = IVaultFeeOracleQuery(address(indexedexManager)).seigniorageIncentivePercentageOfVault(openDetf);
         usage_;
         assertEq(IERC20(openDetf).balanceOf(feeTo_), feeBefore_, "D14 no feeTo mint");
         if (seign_ > 0) {
@@ -67,8 +61,13 @@ contract SingleStandardExchangeDETF_Requirements_Test is TestBase_SingleStandard
 
     function test_req_nonDilutionExistingHolderOnMint() public {
         _bootstrapDetf(openDetf, alice, 2_000e18);
-        uint256 aliceDetf_ = IERC20(openDetf).balanceOf(alice);
-        assertTrue(aliceDetf_ > 0, "alice has free detf from bond split");
+        uint256 aliceShares_ = _smallMintShares(alice);
+        vm.startPrank(alice);
+        seShare.approve(openDetf, aliceShares_);
+        uint256 aliceDetf_ =
+            openEx.exchangeIn(seShare, aliceShares_, IERC20(openDetf), 0, alice, false, block.timestamp + 1 hours);
+        vm.stopPrank();
+        assertGt(aliceDetf_, 0, "existing holder acquired funded DETF");
 
         uint256 seShares_ = _smallMintShares(bob);
         vm.startPrank(bob);
@@ -119,9 +118,8 @@ contract SingleStandardExchangeDETF_Requirements_Test is TestBase_SingleStandard
 
         vm.startPrank(bob);
         tokenIn_.approve(openDetf, amountIn_);
-        uint256 out_ = openEx.exchangeIn(
-            tokenIn_, amountIn_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
-        );
+        uint256 out_ =
+            openEx.exchangeIn(tokenIn_, amountIn_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         assertTrue(out_ > 0, "minted via allowlisted asset");
@@ -144,8 +142,7 @@ contract SingleStandardExchangeDETF_Requirements_Test is TestBase_SingleStandard
         );
         IERC20 lp_ = IERC20(address(aeroDaiUsdcPool));
         lp_.approve(openDetf, liq_);
-        uint256 out_ =
-            openEx.exchangeIn(lp_, liq_, seShare, 0, bob, false, block.timestamp + 1 hours);
+        uint256 out_ = openEx.exchangeIn(lp_, liq_, seShare, 0, bob, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         assertTrue(out_ > 0, "passthrough out");
@@ -155,43 +152,25 @@ contract SingleStandardExchangeDETF_Requirements_Test is TestBase_SingleStandard
 
     function test_req_bondBonusCurveMinAndClamp() public {
         BondTerms memory terms_ = IVaultFeeOracleQuery(address(indexedexManager)).bondTermsOfVault(openDetf);
-        // Fresh open detf per lock scenario to avoid MaxInRatio on successive unbalanced joins.
-        address d1 = _deployOpenThresholdDetf("Bonus Min", "bMin");
-        uint256 se1_ = _fundSeShares(alice, 500e18);
+        uint256 payment_ = _fundSeShares(alice, 500e18);
+        (uint256 minimum_, uint256 minG_,) = openBonding.previewBond(seShare, payment_, terms_.minLockDuration);
+        (uint256 maximum_, uint256 maxG_,) = openBonding.previewBond(seShare, payment_, terms_.maxLockDuration);
+        (uint256 clamped_, uint256 clampG_,) =
+            openBonding.previewBond(seShare, payment_, terms_.maxLockDuration + 365 days);
+        assertGt(minimum_, 0);
+        assertGt(maximum_, minimum_, "duration increases purchased principal");
+        assertEq(clamped_, maximum_, "duration bonus clamps to maximum");
+        assertEq(minG_, maxG_, "duration bonus does not boost reserve liquidity");
+        assertEq(clampG_, maxG_);
         vm.startPrank(alice);
-        seShare.approve(d1, se1_);
-        (uint256 idMin_,) = ISingleStandardExchangeDETFBonding(d1).bond(
-            seShare, se1_, terms_.minLockDuration, alice, false, block.timestamp + 1 hours
+        seShare.approve(openDetf, payment_);
+        (uint256 id_,) = openBonding.bond(
+            seShare, payment_, terms_.maxLockDuration + 365 days, alice, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
-
-        IDETFNFTVault nft1_ = IDETFNFTVault(ISingleStandardExchangeDETFInfo(d1).bondNftVault());
-        assertEq(
-            nft1_.positionOf(idMin_).bonusMultiplier,
-            DETFBondNFTMathLib._calcBonusMultiplier(terms_, terms_.minLockDuration),
-            "min lock bonus"
-        );
-
-        address d2 = _deployOpenThresholdDetf("Bonus Clamp", "bMax");
-        uint256 se2_ = _fundSeShares(bob, 500e18);
-        vm.startPrank(bob);
-        seShare.approve(d2, se2_);
-        (uint256 idMax_,) = ISingleStandardExchangeDETFBonding(d2).bond(
-            seShare, se2_, terms_.maxLockDuration + 365 days, bob, false, block.timestamp + 1 hours
-        );
-        vm.stopPrank();
-
-        IDETFNFTVault nft2_ = IDETFNFTVault(ISingleStandardExchangeDETFInfo(d2).bondNftVault());
-        assertEq(
-            nft2_.positionOf(idMax_).bonusMultiplier,
-            DETFBondNFTMathLib._calcBonusMultiplier(terms_, terms_.maxLockDuration),
-            "clamped max lock bonus"
-        );
-        assertLe(
-            nft2_.positionOf(idMax_).unlockTime,
-            block.timestamp + terms_.maxLockDuration + 2,
-            "unlock clamped to max"
-        );
+        IDetfBondNFT nft_ = IDetfBondNFT(openInfo.bondNftVault());
+        assertEq(nft_.positionOf(id_).principal, maximum_, "quoted principal funded");
+        assertEq(nft_.positionOf(id_).vestingDuration, terms_.maxLockDuration, "vesting duration clamped");
     }
 
     function test_req_burnCleansResidual() public {
@@ -202,9 +181,7 @@ contract SingleStandardExchangeDETF_Requirements_Test is TestBase_SingleStandard
         uint256 minted_ =
             openEx.exchangeIn(seShare, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours);
         IERC20(openDetf).approve(openDetf, minted_ / 2);
-        openEx.exchangeIn(
-            IERC20(openDetf), minted_ / 2, seShare, 0, bob, false, block.timestamp + 1 hours
-        );
+        openEx.exchangeIn(IERC20(openDetf), minted_ / 2, seShare, 0, bob, false, block.timestamp + 1 hours);
         vm.stopPrank();
         _assertNoFreeInventory(openDetf);
     }

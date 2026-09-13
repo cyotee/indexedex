@@ -1,0 +1,826 @@
+--- a/contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeQuoteTarget.sol
++++ b/contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeQuoteTarget.sol
+@@ -35,13 +35,16 @@
+         q.holder = holder_;
+         q.holderShares = IERC20(address(this)).balanceOf(holder_);
+         q.pool.pool = IUniswapV2Pair(address(ERC4626Repo._reserveAsset()));
+-        _loadIndexSourceReserves(q.pool, IERC20(asset_));
+-        if (asset_ != q.pool.token0 && asset_ != q.pool.token1) revert UnsupportedQuoteAsset(asset_);
+-        _loadStrategyVault(q.vault, IERC20(asset_));
++        bool lpAsset_ = asset_ == address(q.pool.pool);
++        // LP-denominated claims still checkpoint the two pool legs in token0 order.
++        _loadIndexSourceReserves(q.pool, lpAsset_ ? IERC20(address(0)) : IERC20(asset_));
++        if (!lpAsset_ && asset_ != q.pool.token0 && asset_ != q.pool.token1) revert UnsupportedQuoteAsset(asset_);
++        address known_ = lpAsset_ ? q.pool.token0 : asset_;
++        _loadStrategyVault(q.vault, IERC20(known_));
+         q.actualLp = q.pool.pool.balanceOf(address(this));
+         q.poolHeldLp = q.pool.pool.balanceOf(address(q.pool.pool));
+-        q.knownBalance = IERC20(asset_).balanceOf(address(q.pool.pool));
+-        q.opposingBalance = IERC20(asset_ == q.pool.token0 ? q.pool.token1 : q.pool.token0).balanceOf(address(q.pool.pool));
++        q.knownBalance = IERC20(known_).balanceOf(address(q.pool.pool));
++        q.opposingBalance = IERC20(known_ == q.pool.token0 ? q.pool.token1 : q.pool.token0).balanceOf(address(q.pool.pool));
+         return (abi.encode(q), _quoteAssets(q, q.holderShares));
+     }
+ 
+@@ -57,11 +60,13 @@
+         _calcVaultFee(q.pool, q.vault);
+         if (q.holder == address(VaultFeeOracleQueryAwareRepo._feeOracle().feeTo())) q.holderShares += q.vault.feeShares;
+         amountIn_ = amount_;
++        bool lpAsset_ = q.asset == address(q.pool.pool);
+         if (operation_ == Operation.DepositExactIn) {
+-            if (q.actualLp != q.vault.vaultLpReserve) revert InvalidQuoteState();
+-            uint256 lp_ = _quoteDeposit(q, amount_);
++            if (!lpAsset_ && q.actualLp != q.vault.vaultLpReserve) revert InvalidQuoteState();
++            uint256 lp_ = lpAsset_ ? amount_ : _quoteDeposit(q, amount_);
+             amountOut_ = BetterMath._convertToSharesDown(
+-                lp_, q.vault.vaultLpReserve, q.vault.vaultTotalShares, ERC4626Repo._decimalOffset()
++                lp_, lpAsset_ ? q.actualLp : q.vault.vaultLpReserve,
++                q.vault.vaultTotalShares, ERC4626Repo._decimalOffset()
+             );
+             q.holderShares += amountOut_;
+             q.vault.vaultTotalShares += amountOut_;
+@@ -69,7 +74,7 @@
+         } else {
+             uint256 lp_;
+             if (operation_ == Operation.WithdrawExactOut) {
+-                lp_ = ConstProdUtils._quoteZapOutToTargetWithFee(
++                lp_ = lpAsset_ ? amount_ : ConstProdUtils._quoteZapOutToTargetWithFee(
+                     amount_, q.pool.totalSupply, q.pool.knownReserve, q.pool.opposingReserve,
+                     q.pool.opTokenFeePercent, UNISWAPV2_FEE_DENOMINATOR, q.pool.kLast,
+                     UNISWAP_PROTOCOL_FEE_SHARE, _quoteFeeTo() != address(0)
+@@ -86,7 +91,7 @@
+             q.holderShares -= amountIn_;
+             q.vault.vaultTotalShares -= amountIn_;
+             q.actualLp -= lp_;
+-            amountOut_ = _quoteWithdraw(q, lp_);
++            amountOut_ = lpAsset_ ? lp_ : _quoteWithdraw(q, lp_);
+         }
+         q.vault.vaultLpReserve = q.actualLp;
+         q.vault.knownTokenLastOwnedSourceReserve = BetterMath._mulDiv(q.actualLp, q.pool.knownReserve, q.pool.totalSupply);
+@@ -107,7 +112,7 @@
+             _calcVaultFee(q.pool, q.vault);
+             if (q.holder == address(VaultFeeOracleQueryAwareRepo._feeOracle().feeTo())) q.holderShares += q.vault.feeShares;
+             sharesOut_ = BetterMath._convertToSharesDown(
+-                amountIn_, q.vault.vaultLpReserve, q.vault.vaultTotalShares, ERC4626Repo._decimalOffset()
++                amountIn_, q.actualLp, q.vault.vaultTotalShares, ERC4626Repo._decimalOffset()
+             );
+             q.vault.vaultTotalShares += sharesOut_;
+             q.actualLp += amountIn_;
+@@ -117,6 +122,8 @@
+             q.vault.feeShares = 0;
+         } else {
+             if (tokenIn_ != q.pool.token0 && tokenIn_ != q.pool.token1) revert UnsupportedQuoteAsset(tokenIn_);
++            address accounting_ = q.asset;
++            if (q.asset == address(q.pool.pool)) q.asset = q.pool.token0;
+             bool flipped = tokenIn_ != q.asset;
+             if (flipped) _flipQuoteAsset(q);
+             (bytes memory projected,, uint256 minted,) = IStandardExchangeTransitionQuote(address(this)).quoteTransition(
+@@ -126,6 +133,7 @@
+             q.holderShares -= minted;
+             sharesOut_ = minted;
+             if (flipped) _flipQuoteAsset(q);
++            q.asset = accounting_;
+         }
+         return (abi.encode(q), sharesOut_, _quoteAssets(q, q.holderShares));
+     }
+@@ -144,10 +152,22 @@
+     {
+         QuoteState memory q = _decodeQuote(state_);
+         address opposing_ = q.asset == q.pool.token0 ? q.pool.token1 : q.pool.token0;
+-        if (tokenIn_ == address(q.pool.pool)) {
++        if (q.asset == address(q.pool.pool)) {
++            if (tokenIn_ != q.pool.token0 && tokenIn_ != q.pool.token1) revert UnsupportedQuoteAsset(tokenIn_);
++            q.asset = q.pool.token0;
++            bool flipped = tokenIn_ != q.asset;
++            if (flipped) _flipQuoteAsset(q);
++            amountOut_ = _quoteDeposit(q, amountIn_);
++            if (flipped) _flipQuoteAsset(q);
++            q.asset = address(q.pool.pool);
++            // The live pass-through returns newly minted LP to its caller and
++            // rejects any change to the SE's held LP, including pool fee LP.
++            if (q.actualLp != q.vault.vaultLpReserve) revert InvalidQuoteState();
++        } else if (tokenIn_ == address(q.pool.pool)) {
+             // These LP tokens belong to the separate caller. Retain the SE's own
+             // LP and fee checkpoints; only the shared pool state changes.
+             amountOut_ = _quoteWithdraw(q, amountIn_);
++            if (q.actualLp != q.vault.vaultLpReserve) revert InvalidQuoteState();
+         } else if (tokenIn_ == opposing_) {
+             amountOut_ = ConstProdUtils._saleQuote(
+                 amountIn_, q.pool.opposingReserve, q.pool.knownReserve,
+@@ -178,6 +198,7 @@
+         UniV2StrategyVault memory v = abi.decode(abi.encode(q.vault), (UniV2StrategyVault));
+         _calcVaultFee(q.pool, v);
+         uint256 lp_ = BetterMath._convertToAssetsDown(shares_, v.vaultLpReserve, v.vaultTotalShares, ERC4626Repo._decimalOffset());
++        if (q.asset == address(q.pool.pool)) return lp_;
+         return UniswapV2Utils._quoteWithdrawSwapFee(
+             lp_, q.pool.totalSupply, q.pool.knownReserve, q.pool.opposingReserve, q.pool.opTokenFeePercent,
+             UNISWAPV2_FEE_DENOMINATOR, q.pool.kLast, _quoteFeeTo() != address(0)
+--- a/contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeQuoteTarget.sol
++++ b/contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeQuoteTarget.sol
+@@ -36,13 +36,16 @@
+         q.holder = holder_;
+         q.holderShares = IERC20(address(this)).balanceOf(holder_);
+         q.pool.pool = ICamelotPair(address(ERC4626Repo._reserveAsset()));
+-        _loadIndexSourceReserves(q.pool, IERC20(asset_));
+-        if (asset_ != q.pool.token0 && asset_ != q.pool.token1) revert UnsupportedQuoteAsset(asset_);
+-        _loadStrategyVault(q.vault, IERC20(asset_));
++        bool lpAsset_ = asset_ == address(q.pool.pool);
++        // LP-denominated claims still checkpoint the two pool legs in token0 order.
++        _loadIndexSourceReserves(q.pool, lpAsset_ ? IERC20(address(0)) : IERC20(asset_));
++        if (!lpAsset_ && asset_ != q.pool.token0 && asset_ != q.pool.token1) revert UnsupportedQuoteAsset(asset_);
++        address known_ = lpAsset_ ? q.pool.token0 : asset_;
++        _loadStrategyVault(q.vault, IERC20(known_));
+         q.actualLp = q.pool.pool.balanceOf(address(this));
+         q.poolHeldLp = q.pool.pool.balanceOf(address(q.pool.pool));
+-        q.knownBalance = IERC20(asset_).balanceOf(address(q.pool.pool));
+-        q.opposingBalance = IERC20(asset_ == q.pool.token0 ? q.pool.token1 : q.pool.token0).balanceOf(address(q.pool.pool));
++        q.knownBalance = IERC20(known_).balanceOf(address(q.pool.pool));
++        q.opposingBalance = IERC20(known_ == q.pool.token0 ? q.pool.token1 : q.pool.token0).balanceOf(address(q.pool.pool));
+         return (abi.encode(q), _quoteAssets(q, q.holderShares));
+     }
+ 
+@@ -58,11 +61,14 @@
+         _calcVaultFee(q.pool, q.vault);
+         if (q.holder == address(VaultFeeOracleQueryAwareRepo._feeOracle().feeTo())) q.holderShares += q.vault.feeShares;
+         amountIn_ = amount_;
++        bool lpAsset_ = q.asset == address(q.pool.pool);
+         if (operation_ == Operation.DepositExactIn) {
+-            if (q.actualLp != q.vault.vaultLpReserve) revert InvalidQuoteState();
+-            uint256 lp_ = _quoteDeposit(q, amount_);
++            if (!lpAsset_ && q.actualLp != q.vault.vaultLpReserve) revert InvalidQuoteState();
++            if (lpAsset_ && q.vault.vaultTotalShares == 0 && q.actualLp > q.vault.vaultLpReserve) revert InvalidQuoteState();
++            uint256 lp_ = lpAsset_ ? amount_ : _quoteDeposit(q, amount_);
+             amountOut_ = BetterMath._convertToSharesDown(
+-                lp_, q.vault.vaultLpReserve, q.vault.vaultTotalShares, ERC4626Repo._decimalOffset()
++                lp_, lpAsset_ ? q.actualLp : q.vault.vaultLpReserve,
++                q.vault.vaultTotalShares, ERC4626Repo._decimalOffset()
+             );
+             q.holderShares += amountOut_;
+             q.vault.vaultTotalShares += amountOut_;
+@@ -70,7 +76,7 @@
+         } else {
+             uint256 lp_;
+             if (operation_ == Operation.WithdrawExactOut) {
+-                lp_ = ConstProdUtils._quoteZapOutToTargetWithFee(
++                lp_ = lpAsset_ ? amount_ : ConstProdUtils._quoteZapOutToTargetWithFee(
+                     amount_, q.pool.totalSupply, q.pool.knownReserve, q.pool.opposingReserve,
+                     q.pool.opTokenFeePercent, CAMELOTV2_FEE_DENOMINATOR, q.pool.kLast,
+                     _quoteOwnerFee(), _quoteFeeTo() != address(0)
+@@ -87,7 +93,7 @@
+             q.holderShares -= amountIn_;
+             q.vault.vaultTotalShares -= amountIn_;
+             q.actualLp -= lp_;
+-            amountOut_ = _quoteWithdraw(q, lp_);
++            amountOut_ = lpAsset_ ? lp_ : _quoteWithdraw(q, lp_);
+         }
+         q.vault.vaultLpReserve = q.actualLp;
+         q.vault.knownTokenLastOwnedSourceReserve = BetterMath._mulDiv(q.actualLp, q.pool.knownReserve, q.pool.totalSupply);
+@@ -119,6 +125,8 @@
+             q.vault.feeShares = 0;
+         } else {
+             if (tokenIn_ != q.pool.token0 && tokenIn_ != q.pool.token1) revert UnsupportedQuoteAsset(tokenIn_);
++            address accounting_ = q.asset;
++            if (q.asset == address(q.pool.pool)) q.asset = q.pool.token0;
+             bool flipped = tokenIn_ != q.asset;
+             if (flipped) _flipQuoteAsset(q);
+             (bytes memory projected,, uint256 minted,) = IStandardExchangeTransitionQuote(address(this)).quoteTransition(
+@@ -128,6 +136,7 @@
+             q.holderShares -= minted;
+             sharesOut_ = minted;
+             if (flipped) _flipQuoteAsset(q);
++            q.asset = accounting_;
+         }
+         return (abi.encode(q), sharesOut_, _quoteAssets(q, q.holderShares));
+     }
+@@ -146,7 +155,18 @@
+     {
+         QuoteState memory q = _decodeQuote(state_);
+         address opposing_ = q.asset == q.pool.token0 ? q.pool.token1 : q.pool.token0;
+-        if (tokenIn_ == address(q.pool.pool)) {
++        if (q.asset == address(q.pool.pool)) {
++            if (tokenIn_ != q.pool.token0 && tokenIn_ != q.pool.token1) revert UnsupportedQuoteAsset(tokenIn_);
++            q.asset = q.pool.token0;
++            bool flipped = tokenIn_ != q.asset;
++            if (flipped) _flipQuoteAsset(q);
++            amountOut_ = _quoteDeposit(q, amountIn_);
++            if (flipped) _flipQuoteAsset(q);
++            q.asset = address(q.pool.pool);
++            // The live pass-through returns newly minted LP to its caller and
++            // rejects any change to the SE's held LP, including pool fee LP.
++            if (q.actualLp != q.vault.vaultLpReserve) revert InvalidQuoteState();
++        } else if (tokenIn_ == address(q.pool.pool)) {
+             // These LP tokens belong to the separate caller. Retain the SE's own
+             // LP and fee checkpoints; only the shared pool state changes.
+             amountOut_ = _quoteWithdraw(q, amountIn_);
+@@ -182,6 +202,7 @@
+         CamelotV2StrategyVault memory v = abi.decode(abi.encode(q.vault), (CamelotV2StrategyVault));
+         _calcVaultFee(q.pool, v);
+         uint256 lp_ = BetterMath._convertToAssetsDown(shares_, v.vaultLpReserve, v.vaultTotalShares, ERC4626Repo._decimalOffset());
++        if (q.asset == address(q.pool.pool)) return lp_;
+         return CamelotV2Utils._quoteWithdrawSwapWithFee(
+             lp_, q.pool.totalSupply, q.pool.knownReserve, q.pool.opposingReserve, q.pool.opTokenFeePercent,
+             CAMELOTV2_FEE_DENOMINATOR, q.pool.kLast, _quoteOwnerFee(), _quoteFeeTo() != address(0)
+--- a/test/foundry/spec/vaults/standard/sy/ConstantProductNativeSY.t.sol
++++ b/test/foundry/spec/vaults/standard/sy/ConstantProductNativeSY.t.sol
+@@ -27,7 +27,7 @@
+ import {CamelotV2StandardExchangeInFacet} from "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeInFacet.sol";
+ import {CamelotV2StandardExchangeOutFacet} from "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeOutFacet.sol";
+ 
+-abstract contract ConstantProductNativeSYBehavior is Test {
++abstract contract ConstantProductNativeSYBehavior is TransitionQuoteAssertions {
+     IStandardizedYield internal nativeSY;
+     IERC20 internal nativePairA;
+     IERC20 internal nativePairB;
+@@ -37,6 +37,40 @@
+     function _newNativeTokens() internal {
+         nativePairA = IERC20(address(new ERC20PermitMintableStub("SY pair A", "SYA", 18, nativeUser, 10_000 ether)));
+         nativePairB = IERC20(address(new ERC20PermitMintableStub("SY pair B", "SYB", 18, nativeUser, 10_000 ether)));
++    }
++
++    function _fundLpQuoteCaller() private returns (IERC20 lp, uint256 payment) {
++        lp = IERC20(nativeSY.yieldToken());
++        vm.startPrank(nativeUser);
++        payment = nativeSY.redeem(nativeUser, nativeSY.balanceOf(nativeUser) / 5, address(lp), 0, false);
++        lp.transfer(address(this), payment);
++        nativePairA.transfer(address(this), 200 ether);
++        nativePairB.transfer(address(this), 200 ether);
++        nativeSY.transfer(address(this), nativeSY.balanceOf(nativeUser) / 10);
++        vm.stopPrank();
++        nativePairA.approve(address(nativeSY), 10 ether);
++        IStandardExchangeIn(address(nativeSY)).exchangeIn(
++            nativePairA, 10 ether, nativePairB, 0, address(this), false, block.timestamp
++        );
++    }
++
++    function test_lpAccountingSequentialCustodyWithAccruedFees() public {
++        (IERC20 lp,) = _fundLpQuoteCaller();
++        _assertQuoteSequence(address(nativeSY), lp, address(this), 1 ether);
++    }
++
++    function test_lpAccountingExternalDepositsPreserveBothLegsAndDonation() public {
++        (IERC20 lp, uint256 payment) = _fundLpQuoteCaller();
++        _assertExternalDepositQuote(address(nativeSY), nativePairA, lp, 13 ether + 7, nativeUser);
++        _assertExternalDepositQuote(address(nativeSY), nativePairB, lp, 11 ether + 3, nativeUser);
++        lp.transfer(address(nativeSY), payment / 7);
++        _assertExternalDepositQuote(address(nativeSY), lp, lp, payment / 4, nativeUser);
++    }
++
++    function test_lpAccountingExternalConversionsRetainOwnLiquidity() public {
++        (IERC20 lp,) = _fundLpQuoteCaller();
++        _assertExternalExchangeQuote(address(nativeSY), nativePairA, lp, 7 ether + 13);
++        _assertExternalExchangeQuote(address(nativeSY), nativePairB, lp, 5 ether + 17);
+     }
+ 
+     function test_nativeLPMetadataAndCompleteSelectors() public view {
+@@ -121,6 +155,113 @@
+ }
+ 
+ contract AerodromeNativeSYTest is TestBase_AerodromeStandardExchange, ConstantProductNativeSYBehavior {
++    function _aeroProjectionFeesAndInventory() private {
++        vm.prank(owner);
++        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(address(nativeSY), 7e16);
++        vm.startPrank(nativeUser);
++        nativePairA.transfer(address(this), 300 ether);
++        nativePairB.transfer(address(this), 300 ether);
++        nativeSY.transfer(address(this), nativeSY.balanceOf(nativeUser) / 10);
++        nativePairA.approve(address(nativeSY), 10 ether);
++        IStandardExchangeIn(address(nativeSY)).exchangeIn(nativePairA, 10 ether, nativePairB, 1, nativeUser, false, block.timestamp);
++        nativePairB.approve(address(nativeSY), 7 ether);
++        IStandardExchangeIn(address(nativeSY)).exchangeIn(nativePairB, 7 ether, nativePairA, 1, nativeUser, false, block.timestamp);
++        vm.stopPrank();
++        assertGt(IPool(nativeSY.yieldToken()).index0() + IPool(nativeSY.yieldToken()).index1(), 0, "real pool fees accrued");
++    }
++
++    function test_aeroProjectionSelectorsAndComponentSizes() public view {
++        address exchange = address(nativeSY);
++        assertTrue(IERC165(exchange).supportsInterface(type(IStandardExchangeTransitionQuote).interfaceId));
++        assertTrue(IERC165(exchange).supportsInterface(type(IStandardExchangeExternalQuote).interfaceId));
++        bytes4[7] memory selectors = [
++            IStandardExchangeTransitionQuote.quoteState.selector,
++            IStandardExchangeTransitionQuote.quoteAssets.selector,
++            IStandardExchangeTransitionQuote.quoteShareBalance.selector,
++            IStandardExchangeTransitionQuote.quoteTotalSupply.selector,
++            IStandardExchangeTransitionQuote.quoteTransition.selector,
++            IStandardExchangeExternalQuote.quoteExternalDeposit.selector,
++            IStandardExchangeExternalQuote.quoteExternalExchange.selector
++        ];
++        for (uint256 i; i < selectors.length; ++i) {
++            address facet = IDiamondLoupe(exchange).facetAddress(selectors[i]);
++            assertGt(facet.code.length, 0, "installed projection component");
++            assertLe(facet.code.length, 24_576, "deployed component fits EIP-170");
++        }
++    }
++
++    function test_aeroProjectionSequentialBothAssetsAndCompoundedLpFees() public {
++        _aeroProjectionFeesAndInventory();
++        uint256 snapshot = vm.snapshotState();
++        _assertQuoteSequence(address(nativeSY), nativePairA, nativeUser, 1 ether);
++        assertTrue(vm.revertToState(snapshot));
++        _assertQuoteSequence(address(nativeSY), nativePairB, nativeUser, 1 ether);
++    }
++
++    function test_aeroProjectionExternalDepositsAndLiveLpPayment() public {
++        _aeroProjectionFeesAndInventory();
++        _assertExternalDepositQuote(address(nativeSY), nativePairA, nativePairB, 11 ether + 13, nativeUser);
++        _assertExternalDepositQuote(address(nativeSY), nativePairB, nativePairA, 7 ether + 17, nativeUser);
++        nativePairA.approve(address(nativeSY), 10 ether);
++        uint256 lp = IStandardExchangeIn(address(nativeSY)).exchangeIn(
++            nativePairA, 10 ether, IERC20(nativeSY.yieldToken()), 1, address(this), false, block.timestamp
++        );
++        _assertExternalDepositQuote(address(nativeSY), IERC20(nativeSY.yieldToken()), nativePairB, lp, nativeUser);
++    }
++
++    function test_aeroProjectionExternalSwapsAndLpRedemptionPreserveOwnShares() public {
++        _aeroProjectionFeesAndInventory();
++        _assertExternalExchangeQuote(address(nativeSY), nativePairA, nativePairB, 3 ether + 11);
++        _assertExternalExchangeQuote(address(nativeSY), nativePairB, nativePairA, 2 ether + 13);
++        nativePairA.approve(address(nativeSY), 10 ether);
++        uint256 lp = IStandardExchangeIn(address(nativeSY)).exchangeIn(
++            nativePairA, 10 ether, IERC20(nativeSY.yieldToken()), 1, address(this), false, block.timestamp
++        );
++        _assertExternalExchangeQuote(address(nativeSY), IERC20(nativeSY.yieldToken()), nativePairB, lp);
++    }
++
++    function test_aeroProjectionCompoundPaysActualLpWithoutIssuingSeFees() public {
++        _aeroProjectionFeesAndInventory();
++        address recipient = address(indexedexManager.feeTo());
++        IERC20 lp = IERC20(nativeSY.yieldToken());
++        uint256 feeLpBefore = lp.balanceOf(recipient);
++        uint256 feeSharesBefore = nativeSY.balanceOf(recipient);
++        _assertExternalDepositQuote(address(nativeSY), nativePairA, nativePairB, 11 ether + 13, recipient);
++        assertGt(lp.balanceOf(recipient), feeLpBefore, "compound pays funded LP fees");
++        assertEq(nativeSY.balanceOf(recipient), feeSharesBefore, "compound does not issue SE shares");
++    }
++
++    function test_aeroProjectionDonationRemainsBackingBeforeLpPayment() public {
++        _aeroProjectionFeesAndInventory();
++        nativePairA.approve(address(nativeSY), 10 ether);
++        IERC20 lp = IERC20(nativeSY.yieldToken());
++        uint256 acquired = IStandardExchangeIn(address(nativeSY)).exchangeIn(
++            nativePairA, 10 ether, lp, 1, address(this), false, block.timestamp
++        );
++        uint256 donated = acquired / 3;
++        lp.transfer(address(nativeSY), donated);
++        _assertExternalDepositQuote(address(nativeSY), lp, nativePairB, acquired - donated, nativeUser);
++    }
++
++    function test_aeroProjectionExternalLpBurnIncludesPoolHeldLpAndUnsyncedTokens() public {
++        _aeroProjectionFeesAndInventory();
++        nativePairA.approve(address(nativeSY), 10 ether);
++        IERC20 lp = IERC20(nativeSY.yieldToken());
++        uint256 acquired = IStandardExchangeIn(address(nativeSY)).exchangeIn(
++            nativePairA, 10 ether, lp, 1, address(this), false, block.timestamp
++        );
++        uint256 poolHeld = acquired / 5;
++        lp.transfer(address(lp), poolHeld);
++        nativePairA.transfer(address(lp), 17);
++        nativePairB.transfer(address(lp), 29);
++        uint256 reserve = lp.balanceOf(address(nativeSY));
++        uint256 supply = lp.totalSupply();
++        _assertExternalExchangeQuote(address(nativeSY), lp, nativePairB, acquired - poolHeld);
++        assertEq(lp.balanceOf(address(lp)), 0, "actual pool burns its complete held LP balance");
++        assertEq(lp.totalSupply(), supply - acquired, "submitted and previously pool-held LP both burn");
++        assertEq(lp.balanceOf(address(nativeSY)), reserve, "SE-held LP is not external payment");
++    }
++
+     function test_nativeExactOutputAssetADepositAfterFees() public { _fundedExactOutputCase(0, true); }
+     function test_nativeExactOutputAssetBDepositAfterFees() public { _fundedExactOutputCase(1, true); }
+     function test_nativeExactOutputLpDepositAfterFees() public { _fundedExactOutputCase(2, true); }
+@@ -337,7 +478,7 @@
+     }
+ }
+ 
+-contract CamelotV2NativeSYTest is TestBase_CamelotV2StandardExchange, ConstantProductNativeSYBehavior, TransitionQuoteAssertions {
++contract CamelotV2NativeSYTest is TestBase_CamelotV2StandardExchange, ConstantProductNativeSYBehavior {
+     function test_camelotProjectionSelectorsUseCurrentQueryFacet() public view {
+         address exchange_ = address(nativeSY);
+         bytes4[7] memory selectors_ = [
+--- /dev/null
++++ b/contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeQuoteTarget.sol
+@@ -0,0 +1,293 @@
++// SPDX-License-Identifier: BSL-1.1
++pragma solidity ^0.8.0;
++
++import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
++import {IPool} from "@crane/contracts/interfaces/protocols/dexes/aerodrome/IPool.sol";
++import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
++import {ERC4626Repo} from "@crane/contracts/tokens/ERC4626/ERC4626Repo.sol";
++import {AerodromePoolMetadataRepo} from "@crane/contracts/protocols/dexes/aerodrome/v1/aware/AerodromePoolMetadataRepo.sol";
++import {BetterMath} from "@crane/contracts/utils/math/BetterMath.sol";
++import {ConstProdUtils} from "@crane/contracts/utils/math/ConstProdUtils.sol";
++import {AerodromeUtils} from "@crane/contracts/utils/math/AerodromeUtils.sol";
++import {Math} from "@crane/contracts/utils/Math.sol";
++import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
++import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
++import {AerodromeStandardExchangeRepo} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeRepo.sol";
++import {AerodromeStandardExchangeCommon} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeCommon.sol";
++
++/// @notice Sequential volatile-pool quotes, including separately collected LP fees.
++abstract contract AerodromeStandardExchangeQuoteTarget is
++    AerodromeStandardExchangeCommon, IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote
++{
++    struct QuoteState {
++        address exchange;
++        address asset;
++        address holder;
++        address pool;
++        address[2] tokens;
++        uint256 holderShares;
++        uint256 supply;
++        uint256 actualLp;
++        uint256 bookedLp;
++        uint256 poolSupply;
++        uint256 poolHeldLp;
++        uint256[2] reserves;
++        uint256[2] balances;
++        uint256[2] indexes;
++        uint256[2] suppliedIndexes;
++        uint256[2] claimable;
++        uint256[2] excess;
++    }
++
++    function quoteState(address asset, address holder) external view returns (bytes memory, uint256) {
++        QuoteState memory q;
++        q.exchange = address(this);
++        q.asset = asset;
++        q.holder = holder;
++        q.pool = address(ERC4626Repo._reserveAsset());
++        IPool pool = IPool(q.pool);
++        q.tokens = [pool.token0(), pool.token1()];
++        if (asset != q.pool && asset != q.tokens[0] && asset != q.tokens[1]) revert UnsupportedQuoteAsset(asset);
++        q.holderShares = IERC20(address(this)).balanceOf(holder);
++        q.supply = ERC20Repo._totalSupply();
++        q.actualLp = IERC20(q.pool).balanceOf(address(this));
++        q.bookedLp = ERC4626Repo._lastTotalAssets();
++        q.poolSupply = IERC20(q.pool).totalSupply();
++        q.poolHeldLp = IERC20(q.pool).balanceOf(q.pool);
++        (q.reserves[0], q.reserves[1],) = pool.getReserves();
++        q.balances = [IERC20(q.tokens[0]).balanceOf(q.pool), IERC20(q.tokens[1]).balanceOf(q.pool)];
++        q.indexes = [pool.index0(), pool.index1()];
++        q.suppliedIndexes = [pool.supplyIndex0(address(this)), pool.supplyIndex1(address(this))];
++        q.claimable = [pool.claimable0(address(this)), pool.claimable1(address(this))];
++        q.excess = [AerodromeStandardExchangeRepo._excessToken0(), AerodromeStandardExchangeRepo._excessToken1()];
++        return (abi.encode(q), _aeroAssets(q, q.holderShares));
++    }
++
++    function _readAeroQuote(bytes calldata state) private view returns (QuoteState memory q) {
++        q = abi.decode(state, (QuoteState));
++        if (q.exchange != address(this) || q.pool != address(ERC4626Repo._reserveAsset())) revert InvalidQuoteState();
++        if (q.asset != q.pool && q.asset != q.tokens[0] && q.asset != q.tokens[1]) revert InvalidQuoteState();
++    }
++
++    function _aeroFee(QuoteState memory q) private view returns (uint256) {
++        return AerodromePoolMetadataRepo._factory().getFee(q.pool, false);
++    }
++
++    function quoteAssets(bytes calldata state, uint256 shares) external view returns (uint256) {
++        return _aeroAssets(_readAeroQuote(state), shares);
++    }
++
++    function quoteShareBalance(bytes calldata state) external view returns (uint256) {
++        return _readAeroQuote(state).holderShares;
++    }
++
++    function quoteTotalSupply(bytes calldata state) external view returns (uint256) {
++        return _readAeroQuote(state).supply;
++    }
++
++    /// @dev Preserve the public SE redemption convention: preview a fee compound
++    /// and then quote the proportional LP burn and opposing-token sale.
++    function _aeroAssets(QuoteState memory original, uint256 shares) private view returns (uint256) {
++        QuoteState memory q = abi.decode(abi.encode(original), (QuoteState));
++        _aeroCompound(q);
++        uint256 lp = BetterMath._convertToAssetsDown(shares, q.actualLp, q.supply, ERC4626Repo._decimalOffset());
++        if (q.asset == q.pool) return lp;
++        uint256 side = q.asset == q.tokens[0] ? 0 : 1;
++        return AerodromeUtils._quoteWithdrawSwapWithFee(
++            lp, q.poolSupply, q.reserves[side], q.reserves[1 - side], _aeroFee(q)
++        );
++    }
++
++    function quoteTransition(bytes calldata state, Operation operation, uint256 amount)
++        external view returns (bytes memory, uint256 amountIn, uint256 amountOut, uint256)
++    {
++        QuoteState memory q = _readAeroQuote(state);
++        amountIn = amount;
++        if (operation == Operation.ReceiveShares) {
++            q.holderShares += amount;
++            if (q.holderShares > q.supply) revert InvalidQuoteState();
++            amountOut = amount;
++        } else if (operation == Operation.DepositExactIn) {
++            amountOut = _aeroDeposit(q, q.asset, amount);
++            q.holderShares += amountOut;
++        } else {
++            _aeroCompound(q);
++            uint256 side = q.asset == q.tokens[0] ? 0 : 1;
++            if (operation == Operation.WithdrawExactOut) {
++                uint256 needed = q.asset == q.pool ? amount : _quoteAeroLpToToken(
++                    amount, q.poolSupply, q.reserves[side], q.reserves[1 - side], _aeroFee(q)
++                );
++                amountIn = BetterMath._convertToSharesUp(needed, q.actualLp, q.supply, ERC4626Repo._decimalOffset());
++            }
++            if (amountIn > q.holderShares) revert InsufficientQuoteShares(amountIn, q.holderShares);
++            uint256 lp = BetterMath._convertToAssetsDown(amountIn, q.actualLp, q.supply, ERC4626Repo._decimalOffset());
++            q.holderShares -= amountIn;
++            q.supply -= amountIn;
++            _aeroUpdateForVault(q);
++            q.actualLp -= lp;
++            amountOut = q.asset == q.pool ? lp : _aeroWithdraw(q, side, lp);
++            q.bookedLp = q.actualLp;
++            if (operation == Operation.WithdrawExactOut && amountOut < amount) revert InvalidQuoteState();
++        }
++        return (abi.encode(q), amountIn, amountOut, _aeroAssets(q, q.holderShares));
++    }
++
++    function quoteExternalDeposit(bytes calldata state, address tokenIn, uint256 amountIn)
++        external view returns (bytes memory, uint256 sharesOut, uint256)
++    {
++        QuoteState memory q = _readAeroQuote(state);
++        sharesOut = _aeroDeposit(q, tokenIn, amountIn);
++        return (abi.encode(q), sharesOut, _aeroAssets(q, q.holderShares));
++    }
++
++    function _aeroDeposit(QuoteState memory q, address tokenIn, uint256 amount) private view returns (uint256 minted) {
++        _aeroCompound(q);
++        uint256 beforeLp = q.actualLp;
++        uint256 received;
++        if (tokenIn == q.pool) {
++            _aeroUpdateForVault(q);
++            q.actualLp += amount;
++            received = amount;
++        } else {
++            if (tokenIn != q.tokens[0] && tokenIn != q.tokens[1]) revert UnsupportedQuoteAsset(tokenIn);
++            if (q.actualLp != q.bookedLp) revert InvalidQuoteState();
++            received = _aeroZap(q, tokenIn == q.tokens[0] ? 0 : 1, amount);
++        }
++        minted = BetterMath._convertToSharesDown(received, beforeLp, q.supply, ERC4626Repo._decimalOffset());
++        q.supply += minted;
++        q.bookedLp = q.actualLp;
++    }
++
++    function quoteExternalExchange(bytes calldata state, address tokenIn, uint256 amountIn)
++        external view returns (bytes memory, uint256 amountOut, uint256)
++    {
++        QuoteState memory q = _readAeroQuote(state);
++        uint256 side = q.asset == q.tokens[0] ? 0 : 1;
++        if (q.asset == q.pool) {
++            if (tokenIn != q.tokens[0] && tokenIn != q.tokens[1]) revert UnsupportedQuoteAsset(tokenIn);
++            // The router mints directly to the separate recipient. It does not
++            // transfer LP through this SE or checkpoint this SE's fee indexes.
++            amountOut = _aeroZapTo(q, tokenIn == q.tokens[0] ? 0 : 1, amountIn, false);
++        } else if (tokenIn == q.pool) {
++            // The pass-through receives LP before forwarding it to the router.
++            // Both transfers checkpoint the vault's already-earned LP fees.
++            _aeroUpdateForVault(q);
++            q.actualLp += amountIn;
++            _aeroUpdateForVault(q);
++            q.actualLp -= amountIn;
++            amountOut = _aeroWithdraw(q, side, amountIn);
++        } else if (tokenIn == q.tokens[1 - side]) {
++            amountOut = _aeroSwap(q, 1 - side, amountIn);
++        } else revert UnsupportedQuoteAsset(tokenIn);
++        if (q.actualLp != q.bookedLp) revert InvalidQuoteState();
++        return (abi.encode(q), amountOut, _aeroAssets(q, q.holderShares));
++    }
++
++    /// @dev Mirror Pool._updateFor before every LP balance mutation.
++    function _aeroUpdateForVault(QuoteState memory q) private pure {
++        for (uint256 i; i < 2; ++i) {
++            q.claimable[i] += Math.mulDiv(q.actualLp, q.indexes[i] - q.suppliedIndexes[i], 1e18);
++            q.suppliedIndexes[i] = q.indexes[i];
++        }
++    }
++
++    function _aeroCompound(QuoteState memory q) private view {
++        _aeroUpdateForVault(q);
++        uint256 total0 = q.claimable[0] + q.excess[0];
++        uint256 total1 = q.claimable[1] + q.excess[1];
++        q.claimable[0] = 0;
++        q.claimable[1] = 0;
++        q.excess[0] = 0;
++        q.excess[1] = 0;
++        if (total0 == 0 && total1 == 0) return;
++        (uint256 proportional0, uint256 proportional1) = _proportionalDeposit(q.reserves[0], q.reserves[1], total0, total1);
++        uint256 minted;
++        if (proportional0 != 0 && proportional1 != 0) {
++            minted = _aeroAddLiquidity(q, 0, proportional0, proportional1);
++        }
++        uint256[2] memory excess = [total0 - proportional0, total1 - proportional1];
++        for (uint256 i; i < 2; ++i) {
++            if (excess[i] > DEFAULT_DUST_THRESHOLD) minted += _aeroZap(q, i, excess[i]);
++            else q.excess[i] = excess[i];
++        }
++        if (minted == 0) return;
++        uint256 fee = BetterMath._percentageOfWAD(minted, VaultFeeOracleQueryAwareRepo._feeOracle().usageFeeOfVault(address(this)));
++        if (fee != 0) {
++            _aeroUpdateForVault(q);
++            if (address(VaultFeeOracleQueryAwareRepo._feeOracle().feeTo()) != address(this)) q.actualLp -= fee;
++        }
++        q.bookedLp = q.actualLp;
++    }
++
++    function _aeroSwap(QuoteState memory q, uint256 side, uint256 amount) private view returns (uint256 output) {
++        uint256 fee = _aeroFee(q);
++        uint256 net = amount - Math.mulDiv(amount, fee, 10_000);
++        output = Math.mulDiv(net, q.reserves[1 - side], q.reserves[side] + net);
++        if (output == 0 || output >= q.reserves[1 - side]) revert InvalidQuoteState();
++        q.balances[side] += amount;
++        q.balances[1 - side] -= output;
++        for (uint256 i; i < 2; ++i) {
++            uint256 expected = q.reserves[i] - (i == side ? 0 : output);
++            uint256 gross = q.balances[i] > expected ? q.balances[i] - expected : 0;
++            uint256 collected = Math.mulDiv(gross, fee, 10_000);
++            q.balances[i] -= collected;
++            if (collected != 0) q.indexes[i] += Math.mulDiv(collected, 1e18, q.poolSupply);
++        }
++        q.reserves[0] = q.balances[0];
++        q.reserves[1] = q.balances[1];
++    }
++
++    function _aeroZap(QuoteState memory q, uint256 side, uint256 amount) private view returns (uint256) {
++        return _aeroZapTo(q, side, amount, true);
++    }
++
++    function _aeroZapTo(QuoteState memory q, uint256 side, uint256 amount, bool toVault) private view returns (uint256) {
++        uint256 sold = ConstProdUtils._swapDepositSaleAmt(amount, q.reserves[side], _aeroFee(q), 10_000);
++        uint256 bought = _aeroSwap(q, side, sold);
++        return _aeroAddLiquidityTo(q, side, amount - sold, bought, toVault);
++    }
++
++    function _aeroAddLiquidity(QuoteState memory q, uint256 side, uint256 desiredA, uint256 desiredB)
++        private pure returns (uint256 minted)
++    {
++        return _aeroAddLiquidityTo(q, side, desiredA, desiredB, true);
++    }
++
++    function _aeroAddLiquidityTo(QuoteState memory q, uint256 side, uint256 desiredA, uint256 desiredB, bool toVault)
++        private pure returns (uint256 minted)
++    {
++        (uint256 a, uint256 b) = _proportionalDeposit(q.reserves[side], q.reserves[1 - side], desiredA, desiredB);
++        q.balances[side] += a;
++        q.balances[1 - side] += b;
++        uint256 amount0 = q.balances[0] - q.reserves[0];
++        uint256 amount1 = q.balances[1] - q.reserves[1];
++        if (q.poolSupply == 0) {
++            minted = Math.sqrt(amount0 * amount1) - 1_000;
++            q.poolSupply = 1_000;
++        } else {
++            minted = Math.min(Math.mulDiv(amount0, q.poolSupply, q.reserves[0]), Math.mulDiv(amount1, q.poolSupply, q.reserves[1]));
++        }
++        if (minted == 0) revert InvalidQuoteState();
++        if (toVault) {
++            _aeroUpdateForVault(q);
++            q.actualLp += minted;
++        }
++        q.poolSupply += minted;
++        q.reserves[0] = q.balances[0];
++        q.reserves[1] = q.balances[1];
++    }
++
++    function _aeroWithdraw(QuoteState memory q, uint256 side, uint256 lp) private view returns (uint256 output) {
++        uint256 burned = lp + q.poolHeldLp;
++        q.poolHeldLp = 0;
++        uint256 a = Math.mulDiv(burned, q.balances[side], q.poolSupply);
++        uint256 b = Math.mulDiv(burned, q.balances[1 - side], q.poolSupply);
++        if (a == 0 || b == 0) revert InvalidQuoteState();
++        q.poolSupply -= burned;
++        q.balances[side] -= a;
++        q.balances[1 - side] -= b;
++        q.reserves[0] = q.balances[0];
++        q.reserves[1] = q.balances[1];
++        output = a + _aeroSwap(q, 1 - side, b);
++    }
++}
+--- a/contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeOutQueryFacet.sol
++++ b/contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeOutQueryFacet.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
++import {AerodromeStandardExchangeQuoteTarget} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeQuoteTarget.sol";
+ import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+ import {ConstantProductStandardYieldTarget} from "contracts/vaults/standard/sy/ConstantProductStandardYieldTarget.sol";
+ import {NativeStandardYieldSelectors} from "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol";
+@@ -12,19 +14,28 @@
+ } from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeOutQueryTarget.sol";
+ 
+ /// @notice Exact-output previews and native SY adapters using the installed standard routes.
+-contract AerodromeStandardExchangeOutQueryFacet is AerodromeStandardExchangeOutQueryTarget, ConstantProductStandardYieldTarget, IFacet {
++contract AerodromeStandardExchangeOutQueryFacet is AerodromeStandardExchangeOutQueryTarget, AerodromeStandardExchangeQuoteTarget, ConstantProductStandardYieldTarget, IFacet {
+     function facetName() public pure returns (string memory name) {
+         return type(AerodromeStandardExchangeOutQueryFacet).name;
+     }
+ 
+     function facetInterfaces() public pure virtual returns (bytes4[] memory interfaces) {
+-        interfaces = new bytes4[](1);
++        interfaces = new bytes4[](3);
+         interfaces[0] = type(IStandardizedYield).interfaceId;
++        interfaces[1] = type(IStandardExchangeTransitionQuote).interfaceId;
++        interfaces[2] = type(IStandardExchangeExternalQuote).interfaceId;
+     }
+ 
+     function facetFuncs() public pure virtual returns (bytes4[] memory funcs) {
+-        funcs = new bytes4[](1);
++        funcs = new bytes4[](8);
+         funcs[0] = IStandardExchangeOut.previewExchangeOut.selector;
++        funcs[1] = IStandardExchangeTransitionQuote.quoteState.selector;
++        funcs[2] = IStandardExchangeTransitionQuote.quoteAssets.selector;
++        funcs[3] = IStandardExchangeTransitionQuote.quoteShareBalance.selector;
++        funcs[4] = IStandardExchangeTransitionQuote.quoteTotalSupply.selector;
++        funcs[5] = IStandardExchangeTransitionQuote.quoteTransition.selector;
++        funcs[6] = IStandardExchangeExternalQuote.quoteExternalDeposit.selector;
++        funcs[7] = IStandardExchangeExternalQuote.quoteExternalExchange.selector;
+         funcs = NativeStandardYieldSelectors._append(funcs);
+     }
+ 
+--- a/contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeDFPkg.sol
++++ b/contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeDFPkg.sol
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+ import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+ 
+ /* -------------------------------------------------------------------------- */
+@@ -418,7 +419,7 @@
+     }
+ 
+     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
+-        interfaces = new bytes4[](12);
++        interfaces = new bytes4[](14);
+ 
+         interfaces[0] = type(IERC20).interfaceId;
+         interfaces[1] = type(IERC20Metadata).interfaceId;
+@@ -432,6 +433,8 @@
+         interfaces[9] = type(IStandardExchangeOut).interfaceId;
+         interfaces[10] = type(IVaultFeeOracleQueryAware).interfaceId;
+         interfaces[11] = type(IStandardizedYield).interfaceId;
++        interfaces[12] = type(IStandardExchangeTransitionQuote).interfaceId;
++        interfaces[13] = type(IStandardExchangeExternalQuote).interfaceId;
+         return interfaces;
+     }
+ 
+--- a/contracts/protocols/dexes/aerodrome/v1/Aerodrome_Component_FactoryService.sol
++++ b/contracts/protocols/dexes/aerodrome/v1/Aerodrome_Component_FactoryService.sol
+@@ -32,10 +32,9 @@
+     Vm constant vm = Vm(VM_ADDRESS);
+ 
+     function deployAerodromeStandardExchangeInFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
+-        instance = create3Factory.deployFacet(
+-            ArtifactCreationCode.creationCode("AerodromeStandardExchangeInFacet.sol:AerodromeStandardExchangeInFacet"),
+-            abi.encode("AerodromeStandardExchangeInFacet")._hash()
+-        );
++        bytes memory code = ArtifactCreationCode.creationCode("AerodromeStandardExchangeInFacet.sol:AerodromeStandardExchangeInFacet");
++        bytes32 releaseSalt = keccak256(abi.encode("AerodromeStandardExchangeInFacet", keccak256(code)));
++        instance = create3Factory.deployFacet(code, releaseSalt);
+         vm.label(address(instance), "AerodromeStandardExchangeInFacet");
+     }
+ 
+@@ -43,10 +42,9 @@
+         internal
+         returns (IFacet instance)
+     {
+-        instance = create3Factory.deployFacet(
+-            ArtifactCreationCode.creationCode("AerodromeStandardExchangeOutFacet.sol:AerodromeStandardExchangeOutFacet"),
+-            abi.encode("AerodromeStandardExchangeOutFacet")._hash()
+-        );
++        bytes memory code = ArtifactCreationCode.creationCode("AerodromeStandardExchangeOutFacet.sol:AerodromeStandardExchangeOutFacet");
++        bytes32 releaseSalt = keccak256(abi.encode("AerodromeStandardExchangeOutFacet", keccak256(code)));
++        instance = create3Factory.deployFacet(code, releaseSalt);
+         vm.label(address(instance), "AerodromeStandardExchangeOutFacet");
+     }
+ 
+@@ -54,10 +52,9 @@
+         internal
+         returns (IFacet instance)
+     {
+-        instance = create3Factory.deployFacet(
+-            ArtifactCreationCode.creationCode("AerodromeStandardExchangeOutQueryFacet.sol:AerodromeStandardExchangeOutQueryFacet"),
+-            abi.encode("AerodromeStandardExchangeOutQueryFacet")._hash()
+-        );
++        bytes memory code = ArtifactCreationCode.creationCode("AerodromeStandardExchangeOutQueryFacet.sol:AerodromeStandardExchangeOutQueryFacet");
++        bytes32 releaseSalt = keccak256(abi.encode("AerodromeStandardExchangeOutQueryFacet", keccak256(code)));
++        instance = create3Factory.deployFacet(code, releaseSalt);
+         vm.label(address(instance), "AerodromeStandardExchangeOutQueryFacet");
+     }
+ 
+@@ -65,15 +62,10 @@
+         IVaultRegistryDeployment vaultRegistry,
+         IAerodromeStandardExchangeDFPkg.PkgInit memory pkgInit
+     ) internal returns (IAerodromeStandardExchangeDFPkg instance) {
+-        instance = IAerodromeStandardExchangeDFPkg(
+-            address(
+-                vaultRegistry.deployPkg(
+-                    ArtifactCreationCode.creationCode("AerodromeStandardExchangeDFPkg.sol:AerodromeStandardExchangeDFPkg"),
+-                    abi.encode(pkgInit),
+-                    abi.encode("AerodromeStandardExchangeDFPkg")._hash()
+-                )
+-            )
+-        );
++        bytes memory code = ArtifactCreationCode.creationCode("AerodromeStandardExchangeDFPkg.sol:AerodromeStandardExchangeDFPkg");
++        bytes memory arguments = abi.encode(pkgInit);
++        bytes32 releaseSalt = keccak256(abi.encode("AerodromeStandardExchangeDFPkg", keccak256(code), keccak256(arguments)));
++        instance = IAerodromeStandardExchangeDFPkg(address(vaultRegistry.deployPkg(code, arguments, releaseSalt)));
+         vm.label(address(instance), "AerodromeStandardExchangeDFPkg");
+     }
+ 

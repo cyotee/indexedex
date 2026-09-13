@@ -1,0 +1,12 @@
+{
+  "recorded_at_utc": "2026-09-08T08:48:24.827941+00:00",
+  "status": "APPLIED_AWAITING_BUILD_AND_RUNTIME",
+  "defect": "Nested V4 calls pretransferred tokens and requested the optional prepaid path unconditionally. Lido existing asset routes measure a pull delta; own-share redemption burns the caller, so these valid standard routes cannot consume that prepayment.",
+  "change": "Use exact acquired-amount allowance, standard false/pretransferred route, clear allowance after execution; existing outer reentrancy, payment custody and minimum checks remain.",
+  "production": [
+    "UniswapV4DetfCommon.sol",
+    "UniswapV4DetfTarget.sol"
+  ],
+  "tests": "Existing CP reserve suite, inherited in both liquidity policies: actual registered Lido SE, share/wrapped-input fallback and funded wrapped-input bond; output, supply, backing and cleared allowance checks.",
+  "scope": "Approved V4 standard-route compatibility; no D60 or D66 changes"
+}

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 import {Vm} from "forge-std/Vm.sol";
 import {VM_ADDRESS} from "@crane/contracts/constants/FoundryConstants.sol";
@@ -7,19 +8,8 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
-import {
-    MixedLegWeightedBufferPoolFacet
-} from "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolFacet.sol";
-import {
-    MixedLegWeightedBufferPoolLiquidityFacet
-} from "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolLiquidityFacet.sol";
-import {
-    MixedLegWeightedBufferPoolHookFacet
-} from "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolHookFacet.sol";
-import {
-    MixedLegWeightedBufferPoolStandardVaultPkg,
-    IMixedLegWeightedBufferPoolPkg
-} from "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolStandardVaultPkg.sol";
+
+import {IMixedLegWeightedBufferPoolPkg} from "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/IMixedLegWeightedBufferPoolPkg.sol";
 
 library MixedLegWeightedBufferPool_FactoryService {
     using BetterEfficientHashLib for bytes;
@@ -29,26 +19,26 @@ library MixedLegWeightedBufferPool_FactoryService {
 
     function deployMixedLegBufferPoolFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
         instance = create3Factory.deployFacet(
-            type(MixedLegWeightedBufferPoolFacet).creationCode,
-            abi.encode(type(MixedLegWeightedBufferPoolFacet).name)._hash()
+            ArtifactCreationCode.creationCode("MixedLegWeightedBufferPoolFacet.sol:MixedLegWeightedBufferPoolFacet"),
+            abi.encode("MixedLegWeightedBufferPoolFacet")._hash()
         );
-        vm.label(address(instance), type(MixedLegWeightedBufferPoolFacet).name);
+        vm.label(address(instance), "MixedLegWeightedBufferPoolFacet");
     }
 
     function deployMixedLegLiquidityFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
         instance = create3Factory.deployFacet(
-            type(MixedLegWeightedBufferPoolLiquidityFacet).creationCode,
-            abi.encode(type(MixedLegWeightedBufferPoolLiquidityFacet).name)._hash()
+            ArtifactCreationCode.creationCode("MixedLegWeightedBufferPoolLiquidityFacet.sol:MixedLegWeightedBufferPoolLiquidityFacet"),
+            abi.encode("MixedLegWeightedBufferPoolLiquidityFacet")._hash()
         );
-        vm.label(address(instance), type(MixedLegWeightedBufferPoolLiquidityFacet).name);
+        vm.label(address(instance), "MixedLegWeightedBufferPoolLiquidityFacet");
     }
 
     function deployMixedLegHookFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
         instance = create3Factory.deployFacet(
-            type(MixedLegWeightedBufferPoolHookFacet).creationCode,
-            abi.encode(type(MixedLegWeightedBufferPoolHookFacet).name)._hash()
+            ArtifactCreationCode.creationCode("MixedLegWeightedBufferPoolHookFacet.sol:MixedLegWeightedBufferPoolHookFacet"),
+            abi.encode("MixedLegWeightedBufferPoolHookFacet")._hash()
         );
-        vm.label(address(instance), type(MixedLegWeightedBufferPoolHookFacet).name);
+        vm.label(address(instance), "MixedLegWeightedBufferPoolHookFacet");
     }
 
     function deployMixedLegBufferPoolPkg(
@@ -58,12 +48,12 @@ library MixedLegWeightedBufferPool_FactoryService {
         instance = IMixedLegWeightedBufferPoolPkg(
             address(
                 vaultRegistry.deployPkg(
-                    type(MixedLegWeightedBufferPoolStandardVaultPkg).creationCode,
+                    ArtifactCreationCode.creationCode("MixedLegWeightedBufferPoolStandardVaultPkg.sol:MixedLegWeightedBufferPoolStandardVaultPkg"),
                     abi.encode(pkgInit),
-                    abi.encode(type(MixedLegWeightedBufferPoolStandardVaultPkg).name)._hash()
+                    abi.encode("MixedLegWeightedBufferPoolStandardVaultPkg")._hash()
                 )
             )
         );
-        vm.label(address(instance), type(MixedLegWeightedBufferPoolStandardVaultPkg).name);
+        vm.label(address(instance), "MixedLegWeightedBufferPoolStandardVaultPkg");
     }
 }

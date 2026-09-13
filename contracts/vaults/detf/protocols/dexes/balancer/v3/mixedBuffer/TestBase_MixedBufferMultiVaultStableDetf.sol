@@ -1,130 +1,57 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
+import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
 // IVault used in _fundReserveBpt for live balances length
 import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
-import {ERC721Facet} from "@crane/contracts/tokens/ERC721/ERC721Facet.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IPool} from "@crane/contracts/interfaces/protocols/dexes/aerodrome/IPool.sol";
+import {IRouter as IAerodromeRouter} from "@crane/contracts/protocols/dexes/aerodrome/v1/interfaces/IRouter.sol";
 import {Pool} from "@crane/contracts/protocols/dexes/aerodrome/v1/stubs/Pool.sol";
-import {IRouter} from "@crane/contracts/protocols/dexes/aerodrome/v1/interfaces/IRouter.sol";
 import {MockERC20} from "@crane/contracts/test/mocks/MockERC20.sol";
 
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
-import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
-import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {
     IBalancerV3StandardExchangeRouterProxy
 } from "contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol";
-import {
-    TestBase_BalancerV3StandardExchangeRouter
-} from "contracts/protocols/dexes/balancer/v3/routers/TestBase_BalancerV3StandardExchangeRouter.sol";
-import {
-    IMixedBufferMultiVaultStablePoolPkg
-} from "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolStandardVaultPkg.sol";
+import {IMixedBufferMultiVaultStablePoolPkg} from "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/IMixedBufferMultiVaultStablePoolPkg.sol";
 import {
     MixedBufferMultiVaultStablePool_FactoryService
 } from "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePool_FactoryService.sol";
 import {
     BalancerV3ConstantProductPool_FactoryService
 } from "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPool_FactoryService.sol";
-import {
-    DefaultPoolInfoFacet
-} from "contracts/protocols/dexes/balancer/v3/pools/constProd/facets/DefaultPoolInfoFacet.sol";
-import {
-    StandardSwapFeePercentageBoundsFacet
-} from "contracts/protocols/dexes/balancer/v3/pools/constProd/facets/StandardSwapFeePercentageBoundsFacet.sol";
-import {
-    StandardUnbalancedLiquidityInvariantRatioBoundsFacet
-} from "contracts/protocols/dexes/balancer/v3/pools/constProd/facets/StandardUnbalancedLiquidityInvariantRatioBoundsFacet.sol";
-import {DetfComponentFactoryService} from "contracts/vaults/detf/common/factory/DetfComponentFactoryService.sol";
-import {DetfFacetFactoryService} from "contracts/vaults/detf/common/factory/DetfFacetFactoryService.sol";
-import {DetfPkgFactoryService} from "contracts/vaults/detf/common/factory/DetfPkgFactoryService.sol";
-import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/common/factory/nft/IDetfSelfNftInventoryDFPkg.sol";
-import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol";
-import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
+
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
-import {
-    IMixedBufferMultiVaultStableDetfDFPkg
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfDFPkg.sol";
+import {IMixedBufferMultiVaultStableDetfDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfDFPkg.sol";
 import {
     MixedBufferMultiVaultStableDetf_Component_FactoryService
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_Component_FactoryService.sol";
-import {
-    IMixedBufferMultiVaultStableDetfBonding
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfBondingTarget.sol";
-import {
-    IMixedBufferMultiVaultStableDetfInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfInfoTarget.sol";
-import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
-import {DETFNaturalExpansionLib} from "contracts/vaults/detf/common/core/DETFNaturalExpansionLib.sol";
-import {
-    ISingleStandardExchangeDETDFPkg
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETDFPkg.sol";
-import {
-    SingleStandardExchangeDETF_Component_FactoryService
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_Component_FactoryService.sol";
-import {
-    SingleStandardExchangeDETF_Pkg_FactoryService
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_Pkg_FactoryService.sol";
-import {
-    ISingleStandardExchangeDETFBonding
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFBondingTarget.sol";
-import {
-    ISingleStandardExchangeDETFInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFInfoTarget.sol";
-import {
-    IStandardExchangeRateProviderDFPkg,
-    StandardExchangeRateProviderDFPkg
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
-import {
-    StandardExchangeRateProviderFacet
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderFacet.sol";
-import {WeightedPoolFactory} from
-    "@crane/contracts/external/balancer/v3/pool-weighted/contracts/WeightedPoolFactory.sol";
-
-/// @title TestBase_MixedBufferMultiVaultStableDetf
-/// @notice Production MixedBuffer multi-vault stable DETF against production Aerodrome SE legs (shared DAI buffer).
-abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_BalancerV3StandardExchangeRouter {
+import {IMixedBufferMultiVaultStableDetfBonding} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfBonding.sol";
+import {IMixedBufferMultiVaultStableDetfInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfInfo.sol";
+import {TestBase_FundedBalancerDETF} from "contracts/test/bases/TestBase_FundedBalancerDETF.sol";
+/// @notice Actual Mixed Buffer pool, DETF and Aerodrome SE legs with shared funded child packages.
+abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_FundedBalancerDETF {
     using VaultComponentFactoryService for ICreate3FactoryProxy;
-    using DetfFacetFactoryService for ICreate3FactoryProxy;
-    using DetfPkgFactoryService for ICreate3FactoryProxy;
-    using DetfPkgFactoryService for IVaultRegistryDeployment;
     using MixedBufferMultiVaultStableDetf_Component_FactoryService for ICreate3FactoryProxy;
     using MixedBufferMultiVaultStableDetf_Component_FactoryService for IVaultRegistryDeployment;
     using MixedBufferMultiVaultStablePool_FactoryService for IVaultRegistryDeployment;
-
-    uint256 internal constant DEFAULT_MIN_LOCK = 30 days;
-    uint256 internal constant DEFAULT_MAX_LOCK = 180 days;
     uint256 internal constant BOOTSTRAP_BUFFER = 1_000e18;
     uint256 internal constant BOOTSTRAP_SHARE_FUND = 1_000e18;
     uint256 internal constant MBMVS_AMP = 200;
-
-    function _warpPastUnlock(address instance_, uint256 tokenId_) internal {
-        address nft_ = IMixedBufferMultiVaultStableDetfInfo(instance_).bondNftVault();
-        uint256 unlock_ = IDETFNFTVault(nft_).unlockTimeOf(tokenId_);
-        if (block.timestamp <= unlock_) {
-            vm.warp(unlock_ + 1);
-        }
-    }
-
-    IFacet internal multiAssetBasicVaultFacetDetf;
-    IFacet internal multiAssetStandardVaultFacetDetf;
     IFacet internal mixedBufferDetfExchangeInFacet;
     IFacet internal mixedBufferDetfBondingFacet;
     IFacet internal mixedBufferDetfInfoFacet;
-    IFacet internal detfNFTVaultFacet;
-    IFacet internal erc721Facet;
-    IFacet internal singleSeDetfExchangeInFacet;
-
     // MixedBuffer pool package facets
     IFacet internal mbmvsBufferPoolFacet;
     IFacet internal mbmvsPoolLiquidityFacet;
@@ -139,18 +66,15 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_BalancerV
     IFacet internal multiAssetStandardVaultFacetPool;
 
     IMixedBufferMultiVaultStablePoolPkg internal mbmvsPkg;
-    IStandardExchangeRateProviderDFPkg internal rateProviderPkg;
-    IDetfSelfNftInventoryDFPkg internal bondNftVaultPkg;
-    IRebasingClaimTokenDFPkg internal rebasingClaimTokenPkg;
     IMixedBufferMultiVaultStableDetfDFPkg internal mixedBufferDetfPkg;
-    ISingleStandardExchangeDETDFPkg internal singleSeDetfPkg;
-
     // SE vault legs sharing DAI buffer
     IStandardExchangeProxy[3] internal seVaults;
     IERC20[3] internal seShares;
     address[3] internal legTokenA;
     address[3] internal legTokenB;
     uint8 internal seVaultReady;
+    uint8 internal fixtureBufferDecimals = 18;
+    bool private mixedInfrastructureReady;
 
     address internal detf;
     IMixedBufferMultiVaultStableDetfInfo internal detfInfo;
@@ -158,31 +82,8 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_BalancerV
     IStandardExchangeIn internal detfExchangeIn;
 
     function setUp() public virtual override {
-        super.setUp();
-
-        multiAssetBasicVaultFacetDetf = create3Factory.deployMultiAssetBasicVaultFacet();
-        multiAssetStandardVaultFacetDetf = create3Factory.deployMultiAssetStandardVaultFacet();
-        mixedBufferDetfExchangeInFacet =
-            MixedBufferMultiVaultStableDetf_Component_FactoryService.deployExchangeInFacet(create3Factory);
-        mixedBufferDetfBondingFacet =
-            MixedBufferMultiVaultStableDetf_Component_FactoryService.deployBondingFacet(create3Factory);
-        mixedBufferDetfInfoFacet =
-            MixedBufferMultiVaultStableDetf_Component_FactoryService.deployInfoFacet(create3Factory);
-        singleSeDetfExchangeInFacet =
-            SingleStandardExchangeDETF_Component_FactoryService.deployExchangeInFacet(create3Factory);
-
-        _deployMixedBufferPoolPkg();
-        _deployBondNftVaultPkg();
-        _deployRebasingClaimTokenPkg();
-        _deployMixedBufferDetfPkg();
-        _deploySingleSeDetfPkg();
-
-        // Seed N=1 SE vault from router TestBase daiUsdcVault
-        seVaults[0] = daiUsdcVault;
-        seShares[0] = IERC20(address(daiUsdcVault));
-        legTokenA[0] = address(dai);
-        legTokenB[0] = address(usdc);
-        seVaultReady = 1;
+        _initializeMixedInfrastructure();
+        _initializeMixedFixtureLegs();
 
         detf = _deployDetfN(1, 0, 0);
         detfInfo = IMixedBufferMultiVaultStableDetfInfo(detf);
@@ -190,9 +91,40 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_BalancerV
         detfExchangeIn = IStandardExchangeIn(detf);
     }
 
-    /* ---------------------------------------------------------------------- */
-    /*                    MixedBuffer pool package                            */
-    /* ---------------------------------------------------------------------- */
+    /// @dev Deploy actual protocols, manager and packages once per isolated test. Decimal
+    /// matrices snapshot this common infrastructure, then deploy a fresh token/SE/DETF book
+    /// for every assertion. All touched balances and protocol state roll back between books.
+    function _initializeMixedInfrastructure() internal {
+        if (mixedInfrastructureReady) return;
+        super.setUp();
+
+        mixedBufferDetfExchangeInFacet =
+            MixedBufferMultiVaultStableDetf_Component_FactoryService.deployExchangeInFacet(create3Factory);
+        mixedBufferDetfBondingFacet =
+            MixedBufferMultiVaultStableDetf_Component_FactoryService.deployBondingFacet(create3Factory);
+        mixedBufferDetfInfoFacet =
+            MixedBufferMultiVaultStableDetf_Component_FactoryService.deployInfoFacet(create3Factory);
+
+        _deployMixedBufferPoolPkg();
+        _deployMixedBufferDetfPkg();
+
+        mixedInfrastructureReady = true;
+    }
+
+    /// @dev Decimal fixtures customize token books while sharing all funded deployments.
+    function _initializeMixedFixtureLegs() internal virtual {
+        fixtureBufferDecimals = 18;
+        // Seed N=1 SE vault from router TestBase daiUsdcVault
+        seVaults[0] = daiUsdcVault;
+        seShares[0] = IERC20(address(daiUsdcVault));
+        legTokenA[0] = address(dai);
+        legTokenB[0] = address(usdc);
+        seVaultReady = 1;
+    }
+
+    function _fixtureBufferToken() internal view virtual returns (IERC20) {
+        return IERC20(address(dai));
+    }
 
     function _deployMixedBufferPoolPkg() internal {
         multiAssetBasicVaultFacetPool = create3Factory.deployMultiAssetBasicVaultFacet();
@@ -204,10 +136,10 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_BalancerV
         balancerV3AuthenticationFacet =
             BalancerV3ConstantProductPool_FactoryService.deployBalancerV3AuthenticationFacet(create3Factory);
 
-        defaultPoolInfoFacet = IFacet(address(new DefaultPoolInfoFacet()));
-        standardSwapFeePercentageBoundsFacet = IFacet(address(new StandardSwapFeePercentageBoundsFacet()));
+        defaultPoolInfoFacet = IFacet(create3Factory.deployFacet(ArtifactCreationCode.creationCode(create3Factory, "DefaultPoolInfoFacet.sol:DefaultPoolInfoFacet"), keccak256("FundedMixed_DefaultPoolInfoFacet")));
+        standardSwapFeePercentageBoundsFacet = IFacet(create3Factory.deployFacet(ArtifactCreationCode.creationCode(create3Factory, "StandardSwapFeePercentageBoundsFacet.sol:StandardSwapFeePercentageBoundsFacet"), keccak256("FundedMixed_StandardSwapFeePercentageBoundsFacet")));
         unbalancedLiquidityInvariantRatioBoundsFacet =
-            IFacet(address(new StandardUnbalancedLiquidityInvariantRatioBoundsFacet()));
+            IFacet(create3Factory.deployFacet(ArtifactCreationCode.creationCode(create3Factory, "StandardUnbalancedLiquidityInvariantRatioBoundsFacet.sol:StandardUnbalancedLiquidityInvariantRatioBoundsFacet"), keccak256("FundedMixed_StandardUnbalancedLiquidityInvariantRatioBoundsFacet")));
 
         mbmvsBufferPoolFacet =
             MixedBufferMultiVaultStablePool_FactoryService.deployMixedBufferMultiVaultStablePoolFacet(create3Factory);
@@ -215,28 +147,6 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_BalancerV
             .deployMixedBufferMultiVaultStableLiquidityFacet(create3Factory);
         mbmvsHookFacet =
             MixedBufferMultiVaultStablePool_FactoryService.deployMixedBufferMultiVaultStableHookFacet(create3Factory);
-
-        // Optional rate provider pkg (never auto-deployed for share legs by DETF package).
-        IFacet rateProviderFacet = IFacet(
-            create3Factory.deployFacet(
-                type(StandardExchangeRateProviderFacet).creationCode,
-                keccak256("MixedBufferDetf_RateProviderFacet")
-            )
-        );
-        rateProviderPkg = IStandardExchangeRateProviderDFPkg(
-            address(
-                create3Factory.deployPackageWithArgs(
-                    type(StandardExchangeRateProviderDFPkg).creationCode,
-                    abi.encode(
-                        IStandardExchangeRateProviderDFPkg.PkgInit({
-                            rateProviderFacet: rateProviderFacet,
-                            diamondFactory: diamondPackageFactory
-                        })
-                    ),
-                    keccak256("MixedBufferDetf_RateProviderDFPkg")
-                )
-            )
-        );
 
         IMixedBufferMultiVaultStablePoolPkg.PkgInit memory pkgInit;
         pkgInit.basicVaultFacet = multiAssetBasicVaultFacetPool;
@@ -264,42 +174,6 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_BalancerV
         vm.label(address(mbmvsPkg), "MixedBufferMultiVaultStablePkg");
     }
 
-    /* ---------------------------------------------------------------------- */
-    /*                         Bond / claim / DETF packages                   */
-    /* ---------------------------------------------------------------------- */
-
-    function _deployBondNftVaultPkg() internal {
-        detfNFTVaultFacet = create3Factory.deployDETFNFTVaultFacet();
-        erc721Facet = IFacet(
-            create3Factory.deployFacet(
-                type(ERC721Facet).creationCode, keccak256("MixedBufferDetf_ERC721Facet")
-            )
-        );
-
-        IDETFNFTVaultDFPkg.PkgInit memory nftPkgInit = DetfComponentFactoryService.buildDETFNFTVaultPkgInit(
-            erc721Facet,
-            erc4626BasicVaultFacet,
-            erc4626StandardVaultFacet,
-            detfNFTVaultFacet,
-            IVaultFeeOracleQuery(address(indexedexManager)),
-            IVaultRegistryDeployment(address(indexedexManager))
-        );
-
-        vm.startPrank(owner);
-        bondNftVaultPkg =
-            IVaultRegistryDeployment(address(indexedexManager)).deployDETFNFTVaultDFPkg(nftPkgInit);
-        vm.stopPrank();
-    }
-
-    function _deployRebasingClaimTokenPkg() internal {
-        IFacet claimFacet_ = create3Factory.deployRebasingClaimTokenFacet();
-        rebasingClaimTokenPkg = create3Factory.deployRebasingClaimTokenDFPkg(
-            DetfComponentFactoryService.buildRICHIRPkgInit(
-                erc20Facet, erc5267Facet, erc2612Facet, claimFacet_, diamondPackageFactory
-            )
-        );
-    }
-
     function _deployMixedBufferDetfPkg() internal {
         IMixedBufferMultiVaultStableDetfDFPkg.PkgInit memory pkgInit = IMixedBufferMultiVaultStableDetfDFPkg.PkgInit({
             erc20Facet: erc20Facet,
@@ -317,6 +191,7 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_BalancerV
             mixedBufferPoolPkg: mbmvsPkg,
             bondNftVaultPkg: bondNftVaultPkg,
             rebasingClaimTokenPkg: rebasingClaimTokenPkg,
+            syPkg: syPkg,
             diamondFactory: diamondPackageFactory
         });
 
@@ -328,35 +203,6 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_BalancerV
         vm.label(address(mixedBufferDetfPkg), "MixedBufferMultiVaultStableDetfDFPkg");
     }
 
-    function _deploySingleSeDetfPkg() internal {
-        ISingleStandardExchangeDETDFPkg.PkgInit memory pkgInit = ISingleStandardExchangeDETDFPkg.PkgInit({
-            erc20Facet: erc20Facet,
-            erc5267Facet: erc5267Facet,
-            erc2612Facet: erc2612Facet,
-            multiAssetBasicVaultFacet: multiAssetBasicVaultFacetDetf,
-            multiAssetStandardVaultFacet: multiAssetStandardVaultFacetDetf,
-            exchangeInFacet: singleSeDetfExchangeInFacet,
-            feeOracle: IVaultFeeOracleQuery(address(indexedexManager)),
-            vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
-            balancerV3Router: IBalancerV3StandardExchangeRouterProxy(address(seRouter)),
-            balancerV3Vault: IVault(address(vault)),
-            weightedPoolFactory: WeightedPoolFactory(testPoolFactory),
-            rateProviderPkg: rateProviderPkg,
-            bondNftVaultPkg: bondNftVaultPkg,
-            rebasingClaimTokenPkg: rebasingClaimTokenPkg,
-            diamondFactory: diamondPackageFactory
-        });
-        vm.startPrank(owner);
-        singleSeDetfPkg = SingleStandardExchangeDETF_Pkg_FactoryService.deploySingleStandardExchangeDETDFPkg(
-            IVaultRegistryDeployment(address(indexedexManager)), pkgInit
-        );
-        vm.stopPrank();
-    }
-
-    /* ---------------------------------------------------------------------- */
-    /*                    Production SE vault inventory                       */
-    /* ---------------------------------------------------------------------- */
-
     function _ensureSeVaults(uint8 n) internal {
         require(n >= 1 && n <= 3, "n out of range");
         while (seVaultReady < n) {
@@ -367,8 +213,7 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_BalancerV
         }
     }
 
-    /// @dev Extra SE vaults that accept DAI as buffer with distinct second assets.
-    function _deployExtraDaiSeVault(uint8 idx) internal {
+    function _deployExtraDaiSeVault(uint8 idx) internal virtual {
         if (idx == 0) return; // already set from daiUsdcVault
         address tokenA = address(dai);
         address tokenB = idx == 1 ? address(weth) : address(usdc);
@@ -409,24 +254,13 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_BalancerV
         }
     }
 
-    /* ---------------------------------------------------------------------- */
-    /*                         DETF instance deploys                          */
-    /* ---------------------------------------------------------------------- */
-
     function _deployDetfN(uint8 n, uint256 mintThreshold_, uint256 burnThreshold_)
-        internal
-        returns (address detf_)
-    {
-        return _deployDetfN(n, mintThreshold_, burnThreshold_, ThresholdMode.Policy);
-    }
-
-    function _deployDetfN(uint8 n, uint256 mintThreshold_, uint256 burnThreshold_, ThresholdMode mode_)
         internal
         returns (address detf_)
     {
         _ensureSeVaults(n);
         IMixedBufferMultiVaultStableDetfDFPkg.PkgArgs memory args =
-            _buildPkgArgs(n, mintThreshold_, burnThreshold_, mode_);
+            _buildPkgArgs(n, mintThreshold_, burnThreshold_);
         detf_ = _deployWithArgs(args);
         vm.label(detf_, string.concat("MixedBufferDetf_N", vm.toString(uint256(n))));
     }
@@ -436,17 +270,9 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_BalancerV
         view
         returns (IMixedBufferMultiVaultStableDetfDFPkg.PkgArgs memory args)
     {
-        return _buildPkgArgs(n, mintTh_, burnTh_, ThresholdMode.Policy);
-    }
-
-    function _buildPkgArgs(uint8 n, uint256 mintTh_, uint256 burnTh_, ThresholdMode mode_)
-        internal
-        view
-        returns (IMixedBufferMultiVaultStableDetfDFPkg.PkgArgs memory args)
-    {
         args.name = string.concat("MBMV Detf N", vm.toString(uint256(n)));
         args.symbol = string.concat("mbmvd", vm.toString(uint256(n)));
-        args.bufferToken = IERC20(address(dai));
+        args.bufferToken = _fixtureBufferToken();
         args.standardExchangeVaults = new IStandardExchange[](n);
         args.vaultShareRateProviders = new IRateProvider[](n);
         for (uint8 i; i < n; ++i) {
@@ -456,7 +282,6 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_BalancerV
         args.amplificationParameter = MBMVS_AMP;
         args.mintThreshold = mintTh_;
         args.burnThreshold = burnTh_;
-        args.thresholdMode = mode_;
         args.creator = address(0);
     }
 
@@ -471,35 +296,14 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_BalancerV
         vm.stopPrank();
     }
 
-    /// @dev Product Open (always-allow thresholds when live). Replaces illegal mint=1/burn=max dual-path.
-    function _deployOpenThresholdDetfN(uint8 n) internal returns (address) {
-        return _deployOpenModeDetfN(n);
+    /// @dev Test payment amounts use the selected buffer's native units; WAD prices stay WAD.
+    function _fixtureAmount(uint256 wad_) internal view returns (uint256) {
+        uint8 decimals_ = fixtureBufferDecimals;
+        return decimals_ >= 18 ? wad_ * 10 ** (decimals_ - 18) : wad_ / 10 ** (18 - decimals_);
     }
-
-    /// @dev Product Open mode + resolved default thresholds (0,0).
-    function _deployOpenModeDetfN(uint8 n) internal returns (address) {
-        return _deployDetfN(n, 0, 0, ThresholdMode.Open);
-    }
-
-    /// @dev Legal extreme Policy pair (mint > burn). Not product Open.
-    function _deployExtremePolicyPairDetfN(uint8 n) internal returns (address) {
-        return _deployDetfN(n, 2, 1, ThresholdMode.Policy);
-    }
-
-    /// @dev Explicit Policy thresholds.
-    function _deployPolicyThresholdsN(uint8 n, uint256 mintThreshold_, uint256 burnThreshold_)
-        internal
-        returns (address)
-    {
-        return _deployDetfN(n, mintThreshold_, burnThreshold_, ThresholdMode.Policy);
-    }
-
-    /* ---------------------------------------------------------------------- */
-    /*                         Fund / bootstrap helpers                       */
-    /* ---------------------------------------------------------------------- */
 
     function _fundBuffer(address to, uint256 amount) internal {
-        _mintToken(address(dai), to, amount);
+        _mintToken(address(_fixtureBufferToken()), to, amount);
     }
 
     function _fundVaultShares(uint8 leg, address to, uint256 tokenAmount)
@@ -523,14 +327,18 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_BalancerV
         vm.stopPrank();
     }
 
-    function _bootstrapFirstBond(address instance_, address user, uint256 bufferAmt, uint256 shareFundAmt)
+    function _bootstrapFirstBond(address instance_, address user, uint256 bufferAmt, uint256 shareFundWad)
         internal
         returns (uint256 tokenId_, uint256 bptPrincipal_, uint256 freeDetf_)
     {
         uint256 n_ = IMixedBufferMultiVaultStableDetfInfo(instance_).vaultCount();
         uint256[] memory shareAmts_ = new uint256[](n_);
         for (uint8 i; i < n_; ++i) {
-            shareAmts_[i] = _fundVaultShares(i, user, shareFundAmt);
+            // Unrated SE shares retain their 18-decimal book. Rated legs are valued
+            // in the native buffer unit by their actual SE rate provider.
+            uint256 funding_ = IMixedBufferMultiVaultStableDetfInfo(instance_).rateProvider(i) == address(0)
+                ? shareFundWad : _fixtureAmount(shareFundWad);
+            shareAmts_[i] = _fundVaultShares(i, user, funding_);
         }
         _fundBuffer(user, bufferAmt);
 
@@ -552,7 +360,7 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_BalancerV
         internal
         returns (uint256 tokenId_, uint256 bpt_, uint256 freeDetf_)
     {
-        return _bootstrapFirstBond(instance_, user, BOOTSTRAP_BUFFER, BOOTSTRAP_SHARE_FUND);
+        return _bootstrapFirstBond(instance_, user, _fixtureAmount(BOOTSTRAP_BUFFER), BOOTSTRAP_SHARE_FUND);
     }
 
     function _mintDetfFromBuffer(address instance_, address user, uint256 bufferAmt)
@@ -606,260 +414,48 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_BalancerV
         assertApproxEqAbs(preview_, out_, 10, "burn buffer preview==exec (le 10 wei)");
     }
 
-    /// @dev Obtain reserve BPT for `user` via Balancer RouterMock unbalanced join (buffer + DETF self).
-    ///      seRouter prepay is DETF-operator-only; external users use the vault RouterMock path.
-    function _fundReserveBpt(address instance_, address user, uint256 bufferAmt)
-        internal
-        returns (uint256 bptOut_)
-    {
-        IMixedBufferMultiVaultStableDetfInfo info_ = IMixedBufferMultiVaultStableDetfInfo(instance_);
-        address pool_ = info_.reservePool();
-        IERC20 buffer_ = IERC20(info_.bufferToken());
-        // Mint free DETF for the DETF leg of the join.
-        uint256 detfAmt_ = _mintDetfFromBuffer(instance_, user, bufferAmt);
-        // Additional buffer for the buffer leg.
-        _fundBuffer(user, bufferAmt);
-
-        uint256 n_ = IVault(address(vault)).getCurrentLiveBalances(pool_).length;
-        uint256[] memory amountsIn_ = new uint256[](n_);
-        amountsIn_[info_.bufferIndex()] = bufferAmt;
-        amountsIn_[info_.detfIndex()] = detfAmt_;
-
-        vm.startPrank(user);
-        buffer_.approve(address(permit2), type(uint256).max);
-        IERC20(instance_).approve(address(permit2), type(uint256).max);
-        permit2.approve(address(buffer_), address(router), type(uint160).max, type(uint48).max);
-        permit2.approve(instance_, address(router), type(uint160).max, type(uint48).max);
-        // RouterMock pulls via permit2 and mints BPT to user.
-        bptOut_ = router.addLiquidityUnbalanced(pool_, amountsIn_, 0, false, bytes(""));
-        vm.stopPrank();
-        require(bptOut_ > 0, "bpt funded");
-        require(IERC20(pool_).balanceOf(user) >= bptOut_, "user holds bpt");
-    }
-
-    /// @dev Real trade on underlying Aerodrome pool of SE leg (price-shift suites).
-    function _shiftUnderlyingPrice(uint8 leg, bool buyTokenB, uint256 amountIn) internal {
-        address tokenA = legTokenA[leg];
-        address tokenB = legTokenB[leg];
-        address trader = bob;
-        address tokenIn_ = buyTokenB ? tokenA : tokenB;
-        address tokenOut_ = buyTokenB ? tokenB : tokenA;
-        _mintToken(tokenIn_, trader, amountIn);
-        IRouter.Route[] memory routes = new IRouter.Route[](1);
-        routes[0] = IRouter.Route({
-            from: tokenIn_,
-            to: tokenOut_,
-            stable: false,
-            factory: address(aerodromePoolFactory)
+    function _shiftUnderlyingPrice(uint8 leg_, bool buyTokenB_, uint256 amountIn_) internal {
+        address tokenIn_ = buyTokenB_ ? legTokenA[leg_] : legTokenB[leg_];
+        address tokenOut_ = buyTokenB_ ? legTokenB[leg_] : legTokenA[leg_];
+        _mintToken(tokenIn_, bob, amountIn_);
+        IAerodromeRouter.Route[] memory routes_ = new IAerodromeRouter.Route[](1);
+        routes_[0] = IAerodromeRouter.Route({
+            from: tokenIn_, to: tokenOut_, stable: false, factory: address(aerodromePoolFactory)
         });
-        vm.startPrank(trader);
-        IERC20(tokenIn_).approve(address(aerodromeRouter), amountIn);
-        aerodromeRouter.swapExactTokensForTokens(amountIn, 0, routes, trader, block.timestamp + 1 hours);
+        vm.startPrank(bob);
+        IERC20(tokenIn_).approve(address(aerodromeRouter), amountIn_);
+        aerodromeRouter.swapExactTokensForTokens(amountIn_, 0, routes_, bob, block.timestamp + 1 hours);
         vm.stopPrank();
     }
 
     function _assertInert(address instance_) internal view {
         assertFalse(IMixedBufferMultiVaultStableDetfInfo(instance_).isReserveLive(), "expected inert");
+        assertEq(IERC20(instance_).totalSupply(), 0, "first bond starts issuance");
+        assertEq(IMixedBufferMultiVaultStableDetfInfo(instance_).epochAnchor(), 0, "clock has not started");
     }
 
     function _assertLive(address instance_) internal view {
-        assertTrue(IMixedBufferMultiVaultStableDetfInfo(instance_).isReserveLive(), "expected live");
-        assertTrue(IMixedBufferMultiVaultStableDetfInfo(instance_).reservePool() != address(0), "pool");
+        IMixedBufferMultiVaultStableDetfInfo info_ = IMixedBufferMultiVaultStableDetfInfo(instance_);
+        assertTrue(info_.isReserveLive(), "expected live");
+        assertGt(IERC20(instance_).totalSupply(), 0);
+        assertGt(IERC20(info_.reservePool()).balanceOf(info_.bondNftVault()), 0, "funded protocol liquidity");
+        assertGt(info_.epochAnchor(), 0, "first bond anchored the clock");
     }
 
     function _assertNoFreeInventory(address instance_) internal view {
         assertLe(IERC20(instance_).balanceOf(instance_), 1, "residual free detf");
-        IERC20 buffer_ = IERC20(IMixedBufferMultiVaultStableDetfInfo(instance_).bufferToken());
-        assertLe(buffer_.balanceOf(instance_), 1, "residual free buffer");
-        address[] memory shares_ = IMixedBufferMultiVaultStableDetfInfo(instance_).vaultShares();
-        for (uint256 i; i < shares_.length; ++i) {
-            assertLe(IERC20(shares_[i]).balanceOf(instance_), 1, "residual vault share");
-        }
-    }
-
-    function _feeTo() internal view returns (address) {
-        return address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo());
-    }
-
-    function _weightsFC(address instance_) internal view returns (uint256 f_, uint256 c_) {
-        (, f_, c_) = IVaultFeeOracleQuery(address(indexedexManager)).seigniorageSplitOfVault(instance_);
-    }
-
-    function _claim(uint256 tokenId_, address to_) internal returns (uint256 claimed_) {
-        IDETFNFTVault vault_ = _bondNftVault(detf);
-        vm.prank(to_);
-        claimed_ = vault_.claimRewards(tokenId_, to_);
-    }
-
-    function _potBalance() internal view returns (uint256) {
-        return IERC20(detf).balanceOf(address(_bondNftVault(detf)));
-    }
-
-    function _reserveTokenCount(address instance_) internal view returns (uint256) {
-        return IMixedBufferMultiVaultStableDetfInfo(instance_).vaultCount() + 2;
-    }
-
-    function _closeMinAmountsOut(address instance_) internal view returns (uint256[] memory minOut_) {
-        minOut_ = new uint256[](_reserveTokenCount(instance_));
-    }
-
-    /* ---------------------------------------------------------------------- */
-    /*                     Protocol compound test helpers                     */
-    /* ---------------------------------------------------------------------- */
-
-    /// @dev Enable non-zero seigniorage so mint/bond produce inventory DETF on the bond vault.
-    function _enableSeigniorageIncentive(address instance_, uint256 incentiveWad_) internal {
-        vm.startPrank(owner);
-        IVaultFeeOracleManager(address(indexedexManager)).setSeigniorageIncentivePercentageOfVault(
-            instance_, incentiveWad_
-        );
-        vm.stopPrank();
-    }
-
-    function _bondNftVault(address instance_) internal view returns (IDETFNFTVault) {
-        return IDETFNFTVault(IMixedBufferMultiVaultStableDetfInfo(instance_).bondNftVault());
-    }
-
-    function _detfNftId(address instance_) internal view returns (uint256) {
-        return _bondNftVault(instance_).detfNFTId();
-    }
-
-    /// @dev Protocol NFT principal (BPT share units) — claim rate path depends on this rising after compound.
-    function _protocolNftPrincipal(address instance_) internal view returns (uint256) {
-        IDETFNFTVault vault_ = _bondNftVault(instance_);
-        return vault_.originalSharesOf(vault_.detfNFTId());
-    }
-
-    function _protocolPendingRewards(address instance_) internal view returns (uint256) {
-        IDETFNFTVault vault_ = _bondNftVault(instance_);
-        return vault_.pendingRewards(vault_.detfNFTId());
-    }
-
-    /// @dev Bootstrap open-mode MixedBuffer DETF, sell first bond into protocol NFT so it has principal
-    ///      shares, then create a second locked user bond and seed inventory via mint (seigniorage on).
-    /// @return instance_ Open-mode DETF diamond.
-    /// @return userBondId_ Second user bond still locked (for C3 claim-while-locked).
-    function _setupProtocolRewardsLive(address bonder_, address minter_)
-        internal
-        returns (address instance_, uint256 userBondId_)
-    {
-        instance_ = _deployOpenModeDetfN(1);
-        // 20% seigniorage incentive → inventory = afterFee * 10% (half of incentive).
-        _enableSeigniorageIncentive(instance_, 0.20e18);
-
-        // First bootstrap bond → live; sell to protocol so detf NFT earns reward share.
-        (uint256 firstId_,,) = _bootstrapFirstBond(instance_, bonder_, 500e18, 500e18);
-        _warpPastUnlock(instance_, firstId_);
-        vm.prank(bonder_);
-        IMixedBufferMultiVaultStableDetfBonding(instance_).sellPositionToDetfNft(firstId_, 0, bonder_);
-        assertGt(_protocolNftPrincipal(instance_), 0, "protocol nft has principal after sell");
-
-        // Second buffer bond: user keeps NFT (for claim-while-locked). Keep modest vs pool.
-        _fundBuffer(bonder_, 100e18);
-        vm.startPrank(bonder_);
-        IERC20(address(dai)).approve(instance_, 100e18);
-        (userBondId_,) = IMixedBufferMultiVaultStableDetfBonding(instance_).bond(
-            IERC20(address(dai)), 100e18, DEFAULT_MIN_LOCK, bonder_, false, block.timestamp + 1 hours
-        );
-        vm.stopPrank();
-
-        // Mint seigniorage with inventory DETF into bond vault reward pool.
-        _mintDetfFromBuffer(instance_, minter_, 50e18);
-    }
-
-    /// @dev Seed extra free DETF inventory on the bond vault (forces reward balance without another mint).
-    ///      **Adds** to existing vault balance (does not set absolute) so `lastRewardTokenBalance`
-    ///      accounting stays consistent with inventory already deposited via production mint/bond.
-    function _seedBondVaultRewardDetf(address instance_, uint256 amount_) internal {
-        address vault_ = address(_bondNftVault(instance_));
-        uint256 before_ = IERC20(instance_).balanceOf(vault_);
-        // Non-SUT controllability: forge deal adjusts ERC20 balance + totalSupply.
-        deal(instance_, vault_, before_ + amount_, true);
-    }
-
-    /* ---------------------------------------------------------------------- */
-    /*                     Natural expansion test helpers                     */
-    /* ---------------------------------------------------------------------- */
-
-    function _warp(uint256 seconds_) internal {
-        vm.warp(block.timestamp + seconds_);
-    }
-
-    /// @dev Deploy Policy N=1 with WITH_RATE on leg0 so underlying Aerodrome trades move synthetic.
-    function _deployPolicyWithRateNamed(string memory name_, string memory symbol_)
-        internal
-        returns (address detf_)
-    {
-        _ensureSeVaults(1);
-        IRateProvider rp_ = rateProviderPkg.deployRateProvider(
-            IStandardExchange(address(seVaults[0])), seShares[0], IERC20(address(dai))
-        );
-        IMixedBufferMultiVaultStableDetfDFPkg.PkgArgs memory args =
-            _buildPkgArgs(1, 0, 0, ThresholdMode.Policy);
-        args.name = name_;
-        args.symbol = symbol_;
-        args.vaultShareRateProviders[0] = rp_;
-        // Explicit zeros → lib defaults (document deploy-time expansion fields).
-        args.expansionClosureRatePerSecond = 0;
-        args.expansionCatchUpMaxSeconds = 0;
-        args.expansionCatchUpCapBps = 0;
-        detf_ = _deployWithArgs(args);
-        vm.label(detf_, name_);
-    }
-
-    /// @dev Drive synthetic above mint threshold under **default Policy** via real underlying trades.
-    ///      Requires WITH_RATE share leg (see `_deployPolicyWithRateNamed`).
-    function _pushSyntheticAboveMintThreshold(address instance_) internal {
         IMixedBufferMultiVaultStableDetfInfo info_ = IMixedBufferMultiVaultStableDetfInfo(instance_);
-        require(info_.isReserveLive(), "must be live");
-        if (info_.isMintingAllowed()) return;
-
-        for (uint256 i; i < 20 && !info_.isMintingAllowed(); ++i) {
-            _shiftUnderlyingPrice(0, true, 20_000e18 * (i + 1));
-            if (info_.isMintingAllowed()) return;
-            _shiftUnderlyingPrice(0, false, 20_000e18 * (i + 1));
+        assertLe(IERC20(info_.bufferToken()).balanceOf(instance_), 1, "residual free buffer");
+        address[] memory shares_ = info_.vaultShares();
+        for (uint256 i_; i_ < shares_.length; ++i_) {
+            assertLe(IERC20(shares_[i_]).balanceOf(instance_), 1, "residual vault share");
         }
-        require(info_.isMintingAllowed(), "could not open mint under default thresholds");
     }
 
-    /// @dev Live Policy MixedBuffer with locked user bond + protocol NFT principal (for expansion/compound).
-    /// @dev Does **not** push synthetic here (caller runs `_pushSyntheticAboveMintThreshold` when needed).
-    function _setupPolicyExpansionLive(address bonder_, address helper_)
-        internal
-        returns (address instance_, uint256 userBondId_)
-    {
-        instance_ = _deployPolicyWithRateNamed("Natural Expansion MBMVS DETF", "neMBMVS");
-        _enableSeigniorageIncentive(instance_, 0.20e18);
-
-        // Bootstrap → live; sell first bond into protocol NFT so it has principal shares.
-        (uint256 firstId_,,) = _bootstrapFirstBond(instance_, bonder_, 500e18, 500e18);
-        _warpPastUnlock(instance_, firstId_);
-        vm.prank(bonder_);
-        IMixedBufferMultiVaultStableDetfBonding(instance_).sellPositionToDetfNft(firstId_, 0, bonder_);
-        assertGt(_protocolNftPrincipal(instance_), 0, "protocol nft has principal after sell");
-
-        // Second buffer bond: user keeps NFT (for claim-while-locked + reward share).
-        _fundBuffer(bonder_, 100e18);
-        vm.startPrank(bonder_);
-        IERC20(address(dai)).approve(instance_, 100e18);
-        (userBondId_,) = IMixedBufferMultiVaultStableDetfBonding(instance_).bond(
-            IERC20(address(dai)), 100e18, DEFAULT_MIN_LOCK, bonder_, false, block.timestamp + 1 hours
-        );
-        vm.stopPrank();
-        assertGt(
-            _bondNftVault(instance_).effectiveSharesOf(userBondId_),
-            0,
-            "user bond has effective shares"
-        );
-
-        // Seed expansion clock touch is safe at dt≈0 after live seed.
-        IMixedBufferMultiVaultStableDetfInfo(instance_).compoundProtocolRewards();
-
-        helper_; // reserved for multi-actor suites
-    }
-
-    /// @dev Expected max expansion mint under resolved defaults for given supply (bps cap).
-    function _maxExpansionMintDefault(uint256 totalSupply_) internal pure returns (uint256) {
-        return (totalSupply_ * DETFNaturalExpansionLib.DEFAULT_CATCH_UP_CAP_BPS) / 10_000;
+    function _useDetf(address instance_) internal {
+        detf = instance_;
+        detfInfo = IMixedBufferMultiVaultStableDetfInfo(instance_);
+        detfBonding = IMixedBufferMultiVaultStableDetfBonding(instance_);
+        detfExchangeIn = IStandardExchangeIn(instance_);
     }
 }

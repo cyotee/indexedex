@@ -1,0 +1,19 @@
+{
+  "change": "Use bounded interpolation inside the existing forward-verified exact minimum buffered-input search, falling back to bisection after eight probes. Reuse the existing upper-bound quote. No fee, entitlement, approval, route or storage changes.",
+  "trigger": "Live Robinhood transaction gas limit 32M versus prior measured 32.9\u201333.3M V4-position-backed Orbital SY deposits.",
+  "chain_evidence": "robinhood-live-gas-parameters.json",
+  "algorithm_evidence": "orbital-buffer-inversion-reference-check.json",
+  "sources": {
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookCommon.sol": "314c668672ff04fa24caadb4745f83dfb9c794ea8280b014f37aa0c778495a04",
+    "test/foundry/spec/vaults/detf/common/claimToken/V4FundedBindings.t.sol": "fd9d8827350b1f7bfb5b3e6b5025be02119b45cd41acfcc5d24d2d3f73767184"
+  },
+  "validation": {
+    "archive": "orbital-buffer-inversion-78-green-*",
+    "passed": 78,
+    "failed": 0,
+    "suites": 10,
+    "build_seconds": 525.563,
+    "test_seconds": 20.562,
+    "gas_measurements": "orbital-v4-position-gas-after-buffer-inversion.json"
+  }
+}

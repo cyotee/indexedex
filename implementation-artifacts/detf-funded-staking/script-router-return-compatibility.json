@@ -1,0 +1,7 @@
+{
+  "status": "APPLIED_MAINTAINED_SCRIPT_COMPILATION_PASSED",
+  "source": "scripts/foundry/base_main/Script_BaseMain_DeployIndexedex.s.sol",
+  "fix": "Assign the deployed router package to the existing named return seRouterDFPkg, which the subsequent proxy deployment consumes. The obsolete undeclared balRouterPkg identifier prevented compilation.",
+  "scope": "Unrelated Balancer standard-exchange router deployment maintenance, not an excluded Balancer DETF refactor.",
+  "compilation_evidence": "maintained-script-294-green.json"
+}

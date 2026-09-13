@@ -1,0 +1,29 @@
+{
+  "recorded_at_utc": "2026-09-08T04:20:59.981048+00:00",
+  "status": "APPLIED_VALIDATION_PENDING",
+  "coverage_mapping": {
+    "V3 stage single-token initial activation": "Activate with both real tokens, then retain the separate subsequent single-token deposit assertion using its actual balance delta.",
+    "V3 one-sided initial sleeve fuzz": "Replace obsolete one-token launch with two-token funded locked-pool withdrawal; retain independent ceiling, exact recipient payout and supply/burn conservation. V4 already has this funded regression.",
+    "Robinhood helper": "Actual V4 proxy activation funds intended receiver, clears approvals, does not reseed on replay, and enables subsequent one-token intake."
+  },
+  "dependencies": [
+    "prepare-robinhood-se-activation.py"
+  ],
+  "files": [
+    {
+      "path": "test/foundry/spec/scripts/anvil_robinhood_main/StandardExchangeStages.t.sol",
+      "before_sha256": "aa4d79224f312e14663964de70ba535c3fbbfed0744bc1e475be0b77b041f79b",
+      "after_sha256": "fc4efa5644c90079f3ce4e1b679d6aba96bdd24712030180dab450f01172b9a7"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_FullRangeBook.t.sol",
+      "before_sha256": "0ab19bde0ca8503b968fda786d1e65d8670b73af1b2bf72d942f0c5b7a6093ff",
+      "after_sha256": "a2b88003127edc3fb38eb885d2358436db8578b32114c4396e95216e07d2aec6"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_FullRangeBook.t.sol",
+      "before_sha256": "48bc20df7e9f43a5b291a0bcfbf1d493756e2102b0077b8a242467abd354f107",
+      "after_sha256": "9efc9fbfbaea93701d802fabd38d60d2125683d7aa15708c426480e166d1eea6"
+    }
+  ]
+}

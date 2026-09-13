@@ -1,0 +1,781 @@
+{
+  "status": "DRAFT_DIAGNOSTIC_ONLY_NOT_RUNTIME_VALIDATION",
+  "kind": "typecheck",
+  "seconds": 79.626,
+  "exit_code": 0,
+  "errors": [],
+  "source_freeze_preserved": true,
+  "compiler_input_sha256": "9ab2a259e64906f7e59e05623587b11ddfc1113ded47fed54d93bf698c8b2e22",
+  "test_contracts": {
+    "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchangeDFPkg_Deploy.t.sol": {
+      "UniswapV3StandardExchangeDFPkg_Deploy_Test": 3
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchangePositionImportFacet_IFacet_Test.t.sol": {
+      "UniswapV3StandardExchangePositionImportFacet_IFacet_Test": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_FeeCompound.t.sol": {
+      "UniswapV3StandardExchange_FeeCompound_Test": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_FullRangeBook.t.sol": {
+      "MockTokenDescriptorFr": 0,
+      "UniswapV3StandardExchange_FullRangeBook_Test": 18
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_Import.t.sol": {
+      "MockTokenDescriptor": 0,
+      "UniswapV3StandardExchange_Import_Test": 8
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_LocalLiquidBuffer.t.sol": {
+      "UniswapV3StandardExchange_LocalLiquidBuffer_Test": 19
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_MultiJoinExit.t.sol": {
+      "UniswapV3StandardExchange_MultiJoinExit_Test": 16
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_Previews.t.sol": {
+      "UniswapV3StandardExchange_Previews_Test": 9
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_Routes.t.sol": {
+      "UniswapV3StandardExchange_Routes_Test": 9
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_AccessDisable.t.sol": {
+      "Adversarial_AccessDisable_Test": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Accounting.t.sol": {
+      "Adversarial_Accounting_Test": 4
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_CallbackAuth.t.sol": {
+      "Adversarial_CallbackAuth_Test": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Donation.t.sol": {
+      "Adversarial_Donation_Test": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Griefing.t.sol": {
+      "Adversarial_Griefing_Test": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Import.t.sol": {
+      "Adversarial_Import_Test": 4,
+      "MockTokenDescriptor2": 0
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_PriceManipulation.t.sol": {
+      "Adversarial_PriceManipulation_Test": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Reentrancy.t.sol": {
+      "Adversarial_Reentrancy_Test": 4,
+      "HostileV3Token": 0,
+      "MockTokenDescriptorRe": 0,
+      "UniV3SeReentryTarget": 0
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_SecRemediation.t.sol": {
+      "Adversarial_SecRemediation_Test": 7,
+      "MockTokenDescriptorSec": 0
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchangeDFPkg_Deploy_H6.t.sol": {
+      "UniswapV3StandardExchangeDFPkg_Deploy_H6": 3
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchangeDFPkg_Deploy_H9.t.sol": {
+      "UniswapV3StandardExchangeDFPkg_Deploy_H9": 3
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchangeDFPkg_Deploy_P18_R6.t.sol": {
+      "UniswapV3StandardExchangeDFPkg_Deploy_P18_R6": 3
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchangeDFPkg_Deploy_P18_R9.t.sol": {
+      "UniswapV3StandardExchangeDFPkg_Deploy_P18_R9": 3
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchangeDFPkg_Deploy_P6_R18.t.sol": {
+      "UniswapV3StandardExchangeDFPkg_Deploy_P6_R18": 3
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchangeDFPkg_Deploy_P6_R9.t.sol": {
+      "UniswapV3StandardExchangeDFPkg_Deploy_P6_R9": 3
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchangeDFPkg_Deploy_P9_R18.t.sol": {
+      "UniswapV3StandardExchangeDFPkg_Deploy_P9_R18": 3
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchangeDFPkg_Deploy_P9_R6.t.sol": {
+      "UniswapV3StandardExchangeDFPkg_Deploy_P9_R6": 3
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FeeCompound_H6.t.sol": {
+      "UniswapV3StandardExchange_FeeCompound_H6": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FeeCompound_H9.t.sol": {
+      "UniswapV3StandardExchange_FeeCompound_H9": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FeeCompound_P18_R6.t.sol": {
+      "UniswapV3StandardExchange_FeeCompound_P18_R6": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FeeCompound_P18_R9.t.sol": {
+      "UniswapV3StandardExchange_FeeCompound_P18_R9": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FeeCompound_P6_R18.t.sol": {
+      "UniswapV3StandardExchange_FeeCompound_P6_R18": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FeeCompound_P6_R9.t.sol": {
+      "UniswapV3StandardExchange_FeeCompound_P6_R9": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FeeCompound_P9_R18.t.sol": {
+      "UniswapV3StandardExchange_FeeCompound_P9_R18": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FeeCompound_P9_R6.t.sol": {
+      "UniswapV3StandardExchange_FeeCompound_P9_R6": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_H6.t.sol": {
+      "UniswapV3StandardExchange_FullRangeBook_H6": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_H9.t.sol": {
+      "UniswapV3StandardExchange_FullRangeBook_H9": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_P18_R6.t.sol": {
+      "UniswapV3StandardExchange_FullRangeBook_P18_R6": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_P18_R9.t.sol": {
+      "UniswapV3StandardExchange_FullRangeBook_P18_R9": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_P6_R18.t.sol": {
+      "UniswapV3StandardExchange_FullRangeBook_P6_R18": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_P6_R9.t.sol": {
+      "UniswapV3StandardExchange_FullRangeBook_P6_R9": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_P9_R18.t.sol": {
+      "UniswapV3StandardExchange_FullRangeBook_P9_R18": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_P9_R6.t.sol": {
+      "UniswapV3StandardExchange_FullRangeBook_P9_R6": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Import_H6.t.sol": {
+      "UniswapV3StandardExchange_Import_H6": 6
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Import_H9.t.sol": {
+      "UniswapV3StandardExchange_Import_H9": 6
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Import_P18_R6.t.sol": {
+      "UniswapV3StandardExchange_Import_P18_R6": 6
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Import_P18_R9.t.sol": {
+      "UniswapV3StandardExchange_Import_P18_R9": 6
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Import_P6_R18.t.sol": {
+      "UniswapV3StandardExchange_Import_P6_R18": 6
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Import_P6_R9.t.sol": {
+      "UniswapV3StandardExchange_Import_P6_R9": 6
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Import_P9_R18.t.sol": {
+      "UniswapV3StandardExchange_Import_P9_R18": 6
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Import_P9_R6.t.sol": {
+      "UniswapV3StandardExchange_Import_P9_R6": 6
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_LocalLiquidBuffer_H6.t.sol": {
+      "UniswapV3StandardExchange_LocalLiquidBuffer_H6": 19
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_LocalLiquidBuffer_H9.t.sol": {
+      "UniswapV3StandardExchange_LocalLiquidBuffer_H9": 19
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_LocalLiquidBuffer_P18_R6.t.sol": {
+      "UniswapV3StandardExchange_LocalLiquidBuffer_P18_R6": 19
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_LocalLiquidBuffer_P18_R9.t.sol": {
+      "UniswapV3StandardExchange_LocalLiquidBuffer_P18_R9": 19
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_LocalLiquidBuffer_P6_R18.t.sol": {
+      "UniswapV3StandardExchange_LocalLiquidBuffer_P6_R18": 19
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_LocalLiquidBuffer_P6_R9.t.sol": {
+      "UniswapV3StandardExchange_LocalLiquidBuffer_P6_R9": 19
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_LocalLiquidBuffer_P9_R18.t.sol": {
+      "UniswapV3StandardExchange_LocalLiquidBuffer_P9_R18": 19
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_LocalLiquidBuffer_P9_R6.t.sol": {
+      "UniswapV3StandardExchange_LocalLiquidBuffer_P9_R6": 19
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_MultiJoinExit_H6.t.sol": {
+      "UniswapV3StandardExchange_MultiJoinExit_H6": 16
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_MultiJoinExit_H9.t.sol": {
+      "UniswapV3StandardExchange_MultiJoinExit_H9": 16
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_MultiJoinExit_P18_R6.t.sol": {
+      "UniswapV3StandardExchange_MultiJoinExit_P18_R6": 16
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_MultiJoinExit_P18_R9.t.sol": {
+      "UniswapV3StandardExchange_MultiJoinExit_P18_R9": 16
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_MultiJoinExit_P6_R18.t.sol": {
+      "UniswapV3StandardExchange_MultiJoinExit_P6_R18": 16
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_MultiJoinExit_P6_R9.t.sol": {
+      "UniswapV3StandardExchange_MultiJoinExit_P6_R9": 16
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_MultiJoinExit_P9_R18.t.sol": {
+      "UniswapV3StandardExchange_MultiJoinExit_P9_R18": 16
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_MultiJoinExit_P9_R6.t.sol": {
+      "UniswapV3StandardExchange_MultiJoinExit_P9_R6": 16
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Previews_H6.t.sol": {
+      "UniswapV3StandardExchange_Previews_H6": 9
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Previews_H9.t.sol": {
+      "UniswapV3StandardExchange_Previews_H9": 9
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Previews_P18_R6.t.sol": {
+      "UniswapV3StandardExchange_Previews_P18_R6": 9
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Previews_P18_R9.t.sol": {
+      "UniswapV3StandardExchange_Previews_P18_R9": 9
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Previews_P6_R18.t.sol": {
+      "UniswapV3StandardExchange_Previews_P6_R18": 9
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Previews_P6_R9.t.sol": {
+      "UniswapV3StandardExchange_Previews_P6_R9": 9
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Previews_P9_R18.t.sol": {
+      "UniswapV3StandardExchange_Previews_P9_R18": 9
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Previews_P9_R6.t.sol": {
+      "UniswapV3StandardExchange_Previews_P9_R6": 9
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Routes_H6.t.sol": {
+      "UniswapV3StandardExchange_Routes_H6": 9
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Routes_H9.t.sol": {
+      "UniswapV3StandardExchange_Routes_H9": 9
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Routes_P18_R6.t.sol": {
+      "UniswapV3StandardExchange_Routes_P18_R6": 9
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Routes_P18_R9.t.sol": {
+      "UniswapV3StandardExchange_Routes_P18_R9": 9
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Routes_P6_R18.t.sol": {
+      "UniswapV3StandardExchange_Routes_P6_R18": 9
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Routes_P6_R9.t.sol": {
+      "UniswapV3StandardExchange_Routes_P6_R9": 9
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Routes_P9_R18.t.sol": {
+      "UniswapV3StandardExchange_Routes_P9_R18": 9
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Routes_P9_R6.t.sol": {
+      "UniswapV3StandardExchange_Routes_P9_R6": 9
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_AccessDisable_H6.t.sol": {
+      "Adversarial_AccessDisable_H6": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_AccessDisable_H9.t.sol": {
+      "Adversarial_AccessDisable_H9": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_AccessDisable_P18_R6.t.sol": {
+      "Adversarial_AccessDisable_P18_R6": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_AccessDisable_P18_R9.t.sol": {
+      "Adversarial_AccessDisable_P18_R9": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_AccessDisable_P6_R18.t.sol": {
+      "Adversarial_AccessDisable_P6_R18": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_AccessDisable_P6_R9.t.sol": {
+      "Adversarial_AccessDisable_P6_R9": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_AccessDisable_P9_R18.t.sol": {
+      "Adversarial_AccessDisable_P9_R18": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_AccessDisable_P9_R6.t.sol": {
+      "Adversarial_AccessDisable_P9_R6": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Accounting_H6.t.sol": {
+      "Adversarial_Accounting_H6": 4
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Accounting_H9.t.sol": {
+      "Adversarial_Accounting_H9": 4
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Accounting_P18_R6.t.sol": {
+      "Adversarial_Accounting_P18_R6": 4
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Accounting_P18_R9.t.sol": {
+      "Adversarial_Accounting_P18_R9": 4
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Accounting_P6_R18.t.sol": {
+      "Adversarial_Accounting_P6_R18": 4
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Accounting_P6_R9.t.sol": {
+      "Adversarial_Accounting_P6_R9": 4
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Accounting_P9_R18.t.sol": {
+      "Adversarial_Accounting_P9_R18": 4
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Accounting_P9_R6.t.sol": {
+      "Adversarial_Accounting_P9_R6": 4
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_CallbackAuth_H6.t.sol": {
+      "Adversarial_CallbackAuth_H6": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_CallbackAuth_H9.t.sol": {
+      "Adversarial_CallbackAuth_H9": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_CallbackAuth_P18_R6.t.sol": {
+      "Adversarial_CallbackAuth_P18_R6": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_CallbackAuth_P18_R9.t.sol": {
+      "Adversarial_CallbackAuth_P18_R9": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_CallbackAuth_P6_R18.t.sol": {
+      "Adversarial_CallbackAuth_P6_R18": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_CallbackAuth_P6_R9.t.sol": {
+      "Adversarial_CallbackAuth_P6_R9": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_CallbackAuth_P9_R18.t.sol": {
+      "Adversarial_CallbackAuth_P9_R18": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_CallbackAuth_P9_R6.t.sol": {
+      "Adversarial_CallbackAuth_P9_R6": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Donation_H6.t.sol": {
+      "Adversarial_Donation_H6": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Donation_H9.t.sol": {
+      "Adversarial_Donation_H9": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Donation_P18_R6.t.sol": {
+      "Adversarial_Donation_P18_R6": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Donation_P18_R9.t.sol": {
+      "Adversarial_Donation_P18_R9": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Donation_P6_R18.t.sol": {
+      "Adversarial_Donation_P6_R18": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Donation_P6_R9.t.sol": {
+      "Adversarial_Donation_P6_R9": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Donation_P9_R18.t.sol": {
+      "Adversarial_Donation_P9_R18": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Donation_P9_R6.t.sol": {
+      "Adversarial_Donation_P9_R6": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Griefing_H6.t.sol": {
+      "Adversarial_Griefing_H6": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Griefing_H9.t.sol": {
+      "Adversarial_Griefing_H9": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Griefing_P18_R6.t.sol": {
+      "Adversarial_Griefing_P18_R6": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Griefing_P18_R9.t.sol": {
+      "Adversarial_Griefing_P18_R9": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Griefing_P6_R18.t.sol": {
+      "Adversarial_Griefing_P6_R18": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Griefing_P6_R9.t.sol": {
+      "Adversarial_Griefing_P6_R9": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Griefing_P9_R18.t.sol": {
+      "Adversarial_Griefing_P9_R18": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Griefing_P9_R6.t.sol": {
+      "Adversarial_Griefing_P9_R6": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Import_H6.t.sol": {
+      "Adversarial_Import_H6": 4
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Import_H9.t.sol": {
+      "Adversarial_Import_H9": 4
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Import_P18_R6.t.sol": {
+      "Adversarial_Import_P18_R6": 4
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Import_P18_R9.t.sol": {
+      "Adversarial_Import_P18_R9": 4
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Import_P6_R18.t.sol": {
+      "Adversarial_Import_P6_R18": 4
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Import_P6_R9.t.sol": {
+      "Adversarial_Import_P6_R9": 4
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Import_P9_R18.t.sol": {
+      "Adversarial_Import_P9_R18": 4
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Import_P9_R6.t.sol": {
+      "Adversarial_Import_P9_R6": 4
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_PriceManipulation_H6.t.sol": {
+      "Adversarial_PriceManipulation_H6": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_PriceManipulation_H9.t.sol": {
+      "Adversarial_PriceManipulation_H9": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_PriceManipulation_P18_R6.t.sol": {
+      "Adversarial_PriceManipulation_P18_R6": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_PriceManipulation_P18_R9.t.sol": {
+      "Adversarial_PriceManipulation_P18_R9": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_PriceManipulation_P6_R18.t.sol": {
+      "Adversarial_PriceManipulation_P6_R18": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_PriceManipulation_P6_R9.t.sol": {
+      "Adversarial_PriceManipulation_P6_R9": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_PriceManipulation_P9_R18.t.sol": {
+      "Adversarial_PriceManipulation_P9_R18": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_PriceManipulation_P9_R6.t.sol": {
+      "Adversarial_PriceManipulation_P9_R6": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Reentrancy_H6.t.sol": {
+      "Adversarial_Reentrancy_H6_ProDexUniV3": 4
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Reentrancy_H9.t.sol": {
+      "Adversarial_Reentrancy_H9_ProDexUniV3": 4
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Reentrancy_P18_R6.t.sol": {
+      "Adversarial_Reentrancy_P18_R6_ProDexUniV3": 4
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Reentrancy_P18_R9.t.sol": {
+      "Adversarial_Reentrancy_P18_R9_ProDexUniV3": 4
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Reentrancy_P6_R18.t.sol": {
+      "Adversarial_Reentrancy_P6_R18_ProDexUniV3": 4
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Reentrancy_P6_R9.t.sol": {
+      "Adversarial_Reentrancy_P6_R9_ProDexUniV3": 4
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Reentrancy_P9_R18.t.sol": {
+      "Adversarial_Reentrancy_P9_R18_ProDexUniV3": 4
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Reentrancy_P9_R6.t.sol": {
+      "Adversarial_Reentrancy_P9_R6_ProDexUniV3": 4
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_SecRemediation_H6.t.sol": {
+      "Adversarial_SecRemediation_H6": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_SecRemediation_H9.t.sol": {
+      "Adversarial_SecRemediation_H9": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_SecRemediation_P18_R6.t.sol": {
+      "Adversarial_SecRemediation_P18_R6": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_SecRemediation_P18_R9.t.sol": {
+      "Adversarial_SecRemediation_P18_R9": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_SecRemediation_P6_R18.t.sol": {
+      "Adversarial_SecRemediation_P6_R18": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_SecRemediation_P6_R9.t.sol": {
+      "Adversarial_SecRemediation_P6_R9": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_SecRemediation_P9_R18.t.sol": {
+      "Adversarial_SecRemediation_P9_R18": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_SecRemediation_P9_R6.t.sol": {
+      "Adversarial_SecRemediation_P9_R6": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg_Deploy.t.sol": {
+      "UniswapV4StandardExchangeDFPkg_Deploy_Test": 3
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangePositionImportFacet_IFacet_Test.t.sol": {
+      "UniswapV4StandardExchangePositionImportFacet_IFacet_Test": 5
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeRoutes_Test.t.sol": {
+      "UniswapV4ExternalSwapper": 0,
+      "UniswapV4LiquiditySeeder": 0,
+      "UniswapV4StandardExchangeRoutes_Test": 23
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_FullRangeBook.t.sol": {
+      "FullRangeBookSeeder": 0,
+      "FullRangeBookSwapper": 0,
+      "UniswapV4StandardExchange_FullRangeBook": 27
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_LocalLiquidBuffer.t.sol": {
+      "HostileReenterERC20": 0,
+      "ImportWhileUnlocked": 0,
+      "RebalanceWhileUnlocked": 0,
+      "UniswapV4SeedLiquidity": 0,
+      "UniswapV4StandardExchange_LocalLiquidBuffer": 27
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_LocalLiquidBuffer_H2.t.sol": {
+      "H2Seeder": 0,
+      "UniswapV4StandardExchange_LocalLiquidBuffer_H2": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_MultiJoinExit.t.sol": {
+      "MultiJoinExitSeeder": 0,
+      "UniswapV4StandardExchange_MultiJoinExit": 15
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_NativeEthWrap.t.sol": {
+      "UniswapV4NativeEthPoolSeeder": 0,
+      "UniswapV4StandardExchange_NativeEthWrap": 3
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_TwapPoke.t.sol": {
+      "FlipTwapOracle": 0,
+      "UniswapV4SeTwapSeeder": 0,
+      "UniswapV4StandardExchange_TwapPoke": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_Univ4SeNestedCaller.t.sol": {
+      "UniswapV4StandardExchange_Univ4SeNestedCaller_Test": 2,
+      "Univ4SeNestedCallerSeeder": 0,
+      "Univ4SeNestedShareHolder": 0
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/adversarial/Adversarial_UniswapV4SE_E6ImpA0.t.sol": {
+      "AdversarialV4SeederE6": 0,
+      "Adversarial_UniswapV4SE_E6ImpA0": 8,
+      "HostileUniswapV4PositionManager": 0
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/adversarial/Adversarial_UniswapV4SE_SecurePull.t.sol": {
+      "AdversarialV4Seeder": 0,
+      "Adversarial_UniswapV4SE_SecurePull": 19
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeDFPkg_Deploy_H6.t.sol": {
+      "UniswapV4StandardExchangeDFPkg_Deploy_H6": 3
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeDFPkg_Deploy_H9.t.sol": {
+      "UniswapV4StandardExchangeDFPkg_Deploy_H9": 3
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeDFPkg_Deploy_P18_R6.t.sol": {
+      "UniswapV4StandardExchangeDFPkg_Deploy_P18_R6": 3
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeDFPkg_Deploy_P18_R9.t.sol": {
+      "UniswapV4StandardExchangeDFPkg_Deploy_P18_R9": 3
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeDFPkg_Deploy_P6_R18.t.sol": {
+      "UniswapV4StandardExchangeDFPkg_Deploy_P6_R18": 3
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeDFPkg_Deploy_P6_R9.t.sol": {
+      "UniswapV4StandardExchangeDFPkg_Deploy_P6_R9": 3
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeDFPkg_Deploy_P9_R18.t.sol": {
+      "UniswapV4StandardExchangeDFPkg_Deploy_P9_R18": 3
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeDFPkg_Deploy_P9_R6.t.sol": {
+      "UniswapV4StandardExchangeDFPkg_Deploy_P9_R6": 3
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeRoutes_Test_H6.t.sol": {
+      "UniswapV4StandardExchangeRoutes_Test_H6": 23
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeRoutes_Test_H9.t.sol": {
+      "UniswapV4StandardExchangeRoutes_Test_H9": 23
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeRoutes_Test_P18_R6.t.sol": {
+      "UniswapV4StandardExchangeRoutes_Test_P18_R6": 23
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeRoutes_Test_P18_R9.t.sol": {
+      "UniswapV4StandardExchangeRoutes_Test_P18_R9": 23
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeRoutes_Test_P6_R18.t.sol": {
+      "UniswapV4StandardExchangeRoutes_Test_P6_R18": 23
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeRoutes_Test_P6_R9.t.sol": {
+      "UniswapV4StandardExchangeRoutes_Test_P6_R9": 23
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeRoutes_Test_P9_R18.t.sol": {
+      "UniswapV4StandardExchangeRoutes_Test_P9_R18": 23
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeRoutes_Test_P9_R6.t.sol": {
+      "UniswapV4StandardExchangeRoutes_Test_P9_R6": 23
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_H6.t.sol": {
+      "UniswapV4StandardExchange_FullRangeBook_H6": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_H9.t.sol": {
+      "UniswapV4StandardExchange_FullRangeBook_H9": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_P18_R6.t.sol": {
+      "UniswapV4StandardExchange_FullRangeBook_P18_R6": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_P18_R9.t.sol": {
+      "UniswapV4StandardExchange_FullRangeBook_P18_R9": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_P6_R18.t.sol": {
+      "UniswapV4StandardExchange_FullRangeBook_P6_R18": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_P6_R9.t.sol": {
+      "UniswapV4StandardExchange_FullRangeBook_P6_R9": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_P9_R18.t.sol": {
+      "UniswapV4StandardExchange_FullRangeBook_P9_R18": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_P9_R6.t.sol": {
+      "UniswapV4StandardExchange_FullRangeBook_P9_R6": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_LocalLiquidBuffer_H2_H6.t.sol": {
+      "UniswapV4StandardExchange_LocalLiquidBuffer_H2_H6": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_LocalLiquidBuffer_H2_H9.t.sol": {
+      "UniswapV4StandardExchange_LocalLiquidBuffer_H2_H9": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_LocalLiquidBuffer_H2_P18_R6.t.sol": {
+      "UniswapV4StandardExchange_LocalLiquidBuffer_H2_P18_R6": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_LocalLiquidBuffer_H2_P18_R9.t.sol": {
+      "UniswapV4StandardExchange_LocalLiquidBuffer_H2_P18_R9": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_LocalLiquidBuffer_H2_P6_R18.t.sol": {
+      "UniswapV4StandardExchange_LocalLiquidBuffer_H2_P6_R18": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_LocalLiquidBuffer_H2_P6_R9.t.sol": {
+      "UniswapV4StandardExchange_LocalLiquidBuffer_H2_P6_R9": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_LocalLiquidBuffer_H2_P9_R18.t.sol": {
+      "UniswapV4StandardExchange_LocalLiquidBuffer_H2_P9_R18": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_LocalLiquidBuffer_H2_P9_R6.t.sol": {
+      "UniswapV4StandardExchange_LocalLiquidBuffer_H2_P9_R6": 1
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_LocalLiquidBuffer_H6.t.sol": {
+      "UniswapV4StandardExchange_LocalLiquidBuffer_H6": 27
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_LocalLiquidBuffer_H9.t.sol": {
+      "UniswapV4StandardExchange_LocalLiquidBuffer_H9": 27
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_LocalLiquidBuffer_P18_R6.t.sol": {
+      "UniswapV4StandardExchange_LocalLiquidBuffer_P18_R6": 27
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_LocalLiquidBuffer_P18_R9.t.sol": {
+      "UniswapV4StandardExchange_LocalLiquidBuffer_P18_R9": 27
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_LocalLiquidBuffer_P6_R18.t.sol": {
+      "UniswapV4StandardExchange_LocalLiquidBuffer_P6_R18": 27
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_LocalLiquidBuffer_P6_R9.t.sol": {
+      "UniswapV4StandardExchange_LocalLiquidBuffer_P6_R9": 27
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_LocalLiquidBuffer_P9_R18.t.sol": {
+      "UniswapV4StandardExchange_LocalLiquidBuffer_P9_R18": 27
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_LocalLiquidBuffer_P9_R6.t.sol": {
+      "UniswapV4StandardExchange_LocalLiquidBuffer_P9_R6": 27
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_MultiJoinExit_H6.t.sol": {
+      "UniswapV4StandardExchange_MultiJoinExit_H6": 15
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_MultiJoinExit_H9.t.sol": {
+      "UniswapV4StandardExchange_MultiJoinExit_H9": 15
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_MultiJoinExit_P18_R6.t.sol": {
+      "UniswapV4StandardExchange_MultiJoinExit_P18_R6": 15
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_MultiJoinExit_P18_R9.t.sol": {
+      "UniswapV4StandardExchange_MultiJoinExit_P18_R9": 15
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_MultiJoinExit_P6_R18.t.sol": {
+      "UniswapV4StandardExchange_MultiJoinExit_P6_R18": 15
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_MultiJoinExit_P6_R9.t.sol": {
+      "UniswapV4StandardExchange_MultiJoinExit_P6_R9": 15
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_MultiJoinExit_P9_R18.t.sol": {
+      "UniswapV4StandardExchange_MultiJoinExit_P9_R18": 15
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_MultiJoinExit_P9_R6.t.sol": {
+      "UniswapV4StandardExchange_MultiJoinExit_P9_R6": 15
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_NativeEthWrap_P6_R18.t.sol": {
+      "UniswapV4StandardExchange_NativeEthWrap_P6_R18": 3
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_NativeEthWrap_P9_R18.t.sol": {
+      "UniswapV4StandardExchange_NativeEthWrap_P9_R18": 3
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_TwapPoke_H6.t.sol": {
+      "UniswapV4StandardExchange_TwapPoke_H6": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_TwapPoke_H9.t.sol": {
+      "UniswapV4StandardExchange_TwapPoke_H9": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_TwapPoke_P18_R6.t.sol": {
+      "UniswapV4StandardExchange_TwapPoke_P18_R6": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_TwapPoke_P18_R9.t.sol": {
+      "UniswapV4StandardExchange_TwapPoke_P18_R9": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_TwapPoke_P6_R18.t.sol": {
+      "UniswapV4StandardExchange_TwapPoke_P6_R18": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_TwapPoke_P6_R9.t.sol": {
+      "UniswapV4StandardExchange_TwapPoke_P6_R9": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_TwapPoke_P9_R18.t.sol": {
+      "UniswapV4StandardExchange_TwapPoke_P9_R18": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_TwapPoke_P9_R6.t.sol": {
+      "UniswapV4StandardExchange_TwapPoke_P9_R6": 7
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_Univ4SeNestedCaller_H6.t.sol": {
+      "UniswapV4StandardExchange_Univ4SeNestedCaller_H6": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_Univ4SeNestedCaller_H9.t.sol": {
+      "UniswapV4StandardExchange_Univ4SeNestedCaller_H9": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_Univ4SeNestedCaller_P18_R6.t.sol": {
+      "UniswapV4StandardExchange_Univ4SeNestedCaller_P18_R6": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_Univ4SeNestedCaller_P18_R9.t.sol": {
+      "UniswapV4StandardExchange_Univ4SeNestedCaller_P18_R9": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_Univ4SeNestedCaller_P6_R18.t.sol": {
+      "UniswapV4StandardExchange_Univ4SeNestedCaller_P6_R18": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_Univ4SeNestedCaller_P6_R9.t.sol": {
+      "UniswapV4StandardExchange_Univ4SeNestedCaller_P6_R9": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_Univ4SeNestedCaller_P9_R18.t.sol": {
+      "UniswapV4StandardExchange_Univ4SeNestedCaller_P9_R18": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_Univ4SeNestedCaller_P9_R6.t.sol": {
+      "UniswapV4StandardExchange_Univ4SeNestedCaller_P9_R6": 2
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_E6ImpA0_H6.t.sol": {
+      "Adversarial_UniswapV4SE_E6ImpA0_H6": 8
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_E6ImpA0_H9.t.sol": {
+      "Adversarial_UniswapV4SE_E6ImpA0_H9": 8
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_E6ImpA0_P18_R6.t.sol": {
+      "Adversarial_UniswapV4SE_E6ImpA0_P18_R6": 8
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_E6ImpA0_P18_R9.t.sol": {
+      "Adversarial_UniswapV4SE_E6ImpA0_P18_R9": 8
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_E6ImpA0_P6_R18.t.sol": {
+      "Adversarial_UniswapV4SE_E6ImpA0_P6_R18": 8
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_E6ImpA0_P6_R9.t.sol": {
+      "Adversarial_UniswapV4SE_E6ImpA0_P6_R9": 8
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_E6ImpA0_P9_R18.t.sol": {
+      "Adversarial_UniswapV4SE_E6ImpA0_P9_R18": 8
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_E6ImpA0_P9_R6.t.sol": {
+      "Adversarial_UniswapV4SE_E6ImpA0_P9_R6": 8
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_SecurePull_H6.t.sol": {
+      "Adversarial_UniswapV4SE_SecurePull_H6": 19
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_SecurePull_H9.t.sol": {
+      "Adversarial_UniswapV4SE_SecurePull_H9": 19
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_SecurePull_P18_R6.t.sol": {
+      "Adversarial_UniswapV4SE_SecurePull_P18_R6": 19
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_SecurePull_P18_R9.t.sol": {
+      "Adversarial_UniswapV4SE_SecurePull_P18_R9": 19
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_SecurePull_P6_R18.t.sol": {
+      "Adversarial_UniswapV4SE_SecurePull_P6_R18": 19
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_SecurePull_P6_R9.t.sol": {
+      "Adversarial_UniswapV4SE_SecurePull_P6_R9": 19
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_SecurePull_P9_R18.t.sol": {
+      "Adversarial_UniswapV4SE_SecurePull_P9_R18": 19
+    },
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_SecurePull_P9_R6.t.sol": {
+      "Adversarial_UniswapV4SE_SecurePull_P9_R6": 19
+    }
+  },
+  "pass": true
+}

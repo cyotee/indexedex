@@ -134,7 +134,7 @@
           <div class="map-row">
             <span class="map-from">Policy as a DAO argument</span>
             <span class="map-arrow" aria-hidden="true">→</span>
-            <span class="map-to">Policy or Open — chosen once at deploy</span>
+            <span class="map-to">Fixed price gates with reserve swaps</span>
           </div>
           <div class="map-row">
             <span class="map-from">Fork of a moment</span>
@@ -174,11 +174,11 @@
             </p>
           </article>
           <article class="card">
-            <h3>Policy or Open</h3>
+            <h3>One route, pool-priced rules</h3>
             <p>
-              <strong>Policy (default):</strong> mint when rich vs reserve, burn when cheap
-              (often about ±5%). <strong>Open:</strong> mint and burn without those price limits.
-              Fees may still apply. Neither mode is a peg or a coupon.
+              Primary issuance and redemption use fixed price gates. When the relevant
+              condition is not met, the same supported route swaps through the reserve.
+              Liquidity, fees and your minimum output still apply.
             </p>
           </article>
           <article class="card">
@@ -211,7 +211,7 @@
               <li>One onchain share over a real reserve</li>
               <li>Bond path that opens the unit and deepens depth</li>
               <li>Mint / burn priced from the reserve</li>
-              <li>Policy bands — or Open with no price limits</li>
+              <li>Primary price gates with reserve-swap fallback</li>
               <li>A deployable product pattern, many units</li>
             </ul>
           </div>
@@ -249,7 +249,7 @@
             <div>
               <h3>Mint or burn</h3>
               <p>
-                When live, exchange into or out of DETF against the reserve under Policy or Open.
+                When live, exchange into or out of DETF through primary issuance/redemption or a reserve swap.
                 Quotes should match what executes on supported paths.
               </p>
             </div>
@@ -286,7 +286,7 @@
           <p class="section-lede">
             We’re launching with a tight stack on <strong>Uniswap&nbsp;V4</strong>: three market
             rails (hooks) and three matching DETF products. Each DETF uses its market as the real
-            reserve — list the share, bond into fungible LP, mint and burn against the book.
+            reserve — list the share, bond to fund reserve liquidity and staked DETF principal, then trade against the book.
           </p>
         </div>
 
@@ -385,11 +385,11 @@
             <p>Mint stays blocked until the first successful bond. Time alone does not open the market.</p>
           </article>
           <article class="card">
-            <p class="card-kicker">Modes</p>
-            <h3>Policy limits · Open does not expand</h3>
+            <p class="card-kicker">Funded staking</p>
+            <h3>Staked DETF, held in reserve</h3>
             <p>
-              Default Policy uses rich/cheap bands. Open has no price restrictions when live and
-              does <strong>not</strong> run extra supply expansion.
+              One sDETF unstakes for one held DETF. Bond principal vests steadily and
+              staking rewards can be claimed during vesting. Both pay sDETF.
             </p>
           </article>
           <article class="card">
@@ -442,15 +442,15 @@
           </li>
           <li>
             <strong>No performance promises.</strong> Not investment, legal, or tax advice. Smart
-            contracts and markets involve loss of funds. Policy/Open modes do not guarantee peg,
+            contracts and markets involve loss of funds. Price gates do not guarantee peg,
             liquidity, or returns.
           </li>
           <li>
-            <strong>Open mode</strong> removes price limits on primary mint/burn only. Fees still
-            apply. Open never runs natural supply expansion.
+            <strong>Funded rewards.</strong> Issuance rewards are immediate; automatic expansion
+            uses eight-hour periods. More sDETF units do not guarantee a higher market value.
           </li>
           <li>
-            <strong>Status.</strong> Launch families are shipping on Uniswap&nbsp;V4 (pair, triangle,
+            <strong>Status.</strong> The funded design described here is being implemented; existing deployments may differ. Launch families target Uniswap&nbsp;V4 (pair, triangle,
             weighted). Not every integration is live on every chain. Live addresses and audits will
             be linked when published.
           </li>

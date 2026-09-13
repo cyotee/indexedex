@@ -1,0 +1,31 @@
+--- contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfBondTarget.sol
++++ contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfBondTarget.sol
+@@ -6,8 +6,8 @@
+ 
+ /// @notice Bond entrypoints for the universal DETF diamond.
+ abstract contract UniswapV4DetfBondTarget is UniswapV4DetfTarget {
+-    /// @notice Joins capital and opens a time-locked NFT with principal priced at pre-join NAV.
+-    /// @dev Returns physical LP as shares; the NFT credits converted original-share principal.
++    /// @notice Acquires protocol LP and opens an NFT with funded, staked DETF principal that vests linearly.
++    /// @dev The returned shares are acquired protocol LP, not an NFT redemption entitlement.
+     function bond(
+         IERC20 tokenIn,
+         uint256 amountIn,
+--- contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfQueryTarget.sol
++++ contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfQueryTarget.sol
+@@ -82,7 +82,6 @@
+         return _entryBondRoutes();
+     }
+ 
+-    /// @notice Returns the immutable routes used to pay mature bond closes.
+     /// @notice Returns the immutable token-to-vault routes accepted for donations.
+     function donateRoutes() external view returns (IUniswapV4Detf.IoRoute[] memory) {
+         return _entryDonateRoutes();
+@@ -103,7 +102,6 @@
+         return _entryBondRouteMode();
+     }
+ 
+-    /// @notice Returns the configured default or custom mature-close mode.
+     /// @notice Returns the configured default or custom donation-route mode.
+     function donateRouteMode() external view returns (IUniswapV4Detf.RouteTableMode) {
+         return _entryDonateRouteMode();

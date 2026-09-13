@@ -1,0 +1,106 @@
+    function _aeroProjectionFeesAndInventory() private {
+        vm.prank(owner);
+        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(address(nativeSY), 7e16);
+        vm.startPrank(nativeUser);
+        nativePairA.transfer(address(this), 300 ether);
+        nativePairB.transfer(address(this), 300 ether);
+        nativeSY.transfer(address(this), nativeSY.balanceOf(nativeUser) / 10);
+        nativePairA.approve(address(nativeSY), 10 ether);
+        IStandardExchangeIn(address(nativeSY)).exchangeIn(nativePairA, 10 ether, nativePairB, 1, nativeUser, false, block.timestamp);
+        nativePairB.approve(address(nativeSY), 7 ether);
+        IStandardExchangeIn(address(nativeSY)).exchangeIn(nativePairB, 7 ether, nativePairA, 1, nativeUser, false, block.timestamp);
+        vm.stopPrank();
+        assertGt(IPool(nativeSY.yieldToken()).index0() + IPool(nativeSY.yieldToken()).index1(), 0, "real pool fees accrued");
+    }
+
+    function test_aeroProjectionSelectorsAndComponentSizes() public view {
+        address exchange = address(nativeSY);
+        assertTrue(IERC165(exchange).supportsInterface(type(IStandardExchangeTransitionQuote).interfaceId));
+        assertTrue(IERC165(exchange).supportsInterface(type(IStandardExchangeExternalQuote).interfaceId));
+        bytes4[7] memory selectors = [
+            IStandardExchangeTransitionQuote.quoteState.selector,
+            IStandardExchangeTransitionQuote.quoteAssets.selector,
+            IStandardExchangeTransitionQuote.quoteShareBalance.selector,
+            IStandardExchangeTransitionQuote.quoteTotalSupply.selector,
+            IStandardExchangeTransitionQuote.quoteTransition.selector,
+            IStandardExchangeExternalQuote.quoteExternalDeposit.selector,
+            IStandardExchangeExternalQuote.quoteExternalExchange.selector
+        ];
+        for (uint256 i; i < selectors.length; ++i) {
+            address facet = IDiamondLoupe(exchange).facetAddress(selectors[i]);
+            assertGt(facet.code.length, 0, "installed projection component");
+            assertLe(facet.code.length, 24_576, "deployed component fits EIP-170");
+        }
+    }
+
+    function test_aeroProjectionSequentialBothAssetsAndCompoundedLpFees() public {
+        _aeroProjectionFeesAndInventory();
+        uint256 snapshot = vm.snapshotState();
+        _assertQuoteSequence(address(nativeSY), nativePairA, nativeUser, 1 ether);
+        assertTrue(vm.revertToState(snapshot));
+        _assertQuoteSequence(address(nativeSY), nativePairB, nativeUser, 1 ether);
+    }
+
+    function test_aeroProjectionExternalDepositsAndLiveLpPayment() public {
+        _aeroProjectionFeesAndInventory();
+        _assertExternalDepositQuote(address(nativeSY), nativePairA, nativePairB, 11 ether + 13, nativeUser);
+        _assertExternalDepositQuote(address(nativeSY), nativePairB, nativePairA, 7 ether + 17, nativeUser);
+        nativePairA.approve(address(nativeSY), 10 ether);
+        uint256 lp = IStandardExchangeIn(address(nativeSY)).exchangeIn(
+            nativePairA, 10 ether, IERC20(nativeSY.yieldToken()), 1, address(this), false, block.timestamp
+        );
+        _assertExternalDepositQuote(address(nativeSY), IERC20(nativeSY.yieldToken()), nativePairB, lp, nativeUser);
+    }
+
+    function test_aeroProjectionExternalSwapsAndLpRedemptionPreserveOwnShares() public {
+        _aeroProjectionFeesAndInventory();
+        _assertExternalExchangeQuote(address(nativeSY), nativePairA, nativePairB, 3 ether + 11);
+        _assertExternalExchangeQuote(address(nativeSY), nativePairB, nativePairA, 2 ether + 13);
+        nativePairA.approve(address(nativeSY), 10 ether);
+        uint256 lp = IStandardExchangeIn(address(nativeSY)).exchangeIn(
+            nativePairA, 10 ether, IERC20(nativeSY.yieldToken()), 1, address(this), false, block.timestamp
+        );
+        _assertExternalExchangeQuote(address(nativeSY), IERC20(nativeSY.yieldToken()), nativePairB, lp);
+    }
+
+    function test_aeroProjectionCompoundPaysActualLpWithoutIssuingSeFees() public {
+        _aeroProjectionFeesAndInventory();
+        address recipient = address(indexedexManager.feeTo());
+        IERC20 lp = IERC20(nativeSY.yieldToken());
+        uint256 feeLpBefore = lp.balanceOf(recipient);
+        uint256 feeSharesBefore = nativeSY.balanceOf(recipient);
+        _assertExternalDepositQuote(address(nativeSY), nativePairA, nativePairB, 11 ether + 13, recipient);
+        assertGt(lp.balanceOf(recipient), feeLpBefore, "compound pays funded LP fees");
+        assertEq(nativeSY.balanceOf(recipient), feeSharesBefore, "compound does not issue SE shares");
+    }
+
+    function test_aeroProjectionDonationRemainsBackingBeforeLpPayment() public {
+        _aeroProjectionFeesAndInventory();
+        nativePairA.approve(address(nativeSY), 10 ether);
+        IERC20 lp = IERC20(nativeSY.yieldToken());
+        uint256 acquired = IStandardExchangeIn(address(nativeSY)).exchangeIn(
+            nativePairA, 10 ether, lp, 1, address(this), false, block.timestamp
+        );
+        uint256 donated = acquired / 3;
+        lp.transfer(address(nativeSY), donated);
+        _assertExternalDepositQuote(address(nativeSY), lp, nativePairB, acquired - donated, nativeUser);
+    }
+
+    function test_aeroProjectionExternalLpBurnIncludesPoolHeldLpAndUnsyncedTokens() public {
+        _aeroProjectionFeesAndInventory();
+        nativePairA.approve(address(nativeSY), 10 ether);
+        IERC20 lp = IERC20(nativeSY.yieldToken());
+        uint256 acquired = IStandardExchangeIn(address(nativeSY)).exchangeIn(
+            nativePairA, 10 ether, lp, 1, address(this), false, block.timestamp
+        );
+        uint256 poolHeld = acquired / 5;
+        lp.transfer(address(lp), poolHeld);
+        nativePairA.transfer(address(lp), 17);
+        nativePairB.transfer(address(lp), 29);
+        uint256 reserve = lp.balanceOf(address(nativeSY));
+        uint256 supply = lp.totalSupply();
+        _assertExternalExchangeQuote(address(nativeSY), lp, nativePairB, acquired - poolHeld);
+        assertEq(lp.balanceOf(address(lp)), 0, "actual pool burns its complete held LP balance");
+        assertEq(lp.totalSupply(), supply - acquired, "submitted and previously pool-held LP both burn");
+        assertEq(lp.balanceOf(address(nativeSY)), reserve, "SE-held LP is not external payment");
+    }

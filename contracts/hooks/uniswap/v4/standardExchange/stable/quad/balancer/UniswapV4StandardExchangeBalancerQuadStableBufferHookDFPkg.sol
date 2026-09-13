@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 
+import {IUniswapV4BalancerStableLiquidityUnits as IUnits} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/interfaces/IUniswapV4BalancerStableLiquidityUnits.sol";
 import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -16,6 +18,7 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {UniswapV4SeBufferHookLegLib} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
@@ -53,13 +56,15 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg is
 {
     using BetterEfficientHashLib for bytes;
 
-    bytes32 public constant PRODUCT_ID = keccak256("UniswapV4StandardExchangeBalancerQuadStableBufferHook");
+    bytes32 public constant PRODUCT_ID = keccak256("UniswapV4StandardExchangeBalancerQuadStableBufferHook.v2");
     bytes4 public constant HOOK_VAULT_TYPE =
-        bytes4(keccak256("UniswapV4StandardExchangeBalancerQuadStableBufferHook"));
+        bytes4(keccak256("UniswapV4StandardExchangeBalancerQuadStableBufferHook.v2"));
 
     IVaultRegistryDeployment public immutable VAULT_REGISTRY_DEPLOYMENT;
     IVaultFeeOracleQuery public immutable VAULT_FEE_ORACLE_QUERY;
     IFacet public immutable LIQUIDITY_FACET;
+    IFacet public immutable EXIT_FACET;
+    IFacet public immutable QUERY_FACET;
     IFacet public immutable SE_FACET;
     IFacet public immutable HOOKS_FACET;
     IFacet public immutable ERC20_FACET;
@@ -73,6 +78,7 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg is
         if (
             address(init.vaultRegistryDeployment) == address(0)
                 || address(init.vaultFeeOracleQuery) == address(0)
+                || address(init.exitFacet) == address(0) || address(init.queryFacet) == address(0)
                 || address(init.liquidityFacet) == address(0) || address(init.seFacet) == address(0)
                 || address(init.hooksFacet) == address(0) || address(init.erc20Facet) == address(0)
                 || address(init.erc5267Facet) == address(0) || address(init.erc2612Facet) == address(0)
@@ -84,6 +90,8 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg is
         VAULT_REGISTRY_DEPLOYMENT = init.vaultRegistryDeployment;
         VAULT_FEE_ORACLE_QUERY = init.vaultFeeOracleQuery;
         LIQUIDITY_FACET = init.liquidityFacet;
+        EXIT_FACET = init.exitFacet;
+        QUERY_FACET = init.queryFacet;
         SE_FACET = init.seFacet;
         HOOKS_FACET = init.hooksFacet;
         ERC20_FACET = init.erc20Facet;
@@ -129,7 +137,7 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg is
         override(IDiamondFactoryPackage, UniswapV4StandardExchangeBalancerQuadStableBufferHookInitFacet)
         returns (bytes4[] memory interfaces)
     {
-        interfaces = new bytes4[](10);
+        interfaces = new bytes4[](12);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20Permit).interfaceId;
@@ -140,10 +148,12 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg is
         interfaces[7] = type(IBasicVault).interfaceId;
         interfaces[8] = type(IStandardVault).interfaceId;
         interfaces[9] = HOOK_VAULT_TYPE;
+        interfaces[10] = type(IStandardizedYield).interfaceId;
+        interfaces[11] = type(IUnits).interfaceId;
     }
 
     function facetAddresses() public view returns (address[] memory facets) {
-        facets = new address[](9);
+        facets = new address[](11);
         facets[0] = address(MULTI_ASSET_BASIC_VAULT_FACET);
         facets[1] = address(MULTI_ASSET_STANDARD_VAULT_FACET);
         facets[2] = address(SELF);
@@ -153,6 +163,8 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg is
         facets[6] = address(ERC20_FACET);
         facets[7] = address(ERC5267_FACET);
         facets[8] = address(ERC2612_FACET);
+        facets[9] = address(EXIT_FACET);
+        facets[10] = address(QUERY_FACET);
     }
 
     function packageMetadata()
@@ -185,63 +197,31 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg is
     }
 
     function productionFacetCuts() public view returns (IDiamond.FacetCut[] memory cuts) {
-        cuts = new IDiamond.FacetCut[](6);
-        cuts[0] = IDiamond.FacetCut({
-            facetAddress: address(HOOKS_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: HOOKS_FACET.facetFuncs()
-        });
-        cuts[1] = IDiamond.FacetCut({
-            facetAddress: address(LIQUIDITY_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: LIQUIDITY_FACET.facetFuncs()
-        });
-        cuts[2] = IDiamond.FacetCut({
-            facetAddress: address(SE_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: SE_FACET.facetFuncs()
-        });
-        cuts[3] = IDiamond.FacetCut({
-            facetAddress: address(ERC20_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: ERC20_FACET.facetFuncs()
-        });
-        cuts[4] = IDiamond.FacetCut({
-            facetAddress: address(ERC5267_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: ERC5267_FACET.facetFuncs()
-        });
-        cuts[5] = IDiamond.FacetCut({
-            facetAddress: address(ERC2612_FACET),
-            action: IDiamond.FacetCutAction.Add,
-            functionSelectors: ERC2612_FACET.facetFuncs()
-        });
+        address[] memory facets_ = facetAddresses();
+        cuts = new IDiamond.FacetCut[](8);
+        for (uint256 i_; i_ < cuts.length; ++i_) {
+            address facet_ = facets_[i_ + 3];
+            cuts[i_] = IDiamond.FacetCut({facetAddress: facet_, action: IDiamond.FacetCutAction.Add, functionSelectors: IFacet(facet_).facetFuncs()});
+        }
     }
 
     function finalizeInitialization() public override nonReentrant returns (bool) {
         Repo.Layout storage l = Repo._layout();
         if (l.initializationFinalized) revert InitializationAlreadyFinalized();
-        if (
-            !isPairPoolLive(l.tokens[0], l.tokens[1]) || !isPairPoolLive(l.tokens[0], l.tokens[2])
-                || !isPairPoolLive(l.tokens[0], l.tokens[3]) || !isPairPoolLive(l.tokens[1], l.tokens[2])
-                || !isPairPoolLive(l.tokens[1], l.tokens[3]) || !isPairPoolLive(l.tokens[2], l.tokens[3])
-        ) {
-            revert ProductDoorsNotLive();
+        for (uint256 i; i < l.tokens.length; ++i) {
+            for (uint256 j = i + 1; j < l.tokens.length; ++j) {
+                if (!isPairPoolLive(l.tokens[i], l.tokens[j])) revert ProductDoorsNotLive();
+            }
         }
 
-        IDiamond.FacetCut[] memory cuts = new IDiamond.FacetCut[](7);
+        IDiamond.FacetCut[] memory cuts = new IDiamond.FacetCut[](9);
         cuts[0] = IDiamond.FacetCut({
             facetAddress: address(SELF),
             action: IDiamond.FacetCutAction.Remove,
             functionSelectors: facetFuncs()
         });
         IDiamond.FacetCut[] memory adds = productionFacetCuts();
-        cuts[1] = adds[0];
-        cuts[2] = adds[1];
-        cuts[3] = adds[2];
-        cuts[4] = adds[3];
-        cuts[5] = adds[4];
-        cuts[6] = adds[5];
+        for (uint256 i_; i_ < adds.length; ++i_) cuts[i_ + 1] = adds[i_];
 
         ERC2535Repo._processFacetCuts(cuts);
         emit IDiamond.DiamondCut(cuts, address(0), "");
@@ -264,7 +244,15 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg is
         PkgArgs memory a = abi.decode(pkgArgs, (PkgArgs));
         // PRODUCT_ID + tokens + SEs + RPs + baseAmp — no package/facet addresses; no PM/oracle.
         return keccak256(
-            abi.encode(PRODUCT_ID, a.tokens, a.standardExchanges, a.rateProviders, a.baseAmp)
+            abi.encode(
+                PRODUCT_ID,
+                a.tokens,
+                a.standardExchanges,
+                a.rateProviders,
+                a.baseAmp,
+                a.tokenDecimals,
+                a.seDecimals
+            )
         );
     }
 
@@ -284,11 +272,7 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg is
         string memory symbol_ = _lpSymbol(a.tokens);
         ERC20Repo._initialize(name_, symbol_, 18);
         EIP712Repo._initialize(name_, "1");
-        address[] memory toks = new address[](4);
-        toks[0] = a.tokens[0];
-        toks[1] = a.tokens[1];
-        toks[2] = a.tokens[2];
-        toks[3] = a.tokens[3];
+        address[] memory toks = a.tokens;
         MultiAssetBasicVaultRepo._initialize(toks);
         StandardVaultRepo._initialize(
             VAULT_FEE_ORACLE_QUERY, vaultFeeTypeIds(), vaultTypes(), abi.encode(toks)._hash()
@@ -296,25 +280,19 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg is
     }
 
     function _initProductBindings(PkgArgs memory a) private {
-        uint256[4] memory invScales;
-        uint256[4] memory ratedScales;
-        uint8[4] memory pairDecimals;
-        uint8[4] memory invDecimals;
+        uint256[] memory invScales = new uint256[](a.tokens.length);
+        uint256[] memory ratedScales = new uint256[](a.tokens.length);
+        uint8[] memory pairDecimals = new uint8[](a.tokens.length);
+        uint8[] memory invDecimals = new uint8[](a.tokens.length);
 
-        for (uint8 i; i < 4; ++i) {
-            uint8 pd = _readDecimals(a.tokens[i]);
-            if (pd < 6 || pd > 18) revert InvalidDecimals();
+        for (uint8 i; i < a.tokens.length; ++i) {
+            uint8 pd = a.tokenDecimals[i];
             pairDecimals[i] = pd;
             ratedScales[i] = Math.baseScaleFromDecimals(pd);
-            if (a.standardExchanges[i] == address(0)) {
-                invDecimals[i] = pd;
-                invScales[i] = ratedScales[i];
-            } else {
-                uint8 sd = _readDecimals(a.standardExchanges[i]);
-                if (sd < 6 || sd > 18) revert InvalidDecimals();
-                invDecimals[i] = sd;
-                invScales[i] = Math.baseScaleFromDecimals(sd);
-            }
+            // SE share inventory is 1:1 with pair native on Univ3/V4/ERC4626 first mint
+            // (`shares = assets`). Scale with pair decimals, not vault `decimals()` (often 18).
+            invDecimals[i] = pd;
+            invScales[i] = ratedScales[i];
         }
 
         Repo._initializeBindings(
@@ -331,13 +309,13 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg is
         );
     }
 
-    function _lpName(address[4] memory toks) private pure returns (string memory) {
+    function _lpName(address[] memory toks) private pure returns (string memory) {
         // Keep under 64 chars; SEBQS prefix locked.
         toks;
-        return "SEBQS Balancer Quad Stable Buffer Hook LP";
+        return "SEBQS Balancer Stable Buffer Hook LP";
     }
 
-    function _lpSymbol(address[4] memory toks) private pure returns (string memory) {
+    function _lpSymbol(address[] memory toks) private pure returns (string memory) {
         toks;
         return "SEBQS-LP";
     }
@@ -371,14 +349,18 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg is
     }
 
     function _validateArgs(PkgArgs memory a) private view {
+        uint256 n = a.tokens.length;
+        if (n < Repo.MIN_TOKENS || n > Repo.MAX_TOKENS) revert InvalidTokenCount();
+        if (a.standardExchanges.length != n || a.rateProviders.length != n
+            || a.tokenDecimals.length != n || a.seDecimals.length != n) revert ArrayLengthMismatch();
         if (a.poolManager == address(0) || a.feeOracle == address(0)) revert ZeroAddress();
-        if (a.baseAmp == 0 || a.baseAmp >= Math.MAX_AMP) revert InvalidAmp();
+        if (a.baseAmp == 0 || a.baseAmp > Math.MAX_AMP) revert InvalidAmp();
 
         uint256 seCount;
-        for (uint8 i; i < 4; ++i) {
+        for (uint8 i; i < a.tokens.length; ++i) {
             if (a.tokens[i] == address(0)) revert ZeroAddress();
             if (i > 0 && a.tokens[i] <= a.tokens[i - 1]) revert TokensNotAscending();
-            for (uint8 j = i + 1; j < 4; ++j) {
+            for (uint8 j = i + 1; j < a.tokens.length; ++j) {
                 if (a.tokens[i] == a.tokens[j]) revert SameToken();
             }
 
@@ -386,14 +368,30 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg is
                 revert RateProviderWithoutSE();
             }
 
-            uint8 pd = _readDecimals(a.tokens[i]);
-            if (pd < 6 || pd > 18) revert InvalidDecimals();
+            uint8 pd = a.tokenDecimals[i];
+            bool wrapperInv = a.standardExchanges[i] != address(0)
+                && UniswapV4SeBufferHookLegLib.isWrapperShareInventory(a.tokens[i], a.standardExchanges[i]);
+            if (wrapperInv) {
+                if (!UniswapV4SeBufferHookLegLib.wrapperShareDecimalsOk(pd)) revert InvalidDecimals();
+                if (!UniswapV4SeBufferHookLegLib.wrapperShareDecimalsOk(a.seDecimals[i])) {
+                    revert InvalidDecimals();
+                }
+            } else if (pd < 6 || pd > 18) {
+                revert InvalidDecimals();
+            }
+            if (a.tokens[i].code.length != 0 && IERC20Metadata(a.tokens[i]).decimals() != pd) revert InvalidDecimals();
+            if (a.standardExchanges[i] == address(0)) {
+                if (a.seDecimals[i] != 0) revert InvalidDecimals();
+            } else if (!wrapperInv) {
+                uint8 sd = a.seDecimals[i];
+                if (sd < 6 || sd > 18) revert InvalidDecimals();
+            }
 
             if (a.standardExchanges[i] != address(0)) {
                 unchecked {
                     ++seCount;
                 }
-                for (uint8 j = i + 1; j < 4; ++j) {
+                for (uint8 j = i + 1; j < a.tokens.length; ++j) {
                     if (
                         a.standardExchanges[j] != address(0)
                             && a.standardExchanges[i] == a.standardExchanges[j]
@@ -402,15 +400,23 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg is
                     }
                 }
                 _requireSeOwnsToken(a.standardExchanges[i], a.tokens[i]);
-                uint8 sd = _readDecimals(a.standardExchanges[i]);
-                if (sd < 6 || sd > 18) revert InvalidDecimals();
+                if (IERC20Metadata(a.standardExchanges[i]).decimals() != a.seDecimals[i]) revert InvalidDecimals();
+                for (uint256 j; j < n; ++j) {
+                    if (
+                        a.standardExchanges[i] == a.tokens[j]
+                            && !UniswapV4SeBufferHookLegLib.isWrapperShareInventory(
+                                a.tokens[j], a.standardExchanges[i]
+                            )
+                    ) revert InvalidSE();
+                }
             }
         }
         if (seCount == 0) revert ZeroStandardExchangeRequired();
     }
 
     function _requireSeOwnsToken(address se, address token) private view {
-        if (se == token) revert InvalidSE();
+        if (UniswapV4SeBufferHookLegLib.isWrapperShareInventory(token, se)) return;
+        if (se == token || se.code.length == 0) revert InvalidSE();
         try IBasicVault(se).vaultTokens() returns (address[] memory toks) {
             bool found;
             for (uint256 i; i < toks.length; ++i) {
@@ -425,11 +431,4 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg is
         }
     }
 
-    function _readDecimals(address token) private view returns (uint8) {
-        try IERC20Metadata(token).decimals() returns (uint8 d) {
-            return d;
-        } catch {
-            return 18;
-        }
-    }
 }

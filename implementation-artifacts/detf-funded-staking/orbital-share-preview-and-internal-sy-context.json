@@ -1,0 +1,28 @@
+{
+  "status": "SELECTED_VALIDATION_PASSED",
+  "session": 14447,
+  "formula_policy": "Retain Orbital reserve valuation and zap issuance formulas. Project initial SE share receipt/redemption for the share-input preview. Keep native single-asset execution quote separate from reserve valuation.",
+  "files": [
+    {
+      "path": "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol",
+      "sha256": "b7202795780d3e7884f5a2dfe92c00c66ff4ab2944442f10ffb76815036e13d0"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/libs/UniswapV4HookOwnerOnlyLiquidityLib.sol",
+      "sha256": "e888c2841a070721d99acc3622d42a6c38ab56f13c4efffe9425f66a123d0365"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib.sol",
+      "sha256": "5cf05aa4597e53d0428eecaa5af69cca76989ae1f67f2915aedadd2c2108fe00"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookWithdrawTarget.sol",
+      "sha256": "4b2e82224efcba96fae2c7da6c9a5727781c0a5c89a1a9a0862e5987fa0e21b8"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDepositCore.sol",
+      "sha256": "746987a4d4ea41b1cb7f3d41f11556e6c66ef997cea94d1739de07e4dae2af72"
+    }
+  ],
+  "validation": "v4-orbital-and-restricted-sy-288-pass-*; relevant tests passed, two unrelated newly included transition setup artifact failures"
+}

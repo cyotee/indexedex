@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 pragma solidity ^0.8.0;
 
+import {IWrappedStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/IWrappedStandardExchangeRateProviderDFPkg.sol";
+
 import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
@@ -11,33 +13,16 @@ import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
 import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
+import {IStandardExchangeTransitionQuote, IStandardExchangeRateQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
 
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
-import {
-	IWrappedStandardExchangeRateProvider
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderTarget.sol";
+import {IWrappedStandardExchangeRateProvider} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/IWrappedStandardExchangeRateProvider.sol";
 import {
 	WrappedStandardExchangeRateProviderRepo
 } from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderRepo.sol";
 
-interface IWrappedStandardExchangeRateProviderDFPkg is IDiamondFactoryPackage {
-	struct PkgInit {
-		IFacet rateProviderFacet;
-		IDiamondPackageCallBackFactory diamondFactory;
-	}
 
-	struct PkgArgs {
-		IERC4626 rateSubject;
-		IStandardExchangeIn standardExchange;
-		IERC20 rateTarget;
-	}
-
-	function deployRateProvider(IERC4626 rateSubject, IStandardExchangeIn standardExchange, IERC20 rateTarget)
-		external
-		returns (IRateProvider rateProviderAddress);
-
-}
 
 contract WrappedStandardExchangeRateProviderDFPkg is IWrappedStandardExchangeRateProviderDFPkg {
 	using BetterEfficientHashLib for bytes;
@@ -77,9 +62,10 @@ contract WrappedStandardExchangeRateProviderDFPkg is IWrappedStandardExchangeRat
 	}
 
 	function facetInterfaces() public pure returns (bytes4[] memory interfaces_) {
-		interfaces_ = new bytes4[](2);
+		interfaces_ = new bytes4[](3);
 		interfaces_[0] = type(IRateProvider).interfaceId;
 		interfaces_[1] = type(IWrappedStandardExchangeRateProvider).interfaceId;
+        interfaces_[2] = type(IStandardExchangeRateQuote).interfaceId;
 	}
 
 	function packageMetadata()

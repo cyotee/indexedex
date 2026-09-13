@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -8,27 +9,13 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 import {VM_ADDRESS} from "@crane/contracts/constants/FoundryConstants.sol";
 import {Vm} from "forge-std/Vm.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
-import {
-    IUniswapV4HookDiamondPackage
-} from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackage.sol";
-import {
-    IUniswapV4HookDiamondPackageCallBackFactory
-} from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackageCallBackFactory.sol";
+import {IUniswapV4HookDiamondPackage} from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackage.sol";
+import {IUniswapV4HookDiamondPackageCallBackFactory} from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackageCallBackFactory.sol";
 import {
     UniswapV4HookDiamondPackageCallBackFactory_FactoryService as HookFactoryService
 } from "contracts/hooks/uniswap/v4/factory/UniswapV4HookDiamondPackageCallBackFactory_FactoryService.sol";
-import {
-    UniswapV4OrbitalSwapHookHooksFacet
-} from "contracts/hooks/uniswap/v4/orbital/facets/UniswapV4OrbitalSwapHookHooksFacet.sol";
-import {
-    UniswapV4OrbitalSwapHookLiquidityFacet
-} from "contracts/hooks/uniswap/v4/orbital/facets/UniswapV4OrbitalSwapHookLiquidityFacet.sol";
-import {
-    UniswapV4OrbitalSwapHookDFPkg
-} from "contracts/hooks/uniswap/v4/orbital/UniswapV4OrbitalSwapHookDFPkg.sol";
-import {
-    IUniswapV4OrbitalSwapHookPackage
-} from "contracts/hooks/uniswap/v4/orbital/interfaces/IUniswapV4OrbitalSwapHookPackage.sol";
+
+import {IUniswapV4OrbitalSwapHookPackage} from "contracts/hooks/uniswap/v4/orbital/interfaces/IUniswapV4OrbitalSwapHookPackage.sol";
 
 /**
  * @title UniswapV4OrbitalSwapHook_FactoryService
@@ -44,18 +31,18 @@ library UniswapV4OrbitalSwapHook_FactoryService {
 
     function deployHooksFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         facet = create3Factory.deployFacet(
-            type(UniswapV4OrbitalSwapHookHooksFacet).creationCode,
-            abi.encode(type(UniswapV4OrbitalSwapHookHooksFacet).name)._hash()
+            ArtifactCreationCode.creationCode("UniswapV4OrbitalSwapHookHooksFacet.sol:UniswapV4OrbitalSwapHookHooksFacet"),
+            abi.encode("UniswapV4OrbitalSwapHookHooksFacet")._hash()
         );
-        vm.label(address(facet), type(UniswapV4OrbitalSwapHookHooksFacet).name);
+        vm.label(address(facet), "UniswapV4OrbitalSwapHookHooksFacet");
     }
 
     function deployLiquidityFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         facet = create3Factory.deployFacet(
-            type(UniswapV4OrbitalSwapHookLiquidityFacet).creationCode,
-            abi.encode(type(UniswapV4OrbitalSwapHookLiquidityFacet).name)._hash()
+            ArtifactCreationCode.creationCode("UniswapV4OrbitalSwapHookLiquidityFacet.sol:UniswapV4OrbitalSwapHookLiquidityFacet"),
+            abi.encode("UniswapV4OrbitalSwapHookLiquidityFacet")._hash()
         );
-        vm.label(address(facet), type(UniswapV4OrbitalSwapHookLiquidityFacet).name);
+        vm.label(address(facet), "UniswapV4OrbitalSwapHookLiquidityFacet");
     }
 
     function deployPackage(
@@ -67,10 +54,10 @@ library UniswapV4OrbitalSwapHook_FactoryService {
         vm.prank(owner);
         pkg = IUniswapV4OrbitalSwapHookPackage(
             registry.deployPkg(
-                type(UniswapV4OrbitalSwapHookDFPkg).creationCode, abi.encode(init), salt
+                ArtifactCreationCode.creationCode("UniswapV4OrbitalSwapHookDFPkg.sol:UniswapV4OrbitalSwapHookDFPkg"), abi.encode(init), salt
             )
         );
-        vm.label(address(pkg), type(UniswapV4OrbitalSwapHookDFPkg).name);
+        vm.label(address(pkg), "UniswapV4OrbitalSwapHookDFPkg");
     }
 
     function findMineNonce(

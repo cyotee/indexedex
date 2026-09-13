@@ -1,0 +1,27 @@
+{
+  "status": "read-only review while current Forge compiles; no Dual correction or completion claimed",
+  "sources": {
+    "contracts/interfaces/IStandardExchangeTransitionQuote.sol": "4f5ba4dedc94acf8f361cd2ec8e270b03768c5a445e7d377ec13fed1a2672976",
+    "contracts/vaults/standard/erc4626/ERC4626StandardExchangeQuoteTarget.sol": "20c1515aae673c25f35831c3578f80e404766553029593d80f61a24c3f4e98b6",
+    "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib.sol": "edda904388e6aa1dfa8ba38dc6d10348f23415db4be8c298d430c92406a90733",
+    "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewTarget.sol": "0d49c9b7d593390a57e48fd6a7a2335f0be0083f3e69e1bada56d5e47210f513",
+    "contracts/hooks/uniswap/v4/libs/UniswapV4BufferHookLiquidityRouteLib.sol": "b5922caf0171df040bb37b78d8fc1dfc65d651935285f8d57278cfc07315b645",
+    "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookClaimLib.sol": "6723a561a20ff0c3f77e836899c169eeada1492f84e9ed8e65f8946ed7e755ad"
+  },
+  "reuse": [
+    "UniswapV4BufferHookLiquidityRouteLib already dispatches LP Standard Exchange routes to installed join/exit selectors. Use before the swap lock, retaining actual joins/exits own host lock.",
+    "IStandardExchangeTransitionQuote already models sequential deposit, redeem and exact-output withdrawal for ERC4626, Morpho, Uni V2 and native Uni V3/V4. ERC4626 support depends on its underlying vault capability. SimpleYieldERC4626 implements that external-protocol quote capability in existing fixtures.",
+    "Single CP ClaimLib detects usable transition support through ERC165 and quoteState. Its DepositPreviewTarget models stateful quotes and is a reference for composing the Dual exit.",
+    "Dual ClaimLib currently only has its older ERC4626 dilution model. Merely scaling reserve claims after withdrawal is insufficient: subsequent buffering must use the reduced SE supply, held shares and underlying reserve state.",
+    "A hypothetical incoming transfer of existing SE shares is not a deposit into that SE. The existing transition enum has no holder-share transfer operation. Do not simulate that input by fictitiously minting SE shares or assuming underlying state is unchanged after redemption.",
+    "Existing Dual joinSingleAssetExactIn already accepts SE shares and unwraps them; previews need sequential state support for nonlinear peers before those SY input routes can be claimed consistent."
+  ],
+  "dual_exit_fixes_needed": [
+    "Split _withdraw final dust handling so internal single-token exits can retain this-call raw withdrawals until conversion finishes.",
+    "Pay only amount0/amount1 plus actual residual-swap output, never entire token balance; preserve unsolicited raw inventory.",
+    "For a selected SE output, pay actual SE shares instead of remapping and paying raw pair tokens.",
+    "Quote actual post-withdrawal state using supported sequential transitions; match fee-share dilution and router/underlying floors.",
+    "Keep previewBurnToToken documented H2 proportional behavior, independent of single-token LP-exit aggregation.",
+    "Native metadata can reuse normalized sqrt(_wadProduct()) / _supplyAfterProtocolMint at 18 liquidity decimals. No external ERC20 yield token exists."
+  ]
+}

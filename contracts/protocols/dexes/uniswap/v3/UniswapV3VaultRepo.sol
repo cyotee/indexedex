@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
  * @title UniswapV3VaultRepo
  * @notice One vault-owned bound-pool position for Uniswap V3 Standard Exchange vaults.
  * @dev Organic books use Crane V3 `TickMath.minUsableTick` / `maxUsableTick` as the single center.
- *      Imported books keep the NFT ticks as that center. Position keys use Uniswap V3 canonical packing:
+ *      Imported books convert to the same full-range center. Position keys use Uniswap V3 canonical packing:
  *      `keccak256(abi.encodePacked(owner, tickLower, tickUpper))`.
  */
 library UniswapV3VaultRepo {
@@ -14,18 +14,11 @@ library UniswapV3VaultRepo {
     struct Position {
         int24 tickLower;
         int24 tickUpper;
-        uint128 liquidity;
         bool created;
     }
 
     struct Storage {
         Position centerPosition;
-        uint160 lastSqrtPriceX96;
-        int24 lastTick;
-        uint32 lastTimestamp;
-        address importedPositionManager;
-        uint256 importedPositionTokenId;
-        bool importedPositionActive;
     }
 
     function _layout(bytes32 slot) internal pure returns (Storage storage layout_) {
@@ -52,29 +45,6 @@ library UniswapV3VaultRepo {
         _createPositionIfNeeded(_layout(), tickLower_, tickUpper_);
     }
 
-    /// @notice Mark the imported NFT range as the single center (ticks as-is; D34).
-    function _initializeImportedCenter(
-        Storage storage layout_,
-        address positionManager_,
-        uint256 tokenId_,
-        int24 tickLower_,
-        int24 tickUpper_
-    ) internal {
-        layout_.importedPositionManager = positionManager_;
-        layout_.importedPositionTokenId = tokenId_;
-        layout_.importedPositionActive = true;
-        layout_.centerPosition.tickLower = tickLower_;
-        layout_.centerPosition.tickUpper = tickUpper_;
-        layout_.centerPosition.created = true;
-        layout_.centerPosition.liquidity = 0;
-    }
-
-    function _initializeImportedCenter(address positionManager_, uint256 tokenId_, int24 tickLower_, int24 tickUpper_)
-        internal
-    {
-        _initializeImportedCenter(_layout(), positionManager_, tokenId_, tickLower_, tickUpper_);
-    }
-
     function _isPositionCreated(Storage storage layout_) internal view returns (bool) {
         return layout_.centerPosition.created;
     }
@@ -97,14 +67,6 @@ library UniswapV3VaultRepo {
         return _getPositionTicks(_layout());
     }
 
-    function _updatePositionLiquidity(Storage storage layout_, uint128 liquidity_) internal {
-        layout_.centerPosition.liquidity = liquidity_;
-    }
-
-    function _updatePositionLiquidity(uint128 liquidity_) internal {
-        _updatePositionLiquidity(_layout(), liquidity_);
-    }
-
     /// @dev Canonical Uniswap V3 position key (no salt).
     function _getPositionKey(address owner_, int24 tickLower_, int24 tickUpper_) internal pure returns (bytes32) {
         return keccak256(abi.encodePacked(owner_, tickLower_, tickUpper_));
@@ -113,24 +75,5 @@ library UniswapV3VaultRepo {
     function _getOwnPositionKey() internal view returns (bytes32) {
         (int24 tickLower_, int24 tickUpper_) = _getPositionTicks();
         return _getPositionKey(address(this), tickLower_, tickUpper_);
-    }
-
-    function _setPoolState(uint160 sqrtPriceX96_, int24 tick_, uint32 timestamp_) internal {
-        Storage storage layout_ = _layout();
-        layout_.lastSqrtPriceX96 = sqrtPriceX96_;
-        layout_.lastTick = tick_;
-        layout_.lastTimestamp = timestamp_;
-    }
-
-    function _importedPositionManager() internal view returns (address) {
-        return _layout().importedPositionManager;
-    }
-
-    function _importedPositionTokenId() internal view returns (uint256) {
-        return _layout().importedPositionTokenId;
-    }
-
-    function _importedPositionActive() internal view returns (bool) {
-        return _layout().importedPositionActive;
     }
 }

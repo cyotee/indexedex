@@ -1,0 +1,95 @@
+{
+  "status": "PASS_SELECTED_SUITES",
+  "group": "surfaces",
+  "provenance": {
+    "recorded_at_utc": "2026-09-09T08:41:56.327205+00:00",
+    "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+    "source_and_config_sha256": "533ada6ae25e3d23c56f260129208866fecd6de9b6d28de41a3d6fe314ee2b74",
+    "source_and_config_files": 4818,
+    "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+    "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+    "crane_tracked_contract_and_config_diff_sha256": "284fd75764cb255d1e527eef38fd51e65fca73e8ebb11b7465965e8dfeb2122c",
+    "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+    "machine": "macOS-26.6.2-x86_64-i386-64bit",
+    "architecture": "x86_64",
+    "logical_cpus": 16,
+    "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+  },
+  "started_at_utc": "2026-09-09T08:41:56.379190+00:00",
+  "test_sources": [
+    "test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface.t.sol",
+    "test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualSEBCPHook_Surface.t.sol",
+    "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_PackageDecl.t.sol",
+    "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_StagedInit.t.sol",
+    "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_Surface.t.sol",
+    "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_StagedInit.t.sol",
+    "test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_StagedInit.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_BondNftPackaging.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_FacetPackaging.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Adversarial_Surface.t.sol"
+  ],
+  "explicitly_empty_rpc_environment_keys": [
+    "ALCHEMY_KEY",
+    "INFURA_KEY"
+  ],
+  "scope": "Complete selected existing suites, including inherited tests; no reduced fuzz runs, profiles, viaIR, or artifact clearing. Final unfiltered default validation remains required.",
+  "build": {
+    "command": [
+      "forge",
+      "build",
+      "--offline",
+      "--contracts",
+      "contracts/hooks/uniswap/v4"
+    ],
+    "exit_code": 0,
+    "seconds": 188.089,
+    "log": "hermetic-remediation-surfaces-isolated-imports-build.log",
+    "log_sha256": "534f41431ec0914a956fff5233224a60aa4f7cb0bd56cb41bd215bfd9b7c10c9"
+  },
+  "expected_compiled_suites": {
+    "test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface.t.sol:UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface_Test": 14,
+    "test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualSEBCPHook_Surface.t.sol:UniswapV4DualSEBCPHook_Surface_Test": 12,
+    "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_PackageDecl.t.sol:UniswapV4StandardExchangeOrbitalBufferHook_PackageDecl_Test": 10,
+    "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_StagedInit.t.sol:UniswapV4StandardExchangeOrbitalBufferHook_StagedInit_Test": 27,
+    "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_Surface.t.sol:UniswapV4StandardExchangeOrbitalBufferHook_Surface_Test": 12,
+    "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_StagedInit.t.sol:UniswapV4StandardExchangeCurveQuadStableBufferHook_StagedInit_Test": 18,
+    "test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_StagedInit.t.sol:UniswapV4StandardExchangeWeightedBufferHook_StagedInit_Test": 27,
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_BondNftPackaging.t.sol:UniswapV4Detf_BondNftPackaging": 2,
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_FacetPackaging.t.sol:UniswapV4Detf_FacetPackaging": 10,
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Adversarial_Surface.t.sol:UniswapV4Detf_Quad_Adversarial_Surface": 4
+  },
+  "test": {
+    "command": [
+      "forge",
+      "test",
+      "--offline",
+      "--contracts",
+      "contracts/hooks/uniswap/v4",
+      "--match-contract",
+      "^(UniswapV4Detf_BondNftPackaging|UniswapV4Detf_FacetPackaging|UniswapV4Detf_Quad_Adversarial_Surface|UniswapV4DualSEBCPHook_Surface_Test|UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface_Test|UniswapV4StandardExchangeCurveQuadStableBufferHook_StagedInit_Test|UniswapV4StandardExchangeOrbitalBufferHook_PackageDecl_Test|UniswapV4StandardExchangeOrbitalBufferHook_StagedInit_Test|UniswapV4StandardExchangeOrbitalBufferHook_Surface_Test|UniswapV4StandardExchangeWeightedBufferHook_StagedInit_Test)$",
+      "-vvv"
+    ],
+    "exit_code": 0,
+    "seconds": 15.67,
+    "log": "hermetic-remediation-surfaces-isolated-imports-test.log",
+    "log_sha256": "89935b8cb39fe7a1186cc7ffcd9a6ee99f36786bd1aeb3faa0d7c377afb0d938",
+    "passed": 136,
+    "failed": 0,
+    "actual_suites": {
+      "test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface.t.sol:UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface_Test": 14,
+      "test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualSEBCPHook_Surface.t.sol:UniswapV4DualSEBCPHook_Surface_Test": 12,
+      "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_PackageDecl.t.sol:UniswapV4StandardExchangeOrbitalBufferHook_PackageDecl_Test": 10,
+      "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_Surface.t.sol:UniswapV4StandardExchangeOrbitalBufferHook_Surface_Test": 12,
+      "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_BondNftPackaging.t.sol:UniswapV4Detf_BondNftPackaging": 2,
+      "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Adversarial_Surface.t.sol:UniswapV4Detf_Quad_Adversarial_Surface": 4,
+      "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_StagedInit.t.sol:UniswapV4StandardExchangeOrbitalBufferHook_StagedInit_Test": 27,
+      "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_FacetPackaging.t.sol:UniswapV4Detf_FacetPackaging": 10,
+      "test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_StagedInit.t.sol:UniswapV4StandardExchangeWeightedBufferHook_StagedInit_Test": 27,
+      "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_StagedInit.t.sol:UniswapV4StandardExchangeCurveQuadStableBufferHook_StagedInit_Test": 18
+    },
+    "missing_or_incomplete_suites": {},
+    "validation_passed": true
+  },
+  "finished_at_utc": "2026-09-09T08:45:21.159009+00:00",
+  "sources_unchanged": true
+}

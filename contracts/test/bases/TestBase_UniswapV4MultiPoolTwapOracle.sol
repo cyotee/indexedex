@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
-import {PoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {IUnlockCallback} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/callback/IUnlockCallback.sol";
 import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
@@ -28,9 +29,7 @@ import {
 import {
     UniswapV4TwapOracleFactoryService
 } from "contracts/oracles/uniswap/v4/twap/UniswapV4TwapOracleFactoryService.sol";
-import {
-    UniswapV4TwapAdapterFactory
-} from "contracts/oracles/uniswap/v4/twap/UniswapV4TwapAdapterFactory.sol";
+import {IUniswapV4TwapAdapterFactory} from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4TwapAdapterFactory.sol";
 
 contract UniswapV4TwapPoolHarness is IUnlockCallback {
     using BalanceDeltaLibrary for BalanceDelta;
@@ -146,10 +145,10 @@ abstract contract TestBase_UniswapV4MultiPoolTwapOracle is IndexedexTest {
     uint24 internal constant DEFAULT_FEE = 3000;
     int24 internal constant DEFAULT_TICK_SPACING = 60;
 
-    PoolManager internal poolManager;
+    IPoolManager internal poolManager;
     IFacet internal twapOracleFacet;
     IUniswapV4MultiPoolTwapOracleDFPkg internal twapOraclePkg;
-    UniswapV4TwapAdapterFactory internal twapAdapterFactory;
+    IUniswapV4TwapAdapterFactory internal twapAdapterFactory;
     IUniswapV4MultiPoolTwapOracle internal twapOracle;
     UniswapV4TwapPoolHarness internal poolHarness;
     UniswapV4TwapUnlockPokeHarness internal unlockPokeHarness;
@@ -160,7 +159,11 @@ abstract contract TestBase_UniswapV4MultiPoolTwapOracle is IndexedexTest {
     function setUp() public virtual override {
         IndexedexTest.setUp();
 
-        poolManager = new PoolManager(address(this));
+        poolManager = IPoolManager(create3Factory.create3WithArgs(
+            ArtifactCreationCode.creationCode(create3Factory, "PoolManager.sol:PoolManager"),
+            abi.encode(address(this)),
+            keccak256("TestBase_UniswapV4MultiPoolTwapOracle_PoolManager")
+        ));
         vm.label(address(poolManager), "PoolManager");
 
         twapOracleFacet = create3Factory.deployUniswapV4MultiPoolTwapOracleFacet();

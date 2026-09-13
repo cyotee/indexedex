@@ -1,19 +1,13 @@
 ---
 name: indexedex-product-voice
-description: >
-  Project voice law for IndexedEx / DETF customer-facing copy (UI, research notes,
-  marketing site, X posts). Use when writing or editing landing pages, product UI
-  strings, Protocol DETF copy, research education, disclaimers, CTAs, or when
-  copywriting/copy-editing skills would otherwise inject marketing jargon.
-  Triggers: product voice, UI copy, landing copy, Protocol DETF wording, ban jargon,
-  plain language DeFi, customer-facing text, rewrite marketing speak, DETF narrative.
+description: "Write or edit IndexedEx/DETF customer-facing UI, education and marketing copy using the project voice rules."
 ---
 
 # IndexedEx product voice
 
 **Read first:** `docs/marketing/DETF_NARRATIVE_SPINE.md` and, if present, `.agents/product-marketing.md`.
 
-This skill **overrides** generic marketing skills on **product hierarchy, names, threshold modes, honesty, and banned jargon**. Use `copywriting` / `copy-editing` for structure and clarity, then run this checklist before shipping copy.
+This skill **overrides** generic marketing skills on **product hierarchy, names, price routes, funded staking, honesty, and banned jargon**. Use `copywriting` / `copy-editing` for structure and clarity, then run this checklist before shipping copy.
 
 ---
 
@@ -30,7 +24,7 @@ This skill **overrides** generic marketing skills on **product hierarchy, names,
 
 **$RICH (landing fee story):** $RICH is the named token for app fees. Customer copy: **all protocol / app fees go to buying back $RICH**, including the **pons family** launch for $RICH. Point people to **buy $RICH** as the long-term way to take part when the product is used. Do not promise profit, APY, or a higher price from buybacks. Keep create-your-own DETFs as the premier product; $RICH is the fee-buyback path, not a second DETF brand.
 
-**Creator bond:** Creating a DETF issues an **unredeemable bond** to the creator. It collects a **portion of DETF minted to bond holders** (the mint/bond split, and on Policy, regular supply expansion). Same pattern as the protocol's own unredeemable bond (internally `feeTo()` / protocol NFT). Do **not** say seigniorage. Do **not** imply the creator can redeem principal. Amounts are not guaranteed.
+**Creator rights:** The creator's role NFT has no redeemable principal. It receives a portion of funded rewards as **sDETF**. Those receipts are freely transferable and can be unstaked for an equal amount of DETF. The standing right can receive more sDETF after earlier receipts have all been redeemed. The fee recipient follows the same pattern. Purchased user bonds instead have funded principal that vests linearly, plus staking rewards claimable during vesting. Do not call the creator's sDETF unredeemable or promise reward amounts.
 
 **Never** put deploy package or family type names in customer UI titles:
 
@@ -39,20 +33,16 @@ This skill **overrides** generic marketing skills on **product hierarchy, names,
 
 ---
 
-## Threshold modes (mandatory)
+## Price routes and staking (mandatory)
 
-| Mode | Customer meaning |
-|------|------------------|
-| **Policy** (default) | Primary mint/burn **restricted by synthetic price** (deadband; defaults often ±5%). |
-| **Open** | **No price restrictions** on primary mint/burn — users can mint and burn regardless of synthetic price. |
+The owner-approved `DETF_ALIGNMENT_PRD.md` D32–D55 / §24 supersedes the older Policy/Open and LP-backed claim story.
 
-**Do not write:**
-
-- “Open gates always pass” / “Open collapses the deadband after live” (sounds like price still decides)
-- “0 thresholds = Open”
-- Extreme Policy (`mint=1`) as “open thresholds”
-
-**May still say:** fees can apply; modes do not guarantee peg or returns.
+- All new DETFs have mandatory primary price gates. Failed price conditions select the reserve swap on the same supported route; do not call it blocked solely for price. Liquidity and minimum output still apply.
+- Do not offer Open mode or infer it from zero thresholds.
+- Stake DETF for an equal number of sDETF; unstake sDETF for held DETF one-for-one in token units. Funded rewards may increase sDETF balances; this is not a promise about market value.
+- A bond buys discounted DETF, funded and staked at purchase. Principal vests linearly and rewards are claimable while vesting. Both pay sDETF. Remove mature-only NFT-sale and LP-claim instructions.
+- Issuance rewards are immediate. Only automatic expansion uses eight-hour periods from the first bond, with completed idle periods settled in one update.
+- This is the target design for the refactor. Verify deployed capabilities before presenting them as live, including any Pendle market.
 
 ---
 
@@ -70,7 +60,7 @@ Target **grade 8**. Short sentences. One idea each. Everyday words first.
 | seigniorage / synthetic / residual | do not use |
 | composition / immutable | shape / stays put |
 
-Keep product names: DETF, bond, mint, burn, Policy, Open, vault share, Protocol DETF. Define DETF on first use. Define bond, mint, and burn with a plain verb the first time they appear on a page.
+Keep product names: DETF, bond, mint, burn, stake, unstake, sDETF, vault share, Protocol DETF. Define DETF on first use. Define bond, mint, and burn with a plain verb the first time they appear on a page.
 
 ## Voice
 
@@ -96,7 +86,7 @@ Do **not** use these as labels users see (internal CSS class names are fine):
 | Lab log / experiment · ready | omit, or “how mint and burn work” |
 | Unlock / seamless / supercharge / empower | concrete outcome |
 | Streamline / optimize / innovative / cutting-edge | delete or be specific |
-| Tokenomics experiment (as hype) | explain Policy vs Open plainly |
+| Tokenomics experiment (as hype) | explain the quoted route and funded staking plainly |
 | Fee-accrual DETF | **Protocol DETF** |
 | Deploy package as display name | Protocol DETF + symbol, or “DETF” + type description in plain words |
 
@@ -121,7 +111,7 @@ Also avoid: Learn More, Get Started, Submit (use **Open {symbol}**, **Bond**, **
 1. Load spine + this skill.  
 2. Optional: `copywriting` for structure (then **strip** banned words).  
 3. Optional: `copy-editing` pass.  
-4. Final gate: hierarchy (create DETFs > Protocol DETF fee share), product names, Open/Policy truth, banned list, no invented APY.
+4. Final gate: hierarchy (create DETFs > Protocol DETF fee share), product names, primary/swap and staking accuracy, banned list, no invented APY.
 
 ---
 
@@ -131,7 +121,8 @@ Also avoid: Learn More, Get Started, Submit (use **Open {symbol}**, **Bond**, **
 - [ ] Premier story is **create your own DETFs** (many types), not Protocol DETF alone  
 - [ ] Protocol DETF is **protocol fees path** — not “separate product”  
 - [ ] No deploy-package strings in UI titles  
-- [ ] Open = no price restrictions (not “soft gate”)  
+- [ ] Price gate selects primary issuance/redemption or a pool swap; no Open option
+- [ ] sDETF receipts are funded and unstakable; bond principal vests linearly  
 - [ ] No hero / workspace / surface marketing chrome  
 - [ ] Disclaimers present where claims could be misread  
 - [ ] CTAs name the real next action  

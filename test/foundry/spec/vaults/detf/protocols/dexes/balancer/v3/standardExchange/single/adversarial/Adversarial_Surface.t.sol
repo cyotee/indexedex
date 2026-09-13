@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IDETFFundedRewards} from "contracts/interfaces/IStakedDETF.sol";
+import {IDETFStandardizedYield, IDETFStakingPreview} from "contracts/interfaces/IDETFStandardizedYield.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
@@ -9,11 +12,13 @@ import {
     TestBase_SingleStandardExchangeDETF_Adversarial
 } from "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/adversarial/TestBase_SingleStandardExchangeDETF_Adversarial.sol";
 import {
-    ISingleStandardExchangeDETFBonding
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFBondingTarget.sol";
+    ILegacySingleStandardExchangeDETFBonding as ISingleStandardExchangeDETFBonding
+} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF.sol";
+import {ISingleStandardExchangeDETFBonding as ISingleStandardExchangeDETFBondingSelectorSource} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFBonding.sol";
 import {
-    ISingleStandardExchangeDETFInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFInfoTarget.sol";
+    ILegacySingleStandardExchangeDETFInfo as ISingleStandardExchangeDETFInfo
+} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF.sol";
+import {ISingleStandardExchangeDETFInfo as ISingleStandardExchangeDETFInfoSelectorSource} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFInfo.sol";
 import {
     SingleStandardExchangeDETFRepo
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFRepo.sol";
@@ -23,42 +28,35 @@ import {
 contract Adversarial_SingleSE_Surface_Test is TestBase_SingleStandardExchangeDETF_Adversarial {
     /// @dev Target-derived control set: money + info + bonding selectors (not incomplete Facet copy).
     function _controlSelectors() internal pure returns (bytes4[] memory sels_) {
-        sels_ = new bytes4[](35);
+        sels_ = new bytes4[](28);
         sels_[0] = IStandardExchangeIn.exchangeIn.selector;
         sels_[1] = IStandardExchangeIn.previewExchangeIn.selector;
-        sels_[2] = ISingleStandardExchangeDETFBonding.bond.selector;
-        sels_[3] = ISingleStandardExchangeDETFBonding.sellPositionToDetfNft.selector;
-        sels_[4] = ISingleStandardExchangeDETFInfo.isReserveLive.selector;
-        sels_[5] = ISingleStandardExchangeDETFInfo.standardExchangeVault.selector;
-        sels_[6] = ISingleStandardExchangeDETFInfo.standardExchangeVaultShare.selector;
-        sels_[7] = ISingleStandardExchangeDETFInfo.rateTarget.selector;
-        sels_[8] = ISingleStandardExchangeDETFInfo.reservePool.selector;
-        sels_[9] = ISingleStandardExchangeDETFInfo.syntheticPrice.selector;
-        sels_[10] = ISingleStandardExchangeDETFInfo.mintThreshold.selector;
-        sels_[11] = ISingleStandardExchangeDETFInfo.burnThreshold.selector;
-        sels_[12] = ISingleStandardExchangeDETFInfo.thresholdMode.selector;
-        sels_[13] = ISingleStandardExchangeDETFInfo.isMintingAllowed.selector;
-        sels_[14] = ISingleStandardExchangeDETFInfo.isBurningAllowed.selector;
-        sels_[15] = ISingleStandardExchangeDETFInfo.bondNftVault.selector;
-        sels_[16] = ISingleStandardExchangeDETFInfo.compoundProtocolRewards.selector;
-        sels_[17] = ISingleStandardExchangeDETFInfo.lastExpansionTimestamp.selector;
-        sels_[18] = ISingleStandardExchangeDETFInfo.expansionClosureRatePerSecond.selector;
-        sels_[19] = ISingleStandardExchangeDETFInfo.expansionCatchUpMaxSeconds.selector;
-        sels_[20] = ISingleStandardExchangeDETFInfo.expansionCatchUpCapBps.selector;
-        sels_[21] = ISingleStandardExchangeDETFInfo.rebasingClaimToken.selector;
-        sels_[22] = ISingleStandardExchangeDETFBonding.acceptedBondTokens.selector;
-        sels_[23] = ISingleStandardExchangeDETFBonding.buyClaim.selector;
-        sels_[24] = ISingleStandardExchangeDETFBonding.previewBuyClaim.selector;
-        sels_[25] = ISingleStandardExchangeDETFBonding.closeBondMature.selector;
-        sels_[26] = ISingleStandardExchangeDETFBonding.previewCloseBondMature.selector;
-        sels_[27] = ISingleStandardExchangeDETFBonding.redeemClaim.selector;
-        sels_[28] = ISingleStandardExchangeDETFBonding.previewRedeemClaim.selector;
-        sels_[29] = ISingleStandardExchangeDETFBonding.claimLiquidity.selector;
-        sels_[30] = ISingleStandardExchangeDETFBonding.protocolBondOriginalShares.selector;
-        sels_[31] = ISingleStandardExchangeDETFBonding.joinDonatedCapital.selector;
-        sels_[32] = ISingleStandardExchangeDETFBonding.previewJoinDonatedCapital.selector;
-        sels_[33] = ISingleStandardExchangeDETFBonding.notifyReserveDonated.selector;
-        sels_[34] = ISingleStandardExchangeDETFBonding.donate.selector;
+        sels_[2] = ISingleStandardExchangeDETFBondingSelectorSource.bond.selector;
+        sels_[3] = ISingleStandardExchangeDETFBondingSelectorSource.previewBond.selector;
+        sels_[4] = ISingleStandardExchangeDETFBondingSelectorSource.acceptedBondTokens.selector;
+        sels_[5] = ISingleStandardExchangeDETFBondingSelectorSource.joinDonatedCapital.selector;
+        sels_[6] = ISingleStandardExchangeDETFBondingSelectorSource.notifyReserveDonated.selector;
+        sels_[7] = ISingleStandardExchangeDETFBondingSelectorSource.donate.selector;
+        sels_[8] = ISingleStandardExchangeDETFInfoSelectorSource.isReserveLive.selector;
+        sels_[9] = ISingleStandardExchangeDETFInfoSelectorSource.standardExchangeVault.selector;
+        sels_[10] = ISingleStandardExchangeDETFInfoSelectorSource.standardExchangeVaultShare.selector;
+        sels_[11] = ISingleStandardExchangeDETFInfoSelectorSource.rateTarget.selector;
+        sels_[12] = ISingleStandardExchangeDETFInfoSelectorSource.reservePool.selector;
+        sels_[13] = ISingleStandardExchangeDETFInfoSelectorSource.syntheticPrice.selector;
+        sels_[14] = ISingleStandardExchangeDETFInfoSelectorSource.mintThreshold.selector;
+        sels_[15] = ISingleStandardExchangeDETFInfoSelectorSource.burnThreshold.selector;
+        sels_[16] = ISingleStandardExchangeDETFInfoSelectorSource.isMintingAllowed.selector;
+        sels_[17] = ISingleStandardExchangeDETFInfoSelectorSource.isBurningAllowed.selector;
+        sels_[18] = ISingleStandardExchangeDETFInfoSelectorSource.bondNftVault.selector;
+        sels_[19] = ISingleStandardExchangeDETFInfoSelectorSource.rebasingClaimToken.selector;
+        sels_[20] = ISingleStandardExchangeDETFInfoSelectorSource.lastExpansionTimestamp.selector;
+        sels_[21] = ISingleStandardExchangeDETFInfoSelectorSource.epochAnchor.selector;
+        sels_[22] = ISingleStandardExchangeDETFInfoSelectorSource.expansionClosureRatePerSecond.selector;
+        sels_[23] = ISingleStandardExchangeDETFInfoSelectorSource.pendingExpansionDetf.selector;
+        sels_[24] = IDETFFundedRewards.synchronizeRewards.selector;
+        sels_[25] = IDETFStandardizedYield.rawSY.selector;
+        sels_[26] = IDETFStandardizedYield.stakingSY.selector;
+        sels_[27] = IDETFStakingPreview.previewStakingGonsPerUnit.selector;
     }
 
     function _facetFuncsContains(bytes4[] memory funcs_, bytes4 sel_) internal pure returns (bool) {
@@ -69,24 +67,18 @@ contract Adversarial_SingleSE_Surface_Test is TestBase_SingleStandardExchangeDET
     }
 
     /// @notice J1: Target/product API selectors ⊆ Facet.facetFuncs().
-    function test_J1_facetFuncs_coversTargetApi() public {
-        // CREATE3 facet address from TestBase (not `new`); structural read of declaration only.
-        IFacet facet_ = singleStandardExchangeDetfExchangeInFacet;
-        bytes4[] memory funcs_ = facet_.facetFuncs();
-        assertTrue(funcs_.length >= 35, "facetFuncs length");
-
+    function test_J1_facetFuncs_coversTargetApi() public view {
+        bytes4[] memory exchange_ = singleStandardExchangeDetfExchangeInFacet.facetFuncs();
+        bytes4[] memory bonding_ = singleStandardExchangeDetfBondingFacet.facetFuncs();
         bytes4[] memory controls_ = _controlSelectors();
-        for (uint256 i; i < controls_.length; ++i) {
+        for (uint256 i_; i_ < controls_.length; ++i_) {
             assertTrue(
-                _facetFuncsContains(funcs_, controls_[i]),
-                string.concat("J1 missing selector idx ", vm.toString(i))
+                _facetFuncsContains(exchange_, controls_[i_]) || _facetFuncsContains(bonding_, controls_[i_]),
+                "current product selector declared"
             );
         }
-        // Atomic compound helper is Facet-only (not on ISingleStandardExchangeDETFInfo).
-        assertTrue(
-            _facetFuncsContains(funcs_, bytes4(keccak256("compoundProtocolRewardsAtomic()"))),
-            "J1 atomic compound"
-        );
+        assertFalse(_facetFuncsContains(bonding_, ISingleStandardExchangeDETFBonding.sellPositionToDetfNft.selector));
+        assertFalse(_facetFuncsContains(bonding_, ISingleStandardExchangeDETFInfo.thresholdMode.selector));
     }
 
     /// @notice J2: loupe facetAddress(sel) != 0 for all product controls on production proxy.
@@ -106,8 +98,7 @@ contract Adversarial_SingleSE_Surface_Test is TestBase_SingleStandardExchangeDET
     function test_J3_proxyCallable_smoke_eachSelector() public {
         address instance_ = _openLiveOpenThreshold();
         // Prove we are not calling facet impl: loupe maps exchangeIn to a non-zero facet.
-        address exchangeFacet_ =
-            IDiamondLoupe(instance_).facetAddress(IStandardExchangeIn.exchangeIn.selector);
+        address exchangeFacet_ = IDiamondLoupe(instance_).facetAddress(IStandardExchangeIn.exchangeIn.selector);
         assertTrue(exchangeFacet_ != address(0) && exchangeFacet_ != instance_, "proxy cut");
 
         // --- Views on proxy ---
@@ -120,13 +111,10 @@ contract Adversarial_SingleSE_Surface_Test is TestBase_SingleStandardExchangeDET
         ISingleStandardExchangeDETFInfo(instance_).syntheticPrice();
         ISingleStandardExchangeDETFInfo(instance_).mintThreshold();
         ISingleStandardExchangeDETFInfo(instance_).burnThreshold();
-        ISingleStandardExchangeDETFInfo(instance_).thresholdMode();
         ISingleStandardExchangeDETFInfo(instance_).isMintingAllowed();
         ISingleStandardExchangeDETFInfo(instance_).isBurningAllowed();
         ISingleStandardExchangeDETFInfo(instance_).lastExpansionTimestamp();
         ISingleStandardExchangeDETFInfo(instance_).expansionClosureRatePerSecond();
-        ISingleStandardExchangeDETFInfo(instance_).expansionCatchUpMaxSeconds();
-        ISingleStandardExchangeDETFInfo(instance_).expansionCatchUpCapBps();
 
         // preview on proxy (no state)
         IStandardExchangeIn(instance_).previewExchangeIn(seShare, 1e18, IERC20(instance_));
@@ -134,37 +122,20 @@ contract Adversarial_SingleSE_Surface_Test is TestBase_SingleStandardExchangeDET
         // Money path: ZeroAmount proves selector is live on proxy (exact product error).
         vm.prank(attacker);
         vm.expectRevert(SingleStandardExchangeDETFRepo.ZeroAmount.selector);
-        IStandardExchangeIn(instance_).exchangeIn(
-            seShare, 0, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours
-        );
+        IStandardExchangeIn(instance_)
+            .exchangeIn(seShare, 0, IERC20(instance_), 0, attacker, false, block.timestamp + 1 hours);
 
         vm.prank(attacker);
         vm.expectRevert(SingleStandardExchangeDETFRepo.ZeroAmount.selector);
-        ISingleStandardExchangeDETFBonding(instance_).bond(
-            seShare, 0, DEFAULT_MIN_LOCK, attacker, false, block.timestamp + 1 hours
-        );
+        ISingleStandardExchangeDETFBonding(instance_)
+            .bond(seShare, 0, DEFAULT_MIN_LOCK, attacker, false, block.timestamp + 1 hours);
 
-        // sellPosition: product revert (not missing selector) — non-owner / invalid id.
-        vm.prank(attacker);
-        vm.expectRevert();
-        ISingleStandardExchangeDETFBonding(instance_).sellPositionToDetfNft(1, 0, attacker);
-
-        vm.prank(attacker);
-        vm.expectRevert(SingleStandardExchangeDETFRepo.ZeroAmount.selector);
-        ISingleStandardExchangeDETFBonding(instance_).buyClaim(
-            0, 0, attacker, false, block.timestamp + 1 hours
-        );
-
-        vm.prank(attacker);
-        vm.expectRevert(abi.encodeWithSelector(SingleStandardExchangeDETFRepo.NotAuthorized.selector, attacker));
-        ISingleStandardExchangeDETFBonding(instance_).claimLiquidity(1e18, attacker);
-
-        ISingleStandardExchangeDETFInfo(instance_).rebasingClaimToken();
-        ISingleStandardExchangeDETFBonding(instance_).acceptedBondTokens();
-        ISingleStandardExchangeDETFBonding(instance_).protocolBondOriginalShares();
-
-        // compound: permissionless best-effort; must not be "function does not exist".
-        ISingleStandardExchangeDETFInfo(instance_).compoundProtocolRewards();
+        ISingleStandardExchangeDETFInfoSelectorSource(instance_).rebasingClaimToken();
+        ISingleStandardExchangeDETFBondingSelectorSource(instance_).acceptedBondTokens();
+        IDETFFundedRewards(instance_).synchronizeRewards();
+        assertTrue(IDETFStandardizedYield(instance_).rawSY() != address(0));
+        assertTrue(IDETFStandardizedYield(instance_).stakingSY() != address(0));
+        assertGt(IDETFStakingPreview(instance_).previewStakingGonsPerUnit(IERC20(instance_), 0), 0);
 
         // Explicit anti-theater: do not smoke-call facet implementation address as primary SUT.
         // (Calling impl without diamond context would mis-attribute storage; J3 is proxy-only.)

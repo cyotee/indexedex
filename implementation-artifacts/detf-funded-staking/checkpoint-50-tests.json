@@ -1,0 +1,15 @@
+{
+  "status": "partial implementation; broader family and full-suite verification pending",
+  "branch": "codex/detf-funded-staking-implementation",
+  "baseline_commit": "e08b415733e729471779dcb8102529631330ea16",
+  "suite": "test/foundry/spec/vaults/detf/common/DETFFundedStakingSuite.t.sol",
+  "passed": 50,
+  "failed": 0,
+  "skipped": 0,
+  "build_wall_seconds": 108.139,
+  "warm_test_wall_seconds": 8.711,
+  "fuzz_runs": 16,
+  "via_ir": false,
+  "coverage": ["shared staking math", "issuance splits", "epoch math", "bond metadata", "V4 CP funded staking and bond lifecycle", "raw and staking SY round trips"],
+  "remaining": ["V4 fallback and wider integration coverage", "other V4 reserve bindings", "four Balancer family migrations", "SY for existing SE vaults", "caller and ABI migrations", "complete storage and selector cleanup", "test consolidation and full-suite performance comparison"]
+}

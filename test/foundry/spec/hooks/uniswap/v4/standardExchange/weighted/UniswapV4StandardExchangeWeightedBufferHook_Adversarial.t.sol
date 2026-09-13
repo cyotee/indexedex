@@ -34,6 +34,27 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Adversarial is
 {
     address internal attacker;
 
+    function test_retained_buffered_inventory_is_not_new_funding() public {
+        _firstMintEqual(1000 ether);
+        uint256 retained = 1e12;
+        token0.mint(hook, retained);
+        _swapExactIn(address(token1), address(token0), 1 ether);
+        assertEq(token0.balanceOf(hook), retained, "recorded pair-native inventory");
+        assertGt(weighted.previewSwapExactIn(address(token0), address(token1), retained), 0);
+        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, retained, 0));
+        IStandardExchangeIn(hook).exchangeIn(
+            IERC20(address(token0)), retained, IERC20(address(token1)), 0, attacker, true, block.timestamp
+        );
+        uint256 quote = weighted.previewSwapExactIn(address(token0), address(token1), 1 ether);
+        vm.startPrank(user);
+        token0.transfer(hook, 1 ether);
+        assertEq(IStandardExchangeIn(hook).exchangeIn(
+            IERC20(address(token0)), 1 ether, IERC20(address(token1)), quote, user, true, block.timestamp
+        ), quote);
+        vm.stopPrank();
+        assertEq(token0.balanceOf(hook), retained, "fresh funding cannot consume retained inventory");
+    }
+
     function setUp() public virtual override {
         super.setUp();
         attacker = makeAddr("attacker");

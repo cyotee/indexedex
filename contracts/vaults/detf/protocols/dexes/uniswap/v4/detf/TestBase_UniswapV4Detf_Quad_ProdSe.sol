@@ -1,11 +1,16 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
+
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
+import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
-import {PoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
 import {IUniswapV3Factory} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Factory.sol";
 import {IUniswapV3Pool} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Pool.sol";
@@ -29,6 +34,7 @@ import {
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
 import {TestBase_UniswapV4Detf_Quad} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad.sol";
+import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 import {
     UniswapV4DetfProductionSeDeployLib as SeLib
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol";
@@ -62,7 +68,11 @@ abstract contract TestBase_UniswapV4Detf_Quad_ProdSe is TestBase_UniswapV4Detf_Q
 
         pair0 = new SimpleMintableERC20("Pair0", "P0");
         pairToken = pair0;
-        pm = IPoolManager(address(new PoolManager(address(this))));
+        pm = IPoolManager(address(IPoolManager(create3Factory.create3WithArgs(
+            ArtifactCreationCode.creationCode(create3Factory, "PoolManager.sol:PoolManager"),
+            abi.encode(address(this)),
+            keccak256("TestBase_UniswapV4Detf_Quad_ProdSe_PoolManager")
+        ))));
 
         _deployProductionSes();
 
@@ -85,6 +95,9 @@ abstract contract TestBase_UniswapV4Detf_Quad_ProdSe is TestBase_UniswapV4Detf_Q
         se2 = hookSe2;
 
         _fundAndApprove();
+        SeLib.activatePositionVault(hookSe0, hookPair0, detfUser, address(weth));
+        SeLib.activatePositionVault(hookSe1, hookPair1, detfUser, address(weth));
+        SeLib.activatePositionVault(hookSe2, hookPair2, detfUser, address(weth));
     }
 
     function _deployProductionSes() internal virtual;
@@ -256,7 +269,6 @@ abstract contract TestBase_UniswapV4Detf_Quad_ProdSe is TestBase_UniswapV4Detf_Q
         returns (address detf_)
     {
         address predicted_ = _predictDetf(args);
-        vm.etch(predicted_, address(pair0).code);
         address[4] memory toks;
         toks[0] = predicted_;
         toks[1] = hookPair0;
@@ -278,8 +290,10 @@ abstract contract TestBase_UniswapV4Detf_Quad_ProdSe is TestBase_UniswapV4Detf_Q
                 tokens: toks,
                 standardExchanges: ses,
                 rateProviders: rps,
+                tokenDecimals: HookPkgArgsDecimalsLib.tokenDecimals4(toks, predicted_),
+                seDecimals: HookPkgArgsDecimalsLib.seDecimals4(ses),
                 baseAmp: QUAD_BASE_AMP,
-                ownerOnlyLiquidity: true,
+                ownerOnlyLiquidity: args.ownerOnlyLiquidity,
                 owner: predicted_
             });
         uint256 mineNonce = QuadFactory.findMineNonce(hookFactory, quadHookPkg, hArgs);
@@ -292,7 +306,6 @@ abstract contract TestBase_UniswapV4Detf_Quad_ProdSe is TestBase_UniswapV4Detf_Q
         init.deployPair(toks[1], toks[3]);
         init.deployPair(toks[2], toks[3]);
         require(init.finalizeInitialization(), "finalize");
-        vm.etch(predicted_, "");
         args.hook = reserveHook;
         vm.startPrank(owner);
         detf_ = detfPkg.deployVault(args);
@@ -352,7 +365,7 @@ abstract contract TestBase_UniswapV4Detf_Quad_ProdSe is TestBase_UniswapV4Detf_Q
             address se_ = IUniswapV4SeBufferHook(hook_).standardExchangeOf(toks[i]);
             if (se_ != address(0) && IERC20(se_).balanceOf(detf) > 0) needSweep = true;
         }
-        if (needSweep) detfInfo.sweepDust();
+        if (needSweep) detfInfo.sweepDust{gas: 30_000_000}();
         assertEq(IERC20(hook_).balanceOf(detf), 0, "R19 hook LP");
         for (uint256 i; i < toks.length; ++i) {
             uint256 bal = IERC20(toks[i]).balanceOf(detf);
@@ -403,4 +416,36 @@ abstract contract TestBase_UniswapV4Detf_Quad_ProdSe is TestBase_UniswapV4Detf_Q
             }
         }
     }
+    function _assertClaimAfterMatureClose() internal {
+        (uint256 bondId,) = _firstBond(100 ether);
+        vm.startPrank(detfUser);
+        uint256 minted = detfExchangeIn.exchangeIn{gas: 30_000_000}(
+            IERC20(mintToken), 10 ether, IERC20(detf), 0, detfUser, false, block.timestamp + 1 hours
+        );
+        IERC20(detf).approve(detf, minted / 4);
+        detfExchangeIn.exchangeIn{gas: 30_000_000}(
+            IERC20(detf), minted / 4, IERC20(mintToken), 0, detfUser, false, block.timestamp + 1 hours
+        );
+        vm.stopPrank();
+        _assertFundedMatureClaim(detf, bondId, detfUser);
+        IStakedDETF staking_ = IStakedDETF(detfInfo.rebasingClaimToken());
+        address feeTo_ = address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo());
+        uint256 feeBefore_ = staking_.balanceOf(feeTo_);
+        uint256 lpBefore_ = IERC20(reserveHook).balanceOf(detfInfo.bondNftVault());
+        uint256 amount_ = IERC20(detf).balanceOf(detfUser) / 3;
+        uint256 quote_ = staking_.previewExchangeIn(IERC20(detf), amount_, IERC20(address(staking_)));
+        assertEq(quote_, amount_, "funded stake quote after mature claim");
+        vm.startPrank(detfUser);
+        IERC20(detf).approve(address(staking_), amount_);
+        uint256 received_ = staking_.exchangeIn{gas: 30_000_000}(
+            IERC20(detf), amount_, IERC20(address(staking_)), quote_, detfUser, false, block.timestamp + 1 hours
+        );
+        vm.stopPrank();
+        assertEq(received_, quote_, "stake preview equals execution");
+        _assertFundedUnstake(detf, detfUser, received_ / 2);
+        assertEq(staking_.balanceOf(feeTo_), feeBefore_, "fee receipts remain funded for their owner");
+        assertEq(IERC20(reserveHook).balanceOf(detfInfo.bondNftVault()), lpBefore_, "staking does not liquidate reserve LP");
+        _assertSeAllowancesZero();
+    }
+
 }

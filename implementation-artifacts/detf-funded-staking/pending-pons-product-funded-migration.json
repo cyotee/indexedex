@@ -1,0 +1,20 @@
+{
+  "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+  "files": [
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+      "before": "090a73d7ac2f65b5ffd6f22cc15d488fd1ec0a84319b5020ca742a107690bf46",
+      "after": "fe65ebf5acdc59d725ae9eeaa52d7311369df9eb7603889810711d803fb79dab"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+      "before": "434c3d5b66ab694db4825b3a74788ff54c2727dadd69de8d891bc8eede5126a0",
+      "after": "016e63e57a1c5a20218356fa1f431749d5f816179af62c1cfe0fa6b219966fd1"
+    }
+  ],
+  "mapping": "Pons pre-maturity sale rejection replaced by half-duration principal claim retaining independent rewards; old mature sale replaced by funded payout/NFT retirement/custody conservation; locked staking rewards paid as sDETF; standard one-to-one unstake; duplicate D15 paid-DETF test consolidated into D15_8 and D15_1; old compound/Open replaced by shared immediate funding and mandatory-premium policy assertions.",
+  "historical_preparation_status": "prepared; Solidity unchanged",
+  "application_record": "pons-product-funded-migration.json",
+  "current_status_source": "current-implementation-queue.json and acceptance-progress.json; later edits and validation can supersede the original application hashes.",
+  "pending_owner_approval": false
+}

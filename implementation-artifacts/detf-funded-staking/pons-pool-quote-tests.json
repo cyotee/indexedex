@@ -1,0 +1,16 @@
+{
+  "status": "applied; validation pending",
+  "files": [
+    {
+      "path": "test/foundry/spec/protocols/dexes/uniswap/v4/pons/UniswapV4StandardExchange_PonsV2Pool.t.sol",
+      "before": "1c404190357c1f3b6868057593e651e26cb938ca709b046d1dfc55083539a9f6",
+      "after": "0b08a2022fc9e62baa10cc97713e13d00f5dce83724bad794c9f1af58ba0dc79"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/uniswap/v4/pons/decimals/UniswapV4StandardExchange_PonsV2Pool_Decimals.sol",
+      "before": "85eec5d6b398852d1a6caa9dd0e06bf9c7ba3c4d50461b70d6f49ecdbd01d7ca",
+      "after": "aaa1ee9b43fe23376c79c58969e00c0289ca88b1a28e5ff47e6ec33525b24ef0"
+    }
+  ],
+  "coverage": "Retain T10.1-T10.7 in all three actual Pons SE fixtures; fund required two-token activation; use native output units; shared exact-input/output and rollback assertions on both directions; native quote fixtures add nonzero creator tax and all fixtures verify frozen fee terms after changing future-launch policy."
+}

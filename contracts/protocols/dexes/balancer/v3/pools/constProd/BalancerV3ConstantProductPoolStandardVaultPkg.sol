@@ -1,6 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 pragma solidity ^0.8.0;
 
+import {IBalancerV3ConstantProductPoolStandardVaultPkg} from "contracts/protocols/dexes/balancer/v3/pools/constProd/IBalancerV3ConstantProductPoolStandardVaultPkg.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+
+
 /* -------------------------------------------------------------------------- */
 /*                                 Balancer V3                                */
 /* -------------------------------------------------------------------------- */
@@ -89,32 +95,7 @@ import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
 
-interface IBalancerV3ConstantProductPoolStandardVaultPkg is IDiamondFactoryPackage, IStandardVaultPkg {
-    struct PkgInit {
-        IFacet basicVaultFacet;
-        IFacet standardVaultFacet;
-        IFacet balancerV3VaultAwareFacet;
-        IFacet betterBalancerV3PoolTokenFacet;
-        IFacet defaultPoolInfoFacet;
-        IFacet standardSwapFeePercentageBoundsFacet;
-        IFacet unbalancedLiquidityInvariantRatioBoundsFacet;
-        IFacet balancerV3AuthenticationFacet;
-        IFacet balancerV3ConstProdPoolFacet;
-        IVaultRegistryDeployment vaultRegistry;
-        IVaultFeeOracleQuery vaultFeeOracle;
-        IVault balancerV3Vault;
-        IDiamondPackageCallBackFactory diamondFactory;
-    }
 
-    struct PkgArgs {
-        TokenConfig[] tokenConfigs;
-        address hooksContract;
-    }
-
-    function constantProductMarkerFunction() external pure returns (bool);
-
-    function deployVault(TokenConfig[] calldata tokenConfigs, address hooksContract) external returns (address vault);
-}
 
 contract BalancerV3ConstantProductPoolStandardVaultPkg is
     BalancerV3BasePoolFactory,
@@ -216,7 +197,7 @@ contract BalancerV3ConstantProductPoolStandardVaultPkg is
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](13);
+        interfaces = new bytes4[](16);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20Metadata).interfaceId ^ type(IERC20).interfaceId;
@@ -230,6 +211,9 @@ contract BalancerV3ConstantProductPoolStandardVaultPkg is
         interfaces[10] = type(ISwapFeePercentageBounds).interfaceId;
         interfaces[11] = type(IUnbalancedLiquidityInvariantRatioBounds).interfaceId;
         interfaces[12] = type(IBalancerPoolToken).interfaceId;
+        interfaces[13] = type(IStandardExchangeIn).interfaceId;
+        interfaces[14] = type(IStandardExchangeOut).interfaceId;
+        interfaces[15] = type(IStandardizedYield).interfaceId;
         return interfaces;
     }
 

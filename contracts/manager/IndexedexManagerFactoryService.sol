@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                   Foundry                                  */
@@ -21,18 +22,7 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 // import {DeployedAddressesRepo} from "@crane/contracts/script/DeployedAddressesRepo.sol";
 // import {AddressSet, AddressSetRepo} from "@crane/contracts/utils/collections/sets/AddressSetRepo.sol";
 
-import {VaultFeeOracleQueryFacet} from "contracts/oracles/fee/VaultFeeOracleQueryFacet.sol";
-import {VaultFeeOracleManagerFacet} from "contracts/oracles/fee/VaultFeeOracleManagerFacet.sol";
-import {VaultRegistryDeploymentFacet} from "contracts/registries/vault/VaultRegistryDeploymentFacet.sol";
-import {VaultRegistryVaultManagerFacet} from "contracts/registries/vault/VaultRegistryVaultManagerFacet.sol";
-import {
-    VaultRegistryVaultPackageManagerFacet
-} from "contracts/registries/vault/VaultRegistryVaultPackageManagerFacet.sol";
-import {VaultRegistryVaultPackageQueryFacet} from "contracts/registries/vault/VaultRegistryVaultPackageQueryFacet.sol";
-import {VaultRegistryVaultQueryFacet} from "contracts/registries/vault/VaultRegistryVaultQueryFacet.sol";
-import {VaultRegistryDisableQueryFacet} from "contracts/registries/vault/VaultRegistryDisableQueryFacet.sol";
-import {VaultRegistryDisableManagerFacet} from "contracts/registries/vault/VaultRegistryDisableManagerFacet.sol";
-import {IIndexedexManagerDFPkg, IndexedexManagerDFPkg} from "contracts/manager/IndexedexManagerDFPkg.sol";
+import {IIndexedexManagerDFPkg} from "contracts/manager/IIndexedexManagerDFPkg.sol";
 
 library IndexedexManagerFactoryService {
     using BetterEfficientHashLib for bytes;
@@ -45,9 +35,9 @@ library IndexedexManagerFactoryService {
         returns (IFacet vaultFeeOracleQueryFacet)
     {
         vaultFeeOracleQueryFacet = create3Factory.deployFacet(
-            type(VaultFeeOracleQueryFacet).creationCode, abi.encode(type(VaultFeeOracleQueryFacet).name)._hash()
+            ArtifactCreationCode.creationCode("VaultFeeOracleQueryFacet.sol:VaultFeeOracleQueryFacet"), abi.encode("VaultFeeOracleQueryFacet")._hash()
         );
-        vm.label(address(vaultFeeOracleQueryFacet), type(VaultFeeOracleQueryFacet).name);
+        vm.label(address(vaultFeeOracleQueryFacet), "VaultFeeOracleQueryFacet");
     }
 
     function deployVaultFeeOracleManagerFacet(ICreate3FactoryProxy create3Factory)
@@ -55,9 +45,9 @@ library IndexedexManagerFactoryService {
         returns (IFacet vaultFeeOracleManagerFacet)
     {
         vaultFeeOracleManagerFacet = create3Factory.deployFacet(
-            type(VaultFeeOracleManagerFacet).creationCode, abi.encode(type(VaultFeeOracleManagerFacet).name)._hash()
+            ArtifactCreationCode.creationCode("VaultFeeOracleManagerFacet.sol:VaultFeeOracleManagerFacet"), abi.encode("VaultFeeOracleManagerFacet")._hash()
         );
-        vm.label(address(vaultFeeOracleManagerFacet), type(VaultFeeOracleManagerFacet).name);
+        vm.label(address(vaultFeeOracleManagerFacet), "VaultFeeOracleManagerFacet");
     }
 
     function deployVaultRegistryDeploymentFacet(ICreate3FactoryProxy create3Factory)
@@ -65,9 +55,9 @@ library IndexedexManagerFactoryService {
         returns (IFacet vaultRegistryDeploymentFacet)
     {
         vaultRegistryDeploymentFacet = create3Factory.deployFacet(
-            type(VaultRegistryDeploymentFacet).creationCode, abi.encode(type(VaultRegistryDeploymentFacet).name)._hash()
+            ArtifactCreationCode.creationCode("VaultRegistryDeploymentFacet.sol:VaultRegistryDeploymentFacet"), abi.encode("VaultRegistryDeploymentFacet")._hash()
         );
-        vm.label(address(vaultRegistryDeploymentFacet), type(VaultRegistryDeploymentFacet).name);
+        vm.label(address(vaultRegistryDeploymentFacet), "VaultRegistryDeploymentFacet");
     }
 
     function deployVaultRegistryVaultManagerFacet(ICreate3FactoryProxy create3Factory)
@@ -75,10 +65,10 @@ library IndexedexManagerFactoryService {
         returns (IFacet vaultRegistryVaultManagerFacet)
     {
         vaultRegistryVaultManagerFacet = create3Factory.deployFacet(
-            type(VaultRegistryVaultManagerFacet).creationCode,
-            abi.encode(type(VaultRegistryVaultManagerFacet).name)._hash()
+            ArtifactCreationCode.creationCode("VaultRegistryVaultManagerFacet.sol:VaultRegistryVaultManagerFacet"),
+            abi.encode("VaultRegistryVaultManagerFacet")._hash()
         );
-        vm.label(address(vaultRegistryVaultManagerFacet), type(VaultRegistryVaultManagerFacet).name);
+        vm.label(address(vaultRegistryVaultManagerFacet), "VaultRegistryVaultManagerFacet");
     }
 
     function deployVaultRegistryVaultPackageManagerFacet(ICreate3FactoryProxy create3Factory)
@@ -86,10 +76,10 @@ library IndexedexManagerFactoryService {
         returns (IFacet vaultRegistryVaultPackageManagerFacet)
     {
         vaultRegistryVaultPackageManagerFacet = create3Factory.deployFacet(
-            type(VaultRegistryVaultPackageManagerFacet).creationCode,
-            abi.encode(type(VaultRegistryVaultPackageManagerFacet).name)._hash()
+            ArtifactCreationCode.creationCode("VaultRegistryVaultPackageManagerFacet.sol:VaultRegistryVaultPackageManagerFacet"),
+            abi.encode("VaultRegistryVaultPackageManagerFacet")._hash()
         );
-        vm.label(address(vaultRegistryVaultPackageManagerFacet), type(VaultRegistryVaultPackageManagerFacet).name);
+        vm.label(address(vaultRegistryVaultPackageManagerFacet), "VaultRegistryVaultPackageManagerFacet");
     }
 
     function deployVaultRegistryVaultPackageQueryFacet(ICreate3FactoryProxy create3Factory)
@@ -97,10 +87,10 @@ library IndexedexManagerFactoryService {
         returns (IFacet vaultRegistryVaultPackageQueryFacet)
     {
         vaultRegistryVaultPackageQueryFacet = create3Factory.deployFacet(
-            type(VaultRegistryVaultPackageQueryFacet).creationCode,
-            abi.encode(type(VaultRegistryVaultPackageQueryFacet).name)._hash()
+            ArtifactCreationCode.creationCode("VaultRegistryVaultPackageQueryFacet.sol:VaultRegistryVaultPackageQueryFacet"),
+            abi.encode("VaultRegistryVaultPackageQueryFacet")._hash()
         );
-        vm.label(address(vaultRegistryVaultPackageQueryFacet), type(VaultRegistryVaultPackageQueryFacet).name);
+        vm.label(address(vaultRegistryVaultPackageQueryFacet), "VaultRegistryVaultPackageQueryFacet");
     }
 
     function deployVaultRegistryVaultQueryFacet(ICreate3FactoryProxy create3Factory)
@@ -108,9 +98,9 @@ library IndexedexManagerFactoryService {
         returns (IFacet vaultRegistryVaultQueryFacet)
     {
         vaultRegistryVaultQueryFacet = create3Factory.deployFacet(
-            type(VaultRegistryVaultQueryFacet).creationCode, abi.encode(type(VaultRegistryVaultQueryFacet).name)._hash()
+            ArtifactCreationCode.creationCode("VaultRegistryVaultQueryFacet.sol:VaultRegistryVaultQueryFacet"), abi.encode("VaultRegistryVaultQueryFacet")._hash()
         );
-        vm.label(address(vaultRegistryVaultQueryFacet), type(VaultRegistryVaultQueryFacet).name);
+        vm.label(address(vaultRegistryVaultQueryFacet), "VaultRegistryVaultQueryFacet");
     }
 
     function deployVaultRegistryDisableQueryFacet(ICreate3FactoryProxy create3Factory)
@@ -118,10 +108,10 @@ library IndexedexManagerFactoryService {
         returns (IFacet vaultRegistryDisableQueryFacet)
     {
         vaultRegistryDisableQueryFacet = create3Factory.deployFacet(
-            type(VaultRegistryDisableQueryFacet).creationCode,
-            abi.encode(type(VaultRegistryDisableQueryFacet).name)._hash()
+            ArtifactCreationCode.creationCode("VaultRegistryDisableQueryFacet.sol:VaultRegistryDisableQueryFacet"),
+            abi.encode("VaultRegistryDisableQueryFacet")._hash()
         );
-        vm.label(address(vaultRegistryDisableQueryFacet), type(VaultRegistryDisableQueryFacet).name);
+        vm.label(address(vaultRegistryDisableQueryFacet), "VaultRegistryDisableQueryFacet");
     }
 
     function deployVaultRegistryDisableManagerFacet(ICreate3FactoryProxy create3Factory)
@@ -129,10 +119,10 @@ library IndexedexManagerFactoryService {
         returns (IFacet vaultRegistryDisableManagerFacet)
     {
         vaultRegistryDisableManagerFacet = create3Factory.deployFacet(
-            type(VaultRegistryDisableManagerFacet).creationCode,
-            abi.encode(type(VaultRegistryDisableManagerFacet).name)._hash()
+            ArtifactCreationCode.creationCode("VaultRegistryDisableManagerFacet.sol:VaultRegistryDisableManagerFacet"),
+            abi.encode("VaultRegistryDisableManagerFacet")._hash()
         );
-        vm.label(address(vaultRegistryDisableManagerFacet), type(VaultRegistryDisableManagerFacet).name);
+        vm.label(address(vaultRegistryDisableManagerFacet), "VaultRegistryDisableManagerFacet");
     }
 
     function deployIndexedexManagerDFPkg(ICreate3FactoryProxy create3Factory, IIndexedexManagerDFPkg.PkgInit memory pkgInit)
@@ -142,13 +132,13 @@ library IndexedexManagerFactoryService {
         indexedexManagerDFPkg = IIndexedexManagerDFPkg(
             address(
                 create3Factory.deployPackageWithArgs(
-                    type(IndexedexManagerDFPkg).creationCode,
+                    ArtifactCreationCode.creationCode("IndexedexManagerDFPkg.sol:IndexedexManagerDFPkg"),
                     abi.encode(pkgInit),
-                    abi.encode(type(IndexedexManagerDFPkg).name)._hash()
+                    abi.encode("IndexedexManagerDFPkg")._hash()
                 )
             )
         );
-        vm.label(address(indexedexManagerDFPkg), type(IndexedexManagerDFPkg).name);
+        vm.label(address(indexedexManagerDFPkg), "IndexedexManagerDFPkg");
     }
 
     function deployIndexedexManager(

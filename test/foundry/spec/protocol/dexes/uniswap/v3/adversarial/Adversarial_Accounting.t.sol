@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
 import {
@@ -10,20 +12,31 @@ import {
 contract Adversarial_Accounting_Test is TestBase_UniswapV3StandardExchange_Adversarial {
     function test_E1_roundTrip_zapInOut_conservation() public {
         address token0 = pool.token0();
-        ERC20PermitMintableStub(token0).mint(attacker, 100 ether);
+        uint256 deposit = 100 ether;
+        // A separate holder provides both activation assets. The attacker pays only token0.
+        ERC20PermitMintableStub(token0).mint(victim, deposit);
+        vm.startPrank(victim);
+        IERC20(token0).approve(address(vault), type(uint256).max);
+        _activateWithFundedToken0(victim, deposit, 100 ether);
+        vm.stopPrank();
+
+        ERC20PermitMintableStub(token0).mint(attacker, deposit);
+        uint256 beforePayment = IERC20(token0).balanceOf(attacker);
         vm.startPrank(attacker);
         IERC20(token0).approve(address(vault), type(uint256).max);
-        uint256 shares =
-            vault.exchangeIn(IERC20(token0), 100 ether, IERC20(address(vault)), 0, attacker, false, block.timestamp + 1);
-        uint256 balBefore = IERC20(token0).balanceOf(attacker);
-        vault.exchangeOut(
+        uint256 shares = vault.exchangeIn(
+            IERC20(token0), deposit, IERC20(address(vault)), 0, attacker, false, block.timestamp + 1
+        );
+        vault.approve(address(vault), shares);
+        uint256 beforeRedemption = IERC20(token0).balanceOf(attacker);
+        uint256 recovered = vault.exchangeIn(
             IERC20(address(vault)), shares, IERC20(token0), 1, attacker, false, block.timestamp + 1
         );
         vm.stopPrank();
-        uint256 recovered = IERC20(token0).balanceOf(attacker) - balBefore;
-        // Fees/slippage on wing path; recovery should be positive and not exceed deposit.
+        assertEq(vault.balanceOf(attacker), 0, "all attacker shares redeemed");
+        assertEq(IERC20(token0).balanceOf(attacker) - beforeRedemption, recovered, "actual recovery");
         assertGt(recovered, 0);
-        assertLe(recovered, 100 ether);
+        assertLe(IERC20(token0).balanceOf(attacker), beforePayment, "round trip cannot exceed payment");
         _assertNoUnexpectedFreeInventory(1 ether);
     }
 
@@ -47,9 +60,12 @@ contract Adversarial_Accounting_Test is TestBase_UniswapV3StandardExchange_Adver
         ERC20PermitMintableStub(token0).mint(attacker, 50 ether);
         vm.startPrank(attacker);
         IERC20(token0).approve(address(vault), type(uint256).max);
-        vm.expectRevert();
-        vault.exchangeIn(
-            IERC20(token0), 50 ether, IERC20(address(vault)), type(uint256).max, attacker, false, block.timestamp + 1
+        (address[] memory tokens, uint256[] memory amounts) = _activationInputs(
+            attacker, 50 ether, 50 ether
+        );
+        vm.expectRevert(bytes4(keccak256("UniswapV3ExchangeIn_SlippageExceeded()")));
+        IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
+            tokens, amounts, IERC20(address(vault)), type(uint256).max, attacker, false, block.timestamp + 1
         );
         vm.stopPrank();
         assertEq(IERC20(address(vault)).totalSupply(), 0);
@@ -60,7 +76,7 @@ contract Adversarial_Accounting_Test is TestBase_UniswapV3StandardExchange_Adver
         ERC20PermitMintableStub(token0).mint(attacker, 50 ether);
         vm.startPrank(attacker);
         IERC20(token0).approve(address(vault), type(uint256).max);
-        vault.exchangeIn(IERC20(token0), 50 ether, IERC20(address(vault)), 0, attacker, false, block.timestamp + 1);
+        _activateWithFundedToken0(attacker, 50 ether, 50 ether);
         vm.stopPrank();
         _assertNoUnexpectedFreeInventory(1 ether);
     }

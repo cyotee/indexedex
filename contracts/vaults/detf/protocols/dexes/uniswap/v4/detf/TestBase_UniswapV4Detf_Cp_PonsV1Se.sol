@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
-import {PoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol";
 import {IUniswapV3Factory} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Factory.sol";
 import {IUniswapV3Pool} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Pool.sol";
 import {ISwapRouter} from "@crane/contracts/protocols/dexes/uniswap/v3/periphery/interfaces/ISwapRouter.sol";
@@ -28,6 +29,7 @@ import {
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
 import {TestBase_UniswapV4Detf} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
+import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 import {
     UniswapV4DetfProductionSeDeployLib as SeLib
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol";
@@ -52,7 +54,11 @@ abstract contract TestBase_UniswapV4Detf_Cp_PonsV1Se is TestBase_UniswapV4Detf {
         permit2 = IPermit2(PERMIT2_ADDR);
 
         pairToken = new SimpleMintableERC20("Pair", "PAIR");
-        pm = IPoolManager(address(new PoolManager(address(this))));
+        pm = IPoolManager(address(IPoolManager(create3Factory.create3WithArgs(
+            ArtifactCreationCode.creationCode(create3Factory, "PoolManager.sol:PoolManager"),
+            abi.encode(address(this)),
+            keccak256("TestBase_UniswapV4Detf_Cp_PonsV1Se_PoolManager")
+        ))));
         weth = SeLib.newWeth();
         univ3Factory = SeLib.newUniv3Factory();
         ponsV1 = SeLib.deployPonsV1Stack(univ3Factory, weth);
@@ -85,6 +91,7 @@ abstract contract TestBase_UniswapV4Detf_Cp_PonsV1Se is TestBase_UniswapV4Detf {
         IERC20(launchToken).approve(se, type(uint256).max);
         IERC20(se).approve(detf, type(uint256).max);
         vm.stopPrank();
+        SeLib.activatePositionVault(se, mintToken, detfUser, address(weth));
     }
 
     /// @dev Extra Policy deploys and `_fundToken` top-ups. Swap until `to_` holds `minBal`.
@@ -159,7 +166,6 @@ abstract contract TestBase_UniswapV4Detf_Cp_PonsV1Se is TestBase_UniswapV4Detf {
 
     function _deployPonsV1HookThenDetf(IUniswapV4Detf.PkgArgs memory args) internal returns (address detf_) {
         address predicted_ = _predictDetf(args);
-        vm.etch(predicted_, address(pairToken).code);
         IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs memory hArgs =
             IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs({
                 poolManager: address(pm),
@@ -167,7 +173,9 @@ abstract contract TestBase_UniswapV4Detf_Cp_PonsV1Se is TestBase_UniswapV4Detf {
                 standardExchange: se,
                 pairToken: launchToken,
                 rawToken: predicted_,
-                ownerOnlyLiquidity: true,
+                pairTokenDecimals: HookPkgArgsDecimalsLib.tokenDec(launchToken),
+                rawTokenDecimals: predicted_.code.length == 0 ? uint8(9) : HookPkgArgsDecimalsLib.tokenDec(predicted_),
+                ownerOnlyLiquidity: args.ownerOnlyLiquidity,
                 owner: predicted_
             });
         uint256 mineNonce = CpHookFactory.findMineNonce(hookFactory, hookPkg, hArgs);
@@ -175,7 +183,6 @@ abstract contract TestBase_UniswapV4Detf_Cp_PonsV1Se is TestBase_UniswapV4Detf {
         IUniswapV4HookStagedPairInit init = IUniswapV4HookStagedPairInit(reserveHook);
         init.deployPair(predicted_, launchToken);
         require(init.finalizeInitialization(), "finalize");
-        vm.etch(predicted_, "");
         args.hook = reserveHook;
         vm.startPrank(owner);
         detf_ = detfPkg.deployVault(args);

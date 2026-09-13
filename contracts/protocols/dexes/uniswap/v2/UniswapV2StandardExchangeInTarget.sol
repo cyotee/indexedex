@@ -590,24 +590,7 @@ contract UniswapV2StandardExchangeInTarget is
                 // uint256 amount
                 vault.vaultLpReserve
             );
-            (uint256 ownedReserve0, uint256 ownedReserve1) = ConstProdUtils._quoteWithdrawWithFee(
-                // uint256 ownedLPAmount,
-                vault.vaultLpReserve,
-                // uint256 lpTotalSupply,
-                indexSource.totalSupply,
-                // uint256 totalReserveA,
-                indexSource.knownReserve,
-                // uint256 totalReserveB,
-                indexSource.opposingReserve,
-                // uint256 kLast,
-                indexSource.kLast,
-                // uint256 ownerFeeShare,
-                UNISWAPV2_PROTOCOL_FEE_SHARE,
-                // bool feeOn
-                UniswapV2FactoryAwareRepo._uniswapV2Factory().feeTo() != address(0)
-            );
-            ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token0), ownedReserve0);
-            ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token1), ownedReserve1);
+            _checkpointVaultReserves();
             // Mint the shares to the recipient.
             ERC20Repo._mint(
                 // address account,
@@ -690,28 +673,8 @@ contract UniswapV2StandardExchangeInTarget is
                 // uint256 amount
                 vault.vaultLpReserve
             );
+            _checkpointVaultReserves();
             // Calculated the owned reserves of the LP token reserves.
-            (uint256 ownedReserve0, uint256 ownedReserve1) = ConstProdUtils._quoteWithdrawWithFee(
-                // uint256 ownedLPAmount,
-                vault.vaultLpReserve,
-                // uint256 lpTotalSupply,
-                indexSource.totalSupply,
-                // uint256 totalReserveA,
-                indexSource.knownReserve,
-                // uint256 totalReserveB,
-                indexSource.opposingReserve,
-                // uint256 kLast,
-                indexSource.kLast,
-                // uint256 ownerFeeShare,
-                UNISWAPV2_PROTOCOL_FEE_SHARE,
-                // bool feeOn
-                UniswapV2FactoryAwareRepo._uniswapV2Factory().feeTo() != address(0)
-            );
-            // Store the owned reserves for yield tracking.
-            // _setYieldReserveOfToken(address(indexSource.token0), ownedReserve0);
-            // _setYieldReserveOfToken(address(indexSource.token1), ownedReserve1);
-            ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token0), ownedReserve0);
-            ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token1), ownedReserve1);
             _syncAllExpectedHoldReserves();
             return amountOut;
         }
@@ -788,24 +751,7 @@ contract UniswapV2StandardExchangeInTarget is
                 // uint256 amount
                 vault.vaultLpReserve
             );
-            (uint256 ownedReserve0, uint256 ownedReserve1) = ConstProdUtils._quoteWithdrawWithFee(
-                // uint256 ownedLPAmount,
-                vault.vaultLpReserve,
-                // uint256 lpTotalSupply,
-                indexSource.totalSupply,
-                // uint256 totalReserveA,
-                indexSource.knownReserve,
-                // uint256 totalReserveB,
-                indexSource.opposingReserve,
-                // uint256 kLast,
-                indexSource.kLast,
-                // uint256 ownerFeeShare,
-                UNISWAPV2_PROTOCOL_FEE_SHARE,
-                // bool feeOn
-                UniswapV2FactoryAwareRepo._uniswapV2Factory().feeTo() != address(0)
-            );
-            ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token0), ownedReserve0);
-            ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token1), ownedReserve1);
+            _checkpointVaultReserves();
             // Mint the shares to the recipient.
             ERC20Repo._mint(
                 // address account,
@@ -904,28 +850,8 @@ contract UniswapV2StandardExchangeInTarget is
                 // uint256 amount
                 vault.vaultLpReserve
             );
+            _checkpointVaultReserves();
             // Calculated the owned reserves of the LP token reserves.
-            (uint256 ownedReserve0, uint256 ownedReserve1) = ConstProdUtils._quoteWithdrawWithFee(
-                // uint256 ownedLPAmount,
-                vault.vaultLpReserve,
-                // uint256 lpTotalSupply,
-                indexSource.totalSupply,
-                // uint256 totalReserveA,
-                indexSource.knownReserve,
-                // uint256 totalReserveB,
-                indexSource.opposingReserve,
-                // uint256 kLast,
-                indexSource.kLast,
-                // uint256 ownerFeeShare,
-                UNISWAPV2_PROTOCOL_FEE_SHARE,
-                // bool feeOn
-                UniswapV2FactoryAwareRepo._uniswapV2Factory().feeTo() != address(0)
-            );
-            // Store the owned reserves for yield tracking.
-            // _setYieldReserveOfToken(address(indexSource.token0), ownedReserve0);
-            // _setYieldReserveOfToken(address(indexSource.token1), ownedReserve1);
-            ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token0), ownedReserve0);
-            ConstProdReserveVaultRepo._setYieldReserveOfToken(address(indexSource.token1), ownedReserve1);
             // Go ahead and terminate further execution.
             _syncAllExpectedHoldReserves();
             return amountOut;

@@ -1,0 +1,34 @@
+{
+  "status": "APPLIED_SOURCE_MAPPING_RUNTIME_VALIDATION_PENDING",
+  "rows": [
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_MorphoBlueSe_ProductLaw.t.sol",
+      "retired_local_overrides": [
+        "test_DN13_burn_afterDonate_usesDonatedLp",
+        "test_DN14_closeAfterDonate_userBasketUnchanged"
+      ],
+      "current_source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ReserveDonationOpenBase.sol",
+      "current_inherited_tests": [
+        "test_DN13_burn_afterDonate_usesDonatedLp",
+        "test_DN14_closeAfterDonate_userBasketUnchanged"
+      ],
+      "executed_case_count_change": 0,
+      "reason": "Remove fabricated SUT token balances and obsolete 18-decimal amount cap; use common funded reserve donation and custody/supply/preview assertions."
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Orbital_MorphoMix_ProductLaw.t.sol",
+      "retired_local_overrides": [
+        "test_DN13_burn_afterDonate_usesDonatedLp",
+        "test_DN14_closeAfterDonate_userBasketUnchanged"
+      ],
+      "current_source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ReserveDonationOpenBase.sol",
+      "current_inherited_tests": [
+        "test_DN13_burn_afterDonate_usesDonatedLp",
+        "test_DN14_closeAfterDonate_userBasketUnchanged"
+      ],
+      "executed_case_count_change": 0,
+      "reason": "Remove fabricated SUT token balances and obsolete 18-decimal amount cap; use common funded reserve donation and custody/supply/preview assertions."
+    }
+  ],
+  "application_record": "hermetic-followups-validation-remediation-applied.json"
+}

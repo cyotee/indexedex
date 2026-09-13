@@ -1,14 +1,15 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {DetfPkgFactoryService} from "contracts/vaults/detf/common/factory/DetfPkgFactoryService.sol";
+
 import {LaunchState} from "./LaunchState.sol";
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
-import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
-import {IUniswapV4DetfBondNFTVaultDFPkg} from
-    "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol";
+import {IUniswapV4DetfBondNFTVaultDFPkg} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/IUniswapV4DetfBondNFTVaultDFPkg.sol";
 import {
     IUniswapV4DetfDFPkg
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
@@ -26,18 +27,22 @@ library Phase_06_Stage_07_UniswapV4DetfPkg {
         require(_live(s.bondNftVaultPkg), "Phase 06-07: bondNftVaultPkg");
         require(_live(s.rebasingClaimTokenPkg), "Phase 06-07: rebasingClaimTokenPkg");
         IVaultRegistryDeployment reg = IVaultRegistryDeployment(address(s.indexedexManager));
-        IFacet productFacet = UniswapV4Detf_Facet_FactoryService.deployUniswapV4DetfFacet(s.create3Factory);
+        IFacet[5] memory productFacets = UniswapV4Detf_Facet_FactoryService.deployUniswapV4DetfFacets(s.create3Factory);
         IUniswapV4DetfDFPkg.PkgInit memory init_ = IUniswapV4DetfDFPkg.PkgInit({
             erc20Facet: s.erc20Facet,
             erc5267Facet: s.erc5267Facet,
             erc2612Facet: s.erc2612Facet,
             multiAssetBasicVaultFacet: s.multiAssetBasicVaultFacet,
             multiAssetStandardVaultFacet: s.multiAssetStandardVaultFacet,
-            productFacet: productFacet,
+            productFacets: productFacets,
             feeOracle: IVaultFeeOracleQuery(address(s.indexedexManager)),
             vaultRegistryDeployment: reg,
             bondNftVaultPkg: IUniswapV4DetfBondNFTVaultDFPkg(s.bondNftVaultPkg),
-            rebasingClaimTokenPkg: IRebasingClaimTokenDFPkg(s.rebasingClaimTokenPkg)
+            rebasingClaimTokenPkg: IRebasingClaimTokenDFPkg(s.rebasingClaimTokenPkg),
+            syPkg: DetfPkgFactoryService.deployDETFSYComponents(
+                s.create3Factory, reg, IVaultFeeOracleQuery(address(s.indexedexManager)),
+                s.erc5267Facet, s.erc2612Facet
+            )
         });
         s.uniV4DetfPkg = address(UniswapV4Detf_Pkg_FactoryService.deployUniswapV4DetfDFPkg(reg, init_));
     }

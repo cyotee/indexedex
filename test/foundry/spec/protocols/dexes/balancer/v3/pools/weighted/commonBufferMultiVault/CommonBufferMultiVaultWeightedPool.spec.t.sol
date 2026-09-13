@@ -14,9 +14,7 @@ import {PoolSwapParams, SwapKind} from
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {ICommonBufferMultiVaultWeightedPool} from
     "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/ICommonBufferMultiVaultWeightedPool.sol";
-import {
-    ICommonBufferMultiVaultWeightedPoolPkg
-} from "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolStandardVaultPkg.sol";
+import {ICommonBufferMultiVaultWeightedPoolPkg} from "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/ICommonBufferMultiVaultWeightedPoolPkg.sol";
 
 import {
     TestBase_CommonBufferMultiVaultWeightedPool

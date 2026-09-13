@@ -92,9 +92,9 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookInitTarge
         }
     }
 
-    function _isBound(address token) private view returns (bool) {
+    function _isBound(address token_) private view returns (bool) {
         Repo.Layout storage l = Repo._layout();
-        return token == l.tokens[0] || token == l.tokens[1] || token == l.tokens[2]
-            || token == l.tokens[3];
+        for (uint256 i; i < l.tokens.length; ++i) if (l.tokens[i] == token_) return true;
+        return false;
     }
 }

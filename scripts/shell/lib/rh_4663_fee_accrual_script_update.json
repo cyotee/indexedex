@@ -1,0 +1,5 @@
+{
+  "from": "44691de41f5b69911877c7b6af39af10d895ffc789a0bb972134735174befe93",
+  "to": "90dcad1c28a15255889e10e5281ca3e2e5e67bc94ce2e60f952668c19cc2a11c",
+  "reason": "Reviewed migration deadline fix: four transactions per invocation, fresh sequential batches, local trace metadata, receipt-derived cutover baseline; no contract or economic config changes."
+}

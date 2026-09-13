@@ -1,0 +1,112 @@
+--- test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol
++++ test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol
+@@ -1,5 +1,15 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
++import {HermeticWETH, HermeticStETH, HermeticWstETH, HermeticWithdrawalQueue} from "contracts/protocols/staking/lido/test/hermetic/HermeticLidoPorts.sol";
++import {LidoWstETH_Component_FactoryService as LidoFactory} from "contracts/protocols/staking/lido/LidoWstETH_Component_FactoryService.sol";
++import {ILidoWstETHStandardExchangeDFPkg} from "contracts/protocols/staking/lido/interfaces/ILidoWstETHStandardExchangeDFPkg.sol";
++import {LidoWstETHStandardExchangeInFacet} from "contracts/protocols/staking/lido/LidoWstETHStandardExchangeInFacet.sol";
++import {LidoWstETHStandardExchangeOutFacet} from "contracts/protocols/staking/lido/LidoWstETHStandardExchangeOutFacet.sol";
++import {LidoWstETHMarkerFacet} from "contracts/protocols/staking/lido/LidoWstETHMarkerFacet.sol";
++import {LidoWstETHRebalanceFacet} from "contracts/protocols/staking/lido/LidoWstETHRebalanceFacet.sol";
++import {LidoWstETHStandardExchangeDFPkg} from "contracts/protocols/staking/lido/LidoWstETHStandardExchangeDFPkg.sol";
++
+ import {IDetfNftReserveDonation} from "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol";
+ 
+ import {Test} from "forge-std/Test.sol";
+@@ -660,6 +670,93 @@
+ }
+ 
+ contract CpReserveLiquidityTest is TestBase_UniswapV4Detf, V4ReserveLiquidityBehavior, DETFFundedStakingArtifacts {
++    function _installLidoBuffer() private returns (HermeticWstETH wrapped) {
++        HermeticWETH liquid = new HermeticWETH();
++        HermeticStETH staked = new HermeticStETH();
++        wrapped = new HermeticWstETH(staked);
++        HermeticWithdrawalQueue queue = new HermeticWithdrawalQueue(wrapped);
++        ILidoWstETHStandardExchangeDFPkg.PkgInit memory init;
++        init.erc20Facet = erc20Facet;
++        init.erc2612Facet = erc2612Facet;
++        init.erc5267Facet = erc5267Facet;
++        init.erc4626Facet = erc4626Facet;
++        init.erc4626StandardVaultFacet = erc4626StandardVaultFacet;
++        init.multiAssetBasicVaultFacet = multiAssetBasicVaultFacet;
++        init.multiAssetStandardVaultFacet = multiAssetStandardVaultFacet;
++        init.exchangeInFacet = LidoFactory.deployLidoWstETHStandardExchangeInFacet(create3Factory);
++        init.exchangeOutFacet = LidoFactory.deployLidoWstETHStandardExchangeOutFacet(create3Factory);
++        init.markerFacet = LidoFactory.deployLidoWstETHMarkerFacet(create3Factory);
++        init.rebalanceFacet = LidoFactory.deployLidoWstETHRebalanceFacet(create3Factory);
++        init.vaultFeeOracleQuery = indexedexManager;
++        init.vaultRegistryDeployment = indexedexManager;
++        init.permit2 = permit2;
++        vm.startPrank(owner);
++        ILidoWstETHStandardExchangeDFPkg pkg = LidoFactory.deployLidoWstETHStandardExchangeDFPkg(indexedexManager, init);
++        se = pkg.deployVault(address(staked), address(wrapped), address(liquid), address(queue));
++        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(se, 0.07e18);
++        vm.stopPrank();
++        vm.deal(address(this), 200 ether);
++        liquid.deposit{value: 200 ether}();
++        liquid.approve(se, 200 ether);
++        IStandardExchangeIn(se).exchangeIn(IERC20(address(liquid)), 200 ether, IERC20(se), 1, address(this), false, block.timestamp);
++        staked.mint(detfUser, 100 ether);
++        vm.startPrank(detfUser);
++        staked.approve(address(wrapped), 100 ether);
++        wrapped.wrap(100 ether);
++        vm.stopPrank();
++        pairToken = SimpleMintableERC20(address(liquid));
++        IUniswapV4Detf.PkgArgs memory args = _defaultDetfArgs();
++        args.mintThreshold = 100e18;
++        args.burnThreshold = 1;
++        args.mintRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
++        args.mintRoutes = new IUniswapV4Detf.IoRoute[](3);
++        args.mintRoutes[0] = IUniswapV4Detf.IoRoute(IERC20(address(liquid)), IStandardExchange(se));
++        args.mintRoutes[1] = IUniswapV4Detf.IoRoute(IERC20(se), IStandardExchange(se));
++        args.mintRoutes[2] = IUniswapV4Detf.IoRoute(IERC20(address(wrapped)), IStandardExchange(se));
++        args.bondRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
++        args.bondRoutes = args.mintRoutes;
++        detf = _deployHookThenDetf(args);
++        detfInfo = IUniswapV4Detf(detf);
++        detfExchangeIn = IStandardExchangeIn(detf);
++        _setBondTerms(DEFAULT_MIN_LOCK, DEFAULT_MAX_LOCK);
++        vm.deal(detfUser, 1_000 ether);
++        vm.startPrank(detfUser);
++        liquid.deposit{value: 1_000 ether}();
++        liquid.approve(detf, type(uint256).max);
++        liquid.approve(se, type(uint256).max);
++        wrapped.approve(detf, type(uint256).max);
++        IERC20(se).approve(detf, type(uint256).max);
++        vm.stopPrank();
++        _firstBond(100 ether);
++    }
++
++    function test_lidoBufferUsesApprovedPaymentsForFallbackAndFundedBond() public {
++        HermeticWstETH wrapped = _installLidoBuffer();
++        vm.prank(detfUser);
++        uint256 shares = IStandardExchangeIn(se).exchangeIn(IERC20(address(pairToken)), 5 ether, IERC20(se), 1, detfUser, false, block.timestamp);
++        _assertLidoFallback(IERC20(se), shares / 2);
++        _assertLidoFallback(IERC20(address(wrapped)), 1 ether + 17);
++        (uint256 principal,,) = detfInfo.previewBond(IERC20(address(wrapped)), 2 ether + 29, DEFAULT_MAX_LOCK);
++        vm.prank(detfUser);
++        (uint256 id,) = detfInfo.bond(IERC20(address(wrapped)), 2 ether + 29, DEFAULT_MAX_LOCK, detfUser, false, block.timestamp);
++        assertEq(IDetfBondNFT(detfInfo.bondNftVault()).positionOf(id).principal, principal);
++        assertEq(wrapped.allowance(detf, se), 0, "nested payment allowance cleared");
++        address staking = detfInfo.rebasingClaimToken();
++        assertGe(IERC20(detf).balanceOf(staking), IERC20(staking).totalSupply(), "actual DETF funds staking liabilities");
++    }
++
++    function _assertLidoFallback(IERC20 input, uint256 amount) private {
++        uint256 quote = detfExchangeIn.previewExchangeIn(input, amount, IERC20(detf));
++        assertGt(quote, 0);
++        uint256 supply = IERC20(detf).totalSupply();
++        uint256 beforeBalance = IERC20(detf).balanceOf(detfUser);
++        vm.prank(detfUser);
++        assertEq(detfExchangeIn.exchangeIn(input, amount, IERC20(detf), quote, detfUser, false, block.timestamp), quote);
++        assertEq(IERC20(detf).balanceOf(detfUser) - beforeBalance, quote);
++        assertEq(IERC20(detf).totalSupply(), supply, "fallback trades existing DETF");
++        assertEq(input.allowance(detf, se), 0, "nested payment allowance cleared");
++    }
++
+     function test_deploymentRejectsPolicyMismatchWithActualHook() public {
+         IUniswapV4Detf.PkgArgs memory args_ = _defaultDetfArgs();
+         args_.hook = detfInfo.hook();

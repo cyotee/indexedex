@@ -1,0 +1,13 @@
+{
+  "build": {
+    "exit_code": 1,
+    "seconds": 56.854,
+    "command": [
+      "forge",
+      "build",
+      "--offline",
+      "--contracts",
+      "contracts/vaults/detf/common/core"
+    ]
+  }
+}

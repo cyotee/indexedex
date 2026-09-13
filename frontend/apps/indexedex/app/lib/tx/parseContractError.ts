@@ -70,6 +70,10 @@ export function parseContractError(err: unknown): string {
   }
 
   // Revert data first. Wallets often label a hard revert as "not enough ETH for gas".
+  if (/0x340a4533|MaxInRatio/i.test(blob)) {
+    return 'This amount exceeds the pool’s per-transaction liquidity limit. Try a smaller amount.'
+  }
+
   if (/0x3dec0665|InsufficientTokenOut/i.test(blob)) {
     return 'The reserve could not provide the required output. Refresh the quote and check the amount and available liquidity.'
   }

@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IDETFSYDFPkg} from "contracts/vaults/detf/common/sy/IDETFSYDFPkg.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
@@ -10,9 +11,8 @@ import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeplo
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
-import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
-import {IUniswapV4DetfBondNFTVaultDFPkg} from
-    "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol";
+import {IUniswapV4DetfBondNFTVaultDFPkg} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/IUniswapV4DetfBondNFTVaultDFPkg.sol";
 
 /**
  * @title IUniswapV4Detf
@@ -33,14 +33,12 @@ interface IUniswapV4Detf {
         string name;
         string symbol;
         address hook;
+        bool ownerOnlyLiquidity;
         uint256[] creationPairPerDetfWad;
         uint256[] openingPairPerDetfWad;
         uint256 mintThreshold;
         uint256 burnThreshold;
-        ThresholdMode thresholdMode;
-        uint256 expansionEpochLength;
         uint256 expansionClosureRatePerYearWad;
-        uint256 expansionMaxCatchUpEpochs;
         address creator;
         string claimName;
         string claimSymbol;
@@ -52,13 +50,11 @@ interface IUniswapV4Detf {
         IoRoute[] burnRoutes;
         RouteTableMode bondRouteMode;
         IoRoute[] bondRoutes;
-        RouteTableMode closeRouteMode;
-        IoRoute[] closeRoutes;
         RouteTableMode donateRouteMode;
         IoRoute[] donateRoutes;
     }
 
-    event ThresholdModeSet(ThresholdMode mode, uint256 mintThreshold, uint256 burnThreshold);
+    event ThresholdsConfigured(uint256 mintThreshold, uint256 burnThreshold);
     event ProtocolRewardsCompounded(uint256 detfIn, uint256 lpOut);
     event NaturalSupplyExpanded(uint256 mintAmount, uint256 syntheticPrice, uint256 timestamp);
     event ReserveLive(uint256 firstBondTokenId, uint256 lpPrincipal);
@@ -68,6 +64,8 @@ interface IUniswapV4Detf {
     event ReserveClaimWired(address indexed reserveHook, address rebasingClaimToken);
 
     function hook() external view returns (address);
+
+    function ownerOnlyLiquidity() external view returns (bool);
 
     function reservePool() external view returns (address);
 
@@ -81,7 +79,6 @@ interface IUniswapV4Detf {
 
     function bondRoutes() external view returns (IoRoute[] memory);
 
-    function closeRoutes() external view returns (IoRoute[] memory);
 
     function donateRoutes() external view returns (IoRoute[] memory);
 
@@ -91,7 +88,6 @@ interface IUniswapV4Detf {
 
     function bondRouteMode() external view returns (RouteTableMode);
 
-    function closeRouteMode() external view returns (RouteTableMode);
 
     function donateRouteMode() external view returns (RouteTableMode);
 
@@ -103,7 +99,6 @@ interface IUniswapV4Detf {
 
     function burnThreshold() external view returns (uint256);
 
-    function thresholdMode() external view returns (ThresholdMode);
 
     function syntheticPrice() external view returns (uint256);
 
@@ -117,29 +112,15 @@ interface IUniswapV4Detf {
 
     function acceptedBondTokens() external view returns (address[] memory);
 
-    function previewMint(IERC20 tokenIn, uint256 amountIn)
-        external
-        view
-        returns (uint256 grossDetf, uint256 userDetf, uint256 lpOut);
+    /// @notice All caller-funded payments for an unopened reserve, using an advertised pair-token lead.
+    /// @dev The separately minted DETF liquidity leg is excluded. Other legs use the configured opening rates.
+    function previewFirstBondPayments(IERC20 tokenIn, uint256 amountIn)
+        external view returns (address[] memory tokens, uint256[] memory amounts);
 
-    function mint(
-        IERC20 tokenIn,
-        uint256 amountIn,
-        uint256 minUserDetf,
-        address recipient,
-        bool pretransferred,
-        uint256 deadline
-    ) external returns (uint256 userDetf);
 
-    function previewBurn(uint256 detfIn, IERC20 tokenOut) external view returns (uint256 amountOut);
-
-    function burn(
-        uint256 detfIn,
-        IERC20 tokenOut,
-        uint256 minAmountOut,
-        address recipient,
-        uint256 deadline
-    ) external returns (uint256 amountOut);
+    /// @notice Quote bonus-adjusted purchase, vested principal, staking reward funding and new LP self-leg.
+    function previewBond(IERC20 tokenIn, uint256 amountIn, uint256 lockDuration) external view
+        returns (uint256 purchasedDetf, uint256 principalDetf, uint256 rewardsDetf, uint256 liquidityDetf);
 
     function bond(
         IERC20 tokenIn,
@@ -149,15 +130,6 @@ interface IUniswapV4Detf {
         bool pretransferred,
         uint256 deadline
     ) external returns (uint256 tokenId, uint256 shares);
-
-    function closeBondMature(
-        uint256 tokenId,
-        uint256[] calldata minAmountsOut,
-        address recipient,
-        uint256 deadline
-    ) external returns (uint256[] memory amountsOut);
-
-    function previewCloseBondMature(uint256 tokenId) external view returns (uint256[] memory amountsOut);
 
     function donate(IERC20 token, uint256 amount, bool pretransferred) external;
 
@@ -170,16 +142,6 @@ interface IUniswapV4Detf {
     function isBurningAllowed() external view returns (bool);
 
     function isBurningAllowed(IERC20 tokenOut) external view returns (bool);
-
-    function compoundProtocolRewards() external returns (uint256 detfIn, uint256 lpOut);
-
-    /// @notice Preview DETF paid if `lpAmount` of hook LP is unwound (claim/NFT path).
-    function previewClaimLiquidity(uint256 lpAmount) external view returns (uint256 detfOut);
-
-    /// @notice Unwind hook LP and pay DETF to `recipient`. Bond NFT and claim token only.
-    /// @dev Selector must match `IDetf.claimLiquidity` (`0xcaaf4702`). Claim-token redeem
-    ///      harvests pending DETF first and skips LP withdraw when pending covers owed.
-    function claimLiquidity(uint256 lpAmount, address recipient) external returns (uint256 detfOut);
 
     function joinDonatedCapital(IERC20 token, uint256 amount, uint256 deadline)
         external
@@ -207,8 +169,9 @@ interface IUniswapV4DetfDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
     error InvalidHook();
     error DetfNotInHookTokens();
     error HookOwnerMismatch();
+    error HookLiquidityPolicyMismatch();
     error BarePairForbidden();
-    error InvalidCloseRoutes();
+    error InvalidPackageArguments();
     error DuplicateRoute(address token);
     error InvalidCreationRate();
     error InvalidRouteTable();
@@ -219,11 +182,13 @@ interface IUniswapV4DetfDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
         IFacet erc2612Facet;
         IFacet multiAssetBasicVaultFacet;
         IFacet multiAssetStandardVaultFacet;
-        IFacet productFacet;
+        // Fixed order: exchange, bond, maintenance, claim/wiring, query.
+        IFacet[5] productFacets;
         IVaultFeeOracleQuery feeOracle;
         IVaultRegistryDeployment vaultRegistryDeployment;
         IUniswapV4DetfBondNFTVaultDFPkg bondNftVaultPkg;
         IRebasingClaimTokenDFPkg rebasingClaimTokenPkg;
+        IDETFSYDFPkg syPkg;
     }
 
     function deployVault(IUniswapV4Detf.PkgArgs memory args) external returns (address vault);

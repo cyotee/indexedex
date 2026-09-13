@@ -30,6 +30,9 @@ library StandardExchangeBufferPoolRepo {
         // pool's seeded inventory is its equilibrium point regardless of where the
         // rate provider's absolute scale sits.
         uint256 baselineRate;
+        // Native TTA donated into the pool during pre-seat (ERC-20 units, not Vault scaled18).
+        // Appended after baselineRate so existing slot offsets (virtualTTA=7, baselineRate=10) stay put.
+        uint256 pendingPreSeatTtaRaw;
     }
 
     function _layout(bytes32 slot_) internal pure returns (Storage storage l) {
@@ -73,6 +76,9 @@ library StandardExchangeBufferPoolRepo {
 
     function _pendingPreSeatS() internal view returns (uint256) { return _layout().pendingPreSeatS; }
     function _setPendingPreSeatS(uint256 v) internal { _layout().pendingPreSeatS = v; }
+
+    function _pendingPreSeatTtaRaw() internal view returns (uint256) { return _layout().pendingPreSeatTtaRaw; }
+    function _setPendingPreSeatTtaRaw(uint256 v) internal { _layout().pendingPreSeatTtaRaw = v; }
 
     function _baselineRate() internal view returns (uint256) { return _layout().baselineRate; }
     function _setBaselineRate(uint256 v) internal { _layout().baselineRate = v; }

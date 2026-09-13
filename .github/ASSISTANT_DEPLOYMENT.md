@@ -10,7 +10,7 @@ Core rules
 Naming rules
 - DETF token symbol: `DETF`.
 - DETF token name convention: `<rateTargetName> DETF of <strategyVaultName>`.
-- DETF token decimals: `18`.
+- DETF, sDETF, raw DETF SY and staking SY token decimals: `9`, per owner-approved `contracts/vaults/detf/DETF_ALIGNMENT_PRD.md` D32–D55. Unrelated SE shares and payment tokens retain their existing decimals.
 
 Testing deployments
 - Add focused tests to assert that deployed vault tokens return expected `name()` and `symbol()` values.

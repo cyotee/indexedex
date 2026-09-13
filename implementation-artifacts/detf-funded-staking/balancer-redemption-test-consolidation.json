@@ -1,0 +1,2357 @@
+{
+  "decision": "Owner D32-D55 and implementation plan 11.1.1. Retire only superseded LP/Open/capped behaviors after mapping to funded-family assertions or their removal decision. Native decimal reserve-route integration remains separate.",
+  "new_assertion_validation": "checkpoint-388-run.json: complete focused suite, 388 tests / 47 suites pass after separate build, including epoch-on-unstake and default/config checks.",
+  "retired_files": 40,
+  "rows": [
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_Alignment_RedeemD15.t.sol",
+      "sha256": "4ff0f588669e238fdb62b6f30593faa54dc2ee2090bc6eb9a0a7006ef019c43f",
+      "inherited_only": false,
+      "cases": [
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_5_multiLegLeftoverDump",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: there is no reserve basket or residual swap during unstake; payment balances remain unchanged."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Alignment_RedeemD15_B_ALL6.t.sol",
+      "sha256": "1dff156fe37233abe3ea326a1f9bf8eda702c76638c585f1cea4b8d2210ab5fd",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_5_multiLegLeftoverDump",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: there is no reserve basket or residual swap during unstake; payment balances remain unchanged."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Alignment_RedeemD15_B_ALL9.t.sol",
+      "sha256": "fbcaf2c6e5f493e201f875a472c385a4e5c53f440e20a1034350b1a4365b5737",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_5_multiLegLeftoverDump",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: there is no reserve basket or residual swap during unstake; payment balances remain unchanged."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Alignment_RedeemD15_B_P18_R6.t.sol",
+      "sha256": "fb8d8b7d6a07348892168d7554914679d10dcf3806267b63db87d63882cddfff",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_5_multiLegLeftoverDump",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: there is no reserve basket or residual swap during unstake; payment balances remain unchanged."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Alignment_RedeemD15_B_P18_R9.t.sol",
+      "sha256": "a5578543639a8d595cdd34cfa45a5eda31bf6f65936a3ac2245112d46c724ecd",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_5_multiLegLeftoverDump",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: there is no reserve basket or residual swap during unstake; payment balances remain unchanged."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Alignment_RedeemD15_B_P6_R18.t.sol",
+      "sha256": "d5a626a79f1e00f316e4830e4f4660c963aa44c7509b2b65e54ea0243bed3327",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_5_multiLegLeftoverDump",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: there is no reserve basket or residual swap during unstake; payment balances remain unchanged."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Alignment_RedeemD15_B_P6_R9.t.sol",
+      "sha256": "0502d1b79203df29e73fe65975cf2d92b0761d8645d2748fd98250f59f684e65",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_5_multiLegLeftoverDump",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: there is no reserve basket or residual swap during unstake; payment balances remain unchanged."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Alignment_RedeemD15_B_P9_R18.t.sol",
+      "sha256": "db48580f6ecbb2a93b20cedf724c746d4d71bf0e00e6d274a979f8b0af57fc08",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_5_multiLegLeftoverDump",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: there is no reserve basket or residual swap during unstake; payment balances remain unchanged."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Alignment_RedeemD15_B_P9_R6.t.sol",
+      "sha256": "f5c420dee2a9454c287caa4e64a6a913e061b1053581bf888d6adc10f4e270a1",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_5_multiLegLeftoverDump",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: there is no reserve basket or residual swap during unstake; payment balances remain unchanged."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_Alignment_RedeemD15_Decimals.sol",
+      "sha256": "2455a172de11ae07862cb2ec9ac8f281970777e88fa2f7611e08d2917527b8ec",
+      "inherited_only": false,
+      "cases": [
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_5_multiLegLeftoverDump",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: there is no reserve basket or residual swap during unstake; payment balances remain unchanged."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol#test_mixedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_Alignment_RedeemD15.t.sol",
+      "sha256": "7af0d2f422a7b5ddc782455c0d9cb63632b8b9a529ffe36513577bc872efd843",
+      "inherited_only": false,
+      "cases": [
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_5_multiLegLeftoverDump",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: there is no reserve basket or residual swap during unstake; payment balances remain unchanged."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Alignment_RedeemD15_B_ALL6.t.sol",
+      "sha256": "a041753c78eabac48df57cf3171cb67d58f28bdaaee9e28b992458de6f45a18b",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_5_multiLegLeftoverDump",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: there is no reserve basket or residual swap during unstake; payment balances remain unchanged."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Alignment_RedeemD15_B_ALL9.t.sol",
+      "sha256": "5a9961e8ae0f57c0b27e2029699e7128f495ffd70ef32b509a3a833f768ad994",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_5_multiLegLeftoverDump",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: there is no reserve basket or residual swap during unstake; payment balances remain unchanged."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Alignment_RedeemD15_B_P18_R6.t.sol",
+      "sha256": "889721655fa51ac3ba7c23a2ade4f94a497fb02d9fb5e638654971a374c13a97",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_5_multiLegLeftoverDump",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: there is no reserve basket or residual swap during unstake; payment balances remain unchanged."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Alignment_RedeemD15_B_P18_R9.t.sol",
+      "sha256": "11186d9cc0235a0fea9db3b2d81bbf427fb7f31e884d1885137e7f727215c695",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_5_multiLegLeftoverDump",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: there is no reserve basket or residual swap during unstake; payment balances remain unchanged."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Alignment_RedeemD15_B_P6_R18.t.sol",
+      "sha256": "55b7eaf33580291c02976112f2c103171490376e0c48bec33b06675c6f8be56b",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_5_multiLegLeftoverDump",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: there is no reserve basket or residual swap during unstake; payment balances remain unchanged."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Alignment_RedeemD15_B_P6_R9.t.sol",
+      "sha256": "e7a7a2a8373d95bcc8fcfe3dd4def699309a8c9f0db62990682446cf35a83fda",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_5_multiLegLeftoverDump",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: there is no reserve basket or residual swap during unstake; payment balances remain unchanged."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Alignment_RedeemD15_B_P9_R18.t.sol",
+      "sha256": "c09d6d56f73a3ab7755ea84f6a0015a213268deaa55ed08c2109e348eb4fb0cd",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_5_multiLegLeftoverDump",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: there is no reserve basket or residual swap during unstake; payment balances remain unchanged."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Alignment_RedeemD15_B_P9_R6.t.sol",
+      "sha256": "7be424bd28836882e299143c3dc9ff1d18f138cd4f6900b73b21187848b38018",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_5_multiLegLeftoverDump",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: there is no reserve basket or residual swap during unstake; payment balances remain unchanged."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Alignment_RedeemD15_Decimals.sol",
+      "sha256": "0613e8eafacba20e83e8cf668bdb994c9b7a5c44d9a961f32d74191294829e72",
+      "inherited_only": false,
+      "cases": [
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_5_multiLegLeftoverDump",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: there is no reserve basket or residual swap during unstake; payment balances remain unchanged."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol#test_multiPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_Alignment_RedeemD15.t.sol",
+      "sha256": "111ab53a1e1f4642da5114e726f4b8ca719dc1e4406fdfaaaa0f787a22bd02e6",
+      "inherited_only": false,
+      "cases": [
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_5_multiLegLeftoverDump",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: there is no reserve basket or residual swap during unstake; payment balances remain unchanged."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_Alignment_RedeemD15_B_ALL6.t.sol",
+      "sha256": "e4fd2db6ad180df4a4cedce5209aeb7b67b5af654acdf41e6de9a93482f80781",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_5_multiLegLeftoverDump",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: there is no reserve basket or residual swap during unstake; payment balances remain unchanged."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_Alignment_RedeemD15_B_ALL9.t.sol",
+      "sha256": "790fb68391e20b5c1a9921b688a006911dbea873c48b039214da315d2347733d",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_5_multiLegLeftoverDump",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: there is no reserve basket or residual swap during unstake; payment balances remain unchanged."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_Alignment_RedeemD15_B_P18_R6.t.sol",
+      "sha256": "8f35035324989386aad2577bf8afc6aeedfbc3c9fe8bbaf7c9d8962cd37e6951",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_5_multiLegLeftoverDump",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: there is no reserve basket or residual swap during unstake; payment balances remain unchanged."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_Alignment_RedeemD15_B_P18_R9.t.sol",
+      "sha256": "ae3bb997aebd81ddd45f979bf444f5099686dd676b71165608a1faf947491a9f",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_5_multiLegLeftoverDump",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: there is no reserve basket or residual swap during unstake; payment balances remain unchanged."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_Alignment_RedeemD15_B_P6_R18.t.sol",
+      "sha256": "1d7e951e5bf7827ebfe541b4931650679ee100abf713e4750967e72d26e18119",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_5_multiLegLeftoverDump",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: there is no reserve basket or residual swap during unstake; payment balances remain unchanged."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_Alignment_RedeemD15_B_P6_R9.t.sol",
+      "sha256": "9de8e496f9788bc104ac4fc134837ec4d06f42975eedd296e1e672666b189376",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_5_multiLegLeftoverDump",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: there is no reserve basket or residual swap during unstake; payment balances remain unchanged."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_Alignment_RedeemD15_B_P9_R18.t.sol",
+      "sha256": "bed2f9b92d1d3dce960b0507bf18e8c39c8db154efcaa24a6c38841de74ea542",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_5_multiLegLeftoverDump",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: there is no reserve basket or residual swap during unstake; payment balances remain unchanged."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_Alignment_RedeemD15_B_P9_R6.t.sol",
+      "sha256": "69f083b69163e6296f315aa230bd66307ec46f2e04cb077266fe7664bb4ed1fd",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_5_multiLegLeftoverDump",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: there is no reserve basket or residual swap during unstake; payment balances remain unchanged."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_Alignment_RedeemD15_Decimals.sol",
+      "sha256": "57264473b1e4f620f7c8d04381446fe754bf52b0318f5940ee4747f4ed40dbc2",
+      "inherited_only": false,
+      "cases": [
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_5_multiLegLeftoverDump",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: there is no reserve basket or residual swap during unstake; payment balances remain unchanged."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol#test_composedPositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_Alignment_RedeemD15.t.sol",
+      "sha256": "71541c164c63786da4db4224ad7543c02ae8a4806ee7d891c9dea8ce78bab8b1",
+      "inherited_only": false,
+      "cases": [
+        {
+          "old_test": "test_D15_1_previewEqualsExecute",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: direct Standard Exchange unstake preview and actual output are exact raw-unit 1:1."
+        },
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_9_ungatedVsOpen",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D51 removes Open mode. Direct funded unstaking is available independently of primary price gates."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Alignment_RedeemD15_Decimals.sol",
+      "sha256": "0ea7106b5bd965e6b19e09546f85a4639defb2ac8eadfc43397b98a52fe06381",
+      "inherited_only": false,
+      "cases": [
+        {
+          "old_test": "test_D15_1_previewEqualsExecute",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: direct Standard Exchange unstake preview and actual output are exact raw-unit 1:1."
+        },
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_9_ungatedVsOpen",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D51 removes Open mode. Direct funded unstaking is available independently of primary price gates."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Alignment_RedeemD15_H6.t.sol",
+      "sha256": "b1bbfbbe5afb7dc28d1fb1a411babdbafbd7be52620eedc3b558656624a8af76",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_1_previewEqualsExecute",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: direct Standard Exchange unstake preview and actual output are exact raw-unit 1:1."
+        },
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_9_ungatedVsOpen",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D51 removes Open mode. Direct funded unstaking is available independently of primary price gates."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Alignment_RedeemD15_H9.t.sol",
+      "sha256": "4f442f6774b0ff64019938ed8d84b406e889110c053019fd0296ebb9062c7eff",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_1_previewEqualsExecute",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: direct Standard Exchange unstake preview and actual output are exact raw-unit 1:1."
+        },
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_9_ungatedVsOpen",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D51 removes Open mode. Direct funded unstaking is available independently of primary price gates."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Alignment_RedeemD15_P18_R6.t.sol",
+      "sha256": "1b6af7b7ccfe64f861257214c103f81eaa5b272cdf570da4f7c5ce029c947721",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_1_previewEqualsExecute",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: direct Standard Exchange unstake preview and actual output are exact raw-unit 1:1."
+        },
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_9_ungatedVsOpen",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D51 removes Open mode. Direct funded unstaking is available independently of primary price gates."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Alignment_RedeemD15_P18_R9.t.sol",
+      "sha256": "55e62cdbe2705b454b818d090479d9ff5f97a872bae0a4975276cb897011df39",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_1_previewEqualsExecute",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: direct Standard Exchange unstake preview and actual output are exact raw-unit 1:1."
+        },
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_9_ungatedVsOpen",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D51 removes Open mode. Direct funded unstaking is available independently of primary price gates."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Alignment_RedeemD15_P6_R18.t.sol",
+      "sha256": "885ea30b7a95c9a468fbbe451c485360d54e111a563b545fb09eb5b2fa909ff4",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_1_previewEqualsExecute",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: direct Standard Exchange unstake preview and actual output are exact raw-unit 1:1."
+        },
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_9_ungatedVsOpen",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D51 removes Open mode. Direct funded unstaking is available independently of primary price gates."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Alignment_RedeemD15_P6_R9.t.sol",
+      "sha256": "41c75f161c38567c8288decec20d55470b477c571a816a5a69bdffbd293077ab",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_1_previewEqualsExecute",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: direct Standard Exchange unstake preview and actual output are exact raw-unit 1:1."
+        },
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_9_ungatedVsOpen",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D51 removes Open mode. Direct funded unstaking is available independently of primary price gates."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Alignment_RedeemD15_P9_R18.t.sol",
+      "sha256": "e5cfa76dbfe3694b8aa31a538f95c26c0a48295c8cd8b031d33ffa9497cc3645",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_1_previewEqualsExecute",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: direct Standard Exchange unstake preview and actual output are exact raw-unit 1:1."
+        },
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_9_ungatedVsOpen",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D51 removes Open mode. Direct funded unstaking is available independently of primary price gates."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    },
+    {
+      "retired_source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Alignment_RedeemD15_P9_R6.t.sol",
+      "sha256": "7623b843f3b4f62130b1836d9cff7cdc463fee7bb19ddcf6acef5e0c09bfc892",
+      "inherited_only": true,
+      "cases": [
+        {
+          "old_test": "test_D15_1_previewEqualsExecute",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: direct Standard Exchange unstake preview and actual output are exact raw-unit 1:1."
+        },
+        {
+          "old_test": "test_D15_8_tokenOutNotDetfReverts",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: the sDETF principal interface accepts direct DETF redemption only; arbitrary payment assets are rejected there."
+        },
+        {
+          "old_test": "test_D15_9_ungatedVsOpen",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D51 removes Open mode. Direct funded unstaking is available independently of primary price gates."
+        },
+        {
+          "old_test": "test_D15_2_smallRedeemConsumesPending",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33: redemption transfers already held DETF; pending-reward-first LP settlement is removed."
+        },
+        {
+          "old_test": "test_D15_3_pendingCoversOwed_skipsLpWithdraw",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D34: funded redemption never consumes reserve LP. Full exit preserves actual LP custody and raw supply."
+        },
+        {
+          "old_test": "test_D15_4_shortfallResidualBuy_otherBondersUnchanged",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond",
+            "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol#test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+          ],
+          "disposition": "D33/D35: no shortfall swap or other bond liability is used; pooled bond-gons isolation is separately exercised."
+        },
+        {
+          "old_test": "test_D15_6_lastExitRejoinsLeftover",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_finalFundedClaimPaysOnlyStakingAndRetiresBond"
+          ],
+          "disposition": "D33/D53: final unstake retires only the exiting account fraction, transfers exact held backing, and preserves all reserve LP."
+        },
+        {
+          "old_test": "test_D15_7_realizeExpansionFirst_paysFromId0Slice",
+          "replacements": [
+            "test/foundry/spec/vaults/detf/common/claimToken/SingleSEFundedStaking.t.sol#test_singlePositiveEpochCatchupFundsOneAggregateWithoutLpChange"
+          ],
+          "disposition": "D50: an actual sDETF unstake triggers the due aggregate expansion before withdrawing backing. The old ID0 pending-reward slice is gone."
+        }
+      ]
+    }
+  ]
+}

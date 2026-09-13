@@ -1,0 +1,24 @@
+[
+  {
+    "alias": "ethereum_mainnet_alchemy",
+    "block": 24000000,
+    "recorded_at_utc": "2026-09-10T17:30:04.746836+00:00",
+    "broadcast": false,
+    "status": "AVAILABLE",
+    "chain_id": 1,
+    "hash": "0x738cc1716ea1f08adac2d4e2230aedcee2d5cd3f65d66d5d3597e05d710a3d50",
+    "number": "0x16e3600",
+    "gasLimit": "0x393868e"
+  },
+  {
+    "alias": "ethereum_mainnet_alchemy",
+    "block": 25934585,
+    "recorded_at_utc": "2026-09-10T17:30:05.486260+00:00",
+    "broadcast": false,
+    "status": "AVAILABLE",
+    "chain_id": 1,
+    "hash": "0xb31278c7530c48d559ad721ad75606ed6d3c7417a6217e808b97ae89e242c056",
+    "number": "0x18bbaf9",
+    "gasLimit": "0x3938700"
+  }
+]

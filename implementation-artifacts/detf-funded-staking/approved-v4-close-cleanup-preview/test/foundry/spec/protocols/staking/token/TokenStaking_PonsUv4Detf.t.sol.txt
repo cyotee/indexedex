@@ -1,0 +1,337 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+import {IMultiStepOwnable} from "@crane/contracts/access/ERC8023/IMultiStepOwnable.sol";
+import {StakedDETFTarget} from "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol";
+
+import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
+import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
+
+import {IDetfClaimPurchase} from "contracts/interfaces/IDetfClaimPurchase.sol";
+import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
+import {ITokenStaking} from "contracts/interfaces/ITokenStaking.sol";
+import {ITokenStakingDFPkg} from "contracts/protocols/staking/token/ITokenStakingDFPkg.sol";
+import {IRebasingAwareERC4626DFPkg} from
+    "contracts/protocols/staking/rebasingVault/IRebasingAwareERC4626DFPkg.sol";
+import {TokenStaking_Component_FactoryService} from
+    "contracts/protocols/staking/token/TokenStaking_Component_FactoryService.sol";
+import {IUniswapV4Detf} from
+    "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
+import {TestBase_UniswapV4Detf_PonsV2Se} from
+    "contracts/test/bases/TestBase_UniswapV4Detf_PonsV2Se.sol";
+
+/**
+ * @title TokenStaking_PonsUv4Detf
+ * @notice E2E: Pons v2 DTF/WETH pool → Uni V4 SE → Single SE buffer CP hook DETF
+ *         (Custom I/O WETH + DTF) → TokenStaking deposit/reward = DTF.
+ * @dev Funded staking is backed by raw DETF; mint/bond/burn/donate routes list
+ *      both WETH and the launch token. Bond claims pay sDETF without an asset-selecting close.
+ */
+contract TokenStaking_PonsUv4Detf is TestBase_UniswapV4Detf_PonsV2Se {
+    using VaultComponentFactoryService for ICreate3FactoryProxy;
+    using TokenStaking_Component_FactoryService for ICreate3FactoryProxy;
+
+    ITokenStaking internal staking;
+    address internal stakerB;
+
+    function _defaultDetfArgs() internal view override returns (IUniswapV4Detf.PkgArgs memory args) {
+        args = super._defaultDetfArgs();
+        IUniswapV4Detf.IoRoute[] memory routes_ = _wethAndDtfRoutes();
+        args.mintRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
+        args.mintRoutes = routes_;
+        args.burnRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
+        args.burnRoutes = routes_;
+        args.bondRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
+        args.bondRoutes = routes_;
+        args.donateRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
+        args.donateRoutes = routes_;
+    }
+
+    function setUp() public override {
+        super.setUp();
+        stakerB = makeAddr("stakerB");
+        _deployStaking();
+        uint256 dtfBal_ = IERC20(launchToken).balanceOf(address(this));
+        if (dtfBal_ > 200 ether) {
+            IERC20(launchToken).transfer(detfUser, 80 ether);
+            IERC20(launchToken).transfer(stakerB, 80 ether);
+        }
+        vm.prank(stakerB);
+        IERC20(launchToken).approve(address(staking), type(uint256).max);
+        vm.prank(detfUser);
+        IERC20(launchToken).approve(address(staking), type(uint256).max);
+        vm.prank(detfUser);
+        IERC20(launchToken).approve(detf, type(uint256).max);
+    }
+
+    function _wethAndDtfRoutes() internal view returns (IUniswapV4Detf.IoRoute[] memory routes_) {
+        routes_ = new IUniswapV4Detf.IoRoute[](2);
+        routes_[0] =
+            IUniswapV4Detf.IoRoute({token: IERC20(launchToken), vault: IStandardExchange(address(ponsSe))});
+        routes_[1] =
+            IUniswapV4Detf.IoRoute({token: IERC20(address(weth)), vault: IStandardExchange(address(ponsSe))});
+    }
+
+    function _deployStaking() internal {
+        IFacet rebasingAwareErc4626Facet = create3Factory.deployRebasingAwareERC4626Facet();
+        IFacet tokenStakingFacet = create3Factory.deployTokenStakingFacet();
+        IRebasingAwareERC4626DFPkg claimVaultPkg = TokenStaking_Component_FactoryService
+            .deployRebasingAwareERC4626DFPkg(
+            create3Factory,
+            IRebasingAwareERC4626DFPkg.PkgInit({
+                erc20Facet: erc20Facet,
+                rebasingAwareErc4626Facet: rebasingAwareErc4626Facet,
+                diamondFactory: diamondPackageFactory
+            })
+        );
+        ITokenStakingDFPkg tokenStakingPkg = TokenStaking_Component_FactoryService.deployTokenStakingDFPkg(
+            create3Factory,
+            ITokenStakingDFPkg.PkgInit({
+                tokenStakingFacet: tokenStakingFacet,
+                multiStepOwnableFacet: multiStepOwnableFacet,
+                claimVaultPkg: claimVaultPkg,
+                permit2: permit2
+            })
+        );
+        staking = tokenStakingPkg.deployStaking(
+            diamondPackageFactory,
+            ITokenStakingDFPkg.PkgArgs({
+                stakingToken: IERC20(launchToken),
+                rewardsDuration: 7 days,
+                owner: owner,
+                ownershipBufferPeriod: 2 days,
+                optionalSalt: keccak256("TokenStaking_PonsUv4Detf")
+            })
+        );
+        vm.label(address(staking), "TokenStaking_DTF");
+    }
+
+    function test_routes_declare_weth_and_dtf() public view {
+        _assertRoutesHaveWethAndDtf(detfInfo.mintRoutes());
+        _assertRoutesHaveWethAndDtf(detfInfo.burnRoutes());
+        _assertRoutesHaveWethAndDtf(detfInfo.bondRoutes());
+        _assertRoutesHaveWethAndDtf(detfInfo.donateRoutes());
+    }
+
+    function test_stakingBacking_is_nativeDetf() public view {
+        address claim_ = detfInfo.rebasingClaimToken();
+        assertTrue(claim_ != address(0), "claim wired");
+        assertEq(IStakedDETF(claim_).detf(), detf, "staking holds DETF");
+        assertEq(IStakedDETF(claim_).decimals(), 9, "native staking decimals");
+    }
+
+    function test_e2e_stake_dtf_migrate_chunks_withdraw_claim() public {
+        _firstBond(80 ether);
+        assertTrue(detfInfo.isReserveLive(), "live");
+
+        uint256 stakeAmt_ = 20 ether;
+        vm.prank(detfUser);
+        staking.stake(stakeAmt_);
+        vm.prank(stakerB);
+        staking.stake(stakeAmt_);
+        assertEq(staking.totalSupply(), 40 ether);
+
+        vm.prank(owner);
+        staking.setTargetDetf(IDetfClaimPurchase(detf));
+
+        vm.prank(owner);
+        staking.migrateToClaimVault(15 ether, 0, block.timestamp + 1 hours);
+        assertEq(uint256(staking.phase()), uint256(ITokenStaking.Phase.Migrating));
+
+        uint256 rest_ = staking.reserveRemaining();
+        vm.prank(owner);
+        staking.migrateToClaimVault(rest_, 0, block.timestamp + 1 hours);
+        assertEq(uint256(staking.phase()), uint256(ITokenStaking.Phase.Wrapped));
+        assertEq(staking.reserveRemaining(), 0);
+
+        _assertMigrationApprovalsCleared();
+        address receiptBefore_ = detfInfo.rebasingClaimToken();
+        uint256 vaultBacking_ = IERC20(receiptBefore_).balanceOf(address(staking.claimVault()));
+        uint256 previewBefore_ = staking.previewClaim(detfUser, stakeAmt_);
+        vm.prank(detfUser);
+        detfInfo.bond(IERC20(launchToken), 10 ether, DEFAULT_MIN_LOCK, detfUser, false, block.timestamp);
+        assertGt(IERC20(receiptBefore_).balanceOf(address(staking.claimVault())), vaultBacking_, "actual funded bond issuance rebases wrapping custody");
+        assertGt(staking.previewClaim(detfUser, stakeAmt_), previewBefore_, "wrapped staker receives funded growth");
+        uint256 previewA_ = staking.previewClaim(detfUser, stakeAmt_);
+
+        address claim_ = detfInfo.rebasingClaimToken();
+        vm.prank(detfUser);
+        uint256 outA_ = staking.withdrawClaim(stakeAmt_);
+        assertEq(outA_, previewA_, "A funded preview equals execution");
+        assertApproxEqAbs(IERC20(claim_).balanceOf(detfUser), outA_, 1);
+
+        uint256 previewB_ = staking.previewClaim(stakerB, stakeAmt_);
+        vm.prank(stakerB);
+        uint256 outB_ = staking.withdrawClaim(stakeAmt_);
+        assertEq(outB_, previewB_, "B funded preview equals execution");
+        assertEq(staking.totalSupply(), 0);
+    }
+
+    function test_e2e_notify_stake_migrate_withdraw_claim() public {
+        _firstBond(80 ether);
+        assertTrue(detfInfo.isReserveLive(), "live");
+
+        uint256 notifyAmt_ = 10 ether;
+        IERC20 dtf_ = IERC20(launchToken);
+        uint256 held_ = dtf_.balanceOf(address(this));
+        assertGe(held_, notifyAmt_, "deployer DTF for notify");
+        dtf_.transfer(owner, notifyAmt_);
+        vm.startPrank(owner);
+        dtf_.approve(address(staking), notifyAmt_);
+        staking.notifyRewardAmount(notifyAmt_);
+        vm.stopPrank();
+        assertGt(staking.rewardRate(), 0, "stream on");
+
+        uint256 stakeAmt_ = 20 ether;
+        vm.prank(detfUser);
+        staking.stake(stakeAmt_);
+        vm.prank(stakerB);
+        staking.stake(stakeAmt_);
+        assertEq(staking.totalSupply(), 40 ether);
+
+        vm.prank(owner);
+        staking.setTargetDetf(IDetfClaimPurchase(detf));
+        vm.prank(owner);
+        staking.migrateToClaimVault(15 ether, 0, block.timestamp + 1 hours);
+        assertEq(uint256(staking.phase()), uint256(ITokenStaking.Phase.Migrating));
+
+        uint256 rest_ = staking.reserveRemaining();
+        vm.prank(owner);
+        staking.migrateToClaimVault(rest_, 0, block.timestamp + 1 hours);
+        if (uint256(staking.phase()) == uint256(ITokenStaking.Phase.Migrating)) {
+            vm.prank(owner);
+            staking.completeWrap(owner);
+        }
+        assertEq(uint256(staking.phase()), uint256(ITokenStaking.Phase.Wrapped));
+
+        address claim_ = detfInfo.rebasingClaimToken();
+        vm.prank(detfUser);
+        uint256 outA_ = staking.withdrawClaim(stakeAmt_);
+        assertGt(outA_, 0, "A claim");
+        assertApproxEqAbs(IERC20(claim_).balanceOf(detfUser), outA_, 1);
+
+        vm.prank(stakerB);
+        uint256 outB_ = staking.withdrawClaim(stakeAmt_);
+        assertGt(outB_, 0, "B claim");
+        assertEq(staking.totalSupply(), 0);
+    }
+
+    function test_exchangeIn_detf_to_claim_after_live() public {
+        _firstBond(80 ether);
+        uint256 mintIn_ = 10 ether;
+        vm.startPrank(detfUser);
+        uint256 userDetf_ = IStandardExchangeIn(detf).exchangeIn(
+            IERC20(launchToken), mintIn_, IERC20(detf), 0, detfUser, false, block.timestamp + 1 hours
+        );
+        address stakingToken_ = detfInfo.rebasingClaimToken();
+        IERC20(detf).approve(stakingToken_, userDetf_);
+        uint256 claimOut_ = IStandardExchangeIn(stakingToken_).exchangeIn(
+            IERC20(detf),
+            userDetf_,
+            IERC20(detfInfo.rebasingClaimToken()),
+            0,
+            detfUser,
+            false,
+            block.timestamp + 1 hours
+        );
+        vm.stopPrank();
+        assertGt(userDetf_, 0, "minted DETF");
+        assertEq(claimOut_, userDetf_, "exact held-DETF staking");
+    }
+
+    function test_realMigrationBoundsSlippageAndOwnerChecks() public {
+        _firstBond(80 ether);
+        vm.prank(detfUser);
+        staking.stake(10 ether);
+        vm.prank(owner);
+        staking.setTargetDetf(IDetfClaimPurchase(detf));
+        assertEq(address(staking.targetDetf()), detf, "actual target stored");
+        vm.expectRevert(abi.encodeWithSelector(ITokenStaking.AmountExceedsReserve.selector, 11 ether, 10 ether));
+        vm.prank(owner);
+        staking.migrateToClaimVault(11 ether, 0, block.timestamp);
+        assertEq(uint256(staking.phase()), uint256(ITokenStaking.Phase.Staking));
+
+        uint256 quote_ = IStandardExchangeIn(detf).previewExchangeIn(IERC20(launchToken), 4 ether, IERC20(detf));
+        uint256 supply_ = IERC20(detf).totalSupply();
+        IStakedDETF receipt_ = IStakedDETF(detfInfo.rebasingClaimToken());
+        bytes32 before_ = keccak256(abi.encode(receipt_.stakingState()));
+        vm.expectRevert(abi.encodeWithSelector(StakedDETFTarget.MinimumOutputNotMet.selector, quote_ + 1, quote_));
+        vm.prank(owner);
+        staking.migrateToClaimVault(4 ether, quote_ + 1, block.timestamp);
+        assertEq(uint256(staking.phase()), uint256(ITokenStaking.Phase.Staking), "minimum failure rolls back migration phase");
+        assertEq(IERC20(launchToken).balanceOf(address(staking)), 10 ether, "failed migration keeps payment");
+        assertEq(IERC20(detf).totalSupply(), supply_, "failed minimum rolls back issuance");
+        assertEq(keccak256(abi.encode(receipt_.stakingState())), before_, "failed minimum rolls back funded staking");
+        assertEq(address(staking.claimVault()), address(0), "failed minimum creates no wrapping vault");
+
+        vm.prank(owner);
+        (uint256 claim_,) = staking.migrateToClaimVault(4 ether, quote_, block.timestamp);
+        assertEq(claim_, quote_, "native staking minimum equals funded execution");
+        _assertMigrationApprovalsCleared();
+        vm.expectRevert(abi.encodeWithSelector(
+            ITokenStaking.InvalidPhase.selector, ITokenStaking.Phase.Migrating, ITokenStaking.Phase.Staking
+        ));
+        vm.prank(stakerB);
+        staking.stake(1 ether);
+        vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, detfUser));
+        vm.prank(detfUser);
+        staking.completeWrap(detfUser);
+
+        uint256 remaining_ = staking.reserveRemaining();
+        uint256 ownerBefore_ = IERC20(launchToken).balanceOf(owner);
+        vm.prank(owner);
+        staking.completeWrap(owner);
+        assertEq(uint256(staking.phase()), uint256(ITokenStaking.Phase.Wrapped));
+        assertEq(staking.reserveRemaining(), 0);
+        assertEq(IERC20(launchToken).balanceOf(owner) - ownerBefore_, remaining_, "explicit completion returns remaining payment");
+        uint256 preview_ = staking.previewClaim(detfUser, 10 ether);
+        vm.prank(detfUser);
+        uint256 paid_ = staking.withdrawClaim(10 ether);
+        assertEq(paid_, preview_, "remaining staker receives actual wrapped sDETF");
+        assertEq(receipt_.balanceOf(detfUser), paid_);
+    }
+
+    function test_reassignAfterRealFundedMigration() public {
+        _firstBond(80 ether);
+        vm.prank(detfUser);
+        staking.stake(20 ether);
+        vm.prank(owner);
+        staking.setTargetDetf(IDetfClaimPurchase(detf));
+        vm.prank(owner);
+        staking.migrateToClaimVault(20 ether, 0, block.timestamp);
+        _assertMigrationApprovalsCleared();
+        vm.prank(detfUser);
+        staking.reassign(stakerB, 20 ether);
+        assertEq(staking.balanceOf(detfUser), 0, "old holder conveys entire stake");
+        assertEq(staking.balanceOf(stakerB), 20 ether);
+        uint256 preview_ = staking.previewClaim(stakerB, 20 ether);
+        vm.prank(stakerB);
+        uint256 paid_ = staking.withdrawClaim(20 ether);
+        assertEq(paid_, preview_, "new holder gets actual funded claim");
+        assertGt(paid_, 0);
+        assertEq(IERC20(detfInfo.rebasingClaimToken()).balanceOf(stakerB), paid_);
+        assertEq(staking.totalSupply(), 0);
+    }
+
+    function _assertMigrationApprovalsCleared() private view {
+        address receipt_ = detfInfo.rebasingClaimToken();
+        assertEq(IERC20(launchToken).allowance(address(staking), detf), 0, "raw purchase approval cleared");
+        assertEq(IERC20(detf).allowance(address(staking), receipt_), 0, "funded staking approval cleared");
+        assertEq(IERC20(receipt_).allowance(address(staking), address(staking.claimVault())), 0, "wrapper approval cleared");
+    }
+
+    function _assertRoutesHaveWethAndDtf(IUniswapV4Detf.IoRoute[] memory rows_) internal view {
+        bool dtf_;
+        bool weth_;
+        for (uint256 i; i < rows_.length; ++i) {
+            if (address(rows_[i].token) == launchToken) dtf_ = true;
+            if (address(rows_[i].token) == address(weth)) weth_ = true;
+            assertEq(address(rows_[i].vault), address(ponsSe), "route vault is pons SE");
+        }
+        assertTrue(dtf_, "DTF on table");
+        assertTrue(weth_, "WETH on table");
+    }
+}

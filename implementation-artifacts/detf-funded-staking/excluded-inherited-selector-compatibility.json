@@ -1,0 +1,78 @@
+{
+  "recorded_at_utc": "2026-09-08T08:27:09.910826+00:00",
+  "status": "APPLIED_AWAITING_FULL_BUILD",
+  "scope": "D60 compilation-only selector qualification; no function, argument, expectation or deployed surface changed",
+  "changes": [
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/adversarial/Adversarial_Surface.t.sol",
+      "parent": "contracts/interfaces/IComposedStableCommonDetfBonding.sol",
+      "methods": [
+        "acceptedBondTokens",
+        "bond",
+        "isAcceptedBondToken"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/adversarial/Adversarial_Surface.t.sol",
+      "parent": "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/IComposedStableCommonDetfInfo.sol",
+      "methods": [
+        "burnThreshold",
+        "expansionClosureRatePerSecond",
+        "isBurningAllowed",
+        "isMintingAllowed",
+        "lastExpansionTimestamp",
+        "mintThreshold"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/adversarial/Adversarial_Surface.t.sol",
+      "parent": "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFBondingTarget.sol",
+      "methods": [
+        "acceptedBondTokens",
+        "bond",
+        "donate",
+        "joinDonatedCapital",
+        "notifyReserveDonated",
+        "previewJoinDonatedCapital"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/adversarial/Adversarial_Surface.t.sol",
+      "parent": "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFInfoTarget.sol",
+      "methods": [
+        "bondNftVault",
+        "burnThreshold",
+        "expansionClosureRatePerSecond",
+        "isBurningAllowed",
+        "isMintingAllowed",
+        "isReserveLive",
+        "lastExpansionTimestamp",
+        "mintThreshold",
+        "rateTarget",
+        "rebasingClaimToken",
+        "reservePool",
+        "standardExchangeVault",
+        "standardExchangeVaultShare",
+        "syntheticPrice"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_Surface.t.sol",
+      "parent": "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfBondingTarget.sol",
+      "methods": [
+        "bond",
+        "donate",
+        "initializeReserve",
+        "joinDonatedCapital"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_Surface.t.sol",
+      "parent": "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfInfoTarget.sol",
+      "methods": [
+        "isReserveLive",
+        "syntheticPrice"
+      ]
+    }
+  ]
+}

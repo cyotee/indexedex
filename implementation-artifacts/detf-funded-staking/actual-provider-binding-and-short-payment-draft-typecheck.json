@@ -1,0 +1,22 @@
+{
+  "status": "DRAFT_TYPECHECK_ONLY_NOT_RUNTIME_VALIDATION",
+  "seconds": 26.683,
+  "prepared_records": [
+    "production-se-fixture-followups-prepared.json",
+    "nested-short-funding-followups-prepared.json",
+    "funded-policy-fixture-followups-prepared.json"
+  ],
+  "exit_code": 0,
+  "errors": [],
+  "concrete_suites": {
+    "UniswapV4Detf_Weighted": 4,
+    "UniswapV4Detf_Cp_Univ3Se_ProductLaw": 54,
+    "UniswapV4Detf_Cp_Univ4Se_ProductLaw_P9_R18": 52,
+    "UniswapV4Detf_Orbital_MorphoBlueSe_Policy_B_P18_R6": 19,
+    "UniswapV4Detf_Quad_PonsMix_Lifecycle_B_P18_R6": 4
+  },
+  "compiled_methods": 133,
+  "compiler_input_sha256": "f282f68abc0cca9a327f60a7900969ca82f8a97a462a59b5a548f726dcc261e7",
+  "validation_passed": true,
+  "canonical_sources_unchanged": true
+}

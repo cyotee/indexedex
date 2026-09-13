@@ -4,11 +4,9 @@ pragma solidity ^0.8.0;
 import {
     TestBase_MultiVaultWeightedDetf
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf.sol";
-import {
-    IMultiVaultWeightedDetfInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfInfoTarget.sol";
+import {IMultiVaultWeightedDetfInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfInfo.sol";
 
-/// @notice Deploy + first BPT bond → live for every N in 1..7.
+/// @notice Deploy + fully funded first bond → live for every N in 1..7.
 contract MultiVaultWeightedDetf_NRange_Test is TestBase_MultiVaultWeightedDetf {
     function test_n1_deployAndLive() public {
         _assertNDeployLive(1);
@@ -43,10 +41,10 @@ contract MultiVaultWeightedDetf_NRange_Test is TestBase_MultiVaultWeightedDetf {
         IMultiVaultWeightedDetfInfo info_ = IMultiVaultWeightedDetfInfo(instance_);
         assertEq(info_.vaultCount(), n, "vaultCount");
         _assertInert(instance_);
-        (uint256 tokenId_, uint256 bpt_) = _goLiveViaBptBond(instance_, alice, 500e18);
+        (uint256 tokenId_, uint256 bpt_) = _bootstrapDetf(instance_, alice, 500e18);
         _assertLive(instance_);
         assertTrue(tokenId_ > 0, "bond nft");
-        assertTrue(bpt_ > 0, "bpt principal");
+        assertTrue(bpt_ > 0, "protocol reserve LP");
         assertEq(info_.underlyingVaults().length, n, "vaults len");
         assertEq(info_.vaultShares().length, n, "shares len");
         (uint256 wDetf_, uint256[] memory vw_) = info_.weights();

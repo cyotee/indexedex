@@ -1,0 +1,14 @@
+{
+  "checked_at_utc": "2026-09-10T19:09:55.456062+00:00",
+  "status": "PASS_STRICT_NODE_PREFLIGHT_NO_DEPLOYMENT",
+  "rpc": "http://127.0.0.1:18663",
+  "chain_id": 4663,
+  "head": 56118361,
+  "hardfork": "Prague",
+  "block_gas_limit": 32000000,
+  "code_size_limit": 24576,
+  "code_size_evidence": "Explicit --code-size-limit 24576 in the exclusively recorded maintained node command; actual EIP-170 deployment acceptance remains pending.",
+  "public_transactions": 0,
+  "local_release_transactions": 0,
+  "note": "Node preparation only. Package deployment waits for matching P3/P4 checks."
+}

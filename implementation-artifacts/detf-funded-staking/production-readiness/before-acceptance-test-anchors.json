@@ -1,0 +1,693 @@
+{
+  "status": "Current source anchors only; execution status remains in acceptance-progress.json and complete run logs.",
+  "note": "These are review entry points, not an exhaustive proof of every subclause. Native SE package inventory and storage/selector records supplement them. Named legacy IDs retain their migrated assertions.",
+  "rows": [
+    {
+      "criterion": "A1",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4FundedBindings.t.sol",
+          "line": 77,
+          "function": "test_bindingHasNativeNineDecimalChildren"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg_Deploy.t.sol",
+          "line": 138,
+          "function": "test_stakingPackageRejectsNonNineDecimalBacking"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A2",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFFundedStakingMath.t.sol",
+          "line": 23,
+          "function": "testFuzz_fundedRebaseConservation"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol",
+          "line": 57,
+          "function": "testFuzz_paidRewardsAndStakeChangesKeepEveryUnitFunded"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A3",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Accounting.t.sol",
+          "line": 75,
+          "function": "test_reserveTradingCannotReduceFundedPrincipalAndFullExitRetiresOnlyOwnFraction"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFFundedStakingMath.t.sol",
+          "line": 50,
+          "function": "test_emptyAndUnfundedRebasePreserveIndex"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A4",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4FundedBindings.t.sol",
+          "line": 92,
+          "function": "test_bindingFirstBondFundsPrincipalSeparatelyFromOwnedLP"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4FundedBindings.t.sol",
+          "line": 29,
+          "function": "test_bindingFirstBondPaymentPreviewMatchesEveryWalletDebit"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A5",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFMintSplit_Alignment.t.sol",
+          "line": 24,
+          "function": "test_bond_independentPurchasedAllocationAndLiquidity"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFMintSplit_Alignment.t.sol",
+          "line": 31,
+          "function": "test_bond_equalQuotesPreserveExistingSplit"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A6",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFFundedStakingMath.t.sol",
+          "line": 114,
+          "function": "test_linearVestingFloorsAndFinalUnit"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4FundedBindings.t.sol",
+          "line": 107,
+          "function": "test_bindingHalfwayPrincipalUnstakesWithoutLPWithdrawal"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A7",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFFundedStakingMath.t.sol",
+          "line": 90,
+          "function": "test_halfwayPrincipalAndRewardClaims"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+          "line": 80,
+          "function": "test_rewardOnlyClaimIsImmediateAndDoesNotUnlockPrincipal"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A8",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol",
+          "line": 135,
+          "function": "test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+          "line": 60,
+          "function": "test_ownerOperatorAndTransferPreserveRemainingVesting"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A9",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_FeeCreatorClaimBase.sol",
+          "line": 58,
+          "function": "test_FC_fundedTwoWavesMatchIndependentFloors"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4FundedBindings.t.sol",
+          "line": 129,
+          "function": "test_bindingRewardsClaimWhilePrincipalRemainsLocked"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A10",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 99,
+          "function": "test_standardMintAndBurnFallbackMatchActualSwapWithoutIssuance"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 105,
+          "function": "test_standardFallbackSettlesFundedCatchupBeforeBothDirections"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A11",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 251,
+          "function": "test_seShareFallbackComposesActualRedemptionAndSwap"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 261,
+          "function": "test_customProtocolShareFallbackComposesActualConversionAndSwap"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 272,
+          "function": "test_customDonationQuoteIncludesWrappingBeforeReserveJoin"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A12",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg_Deploy.t.sol",
+          "line": 258,
+          "function": "test_stakingSYDepositAndRedemptionMatchPreviews"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg_Deploy.t.sol",
+          "line": 290,
+          "function": "test_syInternalBalanceRedemptionConsumesOnlyTransferredSY"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A13",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFMintSplit_Alignment.t.sol",
+          "line": 17,
+          "function": "test_liveMint_U_is_Gross_userAndPot"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFMintSplit_Alignment.t.sol",
+          "line": 52,
+          "function": "test_d2_topUpDeltas_workedExample"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 480,
+          "function": "test_lpBondValuesDistinctNonDetfLegsAndRetainsWholeInventory"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A14",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFFundedStakingMath.t.sol",
+          "line": 62,
+          "function": "test_allocationWorkedExample"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_FeeCreatorClaimBase.sol",
+          "line": 58,
+          "function": "test_FC_fundedTwoWavesMatchIndependentFloors"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_FeeCreatorClaimBase.sol",
+          "line": 125,
+          "function": "test_FC_noNewFundingCannotRepeatStandingPayout"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A15",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_FeeCreatorClaimBase.sol",
+          "line": 71,
+          "function": "test_FC_fullExitAndFeeToRotationPreserveStandingIncome"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg_Deploy.t.sol",
+          "line": 361,
+          "function": "test_standingRecipientsReceiveNewExpansionAfterAllStakeUnstakes"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A16",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_OpeningPrice.t.sol",
+          "line": 12,
+          "function": "test_T1_openingZero_storesAsCreation_firstBondGAtPeg"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_OpeningPriceLayerBase.sol",
+          "line": 12,
+          "function": "test_T1_openingZero_storesAsCreation_firstBondGAtPeg"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_OpeningPriceLayerBase_Decimals.sol",
+          "line": 12,
+          "function": "test_T1_openingZero_storesAsCreation_firstBondGAtPeg"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_Policy.t.sol",
+          "line": 97,
+          "function": "test_T1_openingZero_storesAsCreation_firstBondGAtPeg"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Policy_Decimals.sol",
+          "line": 97,
+          "function": "test_T1_openingZero_storesAsCreation_firstBondGAtPeg"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_OpeningPrice.t.sol",
+          "line": 16,
+          "function": "test_T2_openingUsesG_creationViewUnchanged"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_OpeningPriceLayerBase.sol",
+          "line": 16,
+          "function": "test_T2_openingUsesG_creationViewUnchanged"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_OpeningPriceLayerBase_Decimals.sol",
+          "line": 16,
+          "function": "test_T2_openingUsesG_creationViewUnchanged"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_Policy.t.sol",
+          "line": 112,
+          "function": "test_T2_openingUsesG_creationViewUnchanged"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Policy_Decimals.sol",
+          "line": 112,
+          "function": "test_T2_openingUsesG_creationViewUnchanged"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4FundedBindings.t.sol",
+          "line": 29,
+          "function": "test_bindingFirstBondPaymentPreviewMatchesEveryWalletDebit"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A17",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 105,
+          "function": "test_standardFallbackSettlesFundedCatchupBeforeBothDirections"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_FeeCreatorClaimBase.sol",
+          "line": 58,
+          "function": "test_FC_fundedTwoWavesMatchIndependentFloors"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A18",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4FundedBindings.t.sol",
+          "line": 107,
+          "function": "test_bindingHalfwayPrincipalUnstakesWithoutLPWithdrawal"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_CloseD25OpenBase.sol",
+          "line": 11,
+          "function": "test_D25_fundedPrincipalAndRewardsPayOnlyStaking"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_CloseD25OpenBase_Decimals.sol",
+          "line": 11,
+          "function": "test_D25_fundedPrincipalAndRewardsPayOnlyStaking"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+          "line": 230,
+          "function": "test_D25_fundedPrincipalAndRewardsPayOnlyStaking"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+          "line": 230,
+          "function": "test_D25_fundedPrincipalAndRewardsPayOnlyStaking"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A19",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg_Deploy.t.sol",
+          "line": 241,
+          "function": "test_rawSYWrapsAndRedeemsExactDETFWithoutStaking"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg_Deploy.t.sol",
+          "line": 215,
+          "function": "test_syAddressesMetadataAndDirectionalDiscovery"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A20",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4FundedBindings.t.sol",
+          "line": 243,
+          "function": "test_bindingPositionShareInputsRedeemThroughEveryNativeSyOutput"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg_Deploy.t.sol",
+          "line": 258,
+          "function": "test_stakingSYDepositAndRedemptionMatchPreviews"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg_Deploy.t.sol",
+          "line": 305,
+          "function": "test_syDepositSlippageRollsBackInputAndBacking"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A21",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFFundedStakingMath.t.sol",
+          "line": 131,
+          "function": "test_staticSyRateUsesFundedIndex"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg_Deploy.t.sol",
+          "line": 275,
+          "function": "test_stakingSYOwnsStaticBalancesAcrossNewBondRewards"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A22",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 120,
+          "function": "test_boundaryStakeParticipationAndLateEntryOrdering"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A23",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFFundedStakingMath.t.sol",
+          "line": 71,
+          "function": "test_standingWeightsOnlyDistributeWholePot"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg_Deploy.t.sol",
+          "line": 361,
+          "function": "test_standingRecipientsReceiveNewExpansionAfterAllStakeUnstakes"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A24",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFEpochNaturalExpansionLib.t.sol",
+          "line": 32,
+          "function": "test_hour25Settles24AndPreservesNextBoundary"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 452,
+          "function": "test_lpBondSettlesExpansionBeforeTakingPayment"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A25",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_FeeCreatorClaimBase.sol",
+          "line": 58,
+          "function": "test_FC_fundedTwoWavesMatchIndependentFloors"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 452,
+          "function": "test_lpBondSettlesExpansionBeforeTakingPayment"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A26",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 99,
+          "function": "test_standardMintAndBurnFallbackMatchActualSwapWithoutIssuance"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A27",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFEpochNaturalExpansionLib.t.sol",
+          "line": 43,
+          "function": "test_sevenDaysIncludesAll21EpochsWithoutCompounding"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol",
+          "line": 19,
+          "function": "test_weekHasNoOneDayOrSupplyRelativeCap"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A28",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Surface.t.sol",
+          "line": 79,
+          "function": "test_J2_retiredClaimSelectorsAreAbsent"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4FundedBindings.t.sol",
+          "line": 71,
+          "function": "test_bindingRetiredLpClaimProjectionSelectorsAreAbsent"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A29",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg_Deploy.t.sol",
+          "line": 305,
+          "function": "test_syDepositSlippageRollsBackInputAndBacking"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_TrustFlags.t.sol",
+          "line": 29,
+          "function": "test_pretransferredNeverCreditsHeldStakingOrBacking"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_TrustFlags.t.sol",
+          "line": 83,
+          "function": "test_exactOutputNativeLimitsAfterFundedRebase"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A30",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVault_Surface.t.sol",
+          "line": 67,
+          "function": "test_J2_retiredLpAndEffectiveShareSelectorsCannotBeCalled"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A31",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFFundedBondMetadata.t.sol",
+          "line": 27,
+          "function": "test_halfwayArtworkAndExactJSONUseFundedClaims"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFFundedBondMetadata.t.sol",
+          "line": 42,
+          "function": "test_newPartialRewardOnlyAndFullyVestedStates"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A32",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFFundedBondMetadata.t.sol",
+          "line": 53,
+          "function": "test_nameIsEscapedIndependentlyForJSONAndSVG"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFFundedBondMetadata.t.sol",
+          "line": 61,
+          "function": "test_rolesHaveNoInventedVestingOrPrincipal"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFFundedBondMetadata.t.sol",
+          "line": 85,
+          "function": "test_exportRepresentativeRendererArtifacts"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A37",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 462,
+          "function": "test_reservePolicyMatchesHookAndRetainsDetfOwnership"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 619,
+          "function": "test_directLiquidityOperationsFollowDeploymentPolicy"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 760,
+          "function": "test_deploymentRejectsPolicyMismatchWithActualHook"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 433,
+          "function": "test_publicReserveSwapsRemainAvailableInBothPolicies"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A38",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 480,
+          "function": "test_lpBondValuesDistinctNonDetfLegsAndRetainsWholeInventory"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 521,
+          "function": "test_lpBondCannotClaimProtocolOrAnotherWalletsLp"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A39",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 452,
+          "function": "test_lpBondSettlesExpansionBeforeTakingPayment"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 468,
+          "function": "test_lpCannotReplaceFirstBondActivation"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A40",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 409,
+          "function": "test_externallyOwnedLpDonationTransfersWholePositionWithoutStakingIssuance"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 521,
+          "function": "test_lpBondCannotClaimProtocolOrAnotherWalletsLp"
+        }
+      ],
+      "prepared_tests": []
+    },
+    {
+      "criterion": "A41",
+      "tests": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 533,
+          "function": "test_currentCollectorRedeemsActualFeeLpWithOwnerAuthorization"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 553,
+          "function": "test_feeCollectorRotationChangesRestrictedRemovalAuthority"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 577,
+          "function": "test_internalSYRedemptionUsesCurrentCollectorAfterRotation"
+        }
+      ],
+      "prepared_tests": []
+    }
+  ],
+  "separate_evidence": {
+    "A33": "Excluded under D60",
+    "A34_A35_A36": "V3/V4 full-range, transition and native-SY package matrices; current-se-package-inventory.json",
+    "A42": "slipstream-deferral-verification.json; preserve completed work and evidence"
+  }
+}

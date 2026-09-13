@@ -1,0 +1,8 @@
+{
+  "chainId": 4663,
+  "poolManager": "0x8366a39CC670B4001A1121B8F6A443A643e40951",
+  "twapAdapterFactory": "0x90916b9EB39C4B7070aFC3065F3BfD492fa6dBac",
+  "twapOracle": "0xe473a78C654EDb7564B8f6393745d2bc6ABd8FA7",
+  "twapOracleFacet": "0xdfa0eE163Cbca760A90682EC5C8a72b8d206ED61",
+  "twapOraclePkg": "0x41e873c6432189B6363dE94DE68bbEB5e6451Caa"
+}

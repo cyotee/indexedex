@@ -1,0 +1,51 @@
+{
+  "status": "applied; validation pending",
+  "coverage": "Retains all donation route/security/Permit2/unlock/provider IDs. Shared actual funded principal/gons/backing/standing/custody assertions replace LP-backed NAV. Mature claims retain all protocol LP; new bond receives only its quoted funded allocation. Preview checks no longer swallow failures or use percentage tolerances.",
+  "files": [
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ReserveDonationOpenBase.sol",
+      "before_sha256": "53b62ac4ef4aa5cb2edae980c5f2c6d9bdd2a73beab9a3649ee62630a687da6e",
+      "after_sha256": "fa230d4fef7d6cfc95392d85c9f9f4bcbb5dbd0a20154c32402d56166ec53b08"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_ReserveDonationOpenBase_Decimals.sol",
+      "before_sha256": "c8f204c44b7cda577db62777d7adec4dc49f185b70c259617edf20c074ea43ab",
+      "after_sha256": "da7b25c3d6f4a316913a8f29f09ca23ce0d401139c1470879d2d8bf0aac31618"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_Stage11Helpers.sol",
+      "before_sha256": "1998bea1acbac6d6e853220d7aa4cf4ec06b21fafda0296c9ed1ea178e11a29e",
+      "after_sha256": "791700681172cefb6c9faaea36bade1d4bcbbdab490280401b8e2d7d9fe42eb1"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Stage11Helpers_Decimals.sol",
+      "before_sha256": "e558092c1240a0856e80a02eb66d4cc0d3c43e96141bd341183ee65e19a4e8a1",
+      "after_sha256": "f5c077ab21e2e0ddaac958e61f005f6ad7035063fb72b02522f3dfdf93d259d5"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+      "before_sha256": "a0b418f56b5b01c149d37656a5b3b264cfad599db5c1513cc59f7070b247a5ac",
+      "after_sha256": "7236c3f0aabf05b5b13a18670a5d888c3a32b8dc738ec95b774c5e1d3dc3a741"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+      "before_sha256": "48348c96ab67be606468b2a4450ab51f7334ae95353e3add32b783bc67a12346",
+      "after_sha256": "68a4c243a3e0760d5232e7a08ecd710f66cde782d94e32dac7b675981cd0a952"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Stage11OpenSuite.sol",
+      "before_sha256": "1445a50fc15fac2277af29afc99726bd2772ba8cb05fa724c41b663209729bfc",
+      "after_sha256": "78a8aecca021dfd734182b16d8df1fa5b99504d5271b127fbf3515a2df23f8da"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Stage11OpenSuite_Decimals.sol",
+      "before_sha256": "e0059ecf059e1bc4853cb779f61025f03c5413ea240b66eef99aa92b4b95f397",
+      "after_sha256": "bbc32d58c14c6ef430d686f43771a35338084ad9d8c8b7e3a39b3071d50e735a"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_ReserveDonation.t.sol",
+      "before_sha256": "e1de6ab6044a944d8f597ac4261750d7589582ff06b7a0723e0d98153e46309e",
+      "after_sha256": "357aa1d417e454d2ef395bfaeb9180e09e1966ac2139bf8672c19e7d853770b5"
+    }
+  ]
+}

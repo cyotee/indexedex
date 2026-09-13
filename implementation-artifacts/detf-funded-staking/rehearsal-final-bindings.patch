@@ -1,0 +1,137 @@
+--- test/foundry/fork/robinhood_4663/RobinhoodReleaseRehearsal.t.sol
++++ test/foundry/fork/robinhood_4663/RobinhoodReleaseRehearsal.t.sol
+@@ -1,5 +1,11 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
++import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
++import {IFeeCollectorDFPkg} from "contracts/fee/collector/FeeCollectorDFPkg.sol";
++import {FeeCollectorFactoryService as CollectorFactory} from "contracts/fee/collector/FeeCollectorFactoryService.sol";
++import {IUniswapV4StandardExchangeOrbitalBufferHookPackage as IOrbitalPkg} from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHookPackage.sol";
++import {UniswapV4StandardExchangeOrbitalBufferHook_FactoryService as OrbitalFactory} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_FactoryService.sol";
+ import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+ import {IUniswapV4HookLiquidityPolicy} from "contracts/hooks/uniswap/v4/libs/UniswapV4HookOwnerOnlyLiquidityLib.sol";
+ import {IMultiStepOwnable} from "@crane/contracts/access/ERC8023/IMultiStepOwnable.sol";
+@@ -84,6 +90,29 @@
+         detfPkg = IUniswapV4DetfDFPkg(_pin("phase06_stage07_uniswap_v4_detf_pkg.json", ".uniV4DetfPkg", true));
+         pm = IPoolManager(0x8366a39CC670B4001A1121B8F6A443A643e40951);
+         assertGt(address(pm).code.length, 0, "live PoolManager");
++        _deployCurrentRehearsalCollector();
++    }
++
++    function _commonFacet(string memory key) private view returns (IFacet) {
++        return IFacet(_pin("phase03_stage01_common_facets.json", key, true));
++    }
++
++    /// @dev Fork-local deployment and oracle rotation. Existing public-chain
++    /// collectors and their standing NFT rights are never changed by this test.
++    function _deployCurrentRehearsalCollector() private {
++        vm.startPrank(owner);
++        IFacet managerFacet = CollectorFactory.deployFeeCollectorManagerFacet(create3Factory);
++        IFacet pushFacet = CollectorFactory.deployFeeCollectorSingleTokenPushFacet(create3Factory);
++        IFeeCollectorDFPkg pkg = CollectorFactory.deployFeeCollectorDFPkg(
++            create3Factory, _commonFacet(".diamondCutFacet"), _commonFacet(".multiStepOwnableFacet"), pushFacet, managerFacet
++        );
++        IFeeCollectorProxy collector = CollectorFactory.deployFeeCollector(diamondPackageFactory, pkg, owner);
++        IVaultFeeOracleManager(address(indexedexManager)).setFeeTo(collector);
++        vm.stopPrank();
++        assertEq(address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo()), address(collector));
++        assertTrue(IDiamondLoupe(address(collector)).facetAddress(
++            bytes4(keccak256("redeemReserveLiquidity(address,uint256,uint256[],address,uint256)"))
++        ) != address(0), "current collector redemption selector installed");
+     }
+ 
+     function _pin(string memory file, string memory key, bool codeRequired) internal view returns (address result) {
+@@ -93,6 +122,12 @@
+         assertTrue(result != address(0), "nonzero pin");
+         if (codeRequired) assertGt(result.code.length, 0, "deployed pin");
+     }
++
++    function test_orbital_v2() public { _rehearse(3, 0); }
++    function test_orbital_v3() public { _rehearse(3, 1); }
++    function test_orbital_v4() public { _rehearse(3, 2); }
++    function test_orbital_morpho() public { _rehearse(3, 3); }
++    function test_orbital_v4_publicLiquidity() public { _rehearse(3, 2, false); }
+ 
+     function test_cp_v2() public { _rehearse(0, 0); }
+     function test_cp_v3() public { _rehearse(0, 1); }
+@@ -415,7 +450,8 @@
+     function _rehearse(uint256 family, uint256 backend) internal { _rehearse(family, backend, true); }
+ 
+     function _rehearse(uint256 family, uint256 backend, bool restricted) internal {
+-        for (uint256 i; i <= family; ++i) {
++        uint256 pairCount = family == 3 ? 2 : family + 1;
++        for (uint256 i; i < pairCount; ++i) {
+             address pair = address(new SimpleMintableERC20("Rehearsal pair", "PAIR"));
+             address other = address(new SimpleMintableERC20("Rehearsal counter asset", "OTHER"));
+             pairs.push(pair);
+@@ -440,7 +476,8 @@
+         }
+         if (family == 0) detf = _deployHookThenDetf(args);
+         else if (family == 1) detf = _deployWeighted(args);
+-        else detf = _deployQuad(args);
++        else if (family == 2) detf = _deployQuad(args);
++        else detf = _deployOrbital(args);
+         detfInfo = IUniswapV4Detf(detf);
+         detfExchangeIn = IStandardExchangeIn(detf);
+         assertEq(detfInfo.ownerOnlyLiquidity(), restricted, "DETF deployment policy");
+@@ -516,7 +553,7 @@
+         IWeightedPkg.PkgArgs memory h = IWeightedPkg.PkgArgs({
+             poolManager: address(pm), feeOracle: address(indexedexManager), n: 3,
+             tokens: tokens, weights: weights, standardExchanges: ses, rateProviders: new address[](3),
+-            tokenDecimals: Decimals.tokenDecimals(tokens), seDecimals: Decimals.seDecimals(ses),
++            tokenDecimals: Decimals.tokenDecimals(tokens, predicted), seDecimals: Decimals.seDecimals(ses),
+             ownerOnlyLiquidity: args.ownerOnlyLiquidity, owner: predicted
+         });
+         reserveHook = WeightedFactory.deployHook(pkg, h, WeightedFactory.findMineNonce(hookFactory, pkg, h));
+@@ -533,10 +570,49 @@
+         IQuadPkg pkg = IQuadPkg(_pin("phase06_stage06_curve_quad_buffer_hook_pkg.json", ".curveQuadHookPkg", true));
+         IQuadPkg.PkgArgs memory h = IQuadPkg.PkgArgs({
+             poolManager: address(pm), feeOracle: address(indexedexManager), tokens: tokens4,
+-            standardExchanges: ses4, rateProviders: rates, tokenDecimals: Decimals.tokenDecimals4(tokens4),
++            standardExchanges: ses4, rateProviders: rates, tokenDecimals: Decimals.tokenDecimals4(tokens4, predicted),
+             seDecimals: Decimals.seDecimals4(ses4), baseAmp: 100, ownerOnlyLiquidity: args.ownerOnlyLiquidity, owner: predicted
+         });
+         reserveHook = QuadFactory.deployHook(pkg, h, QuadFactory.findMineNonce(hookFactory, pkg, h));
++        return _finalizeAndDeploy(args, predicted, tokens);
++    }
++
++    function _currentOrbitalPackage() private returns (IOrbitalPkg pkg) {
++        IOrbitalPkg.PkgInit memory init;
++        init.vaultRegistryDeployment = IVaultRegistryDeployment(address(indexedexManager));
++        init.vaultFeeOracleQuery = IVaultFeeOracleQuery(address(indexedexManager));
++        vm.startPrank(owner);
++        init.depositFacet = OrbitalFactory.deployDepositFacet(create3Factory);
++        init.depositQueryFacet = OrbitalFactory.deployDepositQueryFacet(create3Factory);
++        init.depositZapFacet = OrbitalFactory.deployDepositZapFacet(create3Factory);
++        init.withdrawFacet = OrbitalFactory.deployWithdrawFacet(create3Factory);
++        init.seFacet = OrbitalFactory.deploySeFacet(create3Factory);
++        init.hooksFacet = OrbitalFactory.deployHooksFacet(create3Factory);
++        vm.stopPrank();
++        init.erc20Facet = _commonFacet(".erc20Facet");
++        init.erc5267Facet = _commonFacet(".erc5267Facet");
++        init.erc2612Facet = _commonFacet(".erc2612Facet");
++        init.multiAssetBasicVaultFacet = _commonFacet(".multiAssetBasicVaultFacet");
++        init.multiAssetStandardVaultFacet = _commonFacet(".multiAssetStandardVaultFacet");
++        init.multiStepOwnableFacet = _commonFacet(".multiStepOwnableFacet");
++        return OrbitalFactory.deployPackage(init.vaultRegistryDeployment, owner, init, keccak256("funded.rehearsal.orbital"));
++    }
++
++    function _deployOrbital(IUniswapV4Detf.PkgArgs memory args) private returns (address) {
++        address predicted = _predictDetf(args);
++        (address[] memory tokens, address[] memory ses) = _sorted(predicted);
++        IOrbitalPkg pkg = _currentOrbitalPackage();
++        IOrbitalPkg.PkgArgs memory h;
++        h.poolManager = address(pm);
++        h.feeOracle = address(indexedexManager);
++        h.token0 = tokens[0]; h.token1 = tokens[1]; h.token2 = tokens[2];
++        h.decimals0 = Decimals.tokenDec(tokens[0], predicted);
++        h.decimals1 = Decimals.tokenDec(tokens[1], predicted);
++        h.decimals2 = Decimals.tokenDec(tokens[2], predicted);
++        h.se0 = ses[0]; h.se1 = ses[1]; h.se2 = ses[2];
++        h.ownerOnlyLiquidity = args.ownerOnlyLiquidity;
++        h.owner = predicted;
++        reserveHook = OrbitalFactory.deployHook(pkg, h, OrbitalFactory.findMineNonce(hookFactory, pkg, h));
+         return _finalizeAndDeploy(args, predicted, tokens);
+     }
+ 

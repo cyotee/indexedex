@@ -18,9 +18,7 @@ import {
 
 import {IMultiPairStandardExchangeBufferPool} from
     "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/IMultiPairStandardExchangeBufferPool.sol";
-import {
-    IMultiPairStandardExchangeBufferPoolPkg
-} from "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPoolStandardVaultPkg.sol";
+import {IMultiPairStandardExchangeBufferPoolPkg} from "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/IMultiPairStandardExchangeBufferPoolPkg.sol";
 import {
     MultiPairStandardExchangeBufferPool_FactoryService
 } from "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPool_FactoryService.sol";

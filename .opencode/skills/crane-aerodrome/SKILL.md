@@ -1,7 +1,6 @@
 ---
 name: crane-aerodrome
 description: This skill should be used when the user asks about "Aerodrome integration", "Aerodrome swap", "Aerodrome liquidity", "volatile pool", "stable pool", "Slipstream", "concentrated liquidity on Aerodrome", or needs to interact with Aerodrome DEX on Base using Crane's service libraries.
-license: MIT
 ---
 
 # Crane Aerodrome Integration
@@ -13,7 +12,7 @@ Crane provides comprehensive Aerodrome v1 and Slipstream integration with servic
 | Component | Location | Purpose |
 |-----------|----------|---------|
 | `AerodromServiceVolatile` | `services/AerodromServiceVolatile.sol` | Volatile pool operations (xy=k) |
-| `AerodromServiceStable` | `services/AerodromServiceStable.sol` | Stable pool operations (x^3y+xy^3=k) |
+| `AerodromServiceStable` | `services/AerodromServiceStable.sol` | Stable pool operations (x³y+xy³=k) |
 | `AerodromeRouterAwareRepo` | `aware/AerodromeRouterAwareRepo.sol` | Router dependency injection |
 | `AerodromePoolMetadataRepo` | `aware/AerodromePoolMetadataRepo.sol` | Pool metadata storage |
 | `TestBase_Aerodrome` | `test/bases/TestBase_Aerodrome.sol` | Full protocol deployment |
@@ -27,7 +26,7 @@ Aerodrome has two pool types with different AMM curves:
 | Type | Curve | Use Case | Service |
 |------|-------|----------|---------|
 | Volatile | xy = k | ETH/USDC, volatile pairs | `AerodromServiceVolatile` |
-| Stable | x^3y + xy^3 = k | USDC/USDT, stablecoin pairs | `AerodromServiceStable` |
+| Stable | x³y + xy³ = k | USDC/USDT, stablecoin pairs | `AerodromServiceStable` |
 
 ## Quick Start: Volatile Pool Swap
 

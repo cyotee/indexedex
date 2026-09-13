@@ -9,7 +9,6 @@ import {
     SingleStandardExchangeDETFRepo
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFRepo.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
-import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 
 /// @notice Phase 0/1: package deploys inert against production SE vault; mint blocked until first bond.
 contract SingleStandardExchangeDETF_Deploy_Test is TestBase_SingleStandardExchangeDETF {
@@ -22,7 +21,7 @@ contract SingleStandardExchangeDETF_Deploy_Test is TestBase_SingleStandardExchan
         assertTrue(detfInfo.bondNftVault() != address(0), "bond nft vault created at deploy");
         assertEq(detfInfo.mintThreshold(), 1.05e18, "default mint threshold");
         assertEq(detfInfo.burnThreshold(), 0.95e18, "default burn threshold");
-        assertEq(uint8(detfInfo.thresholdMode()), uint8(ThresholdMode.Policy), "default mode Policy");
+        assertGt(detfInfo.mintThreshold(), detfInfo.burnThreshold(), "mandatory policy deadband");
         assertFalse(detfInfo.isMintingAllowed(), "inert mint false");
         assertFalse(detfInfo.isBurningAllowed(), "inert burn false");
     }
@@ -32,9 +31,7 @@ contract SingleStandardExchangeDETF_Deploy_Test is TestBase_SingleStandardExchan
         vm.startPrank(alice);
         seShare.approve(detf, seShares_);
         vm.expectRevert(SingleStandardExchangeDETFRepo.ReservePoolNotInitialized.selector);
-        detfExchangeIn.exchangeIn(
-            seShare, seShares_, IERC20(detf), 0, alice, false, block.timestamp + 1 hours
-        );
+        detfExchangeIn.exchangeIn(seShare, seShares_, IERC20(detf), 0, alice, false, block.timestamp + 1 hours);
         vm.stopPrank();
     }
 

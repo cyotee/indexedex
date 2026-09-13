@@ -1,0 +1,53 @@
+{
+  "status": "PREPARED_NOT_APPLIED",
+  "basis": "Actual position runtime failures and review of retained E1 round-trip coverage.",
+  "scope": "Existing V3/V4 fixtures only. Preserve all concrete decimal leaves, test counts, fuzz settings, conservation and authorization checks.",
+  "changes": [
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Accounting.t.sol",
+      "before_sha256": "ff95b75c35edb129dacdd86126aaea1bed3bc04489bdb0e62cd663cddd48e78a",
+      "after_sha256": "2c6ff8e64dec61890c0c547a59416d92df78ba9119a9496c822626e1bf2c6dd2"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Accounting_Decimals.sol",
+      "before_sha256": "dce7f5965f9d5b34c7ff96ae51288a1fc208b9d7d8b33b4cdbd2f9bb923650e2",
+      "after_sha256": "c4c6e6272bfd2cee82f58c08b9b68b375458ae57f3afe991fc377676e318b5c8"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_Decimals.sol",
+      "before_sha256": "4ae9497f1764e9ee041c29ece6bdf54cc28e8fcbf19a291b01092c653b33ade6",
+      "after_sha256": "248b31b5c6baf8c8196825d83b243b5d5e705557d6d789f2e5727eeb55d39f85"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_Decimals.sol",
+      "before_sha256": "3f93b7c5d90d654a40d1c40d7ff29c9c1613a281712ced7fba8e29bf9e646158",
+      "after_sha256": "fe45f2640a35a18af07cab57758d410ff95e53df7f1df3db9baf0d1139f32d0e"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchangeOutQueryFacet_IFacet_Test.t.sol",
+      "before_sha256": "0f75d4f44176bf9d587c662739059f16d2cda0b219bdd39e68572a0b806a97b1",
+      "after_sha256": "cef5c246cef70cf191d3ec32fa5e832ed6a1c52ad31fbfba242ee20000969b51"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/adversarial/Adversarial_UniswapV4SE_E6ImpA0.t.sol",
+      "before_sha256": "6f45cad43cbf647037d4151b7734d74c2771d497d78e215d3047a68a8a30b987",
+      "after_sha256": "4f642e0c6ff808e5cd44051132ab46189d5fac306808e65e1b26ddc172ad0eb6"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_E6ImpA0_Decimals.sol",
+      "before_sha256": "43d0e519cd7ad840619f69df53ea30b33c1ec630599d44fada608c8bc68f4c1a",
+      "after_sha256": "811a6901ac237f307bad97079538e1b4ad57c4a064ae12c36790d7191374058f"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_TwapPoke.t.sol",
+      "before_sha256": "5273eb399bb14ddb25847f377dcbed33e07056d45a8d16fa9a54d2d624180eb5",
+      "after_sha256": "2e5b63cc28cfefe4690f09f69380aaafd7e78e17fc7d8cbe03ac8c2a91ce00b3"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_TwapPoke_Decimals.sol",
+      "before_sha256": "a91eaed2992b82e73b2d0c33b44a00ca9a229cd8ead653ecd0b8217728712a80",
+      "after_sha256": "346e3f22173335d14a30dadf858de30198305a47ff497d910de00e7e9d38d299"
+    }
+  ],
+  "application_gate": "Wait for active validation PTY 52715 and children to exit before applying canonical sources."
+}

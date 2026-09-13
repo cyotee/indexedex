@@ -63,6 +63,10 @@ jobs:
       - name: Forge build (default profile)
         run: forge build
 
+      - name: Build runtime deployment artifacts
+        # Artifact-loaded implementations may be absent from Solidity import graphs.
+        run: python3 scripts/forge-artifacts.py build --all-artifacts
+
       - name: Forge test (hermetic only — no fork / no RPC)
         # default profile → test/foundry/spec (sizes=false in foundry.toml)
         # Exclude misplaced fork suites under spec (createSelectFork / live RPC):
@@ -70,7 +74,9 @@ jobs:
         #   --no-match-contract → *Fork* / *ForkSmoke* contract names
         # (forge allows only one of each flag). True fork suite remains local:
         #   FOUNDRY_PROFILE=fork forge test
+        # Empty fork-URL overrides can be interpreted as filesystem RPC paths.
+        # Remove them for execution so this gate starts from an empty EVM.
         run: >
-          forge test -vv
+          env -u FOUNDRY_ETH_RPC_URL -u ETH_RPC_URL forge test -vv
           --no-match-path '**/fork/**'
           --no-match-contract 'Fork'

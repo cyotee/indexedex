@@ -1,0 +1,58 @@
+{
+  "status": "applied; validation pending",
+  "decision": "D32 supersedes LP basket-close and id-0 rejoin economics",
+  "consolidation": "Eight cases become four per existing concrete D25 provider/native-unit fixture; common financial assertions implemented once. Actual host setup and test inheritance retained.",
+  "coverage_mapping": {
+    "D25-1, D25-2, D25-4, D25-6": "fundedPrincipalAndRewardsPayOnlyStaking: exact independent previews and sDETF receipts, raw supply/backing and all reserve token/LP balances unchanged",
+    "D25-3": "standingReceiptsAlreadyFundedBeforeClaim: actual fee/creator sDETF funded before claim, no LP liability or claim-time issuance",
+    "D25-5": "reservedRolesCannotClaimPurchasedPrincipal: typed reserved-role rejection",
+    "D25-7, D25-lastClose": "finalClaimRetainsProtocolLiquidity: combined preview exact, last NFT retirement, protocol LP preserved and no new standing-recipient income"
+  },
+  "files": [
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_CloseD25Base.sol",
+      "before_sha256": "1c947cd51e55a8ea47513fd528ee5bc0567edd79961ce8031cc6912da18eea8d",
+      "after_sha256": "aff5546e567d8c87d74c6ad75ef6a430f970f33bd104f78769c6f0a849d66bc8"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_CloseD25OpenBase.sol",
+      "before_sha256": "82303efa320c806bd5aa60015915e5108f38a4ec131f10fd1b7e9e2c87edc3cd",
+      "after_sha256": "f97e261839a38e802c29fda3279f6398816b51e3faa7ab1f862121dcbd41e117"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_CloseD25Base_Decimals.sol",
+      "before_sha256": "c5a1e02fbdc0117ca5962028706f39d093acc49138eb83bab5acdd5c52c01bc9",
+      "after_sha256": "9f2b3a88dacd2752fe088fb3d695ff353a60c0d9f1615109e93c364caaf0bb90"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_CloseD25OpenBase_Decimals.sol",
+      "before_sha256": "56830f69e7aea567580fb2db772c2f36ac5660b8b5cc6ee93ee8d8d1e16dc4b0",
+      "after_sha256": "0de6f019bf1d5541e91aca5e02387d7c6984cdfd0a06ac2de8f2c0d3c7a28bc3"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_Alignment_CloseD25.t.sol",
+      "before_sha256": "a7f7d8986d4aff721a7c08c81bf0433b9bca041b0ca16f06e56d20cc9e7b371a",
+      "after_sha256": "28bfa3d2d0303187c2471582bcdb81c4ed640506350410ade3a08c95b4c58f6c"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+      "before_sha256": "faa1fca35cd5a0f5e5fdfc9e7c6ec62ce910a41259c1cb3c9f9a0c84127f0250",
+      "after_sha256": "c5ed7edffb352ebc779e5440aa1c3da54420658bd0f5a5ec6520bbf22000d3b3"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_Stage11Helpers.sol",
+      "before_sha256": "cfcabf1ce1ef982e03e1b8c446e73de74a5e85e72f0b2700522eef971171a310",
+      "after_sha256": "8b5fd8f53d5830d4f7a3f2513822b93ee6176a9725988fb8782efe7c71372530"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+      "before_sha256": "65c300ff86dbdfff262edb2ebb69daf4430be5b252b30294671ac92bef1ac960",
+      "after_sha256": "c477f1a50d59990808f069f96e32382b036f28553bfcbbfd61809c642cba3c32"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Stage11Helpers_Decimals.sol",
+      "before_sha256": "793f49b832f6c06491c000cbfafdc9500d2335339ac08c5ed3420707941b5aa4",
+      "after_sha256": "209f1d24484f19ecc395240d2b8a699016a521d9f6a49705ae739254655c6401"
+    }
+  ]
+}

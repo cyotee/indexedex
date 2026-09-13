@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 /* -------------------------------------------------------------------------- */
 /*                                 Balancer V3                                */
 /* -------------------------------------------------------------------------- */
 
 import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
-import {
-    WeightedPoolFactory
-} from "@crane/contracts/external/balancer/v3/pool-weighted/contracts/WeightedPoolFactory.sol";
+import {IWeightedPoolFactory} from "contracts/interfaces/IWeightedPoolFactory.sol";
 import {SenderGuardFacet} from "@crane/contracts/protocols/dexes/balancer/v3/vault/SenderGuardFacet.sol";
 
 /* -------------------------------------------------------------------------- */
@@ -20,7 +20,6 @@ import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
-import {ERC721Facet} from "@crane/contracts/tokens/ERC721/ERC721Facet.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Indexedex                                 */
@@ -33,38 +32,25 @@ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.so
 import {
     IBalancerV3StandardExchangeRouterProxy
 } from "contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol";
-import {
-    IBalancerV3StandardExchangeRouterDFPkg
-} from "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterDFPkg.sol";
+import {IBalancerV3StandardExchangeRouterDFPkg} from "contracts/protocols/dexes/balancer/v3/routers/IBalancerV3StandardExchangeRouterDFPkg.sol";
 import {
     BalancerV3StandardExchangeRouter_FactoryService
 } from "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouter_FactoryService.sol";
-import {
-    IStandardExchangeRateProviderDFPkg,
-    StandardExchangeRateProviderDFPkg
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
-import {
-    StandardExchangeRateProviderFacet
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderFacet.sol";
+import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
+
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
 import {DetfFacetFactoryService} from "contracts/vaults/detf/common/factory/DetfFacetFactoryService.sol";
 import {DetfPkgFactoryService} from "contracts/vaults/detf/common/factory/DetfPkgFactoryService.sol";
 import {DetfComponentFactoryService} from "contracts/vaults/detf/common/factory/DetfComponentFactoryService.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/common/factory/nft/IDetfSelfNftInventoryDFPkg.sol";
-import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
-import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol";
-import {
-    ISingleStandardExchangeDETDFPkg
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol";
+import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/IDETFNFTVaultDFPkg.sol";
+import {ISingleStandardExchangeDETDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETDFPkg.sol";
 import {
     SingleStandardExchangeDETF_Component_FactoryService
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_Component_FactoryService.sol";
-import {
-    ISingleStandardExchangeDETFBonding
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFBondingTarget.sol";
-import {
-    ISingleStandardExchangeDETFInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFInfoTarget.sol";
+import {ISingleStandardExchangeDETFBonding as ICurrentSingleStandardExchangeDETFBonding} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFBonding.sol";
+import {ISingleStandardExchangeDETFInfo as ICurrentSingleStandardExchangeDETFInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFInfo.sol";
 import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
@@ -76,6 +62,17 @@ import {
 } from "@crane/contracts/protocols/dexes/balancer/v3/test/bases/TestBase_BalancerV3Vault.sol";
 import {IndexedexTest} from "contracts/test/IndexedexTest.sol";
 import {ResearchTelemetry} from "scripts/foundry/research/harness/ResearchTelemetry.sol";
+
+/// @dev D60 historical research ABI only; retired selectors are not restored.
+interface ISingleStandardExchangeDETFBonding is ICurrentSingleStandardExchangeDETFBonding {
+    function sellPositionToDetfNft(uint256 tokenId, uint256 minimum, address recipient) external returns (uint256);
+}
+
+/// @dev Preserve historical telemetry/calls for excluded-family research compilation.
+interface ISingleStandardExchangeDETFInfo is ICurrentSingleStandardExchangeDETFInfo {
+    function compoundProtocolRewards() external returns (uint256, uint256);
+    function thresholdMode() external view returns (ThresholdMode);
+}
 
 /**
  * @title ResearchFixture_DetfSingleSeUniV2
@@ -470,7 +467,7 @@ contract ResearchFixture_DetfSingleSeUniV2 is ResearchFixture_UniswapV2SeRateMat
         seRouter = diamondPackageFactory.deployBalancerV3StandardExchangeRouter(seRouterDFPkg);
 
         bytes32 salt = abi.encodePacked("ResearchDetfSingleSe_WeightedPoolFactory")._hash();
-        bytes memory initCode = type(WeightedPoolFactory).creationCode;
+        bytes memory initCode = ArtifactCreationCode.creationCode(create3Factory, "WeightedPoolFactory.sol:WeightedPoolFactory");
         bytes memory initArgs = abi.encode(IVault(address(vault)), uint32(365 days), "Factory v1", "Pool v1");
         weightedPoolFactory = create3Factory.create3WithArgs(initCode, initArgs, salt);
         vm.label(weightedPoolFactory, "Research_WeightedPoolFactory");
@@ -486,14 +483,14 @@ contract ResearchFixture_DetfSingleSeUniV2 is ResearchFixture_UniswapV2SeRateMat
 
         IFacet rateProviderFacet = IFacet(
             create3Factory.deployFacet(
-                type(StandardExchangeRateProviderFacet).creationCode,
+                ArtifactCreationCode.creationCode(create3Factory, "StandardExchangeRateProviderFacet.sol:StandardExchangeRateProviderFacet"),
                 keccak256("ResearchDetfSingleSe_RateProviderFacet")
             )
         );
         detfRateProviderPkg = IStandardExchangeRateProviderDFPkg(
             address(
                 create3Factory.deployPackageWithArgs(
-                    type(StandardExchangeRateProviderDFPkg).creationCode,
+                    ArtifactCreationCode.creationCode(create3Factory, "StandardExchangeRateProviderDFPkg.sol:StandardExchangeRateProviderDFPkg"),
                     abi.encode(
                         IStandardExchangeRateProviderDFPkg.PkgInit({
                             rateProviderFacet: rateProviderFacet,
@@ -508,14 +505,13 @@ contract ResearchFixture_DetfSingleSeUniV2 is ResearchFixture_UniswapV2SeRateMat
         detfNFTVaultFacet = create3Factory.deployDETFNFTVaultFacet();
         erc721Facet = IFacet(
             create3Factory.deployFacet(
-                type(ERC721Facet).creationCode, keccak256("ResearchDetfSingleSe_ERC721Facet")
+                ArtifactCreationCode.creationCode(create3Factory, "ERC721Facet.sol:ERC721Facet"), keccak256("ResearchDetfSingleSe_ERC721Facet")
             )
         );
 
         IDETFNFTVaultDFPkg.PkgInit memory nftPkgInit = DetfComponentFactoryService.buildDETFNFTVaultPkgInit(
             erc721Facet,
-            erc4626BasicVaultFacet,
-            erc4626StandardVaultFacet,
+            DetfFacetFactoryService.deployDETFFundedBondMetadataFacet(create3Factory),
             detfNFTVaultFacet,
             IVaultFeeOracleQuery(address(indexedexManager)),
             IVaultRegistryDeployment(address(indexedexManager))
@@ -534,6 +530,7 @@ contract ResearchFixture_DetfSingleSeUniV2 is ResearchFixture_UniswapV2SeRateMat
             )
         );
 
+        vm.startPrank(owner);
         ISingleStandardExchangeDETDFPkg.PkgInit memory pkgInit = ISingleStandardExchangeDETDFPkg.PkgInit({
             erc20Facet: erc20Facet,
             erc5267Facet: erc5267Facet,
@@ -541,18 +538,22 @@ contract ResearchFixture_DetfSingleSeUniV2 is ResearchFixture_UniswapV2SeRateMat
             multiAssetBasicVaultFacet: multiAssetBasicVaultFacetDetf,
             multiAssetStandardVaultFacet: multiAssetStandardVaultFacetDetf,
             exchangeInFacet: singleStandardExchangeDetfExchangeInFacet,
+            bondingFacet: create3Factory.deployBondingFacet(),
             feeOracle: IVaultFeeOracleQuery(address(indexedexManager)),
             vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
             balancerV3Router: seRouter,
             balancerV3Vault: IVault(address(vault)),
-            weightedPoolFactory: WeightedPoolFactory(weightedPoolFactory),
+            weightedPoolFactory: IWeightedPoolFactory(weightedPoolFactory),
             rateProviderPkg: detfRateProviderPkg,
             bondNftVaultPkg: bondNftVaultPkg,
             rebasingClaimTokenPkg: rebasingClaimTokenPkg,
+            syPkg: DetfPkgFactoryService.deployDETFSYComponents(
+                create3Factory, IVaultRegistryDeployment(address(indexedexManager)),
+                IVaultFeeOracleQuery(address(indexedexManager)), erc5267Facet, erc2612Facet
+            ),
             diamondFactory: diamondPackageFactory
         });
 
-        vm.startPrank(owner);
         singleStandardExchangeDetfPkg =
             IVaultRegistryDeployment(address(indexedexManager)).deployPkg(pkgInit);
         vm.stopPrank();
@@ -563,6 +564,7 @@ contract ResearchFixture_DetfSingleSeUniV2 is ResearchFixture_UniswapV2SeRateMat
         internal
         returns (address detf_)
     {
+        require(mode_ == ThresholdMode.Policy, "retired threshold mode");
         ISingleStandardExchangeDETDFPkg.PkgArgs memory args = ISingleStandardExchangeDETDFPkg.PkgArgs({
             name: name_,
             symbol: symbol_,
@@ -573,10 +575,7 @@ contract ResearchFixture_DetfSingleSeUniV2 is ResearchFixture_UniswapV2SeRateMat
             vaultShareWeight: 0,
             mintThreshold: 0,
             burnThreshold: 0,
-            thresholdMode: mode_,
             expansionClosureRatePerSecond: 0,
-            expansionCatchUpMaxSeconds: 0,
-            expansionCatchUpCapBps: 0,
             creator: address(0),
             claimName: "",
             claimSymbol: "",

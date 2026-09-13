@@ -1,0 +1,25 @@
+{
+  "recorded_at_utc": "2026-09-08T07:52:01.140293+00:00",
+  "source_artifact": "out/UniswapV2StandardExchangeDFPkg.sol/UniswapV2StandardExchangeDFPkg.json",
+  "artifact_sha256": "6a2319957d2e5dd93adc71da7e45448c5a2d77dfaab1e1d62598309c46f156b2",
+  "target": "frontend/apps/dtf/app/generated.js",
+  "before_sha256": "6f398d2fbd26b40edadbe7e89455004582cb3c4d97e8c8ae25f7241d6ade1a9a",
+  "after_sha256": "4752401c853d5473ce66b50d62feb3984984da87583b8fa447eabfeceead6fce",
+  "scope": "Existing V2 package ABI export only; deployment addresses and unrelated generated exports retained.",
+  "pkg_init_fields": [
+    "erc20Facet",
+    "erc5267Facet",
+    "erc2612Facet",
+    "erc4626Facet",
+    "multiAssetBasicVaultFacet",
+    "multiAssetStandardVaultFacet",
+    "uniswapV2StandardExchangeInFacet",
+    "uniswapV2StandardExchangeOutFacet",
+    "uniswapV2StandardExchangeQueryFacet",
+    "vaultFeeOracleQuery",
+    "vaultRegistryDeployment",
+    "permit2",
+    "uniswapV2Factory",
+    "uniswapV2Router"
+  ]
+}

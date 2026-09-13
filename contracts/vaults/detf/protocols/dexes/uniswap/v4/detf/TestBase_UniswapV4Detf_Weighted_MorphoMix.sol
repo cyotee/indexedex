@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
-import {PoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
 import {MarketParams} from "@crane/contracts/external/morpho/blue/interfaces/IMorpho.sol";
 
@@ -39,7 +40,11 @@ abstract contract TestBase_UniswapV4Detf_Weighted_MorphoMix is TestBase_UniswapV
             pairB = address(new SimpleMintableERC20("Pair1", "P1"));
         }
         SimpleMintableERC20 rate1 = new SimpleMintableERC20("Rate", "RATE");
-        pm = IPoolManager(address(new PoolManager(address(this))));
+        pm = IPoolManager(address(IPoolManager(create3Factory.create3WithArgs(
+            ArtifactCreationCode.creationCode(create3Factory, "PoolManager.sol:PoolManager"),
+            abi.encode(address(this)),
+            keccak256("TestBase_UniswapV4Detf_Weighted_MorphoMix_PoolManager")
+        ))));
         weth = SeLib.newWeth();
 
         morphoStack = SeLib.deployMorphoStack(_craneCtx());
@@ -59,5 +64,7 @@ abstract contract TestBase_UniswapV4Detf_Weighted_MorphoMix is TestBase_UniswapV
 
         _mintMintablePairs(10_000_000 ether);
         _approveUserForPairs();
+        SeLib.activatePositionVault(se0, pairA, detfUser, address(weth));
+        SeLib.activatePositionVault(se1, pairB, detfUser, address(weth));
     }
 }

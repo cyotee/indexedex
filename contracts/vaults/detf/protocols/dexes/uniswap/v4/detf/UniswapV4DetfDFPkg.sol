@@ -12,6 +12,11 @@ import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {EIP712Repo} from "@crane/contracts/utils/cryptography/EIP712/EIP712Repo.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {AddressSet, AddressSetRepo} from "@crane/contracts/utils/collections/sets/AddressSetRepo.sol";
+import {IStakedDETF, IDETFFundedRewards} from "contracts/interfaces/IStakedDETF.sol";
+import {IDETFStandardizedYield, IDETFStakingPreview} from "contracts/interfaces/IDETFStandardizedYield.sol";
+import {IDETFSYDFPkg} from "contracts/vaults/detf/common/sy/IDETFSYDFPkg.sol";
+import {DETFSYDeploymentLib} from "contracts/vaults/detf/common/sy/DETFSYDeploymentLib.sol";
 
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
@@ -36,46 +41,60 @@ import {UniswapV4DetfRepo as Repo} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfRepo.sol";
 import {UniswapV4DetfProcessArgsLib as ArgsLib} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProcessArgsLib.sol";
-import {IUniswapV4DetfBondNFTVaultDFPkg} from
-    "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg.sol";
-import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
+import {IUniswapV4DetfBondNFTVaultDFPkg} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/IUniswapV4DetfBondNFTVaultDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol";
 
 /// @title UniswapV4DetfDFPkg
 /// @notice Unified Uni V4 DETF package. Hook is already deployed; PkgArgs.hook is that address.
 contract UniswapV4DetfDFPkg is IUniswapV4DetfDFPkg {
     using BetterEfficientHashLib for bytes;
+    using AddressSetRepo for AddressSet;
 
     IFacet immutable ERC20_FACET;
     IFacet immutable ERC5267_FACET;
     IFacet immutable ERC2612_FACET;
     IFacet immutable MULTI_ASSET_BASIC_VAULT_FACET;
     IFacet immutable MULTI_ASSET_STANDARD_VAULT_FACET;
-    IFacet immutable PRODUCT_FACET;
+    IFacet immutable EXCHANGE_FACET;
+    IFacet immutable BOND_FACET;
+    IFacet immutable MAINTENANCE_FACET;
+    IFacet immutable CLAIM_FACET;
+    IFacet immutable QUERY_FACET;
     IVaultFeeOracleQuery immutable FEE_ORACLE;
     IVaultRegistryDeployment immutable VAULT_REGISTRY_DEPLOYMENT;
     IUniswapV4DetfBondNFTVaultDFPkg immutable BOND_NFT_VAULT_PKG;
     IRebasingClaimTokenDFPkg immutable REBASING_CLAIM_TOKEN_PKG;
+    IDETFSYDFPkg immutable SY_PKG;
 
     constructor(PkgInit memory pkgInit) {
         if (
-            address(pkgInit.erc20Facet) == address(0) || address(pkgInit.productFacet) == address(0)
+            address(pkgInit.erc20Facet) == address(0)
                 || address(pkgInit.feeOracle) == address(0)
                 || address(pkgInit.vaultRegistryDeployment) == address(0)
                 || address(pkgInit.bondNftVaultPkg) == address(0)
                 || address(pkgInit.rebasingClaimTokenPkg) == address(0)
+                || address(pkgInit.syPkg) == address(0)
         ) {
             revert ZeroAddress();
+        }
+        for (uint256 i; i < pkgInit.productFacets.length; ++i) {
+            if (address(pkgInit.productFacets[i]) == address(0)) revert ZeroAddress();
         }
         ERC20_FACET = pkgInit.erc20Facet;
         ERC5267_FACET = pkgInit.erc5267Facet;
         ERC2612_FACET = pkgInit.erc2612Facet;
         MULTI_ASSET_BASIC_VAULT_FACET = pkgInit.multiAssetBasicVaultFacet;
         MULTI_ASSET_STANDARD_VAULT_FACET = pkgInit.multiAssetStandardVaultFacet;
-        PRODUCT_FACET = pkgInit.productFacet;
+        EXCHANGE_FACET = pkgInit.productFacets[0];
+        BOND_FACET = pkgInit.productFacets[1];
+        MAINTENANCE_FACET = pkgInit.productFacets[2];
+        CLAIM_FACET = pkgInit.productFacets[3];
+        QUERY_FACET = pkgInit.productFacets[4];
         FEE_ORACLE = pkgInit.feeOracle;
         VAULT_REGISTRY_DEPLOYMENT = pkgInit.vaultRegistryDeployment;
         BOND_NFT_VAULT_PKG = pkgInit.bondNftVaultPkg;
         REBASING_CLAIM_TOKEN_PKG = pkgInit.rebasingClaimTokenPkg;
+        SY_PKG = pkgInit.syPkg;
     }
 
     function deployVault(IUniswapV4Detf.PkgArgs memory args) external returns (address vault) {
@@ -104,18 +123,23 @@ contract UniswapV4DetfDFPkg is IUniswapV4DetfDFPkg {
         return VaultPkgDeclaration({name: name(), vaultFeeTypeIds: vaultFeeTypeIds(), vaultTypes: vaultTypes()});
     }
 
+    function _productFacets() internal view returns (IFacet[5] memory) {
+        return [EXCHANGE_FACET, BOND_FACET, MAINTENANCE_FACET, CLAIM_FACET, QUERY_FACET];
+    }
+
     function facetAddresses() public view returns (address[] memory facetAddresses_) {
-        facetAddresses_ = new address[](6);
+        facetAddresses_ = new address[](10);
         facetAddresses_[0] = address(ERC20_FACET);
         facetAddresses_[1] = address(ERC5267_FACET);
         facetAddresses_[2] = address(ERC2612_FACET);
         facetAddresses_[3] = address(MULTI_ASSET_BASIC_VAULT_FACET);
         facetAddresses_[4] = address(MULTI_ASSET_STANDARD_VAULT_FACET);
-        facetAddresses_[5] = address(PRODUCT_FACET);
+        IFacet[5] memory product_ = _productFacets();
+        for (uint256 i; i < product_.length; ++i) facetAddresses_[5 + i] = address(product_[i]);
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces_) {
-        interfaces_ = new bytes4[](9);
+        interfaces_ = new bytes4[](12);
         interfaces_[0] = type(IERC20).interfaceId;
         interfaces_[1] = type(IERC20Metadata).interfaceId;
         interfaces_[2] = type(IERC20Permit).interfaceId;
@@ -125,6 +149,9 @@ contract UniswapV4DetfDFPkg is IUniswapV4DetfDFPkg {
         interfaces_[6] = type(IStandardExchangeIn).interfaceId;
         interfaces_[7] = type(IUniswapV4Detf).interfaceId;
         interfaces_[8] = bytes4(keccak256("UniswapV4Detf"));
+        interfaces_[9] = type(IDETFStandardizedYield).interfaceId;
+        interfaces_[10] = type(IDETFStakingPreview).interfaceId;
+        interfaces_[11] = type(IDETFFundedRewards).interfaceId;
     }
 
     function packageMetadata()
@@ -138,7 +165,7 @@ contract UniswapV4DetfDFPkg is IUniswapV4DetfDFPkg {
     }
 
     function facetCuts() public view returns (IDiamond.FacetCut[] memory facetCuts_) {
-        facetCuts_ = new IDiamond.FacetCut[](6);
+        facetCuts_ = new IDiamond.FacetCut[](10);
         facetCuts_[0] = IDiamond.FacetCut(address(ERC20_FACET), IDiamond.FacetCutAction.Add, ERC20_FACET.facetFuncs());
         facetCuts_[1] =
             IDiamond.FacetCut(address(ERC5267_FACET), IDiamond.FacetCutAction.Add, ERC5267_FACET.facetFuncs());
@@ -154,17 +181,27 @@ contract UniswapV4DetfDFPkg is IUniswapV4DetfDFPkg {
             IDiamond.FacetCutAction.Add,
             MULTI_ASSET_STANDARD_VAULT_FACET.facetFuncs()
         );
-        facetCuts_[5] =
-            IDiamond.FacetCut(address(PRODUCT_FACET), IDiamond.FacetCutAction.Add, PRODUCT_FACET.facetFuncs());
+        IFacet[5] memory product_ = _productFacets();
+        for (uint256 i; i < product_.length; ++i) {
+            facetCuts_[5 + i] = IDiamond.FacetCut(
+                address(product_[i]), IDiamond.FacetCutAction.Add, product_[i].facetFuncs()
+            );
+        }
     }
 
     function diamondConfig() public view returns (DiamondConfig memory config_) {
         config_ = DiamondConfig({facetCuts: facetCuts(), interfaces: facetInterfaces()});
     }
 
+    /// @dev Reject removed fields and noncanonical payloads instead of silently reinterpreting them.
+    function _decodeArgs(bytes memory encoded_) private pure returns (IUniswapV4Detf.PkgArgs memory args_) {
+        args_ = abi.decode(encoded_, (IUniswapV4Detf.PkgArgs));
+        if (keccak256(encoded_) != keccak256(abi.encode(args_))) revert InvalidPackageArguments();
+    }
+
     /// @dev Salt ignores `hook` so TestBase can CREATE2-predict the DETF before the hook exists.
     function calcSalt(bytes memory pkgArgs) public pure returns (bytes32 salt_) {
-        IUniswapV4Detf.PkgArgs memory args = abi.decode(pkgArgs, (IUniswapV4Detf.PkgArgs));
+        IUniswapV4Detf.PkgArgs memory args = _decodeArgs(pkgArgs);
         args.hook = address(0);
         return keccak256(abi.encode(args));
     }
@@ -173,9 +210,9 @@ contract UniswapV4DetfDFPkg is IUniswapV4DetfDFPkg {
         if (msg.sender != address(VAULT_REGISTRY_DEPLOYMENT)) {
             revert NotCalledByRegistry(msg.sender);
         }
-        IUniswapV4Detf.PkgArgs memory args = abi.decode(pkgArgs, (IUniswapV4Detf.PkgArgs));
+        IUniswapV4Detf.PkgArgs memory args = _decodeArgs(pkgArgs);
         ArgsLib.requireHookShape(args.hook);
-        ArgsLib.requireCustomClose(args);
+        ArgsLib.requireLiquidityPolicy(args.hook, args.ownerOnlyLiquidity);
         return pkgArgs;
     }
 
@@ -184,17 +221,17 @@ contract UniswapV4DetfDFPkg is IUniswapV4DetfDFPkg {
     }
 
     function initAccount(bytes memory initArgs) public {
-        IUniswapV4Detf.PkgArgs memory args = abi.decode(initArgs, (IUniswapV4Detf.PkgArgs));
+        IUniswapV4Detf.PkgArgs memory args = _decodeArgs(initArgs);
         ArgsLib.requireHookShape(args.hook);
+        ArgsLib.requireLiquidityPolicy(args.hook, args.ownerOnlyLiquidity);
         ArgsLib.requireDetfSelfLegAndOwner(args.hook, address(this));
-        ArgsLib.requireCustomClose(args);
 
         address[] memory hookTokens_ = IUniswapV4SeBufferHook(args.hook).tokens();
         uint256 pairCount_ = hookTokens_.length - 1;
         ArgsLib.requireCreationRates(args, pairCount_);
         uint256[] memory opening_ = ArgsLib.resolveOpening(args.creationPairPerDetfWad, args.openingPairPerDetfWad);
 
-        ERC20Repo._initialize(args.name, args.symbol, 18);
+        ERC20Repo._initialize(args.name, args.symbol, 9);
         EIP712Repo._initialize(args.name, "1");
 
         address[] memory contents_ = new address[](hookTokens_.length + 1);
@@ -206,12 +243,9 @@ contract UniswapV4DetfDFPkg is IUniswapV4DetfDFPkg {
             FEE_ORACLE, vaultFeeTypeIds(), vaultTypes(), abi.encode(contents_)._hash()
         );
 
-        DETFThresholdPolicy.requireValidThresholdMode(args.thresholdMode);
         (uint256 mint_, uint256 burn_) =
             DETFThresholdPolicy.resolveAndRequireValidThresholds(args.mintThreshold, args.burnThreshold);
-        (uint256 epoch_, uint256 rate_, uint256 maxCatch_) = DETFEpochNaturalExpansionLib.resolveExpansionParams(
-            args.expansionEpochLength, args.expansionClosureRatePerYearWad, args.expansionMaxCatchUpEpochs
-        );
+        uint256 rate_ = DETFEpochNaturalExpansionLib.resolveClosureRate(args.expansionClosureRatePerYearWad);
 
         Repo._initializeCore(
             Repo.CoreInit({
@@ -228,10 +262,7 @@ contract UniswapV4DetfDFPkg is IUniswapV4DetfDFPkg {
             Repo.PolicyInit({
                 mintThreshold: mint_,
                 burnThreshold: burn_,
-                thresholdMode: args.thresholdMode,
-                expansionEpochLength: epoch_,
-                expansionClosureRatePerYearWad: rate_,
-                expansionMaxCatchUpEpochs: maxCatch_
+                expansionClosureRatePerYearWad: rate_
             })
         );
         Repo._setChildTokenMetadata(args.claimName, args.claimSymbol, args.bondName, args.bondSymbol);
@@ -239,39 +270,33 @@ contract UniswapV4DetfDFPkg is IUniswapV4DetfDFPkg {
             args.mintRouteMode,
             args.burnRouteMode,
             args.bondRouteMode,
-            args.closeRouteMode,
             args.donateRouteMode
         );
         ArgsLib.storeHookSetsAndRates(args.hook, address(this), args.creationPairPerDetfWad, opening_);
         _storeTables(args);
         MultiAssetBasicVaultRepo._initialize(contents_);
-        emit IUniswapV4Detf.ThresholdModeSet(args.thresholdMode, mint_, burn_);
+        emit IUniswapV4Detf.ThresholdsConfigured(mint_, burn_);
     }
 
     function _storeTables(IUniswapV4Detf.PkgArgs memory args) private {
         Repo.Storage storage s = Repo._layoutStruct();
         if (args.mintRouteMode == IUniswapV4Detf.RouteTableMode.Custom) {
-            ArgsLib.storeCustomTable(args.hook, address(this), args.mintRoutes, s.mintTable, false, false);
+            ArgsLib.storeCustomTable(address(this), args.mintRoutes, s.mintTable);
         } else {
             ArgsLib.storeDefaultInbound(args.hook, address(this), s.mintTable);
         }
         if (args.burnRouteMode == IUniswapV4Detf.RouteTableMode.Custom) {
-            ArgsLib.storeCustomTable(args.hook, address(this), args.burnRoutes, s.burnTable, false, false);
+            ArgsLib.storeCustomTable(address(this), args.burnRoutes, s.burnTable);
         } else {
             ArgsLib.storeDefaultInbound(args.hook, address(this), s.burnTable);
         }
         if (args.bondRouteMode == IUniswapV4Detf.RouteTableMode.Custom) {
-            ArgsLib.storeCustomTable(args.hook, address(this), args.bondRoutes, s.bondTable, false, false);
+            ArgsLib.storeCustomTable(address(this), args.bondRoutes, s.bondTable);
         } else {
             ArgsLib.storeDefaultInbound(args.hook, address(this), s.bondTable);
         }
-        if (args.closeRouteMode == IUniswapV4Detf.RouteTableMode.Custom) {
-            ArgsLib.storeCustomTable(args.hook, address(this), args.closeRoutes, s.closeTable, true, false);
-        } else {
-            ArgsLib.storeDefaultClose(args.hook, address(this), s.closeTable);
-        }
         if (args.donateRouteMode == IUniswapV4Detf.RouteTableMode.Custom) {
-            ArgsLib.storeCustomTable(args.hook, address(this), args.donateRoutes, s.donateTable, false, true);
+            ArgsLib.storeCustomTable(address(this), args.donateRoutes, s.donateTable);
             ArgsLib.requireDonateSubset();
         } else {
             ArgsLib.storeDonateUnion();
@@ -286,6 +311,10 @@ contract UniswapV4DetfDFPkg is IUniswapV4DetfDFPkg {
         IUniswapV4Detf self_ = IUniswapV4Detf(address(this));
         self_.completeReserveBondNft();
         self_.completeReserveClaim();
+        Repo.Storage storage s_ = Repo._layoutStruct();
+        DETFSYDeploymentLib._deploy(
+            SY_PKG, IStakedDETF(self_.rebasingClaimToken()), s_.mintTable.tokens._values(), s_.burnTable.tokens._values()
+        );
         return true;
     }
 }

@@ -24,7 +24,7 @@ import {
  * @title TestBase_UniswapV2StandardExchange_MultiPool
  * @notice Test base that deploys 3 vault instances with different pool configurations.
  */
-contract TestBase_UniswapV2StandardExchange_MultiPool is TestBase_UniswapV2_Pools, TestBase_UniswapV2StandardExchange {
+abstract contract TestBase_UniswapV2StandardExchange_MultiPool is TestBase_UniswapV2_Pools, TestBase_UniswapV2StandardExchange {
     /* ---------------------------------------------------------------------- */
     /*                               Constants                                */
     /* ---------------------------------------------------------------------- */

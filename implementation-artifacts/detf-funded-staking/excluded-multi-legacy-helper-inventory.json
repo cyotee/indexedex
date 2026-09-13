@@ -1,0 +1,409 @@
+[
+  {
+    "helper": "_assertNoFreeInventory",
+    "callers": [
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_MintBurn.t.sol",
+        "count": 2
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_PriceShift.t.sol",
+        "count": 1
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_MixedRated.t.sol",
+        "count": 1
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_FeeNonDilution.t.sol",
+        "count": 2
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_Nested.t.sol",
+        "count": 1
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_MultiLeg.t.sol",
+        "count": 4
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/TestBase_MultiVaultWeightedDetf_Adversarial.sol",
+        "count": 1
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/fuzz/MultiVaultWeightedDetf_Fuzz.t.sol",
+        "count": 5
+      }
+    ]
+  },
+  {
+    "helper": "_bondNftVault",
+    "callers": [
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_ReserveDonation.t.sol",
+        "count": 2
+      }
+    ]
+  },
+  {
+    "helper": "_burnToLeg",
+    "callers": [
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_MixedRated.t.sol",
+        "count": 2
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_FeeNonDilution.t.sol",
+        "count": 2
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_MultiLeg.t.sol",
+        "count": 2
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/invariant/MultiVaultWeightedDetf.invariant.t.sol",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "helper": "_closeMinOut",
+    "callers": [
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_Bonding.t.sol",
+        "count": 1
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_ReserveDonation.t.sol",
+        "count": 3
+      }
+    ]
+  },
+  {
+    "helper": "_deployDetfN2SameRateAsset",
+    "callers": [
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_MultiLeg.t.sol",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "helper": "_deployDetfNMixedRated",
+    "callers": [
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_MixedRated.t.sol",
+        "count": 2
+      }
+    ]
+  },
+  {
+    "helper": "_deployNestedSingleSeDetfLive",
+    "callers": [
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_Nested.t.sol",
+        "count": 1
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_Nested.t.sol",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "helper": "_deployOpenModeDetf",
+    "callers": [
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_ReserveDonation.t.sol",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "helper": "_deployOpenModeDetfN",
+    "callers": [
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_NestedPush.t.sol",
+        "count": 1
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_PriceManipulation.t.sol",
+        "count": 1
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_BondClaim.t.sol",
+        "count": 3
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_Griefing.t.sol",
+        "count": 2
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_A0.t.sol",
+        "count": 3
+      }
+    ]
+  },
+  {
+    "helper": "_deployOpenThresholdDetf",
+    "callers": [
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_MintBurn.t.sol",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "helper": "_deployOpenThresholdDetfN",
+    "callers": [
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_FeeNonDilution.t.sol",
+        "count": 2
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_MultiLeg.t.sol",
+        "count": 3
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/invariant/MultiVaultWeightedDetf.invariant.t.sol",
+        "count": 1
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/TestBase_MultiVaultWeightedDetf_Adversarial.sol",
+        "count": 1
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_Guards.t.sol",
+        "count": 1
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/fuzz/MultiVaultWeightedDetf_Fuzz.t.sol",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "helper": "_deployOuterOverNested",
+    "callers": [
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_Nested.t.sol",
+        "count": 1
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_Nested.t.sol",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "helper": "_feeTo",
+    "callers": [
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_MintBurn.t.sol",
+        "count": 2
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_FeeNonDilution.t.sol",
+        "count": 2
+      }
+    ]
+  },
+  {
+    "helper": "_fundNestedDetfShares",
+    "callers": [
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_Nested.t.sol",
+        "count": 2
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_Nested.t.sol",
+        "count": 2
+      }
+    ]
+  },
+  {
+    "helper": "_fundSeShares0",
+    "callers": [
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_MintBurn.t.sol",
+        "count": 4
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_Liveness.t.sol",
+        "count": 2
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_Bonding.t.sol",
+        "count": 3
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_PriceShift.t.sol",
+        "count": 1
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_NestedPush.t.sol",
+        "count": 6
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_ReserveDonation.t.sol",
+        "count": 5
+      }
+    ]
+  },
+  {
+    "helper": "_fundSharesForInstanceLeg",
+    "callers": [
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_ReserveDonation.t.sol",
+        "count": 1
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_MultiLeg.t.sol",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "helper": "_goLiveViaBptBond",
+    "callers": [
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_MintBurn.t.sol",
+        "count": 6
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_Liveness.t.sol",
+        "count": 1
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_Bonding.t.sol",
+        "count": 6
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_PriceShift.t.sol",
+        "count": 2
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_MixedRated.t.sol",
+        "count": 2
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_FeeNonDilution.t.sol",
+        "count": 2
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_NestedPush.t.sol",
+        "count": 1
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_MultiLeg.t.sol",
+        "count": 5
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/invariant/MultiVaultWeightedDetf.invariant.t.sol",
+        "count": 1
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_PriceManipulation.t.sol",
+        "count": 1
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/TestBase_MultiVaultWeightedDetf_Adversarial.sol",
+        "count": 2
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_BondClaim.t.sol",
+        "count": 3
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_Griefing.t.sol",
+        "count": 2
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_A0.t.sol",
+        "count": 2
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/fuzz/MultiVaultWeightedDetf_Fuzz.t.sol",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "helper": "_mintOnLeg",
+    "callers": [
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_MixedRated.t.sol",
+        "count": 2
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_FeeNonDilution.t.sol",
+        "count": 5
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_MultiLeg.t.sol",
+        "count": 4
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/invariant/MultiVaultWeightedDetf.invariant.t.sol",
+        "count": 1
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_PriceManipulation.t.sol",
+        "count": 3
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_Donation.t.sol",
+        "count": 2
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_Access.t.sol",
+        "count": 1
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_Griefing.t.sol",
+        "count": 1
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_TrustFlags.t.sol",
+        "count": 4
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_Economic.t.sol",
+        "count": 2
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/fuzz/MultiVaultWeightedDetf_Fuzz.t.sol",
+        "count": 4
+      }
+    ]
+  },
+  {
+    "helper": "_warpPastUnlock",
+    "callers": [
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_Bonding.t.sol",
+        "count": 2
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_MixedRated.t.sol",
+        "count": 1
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_ReserveDonation.t.sol",
+        "count": 3
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_MultiLeg.t.sol",
+        "count": 2
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_BondClaim.t.sol",
+        "count": 3
+      },
+      {
+        "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_Griefing.t.sol",
+        "count": 2
+      }
+    ]
+  }
+]

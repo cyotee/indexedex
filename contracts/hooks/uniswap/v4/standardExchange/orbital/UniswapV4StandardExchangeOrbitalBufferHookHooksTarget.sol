@@ -19,6 +19,7 @@ import {BalanceDelta} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Ba
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {DETFDecimalScaleLib} from "contracts/vaults/detf/common/core/DETFDecimalScaleLib.sol";
 import {
     UniswapV4StandardExchangeOrbitalBufferHookCommon
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookCommon.sol";
@@ -51,6 +52,11 @@ import {AddressSet, AddressSetRepo} from "@crane/contracts/utils/collections/set
 abstract contract UniswapV4StandardExchangeOrbitalBufferHookHooksTarget is UniswapV4StandardExchangeOrbitalBufferHookCommon, IHooks {
     using SafeERC20 for IERC20;
     using AddressSetRepo for AddressSet;
+
+    /// @notice Fixed direct-liquidity policy selected at deployment.
+    function ownerOnlyLiquidity() external view returns (bool) {
+        return Repo._layout().ownerOnlyLiquidity;
+    }
 
     function poolManager() public view returns (IPoolManager) {
         return IPoolManager(Repo._layout().poolManager);
@@ -118,9 +124,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookHooksTarget is Unisw
     }
 
 
-    function radius() public view returns (uint256) {
-        return Repo._layout().R;
-    }
+
 
 
     function lSquared() public view returns (uint256) {
@@ -386,6 +390,12 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookHooksTarget is Unisw
         return IVaultFeeOracleQuery(Repo._layout().feeOracle).dexSwapFeeOfVault(address(this));
     }
 
+    function previewSwapAfterExchange(address tokenIn, address pairToken, address rawTokenOut, uint256 amountIn)
+        external view returns (uint256 amountOut)
+    {
+        return _previewSwapAfterExchange(tokenIn, pairToken, rawTokenOut, amountIn);
+    }
+
     function previewSynthetic(IDetfReserveQuote.DetfQuoteCtx calldata ctx, address numeraire)
         external
         view
@@ -399,7 +409,8 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookHooksTarget is Unisw
         if (out_ == address(0)) return 0;
         uint256 pairOut = IDetfReserveQuote(address(this)).previewBurnToToken(ctx.ownedLp, out_);
         if (pairOut == 0) return 0;
-        uint256 mid_ = (pairOut * 1e18) / ctx.detfTotalSupply;
+        uint256 pairWad = DETFDecimalScaleLib.nativeToWad(out_, pairOut);
+        uint256 mid_ = (pairWad * 1e18) / ctx.detfTotalSupply;
         return (mid_ * 1e18) / ctx.creationPairPerDetfWad;
     }
 

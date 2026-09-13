@@ -1,0 +1,23 @@
+{
+  "status": "applied; validation pending",
+  "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_OriginalPrincipal.t.sol",
+  "before_sha256": "712f2a1412df2ac302dbc79af5569844b9ffe6bc459e671386f0041f62ddcc8c",
+  "after_sha256": "f6784c492e8a0f2d2c3b82eafb294c6dcddb921f689851e91689c4c58153afc9",
+  "before_executable_tests": 33,
+  "after_executable_tests": 18,
+  "coverage_mapping": {
+    "test_P1_laterBond_creditsOriginalPrincipal_afterDonation": "test_P1_fundedPrincipalSurvivesDonationAndLaterBond",
+    "test_P1_compound_creditsOriginalPrincipal_afterDonation": "test_P1_fundedPrincipalSurvivesDonationAndLaterBond",
+    "test_P1_closeRejoin_creditsOriginalPrincipal_afterDonation": "test_P1_matureClaimRetainsDonatedProtocolLiquidity",
+    "test_P1_buyClaim_previewIncludesPendingProtocolFees": "test_P1_stakingQuoteIgnoresLpFeesAndUsesFundedIndex",
+    "test_P1_buyClaim_previewUsesRebasingBalance": "test_P1_stakingQuoteIgnoresLpFeesAndUsesFundedIndex",
+    "test_P1_buyClaim_creditsOriginalPrincipal_afterDonation": "test_P1_stakingQuoteIgnoresLpFeesAndUsesFundedIndex",
+    "test_P1_buyClaim_minimum_revertsEntireOriginalCredit": "test_P1_stakeMinimumRollsBackAllFundedAccounting",
+    "test_P1_tinyPrincipal_belowShareBond_revertsAtomically": "test_P1_zeroNativePrincipalBondRevertsAtomically",
+    "test_P1_tinyPrincipal_belowShareClaimPurchase_revertsAtomically": "test_P1_oneNativeUnitStakeRedeemsExactly",
+    "test_P1_tinyPrincipal_aboveShareBond_floorsWithoutDilution": "test_P1_fundedPrincipalSurvivesDonationAndLaterBond; test_P1_oneNativeUnitStakeRedeemsExactly",
+    "test_P1_tinyPrincipal_closeRejoin_belowShareRemainsUnassigned": "test_P1_matureClaimRetainsDonatedProtocolLiquidity; existing funded staking arithmetic/escrow dust coverage",
+    "test_P1_tinyPrincipal_compoundBelowShare_preservesPendingRewards": "test_P1_fundedPrincipalSurvivesDonationAndLaterBond; existing funded staking distribution conservation/dust coverage"
+  },
+  "reason": "D32 funded DETF and sDETF replace LP-original-share liabilities, sale-to-id0, reward-to-LP compounding, and close/rejoin. Those retired economic assertions cannot be retained as requirements. Their funding/rounding/rollback/custody intent is consolidated into four shared production-binding cases plus two native-unit CP boundaries. Existing dust/conservation coverage still requires final traceability evidence."
+}

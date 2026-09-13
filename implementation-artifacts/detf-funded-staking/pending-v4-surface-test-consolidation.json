@@ -1,0 +1,37 @@
+{
+  "status": "HISTORICAL_PREPARATION_SUPERSEDED_BY_RECORDED_APPLICATION",
+  "files": [
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/adversarial/Adversarial_Surface.t.sol",
+      "before_sha256": "372cd88eb7004b9178ca43faf49c4640de808e7f3aa53382f0891649f6a9311e",
+      "after_sha256": "7fc148f69e6ad78ce71287ae3deda95a274786a01b2a08ce0fe1758694213fdf"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Adversarial_Surface.t.sol",
+      "before_sha256": "1b282a332ecf3f9cf50fa7021c141e5af5f1cb90a0f75766a4739214b6ead508",
+      "after_sha256": "51f6e73287d652bb9c5a9d1678f19c165ac1b38ff68d0534b70aa8a564ab8aaf"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Adversarial_Surface.t.sol",
+      "before_sha256": "cfd80f336d58f2717679ecea2564fe3ce2329c5af952183735812707e9456c6d",
+      "after_sha256": "1deaa351231802c6b42c6cf09296049f379619b417a04e39e9db61ad7785c3dd"
+    }
+  ],
+  "coverage_mapping": {
+    "J1": "Reviewed 48 current interface selectors occur exactly once in the actual product facet union. Removed controls replaced by current funded/SY/policy methods.",
+    "J2": "Each of the four real bindings routes every current selector to its exact facet; eleven retired aliases are absent. Quad retains its existing separate hook join-surface test.",
+    "J3": "Current getters, standard input/output, funded previews and reward maintenance execute through actual proxies; zero input and retained privileged callbacks reject unauthorized callers."
+  },
+  "scope_note": "The owner explicitly approved the obsolete V4 mature-close cleanup. Both close configuration getters and their deployment/storage fields are removed in current source; the reviewed product union now contains 46 selectors. This consolidation record preserves the earlier 48-selector checkpoint as history. No cleanup approval is pending.",
+  "historical_preparation_status": "prepared; Solidity unchanged",
+  "application_record": "v4-surface-test-consolidation.json",
+  "current_status_source": "current-implementation-queue.json and acceptance-progress.json; later edits and validation can supersede the original application hashes.",
+  "pending_owner_approval": false,
+  "historical_scope_note": "Inert closeRoutes/closeRouteMode getters remain in expected controls while their separately rejected cleanup is pending approval. No production selectors added or removed.",
+  "superseding_cleanup": {
+    "approval": "v4-close-cleanup-owner-approval.json",
+    "surface_evidence": "approved-close-cleanup-surface.json",
+    "current_manifest": "current-funded-selector-manifest.json",
+    "updated_at_utc": "2026-09-08T09:27:35.476283+00:00"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "recorded_at_utc": "2026-09-09T02:07:41.879176+00:00",
+  "scope": "Read-only actual V3 pool existence; no runtime validation or broadcast",
+  "checks": [
+    {
+      "network": "base",
+      "block": "45446736",
+      "exit_code": 0,
+      "result": "0xd0b53D9277642d899DF5C87A3966A349A798F224\n"
+    },
+    {
+      "network": "robinhood",
+      "block": "56118361",
+      "exit_code": 0,
+      "result": "0x69BfaF19C9f377BB306a89aEd9F6B07e2c1a8d9a\n"
+    }
+  ],
+  "pool_state_checked_at_utc": "2026-09-09T06:05:42.736095+00:00",
+  "pool_state": [
+    {
+      "network": "base",
+      "block": "45446736",
+      "pool": "0xd0b53D9277642d899DF5C87A3966A349A798F224",
+      "view": "liquidity()(uint128)",
+      "exit_code": 0,
+      "result": "1941519379715404093 [1.941e18]\n"
+    },
+    {
+      "network": "base",
+      "block": "45446736",
+      "pool": "0xd0b53D9277642d899DF5C87A3966A349A798F224",
+      "view": "slot0()(uint160,int24,uint16,uint16,uint16,uint8,bool)",
+      "exit_code": 0,
+      "result": "3797515223116620456337506 [3.797e24]\n-198925 [-1.989e5]\n4980\n5000\n5000\n68\ntrue\n"
+    },
+    {
+      "network": "robinhood",
+      "block": "56118361",
+      "pool": "0x69BfaF19C9f377BB306a89aEd9F6B07e2c1a8d9a",
+      "view": "liquidity()(uint128)",
+      "exit_code": 0,
+      "result": "1113928196661202174 [1.113e18]\n"
+    },
+    {
+      "network": "robinhood",
+      "block": "56118361",
+      "pool": "0x69BfaF19C9f377BB306a89aEd9F6B07e2c1a8d9a",
+      "view": "slot0()(uint160,int24,uint16,uint16,uint16,uint8,bool)",
+      "exit_code": 0,
+      "result": "3945806951493368004865366 [3.945e24]\n-198159 [-1.981e5]\n1072\n3000\n3000\n68\ntrue\n"
+    }
+  ]
+}

@@ -1,0 +1,243 @@
+{
+  "status": "PREPARED_NOT_APPLIED",
+  "authority": "Approved two-token initial activation, retained subsequent single-token routes, native ETH compatibility and production-first test migration.",
+  "changes": [
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_LocalLiquidBuffer.t.sol",
+      "before_sha256": "bfd06e198d909c1b743096f418126fe87e13b5ade269041daafe3950cd86b0bf",
+      "after_sha256": "31302c40c1e77083b9707f49e8d074984da8800933058004f275acff706078cc"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_LocalLiquidBuffer_Decimals.sol",
+      "before_sha256": "9ce9c4f62f4a7390bede28ac47e8d29bbbda883e1ffc34e46c2033ecac4a002c",
+      "after_sha256": "7cd60c63b8c15f004e4ea11caf035e7aebd732686e140c0023f587aaafedb039"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_LocalLiquidBuffer.t.sol",
+      "before_sha256": "9e47210f5c0d56d8900e2dfc2267a62a71754bb69be8f504224555eb0c97ebe5",
+      "after_sha256": "a6b13069a2b15c054350d27f5188705ea522090e675b15e9222f9922dda148bd"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_LocalLiquidBuffer_Decimals.sol",
+      "before_sha256": "8664e6533852134886c81760bcb2bae1616b70fc078aaf0085963f0ff1491ea2",
+      "after_sha256": "1b5c19ed90eb76105c21ae7aaff9b827cda356e7978e68abec31bc2d2411d632"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_NativeEthWrap.t.sol",
+      "before_sha256": "1778999d53708c4045312eed06e1a5cb20b74604e323a21c9b193a0a80ae7c5b",
+      "after_sha256": "863d02e2b1a32b03978abcb517d7b84996ad52a9be8749c7008d7bed962b8823"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_NativeEthWrap_Decimals.sol",
+      "before_sha256": "2602bfad2e6946b52ac3758f47e22dba416febc7a25c3700cf8c0cea32e3d97f",
+      "after_sha256": "d8809189875141a8a9c74a613d7f10c443d20a4f86f59b405d694f9c70095827"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Reentrancy.t.sol",
+      "before_sha256": "66198278b60ecb1b383707b5060b70a09db03af710ae3faa5b25255e722da412",
+      "after_sha256": "b0d231ea8978f6c90b386328f0f3f732e75527875c92863f7f3fdb89e25593bf"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Reentrancy_Decimals.sol",
+      "before_sha256": "d3e191a1c0f19172c4e317342826716575123acb5789c286eeee42d436a7321b",
+      "after_sha256": "9acb22bc4ca7bc9ba27f0cce1a531632f73f0c1f8eeca60870d5571772fb6d70"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FeeCompound_Decimals.sol",
+      "before_sha256": "8608f78d1067625211ebfdf08fdcf2ae0aea85080b422ddb5f14cc053892e4dc",
+      "after_sha256": "85e7266d4e63d7208ce6555ab247249de67c717a0e95cb062d88c83a702bae63"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Import_Decimals.sol",
+      "before_sha256": "98332c8ed8e709cf32ba89c35f8af70fbb5d97b1a3d054fbb9706054b60910ae",
+      "after_sha256": "d3e2882c92573e3aa8ed563e502c4238170c3791836ec1f0719fa3aeff78dbef"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchangeDFPkg_Deploy.t.sol",
+      "before_sha256": "55321521d5526239a58a333fe3283a42a4c7f0e416d2332f67d59d9a0840a197",
+      "after_sha256": "a9cf8abdf335ea5c67a556b1fe0f500e85206ebea85d901ea5d2acf55391b4b2"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchangeDFPkg_Deploy_Decimals.sol",
+      "before_sha256": "e598f42cc5dda618a97ce16a619504b13f70d0a081ffb93e6855f3020bd9a20e",
+      "after_sha256": "cf5b6e29a28ce91ccdf5312544dd99b9829da107ed1d40f0cbf7b4c433b84c6c"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg_Deploy.t.sol",
+      "before_sha256": "790fecf782a45d9b5a3456ff886f2d57e53b479057341595595f77ffaccadfd9",
+      "after_sha256": "987dc1324b14aa3c2c1629e26a0f441018d45c29dabe1dd4434b84d54315dc29"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeDFPkg_Deploy_Decimals.sol",
+      "before_sha256": "ed772f1bd99a64e090b63d82a0165f15aa1ad84c2a91b16e641bff359308f05d",
+      "after_sha256": "30d04e21170437689548437a5110ca0a930819b180b644a41412164e9bb87899"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeRoutes_Test.t.sol",
+      "before_sha256": "e3890ff9569638e45164467910260388df2027917c64b04a6dfff40a84918a3d",
+      "after_sha256": "1691dc46ffc981fb6a0c97e295d5aa386f8b339090ad05bacd726270b0f0876a"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchangeRoutes_Test_Decimals.sol",
+      "before_sha256": "fed3bc16a797db9b0ae6ced81a29be9e8aa0b5e865ceeee38b07d561149b13c4",
+      "after_sha256": "8ecb17e9006c71d3591396950b40a39389f318438e87afb10ee7a4d25815e306"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_Routes.t.sol",
+      "before_sha256": "ca26d2d0bcdbb349dc18fe5fdae299a883f5dbbddb18229be027792ec9adf9c9",
+      "after_sha256": "94efd864fefdaab8191695d3e4385836ba3237afc8360761b0384163b4e881d6"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_Previews.t.sol",
+      "before_sha256": "01d86da0a761c122d33a6b66b6c0278e1050569fc4f778bc3e74f4244d8eb468",
+      "after_sha256": "c16570c71fc0f7e14b64b259c875a29b18e30cf3b9e7e996a668199e134921e9"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Routes_Decimals.sol",
+      "before_sha256": "4ed0d21d2cc22f241664e5bc151f2cce8cb3dceace5863a181f3fe5a74053e1c",
+      "after_sha256": "6c1215b5cd67185e7d153d88407823913f988e24b3202806497fd373c3c35a0d"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_Previews_Decimals.sol",
+      "before_sha256": "064b705e39dc3df29171035b53eb51f57a3ab7a959b98b4e621226299b4478b5",
+      "after_sha256": "72d1e555f8496960e06efae1b7b8a79aafb295e8dfac0ee35e35e0e7a595c421"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/TestBase_UniswapV3StandardExchange_Adversarial.sol",
+      "before_sha256": "90a57222cd51c68dff453b724bc358c5c7ef1c37a157c7d2655b6060779233e9",
+      "after_sha256": "8c9fbeb93adc7ee68b1bce59a290e39a0d3be95c98b2699a1f4d7b99e6c4066e"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Accounting.t.sol",
+      "before_sha256": "bbf62569b1a79e2abd9385490cd2f42750b4941b4f2efcf93f164ae666894d12",
+      "after_sha256": "ff95b75c35edb129dacdd86126aaea1bed3bc04489bdb0e62cd663cddd48e78a"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Donation.t.sol",
+      "before_sha256": "048ec4299e819af8df98319c7353e3cbbc8d69e999cc58c513a95ddfb293a59c",
+      "after_sha256": "db7f822d567b3bacc272fc91abc84628b0aa4bea73de57171eb64eb047722ad7"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_PriceManipulation.t.sol",
+      "before_sha256": "9ee9a5d8716460acac40d0079b29fb9b60fe5d813b398bfa108433e2d14d3e56",
+      "after_sha256": "b42ddfe633dddcbcb1b8f66ada0780130be11c70f664ff8fe5eb341a48161bc5"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_SecRemediation.t.sol",
+      "before_sha256": "7b934a4fb43b874f9eda9f39e29e2d8d9a292b65318b3431ee2423f5de9e430b",
+      "after_sha256": "1e76a55ca9ac7f6320246e5758fca1f8f070bc3f6e23794ea433f891e30cf205"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/TestBase_UniswapV3StandardExchange_Adversarial_Decimals.sol",
+      "before_sha256": "ebcbfceefacc9d0bd48e4d7d2d23cb3995b4da9f1f7cea5d2a2f41e9d20fcf2f",
+      "after_sha256": "4a0b73fe7d74fe08bdbc0b8d0f8c78460f4baac77dbd80482370ca9cfb85f6d0"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Accounting_Decimals.sol",
+      "before_sha256": "afa718825100cafa7c2dc20a4ffff428d2c12b40271a2fabdcef0ed2d5daf2c0",
+      "after_sha256": "dce7f5965f9d5b34c7ff96ae51288a1fc208b9d7d8b33b4cdbd2f9bb923650e2"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Donation_Decimals.sol",
+      "before_sha256": "0bd96a2763ef205cf2bd1ce982eef796b1bc3abc5e474b77387ee7904809eeb8",
+      "after_sha256": "8b34bf69ab0694fd9d9cb756694ab86ad15c446ef1603ca74a3712e8ca10b3d0"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_PriceManipulation_Decimals.sol",
+      "before_sha256": "ed31c2377af4c70297052488e6fbee668dd683ac2cbda090bc2834c692e2e4a2",
+      "after_sha256": "bdf95bb9d1e4862e3aefe412067920ed4af0e4cd0417763a024a2402edfba67e"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_SecRemediation_Decimals.sol",
+      "before_sha256": "5822596bdb5df3ff0f00439792619a5435b9a4cdfa82aebb0918b6f8cd52cc46",
+      "after_sha256": "a2d499b4a6487c3a888a269f9188b88605d8b8e47919416011d4e87ab33a9da9"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_MultiJoinExit.t.sol",
+      "before_sha256": "a0caf372095eeefd98d75bb11242da4847279ae75cd87ccad115b86e6b0cb9cf",
+      "after_sha256": "02905894b13631b99ed47d648604c863f22cdf3658cdaf9cad0a0641c06eb7d2"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_MultiJoinExit_Decimals.sol",
+      "before_sha256": "caa895b6c26919b8c76f1c7a94eebdc17773a709afc11606b2224c33a4444fe2",
+      "after_sha256": "eb0b13d5365f777731c50e6c44698715ee7e0d18efe3a0234d328c7c7a90b962"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_TwapPoke.t.sol",
+      "before_sha256": "ad7e86aab3976fb1e87f671e5320a5d157bacdd02e5caab0a949815dd7e1e785",
+      "after_sha256": "5273eb399bb14ddb25847f377dcbed33e07056d45a8d16fa9a54d2d624180eb5"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_Univ4SeNestedCaller.t.sol",
+      "before_sha256": "7f7746198133874f2f8e04cfa42d59a1ae359db58a053f925cfe3bb5e4e8b33f",
+      "after_sha256": "9b8a62b980807260d73af9b14ba259d53ab3f9fe7f9919e4363279bc023cbbb0"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_LocalLiquidBuffer_H2.t.sol",
+      "before_sha256": "f9c48af4a27ab65466c77bc3c67b107cfed6531f6ccd9bb3e4dd610651a72bf4",
+      "after_sha256": "4c97cf60dce4d1b657bf928d5030c6b4e42b925182e0ee5589b972faa2cbd3e0"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/adversarial/Adversarial_Griefing.t.sol",
+      "before_sha256": "c2b2277c4aaa4f80ab829e2896b3cf724944415ae102ea323219fcedf2ee70b3",
+      "after_sha256": "382fa322388f925707e4f6ee4088849393aabe12cb6f996e54bbbe99724d620c"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_TwapPoke_Decimals.sol",
+      "before_sha256": "accb7654204aec94ebb5f80d4181bbc58c1a691b06ce5e2499f1e2ca43642d5d",
+      "after_sha256": "a91eaed2992b82e73b2d0c33b44a00ca9a229cd8ead653ecd0b8217728712a80"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_Univ4SeNestedCaller_Decimals.sol",
+      "before_sha256": "0b538413705bb72a00fabd791754082e085647be405205df775439db8e1b5012",
+      "after_sha256": "c0908040996518e29636ead7ff92fc9d598f9427887fbf32ee71495125c7f0a7"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_LocalLiquidBuffer_H2_Decimals.sol",
+      "before_sha256": "3192a1de055342a96f3949ee920ee924a21275e88dd101813e6ff01d8a226978",
+      "after_sha256": "6167cbd43eedf233f5a3d2177b0ab6bcb43198ba23a0211be6b581184622fc40"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Griefing_Decimals.sol",
+      "before_sha256": "0fb1da8f5a33e4dc91da58be687e59e915324248e21d507fadc8f3292c590c3b",
+      "after_sha256": "50484a456679af76b6152ccaeb4858eebd7458a7cd73c12b499c8dfe96399632"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/adversarial/Adversarial_UniswapV4SE_SecurePull.t.sol",
+      "before_sha256": "ba4825c1c81efac4ba6110cdf6024485f5d1d39f5b0a37003db2b5fbc58d2374",
+      "after_sha256": "346856423bf6b943dc87719e3b9c5d6913f1b818a59c0b69205ff2e403ea9014"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/adversarial/Adversarial_UniswapV4SE_E6ImpA0.t.sol",
+      "before_sha256": "4803726998c117f5002b2757f10843f615cd1edda558080bfbc06ed489cdf10b",
+      "after_sha256": "6f45cad43cbf647037d4151b7734d74c2771d497d78e215d3047a68a8a30b987"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_SecurePull_Decimals.sol",
+      "before_sha256": "c56bdbcac3a401584bb3ac7c2793560c2e74ac95b58c52830e90e4c6486cdf4d",
+      "after_sha256": "b031a9bd85459a7fb0882007b783a8760406601857ed69b4c478e73caf630c48"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/adversarial/Adversarial_UniswapV4SE_E6ImpA0_Decimals.sol",
+      "before_sha256": "11f75c6911874a4ff3fc9ff8cd3273b534a93ed98be995ebd323a3af168c97b1",
+      "after_sha256": "43d0e519cd7ad840619f69df53ea30b33c1ec630599d44fada608c8bc68f4c1a"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/adversarial/Adversarial_Import_Decimals.sol",
+      "before_sha256": "5ed0d311e1dd907ddd72579141f98e798b43626fcc26a3bfa3c56c383f8e43d1",
+      "after_sha256": "c193e7a6c3098e3874206bf46e19056386f59970e488c5b9e711d8026e149d57"
+    }
+  ],
+  "coverage_preserved": [
+    "V3/V4 base and decimal local-buffer suites",
+    "V4 native ETH deposit, swaps and withdrawal",
+    "V3 authenticated callback and payout reentrancy",
+    "V4 hostile transferFrom reentrancy after funded activation",
+    "V3 decimal incumbent fee protection and imported-position authorization"
+  ],
+  "renamed_cases": {
+    "test_T1b_idleDeposit_token0Only_doesNotRequireSleeveAndL": "test_T1b_subsequentSingleTokenDeposit_keepsFullRangeLiquidity"
+  },
+  "consolidated_cases": "V4 Routes base/decimal: each former first-deposit execution + duplicate preview case becomes one two-token activation case checking preview, receipts, supply and both reserves; two parameter directions retained. V3 Routes retain positive two-token activation; V3 Previews replace obsolete first single-token success with exact zero-preview/revert/no-loss checks in both directions.",
+  "validation": "Draft compilation and actual retained tests required; no test failures are waived."
+}

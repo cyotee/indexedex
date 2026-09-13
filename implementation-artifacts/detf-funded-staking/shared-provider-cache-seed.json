@@ -1,0 +1,26 @@
+{
+  "recorded_at_utc": "2026-09-09T00:30:19.119215+00:00",
+  "status": "ATTEMPT_RECORDED_NO_MEASURED_COMPILATION_ELIMINATION",
+  "source": "implementation-artifacts/detf-funded-staking/uniswap-v2-provider-validation-cache/solidity-files-cache.json",
+  "destination": "implementation-artifacts/detf-funded-staking/aerodrome-provider-validation-cache/solidity-files-cache.json",
+  "source_cache_sha256": "5e0b8f3af2c06632a0340fda7f2c1d91a96b87749724a5c66cecab577e8023f9",
+  "previous_cache_sha256": null,
+  "verified_current_artifacts": [
+    "UniswapV2NativeSYTest",
+    "CamelotV2NativeSYTest",
+    "AerodromeNativeSYTest"
+  ],
+  "verified_dependency_sources": 502,
+  "method": "Copy the whole successful current focused cache, preserving official entries and build IDs; do not merge or fabricate content hashes. Main cache_forge and out artifacts are preserved. Actual Aerodrome build/test and final full validation remain required.",
+  "settings_unchanged": true,
+  "observed_result": {
+    "build_seconds": 24.649,
+    "test_command_seconds": 252.528,
+    "test_compiled_files": 392,
+    "test_solc_seconds": 228.79,
+    "cases_passed": 37,
+    "compilation_skipped": false,
+    "evidence": "aerodrome-funded-followups-run.json"
+  },
+  "followup": "Removed the unproven automatic pre-seeding addition from the runner; retain independent warm caches and actual build/test gates. Preserve this attempt and its before-cache evidence. No speedup claim."
+}

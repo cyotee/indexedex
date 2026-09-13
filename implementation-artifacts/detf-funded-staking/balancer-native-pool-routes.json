@@ -1,0 +1,56 @@
+{
+  "scope": "Native BPT at seven existing Balancer pool diamonds; preserves each BPT ledger and underlying pool economics",
+  "verified_checkpoint": "checkpoint-358-run.json",
+  "accounting": {
+    "assetType": "LIQUIDITY",
+    "assetAddress": "pool diamond",
+    "decimals": 18,
+    "rate": "Balancer Vault.getBptRate(pool)",
+    "yieldToken": "address(0)"
+  },
+  "routes": [
+    {
+      "family": "constant product",
+      "inOut": "all registered physical pool tokens"
+    },
+    {
+      "family": "standard exchange buffer constant product",
+      "inOut": "SE share token",
+      "excluded": "ttaToken() virtual buffer"
+    },
+    {
+      "family": "weighted multi-pair buffer",
+      "inOut": "all SE share tokens",
+      "excluded": "each bufferToken(i) virtual buffer"
+    },
+    {
+      "family": "weighted mixed-leg buffer",
+      "inOut": "unpaired tokens and all SE share tokens",
+      "excluded": "each bufferToken(i) virtual buffer"
+    },
+    {
+      "family": "weighted common buffer",
+      "inOut": "unpaired tokens and all SE share tokens",
+      "excluded": "bufferToken() virtual buffer"
+    },
+    {
+      "family": "stable common buffer",
+      "inOut": "all SE share tokens",
+      "excluded": "bufferToken() virtual buffer"
+    },
+    {
+      "family": "stable mixed buffer",
+      "inOut": "unpaired tokens and all SE share tokens",
+      "excluded": "bufferToken() virtual buffer"
+    }
+  ],
+  "tests": [
+    "all advertised inputs/outputs and actual deltas",
+    "SE exact output/refunds both directions",
+    "internal SY consumes only requested BPT",
+    "limits/pretransfer/authenticated callback",
+    "metadata/all selectors/runtime",
+    "virtual-buffer discovery and upfront rejection"
+  ],
+  "note": "Generic single-token BPT liquidity cannot price virtual buffer deltas. Existing swaps, proportional liquidity and reconciliation routes are preserved; no generic buffer-only LP route is advertised."
+}

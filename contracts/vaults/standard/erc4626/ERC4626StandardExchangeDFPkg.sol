@@ -1,10 +1,16 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IERC4626StandardExchangeDFPkg} from "contracts/vaults/standard/erc4626/IERC4626StandardExchangeDFPkg.sol";
+
+import {IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {IStandardExchangeTransitionQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC20Permit} from "@crane/contracts/interfaces/IERC20Permit.sol";
 import {IERC5267} from "@crane/contracts/interfaces/IERC5267.sol";
@@ -31,32 +37,7 @@ import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVa
 import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
 import {IERC4626StandardExchange} from "contracts/vaults/standard/erc4626/IERC4626StandardExchange.sol";
 
-interface IERC4626StandardExchangeDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
-    error NotCalledByRegistry(address caller);
-    error ZeroProtocolVault();
 
-    struct PkgInit {
-        IFacet erc20Facet;
-        IFacet erc5267Facet;
-        IFacet erc2612Facet;
-        IFacet erc4626Facet;
-        IFacet erc4626StandardVaultFacet;
-        IFacet multiAssetBasicVaultFacet;
-        IFacet multiAssetStandardVaultFacet;
-        IFacet exchangeInFacet;
-        IFacet exchangeOutFacet;
-        IFacet markerFacet;
-        IVaultFeeOracleQuery vaultFeeOracleQuery;
-        IVaultRegistryDeployment vaultRegistryDeployment;
-        IPermit2 permit2;
-    }
-
-    struct PkgArgs {
-        address protocolVault;
-    }
-
-    function deployVault(IERC4626 protocolVault) external returns (address vault);
-}
 
 /**
  * @title ERC4626StandardExchangeDFPkg
@@ -130,7 +111,7 @@ contract ERC4626StandardExchangeDFPkg is IERC4626StandardExchangeDFPkg {
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](10);
+        interfaces = new bytes4[](13);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20Permit).interfaceId;
@@ -141,6 +122,9 @@ contract ERC4626StandardExchangeDFPkg is IERC4626StandardExchangeDFPkg {
         interfaces[7] = type(IERC4626StandardExchange).interfaceId;
         interfaces[8] = type(IBasicVault).interfaceId;
         interfaces[9] = type(IStandardVault).interfaceId;
+        interfaces[10] = type(IStandardExchangeTransitionQuote).interfaceId;
+        interfaces[11] = type(IStandardizedYield).interfaceId;
+        interfaces[12] = type(IStandardExchangeExternalQuote).interfaceId;
     }
 
     function facetCuts() public view returns (IDiamond.FacetCut[] memory cuts) {

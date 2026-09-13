@@ -9,6 +9,7 @@ import {MockERC20} from "@crane/contracts/test/mocks/MockERC20.sol";
 ///      Wave 0 shared harness for peer DETF/SE adversarial suites.
 contract HostileReentrantShare is MockERC20 {
     address public target;
+    address public transferRecipient;
     bytes public reentryCall;
     bool public armed;
     uint256 private _depth;
@@ -20,6 +21,18 @@ contract HostileReentrantShare is MockERC20 {
     constructor() MockERC20("HostileReentrantShare", "HSHR", 18) {}
 
     function arm(address target_, bytes memory reentryCall_) external {
+        transferRecipient = address(0);
+        target = target_;
+        reentryCall = reentryCall_;
+        armed = true;
+        reentryAttempts = 0;
+        nestedCallSucceeded = false;
+        nestedErrorSelector = bytes4(0);
+    }
+
+    /// @notice Probe a selected custody pull while retaining all real downstream transfers.
+    function armForRecipient(address recipient_, address target_, bytes memory reentryCall_) external {
+        transferRecipient = recipient_;
         target = target_;
         reentryCall = reentryCall_;
         armed = true;
@@ -33,7 +46,7 @@ contract HostileReentrantShare is MockERC20 {
     }
 
     function transferFrom(address from_, address to_, uint256 value_) public override returns (bool) {
-        if (armed && _depth == 0) {
+        if (armed && _depth == 0 && (transferRecipient == address(0) || to_ == transferRecipient)) {
             _depth = 1;
             unchecked {
                 ++reentryAttempts;
@@ -53,4 +66,13 @@ contract HostileReentrantShare is MockERC20 {
         }
         return super.transferFrom(from_, to_, value_);
     }
+}
+
+/// @notice The same transfer callback probe with an immutable native token precision.
+contract HostileReentrantShareDecimals is HostileReentrantShare {
+    uint8 private immutable nativeDecimals;
+
+    constructor(uint8 decimals_) { nativeDecimals = decimals_; }
+
+    function decimals() public view override returns (uint8) { return nativeDecimals; }
 }

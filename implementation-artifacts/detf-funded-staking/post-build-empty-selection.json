@@ -1,0 +1,33 @@
+{
+  "command": [
+    "forge",
+    "test",
+    "--offline",
+    "--match-test",
+    "^(test_lidoBufferUsesApprovedPaymentsForFallbackAndFundedBond|test_customBondQuoteIncludesWrappingBeforeIssuance|test_customDonationQuoteIncludesWrappingBeforeReserveJoin|test_seShareFallbackComposesActualRedemptionAndSwap|test_customProtocolShareFallbackComposesActualConversionAndSwap|test_reentrancy_mint_hitsIsLocked|test_orbitalStage_replayRegisteredPackageAndDeployableFacets|test_stataCurrentFacetCannotReuseOccupiedLegacyNamespace)$",
+    "-vvv"
+  ],
+  "provenance": {
+    "recorded_at_utc": "2026-09-08T14:56:40.078396+00:00",
+    "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+    "source_and_config_sha256": "29f519acf11597f815cd4003c85cc56fc6883d2370a229b53bf901e1b4a37d0d",
+    "source_and_config_files": 4815,
+    "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+    "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+    "crane_tracked_contract_and_config_diff_sha256": "284fd75764cb255d1e527eef38fd51e65fca73e8ebb11b7465965e8dfeb2122c",
+    "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+    "machine": "macOS-26.6.2-x86_64-i386-64bit",
+    "architecture": "x86_64",
+    "logical_cpus": 16,
+    "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+  },
+  "prior_full_build": "implementation-full-build.json",
+  "scope": "Changed nested payments, four-family custom quotes/custody, migrated reentrancy controls, Stata salt and main Orbital launch stage. Full hermetic remains separate.",
+  "explicitly_empty_rpc_environment_keys": [
+    "ALCHEMY_KEY",
+    "INFURA_KEY"
+  ],
+  "pid": 271,
+  "exit_code": 0,
+  "seconds": 176.398
+}

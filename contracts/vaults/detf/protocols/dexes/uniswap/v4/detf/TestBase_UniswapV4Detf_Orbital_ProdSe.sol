@@ -24,6 +24,7 @@ import {
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
 import {TestBase_UniswapV4Detf} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
+import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 import {
     UniswapV4DetfProductionSeDeployLib as SeLib
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol";
@@ -66,6 +67,8 @@ abstract contract TestBase_UniswapV4Detf_Orbital_ProdSe is TestBase_UniswapV4Det
             IVaultRegistryDeployment(address(indexedexManager)),
             owner,
             IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgInit({
+                depositQueryFacet: OrbitalFactory.deployDepositQueryFacet(create3Factory),
+                depositZapFacet: OrbitalFactory.deployDepositZapFacet(create3Factory),
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
                 depositFacet: depositFacet,
@@ -116,7 +119,6 @@ abstract contract TestBase_UniswapV4Detf_Orbital_ProdSe is TestBase_UniswapV4Det
         if (address(pairToken) == address(0)) {
             pairToken = new SimpleMintableERC20("Etch", "ETCH");
         }
-        vm.etch(predicted_, address(pairToken).code);
         (address t0, address t1, address t2) = _sort3(predicted_, p0, p1);
         IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory hArgs =
             IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs({
@@ -125,6 +127,9 @@ abstract contract TestBase_UniswapV4Detf_Orbital_ProdSe is TestBase_UniswapV4Det
                 token0: t0,
                 token1: t1,
                 token2: t2,
+                decimals0: HookPkgArgsDecimalsLib.tokenDec(t0, predicted_),
+                decimals1: HookPkgArgsDecimalsLib.tokenDec(t1, predicted_),
+                decimals2: HookPkgArgsDecimalsLib.tokenDec(t2, predicted_),
                 se0: _seOfPair(t0, predicted_, p0, p1, s0, s1),
                 se1: _seOfPair(t1, predicted_, p0, p1, s0, s1),
                 se2: _seOfPair(t2, predicted_, p0, p1, s0, s1),
@@ -133,7 +138,7 @@ abstract contract TestBase_UniswapV4Detf_Orbital_ProdSe is TestBase_UniswapV4Det
                 rp2: address(0),
                 tickSpacing: 0,
                 sqrtPriceX96: 0,
-                ownerOnlyLiquidity: true,
+                ownerOnlyLiquidity: args.ownerOnlyLiquidity,
                 owner: predicted_
             });
         uint256 mineNonce = OrbitalFactory.findMineNonce(hookFactory, orbitalHookPkg, hArgs);
@@ -143,7 +148,6 @@ abstract contract TestBase_UniswapV4Detf_Orbital_ProdSe is TestBase_UniswapV4Det
         init.deployPair(t1, t2);
         init.deployPair(t0, t2);
         require(init.finalizeInitialization(), "finalize");
-        vm.etch(predicted_, "");
         args.hook = reserveHook;
         vm.startPrank(owner);
         detf_ = detfPkg.deployVault(args);
@@ -222,7 +226,7 @@ abstract contract TestBase_UniswapV4Detf_Orbital_ProdSe is TestBase_UniswapV4Det
             address se_ = IUniswapV4SeBufferHook(hook_).standardExchangeOf(toks[i]);
             if (se_ != address(0) && IERC20(se_).balanceOf(detf) > 0) needSweep = true;
         }
-        if (needSweep) detfInfo.sweepDust();
+        if (needSweep) detfInfo.sweepDust{gas: 30_000_000}();
         assertEq(IERC20(hook_).balanceOf(detf), 0, "R19 hook LP");
         for (uint256 i; i < toks.length; ++i) {
             uint256 bal = IERC20(toks[i]).balanceOf(detf);

@@ -6,6 +6,9 @@ import {
     TestBase_UniswapV4StandardExchangeOrbitalBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/TestBase_UniswapV4StandardExchangeOrbitalBufferHook.sol";
 import {
+    IUniswapV4StandardExchangeOrbitalBufferHookPackage as IPkg
+} from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHookPackage.sol";
+import {
     UniswapV4HookDiamondCreate2Lib as Create2Lib
 } from "contracts/hooks/uniswap/v4/factory/libs/UniswapV4HookDiamondCreate2Lib.sol";
 
@@ -38,15 +41,49 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_DeployTest is
     }
 
     function test_lpSymbol_SEORB_prefix() public view {
-        string memory sym = IERC20Metadata(hook).symbol();
-        bytes memory b = bytes(sym);
-        assertTrue(b.length >= 6, "symbol len");
-        assertEq(b[0], "S");
-        assertEq(b[1], "E");
-        assertEq(b[2], "O");
-        assertEq(b[3], "R");
-        assertEq(b[4], "B");
-        assertEq(b[5], "-");
+        assertEq(IERC20Metadata(hook).name(), "SE Orbital Buffer Hook LP");
+        assertEq(IERC20Metadata(hook).symbol(), "SEORB-LP");
+    }
+
+    function test_initAccount_emptySelfLeg_usesPkgArgsDecimals() public {
+        address emptySelf = address(uint160(uint256(keccak256("empty-detf"))));
+        assertEq(emptySelf.code.length, 0, "empty self-leg");
+        IPkg.PkgArgs memory args = _defaultPkgArgs();
+        args.token1 = emptySelf;
+        args.decimals1 = 18;
+        args.se1 = address(0);
+        address h = _deployBootstrapOnly(args);
+        _ensureProductDoorsAndFinalize(h, args.token0, args.token1, args.token2);
+        assertTrue(h.code.length > 0, "hook deployed");
+        assertEq(IERC20Metadata(h).name(), "SE Orbital Buffer Hook LP");
+        assertEq(IERC20Metadata(h).symbol(), "SEORB-LP");
+    }
+
+    function test_processArgs_selfLegDecimalsNot18_reverts() public {
+        IPkg.PkgArgs memory args = _defaultPkgArgs();
+        args.decimals1 = 17;
+        vm.expectRevert(IPkg.InvalidDecimals.selector);
+        hookPkg.processArgs(abi.encode(args));
+    }
+
+    function test_processArgs_decimalsOutOfRange_reverts() public {
+        IPkg.PkgArgs memory args = _defaultPkgArgs();
+        args.decimals0 = 0;
+        vm.expectRevert(IPkg.InvalidDecimals.selector);
+        hookPkg.processArgs(abi.encode(args));
+        args = _defaultPkgArgs();
+        args.decimals0 = 19;
+        vm.expectRevert(IPkg.InvalidDecimals.selector);
+        hookPkg.processArgs(abi.encode(args));
+    }
+
+    function test_calcSalt_differsWhenDecimalsDiffer() public view {
+        IPkg.PkgArgs memory args = _defaultPkgArgs();
+        args.decimals0 = 6;
+        bytes32 salt6 = hookPkg.calcSalt(abi.encode(args));
+        args.decimals0 = 18;
+        bytes32 salt18 = hookPkg.calcSalt(abi.encode(args));
+        assertTrue(salt6 != salt18, "salt includes decimals0");
     }
 
     function test_productId_and_salt_fields() public view {

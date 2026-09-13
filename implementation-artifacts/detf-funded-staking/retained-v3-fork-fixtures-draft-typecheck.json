@@ -1,0 +1,17 @@
+{
+  "status": "DRAFT_TYPECHECK_ONLY_NOT_RUNTIME_VALIDATION",
+  "seconds": 12.185,
+  "prepared_records": [
+    "v3-fork-fixture-followup-prepared.json"
+  ],
+  "exit_code": 0,
+  "errors": [],
+  "concrete_suites": {
+    "UniswapV3StandardExchange_Fork_Test": 5,
+    "UniswapV3StandardExchange_Robinhood_Test": 3
+  },
+  "compiled_methods": 8,
+  "compiler_input_sha256": "bec4a930a7f090fcbfd638b6925aab27c7927734e1c1b65ca2b6f81fb9ab6d5a",
+  "validation_passed": true,
+  "canonical_sources_unchanged": true
+}

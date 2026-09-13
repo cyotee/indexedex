@@ -1,0 +1,17 @@
+{
+  "recorded_at_utc": "2026-09-10T16:59:23.275725+00:00",
+  "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+  "source_and_config_sha256": "255327c8003ecaf332aba822dbb4a1accb932e339ea2fd8405470b903bb63658",
+  "source_and_config_files": 4816,
+  "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+  "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+  "crane_tracked_contract_and_config_diff_sha256": "3bb0f52c1183f2be28ee8a63fab300170f65e989720b5048e21da9c61028cc4d",
+  "crane_source_and_config_sha256": "b45a057611f782040ee29f1fddbbcc8eeba01def2c9341ef01c6bb65f685e123",
+  "crane_source_and_config_files": 14819,
+  "dependency_scope": "Crane Solidity tree, including untracked Solidity and nested vendored libraries/tests, plus Crane Foundry config. Final compiler metadata separately verifies every imported source closure.",
+  "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+  "machine": "macOS-26.6.2-x86_64-i386-64bit",
+  "architecture": "x86_64",
+  "logical_cpus": 16,
+  "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+}

@@ -1,0 +1,29 @@
+{
+  "status": "read-only continuation notes; no correction or integration claimed",
+  "sources": {
+    "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookSeTarget.sol": "38814d837758065a2aae6491d72f6b846e7daf9d9aa177db4e914554b0d49557",
+    "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookWithdrawTarget.sol": "74723056ade86629f34e2b4e9fead6cc9b1a1671d3417e1bcf2395c5e18434f1",
+    "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookCommon.sol": "0d7eaf282de9e2d769155451df1e655d2aa1c0da95bd3db16fda98b14b97d210",
+    "contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoopExchangeInTarget.sol": "2b83199861c18bc6cfee730fbd4c6dd67b6f759d0370967c84b50a8de7dbe3ab",
+    "contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoopExchangeOutTarget.sol": "bba83db78ae141849cf7bad3bfc2b60f887dcafb3d363a29b191e1ab5a73326d",
+    "contracts/protocols/lending/aave/cross-version/CrossVersionLoopExecutor.sol": "4a1d4a58479c1488d509989c11b77ec59d657f2408cdaaabaf4b502c8ace4846"
+  },
+  "dual_cp": [
+    "Standard Exchange currently dispatches pair-to-pair swaps; add LP paths and native SY through shared liquidity logic.",
+    "Keep actual normalized geometric accounting: _wadProduct and _supplyAfterProtocolMint; report existing native liquidity precision, not a new quote currency.",
+    "_exitSingleAsset pays the entire currency wallet balance after withdrawing to self. It must pay only this-call withdrawal plus actual swap output; preserve preexisting inventory.",
+    "_withdraw refunds both pair dust to msg.sender before the caller finishes its single-token exit. Compose internal withdrawal and exit without prematurely refunding its output.",
+    "_previewExitSingleAsset swaps the residual at the pre-withdrawal book. Quote the same post-withdrawal state execution uses.",
+    "SE-share single inputs must account for pre-pull claims and fee minting; pulling a claim-bearing SE share changes the current book.",
+    "previewBurnToToken is a retained proportional reserve-redemption view and must keep its documented H2 semantics.",
+    "Test actual LP/SY route parity, accrued yield and fee dilution, input/output precision, donation isolation, public pretransfer rejection, internal SY redemption, runtime selectors and restricted liquidity owners."
+  ],
+  "aave_cross_version": [
+    "Actual eighteen-decimal share issuer omitted by the initial SE root matrix; must be inventoried and covered.",
+    "Existing executor navUsd uses an eight-decimal oracle-base accounting value. Do not substitute a newly selected ERC20 quote asset.",
+    "Exact-input currently supports tokenA-to-share only. SY redemption needs a canonical share-to-tokenA exact-input route based on retained NAV entitlement.",
+    "Retain the actual V3 collateral buffer all-or-revert limit and never borrow merely to satisfy withdrawals.",
+    "Existing direct exchange functions lack the shared nonReentrant modifier; any SY lock must cover direct exchange callbacks too.",
+    "Use actual registered package E2E deployment and both production protocol TestBases; older standalone target/mock-registry tests do not establish package integration."
+  ]
+}

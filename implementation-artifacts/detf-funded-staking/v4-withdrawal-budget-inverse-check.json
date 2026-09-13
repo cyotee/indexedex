@@ -1,0 +1,8 @@
+{
+  "check": "Integer inverse of the unchanged 1% floor/minimum-one share buffer before supply capping",
+  "consecutive_positive_shares": 1000000,
+  "additional_uint128_samples": 10000,
+  "seed": 4663,
+  "mismatches": 0,
+  "scope": "Arithmetic helper verification only; contract money-path and capped-budget behavior are tested separately in the consolidated full-range suite"
+}

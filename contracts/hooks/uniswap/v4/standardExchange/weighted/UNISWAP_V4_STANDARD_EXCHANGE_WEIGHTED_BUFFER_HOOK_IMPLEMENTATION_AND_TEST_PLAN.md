@@ -906,3 +906,9 @@ K.  Polish / sizes / plan stamp
 Ship a **hook diamond** weighted multi-door book with **≥1 SE buffer**, **inventory-domain LP**, and **rated swap pricing** (dual scale). Mirror raw Weighted join/exit/partial/fees behavior without monomorph factory law. Buffer-last + claim composition from Dual/Orbital process peers. **Only discretionary ship:** exit exact-token-out after Phase 0a. Everything else in PRD v0.6 is locked — implement, test production-first, do not redesign.
 
 **End of plan — UniswapV4StandardExchangeWeightedBufferHook (v1.0)**
+
+## Fee-accrual custody share-decimal amendment — 2026-09-11
+
+Owner-approved: support the fee-free rebasing-aware ERC4626 custody wrapper with an ordinary 18-decimal DTF pair token and 28-decimal static SE shares (+10 offset). Extend SE inventory decimals to [6,36] and `baseScaleFromDecimals` to [6,36]; ordinary pair tokens retain [6,18]. Retain existing direct-wrapper-share binding rules. Both declared vectors must match live metadata (except the not-yet-deployed predicted raw DETF). Preserve `invScale=10^(36-shareDecimals)` and `ratedScale=10^(36-pairDecimals)` separately.
+
+Validate through registered production wrappers and weighted hooks: initial/proportional join, actual shares vs asset claims, asset/share donation accounting, exact input/output preview/execution, exits, provider units, and rejected metadata lies/out-of-range decimals. Fuzz scaling round trips and inventory accounting across supported share decimals; include the actual +10 custody route and migration composition. Existing trust-flag, fee and adverse-swap tests remain required. Do not treat a constant rate or a relabeled share token as compatibility.

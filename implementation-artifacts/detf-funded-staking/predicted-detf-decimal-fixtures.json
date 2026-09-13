@@ -1,0 +1,97 @@
+[
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_ProdSe_Decimals.sol",
+    "before": "HookPkgArgsDecimalsLib.tokenDecimals(toks)",
+    "after": "HookPkgArgsDecimalsLib.tokenDecimals(toks, predicted_)"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_Policy.sol",
+    "before": "HookPkgArgsDecimalsLib.tokenDecimals4(toks)",
+    "after": "HookPkgArgsDecimalsLib.tokenDecimals4(toks, predicted_)"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Decimals.sol",
+    "before": "HookPkgArgsDecimalsLib.tokenDec(t0)",
+    "after": "HookPkgArgsDecimalsLib.tokenDec(t0, predicted_)"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Decimals.sol",
+    "before": "HookPkgArgsDecimalsLib.tokenDec(t1)",
+    "after": "HookPkgArgsDecimalsLib.tokenDec(t1, predicted_)"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_Decimals.sol",
+    "before": "HookPkgArgsDecimalsLib.tokenDec(t2)",
+    "after": "HookPkgArgsDecimalsLib.tokenDec(t2, predicted_)"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_Adversarial.sol",
+    "before": "HookPkgArgsDecimalsLib.tokenDecimals(toks)",
+    "after": "HookPkgArgsDecimalsLib.tokenDecimals(toks, predicted_)"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad.sol",
+    "before": "HookPkgArgsDecimalsLib.tokenDecimals4(toks)",
+    "after": "HookPkgArgsDecimalsLib.tokenDecimals4(toks, predicted_)"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_ProdSe.sol",
+    "before": "HookPkgArgsDecimalsLib.tokenDecimals4(toks)",
+    "after": "HookPkgArgsDecimalsLib.tokenDecimals4(toks, predicted_)"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_Decimals.sol",
+    "before": "HookPkgArgsDecimalsLib.tokenDecimals4(toks)",
+    "after": "HookPkgArgsDecimalsLib.tokenDecimals4(toks, predicted_)"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_Decimals.sol",
+    "before": "HookPkgArgsDecimalsLib.tokenDecimals(toks)",
+    "after": "HookPkgArgsDecimalsLib.tokenDecimals(toks, predicted_)"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_ProdSe.sol",
+    "before": "HookPkgArgsDecimalsLib.tokenDec(t0)",
+    "after": "HookPkgArgsDecimalsLib.tokenDec(t0, predicted_)"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_ProdSe.sol",
+    "before": "HookPkgArgsDecimalsLib.tokenDec(t1)",
+    "after": "HookPkgArgsDecimalsLib.tokenDec(t1, predicted_)"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_ProdSe.sol",
+    "before": "HookPkgArgsDecimalsLib.tokenDec(t2)",
+    "after": "HookPkgArgsDecimalsLib.tokenDec(t2, predicted_)"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_ProdSe_Decimals.sol",
+    "before": "HookPkgArgsDecimalsLib.tokenDec(t0)",
+    "after": "HookPkgArgsDecimalsLib.tokenDec(t0, predicted_)"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_ProdSe_Decimals.sol",
+    "before": "HookPkgArgsDecimalsLib.tokenDec(t1)",
+    "after": "HookPkgArgsDecimalsLib.tokenDec(t1, predicted_)"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital_ProdSe_Decimals.sol",
+    "before": "HookPkgArgsDecimalsLib.tokenDec(t2)",
+    "after": "HookPkgArgsDecimalsLib.tokenDec(t2, predicted_)"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_ProdSe_Decimals.sol",
+    "before": "HookPkgArgsDecimalsLib.tokenDecimals4(toks)",
+    "after": "HookPkgArgsDecimalsLib.tokenDecimals4(toks, predicted_)"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted_ProdSe.sol",
+    "before": "HookPkgArgsDecimalsLib.tokenDecimals(toks)",
+    "after": "HookPkgArgsDecimalsLib.tokenDecimals(toks, predicted_)"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_Adversarial.sol",
+    "before": "HookPkgArgsDecimalsLib.tokenDecimals4(toks)",
+    "after": "HookPkgArgsDecimalsLib.tokenDecimals4(toks, predicted_)"
+  }
+]

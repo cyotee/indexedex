@@ -1,0 +1,77 @@
+{
+  "status": "PREPARED_NOT_APPLIED",
+  "recorded_at_utc": "2026-09-09T07:30:26.640236+00:00",
+  "gate": "Wait for the entire active validation parent session 4255 to exit before application.",
+  "changes": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/UniswapV4DetfProductionSeDeployLib.sol.txt",
+      "reason": "Use exact funded mixed-decimal V3 seed liquidity and a shared real two-token position activation helper; protocol product contracts unchanged.",
+      "before_sha256": "f491c5984d19d5210e0ff7dead5f4bf0254005a8bf96ec897ac48d3898e16bd1",
+      "after_sha256": "df38c8e14484b53daf1cab82eef09cc12da7ce137831dd564dfcc7335cbb278a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_ProdSe.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Quad_ProdSe.sol.txt",
+      "reason": "Activate each position underlier after actual fixture funding; Morpho accounting assets remain on their existing initialization path.",
+      "before_sha256": "a89fa16e9918e9b5cb24a6b84d45b304b67518722989021c0f07a2438fb85bf1",
+      "after_sha256": "18f7e11e5f8a4074634c1e3d08a4091fc194933cb10a23184b9250b7345a2425"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ3Se.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Cp_Univ3Se.sol.txt",
+      "reason": "Activate the real SE with both currencies after its user funding and before DETF first-bond execution.",
+      "before_sha256": "1e3923cb4e787c8707c02662bbbe72dc762f061b3e4450ef263ba8be21a74852",
+      "after_sha256": "666c00b0e98e6f5a376b8931504cd6a0158d8592638825586713902843ef43d8"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ4Se.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Cp_Univ4Se.sol.txt",
+      "reason": "Activate the real SE with both currencies after its user funding and before DETF first-bond execution.",
+      "before_sha256": "0aadcb85ef8b595b9c00db3375e97c702b7f6960782220fce378c5ec73aebea2",
+      "after_sha256": "4bf7485959ac3f254d858af7953fb70a0c94e94d433f2fe1c94a5e34a397de2a"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_PonsV1Se.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Cp_PonsV1Se.sol.txt",
+      "reason": "Activate the real SE with both currencies after its user funding and before DETF first-bond execution.",
+      "before_sha256": "b233037fbe9ce89066952d89d854e344dab010008bbc7ec17df702a7cb1f8983",
+      "after_sha256": "34b1801ee56e21d4e264747ce87c2847e6b21edfa602d032dc0fb904b7415bce"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_ProdSe_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Quad_ProdSe_Decimals.sol.txt",
+      "reason": "Activate each position underlier after actual fixture funding; Morpho accounting assets remain on their existing initialization path.",
+      "before_sha256": "9dfb581b9e82859213690ceba1d5664ec459818acd80004efaeda012dd45d899",
+      "after_sha256": "de6ea1ecc47cba35d948a770e9144e038c837a509fb42c65bc6bd9ef2eccbde2"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ3Se_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Cp_Univ3Se_Decimals.sol.txt",
+      "reason": "Activate the real SE with both currencies after its user funding and before DETF first-bond execution.",
+      "before_sha256": "09f9422a56756767b2748b3ff37b4dee829de0236790d0b573882d576afc0c7b",
+      "after_sha256": "b5ba59eb1aaa4b015230e8c244162949ce1c0da8b2531d5ccdbe5e7dafa15f09"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ4Se_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Cp_Univ4Se_Decimals.sol.txt",
+      "reason": "Activate the real SE with both currencies after its user funding and before DETF first-bond execution.",
+      "before_sha256": "8b1e024acd10e1627507360582dd50af87a933c6936c14778aba66027b75fd2b",
+      "after_sha256": "6e3ffbcb790d69e9e74d2efaf574c8906b2f4966387c07d2357870f1ccc86eda"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_PonsV1Se_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/production-se-fixture-followup-drafts/TestBase_UniswapV4Detf_Cp_PonsV1Se_Decimals.sol.txt",
+      "reason": "Activate the real SE with both currencies after its user funding and before DETF first-bond execution.",
+      "before_sha256": "91a02dab7e555672c049365e5d783d0c919b23c17160b8b1e8636a0981c1e34b",
+      "after_sha256": "43142e7cda92354db2690ef80d0fd4a182e5b80279c30588c670f9e53a3ddc32"
+    }
+  ],
+  "observed_failures": [
+    "V3 mixed-decimal pool setup balance reverts from fixed oversized liquidity.",
+    "V4/pons position underliers still have zero SE supply at the subsequent one-token first-bond deposit."
+  ],
+  "scope": "Existing V4 production-provider TestBases and their local protocol fixture library; retain every test leaf and all production economics.",
+  "validation_passed": false,
+  "required_validation": "Draft typecheck followed by actual affected production-provider suites. Other final full-suite failures still need independent review."
+}

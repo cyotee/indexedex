@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {LocalTestingDeploymentBase} from "../shared/LocalTestingDeploymentBase.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 
@@ -15,15 +17,12 @@ import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFacto
 
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
-import {IUniswapV2StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeDFPkg.sol";
+import {IUniswapV2StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v2/IUniswapV2StandardExchangeDFPkg.sol";
 import {UniswapV2_Component_FactoryService} from "contracts/protocols/dexes/uniswap/v2/UniswapV2_Component_FactoryService.sol";
-import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
+import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
 import {StandardExchangeRateProvider_FactoryService} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProvider_FactoryService.sol";
-import {IBalancerV3ConstantProductPoolStandardVaultPkg} from "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPoolStandardVaultPkg.sol";
+import {IBalancerV3ConstantProductPoolStandardVaultPkg} from "contracts/protocols/dexes/balancer/v3/pools/constProd/IBalancerV3ConstantProductPoolStandardVaultPkg.sol";
 import {BalancerV3ConstantProductPool_FactoryService} from "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPool_FactoryService.sol";
-import {DefaultPoolInfoFacet} from "contracts/protocols/dexes/balancer/v3/pools/constProd/facets/DefaultPoolInfoFacet.sol";
-import {StandardSwapFeePercentageBoundsFacet} from "contracts/protocols/dexes/balancer/v3/pools/constProd/facets/StandardSwapFeePercentageBoundsFacet.sol";
-import {StandardUnbalancedLiquidityInvariantRatioBoundsFacet} from "contracts/protocols/dexes/balancer/v3/pools/constProd/facets/StandardUnbalancedLiquidityInvariantRatioBoundsFacet.sol";
 
 /// @title Script_05_DeployFoundationPackages
 /// @notice Deploys the first local-testing package layer needed for scenario bring-up
@@ -136,6 +135,7 @@ contract Script_05_DeployFoundationPackages is LocalTestingDeploymentBase {
                 multiAssetStandardVaultFacet,
                 create3Factory.deployUniswapV2StandardExchangeInFacet(),
                 create3Factory.deployUniswapV2StandardExchangeOutFacet(),
+                create3Factory.deployUniswapV2StandardExchangeQueryFacet(),
                 indexedexManager,
                 indexedexManager,
                 permit2,
@@ -162,18 +162,18 @@ contract Script_05_DeployFoundationPackages is LocalTestingDeploymentBase {
         IFacet balancerV3ConstantProductPoolFacet = create3Factory.deployBalancerV3ConstantProductPoolFacet();
 
         IFacet defaultPoolInfoFacet = create3Factory.deployFacet(
-            type(DefaultPoolInfoFacet).creationCode,
-            abi.encode(type(DefaultPoolInfoFacet).name)._hash()
+            ArtifactCreationCode.creationCode(create3Factory, "DefaultPoolInfoFacet.sol:DefaultPoolInfoFacet"),
+            abi.encode("DefaultPoolInfoFacet")._hash()
         );
 
         IFacet standardSwapFeePercentageBoundsFacet = create3Factory.deployFacet(
-            type(StandardSwapFeePercentageBoundsFacet).creationCode,
-            abi.encode(type(StandardSwapFeePercentageBoundsFacet).name)._hash()
+            ArtifactCreationCode.creationCode(create3Factory, "StandardSwapFeePercentageBoundsFacet.sol:StandardSwapFeePercentageBoundsFacet"),
+            abi.encode("StandardSwapFeePercentageBoundsFacet")._hash()
         );
 
         IFacet unbalancedLiquidityInvariantRatioBoundsFacet = create3Factory.deployFacet(
-            type(StandardUnbalancedLiquidityInvariantRatioBoundsFacet).creationCode,
-            abi.encode(type(StandardUnbalancedLiquidityInvariantRatioBoundsFacet).name)._hash()
+            ArtifactCreationCode.creationCode(create3Factory, "StandardUnbalancedLiquidityInvariantRatioBoundsFacet.sol:StandardUnbalancedLiquidityInvariantRatioBoundsFacet"),
+            abi.encode("StandardUnbalancedLiquidityInvariantRatioBoundsFacet")._hash()
         );
 
         IBalancerV3ConstantProductPoolStandardVaultPkg.PkgInit memory pkgInit = BalancerV3ConstantProductPool_FactoryService

@@ -1,6 +1,8 @@
 import { parseEther } from 'viem'
 import { test, expect, ANVIL_ACCOUNT_0 } from './wallet/fixture'
-import { feeDetfAddress, findBaseBySymbol } from './helpers/chainArtifacts'
+import { findBaseBySymbol } from './helpers/chainArtifacts'
+import { readProtocolDetf } from '../app/lib/tokenStaking/migration'
+import platform from '../../../packages/protocol/src/addresses/chain/4663/platform.json'
 import { readBondNftVault } from '../app/lib/detf/bondNftVault'
 import { insightsViewAbi } from '../app/insights/lib/insightsAbi'
 import { prepareLocalChain, connectInjectedWallet } from './helpers/connect'
@@ -41,8 +43,8 @@ test.describe('Live staking bond (Anvil RH)', () => {
   })
 
   test('bond rate asset (WETH) via staking UI when fee DETF live', async ({ walletPage }) => {
-    const detf = feeDetfAddress()
-    test.skip(!detf, 'No fee DETF in chain artifacts')
+    const detf = (await readProtocolDetf(publicClient(), platform.tokenStaking as `0x${string}`))!
+    expect(detf).toBeTruthy()
 
     const live = await isDetfReserveLive(detf)
     test.skip(live === false, 'DETF reserve not live — run fee_detf stage 11 first bond')
@@ -53,7 +55,7 @@ test.describe('Live staking bond (Anvil RH)', () => {
 
     await ensureWeth(parseEther('0.2'))
     const wethBefore = await erc20Balance(weth.address as `0x${string}`, ANVIL_ACCOUNT_0.address)
-    test.skip(wethBefore < parseEther('0.01'), 'Insufficient WETH on Anvil #0')
+    test.skip(wethBefore < parseEther('0.00001'), 'Insufficient WETH on Anvil #0')
 
     const client = publicClient()
     const nftVault = await readBondNftVault(client, detf)
@@ -72,7 +74,7 @@ test.describe('Live staking bond (Anvil RH)', () => {
 
     // The selected duration remains subject to the actual oracle's allowed range.
     await walletPage.getByTestId('detf-bond-days').fill('30')
-    await walletPage.getByTestId('detf-bond-amount').fill('0.01')
+    await walletPage.getByTestId('detf-bond-amount-input').fill('0.00001')
 
     const submit = walletPage.getByTestId('detf-bond')
     const approval = walletPage.getByTestId('detf-approve')
@@ -88,7 +90,7 @@ test.describe('Live staking bond (Anvil RH)', () => {
 
     // A purchase must spend the payment, mint a bond, and fund its staked escrow.
     // Approval receipts or status text alone never satisfy this money-path test.
-    await expect.poll(() => erc20Balance(weth.address as `0x${string}`, ANVIL_ACCOUNT_0.address)).toBe(wethBefore - parseEther('0.01'))
+    await expect.poll(() => erc20Balance(weth.address as `0x${string}`, ANVIL_ACCOUNT_0.address)).toBe(wethBefore - parseEther('0.00001'))
     await expect.poll(() => nftBalance(nftVault!, ANVIL_ACCOUNT_0.address)).toBe(nftBefore + 1n)
     await expect.poll(() => erc20Balance(stakingToken, nftVault!)).toBeGreaterThan(stakedBefore)
   })

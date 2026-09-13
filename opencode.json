@@ -2,5 +2,23 @@
   "$schema": "https://opencode.ai/config.json",
   "plugin": [
     "@different-ai/opencode-browser"
-  ]
+  ],
+  "mcp": {
+    "higgsfield": {
+      "type": "remote",
+      "url": "https://mcp.higgsfield.ai/mcp",
+      "enabled": true,
+      "oauth": {
+        "callbackPort": 19877
+      }
+    },
+    "voltaire": {
+      "type": "remote",
+      "url": "https://voltaire.tevm.sh/mcp",
+      "enabled": true
+    },
+    "meshy": {
+      "enabled": false
+    }
+  }
 }

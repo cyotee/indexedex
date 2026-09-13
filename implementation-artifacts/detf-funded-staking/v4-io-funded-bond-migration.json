@@ -1,0 +1,27 @@
+{
+  "status": "applied; validation pending",
+  "decision": "D32 independent U/G with existing proportional liquidity formula retained",
+  "mapping": "T7.10 keeps actual proportional G reference and LP funding; purchased P0 and reward pot checked independently, P0 staked immediately, exact raw issuance/backing deltas and actual protocol LP ownership. Retired ordinary previewMint is not used as a bond purchase quote.",
+  "files": [
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_IoTablesOpenBase.sol",
+      "before_sha256": "e1065d9bbf638aa7ce4f6cb58e9949c101cc913006802960b25541938e5cf8ce",
+      "after_sha256": "adaf6223f721371509aabd374c72c14475bf960f3155bb9423f3370fe5fd1544"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_IoTablesOpenBase_Decimals.sol",
+      "before_sha256": "f65b136585fab48ec227b1fbb8c22378864eee75e8124f3346ea031c6c6de0eb",
+      "after_sha256": "8d56b349c76e7f2e3ebb995171ebf325551555b8307123b9eb10a8b8b3039297"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+      "before_sha256": "c5ed7edffb352ebc779e5440aa1c3da54420658bd0f5a5ec6520bbf22000d3b3",
+      "after_sha256": "a0b418f56b5b01c149d37656a5b3b264cfad599db5c1513cc59f7070b247a5ac"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+      "before_sha256": "c477f1a50d59990808f069f96e32382b036f28553bfcbbfd61809c642cba3c32",
+      "after_sha256": "48348c96ab67be606468b2a4450ab51f7334ae95353e3add32b783bc67a12346"
+    }
+  ]
+}

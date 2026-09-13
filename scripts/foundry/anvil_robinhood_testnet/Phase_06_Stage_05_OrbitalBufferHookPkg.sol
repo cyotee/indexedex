@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
 import {FixtureEconomics} from "./FixtureEconomics.sol";
 import {LaunchState} from "./LaunchState.sol";
 
@@ -11,9 +13,7 @@ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.so
 import {
     IUniswapV4StandardExchangeOrbitalBufferHookPackage as IOrbitalHookPkg
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHookPackage.sol";
-import {
-    UniswapV4StandardExchangeOrbitalBufferHookDFPkg as OrbitalHookDFPkg
-} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDFPkg.sol";
+
 import {
     UniswapV4StandardExchangeOrbitalBufferHook_FactoryService as OrbitalHookFS
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_FactoryService.sol";
@@ -31,6 +31,8 @@ library Phase_06_Stage_05_OrbitalBufferHookPkg {
         IFacet hooksFacet = OrbitalHookFS.deployHooksFacet(s.create3Factory);
         IOrbitalHookPkg.PkgInit memory init_;
         init_.vaultRegistryDeployment = reg;
+        init_.depositQueryFacet = OrbitalHookFS.deployDepositQueryFacet(s.create3Factory);
+        init_.depositZapFacet = OrbitalHookFS.deployDepositZapFacet(s.create3Factory);
         init_.vaultFeeOracleQuery = feeOracle;
         init_.depositFacet = depositFacet;
         init_.withdrawFacet = withdrawFacet;
@@ -43,7 +45,7 @@ library Phase_06_Stage_05_OrbitalBufferHookPkg {
         init_.multiAssetStandardVaultFacet = s.multiAssetStandardVaultFacet;
         init_.multiStepOwnableFacet = s.multiStepOwnableFacet;
         s.orbitalHookPkg = reg.deployPkg(
-            type(OrbitalHookDFPkg).creationCode,
+            ArtifactCreationCode.creationCode(s.create3Factory, "UniswapV4StandardExchangeOrbitalBufferHookDFPkg.sol:UniswapV4StandardExchangeOrbitalBufferHookDFPkg"),
             abi.encode(init_),
             abi.encode(type(IOrbitalHookPkg).name, FixtureEconomics.SALT_NS)._hash()
         );

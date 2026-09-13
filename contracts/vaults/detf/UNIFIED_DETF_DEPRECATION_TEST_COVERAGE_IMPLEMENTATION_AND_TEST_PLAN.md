@@ -1,5 +1,10 @@
 # Implementation & Test Plan: Unified DETF deprecation test coverage
 
+> **Current V4 close cleanup:** The owner explicitly approved removing `closeRouteMode` / `closeRoutes`, their getters and obsolete storage. New V4 deployments have mint, burn, bond and donation configuration only. Purchased bonds pay funded sDETF through principal/reward/combined claims; standard staking/exchange/SY exits remain. Historical close-configuration instructions below are superseded by the [funded plan](DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md) and its recorded owner approval. Balancer DETF exclusion (D60) and Slipstream deferral (D66) remain in force.
+
+> **Funded-design supersession (2026-09-07):** This document records earlier requirements or implementation evidence. For the authorized funded DETF refactor, [alignment PRD D32–D55 / §24](DETF_ALIGNMENT_PRD.md) and the [funded implementation plan](DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md) take precedence over conflicting Open-mode, LP-claim, rebasing, reward, epoch, decimal, cap and public-route instructions below. Unrelated host behavior remains applicable. Historical completion marks do not certify the funded refactor.
+
+
 **PRD (product law SoT):** [`UNIFIED_DETF_DEPRECATION_TEST_COVERAGE_PRD.md`](./UNIFIED_DETF_DEPRECATION_TEST_COVERAGE_PRD.md) (**§0 R-1..R-24** and **§7.0** win on IDs, ABI, layers)  
 **This plan (implementor SoT):** `/goal` kickoff, DAG, worktree names, child prompts, file maps, forge match-paths, DoD. **No product choices.**  
 **Date:** 2026-08-28  

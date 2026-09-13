@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 import {Vm} from "forge-std/Vm.sol";
 
@@ -10,17 +11,7 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
-
-import {AaveCrossVersionLoopExchangeInFacet} from
-    "contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoopExchangeInFacet.sol";
-import {AaveCrossVersionLoopExchangeOutFacet} from
-    "contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoopExchangeOutFacet.sol";
-import {AaveCrossVersionLoopRebalanceFacet} from
-    "contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoopRebalanceFacet.sol";
-import {AaveCrossVersionLoopMarkerFacet} from
-    "contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoopMarkerFacet.sol";
-import {AaveCrossVersionLoopDFPkg} from
-    "contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoopDFPkg.sol";
+import {IAaveCrossVersionLoopDFPkg} from "contracts/protocols/lending/aave/cross-version/IAaveCrossVersionLoopDFPkg.sol";
 
 /**
  * @title AaveCrossVersionLoop_Component_FactoryService
@@ -36,50 +27,50 @@ library AaveCrossVersionLoop_Component_FactoryService {
 
     function deployExchangeInFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
         instance = create3Factory.deployFacet(
-            type(AaveCrossVersionLoopExchangeInFacet).creationCode,
-            abi.encode(type(AaveCrossVersionLoopExchangeInFacet).name)._hash()
+            ArtifactCreationCode.creationCode("AaveCrossVersionLoopExchangeInFacet.sol:AaveCrossVersionLoopExchangeInFacet"),
+            abi.encode("AaveCrossVersionLoopExchangeInFacet")._hash()
         );
-        vm.label(address(instance), type(AaveCrossVersionLoopExchangeInFacet).name);
+        vm.label(address(instance), "AaveCrossVersionLoopExchangeInFacet");
     }
 
     function deployExchangeOutFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
         instance = create3Factory.deployFacet(
-            type(AaveCrossVersionLoopExchangeOutFacet).creationCode,
-            abi.encode(type(AaveCrossVersionLoopExchangeOutFacet).name)._hash()
+            ArtifactCreationCode.creationCode("AaveCrossVersionLoopExchangeOutFacet.sol:AaveCrossVersionLoopExchangeOutFacet"),
+            abi.encode("AaveCrossVersionLoopExchangeOutFacet")._hash()
         );
-        vm.label(address(instance), type(AaveCrossVersionLoopExchangeOutFacet).name);
+        vm.label(address(instance), "AaveCrossVersionLoopExchangeOutFacet");
     }
 
     function deployRebalanceFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
         instance = create3Factory.deployFacet(
-            type(AaveCrossVersionLoopRebalanceFacet).creationCode,
-            abi.encode(type(AaveCrossVersionLoopRebalanceFacet).name)._hash()
+            ArtifactCreationCode.creationCode("AaveCrossVersionLoopRebalanceFacet.sol:AaveCrossVersionLoopRebalanceFacet"),
+            abi.encode("AaveCrossVersionLoopRebalanceFacet")._hash()
         );
-        vm.label(address(instance), type(AaveCrossVersionLoopRebalanceFacet).name);
+        vm.label(address(instance), "AaveCrossVersionLoopRebalanceFacet");
     }
 
     function deployMarkerFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
         instance = create3Factory.deployFacet(
-            type(AaveCrossVersionLoopMarkerFacet).creationCode,
-            abi.encode(type(AaveCrossVersionLoopMarkerFacet).name)._hash()
+            ArtifactCreationCode.creationCode("AaveCrossVersionLoopMarkerFacet.sol:AaveCrossVersionLoopMarkerFacet"),
+            abi.encode("AaveCrossVersionLoopMarkerFacet")._hash()
         );
-        vm.label(address(instance), type(AaveCrossVersionLoopMarkerFacet).name);
+        vm.label(address(instance), "AaveCrossVersionLoopMarkerFacet");
     }
 
     /// @notice Deploys + registers the DFPkg through the VaultRegistry (via the IndexedexManager).
     function deployCrossVersionLoopDFPkg(
         IIndexedexManagerProxy indexedexManager,
-        AaveCrossVersionLoopDFPkg.PkgInit memory pkgInit
-    ) internal returns (AaveCrossVersionLoopDFPkg instance) {
-        instance = AaveCrossVersionLoopDFPkg(
+        IAaveCrossVersionLoopDFPkg.PkgInit memory pkgInit
+    ) internal returns (IAaveCrossVersionLoopDFPkg instance) {
+        instance = IAaveCrossVersionLoopDFPkg(
             address(
                 IVaultRegistryDeployment(address(indexedexManager)).deployPkg(
-                    type(AaveCrossVersionLoopDFPkg).creationCode,
+                    ArtifactCreationCode.creationCode("AaveCrossVersionLoopDFPkg.sol:AaveCrossVersionLoopDFPkg"),
                     abi.encode(pkgInit),
-                    abi.encode(type(AaveCrossVersionLoopDFPkg).name)._hash()
+                    abi.encode("AaveCrossVersionLoopDFPkg")._hash()
                 )
             )
         );
-        vm.label(address(instance), type(AaveCrossVersionLoopDFPkg).name);
+        vm.label(address(instance), "AaveCrossVersionLoopDFPkg");
     }
 }

@@ -1,0 +1,30 @@
+*** Begin Patch
+*** Update File: /private/tmp/indexedex-detf-funded-staking-impl/contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderFacet.sol
+@@
+             return 0;
+         }
+ 
+-        // Start from a 1e18 raw-share quote when possible, but never exceed the
+-        // vault's actual total supply. Some fresh exchange vaults mint far fewer
+-        // than 1e18 raw share units, so quoting 1e18 would effectively ask to
+-        // redeem non-existent shares and collapse to zero.
+-        uint256 quoteAmount = totalShares < ONE_WAD ? totalShares : ONE_WAD;
++        // Quote one whole subject token, capped by actual supply. DETF and sDETF
++        // use nine decimals; treating 1e18 raw units as one token misprices them.
++        uint256 subjectUnit = 10 ** IERC20Metadata(address(subject_)).decimals();
++        uint256 quoteAmount = totalShares < subjectUnit ? totalShares : subjectUnit;
+         (bool success, uint256 out) =
+             _safePreviewExchangeIn(layoutStruct.reserveVault, subject_, quoteAmount, layoutStruct.rateTarget);
+ 
+@@
+             out = nextOut;
+         }
+ 
+-        if (quoteAmount != ONE_WAD) {
+-            out = out._mulDiv(ONE_WAD, quoteAmount, Math.Rounding.Ceil);
++        if (quoteAmount != subjectUnit) {
++            out = out._mulDiv(subjectUnit, quoteAmount, Math.Rounding.Ceil);
+         }
+ 
+         uint8 targetDecimals = layoutStruct.rateTargetDecimals;
+*** End Patch

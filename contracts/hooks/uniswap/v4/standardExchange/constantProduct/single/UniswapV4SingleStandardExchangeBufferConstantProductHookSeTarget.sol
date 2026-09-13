@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {UniswapV4BufferHookLiquidityRouteLib as LiquidityRoute} from "contracts/hooks/uniswap/v4/libs/UniswapV4BufferHookLiquidityRouteLib.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
@@ -9,6 +10,7 @@ import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchang
 import {IFeeCollectorProxy} from "contracts/interfaces/proxies/IFeeCollectorProxy.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {DETFDecimalScaleLib} from "contracts/vaults/detf/common/core/DETFDecimalScaleLib.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {
     toBeforeSwapDelta,
@@ -93,6 +95,11 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
     /* ---------------------------------------------------------------------- */
     /*                              bindings / views                          */
     /* ---------------------------------------------------------------------- */
+
+    /// @notice Fixed direct-liquidity policy selected at deployment.
+    function ownerOnlyLiquidity() external view returns (bool) {
+        return Repo._layout().ownerOnlyLiquidity;
+    }
 
     function poolManager() public view returns (address) {
         return Repo._layout().poolManager;
@@ -217,6 +224,15 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         return _quoteExactOut(zfo, amountOut);
     }
 
+    function _quotePairClaimIn(uint256 seClaim, uint256 claimIn) private view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        return Math.fromWadFloor(Math.saleQuote(
+            Math.toWad(claimIn, _decimalsOf(l.pairToken)),
+            Math.toWad(seClaim, _decimalsOf(l.pairToken)),
+            Math.toWad(IERC20(l.rawToken).balanceOf(address(this)), _decimalsOf(l.rawToken))
+        ), _decimalsOf(l.rawToken));
+    }
+
     function previewSynthetic(IDetfReserveQuote.DetfQuoteCtx calldata ctx, address numeraire)
         external
         view
@@ -229,7 +245,8 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         address out_ = numeraire == address(0) ? Repo._layout().pairToken : numeraire;
         uint256 pairOut = IDetfReserveQuote(address(this)).previewBurnToToken(ctx.ownedLp, out_);
         if (pairOut == 0) return 0;
-        uint256 mid_ = (pairOut * 1e18) / ctx.detfTotalSupply;
+        uint256 pairWad = DETFDecimalScaleLib.nativeToWad(out_, pairOut);
+        uint256 mid_ = (pairWad * 1e18) / ctx.detfTotalSupply;
         return (mid_ * 1e18) / ctx.creationPairPerDetfWad;
     }
 
@@ -254,6 +271,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         Repo.Layout storage l = Repo._layout();
         uint256 seBal = IERC20(l.standardExchange).balanceOf(address(this));
         if (seBal == 0) return 0;
+        if (l.pairToken == l.standardExchange) return seBal;
         uint256 claim = IStandardExchangeIn(l.standardExchange).previewExchangeIn(
             IERC20(l.standardExchange), seBal, IERC20(l.pairToken)
         );
@@ -369,6 +387,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
     function _bufferPair(uint256 amount) internal returns (uint256 seOut) {
         _requireNonZero(amount);
         Repo.Layout storage l = Repo._layout();
+        if (l.pairToken == l.standardExchange) return amount;
         uint256 minOut = IStandardExchangeIn(l.standardExchange).previewExchangeIn(
             IERC20(l.pairToken), amount, IERC20(l.standardExchange)
         );
@@ -400,6 +419,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         if (seIn > cap) seIn = cap;
         if (seIn == 0) return 0;
         Repo.Layout storage l = Repo._layout();
+        if (l.pairToken == l.standardExchange) return seIn;
         uint256 minOut;
         try IStandardExchangeIn(l.standardExchange).previewExchangeIn(
             IERC20(l.standardExchange), seIn, IERC20(l.pairToken)
@@ -425,6 +445,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
     function _unwrapExactPairOut(uint256 pairOut) internal returns (uint256 seIn) {
         _requireNonZero(pairOut);
         Repo.Layout storage l = Repo._layout();
+        if (l.pairToken == l.standardExchange) return pairOut;
         uint256 cap = _spendableSeShares();
         if (cap == 0) revert InsufficientTokenOut();
         try IStandardExchangeOut(l.standardExchange).previewExchangeOut(
@@ -455,9 +476,15 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
     }
 
     function _unwrapPairLeavingDust(uint256 pairWant) internal returns (uint256 pairGot) {
-        uint256 pairBefore = IERC20(Repo._layout().pairToken).balanceOf(address(this));
+        Repo.Layout storage l = Repo._layout();
+        if (l.pairToken == l.standardExchange) {
+            uint256 cap = _spendableSeShares();
+            if (pairWant == 0 || pairWant > cap) revert InsufficientTokenOut();
+            return pairWant;
+        }
+        uint256 pairBefore = IERC20(l.pairToken).balanceOf(address(this));
         _unwrapExactPairOut(pairWant);
-        pairGot = IERC20(Repo._layout().pairToken).balanceOf(address(this)) - pairBefore;
+        pairGot = IERC20(l.pairToken).balanceOf(address(this)) - pairBefore;
         if (pairGot == 0) revert InsufficientTokenOut();
     }
 
@@ -477,6 +504,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
     function _refundPairDust(address to) internal {
         to;
         Repo.Layout storage l = Repo._layout();
+        if (l.pairToken == l.standardExchange) return;
         for (uint256 i; i < 3; ++i) {
             uint256 bal = IERC20(l.pairToken).balanceOf(address(this));
             if (bal <= Repo.MAX_DUST_WEI) return;
@@ -573,6 +601,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
     function beforeSwap(address, PoolKey calldata, SwapParams calldata params, bytes calldata)
         external
         override
+        nonReentrant
         returns (bytes4, BeforeSwapDelta swapDelta, uint24)
     {
         _onlyPoolManager();
@@ -717,11 +746,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
             amountOut = Math.fromWadFloor(Math.saleQuote(aInN, rInN, rOutN), _decimalsOf(l.pairToken));
         } else {
             // pair in → claimIn → raw out
-            uint256 claimIn = _previewBufferClaimIn(amountIn);
-            uint256 rInN = Math.toWad(seClaim, _decimalsOf(l.pairToken));
-            uint256 rOutN = Math.toWad(rawBal, _decimalsOf(l.rawToken));
-            uint256 cInN = Math.toWad(claimIn, _decimalsOf(l.pairToken));
-            amountOut = Math.fromWadFloor(Math.saleQuote(cInN, rInN, rOutN), _decimalsOf(l.rawToken));
+            amountOut = _quotePairClaimIn(seClaim, _previewBufferClaimIn(amountIn));
         }
     }
 
@@ -771,6 +796,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         view
         returns (uint256 amountOut)
     {
+        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return LiquidityRoute.previewIn(tokenIn, amountIn, tokenOut);
         bool zfo = _routeZeroForOne(address(tokenIn), address(tokenOut));
         return _quoteExactIn(zfo, amountIn);
     }
@@ -783,7 +809,20 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external nonReentrant returns (uint256 amountOut) {
+    ) external returns (uint256 amountOut) {
+        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return LiquidityRoute.exchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
+        return _swapExchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
+    }
+
+    function _swapExchangeIn(
+        IERC20 tokenIn,
+        uint256 amountIn,
+        IERC20 tokenOut,
+        uint256 minAmountOut,
+        address recipient,
+        bool pretransferred,
+        uint256 deadline
+    ) internal nonReentrant returns (uint256 amountOut) {
         _requireDeadline(deadline);
         bool zfo = _routeZeroForOne(address(tokenIn), address(tokenOut));
         // Quote on pre-pull book so inventory does not reprice the trade mid-path.
@@ -813,6 +852,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         view
         returns (uint256 amountIn)
     {
+        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return LiquidityRoute.previewOut(tokenIn, tokenOut, amountOut);
         bool zfo = _routeZeroForOne(address(tokenIn), address(tokenOut));
         return _quoteExactOut(zfo, amountOut);
     }
@@ -825,7 +865,20 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external nonReentrant returns (uint256 amountIn) {
+    ) external returns (uint256 amountIn) {
+        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return LiquidityRoute.exchangeOut(tokenIn, maxAmountIn, tokenOut, amountOut, recipient, pretransferred, deadline);
+        return _swapExchangeOut(tokenIn, maxAmountIn, tokenOut, amountOut, recipient, pretransferred, deadline);
+    }
+
+    function _swapExchangeOut(
+        IERC20 tokenIn,
+        uint256 maxAmountIn,
+        IERC20 tokenOut,
+        uint256 amountOut,
+        address recipient,
+        bool pretransferred,
+        uint256 deadline
+    ) internal nonReentrant returns (uint256 amountIn) {
         _requireDeadline(deadline);
         bool zfo = _routeZeroForOne(address(tokenIn), address(tokenOut));
         amountIn = _quoteExactOut(zfo, amountOut);

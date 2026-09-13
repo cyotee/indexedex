@@ -22,6 +22,14 @@ library RobinhoodCanonicalLib {
         return ROBINHOOD_MAIN.UNISWAP_V4_POSITION_MANAGER;
     }
 
+    function v2Factory() internal pure returns (address) {
+        return ROBINHOOD_MAIN.UNISWAP_V2_FACTORY;
+    }
+
+    function v2Router() internal pure returns (address) {
+        return ROBINHOOD_MAIN.UNISWAP_V2_ROUTER02;
+    }
+
     function v3Factory() internal pure returns (address) {
         return ROBINHOOD_MAIN.UNISWAP_V3_FACTORY;
     }
@@ -40,6 +48,11 @@ library RobinhoodCanonicalLib {
 
     function weth() internal pure returns (address) {
         return address(ROBINHOOD_MAIN.WETH);
+    }
+
+    /// @notice Live `$DTF` on 4663. Pin only; never deploy.
+    function dtf() internal pure returns (address) {
+        return 0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01;
     }
 
     function universalRouter() internal pure returns (address) {

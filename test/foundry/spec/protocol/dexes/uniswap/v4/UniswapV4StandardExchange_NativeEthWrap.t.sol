@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
@@ -81,7 +83,7 @@ contract UniswapV4StandardExchange_NativeEthWrap is TestBase_UniswapV4StandardEx
     function setUp() public override {
         super.setUp();
 
-        pairToken = new ERC20PermitMintableStub("Pair", "PAIR", 18, address(this), 0);
+        pairToken = _deployNativePair();
         poolKey = PoolKey({
             currency0: Currency.wrap(address(0)),
             currency1: Currency.wrap(address(pairToken)),
@@ -113,6 +115,48 @@ contract UniswapV4StandardExchange_NativeEthWrap is TestBase_UniswapV4StandardEx
         return block.timestamp + 1 days;
     }
 
+    function _deployNativePair() internal returns (ERC20PermitMintableStub deployed) {
+        bytes32 initHash = keccak256(abi.encodePacked(
+            type(ERC20PermitMintableStub).creationCode, abi.encode("Pair", "PAIR", 18, address(this), 0)
+        ));
+        for (uint256 nonce; ; ++nonce) {
+            bytes32 salt = bytes32(nonce);
+            address predicted = address(uint160(uint256(keccak256(
+                abi.encodePacked(bytes1(0xff), address(this), salt, initHash)
+            ))));
+            if (predicted < address(weth)) {
+                return new ERC20PermitMintableStub{salt: salt}("Pair", "PAIR", 18, address(this), 0);
+            }
+        }
+    }
+
+    /// @dev PoolKey order is native currency first, exposed as WETH even when its address sorts last.
+    function _activateNativeVault(uint256 wethAmount, uint256 pairAmount) internal returns (uint256 shares) {
+        address[] memory tokens = new address[](2);
+        tokens[0] = address(weth);
+        tokens[1] = address(pairToken);
+        uint256[] memory amounts = new uint256[](2);
+        amounts[0] = wethAmount;
+        amounts[1] = pairAmount;
+        uint256 preview = IStandardExchangeInMulti(address(vault)).previewExchangeInManyToOne(
+            tokens, amounts, IERC20(address(vault))
+        );
+        shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
+            tokens, amounts, IERC20(address(vault)), preview, address(this), false, _deadline()
+        );
+        assertEq(shares, preview, "native activation preview equals execution");
+        assertGt(shares, 0, "native two-token activation");
+        assertGt(uint160(tokens[0]), uint160(tokens[1]), "WETH face deliberately sorts after pair");
+        (tokens[0], tokens[1]) = (tokens[1], tokens[0]);
+        vm.expectRevert(bytes4(keccak256("ExchangeInNotAvailable()")));
+        IStandardExchangeInMulti(address(vault)).previewExchangeInManyToOne(tokens, amounts, IERC20(address(vault)));
+        vm.expectRevert(bytes4(keccak256("ExchangeInNotAvailable()")));
+        IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
+            tokens, amounts, IERC20(address(vault)), 0, address(this), false, _deadline()
+        );
+        _assertNoNativeDust();
+    }
+
     function _assertNoNativeDust() internal view {
         assertEq(address(vault).balance, 0, "vault must not hold native ETH");
     }
@@ -122,10 +166,12 @@ contract UniswapV4StandardExchange_NativeEthWrap is TestBase_UniswapV4StandardEx
         assertEq(IBasicVault(address(vault)).vaultTokens()[0], address(weth), "WETH face");
 
         vm.deal(address(this), 20 ether);
-        weth.deposit{value: 10 ether}();
-        pairToken.mint(address(this), 10 ether);
-        IERC20(address(weth)).approve(address(vault), 10 ether);
-        pairToken.approve(address(vault), 10 ether);
+        weth.deposit{value: 11 ether}();
+        pairToken.mint(address(this), 11 ether);
+        IERC20(address(weth)).approve(address(vault), 11 ether);
+        pairToken.approve(address(vault), 11 ether);
+
+        _activateNativeVault(1 ether, 1 ether);
 
         uint256 shares0 = vault.exchangeIn(
             IERC20(address(weth)), 10 ether, IERC20(address(vault)), 0, address(this), false, _deadline()
@@ -149,10 +195,7 @@ contract UniswapV4StandardExchange_NativeEthWrap is TestBase_UniswapV4StandardEx
         IERC20(address(weth)).approve(address(vault), type(uint256).max);
         pairToken.approve(address(vault), type(uint256).max);
 
-        vault.exchangeIn(IERC20(address(weth)), 10 ether, IERC20(address(vault)), 0, address(this), false, _deadline());
-        vault.exchangeIn(
-            IERC20(address(pairToken)), 10 ether, IERC20(address(vault)), 0, address(this), false, _deadline()
-        );
+        _activateNativeVault(10 ether, 10 ether);
         _assertNoNativeDust();
 
         uint256 pairBefore = pairToken.balanceOf(address(this));
@@ -182,10 +225,7 @@ contract UniswapV4StandardExchange_NativeEthWrap is TestBase_UniswapV4StandardEx
         pairToken.approve(address(vault), type(uint256).max);
         IERC20(address(vault)).approve(address(vault), type(uint256).max);
 
-        vault.exchangeIn(IERC20(address(weth)), 10 ether, IERC20(address(vault)), 0, address(this), false, _deadline());
-        vault.exchangeIn(
-            IERC20(address(pairToken)), 10 ether, IERC20(address(vault)), 0, address(this), false, _deadline()
-        );
+        _activateNativeVault(10 ether, 10 ether);
 
         uint256 shares = IERC20(address(vault)).balanceOf(address(this));
         assertGt(shares, 0, "shares");

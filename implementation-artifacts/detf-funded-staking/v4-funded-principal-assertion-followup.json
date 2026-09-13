@@ -1,0 +1,26 @@
+{
+  "evidence": "v4-funded-principal-first-*; 32 pass / 12 fail; 219.061-second build, 21.658-second test command",
+  "changes": [
+    "Confirm both zero owner (existing Crane behavior) and typed nonexistent funded position after retirement.",
+    "Resolve actual hook before the owner prank so authorization applies to the manager mutation.",
+    "Reconcile whole LP supply growth with actual protocol-owned LP plus current Fee Collector LP, including Orbital residual sweeps; staking backing remains unchanged by reserve gifts."
+  ],
+  "files": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol",
+      "before_sha256": "3de24c5e4927b3a0fb0214e63784888493c0f13e623642fe6f80d442f1ee7cb1",
+      "after_sha256": "0e33aaba293407a3147d6836cf8918aadcf24cfad79d1619518cf4fdac7da656"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Decimals.sol",
+      "before_sha256": "5e301dcef422bfe4b4e5d66ed9a6032f4657cc6db4a12ca5ffc22311ad7a333d",
+      "after_sha256": "cf745a66f06d5bceacadfb36eebcedf4f0bf1a74ff5db46a3bd351992720d939"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_OriginalPrincipal.t.sol",
+      "before_sha256": "f6784c492e8a0f2d2c3b82eafb294c6dcddb921f689851e91689c4c58153afc9",
+      "after_sha256": "12a23008872ea5c5dd18362405a166fa6dca84983d6cf0556a21f01ec87177b8"
+    }
+  ],
+  "validation": "pending"
+}

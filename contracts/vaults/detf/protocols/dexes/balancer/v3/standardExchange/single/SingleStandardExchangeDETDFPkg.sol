@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ISingleStandardExchangeDETDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETDFPkg.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC20Permit} from "@crane/contracts/interfaces/IERC20Permit.sol";
@@ -15,8 +17,7 @@ import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balance
 import {
     PoolRoleAccounts, TokenConfig, TokenType
 } from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/VaultTypes.sol";
-import {WeightedPoolFactory} from
-    "@crane/contracts/external/balancer/v3/pool-weighted/contracts/WeightedPoolFactory.sol";
+import {IWeightedPoolFactory} from "contracts/interfaces/IWeightedPoolFactory.sol";
 import {IWeightedPool} from
     "@crane/contracts/external/balancer/v3/interfaces/contracts/pool-weighted/IWeightedPool.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
@@ -45,87 +46,26 @@ import {
 import {
     BalancerV3StandardExchangeRouterAwareRepo
 } from "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterAwareRepo.sol";
-import {
-    IStandardExchangeRateProviderDFPkg
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
+import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
 import {IDetfSelfNftInventoryDFPkg} from "contracts/vaults/detf/common/factory/nft/IDetfSelfNftInventoryDFPkg.sol";
-import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {DETFChildTokenMetadata} from "contracts/vaults/detf/common/DETFChildTokenMetadata.sol";
 import {
     SingleStandardExchangeDETFRepo
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFRepo.sol";
+import {ISingleStandardExchangeDETFBonding} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFBonding.sol";
+import {ISingleStandardExchangeDETFInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFInfo.sol";
 import {
-    ISingleStandardExchangeDETFBonding
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFBondingTarget.sol";
-import {
-    ISingleStandardExchangeDETFInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFInfoTarget.sol";
-import {
-    DETFThresholdPolicy,
-    ThresholdMode
+    DETFThresholdPolicy
 } from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
+import {IStakedDETF, IDETFFundedRewards} from "contracts/interfaces/IStakedDETF.sol";
+import {IDETFStandardizedYield, IDETFStakingPreview} from "contracts/interfaces/IDETFStandardizedYield.sol";
+import {IDETFSYDFPkg} from "contracts/vaults/detf/common/sy/IDETFSYDFPkg.sol";
+import {DETFSYDeploymentLib} from "contracts/vaults/detf/common/sy/DETFSYDeploymentLib.sol";
 import {DETFNaturalExpansionLib} from "contracts/vaults/detf/common/core/DETFNaturalExpansionLib.sol";
 
-/// @title ISingleStandardExchangeDETDFPkg
-interface ISingleStandardExchangeDETDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
-    error NotCalledByRegistry(address caller);
-    error ZeroAddress();
-    error ClaimTokenNotDeployed();
 
-    struct PkgInit {
-        IFacet erc20Facet;
-        IFacet erc5267Facet;
-        IFacet erc2612Facet;
-        IFacet multiAssetBasicVaultFacet;
-        IFacet multiAssetStandardVaultFacet;
-        IFacet exchangeInFacet;
-        IVaultFeeOracleQuery feeOracle;
-        IVaultRegistryDeployment vaultRegistryDeployment;
-        IBalancerV3StandardExchangeRouterProxy balancerV3Router;
-        IVault balancerV3Vault;
-        WeightedPoolFactory weightedPoolFactory;
-        IStandardExchangeRateProviderDFPkg rateProviderPkg;
-        IDetfSelfNftInventoryDFPkg bondNftVaultPkg;
-        IRebasingClaimTokenDFPkg rebasingClaimTokenPkg;
-        IDiamondPackageCallBackFactory diamondFactory;
-    }
-
-    /// @dev Per-instance args. `standardExchangeVault` is injected; underlyings are opaque.
-    /// @dev `standardExchangeVaultShare` optional: address(0) → vault diamond is the share ERC-20
-    ///      (standard multi-asset SE). Non-zero for families with a separate share token.
-    /// @dev Trailing `thresholdMode`: 0 = Policy (default); 1 = Open. Never infer Open from zeros.
-    /// @dev Trailing expansion fields (zeros → `DETFNaturalExpansionLib` defaults). Deploy-time only.
-    ///
-    /// # PkgArgs field order (Stage 06 — document for later families)
-    /// 1 name, 2 symbol, 3 standardExchangeVault, 4 standardExchangeVaultShare, 5 rateTarget,
-    /// 6 detfWeight, 7 vaultShareWeight, 8 mintThreshold, 9 burnThreshold, 10 thresholdMode,
-    /// 11 expansionClosureRatePerSecond, 12 expansionCatchUpMaxSeconds, 13 expansionCatchUpCapBps
-    struct PkgArgs {
-        string name;
-        string symbol;
-        IStandardExchangeProxy standardExchangeVault;
-        IERC20 standardExchangeVaultShare;
-        IERC20 rateTarget;
-        uint256 detfWeight; // 0 → 80e16
-        uint256 vaultShareWeight; // 0 → 20e16
-        uint256 mintThreshold; // 0 → 1.05e18
-        uint256 burnThreshold; // 0 → 0.95e18
-        ThresholdMode thresholdMode; // trailing mode; 0 = Policy
-        uint256 expansionClosureRatePerSecond; // 0 → default
-        uint256 expansionCatchUpMaxSeconds; // 0 → default
-        uint256 expansionCatchUpCapBps; // 0 → default
-        address creator; // D26; 0 → feeTo owns id 2 (D21)
-        string claimName;
-        string claimSymbol;
-        string bondName;
-        string bondSymbol;
-        string reserveName;
-        string reserveSymbol;
-    }
-
-    function deployVault(PkgArgs memory args) external returns (address vault);
-}
 
 /// @title SingleStandardExchangeDETDFPkg
 /// @notice Immutable/unowned DETF package: self + one Standard Exchange vault share in 80/20 reserve.
@@ -146,10 +86,7 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
         uint256 vaultShareWeight;
         uint256 mintThreshold;
         uint256 burnThreshold;
-        ThresholdMode thresholdMode;
         uint256 expansionClosureRatePerSecond;
-        uint256 expansionCatchUpMaxSeconds;
-        uint256 expansionCatchUpCapBps;
         address creator;
         string claimName;
         string claimSymbol;
@@ -165,18 +102,20 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
     IFacet immutable MULTI_ASSET_BASIC_VAULT_FACET;
     IFacet immutable MULTI_ASSET_STANDARD_VAULT_FACET;
     IFacet immutable EXCHANGE_IN_FACET;
+    IFacet immutable BONDING_FACET;
     IVaultFeeOracleQuery immutable FEE_ORACLE;
     IVaultRegistryDeployment immutable VAULT_REGISTRY_DEPLOYMENT;
     IBalancerV3StandardExchangeRouterProxy immutable BALANCER_V3_ROUTER;
     IVault immutable BALANCER_V3_VAULT;
-    WeightedPoolFactory immutable WEIGHTED_POOL_FACTORY;
+    IWeightedPoolFactory immutable WEIGHTED_POOL_FACTORY;
     IStandardExchangeRateProviderDFPkg immutable RATE_PROVIDER_PKG;
     IDetfSelfNftInventoryDFPkg immutable BOND_NFT_VAULT_PKG;
     IRebasingClaimTokenDFPkg immutable REBASING_CLAIM_TOKEN_PKG;
+    IDETFSYDFPkg immutable SY_PKG;
     IDiamondPackageCallBackFactory immutable DIAMOND_FACTORY;
 
     constructor(PkgInit memory pkgInit) {
-        if (address(pkgInit.rebasingClaimTokenPkg) == address(0)) {
+        if (address(pkgInit.rebasingClaimTokenPkg) == address(0) || address(pkgInit.syPkg) == address(0)) {
             revert ZeroAddress();
         }
         ERC20_FACET = pkgInit.erc20Facet;
@@ -185,6 +124,7 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
         MULTI_ASSET_BASIC_VAULT_FACET = pkgInit.multiAssetBasicVaultFacet;
         MULTI_ASSET_STANDARD_VAULT_FACET = pkgInit.multiAssetStandardVaultFacet;
         EXCHANGE_IN_FACET = pkgInit.exchangeInFacet;
+        BONDING_FACET = pkgInit.bondingFacet;
         FEE_ORACLE = pkgInit.feeOracle;
         VAULT_REGISTRY_DEPLOYMENT = pkgInit.vaultRegistryDeployment;
         BALANCER_V3_ROUTER = pkgInit.balancerV3Router;
@@ -193,6 +133,7 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
         RATE_PROVIDER_PKG = pkgInit.rateProviderPkg;
         BOND_NFT_VAULT_PKG = pkgInit.bondNftVaultPkg;
         REBASING_CLAIM_TOKEN_PKG = pkgInit.rebasingClaimTokenPkg;
+        SY_PKG = pkgInit.syPkg;
         DIAMOND_FACTORY = pkgInit.diamondFactory;
     }
 
@@ -230,17 +171,18 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
     }
 
     function facetAddresses() public view returns (address[] memory facetAddresses_) {
-        facetAddresses_ = new address[](6);
+        facetAddresses_ = new address[](7);
         facetAddresses_[0] = address(ERC20_FACET);
         facetAddresses_[1] = address(ERC5267_FACET);
         facetAddresses_[2] = address(ERC2612_FACET);
         facetAddresses_[3] = address(MULTI_ASSET_BASIC_VAULT_FACET);
         facetAddresses_[4] = address(MULTI_ASSET_STANDARD_VAULT_FACET);
         facetAddresses_[5] = address(EXCHANGE_IN_FACET);
+        facetAddresses_[6] = address(BONDING_FACET);
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory interfaces_) {
-        interfaces_ = new bytes4[](9);
+        interfaces_ = new bytes4[](12);
         interfaces_[0] = type(IERC20).interfaceId;
         interfaces_[1] = type(IERC20Metadata).interfaceId;
         interfaces_[2] = type(IERC20Permit).interfaceId;
@@ -250,6 +192,9 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
         interfaces_[6] = type(IStandardExchangeIn).interfaceId;
         interfaces_[7] = type(ISingleStandardExchangeDETFBonding).interfaceId;
         interfaces_[8] = type(ISingleStandardExchangeDETFInfo).interfaceId;
+        interfaces_[9] = type(IDETFFundedRewards).interfaceId;
+        interfaces_[10] = type(IDETFStandardizedYield).interfaceId;
+        interfaces_[11] = type(IDETFStakingPreview).interfaceId;
     }
 
     function packageMetadata()
@@ -263,7 +208,7 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
     }
 
     function facetCuts() public view returns (IDiamond.FacetCut[] memory facetCuts_) {
-        facetCuts_ = new IDiamond.FacetCut[](6);
+        facetCuts_ = new IDiamond.FacetCut[](7);
         facetCuts_[0] = IDiamond.FacetCut(address(ERC20_FACET), IDiamond.FacetCutAction.Add, ERC20_FACET.facetFuncs());
         facetCuts_[1] =
             IDiamond.FacetCut(address(ERC5267_FACET), IDiamond.FacetCutAction.Add, ERC5267_FACET.facetFuncs());
@@ -279,6 +224,7 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
         );
         facetCuts_[5] =
             IDiamond.FacetCut(address(EXCHANGE_IN_FACET), IDiamond.FacetCutAction.Add, EXCHANGE_IN_FACET.facetFuncs());
+        facetCuts_[6] = IDiamond.FacetCut(address(BONDING_FACET), IDiamond.FacetCutAction.Add, BONDING_FACET.facetFuncs());
     }
 
     function diamondConfig() public view returns (DiamondConfig memory config_) {
@@ -302,7 +248,8 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
 
     function initAccount(bytes memory initArgs) public {
         PkgArgs memory args = abi.decode(initArgs, (PkgArgs));
-        ERC20Repo._initialize(args.name, args.symbol, 18);
+        if (keccak256(initArgs) != keccak256(abi.encode(args))) revert InvalidPackageArguments();
+        ERC20Repo._initialize(args.name, args.symbol, 9);
         EIP712Repo._initialize(args.name, "1");
         BalancerV3StandardExchangeRouterAwareRepo._initialize(BALANCER_V3_ROUTER);
         BalancerV3VaultAwareRepo._initialize(BALANCER_V3_VAULT);
@@ -313,14 +260,9 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
             FEE_ORACLE, vaultFeeTypeIds(), vaultTypes(), abi.encode(contents_)._hash()
         );
 
-        DETFThresholdPolicy.requireValidThresholdMode(args.thresholdMode);
         (uint256 mint_, uint256 burn_) =
             DETFThresholdPolicy.resolveAndRequireValidThresholds(args.mintThreshold, args.burnThreshold);
-        (uint256 expRate_, uint256 expCatchUpSec_, uint256 expCapBps_) = DETFNaturalExpansionLib.resolveExpansionParams(
-            args.expansionClosureRatePerSecond,
-            args.expansionCatchUpMaxSeconds,
-            args.expansionCatchUpCapBps
-        );
+        uint256 expRate_ = DETFNaturalExpansionLib.resolveClosureRate(args.expansionClosureRatePerSecond);
 
         DeployConfig storage cfg = _deployConfig();
         cfg.standardExchangeVault = args.standardExchangeVault;
@@ -332,10 +274,7 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
         cfg.vaultShareWeight = args.vaultShareWeight == 0 ? _TWENTY : args.vaultShareWeight;
         cfg.mintThreshold = mint_;
         cfg.burnThreshold = burn_;
-        cfg.thresholdMode = args.thresholdMode;
         cfg.expansionClosureRatePerSecond = expRate_;
-        cfg.expansionCatchUpMaxSeconds = expCatchUpSec_;
-        cfg.expansionCatchUpCapBps = expCapBps_;
         cfg.creator = args.creator;
         cfg.claimName = args.claimName;
         cfg.claimSymbol = args.claimSymbol;
@@ -367,25 +306,24 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
         PoolBuild memory pb_ = _createRateProviderAndPool(cfg);
         IDETFNFTVault bondVault_ = _deployBondNftVault(pb_.reservePool);
         // Bond vault initializeDETFNFT() before claim init so detfNFTId is known.
-        uint256 detfNftId_ = _tryInitDetfNft(bondVault_);
-        IRebasingClaimToken claimToken_ = _deployRebasingClaimToken(cfg, bondVault_, detfNftId_);
-        _initBasicVaultTokens(address(pb_.seShare), pb_.reservePool);
-        _initFamilyRepo(cfg, pb_, bondVault_, detfNftId_, claimToken_);
+        _tryInitDetfNft(bondVault_);
+        IRebasingClaimToken claimToken_ = _deployRebasingClaimToken(cfg, bondVault_);
+        _initBasicVaultTokens(address(pb_.seShare), pb_.reservePool, address(claimToken_));
+        _initFamilyRepo(cfg, pb_, bondVault_, claimToken_);
+        address[] memory routes_ = ISingleStandardExchangeDETFBonding(address(this)).acceptedBondTokens();
+        DETFSYDeploymentLib._deploy(SY_PKG, IStakedDETF(address(claimToken_)), routes_, routes_);
     }
 
     function _deployRebasingClaimToken(
         DeployConfig storage cfg,
-        IDETFNFTVault bondVault_,
-        uint256 detfNftId_
+        IDETFNFTVault bondVault_
     ) private returns (IRebasingClaimToken claimToken_) {
         address detf_ = address(this);
         claimToken_ = IRebasingClaimToken(
             REBASING_CLAIM_TOKEN_PKG.deployToken(
                 IDetf(detf_),
                 bondVault_,
-                cfg.rateTarget,
-                detfNftId_,
-                detf_,
+                FEE_ORACLE,
                 DETFChildTokenMetadata.resolveClaimName(cfg.claimName, ERC20Repo._name()),
                 DETFChildTokenMetadata.resolveClaimSymbol(cfg.claimSymbol, ERC20Repo._symbol())
             )
@@ -393,10 +331,7 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
         if (address(claimToken_) == address(0)) {
             revert ClaimTokenNotDeployed();
         }
-        // Owner is DETF; re-assert DETF wiring (deployToken already inits detf).
-        if (claimToken_.detf() != detf_) {
-            claimToken_.setDetf(detf_);
-        }
+        if (claimToken_.detf() != detf_) revert ClaimTokenNotDeployed();
     }
 
     function _createRateProviderAndPool(DeployConfig storage cfg) private returns (PoolBuild memory pb_) {
@@ -485,10 +420,7 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
                 DETFChildTokenMetadata.resolveBondName(_deployConfig().bondName, ERC20Repo._name()),
                 DETFChildTokenMetadata.resolveBondSymbol(_deployConfig().bondSymbol, ERC20Repo._symbol()),
                 IDetf(detf_),
-                IERC20(reservePool_),
-                IERC20(detf_),
-                0,
-                detf_
+                IERC20(reservePool_)
             )
         );
     }
@@ -496,30 +428,30 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
     function _tryInitDetfNft(IDETFNFTVault bondVault_) private returns (uint256 detfNftId_) {
         address feeTo_ = address(FEE_ORACLE.feeTo());
         address creator_ = _deployConfig().creator;
-        try bondVault_.initializeReservedBondNfts(feeTo_, creator_) returns (uint256 id_) {
-            detfNftId_ = id_;
-        } catch {
-            try bondVault_.initializeDETFNFT() returns (uint256 id2_) {
-                detfNftId_ = id2_;
-            } catch {
-                detfNftId_ = 0;
-            }
-        }
+        detfNftId_ = bondVault_.initializeReservedBondNfts(feeTo_, creator_);
     }
 
-    function _initBasicVaultTokens(address seShare_, address reservePool_) private {
-        address[] memory vaultTokens_ = new address[](3);
-        vaultTokens_[0] = address(this);
-        vaultTokens_[1] = seShare_;
-        vaultTokens_[2] = reservePool_;
-        MultiAssetBasicVaultRepo._initialize(vaultTokens_);
+    function _initBasicVaultTokens(address seShare_, address reservePool_, address staking_) private {
+        address[] memory host_ = IBasicVault(address(_deployConfig().standardExchangeVault)).vaultTokens();
+        address[] memory tokens_ = new address[](host_.length + 4);
+        tokens_[0] = address(this);
+        tokens_[1] = seShare_;
+        tokens_[2] = reservePool_;
+        tokens_[3] = staking_;
+        uint256 count_ = 4;
+        for (uint256 i_; i_ < host_.length; ++i_) {
+            bool seen_;
+            for (uint256 j_; j_ < count_; ++j_) if (tokens_[j_] == host_[i_]) seen_ = true;
+            if (!seen_) tokens_[count_++] = host_[i_];
+        }
+        assembly { mstore(tokens_, count_) }
+        MultiAssetBasicVaultRepo._initialize(tokens_);
     }
 
     function _initFamilyRepo(
         DeployConfig storage cfg,
         PoolBuild memory pb_,
         IDETFNFTVault bondVault_,
-        uint256 detfNftId_,
         IRebasingClaimToken claimToken_
     ) private {
         SingleStandardExchangeDETFRepo._initialize(
@@ -532,32 +464,26 @@ contract SingleStandardExchangeDETDFPkg is ISingleStandardExchangeDETDFPkg {
             pb_.shareIndex,
             cfg.detfWeight,
             cfg.vaultShareWeight,
-            _thresholdAndFeeInit(cfg, bondVault_, detfNftId_)
+            _thresholdAndFeeInit(cfg, bondVault_)
         );
         SingleStandardExchangeDETFRepo._setRebasingClaimToken(claimToken_);
-        _emitThresholdModeSet(cfg);
+        _emitThresholdsSet(cfg);
     }
 
     function _thresholdAndFeeInit(
         DeployConfig storage cfg,
-        IDETFNFTVault bondVault_,
-        uint256 detfNftId_
+        IDETFNFTVault bondVault_
     ) private view returns (SingleStandardExchangeDETFRepo.ThresholdAndFeeInit memory tf_) {
         tf_.mintThreshold = cfg.mintThreshold;
         tf_.burnThreshold = cfg.burnThreshold;
-        tf_.thresholdMode = cfg.thresholdMode;
         tf_.feeOracle = FEE_ORACLE;
         tf_.bondNftVault = bondVault_;
-        tf_.detfNftId = detfNftId_;
-        tf_.feeRecipientNftId = 0;
         tf_.expansionClosureRatePerSecond = cfg.expansionClosureRatePerSecond;
-        tf_.expansionCatchUpMaxSeconds = cfg.expansionCatchUpMaxSeconds;
-        tf_.expansionCatchUpCapBps = cfg.expansionCatchUpCapBps;
     }
 
-    function _emitThresholdModeSet(DeployConfig storage cfg) private {
-        emit ISingleStandardExchangeDETFInfo.ThresholdModeSet(
-            cfg.thresholdMode, cfg.mintThreshold, cfg.burnThreshold
+    function _emitThresholdsSet(DeployConfig storage cfg) private {
+        emit ISingleStandardExchangeDETFInfo.ThresholdsSet(
+            cfg.mintThreshold, cfg.burnThreshold
         );
     }
 }

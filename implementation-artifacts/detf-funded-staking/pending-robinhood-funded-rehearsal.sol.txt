@@ -1,0 +1,629 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+import {IUniswapV4HookLiquidityPolicy} from "contracts/hooks/uniswap/v4/libs/UniswapV4HookOwnerOnlyLiquidityLib.sol";
+import {IMultiStepOwnable} from "@crane/contracts/access/ERC8023/IMultiStepOwnable.sol";
+import {IFeeCollectorProxy} from "contracts/interfaces/proxies/IFeeCollectorProxy.sol";
+import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
+import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
+
+import {TestBase_UniswapV4Detf} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
+import {UniswapV4DetfProductionSeDeployLib as SeDeploy} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol";
+import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
+import {HookPkgArgsDecimalsLib as Decimals} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
+import {IERC721} from "@crane/contracts/interfaces/IERC721.sol";
+import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
+import {IUniswapV4SeBufferHookClaimExitQuote} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
+import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IUniswapV2Factory} from "@crane/contracts/interfaces/protocols/dexes/uniswap/v2/IUniswapV2Factory.sol";
+import {IUniswapV2Pair} from "@crane/contracts/interfaces/protocols/dexes/uniswap/v2/IUniswapV2Pair.sol";
+import {IUniswapV3Factory} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Factory.sol";
+import {IUniswapV3Pool} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Pool.sol";
+import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
+import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
+import {IMorpho, MarketParams} from "@crane/contracts/external/morpho/blue/interfaces/IMorpho.sol";
+import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
+import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
+import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
+import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
+import {IUniswapV2StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeDFPkg.sol";
+import {IUniswapV3StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeDFPkg.sol";
+import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol";
+import {IMorphoBlueStandardExchangeDFPkg} from "contracts/vaults/standard/exchange/protocols/morpho/blue/IMorphoBlueStandardExchangeDFPkg.sol";
+import {IUniswapV4Detf, IUniswapV4DetfDFPkg} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
+import {IUniswapV4HookStagedPairInit} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
+import {IUniswapV4HookDiamondPackageCallBackFactory} from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackageCallBackFactory.sol";
+import {IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.sol";
+import {IUniswapV4StandardExchangeWeightedBufferHookPackage as IWeightedPkg} from "contracts/hooks/uniswap/v4/standardExchange/weighted/interfaces/IUniswapV4StandardExchangeWeightedBufferHookPackage.sol";
+import {UniswapV4StandardExchangeWeightedBufferHook_FactoryService as WeightedFactory} from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_FactoryService.sol";
+import {IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage as IQuadPkg} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.sol";
+import {UniswapV4StandardExchangeCurveQuadStableBufferHook_FactoryService as QuadFactory} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_FactoryService.sol";
+
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {IUniswapV4BalancerStableLiquidityUnits as IBalancerUnits} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/interfaces/IUniswapV4BalancerStableLiquidityUnits.sol";
+import {UniswapV4StandardExchangeBalancerQuadStableBufferHookRepo as BalancerRepo} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookRepo.sol";
+import {IUniswapV4StandardExchangeBalancerQuadStableBufferHookPackage as IBalancerPkg} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/interfaces/IUniswapV4StandardExchangeBalancerQuadStableBufferHookPackage.sol";
+import {IUniswapV4StandardExchangeBalancerQuadStableBufferHook as IBalancerHook} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/interfaces/IUniswapV4StandardExchangeBalancerQuadStableBufferHook.sol";
+import {UniswapV4StandardExchangeBalancerQuadStableBufferHook_FactoryService as BalancerFactory} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_FactoryService.sol";
+
+import {WrapperExactOutRouter} from "contracts/test/stubs/WrapperExactOutRouter.sol";
+import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
+import {SwapParams} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
+import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/TickMath.sol";
+import {UniswapV4StandardExchangeBalancerQuadStableBufferHookPairPoolLib as BalancerPairs} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookPairPoolLib.sol";
+
+/// @notice Runs after rehearse-packages against its local Anvil RPC and manifests.
+contract RobinhoodReleaseRehearsalTest is TestBase_UniswapV4Detf {
+    uint256 internal constant TX_GAS = 30_000_000;
+    address internal constant V2_FACTORY = 0x8bcEaA40B9AcdfAedF85AdF4FF01F5Ad6517937f;
+    address internal constant V3_FACTORY = 0x1f7d7550B1b028f7571E69A784071F0205FD2EfA;
+    address internal constant MORPHO = 0x9D53d5E3bd5E8d4Cbfa6DB1ca238AEA02E651010;
+    address internal constant MORPHO_IRM = 0x2BD3d5965B26B51814AC95127B2b80dD6CcC0fa1;
+    address[] internal pairs;
+    address[] internal exchanges;
+    string internal deploymentDir;
+
+    /// @dev Attach to the already deployed core; the hermetic parent setup deploys a fresh core.
+    function setUp() public override {
+        vm.createSelectFork(vm.envOr("REHEARSAL_RPC_URL", string("http://127.0.0.1:18663")));
+        assertEq(block.chainid, 4663, "Robinhood chain ID");
+        deploymentDir = vm.envOr("REHEARSAL_DEPLOYMENTS_DIR", string(".scratch/robinhood-mainnet-rehearsal/deployments"));
+        owner = _pin("phase04_stage01_fee_collector_and_manager.json", ".owner", false);
+        indexedexManager = IIndexedexManagerProxy(_pin("phase04_stage01_fee_collector_and_manager.json", ".indexedexManager", true));
+        create3Factory = ICreate3FactoryProxy(_pin("phase02_stage01_create3_factory.json", ".create3Factory", true));
+        diamondPackageFactory = IDiamondPackageCallBackFactory(_pin("phase02_stage02_diamond_package_factory.json", ".diamondPackageFactory", true));
+        hookFactory = IUniswapV4HookDiamondPackageCallBackFactory(_pin("phase02_stage03_hook_factory.json", ".hookFactory", true));
+        hookPkg = IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage(_pin("phase06_stage03_cp_buffer_hook_pkg.json", ".cpHookPkg", true));
+        detfPkg = IUniswapV4DetfDFPkg(_pin("phase06_stage07_uniswap_v4_detf_pkg.json", ".uniV4DetfPkg", true));
+        pm = IPoolManager(0x8366a39CC670B4001A1121B8F6A443A643e40951);
+        assertGt(address(pm).code.length, 0, "live PoolManager");
+    }
+
+    function _pin(string memory file, string memory key, bool codeRequired) internal view returns (address result) {
+        string memory data = vm.readFile(string.concat(deploymentDir, "/", file));
+        assertEq(vm.parseJsonUint(data, ".chainId"), 4663, "manifest chain ID");
+        result = vm.parseJsonAddress(data, key);
+        assertTrue(result != address(0), "nonzero pin");
+        if (codeRequired) assertGt(result.code.length, 0, "deployed pin");
+    }
+
+    function test_cp_v2() public { _rehearse(0, 0); }
+    function test_cp_v3() public { _rehearse(0, 1); }
+    function test_cp_v4() public { _rehearse(0, 2); }
+    function test_cp_morpho() public { _rehearse(0, 3); }
+    function test_weighted_v2() public { _rehearse(1, 0); }
+    function test_weighted_v3() public { _rehearse(1, 1); }
+    function test_weighted_v4() public { _rehearse(1, 2); }
+    function test_weighted_morpho() public { _rehearse(1, 3); }
+    function test_quad_v2() public { _rehearse(2, 0); }
+    function test_quad_v3() public { _rehearse(2, 1); }
+    function test_quad_v4() public { _rehearse(2, 2); }
+    function test_quad_morpho() public { _rehearse(2, 3); }
+
+    function test_balancer_n2_v2() public { _rehearseBalancer(2, 0); }
+    function test_balancer_n2_v3() public { _rehearseBalancer(2, 1); }
+    function test_balancer_n2_v4() public { _rehearseBalancer(2, 2); }
+    function test_balancer_n2_morpho() public { _rehearseBalancer(2, 3); }
+    function test_balancer_n3_v2() public { _rehearseBalancer(3, 0); }
+    function test_balancer_n3_v3() public { _rehearseBalancer(3, 1); }
+    function test_balancer_n3_v4() public { _rehearseBalancer(3, 2); }
+    function test_balancer_n3_morpho() public { _rehearseBalancer(3, 3); }
+    function test_balancer_n4_v2() public { _rehearseBalancer(4, 0); }
+    function test_balancer_n4_v3() public { _rehearseBalancer(4, 1); }
+    function test_balancer_n4_v4() public { _rehearseBalancer(4, 2); }
+    function test_balancer_n4_morpho() public { _rehearseBalancer(4, 3); }
+    function test_balancer_n5_v2() public { _rehearseBalancer(5, 0); }
+    function test_balancer_n5_v3() public { _rehearseBalancer(5, 1); }
+    function test_balancer_n5_v4() public { _rehearseBalancer(5, 2); }
+    function test_balancer_n5_morpho() public { _rehearseBalancer(5, 3); }
+    function test_balancer_n2_v2_mixed() public { _rehearseBalancer(2, 0, true); }
+    function test_balancer_n5_v2_mixed() public { _rehearseBalancer(5, 0, true); }
+
+    function test_balancer_buffered_dust_cannot_fund_pretransfer() public {
+        IBalancerHook h = _rehearseBalancer(2, 3);
+        address input = h.token(1);
+        address output = h.token(0);
+        SimpleMintableERC20(input).mint(address(h), 10);
+        _balancerSwapRoute(h, output, input);
+        assertEq(IERC20(input).balanceOf(address(h)), 10, "retained reserve dust");
+        assertGt(h.previewSwapExactIn(input, output, 10), 0, "dust could otherwise buy output");
+        uint256 beforeBalance = IERC20(output).balanceOf(address(this));
+        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 10, 0));
+        IStandardExchangeIn(address(h)).exchangeIn(
+            IERC20(input), 10, IERC20(output), 0, address(this), true, block.timestamp + 1
+        );
+        uint256 required = h.previewSwapExactOut(input, output, 1);
+        assertLe(required, 10, "retained balance covers exact-out quote");
+        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, required, 0));
+        IStandardExchangeOut(address(h)).exchangeOut(
+            IERC20(input), required, IERC20(output), 1, address(this), true, block.timestamp + 1
+        );
+        assertEq(IERC20(output).balanceOf(address(this)), beforeBalance);
+    }
+
+    function _rehearseBalancer(uint256 n, uint256 backend) internal returns (IBalancerHook h) {
+        return _rehearseBalancer(n, backend, false);
+    }
+
+    function _rehearseBalancer(uint256 n, uint256 backend, bool mixed) internal returns (IBalancerHook h) {
+        IBalancerPkg.PkgArgs memory args;
+        args.poolManager = address(pm);
+        args.feeOracle = address(indexedexManager);
+        args.baseAmp = 100;
+        args.tokens = new address[](n);
+        args.standardExchanges = new address[](n);
+        args.rateProviders = new address[](n);
+        for (uint256 i; i < n; ++i) args.tokens[i] = address(new SimpleMintableERC20("Stable asset", "STABLE"));
+        for (uint256 i; i < n; ++i) {
+            for (uint256 j = i + 1; j < n; ++j) {
+                if (args.tokens[j] < args.tokens[i]) (args.tokens[i], args.tokens[j]) = (args.tokens[j], args.tokens[i]);
+            }
+            if (!mixed || i == n - 1) {
+                args.standardExchanges[i] = _deploySe(backend, args.tokens[i], address(new SimpleMintableERC20("Counter asset", "OTHER")));
+            }
+        }
+        args.tokenDecimals = Decimals.tokenDecimals(args.tokens);
+        args.seDecimals = Decimals.seDecimals(args.standardExchanges);
+        IBalancerPkg pkg = IBalancerPkg(_pin("phase06_stage09_balancer_stable_hook_pkg.json", ".balancerStableHookPkg", true));
+        uint256 nonce = BalancerFactory.findMineNonce(hookFactory, pkg, args);
+        address instance = pkg.deployVault{gas: TX_GAS}(args, nonce);
+        assertEq(uint160(instance) & ((1 << 14) - 1), BalancerFactory.requiredFlags(), "hook flags");
+        IUniswapV4HookStagedPairInit staged = IUniswapV4HookStagedPairInit(instance);
+        for (uint256 i; i < n; ++i) {
+            for (uint256 j = i + 1; j < n; ++j) staged.deployPair{gas: TX_GAS}(args.tokens[i], args.tokens[j]);
+        }
+        assertTrue(staged.finalizeInitialization{gas: TX_GAS}(), "finalize Balancer production facets");
+        h = IBalancerHook(instance);
+        assertEq(h.numTokens(), n);
+        assertEq(h.pairDoorCount(), n * (n - 1) / 2);
+        vm.startPrank(owner);
+        IVaultFeeOracleManager(address(indexedexManager)).setVaultDexSwapFee(instance, 3e14);
+        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(instance, 0);
+        vm.stopPrank();
+        _balancerLiquidityAndSwaps(h, args);
+    }
+
+    function _balancerLiquidityAndSwaps(IBalancerHook h, IBalancerPkg.PkgArgs memory args) private {
+        uint256 n = args.tokens.length;
+        uint256[] memory amounts = new uint256[](n);
+        for (uint256 i; i < n; ++i) {
+            SimpleMintableERC20(args.tokens[i]).mint(detfUser, 10_000 ether);
+            vm.prank(detfUser);
+            IERC20(args.tokens[i]).approve(address(h), type(uint256).max);
+            amounts[i] = 100 ether;
+        }
+        (uint256 expected,) = h.previewJoinProportional(amounts);
+        vm.prank(detfUser);
+        (uint256 minted,) = h.joinProportional{gas: TX_GAS}(amounts, detfUser, expected, block.timestamp + 1);
+        assertEq(minted, expected, "Balancer initial LP quote");
+        assertGt(minted, 0);
+        _balancerFlexibleLiquidity(h, args);
+        _balancerNonProportionalLiquidity(h, args);
+        for (uint256 i; i < n; ++i) {
+            for (uint256 j; j < n; ++j) {
+                if (i != j) _balancerSwapRoute(h, args.tokens[i], args.tokens[j]);
+            }
+        }
+        _balancerPoolManagerSwaps(h, args.tokens[0], args.tokens[n - 1]);
+        _balancerSwapRoundTrip(h, args.tokens[0], args.tokens[n - 1]);
+        uint256 exitShares = minted / 3;
+        uint256[] memory outputs = h.previewExitProportional(exitShares);
+        uint256[] memory beforeBalances = new uint256[](n);
+        for (uint256 i; i < n; ++i) beforeBalances[i] = IERC20(args.tokens[i]).balanceOf(detfUser);
+        vm.prank(detfUser);
+        uint256[] memory actual = h.exitProportional{gas: TX_GAS}(exitShares, detfUser, outputs, block.timestamp + 1);
+        for (uint256 i; i < n; ++i) {
+            assertEq(actual[i], outputs[i], "Balancer exit quote");
+            assertEq(IERC20(args.tokens[i]).balanceOf(detfUser) - beforeBalances[i], outputs[i], "Balancer settled exit");
+            if (args.standardExchanges[i] == address(0)) continue;
+            uint256 dust = IERC20(args.tokens[i]).balanceOf(address(h));
+            if (dust > BalancerRepo.MAX_DUST_WEI) {
+                assertEq(IStandardExchangeIn(args.standardExchanges[i]).previewExchangeIn(
+                    IERC20(args.tokens[i]), dust - BalancerRepo.MAX_DUST_WEI, IERC20(args.standardExchanges[i])
+                ), 0, "no bufferable excess above retained dust");
+            }
+            assertEq(IERC20(args.tokens[i]).allowance(address(h), args.standardExchanges[i]), 0, "pair allowance cleared");
+            assertEq(IERC20(args.standardExchanges[i]).allowance(address(h), args.standardExchanges[i]), 0, "share allowance cleared");
+        }
+    }
+
+    function _balancerFlexibleLiquidity(IBalancerHook h, IBalancerPkg.PkgArgs memory args) private {
+        uint256 n = args.tokens.length;
+        uint256[] memory amounts = new uint256[](n);
+        bool[] memory flags = new bool[](n);
+        for (uint256 i; i < n; ++i) {
+            amounts[i] = 5 ether;
+            flags[i] = args.standardExchanges[i] != address(0) && i % 2 == 0;
+            if (flags[i]) {
+                vm.startPrank(detfUser);
+                IERC20(args.tokens[i]).approve(args.standardExchanges[i], amounts[i]);
+                amounts[i] = IStandardExchangeIn(args.standardExchanges[i]).exchangeIn{gas: TX_GAS}(
+                    IERC20(args.tokens[i]), amounts[i], IERC20(args.standardExchanges[i]), 1,
+                    detfUser, false, block.timestamp + 1
+                );
+                IERC20(args.standardExchanges[i]).approve(address(h), amounts[i]);
+                vm.stopPrank();
+            }
+        }
+        IBalancerUnits units = IBalancerUnits(address(h));
+        (uint256 expected, uint256[] memory used) = units.previewJoinProportionalFlexible(amounts, flags);
+        uint256[] memory beforeBalances = _balancerUnitBalances(args, flags);
+        vm.prank(detfUser);
+        (uint256 minted, uint256[] memory actual) = units.joinProportionalFlexible{gas: TX_GAS}(
+            amounts, flags, detfUser, expected, block.timestamp + 1
+        );
+        assertEq(minted, expected, "mixed pair/share join LP");
+        assertEq(actual, used, "mixed pair/share join units");
+        uint256[] memory afterBalances = _balancerUnitBalances(args, flags);
+        for (uint256 i; i < n; ++i) {
+            assertEq(beforeBalances[i] - afterBalances[i], used[i], "mixed pair/share input custody");
+            flags[i] = args.standardExchanges[i] != address(0);
+        }
+        uint256[] memory output = units.previewExitProportionalFlexible(minted, flags);
+        beforeBalances = _balancerUnitBalances(args, flags);
+        vm.prank(detfUser);
+        actual = units.exitProportionalFlexible{gas: TX_GAS}(minted, detfUser, flags, output, block.timestamp + 1);
+        assertEq(actual, output, "share exit quote");
+        afterBalances = _balancerUnitBalances(args, flags);
+        for (uint256 i; i < n; ++i) assertEq(afterBalances[i] - beforeBalances[i], output[i], "share exit custody");
+    }
+
+    function _balancerUnitBalances(IBalancerPkg.PkgArgs memory args, bool[] memory flags)
+        private view returns (uint256[] memory balances)
+    {
+        balances = new uint256[](flags.length);
+        for (uint256 i; i < flags.length; ++i) {
+            balances[i] = IERC20(flags[i] ? args.standardExchanges[i] : args.tokens[i]).balanceOf(detfUser);
+        }
+    }
+
+    function _balancerNonProportionalLiquidity(IBalancerHook h, IBalancerPkg.PkgArgs memory args) private {
+        uint256 n = args.tokens.length;
+        uint256[] memory amounts = new uint256[](n);
+        amounts[0] = 1 ether;
+        amounts[n - 1] = 2 ether;
+        uint256[] memory beforeBalances = _balancerUnitBalances(args, new bool[](n));
+        uint256 beforeLp = IERC20(address(h)).balanceOf(detfUser);
+        uint256 expected = h.previewJoinUnbalanced(amounts);
+        assertGt(expected, 0, "unbalanced join quote");
+        vm.prank(detfUser);
+        uint256 minted = h.joinUnbalanced{gas: TX_GAS}(amounts, detfUser, expected, block.timestamp + 1);
+        assertEq(minted, expected, "unbalanced join LP");
+        assertEq(IERC20(address(h)).balanceOf(detfUser) - beforeLp, expected, "unbalanced join LP custody");
+        for (uint256 i; i < n; ++i) {
+            assertEq(beforeBalances[i] - IERC20(args.tokens[i]).balanceOf(detfUser), amounts[i], "unbalanced input custody");
+        }
+        address output = args.tokens[n - 1];
+        expected = h.previewWithdrawSingle(output, minted);
+        uint256 beforeOut = IERC20(output).balanceOf(detfUser);
+        vm.prank(detfUser);
+        uint256 received = h.withdrawSingle{gas: TX_GAS}(output, minted, detfUser, expected, block.timestamp + 1);
+        assertEq(received, expected, "single exit quote");
+        assertEq(IERC20(output).balanceOf(detfUser) - beforeOut, expected, "single exit custody");
+        assertEq(IERC20(address(h)).balanceOf(detfUser), beforeLp, "single exit LP custody");
+        _balancerExactOutputLiquidity(h, output);
+    }
+
+    function _balancerExactOutputLiquidity(IBalancerHook h, address token) private {
+        uint256 lpOut = 0.1 ether;
+        uint256 expected = h.previewJoinSingleAssetExactOut(token, lpOut);
+        uint256 beforeToken = IERC20(token).balanceOf(detfUser);
+        uint256 beforeLp = IERC20(address(h)).balanceOf(detfUser);
+        vm.prank(detfUser);
+        uint256 spent = h.joinSingleAssetExactOut{gas: TX_GAS}(token, lpOut, detfUser, expected, block.timestamp + 1);
+        assertEq(spent, expected, "exact LP output input quote");
+        assertEq(beforeToken - IERC20(token).balanceOf(detfUser), expected, "exact LP output input custody");
+        assertEq(IERC20(address(h)).balanceOf(detfUser) - beforeLp, lpOut, "exact LP output custody");
+
+        uint256 tokenOut = 0.1 ether;
+        expected = h.previewWithdrawSingleExactOut(token, tokenOut);
+        beforeToken = IERC20(token).balanceOf(detfUser);
+        beforeLp = IERC20(address(h)).balanceOf(detfUser);
+        vm.prank(detfUser);
+        spent = h.withdrawSingleExactOut{gas: TX_GAS}(token, tokenOut, detfUser, expected, block.timestamp + 1);
+        assertEq(spent, expected, "exact token output LP quote");
+        assertEq(beforeLp - IERC20(address(h)).balanceOf(detfUser), expected, "exact token output LP custody");
+        assertEq(IERC20(token).balanceOf(detfUser) - beforeToken, tokenOut, "exact token output custody");
+    }
+
+    function _balancerSwapRoundTrip(IBalancerHook h, address tokenIn, address tokenOut) private {
+        uint256 beforeInput = IERC20(tokenIn).balanceOf(detfUser);
+        uint256 beforeOutput = IERC20(tokenOut).balanceOf(detfUser);
+        vm.prank(detfUser);
+        uint256 received = IStandardExchangeIn(address(h)).exchangeIn{gas: TX_GAS}(
+            IERC20(tokenIn), 1 ether, IERC20(tokenOut), 1, detfUser, false, block.timestamp + 1
+        );
+        vm.prank(detfUser);
+        IStandardExchangeIn(address(h)).exchangeIn{gas: TX_GAS}(
+            IERC20(tokenOut), received, IERC20(tokenIn), 1, detfUser, false, block.timestamp + 1
+        );
+        assertLe(IERC20(tokenIn).balanceOf(detfUser), beforeInput, "no profitable SE round trip");
+        assertEq(IERC20(tokenOut).balanceOf(detfUser), beforeOutput, "round trip consumed only its output");
+    }
+
+    function _balancerPoolManagerSwaps(IBalancerHook h, address first, address last) private {
+        WrapperExactOutRouter router = new WrapperExactOutRouter(pm);
+        vm.startPrank(detfUser);
+        IERC20(first).approve(address(router), type(uint256).max);
+        IERC20(last).approve(address(router), type(uint256).max);
+        vm.stopPrank();
+        PoolKey memory key = BalancerPairs.pairKey(first, last, 1, IHooks(address(h)));
+        SwapParams memory params = SwapParams(true, -int256(1 ether), TickMath.MIN_SQRT_PRICE + 1);
+        uint256 quote = _balancerQuoteDuringUnlock(h, first, last, 1 ether, false);
+        uint256 beforeOut = IERC20(last).balanceOf(detfUser);
+        vm.prank(detfUser);
+        router.swapExactIn{gas: TX_GAS}(key, params, "");
+        assertEq(IERC20(last).balanceOf(detfUser) - beforeOut, quote, "PoolManager exact-in settlement");
+        params = SwapParams(false, int256(0.5 ether), TickMath.MAX_SQRT_PRICE - 1);
+        quote = _balancerQuoteDuringUnlock(h, last, first, 0.5 ether, true);
+        uint256 beforeIn = IERC20(last).balanceOf(detfUser);
+        beforeOut = IERC20(first).balanceOf(detfUser);
+        vm.prank(detfUser);
+        router.swapExactOut{gas: TX_GAS}(key, params, quote, "");
+        assertEq(beforeIn - IERC20(last).balanceOf(detfUser), quote, "PoolManager exact-out input");
+        assertEq(IERC20(first).balanceOf(detfUser) - beforeOut, 0.5 ether, "PoolManager exact-out settlement");
+    }
+
+    function _balancerQuoteDuringUnlock(IBalancerHook h, address tokenIn, address tokenOut, uint256 amount, bool exactOut)
+        private returns (uint256)
+    {
+        // V4 SE previews follow the current PoolManager gate, just like settlement.
+        return abi.decode(pm.unlock{gas: TX_GAS}(abi.encode(h, tokenIn, tokenOut, amount, exactOut)), (uint256));
+    }
+
+    function unlockCallback(bytes calldata data) external returns (bytes memory) {
+        require(msg.sender == address(pm), "PoolManager only");
+        (IBalancerHook h, address tokenIn, address tokenOut, uint256 amount, bool exactOut) =
+            abi.decode(data, (IBalancerHook, address, address, uint256, bool));
+        return abi.encode(exactOut ? h.previewSwapExactOut(tokenIn, tokenOut, amount)
+            : h.previewSwapExactIn(tokenIn, tokenOut, amount));
+    }
+
+    function _balancerSwapRoute(IBalancerHook h, address tokenIn, address tokenOut) private {
+        uint256 quote = h.previewSwapExactIn(tokenIn, tokenOut, 1 ether);
+        assertGt(quote, 0);
+        uint256 beforeOut = IERC20(tokenOut).balanceOf(detfUser);
+        vm.prank(detfUser);
+        uint256 actual = IStandardExchangeIn(address(h)).exchangeIn{gas: TX_GAS}(
+            IERC20(tokenIn), 1 ether, IERC20(tokenOut), quote, detfUser, false, block.timestamp + 1
+        );
+        assertEq(actual, quote, "Balancer exact-in quote");
+        assertEq(IERC20(tokenOut).balanceOf(detfUser) - beforeOut, quote, "Balancer exact-in settlement");
+        quote = h.previewSwapExactOut(tokenIn, tokenOut, 0.5 ether);
+        uint256 beforeIn = IERC20(tokenIn).balanceOf(detfUser);
+        beforeOut = IERC20(tokenOut).balanceOf(detfUser);
+        vm.prank(detfUser);
+        actual = IStandardExchangeOut(address(h)).exchangeOut{gas: TX_GAS}(
+            IERC20(tokenIn), quote, IERC20(tokenOut), 0.5 ether, detfUser, false, block.timestamp + 1
+        );
+        assertEq(actual, quote, "Balancer exact-out quote");
+        assertEq(beforeIn - IERC20(tokenIn).balanceOf(detfUser), quote, "Balancer exact-out input");
+        assertEq(IERC20(tokenOut).balanceOf(detfUser) - beforeOut, 0.5 ether, "Balancer exact-out settlement");
+    }
+
+    function test_cp_v4_publicLiquidity() public { _rehearse(0, 2, false); }
+    function test_weighted_v4_publicLiquidity() public { _rehearse(1, 2, false); }
+    function test_quad_v4_publicLiquidity() public { _rehearse(2, 2, false); }
+
+    function _rehearse(uint256 family, uint256 backend) internal { _rehearse(family, backend, true); }
+
+    function _rehearse(uint256 family, uint256 backend, bool restricted) internal {
+        for (uint256 i; i <= family; ++i) {
+            address pair = address(new SimpleMintableERC20("Rehearsal pair", "PAIR"));
+            address other = address(new SimpleMintableERC20("Rehearsal counter asset", "OTHER"));
+            pairs.push(pair);
+            exchanges.push(_deploySe(backend, pair, other));
+        }
+        pairToken = SimpleMintableERC20(pairs[0]);
+        se = exchanges[0];
+        IUniswapV4Detf.PkgArgs memory args = _nLegDetfArgs(pairs.length);
+        args.ownerOnlyLiquidity = restricted;
+        args.name = "Rehearsal DETF";
+        args.symbol = "DETF";
+        if (backend == 0) {
+            // V2 vault shares include a virtual-share precision offset. Set the
+            // bootstrap denomination from the SE quote so stable legs start balanced.
+            for (uint256 i; i < pairs.length; ++i) {
+                uint256 shares = IStandardExchangeIn(exchanges[i]).previewExchangeIn(
+                    IERC20(pairs[i]), 1 ether, IERC20(exchanges[i])
+                );
+                args.creationPairPerDetfWad[i] = 1e36 / shares;
+                assertGt(args.creationPairPerDetfWad[i], 0, "nonzero bootstrap denomination");
+            }
+        }
+        if (family == 0) detf = _deployHookThenDetf(args);
+        else if (family == 1) detf = _deployWeighted(args);
+        else detf = _deployQuad(args);
+        detfInfo = IUniswapV4Detf(detf);
+        detfExchangeIn = IStandardExchangeIn(detf);
+        assertEq(detfInfo.ownerOnlyLiquidity(), restricted, "DETF deployment policy");
+        assertEq(IUniswapV4HookLiquidityPolicy(reserveHook).ownerOnlyLiquidity(), restricted, "actual hook policy agrees");
+        assertEq(IMultiStepOwnable(reserveHook).owner(), detf, "DETF remains hook administrator");
+        assertEq(IERC20Metadata(detf).symbol(), "DETF");
+        assertEq(IERC20Metadata(detf).decimals(), 9);
+        vm.prank(owner);
+        IVaultFeeOracleManager(address(indexedexManager)).setVaultBondTerms(detf, BondTerms({
+            minLockDuration: DEFAULT_MIN_LOCK, maxLockDuration: DEFAULT_MAX_LOCK,
+            minBonusPercentage: 0, maxBonusPercentage: 0.5e18
+        }));
+        for (uint256 i; i < pairs.length; ++i) {
+            SimpleMintableERC20(pairs[i]).mint(detfUser, 1_000_000 ether);
+            vm.prank(detfUser);
+            IERC20(pairs[i]).approve(detf, type(uint256).max);
+        }
+        vm.prank(detfUser);
+        IERC20(detf).approve(detf, type(uint256).max);
+        _lifecycle();
+    }
+
+    function _deploySe(uint256 backend, address pair, address other) internal returns (address) {
+        if (backend == 0) {
+            IUniswapV2Pair pool = IUniswapV2Pair(IUniswapV2Factory(V2_FACTORY).createPair(pair, other));
+            SimpleMintableERC20(pair).mint(address(pool), 1_000_000 ether);
+            SimpleMintableERC20(other).mint(address(pool), 1_000_000 ether);
+            pool.mint(address(this));
+            return IUniswapV2StandardExchangeDFPkg(_pin("phase05_stage06_uniswap_v2_standard_exchange_pkg.json", ".uniV2SePkg", true)).deployVault(pool);
+        }
+        if (backend == 1) {
+            IUniswapV3Pool pool = SeDeploy.createUniv3PoolOneToOne(IUniswapV3Factory(V3_FACTORY), pair, other, 3000);
+            SeDeploy.seedUniv3Pool(pool);
+            address vault_ = SeDeploy.deployUniv3Vault(IUniswapV3StandardExchangeDFPkg(_pin("phase05_stage04_uniswap_v3_standard_exchange_pkg.json", ".uniV3SePkg", true)), pool);
+            _activatePositionSe(vault_, pair, other);
+            return vault_;
+        }
+        if (backend == 2) {
+            PoolKey memory key = SeDeploy.initAndSeedUniv4Pool(pm, pair, other);
+            address vault_ = SeDeploy.deployUniv4Vault(IUniswapV4StandardExchangeDFPkg(_pin("phase05_stage03_uniswap_v4_standard_exchange_pkg.json", ".uniV4SePkg", true)), key);
+            _activatePositionSe(vault_, pair, other);
+            return vault_;
+        }
+        IMorpho morpho = IMorpho(MORPHO);
+        assertTrue(morpho.isIrmEnabled(MORPHO_IRM), "live IRM enabled");
+        assertTrue(morpho.isLltvEnabled(0), "live supply-only LLTV enabled");
+        // A zero-LLTV market never reads its oracle. The token has no price() function,
+        // so an unexpected oracle call fails instead of supplying a fabricated price.
+        MarketParams memory market = MarketParams(pair, other, other, MORPHO_IRM, 0);
+        morpho.createMarket(market);
+        return IMorphoBlueStandardExchangeDFPkg(_pin("phase05_stage05_morpho_blue_standard_exchange_pkg.json", ".morphoBlueSePkg", true)).deployVault(IMorphoBlueStandardExchangeDFPkg.PkgArgs(morpho, market));
+    }
+
+    function _sorted(address predicted) internal view returns (address[] memory tokens, address[] memory ses) {
+        tokens = new address[](pairs.length + 1);
+        ses = new address[](tokens.length);
+        tokens[0] = predicted;
+        for (uint256 i; i < pairs.length; ++i) tokens[i + 1] = pairs[i];
+        for (uint256 i; i < tokens.length; ++i) {
+            for (uint256 j = i + 1; j < tokens.length; ++j) {
+                if (tokens[i] > tokens[j]) (tokens[i], tokens[j]) = (tokens[j], tokens[i]);
+            }
+            for (uint256 j; j < pairs.length; ++j) if (tokens[i] == pairs[j]) ses[i] = exchanges[j];
+        }
+    }
+
+    function _deployWeighted(IUniswapV4Detf.PkgArgs memory args) internal returns (address) {
+        address predicted = _predictDetf(args);
+        (address[] memory tokens, address[] memory ses) = _sorted(predicted);
+        uint256[] memory weights = new uint256[](3);
+        for (uint256 i; i < 3; ++i) weights[i] = tokens[i] == predicted ? 4e17 : 3e17;
+        IWeightedPkg pkg = IWeightedPkg(_pin("phase06_stage04_weighted_buffer_hook_pkg.json", ".weightedHookPkg", true));
+        IWeightedPkg.PkgArgs memory h = IWeightedPkg.PkgArgs({
+            poolManager: address(pm), feeOracle: address(indexedexManager), n: 3,
+            tokens: tokens, weights: weights, standardExchanges: ses, rateProviders: new address[](3),
+            tokenDecimals: Decimals.tokenDecimals(tokens), seDecimals: Decimals.seDecimals(ses),
+            ownerOnlyLiquidity: args.ownerOnlyLiquidity, owner: predicted
+        });
+        reserveHook = WeightedFactory.deployHook(pkg, h, WeightedFactory.findMineNonce(hookFactory, pkg, h));
+        return _finalizeAndDeploy(args, predicted, tokens);
+    }
+
+    function _deployQuad(IUniswapV4Detf.PkgArgs memory args) internal returns (address) {
+        address predicted = _predictDetf(args);
+        (address[] memory tokens, address[] memory ses) = _sorted(predicted);
+        address[4] memory tokens4;
+        address[4] memory ses4;
+        address[4] memory rates;
+        for (uint256 i; i < 4; ++i) { tokens4[i] = tokens[i]; ses4[i] = ses[i]; }
+        IQuadPkg pkg = IQuadPkg(_pin("phase06_stage06_curve_quad_buffer_hook_pkg.json", ".curveQuadHookPkg", true));
+        IQuadPkg.PkgArgs memory h = IQuadPkg.PkgArgs({
+            poolManager: address(pm), feeOracle: address(indexedexManager), tokens: tokens4,
+            standardExchanges: ses4, rateProviders: rates, tokenDecimals: Decimals.tokenDecimals4(tokens4),
+            seDecimals: Decimals.seDecimals4(ses4), baseAmp: 100, ownerOnlyLiquidity: args.ownerOnlyLiquidity, owner: predicted
+        });
+        reserveHook = QuadFactory.deployHook(pkg, h, QuadFactory.findMineNonce(hookFactory, pkg, h));
+        return _finalizeAndDeploy(args, predicted, tokens);
+    }
+
+    function _finalizeAndDeploy(IUniswapV4Detf.PkgArgs memory args, address predicted, address[] memory tokens) internal returns (address result) {
+        IUniswapV4HookStagedPairInit init = IUniswapV4HookStagedPairInit(reserveHook);
+        for (uint256 i; i < tokens.length; ++i) {
+            for (uint256 j = i + 1; j < tokens.length; ++j) init.deployPair(tokens[i], tokens[j]);
+        }
+        assertTrue(init.finalizeInitialization());
+        args.hook = reserveHook;
+        vm.prank(owner);
+        result = detfPkg.deployVault(args);
+        assertEq(result, predicted, "predicted DETF");
+    }
+
+    function _lifecycle() internal {
+        vm.prank(owner);
+        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(reserveHook, 0.1e18);
+        vm.prank(detfUser);
+        (uint256 bondId,) = detfInfo.bond{gas: TX_GAS}(IERC20(address(pairToken)), 100 ether, DEFAULT_MIN_LOCK, detfUser, false, block.timestamp + 1 hours);
+        uint256 mintQuote = detfExchangeIn.previewExchangeIn{gas: TX_GAS}(IERC20(address(pairToken)), 10 ether, IERC20(detf));
+        vm.prank(detfUser);
+        assertEq(detfExchangeIn.exchangeIn{gas: TX_GAS}(IERC20(address(pairToken)), 10 ether, IERC20(detf), mintQuote, detfUser, false, block.timestamp + 1 hours), mintQuote, "standard purchase quote");
+        uint256 burnAmount = mintQuote / 4;
+        uint256 burnQuote = detfExchangeIn.previewExchangeIn{gas: TX_GAS}(IERC20(detf), burnAmount, IERC20(address(pairToken)));
+        vm.prank(detfUser);
+        assertEq(detfExchangeIn.exchangeIn{gas: TX_GAS}(IERC20(detf), burnAmount, IERC20(address(pairToken)), burnQuote, detfUser, false, block.timestamp + 1 hours), burnQuote, "standard reserve exit quote");
+        _assertFundedMatureClaim(detf, bondId, detfUser);
+        _claimAndCheckFeeBond();
+        _checkFeeLpRedemption();
+        detfInfo.sweepDust{gas: TX_GAS}();
+        assertEq(IERC20(reserveHook).balanceOf(detf), 0, "reserve held in NFT custody");
+        for (uint256 i; i < pairs.length; ++i) {
+            assertLe(IERC20(pairs[i]).balanceOf(detf), 10, "pair dust");
+            assertEq(IERC20(exchanges[i]).allowance(reserveHook, exchanges[i]), 0, "temporary SE allowance cleared");
+        }
+    }
+
+    function _claimAndCheckFeeBond() internal {
+        IDetfBondNFT nft = IDetfBondNFT(detfInfo.bondNftVault());
+        IFeeCollectorProxy collector = IVaultFeeOracleQuery(address(indexedexManager)).feeTo();
+        assertEq(nft.ownerOf(1), address(collector), "original standing fee role");
+        IStakedDETF receipt = IStakedDETF(detfInfo.rebasingClaimToken());
+        uint256 fees = receipt.balanceOf(address(collector));
+        assertGt(fees, 0, "standing fees already funded");
+        address collectorOwner = IMultiStepOwnable(address(collector)).owner();
+        vm.prank(collectorOwner);
+        collector.pullFee(IERC20(address(receipt)), fees, detfUser);
+        assertEq(receipt.balanceOf(address(collector)), 0, "all displayed fee receipts transferred");
+        _assertFundedUnstake(detf, detfUser, fees);
+        vm.prank(detfUser);
+        detfInfo.bond{gas: TX_GAS}(IERC20(address(pairToken)), 10 ether, DEFAULT_MIN_LOCK, detfUser, false, block.timestamp);
+        assertGt(receipt.balanceOf(address(collector)), 0, "new issuance pays standing rights after full prior receipt redemption");
+        assertEq(nft.positionOf(1).principal, 0, "standing role is not purchased LP principal");
+        assertGe(IERC20(detf).balanceOf(address(receipt)), receipt.totalSupply(), "actual held DETF backs staking");
+    }
+
+    function _checkFeeLpRedemption() internal {
+        IFeeCollectorProxy collector = IVaultFeeOracleQuery(address(indexedexManager)).feeTo();
+        IERC20 lp = IERC20(reserveHook);
+        uint256 amount = lp.balanceOf(address(collector)) / 2;
+        assertGt(amount, 0, "real accrued fee LP");
+        uint256 owned = lp.balanceOf(detfInfo.bondNftVault());
+        uint256[] memory quote = IUniswapV4SeBufferHook(reserveHook).previewExitProportional{gas: TX_GAS}(amount);
+        address recipient = makeAddr("rehearsal fee redemption");
+        address[] memory tokens = IUniswapV4SeBufferHook(reserveHook).tokens();
+        vm.prank(IMultiStepOwnable(address(collector)).owner());
+        uint256[] memory actual = collector.redeemReserveLiquidity{gas: TX_GAS}(lp, amount, quote, recipient, block.timestamp);
+        assertEq(actual, quote, "collector proportional redemption preview");
+        for (uint256 i; i < tokens.length; ++i) assertEq(IERC20(tokens[i]).balanceOf(recipient), actual[i], "collector actual settlement");
+        assertEq(lp.balanceOf(detfInfo.bondNftVault()), owned, "external fee LP redemption preserves protocol-owned LP");
+        assertEq(lp.allowance(address(collector), reserveHook), 0, "collector clears LP approval");
+    }
+
+    function _activatePositionSe(address vault_, address pair_, address other_) internal {
+        address[] memory tokens_ = new address[](2);
+        tokens_[0] = pair_ < other_ ? pair_ : other_;
+        tokens_[1] = pair_ < other_ ? other_ : pair_;
+        uint256[] memory amounts_ = new uint256[](2);
+        for (uint256 i_; i_ < 2; ++i_) {
+            amounts_[i_] = 10_000 ether;
+            SimpleMintableERC20(tokens_[i_]).mint(address(this), amounts_[i_]);
+            IERC20(tokens_[i_]).approve(vault_, amounts_[i_]);
+        }
+        uint256 quote_ = IStandardExchangeInMulti(vault_).previewExchangeInManyToOne(tokens_, amounts_, IERC20(vault_));
+        uint256 actual_ = IStandardExchangeInMulti(vault_).exchangeInManyToOne{gas: TX_GAS}(tokens_, amounts_, IERC20(vault_), quote_, address(this), false, block.timestamp);
+        assertGt(actual_, 0, "both tokens activate position SE");
+        assertEq(actual_, quote_, "position activation quote");
+    }
+}

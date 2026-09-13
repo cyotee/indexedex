@@ -5,6 +5,9 @@ pragma solidity ^0.8.0;
 /*                                    Crane                                   */
 /* -------------------------------------------------------------------------- */
 
+import {Hooks} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Hooks.sol";
+import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
+import {PoolId, PoolIdLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolId.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
 import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/TickMath.sol";
@@ -13,6 +16,49 @@ import {UniswapV4ZapQuoter} from "@crane/contracts/protocols/dexes/uniswap/v4/ut
 import {ConstProdUtils} from "@crane/contracts/utils/math/ConstProdUtils.sol";
 
 library UniswapV4QuoteService {
+    /// @dev Pons V2 takes separate floored cuts on the unspecified swap leg.
+    /// Read the immutable per-pool launch terms, not the policy for future launches.
+    function _ponsHookFees(PoolKey memory key)
+        private view returns (bool supported, uint256 feeBps, uint256 taxBps)
+    {
+        uint160 flags = uint160(address(key.hooks)) & Hooks.ALL_HOOK_MASK;
+        if (flags != (Hooks.BEFORE_INITIALIZE_FLAG | Hooks.AFTER_SWAP_FLAG | Hooks.AFTER_SWAP_RETURNS_DELTA_FLAG)) {
+            return (false, 0, 0);
+        }
+        (bool ok, bytes memory result) = address(key.hooks).staticcall(
+            abi.encodeWithSignature("launches(bytes32)", PoolId.unwrap(key.toId()))
+        );
+        if (!ok || result.length != 13 * 32) return (false, 0, 0);
+        // Pinned Pons LaunchInfo has thirteen static words. Decode raw words once;
+        // validate the fields used here without embedding thirteen typed ABI decoders.
+        uint256[13] memory info = abi.decode(result, (uint256[13]));
+        if (info[0] != 1 || info[1] > 1 || info[10] > 2_000 || info[7] > 2_000
+            || info[10] + info[7] > 2_000) return (false, 0, 0);
+        if (info[2] != uint160(Currency.unwrap(info[1] == 1 ? key.currency0 : key.currency1))
+            || info[3] != uint160(Currency.unwrap(info[1] == 1 ? key.currency1 : key.currency0))) {
+            return (false, 0, 0);
+        }
+        return (true, info[10], info[7]);
+    }
+
+    function _supportsProjectedHook(PoolKey memory key) internal view returns (bool) {
+        if (address(key.hooks) == address(0)) return true;
+        (bool supported,,) = _ponsHookFees(key);
+        return supported;
+    }
+
+    function _adjustHookSwap(PoolKey memory key, uint256 amount, bool exactInput)
+        internal view returns (uint256)
+    {
+        if (address(key.hooks) == address(0) || address(key.hooks) == address(this) || amount == 0) return amount;
+        (bool supported, uint256 feeBps, uint256 taxBps) = _ponsHookFees(key);
+        if (!supported) return amount; // Retain the existing quote path for other hooks.
+        uint256 charge = amount * feeBps / 10_000 + amount * taxBps / 10_000;
+        return exactInput ? amount - charge : amount + charge;
+    }
+
+    using PoolIdLibrary for PoolKey;
+
     uint16 internal constant DEFAULT_ZAP_SEARCH_ITERS = 20;
     uint8 internal constant DEFAULT_SHARE_SEARCH_ITERS = 24;
 
@@ -63,7 +109,7 @@ library UniswapV4QuoteService {
             })
         );
 
-        return quote.amountOut;
+        return _adjustHookSwap(p.key, quote.amountOut, true);
     }
 
     function _quoteDirectExactOutput(DirectQuoteParams memory p) internal view returns (uint256 amountIn) {
@@ -86,7 +132,7 @@ library UniswapV4QuoteService {
             return type(uint256).max;
         }
 
-        return quote.amountIn;
+        return _adjustHookSwap(p.key, quote.amountIn, false);
     }
 
     function _quoteZapInShares(ZapInQuoteParams memory p) internal view returns (uint256 sharesOut) {

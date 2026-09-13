@@ -1,0 +1,21 @@
+{
+  "status": "The real three-leg lifecycle passed all eight decimal books in a single compiled test; 17 Mixed funded tests and six Mixed reentrancy tests also passed. Legacy decimal callers remain to migrate.",
+  "change": "Decimal books retain actual Aerodrome pools and existing raw fixture amounts; share all funded package deployment, registry, mandatory gating, bootstrap and route helpers. Removed copied legacy NFT, expansion and Open-mode setup.",
+  "sources": [
+    {
+      "source": "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/TestBase_MixedBufferMultiVaultStableDetf.sol",
+      "before_sha256": "deb0957f440063bc344325975cf98657837c1f202748c3d39b757f89b4c7298e",
+      "after_sha256": "6e3f491a646e8b31cde509855bbbe31a0f63f58321501820392246794a7b40ee",
+      "before_lines": 446,
+      "after_lines": 455
+    },
+    {
+      "source": "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/TestBase_MixedBufferMultiVaultStableDetf_Decimals.sol",
+      "before_sha256": "5dd0f301aeb31e61ce2e63d7570616fcf7d75c75b0f9f2ff681d5b7af03e0406",
+      "after_sha256": "31ae5110c667efe038666d8d4286685c9ad97920e94ba63462592fa86804d49d",
+      "before_lines": 932,
+      "after_lines": 133
+    }
+  ],
+  "validation": "mixed-eight-decimal-books-and-aerodrome-prepayment-run.json (50 passed, one distinct Aerodrome prepaid-input failure)"
+}

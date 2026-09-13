@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+import {ConstantProductStandardYieldTarget} from "contracts/vaults/standard/sy/ConstantProductStandardYieldTarget.sol";
+import {NativeStandardYieldSelectors} from "contracts/vaults/standard/sy/NativeStandardYieldSelectors.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                    Crane                                   */
@@ -16,7 +19,7 @@ import {
     CamelotV2StandardExchangeInTarget
 } from "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeInTarget.sol";
 
-contract CamelotV2StandardExchangeInFacet is CamelotV2StandardExchangeInTarget, IFacet {
+contract CamelotV2StandardExchangeInFacet is CamelotV2StandardExchangeInTarget, ConstantProductStandardYieldTarget, IFacet {
     function facetName() public pure returns (string memory name) {
         return type(CamelotV2StandardExchangeInFacet).name;
     }
@@ -30,7 +33,8 @@ contract CamelotV2StandardExchangeInFacet is CamelotV2StandardExchangeInTarget, 
             bytes4[] memory interfaces
         )
     {
-        interfaces = new bytes4[](1);
+        interfaces = new bytes4[](2);
+        interfaces[1] = type(IStandardizedYield).interfaceId;
 
         interfaces[0] = type(IStandardExchangeIn).interfaceId;
     }
@@ -48,6 +52,7 @@ contract CamelotV2StandardExchangeInFacet is CamelotV2StandardExchangeInTarget, 
 
         funcs[0] = IStandardExchangeIn.previewExchangeIn.selector;
         funcs[1] = IStandardExchangeIn.exchangeIn.selector;
+        funcs = NativeStandardYieldSelectors._append(funcs);
     }
 
     function facetMetadata()

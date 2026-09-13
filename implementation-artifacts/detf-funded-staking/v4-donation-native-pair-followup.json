@@ -1,0 +1,6 @@
+{
+  "status": "applied; validation pending",
+  "production": "Native pair donation now directly uses the existing reserve hook single-asset join and matching preview, as ordinary issuance already does; clears exact approval and preserves LP custody/bookkeeping. Existing SE-share donation continues to use the share join.",
+  "tests": "Exact donation preview checks retained. T7.18 now asserts absence of both retired LP-claim projections.",
+  "remaining": "SE-share fallback purchase external redemption transition quote remains unresolved; T7.7 exact mismatch retained."
+}

@@ -2,124 +2,135 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
-import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
+
 import {IUniswapV4Detf} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
 import {UniswapV4Detf_Alignment_RedeemD15PolicyBase} from
     "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_RedeemD15PolicyBase.sol";
 
-/**
- * @title UniswapV4Detf_Alignment_RedeemD15Base
- * @notice Gold-full D15 (CP). D15-5 N/A single leftover pair.
- * @dev No public `test_D15_5_multiLegLeftoverDump` (R-2). Multi-leg leftover dump is n-leg gold only.
- */
-abstract contract UniswapV4Detf_Alignment_RedeemD15Base is UniswapV4Detf_Alignment_RedeemD15PolicyBase {
-    function test_D15_2_smallRedeemConsumesPending() public {
-        uint256 claimBal_ = _sellAndClaimOn(detf, detfUser, 100 ether, 60 ether);
-        uint256 redeem_ = claimBal_ / 10;
-        if (redeem_ == 0) redeem_ = 1;
-        uint256 nftDetfBefore_ = IERC20(detf).balanceOf(address(_nft()));
-        uint256 out_ = _redeemOn(detf, detfUser, redeem_);
-        assertGt(out_, 0, "D15-2");
-        uint256 nftDetfAfter_ = IERC20(detf).balanceOf(address(_nft()));
-        if (nftDetfBefore_ > 0) {
-            assertLe(nftDetfAfter_, nftDetfBefore_, "D15-2 pending consumed or held");
+import {Test} from "forge-std/Test.sol";
+import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
+import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
+import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+
+/// @notice Funded unstaking assertions shared by the real CP, Weighted, Orbital and Quad books.
+abstract contract V4FundedUnstakeBehavior is Test {
+    function _d15Prepare(bool premium_) internal virtual returns (IUniswapV4Detf subject_, address holder_, uint256 keepId_);
+
+    struct UnstakeSnapshot {
+        uint256 backing;
+        uint256 rawBalance;
+        uint256 receipts;
+        uint256 supply;
+        uint256 ownedLp;
+        bytes32 reserveBook;
+    }
+
+    function _d15Snapshot(IUniswapV4Detf subject_, address holder_) private view returns (UnstakeSnapshot memory s_) {
+        IStakedDETF staking_ = IStakedDETF(subject_.rebasingClaimToken());
+        s_.backing = IERC20(address(subject_)).balanceOf(address(staking_));
+        s_.rawBalance = IERC20(address(subject_)).balanceOf(holder_);
+        s_.receipts = staking_.balanceOf(holder_);
+        s_.supply = IERC20(address(subject_)).totalSupply();
+        s_.ownedLp = IERC20(subject_.hook()).balanceOf(subject_.bondNftVault());
+        IUniswapV4SeBufferHook hook_ = IUniswapV4SeBufferHook(subject_.hook());
+        s_.reserveBook = keccak256(abi.encode(IERC20(subject_.hook()).totalSupply(), s_.ownedLp));
+        address[] memory tokens_ = hook_.tokens();
+        for (uint256 i_; i_ < tokens_.length; ++i_) {
+            address se_ = hook_.standardExchangeOf(tokens_[i_]);
+            s_.reserveBook = keccak256(abi.encode(s_.reserveBook,
+                IERC20(tokens_[i_]).balanceOf(address(hook_)),
+                IERC20(tokens_[i_]).balanceOf(subject_.bondNftVault()),
+                IERC20(tokens_[i_]).balanceOf(address(subject_)),
+                tokens_[i_] == address(subject_) ? 0 : IERC20(tokens_[i_]).balanceOf(holder_),
+                se_ == address(0) ? 0 : IERC20(se_).balanceOf(address(hook_)),
+                se_ == address(0) ? 0 : IERC20(se_).balanceOf(holder_)
+            ));
         }
     }
 
-    function test_D15_3_pendingCoversOwed_skipsLpWithdraw() public {
-        uint256 claimBal_ = _sellAndClaimOn(detf, detfUser, 100 ether, 60 ether);
-        IDETFNFTVault nft_ = _nft();
-        IERC20 lp_ = nft_.lpToken();
-        deal(detf, address(nft_), IERC20(detf).balanceOf(address(nft_)) + 80 ether);
-        uint256 lpBefore_ = lp_.balanceOf(address(nft_));
-        uint256 origBefore_ = nft_.originalSharesOf(nft_.detfNFTId());
-        uint256 redeem_ = claimBal_ / 50;
-        if (redeem_ == 0) redeem_ = 1;
-        uint256 out_ = _redeemOn(detf, detfUser, redeem_);
-        assertGt(out_, 0, "D15-3 paid");
-        assertGe(lp_.balanceOf(address(nft_)), lpBefore_, "D15-3 no LP withdraw");
-        assertGe(nft_.originalSharesOf(nft_.detfNFTId()) + 1, origBefore_, "D15-3 orig except leftover compound");
+    function _d15Unstake(IUniswapV4Detf subject_, address holder_, uint256 amount_, uint256 expansion_) private {
+        IStakedDETF staking_ = IStakedDETF(subject_.rebasingClaimToken());
+        UnstakeSnapshot memory before_ = _d15Snapshot(subject_, holder_);
+        uint256 quote_ = staking_.previewExchangeIn(IERC20(address(staking_)), amount_, IERC20(address(subject_)));
+        assertEq(quote_, amount_, "exact held-DETF entitlement");
+        vm.prank(holder_);
+        uint256 paid_ = staking_.exchangeIn(IERC20(address(staking_)), amount_, IERC20(address(subject_)), amount_, holder_, false, block.timestamp);
+        assertEq(paid_, amount_);
+        UnstakeSnapshot memory after_ = _d15Snapshot(subject_, holder_);
+        assertEq(after_.rawBalance, before_.rawBalance + amount_, "actual held DETF paid");
+        assertEq(after_.backing, before_.backing + expansion_ - amount_, "only funded expansion and unstake change backing");
+        assertEq(after_.supply, before_.supply + expansion_, "unstaking has no DETF issuance or burn");
+        assertEq(after_.reserveBook, before_.reserveBook, "LP and every reserve/SE leg untouched");
+        if (expansion_ == 0) assertEq(after_.receipts, before_.receipts - amount_, "exact sDETF debit");
     }
 
-    function test_D15_4_shortfallResidualBuy_otherBondersUnchanged() public {
-        (uint256 keepBondId,) = _firstBond(100 ether);
-        (uint256 sellId,) = _firstBond(60 ether);
-        IDETFNFTVault nft_ = _nft();
-        uint256 keepOrig_ = nft_.originalSharesOf(keepBondId);
-        _warpMature(sellId);
-        _d10SellToClaimOn(detf, sellId, detfUser);
-        uint256 claimBal_ = _claimTok().balanceOf(detfUser);
-        uint256 pairBefore_ = pairToken.balanceOf(detfUser);
-        uint256 redeem_ = claimBal_ / 2;
-        if (redeem_ == 0) redeem_ = claimBal_;
-        uint256 out_ = _redeemOn(detf, detfUser, redeem_);
-        assertGt(out_, 0, "D15-4 paid");
-        assertEq(nft_.originalSharesOf(keepBondId), keepOrig_, "D15-4 other originalShares");
-        assertEq(pairToken.balanceOf(detfUser), pairBefore_, "D15-4 no pair to redeemer");
+    function test_D15_partialThenFullUnstakeUsesOnlyFundedBacking() public {
+        (IUniswapV4Detf subject_, address holder_,) = _d15Prepare(false);
+        uint256 amount_ = IStakedDETF(subject_.rebasingClaimToken()).balanceOf(holder_);
+        assertGt(amount_, 1);
+        _d15Unstake(subject_, holder_, amount_ / 10, 0);
+        _d15Unstake(subject_, holder_, amount_ - amount_ / 10, 0);
+        assertEq(IStakedDETF(subject_.rebasingClaimToken()).balanceOf(holder_), 0, "full remaining receipt redemption");
     }
 
-    function test_D15_6_lastExitRejoinsLeftover() public {
-        IUniswapV4Detf.PkgArgs memory args_ = _openArgsPolicy();
-        args_ = _withTag(args_, string.concat("d156", _nextTag()));
-        address instance_ = _deployInstance(args_);
-        _bindPolicy(instance_);
-        (uint256 tokenId,) = _bondOn(instance_, detfUser, 80 ether);
-        _warpMatureOf(instance_, tokenId);
-        _d10SellToClaimOn(instance_, tokenId, detfUser);
-        uint256 claimBal_ = _claimTokOf(instance_).balanceOf(detfUser);
-        assertGt(claimBal_, 0, "D15-6 claim");
-        IDETFNFTVault nft_ = _nftOf(instance_);
-        uint256 pairBefore_ = pairToken.balanceOf(detfUser);
-        uint256 out_ = _redeemOn(instance_, detfUser, claimBal_);
-        assertGt(out_, 0, "D15-6 DETF out");
-        assertEq(pairToken.balanceOf(detfUser), pairBefore_, "D15-6 no pair to redeemer");
-        assertGt(IERC20(nft_.lpToken()).balanceOf(address(nft_)), 0, "D15-6 leftover pair rejoined");
-        assertGt(nft_.originalSharesOf(nft_.detfNFTId()), 0, "D15-6 id0 lpOut");
+    function test_D15_unstakePreservesOtherBondPrincipalAndGons() public {
+        (IUniswapV4Detf subject_, address holder_, uint256 keepId_) = _d15Prepare(false);
+        IDetfBondNFT nft_ = IDetfBondNFT(subject_.bondNftVault());
+        IStakedDETF staking_ = IStakedDETF(subject_.rebasingClaimToken());
+        bytes32 before_ = keccak256(abi.encode(nft_.positionOf(keepId_)));
+        uint256 escrow_ = staking_.gonsOf(address(nft_));
+        _d15Unstake(subject_, holder_, staking_.balanceOf(holder_) / 2, 0);
+        assertEq(keccak256(abi.encode(nft_.positionOf(keepId_))), before_, "other purchased principal/vesting/gons unchanged");
+        assertEq(staking_.gonsOf(address(nft_)), escrow_, "other escrow cannot fund unstaking");
     }
 
-    function test_D15_7_realizeExpansionFirst_paysFromId0Slice() public {
-        address instance_ = _deployD31LaunchRichLive();
-        (uint256 tokenId,) = _bondOn(instance_, detfUser, 40 ether);
-        _warpMatureOf(instance_, tokenId);
-        _d10SellToClaimOn(instance_, tokenId, detfUser);
-        uint256 claimBal_ = _claimTokOf(instance_).balanceOf(detfUser);
-        vm.warp(block.timestamp + POLICY_EXPANSION_EPOCH * POLICY_EXPANSION_CATCHUP);
-        IUniswapV4Detf info_ = IUniswapV4Detf(instance_);
-        uint256 pendingExp_ = info_.pendingExpansionDetf();
-        uint256 nftDetfBefore_ = IERC20(instance_).balanceOf(info_.bondNftVault());
-        uint256 redeem_ = claimBal_ / 4;
-        if (redeem_ == 0) redeem_ = claimBal_;
-        uint256 out_ = _redeemOn(instance_, detfUser, redeem_);
-        assertGt(out_, 0, "D15-7 paid");
-        if (pendingExp_ > 0) {
-            assertLt(info_.pendingExpansionDetf(), pendingExp_, "D15-7 realized pending");
-            assertGe(
-                IERC20(instance_).balanceOf(info_.bondNftVault()) + out_ + 1,
-                nftDetfBefore_,
-                "D15-7 id0 slice"
-            );
+    function test_D15_unstakeDoesNotRequireProtocolLpInventory() public {
+        (IUniswapV4Detf subject_, address holder_,) = _d15Prepare(false);
+        IDetfBondNFT nft_ = IDetfBondNFT(subject_.bondNftVault());
+        IERC20 lp_ = IERC20(subject_.hook());
+        uint256 held_ = lp_.balanceOf(address(nft_));
+        assertGt(held_, 0);
+        address externalOwner_ = makeAddr("D15 external LP owner");
+        vm.prank(address(subject_));
+        nft_.transferHeldToken(lp_, externalOwner_, held_);
+        assertEq(lp_.balanceOf(address(nft_)), 0, "real LP ownership moved through privileged custody operation");
+        _d15Unstake(subject_, holder_, IStakedDETF(subject_.rebasingClaimToken()).balanceOf(holder_), 0);
+        assertEq(lp_.balanceOf(externalOwner_), held_, "external LP remains intact");
+    }
+
+    function test_D15_unstakeSettlesAllDueFundedExpansionFirst() public {
+        (IUniswapV4Detf subject_, address holder_,) = _d15Prepare(true);
+        uint256 amount_ = IStakedDETF(subject_.rebasingClaimToken()).balanceOf(holder_) / 4;
+        vm.warp(block.timestamp + 25 hours);
+        uint256 pending_ = subject_.pendingExpansionDetf();
+        assertGt(pending_, 0, "funded premium supports due expansion");
+        _d15Unstake(subject_, holder_, amount_, pending_);
+        assertEq(subject_.pendingExpansionDetf(), 0, "completed intervals consumed exactly once");
+    }
+}
+
+/// @notice Funded one-to-one unstake through the standard interface.
+abstract contract UniswapV4Detf_Alignment_RedeemD15Base is UniswapV4Detf_Alignment_RedeemD15PolicyBase, V4FundedUnstakeBehavior {
+    function _d15Prepare(bool premium_) internal override returns (IUniswapV4Detf subject_, address holder_, uint256 keepId_) {
+        address d_;
+        if (premium_) {
+            d_ = _deployD31LaunchRichLive();
+            keepId_ = _policyInitialBond[d_];
+        } else {
+            d_ = detf;
+            (keepId_,) = _firstBond(100 ether);
         }
-    }
-
-    function test_D15_pendingFirst_thenZapOutToDetf() public {
-        uint256 claimBal_ = _sellAndClaimOn(detf, detfUser, 100 ether, 60 ether);
-        IDETFNFTVault nft_ = _nft();
-        uint256 pendingDetf_ = IERC20(detf).balanceOf(address(nft_));
-        uint256 lpBefore_ = nft_.lpToken().balanceOf(address(nft_));
-        uint256 pairBefore_ = pairToken.balanceOf(detfUser);
-        uint256 detfBefore_ = IERC20(detf).balanceOf(detfUser);
-        uint256 out_ = _redeemOn(detf, detfUser, claimBal_);
-        assertGt(out_, 0, "pendingFirst DETF");
-        assertEq(IERC20(detf).balanceOf(detfUser) - detfBefore_, out_);
-        assertEq(pairToken.balanceOf(detfUser), pairBefore_, "unwind to DETF not pair");
-        uint256 pendingAfter_ = IERC20(detf).balanceOf(address(nft_));
-        if (pendingDetf_ > 0) {
-            assertLe(pendingAfter_, pendingDetf_, "pending first");
+        (uint256 id_,) = _bondOn(d_, detfUser, 10 ether);
+        _warpMatureOf(d_, id_);
+        _d10SellToClaimOn(d_, id_, detfUser);
+        if (premium_) {
+            uint256 threshold_ = IUniswapV4Detf(d_).mintThreshold();
+            for (uint256 i_; i_ < 16 && IUniswapV4Detf(d_).syntheticPrice() <= threshold_; ++i_) {
+                _pushSyntheticUp(d_);
+            }
+            assertGt(IUniswapV4Detf(d_).syntheticPrice(), threshold_, "actual reserve premium above mint threshold before epoch");
         }
-        uint256 lpAfter_ = nft_.lpToken().balanceOf(address(nft_));
-        if (out_ > pendingDetf_) {
-            assertLe(lpAfter_, lpBefore_, "shortfall from id0 LP");
-        }
+        return (IUniswapV4Detf(d_), detfUser, keepId_);
     }
 }

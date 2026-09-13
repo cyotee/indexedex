@@ -7,12 +7,15 @@ import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHo
 import {
     UniswapV4SingleStandardExchangeBufferConstantProductHookRepo as Repo
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookRepo.sol";
+import {
+    UniswapV4SingleStandardExchangeBufferConstantProductHookPairPoolLib as PairPoolLib
+} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookPairPoolLib.sol";
 
 /**
  * @title UniswapV4SingleStandardExchangeBufferConstantProductHookBeforeInitializeLib
  * @notice Shared beforeInitialize checks for package-as-init and SE_FACET (F5).
- * @dev Bit-identical to today's SeTarget/Target: PoolManager, exact currencies,
- *      fee == 0, poolInitialized / AlreadyInitialized. Error selectors match SeTarget.
+ * @dev Validates the canonical product key before consuming one-time initialization.
+ *      PoolManager, currencies and fee errors match SeTarget.
  *      Does not inherit Target (avoids a SeTarget ↔ lib import cycle).
  */
 library UniswapV4SingleStandardExchangeBufferConstantProductHookBeforeInitializeLib {
@@ -20,6 +23,7 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookBeforeInitialize
     error AlreadyInitialized();
     error InvalidPoolToken();
     error InvalidPoolFee();
+    error InvalidPoolTickSpacing();
 
     function beforeInitialize(PoolKey calldata poolKey) internal returns (bytes4) {
         Repo.Layout storage l = Repo._layout();
@@ -30,6 +34,7 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookBeforeInitialize
         address b = Currency.unwrap(poolKey.currency1);
         if (!(a == l.currency0 && b == l.currency1)) revert InvalidPoolToken();
         if (poolKey.fee != 0) revert InvalidPoolFee();
+        if (poolKey.tickSpacing != PairPoolLib.PRODUCT_TICK_SPACING) revert InvalidPoolTickSpacing();
 
         l.poolInitialized = true;
         return IHooks.beforeInitialize.selector;

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {UniswapV4BufferHookLiquidityRouteLib as LiquidityRoute} from "contracts/hooks/uniswap/v4/libs/UniswapV4BufferHookLiquidityRouteLib.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
@@ -25,6 +27,7 @@ import {IRateProvider} from
 import {IAllowanceTransfer} from
     "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {DETFDecimalScaleLib} from "contracts/vaults/detf/common/core/DETFDecimalScaleLib.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {
     IUniswapV4StandardExchangeWeightedBufferHook
@@ -53,7 +56,7 @@ import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfRese
 
 /**
  * @title UniswapV4StandardExchangeWeightedBufferHookSeTarget
- * @notice SE In/Out swap-only surface.
+ * @notice Standard Exchange swaps and native LP join/exit routes.
  */
 abstract contract UniswapV4StandardExchangeWeightedBufferHookSeTarget is
     UniswapV4StandardExchangeWeightedBufferHookHooksTarget,
@@ -63,7 +66,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookSeTarget is
     using SafeERC20 for IERC20;
 
 /* ---------------------------------------------------------------------- */
-    /*                         SE In / Out (swap-only)                        */
+    /*                         Standard Exchange swap and liquidity routes                        */
     /* ---------------------------------------------------------------------- */
 
     function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
@@ -71,6 +74,9 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookSeTarget is
         view
         returns (uint256 amountOut)
     {
+        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) {
+            return LiquidityRoute.previewInWithSe(tokenIn, amountIn, tokenOut, _liquiditySePair(tokenIn, tokenOut));
+        }
         return _previewSwapExactIn(address(tokenIn), address(tokenOut), amountIn);
     }
 
@@ -82,7 +88,23 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookSeTarget is
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external nonReentrant returns (uint256 amountOut) {
+    ) external returns (uint256 amountOut) {
+        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) {
+            address pair_ = _liquiditySePair(tokenIn, tokenOut);
+            return LiquidityRoute.exchangeInWithSe(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline, pair_);
+        }
+        return _swapExchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
+    }
+
+    function _swapExchangeIn(
+        IERC20 tokenIn,
+        uint256 amountIn,
+        IERC20 tokenOut,
+        uint256 minAmountOut,
+        address recipient,
+        bool pretransferred,
+        uint256 deadline
+    ) internal nonReentrant returns (uint256 amountOut) {
         _requireDeadline(deadline);
         if (amountIn == 0) revert ZeroAmount();
         if (recipient == address(0)) revert ZeroAddress();
@@ -122,6 +144,10 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookSeTarget is
         view
         returns (uint256 amountIn)
     {
+        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) {
+            if (_liquiditySePair(tokenIn, tokenOut) != address(0)) revert ExchangeOutNotAvailable();
+            return LiquidityRoute.previewOut(tokenIn, tokenOut, amountOut);
+        }
         return _previewSwapExactOut(address(tokenIn), address(tokenOut), amountOut);
     }
 
@@ -133,7 +159,23 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookSeTarget is
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external nonReentrant returns (uint256 amountIn) {
+    ) external returns (uint256 amountIn) {
+        if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) {
+            if (_liquiditySePair(tokenIn, tokenOut) != address(0)) revert ExchangeOutNotAvailable();
+            return LiquidityRoute.exchangeOut(tokenIn, maxAmountIn, tokenOut, amountOut, recipient, pretransferred, deadline);
+        }
+        return _swapExchangeOut(tokenIn, maxAmountIn, tokenOut, amountOut, recipient, pretransferred, deadline);
+    }
+
+    function _swapExchangeOut(
+        IERC20 tokenIn,
+        uint256 maxAmountIn,
+        IERC20 tokenOut,
+        uint256 amountOut,
+        address recipient,
+        bool pretransferred,
+        uint256 deadline
+    ) internal nonReentrant returns (uint256 amountIn) {
         _requireDeadline(deadline);
         if (amountOut == 0) revert ZeroAmount();
         if (recipient == address(0)) revert ZeroAddress();
@@ -161,29 +203,6 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookSeTarget is
             l.rawReserves[ii] += amountIn;
         }
         _syncVaultReserves();
-    }
-
-    function previewSynthetic(IDetfReserveQuote.DetfQuoteCtx calldata ctx, address numeraire)
-        external
-        view
-        returns (uint256 wad)
-    {
-        if (ctx.ownedLp == 0 || ctx.detfTotalSupply == 0 || ctx.creationPairPerDetfWad == 0) {
-            return 0;
-        }
-        if (!_isLive()) return 0;
-        address out_ = numeraire;
-        if (out_ == address(0)) {
-            address[] memory nums_ = syntheticNumeraires();
-            if (nums_.length == 0) return 0;
-            out_ = nums_[0];
-        }
-        uint256 pairOut = IDetfReserveQuote(address(this)).previewBurnToToken(ctx.ownedLp, out_);
-        if (pairOut == 0) return 0;
-        uint256 den_ = ctx.detfTotalSupply + ctx.pendingExpansion;
-        if (den_ == 0) return 0;
-        uint256 mid_ = (pairOut * 1e18) / den_;
-        return (mid_ * 1e18) / ctx.creationPairPerDetfWad;
     }
 
     /// @notice D89: owner exact-in; internal book settlement (no nested PoolManager.unlock).
@@ -247,6 +266,15 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookSeTarget is
             l.rawReserves[i] += amountIn;
         }
         _syncVaultReserves();
+    }
+
+    function _liquiditySePair(IERC20 in_, IERC20 out_) private view returns (address) {
+        address edge_ = address(in_) == address(this) ? address(out_) : address(in_);
+        Repo.Layout storage l_ = Repo._layout();
+        for (uint256 i_; i_ < l_.numTokens; ++i_) {
+            if (edge_ != address(0) && edge_ == l_.standardExchanges[i_]) return l_.tokens[i_];
+        }
+        return address(0);
     }
 
 }

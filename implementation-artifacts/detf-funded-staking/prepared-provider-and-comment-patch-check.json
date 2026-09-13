@@ -1,0 +1,29 @@
+{
+  "recorded_at_utc": "2026-09-08T14:44:47.677204+00:00",
+  "status": "DRY_RUN_PASS_NOT_APPLIED",
+  "source_mutations": false,
+  "checks": [
+    {
+      "command": [
+        "git",
+        "apply",
+        "--check",
+        "-p0",
+        "implementation-artifacts/detf-funded-staking/etherfi-composed-quotes.patch"
+      ],
+      "exit_code": 0,
+      "patch_sha256": "d0add85d258a992ea8f4077ab35278bf91da9f65bb717e48d5fe87f54eebc6e6"
+    },
+    {
+      "command": [
+        "git",
+        "apply",
+        "--check",
+        "-p0",
+        "implementation-artifacts/detf-funded-staking/v4-native-unit-comment-cleanup.patch"
+      ],
+      "exit_code": 0,
+      "patch_sha256": "ad42273510c379993b1acd7337b458318f22c0886b989dbebaffab3df8ab2b1e"
+    }
+  ]
+}

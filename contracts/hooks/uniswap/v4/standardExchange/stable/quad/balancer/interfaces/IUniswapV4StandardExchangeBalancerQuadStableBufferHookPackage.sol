@@ -13,7 +13,7 @@ import {
 /**
  * @title IUniswapV4StandardExchangeBalancerQuadStableBufferHookPackage
  * @notice DFPkg interface for SE Balancer Quad Stable Buffer Hook (hook diamond package).
- * @dev PkgInit / PkgArgs on interface (Crane rule). Exactly four tokens; ≥1 SE; immutable baseAmp.
+ * @dev PkgInit / PkgArgs on interface (Crane rule). 2–5 tokens; ≥1 SE; immutable baseAmp.
  *      Deploy: package → registry.deployHookVault → shared hook CREATE2 factory.
  */
 interface IUniswapV4StandardExchangeBalancerQuadStableBufferHookPackage is
@@ -30,11 +30,14 @@ interface IUniswapV4StandardExchangeBalancerQuadStableBufferHookPackage is
     error InvalidDecimals();
     error ArrayLengthMismatch();
     error InvalidAmp();
+    error InvalidTokenCount();
 
     struct PkgInit {
         IVaultRegistryDeployment vaultRegistryDeployment;
         IVaultFeeOracleQuery vaultFeeOracleQuery;
         IFacet liquidityFacet;
+        IFacet exitFacet;
+        IFacet queryFacet;
         IFacet seFacet;
         IFacet hooksFacet;
         /// @dev ERC20PermitDFPkg parity: LP share is the hook diamond.
@@ -45,20 +48,25 @@ interface IUniswapV4StandardExchangeBalancerQuadStableBufferHookPackage is
         IFacet multiAssetStandardVaultFacet;
     }
 
-    /// @notice Binding for one immortal hook instance (exactly 4 tokens, ≥1 SE).
+    /// @notice Binding for one immortal hook instance (2–5 tokens, ≥1 SE).
     /// @dev poolManager + feeOracle from factory-scope wiring; still passed for init.
     ///      Salt identity: PRODUCT_ID + tokens + SEs + RPs + baseAmp (no package/facet addresses).
+    /// @dev Schema v2: dynamic bindings; not compatible with legacy fixed-four encoding.
     struct PkgArgs {
         address poolManager;
         address feeOracle;
-        address[4] tokens;
-        address[4] standardExchanges;
-        address[4] rateProviders;
+        address[] tokens;
+        address[] standardExchanges;
+        address[] rateProviders;
+        uint8[] tokenDecimals;
+        uint8[] seDecimals;
         uint256 baseAmp;
     }
 
     function VAULT_REGISTRY_DEPLOYMENT() external view returns (IVaultRegistryDeployment);
     function LIQUIDITY_FACET() external view returns (IFacet);
+    function EXIT_FACET() external view returns (IFacet);
+    function QUERY_FACET() external view returns (IFacet);
     function SE_FACET() external view returns (IFacet);
     function HOOKS_FACET() external view returns (IFacet);
     function PRODUCT_ID() external pure returns (bytes32);

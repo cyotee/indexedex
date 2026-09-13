@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                   Foundry                                  */
@@ -20,19 +21,8 @@ import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPer
 import {IRouter} from "@crane/contracts/interfaces/protocols/dexes/aerodrome/IRouter.sol";
 import {IPoolFactory} from "@crane/contracts/interfaces/protocols/dexes/aerodrome/IPoolFactory.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
-import {
-    AerodromeStandardExchangeInFacet
-} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeInFacet.sol";
-import {
-    AerodromeStandardExchangeOutFacet
-} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeOutFacet.sol";
-import {
-    AerodromeStandardExchangeOutQueryFacet
-} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeOutQueryFacet.sol";
-import {
-    IAerodromeStandardExchangeDFPkg,
-    AerodromeStandardExchangeDFPkg
-} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeDFPkg.sol";
+
+import {IAerodromeStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/v1/IAerodromeStandardExchangeDFPkg.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 
 library Aerodrome_Component_FactoryService {
@@ -42,49 +32,41 @@ library Aerodrome_Component_FactoryService {
     Vm constant vm = Vm(VM_ADDRESS);
 
     function deployAerodromeStandardExchangeInFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
-        instance = create3Factory.deployFacet(
-            type(AerodromeStandardExchangeInFacet).creationCode,
-            abi.encode(type(AerodromeStandardExchangeInFacet).name)._hash()
-        );
-        vm.label(address(instance), type(AerodromeStandardExchangeInFacet).name);
+        bytes memory code = ArtifactCreationCode.creationCode("AerodromeStandardExchangeInFacet.sol:AerodromeStandardExchangeInFacet");
+        bytes32 releaseSalt = keccak256(abi.encode("AerodromeStandardExchangeInFacet", keccak256(code)));
+        instance = create3Factory.deployFacet(code, releaseSalt);
+        vm.label(address(instance), "AerodromeStandardExchangeInFacet");
     }
 
     function deployAerodromeStandardExchangeOutFacet(ICreate3FactoryProxy create3Factory)
         internal
         returns (IFacet instance)
     {
-        instance = create3Factory.deployFacet(
-            type(AerodromeStandardExchangeOutFacet).creationCode,
-            abi.encode(type(AerodromeStandardExchangeOutFacet).name)._hash()
-        );
-        vm.label(address(instance), type(AerodromeStandardExchangeOutFacet).name);
+        bytes memory code = ArtifactCreationCode.creationCode("AerodromeStandardExchangeOutFacet.sol:AerodromeStandardExchangeOutFacet");
+        bytes32 releaseSalt = keccak256(abi.encode("AerodromeStandardExchangeOutFacet", keccak256(code)));
+        instance = create3Factory.deployFacet(code, releaseSalt);
+        vm.label(address(instance), "AerodromeStandardExchangeOutFacet");
     }
 
     function deployAerodromeStandardExchangeOutQueryFacet(ICreate3FactoryProxy create3Factory)
         internal
         returns (IFacet instance)
     {
-        instance = create3Factory.deployFacet(
-            type(AerodromeStandardExchangeOutQueryFacet).creationCode,
-            abi.encode(type(AerodromeStandardExchangeOutQueryFacet).name)._hash()
-        );
-        vm.label(address(instance), type(AerodromeStandardExchangeOutQueryFacet).name);
+        bytes memory code = ArtifactCreationCode.creationCode("AerodromeStandardExchangeOutQueryFacet.sol:AerodromeStandardExchangeOutQueryFacet");
+        bytes32 releaseSalt = keccak256(abi.encode("AerodromeStandardExchangeOutQueryFacet", keccak256(code)));
+        instance = create3Factory.deployFacet(code, releaseSalt);
+        vm.label(address(instance), "AerodromeStandardExchangeOutQueryFacet");
     }
 
     function deployAerodromeStandardExchangeDFPkg(
         IVaultRegistryDeployment vaultRegistry,
         IAerodromeStandardExchangeDFPkg.PkgInit memory pkgInit
     ) internal returns (IAerodromeStandardExchangeDFPkg instance) {
-        instance = IAerodromeStandardExchangeDFPkg(
-            address(
-                vaultRegistry.deployPkg(
-                    type(AerodromeStandardExchangeDFPkg).creationCode,
-                    abi.encode(pkgInit),
-                    abi.encode(type(AerodromeStandardExchangeDFPkg).name)._hash()
-                )
-            )
-        );
-        vm.label(address(instance), type(AerodromeStandardExchangeDFPkg).name);
+        bytes memory code = ArtifactCreationCode.creationCode("AerodromeStandardExchangeDFPkg.sol:AerodromeStandardExchangeDFPkg");
+        bytes memory arguments = abi.encode(pkgInit);
+        bytes32 releaseSalt = keccak256(abi.encode("AerodromeStandardExchangeDFPkg", keccak256(code), keccak256(arguments)));
+        instance = IAerodromeStandardExchangeDFPkg(address(vaultRegistry.deployPkg(code, arguments, releaseSalt)));
+        vm.label(address(instance), "AerodromeStandardExchangeDFPkg");
     }
 
     struct DeployDFPkgParams {

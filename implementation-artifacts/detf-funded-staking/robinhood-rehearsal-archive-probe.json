@@ -1,0 +1,9 @@
+{
+  "recorded_at_utc": "2026-09-08T05:43:35.045381+00:00",
+  "rpc_alias": "robinhood_mainnet_alchemy",
+  "operation": "eth_getCode at existing rehearsal fork block",
+  "block": "0x3584c59",
+  "address": "0x8366a39CC670B4001A1121B8F6A443A643e40951",
+  "exit_code": 0,
+  "deployed_code_bytes": 24009
+}

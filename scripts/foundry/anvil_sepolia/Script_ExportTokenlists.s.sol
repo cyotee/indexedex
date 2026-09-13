@@ -328,20 +328,19 @@ contract Script_ExportTokenlists is DeploymentBase {
     }
 
     function _exportBalancerCombinedPools(string memory chainIdStr) internal {
-        (address balAbPool, bool okBalAb) = _readAddressSafe("12_balancer_const_prod_vault_token_pools.json", "balancerAbPool");
-        (address balAcPool, bool okBalAc) = _readAddressSafe("12_balancer_const_prod_vault_token_pools.json", "balancerAcPool");
-        (address balBcPool, bool okBalBc) = _readAddressSafe("12_balancer_const_prod_vault_token_pools.json", "balancerBcPool");
+        address[7] memory pools;
+        (pools[0],) = _readAddressSafe("12_balancer_const_prod_vault_token_pools.json", "balancerAbPool");
+        (pools[1],) = _readAddressSafe("12_balancer_const_prod_vault_token_pools.json", "balancerAcPool");
+        (pools[2],) = _readAddressSafe("12_balancer_const_prod_vault_token_pools.json", "balancerBcPool");
+        (pools[3],) = _readAddressSafe("20_weth_ttc_balancer_vault_token_pools.json", "balUniWethcWithWeth");
+        (pools[4],) = _readAddressSafe("20_weth_ttc_balancer_vault_token_pools.json", "balUniWethcWithC");
+        (pools[5],) = _readAddressSafe("20_weth_ttc_balancer_vault_token_pools.json", "balAeroWethcWithWeth");
+        (pools[6],) = _readAddressSafe("20_weth_ttc_balancer_vault_token_pools.json", "balAeroWethcWithC");
 
-        (address balUniWethcWithWeth, bool okUniWeth) = _readAddressSafe("20_weth_ttc_balancer_vault_token_pools.json", "balUniWethcWithWeth");
-        (address balUniWethcWithC, bool okUniTtc) = _readAddressSafe("20_weth_ttc_balancer_vault_token_pools.json", "balUniWethcWithC");
-        (address balAeroWethcWithWeth, bool okAeroWeth) = _readAddressSafe("20_weth_ttc_balancer_vault_token_pools.json", "balAeroWethcWithWeth");
-        (address balAeroWethcWithC, bool okAeroTtc) = _readAddressSafe("20_weth_ttc_balancer_vault_token_pools.json", "balAeroWethcWithC");
-
-        bool hasConstProdPools = okBalAb && okBalAc && okBalBc && balAbPool != address(0) && balAcPool != address(0)
-            && balBcPool != address(0);
-        bool hasWethcVaultTokenPools = okUniWeth && okUniTtc && okAeroWeth && okAeroTtc
-            && balUniWethcWithWeth != address(0) && balUniWethcWithC != address(0)
-            && balAeroWethcWithWeth != address(0) && balAeroWethcWithC != address(0);
+        // Failed optional reads return zero; preserve the existing all-or-none lists.
+        bool hasConstProdPools = pools[0] != address(0) && pools[1] != address(0) && pools[2] != address(0);
+        bool hasWethcVaultTokenPools = pools[3] != address(0) && pools[4] != address(0)
+            && pools[5] != address(0) && pools[6] != address(0);
 
         if (!hasConstProdPools) {
             _writeEmptyTokenlist(_uiTokenlistFilename("balancerv3-pools.tokenlist.json"));
@@ -349,9 +348,9 @@ contract Script_ExportTokenlists is DeploymentBase {
         }
 
         string[] memory entries = new string[](hasWethcVaultTokenPools ? 13 : 9);
-        entries[0] = _tokenlistEntry(chainIdStr, balAbPool, "ab BalancerV3 ConstProd Pool", "abBalancerV3ConstProdPool");
-        entries[1] = _tokenlistEntry(chainIdStr, balAcPool, "ac BalancerV3 ConstProd Pool", "acBalancerV3ConstProdPool");
-        entries[2] = _tokenlistEntry(chainIdStr, balBcPool, "bc BalancerV3 ConstProd Pool", "bcBalancerV3ConstProdPool");
+        entries[0] = _tokenlistEntry(chainIdStr, pools[0], "ab BalancerV3 ConstProd Pool", "abBalancerV3ConstProdPool");
+        entries[1] = _tokenlistEntry(chainIdStr, pools[1], "ac BalancerV3 ConstProd Pool", "acBalancerV3ConstProdPool");
+        entries[2] = _tokenlistEntry(chainIdStr, pools[2], "bc BalancerV3 ConstProd Pool", "bcBalancerV3ConstProdPool");
         entries[3] = _tokenlistEntry(
             chainIdStr,
             _readAddress("12_balancer_const_prod_vault_token_pools.json", "balUniAbWithA"),
@@ -392,25 +391,25 @@ contract Script_ExportTokenlists is DeploymentBase {
         if (hasWethcVaultTokenPools) {
             entries[9] = _tokenlistEntry(
                 chainIdStr,
-                balUniWethcWithWeth,
+                pools[3],
                 "UniV2 WETH/TTC Vault + WETH BalancerV3 Pool",
                 "uniWethcVault_weth_BalancerPool"
             );
             entries[10] = _tokenlistEntry(
                 chainIdStr,
-                balUniWethcWithC,
+                pools[4],
                 "UniV2 WETH/TTC Vault + TTC BalancerV3 Pool",
                 "uniWethcVault_ttc_BalancerPool"
             );
             entries[11] = _tokenlistEntry(
                 chainIdStr,
-                balAeroWethcWithWeth,
+                pools[5],
                 "Aerodrome WETH/TTC Vault + WETH BalancerV3 Pool",
                 "aeroWethcVault_weth_BalancerPool"
             );
             entries[12] = _tokenlistEntry(
                 chainIdStr,
-                balAeroWethcWithC,
+                pools[6],
                 "Aerodrome WETH/TTC Vault + TTC BalancerV3 Pool",
                 "aeroWethcVault_ttc_BalancerPool"
             );

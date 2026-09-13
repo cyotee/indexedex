@@ -1,6 +1,16 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+import {IERC721Errors} from "@crane/contracts/interfaces/IERC721Errors.sol";
+import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
+import {IStakedDETF, IDETFFundedRewards} from "contracts/interfaces/IStakedDETF.sol";
+import {DETFFundedStakingMath} from "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol";
+
+import {IDETFSYDFPkg} from "contracts/vaults/detf/common/sy/IDETFSYDFPkg.sol";
+
+import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/IDETFNFTVaultDFPkg.sol";
+
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IFacetRegistry} from "@crane/contracts/interfaces/IFacetRegistry.sol";
@@ -10,11 +20,9 @@ import {IERC8109Introspection} from "@crane/contracts/interfaces/IERC8109Introsp
 import {IPostDeployAccountHook} from "@crane/contracts/interfaces/IPostDeployAccountHook.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
-import {PoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
-import {ERC721Facet} from "@crane/contracts/tokens/ERC721/ERC721Facet.sol";
 
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
@@ -25,9 +33,8 @@ import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPoli
 import {DetfComponentFactoryService} from "contracts/vaults/detf/common/factory/DetfComponentFactoryService.sol";
 import {DetfFacetFactoryService} from "contracts/vaults/detf/common/factory/DetfFacetFactoryService.sol";
 import {DetfPkgFactoryService} from "contracts/vaults/detf/common/factory/DetfPkgFactoryService.sol";
-import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol";
-import {IUniswapV4DetfBondNFTVaultDFPkg} from
-    "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg.sol";
+import {IRebasingClaimTokenDFPkg} from "contracts/vaults/detf/common/claimToken/IRebasingClaimTokenDFPkg.sol";
+import {IUniswapV4DetfBondNFTVaultDFPkg} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/IUniswapV4DetfBondNFTVaultDFPkg.sol";
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
 import {TestBase_ERC4626StandardExchange} from "contracts/test/bases/TestBase_ERC4626StandardExchange.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
@@ -59,6 +66,7 @@ import {
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
 import {UniswapV4Detf_Facet_FactoryService} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Facet_FactoryService.sol";
+import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 import {UniswapV4Detf_Pkg_FactoryService} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Pkg_FactoryService.sol";
 
@@ -87,11 +95,12 @@ abstract contract TestBase_UniswapV4Detf is TestBase_ERC4626StandardExchange {
     IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage internal hookPkg;
     address internal reserveHook;
 
-    IFacet internal detfProductFacet;
+    IFacet[5] internal detfProductFacets;
     IFacet internal detfNFTVaultFacet;
     IFacet internal erc721FacetDetf;
     IUniswapV4DetfBondNFTVaultDFPkg internal bondNftVaultPkg;
     IRebasingClaimTokenDFPkg internal rebasingClaimTokenPkg;
+    IDETFSYDFPkg internal syPkg;
     IUniswapV4DetfDFPkg internal detfPkg;
 
     address internal detf;
@@ -107,7 +116,11 @@ abstract contract TestBase_UniswapV4Detf is TestBase_ERC4626StandardExchange {
         pairToken = new SimpleMintableERC20("Pair", "PAIR");
         pairProtocolVault = new SimpleYieldERC4626(pairToken);
         se = _deployERC4626SE(address(pairProtocolVault));
-        pm = IPoolManager(address(new PoolManager(address(this))));
+        pm = IPoolManager(address(IPoolManager(create3Factory.create3WithArgs(
+            ArtifactCreationCode.creationCode(create3Factory, "PoolManager.sol:PoolManager"),
+            abi.encode(address(this)),
+            keccak256("TestBase_UniswapV4Detf_PoolManager")
+        ))));
 
         _deployHookFactoryAndPkg();
         _deployBondNftVaultPkg();
@@ -159,6 +172,8 @@ abstract contract TestBase_UniswapV4Detf is TestBase_ERC4626StandardExchange {
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
                 seFacet: seFacet,
                 depositFacet: depositFacet,
+                depositSingleFacet: CpHookFactory.deployDepositSingleFacet(create3Factory),
+                depositPreviewFacet: CpHookFactory.deployDepositPreviewFacet(create3Factory),
                 withdrawFacet: withdrawFacet,
                 erc20Facet: erc20Facet,
                 erc5267Facet: erc5267Facet,
@@ -174,13 +189,12 @@ abstract contract TestBase_UniswapV4Detf is TestBase_ERC4626StandardExchange {
     function _deployBondNftVaultPkg() internal {
         detfNFTVaultFacet = create3Factory.deployUniswapV4DetfBondNFTVaultFacet();
         erc721FacetDetf = IFacet(
-            create3Factory.deployFacet(type(ERC721Facet).creationCode, keccak256("Uv4Detf_ERC721Facet"))
+            create3Factory.deployFacet(ArtifactCreationCode.creationCode(create3Factory, "ERC721Facet.sol:ERC721Facet"), keccak256("Uv4Detf_ERC721Facet"))
         );
-        IUniswapV4DetfBondNFTVaultDFPkg.PkgInit memory nftPkgInit = DetfComponentFactoryService
+        IDETFNFTVaultDFPkg.PkgInit memory nftPkgInit = DetfComponentFactoryService
             .buildUniswapV4DetfBondNFTVaultPkgInit(
             erc721FacetDetf,
-            erc4626BasicVaultFacet,
-            erc4626StandardVaultFacet,
+            DetfFacetFactoryService.deployDETFFundedBondMetadataFacet(create3Factory),
             detfNFTVaultFacet,
             IVaultFeeOracleQuery(address(indexedexManager)),
             IVaultRegistryDeployment(address(indexedexManager))
@@ -203,18 +217,29 @@ abstract contract TestBase_UniswapV4Detf is TestBase_ERC4626StandardExchange {
     }
 
     function _deployDetfPkg() internal {
-        detfProductFacet = UniswapV4Detf_Facet_FactoryService.deployUniswapV4DetfFacet(create3Factory);
+        IFacet syFacet_ = create3Factory.deployDETFSYFacet();
+        vm.startPrank(owner);
+        syPkg = DetfPkgFactoryService.deployDETFSYDFPkg(
+            IVaultRegistryDeployment(address(indexedexManager)), IDETFSYDFPkg.PkgInit({
+                erc5267Facet: erc5267Facet, erc2612Facet: erc2612Facet, syFacet: syFacet_,
+                feeOracle: IVaultFeeOracleQuery(address(indexedexManager)),
+                vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager))
+            })
+        );
+        vm.stopPrank();
+        detfProductFacets = UniswapV4Detf_Facet_FactoryService.deployUniswapV4DetfFacets(create3Factory);
         IUniswapV4DetfDFPkg.PkgInit memory pkgInit = IUniswapV4DetfDFPkg.PkgInit({
             erc20Facet: erc20Facet,
             erc5267Facet: erc5267Facet,
             erc2612Facet: erc2612Facet,
             multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
             multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
-            productFacet: detfProductFacet,
+            productFacets: detfProductFacets,
             feeOracle: IVaultFeeOracleQuery(address(indexedexManager)),
             vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
             bondNftVaultPkg: bondNftVaultPkg,
-            rebasingClaimTokenPkg: rebasingClaimTokenPkg
+            rebasingClaimTokenPkg: rebasingClaimTokenPkg,
+            syPkg: syPkg
         });
         vm.startPrank(owner);
         detfPkg = UniswapV4Detf_Pkg_FactoryService.deployUniswapV4DetfDFPkg(
@@ -234,22 +259,19 @@ abstract contract TestBase_UniswapV4Detf is TestBase_ERC4626StandardExchange {
         args.openingPairPerDetfWad = new uint256[](0);
     }
 
-    function _defaultDetfArgs() internal view returns (IUniswapV4Detf.PkgArgs memory args) {
+    function _defaultDetfArgs() internal view virtual returns (IUniswapV4Detf.PkgArgs memory args) {
         uint256[] memory creation_ = new uint256[](1);
         creation_[0] = DEFAULT_CREATION_PAIR_PER_DETF;
         args = IUniswapV4Detf.PkgArgs({
             name: "UniV4 DETF",
             symbol: "uv4DETF",
             hook: address(0),
+            ownerOnlyLiquidity: true,
             creationPairPerDetfWad: creation_,
             openingPairPerDetfWad: new uint256[](0),
             mintThreshold: 0,
             burnThreshold: 0,
-            // Open: first-bond free legs typically leave synthetic < Policy mintThreshold.
-            thresholdMode: ThresholdMode.Open,
-            expansionEpochLength: 0,
             expansionClosureRatePerYearWad: 0,
-            expansionMaxCatchUpEpochs: 0,
             creator: address(0),
             claimName: "",
             claimSymbol: "",
@@ -261,8 +283,7 @@ abstract contract TestBase_UniswapV4Detf is TestBase_ERC4626StandardExchange {
             burnRoutes: new IUniswapV4Detf.IoRoute[](0),
             bondRouteMode: IUniswapV4Detf.RouteTableMode.Default,
             bondRoutes: new IUniswapV4Detf.IoRoute[](0),
-            closeRouteMode: IUniswapV4Detf.RouteTableMode.Default,
-            closeRoutes: new IUniswapV4Detf.IoRoute[](0),
+
             donateRouteMode: IUniswapV4Detf.RouteTableMode.Default,
             donateRoutes: new IUniswapV4Detf.IoRoute[](0)
         });
@@ -278,10 +299,6 @@ abstract contract TestBase_UniswapV4Detf is TestBase_ERC4626StandardExchange {
 
     function _deployHookThenDetf(IUniswapV4Detf.PkgArgs memory args) internal returns (address detf_) {
         address predicted_ = _predictDetf(args);
-        // Hook initAccount reads rawToken.decimals() before the DETF exists. Etch a
-        // mintable ERC-20 at the predicted address for hook deploy, then clear so
-        // CREATE2 can land the DETF diamond.
-        vm.etch(predicted_, address(pairToken).code);
         IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs memory hArgs =
             IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs({
                 poolManager: address(pm),
@@ -289,18 +306,16 @@ abstract contract TestBase_UniswapV4Detf is TestBase_ERC4626StandardExchange {
                 standardExchange: se,
                 pairToken: address(pairToken),
                 rawToken: predicted_,
-                ownerOnlyLiquidity: true,
+                pairTokenDecimals: HookPkgArgsDecimalsLib.tokenDec(address(pairToken)),
+                rawTokenDecimals: predicted_.code.length == 0 ? uint8(9) : HookPkgArgsDecimalsLib.tokenDec(predicted_),
+                ownerOnlyLiquidity: args.ownerOnlyLiquidity,
                 owner: predicted_
             });
         uint256 mineNonce = CpHookFactory.findMineNonce(hookFactory, hookPkg, hArgs);
         reserveHook = CpHookFactory.deployHook(hookPkg, hArgs, mineNonce);
-        // Production facets (tokens(), joinUnbalanced) are cut at finalize. DETF
-        // processArgs reads hook.tokens(), so finalize while the predicted DETF
-        // still has ERC-20 bytecode.
         IUniswapV4HookStagedPairInit init = IUniswapV4HookStagedPairInit(reserveHook);
         init.deployPair(predicted_, address(pairToken));
         require(init.finalizeInitialization(), "finalize");
-        vm.etch(predicted_, "");
         args.hook = reserveHook;
         vm.startPrank(owner);
         detf_ = detfPkg.deployVault(args);
@@ -404,5 +419,54 @@ abstract contract TestBase_UniswapV4Detf is TestBase_ERC4626StandardExchange {
         assertEq(IERC20(hook_).balanceOf(detf), 0, "no hook LP on diamond");
         assertEq(IERC20(address(pairToken)).balanceOf(detf), 0, "no pair on diamond");
         assertEq(IERC20(se).balanceOf(detf), 0, "no SE share on diamond");
+    }
+
+    /// @dev Exercise the actual purchased bond, its funded payout and one-to-one unstaking.
+    /// All protocol reserve LP remains in custody throughout maturity and redemption.
+    function _assertFundedMatureClaim(address d_, uint256 id_, address holder_)
+        internal returns (uint256 principal_, uint256 rewards_)
+    {
+        IUniswapV4Detf info_ = IUniswapV4Detf(d_);
+        IDetfBondNFT nft_ = IDetfBondNFT(info_.bondNftVault());
+        DETFFundedStakingMath.BondPosition memory position_ = nft_.positionOf(id_);
+        uint256 maturity_ = position_.startTimestamp + position_.vestingDuration;
+        if (block.timestamp < maturity_) vm.warp(maturity_);
+        IDETFFundedRewards(d_).synchronizeRewards();
+        DETFFundedStakingMath.BondClaim memory quote_ = nft_.previewClaim(id_);
+        assertEq(quote_.principalDue, position_.principal - position_.claimedPrincipal, "all remaining principal vested");
+        IERC20 staking_ = IERC20(info_.rebasingClaimToken());
+        uint256 before_ = staking_.balanceOf(holder_);
+        bytes32 custody_ = _fundedLifecycleCustody(d_);
+        vm.prank(holder_);
+        (principal_, rewards_) = nft_.claimBond{gas: 30_000_000}(id_, holder_);
+        assertEq(principal_, quote_.principalDue, "principal preview equals execution");
+        assertEq(rewards_, quote_.rewardsDue, "funded reward preview equals execution");
+        uint256 paid_ = principal_ + rewards_;
+        assertGt(paid_, 0, "funded sDETF paid");
+        assertEq(staking_.balanceOf(holder_) - before_, paid_, "exact sDETF payout");
+        assertEq(_fundedLifecycleCustody(d_), custody_, "claim retains protocol LP and DETF supply");
+        assertEq(nft_.ownerOf(id_), address(0), "retired NFT has no owner");
+        vm.expectRevert(abi.encodeWithSelector(IERC721Errors.ERC721NonexistentToken.selector, id_));
+        nft_.positionOf(id_);
+        _assertFundedUnstake(d_, holder_, paid_);
+        assertEq(_fundedLifecycleCustody(d_), custody_, "unstaking retains protocol LP and DETF supply");
+    }
+
+    function _fundedLifecycleCustody(address d_) private view returns (bytes32) {
+        IUniswapV4Detf info_ = IUniswapV4Detf(d_);
+        IERC20 lp_ = IERC20(info_.hook());
+        return keccak256(abi.encode(IERC20(d_).totalSupply(), lp_.balanceOf(d_), lp_.balanceOf(info_.bondNftVault())));
+    }
+
+    function _assertFundedUnstake(address d_, address holder_, uint256 amount_) internal {
+        IStakedDETF staking_ = IStakedDETF(IUniswapV4Detf(d_).rebasingClaimToken());
+        uint256 before_ = IERC20(d_).balanceOf(holder_);
+        assertEq(staking_.previewExchangeIn(IERC20(address(staking_)), amount_, IERC20(d_)), amount_, "one-to-one unstake quote");
+        vm.prank(holder_);
+        uint256 out_ = staking_.exchangeIn(
+            IERC20(address(staking_)), amount_, IERC20(d_), amount_, holder_, false, block.timestamp + 1 hours
+        );
+        assertEq(out_, amount_, "one-to-one unstake execution");
+        assertEq(IERC20(d_).balanceOf(holder_) - before_, amount_, "actual held DETF redemption");
     }
 }

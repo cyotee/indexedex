@@ -1,0 +1,225 @@
+{
+  "reviewed_at_utc": "2026-09-11T12:59:50.691829+00:00",
+  "candidate": "187b03242b92380b8696be84a5d3f55a74ba4a140012b67820a4bee70cd7b2fe",
+  "method": "Explicit review of stages 0-7 against the complete A1-A42 dispositions and separate runtime, provider, storage, package and caller evidence. No excluded functionality is marked implemented by this review.",
+  "stages": [
+    {
+      "stage": 0,
+      "criteria": "A1,A12,A28,A30,A34-A36,A42",
+      "reviewed_checklist_items": [
+        "Enumerate all four in-scope V4 DETF bindings and every SE share-issuing package in \u00a71; record route lists, accounting/yield assets, unit conversions, current external rewards, facet cuts and factory dependencies.",
+        "Record the exact interface-to-target-to-facet-to-package selector replacement map, including signatures of retained family bond purchase routes and NFT methods.",
+        "Record field-by-field storage disposition and every affected deployment payload, script, ABI and application caller.",
+        "Inventory existing affected tests, fixtures and inherited suites; map each to retain, update, merge or retire, and capture baseline compile/runtime measurements under \u00a711.1.1."
+      ],
+      "evidence": [
+        "current-source-manifest.json",
+        "current-se-package-inventory.json",
+        "current-funded-selector-manifest.json",
+        "production-readiness/storage-review.json",
+        "production-readiness/package-source-manifest.json",
+        "current-test-consolidation.json",
+        "production-readiness/dependency-revisions-renewal.json"
+      ],
+      "status": "COMPLETE_IN_SCOPE"
+    },
+    {
+      "stage": 1,
+      "criteria": "A1-A3,A5,A13,A16",
+      "reviewed_checklist_items": [
+        "Generalize the bond split to independent `U/G`; preserve ordinary split, fee top-up algebra, duration formula and burn-to-LP mapping.",
+        "Implement full-precision gons/conversion, vesting and reward-allocation helpers with independent arithmetic test vectors.",
+        "Specify exact native/WAD boundaries in all four in-scope V4 reserve adapters and deployment price encodings; update DETF decimals and affected expected amounts.",
+        "Prove funded liability, monotone index, exact stake/unstake, distribution conservation and full-exit behavior before integrating external calls."
+      ],
+      "evidence": [
+        "acceptance-current-run-anchors.json",
+        "implementation-hermetic-test.json",
+        "production-readiness/lifecycle-production-regressions.json"
+      ],
+      "status": "COMPLETE_IN_SCOPE"
+    },
+    {
+      "stage": 2,
+      "criteria": "A2,A3,A9,A14,A15,A17,A21-A25,A28,A30",
+      "reviewed_checklist_items": [
+        "Replace spot-valued claim accounting and implement shared principal/reward funding, rebase, standard stake/unstake and transfers.",
+        "Implement standing weights, beneficiary resolution, fee/creator receipt settlement, dust buckets and reentrancy-safe synchronization hooks.",
+        "Remove obsolete claim storage, LP redemption hooks and duplicate fungible selectors in the affected common components.",
+        "Cover all-zero ordinary stake, recipient full redemption, later new receipts and donated/idle-balance negatives."
+      ],
+      "evidence": [
+        "acceptance-current-run-anchors.json",
+        "implementation-hermetic-test.json",
+        "production-readiness/storage-review.json",
+        "current-robinhood-rehearsal-production-readiness-lifecycle-fixed/lifecycle-run.json"
+      ],
+      "status": "COMPLETE_IN_SCOPE"
+    },
+    {
+      "stage": 3,
+      "criteria": "A4-A8,A16,A18,A38-A40; A33 excluded",
+      "reviewed_checklist_items": [
+        "Replace user LP accounting with `P0`, claimed principal, attributed gons and linear vesting.",
+        "Implement first-bond linear quote and separate liquidity self-leg, later curve quote, funded purchased principal and immediate bond seigniorage order. A33 is excluded under D60; do not continue Composed functional implementation.",
+        "Implement principal-only, reward-only and combined sDETF claims, transfer authorization and mature retirement.",
+        "Remove old LP-sale/asset-payout paths; reconcile actual reserve custody without treating external LP as protocol property.",
+        "Implement own-reserve V4 LP payment under \u00a73.3: pre-transfer settled valuation, non-DETF legs only, whole-position custody, `G = 0`, funded vesting and immediate new-issuance rewards (A38\u2013A40)."
+      ],
+      "evidence": [
+        "acceptance-current-run-anchors.json",
+        "implementation-hermetic-test.json",
+        "current-robinhood-rehearsal-production-readiness-lifecycle-fixed/lifecycle-run.json"
+      ],
+      "status": "COMPLETE_IN_SCOPE"
+    },
+    {
+      "stage": 4,
+      "criteria": "A9-A11,A17,A22-A27,A37,A41",
+      "reviewed_checklist_items": [
+        "Implement first-bond anchored eight-hour settlement and one aggregate catch-up with every cap removed.",
+        "Route seigniorage immediately to the shared distributor; remove old automatic reward-to-LP joins and recursive reward minting.",
+        "Remove Open/configuration modes and implement explicit post-expansion primary/swap selection shared with previews.",
+        "Wire immutable `ownerOnlyLiquidity` through creation, DETF payload and actual hook; validate both modes and public swaps (A37). Implement and validate the approved dynamic Fee Collector redemption exception (D65/A41).",
+        "Integrate the common lifecycle into all four V4 bindings, preserving the host's actual formulas/routes."
+      ],
+      "evidence": [
+        "acceptance-current-run-anchors.json",
+        "implementation-hermetic-test.json",
+        "production-readiness/package-source-manifest.json",
+        "current-robinhood-rehearsal-production-readiness-lifecycle-fixed/lifecycle-run.json"
+      ],
+      "status": "COMPLETE_IN_SCOPE"
+    },
+    {
+      "stage": 5,
+      "criteria": "A12,A19-A21,A28,A29,A34-A36",
+      "reviewed_checklist_items": [
+        "Implement separate raw-DETF and staking SY packages, static gons backing, metadata and all directional routes.",
+        "Implement the V3/V4 full-range, imported-position conversion, complete-book accounting and two-token activation requirements in \u00a77.4 (A34\u2013A36).",
+        "Add native SY adapters to every in-scope SE package in the manifest, using its accepted asset/share model, decimals and external reward behavior.",
+        "Wire all wrappers/facets through FactoryServices and manager/registry deployment; remove legacy selector exports and update interface declarations.",
+        "Test complete SE/SY transactions, exact-output SE paths, internal-SY redemption, projected previews and actual final output limits."
+      ],
+      "evidence": [
+        "current-se-package-inventory.json",
+        "current-funded-selector-manifest.json",
+        "production-readiness/corrected-local-core-and-packages.json",
+        "production-readiness/lifecycle-fork-evidence-reuse.json",
+        "v3-retained-live-pool-production-readiness-run.json",
+        "current-robinhood-rehearsal-production-readiness-lifecycle-fixed/lifecycle-run.json"
+      ],
+      "status": "COMPLETE_IN_SCOPE"
+    },
+    {
+      "stage": 6,
+      "criteria": "A1,A28-A32,A42",
+      "reviewed_checklist_items": [
+        "Implement SVG/JSON from the common position view and capture all \u00a79 fixtures.",
+        "Migrate active application, launch scripts, ABIs and configuration to nine-decimal tokens and standard routes.",
+        "Complete storage-reader/writer cleanup, dead getter removal and package/deployment argument cleanup.",
+        "Consolidate affected tests and fixtures under \u00a711.1.1; replace superseded expectations, remove redundant suites after mapping their coverage, and preserve distinct family/route regressions.",
+        "Reconcile current family/law/product docs and add supersession links to historical plans."
+      ],
+      "evidence": [
+        "production-readiness/renderer-evidence-reuse.json",
+        "production-readiness/frontend-check.json",
+        "production-readiness/frontend-abi-reconciliation.json",
+        "production-readiness/storage-review.json",
+        "current-test-consolidation.json",
+        "production-readiness/current-consolidation-runtime-review.json"
+      ],
+      "status": "COMPLETE_IN_SCOPE"
+    },
+    {
+      "stage": 7,
+      "criteria": "All 40 applicable criteria; D60 excluded and D66 preserved",
+      "reviewed_checklist_items": [
+        "Complete the common acceptance matrix below for all applicable packages and family bindings.",
+        "Run focused tests, full hermetic suite and available in-scope protocol fork smoke tests using repository workflows; document any unavailable fork environment explicitly.",
+        "Review conservation/authorization failures, final selector/storage manifests, CREATE3 deployment wiring and current docs against D32\u2013D66.",
+        "Report before/after compilation and test runtime, compiled test-contract counts and consolidation coverage mapping; explain remaining bottlenecks or regressions.",
+        "Produce the reviewable change/validation report and residual limitations. Do not mark completion based solely on common-unit tests or a subset of families."
+      ],
+      "evidence": [
+        "acceptance-progress.json",
+        "implementation-full-build.json",
+        "implementation-hermetic-test.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "production-readiness/final-static-renewal.json",
+        "current-robinhood-rehearsal-production-readiness-lifecycle-fixed/lifecycle-run.json"
+      ],
+      "status": "COMPLETE_IN_SCOPE"
+    }
+  ],
+  "readiness_checklist_review": [
+    {
+      "task": "Recheck the changed V4 residual-capital sweep and dust parking against real SE quotes: joinable residuals are processed, repeated unchanged balances terminate, and parked assets do not create an unfunded user entitlement.",
+      "disposition": "Complete against final execution table and acceptance/security/package records."
+    },
+    {
+      "task": "Record each finding with affected deployed routes, severity, reproduction, disposition, changed source hashes and regression evidence. Close security-critical findings before release; explicitly record any remaining product limitation.",
+      "disposition": "Complete against final execution table and acceptance/security/package records."
+    },
+    {
+      "task": "Enumerate every release package and dependency, its FactoryService, constructor/`PkgInit`/`PkgArgs` encoding, registry registration and deterministic deployment salt. Exclude D60/D66 deferred products from new release claims.",
+      "disposition": "Complete against final execution table and acceptance/security/package records."
+    },
+    {
+      "task": "Reconcile interface signatures \u2192 targets \u2192 facet declarations \u2192 package cuts \u2192 deployed proxy selectors. Check duplicates, omissions, ERC-165 declarations, removed selectors and every supported standard replacement.",
+      "disposition": "Complete against final execution table and acceptance/security/package records."
+    },
+    {
+      "task": "Verify nine-decimal DETF/sDETF/SY boundaries, retained native SE/token decimals, supported route discovery and all required companion addresses.",
+      "disposition": "Complete against final execution table and acceptance/security/package records."
+    },
+    {
+      "task": "Reconcile maintained launch scripts, generated ABIs, address exports and `frontend/apps/dtf` callers against the candidate. Verify token formatting, previews, minimum output, deadlines, approvals and bond/staking routes.",
+      "disposition": "Complete against final execution table and acceptance/security/package records."
+    },
+    {
+      "task": "Run relevant caller checks when sources, ABIs or bindings changed. The active application declares `npm --prefix frontend/apps/dtf run check`; add its applicable live transaction tests against the local rehearsal when deployment bindings change. Reuse matching earlier lint/typecheck/unit/SVG evidence.",
+      "disposition": "Complete against final execution table and acceptance/security/package records."
+    },
+    {
+      "task": "Verify deployed runtime and creation artifacts against current sources and dependencies, especially components loaded indirectly by FactoryServices. Check every release component against the 24,576-byte runtime limit and verify library linking.",
+      "disposition": "Complete against final execution table and acceptance/security/package records."
+    },
+    {
+      "task": "Deploy current release packages via FactoryServices and the manager registry into the local rehearsal. Verify existing core dependencies by code hash before reuse; reconcile stale core/facets in the local deployment if required. Record CREATE3/CREATE2 salt/address calculations, hook flags, constructor arguments, code hashes and successful receipts.",
+      "disposition": "Complete against final execution table and acceptance/security/package records."
+    },
+    {
+      "task": "Run the complete existing 39-case matrix, including four V4 DETF bindings, V2/V3/V4/Morpho provider combinations, public-liquidity cases, Balancer SE hook cases and retained-inventory abuse coverage.",
+      "disposition": "Complete against final execution table and acceptance/security/package records."
+    },
+    {
+      "task": "Verify actual funded bond purchase, vested/reward claims, stake/unstake, primary and fallback routes, SY conversion, LP custody, fee rotation and recipient balance deltas. Tie each deployed contract to P3 artifacts.",
+      "disposition": "Complete against final execution table and acceptance/security/package records."
+    },
+    {
+      "task": "Preserve transaction gas measurements under strict limits and any required deployment funding estimate. A passing hermetic setup with a high gas allowance is not a replacement for this check.",
+      "disposition": "Complete against final execution table and acceptance/security/package records."
+    },
+    {
+      "task": "Close applicable A1\u2013A42 rows against exact evidence, preserving D60 exclusions and D66 deferrals. Reconcile the parent plan's unchecked stages against actual implementation rather than rebuilding already-completed features.",
+      "disposition": "Complete against final execution table and acceptance/security/package records."
+    },
+    {
+      "task": "Update [DETF_FUNDED_STAKING_AND_SY_VALIDATION_REPORT.md](./DETF_FUNDED_STAKING_AND_SY_VALIDATION_REPORT.md), the parent completion record and the artifact trackers. Replace stale active-run text; distinguish owner-reported checks, agent-executed checks and any independent review.",
+      "disposition": "Complete against final execution table and acceptance/security/package records."
+    },
+    {
+      "task": "Attach security finding dispositions, fork/rehearsal logs, selector/storage/caller manifests, exact test counts and known limitations. State explicitly which products are excluded from the deployment candidate.",
+      "disposition": "Complete against final execution table and acceptance/security/package records."
+    },
+    {
+      "task": "Prepare the concrete public deployment runbook and required operational configuration for the exact candidate. DETF instances are immutable; document how a defective or misconfigured instance would be superseded instead of assuming an upgrade or admin pause exists.",
+      "disposition": "Complete against final execution table and acceptance/security/package records."
+    },
+    {
+      "task": "Produce one release manifest containing the final revision/dirty-source manifest, compiler/dependency settings, artifact hashes, package/facet addresses or predictions, salts, hook flags, registry wiring, creation parameters, fee/creator configuration, deployment order and local receipt references.",
+      "disposition": "Complete: release-manifest-acceptance-reviewed.json reports every required gate passed; canonical final manifest assembled after final documentation/preservation reconciliation."
+    }
+  ]
+}

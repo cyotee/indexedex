@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+
 import {DeploymentBase} from "./DeploymentBase.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IDiamondPackageCallBackFactory} from "@crane/contracts/interfaces/IDiamondPackageCallBackFactory.sol";
@@ -8,44 +11,33 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
 
-import {SenderGuardFacet} from "@crane/contracts/protocols/dexes/balancer/v3/vault/SenderGuardFacet.sol";
 import {BASE_MAIN} from "@crane/contracts/constants/networks/BASE_MAIN.sol";
 
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 
 import {UniswapV2_Component_FactoryService} from "contracts/protocols/dexes/uniswap/v2/UniswapV2_Component_FactoryService.sol";
-import {IUniswapV2StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeDFPkg.sol";
+import {IUniswapV2StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v2/IUniswapV2StandardExchangeDFPkg.sol";
 
 import {Aerodrome_Component_FactoryService} from "contracts/protocols/dexes/aerodrome/v1/Aerodrome_Component_FactoryService.sol";
-import {IAerodromeStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeDFPkg.sol";
+import {IAerodromeStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodrome/v1/IAerodromeStandardExchangeDFPkg.sol";
 
 import {CamelotV2_Component_FactoryService} from "contracts/protocols/dexes/camelot/v2/CamelotV2_Component_FactoryService.sol";
-import {ICamelotV2StandardExchangeDFPkg} from "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeDFPkg.sol";
+import {ICamelotV2StandardExchangeDFPkg} from "contracts/protocols/dexes/camelot/v2/ICamelotV2StandardExchangeDFPkg.sol";
 
 import {BalancerV3StandardExchangeRouter_FactoryService} from
     "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouter_FactoryService.sol";
-import {IBalancerV3StandardExchangeRouterDFPkg} from
-    "contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterDFPkg.sol";
+import {IBalancerV3StandardExchangeRouterDFPkg} from "contracts/protocols/dexes/balancer/v3/routers/IBalancerV3StandardExchangeRouterDFPkg.sol";
 import {IBalancerV3StandardExchangeRouterProxy} from
     "contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol";
 
 import {StandardExchangeRateProvider_FactoryService} from
     "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProvider_FactoryService.sol";
-import {IStandardExchangeRateProviderDFPkg} from
-    "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
+import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
 
 import {BalancerV3ConstantProductPool_FactoryService} from
     "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPool_FactoryService.sol";
-import {IBalancerV3ConstantProductPoolStandardVaultPkg} from
-    "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPoolStandardVaultPkg.sol";
-
-import {DefaultPoolInfoFacet} from
-    "contracts/protocols/dexes/balancer/v3/pools/constProd/facets/DefaultPoolInfoFacet.sol";
-import {StandardSwapFeePercentageBoundsFacet} from
-    "contracts/protocols/dexes/balancer/v3/pools/constProd/facets/StandardSwapFeePercentageBoundsFacet.sol";
-import {StandardUnbalancedLiquidityInvariantRatioBoundsFacet} from
-    "contracts/protocols/dexes/balancer/v3/pools/constProd/facets/StandardUnbalancedLiquidityInvariantRatioBoundsFacet.sol";
+import {IBalancerV3ConstantProductPoolStandardVaultPkg} from "contracts/protocols/dexes/balancer/v3/pools/constProd/IBalancerV3ConstantProductPoolStandardVaultPkg.sol";
 
 /// @title Script_04_DeployDEXPackages
 /// @notice Deploys all DEX integration packages (UniswapV2, Aerodrome, Camelot, BalancerV3)
@@ -139,6 +131,7 @@ contract Script_04_DeployDEXPackages is DeploymentBase {
                 multiAssetStandardVaultFacet,
                 create3Factory.deployUniswapV2StandardExchangeInFacet(),
                 create3Factory.deployUniswapV2StandardExchangeOutFacet(),
+                create3Factory.deployUniswapV2StandardExchangeQueryFacet(),
                 indexedexManager,
                 indexedexManager,
                 permit2,
@@ -194,6 +187,7 @@ contract Script_04_DeployDEXPackages is DeploymentBase {
         init.multiAssetStandardVaultFacet = multiAssetStandardVaultFacet;
         init.camelotV2StandardExchangeInFacet = create3Factory.deployCamelotV2StandardExchangeInFacet();
         init.camelotV2StandardExchangeOutFacet = create3Factory.deployCamelotV2StandardExchangeOutFacet();
+        init.camelotV2StandardExchangeQueryFacet = create3Factory.deployCamelotV2StandardExchangeQueryFacet();
         init.vaultFeeOracleQuery = indexedexManager;
         init.vaultRegistryDeployment = indexedexManager;
         init.permit2 = permit2;
@@ -208,8 +202,8 @@ contract Script_04_DeployDEXPackages is DeploymentBase {
 
     function _deployBalancerV3Router() internal {
         // IFacet senderGuardFacet = create3Factory.deployFacet(
-        //     type(SenderGuardFacet).creationCode,
-        //     abi.encode(type(SenderGuardFacet).name)._hash()
+        //     ArtifactCreationCode.creationCode(create3Factory, "SenderGuardFacet.sol:SenderGuardFacet"),
+        //     abi.encode("SenderGuardFacet")._hash()
         // );
 
         // IFacet exactInQueryFacet = create3Factory.deployBalancerV3StandardExchangeRouterExactInQueryFacet();
@@ -241,8 +235,8 @@ contract Script_04_DeployDEXPackages is DeploymentBase {
         IBalancerV3StandardExchangeRouterDFPkg.PkgInit memory pkgInit;
         {
             pkgInit.senderGuardFacet = create3Factory.deployFacet(
-                type(SenderGuardFacet).creationCode,
-                abi.encode(type(SenderGuardFacet).name)._hash()
+                ArtifactCreationCode.creationCode(create3Factory, "SenderGuardFacet.sol:SenderGuardFacet"),
+                abi.encode("SenderGuardFacet")._hash()
             );
             pkgInit.balancerV3StandardExchangeRouterExactInQueryFacet = create3Factory.deployBalancerV3StandardExchangeRouterExactInQueryFacet();
             pkgInit.balancerV3StandardExchangeRouterExactInSwapFacet = create3Factory.deployBalancerV3StandardExchangeRouterExactInSwapFacet();
@@ -291,18 +285,18 @@ contract Script_04_DeployDEXPackages is DeploymentBase {
         );
 
         IFacet defaultPoolInfoFacet = create3Factory.deployFacet(
-            type(DefaultPoolInfoFacet).creationCode,
-            abi.encode(type(DefaultPoolInfoFacet).name)._hash()
+            ArtifactCreationCode.creationCode(create3Factory, "DefaultPoolInfoFacet.sol:DefaultPoolInfoFacet"),
+            abi.encode("DefaultPoolInfoFacet")._hash()
         );
 
         IFacet standardSwapFeePercentageBoundsFacet = create3Factory.deployFacet(
-            type(StandardSwapFeePercentageBoundsFacet).creationCode,
-            abi.encode(type(StandardSwapFeePercentageBoundsFacet).name)._hash()
+            ArtifactCreationCode.creationCode(create3Factory, "StandardSwapFeePercentageBoundsFacet.sol:StandardSwapFeePercentageBoundsFacet"),
+            abi.encode("StandardSwapFeePercentageBoundsFacet")._hash()
         );
 
         IFacet unbalancedLiquidityInvariantRatioBoundsFacet = create3Factory.deployFacet(
-            type(StandardUnbalancedLiquidityInvariantRatioBoundsFacet).creationCode,
-            abi.encode(type(StandardUnbalancedLiquidityInvariantRatioBoundsFacet).name)._hash()
+            ArtifactCreationCode.creationCode(create3Factory, "StandardUnbalancedLiquidityInvariantRatioBoundsFacet.sol:StandardUnbalancedLiquidityInvariantRatioBoundsFacet"),
+            abi.encode("StandardUnbalancedLiquidityInvariantRatioBoundsFacet")._hash()
         );
 
         IBalancerV3ConstantProductPoolStandardVaultPkg.PkgInit memory pkgInit =

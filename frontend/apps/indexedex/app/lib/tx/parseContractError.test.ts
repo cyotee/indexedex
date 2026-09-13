@@ -2,6 +2,10 @@ import { describe, expect, it } from 'vitest'
 import { parseContractError } from './parseContractError'
 
 describe('parseContractError', () => {
+  it('explains the weighted pool input limit even when RPC renders its selector as text', () => {
+    expect(parseContractError({ message: 'execution reverted: 4', cause: { data: '0x340a4533' } }))
+      .toMatch(/per-transaction liquidity limit.*smaller amount/)
+  })
   it('maps Provider not found', () => {
     const err = new Error('Provider not found.')
     err.name = 'ProviderNotFoundError'

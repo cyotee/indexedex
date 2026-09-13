@@ -1,0 +1,19 @@
+{
+  "scope": "D60 test-only import declarations; no original legacy assertions removed and no retired product selectors installed",
+  "files": [
+    "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/TestBase_ComposedStableCommonDetf_Decimals.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfDFPkg_Deploy.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_IntegratedDeploy.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondingFacet.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/adversarial/Adversarial_ComposedStable_SecRemediation.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/adversarial/Adversarial_Surface.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/adversarial/Adversarial_ComposedStable_GE.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/adversarial/Adversarial_ComposedStable_P0.t.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_SecRemediation_Decimals.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_P0_Decimals.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_GE_Decimals.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/sequences/ComposedStableCommonDetf_Sequences_Decimals.sol",
+    "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/sequences/ComposedStableCommonDetf_Sequences.t.sol"
+  ],
+  "validation": "pending full build"
+}

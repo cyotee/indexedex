@@ -15,9 +15,7 @@ import {TestBase_VaultComponents} from 'contracts/vaults/TestBase_VaultComponent
 import {
     ComposedStableCommonDetf_Component_FactoryService
 } from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_Component_FactoryService.sol';
-import {
-    IRebasingDETFTokenDFPkg
-} from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenDFPkg.sol';
+import {IRebasingDETFTokenDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/IRebasingDETFTokenDFPkg.sol";
 import {
     RebasingDETFToken_Facet_FactoryService
 } from 'contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFToken_Facet_FactoryService.sol';

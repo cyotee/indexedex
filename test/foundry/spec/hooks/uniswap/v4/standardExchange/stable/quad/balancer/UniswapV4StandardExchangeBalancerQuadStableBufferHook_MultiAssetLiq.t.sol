@@ -19,8 +19,8 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_MultiAssetLiq is 
         vm.prank(user);
         (uint256 shares,) = mal.joinProportional(amounts, user, 0, block.timestamp + 1);
         assertGt(shares, 0);
-        // InvalidRoute on OMIT
-        vm.expectRevert(IUniswapV4StandardExchangeBalancerQuadStableBufferHook.InvalidRoute.selector);
-        mal.previewJoinUnbalanced(amounts);
+        uint256 expected = mal.previewJoinUnbalanced(amounts);
+        vm.prank(user);
+        assertEq(mal.joinUnbalanced(amounts, user, expected, block.timestamp + 1), expected);
     }
 }

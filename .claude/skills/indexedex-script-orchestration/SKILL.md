@@ -1,6 +1,6 @@
 ---
 name: indexedex-script-orchestration
-description: Indexedex shell and forge deployment orchestration best practices. Use when editing deploy_mainnet_bridge_ui.sh, wiring direct forge script execution, passing SENDER or OUT_DIR_OVERRIDE, handling local supersim signers, or stabilizing long broadcast runs for the Sepolia plus Base Sepolia rehearsal.
+description: "IndexedEx shell/Forge orchestration for Sepolia, Base Sepolia and SuperSim bridge rehearsals and long broadcasts."
 ---
 
 # Indexedex Script Orchestration

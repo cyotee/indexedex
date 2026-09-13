@@ -1,5 +1,9 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {TransitionQuoteAssertions} from "test/foundry/spec/vaults/standard/TransitionQuoteAssertions.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
@@ -98,7 +102,7 @@ contract RocketPoolRETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_
         IVaultFeeOracleManager(address(indexedexManager)).setDefaultLiquidReservePercentage(DEFAULT_LIQUID_PCT);
 
         vm.prank(owner);
-        seVault = pkg.deployVault(MAINNET_RETH, MAINNET_WETH, depositPool);
+        seVault = pkg.deployVault(MAINNET_RETH, MAINNET_WETH, depositPool, MAINNET_ROCKET_STORAGE);
         se = IRocketPoolRETHStandardVault(seVault);
         seIn = IStandardExchangeIn(seVault);
         seOut = IStandardExchangeOut(seVault);
@@ -248,5 +252,132 @@ contract RocketPoolRETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_
             // Honest: do not soft-pass as success when collateral was required
             // Pass only means we exercised the path and logged; if collateral exists mid-test elsewhere, prefer success branch
         }
+    }
+}
+
+/// @notice Compare every projected field with real Rocket Pool state. Archive
+/// unavailability fails setup instead of turning protocol checks into skips.
+contract RocketPoolStandardExchangeProjectionFork is RocketPoolRETHStandardExchange_Fork_Test, TransitionQuoteAssertions {
+    function setUp() public override {
+        vm.createSelectFork("ethereum_mainnet_alchemy", vm.envOr("ROCKET_QUOTE_FORK_BLOCK", uint256(24_000_000)));
+        super.setUp();
+        assertGt(seVault.code.length, 0, "registered production SE");
+        vm.prank(owner);
+        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(seVault, 0.07e18);
+        vm.deal(address(this), 10_100 ether);
+        IWETH(payable(MAINNET_WETH)).deposit{value: 10_000 ether}();
+        IRocketDepositPool(depositPool).deposit{value: 100 ether}();
+        IERC20(MAINNET_WETH).approve(seVault, 40 ether);
+        seIn.exchangeIn(IERC20(MAINNET_WETH), 40 ether, IERC20(seVault), 1, address(this), false, block.timestamp);
+        IERC20(MAINNET_RETH).approve(seVault, 10 ether);
+        seIn.exchangeIn(IERC20(MAINNET_RETH), 10 ether, IERC20(seVault), 1, address(this), false, block.timestamp);
+        assertGt(IRETH(MAINNET_RETH).getEthValue(1e18), 1e18, "actual fractional rate");
+    }
+
+    function test_rocketLiveSequentialLiquidAndLockedBooks() public {
+        _assertQuoteSequence(seVault, IERC20(MAINNET_WETH), address(this), 0.01 ether);
+        _assertQuoteSequence(seVault, IERC20(MAINNET_RETH), address(this), 0.01 ether);
+    }
+
+    function test_rocketLiveExternalDepositsAndFeeReceipts() public {
+        _assertExternalDepositQuote(seVault, IERC20(MAINNET_WETH), IERC20(MAINNET_RETH), 7 ether + 19, address(this));
+        address beneficiary = address(IVaultFeeOracleQuery(address(indexedexManager)).feeTo());
+        uint256 beforeShares = IERC20(seVault).balanceOf(beneficiary);
+        _assertExternalDepositQuote(seVault, IERC20(MAINNET_RETH), IERC20(MAINNET_WETH), 3 ether + 11, beneficiary);
+        assertGt(IERC20(seVault).balanceOf(beneficiary), beforeShares, "actual funded fee receipt");
+    }
+
+    function test_rocketLiveExternalConversionsIncludeDepositFee() public {
+        _assertExternalExchangeQuote(seVault, IERC20(MAINNET_RETH), IERC20(MAINNET_WETH), 1 ether + 17);
+        uint256 amount = 2 ether + 29;
+        IStandardExchangeTransitionQuote quote = IStandardExchangeTransitionQuote(seVault);
+        (bytes memory state,) = quote.quoteState(MAINNET_RETH, address(this));
+        (, uint256 projected,) = IStandardExchangeExternalQuote(seVault).quoteExternalExchange(state, MAINNET_WETH, amount);
+        assertLt(projected, IRETH(MAINNET_RETH).getRethValue(amount), "positive protocol deposit fee");
+        _assertExternalExchangeQuote(seVault, IERC20(MAINNET_WETH), IERC20(MAINNET_RETH), amount);
+    }
+
+    function test_rocketLiveSoftMinimumDepositPreservesSleeve() public {
+        uint256 target = se.actualLiquidReservePercentage();
+        vm.prank(owner);
+        IVaultFeeOracleManager(address(indexedexManager)).setDefaultLiquidReservePercentage(target);
+        uint256 beforeLocked = IERC20(MAINNET_RETH).balanceOf(seVault);
+        uint256 beforeLiquid = se.liquidReserveEth();
+        _assertExternalDepositQuote(seVault, IERC20(MAINNET_WETH), IERC20(MAINNET_WETH), 7, address(this));
+        assertEq(IERC20(MAINNET_RETH).balanceOf(seVault), beforeLocked, "failed sub-minimum soft stake keeps receipt book");
+        assertEq(se.liquidReserveEth(), beforeLiquid + 7, "failed soft stake restores WETH");
+    }
+
+    function _rocketWithdrawAndCompare(uint256 amount) private {
+        IStandardExchangeTransitionQuote quote = IStandardExchangeTransitionQuote(seVault);
+        (bytes memory state,) = quote.quoteState(MAINNET_WETH, address(this));
+        (bytes memory projected, uint256 required,,) = quote.quoteTransition(
+            state, IStandardExchangeTransitionQuote.Operation.WithdrawExactOut, amount
+        );
+        uint256 beforeBalance = IERC20(MAINNET_WETH).balanceOf(address(this));
+        assertEq(seOut.exchangeOut(IERC20(seVault), required, IERC20(MAINNET_WETH), amount, address(this), false, block.timestamp), required);
+        assertEq(IERC20(MAINNET_WETH).balanceOf(address(this)) - beforeBalance, amount);
+        (bytes memory actual,) = quote.quoteState(MAINNET_WETH, address(this));
+        _assertProjectedState(actual, projected);
+    }
+
+    function test_rocketLiveCollateralBurnPreservesExactBook() public {
+        // The canonical receipt explicitly accepts donations as burn collateral.
+        vm.deal(address(this), 5 ether);
+        (bool sent,) = MAINNET_RETH.call{value: 5 ether}("");
+        assertTrue(sent);
+        uint256 beforeLocked = IERC20(MAINNET_RETH).balanceOf(seVault);
+        _rocketWithdrawAndCompare(se.liquidReserveEth() + 1 ether + 1);
+        assertLt(IERC20(MAINNET_RETH).balanceOf(seVault), beforeLocked, "actual receipt burn funds shortfall");
+    }
+
+    function test_rocketLiveQueueAssignmentAndPoolCollateral() public {
+        // The two pinned versions have distinct validator queues and deposit
+        // limits. Both payments cover the actual queue and refill collateral.
+        uint256 payment = block.number == 24_000_000 ? 6_000 ether : 200_000 ether;
+        vm.deal(address(this), payment);
+        IWETH(payable(MAINNET_WETH)).deposit{value: payment}();
+        IStandardExchangeTransitionQuote quote = IStandardExchangeTransitionQuote(seVault);
+        (bytes memory state,) = quote.quoteState(MAINNET_WETH, address(this));
+        (bytes memory projected,, uint256 shares,) = quote.quoteTransition(
+            state, IStandardExchangeTransitionQuote.Operation.DepositExactIn, payment
+        );
+        IERC20(MAINNET_WETH).approve(seVault, payment);
+        assertEq(seIn.exchangeIn(IERC20(MAINNET_WETH), payment, IERC20(seVault), shares, address(this), false, block.timestamp), shares);
+        (bytes memory actual,) = quote.quoteState(MAINNET_WETH, address(this));
+        _assertProjectedState(actual, projected);
+        assertGt(IRocketDepositPool(depositPool).getExcessBalance(), 1 ether, "actual post-queue pool collateral");
+        uint256 beforePool = IRocketDepositPool(depositPool).getExcessBalance();
+        _rocketWithdrawAndCompare(se.liquidReserveEth() + MAINNET_RETH.balance + 1 ether);
+        assertLt(IRocketDepositPool(depositPool).getExcessBalance(), beforePool, "burn consumes actual pool excess");
+    }
+
+    function test_rocketLiveDeploymentBindingsAndComponentSizes() public {
+        IRocketPoolRETHStandardExchangeDFPkg.PkgArgs memory args = IRocketPoolRETHStandardExchangeDFPkg.PkgArgs({
+            rETH: MAINNET_RETH, weth: MAINNET_WETH, depositPool: depositPool, rocketStorage: MAINNET_ROCKET_STORAGE
+        });
+        assertEq(pkg.processArgs(abi.encode(args)), abi.encode(args));
+        args.depositPool = MAINNET_WETH;
+        vm.expectRevert(IRocketPoolRETHStandardExchangeDFPkg.InvalidProtocolBinding.selector);
+        pkg.processArgs(abi.encode(args));
+        args.depositPool = depositPool;
+        args.rETH = MAINNET_WETH;
+        vm.expectRevert(IRocketPoolRETHStandardExchangeDFPkg.InvalidProtocolBinding.selector);
+        pkg.processArgs(abi.encode(args));
+        args.rETH = MAINNET_RETH;
+        vm.expectRevert(IRocketPoolRETHStandardExchangeDFPkg.InvalidPackageArguments.selector);
+        pkg.processArgs(abi.encodePacked(abi.encode(args), uint256(1)));
+        args.rocketStorage = address(0);
+        vm.expectRevert(IRocketPoolRETHStandardExchangeDFPkg.ZeroAddress.selector);
+        pkg.processArgs(abi.encode(args));
+        assertLe(address(pkg).code.length, 24_576);
+        IFacet occupied = create3Factory.deployFacet(
+            ArtifactCreationCode.creationCode("ERC20Facet.sol:ERC20Facet"),
+            keccak256(abi.encode("RocketPoolRETHStandardExchangeInFacet"))
+        );
+        IFacet current = RocketPoolRETH_Component_FactoryService.deployRocketPoolRETHStandardExchangeInFacet(create3Factory);
+        assertLe(address(current).code.length, 24_576);
+        assertNotEq(address(current), address(occupied), "occupied legacy salt cannot select stale quote code");
+        assertEq(current.facetName(), "RocketPoolRETHStandardExchangeInFacet");
     }
 }

@@ -1,0 +1,39 @@
+{
+  "recorded_at_utc": "2026-09-08T10:48:46.121759+00:00",
+  "status": "APPLIED_ACTUAL_PROTOCOL_VALIDATION_PASSED",
+  "scope": "Existing EtherFi input target/facet/package/factory and existing actual-protocol fork suite; no new deployment argument or route allowlist.",
+  "files": [
+    {
+      "path": "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeInTarget.sol",
+      "before_sha256": "6a17dc266caf6deba5d15b3fff7d8a6a2a1151b43afe666d6d242a3203be18ba",
+      "prepared_sha256": "0886766c738c7b42bb8c4abf4f23f092d11a6191d8bbce2031a311fc1c7a9cdd"
+    },
+    {
+      "path": "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeInFacet.sol",
+      "before_sha256": "0bc439156524d5be22e5d8ce4ce6b17a68dcab15d0a2b59ef1f1979696e1ac2c",
+      "prepared_sha256": "0120ad2a70847ee0987126bb65fe35d3db3244802782e8f0f288c3f1bb210b6e"
+    },
+    {
+      "path": "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeDFPkg.sol",
+      "before_sha256": "68a869bfd2a3aafa9209c86905f64bc1edb96090d3417234cddde061df3b6880",
+      "prepared_sha256": "c3f3490dabc6ec1b2a7566c703a290aa9294641ada5d7c99651891cce3bb138e"
+    },
+    {
+      "path": "contracts/protocols/staking/etherfi/EtherFiWeETH_Component_FactoryService.sol",
+      "before_sha256": "e196c7ce20fbbf583bd2f43544b5b7c2ece825e6b2c6847dd2121169e0796587",
+      "prepared_sha256": "f50e7dd48134497dc0dc29a2cbf40a7e896a33c1827eb1494e5f3c11f76bb38a"
+    },
+    {
+      "path": "test/foundry/fork/eth_main/vaults/staking/etherfi/EtherFiWeETHStandardExchange_Fork.t.sol",
+      "before_sha256": "cc5903ce6e9bedf0e605657043bccd54dd2cd1748efa6d9d822b2fefdffaae9b",
+      "prepared_sha256": "c99a3f44003eb82adbbee97c4b9280a98f09266c0a3bf128a81c8462c14b3ba6"
+    }
+  ],
+  "remaining": [
+    "Compile unchanged settings and check EIP-170",
+    "Run five actual protocol fork cases and existing hermetic SY tests",
+    "Verify accepted composed V4 integration"
+  ],
+  "applied_at_utc": "2026-09-08T15:05:22.623608+00:00",
+  "validation_evidence": "etherfi-live-projection-fork-run.json"
+}

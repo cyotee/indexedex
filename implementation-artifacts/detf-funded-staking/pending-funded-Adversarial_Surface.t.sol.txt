@@ -1,0 +1,192 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {Test} from "forge-std/Test.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IDETFStakingPreview, IDETFStandardizedYield} from "contracts/interfaces/IDETFStandardizedYield.sol";
+import {IDETFFundedRewards} from "contracts/interfaces/IStakedDETF.sol";
+import {UniswapV4DetfRepo} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfRepo.sol";
+import {IUniswapV4DetfSelfCall} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4DetfSelfCall.sol";
+import {IUniswapV4Detf} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
+import {TestBase_UniswapV4Detf_Adversarial} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol";
+
+/// @notice Shared J1–J3 assertions against each actual manager-deployed reserve binding.
+abstract contract V4FundedSurfaceBehavior is Test {
+    function _surfaceSubject() internal view virtual returns (IUniswapV4Detf);
+    function _surfaceFacets() internal view virtual returns (IFacet[5] memory);
+    function _surfaceSeed() internal virtual;
+    function _surfaceMint() internal virtual returns (uint256);
+    function _surfaceBuyer() internal view virtual returns (address);
+    function _surfaceAttacker() internal view virtual returns (address);
+    function _surfacePayment() internal view virtual returns (IERC20);
+
+    function _controlSelectors() internal pure returns (bytes4[] memory s_) {
+        s_ = new bytes4[](48);
+        s_[0] = IStandardExchangeIn.exchangeIn.selector;
+        s_[1] = IStandardExchangeIn.previewExchangeIn.selector;
+        s_[2] = IUniswapV4Detf.bond.selector;
+        s_[3] = IUniswapV4Detf.previewBond.selector;
+        s_[4] = IUniswapV4Detf.donate.selector;
+        s_[5] = IUniswapV4Detf.sweepDust.selector;
+        s_[6] = IUniswapV4Detf.hook.selector;
+        s_[7] = IUniswapV4Detf.ownerOnlyLiquidity.selector;
+        s_[8] = IUniswapV4Detf.reservePool.selector;
+        s_[9] = IUniswapV4Detf.isReserveLive.selector;
+        s_[10] = IUniswapV4Detf.isReserveWired.selector;
+        s_[11] = IUniswapV4Detf.mintRoutes.selector;
+        s_[12] = IUniswapV4Detf.burnRoutes.selector;
+        s_[13] = IUniswapV4Detf.bondRoutes.selector;
+        s_[14] = IUniswapV4Detf.closeRoutes.selector;
+        s_[15] = IUniswapV4Detf.donateRoutes.selector;
+        s_[16] = IUniswapV4Detf.mintRouteMode.selector;
+        s_[17] = IUniswapV4Detf.burnRouteMode.selector;
+        s_[18] = IUniswapV4Detf.bondRouteMode.selector;
+        s_[19] = IUniswapV4Detf.closeRouteMode.selector;
+        s_[20] = IUniswapV4Detf.donateRouteMode.selector;
+        s_[21] = IUniswapV4Detf.creationPairPerDetfWad.selector;
+        s_[22] = IUniswapV4Detf.openingPairPerDetfWad.selector;
+        s_[23] = IUniswapV4Detf.mintThreshold.selector;
+        s_[24] = IUniswapV4Detf.burnThreshold.selector;
+        s_[25] = IUniswapV4Detf.syntheticPrice.selector;
+        s_[26] = IUniswapV4Detf.pendingExpansionDetf.selector;
+        s_[27] = IUniswapV4Detf.bondNftVault.selector;
+        s_[28] = IUniswapV4Detf.detfNFTVault.selector;
+        s_[29] = IUniswapV4Detf.rebasingClaimToken.selector;
+        s_[30] = IUniswapV4Detf.acceptedBondTokens.selector;
+        s_[31] = bytes4(keccak256("isMintingAllowed()"));
+        s_[32] = bytes4(keccak256("isMintingAllowed(address)"));
+        s_[33] = bytes4(keccak256("isBurningAllowed()"));
+        s_[34] = bytes4(keccak256("isBurningAllowed(address)"));
+        s_[35] = IUniswapV4Detf.joinDonatedCapital.selector;
+        s_[36] = IUniswapV4Detf.previewJoinDonatedCapital.selector;
+        s_[37] = IUniswapV4Detf.notifyReserveDonated.selector;
+        s_[38] = IUniswapV4Detf.completeReserveBondNft.selector;
+        s_[39] = IUniswapV4Detf.completeReserveClaim.selector;
+        s_[40] = IUniswapV4DetfSelfCall.peekPairEq.selector;
+        s_[41] = IUniswapV4DetfSelfCall.sweepDustAtomic.selector;
+        s_[42] = IUniswapV4DetfSelfCall.sweepPairToShare.selector;
+        s_[43] = IDETFFundedRewards.synchronizeRewards.selector;
+        s_[44] = IDETFStakingPreview.previewStakingGonsPerUnit.selector;
+        s_[45] = IDETFStandardizedYield.rawSY.selector;
+        s_[46] = IDETFStandardizedYield.stakingSY.selector;
+        s_[47] = IUniswapV4Detf.previewFirstBondPayments.selector;
+    }
+
+    function test_J1_facetFuncs_coversTargetApi() public view {
+        IFacet[5] memory facets_ = _surfaceFacets();
+        bytes4[] memory expected_ = _controlSelectors();
+        uint256 count_;
+        for (uint256 i_; i_ < facets_.length; ++i_) count_ += facets_[i_].facetFuncs().length;
+        assertEq(count_, expected_.length, "complete current product selector count");
+        for (uint256 i_; i_ < expected_.length; ++i_) {
+            uint256 occurrences_;
+            for (uint256 j_; j_ < facets_.length; ++j_) {
+                bytes4[] memory declared_ = facets_[j_].facetFuncs();
+                for (uint256 k_; k_ < declared_.length; ++k_) if (declared_[k_] == expected_[i_]) ++occurrences_;
+            }
+            assertEq(occurrences_, 1, string.concat("selector missing or duplicated: ", vm.toString(expected_[i_])));
+        }
+    }
+
+    function test_J2_proxyLoupe_allProductSelectors() public {
+        _surfaceSeed();
+        IFacet[5] memory facets_ = _surfaceFacets();
+        address proxy_ = address(_surfaceSubject());
+        for (uint256 i_; i_ < facets_.length; ++i_) {
+            bytes4[] memory declared_ = facets_[i_].facetFuncs();
+            for (uint256 j_; j_ < declared_.length; ++j_) {
+                assertEq(IDiamondLoupe(proxy_).facetAddress(declared_[j_]), address(facets_[i_]), "actual proxy routes to declared product facet");
+            }
+        }
+        _assertRetiredSelectorsAbsent(proxy_);
+    }
+
+    function _assertRetiredSelectorsAbsent(address proxy_) private view {
+        bytes4[11] memory retired_ = [
+            bytes4(keccak256("mint(address,uint256,uint256,address,bool,uint256)")),
+            bytes4(keccak256("previewMint(address,uint256)")),
+            bytes4(keccak256("burn(uint256,address,uint256,address,uint256)")),
+            bytes4(keccak256("previewBurn(uint256,address)")),
+            bytes4(keccak256("closeBondMature(uint256,uint256[],address,uint256)")),
+            bytes4(keccak256("previewCloseBondMature(uint256)")),
+            bytes4(keccak256("compoundProtocolRewards()")),
+            bytes4(keccak256("compoundProtocolRewardsAtomic()")),
+            bytes4(keccak256("claimLiquidity(uint256,address)")),
+            bytes4(keccak256("previewClaimLiquidity(uint256)")),
+            bytes4(keccak256("thresholdMode()"))
+        ];
+        for (uint256 i_; i_ < retired_.length; ++i_) {
+            assertEq(IDiamondLoupe(proxy_).facetAddress(retired_[i_]), address(0), "retired selector is absent");
+        }
+    }
+
+    function test_J3_proxyCallable_smoke_eachSelector() public {
+        _surfaceSeed();
+        IUniswapV4Detf info_ = _surfaceSubject();
+        address proxy_ = address(info_);
+        IERC20 payment_ = _surfacePayment();
+        assertTrue(info_.isReserveLive());
+        assertTrue(info_.isReserveWired());
+        assertEq(info_.reservePool(), info_.hook());
+        assertEq(address(info_.detfNFTVault()), info_.bondNftVault());
+        assertTrue(info_.rebasingClaimToken() != address(0));
+        info_.ownerOnlyLiquidity();
+        info_.mintRoutes(); info_.burnRoutes(); info_.bondRoutes(); info_.donateRoutes();
+        // These inert configuration getters remain until the separately recorded cleanup approval.
+        info_.closeRoutes(); info_.closeRouteMode();
+        info_.mintRouteMode(); info_.burnRouteMode(); info_.bondRouteMode(); info_.donateRouteMode();
+        info_.creationPairPerDetfWad(); info_.openingPairPerDetfWad();
+        assertGt(info_.mintThreshold(), info_.burnThreshold());
+        info_.syntheticPrice(); info_.pendingExpansionDetf(); info_.acceptedBondTokens();
+        info_.isMintingAllowed(); info_.isMintingAllowed(payment_);
+        info_.isBurningAllowed(); info_.isBurningAllowed(payment_);
+        IStandardExchangeIn(proxy_).previewExchangeIn(payment_, 1 ether, IERC20(proxy_));
+        IStandardExchangeIn(proxy_).previewExchangeIn(IERC20(proxy_), 1e9, payment_);
+        info_.previewBond(payment_, 1 ether, 30 days);
+        assertGt(IDETFStakingPreview(proxy_).previewStakingGonsPerUnit(payment_, 1 ether), 0);
+        assertTrue(IDETFStandardizedYield(proxy_).rawSY() != address(0));
+        assertTrue(IDETFStandardizedYield(proxy_).stakingSY() != address(0));
+        _assertUnauthorizedCallbacks(info_, payment_);
+        uint256 minted_ = _surfaceMint();
+        assertGt(minted_, 0, "standard input executes through actual proxy");
+        address buyer_ = _surfaceBuyer();
+        vm.startPrank(buyer_);
+        IERC20(proxy_).approve(proxy_, minted_ / 2);
+        uint256 out_ = IStandardExchangeIn(proxy_).exchangeIn(
+            IERC20(proxy_), minted_ / 2, payment_, 1, buyer_, false, block.timestamp + 1 hours
+        );
+        vm.stopPrank();
+        assertGt(out_, 0, "standard output executes through actual proxy");
+        IDETFFundedRewards(proxy_).synchronizeRewards();
+        info_.sweepDust();
+    }
+
+    function _assertUnauthorizedCallbacks(IUniswapV4Detf info_, IERC20 payment_) private {
+        address attacker_ = _surfaceAttacker();
+        vm.prank(attacker_);
+        vm.expectRevert(UniswapV4DetfRepo.ZeroAmount.selector);
+        IStandardExchangeIn(address(info_)).exchangeIn(payment_, 0, IERC20(address(info_)), 0, attacker_, false, block.timestamp + 1 hours);
+        vm.prank(attacker_);
+        vm.expectRevert(UniswapV4DetfRepo.ZeroAmount.selector);
+        info_.bond(payment_, 0, 30 days, attacker_, false, block.timestamp + 1 hours);
+        vm.prank(attacker_);
+        vm.expectRevert(abi.encodeWithSelector(UniswapV4DetfRepo.NotAuthorized.selector, attacker_));
+        info_.joinDonatedCapital(payment_, 1 ether, block.timestamp + 1 hours);
+        vm.prank(attacker_);
+        vm.expectRevert(abi.encodeWithSelector(UniswapV4DetfRepo.NotAuthorized.selector, attacker_));
+        info_.notifyReserveDonated();
+    }
+}
+
+contract Adversarial_Surface is TestBase_UniswapV4Detf_Adversarial, V4FundedSurfaceBehavior {
+    function _surfaceSubject() internal view override returns (IUniswapV4Detf) { return detfInfo; }
+    function _surfaceFacets() internal view override returns (IFacet[5] memory) { return detfProductFacets; }
+    function _surfaceSeed() internal override { _goLive(500 ether); }
+    function _surfaceMint() internal override returns (uint256) { return _mintPairTo(detf, detfUser, 25 ether); }
+    function _surfaceBuyer() internal view override returns (address) { return detfUser; }
+    function _surfaceAttacker() internal view override returns (address) { return attacker; }
+    function _surfacePayment() internal view override returns (IERC20) { return IERC20(address(pairToken)); }
+}

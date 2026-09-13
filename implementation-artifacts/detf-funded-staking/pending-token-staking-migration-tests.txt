@@ -1,0 +1,80 @@
+    function test_realMigrationBoundsSlippageAndOwnerChecks() public {
+        _firstBond(80 ether);
+        vm.prank(detfUser);
+        staking.stake(10 ether);
+        vm.prank(owner);
+        staking.setTargetDetf(IDetfClaimPurchase(detf));
+        assertEq(address(staking.targetDetf()), detf, "actual target stored");
+        vm.expectRevert(abi.encodeWithSelector(ITokenStaking.AmountExceedsReserve.selector, 11 ether, 10 ether));
+        vm.prank(owner);
+        staking.migrateToClaimVault(11 ether, 0, block.timestamp);
+        assertEq(uint256(staking.phase()), uint256(ITokenStaking.Phase.Staking));
+
+        uint256 quote_ = IStandardExchangeIn(detf).previewExchangeIn(IERC20(launchToken), 4 ether, IERC20(detf));
+        uint256 supply_ = IERC20(detf).totalSupply();
+        IStakedDETF receipt_ = IStakedDETF(detfInfo.rebasingClaimToken());
+        bytes32 before_ = keccak256(abi.encode(receipt_.stakingState()));
+        vm.expectRevert(abi.encodeWithSelector(StakedDETFTarget.MinimumOutputNotMet.selector, quote_ + 1, quote_));
+        vm.prank(owner);
+        staking.migrateToClaimVault(4 ether, quote_ + 1, block.timestamp);
+        assertEq(uint256(staking.phase()), uint256(ITokenStaking.Phase.Staking), "minimum failure rolls back migration phase");
+        assertEq(IERC20(launchToken).balanceOf(address(staking)), 10 ether, "failed migration keeps payment");
+        assertEq(IERC20(detf).totalSupply(), supply_, "failed minimum rolls back issuance");
+        assertEq(keccak256(abi.encode(receipt_.stakingState())), before_, "failed minimum rolls back funded staking");
+        assertEq(address(staking.claimVault()), address(0), "failed minimum creates no wrapping vault");
+
+        vm.prank(owner);
+        (uint256 claim_,) = staking.migrateToClaimVault(4 ether, quote_, block.timestamp);
+        assertEq(claim_, quote_, "native staking minimum equals funded execution");
+        _assertMigrationApprovalsCleared();
+        vm.expectRevert(abi.encodeWithSelector(
+            ITokenStaking.InvalidPhase.selector, ITokenStaking.Phase.Migrating, ITokenStaking.Phase.Staking
+        ));
+        vm.prank(stakerB);
+        staking.stake(1 ether);
+        vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, detfUser));
+        vm.prank(detfUser);
+        staking.completeWrap(detfUser);
+
+        uint256 remaining_ = staking.reserveRemaining();
+        uint256 ownerBefore_ = IERC20(launchToken).balanceOf(owner);
+        vm.prank(owner);
+        staking.completeWrap(owner);
+        assertEq(uint256(staking.phase()), uint256(ITokenStaking.Phase.Wrapped));
+        assertEq(staking.reserveRemaining(), 0);
+        assertEq(IERC20(launchToken).balanceOf(owner) - ownerBefore_, remaining_, "explicit completion returns remaining payment");
+        uint256 preview_ = staking.previewClaim(detfUser, 10 ether);
+        vm.prank(detfUser);
+        uint256 paid_ = staking.withdrawClaim(10 ether);
+        assertEq(paid_, preview_, "remaining staker receives actual wrapped sDETF");
+        assertEq(receipt_.balanceOf(detfUser), paid_);
+    }
+
+    function test_reassignAfterRealFundedMigration() public {
+        _firstBond(80 ether);
+        vm.prank(detfUser);
+        staking.stake(20 ether);
+        vm.prank(owner);
+        staking.setTargetDetf(IDetfClaimPurchase(detf));
+        vm.prank(owner);
+        staking.migrateToClaimVault(20 ether, 0, block.timestamp);
+        _assertMigrationApprovalsCleared();
+        vm.prank(detfUser);
+        staking.reassign(stakerB, 20 ether);
+        assertEq(staking.balanceOf(detfUser), 0, "old holder conveys entire stake");
+        assertEq(staking.balanceOf(stakerB), 20 ether);
+        uint256 preview_ = staking.previewClaim(stakerB, 20 ether);
+        vm.prank(stakerB);
+        uint256 paid_ = staking.withdrawClaim(20 ether);
+        assertEq(paid_, preview_, "new holder gets actual funded claim");
+        assertGt(paid_, 0);
+        assertEq(IERC20(detfInfo.rebasingClaimToken()).balanceOf(stakerB), paid_);
+        assertEq(staking.totalSupply(), 0);
+    }
+
+    function _assertMigrationApprovalsCleared() private view {
+        address receipt_ = detfInfo.rebasingClaimToken();
+        assertEq(IERC20(launchToken).allowance(address(staking), detf), 0, "raw purchase approval cleared");
+        assertEq(IERC20(detf).allowance(address(staking), receipt_), 0, "funded staking approval cleared");
+        assertEq(IERC20(receipt_).allowance(address(staking), address(staking.claimVault())), 0, "wrapper approval cleared");
+    }

@@ -1,0 +1,96 @@
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol
+@@ -170,11 +170,29 @@
+         _assertStandardSettlementOrder(d, token_, _policyTokenUnits(token_, 10), IERC20(d));
+     }
+ 
++    /// @dev Establish the trigger on the real family book. Thirty years at 5%
++    /// need not close every opening premium. Each probe is rolled back before
++    /// the actual preview/implicit-settlement comparison below.
++    function _warpUntilSettlementClosesMint(address d, IERC20 token_) private {
++        uint256 start_ = block.timestamp;
++        uint256 elapsed_ = 30 * 365 days;
++        for (uint256 i_; i_ < 8; ++i_) {
++            vm.warp(start_ + elapsed_);
++            uint256 snapshot_ = vm.snapshotState();
++            IDETFFundedRewards(d).synchronizeRewards();
++            bool closed_ = !IUniswapV4Detf(d).isMintingAllowed(token_);
++            assertTrue(vm.revertToStateAndDelete(snapshot_));
++            if (closed_) return;
++            elapsed_ *= 2;
++        }
++        revert("fixture cannot establish post-expansion gate closure");
++    }
++
+     function _assert_D31_2_realizeWouldCloseMint_revertsUnchanged(address d) internal {
+         IUniswapV4Detf info_ = IUniswapV4Detf(d);
+         IERC20 token_ = _fundedPolicyMintToken(d);
+         assertTrue(info_.isMintingAllowed(token_), "stored price initially permits primary mint");
+-        vm.warp(block.timestamp + 30 * 365 days);
++        _warpUntilSettlementClosesMint(d, token_);
+         uint256 pending_ = info_.pendingExpansionDetf();
+         assertGt(pending_, 0, "uncapped aggregate expansion due");
+         uint256 snapshot_ = vm.snapshotState();
+@@ -517,7 +535,10 @@
+     }
+ 
+     function _deployOpenLive() internal returns (address d) {
+-        d = _deployTagged(_openArgsPolicy(), _nextTag());
++        // A configured 1:1 opening is not necessarily a no-premium reserve
++        // valuation (notably for Orbital). Set an explicit below-peg launch;
++        // the shared no-expansion assertion still checks the actual price.
++        d = _deployTagged(_withOpening(_openArgsPolicy(), 0.5e18), _nextTag());
+         _firstBondOn(d, FIRST_BOND_AMT);
+         assertTrue(IUniswapV4Detf(d).isReserveLive(), "open live");
+         return d;
+@@ -639,7 +660,10 @@
+     }
+ 
+     function _skewSyntheticDownAmt(address d, uint256 detfAmt) internal {
+-        _ensureFreeDetf(d, 1e9);
++        // Fractions of a DETF remain spendable after earlier reserve swaps.
++        // Do not attempt to claim an already consumed bond merely because the
++        // remaining balance is below one whole (1e9-unit) token.
++        _ensureFreeDetf(d, 1);
+         uint256 available_ = IERC20(d).balanceOf(detfUser) / 2;
+         uint256 amount_ = detfAmt < available_ ? detfAmt : available_;
+         address hook_ = IUniswapV4Detf(d).hook();
+--- a/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol
++++ b/contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol
+@@ -369,7 +369,10 @@
+     }
+ 
+     function _deployOpenLive() internal returns (address d) {
+-        d = _deployTagged(_openArgsPolicy(), _nextTag());
++        // A configured 1:1 opening is not necessarily a no-premium reserve
++        // valuation (notably for Orbital). Set an explicit below-peg launch;
++        // the shared no-expansion assertion still checks the actual price.
++        d = _deployTagged(_withOpening(_openArgsPolicy(), 0.5e18), _nextTag());
+         _firstBondOn(d, _firstBondAmt());
+         assertTrue(IUniswapV4Detf(d).isReserveLive(), "open live");
+         return d;
+@@ -507,7 +510,10 @@
+     }
+ 
+     function _skewSyntheticDownAmt(address d, uint256 detfAmt) internal {
+-        _ensureFreeDetf(d, 1e9);
++        // Fractions of a DETF remain spendable after earlier reserve swaps.
++        // Do not attempt to claim an already consumed bond merely because the
++        // remaining balance is below one whole (1e9-unit) token.
++        _ensureFreeDetf(d, 1);
+         uint256 available_ = IERC20(d).balanceOf(detfUser) / 2;
+         uint256 amount_ = detfAmt < available_ ? detfAmt : available_;
+         address hook_ = IUniswapV4Detf(d).hook();
+--- a/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted.t.sol
++++ b/test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted.t.sol
+@@ -38,6 +38,10 @@
+     function test_T8_4_mintAllowed_pairA_not_pairB() public {
+         IUniswapV4Detf.PkgArgs memory args = _customMintPair0Args();
+         args.symbol = "wH8";
++        // Isolate route membership while the mandatory primary gate is open.
++        args.openingPairPerDetfWad = new uint256[](2);
++        args.openingPairPerDetfWad[0] = 2.2e18;
++        args.openingPairPerDetfWad[1] = 2.2e18;
+         address customDetf = _deployWeightedHookThenDetf(args);
+         IUniswapV4Detf info = IUniswapV4Detf(customDetf);
+         vm.startPrank(detfUser);

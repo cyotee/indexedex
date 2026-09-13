@@ -1,0 +1,62 @@
+{
+  "status": "applied; validation pending",
+  "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4_Component_FactoryService.sol",
+  "before_sha256": "85aa515ff87564978125f9d0e238225c5fa0d873c2a5f44d9628f925c9f883bf",
+  "after_sha256": "6365753ba811744b40ba3e70c5584d340df5b4ea324e2d8b0f7a3f05d8b9bd28",
+  "artifacts": [
+    {
+      "artifact": "UniswapV4StandardExchangeDFPkg.sol:UniswapV4StandardExchangeDFPkg",
+      "source": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol"
+    },
+    {
+      "artifact": "UniswapV4StandardExchangeInExecutionDelegate.sol:UniswapV4StandardExchangeInExecutionDelegate",
+      "source": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInExecutionDelegate.sol"
+    },
+    {
+      "artifact": "UniswapV4StandardExchangeInFacet.sol:UniswapV4StandardExchangeInFacet",
+      "source": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInFacet.sol"
+    },
+    {
+      "artifact": "UniswapV4StandardExchangeInMultiFacet.sol:UniswapV4StandardExchangeInMultiFacet",
+      "source": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInMultiFacet.sol"
+    },
+    {
+      "artifact": "UniswapV4StandardExchangeInMultiQueryFacet.sol:UniswapV4StandardExchangeInMultiQueryFacet",
+      "source": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInMultiQueryFacet.sol"
+    },
+    {
+      "artifact": "UniswapV4StandardExchangeInQueryFacet.sol:UniswapV4StandardExchangeInQueryFacet",
+      "source": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryFacet.sol"
+    },
+    {
+      "artifact": "UniswapV4StandardExchangeLiquidReserveFacet.sol:UniswapV4StandardExchangeLiquidReserveFacet",
+      "source": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeLiquidReserveFacet.sol"
+    },
+    {
+      "artifact": "UniswapV4StandardExchangeOutExecutionDelegate.sol:UniswapV4StandardExchangeOutExecutionDelegate",
+      "source": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutExecutionDelegate.sol"
+    },
+    {
+      "artifact": "UniswapV4StandardExchangeOutFacet.sol:UniswapV4StandardExchangeOutFacet",
+      "source": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutFacet.sol"
+    },
+    {
+      "artifact": "UniswapV4StandardExchangeOutMultiFacet.sol:UniswapV4StandardExchangeOutMultiFacet",
+      "source": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiFacet.sol"
+    },
+    {
+      "artifact": "UniswapV4StandardExchangeOutMultiQueryFacet.sol:UniswapV4StandardExchangeOutMultiQueryFacet",
+      "source": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiQueryFacet.sol"
+    },
+    {
+      "artifact": "UniswapV4StandardExchangeOutQueryFacet.sol:UniswapV4StandardExchangeOutQueryFacet",
+      "source": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutQueryFacet.sol"
+    },
+    {
+      "artifact": "UniswapV4StandardExchangePositionImportFacet.sol:UniswapV4StandardExchangePositionImportFacet",
+      "source": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangePositionImportFacet.sol"
+    }
+  ],
+  "evidence": "token-staking-pons-artifact-trace.log: InExecutionDelegate exists in out but is absent from Pons fixture artifact resolution.",
+  "purpose": "Declare the actual creation-bytecode dependencies at the existing factory used by every V4 fixture. No factory API, salts or deployment operations changed."
+}

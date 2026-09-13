@@ -1,0 +1,1180 @@
+{
+  "updated_at_utc": "2026-09-11T12:10:08.211830+00:00",
+  "complete": false,
+  "status": "CURRENT_FULL_SUITE_PASS_STRICT_LOCAL_RELEASE_VALIDATION_PENDING",
+  "scope": "Unified four-family V4 DETF and retained SE/SY. D60 excludes Balancer-hosted DETF functional refactoring. D66 defers unfinished Slipstream.",
+  "owner_passing_baseline": "production-readiness/owner-passing-baseline.json",
+  "current_source_provenance": "production-readiness/rehearsal-coverage-source.json",
+  "active_plan": "../../contracts/vaults/detf/DETF_PRODUCTION_READINESS_REMAINING_IMPLEMENTATION_PLAN.md",
+  "current_queue": "current-implementation-queue.json",
+  "sequence_coordinator": "current-repository-production-readiness-nested-zero-sequence.json",
+  "historical_checkpoint_archive": "production-readiness/before-acceptance-pr04-reconciliation.json",
+  "rows": [
+    {
+      "id": "A1",
+      "requirement": "Every in-scope DETF and its staking token reports 9 decimals. Stake/unstake uses equal raw amounts; remaining 18-decimal DETF assumptions in bootstrap, pool scaling, supply, rewards and integrations are removed or converted explicitly",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4FundedBindings.t.sol",
+          "line": 77,
+          "function": "test_bindingHasNativeNineDecimalChildren"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg_Deploy.t.sol",
+          "line": 138,
+          "function": "test_stakingPackageRejectsNonNineDecimalBacking"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A2",
+      "requirement": "Deposits and funded rebases never issue more redeemable staking units than held DETF backs. LP value, pending unfunded expansion, unrelated idle balances and repeated reward synchronization cannot manufacture claims",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFFundedStakingMath.t.sol",
+          "line": 23,
+          "function": "testFuzz_fundedRebaseConservation"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol",
+          "line": 57,
+          "function": "testFuzz_paidRewardsAndStakeChangesKeepEveryUnitFunded"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A3",
+      "requirement": "For an unchanged holder position, the funded rebase index/balance never decreases. Pool swaps, DETF burns and LP valuation changes do not reduce staking inventory. Unstake transfers held DETF 1:1 independently of mint/burn gates",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Accounting.t.sol",
+          "line": 75,
+          "function": "test_reserveTradingCannotReduceFundedPrincipalAndFullExitRetiresOnlyOwnFraction"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFFundedStakingMath.t.sol",
+          "line": 50,
+          "function": "test_emptyAndUnfundedRebasePreserveIndex"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A4",
+      "requirement": "Mint/bond capital increases protocol-owned reserve assets. A bond separately mints proportional `G` and joins it with actual payment; this does not consume the vesting allocation. The first bond still initializes the family reserve and opens the DETF. New bond NFTs have no LP-principal redemption entitlement. Protocol reserves and staking backing are conserved independently",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4FundedBindings.t.sol",
+          "line": 92,
+          "function": "test_bindingFirstBondFundsPrincipalSeparatelyFromOwnedLP"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4FundedBindings.t.sol",
+          "line": 29,
+          "function": "test_bindingFirstBondPaymentPreviewMatchesEveryWalletDebit"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A5",
+      "requirement": "Bond principal equals the existing net-user split of the specified duration-bonus gross quote `U`, while actual received capital equals unboosted payment. The duration multiplier is not double-counted; D3 uses `U` and D4 uses independent `G`. Principal is fixed, minted and funded into staking at purchase",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFMintSplit_Alignment.t.sol",
+          "line": 24,
+          "function": "test_bond_independentPurchasedAllocationAndLiquidity"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFMintSplit_Alignment.t.sol",
+          "line": 31,
+          "function": "test_bond_equalQuotesPreserveExistingSplit"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A6",
+      "requirement": "Original principal vests linearly: no principal is claimable before its elapsed fraction, repeated/partial claims do not reset the clock, and all principal is vested at maturity",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFFundedStakingMath.t.sol",
+          "line": 114,
+          "function": "test_linearVestingFloorsAndFinalUnit"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4FundedBindings.t.sol",
+          "line": 107,
+          "function": "test_bindingHalfwayPrincipalUnstakesWithoutLPWithdrawal"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A7",
+      "requirement": "The 100-principal / 110-staked-value halfway example yields 50 claimable principal and 10 independently claimable rewards. Rewards on unvested and vested-but-unclaimed principal are claimable; claiming them does not consume principal or accelerate vesting",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFFundedStakingMath.t.sol",
+          "line": 90,
+          "function": "test_halfwayPrincipalAndRewardClaims"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+          "line": 80,
+          "function": "test_rewardOnlyClaimIsImmediateAndDoesNotUnlockPrincipal"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A8",
+      "requirement": "Interleaved rebases, reward-only claims, principal-only claims, combined claims and NFT ownership changes conserve each bond's staking shares and remaining principal. No cross-NFT leakage, double claim, or unrecoverable final principal dust",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/FundedStakingSequence.t.sol",
+          "line": 135,
+          "function": "test_twoBondEscrowsCloseWithoutRetiringEachOthersFraction"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVaultDFPkg_Deploy.t.sol",
+          "line": 60,
+          "function": "test_ownerOperatorAndTransferPreserveRemainingVesting"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A9",
+      "requirement": "Seigniorage and expansion reach staking backing. Their staking-reward portion benefits ordinary and bond-escrowed staking positions through the same funded index; fee/creator portions separately fund the receipts specified in D40. No duplicate payout through legacy bond reward shares or unintended second LP-compound allocation",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_FeeCreatorClaimBase.sol",
+          "line": 58,
+          "function": "test_FC_fundedTwoWavesMatchIndependentFloors"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4FundedBindings.t.sol",
+          "line": 129,
+          "function": "test_bindingRewardsClaimWhilePrincipalRemainsLocked"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A10",
+      "requirement": "At each failing primary price threshold, including equality/deadband, mint/buy and burn/sell execute their reserve-swap branches when liquidity and user limits permit. The fallback itself has zero DETF mint/burn; a successful fallback does not revert solely because expansion changed the primary gate result",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 99,
+          "function": "test_standardMintAndBurnFallbackMatchActualSwapWithoutIssuance"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 117,
+          "function": "test_standardFallbackSettlesFundedCatchupBeforeBothDirections"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A11",
+      "requirement": "Preview and execution agree on selected primary/swap route, fees and conservative outputs for the same state. Slippage, allowance, unsupported-route and liquidity failures retain their legitimate failure behavior; arbitrary errors are not swallowed as price-gate fallbacks",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json",
+        "production-readiness/zero-output-final-regressions.json",
+        "production-readiness/security-findings.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 263,
+          "function": "test_seShareFallbackComposesActualRedemptionAndSwap"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 273,
+          "function": "test_customProtocolShareFallbackComposesActualConversionAndSwap"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 284,
+          "function": "test_customDonationQuoteIncludesWrappingBeforeReserveJoin"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A12",
+      "requirement": "Existing SE interfaces remain callable. Pendle-compatible SY entrypoints, internal-balance redemption, metadata and static-share accounting work with nine-decimal DETF/staking tokens and supported underlying decimal combinations. A complete SY staking deposit/reward/redemption round trip preserves backing",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json",
+        "current-se-package-inventory.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg_Deploy.t.sol",
+          "line": 258,
+          "function": "test_stakingSYDepositAndRedemptionMatchPreviews"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg_Deploy.t.sol",
+          "line": 290,
+          "function": "test_syInternalBalanceRedemptionConsumesOnlyTransferredSY"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A13",
+      "requirement": "Ordinary issuance, existing fee parameters and primary burn-to-LP proportionality retain their baseline economics under correct decimal conversion. Principal deposits are excluded from reward detection; fee-only weights cannot create unfunded redeemable principal",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFMintSplit_Alignment.t.sol",
+          "line": 17,
+          "function": "test_liveMint_U_is_Gross_userAndPot"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFMintSplit_Alignment.t.sol",
+          "line": 52,
+          "function": "test_d2_topUpDeltas_workedExample"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 492,
+          "function": "test_lpBondValuesDistinctNonDetfLegsAndRetainsWholeInventory"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A14",
+      "requirement": "For a 100-DETF distribution with allocated fee 10 and creator 5, exactly 85 funds the existing positions' rebase and 15 backs newly delivered 10/5 sDETF receipts. Previously held fee/creator sDETF earns the ordinary rebase; this distribution's new receipts do not. Repeated synchronization cannot redistribute the 100 or issue duplicate receipts. Fee payout remains funded and possible when no other staking positions exist",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFFundedStakingMath.t.sol",
+          "line": 62,
+          "function": "test_allocationWorkedExample"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_FeeCreatorClaimBase.sol",
+          "line": 58,
+          "function": "test_FC_fundedTwoWavesMatchIndependentFloors"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_FeeCreatorClaimBase.sol",
+          "line": 125,
+          "function": "test_FC_noNewFundingCannotRepeatStandingPayout"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A15",
+      "requirement": "Fee/creator receipts transfer and unstake to DETF 1:1 without bond maturity or DETF price-gate restrictions. After either recipient fully redeems to zero sDETF, the next applicable distribution still pays new funded sDETF under that recipient's continuing fee entitlement. Partial redemption and transfer likewise do not cancel that entitlement, and a transferee gains no fee/creator role merely by receiving sDETF",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_FeeCreatorClaimBase.sol",
+          "line": 71,
+          "function": "test_FC_fullExitAndFeeToRotationPreserveStandingIncome"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg_Deploy.t.sol",
+          "line": 361,
+          "function": "test_standingRecipientsReceiveNewExpansionAfterAllStakeUnstakes"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A16",
+      "requirement": "First-bond gross DETF is the linear conversion of bonus-adjusted input at the configured initial/opening price, with correct native/WAD/nine-decimal scaling and existing fee splits. At initial price 2 and payment 100 with 20% bonus, gross `U` is 60 DETF. The independent liquidity self-leg remains unboosted. Preview and execution agree; first-bond pricing has no live-pool price impact, and later bonds use the live curve",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_OpeningPrice.t.sol",
+          "line": 12,
+          "function": "test_T1_openingZero_storesAsCreation_firstBondGAtPeg"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_OpeningPriceLayerBase.sol",
+          "line": 12,
+          "function": "test_T1_openingZero_storesAsCreation_firstBondGAtPeg"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_OpeningPriceLayerBase_Decimals.sol",
+          "line": 12,
+          "function": "test_T1_openingZero_storesAsCreation_firstBondGAtPeg"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_Policy.t.sol",
+          "line": 97,
+          "function": "test_T1_openingZero_storesAsCreation_firstBondGAtPeg"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Policy_Decimals.sol",
+          "line": 97,
+          "function": "test_T1_openingZero_storesAsCreation_firstBondGAtPeg"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Quad_OpeningPrice.t.sol",
+          "line": 16,
+          "function": "test_T2_openingUsesG_creationViewUnchanged"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_OpeningPriceLayerBase.sol",
+          "line": 16,
+          "function": "test_T2_openingUsesG_creationViewUnchanged"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_OpeningPriceLayerBase_Decimals.sol",
+          "line": 16,
+          "function": "test_T2_openingUsesG_creationViewUnchanged"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_Policy.t.sol",
+          "line": 112,
+          "function": "test_T2_openingUsesG_creationViewUnchanged"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Policy_Decimals.sol",
+          "line": 112,
+          "function": "test_T2_openingUsesG_creationViewUnchanged"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4FundedBindings.t.sol",
+          "line": 29,
+          "function": "test_bindingFirstBondPaymentPreviewMatchesEveryWalletDebit"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A17",
+      "requirement": "Only automatic expansion follows the fixed 8-hour epochs. Every applicable ordinary/bond issuance distributes its funded seigniorage immediately, including between boundaries, without moving the expansion clock. Principal deposits and unminted expansion cannot manufacture rewards. Neither distribution source can be paid twice. Both rebase eligible stake before issuing their fee/creator receipts; transfers, unstaking and funded bond claims remain available between boundaries",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 117,
+          "function": "test_standardFallbackSettlesFundedCatchupBeforeBothDirections"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_FeeCreatorClaimBase.sol",
+          "line": 58,
+          "function": "test_FC_fundedTwoWavesMatchIndependentFloors"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A18",
+      "requirement": "Every supported bond principal/reward/close claim transfers only sDETF from the attributable escrow stake. The 100-principal/110-value halfway combined claim pays 60 sDETF. Claiming itself neither mints DETF nor unstakes or liquidates LP; the recipient may separately unstake claimed sDETF to DETF 1:1. No extra bond-specific reward or lock multiplier is applied to the purchased staking position",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4FundedBindings.t.sol",
+          "line": 107,
+          "function": "test_bindingHalfwayPrincipalUnstakesWithoutLPWithdrawal"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_CloseD25OpenBase.sol",
+          "line": 11,
+          "function": "test_D25_fundedPrincipalAndRewardsPayOnlyStaking"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Alignment_CloseD25OpenBase_Decimals.sol",
+          "line": 11,
+          "function": "test_D25_fundedPrincipalAndRewardsPayOnlyStaking"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+          "line": 229,
+          "function": "test_D25_fundedPrincipalAndRewardsPayOnlyStaking"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+          "line": 229,
+          "function": "test_D25_fundedPrincipalAndRewardsPayOnlyStaking"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A19",
+      "requirement": "The raw-DETF SY has a separate share-token address. Its deposit/redeem mints/burns SY around acquired/released DETF, including when the DETF leg selects a supply-neutral reserve swap. Existing DETF SE entrypoints remain callable and events distinguish actual SY issuance from DETF swap transfers",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json",
+        "production-readiness/zero-output-final-regressions.json",
+        "production-readiness/security-findings.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg_Deploy.t.sol",
+          "line": 241,
+          "function": "test_rawSYWrapsAndRedeemsExactDETFWithoutStaking"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg_Deploy.t.sol",
+          "line": 215,
+          "function": "test_syAddressesMetadataAndDirectionalDiscovery"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A20",
+      "requirement": "Staking SY supports direct sDETF, direct DETF and every existing directionally configured DETF input/output route. Discovery, validation and previews match execution; composed routes enforce final minimum outputs and preserve primary/swap selection and existing fees. Direct sDETF/DETF routes preserve funded 1:1 staking without requiring a reserve swap",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json",
+        "production-readiness/zero-output-final-regressions.json",
+        "production-readiness/security-findings.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4FundedBindings.t.sol",
+          "line": 243,
+          "function": "test_bindingPositionShareInputsRedeemThroughEveryNativeSyOutput"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg_Deploy.t.sol",
+          "line": 258,
+          "function": "test_stakingSYDepositAndRedemptionMatchPreviews"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg_Deploy.t.sol",
+          "line": 305,
+          "function": "test_syDepositSlippageRollsBackInputAndBacking"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A21",
+      "requirement": "Staking SY reports 9 decimals, non-rebasing balances, DETF accounting metadata and sDETF as its yield token. Its WAD exchange rate converts raw SY to raw DETF entitlement; immediately distributed seigniorage and settled expansion can increase that entitlement without rebasing SY balances or creating a duplicate reward-token claim. Pending unminted expansion is not already-redeemable backing. No Scaled18 metadata or unapproved changes to SE-vault decimals are introduced",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFFundedStakingMath.t.sol",
+          "line": 131,
+          "function": "test_staticSyRateUsesFundedIndex"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg_Deploy.t.sol",
+          "line": 275,
+          "function": "test_stakingSYOwnsStaticBalancesAcrossNewBondRewards"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A22",
+      "requirement": "An ordinary or bond-escrow deposit already present at an expansion boundary participates without time weighting, including a deposit made just before the boundary. A deposit entering in the transaction that processes the due boundary is credited afterward. Due expansion precedes withdrawals. Immediate seigniorage uses the stake present at its own distribution, with the bond's funded position established before its own pot distributes. New fee receipts do not earn their own distribution, and transfers cannot duplicate entitlement",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 132,
+          "function": "test_boundaryStakeParticipationAndLateEntryOrdering"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A23",
+      "requirement": "After all actual sDETF balances are redeemed, standing fee/creator reward rights remain eligible. A later distribution processes their existing weights and pays newly funded sDETF even with zero ordinary staking supply. When only their standing weights remain, the existing calculation distributes between them without an invented fixed ordinary-staker remainder or a no-recipient carry-forward branch; preserve ordinary rounding-dust accounting",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFFundedStakingMath.t.sol",
+          "line": 71,
+          "function": "test_standingWeightsOnlyDistributeWholePot"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg_Deploy.t.sol",
+          "line": 361,
+          "function": "test_standingRecipientsReceiveNewExpansionAfterAllStakeUnstakes"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A24",
+      "requirement": "The first successful bond anchors the expansion clock. At hour 25 with three completed intervals and no intervening interaction, process one aggregate eligible expansion mint and distribution, advance through hour 24 and retain hour 32 as the next boundary. No historical distribution replay, hypothetical fee-receipt compounding, duplicate interval payment or distribution of unminted DETF occurs; zero eligible expansion advances completed boundaries without issuing unfunded claims",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFEpochNaturalExpansionLib.t.sol",
+          "line": 32,
+          "function": "test_hour25Settles24AndPreservesNextBoundary"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 464,
+          "function": "test_lpBondSettlesExpansionBeforeTakingPayment"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A25",
+      "requirement": "A transaction with both due expansion and new issuance settles expansion before the action and distributes the new seigniorage immediately afterward under the required position order. Each source rebases eligible stake before issuing its own fee/creator sDETF. Expansion fee receipts may earn the later seigniorage distribution, but no receipts earn their own distribution. Expansion does not also mint an extra `p * expansion` reward",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Alignment_FeeCreatorClaimBase.sol",
+          "line": 58,
+          "function": "test_FC_fundedTwoWavesMatchIndependentFloors"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 464,
+          "function": "test_lpBondSettlesExpansionBeforeTakingPayment"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A26",
+      "requirement": "Every refactored DETF deploys with mandatory price gating. Deployment cannot select Open or disable gating through any alternate flag. Preserve configured thresholds, validation, first-bond/staking/claim exemptions and primary mint/burn semantics; failed primary gates use reserve swaps under A10/A11",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 99,
+          "function": "test_standardMintAndBurnFallbackMatchActualSwapWithoutIssuance"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A27",
+      "requirement": "Every family calculates expansion over all unsettled completed epochs without a time, epoch-count, supply-relative or absolute amount cap. Seven idle days contribute all 21 completed epochs to one mint/distribution. Cases whose formula output exceeds former per-update caps still mint the full calculated amount. No cap deployment option or equivalent hidden limiter survives, and subsequent calls cannot pay the same interval twice",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFEpochNaturalExpansionLib.t.sol",
+          "line": 43,
+          "function": "test_sevenDaysIncludesAll21EpochsWithoutCompounding"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol",
+          "line": 19,
+          "function": "test_weekHasNoOneDayOrSupplyRelativeCap"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A28",
+      "requirement": "The final selector inventory maps every retained fungible mint/burn/stake/unstake/wrap route to SE/SY. Duplicate standalone selectors such as `mintClaim`, `buyClaim` and `redeemClaim` are absent from new deployment exports and supported callers use their standard replacements. Retained NFT-specific operations have a documented need for position/duration arguments and cannot release unvested principal",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json",
+        "production-readiness/frontend-check.json",
+        "production-readiness/frontend-abi-reconciliation.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_Surface.t.sol",
+          "line": 79,
+          "function": "test_J2_retiredClaimSelectorsAreAbsent"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4FundedBindings.t.sol",
+          "line": 71,
+          "function": "test_bindingRetiredLpClaimProjectionSelectorsAreAbsent"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A29",
+      "requirement": "Standard replacements preserve route discovery, previews, received-asset accounting, recipient/approval semantics, slippage, supported exact-out behavior, funded staking and price-gate swap fallback. SE and SY compose the same accounting operations without double minting, double reward distribution or a second bond payout route",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json",
+        "production-readiness/frontend-check.json",
+        "production-readiness/frontend-abi-reconciliation.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg_Deploy.t.sol",
+          "line": 305,
+          "function": "test_syDepositSlippageRollsBackInputAndBacking"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_TrustFlags.t.sol",
+          "line": 29,
+          "function": "test_pretransferredNeverCreditsHeldStakingOrBacking"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/RebasingClaimToken_TrustFlags.t.sol",
+          "line": 83,
+          "function": "test_exactOutputNativeLimitsAfterFundedRebase"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A30",
+      "requirement": "A field-by-field inventory accounts for every affected storage member as retained with an active purpose, replaced or removed. Unused fields, obsolete layouts and their initialization/getter-only dependencies are removed from the new implementation. All readers/writers use the same revised layout, while required protocol LP custody, staking backing, vesting and standing fee rights remain functional",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json",
+        "production-readiness/storage-review.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFNFTVault_Surface.t.sol",
+          "line": 67,
+          "function": "test_J2_retiredLpAndEffectiveShareSelectorsCannotBeCalled"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A31",
+      "requirement": "The redesigned SVG and JSON traits reflect current funded bond state. The 100-principal/110-sDETF halfway example shows 50% vested, 50 sDETF claimable principal, 10 sDETF claimable rewards and 60 sDETF total claimable. After claiming both, it shows 50 DETF remaining principal and zero immediately claimable balance at the same timestamp. Reward-only claims do not change vesting progress or principal",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json",
+        "production-readiness/frontend-check.json",
+        "production-readiness/frontend-abi-reconciliation.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFFundedBondMetadata.t.sol",
+          "line": 27,
+          "function": "test_halfwayArtworkAndExactJSONUseFundedClaims"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFFundedBondMetadata.t.sol",
+          "line": 42,
+          "function": "test_newPartialRewardOnlyAndFullyVestedStates"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A32",
+      "requirement": "Representative new, partially vested, partially claimed, fully vested and retained standing-role NFT states render legibly with explicit token units and nine-decimal amounts. SVG/JSON contain no obsolete user LP entitlement, boosted reward-share balance, cliff-only unlock story or unfunded projected reward. Text is escaped and artwork renders without external scripts, fonts or image requests",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json",
+        "production-readiness/frontend-check.json",
+        "production-readiness/frontend-abi-reconciliation.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFFundedBondMetadata.t.sol",
+          "line": 53,
+          "function": "test_nameIsEscapedIndependentlyForJSONAndSVG"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFFundedBondMetadata.t.sol",
+          "line": 61,
+          "function": "test_rolesHaveNoInventedVestingOrPrincipal"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/bondNft/DETFFundedBondMetadata.t.sol",
+          "line": 85,
+          "function": "test_exportRepresentativeRendererArtifacts"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A33",
+      "requirement": "Historical Composed requirement, no further functional work: deployment arguments carry opening price and seed ratios through validation, deterministic prediction, initialization and callers. Non-1:1 rich first-bond previews and execution agree on separate linear purchased `U` and unboosted liquidity `G`; later bonds use the live curve.",
+      "status": "EXCLUDED_D60",
+      "evidence": [
+        "requirement-decisions.json",
+        "production-readiness/package-source-manifest.json"
+      ],
+      "source_anchors": [],
+      "remaining": "Preserve excluded Balancer DETF code/tests. Confirm no excluded product in final deployed release manifest."
+    },
+    {
+      "id": "A34",
+      "requirement": "V3/V4 ordinary launches and imported positions produce the maximum usable tick range for the actual tick spacing. Imports preserve credited assets through conversion; no narrow imported backing remains.",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json",
+        "current-se-package-inventory.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_FullRangeBook.t.sol",
+          "line": 252,
+          "function": "test_FR1_centerTicksFullRange_noWings"
+        },
+        {
+          "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_Decimals.sol",
+          "line": 59,
+          "function": "test_FR1_centerTicksFullRange_noWings"
+        },
+        {
+          "source": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_FullRangeBook.t.sol",
+          "line": 508,
+          "function": "test_FR1_centerTicksFullRange_wingsUnused"
+        },
+        {
+          "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_Decimals.sol",
+          "line": 111,
+          "function": "test_FR1_centerTicksFullRange_wingsUnused"
+        },
+        {
+          "source": "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_FullRangeBook.t.sol",
+          "line": 327,
+          "function": "test_FR6_importedNftConvertedToFullRange"
+        },
+        {
+          "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_Decimals.sol",
+          "line": 151,
+          "function": "test_FR6_importedNftConvertedToFullRange"
+        },
+        {
+          "source": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_FullRangeBook.t.sol",
+          "line": 585,
+          "function": "test_FR6_importConvertsRealNftToFullRangeIncludingEarnedFees"
+        },
+        {
+          "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_Decimals.sol",
+          "line": 214,
+          "function": "test_FR6_importConvertsRealNftToFullRangeIncludingEarnedFees"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A35",
+      "requirement": "For in-scope V3/V4 position vaults, independent exact concentrated-liquidity token amounts plus sleeves and earned fees reconcile to the complete V2-style proportional/constant-product book and SY rate. Fee collection, deployment, withdrawal and locked-pool sleeve operations do not double count assets. Mixed decimals, price movement and rounding are covered.",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json",
+        "current-se-package-inventory.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/standard/sy/V3FullRangeNativeSY.t.sol",
+          "line": 67,
+          "function": "test_nativeSYMetadataAndWholeBookRate"
+        },
+        {
+          "source": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_FullRangeBook.t.sol",
+          "line": 682,
+          "function": "test_nativeSYMetadataRateAndFacetSize"
+        },
+        {
+          "source": "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_FullRangeBook.t.sol",
+          "line": 143,
+          "function": "test_accruedFees_blockedDepositMatchesIdlePreview"
+        },
+        {
+          "source": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_FullRangeBook.t.sol",
+          "line": 346,
+          "function": "test_accruedFees_blockedDepositMatchesIdlePreview"
+        },
+        {
+          "source": "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_FullRangeBook.t.sol",
+          "line": 101,
+          "function": "testFuzz_fundedSleeveWithdrawalRounding"
+        },
+        {
+          "source": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_FullRangeBook.t.sol",
+          "line": 308,
+          "function": "testFuzz_fundedSleeveWithdrawalRounding"
+        },
+        {
+          "source": "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_FullRangeBook.t.sol",
+          "line": 203,
+          "function": "testFuzz_singleDeposit_roundTripPreservesIncumbentValue"
+        },
+        {
+          "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_Decimals.sol",
+          "line": 112,
+          "function": "testFuzz_singleDeposit_roundTripPreservesIncumbentValue"
+        },
+        {
+          "source": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_FullRangeBook.t.sol",
+          "line": 406,
+          "function": "testFuzz_singleDeposit_roundTripPreservesIncumbentValue"
+        },
+        {
+          "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_Decimals.sol",
+          "line": 175,
+          "function": "testFuzz_singleDeposit_roundTripPreservesIncumbentValue"
+        },
+        {
+          "source": "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_FullRangeBook.t.sol",
+          "line": 93,
+          "function": "testFuzz_transitionSequence_fundedPool"
+        },
+        {
+          "source": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_FullRangeBook.t.sol",
+          "line": 272,
+          "function": "testFuzz_transitionSequence_fundedPool"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A36",
+      "requirement": "For in-scope V3/V4 position vaults, initial activation requires both tokens and rejects a one-sided launch atomically. Subsequent single-token deposits and funded sleeve routes work while the underlying pool is locked; previews, credited shares and actual payouts agree.",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json",
+        "current-se-package-inventory.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchange_FullRangeBook.t.sol",
+          "line": 305,
+          "function": "test_FR5_bothTokensActivateThenSingleTokenDepositsRemainAvailable"
+        },
+        {
+          "source": "test/foundry/spec/protocol/dexes/uniswap/v3/decimals/UniswapV3StandardExchange_FullRangeBook_Decimals.sol",
+          "line": 129,
+          "function": "test_FR5_bothTokensActivateThenSingleTokenDepositsRemainAvailable"
+        },
+        {
+          "source": "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4StandardExchange_FullRangeBook_Decimals.sol",
+          "line": 192,
+          "function": "test_FR5_bothTokensActivateThenSingleTokenDepositsRemainAvailable"
+        },
+        {
+          "source": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_FullRangeBook.t.sol",
+          "line": 570,
+          "function": "test_FR5_firstActivationRequiresBothTokens"
+        },
+        {
+          "source": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_FullRangeBook.t.sol",
+          "line": 607,
+          "function": "test_importRejectsUnfundedSideAndRollsBackNftTransfer"
+        },
+        {
+          "source": "test/foundry/spec/vaults/standard/sy/V3FullRangeNativeSY.t.sol",
+          "line": 119,
+          "function": "test_nativeSYPreservesFundedSleeveOperationsDuringPoolLock"
+        },
+        {
+          "source": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_FullRangeBook.t.sol",
+          "line": 726,
+          "function": "test_nativeSYUsesFundedSleeveDuringManagerSession"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A37",
+      "requirement": "All four V4 bindings expose the creator-selected immutable liquidity policy in creation/deployment. DETF and hook agree; only DETF directly adds in restricted mode; DETF and the current fee collector may remove their LP under D65, public holders/authorized spenders may do so in public mode, unauthorized spending fails, DETF ownership/privileges persist and public swaps work in both modes.",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 474,
+          "function": "test_reservePolicyMatchesHookAndRetainsDetfOwnership"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 631,
+          "function": "test_directLiquidityOperationsFollowDeploymentPolicy"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 772,
+          "function": "test_deploymentRejectsPolicyMismatchWithActualHook"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 445,
+          "function": "test_publicReserveSwapsRemainAvailableInBothPolicies"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A38",
+      "requirement": "Own-reserve LP payment preserves the entire position and uses only proportional non-DETF value. Cover the 20-DETF/100-payment example, multiple distinct payment legs, buffered SE accounting without double counting, foreign-LP rejection and no valuation unwind.",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 492,
+          "function": "test_lpBondValuesDistinctNonDetfLegsAndRetainsWholeInventory"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 533,
+          "function": "test_lpBondCannotClaimProtocolOrAnotherWalletsLp"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A39",
+      "requirement": "LP-payment preview/execution settle due expansion before snapshot/funding and agree on duration bonus once, split, funded principal, immediate rewards and linear vesting. No matching `G` is minted and no issuance fee is charged on existing DETF inside the LP. First-bond activation remains intact.",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 464,
+          "function": "test_lpBondSettlesExpansionBeforeTakingPayment"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 480,
+          "function": "test_lpCannotReplaceFirstBondActivation"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A40",
+      "requirement": "External LP in both modes remains outside protocol redemption, synthetic-price and expansion calculations until actually received; acquiring LP changes custody exactly once. Actual-receipt, ownership/allowance, donation, preview and conservation controls pass.",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 421,
+          "function": "test_externallyOwnedLpDonationTransfersWholePositionWithoutStakingIssuance"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 533,
+          "function": "test_lpBondCannotClaimProtocolOrAnotherWalletsLp"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A41",
+      "requirement": "Production-path Fee Collector redemption works in restricted mode, including after `feeTo()` rotation. The old collector loses special removal authority; neither collector nor another caller can redeem unowned/unapproved LP. Collector additions and ordinary public removals remain restricted.",
+      "status": "FINAL_CANDIDATE_VALIDATION_PENDING",
+      "evidence": [
+        "production-readiness/owner-passing-baseline.json",
+        "production-readiness/SECURITY_REVIEW.md",
+        "acceptance-test-anchors.json"
+      ],
+      "source_anchors": [
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 545,
+          "function": "test_currentCollectorRedeemsActualFeeLpWithOwnerAuthorization"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 565,
+          "function": "test_feeCollectorRotationChangesRestrictedRemovalAuthority"
+        },
+        {
+          "source": "test/foundry/spec/vaults/detf/common/claimToken/V4ReserveLiquidity.t.sol",
+          "line": 589,
+          "function": "test_internalSYRedemptionUsesCurrentCollectorAfterRotation"
+        }
+      ],
+      "remaining": "Complete the corrected candidate build, matching runtime evidence and applicable fork/rehearsal gates; reconcile this complete requirement against those results."
+    },
+    {
+      "id": "A42",
+      "requirement": "D66 scope is reflected in the plan, manifests and release gates. Preserve completed Slipstream code, existing functionality/tests and historical validation evidence; no unfinished Slipstream functional work, new tests, fork checks or integration validation is required for release. Only compilation maintenance or compatibility with shared V4 changes may alter Slipstream. No unresolved Slipstream requirement blocks release.",
+      "status": "DEFERRED_D66_PRESERVED",
+      "evidence": [
+        "requirement-decisions.json",
+        "slipstream-deferral-verification.json",
+        "production-readiness/package-source-manifest.json"
+      ],
+      "source_anchors": [],
+      "remaining": "No unfinished Slipstream release gate. Confirm excluded from new release manifest."
+    }
+  ],
+  "note": "Historical failures and old process IDs are preserved only in the linked archive. Owner-reported passing results have no supplied tested fingerprint. Selected checks overlap and are not a full-suite total. Source anchors are review entry points, not proof of every subclause.",
+  "source_anchors_refreshed_at_utc": "2026-09-10T21:49:35.751658+00:00",
+  "new_findings": [
+    "PR-09",
+    "PR-10"
+  ],
+  "new_fixture_corrections": [
+    "LC-01"
+  ]
+}

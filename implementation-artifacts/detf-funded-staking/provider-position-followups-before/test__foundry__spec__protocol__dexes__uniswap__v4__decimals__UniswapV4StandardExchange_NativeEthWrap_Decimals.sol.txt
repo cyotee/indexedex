@@ -1,0 +1,195 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
+import {IUnlockCallback} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/callback/IUnlockCallback.sol";
+import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
+import {Currency, CurrencyLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
+import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
+import {BalanceDelta, BalanceDeltaLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/types/BalanceDelta.sol";
+import {ModifyLiquidityParams} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
+import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/TickMath.sol";
+import {LiquidityAmounts} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/LiquidityAmounts.sol";
+
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
+import {MintableERC20Decimals} from "contracts/test/stubs/MintableERC20Decimals.sol";
+import {UniswapV4SeDecimalsHelpers} from
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4SeDecimalsHelpers.sol";
+
+/// @dev Seeds a V4 pool that may use native ETH as currency0. Copied from gold.
+contract UniswapV4NativeEthPoolSeederDecimals is IUnlockCallback {
+    using BalanceDeltaLibrary for BalanceDelta;
+    using CurrencyLibrary for Currency;
+
+    IPoolManager internal immutable poolManager;
+
+    constructor(IPoolManager poolManager_) {
+        poolManager = poolManager_;
+    }
+
+    receive() external payable {}
+
+    function addLiquidity(PoolKey memory poolKey, int24 tickLower, int24 tickUpper, uint128 liquidity) external {
+        poolManager.unlock(abi.encode(poolKey, tickLower, tickUpper, liquidity));
+    }
+
+    function unlockCallback(bytes calldata data) external returns (bytes memory) {
+        require(msg.sender == address(poolManager), "not pm");
+        (PoolKey memory poolKey, int24 tickLower, int24 tickUpper, uint128 liquidity) =
+            abi.decode(data, (PoolKey, int24, int24, uint128));
+        (BalanceDelta callerDelta,) = poolManager.modifyLiquidity(
+            poolKey,
+            ModifyLiquidityParams({
+                tickLower: tickLower, tickUpper: tickUpper, liquidityDelta: int256(uint256(liquidity)), salt: bytes32(0)
+            }),
+            bytes("")
+        );
+        _settle(poolKey.currency0, callerDelta.amount0());
+        _settle(poolKey.currency1, callerDelta.amount1());
+        return abi.encode(callerDelta);
+    }
+
+    function _settle(Currency currency, int128 delta) internal {
+        if (delta < 0) {
+            uint256 amount = uint128(-delta);
+            poolManager.sync(currency);
+            if (currency.isAddressZero()) {
+                poolManager.settle{value: amount}();
+            } else {
+                IERC20(Currency.unwrap(currency)).transfer(address(poolManager), amount);
+                poolManager.settle();
+            }
+        } else if (delta > 0) {
+            poolManager.take(currency, address(this), uint128(delta));
+        }
+    }
+}
+
+/**
+ * @title UniswapV4StandardExchange_NativeEthWrap_Decimals
+ * @notice Native ETH stays 18. pairToken = tokenA at combo decimals (`P6_R18` / `P9_R18` only).
+ */
+abstract contract UniswapV4StandardExchange_NativeEthWrap_Decimals is UniswapV4SeDecimalsHelpers {
+    MintableERC20Decimals internal pairToken;
+    IStandardExchangeProxy internal vault;
+    UniswapV4NativeEthPoolSeederDecimals internal seeder;
+    PoolKey internal poolKey;
+
+    function setUp() public virtual override {
+        super.setUp();
+
+        pairToken = new MintableERC20Decimals("Pair", "PAIR", _tokenADecimals());
+        poolKey = PoolKey({
+            currency0: Currency.wrap(address(0)),
+            currency1: Currency.wrap(address(pairToken)),
+            fee: 3000,
+            tickSpacing: 60,
+            hooks: IHooks(address(0))
+        });
+        uint160 sqrtP = _oneToOneHumanSqrtPrice(address(0), address(pairToken));
+        poolManager.initialize(poolKey, sqrtP);
+
+        seeder = new UniswapV4NativeEthPoolSeederDecimals(poolManager);
+        pairToken.mint(address(seeder), _uA(1_000_000));
+        vm.deal(address(seeder), 1_000_000 ether);
+
+        (int24 tickLower, int24 tickUpper) = _seedTicksAround(sqrtP, poolKey.tickSpacing);
+        uint128 liq = LiquidityAmounts.getLiquidityForAmounts(
+            sqrtP,
+            TickMath.getSqrtPriceAtTick(tickLower),
+            TickMath.getSqrtPriceAtTick(tickUpper),
+            100_000 ether,
+            _uA(100_000)
+        );
+        seeder.addLiquidity(poolKey, tickLower, tickUpper, liq);
+
+        vault = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(poolKey));
+    }
+
+    function _assertNoNativeDust() internal view {
+        assertEq(address(vault).balance, 0, "vault must not hold native ETH");
+    }
+
+    function test_zapIn_nativeEthPool_unwrapsWethAndLeavesNoEthDust() public {
+        assertEq(IBasicVault(address(vault)).vaultTokens()[0], address(weth), "WETH face");
+
+        vm.deal(address(this), 20 ether);
+        weth.deposit{value: 10 ether}();
+        pairToken.mint(address(this), _uA(10));
+        IERC20(address(weth)).approve(address(vault), 10 ether);
+        pairToken.approve(address(vault), _uA(10));
+
+        uint256 shares0 = vault.exchangeIn(
+            IERC20(address(weth)), 10 ether, IERC20(address(vault)), 0, address(this), false, _deadline()
+        );
+        _assertNoNativeDust();
+        uint256 shares1 = vault.exchangeIn(
+            IERC20(address(pairToken)), _uA(10), IERC20(address(vault)), 0, address(this), false, _deadline()
+        );
+        _assertNoNativeDust();
+
+        assertGt(shares0, 0, "WETH zap-in minted shares");
+        assertGt(shares1, 0, "pairToken zap-in minted shares");
+        assertGt(IERC20(address(vault)).balanceOf(address(this)), 0, "user holds vault shares");
+    }
+
+    function test_swap_nativeEthPool_wrapsTakenEthToWeth() public {
+        vm.deal(address(this), 30 ether);
+        weth.deposit{value: 20 ether}();
+        pairToken.mint(address(this), _uA(10));
+        IERC20(address(weth)).approve(address(vault), type(uint256).max);
+        pairToken.approve(address(vault), type(uint256).max);
+
+        vault.exchangeIn(IERC20(address(weth)), 10 ether, IERC20(address(vault)), 0, address(this), false, _deadline());
+        vault.exchangeIn(
+            IERC20(address(pairToken)), _uA(10), IERC20(address(vault)), 0, address(this), false, _deadline()
+        );
+        _assertNoNativeDust();
+
+        uint256 pairBefore = pairToken.balanceOf(address(this));
+        uint256 pairOut = vault.exchangeIn(
+            IERC20(address(weth)), 1 ether, IERC20(address(pairToken)), 0, address(this), false, _deadline()
+        );
+        _assertNoNativeDust();
+        assertGt(pairOut, 0, "WETH->pair out");
+        assertEq(pairToken.balanceOf(address(this)), pairBefore + pairOut, "pair delivered as ERC-20");
+
+        uint256 wethBefore = IERC20(address(weth)).balanceOf(address(this));
+        uint256 wethOut = vault.exchangeIn(
+            IERC20(address(pairToken)), pairOut / 2, IERC20(address(weth)), 0, address(this), false, _deadline()
+        );
+        _assertNoNativeDust();
+        assertGt(wethOut, 0, "pair->WETH out");
+        assertEq(IERC20(address(weth)).balanceOf(address(this)), wethBefore + wethOut, "WETH delivered not native ETH");
+        assertEq(address(this).balance, 10 ether, "user ETH unchanged after WETH swaps");
+    }
+
+    function test_zapOut_nativeEthPool_paysWethNotEth() public {
+        vm.deal(address(this), 20 ether);
+        weth.deposit{value: 10 ether}();
+        pairToken.mint(address(this), _uA(10));
+        IERC20(address(weth)).approve(address(vault), type(uint256).max);
+        pairToken.approve(address(vault), type(uint256).max);
+        IERC20(address(vault)).approve(address(vault), type(uint256).max);
+
+        vault.exchangeIn(IERC20(address(weth)), 10 ether, IERC20(address(vault)), 0, address(this), false, _deadline());
+        vault.exchangeIn(
+            IERC20(address(pairToken)), _uA(10), IERC20(address(vault)), 0, address(this), false, _deadline()
+        );
+
+        uint256 shares = IERC20(address(vault)).balanceOf(address(this));
+        assertGt(shares, 0, "shares");
+        uint256 ethBefore = address(this).balance;
+        uint256 wethBefore = IERC20(address(weth)).balanceOf(address(this));
+
+        uint256 wethOut = vault.exchangeIn(
+            IERC20(address(vault)), shares / 2, IERC20(address(weth)), 0, address(this), false, _deadline()
+        );
+        _assertNoNativeDust();
+        assertGt(wethOut, 0, "share->WETH out");
+        assertEq(IERC20(address(weth)).balanceOf(address(this)), wethBefore + wethOut, "payout is WETH");
+        assertEq(address(this).balance, ethBefore, "payout is not native ETH");
+    }
+}

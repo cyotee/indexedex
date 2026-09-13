@@ -24,6 +24,7 @@ import {
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
 import {TestBase_UniswapV4Detf} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
+import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 import {
     UniswapV4DetfProductionSeDeployLib as SeLib
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol";
@@ -86,6 +87,9 @@ abstract contract TestBase_UniswapV4Detf_Weighted_ProdSe is TestBase_UniswapV4De
             IVaultRegistryDeployment(address(indexedexManager)),
             owner,
             IUniswapV4StandardExchangeWeightedBufferHookPackage.PkgInit({
+                joinQueryFacet: WeightedFactory.deployJoinQueryFacet(create3Factory),
+                joinFlexibleFacet: WeightedFactory.deployJoinFlexibleFacet(create3Factory),
+                exitQueryFacet: WeightedFactory.deployExitQueryFacet(create3Factory),
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
                 joinFacet: joinFacet,
@@ -108,7 +112,6 @@ abstract contract TestBase_UniswapV4Detf_Weighted_ProdSe is TestBase_UniswapV4De
         returns (address detf_)
     {
         address predicted_ = _predictDetf(args);
-        vm.etch(predicted_, address(pairToken).code);
         address[] memory toks = new address[](3);
         toks[0] = predicted_;
         toks[1] = pairA;
@@ -136,7 +139,9 @@ abstract contract TestBase_UniswapV4Detf_Weighted_ProdSe is TestBase_UniswapV4De
                 weights: w,
                 standardExchanges: ses,
                 rateProviders: rps,
-                ownerOnlyLiquidity: true,
+                tokenDecimals: HookPkgArgsDecimalsLib.tokenDecimals(toks, predicted_),
+                seDecimals: HookPkgArgsDecimalsLib.seDecimals(ses),
+                ownerOnlyLiquidity: args.ownerOnlyLiquidity,
                 owner: predicted_
             });
         uint256 mineNonce = WeightedFactory.findMineNonce(hookFactory, weightedHookPkg, hArgs);
@@ -146,7 +151,6 @@ abstract contract TestBase_UniswapV4Detf_Weighted_ProdSe is TestBase_UniswapV4De
         init.deployPair(toks[0], toks[2]);
         init.deployPair(toks[1], toks[2]);
         require(init.finalizeInitialization(), "finalize");
-        vm.etch(predicted_, "");
         args.hook = reserveHook;
         vm.startPrank(owner);
         detf_ = detfPkg.deployVault(args);
@@ -224,7 +228,7 @@ abstract contract TestBase_UniswapV4Detf_Weighted_ProdSe is TestBase_UniswapV4De
             address se_ = IUniswapV4SeBufferHook(hook_).standardExchangeOf(toks[i]);
             if (se_ != address(0) && IERC20(se_).balanceOf(detf) > 0) needSweep = true;
         }
-        if (needSweep) detfInfo.sweepDust();
+        if (needSweep) detfInfo.sweepDust{gas: 30_000_000}();
         assertEq(IERC20(hook_).balanceOf(detf), 0, "R19 hook LP");
         for (uint256 i; i < toks.length; ++i) {
             uint256 bal = IERC20(toks[i]).balanceOf(detf);

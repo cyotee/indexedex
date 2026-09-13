@@ -1,0 +1,27 @@
+{
+  "build": {
+    "command": [
+      "forge",
+      "build",
+      "--offline",
+      "--contracts",
+      "contracts/vaults/detf/common/core"
+    ],
+    "exit_code": 0,
+    "seconds": 5.389
+  },
+  "test": {
+    "command": [
+      "forge",
+      "test",
+      "--offline",
+      "--contracts",
+      "contracts/vaults/detf/common/core",
+      "--match-contract",
+      "AerodromeNativeSYTest|MixedBufferMultiVaultStableDetf_NestedPush_B_ALL6",
+      "-vvvvv"
+    ],
+    "exit_code": 1,
+    "seconds": 82.922
+  }
+}

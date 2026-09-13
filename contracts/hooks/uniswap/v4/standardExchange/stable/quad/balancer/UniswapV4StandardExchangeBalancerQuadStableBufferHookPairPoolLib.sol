@@ -11,7 +11,7 @@ import {StateLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/librarie
 
 /**
  * @title UniswapV4StandardExchangeBalancerQuadStableBufferHookPairPoolLib
- * @notice Product pair keys for fixed n=4 with DYNAMIC_FEE_FLAG, tickSpacing=1, hooks=this.
+ * @notice Product pair keys for 2–5 active currencies with DYNAMIC_FEE_FLAG, tickSpacing=1, hooks=this.
  * @dev No bulk ensure (F5). Callers open each unordered pair via deployPair.
  */
 library UniswapV4StandardExchangeBalancerQuadStableBufferHookPairPoolLib {
@@ -19,12 +19,8 @@ library UniswapV4StandardExchangeBalancerQuadStableBufferHookPairPoolLib {
     using StateLibrary for IPoolManager;
 
     int24 internal constant TICK_SPACING = 1;
-    uint256 internal constant N_TOKENS = 4;
-    uint256 internal constant PAIR_DOOR_COUNT = 6; // binom(4,2)
 
-    function pairDoorCount() internal pure returns (uint256) {
-        return PAIR_DOOR_COUNT;
-    }
+
 
     function pairDoorCount(uint256 n) internal pure returns (uint256) {
         // binom(n,2) = n*(n-1)/2

@@ -5,6 +5,7 @@ pragma solidity ^0.8.0;
 /*                                    Crane                                   */
 /* -------------------------------------------------------------------------- */
 
+import {AerodromeService} from "@crane/contracts/protocols/dexes/aerodrome/v1/services/AerodromeService.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IRouter as IAerodromeRouter} from "@crane/contracts/interfaces/protocols/dexes/aerodrome/IRouter.sol";
 import {IPoolFactory} from "@crane/contracts/interfaces/protocols/dexes/aerodrome/IPoolFactory.sol";
@@ -30,6 +31,65 @@ import {IFeeCompounding} from "contracts/interfaces/IFeeCompounding.sol";
 
 // abstract
 contract AerodromeStandardExchangeCommon is BasicVaultCommon, IFeeCompounding {
+    error UnreachableExactOutput();
+
+    /// @dev Invert the actual volatile Aerodrome zap, whose fees leave pool reserves.
+    /// A Uniswap fee-in-reserve inverse does not have the same rounding or invariant.
+    function _quoteAeroZapToLp(uint256 target_, uint256 supply_, uint256 reserveIn_, uint256 reserveOut_, uint256 fee_)
+        internal pure returns (uint256 required_)
+    {
+        if (target_ == 0) return 0;
+        if (supply_ == 0 || reserveIn_ == 0 || reserveOut_ == 0 || fee_ >= AERO_FEE_DENOM) revert UnreachableExactOutput();
+        uint256 high_ = BetterMath._mulDiv(target_, reserveIn_, supply_) * 4 + 2;
+        while (AerodromeUtils._quoteSwapDepositWithFee(high_, supply_, reserveIn_, reserveOut_, fee_) < target_) high_ *= 2;
+        uint256 low_ = 1;
+        while (low_ < high_) {
+            uint256 middle_ = low_ + (high_ - low_) / 2;
+            if (AerodromeUtils._quoteSwapDepositWithFee(middle_, supply_, reserveIn_, reserveOut_, fee_) >= target_) high_ = middle_;
+            else low_ = middle_ + 1;
+        }
+        return low_;
+    }
+
+    /// @dev Invert the same proportional burn and opposing-token sale as exact-in withdrawal.
+    function _quoteAeroLpToToken(uint256 target_, uint256 supply_, uint256 reserveOut_, uint256 reserveIn_, uint256 fee_)
+        internal pure returns (uint256 required_)
+    {
+        if (target_ == 0) return 0;
+        if (supply_ <= 1 || reserveIn_ == 0 || reserveOut_ == 0 || fee_ >= AERO_FEE_DENOM) revert UnreachableExactOutput();
+        uint256 high_ = supply_ - 1;
+        if (AerodromeUtils._quoteWithdrawSwapWithFee(high_, supply_, reserveOut_, reserveIn_, fee_) < target_) revert UnreachableExactOutput();
+        uint256 low_ = 1;
+        while (low_ < high_) {
+            uint256 middle_ = low_ + (high_ - low_) / 2;
+            if (AerodromeUtils._quoteWithdrawSwapWithFee(middle_, supply_, reserveOut_, reserveIn_, fee_) >= target_) high_ = middle_;
+            else low_ = middle_ + 1;
+        }
+        return low_;
+    }
+
+    /// @dev All four share routes first compound real LP, then convert at the pre-user-action rate.
+    function _previewFundedExactOutput(IPool pool_, IERC20 input_, IERC20 output_, uint256 target_)
+        internal view returns (uint256)
+    {
+        (uint256 reserve0_, uint256 reserve1_,) = pool_.getReserves();
+        uint256 fee_ = AerodromePoolMetadataRepo._factory().getFee(address(pool_), AerodromePoolMetadataRepo._isStable());
+        PreviewCompoundState memory state_ = _previewCompoundState(pool_, reserve0_, reserve1_, IERC20(address(pool_)).totalSupply(), fee_);
+        uint256 held_ = IERC20(address(pool_)).balanceOf(address(this)) + state_.lpMinted
+            - BetterMath._percentageOfWAD(state_.lpMinted, VaultFeeOracleQueryAwareRepo._feeOracle().usageFeeOfVault(address(this)));
+        uint256 shares_ = ERC20Repo._totalSupply(); uint8 offset_ = ERC4626Repo._decimalOffset();
+        if (address(input_) == address(pool_)) return BetterMath._convertToAssetsUp(target_, held_, shares_, offset_);
+        if (address(output_) == address(pool_)) return BetterMath._convertToSharesUp(target_, held_, shares_, offset_);
+        if (address(output_) == address(this)) {
+            uint256 lp_ = BetterMath._convertToAssetsUp(target_, held_, shares_, offset_);
+            (reserve0_, reserve1_) = ConstProdUtils._sortReserves(address(input_), ConstProdReserveVaultRepo._token0(), state_.reserve0, state_.reserve1);
+            return _quoteAeroZapToLp(lp_, state_.lpTotalSupply, reserve0_, reserve1_, fee_);
+        }
+        (reserve0_, reserve1_) = ConstProdUtils._sortReserves(address(output_), ConstProdReserveVaultRepo._token0(), state_.reserve0, state_.reserve1);
+        uint256 needed_ = _quoteAeroLpToToken(target_, state_.lpTotalSupply, reserve0_, reserve1_, fee_);
+        return BetterMath._convertToSharesUp(needed_, held_, shares_, offset_);
+    }
+
     uint256 constant AERO_FEE_DENOM = 10000;
     using BetterSafeERC20 for IERC20;
 
@@ -512,7 +572,10 @@ contract AerodromeStandardExchangeCommon is BasicVaultCommon, IFeeCompounding {
         // Calculate swap amount using constant product formula
         uint256 saleAmt;
         {
-            uint256 reserveIn = tokenIn == params.token0 ? params.reserve0 : params.reserve1;
+            // Proportional compounding has already changed the reserves. Use the
+            // same post-deposit book as the compound preview for the excess zap.
+            (uint256 reserve0_, uint256 reserve1_,) = params.pool.getReserves();
+            uint256 reserveIn = tokenIn == params.token0 ? reserve0_ : reserve1_;
             saleAmt = ConstProdUtils._swapDepositSaleAmt(
                 amountIn,
                 reserveIn,
@@ -684,16 +747,22 @@ contract AerodromeStandardExchangeCommon is BasicVaultCommon, IFeeCompounding {
             return 0;
         }
 
+        // Execution passes the precomputed proportional amounts to Router.addLiquidity,
+        // which applies its own proportional floor again before transferring either token.
+        (uint256 amount0_, uint256 amount1_) = _proportionalDeposit(
+            poolState.reserve0, poolState.reserve1, amounts.proportional0, amounts.proportional1
+        );
+
         lpFromProportional = ConstProdUtils._depositQuote(
-            amounts.proportional0,
-            amounts.proportional1,
+            amount0_,
+            amount1_,
             poolState.lpTotalSupply,
             poolState.reserve0,
             poolState.reserve1
         );
 
-        poolState.reserve0 += amounts.proportional0;
-        poolState.reserve1 += amounts.proportional1;
+        poolState.reserve0 += amount0_;
+        poolState.reserve1 += amount1_;
         poolState.lpTotalSupply += lpFromProportional;
     }
 
@@ -841,5 +910,34 @@ contract AerodromeStandardExchangeCommon is BasicVaultCommon, IFeeCompounding {
         state.vaultLpReserve = baseLpReserve + (pendingCompoundLP - protocolFeeLP);
         state.vaultTotalShares = ERC20Repo._totalSupply();
         state.decimalOffset = ERC4626Repo._decimalOffset();
+    }
+    function _withdrawSwapVolatileSafe(
+        IAerodromeRouter aerodromeRouter,
+        IPool pool,
+        IERC20 tokenOut,
+        uint256 lpBurnAmt,
+        address recipient,
+        uint256 deadline
+    ) internal returns (uint256 amountOut) {
+        address opposingToken = ConstProdReserveVaultRepo._opposingToken(address(tokenOut));
+        address swapRecipient = recipient;
+        if (recipient == address(tokenOut) || recipient == opposingToken || recipient == address(pool)) {
+            swapRecipient = address(this);
+        }
+
+        AerodromeService.WithdrawSwapVolatileParams memory params = AerodromeService.WithdrawSwapVolatileParams({
+            aerodromeRouter: aerodromeRouter,
+            pool: pool,
+            factory: AerodromePoolMetadataRepo._factory(),
+            tokenOut: tokenOut,
+            opposingToken: IERC20(opposingToken),
+            lpBurnAmt: lpBurnAmt,
+            recipient: swapRecipient,
+            deadline: deadline
+        });
+        amountOut = AerodromeService._withdrawSwapVolatile(params);
+        if (swapRecipient != recipient) {
+            tokenOut.safeTransfer(recipient, amountOut);
+        }
     }
 }

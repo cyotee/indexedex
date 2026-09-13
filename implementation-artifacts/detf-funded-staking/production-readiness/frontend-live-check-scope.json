@@ -1,0 +1,44 @@
+{
+  "recorded_at_utc": "2026-09-10T20:45:08.272194+00:00",
+  "status": "CONDITIONAL_UI_BINDING_GATE_NOT_TRIGGERED",
+  "scope": "Current architecture/package release and isolated exports; existing application source and deployment bindings remain unchanged.",
+  "plan_rule": "P2: add applicable live transaction tests against the local rehearsal when deployment bindings change.",
+  "observations": [
+    "The readiness runner directs Phase 09 exports to an isolated evidence directory and hashes existing application address files before and after execution.",
+    "Architecture stages register packages but do not deploy customer DETF/SE instances; the 39 Foundry lifecycle cases create and exercise test-only instances.",
+    "The live bond browser spec consumes an existing live DETF from application tokenlists. The current isolated architecture export intentionally has empty product tokenlists.",
+    "The swap/deposit browser spec is explicitly skipped for the archived Balancer swap UI; TokenStaking is an opt-in product outside this release. Neither is claimed as new passing coverage."
+  ],
+  "reused_checks": [
+    "frontend-check.json: lint, typecheck, 410 tests",
+    "frontend-abi-reconciliation.json: required current ABI declarations; refresh hashes after the final build"
+  ],
+  "future_trigger": "If application bindings or supported UI transaction wiring change, publish the reviewed local test bindings first, run the applicable injected-wallet transactions, and require onchain balance/NFT/receipt effects. Skipped cases do not establish a passing money path.",
+  "browser_transactions_executed_by_this_record": false,
+  "files": [
+    {
+      "path": "frontend/apps/dtf/e2e/staking-bond-live.spec.ts",
+      "sha256": "476b887bba780bac53efcc3f0d03a75a773ded4a318ed5dfbf9cdc4593d91fe8"
+    },
+    {
+      "path": "frontend/apps/dtf/e2e/swap-routes-live.spec.ts",
+      "sha256": "625a99e6c33940578349719c91bd69c00498c48c2e882150799e061fb3d5f40f"
+    },
+    {
+      "path": "frontend/apps/dtf/e2e/token-staking-overlay-live.spec.ts",
+      "sha256": "c66c9b7be05ce6a0d1bbe3bf8b183f6c6162b584e809ef6e34364dfc0050fddd"
+    },
+    {
+      "path": "frontend/apps/dtf/e2e/helpers/chainArtifacts.ts",
+      "sha256": "2462d6ef40399c205721ed95247d3415ae677b2ab9dc457138a3cdd00ef2e204"
+    },
+    {
+      "path": "frontend/apps/dtf/package.json",
+      "sha256": "31c9ab9701b7340cb96927386c2806fd215a56d4002e14044c045a0e824e05a7"
+    },
+    {
+      "path": "scripts/foundry/anvil_robinhood_main/Phase_09_Stage_01_ExportFrontend.s.sol",
+      "sha256": "87a2bd07eb26984bb1395b2a9cf776ff29af778dadc77be8a03ac036fb12dd06"
+    }
+  ]
+}

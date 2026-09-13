@@ -1,0 +1,7 @@
+{
+  "status": "STOPPED_FOR_ACTUAL_RESULT_REVIEW",
+  "pid": 77898,
+  "previous_parent_pid": 49915,
+  "started_at_utc": "2026-09-08T23:54:29.561028+00:00",
+  "error": "Command '['python3', '/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/implementation-artifacts/detf-funded-staking/run-provider-position-followups.py', '--label', 'funded-followups']' returned non-zero exit status 1."
+}

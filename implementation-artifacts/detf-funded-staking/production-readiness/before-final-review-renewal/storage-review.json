@@ -1,0 +1,455 @@
+{
+  "recorded_at_utc": "2026-09-10T15:58:50.524042+00:00",
+  "status": "PASS_ALL_64_FIELD_DISPOSITIONS_AND_CURRENT_RUNTIME_COVERAGE",
+  "method": "Manual initializer and mutation dispositions supplement lexical references. Memory preview/salt assignments are not classified as state mutation; tuple writes, AddressSet accessors and route storage aliases are explicitly included. No formal alias proof claimed.",
+  "rows": [
+    {
+      "source": "contracts/vaults/detf/common/bondNft/DETFFundedBondRepo.sol",
+      "sha256": "23fbbc8494229c7f87e56d118d8931991e16bcdb8fb1425d6d8eb553926e58a4",
+      "struct": "Storage",
+      "fields": [
+        {
+          "name": "detf",
+          "type": "address detf",
+          "disposition": "_initialize; owning DETF immutable",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "lpToken",
+          "type": "IERC20 lpToken",
+          "disposition": "_initialize; protocol LP custody token",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "reservedIdsWired",
+          "type": "bool reservedIdsWired",
+          "disposition": "false at deployment; one-time initializeReservedBondNfts",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "attributedGons",
+          "type": "uint256 attributedGons",
+          "disposition": "zero at deployment; _open/_claim/_retireIfPaid exact aggregate escrow",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "positions",
+          "type": "mapping(uint256 tokenId => StakingMath.BondPosition position) positions",
+          "disposition": "empty mapping; _open fixes principal/start/duration and measured gons; claims update only purchased ID",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        }
+      ]
+    },
+    {
+      "source": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+      "sha256": "ac8618bcc168f05902ae27da16381bbfed2811ff19cbf992ab07666198c6abe9",
+      "struct": "Storage",
+      "fields": [
+        {
+          "name": "detf",
+          "type": "IERC20 detf",
+          "disposition": "_initialize; authenticated nine-decimal backing",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "bondNftVault",
+          "type": "address bondNftVault",
+          "disposition": "_initialize; only escrow may retire its fractions",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "feeOracle",
+          "type": "IVaultFeeOracleQuery feeOracle",
+          "disposition": "_initialize; live fee recipient lookup",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "synchronizing",
+          "type": "bool synchronizing",
+          "disposition": "false at deployment; _synchronize callback guard",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "gonsPerUnit",
+          "type": "uint256 gonsPerUnit",
+          "disposition": "_initialize = 1e36; _distribute tuple assignment applies funded _rebase only",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "totalGons",
+          "type": "uint256 totalGons",
+          "disposition": "zero at deployment; issue/debit/retire only; previewDistributions mutates memory, not ledger",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "accountedBacking",
+          "type": "uint256 accountedBacking",
+          "disposition": "zero at deployment; actual pull credit/distribution and exact redemption debit",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "allocationDust",
+          "type": "uint256 allocationDust",
+          "disposition": "zero; _distribute stores undistributed allocation remainder once",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "stakingDust",
+          "type": "uint256 stakingDust",
+          "disposition": "zero; funded _distribute tuple assignment and final fraction/debit rounding",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "feeWeight",
+          "type": "uint256 feeWeight",
+          "disposition": "zero; top-up-only nonredeemable fee allocation weight",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "creatorWeight",
+          "type": "uint256 creatorWeight",
+          "disposition": "zero; top-up-only nonredeemable creator allocation weight",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "gonsOf",
+          "type": "mapping(address account => uint256 gons) gonsOf",
+          "disposition": "empty mapping; allocated issuance, exact transfer, redemption and owned-fraction retirement",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        }
+      ]
+    },
+    {
+      "source": "contracts/vaults/detf/common/sy/DETFChildSYRepo.sol",
+      "sha256": "5d06f9ef248d9bf957ccb8d9fd5fccf4b149e42293fc3d59b7224af54918c86d",
+      "struct": "Storage",
+      "fields": [
+        {
+          "name": "rawSY",
+          "type": "address rawSY",
+          "disposition": "_initialize once; nonzero distinct registered wrapper",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "stakingSY",
+          "type": "address stakingSY",
+          "disposition": "_initialize once; nonzero distinct registered wrapper",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        }
+      ]
+    },
+    {
+      "source": "contracts/vaults/detf/common/sy/DETFSYRepo.sol",
+      "sha256": "92226fd5440862f424aa0fecbf4337af1f96f9324296a9513c30d6570d0d990e",
+      "struct": "Storage",
+      "fields": [
+        {
+          "name": "detf",
+          "type": "IERC20 detf",
+          "disposition": "_initialize once; raw backing asset",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "staking",
+          "type": "IStakedDETF staking",
+          "disposition": "_initialize; checked against owning DETF for staking mode",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "isStaking",
+          "type": "bool isStaking",
+          "disposition": "_initialize immutable wrapper mode",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "backingGons",
+          "type": "uint256 backingGons",
+          "disposition": "zero; deposit/redeem tracks measured static entitlement",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "conversionDustGons",
+          "type": "uint256 conversionDustGons",
+          "disposition": "zero; deposit/redeem segregates rounding fractions",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "rawBacking",
+          "type": "uint256 rawBacking",
+          "disposition": "zero; raw deposit/redeem measures attributable DETF",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "tokensIn",
+          "type": "AddressSet tokensIn",
+          "disposition": "_initialize/_addRoutes via AddressSet._add; immutable input discovery",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "tokensOut",
+          "type": "AddressSet tokensOut",
+          "disposition": "_initialize/_addRoutes via AddressSet._add; immutable output discovery",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        }
+      ]
+    },
+    {
+      "source": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfRepo.sol",
+      "sha256": "b6af4f42526afb74b67e4ce43997b75fe3f10b7c47e7ba9f13070fb39ec86071",
+      "struct": "Table",
+      "fields": [
+        {
+          "name": "tokens",
+          "type": "AddressSet tokens",
+          "disposition": "_addRoute writes AddressSet through storage alias; immutable after initialization",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "vaultOf",
+          "type": "mapping(address token => IStandardExchange vault) vaultOf",
+          "disposition": "_addRoute sets validated vault for each token; runtime read only",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        }
+      ]
+    },
+    {
+      "source": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfRepo.sol",
+      "sha256": "b6af4f42526afb74b67e4ce43997b75fe3f10b7c47e7ba9f13070fb39ec86071",
+      "struct": "Storage",
+      "fields": [
+        {
+          "name": "isReserveLive",
+          "type": "bool isReserveLive",
+          "disposition": "_initializeCore false; _setReserveLive once after successful first bond",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "hook",
+          "type": "address hook",
+          "disposition": "_initializeCore once; calcSalt changes a memory PkgArgs only",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "feeOracle",
+          "type": "IVaultFeeOracleQuery feeOracle",
+          "disposition": "_initializeCore immutable oracle",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "bondNftVault",
+          "type": "IDETFNFTVault bondNftVault",
+          "disposition": "_setBondNft after registered child deployment; duplicate wiring rejected",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "rebasingClaimToken",
+          "type": "IRebasingClaimToken rebasingClaimToken",
+          "disposition": "_setClaim after registered child deployment; duplicate wiring rejected",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "creationPairPerDetfWad",
+          "type": "uint256[] creationPairPerDetfWad",
+          "disposition": "_initializeCore immutable validated rates",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "openingPairPerDetfWad",
+          "type": "uint256[] openingPairPerDetfWad",
+          "disposition": "_initializeCore resolved opening rates",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "creationOfPair",
+          "type": "mapping(address pair => uint256 wad) creationOfPair",
+          "disposition": "_setPairRates during package initialization",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "openingOfPair",
+          "type": "mapping(address pair => uint256 wad) openingOfPair",
+          "disposition": "_setPairRates during package initialization",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "mintThreshold",
+          "type": "uint256 mintThreshold",
+          "disposition": "_initializePolicy resolves and validates immutable threshold",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "burnThreshold",
+          "type": "uint256 burnThreshold",
+          "disposition": "_initializePolicy resolves and validates immutable threshold",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "expansionClosureRatePerYearWad",
+          "type": "uint256 expansionClosureRatePerYearWad",
+          "disposition": "_initializePolicy immutable rate; equality comparisons are reads",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "lastExpansionTimestamp",
+          "type": "uint256 lastExpansionTimestamp",
+          "disposition": "zero initially; first live bond anchors clock, _realizeExpansionIfNeeded advances completed epoch boundary",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "bondNftVaultPkg",
+          "type": "address bondNftVaultPkg",
+          "disposition": "_initializeCore immutable child package",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "rebasingClaimTokenPkg",
+          "type": "address rebasingClaimTokenPkg",
+          "disposition": "_initializeCore immutable child package",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "creator",
+          "type": "address creator",
+          "disposition": "_initializeCore fixed creator configuration",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "claimName",
+          "type": "string claimName",
+          "disposition": "_setChildTokenMetadata during initialization; fallback metadata resolved when wiring children",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "claimSymbol",
+          "type": "string claimSymbol",
+          "disposition": "_setChildTokenMetadata during initialization; fallback metadata resolved when wiring children",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "bondName",
+          "type": "string bondName",
+          "disposition": "_setChildTokenMetadata during initialization; fallback metadata resolved when wiring children",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "bondSymbol",
+          "type": "string bondSymbol",
+          "disposition": "_setChildTokenMetadata during initialization; fallback metadata resolved when wiring children",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "hookPairTokens",
+          "type": "AddressSet hookPairTokens",
+          "disposition": "storeHookSetsAndRates via _addHookPair/_addHookStandardExchange and AddressSet._add; immutable after initialization",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "hookStandardExchanges",
+          "type": "AddressSet hookStandardExchanges",
+          "disposition": "storeHookSetsAndRates via _addHookPair/_addHookStandardExchange and AddressSet._add; immutable after initialization",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "mintRouteMode",
+          "type": "IUniswapV4Detf.RouteTableMode mintRouteMode",
+          "disposition": "_setRouteModes during initialization; immutable route mode",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "burnRouteMode",
+          "type": "IUniswapV4Detf.RouteTableMode burnRouteMode",
+          "disposition": "_setRouteModes during initialization; immutable route mode",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "bondRouteMode",
+          "type": "IUniswapV4Detf.RouteTableMode bondRouteMode",
+          "disposition": "_setRouteModes during initialization; immutable route mode",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "donateRouteMode",
+          "type": "IUniswapV4Detf.RouteTableMode donateRouteMode",
+          "disposition": "_setRouteModes during initialization; immutable route mode",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "mintTable",
+          "type": "Table mintTable",
+          "disposition": "DFPkg._storeTables passes storage alias to ArgsLib default/custom/union helpers; _addRoute writes tokens and vaultOf; runtime paths read only",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "burnTable",
+          "type": "Table burnTable",
+          "disposition": "DFPkg._storeTables passes storage alias to ArgsLib default/custom/union helpers; _addRoute writes tokens and vaultOf; runtime paths read only",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "bondTable",
+          "type": "Table bondTable",
+          "disposition": "DFPkg._storeTables passes storage alias to ArgsLib default/custom/union helpers; _addRoute writes tokens and vaultOf; runtime paths read only",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        },
+        {
+          "name": "donateTable",
+          "type": "Table donateTable",
+          "disposition": "DFPkg._storeTables passes storage alias to ArgsLib default/custom/union helpers; _addRoute writes tokens and vaultOf; runtime paths read only",
+          "reference_inventory": "../current-funded-storage-readers.json"
+        }
+      ]
+    },
+    {
+      "source": "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol",
+      "sha256": "3ec13e4bb20549f5e3055e63212d6518cdc011bb616bab2783e22e5c7a20ba06",
+      "struct": "BondPosition (nested in positions mapping)",
+      "fields": [
+        {
+          "name": "principal",
+          "disposition": "fixed at _open, never reset"
+        },
+        {
+          "name": "claimedPrincipal",
+          "disposition": "zero at _open; successful principal claims increment only paid amount"
+        },
+        {
+          "name": "stakingGons",
+          "disposition": "measured at _open; exact claimed gons and own final fraction deducted"
+        },
+        {
+          "name": "startTimestamp",
+          "disposition": "fixed purchase time; claims/transfer do not restart"
+        },
+        {
+          "name": "vestingDuration",
+          "disposition": "fixed validated/clamped lock; linear vesting uses original duration"
+        }
+      ]
+    }
+  ],
+  "legacy": "Distinct legacy storage/interfaces remain only for excluded families. No storage migration or in-place upgrade is proposed. Removed position fields remain mapped in current-position-storage-disposition.json and obsolete-common-ledger-cleanup-applied.json.",
+  "reviewed_at_utc": "2026-09-11T06:04:34.683853+00:00",
+  "provenance": {
+    "recorded_at_utc": "2026-09-11T05:59:12.104992+00:00",
+    "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+    "source_and_config_sha256": "be6990fe2e95aec308d401ad16720175a83d64eafbf0c805f174c8885f1ae22e",
+    "source_and_config_files": 4816,
+    "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+    "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+    "crane_tracked_contract_and_config_diff_sha256": "3bb0f52c1183f2be28ee8a63fab300170f65e989720b5048e21da9c61028cc4d",
+    "crane_source_and_config_sha256": "b45a057611f782040ee29f1fddbbcc8eeba01def2c9341ef01c6bb65f685e123",
+    "crane_source_and_config_files": 14819,
+    "dependency_scope": "Crane Solidity tree, including untracked Solidity and nested vendored libraries/tests, plus Crane Foundry config. Final compiler metadata separately verifies every imported source closure.",
+    "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+    "machine": "macOS-26.6.2-x86_64-i386-64bit",
+    "architecture": "x86_64",
+    "logical_cpus": 16,
+    "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+  },
+  "evidence": [
+    "current-funded-storage-readers.json",
+    "acceptance-current-run-anchors.json",
+    "implementation-hermetic-test.json",
+    "production-readiness/SECURITY_REVIEW.md"
+  ]
+}

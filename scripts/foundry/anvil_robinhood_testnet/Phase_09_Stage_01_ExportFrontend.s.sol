@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import {LaunchStageBase} from "./LaunchStageBase.sol";
 import {RobinhoodCanonicalLib} from "./RobinhoodCanonicalLib.sol";
 import {ROBINHOOD_TESTNET} from "@crane/contracts/constants/networks/ROBINHOOD_TESTNET.sol";
+import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 
 /// @title Phase_09_Stage_01_ExportFrontend
@@ -183,9 +184,10 @@ contract Phase_09_Stage_01_ExportFrontend is LaunchStageBase {
 
     function _tok(string memory name, string memory symbol, address addr, string memory tags)
         private
-        pure
+        view
         returns (string memory)
     {
+        uint8 decimals_ = addr.code.length == 0 ? 18 : IERC20Metadata(addr).decimals();
         return string.concat(
             '{"chainId":46630,"address":"',
             vm.toString(addr),
@@ -193,7 +195,9 @@ contract Phase_09_Stage_01_ExportFrontend is LaunchStageBase {
             name,
             '","symbol":"',
             symbol,
-            '","decimals":18,"tags":',
+            '","decimals":',
+            vm.toString(uint256(decimals_)),
+            ',"tags":',
             tags,
             "}"
         );

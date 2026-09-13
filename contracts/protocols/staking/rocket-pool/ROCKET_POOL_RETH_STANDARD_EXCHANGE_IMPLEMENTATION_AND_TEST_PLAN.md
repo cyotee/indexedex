@@ -193,7 +193,7 @@ test/foundry/fork/eth_main/vaults/staking/rocket-pool/
 
 - [ ] Package dirs + interfaces with NatSpec  
 - [ ] Verify mainnet: rETH, RocketStorage, deposit pool (via storage key), WETH  
-- [ ] `PkgArgs`: `rETH`, `weth`, `depositPool` and/or `rocketStorage`  
+- [x] Current release `PkgArgs`: all four of `rETH`, `weth`, `depositPool`, `rocketStorage`; canonical payload and registry-binding validation are implemented. Seven actual-protocol cases pass at each of Ethereum blocks 24,000,000 and 25,934,585. Final repository acceptance remains under the [funded DETF/SY plan](../../../vaults/detf/DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md).  
 - [ ] `PkgInit` / `PkgArgs` **on interface only**
 
 **Exit:** compiles stubs; address table in package README or PRD §10 checked.

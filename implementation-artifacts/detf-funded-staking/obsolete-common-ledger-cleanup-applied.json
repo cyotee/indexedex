@@ -1,0 +1,191 @@
+{
+  "status": "APPLIED_SELECTED_RUNTIME_VALIDATION_PASSED",
+  "approval": "v4-close-cleanup-owner-approval.json",
+  "before_provenance": {
+    "recorded_at_utc": "2026-09-09T09:03:37.386148+00:00",
+    "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+    "source_and_config_sha256": "533ada6ae25e3d23c56f260129208866fecd6de9b6d28de41a3d6fe314ee2b74",
+    "source_and_config_files": 4818,
+    "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+    "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+    "crane_tracked_contract_and_config_diff_sha256": "284fd75764cb255d1e527eef38fd51e65fca73e8ebb11b7465965e8dfeb2122c",
+    "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+    "machine": "macOS-26.6.2-x86_64-i386-64bit",
+    "architecture": "x86_64",
+    "logical_cpus": 16,
+    "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+  },
+  "after_provenance": {
+    "recorded_at_utc": "2026-09-09T09:03:40.026602+00:00",
+    "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+    "source_and_config_sha256": "8af45784e4f7710345682266bd78dd97a5bede7a014ac1404dedd7294e9eaef4",
+    "source_and_config_files": 4812,
+    "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+    "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+    "crane_tracked_contract_and_config_diff_sha256": "284fd75764cb255d1e527eef38fd51e65fca73e8ebb11b7465965e8dfeb2122c",
+    "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+    "machine": "macOS-26.6.2-x86_64-i386-64bit",
+    "architecture": "x86_64",
+    "logical_cpus": 16,
+    "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+  },
+  "before_archive": "implementation-artifacts/detf-funded-staking/before-obsolete-common-ledger-cleanup",
+  "changes": [
+    {
+      "path": "contracts/vaults/detf/common/bondNft/DETFNFTVaultTarget.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/obsolete-common-ledger-cleanup-drafts/00-DETFNFTVaultTarget.sol.txt",
+      "reason": "No installed facet, package, FactoryService, script or Balancer DETF uses this legacy implementation. The active NFT facet inherits DETFFundedBondTarget. Keep legacy public interfaces required by excluded families.",
+      "action": "delete",
+      "before_sha256": "7bdaf28550ed8516a4ef1a9c029dac24b0aac03671a3880f4e56f310fb3f9028",
+      "after_sha256": "5a5e0d027a45d9b6c131a464c3882c1c1128ba753ab298d884bb602c0c34f6db"
+    },
+    {
+      "path": "contracts/vaults/detf/common/bondNft/DETFNFTVaultCommon.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/obsolete-common-ledger-cleanup-drafts/01-DETFNFTVaultCommon.sol.txt",
+      "reason": "No installed facet, package, FactoryService, script or Balancer DETF uses this legacy implementation. The active NFT facet inherits DETFFundedBondTarget. Keep legacy public interfaces required by excluded families.",
+      "action": "delete",
+      "before_sha256": "20ab45a6e7dea47341f3c5a426fae0acf611d985409ed9ce46bc0a6d251c2c99",
+      "after_sha256": "5a5e0d027a45d9b6c131a464c3882c1c1128ba753ab298d884bb602c0c34f6db"
+    },
+    {
+      "path": "contracts/vaults/detf/common/bondNft/DETFNFTVaultRepo.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/obsolete-common-ledger-cleanup-drafts/02-DETFNFTVaultRepo.sol.txt",
+      "reason": "No installed facet, package, FactoryService, script or Balancer DETF uses this legacy implementation. The active NFT facet inherits DETFFundedBondTarget. Keep legacy public interfaces required by excluded families.",
+      "action": "delete",
+      "before_sha256": "c6086587a92cf8affc22c06e4ac26b83ed16df8f0336700935e9c0355b88ac99",
+      "after_sha256": "5a5e0d027a45d9b6c131a464c3882c1c1128ba753ab298d884bb602c0c34f6db"
+    },
+    {
+      "path": "contracts/vaults/detf/common/bondNft/DETFNFTVaultService.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/obsolete-common-ledger-cleanup-drafts/03-DETFNFTVaultService.sol.txt",
+      "reason": "No installed facet, package, FactoryService, script or Balancer DETF uses this legacy implementation. The active NFT facet inherits DETFFundedBondTarget. Keep legacy public interfaces required by excluded families.",
+      "action": "delete",
+      "before_sha256": "8b9636b132f04c63003e9322cba5e78c60a92a47fa7a3cac61716fb2e1499202",
+      "after_sha256": "5a5e0d027a45d9b6c131a464c3882c1c1128ba753ab298d884bb602c0c34f6db"
+    },
+    {
+      "path": "contracts/vaults/detf/common/core/DETFBondLifecycleLib.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/obsolete-common-ledger-cleanup-drafts/04-DETFBondLifecycleLib.sol.txt",
+      "reason": "No installed facet, package, FactoryService, script or Balancer DETF uses this legacy implementation. The active NFT facet inherits DETFFundedBondTarget. Keep legacy public interfaces required by excluded families.",
+      "action": "delete",
+      "before_sha256": "b9142c0607f5065d9489237e0c369faf0c680933735a16f773e2b27d792f5e13",
+      "after_sha256": "5a5e0d027a45d9b6c131a464c3882c1c1128ba753ab298d884bb602c0c34f6db"
+    },
+    {
+      "path": "contracts/vaults/detf/common/core/DETFProtocolCompoundLib.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/obsolete-common-ledger-cleanup-drafts/05-DETFProtocolCompoundLib.sol.txt",
+      "reason": "No installed facet, package, FactoryService, script or Balancer DETF uses this legacy implementation. The active NFT facet inherits DETFFundedBondTarget. Keep legacy public interfaces required by excluded families.",
+      "action": "delete",
+      "before_sha256": "f9eda9e842fa09900aceeab2c3c21702cb0c6cbf62ac35d96e0709cb4ebd90bc",
+      "after_sha256": "5a5e0d027a45d9b6c131a464c3882c1c1128ba753ab298d884bb602c0c34f6db"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/obsolete-common-ledger-cleanup-drafts/06-UniswapV4DetfCommon.sol.txt",
+      "reason": "Remove unused legacy imports; active funded route implementations and storage are preserved.",
+      "action": "update",
+      "before_sha256": "ffc7d165f33828fbb75431aaa87dc6830988c22334953fc27c58f510c502e8a0",
+      "after_sha256": "ea0c5182b1fc55ec21ae54e9dd3f534146e5c0b248221a749d82dbcfbdcf1789"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/obsolete-common-ledger-cleanup-drafts/07-UniswapV4DetfTarget.sol.txt",
+      "reason": "Remove unused legacy imports; active funded route implementations and storage are preserved.",
+      "action": "update",
+      "before_sha256": "2d461a2bb3a761c24166ffe1a3bd6667ba833c8d984e15549fa33b266472118f",
+      "after_sha256": "a43f26a1b79e55450798aaf6f0e023e885006d1ec494e18246fbdda36d36daf5"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfQueryTarget.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/obsolete-common-ledger-cleanup-drafts/08-UniswapV4DetfQueryTarget.sol.txt",
+      "reason": "Remove unused legacy imports; active funded route implementations and storage are preserved.",
+      "action": "update",
+      "before_sha256": "f051752cca5f28bb13d363dca795fd888541fbc4620c537ef6647c875d6f64d2",
+      "after_sha256": "67724195cc13b94ba600c01c82edcc477f2c9fd313527c98ae06aacbc588c3cd"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_ProductLaw.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/obsolete-common-ledger-cleanup-drafts/09-UniswapV4Detf_PonsV2Se_ProductLaw.t.sol.txt",
+      "reason": "Remove unused imported legacy common class; every Pons test and helper body is preserved.",
+      "action": "update",
+      "before_sha256": "c3f544f15e6f4e72a5fdf34292679abd86f4b7b3dc2868c019869e1172ed3177",
+      "after_sha256": "7e30ce2109373bda79c158fbdbd66a96a49e99f0257e9f9c12a69e4d5d0dd1b6"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/UniswapV4Detf_PonsV2Se_Stage11Helpers.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/obsolete-common-ledger-cleanup-drafts/10-UniswapV4Detf_PonsV2Se_Stage11Helpers.sol.txt",
+      "reason": "Remove unused imported legacy common class; every Pons test and helper body is preserved.",
+      "action": "update",
+      "before_sha256": "5aeef7849f8658994e4301347b9f9835f70690a811ad553c74ed5d72ee10ac8d",
+      "after_sha256": "de29774b6455165a869a808d131d0c16e0cf1cc0a7222aa9a47edb51f2e03d42"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/obsolete-common-ledger-cleanup-drafts/11-UniswapV4Detf_PonsV2Se_ProductLaw_Decimals.sol.txt",
+      "reason": "Remove unused imported legacy common class; every Pons test and helper body is preserved.",
+      "action": "update",
+      "before_sha256": "2f9958454cb56df18279a3bdade32b36fefcfa3d3136c808422b87e9e6ed49f2",
+      "after_sha256": "b2fba95bcda9c7609c328648428aeb13d6cc816d27a998e3e7c2def41b2e6703"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/pons/decimals/UniswapV4Detf_PonsV2Se_Stage11Helpers_Decimals.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/obsolete-common-ledger-cleanup-drafts/12-UniswapV4Detf_PonsV2Se_Stage11Helpers_Decimals.sol.txt",
+      "reason": "Remove unused imported legacy common class; every Pons test and helper body is preserved.",
+      "action": "update",
+      "before_sha256": "649aeadfc1e3a725fe5692cbe0cc7bad03896927fe081f28432b7bfbdf313e79",
+      "after_sha256": "96840e0fbfb4e34afb0f63d7ae80b5da2e74db8a116027aea6f00cd61b5aabf6"
+    },
+    {
+      "path": "test/foundry/spec/saf/T10_DeadMembers.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/obsolete-common-ledger-cleanup-drafts/13-T10_DeadMembers.t.sol.txt",
+      "reason": "Retire declarations that assert only deleted struct shapes or the obsolete LP compound dust gate. Explicit replacement/retirement mapping retained.",
+      "action": "update",
+      "before_sha256": "8964a85429b118606194e266b2c7ef3cc6d0439cb9fe21ead8da3e76f1554f48",
+      "after_sha256": "3478dd6a5c068731bdc508c58f038facd040d9e566c9668faf03461c3de9ba05"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/common/core/DETFProtocolCompoundLib.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/obsolete-common-ledger-cleanup-drafts/14-DETFProtocolCompoundLib.t.sol.txt",
+      "reason": "Retire declarations that assert only deleted struct shapes or the obsolete LP compound dust gate. Explicit replacement/retirement mapping retained.",
+      "action": "update",
+      "before_sha256": "269a164e884e81fb248ead7673089cf7251b5c8f48ee8717134f58edf8fe5584",
+      "after_sha256": "3478dd6a5c068731bdc508c58f038facd040d9e566c9668faf03461c3de9ba05"
+    },
+    {
+      "path": "test/foundry/spec/oracles/fee/VaultFeeOracle_BondTermsFallback.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/obsolete-common-ledger-cleanup-drafts/15-VaultFeeOracle_BondTermsFallback.t.sol.txt",
+      "reason": "Remove stale references to the retired common target; all fee-oracle assertions remain.",
+      "action": "update",
+      "before_sha256": "553a51141700ddbfa3545b624cdb8c84f4c22ad0a1dbd6459381bf946cf22a23",
+      "after_sha256": "04cdef81e13a591c60bf6ca2f29db7b1133d11ee534cc05e6bdbfc5ed76ade3f"
+    }
+  ],
+  "removed_storage_members": [
+    "IDetf detf;",
+    "IERC20 lpToken;",
+    "IERC20 rewardToken;",
+    "uint256 lastRewardTokenBalance;",
+    "uint256 totalShares;",
+    "uint256 rewardPerShares;",
+    "uint8 decimalOffset;",
+    "mapping(uint256 tokenId => uint256 originalShares) originalSharesOf;",
+    "mapping(uint256 tokenId => uint256 effectiveShares) effectiveSharesOf;",
+    "mapping(uint256 tokenId => uint256 bonusMultiplier) bonusMultiplierOf;",
+    "mapping(uint256 tokenId => uint256 unlockTime) unlockTimeOf;",
+    "mapping(uint256 tokenId => uint256) userRewardPerSharePaid;",
+    "uint256 nextTokenId;",
+    "uint256 detfNFTId;",
+    "uint256 totalOriginalShares;",
+    "bool protocolNftInitialized;",
+    "bool reservedIdsWired;"
+  ],
+  "validation_before_application": "obsolete-common-ledger-draft-typecheck.json",
+  "scope": "Unused common legacy ledger and lifecycle code only. No Balancer-hosted DETF or Slipstream functional changes; their remaining compatibility interfaces stay.",
+  "runtime_evidence": {
+    "record": "hermetic-remediation-v4-policy-public-market-split.json",
+    "cleanup_anchor_cases": 102,
+    "cleanup_anchor_failures": 0,
+    "complete_selected_batch_passed": true,
+    "remaining": "Final complete current-source validation and reconciliation."
+  }
+}

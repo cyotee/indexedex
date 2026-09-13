@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                   Foundry                                  */
@@ -20,16 +21,8 @@ import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPer
 import {ICamelotV2Router} from "@crane/contracts/interfaces/protocols/dexes/camelot/v2/ICamelotV2Router.sol";
 import {ICamelotFactory} from "@crane/contracts/interfaces/protocols/dexes/camelot/v2/ICamelotFactory.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
-import {
-    CamelotV2StandardExchangeInFacet
-} from "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeInFacet.sol";
-import {
-    CamelotV2StandardExchangeOutFacet
-} from "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeOutFacet.sol";
-import {
-    ICamelotV2StandardExchangeDFPkg,
-    CamelotV2StandardExchangeDFPkg
-} from "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeDFPkg.sol";
+
+import {ICamelotV2StandardExchangeDFPkg} from "contracts/protocols/dexes/camelot/v2/ICamelotV2StandardExchangeDFPkg.sol";
 
 library CamelotV2_Component_FactoryService {
     using BetterEfficientHashLib for bytes;
@@ -37,38 +30,32 @@ library CamelotV2_Component_FactoryService {
     /// forge-lint: disable-next-line(screaming-snake-case-const)
     Vm constant vm = Vm(VM_ADDRESS);
 
-    function deployCamelotV2StandardExchangeInFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
-        instance = create3Factory.deployFacet(
-            type(CamelotV2StandardExchangeInFacet).creationCode,
-            abi.encode(type(CamelotV2StandardExchangeInFacet).name)._hash()
-        );
-        vm.label(address(instance), type(CamelotV2StandardExchangeInFacet).name);
+    function _deployFacet(ICreate3FactoryProxy factory_, string memory name_) private returns (IFacet instance) {
+        bytes memory code = ArtifactCreationCode.creationCode(string.concat(name_, ".sol:", name_));
+        instance = factory_.deployFacet(code, ArtifactCreationCode.releaseSalt(abi.encode(name_)._hash(), code, ""));
+        vm.label(address(instance), name_);
     }
 
-    function deployCamelotV2StandardExchangeOutFacet(ICreate3FactoryProxy create3Factory)
-        internal
-        returns (IFacet instance)
-    {
-        instance = create3Factory.deployFacet(
-            type(CamelotV2StandardExchangeOutFacet).creationCode,
-            abi.encode(type(CamelotV2StandardExchangeOutFacet).name)._hash()
-        );
-        vm.label(address(instance), type(CamelotV2StandardExchangeOutFacet).name);
+    function deployCamelotV2StandardExchangeInFacet(ICreate3FactoryProxy factory_) internal returns (IFacet) {
+        return _deployFacet(factory_, "CamelotV2StandardExchangeInFacet");
+    }
+
+    function deployCamelotV2StandardExchangeOutFacet(ICreate3FactoryProxy factory_) internal returns (IFacet) {
+        return _deployFacet(factory_, "CamelotV2StandardExchangeOutFacet");
+    }
+
+    function deployCamelotV2StandardExchangeQueryFacet(ICreate3FactoryProxy factory_) internal returns (IFacet) {
+        return _deployFacet(factory_, "CamelotV2StandardExchangeQueryFacet");
     }
 
     function deployCamelotV2StandardExchangeDFPkg(
-        IVaultRegistryDeployment vaultRegistry,
-        ICamelotV2StandardExchangeDFPkg.PkgInit memory pkgInit
+        IVaultRegistryDeployment registry_, ICamelotV2StandardExchangeDFPkg.PkgInit memory init_
     ) internal returns (ICamelotV2StandardExchangeDFPkg instance) {
-        instance = ICamelotV2StandardExchangeDFPkg(
-            address(
-                vaultRegistry.deployPkg(
-                    type(CamelotV2StandardExchangeDFPkg).creationCode,
-                    abi.encode(pkgInit),
-                    abi.encode(type(CamelotV2StandardExchangeDFPkg).name)._hash()
-                )
-            )
-        );
-        vm.label(address(instance), type(CamelotV2StandardExchangeDFPkg).name);
+        bytes memory code = ArtifactCreationCode.creationCode("CamelotV2StandardExchangeDFPkg.sol:CamelotV2StandardExchangeDFPkg");
+        bytes memory args = abi.encode(init_);
+        instance = ICamelotV2StandardExchangeDFPkg(address(registry_.deployPkg(
+            code, args, ArtifactCreationCode.releaseSalt(abi.encode("CamelotV2StandardExchangeDFPkg")._hash(), code, args)
+        )));
+        vm.label(address(instance), "CamelotV2StandardExchangeDFPkg");
     }
 }

@@ -1,0 +1,11 @@
+{
+  "path": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchange_FullRangeBook.t.sol",
+  "before_sha256": "ba85beb086f6754b552987a0fb38ac7bac3044eba4d3f4918e3d166e275bc54c",
+  "after_sha256": "618d78d84831fab22932c00ddceb8a30e90c87828fcf053037eb7fdf4592d12d",
+  "replaced": {
+    "FR5": "D59 two-token initial activation, later deposits retained",
+    "FR6": "D57 real NFT conversion with actual principal/fees; removes fake NPM no-op transfer harness",
+    "testFuzz_oneAssetSleeveWithdrawal": "D59 excludes one-token activation. testFuzz_fundedSleeveWithdrawalRounding retains independent ceiling, exact-output and donation/claim conservation checks over a legitimately funded two-token sleeve during a pool session; existing free-path exact-output tests retained."
+  },
+  "new_cases": "Native SY metadata, whole-book rate, runtime size, caller/internal redemption, minimum rollback, pool-session sleeve, import owner/one-sided/minimum/donation conservation"
+}

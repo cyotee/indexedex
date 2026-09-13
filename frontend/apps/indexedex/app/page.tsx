@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { useMemo } from 'react'
 
 import { LandingWalkthrough } from './components/landing/LandingWalkthrough'
-import { TokenStakingOverlay } from './components/landing/TokenStakingOverlay'
 import { DomainAnnouncementOverlay } from './components/landing/DomainAnnouncementOverlay'
 import { loadFeaturedFeeDetfs } from './lib/earn/loadEarnProducts'
 import { getLaunchTokenAddress } from './lib/lab'
@@ -253,9 +252,7 @@ export default function HomePage() {
         </div>
       </footer>
 
-      {process.env.NEXT_PUBLIC_SITE_DEPLOYMENT === 'dtf'
-        ? <DomainAnnouncementOverlay><TokenStakingOverlay /></DomainAnnouncementOverlay>
-        : <TokenStakingOverlay />}
+      {process.env.NEXT_PUBLIC_SITE_DEPLOYMENT === 'dtf' ? <DomainAnnouncementOverlay /> : null}
     </div>
   )
 }

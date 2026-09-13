@@ -1,0 +1,41 @@
+{
+  "scope": "Four existing F1 bodies use shared current authority checks in the two native-unit base hierarchies. No tests removed.",
+  "replacements": {
+    "legacy sale NotOwner assertions": "fundRewards and createFundedPosition reject attacker with typed current errors; legacy selectors absent",
+    "malformed diamondCut calldata": "actual live loupe reports no diamondCut selector on all three immutable proxies",
+    "owner checks": "retained optional owner() check"
+  },
+  "validation": "pending focused build/test",
+  "files": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol",
+      "before_sha256": "e0f55c8f3748710d1823e18d55c696b4bf84f0fa1ef5629c649e01afaccf7b82",
+      "after_sha256": "783c833acb2e19824261530c8248c879c394e411e64f19dd699e1368f3783472"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial_Decimals.sol",
+      "before_sha256": "f9a22136c269d06ab363d2e90839a874e1613b2d5093f02bf3efa969a990b230",
+      "after_sha256": "cacda95d9291adb811b136c04b3345bd0f77cf1e52718a333fd205604c128414"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/adversarial/Adversarial_A0Crops.t.sol",
+      "before_sha256": "38e32efa62d736325a1487990b86f5d49e7f3b38d1181cdac0ebbbe8879440a3",
+      "after_sha256": "f9c1899abcebed6d98b7e3182499651e0d3b4bdf9d3e8da2e8938763dccc611d"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Weighted_Adversarial_A0Crops.t.sol",
+      "before_sha256": "eff3b5076cf749dae57921596daf41a76fc2094f76a2734c046f7054573c0dcd",
+      "after_sha256": "a9f4003653152af300f3e16aaeaa35c303626cec6662cc0836c6745f9fa97413"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Orbital_Adversarial_A0Crops.t.sol",
+      "before_sha256": "4756b97ec33c7c8da47dc3279f1a88b213d91c83991b0bb06409dcd57a67b29e",
+      "after_sha256": "b0b77690d3fcaf734d592ff2fe06f69753313c4a25cb814ddd8e1dc67918d21b"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/adversarial/Adversarial_A0Crops_Decimals.sol",
+      "before_sha256": "74b07c9986dadb94b0b5b9efb3b8c4661830edb103e19b1ac7bd0d6623da741a",
+      "after_sha256": "eea8ea6532347dd5bb24f13305dca08ffa890eb997306f6b487273c7551a78be"
+    }
+  ]
+}

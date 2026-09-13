@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IComposedStableCommonDetfBondNFTVaultDFPkg} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/IComposedStableCommonDetfBondNFTVaultDFPkg.sol";
+
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IDiamondFactoryPackage} from "@crane/contracts/interfaces/IDiamondFactoryPackage.sol";
 import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
@@ -28,39 +30,7 @@ import {VaultTypeUtils} from "contracts/registries/vault/VaultTypeUtils.sol";
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
 import {ComposedStableCommonDetfBondNFTVaultRepo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondNFTVaultRepo.sol";
 
-interface IComposedStableCommonDetfBondNFTVaultDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
-    struct PkgInit {
-        IFacet erc721Facet;
-        IFacet erc4626BasicVaultFacet;
-        IFacet erc4626StandardVaultFacet;
-        IFacet bondNFTVaultFacet;
-        IFacet multiStepOwnableFacet;
-        IVaultFeeOracleQuery feeOracle;
-        IVaultRegistryDeployment vaultRegistryDeployment;
-    }
 
-    struct PkgArgs {
-        string name;
-        string symbol;
-        IDetf detf;
-        IERC20 lpToken;
-        IERC20 rewardToken;
-        uint8 decimalOffset;
-        address owner;
-    }
-
-    error NotCalledByRegistry(address caller);
-
-    function deployVault(
-        string memory name,
-        string memory symbol,
-        IDetf detf,
-        IERC20 lpToken,
-        IERC20 rewardToken,
-        uint8 decimalOffset,
-        address owner
-    ) external returns (address vaultAddress);
-}
 
 contract ComposedStableCommonDetfBondNFTVaultDFPkg is IComposedStableCommonDetfBondNFTVaultDFPkg {
     using BetterEfficientHashLib for bytes;

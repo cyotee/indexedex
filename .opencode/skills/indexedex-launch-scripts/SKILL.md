@@ -100,6 +100,7 @@ When EIP-170 may be off: [references/anvil-dev-complete.md](references/anvil-dev
 ## Constraints (do not violate)
 
 - Never `new` facets or DFPkgs. Vault/DETF packages: manager / vault registry. `PkgInit` / `PkgArgs` on the **interface**.
+- After production contract edits, `forge build` before `forge script`. IndexedEx FactoryServices load creation bytecode from `out/` (`ArtifactCreationCode` / `vm.getCode`). Skipping the build can deploy stale bytecode.
 - `new Morpho` / `new UniswapV3Factory` only in **Phase 01 rehearsal** Stages.
 - Pin Stages (Permit2, WETH, Uni V4) **fail** if the pin has no code. Never deploy those.
 - Skip: all catalog skip keys in JSON are non-zero with `code.length > 0`, unless `FORCE=1`. Skipped Stage still rewrites JSON.
@@ -117,6 +118,7 @@ When EIP-170 may be off: [references/anvil-dev-complete.md](references/anvil-dev
 - `skill:indexedex-testing`: tests, not launch shells
 - `skill:indexedex-script-orchestration`: SuperSim / Sepolia bridge wrappers only
 - `skill:indexedex-uniswap-v4-hook-packages`: hook DFPkg deploy path used by Phase 02/06
-- PRD: `docs/ANVIL_ROBINHOOD_TESTNET_LAUNCH_SCRIPTS_REWRITE_PRD.md`
+- PRD (46630 lab): `docs/ANVIL_ROBINHOOD_TESTNET_LAUNCH_SCRIPTS_REWRITE_PRD.md`
+- PRD (4663 architecture): `docs/ANVIL_ROBINHOOD_MAIN_ARCHITECTURE_PHASE_STAGE_PRD.md`
 - Plan: `docs/ANVIL_ROBINHOOD_TESTNET_LAUNCH_SCRIPTS_REWRITE_IMPLEMENTATION_AND_TEST_PLAN.md`
 - 4663 README: `scripts/foundry/anvil_robinhood_main/README.md`

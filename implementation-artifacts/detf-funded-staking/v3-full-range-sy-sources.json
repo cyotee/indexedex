@@ -1,0 +1,45 @@
+{
+  "requirements": [
+    "D57",
+    "D58",
+    "D59"
+  ],
+  "validation": "pending; V4/Slipstream remain separate unfinished implementations",
+  "files": [
+    {
+      "path": "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeCommon.sol",
+      "before_sha256": "dc70d5dc7f0db2b31b0019295de9b77164f79656a87979f2c5dfa04386f07aab",
+      "after_sha256": "7d45ec5ebeafe5b74351aead8d74c4640e55879b88a4e5ebcd722546b551549b"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangePositionImportTarget.sol",
+      "before_sha256": "b824cf272e4758e42fc41df7927c724061e815a5d17d61b64e6c770d94f231de",
+      "after_sha256": "8ef76c59e4a8864ce4015e74de7bc8f5d50e530ff438443081237dc34ade1149"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v3/UniswapV3VaultRepo.sol",
+      "before_sha256": "3e1c4f624e410e945aa232250f73e035bb3de252505395d7ca72d8845fe2e6a5",
+      "after_sha256": "f5026a97e4a9cc0da3a5cc05de95b528395af3a49f231254808fbe9a612af0e0"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutQueryTarget.sol",
+      "before_sha256": "525d39c866ba14a62d126e310ab1ae87f3f10ec6f423a7c2c5db3c7e7c344805",
+      "after_sha256": "79a4cf4c6473d4ead405ec338274a5b740ea5790cd02f24aaa6e6f4b0375e07d"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutQueryFacet.sol",
+      "before_sha256": "3fb5fa19cb904cfa4e6bb51a84ce9e0098a125eff0da737244cf5a7b1e9e84e5",
+      "after_sha256": "1ef626911143f903ba4c1c57ba1ee95e0aa03e7420fc93e5bd4e1d9054bc53d2"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeDFPkg.sol",
+      "before_sha256": "b3a33128c991dda650ac9aa76e56b7506b1740404a995f7d46cb669ee70eca76",
+      "after_sha256": "3913c64e7901e458cab614893bf1370d0412c0eb6ef400f4af1c46c0bb823219"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v3/test/bases/TestBase_UniswapV3StandardExchange.sol",
+      "before_sha256": "a3750422b9932bdf849f41e7837056e56fc2f4989101c1cdff8f8eaf9bb9d2eb",
+      "after_sha256": "1e24b6b52bd70d82590004593a054189bc9457e82e254a198b50fd3ad73219a4"
+    }
+  ]
+}

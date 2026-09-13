@@ -1,14 +1,6 @@
 ---
 name: indexedex-launch-scripts
-description: >
-  Guides IndexedEx Foundry launch scripts: Phase/Stage file layout, two-shell Anvil vs public
-  entrypoints, skip/pin/rehearsal, and Anvil configuration for accurate EIP-1559 gas and
-  deployer funding quotes. Use when the user asks about "Phase_00_Stage", "anvil_robinhood",
-  "4663", "46630", "simulate architecture", "gas estimate", "funding quote",
-  "disable-code-size-limit", "disable-min-priority-fee", launch scripts, robinhood_testnet.sh,
-  "platform.json", "tokenlist", or "chain/46630" export. DO NOT use for Foundry tests
-  (indexedex-testing), SuperSim/Sepolia bridge rehearsal (indexedex-script-orchestration),
-  or generic Anvil node setup (anvil-node).
+description: "IndexedEx Robinhood launch scripts: Phase/Stage layout, 4663/46630 Anvil rehearsal, gas/funding quotes and exports."
 license: MIT
 ---
 
@@ -100,6 +92,7 @@ When EIP-170 may be off: [references/anvil-dev-complete.md](references/anvil-dev
 ## Constraints (do not violate)
 
 - Never `new` facets or DFPkgs. Vault/DETF packages: manager / vault registry. `PkgInit` / `PkgArgs` on the **interface**.
+- After production contract edits, `forge build` before `forge script`. IndexedEx FactoryServices load creation bytecode from `out/` (`ArtifactCreationCode` / `vm.getCode`). Skipping the build can deploy stale bytecode.
 - `new Morpho` / `new UniswapV3Factory` only in **Phase 01 rehearsal** Stages.
 - Pin Stages (Permit2, WETH, Uni V4) **fail** if the pin has no code. Never deploy those.
 - Skip: all catalog skip keys in JSON are non-zero with `code.length > 0`, unless `FORCE=1`. Skipped Stage still rewrites JSON.

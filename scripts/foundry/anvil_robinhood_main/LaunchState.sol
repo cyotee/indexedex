@@ -10,10 +10,8 @@ import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexMan
 import {
     IUniswapV4HookDiamondPackageCallBackFactory
 } from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackageCallBackFactory.sol";
-import {
-    IStandardExchangeRateProviderDFPkg
-} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol";
-import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol";
+import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
+import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/IUniswapV4StandardExchangeDFPkg.sol";
 import {
     IUniswapV4MultiPoolTwapOracle
 } from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4MultiPoolTwapOracle.sol";
@@ -23,7 +21,7 @@ import {
 
 /// @title LaunchState
 /// @notice Architecture bag: factories, manager, TWAP, SE pkgs, hook pkgs, DETF pkgs.
-/// @dev Packages only. No token or DETF instance fields.
+/// @dev TokenStaking package fields are opt-in (Phase 06-08 / 08-01). No Protocol DETF instances.
 struct LaunchState {
     ICreate3FactoryProxy create3Factory;
     IDiamondPackageCallBackFactory diamondPackageFactory;
@@ -50,9 +48,24 @@ struct LaunchState {
     address cpHookPkg;
     IUniswapV4StandardExchangeDFPkg uniV4SePkg;
     address morphoBlueSePkg;
+    address uniV3SePkg;
+    address uniV2SePkg;
     address bondNftVaultPkg;
     address rebasingClaimTokenPkg;
     address uniV4DetfPkg;
     address weightedHookPkg;
+    address orbitalHookPkg;
     address curveQuadHookPkg;
+    IFacet tokenStakingFacet;
+    IFacet rebasingAwareErc4626Facet;
+    IFacet rebasingAwareSeFacet;
+    IFacet rebasingAwareSyFacet;
+    IFacet rebasingAwareMetadataFacet;
+    IFacet rebasingAwareQuoteFacet;
+    address rebasingAwareErc4626Pkg;
+    string rebasingAwareReleaseId;
+    bytes32 rebasingAwareConstructorFingerprint;
+    bytes32 rebasingAwareImplFingerprint;
+    address tokenStakingPkg;
+    address tokenStaking;
 }

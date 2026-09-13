@@ -1,0 +1,30 @@
+{
+  "status": "PREPARED_NOT_APPLIED",
+  "recorded_at_utc": "2026-09-09T07:58:37.669312+00:00",
+  "gate": "Entire active validation parent4255 must exit before applying.",
+  "changes": [
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolPkg_Smoke.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/balancer-se-smoke-drafts/StandardExchangeBufferPoolPkg_Smoke.t.sol.txt",
+      "reason": "Retire the mock-address DFPkg constructor suite after moving all seven declarations into the existing production-path smoke suite.",
+      "before_sha256": "41dd0648f946387094549eaedf5d9a2fb18b9c1e4209bb8a9c6564576ccf7791",
+      "after_sha256": "5d4d57eda013616daa5d107d6e82c87d866d7c3d29a48b746d92dc03472e9fd7"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/TestBase_Smoke.t.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/balancer-se-smoke-drafts/TestBase_Smoke.t.sol.txt",
+      "reason": "Consolidate every former declaration into the retained real registry/protocol fixture and check the installed interfaces.",
+      "before_sha256": "a55a11897c8a649de2797257cc1ca8f0e3dcbd4647cb025afd8ac2af75517c30",
+      "after_sha256": "f24ed3baf888222cbe682cdc381cb1e80f85e6efa79e687a6055850ea8d0103a"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/bases/TestBase_StandardExchangeBufferPool.sol",
+      "draft": "implementation-artifacts/detf-funded-staking/balancer-se-smoke-drafts/TestBase_StandardExchangeBufferPool.sol.txt",
+      "reason": "Preserve the actual protocol fixture while deploying its remaining three facets through CREATE3 rather than constructors.",
+      "before_sha256": "658777536083323431b92d3c5b1f73c442a1b792fe1beef967d09154c434bc27",
+      "after_sha256": "34fd5dc6dbb1312afe91c17474a72b13ddcf706c211b7af922c5b78831e6c4fb"
+    }
+  ],
+  "validation_passed": false,
+  "scope": "Balancer SE only; no Balancer-hosted DETF or Slipstream changes."
+}

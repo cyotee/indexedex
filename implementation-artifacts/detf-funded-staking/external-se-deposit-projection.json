@@ -1,0 +1,62 @@
+{
+  "status": "applied; validation pending",
+  "scope": "Optional provider projection only. Four providers preserve current deposit formulas and holder inventory; fee shares remain correctly attributed. No execution route authorization change.",
+  "next": "Wire projected external mint state into actual host donation/bond previews and validate external deposits with real providers before considering this capability complete.",
+  "files": [
+    {
+      "path": "contracts/interfaces/IStandardExchangeTransitionQuote.sol",
+      "before_sha256": "6328f81baf68d64556e1ed1273a8930fa0c671297bb37ec435a4818923ac759f",
+      "after_sha256": "a1816004f5d0cb42fe8467795464693cee193ee917222f3beb39ac0e06896890"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInQueryTarget.sol",
+      "before_sha256": "6bc13e2c0b5e742c57de9e830963ec4958ab073e156f82f5b86af5e848c1359f",
+      "after_sha256": "aa0aa165316fdf5cf58d2680d3a3caa818ad9bbbd0b2d22dc42ccbc67a75b45b"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryTarget.sol",
+      "before_sha256": "71c68fb949ee08b1ffc10dbe347882f98951d1ac4e8510acbd6a067bc3dc8f33",
+      "after_sha256": "771f275e830e7a575eb73bcd39a2f413f7715b5591833db832e4c7e745356a71"
+    },
+    {
+      "path": "contracts/vaults/standard/erc4626/ERC4626StandardExchangeQuoteTarget.sol",
+      "before_sha256": "f896e6062268363a402f2ff9cd3e91795d782aa5f4f8bd4c86db54353ca34492",
+      "after_sha256": "af89710289dfcdc6f3930a96b2843168ac017b619d24787274e0e1e2bcb32b37"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeQuoteTarget.sol",
+      "before_sha256": "e9002f2c8cf480eaf00df3a258daa8186ce57428768137376258f6a625edb556",
+      "after_sha256": "51b9c86e807451d6ebca53a324991507fea67f740cd297fd4fca22792c253dda"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeInFacet.sol",
+      "before_sha256": "a939fff4e328319ffde299ac6320c800e4b066d37fcb264b76e17e2b2d494f25",
+      "after_sha256": "dd10fc0189de0b76c5f8ed7dfcc7dbb2d2d44c27c7062fb2d9fe67dbabaa7374"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInQueryFacet.sol",
+      "before_sha256": "5ac90b1507d928b563807d2eeac95caf726437024dd16f08aec4f72f7f132d8f",
+      "after_sha256": "8fffa7858f8627cb740bee5645ad94cfb3868ee2490396e7b4d6e999fd746971"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryFacet.sol",
+      "before_sha256": "a60d40be2de29bb2c82f9ac7254409dd7b2e91d307f7d49dd8515899486fff2b",
+      "after_sha256": "c6c7b95633c54e5f69c7f5d5ae00c6813d4bfba7ee94c71b114f9255b8e9d2f6"
+    },
+    {
+      "path": "contracts/vaults/standard/erc4626/ERC4626StandardExchangeInFacet.sol",
+      "before_sha256": "d7a84256a957cbb75a6cbded35e24d32b9e5167571f4fb30c8a1383dbc48c8a0",
+      "after_sha256": "f7aeb2284868cfdfc89d1dc4bbd1cb2382ff2b0520925ebd921f5b33561a025f"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v3/UniswapV3StandardExchangeInQueryFacet_IFacet_Test.t.sol",
+      "before_sha256": "ca08f5a575feff396b74553763922351a25b9b4f9a0e00b122865415c774c216",
+      "after_sha256": "b6b70b190d2b57e269cbe3deb61e0536126f83412ae9302ebd0e8272460e5464"
+    },
+    {
+      "path": "test/foundry/spec/protocol/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryFacet_IFacet_Test.t.sol",
+      "before_sha256": "335323ab3f1f2e547f2e286028989cccc0f74479fd478b943569887961e7733a",
+      "after_sha256": "f3ef0586ef36b8b9069406a62ccd52ebc68ab6628b30792ccd841043f97917e7"
+    }
+  ]
+}

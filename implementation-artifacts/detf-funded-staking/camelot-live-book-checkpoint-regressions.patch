@@ -1,0 +1,60 @@
+--- a/test/foundry/spec/vaults/standard/sy/ConstantProductNativeSY.t.sol
++++ b/test/foundry/spec/vaults/standard/sy/ConstantProductNativeSY.t.sol
+@@ -2,6 +2,8 @@
+ pragma solidity ^0.8.0;
+ 
+ import {Test} from "forge-std/Test.sol";
++import {ICamelotPair} from "@crane/contracts/interfaces/protocols/dexes/camelot/v2/ICamelotPair.sol";
++import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
+ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+@@ -331,6 +333,48 @@
+ }
+ 
+ contract CamelotV2NativeSYTest is TestBase_CamelotV2StandardExchange, ConstantProductNativeSYBehavior {
++    function test_camelotLpPassThroughPreviewMatchesExecution() public {
++        address lp_ = nativeSY.yieldToken();
++        vm.startPrank(nativeUser);
++        uint256 payment_ = nativeSY.redeem(nativeUser, nativeSY.balanceOf(nativeUser) / 10, lp_, 0, false);
++        IStandardExchangeIn exchange_ = IStandardExchangeIn(address(nativeSY));
++        uint256 preview_ = exchange_.previewExchangeIn(IERC20(lp_), payment_, nativePairA);
++        IERC20(lp_).approve(address(nativeSY), payment_);
++        uint256 before_ = nativePairA.balanceOf(nativeUser);
++        assertEq(exchange_.exchangeIn(IERC20(lp_), payment_, nativePairA, preview_, nativeUser, false, block.timestamp), preview_);
++        assertEq(nativePairA.balanceOf(nativeUser) - before_, preview_);
++        vm.stopPrank();
++    }
++
++    function test_camelotCheckpointTracksLiveBookAfterToken0Deposit() public { _assertCamelotCheckpoint(0, true); }
++    function test_camelotCheckpointTracksLiveBookAfterToken1Deposit() public { _assertCamelotCheckpoint(1, true); }
++    function test_camelotCheckpointTracksLiveBookAfterToken0Redemption() public { _assertCamelotCheckpoint(0, false); }
++    function test_camelotCheckpointTracksLiveBookAfterToken1Redemption() public { _assertCamelotCheckpoint(1, false); }
++
++    function _assertCamelotCheckpoint(uint256 tokenIndex_, bool deposit_) private {
++        ICamelotPair pool_ = ICamelotPair(nativeSY.yieldToken());
++        address asset_ = tokenIndex_ == 0 ? pool_.token0() : pool_.token1();
++        vm.prank(owner);
++        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(address(nativeSY), 7e16);
++        vm.startPrank(nativeUser);
++        if (deposit_) {
++            IERC20(asset_).approve(address(nativeSY), 5 ether);
++            nativeSY.deposit(nativeUser, asset_, 5 ether, 0);
++        } else {
++            nativeSY.redeem(nativeUser, nativeSY.balanceOf(nativeUser) / 10, asset_, 0, false);
++        }
++        vm.stopPrank();
++        // Yield checkpoints describe the actual pool ownership after settlement.
++        // Inspect the existing proxy ledger without mutating or mocking it.
++        (uint112 reserve0_, uint112 reserve1_,,) = pool_.getReserves();
++        uint256 heldLp_ = pool_.balanceOf(address(nativeSY));
++        uint256 supply_ = pool_.totalSupply();
++        uint256 mappingSlot_ = uint256(keccak256(abi.encode("indexedex.vaults.constprodreserve"))) + 4;
++        uint256 checkpoint0_ = uint256(vm.load(address(nativeSY), keccak256(abi.encode(pool_.token0(), mappingSlot_))));
++        uint256 checkpoint1_ = uint256(vm.load(address(nativeSY), keccak256(abi.encode(pool_.token1(), mappingSlot_))));
++        assertEq(checkpoint0_, heldLp_ * reserve0_ / supply_, "token0 checkpoint must use post-operation ownership");
++        assertEq(checkpoint1_, heldLp_ * reserve1_ / supply_, "token1 checkpoint must use post-operation ownership");
++    }
+     function _expectedShareDecimals() internal pure override returns (uint8) { return 27; }
+     function setUp() public override {
+         TestBase_CamelotV2StandardExchange.setUp();

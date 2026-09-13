@@ -1,0 +1,98 @@
+{
+  "status": "validated: 43 tests across six suites passed",
+  "decision": "D32-D55 funded staking and mandatory reserve fallback; real SE fixture replaces mocked SE issuer. Native units are nine decimals only for DETF and sDETF.",
+  "sources": [
+    {
+      "path": "contracts/test/adversarial/HostileReentrantShare.sol",
+      "before_sha256": "a73b99ee00926c134d1129a9f54fee4ad0bc30c1a036fc2e6a388f2fa442c9ec",
+      "after_sha256": "5c4e3b9bea25637c79adaf79402efa920391c8f2c1bb14e8cc6d4c5ed22c54cb",
+      "old_tests": [],
+      "new_tests": []
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/adversarial/TestBase_MixedBufferMultiVaultStableDetf_Adversarial.sol",
+      "before_sha256": "b26527d7e38af15c7108137a85840401de6a8bd8feaa5ef277cd93e8b4fa95b8",
+      "after_sha256": "81bde05b0fa94e4ec8dbde5931ea37d2a3a25215b4c6f8c6f0ae433d16efd706",
+      "old_tests": [],
+      "new_tests": []
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_RateProviders.t.sol",
+      "before_sha256": "57b2479f01ee83e1add4adbfa2d7c769736786bd390c9f42745d42dfd51185b2",
+      "after_sha256": "596b59a1433e83d355c723639117505bb9580fa25c069cc00fdd837bf84ab660",
+      "old_tests": [
+        "test_share_STANDARD_default",
+        "test_share_WITH_RATE_matrix"
+      ],
+      "new_tests": [
+        "test_share_STANDARD_default",
+        "test_share_WITH_RATE_matrix"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_Pricing.t.sol",
+      "before_sha256": "7af03b4a83623ce4af72a5e82ccd1cb972b8cdbf83e8d73771b42bb40c7549bd",
+      "after_sha256": "419a1c5c5df2cc5327fac47af25c724cce92e4b9c6ac49ba953541babb41082a",
+      "old_tests": [
+        "test_synthetic_readable_inert",
+        "test_synthetic_after_bootstrap",
+        "test_gate_coupling_matches_thresholds",
+        "test_mint_reverts_when_gate_closed",
+        "test_burn_reverts_when_gate_closed"
+      ],
+      "new_tests": [
+        "test_synthetic_readable_inert",
+        "test_synthetic_after_bootstrap",
+        "test_gate_coupling_matches_thresholds",
+        "test_mint_swaps_when_gate_closed",
+        "test_burn_swaps_when_gate_closed"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_Reentrancy.t.sol",
+      "before_sha256": "51aabcfe7cbd07971f39177d4be85f412fa98e3ccb745ebb3e324b3fa9fe74ed",
+      "after_sha256": "044b189882304d3dda541328487b52f1731dda00fc375ef11595986ac1196497",
+      "old_tests": [
+        "test_control_path_mint_succeeds",
+        "test_reentrancy_mintSharePath_nestedHitsIsLocked",
+        "test_reentrancy_crossFunction_bond_nestedHitsIsLocked"
+      ],
+      "new_tests": [
+        "test_control_path_mint_succeeds",
+        "test_reentrancy_mintBufferPath_nestedHitsIsLocked",
+        "test_reentrancy_crossFunction_bond_nestedHitsIsLocked"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/adversarial/Adversarial_MixedBuffer_TrustFlag.t.sol",
+      "before_sha256": "788eefecb9661a164f3bb3f9944afe73c79b72c14c52bc6ee9346d9f735550fe",
+      "after_sha256": "03314da48553d9bbd521faed92c7cf4c9a30a4b44ea6a3d455512d53430797c1",
+      "old_tests": [
+        "test_I1_pretransferred_inventoryNoInCallTransfer_revertsDelta0",
+        "test_I1_burn_pretransferred_true_usesOnlyCallerTransferredDetf",
+        "test_I1_bond_pretransferred_inventoryNoTransfer_reverts",
+        "test_I2_pretransferred_claimedGtDelta0_reverts",
+        "test_I3_residualInventory_cannotFundSecondFreePretransfer"
+      ],
+      "new_tests": [
+        "test_I1_pretransferred_inventoryNoInCallTransfer_revertsDelta0",
+        "test_I1_burn_pretransferred_true_usesOnlyCallerTransferredDetf",
+        "test_I1_bond_pretransferred_inventoryNoTransfer_reverts",
+        "test_I2_pretransferred_claimedGtDelta0_reverts",
+        "test_I3_residualInventory_cannotFundSecondFreePretransfer"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/adversarial/Adversarial_MixedBuffer_A0.t.sol",
+      "before_sha256": "f1bdbb803d8022f6d569706a593a1c701161fc2c50f8dcd8a80fdfb5f5315e1f",
+      "after_sha256": "7baa5676af19ba7f47b88a28d24925fc94a81bcd1d87b24e689a0501c1a79a84",
+      "old_tests": [
+        "test_A0_mb_donatedBuffer_bootstrapDoesNotStealOthersSeed"
+      ],
+      "new_tests": [
+        "test_A0_mb_donatedBuffer_bootstrapDoesNotStealOthersSeed"
+      ]
+    }
+  ],
+  "validation": "mixed-funded-security-run.json"
+}

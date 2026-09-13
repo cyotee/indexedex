@@ -1,0 +1,71 @@
+{
+  "scope": "D60 compilation maintenance only. Legacy Composed callee signatures retained separately; historical factory builders populate surviving inputs only and do not implement missing launch functionality. Single/Multi test input assignments updated for existing argument types.",
+  "files": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_Component_FactoryService.sol",
+      "before_sha256": "4136238b5b872d66cde1f68db4989ef4081db2dbe9743d27796f6e4eb0285965",
+      "after_sha256": "2dc94436d05fb9eb44771e0c9301a060bbfee32947208bdd8a139a6115036e32"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenTarget.sol",
+      "before_sha256": "efaa764e5532f9f2a5527d6ec6dfd754eb27b9e3ba924a7a4bb10f50f8124579",
+      "after_sha256": "cfc773b73fedd35d9fc978e69b09f6d6b47b82fd56fc958063f88df4021ae898"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_Reentrancy.t.sol",
+      "before_sha256": "3c62bdb917ca2ba13bab9b274e6046af735b0af8bbcb022c765bf419980362f7",
+      "after_sha256": "e936d0dd024b01d4a48ffd3db4aa0cd1de3b4cc8eb0e815c46ab07e9c91aa71d"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/adversarial/TestBase_SingleStandardExchangeDETF_Adversarial.sol",
+      "before_sha256": "241676fa8d00e93001ae49aea1b99af536f6503e6323a59bbf75010ef1aeb0a8",
+      "after_sha256": "d4834305a57ad8f41a1df499024d9a2041b8ef9ccfb691c5e241a33ea25108cb"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_Reentrancy_Decimals.sol",
+      "before_sha256": "2d7cb9ed8d84fb398e2ed2ebd101ad6eb9b89a9301b5b5b9df467aae426b5b6a",
+      "after_sha256": "aab3afce2700ea092c0a4ff1f35357e668201eaa3a780b36493c329fc2c6dda3"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/adversarial/TestBase_SingleStandardExchangeDETF_Adversarial_Decimals.sol",
+      "before_sha256": "2e7e38aa6f2fb9b3ead7d75f465f93b948284d4232956ab5ff6c4577f228ed6e",
+      "after_sha256": "34be0123047c8d2795e98e9c07e6e7926ca86331ae1f0208171fe14cd6d70492"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_Reentrancy.t.sol",
+      "before_sha256": "1d6bba763ac762bfd5893b09f744045af06fe7780422009f52a353d3a0d93b24",
+      "after_sha256": "9e9a6491cdcbca3de3d864ce8bb164e6aab4a682464eb896d95895c568d89cfa"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/Adversarial_PkgArgs.t.sol",
+      "before_sha256": "4012e767ff2d7ef4ebc956c633120d6f5a11ac8cdf16201df8192a81f07dc447",
+      "after_sha256": "d9b36ad15bae9d255a9c969fd4fa5c61b8788ea2e88e9a1a9073724642458fad"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/TestBase_MultiVaultWeightedDetf_Adversarial.sol",
+      "before_sha256": "74cdd7c038c5f76de4876584a6d4b9682bc5160a78926d1416924f61508b85c5",
+      "after_sha256": "3dcd72eff7cb7a582d60276a9576248d1899d88a3ace28def3a1229b86a0d232"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Deploy_Decimals.sol",
+      "before_sha256": "8ca52953e445394329e863c080eb177a0e942e87d65206d2fbe659f75e9cd1cd",
+      "after_sha256": "2287b17a674f9f369d1c7cf3f2f45f38b7d11467442d57b1f9eeb94ad8c07c7b"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_Reentrancy_Decimals.sol",
+      "before_sha256": "b00d987825f2526c3fbddc659a435fa5c74727e1e6f6d78de5db6ea57c4bd514",
+      "after_sha256": "fe712c772a75c3f2671b2a8e5bf077230b5cf637ee741d532c4643e24220383b"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/adversarial/TestBase_MultiVaultWeightedDetf_Adversarial_Decimals.sol",
+      "before_sha256": "7f7ea43fc68e957413c4f257bf8d9330f1dd2f4486b53b2d468b2db34c3f8eab",
+      "after_sha256": "8878674407832758dd7b515cace2b01d0aacc4c719bc11bea07fa4b4b6439fee"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/adversarial/Adversarial_PkgArgs_Decimals.sol",
+      "before_sha256": "b51d83cf8d39cb1922aeb8de59ab4b1aa1fcf4a2e0c2b2d72fcdcf8bc07a13f4",
+      "after_sha256": "ed325d85f9460fd4c41795b038becb410d1312d480c6b70daeeba681d0743d31"
+    }
+  ],
+  "validation": "pending default full build"
+}

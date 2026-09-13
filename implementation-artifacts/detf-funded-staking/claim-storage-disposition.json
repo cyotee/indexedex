@@ -1,0 +1,660 @@
+{
+  "deployment": "Fresh layouts only; no production migration",
+  "old_slot": "keccak256(\"indexedex.vaults.protocol.richir\")",
+  "new_slot": "bytes32(uint256(keccak256(abi.encode(\"indexedex.detf.funded.staking\"))) - 1)",
+  "old_members": [
+    {
+      "member": "detf",
+      "disposition": "retained",
+      "reason": "IERC20 detf: held backing and funding authority"
+    },
+    {
+      "member": "nftVault",
+      "disposition": "replaced",
+      "reason": "bondNftVault: escrow authorization and standing-role lookup"
+    },
+    {
+      "member": "rateAsset",
+      "disposition": "removed",
+      "reason": "Direct backing is DETF; no spot conversion"
+    },
+    {
+      "member": "detfNFTId",
+      "disposition": "removed",
+      "reason": "No redemption against a protocol LP NFT"
+    },
+    {
+      "member": "totalShares",
+      "disposition": "replaced",
+      "reason": "totalGons: actually funded outstanding receipt ownership"
+    },
+    {
+      "member": "sharesOf",
+      "disposition": "replaced",
+      "reason": "gonsOf: actually funded account ownership"
+    },
+    {
+      "member": "cachedRedemptionRate",
+      "disposition": "removed",
+      "reason": "gonsPerUnit changes only when funded ordinary rewards rebase"
+    },
+    {
+      "member": "lastRateUpdateBlock",
+      "disposition": "removed",
+      "reason": "No cached spot rate or per-block refresh"
+    },
+    {
+      "member": "lastSelfBalance",
+      "disposition": "removed",
+      "reason": "Current call funding deltas only; unsolicited balances remain excluded"
+    },
+    {
+      "member": "pendingRedeemDetfOut",
+      "disposition": "removed",
+      "reason": "No LP-based quote/claim handoff"
+    }
+  ],
+  "funded_member_references": {
+    "detf": [
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 17,
+        "function": "",
+        "source": "bytes32(uint256(keccak256(abi.encode(\"indexedex.detf.funded.staking\"))) - 1);"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 55,
+        "function": "_initialize",
+        "source": "if (address(layoutStruct_.detf) != address(0)) revert AlreadyInitialized();"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 60,
+        "function": "_initialize",
+        "source": "layoutStruct_.detf = detf_;"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 214,
+        "function": "_requireBacking",
+        "source": "uint256 held_ = layoutStruct_.detf.balanceOf(address(this));"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 41,
+        "function": "detf",
+        "source": "return address(Repo._layoutStruct().detf);"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 62,
+        "function": "previewDistributions",
+        "source": "(, uint256 fee_, uint256 creator_) = s_.feeOracle.seigniorageSplitOfVault(address(s_.detf));"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 167,
+        "function": "fundRewards",
+        "source": "if (msg.sender != address(s_.detf)) revert Unauthorized(msg.sender);"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 203,
+        "function": "_exchange",
+        "source": "s_.detf.safeTransfer(recipient_, amount_);"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 211,
+        "function": "_isStake",
+        "source": "address backing_ = address(Repo._layoutStruct().detf);"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 218,
+        "function": "_pullDetf",
+        "source": "uint256 before_ = s_.detf.balanceOf(address(this));"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 219,
+        "function": "_pullDetf",
+        "source": "s_.detf.safeTransferFrom(msg.sender, address(this), amount_);"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 220,
+        "function": "_pullDetf",
+        "source": "uint256 after_ = s_.detf.balanceOf(address(this));"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 226,
+        "function": "_topUpWeights",
+        "source": "(, uint256 fee_, uint256 creator_) = s_.feeOracle.seigniorageSplitOfVault(address(s_.detf));"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 234,
+        "function": "_synchronize",
+        "source": "IDETFFundedRewards(address(s_.detf)).synchronizeRewards();"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol",
+        "line": 146,
+        "function": "processArgs",
+        "source": "address(args_.detf) == address(0) || address(args_.nftVault) == address(0)"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol",
+        "line": 164,
+        "function": "initAccount",
+        "source": "DETFFundedStakingRepo._initialize(IERC20(address(args_.detf)), address(args_.nftVault), args_.feeOracle);"
+      }
+    ],
+    "bondNftVault": [
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 61,
+        "function": "_initialize",
+        "source": "layoutStruct_.bondNftVault = bondNftVault_;"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 170,
+        "function": "fundRewards",
+        "source": "address feeRecipient_ = IERC721(s_.bondNftVault).ownerOf(DETF_FEE_TO_BOND_NFT_ID);"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 171,
+        "function": "fundRewards",
+        "source": "address creatorRecipient_ = IERC721(s_.bondNftVault).ownerOf(DETF_CREATOR_BOND_NFT_ID);"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 182,
+        "function": "retireEscrowDust",
+        "source": "if (msg.sender != s_.bondNftVault) revert Unauthorized(msg.sender);"
+      }
+    ],
+    "feeOracle": [
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 62,
+        "function": "_initialize",
+        "source": "layoutStruct_.feeOracle = feeOracle_;"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 62,
+        "function": "previewDistributions",
+        "source": "(, uint256 fee_, uint256 creator_) = s_.feeOracle.seigniorageSplitOfVault(address(s_.detf));"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 226,
+        "function": "_topUpWeights",
+        "source": "(, uint256 fee_, uint256 creator_) = s_.feeOracle.seigniorageSplitOfVault(address(s_.detf));"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol",
+        "line": 147,
+        "function": "processArgs",
+        "source": "|| address(args_.feeOracle) == address(0) || abi.encode(args_)._hash() != pkgArgs_._hash()"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol",
+        "line": 164,
+        "function": "initAccount",
+        "source": "DETFFundedStakingRepo._initialize(IERC20(address(args_.detf)), address(args_.nftVault), args_.feeOracle);"
+      }
+    ],
+    "synchronizing": [
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 232,
+        "function": "_synchronize",
+        "source": "if (s_.synchronizing) revert RewardSynchronizationInProgress();"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 233,
+        "function": "_synchronize",
+        "source": "s_.synchronizing = true;"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 235,
+        "function": "_synchronize",
+        "source": "s_.synchronizing = false;"
+      }
+    ],
+    "gonsPerUnit": [
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 63,
+        "function": "_initialize",
+        "source": "layoutStruct_.gonsPerUnit = StakingMath.INITIAL_GONS_PER_UNIT;"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 73,
+        "function": "_totalSupply",
+        "source": "return StakingMath._toAmount(layoutStruct_.totalGons, layoutStruct_.gonsPerUnit);"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 83,
+        "function": "_balanceOf",
+        "source": "return StakingMath._toAmount(layoutStruct_.gonsOf[account_], layoutStruct_.gonsPerUnit);"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 118,
+        "function": "_debitPrincipal",
+        "source": ": StakingMath._toGons(amount_, layoutStruct_.gonsPerUnit);"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 133,
+        "function": "_retireFraction",
+        "source": "if (gons_ >= layoutStruct_.gonsPerUnit || gons_ > layoutStruct_.gonsOf[owner_]) {"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 153,
+        "function": "_transfer",
+        "source": "uint256 gons_ = StakingMath._toGons(amount_, layoutStruct_.gonsPerUnit);"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 197,
+        "function": "_distribute",
+        "source": "(layoutStruct_.gonsPerUnit, growth_, layoutStruct_.stakingDust) = StakingMath._rebase("
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 198,
+        "function": "_distribute",
+        "source": "layoutStruct_.totalGons, layoutStruct_.gonsPerUnit, allocation_.staking + layoutStruct_.stakingDust"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 231,
+        "function": "_issueAllocatedPrincipal",
+        "source": "gons_ = StakingMath._toGons(amount_, layoutStruct_.gonsPerUnit);"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 53,
+        "function": "stakingState",
+        "source": "s_.totalGons, s_.gonsPerUnit, s_.accountedBacking, s_.allocationDust,"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 71,
+        "function": "previewDistributions",
+        "source": "(state_.gonsPerUnit,, state_.stakingDust) = DETFFundedStakingMath._rebase("
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 72,
+        "function": "previewDistributions",
+        "source": "state_.totalGons, state_.gonsPerUnit, allocation_.staking + state_.stakingDust"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 75,
+        "function": "previewDistributions",
+        "source": "allocation_.fee + allocation_.creator, state_.gonsPerUnit"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 175,
+        "function": "fundRewards",
+        "source": "emit RewardsFunded(amount_, stakingGrowth_, allocation_.fee, allocation_.creator, s_.gonsPerUnit);"
+      }
+    ],
+    "totalGons": [
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 73,
+        "function": "_totalSupply",
+        "source": "return StakingMath._toAmount(layoutStruct_.totalGons, layoutStruct_.gonsPerUnit);"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 120,
+        "function": "_debitPrincipal",
+        "source": "layoutStruct_.totalGons -= gons_;"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 138,
+        "function": "_retireFraction",
+        "source": "layoutStruct_.totalGons -= gons_;"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 167,
+        "function": "_topUpWeights",
+        "source": "layoutStruct_.totalGons,"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 192,
+        "function": "_distribute",
+        "source": "layoutStruct_.totalGons,"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 198,
+        "function": "_distribute",
+        "source": "layoutStruct_.totalGons, layoutStruct_.gonsPerUnit, allocation_.staking + layoutStruct_.stakingDust"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 232,
+        "function": "_issueAllocatedPrincipal",
+        "source": "layoutStruct_.totalGons += gons_;"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 53,
+        "function": "stakingState",
+        "source": "s_.totalGons, s_.gonsPerUnit, s_.accountedBacking, s_.allocationDust,"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 68,
+        "function": "previewDistributions",
+        "source": "amount_ + state_.allocationDust, state_.totalGons, state_.feeWeight, state_.creatorWeight"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 72,
+        "function": "previewDistributions",
+        "source": "state_.totalGons, state_.gonsPerUnit, allocation_.staking + state_.stakingDust"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 74,
+        "function": "previewDistributions",
+        "source": "state_.totalGons += DETFFundedStakingMath._toGons("
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 78,
+        "function": "previewDistributions",
+        "source": "state_.totalGons, state_.feeWeight, state_.creatorWeight, fee_, creator_"
+      }
+    ],
+    "accountedBacking": [
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 97,
+        "function": "_creditPrincipal",
+        "source": "layoutStruct_.accountedBacking += amount_;"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 121,
+        "function": "_debitPrincipal",
+        "source": "layoutStruct_.accountedBacking -= amount_;"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 188,
+        "function": "_distribute",
+        "source": "layoutStruct_.accountedBacking += amount_;"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 215,
+        "function": "_requireBacking",
+        "source": "if (held_ < layoutStruct_.accountedBacking) {"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 216,
+        "function": "_requireBacking",
+        "source": "revert InsufficientBacking(held_, layoutStruct_.accountedBacking);"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 53,
+        "function": "stakingState",
+        "source": "s_.totalGons, s_.gonsPerUnit, s_.accountedBacking, s_.allocationDust,"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 66,
+        "function": "previewDistributions",
+        "source": "state_.accountedBacking += amount_;"
+      }
+    ],
+    "allocationDust": [
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 191,
+        "function": "_distribute",
+        "source": "amount_ + layoutStruct_.allocationDust,"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 196,
+        "function": "_distribute",
+        "source": "layoutStruct_.allocationDust = allocation_.dust;"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 53,
+        "function": "stakingState",
+        "source": "s_.totalGons, s_.gonsPerUnit, s_.accountedBacking, s_.allocationDust,"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 68,
+        "function": "previewDistributions",
+        "source": "amount_ + state_.allocationDust, state_.totalGons, state_.feeWeight, state_.creatorWeight"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 70,
+        "function": "previewDistributions",
+        "source": "state_.allocationDust = allocation_.dust;"
+      }
+    ],
+    "stakingDust": [
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 122,
+        "function": "_debitPrincipal",
+        "source": "layoutStruct_.stakingDust += oldLiability_ - _totalSupply(layoutStruct_) - amount_;"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 139,
+        "function": "_retireFraction",
+        "source": "layoutStruct_.stakingDust += before_ - _totalSupply(layoutStruct_);"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 197,
+        "function": "_distribute",
+        "source": "(layoutStruct_.gonsPerUnit, growth_, layoutStruct_.stakingDust) = StakingMath._rebase("
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 198,
+        "function": "_distribute",
+        "source": "layoutStruct_.totalGons, layoutStruct_.gonsPerUnit, allocation_.staking + layoutStruct_.stakingDust"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 54,
+        "function": "stakingState",
+        "source": "s_.stakingDust, s_.feeWeight, s_.creatorWeight"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 71,
+        "function": "previewDistributions",
+        "source": "(state_.gonsPerUnit,, state_.stakingDust) = DETFFundedStakingMath._rebase("
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 72,
+        "function": "previewDistributions",
+        "source": "state_.totalGons, state_.gonsPerUnit, allocation_.staking + state_.stakingDust"
+      }
+    ],
+    "feeWeight": [
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 168,
+        "function": "_topUpWeights",
+        "source": "layoutStruct_.feeWeight,"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 173,
+        "function": "_topUpWeights",
+        "source": "layoutStruct_.feeWeight += fee_;"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 193,
+        "function": "_distribute",
+        "source": "layoutStruct_.feeWeight,"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 54,
+        "function": "stakingState",
+        "source": "s_.stakingDust, s_.feeWeight, s_.creatorWeight"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 68,
+        "function": "previewDistributions",
+        "source": "amount_ + state_.allocationDust, state_.totalGons, state_.feeWeight, state_.creatorWeight"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 78,
+        "function": "previewDistributions",
+        "source": "state_.totalGons, state_.feeWeight, state_.creatorWeight, fee_, creator_"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 80,
+        "function": "previewDistributions",
+        "source": "state_.feeWeight += feeDelta_;"
+      }
+    ],
+    "creatorWeight": [
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 169,
+        "function": "_topUpWeights",
+        "source": "layoutStruct_.creatorWeight,"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 174,
+        "function": "_topUpWeights",
+        "source": "layoutStruct_.creatorWeight += creator_;"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 194,
+        "function": "_distribute",
+        "source": "layoutStruct_.creatorWeight"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 54,
+        "function": "stakingState",
+        "source": "s_.stakingDust, s_.feeWeight, s_.creatorWeight"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 68,
+        "function": "previewDistributions",
+        "source": "amount_ + state_.allocationDust, state_.totalGons, state_.feeWeight, state_.creatorWeight"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 78,
+        "function": "previewDistributions",
+        "source": "state_.totalGons, state_.feeWeight, state_.creatorWeight, fee_, creator_"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 81,
+        "function": "previewDistributions",
+        "source": "state_.creatorWeight += creatorDelta_;"
+      }
+    ],
+    "gonsOf": [
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 83,
+        "function": "_balanceOf",
+        "source": "return StakingMath._toAmount(layoutStruct_.gonsOf[account_], layoutStruct_.gonsPerUnit);"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 117,
+        "function": "_debitPrincipal",
+        "source": "? layoutStruct_.gonsOf[owner_]"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 119,
+        "function": "_debitPrincipal",
+        "source": "layoutStruct_.gonsOf[owner_] -= gons_;"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 133,
+        "function": "_retireFraction",
+        "source": "if (gons_ >= layoutStruct_.gonsPerUnit || gons_ > layoutStruct_.gonsOf[owner_]) {"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 137,
+        "function": "_retireFraction",
+        "source": "layoutStruct_.gonsOf[owner_] -= gons_;"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 154,
+        "function": "_transfer",
+        "source": "layoutStruct_.gonsOf[from_] -= gons_;"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 155,
+        "function": "_transfer",
+        "source": "layoutStruct_.gonsOf[to_] += gons_;"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol",
+        "line": 233,
+        "function": "_issueAllocatedPrincipal",
+        "source": "layoutStruct_.gonsOf[recipient_] += gons_;"
+      },
+      {
+        "path": "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol",
+        "line": 46,
+        "function": "gonsOf",
+        "source": "return Repo._layoutStruct().gonsOf[account_];"
+      }
+    ]
+  },
+  "scope": "Claim-token ledger. Other family and NFT storage disposition remains separate work."
+}

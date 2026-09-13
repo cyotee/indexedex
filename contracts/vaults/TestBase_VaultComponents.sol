@@ -6,7 +6,7 @@ import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
 import {IndexedexTest} from "contracts/test/IndexedexTest.sol";
 
-contract TestBase_VaultComponents is IndexedexTest {
+abstract contract TestBase_VaultComponents is IndexedexTest {
     using VaultComponentFactoryService for ICreate3FactoryProxy;
 
     IFacet erc20Facet;

@@ -1,0 +1,144 @@
+{
+  "status": "APPLIED_CODEGEN_VERIFIED_RUNTIME_PENDING",
+  "recorded_at_utc": "2026-09-09T19:57:22.357066+00:00",
+  "provenance": {
+    "recorded_at_utc": "2026-09-09T19:57:22.246278+00:00",
+    "base_commit": "9a99124939e86b9a7f441953136895f05df476fa",
+    "source_and_config_sha256": "26484c06fffc5dc4aaf6fcaf8054f8dac5448e3b394f1181207cee58f08ca911",
+    "source_and_config_files": 4812,
+    "source_scope": "All tracked and untracked local Solidity under contracts/test/scripts plus Foundry config; source fingerprint is not a claim that all files were compiled by a focused run.",
+    "crane_head": "280799d7bd4c8d6ed85c6840c92afdc2d7370e18",
+    "crane_tracked_contract_and_config_diff_sha256": "284fd75764cb255d1e527eef38fd51e65fca73e8ebb11b7465965e8dfeb2122c",
+    "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+    "machine": "macOS-26.6.2-x86_64-i386-64bit",
+    "architecture": "x86_64",
+    "logical_cpus": 16,
+    "cache": "Existing seeded out/cache_forge; no clean. Independent baseline is archived; current validation uses one Forge process at a time."
+  },
+  "changes": [
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookCommon.sol",
+      "before_sha256": "a34eb2e5b1a04c3efc81b8bea85395f8636210e6f4e15bce304eae80ac69b57f",
+      "after_sha256": "a0844c5113e2ac26d1f87c17135a4adb4bc88f044749f176b4b0750408efeb56"
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib.sol",
+      "before_sha256": "08cf72503457b8198fcd59f3daad269aee8b5a1f0248992b271bc37ec5827ce3",
+      "after_sha256": "38f75595ec699f5802ba9da3d5b04ced92e79da1dd010dcd4caa46bea2d394f9"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolCommon.sol",
+      "before_sha256": "5113f334c4ef3034fbbed22583a0f98ead37d8c34cd8724a51de2ef81d790f47",
+      "after_sha256": "4bfd5121a5971a92953fd7594487fe5050810683b037ce43708e17e326ab73ea"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolHookTarget.sol",
+      "before_sha256": "4e65f1f7f5a4e0b1bd05e04ab37eb2d8f5c5f663eeaaaccee470ea896473387a",
+      "after_sha256": "f3fef987e93fcd9dda4c30470e811a7f80eec1590f971291a2dd5064c66e5964"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferHookTarget.sol",
+      "before_sha256": "6c0dfee1d9233bfda43af5781a832c51a38184085a272a1c14ad41767816897a",
+      "after_sha256": "65a484de96b79cfa79d6efdf8a59cf499cd2d97076e39a31ff66b0113fe1bd08"
+    },
+    {
+      "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPoolCommon.sol",
+      "before_sha256": "947059076b82f02b5dc651e76ea25843646f02cb9c52948a7205dbfc9f2a9545",
+      "after_sha256": "1e78f72147a9870774efbb9a25a418ac9cc6d320b03e78d3f1524b2b99c4f10d"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInQueryTarget.sol",
+      "before_sha256": "aa0aa165316fdf5cf58d2680d3a3caa818ad9bbbd0b2d22dc42ccbc67a75b45b",
+      "after_sha256": "f510cbb38648b0278bdc9d670f280bfcfcd9a7a7c14103517aee263c5207b05f"
+    },
+    {
+      "path": "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutBase.sol",
+      "before_sha256": "47a80de9243882a42e241644ae453007cf8783160a4c6ad8b68c0f5fd77d8bd8",
+      "after_sha256": "386efd3aeaeab085189c3521f050aff90e686443894c88c9f194823cf22b2917"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Cp_Univ3Se_Decimals.sol",
+      "before_sha256": "b5ba59eb1aaa4b015230e8c244162949ce1c0da8b2531d5ccdbe5e7dafa15f09",
+      "after_sha256": "e8ac1428f738cdf4790a5ac59d89b8224103e83a189acbdf2e39e12681f3c8c9"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy.sol",
+      "before_sha256": "54a77b4ccbe37e0c14e80b57e12bb0809b003677f70e8a233f92bde9afca9a59",
+      "after_sha256": "3dd6aa0555d7a71b82dd3c36807853588ad5d825f90ef443d14a2c8ba86f82a6"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Policy_Decimals.sol",
+      "before_sha256": "af472045b1a3eb21156854c53cafa0e6bde0bcf2ca268d96c94e39e31dc139fb",
+      "after_sha256": "cd73c370725328245887334eccb3ab63db707c6edd63c6357931e06ea69ac84f"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/decimals/CommonBufferMultiVault_RoutingAndWalk_Decimals.sol",
+      "before_sha256": "bac9126da34a2db9162f7077895023d8edf233639b4ee9121c3e908b4ce97a99",
+      "after_sha256": "429f2d9e4bdd4b735f30dc6c84c2ce417f2305879ccb801338eb44f3d084ca40"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/decimals/MixedLegWeightedBufferPool_Decimals.sol",
+      "before_sha256": "e3c15d558612b0fe782dcbd01dd97e41267be0d7aea7866d42faa9935a6dc957",
+      "after_sha256": "60b21b7fdc59baba979b6eee3ac525889821275e27aa745979365afd7d324e19"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/decimals/MultiPairStandardExchangeBufferPool_Decimals.sol",
+      "before_sha256": "e8532d1a9455d6d1e0a15181140f09491406c518f387213c219e94ee81c97129",
+      "after_sha256": "4993e733717fe4047dc535ce2059cde89f4fedb231f03bfda7446beeff8daddb"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Stage11OpenSuite.sol",
+      "before_sha256": "78a8aecca021dfd734182b16d8df1fa5b99504d5271b127fbf3515a2df23f8da",
+      "after_sha256": "a7df66e79a8fbafd4e744b62c421dbd8e0b6c516c9d00d28961357dcc65cd277"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Stage11OpenSuite_Decimals.sol",
+      "before_sha256": "bbc32d58c14c6ef430d686f43771a35338084ad9d8c8b7e3a39b3071d50e735a",
+      "after_sha256": "f8200e48f49777cf943e889fdad1d9f1a39e60704a56610b803e6338acc80629"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Cp_Univ4Se.t.sol",
+      "before_sha256": "d2e4749f6d96979f873bcb614610c9da542a57006f5d60f4494365b60919dede",
+      "after_sha256": "82d6aabef2d750402be9dbe8fda5fbd410d1eeccdb76a6b1e109f8ef23f850f9"
+    }
+  ],
+  "patch": "remediation.patch",
+  "reported_results": "reported-results.json",
+  "diagnostic_before_changes": {
+    "log": "../user-failure-diagnostics.log",
+    "sha256": "7a36e440d654bd63eba0d92af755048943f2fe0ce256a72547f2673dc1a18be6",
+    "passed": 1,
+    "failed": 7,
+    "suites": 6,
+    "compilation_skipped": true,
+    "seconds": 8.05
+  },
+  "compiler_checks": [
+    "first-codegen.json",
+    "v3-minimum-codegen.json"
+  ],
+  "representative_test_methods_compiled": 237,
+  "production_runtime_bytes": {
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib.sol:UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib": 14240,
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositFacet.sol:UniswapV4StandardExchangeOrbitalBufferHookDepositFacet": 22293,
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositFlexibleFacet.sol:UniswapV4StandardExchangeOrbitalBufferHookDepositFlexibleFacet": 19995,
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositQueryFacet.sol:UniswapV4StandardExchangeOrbitalBufferHookDepositQueryFacet": 18535,
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookDepositZapFacet.sol:UniswapV4StandardExchangeOrbitalBufferHookDepositZapFacet": 17824,
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookSeFacet.sol:UniswapV4StandardExchangeOrbitalBufferHookSeFacet": 22346,
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/facets/UniswapV4StandardExchangeOrbitalBufferHookWithdrawFacet.sol:UniswapV4StandardExchangeOrbitalBufferHookWithdrawFacet": 21410,
+    "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolHookFacet.sol:MixedLegWeightedBufferPoolHookFacet": 18031,
+    "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeHookFacet.sol:MultiPairStandardExchangeHookFacet": 16970,
+    "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInQueryFacet.sol:UniswapV3StandardExchangeInQueryFacet": 23343,
+    "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutFacet.sol:UniswapV3StandardExchangeOutFacet": 22418,
+    "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutQueryFacet.sol:UniswapV3StandardExchangeOutQueryFacet": 21965
+  },
+  "runtime_acceptance": false,
+  "full_build_started_by_this_remediation": false,
+  "next_command": "python3 implementation-artifacts/detf-funded-staking/run-current-repository-checks.py --label user-failure-remediation",
+  "scope": "V4 DETF and Balancer/Uniswap SE remain in scope. D60 Balancer-hosted DETF failures are retained; no functional changes there. D66 unfinished Slipstream remains deferred.",
+  "limitations": [
+    "Compiler diagnostics do not establish corrected runtime behavior or gas usage.",
+    "No full-run improvement count is claimed from the repeated failure patterns.",
+    "The owner-reported footer has not been attributed to an archived run or a source fingerprint."
+  ]
+}

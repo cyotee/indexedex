@@ -6,12 +6,8 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {
     TestBase_SingleStandardExchangeDETF
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF.sol";
-import {
-    ISingleStandardExchangeDETFBonding
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFBondingTarget.sol";
-import {
-    ISingleStandardExchangeDETFInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFInfoTarget.sol";
+import {ISingleStandardExchangeDETFBonding} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFBonding.sol";
+import {ISingleStandardExchangeDETFInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFInfo.sol";
 
 /// @notice Phase 3: mint after bootstrap with open mint threshold (production SE only).
 contract SingleStandardExchangeDETF_Mint_Test is TestBase_SingleStandardExchangeDETF {
@@ -29,7 +25,7 @@ contract SingleStandardExchangeDETF_Mint_Test is TestBase_SingleStandardExchange
     }
 
     function _deployOpenMintDetf() internal returns (address detf_) {
-        // Product Open: always-allow mint when live (mint=1/burn=0.95e18 fails mint>burn validation).
+        // The legacy fixture helper deploys the current mandatory-threshold package.
         detf_ = _deployOpenModeDetf("Open Mint Single Standard Exchange DETF", "omDETF");
     }
 
@@ -44,7 +40,7 @@ contract SingleStandardExchangeDETF_Mint_Test is TestBase_SingleStandardExchange
     function test_mint_fromVaultShares_afterBootstrap() public {
         _bootstrapOpen(alice, 1_000e18);
         assertTrue(openInfo.isReserveLive(), "live");
-        assertTrue(openInfo.isMintingAllowed(), "minting allowed with open threshold");
+        assertFalse(openInfo.isMintingAllowed(), "primary mint closed; standard route uses reserve swap");
 
         uint256 seShares_ = _fundSeShares(bob, 200e18);
         uint256 bobBefore_ = IERC20(openDetf).balanceOf(bob);
@@ -62,21 +58,25 @@ contract SingleStandardExchangeDETF_Mint_Test is TestBase_SingleStandardExchange
         assertApproxEqAbs(preview_, out_, 1, "preview == execution");
     }
 
-    function test_mint_doesNotIncreaseReserveDetf_orFeeTo() public {
+    function test_closedPrimaryMint_swapsExistingDetf_withoutIssuance() public {
         _bootstrapOpen(alice, 1_000e18);
         uint256 reserveDetfBefore_ = IERC20(openDetf).balanceOf(address(vault));
         uint256 feeToBefore_ = IERC20(openDetf).balanceOf(_feeTo());
+        uint256 supplyBefore_ = IERC20(openDetf).totalSupply();
+        assertFalse(openInfo.isMintingAllowed(), "primary mint closed");
 
         uint256 seShares_ = _fundSeShares(bob, 200e18);
         vm.startPrank(bob);
         seShare.approve(openDetf, seShares_);
-        uint256 out_ = openExchangeIn.exchangeIn(
-            seShare, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours
-        );
+        uint256 out_ =
+            openExchangeIn.exchangeIn(seShare, seShares_, IERC20(openDetf), 0, bob, false, block.timestamp + 1 hours);
         vm.stopPrank();
 
         assertTrue(out_ > 0, "minted");
-        assertEq(IERC20(openDetf).balanceOf(address(vault)), reserveDetfBefore_, "D11 no DETF join");
+        assertEq(
+            IERC20(openDetf).balanceOf(address(vault)), reserveDetfBefore_ - out_, "existing reserve DETF pays the swap"
+        );
+        assertEq(IERC20(openDetf).totalSupply(), supplyBefore_, "fallback does not issue DETF");
         assertEq(IERC20(openDetf).balanceOf(_feeTo()), feeToBefore_, "D14 no feeTo mint");
     }
 
@@ -85,9 +85,7 @@ contract SingleStandardExchangeDETF_Mint_Test is TestBase_SingleStandardExchange
         vm.startPrank(alice);
         seShare.approve(openDetf, seShares_);
         vm.expectRevert();
-        openExchangeIn.exchangeIn(
-            seShare, seShares_, IERC20(openDetf), 0, alice, false, block.timestamp + 1 hours
-        );
+        openExchangeIn.exchangeIn(seShare, seShares_, IERC20(openDetf), 0, alice, false, block.timestamp + 1 hours);
         vm.stopPrank();
     }
 }

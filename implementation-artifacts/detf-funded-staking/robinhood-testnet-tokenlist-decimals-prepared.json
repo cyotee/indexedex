@@ -1,0 +1,9 @@
+{
+  "status": "APPLIED_COMPILATION_PASSED",
+  "source": "scripts/foundry/anvil_robinhood_testnet/Phase_09_Stage_01_ExportFrontend.s.sol",
+  "before_sha256": "e7f78f7814c64fcdb528c14779ea0c9be26ee49e10234d47794f7d9b323c1489",
+  "after_sha256": "db13184e98d51d8b59c541232dd082bbe42a9e4b025d8dd14e6af28d7e8b0cb5",
+  "change": "Read actual deployed token decimals for DETF/sDETF and all other exported tokens. Preserve the existing 18-decimal placeholder only for an address without deployed code.",
+  "scope": "Maintained frontend caller migration, no DETF economics or deployment changes.",
+  "compilation_evidence": "maintained-script-294-green.json"
+}

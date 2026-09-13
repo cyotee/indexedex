@@ -1,0 +1,967 @@
+{
+  "checked_at_utc": "2026-09-10T16:14:18.497065+00:00",
+  "rpc_alias_or_loopback": "robinhood_mainnet_alchemy",
+  "chain_id": 4663,
+  "block": 56118361,
+  "block_hash": "0x108ba210e727f1fa6ecea533508dd0266759a0a6a18be55de934552a74f20175",
+  "mode": "READ_ONLY_NO_BROADCAST",
+  "dependencies": [
+    {
+      "address": "0xD7786b10BC8Bc97dc7651CAb7B97086c8b227882",
+      "contract": "Create3Factory",
+      "runtime_bytes": 6744,
+      "code_keccak256": "0x87c7bb852c5243498b607998cd5ea2e5ee34f9614e76e6e4937aa5501f8426ae",
+      "present": true,
+      "artifact": "out/Create3Factory.sol/Create3Factory.json",
+      "artifact_sha256": "28ac2a54ed41a31b807d23bc4989da59606e81684ff64041e5c17ab179dec18f",
+      "immutable_values": [],
+      "template_code_keccak256": "0xa398ac7a0003e28ad5c6ea95742f7b4274d0cfc7fe17066c1f36ff0bded7a0e1",
+      "normalized_code_keccak256": "0x87c7bb852c5243498b607998cd5ea2e5ee34f9614e76e6e4937aa5501f8426ae",
+      "status": "CODE_MISMATCH",
+      "stale_compiled_sources": []
+    },
+    {
+      "address": "0x976949aB55830fA4794bF40C88ea7D7567931003",
+      "contract": "DiamondPackageCallBackFactory",
+      "runtime_bytes": 10403,
+      "code_keccak256": "0x77f8382de756aed6769e623fef772a39a21dd903f679912efafe3200e37a4395",
+      "present": true,
+      "artifact": "out/DiamondPackageCallBackFactory.sol/DiamondPackageCallBackFactory.json",
+      "artifact_sha256": "56853d555f214ad6e9d54b5ea0dec7d0890cab5f5aca9a37ccd051599f7b14f6",
+      "immutable_values": [
+        {
+          "ast_id": "172188",
+          "offset": 338,
+          "bytes": 32,
+          "deployed_value": "0x00000000000000000000000069a470758a14176c86927ee080f9419d30c49480"
+        },
+        {
+          "ast_id": "172188",
+          "offset": 2195,
+          "bytes": 32,
+          "deployed_value": "0x00000000000000000000000069a470758a14176c86927ee080f9419d30c49480"
+        },
+        {
+          "ast_id": "172188",
+          "offset": 2244,
+          "bytes": 32,
+          "deployed_value": "0x00000000000000000000000069a470758a14176c86927ee080f9419d30c49480"
+        },
+        {
+          "ast_id": "172192",
+          "offset": 548,
+          "bytes": 32,
+          "deployed_value": "0x000000000000000000000000343590ed92498739225e351c27133bc2c11b91b9"
+        },
+        {
+          "ast_id": "172192",
+          "offset": 2417,
+          "bytes": 32,
+          "deployed_value": "0x000000000000000000000000343590ed92498739225e351c27133bc2c11b91b9"
+        },
+        {
+          "ast_id": "172192",
+          "offset": 2487,
+          "bytes": 32,
+          "deployed_value": "0x000000000000000000000000343590ed92498739225e351c27133bc2c11b91b9"
+        },
+        {
+          "ast_id": "172196",
+          "offset": 420,
+          "bytes": 32,
+          "deployed_value": "0x000000000000000000000000e3d915c0211a87077b14dfe995009741dac2f5da"
+        },
+        {
+          "ast_id": "172196",
+          "offset": 2661,
+          "bytes": 32,
+          "deployed_value": "0x000000000000000000000000e3d915c0211a87077b14dfe995009741dac2f5da"
+        },
+        {
+          "ast_id": "172200",
+          "offset": 608,
+          "bytes": 32,
+          "deployed_value": "0x000000000000000000000000c08a6221f2a93b965a5a12ec0f645e9eba717703"
+        },
+        {
+          "ast_id": "172200",
+          "offset": 2783,
+          "bytes": 32,
+          "deployed_value": "0x000000000000000000000000c08a6221f2a93b965a5a12ec0f645e9eba717703"
+        },
+        {
+          "ast_id": "172200",
+          "offset": 2853,
+          "bytes": 32,
+          "deployed_value": "0x000000000000000000000000c08a6221f2a93b965a5a12ec0f645e9eba717703"
+        },
+        {
+          "ast_id": "172200",
+          "offset": 3088,
+          "bytes": 32,
+          "deployed_value": "0x000000000000000000000000c08a6221f2a93b965a5a12ec0f645e9eba717703"
+        },
+        {
+          "ast_id": "172200",
+          "offset": 3138,
+          "bytes": 32,
+          "deployed_value": "0x000000000000000000000000c08a6221f2a93b965a5a12ec0f645e9eba717703"
+        },
+        {
+          "ast_id": "172203",
+          "offset": 1293,
+          "bytes": 32,
+          "deployed_value": "0x000000000000000000000000976949ab55830fa4794bf40c88ea7d7567931003"
+        },
+        {
+          "ast_id": "172203",
+          "offset": 1807,
+          "bytes": 32,
+          "deployed_value": "0x000000000000000000000000976949ab55830fa4794bf40c88ea7d7567931003"
+        }
+      ],
+      "template_code_keccak256": "0xf9a1dc1814b3b826514acd5466e253074cbad202ae4f580a973ed2559a7772e8",
+      "normalized_code_keccak256": "0xf9a1dc1814b3b826514acd5466e253074cbad202ae4f580a973ed2559a7772e8",
+      "status": "MATCH",
+      "stale_compiled_sources": []
+    },
+    {
+      "address": "0x8BB5FCC67e8CCa44DC41dd08A5e2b2B392C22945",
+      "contract": "UniswapV4HookDiamondPackageCallBackFactory",
+      "runtime_bytes": 11719,
+      "code_keccak256": "0x1bbb838a536b7e7c9914b689529edc84fd82913ef554ef618716645e73f36b45",
+      "present": true,
+      "artifact": "out/UniswapV4HookDiamondPackageCallBackFactory.sol/UniswapV4HookDiamondPackageCallBackFactory.json",
+      "artifact_sha256": "5d299b6fe02eee7eb0d616555c7a27abe3ec128043900d8b00695ce280eab528",
+      "immutable_values": [
+        {
+          "ast_id": "1359",
+          "offset": 420,
+          "bytes": 32,
+          "deployed_value": "0x00000000000000000000000069a470758a14176c86927ee080f9419d30c49480"
+        },
+        {
+          "ast_id": "1359",
+          "offset": 2495,
+          "bytes": 32,
+          "deployed_value": "0x00000000000000000000000069a470758a14176c86927ee080f9419d30c49480"
+        },
+        {
+          "ast_id": "1362",
+          "offset": 641,
+          "bytes": 32,
+          "deployed_value": "0x000000000000000000000000343590ed92498739225e351c27133bc2c11b91b9"
+        },
+        {
+          "ast_id": "1362",
+          "offset": 2565,
+          "bytes": 32,
+          "deployed_value": "0x000000000000000000000000343590ed92498739225e351c27133bc2c11b91b9"
+        },
+        {
+          "ast_id": "1365",
+          "offset": 502,
+          "bytes": 32,
+          "deployed_value": "0x000000000000000000000000e3d915c0211a87077b14dfe995009741dac2f5da"
+        },
+        {
+          "ast_id": "1365",
+          "offset": 2644,
+          "bytes": 32,
+          "deployed_value": "0x000000000000000000000000e3d915c0211a87077b14dfe995009741dac2f5da"
+        },
+        {
+          "ast_id": "1368",
+          "offset": 701,
+          "bytes": 32,
+          "deployed_value": "0x000000000000000000000000c08a6221f2a93b965a5a12ec0f645e9eba717703"
+        },
+        {
+          "ast_id": "1368",
+          "offset": 2758,
+          "bytes": 32,
+          "deployed_value": "0x000000000000000000000000c08a6221f2a93b965a5a12ec0f645e9eba717703"
+        },
+        {
+          "ast_id": "1368",
+          "offset": 2969,
+          "bytes": 32,
+          "deployed_value": "0x000000000000000000000000c08a6221f2a93b965a5a12ec0f645e9eba717703"
+        },
+        {
+          "ast_id": "1368",
+          "offset": 3019,
+          "bytes": 32,
+          "deployed_value": "0x000000000000000000000000c08a6221f2a93b965a5a12ec0f645e9eba717703"
+        },
+        {
+          "ast_id": "1371",
+          "offset": 740,
+          "bytes": 32,
+          "deployed_value": "0x0000000000000000000000006c9649fb1a80916684f691e0796bd8e8b5e3b905"
+        },
+        {
+          "ast_id": "1371",
+          "offset": 2829,
+          "bytes": 32,
+          "deployed_value": "0x0000000000000000000000006c9649fb1a80916684f691e0796bd8e8b5e3b905"
+        },
+        {
+          "ast_id": "1374",
+          "offset": 1501,
+          "bytes": 32,
+          "deployed_value": "0x0000000000000000000000008bb5fcc67e8cca44dc41dd08a5e2b2b392c22945"
+        },
+        {
+          "ast_id": "1374",
+          "offset": 2012,
+          "bytes": 32,
+          "deployed_value": "0x0000000000000000000000008bb5fcc67e8cca44dc41dd08a5e2b2b392c22945"
+        }
+      ],
+      "template_code_keccak256": "0xfcdfbe1da306657d27c7f2edaf9675f0ab85abb858f91a7c1d42068555aaedf3",
+      "normalized_code_keccak256": "0xfcdfbe1da306657d27c7f2edaf9675f0ab85abb858f91a7c1d42068555aaedf3",
+      "status": "MATCH",
+      "stale_compiled_sources": []
+    },
+    {
+      "address": "0x6c9649Fb1A80916684F691E0796bD8e8b5e3B905",
+      "contract": "UniswapV4HookFlagsFacet",
+      "runtime_bytes": 918,
+      "code_keccak256": "0x4f6f2341c753d46ef656a100219829e930d284b22d3a5263072ab99436e16472",
+      "present": true,
+      "artifact": "out/UniswapV4HookFlagsFacet.sol/UniswapV4HookFlagsFacet.json",
+      "artifact_sha256": "b7b397c504b8faddb0037fb8dab26279427313415ddf4c63685e37695cebdcee",
+      "immutable_values": [],
+      "template_code_keccak256": "0x4f6f2341c753d46ef656a100219829e930d284b22d3a5263072ab99436e16472",
+      "normalized_code_keccak256": "0x4f6f2341c753d46ef656a100219829e930d284b22d3a5263072ab99436e16472",
+      "status": "MATCH",
+      "stale_compiled_sources": []
+    },
+    {
+      "address": "0xa8fb4aa08F910026d33579BD680fc133a399C447",
+      "contract": "DiamondCutFacet",
+      "runtime_bytes": 4983,
+      "code_keccak256": "0xc777bd408f98610e91976a4a60098b1c6badd8e3571ef78faa8aeb514f312491",
+      "present": true,
+      "artifact": "out/DiamondCutFacet.sol/DiamondCutFacet.json",
+      "artifact_sha256": "39de90cb63efc250a56519bcbe71cf3610570770662f446b36bb6bb8d1fffe7f",
+      "immutable_values": [],
+      "template_code_keccak256": "0xc777bd408f98610e91976a4a60098b1c6badd8e3571ef78faa8aeb514f312491",
+      "normalized_code_keccak256": "0xc777bd408f98610e91976a4a60098b1c6badd8e3571ef78faa8aeb514f312491",
+      "status": "MATCH",
+      "stale_compiled_sources": [],
+      "role": "diamondCutFacet"
+    },
+    {
+      "address": "0x1d17acA0e0717d90cea916372070a1BE4652223F",
+      "contract": "ERC20Facet",
+      "runtime_bytes": 3164,
+      "code_keccak256": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50",
+      "present": true,
+      "artifact": "out/ERC20Facet.sol/ERC20Facet.json",
+      "artifact_sha256": "5f8c33ab7b8cf9194bc8bb319e47a1da26e88458b8c813d1caf0f6f872c20c3b",
+      "immutable_values": [],
+      "template_code_keccak256": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50",
+      "normalized_code_keccak256": "0xf250dca135b1de9a5fc9ceda732c06af7020fef1d45d7c43dfa92efe02b47e50",
+      "status": "MATCH",
+      "stale_compiled_sources": [],
+      "role": "erc20Facet"
+    },
+    {
+      "address": "0x7061709368d038Dc88fE553C649dbBa30F50Fb49",
+      "contract": "ERC2612Facet",
+      "runtime_bytes": 2173,
+      "code_keccak256": "0x3b682277b1d7c47306ab4d99c64d6441abc438307b6c17f739ac0bdfef409604",
+      "present": true,
+      "artifact": "out/ERC2612Facet.sol/ERC2612Facet.json",
+      "artifact_sha256": "92e59ac28f496772afceef049563b4f71c63c5f7cb0a80d79ea59e69be0ebb0c",
+      "immutable_values": [],
+      "template_code_keccak256": "0x3b682277b1d7c47306ab4d99c64d6441abc438307b6c17f739ac0bdfef409604",
+      "normalized_code_keccak256": "0x3b682277b1d7c47306ab4d99c64d6441abc438307b6c17f739ac0bdfef409604",
+      "status": "MATCH",
+      "stale_compiled_sources": [],
+      "role": "erc2612Facet"
+    },
+    {
+      "address": "0x2c88bD365D7c6dCc6BbbDb74a8E1FDd2b4AF572E",
+      "contract": "ERC4626BasedBasicVaultFacet",
+      "runtime_bytes": 1495,
+      "code_keccak256": "0xff499e0fb34a6e0d7120a4876c6fa259f8aa1db8a1e17b3bbaef9bfc653fd47f",
+      "present": true,
+      "artifact": "out/ERC4626BasedBasicVaultFacet.sol/ERC4626BasedBasicVaultFacet.json",
+      "artifact_sha256": "d4f00d4a7ce8ed935fcff1c7e67ee3cd9c0ce4ed4dcc2a27704523761aed10cf",
+      "immutable_values": [],
+      "template_code_keccak256": "0xff499e0fb34a6e0d7120a4876c6fa259f8aa1db8a1e17b3bbaef9bfc653fd47f",
+      "normalized_code_keccak256": "0xff499e0fb34a6e0d7120a4876c6fa259f8aa1db8a1e17b3bbaef9bfc653fd47f",
+      "status": "MATCH",
+      "stale_compiled_sources": [],
+      "role": "erc4626BasicVaultFacet"
+    },
+    {
+      "address": "0x9Bf8De693CE8741EC2001a9e8138D62e5ecC6FD4",
+      "contract": "ERC4626Facet",
+      "runtime_bytes": 6562,
+      "code_keccak256": "0x73503f5f2514bb4f4608810def9454af4919d12e3d49ea01cd56ee6f220ac374",
+      "present": true,
+      "artifact": "out/ERC4626Facet.sol/ERC4626Facet.json",
+      "artifact_sha256": "4a23904eed2053f7c36ba95c84491b85fc1005bbaf956346f2c77ed90b812574",
+      "immutable_values": [],
+      "template_code_keccak256": "0x73503f5f2514bb4f4608810def9454af4919d12e3d49ea01cd56ee6f220ac374",
+      "normalized_code_keccak256": "0x73503f5f2514bb4f4608810def9454af4919d12e3d49ea01cd56ee6f220ac374",
+      "status": "MATCH",
+      "stale_compiled_sources": [],
+      "role": "erc4626Facet"
+    },
+    {
+      "address": "0x44CbE64D43c244f104D1fE2eC4f7EB85a0c250af",
+      "contract": "ERC4626StandardVaultFacet",
+      "runtime_bytes": 1778,
+      "code_keccak256": "0xb99e7f865d5a539a661f31e877c7f698897dfa19f9b2fcd8ba7d205ac70d49a6",
+      "present": true,
+      "artifact": "out/ERC4626StandardVaultFacet.sol/ERC4626StandardVaultFacet.json",
+      "artifact_sha256": "46509bb8c6db83d760d09437e2c5703b299b533e7d9aa820730fded3db446aba",
+      "immutable_values": [],
+      "template_code_keccak256": "0xb8e6d87ee9933abc943141bccf538c88ce5bf1af44079aa1aabd422114d3c735",
+      "normalized_code_keccak256": "0xb99e7f865d5a539a661f31e877c7f698897dfa19f9b2fcd8ba7d205ac70d49a6",
+      "status": "CODE_MISMATCH",
+      "stale_compiled_sources": [],
+      "role": "erc4626StandardVaultFacet"
+    },
+    {
+      "address": "0xe3Cd0F9F643180D5C0483De0c43813D4282F4524",
+      "contract": "ERC5267Facet",
+      "runtime_bytes": 1447,
+      "code_keccak256": "0x63e0ac062d4746f2b10536fc8cdb70978bcfe6da8e4daf8f5ccea4aaa748c2d5",
+      "present": true,
+      "artifact": "out/ERC5267Facet.sol/ERC5267Facet.json",
+      "artifact_sha256": "33718bae321553896e4c26c4da139f0b3fc8d668e4bf911c0e43805d41e7dc6f",
+      "immutable_values": [],
+      "template_code_keccak256": "0x63e0ac062d4746f2b10536fc8cdb70978bcfe6da8e4daf8f5ccea4aaa748c2d5",
+      "normalized_code_keccak256": "0x63e0ac062d4746f2b10536fc8cdb70978bcfe6da8e4daf8f5ccea4aaa748c2d5",
+      "status": "MATCH",
+      "stale_compiled_sources": [],
+      "role": "erc5267Facet"
+    },
+    {
+      "address": "0xABbf6CCa435AEd22fB8b7F055D83fF33F35143C9",
+      "contract": "MultiAssetBasicVaultFacet",
+      "runtime_bytes": 1720,
+      "code_keccak256": "0xf2257f1c99bb054fcd8bff0ae66c319c999b936b3a9d00f1c821ed85e8014ddd",
+      "present": true,
+      "artifact": "out/MultiAssetBasicVaultFacet.sol/MultiAssetBasicVaultFacet.json",
+      "artifact_sha256": "6b2027d48d1a069b535e5d88277050b2f847db9c58e854f672082edbcb7df841",
+      "immutable_values": [],
+      "template_code_keccak256": "0xf2257f1c99bb054fcd8bff0ae66c319c999b936b3a9d00f1c821ed85e8014ddd",
+      "normalized_code_keccak256": "0xf2257f1c99bb054fcd8bff0ae66c319c999b936b3a9d00f1c821ed85e8014ddd",
+      "status": "MATCH",
+      "stale_compiled_sources": [],
+      "role": "multiAssetBasicVaultFacet"
+    },
+    {
+      "address": "0x67ed019eC3f8b77Bc51ED1e6403Fc90E0aBb15bE",
+      "contract": "MultiAssetStandardVaultFacet",
+      "runtime_bytes": 1747,
+      "code_keccak256": "0xa289425ebf221bd44551376c3459083a4d53eb30f485b48e783bf8291f7a05d6",
+      "present": true,
+      "artifact": "out/MultiAssetStandardVaultFacet.sol/MultiAssetStandardVaultFacet.json",
+      "artifact_sha256": "8ac6199c6cc1ae1b6946720977dadf56cf8648166c59d4dcb388f91c1688627d",
+      "immutable_values": [],
+      "template_code_keccak256": "0x33959491429c66645fc1f11261844798f64a881e901a55b3d14b580ef88ccb1d",
+      "normalized_code_keccak256": "0xa289425ebf221bd44551376c3459083a4d53eb30f485b48e783bf8291f7a05d6",
+      "status": "CODE_MISMATCH",
+      "stale_compiled_sources": [],
+      "role": "multiAssetStandardVaultFacet"
+    },
+    {
+      "address": "0xF03FAD914Ec73b6A7D41cEce447656aE97b8B16F",
+      "contract": "MultiStepOwnableFacet",
+      "runtime_bytes": 2388,
+      "code_keccak256": "0xa78f530ce1e478d21eb04ad34e190da64272e9bca437a8010388d09847ca4e9b",
+      "present": true,
+      "artifact": "out/MultiStepOwnableFacet.sol/MultiStepOwnableFacet.json",
+      "artifact_sha256": "f65df43a4d1f1d42e38e9294380ad3b2dff8a9e96b9080b25725441b74c7e73d",
+      "immutable_values": [],
+      "template_code_keccak256": "0xa78f530ce1e478d21eb04ad34e190da64272e9bca437a8010388d09847ca4e9b",
+      "normalized_code_keccak256": "0xa78f530ce1e478d21eb04ad34e190da64272e9bca437a8010388d09847ca4e9b",
+      "status": "MATCH",
+      "stale_compiled_sources": [],
+      "role": "multiStepOwnableFacet"
+    },
+    {
+      "address": "0xC6367d76D4b04eBA5dEAeBDeea379dC9ea70447E",
+      "contract": "OperableFacet",
+      "runtime_bytes": 1960,
+      "code_keccak256": "0x0b9cc0bcec20d148420e6b7924e42a174fb5533056c22fd0667c5ece9f18c9f6",
+      "present": true,
+      "artifact": "out/OperableFacet.sol/OperableFacet.json",
+      "artifact_sha256": "2042cc4199ea022094a7affa7dfd6f2bf56fea773b44fe6ceaa3fcb4d9080f19",
+      "immutable_values": [],
+      "template_code_keccak256": "0x0b9cc0bcec20d148420e6b7924e42a174fb5533056c22fd0667c5ece9f18c9f6",
+      "normalized_code_keccak256": "0x0b9cc0bcec20d148420e6b7924e42a174fb5533056c22fd0667c5ece9f18c9f6",
+      "status": "MATCH",
+      "stale_compiled_sources": [],
+      "role": "operableFacet"
+    }
+  ],
+  "core_proxies": [
+    {
+      "address": "0x09682b00D873D913ada0bB69B4D4c9631810d0bc",
+      "contract": "MinimalDiamondCallBackProxy",
+      "runtime_bytes": 370,
+      "code_keccak256": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "present": true,
+      "artifact": "out/MinimalDiamondCallBackProxy.sol/MinimalDiamondCallBackProxy.json",
+      "artifact_sha256": "03ad63b2206f07c61c34941d9b5a5a1d2cf0d8b9853a13e0a24cf80c15a2ef5a",
+      "immutable_values": [],
+      "template_code_keccak256": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "normalized_code_keccak256": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "status": "MATCH",
+      "stale_compiled_sources": [],
+      "role": "indexedexManager",
+      "owner": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+      "facets": [
+        {
+          "address": "0x69a470758a14176c86927ee080f9419d30c49480",
+          "contract": "ERC165Facet",
+          "runtime_bytes": 949,
+          "code_keccak256": "0x446ba538994a213da6ce6ad772b5d40b2e0c4f0caf0eae45382374275a7b0a15",
+          "present": true,
+          "artifact": "out/ERC165Facet.sol/ERC165Facet.json",
+          "artifact_sha256": "a1ff0b2e2f76ba8147350a4478675152cf0ef73edc456a047ebd57eece5a5521",
+          "immutable_values": [],
+          "template_code_keccak256": "0x446ba538994a213da6ce6ad772b5d40b2e0c4f0caf0eae45382374275a7b0a15",
+          "normalized_code_keccak256": "0x446ba538994a213da6ce6ad772b5d40b2e0c4f0caf0eae45382374275a7b0a15",
+          "status": "MATCH",
+          "stale_compiled_sources": [],
+          "selectors": [
+            "0x01ffc9a7"
+          ],
+          "installed_selectors_declared": true
+        },
+        {
+          "address": "0x343590ed92498739225e351c27133bc2c11b91b9",
+          "contract": "DiamondLoupeFacet",
+          "runtime_bytes": 2291,
+          "code_keccak256": "0x4ec4e7a53c6dac358a2d8af7dab6581dfd26f01fc76d02333d7caec7a44a39f4",
+          "present": true,
+          "artifact": "out/DiamondLoupeFacet.sol/DiamondLoupeFacet.json",
+          "artifact_sha256": "962c39d0f6b609ee9d7a9df262af6755d9bec18237b4899a80d3e72e2df4c632",
+          "immutable_values": [],
+          "template_code_keccak256": "0x4ec4e7a53c6dac358a2d8af7dab6581dfd26f01fc76d02333d7caec7a44a39f4",
+          "normalized_code_keccak256": "0x4ec4e7a53c6dac358a2d8af7dab6581dfd26f01fc76d02333d7caec7a44a39f4",
+          "status": "MATCH",
+          "stale_compiled_sources": [],
+          "selectors": [
+            "0x7a0ed627",
+            "0xadfca15e",
+            "0x52ef6b2c",
+            "0xcdffacc6"
+          ],
+          "installed_selectors_declared": true
+        },
+        {
+          "address": "0xe3d915c0211a87077b14dfe995009741dac2f5da",
+          "contract": "ERC8109IntrospectionFacet",
+          "runtime_bytes": 1884,
+          "code_keccak256": "0x457e047aa018e85966474f1430aba2456deb76b07c912bafb36a8d00528adbe5",
+          "present": true,
+          "artifact": "out/ERC8109IntrospectionFacet.sol/ERC8109IntrospectionFacet.json",
+          "artifact_sha256": "ab16fadf5968810a23ab97a686e975b165f229ee2808613aa07e5c493def3355",
+          "immutable_values": [],
+          "template_code_keccak256": "0x457e047aa018e85966474f1430aba2456deb76b07c912bafb36a8d00528adbe5",
+          "normalized_code_keccak256": "0x457e047aa018e85966474f1430aba2456deb76b07c912bafb36a8d00528adbe5",
+          "status": "MATCH",
+          "stale_compiled_sources": [],
+          "selectors": [
+            "0x60b5befb"
+          ],
+          "installed_selectors_declared": true
+        },
+        {
+          "address": "0xd1fd586d785e9d150a86306bdca9deaa0c202cee",
+          "contract": "VaultRegistryDisableManagerFacet",
+          "runtime_bytes": 1967,
+          "code_keccak256": "0x2db174674d7448913db5f7e453cd898101744c527755b2d4e1ae2578c21d82ac",
+          "present": true,
+          "artifact": "out/VaultRegistryDisableManagerFacet.sol/VaultRegistryDisableManagerFacet.json",
+          "artifact_sha256": "6e500aca219dce85da801cac30a23fd57720d636a1e26bec75fa9822af06f366",
+          "immutable_values": [],
+          "template_code_keccak256": "0x2db174674d7448913db5f7e453cd898101744c527755b2d4e1ae2578c21d82ac",
+          "normalized_code_keccak256": "0x2db174674d7448913db5f7e453cd898101744c527755b2d4e1ae2578c21d82ac",
+          "status": "MATCH",
+          "stale_compiled_sources": [],
+          "selectors": [
+            "0xa64bc063",
+            "0xa64b7625"
+          ],
+          "installed_selectors_declared": true
+        },
+        {
+          "address": "0xa8fb4aa08f910026d33579bd680fc133a399c447",
+          "contract": "DiamondCutFacet",
+          "runtime_bytes": 4983,
+          "code_keccak256": "0xc777bd408f98610e91976a4a60098b1c6badd8e3571ef78faa8aeb514f312491",
+          "present": true,
+          "artifact": "out/DiamondCutFacet.sol/DiamondCutFacet.json",
+          "artifact_sha256": "39de90cb63efc250a56519bcbe71cf3610570770662f446b36bb6bb8d1fffe7f",
+          "immutable_values": [],
+          "template_code_keccak256": "0xc777bd408f98610e91976a4a60098b1c6badd8e3571ef78faa8aeb514f312491",
+          "normalized_code_keccak256": "0xc777bd408f98610e91976a4a60098b1c6badd8e3571ef78faa8aeb514f312491",
+          "status": "MATCH",
+          "stale_compiled_sources": [],
+          "selectors": [
+            "0x1f931c1c"
+          ],
+          "installed_selectors_declared": true
+        },
+        {
+          "address": "0xf03fad914ec73b6a7d41cece447656ae97b8b16f",
+          "contract": "MultiStepOwnableFacet",
+          "runtime_bytes": 2388,
+          "code_keccak256": "0xa78f530ce1e478d21eb04ad34e190da64272e9bca437a8010388d09847ca4e9b",
+          "present": true,
+          "artifact": "out/MultiStepOwnableFacet.sol/MultiStepOwnableFacet.json",
+          "artifact_sha256": "f65df43a4d1f1d42e38e9294380ad3b2dff8a9e96b9080b25725441b74c7e73d",
+          "immutable_values": [],
+          "template_code_keccak256": "0xa78f530ce1e478d21eb04ad34e190da64272e9bca437a8010388d09847ca4e9b",
+          "normalized_code_keccak256": "0xa78f530ce1e478d21eb04ad34e190da64272e9bca437a8010388d09847ca4e9b",
+          "status": "MATCH",
+          "stale_compiled_sources": [],
+          "selectors": [
+            "0xc0b6f561",
+            "0x3c213957",
+            "0x737293e2",
+            "0xb842e87f",
+            "0x8da5cb5b",
+            "0xe30c3978",
+            "0x1af1b0c4",
+            "0x0f9f2530"
+          ],
+          "installed_selectors_declared": true
+        },
+        {
+          "address": "0xc6367d76d4b04eba5deaebdeea379dc9ea70447e",
+          "contract": "OperableFacet",
+          "runtime_bytes": 1960,
+          "code_keccak256": "0x0b9cc0bcec20d148420e6b7924e42a174fb5533056c22fd0667c5ece9f18c9f6",
+          "present": true,
+          "artifact": "out/OperableFacet.sol/OperableFacet.json",
+          "artifact_sha256": "2042cc4199ea022094a7affa7dfd6f2bf56fea773b44fe6ceaa3fcb4d9080f19",
+          "immutable_values": [],
+          "template_code_keccak256": "0x0b9cc0bcec20d148420e6b7924e42a174fb5533056c22fd0667c5ece9f18c9f6",
+          "normalized_code_keccak256": "0x0b9cc0bcec20d148420e6b7924e42a174fb5533056c22fd0667c5ece9f18c9f6",
+          "status": "MATCH",
+          "stale_compiled_sources": [],
+          "selectors": [
+            "0x6d70f7ae",
+            "0xea562a25",
+            "0x558a7297",
+            "0x755dbe7c"
+          ],
+          "installed_selectors_declared": true
+        },
+        {
+          "address": "0x2877fdb3510ca459de2a13d55d7b35101506b915",
+          "contract": "VaultFeeOracleQueryFacet",
+          "runtime_bytes": 6153,
+          "code_keccak256": "0xcc496904efc2a014b2d90d5c262f37d7e3440236d6846910668abb5b82c2bd7d",
+          "present": true,
+          "artifact": "out/VaultFeeOracleQueryFacet.sol/VaultFeeOracleQueryFacet.json",
+          "artifact_sha256": "9a27a0abba6633f3656b298447bba7d49f721b8473d2527e3e09579fd24a3cd8",
+          "immutable_values": [],
+          "template_code_keccak256": "0x97aa74979ad566621f07a8708ef7c54a205ce0b3dc5196427dcaf491ebf03949",
+          "normalized_code_keccak256": "0xcc496904efc2a014b2d90d5c262f37d7e3440236d6846910668abb5b82c2bd7d",
+          "status": "CODE_MISMATCH",
+          "stale_compiled_sources": [],
+          "selectors": [
+            "0x017e7e58",
+            "0x70d8521d",
+            "0x99eed7ac",
+            "0xbbdce0ae",
+            "0x7662f468",
+            "0x8f6dc5ee",
+            "0xd462c40b",
+            "0x65ea6288",
+            "0x502a2c1b",
+            "0xfac8ac1c",
+            "0xd1406ccc",
+            "0x1aa15b12",
+            "0x3324d60f",
+            "0x036c0bfe",
+            "0x5f3bf472",
+            "0x2141a5e0",
+            "0x6eda943f",
+            "0xa4ecef74",
+            "0x8a851ddd",
+            "0x921d28bf",
+            "0x14821f13",
+            "0xc91cb31b",
+            "0xe2b470aa",
+            "0xb9ff265c",
+            "0xe1d271b2",
+            "0x09136817",
+            "0x050f0919",
+            "0xb2da8a0a",
+            "0xb1ce77a2",
+            "0x0eeedfa6",
+            "0x423ac34b",
+            "0x95f22b17",
+            "0xa7849b48",
+            "0x1584d9f7"
+          ],
+          "installed_selectors_declared": true
+        },
+        {
+          "address": "0xccc45be0bbdd1117ffb0731cd91163f5487149dd",
+          "contract": "VaultFeeOracleManagerFacet",
+          "runtime_bytes": 8226,
+          "code_keccak256": "0x08274cae0d867fb68f196cb1d1e37da00176355590fa3022ec3bdce0587d48e1",
+          "present": true,
+          "artifact": "out/VaultFeeOracleManagerFacet.sol/VaultFeeOracleManagerFacet.json",
+          "artifact_sha256": "970f6d0fec7bdd94c5b6ab904681d562c19b3210802f72ee8ad8f02818f88591",
+          "immutable_values": [],
+          "template_code_keccak256": "0xf7df6654ed90bbb94605499fcda50277511225c6b7b24abe6bfedaddc0aa9596",
+          "normalized_code_keccak256": "0x08274cae0d867fb68f196cb1d1e37da00176355590fa3022ec3bdce0587d48e1",
+          "status": "CODE_MISMATCH",
+          "stale_compiled_sources": [],
+          "selectors": [
+            "0xf46901ed",
+            "0x541b196b",
+            "0x75e8a097",
+            "0x52e4e23a",
+            "0x21fd4bcb",
+            "0x97109390",
+            "0xa20fa5a9",
+            "0xa59e375f",
+            "0xe342c4e1",
+            "0x2a31b390",
+            "0xad26aa7d",
+            "0x78622e00",
+            "0xd4f991d3",
+            "0xcbdf486b",
+            "0x3bd23bf5",
+            "0xeb23e16e",
+            "0x4f7c864b",
+            "0x67c49a33",
+            "0x2c692e79",
+            "0x556222e0",
+            "0x8d4a9483",
+            "0x44cc5026",
+            "0x37caa5ea",
+            "0x828dd38a",
+            "0xdeacb80f"
+          ],
+          "installed_selectors_declared": true
+        },
+        {
+          "address": "0xa36792a3c9bc0f96501b1c8791df00a282a9b616",
+          "contract": "VaultRegistryDeploymentFacet",
+          "runtime_bytes": 7687,
+          "code_keccak256": "0x9fdd4e28564d77e15a18c3558d3046ff08c106929bf65eb9bbafd55bc92ccccd",
+          "present": true,
+          "artifact": "out/VaultRegistryDeploymentFacet.sol/VaultRegistryDeploymentFacet.json",
+          "artifact_sha256": "62af804297ee4f331b608d62c748fef075755eb5dd21d67bf9a89a57d599be76",
+          "immutable_values": [],
+          "template_code_keccak256": "0x9fdd4e28564d77e15a18c3558d3046ff08c106929bf65eb9bbafd55bc92ccccd",
+          "normalized_code_keccak256": "0x9fdd4e28564d77e15a18c3558d3046ff08c106929bf65eb9bbafd55bc92ccccd",
+          "status": "MATCH",
+          "stale_compiled_sources": [],
+          "selectors": [
+            "0x96295ed2",
+            "0x968cbade",
+            "0x22784927",
+            "0x4fc2e844",
+            "0x735129f0"
+          ],
+          "installed_selectors_declared": true
+        },
+        {
+          "address": "0x6e05d424b484c95fa3e9b707247283f89c611cdb",
+          "contract": "VaultRegistryVaultManagerFacet",
+          "runtime_bytes": 4679,
+          "code_keccak256": "0xad63ab54fbda6b288344bc5afd813041f04e4c78e0ca430b65c846ced3d8bcc0",
+          "present": true,
+          "artifact": "out/VaultRegistryVaultManagerFacet.sol/VaultRegistryVaultManagerFacet.json",
+          "artifact_sha256": "ce4a8d80cf86e60ab1d6ebf7bc6af4981a1449206b145c830b41efa9b7fd3096",
+          "immutable_values": [],
+          "template_code_keccak256": "0xad63ab54fbda6b288344bc5afd813041f04e4c78e0ca430b65c846ced3d8bcc0",
+          "normalized_code_keccak256": "0xad63ab54fbda6b288344bc5afd813041f04e4c78e0ca430b65c846ced3d8bcc0",
+          "status": "MATCH",
+          "stale_compiled_sources": [],
+          "selectors": [
+            "0x3ca888d7",
+            "0x47a6146f"
+          ],
+          "installed_selectors_declared": true
+        },
+        {
+          "address": "0x6569b4ad730dc1d0391c838fe55042fed11703d9",
+          "contract": "VaultRegistryVaultPackageManagerFacet",
+          "runtime_bytes": 3679,
+          "code_keccak256": "0x92e4aebd84003dd103854cbbee10b1d16c79cc1559d134c985e9f8a7d2d2b385",
+          "present": true,
+          "artifact": "out/VaultRegistryVaultPackageManagerFacet.sol/VaultRegistryVaultPackageManagerFacet.json",
+          "artifact_sha256": "a4eed88e6041b5c343a92cb09346a6757c9c6ab56a31a3cfe40f68ca5771a6d4",
+          "immutable_values": [],
+          "template_code_keccak256": "0x92e4aebd84003dd103854cbbee10b1d16c79cc1559d134c985e9f8a7d2d2b385",
+          "normalized_code_keccak256": "0x92e4aebd84003dd103854cbbee10b1d16c79cc1559d134c985e9f8a7d2d2b385",
+          "status": "MATCH",
+          "stale_compiled_sources": [],
+          "selectors": [
+            "0xf6ea5789",
+            "0xcde195ed"
+          ],
+          "installed_selectors_declared": true
+        },
+        {
+          "address": "0x3daa2843d5fe3484094cd3598091fcd6043bb21b",
+          "contract": "VaultRegistryVaultPackageQueryFacet",
+          "runtime_bytes": 2645,
+          "code_keccak256": "0x9af3cd366b9d53d6b23d806a3936a32bb9986701356b8db420e9124e42f7cfe4",
+          "present": true,
+          "artifact": "out/VaultRegistryVaultPackageQueryFacet.sol/VaultRegistryVaultPackageQueryFacet.json",
+          "artifact_sha256": "247d98040600d63da6550eba1f32ce7a15eebb9e7e966e4818f795358e93e519",
+          "immutable_values": [],
+          "template_code_keccak256": "0x9af3cd366b9d53d6b23d806a3936a32bb9986701356b8db420e9124e42f7cfe4",
+          "normalized_code_keccak256": "0x9af3cd366b9d53d6b23d806a3936a32bb9986701356b8db420e9124e42f7cfe4",
+          "status": "MATCH",
+          "stale_compiled_sources": [],
+          "selectors": [
+            "0xd0742235",
+            "0x9e46b4b6",
+            "0xe41621aa",
+            "0x6737e5d0",
+            "0xd9c37912",
+            "0x80a5a93e",
+            "0x3853b30b",
+            "0x9e43946c",
+            "0x6ca40653",
+            "0x1d2732e7"
+          ],
+          "installed_selectors_declared": true
+        },
+        {
+          "address": "0x918f2de88ec3d9138ffb34c6fcb5958c67b007cc",
+          "contract": "VaultRegistryVaultQueryFacet",
+          "runtime_bytes": 5252,
+          "code_keccak256": "0x3df0b7e05ce29fa5f70253e4e32b4e8695de088fb8f166413d96cc9fc265f7ce",
+          "present": true,
+          "artifact": "out/VaultRegistryVaultQueryFacet.sol/VaultRegistryVaultQueryFacet.json",
+          "artifact_sha256": "59dcc2337aba5aee717b31e940a697e7fea5a768d752ae2d61e4a4a558cd72e8",
+          "immutable_values": [],
+          "template_code_keccak256": "0x3df0b7e05ce29fa5f70253e4e32b4e8695de088fb8f166413d96cc9fc265f7ce",
+          "normalized_code_keccak256": "0x3df0b7e05ce29fa5f70253e4e32b4e8695de088fb8f166413d96cc9fc265f7ce",
+          "status": "MATCH",
+          "stale_compiled_sources": [],
+          "selectors": [
+            "0x8220ef5b",
+            "0x652b9b41",
+            "0x69722233",
+            "0xa6558759",
+            "0x2b9fc930",
+            "0x25d6a19d",
+            "0x396d8457",
+            "0x08364393",
+            "0x4bef424b",
+            "0x45a04abd",
+            "0xcc130893",
+            "0x1cee886c",
+            "0x5f109775",
+            "0x2398fdc4",
+            "0x7d73194b",
+            "0x902d8230",
+            "0x538981d7",
+            "0x989c5b23",
+            "0x153729c4",
+            "0xd5ef426f",
+            "0x47098530",
+            "0x89499a3b"
+          ],
+          "installed_selectors_declared": true
+        },
+        {
+          "address": "0x10e1211a99126304d4dadaec39146c2ac45f7f91",
+          "contract": "VaultRegistryDisableQueryFacet",
+          "runtime_bytes": 2061,
+          "code_keccak256": "0xcd398ac2fb1636923d4d6f91ec65c12b711c09785da00142bfbbe01003df9730",
+          "present": true,
+          "artifact": "out/VaultRegistryDisableQueryFacet.sol/VaultRegistryDisableQueryFacet.json",
+          "artifact_sha256": "b71b9050666ac842ce428da3473fe234fe203414e0266c519a33f7caf108e38d",
+          "immutable_values": [],
+          "template_code_keccak256": "0xcd398ac2fb1636923d4d6f91ec65c12b711c09785da00142bfbbe01003df9730",
+          "normalized_code_keccak256": "0xcd398ac2fb1636923d4d6f91ec65c12b711c09785da00142bfbbe01003df9730",
+          "status": "MATCH",
+          "stale_compiled_sources": [],
+          "selectors": [
+            "0x4f6c171d",
+            "0x82070585",
+            "0x60d3f4f5",
+            "0x35a5aaac",
+            "0xfe64d812",
+            "0xef9b0b6b",
+            "0x14f0a95b"
+          ],
+          "installed_selectors_declared": true
+        }
+      ]
+    },
+    {
+      "address": "0x20af9A1e21a59a411cd3b0C40E70AF9084770b2E",
+      "contract": "MinimalDiamondCallBackProxy",
+      "runtime_bytes": 370,
+      "code_keccak256": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "present": true,
+      "artifact": "out/MinimalDiamondCallBackProxy.sol/MinimalDiamondCallBackProxy.json",
+      "artifact_sha256": "03ad63b2206f07c61c34941d9b5a5a1d2cf0d8b9853a13e0a24cf80c15a2ef5a",
+      "immutable_values": [],
+      "template_code_keccak256": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "normalized_code_keccak256": "0x2393ee3dc4d7877a9bfb7b59c272f2b9b0d1df92f2dc82ee67df076a99836601",
+      "status": "MATCH",
+      "stale_compiled_sources": [],
+      "role": "feeCollector",
+      "owner": "0x72bea6fa3e68ef18c87d045aac7c4aa5249d933b",
+      "facets": [
+        {
+          "address": "0x69a470758a14176c86927ee080f9419d30c49480",
+          "contract": "ERC165Facet",
+          "runtime_bytes": 949,
+          "code_keccak256": "0x446ba538994a213da6ce6ad772b5d40b2e0c4f0caf0eae45382374275a7b0a15",
+          "present": true,
+          "artifact": "out/ERC165Facet.sol/ERC165Facet.json",
+          "artifact_sha256": "a1ff0b2e2f76ba8147350a4478675152cf0ef73edc456a047ebd57eece5a5521",
+          "immutable_values": [],
+          "template_code_keccak256": "0x446ba538994a213da6ce6ad772b5d40b2e0c4f0caf0eae45382374275a7b0a15",
+          "normalized_code_keccak256": "0x446ba538994a213da6ce6ad772b5d40b2e0c4f0caf0eae45382374275a7b0a15",
+          "status": "MATCH",
+          "stale_compiled_sources": [],
+          "selectors": [
+            "0x01ffc9a7"
+          ],
+          "installed_selectors_declared": true
+        },
+        {
+          "address": "0x343590ed92498739225e351c27133bc2c11b91b9",
+          "contract": "DiamondLoupeFacet",
+          "runtime_bytes": 2291,
+          "code_keccak256": "0x4ec4e7a53c6dac358a2d8af7dab6581dfd26f01fc76d02333d7caec7a44a39f4",
+          "present": true,
+          "artifact": "out/DiamondLoupeFacet.sol/DiamondLoupeFacet.json",
+          "artifact_sha256": "962c39d0f6b609ee9d7a9df262af6755d9bec18237b4899a80d3e72e2df4c632",
+          "immutable_values": [],
+          "template_code_keccak256": "0x4ec4e7a53c6dac358a2d8af7dab6581dfd26f01fc76d02333d7caec7a44a39f4",
+          "normalized_code_keccak256": "0x4ec4e7a53c6dac358a2d8af7dab6581dfd26f01fc76d02333d7caec7a44a39f4",
+          "status": "MATCH",
+          "stale_compiled_sources": [],
+          "selectors": [
+            "0x7a0ed627",
+            "0xadfca15e",
+            "0x52ef6b2c",
+            "0xcdffacc6"
+          ],
+          "installed_selectors_declared": true
+        },
+        {
+          "address": "0xe3d915c0211a87077b14dfe995009741dac2f5da",
+          "contract": "ERC8109IntrospectionFacet",
+          "runtime_bytes": 1884,
+          "code_keccak256": "0x457e047aa018e85966474f1430aba2456deb76b07c912bafb36a8d00528adbe5",
+          "present": true,
+          "artifact": "out/ERC8109IntrospectionFacet.sol/ERC8109IntrospectionFacet.json",
+          "artifact_sha256": "ab16fadf5968810a23ab97a686e975b165f229ee2808613aa07e5c493def3355",
+          "immutable_values": [],
+          "template_code_keccak256": "0x457e047aa018e85966474f1430aba2456deb76b07c912bafb36a8d00528adbe5",
+          "normalized_code_keccak256": "0x457e047aa018e85966474f1430aba2456deb76b07c912bafb36a8d00528adbe5",
+          "status": "MATCH",
+          "stale_compiled_sources": [],
+          "selectors": [
+            "0x60b5befb"
+          ],
+          "installed_selectors_declared": true
+        },
+        {
+          "address": "0xf7a99a0aed1a4252c71c99fdd2a5b3250a41f669",
+          "contract": "FeeCollectorManagerFacet",
+          "runtime_bytes": 1870,
+          "code_keccak256": "0x7ae5c353c623b635938a7bb3ebc07cb3eda6469b2cd9dbf76c8bed336ff0b5cb",
+          "present": true,
+          "artifact": "out/FeeCollectorManagerFacet.sol/FeeCollectorManagerFacet.json",
+          "artifact_sha256": "b23f56628881c28a90374893d8061ff069775638eec4f6f79f5adcbc195da01d",
+          "immutable_values": [],
+          "template_code_keccak256": "0xe89bba4e597aeb0dddc8bf36a4b6a282a9b9fe0a5c8dbd7037f79ecf04981b95",
+          "normalized_code_keccak256": "0x7ae5c353c623b635938a7bb3ebc07cb3eda6469b2cd9dbf76c8bed336ff0b5cb",
+          "status": "CODE_MISMATCH",
+          "stale_compiled_sources": [],
+          "selectors": [
+            "0xa4eef28a",
+            "0xb100fc0a",
+            "0x45e94ee3"
+          ],
+          "installed_selectors_declared": true
+        },
+        {
+          "address": "0xa8fb4aa08f910026d33579bd680fc133a399c447",
+          "contract": "DiamondCutFacet",
+          "runtime_bytes": 4983,
+          "code_keccak256": "0xc777bd408f98610e91976a4a60098b1c6badd8e3571ef78faa8aeb514f312491",
+          "present": true,
+          "artifact": "out/DiamondCutFacet.sol/DiamondCutFacet.json",
+          "artifact_sha256": "39de90cb63efc250a56519bcbe71cf3610570770662f446b36bb6bb8d1fffe7f",
+          "immutable_values": [],
+          "template_code_keccak256": "0xc777bd408f98610e91976a4a60098b1c6badd8e3571ef78faa8aeb514f312491",
+          "normalized_code_keccak256": "0xc777bd408f98610e91976a4a60098b1c6badd8e3571ef78faa8aeb514f312491",
+          "status": "MATCH",
+          "stale_compiled_sources": [],
+          "selectors": [
+            "0x1f931c1c"
+          ],
+          "installed_selectors_declared": true
+        },
+        {
+          "address": "0xf03fad914ec73b6a7d41cece447656ae97b8b16f",
+          "contract": "MultiStepOwnableFacet",
+          "runtime_bytes": 2388,
+          "code_keccak256": "0xa78f530ce1e478d21eb04ad34e190da64272e9bca437a8010388d09847ca4e9b",
+          "present": true,
+          "artifact": "out/MultiStepOwnableFacet.sol/MultiStepOwnableFacet.json",
+          "artifact_sha256": "f65df43a4d1f1d42e38e9294380ad3b2dff8a9e96b9080b25725441b74c7e73d",
+          "immutable_values": [],
+          "template_code_keccak256": "0xa78f530ce1e478d21eb04ad34e190da64272e9bca437a8010388d09847ca4e9b",
+          "normalized_code_keccak256": "0xa78f530ce1e478d21eb04ad34e190da64272e9bca437a8010388d09847ca4e9b",
+          "status": "MATCH",
+          "stale_compiled_sources": [],
+          "selectors": [
+            "0xc0b6f561",
+            "0x3c213957",
+            "0x737293e2",
+            "0xb842e87f",
+            "0x8da5cb5b",
+            "0xe30c3978",
+            "0x1af1b0c4",
+            "0x0f9f2530"
+          ],
+          "installed_selectors_declared": true
+        },
+        {
+          "address": "0x694fe17168d3cbe407833832e7f1224b70120491",
+          "contract": "FeeCollectorSingleTokenPushFacet",
+          "runtime_bytes": 1069,
+          "code_keccak256": "0x0006c3756146e3d19c4fafa312f93f02acf0d89901313cef44e0a51b5eb76c1d",
+          "present": true,
+          "artifact": "out/FeeCollectorSingleTokenPushFacet.sol/FeeCollectorSingleTokenPushFacet.json",
+          "artifact_sha256": "4791dd5db23c542140825f5f9b248547656e195022af91480ba133dce6b1302d",
+          "immutable_values": [],
+          "template_code_keccak256": "0x0006c3756146e3d19c4fafa312f93f02acf0d89901313cef44e0a51b5eb76c1d",
+          "normalized_code_keccak256": "0x0006c3756146e3d19c4fafa312f93f02acf0d89901313cef44e0a51b5eb76c1d",
+          "status": "MATCH",
+          "stale_compiled_sources": [],
+          "selectors": [
+            "0x4a5658f8"
+          ],
+          "installed_selectors_declared": true
+        }
+      ]
+    }
+  ],
+  "limits": "Immutable values are recorded separately and masked only at compiler-declared offsets. Proxy runtime equality alone does not validate its installed facets or configuration; those are recorded separately."
+}

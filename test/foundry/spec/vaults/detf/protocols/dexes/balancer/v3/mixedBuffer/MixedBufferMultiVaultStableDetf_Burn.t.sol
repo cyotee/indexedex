@@ -6,33 +6,30 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {
     TestBase_MixedBufferMultiVaultStableDetf
 } from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/TestBase_MixedBufferMultiVaultStableDetf.sol";
-import {
-    IMixedBufferMultiVaultStableDetfInfo
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfInfoTarget.sol";
-import {
-    IMixedBufferMultiVaultStableDetfBonding
-} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfBondingTarget.sol";
+import {IMixedBufferMultiVaultStableDetfInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfInfo.sol";
+import {IMixedBufferMultiVaultStableDetfBonding} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfBonding.sol";
 
 contract MixedBufferMultiVaultStableDetf_Burn_Test is TestBase_MixedBufferMultiVaultStableDetf {
-    function setUp() public override {
+    function setUp() public virtual override {
         super.setUp();
-        detf = _deployOpenThresholdDetfN(1);
+        detf = _deployDetfN(1, 100e18, 10e18);
         detfInfo = IMixedBufferMultiVaultStableDetfInfo(detf);
         detfBonding = IMixedBufferMultiVaultStableDetfBonding(detf);
         detfExchangeIn = IStandardExchangeIn(detf);
         _bootstrapDefault(detf, alice);
+        assertTrue(detfInfo.isBurningAllowed(), "primary burn fixture");
     }
 
-    function test_burn_to_buffer() public {
-        uint256 minted_ = _mintDetfFromBuffer(detf, bob, 100e18);
+    function test_burn_to_buffer() public virtual {
+        uint256 minted_ = _mintDetfFromBuffer(detf, bob, _fixtureAmount(100e18));
         uint256 burnAmt_ = minted_ / 2;
         uint256 out_ = _burnDetfToBuffer(detf, bob, burnAmt_);
         assertTrue(out_ > 0, "buffer out");
         _assertNoFreeInventory(detf);
     }
 
-    function test_burn_to_vaultShare() public {
-        uint256 minted_ = _mintDetfFromBuffer(detf, bob, 100e18);
+    function test_burn_to_vaultShare() public virtual {
+        uint256 minted_ = _mintDetfFromBuffer(detf, bob, _fixtureAmount(100e18));
         vm.startPrank(bob);
         IERC20(detf).approve(detf, minted_);
         uint256 out_ = detfExchangeIn.exchangeIn(

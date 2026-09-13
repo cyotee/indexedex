@@ -1,0 +1,349 @@
+{
+  "status": "APPLIED_SELECTED_RUNTIME_VALIDATION_PASSED",
+  "rows": [
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "retired": "test_Real_RewardsForwarded_NA",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_RewardsForwarded"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange_Real.t.sol",
+      "retired": "testFuzz_Real_BaseToSE",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "testFuzz_Real_BaseToSE"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange_Real.t.sol",
+      "retired": "testFuzz_Real_FeeOnBaseToSE",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "testFuzz_Real_FeeOnBaseToSE"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange_Real.t.sol",
+      "retired": "testFuzz_Real_SEToStata",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "testFuzz_Real_SEToStata"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange_Real.t.sol",
+      "retired": "testFuzz_Real_SEToStata_Pretransferred",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "testFuzz_Real_SEToStata_Pretransferred"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange_Real.t.sol",
+      "retired": "test_Real_FeeApplicationAndMarker",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_FeeApplicationAndMarker"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange_Real.t.sol",
+      "retired": "test_Real_RewardsForwarded_NA",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_RewardsForwarded"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange_Real.t.sol",
+      "retired": "test_Real_Route_ATokenToSE",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_Route_ATokenToSE"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange_Real.t.sol",
+      "retired": "test_Real_Route_ATokenToStata",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_Route_ATokenToStata"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange_Real.t.sol",
+      "retired": "test_Real_Route_BaseToSE_PreviewMatches",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_Route_BaseToSE_PreviewMatches"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange_Real.t.sol",
+      "retired": "test_Real_Route_BaseToStata",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_Route_BaseToStata"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange_Real.t.sol",
+      "retired": "test_Real_Route_BaseToStata_Pretransferred",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_Route_BaseToStata_Pretransferred"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange_Real.t.sol",
+      "retired": "test_Real_Route_BaseToStata_Pretransferred_bookedInventory_reverts",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_Route_BaseToStata_Pretransferred_bookedInventory_reverts"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange_Real.t.sol",
+      "retired": "test_Real_Route_SEToAToken",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_Route_SEToAToken"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange_Real.t.sol",
+      "retired": "test_Real_Route_SEToBase_Pretransferred",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_Route_SEToBase_Pretransferred"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange_Real.t.sol",
+      "retired": "test_Real_Route_SEToBase_PreviewMatches",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_Route_SEToBase_PreviewMatches"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange_Real.t.sol",
+      "retired": "test_Real_Route_SEToStata_PreviewMatches",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_Route_SEToStata_PreviewMatches"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange_Real.t.sol",
+      "retired": "test_Real_Route_StataToSE",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_Route_StataToSE"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/adversarial/Adversarial_AaveV3StataSE_SecurePull.t.sol",
+      "retired": "test_A0_pretransferred_noDelta_reverts",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/Adversarial_AaveV3StataSE_SecurePull_Decimals.sol",
+      "replacement_function": "test_A0_pretransferred_noDelta_reverts"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/adversarial/Adversarial_AaveV3StataSE_SecurePull.t.sol",
+      "retired": "test_A1_donateBase_cannotMintFreeShares",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/Adversarial_AaveV3StataSE_SecurePull_Decimals.sol",
+      "replacement_function": "test_A1_donateBase_cannotMintFreeShares"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/adversarial/Adversarial_AaveV3StataSE_SecurePull.t.sol",
+      "retired": "test_A2_donateSeShares_noFreeMintOrTheft",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/Adversarial_AaveV3StataSE_SecurePull_Decimals.sol",
+      "replacement_function": "test_A2_donateSeShares_noFreeMintOrTheft"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/adversarial/Adversarial_AaveV3StataSE_SecurePull.t.sol",
+      "retired": "test_A3_donateStata_cannotMintFreeShares",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/Adversarial_AaveV3StataSE_SecurePull_Decimals.sol",
+      "replacement_function": "test_A3_donateStata_cannotMintFreeShares"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/adversarial/Adversarial_AaveV3StataSE_SecurePull.t.sol",
+      "retired": "test_E1_mintRedeemRoundTrip_bounded",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/Adversarial_AaveV3StataSE_SecurePull_Decimals.sol",
+      "replacement_function": "test_E1_mintRedeemRoundTrip_bounded"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/adversarial/Adversarial_AaveV3StataSE_SecurePull.t.sol",
+      "retired": "test_E4_holderBalance_notDilutedByOthersMint",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/Adversarial_AaveV3StataSE_SecurePull_Decimals.sol",
+      "replacement_function": "test_E4_holderBalance_notDilutedByOthersMint"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/adversarial/Adversarial_AaveV3StataSE_SecurePull.t.sol",
+      "retired": "test_E5_invalidRoute_unsupportedToken_reverts",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/Adversarial_AaveV3StataSE_SecurePull_Decimals.sol",
+      "replacement_function": "test_E5_invalidRoute_unsupportedToken_reverts"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/adversarial/Adversarial_AaveV3StataSE_SecurePull.t.sol",
+      "retired": "test_E5_zeroAmount_noFreeMint",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/Adversarial_AaveV3StataSE_SecurePull_Decimals.sol",
+      "replacement_function": "test_E5_zeroAmount_noFreeMint"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/adversarial/Adversarial_AaveV3StataSE_SecurePull.t.sol",
+      "retired": "test_FreeMint_baseToSe_pretransferredInventory_reverts",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/Adversarial_AaveV3StataSE_SecurePull_Decimals.sol",
+      "replacement_function": "test_FreeMint_baseToSe_pretransferredInventory_reverts"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/adversarial/Adversarial_AaveV3StataSE_SecurePull.t.sol",
+      "retired": "test_FreeMint_stataToSe_pretransferredInventory_reverts",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/Adversarial_AaveV3StataSE_SecurePull_Decimals.sol",
+      "replacement_function": "test_FreeMint_stataToSe_pretransferredInventory_reverts"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/adversarial/Adversarial_AaveV3StataSE_SecurePull.t.sol",
+      "retired": "test_H2_exchangeOut_withoutShares_balancesUnchanged",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/Adversarial_AaveV3StataSE_SecurePull_Decimals.sol",
+      "replacement_function": "test_H2_exchangeOut_withoutShares_balancesUnchanged"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/adversarial/Adversarial_AaveV3StataSE_SecurePull.t.sol",
+      "retired": "test_H2_minOutTooHigh_balancesUnchanged",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/Adversarial_AaveV3StataSE_SecurePull_Decimals.sol",
+      "replacement_function": "test_H2_minOutTooHigh_balancesUnchanged"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/adversarial/Adversarial_AaveV3StataSE_SecurePull.t.sol",
+      "retired": "test_H3_minOutTooHigh_noFreeShares",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/Adversarial_AaveV3StataSE_SecurePull_Decimals.sol",
+      "replacement_function": "test_H3_minOutTooHigh_noFreeShares"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/adversarial/Adversarial_AaveV3StataSE_SecurePull.t.sol",
+      "retired": "test_I1_pretransferred_stataInventoryNoInCallTransfer_revertsDelta0",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/Adversarial_AaveV3StataSE_SecurePull_Decimals.sol",
+      "replacement_function": "test_I1_pretransferred_stataInventoryNoInCallTransfer_reverts"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/adversarial/Adversarial_AaveV3StataSE_SecurePull.t.sol",
+      "retired": "test_I_positive_honestStataPullMint_succeeds",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/Adversarial_AaveV3StataSE_SecurePull_Decimals.sol",
+      "replacement_function": "test_I_positive_honestStataPullMint_succeeds"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange.t.sol",
+      "retired": "testFuzz_FeeApplication",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "testFuzz_Real_FeeOnBaseToSE"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange.t.sol",
+      "retired": "testFuzz_Route_BaseToSE",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "testFuzz_Real_BaseToSE"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange.t.sol",
+      "retired": "testFuzz_Route_BaseToStata",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "testFuzz_Real_BaseToStata"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange.t.sol",
+      "retired": "testFuzz_Route_SEToStata",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "testFuzz_Real_SEToStata"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange.t.sol",
+      "retired": "testFuzz_Route_StataToSE_Pretransferred",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "testFuzz_Real_StataToSE_Pretransferred"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange.t.sol",
+      "retired": "test_AllRoutesSmoke",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_Route_BaseToSE_PreviewMatches"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange.t.sol",
+      "retired": "test_DeploymentPaths",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_MarkerAndDeployment"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange.t.sol",
+      "retired": "test_FeeApplicationAndMarker",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_FeeApplicationAndMarker"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange.t.sol",
+      "retired": "test_FeeOnAndOff",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_FeeOnAndOff"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange.t.sol",
+      "retired": "test_MarkerInterface",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_MarkerAndDeployment"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange.t.sol",
+      "retired": "test_RewardCollectionTrigger",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_RewardsForwarded"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange.t.sol",
+      "retired": "test_RewardsForwarded",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_RewardsForwarded"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange.t.sol",
+      "retired": "test_Route_ATokenToSE",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_Route_ATokenToSE"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange.t.sol",
+      "retired": "test_Route_ATokenToStata",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_Route_ATokenToStata"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange.t.sol",
+      "retired": "test_Route_BaseToSE",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_Route_BaseToSE_PreviewMatches"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange.t.sol",
+      "retired": "test_Route_BaseToStata",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_Route_BaseToStata"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange.t.sol",
+      "retired": "test_Route_BaseToStata_Pretransferred",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_Route_BaseToStata_Pretransferred"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange.t.sol",
+      "retired": "test_Route_BaseToStata_Pretransferred_bookedInventory_reverts",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_Route_BaseToStata_Pretransferred_bookedInventory_reverts"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange.t.sol",
+      "retired": "test_Route_SEToAToken",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_Route_SEToAToken"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange.t.sol",
+      "retired": "test_Route_SEToBase",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_Route_SEToBase_PreviewMatches"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange.t.sol",
+      "retired": "test_Route_SEToBase_Pretransferred",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_Route_SEToBase_Pretransferred"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange.t.sol",
+      "retired": "test_Route_SEToStata",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_Route_SEToStata_PreviewMatches"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange.t.sol",
+      "retired": "test_Route_SEToStata_Pretransferred",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "testFuzz_Real_SEToStata_Pretransferred"
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange.t.sol",
+      "retired": "test_Route_StataToSE",
+      "replacement_source": "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol",
+      "replacement_function": "test_Real_Route_StataToSE"
+    }
+  ],
+  "runtime_validation_passed": true,
+  "runtime_evidence": "hermetic-remediation-stata-first-runtime.json"
+}

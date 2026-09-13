@@ -11,12 +11,18 @@ import {
 
 contract MixedBufferMultiVaultStableDetf_Liveness_Test is TestBase_MixedBufferMultiVaultStableDetf {
     function test_preLive_mint_buffer_reverts() public {
-        _fundBuffer(alice, 100e18);
+        _fundBuffer(alice, _fixtureAmount(100e18));
         vm.startPrank(alice);
-        IERC20(address(dai)).approve(detf, 100e18);
+        IERC20(address(_fixtureBufferToken())).approve(detf, _fixtureAmount(100e18));
         vm.expectRevert(MixedBufferMultiVaultStableDetfRepo.ReservePoolNotInitialized.selector);
         detfExchangeIn.exchangeIn(
-            IERC20(address(dai)), 100e18, IERC20(detf), 0, alice, false, block.timestamp + 1 hours
+            IERC20(address(_fixtureBufferToken())),
+            _fixtureAmount(100e18),
+            IERC20(detf),
+            0,
+            alice,
+            false,
+            block.timestamp + 1 hours
         );
         vm.stopPrank();
     }
@@ -26,29 +32,32 @@ contract MixedBufferMultiVaultStableDetf_Liveness_Test is TestBase_MixedBufferMu
         vm.startPrank(alice);
         seShares[0].approve(detf, shares_);
         vm.expectRevert(MixedBufferMultiVaultStableDetfRepo.ReservePoolNotInitialized.selector);
-        detfExchangeIn.exchangeIn(
-            seShares[0], shares_, IERC20(detf), 0, alice, false, block.timestamp + 1 hours
-        );
+        detfExchangeIn.exchangeIn(seShares[0], shares_, IERC20(detf), 0, alice, false, block.timestamp + 1 hours);
         vm.stopPrank();
     }
 
-    function test_preLive_burn_reverts() public {
-        // No DETF yet; still attempt burn path
+    function test_preLive_burn_requiresFundedInput() public {
+        // Secure pull rejects an unfunded caller before entering the reserve route.
         vm.startPrank(alice);
-        vm.expectRevert(MixedBufferMultiVaultStableDetfRepo.ReservePoolNotInitialized.selector);
+        vm.expectRevert(bytes4(keccak256("TransferFromFailed()")));
         detfExchangeIn.exchangeIn(
-            IERC20(detf), 1e18, IERC20(address(dai)), 0, alice, false, block.timestamp + 1 hours
+            IERC20(detf), 1e9, IERC20(address(_fixtureBufferToken())), 0, alice, false, block.timestamp + 1 hours
         );
         vm.stopPrank();
     }
 
     function test_preLive_bond_reverts() public {
-        _fundBuffer(alice, 100e18);
+        _fundBuffer(alice, _fixtureAmount(100e18));
         vm.startPrank(alice);
-        IERC20(address(dai)).approve(detf, 100e18);
+        IERC20(address(_fixtureBufferToken())).approve(detf, _fixtureAmount(100e18));
         vm.expectRevert(MixedBufferMultiVaultStableDetfRepo.ReservePoolNotInitialized.selector);
         detfBonding.bond(
-            IERC20(address(dai)), 100e18, DEFAULT_MIN_LOCK, alice, false, block.timestamp + 1 hours
+            IERC20(address(_fixtureBufferToken())),
+            _fixtureAmount(100e18),
+            DEFAULT_MIN_LOCK,
+            alice,
+            false,
+            block.timestamp + 1 hours
         );
         vm.stopPrank();
     }
@@ -62,10 +71,8 @@ contract MixedBufferMultiVaultStableDetf_Liveness_Test is TestBase_MixedBufferMu
     function test_acceptedBondTokens_postLive() public {
         _bootstrapDefault(detf, alice);
         address[] memory tokens_ = detfBonding.acceptedBondTokens();
-        // buffer + 1 share + BPT
-        assertEq(tokens_.length, 3, "buffer+share+bpt");
-        assertEq(tokens_[0], address(dai), "buffer");
+        assertEq(tokens_.length, 2, "buffer and configured share payments");
+        assertEq(tokens_[0], address(_fixtureBufferToken()), "buffer");
         assertEq(tokens_[1], address(seShares[0]), "share");
-        assertEq(tokens_[2], detfInfo.reservePool(), "bpt");
     }
 }

@@ -3,89 +3,60 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
-
+import {Math} from "@crane/contracts/utils/Math.sol";
+import {ReentrancyLockRepo} from "@crane/contracts/access/reentrancy/ReentrancyLockRepo.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
-import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
-import {AaveCrossVersionLoopExchangeBase} from
-    "contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoopExchangeBase.sol";
-import {CrossVersionLoopExecutor} from "contracts/protocols/lending/aave/cross-version/CrossVersionLoopExecutor.sol";
-import {CrossVersionLoopService} from "contracts/protocols/lending/aave/cross-version/CrossVersionLoopService.sol";
+import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+import {NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
+import {AaveCrossVersionLoopExchangeBase} from "./AaveCrossVersionLoopExchangeBase.sol";
+import {CrossVersionLoopExecutor} from "./CrossVersionLoopExecutor.sol";
+import {LoopPositionRepo} from "./LoopPositionRepo.sol";
 
-/**
- * @title AaveCrossVersionLoopExchangeOutTarget
- * @author cyotee doge <doge.cyotee>
- * @notice Withdraw exit for the cross-version loop vault (PRD decisions 11, 14, 15): `exchangeOut`
- *         burns LP-style shares and delivers one pair token, freed via the never-borrow rule from the
- *         HF buffer. All-or-revert: a request exceeding what is currently freeable reverts (decision
- *         15). v1 services tokenA out from the V3 buffer; larger deleverage-served withdrawals and
- *         the oracle-sourced withdrawal fee (decision 18) are later refinements.
- */
-contract AaveCrossVersionLoopExchangeOutTarget is AaveCrossVersionLoopExchangeBase, IStandardExchangeOut {
-    /// @dev Shares required to redeem `amountOut` of tokenA, rounded up so the burn never under-charges.
-    function _sharesForAmountOut(CrossVersionLoopExecutor.Market memory m, uint256 amountOut)
-        internal
-        view
-        returns (uint256)
-    {
-        uint256 nav = CrossVersionLoopExecutor.navUsd(m);
-        uint256 supply = ERC20Repo._totalSupply();
-        if (nav == 0 || supply == 0) return 0;
-        uint256 valueOut = CrossVersionLoopExecutor.valueUsd(m, m.tokenA, amountOut);
-        return (valueOut * supply + nav - 1) / nav;
-    }
-
-    /// @inheritdoc IStandardExchangeOut
+/// @notice Exact-output withdrawals and native SY reuse the canonical funded standard routes.
+contract AaveCrossVersionLoopExchangeOutTarget is
+    AaveCrossVersionLoopExchangeBase, IStandardExchangeOut, NativeStandardYieldTarget
+{
     function previewExchangeOut(IERC20 tokenIn, IERC20 tokenOut, uint256 amountOut)
-        external
-        view
-        returns (uint256 amountIn)
+        external view returns (uint256 amountIn)
     {
+        ReentrancyLockRepo._onlyUnlocked();
         CrossVersionLoopExecutor.Market memory m = _market();
-        if (address(tokenIn) != address(this) || address(tokenOut) != address(m.tokenA)) {
-            revert ExchangeOutNotAvailable();
-        }
-        // Serviceable only if the requested amount is within the currently-freeable buffer (decision 15).
-        if (amountOut > CrossVersionLoopExecutor.maxWithdrawableA(m)) {
-            revert AmountOutNotMet(amountOut, CrossVersionLoopExecutor.maxWithdrawableA(m));
-        }
-        amountIn = _sharesForAmountOut(m, amountOut);
+        if (address(tokenIn) != address(this) || tokenOut != m.tokenA) revert ExchangeOutNotAvailable();
+        _requireFreeable(m, amountOut);
+        return _sharesForAmountOut(m, amountOut);
     }
 
-    /// @inheritdoc IStandardExchangeOut
-    function exchangeOut(
-        IERC20 tokenIn,
-        uint256 maxAmountIn,
-        IERC20 tokenOut,
-        uint256 amountOut,
-        address recipient,
-        bool pretransferred,
-        uint256 deadline
-    ) external returns (uint256 amountIn) {
-        if (deadline < block.timestamp) revert DeadlineExceeded(deadline, block.timestamp);
-        uint256 shareBefore = ERC20Repo._balanceOf(address(this));
+    function exchangeOut(IERC20 tokenIn, uint256 maxAmountIn, IERC20 tokenOut, uint256 amountOut,
+        address recipient, bool pretransferred, uint256 deadline)
+        external nonReentrant returns (uint256 amountIn)
+    {
+        _requireExchange(deadline, amountOut, recipient);
         CrossVersionLoopExecutor.Market memory m = _market();
-        if (address(tokenIn) != address(this) || address(tokenOut) != address(m.tokenA)) {
-            revert ExchangeOutNotAvailable();
-        }
-
-        uint256 freeable = CrossVersionLoopExecutor.maxWithdrawableA(m);
-        if (amountOut > freeable) revert AmountOutNotMet(amountOut, freeable); // all-or-revert (decision 15)
-
+        if (address(tokenIn) != address(this) || tokenOut != m.tokenA) revert ExchangeOutNotAvailable();
+        _requireFreeable(m, amountOut);
         amountIn = _sharesForAmountOut(m, amountOut);
         if (amountIn > maxAmountIn) revert MaxAmountExceeded(maxAmountIn, amountIn);
+        _burnWithdrawalShares(amountIn, pretransferred);
+        _withdrawAndPay(m, amountOut, recipient);
+    }
 
-        // L-CLAIM-3: burn address(this) shares only against this-call inbound share delta.
-        // Sitting / donated self-shares are not delivery (SEC-SE-AAVE-002).
-        if (!pretransferred) {
-            ERC20Repo._burn(msg.sender, amountIn);
-        } else {
-            uint256 observedDelta = ERC20Repo._balanceOf(address(this)) - shareBefore;
-            if (amountIn > observedDelta) {
-                revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, observedDelta);
-            }
-            ERC20Repo._burn(address(this), amountIn);
-        }
-        CrossVersionLoopExecutor.withdrawA(m, amountOut);
-        tokenOut.transfer(recipient, amountOut);
+    function getTokensIn() public view override returns (address[] memory tokens_) {
+        tokens_ = new address[](1);
+        tokens_[0] = address(LoopPositionRepo._tokenA());
+    }
+
+    function getTokensOut() public view override returns (address[] memory) { return getTokensIn(); }
+    function yieldToken() external pure override returns (address) { return address(0); }
+
+    /// @dev The existing native position accounting unit is USD at oracle-base precision 8.
+    /// The vault identifies that composite position; it is not an ERC20 accounting-asset address.
+    function assetInfo() external view override returns (IStandardizedYield.AssetType, address, uint8) {
+        return (IStandardizedYield.AssetType.LIQUIDITY, address(this), 8);
+    }
+
+    function exchangeRate() external view override returns (uint256) {
+        ReentrancyLockRepo._onlyUnlocked();
+        uint256 supply_ = ERC20Repo._totalSupply();
+        return supply_ == 0 ? 1e18 : Math.mulDiv(CrossVersionLoopExecutor.navUsd(_market()), 1e18, supply_);
     }
 }

@@ -1,0 +1,109 @@
+contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/TestBase_MultiVaultWeightedDetf_Decimals.sol:1149:        return (totalSupply_ * DETFNaturalExpansionLib.DEFAULT_CATCH_UP_CAP_BPS) / 10_000;
+contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/TestBase_SingleStandardExchangeDETF_Decimals.sol:796:        return (totalSupply_ * DETFNaturalExpansionLib.DEFAULT_CATCH_UP_CAP_BPS) / 10_000;
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_NaturalExpansion.t.sol:254:            DETFNaturalExpansionLib.DEFAULT_CATCH_UP_MAX_SECONDS,
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_NaturalExpansion.t.sol:259:            DETFNaturalExpansionLib.DEFAULT_CATCH_UP_CAP_BPS,
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetf_NaturalExpansion.t.sol:277:        _warp(365 days); // far beyond DEFAULT_CATCH_UP_MAX_SECONDS (1 day)
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:11:///      All mint expectations come from `computeExpansionMint` / `resolveExpansionParams`
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:25:        returns (DETFNaturalExpansionLib.AccrualInput memory in_)
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:35:        in_.catchUpMaxSeconds = DETFNaturalExpansionLib.DEFAULT_CATCH_UP_MAX_SECONDS;
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:36:        in_.catchUpCapBps = DETFNaturalExpansionLib.DEFAULT_CATCH_UP_CAP_BPS;
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:50:        assertEq(DETFNaturalExpansionLib.DEFAULT_CATCH_UP_MAX_SECONDS, 1 days);
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:51:        assertEq(DETFNaturalExpansionLib.DEFAULT_CATCH_UP_CAP_BPS, 50);
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:59:            DETFNaturalExpansionLib.resolveExpansionParams(0, 0, 0);
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:61:        assertEq(seconds_, DETFNaturalExpansionLib.DEFAULT_CATCH_UP_MAX_SECONDS);
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:62:        assertEq(bps_, DETFNaturalExpansionLib.DEFAULT_CATCH_UP_CAP_BPS);
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:67:        (uint256 rateFromZero_,,) = DETFNaturalExpansionLib.resolveExpansionParams(0, 0, 0);
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:73:            DETFNaturalExpansionLib.resolveExpansionParams(explicitTiny_, 3600, 25);
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:79:        (uint256 rateCustom_,,) = DETFNaturalExpansionLib.resolveExpansionParams(customRate_, 0, 0);
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:88:        DETFNaturalExpansionLib.AccrualInput memory in_ = _richBase();
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:90:        (uint256 mint_, uint256 newTs_) = DETFNaturalExpansionLib.computeExpansionMint(in_);
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:96:        DETFNaturalExpansionLib.AccrualInput memory in_ = _richBase();
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:98:        (uint256 mint_, uint256 newTs_) = DETFNaturalExpansionLib.computeExpansionMint(in_);
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:104:        DETFNaturalExpansionLib.AccrualInput memory in_ = _richBase();
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:106:        (uint256 mint_,) = DETFNaturalExpansionLib.computeExpansionMint(in_);
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:113:        DETFNaturalExpansionLib.AccrualInput memory in_ = _richBase();
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:116:        (uint256 mint_,) = DETFNaturalExpansionLib.computeExpansionMint(in_);
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:121:        DETFNaturalExpansionLib.AccrualInput memory in_ = _richBase();
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:123:        (uint256 mint_, uint256 newTs_) = DETFNaturalExpansionLib.computeExpansionMint(in_);
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:129:        DETFNaturalExpansionLib.AccrualInput memory in_ = _richBase();
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:131:        (uint256 mint_, uint256 newTs_) = DETFNaturalExpansionLib.computeExpansionMint(in_);
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:142:        DETFNaturalExpansionLib.AccrualInput memory in_ = _richBase();
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:145:        (uint256 mint_, uint256 newTs_) = DETFNaturalExpansionLib.computeExpansionMint(in_);
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:149:        // Determinism: identical AccrualInput ⇒ identical production output.
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:150:        (uint256 mint2_, uint256 newTs2_) = DETFNaturalExpansionLib.computeExpansionMint(in_);
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:151:        assertEq(mint2_, mint_, "deterministic mint for fixed AccrualInput");
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:156:        DETFNaturalExpansionLib.AccrualInput memory in2x_ = in_;
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:158:        (uint256 mint2h_,) = DETFNaturalExpansionLib.computeExpansionMint(in2x_);
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:166:            DETFNaturalExpansionLib.resolveExpansionParams(1, 365 days, 10_000);
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:169:        DETFNaturalExpansionLib.AccrualInput memory in_ = _richBase();
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:176:        (uint256 mint_,) = DETFNaturalExpansionLib.computeExpansionMint(in_);
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:184:        DETFNaturalExpansionLib.AccrualInput memory inHuge_ = _richBase();
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:188:            DETFNaturalExpansionLib.computeExpansionMint(inHuge_);
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:194:        DETFNaturalExpansionLib.AccrualInput memory inCapped_ = inHuge_;
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:195:        inCapped_.nowTimestamp = T0 + DETFNaturalExpansionLib.DEFAULT_CATCH_UP_MAX_SECONDS;
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:196:        (uint256 mintCapped_,) = DETFNaturalExpansionLib.computeExpansionMint(inCapped_);
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:206:        DETFNaturalExpansionLib.AccrualInput memory inShort_ = inHuge_;
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:208:        (uint256 mintShort_,) = DETFNaturalExpansionLib.computeExpansionMint(inShort_);
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:214:        DETFNaturalExpansionLib.AccrualInput memory in_ = _richBase();
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:220:        (uint256 mint_,) = DETFNaturalExpansionLib.computeExpansionMint(in_);
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:226:        (uint256 mintHigherBps_,) = DETFNaturalExpansionLib.computeExpansionMint(in_);
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:233:        DETFNaturalExpansionLib.AccrualInput memory in_ = _richBase();
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:236:        (uint256 mint_, uint256 newTs_) = DETFNaturalExpansionLib.computeExpansionMint(in_);
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:243:        DETFNaturalExpansionLib.AccrualInput memory in_ = _richBase();
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:249:        (uint256 mint_,) = DETFNaturalExpansionLib.computeExpansionMint(in_);
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:256:        DETFNaturalExpansionLib.AccrualInput memory in_ = _richBase();
+test/foundry/spec/vaults/detf/common/core/DETFNaturalExpansionLib.t.sol:258:        (uint256 mint_,) = DETFNaturalExpansionLib.computeExpansionMint(in_);
+test/foundry/spec/vaults/detf/common/core/DETFEpochNaturalExpansionLib.t.sol:9:    function _input() private pure returns (Lib.AccrualInput memory in_) {
+test/foundry/spec/vaults/detf/common/core/DETFEpochNaturalExpansionLib.t.sol:25:        Lib.AccrualInput memory in_ = _input();
+test/foundry/spec/vaults/detf/common/core/DETFEpochNaturalExpansionLib.t.sol:33:        Lib.AccrualInput memory in_ = _input();
+test/foundry/spec/vaults/detf/common/core/DETFEpochNaturalExpansionLib.t.sol:44:        Lib.AccrualInput memory in_ = _input();
+test/foundry/spec/vaults/detf/common/core/DETFEpochNaturalExpansionLib.t.sol:53:        Lib.AccrualInput memory in_ = _input();
+test/foundry/spec/vaults/detf/common/core/DETFEpochNaturalExpansionLib.t.sol:65:        Lib.AccrualInput memory in_ = _input();
+test/foundry/spec/vaults/detf/common/core/DETFEpochNaturalExpansionLib.t.sol:74:        Lib.AccrualInput memory in_ = _input();
+contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/TestBase_MixedBufferMultiVaultStableDetf_Decimals.sol:913:        return (totalSupply_ * DETFNaturalExpansionLib.DEFAULT_CATCH_UP_CAP_BPS) / 10_000;
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:304:        DETFEpochNaturalExpansionLib.AccrualInput memory in_;
+contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol:331:        DETFEpochNaturalExpansionLib.AccrualInput memory in_;
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_NaturalExpansion_Decimals.sol:253:            DETFNaturalExpansionLib.DEFAULT_CATCH_UP_MAX_SECONDS,
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_NaturalExpansion_Decimals.sol:258:            DETFNaturalExpansionLib.DEFAULT_CATCH_UP_CAP_BPS,
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/MultiVaultWeightedDetf_NaturalExpansion_Decimals.sol:276:        _warp(365 days); // far beyond DEFAULT_CATCH_UP_MAX_SECONDS (1 day)
+contracts/vaults/detf/common/core/DETFEpochNaturalExpansionLib.sol:15:    struct AccrualInput {
+contracts/vaults/detf/common/core/DETFEpochNaturalExpansionLib.sol:31:    function previewPendingExpansionMint(AccrualInput memory in_) internal pure returns (uint256 mint_) {
+contracts/vaults/detf/common/core/DETFEpochNaturalExpansionLib.sol:45:    function computeRealization(AccrualInput memory in_)
+contracts/vaults/detf/common/core/DETFNaturalExpansionLib.sol:42:/// `resolveExpansionParams` maps zero args → plan defaults (same spirit as
+contracts/vaults/detf/common/core/DETFNaturalExpansionLib.sol:51:///   1. mintAmount, newTs = DETFNaturalExpansionLib.computeExpansionMint(...)
+contracts/vaults/detf/common/core/DETFNaturalExpansionLib.sol:112:    uint256 internal constant DEFAULT_CATCH_UP_MAX_SECONDS = 1 days;
+contracts/vaults/detf/common/core/DETFNaturalExpansionLib.sol:115:    uint256 internal constant DEFAULT_CATCH_UP_CAP_BPS = 50;
+contracts/vaults/detf/common/core/DETFNaturalExpansionLib.sol:125:    struct AccrualInput {
+contracts/vaults/detf/common/core/DETFNaturalExpansionLib.sol:151:    function resolveExpansionParams(
+contracts/vaults/detf/common/core/DETFNaturalExpansionLib.sol:157:        catchUpSeconds_ = catchUpSecondsArg_ == 0 ? DEFAULT_CATCH_UP_MAX_SECONDS : catchUpSecondsArg_;
+contracts/vaults/detf/common/core/DETFNaturalExpansionLib.sol:158:        capBps_ = catchUpCapBpsArg_ == 0 ? DEFAULT_CATCH_UP_CAP_BPS : catchUpCapBpsArg_;
+contracts/vaults/detf/common/core/DETFNaturalExpansionLib.sol:176:    function computeExpansionMint(AccrualInput memory in_)
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_NaturalExpansion.t.sol:249:            DETFNaturalExpansionLib.DEFAULT_CATCH_UP_MAX_SECONDS,
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_NaturalExpansion.t.sol:254:            DETFNaturalExpansionLib.DEFAULT_CATCH_UP_CAP_BPS,
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETF_NaturalExpansion.t.sol:272:        _warp(365 days); // far beyond DEFAULT_CATCH_UP_MAX_SECONDS (1 day)
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_NaturalExpansion.t.sol:99:        return (totalSupply_ * DETFNaturalExpansionLib.DEFAULT_CATCH_UP_CAP_BPS) / 10_000;
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_NaturalExpansion.t.sol:333:            DETFNaturalExpansionLib.DEFAULT_CATCH_UP_MAX_SECONDS,
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_NaturalExpansion.t.sol:338:            DETFNaturalExpansionLib.DEFAULT_CATCH_UP_CAP_BPS,
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_NaturalExpansion.t.sol:354:        _warp(365 days); // far beyond DEFAULT_CATCH_UP_MAX_SECONDS (1 day)
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_NaturalExpansion_Decimals.sol:248:            DETFNaturalExpansionLib.DEFAULT_CATCH_UP_MAX_SECONDS,
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_NaturalExpansion_Decimals.sol:253:            DETFNaturalExpansionLib.DEFAULT_CATCH_UP_CAP_BPS,
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/SingleStandardExchangeDETF_NaturalExpansion_Decimals.sol:271:        _warp(365 days); // far beyond DEFAULT_CATCH_UP_MAX_SECONDS (1 day)
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_NaturalExpansion_Decimals.sol:98:        return (totalSupply_ * DETFNaturalExpansionLib.DEFAULT_CATCH_UP_CAP_BPS) / 10_000;
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_NaturalExpansion_Decimals.sol:332:            DETFNaturalExpansionLib.DEFAULT_CATCH_UP_MAX_SECONDS,
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_NaturalExpansion_Decimals.sol:337:            DETFNaturalExpansionLib.DEFAULT_CATCH_UP_CAP_BPS,
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/ComposedStableCommonDetf_NaturalExpansion_Decimals.sol:353:        _warp(365 days); // far beyond DEFAULT_CATCH_UP_MAX_SECONDS (1 day)
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_NaturalExpansion_Decimals.sol:255:            DETFNaturalExpansionLib.DEFAULT_CATCH_UP_MAX_SECONDS,
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_NaturalExpansion_Decimals.sol:260:            DETFNaturalExpansionLib.DEFAULT_CATCH_UP_CAP_BPS,
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/decimals/MixedBufferMultiVaultStableDetf_NaturalExpansion_Decimals.sol:278:        _warp(365 days); // far beyond DEFAULT_CATCH_UP_MAX_SECONDS (1 day)
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_NaturalExpansion.t.sol:256:            DETFNaturalExpansionLib.DEFAULT_CATCH_UP_MAX_SECONDS,
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_NaturalExpansion.t.sol:261:            DETFNaturalExpansionLib.DEFAULT_CATCH_UP_CAP_BPS,
+test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetf_NaturalExpansion.t.sol:279:        _warp(365 days); // far beyond DEFAULT_CATCH_UP_MAX_SECONDS (1 day)
+
+102 matches
+100 matched lines
+16 files contained matches
+5185 files searched
+16583 bytes printed
+21750853 bytes searched
+0.527279 seconds spent searching
+0.141504 seconds total

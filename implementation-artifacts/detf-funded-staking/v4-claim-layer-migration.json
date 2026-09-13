@@ -1,0 +1,41 @@
+{
+  "status": "applied; validation pending",
+  "files": [
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ClaimBase.sol",
+      "before_sha256": "cb3ba5bac0865b2d02636b798531136927cd4b3fe520ffd1c7b58778586169c3",
+      "after_sha256": "b4a6a6970f8bb8e0976f60896f57e75ead9de767280ea7e416d875b70b2549dc",
+      "mapping": [
+        "Maturity comes from funded position terms; claim uses actual owner authorization, pays sDETF and preserves protocol LP. Remaining old caller economic assertions still require migration."
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_ClaimOpenBase.sol",
+      "before_sha256": "ac764f3327d49363bdf020429a3c28d456d15ec24784b083d6bbfaca6b7d7d9d",
+      "after_sha256": "366a38801c810b81745f0806c868fb9dbb66db1d738fdeb06297f192a589ef27",
+      "mapping": [
+        "preMaturity sell revert -> zero-at-start and linear halfway principal payout",
+        "mature sale -> funded sDETF payout, NFT retirement, exact unstake and retained LP",
+        "reward-while-locked keeps independent claimability and pays sDETF; raw-DETF payout retired under D32"
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_ClaimBase_Decimals.sol",
+      "before_sha256": "b61b40e4f7131d22b6db31804234108a8190d41b2ca462ae5cf7897349f9ddf8",
+      "after_sha256": "5c1fb9adbb35098086c035e914854c9d1566c461d8bd67175462038880520376",
+      "mapping": [
+        "Maturity comes from funded position terms; claim uses actual owner authorization, pays sDETF and preserves protocol LP. Remaining old caller economic assertions still require migration."
+      ]
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_ClaimOpenBase_Decimals.sol",
+      "before_sha256": "429a745800863791350a435592e975b4720484640f5f4dd641043d0061db4695",
+      "after_sha256": "8533ecbd9969afad648aa04a6ef1324d2ee2278a970cb00772a31c3ce9cc34cb",
+      "mapping": [
+        "preMaturity sell revert -> zero-at-start and linear halfway principal payout",
+        "mature sale -> funded sDETF payout, NFT retirement, exact unstake and retained LP",
+        "reward-while-locked keeps independent claimability and pays sDETF; raw-DETF payout retired under D32"
+      ]
+    }
+  ]
+}
