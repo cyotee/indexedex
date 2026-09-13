@@ -82,6 +82,9 @@ export function Header() {
                 <Link href="/insights" className={navLinkClass}>
                   DETFs
                 </Link>
+                <Link href="/staking" className={navLinkClass}>
+                  Staking
+                </Link>
                 <Link href="/create" className={navLinkClass}>
                   Create
                 </Link>
