@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
-import { erc20Abi, parseUnits } from 'viem'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { erc20Abi, formatUnits, parseUnits } from 'viem'
 import { useAccount, useBalance, usePublicClient, useReadContract, useSwitchChain, useWriteContract } from 'wagmi'
 import { CHAIN_ID_ANVIL, CHAIN_ID_LOCALHOST } from '@indexedex/protocol/addressArtifacts'
 
@@ -14,7 +14,7 @@ import { chainDeadline } from '../../lib/tx/chainDeadline'
 import { parseContractError } from '../../lib/tx/parseContractError'
 import { actionTokenOptionLabel, type ActionToken } from '../lib/actionTokens'
 import { insightsViewAbi, rebasingClaimAbi, standardizedYieldDiscoveryAbi } from '../lib/insightsAbi'
-import { collectStakeTokenAddresses, formatTokenAmount, stakingExchangeRoute } from '../lib/claimMint'
+import { collectStakeTokenAddresses, formatTokenAmount, receivedDetfAmount, stakingExchangeRoute } from '../lib/claimMint'
 
 const inputClass = 'mt-1 w-full rounded-lg border border-[var(--border-subtle,rgba(255,255,255,0.08))] bg-[var(--surface-2,#1c2030)] px-3 py-2 text-sm text-[var(--text-primary,#EDEDED)]'
 
@@ -41,12 +41,16 @@ export function DetfStaking({ detf, detfSymbol, claimToken, claimSymbol, pairTok
   const [status, setStatus] = useState('')
   const [pendingLeg, setPendingLeg] = useState<'approve' | 'stake' | 'unstake' | null>(null)
 
+  const contextKey = `${chainId}:${walletChainId}:${address}:${detf}`
+  const currentContext = useRef(contextKey)
+  currentContext.current = contextKey
+
   const { data: stakingSY } = useReadContract({
-    address: detf, abi: standardizedYieldDiscoveryAbi, functionName: 'stakingSY',
+    chainId, address: detf, abi: standardizedYieldDiscoveryAbi, functionName: 'stakingSY',
     query: { enabled: !!detf },
   })
   const { data: acceptedInputs } = useReadContract({
-    address: stakingSY, abi: standardizedYieldDiscoveryAbi, functionName: 'getTokensIn',
+    chainId, address: stakingSY, abi: standardizedYieldDiscoveryAbi, functionName: 'getTokensIn',
     query: { enabled: !!stakingSY },
   })
   const { data: claimName } = useReadContract({ chainId, address: claimToken, abi: rebasingClaimAbi, functionName: 'name', query: { enabled: !!claimToken } })
@@ -80,12 +84,12 @@ export function DetfStaking({ detf, detfSymbol, claimToken, claimSymbol, pairTok
   const { data: tokenBalance, refetch: refreshTokenBalance } = useReadContract({ chainId, address: spendToken, abi: erc20Abi, functionName: 'balanceOf', args: address ? [address] : undefined, query: { enabled: !!spendToken && !!address && !payEth } })
   const balance = payEth ? ethBalance?.value : tokenBalance
   const { data: allowance, refetch: refreshAllowance } = useReadContract({
-    address: spendToken, abi: erc20Abi, functionName: 'allowance',
+    chainId, address: spendToken, abi: erc20Abi, functionName: 'allowance',
     args: address && route ? [address, route.target] : undefined,
     query: { enabled: !!spendToken && !!address && !!route?.needsAllowance },
   })
-  const { data: preview, refetch: refreshPreview } = useReadContract({
-    address: route?.target, abi: insightsViewAbi, functionName: 'previewExchangeIn',
+  const { data: preview, error: previewError, isFetching: previewFetching, refetch: refreshPreview } = useReadContract({
+    chainId, address: route?.target, abi: insightsViewAbi, functionName: 'previewExchangeIn',
     args: route && parsed != null && parsed > 0n ? [route.tokenIn, parsed, route.tokenOut] : undefined,
     query: { enabled: !!route && parsed != null && parsed > 0n, retry: 0, refetchInterval: 15_000 },
   })
@@ -93,11 +97,21 @@ export function DetfStaking({ detf, detfSymbol, claimToken, claimSymbol, pairTok
   const blockedCopy = !isConnected ? 'Connect a wallet to sign.'
     : !walletMatches ? `Switch the wallet to chain ${chainId}.`
       : !claimToken ? 'Reading the staking token…'
-        : reserveLive === false && route?.requiresLiveReserve ? 'Payment-token staking opens after the first bond. Direct DETF staking remains available.'
+        : reserveLive !== true && route?.requiresLiveReserve ? 'Payment-token staking opens after the first bond. Direct DETF staking remains available.'
           : null
-  const ready = !blockedCopy && !!route && !!address && pendingLeg == null && parsed != null && parsed > 0n && preview != null && preview > 0n && balance != null && balance >= parsed
+  const ready = !blockedCopy && !!route && !!address && pendingLeg == null && parsed != null && parsed > 0n && !previewError && !previewFetching && preview != null && preview > 0n && balance != null && balance >= parsed
 
+  function requireSameWallet() {
+    if (currentContext.current !== contextKey) throw new Error('Wallet or network changed. Review the selected account before continuing.')
+  }
+  async function freshQuote() {
+    if (!publicClient || !route || parsed == null) throw new Error('The staking route is unavailable.')
+    const quote = await publicClient.readContract({ address: route.target, abi: insightsViewAbi, functionName: 'previewExchangeIn', args: [route.tokenIn, parsed, route.tokenOut] })
+    if (quote <= 0n) throw new Error('No positive staking quote is available.')
+    return quote
+  }
   async function writeOnWallet(params: Parameters<typeof writeContractAsync>[0] | EthWrapWrite) {
+    requireSameWallet()
     if (typeof walletChainId === 'number' && walletChainId !== chainId && !localWallet) await switchChainAsync({ chainId })
     const { chain: _chain, chainId: _cid, ...rest } = params as typeof params & { chain?: unknown; chainId?: number }
     return writeContractAsync((localWallet ? rest : params) as Parameters<typeof writeContractAsync>[0])
@@ -108,11 +122,14 @@ export function DetfStaking({ detf, detfSymbol, claimToken, claimSymbol, pairTok
     const receipt = await publicClient.waitForTransactionReceipt({ hash })
     if (receipt.status === 'reverted') throw new Error('Transaction reverted')
     setStatus(`${label} confirmed.`)
+    return receipt
   }
   async function approve() {
-    if (!route || !spendToken || parsed == null || parsed <= 0n || !address) return
+    if (!ready || !route || !spendToken || parsed == null || parsed <= 0n || !address || !publicClient) return
     setPendingLeg('approve')
     try {
+      await freshQuote()
+      await publicClient.simulateContract({ account: address, address: spendToken, abi: erc20Abi, functionName: 'approve', args: [route.target, parsed] })
       const hash = await writeOnWallet({ account: address, address: spendToken, abi: erc20Abi, functionName: 'approve', args: [route.target, parsed] })
       await wait(hash, 'Approve')
       await refreshAllowance()
@@ -121,7 +138,9 @@ export function DetfStaking({ detf, detfSymbol, claimToken, claimSymbol, pairTok
   async function exchange() {
     if (!ready || !route || !spendToken || parsed == null || !address || !publicClient) return
     setPendingLeg(tab === 'unstake' ? 'unstake' : 'stake')
+    setStatus('')
     try {
+      await freshQuote()
       if (payEth && weth) {
         const hash = await writeOnWallet({ account: address, address: weth, abi: WETH9_DEPOSIT_ABI, functionName: 'deposit', value: parsed })
         await wait(hash, 'Wrap')
@@ -133,21 +152,31 @@ export function DetfStaking({ detf, detfSymbol, claimToken, claimSymbol, pairTok
           await wait(hash, 'Approve')
         }
       }
-      const quoted = await publicClient.readContract({ address: route.target, abi: insightsViewAbi, functionName: 'previewExchangeIn', args: [route.tokenIn, parsed, route.tokenOut] })
-      if (quoted <= 0n) throw new Error('No positive staking quote is available')
+      const quoted = await freshQuote()
       const minimum = route.requiresLiveReserve ? (quoted * 99n / 100n || 1n) : quoted
-      const hash = await writeOnWallet({
-        account: address, address: route.target, abi: insightsViewAbi, functionName: 'exchangeIn',
-        args: [route.tokenIn, parsed, route.tokenOut, minimum, address, false, await chainDeadline(publicClient)],
+      const args = [route.tokenIn, parsed, route.tokenOut, minimum, address, false, await chainDeadline(publicClient)] as const
+      const simulation = await publicClient.simulateContract({
+        account: address, address: route.target, abi: insightsViewAbi, functionName: 'exchangeIn', args,
       })
-      await wait(hash, tab === 'unstake' ? 'Unstake' : 'Stake')
+      const hash = await writeOnWallet(simulation.request)
+      const receipt = await wait(hash, route.requiresLiveReserve ? `Acquire ${detfSymbol}` : tab === 'unstake' ? 'Unstake' : 'Stake')
+      requireSameWallet()
+      if (route.requiresLiveReserve) {
+        // A separate user action stakes only the DETF delivered by this receipt.
+        // Reloading is safe: direct DETF staking is the default and reads wallet holdings.
+        setToken(route.tokenOut)
+        setAmount('')
+        const received = receivedDetfAmount(receipt.logs, route.tokenOut, address)
+        setAmount(formatUnits(received, 9))
+        setStatus(`Received ${formatUnits(received, 9)} ${detfSymbol} in your wallet. Step 2: approve if needed, then stake to receive ${claimLabel}.`)
+      }
       await Promise.allSettled([refreshSupply(), refreshClaimBalance(), refreshTokenBalance(), refreshEthBalance(), refreshAllowance(), refreshPreview()])
     } catch (error) { setStatus(parseContractError(error)) } finally { setPendingLeg(null) }
   }
 
   if (!detf) return null
   return (
-    <div data-testid="detf-staking">
+    <fieldset disabled={pendingLeg != null} className="min-w-0" data-testid="detf-staking">
       <p className="text-sm text-[var(--text-muted,#9aa3b2)]">
         Stake {detfSymbol} to receive an equal amount of {claimLabel}. Rewards add to your staked balance when they are funded.
         Unstake one {claimLabel} for one {detfSymbol}. You can also pay with a supported token using the quote below.
@@ -170,11 +199,16 @@ export function DetfStaking({ detf, detfSymbol, claimToken, claimSymbol, pairTok
           </select>
         </label>
         <AmountField className="mt-4" label="Pay" symbol={tokenMeta?.symbol} value={amount} onChange={setAmount} decimals={decimals ?? 9} balance={balance} data-testid="detf-stake-amount" />
-        <p className="mt-2 text-xs">Preview: {tab === 'stake' && preview != null ? `${formatTokenAmount(preview, claimDecimals ?? 9)} ${claimLabel}` : 'Enter an amount for a quote.'}</p>
+        <p className="mt-2 text-xs">Preview: {tab === 'stake' && preview != null ? `${formatTokenAmount(preview, 9, 9)} ${route?.requiresLiveReserve ? detfSymbol : claimLabel}` : 'Enter an amount for a quote.'}</p>
+        {route?.requiresLiveReserve ? <p className="mt-2 text-sm" data-testid="detf-stake-steps">
+          Step 1: acquire {detfSymbol} into your wallet. Step 2: stake it for an equal amount of {claimLabel}.
+          Each step requires a separate transaction, plus token approvals if needed.{payEth ? ' ETH is wrapped to WETH first.' : ''}
+        </p> : null}
+        {previewError ? <p role="alert" className="mt-2 text-sm" data-testid="detf-stake-quote-error">{parseContractError(previewError)}</p> : null}
         {blockedCopy ? <p className="mt-2 text-sm">{blockedCopy}</p> : null}
         <div className="mt-4">
           {needApprove ? <Button type="button" onClick={() => void approve()} disabled={!ready} loading={pendingLeg === 'approve'} data-testid="detf-stake-approve">Approve {tokenMeta?.symbol ?? 'token'}</Button>
-            : <Button type="button" onClick={() => void exchange()} disabled={!ready} loading={pendingLeg === 'stake'} data-testid="detf-stake">Stake {claimLabel}</Button>}
+            : <Button type="button" onClick={() => void exchange()} disabled={!ready} loading={pendingLeg === 'stake'} data-testid="detf-stake">{route?.requiresLiveReserve ? `Step 1: acquire ${detfSymbol}` : `Stake ${claimLabel}`}</Button>}
         </div>
       </TabPanel>
       <TabPanel when="unstake" active={tab}>
@@ -184,7 +218,7 @@ export function DetfStaking({ detf, detfSymbol, claimToken, claimSymbol, pairTok
         <Button type="button" className="mt-4" onClick={() => void exchange()} disabled={!ready} loading={pendingLeg === 'unstake'} data-testid="detf-unstake">Unstake {claimLabel}</Button>
       </TabPanel>
       {status ? <p className="mt-3 text-xs" data-testid="detf-staking-status">{status}</p> : null}
-    </div>
+    </fieldset>
   )
 }
 

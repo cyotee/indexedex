@@ -97,6 +97,11 @@ describe('parseContractError', () => {
   })
 
 
+  it('does not mistake an ABI deadline parameter for an expired transaction', () => {
+    expect(parseContractError(new Error('RPC request unavailable\nTransaction: exchangeIn(uint256 deadline)'))).toBe('RPC request unavailable')
+    expect(parseContractError({ message: 'Execution reverted', cause: { data: { errorName: 'DeadlineExpired' } } })).toMatch(/deadline expired/i)
+  })
+
   it('returns safe fallback for unknown errors', () => {
     const msg = parseContractError({ weird: true })
     expect(msg.length).toBeGreaterThan(0)

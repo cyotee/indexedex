@@ -46,6 +46,8 @@ export async function installInjectedWallet(
     unlockedAddress?: `0x${string}`
     /** Mainnet UI inspection only: no signing or transaction submission. */
     readOnlyAddress?: `0x${string}`
+    /** Observe UI requests in tests; does not bypass the read-only guard. */
+    onRequest?: (request: RpcRequest) => void
   },
 ) {
   const rpcUrl = options?.rpcUrl ?? DEFAULT_E2E_RPC
@@ -79,6 +81,7 @@ export async function installInjectedWallet(
 
   await page.exposeFunction(bridgeName, async (payload: RpcRequest) => {
     const { method, params = [] } = payload
+    options?.onRequest?.(payload)
 
     if (options?.readOnlyAddress && !new Set([
       'eth_requestAccounts', 'eth_accounts', 'eth_chainId', 'net_version', 'eth_blockNumber',

@@ -60,3 +60,26 @@ E2E_MAINNET_READONLY=1 E2E_SKIP_WEBSERVER=1 E2E_BASE_URL=http://127.0.0.1:3003 n
 ```
 
 Bond quotes include the selected duration's bonus and the reserve input limit. Failed quotes must stop approval/wrapping, and fresh quotes are checked again before execution. “Find a smaller amount” only updates the amount field using contract previews; it never splits or submits a purchase. ETH wrapping and approval confirmations are separate from “Bond confirmed.”
+
+### Payment-token staking
+
+The staking form acquires DETF into the connected wallet before offering a
+separate direct DETF-to-sDETF exchange. This avoids the deployed combined route,
+whose mint cleanup can consume its held DETF before the staking transfer.
+The form explains both transactions and any approvals, simulates each exchange,
+and fills the second step from the confirmed receipt's net DETF transfers to the
+wallet. Rejection of the second step leaves DETF in the wallet; select DETF to
+resume staking after a reload. Quotes and approvals use the selected chain and
+the actual spender for each step. No combined payment-to-sDETF call is submitted.
+
+Read-only mainnet regression for the reported 10 DTF amount (run from `frontend`):
+
+```sh
+E2E_MAINNET_READONLY=1 E2E_SKIP_WEBSERVER=1 npm run test:e2e -w @indexedex/app-indexedex -- e2e/staking-payment-mainnet-readonly.spec.ts
+E2E_MAINNET_READONLY=1 E2E_SKIP_WEBSERVER=1 E2E_BASE_URL=http://127.0.0.1:3003 npm run test:e2e -w @indexedex/app-indexedex -- e2e/staking-payment-mainnet-readonly.spec.ts
+```
+
+The test wallet rejects all submissions and signing. The first exchange uses
+ordinary mainnet `eth_call`; direct staking is independently simulated with
+call-local balance/allowance overrides representing acquired DETF. These checks
+do not claim a completed onchain two-transaction lifecycle.

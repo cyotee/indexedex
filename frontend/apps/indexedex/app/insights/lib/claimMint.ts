@@ -1,4 +1,4 @@
-import { formatUnits, type Address } from 'viem'
+import { erc20Abi, formatUnits, parseEventLogs, type Address, type TransactionReceipt } from 'viem'
 
 import { asAddr } from './actionTokens'
 import { insightsDetfHref } from './insightsHref'
@@ -21,7 +21,10 @@ export function collectStakeTokenAddresses(input: {
   return out
 }
 
-/** Both previews and writes use this route, including its actual allowance spender. */
+/** Payment tokens acquire wallet-held DETF first; a separate direct stake follows.
+ * The deployed combined route sweeps its held DETF before it can stake it.
+ * Both previews and writes use the same output and allowance spender.
+ */
 export function stakingExchangeRoute(input: {
   detf?: Address
   stakingToken?: Address
@@ -34,10 +37,25 @@ export function stakingExchangeRoute(input: {
   return {
     target: direct ? stakingToken : detf,
     tokenIn: unstake ? stakingToken : tokenIn!,
-    tokenOut: unstake ? detf : stakingToken,
+    tokenOut: unstake || !direct ? detf : stakingToken,
     needsAllowance: !unstake,
     requiresLiveReserve: !direct,
   }
+}
+
+/** Only this receipt's net DETF delivery becomes the next staking amount. */
+export function receivedDetfAmount(logs: TransactionReceipt['logs'], detf: Address, recipient: Address): bigint {
+  const transfers = parseEventLogs({
+    abi: erc20Abi, eventName: 'Transfer',
+    logs: logs.filter((log) => log.address.toLowerCase() === detf.toLowerCase()),
+  })
+  let received = 0n
+  for (const { args } of transfers) {
+    if (args.to.toLowerCase() === recipient.toLowerCase()) received += args.value
+    if (args.from.toLowerCase() === recipient.toLowerCase()) received -= args.value
+  }
+  if (received <= 0n) throw new Error('Could not identify the received DETF amount. Check your wallet balance before staking.')
+  return received
 }
 
 export function formatTokenAmount(value: bigint | undefined, decimals = 9, maxFrac = 6): string {

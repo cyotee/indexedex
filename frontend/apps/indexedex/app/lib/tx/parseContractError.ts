@@ -126,7 +126,7 @@ export function parseContractError(err: unknown): string {
     return 'Token allowance too low. Approve again.'
   }
 
-  if (/deadline|expired/i.test(lower) && /transaction|swap|permit/i.test(lower)) {
+  if (/DeadlineExpired|(?:deadline|transaction|swap|permit)[^\n]{0,60}expired|expired[^\n]{0,60}(?:deadline|transaction|swap|permit)/i.test(blob)) {
     return 'Transaction deadline expired. Try again.'
   }
 

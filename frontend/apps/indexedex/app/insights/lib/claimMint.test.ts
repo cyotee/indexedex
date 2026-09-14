@@ -1,6 +1,6 @@
-import { getAddress } from 'viem'
+import { encodeAbiParameters, encodeEventTopics, erc20Abi, getAddress, type TransactionReceipt } from 'viem'
 import { describe, expect, it } from 'vitest'
-import { collectStakeTokenAddresses, formatTokenAmount, insightsStakingHref, stakingExchangeRoute } from './claimMint'
+import { collectStakeTokenAddresses, formatTokenAmount, receivedDetfAmount, insightsStakingHref, stakingExchangeRoute } from './claimMint'
 
 const DETF = '0xd31fe4f8d93a373fb08ecf6a955095f8b3d27117' as const
 const PAIR = '0xd97e3BCF599A5dbc893387680868d4Ad76E81206' as const
@@ -13,9 +13,9 @@ describe('funded staking routes', () => {
       target: STAKING, tokenIn: DETF, tokenOut: STAKING, needsAllowance: true, requiresLiveReserve: false,
     })
   })
-  it('routes supported payment tokens through the DETF standard interface', () => {
+  it('acquires wallet-held DETF for payment tokens before a separate direct stake', () => {
     expect(stakingExchangeRoute({ detf: DETF, stakingToken: STAKING, tokenIn: PAIR, unstake: false })).toEqual({
-      target: DETF, tokenIn: PAIR, tokenOut: STAKING, needsAllowance: true, requiresLiveReserve: true,
+      target: DETF, tokenIn: PAIR, tokenOut: DETF, needsAllowance: true, requiresLiveReserve: true,
     })
   })
   it('unstakes directly without reserve gating or approval of the DETF', () => {
@@ -52,5 +52,28 @@ describe('insightsStakingHref', () => {
     expect(insightsStakingHref(DETF)).toBe(`/insights/${getAddress(DETF)}?tab=stake`)
     expect(insightsStakingHref(DETF)).not.toMatch(/^\/staking(\?|$)/)
     expect(insightsStakingHref(DETF)).not.toMatch(/[?&]detf=/)
+  })
+})
+
+
+describe('received DETF for the second staking step', () => {
+  const wallet = '0x1111111111111111111111111111111111111111' as const
+  function transfer(token: typeof DETF | typeof PAIR, from: `0x${string}`, to: `0x${string}`, value: bigint): TransactionReceipt['logs'][number] {
+    return {
+      address: token, data: encodeAbiParameters([{ type: 'uint256' }], [value]),
+      topics: encodeEventTopics({ abi: erc20Abi, eventName: 'Transfer', args: { from, to } }) as [`0x${string}`, ...`0x${string}`[]],
+      blockHash: `0x${'00'.repeat(32)}`, blockNumber: 1n, transactionHash: `0x${'11'.repeat(32)}`, transactionIndex: 0, logIndex: 0, removed: false,
+    }
+  }
+  it('uses only net DETF delivered to this wallet in this receipt', () => {
+    expect(receivedDetfAmount([
+      transfer(DETF, ZERO, wallet, 12_377n), transfer(DETF, wallet, STAKING, 2n),
+      transfer(PAIR, ZERO, wallet, 10n ** 18n), transfer(DETF, ZERO, STAKING, 9_000n),
+      transfer(DETF, wallet, wallet, 500n),
+    ], DETF, wallet)).toBe(12_375n)
+  })
+  it('does not substitute the quote or an existing balance for a missing delivery', () => {
+    expect(() => receivedDetfAmount([], DETF, wallet)).toThrow('Check your wallet balance')
+    expect(() => receivedDetfAmount([transfer(DETF, wallet, STAKING, 1n)], DETF, wallet)).toThrow()
   })
 })
