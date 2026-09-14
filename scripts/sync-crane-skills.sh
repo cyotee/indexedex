@@ -26,6 +26,7 @@ SKILLS=(
   pons-operations
   pons-integration
   pons-family
+  forge-deployment
   forge-testing
   forge-fuzz-testing
 )

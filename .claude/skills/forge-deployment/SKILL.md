@@ -7,6 +7,10 @@ description: Deploy and verify smart contracts with Foundry. Use when deploying 
 
 Deploy and verify smart contracts using Foundry's deployment tools.
 
+## Source verification preflight
+
+For existing contracts, first read [source verification](references/source-verification.md): inherited credentials, exact build identity, Blockscout PRO authentication, standard JSON fallback, and independent Sourcify/Blockscout completion checks. Check the consumer’s configured `BLOCKSCOUT_API_KEY` in the inherited environment before looking in `.env` or asking for a key. Verification alone requires no signing key or onchain broadcast.
+
 ## When to Use
 
 - Deploying contracts to testnets or mainnet
