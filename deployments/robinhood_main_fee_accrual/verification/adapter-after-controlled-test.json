@@ -1,0 +1,21 @@
+{
+  "is_verified": null,
+  "is_fully_verified": null,
+  "is_partially_verified": null,
+  "verified_twin_address_hash": null,
+  "message": null,
+  "error": null,
+  "httpStatus": "200",
+  "address": "0xc84999f31ea72a793a65ce73aa05ff624fdcbb51",
+  "checkedAt": "2026-09-14T21:25:38.006787+00:00",
+  "responseKeys": [
+    "conflicting_implementations",
+    "creation_bytecode",
+    "creation_status",
+    "deployed_bytecode",
+    "implementations",
+    "proxy_type"
+  ],
+  "sourceCodePresent": false,
+  "interpretation": "HTTP 200 bytecode response without verified-source fields; no completed source verification confirmed"
+}

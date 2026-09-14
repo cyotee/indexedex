@@ -1,0 +1,22 @@
+[
+  {
+    "authentication": "bearer",
+    "url": "https://api.blockscout.com/v2/api?chain_id=4663&module=contract&action=getsourcecode&address=0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+    "httpStatus": "200",
+    "apiStatus": "1",
+    "message": "OK",
+    "sourcePresent": true,
+    "contractName": "MinimalDiamondCallBackProxy",
+    "checkedAt": "2026-09-14T21:42:58.483151+00:00"
+  },
+  {
+    "authentication": "query",
+    "url": "https://api.blockscout.com/v2/api?chain_id=4663&module=contract&action=getsourcecode&address=0x4a5cFDC2b07016FCf917f4eD5A51C52111A0fcC7",
+    "httpStatus": "200",
+    "apiStatus": "1",
+    "message": "OK",
+    "sourcePresent": true,
+    "contractName": "MinimalDiamondCallBackProxy",
+    "checkedAt": "2026-09-14T21:43:00.395107+00:00"
+  }
+]

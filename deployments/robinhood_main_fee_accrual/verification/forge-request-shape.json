@@ -1,0 +1,35 @@
+[
+  {
+    "configuredChain": "4663",
+    "bodyKeyPresent": false,
+    "bodyKeyIsPlaceholder": false,
+    "queryKeyPresent": false,
+    "authorizationHeaderPresent": false,
+    "fieldNames": [
+      "action",
+      "codeformat",
+      "compilerversion",
+      "contractaddress",
+      "contractname",
+      "module",
+      "sourceCode"
+    ]
+  },
+  {
+    "configuredChain": "1",
+    "bodyKeyPresent": true,
+    "bodyKeyIsPlaceholder": true,
+    "queryKeyPresent": false,
+    "authorizationHeaderPresent": false,
+    "fieldNames": [
+      "action",
+      "apikey",
+      "codeformat",
+      "compilerversion",
+      "contractaddress",
+      "contractname",
+      "module",
+      "sourceCode"
+    ]
+  }
+]
