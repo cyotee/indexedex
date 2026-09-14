@@ -1,14 +1,6 @@
 ---
 name: indexedex-launch-scripts
-description: >
-  Guides IndexedEx Foundry launch scripts: Phase/Stage file layout, two-shell Anvil vs public
-  entrypoints, skip/pin/rehearsal, and Anvil configuration for accurate EIP-1559 gas and
-  deployer funding quotes. Use when the user asks about "Phase_00_Stage", "anvil_robinhood",
-  "4663", "46630", "simulate architecture", "gas estimate", "funding quote",
-  "disable-code-size-limit", "disable-min-priority-fee", launch scripts, robinhood_testnet.sh,
-  "platform.json", "tokenlist", or "chain/46630" export. DO NOT use for Foundry tests
-  (indexedex-testing), SuperSim/Sepolia bridge rehearsal (indexedex-script-orchestration),
-  or generic Anvil node setup (anvil-node).
+description: "IndexedEx Robinhood launch scripts: Phase/Stage layout, 4663/46630 Anvil rehearsal, gas/funding quotes and exports."
 license: MIT
 ---
 
@@ -25,6 +17,10 @@ matches the live chain. Two jobs, two gold trees. Do not mix their Anvil flags.
 | Local / public staged deploy | `scripts/foundry/anvil_robinhood_testnet/` | Phase/Stage catalog; 46630 may turn EIP-170 **off** |
 
 Generic `anvil-node` is not this law.
+
+## Existing-contract source verification
+
+`BLOCKSCOUT_API_KEY` is already configured in the owner’s inherited environment (confirmed 2026-09-14). Check presence there first without displaying it; do not infer it is missing from `.env` alone or ask the owner to set it again. Use [source verification](references/source-verification.md) for Robinhood Blockscout/Sourcify authentication, migration inventory and exact-match checks. No deployment or signing is needed for this task.
 
 ## Two Anvil modes (do not mix)
 

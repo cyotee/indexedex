@@ -18,6 +18,10 @@ matches the live chain. Two jobs, two gold trees. Do not mix their Anvil flags.
 
 Generic `anvil-node` is not this law.
 
+## Existing-contract source verification
+
+`BLOCKSCOUT_API_KEY` is already configured in the owner’s inherited environment (confirmed 2026-09-14). Check presence there first without displaying it; do not infer it is missing from `.env` alone or ask the owner to set it again. Use [source verification](references/source-verification.md) for Robinhood Blockscout/Sourcify authentication, migration inventory and exact-match checks. No deployment or signing is needed for this task.
+
 ## Two Anvil modes (do not mix)
 
 | Mode | EIP-170 | Fees | Forge | Output |
@@ -110,6 +114,7 @@ When EIP-170 may be off: [references/anvil-dev-complete.md](references/anvil-dev
 - `skill:indexedex-testing`: tests, not launch shells
 - `skill:indexedex-script-orchestration`: SuperSim / Sepolia bridge wrappers only
 - `skill:indexedex-uniswap-v4-hook-packages`: hook DFPkg deploy path used by Phase 02/06
-- PRD: `docs/ANVIL_ROBINHOOD_TESTNET_LAUNCH_SCRIPTS_REWRITE_PRD.md`
+- PRD (46630 lab): `docs/ANVIL_ROBINHOOD_TESTNET_LAUNCH_SCRIPTS_REWRITE_PRD.md`
+- PRD (4663 architecture): `docs/ANVIL_ROBINHOOD_MAIN_ARCHITECTURE_PHASE_STAGE_PRD.md`
 - Plan: `docs/ANVIL_ROBINHOOD_TESTNET_LAUNCH_SCRIPTS_REWRITE_IMPLEMENTATION_AND_TEST_PLAN.md`
 - 4663 README: `scripts/foundry/anvil_robinhood_main/README.md`
