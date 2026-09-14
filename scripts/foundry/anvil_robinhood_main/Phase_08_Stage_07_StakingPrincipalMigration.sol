@@ -35,9 +35,11 @@ library Phase_08_Stage_07_StakingPrincipalMigration {
         Snapshot afterState;
     }
 
-    /// @notice Cap each weighted-reserve migration at one quarter of its current DTF book.
-    /// @dev The hook permits at most 30% for swaps. A 25% cap leaves room for rounding
-    ///      and applies whether the DETF chooses issuance or its price-gate swap fallback.
+    /// @notice Cap each weighted-reserve migration at 5% of its current DTF book.
+    /// @dev Public reserve outflows invalidated the former 25% quotes before mining.
+    ///      A 5% cap leaves room for the observed reserve declines (up to 78.4%),
+    ///      including the issuance incentive gross-up, below the hook's 30% limit.
+    ///      Slippage and ratio guards still reject adverse moves beyond that margin.
     function nextChunkAmount(ITokenStaking staking, address target, uint256 maximum)
         internal
         view
@@ -51,7 +53,7 @@ library Phase_08_Stage_07_StakingPrincipalMigration {
         uint256 reserveCap;
         for (uint256 i; i < tokens.length; ++i) {
             if (tokens[i] == asset) {
-                reserveCap = hook.ratedBalance(i) / 4;
+                reserveCap = hook.ratedBalance(i) / 20;
                 break;
             }
         }

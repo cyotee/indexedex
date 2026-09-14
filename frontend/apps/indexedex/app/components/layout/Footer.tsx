@@ -30,8 +30,8 @@ export function Footer() {
             <Link href="/create" className="text-[var(--text-muted,#9aa3b2)] hover:text-[var(--accent,#4FD44B)]">
               Create
             </Link>
-            <Link href="/you" className="text-[var(--text-muted,#9aa3b2)] hover:text-[var(--accent,#4FD44B)]">
-              You
+            <Link href="/portfolio" className="text-[var(--text-muted,#9aa3b2)] hover:text-[var(--accent,#4FD44B)]">
+              Portfolio
             </Link>
             <Link href="/learn" className="text-[var(--text-muted,#9aa3b2)] hover:text-[var(--accent,#4FD44B)]">
               Learn

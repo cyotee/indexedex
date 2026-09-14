@@ -1,6 +1,6 @@
 {
   "identity": {
-    "scriptSourceSha256": "10c68a9dbee00498e2bc071f8ab50795194c931be24f7c70be5327d18891c942",
+    "scriptSourceSha256": "7b241553cb54220041d97ac3bc220b308bbc607bb053a93aaaa5ee664f184d3e",
     "instanceId": "public-4663",
     "configSha256": "23a0b8e28b37e66c921bbde8ede5c6eb296ba160911b893175207042568f642f",
     "forkBlockNumber": 62009735,
@@ -439,16 +439,6 @@
       "from": "90dcad1c28a15255889e10e5281ca3e2e5e67bc94ce2e60f952668c19cc2a11c",
       "to": "7b241553cb54220041d97ac3bc220b308bbc607bb053a93aaaa5ee664f184d3e",
       "reason": "Reviewed first-batch cutover reconciliation: prove the first migration timestamp and transaction order, preserve exact actual debits and quote limits, recover the confirmed batch without broadcast. No contract or economic configuration changes."
-    },
-    {
-      "from": "7b241553cb54220041d97ac3bc220b308bbc607bb053a93aaaa5ee664f184d3e",
-      "to": "ae7112dc9a9b65443b405f644aafc73e6d49742aab990fb24f2490f46a7aaa77",
-      "reason": "Reviewed recovery for a canonically reverted first transaction with an unsent remainder: verify sender nonces, preserve failed calldata and quotes, enforce unchanged staking reserve/principal, then permit fresh quote execution. No contract, economic, slippage, or pool-limit changes."
-    },
-    {
-      "from": "ae7112dc9a9b65443b405f644aafc73e6d49742aab990fb24f2490f46a7aaa77",
-      "to": "10c68a9dbee00498e2bc071f8ab50795194c931be24f7c70be5327d18891c942",
-      "reason": "Reviewed reserve-drift sizing fix: cap migration calls at 5% of live DTF custody instead of 25%; reconcile a successful prefix followed by a reverted transaction without replay. No deployed contract, fee, slippage, deadline, weight, or pool-limit changes."
     }
   ]
 }

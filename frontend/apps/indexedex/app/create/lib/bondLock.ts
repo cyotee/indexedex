@@ -57,8 +57,9 @@ export function asBondLockTerms(raw: unknown): BondLockTerms | null {
 }
 
 export function clampLockDays(raw: string, minDays: number, maxDays: number): number | null {
-  const n = Math.floor(Number(raw))
-  if (!Number.isFinite(n)) return null
+  if (!/^\d+$/.test(raw.trim())) return null
+  const n = Number(raw)
+  if (!Number.isSafeInteger(n)) return null
   if (n < minDays || n > maxDays) return null
   return n
 }

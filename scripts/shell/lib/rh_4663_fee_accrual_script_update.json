@@ -1,5 +1,5 @@
 {
-  "from": "44691de41f5b69911877c7b6af39af10d895ffc789a0bb972134735174befe93",
-  "to": "90dcad1c28a15255889e10e5281ca3e2e5e67bc94ce2e60f952668c19cc2a11c",
-  "reason": "Reviewed migration deadline fix: four transactions per invocation, fresh sequential batches, local trace metadata, receipt-derived cutover baseline; no contract or economic config changes."
+  "from": "10c68a9dbee00498e2bc071f8ab50795194c931be24f7c70be5327d18891c942",
+  "to": "268a34b602629cb0580f6344c2fd3d8ea8308c9489ce8c4f1171ae0e51f498ca",
+  "reason": "Recover a confirmed successful migration prefix with an unsent tail only after verifying receipts, contiguous nonces and no later or pending sender transactions. Archive the original batch and reconcile before fresh migration automatically. No contract, sizing, slippage, deadline or signing changes."
 }

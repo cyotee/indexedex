@@ -196,6 +196,30 @@ broadcast failures require receipt reconciliation before resuming.
 
 #### Recovering from the migration deadline failure
 
+**Current resume command (from the repository root, with `DEPLOYER_ADDRESS` set):**
+
+```bash
+bash scripts/shell/robinhood_main.sh fee-accrual-migrate --broadcast
+```
+
+When a composition journal exists, this command first reconciles the exact
+reviewed script update and the saved migration broadcast, before any Forge stage
+can overwrite its quote. The separate `fee-accrual-reconcile` command remains
+available for read-only recovery, but is no longer required before resuming.
+
+Recovery now supports a successful submitted prefix followed by an unsent tail.
+It verifies each receipt, canonical block, calldata, migration event and reserve
+delta; the sender's latest and pending nonces must both equal the last confirmed
+nonce plus one, and the prepared nonces must be contiguous. A saved pending hash,
+later sender activity, missing receipt or partial journal entry still stops the
+run. The original batch and full quote are archived in `interruptedBroadcast` on
+the recovered journal entry. Only confirmed events debit the journal; the unsent
+tail is freshly quoted rather than replayed. Recovery is idempotent.
+
+The 5% live DTF reserve cap is unchanged. When the remaining staking balance fits
+within that cap, the script automatically migrates it in one transaction and runs
+the completion checks. No larger limit or additional configuration is necessary.
+
 The September 13 runner prepared 59 calls before Forge's RPC simulation, all
 with the same 30-minute deadline. Stage 08-07 now prepares at most four calls
 per invocation. Both shells simulate, broadcast and reconcile each batch before
@@ -217,8 +241,8 @@ A 45-minute pause between batches confirmed fresh deadlines on continuation.
 The first corrected batch also passed normal simulation against public mainnet.
 The 34 Python runner and receipt tests passed.
 
-For a run created with the original scripts, first reconcile the reviewed script
-update, then continue migration:
+For a run using the reviewed predecessor script hash, reconcile the script
+update and any fully confirmed, unjournaled migration batch, then continue:
 
 ```bash
 bash scripts/shell/robinhood_main.sh fee-accrual-reconcile &&
@@ -234,12 +258,66 @@ manifests, config hashes and confirmed stage receipts are retained.
 
 A pre-migration snapshot is provisional while staking remains open. Retrying
 before the first migration refreshes that snapshot, preserving its prior values.
-The first confirmed batch establishes the reserve and principal baseline from
-its fresh quote and matching onchain event deltas. Subsequent batches must
-reconcile against that baseline and preserve principal allocation weights.
-An unjournaled migration remains an error; changing the script identity does not
-adopt unrecorded conversions. If any transactions were partially broadcast,
-reconcile their receipts before attempting another batch.
+The first confirmed batch establishes the reserve baseline from its first event
+(remaining reserve plus input), and principal from the frozen staking supply.
+Deposits/withdrawals can occur even after simulation and before the first mined
+migration, so absolute simulated balances are not the cutover baseline. The
+checker proves the first receipt is the cutover using `periodFinish` and
+`lastUpdateTime`, which `_beginMigration` freezes at that block timestamp, and
+checks preceding transactions in that block for an earlier migration. Every
+actual debit and quoted input/minimum output must still match; later batches
+must start at the preceding confirmed reserve and preserve principal weights.
+
+If Forge reports success followed by `Migration reserve delta mismatch`, retain
+the Stage 08-07 quote and broadcast files and run the two commands above.
+`fee-accrual-reconcile` verifies the saved transactions against canonical live
+receipts, records the confirmed batch once, and preserves its quotes in the
+journal. It submits no transactions and is idempotent. It rejects ambiguous or partially journaled successful prefixes and unrecorded
+earlier migration activity.
+`fee-accrual-migrate --broadcast` then quotes and simulates only the remaining
+reserve; it never resends the recovered batch. A successful prefix followed by
+a confirmed revert is handled as described below.
+
+#### Recovering a reverted first migration transaction
+
+A successful simulation cannot freeze a public reserve pool while a transaction
+awaits signing/mining. Transaction `0x6185dd11b89407302f8208a5c448dc9171c885982fe6534a9ed4176309f3abe0`
+reverted with `MaxInRatio()` at block 62276653: the DTF custody book fell from
+187,611.7271 DTF when quoted to 40,628.4163 DTF before mining. The prepared
+46,902.9318 DTF input exceeded the weighted hook's 30% limit. The deadline had
+not expired and the transaction did not exhaust its gas limit. The revert
+rolled back the entire migration call, including transfers and approvals.
+
+Use the same `fee-accrual-reconcile && fee-accrual-migrate --broadcast` commands
+above. Recovery now accepts a canonically reverted first transaction when the
+remaining batch transactions were never submitted, the sender's mined and
+pending nonces both show only that failed nonce was consumed, and staking's
+reserve/principal still match the last confirmed migration. It preserves the
+failed calldata and quotes under `failedMigrationAttempts`, without counting
+them as converted funds. If earlier transactions in the batch succeeded, their
+receipts and corresponding quotes are reconciled first, exactly once. The
+terminal revert is then recorded without a debit. Pending transactions, gaps
+in submitted nonces, or an ambiguous partial journal still stop recovery.
+
+The next run uses fresh nonces, deadlines, output quotes, and a 5%
+cap on the current DTF reserve. Do not use `forge --resume` to replay the stale
+calldata. Pool limits and slippage checks remain enabled; another reserve change
+between quoting and mining can still cause a protective revert. Complete signing
+promptly after reviewing the simulation.
+
+The repeated failure `0xd67d96cb35ee081a9c10bcc6de27a6ba58969424215bc41e7832dae6451811a8`
+at block 62291906 occurred about 135 seconds after quoting. The reserve fell
+from approximately 99,190 to 71,034 DTF. This demonstrated that sizing needed
+more headroom even with prompt signing. The 5% policy was tested using both
+historical failure blocks: inputs sized from the original pre-decline books
+succeeded against the actual post-decline states. A fork rehearsal starting at
+62291906 converted the entire remaining reserve in 158 calls with quoted 50-bps
+minimums, unchanged principal, and ordinary Wrapped completion. Live activity
+can change that count; smaller chunks trade additional transactions for margin.
+Validation also passed 14 existing hermetic migration/composition tests and
+43 Python runner/receipt checks. Recovery was exercised against copied live
+journals, including a successful prefix plus terminal failure reconstructed
+from real consecutive receipts, and repeated to verify idempotency.
 
 For individual steps, use `fee-accrual-packages`, `fee-accrual-prepare`, and
 `fee-accrual-migrate`, each with `--broadcast`. They default to the same package
@@ -265,7 +343,7 @@ Stage 08-03 deploys the deterministic bond NFT child through its registered pack
 
 Stage 08-05 deploys the owner-approved standalone `TokenStakingMigrationAdapter` with `new` and constructor arguments, reusing actual DETF and its existing static staking SY. It sets that adapter as the historical staking target while phase remains Staking, or validates an already configured adapter. It exports `phase08_stage05_staking_migration_adapter.json`; the protocol DETF address remains unchanged.
 
-Migration snapshots allocation weights and **the whole actual DTF balance**, then invokes `migrateToClaimVault` in a bounded batch. Each chunk is capped by the remaining staking balance, `maxChunkInput`, and 25% of the weighted hook's current rated DTF reserve. This stays below the hook's 30% swap input limit when the DETF uses its price-gate fallback. The shared stage simulates the complete native call before each broadcast and derives a nonzero minimum. At most `maxChunks` transactions are prepared per invocation; an unfinished migration remains resumable. Rewards and deposits enter the same claim vault backed by static staking SY. Native migration minimums and outputs use SY units. Users call `withdrawClaim` to receive SY, then redeem it through the existing SY for real sDETF; pending rebases and delays before redemption preserve their static ownership. The runner never rescues rewards, donates migration funds, replaces the staking claim-vault package, or calls `completeWrap`. It requires ordinary Wrapped completion with zero remaining DTF and verifies every ordered migration event against its actual adapter target, quote, preceding reserve balance and receipt. The shared runner checks adapter bindings, receipt exhaustion and allowance cleanup. The frontend candidate exports actual DETF, real sDETF, staking SY and migration target separately.
+Migration snapshots allocation weights and **the whole actual DTF balance**, then invokes `migrateToClaimVault` in a bounded batch. Each chunk is capped by the remaining staking balance, `maxChunkInput`, and 5% of the weighted hook's current rated DTF reserve. The former 25% cap left insufficient headroom for observed public reserve declines. The 5% cap stays below the 30% limit across both observed failure states, including issuance gross-up; larger adverse changes can still cause a protective revert. The shared stage simulates the complete native call before each broadcast and derives a nonzero minimum. At most `maxChunks` transactions are prepared per invocation; an unfinished migration remains resumable. Rewards and deposits enter the same claim vault backed by static staking SY. Native migration minimums and outputs use SY units. Users call `withdrawClaim` to receive SY, then redeem it through the existing SY for real sDETF; pending rebases and delays before redemption preserve their static ownership. The runner never rescues rewards, donates migration funds, replaces the staking claim-vault package, or calls `completeWrap`. It requires ordinary Wrapped completion with zero remaining DTF and verifies every ordered migration event against its actual adapter target, quote, preceding reserve balance and receipt. The shared runner checks adapter bindings, receipt exhaustion and allowance cleanup. The frontend candidate exports actual DETF, real sDETF, staking SY and migration target separately.
 
 For already-built stages, set `FOUNDRY_OFFLINE=true` to avoid optional external source/trace-label lookups. Local RPC simulation and broadcasting remain enabled; this does not skip transaction simulation.
 

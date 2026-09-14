@@ -1,7 +1,20 @@
 import { describe, expect, it } from 'vitest'
 import { parseContractError } from './parseContractError'
+import { ContractFunctionRevertedError } from 'viem'
+import { FUNDED_BOND_ABI } from '../detf/bondRoute'
 
 describe('parseContractError', () => {
+  it('explains the liquidity limit decoded by viem under a generic bond error', () => {
+    const cause = new ContractFunctionRevertedError({ abi: FUNDED_BOND_ABI, data: '0x340a4533', functionName: 'bond' })
+    expect(parseContractError(new Error('The contract function "bond" reverted.', { cause })))
+      .toMatch(/per-transaction liquidity limit/)
+  })
+
+  it('finds MetaMask nested original revert data', () => {
+    expect(parseContractError({ message: 'The contract function "bond" reverted.', cause: {
+      data: { originalError: { data: '0x340a4533' } },
+    } })).toMatch(/per-transaction liquidity limit/)
+  })
   it('explains the weighted pool input limit even when RPC renders its selector as text', () => {
     expect(parseContractError({ message: 'execution reverted: 4', cause: { data: '0x340a4533' } }))
       .toMatch(/per-transaction liquidity limit.*smaller amount/)

@@ -734,7 +734,7 @@ export function FirstBondClient() {
         </Card>
 
         <div className="flex flex-wrap gap-3">
-          <Link href={`/you?detf=${detf}`}>
+          <Link href={`/portfolio?detf=${detf}`}>
             <Button variant="secondary">View bond</Button>
           </Link>
           <Link href={insightsDetfHref(detf)}>

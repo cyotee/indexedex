@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { erc20Abi, formatUnits, parseUnits } from 'viem'
 import {
   useAccount,
@@ -23,6 +23,7 @@ import { Tabs, TabPanel } from '../../components/ui/Tabs'
 import {
   asBondLockTerms,
   clampLockDays,
+  FALLBACK_MIN_LOCK_DAYS,
   lockRangeFromBondTerms,
   lockSecondsFromDays as lockSecondsFromNumber,
 } from '../../create/lib/bondLock'
@@ -38,9 +39,9 @@ import {
   withEthPayOption,
 } from '../../lib/ethPay'
 import { asBondClaim, asBondPosition, requireFundedBondSupport } from '../../lib/detf/bondNftVault'
-import { FUNDED_BOND_ABI, V4_BOND_PREVIEW_ABI, fundedBondArgs, resolveBondRoute } from '../../lib/detf/bondRoute'
+import { FUNDED_BOND_ABI, V4_BOND_PREVIEW_ABI, fundedBondArgs, resolveBondRoute, smallerBondAmount } from '../../lib/detf/bondRoute'
 import { chainDeadline } from '../../lib/tx/chainDeadline'
-import { parseContractError } from '../../lib/tx/parseContractError'
+import { isPoolInputLimitError, parseContractError } from '../../lib/tx/parseContractError'
 import { isArchivedDetf } from '../lib/archivedDetfs'
 import { isInsightsActionTab } from '../lib/insightsHref'
 import { bondNftAbi, diamondLoupeAbi, insightsViewAbi, standardizedYieldDiscoveryAbi } from '../lib/insightsAbi'
@@ -56,7 +57,6 @@ import {
   walletCanSignOnChain,
 } from '../lib/claimRewardsGate'
 import { isZero } from '../lib/tokenLabels'
-import { lockSecondsFromDays, MIN_LOCK_DAYS } from '../lib/lockSeconds'
 import { actionTokenOptionLabel, asAddr, tokensForStandardRoute, type ActionToken } from '../lib/actionTokens'
 import { DetfStaking } from './DetfStaking'
 
@@ -124,9 +124,11 @@ export function DetfActions({
   const [token, setToken] = useState<string>(pairTokens[0]?.address ?? '')
   const [amount, setAmount] = useState('')
   const [burnAmount, setBurnAmount] = useState('')
-  const [lockDays, setLockDays] = useState(String(MIN_LOCK_DAYS))
+  const [lockDays, setLockDays] = useState(String(FALLBACK_MIN_LOCK_DAYS))
+  const [lockBlurred, setLockBlurred] = useState(false)
   const [tokenId, setTokenId] = useState('')
   const [status, setStatus] = useState('')
+  const [findingBondAmount, setFindingBondAmount] = useState(false)
   const [pendingLeg, setPendingLeg] = useState<'approve' | 'mint' | 'bond' | 'claim' | 'burn' | null>(null)
   const [approvedSpend, setApprovedSpend] = useState(0n)
   const [approvedDetfSpend, setApprovedDetfSpend] = useState(0n)
@@ -184,7 +186,6 @@ export function DetfActions({
   })
   const decimals = payEth || tokenDecimals == null ? 18 : Number(tokenDecimals)
   const parsed = payEth || tokenDecimals != null ? parseAmount(amount, decimals) : undefined
-  const lock = lockSecondsFromDays(lockDays)
   const parsedId = useMemo(() => parseBondTokenId(tokenId), [tokenId])
 
   const { data: ethBal } = useBalance({
@@ -222,18 +223,19 @@ export function DetfActions({
     [oracleTerms],
   )
 
-  useEffect(() => {
-    const n = Number(lockDays)
-    if (!Number.isFinite(n) || n < minDays || n > maxDays) {
-      setLockDays(String(minDays))
-    }
-  }, [minDays, maxDays, lockDays])
-  const oracleLock = lockSecondsFromNumber(clampLockDays(lockDays, minDays, maxDays) ?? minDays)
-  const { data: bondPreview } = useReadContract({
+  // Keep the draft intact while typing (including blank or partial numbers).
+  // Invalid drafts cannot be quoted or submitted as a different duration.
+  const validLockDays = clampLockDays(lockDays, minDays, maxDays)
+  const oracleLock = validLockDays == null ? null : lockSecondsFromNumber(validLockDays)
+  const bondInputKey = `${chainId}:${address}:${detf}:${tokenAddr}:${parsed}:${lockDays}`
+  const currentBondInput = useRef(bondInputKey)
+  currentBondInput.current = bondInputKey
+  const { data: bondPreview, error: bondPreviewError, isFetching: bondPreviewFetching } = useReadContract({
     chainId, address: detf, abi: V4_BOND_PREVIEW_ABI, functionName: 'previewBond',
-    args: spendToken && parsed != null ? [spendToken, parsed, oracleLock] : undefined,
-    query: { enabled: tab === 'bond' && !!detf && !!spendToken && parsed != null && parsed > 0n, retry: 0, refetchInterval: 15_000 },
+    args: spendToken && parsed != null && oracleLock != null ? [spendToken, parsed, oracleLock] : undefined,
+    query: { enabled: tab === 'bond' && !!detf && !!spendToken && parsed != null && parsed > 0n && oracleLock != null, retry: 0, refetchInterval: 15_000 },
   })
+  const bondQuoteReady = oracleLock != null && !!bondPreview && bondPreview[1] > 0n && !bondPreviewError && !bondPreviewFetching && !findingBondAmount
   const payingReserveLp = tab === 'bond' && addressesMatch(spendToken, reserveLp)
   const { data: preview } = useReadContract({
     chainId,
@@ -444,7 +446,10 @@ export function DetfActions({
     setPendingLeg('approve')
     setStatus('')
     try {
-      if (tab === 'bond') await readBondRoute()
+      if (tab === 'bond') {
+        await readBondRoute()
+        await freshBondQuote(parsed)
+      }
       const hash = await writeOnWallet({
         account: address,
         address: spendToken,
@@ -599,21 +604,52 @@ export function DetfActions({
     return minimum > 0n ? minimum : 1n
   }
 
+  async function freshBondQuote(amountIn: bigint) {
+    if (!publicClient || !detf || !spendToken) throw new Error('The selected DETF is unavailable.')
+    if (oracleLock == null) throw new Error(`Enter a whole number of days from ${minDays} to ${maxDays}.`)
+    const quote = await publicClient.readContract({
+      address: detf, abi: V4_BOND_PREVIEW_ABI, functionName: 'previewBond', args: [spendToken, amountIn, oracleLock],
+    })
+    if (quote[1] <= 0n) throw new Error('No positive bond quote is available for this amount.')
+    return quote
+  }
+
+  async function findSmallerBond() {
+    if (!parsed || findingBondAmount) return
+    const inputKey = bondInputKey
+    setFindingBondAmount(true)
+    setStatus('Checking smaller bond amounts…')
+    try {
+      const candidate = await smallerBondAmount(parsed, freshBondQuote)
+      if (currentBondInput.current !== inputKey) return
+      setAmount(formatUnits(candidate, decimals))
+      setStatus('Amount reduced to a current positive quote. Review it before buying; no bond has been submitted.')
+    } catch (error) {
+      if (currentBondInput.current === inputKey) setStatus(parseContractError(error))
+    } finally {
+      setFindingBondAmount(false)
+    }
+  }
+
   async function bond() {
-    if (archived || !detf || !spendToken || parsed == null || parsed <= 0n || !address || !publicClient) return
+    if (archived || !detf || !spendToken || parsed == null || parsed <= 0n || !address || !publicClient || oracleLock == null) return
     setPendingLeg('bond')
     setStatus('')
     try {
       const route = await readBondRoute()
+      // previewBond applies the duration bonus and the reserve's input limit.
+      // Check it before spending gas on wrapping or approving ETH payment.
+      await freshBondQuote(parsed)
       await wrapEth()
       if (payEth) await approveWethIfNeeded()
+      await freshBondQuote(parsed)
       const args = fundedBondArgs(route, { token: spendToken, amount: parsed, duration: oracleLock, recipient: address, deadline: await chainDeadline(publicClient) })
       await publicClient.simulateContract({ account: address, address: detf, abi: FUNDED_BOND_ABI, functionName: 'bond', args })
       const hash = await writeOnWallet({ account: address, address: detf, abi: FUNDED_BOND_ABI, functionName: 'bond', args })
       await wait(hash, 'Bond')
       await ownerScan.refetch()
     } catch (e) {
-      setStatus(parseContractError(e))
+      setStatus(`${parseContractError(e)}${payEth ? ' If wrapping already confirmed, the WETH remains in your wallet. Select WETH to retry without wrapping again.' : ''}`)
     } finally {
       setPendingLeg(null)
     }
@@ -822,17 +858,41 @@ export function DetfActions({
             className={`${inputClass} font-mono`}
             value={lockDays}
             onChange={(e) => setLockDays(e.target.value)}
+            onFocus={() => setLockBlurred(false)}
+            onBlur={() => setLockBlurred(true)}
+            aria-invalid={lockBlurred && oracleLock == null}
             inputMode="numeric"
             data-testid="detf-bond-days"
           />
         </label>
+        {lockBlurred && oracleLock == null ? (
+          <p className="mt-1 text-sm" role="alert" data-testid="detf-bond-lock-error">
+            Enter a whole number of days from {minDays} to {maxDays}.
+          </p>
+        ) : null}
         <p className="mt-1 text-xs text-[var(--text-muted,#9aa3b2)]">
           Minimum {minDays} days. Maximum {maxDays} days. Principal unlocks continuously over the selected period.
           Staking rewards can be claimed while principal is still vesting.
         </p>
-        {bondPreview ? (
+        {oracleLock != null && bondPreview && !bondPreviewError ? (
           <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]" data-testid="detf-bond-preview">
             Purchase preview: {formatUnits(bondPreview[1], 9)} DETF, staked throughout the vesting period.
+          </p>
+        ) : null}
+        {oracleLock != null && bondPreviewError ? (
+          <div className="mt-2 text-sm" role="alert" data-testid="detf-bond-quote-error">
+            <p>{parseContractError(bondPreviewError)}</p>
+            {isPoolInputLimitError(bondPreviewError) ? (
+              <Button type="button" onClick={() => void findSmallerBond()} loading={findingBondAmount}
+                disabled={findingBondAmount || pendingLeg != null} data-testid="detf-bond-smaller">
+                Find a smaller amount
+              </Button>
+            ) : null}
+          </div>
+        ) : null}
+        {payEth ? (
+          <p className="mt-2 text-xs text-[var(--text-muted,#9aa3b2)]">
+            ETH payment requires wrapping, approval if needed, and a separate bond transaction. Only “Bond confirmed” means your bond was purchased.
           </p>
         ) : null}
         {payingReserveLp ? (
@@ -853,7 +913,7 @@ export function DetfActions({
             <Button
               type="button"
               onClick={() => void approve()}
-              disabled={!canMintOrBond || parsed == null || parsed <= 0n}
+              disabled={!canMintOrBond || parsed == null || parsed <= 0n || !bondQuoteReady}
               loading={pendingLeg === 'approve'}
               data-testid="detf-approve"
             >
@@ -863,7 +923,7 @@ export function DetfActions({
             <Button
               type="button"
               onClick={() => void bond()}
-              disabled={!canMintOrBond || parsed == null || parsed <= 0n || lock == null || !spendToken}
+              disabled={!canMintOrBond || parsed == null || parsed <= 0n || oracleLock == null || !spendToken || !bondQuoteReady}
               loading={pendingLeg === 'bond'}
               data-testid="detf-bond"
             >

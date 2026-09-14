@@ -27,6 +27,7 @@ elif name == 'jq':
     print('https://rpc.default.example' if '--arg' in args and 'alias_name' in args else '0x' + '12' * 20)
 elif name == 'python3':
     mode = args[2]
+    if mode == 'recover-migration' and os.environ.get('FAIL_RECOVERY'): sys.exit(1)
     Path(os.environ['OUT_DIR_OVERRIDE']).mkdir(parents=True, exist_ok=True)
     if mode == 'stage-complete':
         if os.environ.get('INVALID_PRIOR_RECEIPT'): sys.exit(1)
@@ -96,6 +97,10 @@ class FeeAccrualSender(unittest.TestCase):
                             'OUT_DIR_OVERRIDE', 'FOUNDRY_BROADCAST'):
                     env.pop(key, None)
             env.update(changes)
+            if env.get('EXISTING_MIGRATION_JOURNAL'):
+                run = Path(env['FEE_ACCRUAL_RUN_DIR'])
+                run.mkdir(parents=True, exist_ok=True)
+                (run / 'fee-accrual-journal.json').write_text('{}')
             if command == 'fee-accrual-launch' and '06-01' in env.get('COMPLETED_STAGES', '').split(','):
                 saved_packages = Path(env['FEE_ACCRUAL_RUN_DIR']) / 'packages'
                 saved_packages.mkdir(parents=True, exist_ok=True)
@@ -125,8 +130,21 @@ class FeeAccrualSender(unittest.TestCase):
         for r in broadcasts:
             self.assertIn('--slow', r['args'])
             self.assertNotIn('--account', r['args'])
+
         checks = [r['args'][2] for r in rows if r['cli'] == 'python3']
         self.assertEqual(checks, ['preflight', 'ready', 'stage-complete', 'receipts', 'begin-migration', 'remaining', 'receipts', 'remaining', 'verify'])
+
+    def test_migrate_recovers_existing_journal_before_any_forge_stage(self):
+        result, rows = self.run_public(EXISTING_MIGRATION_JOURNAL='1')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        first_forge = next(i for i, row in enumerate(rows) if row['cli'] == 'forge')
+        modes = [row['args'][2] for row in rows[:first_forge] if row['cli'] == 'python3']
+        self.assertEqual(modes[:2], ['reconcile-scripts', 'recover-migration'])
+
+    def test_uncertain_recovery_stops_before_forge_can_overwrite_quotes(self):
+        result, rows = self.run_public(EXISTING_MIGRATION_JOURNAL='1', FAIL_RECOVERY='1')
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse(any(row['cli'] == 'forge' for row in rows))
         self.assertFalse(any(arg.startswith('anvil_') for r in rows for arg in r['args']))
 
     def test_requires_explicit_broadcast(self):
@@ -157,7 +175,7 @@ class FeeAccrualSender(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertFalse(any(r['cli'] == 'forge' and r['args'][0] == 'script' for r in rows))
         checks = [r for r in rows if r['cli'] == 'python3']
-        self.assertEqual([r['args'][2] for r in checks], ['reconcile-scripts', 'reconcile-scripts'])
+        self.assertEqual([r['args'][2] for r in checks], ['reconcile-scripts', 'reconcile-scripts', 'recover-migration'])
         self.assertTrue(checks[0]['output'].endswith('/packages'))
         self.assertTrue(checks[1]['output'].endswith('/composition'))
 

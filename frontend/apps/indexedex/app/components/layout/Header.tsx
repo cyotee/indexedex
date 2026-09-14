@@ -88,8 +88,8 @@ export function Header() {
                 <Link href="/create" className={navLinkClass}>
                   Create
                 </Link>
-                <Link href="/you" className={navLinkClass}>
-                  You
+                <Link href="/portfolio" className={navLinkClass}>
+                  Portfolio
                 </Link>
                 <Link href="/learn" className={navLinkClass}>
                   Learn

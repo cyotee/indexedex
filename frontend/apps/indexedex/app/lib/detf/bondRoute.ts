@@ -1,7 +1,11 @@
 import { toFunctionSelector } from 'viem'
+import { isPoolInputLimitError } from '../tx/parseContractError'
+
+const BOND_ERRORS = [{ type: 'error', name: 'MaxInRatio', inputs: [] }] as const
 
 /** Both live bond entrypoints retain their family's payment and bootstrap semantics. */
 export const FUNDED_BOND_ABI = [
+  ...BOND_ERRORS,
   {
     type: 'function', name: 'bond', stateMutability: 'nonpayable',
     inputs: [
@@ -22,7 +26,7 @@ export const FUNDED_BOND_ABI = [
   },
 ] as const
 
-export const FUNDED_BOND_SELECTORS = FUNDED_BOND_ABI.map((item) => toFunctionSelector(item))
+export const FUNDED_BOND_SELECTORS = FUNDED_BOND_ABI.flatMap((item) => item.type === 'function' ? [toFunctionSelector(item)] : [])
 
 /** Read the installed selectors before approvals or wrapping; never retry a failed purchase on another route. */
 export async function resolveBondRoute(readFacet: (selector: `0x${string}`) => Promise<unknown>) {
@@ -42,7 +46,7 @@ export function fundedBondArgs(route: Awaited<ReturnType<typeof resolveBondRoute
 
 
 /** Funded V4 purchase quote; LP payments exclude the reserve's direct DETF inventory. */
-export const V4_BOND_PREVIEW_ABI = [{
+export const V4_BOND_PREVIEW_ABI = [...BOND_ERRORS, {
   type: 'function', name: 'previewBond', stateMutability: 'view',
   inputs: [
     { name: 'tokenIn', type: 'address' }, { name: 'amountIn', type: 'uint256' },
@@ -53,3 +57,20 @@ export const V4_BOND_PREVIEW_ABI = [{
     { name: 'rewardsDetf', type: 'uint256' }, { name: 'liquidityDetf', type: 'uint256' },
   ],
 }] as const
+
+/** User-requested quote search only: never submits or splits a purchase. */
+export async function smallerBondAmount(amount: bigint, quote: (amount: bigint) => Promise<readonly bigint[]>): Promise<bigint> {
+  let candidate = amount
+  for (let i = 0; i < 24; i++) {
+    candidate /= 2n
+    if (candidate === 0n) break
+    try {
+      const result = await quote(candidate)
+      if (result[1] == null || result[1] <= 0n) break
+      return candidate
+    } catch (error) {
+      if (!isPoolInputLimitError(error)) throw error
+    }
+  }
+  throw new Error('No smaller positive bond quote was found. Try another amount or refresh the reserves.')
+}

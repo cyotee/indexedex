@@ -29,17 +29,25 @@ function extractCode(err: unknown): number | string | undefined {
  */
 function extractDataBlob(err: unknown): string {
   const parts: string[] = []
-  let current: unknown = err
-  for (let i = 0; i < 6 && current != null; i++) {
-    if (typeof current === 'object') {
-      const o = current as Record<string, unknown>
-      if (typeof o.data === 'string') parts.push(o.data)
-      current = o.cause
-      continue
+  const seen = new Set<unknown>()
+  function visit(value: unknown, depth: number) {
+    if (depth > 10 || value == null || seen.has(value)) return
+    if (typeof value === 'string') { parts.push(value); return }
+    if (typeof value !== 'object') return
+    seen.add(value)
+    const o = value as Record<string, unknown>
+    // viem decodes data to { errorName, args }; wallet RPCs may nest the
+    // original revert under data.originalError. Preserve both forms.
+    for (const key of ['cause', 'data', 'originalError', 'error', 'errorName', 'message', 'shortMessage', 'details']) {
+      visit(o[key], depth + 1)
     }
-    break
   }
+  visit(err, 0)
   return parts.join(' ')
+}
+
+export function isPoolInputLimitError(err: unknown): boolean {
+  return /0x340a4533|MaxInRatio/i.test(extractDataBlob(err))
 }
 
 export function parseContractError(err: unknown): string {

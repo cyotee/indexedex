@@ -6,8 +6,8 @@ import { test, expect } from './wallet/fixture'
 const SAMPLE_DETF = '0xd31fe4f8d93a373fb08ecf6a955095f8b3d27117'
 
 test.describe('App routes & redirects (DTF)', () => {
-  test('home, explore, create, you, learn, earn load', async ({ walletPage }) => {
-    for (const path of ['/', '/explore', '/create', '/you', '/learn', '/earn', '/insights', '/protocol']) {
+  test('home, explore, create, portfolio, learn, earn load', async ({ walletPage }) => {
+    for (const path of ['/', '/explore', '/create', '/portfolio', '/learn', '/earn', '/insights', '/protocol']) {
       const res = await walletPage.goto(path)
       expect(res?.ok() || res?.status() === 304).toBeTruthy()
       await expect(walletPage.locator('body')).not.toBeEmpty()

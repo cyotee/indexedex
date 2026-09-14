@@ -164,6 +164,7 @@ def verify_migration_events(events, quotes, target, before_remaining, live_remai
     require(events and len(events) == len(quotes), 'Migration event/quote count mismatch')
     totals = {'amountIn': 0, 'detfOut': 0, 'claimOut': 0, 'sharesOut': 0, 'chunks': len(events)}
     remaining = before_remaining
+    quoted_remaining = quote_uint(quotes[0]['beforeRemaining'])
     for event, raw_quote in zip(events, quotes):
         quote = {key: quote_uint(raw_quote[key]) for key in
                  ('amountIn', 'minClaimOut', 'beforeRemaining', 'afterRemaining')}
@@ -173,13 +174,150 @@ def verify_migration_events(events, quotes, target, before_remaining, live_remai
         amount, detf_out, claim_out, shares_out, after = [int.from_bytes(data[i:i+32], 'big') for i in range(0, 160, 32)]
         require(amount == quote['amountIn'] and amount > 0, 'Migration input differs from simulation')
         require(detf_out > 0 and claim_out >= quote['minClaimOut'] > 0 and shares_out > 0, 'Migration output below limits')
-        require(quote['beforeRemaining'] == remaining and after == remaining - amount == quote['afterRemaining'],
+        require(quote['beforeRemaining'] == quoted_remaining and
+                quote['afterRemaining'] == quoted_remaining - amount,
+                'Migration quote reserve delta mismatch')
+        require(after == remaining - amount,
                 'Migration reserve delta mismatch')
+        quoted_remaining = quote['afterRemaining']
         remaining = after
         for key, value in zip(('amountIn', 'detfOut', 'claimOut', 'sharesOut'), (amount, detf_out, claim_out, shares_out)):
             totals[key] += value
     require(remaining == live_remaining, 'Migration final reserve differs from live balance')
     return totals
+
+
+def verify_cutover_timestamp(timestamp, period_finish, last_update, earlier_events):
+    # _beginMigration writes both timestamps exactly once, on the first migration.
+    # A previous migration in the same block would have the same timestamp, so
+    # explicitly reject earlier migration events in that block as well.
+    require(timestamp == period_finish == last_update and not earlier_events,
+            'Cannot adopt an unjournaled earlier migration')
+
+
+def confirmed_cutover_reserve(url, staking, first_receipt, first_event, topic):
+    block = rpc(url, 'eth_getBlockByNumber', [first_receipt['blockNumber'], False])
+    require(block['hash'] == first_receipt['blockHash'], 'Cutover block is not canonical')
+    index = int(first_receipt['transactionIndex'], 16)
+    require(block['transactions'][index].lower() == first_receipt['transactionHash'].lower(),
+            'Cutover transaction order mismatch')
+    earlier_events = []
+    for tx_hash in block['transactions'][:index]:
+        receipt = rpc(url, 'eth_getTransactionReceipt', [tx_hash])
+        require(receipt and receipt['blockHash'] == block['hash'], 'Missing cutover predecessor receipt')
+        earlier_events.extend(log for log in receipt['logs'] if
+                              log['address'].lower() == staking.lower() and log['topics'] and
+                              log['topics'][0] == topic)
+    verify_cutover_timestamp(int(block['timestamp'], 16),
+                             int(call(url, staking, 'periodFinish()'), 16),
+                             int(call(url, staking, 'lastUpdateTime()'), 16), earlier_events)
+    data = bytes.fromhex(first_event['data'][2:])
+    require(len(data) == 160, 'Unexpected migration event ABI')
+    return int.from_bytes(data[:32], 'big') + int.from_bytes(data[-32:], 'big')
+
+
+def recovery_needed(transactions, journal):
+    require(transactions and all(tx.get('hash') for tx in transactions),
+            'Incomplete broadcast record; reconcile partial submission separately')
+    hashes = [tx['hash'].lower() for tx in transactions]
+    require(len(set(hashes)) == len(hashes), 'Duplicate broadcast transaction')
+    recorded = {r['transactionHash'].lower() for item in journal['stages'] for r in item['receipts']}
+    seen = [tx_hash in recorded for tx_hash in hashes]
+    require(not any(seen) or all(seen), 'Partially journaled batch; inspect before continuing')
+    return not all(seen)
+
+
+def verify_reverted_batch(transactions, receipt, live_tx, mined_nonce, pending_nonce):
+    require(transactions and transactions[0].get('hash') and
+            not any(tx.get('hash') for tx in transactions[1:]),
+            'Failed-batch recovery requires only the first transaction to have been submitted')
+    first = transactions[0]
+    require(receipt and int(receipt['status'], 16) == 0 and not receipt.get('logs'),
+            'Expected a confirmed reverted transaction')
+    require(live_tx and receipt['transactionHash'].lower() == first['hash'].lower() == live_tx['hash'].lower(),
+            'Failed transaction hash mismatch')
+    expected = first['transaction']
+    for field in ('from', 'to', 'input', 'nonce'):
+        require(str(expected.get(field, '')).lower() == str(live_tx.get(field, '')).lower(),
+                f'Failed broadcast {field} mismatch')
+    nonce = int(live_tx['nonce'], 16)
+    require(mined_nonce == pending_nonce == nonce + 1,
+            'Later or pending sender transactions require separate reconciliation')
+    for offset, tx in enumerate(transactions):
+        require(int(tx['transaction']['nonce'], 16) == nonce + offset,
+                'Failed batch nonce sequence mismatch')
+
+
+def submitted_prefix(transactions):
+    """A slow broadcast may contain a mined prefix and an unsubmitted suffix."""
+    count = 0
+    for tx in transactions:
+        if not tx.get('hash'):
+            break
+        count += 1
+    require(count > 0 and not any(tx.get('hash') for tx in transactions[count:]),
+            'Missing or noncontiguous submitted migration transactions')
+    require(len({tx['hash'].lower() for tx in transactions[:count]}) == count,
+            'Duplicate submitted migration transaction')
+    return count
+
+def verify_successful_prefix(transactions, count, receipt, live_tx, mined_nonce, pending_nonce):
+    """Prove the saved tail has not consumed or reserved a sender nonce."""
+    require(0 < count < len(transactions) and submitted_prefix(transactions) == count,
+            'Expected a successful submitted prefix and an unsent suffix')
+    last = transactions[count - 1]
+    require(receipt and int(receipt['status'], 16) == 1,
+            'Expected a confirmed successful prefix')
+    require(live_tx and receipt['transactionHash'].lower() == last['hash'].lower() == live_tx['hash'].lower(),
+            'Successful prefix transaction hash mismatch')
+    for field in ('from', 'to', 'input', 'nonce'):
+        require(str(last['transaction'].get(field, '')).lower() == str(live_tx.get(field, '')).lower(),
+                f'Successful prefix {field} mismatch')
+    next_nonce = int(live_tx['nonce'], 16) + 1
+    require(mined_nonce == pending_nonce == next_nonce,
+            'Later or pending sender transactions require separate reconciliation')
+    first_nonce = next_nonce - count
+    for offset, tx in enumerate(transactions):
+        require(int(tx['transaction']['nonce'], 16) == first_nonce + offset,
+                'Interrupted batch nonce sequence mismatch')
+        require(tx['transaction']['from'].lower() == live_tx['from'].lower() and
+                tx['transaction']['to'].lower() == live_tx['to'].lower(),
+                'Interrupted batch sender or target mismatch')
+
+
+def recover_reverted_batch(url, config, journal, transactions, receipt, output):
+    tx_hash = transactions[0]['hash']
+    attempts = journal.get('failedMigrationAttempts', [])
+    if any(item['transactionHash'].lower() == tx_hash.lower() for item in attempts):
+        print('Reverted migration attempt already reconciled; next run will quote fresh transactions')
+        return
+    live_tx = rpc(url, 'eth_getTransactionByHash', [tx_hash])
+    sender = config['stakingOwner']
+    verify_reverted_batch(transactions, receipt, live_tx,
+                          int(rpc(url, 'eth_getTransactionCount', [sender, 'latest']), 16),
+                          int(rpc(url, 'eth_getTransactionCount', [sender, 'pending']), 16))
+    require(live_tx['from'].lower() == sender.lower() and
+            live_tx['to'].lower() == config['tokenStaking'].lower() and
+            live_tx['input'][:10].lower() == subprocess.check_output(
+                ['cast', 'sig', 'migrateToClaimVault(uint256,uint256,uint256)'], text=True).strip(),
+            'Failed transaction is not the configured staking migration')
+    block = rpc(url, 'eth_getBlockByNumber', [receipt['blockNumber'], False])
+    require(block['hash'] == receipt['blockHash'], 'Failed receipt is not canonical')
+    prior = [item for item in journal['stages'] if 'migration' in item]
+    require(prior and int(call(url, config['tokenStaking'], 'phase()'), 16) == 1,
+            'Failed-batch recovery requires an existing reconciled migration')
+    remaining = int(call(url, config['tokenStaking'], 'reserveRemaining()'), 16)
+    require(remaining == prior[-1]['reserveRemaining'], 'Staking reserve changed after the failed batch')
+    require(int(call(url, config['tokenStaking'], 'totalSupply()'), 16) == journal['initialPrincipal'],
+            'Principal weights changed after the failed batch')
+    # Preserve the failed calldata/quotes before Forge replaces run-latest.json.
+    quote = json.loads((output / 'phase08_stage07_staking_principal_migration.json').read_text())
+    record = {'transactionHash': tx_hash, 'blockHash': receipt['blockHash'],
+              'blockNumber': receipt['blockNumber'], 'status': 0, 'reserveRemaining': remaining,
+              'transactions': transactions, 'quote': quote}
+    journal.setdefault('failedMigrationAttempts', []).append(record)
+    write_json(output / 'fee-accrual-journal.json', journal)
+    print('Confirmed reverted migration: no reserve debit; unsent transactions discarded on fresh execution')
 
 
 def main():
@@ -261,11 +399,54 @@ def main():
         else:
             write_json(destination, resolved)
         print(f'Confirmed package addresses exported to {destination}')
-    elif mode == 'receipts':
-        stage, path = sys.argv[2:4]
+    elif mode in ('receipts', 'recover-migration'):
+        if mode == 'recover-migration':
+            stage = '08-07'
+            path = output / 'broadcast/Phase_08_Stage_07_StakingPrincipalMigration.s.sol/4663/run-latest.json'
+            if not path.exists():
+                print('No migration broadcast to recover')
+                return
+        else:
+            stage, path = sys.argv[2:4]
         broadcast = json.loads(Path(path).read_text())
         transactions = broadcast.get('transactions', [])
         require(transactions, 'No broadcast transactions; cannot certify a money/deployment stage')
+        reverted = None
+        interrupted = None
+        if mode == 'recover-migration':
+            count = submitted_prefix(transactions)
+            last_receipt = rpc(url, 'eth_getTransactionReceipt', [transactions[count - 1]['hash']])
+            require(last_receipt, 'Submitted migration transaction is still pending')
+            if int(last_receipt['status'], 16) == 0:
+                reverted = (transactions[count - 1:], last_receipt)
+                failed_tx = rpc(url, 'eth_getTransactionByHash', [transactions[count - 1]['hash']])
+                sender = config['stakingOwner']
+                verify_reverted_batch(reverted[0], last_receipt, failed_tx,
+                    int(rpc(url, 'eth_getTransactionCount', [sender, 'latest']), 16),
+                    int(rpc(url, 'eth_getTransactionCount', [sender, 'pending']), 16))
+                transactions = transactions[:count - 1]
+            else:
+                if count < len(transactions):
+                    require(not broadcast.get('pending'), 'Broadcast records pending transactions; wait for confirmation')
+                    live_tx = rpc(url, 'eth_getTransactionByHash', [transactions[count - 1]['hash']])
+                    sender = config['stakingOwner']
+                    require(live_tx and live_tx['from'].lower() == sender.lower() and
+                            live_tx['to'].lower() == config['tokenStaking'].lower(),
+                            'Successful prefix is not from the configured staking owner to staking')
+                    verify_successful_prefix(transactions, count, last_receipt, live_tx,
+                        int(rpc(url, 'eth_getTransactionCount', [sender, 'latest']), 16),
+                        int(rpc(url, 'eth_getTransactionCount', [sender, 'pending']), 16))
+                    interrupted = transactions
+                    transactions = transactions[:count]
+            if not transactions:
+                recover_reverted_batch(url, config, journal, *reverted, output)
+                return
+        if mode == 'recover-migration' and not recovery_needed(transactions, journal):
+            if reverted:
+                recover_reverted_batch(url, config, journal, *reverted, output)
+                return
+            print('Migration broadcast already reconciled')
+            return
         confirmed = []
         live_receipts = []
         for tx in transactions:
@@ -276,7 +457,7 @@ def main():
             live_tx = rpc(url, 'eth_getTransactionByHash', [tx_hash])
             require(live_tx is not None, 'Missing broadcast transaction')
             expected_tx = tx.get('transaction', {})
-            for field in ('from', 'to', 'input'):
+            for field in ('from', 'to', 'input', 'nonce'):
                 expected_value = expected_tx.get(field)
                 if expected_value is not None:
                     require(str(live_tx.get(field, '')).lower() == str(expected_value).lower(), f'Broadcast {field} mismatch')
@@ -296,22 +477,42 @@ def main():
             quote = json.loads((output / 'phase08_stage07_staking_principal_migration.json').read_text())
             target = '0x' + call(url, config['tokenStaking'], 'targetDetf()')[-40:]
             chunks = quote.get('chunks', [quote])
+            if reverted or interrupted:
+                # Only the successful prefix debited reserves. Retain the full
+                # original quote with the terminal failure record for diagnosis.
+                chunks = chunks[:len(transactions)]
+            if interrupted:
+                # Archive the original prepared tail before the next Forge run
+                # overwrites run-latest.json. Only confirmed events count below.
+                record['interruptedBroadcast'] = {'transactions': interrupted, 'quote': quote,
+                                                   'confirmedCount': len(transactions)}
             prior_migrations = [item for item in journal['stages'] if 'migration' in item]
-            # Before cutover, ordinary deposits/withdrawals can change the reserve.
-            # Establish the actual baseline from the first confirmed migration,
-            # whose event must exactly match its fresh simulated reserve delta.
-            previous_remaining = prior_migrations[-1]['reserveRemaining'] if prior_migrations else quote_uint(chunks[0]['beforeRemaining'])
+            require(len(events) == len(live_receipts) == len(chunks), 'Expected one migration per transaction')
+            # Staking remains open between simulation and the first mined call.
+            # Prove this is the actual cutover, then use its receipt-backed reserve.
+            # Quotes still constrain each input/output, but cannot freeze deposits.
+            previous_remaining = (prior_migrations[-1]['reserveRemaining'] if prior_migrations else
+                                  confirmed_cutover_reserve(url, config['tokenStaking'], live_receipts[0], events[0], topic))
+            if prior_migrations:
+                require(quote_uint(chunks[0]['beforeRemaining']) == previous_remaining,
+                        'Migration quote starts from an unrecorded reserve')
             record['migration'] = verify_migration_events(events, chunks, target,
                                                          previous_remaining, record['reserveRemaining'])
+            record['quotes'] = chunks
             principal = int(call(url, config['tokenStaking'], 'totalSupply()'), 16)
             if not prior_migrations:
-                require(principal == quote_uint(chunks[0]['principalBefore']), 'Principal changed since first migration quote')
+                # The first migration freezes principal; use that frozen supply,
+                # not the provisional simulation supply while users could exit.
                 journal.setdefault('preMigrationSnapshots', []).append({key: journal[key] for key in ('initialReserve', 'initialPrincipal')})
                 journal.update(initialReserve=previous_remaining, initialPrincipal=principal)
             require(principal == journal['initialPrincipal'], 'Principal weights changed during migration')
         journal['stages'].append(record)
         write_json(journal_path, journal)
         print(f'Confirmed {len(confirmed)} transaction receipts for {stage}')
+        if interrupted:
+            print('Recovered successful migration prefix; unsent tail will be freshly quoted from live balances')
+        if reverted:
+            recover_reverted_batch(url, config, journal, *reverted, output)
     elif mode == 'stage-complete':
         records = [item for item in journal['stages'] if item['stage'] == sys.argv[2]]
         if not records:

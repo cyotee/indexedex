@@ -51,7 +51,7 @@ test.describe('Shell without requiring chain', () => {
     await expect(nav.getByRole('link', { name: 'Explore', exact: true })).toBeVisible()
     await expect(nav.getByRole('link', { name: 'DETFs', exact: true })).toBeVisible()
     await expect(nav.getByRole('link', { name: 'Create', exact: true })).toBeVisible()
-    await expect(nav.getByRole('link', { name: 'You', exact: true })).toBeVisible()
+    await expect(nav.getByRole('link', { name: 'Portfolio', exact: true })).toBeVisible()
     await expect(nav.getByRole('link', { name: 'Learn', exact: true })).toBeVisible()
   })
 })

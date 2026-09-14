@@ -621,7 +621,7 @@ function PortfolioPage() {
   return (
     <div className="max-w-6xl">
       <PageHeader
-        title="You"
+        title="Portfolio"
         subtitle="Your vault receipts, DETF tokens, and bond NFTs."
         actions={
           <div className="flex flex-wrap items-center gap-2">

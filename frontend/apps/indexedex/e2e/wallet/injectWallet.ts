@@ -44,12 +44,16 @@ export async function installInjectedWallet(
     privateKey?: Hex
     /** Test-only impersonation on a disposable Anvil fork. */
     unlockedAddress?: `0x${string}`
+    /** Mainnet UI inspection only: no signing or transaction submission. */
+    readOnlyAddress?: `0x${string}`
   },
 ) {
   const rpcUrl = options?.rpcUrl ?? DEFAULT_E2E_RPC
   const chainId = options?.chainId ?? DEFAULT_E2E_CHAIN_ID
   const privateKey = options?.privateKey ?? ANVIL_ACCOUNT_0.privateKey
-  const account = options?.unlockedAddress
+  const account = options?.readOnlyAddress
+    ? { address: options.readOnlyAddress, type: 'json-rpc' as const }
+    : options?.unlockedAddress
     ? { address: options.unlockedAddress, type: 'json-rpc' as const }
     : privateKeyToAccount(privateKey)
 
@@ -75,6 +79,28 @@ export async function installInjectedWallet(
 
   await page.exposeFunction(bridgeName, async (payload: RpcRequest) => {
     const { method, params = [] } = payload
+
+    if (options?.readOnlyAddress && !new Set([
+      'eth_requestAccounts', 'eth_accounts', 'eth_chainId', 'net_version', 'eth_blockNumber',
+      'eth_getBalance', 'eth_call', 'eth_estimateGas', 'eth_gasPrice', 'eth_getTransactionCount',
+      'eth_getTransactionReceipt', 'eth_getTransactionByHash', 'eth_getBlockByNumber', 'eth_getBlockByHash',
+      'eth_getCode', 'eth_getLogs', 'eth_feeHistory', 'eth_maxPriorityFeePerGas',
+      'wallet_switchEthereumChain', 'wallet_addEthereumChain', 'wallet_requestPermissions', 'wallet_getPermissions',
+    ]).has(method)) {
+      throw new Error(`Read-only test wallet forbids ${method}`)
+    }
+
+    if (options?.readOnlyAddress && method === 'eth_call') {
+      // Playwright serializes thrown Error objects without custom RPC data.
+      // Return an envelope and reconstruct it in the browser, as an actual
+      // EIP-1193 wallet does, so viem can decode the real mainnet revert.
+      const response = await fetch(rpcUrl, {
+        method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
+      })
+      const json = await response.json()
+      return json.error ? { __e2eRpcError: json.error } : json.result
+    }
 
     switch (method) {
       case 'eth_requestAccounts':
@@ -212,7 +238,11 @@ export async function installInjectedWallet(
         networkVersion: String(Number.parseInt(chainIdHex, 16)),
         selectedAddress: address,
         request: async (args: { method: string; params?: unknown[] }) => {
-          return (window as any)[bridge]({ method: args.method, params: args.params ?? [] })
+          const result = await (window as any)[bridge]({ method: args.method, params: args.params ?? [] })
+          if (result?.__e2eRpcError) {
+            throw Object.assign(new Error(result.__e2eRpcError.message), result.__e2eRpcError)
+          }
+          return result
         },
         on(event: string, handler: Listener) {
           if (!listeners.has(event)) listeners.set(event, new Set())

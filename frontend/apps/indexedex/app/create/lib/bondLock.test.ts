@@ -53,6 +53,13 @@ describe('asBondLockTerms', () => {
 })
 
 describe('clampLockDays', () => {
+  it('rejects incomplete or fractional input without silently choosing another duration', () => {
+    for (const raw of ['', ' ', '6', '30.5', '3e1', '-30']) {
+      expect(clampLockDays(raw, 30, 180)).toBeNull()
+    }
+    expect(clampLockDays('60', 30, 180)).toBe(60)
+    expect(clampLockDays('180', 30, 180)).toBe(180)
+  })
   it('rejects values outside the oracle range', () => {
     expect(clampLockDays('29', 30, 180)).toBeNull()
     expect(clampLockDays('181', 30, 180)).toBeNull()

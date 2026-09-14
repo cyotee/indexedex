@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Hermetic checks for local deployment guardrails (no contract mocks)."""
 import importlib.util
+import json
+import copy
 from pathlib import Path
 import unittest
 
@@ -141,6 +143,145 @@ class FeeAccrualChecks(unittest.TestCase):
         quotes[1]['minClaimOut'] = 61
         with self.assertRaisesRegex(ValueError, 'below limits'):
             checks.verify_migration_events(events, quotes, target, 100, 0)
+
+    def test_first_cutover_can_differ_from_simulation_without_weakening_debits(self):
+        events, quotes, target = self.migration_batch()
+        # A user deposits 20 after the quote and before staking is frozen.
+        for event in events:
+            data = bytes.fromhex(event['data'][2:])
+            event['data'] = '0x' + (data[:-32] + (int.from_bytes(data[-32:], 'big') + 20).to_bytes(32, 'big')).hex()
+        self.assertEqual(checks.verify_migration_events(events, quotes, target, 120, 20)['amountIn'], 100)
+        with self.assertRaisesRegex(ValueError, 'reserve delta mismatch'):
+            checks.verify_migration_events(events, quotes, target, 121, 20)
+        quotes[1]['beforeRemaining'] += 1
+        with self.assertRaisesRegex(ValueError, 'quote reserve delta mismatch'):
+            checks.verify_migration_events(events, quotes, target, 120, 20)
+
+    def test_cutover_rejects_previous_block_or_same_block_unjournaled_migration(self):
+        checks.verify_cutover_timestamp(100, 100, 100, [])
+        for finish, update, earlier in ((99, 99, []), (100, 99, []), (100, 100, ['earlier event'])):
+            with self.subTest(finish=finish, update=update, earlier=earlier), self.assertRaisesRegex(ValueError, 'unjournaled'):
+                checks.verify_cutover_timestamp(100, finish, update, earlier)
+
+    def test_recovery_never_replays_or_accepts_partial_records(self):
+        transactions = [{'hash': '0xabc'}, {'hash': '0xdef'}]
+        journal = {'stages': []}
+        self.assertTrue(checks.recovery_needed(transactions, journal))
+        journal['stages'] = [{'receipts': [{'transactionHash': '0xABC'}, {'transactionHash': '0xdef'}]}]
+        self.assertFalse(checks.recovery_needed(transactions, journal))
+        journal['stages'][0]['receipts'].pop()
+        with self.assertRaisesRegex(ValueError, 'Partially journaled'):
+            checks.recovery_needed(transactions, journal)
+        for invalid in ([], [{'hash': None}], [transactions[0], transactions[0]]):
+            with self.assertRaises(ValueError):
+                checks.recovery_needed(invalid, {'stages': []})
+
+    def test_confirmed_mainnet_batch_with_pre_cutover_principal_withdrawal(self):
+        fixture = json.loads((Path(__file__).parent / 'fixtures/fee_accrual_first_cutover.json').read_text())
+        before, after = int(fixture['cutoverReserve']), int(fixture['finalReserve'])
+        totals = checks.verify_migration_events(fixture['events'], fixture['quotes'], fixture['target'], before, after)
+        self.assertEqual(totals['chunks'], 4)
+        self.assertEqual(totals['amountIn'], 523077474431250000000)
+        self.assertEqual(totals['amountIn'], before - after)
+        with self.assertRaisesRegex(ValueError, 'reserve delta mismatch'):
+            checks.verify_migration_events(fixture['events'], fixture['quotes'], fixture['target'],
+                                            int(fixture['quotes'][0]['beforeRemaining']), after)
+
+    def reverted_batch(self):
+        tx = {'from': '0xowner', 'to': '0xstaking', 'input': '0x1234', 'nonce': '0x10'}
+        transactions = [{'hash': '0xfailed', 'transaction': tx},
+                        {'hash': None, 'transaction': {**tx, 'nonce': '0x11'}}]
+        receipt = {'status': '0x0', 'logs': [], 'transactionHash': '0xfailed'}
+        return transactions, receipt, {**tx, 'hash': '0xfailed'}
+
+    def test_reverted_first_transaction_can_be_discarded_without_a_migration_debit(self):
+        transactions, receipt, live_tx = self.reverted_batch()
+        checks.verify_reverted_batch(transactions, receipt, live_tx, 17, 17)
+
+    def test_failed_batch_recovery_rejects_pending_later_or_successful_transactions(self):
+        transactions, receipt, live_tx = self.reverted_batch()
+        for mined, pending in ((16, 16), (17, 18), (18, 18)):
+            with self.subTest(mined=mined, pending=pending), self.assertRaises(ValueError):
+                checks.verify_reverted_batch(transactions, receipt, live_tx, mined, pending)
+        for modified in ({**receipt, 'status': '0x1'}, {**receipt, 'logs': ['event']},
+                         {**receipt, 'transactionHash': '0xother'}):
+            with self.assertRaises(ValueError):
+                checks.verify_reverted_batch(transactions, modified, live_tx, 17, 17)
+        transactions[1]['hash'] = '0xsubmitted'
+        with self.assertRaises(ValueError):
+            checks.verify_reverted_batch(transactions, receipt, live_tx, 17, 17)
+
+    def test_failed_batch_recovery_binds_sender_calldata_and_nonce(self):
+        transactions, receipt, live_tx = self.reverted_batch()
+        for field in ('hash', 'from', 'to', 'input', 'nonce'):
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                checks.verify_reverted_batch(transactions, receipt, {**live_tx, field: '0xchanged'}, 17, 17)
+        bad = copy.deepcopy(transactions)
+        bad[1]['transaction']['nonce'] = '0x12'
+        with self.assertRaises(ValueError):
+            checks.verify_reverted_batch(bad, receipt, live_tx, 17, 17)
+
+    def test_partial_batch_separates_successful_prefix_from_terminal_failure(self):
+        transactions, receipt, live_tx = self.reverted_batch()
+        successful = {'hash': '0xsuccess', 'transaction': {**live_tx, 'nonce': '0xf'}}
+        batch = [successful, *transactions]
+        count = checks.submitted_prefix(batch)
+        self.assertEqual(count, 2)
+        checks.verify_reverted_batch(batch[count - 1:], receipt, live_tx, 17, 17)
+        self.assertEqual(batch[:count - 1], [successful])
+        # Once the successful prefix is recorded, recovery must not count it again.
+        journal = {'stages': [{'receipts': [{'transactionHash': '0xsuccess'}]}]}
+        self.assertFalse(checks.recovery_needed(batch[:count - 1], journal))
+
+    def test_partial_batch_rejects_missing_duplicate_or_noncontiguous_hashes(self):
+        for batch in ([], [{'hash': None}], [{'hash': '0xa'}, {'hash': None}, {'hash': '0xb'}],
+                      [{'hash': '0xa'}, {'hash': '0xA'}]):
+            with self.assertRaises(ValueError):
+                checks.submitted_prefix(batch)
+
+    def successful_partial_batch(self):
+        base = {'from': '0xowner', 'to': '0xstaking', 'input': '0x1234'}
+        transactions = [{'hash': '0xfirst', 'transaction': {**base, 'nonce': '0x10'}},
+                        {'hash': '0xlast', 'transaction': {**base, 'nonce': '0x11'}},
+                        {'hash': None, 'transaction': {**base, 'nonce': '0x12'}}]
+        receipt = {'status': '0x1', 'transactionHash': '0xlast'}
+        live = {**transactions[1]['transaction'], 'hash': '0xlast'}
+        return transactions, receipt, live
+
+    def test_successful_prefix_recovers_without_counting_unsent_transactions(self):
+        transactions, receipt, live = self.successful_partial_batch()
+        checks.verify_successful_prefix(transactions, 2, receipt, live, 18, 18)
+        prefix = transactions[:2]
+        self.assertTrue(checks.recovery_needed(prefix, {'stages': []}))
+        journal = {'stages': [{'receipts': [{'transactionHash': t['hash']} for t in prefix]}]}
+        self.assertFalse(checks.recovery_needed(prefix, journal))
+
+    def test_successful_prefix_rejects_later_mined_pending_or_lagging_nonce(self):
+        transactions, receipt, live = self.successful_partial_batch()
+        for mined, pending in ((18, 19), (19, 19), (17, 18), (18, 17)):
+            with self.subTest(mined=mined, pending=pending), self.assertRaisesRegex(ValueError, 'Later or pending'):
+                checks.verify_successful_prefix(transactions, 2, receipt, live, mined, pending)
+
+    def test_successful_prefix_binds_live_calldata_and_sender(self):
+        transactions, receipt, live = self.successful_partial_batch()
+        for field in ('hash', 'from', 'to', 'input', 'nonce'):
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                checks.verify_successful_prefix(transactions, 2, receipt, {**live, field: '0xbad'}, 18, 18)
+
+    def test_successful_prefix_rejects_modified_tail_or_nonce_gaps(self):
+        transactions, receipt, live = self.successful_partial_batch()
+        for index, field, value in ((2, 'nonce', '0x13'), (0, 'nonce', '0xf'),
+                                    (2, 'from', '0xother'), (2, 'to', '0xother')):
+            bad = copy.deepcopy(transactions)
+            bad[index]['transaction'][field] = value
+            with self.subTest(index=index, field=field), self.assertRaises(ValueError):
+                checks.verify_successful_prefix(bad, 2, receipt, live, 18, 18)
+
+    def test_successful_prefix_requires_a_confirmed_success_and_matching_receipt(self):
+        transactions, receipt, live = self.successful_partial_batch()
+        for bad in (None, {**receipt, 'status': '0x0'}, {**receipt, 'transactionHash': '0xother'}):
+            with self.subTest(receipt=bad), self.assertRaises(ValueError):
+                checks.verify_successful_prefix(transactions, 2, bad, live, 18, 18)
 
 if __name__ == '__main__':
     unittest.main()

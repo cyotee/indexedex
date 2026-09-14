@@ -49,3 +49,14 @@ E2E_SKIP_WEBSERVER=1 npm run test:e2e -w @indexedex/app-indexedex -- e2e/rainbow
 ```
 
 Use the existing dev server on port 3002 and operator-provided Anvil. The connection suite covers discovery, explicit selection, rejection, account changes, reconnect/disconnect, network mismatch, ordinary browsers without test injection, and mobile layout. Contract money-path suites still require deployed contracts matching the exported artifacts; wallet tests do not deploy them.
+
+For local UI verification against **Robinhood mainnet**, leave `NEXT_PUBLIC_LOCAL_RPC_URL` empty and retain chain ID 4663 and the `anvil_robinhood_main` address registry (the registry name is historical; staking discovers the active DETF from the mainnet staking contract). Run `npm run dev:indexedex` and `npm run dev:dtf` from `frontend/` for ports 3002 and 3003. Connected operations use the wallet's configured RPC.
+
+The opt-in mainnet bond regression uses a read-only test provider. It checks the real oversized WETH/ETH quote, disabled payment buttons, and selection of a smaller positive quote. It cannot sign or broadcast; successful bond execution still needs separate simulation or user verification.
+
+```sh
+E2E_MAINNET_READONLY=1 E2E_SKIP_WEBSERVER=1 npm run test:e2e -w @indexedex/app-indexedex -- e2e/staking-bond-mainnet-readonly.spec.ts
+E2E_MAINNET_READONLY=1 E2E_SKIP_WEBSERVER=1 E2E_BASE_URL=http://127.0.0.1:3003 npm run test:e2e -w @indexedex/app-indexedex -- e2e/staking-bond-mainnet-readonly.spec.ts
+```
+
+Bond quotes include the selected duration's bonus and the reserve input limit. Failed quotes must stop approval/wrapping, and fresh quotes are checked again before execution. “Find a smaller amount” only updates the amount field using contract previews; it never splits or submits a purchase. ETH wrapping and approval confirmations are separate from “Bond confirmed.”

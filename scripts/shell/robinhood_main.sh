@@ -70,7 +70,7 @@ Commands:
   token-staking-fund   Phase 08 Stage 02: notifyRewardAmount(sender DTF balance).
                        Same as forge script: simulates unless --broadcast.
   fee-accrual-preflight Read-only validation of the prepared fee-accrual deployment.
-  fee-accrual-reconcile Verify receipts and record the reviewed deadline-script update (no broadcast).
+  fee-accrual-reconcile Verify the reviewed script update and recover a confirmed migration batch (no broadcast).
   fee-accrual-launch   Packages, composition, first bond and full staking migration.
                        Uses the checked-in launch config and default deployment directory.
                        Requires funded WETH/DTF, DEPLOYER_ADDRESS and --broadcast.
@@ -283,7 +283,10 @@ run_fee_accrual() {
     OUT_DIR_OVERRIDE="$FEE_ACCRUAL_RUN_DIR/packages" fee_accrual_check reconcile-scripts || return $?
     OUT_DIR_OVERRIDE="$FEE_ACCRUAL_RUN_DIR/composition" \
       FEE_ACCRUAL_CONFIG="$FEE_ACCRUAL_RUN_DIR/packages/fee-accrual-config.resolved.json" \
-      fee_accrual_check reconcile-scripts
+      fee_accrual_check reconcile-scripts || return $?
+    OUT_DIR_OVERRIDE="$FEE_ACCRUAL_RUN_DIR/composition" \
+      FEE_ACCRUAL_CONFIG="$FEE_ACCRUAL_RUN_DIR/packages/fee-accrual-config.resolved.json" \
+      fee_accrual_check recover-migration
     return $?
   fi
   if [[ "$COMMAND" == fee-accrual-launch ]]; then
@@ -295,6 +298,11 @@ run_fee_accrual() {
     FEE_ACCRUAL_RUN_DIR="$root/composition" bash "$SCRIPT_DIR/robinhood_main.sh" fee-accrual-prepare --broadcast || return $?
     FEE_ACCRUAL_RUN_DIR="$root/composition" bash "$SCRIPT_DIR/robinhood_main.sh" fee-accrual-migrate --broadcast
     return $?
+  fi
+  if [[ "$COMMAND" == fee-accrual-migrate && -f "$OUT_DIR_OVERRIDE/fee-accrual-journal.json" ]]; then
+    # Recover before any Forge stage can overwrite the interrupted batch's quote.
+    fee_accrual_check reconcile-scripts || return $?
+    fee_accrual_check recover-migration || return $?
   fi
   fee_accrual_check preflight || return $?
   if [[ "$COMMAND" == fee-accrual-packages ]]; then
