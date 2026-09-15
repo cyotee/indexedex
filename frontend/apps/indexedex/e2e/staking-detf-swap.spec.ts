@@ -52,7 +52,7 @@ test.describe('DTF-DETF reserve swaps', () => {
     await panel.screenshot({ path: testInfo.outputPath('detf-swap-mobile.png') })
   })
 
-  test('labels the approval after a failed simulation, then sells exactly 1 DTF-DETF for ETH', async ({ page }) => {
+  test('sells exactly 1 DTF-DETF through a MetaMask-style cache and recovers from a failed simulation', async ({ page }) => {
     const snapshot = await fork.snapshot()
     try {
       const key = generatePrivateKey()
@@ -79,12 +79,27 @@ test.describe('DTF-DETF reserve swaps', () => {
       await installInjectedWallet(page, { privateKey: key, onRequest: request => methods.push(request.method) })
       await page.goto('/staking', { waitUntil: 'domcontentloaded' })
       await page.evaluate((router) => {
-        type Request = { method: string; params?: { to?: string }[] }
+        type Request = { method: string; params?: unknown[] }
         const state = window as unknown as { ethereum: { request: (args: Request) => Promise<unknown> }; failSwapSimulation?: boolean }
         const original = state.ethereum.request.bind(state.ethereum)
+        const cache = new Map<string, unknown>()
         state.ethereum.request = async args => {
-          if (state.failSwapSimulation && args.method === 'eth_call' && args.params?.[0]?.to?.toLowerCase() === router.toLowerCase()) {
+          const call = args.params?.[0] as { to?: string } | undefined
+          if (state.failSwapSimulation && args.method === 'eth_call' && call?.to?.toLowerCase() === router.toLowerCase()) {
             throw Object.assign(new Error('execution reverted'), { code: 3, data: '0x' })
+          }
+          // MetaMask's block cache keys eth_call by the call object and block,
+          // dropping the third (state override) parameter. Pending bypasses it.
+          // Cache real RPC responses only; never substitute protocol results.
+          // https://github.com/MetaMask/core/blob/main/packages/eth-json-rpc-middleware/src/utils/cache.ts
+          if (args.method === 'eth_call' && args.params?.[1] !== 'pending') {
+            const block = args.params?.[1] === 'latest' || !args.params?.[1]
+              ? await original({ method: 'eth_blockNumber' }) : args.params[1]
+            const key = JSON.stringify([args.params?.[0], block])
+            if (cache.has(key)) return cache.get(key)
+            const result = await original(args)
+            cache.set(key, result)
+            return result
           }
           return original(args)
         }

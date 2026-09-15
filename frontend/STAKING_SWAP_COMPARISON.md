@@ -39,6 +39,11 @@ verifies that the RPC honors that layout/override; failure prevents a quote.
 This does not donate tokens, send an approval, or change persistent state.
 Other inputs use the deployed quoter without that override.
 
+The balance read, override probe and funded quoter call use `blockTag: 'pending'`.
+MetaMask's block cache omits parameters after the block tag from its cache key,
+so an ordinary balance read can incorrectly satisfy the subsequent overridden
+read. Pending calls bypass that cache. The layout/support probe remains required.
+
 Actual transactions still encode exact-input **SETTLE before SWAP**, then TAKE
 (and unwrap for ETH output), all in one Universal Router call. The complete
 calldata is simulated with the user's real balances and approvals, with no state
@@ -224,3 +229,48 @@ Unsupported or ignored overrides prevent quoting. The historical suite limitatio
 in `MAINNET_FORK_VERIFICATION.md` and earlier unexplained reserve transient remain
 documented; this fix does not diagnose that earlier transient. All changes remain
 uncommitted and undeployed.
+
+### Follow-up: MetaMask quote cache compatibility
+
+Reports that Rabby worked while MetaMask failed led to a reproduction with the
+published `@metamask/eth-json-rpc-middleware@25.0.0`, installed only in a temporary
+test directory. Its real `createBlockCacheMiddleware` wrapped real read-only
+calls to the affected-state fork on port 28545. Before the fix, only the ordinary
+balance read reached Anvil; the overridden read received that cached result and
+the app threw `This RPC could not simulate reserve input funding.` After the fix,
+all three calls reached Anvil and the quote matched a direct call:
+0.030191340287978048 ETH for 1 DTF-DETF at that snapshot.
+
+The upstream cache key calls `paramsWithoutBlockTag`, which uses
+`request.params.slice(0, index)` and drops the state override. Its block cache
+explicitly bypasses `pending` calls. Sources:
+[cache key](https://github.com/MetaMask/core/blob/main/packages/eth-json-rpc-middleware/src/utils/cache.ts),
+[pending bypass](https://github.com/MetaMask/core/blob/main/packages/eth-json-rpc-middleware/src/block-cache.ts).
+The fix tags the three funded quote calls as pending and invalidates the UI's
+previous quote cache. Exact approvals, router encoding, real-state pre-signing
+simulation and minimum-output checks are unchanged.
+
+The exact 1-token browser regression now includes the same block-cache key
+behavior while caching only actual RPC responses. It still exercises approval,
+simulated provider failure without submission, recovery, actual fork settlement,
+unchanged supply and restored PoolManager balance. This reproduction tests the
+published middleware and injected-wallet behavior, not the affected user's exact
+MetaMask extension/mobile version.
+
+RPC routing remains through the selected connector for connected reads and
+pre-signing simulation. Injected wallets receive the calls directly. WalletConnect
+can handle non-session read methods through its HTTP provider, configured here
+with the chain's public Robinhood RPC; the connector is not a guarantee of the
+RPC configured inside the remote wallet. Disconnected production browsing uses
+`https://rpc.mainnet.chain.robinhood.com`. Safari success alone does not establish
+which wallet/provider was involved.
+
+Validation of this local follow-up: **467 app tests**, typecheck and configuration
+checks passed; lint remained **0 errors / 78 existing warnings**. The IndexedEx
+production build passed, followed by **11/11 combined swap browser tests** (38.5s),
+including the exact 1-token sale through the cache. The new cache regression first
+ran against the previous production build and failed with `Quote unavailable`;
+it passed after rebuilding the fix. An anonymous public-RPC pending-state quote
+also passed (0.032487781734049653 ETH at the time checked). No live transaction was
+submitted. These verification results were recorded before the separately
+authorized production rollout, with `d8b6148a` as the previous production revision.

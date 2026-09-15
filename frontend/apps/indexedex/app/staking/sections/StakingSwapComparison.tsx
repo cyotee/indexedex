@@ -43,7 +43,7 @@ export default function StakingSwapComparison({ chainId, environment, staking, d
 
   const wrongNetwork = wallet.isConnected && wallet.chainId !== chainId
   const bindingScope = `${chainId}:${environment}:${staking}:${detf ?? ''}:${wallet.address ?? ''}:${wallet.chainId}:${wallet.connector?.uid}:${wallet.status}`
-  const scope = `${bindingScope}:${mode}:execution-quotes-v1`
+  const scope = `${bindingScope}:${mode}:execution-quotes-v2`
   const platform = useMemo(() => getAddressArtifacts(chainId, environment).platform as Record<string, unknown>, [chainId, environment])
   const poolsQuery = useQuery({
     queryKey: ['staking-swap', bindingScope, 'pools-v3'],

@@ -108,18 +108,21 @@ export async function quoteComparisonPool(client: PublicClient, pools: SwapCompa
       // Fund only the quoter's eth_call; never donate input or override a real swap.
       const root = BigInt(keccak256(encodeAbiParameters([{ type: 'string' }], ['eip.erc.20']))) - 1n
       const slot = keccak256(encodeAbiParameters([{ type: 'address' }, { type: 'uint256' }], [pools.poolManager, root + 4n]))
-      const balance = await client.readContract({ address: pools.detf, abi: erc20Abi, functionName: 'balanceOf', args: [pools.poolManager] })
+      // MetaMask's block cache omits params after the block tag from its key,
+      // conflating ordinary balance reads with overridden ones. Pending bypasses
+      // that cache while keeping every request on the selected wallet provider.
+      const balance = await client.readContract({ address: pools.detf, abi: erc20Abi, functionName: 'balanceOf', args: [pools.poolManager], blockTag: 'pending' })
       const fundedBalance = balance + amountIn
       stateOverride = [{ address: pools.detf, stateDiff: [{ slot, value: toHex(fundedBalance, { size: 32 }) }] }]
       // Fail closed if the deployment uses another layout or the RPC ignores overrides.
-      const probe = await client.readContract({ address: pools.detf, abi: erc20Abi, functionName: 'balanceOf', args: [pools.poolManager], stateOverride })
+      const probe = await client.readContract({ address: pools.detf, abi: erc20Abi, functionName: 'balanceOf', args: [pools.poolManager], stateOverride, blockTag: 'pending' })
       if (probe !== fundedBalance) throw new Error('This RPC could not simulate reserve input funding. A swap quote is unavailable.')
     }
     const zeroForOne = sameAddress(tokenIn, poolKey.currency0)
     const { result } = await client.simulateContract({
       address: pools.quoter, abi: V4_QUOTER_ABI, functionName: 'quoteExactInputSingle',
       args: [{ poolKey, zeroForOne, exactAmount: amountIn, hookData: '0x' }],
-      account, stateOverride,
+      account, stateOverride, blockTag: stateOverride ? 'pending' : 'latest',
     })
     const amountOut = result[0]
     if (amountOut <= 0n) throw new Error('No quote from the reserve pool for this amount.')
