@@ -9,7 +9,7 @@
 
 set -u
 
-APP_NAME="${1:-indexedex}"
+APP_NAME="${1:-${NEXT_PUBLIC_SITE_DEPLOYMENT:-indexedex}}"
 if [[ "$APP_NAME" != "dtf" && "$APP_NAME" != "indexedex" ]]; then
   echo "vercel-ignore: unknown app '${APP_NAME}' — build"
   exit 1
@@ -22,14 +22,14 @@ cd "$REPO_ROOT" || exit 1
 # Paths relative to monorepo git root (when Root Directory is frontend/apps/<app>,
 # git still sees the full repo if project is monorepo-linked).
 SCOPES=(
-  "frontend/apps/${APP_NAME}"
+  "frontend/apps/indexedex"
   "frontend/package.json"
   "frontend/package-lock.json"
   "frontend/patches"
   "frontend/scripts/vercel-ignore-build.sh"
   "scripts/shell/vercel-ignore-frontend.sh"
 )
-SCOPES+=("frontend/apps/indexedex" "frontend/packages/protocol")
+SCOPES+=("frontend/packages/protocol")
 
 has_commit() {
   git rev-parse -q --verify "${1}^{commit}" >/dev/null 2>&1

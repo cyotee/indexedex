@@ -3,5 +3,5 @@
   "framework": "nextjs",
   "installCommand": "cd ../.. && npm install",
   "buildCommand": "cd ../.. && npm run build -w @indexedex/app-indexedex",
-  "ignoreCommand": "bash ../../scripts/vercel-ignore-build.sh indexedex"
+  "ignoreCommand": "bash ../../scripts/vercel-ignore-build.sh"
 }
