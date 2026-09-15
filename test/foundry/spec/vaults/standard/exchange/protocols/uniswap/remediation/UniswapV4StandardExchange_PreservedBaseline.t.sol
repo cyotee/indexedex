@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {StandardExchangeLockedCaller} from "./StandardExchangeLockedCaller.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
@@ -24,6 +25,7 @@ contract UniswapV4StandardExchange_PreservedBaseline is TestBase_UniswapV4Standa
             fee: 3000, tickSpacing: 60, hooks: IHooks(address(0))});
         poolManager.initialize(market, uint160(1 << 96));
         subject = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(market));
+        lockedCaller = new StandardExchangeLockedCaller(address(poolManager), true);
     }
     function _trade(bool zeroForOne, uint256 amount) internal override {
         _fund(zeroForOne ? asset0 : asset1, address(trader), amount);

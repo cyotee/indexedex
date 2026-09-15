@@ -2,7 +2,7 @@
 
 **Implementation:** See [new-version code and integration notes](README.md) and the linked validation record. This PRD retains the broader release matrix.
 
-**Status:** New V3/V4 implementations and focused regression suite complete; broader release matrix retained
+**Status:** New V3/V4 implementations with expanded feature, regression, fuzz and invariant suites; validation scope recorded
 **Date:** 2026-09-15
 **Deliverables:** two new vault versions, with equivalent liquidity economics and independently verified token delivery
 
@@ -169,7 +169,7 @@ The existing constant-product acceptance matrix applies to both families, adapti
 5. Pass PT-01 through PT-11 and the applicable constant-product acceptance matrix on both new registry-deployed packages. Record build-before-test commands, revisions, fixtures, results and limitations under the repository's existing Foundry workflow.
 6. Deliver separate old/new factory, facet, package, interface, storage and migration maps. Document compatibility with required hook/router/SY routes and immutable consumers.
 
-The new code, reproduction tests, and focused regression results are linked above. The full matrix remains the broader release gate; the validation record identifies its coverage limits. Deployment and migration remain separate actions.
+The new code, reproduction tests, feature suites, fuzz cases and stateful campaigns are linked above. The validation record maps the acceptance matrix to concrete evidence and identifies the remaining integration and historical-replay limits. Deployment and migration remain separate actions.
 
 ## References
 

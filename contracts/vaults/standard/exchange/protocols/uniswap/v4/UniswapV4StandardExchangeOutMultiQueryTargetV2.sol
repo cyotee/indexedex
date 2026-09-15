@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {StandardExchangeDeliveryRepo} from "../StandardExchangeDeliveryRepo.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 
 import {NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
@@ -16,11 +18,19 @@ contract UniswapV4StandardExchangeOutMultiQueryTargetV2 is UniswapV4StandardExch
     function _standardRoute(IERC20 in_, uint256 amount_, IERC20 out_, uint256 minimum_, address receiver_, bool internal_)
         internal override returns (uint256)
     {
-        if (address(in_) == address(this) && !internal_) {
-            ERC20Repo._transfer(msg.sender, address(this), amount_);
-            internal_ = true;
+        if (address(in_) != address(this)) {
+            return super._standardRoute(in_, amount_, out_, minimum_, receiver_, internal_);
         }
-        return super._standardRoute(in_, amount_, out_, minimum_, receiver_, internal_);
+        bytes memory route = abi.encodeCall(IStandardExchangeIn.exchangeIn,
+            (in_, amount_, out_, minimum_, receiver_, true, block.timestamp));
+        if (internal_) StandardExchangeDeliveryRepo._routePrepared(route);
+        else {
+            StandardExchangeDeliveryRepo._prepareOwnShares(amount_, route);
+            ERC20Repo._transfer(msg.sender, address(this), amount_);
+        }
+        (bool ok, bytes memory result) = address(this).delegatecall(route);
+        if (!ok) assembly ("memory-safe") { revert(add(result, 32), mload(result)) }
+        return abi.decode(result, (uint256));
     }
 
     function getTokensIn() public view override returns (address[] memory tokens) {

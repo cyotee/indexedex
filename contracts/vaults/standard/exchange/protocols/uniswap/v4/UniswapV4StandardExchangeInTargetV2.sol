@@ -41,7 +41,7 @@ contract UniswapV4StandardExchangeInTargetV2 is UniswapV4StandardExchangeInBaseV
     function preparePretransfer(address[] calldata tokens, uint256[] calldata amounts, bytes32 callHash)
         external override nonReentrant
     {
-        _requireNotDisabled();
+        if (tokens.length != 1 || tokens[0] != address(this)) _requireNotDisabled();
         for (uint256 i; i < tokens.length; ++i) {
             if (tokens[i] != _token0() && tokens[i] != _token1() && tokens[i] != address(this)) {
                 revert IStandardExchangePretransfer.InvalidPretransfer();
@@ -59,7 +59,7 @@ contract UniswapV4StandardExchangeInTargetV2 is UniswapV4StandardExchangeInBaseV
         bool pretransferred,
         uint256 deadline
     ) external nonReentrant inputOperation returns (uint256 amountOut) {
-        _requireNotDisabled();
+        if (address(tokenIn) != address(this)) _requireNotDisabled();
         if (deadline < block.timestamp) revert UniswapV4ExchangeIn_DeadlineExceeded();
 
         address token0 = _token0();

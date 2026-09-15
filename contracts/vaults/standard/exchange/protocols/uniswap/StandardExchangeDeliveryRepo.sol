@@ -59,6 +59,30 @@ library StandardExchangeDeliveryRepo {
         _set(3, 1);
     }
 
+    /// @dev The native SY adapter moves the original caller's own shares without
+    /// an allowance, then uses the same measured-delivery exchange route.
+    function _prepareOwnShares(uint256 amount, bytes memory route) internal {
+        if (_get(0) != 0 || _get(3) != 0) revert IPretransfer.PretransferPending();
+        _set(0, uint160(msg.sender));
+        _set(1, uint256(keccak256(route)));
+        _set(2, 1);
+        _set(4, uint160(address(this)));
+        _set(5, IERC20(address(this)).balanceOf(address(this)));
+        _set(6, amount);
+    }
+
+    /// @dev Translate a caller-bound SY commitment to its fixed inner exchange
+    /// calldata. Caller and funding records remain unchanged. Never callable by
+    /// a public arbitrary-call router or while another exchange is executing.
+    function _routePrepared(bytes memory route) internal {
+        if (_get(3) != 0) revert IPretransfer.PretransferPending();
+        if (_get(0) == 0) revert IPretransfer.PretransferNotPrepared();
+        if (address(uint160(_get(0))) != msg.sender || bytes32(_get(1)) != keccak256(msg.data)) {
+            revert IPretransfer.PretransferCallMismatch();
+        }
+        _set(1, uint256(keccak256(route)));
+    }
+
     function _consume(address token, uint256 amount) internal returns (uint256) {
         if (_get(0) == 0 || _get(3) != 1) revert IPretransfer.PretransferNotPrepared();
         for (uint256 i; i < _get(2); ++i) {

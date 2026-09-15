@@ -2,7 +2,7 @@
 
 **Implementation:** See [new-version code and integration notes](../README.md) and the linked validation record. This PRD retains the broader release matrix.
 
-**Status:** New implementation and focused regression suite complete; see validation record
+**Status:** New implementation with expanded feature, regression, fuzz and invariant suites; see validation record
 **Date:** 2026-09-15
 **New implementation:** `contracts/vaults/standard/exchange/protocols/uniswap/v3/`
 **Preserved implementation:** `contracts/protocols/dexes/uniswap/v3/`

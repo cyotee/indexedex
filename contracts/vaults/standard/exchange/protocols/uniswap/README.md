@@ -37,6 +37,12 @@ The commitment binds the caller and complete calldata, including recipient, limi
 
 **Existing push-only routers/hooks must add this preparation step before using the new vaults.** Their old transfer-then-call sequence is deliberately rejected. Pull integrations retain their calling convention. The regression suite exercises valid prepared routes inside real V3 flash callbacks and V4 outer unlock sessions. Both versions require the chain's existing EIP-1153 support (the inherited reentrancy lock already uses transient storage).
 
+## SY redemption and disable controls
+
+`redeem(..., internalBalance=false)` spends the caller's own shares without an allowance. The V2 adapter measures that share delivery through the same exchange path. `internalBalance=true` requires preparation committed to the complete **SY redeem calldata**, followed by a fresh share transfer and that exact redemption, atomically from one caller. Prior shares donated to the vault cannot be claimed through this flag. Legacy Pendle or other push consumers need this integration change before they can use internal-balance redemption.
+
+Disabling a V2 vault or its package blocks deposits and swaps while allowing share withdrawals, including prepared withdrawals. The test suites exercise these controls on independent local deployments. No live disable control was used.
+
 ## Liquidity and ownership rules
 
 Both versions use the same shared deposit calculations: two-token activation, proportional subsequent two-token issuance, and fee-free same-book single-token zap issuance. A two-token contribution follows the V2-pair convention: the limiting contribution determines shares, and any surplus stays as a donation. Integrators should supply the desired ratio or explicitly accept that surplus; no unrelated vault inventory funds refunds.
@@ -55,7 +61,8 @@ Run from the repository root:
 python3 scripts/forge-artifacts.py test \
   contracts/vaults/standard/exchange/protocols/uniswap/StandardExchangeDeliveryRepo.sol \
   contracts/vaults/standard/exchange/protocols/uniswap/StandardExchangeConstantProduct.sol \
-  --test-root test/foundry/spec/vaults/standard/exchange/protocols/uniswap/remediation
+  --test-root test/foundry/spec/vaults/standard/exchange/protocols/uniswap \
+  -- --fuzz-runs 128
 ```
 
 The script rebuilds implementation and runtime artifacts before executing the selected tests. See [VALIDATION.md](VALIDATION.md) for the recorded results and scope.

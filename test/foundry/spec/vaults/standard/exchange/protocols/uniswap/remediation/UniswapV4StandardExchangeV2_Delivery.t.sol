@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IVaultRegistryDisableManager} from "contracts/interfaces/IVaultRegistryDisableManager.sol";
+import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {StandardExchangeLockedCaller} from "./StandardExchangeLockedCaller.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {DeliveryTestToken} from "./DeliveryTestToken.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
-import {StandardExchangeDeliveryBehavior} from "./StandardExchangeDeliveryBehavior.sol";
+import {StandardExchangeReleaseBehavior} from "./StandardExchangeReleaseBehavior.sol";
 import {StandardExchangeMarketTrader} from "./StandardExchangeMarketTrader.sol";
 import {TestBase_UniswapV4StandardExchangeV2} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/test/bases/TestBase_UniswapV4StandardExchangeV2.sol";
 import {IUniswapV4StandardExchangeLiquidReserveV2} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/interfaces/IUniswapV4StandardExchangeLiquidReserveV2.sol";
@@ -12,7 +14,7 @@ import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey
 import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
 import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
 
-contract UniswapV4StandardExchangeV2_Delivery is TestBase_UniswapV4StandardExchangeV2, StandardExchangeDeliveryBehavior {
+contract UniswapV4StandardExchangeV2_Delivery is TestBase_UniswapV4StandardExchangeV2, StandardExchangeReleaseBehavior {
     StandardExchangeMarketTrader internal trader;
     PoolKey internal market;
     function setUp() public override {
@@ -36,5 +38,15 @@ contract UniswapV4StandardExchangeV2_Delivery is TestBase_UniswapV4StandardExcha
     }
     function _rebalance() internal override {
         IUniswapV4StandardExchangeLiquidReserveV2(address(subject)).rebalanceLiquidReserve();
+    }
+    function _family() internal pure override returns (string memory) { return "UniswapV4"; }
+    function _disable(bool disabled, bool packageWide) internal override {
+        vm.prank(owner);
+        if (packageWide) IVaultRegistryDisableManager(address(indexedexManager)).setPackageDisabled(address(uniswapV4StandardExchangeDFPkg), disabled);
+        else IVaultRegistryDisableManager(address(indexedexManager)).setVaultAddressDisabled(address(subject), disabled);
+    }
+    function _configureSleeve(uint256 pct) internal override {
+        vm.prank(owner);
+        IVaultFeeOracleManager(address(indexedexManager)).setLiquidReservePercentageOfVault(address(subject), pct);
     }
 }

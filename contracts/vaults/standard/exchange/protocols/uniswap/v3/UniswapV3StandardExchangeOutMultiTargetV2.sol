@@ -26,7 +26,6 @@ contract UniswapV3StandardExchangeOutMultiTargetV2 is UniswapV3StandardExchangeO
         bool pretransferred,
         uint256 deadline
     ) external nonReentrant inputOperation returns (uint256 amountIn) {
-        _requireNotDisabled();
         if (deadline < block.timestamp) revert UniswapV3ExchangeOut_DeadlineExceeded();
         // D9: idle collect first so D52 reads post-collect totals. Blocked: no collect.
         if (canOpenBoundPoolOps()) {

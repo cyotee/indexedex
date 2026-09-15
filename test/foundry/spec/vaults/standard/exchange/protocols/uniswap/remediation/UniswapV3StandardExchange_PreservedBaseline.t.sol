@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {StandardExchangeLockedCaller} from "./StandardExchangeLockedCaller.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
@@ -20,6 +21,7 @@ contract UniswapV3StandardExchange_PreservedBaseline is TestBase_UniswapV3Standa
         trader = new StandardExchangeMarketTrader();
         market = _createPoolOneToOne(a, b, FEE_MEDIUM);
         subject = _deployVault(market);
+        lockedCaller = new StandardExchangeLockedCaller(address(market), false);
     }
     function _trade(bool zeroForOne, uint256 amount) internal override {
         _fund(zeroForOne ? asset0 : asset1, address(trader), amount);

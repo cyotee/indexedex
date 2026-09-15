@@ -1,0 +1,50 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
+import {TestBase_IFacet} from "@crane/contracts/factories/diamondPkg/TestBase_IFacet.sol";
+import {CraneTest} from "@crane/contracts/test/CraneTest.sol";
+
+import {IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {IStandardExchangeTransitionQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {
+    UniswapV3StandardExchangeInQueryFacetV2
+} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3StandardExchangeInQueryFacetV2.sol";
+import {
+    UniswapV3_Component_FactoryServiceV2
+} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3_Component_FactoryServiceV2.sol";
+
+contract UniswapV3StandardExchangeInQueryFacet_IFacet_TestV2 is CraneTest, TestBase_IFacet {
+    using UniswapV3_Component_FactoryServiceV2 for ICreate3FactoryProxy;
+
+    function setUp() public override(CraneTest, TestBase_IFacet) {
+        CraneTest.setUp();
+        TestBase_IFacet.setUp();
+    }
+
+    function facetTestInstance() public override returns (IFacet) {
+        return create3Factory.deployUniswapV3StandardExchangeInQueryFacet();
+    }
+
+    function controlFacetName() public pure override returns (string memory) {
+        return type(UniswapV3StandardExchangeInQueryFacetV2).name;
+    }
+
+    function controlFacetInterfaces() public pure override returns (bytes4[] memory controlInterfaces) {
+        controlInterfaces = new bytes4[](2);
+        controlInterfaces[0] = type(IStandardExchangeTransitionQuote).interfaceId;
+        controlInterfaces[1] = type(IStandardExchangeExternalQuote).interfaceId;
+    }
+
+    function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
+        controlFuncs = new bytes4[](7);
+        controlFuncs[0] = IStandardExchangeTransitionQuote.quoteState.selector;
+        controlFuncs[1] = IStandardExchangeTransitionQuote.quoteAssets.selector;
+        controlFuncs[2] = IStandardExchangeTransitionQuote.quoteShareBalance.selector;
+        controlFuncs[3] = IStandardExchangeTransitionQuote.quoteTransition.selector;
+        controlFuncs[4] = IStandardExchangeExternalQuote.quoteExternalExchange.selector;
+        controlFuncs[5] = IStandardExchangeTransitionQuote.quoteTotalSupply.selector;
+        controlFuncs[6] = IStandardExchangeExternalQuote.quoteExternalDeposit.selector;
+    }
+}

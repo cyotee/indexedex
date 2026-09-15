@@ -1,16 +1,18 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {IVaultRegistryDisableManager} from "contracts/interfaces/IVaultRegistryDisableManager.sol";
+import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {StandardExchangeLockedCaller} from "./StandardExchangeLockedCaller.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {DeliveryTestToken} from "./DeliveryTestToken.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
-import {StandardExchangeDeliveryBehavior} from "./StandardExchangeDeliveryBehavior.sol";
+import {StandardExchangeReleaseBehavior} from "./StandardExchangeReleaseBehavior.sol";
 import {StandardExchangeMarketTrader} from "./StandardExchangeMarketTrader.sol";
 import {TestBase_UniswapV3StandardExchangeV2} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/test/bases/TestBase_UniswapV3StandardExchangeV2.sol";
 import {IUniswapV3StandardExchangeLiquidReserveV2} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/interfaces/IUniswapV3StandardExchangeLiquidReserveV2.sol";
 import {IUniswapV3Pool} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/IUniswapV3Pool.sol";
 
-contract UniswapV3StandardExchangeV2_Delivery is TestBase_UniswapV3StandardExchangeV2, StandardExchangeDeliveryBehavior {
+contract UniswapV3StandardExchangeV2_Delivery is TestBase_UniswapV3StandardExchangeV2, StandardExchangeReleaseBehavior {
     StandardExchangeMarketTrader internal trader;
     IUniswapV3Pool internal market;
     function setUp() public override {
@@ -32,5 +34,15 @@ contract UniswapV3StandardExchangeV2_Delivery is TestBase_UniswapV3StandardExcha
     }
     function _rebalance() internal override {
         IUniswapV3StandardExchangeLiquidReserveV2(address(subject)).rebalanceLiquidReserve();
+    }
+    function _family() internal pure override returns (string memory) { return "UniswapV3"; }
+    function _disable(bool disabled, bool packageWide) internal override {
+        vm.prank(owner);
+        if (packageWide) IVaultRegistryDisableManager(address(indexedexManager)).setPackageDisabled(address(uniswapV3StandardExchangeDFPkg), disabled);
+        else IVaultRegistryDisableManager(address(indexedexManager)).setVaultAddressDisabled(address(subject), disabled);
+    }
+    function _configureSleeve(uint256 pct) internal override {
+        vm.prank(owner);
+        IVaultFeeOracleManager(address(indexedexManager)).setLiquidReservePercentageOfVault(address(subject), pct);
     }
 }

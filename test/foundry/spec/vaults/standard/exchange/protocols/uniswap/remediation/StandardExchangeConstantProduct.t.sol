@@ -33,4 +33,35 @@ contract StandardExchangeConstantProductTest is Test {
         assertGe(CP._singleExit(outReserve, otherReserve, shares, s), out);
         assertLt(CP._singleExit(outReserve, otherReserve, shares - 1, s), out);
     }
+
+    function test_dustAndZeroSupplyCannotProduceOutput() public pure {
+        assertEq(CP._singleExit(1000, 1000, 0, 1000), 0);
+        assertEq(CP._singleExit(1000, 1000, 1, 0), 0);
+        assertEq(CP._sharesForSingleExit(1000, 1000, 0, 1000), 0);
+        assertEq(CP._sharesForDeposit(1, 0, 1000, 1000, 1000), 0);
+        assertEq(CP._singleExit(1, 1, 1, 1000), 0);
+    }
+    function test_fullSupplyAndReserveExhaustionHaveExplicitErrors() public {
+        vm.expectRevert(CP.InsufficientBacking.selector); this.singleExit(1000, 1000, 1000, 1000);
+        vm.expectRevert(CP.InsufficientBacking.selector); this.singleExit(1000, 0, 1001, 1000);
+        vm.expectRevert(CP.InsufficientBacking.selector); this.inverse(1000, 1000, 1001, 1000);
+        vm.expectRevert(CP.InsufficientBacking.selector); this.inverse(1000, 1000, 1, 0);
+        assertEq(CP._singleExit(1000, 0, 1000, 1000), 1000);
+        assertEq(CP._sharesForSingleExit(1000, 0, 1000, 1000), 1000);
+    }
+    function singleExit(uint256 x, uint256 y, uint256 shares, uint256 supply) external pure returns (uint256) {
+        return CP._singleExit(x, y, shares, supply);
+    }
+    function inverse(uint256 x, uint256 y, uint256 output, uint256 supply) external pure returns (uint256) {
+        return CP._sharesForSingleExit(x, y, output, supply);
+    }
+    function testFuzz_singleExitMatchesIndependentBurnThenSwap(uint96 x_, uint96 y_, uint96 supply_, uint96 burn_) public pure {
+        uint256 x = bound(x_, 2, 1e27); uint256 y = bound(y_, 2, 1e27);
+        uint256 supply = bound(supply_, 2, 1e27); uint256 burn = bound(burn_, 1, supply - 1);
+        uint256 first = x * burn / supply; uint256 second = y * burn / supply;
+        uint256 remainingX = x - first; uint256 remainingY = y - second;
+        uint256 expected = first + second * remainingX / (remainingY + second);
+        assertEq(CP._singleExit(x, y, burn, supply), expected);
+        assertLe(expected, x);
+    }
 }

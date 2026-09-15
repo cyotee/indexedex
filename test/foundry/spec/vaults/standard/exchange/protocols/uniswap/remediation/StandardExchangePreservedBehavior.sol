@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {StandardExchangeLockedCaller} from "./StandardExchangeLockedCaller.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 
 import {Test} from "forge-std/Test.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -13,6 +15,7 @@ import {IStandardExchangePretransfer as IPretransfer} from "contracts/vaults/sta
 
 // The same assertions run against independently deployed V3 and V4 diamonds.
 abstract contract StandardExchangePreservedBehavior is Test {
+    StandardExchangeLockedCaller internal lockedCaller;
     IStandardExchangeProxy internal subject;
     IERC20 internal asset0;
     IERC20 internal asset1;
@@ -75,6 +78,21 @@ abstract contract StandardExchangePreservedBehavior is Test {
         assertEq(subject.balanceOf(address(this)), holder, "holder shares unchanged");
         assertEq(asset0.balanceOf(address(subject)), balance0, "token0 unchanged");
         assertEq(asset1.balanceOf(address(subject)), balance1, "token1 unchanged");
+    }
+
+    function test_preserved_noMovementControlRejectsUnfundedCredit() public {
+        _bootstrap();
+        _reject(_depositCall(asset0, 25 ether, FALSE_DEPOSITOR),
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 25 ether, 0));
+    }
+    function test_preserved_lockedExitOmitsOtherTokenEntitlement() public {
+        _bootstrap();
+        bytes memory quoteData = abi.encodeCall(IStandardExchangeIn.previewExchangeIn,
+            (IERC20(address(subject)), subject.totalSupply() / 10, asset1));
+        uint256 quoted = lockedCaller.run(address(subject), quoteData, new address[](0), new uint256[](0));
+        // The corrected version's paired test quotes 190 from the same (1000,1000) book.
+        assertApproxEqAbs(quoted, 100 ether, 5, "preserved exit values only the output-token tenth");
+        assertLt(quoted, 190 ether);
     }
 
     function test_preserved_phantomMintAndRedemption_token0() public { _demonstrate(true); }

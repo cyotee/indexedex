@@ -36,7 +36,7 @@ abstract contract UniswapV4StandardExchangeOutExecuteTargetV2 is UniswapV4Standa
         bool pretransferred,
         uint256 deadline
     ) external nonReentrant inputOperation returns (uint256 amountIn) {
-        _requireNotDisabled();
+        if (address(tokenIn) != address(this)) _requireNotDisabled();
         if (deadline < block.timestamp) revert UniswapV4ExchangeOut_DeadlineExceeded();
 
         address token0 = _token0();

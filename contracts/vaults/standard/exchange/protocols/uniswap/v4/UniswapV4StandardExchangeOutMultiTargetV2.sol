@@ -26,7 +26,6 @@ contract UniswapV4StandardExchangeOutMultiTargetV2 is UniswapV4StandardExchangeO
         bool pretransferred,
         uint256 deadline
     ) external nonReentrant inputOperation returns (uint256 amountIn) {
-        _requireNotDisabled();
         if (deadline < block.timestamp) revert UniswapV4ExchangeOut_DeadlineExceeded();
         DualExitLocal memory state = _quoteDualExit(tokenIn, maxAmountIn, tokensOut, amountsOut);
         state.delivered = _secureShareDelivery(maxAmountIn, pretransferred);
