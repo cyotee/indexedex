@@ -1,0 +1,40 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {
+    IUniswapV3StandardExchangePositionImportV2,
+    UniswapV3StandardExchangePositionImportTargetV2
+} from "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3StandardExchangePositionImportTargetV2.sol";
+
+/**
+ * @title UniswapV3StandardExchangePositionImportFacetV2
+ * @notice Facet for first-deposit NPM → direct-pool center conversion.
+ */
+contract UniswapV3StandardExchangePositionImportFacetV2 is UniswapV3StandardExchangePositionImportTargetV2, IFacet {
+    function facetName() public pure override returns (string memory name) {
+        return type(UniswapV3StandardExchangePositionImportFacetV2).name;
+    }
+
+    function facetInterfaces() public pure override returns (bytes4[] memory interfaces) {
+        interfaces = new bytes4[](1);
+        interfaces[0] = type(IUniswapV3StandardExchangePositionImportV2).interfaceId;
+    }
+
+    function facetFuncs() public pure override returns (bytes4[] memory funcs) {
+        funcs = new bytes4[](2);
+        funcs[0] = IUniswapV3StandardExchangePositionImportV2.previewImportPosition.selector;
+        funcs[1] = IUniswapV3StandardExchangePositionImportV2.importPosition.selector;
+    }
+
+    function facetMetadata()
+        external
+        pure
+        override
+        returns (string memory name_, bytes4[] memory interfaces, bytes4[] memory functions)
+    {
+        name_ = facetName();
+        interfaces = facetInterfaces();
+        functions = facetFuncs();
+    }
+}
