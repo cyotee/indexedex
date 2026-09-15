@@ -1,11 +1,11 @@
 # IndexedEx frontend
 
-Two Next.js deployments share one application source in this npm workspace.
+Two Vercel projects build one Next.js application root in this npm workspace.
 
 | Path | Package | Role | Local URL |
 |------|---------|------|-----------|
-| `apps/indexedex` | `@indexedex/app-indexedex` | Main application at indexedex.com | http://localhost:3002 |
-| `apps/dtf` | `@indexedex/app-dtf` | Full application with a closable domain/X announcement | http://localhost:3003 |
+| `apps/indexedex` | `@indexedex/app-indexedex` | IndexedEx deployment, notice off | http://localhost:3002 |
+| `apps/indexedex` | `@indexedex/app-indexedex` | DTF deployment, notice on | http://localhost:3003 |
 | `packages/protocol` | `@indexedex/protocol` | Shared addresses, ABIs, chains and helpers | — |
 
 ## Local development
@@ -21,10 +21,10 @@ npm run test:e2e       # Main app Playwright tests
 npm run test:e2e:dtf   # Announcement navigation checks
 ```
 
-App details: [IndexedEx](apps/indexedex/README.md), [DTF notice](apps/dtf/README.md).
+App details: [shared application](apps/indexedex/README.md).
 Product roadmap: [ROADMAP.md](ROADMAP.md). Vercel configuration and rollout: [SITE_DEPLOYMENT.md](SITE_DEPLOYMENT.md).
 
-The token-list guidance below applies to both deployments. Product source is maintained in `apps/indexedex`; DTF links to that source and adds its landing notice.
+The token-list guidance below applies to both deployments. `NEXT_PUBLIC_SITE_DEPLOYMENT=indexedex` (default) or `dtf` selects the landing notice at build time. There is no separate DTF application directory or hostname detection. Local development uses separate `.next-indexedex` and `.next-dtf` caches. Production builds use `.next`; build and test each variant in sequence locally.
 
 ---
 
@@ -239,4 +239,4 @@ cd frontend && npm run typecheck
 
 ## Vercel (production)
 
-See [SITE_DEPLOYMENT.md](SITE_DEPLOYMENT.md) for the separate project roots and build commands.
+See [SITE_DEPLOYMENT.md](SITE_DEPLOYMENT.md) for the shared project root and per-project environment settings.

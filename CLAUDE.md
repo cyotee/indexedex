@@ -11,7 +11,7 @@ Lean, always-on instructions for agents in this monorepo. **Full product law** (
 | Skill catalog | [`docs/agent/SKILL_CATALOG.md`](docs/agent/SKILL_CATALOG.md) |
 | Crane capability inventory | [`lib/crane/docs/agent/CRANE_CAPABILITY_INVENTORY.md`](lib/crane/docs/agent/CRANE_CAPABILITY_INVENTORY.md) |
 | Cartographer install (PATH) | [`scripts/install-cartographer.sh`](scripts/install-cartographer.sh) |
-| Frontend redesign / active UI work | [`frontend/ROADMAP.md`](frontend/ROADMAP.md) — **main app:** [`frontend/apps/indexedex`](frontend/apps/indexedex); **DTF app with landing notice:** [`frontend/apps/dtf`](frontend/apps/dtf) (not root `PROGRESS.md`) |
+| Frontend redesign / active UI work | [`frontend/ROADMAP.md`](frontend/ROADMAP.md) — **shared app:** [`frontend/apps/indexedex`](frontend/apps/indexedex); two Vercel projects use `NEXT_PUBLIC_SITE_DEPLOYMENT=indexedex` or `dtf` (landing notice). Not root `PROGRESS.md`. |
 | Crane framework | `lib/crane/AGENTS.md` + skills under `lib/crane/.claude/skills/` |
 | Family product law | Co-located `*_PRD.md` / impl plans next to the package |
 | Funded DETF staking, bonds and SY | [`DETF_ALIGNMENT_PRD.md`](contracts/vaults/detf/DETF_ALIGNMENT_PRD.md) D32–D66 / §24; [`implementation and test plan`](contracts/vaults/detf/DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md). These supersede conflicting older DETF law. D60 excludes further functional refactoring of Balancer-hosted DETFs; retain compilation maintenance only. D66 defers unfinished Slipstream work and its release gates; preserve completed code/tests/evidence and allow only compilation or shared V4 compatibility maintenance. Other SE work remains in scope. |

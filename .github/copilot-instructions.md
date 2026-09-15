@@ -15,7 +15,7 @@ in `CLAUDE.md` when older examples differ.
 - After production contract edits, run `forge build` before `forge test` or
   `forge script`, because FactoryServices read creation bytecode from `out/`.
 - Follow the router's Foundry compile patience and worktree cache-seeding rules.
-- The main frontend app is `frontend/apps/indexedex`; `frontend/apps/dtf` shares that source and adds a landing notice; use `frontend/ROADMAP.md`.
+- Both frontend deployments build `frontend/apps/indexedex`; `NEXT_PUBLIC_SITE_DEPLOYMENT=dtf` enables the landing notice. There is no separate DTF app package; use `frontend/ROADMAP.md`.
 
 Canonical skill locations and refresh instructions are in
 [docs/agent/SKILL_CATALOG.md](../docs/agent/SKILL_CATALOG.md).
