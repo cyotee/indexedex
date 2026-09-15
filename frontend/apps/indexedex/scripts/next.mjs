@@ -65,7 +65,11 @@ for (let i = rest.indexOf('--'); i !== -1; i = rest.indexOf('--')) {
 }
 
 if (shouldClean) {
-  await rm(path.join(frontendDir, '.next'), { recursive: true, force: true })
+  createRequire(import.meta.url)('@next/env').loadEnvConfig(frontendDir, cmd === 'dev')
+  const { default: nextConfig } = await import('../next.config.js')
+  const { PHASE_DEVELOPMENT_SERVER } = createRequire(import.meta.url)('next/constants')
+  const { distDir } = nextConfig(cmd === 'dev' ? PHASE_DEVELOPMENT_SERVER : undefined)
+  await rm(path.join(frontendDir, distDir), { recursive: true, force: true })
 }
 
 async function killPortListeners(port) {
