@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
+import Link from 'next/link'
 import { erc20Abi, formatUnits, type PublicClient } from 'viem'
 import { useAccount, usePublicClient, useReadContracts } from 'wagmi'
 import { useQuery } from '@tanstack/react-query'
@@ -19,6 +20,7 @@ import SyntheticPrices from './sections/SyntheticPrices'
 import MigrationClaimPanel from './sections/MigrationClaimPanel'
 import { readProtocolDetf } from '../lib/tokenStaking/migration'
 import { Button } from '../components/ui/Button'
+import StakingSwapComparison from './sections/StakingSwapComparison'
 
 const workspaceReadAbi = [...erc20Abi, ...insightsViewAbi, ...standardizedYieldDiscoveryAbi] as const
 
@@ -82,11 +84,13 @@ export default function StakingPageClient({ embedMode = false, fixedDetf }: Stak
   return <div className={shellClass} data-testid={embedMode ? 'detf-workspace-embed-body' : 'detf-workspace-full'}>
     {!embedMode ? <>
       <PageHeader title="DTF-DETF staking" subtitle="View your migrated DTF position, claim staking tokens, or purchase a DTF-DETF bond." />
-      <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]">Looking for strategy vaults? <a href="/earn" className="text-[var(--accent,#4FD44B)] hover:underline">Browse Earn</a>.</p>
+      <p className="mt-2 text-sm text-[var(--text-muted,#9aa3b2)]">Looking for strategy vaults? <Link href="/earn" className="text-[var(--accent,#4FD44B)] hover:underline">Browse Earn</Link>.</p>
     </> : null}
     <WalletStatusBanner className={embedMode ? 'mt-0' : 'mt-4'} isConnected={chain.isConnected}
       isUnsupportedChain={chain.isUnsupportedChain} walletMatchesDataChain={chain.walletMatchesDataChain}
       attachedWalletChainId={chain.attachedWalletChainId} dataChainId={chain.dataChainId} environment={chain.environment} />
+    {!embedMode && stakingAddress ? <StakingSwapComparison chainId={chain.dataChainId} environment={chain.environment} staking={stakingAddress} detf={detfAddress} /> : null}
+    {!embedMode && stakingAddress ? <StakingSwapComparison mode="detf" chainId={chain.dataChainId} environment={chain.environment} staking={stakingAddress} detf={detfAddress} /> : null}
     {!embedMode && stakingAddress && detfAddress ?
       <MigrationClaimPanel chainId={chain.dataChainId} staking={stakingAddress} detf={detfAddress} /> : null}
     {!detfAddress ? <div className="mt-6 text-sm text-[var(--text-muted,#9aa3b2)]" data-testid="staking-discovery-status">

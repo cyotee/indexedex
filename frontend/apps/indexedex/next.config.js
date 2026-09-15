@@ -12,8 +12,9 @@ module.exports = (phase) => {
     // deployments and retain the standard output directory.
     distDir: phase === PHASE_DEVELOPMENT_SERVER ? `.next-${deployment}` : '.next',
     env: { NEXT_PUBLIC_SITE_DEPLOYMENT: deployment },
+    allowedDevOrigins: ['127.0.0.1'],
     // Vercel resolves relativeAppDir from the repository root when packaging functions.
-    experimental: { outputFileTracingRoot: path.resolve(__dirname, '../../..') },
+    outputFileTracingRoot: path.resolve(__dirname, '../../..'),
     transpilePackages: ['@indexedex/protocol'],
     webpack: (config) => {
       // Wallet connectors need the SDK's browser entry during SSR as well.

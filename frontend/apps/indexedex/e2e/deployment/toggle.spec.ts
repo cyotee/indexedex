@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 
 test('deployment setting selects the notice independently of hostname', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('/', { waitUntil: 'domcontentloaded' })
   const notice = page.getByTestId('domain-announcement-overlay')
   if (process.env.E2E_SITE_DEPLOYMENT === 'dtf') {
     await expect(notice).toBeVisible()

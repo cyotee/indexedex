@@ -1,12 +1,12 @@
 import { test, expect } from '@playwright/test'
-import { createPublicClient, decodeFunctionData, encodeAbiParameters, erc20Abi, http, keccak256, parseAbi, toHex, type Address } from 'viem'
+import { createPublicClient, decodeFunctionData, encodeAbiParameters, erc20Abi, getAddress, http, keccak256, parseAbi, toHex, type Address } from 'viem'
 import { installInjectedWallet } from './wallet/injectWallet'
 import { connectInjectedWallet, selectByValue, waitForOption } from './helpers/connect'
 import { loadPlatform } from './helpers/chainArtifacts'
 import { stakingExchangeRoute } from '../app/insights/lib/claimMint'
 
-const wallet = '0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8' as const
-const rpcUrl = 'https://rpc.mainnet.chain.robinhood.com'
+const wallet = getAddress(process.env.E2E_MAINNET_WALLET ?? '0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8')
+const rpcUrl = process.env.E2E_MAINNET_RPC_URL ?? 'https://rpc.mainnet.chain.robinhood.com'
 const exchangeAbi = parseAbi(['function exchangeIn(address,uint256,address,uint256,address,bool,uint256) returns(uint256)'])
 
 test('10 DTF acquires wallet-held DETF before a separately reviewed stake', async ({ page }) => {

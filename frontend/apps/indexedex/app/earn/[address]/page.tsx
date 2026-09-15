@@ -1,9 +1,10 @@
 import EarnDetailClient from './EarnDetailClient'
 
-export default function EarnDetailPage({
+export default async function EarnDetailPage({
   params,
 }: {
-  params: { address: string }
+  params: Promise<{ address: string }>
 }) {
-  return <EarnDetailClient address={params.address} />
+  const { address } = await params
+  return <EarnDetailClient address={address} />
 }

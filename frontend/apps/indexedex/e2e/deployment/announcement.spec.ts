@@ -5,7 +5,7 @@ test.skip(process.env.E2E_SITE_DEPLOYMENT !== 'dtf', 'DTF-only announcement beha
 const notice = (page: import('@playwright/test').Page) => page.getByRole('dialog', { name: 'Same protocol. Another place to call home.' })
 
 test('landing reassures users, stays on DTF and keeps the background inert', async ({ page }) => {
-  await page.goto('/')
+  await page.goto('/', { waitUntil: 'domcontentloaded' })
   await expect(notice(page)).toBeVisible()
   await expect(notice(page)).toContainText('Both domains serve the same protocol.')
   await expect(notice(page)).toContainText('We’ll support both for the foreseeable future.')
@@ -27,7 +27,7 @@ test('landing reassures users, stays on DTF and keeps the background inert', asy
 
 for (const method of ['close', 'continue', 'escape']) {
   test(`${method} closes the domain announcement to reveal the landing page`, async ({ page }) => {
-    await page.goto('/')
+    await page.goto('/', { waitUntil: 'domcontentloaded' })
     await expect(notice(page)).toBeVisible()
     if (method === 'escape') await page.keyboard.press('Escape')
     else await page.getByRole('button', { name: method === 'close' ? 'Close domain announcement' : 'Continue using DTF' }).click()
@@ -35,7 +35,7 @@ for (const method of ['close', 'continue', 'escape']) {
     await expect(page.getByTestId('token-staking-overlay')).toHaveCount(0)
     expect(await page.evaluate(() => document.body.style.overflow)).not.toBe('hidden')
     await expect(page).toHaveURL(`${baseURL}/`)
-    await page.reload()
+    await page.reload({ waitUntil: 'domcontentloaded' })
     await expect(notice(page)).toBeVisible()
     await expect(page.getByTestId('token-staking-overlay')).toHaveCount(0)
     await page.getByRole('button', { name: 'Close domain announcement' }).click()
@@ -45,7 +45,7 @@ for (const method of ['close', 'continue', 'escape']) {
     await page.getByRole('banner').getByRole('link', { name: /IndexedEx/ }).click()
     await expect(notice(page)).toBeVisible()
     await expect(page.getByTestId('token-staking-overlay')).toHaveCount(0)
-    const response = await page.goto('/staking')
+    const response = await page.goto('/staking', { waitUntil: 'domcontentloaded' })
     expect(response?.status()).toBe(200)
     await expect(notice(page)).toHaveCount(0)
     await expect(page.locator('body')).toContainText('DTF-DETF staking')
@@ -56,7 +56,7 @@ test('IndexedEx opens in this tab and X opens in a new tab', async ({ page, cont
   for (const url of ['https://indexedex.com/', 'https://x.com/Indexedex']) {
     await context.route(url, route => route.fulfill({ contentType: 'text/html', body: '<h1>Destination</h1>' }))
   }
-  await page.goto('/')
+  await page.goto('/', { waitUntil: 'domcontentloaded' })
   const popupPromise = page.waitForEvent('popup')
   await page.getByRole('link', { name: 'Follow @Indexedex on X (opens in a new tab)' }).click()
   const popup = await popupPromise
@@ -73,7 +73,7 @@ test('an old saved dismissal cannot skip the domain announcement', async ({ page
   await page.addInitScript(() => {
     sessionStorage.setItem('dtf-domain-announcement-dismissed-v1', 'true')
   })
-  await page.goto('/')
+  await page.goto('/', { waitUntil: 'domcontentloaded' })
   await expect(notice(page)).toBeVisible()
   await page.getByRole('button', { name: 'Continue using DTF' }).click()
   await expect(notice(page)).toHaveCount(0)

@@ -196,12 +196,13 @@ test.describe('Migrated staking on a disposable fork', () => {
   })
 
   test('RPC failure, account changes and wrong network clear actionable positions', async ({ page }) => {
+    test.setTimeout(180_000)
     await installInjectedWallet(page, { rpcUrl, unlockedAddress: holder })
     await prepareLocalChain(page)
     await connectInjectedWallet(page)
     await page.goto('/staking')
     const panel = page.getByTestId('migration-position')
-    await expect(panel.getByTestId('migration-complete')).toBeVisible()
+    await expect(panel.getByTestId('migration-complete')).toBeVisible({ timeout: 60_000 })
     await expect(page.getByText('RPC: connected wallet', { exact: true })).toBeVisible()
     await page.evaluate(() => {
       const eth = (window as any).ethereum

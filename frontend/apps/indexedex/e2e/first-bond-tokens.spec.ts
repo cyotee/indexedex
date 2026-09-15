@@ -1,33 +1,32 @@
-import { protocolDetfs } from './helpers/chainArtifacts'
+import { getAddress, parseAbi, zeroAddress } from 'viem'
 import { test, expect } from './wallet/fixture'
+import { loadPlatform } from './helpers/chainArtifacts'
+import { publicClient } from './helpers/rpc'
+import { selectByValue, waitForOption } from './helpers/connect'
+import { readProtocolDetf } from '../app/lib/tokenStaking/migration'
 
 test.describe('First bond token picker', () => {
-  test('offers the vault token and every SE vaultTokens() entry', async ({ walletPage }) => {
-    const detf = protocolDetfs().find((t) => t.symbol === 'DTF-DETF') ?? protocolDetfs()[0]
-    test.skip(!detf, 'No protocol DETF in the chain tokenlist')
+  test('offers every accepted payment token for the active protocol DETF', async ({ walletPage }) => {
+    const client = publicClient()
+    const detf = await readProtocolDetf(client, getAddress(String(loadPlatform().tokenStaking)))
+    if (!detf) throw new Error('The fork must contain the migrated protocol DETF')
+    const accepted = await client.readContract({
+      address: detf,
+      abi: parseAbi(['function acceptedBondTokens() view returns (address[])']),
+      functionName: 'acceptedBondTokens',
+    })
+    const payments = accepted.filter(token => token !== zeroAddress && token.toLowerCase() !== detf.toLowerCase())
+    expect(payments.length).toBeGreaterThan(0)
 
-    await walletPage.goto(`/create/bond?detf=${detf!.address}`)
+    await walletPage.goto(`/create/bond?detf=${detf}`, { waitUntil: 'domcontentloaded' })
     const select = walletPage.getByTestId('first-bond-token')
-    await expect(select).toBeVisible()
-    await expect
-      .poll(async () => select.locator('option').count(), { timeout: 20_000 })
-      .toBeGreaterThanOrEqual(2)
-
-    const labels = (await select.locator('option').allTextContents()).map((s) => s.trim())
-    expect(labels.some((l) => /vault token/i.test(l))).toBe(true)
-    expect(labels.some((l) => /TTWETH/i.test(l))).toBe(true)
-    expect(labels.some((l) => /^DTF$/.test(l) || l === 'DTF')).toBe(true)
-
-    const pair = '0x23DA2E4264019f2BDeF4bCe0E5866E8f8d8b7172'
-    await expect
-      .poll(async () => (await select.inputValue()).toLowerCase(), { timeout: 10_000 })
-      .toBe(pair.toLowerCase())
-
-    const vaultOption = labels.find((l) => /vault token/i.test(l))
-    expect(vaultOption).toBeTruthy()
-    await select.selectOption({ label: vaultOption! })
-    const vaultSymbol = vaultOption!.replace(/\s*\(vault token\)\s*$/i, '').trim()
-    await expect(walletPage.getByTestId('first-bond-amount')).toBeVisible()
-    await expect(walletPage.getByText(`${vaultSymbol} amount`)).toBeVisible()
+    for (const token of payments) {
+      await waitForOption(walletPage, 'first-bond-token', token)
+      await selectByValue(walletPage, 'first-bond-token', token)
+      expect((await select.inputValue()).toLowerCase()).toBe(token.toLowerCase())
+      const label = await select.locator('option:checked').innerText()
+      await expect(walletPage.getByTestId('first-bond-amount')).toBeVisible()
+      await expect(walletPage.getByText(`${label.trim()} amount`, { exact: true })).toBeVisible()
+    }
   })
 })

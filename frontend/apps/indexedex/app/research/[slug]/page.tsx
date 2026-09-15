@@ -7,15 +7,16 @@ import { RateProvidersView } from '../components/RateProvidersView'
 import { ResearchArticleView } from '../components/ResearchArticleView'
 
 type PageProps = {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 export function generateStaticParams() {
   return getResearchSlugs().map((slug) => ({ slug }))
 }
 
-export function generateMetadata({ params }: PageProps): Metadata {
-  const article = getResearchArticle(params.slug)
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params
+  const article = getResearchArticle(slug)
   if (!article) {
     return { title: 'Research note — IndexedEx' }
   }
@@ -25,8 +26,9 @@ export function generateMetadata({ params }: PageProps): Metadata {
   }
 }
 
-export default function ResearchArticlePage({ params }: PageProps) {
-  const article = getResearchArticle(params.slug)
+export default async function ResearchArticlePage({ params }: PageProps) {
+  const { slug } = await params
+  const article = getResearchArticle(slug)
   if (!article) notFound()
   if (article.slug === 'rate-providers') {
     return <RateProvidersView article={article} />

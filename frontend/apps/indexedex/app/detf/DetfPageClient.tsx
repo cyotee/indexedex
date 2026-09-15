@@ -1,5 +1,7 @@
 'use client'
 
+import Link from 'next/link'
+
 /**
  * Legacy dual-token SeigniorageDETF UI removed.
  * True DETF UX rewrite is deferred; this route shell stays build-clean.
@@ -11,9 +13,9 @@ export default function DetfPageClient() {
       <p className="text-sm text-[var(--text-muted,#9aa3b2)] mb-4">
         The dual-token SeigniorageDETF product has been removed. Browse strategy vaults and modern DETFs on Earn.
       </p>
-      <a href="/earn" className="text-[var(--accent,#4FD44B)] underline text-sm">
+      <Link href="/earn" className="text-[var(--accent,#4FD44B)] underline text-sm">
         Go to Earn
-      </a>
+      </Link>
     </div>
   )
 }

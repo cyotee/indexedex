@@ -87,16 +87,16 @@ export async function installInjectedWallet(
       'eth_requestAccounts', 'eth_accounts', 'eth_chainId', 'net_version', 'eth_blockNumber',
       'eth_getBalance', 'eth_call', 'eth_estimateGas', 'eth_gasPrice', 'eth_getTransactionCount',
       'eth_getTransactionReceipt', 'eth_getTransactionByHash', 'eth_getBlockByNumber', 'eth_getBlockByHash',
-      'eth_getCode', 'eth_getLogs', 'eth_feeHistory', 'eth_maxPriorityFeePerGas',
+      'eth_getCode', 'eth_getStorageAt', 'eth_getLogs', 'eth_feeHistory', 'eth_maxPriorityFeePerGas',
       'wallet_switchEthereumChain', 'wallet_addEthereumChain', 'wallet_requestPermissions', 'wallet_getPermissions',
     ]).has(method)) {
       throw new Error(`Read-only test wallet forbids ${method}`)
     }
 
-    if (options?.readOnlyAddress && method === 'eth_call') {
+    if (method === 'eth_call') {
       // Playwright serializes thrown Error objects without custom RPC data.
-      // Return an envelope and reconstruct it in the browser, as an actual
-      // EIP-1193 wallet does, so viem can decode the real mainnet revert.
+      // Preserve all RPC params, including simulation-only state overrides.
+      // Return an envelope so viem can decode the original revert in the browser.
       const response = await fetch(rpcUrl, {
         method: 'POST', headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
@@ -124,15 +124,6 @@ export async function installInjectedWallet(
           blockTag: (blockTag as any) ?? 'latest',
         })
         return `0x${bal.toString(16)}`
-      }
-      case 'eth_call': {
-        const [tx, blockTag] = params as [TransactionRequest, string?]
-        const data = await publicClient.call({
-          ...tx,
-          account: (tx as TransactionRequest & { from?: `0x${string}` }).from,
-          blockTag: (blockTag as any) ?? 'latest',
-        } as any)
-        return data.data ?? '0x'
       }
       case 'eth_estimateGas': {
         const [tx] = params as [TransactionRequest]

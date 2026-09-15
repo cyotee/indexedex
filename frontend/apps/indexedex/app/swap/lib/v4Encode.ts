@@ -1,6 +1,7 @@
 import { concatHex, encodeAbiParameters, numberToHex } from 'viem'
 
 import type { Address, SwapRoute, V4PathKey, V4PoolKey } from './v4Types'
+import { isNativeCurrency, sameAddress } from './v4Types'
 
 /** Universal Router Commands.V4_SWAP */
 export const CMD_V4_SWAP = 0x10
@@ -67,6 +68,7 @@ function encodeExactInSingle(args: {
           { name: 'zeroForOne', type: 'bool' },
           { name: 'amountIn', type: 'uint128' },
           { name: 'amountOutMinimum', type: 'uint128' },
+          { name: 'minHopPriceX36', type: 'uint256' },
           { name: 'hookData', type: 'bytes' },
         ],
       },
@@ -77,6 +79,8 @@ function encodeExactInSingle(args: {
         zeroForOne: args.zeroForOne,
         amountIn: args.amountIn,
         amountOutMinimum: args.amountOutMinimum,
+        // Current Universal Router single-hop layout; absolute minimum remains enforced.
+        minHopPriceX36: 0n,
         hookData: args.hookData ?? '0x',
       },
     ],
@@ -139,6 +143,11 @@ export function encodeUniversalSwap(args: {
   route: SwapRoute
   amountOutMinimum: bigint
   nativeIn: boolean
+  /** Wrap/unwrap WETH atomically when presenting a wrapped-native pool as ETH. */
+  wrappedNative?: Address
+  nativeOut?: boolean
+  /** Pre-settle exact input for hooks that take input tokens during beforeSwap. */
+  prepayInput?: boolean
 }): EncodedExecute {
   const { route, amountOutMinimum, nativeIn } = args
   const hops = route.hops
@@ -148,6 +157,14 @@ export function encodeUniversalSwap(args: {
 
   const currencyIn = hops[0]!.tokenIn
   const currencyOut = hops[hops.length - 1]!.tokenOut
+  const wrap = nativeIn && !isNativeCurrency(currencyIn)
+  const unwrap = !!args.nativeOut && !isNativeCurrency(currencyOut)
+  if ((wrap && (!args.wrappedNative || !sameAddress(currencyIn, args.wrappedNative))) ||
+      (unwrap && (!args.wrappedNative || !sameAddress(currencyOut, args.wrappedNative)))) {
+    throw new Error('Native settlement does not match the wrapped-native token')
+  }
+  const routerRecipient: Address = '0x0000000000000000000000000000000000000002'
+  const senderRecipient: Address = '0x0000000000000000000000000000000000000001'
   let swapParam: `0x${string}`
   let swapAction: number
 
@@ -177,17 +194,32 @@ export function encodeUniversalSwap(args: {
     })
   }
 
-  const actions = [swapAction, ACTION_SETTLE_ALL, ACTION_TAKE_ALL]
-  const params = [
-    swapParam,
-    encodeCurrencyAndAmount(currencyIn, route.amountIn),
-    encodeCurrencyAndAmount(currencyOut, amountOutMinimum),
-  ]
+  const settleParam = wrap
+      ? encodeAbiParameters([{ type: 'address' }, { type: 'uint256' }, { type: 'bool' }], [currencyIn, route.amountIn, false])
+      : encodeCurrencyAndAmount(currencyIn, route.amountIn)
+  const prepayParam = encodeAbiParameters([{ type: 'address' }, { type: 'uint256' }, { type: 'bool' }], [currencyIn, route.amountIn, !wrap])
+  const takeParam = unwrap
+      ? encodeAbiParameters([{ type: 'address' }, { type: 'address' }, { type: 'uint256' }], [currencyOut, routerRecipient, 0n])
+      : encodeCurrencyAndAmount(currencyOut, amountOutMinimum)
+  const actions = args.prepayInput
+    ? [0x0b, swapAction, unwrap ? 0x0e : ACTION_TAKE_ALL]
+    : [swapAction, wrap ? 0x0b : ACTION_SETTLE_ALL, unwrap ? 0x0e : ACTION_TAKE_ALL]
+  const params = args.prepayInput ? [prepayParam, swapParam, takeParam] : [swapParam, settleParam, takeParam]
   const input = encodeActionsAndParams(actions, params)
+  const commands = [CMD_V4_SWAP]
+  const inputs = [input]
+  if (wrap) {
+    commands.unshift(0x0b) // Universal Router WRAP_ETH to itself; V4 SETTLE pays from its WETH.
+    inputs.unshift(encodeCurrencyAndAmount(routerRecipient, route.amountIn))
+  }
+  if (unwrap) {
+    commands.push(0x0c) // Universal Router UNWRAP_WETH to the original caller.
+    inputs.push(encodeCurrencyAndAmount(senderRecipient, amountOutMinimum))
+  }
 
   return {
-    commands: packedBytes([CMD_V4_SWAP]),
-    inputs: [input],
+    commands: packedBytes(commands),
+    inputs,
     value: nativeIn ? route.amountIn : BigInt(0),
   }
 }

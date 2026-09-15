@@ -4,6 +4,11 @@ import { ContractFunctionRevertedError } from 'viem'
 import { FUNDED_BOND_ABI } from '../detf/bondRoute'
 
 describe('parseContractError', () => {
+  it('explains a V4 minimum-output revert nested under a generic wallet simulation error', () => {
+    expect(parseContractError({ message: 'Execution reverted for an unknown reason.', cause: {
+      data: { originalError: { data: '0x8b063d7300000000000000000000000000000000000000000000000000bb85f640cce4ad000000000000000000000000000000000000000000000000006b145617995c2a' } },
+    } })).toMatch(/less than the displayed minimum.*Refresh the quote/)
+  })
   it('explains the liquidity limit decoded by viem under a generic bond error', () => {
     const cause = new ContractFunctionRevertedError({ abi: FUNDED_BOND_ABI, data: '0x340a4533', functionName: 'bond' })
     expect(parseContractError(new Error('The contract function "bond" reverted.', { cause })))

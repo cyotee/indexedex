@@ -2,6 +2,9 @@
 
 Two Vercel projects build one Next.js application root in this npm workspace.
 
+Framework: Next.js 16.3.5 / React 19.3.0. Use Node 22.13+ for local tooling.
+See [upgrade notes](NEXTJS_UPGRADE.md) for route API, lint and dependency changes.
+
 | Path | Package | Role | Local URL |
 |------|---------|------|-----------|
 | `apps/indexedex` | `@indexedex/app-indexedex` | IndexedEx deployment, notice off | http://localhost:3002 |

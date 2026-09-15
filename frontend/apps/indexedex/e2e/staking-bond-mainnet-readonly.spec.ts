@@ -1,17 +1,19 @@
 import { test, expect } from '@playwright/test'
+import { getAddress } from 'viem'
 import { installInjectedWallet } from './wallet/injectWallet'
 import { connectInjectedWallet, selectByValue, waitForOption } from './helpers/connect'
 import { ETH_PAY } from '../app/lib/ethPay'
 import { findBaseBySymbol } from './helpers/chainArtifacts'
 
-// Explicit opt-in. This fixture only allows reads against mainnet; no Anvil,
-// signatures, approvals, wrapping or purchases are sent by this suite.
+// Explicit opt-in. The fixture only allows reads, either on mainnet or an
+// explicitly configured fork. No signatures, approvals, wrapping or purchases
+// are sent by this suite; fork funding is prepared separately.
 test('mainnet bond limits are visible before any payment on both local apps', async ({ page }) => {
   test.skip(process.env.E2E_MAINNET_READONLY !== '1', 'Read-only mainnet verification is opt-in')
   test.setTimeout(180_000)
   await installInjectedWallet(page, {
-    rpcUrl: 'https://rpc.mainnet.chain.robinhood.com', chainId: 4663,
-    readOnlyAddress: '0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8',
+    rpcUrl: process.env.E2E_MAINNET_RPC_URL ?? 'https://rpc.mainnet.chain.robinhood.com', chainId: 4663,
+    readOnlyAddress: getAddress(process.env.E2E_MAINNET_WALLET ?? '0xec8c4eb216cbfc5b7f49b83cfbe6e34212863ae8'),
   })
   await page.goto('/staking?tab=bond', { waitUntil: 'domcontentloaded' })
   await connectInjectedWallet(page)

@@ -33,13 +33,14 @@ function decodeInt24(raw: number): number {
   return raw >= 0x800000 ? raw - 0x1000000 : raw
 }
 
-function decodePackedFeeTickHooks(word: `0x${string}`): { fee: number; tickSpacing: number; hooks: Address } {
-  const v = BigInt(word)
+function decodePackedFeeTickHooks(currency1Word: `0x${string}`, hooksWord: `0x${string}`): { fee: number; tickSpacing: number; hooks: Address } {
+  // Solidity packs currency1 (20 bytes), fee (3) and tickSpacing (3) in slot 1.
+  // The hooks address does not fit the remaining six bytes and occupies slot 2.
+  const v = BigInt(currency1Word) >> 160n
   const mask24 = BigInt(0xffffff)
   const fee = Number(v & mask24)
   const tickSpacing = decodeInt24(Number((v >> BigInt(24)) & mask24))
-  const hookBits = (v >> BigInt(48)) & ((BigInt(1) << BigInt(160)) - BigInt(1))
-  const hooks = (`0x${hookBits.toString(16).padStart(40, '0')}`) as Address
+  const hooks = wordToAddress(hooksWord)
   return { fee, tickSpacing, hooks }
 }
 
@@ -50,18 +51,18 @@ function isPlausibleKey(key: V4PoolKey): boolean {
   return true
 }
 
-async function readSePoolKey(client: DiscoverReader, vault: Address): Promise<V4PoolKey | null> {
+export async function readSePoolKey(client: Pick<DiscoverReader, 'getStorageAt'>, vault: Address, blockNumber?: bigint): Promise<V4PoolKey | null> {
   try {
     const [s0, s1, s2] = await Promise.all([
-      client.getStorageAt({ address: vault, slot: SE_POOL_KEY_SLOT }),
-      client.getStorageAt({ address: vault, slot: addHex(SE_POOL_KEY_SLOT, 1) }),
-      client.getStorageAt({ address: vault, slot: addHex(SE_POOL_KEY_SLOT, 2) }),
+      client.getStorageAt({ address: vault, slot: SE_POOL_KEY_SLOT, blockNumber }),
+      client.getStorageAt({ address: vault, slot: addHex(SE_POOL_KEY_SLOT, 1), blockNumber }),
+      client.getStorageAt({ address: vault, slot: addHex(SE_POOL_KEY_SLOT, 2), blockNumber }),
     ])
     if (!s0 || !s1 || !s2) return null
     const currency0 = wordToAddress(s0)
     const currency1 = wordToAddress(s1)
     if (currency0 === ZERO_ADDRESS && currency1 === ZERO_ADDRESS) return null
-    const packed = decodePackedFeeTickHooks(s2)
+    const packed = decodePackedFeeTickHooks(s1, s2)
     const key: V4PoolKey = {
       currency0,
       currency1,

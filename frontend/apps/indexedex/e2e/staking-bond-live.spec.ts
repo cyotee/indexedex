@@ -1,5 +1,5 @@
 import { parseEther } from 'viem'
-import { test, expect, ANVIL_ACCOUNT_0 } from './wallet/fixture'
+import { test, expect, ANVIL_ACCOUNT_0, DEFAULT_E2E_RPC } from './wallet/fixture'
 import { findBaseBySymbol } from './helpers/chainArtifacts'
 import { readProtocolDetf } from '../app/lib/tokenStaking/migration'
 import platform from '../../../packages/protocol/src/addresses/chain/4663/platform.json'
@@ -33,7 +33,9 @@ test.describe('Live staking bond (Anvil RH)', () => {
   test.setTimeout(180_000)
 
   test.beforeEach(async ({ walletPage }) => {
+    expect(['127.0.0.1', 'localhost']).toContain(new URL(DEFAULT_E2E_RPC).hostname)
     test.skip(!(await rpcAlive()), 'RPC not reachable — start Anvil RH stack first')
+    expect(await publicClient().request({ method: 'web3_clientVersion' })).toMatch(/^anvil\//)
     test.skip(
       !(await chainIdMatches()),
       `RPC chain id must be ${process.env.E2E_CHAIN_ID ?? 4663}`,
@@ -51,7 +53,10 @@ test.describe('Live staking bond (Anvil RH)', () => {
     // live === null means method missing; continue and let UI attempt
 
     const weth = findBaseBySymbol('WETH') ?? findBaseBySymbol('WETH9')
-    test.skip(!weth, 'WETH missing from base-tokens')
+    if (!weth) {
+      test.skip(true, 'WETH missing from base-tokens')
+      return
+    }
 
     await ensureWeth(parseEther('0.2'))
     const wethBefore = await erc20Balance(weth.address as `0x${string}`, ANVIL_ACCOUNT_0.address)
@@ -78,7 +83,9 @@ test.describe('Live staking bond (Anvil RH)', () => {
 
     const submit = walletPage.getByTestId('detf-bond')
     const approval = walletPage.getByTestId('detf-approve')
-    await expect(approval.or(submit)).toBeVisible({ timeout: 30_000 })
+    // Allowance and quote reads decide which action is ready. A visible disabled
+    // Bond button can be replaced by Approve after those reads finish.
+    await expect(approval.or(submit)).toBeEnabled({ timeout: 60_000 })
     if (await approval.isVisible()) {
       await expect(approval).toBeEnabled()
       await approval.click()
