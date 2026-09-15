@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test'
 
 const baseURL = process.env.E2E_BASE_URL ?? 'http://127.0.0.1:3013'
+test.skip(process.env.E2E_SITE_DEPLOYMENT !== 'dtf', 'DTF-only announcement behavior')
 const notice = (page: import('@playwright/test').Page) => page.getByRole('dialog', { name: 'Same protocol. Another place to call home.' })
 
 test('landing reassures users, stays on DTF and keeps the background inert', async ({ page }) => {
