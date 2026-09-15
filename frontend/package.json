@@ -9,19 +9,20 @@
   "scripts": {
     "postinstall": "patch-package --error-on-fail",
     "dev": "npm run dev -w @indexedex/app-indexedex",
-    "dev:indexedex": "npm run dev -w @indexedex/app-indexedex",
+    "dev:indexedex": "npm run dev:indexedex -w @indexedex/app-indexedex",
     "build": "npm run build:indexedex && npm run build:dtf",
-    "build:indexedex": "npm run build -w @indexedex/app-indexedex",
+    "build:indexedex": "NEXT_PUBLIC_SITE_DEPLOYMENT=indexedex npm run build -w @indexedex/app-indexedex",
     "test": "npm run test -w @indexedex/app-indexedex",
     "test:e2e": "npm run test:e2e -w @indexedex/app-indexedex",
     "test:e2e:indexedex": "npm run test:e2e -w @indexedex/app-indexedex",
     "test:e2e:indexedex:live": "npm run test:e2e:live -w @indexedex/app-indexedex",
-    "typecheck": "npm run typecheck -w @indexedex/app-indexedex && npm run typecheck -w @indexedex/app-dtf",
+    "typecheck": "npm run typecheck -w @indexedex/app-indexedex",
     "check": "npm run check --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
-    "dev:dtf": "npm run dev -w @indexedex/app-dtf",
-    "build:dtf": "npm run build -w @indexedex/app-dtf",
-    "test:e2e:dtf": "npm run test:e2e -w @indexedex/app-dtf"
+    "dev:dtf": "npm run dev:dtf -w @indexedex/app-indexedex",
+    "build:dtf": "NEXT_PUBLIC_SITE_DEPLOYMENT=dtf npm run build -w @indexedex/app-indexedex",
+    "test:e2e:dtf": "E2E_SITE_DEPLOYMENT=dtf npm run test:e2e:deployment -w @indexedex/app-indexedex",
+    "test:e2e:deployment": "npm run test:e2e:deployment -w @indexedex/app-indexedex"
   },
   "devDependencies": {
     "patch-package": "8.0.1"
