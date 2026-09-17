@@ -133,10 +133,7 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferConstantProductH
         IFacet seFacet = PkgFactory.deploySeFacet(create3Factory);
         IFacet depositFacet = PkgFactory.deployDepositFacet(create3Factory);
         IFacet withdrawFacet = PkgFactory.deployWithdrawFacet(create3Factory);
-        hookPkg = PkgFactory.deployPackage(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            owner,
-            IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgInit({
+        hookPkg = PkgFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgInit({
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
                 seFacet: seFacet,
@@ -150,14 +147,7 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferConstantProductH
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
                 multiStepOwnableFacet: multiStepOwnableFacet
-            }),
-            abi.encode(
-                type(IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage).name,
-                "v1",
-                _pairDecimals(),
-                _rawDecimals()
-            )._hash()
-        );
+            }));
 
         IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs memory args = _defaultPkgArgs();
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);

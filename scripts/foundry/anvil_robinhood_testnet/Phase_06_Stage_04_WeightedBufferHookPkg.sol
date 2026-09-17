@@ -48,7 +48,7 @@ library Phase_06_Stage_04_WeightedBufferHookPkg {
         s.weightedHookPkg = reg.deployPkg(
             ArtifactCreationCode.creationCode(s.create3Factory, "UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol:UniswapV4StandardExchangeWeightedBufferHookDFPkg"),
             abi.encode(init_),
-            abi.encode(type(IWeightedHookPkg).name, FixtureEconomics.SALT_NS)._hash()
+            abi.encode("UniswapV4StandardExchangeWeightedBufferHookDFPkg")._hash()
         );
     }
 }

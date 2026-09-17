@@ -121,19 +121,12 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferHook_Decimals is
         IVaultRegistryDeployment(address(indexedexManager)).setHookDiamondPackageFactory(address(hookFactory));
 
         IFacet productFacet = PkgFactory.deployProductFacet(create3Factory);
-        hookPkg = PkgFactory.deployPackage(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            owner,
-            IUniswapV4SingleStandardExchangeBufferHookPackage.PkgInit({
+        hookPkg = PkgFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, IUniswapV4SingleStandardExchangeBufferHookPackage.PkgInit({
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
                 productFacet: productFacet,
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet
-            }),
-            abi.encode(
-                type(IUniswapV4SingleStandardExchangeBufferHookPackage).name, "v1", _pairDecimals()
-            )._hash()
-        );
+            }));
 
         IUniswapV4SingleStandardExchangeBufferHookPackage.PkgArgs memory args = _defaultPkgArgs();
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);

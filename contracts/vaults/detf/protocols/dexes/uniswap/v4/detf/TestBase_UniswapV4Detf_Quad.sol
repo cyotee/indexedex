@@ -96,10 +96,7 @@ abstract contract TestBase_UniswapV4Detf_Quad is TestBase_UniswapV4Detf {
         IFacet joinFacet = QuadFactory.deployJoinFacet(create3Factory);
         IFacet exitFacet = QuadFactory.deployExitFacet(create3Factory);
         IFacet seFacet = QuadFactory.deploySeFacet(create3Factory);
-        quadHookPkg = QuadFactory.deployPackage(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            owner,
-            IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgInit({
+        quadHookPkg = QuadFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgInit({
                 joinQueryFacet: QuadFactory.deployJoinQueryFacet(create3Factory),
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
@@ -113,9 +110,7 @@ abstract contract TestBase_UniswapV4Detf_Quad is TestBase_UniswapV4Detf {
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
                 multiStepOwnableFacet: multiStepOwnableFacet
-            }),
-            abi.encode(type(IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage).name, "v1")._hash()
-        );
+            }));
     }
 
     function _deployQuadHookThenDetf(IUniswapV4Detf.PkgArgs memory args) internal virtual returns (address detf_) {

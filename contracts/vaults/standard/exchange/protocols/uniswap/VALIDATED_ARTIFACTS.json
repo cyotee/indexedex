@@ -1,106 +1,106 @@
 {
-  "UniswapV3StandardExchangeDFPkgV2": {
-    "runtime_bytes": 12304,
-    "unlinked_runtime_sha256": "dd94e4dae76e73b55ffe04f453fa37fd72e0ee1193113b8f9018233e47a1295f"
+  "UniswapV3FullSpreadStandardExchangeVaultDFPkg": {
+    "runtime_bytes": 12265,
+    "unlinked_runtime_sha256": "e033fd5efee108823251653db678e5e71ec53f4ad36f4db1664a740d4d55f022"
   },
-  "UniswapV3StandardExchangeInExecutionDelegateV2": {
-    "runtime_bytes": 16948,
-    "unlinked_runtime_sha256": "d899e65ec894acb4b8075dc24fa789ad35a65b95d87c65ddfbb7a95e0ae5248f"
+  "UniswapV3FullSpreadStandardExchangeVaultInExecutionDelegate": {
+    "runtime_bytes": 17371,
+    "unlinked_runtime_sha256": "8babdb552a387551b23306a1958fc363bc8c07b45f18f9b47a176c89e236ee73"
   },
-  "UniswapV3StandardExchangeInFacetV2": {
-    "runtime_bytes": 16643,
-    "unlinked_runtime_sha256": "e56c34e1c54a297b1596282114937d6da27166057c64cce3e5584e1cb31d683f"
+  "UniswapV3FullSpreadStandardExchangeVaultInFacet": {
+    "runtime_bytes": 14821,
+    "unlinked_runtime_sha256": "e732f3f1535bd56fddf11644b3f7b8c6d7083a3e03b9a5b0d83f29360eca1419"
   },
-  "UniswapV3StandardExchangeInMultiFacetV2": {
-    "runtime_bytes": 17317,
-    "unlinked_runtime_sha256": "1e047809e84f8a95faa5d1be588a7a553a74e05abbbe684319341d0c521bf867"
+  "UniswapV3FullSpreadStandardExchangeVaultInMultiFacet": {
+    "runtime_bytes": 17341,
+    "unlinked_runtime_sha256": "56fa4b606c3e805564f86bfe874fc5810faad0ce62cc7d8f8d82e55ff5a311d0"
   },
-  "UniswapV3StandardExchangeInMultiQueryFacetV2": {
-    "runtime_bytes": 18154,
-    "unlinked_runtime_sha256": "e752923508e5b0f0aa39e07f1ff14e088700c63d1d59d2540d588f435f015e4c"
+  "UniswapV3FullSpreadStandardExchangeVaultInMultiQueryFacet": {
+    "runtime_bytes": 18771,
+    "unlinked_runtime_sha256": "0824ca2848a48813a90b745ce7583d3b93abb7b4864e57bfa87cb6e387d3b306"
   },
-  "UniswapV3StandardExchangeInQueryFacetV2": {
-    "runtime_bytes": 23737,
-    "unlinked_runtime_sha256": "220daff0d20ef128487e0eef930eec4c5fbc033cbbcf6cb97c809997b74ddce2"
+  "UniswapV3FullSpreadStandardExchangeVaultInQueryFacet": {
+    "runtime_bytes": 24099,
+    "unlinked_runtime_sha256": "306b16de72ded6182034e5bf37e61231b9d9e009667f40ab343a2e07504de22e"
   },
-  "UniswapV3StandardExchangeLiquidReserveFacetV2": {
-    "runtime_bytes": 12964,
-    "unlinked_runtime_sha256": "c51302b7a6b89219a183e662937c67f67bf30eba16ce05b1661cf3c74ff15483"
+  "UniswapV3FullSpreadStandardExchangeVaultLiquidReserveFacet": {
+    "runtime_bytes": 12269,
+    "unlinked_runtime_sha256": "ae1505f5fe8b511c540502837a5437ca0ac2a4fd3b144756a9275ca6315b6f1e"
   },
-  "UniswapV3StandardExchangeOutExecutionDelegateV2": {
-    "runtime_bytes": 21123,
-    "unlinked_runtime_sha256": "b9190c6206823378c896ff6b0e8e3f72a2a25a0c13ceed09147f1b4cf583f69f"
+  "UniswapV3FullSpreadStandardExchangeVaultOutExecutionDelegate": {
+    "runtime_bytes": 21499,
+    "unlinked_runtime_sha256": "1cc40754bdc609d36d86906c4771124cfbc4cc6cbade7256acd3ede08556c4ed"
   },
-  "UniswapV3StandardExchangeOutFacetV2": {
-    "runtime_bytes": 23269,
-    "unlinked_runtime_sha256": "aad58cbaac386d6b2e08d829ec723899de903ee54b2911c450aca3567e6bdbdf"
+  "UniswapV3FullSpreadStandardExchangeVaultOutFacet": {
+    "runtime_bytes": 22636,
+    "unlinked_runtime_sha256": "623399c6ee4c79d2e018d3a6af943061857d4ec685116791437bcca310f83c23"
   },
-  "UniswapV3StandardExchangeOutMultiFacetV2": {
-    "runtime_bytes": 16859,
-    "unlinked_runtime_sha256": "93ca2097de79a9602d9c3f36b478ab64003e2733f90350869a00122f177e7c67"
+  "UniswapV3FullSpreadStandardExchangeVaultOutMultiFacet": {
+    "runtime_bytes": 16798,
+    "unlinked_runtime_sha256": "852d1a14b74e127ba9b50cba45a2808bc4f3e4ae0d7e42f1299b3ae699dc62ab"
   },
-  "UniswapV3StandardExchangeOutMultiQueryFacetV2": {
-    "runtime_bytes": 7918,
-    "unlinked_runtime_sha256": "36d3e54d76f670d7716f5f1fca58d3a27d1a397d5ce4d43aa1b271b9d3d593b4"
+  "UniswapV3FullSpreadStandardExchangeVaultOutMultiQueryFacet": {
+    "runtime_bytes": 7931,
+    "unlinked_runtime_sha256": "f6162176dad11c5d128be7af010438f37962ed5c517ea49213d888be9224ee08"
   },
-  "UniswapV3StandardExchangeOutQueryFacetV2": {
-    "runtime_bytes": 23080,
-    "unlinked_runtime_sha256": "a786a6be7f3a386950eb6b559b738a8e6a40177a6683013bb378e7b57784c132"
+  "UniswapV3FullSpreadStandardExchangeVaultOutQueryFacet": {
+    "runtime_bytes": 22529,
+    "unlinked_runtime_sha256": "b3560014213af3a9e6e57302aa28bc8811628950e54f690359ae550d84936650"
   },
-  "UniswapV3StandardExchangePositionImportFacetV2": {
-    "runtime_bytes": 18389,
-    "unlinked_runtime_sha256": "4c8f4149bbbe6ba4be080497d4eaa32f71b8aaa636e5548da36f0f8ddcb085e0"
+  "UniswapV3FullSpreadStandardExchangeVaultPositionImportFacet": {
+    "runtime_bytes": 18056,
+    "unlinked_runtime_sha256": "4a2616073354868e07b967bd40cbf3c6506028e43292b3cecfa1a4b79b34c685"
   },
-  "UniswapV4StandardExchangeDFPkgV2": {
-    "runtime_bytes": 13274,
-    "unlinked_runtime_sha256": "89d26c7d7f9952cce23916c7f8dce887f07b19c04b7d0bc87867fe5c0f62b3e1"
+  "UniswapV4FullSpreadStandardExchangeVaultDFPkg": {
+    "runtime_bytes": 13235,
+    "unlinked_runtime_sha256": "5a8e8327e5fa3a5276bd9dda705a1040b5ef3200e39607453f32dd4efe8e65dd"
   },
-  "UniswapV4StandardExchangeInExecutionDelegateV2": {
-    "runtime_bytes": 20022,
-    "unlinked_runtime_sha256": "72bd284ffa2d8ea9988bf3821e8deb30002ee81db5a05e37b7b9723790545ade"
+  "UniswapV4FullSpreadStandardExchangeVaultInExecutionDelegate": {
+    "runtime_bytes": 18960,
+    "unlinked_runtime_sha256": "9f8058a65cfbdaa34268132977605662ce85420f790ccbcad1a3421a2c1a45f1"
   },
-  "UniswapV4StandardExchangeInFacetV2": {
-    "runtime_bytes": 21227,
-    "unlinked_runtime_sha256": "1fdf74b63800220ca94077f332bbb6988c7d60c9032e2982f99916c956bc3a3e"
+  "UniswapV4FullSpreadStandardExchangeVaultInFacet": {
+    "runtime_bytes": 17906,
+    "unlinked_runtime_sha256": "1c00a4cf01ca1aa42b1d83060782beaafaeb1246888d0ff8f72f9b0f664fa315"
   },
-  "UniswapV4StandardExchangeInMultiFacetV2": {
-    "runtime_bytes": 20792,
-    "unlinked_runtime_sha256": "1a91810816dcb124012c6349c6bb00c25e5a296269796478d669505a06355b29"
+  "UniswapV4FullSpreadStandardExchangeVaultInMultiFacet": {
+    "runtime_bytes": 19369,
+    "unlinked_runtime_sha256": "8442d0dd9a16c4875124986db7a6a14dc3639b705548a63d6c9ac49e6da31b5c"
   },
-  "UniswapV4StandardExchangeInMultiQueryFacetV2": {
-    "runtime_bytes": 19783,
-    "unlinked_runtime_sha256": "c2b3abbdaae47abf642e37e94f2d449a328f44f0e8ac1a6af45d353ea6195b0e"
+  "UniswapV4FullSpreadStandardExchangeVaultInMultiQueryFacet": {
+    "runtime_bytes": 20410,
+    "unlinked_runtime_sha256": "3534f98ea97ebd0705c95a5b0cb4b5f601672f91c0433b62aef29b404dd33441"
   },
-  "UniswapV4StandardExchangeInQueryFacetV2": {
-    "runtime_bytes": 23337,
-    "unlinked_runtime_sha256": "4d0a13a9ae72bba460c1bada299ef16345382bda25136aa4f68faefdacb27676"
+  "UniswapV4FullSpreadStandardExchangeVaultInQueryFacet": {
+    "runtime_bytes": 23709,
+    "unlinked_runtime_sha256": "e63af0f9eaeabb45a60a5170832b33d0ac5ad496874bd15aa6808949346cd31e"
   },
-  "UniswapV4StandardExchangeLiquidReserveFacetV2": {
-    "runtime_bytes": 18182,
-    "unlinked_runtime_sha256": "afdc9554b3aaba1ca2ce6c063330fb9b56fd354c1d93d2b737acee68d330eae1"
+  "UniswapV4FullSpreadStandardExchangeVaultLiquidReserveFacet": {
+    "runtime_bytes": 16059,
+    "unlinked_runtime_sha256": "c5986f8eea59a891dcdecd34e427f6cadccb489004420f76fb570788edb36256"
   },
-  "UniswapV4StandardExchangeOutExecutionDelegateV2": {
-    "runtime_bytes": 14361,
-    "unlinked_runtime_sha256": "9bf3d55750625735fef44399ff95973e2fb633e5c92574374f25195783b3ae3f"
+  "UniswapV4FullSpreadStandardExchangeVaultOutExecutionDelegate": {
+    "runtime_bytes": 13148,
+    "unlinked_runtime_sha256": "f10d80a15e14981c661b622837f0e844228c8c66a276b2c84bc0f6500cb7cf61"
   },
-  "UniswapV4StandardExchangeOutFacetV2": {
-    "runtime_bytes": 19996,
-    "unlinked_runtime_sha256": "455b1fdc7fc75905f64ecd49d25d2c5d33bb37c6f823bf58618921c8fbdc63b3"
+  "UniswapV4FullSpreadStandardExchangeVaultOutFacet": {
+    "runtime_bytes": 18162,
+    "unlinked_runtime_sha256": "370a34268ab92ed3086e27a0a98ffada05fca245bdb1e2a6477fecb421d29d11"
   },
-  "UniswapV4StandardExchangeOutMultiFacetV2": {
-    "runtime_bytes": 20505,
-    "unlinked_runtime_sha256": "aa06cfb12352d6c1a2f6a9ccfc9b5da95999d38cdb21b9cdb967c6127b380c95"
+  "UniswapV4FullSpreadStandardExchangeVaultOutMultiFacet": {
+    "runtime_bytes": 18970,
+    "unlinked_runtime_sha256": "e6cb5ac9cab4f746a099cc40eb0db08b23b2492cabc67b11dcdb011fbe66ef81"
   },
-  "UniswapV4StandardExchangeOutMultiQueryFacetV2": {
-    "runtime_bytes": 16262,
-    "unlinked_runtime_sha256": "2ccf6b367d20a4fcc759688454ad86caf58b0087b8f5fa42de0e4779acb367cf"
+  "UniswapV4FullSpreadStandardExchangeVaultOutMultiQueryFacet": {
+    "runtime_bytes": 15715,
+    "unlinked_runtime_sha256": "1a7f8e763ab467968ca33e4c92b728793e6e7fd9354bc81a4628e6382b8147f7"
   },
-  "UniswapV4StandardExchangeOutQueryFacetV2": {
-    "runtime_bytes": 22871,
-    "unlinked_runtime_sha256": "cd3e34ed4a4fa7db911e0e78dd4fcfdbe2bcb80693ea362985e2669cf5b719f4"
+  "UniswapV4FullSpreadStandardExchangeVaultOutQueryFacet": {
+    "runtime_bytes": 22884,
+    "unlinked_runtime_sha256": "ba9a4f44acb6894ceb12732d7c6707367bdca93c15c29d56a81f2efb0bf1ddc0"
   },
-  "UniswapV4StandardExchangePositionImportFacetV2": {
-    "runtime_bytes": 20560,
-    "unlinked_runtime_sha256": "175c89b6e80876664f9d422a81fcafa7fda6322763004096b11e34dc189d1f85"
+  "UniswapV4FullSpreadStandardExchangeVaultPositionImportFacet": {
+    "runtime_bytes": 18811,
+    "unlinked_runtime_sha256": "be77e3cb52c6dae6d8155fccb559ff83db7bf0e62953879e7de8aecf3eb05881"
   }
 }

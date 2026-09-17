@@ -182,19 +182,7 @@ abstract contract TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook
         init.erc2612Facet = erc2612Facet;
         init.multiAssetBasicVaultFacet = multiAssetBasicVaultFacet;
         init.multiAssetStandardVaultFacet = multiAssetStandardVaultFacet;
-        hookPkg = PkgFactory.deployPackage(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            owner,
-            init,
-            abi.encode(
-                type(IUniswapV4StandardExchangeBalancerQuadStableBufferHookPackage).name,
-                "v1",
-                _dec0(),
-                _dec1(),
-                _dec2(),
-                _dec3()
-            )._hash()
-        );
+        hookPkg = PkgFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, init);
     }
 
     function _raw(MintableERC20Decimals t, uint256 human) internal view returns (uint256) {

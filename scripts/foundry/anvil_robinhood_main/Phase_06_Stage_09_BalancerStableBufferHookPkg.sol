@@ -47,7 +47,7 @@ library Phase_06_Stage_09_BalancerStableBufferHookPkg {
         pkg = reg.deployPkg(
             initCode_,
             initArgs_,
-            ArtifactCreationCode.releaseSalt(abi.encode(type(IBalancerHookPkg).name, FixtureEconomics.SALT_NS)._hash(), initCode_, initArgs_)
+            ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg")._hash())
         );
     }
 }

@@ -30,7 +30,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHook_FactoryService {
     function deployHooksFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet.sol:UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet");
         facet = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet")._hash(), initCode_, bytes(""))
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet")._hash())
         );
         vm.label(address(facet), "UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet");
     }
@@ -38,7 +38,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHook_FactoryService {
     function deployJoinFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4StandardExchangeCurveQuadStableBufferHookJoinFacet.sol:UniswapV4StandardExchangeCurveQuadStableBufferHookJoinFacet");
         facet = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeCurveQuadStableBufferHookJoinFacet")._hash(), initCode_, bytes(""))
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeCurveQuadStableBufferHookJoinFacet")._hash())
         );
         vm.label(address(facet), "UniswapV4StandardExchangeCurveQuadStableBufferHookJoinFacet");
     }
@@ -46,7 +46,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHook_FactoryService {
     function deployJoinQueryFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4StandardExchangeCurveQuadStableBufferHookJoinQueryFacet.sol:UniswapV4StandardExchangeCurveQuadStableBufferHookJoinQueryFacet");
         facet = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeCurveQuadStableBufferHookJoinQueryFacet")._hash(), initCode_, bytes(""))
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeCurveQuadStableBufferHookJoinQueryFacet")._hash())
         );
         vm.label(address(facet), "UniswapV4StandardExchangeCurveQuadStableBufferHookJoinQueryFacet");
     }
@@ -54,7 +54,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHook_FactoryService {
     function deployExitFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet.sol:UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet");
         facet = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet")._hash(), initCode_, bytes(""))
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet")._hash())
         );
         vm.label(address(facet), "UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet");
     }
@@ -67,7 +67,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHook_FactoryService {
     function deploySeFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4StandardExchangeCurveQuadStableBufferHookSeFacet.sol:UniswapV4StandardExchangeCurveQuadStableBufferHookSeFacet");
         facet = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeCurveQuadStableBufferHookSeFacet")._hash(), initCode_, bytes(""))
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeCurveQuadStableBufferHookSeFacet")._hash())
         );
         vm.label(address(facet), "UniswapV4StandardExchangeCurveQuadStableBufferHookSeFacet");
     }
@@ -75,8 +75,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHook_FactoryService {
     function deployPackage(
         IVaultRegistryDeployment registry,
         address owner,
-        IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgInit memory init,
-        bytes32 salt
+        IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgInit memory init
     ) internal returns (IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage pkg) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode("UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg.sol:UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg");
         bytes memory initArgs_ = abi.encode(init);
@@ -85,7 +84,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHook_FactoryService {
             registry.deployPkg(
                 initCode_,
                 initArgs_,
-                ArtifactCreationCode.releaseSalt(salt, initCode_, initArgs_)
+                ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg")._hash())
             )
         );
         vm.label(address(pkg), "UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg");

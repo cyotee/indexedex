@@ -47,7 +47,7 @@ library Phase_06_Stage_05_OrbitalBufferHookPkg {
         s.orbitalHookPkg = reg.deployPkg(
             ArtifactCreationCode.creationCode(s.create3Factory, "UniswapV4StandardExchangeOrbitalBufferHookDFPkg.sol:UniswapV4StandardExchangeOrbitalBufferHookDFPkg"),
             abi.encode(init_),
-            abi.encode(type(IOrbitalHookPkg).name, FixtureEconomics.SALT_NS)._hash()
+            abi.encode("UniswapV4StandardExchangeOrbitalBufferHookDFPkg")._hash()
         );
     }
 }

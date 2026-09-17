@@ -21,24 +21,24 @@ The frontend now has one central artifact registry and one central deployment-en
 
 ### Single Source of Truth
 
-- `frontend/app/addresses/index.ts` owns the artifact registry.
-- `frontend/app/lib/addressArtifacts.ts` owns chain-id resolution and typed access to bundles.
-- `frontend/app/lib/deploymentEnvironment.tsx` owns the deployment-environment type, context contract, storage key, and toggle UI.
-- `frontend/app/providers.tsx` owns persisted environment state and wagmi transport switching.
+- Money-path app is `frontend/apps/dtf` on Robinhood 4663. Do not keep a second IndexedEx/Pachira app.
+- Shared protocol artifacts live under `frontend/packages/protocol/src/addresses/`. Do not treat `frontend/app/addresses/index.ts` as the money-path registry.
+- `frontend/packages/protocol` owns chain-id resolution and typed access to bundles.
+- Wagmi transports for the money path target Robinhood 4663.
 
 Do not scatter direct artifact JSON imports across feature pages when the data belongs in the shared registry.
 
 ## Deployment Environment Model
 
-Current supported environments:
+Current supported environment:
 
 ```ts
-type DeploymentEnvironment = 'sepolia' | 'supersim_sepolia'
+type DeploymentEnvironment = 'robinhood_4663'
 ```
 
 Rules:
 
-- Default to `supersim_sepolia` unless `NEXT_PUBLIC_DEFAULT_DEPLOYMENT_ENVIRONMENT` overrides it.
+- Default to Robinhood 4663 / `frontend/apps/dtf`. Do not default to `supersim_sepolia`.
 - Persist the current environment in localStorage under `indexedex:deployment-environment`.
 - Keep environment switching in provider and context code, not in individual pages.
 

@@ -107,7 +107,7 @@ contract Script_08_DeployFeeDetfPackage is DeploymentBase {
                         multiStepOwnableFacet: multiStepOwnableFacet
                     })
                 ),
-                abi.encode(type(ICpPkg).name, "AnvilFeeDetf")._hash()
+                abi.encode("UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg")._hash()
             );
         }
 

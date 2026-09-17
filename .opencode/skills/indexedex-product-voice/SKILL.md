@@ -28,7 +28,7 @@ This skill **overrides** generic marketing skills on **product hierarchy, names,
 
 **Homes:** Explore live DETFs → `/explore` (Protocol DETF opens `/staking?detf=`). Create types → `/create`. Positions → `/you`. Education → `/learn` (chapters stay at `/research/[slug]`). Vault catalog → `/earn` (not a top-level product).
 
-**$RICH (landing fee story):** $RICH is the named token for app fees. Customer copy: **all protocol / app fees go to buying back $RICH**, including the **pons family** launch for $RICH. Point people to **buy $RICH** as the long-term way to take part when the product is used. Do not promise profit, APY, or a higher price from buybacks. Keep create-your-own DETFs as the premier product; $RICH is the fee-buyback path, not a second DETF brand.
+**$DTF (landing fee story):** Official fee token is **$DTF** at `0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01`. Customer copy: **all protocol / app fees go to buying back $DTF**. Ban RICH and CHIR in customer UI. Protocol DETF display name is **$DTF-DETF**. Do not promise profit, APY, or a higher price from buybacks. Keep create-your-own DETFs as the premier product; $DTF is the fee-buyback path, not a second DETF brand.
 
 **Creator rights:** The creator's role NFT has no redeemable principal. It receives a portion of funded rewards as **sDETF**. Those receipts are freely transferable and can be unstaked for an equal amount of DETF. The standing right can receive more sDETF after earlier receipts have all been redeemed. The fee recipient follows the same pattern. Purchased user bonds instead have funded principal that vests linearly, plus staking rewards claimable during vesting. Do not call the creator's sDETF unredeemable or promise reward amounts.
 

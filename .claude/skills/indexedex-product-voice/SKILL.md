@@ -1,6 +1,12 @@
 ---
 name: indexedex-product-voice
-description: "Write or edit IndexedEx/DETF customer-facing UI, education and marketing copy using the project voice rules."
+description: >
+  Project voice law for IndexedEx / DETF customer-facing copy (UI, research notes,
+  marketing site, X posts). Use when writing or editing landing pages, product UI
+  strings, Protocol DETF copy, research education, disclaimers, CTAs, or when
+  copywriting/copy-editing skills would otherwise inject marketing jargon.
+  Triggers: product voice, UI copy, landing copy, Protocol DETF wording, ban jargon,
+  plain language DeFi, customer-facing text, rewrite marketing speak, DETF narrative.
 ---
 
 # IndexedEx product voice
@@ -22,7 +28,7 @@ This skill **overrides** generic marketing skills on **product hierarchy, names,
 
 **Homes:** Explore live DETFs → `/explore` (Protocol DETF opens `/staking?detf=`). Create types → `/create`. Positions → `/you`. Education → `/learn` (chapters stay at `/research/[slug]`). Vault catalog → `/earn` (not a top-level product).
 
-**$RICH (landing fee story):** $RICH is the named token for app fees. Customer copy: **all protocol / app fees go to buying back $RICH**, including the **pons family** launch for $RICH. Point people to **buy $RICH** as the long-term way to take part when the product is used. Do not promise profit, APY, or a higher price from buybacks. Keep create-your-own DETFs as the premier product; $RICH is the fee-buyback path, not a second DETF brand.
+**$RICH (landing fee story):** Official fee token is **$DTF** at `0xeE5576Fa1Bcaa380e591D01245f406f3f384eb01`. Customer copy: **all protocol / app fees go to buying back $DTF**. Ban RICH and CHIR in customer UI. Protocol DETF display name is **$DTF-DETF**. Do not promise profit, APY, or a higher price from buybacks. Keep create-your-own DETFs as the premier product; $DTF is the fee-buyback path, not a second DETF brand.
 
 **Creator rights:** The creator's role NFT has no redeemable principal. It receives a portion of funded rewards as **sDETF**. Those receipts are freely transferable and can be unstaked for an equal amount of DETF. The standing right can receive more sDETF after earlier receipts have all been redeemed. The fee recipient follows the same pattern. Purchased user bonds instead have funded principal that vests linearly, plus staking rewards claimable during vesting. Do not call the creator's sDETF unredeemable or promise reward amounts.
 
@@ -132,6 +138,6 @@ Also avoid: Learn More, Get Started, Submit (use **Open {symbol}**, **Bond**, **
 ## Canonical paths
 
 - Spine: `docs/marketing/DETF_NARRATIVE_SPINE.md`  
-- Research article: `frontend/apps/indexedex/app/content/research/articles/detf.ts`
-- Landing: `frontend/apps/indexedex/app/page.tsx`
+- Research article: `frontend/apps/dtf/app/content/research/articles/detf.ts`  
+- Landing: `frontend/apps/dtf/app/page.tsx`  
 - Shared marketing context (if present): `.agents/product-marketing.md`  

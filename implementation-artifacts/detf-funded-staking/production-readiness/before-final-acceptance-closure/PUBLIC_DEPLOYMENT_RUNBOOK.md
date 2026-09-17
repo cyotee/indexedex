@@ -21,7 +21,7 @@ Keep the Crane submodule patch in the release snapshot: both `FacetRegistryTarge
 | Target chain | Robinhood mainnet, chain ID 4663; never infer chain from an RPC URL label |
 | Deployer and core owner in the rehearsal | `0x72BeA6Fa3E68EF18c87D045Aac7C4Aa5249d933B`; public signing authority must be available and verified by the operator |
 | CREATE2 core namespace | `FixtureEconomics.SALT_NS = "RhMain"`; core salt binds owner, namespace and `"Create3Factory"` |
-| Product component salts | `ArtifactCreationCode.releaseSalt`: `keccak256(abi.encode(namespace, keccak256(initCode), keccak256(initArgs)))` where used by the recorded FactoryService; record the exact bytes, not a label |
+| Product component salts | `abi.encode(contractIdentifier)._hash()` via `BetterEfficientHashLib`; automatic libraries use the source-qualified `source:Library` identity. `ArtifactCreationCode.releaseSalt` returns the namespace unchanged. |
 | Global usage fee | `5e16` (5%) |
 | Global DEX swap fee | `3e14` (0.03%) |
 | Seigniorage | `5e16` (5%) |
@@ -33,6 +33,8 @@ Keep the Crane submodule patch in the release snapshot: both `FacetRegistryTarge
 | DETF instance policy | Immutable unowned instance; required price gates with reserve-swap fallback; hook ownership and `ownerOnlyLiquidity` must match the encoded args |
 | Fee and creator destinations | Verify the current manager oracle recipient, collector owner and each proposed instance's creator/allocations; do not substitute a test actor or zero/default address silently |
 | External pins | `RobinhoodCanonicalLib.sol`, Phase 01 manifests and verified runtime code; provider-specific addresses/pools/markets must match the candidate's package constructor args |
+
+Historical records below were produced with the old bytecode/constructor-sensitive salt formula; their hashes, addresses, and rehearsal results are retained. Current policy: [CREATE3 salt correction](../../../../docs/create3-release-salt-input-correction.md). Occupied salts retain their existing deployments.
 
 Changing the deployer, owner, code, package constructor, linked library or market arguments can change predictions or security assumptions. Regenerate affected predictions and repeat the corresponding local simulation instead of recycling old receipts.
 

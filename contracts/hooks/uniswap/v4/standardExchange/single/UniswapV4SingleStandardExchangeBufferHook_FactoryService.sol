@@ -37,15 +37,14 @@ library UniswapV4SingleStandardExchangeBufferHook_FactoryService {
     function deployPackage(
         IVaultRegistryDeployment registry,
         address owner,
-        IUniswapV4SingleStandardExchangeBufferHookPackage.PkgInit memory init,
-        bytes32 salt
+        IUniswapV4SingleStandardExchangeBufferHookPackage.PkgInit memory init
     ) internal returns (IUniswapV4SingleStandardExchangeBufferHookPackage pkg) {
         vm.prank(owner);
         pkg = IUniswapV4SingleStandardExchangeBufferHookPackage(
             registry.deployPkg(
                 ArtifactCreationCode.creationCode("UniswapV4SingleStandardExchangeBufferHookDFPkg.sol:UniswapV4SingleStandardExchangeBufferHookDFPkg"),
                 abi.encode(init),
-                salt
+                abi.encode("UniswapV4SingleStandardExchangeBufferHookDFPkg")._hash()
             )
         );
         vm.label(address(pkg), "UniswapV4SingleStandardExchangeBufferHookDFPkg");

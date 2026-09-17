@@ -1,6 +1,12 @@
 ---
 name: indexedex-ui-tx-testing
-description: "Test IndexedEx frontend money paths with Playwright injected wallets and verify Robinhood Anvil onchain effects."
+description: >-
+  Runs IndexedEx/DTF frontend transactions through the UI with Playwright
+  injected wallets (not MetaMask) and verifies on-chain effects. Use when the
+  user asks to "test UI txs", "e2e bond", "live swap UI", "Playwright staking",
+  "verify deposit through UI", "DTF e2e", "Robinhood Anvil UI", "click through
+  money path", or after frontend money-path changes. DO NOT use for Foundry
+  contract tests (crane-testing / indexedex-testing) or pure copy/IA smoke without txs.
 license: MIT
 ---
 
@@ -20,14 +26,14 @@ Prove the **Next app builds and submits correct txs** by driving the real UI wit
 
 | Item | Value |
 |------|--------|
-| App | `frontend/apps/indexedex` (`@indexedex/app-indexedex`) |
+| App | `frontend/apps/dtf` (`@indexedex/app-dtf`) |
 | Port | **3002** |
 | Chain id | **4663** |
 | RPC | `http://127.0.0.1:8545` |
 | Wallet | Anvil **#0** (e2e inject); scripts fund **#1** as human UI wallet |
 | Artifacts | `frontend/packages/protocol/src/addresses/chain/4663/` |
 
-The canonical source is `frontend/apps/indexedex`. DTF shares that source and adds a domain notice before the temporary staking overlay.
+Do not look for `frontend/apps/indexedex`. That app was removed. DTF is the only Next app.
 
 ## Quick start
 
@@ -43,21 +49,21 @@ cast chain-id --rpc-url http://127.0.0.1:8545   # must be 4663
 # 1) Frontend
 cd frontend
 npm install
-npm run build -w @indexedex/app-indexedex
-npm run test:e2e:install -w @indexedex/app-indexedex
+npm run build -w @indexedex/app-dtf
+npm run test:e2e:install -w @indexedex/app-dtf
 
 # 2) Shell + IA (no live txs required)
-npm run test:e2e -w @indexedex/app-indexedex
+npm run test:e2e -w @indexedex/app-dtf
 
 # 3) Live money paths (bond / deposit when stack allows)
-npm run test:e2e:live -w @indexedex/app-indexedex
+npm run test:e2e:live -w @indexedex/app-dtf
 ```
 
-Reuse a running IndexedEx dev server:
+Reuse a running DTF dev server:
 
 ```bash
-npm run dev:indexedex
-E2E_SKIP_WEBSERVER=1 npm run test:e2e:live -w @indexedex/app-indexedex
+npm run dev:dtf
+E2E_SKIP_WEBSERVER=1 npm run test:e2e:live -w @indexedex/app-dtf
 ```
 
 ## Navigation (read on demand)
@@ -77,17 +83,18 @@ E2E_SKIP_WEBSERVER=1 npm run test:e2e:live -w @indexedex/app-indexedex
 3. **Query vs execute** — deposit query **8-tuple** / execute **10-tuple**; never spread execute into query.
 4. **Approvals** — multi-leg uses **split** Permit2 + router CTAs (`swap-approve-*`, ActionCta gates).
 5. **List-driven addresses** — read `chain/<id>/` tokenlists + `platform.json`; do not hardcode vaults.
-6. **Two Anvil families** — `fee_detf` (CHIR live) vs `main` (inert demos). Last export wins for `chain/4663/`.
-7. **Do not invent APY/USD** in assertions or UI checks.
+6. **Two Anvil families** — `fee_detf` ($DTF-DETF live after first bond) vs `main` (inert demos). Last export wins for `chain/4663/`.
+7. **Approvals** — button says Approve until the approval receipt, then Stake.
+8. **Do not invent APY/USD** in assertions or UI checks.
 
 ## Key files
 
 | Path | Role |
 |------|------|
-| `frontend/apps/indexedex/e2e/` | DTF Playwright suite (RH default) |
-| `frontend/apps/indexedex/e2e/staking-bond-live.spec.ts` | Bond WETH via `/staking` |
-| `frontend/apps/indexedex/e2e/swap-routes-live.spec.ts` | Live swap/deposit when stack supports |
-| `frontend/apps/indexedex/playwright.config.ts` | Port 3002 + RH env |
+| `frontend/apps/dtf/e2e/` | DTF Playwright suite (RH default) |
+| `frontend/apps/dtf/e2e/staking-bond-live.spec.ts` | Bond WETH via `/staking` |
+| `frontend/apps/dtf/e2e/swap-routes-live.spec.ts` | Live swap/deposit when stack supports |
+| `frontend/apps/dtf/playwright.config.ts` | Port 3002 + RH env |
 | `frontend/packages/protocol/` | Shared addresses / tokenlists |
 | `frontend/packages/protocol/src/addresses/chain/4663/` | RH artifacts |
 

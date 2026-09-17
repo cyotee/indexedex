@@ -48,13 +48,12 @@ library UniswapV4CurveQuadStableSwapHook_FactoryService {
     function deployPackage(
         IVaultRegistryDeployment registry,
         address owner,
-        IUniswapV4CurveQuadStableSwapHookPackage.PkgInit memory init,
-        bytes32 salt
+        IUniswapV4CurveQuadStableSwapHookPackage.PkgInit memory init
     ) internal returns (IUniswapV4CurveQuadStableSwapHookPackage pkg) {
         vm.prank(owner);
         pkg = IUniswapV4CurveQuadStableSwapHookPackage(
             registry.deployPkg(
-                ArtifactCreationCode.creationCode("UniswapV4CurveQuadStableSwapHookDFPkg.sol:UniswapV4CurveQuadStableSwapHookDFPkg"), abi.encode(init), salt
+                ArtifactCreationCode.creationCode("UniswapV4CurveQuadStableSwapHookDFPkg.sol:UniswapV4CurveQuadStableSwapHookDFPkg"), abi.encode(init), abi.encode("UniswapV4CurveQuadStableSwapHookDFPkg")._hash()
             )
         );
         vm.label(address(pkg), "UniswapV4CurveQuadStableSwapHookDFPkg");

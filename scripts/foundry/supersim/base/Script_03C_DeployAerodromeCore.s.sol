@@ -46,13 +46,13 @@ contract Script_03C_DeployAerodromeCore is DeploymentBase {
 
         deployedAerodromePoolImplementation = _deployCreate3(
             ArtifactCreationCode.creationCode(create3Factory, "lib/crane/contracts/protocols/dexes/aerodrome/v1/stubs/Pool.sol:Pool"),
-            _salt("BaseSepoliaAerodromePoolImplementation")
+            _salt("Pool")
         );
 
         deployedAerodromeFactory = _deployWithArgs(
             ArtifactCreationCode.creationCode(create3Factory, "PoolFactory.sol:PoolFactory"),
             abi.encode(deployedAerodromePoolImplementation),
-            _salt("BaseSepoliaAerodromePoolFactory")
+            _salt("PoolFactory")
         );
 
         deployedAerodromeFactoryRegistry = _deployWithArgs(
@@ -63,7 +63,7 @@ contract Script_03C_DeployAerodromeCore is DeploymentBase {
                 deployedAerodromeFactory,
                 deployer
             ),
-            _salt("BaseSepoliaAerodromeFactoryRegistry")
+            _salt("FactoryRegistry")
         );
 
         deployedAerodromeRouter = _deployWithArgs(
@@ -75,7 +75,7 @@ contract Script_03C_DeployAerodromeCore is DeploymentBase {
                 address(0),
                 address(weth)
             ),
-            _salt("BaseSepoliaAerodromeRouter")
+            _salt("Router")
         );
     }
 

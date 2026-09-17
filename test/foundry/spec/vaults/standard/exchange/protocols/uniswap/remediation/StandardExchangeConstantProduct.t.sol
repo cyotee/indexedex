@@ -64,4 +64,22 @@ contract StandardExchangeConstantProductTest is Test {
         assertEq(CP._singleExit(x, y, burn, supply), expected);
         assertLe(expected, x);
     }
+
+    function test_scaledMinimumLiquidity_decimalMatrix() public pure {
+        assertEq(CP._minimumLiquidity(uint8(18),uint8(18)),1e15);
+        assertEq(CP._minimumLiquidity(uint8(6),uint8(18)),1e9);
+        assertEq(CP._minimumLiquidity(uint8(6),uint8(6)),1e3);
+        assertEq(CP._minimumLiquidity(uint8(6),uint8(9)),1e4);
+        assertEq(CP._minimumLiquidity(uint8(2),uint8(3)),1);
+        assertEq(CP._initialShares(1e15+1,1e15+1,1e15),1);
+        assertEq(CP._initialShares(1001,1001,1000),1);
+        assertEq(CP._initialShares(0,1001,1000),0);
+    }
+    function test_minimumBoundary_revertsExactly() public {
+        vm.expectRevert(abi.encodeWithSelector(CP.InsufficientMinimumLiquidity.selector,1000,1000));
+        this.initialShares(1000,1000,1000);
+    }
+    function initialShares(uint256 a,uint256 b,uint256 minimum) external pure returns(uint256) {
+        return CP._initialShares(a,b,minimum);
+    }
 }

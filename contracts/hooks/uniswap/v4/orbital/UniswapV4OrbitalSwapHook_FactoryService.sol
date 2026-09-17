@@ -48,13 +48,12 @@ library UniswapV4OrbitalSwapHook_FactoryService {
     function deployPackage(
         IVaultRegistryDeployment registry,
         address owner,
-        IUniswapV4OrbitalSwapHookPackage.PkgInit memory init,
-        bytes32 salt
+        IUniswapV4OrbitalSwapHookPackage.PkgInit memory init
     ) internal returns (IUniswapV4OrbitalSwapHookPackage pkg) {
         vm.prank(owner);
         pkg = IUniswapV4OrbitalSwapHookPackage(
             registry.deployPkg(
-                ArtifactCreationCode.creationCode("UniswapV4OrbitalSwapHookDFPkg.sol:UniswapV4OrbitalSwapHookDFPkg"), abi.encode(init), salt
+                ArtifactCreationCode.creationCode("UniswapV4OrbitalSwapHookDFPkg.sol:UniswapV4OrbitalSwapHookDFPkg"), abi.encode(init), abi.encode("UniswapV4OrbitalSwapHookDFPkg")._hash()
             )
         );
         vm.label(address(pkg), "UniswapV4OrbitalSwapHookDFPkg");

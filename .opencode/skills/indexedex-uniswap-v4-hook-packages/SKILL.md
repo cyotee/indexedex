@@ -118,7 +118,7 @@ test/foundry/spec/hooks/uniswap/v4/factory/
 
 - **CREATE2** instances via hook factory (callback needs factory as `msg.sender`). Facets stay CREATE3.
 - Salt: `finalSalt = keccak256(abi.encode(packageSalt, mineNonce))` — **no** `address(pkg)`.
-- Instances **immutable** after postDeploy (no live `diamondCut`).
+- Instances **immutable** after postDeploy. No human `diamondCut`; `deployPoolOne`/`deployPoolTwo` then `finalize` cut internally; off-chain premine only.
 - Premine-first; auto-mine is gas-risky.
 - Monomorph hooks under `weighted/` / `orbital/` / `stable/quad/` are **legacy** until migrated.
 - **Full type names** for product contracts/files; short LP symbols only when PRD locks them.

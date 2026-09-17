@@ -173,7 +173,7 @@ function goodFunction(DepositParams memory params) external {
 
 Standard Crane configuration:
 
-- **Solidity**: 0.8.30
+- **Solidity**: 0.8.35
 - **Optimizer runs**: 1 (for contract size limits)
 - **EVM version**: Prague
 - **via_ir**: false (ALWAYS)

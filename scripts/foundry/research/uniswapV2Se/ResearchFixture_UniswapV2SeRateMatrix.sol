@@ -311,7 +311,7 @@ contract ResearchFixture_UniswapV2SeRateMatrix is TestBase_BalancerV3Vault, Inde
         IFacet rateProviderFacet = IFacet(
             create3Factory.deployFacet(
                 ArtifactCreationCode.creationCode(create3Factory, "StandardExchangeRateProviderFacet.sol:StandardExchangeRateProviderFacet"),
-                keccak256("Research_StandardExchangeRateProviderFacet_WethUsdc")
+                abi.encode("StandardExchangeRateProviderFacet")._hash()
             )
         );
         IStandardExchangeRateProviderDFPkg.PkgInit memory rpInit = IStandardExchangeRateProviderDFPkg.PkgInit({
@@ -323,7 +323,7 @@ contract ResearchFixture_UniswapV2SeRateMatrix is TestBase_BalancerV3Vault, Inde
                 create3Factory.deployPackageWithArgs(
                     ArtifactCreationCode.creationCode(create3Factory, "StandardExchangeRateProviderDFPkg.sol:StandardExchangeRateProviderDFPkg"),
                     abi.encode(rpInit),
-                    keccak256("Research_StandardExchangeRateProviderDFPkg_WethUsdc")
+                    abi.encode("StandardExchangeRateProviderDFPkg")._hash()
                 )
             )
         );

@@ -145,10 +145,7 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook is TestBas
         IFacet depositFacet = PkgFactory.deployDepositFacet(create3Factory);
         IFacet withdrawFacet = PkgFactory.deployWithdrawFacet(create3Factory);
         IFacet seFacet = PkgFactory.deploySeFacet(create3Factory);
-        hookPkg = PkgFactory.deployPackage(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            owner,
-            IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgInit({
+        hookPkg = PkgFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgInit({
                 depositQueryFacet: PkgFactory.deployDepositQueryFacet(create3Factory),
                 depositZapFacet: PkgFactory.deployDepositZapFacet(create3Factory),
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
@@ -163,9 +160,7 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook is TestBas
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
                 multiStepOwnableFacet: multiStepOwnableFacet
-            }),
-            abi.encode(type(IUniswapV4StandardExchangeOrbitalBufferHookPackage).name, "v1")._hash()
-        );
+            }));
 
         _deployHookWithArgs(_defaultPkgArgs());
 

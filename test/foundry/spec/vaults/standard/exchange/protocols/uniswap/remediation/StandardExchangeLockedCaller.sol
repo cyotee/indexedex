@@ -5,7 +5,6 @@ import {IUniswapV3Pool} from "@crane/contracts/protocols/dexes/uniswap/v3/interf
 import {IUniswapV3FlashCallback} from "@crane/contracts/protocols/dexes/uniswap/v3/interfaces/callback/IUniswapV3FlashCallback.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {IUnlockCallback} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/callback/IUnlockCallback.sol";
-import {IStandardExchangePretransfer} from "contracts/vaults/standard/exchange/protocols/uniswap/IStandardExchangePretransfer.sol";
 
 /// @dev Real protocol callback caller, not a replacement for any SUT component.
 contract StandardExchangeLockedCaller is IUniswapV3FlashCallback, IUnlockCallback {
@@ -34,7 +33,7 @@ contract StandardExchangeLockedCaller is IUniswapV3FlashCallback, IUnlockCallbac
         (address vault, bytes memory callData, address[] memory tokens, uint256[] memory amounts) =
             abi.decode(data, (address, bytes, address[], uint256[]));
         if (tokens.length != 0) {
-            IStandardExchangePretransfer(vault).preparePretransfer(tokens, amounts, keccak256(callData));
+
             for (uint256 i; i < tokens.length; ++i) IERC20(tokens[i]).transfer(vault, amounts[i]);
         }
         (bool ok, bytes memory returned) = vault.call(callData);

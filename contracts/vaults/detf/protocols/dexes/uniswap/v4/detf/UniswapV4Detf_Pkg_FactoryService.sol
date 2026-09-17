@@ -24,7 +24,7 @@ library UniswapV4Detf_Pkg_FactoryService {
                 vaultRegistry_.deployPkg(
                     initCode_,
                     initArgs_,
-                    ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4DetfDFPkg")._hash(), initCode_, initArgs_)
+                    ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4DetfDFPkg")._hash())
                 )
             )
         );

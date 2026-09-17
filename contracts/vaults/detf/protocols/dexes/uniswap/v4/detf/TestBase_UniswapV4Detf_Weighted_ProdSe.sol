@@ -83,10 +83,7 @@ abstract contract TestBase_UniswapV4Detf_Weighted_ProdSe is TestBase_UniswapV4De
         IFacet joinFacet = WeightedFactory.deployJoinFacet(create3Factory);
         IFacet exitFacet = WeightedFactory.deployExitFacet(create3Factory);
         IFacet seFacet = WeightedFactory.deploySeFacet(create3Factory);
-        weightedHookPkg = WeightedFactory.deployPackage(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            owner,
-            IUniswapV4StandardExchangeWeightedBufferHookPackage.PkgInit({
+        weightedHookPkg = WeightedFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, IUniswapV4StandardExchangeWeightedBufferHookPackage.PkgInit({
                 joinQueryFacet: WeightedFactory.deployJoinQueryFacet(create3Factory),
                 joinFlexibleFacet: WeightedFactory.deployJoinFlexibleFacet(create3Factory),
                 exitQueryFacet: WeightedFactory.deployExitQueryFacet(create3Factory),
@@ -102,9 +99,7 @@ abstract contract TestBase_UniswapV4Detf_Weighted_ProdSe is TestBase_UniswapV4De
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
                 multiStepOwnableFacet: multiStepOwnableFacet
-            }),
-            abi.encode(type(IUniswapV4StandardExchangeWeightedBufferHookPackage).name, "prod-se")._hash()
-        );
+            }));
     }
 
     function _deployWeightedHookThenDetf(IUniswapV4Detf.PkgArgs memory args)

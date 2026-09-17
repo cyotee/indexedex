@@ -1,5 +1,7 @@
 # Implementation plan: FactoryService artifact creation bytecode
 
+Salt-policy update (2026-09-16): [CREATE3 release salt input correction](create3-release-salt-input-correction.md) supersedes this artifact migration's salt-preservation policy. Named CREATE3 components use `abi.encode(contractIdentifier)._hash()` via `BetterEfficientHashLib`; automatic libraries use their source-qualified artifact identifier. `releaseSalt` is namespace-only. Constructor payloads, artifact loading and linking remain required. Occupied identities retain existing deployments; source changes do not upgrade them.
+
 - **PRD:** `docs/factory-service-artifact-creation-bytecode.md`
 - **Created:** 2026-09-02
 - **Status:** ready for `/goal`
@@ -8,7 +10,7 @@ This file is the execute artifact. `/goal` should be given **this path**. Implem
 
 ## Objective
 
-IndexedEx FactoryService libraries load creation bytecode from Foundry `out/` via `ArtifactCreationCode.creationCode("File.sol:ContractName")` instead of importing implementations for `type(C).creationCode` / `type(C).name`. Crane implementations those services deploy are compiled by `CraneFactoryArtifactSeed.sol` under `src`. CREATE3 salts, labels, helper names, and deploy routing stay. TestBases that already `using` a FactoryService stay on that path.
+IndexedEx FactoryService libraries load creation bytecode from Foundry `out/` via `ArtifactCreationCode.creationCode("File.sol:ContractName")` instead of importing implementations for `type(C).creationCode` / `type(C).name`. Crane implementations those services deploy are compiled by `CraneFactoryArtifactSeed.sol` under `src`. Labels, helper names, and deploy routing stay; CREATE3 salts follow the correction linked above. TestBases that already `using` a FactoryService stay on that path.
 
 ## In scope
 
@@ -25,7 +27,7 @@ IndexedEx FactoryService libraries load creation bytecode from Foundry `out/` vi
 - Do not rewrite wrapper FactoryServices with no `type().creationCode` (list under Do not)
 - Do not rewrite empty stub `contracts/protocols/dexes/balancer/v3/routers/BalancerV3StandardExchangeRouterFactoryService.sol`
 - Do not move interfaces into new files
-- Do not change CREATE3 factories, vault-registry `deployPkg`, hook-factory routing, salts, labels, or deploy helper signatures
+- Do not change CREATE3 factories, vault-registry `deployPkg`, hook-factory routing, or labels. Salt and component-helper signature policy is superseded by the correction linked above
 - Do not parse ABI JSON; do not use `vm.getDeployedCode`
 - Do not put `vm.getCode` on an on-chain production path
 - Do not delete or clean `out/` / `cache_forge/`
@@ -52,7 +54,7 @@ IndexedEx FactoryService libraries load creation bytecode from Foundry `out/` vi
 | D10 | Keep `type(C).creationCode` only for unlinked artifacts (`__$`). Not a general fallback. |
 | D11 | Done means grep + hub import check. No compile-cache smoke. |
 | D12 | API is `ArtifactCreationCode.creationCode(string memory artifactId_)`. No `using` for `string`. `__$` reverts with a string that includes the artifact id. |
-| D13 | Salt rewrite replaces only `type(C).name`. Extra `abi.encode` components (including `pkgInitArgs`) stay. Uni V3/V4 `bytes.concat(..., abi.encode(executionDelegate))` stays. Existing `create3` / `deployFacet` / `deployPackageWithArgs` / `deployPkg` stay. |
+| D13 | Superseded for salt inputs by the CREATE3 salt correction: use ABI-encoded contract identifiers only. Preserve Uni V3/V4 constructor concatenation and existing factory/registry routing. |
 | D14 | Crane-sourced deploy targets compile via `contracts/utils/foundry/CraneFactoryArtifactSeed.sol` (nine imports). FactoryServices load those bytes with `ArtifactCreationCode.creationCode`. |
 
 ## Rewrite recipe (every rewrite-set file)
@@ -70,7 +72,7 @@ Apply this transform. Do not invent a second pattern.
 4. Deploy callee stays: `create3` (execution delegates), `deployFacet`, `deployPackageWithArgs`, or `vaultRegistry.deployPkg`.
 5. Salts: keep today’s `abi.encode(...)` argument list. Only `type(C).name` becomes the string literal `"C"`.
    - `abi.encode(type(C).name)._hash()` → `abi.encode("C")._hash()`
-   - `abi.encode(type(FeeCollectorDFPkg).name, pkgInitArgs)._hash()` → `abi.encode("FeeCollectorDFPkg", pkgInitArgs)._hash()`
+   - Current FeeCollector component salt: `abi.encode("FeeCollectorDFPkg")._hash()`; `abi.encode(pkgInitArgs)` remains its constructor payload.
 6. `vm.label` / `HEVM.label` second argument: same string literal `"C"` (or the existing non-`type()` string if already a literal, e.g. `"FeeCollectorProxy"`).
 7. Drop implementation imports used only for `type()`. Keep interface imports (`IFacet`, `ICreate3FactoryProxy`, `I*DFPkg`, `PkgInit` / `PkgArgs` on the interface).
 8. Co-located interface (D7): `import {IFoo, Foo} from "Foo.sol"` becomes `import {IFoo} from "Foo.sol"`. Do not create a new interface file. Hub examples: `IFeeCollectorDFPkg` from `FeeCollectorDFPkg.sol`, `IIndexedexManagerDFPkg` from `IndexedexManagerDFPkg.sol`, `IERC4626PermitDFPkg` from `ERC4626PermitDFPkg.sol`.
@@ -115,7 +117,7 @@ Apply this transform. Do not invent a second pattern.
 - **Files:**
   - `contracts/fee/collector/FeeCollectorFactoryService.sol`
   - `contracts/manager/IndexedexManagerFactoryService.sol`
-- **Do:** Apply the rewrite recipe. Drop facet implementation imports. Keep `IFeeCollectorDFPkg` from `FeeCollectorDFPkg.sol` and `IIndexedexManagerDFPkg` from `IndexedexManagerDFPkg.sol` (D7). FeeCollector DFPkg salt stays `abi.encode("FeeCollectorDFPkg", pkgInitArgs)._hash()`.
+- **Do:** Apply the rewrite recipe. Drop facet implementation imports. Keep `IFeeCollectorDFPkg` from `FeeCollectorDFPkg.sol` and `IIndexedexManagerDFPkg` from `IndexedexManagerDFPkg.sol` (D7). FeeCollector DFPkg now uses `abi.encode("FeeCollectorDFPkg")._hash()` under the later correction; constructor delivery stays intact.
 - **Tests:** none new. These remain the `IndexedexTest` deploy path.
 - **Done when:** neither file contains `type(...).creationCode` or `type(...).name` except an annotated unlinked helper. Neither imports the facet implementations it deploys.
 
@@ -223,7 +225,7 @@ contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlue_Component_Fa
 - [ ] Every rewrite-set file no longer contains `type(...).creationCode` or `type(...).name`, except annotated unlinked helpers.
 - [ ] Those files no longer import Facet / DFPkg / Target implementations used only for `type()`, except annotated unlinked helpers.
 - [ ] Interface imports stay. Co-located `IFoo` from `Foo.sol` may remain.
-- [ ] CREATE3 salts keep today’s `abi.encode` argument list; only `type(C).name` became the equal string literal.
+- [ ] Superseded salt criterion: component salts follow `abi.encode(contractIdentifier)._hash()`; preserve constructor arguments in the deployment payload only.
 - [ ] `vm.label` strings stay the same contract identifier.
 - [ ] Public helper names and `using` surfaces stay so TestBases and scripts do not need call-site rewrites.
 - [ ] Wrapper FactoryServices in the PRD inventory are not rewritten for bytecode loading.

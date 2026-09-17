@@ -100,12 +100,7 @@ library UniswapV4StandardExchangeBalancerQuadStableBufferHookTestDeployLib {
     ) private returns (IUniswapV4StandardExchangeBalancerQuadStableBufferHookPackage hookPkg) {
         IUniswapV4StandardExchangeBalancerQuadStableBufferHookPackage.PkgInit memory init =
             _buildPkgInit(create3Factory, indexedexManager, vf);
-        hookPkg = PkgFactory.deployPackage(
-            IVaultRegistryDeployment(indexedexManager),
-            owner,
-            init,
-            keccak256(abi.encode(type(IUniswapV4StandardExchangeBalancerQuadStableBufferHookPackage).name, "v1"))
-        );
+        hookPkg = PkgFactory.deployPackage(IVaultRegistryDeployment(indexedexManager), owner, init);
     }
 
     function _buildPkgInit(

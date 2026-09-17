@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
+
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 import {IDETFNFTVaultDFPkg} from "contracts/vaults/detf/common/bondNft/IDETFNFTVaultDFPkg.sol";
@@ -20,13 +22,14 @@ import {IUniswapV4DetfBondNFTVaultDFPkg} from "contracts/vaults/detf/protocols/d
 /// @title Phase_06_Stage_01_BondNftPkg
 /// @notice Uni V4 Bond NFT DFPkg (R12a) + ERC721 + DETF NFT vault facets. Not the common Balancer NFT.
 library Phase_06_Stage_01_BondNftPkg {
+    using BetterEfficientHashLib for bytes;
     using DetfFacetFactoryService for ICreate3FactoryProxy;
     using DetfPkgFactoryService for IVaultRegistryDeployment;
 
     function execute(LaunchState storage s) internal {
         IFacet detfNFTVaultFacet = s.create3Factory.deployUniswapV4DetfBondNFTVaultFacet();
         IFacet erc721FacetDetf = IFacet(
-            s.create3Factory.deployFacet(ArtifactCreationCode.creationCode(s.create3Factory, "ERC721Facet.sol:ERC721Facet"), keccak256("RhMain_ERC721Facet"))
+            s.create3Factory.deployFacet(ArtifactCreationCode.creationCode(s.create3Factory, "ERC721Facet.sol:ERC721Facet"), abi.encode("ERC721Facet")._hash())
         );
         IDETFNFTVaultDFPkg.PkgInit memory nftPkgInit = DetfComponentFactoryService
             .buildUniswapV4DetfBondNFTVaultPkgInit(

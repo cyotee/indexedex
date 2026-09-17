@@ -30,7 +30,7 @@ library UniswapV4StandardExchangeWeightedBufferHook_FactoryService {
     function deployHooksFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4StandardExchangeWeightedBufferHookHooksFacet.sol:UniswapV4StandardExchangeWeightedBufferHookHooksFacet");
         facet = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeWeightedBufferHookHooksFacet")._hash(), initCode_, bytes(""))
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeWeightedBufferHookHooksFacet")._hash())
         );
         vm.label(address(facet), "UniswapV4StandardExchangeWeightedBufferHookHooksFacet");
     }
@@ -38,7 +38,7 @@ library UniswapV4StandardExchangeWeightedBufferHook_FactoryService {
     function deployJoinFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4StandardExchangeWeightedBufferHookJoinFacet.sol:UniswapV4StandardExchangeWeightedBufferHookJoinFacet");
         facet = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeWeightedBufferHookJoinFacet")._hash(), initCode_, bytes(""))
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeWeightedBufferHookJoinFacet")._hash())
         );
         vm.label(address(facet), "UniswapV4StandardExchangeWeightedBufferHookJoinFacet");
     }
@@ -46,7 +46,7 @@ library UniswapV4StandardExchangeWeightedBufferHook_FactoryService {
     function deployJoinFlexibleFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4StandardExchangeWeightedBufferHookJoinFlexibleFacet.sol:UniswapV4StandardExchangeWeightedBufferHookJoinFlexibleFacet");
         facet = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeWeightedBufferHookJoinFlexibleFacet")._hash(), initCode_, bytes(""))
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeWeightedBufferHookJoinFlexibleFacet")._hash())
         );
         vm.label(address(facet), "UniswapV4StandardExchangeWeightedBufferHookJoinFlexibleFacet");
     }
@@ -54,7 +54,7 @@ library UniswapV4StandardExchangeWeightedBufferHook_FactoryService {
     function deployJoinQueryFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4StandardExchangeWeightedBufferHookJoinQueryFacet.sol:UniswapV4StandardExchangeWeightedBufferHookJoinQueryFacet");
         facet = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeWeightedBufferHookJoinQueryFacet")._hash(), initCode_, bytes(""))
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeWeightedBufferHookJoinQueryFacet")._hash())
         );
         vm.label(address(facet), "UniswapV4StandardExchangeWeightedBufferHookJoinQueryFacet");
     }
@@ -62,7 +62,7 @@ library UniswapV4StandardExchangeWeightedBufferHook_FactoryService {
     function deployExitFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4StandardExchangeWeightedBufferHookExitFacet.sol:UniswapV4StandardExchangeWeightedBufferHookExitFacet");
         facet = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeWeightedBufferHookExitFacet")._hash(), initCode_, bytes(""))
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeWeightedBufferHookExitFacet")._hash())
         );
         vm.label(address(facet), "UniswapV4StandardExchangeWeightedBufferHookExitFacet");
     }
@@ -71,7 +71,7 @@ library UniswapV4StandardExchangeWeightedBufferHook_FactoryService {
     function deployExitQueryFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4StandardExchangeWeightedBufferHookExitQueryFacet.sol:UniswapV4StandardExchangeWeightedBufferHookExitQueryFacet");
         facet = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeWeightedBufferHookExitQueryFacet")._hash(), initCode_, bytes(""))
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeWeightedBufferHookExitQueryFacet")._hash())
         );
         vm.label(address(facet), "UniswapV4StandardExchangeWeightedBufferHookExitQueryFacet");
     }
@@ -83,7 +83,7 @@ library UniswapV4StandardExchangeWeightedBufferHook_FactoryService {
     function deploySeFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4StandardExchangeWeightedBufferHookSeFacet.sol:UniswapV4StandardExchangeWeightedBufferHookSeFacet");
         facet = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeWeightedBufferHookSeFacet")._hash(), initCode_, bytes(""))
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeWeightedBufferHookSeFacet")._hash())
         );
         vm.label(address(facet), "UniswapV4StandardExchangeWeightedBufferHookSeFacet");
     }
@@ -91,8 +91,7 @@ library UniswapV4StandardExchangeWeightedBufferHook_FactoryService {
     function deployPackage(
         IVaultRegistryDeployment registry,
         address owner,
-        IUniswapV4StandardExchangeWeightedBufferHookPackage.PkgInit memory init,
-        bytes32 salt
+        IUniswapV4StandardExchangeWeightedBufferHookPackage.PkgInit memory init
     ) internal returns (IUniswapV4StandardExchangeWeightedBufferHookPackage pkg) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode("UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol:UniswapV4StandardExchangeWeightedBufferHookDFPkg");
         bytes memory initArgs_ = abi.encode(init);
@@ -101,7 +100,7 @@ library UniswapV4StandardExchangeWeightedBufferHook_FactoryService {
             registry.deployPkg(
                 initCode_,
                 initArgs_,
-                ArtifactCreationCode.releaseSalt(salt, initCode_, initArgs_)
+                ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeWeightedBufferHookDFPkg")._hash())
             )
         );
         vm.label(address(pkg), "UniswapV4StandardExchangeWeightedBufferHookDFPkg");

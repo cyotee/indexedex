@@ -46,7 +46,7 @@ library Phase_06_Stage_06_CurveQuadBufferHookPkg {
         s.curveQuadHookPkg = reg.deployPkg(
             ArtifactCreationCode.creationCode(s.create3Factory, "UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg.sol:UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg"),
             abi.encode(init_),
-            abi.encode(type(IQuadHookPkg).name, FixtureEconomics.SALT_NS)._hash()
+            abi.encode("UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg")._hash()
         );
     }
 }

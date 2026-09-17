@@ -178,10 +178,7 @@ contract UniswapV4StandardExchange_LocalLiquidBuffer_H2 is TestBase_UniswapV4Sta
         IFacet seFacet = PkgFactory.deploySeFacet(create3Factory);
         IFacet depositFacet = PkgFactory.deployDepositFacet(create3Factory);
         IFacet withdrawFacet = PkgFactory.deployWithdrawFacet(create3Factory);
-        hookPkg = PkgFactory.deployPackage(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            owner,
-            IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgInit({
+        hookPkg = PkgFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgInit({
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
                 seFacet: seFacet,
@@ -195,9 +192,7 @@ contract UniswapV4StandardExchange_LocalLiquidBuffer_H2 is TestBase_UniswapV4Sta
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
                 multiStepOwnableFacet: multiStepOwnableFacet
-            }),
-            abi.encode(type(IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage).name, "v4-h2")._hash()
-        );
+            }));
 
         IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs memory args =
             IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs({

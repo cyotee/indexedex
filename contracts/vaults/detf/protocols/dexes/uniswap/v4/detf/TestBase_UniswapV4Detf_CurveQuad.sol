@@ -75,9 +75,7 @@ abstract contract TestBase_UniswapV4Detf_CurveQuad is TestBase_UniswapV4Detf {
         init_.multiAssetBasicVaultFacet = multiAssetBasicVaultFacet;
         init_.multiAssetStandardVaultFacet = multiAssetStandardVaultFacet;
         init_.multiStepOwnableFacet = multiStepOwnableFacet;
-        curveHookPkg = CurveFactory.deployPackage(
-            init_.vaultRegistryDeployment, owner, init_, keccak256("funded.detf.curve.package")
-        );
+        curveHookPkg = CurveFactory.deployPackage(init_.vaultRegistryDeployment, owner, init_);
     }
 
     function _deployCurveHookThenDetf(IUniswapV4Detf.PkgArgs memory args_)

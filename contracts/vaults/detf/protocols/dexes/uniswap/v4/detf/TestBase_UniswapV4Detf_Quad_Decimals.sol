@@ -99,10 +99,7 @@ abstract contract TestBase_UniswapV4Detf_Quad_Decimals is TestBase_UniswapV4Detf
         IFacet joinFacet = QuadFactory.deployJoinFacet(create3Factory);
         IFacet exitFacet = QuadFactory.deployExitFacet(create3Factory);
         IFacet seFacet = QuadFactory.deploySeFacet(create3Factory);
-        quadHookPkg = QuadFactory.deployPackage(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            owner,
-            IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgInit({
+        quadHookPkg = QuadFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgInit({
                 joinQueryFacet: QuadFactory.deployJoinQueryFacet(create3Factory),
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
@@ -116,9 +113,7 @@ abstract contract TestBase_UniswapV4Detf_Quad_Decimals is TestBase_UniswapV4Detf
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
                 multiStepOwnableFacet: multiStepOwnableFacet
-            }),
-            abi.encode(type(IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage).name, "v1", _dec0(), _dec1(), _dec2())._hash()
-        );
+            }));
     }
 
     function _deployQuadHookForArgs(IUniswapV4Detf.PkgArgs memory args)

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
+
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 import {Script} from "forge-std/Script.sol";
@@ -28,6 +30,7 @@ import {ITokenTransferRelayerDFPkg} from "@crane/contracts/protocols/l2s/superch
 import {SuperSimManifestLib} from "./SuperSimManifestLib.sol";
 
 contract Script_24_DeploySuperchainBridgeInfra is Script {
+    using BetterEfficientHashLib for bytes;
     uint256 private privateKey;
     address private deployer;
     address private owner;
@@ -108,7 +111,7 @@ contract Script_24_DeploySuperchainBridgeInfra is Script {
             _deployWithArgs(
                 ArtifactCreationCode.creationCode(create3Factory, "ApprovedMessageSenderRegistryDFPkg.sol:ApprovedMessageSenderRegistryDFPkg"),
                 abi.encode(pkgInitArgs),
-                keccak256(abi.encode("ApprovedMessageSenderRegistryDFPkg", pkgInitArgs))
+                abi.encode("ApprovedMessageSenderRegistryDFPkg")._hash()
             )
         );
 
@@ -137,7 +140,7 @@ contract Script_24_DeploySuperchainBridgeInfra is Script {
             _deployWithArgs(
                 ArtifactCreationCode.creationCode(create3Factory, "SuperChainBridgeTokenRegistryDFPkg.sol:SuperChainBridgeTokenRegistryDFPkg"),
                 abi.encode(pkgInitArgs),
-                keccak256(abi.encode("SuperChainBridgeTokenRegistryDFPkg", pkgInitArgs))
+                abi.encode("SuperChainBridgeTokenRegistryDFPkg")._hash()
             )
         );
 
@@ -162,7 +165,7 @@ contract Script_24_DeploySuperchainBridgeInfra is Script {
             _deployWithArgs(
                 ArtifactCreationCode.creationCode(create3Factory, "TokenTransferRelayerDFPkg.sol:TokenTransferRelayerDFPkg"),
                 abi.encode(pkgInitArgs),
-                keccak256(abi.encode("TokenTransferRelayerDFPkg", pkgInitArgs))
+                abi.encode("TokenTransferRelayerDFPkg")._hash()
             )
         );
 
@@ -175,7 +178,7 @@ contract Script_24_DeploySuperchainBridgeInfra is Script {
     }
 
     function _deployFacet(bytes memory creationCode, string memory name) internal returns (IFacet facet) {
-        facet = IFacet(create3Factory.create3(creationCode, keccak256(abi.encode(name))));
+        facet = IFacet(create3Factory.create3(creationCode, abi.encode(name)._hash()));
     }
 
     function _deployWithArgs(bytes memory creationCode, bytes memory constructorArgs, bytes32 salt)

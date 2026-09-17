@@ -94,10 +94,7 @@ abstract contract TestBase_UniswapV4Detf_Orbital is TestBase_UniswapV4Detf {
         IFacet depositFacet = OrbitalFactory.deployDepositFacet(create3Factory);
         IFacet withdrawFacet = OrbitalFactory.deployWithdrawFacet(create3Factory);
         IFacet seFacet = OrbitalFactory.deploySeFacet(create3Factory);
-        orbitalHookPkg = OrbitalFactory.deployPackage(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            owner,
-            IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgInit({
+        orbitalHookPkg = OrbitalFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgInit({
                 depositQueryFacet: OrbitalFactory.deployDepositQueryFacet(create3Factory),
                 depositZapFacet: OrbitalFactory.deployDepositZapFacet(create3Factory),
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
@@ -112,9 +109,7 @@ abstract contract TestBase_UniswapV4Detf_Orbital is TestBase_UniswapV4Detf {
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
                 multiStepOwnableFacet: multiStepOwnableFacet
-            }),
-            abi.encode(type(IUniswapV4StandardExchangeOrbitalBufferHookPackage).name, "v1")._hash()
-        );
+            }));
     }
 
     /// @dev Bind a 3-token orbital hook to `args.hook` without deploying the DETF.
@@ -206,10 +201,7 @@ abstract contract TestBase_UniswapV4Detf_Orbital is TestBase_UniswapV4Detf {
         IFacet seFacet = CpHookFactory.deploySeFacet(create3Factory);
         IFacet depositFacet = CpHookFactory.deployDepositFacet(create3Factory);
         IFacet withdrawFacet = CpHookFactory.deployWithdrawFacet(create3Factory);
-        hookPkg = CpHookFactory.deployPackage(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            owner,
-            IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgInit({
+        hookPkg = CpHookFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgInit({
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
                 seFacet: seFacet,
@@ -223,8 +215,6 @@ abstract contract TestBase_UniswapV4Detf_Orbital is TestBase_UniswapV4Detf {
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
                 multiStepOwnableFacet: multiStepOwnableFacet
-            }),
-            abi.encode(type(IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage).name, "v1")._hash()
-        );
+            }));
     }
 }

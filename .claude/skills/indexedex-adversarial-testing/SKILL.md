@@ -1,6 +1,6 @@
 ---
 name: indexedex-adversarial-testing
-description: "IndexedEx adversarial Foundry tests for DETFs, Standard Exchange vaults, bonds, claims and registry deployments."
+description: This skill should be used when the user asks to "adversarial DETF tests", "MultiVaultWeightedDetf adversarial", "abuse tests for Standard Exchange", "vault donation attack IndexedEx", "claim redeem attack test", "DETF reentrancy test", "write adversarial suite for vault", or needs guidance implementing production-first adversarial Foundry tests for IndexedEx DETFs, Standard Exchange vaults, multi-vault products, bond/claim paths, or similar registry-deployed vaults.
 license: MIT
 ---
 
@@ -156,7 +156,12 @@ Every SE / vault / DETF with pull-or-credit paths:
 | **I2** | Short pretransfer vs claimed `amountIn` → exact revert |
 | **I3** | Residual after successful pretransfer cannot free-mint a second op |
 | **J1–J3** | Each new Facet/DFPkg: Target API ⊆ facetFuncs ⊆ facetCuts ⊆ proxy loupe + callable |
-| **K1** | Donation into SE/DETF cannot be consumed as another user's mint credit without explicit product policy |
+| **K1** | Donation into SE/DETF cannot be consumed as another user's mint credit. Donation LP is added to bond-held reserve and apportioned to all live bonds. Never treat token 0 as beneficiary. |
+| **A5** | feeTo / creator NFT / bond holders claim only their share (FeeNonDilution). P0, not Deferred P2. |
+| **FH1** | `reserveOfToken` is vault-held inventory, not AMM/pool/protocol reserves. Snapshots change only on deposit or withdraw. |
+| **FH2** | Mixed 6/9/18 native units; DETF/sDETF/SY stay 9 decimals. pairToken must be in SE tokens. |
+| **FH3** | Last-close-then-donate must not zero reserve or steal remaining holders. |
+| **FH4** | Load this skill on DN13 / D6 / M8 / PairTokenNotInSeTokens / liquidity-leak failures. Fair holdings is an adversarial P0 gate, not a later PRD. |
 
 ### Incident-pattern P0 when surface applies (A0/L/M/N/O)
 
@@ -179,7 +184,7 @@ Do **not** mark "adversarially tested" from happy-path `pretransferred=true` alo
 When deferring P2 or inapplicable L/M/N/O, put the reason on the suite:
 
 ```solidity
-/// @dev Deferred P2: A4 dust initializeReserve grief; A5 fee-slice double-claim (FeeNonDilution).
+/// @dev Deferred P2: A4 dust initializeReserve grief. A5 fee-slice double-claim is P0 fair-holdings.
 ///      B2 reserve sandwich; C4 hostile rateAsset; peer DETF ports.
 /// @dev Deferred M*: no router/helper surface. Deferred O*: no permit path.
 ///      L2: FoT underlyings forbidden (agent law § Token policy) — test_L2_FoT_forbidden.

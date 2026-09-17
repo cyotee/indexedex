@@ -189,19 +189,7 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook_De
         init.multiAssetBasicVaultFacet = multiAssetBasicVaultFacet;
         init.multiAssetStandardVaultFacet = multiAssetStandardVaultFacet;
         init.multiStepOwnableFacet = multiStepOwnableFacet;
-        hookPkg = PkgFactory.deployPackage(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            owner,
-            init,
-            abi.encode(
-                type(IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage).name,
-                "v1",
-                _dec0(),
-                _dec1(),
-                _dec2(),
-                _dec3()
-            )._hash()
-        );
+        hookPkg = PkgFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, init);
     }
 
     function _raw(MintableERC20Decimals t, uint256 human) internal view returns (uint256) {

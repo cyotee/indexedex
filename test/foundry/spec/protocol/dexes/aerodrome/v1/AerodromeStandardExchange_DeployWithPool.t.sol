@@ -1,6 +1,18 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {Creation} from "@crane/contracts/utils/Creation.sol";
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
+import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
+import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {IVaultRegistryVaultPackageQuery} from "contracts/interfaces/IVaultRegistryVaultPackageQuery.sol";
+import {Aerodrome_Component_FactoryService} from "contracts/protocols/dexes/aerodrome/v1/Aerodrome_Component_FactoryService.sol";
+
+
+import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
+
 import {Test} from "forge-std/Test.sol";
 import {console} from "forge-std/console.sol";
 
@@ -20,6 +32,44 @@ import {
  * @notice Tests for the new deployVault(tokenA, tokenAAmount, tokenB, tokenBAmount, recipient) function
  */
 contract AerodromeStandardExchange_DeployWithPool_Test is TestBase_AerodromeStandardExchange {
+    /// @notice Independent Aerodrome salts predict real registered components and retain initial bindings.
+    function test_create3CanonicalSalt_bindingsAndReuse() public {
+        IAerodromeStandardExchangeDFPkg first = aerodromeStandardExchangeDFPkg;
+        assertEq(address(first), Creation._create3AddressFromOf(address(create3Factory), abi.encode("AerodromeStandardExchangeDFPkg")._hash()));
+        assertEq(address(aerodromeStandardExchangeInFacet), Creation._create3AddressFromOf(address(create3Factory), abi.encode("AerodromeStandardExchangeInFacet")._hash()));
+        assertTrue(IVaultRegistryVaultPackageQuery(address(indexedexManager)).isPackage(address(first)));
+        address[] memory initial = first.facetAddresses();
+        assertEq(initial[0], address(erc20Facet));
+        assertEq(initial[6], address(aerodromeStandardExchangeInFacet));
+        assertEq(initial[7], address(aerodromeStandardExchangeOutFacet));
+        assertEq(initial[8], address(aerodromeStandardExchangeOutQueryFacet));
+        address proxy = first.deployVault(IERC20(address(testTokenA)), 0, IERC20(address(testTokenB)), 0, address(0));
+        assertEq(IDiamondLoupe(proxy).facetAddress(IStandardExchangeIn.exchangeIn.selector), initial[6]);
+        IAerodromeStandardExchangeDFPkg.PkgInit memory init;
+        init.erc20Facet = erc20Facet;
+        init.erc2612Facet = erc2612Facet;
+        init.erc5267Facet = erc5267Facet;
+        init.erc4626Facet = erc4626Facet;
+        init.multiAssetBasicVaultFacet = erc4626BasicVaultFacet;
+        init.multiAssetStandardVaultFacet = erc4626StandardVaultFacet;
+        init.aerodromeStandardExchangeInFacet = create3Factory.deployFacet(
+            ArtifactCreationCode.creationCode("AerodromeStandardExchangeInFacet.sol:AerodromeStandardExchangeInFacet"),
+            abi.encode("AerodromeStandardExchange_DeployWithPool.alternateIn")._hash());
+        init.aerodromeStandardExchangeOutFacet = aerodromeStandardExchangeOutFacet;
+        init.aerodromeStandardExchangeOutQueryFacet = aerodromeStandardExchangeOutQueryFacet;
+        init.vaultFeeOracleQuery = IVaultFeeOracleQuery(address(indexedexManager));
+        init.vaultRegistryDeployment = IVaultRegistryDeployment(address(indexedexManager));
+        init.permit2 = permit2;
+        init.aerodromeRouter = aerodromeRouter;
+        init.aerodromePoolFactory = aerodromePoolFactory;
+        vm.prank(owner);
+        IAerodromeStandardExchangeDFPkg again = Aerodrome_Component_FactoryService.deployAerodromeStandardExchangeDFPkg(IVaultRegistryDeployment(address(indexedexManager)), init);
+        assertEq(address(again), address(first));
+        assertEq(again.facetAddresses(), initial);
+        assertEq(again.facetCuts()[6].facetAddress, initial[6]);
+    }
+
+    using BetterEfficientHashLib for bytes;
     ERC20PermitMintableStub testTokenA;
     ERC20PermitMintableStub testTokenB;
     address alice = address(0xA11CE);

@@ -30,7 +30,7 @@ library UniswapV4StandardExchangeOrbitalBufferHook_FactoryService {
     function deployHooksFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4StandardExchangeOrbitalBufferHookHooksFacet.sol:UniswapV4StandardExchangeOrbitalBufferHookHooksFacet");
         facet = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeOrbitalBufferHookHooksFacet")._hash(), initCode_, bytes(""))
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeOrbitalBufferHookHooksFacet")._hash())
         );
         vm.label(address(facet), "UniswapV4StandardExchangeOrbitalBufferHookHooksFacet");
     }
@@ -38,7 +38,7 @@ library UniswapV4StandardExchangeOrbitalBufferHook_FactoryService {
     function deployDepositFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4StandardExchangeOrbitalBufferHookDepositFacet.sol:UniswapV4StandardExchangeOrbitalBufferHookDepositFacet");
         facet = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeOrbitalBufferHookDepositFacet")._hash(), initCode_, bytes(""))
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeOrbitalBufferHookDepositFacet")._hash())
         );
         vm.label(address(facet), "UniswapV4StandardExchangeOrbitalBufferHookDepositFacet");
     }
@@ -46,7 +46,7 @@ library UniswapV4StandardExchangeOrbitalBufferHook_FactoryService {
     function deployDepositZapFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4StandardExchangeOrbitalBufferHookDepositZapFacet.sol:UniswapV4StandardExchangeOrbitalBufferHookDepositZapFacet");
         facet = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeOrbitalBufferHookDepositZapFacet")._hash(), initCode_, bytes(""))
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeOrbitalBufferHookDepositZapFacet")._hash())
         );
         vm.label(address(facet), "UniswapV4StandardExchangeOrbitalBufferHookDepositZapFacet");
     }
@@ -54,7 +54,7 @@ library UniswapV4StandardExchangeOrbitalBufferHook_FactoryService {
     function deployDepositQueryFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4StandardExchangeOrbitalBufferHookDepositQueryFacet.sol:UniswapV4StandardExchangeOrbitalBufferHookDepositQueryFacet");
         facet = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeOrbitalBufferHookDepositQueryFacet")._hash(), initCode_, bytes(""))
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeOrbitalBufferHookDepositQueryFacet")._hash())
         );
         vm.label(address(facet), "UniswapV4StandardExchangeOrbitalBufferHookDepositQueryFacet");
     }
@@ -62,7 +62,7 @@ library UniswapV4StandardExchangeOrbitalBufferHook_FactoryService {
     function deployWithdrawFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4StandardExchangeOrbitalBufferHookWithdrawFacet.sol:UniswapV4StandardExchangeOrbitalBufferHookWithdrawFacet");
         facet = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeOrbitalBufferHookWithdrawFacet")._hash(), initCode_, bytes(""))
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeOrbitalBufferHookWithdrawFacet")._hash())
         );
         vm.label(address(facet), "UniswapV4StandardExchangeOrbitalBufferHookWithdrawFacet");
     }
@@ -70,7 +70,7 @@ library UniswapV4StandardExchangeOrbitalBufferHook_FactoryService {
     function deploySeFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4StandardExchangeOrbitalBufferHookSeFacet.sol:UniswapV4StandardExchangeOrbitalBufferHookSeFacet");
         facet = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeOrbitalBufferHookSeFacet")._hash(), initCode_, bytes(""))
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeOrbitalBufferHookSeFacet")._hash())
         );
         vm.label(address(facet), "UniswapV4StandardExchangeOrbitalBufferHookSeFacet");
     }
@@ -78,8 +78,7 @@ library UniswapV4StandardExchangeOrbitalBufferHook_FactoryService {
     function deployPackage(
         IVaultRegistryDeployment registry,
         address owner,
-        IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgInit memory init,
-        bytes32 salt
+        IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgInit memory init
     ) internal returns (IUniswapV4StandardExchangeOrbitalBufferHookPackage pkg) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode("UniswapV4StandardExchangeOrbitalBufferHookDFPkg.sol:UniswapV4StandardExchangeOrbitalBufferHookDFPkg");
         bytes memory initArgs_ = abi.encode(init);
@@ -88,7 +87,7 @@ library UniswapV4StandardExchangeOrbitalBufferHook_FactoryService {
             registry.deployPkg(
                 initCode_,
                 initArgs_,
-                ArtifactCreationCode.releaseSalt(salt, initCode_, initArgs_)
+                ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeOrbitalBufferHookDFPkg")._hash())
             )
         );
         vm.label(address(pkg), "UniswapV4StandardExchangeOrbitalBufferHookDFPkg");

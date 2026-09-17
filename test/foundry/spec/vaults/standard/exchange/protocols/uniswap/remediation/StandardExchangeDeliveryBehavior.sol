@@ -5,6 +5,8 @@ import {StandardExchangeLockedCaller} from "./StandardExchangeLockedCaller.sol";
 import {DeliveryTestToken} from "./DeliveryTestToken.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {IReentrancyLock} from "@crane/contracts/interfaces/IReentrancyLock.sol";
+import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
+import {Proxy} from "@crane/contracts/proxies/Proxy.sol";
 import {Test} from "forge-std/Test.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
@@ -14,8 +16,8 @@ import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20Permit
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {IStandardExchangeOutMulti} from "contracts/interfaces/IStandardExchangeOutMulti.sol";
 import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
-import {IStandardExchangePretransfer as IPretransfer} from "contracts/vaults/standard/exchange/protocols/uniswap/IStandardExchangePretransfer.sol";
 
+/// @dev K1 live-book unsolicited donation is deferred as donor loss (D9).
 // The same assertions run against independently deployed V3 and V4 diamonds.
 abstract contract StandardExchangeDeliveryBehavior is Test {
     StandardExchangeLockedCaller internal lockedCaller;
@@ -56,11 +58,31 @@ abstract contract StandardExchangeDeliveryBehavior is Test {
             (token, amount, IERC20(address(subject)), 0, recipient, true, block.timestamp));
     }
 
-    function _prepare(IERC20 token, uint256 amount, bytes memory data) internal {
-        address[] memory tokens = new address[](1);
-        uint256[] memory amounts = new uint256[](1);
-        tokens[0] = address(token); amounts[0] = amount;
-        IPretransfer(address(subject)).preparePretransfer(tokens, amounts, keccak256(data));
+
+
+    function _deliveryError(uint256 required, uint256 delivered) internal pure returns (bytes memory) {
+        return abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, required, delivered);
+    }
+
+    function _noDelivery(bytes memory data) internal view returns (bytes memory) {
+        bytes4 selector;
+        assembly ("memory-safe") { selector := mload(add(data, 32)) }
+        bytes memory args = new bytes(data.length - 4);
+        for (uint256 i; i < args.length; ++i) args[i] = data[i + 4];
+        uint256 used;
+        if (selector == IStandardExchangeIn.exchangeIn.selector) {
+            (, used,,,,,) = abi.decode(args, (IERC20,uint256,IERC20,uint256,address,bool,uint256));
+        } else if (selector == IStandardExchangeOut.exchangeOut.selector) {
+            (IERC20 input,, IERC20 output, uint256 amount,,,) = abi.decode(args, (IERC20,uint256,IERC20,uint256,address,bool,uint256));
+            used = subject.previewExchangeOut(input, output, amount);
+        } else if (selector == IStandardExchangeInMulti.exchangeInManyToOne.selector) {
+            (,uint256[] memory amounts,,,,,) = abi.decode(args, (address[],uint256[],IERC20,uint256,address,bool,uint256));
+            used = amounts[0];
+        } else {
+            (IERC20 input,,address[] memory outputs,uint256[] memory amounts,,,) = abi.decode(args, (IERC20,uint256,address[],uint256[],address,bool,uint256));
+            used = IStandardExchangeOutMulti(address(subject)).previewExchangeOutOneToMany(input, outputs, amounts);
+        }
+        return _deliveryError(used, 0);
     }
 
     function _execute(bytes memory data) internal returns (uint256 result) {
@@ -74,6 +96,10 @@ abstract contract StandardExchangeDeliveryBehavior is Test {
         uint256 balance0 = asset0.balanceOf(address(subject));
         uint256 balance1 = asset1.balanceOf(address(subject));
         uint256 holder = subject.balanceOf(address(this));
+        uint256 selfShares = subject.balanceOf(address(subject));
+        uint256 book0 = subject.reserveOfToken(address(asset0));
+        uint256 book1 = subject.reserveOfToken(address(asset1));
+        uint256 bookShares = subject.reserveOfToken(address(subject));
         (bool success, bytes memory returned) = address(subject).call(data);
         assertFalse(success, "unfunded/invalid operation succeeded");
         assertEq(returned, expected, "specific delivery error");
@@ -81,6 +107,10 @@ abstract contract StandardExchangeDeliveryBehavior is Test {
         assertEq(subject.balanceOf(address(this)), holder, "holder shares unchanged");
         assertEq(asset0.balanceOf(address(subject)), balance0, "token0 unchanged");
         assertEq(asset1.balanceOf(address(subject)), balance1, "token1 unchanged");
+        assertEq(subject.balanceOf(address(subject)), selfShares, "self shares unchanged");
+        assertEq(subject.reserveOfToken(address(asset0)), book0, "token0 book unchanged");
+        assertEq(subject.reserveOfToken(address(asset1)), book1, "token1 book unchanged");
+        assertEq(subject.reserveOfToken(address(subject)), bookShares, "share book unchanged");
     }
 
     function test_priceMoveCannotCreditPhantomDeposit_token0() public { _falseDeposit(true); }
@@ -96,70 +126,60 @@ abstract contract StandardExchangeDeliveryBehavior is Test {
         assertEq(token.balanceOf(FALSE_DEPOSITOR), 0);
         bytes memory data = _depositCall(token, 25 ether, FALSE_DEPOSITOR);
         vm.startPrank(FALSE_DEPOSITOR);
-        _reject(data, abi.encodeWithSelector(IPretransfer.PretransferNotPrepared.selector));
-        _prepare(token, 25 ether, data);
-        _reject(data, abi.encodeWithSelector(IPretransfer.PretransferAmountMismatch.selector, address(token), 25 ether, 0));
+        _reject(data, _noDelivery(data));
+
+        _reject(data, _deliveryError(25 ether, 0));
         vm.stopPrank();
         assertEq(subject.balanceOf(FALSE_DEPOSITOR), 0);
         assertEq(token.balanceOf(FALSE_DEPOSITOR), 0);
     }
 
-    function test_pullAndPreparedDepositsAfterPriceMovement() public {
+    function test_pullAndPushedDepositsAfterPriceMovement() public {
         _bootstrap(); _trade(true, 100 ether);
         _fund(asset0, address(this), 40 ether);
         asset0.approve(address(subject), 20 ether);
         uint256 pulled = subject.exchangeIn(asset0, 20 ether, IERC20(address(subject)), 0, address(this), false, block.timestamp);
         assertGt(pulled, 0);
         bytes memory data = _depositCall(asset0, 20 ether, address(this));
-        _prepare(asset0, 20 ether, data);
+
         asset0.transfer(address(subject), 20 ether);
         assertGt(_execute(data), 0);
-        _reject(data, abi.encodeWithSelector(IPretransfer.PretransferNotPrepared.selector));
+        _reject(data, _noDelivery(data));
         assertEq(asset0.balanceOf(address(this)), 0, "only actual tokens credited");
     }
 
-    function test_donationBeforePreparationIsNotInput() public {
-        _bootstrap();
-        _fund(asset0, address(this), 25 ether);
-        asset0.transfer(address(subject), 25 ether);
-        bytes memory data = _depositCall(asset0, 25 ether, address(this));
-        _prepare(asset0, 25 ether, data);
-        _reject(data, abi.encodeWithSelector(IPretransfer.PretransferAmountMismatch.selector, address(asset0), 25 ether, 0));
-    }
 
-    function test_shortPreparedTransferRejected() public { _wrongTransfer(24 ether); }
-    function test_excessPreparedTransferRejected() public { _wrongTransfer(26 ether); }
+
+    function test_shortPushedTransferRejected() public { _wrongTransfer(24 ether); }
+    function test_excessPushedTransferRejected() public { _wrongTransfer(26 ether); }
     function _wrongTransfer(uint256 delivered) internal {
         _bootstrap();
         bytes memory data = _depositCall(asset0, 25 ether, address(this));
-        _prepare(asset0, 25 ether, data);
+
         _fund(asset0, address(this), delivered);
         asset0.transfer(address(subject), delivered);
-        _reject(data, abi.encodeWithSelector(IPretransfer.PretransferAmountMismatch.selector, address(asset0), 25 ether, delivered));
+        _reject(data, _deliveryError(25 ether, delivered));
     }
 
-    function test_callerAndRecipientBoundToPreparedInput() public {
+    function test_fundedCallerMaySelectRecipient() public {
         _bootstrap();
-        bytes memory data = _depositCall(asset0, 25 ether, address(this));
-        _prepare(asset0, 25 ether, data);
-        _fund(asset0, address(this), 25 ether); asset0.transfer(address(subject), 25 ether);
-        vm.startPrank(FALSE_DEPOSITOR);
-        _reject(data, abi.encodeWithSelector(IPretransfer.PretransferCallMismatch.selector));
-        vm.stopPrank();
-        _reject(_depositCall(asset0, 25 ether, FALSE_DEPOSITOR), abi.encodeWithSelector(IPretransfer.PretransferCallMismatch.selector));
-        assertGt(_execute(data), 0, "correct caller can finish");
+        _fund(asset0, address(this), 25 ether);
+        asset0.transfer(address(subject), 25 ether);
+        vm.prank(FALSE_DEPOSITOR);
+        uint256 minted = _execute(_depositCall(asset0, 25 ether, address(this)));
+        assertGt(minted, 0);
+        assertEq(subject.balanceOf(FALSE_DEPOSITOR), 0);
     }
 
-    function test_rebalanceCannotCreatePreparedCredit() public {
+    function test_rebalanceCannotCreatePushedCredit() public {
         _bootstrap(); _trade(true, 100 ether);
         bytes memory data = _depositCall(asset0, 25 ether, address(this));
-        _prepare(asset0, 25 ether, data);
-        vm.expectRevert(IPretransfer.PretransferCallMismatch.selector);
+
         _rebalance();
-        _reject(data, abi.encodeWithSelector(IPretransfer.PretransferAmountMismatch.selector, address(asset0), 25 ether, 0));
+        _reject(data, _deliveryError(25 ether, 0));
     }
 
-    function test_preparedMultiDepositAndMissingSecondToken() public {
+    function test_pushedMultiDepositAndMissingSecondToken() public {
         _bootstrap(); _trade(false, 100 ether);
         address[] memory tokens = new address[](2);
         uint256[] memory amounts = new uint256[](2);
@@ -167,62 +187,67 @@ abstract contract StandardExchangeDeliveryBehavior is Test {
         amounts[0] = 10 ether; amounts[1] = 10 ether;
         bytes memory data = abi.encodeCall(IStandardExchangeInMulti.exchangeInManyToOne,
             (tokens, amounts, IERC20(address(subject)), 0, address(this), true, block.timestamp));
-        IPretransfer(address(subject)).preparePretransfer(tokens, amounts, keccak256(data));
+
         _fund(asset0, address(this), 10 ether); asset0.transfer(address(subject), 10 ether);
-        _reject(data, abi.encodeWithSelector(IPretransfer.PretransferAmountMismatch.selector, address(asset1), 10 ether, 0));
+        _reject(data, _deliveryError(10 ether, 0));
         _fund(asset1, address(this), 10 ether); asset1.transfer(address(subject), 10 ether);
         assertGt(_execute(data), 0);
-        _reject(data, abi.encodeWithSelector(IPretransfer.PretransferNotPrepared.selector));
+        _reject(data, _noDelivery(data));
     }
 
-    function test_unpreparedDirectSwapAndExactOutputRejected() public {
+    function test_unpushedDirectSwapAndExactOutputRejected() public {
         _bootstrap(); _trade(true, 100 ether);
         bytes memory exactIn = abi.encodeCall(IStandardExchangeIn.exchangeIn,
             (asset0, 25 ether, asset1, 0, FALSE_DEPOSITOR, true, block.timestamp));
-        _reject(exactIn, abi.encodeWithSelector(IPretransfer.PretransferNotPrepared.selector));
+        _reject(exactIn, _noDelivery(exactIn));
         bytes memory exactOut = abi.encodeCall(IStandardExchangeOut.exchangeOut,
             (asset0, 25 ether, asset1, 1 ether, FALSE_DEPOSITOR, true, block.timestamp));
-        _reject(exactOut, abi.encodeWithSelector(IPretransfer.PretransferNotPrepared.selector));
+        _reject(exactOut, _noDelivery(exactOut));
     }
 
-    function test_preparedExactOutputRefundOnlyUnusedInput() public {
+    function test_pushedExactOutputRefundOnlyUnusedInput() public {
         _bootstrap(); _trade(true, 100 ether);
         bytes memory data = abi.encodeCall(IStandardExchangeOut.exchangeOut,
             (asset0, 25 ether, asset1, 1 ether, address(this), true, block.timestamp));
-        _prepare(asset0, 25 ether, data);
+
         _fund(asset0, address(this), 25 ether); asset0.transfer(address(subject), 25 ether);
         uint256 used = _execute(data);
         assertGt(used, 0); assertLt(used, 25 ether);
         assertEq(asset0.balanceOf(address(this)), 25 ether - used, "exact per-call refund");
         assertGe(asset1.balanceOf(address(this)), 1 ether, "requested output");
-        _reject(data, abi.encodeWithSelector(IPretransfer.PretransferNotPrepared.selector));
+        _reject(data, _noDelivery(data));
     }
 
-    function test_preparedSharesRedeemAndCannotReplay() public {
+    function test_pushedSharesRedeemAndCannotReplay() public {
         _bootstrap();
         uint256 shares = subject.balanceOf(address(this)) / 10;
         bytes memory data = abi.encodeCall(IStandardExchangeIn.exchangeIn,
             (IERC20(address(subject)), shares, asset1, 0, address(this), true, block.timestamp));
-        _prepare(IERC20(address(subject)), shares, data);
+
         subject.transfer(address(subject), shares);
         assertGt(_execute(data), 0);
-        _reject(data, abi.encodeWithSelector(IPretransfer.PretransferNotPrepared.selector));
+        _reject(data, _noDelivery(data));
         assertEq(subject.balanceOf(address(subject)), 0);
     }
 
-    function test_donatedSharesCannotBeClaimed() public {
+    function test_bookedSharesCannotBeClaimed() public {
         _bootstrap();
         uint256 shares = subject.balanceOf(address(this)) / 10;
         subject.transfer(address(subject), shares);
+        _rebalance(); // Book shares before the unfunded probe.
         bytes memory data = abi.encodeCall(IStandardExchangeIn.exchangeIn,
             (IERC20(address(subject)), shares, asset1, 0, FALSE_DEPOSITOR, true, block.timestamp));
-        _reject(data, abi.encodeWithSelector(IPretransfer.PretransferNotPrepared.selector));
-        _prepare(IERC20(address(subject)), shares, data);
-        _reject(data, abi.encodeWithSelector(IPretransfer.PretransferAmountMismatch.selector, address(subject), shares, 0));
+        _reject(data, _noDelivery(data));
+
+        _reject(data, _deliveryError(shares, 0));
     }
 
-    function test_proxyAdvertisesPreparationInterface() public view {
-        assertTrue(IERC165(address(subject)).supportsInterface(type(IPretransfer).interfaceId));
+    function test_proxyRemovedPreparationSurface() public {
+        bytes4 selector = bytes4(keccak256("preparePretransfer(address[],uint256[],bytes32)"));
+        assertEq(IDiamondLoupe(address(subject)).facetAddress(selector), address(0));
+        assertFalse(IERC165(address(subject)).supportsInterface(selector));
+        _reject(abi.encodeWithSelector(selector, new address[](0), new uint256[](0), bytes32(0)),
+            abi.encodeWithSelector(Proxy.NoTargetFor.selector, selector));
         assertEq(subject.decimals(), 18);
     }
 
@@ -230,7 +255,7 @@ abstract contract StandardExchangeDeliveryBehavior is Test {
         _bootstrap();
         _trade(zeroForOne, bound(uint256(tradeSize), 1e12, 500 ether));
         IERC20 token = zeroForOne ? asset0 : asset1;
-        _reject(_depositCall(token, 1 ether, FALSE_DEPOSITOR), abi.encodeWithSelector(IPretransfer.PretransferNotPrepared.selector));
+        _reject(_depositCall(token, 1 ether, FALSE_DEPOSITOR), _deliveryError(1 ether, 0));
     }
 
     function _locked(bytes memory data, IERC20 token, uint256 amount) internal returns (uint256) {
@@ -240,7 +265,7 @@ abstract contract StandardExchangeDeliveryBehavior is Test {
         return lockedCaller.run(address(subject), data, tokens, amounts);
     }
 
-    function test_lockedPreparedDeposit() public {
+    function test_lockedPushedDeposit() public {
         _bootstrap();
         _fund(asset0, address(lockedCaller), 20 ether);
         uint256 beforeShares = subject.balanceOf(address(this));
@@ -267,7 +292,7 @@ abstract contract StandardExchangeDeliveryBehavior is Test {
         assertEq(subject.balanceOf(address(subject)), 0);
     }
 
-    function test_lockedExactOutputRefundsPreparedShares() public {
+    function test_lockedExactOutputRefundsPushedShares() public {
         _bootstrap();
         uint256 maximum = subject.totalSupply() / 10;
         bytes memory quoteData = abi.encodeCall(IStandardExchangeOut.previewExchangeOut,
@@ -283,26 +308,26 @@ abstract contract StandardExchangeDeliveryBehavior is Test {
         assertEq(subject.balanceOf(address(subject)), 0);
     }
 
-    function test_preparedExactOutputShareWithdrawal() public {
+    function test_pushedExactOutputShareWithdrawal() public {
         _bootstrap();
         uint256 maximum = subject.totalSupply() / 10;
         bytes memory data = abi.encodeCall(IStandardExchangeOut.exchangeOut,
             (IERC20(address(subject)), maximum, asset1, 10 ether, address(this), true, block.timestamp));
-        _prepare(IERC20(address(subject)), maximum, data);
+
         subject.transfer(address(subject), maximum);
         uint256 used = _execute(data);
         assertGt(used, 0); assertLt(used, maximum);
         assertGe(asset1.balanceOf(address(this)), 10 ether);
         assertEq(subject.balanceOf(address(subject)), 0, "unused shares refunded");
-        assertEq(subject.balanceOf(address(this)), subject.totalSupply());
+        assertEq(subject.balanceOf(address(this)) + subject.balanceOf(address(0xdEaD)), subject.totalSupply());
     }
 
     function test_failedRouteRollsBackCreditAndCanRetry() public {
         _bootstrap();
         bytes memory data = _depositCall(asset0, 20 ether, address(this));
-        _prepare(asset0, 20 ether, data);
+
         _fund(asset0, address(this), 19 ether); asset0.transfer(address(subject), 19 ether);
-        _reject(data, abi.encodeWithSelector(IPretransfer.PretransferAmountMismatch.selector, address(asset0), 20 ether, 19 ether));
+        _reject(data, _deliveryError(20 ether, 19 ether));
         _fund(asset0, address(this), 1 ether); asset0.transfer(address(subject), 1 ether);
         assertGt(_execute(data), 0);
     }
@@ -320,14 +345,13 @@ abstract contract StandardExchangeDeliveryBehavior is Test {
         assertEq(asset1.balanceOf(address(this)), 100 ether);
     }
 
-    function test_transferCallbackCannotReenterOrPrepare() public {
+    function test_transferCallbackCannotReenter() public {
         _bootstrap();
         DeliveryTestToken token = DeliveryTestToken(address(asset1));
         address[] memory tokens = new address[](1);
         uint256[] memory amounts = new uint256[](1);
         tokens[0] = address(asset1); amounts[0] = 10 ether;
-        bytes memory reentry = abi.encodeCall(IPretransfer.preparePretransfer,
-            (tokens, amounts, keccak256(_depositCall(asset1, 10 ether, FALSE_DEPOSITOR))));
+        bytes memory reentry = _depositCall(asset1, 10 ether, FALSE_DEPOSITOR);
         token.setCallback(address(subject), reentry);
         _fund(asset1, address(this), 10 ether);
         asset1.approve(address(subject), 10 ether);
@@ -336,25 +360,14 @@ abstract contract StandardExchangeDeliveryBehavior is Test {
         assertEq(subject.balanceOf(FALSE_DEPOSITOR), 0);
     }
 
-    function test_preparedCallMustConsumeAllCredits() public {
-        _bootstrap();
-        bytes memory data = _depositCall(asset0, 10 ether, address(this));
-        address[] memory tokens = new address[](2);
-        uint256[] memory amounts = new uint256[](2);
-        tokens[0] = address(asset0); tokens[1] = address(asset1);
-        amounts[0] = 10 ether; amounts[1] = 10 ether;
-        IPretransfer(address(subject)).preparePretransfer(tokens, amounts, keccak256(data));
-        _fund(asset0, address(this), 10 ether); asset0.transfer(address(subject), 10 ether);
-        _fund(asset1, address(this), 10 ether); asset1.transfer(address(subject), 10 ether);
-        _reject(data, abi.encodeWithSelector(IPretransfer.PretransferNotConsumed.selector));
+
+
+    function test_noPositionNoMovementDoesNotEnableUnpushedInput() public {
+        _rebalance();
+        _reject(_depositCall(asset0, 10 ether, FALSE_DEPOSITOR), _deliveryError(10 ether, 0));
     }
 
-    function test_noPositionNoMovementDoesNotEnableUnpreparedInput() public {
-        _fund(asset0, address(subject), 10 ether);
-        _reject(_depositCall(asset0, 10 ether, FALSE_DEPOSITOR), abi.encodeWithSelector(IPretransfer.PretransferNotPrepared.selector));
-    }
-
-    function test_preparedDualWithdrawalRefundsOnlyDeliveredShares() public {
+    function test_pushedDualWithdrawalRefundsOnlyDeliveredShares() public {
         _bootstrap();
         address[] memory tokens = new address[](2);
         uint256[] memory amounts = new uint256[](2);
@@ -363,26 +376,26 @@ abstract contract StandardExchangeDeliveryBehavior is Test {
         uint256 maximum = subject.totalSupply() / 10;
         bytes memory data = abi.encodeCall(IStandardExchangeOutMulti.exchangeOutOneToMany,
             (IERC20(address(subject)), maximum, tokens, amounts, address(this), true, block.timestamp));
-        _reject(data, abi.encodeWithSelector(IPretransfer.PretransferNotPrepared.selector));
-        _prepare(IERC20(address(subject)), maximum, data);
+        _reject(data, _noDelivery(data));
+
         subject.transfer(address(subject), maximum);
         uint256 used = _execute(data);
         assertGt(used, 0); assertLt(used, maximum);
         assertEq(asset0.balanceOf(address(this)), 1 ether);
         assertEq(asset1.balanceOf(address(this)), 1 ether);
         assertEq(subject.balanceOf(address(subject)), 0);
-        _reject(data, abi.encodeWithSelector(IPretransfer.PretransferNotPrepared.selector));
+        _reject(data, _noDelivery(data));
     }
 
-    function test_preparedDirectExactInputSwap() public {
+    function test_pushedDirectExactInputSwap() public {
         _bootstrap(); _trade(true, 100 ether);
         bytes memory data = abi.encodeCall(IStandardExchangeIn.exchangeIn,
             (asset0, 10 ether, asset1, 0, address(this), true, block.timestamp));
-        _prepare(asset0, 10 ether, data);
+
         _fund(asset0, address(this), 10 ether); asset0.transfer(address(subject), 10 ether);
         uint256 received = _execute(data);
         assertGt(received, 0);
         assertEq(asset1.balanceOf(address(this)), received);
-        _reject(data, abi.encodeWithSelector(IPretransfer.PretransferNotPrepared.selector));
+        _reject(data, _noDelivery(data));
     }
 }

@@ -26,10 +26,7 @@ library UniswapV3_Component_FactoryService {
     {
         instance = create3Factory.create3(
             ArtifactCreationCode.creationCode("UniswapV3StandardExchangeInExecutionDelegate.sol:UniswapV3StandardExchangeInExecutionDelegate"),
-            ArtifactCreationCode.releaseSalt(
-                keccak256(bytes("UniswapV3StandardExchangeInExecutionDelegate")),
-                ArtifactCreationCode.creationCode("UniswapV3StandardExchangeInExecutionDelegate.sol:UniswapV3StandardExchangeInExecutionDelegate"), bytes("")
-            )
+            ArtifactCreationCode.releaseSalt(abi.encode("UniswapV3StandardExchangeInExecutionDelegate")._hash())
         );
         vm.label(instance, "UniswapV3StandardExchangeInExecutionDelegate");
     }
@@ -41,10 +38,7 @@ library UniswapV3_Component_FactoryService {
         address executionDelegate = deployUniswapV3StandardExchangeInExecutionDelegate(create3Factory);
         instance = create3Factory.deployFacet(
             bytes.concat(ArtifactCreationCode.creationCode("UniswapV3StandardExchangeInFacet.sol:UniswapV3StandardExchangeInFacet"), abi.encode(executionDelegate)),
-            ArtifactCreationCode.releaseSalt(
-                keccak256(bytes("UniswapV3StandardExchangeInFacet")),
-                ArtifactCreationCode.creationCode("UniswapV3StandardExchangeInFacet.sol:UniswapV3StandardExchangeInFacet"), abi.encode(executionDelegate)
-            )
+            ArtifactCreationCode.releaseSalt(abi.encode("UniswapV3StandardExchangeInFacet")._hash())
         );
         vm.label(address(instance), "UniswapV3StandardExchangeInFacet");
     }
@@ -55,10 +49,7 @@ library UniswapV3_Component_FactoryService {
     {
         instance = create3Factory.deployFacet(
             ArtifactCreationCode.creationCode("UniswapV3StandardExchangeInQueryFacet.sol:UniswapV3StandardExchangeInQueryFacet"),
-            ArtifactCreationCode.releaseSalt(
-                keccak256(bytes("UniswapV3StandardExchangeInQueryFacet")),
-                ArtifactCreationCode.creationCode("UniswapV3StandardExchangeInQueryFacet.sol:UniswapV3StandardExchangeInQueryFacet"), bytes("")
-            )
+            ArtifactCreationCode.releaseSalt(abi.encode("UniswapV3StandardExchangeInQueryFacet")._hash())
         );
         vm.label(address(instance), "UniswapV3StandardExchangeInQueryFacet");
     }
@@ -69,10 +60,7 @@ library UniswapV3_Component_FactoryService {
     {
         instance = create3Factory.create3(
             ArtifactCreationCode.creationCode("UniswapV3StandardExchangeOutExecutionDelegate.sol:UniswapV3StandardExchangeOutExecutionDelegate"),
-            ArtifactCreationCode.releaseSalt(
-                keccak256(bytes("UniswapV3StandardExchangeOutExecutionDelegate")),
-                ArtifactCreationCode.creationCode("UniswapV3StandardExchangeOutExecutionDelegate.sol:UniswapV3StandardExchangeOutExecutionDelegate"), bytes("")
-            )
+            ArtifactCreationCode.releaseSalt(abi.encode("UniswapV3StandardExchangeOutExecutionDelegate")._hash())
         );
         vm.label(instance, "UniswapV3StandardExchangeOutExecutionDelegate");
     }
@@ -84,10 +72,7 @@ library UniswapV3_Component_FactoryService {
         address executionDelegate = deployUniswapV3StandardExchangeOutExecutionDelegate(create3Factory);
         instance = create3Factory.deployFacet(
             bytes.concat(ArtifactCreationCode.creationCode("UniswapV3StandardExchangeOutFacet.sol:UniswapV3StandardExchangeOutFacet"), abi.encode(executionDelegate)),
-            ArtifactCreationCode.releaseSalt(
-                keccak256(bytes("UniswapV3StandardExchangeOutFacet")),
-                ArtifactCreationCode.creationCode("UniswapV3StandardExchangeOutFacet.sol:UniswapV3StandardExchangeOutFacet"), abi.encode(executionDelegate)
-            )
+            ArtifactCreationCode.releaseSalt(abi.encode("UniswapV3StandardExchangeOutFacet")._hash())
         );
         vm.label(address(instance), "UniswapV3StandardExchangeOutFacet");
     }
@@ -98,10 +83,7 @@ library UniswapV3_Component_FactoryService {
     {
         instance = create3Factory.deployFacet(
             ArtifactCreationCode.creationCode("UniswapV3StandardExchangeOutQueryFacet.sol:UniswapV3StandardExchangeOutQueryFacet"),
-            ArtifactCreationCode.releaseSalt(
-                keccak256(bytes("UniswapV3StandardExchangeOutQueryFacet")),
-                ArtifactCreationCode.creationCode("UniswapV3StandardExchangeOutQueryFacet.sol:UniswapV3StandardExchangeOutQueryFacet"), bytes("")
-            )
+            ArtifactCreationCode.releaseSalt(abi.encode("UniswapV3StandardExchangeOutQueryFacet")._hash())
         );
         vm.label(address(instance), "UniswapV3StandardExchangeOutQueryFacet");
     }
@@ -112,10 +94,7 @@ library UniswapV3_Component_FactoryService {
     {
         instance = create3Factory.deployFacet(
             ArtifactCreationCode.creationCode("UniswapV3StandardExchangePositionImportFacet.sol:UniswapV3StandardExchangePositionImportFacet"),
-            ArtifactCreationCode.releaseSalt(
-                keccak256(bytes("UniswapV3StandardExchangePositionImportFacet")),
-                ArtifactCreationCode.creationCode("UniswapV3StandardExchangePositionImportFacet.sol:UniswapV3StandardExchangePositionImportFacet"), bytes("")
-            )
+            ArtifactCreationCode.releaseSalt(abi.encode("UniswapV3StandardExchangePositionImportFacet")._hash())
         );
         vm.label(address(instance), "UniswapV3StandardExchangePositionImportFacet");
     }
@@ -126,10 +105,7 @@ library UniswapV3_Component_FactoryService {
     {
         instance = create3Factory.deployFacet(
             ArtifactCreationCode.creationCode("UniswapV3StandardExchangeLiquidReserveFacet.sol:UniswapV3StandardExchangeLiquidReserveFacet"),
-            ArtifactCreationCode.releaseSalt(
-                keccak256(bytes("UniswapV3StandardExchangeLiquidReserveFacet")),
-                ArtifactCreationCode.creationCode("UniswapV3StandardExchangeLiquidReserveFacet.sol:UniswapV3StandardExchangeLiquidReserveFacet"), bytes("")
-            )
+            ArtifactCreationCode.releaseSalt(abi.encode("UniswapV3StandardExchangeLiquidReserveFacet")._hash())
         );
         vm.label(address(instance), "UniswapV3StandardExchangeLiquidReserveFacet");
     }
@@ -140,10 +116,7 @@ library UniswapV3_Component_FactoryService {
     {
         instance = create3Factory.deployFacet(
             ArtifactCreationCode.creationCode("UniswapV3StandardExchangeInMultiFacet.sol:UniswapV3StandardExchangeInMultiFacet"),
-            ArtifactCreationCode.releaseSalt(
-                keccak256(bytes("UniswapV3StandardExchangeInMultiFacet")),
-                ArtifactCreationCode.creationCode("UniswapV3StandardExchangeInMultiFacet.sol:UniswapV3StandardExchangeInMultiFacet"), bytes("")
-            )
+            ArtifactCreationCode.releaseSalt(abi.encode("UniswapV3StandardExchangeInMultiFacet")._hash())
         );
         vm.label(address(instance), "UniswapV3StandardExchangeInMultiFacet");
     }
@@ -154,10 +127,7 @@ library UniswapV3_Component_FactoryService {
     {
         instance = create3Factory.deployFacet(
             ArtifactCreationCode.creationCode("UniswapV3StandardExchangeInMultiQueryFacet.sol:UniswapV3StandardExchangeInMultiQueryFacet"),
-            ArtifactCreationCode.releaseSalt(
-                keccak256(bytes("UniswapV3StandardExchangeInMultiQueryFacet")),
-                ArtifactCreationCode.creationCode("UniswapV3StandardExchangeInMultiQueryFacet.sol:UniswapV3StandardExchangeInMultiQueryFacet"), bytes("")
-            )
+            ArtifactCreationCode.releaseSalt(abi.encode("UniswapV3StandardExchangeInMultiQueryFacet")._hash())
         );
         vm.label(address(instance), "UniswapV3StandardExchangeInMultiQueryFacet");
     }
@@ -168,10 +138,7 @@ library UniswapV3_Component_FactoryService {
     {
         instance = create3Factory.deployFacet(
             ArtifactCreationCode.creationCode("UniswapV3StandardExchangeOutMultiFacet.sol:UniswapV3StandardExchangeOutMultiFacet"),
-            ArtifactCreationCode.releaseSalt(
-                keccak256(bytes("UniswapV3StandardExchangeOutMultiFacet")),
-                ArtifactCreationCode.creationCode("UniswapV3StandardExchangeOutMultiFacet.sol:UniswapV3StandardExchangeOutMultiFacet"), bytes("")
-            )
+            ArtifactCreationCode.releaseSalt(abi.encode("UniswapV3StandardExchangeOutMultiFacet")._hash())
         );
         vm.label(address(instance), "UniswapV3StandardExchangeOutMultiFacet");
     }
@@ -182,10 +149,7 @@ library UniswapV3_Component_FactoryService {
     {
         instance = create3Factory.deployFacet(
             ArtifactCreationCode.creationCode("UniswapV3StandardExchangeOutMultiQueryFacet.sol:UniswapV3StandardExchangeOutMultiQueryFacet"),
-            ArtifactCreationCode.releaseSalt(
-                keccak256(bytes("UniswapV3StandardExchangeOutMultiQueryFacet")),
-                ArtifactCreationCode.creationCode("UniswapV3StandardExchangeOutMultiQueryFacet.sol:UniswapV3StandardExchangeOutMultiQueryFacet"), bytes("")
-            )
+            ArtifactCreationCode.releaseSalt(abi.encode("UniswapV3StandardExchangeOutMultiQueryFacet")._hash())
         );
         vm.label(address(instance), "UniswapV3StandardExchangeOutMultiQueryFacet");
     }
@@ -213,10 +177,7 @@ library UniswapV3_Component_FactoryService {
                 vaultRegistry.deployPkg(
                     ArtifactCreationCode.creationCode("UniswapV3StandardExchangeDFPkg.sol:UniswapV3StandardExchangeDFPkg"),
                     abi.encode(pkgInit),
-                    ArtifactCreationCode.releaseSalt(
-                keccak256(bytes("UniswapV3StandardExchangeDFPkg")),
-                ArtifactCreationCode.creationCode("UniswapV3StandardExchangeDFPkg.sol:UniswapV3StandardExchangeDFPkg"), abi.encode(pkgInit)
-            )
+                    ArtifactCreationCode.releaseSalt(abi.encode("UniswapV3StandardExchangeDFPkg")._hash())
                 )
             )
         );

@@ -46,7 +46,7 @@ library Phase_06_Stage_03_CpBufferHookPkg {
         s.cpHookPkg = reg.deployPkg(
             ArtifactCreationCode.creationCode(s.create3Factory, "UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg.sol:UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg"),
             abi.encode(init_),
-            abi.encode(type(ICpHookPkg).name, FixtureEconomics.SALT_NS)._hash()
+            abi.encode("UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg")._hash()
         );
     }
 }

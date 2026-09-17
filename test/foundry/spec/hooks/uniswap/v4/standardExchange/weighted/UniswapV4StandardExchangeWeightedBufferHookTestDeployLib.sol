@@ -105,12 +105,7 @@ library UniswapV4StandardExchangeWeightedBufferHookTestDeployLib {
         IUniswapV4StandardExchangeWeightedBufferHookPackage.PkgInit memory init =
             _buildPkgInit(create3Factory, indexedexManager, vf);
         // caller must prank owner for setHookDiamondPackageFactory + deployPackage
-        hookPkg = PkgFactory.deployPackage(
-            IVaultRegistryDeployment(indexedexManager),
-            owner,
-            init,
-            keccak256(abi.encode(type(IUniswapV4StandardExchangeWeightedBufferHookPackage).name, "v1"))
-        );
+        hookPkg = PkgFactory.deployPackage(IVaultRegistryDeployment(indexedexManager), owner, init);
     }
 
     function _buildPkgInit(

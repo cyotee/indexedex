@@ -91,10 +91,7 @@ abstract contract TestBase_UniswapV4Detf_Orbital_Decimals is TestBase_UniswapV4D
         IFacet depositFacet = OrbitalFactory.deployDepositFacet(create3Factory);
         IFacet withdrawFacet = OrbitalFactory.deployWithdrawFacet(create3Factory);
         IFacet seFacet = OrbitalFactory.deploySeFacet(create3Factory);
-        orbitalHookPkg = OrbitalFactory.deployPackage(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            owner,
-            IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgInit({
+        orbitalHookPkg = OrbitalFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgInit({
                 depositQueryFacet: OrbitalFactory.deployDepositQueryFacet(create3Factory),
                 depositZapFacet: OrbitalFactory.deployDepositZapFacet(create3Factory),
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
@@ -109,9 +106,7 @@ abstract contract TestBase_UniswapV4Detf_Orbital_Decimals is TestBase_UniswapV4D
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
                 multiStepOwnableFacet: multiStepOwnableFacet
-            }),
-            abi.encode(type(IUniswapV4StandardExchangeOrbitalBufferHookPackage).name, "v1", _dec0(), _dec1())._hash()
-        );
+            }));
     }
 
     /// @dev Bind a 3-token orbital hook to `args.hook` without deploying the DETF.

@@ -23,7 +23,7 @@ library MorphoBlue_Component_FactoryService {
     {
         bytes memory initCode_ = ArtifactCreationCode.creationCode("MorphoBlueERC4626Facet.sol:MorphoBlueERC4626Facet");
         instance = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("MorphoBlueERC4626Facet")._hash(), initCode_, "")
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("MorphoBlueERC4626Facet")._hash())
         );
         vm.label(address(instance), "MorphoBlueERC4626Facet");
     }
@@ -34,7 +34,7 @@ library MorphoBlue_Component_FactoryService {
     {
         bytes memory initCode_ = ArtifactCreationCode.creationCode("MorphoBlueStandardExchangeInFacet.sol:MorphoBlueStandardExchangeInFacet");
         instance = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("MorphoBlueStandardExchangeInFacet")._hash(), initCode_, "")
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("MorphoBlueStandardExchangeInFacet")._hash())
         );
         vm.label(address(instance), "MorphoBlueStandardExchangeInFacet");
     }
@@ -45,7 +45,7 @@ library MorphoBlue_Component_FactoryService {
     {
         bytes memory initCode_ = ArtifactCreationCode.creationCode("MorphoBlueStandardExchangeOutFacet.sol:MorphoBlueStandardExchangeOutFacet");
         instance = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("MorphoBlueStandardExchangeOutFacet")._hash(), initCode_, "")
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("MorphoBlueStandardExchangeOutFacet")._hash())
         );
         vm.label(address(instance), "MorphoBlueStandardExchangeOutFacet");
     }
@@ -56,7 +56,7 @@ library MorphoBlue_Component_FactoryService {
     {
         bytes memory initCode_ = ArtifactCreationCode.creationCode("MorphoBlueStandardExchangeMarkerFacet.sol:MorphoBlueStandardExchangeMarkerFacet");
         instance = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("MorphoBlueStandardExchangeMarkerFacet")._hash(), initCode_, "")
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("MorphoBlueStandardExchangeMarkerFacet")._hash())
         );
         vm.label(address(instance), "MorphoBlueStandardExchangeMarkerFacet");
     }
@@ -72,7 +72,7 @@ library MorphoBlue_Component_FactoryService {
                 IVaultRegistryDeployment(address(indexedexManager)).deployPkg(
                     initCode_,
                     initArgs_,
-                    ArtifactCreationCode.releaseSalt(abi.encode("MorphoBlueStandardExchangeDFPkg")._hash(), initCode_, initArgs_)
+                    ArtifactCreationCode.releaseSalt(abi.encode("MorphoBlueStandardExchangeDFPkg")._hash())
                 )
             )
         );

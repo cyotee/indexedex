@@ -30,6 +30,8 @@ Generic `anvil-node` is not this law.
 | **Dev-complete staged deploy** | Chain-specific. 4663 **on**. 46630 **off** only so rehearsal `UniswapV3Factory` can deploy. | Anvil local. Staged `all` on 4663 may use `--legacy --gas-price 2gwei` as a `feeHistory` workaround. | Per-Stage simulate, then broadcast. Never `--skip-simulation`. | **Not** a live funding quote. |
 | **Public** | n/a | Live chain | `--sender $DEPLOYER_ADDRESS`. No `--unlocked`. No Phase 00. | Real fees. |
 
+If `SENDER=` prints any address other than `$DEPLOYER_ADDRESS`, stop. Do not fall back to another keystore. Do not use `--private-key` on public shells.
+
 `--disable-code-size-limit` is a **dev-complete** flag. On a 4663 estimate it hides EIP-170 failures and understates codesize-adjacent gas.
 
 ## Structure (Phases / Stages)

@@ -23,7 +23,7 @@ library ERC4626StandardExchange_Component_FactoryService {
     {
         bytes memory initCode_ = ArtifactCreationCode.creationCode("ERC4626StandardExchangeInFacet.sol:ERC4626StandardExchangeInFacet");
         instance = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("ERC4626StandardExchangeInFacet")._hash(), initCode_, "")
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("ERC4626StandardExchangeInFacet")._hash())
         );
         vm.label(address(instance), "ERC4626StandardExchangeInFacet");
     }
@@ -34,7 +34,7 @@ library ERC4626StandardExchange_Component_FactoryService {
     {
         bytes memory initCode_ = ArtifactCreationCode.creationCode("ERC4626StandardExchangeOutFacet.sol:ERC4626StandardExchangeOutFacet");
         instance = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("ERC4626StandardExchangeOutFacet")._hash(), initCode_, "")
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("ERC4626StandardExchangeOutFacet")._hash())
         );
         vm.label(address(instance), "ERC4626StandardExchangeOutFacet");
     }
@@ -45,7 +45,7 @@ library ERC4626StandardExchange_Component_FactoryService {
     {
         bytes memory initCode_ = ArtifactCreationCode.creationCode("ERC4626StandardExchangeMarkerFacet.sol:ERC4626StandardExchangeMarkerFacet");
         instance = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("ERC4626StandardExchangeMarkerFacet")._hash(), initCode_, "")
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("ERC4626StandardExchangeMarkerFacet")._hash())
         );
         vm.label(address(instance), "ERC4626StandardExchangeMarkerFacet");
     }
@@ -61,7 +61,7 @@ library ERC4626StandardExchange_Component_FactoryService {
                 IVaultRegistryDeployment(address(indexedexManager)).deployPkg(
                     initCode_,
                     initArgs_,
-                    ArtifactCreationCode.releaseSalt(abi.encode("ERC4626StandardExchangeDFPkg")._hash(), initCode_, initArgs_)
+                    ArtifactCreationCode.releaseSalt(abi.encode("ERC4626StandardExchangeDFPkg")._hash())
                 )
             )
         );

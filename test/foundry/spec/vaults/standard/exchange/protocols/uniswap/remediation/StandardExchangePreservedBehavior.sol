@@ -11,7 +11,6 @@ import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchang
 import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
-import {IStandardExchangePretransfer as IPretransfer} from "contracts/vaults/standard/exchange/protocols/uniswap/IStandardExchangePretransfer.sol";
 
 // The same assertions run against independently deployed V3 and V4 diamonds.
 abstract contract StandardExchangePreservedBehavior is Test {
@@ -53,12 +52,7 @@ abstract contract StandardExchangePreservedBehavior is Test {
             (token, amount, IERC20(address(subject)), 0, recipient, true, block.timestamp));
     }
 
-    function _prepare(IERC20 token, uint256 amount, bytes memory data) internal {
-        address[] memory tokens = new address[](1);
-        uint256[] memory amounts = new uint256[](1);
-        tokens[0] = address(token); amounts[0] = amount;
-        IPretransfer(address(subject)).preparePretransfer(tokens, amounts, keccak256(data));
-    }
+
 
     function _execute(bytes memory data) internal returns (uint256 result) {
         (bool success, bytes memory returned) = address(subject).call(data);

@@ -34,7 +34,7 @@ library Phase_07_Stage_01_CoreTestTokens {
         if (_live(s.tokenPkg)) return IERC20MintBurnOwnableOperableDFPkg(s.tokenPkg);
         IFacet mintBurnOwnableFacet = s.create3Factory.deployFacet(
             ArtifactCreationCode.creationCode(s.create3Factory, "ERC20MintBurnOwnableFacet.sol:ERC20MintBurnOwnableFacet"),
-            abi.encode("ERC20MintBurnOwnableFacet", FixtureEconomics.SALT_NS)._hash()
+            abi.encode("ERC20MintBurnOwnableFacet")._hash()
         );
         IERC20MintBurnOwnableOperableDFPkg.PkgInit memory pkgInit;
         pkgInit.erc20Facet = s.erc20Facet;
@@ -49,7 +49,7 @@ library Phase_07_Stage_01_CoreTestTokens {
                 s.create3Factory.deployPackageWithArgs(
                     ArtifactCreationCode.creationCode(s.create3Factory, "ERC20MintBurnOwnableOperableDFPkg.sol:ERC20MintBurnOwnableOperableDFPkg"),
                     abi.encode(pkgInit),
-                    abi.encode("ERC20MintBurnOwnableOperableDFPkg", FixtureEconomics.SALT_NS)._hash()
+                    abi.encode("ERC20MintBurnOwnableOperableDFPkg")._hash()
                 )
             )
         );

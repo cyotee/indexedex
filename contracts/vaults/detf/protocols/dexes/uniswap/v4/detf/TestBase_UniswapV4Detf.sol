@@ -164,10 +164,7 @@ abstract contract TestBase_UniswapV4Detf is TestBase_ERC4626StandardExchange {
         IFacet seFacet = CpHookFactory.deploySeFacet(create3Factory);
         IFacet depositFacet = CpHookFactory.deployDepositFacet(create3Factory);
         IFacet withdrawFacet = CpHookFactory.deployWithdrawFacet(create3Factory);
-        hookPkg = CpHookFactory.deployPackage(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            owner,
-            IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgInit({
+        hookPkg = CpHookFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgInit({
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
                 seFacet: seFacet,
@@ -181,9 +178,7 @@ abstract contract TestBase_UniswapV4Detf is TestBase_ERC4626StandardExchange {
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
                 multiStepOwnableFacet: multiStepOwnableFacet
-            }),
-            abi.encode(type(IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage).name, "v1")._hash()
-        );
+            }));
     }
 
     function _deployBondNftVaultPkg() internal {
@@ -383,10 +378,7 @@ abstract contract TestBase_UniswapV4Detf is TestBase_ERC4626StandardExchange {
         IFacet depositFacet = DualFactory.deployDepositFacet(create3Factory);
         IFacet withdrawFacet = DualFactory.deployWithdrawFacet(create3Factory);
         IFacet seFacet = DualFactory.deploySeFacet(create3Factory);
-        IUniswapV4DualStandardExchangeBufferConstantProductHookPackage dualPkg = DualFactory.deployPackage(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            owner,
-            IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgInit({
+        IUniswapV4DualStandardExchangeBufferConstantProductHookPackage dualPkg = DualFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgInit({
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
                 hooksFacet: hooksFacet,
@@ -398,9 +390,7 @@ abstract contract TestBase_UniswapV4Detf is TestBase_ERC4626StandardExchange {
                 erc2612Facet: erc2612Facet,
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet
-            }),
-            abi.encode(type(IUniswapV4DualStandardExchangeBufferConstantProductHookPackage).name, "v1")._hash()
-        );
+            }));
         IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgArgs memory args =
         IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgArgs({
             poolManager: address(pm),

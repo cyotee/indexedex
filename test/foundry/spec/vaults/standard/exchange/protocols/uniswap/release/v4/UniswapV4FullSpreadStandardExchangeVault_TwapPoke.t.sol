@@ -1,0 +1,338 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
+import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
+import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
+import {IUnlockCallback} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/callback/IUnlockCallback.sol";
+import {IPositionManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPositionManager.sol";
+import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
+import {PoolId} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolId.sol";
+import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
+import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
+import {BalanceDelta, BalanceDeltaLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/types/BalanceDelta.sol";
+import {ModifyLiquidityParams} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
+import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/TickMath.sol";
+import {StateLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/StateLibrary.sol";
+import {LiquidityAmounts} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/LiquidityAmounts.sol";
+import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
+import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
+import {
+    TestBase_UniswapV4FullSpreadStandardExchangeVault
+} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/test/bases/TestBase_UniswapV4FullSpreadStandardExchangeVault.sol";
+import {
+    IUniswapV4FullSpreadStandardExchangeVaultLiquidReserve
+} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/interfaces/IUniswapV4FullSpreadStandardExchangeVaultLiquidReserve.sol";
+import {IUniswapV4FullSpreadStandardExchangeVaultDFPkg} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/IUniswapV4FullSpreadStandardExchangeVaultDFPkg.sol";
+import {
+    UniswapV4FullSpreadStandardExchangeVault_Component_FactoryService
+} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVault_Component_FactoryService.sol";
+import {
+    UniswapV4FullSpreadStandardExchangeVaultCommon
+} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultCommon.sol";
+import {
+    IUniswapV4MultiPoolTwapOracle
+} from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4MultiPoolTwapOracle.sol";
+
+contract FlipTwapOracleFullSpread {
+    address public pm;
+
+    function setPm(address pm_) external {
+        pm = pm_;
+    }
+
+    function poolManager() external view returns (address) {
+        return pm;
+    }
+
+    function update(PoolKey calldata) external pure returns (bool) {
+        revert("hostile");
+    }
+}
+
+contract UniswapV4SeTwapSeederFullSpread is IUnlockCallback {
+    using BalanceDeltaLibrary for BalanceDelta;
+
+    IPoolManager internal immutable poolManager;
+
+    constructor(IPoolManager poolManager_) {
+        poolManager = poolManager_;
+    }
+
+    function addLiquidity(PoolKey memory poolKey, int24 tickLower, int24 tickUpper, uint128 liquidity) external {
+        poolManager.unlock(abi.encode(poolKey, tickLower, tickUpper, liquidity));
+    }
+
+    function unlockCallback(bytes calldata data) external returns (bytes memory) {
+        require(msg.sender == address(poolManager), "not pm");
+        (PoolKey memory poolKey, int24 tickLower, int24 tickUpper, uint128 liquidity) =
+            abi.decode(data, (PoolKey, int24, int24, uint128));
+        (BalanceDelta callerDelta,) = poolManager.modifyLiquidity(
+            poolKey,
+            ModifyLiquidityParams({
+                tickLower: tickLower, tickUpper: tickUpper, liquidityDelta: int256(uint256(liquidity)), salt: bytes32(0)
+            }),
+            bytes("")
+        );
+        _settle(poolKey.currency0, callerDelta.amount0());
+        _settle(poolKey.currency1, callerDelta.amount1());
+        return abi.encode(callerDelta);
+    }
+
+    function _settle(Currency currency, int128 delta) internal {
+        if (delta < 0) {
+            uint256 amount = uint128(-delta);
+            poolManager.sync(currency);
+            IERC20(Currency.unwrap(currency)).transfer(address(poolManager), amount);
+            poolManager.settle();
+        } else if (delta > 0) {
+            poolManager.take(currency, address(this), uint128(delta));
+        }
+    }
+}
+
+/**
+ * @title UniswapV4FullSpreadStandardExchangeVault_TwapPoke
+ * @notice H14–H17, H27–H29 for Uni V4 SE canonical TWAP wiring and fail-open poke.
+ */
+contract UniswapV4FullSpreadStandardExchangeVault_TwapPoke is TestBase_UniswapV4FullSpreadStandardExchangeVault {
+    ERC20PermitMintableStub internal tokenA;
+    ERC20PermitMintableStub internal tokenB;
+    IStandardExchangeProxy internal vault;
+    IUniswapV4FullSpreadStandardExchangeVaultLiquidReserve internal liquid;
+    PoolKey internal poolKey;
+    UniswapV4SeTwapSeederFullSpread internal seeder;
+
+    function setUp() public override {
+        super.setUp();
+        tokenA = new ERC20PermitMintableStub("Token A", "TKNA", 18, address(this), 0);
+        tokenB = new ERC20PermitMintableStub("Token B", "TKNB", 18, address(this), 0);
+        poolKey = _buildPoolKey(address(tokenA), address(tokenB));
+        poolManager.initialize(poolKey, TickMath.getSqrtPriceAtTick(0));
+        seeder = new UniswapV4SeTwapSeederFullSpread(poolManager);
+        tokenA.mint(address(seeder), 1_000_000 ether);
+        tokenB.mint(address(seeder), 1_000_000 ether);
+        int24 tickLower = TickMath.minUsableTick(60);
+        int24 tickUpper = TickMath.maxUsableTick(60);
+        uint128 liq = LiquidityAmounts.getLiquidityForAmounts(
+            TickMath.getSqrtPriceAtTick(0),
+            TickMath.getSqrtPriceAtTick(tickLower),
+            TickMath.getSqrtPriceAtTick(tickUpper),
+            100_000 ether,
+            100_000 ether
+        );
+        seeder.addLiquidity(poolKey, tickLower, tickUpper, liq);
+        vault = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(poolKey));
+        liquid = IUniswapV4FullSpreadStandardExchangeVaultLiquidReserve(address(vault));
+    }
+
+    function test_H14_vaultTwapOracleAndZapPokesBoundPool() public {
+        assertEq(address(liquid.twapOracle()), address(twapOracle));
+        assertEq(twapOracle.poolManager(), address(poolManager));
+        (, uint16 cardBefore,,,) = twapOracle.getState(poolKey.toId());
+        assertEq(cardBefore, 0);
+        _zapIn(_token0(), 10 ether);
+        (, uint16 cardAfter,,,) = twapOracle.getState(poolKey.toId());
+        assertEq(cardAfter, 1);
+    }
+
+    function test_H15_firstWriterMatchesPostTradeTick() public {
+        _zapIn(_token0(), 50 ether);
+        (, int24 spot,,) = StateLibrary.getSlot0(poolManager, poolKey.toId());
+        (,,, int24 recorded,) = twapOracle.getState(poolKey.toId());
+        IUniswapV4MultiPoolTwapOracle.Observation memory obs = twapOracle.getObservation(poolKey.toId(), 0);
+        assertEq(recorded, spot);
+        assertEq(obs.prevTick, spot);
+        assertEq(obs.tickCumulative, 0);
+    }
+
+    function test_H16_pokeRevertFailOpen() public {
+        // Inject an external reverting advisory oracle through the real registry
+        // package arguments; never replace calls on a SUT contract with cheatcodes.
+        FlipTwapOracleFullSpread hostile = new FlipTwapOracleFullSpread();
+        hostile.setPm(address(poolManager));
+        IUniswapV4FullSpreadStandardExchangeVaultDFPkg.PkgInit memory pkgInit = _copyPkgInit();
+        pkgInit.twapOracle = IUniswapV4MultiPoolTwapOracle(address(hostile));
+        vm.startPrank(owner);
+        IUniswapV4FullSpreadStandardExchangeVaultDFPkg pkg = IUniswapV4FullSpreadStandardExchangeVaultDFPkg(address(
+            IVaultRegistryDeployment(address(indexedexManager)).deployPkg(
+                ArtifactCreationCode.creationCode(create3Factory,
+                    "contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultDFPkg.sol:UniswapV4FullSpreadStandardExchangeVaultDFPkg"),
+                abi.encode(pkgInit), keccak256("V2.revertingAdvisoryOracle"))));
+        vm.stopPrank();
+        vault = IStandardExchangeProxy(pkg.deployVault(poolKey));
+        uint256 amountIn = 5 ether;
+        (address[] memory tokens, uint256[] memory amounts) = _fundDualInput(_token0(), amountIn);
+        vm.expectEmit(false, false, false, true, address(vault));
+        emit UniswapV4FullSpreadStandardExchangeVaultCommon.TwapOracleUpdateFailed(PoolId.unwrap(poolKey.toId()), abi.encodeWithSignature("Error(string)", "hostile"));
+        uint256 shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
+            tokens, amounts, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1 hours
+        );
+        assertGt(shares, 0);
+    }
+
+    function test_H17_transferDoesNotPokeAndForeignUpdateWrites() public {
+        PoolKey memory foreign = PoolKey({
+            currency0: poolKey.currency0,
+            currency1: poolKey.currency1,
+            fee: 10_000,
+            tickSpacing: 60,
+            hooks: IHooks(address(0))
+        });
+        poolManager.initialize(foreign, TickMath.getSqrtPriceAtTick(0));
+        (, uint16 foreignBefore,,,) = twapOracle.getState(foreign.toId());
+        assertEq(foreignBefore, 0);
+
+        uint256 shares = _zapIn(_token0(), 10 ether);
+        (, uint16 card,, uint32 ts) = _state();
+        (, uint16 foreignAfterZap,,,) = twapOracle.getState(foreign.toId());
+        assertEq(foreignAfterZap, 0, "zap must not poke a second PoolKey");
+
+        vault.approve(address(1), shares / 2);
+        vault.transfer(address(1), shares / 2);
+        (, uint16 card2,, uint32 ts2) = _state();
+        assertEq(card2, card);
+        assertEq(ts2, ts);
+
+        liquid.rebalanceLiquidReserve();
+        (, uint16 foreignAfterRebalance,,,) = twapOracle.getState(foreign.toId());
+        assertEq(foreignAfterRebalance, 0, "rebalance must not poke a second PoolKey");
+
+        assertTrue(twapOracle.update(foreign));
+        (, uint16 foreignCard,,,) = twapOracle.getState(foreign.toId());
+        assertEq(foreignCard, 1);
+        (, uint16 boundCard,,,) = twapOracle.getState(poolKey.toId());
+        assertEq(boundCard, card);
+    }
+
+    function test_H27_everyVaultSharesPackageOracle() public {
+        IStandardExchangeProxy vault2 =
+            IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(poolKey));
+        IUniswapV4FullSpreadStandardExchangeVaultLiquidReserve liquid2 =
+            IUniswapV4FullSpreadStandardExchangeVaultLiquidReserve(address(vault2));
+        assertEq(address(liquid.twapOracle()), address(twapOracle));
+        assertEq(address(liquid2.twapOracle()), address(twapOracle));
+        assertEq(liquid.twapOracle().poolManager(), address(poolManager));
+        assertEq(liquid2.twapOracle().poolManager(), address(poolManager));
+    }
+
+    /// @dev Preserve constructor revert data while loading the production package from its artifact.
+    function deployPackageForConstructorValidation(bytes memory creationCode_, bytes memory constructorArgs_)
+        external
+        returns (address deployed_)
+    {
+        bytes memory initCode_ = bytes.concat(creationCode_, constructorArgs_);
+        assembly ("memory-safe") {
+            deployed_ := create(0, add(initCode_, 32), mload(initCode_))
+            if iszero(deployed_) {
+                let free_ := mload(0x40)
+                returndatacopy(free_, 0, returndatasize())
+                revert(free_, returndatasize())
+            }
+        }
+    }
+
+    function test_H29_constructZeroOrMismatchReverts() public {
+        bytes memory creationCode_ = ArtifactCreationCode.creationCode(
+            "contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultDFPkg.sol:UniswapV4FullSpreadStandardExchangeVaultDFPkg"
+        );
+        IUniswapV4FullSpreadStandardExchangeVaultDFPkg.PkgInit memory pkgInit = _copyPkgInit();
+        pkgInit.twapOracle = IUniswapV4MultiPoolTwapOracle(address(0));
+        vm.expectRevert(IUniswapV4FullSpreadStandardExchangeVaultDFPkg.ZeroTwapOracle.selector);
+        this.deployPackageForConstructorValidation(creationCode_, abi.encode(pkgInit));
+
+        FlipTwapOracleFullSpread flip = new FlipTwapOracleFullSpread();
+        flip.setPm(address(uint160(address(poolManager)) + 1));
+        pkgInit = _copyPkgInit();
+        pkgInit.twapOracle = IUniswapV4MultiPoolTwapOracle(address(flip));
+        vm.expectRevert(IUniswapV4FullSpreadStandardExchangeVaultDFPkg.TwapOraclePoolManagerMismatch.selector);
+        this.deployPackageForConstructorValidation(creationCode_, abi.encode(pkgInit));
+    }
+
+    function test_H28_deployVaultRevertsOnPmMismatch() public {
+        FlipTwapOracleFullSpread flip = new FlipTwapOracleFullSpread();
+        flip.setPm(address(poolManager));
+        IUniswapV4FullSpreadStandardExchangeVaultDFPkg.PkgInit memory pkgInit = _copyPkgInit();
+        pkgInit.twapOracle = IUniswapV4MultiPoolTwapOracle(address(flip));
+        vm.startPrank(owner);
+        IUniswapV4FullSpreadStandardExchangeVaultDFPkg hostilePkg = IUniswapV4FullSpreadStandardExchangeVaultDFPkg(
+            address(
+                IVaultRegistryDeployment(address(indexedexManager)).deployPkg(
+                    ArtifactCreationCode.creationCode(create3Factory, "contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultDFPkg.sol:UniswapV4FullSpreadStandardExchangeVaultDFPkg"),
+                    abi.encode(pkgInit),
+                    keccak256("UniswapV4FullSpreadStandardExchangeVaultDFPkg.hostileTwap")
+                )
+            )
+        );
+        vm.stopPrank();
+        flip.setPm(address(uint160(address(poolManager)) + 1));
+        vm.expectRevert(IUniswapV4FullSpreadStandardExchangeVaultDFPkg.TwapOraclePoolManagerMismatch.selector);
+        hostilePkg.deployVault(poolKey);
+    }
+
+    function _copyPkgInit() internal view returns (IUniswapV4FullSpreadStandardExchangeVaultDFPkg.PkgInit memory pkgInit) {
+        pkgInit = UniswapV4FullSpreadStandardExchangeVault_Component_FactoryService.buildArgsUniswapV4FullSpreadStandardExchangeVaultPkgInit(_univ4SePkgInitCore());
+        pkgInit = UniswapV4FullSpreadStandardExchangeVault_Component_FactoryService.attachTwapOracle(pkgInit, twapOracle);
+        pkgInit = UniswapV4FullSpreadStandardExchangeVault_Component_FactoryService.attachUniswapV4FullSpreadStandardExchangeVaultMultiFacets(
+            pkgInit,
+            uniswapV4StandardExchangeInMultiFacet,
+            uniswapV4StandardExchangeInMultiQueryFacet,
+            uniswapV4StandardExchangeOutMultiFacet,
+            uniswapV4StandardExchangeOutMultiQueryFacet
+        );
+    }
+
+    function _fundDualInput(address token, uint256 amountIn)
+        internal returns (address[] memory tokens, uint256[] memory amounts)
+    {
+        assertEq(token, _token0(), "TWAP fixture starts from token0");
+        tokens = new address[](2);
+        tokens[0] = _token0();
+        tokens[1] = Currency.unwrap(poolKey.currency1);
+        amounts = new uint256[](2);
+        amounts[0] = amountIn;
+        amounts[1] = amountIn;
+        for (uint256 i; i < 2; ++i) {
+            ERC20PermitMintableStub(tokens[i]).mint(address(this), amounts[i]);
+            IERC20(tokens[i]).approve(address(vault), amounts[i]);
+        }
+    }
+
+    function _zapIn(address token, uint256 amountIn) internal returns (uint256 shares) {
+        (address[] memory tokens, uint256[] memory amounts) = _fundDualInput(token, amountIn);
+        shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
+            tokens, amounts, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1 hours
+        );
+        assertGt(shares, 0, "funded activation writes TWAP");
+    }
+
+    function _state()
+        internal
+        view
+        returns (uint16 index, uint16 cardinality, uint16 cardinalityNext, uint32 lastTimestamp)
+    {
+        (index, cardinality, cardinalityNext,, lastTimestamp) = twapOracle.getState(poolKey.toId());
+    }
+
+    function _token0() internal view returns (address) {
+        return Currency.unwrap(poolKey.currency0);
+    }
+
+    function _buildPoolKey(address token0Candidate, address token1Candidate) internal pure returns (PoolKey memory) {
+        (address token0, address token1) =
+            token0Candidate < token1Candidate ? (token0Candidate, token1Candidate) : (token1Candidate, token0Candidate);
+        return PoolKey({
+            currency0: Currency.wrap(token0),
+            currency1: Currency.wrap(token1),
+            fee: 3000,
+            tickSpacing: 60,
+            hooks: IHooks(address(0))
+        });
+    }
+}

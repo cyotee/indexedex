@@ -1,6 +1,6 @@
 ---
 name: indexedex-testing
-description: "Write or review IndexedEx production-first Foundry tests, TestBases, registry deployment and SE/DETF coverage."
+description: This skill should be used when writing or reviewing IndexedEx Foundry tests, TestBases, mocks, vm.mockCall, IndexedexTest, vault DFPkg deploy, Standard Exchange tests, DETF tests, fork tests, or when an agent is tempted to mock vaults/manager/registry. Prefer production code over mocks.
 license: MIT
 ---
 
@@ -18,11 +18,9 @@ Generic Foundry skills (`forge-testing` mock sections) are **subordinate** to Cr
 
 ## `forge build` before `forge test` (LOCKED)
 
-IndexedEx FactoryServices load creation bytecode directly from `out/` artifact JSON via `ArtifactCreationCode`. The factory-aware overload recursively deploys and links external libraries. Keep Facet/DFPkg implementation imports and artifact-seed inheritance out of deployment helpers; import standalone interfaces instead. Editing an implementation then does not invalidate helpers that reference it only by artifact ID.
+IndexedEx FactoryServices load creation bytecode from `out/` via `ArtifactCreationCode` (`vm.getCode`). They do not import Facet/DFPkg implementations for `type().creationCode`. Editing production source does not recompile FactoryService or TestBases that only `using` it.
 
 After any production contract change, run **`forge build` then `forge test`** (same for `forge script`). `forge test` alone can CREATE3-deploy stale `out/` bytecode. Full text: root `CLAUDE.md` item 10 and agent law § FactoryService creation bytecode.
-
-For incremental work, use `python3 scripts/forge-artifacts.py test contracts/path/EditedTarget.sol --test-root test/foundry/spec/path/RelevantTest.t.sol -- -vv`. It refreshes concrete descendants and runtime artifacts before selecting test roots with `--skip`. Repeat `--test-root` for multiple suites. Keep configured project paths stable: changing `FOUNDRY_TEST` invalidates the shared cache. See [artifact build workflow](../../../docs/testing/ARTIFACT_BUILDS.md).
 
 ## Production-first (IndexedEx)
 
@@ -82,7 +80,7 @@ Fork tests often combine `IndexedexTest` / vault components with `TestBase_*Fork
 | Camelot SE | `contracts/protocols/dexes/camelot/v2/TestBase_CamelotV2StandardExchange.sol` | In/Out facets + `deployCamelotV2StandardExchangeDFPkg` |
 | Aave Stata SE | `contracts/test/bases/TestBase_AaveV3StataStandardExchange.sol` | Registry path for lending SE |
 | Aerodrome SE | `contracts/protocols/dexes/aerodrome/v1/TestBase_AerodromeStandardExchange.sol` | Same pattern as Camelot |
-| Dual-liquidity (fork) | `test/foundry/fork/base_main/vaults/detf/protocols/dexes/balancer/v3/uniswap/v4/crossVersion/v2/TestBase_DualLiquidityLinkedCrossVersionUniswapVault.sol` | Full production deploy on Base fork |
+| Dual-liquidity (fork) | **Removed** (alignment D1). Do not use as a gold TestBase. | Deleted product |
 
 ## Two deploy paths (critical)
 
@@ -160,7 +158,7 @@ Do not mix live addresses with hermetic protocol ports in one base without an ex
 - [ ] **Facet surface:** `controlFacetFuncs` from Target/product interface; every product selector on live proxy after registry deploy
 - [ ] **Trust flags:** negative tests for `pretransferred=true` without transfer (vault already funded) — not only happy path
 - [ ] Inbound credit uses measured **delta**, not absolute balance + claimed amount
-- [ ] Token policy (do not re-ask): FoT forbidden; rebasing **underlyings** forbidden (`rebasingClaimToken` is a protocol product); non-18 decimals allowed (scale to 18); pause/blacklist accepted; no `PkgArgs` allowlist
+- [ ] Token policy (do not re-ask): FoT forbidden; rebasing **underlyings** forbidden (`rebasingClaimToken` is a protocol product); non-18 decimals allowed (normalize only where the price adapter requires WAD; retain native units at token boundaries; DETF/sDETF/SY are 9-dec); pause/blacklist accepted; no `PkgArgs` allowlist
 - [ ] `--match-test` prefixes unique enough (or `--match-contract` the suite); do not treat colliding extras as this change
 - [ ] After production contract edits: `forge build` then `forge test` (FactoryService reads `out/`; tests can deploy stale bytecode)
 
@@ -176,7 +174,7 @@ When implementing or reviewing tests for any path that mints shares or credits d
 |------|--------|
 | `pretransferred=true`, no tokens sent, vault holds inventory | Revert **or** zero shares minted; attacker product balance unchanged |
 | `pretransferred=true`, short delivery | Exact transfer-not-received / insufficient selector |
-| Donation then deposit | No free mint from donation (or documented beneficiary + no victim loss) |
+| Donation then deposit | No free mint; donation LP goes to bond-held reserve for all live bonds, never token 0 as beneficiary |
 | Fat `max` + transfer only `used` + booked `R` | Attacker does not receive booked inventory (E6) |
 | `setVaultAddressDisabled(true)` then mature close / redeem / `exchangeOut` | Still succeeds (CROPS; inbound may stay gated) |
 | Product fn only on Target/Facet impl | Must also succeed on **deployed vault/DETF proxy** |

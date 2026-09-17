@@ -262,7 +262,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
             create3Factory.create3WithArgs(
                 ArtifactCreationCode.creationCode(create3Factory, "WeightedPoolFactory.sol:WeightedPoolFactory"),
                 abi.encode(address(balancerV3Vault), uint32(365 days), "Factory v1", "Pool v1"),
-                keccak256("LocalTestingScenario3WeightedPoolFactory")
+                abi.encode("WeightedPoolFactory")._hash()
             )
         );
     }
@@ -288,7 +288,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         erc721Facet = IFacet(
             create3Factory.deployFacet(
                 ArtifactCreationCode.creationCode(create3Factory, "ERC721Facet.sol:ERC721Facet"),
-                keccak256("LocalTestingScenario3_ERC721Facet")
+                abi.encode("ERC721Facet")._hash()
             )
         );
     }
@@ -302,7 +302,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
                 create3Factory.create3WithArgs(
                     ArtifactCreationCode.creationCode(create3Factory, "PoolManager.sol:PoolManager"),
                     abi.encode(owner),
-                    keccak256("LocalTestingScenario3PoolManager")
+                    abi.encode("PoolManager")._hash()
                 )
             );
         }
@@ -322,7 +322,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
                 create3Factory.create3WithArgs(
                     ArtifactCreationCode.creationCode(create3Factory, "UniswapV4LiquiditySeeder.sol:UniswapV4LiquiditySeeder"),
                     abi.encode(poolManager),
-                    keccak256("LocalTestingScenario3LiquiditySeeder")
+                    abi.encode("UniswapV4LiquiditySeeder")._hash()
                 )
             );
         }

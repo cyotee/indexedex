@@ -11,6 +11,7 @@ contract DeliveryTestToken {
     mapping(address => uint256) public balanceOf;
     mapping(address => mapping(address => uint256)) public allowance;
     bool public chargeFee;
+    bool public callbackPropagates;
     address public callbackTarget;
     bytes public callbackData;
     bytes public callbackError;
@@ -31,7 +32,9 @@ contract DeliveryTestToken {
         _transfer(from, to, amount);
         if (callbackTarget != address(0)) {
             (bool ok, bytes memory reason) = callbackTarget.call(callbackData);
-            require(!ok, "reentry unexpectedly succeeded");
+            if (callbackPropagates) {
+                if (!ok) assembly ("memory-safe") { revert(add(reason, 32), mload(reason)) }
+            } else require(!ok, "reentry unexpectedly succeeded");
             callbackError = reason;
         }
         return true;
@@ -42,6 +45,7 @@ contract DeliveryTestToken {
         balanceOf[to] += amount - fee;
         totalSupply -= fee;
     }
+    function setCallbackPropagates(bool enabled) external { callbackPropagates = enabled; }
     function setFee(bool enabled) external { chargeFee = enabled; }
     function setCallback(address target, bytes calldata data) external { callbackTarget = target; callbackData = data; }
 }

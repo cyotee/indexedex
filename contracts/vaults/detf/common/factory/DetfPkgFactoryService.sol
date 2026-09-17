@@ -57,7 +57,7 @@ library DetfPkgFactoryService {
         bytes memory code_ = ArtifactCreationCode.creationCode("DETFSYDFPkg.sol:DETFSYDFPkg");
         bytes memory args_ = abi.encode(init_);
         instance_ = IDETFSYDFPkg(address(registry_.deployPkg(
-            code_, args_, ArtifactCreationCode.releaseSalt(keccak256("DETFSYDFPkg"), code_, args_)
+            code_, args_, ArtifactCreationCode.releaseSalt(abi.encode("DETFSYDFPkg")._hash())
         )));
         vm.label(address(instance_), "DETFSYDFPkg");
     }
@@ -89,7 +89,7 @@ library DetfPkgFactoryService {
                 vaultRegistry.deployPkg(
                     initCode_,
                     initArgs_,
-                    ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4DetfDFPkg")._hash(), initCode_, initArgs_)
+                    ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4DetfDFPkg")._hash())
                 )
             )
         );
@@ -107,7 +107,7 @@ library DetfPkgFactoryService {
                 vaultRegistry.deployPkg(
                     initCode_,
                     initArgs_,
-                    ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4DetfBondNFTVaultDFPkg")._hash(), initCode_, initArgs_)
+                    ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4DetfBondNFTVaultDFPkg")._hash())
                 )
             )
         );
@@ -141,7 +141,7 @@ library DetfPkgFactoryService {
                 create3Factory.deployPackageWithArgs(
                     initCode_,
                     initArgs_,
-                    ArtifactCreationCode.releaseSalt(abi.encode("RebasingClaimTokenDFPkg")._hash(), initCode_, initArgs_)
+                    ArtifactCreationCode.releaseSalt(abi.encode("RebasingClaimTokenDFPkg")._hash())
                 )
             )
         );

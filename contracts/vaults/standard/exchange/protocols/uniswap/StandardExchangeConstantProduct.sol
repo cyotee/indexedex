@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {FixedPointMathLib} from "@crane/contracts/utils/FixedPointMathLib.sol";
+import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {Math} from "@crane/contracts/utils/Math.sol";
 
 /// @notice Fee-free settlement against the complete two-asset share book.
@@ -10,6 +11,28 @@ import {Math} from "@crane/contracts/utils/Math.sol";
 /// stay in the book, output must be locally funded, and no pool interaction occurs.
 library StandardExchangeConstantProduct {
     error InsufficientBacking();
+    error InsufficientMinimumLiquidity(uint256 raw, uint256 minimum);
+
+    function _minimumLiquidity(address token0, address token1) internal view returns (uint256) {
+        return _minimumLiquidity(_decimals(token0), _decimals(token1));
+    }
+
+    function _minimumLiquidity(uint8 decimals0, uint8 decimals1) internal pure returns (uint256) {
+        uint256 mean = (uint256(decimals0) + uint256(decimals1)) / 2;
+        return mean < 3 ? 1 : 10 ** (mean - 3);
+    }
+
+    function _decimals(address token) private view returns (uint8) {
+        try IERC20Metadata(token).decimals() returns (uint8 d) { return d; }
+        catch { return 18; }
+    }
+
+    function _initialShares(uint256 amount0, uint256 amount1, uint256 minimum) internal pure returns (uint256) {
+        if (amount0 == 0 || amount1 == 0) return 0;
+        uint256 raw = FixedPointMathLib.mulSqrt(amount0, amount1);
+        if (raw <= minimum) revert InsufficientMinimumLiquidity(raw, minimum);
+        return raw - minimum;
+    }
 
     function _sharesForDeposit(
         uint256 amount0Added,

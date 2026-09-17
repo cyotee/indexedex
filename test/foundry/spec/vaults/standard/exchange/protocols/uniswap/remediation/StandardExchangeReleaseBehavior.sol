@@ -9,7 +9,7 @@ import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
-import {IPretransfer} from "./StandardExchangeDeliveryBehavior.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 
 abstract contract StandardExchangeReleaseBehavior is StandardExchangeDeliveryBehavior {
@@ -29,7 +29,7 @@ abstract contract StandardExchangeReleaseBehavior is StandardExchangeDeliveryBeh
         assertGt(subject.exchangeIn(IERC20(address(subject)), shares, asset1, 0, address(this), false, block.timestamp), 0);
         bytes memory data = abi.encodeCall(IStandardExchangeOut.exchangeOut,
             (IERC20(address(subject)), shares, asset1, 1 ether, address(this), true, block.timestamp));
-        _prepare(IERC20(address(subject)), shares, data); subject.transfer(address(subject), shares);
+         subject.transfer(address(subject), shares);
         assertGt(_execute(data), 0);
         _disable(false, packageWide);
         assertGt(subject.exchangeIn(asset0, 1 ether, IERC20(address(subject)), 0, address(this), false, block.timestamp), 0);
@@ -41,47 +41,32 @@ abstract contract StandardExchangeReleaseBehavior is StandardExchangeDeliveryBeh
         assertEq(IStandardizedYield(address(subject)).redeem(address(this), 1 ether, address(asset1), quoted, false), quoted);
         assertEq(subject.balanceOf(address(this)), beforeShares - 1 ether);
     }
-    function test_nativeSYPreparedInternalBalanceCannotClaimOldShares() public {
-        _bootstrap(); subject.transfer(address(subject), 3 ether);
-        bytes memory data = abi.encodeCall(IStandardizedYield.redeem, (address(this), 1 ether, address(asset1), 0, true));
-        _reject(data, abi.encodeWithSelector(IPretransfer.PretransferNotPrepared.selector));
-        _prepare(IERC20(address(subject)), 1 ether, data);
-        subject.transfer(address(subject), 1 ether);
-        assertGt(_execute(data), 0);
-        assertEq(subject.balanceOf(address(subject)), 3 ether, "prior shares untouched");
-        _reject(data, abi.encodeWithSelector(IPretransfer.PretransferNotPrepared.selector));
+    function test_nativeSYInternalHolderBurnAndInsufficientBalance() public {
+        _bootstrap(); subject.transfer(address(subject), 3 ether); _rebalance();
+        uint256 supply = subject.totalSupply();
+        uint256 received = IStandardizedYield(address(subject)).redeem(address(this), 1 ether, address(asset1), 0, true);
+        assertGt(received, 0);
+        assertEq(subject.totalSupply(), supply - 1 ether);
+        assertEq(subject.balanceOf(address(subject)), 2 ether);
+        assertEq(subject.reserveOfToken(address(subject)), 2 ether);
+        bytes memory data = abi.encodeCall(IStandardizedYield.redeem, (address(this), 3 ether, address(asset1), 0, true));
+        _reject(data, _deliveryError(3 ether, 2 ether));
+        _reject(abi.encodeCall(IStandardExchangeIn.exchangeIn, (IERC20(address(subject)), 1 ether, asset1, 0, FALSE_DEPOSITOR, true, block.timestamp)), _deliveryError(1 ether, 0));
     }
-    function test_nativeSYPreparedRecipientBinding() public {
-        _bootstrap();
-        bytes memory data = abi.encodeCall(IStandardizedYield.redeem, (address(this), 1 ether, address(asset1), 0, true));
-        _prepare(IERC20(address(subject)), 1 ether, data); subject.transfer(address(subject), 1 ether);
-        bytes memory changed = abi.encodeCall(IStandardizedYield.redeem, (FALSE_DEPOSITOR, 1 ether, address(asset1), 0, true));
-        _reject(changed, abi.encodeWithSelector(IPretransfer.PretransferCallMismatch.selector));
-        assertGt(_execute(data), 0);
+    function test_nativeSYRequestedRecipientAndOrdinaryCallerDenied() public {
+        _bootstrap(); subject.transfer(address(subject), 3 ether); _rebalance();
+        uint256 received = IStandardizedYield(address(subject)).redeem(FALSE_DEPOSITOR, 1 ether, address(asset1), 0, true);
+        assertEq(asset1.balanceOf(FALSE_DEPOSITOR), received);
+        uint256 supply = subject.totalSupply();
+        vm.startPrank(FALSE_DEPOSITOR);
+        vm.expectRevert();
+        subject.exchangeIn(IERC20(address(subject)), 1 ether, asset1, 0, FALSE_DEPOSITOR, false, block.timestamp);
+        vm.stopPrank();
+        assertEq(subject.totalSupply(), supply);
+        assertEq(subject.balanceOf(address(subject)), 2 ether);
     }
-    function test_preparationRejectsZeroDuplicateAndUnknownTokens() public {
-        address[] memory tokens = new address[](2); uint256[] memory amounts = new uint256[](2);
-        tokens[0] = address(asset0); tokens[1] = address(asset0); amounts[0] = 1; amounts[1] = 1;
-        vm.expectRevert(IPretransfer.InvalidPretransfer.selector);
-        IPretransfer(address(subject)).preparePretransfer(tokens, amounts, bytes32(uint256(1)));
-        tokens[1] = address(asset1); amounts[1] = 0;
-        vm.expectRevert(IPretransfer.InvalidPretransfer.selector);
-        IPretransfer(address(subject)).preparePretransfer(tokens, amounts, bytes32(uint256(1)));
-        amounts[1] = 1; tokens[1] = FALSE_DEPOSITOR;
-        vm.expectRevert(IPretransfer.InvalidPretransfer.selector);
-        IPretransfer(address(subject)).preparePretransfer(tokens, amounts, bytes32(uint256(1)));
-        tokens[1] = address(asset1);
-        vm.expectRevert(IPretransfer.InvalidPretransfer.selector);
-        IPretransfer(address(subject)).preparePretransfer(tokens, amounts, bytes32(0));
-    }
-    function test_pendingInputCannotBeUsedByPullOrSecondPreparation() public {
-        _bootstrap(); bytes memory data = _depositCall(asset0, 1 ether, address(this));
-        _prepare(asset0, 1 ether, data);
-        vm.expectRevert(IPretransfer.PretransferPending.selector); _prepare(asset0, 1 ether, data);
-        bytes memory pull = abi.encodeCall(IStandardExchangeIn.exchangeIn,
-            (asset0, 1 ether, IERC20(address(subject)), 0, address(this), false, block.timestamp));
-        _reject(pull, abi.encodeWithSelector(IPretransfer.PretransferCallMismatch.selector));
-    }
+
+
     function testFuzz_deliveryAcrossSleeveRatios(bool side, uint8 pctSeed) public {
         uint256[4] memory choices = [uint256(0.02e18), 0.2e18, 0.5e18, 1e18];
         _configureSleeve(choices[pctSeed % 4]);
@@ -90,10 +75,10 @@ abstract contract StandardExchangeReleaseBehavior is StandardExchangeDeliveryBeh
         _configureSleeve(0.2e18); _bootstrap(); _trade(side, 10 ether);
         _configureSleeve(choices[pctSeed % 4]); _rebalance();
         IERC20 token = side ? asset0 : asset1;
-        _reject(_depositCall(token, 1 ether, FALSE_DEPOSITOR), abi.encodeWithSelector(IPretransfer.PretransferNotPrepared.selector));
+        _reject(_depositCall(token, 1 ether, FALSE_DEPOSITOR), _deliveryError(1 ether, 0));
         _fund(token, address(this), 1 ether);
         bytes memory data = _depositCall(token, 1 ether, address(this));
-        _prepare(token, 1 ether, data); token.transfer(address(subject), 1 ether);
+         token.transfer(address(subject), 1 ether);
         assertGt(_execute(data), 0);
     }
     function test_sharePermitAuthorizesOnlySignedSpenderAndCannotReplay() public {
@@ -117,7 +102,7 @@ abstract contract StandardExchangeReleaseBehavior is StandardExchangeDeliveryBeh
             "OutExecuteTarget", "OutQueryTarget", "OutMultiTarget", "OutMultiQueryTarget", "LiquidReserveTarget", "PositionImportTarget"];
         uint256 checked;
         for (uint256 i; i < targets.length; ++i) {
-            string memory name = string.concat(_family(), "StandardExchange", targets[i], "V2");
+            string memory name = string.concat(_family(), "FullSpreadStandardExchangeVault", targets[i]);
             string memory artifact = vm.readFile(string.concat("out/", name, ".sol/", name, ".json"));
             string[] memory signatures = vm.parseJsonKeys(artifact, ".methodIdentifiers");
             for (uint256 j; j < signatures.length; ++j) {
@@ -130,19 +115,9 @@ abstract contract StandardExchangeReleaseBehavior is StandardExchangeDeliveryBeh
         assertGt(checked, 30, "nonempty independent Target ABI controls");
     }
 
-    function test_preparationRejectsEmptyOversizedAndUnequalArrays() public {
-        address[] memory tokens = new address[](0); uint256[] memory amounts = new uint256[](0);
-        vm.expectRevert(IPretransfer.InvalidPretransfer.selector);
-        IPretransfer(address(subject)).preparePretransfer(tokens, amounts, bytes32(uint256(1)));
-        tokens = new address[](3); amounts = new uint256[](3);
-        vm.expectRevert(IPretransfer.InvalidPretransfer.selector);
-        IPretransfer(address(subject)).preparePretransfer(tokens, amounts, bytes32(uint256(1)));
-        tokens = new address[](1); tokens[0] = address(asset0);
-        vm.expectRevert(IPretransfer.InvalidPretransfer.selector);
-        IPretransfer(address(subject)).preparePretransfer(tokens, amounts, bytes32(uint256(1)));
-    }
 
-    function test_preparedSYFailureRollsBackAndCanRetry() public {
+
+    function test_SYFailureRollsBackAndCanRetry() public {
         _bootstrap();
         uint256 supply = subject.totalSupply();
         uint256 beforeAsset = asset1.balanceOf(address(subject));
@@ -164,7 +139,7 @@ abstract contract StandardExchangeReleaseBehavior is StandardExchangeDeliveryBeh
             (FALSE_DEPOSITOR, 1 ether, address(asset0), 0, false)));
         _fund(asset1, address(this), 10 ether); asset1.approve(address(subject), 10 ether);
         assertGt(subject.exchangeIn(asset1, 10 ether, IERC20(address(subject)), 0, address(this), false, block.timestamp), 0);
-        assertEq(token.callbackError(), abi.encodeWithSelector(IPretransfer.PretransferPending.selector));
+        assertEq(token.callbackError(), abi.encodeWithSelector(IReentrancyLock.IsLocked.selector));
         assertEq(subject.balanceOf(address(token)), 2 ether); assertEq(asset0.balanceOf(FALSE_DEPOSITOR), 0);
     }
     function test_transferCallbackCannotExchangeMidDeposit() public {
@@ -175,5 +150,16 @@ abstract contract StandardExchangeReleaseBehavior is StandardExchangeDeliveryBeh
         assertGt(subject.exchangeIn(asset1, 10 ether, IERC20(address(subject)), 0, address(this), false, block.timestamp), 0);
         assertEq(token.callbackError(), abi.encodeWithSelector(IReentrancyLock.IsLocked.selector));
         assertEq(subject.balanceOf(FALSE_DEPOSITOR), 0);
+    }
+
+    function test_nativeSYInternalMinimumRollbackAndContextRestored() public {
+        _bootstrap(); subject.transfer(address(subject),3 ether); _rebalance();
+        bytes memory data=abi.encodeCall(IStandardizedYield.redeem,(FALSE_DEPOSITOR,1 ether,address(asset1),type(uint256).max,true));
+        _reject(data,abi.encodeWithSignature(string.concat(_family(),"ExchangeIn_SlippageExceeded()")));
+        uint256 received=IStandardizedYield(address(subject)).redeem(FALSE_DEPOSITOR,1 ether,address(asset1),0,true);
+        assertEq(asset1.balanceOf(FALSE_DEPOSITOR),received);assertEq(subject.balanceOf(address(subject)),2 ether);
+        vm.prank(FALSE_DEPOSITOR);vm.expectRevert();
+        subject.exchangeIn(IERC20(address(subject)),1 ether,asset1,0,FALSE_DEPOSITOR,false,block.timestamp);
+        assertEq(subject.balanceOf(address(subject)),2 ether);
     }
 }

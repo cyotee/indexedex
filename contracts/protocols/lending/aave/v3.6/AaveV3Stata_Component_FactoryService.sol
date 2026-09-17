@@ -37,7 +37,7 @@ library AaveV3Stata_Component_FactoryService {
     {
         bytes memory code = ArtifactCreationCode.creationCode("AaveV3StataStandardExchangeInFacet.sol:AaveV3StataStandardExchangeInFacet");
         instance = create3Factory.deployFacet(
-            code, ArtifactCreationCode.releaseSalt(abi.encode("AaveV3StataStandardExchangeInFacet")._hash(), code, bytes(""))
+            code, ArtifactCreationCode.releaseSalt(abi.encode("AaveV3StataStandardExchangeInFacet")._hash())
         );
         vm.label(address(instance), "AaveV3StataStandardExchangeInFacet");
     }
@@ -48,7 +48,7 @@ library AaveV3Stata_Component_FactoryService {
     {
         bytes memory code = ArtifactCreationCode.creationCode("AaveV3StataStandardExchangeOutFacet.sol:AaveV3StataStandardExchangeOutFacet");
         instance = create3Factory.deployFacet(
-            code, ArtifactCreationCode.releaseSalt(abi.encode("AaveV3StataStandardExchangeOutFacet")._hash(), code, bytes(""))
+            code, ArtifactCreationCode.releaseSalt(abi.encode("AaveV3StataStandardExchangeOutFacet")._hash())
         );
         vm.label(address(instance), "AaveV3StataStandardExchangeOutFacet");
     }
@@ -59,7 +59,7 @@ library AaveV3Stata_Component_FactoryService {
     {
         bytes memory code = ArtifactCreationCode.creationCode("AaveV3StataMarkerFacet.sol:AaveV3StataMarkerFacet");
         instance = create3Factory.deployFacet(
-            code, ArtifactCreationCode.releaseSalt(abi.encode("AaveV3StataMarkerFacet")._hash(), code, bytes(""))
+            code, ArtifactCreationCode.releaseSalt(abi.encode("AaveV3StataMarkerFacet")._hash())
         );
         vm.label(address(instance), "AaveV3StataMarkerFacet");
     }
@@ -71,7 +71,7 @@ library AaveV3Stata_Component_FactoryService {
         bytes memory code = ArtifactCreationCode.creationCode("AaveV3StataStandardExchangeDFPkg.sol:AaveV3StataStandardExchangeDFPkg");
         bytes memory args = abi.encode(pkgInit);
         instance = IAaveV3StataStandardExchangeDFPkg(address(vaultRegistry.deployPkg(
-            code, args, ArtifactCreationCode.releaseSalt(abi.encode("AaveV3StataStandardExchangeDFPkg")._hash(), code, args)
+            code, args, ArtifactCreationCode.releaseSalt(abi.encode("AaveV3StataStandardExchangeDFPkg")._hash())
         )));
         vm.label(address(instance), "AaveV3StataStandardExchangeDFPkg");
     }

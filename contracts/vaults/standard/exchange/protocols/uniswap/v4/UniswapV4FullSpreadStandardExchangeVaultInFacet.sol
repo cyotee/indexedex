@@ -1,0 +1,39 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {IUnlockCallback} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/callback/IUnlockCallback.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {
+    UniswapV4FullSpreadStandardExchangeVaultInTarget
+} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultInTarget.sol";
+
+contract UniswapV4FullSpreadStandardExchangeVaultInFacet is UniswapV4FullSpreadStandardExchangeVaultInTarget, IFacet {
+    constructor(address executionDelegate) UniswapV4FullSpreadStandardExchangeVaultInTarget(executionDelegate) {}
+
+    function facetName() public pure override returns (string memory name) {
+        return type(UniswapV4FullSpreadStandardExchangeVaultInFacet).name;
+    }
+
+    function facetInterfaces() public pure override returns (bytes4[] memory interfaces) {
+        interfaces = new bytes4[](1);
+        interfaces[0] = type(IStandardExchangeIn).interfaceId;
+    }
+
+    function facetFuncs() public pure override returns (bytes4[] memory funcs) {
+        funcs = new bytes4[](2);
+        funcs[0] = IStandardExchangeIn.exchangeIn.selector;
+        funcs[1] = IUnlockCallback.unlockCallback.selector;
+    }
+
+    function facetMetadata()
+        external
+        pure
+        override
+        returns (string memory name_, bytes4[] memory interfaces, bytes4[] memory functions)
+    {
+        name_ = facetName();
+        interfaces = facetInterfaces();
+        functions = facetFuncs();
+    }
+}

@@ -83,8 +83,9 @@ E2E_SKIP_WEBSERVER=1 npm run test:e2e:live -w @indexedex/app-dtf
 3. **Query vs execute** — deposit query **8-tuple** / execute **10-tuple**; never spread execute into query.
 4. **Approvals** — multi-leg uses **split** Permit2 + router CTAs (`swap-approve-*`, ActionCta gates).
 5. **List-driven addresses** — read `chain/<id>/` tokenlists + `platform.json`; do not hardcode vaults.
-6. **Two Anvil families** — `fee_detf` (CHIR live) vs `main` (inert demos). Last export wins for `chain/4663/`.
-7. **Do not invent APY/USD** in assertions or UI checks.
+6. **Two Anvil families** — `fee_detf` ($DTF-DETF live after first bond) vs `main` (inert demos). Last export wins for `chain/4663/`.
+7. **Approvals** — button says Approve until the approval receipt, then Stake.
+8. **Do not invent APY/USD** in assertions or UI checks.
 
 ## Key files
 

@@ -18,7 +18,9 @@ import {IVaultRegistryVaultPackageQuery} from "contracts/interfaces/IVaultRegist
 library Phase_06_Stage_10_RebasingAwareERC4626Pkg {
     using RebasingAwareERC4626_Component_FactoryService for ICreate3FactoryProxy;
 
-    /// @notice Code at a saved address is insufficient: require this build and these constructor dependencies.
+    /// @notice Check canonical component identities and the recorded constructor configuration.
+    /// @dev Occupied identities retain their original code and bindings; these address/configuration
+    ///      checks do not prove that rerunning the stage installed the current build.
     function isCurrent(LaunchState storage s) internal returns (bool) {
         if (!_matches(s, s.rebasingAwareErc4626Facet, "RebasingAwareERC4626Facet",
             ArtifactCreationCode.creationCode("RebasingAwareERC4626Facet.sol:RebasingAwareERC4626Facet"))) return false;
@@ -32,7 +34,7 @@ library Phase_06_Stage_10_RebasingAwareERC4626Pkg {
             ArtifactCreationCode.creationCode("RebasingAwareStandardExchangeQuoteFacet.sol:RebasingAwareStandardExchangeQuoteFacet"))) return false;
         bytes memory code = ArtifactCreationCode.creationCode("RebasingAwareERC4626DFPkg.sol:RebasingAwareERC4626DFPkg");
         bytes memory args = abi.encode(_pkgInit(s));
-        bytes32 salt = RebasingAwareERC4626_Component_FactoryService.releaseSalt("RebasingAwareERC4626DFPkg", code, args);
+        bytes32 salt = RebasingAwareERC4626_Component_FactoryService.releaseSalt("RebasingAwareERC4626DFPkg");
         if (s.rebasingAwareErc4626Pkg != Creation._create3AddressFromOf(address(s.create3Factory), salt)
             || s.rebasingAwareErc4626Pkg.code.length == 0) return false;
         if (s.rebasingAwareConstructorFingerprint != keccak256(args)
@@ -44,7 +46,7 @@ library Phase_06_Stage_10_RebasingAwareERC4626Pkg {
     function _matches(LaunchState storage s, IFacet facet, string memory name, bytes memory code)
         private view returns (bool)
     {
-        bytes32 salt = RebasingAwareERC4626_Component_FactoryService.releaseSalt(name, code, "");
+        bytes32 salt = RebasingAwareERC4626_Component_FactoryService.releaseSalt(name);
         return address(facet).code.length > 0
             && address(facet) == Creation._create3AddressFromOf(address(s.create3Factory), salt);
     }

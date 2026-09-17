@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {Test} from "forge-std/Test.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
-import {IStandardExchangePretransfer as IPretransfer} from "contracts/vaults/standard/exchange/protocols/uniswap/IStandardExchangePretransfer.sol";
 
 interface ISequenceEnvironment {
     function fund(IERC20 token, address recipient, uint256 amount) external;
@@ -19,13 +19,7 @@ contract UnfundedSequenceActor {
         if (!ok) assembly ("memory-safe") { revert(add(returned, 32), mload(returned)) }
         return returned;
     }
-    function prepareAndInvoke(address vault, address token, uint256 amount, bytes calldata data) external {
-        address[] memory tokens = new address[](1); tokens[0] = token;
-        uint256[] memory amounts = new uint256[](1); amounts[0] = amount;
-        IPretransfer(vault).preparePretransfer(tokens, amounts, keccak256(data));
-        (bool ok, bytes memory returned) = vault.call(data);
-        if (!ok) assembly ("memory-safe") { revert(add(returned, 32), mload(returned)) }
-    }
+
 }
 
 /// @notice Stateful actor driving only the real public vault/protocol interfaces.
@@ -48,14 +42,14 @@ contract StandardExchangeHandler is Test {
     }
     modifier checked() { _; assertNoUnfundedCredit(); }
 
-    function deposit(bool side, uint96 raw, bool prepared) external checked {
+    function deposit(bool side, uint96 raw, bool pushed) external checked {
         IERC20 token = side ? token1 : token0;
         uint256 amount = bound(uint256(raw), 1e14, 25 ether);
         environment.fund(token, address(this), amount);
         uint256 supplyBefore = vault.totalSupply();
         bytes memory data = abi.encodeCall(IStandardExchangeIn.exchangeIn,
-            (token, amount, IERC20(address(vault)), 0, address(this), prepared, block.timestamp));
-        if (prepared) _prepareAndTransfer(token, amount, data);
+            (token, amount, IERC20(address(vault)), 0, address(this), pushed, block.timestamp));
+        if (pushed) _transferInput(token, amount, data);
         else token.approve(address(vault), amount);
         uint256 received = _call(data);
         assertGt(received, 0);
@@ -63,15 +57,15 @@ contract StandardExchangeHandler is Test {
         issued += received; ++calls[0];
         assertEq(token.balanceOf(address(this)), 0, "new input fully delivered");
     }
-    function withdraw(bool side, uint16 raw, bool prepared) external checked {
+    function withdraw(bool side, uint16 raw, bool pushed) external checked {
         uint256 balance = vault.balanceOf(address(this));
         if (balance < 1e12) return;
         uint256 shares = balance / bound(uint256(raw), 4, 20);
         IERC20 output = side ? token1 : token0;
         bytes memory data = abi.encodeCall(IStandardExchangeIn.exchangeIn,
-            (IERC20(address(vault)), shares, output, 0, address(this), prepared, block.timestamp));
+            (IERC20(address(vault)), shares, output, 0, address(this), pushed, block.timestamp));
         uint256 beforeBalance = output.balanceOf(address(this));
-        if (prepared) _prepareAndTransfer(IERC20(address(vault)), shares, data);
+        if (pushed) _transferInput(IERC20(address(vault)), shares, data);
         else vault.approve(address(vault), shares);
         uint256 paid = _call(data);
         assertEq(output.balanceOf(address(this)) - beforeBalance, paid);
@@ -85,6 +79,7 @@ contract StandardExchangeHandler is Test {
     function donate(bool side, uint96 raw) external checked {
         uint256 supply = vault.totalSupply();
         environment.fund(side ? token1 : token0, address(vault), bound(uint256(raw), 1, 2 ether));
+        ISequenceReserve(address(vault)).rebalanceLiquidReserve();
         assertEq(vault.totalSupply(), supply); ++calls[3];
     }
     function rebalance() external checked {
@@ -103,20 +98,17 @@ contract StandardExchangeHandler is Test {
             bytes memory data = abi.encodeCall(IStandardExchangeIn.exchangeIn,
                 (token, 1, IERC20(address(vault)), 0, address(attacker), true, block.timestamp));
             (bool ok, bytes memory reason) = address(attacker).call(abi.encodeCall(UnfundedSequenceActor.invoke, (address(vault), data)));
-            assertFalse(ok); assertEq(reason, abi.encodeWithSelector(IPretransfer.PretransferNotPrepared.selector));
-            (ok, reason) = address(attacker).call(abi.encodeCall(UnfundedSequenceActor.prepareAndInvoke,
-                (address(vault), address(token), 1, data)));
-            assertFalse(ok); assertEq(reason, abi.encodeWithSelector(IPretransfer.PretransferAmountMismatch.selector, address(token), 1, 0));
+            assertFalse(ok); assertEq(reason, abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1, 0));
             assertEq(token.balanceOf(address(attacker)), 0);
         }
         assertEq(vault.balanceOf(address(attacker)), 0);
         assertEq(vault.balanceOf(address(vault)), 0, "no orphan input shares");
         assertEq(vault.totalSupply(), initialSupply + issued - burned, "all supply changes attributed");
     }
-    function _prepareAndTransfer(IERC20 token, uint256 amount, bytes memory data) private {
+    function _transferInput(IERC20 token, uint256 amount, bytes memory data) private {
         address[] memory tokens = new address[](1); tokens[0] = address(token);
         uint256[] memory amounts = new uint256[](1); amounts[0] = amount;
-        IPretransfer(address(vault)).preparePretransfer(tokens, amounts, keccak256(data));
+
         token.transfer(address(vault), amount);
     }
     function _call(bytes memory data) private returns (uint256) {

@@ -142,10 +142,7 @@ abstract contract TestBase_UniswapV4Detf_PonsV2Se is TestBase_UniswapV4StandardE
         IFacet seFacet = CpHookFactory.deploySeFacet(create3Factory);
         IFacet depositFacet = CpHookFactory.deployDepositFacet(create3Factory);
         IFacet withdrawFacet = CpHookFactory.deployWithdrawFacet(create3Factory);
-        hookPkg = CpHookFactory.deployPackage(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            owner,
-            IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgInit({
+        hookPkg = CpHookFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgInit({
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
                 seFacet: seFacet,
@@ -159,9 +156,7 @@ abstract contract TestBase_UniswapV4Detf_PonsV2Se is TestBase_UniswapV4StandardE
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
                 multiStepOwnableFacet: multiStepOwnableFacet
-            }),
-            abi.encode(type(IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage).name, "pons")._hash()
-        );
+            }));
     }
 
     function _deployBondNftVaultPkg() internal {

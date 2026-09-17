@@ -37,7 +37,7 @@ library FeeCollectorFactoryService {
     {
         bytes memory code_ = ArtifactCreationCode.creationCode("FeeCollectorManagerFacet.sol:FeeCollectorManagerFacet");
         facet = factory.deployFacet(
-            code_, ArtifactCreationCode.releaseSalt(abi.encode("FeeCollectorManagerFacet")._hash(), code_, bytes(""))
+            code_, ArtifactCreationCode.releaseSalt(abi.encode("FeeCollectorManagerFacet")._hash())
         );
         HEVM.label(address(facet), "FeeCollectorManagerFacet");
     }
@@ -94,7 +94,7 @@ library FeeCollectorFactoryService {
             address(
                 factory.deployPackageWithArgs(
                     code_, args_,
-                    ArtifactCreationCode.releaseSalt(abi.encode("FeeCollectorDFPkg", pkgInitArgs)._hash(), code_, args_)
+                    ArtifactCreationCode.releaseSalt(abi.encode("FeeCollectorDFPkg")._hash())
                 )
             )
         );
