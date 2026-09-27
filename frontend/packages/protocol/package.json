@@ -22,7 +22,7 @@
   "devDependencies": {
     "@types/react": "19.3.0",
     "typescript": "5.4.5",
-    "vitest": "^4.1.8"
+    "vitest": "^4.1.11"
   },
   "dependencies": {}
 }
