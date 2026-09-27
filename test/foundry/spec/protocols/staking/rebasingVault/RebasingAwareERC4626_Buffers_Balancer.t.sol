@@ -30,6 +30,7 @@ import {IStandardExchangeTransitionQuote} from
     "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {RebasingERC20Harness} from "contracts/test/stubs/RebasingERC20Harness.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 
 contract RebasingAwareERC4626_Buffers_Balancer is TestBase {
     using RebasingAwareERC4626_Component_FactoryService for ICreate3FactoryProxy;
@@ -212,7 +213,7 @@ contract RebasingAwareERC4626_Buffers_Balancer is TestBase {
         vm.stopPrank();
     }
 
-    function _wrapperMixedArgs() internal view returns (IPkg.PkgArgs memory args) {
+    function _wrapperMixedArgs() internal returns (IPkg.PkgArgs memory args) {
         args = _defaultPkgArgs();
         address[] memory toks = new address[](4);
         toks[0] = address(wrapper);
@@ -227,7 +228,7 @@ contract RebasingAwareERC4626_Buffers_Balancer is TestBase {
         }
         args.tokens = toks;
         args.standardExchanges = ses;
-        args.rateProviders = rps;
+        args.rateProviders = RateProviderFixtureLib.fillMissing(create3Factory, diamondPackageFactory, args.tokens, args.standardExchanges, rps); // D60
         args.tokenDecimals = HookPkgArgsDecimalsLib.tokenDecimals(toks);
         args.seDecimals = HookPkgArgsDecimalsLib.seDecimals(ses);
     }

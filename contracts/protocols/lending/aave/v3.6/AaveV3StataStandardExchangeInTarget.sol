@@ -11,6 +11,8 @@ import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/
 import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
 import {IStataTokenV2} from "@crane/contracts/protocols/lending/aave/v3.6/extensions/stata-token/interfaces/IStataTokenV2.sol";
 import {IAaveV3StataStandardVault} from "contracts/interfaces/IAaveV3StataStandardVault.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
 import {AaveV3StataStandardExchangeCommon} from "./AaveV3StataStandardExchangeCommon.sol";
 
 /// @notice Exact-input Stata, underlying and aToken routes, including redemption of existing SE shares.
@@ -42,8 +44,10 @@ contract AaveV3StataStandardExchangeInTarget is AaveV3StataStandardExchangeCommo
         }
         if (!_isStataAsset(stata_, address(in_))) revert InvalidStataRoute(address(in_), address(out_));
         if (address(out_) == address(this)) {
+            // Receipt-equivalent of the credited input; D22 mints on the full input even when
+            // Aave capacity books part of it locally.
             uint256 delta_ = address(in_) == address(stata_) ? amount_ : stata_.previewDeposit(amount_);
-            return _convertStataDeltaToShares(delta_, IERC20(address(stata_)).balanceOf(address(this)));
+            return _convertStataDeltaToShares(delta_, _stataBacking());
         }
         if (address(out_) == address(stata_)) return stata_.previewDeposit(amount_);
         if (address(in_) == address(stata_) && _isStataAsset(stata_, address(out_))) return stata_.previewRedeem(amount_);
@@ -55,19 +59,43 @@ contract AaveV3StataStandardExchangeInTarget is AaveV3StataStandardExchangeCommo
         external nonReentrant returns (uint256 received_)
     {
         if (amount_ == 0 || to_ == address(0) || block.timestamp > deadline_) revert InvalidStataPayment();
-        uint256 quote_ = _previewStataExactIn(in_, amount_, out_);
-        if (quote_ < minimum_) revert StataSlippage(minimum_, quote_);
         IStataTokenV2 stata_ = _stata();
+        // Prepaid Stata is already in the vault. Quote and mint against the
+        // pre-credit snapshot so share math matches a pull-path preview.
+        uint256 stataHeld_ = IERC20(address(stata_)).balanceOf(address(this));
+        uint256 quote_ = _previewStataExactIn(in_, amount_, out_);
+        if (prepaid_ && address(in_) == address(stata_) && address(out_) == address(this)) {
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+            uint256 avail_ = LocalCreditLib.available(stataHeld_, _bookedReserve(IERC20(address(stata_))));
+            if (amount_ > avail_) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(amount_, avail_);
+            }
+            quote_ = _convertStataDeltaToShares(amount_, _stataBacking() - amount_);
+        }
+        if (quote_ < minimum_) revert StataSlippage(minimum_, quote_);
         if (address(in_) == address(this)) {
             uint256 claim_ = _convertSharesToStata(amount_);
             _secureSelfBurn(msg.sender, amount_, prepaid_);
             received_ = _deliverStata(stata_, claim_, out_, to_);
         } else {
-            uint256 before_ = IERC20(address(stata_)).balanceOf(address(this));
             uint256 actual_ = _secureTokenTransfer(in_, amount_, prepaid_);
             if (address(out_) == address(this)) {
-                uint256 delta_ = address(in_) == address(stata_) ? actual_ : _depositIntoStata(stata_, in_, actual_, address(this));
-                received_ = _convertStataDeltaToShares(delta_, before_);
+                // Backing before this caller's credit: a Stata receipt input (prepaid or pulled) is
+                // already in the held balance, booked local underlying excludes unbooked input.
+                uint256 backingBefore_ = _stataBacking() - (address(in_) == address(stata_) ? actual_ : 0);
+                uint256 delta_;
+                if (address(in_) == address(stata_)) {
+                    delta_ = actual_;
+                } else if (address(in_) == stata_.aToken()) {
+                    // Existing aToken route: receipt transfer, no Aave supply, no capacity gate.
+                    delta_ = _depositIntoStata(stata_, in_, actual_, address(this));
+                } else {
+                    // D22/D31: precheck capacity, sweep booked reserve, invest what fits, mint on
+                    // the full credited input; the remainder is booked at the end-of-route sync.
+                    _investUnderlyingIntoStata(stata_, in_, actual_);
+                    delta_ = stata_.previewDeposit(actual_);
+                }
+                received_ = _convertStataDeltaToShares(delta_, backingBefore_);
                 _mintSharesWithUsageFee(to_, received_);
             } else if (address(in_) == address(stata_)) {
                 received_ = _deliverStata(stata_, actual_, out_, to_);
@@ -91,10 +119,19 @@ contract AaveV3StataStandardExchangeInTarget is AaveV3StataStandardExchangeCommo
         in_.forceApprove(address(stata_), 0);
     }
 
+    /// @dev Receipt outputs need actual receipts (R14.15); underlying output spends local cash first.
     function _deliverStata(IStataTokenV2 stata_, uint256 shares_, IERC20 out_, address to_) internal returns (uint256) {
-        if (address(out_) == address(stata_)) { out_.safeTransfer(to_, shares_); return shares_; }
-        if (address(out_) == stata_.aToken()) return stata_.redeemATokens(shares_, to_, address(this));
-        return stata_.redeem(shares_, to_, address(this));
+        uint256 held_ = IERC20(address(stata_)).balanceOf(address(this));
+        if (address(out_) == address(stata_)) {
+            if (shares_ > held_) revert InsufficientReceiptInventory(shares_, held_);
+            out_.safeTransfer(to_, shares_);
+            return shares_;
+        }
+        if (address(out_) == stata_.aToken()) {
+            if (shares_ > held_) revert InsufficientReceiptInventory(shares_, held_);
+            return stata_.redeemATokens(shares_, to_, address(this));
+        }
+        return _payUnderlying(stata_, stata_.previewRedeem(shares_), to_);
     }
 
     /// @dev Stata conversions use the current normalized income, which is fixed
@@ -112,9 +149,10 @@ contract AaveV3StataStandardExchangeInTarget is AaveV3StataStandardExchangeCommo
     function quoteState(address asset, address holder) external view returns (bytes memory, uint256) {
         IStataTokenV2 stata = _stata();
         if (!_isStataAsset(stata, asset)) revert UnsupportedQuoteAsset(asset);
+        // `stataShares` is the receipt-denominated backing including booked local underlying (R14.14).
         StataQuoteState memory q = StataQuoteState(
             address(this), asset, holder, IERC20(address(this)).balanceOf(holder),
-            ERC20Repo._totalSupply(), stata.balanceOf(address(this))
+            ERC20Repo._totalSupply(), _stataBacking()
         );
         return (abi.encode(q), _stataQuoteAssets(q, q.holderShares));
     }

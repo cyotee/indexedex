@@ -23,23 +23,22 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib {
     error BufferFailed();
     error UnwrapFailed();
     error RateProviderFailed();
+    error RateProviderRequired();
     error SeInvertUnavailable();
 
     function ratedPairUnits(uint8 i) external view returns (uint256) {
         Repo.Layout storage l = Repo._layout();
         address se = l.standardExchanges[i];
+        address rp = l.rateProviders[i];
+        // D60: raw leg = raw balance (times the rate when a provider is configured); buffered leg = shares x rate.
         if (se == address(0)) {
-            return IERC20(l.tokens[i]).balanceOf(address(this));
+            uint256 raw = IERC20(l.tokens[i]).balanceOf(address(this));
+            return rp == address(0) ? raw : Math.ratedPairUnits(raw, _getRateFailClosed(rp), l.invScales[i], l.ratedScales[i]);
         }
         uint256 seBal = IERC20(se).balanceOf(address(this));
         if (seBal == 0) return 0;
-        address rp = l.rateProviders[i];
-        if (rp != address(0)) {
-            uint256 rate = _getRateFailClosed(rp);
-            return (seBal * rate) / Math.RATE_PRECISION;
-        }
-        if (se == l.tokens[i]) return seBal;
-        return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seBal, IERC20(l.tokens[i]));
+        if (rp == address(0)) revert RateProviderRequired();
+        return Math.ratedPairUnits(seBal, _getRateFailClosed(rp), l.invScales[i], l.ratedScales[i]);
     }
 
     function _getRateFailClosed(address provider) private view returns (uint256 rate) {
@@ -48,6 +47,30 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib {
         if (!ok || ret.length != 32) revert RateProviderFailed();
         rate = abi.decode(ret, (uint256));
         if (rate == 0) revert RateProviderFailed();
+    }
+
+
+    /// @notice D60: `units` of leg `i` (raw pair units on a plain leg, SE shares on a buffered leg) valued in
+    ///         pair units through the leg's provider. External so the hooks facet does not inline the math.
+    function rated(uint8 i, uint256 units) external view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        address rp = l.rateProviders[i];
+        if (rp == address(0)) revert RateProviderRequired();
+        return Math.ratedPairUnits(units, _getRateFailClosed(rp), l.invScales[i], l.ratedScales[i]);
+    }
+
+    /// @notice D60: same as `rated` with a caller-supplied (projected) rate.
+    function ratedWith(uint8 i, uint256 units, uint256 rate) external view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        return Math.ratedPairUnits(units, rate, l.invScales[i], l.ratedScales[i]);
+    }
+
+    /// @notice D60: pair units of leg `i` back to the leg's native units (shares on a buffered leg), rounding up.
+    function unrated(uint8 i, uint256 pairUnits) external view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        address rp = l.rateProviders[i];
+        if (rp == address(0)) revert RateProviderRequired();
+        return Math.sharesForPairUnitsUp(pairUnits, _getRateFailClosed(rp), l.invScales[i], l.ratedScales[i]);
     }
 
     function getRateFailClosed(address rp) external view returns (uint256 rate) {
@@ -92,12 +115,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib {
     {
         if (amountOutNative == 0) return 0;
         if (se == pairToken) return amountOutNative;
-        try IStandardExchangeOut(se).previewExchangeOut(IERC20(se), IERC20(pairToken), amountOutNative)
-        returns (uint256 seIn) {
-            return seIn;
-        } catch {
-            revert SeInvertUnavailable();
-        }
+        return IStandardExchangeOut(se).previewExchangeOut(IERC20(se), IERC20(pairToken), amountOutNative);
     }
 
     function invertBufferExactSharesOut(address se, address pairToken, uint256 sharesOut)
@@ -114,11 +132,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib {
         internal view returns (uint256)
     {
         if (sharesOut == 0) return 0;
-        uint256 high;
-        try IStandardExchangeOut(se).previewExchangeOut(IERC20(pairToken), IERC20(se), sharesOut)
-        returns (uint256 quoted) {
-            high = quoted;
-        } catch {}
+        uint256 high = IStandardExchangeOut(se).previewExchangeOut(IERC20(pairToken), IERC20(se), sharesOut);
         if (high != 0 && IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), high, IERC20(se)) >= sharesOut) {
             return high;
         }

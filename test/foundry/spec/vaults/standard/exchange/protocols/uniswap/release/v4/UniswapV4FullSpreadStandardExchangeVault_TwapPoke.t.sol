@@ -169,12 +169,10 @@ contract UniswapV4FullSpreadStandardExchangeVault_TwapPoke is TestBase_UniswapV4
         vault = IStandardExchangeProxy(pkg.deployVault(poolKey));
         uint256 amountIn = 5 ether;
         (address[] memory tokens, uint256[] memory amounts) = _fundDualInput(_token0(), amountIn);
-        vm.expectEmit(false, false, false, true, address(vault));
-        emit UniswapV4FullSpreadStandardExchangeVaultCommon.TwapOracleUpdateFailed(PoolId.unwrap(poolKey.toId()), abi.encodeWithSignature("Error(string)", "hostile"));
-        uint256 shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
+        vm.expectRevert(bytes("hostile"));
+        IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
             tokens, amounts, IERC20(address(vault)), 0, address(this), false, block.timestamp + 1 hours
         );
-        assertGt(shares, 0);
     }
 
     function test_H17_transferDoesNotPokeAndForeignUpdateWrites() public {

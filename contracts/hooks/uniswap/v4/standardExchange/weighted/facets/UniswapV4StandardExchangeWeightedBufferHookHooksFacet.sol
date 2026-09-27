@@ -47,7 +47,7 @@ contract UniswapV4StandardExchangeWeightedBufferHookHooksFacet is
         funcs[16] = IUniswapV4StandardExchangeWeightedBufferHook.getNormalizedWeights.selector;
         funcs[17] = IUniswapV4StandardExchangeWeightedBufferHook.weight.selector;
         funcs[18] = IUniswapV4StandardExchangeWeightedBufferHook.standardExchange.selector;
-        funcs[19] = IUniswapV4StandardExchangeWeightedBufferHook.rateProvider.selector;
+        funcs[19] = bytes4(keccak256("rateProvider(uint256)"));
         funcs[20] = IUniswapV4StandardExchangeWeightedBufferHook.isBuffered.selector;
         funcs[21] = IUniswapV4StandardExchangeWeightedBufferHook.nativeReserve.selector;
         funcs[22] = IUniswapV4StandardExchangeWeightedBufferHook.nativeReserves.selector;

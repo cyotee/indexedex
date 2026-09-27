@@ -8,6 +8,8 @@ import {TestBase_RebasingAwareERC4626} from
     "contracts/protocols/staking/rebasingVault/TestBase_RebasingAwareERC4626.sol";
 import {IRebasingAwareERC4626} from
     "contracts/protocols/staking/rebasingVault/IRebasingAwareERC4626.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {RebasingAwareOracle} from
     "test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareOracle.sol";
 
@@ -62,8 +64,14 @@ contract RebasingAwareERC4626_StandardYield is TestBase_RebasingAwareERC4626 {
         IERC20(address(vault)).transfer(address(vault), prepaid);
         uint256 burnAmt = prepaid / 2;
         uint256 leftover = prepaid - burnAmt;
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vm.prank(bob);
         _sy().redeem(bob, burnAmt, address(asset), 0, true);
+        AtomicPretransferCaller atomic = new AtomicPretransferCaller();
+        atomic.execute(
+            address(vault),
+            abi.encodeCall(IStandardizedYield.redeem, (address(atomic), burnAmt, address(asset), uint256(0), true))
+        );
         assertEq(IERC20(address(vault)).balanceOf(address(vault)), leftover);
     }
 

@@ -119,9 +119,7 @@ contract UniswapV3FullSpreadStandardExchangeVault_MultiJoinExit_Test is TestBase
         address[] memory tokens = _poolTokens();
         uint256[] memory amounts = _amts(claimed0, claimed1);
         uint256 deadline = _deadline();
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed0, 0)
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vm.prank(attacker);
         inMulti.exchangeInManyToOne(tokens, amounts, IERC20(address(vault)), 0, attacker, true, deadline);
         assertEq(IERC20(address(vault)).totalSupply(), supplyBefore, "MJ5: no free mint");
@@ -230,7 +228,7 @@ contract UniswapV3FullSpreadStandardExchangeVault_MultiJoinExit_Test is TestBase
         uint256 need = outMulti.previewExchangeOutOneToMany(IERC20(address(vault)), tokens, shortAmts);
         IERC20(address(vault)).transfer(address(lockCaller), need);
         uint256 deadline = _deadline();
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("UniswapV3Exchange_InsufficientLocalReserve(address,uint256,uint256)", _token0(), short0, IERC20(_token0()).balanceOf(address(vault))));
         lockCaller.runExchangeOutOneToMany(
             address(vault), IERC20(address(vault)), need, tokens, shortAmts, address(this), true, deadline
         );

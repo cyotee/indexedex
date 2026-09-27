@@ -8,6 +8,7 @@ import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManage
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {TestBase_ERC4626StandardExchange_Decimals} from
     "contracts/test/bases/TestBase_ERC4626StandardExchange_Decimals.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
@@ -267,7 +268,6 @@ abstract contract ERC4626StandardExchange_Routes_Decimals is TestBase_ERC4626Sta
         SimpleYieldERC4626 giftVault = new SimpleYieldERC4626(giftU);
         address giftSe = _deployERC4626SE(address(giftVault));
         giftU.mint(user, 1_000 ether);
-        giftU.setGift(100);
         vm.startPrank(user);
         giftU.approve(giftSe, type(uint256).max);
         IStandardExchangeIn(giftSe).exchangeIn(
@@ -277,14 +277,16 @@ abstract contract ERC4626StandardExchange_Routes_Decimals is TestBase_ERC4626Sta
         uint256 amountIn = IStandardExchangeOut(giftSe).previewExchangeOut(
             IERC20(address(giftU)), IERC20(giftSe), seDesired
         );
-        uint256 uBefore = giftU.balanceOf(user);
         giftU.setGift(100);
-        uint256 spent = IStandardExchangeOut(giftSe).exchangeOut(
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ISecurePullErrors.TransferDeltaInsufficient.selector, amountIn, amountIn + 100
+            )
+        );
+        IStandardExchangeOut(giftSe).exchangeOut(
             IERC20(address(giftU)), amountIn, IERC20(giftSe), seDesired, user, false, block.timestamp
         );
         vm.stopPrank();
-        assertEq(spent, amountIn);
-        assertEq(uBefore - giftU.balanceOf(user), amountIn, "surplus gift refunded");
     }
 
     function test_O6_dustAbsorb_toFeeTo() public {
@@ -302,11 +304,13 @@ abstract contract ERC4626StandardExchange_Routes_Decimals is TestBase_ERC4626Sta
         );
         dustVault.setLeaveDust(5);
         uint256 feeBefore = dustU.balanceOf(feeTo);
+        uint256 seBefore = dustU.balanceOf(dustSe);
         IStandardExchangeIn(dustSe).exchangeIn(
             IERC20(address(dustU)), 10 ether, IERC20(dustSe), 0, user, false, block.timestamp
         );
         vm.stopPrank();
-        assertEq(dustU.balanceOf(feeTo) - feeBefore, 5, "dust to feeTo");
+        assertEq(dustU.balanceOf(feeTo), feeBefore, "dust not paid to feeTo");
+        assertEq(dustU.balanceOf(dustSe) - seBefore, 5, "under-consumed remainder booked locally");
     }
 
     function test_O6b_dustSkip_noRevert() public {

@@ -50,7 +50,8 @@ library UniswapV4DetfHookPremineLib {
         address poolManager,
         address feeOracle,
         address standardExchange,
-        address pairToken
+        address pairToken,
+        address rateProvider
     ) internal returns (address predictedDetf, uint256 mineNonce) {
         predictedDetf = predictDetf(diamondPackageFactory, address(detfPkg), args);
         IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs memory hArgs =
@@ -63,7 +64,8 @@ library UniswapV4DetfHookPremineLib {
                 pairTokenDecimals: HookPkgArgsDecimalsLib.tokenDec(pairToken),
                 rawTokenDecimals: predictedDetf.code.length == 0 ? uint8(9) : HookPkgArgsDecimalsLib.tokenDec(predictedDetf),
                 ownerOnlyLiquidity: args.ownerOnlyLiquidity,
-                owner: predictedDetf
+                owner: predictedDetf,
+                rateProvider: rateProvider // D60
             });
         mineNonce = premineCpHook(hookFactory, hookPkg, hArgs);
     }

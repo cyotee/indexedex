@@ -30,6 +30,7 @@ import {
 } from "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {
     UniswapV4HookOwnerOnlyLiquidityLib
@@ -279,6 +280,12 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         uint256 used2;
     }
 
+    struct FaceSnap {
+        uint256 o0;
+        uint256 o1;
+        uint256 o2;
+    }
+
     /* internals */
     function _feeOracle() internal view returns (IVaultFeeOracleQuery) {
         return IVaultFeeOracleQuery(Repo._layout().feeOracle);
@@ -447,6 +454,11 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
 
     function _syncVaultReserves() internal {
         Repo.Layout storage l = Repo._layout();
+        // Identity legs custody their backing in the face token; keep its native-unit book.
+        for (uint8 i; i < 3; ++i) {
+            address token = Repo._tokenAt(l, i);
+            if (Repo._seAt(l, i) == token) l.reserves[token] = IERC20(token).balanceOf(address(this));
+        }
         MultiAssetBasicVaultRepo._updateReserve(IERC20(l.token0), _effectiveNativeAt(0));
         MultiAssetBasicVaultRepo._updateReserve(IERC20(l.token1), _effectiveNativeAt(1));
         MultiAssetBasicVaultRepo._updateReserve(IERC20(l.token2), _effectiveNativeAt(2));
@@ -503,12 +515,8 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
             return 0;
         }
         if (se == token) return amount;
-        uint256 minOut;
-        try IStandardExchangeIn(se).previewExchangeIn(IERC20(token), amount, IERC20(se))
-            returns (uint256 m)
-        {
-            minOut = m > 0 ? m - 1 : 0;
-        } catch {}
+        uint256 m = IStandardExchangeIn(se).previewExchangeIn(IERC20(token), amount, IERC20(se));
+        uint256 minOut = m > 0 ? m - 1 : 0;
         IERC20(token).forceApprove(se, amount);
         seOut = IStandardExchangeIn(se).exchangeIn(
             IERC20(token), amount, IERC20(se), minOut, address(this), false, block.timestamp
@@ -529,12 +537,8 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         if (seIn == 0) return 0;
         address se = _seOf(token);
         if (se == token) return seIn;
-        uint256 minOut;
-        try IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seIn, IERC20(token)) returns (uint256 m) {
-            minOut = m > 0 ? m - 1 : 0;
-        } catch {
-            minOut = 0;
-        }
+        uint256 m = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seIn, IERC20(token));
+        uint256 minOut = m > 0 ? m - 1 : 0;
         IERC20(se).forceApprove(se, seIn);
         pairOut = IStandardExchangeIn(se).exchangeIn(
             IERC20(se), seIn, IERC20(token), minOut, address(this), false, block.timestamp
@@ -543,22 +547,18 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
     }
 
 
-    function _unwrapExactTokenOut(address token, uint256 amountOut) internal returns (uint256 seIn) {
-        if (amountOut == 0) return 0;
+    function _unwrapExactTokenOut(address token, uint256 amountOut) internal {
+        if (amountOut == 0) return;
         address se = _seOf(token);
-        if (se == token) return amountOut;
+        if (se == token) return;
         uint256 cap = _spendableSeShares(token);
         if (cap == 0) revert InsufficientTokenOut();
-        seIn = ClaimLib.invertUnwrapExactTokenOut(se, token, amountOut);
-        if (seIn > cap) {
-            uint256 pairGot = _unwrapSeShares(token, cap);
-            if (pairGot < amountOut) revert InsufficientTokenOut();
-            return cap;
-        }
-        IERC20(se).forceApprove(se, seIn);
+        uint256 quotedIn = ClaimLib.invertUnwrapExactTokenOut(se, token, amountOut);
+        uint256 maxIn = quotedIn > cap ? cap : quotedIn;
+        IERC20(se).forceApprove(se, maxIn);
         uint256 beforeOut = IERC20(token).balanceOf(address(this));
         IStandardExchangeOut(se).exchangeOut(
-            IERC20(se), seIn, IERC20(token), amountOut, address(this), false, block.timestamp
+            IERC20(se), maxIn, IERC20(token), amountOut, address(this), false, block.timestamp
         );
         IERC20(se).forceApprove(se, 0);
         if (IERC20(token).balanceOf(address(this)) - beforeOut < amountOut) revert InsufficientTokenOut();
@@ -570,16 +570,6 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         if (u0 > 0) _bufferToken(Repo._layout().token0, u0);
         if (u1 > 0) _bufferToken(Repo._layout().token1, u1);
         if (u2 > 0) _bufferToken(Repo._layout().token2, u2);
-    }
-
-
-    function _refundBufferedDust(address token) internal {
-        address se = _seOf(token);
-        if (se == address(0) || se == token) return;
-        uint256 bal = IERC20(token).balanceOf(address(this));
-        if (bal > Repo.MAX_DUST_WEI) {
-            IERC20(token).safeTransfer(msg.sender, bal);
-        }
     }
 
 
@@ -628,15 +618,12 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         SwapLiveCtx memory ctx = _loadSwapLiveCtx(pairToken, rawTokenOut);
         LegLib.ExternalQuote memory q = LegLib.afterExternalExchange(se, pairToken, tokenIn, amountIn, address(this));
         (uint256 minted,) = LegLib.depositAfterExchange(q, q.assets);
-        uint256 held = q.heldAssets;
-        uint256 afterClaim = q.exchange.quoteAssets(q.state, q.heldShares + minted);
-        uint256 inflow = afterClaim > held ? afterClaim - held : 0;
+        // D60: a buffered leg is valued as shares x rate; the SE never values the hook's reserve.
         address rp = _rpOf(pairToken);
-        if (rp != address(0)) {
-            uint256 rate = LegLib.rateAfterExchange(q, pairToken, rp);
-            held = q.heldShares * rate / Math.WAD;
-            inflow = minted * rate / Math.WAD;
-        }
+        if (rp == address(0)) revert ClaimLib.RateProviderRequired();
+        uint256 rate = LegLib.rateAfterExchange(q, pairToken, rp);
+        uint256 held = ClaimLib.ratedNative(q.heldShares, rate, _seOf(pairToken), pairToken);
+        uint256 inflow = ClaimLib.ratedNative(minted, rate, _seOf(pairToken), pairToken);
         if (held == 0) revert NotLive();
         SphereLegsWad memory legs = _loadSphereLegs(pairToken, rawTokenOut, ctx.tokenZ);
         legs.xWad = _toWad(pairToken, held);
@@ -775,9 +762,9 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
     {
         dInNative = amountIn;
         address se = _seOf(tokenIn);
-        if (se != address(0)) {
-            dInNative = ClaimLib.previewBufferClaimIn(se, _rpOf(tokenIn), tokenIn, amountIn, address(this));
-            if (dInNative == 0) revert ZeroAmount();
+        if (se != address(0) && se != tokenIn) {
+            uint256 claim_ = ClaimLib.previewBufferClaimIn(se, _rpOf(tokenIn), tokenIn, amountIn, address(this));
+            if (claim_ != 0) dInNative = claim_;
         }
     }
 
@@ -806,11 +793,8 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         if (se == address(0)) return dOutNative;
         uint256 shares = ClaimLib.invertUnwrapExactTokenOut(se, tokenOut, amountOut);
         address rp = _rpOf(tokenOut);
-        if (rp != address(0)) {
-            dOutNative = (shares * ClaimLib.getRateFailClosed(rp)) / 1e18;
-        } else {
-            dOutNative = ClaimLib.seClaimOf(se, tokenOut, shares);
-        }
+        if (rp == address(0)) revert ClaimLib.RateProviderRequired();
+        dOutNative = ClaimLib.ratedNative(shares, ClaimLib.getRateFailClosed(rp), se, tokenOut);
     }
 
 
@@ -982,7 +966,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         returns (uint256 shares, uint256 used0, uint256 used1, uint256 used2)
     {
         (a0Max, a1Max, a2Max) = _capFaceUnderRadius(a0Max, a1Max, a2Max);
-        if (a0Max == 0 && a1Max == 0 && a2Max == 0) revert ZeroAmount();
+        if (a0Max == 0 && a1Max == 0 && a2Max == 0) return (0, 0, 0, 0);
         SharesUsed memory r = _partialSharesUsed(a0Max, a1Max, a2Max, supply);
         shares = r.shares;
         used0 = r.used0;
@@ -1058,7 +1042,12 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         r.used0 = _effectiveUsedWadToFace(0, Math.fullBookUsedWad(r.shares, e0, supply));
         r.used1 = _effectiveUsedWadToFace(1, Math.fullBookUsedWad(r.shares, e1, supply));
         r.used2 = _effectiveUsedWadToFace(2, Math.fullBookUsedWad(r.shares, e2, supply));
-        if (r.used0 == 0 || r.used1 == 0 || r.used2 == 0) revert ZeroAmount();
+        if (r.used0 == 0 || r.used1 == 0 || r.used2 == 0) {
+            r.shares = 0;
+            r.used0 = 0;
+            r.used1 = 0;
+            r.used2 = 0;
+        }
     }
 
 
@@ -1071,16 +1060,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         uint256 e1n = _effectiveNativeAt(1);
         uint256 e2n = _effectiveNativeAt(2);
         (r.used0, r.used1, r.used2) = _partialUsed(a0Max, a1Max, a2Max, e0n, e1n, e2n);
-        Math.SphereNavArgs memory nav;
-        nav.supply = supply;
-        nav.R = Repo._layout().R;
-        nav.r0Wad = _toWad(Repo._layout().token0, e0n);
-        nav.r1Wad = _toWad(Repo._layout().token1, e1n);
-        nav.r2Wad = _toWad(Repo._layout().token2, e2n);
-        nav.used0Wad = _toWad(Repo._layout().token0, r.used0);
-        nav.used1Wad = _toWad(Repo._layout().token1, r.used1);
-        nav.used2Wad = _toWad(Repo._layout().token2, r.used2);
-        r.shares = Math.sphereNavShares(nav);
+        r.shares = _partialNavShares(supply, e0n, e1n, e2n, r.used0, r.used1, r.used2);
     }
 
 
@@ -1118,24 +1098,24 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
 
         uint256 minShares = _partialMinShares(a0Max, a1Max, a2Max, r0, r1, r2);
         if (minShares == type(uint256).max) {
-            if (!anyZ) revert ZeroAmount();
+            if (!anyZ) return (0, 0, 0);
             return (used0, used1, used2);
         }
-        if (minShares == 0) revert ZeroAmount();
+        if (minShares == 0) return (0, 0, 0);
 
         uint256 supply = _totalSupply();
         Repo.Layout storage l = Repo._layout();
         if (r0 > 0 && a0Max > 0) {
             used0 = _fromWadFloor(l.token0, Math.fullBookUsedWad(minShares, _toWad(l.token0, r0), supply));
-            if (used0 == 0) revert ZeroAmount();
+            if (used0 == 0) return (0, 0, 0);
         }
         if (r1 > 0 && a1Max > 0) {
             used1 = _fromWadFloor(l.token1, Math.fullBookUsedWad(minShares, _toWad(l.token1, r1), supply));
-            if (used1 == 0) revert ZeroAmount();
+            if (used1 == 0) return (0, 0, 0);
         }
         if (r2 > 0 && a2Max > 0) {
             used2 = _fromWadFloor(l.token2, Math.fullBookUsedWad(minShares, _toWad(l.token2, r2), supply));
-            if (used2 == 0) revert ZeroAmount();
+            if (used2 == 0) return (0, 0, 0);
         }
     }
 
@@ -1177,18 +1157,19 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         _requireDeadline(deadline);
         if (to == address(0)) revert ZeroAddress();
 
+        FaceSnap memory snap = _faceSnap();
         _maybeMintProtocolFee();
         uint256 supply = _totalSupply();
 
         (shares, used0, used1, used2) = _computeAdd(a0Max, a1Max, a2Max, supply);
+        if (shares == 0) revert ZeroAmount();
         if (shares < sharesMin) revert InsufficientSharesOut();
 
         _pullLegs(used0, used1, used2, permit2Data);
         // Buffer-last SE legs; raw legs credit reserves inside _bufferToken
         _bufferLastUsed(used0, used1, used2);
         _applyAdd(supply, shares, used0, used1, used2, to);
-        // D35: refund free buffered-token dust after multipath add
-        _refundConservation(msg.sender);
+        _refundConservation(msg.sender, snap);
         emit LiquidityAdded(msg.sender, to, shares, used0, used1, used2);
     }
 
@@ -1301,6 +1282,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         returns (uint256, uint256, uint256)
     {
         Repo.Layout storage l = Repo._layout();
+        FaceSnap memory snap = _faceSnap();
         uint256 supply = _totalSupply();
         _burnLp(msg.sender, shares);
 
@@ -1341,7 +1323,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
             _recomputeL2();
         }
         _snapshotKLastIfFeeOn();
-        if (refundFree) _refundConservation(msg.sender);
+        if (refundFree) _refundConservation(msg.sender, snap);
         _syncVaultReserves();
         return (a0, a1, a2);
     }
@@ -1369,15 +1351,17 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         if (v.to == address(0)) revert ZeroAddress();
         _validateSeShareFlags(v.amount0IsSeShare, v.amount1IsSeShare, v.amount2IsSeShare);
 
+        FaceSnap memory snap = _faceSnap();
         _maybeMintProtocolFee();
         uint256 supply = _totalSupply();
         _fillComputeAddFlexible(v, supply);
+        if (v.shares == 0) revert ZeroAmount();
         if (v.shares < v.sharesMin) revert InsufficientSharesOut();
 
         _pullFlexible(v);
         _bufferFlexibleUsed(v);
         _applyAdd(supply, v.shares, v.used0, v.used1, v.used2, v.to);
-        _refundConservation(msg.sender);
+        _refundConservation(msg.sender, snap);
         _emitDepositFlexible(v);
         return (v.shares, v.used0, v.used1, v.used2);
     }
@@ -1493,10 +1477,8 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         address token = Repo._tokenAt(l, i);
         address rp = Repo._rpAt(l, i);
         if (isSeShare) {
-            if (rp != address(0)) {
-                return (amount * ClaimLib.getRateFailClosed(rp)) / 1e18;
-            }
-            return ClaimLib.seClaimOf(se, token, amount);
+            if (rp == address(0)) revert ClaimLib.RateProviderRequired();
+            return ClaimLib.ratedNative(amount, ClaimLib.getRateFailClosed(rp), se, token);
         }
         return _previewClaimInAt(i, amount);
     }
@@ -1525,7 +1507,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         if (Repo._layout().R == 0) revert NotLive();
         if (!v.amount0IsSeShare && !v.amount1IsSeShare && !v.amount2IsSeShare) {
             (v.amount0, v.amount1, v.amount2) = _capFaceUnderRadius(v.amount0, v.amount1, v.amount2);
-            if (v.amount0 == 0 && v.amount1 == 0 && v.amount2 == 0) revert ZeroAmount();
+            if (v.amount0 == 0 && v.amount1 == 0 && v.amount2 == 0) return;
             s.o0 = _offeredEffectiveNative(0, v.amount0, false);
             s.o1 = _offeredEffectiveNative(1, v.amount1, false);
             s.o2 = _offeredEffectiveNative(2, v.amount2, false);
@@ -1558,13 +1540,18 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         view
     {
         if (v.amount0 == 0 || v.amount1 == 0 || v.amount2 == 0) revert FullBookRequiresThreeLegs();
-        if (s.o0 == 0 || s.o1 == 0 || s.o2 == 0) revert ZeroAmount();
+        if (s.o0 == 0 || s.o1 == 0 || s.o2 == 0) return;
         v.shares = _fullBookSharesFromOffered(s);
-        if (v.shares == 0) revert ZeroAmount();
+        if (v.shares == 0) return;
         v.used0 = _mapUsedInput(v.amount0, s.o0, 0, v.shares, s.e0, s.supply);
         v.used1 = _mapUsedInput(v.amount1, s.o1, 1, v.shares, s.e1, s.supply);
         v.used2 = _mapUsedInput(v.amount2, s.o2, 2, v.shares, s.e2, s.supply);
-        if (v.used0 == 0 || v.used1 == 0 || v.used2 == 0) revert ZeroAmount();
+        if (v.used0 == 0 || v.used1 == 0 || v.used2 == 0) {
+            v.shares = 0;
+            v.used0 = 0;
+            v.used1 = 0;
+            v.used2 = 0;
+        }
     }
 
 
@@ -1613,13 +1600,17 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         uint256 u1,
         uint256 u2
     ) private view returns (uint256) {
+        if (u0 == 0 && u1 == 0 && u2 == 0) return 0;
+        uint256 radius = Repo._layout().R;
+        if (supply == 0 || radius == 0) return 0;
+        Repo.Layout storage l = Repo._layout();
         Math.SphereNavArgs memory nav;
         nav.supply = supply;
-        nav.R = Repo._layout().R;
-        Repo.Layout storage l = Repo._layout();
+        nav.R = radius;
         nav.r0Wad = _toWad(l.token0, e0n);
         nav.r1Wad = _toWad(l.token1, e1n);
         nav.r2Wad = _toWad(l.token2, e2n);
+        if (nav.r0Wad >= radius || nav.r1Wad >= radius || nav.r2Wad >= radius) return 0;
         nav.used0Wad = _toWad(l.token0, u0);
         nav.used1Wad = _toWad(l.token1, u1);
         nav.used2Wad = _toWad(l.token2, u2);
@@ -1700,6 +1691,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         bool receiveSeShare2
     ) private {
         Repo.Layout storage l = Repo._layout();
+        FaceSnap memory snap = _faceSnap();
         uint256 supply = _totalSupply();
         _burnLp(msg.sender, shares);
 
@@ -1713,7 +1705,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
             _recomputeL2();
         }
         _snapshotKLastIfFeeOn();
-        _refundConservation(msg.sender);
+        _refundConservation(msg.sender, snap);
         _syncVaultReserves();
     }
 
@@ -1800,12 +1792,14 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         _requireZapEligibleOrOwnerMin();
         if (!_isBound(tokenIn)) revert InvalidPoolToken();
 
+        FaceSnap memory snap = _faceSnap();
         _maybeMintProtocolFee();
         ZapPlan memory plan = _planZap(tokenIn, amountIn);
+        if (plan.shares == 0) revert ZeroAmount();
         if (plan.shares < sharesMin) revert InsufficientSharesOut();
 
         _pullTokenIn(tokenIn, amountIn, permit2Data);
-        return _executeDepositSinglePlan(tokenIn, amountIn, to, plan);
+        return _executeDepositSinglePlan(tokenIn, amountIn, to, plan, snap);
     }
 
     /// @dev Zap-in when `amountIn` of `tokenIn` is already on the hook (joinSingleAsset SE unwrap).
@@ -1822,25 +1816,50 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         _requireZapEligibleOrOwnerMin();
         if (!_isBound(tokenIn)) revert InvalidPoolToken();
 
+        FaceSnap memory snap = _faceSnap();
+        Repo.Layout storage l = Repo._layout();
+        if (tokenIn == l.token0) snap.o0 -= amountIn;
+        else if (tokenIn == l.token1) snap.o1 -= amountIn;
+        else snap.o2 -= amountIn;
         _maybeMintProtocolFee();
         ZapPlan memory plan = _planZap(tokenIn, amountIn);
+        if (plan.shares == 0) revert ZeroAmount();
         if (plan.shares < sharesMin) revert InsufficientSharesOut();
-        return _executeDepositSinglePlan(tokenIn, amountIn, to, plan);
+        return _executeDepositSinglePlan(tokenIn, amountIn, to, plan, snap);
     }
 
     function _executeDepositSinglePlan(
         address tokenIn,
         uint256 amountIn,
         address to,
-        ZapPlan memory plan
+        ZapPlan memory plan,
+        FaceSnap memory snap
     ) private returns (uint256 shares) {
         _executeZapSwaps(tokenIn, plan);
         uint256 supplyBefore = _totalSupply();
         _bufferLastUsed(plan.used0, plan.used1, plan.used2);
+        _syncRawFaceToBook();
         _applyAdd(supplyBefore, plan.shares, plan.used0, plan.used1, plan.used2, to);
         shares = plan.shares;
-        _refundConservation(msg.sender);
+        _refundConservation(msg.sender, snap);
         emit DepositSingle(msg.sender, to, tokenIn, amountIn, shares);
+    }
+
+    /// @dev Internal sphere swaps rebook without moving face. Floor/ceil of used vs
+    ///      sales leaves raw face above `reserves`. Raise the book to face so leftover
+    ///      free face is zero (SeLifecycle). Buffered SE legs keep share-backed book.
+    function _syncRawFaceToBook() private {
+        Repo.Layout storage l = Repo._layout();
+        _raiseRawBookToFace(l.token0, l.se0);
+        _raiseRawBookToFace(l.token1, l.se1);
+        _raiseRawBookToFace(l.token2, l.se2);
+    }
+
+    function _raiseRawBookToFace(address token, address se) private {
+        if (se != address(0)) return;
+        uint256 bal = IERC20(token).balanceOf(address(this));
+        uint256 book = Repo._layout().reserves[token];
+        if (bal > book) Repo._layout().reserves[token] = bal;
     }
 
 
@@ -1909,11 +1928,21 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         // would drain pair SE (MathDomain). Use single-sided only when an other
         // leg is small vs amountIn (live depositClaim/Policy mint stays ratio zap).
         uint256 eIn = _effectiveNativeOf(tokenIn);
-        if (eIn > 0 && amountIn > eIn && _ratioZapWouldDrain(p.inIdx, amountIn)) {
+        (uint256 e0, uint256 e1, uint256 e2) = _effectiveWad();
+        if (e0 + 1 >= l.R || e1 + 1 >= l.R || e2 + 1 >= l.R
+            || (eIn > 0 && amountIn > eIn && _ratioZapWouldDrain(p.inIdx, amountIn)))
+        {
+            return _singleSidedPlan(tokenIn, amountIn);
+        }
+
+        if (e0 == 0 || e1 == 0 || e2 == 0 || l.R == 0
+            || _toWad(tokenIn, amountIn) < 3)
+        {
             return _singleSidedPlan(tokenIn, amountIn);
         }
 
         ExitQuoteLib.DepositQuote memory q = ExitQuoteLib.planDeposit(tokenIn, amountIn);
+        if (q.shares == 0) return _singleSidedPlan(tokenIn, amountIn);
         p.saleJ = q.saleJ;
         p.saleK = q.saleK;
         p.residual = q.offered[p.inIdx];
@@ -1966,22 +1995,32 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
     }
 
 
-    function _refundConservation(address to) internal {
-        if (to == address(0)) return;
+    /// @dev Opening face balances of the three pool tokens. Refunds compare against this snap
+    ///      so resting D12 credit is not paid to the current caller (APEX-2026-008 / R6).
+    function _faceSnap() internal view returns (FaceSnap memory snap) {
         Repo.Layout storage l = Repo._layout();
-        _refundFreeOfToken(l.token0, l.se0 != address(0), to);
-        _refundFreeOfToken(l.token1, l.se1 != address(0), to);
-        _refundFreeOfToken(l.token2, l.se2 != address(0), to);
+        snap.o0 = IERC20(l.token0).balanceOf(address(this));
+        snap.o1 = IERC20(l.token1).balanceOf(address(this));
+        snap.o2 = IERC20(l.token2).balanceOf(address(this));
     }
 
-    function _refundFreeOfToken(address token, bool buffered, address to) private {
-        uint256 free = _freeTokenBalance(token);
-        if (free == 0) return;
-        if (buffered) {
-            if (free > Repo.MAX_DUST_WEI) IERC20(token).safeTransfer(to, free);
-        } else if (free > 0) {
-            IERC20(token).safeTransfer(to, free);
-        }
+    /// @dev Refund this-call surplus only. Non-identity buffered legs: face above the opening
+    ///      snap (`offered - used` plus SE receipts this call). Identity (`se == token`): 0
+    ///      (share backing). Raw: 0 (unused is not pulled; resting above book stays as book).
+    ///      Never the whole free balance. Dust, including amounts at or below `MAX_DUST_WEI`,
+    ///      is returned when it is this-call surplus.
+    function _refundConservation(address to, FaceSnap memory snap) internal {
+        if (to == address(0)) return;
+        Repo.Layout storage l = Repo._layout();
+        _refundThisCallSurplus(l.token0, l.se0, snap.o0, to);
+        _refundThisCallSurplus(l.token1, l.se1, snap.o1, to);
+        _refundThisCallSurplus(l.token2, l.se2, snap.o2, to);
+    }
+
+    function _refundThisCallSurplus(address token, address se, uint256 opening, address to) private {
+        if (se == token || se == address(0)) return;
+        uint256 bal = IERC20(token).balanceOf(address(this));
+        if (bal > opening) IERC20(token).safeTransfer(to, bal - opening);
     }
 
 
@@ -2004,14 +2043,38 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookCommon {
         uint256 B0 = tokenIn.balanceOf(address(this));
         if (!pretransferred) {
             _pullSeFunding(address(tokenIn), claimed);
-            return tokenIn.balanceOf(address(this)) - B0;
+            uint256 delta = tokenIn.balanceOf(address(this)) - B0;
+            if (delta != claimed) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(claimed, delta);
+            }
+            return claimed;
         }
-        uint256 R = MultiAssetBasicVaultRepo._reserveOfToken(address(tokenIn));
-        uint256 U = B0 >= R ? B0 - R : B0;
+        LocalCreditLib.requirePretransferCaller(msg.sender);
+        uint256 U = _unbookedBalance(tokenIn);
         if (claimed > U) {
             revert ISecurePullErrors.TransferDeltaInsufficient(claimed, U);
         }
         return claimed;
+    }
+
+    /// @dev Exact-out input: false-flag pulls `used` and refunds nothing. True-flag credits
+    ///      `budget(available, maxAmountIn)` and refunds `credit - used` only.
+    function _pullExactOutInput(IERC20 token, uint256 used, uint256 maxAmountIn, bool pretransferred)
+        internal
+    {
+        _securePull(token, used, pretransferred);
+        if (!pretransferred) return;
+        uint256 credit = LocalCreditLib.budget(_unbookedBalance(token), maxAmountIn);
+        if (credit > used) token.safeTransfer(msg.sender, credit - used);
+    }
+
+    /// @dev Credit is measured in locally held token units, never against rated claim value.
+    ///      Non-identity buffered legs hold their backing as a different SE token.
+    function _unbookedBalance(IERC20 token) internal view returns (uint256) {
+        address se = _seOf(address(token));
+        uint256 booked = se == address(0) || se == address(token)
+            ? Repo._layout().reserves[address(token)] : 0;
+        return LocalCreditLib.available(token.balanceOf(address(this)), booked);
     }
 
 

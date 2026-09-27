@@ -62,14 +62,14 @@ contract UniswapV4StandardExchangeOrbitalBufferHookHooksFacet is
         funcs[13] = IUniswapV4StandardExchangeOrbitalBufferHook.token1.selector;
         funcs[14] = IUniswapV4StandardExchangeOrbitalBufferHook.token2.selector;
         funcs[15] = IUniswapV4StandardExchangeOrbitalBufferHook.standardExchange.selector;
-        funcs[16] = IUniswapV4StandardExchangeOrbitalBufferHook.rateProvider.selector;
+        funcs[16] = bytes4(keccak256("rateProvider(uint8)"));
         funcs[17] = IUniswapV4StandardExchangeOrbitalBufferHook.isBuffered.selector;
         funcs[18] = IUniswapV4StandardExchangeOrbitalBufferHook.lSquared.selector;
         funcs[19] = this.previewSwapAfterExchange.selector;
     }
 
     function _b() private pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](26);
+        funcs = new bytes4[](28);
         funcs[0] = IUniswapV4StandardExchangeOrbitalBufferHook.rawReserve.selector;
         funcs[1] = IUniswapV4StandardExchangeOrbitalBufferHook.seBalance.selector;
         funcs[2] = IUniswapV4StandardExchangeOrbitalBufferHook.seClaim.selector;
@@ -96,6 +96,8 @@ contract UniswapV4StandardExchangeOrbitalBufferHookHooksFacet is
         funcs[23] = IUniswapV4SeBufferHook.tradingFeeWad.selector;
         funcs[24] = IDetfReserveQuote.previewSynthetic.selector;
         funcs[25] = this.ownerOnlyLiquidity.selector;
+        funcs[26] = IUniswapV4StandardExchangeOrbitalBufferHook.rateProviders.selector;
+        funcs[27] = bytes4(keccak256("rateProvider(address)"));
     }
 
     function facetMetadata()

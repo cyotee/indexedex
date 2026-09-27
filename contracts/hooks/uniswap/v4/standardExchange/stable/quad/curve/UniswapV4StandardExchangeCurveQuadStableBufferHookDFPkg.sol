@@ -369,8 +369,9 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg is
                 if (a.tokens[i] == a.tokens[j]) revert SameToken();
             }
 
-            if (a.rateProviders[i] != address(0) && a.standardExchanges[i] == address(0)) {
-                revert RateProviderWithoutSE();
+            // D60: every buffered leg needs a rate provider; a raw leg may carry one.
+            if (a.standardExchanges[i] != address(0) && a.rateProviders[i] == address(0)) {
+                revert RateProviderRequired();
             }
 
             uint8 pd = a.tokenDecimals[i];
@@ -384,13 +385,20 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg is
                 }
             } else if (pd < 6 || pd > 18) {
                 revert InvalidDecimals();
-            } else if (a.standardExchanges[i] == address(0)) {
+            } else {
+                // D65: the pair token decimals check applies to every non-wrapper leg, buffered or raw.
                 if (a.tokens[i].code.length != 0 && IERC20Metadata(a.tokens[i]).decimals() != pd) {
                     revert InvalidDecimals();
                 }
-            } else {
-                uint8 sd = a.seDecimals[i];
-                if (sd < 6 || sd > 18) revert InvalidDecimals();
+                if (a.standardExchanges[i] != address(0)) {
+                    // D65: SE share decimals may be 6..36 (the rated scale is 10^(36 - decimals), so 36 is the
+                    // ceiling; pair decimals stay 6..18, which keeps pd - sd <= 18 for the rate denominator).
+                    uint8 sd = a.seDecimals[i];
+                    if (sd < 6 || sd > 36) revert InvalidDecimals();
+                    // The declared SE decimals must match the live metadata the rated scale is built from,
+                    // or the whole buffered inventory book mis-scales by 10^(delta).
+                    if (IERC20Metadata(a.standardExchanges[i]).decimals() != sd) revert InvalidDecimals();
+                }
             }
 
             if (a.standardExchanges[i] != address(0)) {
@@ -414,18 +422,11 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg is
     function _requireSeOwnsToken(address se, address token) private view {
         if (UniswapV4SeBufferHookLegLib.isWrapperShareInventory(token, se)) return;
         if (se == token) revert InvalidSE();
-        try IBasicVault(se).vaultTokens() returns (address[] memory toks) {
-            bool found;
-            for (uint256 i; i < toks.length; ++i) {
-                if (toks[i] == token) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) revert InvalidSE();
-        } catch {
-            revert InvalidSE();
+        address[] memory toks = IBasicVault(se).vaultTokens();
+        for (uint256 i; i < toks.length; ++i) {
+            if (toks[i] == token) return;
         }
+        revert InvalidSE();
     }
 
 }

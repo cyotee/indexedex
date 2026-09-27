@@ -18,6 +18,10 @@ import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {IVaultRegistryDisableManager} from "contracts/interfaces/IVaultRegistryDisableManager.sol";
 import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
+import {ReentrantERC20Harness} from "contracts/test/stubs/ReentrantERC20Harness.sol";
+import {IReentrancyLock} from "@crane/contracts/interfaces/IReentrancyLock.sol";
 
 /// @notice Independent two-vault ledger; expected values never come from production previews.
 /// @dev Amounts and 100-step campaigns keep direct integer oracle products below uint256.
@@ -46,6 +50,15 @@ contract RebasingAwareHandler is Test {
     uint256 public cycles;
     uint256 public negativeCalls;
     uint256 public feeUpdates;
+    uint256 public campaignCalls;
+    uint256[3] public honestCycles;
+    uint256[8] public maintenanceAttempts;
+    uint256[8] public maintenanceSuccesses;
+    uint256 public eoaRejections;
+    uint256 public contractRejections;
+    uint256 public nestedRejections;
+    IERC4626 private callbackVault;
+    ReentrantERC20Harness private callbackAsset;
 
     constructor(
         IERC4626 first,
@@ -69,6 +82,122 @@ contract RebasingAwareHandler is Test {
         }
         wallet[receiver_] = token.balanceOf(receiver_);
         wallet[collector_] = token.balanceOf(collector_);
+    }
+
+    function configureCallback(IERC4626 vault_, ReentrantERC20Harness token_) external {
+        require(address(callbackVault) == address(0));
+        callbackVault = vault_;
+        callbackAsset = token_;
+    }
+
+    /// @notice Every call completes funded entry and partial exit; all ten routes and
+    /// three honest holders are compulsory within the first thirty calls.
+    function cycle(uint96 amountSeed) external {
+        uint256 n = campaignCalls++;
+        uint8 v = uint8(n % 2);
+        uint8 route = uint8((n / 2) % 5);
+        uint8 actorIndex = uint8((n / 10) % 3);
+        address actor = actors[actorIndex];
+        ++honestCycles[actorIndex];
+        money(v, route, actorIndex, uint96(bound(uint256(amountSeed), 1e16, 2e18)), false);
+        uint256 owned = shares[v][actor];
+        uint256 amount = route == 1 || route == 3 ? owned * (backing[v] + 1) / (issued[v] + V) / 4 : owned / 4;
+        assertGt(amount, 0, "funded partial exit is nonzero");
+        ++attempts[route + 5];
+        _withdraw(v, route + 5, actor, amount, false);
+        if (route >= 2) _publicBurn(v, route + 5, actor);
+        uint256 phase = n % 8;
+        ++maintenanceAttempts[phase];
+        if (phase == 0) {
+            donate(v, actorIndex, 1e15);
+        } else if (phase == 1) {
+            rebase(v, 1e15, false);
+            rebase(v, 1e14, true);
+        } else if (phase == 2) {
+            lossAndRecovery(v);
+        } else if (phase == 3) {
+            transferAndApprovedExit(v, actorIndex, 1e20);
+        } else if (phase == 4) {
+            invalidCalls(v, 3);
+            invalidCalls(v, 4);
+            _rejectNoDelivery(v);
+        } else if (phase == 5) {
+            policy(v, true, 1e15);
+            money(v, 0, actorIndex, 1e18, false);
+            policy(v, false, 1e15);
+        } else if (phase == 6) {
+            closedCycle(v, actorIndex, 1e16);
+        } else {
+            _reentry(actor);
+        }
+        ++maintenanceSuccesses[phase];
+        assertLedger();
+    }
+
+    function _publicBurn(uint256 v, uint256 route, address owner_) private {
+        IERC20 share = IERC20(address(vaults[v]));
+        uint256 funding = shares[v][owner_] / 8;
+        assertGt(funding, 0);
+        vm.prank(owner_);
+        share.transfer(actors[4], funding);
+        shares[v][owner_] -= funding;
+        shares[v][actors[4]] += funding;
+        uint256 amount = route == 8 ? funding * (backing[v] + 1) / (issued[v] + V) / 3 : funding / 3;
+        assertGt(amount, 0);
+        ++attempts[route];
+        _withdraw(v, route, actors[4], amount, true);
+    }
+
+    function _rejectNoDelivery(uint256 v) private {
+        IERC20 share = IERC20(address(vaults[v]));
+        uint256 available = shares[v][address(share)];
+        uint256 amount = available + (issued[v] - available) / 8;
+        assertGt(amount, available, "claim exceeds only public credit, not total backing");
+        bytes memory data = abi.encodeCall(
+            IStandardExchangeIn.exchangeIn, (share, amount, IERC20(address(asset)), 0, recipient, true, block.timestamp)
+        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        vm.prank(actors[3]);
+        IStandardExchangeIn(address(share))
+            .exchangeIn(share, amount, IERC20(address(asset)), 0, recipient, true, block.timestamp);
+        ++eoaRejections;
+        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, amount, available));
+        AtomicPretransferCaller(actors[4]).execute(address(share), data);
+        ++contractRejections;
+        // The independent ledger includes the prior separately transferred shares;
+        // rejection cannot erase them or change any holder's entitlement.
+        assertLedger();
+    }
+
+    function _reentry(address actor) private {
+        callbackAsset.mint(actor, 1e18);
+        vm.prank(actor);
+        callbackAsset.approve(address(callbackVault), 1e18);
+        uint256 beforeChecks = nestedRejections;
+        callbackAsset.setCallbackOnTransfer(true);
+        callbackAsset.setReenter(address(this), abi.encodeCall(this.observeCallback, ()));
+        uint256 beforeAssets = callbackAsset.balanceOf(actor);
+        vm.prank(actor);
+        uint256 minted = callbackVault.deposit(1e18, actor);
+        assertGt(minted, 0);
+        assertEq(callbackAsset.balanceOf(actor), beforeAssets - 1e18);
+        assertEq(callbackVault.balanceOf(actor), minted);
+        vm.prank(actor);
+        assertEq(callbackVault.redeem(minted, actor, actor), 1e18);
+        assertEq(callbackAsset.balanceOf(actor), beforeAssets);
+        assertEq(callbackVault.totalSupply(), 0);
+        assertEq(callbackVault.totalAssets(), 0);
+        assertEq(nestedRejections - beforeChecks, 2, "both transfer callbacks ran");
+        callbackAsset.setReenter(address(0), "");
+    }
+
+    function observeCallback() external {
+        require(msg.sender == address(callbackAsset));
+        (bool ok, bytes memory reason) =
+            address(callbackVault).call(abi.encodeCall(IERC4626.deposit, (1e18, actors[0])));
+        assertFalse(ok);
+        assertEq(reason, abi.encodeWithSelector(IReentrancyLock.IsLocked.selector));
+        ++nestedRejections;
     }
 
     /// @notice Exercise all ten ERC4626/SE/SY money routes, both vaults and public-share modes.
@@ -170,6 +299,13 @@ contract RebasingAwareHandler is Test {
         }
         IERC20 share = IERC20(address(vaults[v]));
         bool internalShares = prepaid && route >= 7;
+        if (internalShares && actor.code.length == 0) {
+            vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+            vm.prank(actor);
+            _exit(v, route, actor, amount, true);
+            expectedReverts[route]++;
+            return;
+        }
         if (internalShares) {
             uint256 prepayment = burned + (shares[v][actor] - burned) / 3;
             vm.prank(actor);
@@ -178,12 +314,12 @@ contract RebasingAwareHandler is Test {
             shares[v][address(share)] += prepayment;
         }
         uint256 publicBefore = shares[v][address(share)];
-        vm.prank(actor);
+        if (!internalShares) vm.prank(actor);
         uint256 actual = _exit(v, route, actor, amount, internalShares);
         assertEq(actual, exactOut ? burned : paid);
         if (internalShares) {
             shares[v][address(share)] -= burned;
-            if (route != 9) {
+            if (route == 8) {
                 shares[v][actor] += publicBefore - burned;
                 shares[v][address(share)] = 0;
             }
@@ -199,6 +335,28 @@ contract RebasingAwareHandler is Test {
 
     function _exit(uint256 v, uint256 route, address actor, uint256 amount, bool prepaid) private returns (uint256) {
         IERC4626 vault = vaults[v];
+        if (prepaid) {
+            bytes memory callData = route == 7
+                ? abi.encodeCall(
+                    IStandardExchangeIn.exchangeIn,
+                    (IERC20(address(vault)), amount, IERC20(address(asset)), 0, recipient, true, block.timestamp)
+                )
+                : route == 8
+                    ? abi.encodeCall(
+                        IStandardExchangeOut.exchangeOut,
+                        (
+                            IERC20(address(vault)),
+                            type(uint256).max,
+                            IERC20(address(asset)),
+                            amount,
+                            recipient,
+                            true,
+                            block.timestamp
+                        )
+                    )
+                    : abi.encodeCall(IStandardizedYield.redeem, (recipient, amount, address(asset), 0, true));
+            return abi.decode(AtomicPretransferCaller(actor).execute(address(vault), callData), (uint256));
+        }
         if (route == 5) return vault.redeem(amount, recipient, actor);
         if (route == 6) return vault.withdraw(amount, recipient, actor);
         if (route == 7) {
@@ -261,6 +419,7 @@ contract RebasingAwareHandler is Test {
         assertEq(vaults[v].maxDeposit(actors[0]), 0);
         assertEq(vaults[v].maxMint(actors[0]), 0);
         for (uint256 r; r < 5; ++r) {
+            ++attempts[r];
             vm.expectRevert(IRebasingAwareERC4626.ZeroReserveWithOutstandingShares.selector);
             vm.prank(actors[0]);
             _enter(v, r, actors[0], 1e18);
@@ -348,6 +507,7 @@ contract RebasingAwareHandler is Test {
         uint256 amount = bound(uint256(amountSeed), 1, wallet[actor] < 1e18 ? wallet[actor] : 1e18);
         uint256 minted = amount * (issued[v] + V) / (backing[v] + 1);
         if (minted == 0) return;
+        ++attempts[0];
         _deposit(v, 0, actor, amount, amount, minted);
         uint256 paid = minted * (backing[v] + 1) / (issued[v] + V);
         if (paid == 0) {
@@ -408,19 +568,24 @@ contract RebasingAwareHandler is Test {
     }
 }
 
-/// @notice Stateful production-proxy coverage for INV-01–15, with compulsory successful route bootstrap.
+/// @notice Stateful production-proxy coverage with zero startup counters and compulsory campaign actions.
+/// forge-config: default.invariant.runs = 256
+/// forge-config: default.invariant.depth = 64
+/// forge-config: default.invariant.fail-on-revert = true
 contract RebasingAwareERC4626_Invariant is TestBase_RebasingAwareERC4626 {
     RebasingAwareHandler internal handler;
 
     function setUp() public override {
         super.setUp();
         IERC4626 second = pkg.deployVault(IERC20Metadata(address(asset)), 10, bytes32(uint256(7)));
-        address[] memory actors = new address[](4);
+        address[] memory actors = new address[](5);
         actors[0] = alice;
         actors[1] = bob;
         actors[2] = makeAddr("charlie");
         actors[3] = attacker;
+        actors[4] = address(new AtomicPretransferCaller());
         asset.mint(actors[2], 1_000_000e18);
+        asset.mint(actors[4], 1_000_000e18);
         for (uint256 a; a < actors.length; ++a) {
             vm.startPrank(actors[a]);
             asset.approve(address(vault), type(uint256).max);
@@ -430,41 +595,51 @@ contract RebasingAwareERC4626_Invariant is TestBase_RebasingAwareERC4626 {
         handler = new RebasingAwareHandler(
             vault, second, asset, actors, receiver, address(indexedexManager), owner, address(feeCollector)
         );
-        for (uint8 v; v < 2; ++v) {
-            for (uint8 a; a < 4; ++a) {
-                handler.money(v, 0, a, 5e18, false);
-            }
-            for (uint8 r; r < 10; ++r) {
-                handler.money(v, r, 0, 1e18, true);
-            }
-            handler.rebase(v, 1e18, false);
-            handler.rebase(v, 1e18, true);
-            handler.lossAndRecovery(v);
-            handler.invalidCalls(v, 0);
-            handler.closedCycle(v, 0, 1e18);
-            handler.policy(v, false, 1e15);
-        }
-        bytes4[] memory selectors = new bytes4[](9);
-        selectors[0] = handler.money.selector;
-        selectors[1] = handler.donate.selector;
-        selectors[2] = handler.rebase.selector;
-        selectors[3] = handler.lossAndRecovery.selector;
-        selectors[4] = handler.transferAndApprovedExit.selector;
-        selectors[5] = handler.invalidCalls.selector;
-        selectors[6] = handler.policy.selector;
-        selectors[7] = handler.closedCycle.selector;
-        selectors[8] = handler.money.selector;
+        ReentrantERC20Harness callbackToken = new ReentrantERC20Harness("Callback", "CB", 18);
+        IERC4626 callbackWrapped = pkg.deployVault(IERC20Metadata(address(callbackToken)));
+        handler.configureCallback(callbackWrapped, callbackToken);
+        bytes4[] memory selectors = new bytes4[](1);
+        selectors[0] = handler.cycle.selector;
         targetContract(address(handler));
         targetSelector(FuzzSelector({addr: address(handler), selectors: selectors}));
     }
 
+    function test_APEX_custodyLifecycle() public {
+        for (uint256 i; i < 32; ++i) {
+            handler.cycle(uint96(1e16 + i * 1e15));
+        }
+        _assertCampaign();
+    }
+
+    /// forge-config: default.invariant.runs = 256
+    /// forge-config: default.invariant.depth = 64
+    /// forge-config: default.invariant.fail-on-revert = true
     function invariant_INV01_through15_independentAccounting() public view {
         handler.assertLedger();
     }
 
     function afterInvariant() public view {
+        _assertCampaign();
+    }
+
+    function _assertCampaign() internal view {
+        assertGe(handler.campaignCalls(), 30);
+        for (uint256 i; i < 3; ++i) {
+            assertGt(handler.honestCycles(i), 0);
+        }
+        for (uint256 i; i < 8; ++i) {
+            assertGt(handler.maintenanceSuccesses(i), 0);
+            assertEq(handler.maintenanceAttempts(i), handler.maintenanceSuccesses(i));
+        }
+        assertGt(handler.eoaRejections(), 0);
+        assertGt(handler.contractRejections(), 0);
+        assertGt(handler.nestedRejections(), 0);
         for (uint256 r; r < 10; ++r) {
             assertGt(handler.successes(r), 0, "missing successful money route");
+            assertEq(
+                handler.attempts(r), handler.successes(r) + handler.expectedReverts(r), "every action accounted for"
+            );
+            assertEq(handler.skips(r), 0, "valid lifecycle cannot skip a money action");
         }
         for (uint256 r; r < 3; ++r) {
             assertGt(handler.publicBurns(r), 0, "missing public-share route");

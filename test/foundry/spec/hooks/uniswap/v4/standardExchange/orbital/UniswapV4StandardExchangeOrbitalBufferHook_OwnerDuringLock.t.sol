@@ -99,9 +99,11 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_OwnerDuringLock_Test is
         assertEq(IERC20(hook).totalSupply(), 1000, "MIN remains");
         assertFalse(orbital.isZapEligible());
 
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, user));
         vm.prank(user);
         orbital.depositSingle(address(token1), 20 ether, user, 0, block.timestamp + 1 hours, "");
+
+        assertEq(IERC20(hook).totalSupply(), 1000, "unauthorized join preserves MIN supply");
 
         vm.prank(owner);
         uint256 lpOut = orbital.depositSingle(address(token1), 50 ether, owner, 0, block.timestamp + 1 hours, "");

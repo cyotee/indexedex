@@ -11,6 +11,7 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {
     TestBase_AerodromeStandardExchange_MultiPool
 } from "contracts/protocols/dexes/aerodrome/v1/test/bases/TestBase_AerodromeStandardExchange_MultiPool.sol";
@@ -319,9 +320,7 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
         uint256 invBefore_ = tokenA.balanceOf(address(vault_));
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, residual_, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vault_.exchangeIn(IERC20(address(tokenA)), residual_, IERC20(address(tokenB)), 0, attacker, true, _deadline());
 
         assertEq(vault_.totalSupply(), supplyBefore_, "I1: no free share mint");
@@ -345,14 +344,12 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
         vm.stopPrank();
         assertGe(tokenA.balanceOf(address(vault_)), claimed_, "claimed <= booked inventory");
 
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
-        );
         vault_.exchangeIn(IERC20(address(tokenA)), claimed_, IERC20(address(tokenB)), 0, attacker, true, _deadline());
     }
 
-    /// @notice Reserve-delta push: transfer-before-call + pretransferred=true succeeds when claimed ≤ U.
+    /// @notice EOA prepaid is rejected; a contract may consume unbooked push credit atomically.
     function test_I2_transferBeforeCall_pretransferred_revertsDelta0() public {
         IStandardExchangeProxy vault_ = _vault();
         (ERC20PermitMintableStub tokenA, ERC20PermitMintableStub tokenB) = _getTokens(PoolConfig.Balanced);
@@ -361,14 +358,38 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
         tokenA.mint(attacker, claimed_);
         vm.prank(attacker);
         tokenA.transfer(address(vault_), claimed_);
-
-        // Durable U = B - R (bootstrap R=0) allows push funding.
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vm.prank(attacker);
-        uint256 out_ = vault_.exchangeIn(
+        vault_.exchangeIn(
             IERC20(address(tokenA)), claimed_, IERC20(address(tokenB)), 0, attacker, true, _deadline()
         );
+
+        AtomicPretransferCaller atomic = new AtomicPretransferCaller();
+        tokenA.mint(attacker, claimed_);
+        vm.startPrank(attacker);
+        tokenA.approve(address(atomic), claimed_);
+        uint256 out_ = abi.decode(
+            atomic.consumePretransfer(
+                IERC20(address(tokenA)),
+                attacker,
+                address(vault_),
+                claimed_,
+                abi.encodeWithSelector(
+                    vault_.exchangeIn.selector,
+                    IERC20(address(tokenA)),
+                    claimed_,
+                    IERC20(address(tokenB)),
+                    0,
+                    address(atomic),
+                    true,
+                    _deadline()
+                )
+            ),
+            (uint256)
+        );
+        vm.stopPrank();
         assertGt(out_, 0, "push pretransfer succeeds under reserve-delta");
-        assertEq(tokenB.balanceOf(attacker), out_, "attacker received tokenB");
+        assertEq(tokenB.balanceOf(address(atomic)), out_, "contract caller received tokenB");
     }
 
     /// @notice I3: residual inventory after an honest pull cannot fund a second free pretransfer credit.
@@ -396,9 +417,7 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
         // Second call: pretransferred=true, claim against residual, no new transfer.
         uint256 claim_ = residualSeed_;
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claim_, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vault_.exchangeIn(IERC20(address(tokenA)), claim_, IERC20(address(tokenB)), 0, attacker, true, _deadline());
 
         assertEq(tokenA.balanceOf(address(vault_)), residual_, "I3 second call must not move inventory");
@@ -498,9 +517,7 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
 
         // Money path smoke: product revert (not missing selector) for free-credit I1 path.
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, uint256(1 ether), uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         IStandardExchangeIn(address(vault_)).exchangeIn(
             IERC20(address(tokenA)), 1 ether, IERC20(address(tokenB)), 0, attacker, true, _deadline()
         );
@@ -544,9 +561,7 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
         uint256 liveAfterPush_ = tokenA.balanceOf(address(vault_));
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, fatMax_, usedIn_)
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vault_.exchangeOut(
             IERC20(address(tokenA)),
             fatMax_,
@@ -679,9 +694,7 @@ contract AerodromeSE_Adversarial_Test is TestBase_AerodromeStandardExchange_Mult
         if (claimed_ == 0) claimed_ = booked_;
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vault_.exchangeIn(lp_, claimed_, IERC20(address(vault_)), 0, attacker, true, _deadline());
 
         assertEq(vault_.totalSupply(), supplyBefore_, "I1: no free mint against booked LP");

@@ -26,6 +26,8 @@ interface IUniswapV4StandardExchangeBalancerQuadStableBufferHookPackage is
     error ZeroStandardExchangeRequired();
     error SameStandardExchange();
     error RateProviderWithoutSE();
+    /// @notice D60: a buffered leg was declared without a rate provider.
+    error RateProviderRequired();
     error InvalidSE();
     error InvalidDecimals();
     error ArrayLengthMismatch();

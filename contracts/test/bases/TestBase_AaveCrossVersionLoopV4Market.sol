@@ -78,7 +78,12 @@ abstract contract TestBase_AaveCrossVersionLoopV4Market is TestBase_AaveCrossVer
             nativeWrapper: address(weth),
             hubBytecode: ArtifactCreationCode.creationCode(create3Factory, "HubInstance.sol:HubInstance"),
             spokeBytecode: ArtifactCreationCode.creationCode(create3Factory, "SpokeInstance.sol:SpokeInstance"),
-            salt: keccak256("indexedex.aave.cross-version.v4")
+            // Every V4 create2 salt in `deployTestEnv` derives from this base salt through the shared
+            // Safe Singleton factory (0x914d), so a fixed base collides when several harnesses stand up
+            // a market in one test (the R10.3 multi-leg SE matrix builds one loop harness per leg). The
+            // harness address is unique per instance, so it namespaces the whole V4 market to distinct
+            // addresses; a single-harness test (every other loop test) is unaffected.
+            salt: keccak256(abi.encode("indexedex.aave.cross-version.v4", address(this)))
         });
 
         v4Hub = IHub(report.hubReports[0].hub);

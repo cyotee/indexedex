@@ -14,6 +14,7 @@ import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Ti
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
@@ -48,6 +49,7 @@ import {
     UniswapV4StandardExchangeCurveQuadStableBufferHookPairPoolLib as PairPoolLib
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookPairPoolLib.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 import {
     IUniswapV4HookStagedPairInit
 } from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
@@ -228,7 +230,6 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook is
     /// @notice Default: 4 tokens, SE on token0, baseAmp=100.
     function _defaultPkgArgs()
         internal
-        view
         returns (IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgArgs memory)
     {
         address[4] memory toks;
@@ -244,7 +245,7 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook is
             feeOracle: address(indexedexManager),
             tokens: toks,
             standardExchanges: ses,
-            rateProviders: rps,
+            rateProviders: RateProviderFixtureLib.providersFor4(create3Factory, diamondPackageFactory, toks, ses),
             tokenDecimals: HookPkgArgsDecimalsLib.tokenDecimals4(toks),
             seDecimals: HookPkgArgsDecimalsLib.seDecimals4(ses),
             baseAmp: DEFAULT_BASE_AMP,
@@ -306,7 +307,8 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook is
         uint256 previewIn = IUniswapV4StandardExchangeCurveQuadStableBufferHook(hook).previewSwapExactOut(
             tokenIn, tokenOut, amountOut
         );
-        uint256 maxIn = previewIn + (previewIn / 10) + 1 ether; // slack for fee/rounding
+        // Slack for fee/rounding: one whole unit of tokenIn (M14: faces are not always 18 decimals).
+        uint256 maxIn = previewIn + (previewIn / 10) + 10 ** uint256(IERC20Metadata(tokenIn).decimals());
         SwapParams memory params = SwapParams({
             zeroForOne: zeroForOne,
             amountSpecified: int256(amountOut),
@@ -319,7 +321,6 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook is
     /// @notice SE matrix: `seCount` first legs buffered (1–4), rest raw.
     function _argsSeCount(uint8 seCount)
         internal
-        view
         returns (IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgArgs memory a)
     {
         require(seCount >= 1 && seCount <= 4, "seCount");
@@ -338,6 +339,7 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook is
         a.owner = _pkgOwner();
         a.tokenDecimals = HookPkgArgsDecimalsLib.tokenDecimals4(a.tokens);
         a.seDecimals = HookPkgArgsDecimalsLib.seDecimals4(a.standardExchanges);
+        a.rateProviders = RateProviderFixtureLib.providersFor4(create3Factory, diamondPackageFactory, a.tokens, a.standardExchanges); // D60
     }
 
     function _pkgArgs(
@@ -345,15 +347,15 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook is
         address[4] memory ses,
         address[4] memory rps,
         uint256 baseAmp
-    ) internal view returns (IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgArgs memory a) {
+    ) internal returns (IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgArgs memory a) {
         a.poolManager = address(pm);
         a.feeOracle = address(indexedexManager);
         a.tokens = toks;
         a.standardExchanges = ses;
-        a.rateProviders = rps;
         a.baseAmp = baseAmp;
         a.tokenDecimals = HookPkgArgsDecimalsLib.tokenDecimals4(a.tokens);
         a.seDecimals = HookPkgArgsDecimalsLib.seDecimals4(a.standardExchanges);
+        a.rateProviders = RateProviderFixtureLib.fillMissing4(create3Factory, diamondPackageFactory, a.tokens, a.standardExchanges, rps); // D60: caller-supplied providers kept
         a.ownerOnlyLiquidity = _pkgOwnerOnlyLiquidity();
         a.owner = _pkgOwner();
     }

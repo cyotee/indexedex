@@ -1,6 +1,6 @@
 ---
 name: indexedex-product-voice
-description: >
+description: Voice law for IndexedEx / DETF customer-facing copy: UI strings, landing pages, research notes, disclaimers, CTAs and posts; bans marketing jargon.
   Project voice law for IndexedEx / DETF customer-facing copy (UI, research notes,
   marketing site, X posts). Use when writing or editing landing pages, product UI
   strings, Protocol DETF copy, research education, disclaimers, CTAs, or when

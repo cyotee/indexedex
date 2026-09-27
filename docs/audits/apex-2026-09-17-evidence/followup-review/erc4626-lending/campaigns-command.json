@@ -1,0 +1,19 @@
+[
+  "python3",
+  "scripts/forge-artifacts.py",
+  "test",
+  "contracts/vaults/standard/erc4626/ERC4626StandardExchangeCommon.sol",
+  "contracts/protocols/lending/aave/v3.6/AaveV3StataStandardExchangeCommon.sol",
+  "--test-root",
+  "test/foundry/spec/vaults/standard/erc4626/invariant/ERC4626StandardExchange_Invariant.t.sol",
+  "--test-root",
+  "test/foundry/spec/protocol/lending/aave/v3.6/invariant/AaveV3StataStandardExchange_Invariant.t.sol",
+  "--test-root",
+  "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BalancerV3SinglePoolStandardExchange_Invariant.t.sol",
+  "--test-root",
+  "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BalancerV3SinglePoolStandardExchange_PoolActionsInvariant.t.sol",
+  "--",
+  "--match-test",
+  "(invariant_APEX_accounting|invariant_poolActionsAccounting)",
+  "-vvv"
+]

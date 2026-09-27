@@ -209,7 +209,7 @@ contract RebasingAwareERC4626_Buffers_Dual is TestBase {
         vm.stopPrank();
     }
 
-    function _mixedArgs() internal view returns (IPkg.PkgArgs memory args) {
+    function _mixedArgs() internal returns (IPkg.PkgArgs memory args) {
         args = _defaultPkgArgs();
         args.standardExchange0 = address(wrapper);
         args.token0 = address(wrapper);

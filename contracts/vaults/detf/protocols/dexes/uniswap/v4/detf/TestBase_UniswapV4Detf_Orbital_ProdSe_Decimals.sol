@@ -25,6 +25,7 @@ import {
 import {TestBase_UniswapV4Detf_Decimals} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Decimals.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 import {
     UniswapV4DetfProductionSeDeployLib as SeLib
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol";
@@ -79,6 +80,14 @@ abstract contract TestBase_UniswapV4Detf_Orbital_ProdSe_Decimals is TestBase_Uni
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
                 multiStepOwnableFacet: multiStepOwnableFacet
             }));
+    }
+
+    /// @dev D60: provider for the leg's SE (address(0) on a raw leg); hoisted out of the argument literal
+    ///      to keep the stack shallow.
+    function _orbitalRp(address t, address predicted_, address p0, address p1, address s0, address s1)
+        internal returns (address)
+    {
+        return RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, _seOfPair(t, predicted_, p0, p1, s0, s1), t);
     }
 
     function _seOfPair(address token_, address predicted_, address p0, address p1, address s0, address s1)
@@ -152,9 +161,9 @@ abstract contract TestBase_UniswapV4Detf_Orbital_ProdSe_Decimals is TestBase_Uni
                 se0: _seOfPair(t0, predicted_, p0, p1, s0, s1),
                 se1: _seOfPair(t1, predicted_, p0, p1, s0, s1),
                 se2: _seOfPair(t2, predicted_, p0, p1, s0, s1),
-                rp0: address(0),
-                rp1: address(0),
-                rp2: address(0),
+                rp0: _orbitalRp(t0, predicted_, p0, p1, s0, s1),
+                rp1: _orbitalRp(t1, predicted_, p0, p1, s0, s1),
+                rp2: _orbitalRp(t2, predicted_, p0, p1, s0, s1),
                 tickSpacing: 0,
                 sqrtPriceX96: 0,
                 ownerOnlyLiquidity: args.ownerOnlyLiquidity,

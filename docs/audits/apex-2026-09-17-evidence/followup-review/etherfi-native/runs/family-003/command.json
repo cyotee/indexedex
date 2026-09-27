@@ -1,0 +1,34 @@
+{
+  "command": [
+    "python3",
+    "scripts/forge-artifacts.py",
+    "test",
+    "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeCommon.sol",
+    "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeInTarget.sol",
+    "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeOutTarget.sol",
+    "--test-root",
+    "test/foundry/spec/protocol/staking/etherfi",
+    "--",
+    "-vv",
+    "--fuzz-seed",
+    "0x20260917",
+    "--fuzz-runs",
+    "10000"
+  ],
+  "cwd": "/private/tmp/apex-review-fullspread-validation",
+  "source_hashes": {
+    "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeCommon.sol": "ce6bcb58cb8c90dfce6b4bb91ba231ccb78c860c20411ebe018c6a491da2d975",
+    "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeInTarget.sol": "27d7bcb3b1b3ca0bbae40a452e51008d297b266f1bb6927e500d6ee4023b5471",
+    "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeOutTarget.sol": "9dddb9d1aa5a613d10bed0a79e0ef91e86871dda77601abf58e6a9fb42645a86",
+    "test/foundry/spec/protocol/staking/etherfi/invariant/EtherFiWeETHStandardExchange_NativeRounding.t.sol": "ff92fd460f59b725e8d4bee4afa6c89dee26f78d9fa86d44bb7f7b307a2b12a5",
+    "contracts/test/stubs/NativeEtherFiPorts.sol": "fbd7650e15e5cad409f4110165be7d3c46067da72a92c1f12c0e88e998f485f3",
+    "contracts/protocols/staking/etherfi/test/hermetic/HermeticEtherFiPorts.sol": "9c47b3a2ec2150c1aa1f60606ff4c7975b78ba49498f4e32ed4d64425b2ec8c2",
+    "test/foundry/spec/protocol/staking/etherfi/invariant/EtherFiWeETHStandardExchange_NonUnitPretransfer.t.sol": "b5eb88c225acb7b94878010248b7e5e9804d7f69f1c4cf9fd7cd5a0ff5a54942",
+    "lib/crane/contracts/external/etherfi/core/EETH.sol": "66a2df4dd2f55ba5d7951cecb846bde5317be00c577cd5a2589c0fe6fee69e6b",
+    "lib/crane/contracts/external/etherfi/core/WeETH.sol": "cfd51624b8d5d5f4bca35e8d31bcf1c22898c0ccb165502ba9d9b1258238129c",
+    "foundry.toml": "14536c5fabad6b40fea707ad11d8b80d48b6ada96c5995eaa25e2384908e8d38",
+    "test/foundry/spec/vaults/standard/exchange/invariant/StakingStandardExchangeAccountingHandler.sol": "6a8287871369ffa1d7463ad02153cc12cbf22bf0b3af5bc2f807438245f4fdbe",
+    "test/foundry/spec/vaults/standard/exchange/invariant/StandardExchangeAccountingHandler.sol": "327bb71428f90670d2d7ef02347032f61234f1eb1cee87598b92d3c019061e7e"
+  },
+  "started_at": 1790352638.06286
+}

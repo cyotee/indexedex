@@ -1,0 +1,28 @@
+{
+  "status": "PASS",
+  "commands": [
+    {
+      "command": "PYTHONPATH=scripts python3 -m unittest scripts/test_hook_se_matrix_evidence.py scripts/test_apex_bare_expectrevert_scan.py scripts/test_r12_selector_size_compare.py",
+      "exitCode": 0,
+      "testsPassed": 15
+    },
+    {
+      "command": "python3 scripts/sync-codex-skills.py --check",
+      "exitCode": 0,
+      "entries": 45,
+      "retainedTopics": 200,
+      "linksChanged": 0
+    },
+    {
+      "command": "bash scripts/apex_bare_expectrevert_scan.sh",
+      "exitCode": 0,
+      "scopedFiles": 606,
+      "bareExpectations": 0
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0
+    }
+  ],
+  "scope": "Recorded before the last ERC4626 and Loop integration. Final source-specific scanner and whitespace checks are recorded separately."
+}

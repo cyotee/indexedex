@@ -1,0 +1,53 @@
+{
+  "capturedAt": "2026-09-25T08:35:48.062745+00:00",
+  "files": [
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookCommon.sol",
+      "validatedCloneSha256": "5432fa00b13b4282c98590ea06177b9b0075d3a657f5e03f3e541b5c4f44b8e5",
+      "sharedCurrentSha256": "5432fa00b13b4282c98590ea06177b9b0075d3a657f5e03f3e541b5c4f44b8e5",
+      "matches": true
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookCommon.sol",
+      "validatedCloneSha256": "1985beea6d2cee1c40350b2f78d7e6148165615e2eb548945832a364eb5f6539",
+      "sharedCurrentSha256": "1985beea6d2cee1c40350b2f78d7e6148165615e2eb548945832a364eb5f6539",
+      "matches": true
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookRepo.sol",
+      "validatedCloneSha256": "f5f765bbc9f3e894141c7675c88d4e8e187164eedaed386b26a816db6b7d9771",
+      "sharedCurrentSha256": "f5f765bbc9f3e894141c7675c88d4e8e187164eedaed386b26a816db6b7d9771",
+      "matches": true
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookRepo.sol",
+      "validatedCloneSha256": "af071fab414794a833fd18f1461dc0ba1d2529300efd5194bd0f59b1adee6605",
+      "sharedCurrentSha256": "af071fab414794a833fd18f1461dc0ba1d2529300efd5194bd0f59b1adee6605",
+      "matches": true
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositCommon.sol",
+      "validatedCloneSha256": "313d32d8bd9833be3d9e6a9b55bf453ab3dd05d6afba7cd60ceebb78b6eda026",
+      "sharedCurrentSha256": "313d32d8bd9833be3d9e6a9b55bf453ab3dd05d6afba7cd60ceebb78b6eda026",
+      "matches": true
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawTarget.sol",
+      "validatedCloneSha256": "94b8c75832adbc0f189b77db01c84ef66aa29a755c3d13444042b3ea6a1af6ac",
+      "sharedCurrentSha256": "94b8c75832adbc0f189b77db01c84ef66aa29a755c3d13444042b3ea6a1af6ac",
+      "matches": true
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookTarget.sol",
+      "validatedCloneSha256": "5e892a6ebea9f35d673b291e15b3efcfe5162b7e5c8b2385a778822a145e81c2",
+      "sharedCurrentSha256": "5e892a6ebea9f35d673b291e15b3efcfe5162b7e5c8b2385a778822a145e81c2",
+      "matches": true
+    },
+    {
+      "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarget.sol",
+      "validatedCloneSha256": "f1946fec7e2dfd1e465799ed3b9fbfdae3f9dba44840e8e7ebd73f6c74d2c2ef",
+      "sharedCurrentSha256": "f1946fec7e2dfd1e465799ed3b9fbfdae3f9dba44840e8e7ebd73f6c74d2c2ef",
+      "matches": true
+    }
+  ]
+}

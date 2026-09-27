@@ -184,14 +184,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         return Repo._layout().kLast;
     }
 
+    /// @dev D60: SE shares held x provider rate (pair units); never an SE self-quote.
     function _seClaim() internal view returns (uint256) {
-        Repo.Layout storage l = Repo._layout();
-        uint256 seBal = IERC20(l.standardExchange).balanceOf(address(this));
-        if (seBal == 0) return 0;
-        if (l.pairToken == l.standardExchange) return seBal;
-        uint256 claim = IStandardExchangeIn(l.standardExchange)
-            .previewExchangeIn(IERC20(l.standardExchange), seBal, IERC20(l.pairToken));
-        return claim == 0 ? 1 : claim;
+        return ClaimLib.ratedReserve();
     }
 
     function _reserveOfCurrency(address c) internal view returns (uint256) {
@@ -216,6 +211,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
     function _syncReserves() internal {
         Repo.Layout storage l = Repo._layout();
         MultiAssetBasicVaultRepo._updateReserve(IERC20(l.rawToken), IERC20(l.rawToken).balanceOf(address(this)));
+        if (l.pairToken == l.standardExchange) {
+            l.localPairReserve = IERC20(l.pairToken).balanceOf(address(this));
+        }
         MultiAssetBasicVaultRepo._updateReserve(IERC20(l.pairToken), _seClaim());
     }
 
@@ -279,17 +277,11 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
     }
 
     function _previewBufferClaimIn(uint256 amountInRaw) internal view returns (uint256) {
-        Repo.Layout storage l = Repo._layout();
-        return ClaimLib.previewBufferClaimIn(
-            l.standardExchange, l.pairToken, amountInRaw, IVaultFeeOracleQuery(l.feeOracle), address(this)
-        );
+        return ClaimLib.previewBufferClaimIn(amountInRaw);
     }
 
     function _invertBufferClaimIn(uint256 claimInNeeded) internal view returns (uint256) {
-        Repo.Layout storage l = Repo._layout();
-        return ClaimLib.invertBufferClaimIn(
-            l.standardExchange, l.pairToken, claimInNeeded, IVaultFeeOracleQuery(l.feeOracle), address(this)
-        );
+        return ClaimLib.invertBufferClaimIn(claimInNeeded);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -297,11 +289,12 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
     /* ---------------------------------------------------------------------- */
 
     function _bufferPair(uint256 amount) internal returns (uint256 seOut) {
-        _requireNonZero(amount);
+        if (amount == 0) return 0;
         Repo.Layout storage l = Repo._layout();
         if (l.pairToken == l.standardExchange) return amount;
         uint256 minOut = IStandardExchangeIn(l.standardExchange)
             .previewExchangeIn(IERC20(l.pairToken), amount, IERC20(l.standardExchange));
+        if (minOut == 0) return 0;
         IERC20(l.pairToken).forceApprove(l.standardExchange, amount);
         seOut = IStandardExchangeIn(l.standardExchange)
             .exchangeIn(
@@ -326,15 +319,8 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         if (seIn == 0) return 0;
         Repo.Layout storage l = Repo._layout();
         if (l.pairToken == l.standardExchange) return seIn;
-        uint256 minOut;
-        try IStandardExchangeIn(l.standardExchange)
-            .previewExchangeIn(IERC20(l.standardExchange), seIn, IERC20(l.pairToken)) returns (
-            uint256 m
-        ) {
-            minOut = m;
-        } catch {
-            minOut = 0;
-        }
+        uint256 minOut = IStandardExchangeIn(l.standardExchange)
+            .previewExchangeIn(IERC20(l.standardExchange), seIn, IERC20(l.pairToken));
         // Uni V3/V4 SE pulls shares via transferFrom when pretransferred=false.
         IERC20(l.standardExchange).forceApprove(l.standardExchange, seIn);
         pairOut = IStandardExchangeIn(l.standardExchange)
@@ -353,14 +339,8 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
             if (Repo._layout().ownerOnlyLiquidity) return 0;
             revert InsufficientTokenOut();
         }
-        try IStandardExchangeOut(l.standardExchange)
-            .previewExchangeOut(IERC20(l.standardExchange), IERC20(l.pairToken), pairOut) returns (
-            uint256 need
-        ) {
-            seIn = need;
-        } catch {
-            seIn = type(uint256).max;
-        }
+        seIn = IStandardExchangeOut(l.standardExchange)
+            .previewExchangeOut(IERC20(l.standardExchange), IERC20(l.pairToken), pairOut);
         // Never unwrap the last MAX_DUST_WEI SE shares — both book legs stay live.
         if (seIn > cap) {
             uint256 pairGot = _unwrapSeShares(cap);
@@ -529,8 +509,10 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
             (used0, used1) = _clampToReserveRatioFrom(xBefore, yBefore, amount0, amount1);
             if (amount0 > used0) IERC20(l.currency0).safeTransfer(msg.sender, amount0 - used0);
             if (amount1 > used1) IERC20(l.currency1).safeTransfer(msg.sender, amount1 - used1);
+            // D59: the clamp sized the intake on the rated book; issuance follows the raw book.
+            (uint256 rawX, uint256 rawY) = _rawReservesBeforeDualPull(used0, used1);
             _intakePoolAmounts(used0, used1);
-            lpAmount = _mintFromDeltas(xBefore, yBefore, to);
+            lpAmount = _mintFromDeltas(rawX, rawY, to);
         }
         if (lpAmount < minLpAmount) revert InsufficientLpOut();
         _syncReserves();
@@ -568,10 +550,8 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
             used0 = (used1 * x) / y;
         }
         if (used0 == 0 || used1 == 0) {
-            if (Repo._layout().ownerOnlyLiquidity) {
-                if (used0 == 0 && (amount0 > 0 || x > 0)) used0 = 1;
-                if (used1 == 0 && (amount1 > 0 || y > 0)) used1 = 1;
-            }
+            if (used0 == 0 && (amount0 > 0 || x > 0)) used0 = 1;
+            if (used1 == 0 && (amount1 > 0 || y > 0)) used1 = 1;
             if (used0 == 0 || used1 == 0) revert ZeroAmount();
         }
     }
@@ -617,23 +597,19 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
             used0 = (used1 * x) / y;
         }
         if (used0 == 0 || used1 == 0) {
-            if (Repo._layout().ownerOnlyLiquidity) {
-                if (used0 == 0 && (amount0 > 0 || x > 0)) used0 = 1;
-                if (used1 == 0 && (amount1 > 0 || y > 0)) used1 = 1;
-            }
+            if (used0 == 0 && (amount0 > 0 || x > 0)) used0 = 1;
+            if (used1 == 0 && (amount1 > 0 || y > 0)) used1 = 1;
             if (used0 == 0 || used1 == 0) revert ZeroAmount();
         }
     }
 
-    function _mintFromDeltas(uint256 xBefore, uint256 yBefore, address to) internal returns (uint256 lpAmount) {
-        uint8 d0 = _decimalsOf(Repo._layout().currency0);
-        uint8 d1 = _decimalsOf(Repo._layout().currency1);
-        uint256 dxN = Math.toWad(reserveCurrency0() - xBefore, d0);
-        uint256 dyN = Math.toWad(reserveCurrency1() - yBefore, d1);
-        uint256 xN = Math.toWad(xBefore, d0);
-        uint256 yN = Math.toWad(yBefore, d1);
-        lpAmount = Math.mintSharesLater(dxN, dyN, xN, yN, ERC20Repo._totalSupply());
-        if (lpAmount == 0) revert InsufficientLpOut();
+    /// @dev D59: LP for a later join is the smaller raw-balance growth ratio (raw token, SE shares) measured
+    ///      against the raw book in pool order before the intake; the provider rate plays no part in issuance.
+    function _mintFromDeltas(uint256 rawXBefore, uint256 rawYBefore, address to) internal returns (uint256 lpAmount) {
+        uint256 x = _rawReserveCurrency0();
+        uint256 y = _rawReserveCurrency1();
+        lpAmount = Math.mintSharesLater(x - rawXBefore, y - rawYBefore, rawXBefore, rawYBefore, ERC20Repo._totalSupply());
+        if (lpAmount == 0) revert ZeroAmount();
         _mintLp(to, lpAmount);
     }
 
@@ -683,6 +659,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         (uint256 rawBefore, uint256 seClaimBefore, uint256 claimOffered) = _seDepositPrePullBook(amountRaw, amountSe);
         if (rawBefore == 0 || seClaimBefore == 0) revert NotLive();
         if (claimOffered == 0) revert ZeroAmount();
+        uint256 seBefore = _rawSeBalance() - amountSe; // D59: pre-pull share balance
 
         uint256 usedClaim;
         (usedRaw, usedClaim) = _clampToReserveRatioFrom(rawBefore, seClaimBefore, amountRaw, claimOffered);
@@ -691,7 +668,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         if (usedSe == 0 || usedRaw == 0) revert ZeroAmount();
 
         _refundSeDepositExcess(amountRaw, amountSe, usedRaw, usedSe);
-        lpAmount = _mintFromDeltas(_poolOrderX(rawBefore, seClaimBefore), _poolOrderY(rawBefore, seClaimBefore), to);
+        lpAmount = _mintFromDeltas(_poolOrderX(rawBefore, seBefore), _poolOrderY(rawBefore, seBefore), to);
     }
 
     function _seDepositPrePullBook(uint256 amountRaw, uint256 amountSe)
@@ -725,12 +702,59 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         return Repo._layout().currency0 == Repo._layout().rawToken ? seClaimAmt : rawAmt;
     }
 
+    /// @dev D60: rated valuation of `seBal` shares (pair units).
     function _previewSeClaimOfBal(uint256 seBal) internal view returns (uint256) {
-        if (seBal == 0) return 0;
+        return ClaimLib.ratedOf(seBal);
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*                       D59 raw liquidity book                           */
+    /* ---------------------------------------------------------------------- */
+
+    /// @dev D59: LP issuance is proportional in raw balances. The raw book in pool order is the raw-token
+    ///      balance and the SE share balance (an identity leg's pair balance); the provider rate never enters it.
+    function _rawSeBalance() internal view returns (uint256) {
+        return IERC20(Repo._layout().standardExchange).balanceOf(address(this));
+    }
+
+    function _rawReserveCurrency0() internal view returns (uint256) {
         Repo.Layout storage l = Repo._layout();
-        if (l.pairToken == l.standardExchange) return seBal;
+        return l.currency0 == l.rawToken ? IERC20(l.rawToken).balanceOf(address(this)) : _rawSeBalance();
+    }
+
+    function _rawReserveCurrency1() internal view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        return l.currency1 == l.rawToken ? IERC20(l.rawToken).balanceOf(address(this)) : _rawSeBalance();
+    }
+
+    /// @dev Raw units a leg gains from `used` tokens: the raw token itself, or the SE shares a pair buffer mints
+    ///      (the SE's own preview, which equals execution, D73).
+    function _previewRawDelta(bool forC0, uint256 used0, uint256 used1) internal view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        address c = forC0 ? l.currency0 : l.currency1;
+        uint256 used = forC0 ? used0 : used1;
+        if (c == l.rawToken || l.pairToken == l.standardExchange || used == 0) return used;
         return IStandardExchangeIn(l.standardExchange)
-            .previewExchangeIn(IERC20(l.standardExchange), seBal, IERC20(l.pairToken));
+            .previewExchangeIn(IERC20(l.pairToken), used, IERC20(l.standardExchange));
+    }
+
+    /// @dev Raw book before a pull of (amount0, amount1): the raw leg backs out its pull; an identity pair leg
+    ///      backs out the pulled pair (it already sits in the share balance); a buffered pair leg's pull sits as
+    ///      free pair, outside the share balance.
+    function _rawReservesBeforeDualPull(uint256 amount0, uint256 amount1)
+        internal view returns (uint256 x, uint256 y)
+    {
+        Repo.Layout storage l = Repo._layout();
+        bool identity = l.pairToken == l.standardExchange;
+        uint256 seBal = _rawSeBalance();
+        uint256 rawBal = IERC20(l.rawToken).balanceOf(address(this));
+        if (l.currency0 == l.rawToken) {
+            x = rawBal - amount0;
+            y = identity && seBal >= amount1 ? seBal - amount1 : seBal;
+        } else {
+            x = identity && seBal >= amount0 ? seBal - amount0 : seBal;
+            y = rawBal - amount1;
+        }
     }
 
     function _depositSingle(address tokenIn, uint256 amountIn, address to, uint256 minLpAmount, uint256 deadline)
@@ -850,15 +874,26 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
             add0 = amountOtherOut;
             add1 = keptIn;
         }
-        // Book after zap swap already reflects inventory; measure before proportional intake.
-        uint256 xBefore = reserveCurrency0();
-        uint256 yBefore = reserveCurrency1();
-        // Back out free pair / raw still sitting as add legs before buffer.
-        // add0/add1 are in currency order regardless of which token funded the zap.
-        // Identity (pair == se): pulled pair shares already sit in `_seClaim()`, so
-        // back them out the same way unused raw is backed out.
+        (uint256 used0, uint256 used1) = _clampAfterZap(add0, add1);
+        // Unused pair stays for `_refundPairDust` rebuffer. Unused raw stays as book
+        // inventory (D71) — refunding it to the DETF parks dust the diamond cannot rejoin
+        // when the bound SE panics or previews 0 on the residual zap.
+        // D59: issuance follows the raw book measured before the intake (adds backed out).
+        (uint256 xBefore, uint256 yBefore) = _rawReservesBeforeDualPull(add0, add1);
+        _intakePoolAmounts(used0, used1);
+        lpAmount = _mintFromDeltas(xBefore, yBefore, to);
+        tokenOut;
+        l;
+    }
+
+    /// @dev Rated book after the zap swap with the free adds backed out (an identity pair leg's pulled pair
+    ///      already sits in the rated balance), then the reserve-ratio clamp. add0/add1 are in currency order.
+    function _clampAfterZap(uint256 add0, uint256 add1) internal view returns (uint256 used0, uint256 used1) {
+        Repo.Layout storage l = Repo._layout();
         bool identity = l.pairToken == l.standardExchange;
         uint256 seClaim = _seClaim();
+        uint256 xBefore;
+        uint256 yBefore;
         if (l.currency0 == l.rawToken) {
             xBefore = IERC20(l.rawToken).balanceOf(address(this)) - add0;
             yBefore = identity && seClaim >= add1 ? seClaim - add1 : seClaim;
@@ -866,15 +901,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
             xBefore = identity && seClaim >= add0 ? seClaim - add0 : seClaim;
             yBefore = IERC20(l.rawToken).balanceOf(address(this)) - add1;
         }
-
-        (uint256 used0, uint256 used1) = _clampToReserveRatioFrom(xBefore, yBefore, add0, add1);
-        // Unused pair stays for `_refundPairDust` rebuffer. Unused raw stays as book
-        // inventory (D71) — refunding it to the DETF parks dust the diamond cannot rejoin
-        // when the bound SE panics or previews 0 on the residual zap.
-
-        _intakePoolAmounts(used0, used1);
-        lpAmount = _mintFromDeltas(xBefore, yBefore, to);
-        tokenOut;
+        (used0, used1) = _clampToReserveRatioFrom(xBefore, yBefore, add0, add1);
     }
 
     /*                              protocol fee                              */
@@ -969,17 +996,10 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         usedSe = (amountSe * usedClaim) / claimOffered;
         if (usedSe == 0 || usedRaw == 0) return (0, usedRaw, usedSe);
 
-        // Execution credits the change in the hook's aggregate claim after the rounded
-        // share intake, rather than the unrounded claim budget used to select those shares.
-        usedClaim = _previewSeClaimOfBal(IERC20(l.standardExchange).balanceOf(address(this)) + usedSe) - seClaim;
-        uint256 dx = _poolOrderX(usedRaw, usedClaim);
-        uint256 dy = _poolOrderY(usedRaw, usedClaim);
+        // D59: the clamp sized `usedSe` on the rated book; issuance follows the raw book (raw token, SE shares).
         lpAmount = Math.mintSharesLater(
-            Math.toWad(dx, l.decimalsCurrency0),
-            Math.toWad(dy, l.decimalsCurrency1),
-            Math.toWad(reserveCurrency0(), l.decimalsCurrency0),
-            Math.toWad(reserveCurrency1(), l.decimalsCurrency1),
-            _supplyAfterProtocolMint()
+            _poolOrderX(usedRaw, usedSe), _poolOrderY(usedRaw, usedSe),
+            _rawReserveCurrency0(), _rawReserveCurrency1(), _supplyAfterProtocolMint()
         );
     }
 

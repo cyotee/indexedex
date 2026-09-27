@@ -137,12 +137,9 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookSeTarget
         bool zfo = _routeZeroForOne(address(tokenIn), address(tokenOut));
         amountIn = _previewSwapExactOut(zfo, amountOut);
         if (amountIn > maxAmountIn) revert InsufficientTokenOut();
-        // L-GAPS-11: delta-gate claimed amountIn. Refund only in-window surplus above amountIn
-        // (never absolute maxAmountIn - amountIn from free inventory / SE book).
-        uint256 observedDelta = _securePull(IERC20(address(tokenIn)), amountIn, pretransferred);
-        if (pretransferred && observedDelta > amountIn) {
-            IERC20(address(tokenIn)).safeTransfer(msg.sender, observedDelta - amountIn);
-        }
+        // D15: false-flag pulls exactly `amountIn`; true-flag credits `budget(unbooked, maxAmountIn)`
+        // and refunds only `credit - amountIn` (never booked inventory or SE book).
+        _pullExactOutInput(IERC20(address(tokenIn)), amountIn, maxAmountIn, pretransferred);
         _executeBookSwap(zfo, amountIn, amountOut, recipient);
     }
 

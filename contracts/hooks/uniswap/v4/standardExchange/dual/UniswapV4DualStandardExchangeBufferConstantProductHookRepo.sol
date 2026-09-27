@@ -43,6 +43,16 @@ library UniswapV4DualStandardExchangeBufferConstantProductHookRepo {
         uint256 reentrancyStatus;
         bool initializationFinalized;
         UniswapV4SeBufferHookLegLib.Layout legs;
+        // --- D60 rated reserves ---
+        /// @dev Rate providers per leg (WAD whole pair tokens per whole SE share); required on a
+        ///      buffered leg (`token != se`), optional on an identity leg.
+        address rateProvider0;
+        address rateProvider1;
+        /// @dev `IERC20Metadata(se).decimals()` snapshots for the rated scale.
+        uint8 seDecimals0;
+        uint8 seDecimals1;
+        /// @dev Native token book for identity legs; independent of provider rate.
+        mapping(address token => uint256 balance) localReserves;
     }
 
     function _layout() internal pure returns (Layout storage l) {

@@ -1,6 +1,6 @@
 ---
 name: indexedex-adversarial-testing
-description: This skill should be used when the user asks to "adversarial DETF tests", "MultiVaultWeightedDetf adversarial", "abuse tests for Standard Exchange", "vault donation attack IndexedEx", "claim redeem attack test", "DETF reentrancy test", "write adversarial suite for vault", or needs guidance implementing production-first adversarial Foundry tests for IndexedEx DETFs, Standard Exchange vaults, multi-vault products, bond/claim paths, or similar registry-deployed vaults.
+description: Production-first adversarial Foundry suites for IndexedEx DETFs, Standard Exchange vaults, bond/claim and multi-vault products (catalog A-O, I1-I3, E6, K, J).
 license: MIT
 ---
 
@@ -134,7 +134,7 @@ abstract contract TestBase_MultiVaultWeightedDetf_Adversarial is TestBase_MultiV
 | Donation mints free DETF | Never use raw `balanceOf` donation for mint credit without accounting |
 | Refund / reclaim pays raw `balance − floor` after user payment | Cap to this-call unused inbound; E6 recipe (seed `R`, fat max, transfer only `used`) |
 | Nested MaxInRatio leaves partial balances | Clean revert; residual inventory asserts |
-| **`pretransferred=true` free mint** while vault holds reserves | Credit only **balance delta** (or lastReserve sync); never `return amountIn` after absolute `balanceOf >= amountIn`. See Crane catalog **I1–I3**. |
+| **`pretransferred=true` free mint** while vault holds reserves | Credit only `LocalCreditLib.available(balance, booked)` capped by the declared amount. EOA reverts `EOAPretransferNotAllowed()`. Exact-in never refunds. Exact-out refunds only `credit - used`. False-flag exact-out pulls quoted used. See Crane catalog **I1–I3** and APEX 2026-09-17 D9/D15. |
 | Facet omits Target selectors → proxy has no function | Target-derived `facetFuncs` + post-deploy loupe/smoke (**J1–J3**) |
 | Next depositor credited prior donation | Strict transfer-not-received / reserve snapshot update (**K**) |
 | Disable bricks mature close / redeem / `exchangeOut` | Inbound-only disable (**CROPS**) |
@@ -152,7 +152,7 @@ Every SE / vault / DETF with pull-or-credit paths:
 | **A0** | Residual inventory at empty share supply (or pre-live residual) cannot free-mint to first user. Donate-before-first-bond/mint on the proxy is enough; do not add a path through an unrelated solver |
 | **E6** | Residual-return path: seed booked `R`; fat `max` + transfer of only `used` + `pretransferred=true` must not pay `R` |
 | **CROPS** | After `setVaultAddressDisabled(true)`, mature close / redeemClaim / user `exchangeOut` still succeed (inbound may stay gated) |
-| **I1** | `pretransferred=true`, **no** user transfer, vault already holds ≥ claimed amount → attacker receives **zero** shares/product (revert preferred) |
+| **I1** | `pretransferred=true`, **no** user transfer, vault already holds ≥ claimed amount → revert `TransferDeltaInsufficient(claimed, 0)` (booked inventory is never credit). EOA callers revert `EOAPretransferNotAllowed()` before credit. |
 | **I2** | Short pretransfer vs claimed `amountIn` → exact revert |
 | **I3** | Residual after successful pretransfer cannot free-mint a second op |
 | **J1–J3** | Each new Facet/DFPkg: Target API ⊆ facetFuncs ⊆ facetCuts ⊆ proxy loupe + callable |

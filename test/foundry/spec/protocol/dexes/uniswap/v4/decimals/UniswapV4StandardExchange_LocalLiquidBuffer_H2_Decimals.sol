@@ -40,6 +40,7 @@ import {UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService 
     "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService.sol";
 import {WrapperExactOutRouter} from "contracts/test/stubs/WrapperExactOutRouter.sol";
 import {MintableERC20Decimals} from "contracts/test/stubs/MintableERC20Decimals.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 import {UniswapV4SeDecimalsHelpers} from
     "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4SeDecimalsHelpers.sol";
 import {UniswapV4LiquiditySeeder_ProDexUniV4} from
@@ -152,7 +153,8 @@ abstract contract UniswapV4StandardExchange_LocalLiquidBuffer_H2_Decimals is Uni
                 pairTokenDecimals: HookPkgArgsDecimalsLib.tokenDec(address(pairToken)),
                 rawTokenDecimals: address(rawToken).code.length == 0 ? uint8(18) : HookPkgArgsDecimalsLib.tokenDec(address(rawToken)),
                 ownerOnlyLiquidity: false,
-                owner: owner
+                owner: owner,
+                rateProvider: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, address(seVault), address(pairToken)) // D60
             });
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
         hook = PkgFactory.deployHook(hookPkg, args, mineNonce);

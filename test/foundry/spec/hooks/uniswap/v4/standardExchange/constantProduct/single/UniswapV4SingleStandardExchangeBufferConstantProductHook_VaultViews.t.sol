@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage as IPkg} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.sol";
+import {IUniswapV4HookStagedPairInit as IInit} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
 import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
 import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
@@ -73,18 +75,28 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_VaultViews_Tes
     }
 
     function test_I1_I2_poolInit_guards() public {
-        PoolKey memory badFee = PoolKey({
-            currency0: Currency.wrap(single.currency0()),
-            currency1: Currency.wrap(single.currency1()),
-            fee: 1,
-            tickSpacing: 60,
-            hooks: IHooks(hook)
-        });
-        vm.expectRevert();
+        // Fee validation must run on a fresh production bootstrap before the one-shot init guard.
+        IPkg.PkgArgs memory args = _defaultPkgArgs();
+        args.owner = makeAddr("fresh-init-owner");
+        address fresh = _deployBootstrapOnly(args);
+        IInit init = IInit(fresh);
+        PoolKey memory key = init.pairPoolKey(address(rawToken), address(pairToken));
+        PoolKey memory badFee = key;
+        badFee.fee = 1;
+        vm.expectRevert(abi.encodeWithSignature("WrappedError(address,bytes4,bytes,bytes)", fresh,
+            IHooks.beforeInitialize.selector, abi.encodeWithSignature("InvalidPoolFee()"),
+            abi.encodeWithSignature("HookCallFailed()")));
         pm.initialize(badFee, SQRT_PRICE_1_1);
+        assertFalse(init.isPairPoolLive(address(rawToken), address(pairToken)), "invalid fee cannot consume initialization");
 
-        // already seeded live (initialized); second init reverts
-        vm.expectRevert();
-        pm.initialize(poolKey, SQRT_PRICE_1_1);
+        // The valid key still initializes successfully after the rejected attempt.
+        key.fee = 0;
+        pm.initialize(key, SQRT_PRICE_1_1);
+        assertTrue(init.isPairPoolLive(address(rawToken), address(pairToken)), "valid initialization succeeds");
+        vm.expectRevert(abi.encodeWithSignature("WrappedError(address,bytes4,bytes,bytes)", fresh,
+            IHooks.beforeInitialize.selector, abi.encodeWithSignature("AlreadyInitialized()"),
+            abi.encodeWithSignature("HookCallFailed()")));
+        pm.initialize(key, SQRT_PRICE_1_1);
+        assertTrue(init.isPairPoolLive(address(rawToken), address(pairToken)), "repeat rejection preserves live pool");
     }
 }

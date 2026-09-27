@@ -108,7 +108,7 @@ indexedex/
 |------|------|-------|
 | Basic vaults | `contracts/vaults/basic/` | Non-DETF vault packages |
 | ERC-4626 SE | `contracts/vaults/standard/erc4626/` | `ERC4626StandardExchangeDFPkg` |
-| Slipstream | `contracts/vaults/slipstream/` | Slipstream-related vault support |
+| Slipstream | `contracts/vaults/slipstream/`, `contracts/protocols/dexes/aerodrome/slipstream/` | Slipstream vault support and Standard Exchange. **Deprecated** (APEX D57, 2026-09-21): not wired into launch or registry; kept compiling pending deletion. |
 | Shared components | `contracts/vaults/*VaultComponent*` | Component factory/repo helpers |
 
 Underlying **standardExchangeVault** / **vaultShare** terminology is mandatory in DETF-facing copy (not product brands).

@@ -16,6 +16,7 @@ import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20Permit
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {IStandardExchangeOutMulti} from "contracts/interfaces/IStandardExchangeOutMulti.sol";
 import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 
 /// @dev K1 live-book unsolicited donation is deferred as donor loss (D9).
 // The same assertions run against independently deployed V3 and V4 diamonds.
@@ -116,6 +117,9 @@ abstract contract StandardExchangeDeliveryBehavior is Test {
     function test_priceMoveCannotCreditPhantomDeposit_token0() public { _falseDeposit(true); }
     function test_priceMoveCannotCreditPhantomDeposit_token1() public { _falseDeposit(false); }
 
+    function test_APEX001M_eoaAndContractZeroInputRejected_token0() public { _falseDeposit(true); }
+    function test_APEX001M_eoaAndContractZeroInputRejected_token1() public { _falseDeposit(false); }
+
     function _falseDeposit(bool zeroForOne) internal {
         _bootstrap();
         (uint256 before0, uint256 before1) = _deployed();
@@ -126,12 +130,14 @@ abstract contract StandardExchangeDeliveryBehavior is Test {
         assertEq(token.balanceOf(FALSE_DEPOSITOR), 0);
         bytes memory data = _depositCall(token, 25 ether, FALSE_DEPOSITOR);
         vm.startPrank(FALSE_DEPOSITOR);
-        _reject(data, _noDelivery(data));
-
-        _reject(data, _deliveryError(25 ether, 0));
+        _reject(data, abi.encodeWithSelector(ISecurePullErrors.EOAPretransferNotAllowed.selector));
         vm.stopPrank();
+        AtomicPretransferCaller attacker = new AtomicPretransferCaller();
+        vm.expectRevert(_deliveryError(25 ether, 0));
+        attacker.execute(address(subject), data);
         assertEq(subject.balanceOf(FALSE_DEPOSITOR), 0);
         assertEq(token.balanceOf(FALSE_DEPOSITOR), 0);
+        assertEq(subject.balanceOf(address(attacker)), 0);
     }
 
     function test_pullAndPushedDepositsAfterPriceMovement() public {
@@ -151,7 +157,15 @@ abstract contract StandardExchangeDeliveryBehavior is Test {
 
 
     function test_shortPushedTransferRejected() public { _wrongTransfer(24 ether); }
-    function test_excessPushedTransferRejected() public { _wrongTransfer(26 ether); }
+    function test_APEX001M_excessPushedTransferCreditsRequestedOnly() public {
+        _bootstrap();
+        bytes memory data = _depositCall(asset0, 25 ether, address(this));
+        _fund(asset0, address(this), 26 ether);
+        asset0.transfer(address(subject), 26 ether);
+        uint256 minted = _execute(data);
+        assertGt(minted, 0);
+        assertEq(asset0.balanceOf(address(this)), 0);
+    }
     function _wrongTransfer(uint256 delivered) internal {
         _bootstrap();
         bytes memory data = _depositCall(asset0, 25 ether, address(this));
@@ -163,12 +177,32 @@ abstract contract StandardExchangeDeliveryBehavior is Test {
 
     function test_fundedCallerMaySelectRecipient() public {
         _bootstrap();
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
         _fund(asset0, address(this), 25 ether);
-        asset0.transfer(address(subject), 25 ether);
-        vm.prank(FALSE_DEPOSITOR);
-        uint256 minted = _execute(_depositCall(asset0, 25 ether, address(this)));
+        asset0.approve(address(caller), 25 ether);
+        bytes memory data = _depositCall(asset0, 25 ether, address(this));
+        bytes memory returned = caller.consumePretransfer(
+            asset0, address(this), address(subject), 25 ether, data
+        );
+        uint256 minted = abi.decode(returned, (uint256));
         assertGt(minted, 0);
         assertEq(subject.balanceOf(FALSE_DEPOSITOR), 0);
+        assertGt(subject.balanceOf(address(this)), minted);
+    }
+
+    function test_APEX001M_atomicFundedSucceedsFromPreparedState() public {
+        _bootstrap();
+        _trade(true, 100 ether);
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        _fund(asset0, address(this), 25 ether);
+        asset0.approve(address(caller), 25 ether);
+        bytes memory data = _depositCall(asset0, 25 ether, address(this));
+        uint256 minted = abi.decode(
+            caller.consumePretransfer(asset0, address(this), address(subject), 25 ether, data),
+            (uint256)
+        );
+        assertGt(minted, 0);
+        assertEq(asset0.balanceOf(address(caller)), 0);
     }
 
     function test_rebalanceCannotCreatePushedCredit() public {

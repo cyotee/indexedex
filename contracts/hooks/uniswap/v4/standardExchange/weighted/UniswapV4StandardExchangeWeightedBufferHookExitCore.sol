@@ -161,6 +161,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookExitCore is
         }
         uint256[] memory amounts = _entryPreviewExitProportional(lpAmount);
         address detf_ = l.legs.detfToken;
+        uint8 jOut = _tokenIndex(tokenOut);
         for (uint8 i; i < l.numTokens; ++i) {
             if (amounts[i] == 0) continue;
             address t = l.tokens[i];
@@ -169,11 +170,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookExitCore is
             } else if (t == detf_) {
                 continue;
             } else {
-                try IUniswapV4SeBufferHook(address(this)).previewSwapExactIn(t, tokenOut, amounts[i])
-                    returns (uint256 so)
-                {
-                    amountOut += so;
-                } catch {}
+                amountOut += Math.descale(Math.scaleTo(amounts[i], l.ratedScales[i]), l.ratedScales[jOut]);
             }
         }
     }

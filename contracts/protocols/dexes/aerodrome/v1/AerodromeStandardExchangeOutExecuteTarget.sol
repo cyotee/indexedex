@@ -34,6 +34,8 @@ import {VaultFeeOracleQueryAwareRepo} from 'contracts/oracles/fee/VaultFeeOracle
 import {
     AerodromeStandardExchangeCommon
 } from 'contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeCommon.sol';
+import {LocalCreditLib} from 'contracts/utils/LocalCreditLib.sol';
+import {ISecurePullErrors} from 'contracts/interfaces/ISecurePullErrors.sol';
 
 abstract contract AerodromeStandardExchangeOutExecuteTarget is
     AerodromeStandardExchangeCommon,
@@ -285,7 +287,11 @@ abstract contract AerodromeStandardExchangeOutExecuteTarget is
         returns (uint256 used, uint256 credited)
     {
         if (pretransferred) {
-            credited = _secureTokenTransfer(tokenIn, maxAmountIn, true);
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+            credited = _pretransferCredit(tokenIn, maxAmountIn);
+            if (usedIn > credited) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(usedIn, credited);
+            }
             used = usedIn;
         } else {
             credited = _secureTokenTransfer(tokenIn, usedIn, false);
@@ -384,7 +390,12 @@ abstract contract AerodromeStandardExchangeOutExecuteTarget is
     {
         Route6State memory s;
         // Fees compounded by this call are existing holders' funds, never prepaid user input.
-        if (args.pretransferred) s.creditedIn = _secureTokenTransfer(args.tokenIn, args.maxAmountIn, true);
+        // D15: credit `min(unbooked, maxAmountIn)`; a smaller resting balance is a smaller credit,
+        // never a revert, and `used > credit` reverts below.
+        if (args.pretransferred) {
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+            s.creditedIn = _pretransferCredit(args.tokenIn, args.maxAmountIn);
+        }
         // Compound fees (mirrors exchangeIn Route 6 which calls _claimAndCompoundFees).
         _claimAndCompoundFees(_buildCompoundParams(aeroReserve.pool, args.deadline));
 
@@ -408,9 +419,11 @@ abstract contract AerodromeStandardExchangeOutExecuteTarget is
             revert MaxAmountExceeded(args.maxAmountIn, s.amountIn);
         }
 
-        // E6: credit prepaid max when pretransferred; else pull only used.
+        // E6/D15: bounded prepaid credit when pretransferred; else pull only used.
         if (!args.pretransferred) {
             (s.amountIn, s.creditedIn) = _creditOutInbound(args.tokenIn, s.amountIn, args.maxAmountIn, false);
+        } else if (s.amountIn > s.creditedIn) {
+            revert ISecurePullErrors.TransferDeltaInsufficient(s.amountIn, s.creditedIn);
         }
 
         // Execute ZapIn and mint shares.
@@ -469,13 +482,18 @@ abstract contract AerodromeStandardExchangeOutExecuteTarget is
         internal returns (uint256 amountIn_)
     {
         // Validate prepaid LP before compounding can create any new, unbooked LP.
+        // D15: credit `min(unbooked, maxAmountIn)` and require `used <= credit`.
         uint256 credited_;
-        if (args.pretransferred) credited_ = _secureTokenTransfer(args.tokenIn, args.maxAmountIn, true);
+        if (args.pretransferred) {
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+            credited_ = _pretransferCredit(args.tokenIn, args.maxAmountIn);
+        }
         _claimAndCompoundFees(_buildCompoundParams(aeroReserve.pool, args.deadline));
         uint256 held_ = IERC20(address(aeroReserve.pool)).balanceOf(address(this)) - credited_;
         amountIn_ = BetterMath._convertToAssetsUp(args.amountOut, held_, ERC20Repo._totalSupply(), ERC4626Repo._decimalOffset());
         if (amountIn_ > args.maxAmountIn) revert MaxAmountExceeded(args.maxAmountIn, amountIn_);
         if (!args.pretransferred) (amountIn_, credited_) = _creditOutInbound(args.tokenIn, amountIn_, args.maxAmountIn, false);
+        else if (amountIn_ > credited_) revert ISecurePullErrors.TransferDeltaInsufficient(amountIn_, credited_);
         _refundExcess(args.tokenIn, credited_, amountIn_, args.pretransferred, msg.sender);
         ERC20Repo._mint(args.recipient, args.amountOut);
         ERC4626Repo._setLastTotalAssets(IERC20(address(aeroReserve.pool)).balanceOf(address(this)));

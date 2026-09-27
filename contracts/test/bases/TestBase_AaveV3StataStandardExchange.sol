@@ -14,6 +14,7 @@ import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexMan
 import {
     AaveV3Stata_Component_FactoryService
 } from "contracts/protocols/lending/aave/v3.6/AaveV3Stata_Component_FactoryService.sol";
+import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
 
 import {IStataTokenFactory} from "@crane/contracts/protocols/lending/aave/v3.6/extensions/stata-token/interfaces/IStataTokenFactory.sol";
 import {IPool} from "@crane/contracts/protocols/lending/aave/v3.6/interfaces/IPool.sol";
@@ -27,6 +28,7 @@ import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
 abstract contract TestBase_AaveV3StataStandardExchange is TestBase_Permit2, TestBase_VaultComponents {
     using AaveV3Stata_Component_FactoryService for ICreate3FactoryProxy;
     using AaveV3Stata_Component_FactoryService for IIndexedexManagerProxy;
+    using VaultComponentFactoryService for ICreate3FactoryProxy;
 
     IFacet aaveV3StataStandardExchangeInFacet;
     IFacet aaveV3StataStandardExchangeOutFacet;
@@ -51,6 +53,7 @@ abstract contract TestBase_AaveV3StataStandardExchange is TestBase_Permit2, Test
         aaveV3StataStandardExchangeInFacet = create3Factory.deployAaveV3StataStandardExchangeInFacet();
         aaveV3StataStandardExchangeOutFacet = create3Factory.deployAaveV3StataStandardExchangeOutFacet();
         aaveV3StataMarkerFacet = create3Factory.deployAaveV3StataMarkerFacet();
+        erc4626Facet = create3Factory.deployReceiptBackedERC4626Facet();
 
         vm.prank(owner);
         aaveV3StataStandardExchangeDFPkg = indexedexManager.deployAaveV3StataStandardExchangeDFPkg(

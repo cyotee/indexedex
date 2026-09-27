@@ -78,9 +78,7 @@ abstract contract Adversarial_SlipstreamSE_E6IJ_Decimals is TestBase_SlipstreamS
         uint256 attBefore = pairToken0.balanceOf(attacker);
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, quotedUsed, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vault.exchangeOut(
             IERC20(address(pairToken0)),
             fatMax,
@@ -105,9 +103,7 @@ abstract contract Adversarial_SlipstreamSE_E6IJ_Decimals is TestBase_SlipstreamS
         assertEq(pairToken0.allowance(attacker, address(vault)), 0, "no allowance");
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vault.exchangeIn(
             IERC20(address(pairToken0)),
             claimed,
@@ -138,9 +134,7 @@ abstract contract Adversarial_SlipstreamSE_E6IJ_Decimals is TestBase_SlipstreamS
         uint256 att1Before = pairToken1.balanceOf(attacker);
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, quotedUsed, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vault.exchangeOut(
             IERC20(address(pairToken0)),
             claimed,

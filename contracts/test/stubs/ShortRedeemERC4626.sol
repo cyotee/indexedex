@@ -17,6 +17,24 @@ contract ShortRedeemERC4626 is SimpleYieldERC4626 {
         shortByOne = v;
     }
 
+    /// @dev RC-02 pays the shortfall with `withdraw`. Under-delivery has to be on that path.
+    function withdraw(uint256 assets, address receiver, address owner_)
+        external
+        override
+        returns (uint256 shares)
+    {
+        shares = previewWithdraw(assets);
+        uint256 pay = assets;
+        if (shortByOne && pay > 0) {
+            unchecked {
+                pay -= 1;
+            }
+        }
+        _burnShares(owner_, shares);
+        totalAssetsStored -= pay;
+        require(assetToken.transfer(receiver, pay), "pay");
+    }
+
     function redeem(uint256 shares, address receiver, address owner_)
         external
         override

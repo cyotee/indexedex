@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 import {StandardExchangeConstantProduct as CP} from "contracts/vaults/standard/exchange/protocols/uniswap/StandardExchangeConstantProduct.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {TransferredTestInput, IStandardExchangeIn, IStandardExchangeOut} from "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/TransferredTestInput.sol";
 
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
@@ -474,13 +475,14 @@ contract UniswapV4FullSpreadStandardExchangeVault_FullRangeBook is TestBase_Unis
         uint256 supply_ = IERC20(address(vault)).totalSupply();
         uint256 low_ = 1;
         uint256 high_ = supply_;
-        // Independent unchanged exact-input surface verifies the minimum and its existing buffer.
+        // Independent exact-input surface verifies the minimal sufficient share count. D55 (APEX F6,
+        // 2026-09-21): the exact-out quote carries no pad; it is exactly that minimum.
         while (low_ < high_) {
             uint256 mid_ = low_ + (high_ - low_) / 2;
             if (vault.previewExchangeIn(IERC20(address(vault)), mid_, asset_) >= wanted_) high_ = mid_;
             else low_ = mid_ + 1;
         }
-        return Math.min(supply_, high_ + Math.max(high_ / 100, 1));
+        return Math.min(supply_, high_);
     }
 
     function _assertWithdrawalBudget(IERC20 asset_, uint256 wanted_, uint256 expected_, uint256 budget_, bool prepaid_)
@@ -499,7 +501,7 @@ contract UniswapV4FullSpreadStandardExchangeVault_FullRangeBook is TestBase_Unis
         );
         assertEq(charged_, expected_, "budget does not change the standard charge");
         assertEq(shares_.balanceOf(address(this)), sharesBefore_ - charged_, "unused budget refunded");
-        assertGe(asset_.balanceOf(address(this)) - before_, wanted_);
+        assertEq(asset_.balanceOf(address(this)) - before_, wanted_, "D55: exact-out delivers exactly the request");
     }
 
     function testFuzz_directSwap_protocolFeeQuoteMatches(bool token1_, uint16 fee_) public {
@@ -585,7 +587,7 @@ contract UniswapV4FullSpreadStandardExchangeVault_FullRangeBook is TestBase_Unis
         ERC20PermitMintableStub(token).mint(address(this), amount);
         IERC20(token).approve(address(vault), amount);
         assertEq(vault.previewExchangeIn(IERC20(token), amount, IERC20(address(vault))), 0);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("UniswapV4Exchange_ZeroAmount()"));
         vault.exchangeIn(IERC20(token), amount, IERC20(address(vault)), 0, address(this), false, block.timestamp);
         assertEq(IERC20(address(vault)).totalSupply(), 0);
         assertEq(IERC20(token).balanceOf(address(vault)), 0);
@@ -607,18 +609,31 @@ contract UniswapV4FullSpreadStandardExchangeVault_FullRangeBook is TestBase_Unis
         bytes memory callData = abi.encodeCall(IStandardExchangeIn.exchangeIn,
             (input, 1 ether, IERC20(address(bound)), 0, actor, true, block.timestamp));
         vm.startPrank(actor);
-        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1 ether, 0));
-        bound.exchangeIn(input, 1 ether, IERC20(address(bound)), 0, actor, true, block.timestamp);
-
-        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1 ether, 0));
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         bound.exchangeIn(input, 1 ether, IERC20(address(bound)), 0, actor, true, block.timestamp);
         vm.stopPrank();
+        AtomicPretransferCaller atomic = new AtomicPretransferCaller();
+        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1 ether, 0));
+        atomic.execute(address(bound), callData);
         assertEq(bound.totalSupply(), supply); assertEq(bound.balanceOf(actor), 0); assertEq(input.balanceOf(actor), 0);
         ERC20PermitMintableStub(address(input)).mint(actor, 1 ether);
         vm.startPrank(actor);
-        input.transfer(address(bound), 1 ether);
-        assertGt(bound.exchangeIn(input, 1 ether, IERC20(address(bound)), 0, actor, true, block.timestamp), 0);
+        input.approve(address(atomic), 1 ether);
+        uint256 minted = abi.decode(
+            atomic.consumePretransfer(
+                input,
+                actor,
+                address(bound),
+                1 ether,
+                abi.encodeCall(
+                    IStandardExchangeIn.exchangeIn,
+                    (input, uint256(1 ether), IERC20(address(bound)), uint256(0), address(atomic), true, block.timestamp)
+                )
+            ),
+            (uint256)
+        );
         vm.stopPrank();
+        assertGt(minted, 0);
     }
 
     function test_FR6_importConvertsRealNftToFullRangeIncludingEarnedFees() public {
@@ -648,7 +663,7 @@ contract UniswapV4FullSpreadStandardExchangeVault_FullRangeBook is TestBase_Unis
         IStandardExchangeProxy bound = _deployVaultBoundToPm(manager);
         IERC721(address(manager)).approve(address(bound), id);
         uint128 liquidity = manager.getPositionLiquidity(id);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("UniswapV4Exchange_ZeroAmount()"));
         IUniswapV4FullSpreadStandardExchangeVaultPositionImport(address(bound)).importPosition(
             manager, id, 0, address(this), address(this), block.timestamp
         );
@@ -662,11 +677,11 @@ contract UniswapV4FullSpreadStandardExchangeVault_FullRangeBook is TestBase_Unis
         IStandardExchangeProxy bound = _deployVaultBoundToPm(manager);
         uint256 expected = _importEntitlement(manager, id, -120, 120);
         IERC721(address(manager)).approve(address(bound), id);
-        vm.prank(address(0xBAD)); vm.expectRevert();
+        vm.prank(address(0xBAD)); vm.expectRevert(abi.encodeWithSignature("UniswapV4ExchangeIn_UntrustedImportOwner()"));
         IUniswapV4FullSpreadStandardExchangeVaultPositionImport(address(bound)).importPosition(
             manager, id, 0, address(this), address(0xBAD), block.timestamp
         );
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("UniswapV4ExchangeIn_SlippageExceeded()"));
         IUniswapV4FullSpreadStandardExchangeVaultPositionImport(address(bound)).importPosition(
             manager, id, expected + 1, address(this), address(this), block.timestamp
         );
@@ -755,7 +770,7 @@ contract UniswapV4FullSpreadStandardExchangeVault_FullRangeBook is TestBase_Unis
         uint256 out = sy.previewRedeem(_token1(), quote / 2);
         uint256 supply = IERC20(address(vault)).totalSupply();
         address token = _token1();
-        vm.expectRevert(); sy.redeem(address(this), quote / 2, token, out + 1, false);
+        vm.expectRevert(abi.encodeWithSignature("UniswapV4ExchangeIn_SlippageExceeded()")); sy.redeem(address(this), quote / 2, token, out + 1, false);
         assertEq(IERC20(address(vault)).totalSupply(), supply);
         assertEq(IERC20(address(vault)).balanceOf(address(vault)), 0);
         assertEq(sy.redeem(address(this), quote / 2, token, out, false), out);

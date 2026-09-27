@@ -106,6 +106,7 @@ contract TestBase_SlipstreamFork is TestBase_BaseFork, TestBase_Permit2, TestBas
     /* ---------------------------------------------------------------------- */
 
     IFacet internal slipstreamStandardExchangeInFacet;
+    IFacet internal slipstreamStandardExchangeInFacetExt;
     IFacet internal slipstreamStandardExchangeOutFacet;
     ISlipstreamStandardExchangeDFPkg internal slipstreamStandardExchangeDFPkg;
 
@@ -210,6 +211,7 @@ contract TestBase_SlipstreamFork is TestBase_BaseFork, TestBase_Permit2, TestBas
     function _deployVaultInfrastructure() internal virtual {
         // Deploy Slipstream exchange facets via CREATE3
         slipstreamStandardExchangeInFacet = create3Factory.deploySlipstreamStandardExchangeInFacet();
+        slipstreamStandardExchangeInFacetExt = create3Factory.deploySlipstreamStandardExchangeInFacetExt();
         slipstreamStandardExchangeOutFacet = create3Factory.deploySlipstreamStandardExchangeOutFacet();
 
         // Deploy DFPkg as owner via IndexedexManager
@@ -221,6 +223,7 @@ contract TestBase_SlipstreamFork is TestBase_BaseFork, TestBase_Permit2, TestBas
             multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
             multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
             slipstreamStandardExchangeInFacet: slipstreamStandardExchangeInFacet,
+            slipstreamStandardExchangeInFacetExt: slipstreamStandardExchangeInFacetExt,
             slipstreamStandardExchangeOutFacet: slipstreamStandardExchangeOutFacet,
             vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
             vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),

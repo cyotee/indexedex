@@ -66,10 +66,12 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Liquidity_Test
     function test_P4_zeroAmount_reverts() public {
         _initPool();
         vm.prank(user);
-        vm.expectRevert();
+        // R2.4: pin ZeroAmount() 0x1f2a2005 (DepositCommon); a bare expectRevert() also
+        // passed on an unrelated Panic/OOG, masking a wrong-guard regression.
+        vm.expectRevert(abi.encodeWithSignature("ZeroAmount()"));
         single.deposit(0, 1 ether, user, 0, block.timestamp + 1);
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("ZeroAmount()"));
         single.deposit(1 ether, 0, user, 0, block.timestamp + 1);
     }
 
@@ -78,12 +80,14 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Liquidity_Test
         uint256 a0 = _amountForCurrency(single.currency0(), 10 ether, 10 ether);
         uint256 a1 = _amountForCurrency(single.currency1(), 10 ether, 10 ether);
         vm.prank(user);
-        vm.expectRevert();
+        // R2.4: pin DeadlineExpired() 0x1ab7da6b (DepositCommon); bare form masked wrong revert.
+        vm.expectRevert(abi.encodeWithSignature("DeadlineExpired()"));
         single.deposit(a0, a1, user, 0, block.timestamp - 1);
 
         _depositBoth(100 ether, 100 ether);
         vm.prank(user);
-        vm.expectRevert();
+        // R2.4: pin InsufficientLpOut() 0xb49d8a5e (DepositCommon).
+        vm.expectRevert(abi.encodeWithSignature("InsufficientLpOut()"));
         single.deposit(a0, a1, user, type(uint256).max, block.timestamp + 1);
     }
 
@@ -141,7 +145,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Liquidity_Test
     function test_Zi3_depositSingle_emptyBook_reverts() public {
         _initPool();
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("NotZapEligible()"));
         single.depositSingle(address(rawToken), 10 ether, user, 0, block.timestamp + 1);
     }
 
@@ -152,7 +156,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Liquidity_Test
         single.withdraw(lp, user, 0, 0, block.timestamp + 1);
         assertEq(IERC20(hook).totalSupply(), 1000);
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("NotZapEligible()"));
         single.depositSingle(address(rawToken), 10 ether, user, 0, block.timestamp + 1);
     }
 
@@ -195,10 +199,12 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Liquidity_Test
         _seedLiveLiquidity();
         uint256 lp = IERC20(hook).balanceOf(user) / 5;
         vm.prank(user);
-        vm.expectRevert();
+        // R2.4: pin DeadlineExpired() 0x1ab7da6b (WithdrawTarget).
+        vm.expectRevert(abi.encodeWithSignature("DeadlineExpired()"));
         single.withdrawSingle(lp, address(rawToken), user, 0, block.timestamp - 1);
         vm.prank(user);
-        vm.expectRevert();
+        // R2.4: pin InsufficientTokenOut() 0x3dec0665 (WithdrawTarget).
+        vm.expectRevert(abi.encodeWithSignature("InsufficientTokenOut()"));
         single.withdrawSingle(lp, address(rawToken), user, type(uint256).max, block.timestamp + 1);
     }
 
@@ -337,10 +343,11 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Liquidity_Test
         _initPool();
         uint256 seShares = _mintSeSharesToUser(10 ether);
         vm.prank(user);
-        vm.expectRevert();
+        // R2.4: pin ZeroAmount() 0x1f2a2005 (depositWithSeShares zero-leg guard).
+        vm.expectRevert(abi.encodeWithSignature("ZeroAmount()"));
         single.depositWithSeShares(0, seShares, user, 0, block.timestamp + 1);
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("ZeroAmount()"));
         single.depositWithSeShares(10 ether, 0, user, 0, block.timestamp + 1);
     }
 
@@ -349,10 +356,10 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Liquidity_Test
         uint256 seShares = _mintSeSharesToUser(50 ether);
         uint256 lp = _depositBothSeShares(50 ether, seShares);
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("DeadlineExpired()"));
         single.withdrawSeShares(lp / 2, user, 0, 0, block.timestamp - 1);
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("InsufficientTokenOut()"));
         single.withdrawSeShares(lp / 2, user, type(uint256).max, 0, block.timestamp + 1);
     }
 }

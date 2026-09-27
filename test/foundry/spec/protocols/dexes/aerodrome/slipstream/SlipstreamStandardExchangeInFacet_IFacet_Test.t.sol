@@ -41,17 +41,15 @@ contract SlipstreamStandardExchangeInFacet_IFacet_Test is CraneTest, TestBase_IF
     }
 
     function controlFacetInterfaces() public pure override returns (bytes4[] memory controlInterfaces) {
-        controlInterfaces = new bytes4[](3);
-        controlInterfaces[0] = type(IStandardExchangeIn).interfaceId;
-        controlInterfaces[1] = type(ICLMintCallback).interfaceId;
-        controlInterfaces[2] = type(ICLSwapCallback).interfaceId;
+        controlInterfaces = new bytes4[](2);
+        controlInterfaces[0] = type(ICLMintCallback).interfaceId;
+        controlInterfaces[1] = type(ICLSwapCallback).interfaceId;
     }
 
     function controlFacetFuncs() public pure override returns (bytes4[] memory controlFuncs) {
-        controlFuncs = new bytes4[](4);
-        controlFuncs[0] = IStandardExchangeIn.previewExchangeIn.selector;
-        controlFuncs[1] = IStandardExchangeIn.exchangeIn.selector;
-        controlFuncs[2] = ICLMintCallback.uniswapV3MintCallback.selector;
-        controlFuncs[3] = ICLSwapCallback.uniswapV3SwapCallback.selector;
+        controlFuncs = new bytes4[](3);
+        controlFuncs[0] = IStandardExchangeIn.exchangeIn.selector;
+        controlFuncs[1] = ICLMintCallback.uniswapV3MintCallback.selector;
+        controlFuncs[2] = ICLSwapCallback.uniswapV3SwapCallback.selector;
     }
 }

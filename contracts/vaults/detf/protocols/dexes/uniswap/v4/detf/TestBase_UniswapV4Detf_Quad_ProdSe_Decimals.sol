@@ -31,6 +31,7 @@ import {
 import {TestBase_UniswapV4Detf_Quad_Decimals} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_Decimals.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 import {
     UniswapV4DetfProductionSeDeployLib as SeLib
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol";
@@ -308,7 +309,7 @@ abstract contract TestBase_UniswapV4Detf_Quad_ProdSe_Decimals is TestBase_Uniswa
                 feeOracle: address(indexedexManager),
                 tokens: toks,
                 standardExchanges: ses,
-                rateProviders: rps,
+                rateProviders: RateProviderFixtureLib.providersFor4(create3Factory, diamondPackageFactory, toks, ses),
                 tokenDecimals: HookPkgArgsDecimalsLib.tokenDecimals4(toks, predicted_),
                 seDecimals: HookPkgArgsDecimalsLib.seDecimals4(ses),
                 baseAmp: QUAD_BASE_AMP,

@@ -28,6 +28,7 @@ import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
 import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {MixedBufferMultiVaultStableDetfRepo as Repo} from "./MixedBufferMultiVaultStableDetfRepo.sol";
 
@@ -225,12 +226,18 @@ abstract contract MixedBufferMultiVaultStableDetfCommon is ReentrancyLockModifie
             token_.safeTransferFrom(msg.sender, address(this), amount_);
             uint256 received_ = token_.balanceOf(address(this)) - before_;
             if (received_ != amount_) revert ISecurePullErrors.TransferDeltaInsufficient(amount_, received_);
-        } else {
-            uint256 reserved_ = MultiAssetBasicVaultRepo._reserveOfToken(address(token_));
-            uint256 available_ = before_ > reserved_ ? before_ - reserved_ : 0;
-            if (amount_ > available_) revert ISecurePullErrors.TransferDeltaInsufficient(amount_, available_);
+            return amount_;
         }
+        LocalCreditLib.requirePretransferCaller(msg.sender);
+        uint256 available_ = LocalCreditLib.available(
+            before_, MultiAssetBasicVaultRepo._reserveOfToken(address(token_))
+        );
+        if (amount_ > available_) revert ISecurePullErrors.TransferDeltaInsufficient(amount_, available_);
         return amount_;
+    }
+
+    function _requirePrepaidCaller(bool prepaid_) internal view {
+        if (prepaid_) LocalCreditLib.requirePretransferCaller(msg.sender);
     }
 
     function _amp() internal view returns (uint256 amp_) {

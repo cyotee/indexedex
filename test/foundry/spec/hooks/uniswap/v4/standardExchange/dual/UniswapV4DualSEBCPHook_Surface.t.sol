@@ -80,7 +80,9 @@ contract UniswapV4DualSEBCPHook_Surface_Test is TestBase {
         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.isLive.selector), "J1 isLive");
         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.previewSwapExactIn.selector), "J1 previewSwapExactIn addr");
         assertTrue(_contains(funcs_, IDetfReserveQuote.previewSynthetic.selector), "J1 previewSynthetic");
-        assertEq(funcs_.length, 41, "J1 HooksFacet facetFuncs length");
+        assertTrue(_contains(funcs_, IHook.rateProviders.selector), "D60 rateProviders");
+        assertTrue(_contains(funcs_, IHook.rateProvider.selector), "D60 rateProvider(address)");
+        assertEq(funcs_.length, 43, "J1 HooksFacet facetFuncs length"); // D60: + 2 getters
     }
 
     function test_J1_deposit_targetSelectors_subseteq_facetFuncs() public view {

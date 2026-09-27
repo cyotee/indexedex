@@ -1,63 +1,66 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
-
-import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {
-    TestBase_AerodromeStandardExchange_MultiPool
-} from "contracts/protocols/dexes/aerodrome/v1/test/bases/TestBase_AerodromeStandardExchange_MultiPool.sol";
+    TestBase_AerodromeStandardExchange
+} from "contracts/protocols/dexes/aerodrome/v1/test/bases/TestBase_AerodromeStandardExchange.sol";
+import {IPool} from "@crane/contracts/interfaces/protocols/dexes/aerodrome/IPool.sol";
+import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
+import {
+    AccountingPoolToken,
+    IAccountingPair,
+    ConstantProductAccountingHandler
+} from "test/foundry/spec/vaults/standard/exchange/invariant/ConstantProductAccountingHandler.sol";
 import {
     Handler_AerodromeStandardExchange
 } from "test/foundry/spec/protocol/dexes/aerodrome/v1/invariant/Handler_AerodromeStandardExchange.sol";
 
-/**
- * @title AerodromeStandardExchangeInvariant
- * @notice L3 multi-route inventory invariants for Aerodrome SE (Wave 2A).
- * @dev Complements dense L1 route fuzz; does not replace InOutInvariant suites.
- */
-/// forge-config: default.invariant.runs = 24
-/// forge-config: default.invariant.depth = 10
-contract AerodromeStandardExchangeInvariant is TestBase_AerodromeStandardExchange_MultiPool {
-    Handler_AerodromeStandardExchange internal handler;
-    address internal invActor0;
-    address internal invActor1;
+contract Handler_AerodromeAPEX is Handler_AerodromeStandardExchange {
+    constructor(address vault_, address pair_) Handler_AerodromeStandardExchange(vault_, pair_) {}
+}
 
-    function setUp() public virtual override {
+/// forge-config: default.invariant.runs = 256
+/// forge-config: default.invariant.depth = 64
+/// forge-config: default.invariant.fail-on-revert = true
+contract AerodromeStandardExchangeInvariant is TestBase_AerodromeStandardExchange {
+    ConstantProductAccountingHandler internal handler;
+
+    function setUp() public override {
         super.setUp();
-        invActor0 = makeAddr("aeroInv0");
-        invActor1 = makeAddr("aeroInv1");
-
-        handler = new Handler_AerodromeStandardExchange(
-            balancedVault, aeroBalancedTokenA, aeroBalancedTokenB, invActor0, invActor1
-        );
-
-        bytes4[] memory selectors = new bytes4[](3);
-        selectors[0] = Handler_AerodromeStandardExchange.swap.selector;
-        selectors[1] = Handler_AerodromeStandardExchange.vaultDeposit.selector;
-        selectors[2] = Handler_AerodromeStandardExchange.vaultWithdraw.selector;
-
+        AccountingPoolToken a = new AccountingPoolToken("CallbackA");
+        AccountingPoolToken b = new AccountingPoolToken("CallbackB");
+        address pair = aerodromePoolFactory.createPool(address(a), address(b), false);
+        a.mint(pair, 1_000_000 ether);
+        b.mint(pair, 1_000_000 ether);
+        IAccountingPair(pair).mint(address(this));
+        vm.startPrank(owner);
+        IVaultFeeOracleManager(address(indexedexManager)).setDefaultUsageFee(0);
+        address vault = aerodromeStandardExchangeDFPkg.deployVault(IPool(pair));
+        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(vault, 0);
+        vm.stopPrank();
+        handler = new Handler_AerodromeAPEX(vault, pair);
+        bytes4[] memory selectors = new bytes4[](1);
+        selectors[0] = handler.cycle.selector;
         targetContract(address(handler));
         targetSelector(FuzzSelector({addr: address(handler), selectors: selectors}));
     }
 
-    /// @notice P-RESID soft: vault should not hold large free tokenA/tokenB inventory
-    ///         beyond dust after ops (exact zero may fail if intermediate accounting holds dust).
-    function invariant_inventoryDustBounded() public view {
-        uint256 dustCap = 1e15; // 0.001 token
-        uint256 aBal = aeroBalancedTokenA.balanceOf(address(balancedVault));
-        uint256 bBal = aeroBalancedTokenB.balanceOf(address(balancedVault));
-        // Pass-through routes may leave residual; bound generously for hermetic pools.
-        assertLe(aBal, dustCap * 1000, "P-RESID tokenA inventory");
-        assertLe(bBal, dustCap * 1000, "P-RESID tokenB inventory");
+    function invariant_APEX_accounting() public view {
+        handler.assertAccounting();
+        handler.assertPoolAccounting();
     }
 
-    function invariant_ghostMonotonic() public view {
-        // Counts are uint - always >= 0; ensure no absurd wrap (always true for uint increases).
-        assertTrue(handler.ghost_swapCount() < type(uint128).max, "P-GHOST swap");
-        assertTrue(handler.ghost_depositCount() < type(uint128).max, "P-GHOST deposit");
-        assertTrue(handler.ghost_withdrawCount() < type(uint128).max, "P-GHOST withdraw");
+    function afterInvariant() public view {
+        assertGe(handler.cycles(), 4, "randomized positive money flow required");
+        for (uint256 i; i < 3; ++i) {
+            assertGt(handler.actorCycles(handler.actors(i)), 0, "three actual funded actors");
+        }
+        invariant_APEX_accounting();
     }
 
-    function invariant_shareSupplyNonNegative() public view {
-        assertTrue(IERC20(address(balancedVault)).totalSupply() >= 0, "supply");
+    function test_APEX_deterministicLifecycle() public {
+        for (uint256 i; i < 4; ++i) {
+            handler.cycle(1 ether + i, i);
+        }
+        afterInvariant();
     }
 }

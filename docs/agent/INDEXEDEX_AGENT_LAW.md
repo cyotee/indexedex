@@ -102,7 +102,7 @@ Agents must not invent FoT economics, a token allowlist, or a “this family sup
 
 ## DETF families — common expectations (mandatory for agents)
 
-Apply these to **any** DETF work under `contracts/vaults/detf/**`. The owner-approved [`DETF_ALIGNMENT_PRD.md`](../../contracts/vaults/detf/DETF_ALIGNMENT_PRD.md) **D32–D66 / §24** and [`funded staking implementation and test plan`](../../contracts/vaults/detf/DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md) supersede conflicting earlier decisions, family PRDs, NatSpec and shared programs under `docs/detf/`. D60 excludes further Balancer-hosted DETF functionality from this release; compilation maintenance remains allowed. D66 defers unfinished Slipstream work and its release gates while preserving completed functionality, tests and evidence. Unrelated Balancer SE and shared V4 work remain in scope. The following describes that target design; it is not evidence that implementation or deployment is complete.
+Apply these to **any** DETF work under `contracts/vaults/detf/**`. The owner-approved [`DETF_ALIGNMENT_PRD.md`](../../contracts/vaults/detf/DETF_ALIGNMENT_PRD.md) **D32–D66 / §24** and [`funded staking implementation and test plan`](../../contracts/vaults/detf/DETF_FUNDED_STAKING_AND_SY_IMPLEMENTATION_AND_TEST_PLAN.md) supersede conflicting earlier decisions, family PRDs, NatSpec and shared programs under `docs/detf/`. D60 excludes further Balancer-hosted DETF functionality from this release; compilation maintenance remains allowed. D66 deferred unfinished Slipstream work; the Slipstream Standard Exchange is deprecated entirely under APEX D57 (owner ruling 2026-09-21, `docs/audits/apex-2026-09-17-remediation-and-regression-tests.plan.md`): it is not wired into any launch or registry path, its hook-matrix rows are DEPRECATED, and its sources stay compiling only until a separate deletion request. Unrelated Balancer SE and shared V4 work remain in scope. The following describes that target design; it is not evidence that implementation or deployment is complete.
 
 ### Product docs vs public docs (LOCKED)
 
@@ -201,7 +201,7 @@ Family-specific compound/expansion **stage plans** for Balancer families current
 Production-first rules and `indexedex-testing` apply. The funded implementation plan §11 and PRD A1–A42 are the acceptance matrix, subject to D60 and D66.
 
 1. Use real registered diamonds, facets, DFPkgs, manager, registry, fee oracle and attached SEs. Inherit the existing Crane → Indexedex → protocol TestBase hierarchy. Protocol ports and funding tokens are acceptable; mock SUTs are not.
-2. Cover all four in-scope V4 DETF bindings and every in-scope SE share issuer: metadata, installed/retired selectors, runtime size, first bond, actual liquidity plus separately funded principal, standard/SY routes and exact-output limits. Balancer-hosted DETFs have no functional completion gate under D60; unfinished Slipstream tests, forks and integration checks are deferred under D66.
+2. Cover all four in-scope V4 DETF bindings and every in-scope SE share issuer: metadata, installed/retired selectors, runtime size, first bond, actual liquidity plus separately funded principal, standard/SY routes and exact-output limits. Balancer-hosted DETFs have no functional completion gate under D60; the Slipstream SE is deprecated under APEX D57 and has no completion gate.
 3. Exercise strict threshold equality/deadband and both primary/swap regimes with real pool trades. Verify fallback preserves supply and adds no issuance pot, while genuine failures remain atomic.
 4. Prove actual custody backs gons liabilities; 1:1 full/partial unstaking; funded upward/flat rebases; unsolicited balance separation; linear principal and early reward claims; multiple-NFT fraction isolation and owner/operator transfers.
 5. Exercise immediate reward ordering, rebase-before-fee-receipts, persistent standing recipients after complete unstaking, just-before-boundary stake, post-boundary new stake, fixed 25-hour/seven-day catch-up and zero expansion. No Open mode, configurable caps or hypothetical unfunded accrual.
@@ -229,6 +229,17 @@ docs/detf/balancer/v3/<family-path>/                  # historical family compou
 ```
 
 When implementing a new DETF family: place package code under the correct host tree (`protocols/dexes/<host>/…`), keep shared libs in `common/`, and keep **family product PRDs / impl plans co-located with the package** (internal law). Shared cross-family programs stay under `docs/detf/`. Do not re-open locked shared product law without an explicit PRD revision.
+
+## Uniswap V4 SE buffer hooks: held-reserve valuation (APEX D60, LOCKED 2026-09-22)
+
+Applies to every reserve-holding buffer hook under `contracts/hooks/uniswap/v4/standardExchange/**` (weighted, curve-quad, Balancer-quad, orbital, single constant-product, dual constant-product). The non-CP single buffer hook under `standardExchange/single/` holds no reserve and is outside this rule.
+
+- **Valuation.** A hook values a held reserve as its **raw held balance**, or as `held x rate` when a rate provider is configured for that leg. A hook never derives a rate from the Standard Exchange it holds: no `previewExchangeIn(se, heldBalance, token)`, no transition-quote `quoteAssets(state, heldShares)` as a valuation. Rate providers implement `IRateProvider.getRate()` (WAD whole pair tokens per whole share); reads fail closed (`RateProviderFailed` on revert, short return or zero).
+- **SE declaration means buffering.** Declaring a Standard Exchange on a leg means the leg's token is deposited into that SE on inflow and withdrawn on outflow. The SE calls that remain are buffering quotes and executions (`previewExchangeIn(token, amount, se)` for shares minted, `previewExchangeOut` / unwrap previews for pair paid out, `exchangeIn` / `exchangeOut`).
+- **Providers.** Any leg may carry a rate provider; the deployer is responsible for the provider matching the bound token. A buffered leg (`token != se`) **must** carry one: package init reverts `RateProviderRequired`. An identity leg (`token == se`, wrapper-share inventory) needs none and values as its raw balance.
+- **Two invariants.** The virtual swap invariant uses the rated reserves. Liquidity issuance and proportional exits use raw balances of the concrete reserve (D59). On the constant-product hooks the rated reserve is linear in shares, so LP minted for a buffered leg follows `dShares / shares` whatever the rate; `kLast` and the protocol-fee LP are computed on the rated book, as before.
+- **Getters.** Every pool answers `rateProviders() -> address[]` (pool order) and `rateProvider(address token) -> address` (pair token or its SE; `address(0)` when none). `IUniswapV4SeBufferHook` declares both; the V4 DETF package rejects a reserve hook whose buffered leg has no provider (`HookRateProviderRequired`).
+- **Tests.** Every fixture that binds an SE leg deploys a `StandardExchangeRateProvider` through `contracts/test/libs/RateProviderFixtureLib.sol` (`providerFor` / `providersFor` / `providerForCp`). Program record: `docs/audits/apex-2026-09-17-open-item-10-cp-hook-rate-providers-PRD.md`.
 
 ## Codebase Overview
 
@@ -408,7 +419,7 @@ IFacet / behavior tests implement the usual virtuals (`facetTestInstance()`, etc
 
 | Failure class | Required bar |
 |---------------|--------------|
-| **Trust-flag free mint** (`pretransferred=true` / claimed `amountIn` while vault already holds inventory) | Negative tests I1–I3; BasicVault family uses reserve-delta (`U = balanceOf − reserveOfToken`), not absolute inventory — see `docs/vaults/BASIC_VAULT_RESERVE_DELTA_PRETRANSFER_PRD.md` |
+| **Trust-flag free mint** (`pretransferred=true` / claimed `amountIn` while vault already holds inventory) | EOA reverts `EOAPretransferNotAllowed()`. Contract I1 reverts `TransferDeltaInsufficient(claimed, 0)`. Credit is `LocalCreditLib.available(balance, booked)` capped by the declared amount. Exact-in never refunds. False-flag exact-out pulls quoted used. See `docs/vaults/BASIC_VAULT_RESERVE_DELTA_PRETRANSFER_PRD.md` and APEX 2026-09-17 D9/D15 |
 | **Incomplete `facetFuncs`** | Controls from **Target/product API**; after DFPkg deploy, loupe + smoke call every product selector on the **proxy** (J1–J3) |
 | **Happy-path-only security** | Adversarial catalog A–K P0 (or explicit NatSpec defer); happy path is not a security bar |
 

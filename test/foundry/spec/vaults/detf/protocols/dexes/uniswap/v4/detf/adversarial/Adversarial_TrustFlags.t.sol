@@ -3,6 +3,8 @@ pragma solidity ^0.8.0;
 
 import {TestBase_UniswapV4Detf_Adversarial} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 
 /**
  * @title Adversarial_TrustFlags
@@ -48,5 +50,18 @@ contract Adversarial_TrustFlags is TestBase_UniswapV4Detf_Adversarial {
 
     function test_K1_donationNotMintCredit() public {
         _assertK1_donationNotMintCredit();
+    }
+
+    /// @notice D37: a registry that cannot answer isDisabled reverts prepaid-capable donate/bond.
+    function test_APEX005_D37_registryWithoutIsDisabled_revertsDonate() public {
+        _goLive(500 ether);
+        vm.mockCallRevert(
+            address(indexedexManager),
+            abi.encodeWithSelector(IVaultRegistryDisableQuery.isDisabled.selector, detf),
+            "missing isDisabled"
+        );
+        vm.prank(address(apexCaller));
+        vm.expectRevert(bytes("missing isDisabled"));
+        detfInfo.donate(IERC20(address(pairToken)), 1 ether, true);
     }
 }

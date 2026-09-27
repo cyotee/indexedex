@@ -1,0 +1,23 @@
+[
+  {
+    "label": "negative-expectations",
+    "command": [
+      "bash",
+      "scripts/apex_bare_expectrevert_scan.sh"
+    ],
+    "exitCode": 0,
+    "log": "docs/audits/apex-2026-09-17-evidence/followup-review/final-negative-expectations.log",
+    "logSha256": "4857fd9a3d82c893c4a8fc0fbfb1807082964c37b7a9a7ddd863b7e173d9fc79"
+  },
+  {
+    "label": "whitespace",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exitCode": 0,
+    "log": "docs/audits/apex-2026-09-17-evidence/followup-review/final-whitespace.log",
+    "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

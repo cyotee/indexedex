@@ -239,7 +239,7 @@ contract RebasingAwareERC4626_Buffers_Weighted is TestBase {
         vm.stopPrank();
     }
 
-    function _wrapperMixedArgs() internal view returns (IPkg.PkgArgs memory args) {
+    function _wrapperMixedArgs() internal returns (IPkg.PkgArgs memory args) {
         address w = address(wrapper);
         address raw = address(token1);
         address[] memory toks = new address[](2);

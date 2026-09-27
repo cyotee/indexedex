@@ -15,6 +15,12 @@ interface IUniswapV4SeBufferHook {
 
     function standardExchangeOf(address token) external view returns (address);
 
+    /// @notice D60: configured rate providers in pool order (address(0) on a leg without one).
+    function rateProviders() external view returns (address[] memory);
+
+    /// @notice D60: configured rate provider for `token` (address(0) when none or unknown).
+    function rateProvider(address token) external view returns (address);
+
     function syntheticNumeraires() external view returns (address[] memory);
 
     function requiredFirstBondTokens() external view returns (address[] memory);

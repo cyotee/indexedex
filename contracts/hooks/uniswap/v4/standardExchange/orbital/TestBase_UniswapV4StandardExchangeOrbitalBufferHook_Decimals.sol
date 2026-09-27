@@ -50,6 +50,7 @@ import {
     UniswapV4StandardExchangeOrbitalBufferHook_FactoryService as PkgFactory
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_FactoryService.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 import {
     UniswapV4StandardExchangeOrbitalBufferHookPairPoolLib as PairPoolLib
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookPairPoolLib.sol";
@@ -221,7 +222,6 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook_Decimals i
     /// @notice Default: min SE — leg0 buffered. Raw-only rejected by package.
     function _defaultPkgArgs()
         internal
-        view
         virtual
         returns (IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory)
     {
@@ -237,9 +237,9 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook_Decimals i
             se0: se0,
             se1: token1.decimals() == 18 ? address(0) : se1,
             se2: token2.decimals() == 18 ? address(0) : se2,
-            rp0: address(0),
-            rp1: address(0),
-            rp2: address(0),
+            rp0: RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, se0, address(token0)),
+            rp1: RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, token1.decimals() == 18 ? address(0) : se1, address(token1)),
+            rp2: RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, token2.decimals() == 18 ? address(0) : se2, address(token2)),
             tickSpacing: 0,
             sqrtPriceX96: 0,
             ownerOnlyLiquidity: _pkgOwnerOnlyLiquidity(),
@@ -257,7 +257,6 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook_Decimals i
 
     function _argsZeroSE()
         internal
-        view
         returns (IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory)
     {
         return IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs({
@@ -272,9 +271,9 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook_Decimals i
             se0: address(0),
             se1: address(0),
             se2: address(0),
-            rp0: address(0),
-            rp1: address(0),
-            rp2: address(0),
+            rp0: RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, address(0), address(token0)),
+            rp1: RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, address(0), address(token1)),
+            rp2: RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, address(0), address(token2)),
             tickSpacing: 0,
             sqrtPriceX96: 0,
             ownerOnlyLiquidity: _pkgOwnerOnlyLiquidity(),
@@ -284,7 +283,6 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook_Decimals i
 
     function _argsWithSE(bool b0, bool b1, bool b2)
         internal
-        view
         returns (IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory a)
     {
         a = _argsZeroSE();
@@ -294,6 +292,10 @@ abstract contract TestBase_UniswapV4StandardExchangeOrbitalBufferHook_Decimals i
         if (b0) a.se0 = se0;
         if (b1) a.se1 = se1;
         if (b2) a.se2 = se2;
+        // D60: every buffered leg carries a rate provider.
+        a.rp0 = RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, a.se0, a.token0);
+        a.rp1 = RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, a.se1, a.token1);
+        a.rp2 = RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, a.se2, a.token2);
     }
 
     /// @notice Mint pair into SE, leave SE shares on `user` (B6). Share token stays 18.

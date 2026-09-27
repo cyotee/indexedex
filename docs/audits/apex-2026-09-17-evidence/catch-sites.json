@@ -1,0 +1,1151 @@
+[
+ {
+  "family": "U3",
+  "path": "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultCommon.sol",
+  "line": 194,
+  "expression": "IERC20Metadata(token).decimals() returns (uint8 d) {",
+  "rule": "D34",
+  "state": "REPORTED"
+ },
+ {
+  "family": "U3",
+  "path": "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultDFPkg.sol",
+  "line": 313,
+  "expression": "IERC20Metadata(token).symbol() returns (string memory fetchedSymbol) {",
+  "rule": "D34",
+  "state": "REPORTED"
+ },
+ {
+  "family": "U4",
+  "path": "contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultCommon.sol",
+  "line": 335,
+  "expression": "twapOracle().update(key) returns (bool) {}",
+  "rule": "D34",
+  "state": "REPORTED"
+ },
+ {
+  "family": "U4",
+  "path": "contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultCommon.sol",
+  "line": 366,
+  "expression": "IERC20Metadata(token).decimals() returns (uint8 d) {",
+  "rule": "D34",
+  "state": "REPORTED"
+ },
+ {
+  "family": "U4",
+  "path": "contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultCommon.sol",
+  "line": 1281,
+  "expression": "IERC20Metadata(token).symbol() returns (string memory fetchedSymbol) {",
+  "rule": "D34",
+  "state": "REPORTED"
+ },
+ {
+  "family": "U4",
+  "path": "contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultDFPkg.sol",
+  "line": 359,
+  "expression": "IERC20Metadata(token).symbol() returns (string memory fetchedSymbol) {",
+  "rule": "D34",
+  "state": "REPORTED"
+ },
+ {
+  "family": "ER",
+  "path": "contracts/vaults/standard/erc4626/ERC4626StandardExchangeQuoteTarget.sol",
+  "line": 48,
+  "expression": "IStandardExchangeTransitionQuote(q.vault).quoteState(_underlying(), address(this))",
+  "rule": "D34",
+  "state": "REPORTED"
+ },
+ {
+  "family": "MO",
+  "path": "contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeDFPkg.sol",
+  "line": 260,
+  "expression": "IERC20Metadata(loanToken_).symbol() returns (string memory symbol_) {",
+  "rule": "D34",
+  "state": "REPORTED"
+ },
+ {
+  "family": "ST",
+  "path": "contracts/protocols/lending/aave/v3.6/AaveV3StataStandardExchangeCommon.sol",
+  "line": 127,
+  "expression": "lm.refreshRewardTokens() {} catch {}",
+  "rule": "D34",
+  "state": "REPORTED"
+ },
+ {
+  "family": "ST",
+  "path": "contracts/protocols/lending/aave/v3.6/AaveV3StataStandardExchangeCommon.sol",
+  "line": 137,
+  "expression": "lm.collectAndUpdateRewards(rewards[i]) {} catch {}",
+  "rule": "D34",
+  "state": "REPORTED"
+ },
+ {
+  "family": "ST",
+  "path": "contracts/protocols/lending/aave/v3.6/AaveV3StataStandardExchangeCommon.sol",
+  "line": 142,
+  "expression": "lm.claimRewards(feeRecipient, rewards) {} catch {}",
+  "rule": "D34",
+  "state": "REPORTED"
+ },
+ {
+  "family": "RP",
+  "path": "contracts/protocols/staking/rocket-pool/RocketPoolRETHRebalanceTarget.sol",
+  "line": 52,
+  "expression": "IRETH(reth_).burn(rethNeeded) {",
+  "rule": "D34",
+  "state": "REPORTED"
+ },
+ {
+  "family": "RP",
+  "path": "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeCommon.sol",
+  "line": 168,
+  "expression": "IRocketDepositPool(pool).getMaximumDepositAmount() returns (uint256 maxDep) {",
+  "rule": "D34",
+  "state": "REPORTED"
+ },
+ {
+  "family": "RP",
+  "path": "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeCommon.sol",
+  "line": 338,
+  "expression": "IRETH(reth_).burn(rethNeeded) {",
+  "rule": "D34",
+  "state": "REPORTED"
+ },
+ {
+  "family": "RP",
+  "path": "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeCommon.sol",
+  "line": 393,
+  "expression": "IRocketDepositPool(pool).deposit{value: stakeable}() {",
+  "rule": "D34",
+  "state": "REPORTED"
+ },
+ {
+  "family": "EF",
+  "path": "contracts/protocols/staking/etherfi/EtherFiWeETHRebalanceTarget.sol",
+  "line": 66,
+  "expression": "IEtherFiWithdrawRequestNFT(nft).isFinalized(id) returns (bool fin) {",
+  "rule": "D34",
+  "state": "REPORTED"
+ },
+ {
+  "family": "EF",
+  "path": "contracts/protocols/staking/etherfi/EtherFiWeETHRebalanceTarget.sol",
+  "line": 72,
+  "expression": "IEtherFiWithdrawRequestNFT(nft).claimWithdraw(id) {",
+  "rule": "D34",
+  "state": "REPORTED"
+ },
+ {
+  "family": "EF",
+  "path": "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeCommon.sol",
+  "line": 170,
+  "expression": "IEtherFiLiquidityPool(pool).sharesForWithdrawalAmount(eOut) returns (uint256 we) {",
+  "rule": "D34",
+  "state": "REPORTED"
+ },
+ {
+  "family": "EF",
+  "path": "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeCommon.sol",
+  "line": 435,
+  "expression": "IEtherFiRedemptionManager(mgr).canRedeem(eFace, ETH_SENTINEL) returns (bool ok) {",
+  "rule": "D34",
+  "state": "REPORTED"
+ },
+ {
+  "family": "EF",
+  "path": "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeCommon.sol",
+  "line": 442,
+  "expression": "IEtherFiRedemptionManager(mgr).canRedeem(eFace, ETH_SENTINEL) returns (bool ok2) {",
+  "rule": "D34",
+  "state": "REPORTED"
+ },
+ {
+  "family": "EF",
+  "path": "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeCommon.sol",
+  "line": 452,
+  "expression": "IEtherFiRedemptionManager(mgr).redeemWeEth(weNeeded, address(this), ETH_SENTINEL) {",
+  "rule": "D34",
+  "state": "REPORTED"
+ },
+ {
+  "family": "SL",
+  "path": "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeDFPkg.sol",
+  "line": 257,
+  "expression": "IERC20Metadata(token).symbol() returns (string memory fetchedSymbol) {",
+  "rule": "D34",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget.sol",
+  "line": 371,
+  "expression": "IBalancerV3StandardExchangeRouterPrepay(seRouter).passPrepayAuth(address(seVault)) {} catch {}",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget.sol",
+  "line": 374,
+  "expression": "seVault.exchangeIn(ttaTok, X_raw, shareTok, 0, address(vault), false, block.timestamp) returns (",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget.sol",
+  "line": 380,
+  "expression": "IBalancerV3StandardExchangeRouterPrepay(seRouter).restorePrepayAuth() {} catch {}",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget.sol",
+  "line": 385,
+  "expression": "IBalancerV3StandardExchangeRouterPrepay(seRouter).restorePrepayAuth() {} catch {}",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget.sol",
+  "line": 512,
+  "expression": "IBalancerV3StandardExchangeRouterPrepay(seRouter).passPrepayAuth(address(seVault)) {} catch {}",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget.sol",
+  "line": 515,
+  "expression": "seVault.exchangeOut(shareTok, drainAmount, ttaTok, Y_TTA_raw, address(vault), false, block.timestamp)",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget.sol",
+  "line": 520,
+  "expression": "IBalancerV3StandardExchangeRouterPrepay(seRouter).restorePrepayAuth() {} catch {}",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget.sol",
+  "line": 525,
+  "expression": "IBalancerV3StandardExchangeRouterPrepay(seRouter).restorePrepayAuth() {} catch {}",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget.sol",
+  "line": 607,
+  "expression": "seVault.exchangeIn(ttaTok, drainRaw, shareTok, 0, address(vault), false, block.timestamp) returns (",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolHookTarget.sol",
+  "line": 334,
+  "expression": "seVault.previewExchangeOut(shareTok, Repo._bufferToken(), yBufferRaw) returns (uint256 sPreview) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolHookTarget.sol",
+  "line": 341,
+  "expression": "this.__preSeatAttempt(seRouter, vaultIdx, yBufferRaw, drainAmount) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolHookTarget.sol",
+  "line": 377,
+  "expression": "seVault.exchangeOut(",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolHookTarget.sol",
+  "line": 446,
+  "expression": "this.__reconcileAttempt(seRouter, vaultIdx, physicalRaw, bumpVirtual, virtualBump) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolHookTarget.sol",
+  "line": 480,
+  "expression": "seVault.exchangeIn(bufferTok, xRaw, shareTok, 0, address(vault), false, block.timestamp) returns (",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolHookTarget.sol",
+  "line": 523,
+  "expression": "IBalancerV3StandardExchangeRouterPrepay(seRouter).passPrepayAuth(seVault) {} catch {}",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolHookTarget.sol",
+  "line": 529,
+  "expression": "IBalancerV3StandardExchangeRouterPrepay(seRouter).restorePrepayAuth() {} catch {}",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolStandardVaultPkg.sol",
+  "line": 373,
+  "expression": "vault.previewExchangeOut(share, buffer, 1e15) returns (uint256 sharesIn) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolStandardVaultPkg.sol",
+  "line": 385,
+  "expression": "vault.previewExchangeIn(buffer, amt, share) returns (uint256 minted) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolStandardVaultPkg.sol",
+  "line": 395,
+  "expression": "IERC20Metadata(address(buffer)).decimals() returns (uint8 got) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolStandardVaultPkg.sol",
+  "line": 402,
+  "expression": "IBasicVault(vault).vaultTokens() returns (address[] memory toks) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolStandardVaultPkg.sol",
+  "line": 407,
+  "expression": "IStandardVault(vault).vaultConfig() returns (IStandardVault.VaultConfig memory cfg) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolHookTarget.sol",
+  "line": 357,
+  "expression": "seVault.previewExchangeOut(shareTok, Repo._bufferToken(), yBufferRaw) returns (uint256 sPreview) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolHookTarget.sol",
+  "line": 364,
+  "expression": "this.__preSeatAttempt(seRouter, vaultIdx, yBufferRaw, drainAmount) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolHookTarget.sol",
+  "line": 401,
+  "expression": "seVault.exchangeOut(",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolHookTarget.sol",
+  "line": 472,
+  "expression": "this.__reconcileAttempt(seRouter, vaultIdx, physicalRaw, bumpVirtual, virtualBump) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolHookTarget.sol",
+  "line": 506,
+  "expression": "seVault.exchangeIn(bufferTok, xRaw, shareTok, 0, address(vault), false, block.timestamp) returns (",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolHookTarget.sol",
+  "line": 549,
+  "expression": "IBalancerV3StandardExchangeRouterPrepay(seRouter).passPrepayAuth(seVault) {} catch {}",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolHookTarget.sol",
+  "line": 555,
+  "expression": "IBalancerV3StandardExchangeRouterPrepay(seRouter).restorePrepayAuth() {} catch {}",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolStandardVaultPkg.sol",
+  "line": 396,
+  "expression": "vault.previewExchangeOut(share, buffer, 1e15) returns (uint256 sharesIn) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolStandardVaultPkg.sol",
+  "line": 408,
+  "expression": "vault.previewExchangeIn(buffer, amt, share) returns (uint256 minted) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolStandardVaultPkg.sol",
+  "line": 418,
+  "expression": "IERC20Metadata(address(buffer)).decimals() returns (uint8 got) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolStandardVaultPkg.sol",
+  "line": 425,
+  "expression": "IBasicVault(vault).vaultTokens() returns (address[] memory toks) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolStandardVaultPkg.sol",
+  "line": 430,
+  "expression": "IStandardVault(vault).vaultConfig() returns (IStandardVault.VaultConfig memory cfg) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolHookTarget.sol",
+  "line": 365,
+  "expression": "seVault.previewExchangeOut(shareTok, Repo._bufferToken(), yBufferRaw) returns (uint256 sPreview) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolHookTarget.sol",
+  "line": 372,
+  "expression": "this.__preSeatAttempt(seRouter, vaultIdx, yBufferRaw, drainAmount) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolHookTarget.sol",
+  "line": 411,
+  "expression": "seVault.exchangeOut(",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolHookTarget.sol",
+  "line": 485,
+  "expression": "this.__reconcileAttempt(seRouter, vaultIdx, physicalRaw, bumpVirtual, virtualBump) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolHookTarget.sol",
+  "line": 526,
+  "expression": "seVault.exchangeIn(bufferTok, xRaw, shareTok, 0, address(vault), false, block.timestamp) returns (",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolHookTarget.sol",
+  "line": 569,
+  "expression": "IBalancerV3StandardExchangeRouterPrepay(seRouter).passPrepayAuth(seVault) {} catch {}",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolHookTarget.sol",
+  "line": 575,
+  "expression": "IBalancerV3StandardExchangeRouterPrepay(seRouter).restorePrepayAuth() {} catch {}",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolStandardVaultPkg.sol",
+  "line": 406,
+  "expression": "vault.previewExchangeOut(share, buffer, 1e15) returns (uint256 sharesIn) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolStandardVaultPkg.sol",
+  "line": 418,
+  "expression": "vault.previewExchangeIn(buffer, amt, share) returns (uint256 minted) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolStandardVaultPkg.sol",
+  "line": 428,
+  "expression": "IERC20Metadata(address(buffer)).decimals() returns (uint8 got) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolStandardVaultPkg.sol",
+  "line": 435,
+  "expression": "IBasicVault(vault).vaultTokens() returns (address[] memory toks) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolStandardVaultPkg.sol",
+  "line": 440,
+  "expression": "IStandardVault(vault).vaultConfig() returns (IStandardVault.VaultConfig memory cfg) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolHookTarget.sol",
+  "line": 404,
+  "expression": "seVault.exchangeOut(",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolHookTarget.sol",
+  "line": 447,
+  "expression": "IBalancerV3StandardExchangeRouterPrepay(seRouter).passPrepayAuth(seVault) {} catch {}",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolHookTarget.sol",
+  "line": 453,
+  "expression": "IBalancerV3StandardExchangeRouterPrepay(seRouter).restorePrepayAuth() {} catch {}",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolHookTarget.sol",
+  "line": 470,
+  "expression": "seVault.exchangeIn(bufferTok, xRaw, shareTok, 0, address(vault), false, block.timestamp) returns (",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferHookTarget.sol",
+  "line": 372,
+  "expression": "seVault.exchangeOut(",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferHookTarget.sol",
+  "line": 415,
+  "expression": "IBalancerV3StandardExchangeRouterPrepay(seRouter).passPrepayAuth(seVault) {} catch {}",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferHookTarget.sol",
+  "line": 421,
+  "expression": "IBalancerV3StandardExchangeRouterPrepay(seRouter).restorePrepayAuth() {} catch {}",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferHookTarget.sol",
+  "line": 438,
+  "expression": "seVault.exchangeIn(bufferTok, xRaw, shareTok, 0, address(vault), false, block.timestamp) returns (",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "DT",
+  "path": "contracts/vaults/detf/common/bondNft/DETFFundedBondTarget.sol",
+  "line": 375,
+  "expression": "IVaultRegistryDisableQuery(oracle_).isDisabled(detfAddr_) returns (bool disabled_) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "DT",
+  "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol",
+  "line": 331,
+  "expression": "IStandardExchangeOut(router_).previewExchangeOut(tokenIn_, tokenOut_, amountOut_) returns (uint256 quotedIn_) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "DT",
+  "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfCommon.sol",
+  "line": 347,
+  "expression": "IStandardExchangeIn(router_).previewExchangeIn(tokenIn_, amountIn_, tokenOut_) returns (",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "DT",
+  "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETFCommon.sol",
+  "line": 92,
+  "expression": "IStandardExchangeIn(address(s.standardExchangeVault)).previewExchangeIn(",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "DT",
+  "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol",
+  "line": 170,
+  "expression": "vault_.previewExchangeIn(tokenIn_, amountIn_, IERC20(pair_)) returns (uint256 out_) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "DT",
+  "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol",
+  "line": 176,
+  "expression": "vault_.previewExchangeIn(tokenIn_, amountIn_, IERC20(pair_)) returns (uint256 out_) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "DT",
+  "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol",
+  "line": 482,
+  "expression": "IUniswapV4DetfSelfCall(address(this)).sweepDustAtomic() {} catch {}",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "DT",
+  "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol",
+  "line": 560,
+  "expression": "_hook().joinSingleAssetExactIn(token_, amt_, _bondLpHolder(), 0, block.timestamp + 1) returns (",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "DT",
+  "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol",
+  "line": 594,
+  "expression": "_hook().joinUnbalanced(tokensIn_, amounts_, _bondLpHolder(), 0, block.timestamp + 1) returns (",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "DT",
+  "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol",
+  "line": 633,
+  "expression": "IStandardExchangeIn(se_).previewExchangeIn(IERC20(pair_), amount_, IERC20(se_)) returns (uint256 shares_) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "DT",
+  "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol",
+  "line": 638,
+  "expression": "IStandardExchangeIn(se_).previewExchangeIn(IERC20(se_), 10, IERC20(pair_)) returns (uint256 quantum_) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "DT",
+  "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfCommon.sol",
+  "line": 663,
+  "expression": "IUniswapV4DetfSelfCall(address(this)).sweepPairToShare(se_, pair_, amt_) returns (uint256) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "DT",
+  "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProcessArgsLib.sol",
+  "line": 44,
+  "expression": "IUniswapV4HookLiquidityPolicy(hook_).ownerOnlyLiquidity() returns (bool actual_) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "DT",
+  "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProcessArgsLib.sol",
+  "line": 62,
+  "expression": "IMultiStepOwnable(hook_).owner() returns (address owner_) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "DT",
+  "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProcessArgsLib.sol",
+  "line": 214,
+  "expression": "vault_.previewExchangeIn(IERC20(address(vault_)), ONE_WAD, IERC20(address(vault_))) returns (uint256) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "DT",
+  "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProcessArgsLib.sol",
+  "line": 223,
+  "expression": "IStandardExchangeIn(address(vault_)).previewExchangeIn(token_, ONE_WAD, share_) returns (uint256 out_) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "DT",
+  "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol",
+  "line": 182,
+  "expression": "IUniswapV4DetfSelfCall(address(this)).peekPairEq(address(v_), address(tokenIn), amountIn) returns (",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "DT",
+  "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol",
+  "line": 407,
+  "expression": "v_.previewExchangeIn(IERC20(pair_), residual_, IERC20(address(v_))) returns (uint256 sh_) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "DT",
+  "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfTarget.sol",
+  "line": 413,
+  "expression": "v_.previewExchangeIn(IERC20(pair_), residual_, tokenOut) returns (uint256 o_) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib.sol",
+  "line": 22,
+  "expression": "IERC165(se).supportsInterface(type(IStandardExchangeTransitionQuote).interfaceId) returns (bool supported_) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib.sol",
+  "line": 28,
+  "expression": "IStandardExchangeTransitionQuote(se).quoteState(pairToken, holder) returns (bytes memory, uint256) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositCommon.sol",
+  "line": 330,
+  "expression": "IStandardExchangeIn(l.standardExchange)",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositCommon.sol",
+  "line": 356,
+  "expression": "IStandardExchangeOut(l.standardExchange)",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewTarget.sol",
+  "line": 339,
+  "expression": "IStandardExchangeOut(l.standardExchange).previewExchangeOut(",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarget.sol",
+  "line": 424,
+  "expression": "IStandardExchangeIn(l.standardExchange).previewExchangeIn(",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarget.sol",
+  "line": 451,
+  "expression": "IStandardExchangeOut(l.standardExchange).previewExchangeOut(",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookTarget.sol",
+  "line": 337,
+  "expression": "IStandardExchangeIn(l.standardExchange).previewExchangeIn(",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookTarget.sol",
+  "line": 364,
+  "expression": "IStandardExchangeOut(l.standardExchange).previewExchangeOut(",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawTarget.sol",
+  "line": 337,
+  "expression": "IStandardExchangeIn(l.standardExchange).previewExchangeIn(",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawTarget.sol",
+  "line": 364,
+  "expression": "IStandardExchangeOut(l.standardExchange).previewExchangeOut(",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg.sol",
+  "line": 389,
+  "expression": "IERC20Metadata(token).decimals() returns (uint8 d) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg.sol",
+  "line": 397,
+  "expression": "IERC20Metadata(token).symbol() returns (string memory s) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookClaimLib.sol",
+  "line": 127,
+  "expression": "IStandardExchangeOut(se).previewExchangeOut(IERC20(se), IERC20(token), dOutNative) returns (",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookClaimLib.sol",
+  "line": 157,
+  "expression": "IStandardExchangeOut(se).previewExchangeOut(IERC20(se), IERC20(token), amountOutNative)",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookCommon.sol",
+  "line": 507,
+  "expression": "IStandardExchangeIn(se).previewExchangeIn(IERC20(token), amount, IERC20(se))",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookCommon.sol",
+  "line": 533,
+  "expression": "IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seIn, IERC20(token)) returns (uint256 m) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDFPkg.sol",
+  "line": 411,
+  "expression": "IBasicVault(se).vaultTokens() returns (address[] memory tokens) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookWithdrawTarget.sol",
+  "line": 226,
+  "expression": "IUniswapV4SeBufferHook(address(this)).previewSwapExactIn(tokenIn, tokenOut, amountIn)",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookClaimLib.sol",
+  "line": 91,
+  "expression": "IStandardExchangeOut(se).previewExchangeOut(IERC20(se), IERC20(pairToken), amountOutNative)",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookClaimLib.sol",
+  "line": 114,
+  "expression": "IStandardExchangeOut(se).previewExchangeOut(IERC20(pairToken), IERC20(se), sharesOut)",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg.sol",
+  "line": 420,
+  "expression": "IBasicVault(se).vaultTokens() returns (address[] memory toks) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib.sol",
+  "line": 95,
+  "expression": "IStandardExchangeOut(se).previewExchangeOut(IERC20(se), IERC20(pairToken), amountOutNative)",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib.sol",
+  "line": 118,
+  "expression": "IStandardExchangeOut(se).previewExchangeOut(IERC20(pairToken), IERC20(se), sharesOut)",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg.sol",
+  "line": 417,
+  "expression": "IBasicVault(se).vaultTokens() returns (address[] memory toks) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookClaimLib.sol",
+  "line": 96,
+  "expression": "IStandardExchangeOut(se).previewExchangeOut(IERC20(se), IERC20(pairToken), amountOutNative)",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookClaimLib.sol",
+  "line": 112,
+  "expression": "IStandardExchangeOut(se).previewExchangeOut(IERC20(pairToken), IERC20(se), sharesOut)",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol",
+  "line": 452,
+  "expression": "IBasicVault(se).vaultTokens() returns (address[] memory toks) {",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookExitCore.sol",
+  "line": 172,
+  "expression": "IUniswapV4SeBufferHook(address(this)).previewSwapExactIn(t, tokenOut, amounts[i])",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookLiquidityTarget.sol",
+  "line": 293,
+  "expression": "IUniswapV4SeBufferHook(address(this)).previewSwapExactIn(t, tokenOut, amounts[i])",
+  "rule": "D37",
+  "state": "REPORTED"
+ },
+ {
+  "family": "RQ",
+  "path": "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderFacet.sol",
+  "line": 131,
+  "expression": "IStandardExchangeTransitionQuote(address(reserveVault_)).quoteAssets(state, quoteAmount_)",
+  "rule": "D48",
+  "state": "REPORTED"
+ },
+ {
+  "family": "RQ",
+  "path": "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderFacet.sol",
+  "line": 135,
+  "expression": "reserveVault_.previewExchangeIn(subject_, quoteAmount_, rateTarget_) returns (uint256 quotedOut) {",
+  "rule": "D48",
+  "state": "REPORTED"
+ },
+ {
+  "family": "RQ",
+  "path": "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderTarget.sol",
+  "line": 115,
+  "expression": "IStandardExchangeTransitionQuote(address(standardExchange_)).quoteAssets(state, reserveShareAmount_)",
+  "rule": "D48",
+  "state": "REPORTED"
+ },
+ {
+  "family": "RQ",
+  "path": "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderTarget.sol",
+  "line": 119,
+  "expression": "standardExchange_.previewExchangeIn(reserveVaultToken_, reserveShareAmount_, rateTarget_) returns (",
+  "rule": "D48",
+  "state": "REPORTED"
+ },
+ {
+  "family": "HK",
+  "path": "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol",
+  "line": 110,
+  "expression": "IERC165(provider).supportsInterface(...) catch {}",
+  "rule": "D41",
+  "state": "REPORTED"
+ },
+ {
+  "family": "U3",
+  "path": "contracts/vaults/standard/exchange/protocols/uniswap/StandardExchangeConstantProduct.sol",
+  "line": 26,
+  "expression": "IERC20Metadata(token).decimals() returns (uint8 d) { } catch { return 18; }",
+  "rule": "D34",
+  "state": "REPORTED",
+  "note": "shared FullSpread helper; also consumed by U4"
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget.sol",
+  "line": 595,
+  "expression": "seRouter.staticcall(prepaySessionActive)",
+  "rule": "D49",
+  "state": "D49_STATICCALL_PROBE",
+  "note": "Interface-detection staticcall retained under D49 (2026-09-21); operative calls hard. Line at the 2026-09-21 revision."
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolHookTarget.sol",
+  "line": 337,
+  "expression": "address(seVault).staticcall(previewExchangeOut)",
+  "rule": "D49",
+  "state": "D49_STATICCALL_PROBE",
+  "note": "Interface-detection staticcall retained under D49 (2026-09-21); operative calls hard. Line at the 2026-09-21 revision."
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolHookTarget.sol",
+  "line": 442,
+  "expression": "address(seVault).staticcall(previewExchangeIn)",
+  "rule": "D49",
+  "state": "D49_STATICCALL_PROBE",
+  "note": "Interface-detection staticcall retained under D49 (2026-09-21); operative calls hard. Line at the 2026-09-21 revision."
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolHookTarget.sol",
+  "line": 517,
+  "expression": "seRouter.staticcall(prepaySessionActive)",
+  "rule": "D49",
+  "state": "D49_STATICCALL_PROBE",
+  "note": "Interface-detection staticcall retained under D49 (2026-09-21); operative calls hard. Line at the 2026-09-21 revision."
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolHookTarget.sol",
+  "line": 361,
+  "expression": "address(seVault).staticcall(previewExchangeOut)",
+  "rule": "D49",
+  "state": "D49_STATICCALL_PROBE",
+  "note": "Interface-detection staticcall retained under D49 (2026-09-21); operative calls hard. Line at the 2026-09-21 revision."
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolHookTarget.sol",
+  "line": 469,
+  "expression": "address(seVault).staticcall(previewExchangeIn)",
+  "rule": "D49",
+  "state": "D49_STATICCALL_PROBE",
+  "note": "Interface-detection staticcall retained under D49 (2026-09-21); operative calls hard. Line at the 2026-09-21 revision."
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolHookTarget.sol",
+  "line": 544,
+  "expression": "seRouter.staticcall(prepaySessionActive)",
+  "rule": "D49",
+  "state": "D49_STATICCALL_PROBE",
+  "note": "Interface-detection staticcall retained under D49 (2026-09-21); operative calls hard. Line at the 2026-09-21 revision."
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolHookTarget.sol",
+  "line": 367,
+  "expression": "address(seVault).staticcall(previewExchangeOut)",
+  "rule": "D49",
+  "state": "D49_STATICCALL_PROBE",
+  "note": "Interface-detection staticcall retained under D49 (2026-09-21); operative calls hard. Line at the 2026-09-21 revision."
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolHookTarget.sol",
+  "line": 482,
+  "expression": "address(seVault).staticcall(previewExchangeIn)",
+  "rule": "D49",
+  "state": "D49_STATICCALL_PROBE",
+  "note": "Interface-detection staticcall retained under D49 (2026-09-21); operative calls hard. Line at the 2026-09-21 revision."
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolHookTarget.sol",
+  "line": 564,
+  "expression": "seRouter.staticcall(prepaySessionActive)",
+  "rule": "D49",
+  "state": "D49_STATICCALL_PROBE",
+  "note": "Interface-detection staticcall retained under D49 (2026-09-21); operative calls hard. Line at the 2026-09-21 revision."
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolHookTarget.sol",
+  "line": 441,
+  "expression": "seRouter.staticcall(prepaySessionActive)",
+  "rule": "D49",
+  "state": "D49_STATICCALL_PROBE",
+  "note": "Interface-detection staticcall retained under D49 (2026-09-21); operative calls hard. Line at the 2026-09-21 revision."
+ },
+ {
+  "family": "BA",
+  "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferHookTarget.sol",
+  "line": 409,
+  "expression": "seRouter.staticcall(prepaySessionActive)",
+  "rule": "D49",
+  "state": "D49_STATICCALL_PROBE",
+  "note": "Interface-detection staticcall retained under D49 (2026-09-21); operative calls hard. Line at the 2026-09-21 revision."
+ }
+]

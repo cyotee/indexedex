@@ -197,6 +197,11 @@ contract HostileSE_V3PooStaCom {
         bufferToken = bufferToken_;
     }
 
+    function vaultTokens() external view returns (address[] memory tokens_) {
+        tokens_ = new address[](1);
+        tokens_[0] = address(bufferToken);
+    }
+
     function setFailExchangeIn(bool v) external {
         failExchangeIn = v;
     }
@@ -231,7 +236,8 @@ contract HostileSE_V3PooStaCom {
         return true;
     }
 
-    function previewExchangeIn(IERC20, uint256 amountIn, IERC20) external pure returns (uint256) {
+    function previewExchangeIn(IERC20, uint256 amountIn, IERC20) external view returns (uint256) {
+        if (failExchangeIn) revert("HostileSE_V3PooStaCom: exchangeIn");
         return amountIn;
     }
 
@@ -246,7 +252,8 @@ contract HostileSE_V3PooStaCom {
         totalSupply += amountOut;
     }
 
-    function previewExchangeOut(IERC20, IERC20, uint256 amountOut) external pure returns (uint256) {
+    function previewExchangeOut(IERC20, IERC20, uint256 amountOut) external view returns (uint256) {
+        if (failExchangeOut) revert("HostileSE_V3PooStaCom: exchangeOut");
         return amountOut;
     }
 

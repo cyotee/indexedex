@@ -94,7 +94,7 @@ contract UniswapV3FullSpreadStandardExchangeVaultDFPkg_Deploy_Test is TestBase_U
         IUniswapV3Pool roguePool = IUniswapV3Pool(otherFactory.createPool(t0, t1, FEE_MEDIUM));
         roguePool.initialize(uint160(uint256(1) << 96));
 
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("InvalidPoolFactory(address,address)", address(otherFactory), address(uniswapV3Factory)));
         uniswapV3StandardExchangeDFPkg.deployVault(roguePool);
     }
 

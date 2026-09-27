@@ -87,9 +87,7 @@ contract Adversarial_MixedBuffer_TrustFlag_Test is TestBase_MixedBufferMultiVaul
         assertEq(buffer_.balanceOf(attacker), 0, "attacker has no buffer");
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         IStandardExchangeIn(instance_)
             .exchangeIn(buffer_, claimed_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours);
 
@@ -127,9 +125,7 @@ contract Adversarial_MixedBuffer_TrustFlag_Test is TestBase_MixedBufferMultiVaul
         uint256 bufferBefore_ = buffer_.balanceOf(attacker);
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, residualDetf_, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         IStandardExchangeIn(instance_)
             .exchangeIn(IERC20(instance_), residualDetf_, buffer_, 0, attacker, true, block.timestamp + 1 hours);
 
@@ -149,9 +145,7 @@ contract Adversarial_MixedBuffer_TrustFlag_Test is TestBase_MixedBufferMultiVaul
         uint256 claimed_ = residual_;
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         IMixedBufferMultiVaultStableDetfBonding(instance_)
             .bond(buffer_, claimed_, DEFAULT_MIN_LOCK, attacker, true, block.timestamp + 1 hours);
 
@@ -217,9 +211,7 @@ contract Adversarial_MixedBuffer_TrustFlag_Test is TestBase_MixedBufferMultiVaul
 
         // Second call: pretransferred against residual, no new inbound transfer.
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, residual_, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         IStandardExchangeIn(instance_)
             .exchangeIn(buffer_, residual_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours);
 

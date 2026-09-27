@@ -722,3 +722,14 @@ Product law is **LOCKED**. Stakeholders / review confirmed:
 11. ✅ Phase 0: ship exact-LP-out / exact-token-out / unbalanced **iff** closed-form; never binary-search.
 
 **Implementation plan** (`UNISWAP_V4_STANDARD_EXCHANGE_QUAD_STABLE_BUFFER_HOOK_IMPLEMENTATION_AND_TEST_PLAN.md`) is now the implementor SoT for phases/tests. Further product changes require **explicit PRD revision** (v0.3+).
+
+---
+
+## Addendum: APEX D60 held-reserve valuation (2026-09-22)
+
+Owner ruling recorded in `docs/audits/apex-2026-09-17-remediation-and-regression-tests.plan.md` (D59, D60) and `docs/audits/apex-2026-09-17-open-item-10-cp-hook-rate-providers-PRD.md`; supersedes any statement in this PRD that values a held SE leg through the SE's own quote (`previewExchangeIn(se, heldShares, token)` or transition-quote `quoteAssets`).
+
+- `PkgArgs.rateProviders[i]` is required on every SE leg and accepted on any leg (`RateProviderWithoutSE` removed, `RateProviderRequired` added). `ClaimLib.ratedPairUnits(i)` / `rated` / `ratedWith` / `unrated` are the only valuation paths. Getters are hosted on `ExitTarget` / `ExitFacet` (EIP-170 headroom).
+- Swap-side valuation of a buffered leg is `shares x rate` (`Math.ratedPairUnits` with the Balancer rate scaling `invScale = 10^(36 - seDecimals)`, `ratedScale = 10^(36 - tokenDecimals)`); the SE is asked only how many shares a buffer mints or how much pair an unwrap pays.
+- Liquidity operations use raw balances (D59): LP issuance for a buffered leg follows the share ratio, exits are pro rata in raw shares and raw tokens.
+- Getters `rateProviders()` and `rateProvider(address token)` are on the proxy surface.

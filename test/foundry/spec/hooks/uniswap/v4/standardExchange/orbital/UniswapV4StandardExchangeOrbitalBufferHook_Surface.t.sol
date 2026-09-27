@@ -85,7 +85,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_Surface_Test is TestBase {
         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.tokens.selector), "J1 tokens");
         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.isLive.selector), "J1 isLive");
         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.firstJoinMustBeFullBook.selector), "J1 firstJoinMustBeFullBook");
-        assertEq(funcs_.length, 46, "J1 HooksFacet facetFuncs length");
+        assertEq(funcs_.length, 48, "J1 HooksFacet facetFuncs length"); // D60: + rateProviders(), rateProvider(address)
     }
 
     function test_J1_deposit_targetSelectors_subseteq_facetFuncs() public view {

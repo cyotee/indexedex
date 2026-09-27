@@ -22,9 +22,9 @@ library StandardExchangeConstantProduct {
         return mean < 3 ? 1 : 10 ** (mean - 3);
     }
 
+    /// @dev D34: direct metadata call; a token without decimals() reverts here.
     function _decimals(address token) private view returns (uint8) {
-        try IERC20Metadata(token).decimals() returns (uint8 d) { return d; }
-        catch { return 18; }
+        return IERC20Metadata(token).decimals();
     }
 
     function _initialShares(uint256 amount0, uint256 amount1, uint256 minimum) internal pure returns (uint256) {
@@ -62,6 +62,37 @@ library StandardExchangeConstantProduct {
         uint256 afterInvariant = FixedPointMathLib.mulSqrt(reserve0Before + amount0Added, reserve1Before + amount1Added);
         if (afterInvariant <= beforeInvariant) return 0;
         return Math.mulDiv(totalSharesBefore, afterInvariant - beforeInvariant, beforeInvariant);
+    }
+
+    /// @notice Closed-form minimal single-token input that mints at least `sharesOut`.
+    /// @dev Inverts the single-token branch of `_sharesForDeposit` (amountOther == 0).
+    /// The forward path grows the invariant: `K = ceil(sqrt(reserveIn*reserveOther))`,
+    /// `sharesOut = mulDiv(supply, afterInvariant - K, K)` with
+    /// `afterInvariant = floor(sqrt((reserveIn+amountIn)*reserveOther))`. Requiring
+    /// `sharesOut` shares needs `afterInvariant >= A = K + ceil(sharesOut*K/supply)`,
+    /// hence `(reserveIn+amountIn)*reserveOther >= A^2`, i.e.
+    /// `amountIn = ceil(A^2/reserveOther) - reserveIn`. Exact-out execution books this
+    /// input in full while minting exactly `sharesOut`; any rounding surplus stays in
+    /// the book and accrues to existing holders (NAV never decreases). Reverts when no
+    /// closed form exists (first mint, or depositing into an empty same-side reserve).
+    function _amountInForShares(uint256 reserveIn, uint256 reserveOther, uint256 sharesOut, uint256 supply)
+        internal pure returns (uint256 amountIn)
+    {
+        if (sharesOut == 0) return 0;
+        // First mint has no single-token closed form (mulSqrt needs both legs).
+        if (supply == 0) revert InsufficientBacking();
+        // Forward yields zero shares for any single-token input into an empty same-side reserve.
+        if (reserveIn == 0) revert InsufficientBacking();
+        if (reserveOther == 0) {
+            // Linear branch: forward is mulDiv(amountIn, supply, reserveIn); invert with ceil.
+            return Math.mulDiv(sharesOut, reserveIn, supply, Math.Rounding.Ceil);
+        }
+        // Invariant-growth branch. K == forward `beforeInvariant` (ceil of the sqrt).
+        uint256 K = FixedPointMathLib.mulSqrt(reserveIn, reserveOther);
+        if (Math.mulDiv(reserveIn, reserveOther, K) != K || mulmod(reserveIn, reserveOther, K) != 0) ++K;
+        uint256 A = K + Math.mulDiv(sharesOut, K, supply, Math.Rounding.Ceil);
+        uint256 needInPlus = Math.mulDiv(A, A, reserveOther, Math.Rounding.Ceil);
+        amountIn = needInPlus > reserveIn ? needInPlus - reserveIn : 1;
     }
 
     function _singleExit(uint256 reserveOut, uint256 reserveOther, uint256 shares, uint256 supply)

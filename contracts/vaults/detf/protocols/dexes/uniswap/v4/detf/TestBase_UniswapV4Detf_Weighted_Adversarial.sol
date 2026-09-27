@@ -18,6 +18,8 @@ import {TestBase_UniswapV4Detf} from
 import {TestBase_UniswapV4Detf_Weighted} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Weighted.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 import {
     TestBase_UniswapV4Detf_Adversarial,
     UniV4DetfPretransferHelper
@@ -42,6 +44,7 @@ abstract contract TestBase_UniswapV4Detf_Weighted_Adversarial is
         victim = makeAddr("victim");
         aliceAdv = makeAddr("aliceAdv");
         preHelper = new UniV4DetfPretransferHelper();
+        apexCaller = new AtomicPretransferCaller();
     }
 
     function _firstBond(uint256 pairAmount_)
@@ -115,7 +118,7 @@ abstract contract TestBase_UniswapV4Detf_Weighted_Adversarial is
                 tokens: toks,
                 weights: w,
                 standardExchanges: ses,
-                rateProviders: rps,
+                rateProviders: RateProviderFixtureLib.providersFor(create3Factory, diamondPackageFactory, toks, ses),
                 tokenDecimals: HookPkgArgsDecimalsLib.tokenDecimals(toks, predicted_),
                 seDecimals: HookPkgArgsDecimalsLib.seDecimals(ses),
                 ownerOnlyLiquidity: args.ownerOnlyLiquidity,

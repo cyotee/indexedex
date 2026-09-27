@@ -118,7 +118,8 @@ library ProtocolDetfInstanceLib {
                 pairTokenDecimals: HookPkgArgsDecimalsLib.tokenDec(s.ttWETH),
                 rawTokenDecimals: predicted.code.length == 0 ? uint8(9) : HookPkgArgsDecimalsLib.tokenDec(predicted),
                 ownerOnlyLiquidity: _dtfDetfArgs(s).ownerOnlyLiquidity,
-                owner: predicted
+                owner: predicted,
+                rateProvider: s.rpRichWeth // D60
             });
         return CpHookFactory.findMineNonce(
             s.hookFactory,
@@ -140,7 +141,8 @@ library ProtocolDetfInstanceLib {
                 pairTokenDecimals: HookPkgArgsDecimalsLib.tokenDec(s.ttWETH),
                 rawTokenDecimals: predicted.code.length == 0 ? uint8(9) : HookPkgArgsDecimalsLib.tokenDec(predicted),
                 ownerOnlyLiquidity: args.ownerOnlyLiquidity,
-                owner: predicted
+                owner: predicted,
+                rateProvider: s.rpRichWeth // D60
             });
         address hook_ = CpHookFactory.deployHook(
             IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage(s.cpHookPkg), hArgs, nonce

@@ -5,6 +5,8 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
 import {Actions} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Actions.sol";
 import {UniswapV4FullSpreadStandardExchangeVaultPositionRepo} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultPositionRepo.sol";
 import {
@@ -24,16 +26,18 @@ contract UniswapV4FullSpreadStandardExchangeVaultOutExecutionDelegate is Uniswap
         state.totalShares = IERC20(address(this)).totalSupply();
 
         uint256 delivered;
-        if (pretransferred) {
-            delivered = _secureShareDelivery(maxSharesToBurn, true);
-        }
-
         if (!canOpenPoolManagerUnlock()) {
             sharesBurned = _quotedWithdrawalShares(tokenOut, minAmountOut, 0);
             if (sharesBurned == 0 || sharesBurned > maxSharesToBurn) {
                 revert UniswapV4ExchangeOut_InsufficientInput();
             }
-            if (pretransferred) _requireDelivered(sharesBurned, delivered);
+            if (pretransferred) {
+                LocalCreditLib.requirePretransferCaller(msg.sender);
+                delivered = _pretransferCredit(IERC20(address(this)), maxSharesToBurn);
+                if (sharesBurned > delivered) {
+                    revert ISecurePullErrors.TransferDeltaInsufficient(sharesBurned, delivered);
+                }
+            }
             uint256 freeOut = IERC20(tokenOut).balanceOf(address(this));
             if (freeOut < minAmountOut) {
                 revert UniswapV4Exchange_InsufficientLocalReserve(tokenOut, minAmountOut, freeOut);
@@ -54,7 +58,13 @@ contract UniswapV4FullSpreadStandardExchangeVaultOutExecutionDelegate is Uniswap
         if (sharesBurned == 0 || sharesBurned > maxSharesToBurn) {
             revert UniswapV4ExchangeOut_InsufficientInput();
         }
-        if (pretransferred) _requireDelivered(sharesBurned, delivered);
+        if (pretransferred) {
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+            delivered = _pretransferCredit(IERC20(address(this)), maxSharesToBurn);
+            if (sharesBurned > delivered) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(sharesBurned, delivered);
+            }
+        }
 
         state.actualOut = _executeFreeZapOutWithdrawalCore(tokenOut, sharesBurned, state.totalShares);
         if (state.actualOut < minAmountOut) revert UniswapV4ExchangeOut_SlippageExceeded();
@@ -65,7 +75,10 @@ contract UniswapV4FullSpreadStandardExchangeVaultOutExecutionDelegate is Uniswap
         } else {
             ERC20Repo._burn(msg.sender, sharesBurned);
         }
-        _transferCurrency(tokenOut, recipient, state.actualOut);
+        // D55 (APEX F6): exact-output pays exactly the requested amount. The zap-out surplus above it
+        // stays in the vault and is booked by `_syncVaultReserves` (D6), so preview and execution agree
+        // on both the shares spent and the amount delivered.
+        _transferCurrency(tokenOut, recipient, minAmountOut);
         _syncVaultReserves();
     }
 
@@ -73,13 +86,11 @@ contract UniswapV4FullSpreadStandardExchangeVaultOutExecutionDelegate is Uniswap
         private view returns (uint256)
     {
         uint256 supply = IERC20(address(this)).totalSupply();
-        if (amountOut != 0 && shareBudget > 1 && shareBudget < supply) {
-            // Invert s + max(floor(s / 100), 1). A capped budget has no unique inverse.
-            uint256 candidate = shareBudget < 101 ? shareBudget - 1 : shareBudget - shareBudget / 101;
-            // Treat the budget only as a hint. Verify the buffer and both adjacent forward quotes.
-            if (_bufferedInventoryShares(candidate, supply) == shareBudget
-                && _withdrawalAssets(tokenOut, candidate) >= amountOut
-                && (candidate == 1 || _withdrawalAssets(tokenOut, candidate - 1) < amountOut)) {
+        if (amountOut != 0 && shareBudget > 0 && shareBudget < supply) {
+            // The budget is only a hint (D55: the exact-out quote is the minimal sufficient share count, no
+            // pad). Accept it when it is sufficient and one share fewer is not; otherwise search.
+            if (_withdrawalAssets(tokenOut, shareBudget) >= amountOut
+                && (shareBudget == 1 || _withdrawalAssets(tokenOut, shareBudget - 1) < amountOut)) {
                 return shareBudget;
             }
         }

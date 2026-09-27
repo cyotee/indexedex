@@ -8,6 +8,10 @@ pragma solidity ^0.8.0;
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {Address} from "@crane/contracts/utils/Address.sol";
+import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
+import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Indexedex                                 */
@@ -52,7 +56,15 @@ abstract contract UniswapV4FullSpreadStandardExchangeVaultOutExecuteTarget is Un
             if (estimatedAmountIn > maxAmountIn) revert UniswapV4ExchangeOut_InsufficientInput();
 
             uint256 inboundBefore = tokenIn.balanceOf(address(this));
-            uint256 providedAmountIn = _secureTokenTransfer(tokenIn, maxAmountIn, pretransferred);
+            uint256 pullAmount = estimatedAmountIn;
+            if (pretransferred) {
+                uint256 credit = _pretransferCredit(tokenIn, maxAmountIn);
+                if (estimatedAmountIn > credit) {
+                    revert ISecurePullErrors.TransferDeltaInsufficient(estimatedAmountIn, credit);
+                }
+                pullAmount = credit;
+            }
+            uint256 providedAmountIn = _secureTokenTransfer(tokenIn, pullAmount, pretransferred);
             if (pretransferred) inboundBefore -= providedAmountIn;
             _requireDelivered(estimatedAmountIn, providedAmountIn);
             uint256 actualOut;
@@ -61,7 +73,9 @@ abstract contract UniswapV4FullSpreadStandardExchangeVaultOutExecuteTarget is Un
             _requireDelivered(amountIn, providedAmountIn);
             if (actualOut < amountOut) revert UniswapV4ExchangeOut_SlippageExceeded();
 
-            _refundExcess(tokenIn, inboundBefore, providedAmountIn < maxAmountIn ? providedAmountIn : maxAmountIn, amountIn);
+            if (pretransferred) {
+                _refundExcess(tokenIn, inboundBefore, providedAmountIn, amountIn);
+            }
             _syncVaultReserves();
             _rebalanceLiquidReserveBestEffort();
             _pokeBoundPoolTwap();
@@ -77,7 +91,49 @@ abstract contract UniswapV4FullSpreadStandardExchangeVaultOutExecuteTarget is Un
             return amountIn;
         }
 
+        // D64: exact-out mint. Pull the closed-form pair input, book it, mint exactly `amountOut` shares.
+        if (address(tokenOut) == address(this) && (address(tokenIn) == token0 || address(tokenIn) == token1)) {
+            amountIn = _executeZapInMintExactOut(tokenIn, maxAmountIn, amountOut, recipient, pretransferred);
+            _rebalanceLiquidReserveBestEffort();
+            _pokeBoundPoolTwap();
+            return amountIn;
+        }
+
         revert ExchangeOutNotAvailable();
+    }
+
+    /// @dev D64 exact-out mint. `amountIn` is the closed-form minimal pair input for `sharesOut`
+    /// (total-reserve basis, so it equals `previewExchangeOut`). The full input is booked by
+    /// `_syncVaultReserves`; any rounding surplus over the exact backing stays for existing holders
+    /// (D6, NAV never decreases). Mirrors the deposit path's collect / sleeve semantics.
+    function _executeZapInMintExactOut(
+        IERC20 tokenIn,
+        uint256 maxAmountIn,
+        uint256 sharesOut,
+        address recipient,
+        bool pretransferred
+    ) internal returns (uint256 amountIn) {
+        if (sharesOut == 0) revert UniswapV4Exchange_ZeroAmount();
+        uint256 credit = pretransferred ? _pretransferCredit(tokenIn, maxAmountIn) : 0;
+        amountIn = _amountInForZapMint(address(tokenIn), sharesOut, credit);
+        if (amountIn > maxAmountIn) revert UniswapV4ExchangeOut_InsufficientInput();
+
+        uint256 inboundBefore = tokenIn.balanceOf(address(this));
+        uint256 pullAmount = amountIn;
+        if (pretransferred) {
+            if (amountIn > credit) revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, credit);
+            pullAmount = credit;
+        }
+        uint256 providedAmountIn = _secureTokenTransfer(tokenIn, pullAmount, pretransferred);
+        if (pretransferred) inboundBefore -= providedAmountIn;
+        _requireDelivered(amountIn, providedAmountIn);
+        if (pretransferred) {
+            _refundExcess(tokenIn, inboundBefore, providedAmountIn, amountIn);
+        }
+
+        _collectManagedFeesIfIdle();
+        ERC20Repo._mint(recipient, sharesOut);
+        _syncVaultReserves();
     }
 
     function _executeDirectSwapOut(address tokenIn, uint256 amountOut, address recipient)

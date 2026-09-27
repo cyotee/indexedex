@@ -183,6 +183,15 @@ abstract contract V4ReserveLiquidityBehavior is Test {
         uint256 low_;
         uint256 high_ = 1_000_000 ether;
         uint256 snapshot_ = vm.snapshotState();
+        // Orbital sphere mark returns 0 once a yield-scaled leg sits on the radius.
+        // Shrink the probe until the mark is inside the domain and above the gate.
+        while (high_ >= 1e9) {
+            _fundReserveYield(subject_, high_);
+            uint256 priced_ = _leadSyntheticPrice(subject_);
+            vm.revertToState(snapshot_);
+            if (priced_ > target_) break;
+            high_ /= 2;
+        }
         _fundReserveYield(subject_, high_);
         assertGt(_leadSyntheticPrice(subject_), target_, "funding budget reaches expansion threshold");
         vm.revertToState(snapshot_);
@@ -293,9 +302,10 @@ abstract contract V4ReserveLiquidityBehavior is Test {
         // Weighted/Curve measure fee growth in native SE inventory, not the SE exchange rate.
         // Fund additional SE shares through the real deposit route; no LP is fabricated.
         IERC20(_leadPayment()).approve(se_, 10 ether);
-        IStandardExchangeIn(se_).exchangeIn(
-            IERC20(_leadPayment()), 10 ether, IERC20(se_), 0, hook_, false, block.timestamp
+        uint256 seeded_ = IStandardExchangeIn(se_).exchangeIn(
+            IERC20(_leadPayment()), 10 ether, IERC20(se_), 0, _buyer(), false, block.timestamp
         );
+        IERC20(se_).transfer(hook_, seeded_);
         vm.stopPrank();
         _purchase(10 ether); // A real liquidity operation realizes accrued fee LP.
         amount_ = _lp().balanceOf(address(_collector()));

@@ -1,0 +1,527 @@
+{
+  "capturedUtc": "2026-09-18T20:00:00+00:00",
+  "fixRevision": {
+    "indexedex": "2d69dc1e954f51698f7e26699940171dec2d8a3b",
+    "indexedexDirty": true,
+    "crane": "dfc93a9bcf7bcb4376333a10c74d924417b2bfbe",
+    "craneDirty": true,
+    "craneDirtyFiles": [
+      "lib/crane/contracts/interfaces/IStandardExchangeIn.sol",
+      "lib/crane/contracts/interfaces/IStandardExchangeOut.sol"
+    ],
+    "auditedIndexedex": "aca16198a87ab292a87e104f85fd7035fbb3320d",
+    "auditedCrane": "d87c74b76ad30f6055211e6a37089c600d3ab3c3",
+    "pdfSha256": "1065dfd9d0b85dd53b3af1c073fdaa5bc5301891847554b10926e205c4207485",
+    "solc": "0.8.35",
+    "snapshotStatus": "PREFIXED_REBUILT_TARGETED_003_009_004B_005"
+  },
+  "publicSelectors": {
+    "exchangeIn": "0x05562cc8",
+    "exchangeOut": "0x612d4427",
+    "previewExchangeIn": "0x89d61912",
+    "previewExchangeOut": "0xdb149bc5",
+    "reserveOfToken": "0x46f910ac",
+    "EOAPretransferNotAllowed": "0xb18c67ea",
+    "TransferDeltaInsufficient": "0x0b7f868c",
+    "UniswapV4Exchange_ZeroAmount": "0xd373011c",
+    "ZeroOperationAmount": "0xab340279",
+    "NotPoolManager": "0xae18210a",
+    "beforeSwap": "0x575e24b4"
+  },
+  "sourceSha256": {
+    "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeCommon.sol": "4d1f9d99da8e51613ec50bcc49a8fdde0c93167454904ffb65fe30612771257a",
+    "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeCommon.sol": "107f55508296c893a651b23003b9ffcf78d21c5f342b74c821bc855c1e743ab3",
+    "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultCommon.sol": "d52b8728ebc48084d5583aaf3028e8e040a4633fc7eb4c7f68ccb5bded99b1b6",
+    "contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultCommon.sol": "82cead3623734229f49c74f9bb0dabe911091b8970003dd991b4ff3ca764c7af",
+    "contracts/protocols/staking/rebasingVault/RebasingAwareStandardExchangeTarget.sol": "1ae3423540901c1877c4687dd34010a5a2553e4c9560f99ee922cad92c05b50f",
+    "contracts/vaults/standard/erc4626/ERC4626StandardExchangeCommon.sol": "28409bcc026511682f6ae936cc79b2e6aa53cc9fae8961acf457722a457aa5ad",
+    "contracts/vaults/standard/erc4626/ERC4626StandardExchangeInTarget.sol": "d925de62a87e3cc1edb456ca9eb49afe2056d5dc024238e52f59c9813981f606",
+    "contracts/vaults/standard/erc4626/ERC4626StandardExchangeOutTarget.sol": "e31cc3920468f7cd8faf26255272c7b3ea675ac3c6855085c3bda4b9d25f5516",
+    "contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeOutTarget.sol": "800ca8948bb61f9f8fbf971d08e8230719a7b1a4c4dff0290229159bf94f59d3",
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookCommon.sol": "5432fa00b13b4282c98590ea06177b9b0075d3a657f5e03f3e541b5c4f44b8e5",
+    "contracts/utils/LocalCreditLib.sol": "6d66ed5be41ebcb7b59716c1af24023469ef4da4b1b2123a8d4a7b1beb02d411",
+    "contracts/interfaces/ISecurePullErrors.sol": "b2b57a724e93b111647978599297a6a861f556b2739460a1c1d8f42c40394b71",
+    "lib/crane/contracts/interfaces/IStandardExchangeIn.sol": "e0f62a920049c84ea71b7e8c26279ff88958a7a0d17d1ba126d7e42b2d638809",
+    "lib/crane/contracts/interfaces/IStandardExchangeOut.sol": "3cdd3fab91b0f27041cc42a8879bde298a092be85405442f7ee4f0c0447d069d",
+    "contracts/vaults/basic/BasicVaultCommon.sol": "a005d5eff958df36a14942308d4385a1bdf2a17fc569c41cdb2b5a9594786fb5"
+  },
+  "rows": [
+    {
+      "finding": "APEX-2026-001-M",
+      "pdfPage": "1-2",
+      "affectedSourceFunction": [
+        "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeCommon.sol::_secureTokenTransfer (preserved, unmodified)",
+        "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeCommon.sol::_secureTokenTransfer (preserved, unmodified)",
+        "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultCommon.sol::exchangeIn/exchangeOut (replacement)",
+        "contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultCommon.sol::exchangeIn/exchangeOut (replacement)"
+      ],
+      "publicSelectors": [
+        "0x05562cc8",
+        "0x612d4427",
+        "0xb18c67ea",
+        "0x0b7f868c"
+      ],
+      "packageVersion": {
+        "preserved": "historical UniswapV3/V4 StandardExchange under contracts/protocols/dexes/uniswap/{v3,v4}/ at audited IndexedEx aca16198 and current 2d69dc1e (unmodified)",
+        "replacement": "UniswapV3/V4FullSpreadStandardExchangeVault diamonds, IndexedEx 2d69dc1e dirty"
+      },
+      "reproductionTests": [
+        "test_APEX001M_preserved_phantomMintAndRedemption_token0",
+        "test_APEX001M_preserved_phantomMintAndRedemption_token1"
+      ],
+      "correctedTests": [
+        "test_APEX001M_eoaAndContractZeroInputRejected_token0",
+        "test_APEX001M_eoaAndContractZeroInputRejected_token1",
+        "test_APEX001M_atomicFundedSucceedsFromPreparedState",
+        "test_APEX001M_excessPushedTransferCreditsRequestedOnly"
+      ],
+      "fixRevision": "IndexedEx 2d69dc1e dirty; Crane dfc93a9b dirty NatSpec; preserved source SHA-256 4d1f9d99\u2026 / 107f5550\u2026; FullSpread Common SHA-256 cc0ac9d1\u2026 / dff793d1\u2026",
+      "command": "python3 scripts/forge-artifacts.py test contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultCommon.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultCommon.sol contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeCommon.sol contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeCommon.sol --test-root test/foundry/spec/vaults/standard/exchange/protocols/uniswap -- -vv",
+      "log": "docs/audits/apex-2026-09-17-evidence/fullspread-delivery.log",
+      "outcome": "Preserved V3/V4 APEX001M phantom mint/redemption PASS (exploit demonstration). FullSpread V3/V4/native APEX001M named tests PASS. Sibling FullSpread suites in the same log 38 passed / 1 failed each; those failures are not the APEX001M assertions.",
+      "state": "REPRODUCED on preserved; VERIFIED_FIXED on FullSpread named tests (replacement verified, not live-instance remediated)",
+      "residualLimitation": "Immutable live instances are not remediated. Source/replacement tests never count as live-instance repair. Sibling FullSpread suites in fullspread-delivery.log are not all-green (38/1). Isolated snapshot rebuild remains COPIED_REBUILD_PENDING.",
+      "independentReleaseEvidence": {
+        "release": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-summary.json",
+        "currentSourceAndRuntimeIdentity": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-identity-after.json",
+        "historicalRunRetained": "docs/audits/apex-2026-09-17-evidence/fullspread-delivery.log"
+      }
+    },
+    {
+      "finding": "APEX-2026-001-M2",
+      "pdfPage": "3",
+      "affectedSourceFunction": [
+        "Seven reported Uniswap V4 diamonds on chain 4663",
+        "Vault registry 0x09682b00D873D913ada0bB69B4D4c9631810d0bc",
+        "Custody instance 0x2E9C1F705aB967c5Af59249203d7495bDabb223b",
+        "IVault.reserveOfToken(address)"
+      ],
+      "publicSelectors": [
+        "0x46f910ac",
+        "0x05562cc8",
+        "0xd373011c",
+        "0xab340279"
+      ],
+      "packageVersion": "Chain 4663 block 64025200; FOUNDRY_PROFILE=fork; registry 0x09682b00\u2026; not a separate arithmetic defect",
+      "reproductionTests": [
+        "test_APEX001M2_chainAndRegistry",
+        "test_APEX001M2_reserveOfTokenSelector",
+        "test_APEX001M2_instanceInventoryAndGates"
+      ],
+      "correctedTests": [
+        "None. 001-M2 is instance inventory of 001-M, not an independent arithmetic fix. Closed gates are not labeled fixed."
+      ],
+      "fixRevision": "Fork evidence against live bytecode at block 64025200; hermetic replacement remains FullSpread 2d69dc1e",
+      "command": "FOUNDRY_PROFILE=fork python3 scripts/forge-artifacts.py test --test-root test/foundry/fork/robinhood_main/APEX20260917_HistoricalInventory.t.sol -- -vv",
+      "log": "docs/audits/apex-2026-09-17-evidence/historical-inventory.log",
+      "outcome": "3/3 PASS. Registry enumerates 49 vaults. reserveOfToken selector 0x46f910ac. Seven reported V4 diamonds registered, not disabled, 18 facets; zero-input exchangeIn reverts UniswapV4Exchange_ZeroAmount (0xd373011c). Custody 0x2E9C\u2026 registered, 9 facets, reserve equals held, reverts ZeroOperationAmount. Instance 0x64e0\u2026 lists a zero token and an empty probe revert.",
+      "state": "REPRODUCED",
+      "residualLimitation": "Live instances are not remediated. A closed gate is not a fix. Hermetic 001-M remains the arithmetic reproduction. replacement verified \u2260 existing deployment remediated.",
+      "independentReleaseEvidence": {
+        "release": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-summary.json",
+        "currentSourceAndRuntimeIdentity": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-identity-after.json",
+        "historicalRunRetained": "docs/audits/apex-2026-09-17-evidence/historical-inventory.log"
+      }
+    },
+    {
+      "finding": "APEX-2026-003",
+      "pdfPage": "3",
+      "affectedSourceFunction": [
+        "contracts/protocols/staking/rebasingVault/RebasingAwareStandardExchangeTarget.sol::exchangeIn/exchangeOut/takeShares",
+        "contracts/protocols/staking/rebasingVault/RebasingAwareStandardYieldTarget.sol::redeem (burnFromInternalBalance)"
+      ],
+      "publicSelectors": [
+        "0x05562cc8",
+        "0x612d4427",
+        "0xb18c67ea",
+        "0x0b7f868c"
+      ],
+      "packageVersion": "RebasingAware ERC-4626 SY/SE package, IndexedEx 2d69dc1e dirty; live custody 0x2E9C1F705aB967c5Af59249203d7495bDabb223b immutable",
+      "reproductionTests": [
+        "prefixed test_API07_sharePretransferBurnsBAndRefundsPB PASS (leftover shares refunded to EOA)",
+        "prefixed test_APEX003_eoaSharePretransferRejected FAIL: next call did not revert",
+        "prefixed test_APEX003_contractExactInBurnsRequestedOnly FAIL: leftover 450e27 shares paid to caller (0 != 450e27)"
+      ],
+      "correctedTests": [
+        "test_APEX003_eoaSharePretransferRejected",
+        "test_APEX003_contractExactInBurnsRequestedOnly",
+        "test_API07_assetPretransferReverts",
+        "test_API07_sharePretransferBurnsBAndRefundsPB",
+        "test_API07_sharePretransferExactOutBurnsBRefundsPB",
+        "test_API12_internalBurnExactNoRefund"
+      ],
+      "fixRevision": "RebasingAwareStandardExchangeTarget SHA-256 1ae34235\u2026; ISecurePullErrors SHA-256 b2b57a72\u2026; IndexedEx 2d69dc1e dirty",
+      "command": "python3 scripts/forge-artifacts.py test contracts/protocols/staking/rebasingVault/RebasingAwareStandardExchangeTarget.sol contracts/protocols/staking/rebasingVault/RebasingAwareStandardYieldTarget.sol --test-root test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_StandardExchange.t.sol -- -vv",
+      "log": [
+        "docs/audits/apex-2026-09-17-evidence/prefixed-red-003-005-custody.log",
+        "docs/audits/apex-2026-09-17-evidence/green-003-custody.log"
+      ],
+      "outcome": "RED prefixed-red-003-005-custody.log: API-07 2/2 PASS (forbidden leftover refund). APEX003/005 assertions 0/3 FAIL because EOA prepaid succeeds and leftover shares are paid to the caller. GREEN green-003-custody.log: test_APEX003_* and API-07 5/5 PASS on current production.",
+      "state": "VERIFIED_FIXED",
+      "residualLimitation": "Live custody instance 0x2E9C\u2026 remains immutable and unremediated. Source VERIFIED_FIXED is replacement-only.",
+      "independentReleaseEvidence": {
+        "release": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-summary.json",
+        "currentSourceAndRuntimeIdentity": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-identity-after.json",
+        "historicalRunRetained": [
+          "docs/audits/apex-2026-09-17-evidence/prefixed-red-003-005-custody.log",
+          "docs/audits/apex-2026-09-17-evidence/green-003-custody.log"
+        ]
+      }
+    },
+    {
+      "finding": "APEX-2026-008",
+      "pdfPage": "3-4",
+      "affectedSourceFunction": [
+        "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookCommon.sol::_refundConservation (five public callers: addLiquidity, depositSingle, removeLiquidity, depositFlexible, withdrawFlexible)",
+        "orbital beforeSwap capped unwrap via SE exact-output"
+      ],
+      "publicSelectors": [
+        "0x05562cc8",
+        "0x612d4427",
+        "0x575e24b4",
+        "0xb18c67ea",
+        "0x0b7f868c"
+      ],
+      "packageVersion": "UniswapV4StandardExchangeOrbitalBufferHook DFPkg, IndexedEx 2d69dc1e dirty; Common SHA-256 4db30b8a\u2026",
+      "reproductionTests": [
+        "prefixed test_APEX008_prefixed_addLiquidity_refundsResting500 PASS (user received resting 500)",
+        "prefixed test_R6_addLiquidity_resting500_notRefunded FAIL (assertLe user <= user0+1; 500-face refund)"
+      ],
+      "correctedTests": [
+        "test_R6_addLiquidity_resting500_notRefunded",
+        "test_R6_depositSingle_resting500_notRefunded",
+        "test_R6_removeLiquidity_resting500_notRefunded",
+        "test_R6_depositFlexible_resting500_notRefunded",
+        "test_R6_withdrawFlexible_resting500_notRefunded",
+        "test_R6_rawLeg_resting500_notRefunded",
+        "test_R6_allBuffered_resting500_notRefunded",
+        "test_R6_swapExactIn_noLeftoverFace",
+        "test_R6_swapExactOut_noLeftoverFace",
+        "test_R6_swapBothDirections_restingUnchanged",
+        "test_R6_cappedUnwrap_fundedSuccess",
+        "test_R6_cappedUnwrap_insufficient_rollsBack",
+        "test_R6_dustBoundary_restingLeftInPlace",
+        "test_R6_exactOut_falseFlag_pullsUsed_noRefund",
+        "test_R6_exactOut_trueFlag_refundsCreditMinusUsed",
+        "test_R6_eoaPretransfer_rejected",
+        "test_R6_previewAgreesAfterCorrection"
+      ],
+      "fixRevision": "Orbital Common SHA-256 4db30b8a\u2026; IndexedEx 2d69dc1e dirty",
+      "command": "RED: cd /private/tmp/indexedex-apex-20260917-kgq82ijp/prefixed && python3 scripts/forge-artifacts.py test contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookCommon.sol --test-root test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/APEX008_PrefixedRed.t.sol -- -vv. GREEN: python3 scripts/forge-artifacts.py test contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookCommon.sol --test-root test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_Apex008.t.sol -- -vv",
+      "log": [
+        "docs/audits/apex-2026-09-17-evidence/prefixed-red-008-orbital.log",
+        "docs/audits/apex-2026-09-17-evidence/orbital-008.log"
+      ],
+      "outcome": "RED prefixed-red-008-orbital.log and prefixed-red-008-rerun.log: test_R6_addLiquidity_resting500_notRefunded FAIL on the green assertLe (1000400000999000999001000 > 999901000000000000000000); demonstration test_APEX008_prefixed_addLiquidity_refundsResting500 PASS. Prefixed suite then inverted that bound as a passing reproduction (prefixed-red-008-repro-pass.log 2/2 PASS). GREEN orbital-008.log Apex008 17/17 PASS. orbital-008-regression.log is not the green identity.",
+      "state": "VERIFIED_FIXED",
+      "residualLimitation": "Orbital outside transfers remain unrecorded credit under D12/D18. Live instances are not claimed remediated. Resting face is not booked by the hook.",
+      "independentReleaseEvidence": {
+        "release": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-summary.json",
+        "currentSourceAndRuntimeIdentity": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-identity-after.json",
+        "historicalRunRetained": [
+          "docs/audits/apex-2026-09-17-evidence/prefixed-red-008-orbital.log",
+          "docs/audits/apex-2026-09-17-evidence/orbital-008.log"
+        ]
+      }
+    },
+    {
+      "finding": "APEX-2026-009",
+      "pdfPage": "4-5",
+      "affectedSourceFunction": [
+        "contracts/vaults/standard/erc4626/ERC4626StandardExchangeCommon.sol::_burnSeShares",
+        "contracts/vaults/standard/erc4626/ERC4626StandardExchangeInTarget.sol::exchangeIn",
+        "contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeOutTarget.sol::_burnSeShares / exchangeOut"
+      ],
+      "publicSelectors": [
+        "0x05562cc8",
+        "0x612d4427",
+        "0xb18c67ea",
+        "0x0b7f868c"
+      ],
+      "packageVersion": "ERC4626StandardExchange DFPkg and MorphoBlueStandardExchange DFPkg, IndexedEx 2d69dc1e dirty",
+      "reproductionTests": [
+        "prefixed test_APEX009_contractExactInBurnsRequestedOnly FAIL: leftover self-shares 0 != 45e18 (diamond emptied, leftover paid out)"
+      ],
+      "correctedTests": [
+        "test_FreeMint_pretransferred_noDelta_protocolVaultToSe_reverts",
+        "test_FreeMint_pretransferred_noDelta_protocolVaultToSeExactOut_reverts",
+        "test_O3_unwrapExactOut_burnsOnlyAmountIn",
+        "test_I1_pretransferred_noTransfer_bookedReserve_reverts",
+        "test_I1_pretransferred_noTransfer_bookedInventory_reverts",
+        "test_I2_shortPretransfer_revertsExactArgs",
+        "test_E6_fatMaxIn_pretransferOnlyUsed_bookedIntact"
+      ],
+      "fixRevision": "ERC4626 Common SHA-256 4bf0309a\u2026; ERC4626 OutTarget SHA-256 1b3dbaa5\u2026; Morpho OutTarget SHA-256 800ca894\u2026; IndexedEx 2d69dc1e dirty",
+      "command": "python3 scripts/forge-artifacts.py test contracts/vaults/standard/erc4626/ERC4626StandardExchangeCommon.sol contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeOutTarget.sol --test-root test/foundry/spec/vaults/standard/erc4626 --test-root test/foundry/spec/vaults/standard/exchange/protocols/morpho/blue -- -vv",
+      "log": [
+        "docs/audits/apex-2026-09-17-evidence/prefixed-red-009-004B-005-erc4626.log",
+        "docs/audits/apex-2026-09-17-evidence/green-009-004B-erc4626.log",
+        "docs/audits/apex-2026-09-17-evidence/green-009-morpho.log"
+      ],
+      "outcome": "RED prefixed-red-009-004B-005-erc4626.log: leftover self-shares refunded on prepaid unwrap. GREEN green-009-004B-erc4626.log: test_O3_unwrapExactOut_burnsOnlyAmountIn and FreeMint 5/5 PASS; green-009-morpho.log I1/I2/E6 3/3 PASS.",
+      "state": "VERIFIED_FIXED",
+      "residualLimitation": "Live instances unremediated. Prefixed red is ERC-4626 _burnSeShares; Morpho green I1/I2/E6 confirms the same corrected burn/credit rule.",
+      "independentReleaseEvidence": {
+        "release": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-summary.json",
+        "currentSourceAndRuntimeIdentity": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-identity-after.json",
+        "historicalRunRetained": [
+          "docs/audits/apex-2026-09-17-evidence/prefixed-red-009-004B-005-erc4626.log",
+          "docs/audits/apex-2026-09-17-evidence/green-009-004B-erc4626.log",
+          "docs/audits/apex-2026-09-17-evidence/green-009-morpho.log"
+        ]
+      }
+    },
+    {
+      "finding": "APEX-2026-004B",
+      "pdfPage": "5",
+      "affectedSourceFunction": [
+        "contracts/vaults/standard/erc4626/ERC4626StandardExchangeCommon.sol::_refundOrAbsorbAbove / _absorbDustToFeeTo (no refund-path callers)",
+        "contracts/vaults/standard/erc4626/ReceiptBackedERC4626Target.sol (D45 adapter)",
+        "three ERC-4626 routes: wrap exact-in, wrap exact-out, unwrap"
+      ],
+      "publicSelectors": [
+        "0x05562cc8",
+        "0x612d4427",
+        "0xb18c67ea",
+        "0x0b7f868c"
+      ],
+      "packageVersion": "ERC4626StandardExchange DFPkg + ReceiptBackedERC4626 adapter, IndexedEx 2d69dc1e dirty",
+      "reproductionTests": [
+        "prefixed test_O5_wrapExactOut_pullSurplus_refunded PASS (gift surplus refunded)",
+        "prefixed test_O6_dustAbsorb_toFeeTo PASS (5 wei paid to feeTo)",
+        "prefixed test_APEX004B_pullSurplusMustRevertDelta FAIL: next call did not revert",
+        "prefixed test_APEX004B_dustMustNotPayFeeTo FAIL: 5 != 0"
+      ],
+      "correctedTests": [
+        "test_APEX004B_adapterDepositBooksReceiptsAndBlocksStalePretransfer",
+        "test_APEX004B_atomicReceiptPretransferSucceedsAfterAdapterDeposit",
+        "test_APEX004B_maxWithdrawZeroWhenOnlyLocalCash",
+        "test_O5_wrapExactOut_pullSurplus_refunded",
+        "test_O6_dustAbsorb_toFeeTo"
+      ],
+      "fixRevision": "ERC4626 Common SHA-256 4bf0309a\u2026; OutTarget SHA-256 1b3dbaa5\u2026; IndexedEx 2d69dc1e dirty",
+      "command": "python3 scripts/forge-artifacts.py test contracts/vaults/standard/erc4626/ReceiptBackedERC4626Target.sol contracts/vaults/standard/erc4626/ReceiptBackedERC4626Facet.sol contracts/vaults/standard/erc4626/ReceiptBackedERC4626AccountingLib.sol contracts/vaults/VaultComponentFactoryService.sol contracts/vaults/standard/erc4626/ERC4626StandardExchangeCommon.sol --test-root test/foundry/spec/vaults/standard/erc4626 -- -vv",
+      "log": [
+        "docs/audits/apex-2026-09-17-evidence/prefixed-red-009-004B-005-erc4626.log",
+        "docs/audits/apex-2026-09-17-evidence/green-009-004B-erc4626.log"
+      ],
+      "outcome": "RED prefixed-red-009-004B-005-erc4626.log: O5/O6 2/2 PASS (forbidden refund and feeTo dust). APEX004B assertions FAIL. GREEN green-009-004B-erc4626.log: APEX004B adapter 3/3 and corrected O3/O5/O6/FreeMint 5/5 PASS.",
+      "state": "VERIFIED_FIXED",
+      "residualLimitation": "Live instances unremediated. ReceiptBacked adapter is the D45 green path; prefixed red is the pre-adapter ERC-4626 wrap/unwrap routes. _absorbDustToFeeTo remains a dead helper on current production.",
+      "independentReleaseEvidence": {
+        "release": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-summary.json",
+        "currentSourceAndRuntimeIdentity": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-identity-after.json",
+        "historicalRunRetained": [
+          "docs/audits/apex-2026-09-17-evidence/prefixed-red-009-004B-005-erc4626.log",
+          "docs/audits/apex-2026-09-17-evidence/green-009-004B-erc4626.log"
+        ]
+      }
+    },
+    {
+      "finding": "APEX-2026-005",
+      "pdfPage": "5-6",
+      "affectedSourceFunction": [
+        "contracts/utils/LocalCreditLib.sol::available/budget/requirePretransferCaller",
+        "contracts/interfaces/ISecurePullErrors.sol::EOAPretransferNotAllowed/TransferDeltaInsufficient",
+        "D16 family public exchangeIn/exchangeOut/prepaid/burnFromInternalBalance consumers"
+      ],
+      "publicSelectors": [
+        "0x05562cc8",
+        "0x612d4427",
+        "0xb18c67ea",
+        "0x0b7f868c"
+      ],
+      "packageVersion": "Shared LocalCreditLib + every D16 family listed in the execute-plan D16 set, IndexedEx 2d69dc1e dirty",
+      "reproductionTests": [
+        "prefixed test_APEX005_eoaRejectedExactError FAIL: EOA custody prepaid did not revert",
+        "prefixed test_APEX005_eoaWrapPretransferRejected FAIL: EOA ERC-4626 prepaid unwrap did not revert"
+      ],
+      "correctedTests": [
+        "test_APEX005_available_zeroDeficitEqualityExcess",
+        "test_APEX005_budget_zeroEqualityExcessMax",
+        "test_APEX005_eoaRejectedExactError",
+        "test_APEX005_contractCallerAccepted",
+        "test_APEX005_constructorCallerRejected",
+        "test_APEX005_deployedWalletAcceptedAsUnsupportedUse",
+        "test_APEX005_eip7702DelegatedEoaAcceptedAsUnsupportedUse",
+        "test_APEX005_falseFlagPullSeparatesPayerAndRecipient",
+        "test_APEX005_failedConsumeRollsBackPayerBalance",
+        "testFuzz_APEX_availableNeverUnderflows",
+        "testFuzz_APEX_budgetIsMin",
+        "testFuzz_APEX_refundNeverExceedsMaxMinusUsed"
+      ],
+      "fixRevision": "LocalCreditLib SHA-256 6d66ed5b\u2026; ISecurePullErrors SHA-256 b2b57a72\u2026; Crane In SHA-256 e0f62a92\u2026; Crane Out SHA-256 3cdd3fab\u2026; IndexedEx 2d69dc1e dirty",
+      "command": "python3 scripts/forge-artifacts.py test contracts/utils/LocalCreditLib.sol contracts/interfaces/ISecurePullErrors.sol --test-root test/foundry/spec/utils/LocalCreditLib.t.sol -- -vv ; FOUNDRY_FUZZ_RUNS=10000 python3 scripts/forge-artifacts.py test --test-root test/foundry/spec/utils/LocalCreditLib.t.sol -- -vv",
+      "log": [
+        "docs/audits/apex-2026-09-17-evidence/prefixed-red-003-005-custody.log",
+        "docs/audits/apex-2026-09-17-evidence/prefixed-red-009-004B-005-erc4626.log",
+        "docs/audits/apex-2026-09-17-evidence/green-005-local-credit.log",
+        "docs/audits/apex-2026-09-17-evidence/green-003-custody.log"
+      ],
+      "outcome": "RED: EOA prepaid succeeds on prefixed custody and ERC-4626. GREEN green-005-local-credit.log 12/12 including test_APEX005_eoaRejectedExactError; green-003-custody.log test_APEX003_eoaSharePretransferRejected PASS.",
+      "state": "VERIFIED_FIXED",
+      "residualLimitation": "D12 wallet/EIP-7702 acceptance remains UNSUPPORTED_USE, not a 005 defect. Live instances unremediated. R12 hermetic is not a green release suite.",
+      "independentReleaseEvidence": {
+        "release": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-summary.json",
+        "currentSourceAndRuntimeIdentity": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-identity-after.json",
+        "historicalRunRetained": [
+          "docs/audits/apex-2026-09-17-evidence/prefixed-red-003-005-custody.log",
+          "docs/audits/apex-2026-09-17-evidence/prefixed-red-009-004B-005-erc4626.log",
+          "docs/audits/apex-2026-09-17-evidence/green-005-local-credit.log",
+          "docs/audits/apex-2026-09-17-evidence/green-003-custody.log"
+        ]
+      }
+    },
+    {
+      "finding": "beforeSwap guard claim",
+      "pdfPage": "6",
+      "affectedSourceFunction": [
+        "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksTarget.sol::beforeSwap (calls _onlyPoolManager)",
+        "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookHooksTarget.sol::beforeSwap",
+        "contracts/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleStandardExchangeBufferHookTarget.sol::beforeSwap"
+      ],
+      "publicSelectors": [
+        "0x575e24b4",
+        "0xae18210a"
+      ],
+      "packageVersion": "Auditor retraction / false positive. No invented guard fix. IndexedEx 2d69dc1e dirty",
+      "reproductionTests": [
+        "None. Claim withdrawn. Residual controls only."
+      ],
+      "correctedTests": [
+        "test_F2_nonPoolManager_beforeSwap_reverts (dual)",
+        "test_F1_nonPoolManager_beforeSwap_reverts (non-CP single, named in source)"
+      ],
+      "fixRevision": "No production change for this retraction. Dual F2 PASS in r12-hermetic-full.log line 55157.",
+      "command": "python3 scripts/forge-artifacts.py test --test-root test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualSEBCPHook_Adversarial.t.sol -- -vv (F2 evidenced in r12-hermetic-full.log)",
+      "log": "docs/audits/apex-2026-09-17-evidence/r12-hermetic-full.log",
+      "outcome": "WITHDRAWN. Dual test_F2_nonPoolManager_beforeSwap_reverts PASS in the hermetic log. Non-CP single test_F1_nonPoolManager_beforeSwap_reverts is present in source; it did not appear in r12-hermetic-full.log. Balancer-quad production beforeSwap still calls _onlyPoolManager(); no named balancer-quad F1/F2 test is in this bundle.",
+      "state": "WITHDRAWN",
+      "residualLimitation": "No missing guard is inferred. Balancer-quad lacks a named non-PoolManager beforeSwap test in this evidence bundle; production still gates on _onlyPoolManager. Hermetic suite is not a green release run.",
+      "independentReleaseEvidence": {
+        "release": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-summary.json",
+        "currentSourceAndRuntimeIdentity": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-identity-after.json",
+        "historicalRunRetained": "docs/audits/apex-2026-09-17-evidence/r12-hermetic-full.log"
+      }
+    },
+    {
+      "finding": "Weighted dust claim",
+      "pdfPage": "6",
+      "affectedSourceFunction": [
+        "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookExitCore.sol (buffer-first / D36)",
+        "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookTarget.sol",
+        "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookWithdrawTarget.sol"
+      ],
+      "publicSelectors": [
+        "0x05562cc8",
+        "0x612d4427"
+      ],
+      "packageVersion": "Auditor downgrade to informational. Weighted/curve/dual D36 remainder-to-caller removed. IndexedEx 2d69dc1e dirty",
+      "reproductionTests": [
+        "None as a vulnerability. Informational residual: resting face is not paid to the joiner."
+      ],
+      "correctedTests": [
+        "test_D36_restingFace_notPaidToJoiner (weighted, curve-quad, dual)"
+      ],
+      "fixRevision": "Weighted ExitCore SHA-256 5558807c\u2026; dual WithdrawTarget SHA-256 9d543b95\u2026; curve Target SHA-256 e5f82009\u2026; IndexedEx 2d69dc1e dirty",
+      "command": "python3 scripts/forge-artifacts.py test contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookExitCore.sol contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookWithdrawTarget.sol contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookTarget.sol --test-root test/foundry/spec/hooks/uniswap/v4/standardExchange -- -vv --match-test test_D36_restingFace_notPaidToJoiner",
+      "log": "docs/audits/apex-2026-09-17-evidence/hook-d36.log",
+      "outcome": "3/3 PASS (curve, dual, weighted). Hook \u00d7 SE cartesian: 21 packaged SE families \u00d7 7 hooks INCOMPATIBLE (hook-se-matrix.json). Compatible buffer-first/refund evidence remains each hook family's gold TestBase SE suites.",
+      "state": "WITHDRAWN",
+      "residualLimitation": "No incompatible row is counted as a passing integration. Compatible buffer-first/refund/under-consumption remains each-hook gold TestBase SE. BalancerV3SinglePoolStandardExchange has no matrix file (external bptToken()).",
+      "independentReleaseEvidence": {
+        "release": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-summary.json",
+        "currentSourceAndRuntimeIdentity": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-identity-after.json",
+        "historicalRunRetained": "docs/audits/apex-2026-09-17-evidence/hook-d36.log"
+      }
+    },
+    {
+      "finding": "Non-atomic contract pretransfer",
+      "pdfPage": "PRD D12",
+      "affectedSourceFunction": [
+        "contracts/utils/LocalCreditLib.sol::requirePretransferCaller (BetterAddress.isContract)",
+        "lib/crane/contracts/interfaces/IStandardExchangeIn.sol::exchangeIn pretransferred NatSpec",
+        "lib/crane/contracts/interfaces/IStandardExchangeOut.sol::exchangeOut pretransferred NatSpec"
+      ],
+      "publicSelectors": [
+        "0x05562cc8",
+        "0x612d4427",
+        "0xb18c67ea"
+      ],
+      "packageVersion": "Accepted design limitation. Only permitted UNSUPPORTED_USE state. IndexedEx 2d69dc1e dirty; Crane dfc93a9b dirty NatSpec",
+      "reproductionTests": [
+        "Not a defect. Residual: the next contract caller with a declared amount within unbooked credit can consume resting unrecorded balance."
+      ],
+      "correctedTests": [
+        "test_APEX005_deployedWalletAcceptedAsUnsupportedUse",
+        "test_APEX005_eip7702DelegatedEoaAcceptedAsUnsupportedUse",
+        "test_APEX005_constructorCallerRejected",
+        "test_APEX005_eoaRejectedExactError"
+      ],
+      "fixRevision": "LocalCreditLib SHA-256 6d66ed5b\u2026; Crane In SHA-256 e0f62a92\u2026; Crane Out SHA-256 3cdd3fab\u2026",
+      "command": "python3 scripts/forge-artifacts.py test contracts/utils/LocalCreditLib.sol contracts/interfaces/ISecurePullErrors.sol --test-root test/foundry/spec/utils/LocalCreditLib.t.sol -- -vv",
+      "log": "docs/audits/apex-2026-09-17-evidence/local-credit.log",
+      "outcome": "12/12 PASS. Deployed wallet and EIP-7702 delegated EOA pass requirePretransferCaller. Constructor-time caller and plain EOA revert EOAPretransferNotAllowed. Booked inventory is never paid out.",
+      "state": "UNSUPPORTED_USE",
+      "residualLimitation": "Another contract may consume any declared amount within unbooked credit. Atomic transfer-then-call avoids that residual. Protocol and other holders lose nothing because booked inventory is never paid. This is the only permitted UNSUPPORTED_USE row.",
+      "independentReleaseEvidence": {
+        "release": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-summary.json",
+        "currentSourceAndRuntimeIdentity": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-identity-after.json",
+        "historicalRunRetained": "docs/audits/apex-2026-09-17-evidence/local-credit.log"
+      }
+    }
+  ],
+  "liveInstancesUnremediated": true,
+  "completeAuditClosureClaimed": false,
+  "hermeticReleaseGreen": true,
+  "prefixedRed": {
+    "path": "/private/tmp/indexedex-apex-20260917-kgq82ijp/prefixed",
+    "rebuild": "targeted forge-artifacts.py rebuild of custody SE and ERC-4626 SE artifacts against prefixed source",
+    "outIndependent": true
+  },
+  "independentCompletionReview": {
+    "status": "PASS",
+    "scope": "Local source remediation and plan verification; no deployment or migration.",
+    "completedUtc": "2026-09-25T17:49:19.937529+00:00",
+    "acceptanceCriteria": 108,
+    "hermeticTests": 34909,
+    "hermeticSuites": 3053,
+    "failed": 0,
+    "skipped": 0,
+    "campaignCount": 33,
+    "campaignCalls": 540672,
+    "matrix": {
+      "COMPATIBLE": 195,
+      "DEPRECATED": 7,
+      "INCOMPATIBLE": 1
+    },
+    "runtimeArtifacts": 571,
+    "fuzzSourceProperties": 16,
+    "minimumFuzzCases": 10000,
+    "releaseSummary": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-summary.json",
+    "sourceAndRuntimeManifest": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-identity-after.json",
+    "campaignEvidence": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-campaigns.json",
+    "matrixEvidence": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-hook-se-matrix.json",
+    "historicalEvidence": "docs/audits/apex-2026-09-17-evidence/followup-review/historical.log",
+    "sourceChecks": "docs/audits/apex-2026-09-17-evidence/followup-review/final-source-checks.json"
+  },
+  "historicalSourceSha256": {
+    "contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeCommon.sol": "4d1f9d99da8e51613ec50bcc49a8fdde0c93167454904ffb65fe30612771257a",
+    "contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeCommon.sol": "107f55508296c893a651b23003b9ffcf78d21c5f342b74c821bc855c1e743ab3",
+    "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultCommon.sol": "cc0ac9d11209f3a04d8cc1d41e360cb916cefd335cc8691dbec25aa4d86999b4",
+    "contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultCommon.sol": "dff793d12edaadfcb4490c732b5fd815befb6cc7164521e0e5074d1814faf2b4",
+    "contracts/protocols/staking/rebasingVault/RebasingAwareStandardExchangeTarget.sol": "1ae3423540901c1877c4687dd34010a5a2553e4c9560f99ee922cad92c05b50f",
+    "contracts/vaults/standard/erc4626/ERC4626StandardExchangeCommon.sol": "4bf0309ac1eac8f040a54008cdb302f3849f888a98a2729cb03b934bd164124b",
+    "contracts/vaults/standard/erc4626/ERC4626StandardExchangeInTarget.sol": "689048316ce1cf7a8926a277b675cf89516bca038e9bcbf2e032b7321f8defe0",
+    "contracts/vaults/standard/erc4626/ERC4626StandardExchangeOutTarget.sol": "1b3dbaa5fde30dda16324f6497d24fb973089a72b56e5f690eecfe37ebdf3146",
+    "contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeOutTarget.sol": "800ca8948bb61f9f8fbf971d08e8230719a7b1a4c4dff0290229159bf94f59d3",
+    "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookCommon.sol": "4db30b8a69edd268066f0e8d34ebcfa24ec4a15406b5e55f5052bafaca3afd7c",
+    "contracts/utils/LocalCreditLib.sol": "6d66ed5be41ebcb7b59716c1af24023469ef4da4b1b2123a8d4a7b1beb02d411",
+    "contracts/interfaces/ISecurePullErrors.sol": "b2b57a724e93b111647978599297a6a861f556b2739460a1c1d8f42c40394b71",
+    "lib/crane/contracts/interfaces/IStandardExchangeIn.sol": "e0f62a920049c84ea71b7e8c26279ff88958a7a0d17d1ba126d7e42b2d638809",
+    "lib/crane/contracts/interfaces/IStandardExchangeOut.sol": "3cdd3fab91b0f27041cc42a8879bde298a092be85405442f7ee4f0c0447d069d",
+    "contracts/vaults/basic/BasicVaultCommon.sol": "a005d5eff958df36a14942308d4385a1bdf2a17fc569c41cdb2b5a9594786fb5"
+  },
+  "localRemediationPlanComplete": true,
+  "closureScope": "All local plan work verified; immutable historical deployments retain a separate operational status."
+}

@@ -14,7 +14,7 @@ contract UniswapV4SingleSEBufferHook_LiquidityBan_Test is TestBase {
     }
 
     function test_addLiquidity_revertsLiquidityNotAllowed() public {
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("WrappedError(address,bytes4,bytes,bytes)", hook, bytes4(keccak256("beforeAddLiquidity(address,(address,address,uint24,int24,address),(int24,int24,int256,bytes32),bytes)")), abi.encodeWithSignature("LiquidityNotAllowed()"), abi.encodeWithSignature("HookCallFailed()")));
         liqRouter.modifyLiquidity(
             poolKey,
             ModifyLiquidityParams({

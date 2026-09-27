@@ -185,7 +185,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookSeTarget is
         if (amountIn > maxAmountIn) revert Slippage();
 
         // L-GAPS-11: delta-gate claimed amountIn (no absolute free inventory credit).
-        _securePull(IERC20(tin), amountIn, pretransferred);
+        _pullExactOutInput(IERC20(tin), amountIn, maxAmountIn, pretransferred);
 
         uint8 j = _tokenIndex(tout);
         uint8 ii = _tokenIndex(tin);

@@ -14,6 +14,8 @@ import {
     IEtherFiWeETHRebalance
 } from "contracts/protocols/staking/etherfi/interfaces/IEtherFiWeETHStandardVault.sol";
 import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {
     EtherFiWeETHStandardExchangeCommon
 } from "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeCommon.sol";
@@ -27,6 +29,7 @@ import {
     HermeticEETH,
     HermeticWeETH,
     HermeticLiquidityPool,
+    HermeticBlacklister,
     HermeticWithdrawRequestNFT,
     HermeticRedemptionManager
 } from "contracts/protocols/staking/etherfi/test/hermetic/HermeticEtherFiPorts.sol";
@@ -53,9 +56,7 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
 
         uint256 fakeIn = 1 ether;
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(EtherFiWeETHStandardExchangeCommon.InsufficientDeposit.selector, fakeIn, 0)
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         seIn.exchangeIn(
             IERC20(address(hermeticWeth)),
             fakeIn,
@@ -117,9 +118,7 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
         _seedVaultInventory(0, 20 ether);
         assertEq(etherFiSe.liquidReserveEth(), 0);
         uint256 requested = 1 ether;
-        vm.expectRevert(
-            abi.encodeWithSelector(IEtherFiWeETHStandardVault.InsufficientLiquidReserve.selector, requested, 0)
-        );
+        vm.expectRevert(bytes("capacity"));
         seOut.exchangeOut(
             IERC20(seVault),
             type(uint256).max,
@@ -163,9 +162,7 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
             block.timestamp + 1 hours
         );
         assertEq(etherFiSe.liquidReserveEth(), 0);
-        vm.expectRevert(
-            abi.encodeWithSelector(IEtherFiWeETHStandardVault.InsufficientLiquidReserve.selector, 1, 0)
-        );
+        vm.expectRevert(bytes("capacity"));
         seOut.exchangeOut(
             IERC20(seVault),
             type(uint256).max,
@@ -331,8 +328,9 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
         vm.deal(address(this), face);
         hermeticQueue.finalizeForTest{value: face}(reqId);
         seRebalance.rebalance(); // first claim
-        // second claim attempt on cleared/claimed request
-        vm.expectRevert();
+        // Repeat as the original request owner so the claimed guard is reached.
+        vm.prank(seVault);
+        vm.expectRevert(abi.encodeWithSignature("Error(string)", "claimed"));
         hermeticQueue.claimWithdraw(reqId);
     }
 
@@ -455,17 +453,28 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
         assertEq(hermeticWeth.allowance(attacker, seVault), 0, "no allowance");
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                EtherFiWeETHStandardExchangeCommon.InsufficientDeposit.selector, claimed, uint256(0)
-            )
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         seIn.exchangeIn(
             IERC20(address(hermeticWeth)),
             claimed,
             IERC20(seVault),
             0,
             attacker,
+            true,
+            block.timestamp + 1 hours
+        );
+
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed, uint256(0))
+        );
+        seIn.exchangeIn(
+            IERC20(address(hermeticWeth)),
+            claimed,
+            IERC20(seVault),
+            0,
+            address(caller),
             true,
             block.timestamp + 1 hours
         );
@@ -492,17 +501,28 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
         assertEq(hermeticWeth.allowance(attacker, seVault), 0, "I2: no in-call allowance");
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                EtherFiWeETHStandardExchangeCommon.InsufficientDeposit.selector, claimed, uint256(0)
-            )
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         seIn.exchangeIn(
             IERC20(address(hermeticWeth)),
             claimed,
             IERC20(seVault),
             0,
             attacker,
+            true,
+            block.timestamp + 1 hours
+        );
+
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed, shortPush)
+        );
+        seIn.exchangeIn(
+            IERC20(address(hermeticWeth)),
+            claimed,
+            IERC20(seVault),
+            0,
+            address(caller),
             true,
             block.timestamp + 1 hours
         );
@@ -540,17 +560,28 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
         assertEq(hermeticWeth.allowance(attacker, seVault), 0, "I3: no allowance");
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                EtherFiWeETHStandardExchangeCommon.InsufficientDeposit.selector, claim, uint256(0)
-            )
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         seIn.exchangeIn(
             IERC20(address(hermeticWeth)),
             claim,
             IERC20(seVault),
             0,
             attacker,
+            true,
+            block.timestamp + 1 hours
+        );
+
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claim, uint256(0))
+        );
+        seIn.exchangeIn(
+            IERC20(address(hermeticWeth)),
+            claim,
+            IERC20(seVault),
+            0,
+            address(caller),
             true,
             block.timestamp + 1 hours
         );
@@ -634,11 +665,7 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
         assertGt(previewOut_, 0, "J3 previewExchangeOut live on proxy");
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                EtherFiWeETHStandardExchangeCommon.InsufficientDeposit.selector, uint256(1 ether), uint256(0)
-            )
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         IStandardExchangeIn(seVault).exchangeIn(
             IERC20(address(hermeticWeth)), 1 ether, IERC20(seVault), 0, attacker, true, block.timestamp + 1 hours
         );
@@ -648,6 +675,109 @@ contract Adversarial_EtherFiWeETH_P0_Test is TestBase_EtherFiWeETHStandardExchan
         assertEq(recv_, EtherFiWeETHRebalanceTarget.onERC721Received.selector, "J3 onERC721Received live");
 
         seRebalance.rebalance();
+    }
+
+    function test_APEX_D40_pausedWethToSeBooksWithoutStake() public {
+        hermeticPool.setPaused(true);
+        uint256 amount = 5 ether;
+        _dealWeth(address(this), amount);
+        hermeticWeth.approve(seVault, amount);
+        uint256 shares = seIn.exchangeIn(
+            IERC20(address(hermeticWeth)),
+            amount,
+            IERC20(seVault),
+            0,
+            address(this),
+            false,
+            block.timestamp + 1 hours
+        );
+        assertGt(shares, 0);
+        assertEq(etherFiSe.liquidReserveEth(), amount);
+        assertEq(hermeticWeEth.balanceOf(seVault), 0);
+    }
+
+    function test_APEX_D40_pausedWethToEEthHardRevert() public {
+        hermeticPool.setPaused(true);
+        uint256 amount = 1 ether;
+        _dealWeth(address(this), amount);
+        hermeticWeth.approve(seVault, amount);
+        vm.expectRevert(HermeticLiquidityPool.ContractPaused.selector);
+        seIn.exchangeIn(
+            IERC20(address(hermeticWeth)),
+            amount,
+            IERC20(address(hermeticEEth)),
+            0,
+            address(this),
+            false,
+            block.timestamp + 1 hours
+        );
+    }
+
+    function test_APEX_D40_blacklistWethToSeBooks() public {
+        HermeticBlacklister bl = hermeticPool.blacklister();
+        bl.setBlacklistedUntil(seVault, block.timestamp + 1);
+        uint256 amount = 2 ether;
+        _dealWeth(address(this), amount);
+        hermeticWeth.approve(seVault, amount);
+        uint256 shares = seIn.exchangeIn(
+            IERC20(address(hermeticWeth)),
+            amount,
+            IERC20(seVault),
+            0,
+            address(this),
+            false,
+            block.timestamp + 1 hours
+        );
+        assertGt(shares, 0);
+        assertEq(etherFiSe.liquidReserveEth(), amount);
+    }
+
+    function test_APEX_D40_pausedUntilWethToSeBooksWithoutStake() public {
+        hermeticPool.setPausedUntil(block.timestamp + 1);
+        uint256 amount = 5 ether;
+        _dealWeth(address(this), amount);
+        hermeticWeth.approve(seVault, amount);
+        uint256 preview = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), amount, IERC20(seVault));
+        uint256 shares = seIn.exchangeIn(
+            IERC20(address(hermeticWeth)), amount, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours
+        );
+        assertEq(shares, preview, "preview equals execution");
+        assertEq(etherFiSe.liquidReserveEth(), amount, "timed pause books all");
+        assertEq(hermeticWeEth.balanceOf(seVault), 0, "no deposit while timed-paused");
+        // Reopen: the next investing exchangeIn sweeps the sleeve-eligible booked excess (D31/D42).
+        hermeticPool.setPausedUntil(0);
+        _dealWeth(address(this), 1 ether);
+        hermeticWeth.approve(seVault, 1 ether);
+        seIn.exchangeIn(
+            IERC20(address(hermeticWeth)), 1 ether, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours
+        );
+        uint256 total = etherFiSe.liquidReserveEth() + etherFiSe.lockedReserveEth();
+        assertLt(etherFiSe.liquidReserveEth(), amount + 1 ether, "booked excess swept on the next exchangeIn");
+        assertGe(etherFiSe.liquidReserveEth(), (total * 20) / 100 - 1, "target sleeve retained");
+        assertGt(hermeticWeEth.balanceOf(seVault), 0, "weETH received");
+    }
+
+    function test_APEX_D40_rebalanceSkipsWhenPaused() public {
+        hermeticPool.setPaused(true);
+        uint256 amount = 100 ether;
+        _dealWeth(address(this), amount);
+        hermeticWeth.approve(seVault, amount);
+        seIn.exchangeIn(
+            IERC20(address(hermeticWeth)),
+            amount,
+            IERC20(seVault),
+            0,
+            address(this),
+            false,
+            block.timestamp + 1 hours
+        );
+        uint256 liquidBefore = etherFiSe.liquidReserveEth();
+        assertEq(liquidBefore, amount, "paused mint books all WETH");
+        seRebalance.rebalance();
+        assertEq(etherFiSe.liquidReserveEth(), liquidBefore, "paused: no stake");
+        hermeticPool.setPaused(false);
+        seRebalance.rebalance();
+        assertLt(etherFiSe.liquidReserveEth(), liquidBefore, "unpaused: stakes excess");
     }
 }
 

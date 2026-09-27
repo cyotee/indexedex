@@ -61,6 +61,7 @@ contract RocketPoolRETHStandardExchangeInTarget is
             if (amountOut < minAmountOut) revert Slippage();
             _burnShares(amountIn);
             _payAsset(out_, amountOut, recipient);
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
@@ -69,14 +70,15 @@ contract RocketPoolRETHStandardExchangeInTarget is
             if (!_isAsset(in_)) revert InvalidRoute(in_, out_);
             uint256 totalBefore = totalReserveEth();
             uint256 actualIn = _securePull(tokenIn, amountIn, pretransferred);
+            if (pretransferred) totalBefore = _reserveBeforePretransfer(in_, actualIn);
             uint256 ethValue = _creditAssetToReserve(in_, actualIn);
             amountOut = _convertEthDeltaToShares(ethValue, totalBefore);
             if (amountOut < minAmountOut) revert Slippage();
             _mintWithUsageFee(recipient, amountOut);
-            // D22: best-effort soft stake overage toward liquid target
             if (in_ == weth()) {
                 _bestEffortStakeOverageTowardTarget();
             }
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
@@ -85,6 +87,7 @@ contract RocketPoolRETHStandardExchangeInTarget is
             uint256 actualIn = _securePull(tokenIn, amountIn, pretransferred);
             amountOut = _execAssetToAsset(in_, actualIn, out_, recipient);
             if (amountOut < minAmountOut) revert Slippage();
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 

@@ -31,7 +31,8 @@ contract ERC4626StandardExchange_TransitionQuote is TestBase_ERC4626StandardExch
         );
         assertEq(minted_, quoted_, "ordinary ERC4626 routes retain compatibility");
         assertTrue(ClaimLib.supportsTransitionQuote(se_, address(asset_), address(this)));
-        assertGt(ClaimLib.previewBufferClaimIn(se_, address(asset_), 1 ether, indexedexManager, address(this)), 0);
+        // D60: claim-in is hook-scoped (shares x provider rate); the SE side only counts shares minted.
+        assertGt(IStandardExchangeIn(se_).previewExchangeIn(IERC20(address(asset_)), 1 ether, IERC20(se_)), 0);
         asset_.mint(address(this), 100 ether);
         _assertQuoteSequence(se_, IERC20(address(asset_)), address(this), 1 ether);
     }

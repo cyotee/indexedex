@@ -16,6 +16,7 @@ import {ERC4626Repo} from "@crane/contracts/tokens/ERC4626/ERC4626Repo.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {BetterMath} from "@crane/contracts/utils/math/BetterMath.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
 import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {
@@ -171,19 +172,14 @@ abstract contract MorphoBlueStandardExchangeCommon {
         if (!pretransferred) {
             token.safeTransferFrom(msg.sender, address(this), amountIn);
             uint256 delta = token.balanceOf(address(this)) - B0;
-            if (delta == 0) {
-                revert InsufficientDeposit(amountIn, 0);
-            }
-            if (delta < amountIn) {
-                return delta;
-            }
-            if (delta > amountIn) {
-                token.safeTransfer(msg.sender, delta - amountIn);
+            if (delta != amountIn) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, delta);
             }
             return amountIn;
         }
 
-        uint256 U = B0 - R;
+        LocalCreditLib.requirePretransferCaller(msg.sender);
+        uint256 U = LocalCreditLib.available(B0, R);
         if (amountIn > U) {
             revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, U);
         }
@@ -209,11 +205,12 @@ abstract contract MorphoBlueStandardExchangeCommon {
 
     function _burnSeShares(address owner, uint256 burnAmount, bool pretransferred) internal {
         if (pretransferred) {
-            ERC20Repo._burn(address(this), burnAmount);
-            uint256 leftover = IERC20(address(this)).balanceOf(address(this));
-            if (leftover > 0) {
-                IERC20(address(this)).safeTransfer(owner, leftover);
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+            uint256 selfBal = IERC20(address(this)).balanceOf(address(this));
+            if (burnAmount > selfBal) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(burnAmount, selfBal);
             }
+            ERC20Repo._burn(address(this), burnAmount);
         } else {
             ERC20Repo._burn(owner, burnAmount);
         }
@@ -273,6 +270,8 @@ abstract contract MorphoBlueStandardExchangeCommon {
         uint256 navBefore = ERC4626Repo._lastTotalAssets();
         uint256 supply = ERC20Repo._totalSupply();
         uint256 actualIn = _securePull(_loan(), amountIn, pretransferred);
+        // A pushed payment is already idle cash, but is not the existing holders' NAV.
+        if (pretransferred) navBefore -= actualIn;
         sharesOut = _sharesFromAssetsDown(actualIn, navBefore, supply);
         if (sharesOut < minAmountOut) revert Slippage();
         _mintWithUsageFee(recipient, sharesOut);
@@ -289,12 +288,30 @@ abstract contract MorphoBlueStandardExchangeCommon {
         _syncNavSnapshot();
         uint256 navBefore = ERC4626Repo._lastTotalAssets();
         uint256 supply = ERC20Repo._totalSupply();
+        IERC20 loan_ = _loan();
+        uint256 credit;
+        if (pretransferred) {
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+            credit = LocalCreditLib.budget(
+                LocalCreditLib.available(
+                    loan_.balanceOf(address(this)),
+                    MultiAssetBasicVaultRepo._reserveOfToken(address(loan_))
+                ),
+                maxAmountIn
+            );
+            // Exclude the entire bounded payment: unused credit is refunded below.
+            navBefore -= credit;
+        }
         amountIn = _assetsFromSharesUp(sharesOut, navBefore, supply);
         if (amountIn > maxAmountIn) revert Slippage();
-        uint256 actualIn = _securePull(_loan(), amountIn, pretransferred);
+        if (pretransferred && amountIn > credit) {
+            revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, credit);
+        }
+        uint256 actualIn = _securePull(loan_, amountIn, pretransferred);
         if (actualIn < amountIn) {
             revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, actualIn);
         }
+        if (pretransferred && credit > actualIn) loan_.safeTransfer(msg.sender, credit - actualIn);
         _mintWithUsageFee(recipient, sharesOut);
         _supplyInBound(actualIn);
         _endMoneyRoute();
@@ -332,8 +349,22 @@ abstract contract MorphoBlueStandardExchangeCommon {
         sharesIn = _sharesFromAssetsUp(assetsOut, nav, supply);
         if (sharesIn > maxAmountIn) revert Slippage();
         _requireLiquidity(assetsOut);
+        uint256 shareCredit;
+        if (pretransferred) {
+            IERC20 se = IERC20(address(this));
+            shareCredit = LocalCreditLib.budget(
+                LocalCreditLib.available(se.balanceOf(address(this)), 0),
+                maxAmountIn
+            );
+            if (sharesIn > shareCredit) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(sharesIn, shareCredit);
+            }
+        }
         if (!pretransferred) _maybeSpendAllowance(shareOwner, sharesIn);
         _burnSeShares(shareOwner, sharesIn, pretransferred);
+        if (pretransferred && shareCredit > sharesIn) {
+            IERC20(address(this)).safeTransfer(msg.sender, shareCredit - sharesIn);
+        }
         _payLoanToken(assetsOut, recipient);
         _endMoneyRoute();
     }

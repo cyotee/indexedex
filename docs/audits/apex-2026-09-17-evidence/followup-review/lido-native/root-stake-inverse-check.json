@@ -1,0 +1,6 @@
+{
+  "casesAttempted": 500000,
+  "seed": "0x20260917",
+  "underfundedExamples": [],
+  "scope": "Independent draft Lido _ethForStakeOut upper-bound arithmetic; not runtime evidence"
+}

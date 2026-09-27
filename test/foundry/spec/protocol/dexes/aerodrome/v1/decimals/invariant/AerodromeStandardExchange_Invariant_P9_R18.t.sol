@@ -7,8 +7,7 @@ import {AerodromeStandardExchange_Invariant_Decimals} from
 /// @notice Combo `P9_R18`. pairToken = tokenA at 9-dec; other token 18-dec.
 /// @dev After Aerodrome pool address sort, token0/token1 may swap; roles stay pairToken vs other.
 ///      vaultShare stays 18.
-/// forge-config: default.invariant.runs = 24
-/// forge-config: default.invariant.depth = 10
+
 contract AerodromeStandardExchange_Invariant_P9_R18 is AerodromeStandardExchange_Invariant_Decimals {
     function _tokenADecimals() internal pure override returns (uint8) {
         return 9;

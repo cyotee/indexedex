@@ -83,6 +83,7 @@ abstract contract TestBase_MultiPairStandardExchangeBufferPool_Decimals is TestB
         pkgInit.bufferPoolFacet = bufferPoolFacet;
         pkgInit.poolLiquidityFacet = poolLiquidityFacet;
         pkgInit.hookFacet = hookFacet;
+        pkgInit.transitionQuoteFacet = transitionQuoteFacet;
         pkgInit.vaultRegistry = IVaultRegistryDeployment(address(indexedexManager));
         pkgInit.vaultFeeOracle = IVaultFeeOracleQuery(address(indexedexManager));
         pkgInit.balancerV3Vault = bv3Vault;

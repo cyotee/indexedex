@@ -44,6 +44,7 @@ calldatasize
 chainid
 Chainlink
 cheatcode
+checkpointing
 checksummed
 CHIR
 claimliquidity
@@ -51,6 +52,7 @@ CMLT
 Codehash
 collateralized
 constprodreserve
+consultable
 contractlist
 contractlists
 cooldown
@@ -104,6 +106,8 @@ FAKEGAS
 Farcaster
 fastmcp
 FBAL
+ffeid
+ffej
 FIFTYK
 FIVEHUNDREDM
 FIVEK
@@ -157,6 +161,7 @@ jridgewell
 jumpdest
 keccak
 keypair
+kimi
 Kleros
 knownfee
 kroki
@@ -167,6 +172,7 @@ LLAMMA
 lookback
 LPWD
 LUSD
+LXQMGVW
 Merkle
 micropayment
 micropayments
@@ -188,6 +194,7 @@ NFTID
 nohup
 nomicfoundation
 noncirculating
+noncompounding
 Nonfungible
 nullglob
 nums
@@ -235,6 +242,7 @@ Reentrancy
 refetches
 reimplementation
 remappings
+remediations
 remint
 returndatacopy
 returndatasize
@@ -296,7 +304,9 @@ tokenlists
 tokenomic
 Tokenomics
 toplevel
+touchpoints
 Trunc
+Ttpr
 TWAP
 TWENTYK
 TWOB
@@ -311,10 +321,13 @@ underlyings
 ungated
 Unichain
 UNISWAPV
+unminted
+unstake
 unstaked
 unvested
 unwindable
 uqdiv
+USDG
 usedapp
 viem
 virality

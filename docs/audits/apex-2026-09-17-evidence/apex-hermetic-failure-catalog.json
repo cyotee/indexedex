@@ -1,0 +1,397 @@
+{
+  "log": "docs/audits/apex-2026-09-17-evidence/r12-hermetic-rerun.log",
+  "forgeTestTotals": {
+    "passed": 25737,
+    "failed": 6424,
+    "exit": 1,
+    "claimGreen": false
+  },
+  "failLinesParsed": 12804,
+  "namedApexOrR6Failures": 0,
+  "buckets": [
+    {
+      "id": "decimal_preexisting_math",
+      "failLines": 9976,
+      "uniqueTests": 4950,
+      "disposition": "Pre-existing decimal ZeroAmount/MaxInRatio/MathDomain. Not an APEX finding closure item.",
+      "samples": [
+        {
+          "file": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Claim_P6_R18.t.sol",
+          "test": "test_claimRewards_whileLocked",
+          "reason": "ZeroAmount()"
+        },
+        {
+          "file": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Claim_P6_R18.t.sol",
+          "test": "test_postMaturity_claimPaysFundedStaking",
+          "reason": "ZeroAmount()"
+        },
+        {
+          "file": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Claim_P6_R18.t.sol",
+          "test": "test_preMaturity_principalVestsLinearly",
+          "reason": "ZeroAmount()"
+        },
+        {
+          "file": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Claim_P6_R9.t.sol",
+          "test": "test_claimRewards_whileLocked",
+          "reason": "ZeroAmount()"
+        },
+        {
+          "file": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Claim_P6_R9.t.sol",
+          "test": "test_postMaturity_claimPaysFundedStaking",
+          "reason": "ZeroAmount()"
+        },
+        {
+          "file": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/UniswapV4Detf_Claim_P6_R9.t.sol",
+          "test": "test_preMaturity_principalVestsLinearly",
+          "reason": "ZeroAmount()"
+        }
+      ]
+    },
+    {
+      "id": "other_unrelated",
+      "failLines": 1584,
+      "uniqueTests": 734,
+      "disposition": "Unrelated or unclassified hermetic failures. Release limitation, not claimed green.",
+      "samples": [
+        {
+          "file": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/adversarial/Adversarial_Reentrancy_P18_R9.t.sol",
+          "test": "test_reentrancy_mint_hitsIsLocked",
+          "reason": "funded callback succeeds outside the lock"
+        },
+        {
+          "file": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/adversarial/Adversarial_Reentrancy_P6_R18.t.sol",
+          "test": "test_reentrancy_mint_hitsIsLocked",
+          "reason": "funded callback succeeds outside the lock"
+        },
+        {
+          "file": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/adversarial/Adversarial_Reentrancy_P6_R9.t.sol",
+          "test": "test_reentrancy_mint_hitsIsLocked",
+          "reason": "funded callback succeeds outside the lock"
+        },
+        {
+          "file": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/adversarial/Adversarial_Reentrancy_H6.t.sol",
+          "test": "test_reentrancy_mint_hitsIsLocked",
+          "reason": "funded callback succeeds outside the lock"
+        },
+        {
+          "file": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/adversarial/Adversarial_Reentrancy_P9_R18.t.sol",
+          "test": "test_reentrancy_mint_hitsIsLocked",
+          "reason": "funded callback succeeds outside the lock"
+        },
+        {
+          "file": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/decimals/adversarial/Adversarial_Reentrancy_P9_R6.t.sol",
+          "test": "test_reentrancy_mint_hitsIsLocked",
+          "reason": "funded callback succeeds outside the lock"
+        }
+      ]
+    },
+    {
+      "id": "eoa_guard_first_expected_tdi",
+      "failLines": 448,
+      "uniqueTests": 224,
+      "disposition": "Leftover test retarget. EOA now hits EOAPretransferNotAllowed before TDI. Production is the D9 guard. Expect the EOA error, then use AtomicPretransferCaller for the TDI/I1 body.",
+      "samples": [
+        {
+          "file": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/adversarial/Adversarial_ComposedStable_SecurePull.t.sol",
+          "test": "test_I1_pretransferred_claimedLeInventory_stillReverts",
+          "reason": "Error != expected error: EOAPretransferNotAllowed() != TransferDeltaInsufficient(5000000000000000000 [5e18], 0)"
+        },
+        {
+          "file": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/adversarial/Adversarial_ComposedStable_SecurePull.t.sol",
+          "test": "test_I1_pretransferred_inventoryNoInCallTransfer_revertsDelta0",
+          "reason": "Error != expected error: EOAPretransferNotAllowed() != TransferDeltaInsufficient(10000000000000000000 [1e19], 0)"
+        },
+        {
+          "file": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/adversarial/Adversarial_ComposedStable_SecurePull.t.sol",
+          "test": "test_I2_pretransferred_claimedGtDelta0_reverts",
+          "reason": "Error != expected error: EOAPretransferNotAllowed() != TransferDeltaInsufficient(10000000000000000000 [1e19], 0)"
+        },
+        {
+          "file": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/adversarial/Adversarial_ComposedStable_SecurePull.t.sol",
+          "test": "test_I3_residualInventory_cannotFundSecondFreePretransfer",
+          "reason": "Error != expected error: EOAPretransferNotAllowed() != TransferDeltaInsufficient(10000000000000000000 [1e19], 0)"
+        },
+        {
+          "file": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_SecurePull_B_ALL6.t.sol",
+          "test": "test_I1_pretransferred_claimedLeInventory_stillReverts",
+          "reason": "Error != expected error: EOAPretransferNotAllowed() != TransferDeltaInsufficient(5000000000000000000 [5e18], 0)"
+        },
+        {
+          "file": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/decimals/adversarial/Adversarial_ComposedStable_SecurePull_B_ALL6.t.sol",
+          "test": "test_I1_pretransferred_inventoryNoInCallTransfer_revertsDelta0",
+          "reason": "Error != expected error: EOAPretransferNotAllowed() != TransferDeltaInsufficient(10000000000000000000 [1e19], 0)"
+        }
+      ]
+    },
+    {
+      "id": "trust_flag_leftover",
+      "failLines": 442,
+      "uniqueTests": 221,
+      "disposition": "Remaining I1/I2/I3/E6 bodies not yet switched to AtomicPretransferCaller or exact TDI args.",
+      "samples": [
+        {
+          "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV3FullSpreadStandardExchangeVault_Adversarial.t.sol",
+          "test": "test_E6_pretransferredZapOut_cannotBurnMoreThanDelivered",
+          "reason": "specific delivery error: 0x0b7f868c00000000000000000000000000000000000000000000000118c435457a0d25c000000000000000000000000000000000000000000000000046310d515e83496f != 0x0b7f868c00000000000000000000000000000000000000000000000046310d515e83497"
+        },
+        {
+          "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV3FullSpreadStandardExchangeVault_Adversarial.t.sol",
+          "test": "test_I1_exchangeOut_pretransferredTrue_noDelivery",
+          "reason": "specific delivery error: 0x0b7f868c00000000000000000000000000000000000000000000000118c435457a0d25c00000000000000000000000000000000000000000000000000000000000000000 != 0x0b7f868c00000000000000000000000000000000000000000000000046310d515e83497"
+        },
+        {
+          "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV3FullSpreadStandardExchangeVault_Adversarial.t.sol",
+          "test": "test_I2_exchangeOut_usedGtActualIn_reverts",
+          "reason": "specific delivery error: 0x0b7f868c00000000000000000000000000000000000000000000000118c435457a0d25c000000000000000000000000000000000000000000000000046310d515e83496f != 0x0b7f868c00000000000000000000000000000000000000000000000046310d515e83497"
+        },
+        {
+          "file": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_MorphoBlueSe_ProductLaw.t.sol",
+          "test": "test_I2_mint_pretransferred_claimedGtDelta_reverts",
+          "reason": "Error != expected error: MaxInRatio() != TransferDeltaInsufficient(50000000000000000000 [5e19], 25000000000000000000 [2.5e19])"
+        },
+        {
+          "file": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/UniswapV4Detf_Weighted_MorphoBlueSe_ProductLaw.t.sol",
+          "test": "test_I3_mint_residualInventory_cannotFundSecondFreePretransfer",
+          "reason": "Error != expected error: MaxInRatio() != TransferDeltaInsufficient(30000000000000000000 [3e19], 0)"
+        },
+        {
+          "file": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/prod-se/decimals/UniswapV4Detf_Weighted_MorphoBlueSe_ProductLaw_B_ALL6.t.sol",
+          "test": "test_I2_mint_pretransferred_claimedGtDelta_reverts",
+          "reason": "Error != expected error: MaxInRatio() != TransferDeltaInsufficient(50000000 [5e7], 25000000 [2.5e7])"
+        }
+      ]
+    },
+    {
+      "id": "eoa_guard_unretargeted",
+      "failLines": 164,
+      "uniqueTests": 82,
+      "disposition": "Leftover test retarget. Decimal Camelot/Aerodrome I2 still prank an EOA into prepaid. Same D9 guard.",
+      "samples": [
+        {
+          "file": "test/foundry/spec/protocol/dexes/camelot/v2/decimals/CamelotV2StandardExchange_SecRemediation_P18_R6.t.sol",
+          "test": "test_E6_exchangeOut_swap_inflatedMax_pretransferred_noExtraTransfer_noInventorySkim",
+          "reason": "EOAPretransferNotAllowed()"
+        },
+        {
+          "file": "test/foundry/spec/protocol/dexes/camelot/v2/decimals/CamelotV2StandardExchange_SecRemediation_P18_R9.t.sol",
+          "test": "test_E6_exchangeOut_swap_inflatedMax_pretransferred_noExtraTransfer_noInventorySkim",
+          "reason": "EOAPretransferNotAllowed()"
+        },
+        {
+          "file": "test/foundry/spec/protocol/dexes/camelot/v2/decimals/CamelotV2StandardExchange_SecRemediation_P6_R18.t.sol",
+          "test": "test_E6_exchangeOut_swap_inflatedMax_pretransferred_noExtraTransfer_noInventorySkim",
+          "reason": "EOAPretransferNotAllowed()"
+        },
+        {
+          "file": "test/foundry/spec/protocol/dexes/camelot/v2/decimals/CamelotV2StandardExchange_SecRemediation_P6_R9.t.sol",
+          "test": "test_E6_exchangeOut_swap_inflatedMax_pretransferred_noExtraTransfer_noInventorySkim",
+          "reason": "EOAPretransferNotAllowed()"
+        },
+        {
+          "file": "test/foundry/spec/protocol/dexes/camelot/v2/decimals/CamelotV2StandardExchange_SecRemediation_P9_R18.t.sol",
+          "test": "test_E6_exchangeOut_swap_inflatedMax_pretransferred_noExtraTransfer_noInventorySkim",
+          "reason": "EOAPretransferNotAllowed()"
+        },
+        {
+          "file": "test/foundry/spec/protocol/dexes/camelot/v2/decimals/CamelotV2StandardExchange_SecRemediation_P9_R6.t.sol",
+          "test": "test_E6_exchangeOut_swap_inflatedMax_pretransferred_noExtraTransfer_noInventorySkim",
+          "reason": "EOAPretransferNotAllowed()"
+        }
+      ]
+    },
+    {
+      "id": "nested_balancer_setUp_lock",
+      "failLines": 142,
+      "uniqueTests": 58,
+      "disposition": "Nested Balancer vault ReentrancyGuardReentrantCall in setUp. Same limitation as MixedBuffer DETF / CommonBufferWeighted. Not an APEX refund defect.",
+      "samples": [
+        {
+          "file": "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStable_WalkAndExhaust.spec.t.sol",
+          "test": "setUp",
+          "reason": "ReentrancyGuardReentrantCall()"
+        },
+        {
+          "file": "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_ALL6.t.sol",
+          "test": "setUp",
+          "reason": "ReentrancyGuardReentrantCall()"
+        },
+        {
+          "file": "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_ALL9.t.sol",
+          "test": "setUp",
+          "reason": "ReentrancyGuardReentrantCall()"
+        },
+        {
+          "file": "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_P18_R6.t.sol",
+          "test": "setUp",
+          "reason": "ReentrancyGuardReentrantCall()"
+        },
+        {
+          "file": "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/decimals/CommonBufferMultiVaultStable_WalkAndExhaust_B_P18_R9.t.sol",
+          "test": "setUp",
+          "reason": "ReentrancyGuardReentrantCall()"
+        },
+        {
+          "file": "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/adversarial/Adversarial_CommonBufferMultiVaultStable_P0.t.sol",
+          "test": "setUp",
+          "reason": "ReentrancyGuardReentrantCall()"
+        }
+      ]
+    },
+    {
+      "id": "native_sy_leftover",
+      "failLines": 14,
+      "uniqueTests": 7,
+      "disposition": "Native SY / hook SY leftover. Not counted as a named APEX red. Catalogued; production Native SY prepaid maps to false-flag self-call.",
+      "samples": [
+        {
+          "file": "test/foundry/spec/vaults/standard/sy/SingleConstantProductHookNativeSY.t.sol",
+          "test": "test_hookSYBothBookDirectionsUseSameStandardLiquidityRoutes",
+          "reason": "assertion failed: 2477343713995222763 != 225647749075133767"
+        },
+        {
+          "file": "test/foundry/spec/vaults/standard/sy/DualBufferHookNativeSY.t.sol",
+          "test": "test_dualNativeSYEveryDeclaredRouteMatchesPreviewAndActualPayout",
+          "reason": "SY deposit preview: 19552998220439527 != 390159114658972"
+        },
+        {
+          "file": "test/foundry/spec/vaults/standard/sy/DualBufferHookNativeSY.t.sol",
+          "test": "test_dualNativeSYInternalRedemptionAndLimits",
+          "reason": "next call did not revert as expected"
+        },
+        {
+          "file": "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi.t.sol",
+          "test": "test_nativeSYEveryDeclaredRoutePaysItsPreview",
+          "reason": "InsufficientTokenOut()"
+        },
+        {
+          "file": "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi.t.sol",
+          "test": "test_nativeSYFundedYieldRepricesWithoutRebasingAndStillRedeems",
+          "reason": "InsufficientTokenOut()"
+        },
+        {
+          "file": "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi.t.sol",
+          "test": "test_nativeSYInternalBalanceLimitsAndPriorInventory",
+          "reason": "InsufficientTokenOut()"
+        }
+      ]
+    },
+    {
+      "id": "zap_out_tdi_leftover",
+      "failLines": 12,
+      "uniqueTests": 6,
+      "disposition": "FullSpread zap-out leftover still using max-style expected TDI args. Production pulls used.",
+      "samples": [
+        {
+          "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV3FullSpreadStandardExchangeVault_Adversarial.t.sol",
+          "test": "test_E6_zapOut_refundMatrix_blocked",
+          "reason": "TransferDeltaInsufficient(20050251573520181064 [2.005e19], 5012562893380045266 [5.012e18])"
+        },
+        {
+          "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV3FullSpreadStandardExchangeVault_Adversarial.t.sol",
+          "test": "test_E6_zapOut_refundMatrix_idle",
+          "reason": "TransferDeltaInsufficient(20231353998571808192 [2.023e19], 5057838499642952048 [5.057e18])"
+        },
+        {
+          "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV4FullSpreadStandardExchangeVault_Adversarial.t.sol",
+          "test": "test_E6_zapOut_refundMatrix_blocked",
+          "reason": "TransferDeltaInsufficient(20050251573520181064 [2.005e19], 5012562893380045266 [5.012e18])"
+        },
+        {
+          "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV4FullSpreadStandardExchangeVault_Adversarial.t.sol",
+          "test": "test_E6_zapOut_refundMatrix_idle",
+          "reason": "TransferDeltaInsufficient(20231353998571808192 [2.023e19], 5057838499642952048 [5.057e18])"
+        },
+        {
+          "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV4FullSpreadStandardExchangeVault_NativeAdversarial.t.sol",
+          "test": "test_E6_zapOut_refundMatrix_blocked",
+          "reason": "TransferDeltaInsufficient(20050251573520181064 [2.005e19], 5012562893380045266 [5.012e18])"
+        },
+        {
+          "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV4FullSpreadStandardExchangeVault_NativeAdversarial.t.sol",
+          "test": "test_E6_zapOut_refundMatrix_idle",
+          "reason": "TransferDeltaInsufficient(20231353998571808192 [2.023e19], 5057838499642952048 [5.057e18])"
+        }
+      ]
+    },
+    {
+      "id": "fullspread_exact_out_or_mj5",
+      "failLines": 12,
+      "uniqueTests": 6,
+      "disposition": "Leftover FullSpread dual-exit pull tests still assert unused maxAmountIn refund (30e18 leftover). D15/D17 pull quoted used and refund nothing. MJ5 EOA prepaid expects TDI and gets EOAPretransferNotAllowed.",
+      "samples": [
+        {
+          "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV3FullSpreadStandardExchangeVault_Adversarial.t.sol",
+          "test": "test_pullDualExit_maxAllowanceAndBalance_blocked",
+          "reason": "assertion failed: 30000000000000000000 != 0"
+        },
+        {
+          "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV3FullSpreadStandardExchangeVault_Adversarial.t.sol",
+          "test": "test_pullDualExit_maxAllowanceAndBalance_idle",
+          "reason": "assertion failed: 30000000000000000000 != 0"
+        },
+        {
+          "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV4FullSpreadStandardExchangeVault_Adversarial.t.sol",
+          "test": "test_pullDualExit_maxAllowanceAndBalance_blocked",
+          "reason": "assertion failed: 30000000000000000000 != 0"
+        },
+        {
+          "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV4FullSpreadStandardExchangeVault_Adversarial.t.sol",
+          "test": "test_pullDualExit_maxAllowanceAndBalance_idle",
+          "reason": "assertion failed: 30000000000000000000 != 0"
+        },
+        {
+          "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV4FullSpreadStandardExchangeVault_NativeAdversarial.t.sol",
+          "test": "test_pullDualExit_maxAllowanceAndBalance_blocked",
+          "reason": "assertion failed: 30000000000000000000 != 0"
+        },
+        {
+          "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV4FullSpreadStandardExchangeVault_NativeAdversarial.t.sol",
+          "test": "test_pullDualExit_maxAllowanceAndBalance_idle",
+          "reason": "assertion failed: 30000000000000000000 != 0"
+        }
+      ]
+    },
+    {
+      "id": "d34_metadata_no_fallback",
+      "failLines": 6,
+      "uniqueTests": 3,
+      "disposition": "D34: reverting metadata no longer falls back to 18. Tests still expect InsufficientMinimumLiquidity.",
+      "samples": [
+        {
+          "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV3FullSpreadStandardExchangeVault_Adversarial.t.sol",
+          "test": "test_A0_floor_revertingMetadataFallsBackToEighteen",
+          "reason": "Error != expected error: metadata unavailable != InsufficientMinimumLiquidity(1000000000000000 [1e15], 1000000000000000 [1e15])"
+        },
+        {
+          "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV4FullSpreadStandardExchangeVault_Adversarial.t.sol",
+          "test": "test_A0_floor_revertingMetadataFallsBackToEighteen",
+          "reason": "Error != expected error: metadata unavailable != InsufficientMinimumLiquidity(1000000000000000 [1e15], 1000000000000000 [1e15])"
+        },
+        {
+          "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV4FullSpreadStandardExchangeVault_NativeAdversarial.t.sol",
+          "test": "test_A0_floor_revertingMetadataFallsBackToEighteen",
+          "reason": "Error != expected error: metadata unavailable != InsufficientMinimumLiquidity(1000000000000000 [1e15], 1000000000000000 [1e15])"
+        }
+      ]
+    },
+    {
+      "id": "erc4626_decimal_o5_gift_surplus_tdi",
+      "failLines": 4,
+      "uniqueTests": 2,
+      "disposition": "Corrected exact-out pull: gift surplus reverts TDI. 18-dec Routes O5 was retargeted; U6/U9 copies still expect a refund.",
+      "samples": [
+        {
+          "file": "test/foundry/spec/vaults/standard/erc4626/decimals/ERC4626StandardExchange_Routes_U6.t.sol",
+          "test": "test_O5_wrapExactOut_pullSurplus_refunded",
+          "reason": "TransferDeltaInsufficient(50000000000000000000 [5e19], 50000000000000000100 [5e19])"
+        },
+        {
+          "file": "test/foundry/spec/vaults/standard/erc4626/decimals/ERC4626StandardExchange_Routes_U9.t.sol",
+          "test": "test_O5_wrapExactOut_pullSurplus_refunded",
+          "reason": "TransferDeltaInsufficient(50000000000000000000 [5e19], 50000000000000000100 [5e19])"
+        }
+      ]
+    }
+  ],
+  "note": "Named APEX003/004B/005/008/R6 tests did not fail. Remaining APEX-related lines are leftover test retargets or documented limitations. Do not treat this suite as a green release run. Live instances are unremediated."
+}

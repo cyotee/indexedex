@@ -42,6 +42,7 @@ import {
     UniswapV4StandardExchangeOrbitalBufferHookPairPoolLib as PairPoolLib
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookPairPoolLib.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 import {
     UniswapV4StandardExchangeOrbitalBufferHookCommon
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookCommon.sol";
@@ -334,9 +335,9 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_StagedInit_Test is
             se0: se,
             se1: address(0),
             se2: address(0),
-            rp0: address(0),
-            rp1: address(0),
-            rp2: address(0),
+            rp0: RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, se, address(a)),
+            rp1: RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, address(0), address(b)),
+            rp2: RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, address(0), address(c)),
             tickSpacing: 0,
             sqrtPriceX96: 0,
             ownerOnlyLiquidity: _pkgOwnerOnlyLiquidity(),
@@ -358,7 +359,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_StagedInit_Test is
         SimpleMintableERC20(t0).approve(address(swapRouter), type(uint256).max);
         SimpleMintableERC20(t1).approve(address(swapRouter), type(uint256).max);
         bool zeroForOne = t0 == Currency.unwrap(key.currency0);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("WrappedError(address,bytes4,bytes,bytes)", h, bytes4(keccak256("beforeSwap(address,(address,address,uint24,int24,address),(bool,int256,uint160),bytes)")), abi.encodeWithSignature("NoTargetFor(bytes4)", IHooks.beforeSwap.selector), abi.encodeWithSignature("HookCallFailed()")));
         swapRouter.swapExactIn(
             key,
             SwapParams({
@@ -507,9 +508,9 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_StagedInit_Test is
             se0: seA,
             se1: address(0),
             se2: address(0),
-            rp0: address(0),
-            rp1: address(0),
-            rp2: address(0),
+            rp0: RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, seA, t0),
+            rp1: RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, address(0), t1),
+            rp2: RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, address(0), t2),
             tickSpacing: 0,
             sqrtPriceX96: 0,
             ownerOnlyLiquidity: _pkgOwnerOnlyLiquidity(),

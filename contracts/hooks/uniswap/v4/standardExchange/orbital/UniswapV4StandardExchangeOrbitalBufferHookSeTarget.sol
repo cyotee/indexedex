@@ -83,6 +83,9 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookSeTarget is UniswapV
     }
 
 
+    /// @dev Exact-in credits the requested amount and refunds nothing. `pretransferred=true`
+    ///      is for integrating contracts only and reverts `EOAPretransferNotAllowed` for a
+    ///      caller with no bytecode. Resting unbooked face is D12 credit, not this call's refund.
     function exchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut, uint256 minAmountOut, address recipient, bool pretransferred, uint256 deadline) external returns (uint256 amountOut) {
         if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return LiquidityRoute.exchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
         return _swapExchangeIn(tokenIn, amountIn, tokenOut, minAmountOut, recipient, pretransferred, deadline);
@@ -145,6 +148,11 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookSeTarget is UniswapV
     }
 
 
+    /// @dev Exact-out refunds `credit - used` on `pretransferred=true` only, where
+    ///      `credit = min(unbooked, maxAmountIn)`. False-flag pulls `used` and refunds nothing.
+    ///      EOA pretransfer reverts `EOAPretransferNotAllowed`. Resting unbooked face beyond the credit is
+    ///      D12 pretransfer credit, never this call's refund; what the SE returns during this call is counted
+    ///      once, and an identity buffer's SE-share backing is not face to refund.
     function exchangeOut(IERC20 tokenIn, uint256 maxAmountIn, IERC20 tokenOut, uint256 amountOut, address recipient, bool pretransferred, uint256 deadline) external returns (uint256 amountIn) {
         if (LiquidityRoute.isLiquidityRoute(tokenIn, tokenOut)) return LiquidityRoute.exchangeOut(tokenIn, maxAmountIn, tokenOut, amountOut, recipient, pretransferred, deadline);
         return _swapExchangeOut(tokenIn, maxAmountIn, tokenOut, amountOut, recipient, pretransferred, deadline);
@@ -169,12 +177,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookSeTarget is UniswapV
         amountIn = _previewSwapExactOut(tin, tout, amountOut);
         if (amountIn > maxAmountIn) revert InsufficientTokenOut();
 
-        // L-GAPS-11: delta-gate claimed amountIn. Refund only in-window surplus above amountIn
-        // (never absolute free inventory / book).
-        uint256 observedDelta = _securePull(IERC20(tin), amountIn, pretransferred);
-        if (pretransferred && observedDelta > amountIn) {
-            IERC20(tin).safeTransfer(msg.sender, observedDelta - amountIn);
-        }
+        _pullExactOutInput(IERC20(tin), amountIn, maxAmountIn, pretransferred);
 
         uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
         Repo.Layout storage l = Repo._layout();

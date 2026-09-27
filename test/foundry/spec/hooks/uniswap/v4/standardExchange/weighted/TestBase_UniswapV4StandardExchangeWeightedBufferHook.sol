@@ -54,6 +54,7 @@ import {
     UniswapV4StandardExchangeWeightedBufferHookTestDeployLib as DeployLib
 } from "test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookTestDeployLib.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 import {
     UniswapV4StandardExchangeWeightedBufferHookPairPoolLib as PairPoolLib
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookPairPoolLib.sol";
@@ -219,7 +220,6 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedBufferHook is TestBa
     /// @notice Default: n=2, SE on token0, equal weights.
     function _defaultPkgArgs()
         internal
-        view
         returns (IUniswapV4StandardExchangeWeightedBufferHookPackage.PkgArgs memory)
     {
         address[] memory toks = new address[](2);
@@ -239,7 +239,7 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedBufferHook is TestBa
             tokens: toks,
             weights: w,
             standardExchanges: ses,
-            rateProviders: rps,
+            rateProviders: RateProviderFixtureLib.providersFor(create3Factory, diamondPackageFactory, toks, ses),
             tokenDecimals: HookPkgArgsDecimalsLib.tokenDecimals(toks),
             seDecimals: HookPkgArgsDecimalsLib.seDecimals(ses),
             ownerOnlyLiquidity: _pkgOwnerOnlyLiquidity(),
@@ -311,7 +311,6 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedBufferHook is TestBa
     /// @notice n-token args with optional all-SE; equal weights; ≥1 SE on leg 0.
     function _argsN(uint8 n, bool allSE)
         internal
-        view
         returns (IUniswapV4StandardExchangeWeightedBufferHookPackage.PkgArgs memory a)
     {
         require(n >= 2 && n <= 4, "test n");
@@ -321,7 +320,6 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedBufferHook is TestBa
         a.tokens = new address[](n);
         a.weights = new uint256[](n);
         a.standardExchanges = new address[](n);
-        a.rateProviders = new address[](n);
         address[4] memory toks = [address(token0), address(token1), address(token2), address(token3)];
         address[4] memory ses = [se0, se1, se2, se3];
         uint256 wEach = WAD / n;
@@ -336,6 +334,7 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedBufferHook is TestBa
         a.owner = _pkgOwner();
         a.tokenDecimals = HookPkgArgsDecimalsLib.tokenDecimals(a.tokens);
         a.seDecimals = HookPkgArgsDecimalsLib.seDecimals(a.standardExchanges);
+        a.rateProviders = RateProviderFixtureLib.providersFor(create3Factory, diamondPackageFactory, a.tokens, a.standardExchanges); // D60
     }
 
     function _pkgArgs(
@@ -343,16 +342,16 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedBufferHook is TestBa
         uint256[] memory weights,
         address[] memory ses,
         address[] memory rps
-    ) internal view returns (IUniswapV4StandardExchangeWeightedBufferHookPackage.PkgArgs memory a) {
+    ) internal returns (IUniswapV4StandardExchangeWeightedBufferHookPackage.PkgArgs memory a) {
         a.poolManager = address(pm);
         a.feeOracle = address(indexedexManager);
         a.n = uint8(toks.length);
         a.tokens = toks;
         a.weights = weights;
         a.standardExchanges = ses;
-        a.rateProviders = rps;
         a.tokenDecimals = HookPkgArgsDecimalsLib.tokenDecimals(a.tokens);
         a.seDecimals = HookPkgArgsDecimalsLib.seDecimals(a.standardExchanges);
+        a.rateProviders = RateProviderFixtureLib.fillMissing(create3Factory, diamondPackageFactory, a.tokens, a.standardExchanges, rps); // D60: caller-supplied providers kept
         a.ownerOnlyLiquidity = _pkgOwnerOnlyLiquidity();
         a.owner = _pkgOwner();
     }

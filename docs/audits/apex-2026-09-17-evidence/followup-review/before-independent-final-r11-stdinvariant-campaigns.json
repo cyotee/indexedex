@@ -1,0 +1,220 @@
+{
+  "env": {
+    "FOUNDRY_FUZZ_RUNS": 10000,
+    "FOUNDRY_INVARIANT_RUNS": 256,
+    "FOUNDRY_INVARIANT_DEPTH": 64
+  },
+  "noInvariantApexIdentifiers": true,
+  "outOfScope": [
+    "test/foundry/spec/protocols/staking/token/TokenStakingMigrationAdapter.t.sol",
+    "test/foundry/spec/protocol/dexes/balancer/v3/routers/invariant/BalancerV3StandardExchangeRouter_PrepayAuth.invariant.t.sol",
+    "lib/crane invariant suites"
+  ],
+  "campaigns": [
+    {
+      "family": "Camelot V2 SE",
+      "kind": "fuzz InOutInvariant (not StdInvariant)",
+      "log": "camelot-apex-invariant.log",
+      "result": "3/3 PASS including two testFuzz at runs 10000; 8 decimal combos 24/24 at 10000 in camelot-decimals-fuzz-10000.log"
+    },
+    {
+      "family": "Uniswap V2 SE",
+      "kind": "fuzz InOutInvariant",
+      "log": "uniswap-v2-apex-invariant.log",
+      "result": "29/29 including four route fuzzes at 10000"
+    },
+    {
+      "family": "LocalCreditLib",
+      "kind": "testFuzz_APEX_*",
+      "log": "apex-r11-fuzz-10000.log",
+      "result": "3/3 at 10000"
+    },
+    {
+      "family": "Aerodrome V1 SE",
+      "kind": "StdInvariant targetContract Handler",
+      "log": "aerodrome-apex-invariant.log",
+      "result": "3/3 invariant at 256 runs / 16384 calls / 0 reverts; Handler swap/vaultDeposit/vaultWithdraw all succeed"
+    },
+    {
+      "family": "Aerodrome V1 SE decimals",
+      "kind": "StdInvariant 8 combos",
+      "log": "aerodrome-decimals-apex-invariant.log",
+      "result": "8 suites x 3 invariants = 24/24 at 256/16384/0"
+    },
+    {
+      "family": "Lido wstETH SE",
+      "kind": "StdInvariant",
+      "log": "lido-apex-invariant.log",
+      "result": "4/4 at 256/16384/0; Handler donate/exchangeIn/exchangeOut/rebalance succeed"
+    },
+    {
+      "family": "Rocket Pool rETH SE",
+      "kind": "StdInvariant",
+      "log": "rocket-apex-invariant.log",
+      "result": "3/3 at 256/16384/0"
+    },
+    {
+      "family": "EtherFi weETH SE",
+      "kind": "StdInvariant",
+      "log": "etherfi-apex-invariant.log",
+      "result": "5/5 at 256/16384/0"
+    },
+    {
+      "family": "Morpho Blue SE",
+      "kind": "StdInvariant",
+      "log": "morpho-apex-invariant.log",
+      "result": "6 invariants at 256/16384/0"
+    },
+    {
+      "family": "Morpho Blue SE decimals U6/U9",
+      "kind": "StdInvariant",
+      "log": "remaining-stdinvariant-256.log",
+      "result": "2 suites x 7 = 14/14 at 256/16384/0"
+    },
+    {
+      "family": "RebasingAware custody",
+      "kind": "StdInvariant",
+      "log": "rebasing-aware-apex-invariant.log",
+      "result": "1/1 at 256/16384/0; Handler money/donate/rebase/closedCycle succeed"
+    },
+    {
+      "family": "RebasingAware buffer + DETF compose",
+      "kind": "StdInvariant",
+      "log": "remaining-stdinvariant-256.log",
+      "result": "Buffer 5/5 and Detf 2/2 at 256/16384/0"
+    },
+    {
+      "family": "FullSpread V3+V4",
+      "kind": "StdInvariant",
+      "log": "fullspread-apex-invariant.log",
+      "result": "V3 and V4 invariant_allInputsSharesAndCustodyReconcile at 256/16384/0; Handler deposit/donate/marketTrade/rebalance/sleeve/withdraw succeed"
+    },
+    {
+      "family": "StandardExchangeBufferPool",
+      "kind": "StdInvariant",
+      "log": "buffer-pool-apex-invariant.log",
+      "result": "8/8 at 256/16384 with expected handler reverts"
+    },
+    {
+      "family": "MultiVaultWeighted DETF",
+      "kind": "StdInvariant + fuzz",
+      "logs": [
+        "detf-multivault-apex-invariant.log",
+        "detf-decimals-apex-invariant.log",
+        "detf-fuzz-10000.log"
+      ],
+      "result": "18-dec 5/5 at 256; 8 decimal combos 40/40 at 256; fuzz 4/4 at 10000"
+    },
+    {
+      "family": "SingleStandardExchange DETF",
+      "kind": "StdInvariant + fuzz",
+      "logs": [
+        "detf-singlese-apex-invariant.log",
+        "detf-decimals-apex-invariant.log",
+        "detf-fuzz-10000.log"
+      ],
+      "result": "18-dec 4/4 at 256; 8 decimal combos 32/32 at 256; fuzz 3/3 at 10000"
+    },
+    {
+      "family": "CommonBufferMultiVaultWeighted + MixedBufferMultiVaultStable",
+      "kind": "StdInvariant",
+      "log": "remaining-stdinvariant-256.log",
+      "result": "FAIL setUp ReentrancyGuardReentrantCall(); not counted green. BufferPool constProd remains the passing Balancer buffer-pool campaign."
+    },
+    {
+      "family": "ERC-4626 SE",
+      "kind": "StdInvariant",
+      "log": "apex-r11-erc4626-slipstream-invariant.log",
+      "result": "2/2 at 256/16384/0; Handler exchangeIn/exchangeOut/eoaPrepaidRejected"
+    },
+    {
+      "family": "Slipstream SE",
+      "kind": "StdInvariant",
+      "log": "apex-r11-erc4626-slipstream-invariant.log",
+      "result": "2/2 at 256/16384/0; Handler exchangeIn/exchangeOut/eoaPrepaidRejected"
+    },
+    {
+      "family": "Orbital SE buffer hook",
+      "kind": "StdInvariant",
+      "log": "apex-r11-orbital-invariant.log",
+      "result": "2/2 at 256/16384/0; Handler addLiq/removeLiq"
+    },
+    {
+      "family": "Aave V3 Stata SE",
+      "kind": "StdInvariant",
+      "log": "apex-r11-stata-loop-sp-invariant.log",
+      "result": "1/1 at 256/16384/0; Handler exchangeIn/exchangeOut/eoaPrepaidRejected"
+    },
+    {
+      "family": "Aave Cross-Version Loop",
+      "kind": "StdInvariant",
+      "log": "apex-r11-stata-loop-sp-invariant.log",
+      "result": "1/1 at 256/16384/0; Handler exchangeIn/exchangeOut prepaid=false only (D32)"
+    },
+    {
+      "family": "BalancerV3SinglePoolStandardExchange",
+      "kind": "StdInvariant",
+      "log": "apex-r11-stata-loop-sp-invariant.log",
+      "result": "1/1 at 256/16384/0; Handler exchangeIn/exchangeOut/eoaPrepaidRejected"
+    },
+    {
+      "family": "Weighted SE buffer hook",
+      "kind": "StdInvariant",
+      "log": "apex-r11-hook-families-invariant.log",
+      "result": "1/1 at 256/16384/0; Handler join/exit"
+    },
+    {
+      "family": "Single-CP SE buffer hook",
+      "kind": "StdInvariant",
+      "log": "apex-r11-hook-families-invariant.log",
+      "result": "1/1 at 256/16384/0; Handler deposit/withdraw"
+    },
+    {
+      "family": "Dual-CP SE buffer hook",
+      "kind": "StdInvariant",
+      "log": "apex-r11-hook-families-invariant.log",
+      "result": "1/1 at 256/16384/0; Handler deposit/withdraw"
+    },
+    {
+      "family": "Curve quad SE buffer hook",
+      "kind": "StdInvariant",
+      "log": "apex-r11-hook-families-invariant.log",
+      "result": "1/1 at 256/16384/0; Handler join"
+    },
+    {
+      "family": "Balancer quad SE buffer hook",
+      "kind": "StdInvariant",
+      "log": "apex-r11-hook-families-invariant.log",
+      "result": "1/1 at 256/16384/0; Handler join"
+    },
+    {
+      "family": "non-CP single SE buffer hook",
+      "kind": "StdInvariant",
+      "log": "apex-r11-noncp-invariant.log",
+      "result": "1/1 at 256/16384/0; Handler exchangeIn/exchangeOut/eoaPrepaidRejected. Crane ERC4626Permit underlying uses Crane ERC4626Facet, not D45 ReceiptBacked."
+    },
+    {
+      "family": "Uniswap V4 DETF",
+      "kind": "StdInvariant",
+      "log": "apex-r11-detf-remaining-invariant.log",
+      "result": "1/1 at 256/16384/0; Handler exchangeIn/eoaPrepaidRejected after _firstBond"
+    },
+    {
+      "family": "Composed/Rebasing stable DETF",
+      "kind": "StdInvariant",
+      "log": "apex-r11-detf-remaining-invariant.log",
+      "result": "1/1 at 256/16384/0; Handler exchangeIn/eoaPrepaidRejected after _live"
+    },
+    {
+      "family": "MixedBuffer MultiVault Stable DETF",
+      "kind": "StdInvariant",
+      "log": "apex-r11-detf-remaining-invariant.log",
+      "result": "FAIL setUp ReentrancyGuardReentrantCall(); same nested Balancer-vault lock as CommonBufferWeighted/MixedBufferStable pool campaigns. Not counted green. Mint/bootstrap remain in MixedBuffer unit suites."
+    }
+  ],
+  "familiesWithoutStdInvariantCampaign": [
+    "MixedBuffer MultiVault Stable DETF",
+    "MixedBufferMultiVaultStable",
+    "CommonBufferMultiVaultWeighted"
+  ]
+}

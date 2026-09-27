@@ -38,7 +38,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_SeBufferAbi is
     function test_T1_4_joinSingleAssetExactIn_beforeLive_reverts() public {
         assertFalse(single.isLive(), "pre-live");
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("NotLive()"));
         single.joinSingleAssetExactIn(address(pairToken), 10 ether, user, 0, block.timestamp + 1 hours);
     }
 

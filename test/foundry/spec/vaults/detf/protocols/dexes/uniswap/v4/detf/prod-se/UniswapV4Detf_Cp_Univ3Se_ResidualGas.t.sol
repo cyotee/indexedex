@@ -33,7 +33,19 @@ contract UniswapV4Detf_Cp_Univ3Se_ResidualGas is TestBase_UniswapV4Detf_Cp_Univ3
         assertEq(IERC20(detf).totalSupply(), supplyBefore_, "dust creates no user entitlement");
         assertGe(IERC20(reserveHook).balanceOf(detfInfo.bondNftVault()), lpBefore_, "protocol LP custody preserved");
         assertEq(IERC20(reserveHook).balanceOf(detf), 0, "LP belongs in NFT custody");
-        assertLe(IERC20(mintToken).balanceOf(detf), 10, "only native pair dust remains");
+        // APEX D6: a residual the hook cannot mint from (preview 0) is retained as book, dust or not;
+        // the production sweep is preview-gated, so only mintable residual above the dust bound is a defect.
+        uint256 remaining_ = IERC20(mintToken).balanceOf(detf);
+        if (remaining_ > 10) {
+            address[] memory tokens_ = new address[](1);
+            uint256[] memory amounts_ = new uint256[](1);
+            tokens_[0] = mintToken;
+            amounts_[0] = remaining_;
+            (bool ok_, bytes memory ret_) = reserveHook.staticcall(
+                abi.encodeWithSignature("previewJoinUnbalanced(address[],uint256[])", tokens_, amounts_)
+            );
+            assertTrue(ok_ && ret_.length >= 32 && abi.decode(ret_, (uint256)) == 0, "only unmintable pair residual may remain");
+        }
         assertLe(IERC20(se).balanceOf(detf), 10, "only native SE dust remains");
         assertEq(IERC20(mintToken).allowance(detf, reserveHook), 0, "join approval cleared");
         assertEq(IERC20(mintToken).allowance(detf, se), 0, "wrap approval cleared");

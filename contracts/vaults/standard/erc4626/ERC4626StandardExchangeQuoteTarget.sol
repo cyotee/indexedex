@@ -9,6 +9,7 @@ import {Math} from "@crane/contracts/utils/Math.sol";
 import {IStandardExchangeTransitionQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
 import {ERC4626StandardExchangeCommon} from "contracts/vaults/standard/erc4626/ERC4626StandardExchangeCommon.sol";
+import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 
 abstract contract ERC4626StandardExchangeQuoteTarget is ERC4626StandardExchangeCommon, IStandardExchangeTransitionQuote {
     struct QuoteState {
@@ -25,6 +26,8 @@ abstract contract ERC4626StandardExchangeQuoteTarget is ERC4626StandardExchangeC
         // preserves actual wrapper custody through receipt transfers without
         // pretending those transfers mint or redeem underlying vault shares.
         uint256 nativeExcludedShares;
+        uint256 localUnderlying;
+        uint256 receiptBacking;
     }
 
     function quoteState(address asset_, address holder_)
@@ -45,13 +48,14 @@ abstract contract ERC4626StandardExchangeQuoteTarget is ERC4626StandardExchangeC
         if (!canonical) (virtualState, canonical) = _ratioSnapshot(IERC4626(q.vault));
         if (canonical) q.vaultState = abi.encode(virtualState);
         else {
-            try IStandardExchangeTransitionQuote(q.vault).quoteState(_underlying(), address(this))
-                returns (bytes memory nested, uint256) {
-                q.vaultState = nested;
-                q.nativeQuote = true;
-                _normalizeNativeSnapshot(q);
-            } catch { revert InvalidQuoteState(); }
+            (bytes memory nested,) =
+                IStandardExchangeTransitionQuote(q.vault).quoteState(_underlying(), address(this));
+            q.vaultState = nested;
+            q.nativeQuote = true;
+            _normalizeNativeSnapshot(q);
         }
+        q.localUnderlying = MultiAssetBasicVaultRepo._reserveOfToken(_underlying());
+        q.receiptBacking = _receiptBacking();
         holderAssets_ = _quoteHolderAssets(q);
         state_ = abi.encode(q);
     }
@@ -72,9 +76,9 @@ abstract contract ERC4626StandardExchangeQuoteTarget is ERC4626StandardExchangeC
             (, vaultAdded_) = _vaultTransition(
                 q, q.asset == q.vault ? Operation.ReceiveShares : Operation.DepositExactIn, amount_
             );
-            amountOut_ = q.supply == 0 || q.vaultShares == 0
-                ? vaultAdded_ : Math.mulDiv(vaultAdded_, q.supply, q.vaultShares);
-            q.vaultShares = _vaultShareBalance(q);
+            uint256 backingBefore_ = _quoteBacking(q);
+            amountOut_ = q.supply == 0 || backingBefore_ == 0
+                ? vaultAdded_ : Math.mulDiv(vaultAdded_, q.supply, backingBefore_);
             q.supply += amountOut_;
             q.holderShares += amountOut_;
             address feeTo_ = address(VaultFeeOracleQueryAwareRepo._feeOracle().feeTo());
@@ -85,35 +89,57 @@ abstract contract ERC4626StandardExchangeQuoteTarget is ERC4626StandardExchangeC
                 q.supply += fee_;
                 if (q.holder == feeTo_) q.holderShares += fee_;
             }
+            _syncQuoteBacking(q);
         } else {
             amountIn_ = amount_;
+            uint256 backing_ = _quoteBacking(q);
             if (operation_ == Operation.WithdrawExactOut) {
                 uint256 needed_ = amount_;
                 if (q.asset != q.vault) {
                     QuoteState memory copy = abi.decode(abi.encode(q), (QuoteState));
                     (needed_,) = _vaultTransition(copy, Operation.WithdrawExactOut, amount_);
                 }
-                amountIn_ = q.supply == 0 || q.vaultShares == 0
-                    ? needed_ : Math.mulDiv(needed_, q.supply, q.vaultShares, Math.Rounding.Ceil);
+                amountIn_ = q.supply == 0 || backing_ == 0
+                    ? needed_ : Math.mulDiv(needed_, q.supply, backing_, Math.Rounding.Ceil);
             }
             if (amountIn_ > q.holderShares) revert InsufficientQuoteShares(amountIn_, q.holderShares);
             uint256 vaultOut_ = q.asset == q.vault && operation_ == Operation.WithdrawExactOut
-                ? amount_ : (q.supply == 0 ? 0 : Math.mulDiv(amountIn_, q.vaultShares, q.supply));
+                ? amount_ : (q.supply == 0 ? 0 : Math.mulDiv(amountIn_, backing_, q.supply));
             if (q.asset == q.vault) {
                 _sendVaultShares(q, vaultOut_);
                 amountOut_ = vaultOut_;
-            } else (, amountOut_) = _vaultTransition(q, Operation.RedeemExactIn, vaultOut_);
+            } else {
+                // R14.15: booked local underlying pays first; only the shortfall leaves the vault.
+                amountOut_ = _vaultAssets(q, vaultOut_);
+                uint256 fromLocal_ = amountOut_ < q.localUnderlying ? amountOut_ : q.localUnderlying;
+                q.localUnderlying -= fromLocal_;
+                if (amountOut_ > fromLocal_) _vaultTransition(q, Operation.WithdrawExactOut, amountOut_ - fromLocal_);
+            }
             q.holderShares -= amountIn_;
             q.supply -= amountIn_;
-            q.vaultShares = _vaultShareBalance(q);
+            _syncQuoteBacking(q);
         }
         holderAssetsAfter_ = _quoteHolderAssets(q);
         nextState_ = abi.encode(q);
     }
 
+    function _syncQuoteBacking(QuoteState memory q) private view {
+        q.vaultShares = _vaultShareBalance(q);
+        uint256 backing_ = q.vaultShares;
+        if (q.localUnderlying > 0) {
+            backing_ += IERC4626(q.vault).convertToShares(q.localUnderlying);
+        }
+        q.receiptBacking = backing_;
+    }
+
+    function _quoteBacking(QuoteState memory q) private pure returns (uint256) {
+        return q.receiptBacking == 0 ? q.vaultShares : q.receiptBacking;
+    }
+
     function _quoteHolderAssets(QuoteState memory q) private view returns (uint256 amount_) {
         if (q.holderShares == 0 || q.supply == 0) return 0;
-        uint256 vaultClaim_ = Math.mulDiv(q.holderShares, q.vaultShares, q.supply);
+        uint256 backing_ = _quoteBacking(q);
+        uint256 vaultClaim_ = Math.mulDiv(q.holderShares, backing_, q.supply);
         if (vaultClaim_ == 0) return 0;
         return q.asset == q.vault ? vaultClaim_ : _vaultAssets(q, vaultClaim_);
     }
@@ -136,9 +162,9 @@ abstract contract ERC4626StandardExchangeQuoteTarget is ERC4626StandardExchangeC
         } else if (tokenIn_ == _underlying()) {
             (, added) = _vaultTransition(q, Operation.DepositExactIn, amountIn_);
         } else revert UnsupportedQuoteAsset(tokenIn_);
-        sharesOut_ = q.supply == 0 || q.vaultShares == 0
-            ? added : Math.mulDiv(added, q.supply, q.vaultShares);
-        q.vaultShares = _vaultShareBalance(q);
+        uint256 backingBefore_ = _quoteBacking(q);
+        sharesOut_ = q.supply == 0 || backingBefore_ == 0
+            ? added : Math.mulDiv(added, q.supply, backingBefore_);
         q.supply += sharesOut_;
         address feeTo = address(VaultFeeOracleQueryAwareRepo._feeOracle().feeTo());
         if (feeTo != address(0)) {
@@ -146,6 +172,7 @@ abstract contract ERC4626StandardExchangeQuoteTarget is ERC4626StandardExchangeC
             q.supply += fee;
             if (q.holder == feeTo) q.holderShares += fee;
         }
+        _syncQuoteBacking(q);
         return (abi.encode(q), sharesOut_, _quoteHolderAssets(q));
     }
 
@@ -164,7 +191,7 @@ abstract contract ERC4626StandardExchangeQuoteTarget is ERC4626StandardExchangeC
             _vaultTransition(q, Operation.ReceiveShares, amountIn_);
             (, amountOut_) = _vaultTransition(q, Operation.RedeemExactIn, amountIn_);
         } else revert UnsupportedQuoteAsset(tokenIn_);
-        q.vaultShares = _vaultShareBalance(q);
+        _syncQuoteBacking(q);
         return (abi.encode(q), amountOut_, _quoteHolderAssets(q));
     }
 

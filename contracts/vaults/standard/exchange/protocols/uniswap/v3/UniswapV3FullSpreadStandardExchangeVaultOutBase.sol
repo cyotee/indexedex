@@ -30,6 +30,26 @@ abstract contract UniswapV3FullSpreadStandardExchangeVaultOutBase is UniswapV3Fu
     error UniswapV3ExchangeOut_SlippageExceeded();
     error UniswapV3ExchangeOut_InsufficientInput();
 
+    /// @notice Minimal single-token input to mint exactly `sharesOut` (D64 exact-out mint).
+    /// @dev Inverts the single-token deposit branch against the same owed-inclusive reserve
+    /// basis the deposit preview and `exchangeRate` use, so preview and execution agree to
+    /// the wei. Reverts `InsufficientBacking` when no closed form exists (empty book, or the
+    /// deposited side reserve is zero), leaving that route unsupported per the owner ruling.
+    function _amountInForZapMint(address tokenIn, uint256 sharesOut) internal view returns (uint256) {
+        return _amountInForZapMint(tokenIn, sharesOut, 0);
+    }
+
+    /// @dev Bounded prepaid input (including the part to refund) is not pre-deposit backing.
+    function _amountInForZapMint(address tokenIn, uint256 sharesOut, uint256 prepaidCredit)
+        internal view returns (uint256)
+    {
+        uint256 supply = IERC20(address(this)).totalSupply();
+        (uint256 reserve0, uint256 reserve1) = _totalVaultReservesForShareMath();
+        return tokenIn == _token0()
+            ? StandardExchangeConstantProduct._amountInForShares(reserve0 - prepaidCredit, reserve1, sharesOut, supply)
+            : StandardExchangeConstantProduct._amountInForShares(reserve1 - prepaidCredit, reserve0, sharesOut, supply);
+    }
+
     function _previewZapOutWithdrawal(address tokenOut, uint256 desiredAmountOut)
         internal
         view
@@ -93,10 +113,12 @@ abstract contract UniswapV3FullSpreadStandardExchangeVaultOutBase is UniswapV3Fu
         return _bufferedWithdrawalShares(high, totalShares);
     }
 
+    /// @dev Exact-out share quote clamp. The former 1% pad (`shares + max(shares / 100, 1)`) was removed under
+    ///      APEX D55 (2026-09-21): the forward quote is wei-exact against execution, execution pays exactly the
+    ///      requested amount, and any zap-out surplus stays in the vault, so the minimal sufficient share count
+    ///      is the exact quote. A quote at or above the supply is the whole supply.
     function _bufferedWithdrawalShares(uint256 shares, uint256 supply) private pure returns (uint256) {
-        if (shares >= supply) return supply;
-        uint256 buffer = Math.max(shares / 100, 1);
-        return buffer > supply - shares ? supply : shares + buffer;
+        return shares >= supply ? supply : shares;
     }
 
     function _quoteZapOutAmount(address tokenOut, uint256 sharesBurned, uint256 totalShares)

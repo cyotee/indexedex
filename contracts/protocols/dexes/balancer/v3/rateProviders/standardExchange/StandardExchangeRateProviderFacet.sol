@@ -27,6 +27,7 @@ import {Math} from "@crane/contracts/utils/Math.sol";
 
 import {IStandardExchangeTransitionQuote, IStandardExchangeRateQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {
     StandardExchangeRateProviderRepo
 } from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderRepo.sol";
@@ -67,7 +68,10 @@ contract StandardExchangeRateProviderFacet is IStandardExchangeRateProvider, IFa
             : IStandardExchangeTransitionQuote(address(layoutStruct.reserveVault)).quoteTotalSupply(state);
 
         if (totalShares == 0) {
-            return 0;
+            // D60 (2026-09-22): an empty Standard Exchange still has a well-defined initial mint rate.
+            // Hooks bind fresh SEs and read the rate on the first buffer, so invert a unit target deposit
+            // (shares minted for one whole target token) instead of publishing 0.
+            return _initialRate(subject_, layoutStruct);
         }
 
         // Quote one whole subject token, capped by actual supply. DETF and sDETF
@@ -120,6 +124,27 @@ contract StandardExchangeRateProviderFacet is IStandardExchangeRateProvider, IFa
         return out / (10 ** (targetDecimals - 18));
     }
 
+    /// @dev Zero-supply rate: target per whole share from the SE's own mint preview of one whole target
+    ///      token. Returns 0 only when the SE cannot quote that deposit, or would mint nothing.
+    function _initialRate(IERC20 subject_, StandardExchangeRateProviderRepo.Storage storage l)
+        private view returns (uint256)
+    {
+        uint256 targetUnit = 10 ** uint256(l.rateTargetDecimals);
+        (bool ok, bytes memory data) = address(l.reserveVault).staticcall(
+            abi.encodeCall(IStandardExchangeIn.previewExchangeIn, (l.rateTarget, targetUnit, subject_))
+        );
+        if (!ok || data.length != 32) return 0;
+        uint256 sharesForTargetUnit = abi.decode(data, (uint256));
+        if (sharesForTargetUnit == 0) return 0;
+        uint256 subjectUnit = 10 ** IERC20Metadata(address(subject_)).decimals();
+        // target (native units) per whole share, then scale to 18 decimals of target like the live path.
+        uint256 out = targetUnit._mulDiv(subjectUnit, sharesForTargetUnit, Math.Rounding.Ceil);
+        uint8 targetDecimals = l.rateTargetDecimals;
+        if (targetDecimals == 18) return out;
+        if (targetDecimals < 18) return out * (10 ** (18 - targetDecimals));
+        return out / (10 ** (targetDecimals - 18));
+    }
+
     function _safePreviewExchangeIn(uint256 quoteAmount_, bytes memory state)
         private view returns (bool success_, uint256 out_)
     {
@@ -127,16 +152,13 @@ contract StandardExchangeRateProviderFacet is IStandardExchangeRateProvider, IFa
         IStandardExchange reserveVault_ = l.reserveVault;
         IERC20 subject_ = address(l.rateSubject) == address(0) ? IERC20(address(reserveVault_)) : l.rateSubject;
         IERC20 rateTarget_ = l.rateTarget;
-        if (state.length != 0) {
-            try IStandardExchangeTransitionQuote(address(reserveVault_)).quoteAssets(state, quoteAmount_)
-                returns (uint256 quotedOut) { return (true, quotedOut); }
-            catch { return (false, 0); }
-        }
-        try reserveVault_.previewExchangeIn(subject_, quoteAmount_, rateTarget_) returns (uint256 quotedOut) {
-            return (true, quotedOut);
-        } catch {
-            return (false, 0);
-        }
+        bytes memory input = state.length != 0
+            ? abi.encodeCall(IStandardExchangeTransitionQuote.quoteAssets, (state, quoteAmount_))
+            : abi.encodeCall(IStandardExchangeIn.previewExchangeIn, (subject_, quoteAmount_, rateTarget_));
+        address target = address(reserveVault_);
+        (bool ok, bytes memory data) = target.staticcall(input);
+        if (!ok || data.length != 32) return (false, 0);
+        return (true, abi.decode(data, (uint256)));
     }
 
     /* ---------------------------------------------------------------------- */

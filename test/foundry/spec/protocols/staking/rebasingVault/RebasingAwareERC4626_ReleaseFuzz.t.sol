@@ -7,12 +7,14 @@ import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
 import {
     TestBase_RebasingAwareERC4626
 } from "contracts/protocols/staking/rebasingVault/TestBase_RebasingAwareERC4626.sol";
 import {IRebasingAwareERC4626} from "contracts/protocols/staking/rebasingVault/IRebasingAwareERC4626.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 
 /// @notice Independent integer accounting over changed backing, all money routes and public shares.
 contract RebasingAwareERC4626_ReleaseFuzz is TestBase_RebasingAwareERC4626 {
@@ -172,24 +174,25 @@ contract RebasingAwareERC4626_ReleaseFuzz is TestBase_RebasingAwareERC4626 {
         uint256 supply = vault.totalSupply();
         uint256 callerShares = vault.balanceOf(alice);
         uint256 receiverAssets = asset.balanceOf(receiver);
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
         vm.expectRevert(
-            abi.encodeWithSelector(IStandardExchangeErrors.MaxAmountExceeded.selector, required - 1, required)
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, required, required - 1)
         );
-        vm.prank(alice);
+        vm.prank(address(caller));
         IStandardExchangeOut(address(vault))
             .exchangeOut(
                 IERC20(address(vault)), required - 1, IERC20(address(asset)), payout, receiver, true, block.timestamp
             );
         assertEq(vault.balanceOf(address(vault)), budget);
         assertEq(vault.totalAssets(), 150e18);
-        vm.prank(alice);
+        vm.prank(address(caller));
         uint256 burned = IStandardExchangeOut(address(vault))
             .exchangeOut(
                 IERC20(address(vault)), required, IERC20(address(asset)), payout, receiver, true, block.timestamp
             );
         assertEq(burned, required);
-        assertEq(vault.balanceOf(alice) - callerShares + burned, budget);
-        assertEq(vault.balanceOf(address(vault)), 0);
+        assertEq(vault.balanceOf(alice), callerShares, "exact-out refunds the atomic caller, not alice");
+        assertEq(vault.balanceOf(address(vault)), budget - required, "excess unbooked is not this op's credit");
         assertEq(vault.totalSupply(), supply - required);
         assertEq(asset.balanceOf(receiver), receiverAssets + payout);
         assertEq(vault.totalAssets(), 150e18 - payout);

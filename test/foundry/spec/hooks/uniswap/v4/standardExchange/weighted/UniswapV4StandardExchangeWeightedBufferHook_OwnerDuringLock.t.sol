@@ -102,9 +102,11 @@ contract UniswapV4StandardExchangeWeightedBufferHook_OwnerDuringLock_Test is
         // token1 is the raw (unbuffered) leg; size join to remaining MIN inventory.
         uint256 joinAmt = token1.balanceOf(hook) / 4;
         if (joinAmt == 0) joinAmt = 1;
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, user));
         vm.prank(user);
         weighted.depositSingle(address(token1), joinAmt, user, 0, block.timestamp + 1 days);
+
+        assertEq(IERC20(hook).totalSupply(), 1000, "unauthorized join preserves MIN supply");
 
         vm.prank(owner);
         uint256 lpOut = weighted.depositSingle(address(token1), joinAmt, owner, 0, block.timestamp + 1 days);

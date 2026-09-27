@@ -7,6 +7,8 @@ import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchang
 import {IRateProvider} from
     "@crane/contracts/protocols/dexes/balancer/common/interfaces/IRateProvider.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
+import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 
 /**
  * @title UniswapV4StandardExchangeOrbitalBufferHookClaimLib
@@ -15,6 +17,7 @@ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.so
  */
 library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
     error RateProviderFailed();
+    error RateProviderRequired();
     error SeInvertUnavailable();
     error InsufficientTokenOut();
 
@@ -32,11 +35,11 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
     {
         quote.se = se;
         quote.token = token;
+        // D60: a buffered leg always carries a rate provider (package init rejects an SE leg without one);
+        // a raw leg may carry one. The hook never derives a rate from the SE's own quotes.
         if (rp != address(0)) quote.rate = getRateFailClosed(rp);
-        else if (se != address(0)) {
-            quote.heldShares = IERC20(se).balanceOf(hook);
-            quote.heldClaim = seClaimOf(se, token, quote.heldShares);
-        }
+        else if (se != address(0)) revert RateProviderRequired();
+        hook;
     }
 
     function previewBufferClaimIn(BufferClaimQuote memory quote, uint256 amountInRaw)
@@ -47,10 +50,27 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
         uint256 sharesOut = IStandardExchangeIn(quote.se).previewExchangeIn(
             IERC20(quote.token), amountInRaw, IERC20(quote.se)
         );
-        if (sharesOut == 0) return 0;
-        if (quote.rate != 0) return (sharesOut * quote.rate) / 1e18;
-        uint256 afterClaim = seClaimOf(quote.se, quote.token, quote.heldShares + sharesOut);
-        return afterClaim > quote.heldClaim ? afterClaim - quote.heldClaim : 0;
+        if (sharesOut == 0) return amountInRaw;
+        if (quote.rate == 0) revert RateProviderRequired();
+        return ratedNative(sharesOut, quote.rate, quote.se, quote.token);
+    }
+
+
+    /// @notice D60: raw SE shares to the leg token's native units through a WAD rate of whole tokens per
+    ///         whole share, honoring share and token decimals.
+    function ratedNative(uint256 shares, uint256 rate, address se, address token) internal view returns (uint256) {
+        uint8 sd = IERC20Metadata(se).decimals();
+        uint8 td = IERC20Metadata(token).decimals();
+        if (sd >= td) return FullMath.mulDiv(shares, rate, 1e18 * (10 ** uint256(sd - td)));
+        return FullMath.mulDiv(shares * (10 ** uint256(td - sd)), rate, 1e18);
+    }
+
+    /// @notice D60: inverse of `ratedNative`, rounding up.
+    function sharesForNativeUp(uint256 native, uint256 rate, address se, address token) internal view returns (uint256) {
+        uint8 sd = IERC20Metadata(se).decimals();
+        uint8 td = IERC20Metadata(token).decimals();
+        if (sd >= td) return FullMath.mulDiv(native, 1e18 * (10 ** uint256(sd - td)), rate, FullMath.Rounding.Ceil);
+        return FullMath.mulDiv(native, 1e18, rate * (10 ** uint256(td - sd)), FullMath.Rounding.Ceil);
     }
 
     function getRateFailClosed(address rp) internal view returns (uint256 rate) {
@@ -76,13 +96,13 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
         uint256 rawReserve,
         uint256 seBal
     ) internal view returns (uint256) {
-        if (se == address(0)) return rawReserve;
-        if (seBal == 0) return 0;
-        if (rp != address(0)) {
-            uint256 rate = getRateFailClosed(rp);
-            return (seBal * rate) / 1e18;
+        // D60: raw leg = raw balance, times the rate when a provider is configured; buffered leg = shares x rate.
+        if (se == address(0)) {
+            return rp == address(0) ? rawReserve : (rawReserve * getRateFailClosed(rp)) / 1e18;
         }
-        return seClaimOf(se, token, seBal);
+        if (seBal == 0) return 0;
+        if (rp == address(0)) revert RateProviderRequired();
+        return ratedNative(seBal, getRateFailClosed(rp), se, token);
     }
 
     /// @notice Preview claim-in (effective native) from buffering `amountInRaw` pool tokens into SE.
@@ -97,15 +117,10 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
         if (se == token) return amountInRaw;
         uint256 sharesOut =
             IStandardExchangeIn(se).previewExchangeIn(IERC20(token), amountInRaw, IERC20(se));
-        if (sharesOut == 0) return 0;
-        if (rp != address(0)) {
-            return (sharesOut * getRateFailClosed(rp)) / 1e18;
-        }
-        // Claim delta = post claim − pre claim for hook's SE balance + sharesOut.
-        uint256 seBalBefore = IERC20(se).balanceOf(hook);
-        uint256 claimBefore = seClaimOf(se, token, seBalBefore);
-        uint256 claimAfter = seClaimOf(se, token, seBalBefore + sharesOut);
-        return claimAfter > claimBefore ? claimAfter - claimBefore : 0;
+        if (sharesOut == 0) return amountInRaw;
+        if (rp == address(0)) revert RateProviderRequired();
+        hook;
+        return ratedNative(sharesOut, getRateFailClosed(rp), se, token);
     }
 
     /// @notice Preview pool-token out from unwrapping SE shares that deliver `dOutNative` effective.
@@ -116,23 +131,12 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
         uint256 dOutNative
     ) internal view returns (uint256 amountOutNative, uint256 sharesOut) {
         if (dOutNative == 0 || se == address(0)) return (0, 0);
-        if (rp != address(0)) {
-            uint256 rate = getRateFailClosed(rp);
-            // ceil shares for exact effective out when selling
-            sharesOut = (dOutNative * 1e18 + rate - 1) / rate;
-            amountOutNative = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), sharesOut, IERC20(token));
-            return (amountOutNative, sharesOut);
-        }
-        // No RP: invert claim-out via exchangeOut when possible; else full revert (D31a).
-        try IStandardExchangeOut(se).previewExchangeOut(IERC20(se), IERC20(token), dOutNative) returns (
-            uint256 seIn
-        ) {
-            sharesOut = seIn;
-            amountOutNative = dOutNative;
-            return (amountOutNative, sharesOut);
-        } catch {
-            revert SeInvertUnavailable();
-        }
+        if (rp == address(0)) revert RateProviderRequired();
+        uint256 rate = getRateFailClosed(rp);
+        // ceil shares for exact effective out when selling; the unwrap amount is the SE's buffering quote
+        sharesOut = sharesForNativeUp(dOutNative, rate, se, token);
+        amountOutNative = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), sharesOut, IERC20(token));
+        return (amountOutNative, sharesOut);
     }
 
     /// @notice Preview pool-token out from burning `sharesOut` SE shares (pro-rata remove).
@@ -154,11 +158,6 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
     {
         if (amountOutNative == 0) return 0;
         if (se == token) return amountOutNative;
-        try IStandardExchangeOut(se).previewExchangeOut(IERC20(se), IERC20(token), amountOutNative)
-        returns (uint256 seIn) {
-            return seIn;
-        } catch {
-            revert SeInvertUnavailable();
-        }
+        return IStandardExchangeOut(se).previewExchangeOut(IERC20(se), IERC20(token), amountOutNative);
     }
 }

@@ -13,7 +13,7 @@ import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchang
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
-import {ModifyLiquidityParams} from
+import {ModifyLiquidityParams, SwapParams} from
     "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
 import {
     UniswapV4StandardExchangeBalancerQuadStableBufferHookPairPoolLib as PairPoolLib
@@ -57,6 +57,15 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Adversarial is Te
         assertLt(sharesAfter, sharesBefore, "SE share donation must dilute subsequent join");
     }
 
+    /// @notice R10.1: the withdrawn `beforeSwap` guard claim. A direct call from an address that is
+    ///         not the PoolManager fails on the real guard; no redundant guard is invented.
+    function test_F1_nonPoolManager_beforeSwap_reverts() public {
+        _firstMintEqual(200 ether);
+        SwapParams memory params = SwapParams({zeroForOne: true, amountSpecified: -1e18, sqrtPriceLimitX96: 0});
+        vm.expectRevert(abi.encodeWithSignature("NotPoolManager()"));
+        IHooks(hook).beforeSwap(address(this), poolKey01, params, "");
+    }
+
     function test_rateProvider_failClosed_onSwapPreview() public {
         RateProviderMock rp = new RateProviderMock();
         rp.mockRate(1e18);
@@ -72,7 +81,7 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Adversarial is Te
         _fundAndApprove(token3);
         _firstMintEqual(200 ether);
         rp.mockRate(0);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("RateProviderFailed()"));
         quad.previewSwapExactIn(address(token0), address(token1), 1 ether);
     }
 
@@ -104,7 +113,7 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Adversarial is Te
         _firstMintEqual(50 ether);
         PoolKey memory key = PairPoolLib.pairKey(address(token0), address(token1), 1, IHooks(hook));
         vm.prank(address(pm));
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("LiquidityNotAllowed()"));
         IHooks(hook).beforeAddLiquidity(
             address(this),
             key,
@@ -118,7 +127,7 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Adversarial is Te
         _firstMintEqual(50 ether);
         PoolKey memory key = PairPoolLib.pairKey(address(token0), address(token1), 1, IHooks(hook));
         vm.prank(address(pm));
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("DonateNotAllowed()"));
         IHooks(hook).beforeDonate(address(this), key, 1, 1, "");
     }
 
@@ -218,7 +227,7 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Adversarial is Te
         _fundAndApprove(token2);
         _fundAndApprove(token3);
         assertEq(IERC20(hook).totalSupply(), 0);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("SwapNotLive()"));
         quad.previewSwapExactIn(address(token0), address(token1), 1 ether);
     }
 
@@ -240,7 +249,19 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Adversarial is Te
         uint256 face1Before_ = token1.balanceOf(hook);
         uint256 n2Before_ = quad.nativeReserve(2);
 
+        // APEX D9: an EOA is rejected before any credit; the booked-inventory rule is asserted
+        // from this contract (bytecode present), which still cannot claim booked inventory.
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeIn(hook).exchangeIn(
+            IERC20(address(token1)),
+            claimed_,
+            IERC20(address(token2)),
+            0,
+            attacker,
+            true,
+            block.timestamp + 1
+        );
         vm.expectRevert(
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
@@ -274,7 +295,19 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Adversarial is Te
         uint256 outAttBefore_ = token1.balanceOf(attacker);
         uint256 faceBefore_ = token0.balanceOf(hook);
 
+        // APEX D9: an EOA is rejected before any credit; the booked-inventory rule is asserted
+        // from this contract (bytecode present), which still cannot claim booked inventory.
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeIn(hook).exchangeIn(
+            IERC20(address(token0)),
+            claimed_,
+            IERC20(address(token1)),
+            0,
+            attacker,
+            true,
+            block.timestamp + 1
+        );
         vm.expectRevert(
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
@@ -311,7 +344,19 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Adversarial is Te
         uint256 face1Before_ = token1.balanceOf(hook);
         uint256 n2Before_ = quad.nativeReserve(2);
 
+        // APEX D9: an EOA is rejected before any credit; the booked-inventory rule is asserted
+        // from this contract (bytecode present), which still cannot claim booked inventory.
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeOut(hook).exchangeOut(
+            IERC20(address(token1)),
+            needIn_,
+            IERC20(address(token2)),
+            wantOut_,
+            attacker,
+            true,
+            block.timestamp + 1
+        );
         vm.expectRevert(
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, needIn_, uint256(0)
@@ -361,7 +406,19 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Adversarial is Te
         uint256 n2Before_ = quad.nativeReserve(2);
         uint256 outAttBefore_ = token2.balanceOf(attacker);
 
+        // APEX D9: an EOA is rejected before any credit; the booked-inventory rule is asserted
+        // from this contract (bytecode present), which still cannot claim booked inventory.
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeIn(hook).exchangeIn(
+            IERC20(address(token1)),
+            claimed_,
+            IERC20(address(token2)),
+            0,
+            attacker,
+            true,
+            block.timestamp + 1
+        );
         vm.expectRevert(
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
@@ -428,7 +485,19 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_Adversarial is Te
         uint256 amountIn = 2 ether;
         // Post-mint raw is end-synced (booked). Do not bare-donate (that would free-credit).
         assertGe(token1.balanceOf(hook), amountIn, "booked inventory covers claimed");
+        // APEX D9: an EOA is rejected before any credit; the booked-inventory rule is asserted
+        // from this contract (bytecode present), which still cannot claim booked inventory.
         vm.prank(user);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeIn(hook).exchangeIn(
+            IERC20(address(token1)),
+            amountIn,
+            IERC20(address(token2)),
+            0,
+            user,
+            true,
+            block.timestamp + 1
+        );
         vm.expectRevert(
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, amountIn, uint256(0)

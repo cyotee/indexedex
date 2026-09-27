@@ -174,7 +174,7 @@ interface IRebasingClaimToken is IERC20, IERC20Metadata, IStandardExchangeIn, IS
      *
      * @param rebasingClaimAmount Amount of rebasing claim token to redeem
     * @param recipient Address to receive the configured common token
-     * @param pretransferred Whether rebasing claim token was already transferred
+     * @param pretransferred Integrating-contract flag only. Callers with no bytecode revert `EOAPretransferNotAllowed()`. Booked holder backing is never pretransfer credit. Exact-input burns the requested amount and refunds nothing.
     * @return wethOut Amount of configured common token sent to recipient
      */
     function redeem(uint256 rebasingClaimAmount, address recipient, bool pretransferred) external returns (uint256 wethOut);
@@ -185,7 +185,7 @@ interface IRebasingClaimToken is IERC20, IERC20Metadata, IStandardExchangeIn, IS
      *      The DETF diamond handles the BPT exit and rateAsset transfer separately.
      * @param rebasingClaimAmount Amount of rebasing claim token balance to burn
      * @param owner Address whose rebasing claim token is being burned
-     * @param pretransferred Whether rebasing claim token was already transferred to this contract
+     * @param pretransferred Integrating-contract flag only. Callers with no bytecode revert `EOAPretransferNotAllowed()`. Booked holder backing is never pretransfer credit. Exact-input burns the requested amount and refunds nothing.
      * @return sharesBurned Amount of underlying shares burned
      */
     function burnShares(uint256 rebasingClaimAmount, address owner, bool pretransferred)

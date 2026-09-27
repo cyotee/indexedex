@@ -18,6 +18,7 @@ import {UniswapV4StandardExchangeCurveQuadStableBufferHook_FactoryService as Cur
 import {IUniswapV4Detf} from "./interfaces/IUniswapV4Detf.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 import {TestBase_UniswapV4Detf} from "./TestBase_UniswapV4Detf.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 
 /// @notice Actual four-leg Curve reserve bound to the shared funded DETF package.
 abstract contract TestBase_UniswapV4Detf_CurveQuad is TestBase_UniswapV4Detf {
@@ -63,9 +64,9 @@ abstract contract TestBase_UniswapV4Detf_CurveQuad is TestBase_UniswapV4Detf {
     function _deployCurvePackage() internal {
         ICurvePkg.PkgInit memory init_;
         init_.vaultRegistryDeployment = IVaultRegistryDeployment(address(indexedexManager));
-        init_.joinQueryFacet = CurveFactory.deployJoinQueryFacet(create3Factory);
+        init_.joinQueryFacet = CurveFactory.deployLiquidityFacetExt(create3Factory);
         init_.vaultFeeOracleQuery = IVaultFeeOracleQuery(address(indexedexManager));
-        init_.liquidityFacet = CurveFactory.deployJoinFacet(create3Factory);
+        init_.liquidityFacet = CurveFactory.deployLiquidityFacet(create3Factory);
         init_.exitFacet = CurveFactory.deployExitFacet(create3Factory);
         init_.seFacet = CurveFactory.deploySeFacet(create3Factory);
         init_.hooksFacet = CurveFactory.deployHooksFacet(create3Factory);
@@ -100,6 +101,7 @@ abstract contract TestBase_UniswapV4Detf_CurveQuad is TestBase_UniswapV4Detf {
         }
         hook_.tokenDecimals = HookPkgArgsDecimalsLib.tokenDecimals4(hook_.tokens, predicted_);
         hook_.seDecimals = HookPkgArgsDecimalsLib.seDecimals4(hook_.standardExchanges);
+        hook_.rateProviders = RateProviderFixtureLib.providersFor4(create3Factory, diamondPackageFactory, hook_.tokens, hook_.standardExchanges); // D60
         hook_.baseAmp = 200;
         hook_.ownerOnlyLiquidity = args_.ownerOnlyLiquidity;
         hook_.owner = predicted_;

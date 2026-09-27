@@ -356,10 +356,6 @@ contract UniswapV4FullSpreadStandardExchangeVaultDFPkg is IUniswapV4FullSpreadSt
         if (token == address(0)) {
             return "ETH";
         }
-        try IERC20Metadata(token).symbol() returns (string memory fetchedSymbol) {
-            return fetchedSymbol;
-        } catch {
-            return "TOKEN";
-        }
+        return IERC20Metadata(token).symbol();
     }
 }

@@ -1,0 +1,178 @@
+{
+  "status": "PASS",
+  "selection": {
+    "status": "PASS",
+    "environment": {
+      "FOUNDRY_FUZZ_RUNS": "10000",
+      "FOUNDRY_INVARIANT_RUNS": "256",
+      "FOUNDRY_INVARIANT_DEPTH": "64"
+    },
+    "seed": "0x20260917",
+    "testSelector": "^(testFuzz_APEX_.*|testFuzz_FUZZ05_decimalsAndQuantizedRate|testFuzz_FUZZ10_FUZZ12_exactOutPublicBudget|testFuzz_deliveryAcrossSleeveRatios|testFuzz_noPhantomCreditAfterTrade|testFuzz_importedPositionCannotBecomeUnfundedCredit|testFuzz_exchangeOut_(swap_)?refundInvariant)\\(",
+    "purpose": "Independent bounded-credit arithmetic, native-decimal custody accounting, delivery after market movement/import, and actual prepaid refunds."
+  },
+  "properties": [
+    {
+      "file": "test/foundry/spec/protocol/dexes/aerodrome/v1/AerodromeStandardExchangeOut_Swap.t.sol",
+      "function": "testFuzz_exchangeOut_swap_refundInvariant",
+      "sourceSha256": "e7721b162cd9f023487ab09ff2ab9de024eab7e9295ae26878b60d02f0f0823a",
+      "executionCounts": [
+        10001,
+        10001,
+        10001,
+        10001,
+        10001,
+        10001,
+        10001,
+        10001,
+        10001
+      ]
+    },
+    {
+      "file": "test/foundry/spec/protocol/dexes/aerodrome/v1/decimals/AerodromeStandardExchangeOut_Swap_Decimals.sol",
+      "function": "testFuzz_exchangeOut_swap_refundInvariant",
+      "sourceSha256": "92e01cc3d8089338e0d3138cc7c256fb8fdc21faff4f564b07a95dbcb4cae601",
+      "executionCounts": [
+        10001,
+        10001,
+        10001,
+        10001,
+        10001,
+        10001,
+        10001,
+        10001,
+        10001
+      ]
+    },
+    {
+      "file": "test/foundry/spec/protocol/staking/etherfi/invariant/EtherFiWeETHStandardExchange_NativeRounding.t.sol",
+      "function": "testFuzz_APEX_nativePullWrapConservesShares",
+      "sourceSha256": "ff92fd460f59b725e8d4bee4afa6c89dee26f78d9fa86d44bb7f7b307a2b12a5",
+      "executionCounts": [
+        10000
+      ]
+    },
+    {
+      "file": "test/foundry/spec/protocol/staking/etherfi/invariant/EtherFiWeETHStandardExchange_NativeRounding.t.sol",
+      "function": "testFuzz_APEX_nativeExactOutStakeFundsDelivery",
+      "sourceSha256": "ff92fd460f59b725e8d4bee4afa6c89dee26f78d9fa86d44bb7f7b307a2b12a5",
+      "executionCounts": [
+        10000
+      ]
+    },
+    {
+      "file": "test/foundry/spec/protocol/staking/lido/invariant/LidoWstETHStandardExchange_NativeRounding.t.sol",
+      "function": "testFuzz_APEX_nativeStEth_pullAndOutput_nativeRounding",
+      "sourceSha256": "744823254f9437a647ff3c92f8579615b3f7f729d9adcbd971d3ce1b8be1b2d1",
+      "executionCounts": [
+        10000
+      ]
+    },
+    {
+      "file": "test/foundry/spec/protocol/staking/lido/invariant/LidoWstETHStandardExchange_NativeRounding.t.sol",
+      "function": "testFuzz_APEX_nativeStEth_exactOutStake_rates",
+      "sourceSha256": "744823254f9437a647ff3c92f8579615b3f7f729d9adcbd971d3ce1b8be1b2d1",
+      "executionCounts": [
+        10000
+      ]
+    },
+    {
+      "file": "test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_ReleaseFuzz.t.sol",
+      "function": "testFuzz_FUZZ05_decimalsAndQuantizedRate",
+      "sourceSha256": "29aadd910a06bca93c21be28d29b70708c23541ef89550d9f9e393990f8d93f6",
+      "executionCounts": [
+        10000
+      ]
+    },
+    {
+      "file": "test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_ReleaseFuzz.t.sol",
+      "function": "testFuzz_FUZZ10_FUZZ12_exactOutPublicBudget",
+      "sourceSha256": "29aadd910a06bca93c21be28d29b70708c23541ef89550d9f9e393990f8d93f6",
+      "executionCounts": [
+        10001
+      ]
+    },
+    {
+      "file": "test/foundry/spec/utils/LocalCreditLib.t.sol",
+      "function": "testFuzz_APEX_availableNeverUnderflows",
+      "sourceSha256": "7aa5cb0a3ef5bd7a07280443101277a449d97275f9691c23175e309c1da36da6",
+      "executionCounts": [
+        10000
+      ]
+    },
+    {
+      "file": "test/foundry/spec/utils/LocalCreditLib.t.sol",
+      "function": "testFuzz_APEX_budgetIsMin",
+      "sourceSha256": "7aa5cb0a3ef5bd7a07280443101277a449d97275f9691c23175e309c1da36da6",
+      "executionCounts": [
+        10000
+      ]
+    },
+    {
+      "file": "test/foundry/spec/utils/LocalCreditLib.t.sol",
+      "function": "testFuzz_APEX_refundNeverExceedsMaxMinusUsed",
+      "sourceSha256": "7aa5cb0a3ef5bd7a07280443101277a449d97275f9691c23175e309c1da36da6",
+      "executionCounts": [
+        10000
+      ]
+    },
+    {
+      "file": "test/foundry/spec/vaults/StandardExchangeOut_Refund.t.sol",
+      "function": "testFuzz_exchangeOut_refundInvariant",
+      "sourceSha256": "f9dfbb906b108c8186ad55b24bf9617ccb6717f01f2c42f76383d3bfc098c001",
+      "executionCounts": [
+        10001
+      ]
+    },
+    {
+      "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVault_Import.t.sol",
+      "function": "testFuzz_importedPositionCannotBecomeUnfundedCredit",
+      "sourceSha256": "f6e21a95a01510c247d2661743c4e8ee29801becb98cc9b2966ddc22c024d7f0",
+      "executionCounts": [
+        10001,
+        10001
+      ]
+    },
+    {
+      "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v4/UniswapV4FullSpreadStandardExchangeVault_FullRangeBook.t.sol",
+      "function": "testFuzz_importedPositionCannotBecomeUnfundedCredit",
+      "sourceSha256": "18749dc076d5f6f358fd078c09515c5489a3c491bbb02f4aa532ac8c3ff3783f",
+      "executionCounts": [
+        10001,
+        10001
+      ]
+    },
+    {
+      "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/remediation/StandardExchangeDeliveryBehavior.sol",
+      "function": "testFuzz_noPhantomCreditAfterTrade",
+      "sourceSha256": "d33fa2edf15674595f2edf7484ffdf554566d63aa99e6bc78511712449439dbd",
+      "executionCounts": [
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000,
+        10000
+      ]
+    },
+    {
+      "file": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/remediation/StandardExchangeReleaseBehavior.sol",
+      "function": "testFuzz_deliveryAcrossSleeveRatios",
+      "sourceSha256": "e2bfb638b26b0bc434e14040ea6a51edc1bff9d853ae1e35ef81aad088af3b3b",
+      "executionCounts": [
+        10000,
+        10001,
+        10001,
+        10001,
+        10000,
+        10000,
+        10001,
+        10000
+      ]
+    }
+  ],
+  "log": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-fuzz.log",
+  "logSha256": "9085c655f3d8acaf8b469d9325e9643b19f5dcb970a96a61d5bc8f8273fd7407"
+}

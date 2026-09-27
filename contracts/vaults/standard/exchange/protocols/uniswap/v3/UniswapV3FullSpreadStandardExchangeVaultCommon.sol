@@ -33,6 +33,7 @@ import {ONE_WAD} from "@crane/contracts/constants/Constants.sol";
 
 import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
@@ -190,12 +191,8 @@ abstract contract UniswapV3FullSpreadStandardExchangeVaultCommon is
     }
 
     function _absoluteFloor(address token) internal view returns (uint256) {
-        uint8 decimals_;
-        try IERC20Metadata(token).decimals() returns (uint8 d) {
-            decimals_ = d;
-        } catch {
-            decimals_ = 18;
-        }
+        // D34: direct metadata call; a token without decimals() reverts here.
+        uint8 decimals_ = IERC20Metadata(token).decimals();
         if (decimals_ <= 6) {
             return 1;
         }
@@ -856,9 +853,13 @@ abstract contract UniswapV3FullSpreadStandardExchangeVaultCommon is
         internal returns (uint256 actualIn)
     {
         if (pretransferred) {
-            uint256 balance = tokenIn.balanceOf(address(this));
-            uint256 booked = MultiAssetBasicVaultRepo._reserveOfToken(address(tokenIn));
-            return balance > booked ? balance - booked : 0;
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+            uint256 avail = LocalCreditLib.available(
+                tokenIn.balanceOf(address(this)),
+                MultiAssetBasicVaultRepo._reserveOfToken(address(tokenIn))
+            );
+            if (avail < amountIn) revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, avail);
+            return amountIn;
         }
         uint256 beforeBalance = tokenIn.balanceOf(address(this));
         // Preserve token callback reverts (including IsLocked) through the pull.
@@ -891,6 +892,16 @@ abstract contract UniswapV3FullSpreadStandardExchangeVaultCommon is
 
     function _requireDelivered(uint256 used, uint256 delivered) internal pure {
         if (used > delivered) revert ISecurePullErrors.TransferDeltaInsufficient(used, delivered);
+    }
+
+    function _pretransferCredit(IERC20 token, uint256 maximum) internal view returns (uint256) {
+        return LocalCreditLib.budget(
+            LocalCreditLib.available(
+                token.balanceOf(address(this)),
+                MultiAssetBasicVaultRepo._reserveOfToken(address(token))
+            ),
+            maximum
+        );
     }
 
     function _secureShareDelivery(uint256 amountIn, bool pretransferred) internal returns (uint256 actualIn) {

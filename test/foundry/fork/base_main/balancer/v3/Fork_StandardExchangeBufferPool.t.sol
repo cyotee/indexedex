@@ -105,6 +105,7 @@ contract Fork_StandardExchangeBufferPool is TestBase_BalancerV3Fork_StrategyVaul
     IFacet internal bufferPoolFacet;
     IFacet internal poolLiquidityFacet;
     IFacet internal hookFacet;
+    IFacet internal transitionQuoteFacet;
 
     /// @notice The deployed buffer pool DFPkg.
     IStandardExchangeBufferPoolPkg public bufferPoolPkg;
@@ -184,6 +185,7 @@ contract Fork_StandardExchangeBufferPool is TestBase_BalancerV3Fork_StrategyVaul
         bufferPoolFacet    = create3Factory.deployBufferPoolFacet();
         poolLiquidityFacet = create3Factory.deployPoolLiquidityFacet();
         hookFacet          = create3Factory.deployHookFacet();
+        transitionQuoteFacet = create3Factory.deployTransitionQuoteFacet();
     }
 
     /* ---------------------------------------------------------------------- */
@@ -203,6 +205,7 @@ contract Fork_StandardExchangeBufferPool is TestBase_BalancerV3Fork_StrategyVaul
         pkgInit.bufferPoolFacet                          = bufferPoolFacet;
         pkgInit.poolLiquidityFacet                       = poolLiquidityFacet;
         pkgInit.hookFacet                                = hookFacet;
+        pkgInit.transitionQuoteFacet                     = transitionQuoteFacet;
         pkgInit.vaultRegistry     = IVaultRegistryDeployment(address(indexedexManager));
         pkgInit.vaultFeeOracle    = IVaultFeeOracleQuery(address(indexedexManager));
         pkgInit.balancerV3Vault   = vault;   // live forked vault from TestBase_BalancerV3Fork

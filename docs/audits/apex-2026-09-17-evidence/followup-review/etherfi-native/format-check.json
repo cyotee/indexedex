@@ -1,0 +1,17 @@
+{
+  "command": [
+    "forge",
+    "fmt",
+    "--check",
+    "/tmp/apex-etherfi-native-rounding-overlay/contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeCommon.sol",
+    "/tmp/apex-etherfi-native-rounding-overlay/contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeInTarget.sol",
+    "/tmp/apex-etherfi-native-rounding-overlay/contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeOutTarget.sol",
+    "/tmp/apex-etherfi-native-rounding-overlay/contracts/protocols/staking/etherfi/test/hermetic/HermeticEtherFiPorts.sol",
+    "/tmp/apex-etherfi-native-rounding-overlay/contracts/test/stubs/NativeEtherFiPorts.sol",
+    "/tmp/apex-etherfi-native-rounding-overlay/test/foundry/spec/protocol/staking/etherfi/invariant/EtherFiWeETHStandardExchange_NativeRounding.t.sol",
+    "/tmp/apex-etherfi-native-rounding-overlay/test/foundry/spec/protocol/staking/etherfi/invariant/EtherFiWeETHStandardExchange_NonUnitPretransfer.t.sol"
+  ],
+  "exit_code": 0,
+  "stdout": "",
+  "stderr": ""
+}

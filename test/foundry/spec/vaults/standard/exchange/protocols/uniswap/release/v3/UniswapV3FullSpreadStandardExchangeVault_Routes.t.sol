@@ -200,9 +200,9 @@ contract UniswapV3FullSpreadStandardExchangeVault_Routes_Test is TestBase_Uniswa
 
     function test_callbackSpoof_reverts() public {
         // Direct callback from EOA must revert.
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("UniswapV3Exchange_CallbackNotAuthorized()"));
         IUniswapV3MintCallback(address(vault)).uniswapV3MintCallback(1, 1, "");
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("UniswapV3Exchange_CallbackNotAuthorized()"));
         IUniswapV3SwapCallback(address(vault)).uniswapV3SwapCallback(1, 1, "");
     }
 }

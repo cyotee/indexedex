@@ -22,9 +22,9 @@ contract Adversarial_Accounting_Test is AdvBase {
 
     /// @notice E2: zero amount preview reverts ZeroAmount
     function test_E2_zeroAmount_reverts() public {
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("ZeroAmount()"));
         buffer.previewWrap(0);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("ZeroAmount()"));
         buffer.previewUnwrap(0);
     }
 
@@ -34,14 +34,31 @@ contract Adversarial_Accounting_Test is AdvBase {
         uint256 amountIn = buffer.previewWrapExactOut(seOut);
         bool zfo = _isWrapZFO();
         // Pass maxIn too low
+        uint256 beforePair = pairToken.balanceOf(user);
+        uint256 beforeShares = IERC20(se).balanceOf(user);
+        uint256 beforeSupply = IERC20(se).totalSupply();
+        uint256 beforeBacking = pairToken.balanceOf(address(protocolVault));
+        // The router prepays only maxIn. PoolManager's attempted transfer of the full
+        // required input fails, wrapped by the currency library and then the hook call.
+        bytes memory currencyFailure = abi.encodeWithSignature("WrappedError(address,bytes4,bytes,bytes)",
+            address(pairToken), IERC20.transfer.selector, abi.encodeWithSignature("Error(string)", "balance"),
+            abi.encodeWithSignature("ERC20TransferFailed()"));
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("WrappedError(address,bytes4,bytes,bytes)", hook,
+            bytes4(keccak256("beforeSwap(address,(address,address,uint24,int24,address),(bool,int256,uint160),bytes)")),
+            currencyFailure, abi.encodeWithSignature("HookCallFailed()")));
         swapRouter.swapExactOut(
             poolKey,
             SwapParams({zeroForOne: zfo, amountSpecified: int256(seOut), sqrtPriceLimitX96: _sqrtLimit(zfo)}),
             amountIn / 2,
             ""
         );
+        _assertHookFlat();
+        assertEq(pairToken.balanceOf(user), beforePair, "insufficient prepayment rolls back payer");
+        assertEq(IERC20(se).balanceOf(user), beforeShares, "no output from rejected wrap");
+        assertEq(IERC20(se).totalSupply(), beforeSupply, "rejected wrap cannot issue shares");
+        assertEq(pairToken.balanceOf(address(protocolVault)), beforeBacking, "rejected wrap preserves backing");
+        assertEq(_wrapExactOut(seOut), amountIn, "same-state fully funded wrap succeeds");
         _assertHookFlat();
     }
 }

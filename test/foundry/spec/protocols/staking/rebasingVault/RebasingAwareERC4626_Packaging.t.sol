@@ -16,6 +16,7 @@ import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {Behavior_IFacet} from "@crane/contracts/factories/diamondPkg/Behavior_IFacet.sol";
 
@@ -175,7 +176,8 @@ contract RebasingAwareERC4626_Packaging is TestBase_RebasingAwareERC4626 {
         assertGt(out, 0);
         vm.prank(alice);
         IERC20(address(vault)).transfer(address(vault), shares / 4);
-        vm.prank(alice);
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));
         IStandardExchangeIn(address(vault)).exchangeIn(
             IERC20(address(vault)),
             shares / 8,
@@ -187,8 +189,8 @@ contract RebasingAwareERC4626_Packaging is TestBase_RebasingAwareERC4626 {
         );
         vm.prank(alice);
         IERC20(address(vault)).transfer(address(vault), shares / 16);
-        vm.prank(bob);
-        IStandardizedYield(address(vault)).redeem(bob, shares / 16, address(asset), 0, true);
+        vm.prank(address(caller));
+        IStandardizedYield(address(vault)).redeem(address(caller), shares / 16, address(asset), 0, true);
     }
 
     function test_releaseIdentifier() public view {

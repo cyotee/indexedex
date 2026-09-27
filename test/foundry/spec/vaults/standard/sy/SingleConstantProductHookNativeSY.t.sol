@@ -10,6 +10,7 @@ import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchang
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {Math} from "@crane/contracts/utils/Math.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {TestBase_UniswapV4SingleStandardExchangeBufferConstantProductHook} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/TestBase_UniswapV4SingleStandardExchangeBufferConstantProductHook.sol";
 
 contract SingleConstantProductHookNativeSYTest is TestBase_UniswapV4SingleStandardExchangeBufferConstantProductHook {
@@ -115,9 +116,24 @@ contract SingleConstantProductHookNativeSYTest is TestBase_UniswapV4SingleStanda
         vm.expectRevert();
         sy_.redeem(user, shares_ / 100, address(pairToken), type(uint256).max, false);
         rawToken.transfer(hook, amount_);
-        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, amount_, 0));
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         IStandardExchangeIn(hook).exchangeIn(rawToken, amount_, IERC20(hook), 0, user, true, block.timestamp);
         vm.stopPrank();
+        AtomicPretransferCaller atomic = new AtomicPretransferCaller();
+        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, amount_, 0));
+        atomic.execute(
+            hook,
+            abi.encodeWithSelector(
+                IStandardExchangeIn.exchangeIn.selector,
+                rawToken,
+                amount_,
+                IERC20(hook),
+                uint256(0),
+                address(atomic),
+                true,
+                block.timestamp
+            )
+        );
         assertEq(rawToken.balanceOf(user), before_ - amount_);
         assertEq(sy_.balanceOf(user), shares_);
     }

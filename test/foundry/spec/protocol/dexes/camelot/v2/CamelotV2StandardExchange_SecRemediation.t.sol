@@ -5,11 +5,13 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ICamelotPair} from "@crane/contracts/interfaces/protocols/dexes/camelot/v2/ICamelotPair.sol";
 import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {FeeOnTransferERC20} from "contracts/test/stubs/FeeOnTransferERC20.sol";
 import {
     TestBase_CamelotV2StandardExchange
 } from "contracts/protocols/dexes/camelot/v2/TestBase_CamelotV2StandardExchange.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 
 /// @notice Stage 3 cam-se proofs on the production Camelot V2 SE proxy.
 /// @dev Catalog names required by WP-SEC-CAM-OUT-001, E6/R4/A0/I1 LP-deposit.
@@ -94,18 +96,46 @@ contract CamelotV2StandardExchange_SecRemediation_Test is TestBase_CamelotV2Stan
         vm.prank(attacker);
         tokenA.transfer(address(vault), used_);
 
-        uint256 attackerABefore_ = tokenA.balanceOf(attacker);
-        uint256 rBefore_ = vault.reserveOfToken(address(tokenA));
-
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vault.exchangeOut(
             IERC20(address(tokenA)), fatMax_, IERC20(address(tokenB)), amountOut_, attacker, true, _deadline()
         );
+    }
 
-        uint256 attackerAGain_ = tokenA.balanceOf(attacker) - attackerABefore_;
-        assertEq(attackerAGain_, 0, "E6: no pairToken refund from booked R");
+    function test_E6_exchangeOut_swap_inflatedMax_contractCaller_noInventorySkim() public {
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        uint256 inventory_ = 20 ether;
+        uint256 syncPull_ = TEST_AMT / 10;
+        tokenA.mint(address(vault), inventory_);
+        tokenA.mint(address(this), syncPull_);
+        tokenA.approve(address(vault), syncPull_);
+        vault.exchangeIn(IERC20(address(tokenA)), syncPull_, IERC20(address(tokenB)), 0, address(this), false, _deadline());
+
+        uint256 bookedR_ = vault.reserveOfToken(address(tokenA));
+        assertEq(bookedR_, tokenA.balanceOf(address(vault)), "E6: pairToken booked after sync");
+
+        uint256 amountOut_ = 1 ether;
+        uint256 used_ = vault.previewExchangeOut(IERC20(address(tokenA)), IERC20(address(tokenB)), amountOut_);
+        require(used_ > 0, "preview");
+        uint256 fatMax_ = used_ + bookedR_;
+
+        tokenA.mint(address(caller), used_);
+        vm.prank(address(caller));
+        tokenA.transfer(address(vault), used_);
+
+        uint256 callerABefore_ = tokenA.balanceOf(address(caller));
+        uint256 rBefore_ = vault.reserveOfToken(address(tokenA));
+
+        vm.prank(address(caller));
+        vault.exchangeOut(
+            IERC20(address(tokenA)), fatMax_, IERC20(address(tokenB)), amountOut_, address(caller), true, _deadline()
+        );
+
+        uint256 callerAGain_ = tokenA.balanceOf(address(caller)) - callerABefore_;
+        assertEq(callerAGain_, 0, "E6: no pairToken refund from booked R");
         assertGe(tokenA.balanceOf(address(vault)), rBefore_, "E6: booked pairToken R intact");
-        assertLt(attackerAGain_, bookedR_, "E6: attacker must not receive booked R");
+        assertLt(callerAGain_, bookedR_, "E6: attacker must not receive booked R");
     }
 
     /// @notice A0: donate reserve LP (donator != attacker), zap-in deposit; redeem cannot take donation.
@@ -192,12 +222,30 @@ contract CamelotV2StandardExchange_SecRemediation_Test is TestBase_CamelotV2Stan
         uint256 vaultLpBefore_ = lp_.balanceOf(address(vault));
 
         vm.prank(attacker);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("AllowanceExpired(uint256)", 0));
         vault.exchangeIn(lp_, gap_, IERC20(address(vault)), 0, attacker, false, _deadline());
 
         assertEq(vault.totalSupply(), supplyBefore_, "I1 lpDeposit: no free share mint");
         assertEq(vault.balanceOf(attacker), attackerSharesBefore_, "I1 lpDeposit: attacker shares unchanged");
         assertEq(lp_.balanceOf(address(vault)), vaultLpBefore_, "I1 lpDeposit: LP inventory unmoved");
+        _assertFundedLpGapControl(vault, lp_, gap_);
+    }
+
+    function _assertFundedLpGapControl(IStandardExchangeProxy vault_, IERC20 lp_, uint256 gap_) internal {
+        uint256[4] memory before_ = [lp_.balanceOf(address(this)), vault_.balanceOf(attacker),
+            vault_.totalSupply(), lp_.balanceOf(address(vault_))];
+        AtomicPretransferCaller caller_ = new AtomicPretransferCaller();
+        lp_.approve(address(caller_), gap_);
+        bytes memory data_ = abi.encodeWithSignature(
+            "exchangeIn(address,uint256,address,uint256,address,bool,uint256)",
+            lp_, gap_, IERC20(address(vault_)), 1, attacker, false, _deadline());
+        uint256 minted_ = abi.decode(caller_.consumePull(lp_, address(this), address(vault_), gap_, data_), (uint256));
+        assertGt(minted_, 0, "funded control issues shares");
+        assertEq(lp_.balanceOf(address(this)), before_[0] - gap_, "payer supplies the full input");
+        assertEq(vault_.balanceOf(attacker), before_[1] + minted_);
+        assertEq(vault_.totalSupply(), before_[2] + minted_);
+        assertEq(lp_.balanceOf(address(vault_)), before_[3] + gap_, "old inventory stays in custody");
+        assertEq(lp_.balanceOf(address(caller_)), 0, "exact-in pull refunds nothing");
     }
 
     /// @notice L2: real FoT as configured pairToken cannot credit claimed face.
@@ -222,14 +270,45 @@ contract CamelotV2StandardExchange_SecRemediation_Test is TestBase_CamelotV2Stan
         fot.transfer(address(fotVault), claimed_);
         uint256 observed_ = fot.balanceOf(address(fotVault));
         assertLt(observed_, claimed_, "L2: FoT delivered less than claimed");
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, observed_
-            )
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         fotVault.exchangeIn(
             IERC20(address(fot)), claimed_, IERC20(address(other)), 0, attacker, true, _deadline()
         );
         vm.stopPrank();
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*  APEX-2026-004B / D35: exact-out refund is `min(availableBefore, max) - used`   */
+    /* ---------------------------------------------------------------------- */
+
+    function test_APEX004B_exactOut_refundTriples_contractCaller() public {
+        uint256 used_ = vault.previewExchangeOut(IERC20(address(tokenA)), IERC20(address(tokenB)), 1 ether);
+        require(used_ > 0, "preview used");
+        uint256 hundred_ = (used_ * 100) / 60;
+        uint256 eighty_ = (used_ * 80) / 60;
+        _refundTripleCase(hundred_, hundred_, used_); // 100/100/60 -> 40
+        _refundTripleCase(hundred_, eighty_, used_); // 100/80/60 -> 20, 20 uncredited
+        _refundTripleCase(used_, hundred_, used_); // 60/100/60 -> 0
+    }
+
+    function _refundTripleCase(uint256 available_, uint256 maximum_, uint256 used_) internal {
+        uint256 snap = vm.snapshotState();
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        tokenA.mint(address(this), available_);
+        tokenA.approve(address(caller), available_);
+        uint256 bookedBefore_ = vault.reserveOfToken(address(tokenA));
+        uint256 vaultBefore_ = tokenA.balanceOf(address(vault));
+        bytes memory data = abi.encodeCall(
+            IStandardExchangeOut.exchangeOut,
+            (IERC20(address(tokenA)), maximum_, IERC20(address(tokenB)), 1 ether, address(caller), true, _deadline())
+        );
+        uint256 spent_ = abi.decode(caller.consumePretransfer(IERC20(address(tokenA)), address(this), address(vault), available_, data), (uint256));
+        assertEq(spent_, used_, "used equals quote");
+        uint256 credit_ = available_ < maximum_ ? available_ : maximum_;
+        assertEq(tokenA.balanceOf(address(caller)), credit_ - used_, "refund = min(available, max) - used");
+        assertEq(tokenB.balanceOf(address(caller)), 1 ether, "exact output");
+        assertGe(vault.reserveOfToken(address(tokenA)), bookedBefore_, "booked backing never paid out");
+        assertEq(tokenA.balanceOf(address(vault)), vaultBefore_ + available_ - (credit_ - used_) - used_, "vault keeps used + uncredited excess");
+        assertTrue(vm.revertToState(snap));
     }
 }

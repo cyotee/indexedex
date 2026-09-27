@@ -1,0 +1,51 @@
+{
+  "ERC4626StandardExchangeInFacet": {
+    "sha256": "8519e0d2231ac268981a52855eed76f207ad3ae24740cf9a07dc3bd8e6bd5eb5",
+    "runtime_bytes": 24513,
+    "methodIdentifiers": {
+      "accruedRewards(address)": "128fced1",
+      "assetInfo()": "a40bee50",
+      "claimRewards(address)": "ef5cfb8c",
+      "deposit(address,address,uint256,uint256)": "20e8c565",
+      "exchangeIn(address,uint256,address,uint256,address,bool,uint256)": "d02d3063",
+      "exchangeRate()": "3ba0b9a9",
+      "facetFuncs()": "574a4cff",
+      "facetInterfaces()": "2ea80826",
+      "facetMetadata()": "f10d7a75",
+      "facetName()": "5b6f4d01",
+      "getRewardTokens()": "c4f59f9b",
+      "getTokensIn()": "213cae63",
+      "getTokensOut()": "071bc3c9",
+      "isValidTokenIn(address)": "fa5a4f06",
+      "isValidTokenOut(address)": "784367d6",
+      "previewDeposit(address,uint256)": "b8f82b26",
+      "previewExchangeIn(address,uint256,address)": "89d61912",
+      "previewRedeem(address,uint256)": "cbe52ae3",
+      "protocolVault()": "5a9249e6",
+      "quoteAssets(bytes,uint256)": "dedbf308",
+      "quoteExternalDeposit(bytes,address,uint256)": "cad1be6b",
+      "quoteExternalExchange(bytes,address,uint256)": "0558d1f9",
+      "quoteShareBalance(bytes)": "2e5f15dc",
+      "quoteState(address,address)": "844c633c",
+      "quoteTotalSupply(bytes)": "43225235",
+      "quoteTransition(bytes,uint8,uint256)": "2fb41732",
+      "redeem(address,uint256,address,uint256,bool)": "769f8e5d",
+      "rewardIndexesCurrent()": "f8b2f991",
+      "rewardIndexesStored()": "da88ecb4",
+      "yieldToken()": "76d5de85"
+    }
+  },
+  "ERC4626StandardExchangeOutFacet": {
+    "sha256": "5b605d784c2422c30a1124d471fb01bff09a6222bbefbc883255537dbc2453f6",
+    "runtime_bytes": 7899,
+    "methodIdentifiers": {
+      "exchangeOut(address,uint256,address,uint256,address,bool,uint256)": "bbac8477",
+      "facetFuncs()": "574a4cff",
+      "facetInterfaces()": "2ea80826",
+      "facetMetadata()": "f10d7a75",
+      "facetName()": "5b6f4d01",
+      "previewExchangeOut(address,address,uint256)": "db149bc5",
+      "protocolVault()": "5a9249e6"
+    }
+  }
+}

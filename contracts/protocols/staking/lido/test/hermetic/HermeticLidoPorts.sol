@@ -27,10 +27,34 @@ contract HermeticWETH is ERC20 {
 }
 
 contract HermeticStETH is ERC20 {
+    bool public stakingPaused;
+    uint256 public remainingStakeLimit = type(uint256).max;
+
     constructor() ERC20("Liquid staked Ether", "stETH") {}
 
+    function isStakingPaused() external view returns (bool) {
+        return stakingPaused;
+    }
+
+    function getCurrentStakeLimit() external view returns (uint256) {
+        return stakingPaused ? 0 : remainingStakeLimit;
+    }
+
+    function setStakingPaused(bool paused_) external {
+        stakingPaused = paused_;
+    }
+
+    function setStakeLimit(uint256 limit) external {
+        remainingStakeLimit = limit;
+    }
+
     function submit(address) external payable returns (uint256) {
+        require(!stakingPaused, "STAKING_PAUSED");
         require(msg.value > 0, "ZERO_DEPOSIT");
+        if (remainingStakeLimit != type(uint256).max) {
+            require(msg.value <= remainingStakeLimit, "STAKE_LIMIT");
+            remainingStakeLimit -= msg.value;
+        }
         _mint(msg.sender, msg.value);
         return msg.value;
     }

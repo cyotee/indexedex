@@ -408,6 +408,7 @@ contract CamelotV2StandardExchangeOutTarget is
                 revert MaxAmountExceeded(maxAmountIn, amountIn);
             }
 
+            uint256 credit = pretransferred ? _pretransferCredit(tokenIn, maxAmountIn) : 0;
             // Pull tokenIn used. Do not overwrite used with swap amountOut.
             uint256 used = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
 
@@ -425,12 +426,15 @@ contract CamelotV2StandardExchangeOutTarget is
                 address(VaultFeeOracleQueryAwareRepo._feeOracle().feeTo())
             );
 
-            // Pay measured this-call tokenOut (quote may exceed live FoT/rounding output).
+            // Pay measured this-call tokenOut. A book deficit must not become a successful zero payout.
+            if (amountOut > 0 && tokenOut.balanceOf(address(this)) < _bookedReserve(tokenOut)) {
+                revert AmountOutNotMet(amountOut, 0);
+            }
             tokenOut.safeTransfer(recipient, _unbookedSurplus(tokenOut));
 
             // Pass this-call unused inbound (not the fat maxAmountIn slippage cap).
             // `used` is tokenIn consumed, never amountOut.
-            _refundExcess(tokenIn, used + _unbookedSurplus(tokenIn), used, pretransferred, msg.sender);
+            _refundExactOutCredit(tokenIn, credit, used, pretransferred);
 
             _syncAllExpectedHoldReserves();
             return used;
@@ -506,6 +510,7 @@ contract CamelotV2StandardExchangeOutTarget is
             // NOTE: _secureTokenTransfer returns balanceOf(this), which may exceed amountIn
             // when pretransferred with surplus. Use the computed amountIn for the withdrawal
             // and refund any excess to the caller.
+            uint256 credit = pretransferred ? _pretransferCredit(tokenIn, maxAmountIn) : 0;
             _secureTokenTransfer(
                 // IERC20 tokenIn,
                 tokenIn,
@@ -542,7 +547,7 @@ contract CamelotV2StandardExchangeOutTarget is
             // Pass this-call unused inbound LP (not the fat maxAmountIn slippage cap).
             // Must happen BEFORE reserve check since tokenIn IS the pool token —
             // surplus LP in the vault would cause the reserve check to fail.
-            _refundExcess(tokenIn, amountIn + _unbookedSurplus(tokenIn), amountIn, pretransferred, msg.sender);
+            _refundExactOutCredit(tokenIn, credit, amountIn, pretransferred);
             // No reserve change, so no update needed.
             // But we do receive and send pool tokens, so we must verify the reserve still matches the held balance.
             // Check that local balance of the pool token still matches the stored reserve.
@@ -586,7 +591,11 @@ contract CamelotV2StandardExchangeOutTarget is
             }
 
             // Honor pretransferred: false always pulls. Do not credit lastTotalAssets exact-gap.
+            // D15: true-flag credit is `min(unbooked, maxAmountIn)`; refund only `credit - used`
+            // before the LP book absorbs the balance.
+            uint256 lpCredit = pretransferred ? _pretransferCredit(tokenIn, maxAmountIn) : 0;
             amountIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
+            _refundExactOutCredit(tokenIn, lpCredit, amountIn, pretransferred);
 
             uint256 actualShares = BetterMath._convertToSharesDown(
                 // uint256 assets,
@@ -651,6 +660,7 @@ contract CamelotV2StandardExchangeOutTarget is
                 revert MaxAmountExceeded(maxAmountIn, amountIn);
             }
 
+            uint256 shareCredit = pretransferred ? _pretransferCredit(IERC20(address(this)), maxAmountIn) : 0;
             // Secure the burn of the underlying pool token.
             _secureSelfBurn(
                 // address owner,
@@ -660,7 +670,7 @@ contract CamelotV2StandardExchangeOutTarget is
                 // bool preTransferred
                 pretransferred
             );
-            _refundExcess(IERC20(address(this)), maxAmountIn, amountIn, pretransferred, msg.sender);
+            _refundExactOutCredit(IERC20(address(this)), shareCredit, amountIn, pretransferred);
 
             // Transfer exactly the requested amountOut (don't recalculate to avoid rounding errors)
             IERC20(address(indexSource.pool))
@@ -748,9 +758,10 @@ contract CamelotV2StandardExchangeOutTarget is
                 ERC4626Repo._decimalOffset()
             );
 
+            uint256 zapShareCredit = pretransferred ? _pretransferCredit(IERC20(address(this)), maxAmountIn) : 0;
             // Secure the burn of the underlying pool token
             _secureSelfBurn(msg.sender, amountIn, pretransferred);
-            _refundExcess(IERC20(address(this)), maxAmountIn, amountIn, pretransferred, msg.sender);
+            _refundExactOutCredit(IERC20(address(this)), zapShareCredit, amountIn, pretransferred);
             // Load the router.
             // ICamelotV2Router router_ = _camelotV2Router();
             amountOut = indexSource.pool

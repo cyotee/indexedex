@@ -280,7 +280,10 @@ contract UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg is
         (address seLo, address tLo, address seHi, address tHi) = a.token0 < a.token1
             ? (a.standardExchange0, a.token0, a.standardExchange1, a.token1)
             : (a.standardExchange1, a.token1, a.standardExchange0, a.token0);
-        return keccak256(abi.encode(PRODUCT_ID, a.poolManager, a.feeOracle, seLo, tLo, seHi, tHi));
+        (address rpLo, address rpHi) = a.token0 < a.token1
+            ? (a.rateProvider0, a.rateProvider1)
+            : (a.rateProvider1, a.rateProvider0);
+        return keccak256(abi.encode(PRODUCT_ID, a.poolManager, a.feeOracle, seLo, tLo, seHi, tHi, rpLo, rpHi));
     }
 
     function updatePkg(address, bytes memory) public pure returns (bool) {
@@ -331,6 +334,12 @@ contract UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg is
             _readDecimals(c0),
             _readDecimals(c1)
         );
+        // D60: the swap invariant values each SE leg as shares x provider rate.
+        Repo.Layout storage l = Repo._layout();
+        l.rateProvider0 = a.rateProvider0;
+        l.rateProvider1 = a.rateProvider1;
+        l.seDecimals0 = _readDecimals(a.standardExchange0);
+        l.seDecimals1 = _readDecimals(a.standardExchange1);
     }
 
     function postDeploy(address) public pure returns (bool) {
@@ -374,6 +383,9 @@ contract UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg is
         if (a.token0 == a.token1) revert SamePairToken();
         _requireTokenInVaultTokens(a.standardExchange0, a.token0);
         _requireTokenInVaultTokens(a.standardExchange1, a.token1);
+        // D60: a buffered leg is priced by its rate provider, never by the hook.
+        if (a.token0 != a.standardExchange0 && a.rateProvider0 == address(0)) revert RateProviderRequired();
+        if (a.token1 != a.standardExchange1 && a.rateProvider1 == address(0)) revert RateProviderRequired();
     }
 
     function _requireTokenInVaultTokens(address se, address token) private view {
@@ -386,18 +398,10 @@ contract UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg is
     }
 
     function _readDecimals(address token) private view returns (uint8) {
-        try IERC20Metadata(token).decimals() returns (uint8 d) {
-            return d;
-        } catch {
-            return 18;
-        }
+        return IERC20Metadata(token).decimals();
     }
 
     function _safeSymbol(address token) private view returns (string memory) {
-        try IERC20Metadata(token).symbol() returns (string memory s) {
-            return s;
-        } catch {
-            return "TKN";
-        }
+        return IERC20Metadata(token).symbol();
     }
 }

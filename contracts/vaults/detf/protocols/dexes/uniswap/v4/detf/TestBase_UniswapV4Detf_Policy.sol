@@ -30,6 +30,7 @@ import {UniswapV4DetfRepo} from "contracts/vaults/detf/protocols/dexes/uniswap/v
 import {IDetfNftReserveDonation} from "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 import {TestBase_UniswapV4Detf} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 
 /// @notice Identical funded settlement and policy assertions over real reserve/provider fixtures.
 abstract contract V4FundedPolicyAssertions is Test {
@@ -227,7 +228,7 @@ abstract contract V4FundedPolicyAssertions is Test {
         IERC20 token_ = _fundedPolicyMintToken(d);
         assertTrue(info_.isMintingAllowed(token_), "rich launch has primary issuance");
         _assertStandardSettlementOrder(d, token_, _policyTokenUnits(token_, 10), IERC20(d));
-        for (uint256 i_; i_ < 24 && info_.isMintingAllowed(token_); ++i_) {
+        for (uint256 i_; i_ < 40 && info_.isMintingAllowed(token_); ++i_) {
             _fundedPolicySkewDown(d);
         }
         assertFalse(info_.isMintingAllowed(token_), "closed primary mint gate");
@@ -739,19 +740,84 @@ abstract contract TestBase_UniswapV4Detf_Policy is TestBase_UniswapV4Detf, V4Fun
         if (_policyInitialBond[d] >= 3) {
             _ensureFreeDetf(d, IERC20(d).balanceOf(detfUser) + 1);
         }
-        uint256 available_ = IERC20(d).balanceOf(detfUser) / 2;
-        uint256 amount_ = detfAmt < available_ ? detfAmt : available_;
+        (address[] memory open_, uint256 n_) = _openMintPairs(d);
+        if (n_ == 0) return;
+        uint256 amount_ = _skewDumpBudget(d, detfAmt);
+        if (amount_ < 1e9) return;
+        _dumpOpenMintPairs(d, open_, n_, amount_);
+    }
+
+    function _openMintPairs(address d) internal view returns (address[] memory open_, uint256 n_) {
+        IUniswapV4Detf info_ = IUniswapV4Detf(d);
+        IUniswapV4Detf.IoRoute[] memory rows_ = info_.mintRoutes();
+        open_ = new address[](rows_.length);
+        for (uint256 r_; r_ < rows_.length; ++r_) {
+            if (!info_.isMintingAllowed(rows_[r_].token)) continue;
+            address pair_ = _reservePairOfMintToken(d, address(rows_[r_].token));
+            if (pair_ == address(0) || pair_ == d) continue;
+            bool seen_;
+            for (uint256 j_; j_ < n_; ++j_) if (open_[j_] == pair_) { seen_ = true; break; }
+            if (!seen_) open_[n_++] = pair_;
+        }
+    }
+
+    function _skewDumpBudget(address d, uint256 detfAmt) internal view returns (uint256 amount_) {
+        uint256 available_ = IERC20(d).balanceOf(detfUser);
+        if (available_ > 1e9) available_ -= 1e9;
+        uint256 reserveBudget_ = IERC20(d).balanceOf(IUniswapV4Detf(d).hook()) / 4;
+        if (reserveBudget_ > 0 && available_ > reserveBudget_) available_ = reserveBudget_;
+        amount_ = detfAmt < available_ ? detfAmt : available_;
+    }
+
+    function _dumpOpenMintPairs(address d, address[] memory open_, uint256 n_, uint256 amount_) internal {
         address hook_ = IUniswapV4Detf(d).hook();
-        address[] memory tokens_ = IUniswapV4SeBufferHook(hook_).tokens();
-        uint256 chunk_ = amount_ / (tokens_.length - 1);
+        address preferred_ = _reservePairOfMintToken(d, address(_mintTokenOf(d)));
+        bool prefOpen_ = preferred_ != address(0) && IUniswapV4Detf(d).isMintingAllowed(_mintTokenOf(d));
+        uint256 prefAmt_ = (prefOpen_ && n_ > 1) ? amount_ * 2 / 3 : amount_;
+        if (prefAmt_ < 1e9) prefAmt_ = amount_;
         vm.startPrank(detfUser);
         IERC20(d).approve(hook_, amount_);
-        for (uint256 i_; i_ < tokens_.length; ++i_) {
-            if (tokens_[i_] == d) continue;
-            IStandardExchangeIn(hook_)
-                .exchangeIn(IERC20(d), chunk_, IERC20(tokens_[i_]), 0, detfUser, false, _deadline());
+        if (prefOpen_) _dumpDetfForPair(hook_, d, preferred_, prefAmt_);
+        uint256 otherAmt_ = (!prefOpen_ || n_ <= 1) ? 0 : (amount_ - prefAmt_) / (n_ - 1);
+        for (uint256 i_; i_ < n_; ++i_) {
+            if (prefOpen_ && open_[i_] == preferred_) continue;
+            uint256 chunk_ = otherAmt_ >= 1e9 ? otherAmt_ : amount_ / n_;
+            if (chunk_ < 1e9) chunk_ = amount_;
+            if (!prefOpen_ || otherAmt_ >= 1e9) _dumpDetfForPair(hook_, d, open_[i_], chunk_);
         }
         vm.stopPrank();
+    }
+
+    function _reservePairOfMintToken(address d, address token_) internal view returns (address) {
+        address hook_ = IUniswapV4Detf(d).hook();
+        address[] memory tokens_ = IUniswapV4SeBufferHook(hook_).tokens();
+        for (uint256 i_; i_ < tokens_.length; ++i_) {
+            if (tokens_[i_] == token_) return tokens_[i_];
+            if (IUniswapV4SeBufferHook(hook_).standardExchangeOf(tokens_[i_]) == token_) return tokens_[i_];
+        }
+        return address(0);
+    }
+
+    function _dumpDetfForPair(address hook_, address d, address pair_, uint256 chunk_) internal {
+        while (chunk_ >= 1e9) {
+            try IStandardExchangeIn(hook_).previewExchangeIn(IERC20(d), chunk_, IERC20(pair_))
+                returns (uint256 quote_)
+            {
+                if (quote_ == 0) {
+                    chunk_ /= 2;
+                    continue;
+                }
+                try IStandardExchangeIn(hook_).exchangeIn(
+                    IERC20(d), chunk_, IERC20(pair_), 0, detfUser, false, _deadline()
+                ) {
+                    return;
+                } catch {
+                    chunk_ /= 2;
+                }
+            } catch {
+                chunk_ /= 2;
+            }
+        }
     }
 
     function _ensureFreeDetf(address d, uint256 amt) internal {
@@ -858,7 +924,8 @@ abstract contract TestBase_UniswapV4Detf_Policy is TestBase_UniswapV4Detf, V4Fun
                 pairTokenDecimals: HookPkgArgsDecimalsLib.tokenDec(address(pairToken)),
                 rawTokenDecimals: predicted_.code.length == 0 ? uint8(9) : HookPkgArgsDecimalsLib.tokenDec(predicted_),
                 ownerOnlyLiquidity: ownerOnlyLiquidity_,
-                owner: predicted_
+                owner: predicted_,
+                rateProvider: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, se, address(pairToken)) // D60
             });
         uint256 mineNonce = CpHookFactory.findMineNonce(hookFactory, hookPkg, hArgs);
         reserveHook = CpHookFactory.deployHook(hookPkg, hArgs, mineNonce);

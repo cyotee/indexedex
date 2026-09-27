@@ -1,0 +1,83 @@
+{
+ "F1": {
+  "title": "Orbital hook: contract pretransfer into a buffered input leg is always rejected",
+  "severity": "medium",
+  "site": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookCommon.sol:2057 (_securePull) and :2072 (_pullExactOutInput)",
+  "detail": "The D15 credit is measured as available(balance, MultiAssetBasicVaultRepo._reserveOfToken(tokenIn)). For a buffered leg that reserve book is the face-equivalent of the SE claim, which exceeds the hook's local face balance, so the credit is always 0 and exchangeOut(..., pretransferred=true) reverts TransferDeltaInsufficient(used, 0) for every SE family. The family's Apex008 R6 test passes only because its input leg is raw; the dual hook (both legs buffered) does not have this defect. Root cause confirmed 2026-09-21: `_securePull` / `_pullExactOutInput` measure credit with `LocalCreditLib.available(balance, _reserveOfToken(tokenIn))`, and on a buffered leg `_reserveOfToken` is the face-equivalent SE claim, which exceeds the face balance, so available() is 0. The dual hook uses `_unbookedBalance` (`B >= R ? B - R : B`) at the same two sites and its rows are COMPATIBLE; the orbital hook's own `_freeTokenBalance` already treats a buffered leg's face balance as fully unbooked.",
+  "rows": "all 12 executed orbital rows",
+  "control": "test_row_hookSwap_exactOut_trueFlag_refundsCreditMinusUsed asserts the exact revert",
+  "ruling": "D50 follow-up: fixed with custody-specific native books; raw/identity held reserves are excluded from credit and non-identity buffered face uses only local unbooked custody. Added at/above-reserve and non-unit-rate regressions; see followup-review/hook-red and the final follow-up release evidence."
+ },
+ "F2": {
+  "title": "Aave cross-version loop: share-to-tokenA quote requires instant HF-safe liquidity for the whole position, so the hook's claim valuation reverts",
+  "severity": "high",
+  "site": "AaveCrossVersionLoop exchangeIn(tokenA -> vault) via the single-CP hook _bufferPair",
+  "detail": "Corrected 2026-09-21 (the earlier description said the mint previewed ~100e18 and minted 25.2e18; that is not what the code does). `AmountOutNotMet(uint256,uint256)` is raised only in `AaveCrossVersionLoopExchangeBase._requireFreeable`, which `_amountForShares` calls for both `previewExchangeIn(se, shares, tokenA)` and the exit itself. The single-CP hook's first buffer mints ~100e18 shares as previewed (`_bufferPair` uses the same `sharesForDeposit` formula on both sides), then the hook values its SE holding with `_seClaim()` = `previewExchangeIn(se, seBal, tokenA)`; the loop turns that into a full-position exit quote and reverts `AmountOutNotMet(99999999995000000000, 25209888139097750000)` because only local tokenA plus `maxWithdrawableA` (HF-safe V3 withdrawal without deleverage, ~25% after the 70% LTV loop) is freeable. Preview and execute agree (both revert); the defect is that the SE's share-to-face preview is a liquidity check, not a valuation, so a hook that holds most of the supply cannot quote its claim. Same shape as F7.",
+  "rows": "single-cp:AaveCrossVersionLoop",
+  "control": "every row test asserts AmountOutNotMet on the first deposit",
+  "ruling": "Closed by D60/D61/D69. The rate provider values the held SE claim; the loop unwinds debt proportionally and the multi-instance fixtures now support all seven hook families. All ten matrix controls execute, including 6/9-decimal rows."
+ },
+ "F3": {
+  "title": "Camelot SE: exact-out mint quote returns 0 instead of a route error",
+  "severity": "medium",
+  "site": "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeOutTarget.sol previewExchangeOut (face -> share)",
+  "detail": "previewExchangeOut(face, se, sharesOut) falls through every route and returns 0 (3,019 gas) rather than reverting ExchangeOutNotAvailable; the non-CP hook's previewWrapExactOut therefore quotes 0 and exact-out wraps fail ZeroMaxIn() at the router. Confirmed 2026-09-21: `exchangeOut` for the same face-to-share route reverts `InvalidRoute(tokenIn, tokenOut)`, so preview and execute disagree; the Uniswap V2 SE implements this route in both (`_quoteZapInToTargetLPWithFee`).",
+  "rows": "single-noncp:CamelotV2StandardExchange",
+  "control": "four row tests assert the zero quote",
+  "ruling": "Ruled 2026-09-21 (D52): by design. Unsupported route previews return 0 and execute reverts `InvalidRoute`; the row is INCOMPATIBLE on that named check."
+ },
+ "F4": {
+  "title": "EtherFi and Rocket SEs cannot answer the orbital transition quote in the hermetic fixtures: the stubs lack the protocol views quoteState reads",
+  "severity": "low",
+  "site": "EtherFiWeETHStandardExchangeInFacet.quoteState / RocketPoolRETH equivalent, called from UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib.planDeposit",
+  "detail": "Corrected 2026-09-21. `quoteState` reverts `InvalidQuoteState()` from `_efWord` / `_rpWord` when a protocol view staticcall fails or does not return 32 bytes. The hermetic EtherFi ports (`HermeticEtherFiPorts.sol`) expose `getTotalPooledEther()` and `shares(address)` on eETH but not `totalShares()`, and the hermetic liquidity pool has no `totalValueInLp()`; the hermetic Rocket deposit pool (`HermeticRocketPoolPorts.sol`) has `getBalance()` but no `version()`, and the TestBase registers no `rocketMinipoolQueue` or `rocketDAOProtocolSettingsNetwork`. No hermetic suite calls `quoteState` on these two SEs today. The orbital previews (`ExitQuoteLib.planDeposit`) require the quote, so the orbital preview row cannot run hermetically although `addLiquidity`, `depositSingle` and `removeLiquidity` execute. This is a D46 fixture gap on the underlying stubs (not a SUT mock), pending confirmation on a mainnet fork that the production reads answer.",
+  "rows": "orbital:EtherFiWeETHStandardExchange, orbital:RocketPoolRETHStandardExchange",
+  "control": "test_row_previewMatchesExecution asserts InvalidQuoteState on the failing preview",
+  "ruling": "Resolved 2026-09-21 (D53): hermetic EtherFi and Rocket stubs expose the views quoteState reads; `*_TransitionQuote.t.sol` suites added; the two orbital rows run the gold preview body."
+ },
+ "F5": {
+  "title": "Non-CP single hook with an AMM SE: exact-out unwrap leaves a PoolManager delta unsettled after prior swaps",
+  "severity": "medium",
+  "site": "contracts/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleStandardExchangeBufferHookTarget.sol _unwrapExactOut (requires spent == seIn, settles received pair)",
+  "detail": "After an exact-in wrap, an exact-in unwrap and an exact-out wrap, the exact-out unwrap through the PoolManager reverts CurrencyNotSettled() with the Uni V2 (full-size sequence) and Aerodrome (half-size sequence) SEs; the same call from a fresh state settles, and ERC-4626 / LST rows settle in both sequences. Root cause confirmed 2026-09-21: `_unwrapExactOut` settles `got` (the pair actually received) while `beforeSwap` returns a delta of exactly `pairOut`; when the AMM zap-out delivers `got > pairOut`, the surplus becomes a positive PoolManager credit to the hook that nothing takes, so the swap ends `CurrencyNotSettled()`. Fresh state delivers exactly `pairOut`, which is why the same call settles there.",
+  "rows": "single-noncp:UniswapV2StandardExchange (preview row), single-noncp:AerodromeStandardExchange (swap row)",
+  "control": "the affected row test replays the sequence and asserts CurrencyNotSettled()",
+  "ruling": "Fixed 2026-09-21 (D51): `_unwrapExactOut` settles exactly `pairOut`; the surplus is retained residual (D6). Both rows run with a bounded-residual assertion."
+ },
+ "F6": {
+  "title": "FullSpread V3/V4 SEs over-deliver on unwrap relative to their preview; hooks retain the excess",
+  "severity": "low",
+  "site": "UniswapV3/V4FullSpreadStandardExchangeVault exchangeIn(se -> token) / exchangeOut(se -> token) vs previewExchangeIn / previewExchangeOut",
+  "detail": "On the single-CP hook withdrawSingle(face) executes ~0.47% above its preview, and PoolManager swaps through the dual (1.3e16 wei), orbital (7.1e15 wei) and single-CP hooks leave up to ~1.3% of the swapped face on the hook as retained residual (D6 says retained, but this is not rounding dust). Root cause isolated 2026-09-21 by `Uniswap{V3,V4}FullSpreadStandardExchangeVault_F6Diagnostic.t.sol` (`review-20260921/gap1-run-2.log`): exact-in zap-out preview and execution agree to the wei in every state (fresh, after a single-token zap-in, after market trades, with a 20% sleeve); the exact-out route spends exactly the previewed shares but delivers 99 bps more than requested in every state on both versions. `_previewZapOutWithdrawal` pads the share quote by 1% (`_bufferedWithdrawalShares`, `Math.max(shares / 100, 1)`; V3 `OutBase.sol:98`, V4 `Common.sol:216`), and the pool-backed branch of `executeZapOutWithdrawal` burns the padded shares and pays `actualOut` (the whole zap-out result) instead of the requested `minAmountOut`, so the padding's value leaves the vault with the exiting caller. The idle branch pays exactly `minAmountOut` and keeps the surplus. The hooks' residual is that over-delivery landing on the hook after exact-out unwraps (withdrawSingle exact-out and PoolManager exact-out swaps).",
+  "rows": "single-cp, dual and orbital rows for UniswapV3FullSpreadStandardExchangeVault and UniswapV4FullSpreadStandardExchangeVault",
+  "control": "rows keep the controls with a 1% / 2% tolerance and record the finding",
+  "ruling": "Fixed 2026-09-21 (D55): the 1% exact-out share pad is removed on V3 and V4 (`_bufferedWithdrawalShares`, `_bufferedInventoryShares`, the V4 budget hint), the pool-backed `executeZapOutWithdrawal` branch pays exactly the requested amount and retains the surplus, and the transition-quote projection reports the request and keeps the surplus in free inventory. Gate `test_F6_exactOut_previewAndExecutionMatchExactly` red before (`review-20260921/f6-fix-red.log`) and green after (`f6-fix-run-2.log`, 935/935 across every FullSpread suite); the six FullSpread matrix rows run the gold bodies with the default residual tolerance."
+ },
+ "F7": {
+  "title": "Single-CP hook previews value a Balancer pool SE with a full-supply exit quote, which Balancer rejects",
+  "severity": "medium",
+  "site": "single-CP hook claim/rate quote (previewExchangeIn(se, totalSupply, face)) against BalancerV3PoolStandardExchangeTarget._previewPoolLiquidity",
+  "detail": "The hook's previewDeposit / previewSwap quote the SE leg with the SE's whole supply; the pool SE turns that into a single-token exit of its entire BPT supply and reverts InvariantRatioBelowMin(0, 0.7e18). Deposits, withdrawals and hook-level exchanges execute; previews and PoolManager swaps fail for all six pool families.",
+  "rows": "single-cp rows of the six Balancer buffer-pool families",
+  "control": "test_row_previewMatchesExecution and test_row_poolManagerSwap_bothDirections_noFaceResidual assert InvariantRatioBelowMin on previewDeposit",
+  "ruling": "Fixed 2026-09-22 (D60 work package 2): single-CP previews and PoolManager swaps value the SE leg as shares x the StandardExchangeRateProvider rate (projected through the provider's state quote where the SE offers a transition quote) and LP issuance follows the raw share book (D59), so no full-supply exit quote reaches the pool; all six single-CP rows run the gold controls, and the six families gained dual-CP rows (A7). The dual rows also exposed a latent dual defect fixed alongside: `_unwrapExactOut` never approved the SE to pull shares, so pull-based SEs reverted TransferFromFailed on exact-out."
+ },
+ "F8": {
+  "title": "Aave cross-version loop: no borrow headroom after a partial single-sided unwind, so the next buffer reverts at Aave",
+  "severity": "low",
+  "site": "AaveCrossVersionLoop exchangeIn(tokenA -> vault) after an exact-out exchangeOut unwound part of the position (single-CP hook withdrawSingle then a swap)",
+  "detail": "With the hook valuing the loop leg through its rate provider (D60), the loop row runs every control except the preview row's final swap: after the seed, a proportional deposit and a single-sided face withdraw, the loop's Aave V3 position sits at its collateral factor and the borrow behind the next buffer reverts CollateralCannotCoverNewBorrow() for 1 tokenA and for 0.01 tokenA alike. The loop's LTV management after a partial unwind, not a hook check (the hook only calls exchangeIn). Reproduced in test_BLOCKED_F8_swapAfterSingleSidedWithdraw_CollateralCannotCoverNewBorrow.",
+  "rows": "single-cp:AaveCrossVersionLoop",
+  "control": "test_row_previewMatchesExecution: funded deposit, single-sided exit with exact payout or conservative atomic rejection, followed by a nonzero previewed swap. No skip is configured.",
+  "ruling": "Closed by D61/D69. Proportional safe deleverage restores borrow headroom; exact-out quotes use the net tokenA basis and exact-in is capped at deliverable value. The single-CP preview control retains the owner-approved exact-output-or-atomic-conservative-rejection assertion. The swap probe executes; no blocked control remains. Independently rebuilt full follow-up suite passes."
+ },
+ "F9": {
+  "title": "ERC-4626 SE: sequential transition projections in one quote state round a few wei away from execution",
+  "severity": "low",
+  "site": "contracts/vaults/standard/erc4626/ERC4626StandardExchangeQuoteTarget.sol quoteTransition(DepositExactIn) after a prior transition in the same state (_syncQuoteBacking / _vaultTransition rounding)",
+  "detail": "With LP issuance on raw shares (D59), the dual hook's zap-deposit preview projects a sale deposit, an exact-out unwrap and the two intake deposits through the SE's transition quote. The first projected deposit matches execution to the wei; later steps in the same state differ by a few wei to about 1e-15 relative, in either direction: 934 to 937 wei under execution on each leg in test_dualNativeSYEveryDeclaredRouteMatchesPreviewAndActualPayout (usage fee 1 percent), 4 to 5 wei over on the minted shares and 4 wei under on the output leg's balance in UniswapV4DualSEBCPHook_Core test_Z1_depositSingle_whenEligible (mintSharesLater inputs 10225839000453371087 / 9292088983423696589 / 209871902609542095200 / 190707911016576303410 projected against 10225839000453371082 / 9292088983423696585 / 209871902609542095200 / 190707911016576303414 executed). The hook cannot do better than the SE's projection: a live previewExchangeIn alternative is 2e-5 off because it ignores the earlier step's fee, and mirroring the executed exact-out burn alone leaves the +4 wei.",
+  "rows": "dual hook zap-deposit previews on ERC-4626 SEs with a usage fee (test/foundry/spec/vaults/standard/sy/DualBufferHookNativeSY.t.sol, dual Core Z1)",
+  "control": "Exact preview/execution assertions in test_dualNativeSYEveryDeclaredRouteMatchesPreviewAndActualPayout and dual Core Z1.",
+  "ruling": "Closed by D62. ERC4626 sequential quote rounding and dual-hook projected pre-unwrap sizing now match execution. Exact preview assertions are restored in DualBufferHookNativeSY and dual Core. Independently rebuilt full follow-up suite passes."
+ }
+}

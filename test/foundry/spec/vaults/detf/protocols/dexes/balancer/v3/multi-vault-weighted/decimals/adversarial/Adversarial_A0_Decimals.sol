@@ -6,6 +6,7 @@ import {TestBase_MultiVaultWeightedDetf_Adversarial_Decimals} from "test/foundry
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {IMultiVaultWeightedDetfBonding} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfBonding.sol";
 import {IMultiVaultWeightedDetfInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfInfo.sol";
 import {
@@ -15,7 +16,16 @@ import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 
 /// @notice WP-SEC-DETF-MV-A0-001: first mover cannot drain pre-seeded inventory.
 /// @dev Donate **before** first bond. Calls the production proxy. No mock SUT.
+///      EOA `pretransferred=true` reverts `EOAPretransferNotAllowed` first. Booked residual
+///      still reverts `TransferDeltaInsufficient` for a contract caller.
 abstract contract Adversarial_A0_Decimals is TestBase_MultiVaultWeightedDetf_Adversarial_Decimals {
+    AtomicPretransferCaller internal apexCaller;
+
+    function setUp() public virtual override {
+        super.setUp();
+        apexCaller = new AtomicPretransferCaller();
+    }
+
     function test_A0_preLive_donatedVaultShare_cannotBeFirstMinted() public {
         address instance_ = _deployOpenModeDetfN(1);
         _assertInert(instance_);
@@ -56,11 +66,16 @@ abstract contract Adversarial_A0_Decimals is TestBase_MultiVaultWeightedDetf_Adv
 
         // After honest money-route sync, booked residual cannot fund a free pretransfer mint.
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeIn(instance_).exchangeIn(
+            seShares[0], donated_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours
+        );
+        vm.prank(address(apexCaller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, donated_, uint256(0))
         );
         IStandardExchangeIn(instance_).exchangeIn(
-            seShares[0], donated_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours
+            seShares[0], donated_, IERC20(instance_), 0, address(apexCaller), true, block.timestamp + 1 hours
         );
         assertEq(IERC20(instance_).balanceOf(attacker), out_, "booked donation not minted");
     }
@@ -116,11 +131,16 @@ abstract contract Adversarial_A0_Decimals is TestBase_MultiVaultWeightedDetf_Adv
         assertEq(seShares[0].balanceOf(instance_), donated_, "victim donation still idle");
 
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeIn(instance_).exchangeIn(
+            seShares[0], donated_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours
+        );
+        vm.prank(address(apexCaller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, donated_, uint256(0))
         );
         IStandardExchangeIn(instance_).exchangeIn(
-            seShares[0], donated_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours
+            seShares[0], donated_, IERC20(instance_), 0, address(apexCaller), true, block.timestamp + 1 hours
         );
         assertEq(IERC20(instance_).balanceOf(attacker), out_, "booked donation not drained");
         assertEq(seShares[0].balanceOf(instance_), donated_, "donated inventory not drained");

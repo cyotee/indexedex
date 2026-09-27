@@ -13,6 +13,7 @@ import {IERC4626StandardExchangeDFPkg} from "contracts/vaults/standard/erc4626/I
 import {
     ERC4626StandardExchange_Component_FactoryService
 } from "contracts/vaults/standard/erc4626/ERC4626StandardExchange_Component_FactoryService.sol";
+import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFactoryService.sol";
 
 /**
  * @title TestBase_ERC4626StandardExchange
@@ -21,6 +22,7 @@ import {
 abstract contract TestBase_ERC4626StandardExchange is TestBase_Permit2, TestBase_VaultComponents {
     using ERC4626StandardExchange_Component_FactoryService for ICreate3FactoryProxy;
     using ERC4626StandardExchange_Component_FactoryService for IIndexedexManagerProxy;
+    using VaultComponentFactoryService for ICreate3FactoryProxy;
 
     IFacet exchangeInFacet;
     IFacet exchangeOutFacet;
@@ -34,6 +36,7 @@ abstract contract TestBase_ERC4626StandardExchange is TestBase_Permit2, TestBase
         exchangeInFacet = create3Factory.deployERC4626StandardExchangeInFacet();
         exchangeOutFacet = create3Factory.deployERC4626StandardExchangeOutFacet();
         markerFacet = create3Factory.deployERC4626StandardExchangeMarkerFacet();
+        erc4626Facet = create3Factory.deployReceiptBackedERC4626Facet();
 
         vm.prank(owner);
         erc4626StandardExchangeDFPkg =

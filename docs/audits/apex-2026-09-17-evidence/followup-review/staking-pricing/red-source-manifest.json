@@ -1,0 +1,82 @@
+[
+  {
+    "path": "contracts/protocols/staking/lido/LidoWstETHStandardExchangeCommon.sol",
+    "sha256": "cc8883698f448b271df66f15c17782086af1202fde446666b3b00e5390b6ac58",
+    "kind": "production"
+  },
+  {
+    "path": "contracts/protocols/staking/lido/LidoWstETHStandardExchangeInTarget.sol",
+    "sha256": "81dfe2d11a0ed101707126123a86aa781ada910af239f0e18835f624e02783cd",
+    "kind": "production"
+  },
+  {
+    "path": "contracts/protocols/staking/lido/LidoWstETHStandardExchangeOutTarget.sol",
+    "sha256": "0adeb14128a4bf0b3e1ea57ec08b8058c852c0da3825a9a7299e29668767398c",
+    "kind": "production"
+  },
+  {
+    "path": "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeCommon.sol",
+    "sha256": "829ad31ab608e964b3e13e4cce014c3342faac19a1ad859919b3a00ab65f7ae3",
+    "kind": "production"
+  },
+  {
+    "path": "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeInTarget.sol",
+    "sha256": "1edf1987a264fac5ca2ba262be592e6594b9927635a8c2b142343480d32a649e",
+    "kind": "production"
+  },
+  {
+    "path": "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeOutTarget.sol",
+    "sha256": "b89f8bc2c989cff60a65f3591dbd5944fd3ddf30a9b63e97e649e15db01b5897",
+    "kind": "production"
+  },
+  {
+    "path": "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeCommon.sol",
+    "sha256": "a077444d271a50917d6ef77666c2ca0c94b628998f111cd518d485f4b9082bb8",
+    "kind": "production"
+  },
+  {
+    "path": "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeInTarget.sol",
+    "sha256": "33c38b5e7689db388da4d3238eb7156c34247b442bc8abb29fcd38a4a578a51b",
+    "kind": "production"
+  },
+  {
+    "path": "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeOutTarget.sol",
+    "sha256": "8ab9efa845835c5e21d0be5b441ba8601ab97ee8961cdada3cb52ed3b1421dae",
+    "kind": "production"
+  },
+  {
+    "path": "test/foundry/spec/vaults/standard/exchange/invariant/StandardExchangeAccountingHandler.sol",
+    "sha256": "327bb71428f90670d2d7ef02347032f61234f1eb1cee87598b92d3c019061e7e",
+    "kind": "campaign"
+  },
+  {
+    "path": "test/foundry/spec/vaults/standard/exchange/invariant/StakingStandardExchangeAccountingHandler.sol",
+    "sha256": "d536cd5d6e00aab60bbe394ac7bf282a1ca1b877e50acbbf3d6772b77da31e66",
+    "kind": "campaign"
+  },
+  {
+    "path": "test/foundry/spec/protocol/staking/lido/invariant/LidoWstETHStandardExchange_Invariant.t.sol",
+    "sha256": "c6bb790235e66156dbf5350e4d0e584ca659e8c148325b7d8e35eb737aa913d5",
+    "kind": "campaign"
+  },
+  {
+    "path": "test/foundry/spec/protocol/staking/etherfi/invariant/EtherFiWeETHStandardExchange_Invariant.t.sol",
+    "sha256": "e2584ebb62b40793b640dad26d4d02f53df586c4b905004e2e1fa5a218ef581c",
+    "kind": "campaign"
+  },
+  {
+    "path": "test/foundry/spec/protocol/staking/rocket-pool/invariant/RocketPoolRETHStandardExchange_Invariant.t.sol",
+    "sha256": "95fd41dc7d6e0da3d0705dda44647914c12fbf06d89f929b4e14f111ef51b2ab",
+    "kind": "campaign"
+  },
+  {
+    "path": "test/foundry/spec/vaults/standard/exchange/protocols/morpho/blue/invariant/MorphoBlueStandardExchange_Invariant.t.sol",
+    "sha256": "8c620d5cd11148ecac7163f62d85469e7ad46666938970f855afd288cbb41851",
+    "kind": "morpho-campaign"
+  },
+  {
+    "path": "test/foundry/spec/protocol/staking/lido/invariant/LidoWstETHStandardExchange_NonUnitPretransfer.t.sol",
+    "sha256": "eeaa0997b3f7d3c481a40db79623f1564cdf8d49a518d4ece14f5d82f2910562",
+    "kind": "nonunit"
+  }
+]

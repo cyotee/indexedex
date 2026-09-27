@@ -1,0 +1,163 @@
+{
+ "orbital:ERC4626StandardExchange": {
+  "findings": [
+   "F1"
+  ],
+  "blockedTests": []
+ },
+ "orbital:SimpleYieldERC4626Control": {
+  "findings": [
+   "F1"
+  ],
+  "blockedTests": []
+ },
+ "orbital:MorphoBlueStandardExchange": {
+  "findings": [
+   "F1"
+  ],
+  "blockedTests": []
+ },
+ "orbital:RebasingAwareERC4626": {
+  "findings": [
+   "F1"
+  ],
+  "blockedTests": []
+ },
+ "orbital:UniswapV2StandardExchange": {
+  "findings": [
+   "F1"
+  ],
+  "blockedTests": []
+ },
+ "orbital:CamelotV2StandardExchange": {
+  "findings": [
+   "F1"
+  ],
+  "blockedTests": []
+ },
+ "orbital:AerodromeStandardExchange": {
+  "findings": [
+   "F1"
+  ],
+  "blockedTests": []
+ },
+ "orbital:LidoWstETHStandardExchange": {
+  "findings": [
+   "F1"
+  ],
+  "blockedTests": []
+ },
+ "orbital:RocketPoolRETHStandardExchange": {
+  "findings": [
+   "F1",
+   "F4"
+  ],
+  "blockedTests": []
+ },
+ "orbital:EtherFiWeETHStandardExchange": {
+  "findings": [
+   "F1",
+   "F4"
+  ],
+  "blockedTests": []
+ },
+ "orbital:UniswapV3FullSpreadStandardExchangeVault": {
+  "findings": [
+   "F1",
+   "F6"
+  ],
+  "blockedTests": []
+ },
+ "orbital:UniswapV4FullSpreadStandardExchangeVault": {
+  "findings": [
+   "F1",
+   "F6"
+  ],
+  "blockedTests": []
+ },
+ "single-cp:AaveCrossVersionLoop": {
+  "findings": [
+   "F2",
+   "F8"
+  ],
+  "blockedTests": []
+ },
+ "single-cp:UniswapV3FullSpreadStandardExchangeVault": {
+  "findings": [
+   "F6"
+  ],
+  "blockedTests": []
+ },
+ "single-cp:UniswapV4FullSpreadStandardExchangeVault": {
+  "findings": [
+   "F6"
+  ],
+  "blockedTests": []
+ },
+ "single-noncp:CamelotV2StandardExchange": {
+  "findings": [
+   "F3"
+  ],
+  "blockedTests": []
+ },
+ "single-noncp:UniswapV2StandardExchange": {
+  "findings": [
+   "F5"
+  ],
+  "blockedTests": []
+ },
+ "single-noncp:AerodromeStandardExchange": {
+  "findings": [
+   "F5"
+  ],
+  "blockedTests": []
+ },
+ "single-cp:StandardExchangeBufferPool": {
+  "findings": [
+   "F7"
+  ],
+  "blockedTests": []
+ },
+ "single-cp:CommonBufferMultiVaultStablePool": {
+  "findings": [
+   "F7"
+  ],
+  "blockedTests": []
+ },
+ "single-cp:MixedBufferMultiVaultStablePool": {
+  "findings": [
+   "F7"
+  ],
+  "blockedTests": []
+ },
+ "single-cp:CommonBufferMultiVaultWeightedPool": {
+  "findings": [
+   "F7"
+  ],
+  "blockedTests": []
+ },
+ "single-cp:MixedLegWeightedBufferPool": {
+  "findings": [
+   "F7"
+  ],
+  "blockedTests": []
+ },
+ "single-cp:MultiPairStandardExchangeBufferPool": {
+  "findings": [
+   "F7"
+  ],
+  "blockedTests": []
+ },
+ "dual:UniswapV3FullSpreadStandardExchangeVault": {
+  "findings": [
+   "F6"
+  ],
+  "blockedTests": []
+ },
+ "dual:UniswapV4FullSpreadStandardExchangeVault": {
+  "findings": [
+   "F6"
+  ],
+  "blockedTests": []
+ }
+}

@@ -295,7 +295,11 @@ contract RebasingDETFTokenBehavior_Test is TestBase_VaultComponents {
         vm.prank(alice);
         token.transfer(address(token), 4 ether);
 
+        // APEX D9/R13.1: `pretransferred=true` is contract-only; the DETF is the production caller.
         vm.prank(owner);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        token.burnShares(4 ether, alice, true);
+        vm.prank(address(detf));
         uint256 sharesBurned = token.burnShares(4 ether, alice, true);
 
         assertEq(sharesBurned, 4, 'shares burned');
@@ -317,11 +321,7 @@ contract RebasingDETFTokenBehavior_Test is TestBase_VaultComponents {
         uint256 balBefore = token.balanceOf(address(token));
 
         vm.prank(alice);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed, uint256(0)
-            )
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         token.redeem(claimed, alice, true);
 
         assertEq(token.balanceOf(address(token)), balBefore, 'I1 must not consume inventory');
@@ -335,11 +335,7 @@ contract RebasingDETFTokenBehavior_Test is TestBase_VaultComponents {
 
         uint256 claimed = 4 ether;
         vm.prank(alice);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed, uint256(0)
-            )
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         IStandardExchangeIn(address(token)).exchangeIn(
             IERC20(address(token)), claimed, IERC20(address(weth)), 0, alice, true, block.timestamp + 1
         );
@@ -355,11 +351,7 @@ contract RebasingDETFTokenBehavior_Test is TestBase_VaultComponents {
         token.transfer(address(token), claimed);
 
         vm.prank(alice);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed, uint256(0)
-            )
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         token.redeem(claimed, alice, true);
     }
 
@@ -384,11 +376,7 @@ contract RebasingDETFTokenBehavior_Test is TestBase_VaultComponents {
         assertGe(residual_, claimed);
 
         vm.prank(alice);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed, uint256(0)
-            )
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         token.redeem(claimed, alice, true);
 
         assertEq(token.balanceOf(address(token)), residual_, 'I3 residual preserved');

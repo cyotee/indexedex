@@ -150,7 +150,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookSeTarget is
         amountIn = _previewSwapExactOut(tin, tout, amountOut);
         if (amountIn > maxAmountIn) revert Slippage();
 
-        _securePull(IERC20(tin), amountIn, pretransferred);
+        _pullExactOutInput(IERC20(tin), amountIn, maxAmountIn, pretransferred);
 
         uint8 j = _tokenIndex(tout);
         uint8 ii = _tokenIndex(tin);

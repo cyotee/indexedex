@@ -35,22 +35,6 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHook_FactoryService {
         vm.label(address(facet), "UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet");
     }
 
-    function deployJoinFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
-        bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4StandardExchangeCurveQuadStableBufferHookJoinFacet.sol:UniswapV4StandardExchangeCurveQuadStableBufferHookJoinFacet");
-        facet = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeCurveQuadStableBufferHookJoinFacet")._hash())
-        );
-        vm.label(address(facet), "UniswapV4StandardExchangeCurveQuadStableBufferHookJoinFacet");
-    }
-
-    function deployJoinQueryFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
-        bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4StandardExchangeCurveQuadStableBufferHookJoinQueryFacet.sol:UniswapV4StandardExchangeCurveQuadStableBufferHookJoinQueryFacet");
-        facet = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeCurveQuadStableBufferHookJoinQueryFacet")._hash())
-        );
-        vm.label(address(facet), "UniswapV4StandardExchangeCurveQuadStableBufferHookJoinQueryFacet");
-    }
-
     function deployExitFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet.sol:UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet");
         facet = create3Factory.deployFacet(
@@ -59,9 +43,34 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHook_FactoryService {
         vm.label(address(facet), "UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet");
     }
 
-    /// @dev Backward-compat alias (Join only). Prefer deployJoinFacet + deployExitFacet.
+    /// @dev D19: mutating join/deposit half of the former fat LiquidityFacet.
     function deployLiquidityFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
-        return deployJoinFacet(create3Factory);
+        bytes memory initCode_ = ArtifactCreationCode.creationCode(
+            create3Factory,
+            "UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacet.sol:UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacet"
+        );
+        facet = create3Factory.deployFacet(
+            initCode_,
+            ArtifactCreationCode.releaseSalt(
+                abi.encode("UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacet")._hash()
+            )
+        );
+        vm.label(address(facet), "UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacet");
+    }
+
+    /// @dev D19 Ext: join/deposit preview half. Salt is the contract name.
+    function deployLiquidityFacetExt(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
+        bytes memory initCode_ = ArtifactCreationCode.creationCode(
+            create3Factory,
+            "UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacetExt.sol:UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacetExt"
+        );
+        facet = create3Factory.deployFacet(
+            initCode_,
+            ArtifactCreationCode.releaseSalt(
+                abi.encode("UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacetExt")._hash()
+            )
+        );
+        vm.label(address(facet), "UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacetExt");
     }
 
     function deploySeFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {

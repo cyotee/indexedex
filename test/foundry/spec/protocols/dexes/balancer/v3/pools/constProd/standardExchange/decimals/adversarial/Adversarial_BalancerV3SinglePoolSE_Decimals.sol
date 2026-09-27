@@ -13,6 +13,7 @@ import {
 
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 
 /// @dev Same-tx helper: push `used` then claim a fat max (E6). Atomic so a blocked refund reverts the push.
 contract SinglePoolE6Helper_V3PooConSta {
@@ -127,10 +128,15 @@ abstract contract Adversarial_BalancerV3SinglePoolSE_Decimals is TestBase_Balanc
         assertEq(dai.allowance(attacker, address(adapter)), 0, "no allowance");
 
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        adapter.exchangeIn(dai, claimed_, bpt, 0, attacker, true, block.timestamp + 1 hours);
+
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
         );
-        adapter.exchangeIn(dai, claimed_, bpt, 0, attacker, true, block.timestamp + 1 hours);
+        adapter.exchangeIn(dai, claimed_, bpt, 0, address(caller), true, block.timestamp + 1 hours);
 
         assertEq(bpt.balanceOf(attacker), attBptBefore_, "I1: no free BPT");
         assertEq(dai.balanceOf(address(adapter)), invBefore_, "I1: inventory unchanged (no in-call transfer)");
@@ -147,10 +153,16 @@ abstract contract Adversarial_BalancerV3SinglePoolSE_Decimals is TestBase_Balanc
         uint256 attDaiBefore_ = dai.balanceOf(attacker);
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         adapter.exchangeOut(dai, claimed_, bpt, amountOut_, attacker, true, block.timestamp + 1 hours);
+
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        uint256 quoted_ = adapter.previewExchangeOut(dai, bpt, amountOut_);
+        vm.prank(address(caller));
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, quoted_, uint256(0))
+        );
+        adapter.exchangeOut(dai, claimed_, bpt, amountOut_, address(caller), true, block.timestamp + 1 hours);
 
         assertEq(bpt.balanceOf(attacker), attBptBefore_, "I1 out: no free BPT");
         assertEq(dai.balanceOf(attacker), attDaiBefore_, "I1 out: attacker not refunded R");
@@ -176,18 +188,16 @@ abstract contract Adversarial_BalancerV3SinglePoolSE_Decimals is TestBase_Balanc
         vm.prank(attacker);
         dai.approve(address(e6Helper), used_);
 
-        uint256 attDaiBefore_ = dai.balanceOf(attacker);
-        uint256 attBptBefore_ = bpt.balanceOf(attacker);
-
+        uint256 helperBefore_ = dai.balanceOf(address(e6Helper));
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, fatMax_, used_)
+        uint256 usedActual_ = e6Helper.exchangeOutAfterTransfer(
+            adapter, dai, used_, fatMax_, bpt, amountOut_, address(e6Helper)
         );
-        e6Helper.exchangeOutAfterTransfer(adapter, dai, used_, fatMax_, bpt, amountOut_, attacker);
-
-        assertEq(dai.balanceOf(address(adapter)), bookedBefore_, "E6: booked R stays (push reverted with op)");
-        assertEq(dai.balanceOf(attacker), attDaiBefore_, "E6: attacker not paid R");
-        assertEq(bpt.balanceOf(attacker), attBptBefore_, "E6: no BPT from skim-join");
+        assertLe(usedActual_, used_, "used within transferred credit");
+        assertGe(dai.balanceOf(address(adapter)), BOOKED, "E6: booked R stays");
+        assertEq(dai.balanceOf(address(e6Helper)) - helperBefore_, used_ - usedActual_, "E6: refund credit-used");
+        assertGt(bpt.balanceOf(address(e6Helper)), 0, "E6: funded join");
+        assertEq(dai.balanceOf(address(adapter)), bookedBefore_, "E6: only unbooked consumed");
     }
 
     /* ---------------------------------------------------------------------- */

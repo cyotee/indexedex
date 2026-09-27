@@ -1,0 +1,1874 @@
+{
+  "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeInFacet.sol:MixedBufferMultiVaultStableDetfExchangeInFacet": {
+    "artifact": "out/MixedBufferMultiVaultStableDetfExchangeInFacet.sol/MixedBufferMultiVaultStableDetfExchangeInFacet.json",
+    "sha256": "f85d9dac4912c7fccfb5dfbbd1a496cc3cf3094efca7358f362f76be8ef6bf77",
+    "runtime_bytes": 17563,
+    "methodIdentifiers": {
+      "exchangeIn(address,uint256,address,uint256,address,bool,uint256)": "d02d3063",
+      "exchangeOut(address,uint256,address,uint256,address,bool,uint256)": "bbac8477",
+      "executeReserveSwap((uint8,address,address,address,uint256,uint256,bytes))": "19f3749c",
+      "facetFuncs()": "574a4cff",
+      "facetInterfaces()": "2ea80826",
+      "facetMetadata()": "f10d7a75",
+      "facetName()": "5b6f4d01",
+      "previewExchangeIn(address,uint256,address)": "89d61912",
+      "previewExchangeOut(address,address,uint256)": "db149bc5"
+    },
+    "abi": [
+      {
+        "type": "function",
+        "name": "exchangeIn",
+        "inputs": [
+          {
+            "name": "in_",
+            "type": "address",
+            "internalType": "contract IERC20"
+          },
+          {
+            "name": "amount_",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "out_",
+            "type": "address",
+            "internalType": "contract IERC20"
+          },
+          {
+            "name": "minimum_",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "to_",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "prepaid_",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "deadline_",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "received_",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "type": "function",
+        "name": "exchangeOut",
+        "inputs": [
+          {
+            "name": "in_",
+            "type": "address",
+            "internalType": "contract IERC20"
+          },
+          {
+            "name": "maximum_",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "out_",
+            "type": "address",
+            "internalType": "contract IERC20"
+          },
+          {
+            "name": "amount_",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "to_",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "prepaid_",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "deadline_",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "type": "function",
+        "name": "executeReserveSwap",
+        "inputs": [
+          {
+            "name": "p_",
+            "type": "tuple",
+            "internalType": "struct VaultSwapParams",
+            "components": [
+              {
+                "name": "kind",
+                "type": "uint8",
+                "internalType": "enum SwapKind"
+              },
+              {
+                "name": "pool",
+                "type": "address",
+                "internalType": "address"
+              },
+              {
+                "name": "tokenIn",
+                "type": "address",
+                "internalType": "contract IERC20"
+              },
+              {
+                "name": "tokenOut",
+                "type": "address",
+                "internalType": "contract IERC20"
+              },
+              {
+                "name": "amountGivenRaw",
+                "type": "uint256",
+                "internalType": "uint256"
+              },
+              {
+                "name": "limitRaw",
+                "type": "uint256",
+                "internalType": "uint256"
+              },
+              {
+                "name": "userData",
+                "type": "bytes",
+                "internalType": "bytes"
+              }
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "paid_",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "received_",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "type": "function",
+        "name": "facetFuncs",
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "selectors_",
+            "type": "bytes4[]",
+            "internalType": "bytes4[]"
+          }
+        ],
+        "stateMutability": "pure"
+      },
+      {
+        "type": "function",
+        "name": "facetInterfaces",
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "interfaces_",
+            "type": "bytes4[]",
+            "internalType": "bytes4[]"
+          }
+        ],
+        "stateMutability": "pure"
+      },
+      {
+        "type": "function",
+        "name": "facetMetadata",
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "",
+            "type": "bytes4[]",
+            "internalType": "bytes4[]"
+          },
+          {
+            "name": "",
+            "type": "bytes4[]",
+            "internalType": "bytes4[]"
+          }
+        ],
+        "stateMutability": "pure"
+      },
+      {
+        "type": "function",
+        "name": "facetName",
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "",
+            "type": "string",
+            "internalType": "string"
+          }
+        ],
+        "stateMutability": "pure"
+      },
+      {
+        "type": "function",
+        "name": "previewExchangeIn",
+        "inputs": [
+          {
+            "name": "in_",
+            "type": "address",
+            "internalType": "contract IERC20"
+          },
+          {
+            "name": "amount_",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "out_",
+            "type": "address",
+            "internalType": "contract IERC20"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "previewExchangeOut",
+        "inputs": [
+          {
+            "name": "in_",
+            "type": "address",
+            "internalType": "contract IERC20"
+          },
+          {
+            "name": "out_",
+            "type": "address",
+            "internalType": "contract IERC20"
+          },
+          {
+            "name": "amount_",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "view"
+      },
+      {
+        "type": "event",
+        "name": "NaturalSupplyExpanded",
+        "inputs": [
+          {
+            "name": "mintAmount",
+            "type": "uint256",
+            "indexed": false,
+            "internalType": "uint256"
+          },
+          {
+            "name": "syntheticPrice",
+            "type": "uint256",
+            "indexed": false,
+            "internalType": "uint256"
+          },
+          {
+            "name": "timestamp",
+            "type": "uint256",
+            "indexed": false,
+            "internalType": "uint256"
+          }
+        ],
+        "anonymous": false
+      },
+      {
+        "type": "event",
+        "name": "Transfer",
+        "inputs": [
+          {
+            "name": "from",
+            "type": "address",
+            "indexed": true,
+            "internalType": "address"
+          },
+          {
+            "name": "to",
+            "type": "address",
+            "indexed": true,
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "indexed": false,
+            "internalType": "uint256"
+          }
+        ],
+        "anonymous": false
+      },
+      {
+        "type": "error",
+        "name": "DeadlineExpired",
+        "inputs": [
+          {
+            "name": "deadline",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "EOAPretransferNotAllowed",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "InvalidRoute",
+        "inputs": [
+          {
+            "name": "tokenIn",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "tokenOut",
+            "type": "address",
+            "internalType": "address"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "IsLocked",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "MaximumInputExceeded",
+        "inputs": [
+          {
+            "name": "maximum",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "required",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "MinAmountNotMet",
+        "inputs": [
+          {
+            "name": "minAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "actualAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "ReservePoolNotInitialized",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "ReserveSwapFundingMismatch",
+        "inputs": [
+          {
+            "name": "expected",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "actual",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "StableComputeBalanceDidNotConverge",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "StableInvariantDidNotConverge",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "TransferDeltaInsufficient",
+        "inputs": [
+          {
+            "name": "claimed",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "observedDelta",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "UnauthorizedReserveSwap",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "VaultDisabled",
+        "inputs": [
+          {
+            "name": "vault",
+            "type": "address",
+            "internalType": "address"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "ZeroAmount",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "ZeroDivision",
+        "inputs": []
+      }
+    ]
+  },
+  "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeInFacet.sol:MultiVaultWeightedDetfExchangeInFacet": {
+    "artifact": "out/MultiVaultWeightedDetfExchangeInFacet.sol/MultiVaultWeightedDetfExchangeInFacet.json",
+    "sha256": "add4792a705498c424dd3735501a6a9600fc7d2550114c609aecfc678d8dbd3b",
+    "runtime_bytes": 20749,
+    "methodIdentifiers": {
+      "exchangeIn(address,uint256,address,uint256,address,bool,uint256)": "d02d3063",
+      "exchangeOut(address,uint256,address,uint256,address,bool,uint256)": "bbac8477",
+      "executeReserveSwap((uint8,address,address,address,uint256,uint256,bytes))": "19f3749c",
+      "facetFuncs()": "574a4cff",
+      "facetInterfaces()": "2ea80826",
+      "facetMetadata()": "f10d7a75",
+      "facetName()": "5b6f4d01",
+      "previewExchangeIn(address,uint256,address)": "89d61912",
+      "previewExchangeOut(address,address,uint256)": "db149bc5"
+    },
+    "abi": [
+      {
+        "type": "function",
+        "name": "exchangeIn",
+        "inputs": [
+          {
+            "name": "in_",
+            "type": "address",
+            "internalType": "contract IERC20"
+          },
+          {
+            "name": "amount_",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "out_",
+            "type": "address",
+            "internalType": "contract IERC20"
+          },
+          {
+            "name": "minimum_",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "to_",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "prepaid_",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "deadline_",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "received_",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "type": "function",
+        "name": "exchangeOut",
+        "inputs": [
+          {
+            "name": "in_",
+            "type": "address",
+            "internalType": "contract IERC20"
+          },
+          {
+            "name": "maximum_",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "out_",
+            "type": "address",
+            "internalType": "contract IERC20"
+          },
+          {
+            "name": "amount_",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "to_",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "prepaid_",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "deadline_",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "type": "function",
+        "name": "executeReserveSwap",
+        "inputs": [
+          {
+            "name": "p_",
+            "type": "tuple",
+            "internalType": "struct VaultSwapParams",
+            "components": [
+              {
+                "name": "kind",
+                "type": "uint8",
+                "internalType": "enum SwapKind"
+              },
+              {
+                "name": "pool",
+                "type": "address",
+                "internalType": "address"
+              },
+              {
+                "name": "tokenIn",
+                "type": "address",
+                "internalType": "contract IERC20"
+              },
+              {
+                "name": "tokenOut",
+                "type": "address",
+                "internalType": "contract IERC20"
+              },
+              {
+                "name": "amountGivenRaw",
+                "type": "uint256",
+                "internalType": "uint256"
+              },
+              {
+                "name": "limitRaw",
+                "type": "uint256",
+                "internalType": "uint256"
+              },
+              {
+                "name": "userData",
+                "type": "bytes",
+                "internalType": "bytes"
+              }
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "paid_",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "received_",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "type": "function",
+        "name": "facetFuncs",
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "selectors_",
+            "type": "bytes4[]",
+            "internalType": "bytes4[]"
+          }
+        ],
+        "stateMutability": "pure"
+      },
+      {
+        "type": "function",
+        "name": "facetInterfaces",
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "interfaces_",
+            "type": "bytes4[]",
+            "internalType": "bytes4[]"
+          }
+        ],
+        "stateMutability": "pure"
+      },
+      {
+        "type": "function",
+        "name": "facetMetadata",
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "",
+            "type": "bytes4[]",
+            "internalType": "bytes4[]"
+          },
+          {
+            "name": "",
+            "type": "bytes4[]",
+            "internalType": "bytes4[]"
+          }
+        ],
+        "stateMutability": "pure"
+      },
+      {
+        "type": "function",
+        "name": "facetName",
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "",
+            "type": "string",
+            "internalType": "string"
+          }
+        ],
+        "stateMutability": "pure"
+      },
+      {
+        "type": "function",
+        "name": "previewExchangeIn",
+        "inputs": [
+          {
+            "name": "in_",
+            "type": "address",
+            "internalType": "contract IERC20"
+          },
+          {
+            "name": "amount_",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "out_",
+            "type": "address",
+            "internalType": "contract IERC20"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "view"
+      },
+      {
+        "type": "function",
+        "name": "previewExchangeOut",
+        "inputs": [
+          {
+            "name": "in_",
+            "type": "address",
+            "internalType": "contract IERC20"
+          },
+          {
+            "name": "out_",
+            "type": "address",
+            "internalType": "contract IERC20"
+          },
+          {
+            "name": "amount_",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "view"
+      },
+      {
+        "type": "event",
+        "name": "NaturalSupplyExpanded",
+        "inputs": [
+          {
+            "name": "mintAmount",
+            "type": "uint256",
+            "indexed": false,
+            "internalType": "uint256"
+          },
+          {
+            "name": "syntheticPrice",
+            "type": "uint256",
+            "indexed": false,
+            "internalType": "uint256"
+          },
+          {
+            "name": "timestamp",
+            "type": "uint256",
+            "indexed": false,
+            "internalType": "uint256"
+          }
+        ],
+        "anonymous": false
+      },
+      {
+        "type": "event",
+        "name": "Transfer",
+        "inputs": [
+          {
+            "name": "from",
+            "type": "address",
+            "indexed": true,
+            "internalType": "address"
+          },
+          {
+            "name": "to",
+            "type": "address",
+            "indexed": true,
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "indexed": false,
+            "internalType": "uint256"
+          }
+        ],
+        "anonymous": false
+      },
+      {
+        "type": "error",
+        "name": "BaseOutOfBounds",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "DeadlineExpired",
+        "inputs": [
+          {
+            "name": "deadline",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "EOAPretransferNotAllowed",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "ExponentOutOfBounds",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "InvalidExponent",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "InvalidRoute",
+        "inputs": [
+          {
+            "name": "tokenIn",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "tokenOut",
+            "type": "address",
+            "internalType": "address"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "IsLocked",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "MaxInRatio",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "MaximumInputExceeded",
+        "inputs": [
+          {
+            "name": "maximum",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "required",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "MinAmountNotMet",
+        "inputs": [
+          {
+            "name": "minAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "actualAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "ProductOutOfBounds",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "ReservePoolNotInitialized",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "ReserveSwapFundingMismatch",
+        "inputs": [
+          {
+            "name": "expected",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "actual",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "TransferDeltaInsufficient",
+        "inputs": [
+          {
+            "name": "claimed",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "observedDelta",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "UnauthorizedReserveSwap",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "VaultDisabled",
+        "inputs": [
+          {
+            "name": "vault",
+            "type": "address",
+            "internalType": "address"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "ZeroAmount",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "ZeroDivision",
+        "inputs": []
+      }
+    ]
+  },
+  "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.sol:ComposedStableCommonDetfExchangeOutQueryFacet": {
+    "artifact": "out/ComposedStableCommonDetfExchangeOutQueryFacet.sol/ComposedStableCommonDetfExchangeOutQueryFacet.json",
+    "sha256": "2c4d147d918d91b80e4bb360c4813410c50c3082d7a52e1b49a99fbfcc65ad75",
+    "runtime_bytes": 20778,
+    "methodIdentifiers": {
+      "exchangeOut(address,uint256,address,uint256,address,bool,uint256)": "bbac8477",
+      "executeReserveSwap((uint8,address,address,address,uint256,uint256,bytes))": "19f3749c",
+      "facetFuncs()": "574a4cff",
+      "facetInterfaces()": "2ea80826",
+      "facetMetadata()": "f10d7a75",
+      "facetName()": "5b6f4d01",
+      "previewExchangeOut(address,address,uint256)": "db149bc5"
+    },
+    "abi": [
+      {
+        "type": "function",
+        "name": "exchangeOut",
+        "inputs": [
+          {
+            "name": "in_",
+            "type": "address",
+            "internalType": "contract IERC20"
+          },
+          {
+            "name": "maximum_",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "out_",
+            "type": "address",
+            "internalType": "contract IERC20"
+          },
+          {
+            "name": "amount_",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "to_",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "prepaid_",
+            "type": "bool",
+            "internalType": "bool"
+          },
+          {
+            "name": "deadline_",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "paid_",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "type": "function",
+        "name": "executeReserveSwap",
+        "inputs": [
+          {
+            "name": "p_",
+            "type": "tuple",
+            "internalType": "struct VaultSwapParams",
+            "components": [
+              {
+                "name": "kind",
+                "type": "uint8",
+                "internalType": "enum SwapKind"
+              },
+              {
+                "name": "pool",
+                "type": "address",
+                "internalType": "address"
+              },
+              {
+                "name": "tokenIn",
+                "type": "address",
+                "internalType": "contract IERC20"
+              },
+              {
+                "name": "tokenOut",
+                "type": "address",
+                "internalType": "contract IERC20"
+              },
+              {
+                "name": "amountGivenRaw",
+                "type": "uint256",
+                "internalType": "uint256"
+              },
+              {
+                "name": "limitRaw",
+                "type": "uint256",
+                "internalType": "uint256"
+              },
+              {
+                "name": "userData",
+                "type": "bytes",
+                "internalType": "bytes"
+              }
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "name": "paid_",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "received_",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable"
+      },
+      {
+        "type": "function",
+        "name": "facetFuncs",
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "a_",
+            "type": "bytes4[]",
+            "internalType": "bytes4[]"
+          }
+        ],
+        "stateMutability": "pure"
+      },
+      {
+        "type": "function",
+        "name": "facetInterfaces",
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "a_",
+            "type": "bytes4[]",
+            "internalType": "bytes4[]"
+          }
+        ],
+        "stateMutability": "pure"
+      },
+      {
+        "type": "function",
+        "name": "facetMetadata",
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "",
+            "type": "bytes4[]",
+            "internalType": "bytes4[]"
+          },
+          {
+            "name": "",
+            "type": "bytes4[]",
+            "internalType": "bytes4[]"
+          }
+        ],
+        "stateMutability": "pure"
+      },
+      {
+        "type": "function",
+        "name": "facetName",
+        "inputs": [],
+        "outputs": [
+          {
+            "name": "",
+            "type": "string",
+            "internalType": "string"
+          }
+        ],
+        "stateMutability": "pure"
+      },
+      {
+        "type": "function",
+        "name": "previewExchangeOut",
+        "inputs": [
+          {
+            "name": "in_",
+            "type": "address",
+            "internalType": "contract IERC20"
+          },
+          {
+            "name": "out_",
+            "type": "address",
+            "internalType": "contract IERC20"
+          },
+          {
+            "name": "amount_",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "outputs": [
+          {
+            "name": "",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ],
+        "stateMutability": "view"
+      },
+      {
+        "type": "event",
+        "name": "NaturalSupplyExpanded",
+        "inputs": [
+          {
+            "name": "mintAmount",
+            "type": "uint256",
+            "indexed": false,
+            "internalType": "uint256"
+          },
+          {
+            "name": "syntheticPrice",
+            "type": "uint256",
+            "indexed": false,
+            "internalType": "uint256"
+          },
+          {
+            "name": "newTimestamp",
+            "type": "uint256",
+            "indexed": false,
+            "internalType": "uint256"
+          }
+        ],
+        "anonymous": false
+      },
+      {
+        "type": "event",
+        "name": "Transfer",
+        "inputs": [
+          {
+            "name": "from",
+            "type": "address",
+            "indexed": true,
+            "internalType": "address"
+          },
+          {
+            "name": "to",
+            "type": "address",
+            "indexed": true,
+            "internalType": "address"
+          },
+          {
+            "name": "amount",
+            "type": "uint256",
+            "indexed": false,
+            "internalType": "uint256"
+          }
+        ],
+        "anonymous": false
+      },
+      {
+        "type": "error",
+        "name": "AmountOutNotMet",
+        "inputs": [
+          {
+            "name": "amountOut",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "actualOut",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "BaseOutOfBounds",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "BondTokenNotSupported",
+        "inputs": [
+          {
+            "name": "token",
+            "type": "address",
+            "internalType": "contract IERC20"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "BridgeConfigAlreadySet",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "BridgeConfigNotSet",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "BridgePeerNotConfigured",
+        "inputs": [
+          {
+            "name": "targetChainId",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "BridgeRemoteTokenNotConfigured",
+        "inputs": [
+          {
+            "name": "targetChainId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "localToken",
+            "type": "address",
+            "internalType": "contract IERC20"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "BurningNotAllowed",
+        "inputs": [
+          {
+            "name": "syntheticPrice",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "burnThreshold",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "DETFNFTRestricted",
+        "inputs": [
+          {
+            "name": "tokenId",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "DeadlineExceeded",
+        "inputs": [
+          {
+            "name": "deadline",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "currentTimestamp",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "EOAPretransferNotAllowed",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "ExchangeOutNotAvailable",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "ExponentOutOfBounds",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "IncorrectEthValue",
+        "inputs": [
+          {
+            "name": "expected",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "actual",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "InsufficientBalance",
+        "inputs": [
+          {
+            "name": "required",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "available",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "InvalidDonationToken",
+        "inputs": [
+          {
+            "name": "token",
+            "type": "address",
+            "internalType": "contract IERC20"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "InvalidEthBondRoute",
+        "inputs": [
+          {
+            "name": "token",
+            "type": "address",
+            "internalType": "contract IERC20"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "InvalidExponent",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "InvalidLockDuration",
+        "inputs": [
+          {
+            "name": "duration",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "minDuration",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "maxDuration",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "InvalidReservePoolIndices",
+        "inputs": [
+          {
+            "name": "detfIndex",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "vaultTokenIndex",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "InvalidRoute",
+        "inputs": [
+          {
+            "name": "tokenIn",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "tokenOut",
+            "type": "address",
+            "internalType": "address"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "InvalidToken",
+        "inputs": [
+          {
+            "name": "token",
+            "type": "address",
+            "internalType": "contract IERC20"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "IsLocked",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "MaxAmountExceeded",
+        "inputs": [
+          {
+            "name": "maxAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "requiredAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "MaxOutRatio",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "MinAmountNotMet",
+        "inputs": [
+          {
+            "name": "minAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "actualAmount",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "MintingNotAllowed",
+        "inputs": [
+          {
+            "name": "syntheticPrice",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "mintThreshold",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "NoSeigniorageToCapture",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "NotAuthorized",
+        "inputs": [
+          {
+            "name": "caller",
+            "type": "address",
+            "internalType": "address"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "NotBridgeRelayer",
+        "inputs": [
+          {
+            "name": "caller",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "expectedRelayer",
+            "type": "address",
+            "internalType": "address"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "NotDetf",
+        "inputs": [
+          {
+            "name": "caller",
+            "type": "address",
+            "internalType": "address"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "NotDetfToken",
+        "inputs": [
+          {
+            "name": "token",
+            "type": "address",
+            "internalType": "contract IERC20"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "NotNFTOwner",
+        "inputs": [
+          {
+            "name": "tokenId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "caller",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "owner",
+            "type": "address",
+            "internalType": "address"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "NotNFTVault",
+        "inputs": [
+          {
+            "name": "caller",
+            "type": "address",
+            "internalType": "address"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "NotPairToken",
+        "inputs": [
+          {
+            "name": "token",
+            "type": "address",
+            "internalType": "contract IERC20"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "NotRateAsset",
+        "inputs": [
+          {
+            "name": "token",
+            "type": "address",
+            "internalType": "contract IERC20"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "NotRebasingClaimToken",
+        "inputs": [
+          {
+            "name": "token",
+            "type": "address",
+            "internalType": "contract IERC20"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "PoolImbalanced",
+        "inputs": [
+          {
+            "name": "syntheticRateAssetValue",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "syntheticPairValue",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "PositionLocked",
+        "inputs": [
+          {
+            "name": "tokenId",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "unlockTime",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "currentTime",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "PositionNotFound",
+        "inputs": [
+          {
+            "name": "tokenId",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "ProductOutOfBounds",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "RebasingClaimTransferRestricted",
+        "inputs": [
+          {
+            "name": "to",
+            "type": "address",
+            "internalType": "address"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "RedemptionNotAllowed",
+        "inputs": [
+          {
+            "name": "syntheticPrice",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "burnThreshold",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "ReservePoolAlreadyInitialized",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "ReservePoolNotInitialized",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "ReserveSwapFundingMismatch",
+        "inputs": [
+          {
+            "name": "expected",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "actual",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "RouteNotSupported",
+        "inputs": [
+          {
+            "name": "tokenIn",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "tokenOut",
+            "type": "address",
+            "internalType": "address"
+          },
+          {
+            "name": "functionSelector",
+            "type": "bytes4",
+            "internalType": "bytes4"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "SlippageExceeded",
+        "inputs": [
+          {
+            "name": "expected",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "actual",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "TransferDeltaInsufficient",
+        "inputs": [
+          {
+            "name": "claimed",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "observedDelta",
+            "type": "uint256",
+            "internalType": "uint256"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "UnauthorizedReserveSwap",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "UnknownReserve",
+        "inputs": [
+          {
+            "name": "targetReserve",
+            "type": "address",
+            "internalType": "address"
+          }
+        ]
+      },
+      {
+        "type": "error",
+        "name": "ZeroAmount",
+        "inputs": []
+      },
+      {
+        "type": "error",
+        "name": "ZeroDivision",
+        "inputs": []
+      }
+    ]
+  }
+}

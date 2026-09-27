@@ -122,6 +122,8 @@ interface IUniswapV4Detf {
     function previewBond(IERC20 tokenIn, uint256 amountIn, uint256 lockDuration) external view
         returns (uint256 purchasedDetf, uint256 principalDetf, uint256 rewardsDetf, uint256 liquidityDetf);
 
+    /// @param pretransferred Integrating-contract flag only. Callers with no bytecode revert `EOAPretransferNotAllowed()`.
+    ///        Exact-input credits the requested amount from unbooked available and refunds nothing.
     function bond(
         IERC20 tokenIn,
         uint256 amountIn,
@@ -131,6 +133,8 @@ interface IUniswapV4Detf {
         uint256 deadline
     ) external returns (uint256 tokenId, uint256 shares);
 
+    /// @param pretransferred Integrating-contract flag only. Callers with no bytecode revert `EOAPretransferNotAllowed()`.
+    ///        Exact-input credits the requested amount from unbooked available and refunds nothing.
     function donate(IERC20 token, uint256 amount, bool pretransferred) external;
 
     function sweepDust() external;
@@ -171,6 +175,8 @@ interface IUniswapV4DetfDFPkg is IDiamondFactoryPackage, IStandardVaultPkg {
     error HookOwnerMismatch();
     error HookLiquidityPolicyMismatch();
     error BarePairForbidden();
+    /// @notice D60: a buffered reserve leg (token != SE) on the hook has no rate provider.
+    error HookRateProviderRequired(address token);
     error InvalidPackageArguments();
     error DuplicateRoute(address token);
     error InvalidCreationRate();

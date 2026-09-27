@@ -37,7 +37,7 @@ import {
 contract UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi is TestBase {
     function _defaultPkgArgs()
         internal
-        view
+
         override
         returns (IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory)
     {
@@ -69,7 +69,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi is TestBase {
     function test_T2_3_joinSingleAssetExactIn_beforeLive_reverts() public {
         assertFalse(orbital.isLive(), "pre-live");
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("NotLive()"));
         orbital.joinSingleAssetExactIn(address(token1), 10 ether, user, 0, block.timestamp + 1 hours);
     }
 
@@ -241,16 +241,9 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi is TestBase {
         // Real funded SEs are required before the rate providers can price a first join.
         _mintSeSharesToUser(se1, token1, 100 ether);
         _mintSeSharesToUser(se2, token2, 100 ether);
-        IStandardExchangeRateProviderDFPkg ratePkg =
-            StandardExchangeRateProvider_FactoryService.deployStandardExchangeRateProviderDFPkg(
-                create3Factory,
-                StandardExchangeRateProvider_FactoryService.deployStandardExchangeRateProviderFacet(create3Factory),
-                diamondPackageFactory
-            );
-        IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory args = _argsWithSE(false, true, true);
-        args.rp1 = address(ratePkg.deployRateProvider(IStandardExchange(se1), IERC20(address(token1))));
-        args.rp2 = address(ratePkg.deployRateProvider(IStandardExchange(se2), IERC20(address(token2))));
-        _deployHookWithArgs(args);
+        // D60: the setUp hook already binds se1 and se2 with StandardExchangeRateProviders (every buffered
+        // leg carries one), so it is used as is. Redeploying with identical arguments would return the same
+        // finalized diamond, whose init selectors are retired.
         vm.startPrank(owner);
         IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(se1, 7e16);
         IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(se2, 7e16);
@@ -262,9 +255,9 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi is TestBase {
         IERC20(se1).approve(hook, type(uint256).max);
         IERC20(se2).approve(hook, type(uint256).max);
         vm.stopPrank();
-        uint256 rateBefore = IRateProvider(args.rp1).getRate();
+        uint256 rateBefore = IRateProvider(orbital.rateProvider(1)).getRate();
         uint256 lp = _joinFullBook(300 ether, 300 ether, 300 ether);
-        assertLt(IRateProvider(args.rp1).getRate(), rateBefore, "funded issuance fee changes dependent rate");
+        assertLt(IRateProvider(orbital.rateProvider(1)).getRate(), rateBefore, "funded issuance fee changes dependent rate");
         IStandardizedYield sy = IStandardizedYield(hook);
         address[] memory outputs = sy.getTokensOut();
         for (uint256 i; i < outputs.length; ++i) {
@@ -285,7 +278,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi is TestBase {
         uint256 amount = lp / 100;
         uint256 quoted = sy.previewRedeem(address(token0), amount);
         vm.startPrank(user);
-        vm.expectRevert(); sy.redeem(user, amount, address(token0), quoted + 1, false);
+        vm.expectRevert(abi.encodeWithSignature("InsufficientTokenOut()")); sy.redeem(user, amount, address(token0), quoted + 1, false);
         assertEq(sy.balanceOf(user), lp, "failed minimum rolls back burn");
         sy.transfer(hook, 3 * amount);
         assertEq(sy.redeem(user, amount, address(token0), quoted, true), quoted);

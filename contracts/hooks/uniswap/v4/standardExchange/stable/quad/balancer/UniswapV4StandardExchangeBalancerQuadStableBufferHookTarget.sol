@@ -17,6 +17,7 @@ import {IAllowanceTransfer} from
     "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {
     IUniswapV4StandardExchangeBalancerQuadStableBufferHook
@@ -270,13 +271,29 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookTarget {
         uint256 B0 = tokenIn.balanceOf(address(this));
         if (!pretransferred) {
             _pull(address(tokenIn), claimed);
-            return tokenIn.balanceOf(address(this)) - B0;
+            uint256 delta = tokenIn.balanceOf(address(this)) - B0;
+            if (delta != claimed) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(claimed, delta);
+            }
+            return claimed;
         }
+        LocalCreditLib.requirePretransferCaller(msg.sender);
         uint256 U = _freeTokenBalance(address(tokenIn));
         if (claimed > U) {
             revert ISecurePullErrors.TransferDeltaInsufficient(claimed, U);
         }
         return claimed;
+    }
+
+    /// @dev Exact-out input (D15): false-flag pulls `used` and refunds nothing. True-flag credits
+    ///      `budget(available, maxAmountIn)` and refunds `credit - used` to `msg.sender` only.
+    function _pullExactOutInput(IERC20 token, uint256 used, uint256 maxAmountIn, bool pretransferred)
+        internal
+    {
+        _securePull(token, used, pretransferred);
+        if (!pretransferred) return;
+        uint256 credit = LocalCreditLib.budget(_freeTokenBalance(address(token)), maxAmountIn);
+        if (credit > used) token.safeTransfer(msg.sender, credit - used);
     }
 
     /// @dev Credit intentional raw book after funded intake (join/swap/pretransfer consume free).

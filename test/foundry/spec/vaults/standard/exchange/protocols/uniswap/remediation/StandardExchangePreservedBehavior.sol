@@ -91,6 +91,8 @@ abstract contract StandardExchangePreservedBehavior is Test {
 
     function test_preserved_phantomMintAndRedemption_token0() public { _demonstrate(true); }
     function test_preserved_phantomMintAndRedemption_token1() public { _demonstrate(false); }
+    function test_APEX001M_preserved_phantomMintAndRedemption_token0() public { _demonstrate(true); }
+    function test_APEX001M_preserved_phantomMintAndRedemption_token1() public { _demonstrate(false); }
     function _demonstrate(bool zeroForOne) internal {
         _bootstrap();
         (uint256 before0, uint256 before1) = _deployed();

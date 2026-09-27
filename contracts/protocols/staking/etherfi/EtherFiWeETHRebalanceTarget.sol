@@ -53,6 +53,7 @@ contract EtherFiWeETHRebalanceTarget is
         } else if (liquid + band < target) {
             _queueDeficit(target - liquid);
         }
+        _syncAllExpectedHoldReserves();
     }
 
     function _claimAndWrap() internal {
@@ -63,26 +64,20 @@ contract EtherFiWeETHRebalanceTarget is
         for (uint256 i; i < ids.length; ++i) {
             uint256 id = ids[i];
             if (!EtherFiWeETHStandardExchangeRepo._isTrackedRequest(id)) continue;
-            try IEtherFiWithdrawRequestNFT(nft).isFinalized(id) returns (bool fin) {
-                if (!fin) continue;
-            } catch {
-                continue;
-            }
+            if (!IEtherFiWithdrawRequestNFT(nft).isFinalized(id)) continue;
             uint256 beforeEth = address(this).balance;
-            try IEtherFiWithdrawRequestNFT(nft).claimWithdraw(id) {
-                uint256 got = address(this).balance - beforeEth;
-                EtherFiWeETHStandardExchangeRepo._clearRequest(id);
-                if (got > 0) {
-                    IWETH(payable(weth())).deposit{value: got}();
-                }
-            } catch {
-                // already claimed or not claimable
+            IEtherFiWithdrawRequestNFT(nft).claimWithdraw(id);
+            uint256 got = address(this).balance - beforeEth;
+            EtherFiWeETHStandardExchangeRepo._clearRequest(id);
+            if (got > 0) {
+                IWETH(payable(weth())).deposit{value: got}();
             }
         }
     }
 
     function _stakeExcess(uint256 wethAmount) internal {
         if (wethAmount == 0) return;
+        if (!_etherFiStakeOpen()) return;
         _stakeWethToWeEth(wethAmount);
     }
 

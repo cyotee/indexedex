@@ -68,6 +68,7 @@ import {
 import {UniswapV4Detf_Facet_FactoryService} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Facet_FactoryService.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 import {UniswapV4Detf_Pkg_FactoryService} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Pkg_FactoryService.sol";
 
@@ -408,7 +409,8 @@ abstract contract TestBase_UniswapV4Detf_Decimals is TestBase_ERC4626StandardExc
                 pairTokenDecimals: HookPkgArgsDecimalsLib.tokenDec(address(pairToken)),
                 rawTokenDecimals: predicted_.code.length == 0 ? uint8(9) : HookPkgArgsDecimalsLib.tokenDec(predicted_),
                 ownerOnlyLiquidity: args.ownerOnlyLiquidity,
-                owner: predicted_
+                owner: predicted_,
+                rateProvider: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, se, address(pairToken)) // D60
             });
         uint256 mineNonce = CpHookFactory.findMineNonce(hookFactory, hookPkg, hArgs);
         reserveHook = CpHookFactory.deployHook(hookPkg, hArgs, mineNonce);
@@ -496,16 +498,25 @@ abstract contract TestBase_UniswapV4Detf_Decimals is TestBase_ERC4626StandardExc
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet
             }));
         IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgArgs memory args =
-        IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgArgs({
-            poolManager: address(pm),
-            feeOracle: address(indexedexManager),
-            standardExchange0: seA,
-            token0: address(tokenA),
-            standardExchange1: seB,
-            token1: address(tokenB)
-        });
+            _dualHookArgs(seA, address(tokenA), seB, address(tokenB));
         uint256 mineNonce = DualFactory.findMineNonce(hookFactory, dualPkg, args);
         dualHook_ = DualFactory.deployHook(dualPkg, args, mineNonce);
+    }
+
+    /// @dev Hoisted out of `_deployDualHook` (stack depth); D60 providers built here.
+    function _dualHookArgs(address seA_, address tokenA_, address seB_, address tokenB_)
+        internal returns (IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgArgs memory)
+    {
+        return IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgArgs({
+            poolManager: address(pm),
+            feeOracle: address(indexedexManager),
+            standardExchange0: seA_,
+            token0: tokenA_,
+            standardExchange1: seB_,
+            token1: tokenB_,
+            rateProvider0: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, seA_, tokenA_), // D60
+            rateProvider1: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, seB_, tokenB_) // D60
+        });
     }
 
     function _assertNoJoinableDust() internal view virtual {

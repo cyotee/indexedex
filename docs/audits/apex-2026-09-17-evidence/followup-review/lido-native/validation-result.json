@@ -1,0 +1,39 @@
+{
+  "status": "green",
+  "production_sources": 3,
+  "new_test_sources": 1,
+  "final_family": {
+    "tests_passed": 88,
+    "failed": 0,
+    "skipped": 0,
+    "suites": 7,
+    "invariant_runs": 256,
+    "invariant_depth": 64,
+    "invariant_calls": 16384,
+    "native_fuzz_runs": [
+      10001,
+      10001
+    ]
+  },
+  "red_original": {
+    "tests_failed": 20,
+    "tests_passed": 1,
+    "log": "/tmp/apex-review-accounting-red-run/lido-native-evidence/red-native-ratio.log",
+    "source_manifest": "/tmp/apex-review-accounting-red-run/lido-native-evidence/red-native-ratio-sources.json"
+  },
+  "final_log": "/tmp/apex-review-accounting-red-run/lido-native-evidence/final-family.log",
+  "final_command": "/tmp/apex-review-accounting-red-run/lido-native-evidence/final-family-command.json",
+  "source_identity_matches": true,
+  "patch_apply_check": true,
+  "facet_sizes": {
+    "runtime_bytes": {
+      "LidoWstETHStandardExchangeInFacet": 21893,
+      "LidoWstETHStandardExchangeOutFacet": 15453,
+      "LidoWstETHRebalanceFacet": 6312,
+      "LidoWstETHMarkerFacet": 7770,
+      "LidoWstETHStandardExchangeDFPkg": 9775
+    },
+    "maximum": 24576,
+    "via_ir": false
+  }
+}

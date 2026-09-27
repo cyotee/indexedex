@@ -47,6 +47,7 @@ import {
 import {
     UniswapV4DualStandardExchangeBufferConstantProductHook_FactoryService as DualFactory
 } from "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHook_FactoryService.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 
 /**
  * @title TestBase_UniswapV4DualSEBCPHook_Decimals
@@ -162,7 +163,7 @@ abstract contract TestBase_UniswapV4DualSEBCPHook_Decimals is TestBase_ERC4626St
 
     function _defaultPkgArgs()
         internal
-        view
+
         returns (IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgArgs memory)
     {
         return IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgArgs({
@@ -171,7 +172,9 @@ abstract contract TestBase_UniswapV4DualSEBCPHook_Decimals is TestBase_ERC4626St
             standardExchange0: seA,
             token0: address(tokenA),
             standardExchange1: seB,
-            token1: address(tokenB)
+            token1: address(tokenB),
+            rateProvider0: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, seA, address(tokenA)), // D60
+            rateProvider1: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, seB, address(tokenB)) // D60
         });
     }
 

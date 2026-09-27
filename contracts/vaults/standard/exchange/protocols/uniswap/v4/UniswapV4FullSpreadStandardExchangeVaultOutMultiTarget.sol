@@ -4,6 +4,9 @@ pragma solidity ^0.8.0;
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
+import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {
     UniswapV4FullSpreadStandardExchangeVaultOutBase
 } from "contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultOutBase.sol";
@@ -30,17 +33,24 @@ contract UniswapV4FullSpreadStandardExchangeVaultOutMultiTarget is UniswapV4Full
         if (address(tokenIn) != address(this) || !_isDualPoolCurrencies(tokensOut) || !_dualAmountsPositive(amountsOut)) {
             revert IStandardExchangeOut.ExchangeOutNotAvailable();
         }
-        _quoteDualExit(tokenIn, maxAmountIn, tokensOut, amountsOut); // Validate before pulling max.
-        uint256 delivered = _secureShareDelivery(maxAmountIn, pretransferred);
+        DualExitLocal memory quoted = _quoteDualExit(tokenIn, maxAmountIn, tokensOut, amountsOut);
+        uint256 pullAmount = quoted.sharesToBurn;
+        if (pretransferred) {
+            pullAmount = _pretransferCredit(IERC20(address(this)), maxAmountIn);
+            if (quoted.sharesToBurn > pullAmount) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(quoted.sharesToBurn, pullAmount);
+            }
+        }
+        uint256 delivered = _secureShareDelivery(pullAmount, pretransferred);
         DualExitLocal memory state = _quoteDualExit(tokenIn, maxAmountIn, tokensOut, amountsOut);
         _requireDelivered(state.sharesToBurn, delivered);
-        state.delivered = delivered < maxAmountIn ? delivered : maxAmountIn;
+        state.delivered = delivered;
         if (!canOpenPoolManagerUnlock()) {
-            _payBlockedDualExit(state, recipient);
+            _payBlockedDualExit(state, recipient, pretransferred);
             _pokeBoundPoolTwap();
             return state.sharesToBurn;
         }
-        _payIdleDualExit(state, recipient);
+        _payIdleDualExit(state, recipient, pretransferred);
         _pokeBoundPoolTwap();
         return state.sharesToBurn;
     }
@@ -70,7 +80,7 @@ contract UniswapV4FullSpreadStandardExchangeVaultOutMultiTarget is UniswapV4Full
         state.sharesToBurn = s0;
     }
 
-    function _payBlockedDualExit(DualExitLocal memory state, address recipient) internal {
+    function _payBlockedDualExit(DualExitLocal memory state, address recipient, bool pretransferred) internal {
         uint256 free0 = IERC20(_token0()).balanceOf(address(this));
         uint256 free1 = IERC20(_token1()).balanceOf(address(this));
         if (free0 < state.amount0) {
@@ -80,13 +90,15 @@ contract UniswapV4FullSpreadStandardExchangeVaultOutMultiTarget is UniswapV4Full
             revert UniswapV4Exchange_InsufficientLocalReserve(_token1(), state.amount1, free1);
         }
         ERC20Repo._burn(address(this), state.sharesToBurn);
-        _refundUnusedShares(state.delivered, state.sharesToBurn, msg.sender);
+        if (pretransferred) {
+            _refundUnusedShares(state.delivered, state.sharesToBurn, msg.sender);
+        }
         _transferCurrency(_token0(), recipient, state.amount0);
         _transferCurrency(_token1(), recipient, state.amount1);
         _syncVaultReserves();
     }
 
-    function _payIdleDualExit(DualExitLocal memory state, address recipient) internal {
+    function _payIdleDualExit(DualExitLocal memory state, address recipient, bool pretransferred) internal {
         _collectManagedFeesIfIdle();
         // D3: idle dual exit uses PoolManager even if the sleeve would cover.
         _burnCenterLiquidityForShares(state.sharesToBurn, state.totalShares);
@@ -99,7 +111,9 @@ contract UniswapV4FullSpreadStandardExchangeVaultOutMultiTarget is UniswapV4Full
             revert UniswapV4Exchange_InsufficientOutput();
         }
         ERC20Repo._burn(address(this), state.sharesToBurn);
-        _refundUnusedShares(state.delivered, state.sharesToBurn, msg.sender);
+        if (pretransferred) {
+            _refundUnusedShares(state.delivered, state.sharesToBurn, msg.sender);
+        }
         _transferCurrency(_token0(), recipient, state.amount0);
         _transferCurrency(_token1(), recipient, state.amount1);
         _syncVaultReserves();

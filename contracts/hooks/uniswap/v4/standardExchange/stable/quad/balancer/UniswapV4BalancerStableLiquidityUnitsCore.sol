@@ -74,9 +74,17 @@ abstract contract UniswapV4BalancerStableLiquidityUnitsCore is Target {
         for (uint256 i; i < amounts.length; ++i) {
             uint256 required = Math.proportionalUsedWad(shares, reserves[i], supply);
             address se = l.standardExchanges[i];
-            used[i] = flags[i] || se == address(0) ? required
+            // Buffered legs: size the face by the round-up inversion (bufferInputForShares favors the
+            // reserve, so the minted shares stay fully backed and the pool invariant never drops —
+            // floor-scaling instead under-funds the legs and trips LiquidityValueLoss). Cap at the
+            // caller's provided amount so a ceil that lands just above the input does not revert
+            // Slippage(): on the binding leg amounts[i] still yields inventory[i] = preview(amounts[i])
+            // >= required shares, so the cap costs no backing.
+            uint256 want = flags[i] || se == address(0)
+                ? required
                 : ClaimLib.bufferInputForShares(se, l.tokens[i], required);
-            if (used[i] == 0 || used[i] > amounts[i]) revert Slippage();
+            used[i] = want > amounts[i] ? amounts[i] : want;
+            if (used[i] == 0) revert Slippage();
         }
     }
 

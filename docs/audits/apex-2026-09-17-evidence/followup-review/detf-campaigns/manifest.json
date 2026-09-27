@@ -1,0 +1,92 @@
+[
+  {
+    "path": "contracts/test/bases/DetfExactOutCreditAssertions.sol",
+    "group": "regression",
+    "base_sha256": null,
+    "overlay_sha256": "6a4f57d53c8b5427350708c3ab354328ada396c77d84be1b8dc6047c7d4d490c"
+  },
+  {
+    "path": "contracts/test/bases/DetfStatefulActions.sol",
+    "group": "invariants",
+    "base_sha256": null,
+    "overlay_sha256": "4fe17d34b49bed2628f32318485cf399b1811eef96257def2642005117b5d0ab"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeInTarget.sol",
+    "group": "production",
+    "base_sha256": "7b6a1c441dce11ff3ee8032ea7da59a3a29d9439d3770379c828180d1f3f4cf8",
+    "overlay_sha256": "882bfc477b864356fe2827470178a9c15623ddbedf734a89742a934e10ab349e"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeQueryTarget.sol",
+    "group": "production",
+    "base_sha256": "ce95a0e683af2af727137276bd40db323a551bb0299c441e552b0e9f7b3cdbdd",
+    "overlay_sha256": "3cfcbbe92838db3392e023737d46261a2343617bbd89d435367f7b5b0a796a25"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeInTarget.sol",
+    "group": "production",
+    "base_sha256": "89b0afd9e9aa471da739cba3a417907c80fa7a8d8f565a99f6b7372709ea0253",
+    "overlay_sha256": "edcc04d6a1a827cde97a1f2a54e64097b6ca2ac99f09018963323ab860af9873"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeQueryTarget.sol",
+    "group": "production",
+    "base_sha256": "73c5d772a66147f0fc5a0211550dffb6296cac2a001b57786213b0a39666087b",
+    "overlay_sha256": "d366fab38704ae5babc3137b185ec554869f0823b92e8204457e55b93ef749e7"
+  },
+  {
+    "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.sol",
+    "group": "production",
+    "base_sha256": "66391f0475eb7a8337472adb00833b91267772489198d63e18e4132d70e2b584",
+    "overlay_sha256": "32e0c7076254bcbff2eaaab392240647d0eb5391464ece23f416a3a5034f1ed1"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol",
+    "group": "regression",
+    "base_sha256": "1e1f96be9c431b3da5acdde060579fb49056eeb7f2a3ec5c45f1c82c21f343a6",
+    "overlay_sha256": "a88305bef02250d1d6b7e257f320c3346882770171f87f370166d78607a72495"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol",
+    "group": "regression",
+    "base_sha256": "46f860d6c5822631f7ce4ecc996f3eeaaa3e07716d28ac404ad31f3fe19dd858",
+    "overlay_sha256": "5f6d3ead9a793b914fe8c38d8fd8235a98c67b5d3930c540c1fb75246672bfcb"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol",
+    "group": "regression",
+    "base_sha256": "a364c55c2bd8f093f2045eea130475321ddc557c3dbc722038bfbc6214dc2ccf",
+    "overlay_sha256": "d3666065248147699d217ba286ab4f585a69f2741eb6aff5fadb87caa64bdb35"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/invariant/MixedBufferMultiVaultStableDetf_Invariant.t.sol",
+    "group": "invariants",
+    "base_sha256": "6d390a26829b5960bb33000cf62d1be810180da37dc04a88cb804d34dce08419",
+    "overlay_sha256": "8e87306342c0468ddfe64bb07901433cf0d257a767e500edab021f75e42cad82"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/invariant/MultiVaultWeightedDetf.invariant.t.sol",
+    "group": "invariants",
+    "base_sha256": "dc71ca1141c10cdbbea0a949b8f589d688ac8e83df83be5ab5dc0cb39c60a40a",
+    "overlay_sha256": "df80a6f9081619ccd2cc99b68b85622abe789bf33255ca8dbeb2adb5fd9a833b"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/invariant/ComposedStableCommonDetf_Invariant.t.sol",
+    "group": "invariants",
+    "base_sha256": "39ed76e889f78ca558b45b84dd6af3cb83edb6466e46eefd37feaddd9f77afb5",
+    "overlay_sha256": "98b76d7ded4083d4f983c6f40394a35357a02f45218455fe7609b622d02c7b11"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/invariant/SingleStandardExchangeDETF.invariant.t.sol",
+    "group": "invariants",
+    "base_sha256": "328bb986f71a6de84025d8ab0e626057904231e325d6155dca9ee94a7e256261",
+    "overlay_sha256": "f6f5a48a287e8a3dbedb89f3d13f8dba54408a87aa0c55af59ea3bb4d4ffc29f"
+  },
+  {
+    "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/invariant/UniswapV4Detf_Invariant.t.sol",
+    "group": "invariants",
+    "base_sha256": "b6d20eb903a6cccb573e669a3ff4c413b4e0aba4c1d57e4fa8ce5d5c54b635b8",
+    "overlay_sha256": "8878899b5f74102bd0101adcb3e0576a6824f5a4b3f75d9efc42607ee641afad"
+  }
+]

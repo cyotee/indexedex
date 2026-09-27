@@ -108,11 +108,7 @@ contract ERC4626StandardExchange_Morpho_Test is TestBase_ERC4626MorphoHermetic, 
         assertGe(invBefore_, claimed_, "booked protocolVault inventory");
 
         vm.prank(user);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
-            )
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         seIn.exchangeIn(
             IERC20(address(morphoVault)), claimed_, IERC20(se), 0, user, true, block.timestamp
         );

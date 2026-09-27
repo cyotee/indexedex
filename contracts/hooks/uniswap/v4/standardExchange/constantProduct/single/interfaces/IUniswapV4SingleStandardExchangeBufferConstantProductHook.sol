@@ -200,6 +200,12 @@ interface IUniswapV4SingleStandardExchangeBufferConstantProductHook is
 
     function previewSwapExactOut(bool zeroForOne, uint256 amountOut) external view returns (uint256 amountIn);
 
+    /// @notice D60: configured rate providers in pool order (address(0) on the raw leg).
+    function rateProviders() external view returns (address[] memory);
+
+    /// @notice D60: configured rate provider for `token` (address(0) when none or unknown).
+    function rateProvider(address token) external view returns (address);
+
     // LP ERC-20, IBasicVault, IStandardVault: shared diamond facets (ERC20 / MultiAsset Basic+Standard).
     // Do not redeclare them here — use IERC20 / IBasicVault / IStandardVault on the proxy.
     // ownerSwapExactIn/Out and isLive come from IUniswapV4SeBufferHook.

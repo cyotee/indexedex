@@ -112,6 +112,10 @@ interface IUniswapV4StandardExchangeCurveQuadStableBufferHook is
     function getCurrentAmp() external view returns (uint256);
     function standardExchange(uint256 index) external view returns (address);
     function rateProvider(uint256 index) external view returns (address);
+    /// @notice D60: configured rate providers per leg.
+    function rateProviders() external view returns (address[] memory);
+    /// @notice D60: configured rate provider for `token` (address(0) when none).
+    function rateProvider(address token) external view returns (address);
     function isBuffered(uint256 index) external view returns (bool);
 
     /* --------------------------- Inventory / rated -------------------------- */

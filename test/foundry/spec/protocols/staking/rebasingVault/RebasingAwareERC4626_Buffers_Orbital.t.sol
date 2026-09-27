@@ -218,7 +218,7 @@ contract RebasingAwareERC4626_Buffers_Orbital is TestBase {
         vm.stopPrank();
     }
 
-    function _wrapperLeg0Args() internal view returns (IPkg.PkgArgs memory args) {
+    function _wrapperLeg0Args() internal returns (IPkg.PkgArgs memory args) {
         args = _defaultPkgArgs();
         args.token0 = address(wrapper);
         args.se0 = address(wrapper);

@@ -308,7 +308,7 @@ contract UniswapV4FullSpreadStandardExchangeVaultRoutes_Test is TestBase_Uniswap
         t0.mint(address(this), preview);
         t0.approve(address(vault), preview);
 
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("UniswapV4ExchangeOut_InsufficientInput()"));
         vault.exchangeOut(tokenIn, preview - 1, tokenOut, desiredAmountOut, makeAddr("tooLow"), false, _deadline());
     }
 
@@ -379,7 +379,7 @@ contract UniswapV4FullSpreadStandardExchangeVaultRoutes_Test is TestBase_Uniswap
         uint256 preview = vault.previewExchangeIn(IERC20(_token0Address()), amountIn, vaultToken);
         assertGt(preview, 0, "preview shares slippage");
 
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("UniswapV4ExchangeIn_SlippageExceeded()"));
         vault.exchangeIn(
             IERC20(_token0Address()), amountIn, vaultToken, preview + 11, makeAddr("zapTooHigh"), false, _deadline()
         );
@@ -426,7 +426,7 @@ contract UniswapV4FullSpreadStandardExchangeVaultRoutes_Test is TestBase_Uniswap
         uint256 previewShares = vault.previewExchangeOut(vaultToken, tokenOut, desiredAmountOut);
         assertGt(previewShares, 0, "preview shares revert");
 
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("UniswapV4ExchangeOut_InsufficientInput()"));
         vault.exchangeOut(
             vaultToken, previewShares - 1, tokenOut, desiredAmountOut, makeAddr("zapTooLow"), false, _deadline()
         );

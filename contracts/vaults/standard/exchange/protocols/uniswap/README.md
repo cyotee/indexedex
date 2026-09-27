@@ -29,11 +29,11 @@ IStandardExchangeIn(vault).exchangeIn(
 );
 ```
 
-No `preparePretransfer` call is used or exposed. The measured pushed input is `balanceOf(vault) - reserveOfToken(token)` captured before settlement changes balances. `exchangeIn`, including dual joins, requires `actualIn == amountIn`; short and excess deliveries revert `TransferDeltaInsufficient`.
+No `preparePretransfer` call is used or exposed. The measured pushed input is `balanceOf(vault) - reserveOfToken(token)` captured before settlement changes balances. Exact-in credits exactly `amountIn` when unbooked availability is sufficient. An exact-in excess push does not revert merely for being excess, and exact-in never refunds. A short push reverts `TransferDeltaInsufficient`.
 
-`exchangeOut` requires `used <= max` and `actualIn >= used`. A fat maximum with only the used input transferred succeeds. Refunds go to `msg.sender`, even when output goes to another recipient, and are capped by this-call unused inbound: `min(max - used, actualIn - used)`. Booked inventory cannot fund refunds. Delivery above max leaves `actualIn - max` booked on the vault, with no reusable credit.
+`exchangeOut` requires `used <= max`. False-flag exact-out and dual exits pull the quoted used amount and refund nothing. They do not pull max, a quote buffer, or max shares. True-flag exact-out refunds only `credit - used` to `msg.sender`. Booked inventory cannot fund refunds.
 
-Pull semantics remain route-specific: V3 token exact-out pulls its quote plus the existing capped buffer; V4 pulls max. Dual exits pull max shares and refund unused shares. Single-output exact-out share exits burn only used shares directly from the caller without share allowance.
+Single-output exact-out share exits burn only used shares directly from the caller without share allowance.
 
 Unsolicited transfers on a live vault are donor risk: unbooked surplus can count as a later caller's delivery. An exact-in call whose declared amount differs from that surplus reverts. This does not permit spending inventory already booked by a vault operation.
 

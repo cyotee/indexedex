@@ -50,6 +50,7 @@ import {
     UniswapV4StandardExchangeBalancerQuadStableBufferHookPairPoolLib as PairPoolLib
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookPairPoolLib.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 import {
     IUniswapV4HookStagedPairInit
 } from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
@@ -298,7 +299,6 @@ abstract contract TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook
 
     function _defaultPkgArgs()
         internal
-        view
         returns (IUniswapV4StandardExchangeBalancerQuadStableBufferHookPackage.PkgArgs memory)
     {
         address[4] memory toks;
@@ -317,7 +317,7 @@ abstract contract TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook
             feeOracle: address(indexedexManager),
             tokens: _dynamic(toks),
             standardExchanges: _dynamic(ses),
-            rateProviders: _dynamic(rps),
+            rateProviders: RateProviderFixtureLib.providersFor(create3Factory, diamondPackageFactory, _dynamic(toks), _dynamic(ses)),
             tokenDecimals: HookPkgArgsDecimalsLib.tokenDecimals(_dynamic(toks)),
             seDecimals: HookPkgArgsDecimalsLib.seDecimals(_dynamic(ses)),
             baseAmp: DEFAULT_BASE_AMP
@@ -394,7 +394,6 @@ abstract contract TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook
 
     function _argsSeCount(uint8 seCount)
         internal
-        view
         returns (IUniswapV4StandardExchangeBalancerQuadStableBufferHookPackage.PkgArgs memory a)
     {
         require(seCount >= 1 && seCount <= 4, "seCount");
@@ -403,7 +402,6 @@ abstract contract TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook
         a.baseAmp = DEFAULT_BASE_AMP;
         a.tokens = new address[](4);
         a.standardExchanges = new address[](4);
-        a.rateProviders = new address[](4);
         a.tokens[0] = address(token0);
         a.tokens[1] = address(token1);
         a.tokens[2] = address(token2);
@@ -414,6 +412,7 @@ abstract contract TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook
         }
         a.tokenDecimals = HookPkgArgsDecimalsLib.tokenDecimals(a.tokens);
         a.seDecimals = HookPkgArgsDecimalsLib.seDecimals(a.standardExchanges);
+        a.rateProviders = RateProviderFixtureLib.providersFor(create3Factory, diamondPackageFactory, a.tokens, a.standardExchanges); // D60
     }
 
     function _pkgArgs(
@@ -421,15 +420,15 @@ abstract contract TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook
         address[4] memory ses,
         address[4] memory rps,
         uint256 baseAmp
-    ) internal view returns (IUniswapV4StandardExchangeBalancerQuadStableBufferHookPackage.PkgArgs memory a) {
+    ) internal returns (IUniswapV4StandardExchangeBalancerQuadStableBufferHookPackage.PkgArgs memory a) {
         a.poolManager = address(pm);
         a.feeOracle = address(indexedexManager);
         a.tokens = _dynamic(toks);
         a.standardExchanges = _dynamic(ses);
-        a.rateProviders = _dynamic(rps);
         a.baseAmp = baseAmp;
         a.tokenDecimals = HookPkgArgsDecimalsLib.tokenDecimals(a.tokens);
         a.seDecimals = HookPkgArgsDecimalsLib.seDecimals(a.standardExchanges);
+        a.rateProviders = RateProviderFixtureLib.fillMissing(create3Factory, diamondPackageFactory, a.tokens, a.standardExchanges, _dynamic(rps)); // D60: caller-supplied providers kept
     }
 
     function _setDexFee(uint256 feeWad) internal {

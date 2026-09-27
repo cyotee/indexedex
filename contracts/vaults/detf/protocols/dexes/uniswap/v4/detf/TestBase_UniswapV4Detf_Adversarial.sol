@@ -13,6 +13,7 @@ import {IStakedDETF, IDETFFundedRewards} from "contracts/interfaces/IStakedDETF.
 import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {IVaultRegistryDisableManager} from "contracts/interfaces/IVaultRegistryDisableManager.sol";
 import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
@@ -35,6 +36,7 @@ import {TestBase_UniswapV4Detf} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
 import {DETF_PROTOCOL_BOND_NFT_ID} from "contracts/vaults/detf/common/core/DETFBondNftIds.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 
 /// @dev Same-tx helper for I2 short under durable U. Non-SUT harness only.
 contract UniV4DetfPretransferHelper {
@@ -91,6 +93,7 @@ abstract contract TestBase_UniswapV4Detf_Adversarial is TestBase_UniswapV4Detf {
     address internal victim;
     address internal aliceAdv;
     UniV4DetfPretransferHelper internal preHelper;
+    AtomicPretransferCaller internal apexCaller;
 
     function _fundPair(address to_, uint256 amount_) internal virtual {
         IERC20 tok_ = IERC20(address(pairToken));
@@ -118,6 +121,7 @@ abstract contract TestBase_UniswapV4Detf_Adversarial is TestBase_UniswapV4Detf {
         victim = makeAddr("victim");
         aliceAdv = makeAddr("aliceAdv");
         preHelper = new UniV4DetfPretransferHelper();
+        apexCaller = new AtomicPretransferCaller();
     }
 
     function _deadline() internal view virtual returns (uint256) {
@@ -247,7 +251,8 @@ abstract contract TestBase_UniswapV4Detf_Adversarial is TestBase_UniswapV4Detf {
                 pairTokenDecimals: HookPkgArgsDecimalsLib.tokenDec(pair_),
                 rawTokenDecimals: predicted_.code.length == 0 ? uint8(9) : HookPkgArgsDecimalsLib.tokenDec(predicted_),
                 ownerOnlyLiquidity: args.ownerOnlyLiquidity,
-                owner: predicted_
+                owner: predicted_,
+                rateProvider: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, se_, pair_) // D60
             });
         uint256 mineNonce = CpHookFactory.findMineNonce(hookFactory, hookPkg, hArgs);
         address hook_ = CpHookFactory.deployHook(hookPkg, hArgs, mineNonce);
@@ -398,12 +403,49 @@ abstract contract TestBase_UniswapV4Detf_Adversarial is TestBase_UniswapV4Detf {
         assertEq(pairToken.balanceOf(attacker), 0, "attacker drained");
         assertEq(pairToken.allowance(attacker, detf), 0, "no allowance");
 
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vm.prank(attacker);
-        vm.expectRevert(_deltaRevert(claimed_, 0));
         IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), claimed_, IERC20(address(detfInfo)), 0, attacker, true, _deadline());
+
+        vm.expectRevert();
+        vm.prank(address(apexCaller));
+        IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), claimed_, IERC20(address(detfInfo)), 0, address(apexCaller), true, _deadline());
 
         assertEq(IERC20(detf).balanceOf(attacker), attDetfBefore_, "I1: no free detfToken mint");
         assertEq(pairToken.balanceOf(detf), invBefore_, "I1: inventory unchanged");
+    }
+
+    /// @dev APEX R13.5 / D28: 100 resting unbooked pair units with a request for 10 credit exactly
+    ///      10, refund nothing, and leave the other 90 uncredited on the DETF for a later contract
+    ///      caller (the accepted D12 residual); a following unfunded claim of the full 100 fails.
+    function test_APEX_R13_5_partialRestingCredit_creditsRequestedOnly() public {
+        _goLive(500 ether);
+        uint256 resting_ = 100 ether;
+        uint256 request_ = 10 ether;
+        _fundPair(address(this), resting_);
+        pairToken.approve(address(apexCaller), resting_);
+        uint256 quote_ = IStandardExchangeIn(address(detfInfo)).previewExchangeIn(
+            IERC20(address(pairToken)), request_, IERC20(address(detfInfo))
+        );
+        assertGt(quote_, 0, "funded request mints");
+        uint256 detfPairBefore_ = pairToken.balanceOf(detf);
+        bytes memory data_ = abi.encodeCall(
+            IStandardExchangeIn.exchangeIn,
+            (IERC20(address(pairToken)), request_, IERC20(address(detfInfo)), 0, address(apexCaller), true, _deadline())
+        );
+        uint256 minted_ = abi.decode(
+            apexCaller.consumePretransfer(IERC20(address(pairToken)), address(this), detf, resting_, data_), (uint256)
+        );
+        assertEq(minted_, quote_, "credited exactly the requested amount");
+        assertEq(IERC20(detf).balanceOf(address(apexCaller)), minted_, "shares for the request only");
+        assertEq(pairToken.balanceOf(address(apexCaller)), 0, "exact-in refunds nothing");
+        assertGe(pairToken.balanceOf(detf), detfPairBefore_ + resting_ - request_, "uncredited 90 stays on the DETF");
+        // The whole 100 cannot be claimed afterwards: only what is still unbooked is available.
+        vm.expectRevert();
+        vm.prank(address(apexCaller));
+        IStandardExchangeIn(address(detfInfo)).exchangeIn(
+            IERC20(address(pairToken)), resting_, IERC20(address(detfInfo)), 0, address(apexCaller), true, _deadline()
+        );
     }
 
     function _assertI1_bond() internal {
@@ -413,10 +455,15 @@ abstract contract TestBase_UniswapV4Detf_Adversarial is TestBase_UniswapV4Detf {
         uint256 claimed_ = residual_;
         uint256 invBefore_ = pairToken.balanceOf(detf);
 
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vm.prank(attacker);
-        vm.expectRevert(_deltaRevert(claimed_, 0));
         detfInfo.bond(
             IERC20(address(pairToken)), claimed_, DEFAULT_MIN_LOCK, attacker, true, _deadline()
+        );
+        vm.expectRevert(_deltaRevert(claimed_, 0));
+        vm.prank(address(apexCaller));
+        detfInfo.bond(
+            IERC20(address(pairToken)), claimed_, DEFAULT_MIN_LOCK, address(apexCaller), true, _deadline()
         );
         assertEq(pairToken.balanceOf(detf), invBefore_, "bond I1: inventory unchanged");
         assertEq(IERC20(detf).balanceOf(attacker), 0, "bond I1: no free detfToken");
@@ -436,8 +483,11 @@ abstract contract TestBase_UniswapV4Detf_Adversarial is TestBase_UniswapV4Detf {
         assertEq(pairToken.allowance(attacker, nft_), 0, "no nft allowance");
         assertEq(pairToken.allowance(attacker, detf), 0, "no detf allowance");
 
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vm.prank(attacker);
+        detfInfo.donate(IERC20(address(pairToken)), residual_, true);
         vm.expectRevert();
+        vm.prank(address(apexCaller));
         detfInfo.donate(IERC20(address(pairToken)), residual_, true);
 
         assertEq(pairToken.balanceOf(detf), detfInvBefore_, "donate I1: DETF pair unchanged");
@@ -494,23 +544,15 @@ abstract contract TestBase_UniswapV4Detf_Adversarial is TestBase_UniswapV4Detf {
     function _assertI3_mint() internal {
         _goLive(500 ether);
         uint256 residual_ = 30 ether;
-        _fundPair(aliceAdv, residual_);
-        vm.prank(aliceAdv);
-        pairToken.transfer(detf, residual_);
-        uint256 victimIn_ = 20 ether;
-        uint256 out_ = _mintPairTo(detf, victim, victimIn_);
-        assertGt(out_, 0, "honest mint ok");
+        _bookPairResidual(detf, residual_);
         uint256 residualAfter_ = pairToken.balanceOf(detf);
-        if (residualAfter_ < residual_) {
-            // Mint sweep joined leftover pair. Re-book sitting residual so the second
-            // pretransfer faces booked inventory, not an empty-U claim-1 escape.
-            _bookPairResidual(detf, residual_);
-            residualAfter_ = pairToken.balanceOf(detf);
-        }
-        assertGe(residualAfter_, residual_, "residual still on diamond after honest mint");
+        assertGe(residualAfter_, residual_, "residual still on diamond");
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vm.prank(attacker);
-        vm.expectRevert(_deltaRevert(residualAfter_, 0));
         IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), residualAfter_, IERC20(address(detfInfo)), 0, attacker, true, _deadline());
+        vm.expectRevert(_deltaRevert(residualAfter_, 0));
+        vm.prank(address(apexCaller));
+        IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), residualAfter_, IERC20(address(detfInfo)), 0, address(apexCaller), true, _deadline());
         assertEq(IERC20(detf).balanceOf(attacker), 0, "I3: no free mint");
         assertEq(pairToken.balanceOf(detf), residualAfter_, "I3: residual not free-credited");
     }
@@ -519,24 +561,28 @@ abstract contract TestBase_UniswapV4Detf_Adversarial is TestBase_UniswapV4Detf {
         _goLive(500 ether);
         _bookPairResidual(detf, 25 ether);
         uint256 claimed_ = 1 ether;
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vm.prank(attacker);
-        vm.expectRevert(_deltaRevert(claimed_, 0));
         detfInfo.bond(
             IERC20(address(pairToken)), claimed_, DEFAULT_MIN_LOCK, attacker, true, _deadline()
+        );
+        vm.expectRevert(_deltaRevert(claimed_, 0));
+        vm.prank(address(apexCaller));
+        detfInfo.bond(
+            IERC20(address(pairToken)), claimed_, DEFAULT_MIN_LOCK, address(apexCaller), true, _deadline()
         );
         assertEq(IERC20(detf).balanceOf(attacker), 0, "I3 bond: no free");
     }
 
     function _assertI3_donate() internal {
         _goLive(500 ether);
-        _fundPair(aliceAdv, 8 ether);
-        address nft_ = detfInfo.bondNftVault();
-        vm.startPrank(aliceAdv);
-        pairToken.approve(nft_, 8 ether);
-        detfInfo.donate(IERC20(address(pairToken)), 8 ether, false);
-        vm.stopPrank();
+        _bookPairResidual(detf, 8 ether);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vm.prank(attacker);
-        vm.expectRevert(IDetfErrors.ZeroAmount.selector);
+        detfInfo.donate(IERC20(address(pairToken)), 1 ether, true);
+        // D23: a contract caller with no unbooked credit gets the shared shortfall error.
+        vm.expectPartialRevert(ISecurePullErrors.TransferDeltaInsufficient.selector);
+        vm.prank(address(apexCaller));
         detfInfo.donate(IERC20(address(pairToken)), 1 ether, true);
         assertEq(IERC20(detf).balanceOf(attacker), 0, "I3 donate: no free");
     }
@@ -544,15 +590,14 @@ abstract contract TestBase_UniswapV4Detf_Adversarial is TestBase_UniswapV4Detf {
     function _assertK1_donationNotMintCredit() internal {
         _goLive(500 ether);
         uint256 donate_ = 40 ether;
-        _fundPair(attacker, donate_);
-        vm.prank(attacker);
-        pairToken.transfer(detf, donate_);
-        uint256 victimOut_ = _mintPairTo(detf, victim, 20 ether);
-        assertGt(victimOut_, 0, "victim honest mint");
+        _bookPairResidual(detf, donate_);
         uint256 attBefore_ = IERC20(detf).balanceOf(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vm.prank(attacker);
-        vm.expectRevert(_deltaRevert(donate_, 0));
         IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), donate_, IERC20(address(detfInfo)), 0, attacker, true, _deadline());
+        vm.expectRevert();
+        vm.prank(address(apexCaller));
+        IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), donate_, IERC20(address(detfInfo)), 0, address(apexCaller), true, _deadline());
         assertEq(IERC20(detf).balanceOf(attacker), attBefore_, "K1: donation not mint credit");
     }
 
@@ -577,12 +622,24 @@ abstract contract TestBase_UniswapV4Detf_Adversarial is TestBase_UniswapV4Detf {
         // liquid-balance checkpoint. Claim one more than the actual delivery.
         uint256 claimOver_ = dust_ + 1;
         vm.expectRevert();
+        vm.prank(detfUser);
         IStandardExchangeIn(se).exchangeIn(
             IERC20(address(pairToken)),
             claimOver_,
             IERC20(se),
             0,
             detfUser,
+            true,
+            _deadline()
+        );
+        vm.expectRevert();
+        vm.prank(address(apexCaller));
+        IStandardExchangeIn(se).exchangeIn(
+            IERC20(address(pairToken)),
+            claimOver_,
+            IERC20(se),
+            0,
+            address(apexCaller),
             true,
             _deadline()
         );
@@ -599,27 +656,23 @@ abstract contract TestBase_UniswapV4Detf_Adversarial is TestBase_UniswapV4Detf {
         uint256 U = Bh >= Rh ? Bh - Rh : 0;
         uint256 claim_ = U >= 1 ? U + 1 : uint256(1);
         vm.expectRevert();
+        vm.prank(detfUser);
         IStandardExchangeIn(se).exchangeIn(
             tokenIn_, claim_, IERC20(se), 0, detfUser, true, _deadline()
+        );
+        vm.expectRevert();
+        vm.prank(address(apexCaller));
+        IStandardExchangeIn(se).exchangeIn(
+            tokenIn_, claim_, IERC20(se), 0, address(apexCaller), true, _deadline()
         );
     }
 
     function _assertT_LOCAL_I1() internal {
         _goLive(500 ether);
-        _mintPairTo(detf, detfUser, 35 ether);
-        uint256 R = IBasicVault(detf).reserveOfToken(address(pairToken));
-        uint256 B = IERC20(address(pairToken)).balanceOf(detf);
-        uint256 U = B >= R ? B - R : 0;
-        if (U == 0) {
-            vm.expectRevert();
-            vm.prank(detfUser);
-            IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), 1, IERC20(address(detfInfo)), 0, detfUser, true, _deadline());
-        } else {
-            vm.prank(detfUser);
-            IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), U, IERC20(address(detfInfo)), 0, detfUser, true, _deadline());
-            vm.expectRevert();
-            vm.prank(detfUser);
-            IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(pairToken)), 1, IERC20(address(detfInfo)), 0, detfUser, true, _deadline());
-        }
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        vm.prank(detfUser);
+        IStandardExchangeIn(address(detfInfo)).exchangeIn(
+            IERC20(address(pairToken)), 1, IERC20(address(detfInfo)), 0, detfUser, true, _deadline()
+        );
     }
 }

@@ -166,7 +166,7 @@ interface IDetf {
      * @dev Allowed only when `isMintingAllowed()` is true (live + Policy/Open synthetic gate).
      * @param rateAssetAmount Amount of rateAsset to deposit
      * @param recipient Address to receive DETF tokens
-     * @param pretransferred Whether rateAsset was already transferred
+     * @param pretransferred Integrating-contract flag only. Transfer-and-consume must be atomic to avoid exposing resting credit; staged use is at integrator risk with no ownership or timing guarantee. Callers with no bytecode revert `EOAPretransferNotAllowed()`. Booked holder backing is never pretransfer credit. Exact-input processes exactly `rateAssetAmount` when unbooked available covers it, leaves excess uncredited, and refunds nothing.
      * @return detfMinted Amount of DETF minted to recipient
      */
     function mintWithRateAsset(uint256 rateAssetAmount, address recipient, bool pretransferred)
@@ -235,7 +235,7 @@ interface IDetf {
      *      Donor recorded on `ReserveDonated` is this caller's `msg.sender`.
      * @param token Family mint/bond capital, DETF, or `lpToken`.
      * @param amount Amount to donate (observed inbound / unbooked surplus is booked, not this claim alone).
-     * @param pretransferred True if non-LP tokens already sit on the Bond NFT.
+     * @param pretransferred Integrating-contract flag only. Transfer-and-consume must be atomic; staged use is at integrator risk. Callers with no bytecode revert `EOAPretransferNotAllowed()`. Booked holder backing is never pretransfer credit. Exact-input processes exactly the requested amount when at least that much unbooked input exists, leaves excess uncredited to this operation and refunds nothing; booked holder backing is never pretransfer credit.
      */
     function donate(IERC20 token, uint256 amount, bool pretransferred) external;
 

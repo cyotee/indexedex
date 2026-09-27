@@ -26,7 +26,8 @@ import {
     HermeticWETH,
     HermeticRETH,
     HermeticDepositPool,
-    HermeticRocketStorage
+    HermeticRocketStorage,
+    HermeticRocketDAOProtocolSettingsDeposit
 } from "contracts/protocols/staking/rocket-pool/test/hermetic/HermeticRocketPoolPorts.sol";
 
 /**
@@ -47,6 +48,7 @@ abstract contract TestBase_RocketPoolRETHStandardExchange is TestBase_Permit2, T
     HermeticRETH public hermeticReth;
     HermeticDepositPool public hermeticPool;
     HermeticRocketStorage public hermeticRegistry;
+    HermeticRocketDAOProtocolSettingsDeposit public hermeticSettings;
 
     address public seVault;
     IRocketPoolRETHStandardVault public rocketPoolSe;
@@ -63,8 +65,10 @@ abstract contract TestBase_RocketPoolRETHStandardExchange is TestBase_Permit2, T
 
         hermeticWeth = new HermeticWETH();
         hermeticReth = new HermeticRETH();
-        hermeticPool = new HermeticDepositPool(hermeticReth);
+        hermeticSettings = new HermeticRocketDAOProtocolSettingsDeposit();
+        hermeticPool = new HermeticDepositPool(hermeticReth, hermeticSettings);
         hermeticRegistry = new HermeticRocketStorage(address(hermeticReth), address(hermeticPool));
+        hermeticRegistry.register("rocketDAOProtocolSettingsDeposit", address(hermeticSettings));
         // Default: open capacity for soft stake tests; Capacity suite zeroes this.
         hermeticPool.setMaxDepositAmount(type(uint256).max);
 

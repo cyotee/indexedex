@@ -5,6 +5,9 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {Address} from "@crane/contracts/utils/Address.sol";
 
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
+import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {
     UniswapV3FullSpreadStandardExchangeVaultOutBase
 } from "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutBase.sol";
@@ -50,6 +53,15 @@ abstract contract UniswapV3FullSpreadStandardExchangeVaultOutExecuteTarget is Un
             return amountIn;
         }
 
+        // D64: exact-out mint. Pull the closed-form pair input, book it, mint exactly `amountOut` shares.
+        // Delegated to the CREATE3 execution delegate (mirrors the zap-out withdrawal) so the OutFacet
+        // runtime stays under EIP-170; the closed-form math lives only in the delegate and the query facet.
+        if (address(tokenOut) == address(this) && (address(tokenIn) == token0 || address(tokenIn) == token1)) {
+            amountIn = _delegateExecuteZapInMintExactOut(tokenIn, maxAmountIn, amountOut, recipient, pretransferred);
+            _rebalanceLiquidReserveBestEffort();
+            return amountIn;
+        }
+
         revert IStandardExchangeOut.ExchangeOutNotAvailable();
     }
 
@@ -64,21 +76,45 @@ abstract contract UniswapV3FullSpreadStandardExchangeVaultOutExecuteTarget is Un
         _requireCanOpenBoundPoolOps();
         uint256 quotedIn = _quoteSwapOut(address(tokenIn), address(tokenOut), amountOut);
         if (quotedIn > maxAmountIn) revert UniswapV3ExchangeOut_InsufficientInput();
-        uint256 pullAmount = quotedIn + (quotedIn / 1000) + 1;
-        if (pullAmount > maxAmountIn) {
-            pullAmount = maxAmountIn;
-        }
-        // Push captures the entire unbooked delivery; max remains a separate slippage bound.
-        if (pretransferred) pullAmount = maxAmountIn;
         uint256 inboundBefore = tokenIn.balanceOf(address(this));
+        uint256 pullAmount = quotedIn;
+        if (pretransferred) {
+            uint256 credit = _pretransferCredit(tokenIn, maxAmountIn);
+            if (quotedIn > credit) revert ISecurePullErrors.TransferDeltaInsufficient(quotedIn, credit);
+            pullAmount = credit;
+        }
         uint256 providedAmountIn = _secureTokenTransfer(tokenIn, pullAmount, pretransferred);
-        // Pushed input is already present in the entry balance.
         if (pretransferred) inboundBefore -= providedAmountIn;
         _requireDelivered(quotedIn, providedAmountIn);
         amountIn = _swapExactOut(address(tokenIn), address(tokenOut), amountOut, maxAmountIn, recipient);
         _requireDelivered(amountIn, providedAmountIn);
-        _refundThisCallUnusedInbound(tokenIn, inboundBefore, providedAmountIn < maxAmountIn ? providedAmountIn : maxAmountIn, amountIn);
+        if (pretransferred) {
+            _refundThisCallUnusedInbound(tokenIn, inboundBefore, providedAmountIn, amountIn);
+        }
         _syncVaultReserves();
+    }
+
+    /// @dev D64 exact-out mint, delegated to the CREATE3 execution delegate so the OutFacet runtime
+    /// stays under EIP-170. The delegate computes the closed-form input, pulls it, books it and mints
+    /// exactly `sharesOut`; preview equals execution because both read the owed-inclusive reserve basis.
+    function _delegateExecuteZapInMintExactOut(
+        IERC20 tokenIn,
+        uint256 maxAmountIn,
+        uint256 sharesOut,
+        address recipient,
+        bool pretransferred
+    ) internal returns (uint256 amountIn) {
+        bytes memory result = UNISWAP_V3_STANDARD_EXCHANGE_OUT_EXECUTION_DELEGATE.functionDelegateCall(
+            abi.encodeWithSignature(
+                "executeZapInMintExactOut(address,uint256,uint256,address,bool)",
+                address(tokenIn),
+                maxAmountIn,
+                sharesOut,
+                recipient,
+                pretransferred
+            )
+        );
+        return abi.decode(result, (uint256));
     }
 
     function _refundThisCallUnusedInbound(

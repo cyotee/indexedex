@@ -253,6 +253,24 @@ contract RocketPoolRETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_
             // Pass only means we exercised the path and logged; if collateral exists mid-test elsewhere, prefer success branch
         }
     }
+
+    /// @notice APEX matrix finding F4 / D53 (2026-09-21): the production transition quote reads live protocol
+    ///         views through hard staticcalls. Confirms on mainnet at the suite's pinned block that
+    ///         `quoteState(weth, holder)` answers and that its exact-in deposit projection equals
+    ///         `previewExchangeIn`, so the hermetic fixture extension models an interface the live
+    ///         contracts actually expose.
+    function test_FK9_APEX_F4_liveQuoteStateAnswers() public whenForked {
+        IStandardExchangeTransitionQuote quote = IStandardExchangeTransitionQuote(seVault);
+        (bytes memory state, uint256 holderAssets) = quote.quoteState(MAINNET_WETH, address(this));
+        assertGt(state.length, 0, "Rocket: live quoteState answers");
+        if (IERC20(seVault).balanceOf(address(this)) == 0) assertEq(holderAssets, 0, "Rocket: no shares, no claim");
+        else assertGt(holderAssets, 0, "Rocket: held shares carry a live claim");
+        uint256 amount = 1 ether;
+        (, uint256 input, uint256 output,) =
+            quote.quoteTransition(state, IStandardExchangeTransitionQuote.Operation.DepositExactIn, amount);
+        assertEq(input, amount, "Rocket: exact-in consumes the whole input");
+        assertEq(output, seIn.previewExchangeIn(IERC20(MAINNET_WETH), amount, IERC20(seVault)), "Rocket: transition quote equals previewExchangeIn on mainnet");
+    }
 }
 
 /// @notice Compare every projected field with real Rocket Pool state. Archive

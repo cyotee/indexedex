@@ -41,6 +41,7 @@ import {
 import {
     UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg
 } from "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 
 /**
  * @title UniswapV4DualSEBCPHook_StagedInit_Test
@@ -378,7 +379,7 @@ contract UniswapV4DualSEBCPHook_StagedInit_Test is TestBase_UniswapV4DualSEBCPHo
         assertTrue(init.finalizeInitialization());
         PoolKey memory key = PairPoolLib.pairKey(t0, t1, 60, IHooks(h));
         // Same product key: hook one-shot fires first (PM wraps AlreadyInitialized).
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("WrappedError(address,bytes4,bytes,bytes)", h, bytes4(keccak256("beforeInitialize(address,(address,address,uint24,int24,address),uint160)")), abi.encodeWithSignature("AlreadyInitialized()"), abi.encodeWithSignature("HookCallFailed()")));
         pm.initialize(key, TickMath.getSqrtPriceAtTick(0));
 
         // Direct hook callback still has Dual's one-shot flag (D69 / F5).
@@ -430,7 +431,7 @@ contract UniswapV4DualSEBCPHook_StagedInit_Test is TestBase_UniswapV4DualSEBCPHo
 
     function _pkgArgs(address se0, address t0, address se1, address t1)
         internal
-        view
+
         returns (IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgArgs memory)
     {
         return IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgArgs({
@@ -439,7 +440,9 @@ contract UniswapV4DualSEBCPHook_StagedInit_Test is TestBase_UniswapV4DualSEBCPHo
             standardExchange0: se0,
             token0: t0,
             standardExchange1: se1,
-            token1: t1
+            token1: t1,
+            rateProvider0: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, se0, t0), // D60
+            rateProvider1: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, se1, t1) // D60
         });
     }
 

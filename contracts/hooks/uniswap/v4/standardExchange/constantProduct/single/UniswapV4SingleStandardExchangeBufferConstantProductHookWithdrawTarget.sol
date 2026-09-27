@@ -180,15 +180,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
         return Repo._layout().kLast;
     }
 
+    /// @dev D60: SE shares held x provider rate (pair units); never an SE self-quote.
     function _seClaim() internal view returns (uint256) {
-        Repo.Layout storage l = Repo._layout();
-        uint256 seBal = IERC20(l.standardExchange).balanceOf(address(this));
-        if (seBal == 0) return 0;
-        if (l.pairToken == l.standardExchange) return seBal;
-        uint256 claim = IStandardExchangeIn(l.standardExchange).previewExchangeIn(
-            IERC20(l.standardExchange), seBal, IERC20(l.pairToken)
-        );
-        return claim == 0 ? 1 : claim;
+        return ClaimLib.ratedReserve();
     }
 
     function _reserveOfCurrency(address c) internal view returns (uint256) {
@@ -213,6 +207,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
     function _syncReserves() internal {
         Repo.Layout storage l = Repo._layout();
         MultiAssetBasicVaultRepo._updateReserve(IERC20(l.rawToken), IERC20(l.rawToken).balanceOf(address(this)));
+        if (l.pairToken == l.standardExchange) {
+            l.localPairReserve = IERC20(l.pairToken).balanceOf(address(this));
+        }
         MultiAssetBasicVaultRepo._updateReserve(IERC20(l.pairToken), _seClaim());
     }
 
@@ -272,25 +269,11 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
     }
 
     function _previewBufferClaimIn(uint256 amountInRaw) internal view returns (uint256) {
-        Repo.Layout storage l = Repo._layout();
-        return ClaimLib.previewBufferClaimIn(
-            l.standardExchange,
-            l.pairToken,
-            amountInRaw,
-            IVaultFeeOracleQuery(l.feeOracle),
-            address(this)
-        );
+        return ClaimLib.previewBufferClaimIn(amountInRaw);
     }
 
     function _invertBufferClaimIn(uint256 claimInNeeded) internal view returns (uint256) {
-        Repo.Layout storage l = Repo._layout();
-        return ClaimLib.invertBufferClaimIn(
-            l.standardExchange,
-            l.pairToken,
-            claimInNeeded,
-            IVaultFeeOracleQuery(l.feeOracle),
-            address(this)
-        );
+        return ClaimLib.invertBufferClaimIn(claimInNeeded);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -298,12 +281,13 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
     /* ---------------------------------------------------------------------- */
 
     function _bufferPair(uint256 amount) internal returns (uint256 seOut) {
-        _requireNonZero(amount);
+        if (amount == 0) return 0;
         Repo.Layout storage l = Repo._layout();
         if (l.pairToken == l.standardExchange) return amount;
         uint256 minOut = IStandardExchangeIn(l.standardExchange).previewExchangeIn(
             IERC20(l.pairToken), amount, IERC20(l.standardExchange)
         );
+        if (minOut == 0) return 0;
         IERC20(l.pairToken).forceApprove(l.standardExchange, amount);
         seOut = IStandardExchangeIn(l.standardExchange).exchangeIn(
             IERC20(l.pairToken),
@@ -333,14 +317,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
         if (seIn == 0) return 0;
         Repo.Layout storage l = Repo._layout();
         if (l.pairToken == l.standardExchange) return seIn;
-        uint256 minOut;
-        try IStandardExchangeIn(l.standardExchange).previewExchangeIn(
+        uint256 minOut = IStandardExchangeIn(l.standardExchange).previewExchangeIn(
             IERC20(l.standardExchange), seIn, IERC20(l.pairToken)
-        ) returns (uint256 m) {
-            minOut = m;
-        } catch {
-            minOut = 0;
-        }
+        );
         // Uni V3/V4 SE pulls shares via transferFrom when pretransferred=false.
         IERC20(l.standardExchange).forceApprove(l.standardExchange, seIn);
         pairOut = IStandardExchangeIn(l.standardExchange).exchangeIn(
@@ -361,13 +340,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
         if (l.pairToken == l.standardExchange) return pairOut;
         uint256 cap = _spendableSeShares();
         if (cap == 0) revert InsufficientTokenOut();
-        try IStandardExchangeOut(l.standardExchange).previewExchangeOut(
+        seIn = IStandardExchangeOut(l.standardExchange).previewExchangeOut(
             IERC20(l.standardExchange), IERC20(l.pairToken), pairOut
-        ) returns (uint256 need) {
-            seIn = need;
-        } catch {
-            seIn = type(uint256).max;
-        }
+        );
         // Never unwrap the last MAX_DUST_WEI SE shares — both book legs stay live.
         if (seIn > cap) {
             uint256 pairGot = _unwrapSeShares(cap);
@@ -715,7 +690,16 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
             if (residual > 0) {
                 uint256 got = _unwrapPairLeavingDust(residual);
                 emit ZapSwap(msg.sender, l.rawToken, l.pairToken, rawUser, got);
-                amountOut = pairUser + got;
+                // Pay the quoted amount (preview == execution): an SE exact-out that delivers more leaves the
+                // surplus as retained dust (D6); one that delivers up to MAX_DUST_WEI short is topped up from the
+                // dust the hook retains, when the balance covers it. Anything else pays what was delivered.
+                uint256 delivered = pairUser + got;
+                if (delivered < amountOut) {
+                    if (amountOut - delivered > Repo.MAX_DUST_WEI
+                        || IERC20(l.pairToken).balanceOf(address(this)) < amountOut) {
+                        amountOut = delivered;
+                    }
+                }
             }
             if (amountOut > 0) IERC20(l.pairToken).safeTransfer(to, amountOut);
         } else {
@@ -875,9 +859,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
         );
     }
 
+    /// @dev D60: rated valuation of `seBal` shares (pair units).
     function _previewSeClaimOf(uint256 seBal) internal view returns (uint256) {
-        if (seBal == 0) return 0;
-        return _previewUnwrapSe(seBal);
+        return ClaimLib.ratedOf(seBal);
     }
 
     function _saleQuoteRawToPair(uint256 rawIn, uint256 rawRes, uint256 pairRes)

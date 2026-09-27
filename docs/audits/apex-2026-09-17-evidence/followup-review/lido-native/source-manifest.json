@@ -1,0 +1,6 @@
+{
+  "contracts/protocols/staking/lido/LidoWstETHStandardExchangeCommon.sol": "900e6c8359857dd7873d9e52c5fec5f6d3288c506919825ad665d2fe964dede2",
+  "contracts/protocols/staking/lido/LidoWstETHStandardExchangeInTarget.sol": "8f968fb4f0ab59e80110d874e648aa8ed7421ba7a4b83e9444292efc8551c88b",
+  "contracts/protocols/staking/lido/LidoWstETHStandardExchangeOutTarget.sol": "d2d291e7e4296ddb61f20a8e5f360f8697206736f88726606061065c1ff93b7c",
+  "test/foundry/spec/protocol/staking/lido/invariant/LidoWstETHStandardExchange_NativeRounding.t.sol": "744823254f9437a647ff3c92f8579615b3f7f729d9adcbd971d3ce1b8be1b2d1"
+}

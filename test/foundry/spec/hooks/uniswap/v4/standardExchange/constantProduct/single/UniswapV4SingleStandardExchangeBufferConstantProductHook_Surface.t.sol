@@ -99,7 +99,9 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface_Test i
         bytes4[] memory dual_ = depositFacet.facetFuncs();
         bytes4[] memory single_ = depositSingleFacet.facetFuncs();
         bytes4[] memory preview_ = depositPreviewFacet.facetFuncs();
-        assertEq(dual_.length, 6, "dual deposit selector count");
+        assertEq(dual_.length, 8, "dual deposit selector count"); // D60: + rateProviders / rateProvider(address)
+        assertTrue(_contains(dual_, IHook.rateProviders.selector), "D60 rateProviders");
+        assertTrue(_contains(dual_, IHook.rateProvider.selector), "D60 rateProvider(address)");
         assertEq(single_.length, 7, "single deposit selector count");
         assertEq(preview_.length, 10, "deposit preview selector count");
         bytes4[] memory funcs_ = new bytes4[](dual_.length + single_.length + preview_.length);
@@ -131,7 +133,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface_Test i
         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.previewJoinSingleAssetExactIn.selector), "J1 previewJoinSingleAssetExactIn");
         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.joinSingleAssetExactOut.selector), "J1 joinSingleAssetExactOut");
         assertTrue(_contains(funcs_, IUniswapV4SeBufferHook.previewJoinSingleAssetExactOut.selector), "J1 previewJoinSingleAssetExactOut");
-        assertEq(funcs_.length, 23, "J1 combined deposit selectors");
+        assertEq(funcs_.length, 25, "J1 combined deposit selectors"); // D60: + rateProviders / rateProvider(address)
         for (uint256 i; i < funcs_.length; ++i) {
             for (uint256 j = i + 1; j < funcs_.length; ++j) {
                 assertTrue(funcs_[i] != funcs_[j], "deposit selectors are disjoint");
@@ -184,13 +186,15 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Surface_Test i
 
     /// @notice Validate the split Deposit facet against interface-derived controls.
     function test_depositFacet_declaration() public {
-        bytes4[] memory expected = new bytes4[](6);
+        bytes4[] memory expected = new bytes4[](8);
         expected[0] = IHook.deposit.selector;
         expected[1] = IHook.depositWithPermit2Signature.selector;
         expected[2] = IHook.depositWithPermit2Allowance.selector;
         expected[3] = IHook.depositWithSeShares.selector;
         expected[4] = IUniswapV4SeBufferHook.joinProportional.selector;
         expected[5] = IUniswapV4SeBufferHook.joinUnbalanced.selector;
+        expected[6] = IHook.rateProviders.selector; // D60
+        expected[7] = IHook.rateProvider.selector; // D60
         _assertDepositFacetDeclaration(depositFacet, "UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet", expected);
     }
 

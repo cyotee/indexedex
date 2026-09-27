@@ -3,7 +3,10 @@
   "budget": {
     "max_entries": 50,
     "max_description_chars": 160,
-    "max_catalog_chars": 14000
+    "max_catalog_chars": 14000,
+    "description_budget_exempt_source_prefixes": [
+      "lib/crane/"
+    ]
   },
   "direct": {
     "crane-adversarial-testing": "lib/crane/.claude/skills/crane-adversarial-testing",

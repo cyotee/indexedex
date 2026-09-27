@@ -1,0 +1,25 @@
+{
+  "exitCode": 1,
+  "elapsedSeconds": 173.91580176353455,
+  "sourceHashes": {
+    "contracts/protocols/staking/lido/LidoWstETHStandardExchangeCommon.sol": "71f5da979fb5ee66cb3d8bb5dae8274ee8579216ee5629e1130985377d1c5872",
+    "contracts/protocols/staking/lido/LidoWstETHStandardExchangeInTarget.sol": "734d3cbe8fd5d7c1b028954b7079d2aeca8ef6843bfda2a84d9dbf369f98e6f9",
+    "contracts/protocols/staking/lido/LidoWstETHStandardExchangeOutTarget.sol": "13011b3c10c5ebc8036b6d69d73ae0fb6b242e686ad61a95d38f27bf6170e811",
+    "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeCommon.sol": "e9fcfe9ecd8a968d8af1d3ceaf57f824d2cd0f7fff08cac4ba691ae663059d75",
+    "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeInTarget.sol": "a73b8f9ff8302a1ea5c55c8c6a85eaaf9a546f2325741e7bdefb68d198413e02",
+    "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeOutTarget.sol": "7382e5e2845493f302f968286161f417207e89a22e62e35c334e621259aacfcb",
+    "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeCommon.sol": "672fb129838336e5e1cb16e4e3023f35dcf2df6ed8d9796d9713b4724c49bc93",
+    "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeInTarget.sol": "6c33448a70e0028fee7fcdc1dd6f824b78de098740c145b03a560984a4c01046",
+    "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeOutTarget.sol": "9524c59d3cac3a9afe4023113ecda138e90c8afccca85b746cdf884b10220f5a",
+    "test/foundry/spec/protocol/dexes/uniswap/v2/UniswapV2StandardExchange_SecRemediation.t.sol": "cd397c552bfe8447ef1cd7a207914476b9c335142b6dc228a4ecc61f3a11b939",
+    "test/foundry/spec/protocol/dexes/camelot/v2/CamelotV2StandardExchange_SecRemediation.t.sol": "2c83ee4d140c546772757c043cffac1bbbdc3a33dff78af0f6d54ceefa89a471",
+    "test/foundry/spec/protocol/staking/lido/adversarial/Adversarial_LidoWstETH_P0.t.sol": "41c6c16d57e0412a38eefd3c1b6bfc1c9443b13e4aea74e892c1795307fefcae",
+    "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/sy/UniswapV3FullSpreadStandardExchangeVault_NativeSY.t.sol": "f87563481f0e7771c0e7c87d9d3976c38b691a238270c46dc7aeca8082b3d0ac",
+    "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v4/UniswapV4FullSpreadStandardExchangeVault_FullRangeBook.t.sol": "18749dc076d5f6f358fd078c09515c5489a3c491bbb02f4aa532ac8c3ff3783f",
+    "test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Invariant.t.sol": "861656d24acc962e6ffbe83f0ede3541f671876a969cd3e2d994d13ebe004cfd",
+    "test/foundry/spec/vaults/standard/erc4626/invariant/ERC4626StandardExchange_Invariant.t.sol": "25138a76b74e8ef041b4994268d8f665f3e78347223bfddc2ea8b85d13e9b736",
+    "test/foundry/spec/protocol/lending/aave/v3.6/invariant/AaveV3StataStandardExchange_Invariant.t.sol": "8a1bf64f0f8d98f9ecb165aac570a16b894ff537c3aceb9981e910c57ad7ac96",
+    "test/foundry/spec/protocol/lending/aave/cross-version/invariant/AaveCrossVersionLoop_Invariant.t.sol": "4686ebca8bdbf9d7cccd21aade26651e8d761c8a2731289f20dec8bd74a614c5",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BalancerV3SinglePoolStandardExchange_Invariant.t.sol": "06879b8b63189a59943d6c85e9d97fd1a83f154216145996dbe493f93b0624a5"
+  }
+}

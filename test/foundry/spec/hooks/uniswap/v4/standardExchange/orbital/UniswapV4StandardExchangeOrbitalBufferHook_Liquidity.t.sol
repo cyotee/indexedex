@@ -84,7 +84,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_LiquidityTest is
 
     function test_firstMint_oneLeg_reverts() public {
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("FirstMintRequiresTwoLegs()"));
         orbital.addLiquidity(100 ether, 0, 0, user, 0, block.timestamp + 1 hours, "");
     }
 

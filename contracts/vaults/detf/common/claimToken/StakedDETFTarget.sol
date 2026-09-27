@@ -8,6 +8,7 @@ import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC
 import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
 import {IStakedDETF, IDETFFundedRewards} from "contracts/interfaces/IStakedDETF.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
 import {DETFFundedStakingMath} from "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol";
 import {DETFSeigniorageShareLib} from "contracts/vaults/detf/common/core/DETFSeigniorageShareLib.sol";
 import {DETFFundedStakingRepo as Repo} from "contracts/vaults/detf/common/claimToken/DETFFundedStakingRepo.sol";
@@ -140,6 +141,9 @@ contract StakedDETFTarget is IStakedDETF, ReentrancyLockModifiers {
     }
 
     /// @notice Exchange actual DETF for equal sDETF, or burn sDETF for held DETF.
+    /// @param pretransferred_ Integrating-contract flag only. EOA reverts `EOAPretransferNotAllowed()`.
+    ///        Public true-flag then reverts `TransferDeltaInsufficient(amount, 0)` so idle DETF
+    ///        never authenticates a stake/unstake. False-flag pull remains the supported path.
     function exchangeIn(
         IERC20 tokenIn_, uint256 amountIn_, IERC20 tokenOut_, uint256 minAmountOut_,
         address recipient_, bool pretransferred_, uint256 deadline_
@@ -150,6 +154,9 @@ contract StakedDETFTarget is IStakedDETF, ReentrancyLockModifiers {
     }
 
     /// @notice Exact-output direct staking pulls or burns only the required native input.
+    /// @param pretransferred_ Integrating-contract flag only. EOA reverts `EOAPretransferNotAllowed()`.
+    ///        Public true-flag then reverts `TransferDeltaInsufficient(amount, 0)`. False-flag
+    ///        pulls the required amount and refunds nothing.
     function exchangeOut(
         IERC20 tokenIn_, uint256 maxAmountIn_, IERC20 tokenOut_, uint256 amountOut_,
         address recipient_, bool pretransferred_, uint256 deadline_
@@ -189,8 +196,12 @@ contract StakedDETFTarget is IStakedDETF, ReentrancyLockModifiers {
     ) internal {
         if (block.timestamp > deadline_) revert DeadlineExpired(deadline_);
         if (amount_ == 0) revert ZeroAmount();
-        // Preserve the secure claim-route rule: prior idle balances do not authenticate input.
-        if (pretransferred_) revert ISecurePullErrors.TransferDeltaInsufficient(amount_, 0);
+        // Public pretransfer of backing is not a D32 credit surface. Reject EOA first, then
+        // keep the hard true-flag reject so idle DETF never authenticates a stake/unstake.
+        if (pretransferred_) {
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+            revert ISecurePullErrors.TransferDeltaInsufficient(amount_, 0);
+        }
         bool stake_ = _isStake(tokenIn_, tokenOut_);
         if (recipient_ == address(0)) recipient_ = msg.sender;
         Repo.Storage storage s_ = Repo._layoutStruct();

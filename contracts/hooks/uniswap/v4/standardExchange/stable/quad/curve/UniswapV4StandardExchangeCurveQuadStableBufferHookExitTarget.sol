@@ -5,6 +5,7 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {UniswapV4StandardExchangeCurveQuadStableBufferHookRepo as Repo} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookRepo.sol";
 import {
     IUniswapV4StandardExchangeCurveQuadStableBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/interfaces/IUniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
@@ -547,5 +548,21 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookExitTarget i
                 IERC20(se), invOut, IERC20(tokenOut)
             );
         }
+    }
+
+    /// @notice D60: the configured rate providers, one per leg (address(0) on a raw leg without one).
+    function rateProviders() public view returns (address[] memory rps) {
+        Repo.Layout storage l = Repo._layout();
+        rps = new address[](Repo.N_TOKENS);
+        for (uint256 i; i < Repo.N_TOKENS; ++i) rps[i] = l.rateProviders[i];
+    }
+
+    /// @notice D60: the rate provider configured for `token_`, address(0) when none or unknown token.
+    function rateProvider(address token_) public view returns (address) {
+        Repo.Layout storage l = Repo._layout();
+        for (uint256 i; i < l.tokens.length; ++i) {
+            if (l.tokens[i] == token_) return l.rateProviders[i];
+        }
+        return address(0);
     }
 }

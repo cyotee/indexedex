@@ -1,0 +1,47 @@
+{
+  "files": [
+    {
+      "path": "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeCommon.sol",
+      "before_sha256": "e9fcfe9ecd8a968d8af1d3ceaf57f824d2cd0f7fff08cac4ba691ae663059d75",
+      "sha256": "ce6bcb58cb8c90dfce6b4bb91ba231ccb78c860c20411ebe018c6a491da2d975",
+      "shared_matches_frozen_baseline": true
+    },
+    {
+      "path": "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeInTarget.sol",
+      "before_sha256": "a73b8f9ff8302a1ea5c55c8c6a85eaaf9a546f2325741e7bdefb68d198413e02",
+      "sha256": "27d7bcb3b1b3ca0bbae40a452e51008d297b266f1bb6927e500d6ee4023b5471",
+      "shared_matches_frozen_baseline": true
+    },
+    {
+      "path": "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeOutTarget.sol",
+      "before_sha256": "7382e5e2845493f302f968286161f417207e89a22e62e35c334e621259aacfcb",
+      "sha256": "9dddb9d1aa5a613d10bed0a79e0ef91e86871dda77601abf58e6a9fb42645a86",
+      "shared_matches_frozen_baseline": true
+    },
+    {
+      "path": "contracts/protocols/staking/etherfi/test/hermetic/HermeticEtherFiPorts.sol",
+      "before_sha256": "83a3a35d5b46391ab5a20accfd6cf018c5ed090d044e7f226a72c9c6da8b6cee",
+      "sha256": "9c47b3a2ec2150c1aa1f60606ff4c7975b78ba49498f4e32ed4d64425b2ec8c2",
+      "shared_matches_frozen_baseline": true
+    },
+    {
+      "path": "contracts/test/stubs/NativeEtherFiPorts.sol",
+      "before_sha256": null,
+      "sha256": "fbd7650e15e5cad409f4110165be7d3c46067da72a92c1f12c0e88e998f485f3",
+      "shared_matches_frozen_baseline": true
+    },
+    {
+      "path": "test/foundry/spec/protocol/staking/etherfi/invariant/EtherFiWeETHStandardExchange_NativeRounding.t.sol",
+      "before_sha256": null,
+      "sha256": "ff92fd460f59b725e8d4bee4afa6c89dee26f78d9fa86d44bb7f7b307a2b12a5",
+      "shared_matches_frozen_baseline": true
+    },
+    {
+      "path": "test/foundry/spec/protocol/staking/etherfi/invariant/EtherFiWeETHStandardExchange_NonUnitPretransfer.t.sol",
+      "before_sha256": "96e594b94f989bdf5479ddc42347bc8714ad0336f4727a08620d507c293f25ea",
+      "sha256": "b5eb88c225acb7b94878010248b7e5e9804d7f69f1c4cf9fd7cd5a0ff5a54942",
+      "shared_matches_frozen_baseline": true
+    }
+  ],
+  "patch_sha256": "dda0bb2eb95886b1332821a70ff27ca487e9008bdae297aca51007ecd0ee049e"
+}

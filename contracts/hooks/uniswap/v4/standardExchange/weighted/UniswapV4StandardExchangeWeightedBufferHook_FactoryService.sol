@@ -35,28 +35,12 @@ library UniswapV4StandardExchangeWeightedBufferHook_FactoryService {
         vm.label(address(facet), "UniswapV4StandardExchangeWeightedBufferHookHooksFacet");
     }
 
-    function deployJoinFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
-        bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4StandardExchangeWeightedBufferHookJoinFacet.sol:UniswapV4StandardExchangeWeightedBufferHookJoinFacet");
-        facet = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeWeightedBufferHookJoinFacet")._hash())
-        );
-        vm.label(address(facet), "UniswapV4StandardExchangeWeightedBufferHookJoinFacet");
-    }
-
     function deployJoinFlexibleFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4StandardExchangeWeightedBufferHookJoinFlexibleFacet.sol:UniswapV4StandardExchangeWeightedBufferHookJoinFlexibleFacet");
         facet = create3Factory.deployFacet(
             initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeWeightedBufferHookJoinFlexibleFacet")._hash())
         );
         vm.label(address(facet), "UniswapV4StandardExchangeWeightedBufferHookJoinFlexibleFacet");
-    }
-
-    function deployJoinQueryFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
-        bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4StandardExchangeWeightedBufferHookJoinQueryFacet.sol:UniswapV4StandardExchangeWeightedBufferHookJoinQueryFacet");
-        facet = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4StandardExchangeWeightedBufferHookJoinQueryFacet")._hash())
-        );
-        vm.label(address(facet), "UniswapV4StandardExchangeWeightedBufferHookJoinQueryFacet");
     }
 
     function deployExitFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
@@ -67,7 +51,6 @@ library UniswapV4StandardExchangeWeightedBufferHook_FactoryService {
         vm.label(address(facet), "UniswapV4StandardExchangeWeightedBufferHookExitFacet");
     }
 
-    /// @dev Backward-compat alias: deploy Join facet (prefer deployJoinFacet + deployExitFacet).
     function deployExitQueryFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4StandardExchangeWeightedBufferHookExitQueryFacet.sol:UniswapV4StandardExchangeWeightedBufferHookExitQueryFacet");
         facet = create3Factory.deployFacet(
@@ -76,8 +59,34 @@ library UniswapV4StandardExchangeWeightedBufferHook_FactoryService {
         vm.label(address(facet), "UniswapV4StandardExchangeWeightedBufferHookExitQueryFacet");
     }
 
+    /// @dev D19: mutating join/deposit half of the former fat LiquidityFacet.
     function deployLiquidityFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
-        return deployJoinFacet(create3Factory);
+        bytes memory initCode_ = ArtifactCreationCode.creationCode(
+            create3Factory,
+            "UniswapV4StandardExchangeWeightedBufferHookLiquidityFacet.sol:UniswapV4StandardExchangeWeightedBufferHookLiquidityFacet"
+        );
+        facet = create3Factory.deployFacet(
+            initCode_,
+            ArtifactCreationCode.releaseSalt(
+                abi.encode("UniswapV4StandardExchangeWeightedBufferHookLiquidityFacet")._hash()
+            )
+        );
+        vm.label(address(facet), "UniswapV4StandardExchangeWeightedBufferHookLiquidityFacet");
+    }
+
+    /// @dev D19 Ext: join/deposit preview half. Salt is the contract name.
+    function deployLiquidityFacetExt(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
+        bytes memory initCode_ = ArtifactCreationCode.creationCode(
+            create3Factory,
+            "UniswapV4StandardExchangeWeightedBufferHookLiquidityFacetExt.sol:UniswapV4StandardExchangeWeightedBufferHookLiquidityFacetExt"
+        );
+        facet = create3Factory.deployFacet(
+            initCode_,
+            ArtifactCreationCode.releaseSalt(
+                abi.encode("UniswapV4StandardExchangeWeightedBufferHookLiquidityFacetExt")._hash()
+            )
+        );
+        vm.label(address(facet), "UniswapV4StandardExchangeWeightedBufferHookLiquidityFacetExt");
     }
 
     function deploySeFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {

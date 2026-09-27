@@ -27,6 +27,7 @@ import {
     IUniswapV4Detf
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 import {TestBase_UniswapV4Detf_Decimals} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Decimals.sol";
 
@@ -129,9 +130,9 @@ abstract contract TestBase_UniswapV4Detf_Orbital_Decimals is TestBase_UniswapV4D
                 se0: _seOf(t0, predicted_),
                 se1: _seOf(t1, predicted_),
                 se2: _seOf(t2, predicted_),
-                rp0: address(0),
-                rp1: address(0),
-                rp2: address(0),
+                rp0: RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, _seOf(t0, predicted_), t0),
+                rp1: RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, _seOf(t1, predicted_), t1),
+                rp2: RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, _seOf(t2, predicted_), t2),
                 tickSpacing: 0,
                 sqrtPriceX96: 0,
                 ownerOnlyLiquidity: args.ownerOnlyLiquidity,

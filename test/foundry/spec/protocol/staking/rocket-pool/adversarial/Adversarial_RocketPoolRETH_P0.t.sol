@@ -21,10 +21,13 @@ import {
 import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexManagerProxy.sol";
 import {
     HermeticRETH,
-    HermeticDepositPool
+    HermeticDepositPool,
+    HermeticRocketDAOProtocolSettingsDeposit
 } from "contracts/protocols/staking/rocket-pool/test/hermetic/HermeticRocketPoolPorts.sol";
 import {HostileWETH} from "contracts/protocols/staking/rocket-pool/test/hermetic/HostileWETH.sol";
 import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 
 /**
  * @title Adversarial_RocketPoolRETH_P0
@@ -53,12 +56,12 @@ contract Adversarial_RocketPoolRETH_P0 is TestBase_RocketPoolRETHStandardExchang
         victim = makeAddr("victim");
     }
 
-    /// @dev A0: pretransferred=true with no balance delta → InsufficientDeposit; no mint.
+    /// @dev A0: pretransferred=true with no unbooked credit → TransferDeltaInsufficient; no mint.
     function test_A0_pretransferred_noDelta() public {
         uint256 amount = 1 ether;
         uint256 supplyBefore = IERC20(seVault).totalSupply();
         vm.expectRevert(
-            abi.encodeWithSelector(IRocketPoolRETHStandardVault.InsufficientDeposit.selector, amount, 0)
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, amount, uint256(0))
         );
         seIn.exchangeIn(
             IERC20(address(hermeticWeth)),
@@ -66,10 +69,22 @@ contract Adversarial_RocketPoolRETH_P0 is TestBase_RocketPoolRETHStandardExchang
             IERC20(seVault),
             0,
             address(this),
-            true, // pretransferred without credit
+            true,
             block.timestamp + 1 hours
         );
         assertEq(IERC20(seVault).totalSupply(), supplyBefore);
+
+        vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        seIn.exchangeIn(
+            IERC20(address(hermeticWeth)),
+            amount,
+            IERC20(seVault),
+            0,
+            attacker,
+            true,
+            block.timestamp + 1 hours
+        );
     }
 
     /// @dev A1: donate WETH does not free-mint SE.
@@ -201,10 +216,13 @@ contract Adversarial_RocketPoolRETH_P0 is TestBase_RocketPoolRETHStandardExchang
     function _deployHostileVault() internal returns (HostileWETH hostile, address vault) {
         hostile = new HostileWETH();
         HermeticRETH reth2 = new HermeticRETH();
-        HermeticDepositPool pool2 = new HermeticDepositPool(reth2);
+        HermeticRocketDAOProtocolSettingsDeposit settings2 = new HermeticRocketDAOProtocolSettingsDeposit();
+        HermeticDepositPool pool2 = new HermeticDepositPool(reth2, settings2);
         pool2.setMaxDepositAmount(type(uint256).max);
+        HermeticRocketStorage storage2 = new HermeticRocketStorage(address(reth2), address(pool2));
+        storage2.register("rocketDAOProtocolSettingsDeposit", address(settings2));
         vm.prank(owner);
-        vault = rocketPoolSeDFPkg.deployVault(address(reth2), address(hostile), address(pool2), address(new HermeticRocketStorage(address(reth2), address(pool2))));
+        vault = rocketPoolSeDFPkg.deployVault(address(reth2), address(hostile), address(pool2), address(storage2));
     }
 
     /// @dev E1: round-trip W↔S - preview==exec both legs; no extractable profit; residual free inventory ok on sleeve.
@@ -278,9 +296,7 @@ contract Adversarial_RocketPoolRETH_P0 is TestBase_RocketPoolRETHStandardExchang
     function test_H1_emptySleeve_noBurn() public {
         _seedVaultInventory(0, 15 ether);
         uint256 requested = 1 ether;
-        vm.expectRevert(
-            abi.encodeWithSelector(IRocketPoolRETHStandardVault.InsufficientLiquidReserve.selector, requested, 0)
-        );
+        vm.expectRevert(bytes("collateral"));
         seOut.exchangeOut(
             IERC20(seVault),
             type(uint256).max,
@@ -353,15 +369,28 @@ contract Adversarial_RocketPoolRETH_P0 is TestBase_RocketPoolRETHStandardExchang
         assertEq(hermeticWeth.allowance(attacker, seVault), 0, "no allowance");
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(IRocketPoolRETHStandardVault.InsufficientDeposit.selector, claimed, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         seIn.exchangeIn(
             IERC20(address(hermeticWeth)),
             claimed,
             IERC20(seVault),
             0,
             attacker,
+            true,
+            block.timestamp + 1 hours
+        );
+
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed, uint256(0))
+        );
+        seIn.exchangeIn(
+            IERC20(address(hermeticWeth)),
+            claimed,
+            IERC20(seVault),
+            0,
+            address(caller),
             true,
             block.timestamp + 1 hours
         );
@@ -388,15 +417,28 @@ contract Adversarial_RocketPoolRETH_P0 is TestBase_RocketPoolRETHStandardExchang
         assertEq(hermeticWeth.allowance(attacker, seVault), 0, "I2: no in-call allowance");
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(IRocketPoolRETHStandardVault.InsufficientDeposit.selector, claimed, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         seIn.exchangeIn(
             IERC20(address(hermeticWeth)),
             claimed,
             IERC20(seVault),
             0,
             attacker,
+            true,
+            block.timestamp + 1 hours
+        );
+
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed, shortPush)
+        );
+        seIn.exchangeIn(
+            IERC20(address(hermeticWeth)),
+            claimed,
+            IERC20(seVault),
+            0,
+            address(caller),
             true,
             block.timestamp + 1 hours
         );
@@ -434,15 +476,28 @@ contract Adversarial_RocketPoolRETH_P0 is TestBase_RocketPoolRETHStandardExchang
         assertEq(hermeticWeth.allowance(attacker, seVault), 0, "I3: no allowance");
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(IRocketPoolRETHStandardVault.InsufficientDeposit.selector, claim, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         seIn.exchangeIn(
             IERC20(address(hermeticWeth)),
             claim,
             IERC20(seVault),
             0,
             attacker,
+            true,
+            block.timestamp + 1 hours
+        );
+
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claim, uint256(0))
+        );
+        seIn.exchangeIn(
+            IERC20(address(hermeticWeth)),
+            claim,
+            IERC20(seVault),
+            0,
+            address(caller),
             true,
             block.timestamp + 1 hours
         );
@@ -519,15 +574,12 @@ contract Adversarial_RocketPoolRETH_P0 is TestBase_RocketPoolRETHStandardExchang
         assertGt(previewOut_, 0, "J3 previewExchangeOut live on proxy");
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                IRocketPoolRETHStandardVault.InsufficientDeposit.selector, uint256(1 ether), uint256(0)
-            )
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         IStandardExchangeIn(seVault).exchangeIn(
             IERC20(address(hermeticWeth)), 1 ether, IERC20(seVault), 0, attacker, true, block.timestamp + 1 hours
         );
 
+        vm.expectRevert(bytes("collateral"));
         seRebalance.rebalance();
     }
 }

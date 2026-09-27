@@ -178,7 +178,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Swap_Test is T
 
     function test_SE4_badTokens_reverts() public {
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("UnsupportedRoute()"));
         IStandardExchangeIn(hook).exchangeIn(
             IERC20(address(rawToken)),
             1 ether,

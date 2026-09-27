@@ -25,15 +25,15 @@ library Phase_06_Stage_06_CurveQuadBufferHookPkg {
     function execute(LaunchState storage s) internal {
         IVaultRegistryDeployment reg = IVaultRegistryDeployment(address(s.indexedexManager));
         IVaultFeeOracleQuery feeOracle = IVaultFeeOracleQuery(address(s.indexedexManager));
-        IFacet joinFacet = QuadHookFS.deployJoinFacet(s.create3Factory);
+        IFacet liquidityFacet = QuadHookFS.deployLiquidityFacet(s.create3Factory);
         IFacet exitFacet = QuadHookFS.deployExitFacet(s.create3Factory);
         IFacet seFacet = QuadHookFS.deploySeFacet(s.create3Factory);
         IFacet hooksFacet = QuadHookFS.deployHooksFacet(s.create3Factory);
         IQuadHookPkg.PkgInit memory init_;
         init_.vaultRegistryDeployment = reg;
-        init_.joinQueryFacet = QuadHookFS.deployJoinQueryFacet(s.create3Factory);
+        init_.joinQueryFacet = QuadHookFS.deployLiquidityFacetExt(s.create3Factory);
         init_.vaultFeeOracleQuery = feeOracle;
-        init_.liquidityFacet = joinFacet;
+        init_.liquidityFacet = liquidityFacet;
         init_.exitFacet = exitFacet;
         init_.seFacet = seFacet;
         init_.hooksFacet = hooksFacet;

@@ -1,0 +1,22 @@
+{
+  "regressions": 20,
+  "redFailures": 20,
+  "greenPasses": 20,
+  "testSourcesUnchanged": true,
+  "changedProductionPaths": [
+    "contracts/protocols/staking/lido/LidoWstETHStandardExchangeCommon.sol",
+    "contracts/protocols/staking/lido/LidoWstETHStandardExchangeInTarget.sol",
+    "contracts/protocols/staking/lido/LidoWstETHStandardExchangeOutTarget.sol",
+    "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeCommon.sol",
+    "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeInTarget.sol",
+    "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeOutTarget.sol",
+    "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeCommon.sol",
+    "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeInTarget.sol",
+    "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeOutTarget.sol"
+  ],
+  "successfulPullControlSnapshotRestoresInRedTrace": 18,
+  "logs": {
+    "red.log": "abae735e16e49b6433f4ff01eba26ec81362b81270b11273011911c2acb4907e",
+    "green.log": "cdb6504d4014296822bdcc1fbc124a3dee10a96ce54282cca14c590df5318a92"
+  }
+}

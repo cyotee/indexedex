@@ -35,7 +35,7 @@ contract UniswapV4StandardExchangeWeightedBufferHook_SeBufferAbi is TestBase {
         assertEq(req.length, weighted.tokens().length, "T3.2 required = tokens");
         assertFalse(weighted.isLive(), "pre-live");
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("NotFullBook()"));
         weighted.joinSingleAssetExactIn(address(token0), 10 ether, user, 0, block.timestamp + 1 hours);
 
         address[] memory ts = new address[](1);

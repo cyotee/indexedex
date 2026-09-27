@@ -22,7 +22,7 @@ import {SlipstreamPoolAwareRepo} from "contracts/protocols/dexes/aerodrome/slips
 import {SlipstreamVaultRepo} from "contracts/vaults/slipstream/SlipstreamVaultRepo.sol";
 import {SlipstreamStandardExchangeCommon} from "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeCommon.sol";
 
-contract SlipstreamStandardExchangeInTarget is SlipstreamStandardExchangeCommon, ReentrancyLockModifiers, IStandardExchangeIn {
+contract SlipstreamStandardExchangeInTarget is SlipstreamStandardExchangeCommon, ReentrancyLockModifiers {
     using BetterSafeERC20 for IERC20;
 
     struct ZapInState {
@@ -47,28 +47,6 @@ contract SlipstreamStandardExchangeInTarget is SlipstreamStandardExchangeCommon,
     error SlipstreamExchangeIn_ZeroDeposit();
     error SlipstreamExchangeIn_SlippageExceeded();
 
-    function previewExchangeIn(IERC20 tokenIn, uint256 amountIn, IERC20 tokenOut)
-        external
-        view
-        override
-        returns (uint256 amountOut)
-    {
-        ICLPool pool = SlipstreamPoolAwareRepo._slipstreamPool();
-        address token0 = pool.token0();
-        address token1 = pool.token1();
-
-        if ((address(tokenIn) == token0 && address(tokenOut) == token1)
-            || (address(tokenIn) == token1 && address(tokenOut) == token0)) {
-            return _quoteSwap(address(tokenIn), address(tokenOut), amountIn);
-        }
-
-        if ((address(tokenIn) == token0 || address(tokenIn) == token1) && address(tokenOut) == address(this)) {
-            return _previewZapInDeposit(tokenIn, amountIn);
-        }
-
-        revert IStandardExchangeIn.ExchangeInNotAvailable();
-    }
-
     function exchangeIn(
         IERC20 tokenIn,
         uint256 amountIn,
@@ -77,7 +55,7 @@ contract SlipstreamStandardExchangeInTarget is SlipstreamStandardExchangeCommon,
         address recipient,
         bool pretransferred,
         uint256 deadline
-    ) external override nonReentrant returns (uint256 amountOut) {
+    ) external nonReentrant returns (uint256 amountOut) {
         if (deadline < block.timestamp) revert SlipstreamExchangeIn_DeadlineExceeded();
 
         ICLPool pool = SlipstreamPoolAwareRepo._slipstreamPool();
@@ -87,12 +65,16 @@ contract SlipstreamStandardExchangeInTarget is SlipstreamStandardExchangeCommon,
         if ((address(tokenIn) == token0 && address(tokenOut) == token1)
             || (address(tokenIn) == token1 && address(tokenOut) == token0)) {
             uint256 actualIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
-            return _swap(address(tokenIn), address(tokenOut), actualIn, minAmountOut, recipient);
+            amountOut = _swap(address(tokenIn), address(tokenOut), actualIn, minAmountOut, recipient);
+            _syncAllExpectedHoldReserves();
+            return amountOut;
         }
 
         if ((address(tokenIn) == token0 || address(tokenIn) == token1) && address(tokenOut) == address(this)) {
             uint256 actualIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
-            return _executeZapInDeposit(tokenIn, actualIn, minAmountOut, recipient);
+            amountOut = _executeZapInDeposit(tokenIn, actualIn, minAmountOut, recipient);
+            _syncAllExpectedHoldReserves();
+            return amountOut;
         }
 
         revert IStandardExchangeIn.ExchangeInNotAvailable();
@@ -235,8 +217,9 @@ contract SlipstreamStandardExchangeInTarget is SlipstreamStandardExchangeCommon,
         if (sharesOut < minSharesOut) revert SlipstreamExchangeIn_SlippageExceeded();
 
         ERC20Repo._mint(recipient, sharesOut);
-        _refundRemainder(state.token0, state.pre0);
-        _refundRemainder(state.token1, state.pre1);
+        // D15/D33: exact-in never refunds. Unpaired remainder stays with the vault and is booked as
+        // local NAV by the caller's `_syncAllExpectedHoldReserves()`; it is never paired with a later
+        // caller's in-flight input.
     }
 
     function _mintPositionLiquidity(int24 tickLower, int24 tickUpper, uint128 liquidity) internal {
@@ -263,12 +246,4 @@ contract SlipstreamStandardExchangeInTarget is SlipstreamStandardExchangeCommon,
         amount1Used = bal1Before - IERC20(token1).balanceOf(address(this));
     }
 
-    /// @dev E6: refund this-call unused inbound only (`balance - bookedBefore`). Never sweep booked R.
-    function _refundRemainder(address token, uint256 bookedBefore) internal {
-        uint256 balance = IERC20(token).balanceOf(address(this));
-        if (balance <= bookedBefore) {
-            return;
-        }
-        IERC20(token).safeTransfer(msg.sender, balance - bookedBefore);
-    }
 }

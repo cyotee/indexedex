@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 import {StandardExchangeConstantProduct as CP} from "contracts/vaults/standard/exchange/protocols/uniswap/StandardExchangeConstantProduct.sol";
 import {FixedPointMathLib} from "@crane/contracts/utils/FixedPointMathLib.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {TransferredTestInput, IStandardExchangeIn} from "../TransferredTestInput.sol";
 
 import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v3/libraries/TickMath.sol";
@@ -93,18 +94,31 @@ contract UniswapV3FullSpreadStandardExchangeVault_Import_Test is TestBase_Uniswa
         bytes memory callData = abi.encodeCall(IStandardExchangeIn.exchangeIn,
             (input, 1 ether, IERC20(address(vault)), 0, actor, true, block.timestamp));
         vm.startPrank(actor);
-        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1 ether, 0));
-        vault.exchangeIn(input, 1 ether, IERC20(address(vault)), 0, actor, true, block.timestamp);
-
-        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1 ether, 0));
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vault.exchangeIn(input, 1 ether, IERC20(address(vault)), 0, actor, true, block.timestamp);
         vm.stopPrank();
+        AtomicPretransferCaller atomic = new AtomicPretransferCaller();
+        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1 ether, 0));
+        atomic.execute(address(vault), callData);
         assertEq(vault.totalSupply(), supply); assertEq(vault.balanceOf(actor), 0); assertEq(input.balanceOf(actor), 0);
         ERC20PermitMintableStub(address(input)).mint(actor, 1 ether);
         vm.startPrank(actor);
-        input.transfer(address(vault), 1 ether);
-        assertGt(vault.exchangeIn(input, 1 ether, IERC20(address(vault)), 0, actor, true, block.timestamp), 0);
+        input.approve(address(atomic), 1 ether);
+        uint256 minted = abi.decode(
+            atomic.consumePretransfer(
+                input,
+                actor,
+                address(vault),
+                1 ether,
+                abi.encodeCall(
+                    IStandardExchangeIn.exchangeIn,
+                    (input, uint256(1 ether), IERC20(address(vault)), uint256(0), address(atomic), true, block.timestamp)
+                )
+            ),
+            (uint256)
+        );
         vm.stopPrank();
+        assertGt(minted, 0);
     }
 
     function test_import_happyPath_principalOnly_leavesEmptyNft() public {
@@ -203,9 +217,14 @@ contract UniswapV3FullSpreadStandardExchangeVault_Import_Test is TestBase_Uniswa
         int24 spacing = pool.tickSpacing();
         (uint256 tokenId,) = _mintNpmPosition(alice, spacing * 5, spacing * 10, 20 ether, 0);
         IUniswapV3FullSpreadStandardExchangeVaultPositionImport importer = IUniswapV3FullSpreadStandardExchangeVaultPositionImport(address(vault));
-        vm.expectRevert(); importer.previewImportPosition(INonfungiblePositionManager(address(npm)), tokenId);
+        // R2.4: one-sided position quotes 0 shares -> UniswapV3Exchange_ZeroAmount() 0xdcceb6eb
+        // (from _quoteImportShares/_exitNftAndSleeve). Design guessed InvalidImportedPool; the
+        // real path is ZeroAmount. Bare expectRevert() masked the difference.
+        vm.expectRevert(abi.encodeWithSignature("UniswapV3Exchange_ZeroAmount()"));
+        importer.previewImportPosition(INonfungiblePositionManager(address(npm)), tokenId);
         vm.startPrank(alice); IERC721(address(npm)).approve(address(vault), tokenId);
-        vm.expectRevert(); importer.importPosition(INonfungiblePositionManager(address(npm)), tokenId, 0, alice, alice, block.timestamp + 1); vm.stopPrank();
+        vm.expectRevert(abi.encodeWithSignature("UniswapV3Exchange_ZeroAmount()"));
+        importer.importPosition(INonfungiblePositionManager(address(npm)), tokenId, 0, alice, alice, block.timestamp + 1); vm.stopPrank();
         assertEq(IERC721(address(npm)).ownerOf(tokenId), alice); assertEq(IERC20(address(vault)).totalSupply(), 0);
     }
 
@@ -224,7 +243,9 @@ contract UniswapV3FullSpreadStandardExchangeVault_Import_Test is TestBase_Uniswa
         );
 
         IERC721(address(npm)).approve(address(vault), tokenId2);
-        vm.expectRevert();
+        // R2.4: vault already active after the first import -> UniswapV3ExchangeImport_Unavailable()
+        // 0x40dc1b67 (totalSupply != 0 guard). Bare form masked it.
+        vm.expectRevert(abi.encodeWithSignature("UniswapV3ExchangeImport_Unavailable()"));
         importer.importPosition(
             INonfungiblePositionManager(address(npm)), tokenId2, 0, alice, alice, block.timestamp + 1
         );
@@ -264,7 +285,9 @@ contract UniswapV3FullSpreadStandardExchangeVault_Import_Test is TestBase_Uniswa
             IUniswapV3FullSpreadStandardExchangeVaultPositionImport(address(vault));
         vm.startPrank(alice);
         IERC721(address(npm)).approve(address(vault), tokenId);
-        vm.expectRevert();
+        // R2.4: NFT from a different fee tier fails _requireMatchingPool ->
+        // UniswapV3ExchangeImport_InvalidImportedPool() 0x401fca3e.
+        vm.expectRevert(abi.encodeWithSignature("UniswapV3ExchangeImport_InvalidImportedPool()"));
         importer.importPosition(
             INonfungiblePositionManager(address(npm)), tokenId, 0, alice, alice, block.timestamp + 1
         );
@@ -277,7 +300,8 @@ contract UniswapV3FullSpreadStandardExchangeVault_Import_Test is TestBase_Uniswa
         IUniswapV3FullSpreadStandardExchangeVaultPositionImport importer =
             IUniswapV3FullSpreadStandardExchangeVaultPositionImport(address(vault));
         vm.prank(alice);
-        vm.expectRevert();
+        // The NPM uses the upstream NotOwnerNorApproved custom error.
+        vm.expectRevert(abi.encodeWithSignature("NotOwnerNorApproved()"));
         importer.importPosition(
             INonfungiblePositionManager(address(npm)), tokenId, 0, alice, alice, block.timestamp + 1
         );
@@ -308,7 +332,9 @@ contract UniswapV3FullSpreadStandardExchangeVault_Import_Test is TestBase_Uniswa
         IERC721(address(npm)).approve(address(vault), tokenId);
         IUniswapV3FullSpreadStandardExchangeVaultPositionImport importer =
             IUniswapV3FullSpreadStandardExchangeVaultPositionImport(address(vault));
-        vm.expectRevert();
+        // R2.4: a fully-decreased position has liquidity == 0 ->
+        // UniswapV3ExchangeImport_ZeroLiquidity() 0xb9c5b907.
+        vm.expectRevert(abi.encodeWithSignature("UniswapV3ExchangeImport_ZeroLiquidity()"));
         importer.importPosition(
             INonfungiblePositionManager(address(npm)), tokenId, 0, alice, alice, block.timestamp + 1
         );

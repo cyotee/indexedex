@@ -310,11 +310,7 @@ contract UniswapV3FullSpreadStandardExchangeVaultDFPkg is IUniswapV3FullSpreadSt
     }
 
     function _symbolOrToken(address token) internal view returns (string memory symbol_) {
-        try IERC20Metadata(token).symbol() returns (string memory fetchedSymbol) {
-            return fetchedSymbol;
-        } catch {
-            return "TOKEN";
-        }
+        return IERC20Metadata(token).symbol();
     }
 
     function _feeLabel(uint24 fee) internal pure returns (string memory) {

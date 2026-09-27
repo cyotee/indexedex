@@ -45,13 +45,21 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_RateProviderTest is
         hookPkg.processArgs(abi.encode(args));
     }
 
-    function test_rp_withoutSe_reverts() public {
+    /// @dev D60: a rate provider may be configured on any leg, so a provider on raw leg0 is accepted.
+    function test_rp_onRawLeg_accepted() public {
         StaticRateProvider rp = new StaticRateProvider(1e18);
-        // Min-SE: keep se1 so package still has ≥1 SE; put RP on raw leg0.
         IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory args =
             _argsWithSE(false, true, false);
         args.rp0 = address(rp);
-        vm.expectRevert();
+        hookPkg.processArgs(abi.encode(args));
+    }
+
+    /// @dev D60: a leg that declares a Standard Exchange must carry a rate provider.
+    function test_rp_seWithoutRp_reverts() public {
+        IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory args =
+            _argsWithSE(false, true, false);
+        args.rp1 = address(0);
+        vm.expectRevert(IUniswapV4StandardExchangeOrbitalBufferHookPackage.RateProviderRequired.selector);
         hookPkg.processArgs(abi.encode(args));
     }
 
@@ -103,8 +111,12 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_RateProviderTest is
         o.addLiquidity(50 ether, 50 ether, 50 ether, user, 0, block.timestamp + 1 hours, "");
         vm.stopPrank();
 
+        uint256 beforeReserve = o.effectiveReserve(0);
+        assertGt(beforeReserve, 0, "funded rate read succeeds");
         rp.setFail(true);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("RateProviderFailed()"));
         o.effectiveReserve(0);
+        rp.setFail(false);
+        assertEq(o.effectiveReserve(0), beforeReserve, "failed provider read preserves reserve");
     }
 }

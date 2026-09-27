@@ -1,0 +1,37 @@
+{
+  "command": [
+    "python3",
+    "scripts/forge-artifacts.py",
+    "test",
+    "contracts/vaults/standard/erc4626/ERC4626StandardExchangeInTarget.sol",
+    "contracts/vaults/standard/erc4626/ERC4626StandardExchangeOutTarget.sol",
+    "--test-root",
+    "test/foundry/spec/vaults/standard/erc4626/ERC4626StandardExchange_CreditPricing.t.sol",
+    "--test-root",
+    "test/foundry/spec/vaults/standard/erc4626/invariant/ERC4626StandardExchange_Invariant.t.sol",
+    "--",
+    "--match-test",
+    "test_APEX_sweep",
+    "-vvv",
+    "--fuzz-seed",
+    "0x20260917"
+  ],
+  "cwd": "/private/tmp/apex-review-lending-validation",
+  "source_hashes": {
+    "contracts/vaults/standard/erc4626/ERC4626StandardExchangeInTarget.sol": "562e541f384080249d9bf646e73c0d017948e7cd517f7490df041b920d6ef17b",
+    "contracts/vaults/standard/erc4626/ERC4626StandardExchangeOutTarget.sol": "b8ef1386cdfbf550ff998257e2ca6c89de43c12a9b86180acdad5f8c0799125f",
+    "test/foundry/spec/protocol/lending/aave/v3.6/invariant/AaveV3StataStandardExchange_Invariant.t.sol": "389116d554fdcdf074235949b41701b3675c673c98e0f0c91026a219dc067bd3",
+    "test/foundry/spec/vaults/standard/exchange/invariant/LendingAccountingHandler.sol": "a7467d4830e069ed12be0c8cd9858d959388d4863178b1fe35e7a61a9db90f72",
+    "test/foundry/spec/vaults/standard/erc4626/ERC4626StandardExchange_CreditPricing.t.sol": "62b182b5cf012a91a6fdff26f28011a2cc046c7b637761994001e0eaa1b861ee",
+    "test/foundry/spec/vaults/standard/erc4626/invariant/ERC4626StandardExchange_Invariant.t.sol": "77a6ffd79bbb6634ba669d31f0edb1a2621d764f2fe60dfa9fe7f83b276d73a3",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BalancerV3SinglePoolStandardExchange_PoolActionsInvariant.t.sol": "df07f0af781766bb53c9ac1be40bebcbfdd200321ec1fb0bced65109b27ba918",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BalancerV3SinglePoolStandardExchange_Invariant.t.sol": "264a139ce6aa5adf349c1ac3800a27ab1616a6fc425d45f83e012b3508ffe53d",
+    "test/foundry/spec/vaults/standard/exchange/invariant/StandardExchangeAccountingHandler.sol": "327bb71428f90670d2d7ef02347032f61234f1eb1cee87598b92d3c019061e7e",
+    "foundry.toml": "14536c5fabad6b40fea707ad11d8b80d48b6ada96c5995eaa25e2384908e8d38"
+  },
+  "environment": {
+    "FOUNDRY_INVARIANT_RUNS": "256",
+    "FOUNDRY_INVARIANT_DEPTH": "64"
+  },
+  "started_at": 1790353611.828856
+}

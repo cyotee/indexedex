@@ -1,0 +1,26 @@
+[
+  {
+    "path": "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeCommon.sol",
+    "base_sha256": "e9fcfe9ecd8a968d8af1d3ceaf57f824d2cd0f7fff08cac4ba691ae663059d75",
+    "shared_inode": 418834395,
+    "clone_inode": 418571410
+  },
+  {
+    "path": "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeInTarget.sol",
+    "base_sha256": "a73b8f9ff8302a1ea5c55c8c6a85eaaf9a546f2325741e7bdefb68d198413e02",
+    "shared_inode": 418834396,
+    "clone_inode": 418571386
+  },
+  {
+    "path": "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeOutTarget.sol",
+    "base_sha256": "7382e5e2845493f302f968286161f417207e89a22e62e35c334e621259aacfcb",
+    "shared_inode": 418834397,
+    "clone_inode": 418571407
+  },
+  {
+    "path": "contracts/protocols/staking/etherfi/test/hermetic/HermeticEtherFiPorts.sol",
+    "base_sha256": "83a3a35d5b46391ab5a20accfd6cf018c5ed090d044e7f226a72c9c6da8b6cee",
+    "shared_inode": 389871027,
+    "clone_inode": 418571396
+  }
+]

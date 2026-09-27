@@ -1,0 +1,35 @@
+{
+  "command": [
+    "python3",
+    "scripts/forge-artifacts.py",
+    "test",
+    "contracts/vaults/standard/erc4626/ERC4626StandardExchangeInTarget.sol",
+    "contracts/vaults/standard/erc4626/ERC4626StandardExchangeOutTarget.sol",
+    "--test-root",
+    "test/foundry/spec/vaults/standard/erc4626",
+    "--",
+    "-vv",
+    "--fuzz-seed",
+    "0x20260917",
+    "--fuzz-runs",
+    "10000"
+  ],
+  "cwd": "/private/tmp/apex-review-lending-validation",
+  "source_hashes": {
+    "contracts/vaults/standard/erc4626/ERC4626StandardExchangeInTarget.sol": "d925de62a87e3cc1edb456ca9eb49afe2056d5dc024238e52f59c9813981f606",
+    "contracts/vaults/standard/erc4626/ERC4626StandardExchangeOutTarget.sol": "e31cc3920468f7cd8faf26255272c7b3ea675ac3c6855085c3bda4b9d25f5516",
+    "test/foundry/spec/protocol/lending/aave/v3.6/invariant/AaveV3StataStandardExchange_Invariant.t.sol": "389116d554fdcdf074235949b41701b3675c673c98e0f0c91026a219dc067bd3",
+    "test/foundry/spec/vaults/standard/exchange/invariant/LendingAccountingHandler.sol": "a7467d4830e069ed12be0c8cd9858d959388d4863178b1fe35e7a61a9db90f72",
+    "test/foundry/spec/vaults/standard/erc4626/ERC4626StandardExchange_CreditPricing.t.sol": "6decc88c36c60fd1bfbcae0aba016401767417be41666c5dd7b892c22e787ae5",
+    "test/foundry/spec/vaults/standard/erc4626/invariant/ERC4626StandardExchange_Invariant.t.sol": "47632130e0853cf2b756863b14242bbf6d5e77315488132fbfffcbdf58a6f030",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BalancerV3SinglePoolStandardExchange_PoolActionsInvariant.t.sol": "df07f0af781766bb53c9ac1be40bebcbfdd200321ec1fb0bced65109b27ba918",
+    "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BalancerV3SinglePoolStandardExchange_Invariant.t.sol": "264a139ce6aa5adf349c1ac3800a27ab1616a6fc425d45f83e012b3508ffe53d",
+    "test/foundry/spec/vaults/standard/exchange/invariant/StandardExchangeAccountingHandler.sol": "327bb71428f90670d2d7ef02347032f61234f1eb1cee87598b92d3c019061e7e",
+    "foundry.toml": "14536c5fabad6b40fea707ad11d8b80d48b6ada96c5995eaa25e2384908e8d38"
+  },
+  "environment": {
+    "FOUNDRY_INVARIANT_RUNS": "256",
+    "FOUNDRY_INVARIANT_DEPTH": "64"
+  },
+  "started_at": 1790353818.334213
+}

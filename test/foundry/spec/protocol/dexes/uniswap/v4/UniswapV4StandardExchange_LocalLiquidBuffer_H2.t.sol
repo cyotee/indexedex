@@ -53,6 +53,7 @@ import {
     UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService as PkgFactory
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService.sol";
 import {WrapperExactOutRouter} from "contracts/test/stubs/WrapperExactOutRouter.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 
 /// @dev Seed external liquidity on the V4 SE underlying pool (not the hook pool).
 contract H2Seeder is IUnlockCallback {
@@ -204,7 +205,8 @@ contract UniswapV4StandardExchange_LocalLiquidBuffer_H2 is TestBase_UniswapV4Sta
                 pairTokenDecimals: HookPkgArgsDecimalsLib.tokenDec(address(pairToken)),
                 rawTokenDecimals: address(rawToken).code.length == 0 ? uint8(18) : HookPkgArgsDecimalsLib.tokenDec(address(rawToken)),
                 ownerOnlyLiquidity: false,
-                owner: owner
+                owner: owner,
+                rateProvider: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, address(seVault), address(pairToken)) // D60
             });
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
         hook = PkgFactory.deployHook(hookPkg, args, mineNonce);

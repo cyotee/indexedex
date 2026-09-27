@@ -10,7 +10,7 @@ import {
 
 /**
  * @title RocketPoolRETHStandardExchange_BurnPay_Test
- * @notice WETH pay ladder: sleeve → rETH.burn → InsufficientLiquidReserve.
+ * @notice WETH pay ladder: sleeve → rETH.burn → protocol revert (D34) or InsufficientLiquidReserve.
  */
 contract RocketPoolRETHStandardExchange_BurnPay_Test is TestBase_RocketPoolRETHStandardExchange {
     function test_BP1_sleeveShort_burnCovers() public {
@@ -41,9 +41,8 @@ contract RocketPoolRETHStandardExchange_BurnPay_Test is TestBase_RocketPoolRETHS
         assertEq(rocketPoolSe.liquidReserveEth(), 0);
         // no collateral
         uint256 requested = 1 ether;
-        vm.expectRevert(
-            abi.encodeWithSelector(IRocketPoolRETHStandardVault.InsufficientLiquidReserve.selector, requested, 0)
-        );
+        // D34: rETH.burn protocol revert bytes propagate when collateral is dry.
+        vm.expectRevert(bytes("collateral"));
         seOut.exchangeOut(
             IERC20(seVault),
             type(uint256).max,

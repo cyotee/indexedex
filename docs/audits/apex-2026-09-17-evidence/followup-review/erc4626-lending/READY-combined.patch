@@ -1,0 +1,1240 @@
+diff --git a/contracts/vaults/standard/erc4626/ERC4626StandardExchangeInTarget.sol b/contracts/vaults/standard/erc4626/ERC4626StandardExchangeInTarget.sol
+--- a/contracts/vaults/standard/erc4626/ERC4626StandardExchangeInTarget.sol
++++ b/contracts/vaults/standard/erc4626/ERC4626StandardExchangeInTarget.sol
+@@ -8,7 +8,9 @@
+ import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
+ import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
+ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+-import {ERC4626StandardExchangeQuoteTarget} from "contracts/vaults/standard/erc4626/ERC4626StandardExchangeQuoteTarget.sol";
++import {
++    ERC4626StandardExchangeQuoteTarget
++} from "contracts/vaults/standard/erc4626/ERC4626StandardExchangeQuoteTarget.sol";
+ 
+ /**
+  * @title ERC4626StandardExchangeInTarget
+@@ -100,8 +102,10 @@
+         if (address(tokenIn) == underlying && address(tokenOut) == address(this)) {
+             uint256 actualIn = _securePull(tokenIn, amountIn, pretransferred);
+             uint256 backingBefore = _receiptBacking();
++            // Price D22 credited input at the same native rate as the public preview.
++            // Sweeping booked cash can move that rate through protocol rounding.
++            uint256 receiptEquiv = vault.convertToShares(actualIn);
+             _investCreditedUnderlying(actualIn);
+-            uint256 receiptEquiv = vault.convertToShares(actualIn);
+             amountOut = _convertVaultDeltaToShares(receiptEquiv, backingBefore);
+             if (amountOut < minAmountOut) revert Slippage();
+             _mintWithUsageFee(recipient, amountOut);
+diff --git a/contracts/vaults/standard/erc4626/ERC4626StandardExchangeOutTarget.sol b/contracts/vaults/standard/erc4626/ERC4626StandardExchangeOutTarget.sol
+--- a/contracts/vaults/standard/erc4626/ERC4626StandardExchangeOutTarget.sol
++++ b/contracts/vaults/standard/erc4626/ERC4626StandardExchangeOutTarget.sol
+@@ -78,9 +78,10 @@
+             // Backing before this caller's credit (unbooked underlying is not in the backing).
+             uint256 backingBefore = _receiptBacking();
+             // D22/D31: precheck capacity, sweep booked reserve first, invest what fits, and
+-            // value the full credited input at the receipt's accounting rate.
++            // value the full credited input at the pre-investment accounting rate.
++            uint256 receiptEquiv = vault.convertToShares(amountIn);
+             _investCreditedUnderlying(amountIn);
+-            uint256 sharesFromDelta = _convertVaultDeltaToShares(vault.convertToShares(amountIn), backingBefore);
++            uint256 sharesFromDelta = _convertVaultDeltaToShares(receiptEquiv, backingBefore);
+             if (sharesFromDelta < amountOut) revert Slippage();
+             _mintWithUsageFee(recipient, amountOut);
+             _syncAllExpectedHoldReserves();
+diff --git a/test/foundry/spec/protocol/lending/aave/v3.6/invariant/AaveV3StataStandardExchange_Invariant.t.sol b/test/foundry/spec/protocol/lending/aave/v3.6/invariant/AaveV3StataStandardExchange_Invariant.t.sol
+--- a/test/foundry/spec/protocol/lending/aave/v3.6/invariant/AaveV3StataStandardExchange_Invariant.t.sol
++++ b/test/foundry/spec/protocol/lending/aave/v3.6/invariant/AaveV3StataStandardExchange_Invariant.t.sol
+@@ -1,47 +1,76 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
+ 
+-import {StandardExchangeAccountingHandler} from "test/foundry/spec/vaults/standard/exchange/invariant/StandardExchangeAccountingHandler.sol";
++import {
++    LendingAccountingHandler,
++    LendingAccountingToken,
++    ILendingAccountingHost
++} from "test/foundry/spec/vaults/standard/exchange/invariant/LendingAccountingHandler.sol";
++import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
++import {IFeeCollectorManager} from "contracts/interfaces/IFeeCollectorManager.sol";
++import {AaveV3StataDecimalsListing} from "contracts/test/bases/TestBase_AaveV3StataStandardExchange_Decimals.sol";
++import {
++    MockAggregator
++} from "@crane/contracts/protocols/lending/aave/v3.6/utils/mocks/oracle/CLAggregators/MockAggregator.sol";
++import {StataTokenV2} from "@crane/contracts/protocols/lending/aave/v3.6/extensions/stata-token/StataTokenV2.sol";
+ import {Test} from "forge-std/Test.sol";
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
+ import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
+ import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+-import {AaveV3StataStandardExchange_Real_Decimals} from
+-    "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol";
++import {
++    AaveV3StataStandardExchange_Real_Decimals
++} from "test/foundry/spec/protocol/lending/aave/v3.6/decimals/AaveV3StataStandardExchange_Real_Decimals.sol";
+ 
+-interface IStataInvHost {
+-    function mintBaseTo(address to, uint256 amt) external;
+-}
+-
+-contract Handler_AaveV3StataStandardExchange is StandardExchangeAccountingHandler {
+-    IStataInvHost public immutable host;
+-    constructor(IStandardExchangeIn se_, IERC20 base_, IStataInvHost host_, address a0_, address a1_, address attacker_) StandardExchangeAccountingHandler(se_, base_, IERC20(address(se_)), true, a0_, a1_, attacker_) { host = host_; }
+-    function _fund(address actor_, uint256 amount_) internal override { host.mintBaseTo(actor_, amount_); }
++contract Handler_AaveV3StataStandardExchange is LendingAccountingHandler {
++    constructor(address se_, address base_, ILendingAccountingHost host_, address a0_, address a1_, address attacker_)
++        LendingAccountingHandler(se_, base_, host_, a0_, a1_, attacker_)
++    {}
+ }
+ 
+ /// forge-config: default.invariant.runs = 256
+ /// forge-config: default.invariant.depth = 64
+ /// forge-config: default.invariant.fail-on-revert = true
+-contract AaveV3StataStandardExchange_Invariant is AaveV3StataStandardExchange_Real_Decimals, IStataInvHost {
++contract AaveV3StataStandardExchange_Invariant is AaveV3StataStandardExchange_Real_Decimals, ILendingAccountingHost {
+     Handler_AaveV3StataStandardExchange internal handler;
++    address internal constant YIELD_BORROWER = address(0xB0220);
+ 
+     function _underlyingDecimals() internal pure override returns (uint8) {
+         return 18;
+     }
+ 
+-    function mintBaseTo(address to, uint256 amt) external {
+-        _fundUnderlying(amt, to);
++    function fundBase(address to, uint256 amt) external {
++        LendingAccountingToken(realBase).mint(to, amt);
+     }
+ 
+     function setUp() public override {
+         super.setUp();
++        address asset = address(new LendingAccountingToken());
++        AaveV3StataDecimalsListing listing =
++            new AaveV3StataDecimalsListing(asset, address(new MockAggregator(int256(1e8))), report.configEngine);
++        vm.prank(roleList.marketOwner);
++        contracts.aclManager.addPoolAdmin(address(listing));
++        listing.execute();
++        address[] memory assets = new address[](1);
++        assets[0] = asset;
++        factory.createStataTokens(assets);
++        underlying = asset;
++        realBase = asset;
++        aToken = contracts.poolProxy.getReserveAToken(asset);
++        stataTokenV2 = StataTokenV2(factory.getStataToken(asset));
++        realStata = address(stataTokenV2);
++        realVault = _deployStataVault(realStata);
++        deal(tokenList.weth, YIELD_BORROWER, 1 ether);
++        vm.startPrank(YIELD_BORROWER);
++        IERC20(tokenList.weth).approve(address(contracts.poolProxy), 1 ether);
++        contracts.poolProxy.supply(tokenList.weth, 1 ether, YIELD_BORROWER, 0);
++        vm.stopPrank();
+         _setTestUsageFee(0);
+         address a0 = makeAddr("stataInv0");
+         address a1 = makeAddr("stataInv1");
+         address att = makeAddr("stataInvAttacker");
+         handler = new Handler_AaveV3StataStandardExchange(
+-            IStandardExchangeIn(realVault), IERC20(realBase), IStataInvHost(address(this)), a0, a1, att
++            realVault, realBase, ILendingAccountingHost(address(this)), a0, a1, att
+         );
+         bytes4[] memory sels = new bytes4[](1);
+         sels[0] = handler.cycle.selector;
+@@ -49,22 +78,90 @@
+         targetSelector(FuzzSelector({addr: address(handler), selectors: sels}));
+     }
+ 
++    function custodyCash() external view returns (uint256) {
++        return IERC20(realBase).balanceOf(realVault) + IERC20(realBase).balanceOf(aToken)
++            + IERC20(realBase).balanceOf(realStata) + IERC20(realBase).balanceOf(address(this))
++            + IERC20(realBase).balanceOf(YIELD_BORROWER);
++    }
++
++    function accountingState() external view returns (bytes32) {
++        return keccak256(
++            abi.encode(
++                IBasicVault(realVault).reserveOfToken(realBase),
++                IERC20(realStata).balanceOf(realVault),
++                stataTokenV2.totalAssets(),
++                IERC20(aToken).balanceOf(realStata),
++                IERC20(realBase).allowance(realVault, realStata),
++                contracts.poolProxy.getReserveNormalizedIncome(realBase),
++                IERC20(contracts.poolProxy.getReserveVariableDebtToken(realBase)).balanceOf(YIELD_BORROWER)
++            )
++        );
++    }
++
++    function accrueYield(uint256) external returns (uint256 created_) {
++        uint256 before_ = stataTokenV2.convertToAssets(IERC20(realStata).balanceOf(realVault));
++        vm.prank(YIELD_BORROWER);
++        contracts.poolProxy.borrow(realBase, 1e12, 2, 0, YIELD_BORROWER);
++        vm.warp(block.timestamp + 1 hours);
++        uint256 debt = IERC20(contracts.poolProxy.getReserveVariableDebtToken(realBase)).balanceOf(YIELD_BORROWER);
++        uint256 held = IERC20(realBase).balanceOf(YIELD_BORROWER);
++        created_ = debt > held ? debt - held : 0;
++        LendingAccountingToken(realBase).mint(YIELD_BORROWER, created_);
++        vm.startPrank(YIELD_BORROWER);
++        IERC20(realBase).approve(address(contracts.poolProxy), debt);
++        uint256 repaid = contracts.poolProxy.repay(realBase, type(uint256).max, 2, YIELD_BORROWER);
++        vm.stopPrank();
++        assertEq(repaid, debt, "full real variable debt repaid");
++        assertEq(
++            IERC20(contracts.poolProxy.getReserveVariableDebtToken(realBase)).balanceOf(YIELD_BORROWER),
++            0,
++            "yield borrower debt closed"
++        );
++        assertGt(
++            stataTokenV2.convertToAssets(IERC20(realStata).balanceOf(realVault)),
++            before_,
++            "actual lending interest reaches Stata receipt claim"
++        );
++    }
++
++    function setFee(uint256 fee_) external {
++        _setTestUsageFee(fee_);
++    }
++
++    function feeTo() external view returns (address) {
++        return address(feeCollector);
++    }
++
++    function collectFee(address to_, uint256 amount_) external {
++        vm.prank(owner);
++        IFeeCollectorManager(address(feeCollector)).pullFee(IERC20(realVault), amount_, to_);
++        IFeeCollectorManager(address(feeCollector)).syncReserve(IERC20(realVault));
++    }
++
+     function invariant_APEX_accounting() public view {
+         handler.assertAccounting();
+-        uint256 backing = stataTokenV2.convertToAssets(IERC20(realStata).balanceOf(realVault)) + IERC20(realBase).balanceOf(realVault);
++        handler.assertLendingAccounting();
++        uint256 backing = stataTokenV2.convertToAssets(IERC20(realStata).balanceOf(realVault))
++            + IERC20(realBase).balanceOf(realVault);
+         uint256 supply = IERC20(realVault).totalSupply();
+-        uint256 claim = supply == 0 ? 0 : IStandardExchangeIn(realVault).previewExchangeIn(IERC20(realVault), supply, IERC20(realBase));
++        uint256 claim = supply == 0
++            ? 0
++            : IStandardExchangeIn(realVault).previewExchangeIn(IERC20(realVault), supply, IERC20(realBase));
+         assertLe(claim, backing, "all Stata shares backed by protocol receipts and local principal");
+     }
+ 
+     function afterInvariant() public view {
+         assertGe(handler.cycles(), 4, "randomized campaign reaches funded actions");
+-        for (uint256 i; i < 3; ++i) assertGt(handler.actorCycles(handler.actors(i)), 0, "each honest actor participated");
++        for (uint256 i; i < 3; ++i) {
++            assertGt(handler.actorCycles(handler.actors(i)), 0, "each honest actor participated");
++        }
+         invariant_APEX_accounting();
+     }
+ 
+     function test_APEX_deterministicLifecycle() public {
+-        for (uint256 i; i < 4; ++i) handler.cycle(1 ether + i, 1e14 + i);
++        for (uint256 i; i < 4; ++i) {
++            handler.cycle(1 ether + i, 1e14 + i);
++        }
+         assertEq(handler.ghost_out(), 4, "four nonzero exits");
+         afterInvariant();
+     }
+diff --git a/test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BalancerV3SinglePoolStandardExchange_Invariant.t.sol b/test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BalancerV3SinglePoolStandardExchange_Invariant.t.sol
+--- a/test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BalancerV3SinglePoolStandardExchange_Invariant.t.sol
++++ b/test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BalancerV3SinglePoolStandardExchange_Invariant.t.sol
+@@ -1,10 +1,13 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
+ 
+-import {StandardExchangeAccountingHandler} from "test/foundry/spec/vaults/standard/exchange/invariant/StandardExchangeAccountingHandler.sol";
++import {
++    StandardExchangeAccountingHandler
++} from "test/foundry/spec/vaults/standard/exchange/invariant/StandardExchangeAccountingHandler.sol";
+ import {Test} from "forge-std/Test.sol";
+ import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
++import {IRouterCommon} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IRouterCommon.sol";
+ import {IRouter} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IRouter.sol";
+ import {InitDevService} from "@crane/contracts/InitDevService.sol";
+ import {ERC20TestToken} from "@crane/contracts/protocols/dexes/balancer/v3/test/mocks/ERC20TestToken.sol";
+@@ -16,10 +19,59 @@
+ import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
+ import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+ 
++interface ISinglePoolAccountingSource {
++    function router() external view returns (IRouter);
++}
++
+ contract Handler_BalancerV3SinglePoolSE is StandardExchangeAccountingHandler {
+-    
+-    constructor(IStandardExchangeIn se_, ERC20TestToken base_, IERC20 share_, address a0_, address a1_, address attacker_) StandardExchangeAccountingHandler(se_, IERC20(address(base_)), share_, true, a0_, a1_, attacker_) {  }
+-    function _fund(address actor_, uint256 amount_) internal override { ERC20TestToken(address(base)).mint(actor_, amount_); }
++    address public immutable protocolCustody;
++    uint256 public immutable initialCash;
++    uint256 public funded;
++
++    constructor(
++        IStandardExchangeIn se_,
++        ERC20TestToken base_,
++        IERC20 share_,
++        address a0_,
++        address a1_,
++        address attacker_
++    ) StandardExchangeAccountingHandler(se_, IERC20(address(base_)), share_, true, a0_, a1_, attacker_) {
++        protocolCustody = address(IRouterCommon(address(ISinglePoolAccountingSource(address(se_)).router())).getVault());
++        initialCash = _assetCash();
++    }
++
++    function _fund(address actor_, uint256 amount_) internal override {
++        uint256 before_ = base.balanceOf(actor_);
++        ERC20TestToken(address(base)).mint(actor_, amount_);
++        assertEq(base.balanceOf(actor_) - before_, amount_, "funding preserves prior wallet assets");
++        funded += amount_;
++    }
++
++    function _assetCash() internal view returns (uint256 cash) {
++        cash = base.balanceOf(protocolCustody) + base.balanceOf(address(seIn)) + base.balanceOf(address(this))
++            + base.balanceOf(address(integrator)) + base.balanceOf(attacker);
++        for (uint256 i; i < 3; ++i) {
++            cash += base.balanceOf(actors[i]);
++        }
++    }
++
++    function _state() internal view override returns (bytes32) {
++        return keccak256(
++            abi.encode(
++                super._state(),
++                base.balanceOf(protocolCustody),
++                vm.load(address(seIn), keccak256(abi.encode(address(base), uint256(2)))),
++                vm.load(address(seIn), keccak256(abi.encode(address(share), uint256(2))))
++            )
++        );
++    }
++
++    function assertAssetConservation() external view {
++        assertEq(
++            _assetCash(), initialCash + funded, "all native input principal conserved across adapter, pool and actors"
++        );
++        assertEq(base.balanceOf(attacker), 0, "EOA attacker retains no principal");
++    }
+ }
+ 
+ /// forge-config: default.invariant.runs = 256
+@@ -59,9 +111,7 @@
+         address a0 = makeAddr("spInv0");
+         address a1 = makeAddr("spInv1");
+         address att = makeAddr("spInvAttacker");
+-        handler = new Handler_BalancerV3SinglePoolSE(
+-            IStandardExchangeIn(address(adapter)), dai, bpt, a0, a1, att
+-        );
++        handler = new Handler_BalancerV3SinglePoolSE(IStandardExchangeIn(address(adapter)), dai, bpt, a0, a1, att);
+         bytes4[] memory sels = new bytes4[](1);
+         sels[0] = handler.cycle.selector;
+         targetContract(address(handler));
+@@ -70,17 +120,22 @@
+ 
+     function invariant_APEX_accounting() public view {
+         handler.assertAccounting();
++        handler.assertAssetConservation();
+         assertEq(bpt.balanceOf(address(adapter)), 0, "adapter retains no caller BPT");
+     }
+ 
+     function afterInvariant() public view {
+         assertGe(handler.cycles(), 4, "randomized campaign reaches funded actions");
+-        for (uint256 i; i < 3; ++i) assertGt(handler.actorCycles(handler.actors(i)), 0, "each honest actor participated");
++        for (uint256 i; i < 3; ++i) {
++            assertGt(handler.actorCycles(handler.actors(i)), 0, "each honest actor participated");
++        }
+         invariant_APEX_accounting();
+     }
+ 
+     function test_APEX_deterministicLifecycle() public {
+-        for (uint256 i; i < 4; ++i) handler.cycle(1 ether + i, 1e14 + i);
++        for (uint256 i; i < 4; ++i) {
++            handler.cycle(1 ether + i, 1e14 + i);
++        }
+         assertEq(handler.ghost_out(), 4, "four nonzero exits");
+         afterInvariant();
+     }
+diff --git a/test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BalancerV3SinglePoolStandardExchange_PoolActionsInvariant.t.sol b/test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BalancerV3SinglePoolStandardExchange_PoolActionsInvariant.t.sol
+--- a/test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BalancerV3SinglePoolStandardExchange_PoolActionsInvariant.t.sol
++++ b/test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BalancerV3SinglePoolStandardExchange_PoolActionsInvariant.t.sol
+@@ -11,10 +11,14 @@
+ import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
+ import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+ import {InitDevService} from "@crane/contracts/InitDevService.sol";
+-import {TestBase_BalancerV3_8020WeightedPool} from "@crane/contracts/protocols/dexes/balancer/v3/test/bases/TestBase_BalancerV3_8020WeightedPool.sol";
++import {
++    TestBase_BalancerV3_8020WeightedPool
++} from "@crane/contracts/protocols/dexes/balancer/v3/test/bases/TestBase_BalancerV3_8020WeightedPool.sol";
+ import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
+ import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+-import {Handler_BalancerV3SinglePoolSE} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BalancerV3SinglePoolStandardExchange_Invariant.t.sol";
++import {
++    Handler_BalancerV3SinglePoolSE
++} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BalancerV3SinglePoolStandardExchange_Invariant.t.sol";
+ 
+ /// @dev External callback-token dependency; the adapter and weighted pool remain production code.
+ contract SinglePoolCallbackToken is ERC20 {
+@@ -22,8 +26,16 @@
+     bytes internal payload;
+     bool internal entered;
+     constructor() ERC20("Callback DAI", "cDAI") {}
+-    function mint(address recipient, uint256 amount) external { _mint(recipient, amount); }
+-    function arm(address target_, bytes memory payload_) external { target = target_; payload = payload_; }
++
++    function mint(address recipient, uint256 amount) external {
++        _mint(recipient, amount);
++    }
++
++    function arm(address target_, bytes memory payload_) external {
++        target = target_;
++        payload = payload_;
++    }
++
+     function transferFrom(address from, address to, uint256 amount) public override returns (bool) {
+         bool result = super.transferFrom(from, to, amount);
+         if (!entered && target != address(0) && msg.sender == target && to == target) {
+@@ -51,12 +63,28 @@
+     uint256 public swaps;
+     uint256 public callbackRejections;
+     uint256 public controls;
++    uint256[2] public initialCash;
++    uint256[2] public supplementaryFunding;
+     mapping(address => uint256) public actorCycles;
+ 
+-    constructor(Handler_BalancerV3SinglePoolSE core_, IStandardExchange adapter_, SinglePoolCallbackToken base_,
+-        IERC20 other_, IERC20 bpt_, IRouter router_, IVault vault_, IAllowanceTransfer permit2_) {
+-        core = core_; adapter = adapter_; base = base_; other = other_; bpt = bpt_;
+-        router = router_; vault = vault_; permit2 = permit2_;
++    constructor(
++        Handler_BalancerV3SinglePoolSE core_,
++        IStandardExchange adapter_,
++        SinglePoolCallbackToken base_,
++        IERC20 other_,
++        IERC20 bpt_,
++        IRouter router_,
++        IVault vault_,
++        IAllowanceTransfer permit2_
++    ) {
++        core = core_;
++        adapter = adapter_;
++        base = base_;
++        other = other_;
++        bpt = bpt_;
++        router = router_;
++        vault = vault_;
++        permit2 = permit2_;
+         for (uint256 i; i < 3; ++i) {
+             vm.startPrank(traders[i]);
+             base_.approve(address(permit2_), type(uint256).max);
+@@ -65,6 +93,8 @@
+             permit2_.approve(address(other_), address(router_), type(uint160).max, type(uint48).max);
+             vm.stopPrank();
+         }
++        initialCash[0] = _cash(IERC20(address(base)));
++        initialCash[1] = _cash(other);
+     }
+ 
+     function cycle(uint256 amountSeed, uint256 tradeSeed) external {
+@@ -81,13 +111,13 @@
+     function _trade(address actor, uint256 amount, bool reverse) internal {
+         IERC20 input = reverse ? other : IERC20(address(base));
+         IERC20 output = reverse ? IERC20(address(base)) : other;
+-        if (reverse) ERC20TestToken(address(other)).mint(actor, amount);
+-        else base.mint(actor, amount);
++        _fund(actor, amount, reverse);
+         uint256 beforeInput = input.balanceOf(actor);
+         uint256 beforeOutput = output.balanceOf(actor);
+         uint256 supply = bpt.totalSupply();
+         vm.prank(actor);
+-        uint256 paid = router.swapSingleTokenExactIn(address(bpt), input, output, amount, 1, block.timestamp + 1 hours, false, "");
++        uint256 paid =
++            router.swapSingleTokenExactIn(address(bpt), input, output, amount, 1, block.timestamp + 1 hours, false, "");
+         assertGt(paid, 0, "real weighted pool trade pays");
+         assertEq(beforeInput - input.balanceOf(actor), amount, "trade input debited once");
+         assertEq(output.balanceOf(actor) - beforeOutput, paid, "trade output delivered once");
+@@ -96,22 +126,35 @@
+     }
+ 
+     function _callbackRollback(address actor, uint256 amount) internal {
+-        base.mint(actor, amount + 1e8);
++        _fund(actor, amount + 1e8, false);
+         vm.startPrank(actor);
+         base.transfer(address(adapter), 1e8);
+         base.approve(address(adapter), amount);
+         vm.stopPrank();
+         // The callback consumes the just-delivered principal through the real pool. The outer
+         // exact-delta check must reject and roll back both operations, without assuming a lock.
+-        base.arm(address(adapter), abi.encodeCall(IStandardExchangeIn.exchangeIn,
+-            (IERC20(address(base)), amount, bpt, 0, attackRecipient, true, block.timestamp + 1 hours)));
++        base.arm(
++            address(adapter),
++            abi.encodeCall(
++                IStandardExchangeIn.exchangeIn,
++                (IERC20(address(base)), amount, bpt, 0, attackRecipient, true, block.timestamp + 1 hours)
++            )
++        );
+         bytes32 beforeState = _state();
+         vm.prank(actor);
+-        (bool ok, bytes memory reason) = address(adapter).call(abi.encodeCall(IStandardExchangeIn.exchangeIn,
+-            (IERC20(address(base)), amount, bpt, 0, actor, false, block.timestamp + 1 hours)));
++        (bool ok, bytes memory reason) = address(adapter)
++            .call(
++                abi.encodeCall(
++                    IStandardExchangeIn.exchangeIn,
++                    (IERC20(address(base)), amount, bpt, 0, actor, false, block.timestamp + 1 hours)
++                )
++            );
+         assertFalse(ok, "callback consumption rejects outer accounting");
+-        assertEq(reason, abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, amount, uint256(0)),
+-            "actual exact-delta boundary rejects nested consumption");
++        assertEq(
++            reason,
++            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, amount, uint256(0)),
++            "actual exact-delta boundary rejects nested consumption"
++        );
+         assertEq(_state(), beforeState, "callback and outer money operations roll back completely");
+         ++callbackRejections;
+         base.arm(address(0), "");
+@@ -121,13 +164,15 @@
+         uint256 supply = bpt.totalSupply();
+         uint256 beforeBpt = bpt.balanceOf(actor);
+         vm.prank(actor);
+-        uint256 issued = adapter.exchangeIn(IERC20(address(base)), amount, bpt, 1, actor, false, block.timestamp + 1 hours);
++        uint256 issued =
++            adapter.exchangeIn(IERC20(address(base)), amount, bpt, 1, actor, false, block.timestamp + 1 hours);
+         assertGt(issued, 0, "callback-disabled funded control succeeds");
+         assertEq(beforeBase - base.balanceOf(actor), amount, "control exact debit");
+         assertEq(bpt.balanceOf(actor) - beforeBpt, issued, "control exact issuance");
+         vm.startPrank(actor);
+         bpt.approve(address(adapter), issued);
+-        uint256 paid = adapter.exchangeIn(bpt, issued, IERC20(address(base)), 1, actor, false, block.timestamp + 1 hours);
++        uint256 paid =
++            adapter.exchangeIn(bpt, issued, IERC20(address(base)), 1, actor, false, block.timestamp + 1 hours);
+         vm.stopPrank();
+         assertGt(paid, 0, "control exit pays");
+         assertEq(base.balanceOf(actor), beforeBase - amount + paid, "control complete cash accounting");
+@@ -136,37 +181,83 @@
+         ++controls;
+     }
+ 
++    function _fund(address actor, uint256 amount, bool otherToken) internal {
++        IERC20 token = otherToken ? other : IERC20(address(base));
++        uint256 before_ = token.balanceOf(actor);
++        if (otherToken) ERC20TestToken(address(other)).mint(actor, amount);
++        else base.mint(actor, amount);
++        assertEq(token.balanceOf(actor) - before_, amount, "supplemental funding preserves actor balance");
++        supplementaryFunding[otherToken ? 1 : 0] += amount;
++    }
++
++    function _cash(IERC20 token) internal view returns (uint256 cash) {
++        cash = token.balanceOf(address(vault)) + token.balanceOf(address(router)) + token.balanceOf(address(adapter))
++            + token.balanceOf(address(core)) + token.balanceOf(address(core.integrator()))
++            + token.balanceOf(core.attacker()) + token.balanceOf(address(this)) + token.balanceOf(attackRecipient)
++            + token.balanceOf(address(base));
++        for (uint256 i; i < 3; ++i) {
++            cash += token.balanceOf(core.actors(i)) + token.balanceOf(traders[i]);
++        }
++    }
++
+     function _state() internal view returns (bytes32 state) {
+         (,, uint256[] memory raw, uint256[] memory live) = vault.getPoolTokenInfo(address(bpt));
+         state = keccak256(abi.encode(raw, live));
+         for (uint256 i; i < 3; ++i) {
+             IERC20 token = i == 0 ? IERC20(address(base)) : i == 1 ? other : bpt;
+-            state = keccak256(abi.encode(state, token.totalSupply(), token.balanceOf(address(adapter)),
+-                token.balanceOf(address(vault)), token.balanceOf(address(router)), token.balanceOf(attackRecipient),
+-                token.balanceOf(address(base)), token.allowance(address(adapter), address(permit2)),
+-                token.allowance(address(adapter), address(router))));
+-            (uint160 permitAmount, uint48 expiration, uint48 nonce) = permit2.allowance(address(adapter), address(token), address(router));
++            state = keccak256(
++                abi.encode(
++                    state,
++                    token.totalSupply(),
++                    token.balanceOf(address(adapter)),
++                    token.balanceOf(address(vault)),
++                    token.balanceOf(address(router)),
++                    token.balanceOf(attackRecipient),
++                    token.balanceOf(address(base)),
++                    token.allowance(address(adapter), address(permit2)),
++                    token.allowance(address(adapter), address(router))
++                )
++            );
++            (uint160 permitAmount, uint48 expiration, uint48 nonce) =
++                permit2.allowance(address(adapter), address(token), address(router));
+             // Production adapter storage: dynamic token list slot 0, index mapping slot 1,
+             // native reserve mapping slot 2. Read actual books without replacing or mutating SUT.
+             bytes32 booked = vm.load(address(adapter), keccak256(abi.encode(address(token), uint256(2))));
+             state = keccak256(abi.encode(state, permitAmount, expiration, nonce, booked));
+-            for (uint256 j; j < 3; ++j) state = keccak256(abi.encode(state, token.balanceOf(traders[j]),
+-                token.balanceOf(core.actors(j)), token.allowance(traders[j], address(adapter))));
++            for (uint256 j; j < 3; ++j) {
++                state = keccak256(
++                    abi.encode(
++                        state,
++                        token.balanceOf(traders[j]),
++                        token.balanceOf(core.actors(j)),
++                        token.allowance(traders[j], address(adapter))
++                    )
++                );
++            }
+         }
+     }
+ 
+     function assertAccounting() public view {
+         core.assertAccounting();
++        assertEq(
++            _cash(IERC20(address(base))),
++            initialCash[0] + core.funded() + supplementaryFunding[0],
++            "native base conservation with real pool trades and callback rollback"
++        );
++        assertEq(_cash(other), initialCash[1] + supplementaryFunding[1], "other native pool token conservation");
+         assertEq(swaps, cycles, "every cycle trades the actual pool");
+         assertEq(callbackRejections, cycles, "every cycle reaches callback rollback");
+         assertEq(controls, cycles, "every cycle reaches callback-disabled funded control");
+         assertEq(bpt.balanceOf(attackRecipient), 0, "callback gains no shares");
+         assertEq(bpt.balanceOf(address(adapter)), 0, "no retained BPT");
+     }
++
+     function assertCampaign() external view {
+         assertAccounting();
+         assertGe(cycles, 4, "funded randomized actions reached");
+-        for (uint256 i; i < 3; ++i) assertGt(actorCycles[traders[i]], 0, "all traders participated");
++        for (uint256 i; i < 3; ++i) {
++            assertGt(actorCycles[traders[i]], 0, "all traders participated");
++        }
+     }
+ }
+ 
+@@ -178,11 +269,13 @@
+     IStandardExchange internal adapter;
+     IERC20 internal bpt;
+     Handler_SinglePoolActions internal actions;
++
+     function createDaiUsdc8020WeightedPool() internal override returns (address newPool, bytes memory poolArgs) {
+         dai = ERC20TestToken(address(new SinglePoolCallbackToken()));
+         _approveForAllUsers(IERC20(address(dai)));
+         return super.createDaiUsdc8020WeightedPool();
+     }
++
+     function setUp() public override {
+         super.setUp();
+         if (address(create3Factory) == address(0)) {
+@@ -194,23 +287,52 @@
+         poolTokens[0] = IERC20(daiUsdc8020WeightedPoolTokens[0]);
+         poolTokens[1] = IERC20(daiUsdc8020WeightedPoolTokens[1]);
+         bpt = IERC20(address(daiUsdc8020WeightedPool));
+-        adapter = IStandardExchange(create3Factory.create3WithArgs(
+-            ArtifactCreationCode.creationCode(create3Factory,
+-                "contracts/protocols/dexes/balancer/v3/pools/BalancerV3SinglePoolStandardExchange.sol:BalancerV3SinglePoolStandardExchange"),
+-            abi.encode(IRouter(address(router)), address(bpt), bpt, poolTokens), keccak256("SinglePoolActionsInvariant")));
+-        handler = new Handler_BalancerV3SinglePoolSE(IStandardExchangeIn(address(adapter)), dai, bpt,
+-            makeAddr("actionsCore0"), makeAddr("actionsCore1"), makeAddr("actionsCoreAttacker"));
+-        actions = new Handler_SinglePoolActions(handler, adapter, SinglePoolCallbackToken(address(dai)),
+-            IERC20(address(usdc)), bpt, IRouter(address(router)), IVault(address(vault)), IAllowanceTransfer(address(permit2)));
++        adapter = IStandardExchange(
++            create3Factory.create3WithArgs(
++                ArtifactCreationCode.creationCode(
++                    create3Factory,
++                    "contracts/protocols/dexes/balancer/v3/pools/BalancerV3SinglePoolStandardExchange.sol:BalancerV3SinglePoolStandardExchange"
++                ),
++                abi.encode(IRouter(address(router)), address(bpt), bpt, poolTokens),
++                keccak256("SinglePoolActionsInvariant")
++            )
++        );
++        handler = new Handler_BalancerV3SinglePoolSE(
++            IStandardExchangeIn(address(adapter)),
++            dai,
++            bpt,
++            makeAddr("actionsCore0"),
++            makeAddr("actionsCore1"),
++            makeAddr("actionsCoreAttacker")
++        );
++        actions = new Handler_SinglePoolActions(
++            handler,
++            adapter,
++            SinglePoolCallbackToken(address(dai)),
++            IERC20(address(usdc)),
++            bpt,
++            IRouter(address(router)),
++            IVault(address(vault)),
++            IAllowanceTransfer(address(permit2))
++        );
+         bytes4[] memory selectors = new bytes4[](1);
+         selectors[0] = actions.cycle.selector;
+         targetContract(address(actions));
+         targetSelector(FuzzSelector({addr: address(actions), selectors: selectors}));
+     }
+-    function afterInvariant() public view { actions.assertCampaign(); }
+-    function invariant_poolActionsAccounting() public view { actions.assertAccounting(); }
++
++    function afterInvariant() public view {
++        actions.assertCampaign();
++    }
++
++    function invariant_poolActionsAccounting() public view {
++        actions.assertAccounting();
++    }
++
+     function test_deterministicPoolActionsLifecycle() public {
+-        for (uint256 i; i < 6; ++i) actions.cycle(1e16 + i, 1e13 + i);
++        for (uint256 i; i < 6; ++i) {
++            actions.cycle(1e16 + i, 1e13 + i);
++        }
+         actions.assertCampaign();
+     }
+ }
+diff --git a/test/foundry/spec/vaults/standard/erc4626/ERC4626StandardExchange_CreditPricing.t.sol b/test/foundry/spec/vaults/standard/erc4626/ERC4626StandardExchange_CreditPricing.t.sol
+new file mode 100644
+--- /dev/null
++++ b/test/foundry/spec/vaults/standard/erc4626/ERC4626StandardExchange_CreditPricing.t.sol
+@@ -0,0 +1,152 @@
++// SPDX-License-Identifier: BSL-1.1
++pragma solidity ^0.8.0;
++
++import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
++import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
++import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
++import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
++import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
++import {TestBase_ERC4626StandardExchange} from "contracts/test/bases/TestBase_ERC4626StandardExchange.sol";
++import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
++import {CappedPausableERC4626} from "contracts/test/stubs/CappedPausableERC4626.sol";
++import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
++import {ERC4626StandardExchangeCommon} from "contracts/vaults/standard/erc4626/ERC4626StandardExchangeCommon.sol";
++
++/// @dev Production SE with a native ERC4626 yield/capacity dependency. No vault storage writes.
++contract ERC4626StandardExchange_CreditPricing is TestBase_ERC4626StandardExchange {
++    SimpleMintableERC20 internal asset;
++    CappedPausableERC4626 internal protocol;
++    AtomicPretransferCaller internal atomic;
++    address internal se;
++    address internal alice = address(0xA11CE);
++    address internal bob = address(0xB0B);
++
++    function setUp() public override {
++        super.setUp();
++        asset = new SimpleMintableERC20("Asset", "AST");
++        protocol = new CappedPausableERC4626(asset);
++        se = _deployERC4626SE(address(protocol));
++        atomic = new AtomicPretransferCaller();
++        vm.startPrank(owner);
++        IVaultFeeOracleManager(address(indexedexManager)).setDefaultUsageFee(0);
++        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(se, 0);
++        vm.stopPrank();
++        asset.mint(alice, 6);
++        asset.mint(bob, 20);
++        vm.startPrank(alice);
++        asset.approve(se, 6);
++        IStandardExchangeIn(se).exchangeIn(IERC20(address(asset)), 3, IERC20(se), 3, alice, false, block.timestamp);
++        vm.stopPrank();
++        asset.mint(address(this), 1);
++        asset.approve(address(protocol), 1);
++        protocol.simulateYield(1);
++        protocol.setPaused(true);
++        vm.prank(alice);
++        assertEq(
++            IStandardExchangeIn(se).exchangeIn(IERC20(address(asset)), 3, IERC20(se), 2, alice, false, block.timestamp),
++            2
++        );
++        protocol.setPaused(false);
++        vm.startPrank(bob);
++        asset.approve(se, 20);
++        asset.approve(address(atomic), 20);
++        vm.stopPrank();
++        assertEq(protocol.totalAssets(), 4);
++        assertEq(protocol.totalSupply(), 3);
++        assertEq(IERC20(se).totalSupply(), 5);
++        assertEq(IBasicVault(se).reserveOfToken(address(asset)), 3);
++    }
++
++    function _assertCustody(uint256 refund_) internal view {
++        assertEq(IERC20(se).balanceOf(alice), 5, "prior shares unchanged");
++        assertEq(IERC20(se).balanceOf(bob), 3, "caller receives pre-investment quote");
++        assertEq(IERC20(se).totalSupply(), 8);
++        assertEq(protocol.totalAssets(), 11, "existing3 local plus caller4 are invested");
++        assertEq(protocol.balanceOf(se), 7, "sweep and caller each mint2 native receipts");
++        assertEq(asset.balanceOf(se), 0);
++        assertEq(IBasicVault(se).reserveOfToken(address(asset)), 0);
++        assertEq(IBasicVault(se).reserveOfToken(address(protocol)), 7);
++        assertEq(asset.balanceOf(address(atomic)), refund_);
++        assertEq(asset.balanceOf(bob) + refund_, 16, "only caller's4 assets spent");
++        assertEq(
++            asset.balanceOf(alice) + asset.balanceOf(bob) + asset.balanceOf(se) + asset.balanceOf(address(protocol))
++                + asset.balanceOf(address(atomic)),
++            27,
++            "native asset conservation"
++        );
++        uint256 allClaim = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), 8, IERC20(address(asset)));
++        assertEq(allClaim, 11, "issued shares remain fully backed");
++    }
++
++    function _exactIn(bool prepaid_) internal {
++        uint256 quoted_ = IStandardExchangeIn(se).previewExchangeIn(IERC20(address(asset)), 4, IERC20(se));
++        assertEq(quoted_, 3, "4 assets at pre-investment3/4 native rate");
++        uint256 issued_;
++        if (prepaid_) {
++            issued_ = abi.decode(
++                atomic.consumePretransfer(
++                    IERC20(address(asset)),
++                    bob,
++                    se,
++                    4,
++                    abi.encodeCall(
++                        IStandardExchangeIn.exchangeIn,
++                        (IERC20(address(asset)), 4, IERC20(se), quoted_, bob, true, block.timestamp)
++                    )
++                ),
++                (uint256)
++            );
++        } else {
++            vm.prank(bob);
++            issued_ = IStandardExchangeIn(se)
++                .exchangeIn(IERC20(address(asset)), 4, IERC20(se), quoted_, bob, false, block.timestamp);
++        }
++        assertEq(issued_, quoted_);
++        assertEq(protocol.convertToShares(4), 2, "post-investment conversion differs and must not reprice credit");
++        _assertCustody(0);
++    }
++
++    function _exactOut(bool prepaid_) internal {
++        uint256 quoted_ = IStandardExchangeOut(se).previewExchangeOut(IERC20(address(asset)), IERC20(se), 3);
++        assertEq(quoted_, 4);
++        uint256 paid_;
++        if (prepaid_) {
++            paid_ = abi.decode(
++                atomic.consumePretransfer(
++                    IERC20(address(asset)),
++                    bob,
++                    se,
++                    7,
++                    abi.encodeCall(
++                        IStandardExchangeOut.exchangeOut,
++                        (IERC20(address(asset)), 7, IERC20(se), 3, bob, true, block.timestamp)
++                    )
++                ),
++                (uint256)
++            );
++        } else {
++            vm.prank(bob);
++            paid_ = IStandardExchangeOut(se)
++                .exchangeOut(IERC20(address(asset)), quoted_, IERC20(se), 3, bob, false, block.timestamp);
++        }
++        assertEq(paid_, quoted_);
++        assertEq(protocol.convertToShares(paid_), 2, "native conversion changed during the sweep");
++        _assertCustody(prepaid_ ? 3 : 0);
++    }
++
++    function test_APEX_sweepExactInPullPricesCreditBeforeInvestment() public {
++        _exactIn(false);
++    }
++
++    function test_APEX_sweepExactInPrepaidPricesCreditBeforeInvestment() public {
++        _exactIn(true);
++    }
++
++    function test_APEX_sweepExactOutPullPricesCreditBeforeInvestment() public {
++        _exactOut(false);
++    }
++
++    function test_APEX_sweepExactOutPrepaidPricesCreditBeforeInvestment() public {
++        _exactOut(true);
++    }
++}
+diff --git a/test/foundry/spec/vaults/standard/erc4626/invariant/ERC4626StandardExchange_Invariant.t.sol b/test/foundry/spec/vaults/standard/erc4626/invariant/ERC4626StandardExchange_Invariant.t.sol
+--- a/test/foundry/spec/vaults/standard/erc4626/invariant/ERC4626StandardExchange_Invariant.t.sol
++++ b/test/foundry/spec/vaults/standard/erc4626/invariant/ERC4626StandardExchange_Invariant.t.sol
+@@ -1,7 +1,13 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
+ 
+-import {StandardExchangeAccountingHandler} from "test/foundry/spec/vaults/standard/exchange/invariant/StandardExchangeAccountingHandler.sol";
++import {
++    LendingAccountingHandler,
++    LendingAccountingToken,
++    ILendingAccountingHost
++} from "test/foundry/spec/vaults/standard/exchange/invariant/LendingAccountingHandler.sol";
++import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
++import {IFeeCollectorManager} from "contracts/interfaces/IFeeCollectorManager.sol";
+ import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
+ import {Test} from "forge-std/Test.sol";
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+@@ -11,16 +17,17 @@
+ import {TestBase_ERC4626StandardExchange} from "contracts/test/bases/TestBase_ERC4626StandardExchange.sol";
+ import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
+ import {SimpleYieldERC4626} from "contracts/test/stubs/SimpleYieldERC4626.sol";
+-contract Handler_ERC4626StandardExchange is StandardExchangeAccountingHandler {
+-    
+-    constructor(IStandardExchangeIn se_, IStandardExchangeOut, SimpleMintableERC20 base_, address a0_, address a1_, address attacker_) StandardExchangeAccountingHandler(se_, IERC20(address(base_)), IERC20(address(se_)), true, a0_, a1_, attacker_) {  }
+-    function _fund(address actor_, uint256 amount_) internal override { SimpleMintableERC20(address(base)).mint(actor_, amount_); }
++
++contract Handler_ERC4626StandardExchange is LendingAccountingHandler {
++    constructor(address se_, address base_, ILendingAccountingHost host_, address a0_, address a1_, address attacker_)
++        LendingAccountingHandler(se_, base_, host_, a0_, a1_, attacker_)
++    {}
+ }
+ 
+ /// forge-config: default.invariant.runs = 256
+ /// forge-config: default.invariant.depth = 64
+ /// forge-config: default.invariant.fail-on-revert = true
+-contract ERC4626StandardExchange_Invariant is TestBase_ERC4626StandardExchange {
++contract ERC4626StandardExchange_Invariant is TestBase_ERC4626StandardExchange, ILendingAccountingHost {
+     Handler_ERC4626StandardExchange internal handler;
+     SimpleMintableERC20 internal underlying;
+     SimpleYieldERC4626 internal protocolVault;
+@@ -28,7 +35,7 @@
+ 
+     function setUp() public override {
+         TestBase_ERC4626StandardExchange.setUp();
+-        underlying = new SimpleMintableERC20("Underlying", "UND");
++        underlying = SimpleMintableERC20(address(new LendingAccountingToken()));
+         protocolVault = new SimpleYieldERC4626(underlying);
+         se = _deployERC4626SE(address(protocolVault));
+         vm.startPrank(owner);
+@@ -39,7 +46,7 @@
+         address a1 = makeAddr("erc4626Inv1");
+         address att = makeAddr("erc4626Attacker");
+         handler = new Handler_ERC4626StandardExchange(
+-            IStandardExchangeIn(se), IStandardExchangeOut(se), underlying, a0, a1, att
++            se, address(underlying), ILendingAccountingHost(address(this)), a0, a1, att
+         );
+         bytes4[] memory sels = new bytes4[](1);
+         sels[0] = handler.cycle.selector;
+@@ -47,23 +54,113 @@
+         targetSelector(FuzzSelector({addr: address(handler), selectors: sels}));
+     }
+ 
++    function fundBase(address to_, uint256 amount_) external {
++        underlying.mint(to_, amount_);
++    }
++
++    function custodyCash() public view returns (uint256) {
++        return
++            underlying.balanceOf(se) + underlying.balanceOf(address(protocolVault))
++                + underlying.balanceOf(address(this));
++    }
++
++    function accountingState() external view returns (bytes32) {
++        return keccak256(
++            abi.encode(
++                IBasicVault(se).reserveOfToken(address(underlying)),
++                protocolVault.balanceOf(se),
++                protocolVault.totalAssets(),
++                protocolVault.totalSupply(),
++                underlying.allowance(se, address(protocolVault)),
++                custodyCash()
++            )
++        );
++    }
++
++    function accrueYield(uint256 amount_) external returns (uint256) {
++        uint256 before_ = protocolVault.convertToAssets(protocolVault.balanceOf(se));
++        underlying.mint(address(this), amount_);
++        underlying.approve(address(protocolVault), amount_);
++        protocolVault.simulateYield(amount_);
++        assertGt(
++            protocolVault.convertToAssets(protocolVault.balanceOf(se)),
++            before_,
++            "real protocol yield increases SE receipt claim"
++        );
++        return amount_;
++    }
++
++    function setFee(uint256 fee_) external {
++        vm.startPrank(owner);
++        IVaultFeeOracleManager(address(indexedexManager)).setDefaultUsageFee(fee_);
++        IVaultFeeOracleManager(address(indexedexManager)).setUsageFeeOfVault(se, fee_);
++        vm.stopPrank();
++    }
++
++    function feeTo() external view returns (address) {
++        return address(feeCollector);
++    }
++
++    function collectFee(address to_, uint256 amount_) external {
++        vm.prank(owner);
++        IFeeCollectorManager(address(feeCollector)).pullFee(IERC20(se), amount_, to_);
++        IFeeCollectorManager(address(feeCollector)).syncReserve(IERC20(se));
++    }
++
+     function invariant_APEX_accounting() public view {
+         handler.assertAccounting();
++        handler.assertLendingAccounting();
+         uint256 backing = protocolVault.convertToAssets(protocolVault.balanceOf(se)) + underlying.balanceOf(se);
+         uint256 supply = IERC20(se).totalSupply();
+-        uint256 claim = supply == 0 ? 0 : IStandardExchangeIn(se).previewExchangeIn(IERC20(se), supply, IERC20(address(underlying)));
++        uint256 claim = supply == 0
++            ? 0
++            : IStandardExchangeIn(se).previewExchangeIn(IERC20(se), supply, IERC20(address(underlying)));
+         assertLe(claim, backing, "all shares backed by local assets and protocol receipts");
+     }
+ 
+     function afterInvariant() public view {
+         assertGe(handler.cycles(), 4, "randomized campaign reaches funded actions");
+-        for (uint256 i; i < 3; ++i) assertGt(handler.actorCycles(handler.actors(i)), 0, "each honest actor participated");
++        for (uint256 i; i < 3; ++i) {
++            assertGt(handler.actorCycles(handler.actors(i)), 0, "each honest actor participated");
++        }
+         invariant_APEX_accounting();
+     }
+ 
+     function test_APEX_deterministicLifecycle() public {
+-        for (uint256 i; i < 4; ++i) handler.cycle(1 ether + i, 1e14 + i);
++        for (uint256 i; i < 4; ++i) {
++            handler.cycle(1 ether + i, 1e14 + i);
++        }
+         assertEq(handler.ghost_out(), 4, "four nonzero exits");
+         afterInvariant();
+     }
++
++    /// @dev Exact19-call sequence retained from the original R11 campaign failure.
++    function test_APEX_sweepQuoteRegressionSequence() public {
++        handler.cycle(3, 2689760466567724952050780);
++        handler.cycle(9283, 85000);
++        handler.cycle(17786000705887224, 2251950992378);
++        handler.cycle(7500, 1000000000);
++        handler.cycle(
++            1165348800165884646583272833570758497999479995094779,
++            23762952222059118103674288070318533863969822909982850837281
++        );
++        handler.cycle(7200, 1000000000000);
++        handler.cycle(53951929, 140648644897767126213674513004449886085657150899840);
++        handler.cycle(18487938676292617984406060787333308297862084921603553104606700240717010906, 3);
++        handler.cycle(1090671, 262374);
++        handler.cycle(8, 1000000000000);
++        handler.cycle(30083186092847802128466689385442702949769386, 3464588557125847478747412525570365494195631);
++        handler.cycle(24146, 12);
++        handler.cycle(9629, 7293);
++        handler.cycle(3, 1588925160);
++        handler.cycle(5498, 659918);
++        handler.cycle(249568577306390681288121996924496510797997928484539482977799154290972926850, 125023701002427631);
++        handler.cycle(
++            246462717853273786611537, 115792089237316195423570985008687907853269984665640564039457584007913129639932
++        );
++        handler.cycle(6946, 1000000000);
++        handler.cycle(20, 39);
++        assertEq(handler.cycles(), 19, "entire original failure sequence completed");
++        afterInvariant();
++    }
+ }
+diff --git a/test/foundry/spec/vaults/standard/exchange/invariant/LendingAccountingHandler.sol b/test/foundry/spec/vaults/standard/exchange/invariant/LendingAccountingHandler.sol
+new file mode 100644
+--- /dev/null
++++ b/test/foundry/spec/vaults/standard/exchange/invariant/LendingAccountingHandler.sol
+@@ -0,0 +1,224 @@
++// SPDX-License-Identifier: BSL-1.1
++pragma solidity ^0.8.0;
++import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
++import {ERC20} from "@crane/contracts/external/openzeppelin-contracts/token/ERC20/ERC20.sol";
++import {IReentrancyLock} from "@crane/contracts/access/reentrancy/IReentrancyLock.sol";
++import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
++import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
++import {
++    StandardExchangeAccountingHandler
++} from "test/foundry/spec/vaults/standard/exchange/invariant/StandardExchangeAccountingHandler.sol";
++
++interface ILendingAccountingHost {
++    function fundBase(address, uint256) external;
++    function custodyCash() external view returns (uint256);
++    function accountingState() external view returns (bytes32);
++    function accrueYield(uint256) external returns (uint256);
++    function setFee(uint256) external;
++    function feeTo() external view returns (address);
++    function collectFee(address, uint256) external;
++}
++
++/// @dev External token dependency only; the production SE, protocol and fee collector remain real.
++contract LendingAccountingToken is ERC20 {
++    address public target;
++    bytes internal payload;
++    uint256 public attempts;
++    bool public nestedSuccess;
++    bytes4 public nestedError;
++    constructor() ERC20("Accounting asset", "ACC") {}
++
++    function mint(address to_, uint256 amount_) external {
++        _mint(to_, amount_);
++    }
++
++    function arm(address target_, bytes calldata payload_) external {
++        target = target_;
++        payload = payload_;
++        attempts = 0;
++        nestedSuccess = false;
++        nestedError = bytes4(0);
++    }
++
++    function _callback() internal {
++        if (target == address(0)) return;
++        address called = target;
++        target = address(0);
++        ++attempts;
++        bytes memory result;
++        (nestedSuccess, result) = called.call(payload);
++        if (result.length >= 4) {
++            bytes4 selector;
++            assembly ("memory-safe") { selector := mload(add(result, 32)) }
++            nestedError = selector;
++        }
++    }
++
++    function transfer(address to_, uint256 amount_) public override returns (bool) {
++        bool result = super.transfer(to_, amount_);
++        _callback();
++        return result;
++    }
++
++    function transferFrom(address from_, address to_, uint256 amount_) public override returns (bool) {
++        bool result = super.transferFrom(from_, to_, amount_);
++        _callback();
++        return result;
++    }
++}
++
++abstract contract LendingAccountingHandler is StandardExchangeAccountingHandler {
++    enum LendingAction {
++        Yield,
++        FeeMint,
++        FeeCollect,
++        ReenterIn,
++        Redeem,
++        ReenterOut
++    }
++    mapping(LendingAction => Counts) public lendingCounts;
++    ILendingAccountingHost public immutable host;
++    uint256 public immutable initialCash;
++    uint256 public funded;
++    uint256 public yieldFunding;
++
++    struct FeeCheckpoint {
++        uint256 assets;
++        uint256 shares;
++        uint256 quote;
++        uint256 supply;
++        uint256 feeBefore;
++        uint256 fee;
++    }
++
++    constructor(address se_, address base_, ILendingAccountingHost host_, address a0_, address a1_, address attacker_)
++        StandardExchangeAccountingHandler(
++            IStandardExchangeIn(se_), IERC20(base_), IERC20(se_), true, a0_, a1_, attacker_
++        )
++    {
++        host = host_;
++        initialCash = _cash();
++    }
++
++    function _cash() internal view returns (uint256 cash) {
++        cash = host.custodyCash() + base.balanceOf(address(this)) + base.balanceOf(address(integrator))
++            + base.balanceOf(attacker);
++        for (uint256 i; i < 3; ++i) {
++            cash += base.balanceOf(actors[i]);
++        }
++    }
++
++    function _fund(address actor_, uint256 amount_) internal override {
++        uint256 before_ = base.balanceOf(actor_);
++        host.fundBase(actor_, amount_);
++        assertEq(base.balanceOf(actor_) - before_, amount_, "fixture adds funding without erasing wallet principal");
++        funded += amount_;
++    }
++
++    function _state() internal view override returns (bytes32) {
++        return keccak256(abi.encode(super._state(), host.accountingState()));
++    }
++
++    function _additionalActions(address actor_, uint256 seed_) internal override {
++        ++lendingCounts[LendingAction.Yield].attempted;
++        uint256 supply = share.totalSupply();
++        yieldFunding += host.accrueYield(bound(seed_, 1e9, 1e12));
++        assertEq(share.totalSupply(), supply, "protocol yield creates no SE shares");
++        ++lendingCounts[LendingAction.Yield].succeeded;
++        _feeDeposit(actor_);
++        _redeemCallback(actor_);
++    }
++
++    function _feeDeposit(address actor_) internal {
++        ++lendingCounts[LendingAction.FeeMint].attempted;
++        ++lendingCounts[LendingAction.ReenterIn].attempted;
++        uint256 amount = 1e16;
++        _fund(actor_, amount);
++        host.setFee(1e16);
++        FeeCheckpoint memory before_;
++        before_.assets = base.balanceOf(actor_);
++        before_.shares = share.balanceOf(actor_);
++        before_.quote = seIn.previewExchangeIn(base, amount, share);
++        before_.supply = share.totalSupply();
++        before_.feeBefore = share.balanceOf(host.feeTo());
++        before_.fee = before_.quote / 100;
++        assertGt(before_.fee, 0, "actual nonzero dilution fee");
++        vm.prank(actor_);
++        base.approve(address(seIn), amount);
++        _arm(false);
++        vm.prank(actor_);
++        uint256 issued = seIn.exchangeIn(base, amount, share, before_.quote, actor_, false, block.timestamp + 1 hours);
++        _assertReentry(LendingAction.ReenterIn);
++        assertEq(issued, before_.quote, "funded fee mint honors quote");
++        assertEq(before_.assets - base.balanceOf(actor_), amount, "fee route debits only principal");
++        assertEq(share.balanceOf(actor_) - before_.shares, issued, "fee does not reduce user issuance");
++        assertEq(share.balanceOf(host.feeTo()) - before_.feeBefore, before_.fee, "independent WAD dilution fee");
++        assertEq(share.totalSupply() - before_.supply, issued + before_.fee, "user plus fee supply increase");
++        ++lendingCounts[LendingAction.FeeMint].succeeded;
++        ++lendingCounts[LendingAction.FeeCollect].attempted;
++        host.collectFee(actor_, before_.fee);
++        host.setFee(0);
++        assertEq(share.balanceOf(host.feeTo()), before_.feeBefore, "authorized collector releases exactly accrued fees");
++        assertEq(
++            share.balanceOf(actor_) - before_.shares, issued + before_.fee, "collected fee reaches honest recipient"
++        );
++        mintedShares += issued + before_.fee;
++        ++lendingCounts[LendingAction.FeeCollect].succeeded;
++    }
++
++    function _redeemCallback(address actor_) internal {
++        ++lendingCounts[LendingAction.Redeem].attempted;
++        ++lendingCounts[LendingAction.ReenterOut].attempted;
++        uint256 amount = share.balanceOf(actor_) / 20;
++        Checkpoint memory before_ =
++            Checkpoint(base.balanceOf(actor_), share.balanceOf(actor_), seIn.previewExchangeIn(share, amount, base));
++        assertGt(before_.quote, 0, "callback withdrawal pays nonzero assets");
++        vm.prank(actor_);
++        share.approve(address(seIn), amount);
++        _arm(true);
++        vm.prank(actor_);
++        uint256 paid = seIn.exchangeIn(share, amount, base, before_.quote, actor_, false, block.timestamp + 1 hours);
++        _assertReentry(LendingAction.ReenterOut);
++        assertEq(paid, before_.quote, "withdrawal honors quote after protocol yield");
++        assertEq(base.balanceOf(actor_) - before_.assets, paid, "withdrawal pays once");
++        assertEq(before_.shares - share.balanceOf(actor_), amount, "withdrawal burns once");
++        burnedShares += amount;
++        ++lendingCounts[LendingAction.Redeem].succeeded;
++    }
++
++    function _arm(bool outgoing_) internal {
++        bytes memory payload = outgoing_
++            ? abi.encodeCall(
++                IStandardExchangeOut.exchangeOut,
++                (share, uint256(1), base, uint256(1), attacker, false, block.timestamp + 1 hours)
++            )
++            : abi.encodeCall(
++                IStandardExchangeIn.exchangeIn,
++                (base, uint256(1), share, uint256(0), attacker, true, block.timestamp + 1 hours)
++            );
++        LendingAccountingToken(address(base)).arm(address(seIn), payload);
++    }
++
++    function _assertReentry(LendingAction action_) internal {
++        LendingAccountingToken token = LendingAccountingToken(address(base));
++        assertEq(token.attempts(), 1, "operative token callback reached");
++        assertFalse(token.nestedSuccess(), "nested money operation rejected");
++        assertEq(token.nestedError(), IReentrancyLock.IsLocked.selector, "exact production guard boundary");
++        ++lendingCounts[action_].expectedRevert;
++    }
++
++    function assertLendingAccounting() external view {
++        assertEq(
++            _cash(),
++            initialCash + funded + yieldFunding,
++            "independent native asset conservation across wallets and protocol custody"
++        );
++        for (uint8 i; i < 6; ++i) {
++            Counts memory c = lendingCounts[LendingAction(i)];
++            assertEq(c.attempted, cycles / 4, "every applicable supplementary action reached");
++            assertEq(c.succeeded + c.expectedRevert, cycles / 4, "no swallowed supplementary failure");
++            assertEq(c.unexpectedRevert, 0);
++        }
++        assertEq(base.balanceOf(attacker), 0, "attacker obtains no principal");
++    }
++}

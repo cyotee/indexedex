@@ -71,6 +71,8 @@ abstract contract TestBase_MorphoBlueStandardExchange is
         vm.prank(owner);
         IVaultFeeOracleManager(address(indexedexManager)).setDefaultUsageFee(0);
         TestBase_MorphoBlue.setUp();
+        // Hermetic Morpho ERC20Mock has no IERC20Metadata.symbol; D34 requires a hard call.
+        vm.mockCall(address(loanToken), abi.encodeWithSignature("symbol()"), abi.encode("LOAN"));
 
         user = makeAddr("mbseUser");
         attacker = makeAddr("mbseAttacker");

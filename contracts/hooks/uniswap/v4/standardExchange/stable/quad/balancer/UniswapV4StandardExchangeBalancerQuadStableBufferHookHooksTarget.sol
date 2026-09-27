@@ -262,19 +262,21 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksTarg
         Repo.Layout storage l = Repo._layout();
         address se = l.standardExchanges[i];
         if (se == address(0) || se == l.tokens[i]) {
-            return Math.scaleTo(pairAmount, l.ratedScales[i]);
+            // D60: a raw or self-share leg is its balance, times the rate when a provider is configured.
+            address rpRaw = l.rateProviders[i];
+            uint256 units = rpRaw == address(0)
+                ? pairAmount
+                : Math.ratedPairUnits(pairAmount, _getRateFailClosed(rpRaw), l.invScales[i], l.ratedScales[i]);
+            return Math.scaleTo(units, l.ratedScales[i]);
         }
         // Buffer preview → shares → pair units (rate or claim) → rated WAD
         uint256 shares =
             IStandardExchangeIn(se).previewExchangeIn(IERC20(l.tokens[i]), pairAmount, IERC20(se));
         if (shares == 0) return 0;
         address rp = l.rateProviders[i];
-        uint256 pairUnits;
-        if (rp != address(0)) {
-            pairUnits = (shares * _getRateFailClosed(rp)) / Math.RATE_PRECISION;
-        } else {
-            pairUnits = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), shares, IERC20(l.tokens[i]));
-        }
+        if (rp == address(0)) revert ClaimLib.RateProviderRequired();
+        // D60: the SE answers the buffering quote (shares for this deposit); the rate values them.
+        uint256 pairUnits = Math.ratedPairUnits(shares, _getRateFailClosed(rp), ClaimLib.shareScale(se), l.ratedScales[i]);
         return Math.scaleTo(pairUnits, l.ratedScales[i]);
     }
 
@@ -309,20 +311,15 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksTarg
         uint256 pairUnits = Math.descaleUp(ratedWadIn, l.ratedScales[i]);
         address se = l.standardExchanges[i];
         if (se == address(0)) {
-            return pairUnits;
+            // D60: rated units back to raw units through the provider when one is configured.
+            address rpRaw = l.rateProviders[i];
+            return rpRaw == address(0) ? pairUnits : Math.sharesForPairUnitsUp(pairUnits, _getRateFailClosed(rpRaw), l.invScales[i], l.ratedScales[i]);
         }
         // Convert claim/rate units into the required native SE shares.
         address rp = l.rateProviders[i];
-        uint256 sharesNeeded;
-        if (rp != address(0)) {
-            uint256 rate = _getRateFailClosed(rp);
-            sharesNeeded = Math.descaleUp(pairUnits, rate);
-        } else {
-            // The SE exact-out quote supplies enough shares for the required claim.
-            sharesNeeded = IStandardExchangeOut(se).previewExchangeOut(
-                IERC20(se), IERC20(l.tokens[i]), pairUnits
-            );
-        }
+        if (rp == address(0)) revert ClaimLib.RateProviderRequired();
+        // D60: rated units back to native shares through the provider; the SE only quotes the buffering input.
+        uint256 sharesNeeded = Math.sharesForPairUnitsUp(pairUnits, _getRateFailClosed(rp), ClaimLib.shareScale(se), l.ratedScales[i]);
         return ClaimLib.bufferInputForShares(se, l.tokens[i], sharesNeeded);
     }
 
@@ -354,5 +351,19 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksTarg
             if (amountOut >= _nativeAt(j)) revert WouldZeroReserve();
             _debitRawIntentional(j, amountOut);
         }
+    }
+
+    /// @notice D60: the configured rate providers, one per leg (address(0) on a raw leg without one).
+    function rateProviders() public view returns (address[] memory) {
+        return Repo._layout().rateProviders;
+    }
+
+    /// @notice D60: the rate provider configured for `token_`, address(0) when none or unknown token.
+    function rateProvider(address token_) public view returns (address) {
+        Repo.Layout storage l = Repo._layout();
+        for (uint256 i; i < l.tokens.length; ++i) {
+            if (l.tokens[i] == token_) return l.rateProviders[i];
+        }
+        return address(0);
     }
 }

@@ -45,6 +45,7 @@ import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVa
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
 import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
 import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
 import {UniswapV4FullSpreadStandardExchangeVaultPoolManagerAwareRepo} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultPoolManagerAwareRepo.sol";
 import {UniswapV4FullSpreadStandardExchangeVaultPoolKeyAwareRepo} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultPoolKeyAwareRepo.sol";
@@ -210,10 +211,12 @@ abstract contract UniswapV4FullSpreadStandardExchangeVaultCommon is IUnlockCallb
         return _bufferedInventoryShares(high, q.supply);
     }
 
+    /// @dev Exact-out share quote clamp. The former 1% pad (`shares + max(shares / 100, 1)`) was removed under
+    ///      APEX D55 (2026-09-21): the forward quote is wei-exact against execution, execution pays exactly the
+    ///      requested amount, and any zap-out surplus stays in the vault, so the minimal sufficient share count
+    ///      is the exact quote. A quote at or above the supply is the whole supply.
     function _bufferedInventoryShares(uint256 shares, uint256 supply) internal pure returns (uint256) {
-        if (shares >= supply) return supply;
-        uint256 buffer = Math.max(shares / 100, 1);
-        return buffer > supply - shares ? supply : shares + buffer;
+        return shares >= supply ? supply : shares;
     }
 
     function _inventorySwap(InventoryQuote memory q, uint256 amount) internal view returns (uint256) {
@@ -310,7 +313,7 @@ abstract contract UniswapV4FullSpreadStandardExchangeVaultCommon is IUnlockCallb
     /// @notice Blocked amount-out cannot be covered by free local inventory of `token`.
     error UniswapV4Exchange_InsufficientLocalReserve(address token, uint256 requested, uint256 available);
 
-    event TwapOracleUpdateFailed(bytes32 poolId, bytes reason);
+
 
     /// @dev Relative deadband: 5% of target free (D22).
     uint256 internal constant LIQUID_RESERVE_RELATIVE_TOL_WAD = 0.05e18;
@@ -331,11 +334,7 @@ abstract contract UniswapV4FullSpreadStandardExchangeVaultCommon is IUnlockCallb
     }
 
     function _pokeBoundPoolTwap() internal {
-        PoolKey memory key = _poolKey();
-        try twapOracle().update(key) returns (bool) {}
-        catch (bytes memory reason) {
-            emit TwapOracleUpdateFailed(PoolId.unwrap(key.toId()), reason);
-        }
+        twapOracle().update(_poolKey());
     }
 
     /// @dev Free ERC-20 balances of pool currencies on this diamond (D29). Never includes position math.
@@ -362,12 +361,8 @@ abstract contract UniswapV4FullSpreadStandardExchangeVaultCommon is IUnlockCallb
 
     /// @dev Absolute floor: 10^max(0, decimals-6) (D22).
     function _absoluteFloor(address token) internal view returns (uint256) {
-        uint8 decimals_;
-        try IERC20Metadata(token).decimals() returns (uint8 d) {
-            decimals_ = d;
-        } catch {
-            decimals_ = 18;
-        }
+        // D34: direct metadata call; a token without decimals() reverts here.
+        uint8 decimals_ = IERC20Metadata(token).decimals();
         if (decimals_ <= 6) {
             return 1;
         }
@@ -1225,9 +1220,13 @@ abstract contract UniswapV4FullSpreadStandardExchangeVaultCommon is IUnlockCallb
         internal returns (uint256 actualIn)
     {
         if (pretransferred) {
-            uint256 balance = tokenIn.balanceOf(address(this));
-            uint256 booked = MultiAssetBasicVaultRepo._reserveOfToken(address(tokenIn));
-            return balance > booked ? balance - booked : 0;
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+            uint256 avail = LocalCreditLib.available(
+                tokenIn.balanceOf(address(this)),
+                MultiAssetBasicVaultRepo._reserveOfToken(address(tokenIn))
+            );
+            if (avail < amountIn) revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, avail);
+            return amountIn;
         }
         uint256 beforeBalance = tokenIn.balanceOf(address(this));
         // Preserve token callback reverts (including IsLocked) through the pull.
@@ -1262,6 +1261,16 @@ abstract contract UniswapV4FullSpreadStandardExchangeVaultCommon is IUnlockCallb
         if (used > delivered) revert ISecurePullErrors.TransferDeltaInsufficient(used, delivered);
     }
 
+    function _pretransferCredit(IERC20 token, uint256 maximum) internal view returns (uint256) {
+        return LocalCreditLib.budget(
+            LocalCreditLib.available(
+                token.balanceOf(address(this)),
+                MultiAssetBasicVaultRepo._reserveOfToken(address(token))
+            ),
+            maximum
+        );
+    }
+
     function _secureShareDelivery(uint256 amountIn, bool pretransferred) internal returns (uint256 actualIn) {
         if (!pretransferred && msg.sender == address(this) && NativeStandardYieldContextRepo._initiator() != address(0)) {
             uint256 selfBalance = IERC20(address(this)).balanceOf(address(this));
@@ -1278,10 +1287,6 @@ abstract contract UniswapV4FullSpreadStandardExchangeVaultCommon is IUnlockCallb
     }
 
     function _symbolOrAddress(address token) internal view returns (string memory symbol_) {
-        try IERC20Metadata(token).symbol() returns (string memory fetchedSymbol) {
-            return fetchedSymbol;
-        } catch {
-            return "TOKEN";
-        }
+        return IERC20Metadata(token).symbol();
     }
 }

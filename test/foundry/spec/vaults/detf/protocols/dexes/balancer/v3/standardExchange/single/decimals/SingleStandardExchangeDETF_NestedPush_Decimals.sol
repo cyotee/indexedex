@@ -10,6 +10,7 @@ import {ISingleStandardExchangeDETFBonding} from "contracts/vaults/detf/protocol
 import {ISingleStandardExchangeDETFInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFInfo.sol";
 import {IBasicVault} from "contracts/vaults/basic/IBasicVault.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 
 /// @notice Explicit T-NEST-1…8 + T-LOCAL-PUSH/I1 for BAL-SE (L-DETF-TEST-EXPLICIT).
 /// @dev Production-first: real Single SE DETF + Aerodrome SE vault via TestBase (no SUT mocks).
@@ -251,17 +252,22 @@ abstract contract SingleStandardExchangeDETF_NestedPush_Decimals is TestBase_Sin
         uint256 seShares_ = _fundSeShares(bob, 80e18);
 
         // Push shares to DETF, then exchangeIn with pretransferred=true.
+        AtomicPretransferCaller caller_ = new AtomicPretransferCaller();
         vm.prank(bob);
-        seShare.transfer(openDetf, seShares_);
-
+        seShare.approve(address(caller_), seShares_);
         uint256 R0 = openVaultBook.reserveOfToken(address(seShare));
-        uint256 B0 = seShare.balanceOf(openDetf);
-        uint256 U0 = B0 - R0;
-        assertTrue(U0 >= seShares_, "T-LOCAL-PUSH: unbooked covers push");
-
-        vm.prank(bob);
-        uint256 out_ = openExchangeIn.exchangeIn(
-            seShare, seShares_, IERC20(openDetf), 0, bob, true, block.timestamp + 1 hours
+        uint256 out_ = abi.decode(
+            caller_.consumePretransfer(
+                seShare,
+                bob,
+                openDetf,
+                seShares_,
+                abi.encodeCall(
+                    IStandardExchangeIn.exchangeIn,
+                    (seShare, seShares_, IERC20(openDetf), 0, address(caller_), true, block.timestamp + 1 hours)
+                )
+            ),
+            (uint256)
         );
         assertTrue(out_ > 0, "T-LOCAL-PUSH: mint via push");
 
@@ -298,12 +304,21 @@ abstract contract SingleStandardExchangeDETF_NestedPush_Decimals is TestBase_Sin
         uint256 U = B - R;
         assertEq(U, 0, "T-LOCAL-I1: no unbooked surplus");
 
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1, 0)
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vm.prank(bob);
         openExchangeIn.exchangeIn(
             seShare, 1, IERC20(openDetf), 0, bob, true, block.timestamp + 1 hours
+        );
+        AtomicPretransferCaller caller_ = new AtomicPretransferCaller();
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1, 0)
+        );
+        caller_.execute(
+            openDetf,
+            abi.encodeCall(
+                IStandardExchangeIn.exchangeIn,
+                (seShare, 1, IERC20(openDetf), 0, address(caller_), true, block.timestamp + 1 hours)
+            )
         );
     }
 }

@@ -61,9 +61,7 @@ abstract contract ERC4626StandardExchange_Morpho_Decimals is TestBase_ERC4626Mor
         uint256 invBefore_ = IERC20(address(morphoVault)).balanceOf(se);
         assertGe(invBefore_, claimed_, "booked protocolVault inventory");
         vm.prank(user);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         seIn.exchangeIn(IERC20(address(morphoVault)), claimed_, IERC20(se), 0, user, true, block.timestamp);
         assertEq(IERC20(se).totalSupply(), supplyBefore_, "I1: no free SE mint");
         assertEq(IERC20(address(morphoVault)).balanceOf(se), invBefore_, "I1: inventory unmoved");

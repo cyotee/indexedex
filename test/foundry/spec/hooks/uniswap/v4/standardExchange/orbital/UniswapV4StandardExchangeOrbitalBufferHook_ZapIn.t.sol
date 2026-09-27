@@ -12,7 +12,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_ZapInTest is
     function test_zap_notEligible_beforeLive() public {
         assertFalse(orbital.isZapEligible());
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("NotZapEligible()"));
         orbital.depositSingle(
             address(token0), 10 ether, user, 0, block.timestamp + 1 hours, ""
         );
@@ -52,7 +52,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_ZapInTest is
         _addLiquidity(100 ether, 100 ether, 0);
         assertFalse(orbital.isZapEligible());
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("NotZapEligible()"));
         orbital.depositSingle(
             address(token0), 10 ether, user, 0, block.timestamp + 1 hours, ""
         );

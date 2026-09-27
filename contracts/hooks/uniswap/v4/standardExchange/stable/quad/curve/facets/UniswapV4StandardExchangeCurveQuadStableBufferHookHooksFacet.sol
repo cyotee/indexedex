@@ -47,7 +47,7 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookHooksFacet is
         funcs[16] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.baseAmp.selector;
         funcs[17] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.getCurrentAmp.selector;
         funcs[18] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.standardExchange.selector;
-        funcs[19] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.rateProvider.selector;
+        funcs[19] = bytes4(keccak256("rateProvider(uint256)"));
         funcs[20] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.isBuffered.selector;
         funcs[21] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.nativeReserve.selector;
         funcs[22] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.nativeReserves.selector;

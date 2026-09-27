@@ -45,6 +45,11 @@ abstract contract UniswapV4FullSpreadStandardExchangeVaultOutQueryTarget is Unis
             return _previewZapOutWithdrawal(address(tokenOut), amountOut);
         }
 
+        // D64: exact-out mint. A pair token in, exactly `amountOut` SE shares out.
+        if (address(tokenOut) == address(this) && (address(tokenIn) == token0 || address(tokenIn) == token1)) {
+            return _amountInForZapMint(address(tokenIn), amountOut);
+        }
+
         revert ExchangeOutNotAvailable();
     }
 }

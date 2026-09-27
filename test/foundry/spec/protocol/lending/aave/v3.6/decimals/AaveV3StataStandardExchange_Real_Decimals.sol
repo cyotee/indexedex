@@ -310,12 +310,13 @@ abstract contract AaveV3StataStandardExchange_Real_Decimals is
         amount = bound(amount, _u(1), _u(100));
         uint256 receipt = _acquireStata(address(this), amount);
         uint256 expected = IStandardExchangeIn(realVault).previewExchangeIn(IERC20(realStata), receipt, IERC20(realVault));
+        uint256 stataBefore = IERC20(realStata).balanceOf(realVault);
         IERC20(realStata).transfer(realVault, receipt);
         uint256 out = IStandardExchangeIn(realVault).exchangeIn(
             IERC20(realStata), receipt, IERC20(realVault), expected, address(this), true, _deadline()
         );
         assertEq(out, expected, "prepaid receipt quote/execution");
-        assertEq(IERC20(realStata).balanceOf(realVault), receipt, "actual prepaid custody");
+        assertEq(IERC20(realStata).balanceOf(realVault), stataBefore + receipt, "actual prepaid custody");
         assertEq(IERC20(realVault).balanceOf(address(this)), out, "received SE shares");
     }
 
@@ -326,12 +327,13 @@ abstract contract AaveV3StataStandardExchange_Real_Decimals is
         IERC20(realBase).approve(realVault, amount);
         uint256 expected = stataTokenV2.previewDeposit(amount);
         uint256 beforeReceipt = IERC20(realStata).balanceOf(address(this));
+        uint256 supplyBefore = IERC20(realVault).totalSupply();
         assertEq(IStandardExchangeIn(realVault).previewExchangeIn(IERC20(realBase), amount, IERC20(realStata)), expected);
         uint256 out = IStandardExchangeIn(realVault).exchangeIn(
             IERC20(realBase), amount, IERC20(realStata), expected, address(this), false, _deadline()
         );
         assertEq(out, expected);
         assertEq(IERC20(realStata).balanceOf(address(this)) - beforeReceipt, out);
-        assertEq(IERC20(realVault).totalSupply(), 0, "direct route mints no SE shares");
+        assertEq(IERC20(realVault).totalSupply(), supplyBefore, "direct route mints no SE shares");
     }
 }

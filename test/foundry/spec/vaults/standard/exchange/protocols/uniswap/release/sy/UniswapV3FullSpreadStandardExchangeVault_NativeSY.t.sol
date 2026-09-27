@@ -58,7 +58,7 @@ contract UniswapV3FullSpreadStandardExchangeVault_NativeSYTest is TestBase_Unisw
     function test_nativeSYRequiresBothTokensForInitialActivation() public {
         assertEq(sy.previewDeposit(address(token0), 1e18), 0);
         uint256 before0 = token0.balanceOf(address(this));
-        vm.expectRevert(); sy.deposit(address(this), address(token0), 1e18, 0);
+        vm.expectRevert(abi.encodeWithSignature("UniswapV3Exchange_ZeroAmount()")); sy.deposit(address(this), address(token0), 1e18, 0);
         assertEq(token0.balanceOf(address(this)), before0); assertEq(se.totalSupply(), 0);
         assertEq(_activate(), 1_000e18 - 1e15);
         (uint128 liquidity,,,,) = pool.positions(keccak256(abi.encodePacked(address(se), TickMath.minUsableTick(pool.tickSpacing()), TickMath.maxUsableTick(pool.tickSpacing()))));
@@ -112,11 +112,15 @@ contract UniswapV3FullSpreadStandardExchangeVault_NativeSYTest is TestBase_Unisw
     function test_nativeSYSlippageRollbackPreservesBothLedgers() public {
         _activate(); uint256 balance = token0.balanceOf(address(this)); uint256 supply = se.totalSupply();
         uint256 quote = sy.previewDeposit(address(token0), 3e18);
-        vm.expectRevert(); sy.deposit(address(this), address(token0), 3e18, quote + 1);
+        vm.expectRevert(abi.encodeWithSignature("UniswapV3ExchangeIn_SlippageExceeded()")); sy.deposit(address(this), address(token0), 3e18, quote + 1);
         assertEq(token0.balanceOf(address(this)), balance); assertEq(se.totalSupply(), supply);
         uint256 out = sy.previewRedeem(address(token0), 1e18);
-        vm.expectRevert(); sy.redeem(address(this), 1e18, address(token0), out + 1, false);
+        vm.expectRevert(abi.encodeWithSignature("UniswapV3ExchangeIn_SlippageExceeded()")); sy.redeem(address(this), 1e18, address(token0), out + 1, false);
         assertEq(se.totalSupply(), supply); assertEq(se.balanceOf(address(se)), 0);
+        assertEq(token0.balanceOf(address(this)), balance);
+        assertEq(sy.redeem(address(this), 1e18, address(token0), out, false), out);
+        assertEq(token0.balanceOf(address(this)), balance + out);
+        assertEq(se.totalSupply(), supply - 1e18);
     }
 
     function test_nativeSYPreservesFundedSleeveOperationsDuringPoolLock() public {

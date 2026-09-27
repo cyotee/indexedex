@@ -15,7 +15,6 @@ import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExch
  * @notice Wave 2B L1: route preview in/out conservation for Camelot SE vault (IndexedEx path).
  * @dev Ports Aerodrome/UniV2 InOut pattern; not Crane pair K-invariants.
  */
-/// forge-config: default.fuzz.runs = 64
 contract CamelotV2StandardExchange_InOutInvariant is TestBase_CamelotV2StandardExchange {
     ERC20PermitMintableStub internal tokenA;
     ERC20PermitMintableStub internal tokenB;

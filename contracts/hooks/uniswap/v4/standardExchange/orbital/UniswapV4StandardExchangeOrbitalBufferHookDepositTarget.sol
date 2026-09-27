@@ -4,6 +4,8 @@ pragma solidity ^0.8.0;
 import {UniswapV4StandardExchangeOrbitalBufferHookDepositCore} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDepositCore.sol";
 
 /// @notice Liquidity execution entrypoints. Shared core retains the accounting and checks.
+/// @dev Unused offered amounts and SE receipts from this call are refunded to `msg.sender`.
+///      Resting face is unrecorded pretransfer credit (D12), never this caller's refund.
 abstract contract UniswapV4StandardExchangeOrbitalBufferHookDepositTarget is UniswapV4StandardExchangeOrbitalBufferHookDepositCore {
     function addLiquidity(
         uint256 a0Max,

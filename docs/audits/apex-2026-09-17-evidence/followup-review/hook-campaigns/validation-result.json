@@ -1,0 +1,20 @@
+{
+  "completedAt": "2026-09-25T08:45:49.095085+00:00",
+  "exitCode": 0,
+  "suites": 7,
+  "testsPassed": 14,
+  "testsFailed": 0,
+  "testsSkipped": 0,
+  "invariantRunsPerSuite": 256,
+  "invariantDepth": 64,
+  "callsPerSuite": 16384,
+  "outerReverts": 0,
+  "fuzzSeed": "0x20260917",
+  "sourceManifest": "/tmp/apex-hook-invariant-overlay/source-manifest.json",
+  "patch": "/tmp/apex-hook-invariant-overlay/hook-invariants.patch",
+  "sourceHashesVerified": true,
+  "campaignLog": "/tmp/apex-review-accounting-red-run/hook-invariant-evidence/final-seven-campaigns.log",
+  "command": "/tmp/apex-review-accounting-red-run/hook-invariant-evidence/final-seven-command.json",
+  "invariantHandlerCalls": 114688,
+  "deterministicHandlerCalls": 168
+}

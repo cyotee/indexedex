@@ -12,7 +12,6 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {ISingleStandardExchangeDETFInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFInfo.sol";
 
 /// @notice L1 property fuzz for SingleStandardExchangeDETF (Wave 1B).
-/// forge-config: default.fuzz.runs = 64
 abstract contract SingleStandardExchangeDETF_Fuzz_Decimals is TestBase_SingleStandardExchangeDETF_Decimals {
     address internal actorA;
     address internal actorB;
@@ -29,7 +28,6 @@ abstract contract SingleStandardExchangeDETF_Fuzz_Decimals is TestBase_SingleSta
         assertTrue(ISingleStandardExchangeDETFInfo(instance_).isReserveLive(), "live");
     }
 
-    /// forge-config: default.fuzz.runs = 512
     function testFuzz_mintThenPartialBurn_conservation(uint256 lpSeed, uint256 burnSeed) public {
         // The fixture scales seed and payment together for low-decimal books.
         address instance_ = _openLive();

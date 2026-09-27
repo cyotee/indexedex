@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
-import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {
+    IStandardExchangeTransitionQuote,
+    IStandardExchangeExternalQuote
+} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {Math} from "@crane/contracts/utils/Math.sol";
 import {BetterMath} from "@crane/contracts/utils/math/BetterMath.sol";
 import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
 import {LidoWstETHStandardExchangeRepo} from "contracts/protocols/staking/lido/LidoWstETHStandardExchangeRepo.sol";
-
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
@@ -14,6 +16,7 @@ import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/Reentr
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IWstETH} from "@crane/contracts/protocols/staking/ethereum/lido/interfaces/IWstETH.sol";
 import {IStETH} from "@crane/contracts/protocols/staking/ethereum/lido/interfaces/IStETH.sol";
+import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol";
 
 import {LidoWstETHStandardExchangeCommon} from "contracts/protocols/staking/lido/LidoWstETHStandardExchangeCommon.sol";
 
@@ -64,10 +67,13 @@ contract LidoWstETHStandardExchangeInTarget is
         // SE redeem exact-in: burn shares, pay asset
         if (_isSeShare(in_)) {
             if (!_isAsset(out_)) revert InvalidRoute(in_, out_);
-            amountOut = _quoteExactIn(in_, amountIn, out_);
-            if (amountOut < minAmountOut) revert Slippage();
+            uint256 wrappedOut;
+            if (out_ == stETH()) wrappedOut = _wstEthFromStEth(_previewRedeemSharesToEth(amountIn));
+            else amountOut = _quoteExactIn(in_, amountIn, out_);
             _burnShares(amountIn);
-            _payAsset(out_, amountOut, recipient);
+            amountOut = out_ == stETH() ? _unwrapAndPaySt(wrappedOut, recipient) : _payAsset(out_, amountOut, recipient);
+            if (amountOut < minAmountOut) revert Slippage();
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
@@ -76,10 +82,12 @@ contract LidoWstETHStandardExchangeInTarget is
             if (!_isAsset(in_)) revert InvalidRoute(in_, out_);
             uint256 totalBefore = totalReserveEth();
             uint256 actualIn = _securePull(tokenIn, amountIn, pretransferred);
+            if (pretransferred) totalBefore = _reserveBeforePretransfer(in_, actualIn);
             uint256 ethValue = _creditAssetToReserve(in_, actualIn);
             amountOut = _convertEthDeltaToShares(ethValue, totalBefore);
             if (amountOut < minAmountOut) revert Slippage();
             _mintWithUsageFee(recipient, amountOut);
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
@@ -88,6 +96,7 @@ contract LidoWstETHStandardExchangeInTarget is
             uint256 actualIn = _securePull(tokenIn, amountIn, pretransferred);
             amountOut = _execAssetToAsset(in_, actualIn, out_, recipient);
             if (amountOut < minAmountOut) revert Slippage();
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
@@ -109,15 +118,42 @@ contract LidoWstETHStandardExchangeInTarget is
         address wst_ = wstETH();
         uint256 totalBefore = totalReserveEth();
 
+        // SE-share issuance: stake what fits, wrap leftover native to the WETH sleeve, mint on full value.
+        if (address(tokenOut) == address(this)) {
+            uint256 capacity = _lidoStakeCapacity();
+            uint256 stakeAmt = msg.value < capacity ? msg.value : capacity;
+            uint256 keepEth = msg.value - stakeAmt;
+            uint256 ethValue;
+            if (stakeAmt > 0) {
+                uint256 stBalBefore = IERC20(st_).balanceOf(address(this));
+                IStETH(st_).submit{value: stakeAmt}(address(0));
+                uint256 stReceived = IERC20(st_).balanceOf(address(this)) - stBalBefore;
+                if (stReceived == 0) revert Slippage();
+                IERC20(st_).forceApprove(wst_, stReceived);
+                ethValue = _stEthFromWstEth(IWstETH(wst_).wrap(stReceived));
+            }
+            if (keepEth > 0) {
+                IWETH(payable(weth())).deposit{value: keepEth}();
+                ethValue += keepEth;
+            }
+            amountOut = _convertEthDeltaToShares(ethValue, totalBefore);
+            if (amountOut < minAmountOut) revert Slippage();
+            _mintWithUsageFee(recipient, amountOut);
+            _syncAllExpectedHoldReserves();
+            return amountOut;
+        }
+
+        // Direct stETH/wstETH delivery: full submit, hard revert, no capacity precheck (D47).
         uint256 stBefore = IERC20(st_).balanceOf(address(this));
         IStETH(st_).submit{value: msg.value}(address(0));
         uint256 stGot = IERC20(st_).balanceOf(address(this)) - stBefore;
-        if (stGot == 0) stGot = msg.value;
+        if (stGot == 0) revert Slippage();
 
         if (address(tokenOut) == st_) {
-            if (stGot < minAmountOut) revert Slippage();
-            IERC20(st_).safeTransfer(recipient, stGot);
-            return stGot;
+            amountOut = _transferSt(stGot, recipient);
+            if (amountOut < minAmountOut) revert Slippage();
+            _syncAllExpectedHoldReserves();
+            return amountOut;
         }
 
         IERC20(st_).forceApprove(wst_, stGot);
@@ -126,19 +162,13 @@ contract LidoWstETHStandardExchangeInTarget is
         if (address(tokenOut) == wst_) {
             if (wstOut < minAmountOut) revert Slippage();
             IERC20(wst_).safeTransfer(recipient, wstOut);
+            _syncAllExpectedHoldReserves();
             return wstOut;
-        }
-
-        if (address(tokenOut) == address(this)) {
-            uint256 ethValue = _stEthFromWstEth(wstOut);
-            amountOut = _convertEthDeltaToShares(ethValue, totalBefore);
-            if (amountOut < minAmountOut) revert Slippage();
-            _mintWithUsageFee(recipient, amountOut);
-            return amountOut;
         }
 
         revert InvalidRoute(address(0), address(tokenOut));
     }
+
     /// @dev Keep the liquid sleeve, wrapped receipts and pending queue claims
     /// distinct. A same-transaction Lido submit can change the receipt ratio.
     struct LidoQuoteState {
@@ -159,11 +189,19 @@ contract LidoWstETHStandardExchangeInTarget is
         if (asset != weth() && asset != wstETH()) revert UnsupportedQuoteAsset(asset);
         IStETH st = IStETH(stETH());
         LidoQuoteState memory q = LidoQuoteState(
-            address(this), asset, holder, IERC20(address(this)).balanceOf(holder), ERC20Repo._totalSupply(),
-            liquidReserveEth(), IERC20(wstETH()).balanceOf(address(this)),
+            address(this),
+            asset,
+            holder,
+            IERC20(address(this)).balanceOf(holder),
+            ERC20Repo._totalSupply(),
+            liquidReserveEth(),
+            IERC20(wstETH()).balanceOf(address(this)),
             LidoWstETHStandardExchangeRepo._pendingFaceStEthTotal(),
-            st.sharesOf(address(this)), st.getTotalPooledEther(), st.getTotalShares()
+            st.sharesOf(address(this)),
+            0,
+            0
         );
+        (q.pooledEth, q.stShares) = _nativeShareRate();
         return (abi.encode(q), _lidoQuoteAssets(q, q.holderShares));
     }
 
@@ -204,7 +242,9 @@ contract LidoWstETHStandardExchangeInTarget is
     /// @dev Match the stETH balance delta observed by _securePull, then wrap
     /// that amount. Idle stETH is not part of the SE's reserve NAV.
     function _lidoReceiveAndWrap(LidoQuoteState memory q, uint256 amount)
-        private pure returns (uint256 received, uint256 wrapped)
+        private
+        pure
+        returns (uint256 received, uint256 wrapped)
     {
         uint256 beforeBalance = _lidoPooled(q, q.idleStShares);
         q.idleStShares += _lidoShares(q, amount);
@@ -215,7 +255,9 @@ contract LidoWstETHStandardExchangeInTarget is
     }
 
     function _lidoQuoteDeposit(LidoQuoteState memory q, address token, uint256 amount, bool toHolder)
-        private view returns (uint256 minted)
+        private
+        view
+        returns (uint256 minted)
     {
         uint256 beforeNav = _lidoNav(q);
         uint256 credited;
@@ -229,20 +271,26 @@ contract LidoWstETHStandardExchangeInTarget is
             (, uint256 wrapped) = _lidoReceiveAndWrap(q, amount);
             q.wrapped += wrapped;
             credited = _lidoPooled(q, wrapped);
-        } else revert UnsupportedQuoteAsset(token);
+        } else {
+            revert UnsupportedQuoteAsset(token);
+        }
         minted = BetterMath._convertToSharesDown(credited, beforeNav, q.supply, _decimalOffset());
         q.supply += minted;
         if (toHolder) q.holderShares += minted;
         address beneficiary = address(VaultFeeOracleQueryAwareRepo._feeOracle().feeTo());
         if (beneficiary != address(0)) {
-            uint256 fee = BetterMath._percentageOfWAD(minted, VaultFeeOracleQueryAwareRepo._feeOracle().usageFeeOfVault(address(this)));
+            uint256 fee = BetterMath._percentageOfWAD(
+                minted, VaultFeeOracleQueryAwareRepo._feeOracle().usageFeeOfVault(address(this))
+            );
             q.supply += fee;
             if (q.holder == beneficiary) q.holderShares += fee;
         }
     }
 
     function quoteTransition(bytes calldata state, Operation operation, uint256 amount)
-        external view returns (bytes memory, uint256 amountIn, uint256 amountOut, uint256)
+        external
+        view
+        returns (bytes memory, uint256 amountIn, uint256 amountOut, uint256)
     {
         LidoQuoteState memory q = _readLidoQuote(state);
         amountIn = amount;
@@ -257,7 +305,9 @@ contract LidoWstETHStandardExchangeInTarget is
                 uint256 ethValue = q.asset == weth() ? amount : _lidoPooled(q, amount);
                 amountIn = BetterMath._convertToSharesUp(ethValue, _lidoNav(q), q.supply, _decimalOffset());
                 amountOut = amount;
-            } else amountOut = _lidoQuoteAssets(q, amount);
+            } else {
+                amountOut = _lidoQuoteAssets(q, amount);
+            }
             if (amountIn > q.holderShares) revert InsufficientQuoteShares(amountIn, q.holderShares);
             q.holderShares -= amountIn;
             q.supply -= amountIn;
@@ -273,7 +323,9 @@ contract LidoWstETHStandardExchangeInTarget is
     }
 
     function quoteExternalDeposit(bytes calldata state, address tokenIn, uint256 amount)
-        external view returns (bytes memory, uint256 minted, uint256)
+        external
+        view
+        returns (bytes memory, uint256 minted, uint256)
     {
         LidoQuoteState memory q = _readLidoQuote(state);
         minted = _lidoQuoteDeposit(q, tokenIn, amount, false);
@@ -281,7 +333,9 @@ contract LidoWstETHStandardExchangeInTarget is
     }
 
     function quoteExternalExchange(bytes calldata state, address tokenIn, uint256 amount)
-        external view returns (bytes memory, uint256 amountOut, uint256)
+        external
+        view
+        returns (bytes memory, uint256 amountOut, uint256)
     {
         LidoQuoteState memory q = _readLidoQuote(state);
         if (tokenIn == q.asset || !_isAsset(tokenIn)) revert InvalidRoute(tokenIn, q.asset);
@@ -290,7 +344,10 @@ contract LidoWstETHStandardExchangeInTarget is
             if (tokenIn == wstETH()) {
                 wrapped = amount;
                 amountOut = _lidoPooled(q, amount);
-            } else (amountOut, wrapped) = _lidoReceiveAndWrap(q, amount);
+            } else {
+                (, wrapped) = _lidoReceiveAndWrap(q, amount);
+                amountOut = _lidoPooled(q, wrapped);
+            }
             if (amountOut > q.liquid) revert InsufficientLiquidReserve(amountOut, q.liquid);
             q.liquid -= amountOut;
             q.wrapped += wrapped;
@@ -308,5 +365,4 @@ contract LidoWstETHStandardExchangeInTarget is
         }
         return (abi.encode(q), amountOut, _lidoQuoteAssets(q, q.holderShares));
     }
-
 }

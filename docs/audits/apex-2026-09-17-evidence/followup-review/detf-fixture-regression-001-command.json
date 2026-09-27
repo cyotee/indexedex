@@ -1,0 +1,14 @@
+{
+  "cwd": "/tmp/apex-review-detf-validation",
+  "command": [
+    "forge",
+    "test",
+    "--match-path",
+    "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/invariant/UniswapV4Detf_Invariant.t.sol",
+    "--match-test",
+    "test_APEX_R13_5_partialRestingCredit_creditsRequestedOnly|test_deterministicLifecycle",
+    "--fuzz-seed",
+    "0x20260917",
+    "-vv"
+  ]
+}

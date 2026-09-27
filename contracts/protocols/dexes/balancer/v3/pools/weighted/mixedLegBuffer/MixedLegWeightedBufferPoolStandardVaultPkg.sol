@@ -66,6 +66,7 @@ import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeplo
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
+import {IStandardExchangeTransitionQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
 import {IMixedLegWeightedBufferPool} from
@@ -83,6 +84,7 @@ contract MixedLegWeightedBufferPoolStandardVaultPkg is BalancerV3BasePoolFactory
     using TokenConfigUtils for TokenConfig[];
 
     error NotCalledByRegistry(address caller);
+    error TransitionQuoteFacetRequired(address facet);
 
     uint256 private constant _MIN_SWAP_FEE_PERCENTAGE = 1e14;
     uint256 private constant _MAX_SWAP_FEE_PERCENTAGE = 0.1e18;
@@ -108,6 +110,8 @@ contract MixedLegWeightedBufferPoolStandardVaultPkg is BalancerV3BasePoolFactory
     IFacet public immutable BUFFER_POOL_FACET;
     IFacet public immutable POOL_LIQUIDITY_FACET;
     IFacet public immutable HOOK_FACET;
+    /// @dev Mandatory transition-quote facet (D68 2026-09-24): every SE pool diamond must expose IStandardExchangeTransitionQuote.
+    IFacet public immutable TRANSITION_QUOTE_FACET;
 
     constructor(PkgInit memory init) {
         SELF = this;
@@ -127,6 +131,10 @@ contract MixedLegWeightedBufferPoolStandardVaultPkg is BalancerV3BasePoolFactory
         BUFFER_POOL_FACET = init.bufferPoolFacet;
         POOL_LIQUIDITY_FACET = init.poolLiquidityFacet;
         HOOK_FACET = init.hookFacet;
+        if (address(init.transitionQuoteFacet).code.length == 0) {
+            revert TransitionQuoteFacetRequired(address(init.transitionQuoteFacet));
+        }
+        TRANSITION_QUOTE_FACET = init.transitionQuoteFacet;
 
         BalancerV3BasePoolFactoryRepo._initialize(365 days, address(VAULT_FEE_ORACLE.feeTo()));
         BalancerV3AuthenticationRepo._initialize(keccak256(abi.encode(address(this))));
@@ -152,11 +160,11 @@ contract MixedLegWeightedBufferPoolStandardVaultPkg is BalancerV3BasePoolFactory
         );
     }
 
-    function vaultTypes() public pure returns (bytes4[] memory typeIDs) {
+    function vaultTypes() public view returns (bytes4[] memory typeIDs) {
         return facetInterfaces();
     }
 
-    function vaultDeclaration() public pure returns (VaultPkgDeclaration memory declaration) {
+    function vaultDeclaration() public view returns (VaultPkgDeclaration memory declaration) {
         return VaultPkgDeclaration({name: name(), vaultFeeTypeIds: vaultFeeTypeIds(), vaultTypes: vaultTypes()});
     }
 
@@ -164,8 +172,8 @@ contract MixedLegWeightedBufferPoolStandardVaultPkg is BalancerV3BasePoolFactory
         return type(MixedLegWeightedBufferPoolStandardVaultPkg).name;
     }
 
-    function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](18);
+    function facetInterfaces() public view returns (bytes4[] memory interfaces) {
+        interfaces = new bytes4[](19);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20Metadata).interfaceId ^ type(IERC20).interfaceId;
@@ -184,10 +192,11 @@ contract MixedLegWeightedBufferPoolStandardVaultPkg is BalancerV3BasePoolFactory
             interfaces[15] = type(IStandardExchangeIn).interfaceId;
         interfaces[16] = type(IStandardExchangeOut).interfaceId;
         interfaces[17] = type(IStandardizedYield).interfaceId;
+        interfaces[18] = type(IStandardExchangeTransitionQuote).interfaceId;
     }
 
     function facetAddresses() public view returns (address[] memory facetAddresses_) {
-        facetAddresses_ = new address[](11);
+        facetAddresses_ = new address[](12);
         facetAddresses_[0] = address(BASIC_VAULT_FACET);
         facetAddresses_[1] = address(STANDARD_VAULT_FACET);
         facetAddresses_[2] = address(BALANCER_V3_VAULT_AWARE_FACET);
@@ -199,6 +208,7 @@ contract MixedLegWeightedBufferPoolStandardVaultPkg is BalancerV3BasePoolFactory
         facetAddresses_[8] = address(BUFFER_POOL_FACET);
         facetAddresses_[9] = address(POOL_LIQUIDITY_FACET);
         facetAddresses_[10] = address(HOOK_FACET);
+        facetAddresses_[11] = address(TRANSITION_QUOTE_FACET);
     }
 
     function packageMetadata()

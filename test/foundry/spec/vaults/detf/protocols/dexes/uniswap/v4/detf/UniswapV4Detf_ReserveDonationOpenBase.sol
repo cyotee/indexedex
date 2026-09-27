@@ -416,9 +416,9 @@ abstract contract UniswapV4Detf_ReserveDonationOpenBase is TestBase_UniswapV4Det
         DnLiveSnap memory before_ = _snapLive(dnUserOriginal);
         uint256 quote_ = _nftDonate().previewDonate(token_, amount_);
         vm.startPrank(dnDonor);
-        token_.transfer(address(_nft()), amount_);
+        token_.approve(address(_nft()), amount_);
         vm.recordLogs();
-        detfInfo.donate(token_, amount_, true);
+        detfInfo.donate(token_, amount_, false);
         vm.stopPrank();
         Vm.Log[] memory logs_ = vm.getRecordedLogs();
         bool found_;

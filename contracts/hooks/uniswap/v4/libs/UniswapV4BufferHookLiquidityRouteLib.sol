@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
 import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {IUniswapV4BufferHookFlexibleLiquidity} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4BufferHookFlexibleLiquidity.sol";
 
@@ -57,7 +58,10 @@ library UniswapV4BufferHookLiquidityRouteLib {
     ) internal returns (uint256 received_) {
         if (pair_ == address(0)) return exchangeIn(in_, amount_, out_, minimum_, receiver_, prepaid_, deadline_);
         if (amount_ == 0) revert ZeroLiquidityAmount();
-        if (prepaid_) revert ISecurePullErrors.TransferDeltaInsufficient(amount_, 0);
+        if (prepaid_) {
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+            revert ISecurePullErrors.TransferDeltaInsufficient(amount_, 0);
+        }
         bytes memory call_ = _isJoin(in_, out_)
             ? abi.encodeCall(IUniswapV4BufferHookFlexibleLiquidity.joinSingleAssetExactInFlexible, (pair_, amount_, true, receiver_, minimum_, deadline_))
             : abi.encodeCall(IUniswapV4BufferHookFlexibleLiquidity.exitSingleAssetExactBptInFlexible, (pair_, amount_, true, receiver_, minimum_, deadline_));
@@ -69,7 +73,10 @@ library UniswapV4BufferHookLiquidityRouteLib {
         IERC20 in_, uint256 amount_, IERC20 out_, uint256 minimum_, address receiver_, bool prepaid_, uint256 deadline_
     ) internal returns (uint256 received_) {
         if (amount_ == 0) revert ZeroLiquidityAmount();
-        if (prepaid_) revert ISecurePullErrors.TransferDeltaInsufficient(amount_, 0);
+        if (prepaid_) {
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+            revert ISecurePullErrors.TransferDeltaInsufficient(amount_, 0);
+        }
         bytes memory call_ = _isJoin(in_, out_)
             ? abi.encodeCall(IUniswapV4SeBufferHook.joinSingleAssetExactIn, (address(in_), amount_, receiver_, minimum_, deadline_))
             : abi.encodeCall(IUniswapV4SeBufferHook.exitSingleAssetExactBptIn, (address(out_), amount_, receiver_, minimum_, deadline_));
@@ -83,7 +90,10 @@ library UniswapV4BufferHookLiquidityRouteLib {
         if (amount_ == 0) revert ZeroLiquidityAmount();
         uint256 quoted_ = previewOut(in_, out_, amount_);
         if (quoted_ > maximum_) revert LiquidityMaximumExceeded(maximum_, quoted_);
-        if (prepaid_) revert ISecurePullErrors.TransferDeltaInsufficient(quoted_, 0);
+        if (prepaid_) {
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+            revert ISecurePullErrors.TransferDeltaInsufficient(quoted_, 0);
+        }
         bytes memory call_ = _isJoin(in_, out_)
             ? abi.encodeCall(IUniswapV4SeBufferHook.joinSingleAssetExactOut, (address(in_), amount_, receiver_, quoted_, deadline_))
             : abi.encodeCall(IUniswapV4SeBufferHook.exitSingleAssetExactTokenOut, (address(out_), amount_, receiver_, quoted_, deadline_));

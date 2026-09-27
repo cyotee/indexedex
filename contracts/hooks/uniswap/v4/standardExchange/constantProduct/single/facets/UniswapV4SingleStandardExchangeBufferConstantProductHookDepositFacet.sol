@@ -28,13 +28,15 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet is
 
     /// @inheritdoc IFacet
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](6);
+        funcs = new bytes4[](8);
         funcs[0] = IHook.deposit.selector;
         funcs[1] = IHook.depositWithPermit2Signature.selector;
         funcs[2] = IHook.depositWithPermit2Allowance.selector;
         funcs[3] = IHook.depositWithSeShares.selector;
         funcs[4] = IUniswapV4SeBufferHook.joinProportional.selector;
         funcs[5] = IUniswapV4SeBufferHook.joinUnbalanced.selector;
+        funcs[6] = IHook.rateProviders.selector; // D60
+        funcs[7] = IHook.rateProvider.selector; // D60
     }
 
     /// @inheritdoc IFacet

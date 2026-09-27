@@ -306,7 +306,8 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg is
                 a.ownerOnlyLiquidity,
                 a.owner,
                 a.pairTokenDecimals,
-                a.rawTokenDecimals
+                a.rawTokenDecimals,
+                a.rateProvider
             )
         );
     }
@@ -350,6 +351,9 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg is
             a.poolManager, a.feeOracle, a.standardExchange, a.pairToken, a.rawToken, c0, c1, d0, d1
         );
         Repo._layout().ownerOnlyLiquidity = a.ownerOnlyLiquidity;
+        // D60: the swap invariant values the SE leg as shares x provider rate.
+        Repo._layout().rateProvider = a.rateProvider;
+        Repo._layout().seDecimals = IERC20Metadata(a.standardExchange).decimals();
     }
 
     function postDeploy(address) public pure returns (bool) {
@@ -392,6 +396,8 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg is
         }
         if (a.rawToken == a.pairToken) revert SameToken();
         if (a.rawToken == a.standardExchange) revert RawIsSE();
+        // D60: a buffered pair leg is priced by its rate provider, never by the hook.
+        if (a.pairToken != a.standardExchange && a.rateProvider == address(0)) revert RateProviderRequired();
         if (UniswapV4SeBufferHookLegLib.isWrapperShareInventory(a.pairToken, a.standardExchange)) {
             if (!UniswapV4SeBufferHookLegLib.wrapperShareDecimalsOk(a.pairTokenDecimals)) {
                 revert InvalidDecimals();

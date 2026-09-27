@@ -1,0 +1,132 @@
+{
+ "command": "FOUNDRY_FUZZ_RUNS=10000 FOUNDRY_INVARIANT_RUNS=256 FOUNDRY_INVARIANT_DEPTH=64 python3 scripts/forge-artifacts.py test --test-root <campaign> -- -vv",
+ "foundryTomlDefaultsUnchanged": true,
+ "fileLevelCapsRemoved": [
+  "test/foundry/spec/protocol/dexes/camelot/v2/CamelotV2StandardExchange_InOutInvariant.t.sol",
+  "test/foundry/spec/protocol/dexes/camelot/v2/decimals/CamelotV2StandardExchange_InOutInvariant_{H6,H9,P6_R9,P6_R18,P9_R6,P9_R18,P18_R6,P18_R9}.t.sol",
+  "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/fuzz/MultiVaultWeightedDetf_Fuzz.t.sol",
+  "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/fuzz/MultiVaultWeightedDetf_Fuzz_Decimals.sol",
+  "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/fuzz/SingleStandardExchangeDETF_Fuzz.t.sol",
+  "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/fuzz/SingleStandardExchangeDETF_Fuzz_Decimals.sol",
+  "test/foundry/spec/protocol/dexes/aerodrome/v1/decimals/invariant/AerodromeStandardExchange_Invariant_Decimals.sol and 8 combos",
+  "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/decimals/invariant/MultiVaultWeightedDetf_Decimals.sol",
+  "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/invariant/SingleStandardExchangeDETF_Decimals.sol"
+ ],
+ "remainingFileLevelPinsMatchReleaseCounts": "default.invariant.runs = 256 and depth = 64 only",
+ "catchScan": {
+  "d16ProductionTryCatch": 0,
+  "d41Staticcall": [
+   "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol:110",
+   "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol:119",
+   "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol:148"
+  ],
+  "d48Staticcall": [
+   "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderFacet.sol:135",
+   "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderTarget.sol:117"
+  ],
+  "excludedFromD16": [
+   "contracts/protocols/dexes/uniswap/{v3,v4}/ (preserved)",
+   "contracts/hooks/uniswap/v4/{orbital,weighted,stable/quad/curve,stable/quad/balancer}/ (non-SE swap hooks)",
+   "contracts/protocols/staking/token/TokenStakingTarget.sol",
+   "TestBase_* and test fixtures"
+  ],
+  "review20260920": "The 2026-09-18 scan omitted contracts/vaults/standard/exchange/protocols/uniswap; three decimals() catches remained there (V3/V4 FullSpread Common _absoluteFloor, StandardExchangeConstantProduct._decimals). Removed 2026-09-20; the full-root scan (plan \u00a73 plus every D16 SE root) now returns no executable try/catch.",
+  "d49Staticcall": [
+   "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget.sol:595",
+   "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolHookTarget.sol:337",
+   "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolHookTarget.sol:442",
+   "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolHookTarget.sol:517",
+   "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolHookTarget.sol:361",
+   "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolHookTarget.sol:469",
+   "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolHookTarget.sol:544",
+   "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolHookTarget.sol:367",
+   "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolHookTarget.sol:482",
+   "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolHookTarget.sol:564",
+   "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolHookTarget.sol:441",
+   "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferHookTarget.sol:409"
+  ],
+  "d49Note": "D49 (2026-09-21): prepaySessionActive() router probe in all six Balancer buffer-hook targets and previewExchangeIn/Out walk probes in the three multi-vault targets are retained as interface detection; rg '\\.staticcall\\(' over the six targets lists exactly these twelve sites."
+ },
+ "absorbDustToFeeTo": {
+  "definition": "deleted 2026-09-20 with _refundOrAbsorbAbove (dead code)",
+  "callers": [],
+  "note": "No production path pays residual to feeTo (D6)."
+ },
+ "newPublicSweep": false,
+ "existingSweepNotAddedByThisPrd": [
+  "IUniswapV4Detf.sweepDust",
+  "IUniswapV4DetfSelfCall.sweepDustAtomic",
+  "IUniswapV4DetfSelfCall.sweepPairToShare"
+ ],
+ "craneSelectorsUnchanged": true,
+ "selectorSizeCompare": {
+  "file": "selector-size-compare.json",
+  "compared": 565,
+  "oversizeCount": 0,
+  "selectorDiffCount": 40,
+  "authorizedD19ArtifactMethodMoves": true,
+  "proxySelectorDiffCount": 9,
+  "missingArtifacts": 0,
+  "note": "Run 21 (2026-09-25, D69). 565 compared, 0 missing, 0 oversize (EIP-170), 40 selector diffs all classified (exit 0). D69 SE feature work added internal routes (no new external selectors on tracked artifacts), so the diff count is unchanged from the D68 baseline. New/grown facets measured under EIP-170: AaveCrossVersionLoopExchangeOutFacet 19,371 B (grew for the wrap-exact-out mint route), AaveCrossVersionLoopStandardExchangeTransitionQuoteFacet 8,692 B (new IStandardExchangeTransitionQuote facet), AaveV3StataStandardExchangeOutFacet 10,258 B (grew for the wrap-exact-out mint route). Full hermetic run 21 green (3,013 suites, 34,532 passed, 0 failed, exit 0); SE matrix 175 cells: 165 COMPATIBLE, 3 INCOMPATIBLE, 7 DEPRECATED, 0 DEFERRED/BLOCKED/FAILING."
+ },
+ "hermeticReleaseLimitation": {
+  "file": "r12-hermetic-summary.json",
+  "passed": 25737,
+  "failed": 6424,
+  "exit": 1,
+  "claimGreen": false,
+  "priorRun": "24215 passed / 7809 failed"
+ },
+ "apexFuzzInvariantSelectors": {
+  "testFuzz_APEX": [
+   "test/foundry/spec/utils/LocalCreditLib.t.sol:testFuzz_APEX_availableNeverUnderflows",
+   "test/foundry/spec/utils/LocalCreditLib.t.sol:testFuzz_APEX_budgetIsMin",
+   "test/foundry/spec/utils/LocalCreditLib.t.sol:testFuzz_APEX_refundNeverExceedsMaxMinusUsed"
+  ],
+  "invariant_APEX": [],
+  "note": "No invariant_.*APEX identifiers. Family StdInvariant campaigns reuse older names recorded in r11-stdinvariant-campaigns.json. Release env FOUNDRY_FUZZ_RUNS=10000 FOUNDRY_INVARIANT_RUNS=256 FOUNDRY_INVARIANT_DEPTH=64. MixedBuffer DETF campaign is not counted green.",
+  "releaseCommand": "FOUNDRY_FUZZ_RUNS=10000 FOUNDRY_INVARIANT_RUNS=256 FOUNDRY_INVARIANT_DEPTH=64 forge test --match-test '(testFuzz_.*APEX|invariant_.*APEX)' -vv",
+  "lastRun": {
+   "log": "r12-apex-fuzz-invariant.log",
+   "exit": 0,
+   "passed": 3,
+   "failed": 0,
+   "runs": 10000
+  }
+ },
+ "gitDiffCheck": "clean",
+ "syncCodexSkillsCheck": {
+  "exit": 1,
+  "message": "Description budget exceeded on pre-existing catalog entries (141 skills over 160 chars; next: indexedex-ui-refactor)",
+  "note": "IndexedEx skills changed by this program are within budget; remaining failures predate the program"
+ },
+ "allArtifactsExit": 0,
+ "forgeBuildExit": 0,
+ "hermeticReleaseRun20260920": {
+  "passed": 32654,
+  "failed": 0,
+  "exit": 0,
+  "claimGreen": true
+ },
+ "bareExpectRevertScan": {
+  "script": "scripts/apex_bare_expectrevert_scan.sh",
+  "roots": [
+   "test/foundry/spec/hooks/uniswap/v4/standardExchange",
+   "test/foundry/spec/vaults/standard/exchange/protocols/uniswap"
+  ],
+  "note": "R2.4: enumerates bare vm.expectRevert() (no selector) in the APEX roots; a bare form passes on any revert, masking the wrong error. --check fails if the count exceeds the baseline.",
+  "baselineCount": 138,
+  "currentCount": 115,
+  "namedSitesPinnedToTypedSelectors": [
+   "UniswapV4SingleStandardExchangeBufferConstantProductHook_Liquidity.t.sol: ZeroAmount/DeadlineExpired/InsufficientLpOut/InsufficientTokenOut (8 sites)",
+   "UniswapV4StandardExchangeBalancerQuadStableBufferHook_TokenCount.t.sol: InvalidN (4) + Permit2 AllowanceExpired (1)",
+   "UniswapV3FullSpreadStandardExchangeVault_Import.t.sol: ZeroAmount (one-sided), Unavailable (second import), InvalidImportedPool (wrong pool), ZeroLiquidity",
+   "StandardExchangeReleaseBehavior.sol: ERC20InsufficientAllowance (ordinary-caller denial), ERC2612InvalidSigner (permit replay)",
+   "RebasingAwareERC4626_StandardExchange.t.sol::test_API04_expiredDeadlineReverts: DeadlineExceeded",
+   "RebasingAwareERC4626_Adversarial.t.sol::test_ADV02_insufficientSharePretransferReverts: TransferDeltaInsufficient (contract caller, not the EOA gate \u2014 the named condition)",
+   "UniswapV4StandardExchangeOrbitalBufferHook_Apex008.t.sol::test_R6_cappedUnwrap_insufficient_rollsBack: Drain() (preview) + WrappedError wrapping Drain() (PoolManager path)"
+  ],
+  "scope": "R2.4 targets the named negative controls plus the enforcement scan. The remaining 115 bare sites are lower-priority non-named cases the scan tracks; several are V4 PoolManager-wrapped hook reverts whose typed inner reason is asserted on the paired direct call.",
+  "intentAudit": "2026-09-24: each pinned selector verified against its test's named condition, not the first-encountered revert. One prior mispin corrected: test_ADV02 had been pinned to the first-encountered EOAPretransferNotAllowed; the named condition is the insufficient-share TransferDeltaInsufficient, reachable only via a permitted contract caller."
+ }
+}

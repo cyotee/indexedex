@@ -36,6 +36,21 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Liquidity is
         assertTrue(weighted.isFullBook());
     }
 
+    function test_D36_restingFace_notPaidToJoiner() public {
+        _firstMintEqual(100 ether);
+        address donor = address(0xD0D0);
+        token0.mint(donor, 500 ether);
+        vm.prank(donor);
+        token0.transfer(hook, 500 ether);
+        uint256 user0 = token0.balanceOf(user);
+        uint256[] memory amounts = new uint256[](2);
+        amounts[0] = 1 ether;
+        amounts[1] = 1 ether;
+        vm.prank(user);
+        weighted.joinProportional(amounts, user, 0, block.timestamp + 1 hours);
+        assertLt(token0.balanceOf(user), user0, "D36: joiner does not collect resting face");
+    }
+
     function test_joinUnbalanced_previewEqualsExec() public {
         _firstMintEqual(200 ether);
         uint256[] memory amounts = new uint256[](2);

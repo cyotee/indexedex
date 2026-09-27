@@ -9,6 +9,7 @@ import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExch
 import {
     TestBase_AerodromeStandardExchange_MultiPool
 } from "contracts/protocols/dexes/aerodrome/v1/test/bases/TestBase_AerodromeStandardExchange_MultiPool.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 
 /// @notice Aero SE security remediations: E6 Out refund, A0 first-mint, I1 LP-deposit.
 /// @dev Production proxy only. Volatile pools. No SUT mocks.
@@ -62,9 +63,7 @@ contract AerodromeStandardExchange_E6_A0_I1_Test is TestBase_AerodromeStandardEx
         uint256 liveAfterPush_ = tokenA.balanceOf(address(vault_));
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, fatMax_, usedIn_)
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vault_.exchangeOut(
             IERC20(address(tokenA)),
             fatMax_,
@@ -78,6 +77,51 @@ contract AerodromeStandardExchange_E6_A0_I1_Test is TestBase_AerodromeStandardEx
         assertEq(tokenA.balanceOf(address(vault_)), liveAfterPush_, "E6: live inventory unmoved");
         assertGe(tokenA.balanceOf(address(vault_)), bookedR_, "E6: booked R intact");
         assertEq(tokenA.balanceOf(attacker), attackerBefore_, "E6: attacker did not skim pairToken");
+    }
+
+    function test_E6_exchangeOut_swap_inflatedMax_contractCaller_noInventorySkim() public {
+        IStandardExchangeProxy vault_ = _vault();
+        (ERC20PermitMintableStub tokenA, ERC20PermitMintableStub tokenB) = _getTokens(PoolConfig.Balanced);
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+
+        uint256 residual_ = TEST_AMOUNT / 4;
+        uint256 pull_ = TEST_AMOUNT / 16;
+        tokenA.mint(address(vault_), residual_);
+        tokenA.mint(address(this), pull_);
+        tokenA.approve(address(vault_), pull_);
+        vault_.exchangeIn(IERC20(address(tokenA)), pull_, IERC20(address(tokenB)), 0, address(this), false, _deadline());
+
+        uint256 bookedR_ = tokenA.balanceOf(address(vault_));
+        assertGt(bookedR_, 0, "E6 seed: booked inventory");
+
+        uint256 amountOut_ = 1 ether;
+        uint256 usedIn_ =
+            vault_.previewExchangeOut(IERC20(address(tokenA)), IERC20(address(tokenB)), amountOut_);
+        require(usedIn_ > 0, "E6 preview used");
+        uint256 fatMax_ = usedIn_ + bookedR_;
+
+        tokenA.mint(address(caller), usedIn_);
+        vm.prank(address(caller));
+        tokenA.transfer(address(vault_), usedIn_);
+
+        uint256 callerBefore_ = tokenA.balanceOf(address(caller));
+        uint256 liveAfterPush_ = tokenA.balanceOf(address(vault_));
+
+        vm.prank(address(caller));
+        vault_.exchangeOut(
+            IERC20(address(tokenA)),
+            fatMax_,
+            IERC20(address(tokenB)),
+            amountOut_,
+            address(caller),
+            true,
+            _deadline()
+        );
+
+        uint256 callerGain_ = tokenA.balanceOf(address(caller)) - callerBefore_;
+        assertEq(callerGain_, 0, "E6: no pairToken refund from booked R");
+        assertGe(tokenA.balanceOf(address(vault_)), bookedR_, "E6: booked R intact");
+        assertLe(tokenA.balanceOf(address(vault_)), liveAfterPush_, "E6: vault did not gain attacker skim");
     }
 
     /* ---------------------------------------------------------------------- */
@@ -197,10 +241,15 @@ contract AerodromeStandardExchange_E6_A0_I1_Test is TestBase_AerodromeStandardEx
         if (claimed_ == 0) claimed_ = booked_;
 
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        vault_.exchangeIn(lp_, claimed_, IERC20(address(vault_)), 0, attacker, true, _deadline());
+
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
         );
-        vault_.exchangeIn(lp_, claimed_, IERC20(address(vault_)), 0, attacker, true, _deadline());
+        vault_.exchangeIn(lp_, claimed_, IERC20(address(vault_)), 0, address(caller), true, _deadline());
 
         assertEq(vault_.totalSupply(), supplyBefore_, "I1: no free mint against booked LP");
         assertEq(lp_.balanceOf(address(vault_)), booked_, "I1: booked LP unmoved");

@@ -18,7 +18,7 @@ contract UnderConsumeERC4626 is SimpleYieldERC4626 {
         leaveDust = d;
     }
 
-    function deposit(uint256 assets, address receiver) external override returns (uint256 shares) {
+    function deposit(uint256 assets, address receiver) public override returns (uint256 shares) {
         uint256 pull = assets;
         if (leaveDust > 0 && assets > leaveDust) {
             pull = assets - leaveDust;

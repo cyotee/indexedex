@@ -12,6 +12,7 @@ import {IMixedBufferMultiVaultStableDetfInfo} from "contracts/vaults/detf/protoc
 import {IMixedBufferMultiVaultStableDetfBonding} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfBonding.sol";
 import {IBasicVault} from "contracts/vaults/basic/IBasicVault.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 
 /// @notice Explicit T-NEST-1…8 + T-LOCAL for BAL-MB (L-DETF-TEST-EXPLICIT).
 contract MixedBufferMultiVaultStableDetf_NestedPush_Test is TestBase_MixedBufferMultiVaultStableDetf {
@@ -142,17 +143,24 @@ contract MixedBufferMultiVaultStableDetf_NestedPush_Test is TestBase_MixedBuffer
     function test_T_LOCAL_PUSH_transferToDetf_true_whenClaimedLeU() public virtual {
         IERC20 buffer_ = IERC20(liveInfo.bufferToken());
         uint256 amt_ = _fixtureAmount(50e18);
+        AtomicPretransferCaller caller_ = new AtomicPretransferCaller();
         _fundBuffer(bob, amt_);
         vm.prank(bob);
-        buffer_.transfer(liveDetf, amt_);
+        buffer_.approve(address(caller_), amt_);
         uint256 R0 = liveBook.reserveOfToken(address(buffer_));
-        uint256 B0 = buffer_.balanceOf(liveDetf);
-        assertTrue(B0 - R0 >= amt_, "U covers");
-        vm.prank(bob);
-        uint256 out_ = liveExchangeIn.exchangeIn(
-            buffer_, amt_, IERC20(liveDetf), 0, bob, true, block.timestamp + 1 hours
+        bytes memory returned_ = caller_.consumePretransfer(
+            buffer_,
+            bob,
+            liveDetf,
+            amt_,
+            abi.encodeCall(
+                IStandardExchangeIn.exchangeIn,
+                (buffer_, amt_, IERC20(liveDetf), 0, address(caller_), true, block.timestamp + 1 hours)
+            )
         );
+        uint256 out_ = abi.decode(returned_, (uint256));
         assertTrue(out_ > 0, "T-LOCAL-PUSH");
+        assertGe(buffer_.balanceOf(liveDetf), R0, "buffer held");
         assertEq(liveBook.reserveOfToken(address(buffer_)), buffer_.balanceOf(liveDetf), "R==B");
     }
 
@@ -160,12 +168,21 @@ contract MixedBufferMultiVaultStableDetf_NestedPush_Test is TestBase_MixedBuffer
         _mintDetfFromBuffer(liveDetf, bob, _fixtureAmount(40e18));
         IERC20 buffer_ = IERC20(liveInfo.bufferToken());
         assertEq(liveBook.reserveOfToken(address(buffer_)), buffer_.balanceOf(liveDetf), "booked");
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1, 0)
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vm.prank(bob);
         liveExchangeIn.exchangeIn(
             buffer_, 1, IERC20(liveDetf), 0, bob, true, block.timestamp + 1 hours
+        );
+        AtomicPretransferCaller caller_ = new AtomicPretransferCaller();
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1, 0)
+        );
+        caller_.execute(
+            liveDetf,
+            abi.encodeCall(
+                IStandardExchangeIn.exchangeIn,
+                (buffer_, 1, IERC20(liveDetf), 0, address(caller_), true, block.timestamp + 1 hours)
+            )
         );
     }
 }

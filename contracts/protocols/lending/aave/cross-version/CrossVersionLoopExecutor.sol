@@ -2,9 +2,18 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {Math} from "@crane/contracts/utils/Math.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IPool} from "@crane/contracts/protocols/lending/aave/v3.6/interfaces/IPool.sol";
 import {IAaveOracle} from "@crane/contracts/protocols/lending/aave/v3.6/interfaces/IAaveOracle.sol";
+import {IScaledBalanceToken} from "@crane/contracts/protocols/lending/aave/v3.6/interfaces/IScaledBalanceToken.sol";
+import {IAToken} from "@crane/contracts/protocols/lending/aave/v3.6/interfaces/IAToken.sol";
+import {DataTypes} from
+    "@crane/contracts/protocols/lending/aave/v3.6/protocol/libraries/types/DataTypes.sol";
+import {ReserveConfiguration} from
+    "@crane/contracts/protocols/lending/aave/v3.6/protocol/libraries/configuration/ReserveConfiguration.sol";
+import {TokenMath} from
+    "@crane/contracts/protocols/lending/aave/v3.6/protocol/libraries/helpers/TokenMath.sol";
 import {ISpoke} from "@crane/contracts/protocols/lending/aave/v4/spoke/interfaces/ISpoke.sol";
 import {IHub} from "@crane/contracts/protocols/lending/aave/v4/hub/interfaces/IHub.sol";
 
@@ -25,6 +34,8 @@ import {AaveV4Service} from "contracts/protocols/lending/aave/cross-version/Aave
 library CrossVersionLoopExecutor {
     using AaveV36Service for IPool;
     using AaveV4Service for ISpoke;
+    using ReserveConfiguration for DataTypes.ReserveConfigurationMap;
+    using TokenMath for uint256;
 
     uint256 internal constant BPS = 1e4;
     uint256 internal constant MIN_LAYER_USD = 1e8; // $1 (oracle base 1e8) dust floor
@@ -46,6 +57,23 @@ library CrossVersionLoopExecutor {
         uint256 maxIterations;
     }
 
+    /// @dev Cumulative progress + phi targets for a proportional unwind. Kept in memory so the
+    ///      HF-safe stepping loop stays under the stack limit without `via_ir`.
+    struct UnwindState {
+        uint256 twB; // V4 tokenB collateral to withdraw (funds the V3 tokenB repay)
+        uint256 trB; // V3 tokenB debt to repay (ceil of phi)
+        uint256 twA; // V3 tokenA collateral to withdraw (floor of phi)
+        uint256 trA; // V4 tokenA debt to repay (ceil of phi)
+        uint256 doneWB;
+        uint256 doneRB;
+        uint256 doneWA;
+        uint256 doneRA;
+    }
+
+    // Bound for the HF-safe proportional unwind. Small/partial exits finish in one pass; a
+    // near-full exit deleverages fastest as debt clears (HF rises), so this ceiling is ample.
+    uint256 internal constant UNWIND_MAX_ITERATIONS = 100;
+
     /// @dev USD value (oracle base 1e8) of `amount` of a token with `decimals` at `price` (1e8).
     function _toUsd(uint256 amount, uint8 decimals, uint256 price) internal pure returns (uint256) {
         return (amount * price) / (10 ** decimals);
@@ -56,8 +84,23 @@ library CrossVersionLoopExecutor {
         return (usd * (10 ** decimals)) / price;
     }
 
+    /// @dev Remaining V3 tokenA supply headroom. Cap 0 means unbounded. Paused/frozen is capacity 0.
+    function tokenASupplyCapacity(Market memory m) internal view returns (uint256) {
+        DataTypes.ReserveConfigurationMap memory cfg = m.v36Pool.getConfiguration(address(m.tokenA));
+        if (cfg.getPaused() || cfg.getFrozen()) return 0;
+        uint256 supplyCap = cfg.getSupplyCap();
+        if (supplyCap == 0) return type(uint256).max;
+        DataTypes.ReserveDataLegacy memory rd = m.v36Pool.getReserveData(address(m.tokenA));
+        uint256 index = m.v36Pool.getReserveNormalizedIncome(address(m.tokenA));
+        uint256 used = (IAToken(rd.aTokenAddress).scaledTotalSupply() + uint256(rd.accruedToTreasury))
+            .getATokenBalance(index);
+        uint256 capTokens = supplyCap * (10 ** cfg.getDecimals());
+        return capTokens > used ? capTokens - used : 0;
+    }
+
     /// @notice Deposit `amountA` of tokenA and build the leveraged cross-version loop (A-first):
     ///         supply A on V3, borrow B on V3, supply B on V4, borrow A on V4, supply A on V3, repeat.
+    ///         Stops at the V3 tokenA supply cap and retains unsupplied principal locally (D43).
     function depositLoopAFirst(Market memory m, uint256 amountA, LoopConfig memory cfg) internal {
         // One-time max approvals to both venues for both tokens.
         m.tokenA.approve(address(m.v36Pool), type(uint256).max);
@@ -72,30 +115,64 @@ library CrossVersionLoopExecutor {
 
         uint256 factorBps = (cfg.ltvBps * cfg.safetyBps) / BPS; // effective per-leg borrow fraction
 
-        // Initial collateral.
-        AaveV36Service.supply(m.v36Pool, address(m.tokenA), amountA);
+        uint256 cap = tokenASupplyCapacity(m);
+        uint256 initial = amountA < cap ? amountA : cap;
+        if (initial == 0) return;
 
-        // Borrow capacity (USD) created by the initial collateral.
-        uint256 layerUsd = (_toUsd(amountA, decA, priceA) * factorBps) / BPS;
+        AaveV36Service.supply(m.v36Pool, address(m.tokenA), initial);
+
+        uint256 layerUsd = (_toUsd(initial, decA, priceA) * factorBps) / BPS;
 
         for (uint256 i = 0; i < cfg.maxIterations; ++i) {
             if (layerUsd < MIN_LAYER_USD) break;
+            if (tokenASupplyCapacity(m) == 0) break;
 
-            // Borrow B on V3, supply B on V4 (enable as collateral on first V4 supply).
             uint256 borrowB = _fromUsd(layerUsd, decB, priceB);
+            // V3 validates the post-mint debt, including its native/scaled ceil
+            // conversions. Raw USD headroom alone can overdraw by one debt unit.
+            uint256 availableB = _v3BorrowCapacityB(m, decB, priceB);
+            if (borrowB > availableB) borrowB = availableB;
+            if (borrowB == 0) break;
             AaveV36Service.borrow(m.v36Pool, address(m.tokenB), borrowB);
             AaveV4Service.supply(m.v4Spoke, m.v4ReserveIdB, borrowB);
             if (i == 0) m.v4Spoke.setUsingAsCollateral(m.v4ReserveIdB, true, address(this));
 
-            // Borrow A on V4 against the freshly supplied B, supply A back on V3.
-            uint256 nextUsd = (layerUsd * factorBps) / BPS;
-            if (nextUsd < MIN_LAYER_USD) break;
-            uint256 borrowA = _fromUsd(nextUsd, decA, priceA);
-            AaveV4Service.borrow(m.v4Spoke, m.v4ReserveIdA, borrowA);
-            AaveV36Service.supply(m.v36Pool, address(m.tokenA), borrowA);
-
-            layerUsd = (nextUsd * factorBps) / BPS;
+            // Only the collateral actually supplied on V4 funds the next leg.
+            layerUsd = (_toUsd(borrowB, decB, priceB) * factorBps) / BPS;
+            if (layerUsd < MIN_LAYER_USD) break;
+            if (!_borrowAndResupplyA(m, _fromUsd(layerUsd, decA, priceA))) break;
+            layerUsd = (layerUsd * factorBps) / BPS;
         }
+    }
+
+    /// @dev Invert V3.6's debt valuation: ceil(nativeDebt * price / unit),
+    /// where nativeDebt = ceil(scaledDebt * index / RAY). The new borrow itself
+    /// mints ceil(amount * RAY / index) scaled units. Budget all three native
+    /// rounding boundaries rather than subtracting an arbitrary safety amount.
+    function _v3BorrowCapacityB(Market memory m, uint8 decimalsB, uint256 priceB)
+        private view returns (uint256)
+    {
+        (,, uint256 availableUsd,,,) = m.v36Pool.getUserAccountData(address(this));
+        if (availableUsd == 0) return 0;
+        uint256 index = m.v36Pool.getReserveNormalizedVariableDebt(address(m.tokenB));
+        uint256 scaledDebt = IScaledBalanceToken(m.v36Pool.getReserveVariableDebtToken(address(m.tokenB)))
+            .scaledBalanceOf(address(this));
+        uint256 unit = 10 ** decimalsB;
+        uint256 currentUsd = Math.mulDiv(scaledDebt.getVTokenBalance(index), priceB, unit, Math.Rounding.Ceil);
+        uint256 maxNativeDebt = Math.mulDiv(currentUsd + availableUsd, unit, priceB);
+        uint256 maxScaledDebt = Math.mulDiv(maxNativeDebt, 1e27, index);
+        if (maxScaledDebt <= scaledDebt) return 0;
+        return Math.mulDiv(maxScaledDebt - scaledDebt, index, 1e27);
+    }
+
+    /// @dev Borrow tokenA on V4 and resupply V3, clamped to remaining V3 capacity. False means stop.
+    function _borrowAndResupplyA(Market memory m, uint256 want) private returns (bool continued) {
+        uint256 cap = tokenASupplyCapacity(m);
+        if (cap == 0 || want == 0) return false;
+        uint256 borrowA = want < cap ? want : cap;
+        AaveV4Service.borrow(m.v4Spoke, m.v4ReserveIdA, borrowA);
+        AaveV36Service.supply(m.v36Pool, address(m.tokenA), borrowA);
+        return borrowA == want;
     }
 
     /// @dev Fraction (WAD) of collateral safely removable to keep HF >= ~1.05, with a 5% extra
@@ -202,6 +279,93 @@ library CrossVersionLoopExecutor {
         return AaveV36Service.withdraw(m.v36Pool, address(m.tokenA), amount);
     }
 
+    /// @notice D61: burning `num` of `den` shares is a claim on phi = num/den of every position leg, so
+    ///         scale all four legs by phi: free phi of each collateral and retire phi of each debt. Repay
+    ///         rounds up and withdraw rounds down, so the remaining position's LTV never rises, which keeps
+    ///         borrow headroom for the next deposit. Returns the net tokenA freed to the vault
+    ///         (= floor(phi*suppliedA) - ceil(phi*debtA), matching `proportionalFreeableA`).
+    /// @dev A single pass that withdrew a leg's collateral before repaying that leg's cross-token debt
+    ///      transiently breached the version's HF near a full exit (phi -> 1). Instead this repays each
+    ///      version's debt from freed collateral in HF-safe steps (like `fullUnwind`), so no intermediate
+    ///      withdrawal ever drops a version below its liquidation buffer, while total collateral removed
+    ///      (floor) and total debt repaid (ceil) still hit the proportional targets. Never borrows.
+    function proportionalUnwind(Market memory m, uint256 num, uint256 den) internal returns (uint256 freedA) {
+        if (num == 0 || den == 0) return 0;
+        uint256 beforeA = m.tokenA.balanceOf(address(this));
+
+        UnwindState memory st;
+        // D61 rounding: repay ceil (debt never left under-retired), withdraw floor (collateral never
+        // over-removed) so the remaining position's LTV never rises.
+        st.trB = Math.mulDiv(AaveV36Service.debtOf(m.v36Pool, address(m.tokenB), address(this)), num, den, Math.Rounding.Ceil);
+        st.trA = Math.mulDiv(AaveV4Service.debtOf(m.v4Spoke, m.v4ReserveIdA, address(this)), num, den, Math.Rounding.Ceil);
+        st.twA = Math.mulDiv(AaveV36Service.suppliedOf(m.v36Pool, address(m.tokenA), address(this)), num, den);
+        {
+            // Withdraw only enough V4 tokenB collateral to fund the V3 tokenB repay (bounded by supply).
+            uint256 suppliedB = AaveV4Service.suppliedOf(m.v4Spoke, m.v4ReserveIdB, address(this));
+            st.twB = st.trB < suppliedB ? st.trB : suppliedB;
+        }
+
+        for (uint256 i = 0; i < UNWIND_MAX_ITERATIONS; ++i) {
+            bool progressed = false;
+            // V4 tokenB collateral -> raw tokenB (HF-safe fraction of what remains this step).
+            if (st.doneWB < st.twB) {
+                uint256 supB = AaveV4Service.suppliedOf(m.v4Spoke, m.v4ReserveIdB, address(this));
+                uint256 safeB = (supB * _safeFraction(AaveV4Service.healthFactor(m.v4Spoke, address(this)))) / 1e18;
+                uint256 want = st.twB - st.doneWB;
+                uint256 wb = want < safeB ? want : safeB;
+                if (wb > 0) { AaveV4Service.withdraw(m.v4Spoke, m.v4ReserveIdB, wb); st.doneWB += wb; progressed = true; }
+            }
+            // Repay V3 tokenB debt from raw tokenB (raises V3 HF; never repay 0).
+            if (st.doneRB < st.trB) {
+                uint256 haveB = m.tokenB.balanceOf(address(this));
+                uint256 rb = st.trB - st.doneRB;
+                if (rb > haveB) rb = haveB;
+                if (rb > 0) { AaveV36Service.repay(m.v36Pool, address(m.tokenB), rb); st.doneRB += rb; progressed = true; }
+            }
+            // V3 tokenA collateral -> raw tokenA (HF-safe fraction; V3 HF is now higher from the repay).
+            if (st.doneWA < st.twA) {
+                uint256 supA = AaveV36Service.suppliedOf(m.v36Pool, address(m.tokenA), address(this));
+                uint256 safeA = (supA * _safeFraction(AaveV36Service.healthFactor(m.v36Pool, address(this)))) / 1e18;
+                uint256 want = st.twA - st.doneWA;
+                uint256 wa = want < safeA ? want : safeA;
+                if (wa > 0) { AaveV36Service.withdraw(m.v36Pool, address(m.tokenA), wa); st.doneWA += wa; progressed = true; }
+            }
+            // Repay V4 tokenA debt from raw tokenA (raises V4 HF for the next step; never repay 0).
+            if (st.doneRA < st.trA) {
+                uint256 haveA = m.tokenA.balanceOf(address(this));
+                uint256 ra = st.trA - st.doneRA;
+                if (ra > haveA) ra = haveA;
+                if (ra > 0) { AaveV4Service.repay(m.v4Spoke, m.v4ReserveIdA, ra); st.doneRA += ra; progressed = true; }
+            }
+            if (st.doneWB >= st.twB && st.doneRB >= st.trB && st.doneWA >= st.twA && st.doneRA >= st.trA) break;
+            if (!progressed) break;
+        }
+
+        // navUsd counts tokenB only as (supplied - debt), so any freed tokenB dust must not be stranded.
+        uint256 dustB = m.tokenB.balanceOf(address(this));
+        if (dustB > 0) AaveV4Service.supply(m.v4Spoke, m.v4ReserveIdB, dustB);
+        freedA = m.tokenA.balanceOf(address(this)) - beforeA;
+    }
+
+    /// @notice D61: exact net tokenA a proportional unwind of `num`/`den` shares frees, computed with the
+    ///         same rounding the unwind uses: floor(phi*suppliedA) - ceil(phi*debtA). This is the precise
+    ///         freeable envelope for a pro-rata exit; the earlier floor(phi*(s-d)) over-predicted it by up
+    ///         to a wei, which surfaced as a 1-wei `AmountOutNotMet` at execution.
+    function proportionalFreeableA(Market memory m, uint256 num, uint256 den) internal view returns (uint256) {
+        if (num == 0 || den == 0) return 0;
+        uint256 s = AaveV36Service.suppliedOf(m.v36Pool, address(m.tokenA), address(this));
+        uint256 d = AaveV4Service.debtOf(m.v4Spoke, m.v4ReserveIdA, address(this));
+        uint256 wA = Math.mulDiv(s, num, den);
+        uint256 rA = Math.mulDiv(d, num, den, Math.Rounding.Ceil);
+        return wA > rA ? wA - rA : 0;
+    }
+
+    /// @notice Locally retained tokenA. The loop rejects every public pretransfer (D32), so the
+    ///         whole raw balance is vault-owned backing that the supply cap kept out of V3 (D43).
+    function localTokenA(Market memory m) internal view returns (uint256) {
+        return m.tokenA.balanceOf(address(this));
+    }
+
     /// @notice Common-unit USD value (oracle base 1e8) of `amount` of a pair token.
     function valueUsd(Market memory m, IERC20 token, uint256 amount) internal view returns (uint256) {
         uint256 price = m.v36Oracle.getAssetPrice(address(token));
@@ -210,10 +374,12 @@ library CrossVersionLoopExecutor {
 
     /// @notice Net position value (NAV) in the common USD unit (oracle base 1e8), reconciled live
     ///         from Aave (PRD decisions 2, 10): netA*priceA + netB*priceB. Used for share pricing.
+    ///         Locally retained tokenA (principal not supplied because of the V3 supply cap, D43)
+    ///         is booked backing and counts at the same oracle price (R14.12).
     function navUsd(Market memory m) internal view returns (uint256) {
         uint256 priceA = m.v36Oracle.getAssetPrice(address(m.tokenA));
         uint256 priceB = m.v36Oracle.getAssetPrice(address(m.tokenB));
-        uint256 netA = netBalanceOf(m, m.tokenA, m.v4ReserveIdA);
+        uint256 netA = netBalanceOf(m, m.tokenA, m.v4ReserveIdA) + localTokenA(m);
         uint256 netB = netBalanceOf(m, m.tokenB, m.v4ReserveIdB);
         return _toUsd(netA, IERC20Metadata(address(m.tokenA)).decimals(), priceA)
             + _toUsd(netB, IERC20Metadata(address(m.tokenB)).decimals(), priceB);

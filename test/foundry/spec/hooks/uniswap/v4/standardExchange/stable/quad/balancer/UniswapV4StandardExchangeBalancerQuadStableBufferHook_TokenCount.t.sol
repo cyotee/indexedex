@@ -16,8 +16,11 @@ import {StableMath} from "@crane/contracts/external/balancer/v3/solidity-utils/c
 import {IUniswapV4BalancerStableLiquidityUnits as IUnits} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/interfaces/IUniswapV4BalancerStableLiquidityUnits.sol";
 import {FeeOnTransferERC20} from "contracts/test/stubs/FeeOnTransferERC20.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {MintableERC20Decimals} from "contracts/test/stubs/MintableERC20Decimals.sol";
 import {RateProviderMock} from "contracts/test/balancer/v3/RateProviderMock.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
+import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 
 abstract contract BalancerStableTokenCountBase is TestBase {
     IPkg.PkgArgs internal activeArgs;
@@ -34,7 +37,6 @@ abstract contract BalancerStableTokenCountBase is TestBase {
         a.baseAmp = 100;
         a.tokens = new address[](n);
         a.standardExchanges = new address[](n);
-        a.rateProviders = new address[](n);
         a.tokenDecimals = new uint8[](n);
         a.seDecimals = new uint8[](n);
         for (uint256 i; i < n; ++i) a.tokens[i] = address(new SimpleMintableERC20("Active", "ACT"));
@@ -46,6 +48,7 @@ abstract contract BalancerStableTokenCountBase is TestBase {
         }
         lastVault = new SimpleYieldERC4626(SimpleMintableERC20(a.tokens[n - 1]));
         a.standardExchanges[n - 1] = _deployERC4626SE(address(lastVault));
+        a.rateProviders = RateProviderFixtureLib.providersFor(create3Factory, diamondPackageFactory, a.tokens, a.standardExchanges); // D60
         a.seDecimals[n - 1] = 18;
         activeArgs = a;
         _deployHookWithArgs(a);
@@ -59,12 +62,12 @@ abstract contract BalancerStableTokenCountBase is TestBase {
         for (uint256 i; i < ts.length; ++i) _fundAndApprove(SimpleMintableERC20(ts[i]));
     }
 
-    function _amounts(uint256 value) internal view returns (uint256[] memory a) {
+    function _amounts(uint256 value) internal returns (uint256[] memory a) {
         a = new uint256[](activeCount());
         for (uint256 i; i < a.length; ++i) a[i] = value;
     }
 
-    function test_count_discovery_and_every_pair() public view {
+    function test_count_discovery_and_every_pair() public {
         uint256 n = activeCount();
         assertEq(quad.numTokens(), n);
         assertEq(quad.tokens(), activeArgs.tokens);
@@ -77,10 +80,13 @@ abstract contract BalancerStableTokenCountBase is TestBase {
     }
 
     function test_count_invalid_indices() public {
-        vm.expectRevert(); quad.token(activeCount());
-        vm.expectRevert(); quad.nativeReserve(activeCount());
-        vm.expectRevert(); quad.ratedBalance(activeCount());
-        vm.expectRevert(); quad.standardExchange(activeCount());
+        // R2.4: pin InvalidN() 0xe41d1222 for each out-of-bounds index accessor; a bare
+        // expectRevert() would also have passed on an array OOB Panic (0x32), masking a
+        // missing bounds guard.
+        vm.expectRevert(abi.encodeWithSignature("InvalidN()")); quad.token(activeCount());
+        vm.expectRevert(abi.encodeWithSignature("InvalidN()")); quad.nativeReserve(activeCount());
+        vm.expectRevert(abi.encodeWithSignature("InvalidN()")); quad.ratedBalance(activeCount());
+        vm.expectRevert(abi.encodeWithSignature("InvalidN()")); quad.standardExchange(activeCount());
     }
 
     function test_count_bootstrap_and_proportional_round_trip() public {
@@ -264,7 +270,10 @@ abstract contract BalancerStableTokenCountBase is TestBase {
         assertTrue(init.finalizeInitialization());
         assertLt(beforeGas - gasleft(), 30_000_000);
         assertEq(IHook(staged).numTokens(), activeCount());
-        vm.expectRevert(); init.finalizeInitialization();
+        assertEq(IDiamondLoupe(staged).facetAddress(IInit.finalizeInitialization.selector), address(0), "bootstrap finalizer removed");
+        vm.expectRevert(abi.encodeWithSignature("NoTargetFor(bytes4)", IInit.finalizeInitialization.selector));
+        init.finalizeInitialization();
+        assertEq(IHook(staged).numTokens(), activeCount(), "rejected replay preserves live product");
     }
 
     function test_count_rejects_each_array_mismatch() public {
@@ -329,9 +338,9 @@ abstract contract BalancerStableTokenCountBase is TestBase {
         vm.prank(user);
         assertEq(units.joinUnbalanced(ts, amounts, user, expected, block.timestamp), expected);
         flags[0] = true;
-        vm.expectRevert(); units.previewJoinProportionalFlexible(amounts, flags);
+        vm.expectRevert(abi.encodeWithSignature("InvalidPair()")); units.previewJoinProportionalFlexible(amounts, flags);
         ts[0] = ts[n - 1];
-        vm.expectRevert(); units.previewJoinUnbalanced(ts, amounts);
+        vm.expectRevert(abi.encodeWithSignature("InvalidPair()")); units.previewJoinUnbalanced(ts, amounts);
     }
 
     function test_count_failed_last_transfer_is_atomic() public {
@@ -342,7 +351,11 @@ abstract contract BalancerStableTokenCountBase is TestBase {
         uint256 beforeSupply = IERC20(hook).totalSupply();
         vm.startPrank(user);
         IERC20(quad.token(activeCount() - 1)).approve(hook, 0);
-        vm.expectRevert(); quad.joinUnbalanced(amounts, user, 0, block.timestamp);
+        // R2.4: with the ERC20 allowance revoked, the pull falls back to Permit2, which has no
+        // allowance -> Permit2 AllowanceExpired(0) 0xd81b2f2e. (Design guessed ERC20 allowance;
+        // the real path is the Permit2 fallback.) Bare expectRevert() masked the real revert.
+        vm.expectRevert(abi.encodeWithSignature("AllowanceExpired(uint256)", uint256(0)));
+        quad.joinUnbalanced(amounts, user, 0, block.timestamp);
         vm.stopPrank();
         assertEq(_userBalances(), beforeBalances);
         assertEq(quad.nativeReserves(), beforeReserves);
@@ -355,10 +368,14 @@ abstract contract BalancerStableTokenCountBase is TestBase {
         IERC20 output = IERC20(quad.token(activeCount() - 1));
         uint256 quote = quad.previewSwapExactIn(address(input), address(output), 1 ether);
         uint256 beforeOut = output.balanceOf(user);
-        vm.startPrank(user);
-        input.transfer(hook, 1 ether);
-        assertEq(IStandardExchangeIn(hook).exchangeIn(input, 1 ether, output, quote, user, true, block.timestamp), quote);
-        vm.stopPrank();
+        // APEX D9: pretransfer is contract-only; the honest funded push goes through the atomic fixture.
+        AtomicPretransferCaller atomic_ = new AtomicPretransferCaller();
+        vm.prank(user);
+        input.approve(address(atomic_), 1 ether);
+        assertEq(abi.decode(atomic_.consumePretransfer(
+            input, user, hook, 1 ether,
+            abi.encodeCall(IStandardExchangeIn.exchangeIn, (input, 1 ether, output, quote, user, true, block.timestamp))
+        ), (uint256)), quote);
         assertEq(output.balanceOf(user) - beforeOut, quote);
         vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1 ether, uint256(0)));
         IStandardExchangeIn(hook).exchangeIn(input, 1 ether, output, 0, address(this), true, block.timestamp);
@@ -379,10 +396,14 @@ abstract contract BalancerStableTokenCountBase is TestBase {
         vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, required, 0));
         IStandardExchangeOut(hook).exchangeOut(input, required, output, 1, address(this), true, block.timestamp);
         uint256 quote = quad.previewSwapExactIn(address(input), address(output), 1 ether);
-        vm.startPrank(user);
-        input.transfer(hook, 1 ether);
-        assertEq(IStandardExchangeIn(hook).exchangeIn(input, 1 ether, output, quote, user, true, block.timestamp), quote);
-        vm.stopPrank();
+        // APEX D9: pretransfer is contract-only; the honest funded push goes through the atomic fixture.
+        AtomicPretransferCaller atomic_ = new AtomicPretransferCaller();
+        vm.prank(user);
+        input.approve(address(atomic_), 1 ether);
+        assertEq(abi.decode(atomic_.consumePretransfer(
+            input, user, hook, 1 ether,
+            abi.encodeCall(IStandardExchangeIn.exchangeIn, (input, 1 ether, output, quote, user, true, block.timestamp))
+        ), (uint256)), quote);
         assertEq(input.balanceOf(hook), 10, "new funding leaves reserve dust owned by the hook");
     }
 
@@ -408,6 +429,7 @@ abstract contract BalancerStableTokenCountBase is TestBase {
                 if (a.tokens[j] < a.tokens[i]) {
                     (a.tokens[i], a.tokens[j]) = (a.tokens[j], a.tokens[i]);
                     (a.standardExchanges[i], a.standardExchanges[j]) = (a.standardExchanges[j], a.standardExchanges[i]);
+                    (a.rateProviders[i], a.rateProviders[j]) = (a.rateProviders[j], a.rateProviders[i]); // D60: providers follow their SE
                     (a.seDecimals[i], a.seDecimals[j]) = (a.seDecimals[j], a.seDecimals[i]);
                 }
             }
@@ -417,7 +439,7 @@ abstract contract BalancerStableTokenCountBase is TestBase {
         uint256[] memory beforeBalances = _userBalances();
         uint256[] memory amounts = _amounts(1000 ether);
         vm.prank(user);
-        vm.expectRevert(); quad.joinProportional(amounts, user, 0, block.timestamp);
+        vm.expectRevert(abi.encodeWithSignature("InvalidTransferAmount()")); quad.joinProportional(amounts, user, 0, block.timestamp);
         assertEq(_userBalances(), beforeBalances);
         assertEq(IERC20(hook).totalSupply(), 0);
         for (uint256 i; i < a.tokens.length; ++i) assertEq(quad.nativeReserve(i), 0);
@@ -449,8 +471,12 @@ abstract contract BalancerStableTokenCountBase is TestBase {
             bufferedIndex = i;
         }
         RateProviderMock provider = new RateProviderMock();
-        provider.mockRate(1 ether);
+        // D60: a rate is WAD whole tokens per whole share, so a 1:1 vault whose share metadata decimals
+        // exceed the token's carries the decimals gap in its rate.
+        provider.mockRate(_metaRate(1 ether, a.standardExchanges[bufferedIndex], a.tokens[bufferedIndex]));
         a.rateProviders[bufferedIndex] = address(provider);
+        // D60: the other buffered legs need a provider too; the mock on `bufferedIndex` is kept.
+        a.rateProviders = RateProviderFixtureLib.fillMissing(create3Factory, diamondPackageFactory, a.tokens, a.standardExchanges, a.rateProviders);
         _deployHookWithArgs(a);
         _approveActive();
         uint256[] memory amounts = new uint256[](n);
@@ -468,6 +494,14 @@ abstract contract BalancerStableTokenCountBase is TestBase {
         assertEq(IERC20(a.tokens[bufferedIndex]).balanceOf(user) - beforeBalance, amountOut);
     }
 
+    /// @dev D60: translate a rate expressed per raw share unit in token units into the provider convention
+    ///      (WAD whole tokens per whole share) using the share and token metadata decimals.
+    function _metaRate(uint256 rawRate, address se, address token) internal view returns (uint256) {
+        uint8 sd = IERC20Metadata(se).decimals();
+        uint8 td = IERC20Metadata(token).decimals();
+        return sd >= td ? rawRate * (10 ** uint256(sd - td)) : rawRate / (10 ** uint256(td - sd));
+    }
+
     function _setAccruedNetRate(IPkg.PkgArgs memory a, uint256 index, address vault, RateProviderMock provider) private {
         _accrueYield(vault, a.tokens[index], SimpleYieldERC4626(vault).totalAssets() / 10);
         uint256 inventory = quad.nativeReserve(index);
@@ -477,7 +511,7 @@ abstract contract BalancerStableTokenCountBase is TestBase {
         uint256 expectedClaim = SimpleYieldERC4626(vault).previewRedeem(vaultShares);
         uint256 netRate = expectedClaim * 1 ether / inventory;
         assertGt(netRate, 1 ether, "net accrued rate");
-        provider.mockRate(netRate);
+        provider.mockRate(_metaRate(netRate, se, a.tokens[index])); // D60: provider convention
         assertEq(quad.seClaim(index), expectedClaim, "net vault redemption claim");
         assertEq(quad.ratedBalance(index), inventory * netRate / 1 ether, "rate applied once");
     }
@@ -513,6 +547,7 @@ abstract contract BalancerStableTokenCountBase is TestBase {
             a.standardExchanges[i] = _deployERC4626SE(address(new SimpleYieldERC4626(SimpleMintableERC20(a.tokens[i]))));
             a.seDecimals[i] = 18;
         }
+        a.rateProviders = RateProviderFixtureLib.fillMissing(create3Factory, diamondPackageFactory, a.tokens, a.standardExchanges, a.rateProviders); // D60
         _deployHookWithArgs(a);
         _approveActive();
         uint256 minted = _firstMintEqual(1000 ether);
@@ -531,7 +566,7 @@ abstract contract BalancerStableTokenCountBase is TestBase {
         SimpleYieldERC4626(vault).simulateYield(amount);
     }
 
-    function _userBalances() internal view returns (uint256[] memory balances) {
+    function _userBalances() internal returns (uint256[] memory balances) {
         balances = new uint256[](activeCount());
         for (uint256 i; i < balances.length; ++i) balances[i] = IERC20(quad.token(i)).balanceOf(user);
     }

@@ -8,6 +8,7 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IRateProvider} from
     "@crane/contracts/protocols/dexes/balancer/common/interfaces/IRateProvider.sol";
 
@@ -23,23 +24,30 @@ library UniswapV4StandardExchangeBalancerQuadStableBufferHookClaimLib {
     error BufferFailed();
     error UnwrapFailed();
     error RateProviderFailed();
+    error RateProviderRequired();
     error SeInvertUnavailable();
 
     function ratedPairUnits(uint8 i) external view returns (uint256) {
         Repo.Layout storage l = Repo._layout();
         address se = l.standardExchanges[i];
+        address rp = l.rateProviders[i];
+        // D60: raw leg = raw balance (times the rate when a provider is configured); buffered leg = shares x rate.
         if (se == address(0)) {
-            return IERC20(l.tokens[i]).balanceOf(address(this));
+            uint256 raw = IERC20(l.tokens[i]).balanceOf(address(this));
+            return rp == address(0) ? raw : Math.ratedPairUnits(raw, _readRate(rp), l.invScales[i], l.ratedScales[i]);
         }
         uint256 seBal = IERC20(se).balanceOf(address(this));
         if (seBal == 0) return 0;
-        address rp = l.rateProviders[i];
-        if (rp != address(0)) {
-            uint256 rate = _readRate(rp);
-            return (seBal * rate) / Math.RATE_PRECISION;
-        }
-        if (se == l.tokens[i]) return seBal;
-        return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seBal, IERC20(l.tokens[i]));
+        if (rp == address(0)) revert RateProviderRequired();
+        return Math.ratedPairUnits(seBal, _readRate(rp), shareScale(se), l.ratedScales[i]);
+    }
+
+
+    /// @notice D60: the SE share scale the rate provider prices against, 10^(36 - shareDecimals) from the
+    ///         share token's metadata. This package keeps its inventory scale at the pair's decimals, so the
+    ///         rated conversions read the share metadata directly.
+    function shareScale(address se) public view returns (uint256) {
+        return Math.baseScaleFromDecimals(IERC20Metadata(se).decimals());
     }
 
     function getRateFailClosed(address rp) external view returns (uint256 rate) {
@@ -88,12 +96,7 @@ library UniswapV4StandardExchangeBalancerQuadStableBufferHookClaimLib {
     {
         if (amountOutNative == 0) return 0;
         if (se == pairToken) return amountOutNative;
-        try IStandardExchangeOut(se).previewExchangeOut(IERC20(se), IERC20(pairToken), amountOutNative)
-        returns (uint256 seIn) {
-            return seIn;
-        } catch {
-            revert SeInvertUnavailable();
-        }
+        return IStandardExchangeOut(se).previewExchangeOut(IERC20(se), IERC20(pairToken), amountOutNative);
     }
 
     function invertBufferExactSharesOut(address se, address pairToken, uint256 sharesOut)
@@ -110,11 +113,7 @@ library UniswapV4StandardExchangeBalancerQuadStableBufferHookClaimLib {
         internal view returns (uint256)
     {
         if (sharesOut == 0) return 0;
-        uint256 high;
-        try IStandardExchangeOut(se).previewExchangeOut(IERC20(pairToken), IERC20(se), sharesOut)
-        returns (uint256 quoted) {
-            high = quoted;
-        } catch {}
+        uint256 high = IStandardExchangeOut(se).previewExchangeOut(IERC20(pairToken), IERC20(se), sharesOut);
         if (high != 0 && IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), high, IERC20(se)) >= sharesOut) {
             return high;
         }

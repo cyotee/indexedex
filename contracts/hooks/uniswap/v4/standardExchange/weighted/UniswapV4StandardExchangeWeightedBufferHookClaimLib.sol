@@ -24,23 +24,23 @@ library UniswapV4StandardExchangeWeightedBufferHookClaimLib {
     error BufferFailed();
     error UnwrapFailed();
     error RateProviderFailed();
-    error SeInvertUnavailable();
+    error RateProviderRequired();
+
 
     function ratedPairUnits(uint8 i) external view returns (uint256) {
         Repo.Layout storage l = Repo._layout();
         address se = l.standardExchanges[i];
+        address rp = l.rateProviders[i];
+        // D60: raw leg = raw balance (times the rate when a provider is configured); buffered leg = shares x rate.
+        // The hook never derives a rate from the SE's own quotes.
         if (se == address(0)) {
-            return l.rawReserves[i];
+            if (rp == address(0)) return l.rawReserves[i];
+            return Math.ratedPairUnits(l.rawReserves[i], _readRate(rp), l.invScales[i], l.ratedScales[i]);
         }
         uint256 seBal = IERC20(se).balanceOf(address(this));
         if (seBal == 0) return 0;
-        address rp = l.rateProviders[i];
-        if (rp != address(0)) {
-            uint256 rate = _readRate(rp);
-            return Math.ratedPairUnits(seBal, rate, l.invScales[i], l.ratedScales[i]);
-        }
-        if (se == l.tokens[i]) return seBal;
-        return IStandardExchangeIn(se).previewExchangeIn(IERC20(se), seBal, IERC20(l.tokens[i]));
+        if (rp == address(0)) revert RateProviderRequired();
+        return Math.ratedPairUnits(seBal, _readRate(rp), l.invScales[i], l.ratedScales[i]);
     }
 
     function _readRate(address rp) private view returns (uint256 rate) {
@@ -93,12 +93,7 @@ library UniswapV4StandardExchangeWeightedBufferHookClaimLib {
     {
         if (amountOutNative == 0) return 0;
         if (se == pairToken) return amountOutNative;
-        try IStandardExchangeOut(se).previewExchangeOut(IERC20(se), IERC20(pairToken), amountOutNative)
-        returns (uint256 seIn) {
-            return seIn;
-        } catch {
-            revert SeInvertUnavailable();
-        }
+        return IStandardExchangeOut(se).previewExchangeOut(IERC20(se), IERC20(pairToken), amountOutNative);
     }
 
     /// @notice Pair tokens needed to mint at least `sharesOut` SE shares via buffer.
@@ -109,12 +104,7 @@ library UniswapV4StandardExchangeWeightedBufferHookClaimLib {
     {
         if (sharesOut == 0) return 0;
         if (se == pairToken) return sharesOut;
-        try IStandardExchangeOut(se).previewExchangeOut(IERC20(pairToken), IERC20(se), sharesOut)
-        returns (uint256 pairIn) {
-            return pairIn;
-        } catch {
-            revert SeInvertUnavailable();
-        }
+        return IStandardExchangeOut(se).previewExchangeOut(IERC20(pairToken), IERC20(se), sharesOut);
     }
 
     /// @notice Buffer full gross pair tokens into SE; minOut = tight fee-inclusive preview.

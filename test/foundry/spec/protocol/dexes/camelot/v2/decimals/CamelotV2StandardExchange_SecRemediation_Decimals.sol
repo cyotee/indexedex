@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ICamelotPair} from "@crane/contracts/interfaces/protocols/dexes/camelot/v2/ICamelotPair.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {MintableERC20Decimals} from "contracts/test/stubs/MintableERC20Decimals.sol";
 import {TestBase_CamelotV2StandardExchange_Decimals} from
@@ -103,18 +104,11 @@ abstract contract CamelotV2StandardExchange_SecRemediation_Decimals is TestBase_
         vm.prank(attacker);
         tokenA.transfer(address(vault), used_);
 
-        uint256 attackerABefore_ = tokenA.balanceOf(attacker);
-        uint256 rBefore_ = vault.reserveOfToken(address(tokenA));
-
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vault.exchangeOut(
             IERC20(address(tokenA)), fatMax_, IERC20(address(tokenB)), amountOut_, attacker, true, _deadline()
         );
-
-        uint256 attackerAGain_ = tokenA.balanceOf(attacker) - attackerABefore_;
-        assertEq(attackerAGain_, 0, "E6: no pairToken refund from booked R");
-        assertGe(tokenA.balanceOf(address(vault)), rBefore_, "E6: booked pairToken R intact");
-        assertLt(attackerAGain_, bookedR_, "E6: attacker must not receive booked R");
     }
 
     /// @notice A0: donate reserve LP (donator != attacker), zap-in deposit; redeem cannot take donation.

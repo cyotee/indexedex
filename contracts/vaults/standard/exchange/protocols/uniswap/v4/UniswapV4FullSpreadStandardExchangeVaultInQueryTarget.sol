@@ -86,8 +86,13 @@ contract UniswapV4FullSpreadStandardExchangeVaultInQueryTarget is UniswapV4FullS
                     q.shares -= amountIn;
                 } else {
                     amountOut = _inventoryRedeem(q, amountIn);
-                    if (operation == ITransition.Operation.WithdrawExactOut && amountOut < amount) {
-                        revert ITransition.InvalidQuoteState();
+                    if (operation == ITransition.Operation.WithdrawExactOut) {
+                        if (amountOut < amount) revert ITransition.InvalidQuoteState();
+                        // D55 (APEX F6): exact-output pays exactly the request; the zap-out surplus stays
+                        // in the vault's free inventory, as `executeZapOutWithdrawal` books it.
+                        if (q.token0) q.free0 += amountOut - amount;
+                        else q.free1 += amountOut - amount;
+                        amountOut = amount;
                     }
                 }
             }

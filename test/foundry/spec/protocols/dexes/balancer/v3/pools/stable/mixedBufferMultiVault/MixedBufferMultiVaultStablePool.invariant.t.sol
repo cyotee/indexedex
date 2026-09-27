@@ -1,55 +1,61 @@
 // SPDX-License-Identifier: BSL-1.1
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.24;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
-import {
-    TestBase_MixedBufferMultiVaultStablePool
-} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/bases/TestBase_MixedBufferMultiVaultStablePool.sol";
-import {
-    Handler_MixedBufferMultiVaultStablePool
-} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/Handler_MixedBufferMultiVaultStablePool.sol";
+import {IRouter} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IRouter.sol";
+import {IAllowanceTransfer} from "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
+import {TestBase_MixedBufferMultiVaultStablePool as TestBase} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/bases/TestBase_MixedBufferMultiVaultStablePool.sol";
+import {BufferPoolInvariantHandler, IBufferInvariantFunding} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BufferPoolInvariantHandler.sol";
+import {Handler_MixedBufferMultiVaultStablePool} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/Handler_MixedBufferMultiVaultStablePool.sol";
 
-/// forge-config: default.invariant.runs = 20
-/// forge-config: default.invariant.depth = 10
-contract MixedBufferMultiVaultStablePoolInvariant is TestBase_MixedBufferMultiVaultStablePool {
-    function _targetVaultCount() internal pure override returns (uint8) {
-        return 2;
-    }
 
-    Handler_MixedBufferMultiVaultStablePool internal handler;
+/// forge-config: default.invariant.runs = 256
+/// forge-config: default.invariant.depth = 64
+/// forge-config: default.invariant.fail-on-revert = true
+contract MixedBufferMultiVaultStablePoolInvariant is TestBase, IBufferInvariantFunding {
+    BufferPoolInvariantHandler internal handler;
+    function _targetVaultCount() internal pure override returns (uint8) { return 2; }
 
     function setUp() public override {
         super.setUp();
-        handler = new Handler_MixedBufferMultiVaultStablePool(this);
-        bytes4[] memory selectors = new bytes4[](3);
-        selectors[0] = Handler_MixedBufferMultiVaultStablePool.swap_buffer_in.selector;
-        selectors[1] = Handler_MixedBufferMultiVaultStablePool.swap_share_in.selector;
-        selectors[2] = Handler_MixedBufferMultiVaultStablePool.swap_unpaired_in.selector;
+        BufferPoolInvariantHandler.Config memory c;
+        c.pool = bufferPool;
+        c.router = IRouter(address(router));
+        c.vault = bv3Vault;
+        c.permit2 = IAllowanceTransfer(address(permit2));
+        c.buffer = IERC20(address(dai));
+        c.shares = IERC20(address(seVault));
+        c.funding = IBufferInvariantFunding(address(this));
+        c.virtualBookCount = 1;
+        c.unpaired = _unpairedTokenAt(0);
+        c.buffers = new IERC20[](1);
+        c.buffers[0] = IERC20(address(dai));
+        c.bookCalls = new bytes[](3);
+        c.bookCalls[0] = abi.encodeWithSignature("virtualBuffer()");
+        c.bookCalls[1] = abi.encodeWithSignature("hookShareDelta(uint256)", 0);
+        c.bookCalls[2] = abi.encodeWithSignature("hookShareDelta(uint256)", 1);
+        handler = new Handler_MixedBufferMultiVaultStablePool(c);
+        bytes4[] memory selectors = new bytes4[](1);
+        selectors[0] = handler.cycle.selector;
         targetContract(address(handler));
         targetSelector(FuzzSelector({addr: address(handler), selectors: selectors}));
     }
 
-    function invariant_virtualNonNegativeBounded() public view {
-        assertLt(mbmvs().virtualBuffer(), type(uint128).max, "virtual overflow");
-        // virtual is uint256 storage - always >= 0 by type; assert still live after ops
-        assertTrue(mbmvs().virtualBuffer() >= 0);
+    function fundInvariantToken(address actor, IERC20 token, uint256 amount) external {
+        for (uint8 i; i < 2; ++i) {
+            if (address(token) == address(_seVaultAt(i))) {
+                mintSharesForVault(i, actor, amount);
+                return;
+            }
+        }
+        _mintToken(address(token), actor, amount);
     }
 
-    function invariant_bptSupplyPositive() public view {
-        assertGt(IERC20(mbmvsPool).totalSupply(), 0, "BPT supply");
-    }
-
-    function invariant_physicalBufferBounded() public view {
-        assertLt(rawPoolBufferBalance(), 50_000e18, "runaway physical buffer");
-    }
-
-    function invariant_unpairedNotVirtualized() public view {
-        // unpaired math balance equals live - virtualBuffer is only for buffer leg
-        uint256 uIdx = mbmvs().unpairedIndex(0);
-        (,, uint256[] memory balancesRaw,) = bv3Vault.getPoolTokenInfo(mbmvsPool);
-        // derived depth API is for shares only; ensure buffer virtual is independent of unpaired raw
-        assertTrue(
-            mbmvs().virtualBuffer() != balancesRaw[uIdx] || balancesRaw[uIdx] == 0 || mbmvs().virtualBuffer() > 0
-        );
+    function invariant_bufferPoolAccounting() public view { handler.assertAccounting(); }
+    function afterInvariant() public view { handler.assertCampaign(); }
+    function test_deterministicBufferLifecycle() public {
+        for (uint256 i; i < 24; ++i) handler.cycle(1e15, i, i);
+        assertEq(handler.attempted(), 24);
+        handler.assertCampaign();
     }
 }

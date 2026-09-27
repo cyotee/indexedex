@@ -164,9 +164,12 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferHook is TestBase
     }
 
     /// @notice O17 only path for protocolVault: Crane ERC4626PermitDFPkg.
+    /// @dev Do not pass IndexedEx ReceiptBackedERC4626Facet (D45 overwrites `erc4626Facet`
+    ///      on the SE TestBase). The underlying is a Crane ERC-4626, not an SE family diamond.
     function _deployCraneErc4626(address asset) internal returns (IERC4626 vault) {
+        IFacet craneErc4626Facet = create3Factory.deployERC4626Facet();
         IERC4626PermitDFPkg pkg =
-            create3Factory.deployERC4626PermitDFPkg(erc20Facet, erc5267Facet, erc2612Facet, erc4626Facet);
+            create3Factory.deployERC4626PermitDFPkg(erc20Facet, erc5267Facet, erc2612Facet, craneErc4626Facet);
         IERC4626PermitDFPkg.PkgArgs memory args = IERC4626PermitDFPkg.PkgArgs({
             reserveAsset: IERC20Metadata(asset),
             optionalDecimalOffset: 0,

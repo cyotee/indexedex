@@ -5,6 +5,7 @@ import {StandardExchangeReleaseBehavior} from "../remediation/StandardExchangeRe
 import {DeliveryTestToken} from "../remediation/DeliveryTestToken.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
 import {IStandardExchangeOutMulti} from "contracts/interfaces/IStandardExchangeOutMulti.sol";
@@ -96,7 +97,18 @@ abstract contract StandardExchangeFullSpreadAdversarialBehavior is StandardExcha
     function test_A0_floor_sixEighteen() public { _decimalBoundary(6,18,false,1e9); }
     function test_A0_floor_oddDecimalSum() public { _decimalBoundary(6,9,false,1e4); }
     function test_A0_floor_decimalSumBelowSix() public { _decimalBoundary(2,3,false,1); }
-    function test_A0_floor_revertingMetadataFallsBackToEighteen() public { _decimalBoundary(18,18,true,1e15); }
+    /// @dev D34: no metadata fallback. A token whose `decimals()` reverts surfaces its own revert on
+    ///      the first-mint floor check, both in preview and in execution, with no state change.
+    function test_A0_revertingMetadata_propagatesDependencyRevert_D34() public {
+        _setDecimalFixture(18,18,true); _configureSleeve(1e18);
+        _fund(asset0,address(this),1e15+1); _fund(asset1,address(this),1e15+1);
+        asset0.approve(address(subject),1e15+1); asset1.approve(address(subject),1e15+1);
+        vm.expectRevert(bytes("metadata unavailable"));
+        IStandardExchangeInMulti(address(subject)).previewExchangeInManyToOne(_tokens(),_amounts(1e15,1e15),IERC20(address(subject)));
+        vm.expectRevert(bytes("metadata unavailable"));
+        IStandardExchangeInMulti(address(subject)).exchangeInManyToOne(_tokens(),_amounts(1e15,1e15),IERC20(address(subject)),0,address(this),false,block.timestamp);
+        assertEq(subject.totalSupply(),0); _bookMatchesBalances();
+    }
     function _decimalBoundary(uint8 da,uint8 db,bool failing,uint256 minimum) private {
         _setDecimalFixture(da,db,failing); _configureSleeve(1e18);
         _fund(asset0,address(this),minimum+1); _fund(asset1,address(this),minimum+1);
@@ -204,19 +216,31 @@ abstract contract StandardExchangeFullSpreadAdversarialBehavior is StandardExcha
         assertEq(subject.balanceOf(address(router)),0); _bookMatchesBalances();
     }
     function test_I1_pretransferredTrue_noDelivery_noFreeMint() public {
-        _bootstrap(); _reject(_depositCall(asset0,25 ether,FALSE_DEPOSITOR),_deliveryError(25 ether,0));
+        _bootstrap();
+        bytes memory data = _depositCall(asset0, 25 ether, FALSE_DEPOSITOR);
+        vm.startPrank(FALSE_DEPOSITOR);
+        _reject(data, abi.encodeWithSelector(ISecurePullErrors.EOAPretransferNotAllowed.selector));
+        vm.stopPrank();
+        _reject(data, _deliveryError(25 ether, 0));
         assertEq(subject.balanceOf(FALSE_DEPOSITOR),0);
     }
     function test_I2_shortPush_pretransferred_claimedGtDelta_reverts() public { _wrongTransfer(24 ether); }
-    function test_I2_excessExactIn_reverts() public { _wrongTransfer(26 ether); }
-    function test_I2_dualJoinOneExcessLeg_rollsBack() public {
+    function test_I2_excessExactIn_creditsRequestedOnly() public {
+        _bootstrap();
+        bytes memory data = _depositCall(asset0, 25 ether, address(this));
+        _fund(asset0, address(this), 26 ether);
+        asset0.transfer(address(subject), 26 ether);
+        uint256 minted = _execute(data);
+        assertGt(minted, 0);
+        assertEq(asset0.balanceOf(address(this)), 0);
+    }
+    function test_I2_dualJoinOneExcessLeg_creditsRequestedOnly() public {
         _bootstrap(); _fund(asset0,address(this),10 ether); _fund(asset1,address(this),11 ether);
         asset0.transfer(address(subject),10 ether); asset1.transfer(address(subject),11 ether);
-        uint256 book0=subject.reserveOfToken(address(asset0)); uint256 book1=subject.reserveOfToken(address(asset1));
-        bytes memory data=abi.encodeCall(IStandardExchangeInMulti.exchangeInManyToOne,
-            (_tokens(),_amounts(10 ether,10 ether),IERC20(address(subject)),0,address(this),true,block.timestamp));
-        _reject(data,_deliveryError(10 ether,11 ether));
-        assertEq(subject.reserveOfToken(address(asset0)),book0); assertEq(subject.reserveOfToken(address(asset1)),book1);
+        uint256 minted = IStandardExchangeInMulti(address(subject)).exchangeInManyToOne(
+            _tokens(), _amounts(10 ether, 10 ether), IERC20(address(subject)), 0, address(this), true, block.timestamp);
+        assertGt(minted, 0);
+        assertEq(asset1.balanceOf(address(this)), 0);
     }
     function test_I3_residualAfterSuccessfulPush_cannotFundSecondFreePretransfer() public { test_pullAndPushedDepositsAfterPriceMovement(); }
     function test_L1_poolTradeThenFalsePretransfer_noCredit() public { _falseDeposit(true); }
@@ -379,6 +403,18 @@ abstract contract StandardExchangeFullSpreadAdversarialBehavior is StandardExcha
     function test_E6_dualExit_shortShares_idleAndBlocked() public {
         _refundFixture(); uint256 snap=vm.snapshotState(); _refundCase(2,false,4); assertTrue(vm.revertToState(snap)); _refundCase(2,true,4);
     }
+    /// @dev D9 on the zap-out execution delegate: resting self-shares from an EOA are never credited.
+    function test_APEX005_zapOut_pretransferred_eoaRejected() public {
+        _refundFixture();
+        subject.transfer(FALSE_DEPOSITOR,100 ether);
+        vm.startPrank(FALSE_DEPOSITOR);
+        subject.transfer(address(subject),100 ether);
+        bytes memory data=abi.encodeCall(IStandardExchangeOut.exchangeOut,(IERC20(address(subject)),100 ether,asset1,1 ether,FALSE_DEPOSITOR,true,block.timestamp));
+        _reject(data,abi.encodeWithSelector(ISecurePullErrors.EOAPretransferNotAllowed.selector));
+        vm.stopPrank();
+        assertEq(subject.balanceOf(FALSE_DEPOSITOR),0); assertEq(asset1.balanceOf(FALSE_DEPOSITOR),0);
+    }
+
     function test_I1_exchangeOut_pretransferredTrue_noDelivery() public {
         _refundFixture(); uint256 snap=vm.snapshotState();
         _refundCase(0,false,5); assertTrue(vm.revertToState(snap)); _refundCase(1,false,5);
@@ -492,19 +528,16 @@ abstract contract StandardExchangeFullSpreadAdversarialBehavior is StandardExcha
         c.data=mode==3?
             abi.encodeCall(IStandardExchangeOut.exchangeOut,(c.input,c.maximum,asset1,10 ether,FALSE_DEPOSITOR,false,block.timestamp)):
             abi.encodeCall(IStandardExchangeOutMulti.exchangeOutOneToMany,(c.input,c.maximum,_tokens(),_amounts(10 ether,10 ether),FALSE_DEPOSITOR,false,block.timestamp));
-        if(mode==1||mode==2){
-            // ERC-20 allowance/balance failures must not consume booked self-shares.
-            uint256 balance0=asset0.balanceOf(address(subject));uint256 balance1=asset1.balanceOf(address(subject));
-            vm.expectRevert();
-            if(blocked) _locked(c.data,c.input,0);else _execute(c.data);
-            assertEq(subject.balanceOf(payer),payerBalance);assertEq(subject.totalSupply(),c.supply);
-            assertEq(subject.allowance(payer,address(subject)),allowed);
-            assertEq(asset0.balanceOf(address(subject)),balance0);assertEq(asset1.balanceOf(address(subject)),balance1);
-        }else{
-            uint256 used=blocked?_locked(c.data,c.input,0):_execute(c.data);
-            assertEq(used,c.used);assertEq(subject.balanceOf(payer),payerBalance-c.used);assertEq(subject.totalSupply(),c.supply-c.used);
-            assertEq(subject.allowance(payer,address(subject)),0);assertGe(asset1.balanceOf(FALSE_DEPOSITOR),10 ether);
-        }
+        uint256 used=blocked?_locked(c.data,c.input,0):_execute(c.data);
+        assertEq(used,c.used);
+        assertEq(subject.balanceOf(payer),payerBalance-c.used);
+        assertEq(subject.totalSupply(),c.supply-c.used);
+        assertEq(
+            subject.allowance(payer,address(subject)),
+            mode==3?allowed:allowed-used,
+            "false-flag spends quoted used via transferFrom except single-share burn"
+        );
+        assertGe(asset1.balanceOf(FALSE_DEPOSITOR),10 ether);
         assertEq(subject.reserveOfToken(address(subject)),c.booked);assertEq(subject.balanceOf(address(subject)),c.booked);_bookMatchesBalances();
     }
 }

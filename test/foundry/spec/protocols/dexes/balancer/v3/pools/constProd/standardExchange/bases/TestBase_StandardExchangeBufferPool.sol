@@ -173,6 +173,7 @@ abstract contract TestBase_StandardExchangeBufferPool is TestBase_BalancerV3Vaul
     IFacet internal bufferPoolFacet;
     IFacet internal poolLiquidityFacet;
     IFacet internal hookFacet;
+    IFacet internal transitionQuoteFacet;
 
     IStandardExchangeBufferPoolPkg public bufferPoolPkg;
     address public bufferPool;
@@ -487,6 +488,15 @@ abstract contract TestBase_StandardExchangeBufferPool is TestBase_BalancerV3Vaul
         bufferPoolFacet = create3Factory.deployBufferPoolFacet();
         poolLiquidityFacet = create3Factory.deployPoolLiquidityFacet();
         hookFacet = create3Factory.deployHookFacet();
+
+        transitionQuoteFacet = create3Factory.deployFacet(
+            ArtifactCreationCode.creationCode(
+                create3Factory,
+                "contracts/protocols/dexes/balancer/v3/pools/BalancerV3PoolStandardExchangeTransitionQuoteFacet.sol:BalancerV3PoolStandardExchangeTransitionQuoteFacet"
+            ),
+            keccak256(abi.encode("BalancerV3PoolStandardExchangeTransitionQuoteFacet"))
+        );
+        vm.label(address(transitionQuoteFacet), "BalancerV3PoolStandardExchangeTransitionQuoteFacet");
     }
 
     /* ---------------------------------------------------------------------- */
@@ -507,6 +517,7 @@ abstract contract TestBase_StandardExchangeBufferPool is TestBase_BalancerV3Vaul
         pkgInit.bufferPoolFacet = bufferPoolFacet;
         pkgInit.poolLiquidityFacet = poolLiquidityFacet;
         pkgInit.hookFacet = hookFacet;
+        pkgInit.transitionQuoteFacet = transitionQuoteFacet;
         pkgInit.vaultRegistry = IVaultRegistryDeployment(address(indexedexManager));
         pkgInit.vaultFeeOracle = IVaultFeeOracleQuery(address(indexedexManager));
         pkgInit.balancerV3Vault = bv3Vault;

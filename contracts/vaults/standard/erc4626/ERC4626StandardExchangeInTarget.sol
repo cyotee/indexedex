@@ -8,7 +8,9 @@ import {ERC4626Service} from "@crane/contracts/tokens/ERC4626/ERC4626Service.sol
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
-import {ERC4626StandardExchangeQuoteTarget} from "contracts/vaults/standard/erc4626/ERC4626StandardExchangeQuoteTarget.sol";
+import {
+    ERC4626StandardExchangeQuoteTarget
+} from "contracts/vaults/standard/erc4626/ERC4626StandardExchangeQuoteTarget.sol";
 
 /**
  * @title ERC4626StandardExchangeInTarget
@@ -34,16 +36,19 @@ contract ERC4626StandardExchangeInTarget is
         IERC4626 vault = protocolVault();
         address underlying = vault.asset();
 
+        // Identity share→share: DETF custom mint tables probe `previewExchangeIn(se, 1, se)`.
+        if (address(tokenIn) == address(this) && address(tokenOut) == address(this)) {
+            return amountIn;
+        }
+
         // Mint SE
         if (address(tokenOut) == address(this)) {
             if (address(tokenIn) == address(vault)) {
-                uint256 totalBefore = IERC20(address(vault)).balanceOf(address(this));
-                return _convertVaultDeltaToShares(amountIn, totalBefore);
+                return _convertVaultDeltaToShares(amountIn, _receiptBacking());
             }
             if (address(tokenIn) == underlying) {
-                uint256 vaultDelta = vault.previewDeposit(amountIn);
-                uint256 totalBefore = IERC20(address(vault)).balanceOf(address(this));
-                return _convertVaultDeltaToShares(vaultDelta, totalBefore);
+                uint256 receiptEquiv = vault.convertToShares(amountIn);
+                return _convertVaultDeltaToShares(receiptEquiv, _receiptBacking());
             }
         }
 
@@ -88,23 +93,22 @@ contract ERC4626StandardExchangeInTarget is
             tokenIn.forceApprove(address(vault), actualIn);
             amountOut = vault.deposit(actualIn, recipient);
             if (amountOut < minAmountOut) revert Slippage();
-            // Only idle underlying cash (not protocol-vault reserve)
-            _refundOrAbsorbAbove(tokenIn, msg.sender, 0);
             _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
-        // Wrap exact-in: underlying → SE (dilution fee)
+        // Wrap exact-in: underlying → SE (dilution fee). Mint on full credited input;
+        // under-consumed remainder is booked locally (D22).
         if (address(tokenIn) == underlying && address(tokenOut) == address(this)) {
             uint256 actualIn = _securePull(tokenIn, amountIn, pretransferred);
-            uint256 totalBefore = IERC20(address(vault)).balanceOf(address(this));
-            tokenIn.forceApprove(address(vault), actualIn);
-            uint256 vaultDelta = vault.deposit(actualIn, address(this));
-            amountOut = _convertVaultDeltaToShares(vaultDelta, totalBefore);
+            uint256 backingBefore = _receiptBacking();
+            // Price D22 credited input at the same native rate as the public preview.
+            // Sweeping booked cash can move that rate through protocol rounding.
+            uint256 receiptEquiv = vault.convertToShares(actualIn);
+            _investCreditedUnderlying(actualIn);
+            amountOut = _convertVaultDeltaToShares(receiptEquiv, backingBefore);
             if (amountOut < minAmountOut) revert Slippage();
             _mintWithUsageFee(recipient, amountOut);
-            // Idle underlying leftover after deposit (e.g. under-consume dust) only
-            _refundOrAbsorbAbove(tokenIn, msg.sender, 0);
             _syncAllExpectedHoldReserves();
             return amountOut;
         }
@@ -113,13 +117,13 @@ contract ERC4626StandardExchangeInTarget is
         // amountIn vault tokens **stay** as SE reserve; never refund absolute vault balance.
         if (address(tokenIn) == address(vault) && address(tokenOut) == address(this)) {
             uint256 actualIn = _securePull(tokenIn, amountIn, pretransferred);
-            // A prepaid receipt is already in the token balance. Exclude only
-            // this credited payment, retaining all other existing reserve.
-            uint256 totalBefore = IERC20(address(vault)).balanceOf(address(this)) - actualIn;
+            // The credited receipt (prepaid or pulled) is already in the held balance. Exclude
+            // only this payment; booked local underlying stays in the backing (R14.14).
+            uint256 totalBefore = _receiptBacking() - actualIn;
             amountOut = _convertVaultDeltaToShares(actualIn, totalBefore);
             if (amountOut < minAmountOut) revert Slippage();
             _mintWithUsageFee(recipient, amountOut);
-            // Pull overshoot already refunded in _securePull; reserve retained.
+            // Pull delta equals the requested amount. Residual stays booked; there is no overshoot refund.
             _syncAllExpectedHoldReserves();
             return amountOut;
         }
@@ -138,18 +142,22 @@ contract ERC4626StandardExchangeInTarget is
         // Nested DETF push+true leaves shares on this diamond; burn from address(this).
         // !pretransferred burns from msg.sender (standard ERC20 burn-from-holder).
         if (address(tokenIn) == address(this) && address(tokenOut) == underlying) {
-            uint256 vaultOut = _previewRedeemShares(amountIn);
-            _burnSeShares(msg.sender, amountIn, pretransferred);
-            amountOut = vault.redeem(vaultOut, recipient, address(this));
+            // Entitlement in receipt units of the full backing; local cash pays first (R14.15).
+            amountOut = _previewUnderlyingOutForSeIn(amountIn);
             if (amountOut < minAmountOut) revert Slippage();
+            _burnSeShares(msg.sender, amountIn, pretransferred);
+            _payUnderlyingLocalFirst(vault, amountOut, recipient);
             _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
         // SE → protocolVault exact-in — burn SE shares (self-burn path; same pretransfer law).
+        // Receipt output needs actual receipts; local cash never substitutes for it (R14.15).
         if (address(tokenIn) == address(this) && address(tokenOut) == address(vault)) {
             amountOut = _previewRedeemShares(amountIn);
             if (amountOut < minAmountOut) revert Slippage();
+            uint256 held = IERC20(address(vault)).balanceOf(address(this));
+            if (amountOut > held) revert InsufficientReceiptInventory(amountOut, held);
             _burnSeShares(msg.sender, amountIn, pretransferred);
             IERC20(address(vault)).safeTransfer(recipient, amountOut);
             _syncAllExpectedHoldReserves();

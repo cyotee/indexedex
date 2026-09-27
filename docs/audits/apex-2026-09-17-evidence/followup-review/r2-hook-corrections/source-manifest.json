@@ -1,0 +1,90 @@
+{
+  "createdAt": "2026-09-25T15:06:02.993046+00:00",
+  "files": [
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_OwnerDuringLock.t.sol",
+      "baselineSha256": "2940a70b3c841bc89cfe9a3b25591c5befdea44c6819a7610b1f433c332bcf01",
+      "overlaySha256": "3de10e0ebbafe36bdc0daa1c02a5da2df56cee0b961290baa6ce9dda3454f0d0"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_SeBufferAbi.t.sol",
+      "baselineSha256": "5947142a7e93d53e7c17d4fab9144573405a6a4c0594afc74df34c026e29c96a",
+      "overlaySha256": "06f33816bfba9ec086f00cd04c6d195a962f3b038639072b1bc4b0c0e52a340f"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_Swap.t.sol",
+      "baselineSha256": "24aeb7195794153ce2bb57d3b4908cb3df1abdf319ec6c8d800b7353e1c08f94",
+      "overlaySha256": "2c77e637992b27d668b23df2cc26de14f0581898379d873c793d9c5b6afa6fd8"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_VaultViews.t.sol",
+      "baselineSha256": "b836e11d37531239db79d03a908866a89b8330d992c967eedae442e38a2b48b7",
+      "overlaySha256": "16a435495e45ec7ce5e3fc8cdb040a4e3bedf09d6fbe772899377225bdcfcfc9"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_Adversarial.t.sol",
+      "baselineSha256": "49e5b0a04431554a77322755d77857e4531a95d838b620e14e01c41c02c9569f",
+      "overlaySha256": "233e96863462b44d505e928c6d28fbfa1802bac2a23827801a85e140f80c25d5"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_Binding.t.sol",
+      "baselineSha256": "7e1edc9f8bc8825aaab0e6035f5e2449ffff48c58b40a9fa05ab689f49951de3",
+      "overlaySha256": "f870b78ff4e637e2af179415ca064fd5249c8749bf9e5a6ba539b0e8cb02b681"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_LedgerReconcile.t.sol",
+      "baselineSha256": "8cd59d51fe481e4c6f4f3004680b41e7ce53db89be08825c9394316dd6580bc3",
+      "overlaySha256": "c0a3e1c503b182b6809ed227cb51877701a0f1619e68b843ed47bc9e70ac696d"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_OwnerDuringLock.t.sol",
+      "baselineSha256": "60189098173406fe2223fa9850e43922740dfc83dd13284b7a6ce58d07d7c789",
+      "overlaySha256": "de1fd2c60700f35e55a43cdc95059d022c96b5afa64f5486af7142df0f3b5290"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_RateProvider.t.sol",
+      "baselineSha256": "07414845667443862409d09d382e643d047e25898897ff148e677a7cca160cd7",
+      "overlaySha256": "f7223ad65c637d4159fb68b906e29ba3e8dc7d844807656dc7aa3980b011303f"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi.t.sol",
+      "baselineSha256": "4f8ea6cba8de4cabe8ed0e9b2f3d2d11b1f973ee3d1e3f6ad7112de25bd8f807",
+      "overlaySha256": "8e10c0af199c8fa3abeb4e1fab12df8bc6b1d06d69707616f16684761996df0a"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_StagedInit.t.sol",
+      "baselineSha256": "9b466d932449e3fcb1e771cb75264524bc79ef51db413ca89f0d96a593d45e70",
+      "overlaySha256": "a66dd6dd726bdae8337e1079336fc5a059f251d9efa8a3e16be3fa2e691e7b5e"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/single/adversarial/Adversarial_Accounting.t.sol",
+      "baselineSha256": "f0062ec2e8cf203905f3b2c4d3f146e8e0ae76ceced2e494b1a3b474150e709b",
+      "overlaySha256": "cd202623be3981b1d4e4189aa07f892e1ebdbf6c824be62ac70d1ef27516bff5"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/single/adversarial/Adversarial_Griefing.t.sol",
+      "baselineSha256": "0f974bbb95987e10221f9391f45f7db98d0f4354dabc288e292764704a6e88ba",
+      "overlaySha256": "5e5ed0cc24346df1e3b0082d85b40f235f41699da206c251640c1448278e0dc9"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_TokenCount.t.sol",
+      "baselineSha256": "27fed1b9f4c54abf71b7c410a5f8889879dbdb718604a5f46e6ea11b89139837",
+      "overlaySha256": "4c2c7866b47d880a45363a7ae12740568a932ae8259ab2dcfccc319a688c73dc"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_OwnerDuringLock.t.sol",
+      "baselineSha256": "8d60489c14e99e4a310ded48d7c5cd860a66707b05274fa71920c4d694707ec1",
+      "overlaySha256": "cd536170f005b171dddf1a8456579852368c453a316ee6ca486ae93aaf731ec8"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_Adversarial.t.sol",
+      "baselineSha256": "81617463fdb5d84018bf7e8350a54f83eb18fc85159fdfe61715ec2506966c87",
+      "overlaySha256": "1f6be4cf3ba10b8e751e44b6c91cb1d938167534e652f6e1f7dbd70e02f4acfb"
+    },
+    {
+      "path": "test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_OwnerDuringLock.t.sol",
+      "baselineSha256": "6990c078dd95602da147b365557238c900df615585a7299ee5c56cb81fccb85a",
+      "overlaySha256": "37b55861168f285df3d29fcb302a1904f7d5526734e47a39b4272ead27e5d304"
+    }
+  ]
+}

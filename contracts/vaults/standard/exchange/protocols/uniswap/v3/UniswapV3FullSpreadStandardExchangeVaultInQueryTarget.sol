@@ -134,8 +134,13 @@ abstract contract UniswapV3FullSpreadStandardExchangeVaultInQueryTarget is Unisw
                     q.shares -= amountIn;
                 } else {
                     amountOut = _inventoryRedeem(q, amountIn);
-                    if (operation == ITransition.Operation.WithdrawExactOut && amountOut < amount) {
-                        revert ITransition.InvalidQuoteState();
+                    if (operation == ITransition.Operation.WithdrawExactOut) {
+                        if (amountOut < amount) revert ITransition.InvalidQuoteState();
+                        // D55 (APEX F6): exact-output pays exactly the request; the zap-out surplus stays
+                        // in the vault's free inventory, as `executeZapOutWithdrawal` books it.
+                        if (q.token0) q.free0 += amountOut - amount;
+                        else q.free1 += amountOut - amount;
+                        amountOut = amount;
                     }
                 }
             }
@@ -256,10 +261,12 @@ abstract contract UniswapV3FullSpreadStandardExchangeVaultInQueryTarget is Unisw
         return _bufferedInventoryShares(high, q.supply);
     }
 
+    /// @dev Exact-out share quote clamp. The former 1% pad (`shares + max(shares / 100, 1)`) was removed under
+    ///      APEX D55 (2026-09-21): the forward quote is wei-exact against execution, execution pays exactly the
+    ///      requested amount, and any zap-out surplus stays in the vault, so the minimal sufficient share count
+    ///      is the exact quote. A quote at or above the supply is the whole supply.
     function _bufferedInventoryShares(uint256 shares, uint256 supply) private pure returns (uint256) {
-        if (shares >= supply) return supply;
-        uint256 buffer = Math.max(shares / 100, 1);
-        return buffer > supply - shares ? supply : shares + buffer;
+        return shares >= supply ? supply : shares;
     }
 
     function _inventorySwap(InventoryQuote memory q, uint256 amount) private view returns (uint256) {

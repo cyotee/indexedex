@@ -274,20 +274,16 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget 
         Repo.Layout storage l = Repo._layout();
         address se = l.standardExchanges[i];
         if (se == address(0) || se == l.tokens[i]) {
-            return Math.scaleTo(pairAmount, l.ratedScales[i]);
+            // D60: a raw or self-share leg is its balance, times the rate when a provider is configured.
+            uint256 units = l.rateProviders[i] == address(0) ? pairAmount : ClaimLib.rated(i, pairAmount);
+            return Math.scaleTo(units, l.ratedScales[i]);
         }
         // Buffer preview → shares → pair units (rate or claim) → rated WAD
         uint256 shares =
             IStandardExchangeIn(se).previewExchangeIn(IERC20(l.tokens[i]), pairAmount, IERC20(se));
         if (shares == 0) return 0;
-        address rp = l.rateProviders[i];
-        uint256 pairUnits;
-        if (rp != address(0)) {
-            pairUnits = (shares * _getRateFailClosed(rp)) / Math.RATE_PRECISION;
-        } else {
-            pairUnits = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), shares, IERC20(l.tokens[i]));
-        }
-        return Math.scaleTo(pairUnits, l.ratedScales[i]);
+        // D60: the SE answers the buffering quote (shares for this deposit); the rate values them.
+        return Math.scaleTo(ClaimLib.rated(i, shares), l.ratedScales[i]);
     }
 
     function _previewSwapExactOut(address tokenIn, address tokenOut, uint256 amountOut)
@@ -321,20 +317,12 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget 
         uint256 pairUnits = Math.descaleUp(ratedWadIn, l.ratedScales[i]);
         address se = l.standardExchanges[i];
         if (se == address(0)) {
-            return pairUnits;
+            // D60: rated units back to raw units through the provider when one is configured.
+            return l.rateProviders[i] == address(0) ? pairUnits : ClaimLib.unrated(i, pairUnits);
         }
         // Convert claim/rate units into the required native SE shares.
-        address rp = l.rateProviders[i];
-        uint256 sharesNeeded;
-        if (rp != address(0)) {
-            uint256 rate = _getRateFailClosed(rp);
-            sharesNeeded = Math.descaleUp(pairUnits, rate);
-        } else {
-            // The SE exact-out quote supplies enough shares for the required claim.
-            sharesNeeded = IStandardExchangeOut(se).previewExchangeOut(
-                IERC20(se), IERC20(l.tokens[i]), pairUnits
-            );
-        }
+        // D60: rated units back to native shares through the provider; the SE only quotes the buffering input.
+        uint256 sharesNeeded = ClaimLib.unrated(i, pairUnits);
         return ClaimLib.bufferInputForShares(se, l.tokens[i], sharesNeeded);
     }
 
@@ -414,16 +402,15 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookQuoteTarget 
         if (feeWad >= Math.WAD) revert InvalidFeeWad();
         (uint256 minted,) = LegLib.depositAfterExchange(q, Math.applyTradingFeeNet(q.assets, feeWad));
         uint256[4] memory rated = _ratedWadAll();
-        uint256 held = q.heldAssets;
-        uint256 inflow = q.exchange.quoteAssets(q.state, minted);
-        if (l.rateProviders[i] != address(0)) {
+        if (l.rateProviders[i] == address(0)) revert ClaimLib.RateProviderRequired();
+        {
+            // D60: held reserve and inflow are shares x rate; `minted` carries the rated inflow from here on.
             uint256 rate = LegLib.rateAfterExchange(q, l.tokens[i], l.rateProviders[i]);
-            held = q.heldShares * rate / Math.RATE_PRECISION;
-            inflow = minted * rate / Math.RATE_PRECISION;
+            rated[i] = Math.scaleTo(ClaimLib.ratedWith(i, q.heldShares, rate), l.ratedScales[i]);
+            minted = ClaimLib.ratedWith(i, minted, rate);
         }
-        rated[i] = Math.scaleTo(held, l.ratedScales[i]);
         if (rated[i] == 0 || rated[j] == 0) revert SwapNotLive();
-        return _quoteRatedSwapExactIn(i, j, rated, Math.scaleTo(inflow, l.ratedScales[i]));
+        return _quoteRatedSwapExactIn(i, j, rated, Math.scaleTo(minted, l.ratedScales[i]));
     }
 
 }

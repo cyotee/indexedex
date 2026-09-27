@@ -12,7 +12,7 @@ contract UniswapV4SingleSEBufferHook_Init_Test is TestBase {
     function test_init_correctPoolSucceeds() public {
         _initPool();
         // re-init same pool should revert (already initialized)
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("PoolAlreadyInitialized()"));
         pm.initialize(poolKey, SQRT_PRICE_1_1);
     }
 
@@ -24,7 +24,7 @@ contract UniswapV4SingleSEBufferHook_Init_Test is TestBase {
             tickSpacing: 60,
             hooks: IHooks(hook)
         });
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("WrappedError(address,bytes4,bytes,bytes)", hook, bytes4(keccak256("beforeInitialize(address,(address,address,uint24,int24,address),uint160)")), abi.encodeWithSignature("InvalidPoolFee()"), abi.encodeWithSignature("HookCallFailed()")));
         pm.initialize(bad, SQRT_PRICE_1_1);
     }
 
@@ -39,7 +39,7 @@ contract UniswapV4SingleSEBufferHook_Init_Test is TestBase {
             tickSpacing: 60,
             hooks: IHooks(hook)
         });
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("WrappedError(address,bytes4,bytes,bytes)", hook, bytes4(keccak256("beforeInitialize(address,(address,address,uint24,int24,address),uint160)")), abi.encodeWithSignature("InvalidPoolToken()"), abi.encodeWithSignature("HookCallFailed()")));
         pm.initialize(bad, SQRT_PRICE_1_1);
     }
 }

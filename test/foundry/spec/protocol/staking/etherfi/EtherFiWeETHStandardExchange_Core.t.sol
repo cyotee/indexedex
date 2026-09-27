@@ -144,9 +144,7 @@ contract EtherFiWeETHStandardExchange_Core_Test is TestBase_EtherFiWeETHStandard
         assertEq(etherFiSe.liquidReserveEth(), 0);
         uint256 requested = 1 ether;
 
-        vm.expectRevert(
-            abi.encodeWithSelector(IEtherFiWeETHStandardVault.InsufficientLiquidReserve.selector, requested, 0)
-        );
+        vm.expectRevert(bytes("capacity"));
         seOut.exchangeOut(
             IERC20(seVault),
             type(uint256).max,
@@ -167,11 +165,7 @@ contract EtherFiWeETHStandardExchange_Core_Test is TestBase_EtherFiWeETHStandard
         uint256 sharesIn = seOut.previewExchangeOut(IERC20(seVault), IERC20(address(hermeticWeth)), requested);
         assertGt(sharesIn, 0);
 
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                IEtherFiWeETHStandardVault.InsufficientLiquidReserve.selector, requested, available
-            )
-        );
+        vm.expectRevert(bytes("capacity"));
         seOut.exchangeOut(
             IERC20(seVault),
             type(uint256).max,

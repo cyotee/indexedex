@@ -124,7 +124,12 @@ abstract contract BalancerV3PoolStandardExchangeTarget is NativeStandardYieldTar
         if (block.timestamp > deadline_) revert DeadlineExceeded(deadline_, block.timestamp);
         if (p_.maxInput == 0 || (p_.exactOutput && p_.outputLimit == 0)) revert ZeroSYAmount();
         ReentrancyLockRepo._onlyUnlocked();
-        _poolRoute(p_.tokenIn, p_.tokenOut);
+        (bool joining_, uint256 index_) = _poolRoute(p_.tokenIn, p_.tokenOut);
+        if (p_.exactOutput) {
+            uint256 used_ = _previewPoolLiquidity(joining_, true, index_, p_.outputLimit);
+            if (used_ > p_.maxInput) revert MaxAmountExceeded(p_.maxInput, used_);
+            p_.maxInput = used_;
+        }
         ReentrancyLockRepo._lock();
         uint256 before_ = p_.tokenIn.balanceOf(address(this));
         // Only Pendle's internal-balance redemption calls as the pool itself.
@@ -144,7 +149,6 @@ abstract contract BalancerV3PoolStandardExchangeTarget is NativeStandardYieldTar
         if (received_ < p_.outputLimit) revert MinAmountNotMet(p_.outputLimit, received_);
         if (p_.exactOutput && received_ != p_.outputLimit) revert PoolLiquidityFundingMismatch(p_.outputLimit, received_);
         if (!p_.exactOutput && paid_ != p_.maxInput) revert PoolLiquidityFundingMismatch(p_.maxInput, paid_);
-        if (paid_ < p_.maxInput) p_.tokenIn.safeTransfer(msg.sender, p_.maxInput - paid_);
         ReentrancyLockRepo._unlock();
     }
 

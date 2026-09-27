@@ -1,0 +1,15 @@
+{
+  "files": [
+    {
+      "path": "contracts/protocols/lending/aave/cross-version/CrossVersionLoopExecutor.sol",
+      "beforeSha256": "a0af12d7512422554bc304b450806ccd0f1fa1cb87e7abe2ad36b1d2a3389f5e",
+      "candidateSha256": "9892b2f930686190dcc1f62507591369c1a0d08f9c8f76dc493929b5e6dac02a"
+    },
+    {
+      "path": "test/foundry/spec/protocol/lending/aave/cross-version/invariant/AaveCrossVersionLoop_Invariant.t.sol",
+      "beforeSha256": "4686ebca8bdbf9d7cccd21aade26651e8d761c8a2731289f20dec8bd74a614c5",
+      "candidateSha256": "85fe65adea9b0755e918b4ae23f6843a37d58c6f511f50d7963014ac71798bfc"
+    }
+  ],
+  "status": "DETERMINISTIC_REGRESSION_PASS_FULL_FAMILY_RUNNING"
+}

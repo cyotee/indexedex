@@ -59,7 +59,9 @@ abstract contract StandardExchangeReleaseBehavior is StandardExchangeDeliveryBeh
         assertEq(asset1.balanceOf(FALSE_DEPOSITOR), received);
         uint256 supply = subject.totalSupply();
         vm.startPrank(FALSE_DEPOSITOR);
-        vm.expectRevert();
+        // R2.4: false depositor holds no shares/allowance -> ERC20InsufficientAllowance 0xfb8f41b2
+        // (dynamic args; selector pinned). Bare expectRevert() masked the real revert.
+        vm.expectPartialRevert(bytes4(0xfb8f41b2));
         subject.exchangeIn(IERC20(address(subject)), 1 ether, asset1, 0, FALSE_DEPOSITOR, false, block.timestamp);
         vm.stopPrank();
         assertEq(subject.totalSupply(), supply);
@@ -93,8 +95,10 @@ abstract contract StandardExchangeReleaseBehavior is StandardExchangeDeliveryBeh
         subject.transferFrom(holder, address(this), 1 ether);
         assertEq(subject.balanceOf(holder), 1 ether);
         assertEq(permit.nonces(holder), 1);
-        vm.expectRevert(); permit.permit(holder, address(this), 1 ether, block.timestamp + 100, v, r, s);
-        vm.expectRevert(); subject.transferFrom(holder, address(this), 1 ether);
+        // R2.4: replaying a consumed permit recovers a wrong signer -> ERC2612InvalidSigner 0x4b800e46.
+        vm.expectPartialRevert(bytes4(0x4b800e46)); permit.permit(holder, address(this), 1 ether, block.timestamp + 100, v, r, s);
+        // R2.4: the 1-ether allowance was already spent -> ERC20InsufficientAllowance 0xfb8f41b2.
+        vm.expectPartialRevert(bytes4(0xfb8f41b2)); subject.transferFrom(holder, address(this), 1 ether);
     }
 
     function test_everyTargetSelectorIsInstalledOnRegistryProxy() public view {
@@ -158,7 +162,8 @@ abstract contract StandardExchangeReleaseBehavior is StandardExchangeDeliveryBeh
         _reject(data,abi.encodeWithSignature(string.concat(_family(),"ExchangeIn_SlippageExceeded()")));
         uint256 received=IStandardizedYield(address(subject)).redeem(FALSE_DEPOSITOR,1 ether,address(asset1),0,true);
         assertEq(asset1.balanceOf(FALSE_DEPOSITOR),received);assertEq(subject.balanceOf(address(subject)),2 ether);
-        vm.prank(FALSE_DEPOSITOR);vm.expectRevert();
+        // R2.4: false depositor holds no shares/allowance -> ERC20InsufficientAllowance 0xfb8f41b2.
+        vm.prank(FALSE_DEPOSITOR);vm.expectPartialRevert(bytes4(0xfb8f41b2));
         subject.exchangeIn(IERC20(address(subject)),1 ether,asset1,0,FALSE_DEPOSITOR,false,block.timestamp);
         assertEq(subject.balanceOf(address(subject)),2 ether);
     }

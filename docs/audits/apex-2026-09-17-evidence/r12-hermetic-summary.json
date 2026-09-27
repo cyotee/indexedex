@@ -1,0 +1,19 @@
+{
+  "passed": 25737,
+  "failed": 6424,
+  "exit": 1,
+  "claimGreen": false,
+  "command": "python3 scripts/forge-artifacts.py build --all-artifacts; forge build; forge test -vv",
+  "allArtifactsExit": 0,
+  "forgeBuildExit": 0,
+  "log": "r12-hermetic-rerun.log",
+  "failingSuiteLines": 858,
+  "review20260920": {
+    "passed": 32654,
+    "failed": 0,
+    "exit": 0,
+    "claimGreen": true,
+    "command": "forge test -vv",
+    "log": "review-20260920/full-hermetic-run-3.summary.log"
+  }
+}

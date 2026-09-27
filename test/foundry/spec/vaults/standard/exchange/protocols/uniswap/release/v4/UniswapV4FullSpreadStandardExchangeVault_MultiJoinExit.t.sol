@@ -205,9 +205,7 @@ contract UniswapV4FullSpreadStandardExchangeVault_MultiJoinExit is TestBase_Unis
         uint256 inv0 = IERC20(_token0()).balanceOf(address(vault));
         uint256 inv1 = IERC20(_token1()).balanceOf(address(vault));
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed0, 0)
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         inMulti.exchangeInManyToOne(
             _poolTokens(), _amts(claimed0, claimed1), IERC20(address(vault)), 0, attacker, true, _deadline()
         );

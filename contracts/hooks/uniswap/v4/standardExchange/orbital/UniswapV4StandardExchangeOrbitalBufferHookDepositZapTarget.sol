@@ -4,6 +4,8 @@ pragma solidity ^0.8.0;
 import {UniswapV4StandardExchangeOrbitalBufferHookDepositCore} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDepositCore.sol";
 
 /// @notice Single-token zap execution.
+/// @dev Unused offered amounts and SE receipts from this call are refunded to `msg.sender`.
+///      Resting face is unrecorded pretransfer credit (D12), never this caller's refund.
 abstract contract UniswapV4StandardExchangeOrbitalBufferHookDepositZapTarget is UniswapV4StandardExchangeOrbitalBufferHookDepositCore {
     function depositSingle(
         address tokenIn,

@@ -5,6 +5,9 @@ import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
+import {AaveCrossVersionLoop_Component_FactoryService} from
+    "contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoop_Component_FactoryService.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {IPoolAddressesProvider} from
     "@crane/contracts/protocols/lending/aave/v3.6/interfaces/IPoolAddressesProvider.sol";
@@ -46,12 +49,16 @@ contract _MockRegistryDecimals is IVaultRegistryDeployment {
 
 /// @notice DFPkg pair-validation money paths on each two-token combo. pairToken = tokenA.
 abstract contract AaveCrossVersionLoopDFPkg_Decimals is TestBase_AaveCrossVersionLoopV3Market_Decimals {
+    using AaveCrossVersionLoop_Component_FactoryService for ICreate3FactoryProxy;
+
     IAaveCrossVersionLoopDFPkg internal dfpkg;
     _MockRegistryDecimals internal registry;
 
     function _deployDFPkg() internal {
         registry = new _MockRegistryDecimals();
 
+        // The transition-quote facet is required (constructor reverts if codeless); deploy the real one.
+        IFacet transitionQuoteFacet = create3Factory.deployTransitionQuoteFacet();
         IAaveCrossVersionLoopDFPkg.PkgInit memory pkgInit = IAaveCrossVersionLoopDFPkg.PkgInit({
             erc20Facet: IFacet(address(0)),
             erc5267Facet: IFacet(address(0)),
@@ -62,6 +69,7 @@ abstract contract AaveCrossVersionLoopDFPkg_Decimals is TestBase_AaveCrossVersio
             exchangeOutFacet: IFacet(address(0)),
             rebalanceFacet: IFacet(address(0)),
             markerFacet: IFacet(address(0)),
+            transitionQuoteFacet: transitionQuoteFacet,
             v36Pool: v36Pool,
             v36AddressesProvider: IPoolAddressesProvider(v36AddressesProvider),
             v36Oracle: IAaveOracle(v36Oracle),

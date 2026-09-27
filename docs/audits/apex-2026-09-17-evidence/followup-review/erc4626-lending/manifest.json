@@ -1,0 +1,45 @@
+{
+  "files": [
+    {
+      "path": "contracts/vaults/standard/erc4626/ERC4626StandardExchangeInTarget.sol",
+      "before_sha256": "562e541f384080249d9bf646e73c0d017948e7cd517f7490df041b920d6ef17b",
+      "sha256": "d925de62a87e3cc1edb456ca9eb49afe2056d5dc024238e52f59c9813981f606"
+    },
+    {
+      "path": "contracts/vaults/standard/erc4626/ERC4626StandardExchangeOutTarget.sol",
+      "before_sha256": "b8ef1386cdfbf550ff998257e2ca6c89de43c12a9b86180acdad5f8c0799125f",
+      "sha256": "e31cc3920468f7cd8faf26255272c7b3ea675ac3c6855085c3bda4b9d25f5516"
+    },
+    {
+      "path": "test/foundry/spec/protocol/lending/aave/v3.6/invariant/AaveV3StataStandardExchange_Invariant.t.sol",
+      "before_sha256": "8a1bf64f0f8d98f9ecb165aac570a16b894ff537c3aceb9981e910c57ad7ac96",
+      "sha256": "389116d554fdcdf074235949b41701b3675c673c98e0f0c91026a219dc067bd3"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BalancerV3SinglePoolStandardExchange_Invariant.t.sol",
+      "before_sha256": "06879b8b63189a59943d6c85e9d97fd1a83f154216145996dbe493f93b0624a5",
+      "sha256": "264a139ce6aa5adf349c1ac3800a27ab1616a6fc425d45f83e012b3508ffe53d"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BalancerV3SinglePoolStandardExchange_PoolActionsInvariant.t.sol",
+      "before_sha256": "15d10bf627116dab26821b98eab5c2a2e3c68af9f7cda2afd51fc2fab29e55dd",
+      "sha256": "df07f0af781766bb53c9ac1be40bebcbfdd200321ec1fb0bced65109b27ba918"
+    },
+    {
+      "path": "test/foundry/spec/vaults/standard/erc4626/ERC4626StandardExchange_CreditPricing.t.sol",
+      "before_sha256": null,
+      "sha256": "6decc88c36c60fd1bfbcae0aba016401767417be41666c5dd7b892c22e787ae5"
+    },
+    {
+      "path": "test/foundry/spec/vaults/standard/erc4626/invariant/ERC4626StandardExchange_Invariant.t.sol",
+      "before_sha256": "25138a76b74e8ef041b4994268d8f665f3e78347223bfddc2ea8b85d13e9b736",
+      "sha256": "47632130e0853cf2b756863b14242bbf6d5e77315488132fbfffcbdf58a6f030"
+    },
+    {
+      "path": "test/foundry/spec/vaults/standard/exchange/invariant/LendingAccountingHandler.sol",
+      "before_sha256": null,
+      "sha256": "a7467d4830e069ed12be0c8cd9858d959388d4863178b1fe35e7a61a9db90f72"
+    }
+  ],
+  "patch_sha256": "2de22b6513b5d8afa34d7f648cbe500ca8859380cf5a1e00b162d728e120559b"
+}

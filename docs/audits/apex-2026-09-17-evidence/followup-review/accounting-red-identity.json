@@ -1,0 +1,62 @@
+{
+  "sourceCheckout": "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex",
+  "snapshot": "/tmp/apex-review-accounting-red-run",
+  "baseRevision": "2d69dc1e954f51698f7e26699940171dec2d8a3b",
+  "overlay": "Exact inverse of accounting_review five-file fix; prior dirty remediation preserved",
+  "prefixedSources": [
+    {
+      "path": "contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeCommon.sol",
+      "sha256": "514de276170a86f7ed32a06526b79c2dbd4b1213a8a694d3a4d0c9decd3c00af"
+    },
+    {
+      "path": "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutBase.sol",
+      "sha256": "747e9e7432d1a3c8eff6abcc2735811028b303b04a843c277c21a7094cfafe0a"
+    },
+    {
+      "path": "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutExecutionDelegate.sol",
+      "sha256": "f63d5e97d4192991493c24c97f4e5afdcf5d6fd770f9d8278cea533ac75a0128"
+    },
+    {
+      "path": "contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultOutBase.sol",
+      "sha256": "96f4c769f155873c549f9a00bdc84017f2ec75a7c0c7bc85f82fe923e3d68431"
+    },
+    {
+      "path": "contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultOutExecuteTarget.sol",
+      "sha256": "f84b828e76b8275327326f039156b30e32d59d905aac0b61a1fbd62ac6dfa75f"
+    }
+  ],
+  "copied": [
+    "contracts",
+    "test",
+    "scripts",
+    "lib",
+    "node_modules",
+    "out",
+    "cache_forge",
+    "foundry.toml",
+    "remappings.txt"
+  ],
+  "independentOutInodes": true,
+  "tests": [
+    {
+      "path": "test/foundry/spec/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchange_PretransferParity.t.sol",
+      "sha256": "1611f7ea6da8716c1b92ff4c1b5ec6d7f1305196297c6c1fd854abc8cf7031a5"
+    },
+    {
+      "path": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVault_PretransferParity.t.sol",
+      "sha256": "fcbe28a93542b21d4c6ab2578592d2b9d51acd2d6b8cc8d770029a35d8b52edb"
+    },
+    {
+      "path": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v4/UniswapV4FullSpreadStandardExchangeVault_PretransferParity.t.sol",
+      "sha256": "df60df57e9e5da8bd57d4acb645bb51bd26ecf283cee5bd053a048a4dfbe9fdf"
+    }
+  ],
+  "result": {
+    "exitCode": 1,
+    "passed": 6,
+    "failed": 7,
+    "log": "accounting-red-unsandboxed.log",
+    "logSha256": "e9c696c2e914a5a9d1cde6c197c0c5bf7dba59e757a1649ea770215c374402f4",
+    "sandboxAttempts": "Both sandbox attempts crashed in macOS system proxy initialization before tests; not counted as red evidence."
+  }
+}

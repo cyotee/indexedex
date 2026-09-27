@@ -115,7 +115,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookTestDeployLib {
         returns (IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgInit memory init)
     {
         init.vaultRegistryDeployment = IVaultRegistryDeployment(indexedexManager);
-        init.joinQueryFacet = PkgFactory.deployJoinQueryFacet(create3Factory);
+        init.joinQueryFacet = PkgFactory.deployLiquidityFacetExt(create3Factory);
         init.vaultFeeOracleQuery = IVaultFeeOracleQuery(indexedexManager);
         init.liquidityFacet = PkgFactory.deployLiquidityFacet(create3Factory);
         init.exitFacet = PkgFactory.deployExitFacet(create3Factory);

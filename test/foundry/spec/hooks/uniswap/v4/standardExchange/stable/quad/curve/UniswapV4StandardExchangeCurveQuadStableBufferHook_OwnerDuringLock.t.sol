@@ -106,9 +106,11 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_OwnerDuringLock_Test
 
         uint256 joinAmt = token1.balanceOf(hook) / 4;
         if (joinAmt == 0) joinAmt = 1;
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, user));
         vm.prank(user);
         quad.depositSingle(address(token1), joinAmt, user, 0, block.timestamp + 1 days);
+
+        assertEq(IERC20(hook).totalSupply(), 1000, "unauthorized join preserves MIN supply");
 
         vm.prank(owner);
         uint256 lpOut = quad.depositSingle(address(token1), joinAmt, owner, 0, block.timestamp + 1 days);

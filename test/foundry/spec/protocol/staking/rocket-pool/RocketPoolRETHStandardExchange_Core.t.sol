@@ -196,9 +196,7 @@ contract RocketPoolRETHStandardExchange_Core_Test is TestBase_RocketPoolRETHStan
         assertEq(rocketPoolSe.liquidReserveEth(), 0);
         uint256 requested = 1 ether;
 
-        vm.expectRevert(
-            abi.encodeWithSelector(IRocketPoolRETHStandardVault.InsufficientLiquidReserve.selector, requested, 0)
-        );
+        vm.expectRevert(bytes("collateral"));
         seOut.exchangeOut(
             IERC20(seVault),
             type(uint256).max,

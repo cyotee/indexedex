@@ -80,10 +80,35 @@ library AaveV3Stata_Component_FactoryService {
         IIndexedexManagerProxy indexedexManager,
         IAaveV3StataStandardExchangeDFPkg.PkgInit memory pkgInit
     ) internal returns (IAaveV3StataStandardExchangeDFPkg instance) {
-        return deployAaveV3StataStandardExchangeDFPkgFromVaultRegistry(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            pkgInit
-        );
+        return deployAaveV3StataStandardExchangeDFPkg(indexedexManager, pkgInit, bytes32(0));
+    }
+
+    /// @notice Same as the 2-argument manager deploy, with a salt discriminator so several packages can
+    ///         be deployed on one manager at distinct addresses.
+    /// @dev `disc == bytes32(0)` reproduces the canonical package salt/address of
+    ///      `deployAaveV3StataStandardExchangeDFPkgFromVaultRegistry` byte for byte (production, launch
+    ///      and existing single-package callers stay unchanged). A non-zero `disc` namespaces the salt
+    ///      to a distinct package; the R10.3 multi-leg SE matrix passes the fixture address so each leg
+    ///      binds a distinct Aave market on the shared manager.
+    function deployAaveV3StataStandardExchangeDFPkg(
+        IIndexedexManagerProxy indexedexManager,
+        IAaveV3StataStandardExchangeDFPkg.PkgInit memory pkgInit,
+        bytes32 disc
+    ) internal returns (IAaveV3StataStandardExchangeDFPkg instance) {
+        if (disc == bytes32(0)) {
+            return deployAaveV3StataStandardExchangeDFPkgFromVaultRegistry(
+                IVaultRegistryDeployment(address(indexedexManager)),
+                pkgInit
+            );
+        }
+        bytes memory code = ArtifactCreationCode.creationCode("AaveV3StataStandardExchangeDFPkg.sol:AaveV3StataStandardExchangeDFPkg");
+        bytes memory args = abi.encode(pkgInit);
+        instance = IAaveV3StataStandardExchangeDFPkg(address(
+            IVaultRegistryDeployment(address(indexedexManager)).deployPkg(
+                code, args, ArtifactCreationCode.releaseSalt(keccak256(abi.encode("AaveV3StataStandardExchangeDFPkg", disc)))
+            )
+        ));
+        vm.label(address(instance), "AaveV3StataStandardExchangeDFPkg");
     }
 
     function buildAaveV3StataPkgInit(

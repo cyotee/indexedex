@@ -29,6 +29,8 @@ interface IUniswapV4StandardExchangeWeightedBufferHookPackage is
     error ZeroStandardExchangeRequired();
     error SameStandardExchange();
     error RateProviderWithoutSE();
+    /// @notice D60: a buffered leg was declared without a rate provider.
+    error RateProviderRequired();
     error InvalidSE();
     error InvalidDecimals();
     error ArrayLengthMismatch();
@@ -36,10 +38,12 @@ interface IUniswapV4StandardExchangeWeightedBufferHookPackage is
     struct PkgInit {
         IFacet joinFlexibleFacet;
         IFacet exitQueryFacet;
+        /// @dev Filled by `UniswapV4StandardExchangeWeightedBufferHookLiquidityFacetExt` (join previews and views; D19 split).
         IFacet joinQueryFacet;
         IVaultRegistryDeployment vaultRegistryDeployment;
         IVaultFeeOracleQuery vaultFeeOracleQuery;
         /// @dev Option 1d: join + exit replace combined liquidityFacet.
+        /// @dev Filled by `UniswapV4StandardExchangeWeightedBufferHookLiquidityFacet` (mutating joins and deposits; D19 split).
         IFacet joinFacet;
         IFacet exitFacet;
         IFacet seFacet;

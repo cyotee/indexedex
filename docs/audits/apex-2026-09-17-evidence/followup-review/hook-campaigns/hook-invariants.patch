@@ -1,0 +1,1690 @@
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/HookLiquidityInvariantHandler.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/HookLiquidityInvariantHandler.sol
+@@ -1,92 +1,475 @@
+ // SPDX-License-Identifier: BSL-1.1
+-pragma solidity ^0.8.0;
++pragma solidity ^0.8.24;
+ 
+ import {Test} from "forge-std/Test.sol";
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
++import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
++import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
++import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+ import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
+-
+-/// @dev Common production liquidity interface of weighted and both quad hooks.
++import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
++import {WrapperExactOutRouter} from "contracts/test/stubs/WrapperExactOutRouter.sol";
++import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
++import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
++import {SwapParams} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
++import {BalanceDelta, BalanceDeltaLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/types/BalanceDelta.sol";
++import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/TickMath.sol";
++
+ interface IInvariantHookLiquidity {
+     function joinProportional(uint256[] calldata amounts, address to, uint256 minShares, uint256 deadline)
+-        external returns (uint256 shares, uint256[] memory used);
++        external
++        returns (uint256 shares, uint256[] memory used);
+     function exitProportional(uint256 shares, address to, uint256[] calldata minAmounts, uint256 deadline)
+-        external returns (uint256[] memory amounts);
++        external
++        returns (uint256[] memory amounts);
+ }
+ 
+-/// @notice Funded join/exit campaigns with exact wallet and share accounting on real hook proxies.
+-/// @dev Each randomized call completes both money actions. Setup does not increment these counters.
+-///      Unexpected failures propagate; the suites require fail_on_revert and check campaign counters.
++interface IInvariantCpLiquidity {
++    function deposit(uint256 a0, uint256 a1, address to, uint256 minShares, uint256 deadline)
++        external
++        returns (uint256 shares, uint256 used0, uint256 used1);
++    function withdraw(uint256 shares, address to, uint256 min0, uint256 min1, uint256 deadline)
++        external
++        returns (uint256 out0, uint256 out1);
++}
++
++interface IInvariantOrbitalLiquidity {
++    function radius() external view returns (uint256);
++    function effectiveReserves() external view returns (uint256, uint256, uint256);
++    function addLiquidity(
++        uint256 a0,
++        uint256 a1,
++        uint256 a2,
++        address to,
++        uint256 minShares,
++        uint256 deadline,
++        bytes calldata permit
++    ) external returns (uint256 shares, uint256 used0, uint256 used1, uint256 used2);
++    function removeLiquidity(uint256 shares, address to, uint256 min0, uint256 min1, uint256 min2, uint256 deadline)
++        external
++        returns (uint256 out0, uint256 out1, uint256 out2);
++}
++
++/// @notice Stateful production liquidity, swap, inventory and rollback accounting for six LP hook families.
++/// @dev No successful actions are seeded in setup; no action failure is swallowed. Cycle order guarantees
++///      every category and all three honest actors execute during each 64-call campaign. Funding amounts,
++///      partial burns, share recipients and trade sizes remain randomized. Callback-token reentrancy and
++///      fee administration are covered by their dedicated hostile-token/governance suites, not this fixture.
+ contract HookLiquidityInvariantHandler is Test {
+-    IInvariantHookLiquidity public immutable hook;
++    using BalanceDeltaLibrary for BalanceDelta;
++
++    struct Config {
++        address hook;
++        SimpleMintableERC20[] tokens;
++        uint8 mode; // 0 proportional, 1 constant product, 2 orbital
++        address input;
++        address output;
++        address inputSE;
++        address inputVault;
++        address feeRecipient;
++        WrapperExactOutRouter router;
++        PoolKey key;
++        IERC20[] observedTokens;
++        address[] observedHolders;
++    }
++    address public immutable hook;
++    uint8 internal immutable mode;
+     SimpleMintableERC20[] internal tokens;
+-    address[3] public actors;
++    IERC20 internal immutable input;
++    IERC20 internal immutable output;
++    address internal immutable inputSE;
++    address internal immutable inputVault;
++    address internal immutable feeRecipient;
++    uint256 internal immutable initialSupply;
++    uint256 internal immutable initialFeeShares;
++    uint256 internal immutable initialLockedShares;
++    WrapperExactOutRouter internal immutable router;
++    PoolKey internal key;
++    IERC20[] internal observedTokens;
++    address[] internal observedHolders;
++    AtomicPretransferCaller public immutable caller;
++    address[3] public actors = [address(0xCA1101), address(0xCA1102), address(0xCA1103)];
++    address public constant attacker = address(0xBAD110);
+     uint256 public ghost_join;
+     uint256 public ghost_exit;
+     uint256 public attempted;
+-
+-    constructor(address hook_, SimpleMintableERC20[] memory tokens_) {
+-        hook = IInvariantHookLiquidity(hook_);
+-        tokens = tokens_;
+-        actors = [address(0xCA1101), address(0xCA1102), address(0xCA1103)];
+-    }
+-
+-    /// @notice A nonzero funded join followed by a bounded partial exit from the resulting position.
+-    function cycle(uint256 amountSeed_, uint256 actorSeed_, uint256 exitSeed_) public {
+-        ++attempted;
+-        address actor_ = actors[actorSeed_ % actors.length];
+-        uint256 minted_ = _join(actor_, bound(amountSeed_, 1 ether, 20 ether));
+-        _exit(actor_, bound(exitSeed_, minted_ / 4, minted_ / 2));
+-    }
+-
+-    function _join(address actor_, uint256 amount_) internal returns (uint256 minted_) {
+-        uint256[] memory amounts_ = new uint256[](tokens.length);
+-        uint256[] memory before_ = new uint256[](tokens.length);
++    uint256 public ghost_minted;
++    uint256 public ghost_burned;
++    mapping(address actor => uint256 shares) public expectedShares;
++    uint256[8] public actionAttempts;
++    uint256[8] public actionSuccesses;
++    uint256[8] public expectedReverts;
++    uint256 public unexpectedReverts;
++
++    constructor(Config memory c) {
++        hook = c.hook;
++        mode = c.mode;
++        tokens = c.tokens;
++        input = IERC20(c.input);
++        output = IERC20(c.output);
++        inputSE = c.inputSE;
++        inputVault = c.inputVault;
++        feeRecipient = c.feeRecipient;
++        initialSupply = IERC20(c.hook).totalSupply();
++        initialFeeShares = IERC20(c.hook).balanceOf(c.feeRecipient);
++        initialLockedShares = IERC20(c.hook).balanceOf(address(0));
++        router = c.router;
++        key = c.key;
++        observedTokens = c.observedTokens;
++        observedHolders = c.observedHolders;
++        caller = new AtomicPretransferCaller();
++    }
++
++    function cycle(uint256 amountSeed, uint256 recipientSeed, uint256 exitSeed) public {
++        uint256 step = attempted++;
++        // The first 24 randomized funded cycles guarantee every actor/action pair. Remaining
++        // campaign cycles randomize ordering as well as amounts; setup performs no handler actions.
++        address actor = actors[(step < 24 ? step : recipientSeed) % 3];
++        uint256 action = (step < 24 ? step : amountSeed) % 8;
++        uint256 amountToJoin = bound(amountSeed, 1 ether, 20 ether);
++        if (mode == 2 && IERC20(hook).totalSupply() != 0) {
++            // Orbital's radius is fixed at bootstrap. Construct a valid funded join from its
++            // public admission bound instead of repeatedly adding until the documented cap fails.
++            (uint256 e0, uint256 e1, uint256 e2) = IInvariantOrbitalLiquidity(hook).effectiveReserves();
++            uint256 largest = e0 > e1 ? e0 : e1;
++            if (e2 > largest) largest = e2;
++            uint256 cap = (IInvariantOrbitalLiquidity(hook).radius() - largest) / 4;
++            assertGt(cap, 1e12, "orbital campaign retains funded join headroom");
++            if (amountToJoin > cap) amountToJoin = cap;
++        }
++        uint256 minted = _join(actor, amountToJoin);
++        uint256 toBurn = mode == 2
++            ? bound(exitSeed, IERC20(hook).balanceOf(actor) / 2, IERC20(hook).balanceOf(actor) * 3 / 4)
++            : bound(exitSeed, minted / 4, minted / 2);
++        _exit(actor, toBurn);
++        ++actionAttempts[action];
++        uint256 amount = bound(amountSeed, 1e12, 1e15);
++        if (action < 4) _trade(actor, amount, action);
++        else if (action == 4) _donateAndTransfer(actor, recipientSeed, amount);
++        else if (action == 5) _unfundedControls(amount);
++        else if (action == 6) _rollback(actor, amount);
++        else _poolTrade(actor, amount);
++        ++actionSuccesses[action];
++    }
++
++    function _join(address actor, uint256 amount) internal returns (uint256 minted) {
++        uint256[] memory amounts = new uint256[](tokens.length);
++        uint256[] memory beforeBalances = new uint256[](tokens.length);
+         for (uint256 i; i < tokens.length; ++i) {
+-            tokens[i].mint(actor_, amount_);
+-            amounts_[i] = amount_;
+-            before_[i] = tokens[i].balanceOf(actor_);
+-            vm.prank(actor_);
+-            tokens[i].approve(address(hook), amount_);
+-        }
+-        IERC20 lp_ = IERC20(address(hook));
+-        uint256 sharesBefore_ = lp_.balanceOf(actor_);
+-        vm.prank(actor_);
+-        uint256[] memory used_;
+-        (minted_, used_) = hook.joinProportional(amounts_, actor_, 1, block.timestamp + 1 hours);
+-        assertGt(minted_, 0, "funded join mints");
+-        assertEq(lp_.balanceOf(actor_) - sharesBefore_, minted_, "actual LP issuance");
++            tokens[i].mint(actor, amount);
++            amounts[i] = amount;
++            beforeBalances[i] = tokens[i].balanceOf(actor);
++            vm.prank(actor);
++            tokens[i].approve(hook, amount);
++        }
++        uint256 beforeShares = IERC20(hook).balanceOf(actor);
++        uint256[] memory used = new uint256[](tokens.length);
++        vm.prank(actor);
++        if (mode == 0) {
++            (minted, used) =
++                IInvariantHookLiquidity(hook).joinProportional(amounts, actor, 1, block.timestamp + 1 hours);
++        } else if (mode == 1) {
++            (minted, used[0], used[1]) =
++                IInvariantCpLiquidity(hook).deposit(amount, amount, actor, 1, block.timestamp + 1 hours);
++        } else {
++            (minted, used[0], used[1], used[2]) = IInvariantOrbitalLiquidity(hook)
++                .addLiquidity(amount, amount, amount, actor, 1, block.timestamp + 1 hours, "");
++        }
++        assertGt(minted, 0, "funded join mints");
++        assertEq(IERC20(hook).balanceOf(actor) - beforeShares, minted, "actual LP issuance");
+         for (uint256 i; i < tokens.length; ++i) {
+-            assertEq(before_[i] - tokens[i].balanceOf(actor_), used_[i], "join input delta");
+-            assertLe(used_[i], amounts_[i], "join respects offered budget");
+-        }
++            assertEq(beforeBalances[i] - tokens[i].balanceOf(actor), used[i], "join input delta");
++            assertLe(used[i], amount, "join budget");
++        }
++        expectedShares[actor] += minted;
++        ghost_minted += minted;
+         ++ghost_join;
+     }
+ 
+-    function _exit(address actor_, uint256 shares_) internal {
+-        uint256[] memory before_ = new uint256[](tokens.length);
+-        for (uint256 i; i < tokens.length; ++i) before_[i] = tokens[i].balanceOf(actor_);
+-        IERC20 lp_ = IERC20(address(hook));
+-        uint256 sharesBefore_ = lp_.balanceOf(actor_);
+-        vm.prank(actor_);
+-        uint256[] memory out_ = hook.exitProportional(
+-            shares_, actor_, new uint256[](tokens.length), block.timestamp + 1 hours
+-        );
+-        assertEq(sharesBefore_ - lp_.balanceOf(actor_), shares_, "burn exactly requested shares");
+-        uint256 totalOut_;
++    function _exit(address actor, uint256 shares) internal {
++        uint256[] memory beforeBalances = new uint256[](tokens.length);
+         for (uint256 i; i < tokens.length; ++i) {
+-            assertEq(tokens[i].balanceOf(actor_) - before_[i], out_[i], "actual exit payout");
+-            totalOut_ += out_[i];
+-        }
+-        assertGt(totalOut_, 0, "funded exit pays");
++            beforeBalances[i] = tokens[i].balanceOf(actor);
++        }
++        uint256 beforeShares = IERC20(hook).balanceOf(actor);
++        uint256[] memory out = new uint256[](tokens.length);
++        vm.prank(actor);
++        if (mode == 0) {
++            out = IInvariantHookLiquidity(hook)
++                .exitProportional(shares, actor, new uint256[](tokens.length), block.timestamp + 1 hours);
++        } else if (mode == 1) {
++            (out[0], out[1]) = IInvariantCpLiquidity(hook).withdraw(shares, actor, 0, 0, block.timestamp + 1 hours);
++        } else {
++            (out[0], out[1], out[2]) =
++                IInvariantOrbitalLiquidity(hook).removeLiquidity(shares, actor, 0, 0, 0, block.timestamp + 1 hours);
++        }
++        assertEq(beforeShares - IERC20(hook).balanceOf(actor), shares, "exact burn");
++        uint256 totalOut;
++        for (uint256 i; i < tokens.length; ++i) {
++            assertEq(tokens[i].balanceOf(actor) - beforeBalances[i], out[i], "exit delivery");
++            totalOut += out[i];
++        }
++        assertGt(totalOut, 0, "partial exit pays");
++        expectedShares[actor] -= shares;
++        ghost_burned += shares;
+         ++ghost_exit;
+     }
+ 
+-    /// @notice Every attempted lifecycle must execute both money paths successfully.
+-    function assertAccounting() external view {
+-        assertEq(ghost_join, attempted, "every join succeeds");
+-        assertEq(ghost_exit, attempted, "every exit succeeds");
+-        uint256 actorShares_;
+-        for (uint256 i; i < actors.length; ++i) actorShares_ += IERC20(address(hook)).balanceOf(actors[i]);
+-        assertLe(actorShares_, IERC20(address(hook)).totalSupply(), "holders bounded by supply");
++    function _inData(uint256 amount, uint256 minOut, address recipient, bool prepaid)
++        internal
++        view
++        returns (bytes memory)
++    {
++        return abi.encodeCall(
++            IStandardExchangeIn.exchangeIn,
++            (input, amount, output, minOut, recipient, prepaid, block.timestamp + 1 hours)
++        );
++    }
++
++    struct TradeState {
++        bool exactOut;
++        bool prepaid;
++        uint256 quote;
++        uint256 budget;
++        uint256 actorBefore;
++        uint256 callerBefore;
++        uint256 outBefore;
++    }
++
++    function _trade(address actor, uint256 amount, uint256 action) internal {
++        TradeState memory v;
++        v.exactOut = action % 2 == 1;
++        v.prepaid = action >= 2;
++        v.quote = v.exactOut
++            ? IStandardExchangeOut(hook).previewExchangeOut(input, output, amount)
++            : IStandardExchangeIn(hook).previewExchangeIn(input, amount, output);
++        v.budget = v.exactOut ? v.quote * 2 : amount;
++        SimpleMintableERC20(address(input)).mint(actor, v.budget);
++        vm.prank(actor);
++        input.approve(v.prepaid ? address(caller) : hook, v.budget);
++        v.actorBefore = input.balanceOf(actor);
++        v.callerBefore = input.balanceOf(address(caller));
++        v.outBefore = output.balanceOf(actor);
++        bytes memory data = v.exactOut
++            ? abi.encodeCall(
++                IStandardExchangeOut.exchangeOut,
++                (input, v.budget, output, amount, actor, v.prepaid, block.timestamp + 1 hours)
++            )
++            : _inData(amount, v.quote, actor, v.prepaid);
++        bytes memory returned;
++        if (v.prepaid) {
++            returned = caller.consumePretransfer(input, actor, hook, v.budget, data);
++        } else {
++            vm.prank(actor);
++            bool ok;
++            (ok, returned) = hook.call(data);
++            if (!ok) assembly ("memory-safe") { revert(add(returned, 32), mload(returned)) }
++        }
++        uint256 result = abi.decode(returned, (uint256));
++        assertEq(result, v.quote, "swap matches executable quote");
++        assertEq(output.balanceOf(actor) - v.outBefore, v.exactOut ? amount : v.quote, "exact delivery");
++        assertEq(
++            v.actorBefore - input.balanceOf(actor),
++            v.prepaid ? v.budget : (v.exactOut ? v.quote : amount),
++            "caller debit"
++        );
++        assertEq(
++            input.balanceOf(address(caller)) - v.callerBefore,
++            v.prepaid && v.exactOut ? v.budget - v.quote : 0,
++            "bounded refund to caller"
++        );
++        if (v.prepaid) {
++            _expectFailure(
++                address(caller),
++                _inData(amount, 0, attacker, true),
++                abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, amount, 0),
++                action
++            );
++        }
++    }
++
++    function _donateAndTransfer(address actor, uint256 recipientSeed, uint256 amount) internal {
++        SimpleMintableERC20(address(input)).mint(actor, amount);
++        vm.startPrank(actor);
++        input.approve(inputSE, amount);
++        uint256 shares = IStandardExchangeIn(inputSE)
++            .exchangeIn(input, amount, IERC20(inputSE), 1, actor, false, block.timestamp + 1 hours);
++        uint256 supplyBefore = IERC20(hook).totalSupply();
++        uint256 bookBefore = IERC20(inputSE).balanceOf(hook);
++        IERC20(inputSE).transfer(hook, shares);
++        vm.stopPrank();
++        assertEq(IERC20(inputSE).balanceOf(hook) - bookBefore, shares, "donation custody");
++        assertEq(IERC20(hook).totalSupply(), supplyBefore, "donation mints no LP");
++        uint256 actorIndex = actor == actors[0] ? 0 : actor == actors[1] ? 1 : 2;
++        address recipient = actors[(actorIndex + 1 + recipientSeed % 2) % 3];
++        uint256 transferShares = IERC20(hook).balanceOf(actor) / 7;
++        uint256 beforeActor = IERC20(hook).balanceOf(actor);
++        uint256 beforeRecipient = IERC20(hook).balanceOf(recipient);
++        vm.prank(actor);
++        IERC20(hook).transfer(recipient, transferShares);
++        expectedShares[actor] -= transferShares;
++        expectedShares[recipient] += transferShares;
++        assertEq(beforeActor - IERC20(hook).balanceOf(actor), transferShares, "share sender debit");
++        assertEq(IERC20(hook).balanceOf(recipient) - beforeRecipient, transferShares, "share receiver credit");
++        assertEq(IERC20(hook).totalSupply(), supplyBefore, "share transfer supply");
++        // External yield changes the real ERC4626 protocol rate; the next production action must
++        // account for it without treating buffered face value as local prepaid inventory.
++        SimpleMintableERC20(address(input)).mint(inputVault, amount);
++        assertEq(IERC20(hook).totalSupply(), supplyBefore, "external yield cannot directly mint LP");
++    }
++
++    function _unfundedControls(uint256 amount) internal {
++        _expectFailure(
++            attacker,
++            _inData(amount, 0, attacker, true),
++            abi.encodeWithSelector(ISecurePullErrors.EOAPretransferNotAllowed.selector),
++            5
++        );
++        _expectFailure(
++            address(caller),
++            _inData(amount, 0, attacker, true),
++            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, amount, 0),
++            5
++        );
++    }
++
++    function _expectFailure(address sender, bytes memory data, bytes memory errorData, uint256 action) internal {
++        bytes32 beforeState = _snapshot();
++        bool ok;
++        bytes memory reason;
++        if (sender == address(caller)) {
++            (ok, reason) = address(caller).call(abi.encodeCall(AtomicPretransferCaller.execute, (hook, data)));
++        } else {
++            vm.prank(sender);
++            (ok, reason) = hook.call(data);
++        }
++        if (ok || keccak256(reason) != keccak256(errorData)) ++unexpectedReverts;
++        assertFalse(ok, "attack must fail");
++        assertEq(reason, errorData, "intended complete error");
++        assertEq(_snapshot(), beforeState, "failed call rolls back balances, books, supply and allowances");
++        ++expectedReverts[action];
++    }
++
++    function _rollback(address actor, uint256 amount) internal {
++        // A preceding transfer is outside the subsequently reverted integrating call.
++        SimpleMintableERC20(address(input)).mint(actor, amount * 2);
++        vm.startPrank(actor);
++        input.transfer(hook, amount);
++        input.approve(address(caller), amount);
++        vm.stopPrank();
++        bytes32 beforeState = _snapshot();
++        uint256 quote = IStandardExchangeIn(hook).previewExchangeIn(input, amount, output);
++        bytes memory expected =
++            abi.encodeWithSelector(bytes4(keccak256(bytes(mode == 0 ? "Slippage()" : "InsufficientTokenOut()"))));
++        (bool ok, bytes memory reason) = address(caller)
++            .call(
++                abi.encodeCall(
++                    AtomicPretransferCaller.consumePretransfer,
++                    (input, actor, hook, amount, _inData(amount, quote + 1, actor, true))
++                )
++            );
++        assertFalse(ok, "slippage call fails");
++        assertEq(reason, expected, "slippage intended error");
++        assertEq(_snapshot(), beforeState, "atomic transfer and allowances roll back; prior transfer remains");
++        ++expectedReverts[6];
++        // Consume the independently resting face once, then reject reuse.
++        uint256 beforeOut = output.balanceOf(actor);
++        uint256 delivered = abi.decode(caller.execute(hook, _inData(amount, quote, actor, true)), (uint256));
++        assertEq(delivered, quote, "resting credit once");
++        assertEq(output.balanceOf(actor) - beforeOut, quote, "resting credit delivery");
++        _expectFailure(
++            address(caller),
++            _inData(amount, 0, attacker, true),
++            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, amount, 0),
++            6
++        );
++    }
++
++    function _poolTrade(address actor, uint256 amount) internal {
++        bool zeroForOne = Currency.unwrap(key.currency0) == address(input);
++        SimpleMintableERC20(address(input)).mint(actor, amount);
++        vm.prank(actor);
++        input.approve(address(router), amount);
++        uint256 inBefore = input.balanceOf(actor);
++        uint256 outBefore = output.balanceOf(actor);
++        vm.prank(actor);
++        BalanceDelta delta = router.swapExactIn(
++            key,
++            SwapParams(
++                zeroForOne, -int256(amount), zeroForOne ? TickMath.MIN_SQRT_PRICE + 1 : TickMath.MAX_SQRT_PRICE - 1
++            ),
++            ""
++        );
++        int128 inDelta = zeroForOne ? delta.amount0() : delta.amount1();
++        int128 outDelta = zeroForOne ? delta.amount1() : delta.amount0();
++        assertEq(inBefore - input.balanceOf(actor), amount, "pool exact input");
++        assertEq(uint256(-int256(inDelta)), amount, "pool input delta");
++        assertGt(outDelta, 0, "pool output positive");
++        assertEq(output.balanceOf(actor) - outBefore, uint256(int256(outDelta)), "pool actual delivery");
++    }
++
++    function _snapshot() internal view returns (bytes32 state) {
++        for (uint256 i; i < observedTokens.length; ++i) {
++            IERC20 token = observedTokens[i];
++            state = keccak256(abi.encode(state, token.totalSupply()));
++            for (uint256 j; j < observedHolders.length; ++j) {
++                address holder = observedHolders[j];
++                state = keccak256(
++                    abi.encode(
++                        state, token.balanceOf(holder), token.allowance(holder, hook), token.allowance(holder, inputSE)
++                    )
++                );
++            }
++            for (uint256 j; j < 6; ++j) {
++                address holder = j < 3 ? actors[j] : j == 3 ? attacker : j == 4 ? address(caller) : address(this);
++                state = keccak256(
++                    abi.encode(
++                        state,
++                        token.balanceOf(holder),
++                        token.allowance(holder, hook),
++                        token.allowance(holder, address(caller)),
++                        token.allowance(holder, address(router)),
++                        token.allowance(holder, inputSE)
++                    )
++                );
++            }
++        }
++        for (uint256 i; i < tokens.length; ++i) {
++            (bool ok, bytes memory book) =
++                hook.staticcall(abi.encodeWithSignature("reserveOfToken(address)", address(tokens[i])));
++            state = keccak256(abi.encode(state, ok, book));
++        }
++    }
++
++    function assertAccounting() public view {
++        assertEq(ghost_join, attempted, "every randomized join succeeds");
++        assertEq(ghost_exit, attempted, "every randomized exit succeeds");
++        uint256 shares;
++        for (uint256 i; i < 3; ++i) {
++            assertEq(IERC20(hook).balanceOf(actors[i]), expectedShares[actors[i]], "each honest holder entitlement");
++            shares += IERC20(hook).balanceOf(actors[i]);
++        }
++        assertEq(shares, ghost_minted - ghost_burned, "all honest LP entitlements accounted exactly");
++        assertEq(
++            IERC20(hook).totalSupply() - initialSupply,
++            shares + IERC20(hook).balanceOf(feeRecipient) - initialFeeShares + IERC20(hook).balanceOf(address(0))
++                - initialLockedShares,
++            "supply partition: honest, protocol fee and permanently locked shares"
++        );
++        assertEq(unexpectedReverts, 0, "no unexpected failure");
++        for (uint256 i; i < 8; ++i) {
++            assertEq(actionAttempts[i], actionSuccesses[i], "every supplementary action succeeds");
++        }
++    }
++
++    function assertCampaign() external view {
++        assertAccounting();
++        for (uint256 i; i < 8; ++i) {
++            assertGt(actionSuccesses[i], 0, "campaign executes every action");
++        }
++        assertGt(expectedReverts[2], 0, "exact-in repeated credit rejected");
++        assertGt(expectedReverts[3], 0, "exact-out repeated credit rejected");
++        assertGt(expectedReverts[5], 1, "EOA and contract rejected");
++        assertGt(expectedReverts[6], 1, "rollback and separate credit boundary exercised");
+     }
+ }
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/invariant/UniswapV4SingleStandardExchangeBufferConstantProductHook_Invariant.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/invariant/UniswapV4SingleStandardExchangeBufferConstantProductHook_Invariant.t.sol
+@@ -1,90 +1,69 @@
+ // SPDX-License-Identifier: BSL-1.1
+-pragma solidity ^0.8.0;
++pragma solidity ^0.8.24;
+ 
+-import {Test} from "forge-std/Test.sol";
++import {TestBase_UniswapV4SingleStandardExchangeBufferConstantProductHook as TestBase} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/TestBase_UniswapV4SingleStandardExchangeBufferConstantProductHook.sol";
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+-import {
+-    TestBase_UniswapV4SingleStandardExchangeBufferConstantProductHook as TestBase
+-} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/TestBase_UniswapV4SingleStandardExchangeBufferConstantProductHook.sol";
+-import {
+-    IUniswapV4SingleStandardExchangeBufferConstantProductHook
+-} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeBufferConstantProductHook.sol";
+ import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
++import {WrapperExactOutRouter} from "contracts/test/stubs/WrapperExactOutRouter.sol";
++import {HookLiquidityInvariantHandler} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/HookLiquidityInvariantHandler.sol";
+ 
+-contract Handler_SingleCpHook is Test {
+-    IUniswapV4SingleStandardExchangeBufferConstantProductHook public immutable hook;
+-    SimpleMintableERC20 public immutable raw;
+-    SimpleMintableERC20 public immutable pair;
+-    address public immutable actor0;
+-    address public immutable actor1;
+-    uint256 public ghost_dep;
+-    uint256 public ghost_wd;
+-
+-    constructor(
+-        IUniswapV4SingleStandardExchangeBufferConstantProductHook hook_,
+-        SimpleMintableERC20 raw_,
+-        SimpleMintableERC20 pair_,
+-        address a0,
+-        address a1
+-    ) {
+-        hook = hook_;
+-        raw = raw_;
+-        pair = pair_;
+-        actor0 = a0;
+-        actor1 = a1;
+-    }
+-
+-    function _actor(uint256 seed) internal view returns (address) {
+-        return seed % 2 == 0 ? actor0 : actor1;
+-    }
+-
+-    function deposit(uint256 amtSeed, uint256 actorSeed) public {
+-        address actor = _actor(actorSeed);
+-        uint256 amt = bound(amtSeed, 1 ether, 20 ether);
+-        raw.mint(actor, amt);
+-        pair.mint(actor, amt);
+-        vm.startPrank(actor);
+-        raw.approve(address(hook), amt);
+-        pair.approve(address(hook), amt);
+-        try hook.deposit(amt, amt, actor, 0, block.timestamp + 1 hours) {
+-            unchecked { ++ghost_dep; }
+-        } catch {}
+-        vm.stopPrank();
+-    }
+-
+-    function withdraw(uint256 shareSeed, uint256 actorSeed) public {
+-        address actor = _actor(actorSeed);
+-        uint256 bal = IERC20(address(hook)).balanceOf(actor);
+-        if (bal < 1e12) return;
+-        uint256 shares = bound(shareSeed, 1e12, bal);
+-        vm.prank(actor);
+-        try hook.withdraw(shares, actor, 0, 0, block.timestamp + 1 hours) {
+-            unchecked { ++ghost_wd; }
+-        } catch {}
+-    }
++/// @dev Concrete test-root artifact exposes the handler ABI to focused invariant runs.
++contract Handler_SingleCpHook is HookLiquidityInvariantHandler {
++    constructor(Config memory config_) HookLiquidityInvariantHandler(config_) {}
+ }
+ 
+ /// forge-config: default.invariant.runs = 256
+ /// forge-config: default.invariant.depth = 64
++/// forge-config: default.invariant.fail-on-revert = true
+ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Invariant is TestBase {
+-    Handler_SingleCpHook internal handler;
++    HookLiquidityInvariantHandler internal handler;
+ 
+     function setUp() public override {
+         super.setUp();
+         _initPool();
+-        address a0 = makeAddr("scpInv0");
+-        address a1 = makeAddr("scpInv1");
+-        handler = new Handler_SingleCpHook(single, rawToken, pairToken, a0, a1);
+-        bytes4[] memory sels = new bytes4[](2);
+-        sels[0] = handler.deposit.selector;
+-        sels[1] = handler.withdraw.selector;
++        WrapperExactOutRouter route_ = new WrapperExactOutRouter(pm);
++        HookLiquidityInvariantHandler.Config memory c;
++        c.hook = hook;
++        c.mode = 1;
++        c.tokens = new SimpleMintableERC20[](2);
++        c.tokens[0] = SimpleMintableERC20(single.currency0());
++        c.tokens[1] = SimpleMintableERC20(single.currency1());
++        c.input = address(pairToken);
++        c.output = address(rawToken);
++        c.inputSE = se;
++        c.inputVault = address(pairProtocolVault);
++        c.feeRecipient = address(feeCollector);
++        c.router = route_;
++        c.key = poolKey;
++        c.observedTokens = new IERC20[](5);
++        c.observedTokens[0] = IERC20(address(SimpleMintableERC20(single.currency0())));
++        c.observedTokens[1] = IERC20(address(SimpleMintableERC20(single.currency1())));
++        c.observedTokens[2] = IERC20(address(se));
++        c.observedTokens[3] = IERC20(address(pairProtocolVault));
++        c.observedTokens[4] = IERC20(address(hook));
++        c.observedHolders = new address[](8);
++        c.observedHolders[0] = address(hook);
++        c.observedHolders[1] = address(se);
++        c.observedHolders[2] = address(pairProtocolVault);
++        c.observedHolders[3] = address(address(pm));
++        c.observedHolders[4] = address(address(route_));
++        c.observedHolders[5] = address(address(feeCollector));
++        c.observedHolders[6] = address(user);
++        c.observedHolders[7] = address(address(0));
++        handler = new Handler_SingleCpHook(c);
++        bytes4[] memory selectors_ = new bytes4[](1);
++        selectors_[0] = handler.cycle.selector;
+         targetContract(address(handler));
+-        targetSelector(FuzzSelector({addr: address(handler), selectors: sels}));
+-        handler.deposit(10 ether, 0);
+-        require(handler.ghost_dep() > 0, "bootstrap");
++        targetSelector(FuzzSelector({addr: address(handler), selectors: selectors_}));
+     }
+ 
+-    function invariant_depositSucceeded() public view {
+-        assertGt(handler.ghost_dep(), 0);
++    function invariant_liquidityAccounting() public view { handler.assertAccounting(); }
++    function afterInvariant() public view { handler.assertCampaign(); }
++
++    function test_deterministicLifecycle() public {
++        for (uint256 i; i < 24; ++i) handler.cycle(10 ether, i, i);
++        assertEq(handler.ghost_join(), 24);
++        assertEq(handler.ghost_exit(), 24);
++        handler.assertCampaign();
+     }
+ }
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/invariant/UniswapV4DualSEBCPHook_Invariant.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/invariant/UniswapV4DualSEBCPHook_Invariant.t.sol
+@@ -1,89 +1,73 @@
+ // SPDX-License-Identifier: BSL-1.1
+-pragma solidity ^0.8.0;
++pragma solidity ^0.8.24;
+ 
+-import {Test} from "forge-std/Test.sol";
++import {TestBase_UniswapV4DualSEBCPHook as TestBase} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/TestBase_UniswapV4DualSEBCPHook.sol";
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+-import {TestBase_UniswapV4DualSEBCPHook} from
+-    "test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/TestBase_UniswapV4DualSEBCPHook.sol";
+-import {
+-    IUniswapV4DualStandardExchangeBufferConstantProductHook
+-} from "contracts/hooks/uniswap/v4/standardExchange/dual/interfaces/IUniswapV4DualStandardExchangeBufferConstantProductHook.sol";
+ import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
++import {WrapperExactOutRouter} from "contracts/test/stubs/WrapperExactOutRouter.sol";
++import {HookLiquidityInvariantHandler} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/HookLiquidityInvariantHandler.sol";
+ 
+-contract Handler_DualBufferHook is Test {
+-    IUniswapV4DualStandardExchangeBufferConstantProductHook public immutable hook;
+-    SimpleMintableERC20 public immutable t0;
+-    SimpleMintableERC20 public immutable t1;
+-    address public immutable actor0;
+-    address public immutable actor1;
+-    uint256 public ghost_dep;
+-    uint256 public ghost_wd;
+-
+-    constructor(
+-        IUniswapV4DualStandardExchangeBufferConstantProductHook hook_,
+-        SimpleMintableERC20 t0_,
+-        SimpleMintableERC20 t1_,
+-        address a0,
+-        address a1
+-    ) {
+-        hook = hook_;
+-        t0 = t0_;
+-        t1 = t1_;
+-        actor0 = a0;
+-        actor1 = a1;
+-    }
+-
+-    function _actor(uint256 seed) internal view returns (address) {
+-        return seed % 2 == 0 ? actor0 : actor1;
+-    }
+-
+-    function deposit(uint256 amtSeed, uint256 actorSeed) public {
+-        address actor = _actor(actorSeed);
+-        uint256 amt = bound(amtSeed, 1 ether, 20 ether);
+-        t0.mint(actor, amt);
+-        t1.mint(actor, amt);
+-        vm.startPrank(actor);
+-        t0.approve(address(hook), amt);
+-        t1.approve(address(hook), amt);
+-        try hook.deposit(amt, amt, actor, 0, block.timestamp + 1 hours) {
+-            unchecked { ++ghost_dep; }
+-        } catch {}
+-        vm.stopPrank();
+-    }
+-
+-    function withdraw(uint256 shareSeed, uint256 actorSeed) public {
+-        address actor = _actor(actorSeed);
+-        uint256 bal = IERC20(address(hook)).balanceOf(actor);
+-        if (bal < 1e12) return;
+-        uint256 shares = bound(shareSeed, 1e12, bal);
+-        vm.prank(actor);
+-        try hook.withdraw(shares, actor, 0, 0, block.timestamp + 1 hours) {
+-            unchecked { ++ghost_wd; }
+-        } catch {}
+-    }
++/// @dev Concrete test-root artifact exposes the handler ABI to focused invariant runs.
++contract Handler_DualBufferHook is HookLiquidityInvariantHandler {
++    constructor(Config memory config_) HookLiquidityInvariantHandler(config_) {}
+ }
+ 
+ /// forge-config: default.invariant.runs = 256
+ /// forge-config: default.invariant.depth = 64
+-contract UniswapV4DualSEBCPHook_Invariant is TestBase_UniswapV4DualSEBCPHook {
+-    Handler_DualBufferHook internal handler;
++/// forge-config: default.invariant.fail-on-revert = true
++contract UniswapV4DualSEBCPHook_Invariant is TestBase {
++    HookLiquidityInvariantHandler internal handler;
+ 
+     function setUp() public override {
+         super.setUp();
+         _initPool();
+-        address a0 = makeAddr("dInv0");
+-        address a1 = makeAddr("dInv1");
+-        handler = new Handler_DualBufferHook(dual, tokenA, tokenB, a0, a1);
+-        bytes4[] memory sels = new bytes4[](2);
+-        sels[0] = handler.deposit.selector;
+-        sels[1] = handler.withdraw.selector;
++        WrapperExactOutRouter route_ = new WrapperExactOutRouter(pm);
++        HookLiquidityInvariantHandler.Config memory c;
++        c.hook = hook;
++        c.mode = 1;
++        c.tokens = new SimpleMintableERC20[](2);
++        c.tokens[0] = SimpleMintableERC20(dual.currency0());
++        c.tokens[1] = SimpleMintableERC20(dual.currency1());
++        c.input = address(tokenA);
++        c.output = address(tokenB);
++        c.inputSE = seA;
++        c.inputVault = address(vaultA);
++        c.feeRecipient = address(feeCollector);
++        c.router = route_;
++        c.key = poolKey;
++        c.observedTokens = new IERC20[](7);
++        c.observedTokens[0] = IERC20(address(SimpleMintableERC20(dual.currency0())));
++        c.observedTokens[1] = IERC20(address(SimpleMintableERC20(dual.currency1())));
++        c.observedTokens[2] = IERC20(address(seA));
++        c.observedTokens[3] = IERC20(address(seB));
++        c.observedTokens[4] = IERC20(address(vaultA));
++        c.observedTokens[5] = IERC20(address(vaultB));
++        c.observedTokens[6] = IERC20(address(hook));
++        c.observedHolders = new address[](10);
++        c.observedHolders[0] = address(hook);
++        c.observedHolders[1] = address(seA);
++        c.observedHolders[2] = address(seB);
++        c.observedHolders[3] = address(vaultA);
++        c.observedHolders[4] = address(vaultB);
++        c.observedHolders[5] = address(address(pm));
++        c.observedHolders[6] = address(address(route_));
++        c.observedHolders[7] = address(address(feeCollector));
++        c.observedHolders[8] = address(user);
++        c.observedHolders[9] = address(address(0));
++        handler = new Handler_DualBufferHook(c);
++        bytes4[] memory selectors_ = new bytes4[](1);
++        selectors_[0] = handler.cycle.selector;
+         targetContract(address(handler));
+-        targetSelector(FuzzSelector({addr: address(handler), selectors: sels}));
+-        handler.deposit(10 ether, 0);
+-        require(handler.ghost_dep() > 0, "bootstrap");
++        targetSelector(FuzzSelector({addr: address(handler), selectors: selectors_}));
+     }
+ 
+-    function invariant_depositSucceeded() public view {
+-        assertGt(handler.ghost_dep(), 0);
++    function invariant_liquidityAccounting() public view { handler.assertAccounting(); }
++    function afterInvariant() public view { handler.assertCampaign(); }
++
++    function test_deterministicLifecycle() public {
++        for (uint256 i; i < 24; ++i) handler.cycle(10 ether, i, i);
++        assertEq(handler.ghost_join(), 24);
++        assertEq(handler.ghost_exit(), 24);
++        handler.assertCampaign();
+     }
+ }
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/invariant/UniswapV4StandardExchangeOrbitalBufferHook_Invariant.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/invariant/UniswapV4StandardExchangeOrbitalBufferHook_Invariant.t.sol
+@@ -1,120 +1,70 @@
+ // SPDX-License-Identifier: BSL-1.1
+-pragma solidity ^0.8.0;
++pragma solidity ^0.8.24;
+ 
+-import {Test} from "forge-std/Test.sol";
++import {TestBase_UniswapV4StandardExchangeOrbitalBufferHook as TestBase} from "contracts/hooks/uniswap/v4/standardExchange/orbital/TestBase_UniswapV4StandardExchangeOrbitalBufferHook.sol";
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+-import {
+-    TestBase_UniswapV4StandardExchangeOrbitalBufferHook
+-} from "contracts/hooks/uniswap/v4/standardExchange/orbital/TestBase_UniswapV4StandardExchangeOrbitalBufferHook.sol";
+-import {
+-    IUniswapV4StandardExchangeOrbitalBufferHook
+-} from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHook.sol";
+-import {
+-    IUniswapV4StandardExchangeOrbitalBufferHookPackage
+-} from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHookPackage.sol";
+-import {
+-    UniswapV4StandardExchangeOrbitalBufferHook_FactoryService as PkgFactory
+-} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_FactoryService.sol";
+ import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
++import {WrapperExactOutRouter} from "contracts/test/stubs/WrapperExactOutRouter.sol";
++import {HookLiquidityInvariantHandler} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/HookLiquidityInvariantHandler.sol";
+ 
+-contract Handler_OrbitalBufferHook is Test {
+-    IUniswapV4StandardExchangeOrbitalBufferHook public immutable hook;
+-    SimpleMintableERC20 public immutable t0;
+-    SimpleMintableERC20 public immutable t1;
+-    SimpleMintableERC20 public immutable t2;
+-    address public immutable actor0;
+-    address public immutable actor1;
+-
+-    uint256 public ghost_add;
+-    uint256 public ghost_remove;
+-
+-    constructor(
+-        IUniswapV4StandardExchangeOrbitalBufferHook hook_,
+-        SimpleMintableERC20 t0_,
+-        SimpleMintableERC20 t1_,
+-        SimpleMintableERC20 t2_,
+-        address actor0_,
+-        address actor1_
+-    ) {
+-        hook = hook_;
+-        t0 = t0_;
+-        t1 = t1_;
+-        t2 = t2_;
+-        actor0 = actor0_;
+-        actor1 = actor1_;
+-    }
+-
+-    function _actor(uint256 seed) internal view returns (address) {
+-        return seed % 2 == 0 ? actor0 : actor1;
+-    }
+-
+-    function addLiq(uint256 amtSeed, uint256 actorSeed) public {
+-        address actor = _actor(actorSeed);
+-        uint256 amt = bound(amtSeed, 1 ether, 20 ether);
+-        t0.mint(actor, amt);
+-        t1.mint(actor, amt);
+-        t2.mint(actor, amt);
+-        vm.startPrank(actor);
+-        t0.approve(address(hook), amt);
+-        t1.approve(address(hook), amt);
+-        t2.approve(address(hook), amt);
+-        try hook.addLiquidity(amt, amt, amt, actor, 0, block.timestamp + 1 hours, "") {
+-            unchecked {
+-                ++ghost_add;
+-            }
+-        } catch {}
+-        vm.stopPrank();
+-    }
+-
+-    function removeLiq(uint256 shareSeed, uint256 actorSeed) public {
+-        address actor = _actor(actorSeed);
+-        uint256 bal = IERC20(address(hook)).balanceOf(actor);
+-        if (bal < 1e12) return;
+-        uint256 shares = bound(shareSeed, 1e12, bal);
+-        vm.prank(actor);
+-        try hook.removeLiquidity(shares, actor, 0, 0, 0, block.timestamp + 1 hours) {
+-            unchecked {
+-                ++ghost_remove;
+-            }
+-        } catch {}
+-    }
++/// @dev Concrete test-root artifact exposes the handler ABI to focused invariant runs.
++contract Handler_OrbitalBufferHook is HookLiquidityInvariantHandler {
++    constructor(Config memory config_) HookLiquidityInvariantHandler(config_) {}
+ }
+ 
+ /// forge-config: default.invariant.runs = 256
+ /// forge-config: default.invariant.depth = 64
+-contract UniswapV4StandardExchangeOrbitalBufferHook_Invariant is
+-    TestBase_UniswapV4StandardExchangeOrbitalBufferHook
+-{
+-    Handler_OrbitalBufferHook internal handler;
+-    IUniswapV4StandardExchangeOrbitalBufferHook internal seHook;
++/// forge-config: default.invariant.fail-on-revert = true
++contract UniswapV4StandardExchangeOrbitalBufferHook_Invariant is TestBase {
++    HookLiquidityInvariantHandler internal handler;
+ 
+     function setUp() public override {
+         super.setUp();
+-        IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory args =
+-            _argsWithSE(true, false, false);
+-        uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
+-        address h = PkgFactory.deployHook(hookPkg, args, mineNonce);
+-        seHook = IUniswapV4StandardExchangeOrbitalBufferHook(h);
+-        address a0 = makeAddr("orbInv0");
+-        address a1 = makeAddr("orbInv1");
+-        handler = new Handler_OrbitalBufferHook(
+-            seHook, SimpleMintableERC20(address(token0)), SimpleMintableERC20(address(token1)),
+-            SimpleMintableERC20(address(token2)), a0, a1
+-        );
+-        bytes4[] memory sels = new bytes4[](2);
+-        sels[0] = handler.addLiq.selector;
+-        sels[1] = handler.removeLiq.selector;
++        WrapperExactOutRouter route_ = swapRouter;
++        HookLiquidityInvariantHandler.Config memory c;
++        c.hook = hook;
++        c.mode = 2;
++        c.tokens = new SimpleMintableERC20[](3);
++        c.tokens[0] = token0;
++        c.tokens[1] = token1;
++        c.tokens[2] = token2;
++        c.input = address(token0);
++        c.output = address(token1);
++        c.inputSE = se0;
++        c.inputVault = address(vault0);
++        c.feeRecipient = address(feeCollector);
++        c.router = route_;
++        c.key = poolKey01;
++        c.observedTokens = new IERC20[](6);
++        c.observedTokens[0] = IERC20(address(token0));
++        c.observedTokens[1] = IERC20(address(token1));
++        c.observedTokens[2] = IERC20(address(token2));
++        c.observedTokens[3] = IERC20(address(se0));
++        c.observedTokens[4] = IERC20(address(vault0));
++        c.observedTokens[5] = IERC20(address(hook));
++        c.observedHolders = new address[](8);
++        c.observedHolders[0] = address(hook);
++        c.observedHolders[1] = address(se0);
++        c.observedHolders[2] = address(vault0);
++        c.observedHolders[3] = address(address(pm));
++        c.observedHolders[4] = address(address(route_));
++        c.observedHolders[5] = address(address(feeCollector));
++        c.observedHolders[6] = address(user);
++        c.observedHolders[7] = address(address(0));
++        handler = new Handler_OrbitalBufferHook(c);
++        bytes4[] memory selectors_ = new bytes4[](1);
++        selectors_[0] = handler.cycle.selector;
+         targetContract(address(handler));
+-        targetSelector(FuzzSelector({addr: address(handler), selectors: sels}));
+-        handler.addLiq(10 ether, 0);
+-        require(handler.ghost_add() > 0, "bootstrap add");
++        targetSelector(FuzzSelector({addr: address(handler), selectors: selectors_}));
+     }
+ 
+-    function invariant_addSucceeded() public view {
+-        assertGt(handler.ghost_add(), 0);
+-    }
++    function invariant_liquidityAccounting() public view { handler.assertAccounting(); }
++    function afterInvariant() public view { handler.assertCampaign(); }
+ 
+-    function invariant_radiusFinite() public view {
+-        assertTrue(seHook.radius() < type(uint128).max);
++    function test_deterministicLifecycle() public {
++        for (uint256 i; i < 24; ++i) handler.cycle(10 ether, i, i);
++        assertEq(handler.ghost_join(), 24);
++        assertEq(handler.ghost_exit(), 24);
++        handler.assertCampaign();
+     }
+ }
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/single/invariant/UniswapV4SingleSEBufferHook_Invariant.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/single/invariant/UniswapV4SingleSEBufferHook_Invariant.t.sol
+@@ -1,112 +1,318 @@
+ // SPDX-License-Identifier: BSL-1.1
+-pragma solidity ^0.8.0;
++pragma solidity ^0.8.24;
+ 
+ import {Test} from "forge-std/Test.sol";
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
++import {Proxy} from "@crane/contracts/proxies/Proxy.sol";
+ import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
+-import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
+-import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+ import {
+     TestBase_UniswapV4SingleStandardExchangeBufferHook as TestBase
+ } from "contracts/hooks/uniswap/v4/standardExchange/single/TestBase_UniswapV4SingleStandardExchangeBufferHook.sol";
++import {
++    IUniswapV4SingleStandardExchangeBufferHook as IBuffer
++} from "contracts/hooks/uniswap/v4/standardExchange/single/interfaces/IUniswapV4SingleStandardExchangeBufferHook.sol";
+ import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
+-
++import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
++import {WrapperExactOutRouter} from "contracts/test/stubs/WrapperExactOutRouter.sol";
++import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
++import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
++import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
++import {SwapParams} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
++import {BalanceDelta, BalanceDeltaLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/types/BalanceDelta.sol";
++import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/TickMath.sol";
++
++/// @notice The wrap-only hook is exercised through its actual PoolManager door, never substituted with SE calls.
+ contract Handler_NonCpSingleHook is Test {
+-    IStandardExchangeIn public immutable seIn;
+-    IStandardExchangeOut public immutable seOut;
++    using BalanceDeltaLibrary for BalanceDelta;
++    IBuffer public immutable hook;
+     SimpleMintableERC20 public immutable pair;
+-    address public immutable actor0;
+-    address public immutable actor1;
+-    address public immutable attacker;
++    IERC20 public immutable se;
++    WrapperExactOutRouter public immutable router;
++    AtomicPretransferCaller public immutable caller;
++    IERC20 internal immutable vault;
++    PoolKey internal key;
++    address[3] public actors = [address(0xCA1101), address(0xCA1102), address(0xCA1103)];
++    address public constant attacker = address(0xBAD110);
++    uint256 public attempted;
+     uint256 public ghost_in;
+     uint256 public ghost_out;
+-    uint256 public ghost_eoaReject;
++    uint256 public ghost_minted;
++    uint256 public ghost_burned;
++    uint256 public ghost_donated;
++    mapping(address actor => uint256 shares) public expectedShares;
++    uint256[4] public actionAttempts;
++    uint256[4] public actionSuccesses;
++    uint256[4] public expectedReverts;
+ 
+     constructor(
+-        IStandardExchangeIn seIn_,
+-        IStandardExchangeOut seOut_,
++        address hook_,
+         SimpleMintableERC20 pair_,
+-        address a0,
+-        address a1,
+-        address attacker_
++        address se_,
++        WrapperExactOutRouter router_,
++        PoolKey memory key_,
++        IERC20 vault_
+     ) {
+-        seIn = seIn_;
+-        seOut = seOut_;
++        hook = IBuffer(hook_);
+         pair = pair_;
+-        actor0 = a0;
+-        actor1 = a1;
+-        attacker = attacker_;
+-    }
+-
+-    function _actor(uint256 seed) internal view returns (address) {
+-        return seed % 2 == 0 ? actor0 : actor1;
+-    }
+-
+-    function exchangeIn(uint256 amountSeed, uint256 actorSeed) public {
+-        address actor = _actor(actorSeed);
+-        uint256 amount = bound(amountSeed, 1e15, 20 ether);
++        se = IERC20(se_);
++        router = router_;
++        key = key_;
++        vault = vault_;
++        caller = new AtomicPretransferCaller();
++    }
++
++    function cycle(uint256 amountSeed, uint256 recipientSeed, uint256 exitSeed) external {
++        uint256 step = attempted++;
++        address actor = actors[(step < 24 ? step : recipientSeed) % 3];
++        uint256 action = (step < 24 ? step : amountSeed) % 4;
++        uint256 amount = bound(amountSeed, 1 ether, 20 ether);
+         pair.mint(actor, amount);
++        uint256 shares = _swap(actor, true, false, amount);
++        _swap(actor, false, false, bound(exitSeed, shares / 4, shares / 2));
++        ++actionAttempts[action];
++        if (action == 0) {
++            // Both exact-output directions with fat max input and exact refund accounting.
++            uint256 wanted = bound(amountSeed, 1e12, 1e15);
++            pair.mint(actor, hook.previewWrapExactOut(wanted) * 2);
++            _swap(actor, true, true, wanted);
++            _swap(actor, false, true, hook.previewUnwrap(wanted / 2));
++        } else if (action == 1) {
++            _donateAndTransfer(actor, recipientSeed);
++        } else if (action == 2) {
++            _attackControls();
++        } else {
++            _atomicRollback(actor, bound(amountSeed, 1e12, 1e15));
++        }
++        ++actionSuccesses[action];
++    }
++
++    function _params(bool wrap, bool exactOut, uint256 amount) internal view returns (SwapParams memory) {
++        bool zeroForOne = (Currency.unwrap(key.currency0) == address(pair)) == wrap;
++        return SwapParams(
++            zeroForOne,
++            exactOut ? int256(amount) : -int256(amount),
++            zeroForOne ? TickMath.MIN_SQRT_PRICE + 1 : TickMath.MAX_SQRT_PRICE - 1
++        );
++    }
++
++    struct SwapState {
++        IERC20 input;
++        IERC20 output;
++        uint256 quote;
++        uint256 budget;
++        uint256 beforeIn;
++        uint256 beforeOut;
++        uint256 restingInput;
++        uint256 restingOutput;
++    }
++
++    function _swap(address actor, bool wrap, bool exactOut, uint256 amount) internal returns (uint256 result) {
++        SwapState memory v;
++        v.input = wrap ? IERC20(address(pair)) : se;
++        v.output = wrap ? se : IERC20(address(pair));
++        v.quote = exactOut
++            ? (wrap ? hook.previewWrapExactOut(amount) : hook.previewUnwrapExactOut(amount))
++            : (wrap ? hook.previewWrap(amount) : hook.previewUnwrap(amount));
++        v.budget = exactOut ? v.quote * 2 : amount;
++        v.beforeIn = v.input.balanceOf(actor);
++        v.beforeOut = v.output.balanceOf(actor);
++        v.restingInput = v.input.balanceOf(address(hook));
++        v.restingOutput = v.output.balanceOf(address(hook));
++        vm.prank(actor);
++        v.input.approve(address(router), v.budget);
++        SwapParams memory params = _params(wrap, exactOut, amount);
++        vm.prank(actor);
++        BalanceDelta delta =
++            exactOut ? router.swapExactOut(key, params, v.budget, "") : router.swapExactIn(key, params, "");
++        uint256 paid = v.beforeIn - v.input.balanceOf(actor);
++        result = v.output.balanceOf(actor) - v.beforeOut;
++        assertEq(paid, exactOut ? v.quote : amount, "input consumption and max refund");
++        assertEq(result, exactOut ? amount : v.quote, "exact receiver delivery");
++        assertEq(paid, uint256(-int256(params.zeroForOne ? delta.amount0() : delta.amount1())), "pool input accounting");
++        assertEq(
++            result, uint256(int256(params.zeroForOne ? delta.amount1() : delta.amount0())), "pool output accounting"
++        );
++        assertEq(v.input.balanceOf(address(hook)), v.restingInput, "resting input untouched");
++        assertEq(v.output.balanceOf(address(hook)), v.restingOutput, "resting output untouched");
++        assertGt(result, 0, "funded route pays");
++        if (wrap) {
++            expectedShares[actor] += result;
++            ghost_minted += result;
++            ++ghost_in;
++        } else {
++            expectedShares[actor] -= paid;
++            ghost_burned += paid;
++            ++ghost_out;
++        }
++    }
++
++    function _donateAndTransfer(address actor, uint256 recipientSeed) internal {
++        uint256 shares = se.balanceOf(actor) / 20;
++        uint256 supplyBefore = se.totalSupply();
++        uint256 custodyBefore = se.balanceOf(address(hook));
++        vm.prank(actor);
++        se.transfer(address(hook), shares);
++        expectedShares[actor] -= shares;
++        ghost_donated += shares;
++        assertEq(se.balanceOf(address(hook)) - custodyBefore, shares, "donation custody");
++        uint256 actorIndex = actor == actors[0] ? 0 : actor == actors[1] ? 1 : 2;
++        address recipient = actors[(actorIndex + 1 + recipientSeed % 2) % 3];
++        uint256 beforeActor = se.balanceOf(actor);
++        uint256 beforeRecipient = se.balanceOf(recipient);
++        vm.prank(actor);
++        se.transfer(recipient, shares);
++        expectedShares[actor] -= shares;
++        expectedShares[recipient] += shares;
++        assertEq(beforeActor - se.balanceOf(actor), shares, "share sender debit");
++        assertEq(se.balanceOf(recipient) - beforeRecipient, shares, "share recipient credit");
++        assertEq(se.totalSupply(), supplyBefore, "donation and transfer cannot mint");
++    }
++
++    function _attackControls() internal {
++        bytes memory data = abi.encodeCall(IHooks.beforeSwap, (attacker, key, _params(true, false, 1e12), bytes("")));
++        bytes memory expected = abi.encodeWithSelector(bytes4(keccak256("NotPoolManager()")));
++        _reject(attacker, data, expected, 2);
++        _reject(address(caller), data, expected, 2);
++        // Repeat the contract attempt while the hook has donated inventory from earlier cycles.
++        _reject(address(caller), data, expected, 2);
++    }
++
++    function _reject(address sender, bytes memory data, bytes memory expected, uint256 action) internal {
++        bytes32 beforeState = _snapshot();
++        bool ok;
++        bytes memory reason;
++        if (sender == address(caller)) {
++            (ok, reason) = address(caller).call(abi.encodeCall(AtomicPretransferCaller.execute, (address(hook), data)));
++        } else {
++            vm.prank(sender);
++            (ok, reason) = address(hook).call(data);
++        }
++        assertFalse(ok, "unauthorized call rejected");
++        assertEq(reason, expected, "complete intended error");
++        assertEq(_snapshot(), beforeState, "rejection preserves all balances supply allowances");
++        ++expectedReverts[action];
++    }
++
++    function _atomicRollback(address actor, uint256 amount) internal {
++        pair.mint(actor, amount * 2);
+         vm.startPrank(actor);
+-        pair.approve(address(seIn), amount);
+-        try seIn.exchangeIn(pair, amount, IERC20(address(seIn)), 0, actor, false, block.timestamp + 1 hours) {
+-            unchecked { ++ghost_in; }
+-        } catch {}
++        pair.transfer(address(hook), amount);
++        pair.approve(address(caller), amount);
+         vm.stopPrank();
+-    }
+-
+-    function exchangeOut(uint256 shareSeed, uint256 actorSeed) public {
+-        address actor = _actor(actorSeed);
+-        uint256 bal = IERC20(address(seIn)).balanceOf(actor);
+-        if (bal < 1e12) return;
+-        uint256 shares = bound(shareSeed, 1e12, bal);
+-        vm.startPrank(actor);
+-        IERC20(address(seIn)).approve(address(seOut), shares);
+-        try seOut.exchangeOut(IERC20(address(seIn)), shares, pair, 0, actor, false, block.timestamp + 1 hours) {
+-            unchecked { ++ghost_out; }
+-        } catch {}
+-        vm.stopPrank();
+-    }
+-
+-    function eoaPrepaidRejected(uint256 amountSeed) public {
+-        uint256 amount = bound(amountSeed, 1e15, 5 ether);
+-        vm.prank(attacker);
+-        try seIn.exchangeIn(pair, amount, IERC20(address(seIn)), 0, attacker, true, block.timestamp + 1 hours) {
+-            revert("eoa prepaid must revert");
+-        } catch (bytes memory reason) {
+-            if (bytes4(reason) == ISecurePullErrors.EOAPretransferNotAllowed.selector) {
+-                unchecked { ++ghost_eoaReject; }
++        bytes memory unsupported = abi.encodeCall(
++            IStandardExchangeIn.exchangeIn,
++            (IERC20(address(pair)), amount, se, 0, actor, true, block.timestamp + 1 hours)
++        );
++        bytes32 beforeState = _snapshot();
++        (bool ok, bytes memory reason) = address(caller)
++            .call(
++                abi.encodeCall(
++                    AtomicPretransferCaller.consumePretransfer,
++                    (IERC20(address(pair)), actor, address(hook), amount, unsupported)
++                )
++            );
++        assertFalse(ok, "wrap-only hook has no direct prepaid SE route");
++        assertEq(
++            reason,
++            abi.encodeWithSelector(Proxy.NoTargetFor.selector, IStandardExchangeIn.exchangeIn.selector),
++            "unsupported selector exact error"
++        );
++        assertEq(_snapshot(), beforeState, "atomic transfer rolls back, separate transfer remains");
++        ++expectedReverts[3];
++        _reject(
++            attacker,
++            unsupported,
++            abi.encodeWithSelector(Proxy.NoTargetFor.selector, IStandardExchangeIn.exchangeIn.selector),
++            3
++        );
++    }
++
++    function _snapshot() internal view returns (bytes32 state) {
++        IERC20[3] memory observed = [IERC20(address(pair)), se, vault];
++        address[11] memory holders = [
++            actors[0],
++            actors[1],
++            actors[2],
++            attacker,
++            address(caller),
++            address(hook),
++            address(se),
++            address(vault),
++            address(router),
++            address(router.manager()),
++            address(this)
++        ];
++        for (uint256 i; i < 3; ++i) {
++            state = keccak256(abi.encode(state, observed[i].totalSupply()));
++            for (uint256 j; j < holders.length; ++j) {
++                state = keccak256(
++                    abi.encode(
++                        state,
++                        observed[i].balanceOf(holders[j]),
++                        observed[i].allowance(holders[j], address(caller)),
++                        observed[i].allowance(holders[j], address(router)),
++                        observed[i].allowance(holders[j], address(hook)),
++                        observed[i].allowance(holders[j], address(se))
++                    )
++                );
+             }
+         }
++    }
++
++    function assertAccounting() public view {
++        assertGe(ghost_in, attempted, "every lifecycle wrapped");
++        assertGe(ghost_out, attempted, "every lifecycle unwrapped nonzero");
++        uint256 holderShares;
++        for (uint256 i; i < 3; ++i) {
++            assertEq(se.balanceOf(actors[i]), expectedShares[actors[i]], "each honest holder entitlement");
++            holderShares += se.balanceOf(actors[i]);
++        }
++        assertEq(holderShares, ghost_minted - ghost_burned - ghost_donated, "exact honest share conservation");
++        assertEq(se.balanceOf(address(hook)), ghost_donated, "donated shares never credited to new trades");
++        for (uint256 i; i < 4; ++i) {
++            assertEq(actionAttempts[i], actionSuccesses[i], "no ignored action failures");
++        }
++    }
++
++    function assertCampaign() external view {
++        assertAccounting();
++        for (uint256 i; i < 4; ++i) {
++            assertGt(actionSuccesses[i], 0, "campaign exercised every action");
++        }
++        assertGt(expectedReverts[2], 2, "EOA contract and repeated attempt controls");
++        assertGt(expectedReverts[3], 1, "atomic and staged-transfer rollback controls");
+     }
+ }
+ 
+ /// forge-config: default.invariant.runs = 256
+ /// forge-config: default.invariant.depth = 64
++/// forge-config: default.invariant.fail-on-revert = true
+ contract UniswapV4SingleSEBufferHook_Invariant is TestBase {
+     Handler_NonCpSingleHook internal handler;
+ 
+     function setUp() public override {
+         super.setUp();
+         _initPool();
+-        address a0 = makeAddr("nInv0");
+-        address a1 = makeAddr("nInv1");
+-        address att = makeAddr("nInvAttacker");
+-        handler = new Handler_NonCpSingleHook(
+-            IStandardExchangeIn(se), IStandardExchangeOut(se), pairToken, a0, a1, att
+-        );
+-        excludeContract(address(this));
+-        bytes4[] memory sels = new bytes4[](3);
+-        sels[0] = handler.exchangeIn.selector;
+-        sels[1] = handler.exchangeOut.selector;
+-        sels[2] = handler.eoaPrepaidRejected.selector;
++        handler = new Handler_NonCpSingleHook(hook, pairToken, se, swapRouter, poolKey, IERC20(address(protocolVault)));
++        bytes4[] memory selectors = new bytes4[](1);
++        selectors[0] = handler.cycle.selector;
+         targetContract(address(handler));
+-        targetSelector(FuzzSelector({addr: address(handler), selectors: sels}));
+-        handler.exchangeIn(10 ether, 0);
+-        require(handler.ghost_in() > 0, "bootstrap");
+-    }
+-
+-    function invariant_inSucceeded() public view {
+-        assertGt(handler.ghost_in(), 0);
+-        assertTrue(handler.ghost_eoaReject() < type(uint128).max);
++        targetSelector(FuzzSelector({addr: address(handler), selectors: selectors}));
++    }
++
++    function invariant_liquidityAccounting() public view {
++        handler.assertAccounting();
++    }
++
++    function afterInvariant() public view {
++        handler.assertCampaign();
++    }
++
++    function test_deterministicLifecycle() public {
++        for (uint256 i; i < 24; ++i) {
++            handler.cycle(10 ether, i, i);
++        }
++        assertEq(handler.attempted(), 24);
++        handler.assertCampaign();
+     }
+ }
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/invariant/UniswapV4StandardExchangeBalancerQuadStableBufferHook_Invariant.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/invariant/UniswapV4StandardExchangeBalancerQuadStableBufferHook_Invariant.t.sol
+@@ -1,17 +1,17 @@
+ // SPDX-License-Identifier: BSL-1.1
+-pragma solidity ^0.8.0;
++pragma solidity ^0.8.24;
+ 
+ import {TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook as TestBase} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/TestBase_UniswapV4StandardExchangeBalancerQuadStableBufferHook.sol";
++import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
++import {WrapperExactOutRouter} from "contracts/test/stubs/WrapperExactOutRouter.sol";
+ import {HookLiquidityInvariantHandler} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/HookLiquidityInvariantHandler.sol";
+ 
+-/// @dev Concrete test-root artifact lets Foundry identify the deployed handler ABI during focused runs.
++/// @dev Concrete test-root artifact exposes the handler ABI to focused invariant runs.
+ contract Handler_BalancerQuadLiquidity is HookLiquidityInvariantHandler {
+-    constructor(address hook_, SimpleMintableERC20[] memory tokens_)
+-        HookLiquidityInvariantHandler(hook_, tokens_) {}
++    constructor(Config memory config_) HookLiquidityInvariantHandler(config_) {}
+ }
+ 
+-/// @notice Production joins and partial exits must conserve wallet inputs, outputs and LP shares.
+ /// forge-config: default.invariant.runs = 256
+ /// forge-config: default.invariant.depth = 64
+ /// forge-config: default.invariant.fail-on-revert = true
+@@ -20,31 +20,53 @@
+ 
+     function setUp() public override {
+         super.setUp();
+-        SimpleMintableERC20[] memory tokens_ = new SimpleMintableERC20[](4);
+-        tokens_[0] = token0;
+-        tokens_[1] = token1;
+-        tokens_[2] = token2;
+-        tokens_[3] = token3;
+-        handler = new Handler_BalancerQuadLiquidity(address(quad), tokens_);
++        WrapperExactOutRouter route_ = swapRouter;
++        HookLiquidityInvariantHandler.Config memory c;
++        c.hook = hook;
++        c.mode = 0;
++        c.tokens = new SimpleMintableERC20[](4);
++        c.tokens[0] = token0;
++        c.tokens[1] = token1;
++        c.tokens[2] = token2;
++        c.tokens[3] = token3;
++        c.input = address(token0);
++        c.output = address(token1);
++        c.inputSE = se0;
++        c.inputVault = address(vault0);
++        c.feeRecipient = address(feeCollector);
++        c.router = route_;
++        c.key = poolKey01;
++        c.observedTokens = new IERC20[](7);
++        c.observedTokens[0] = IERC20(address(token0));
++        c.observedTokens[1] = IERC20(address(token1));
++        c.observedTokens[2] = IERC20(address(token2));
++        c.observedTokens[3] = IERC20(address(token3));
++        c.observedTokens[4] = IERC20(address(se0));
++        c.observedTokens[5] = IERC20(address(vault0));
++        c.observedTokens[6] = IERC20(address(hook));
++        c.observedHolders = new address[](8);
++        c.observedHolders[0] = address(hook);
++        c.observedHolders[1] = address(se0);
++        c.observedHolders[2] = address(vault0);
++        c.observedHolders[3] = address(address(pm));
++        c.observedHolders[4] = address(address(route_));
++        c.observedHolders[5] = address(address(feeCollector));
++        c.observedHolders[6] = address(user);
++        c.observedHolders[7] = address(address(0));
++        handler = new Handler_BalancerQuadLiquidity(c);
+         bytes4[] memory selectors_ = new bytes4[](1);
+         selectors_[0] = handler.cycle.selector;
+         targetContract(address(handler));
+         targetSelector(FuzzSelector({addr: address(handler), selectors: selectors_}));
+     }
+ 
+-    function invariant_liquidityAccounting() public view {
+-        handler.assertAccounting();
+-    }
+-
+-    function afterInvariant() public view {
+-        assertGt(handler.attempted(), 0, "campaign reached money actions");
+-        handler.assertAccounting();
+-    }
++    function invariant_liquidityAccounting() public view { handler.assertAccounting(); }
++    function afterInvariant() public view { handler.assertCampaign(); }
+ 
+     function test_deterministicLifecycle() public {
+-        for (uint256 i; i < 3; ++i) handler.cycle(10 ether, i, 0);
+-        assertEq(handler.ghost_join(), 3);
+-        assertEq(handler.ghost_exit(), 3);
+-        handler.assertAccounting();
++        for (uint256 i; i < 24; ++i) handler.cycle(10 ether, i, i);
++        assertEq(handler.ghost_join(), 24);
++        assertEq(handler.ghost_exit(), 24);
++        handler.assertCampaign();
+     }
+ }
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/invariant/UniswapV4StandardExchangeCurveQuadStableBufferHook_Invariant.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/invariant/UniswapV4StandardExchangeCurveQuadStableBufferHook_Invariant.t.sol
+@@ -1,17 +1,17 @@
+ // SPDX-License-Identifier: BSL-1.1
+-pragma solidity ^0.8.0;
++pragma solidity ^0.8.24;
+ 
+ import {TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook as TestBase} from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook.sol";
++import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
++import {WrapperExactOutRouter} from "contracts/test/stubs/WrapperExactOutRouter.sol";
+ import {HookLiquidityInvariantHandler} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/HookLiquidityInvariantHandler.sol";
+ 
+-/// @dev Concrete test-root artifact lets Foundry identify the deployed handler ABI during focused runs.
++/// @dev Concrete test-root artifact exposes the handler ABI to focused invariant runs.
+ contract Handler_CurveQuadLiquidity is HookLiquidityInvariantHandler {
+-    constructor(address hook_, SimpleMintableERC20[] memory tokens_)
+-        HookLiquidityInvariantHandler(hook_, tokens_) {}
++    constructor(Config memory config_) HookLiquidityInvariantHandler(config_) {}
+ }
+ 
+-/// @notice Production joins and partial exits must conserve wallet inputs, outputs and LP shares.
+ /// forge-config: default.invariant.runs = 256
+ /// forge-config: default.invariant.depth = 64
+ /// forge-config: default.invariant.fail-on-revert = true
+@@ -20,31 +20,53 @@
+ 
+     function setUp() public override {
+         super.setUp();
+-        SimpleMintableERC20[] memory tokens_ = new SimpleMintableERC20[](4);
+-        tokens_[0] = token0;
+-        tokens_[1] = token1;
+-        tokens_[2] = token2;
+-        tokens_[3] = token3;
+-        handler = new Handler_CurveQuadLiquidity(address(quad), tokens_);
++        WrapperExactOutRouter route_ = swapRouter;
++        HookLiquidityInvariantHandler.Config memory c;
++        c.hook = hook;
++        c.mode = 0;
++        c.tokens = new SimpleMintableERC20[](4);
++        c.tokens[0] = token0;
++        c.tokens[1] = token1;
++        c.tokens[2] = token2;
++        c.tokens[3] = token3;
++        c.input = address(token0);
++        c.output = address(token1);
++        c.inputSE = se0;
++        c.inputVault = address(vault0);
++        c.feeRecipient = address(feeCollector);
++        c.router = route_;
++        c.key = poolKey01;
++        c.observedTokens = new IERC20[](7);
++        c.observedTokens[0] = IERC20(address(token0));
++        c.observedTokens[1] = IERC20(address(token1));
++        c.observedTokens[2] = IERC20(address(token2));
++        c.observedTokens[3] = IERC20(address(token3));
++        c.observedTokens[4] = IERC20(address(se0));
++        c.observedTokens[5] = IERC20(address(vault0));
++        c.observedTokens[6] = IERC20(address(hook));
++        c.observedHolders = new address[](8);
++        c.observedHolders[0] = address(hook);
++        c.observedHolders[1] = address(se0);
++        c.observedHolders[2] = address(vault0);
++        c.observedHolders[3] = address(address(pm));
++        c.observedHolders[4] = address(address(route_));
++        c.observedHolders[5] = address(address(feeCollector));
++        c.observedHolders[6] = address(user);
++        c.observedHolders[7] = address(address(0));
++        handler = new Handler_CurveQuadLiquidity(c);
+         bytes4[] memory selectors_ = new bytes4[](1);
+         selectors_[0] = handler.cycle.selector;
+         targetContract(address(handler));
+         targetSelector(FuzzSelector({addr: address(handler), selectors: selectors_}));
+     }
+ 
+-    function invariant_liquidityAccounting() public view {
+-        handler.assertAccounting();
+-    }
+-
+-    function afterInvariant() public view {
+-        assertGt(handler.attempted(), 0, "campaign reached money actions");
+-        handler.assertAccounting();
+-    }
++    function invariant_liquidityAccounting() public view { handler.assertAccounting(); }
++    function afterInvariant() public view { handler.assertCampaign(); }
+ 
+     function test_deterministicLifecycle() public {
+-        for (uint256 i; i < 3; ++i) handler.cycle(10 ether, i, 0);
+-        assertEq(handler.ghost_join(), 3);
+-        assertEq(handler.ghost_exit(), 3);
+-        handler.assertAccounting();
++        for (uint256 i; i < 24; ++i) handler.cycle(10 ether, i, i);
++        assertEq(handler.ghost_join(), 24);
++        assertEq(handler.ghost_exit(), 24);
++        handler.assertCampaign();
+     }
+ }
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/invariant/UniswapV4StandardExchangeWeightedBufferHook_Invariant.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/invariant/UniswapV4StandardExchangeWeightedBufferHook_Invariant.t.sol
+@@ -1,17 +1,17 @@
+ // SPDX-License-Identifier: BSL-1.1
+-pragma solidity ^0.8.0;
++pragma solidity ^0.8.24;
+ 
+ import {TestBase_UniswapV4StandardExchangeWeightedBufferHook as TestBase} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/TestBase_UniswapV4StandardExchangeWeightedBufferHook.sol";
++import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
++import {WrapperExactOutRouter} from "contracts/test/stubs/WrapperExactOutRouter.sol";
+ import {HookLiquidityInvariantHandler} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/HookLiquidityInvariantHandler.sol";
+ 
+-/// @dev Concrete test-root artifact lets Foundry identify the deployed handler ABI during focused runs.
++/// @dev Concrete test-root artifact exposes the handler ABI to focused invariant runs.
+ contract Handler_WeightedLiquidity is HookLiquidityInvariantHandler {
+-    constructor(address hook_, SimpleMintableERC20[] memory tokens_)
+-        HookLiquidityInvariantHandler(hook_, tokens_) {}
++    constructor(Config memory config_) HookLiquidityInvariantHandler(config_) {}
+ }
+ 
+-/// @notice Production joins and partial exits must conserve wallet inputs, outputs and LP shares.
+ /// forge-config: default.invariant.runs = 256
+ /// forge-config: default.invariant.depth = 64
+ /// forge-config: default.invariant.fail-on-revert = true
+@@ -20,29 +20,49 @@
+ 
+     function setUp() public override {
+         super.setUp();
+-        SimpleMintableERC20[] memory tokens_ = new SimpleMintableERC20[](2);
+-        tokens_[0] = token0;
+-        tokens_[1] = token1;
+-        handler = new Handler_WeightedLiquidity(address(weighted), tokens_);
++        WrapperExactOutRouter route_ = swapRouter;
++        HookLiquidityInvariantHandler.Config memory c;
++        c.hook = hook;
++        c.mode = 0;
++        c.tokens = new SimpleMintableERC20[](2);
++        c.tokens[0] = token0;
++        c.tokens[1] = token1;
++        c.input = address(token0);
++        c.output = address(token1);
++        c.inputSE = se0;
++        c.inputVault = address(vault0);
++        c.feeRecipient = address(feeCollector);
++        c.router = route_;
++        c.key = poolKey01;
++        c.observedTokens = new IERC20[](5);
++        c.observedTokens[0] = IERC20(address(token0));
++        c.observedTokens[1] = IERC20(address(token1));
++        c.observedTokens[2] = IERC20(address(se0));
++        c.observedTokens[3] = IERC20(address(vault0));
++        c.observedTokens[4] = IERC20(address(hook));
++        c.observedHolders = new address[](8);
++        c.observedHolders[0] = address(hook);
++        c.observedHolders[1] = address(se0);
++        c.observedHolders[2] = address(vault0);
++        c.observedHolders[3] = address(address(pm));
++        c.observedHolders[4] = address(address(route_));
++        c.observedHolders[5] = address(address(feeCollector));
++        c.observedHolders[6] = address(user);
++        c.observedHolders[7] = address(address(0));
++        handler = new Handler_WeightedLiquidity(c);
+         bytes4[] memory selectors_ = new bytes4[](1);
+         selectors_[0] = handler.cycle.selector;
+         targetContract(address(handler));
+         targetSelector(FuzzSelector({addr: address(handler), selectors: selectors_}));
+     }
+ 
+-    function invariant_liquidityAccounting() public view {
+-        handler.assertAccounting();
+-    }
+-
+-    function afterInvariant() public view {
+-        assertGt(handler.attempted(), 0, "campaign reached money actions");
+-        handler.assertAccounting();
+-    }
++    function invariant_liquidityAccounting() public view { handler.assertAccounting(); }
++    function afterInvariant() public view { handler.assertCampaign(); }
+ 
+     function test_deterministicLifecycle() public {
+-        for (uint256 i; i < 3; ++i) handler.cycle(10 ether, i, 0);
+-        assertEq(handler.ghost_join(), 3);
+-        assertEq(handler.ghost_exit(), 3);
+-        handler.assertAccounting();
++        for (uint256 i; i < 24; ++i) handler.cycle(10 ether, i, i);
++        assertEq(handler.ghost_join(), 24);
++        assertEq(handler.ghost_exit(), 24);
++        handler.assertCampaign();
+     }
+ }

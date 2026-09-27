@@ -94,6 +94,19 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookHooksTar
         return Repo._layout().currency1;
     }
 
+    /// @notice D60: configured rate providers in pool order.
+    function rateProviders() public view returns (address[] memory providers) {
+        Repo.Layout storage l = Repo._layout();
+        providers = new address[](2);
+        providers[0] = l.currency0 == l.token0 ? l.rateProvider0 : l.rateProvider1;
+        providers[1] = l.currency1 == l.token1 ? l.rateProvider1 : l.rateProvider0;
+    }
+
+    /// @notice D60: the rate provider configured for `token_` (pair token or its SE; address(0) when unknown).
+    function rateProvider(address token_) public view returns (address) {
+        return ClaimLib.rateProviderOf(token_);
+    }
+
 
     function tradingFeePercent() public pure returns (uint256) {
         return Repo.TRADING_FEE_PERCENT;

@@ -99,11 +99,7 @@ contract ERC4626StandardExchange_Adversarial is TestBase_ERC4626StandardExchange
         uint256 attackerSeBefore_ = IERC20(se).balanceOf(attacker);
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
-            )
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         seIn.exchangeIn(
             IERC20(address(protocolVault)),
             claimed_,
@@ -130,11 +126,7 @@ contract ERC4626StandardExchange_Adversarial is TestBase_ERC4626StandardExchange
         uint256 supplyBefore_ = IERC20(se).totalSupply();
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
-            )
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         seIn.exchangeIn(
             IERC20(address(underlying)), claimed_, IERC20(se), 0, attacker, true, _deadline()
         );
@@ -155,11 +147,7 @@ contract ERC4626StandardExchange_Adversarial is TestBase_ERC4626StandardExchange
         assertGe(invBefore_, claimedIn_, "booked inventory");
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, claimedIn_, uint256(0)
-            )
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         seOut.exchangeOut(
             IERC20(address(protocolVault)),
             maxIn_,
@@ -196,11 +184,7 @@ contract ERC4626StandardExchange_Adversarial is TestBase_ERC4626StandardExchange
         uint256 supplyBefore_ = IERC20(se).totalSupply();
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, short_
-            )
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         seIn.exchangeIn(
             IERC20(address(protocolVault)),
             claimed_,
@@ -246,11 +230,7 @@ contract ERC4626StandardExchange_Adversarial is TestBase_ERC4626StandardExchange
         uint256 claim_ = residualSeed_;
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, claim_, uint256(0)
-            )
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         seIn.exchangeIn(
             IERC20(address(protocolVault)), claim_, IERC20(se), 0, attacker, true, _deadline()
         );
@@ -339,11 +319,7 @@ contract ERC4626StandardExchange_Adversarial is TestBase_ERC4626StandardExchange
         assertEq(previewOut_, 1 ether, "J3 previewExchangeOut live on proxy");
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, uint256(1 ether), uint256(0)
-            )
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         seIn.exchangeIn(
             IERC20(address(protocolVault)), 1 ether, IERC20(se), 0, attacker, true, _deadline()
         );
@@ -367,11 +343,7 @@ contract ERC4626StandardExchange_Adversarial is TestBase_ERC4626StandardExchange
         fot.transfer(fotSe, claimed_);
         uint256 observed_ = fot.balanceOf(fotSe);
         assertLt(observed_, claimed_, "L2: FoT delivered less than claimed");
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, observed_
-            )
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         fotSeIn.exchangeIn(
             IERC20(address(fot)), claimed_, IERC20(fotSe), 0, user, true, _deadline()
         );

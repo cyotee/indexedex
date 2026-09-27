@@ -8,6 +8,7 @@ import {IStandardExchangeTransitionQuote as Transition} from "contracts/interfac
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {UniswapV4StandardExchangeOrbitalBufferHookRepo as Repo} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookRepo.sol";
 import {UniswapV4StandardExchangeOrbitalBufferHookMath as Math} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookMath.sol";
+import {UniswapV4StandardExchangeOrbitalBufferHookClaimLib as ClaimLib} from "./UniswapV4StandardExchangeOrbitalBufferHookClaimLib.sol";
 
 /// @notice Sequential withdrawal, swap and deposit quotes for the Orbital LP.
 library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
@@ -69,15 +70,14 @@ library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
 
     function _refresh(Leg memory leg) private view {
         leg.shares = Transition(leg.se).quoteShareBalance(leg.state);
-        if (leg.rateProvider != address(0)) {
-            LegLib.ExternalQuote memory q;
-            q.exchange = Transition(leg.se);
-            q.state = leg.state;
-            leg.rate = LegLib.rateAfterExchange(q, leg.asset, leg.rateProvider);
-        }
-        leg.effective = leg.rate == 0
-            ? Transition(leg.se).quoteAssets(leg.state, leg.shares)
-            : leg.shares * leg.rate / 1e18;
+        // D60: a buffered leg always carries a rate provider; the held reserve is shares x rate, never the
+        // SE's own valuation. `rateAfterExchange` fails closed on a missing or zero rate.
+        if (leg.rateProvider == address(0)) revert ClaimLib.RateProviderRequired();
+        LegLib.ExternalQuote memory q;
+        q.exchange = Transition(leg.se);
+        q.state = leg.state;
+        leg.rate = LegLib.rateAfterExchange(q, leg.asset, leg.rateProvider);
+        leg.effective = ClaimLib.ratedNative(leg.shares, leg.rate, leg.se, leg.asset);
     }
 
     function _swap(Leg[3] memory legs, uint8 from, uint8 to) private view returns (uint256 received) {
@@ -92,9 +92,8 @@ library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
             );
             // Mirror the family's retained face-to-effective conversion at the
             // post-withdrawal state, before buffering this residual input.
-            added = input.rate == 0
-                ? Transition(input.se).quoteAssets(input.state, input.shares + minted) - input.effective
-                : minted * input.rate / 1e18;
+            added = ClaimLib.ratedNative(minted, input.rate, input.se, input.asset);
+            if (added == 0) added = input.withdrawn;
         }
         uint256 faceOut = _sale(legs, from, to, added);
         received = _receiveOutput(output, faceOut);
@@ -130,19 +129,32 @@ library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
         Repo.Layout storage l = Repo._layout();
         uint256 x = _toWad(legs[from].effective, legs[from].decimals);
         uint256 y = _toWad(legs[to].effective, legs[to].decimals);
-        uint8 witness = 3 - from - to;
-        uint256 z = _toWad(legs[witness].effective, legs[witness].decimals);
+        uint256 z = _toWad(legs[3 - from - to].effective, legs[3 - from - to].decimals);
         uint256 net = Math.applyTradingFeeNet(
             _toWad(added, legs[from].decimals), IVaultFeeOracleQuery(l.feeOracle).dexSwapFeeOfVault(address(this))
         );
-        uint256 outWad = Math.sphereExactInOutWad(l.R, Math.recomputeL2(l.R, x, y, z), x, y, z, net);
-        uint8 decimals = legs[to].decimals;
-        out = decimals <= 18 ? outWad / (10 ** (18 - decimals)) : outWad * (10 ** (decimals - 18));
-        if (legs[to].rate != 0) {
-            uint256 shares = (out * 1e18 + legs[to].rate - 1) / legs[to].rate;
-            out = Transition(legs[to].se).quoteAssets(legs[to].state, shares);
-        }
+        out = Math.fromWadFloor(_cappedSphereOut(l.R, x, y, z, net), legs[to].decimals);
+        if (legs[to].se != address(0)) out = _unwrapPayout(legs[to], out);
         if (out == 0 || out >= legs[to].effective) revert Math.Drain();
+    }
+
+    /// @dev Rated units back to native shares through the leg's rate, then the SE's own unwrap quote for
+    ///      the payout (a buffering-operation quote, not a reserve valuation). Separate frame for stack depth.
+    function _unwrapPayout(Leg memory leg, uint256 out) private view returns (uint256) {
+        return Transition(leg.se).quoteAssets(leg.state, ClaimLib.sharesForNativeUp(out, leg.rate, leg.se, leg.asset));
+    }
+
+    /// @dev Clamp inflow so xPrime stays strictly inside the sphere. Wrap-sized
+    /// custom-bond sales otherwise revert MathDomain (xPrime >= R).
+    function _cappedSphereOut(uint256 R, uint256 x, uint256 y, uint256 z, uint256 net)
+        private
+        view
+        returns (uint256)
+    {
+        if (net == 0 || x + 1 >= R || y + 1 >= R || z + 1 >= R) revert Math.Drain();
+        if (net > R - x - 1) net = R - x - 1;
+        if (net == 0) revert Math.Drain();
+        return Math.sphereExactInOutWad(R, Math.recomputeL2(R, x, y, z), x, y, z, net);
     }
 
     function _toWad(uint256 amount, uint8 decimals) private pure returns (uint256) {
@@ -227,8 +239,15 @@ library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
 
     function _depositAtState(Leg[3] memory legs, uint8 index, uint256 amount) private view returns (uint256) {
         DepositQuote memory q = _depositQuote(legs, index);
-        if (legs[index].effective > 0 && amount > legs[index].effective
-            && (legs[q.j].effective < amount / 4 || legs[q.k].effective < amount / 4)) {
+        uint256 radius = Repo._layout().R;
+        uint256 e0 = Math.toWad(legs[0].effective, legs[0].decimals);
+        uint256 e1 = Math.toWad(legs[1].effective, legs[1].decimals);
+        uint256 e2 = Math.toWad(legs[2].effective, legs[2].decimals);
+        if (radius == 0 || e0 == 0 || e1 == 0 || e2 == 0
+            || e0 + 1 >= radius || e1 + 1 >= radius || e2 + 1 >= radius
+            || (legs[index].effective > 0 && amount > legs[index].effective
+                && (legs[q.j].effective < amount / 4 || legs[q.k].effective < amount / 4)))
+        {
             return _partialDepositAtState(legs, q, amount);
         }
         _planDeposit(legs, q, amount);
@@ -255,7 +274,9 @@ library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
         fb.e1Wad = Math.toWad(legs[1].effective, legs[1].decimals);
         fb.e2Wad = Math.toWad(legs[2].effective, legs[2].decimals);
         fb.supply = q.supply;
+        if (fb.supply == 0 || fb.e0Wad == 0 || fb.e1Wad == 0 || fb.e2Wad == 0) return;
         q.shares = Math.fullBookShares(fb);
+        if (q.shares == 0) return;
         for (uint8 i; i < 3; ++i) {
             uint256 needed = Math.fromWadFloor(
                 Math.fullBookUsedWad(q.shares, Math.toWad(legs[i].effective, legs[i].decimals), q.supply),
@@ -271,12 +292,22 @@ library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
         a.e1 = Math.toWad(legs[1].effective, legs[1].decimals);
         a.e2 = Math.toWad(legs[2].effective, legs[2].decimals);
         a.R = Repo._layout().R;
+        uint8 decimals = legs[q.input].decimals;
+        a.amountInWad = Math.toWad(amount, decimals);
+        if (a.R == 0 || a.e0 == 0 || a.e1 == 0 || a.e2 == 0 || a.amountInWad < 3
+            || a.e0 + 1 >= a.R || a.e1 + 1 >= a.R || a.e2 + 1 >= a.R)
+        {
+            q.offered[q.input] = amount;
+            return;
+        }
         a.L2 = Math.recomputeL2(a.R, a.e0, a.e1, a.e2);
         a.feeWad = IVaultFeeOracleQuery(Repo._layout().feeOracle).dexSwapFeeOfVault(address(this));
         a.inIdx = q.input;
-        uint8 decimals = legs[q.input].decimals;
-        a.amountInWad = Math.toWad(amount, decimals);
         Math.ZapSplitResult memory z = Math.zapSplitWad(a);
+        if (z.sJWad == 0 || z.sKWad == 0) {
+            q.offered[q.input] = amount;
+            return;
+        }
         q.saleJ = Math.fromWadCeil(z.sJWad, decimals);
         q.saleK = Math.fromWadCeil(z.sKWad, decimals);
         if (q.saleJ + q.saleK > amount) {
@@ -306,7 +337,8 @@ library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
     function _faceForClaim(Leg memory leg, uint256 desired, uint256 available, uint256 above)
         private view returns (uint256)
     {
-        if (desired == 0 || above < desired) revert Math.MathDomain();
+        if (desired == 0) return 0;
+        if (above < desired) revert Math.MathDomain();
         if (leg.se == address(0)) return desired;
         uint256 low = 1;
         uint256 high = available;
@@ -334,9 +366,9 @@ library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
     function _claimIn(Leg memory leg, uint256 amount) private view returns (uint256) {
         if (amount == 0 || leg.se == address(0)) return amount;
         (,, uint256 minted,) = Transition(leg.se).quoteTransition(leg.state, Transition.Operation.DepositExactIn, amount);
-        if (leg.rate != 0) return minted * leg.rate / 1e18;
-        uint256 afterClaim = Transition(leg.se).quoteAssets(leg.state, leg.shares + minted);
-        return afterClaim > leg.effective ? afterClaim - leg.effective : 0;
+        if (minted == 0) return amount;
+        uint256 rated = ClaimLib.ratedNative(minted, leg.rate, leg.se, leg.asset);
+        return rated == 0 ? amount : rated;
     }
 
     function _depositSupply(Leg[3] memory legs) private view returns (uint256 supply) {
@@ -362,11 +394,12 @@ library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
         Leg memory leg = legs[q.input];
         uint256 radius = Repo._layout().R;
         uint256 effectiveWad = Math.toWad(leg.effective, leg.decimals);
-        if (effectiveWad + 1 >= radius) revert Math.MathDomain();
+        if (radius == 0 || effectiveWad == 0 || effectiveWad + 1 >= radius) return 0;
         uint256 room = Math.fromWadFloor(radius - effectiveWad - 1, leg.decimals);
         if (amount > room) amount = room;
         uint256 proRata = Math.toWad(amount, leg.decimals) * q.supply / effectiveWad;
         uint256 used = Math.fromWadFloor(Math.fullBookUsedWad(proRata, effectiveWad, q.supply), leg.decimals);
+        if (used == 0) return 0;
         uint256[3] memory usedWad;
         usedWad[q.input] = Math.toWad(used, leg.decimals);
         Math.SphereNavArgs memory nav;

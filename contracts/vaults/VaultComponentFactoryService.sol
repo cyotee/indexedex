@@ -48,6 +48,14 @@ library VaultComponentFactoryService {
         vm.label(address(instance), "ERC4626Facet");
     }
 
+    function deployReceiptBackedERC4626Facet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
+        instance = create3Factory.deployFacet(
+            ArtifactCreationCode.creationCode("ReceiptBackedERC4626Facet.sol:ReceiptBackedERC4626Facet"),
+            abi.encode("ReceiptBackedERC4626Facet")._hash()
+        );
+        vm.label(address(instance), "ReceiptBackedERC4626Facet");
+    }
+
     function deployERC4626PermitDFPkg(ICreate3FactoryProxy create3Factory, IERC4626PermitDFPkg.PkgInit memory pkgInit)
         internal
         returns (IERC4626PermitDFPkg instance)

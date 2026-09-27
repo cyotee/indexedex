@@ -38,6 +38,9 @@ import {
     UniswapV4StandardExchangeWeightedBufferHookMath as Math
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookMath.sol";
 import {
+    UniswapV4StandardExchangeWeightedBufferHookClaimLib as ClaimLib
+} from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookClaimLib.sol";
+import {
     UniswapV4StandardExchangeWeightedBufferHookPairPoolLib as PairPoolLib
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookPairPoolLib.sol";
 import {
@@ -271,20 +274,21 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookHooksTarget is
         Repo.Layout storage l = Repo._layout();
         address se = l.standardExchanges[i];
         if (se == address(0) || se == l.tokens[i]) {
-            return Math.scaleTo(pairAmount, l.ratedScales[i]);
+            // D60: a raw or self-share leg is its balance, times the rate when a provider is configured.
+            address rpRaw = l.rateProviders[i];
+            uint256 units = rpRaw == address(0)
+                ? pairAmount
+                : (pairAmount * _getRateFailClosed(rpRaw)) / Math.RATE_PRECISION;
+            return Math.scaleTo(units, l.ratedScales[i]);
         }
-        // Buffer preview → shares → pair units (rate or claim delta) → rated WAD
+        // Pair-claim delta, not isolated unwrap of new SE shares (Uni V4 zap-out is dual-token).
+        address rp = l.rateProviders[i];
+        if (rp == address(0)) revert ClaimLib.RateProviderRequired();
+        // D60: the SE answers the buffering quote (shares for this deposit); the rate values them.
         uint256 shares =
             IStandardExchangeIn(se).previewExchangeIn(IERC20(l.tokens[i]), pairAmount, IERC20(se));
         if (shares == 0) return 0;
-        address rp = l.rateProviders[i];
-        uint256 pairUnits;
-        if (rp != address(0)) {
-            pairUnits = Math.ratedPairUnits(shares, _getRateFailClosed(rp), l.invScales[i], l.ratedScales[i]);
-        } else {
-            // claim of those shares alone
-            pairUnits = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), shares, IERC20(l.tokens[i]));
-        }
+        uint256 pairUnits = Math.ratedPairUnits(shares, _getRateFailClosed(rp), l.invScales[i], l.ratedScales[i]);
         return Math.scaleTo(pairUnits, l.ratedScales[i]);
     }
 
@@ -395,16 +399,17 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookQuoteTarget is Unis
         if (feeWad >= Math.WAD) revert InvalidFeeWad();
         (uint256 minted,) = LegLib.depositAfterExchange(q, Math.applyTradingFeeNet(q.assets, feeWad));
         uint256[] memory rated = _ratedWadAll();
-        uint256 held = q.heldAssets;
-        uint256 inflow = q.exchange.quoteAssets(q.state, minted);
-        if (l.rateProviders[i] != address(0)) {
+        if (l.rateProviders[i] == address(0)) revert ClaimLib.RateProviderRequired();
+        {
+            // D60: held reserve and inflow are shares x rate; `minted` carries the rated inflow from here on.
             uint256 rate = LegLib.rateAfterExchange(q, l.tokens[i], l.rateProviders[i]);
-            held = Math.ratedPairUnits(q.heldShares, rate, l.invScales[i], l.ratedScales[i]);
-            inflow = Math.ratedPairUnits(minted, rate, l.invScales[i], l.ratedScales[i]);
+            rated[i] = Math.scaleTo(
+                Math.ratedPairUnits(q.heldShares, rate, l.invScales[i], l.ratedScales[i]), l.ratedScales[i]
+            );
+            minted = Math.ratedPairUnits(minted, rate, l.invScales[i], l.ratedScales[i]);
         }
-        rated[i] = Math.scaleTo(held, l.ratedScales[i]);
         if (rated[i] == 0 || rated[j] == 0) revert SwapNotLive();
-        return _quoteRatedSwapExactIn(i, j, rated, Math.scaleTo(inflow, l.ratedScales[i]));
+        return _quoteRatedSwapExactIn(i, j, rated, Math.scaleTo(minted, l.ratedScales[i]));
     }
 
 }

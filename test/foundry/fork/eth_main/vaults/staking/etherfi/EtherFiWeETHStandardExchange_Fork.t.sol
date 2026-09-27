@@ -128,6 +128,32 @@ contract EtherFiWeETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_Va
         assertEq(etherFiSe.targetLiquidReservePercentage(), DEFAULT_LIQUID_PCT);
     }
 
+    /// @notice APEX D40 / R14.20: the production capacity precheck reads the live pool's pause
+    ///         state. Only the pause gates are asserted here (owner decision 2026-09-20); the
+    ///         blacklister read is exercised by every WETH-to-SE deposit in this suite because the
+    ///         production `_etherFiStakeOpen` calls it, so an interface mismatch would revert FK2.
+    function test_FK8_APEX_D40_livePoolPauseGatesOpen() public onlyFork {
+        (bool okPaused, bytes memory pausedRet) = LIQUIDITY_POOL.staticcall(abi.encodeWithSignature("paused()"));
+        assertTrue(okPaused && pausedRet.length == 32, "paused() answers 32 bytes on the live pool");
+        assertFalse(abi.decode(pausedRet, (bool)), "live pool is not paused at the pinned block");
+
+        (bool okUntil, bytes memory untilRet) = LIQUIDITY_POOL.staticcall(abi.encodeWithSignature("pausedUntil()"));
+        assertTrue(okUntil && untilRet.length == 32, "pausedUntil() answers 32 bytes on the live pool");
+        assertLt(abi.decode(untilRet, (uint256)), block.timestamp, "live pool is not timed-paused at the pinned block");
+
+        // Capacity is open: a WETH-to-SE deposit stakes the sleeve-eligible excess instead of booking all.
+        uint256 amount = 5 ether;
+        vm.deal(address(this), amount);
+        IWETH(payable(WETH)).deposit{value: amount}();
+        IERC20(WETH).approve(seVault, amount);
+        uint256 shares = seIn.exchangeIn(
+            IERC20(WETH), amount, IERC20(seVault), 0, address(this), false, block.timestamp + 1 hours
+        );
+        assertGt(shares, 0, "minted");
+        assertLt(etherFiSe.liquidReserveEth(), amount, "open capacity: not everything stayed in the sleeve");
+        assertGt(IERC20(WEETH).balanceOf(seVault), 0, "open capacity: weETH received");
+    }
+
     function test_FK2_wethToSe_splitMint_near20pct() public onlyFork {
         uint256 amount = 5 ether;
         vm.deal(address(this), amount);
@@ -279,6 +305,24 @@ contract EtherFiWeETHStandardExchange_Fork_Test is TestBase_Permit2, TestBase_Va
         // Hermetic claim is covered in core; fork may have no finalized vault requests.
         seRebalance.rebalance(); // claim any finalized
         assertTrue(true);
+    }
+
+    /// @notice APEX matrix finding F4 / D53 (2026-09-21): the production transition quote reads live protocol
+    ///         views through hard staticcalls. Confirms on mainnet at the suite's pinned block that
+    ///         `quoteState(weth, holder)` answers and that its exact-in deposit projection equals
+    ///         `previewExchangeIn`, so the hermetic fixture extension models an interface the live
+    ///         contracts actually expose.
+    function test_FK9_APEX_F4_liveQuoteStateAnswers() public onlyFork {
+        IStandardExchangeTransitionQuote quote = IStandardExchangeTransitionQuote(seVault);
+        (bytes memory state, uint256 holderAssets) = quote.quoteState(WETH, address(this));
+        assertGt(state.length, 0, "EtherFi: live quoteState answers");
+        if (IERC20(seVault).balanceOf(address(this)) == 0) assertEq(holderAssets, 0, "EtherFi: no shares, no claim");
+        else assertGt(holderAssets, 0, "EtherFi: held shares carry a live claim");
+        uint256 amount = 1 ether;
+        (, uint256 input, uint256 output,) =
+            quote.quoteTransition(state, IStandardExchangeTransitionQuote.Operation.DepositExactIn, amount);
+        assertEq(input, amount, "EtherFi: exact-in consumes the whole input");
+        assertEq(output, seIn.previewExchangeIn(IERC20(WETH), amount, IERC20(seVault)), "EtherFi: transition quote equals previewExchangeIn on mainnet");
     }
 }
 

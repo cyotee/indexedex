@@ -196,6 +196,7 @@ contract CurveQuadFundedBindingTest is TestBase_UniswapV4Detf_CurveQuad, V4Funde
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IUniswapV4StandardExchangeOrbitalBufferHook} from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHook.sol";
 import {UniswapV4StandardExchangeOrbitalBufferHookClaimLib as ClaimLib} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookClaimLib.sol";
 import {IStandardExchangeTransitionQuote as ITransition} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
@@ -358,11 +359,14 @@ contract OrbitalV4PositionFundedBindingTest is TestBase_UniswapV4Detf_Orbital_Un
 
     function _assertCachedBufferClaim(address se_, address hook_, uint256 amount_) private view {
         address token_ = se_ == se0 ? pairAddr0 : pairAddr1;
-        ClaimLib.BufferClaimQuote memory quote_ = ClaimLib.bufferClaimQuote(se_, address(0), token_, hook_);
+        // D60: a buffered leg is valued through its configured rate provider; the quote helpers are exercised
+        // with the hook's own provider for this leg.
+        address rp_ = IUniswapV4StandardExchangeOrbitalBufferHook(hook_).rateProvider(token_);
+        ClaimLib.BufferClaimQuote memory quote_ = ClaimLib.bufferClaimQuote(se_, rp_, token_, hook_);
         assertEq(
             ClaimLib.previewBufferClaimIn(quote_, amount_),
-            ClaimLib.previewBufferClaimIn(se_, address(0), token_, amount_, hook_),
-            "cached balance and claim preserve the existing forward quote"
+            ClaimLib.previewBufferClaimIn(se_, rp_, token_, amount_, hook_),
+            "cached rate and claim preserve the existing forward quote"
         );
     }
 

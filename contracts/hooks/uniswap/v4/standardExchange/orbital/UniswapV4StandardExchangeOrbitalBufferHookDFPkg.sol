@@ -370,13 +370,14 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
         if (a.token0 == a.token1 || a.token1 == a.token2 || a.token0 == a.token2) {
             revert SameToken();
         }
-        // RP only allowed on SE legs
+        // D60: every buffered leg needs a rate provider (the swap executes in the leg's token while the
+        // reserve is held as SE shares); a raw leg may carry one too.
         if (
-            (a.rp0 != address(0) && a.se0 == address(0))
-                || (a.rp1 != address(0) && a.se1 == address(0))
-                || (a.rp2 != address(0) && a.se2 == address(0))
+            (a.se0 != address(0) && a.rp0 == address(0))
+                || (a.se1 != address(0) && a.rp1 == address(0))
+                || (a.se2 != address(0) && a.rp2 == address(0))
         ) {
-            revert RateProviderWithoutSE();
+            revert RateProviderRequired();
         }
         // Min SE (remediation H7): ≥1 buffered leg required — zero-SE raw-only rejected.
         if (a.se0 == address(0) && a.se1 == address(0) && a.se2 == address(0)) {
@@ -408,18 +409,11 @@ contract UniswapV4StandardExchangeOrbitalBufferHookDFPkg is
         if (se == address(0)) return;
         if (UniswapV4SeBufferHookLegLib.isWrapperShareInventory(token, se)) return;
         if (se == token) revert InvalidSE();
-        try IBasicVault(se).vaultTokens() returns (address[] memory tokens) {
-            bool found;
-            for (uint256 i; i < tokens.length; ++i) {
-                if (tokens[i] == token) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) revert InvalidSE();
-        } catch {
-            revert InvalidSE();
+        address[] memory tokens = IBasicVault(se).vaultTokens();
+        for (uint256 i; i < tokens.length; ++i) {
+            if (tokens[i] == token) return;
         }
+        revert InvalidSE();
     }
 
 }

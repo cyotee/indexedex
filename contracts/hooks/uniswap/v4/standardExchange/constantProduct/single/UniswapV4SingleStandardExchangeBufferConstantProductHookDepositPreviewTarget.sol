@@ -63,6 +63,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         Repo.Layout storage l = Repo._layout();
         uint256 amt0 = l.currency0 == l.rawToken ? acc.raw : acc.pair;
         uint256 amt1 = l.currency0 == l.rawToken ? acc.pair : acc.raw;
+        if (amt0 == 0 || amt1 == 0) return 0;
         (shares,,) = IHook(address(this)).previewDeposit(amt0, amt1);
     }
 
@@ -88,8 +89,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         view
         returns (uint256 lpAmount, uint256 used0, uint256 used1)
     {
-        _requireNonZero(amount0);
-        _requireNonZero(amount1);
+        if (amount0 == 0 || amount1 == 0) return (0, 0, 0);
         if (ERC20Repo._totalSupply() == 0) {
             used0 = amount0;
             used1 = amount1;
@@ -101,16 +101,10 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
             return (geometric - Repo.MINIMUM_LIQUIDITY, used0, used1);
         }
         (used0, used1) = _clampToReserveRatio(amount0, amount1);
-        uint256 x = reserveCurrency0();
-        uint256 y = reserveCurrency1();
-        uint256 dx = _previewDelta0(used0, used1);
-        uint256 dy = _previewDelta1(used0, used1);
+        // D59: the clamp sizes the intake on the rated book; issuance follows the raw book.
         lpAmount = Math.mintSharesLater(
-            Math.toWad(dx, Repo._layout().decimalsCurrency0),
-            Math.toWad(dy, Repo._layout().decimalsCurrency1),
-            Math.toWad(x, Repo._layout().decimalsCurrency0),
-            Math.toWad(y, Repo._layout().decimalsCurrency1),
-            _supplyAfterProtocolMint()
+            _previewRawDelta(true, used0, used1), _previewRawDelta(false, used0, used1),
+            _rawReserveCurrency0(), _rawReserveCurrency1(), _supplyAfterProtocolMint()
         );
     }
 
@@ -124,16 +118,13 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         uint256 add0 = tokenIn == l.currency0 ? kept : otherOut;
         uint256 add1 = tokenIn == l.currency0 ? otherOut : kept;
         (uint256 used0, uint256 used1) = _clampToReserveRatio(add0, add1);
-        uint256 x = reserveCurrency0();
-        uint256 y = reserveCurrency1();
+        // D59: issuance follows the raw book (raw token, SE shares).
         lpAmount = Math.mintSharesLater(
-            Math.toWad(_previewDelta0(used0, used1), l.decimalsCurrency0),
-            Math.toWad(_previewDelta1(used0, used1), l.decimalsCurrency1),
-            Math.toWad(x, l.decimalsCurrency0),
-            Math.toWad(y, l.decimalsCurrency1),
-            _supplyAfterProtocolMint()
+            _previewRawDelta(true, used0, used1), _previewRawDelta(false, used0, used1),
+            _rawReserveCurrency0(), _rawReserveCurrency1(), _supplyAfterProtocolMint()
         );
         saleAmt;
+        l;
     }
 
     function previewJoinAfterDeposit(address tokenIn, address pairToken, uint256 amountIn)
@@ -144,7 +135,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         LegLib.ExternalQuote memory externalQuote = LegLib.afterExternalDeposit(
             l.standardExchange, pairToken, tokenIn, amountIn, address(this)
         );
-        uint256 claim = externalQuote.heldAssets;
+        uint256 claim = ClaimLib.ratedClaimOfState(l.standardExchange, externalQuote.state); // D60: state rate
         if (claim == 0 && externalQuote.heldShares > 0) claim = 1;
         uint256 supply = _supplyAfterProtocolMintForPairClaim(claim);
         ZapQuote memory q = _quoteShareZapStateAt(externalQuote.state, externalQuote.assets);
@@ -180,26 +171,27 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
             x_, y_, _poolOrderX(q.rawAdded, q.pairAdded), _poolOrderY(q.rawAdded, q.pairAdded)
         );
         uint256 claimAfter_;
-        (q.state,,, claimAfter_) = IStandardExchangeTransitionQuote(l.standardExchange).quoteTransition(
-            q.state, IStandardExchangeTransitionQuote.Operation.DepositExactIn,
-            l.currency0 == l.pairToken ? used0_ : used1_
+        // D59: issuance follows the raw book; the SE share balance of the projected state before and after.
+        uint256 sharesBefore_ = IStandardExchangeTransitionQuote(l.standardExchange).quoteShareBalance(q.state);
+        (q.state,,, claimAfter_) = _quoteMintablePairDeposit(
+            q.state, l.currency0 == l.pairToken ? used0_ : used1_
         );
         if (claimAfter_ == 0) claimAfter_ = 1;
-        uint256 pairDelta_ = claimAfter_ > q.pairReserve ? claimAfter_ - q.pairReserve : 0;
-        minted_ = _sharesAfterZap(q, pairDelta_, supply_);
+        uint256 sharesAfter_ = IStandardExchangeTransitionQuote(l.standardExchange).quoteShareBalance(q.state);
+        minted_ = _sharesAfterZap(q, sharesAfter_ - sharesBefore_, sharesBefore_, supply_);
         q.rawReserve += q.rawAdded;
         q.pairReserve = claimAfter_;
         q.pairAdded -= l.currency0 == l.pairToken ? used0_ : used1_;
         finalSupply_ = supply_ + minted_;
     }
 
-    function _sharesAfterZap(ZapQuote memory q, uint256 pairDelta, uint256 supply) private view returns (uint256) {
-        Repo.Layout storage l = Repo._layout();
+    /// @dev D59: LP from the raw book (raw token, SE shares) of the projected state.
+    function _sharesAfterZap(ZapQuote memory q, uint256 shareDelta, uint256 shareReserve, uint256 supply)
+        private view returns (uint256)
+    {
         return Math.mintSharesLater(
-            Math.toWad(_poolOrderX(q.rawAdded, pairDelta), l.decimalsCurrency0),
-            Math.toWad(_poolOrderY(q.rawAdded, pairDelta), l.decimalsCurrency1),
-            Math.toWad(_poolOrderX(q.rawReserve, q.pairReserve), l.decimalsCurrency0),
-            Math.toWad(_poolOrderY(q.rawReserve, q.pairReserve), l.decimalsCurrency1), supply
+            _poolOrderX(q.rawAdded, shareDelta), _poolOrderY(q.rawAdded, shareDelta),
+            _poolOrderX(q.rawReserve, shareReserve), _poolOrderY(q.rawReserve, shareReserve), supply
         );
     }
 
@@ -226,9 +218,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         uint256 pairDust = IERC20(l.pairToken).balanceOf(address(this)) + q.pairAdded;
         if (pairDust <= Repo.MAX_DUST_WEI) return supply;
         uint256 beforePair = q.pairReserve;
-        (q.state,,, q.pairReserve) = IStandardExchangeTransitionQuote(l.standardExchange).quoteTransition(
-            q.state, IStandardExchangeTransitionQuote.Operation.DepositExactIn, pairDust - Repo.MAX_DUST_WEI
-        );
+        (q.state,,, q.pairReserve) = _quoteMintablePairDeposit(q.state, pairDust - Repo.MAX_DUST_WEI);
         // Deposit snapshots k before its final dust buffer. Exit valuation includes
         // the protocol LP that this final reserve growth can mint.
         (bool feeOn,, uint256 ownerFeeShare) = _feeOnAndShare();
@@ -242,9 +232,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
 
     function _quotePairToRawAfterJoin(ZapQuote memory q, uint256 pairOut) private view returns (uint256) {
         Repo.Layout storage l = Repo._layout();
-        (,,, uint256 claimAfter) = IStandardExchangeTransitionQuote(l.standardExchange).quoteTransition(
-            q.state, IStandardExchangeTransitionQuote.Operation.DepositExactIn, pairOut
-        );
+        (,,, uint256 claimAfter) = _quoteMintablePairDeposit(q.state, pairOut);
         uint256 delta = claimAfter > q.pairReserve ? claimAfter - q.pairReserve : 0;
         return Math.fromWadFloor(Math.saleQuote(
             Math.toWad(delta, _decimalsOf(l.pairToken)), Math.toWad(q.pairReserve, _decimalsOf(l.pairToken)),
@@ -252,12 +240,22 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         ), _decimalsOf(l.rawToken));
     }
 
+    function _quoteMintablePairDeposit(bytes memory state, uint256 amountInRaw)
+        private
+        view
+        returns (bytes memory nextState, uint256 amountIn, uint256 amountOut, uint256 ratedHolderClaimAfter)
+    {
+        Repo.Layout storage l = Repo._layout();
+        return ClaimLib.quoteMintableDepositExactIn(l.standardExchange, l.pairToken, state, amountInRaw);
+    }
+
     function _quoteZapState(address tokenIn_, uint256 amountIn_) private view returns (ZapQuote memory q) {
         Repo.Layout storage l = Repo._layout();
         if (tokenIn_ == l.standardExchange) return _quoteShareZapState(amountIn_);
         (uint256 sold_, uint256 other_, uint256 kept_) = _previewZapSplit(tokenIn_, amountIn_);
-        (q.state, q.pairReserve) = IStandardExchangeTransitionQuote(l.standardExchange)
+        (q.state,) = IStandardExchangeTransitionQuote(l.standardExchange)
             .quoteState(l.pairToken, address(this));
+        q.pairReserve = ClaimLib.ratedClaimOfState(l.standardExchange, q.state); // D60
         q.rawReserve = IERC20(l.rawToken).balanceOf(address(this));
         if (tokenIn_ == l.rawToken) {
             (q.state, other_, q.pairReserve) = _quoteZapUnwrap(q.state, other_);
@@ -265,8 +263,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
             q.rawAdded = kept_;
             q.pairAdded = other_;
         } else {
-            (q.state,,, q.pairReserve) = IStandardExchangeTransitionQuote(l.standardExchange)
-                .quoteTransition(q.state, IStandardExchangeTransitionQuote.Operation.DepositExactIn, sold_);
+            (q.state,,, q.pairReserve) = _quoteMintablePairDeposit(q.state, sold_);
             q.rawReserve -= other_;
             q.rawAdded = other_;
             q.pairAdded = kept_;
@@ -290,16 +287,17 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         q.state = state;
         (q.state,,,) = quote.quoteTransition(q.state, IStandardExchangeTransitionQuote.Operation.ReceiveShares, shares);
         uint256 amount;
-        (q.state,, amount, q.pairReserve) = quote.quoteTransition(
+        (q.state,, amount,) = quote.quoteTransition(
             q.state, IStandardExchangeTransitionQuote.Operation.RedeemExactIn, shares
         );
+        q.pairReserve = ClaimLib.ratedClaimOfState(l.standardExchange, q.state); // D60
         if (q.pairReserve == 0) q.pairReserve = 1;
         q.rawReserve = IERC20(l.rawToken).balanceOf(address(this));
-        (,,, uint256 fullClaim) = quote.quoteTransition(q.state, IStandardExchangeTransitionQuote.Operation.DepositExactIn, amount);
+        (,,, uint256 fullClaim) = _quoteMintablePairDeposit(q.state, amount);
         fullClaim = fullClaim > q.pairReserve ? fullClaim - q.pairReserve : 0;
         uint256 sold = _pairZapSaleAmount(amount, fullClaim, q.pairReserve);
         uint256 afterClaim;
-        (q.state,,, afterClaim) = quote.quoteTransition(q.state, IStandardExchangeTransitionQuote.Operation.DepositExactIn, sold);
+        (q.state,,, afterClaim) = _quoteMintablePairDeposit(q.state, sold);
         uint256 claimIn = afterClaim > q.pairReserve ? afterClaim - q.pairReserve : 0;
         q.rawAdded = _pairZapRawOut(claimIn, q.pairReserve, q.rawReserve);
         q.rawReserve -= q.rawAdded;
@@ -336,9 +334,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         uint256 cap_ = _spendableSeShares();
         uint256 needed_ = type(uint256).max;
         if (wanted_ > 0) {
-            try IStandardExchangeOut(l.standardExchange).previewExchangeOut(
+            needed_ = IStandardExchangeOut(l.standardExchange).previewExchangeOut(
                 IERC20(l.standardExchange), IERC20(l.pairToken), wanted_
-            ) returns (uint256 value_) { needed_ = value_; } catch {}
+            );
         }
         IStandardExchangeTransitionQuote.Operation op_ = IStandardExchangeTransitionQuote.Operation.WithdrawExactOut;
         uint256 amount_ = wanted_;
@@ -346,8 +344,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
             op_ = IStandardExchangeTransitionQuote.Operation.RedeemExactIn;
             amount_ = cap_;
         }
-        (next_,, received_, claimAfter_) = IStandardExchangeTransitionQuote(l.standardExchange)
+        (next_,, received_,) = IStandardExchangeTransitionQuote(l.standardExchange)
             .quoteTransition(state_, op_, amount_);
+        claimAfter_ = ClaimLib.ratedClaimOfState(l.standardExchange, next_); // D60
     }
 
     /// @notice CP previewZapSplit entry point.
@@ -371,8 +370,8 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         view
         returns (uint256 lpAmount, uint256 usedRaw, uint256 usedSe)
     {
-        _requireNonZero(amountRaw);
-        _requireNonZero(amountSe);
+        // H2: leftover sweep may quote a single SE-share residual with 0 raw.
+        if (amountRaw == 0 || amountSe == 0) return (0, 0, 0);
         uint256 claimOffered = _previewSeClaimOfBal(amountSe);
         if (claimOffered == 0) return (0, 0, 0);
 

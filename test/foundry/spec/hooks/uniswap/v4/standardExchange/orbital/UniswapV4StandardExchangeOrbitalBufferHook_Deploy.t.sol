@@ -77,7 +77,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_DeployTest is
         hookPkg.processArgs(abi.encode(args));
     }
 
-    function test_calcSalt_differsWhenDecimalsDiffer() public view {
+    function test_calcSalt_differsWhenDecimalsDiffer() public {
         IPkg.PkgArgs memory args = _defaultPkgArgs();
         args.decimals0 = 6;
         bytes32 salt6 = hookPkg.calcSalt(abi.encode(args));

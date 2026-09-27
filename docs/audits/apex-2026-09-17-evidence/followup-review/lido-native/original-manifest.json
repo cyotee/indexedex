@@ -1,0 +1,5 @@
+{
+  "contracts/protocols/staking/lido/LidoWstETHStandardExchangeCommon.sol": "71f5da979fb5ee66cb3d8bb5dae8274ee8579216ee5629e1130985377d1c5872",
+  "contracts/protocols/staking/lido/LidoWstETHStandardExchangeInTarget.sol": "734d3cbe8fd5d7c1b028954b7079d2aeca8ef6843bfda2a84d9dbf369f98e6f9",
+  "contracts/protocols/staking/lido/LidoWstETHStandardExchangeOutTarget.sol": "13011b3c10c5ebc8036b6d69d73ae0fb6b242e686ad61a95d38f27bf6170e811"
+}

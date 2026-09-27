@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {ERC4626Repo} from "@crane/contracts/tokens/ERC4626/ERC4626Repo.sol";
+import {Math} from "@crane/contracts/utils/Math.sol";
 import {BetterMath} from "@crane/contracts/utils/math/BetterMath.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {ONE_WAD} from "@crane/contracts/constants/Constants.sol";
@@ -12,7 +13,10 @@ import {IWstETH} from "@crane/contracts/protocols/staking/ethereum/lido/interfac
 import {IStETH} from "@crane/contracts/protocols/staking/ethereum/lido/interfaces/IStETH.sol";
 import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol";
 
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
 import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
+import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {ILidoWstETHStandardVault} from "contracts/protocols/staking/lido/interfaces/ILidoWstETHStandardVault.sol";
 import {LidoWstETHStandardExchangeRepo} from "contracts/protocols/staking/lido/LidoWstETHStandardExchangeRepo.sol";
 
@@ -29,7 +33,7 @@ abstract contract LidoWstETHStandardExchangeCommon is ILidoWstETHStandardVault, 
     uint256 internal constant MIN_STETH_WITHDRAWAL = 100;
     uint256 internal constant MAX_STETH_WITHDRAWAL = 1000 ether;
     /// @dev Rebalance hysteresis: 10% of target liquid (band on target).
-    uint256 internal constant REBALANCE_BAND_WAD = 0.10e18;
+    uint256 internal constant REBALANCE_BAND_WAD = 0.1e18;
     uint256 internal constant MAX_QUEUE_REQUESTS_PER_REBALANCE = 5;
 
     /// @notice Deposit tokens received less than requested (or zero when pretransferred without credit).
@@ -108,6 +112,122 @@ abstract contract LidoWstETHStandardExchangeCommon is ILidoWstETHStandardVault, 
         revert InvalidRoute(token, token);
     }
 
+    /// @dev Native stETH moves floor(amount / shareRate) shares. Validate and
+    /// quote that exact native movement, never an arbitrary ERC20 shortfall.
+    function _stReceivedAt(uint256 heldShares, uint256 amount) internal view returns (uint256) {
+        IStETH st = IStETH(stETH());
+        return
+            st.getPooledEthByShares(heldShares + st.getSharesByPooledEth(amount)) - st.getPooledEthByShares(heldShares);
+    }
+
+    function _stInputForReceivedAt(uint256 heldShares, uint256 received) internal view returns (uint256 amount) {
+        if (received == 0) return 0;
+        IStETH st = IStETH(stETH());
+        uint256 targetBalance = st.getPooledEthByShares(heldShares) + received;
+        uint256 targetShares = st.getSharesByPooledEth(targetBalance);
+        if (st.getPooledEthByShares(targetShares) < targetBalance) ++targetShares;
+        uint256 movedShares = targetShares - heldShares;
+        amount = st.getPooledEthByShares(movedShares);
+        if (st.getSharesByPooledEth(amount) < movedShares) ++amount;
+    }
+
+    /// @dev Newer Lido versions convert at the internal share ratio. The total
+    /// pooled ether includes a floor-rounded external component, which cannot
+    /// reconstruct that exact ratio. Legacy stETH lacks both external getters.
+    function _nativeShareRate() internal view returns (uint256 pooled, uint256 supply) {
+        IStETH st = IStETH(stETH());
+        pooled = st.getTotalPooledEther();
+        supply = st.getTotalShares();
+        (bool ok, bytes memory data) = address(st).staticcall(abi.encodeWithSignature("getExternalShares()"));
+        if (!ok && data.length == 0) return (pooled, supply);
+        if (!ok || data.length != 32) {
+            assembly ("memory-safe") { revert(add(data, 32), mload(data)) }
+        }
+        supply -= abi.decode(data, (uint256));
+        (ok, data) = address(st).staticcall(abi.encodeWithSignature("getExternalEther()"));
+        if (!ok || data.length != 32) {
+            assembly ("memory-safe") { revert(add(data, 32), mload(data)) }
+        }
+        pooled -= abi.decode(data, (uint256));
+    }
+
+    function _stPullInput(uint256 received) internal view returns (uint256) {
+        return _stInputForReceivedAt(IStETH(stETH()).sharesOf(address(this)), received);
+    }
+
+    function _stForWrappedUp(uint256 wrappedAmount) internal view returns (uint256 amount) {
+        IWstETH wrapped = IWstETH(wstETH());
+        amount = wrapped.getStETHByWstETH(wrappedAmount);
+        if (wrapped.getWstETHByStETH(amount) < wrappedAmount) ++amount;
+    }
+
+    /// @dev Public previews have no recipient. An empty recipient is the
+    /// conservative native-transfer floor; execution measures its actual delta.
+    function _quoteUnwrapToSt(uint256 wrappedAmount) internal view returns (uint256) {
+        uint256 received = _stReceivedAt(IStETH(stETH()).sharesOf(address(this)), _stEthFromWstEth(wrappedAmount));
+        return _stReceivedAt(0, received);
+    }
+
+    function _wrappedForStDeliveryUp(uint256 delivered) internal view returns (uint256 wrappedAmount) {
+        uint256 transferable = _stInputForReceivedAt(0, delivered);
+        uint256 unwrapNominal = _stPullInput(transferable);
+        IWstETH wrapped = IWstETH(wstETH());
+        wrappedAmount = wrapped.getWstETHByStETH(unwrapNominal);
+        if (wrapped.getStETHByWstETH(wrappedAmount) < unwrapNominal) ++wrappedAmount;
+    }
+
+    function _transferSt(uint256 amount, address recipient) internal returns (uint256 delivered) {
+        IERC20 st = IERC20(stETH());
+        uint256 beforeBalance = st.balanceOf(recipient);
+        st.safeTransfer(recipient, amount);
+        delivered = st.balanceOf(recipient) - beforeBalance;
+    }
+
+    function _unwrapAndPaySt(uint256 wrappedAmount, address recipient) internal returns (uint256 delivered) {
+        _requireLockedWst(wrappedAmount);
+        IERC20 st = IERC20(stETH());
+        uint256 beforeBalance = st.balanceOf(address(this));
+        IWstETH(wstETH()).unwrap(wrappedAmount);
+        delivered = _transferSt(st.balanceOf(address(this)) - beforeBalance, recipient);
+    }
+
+    /// @dev Submit changes the global ratio when the minted native shares round
+    /// down. Model that change before the next wrap or stETH transfer.
+    function _quoteStakeOut(uint256 ethAmount, bool wrappedOutput) internal view returns (uint256) {
+        IStETH st = IStETH(stETH());
+        (uint256 pooled, uint256 supply) = _nativeShareRate();
+        uint256 minted = supply == 0 ? ethAmount : Math.mulDiv(ethAmount, supply, pooled);
+        uint256 held = st.sharesOf(address(this));
+        uint256 beforeBalance = supply == 0 ? held : Math.mulDiv(held, pooled, supply);
+        supply += minted;
+        pooled += ethAmount;
+        if (supply == 0) return 0;
+        uint256 received = Math.mulDiv(held + minted, pooled, supply) - beforeBalance;
+        uint256 transferredShares = Math.mulDiv(received, supply, pooled);
+        return wrappedOutput ? transferredShares : Math.mulDiv(transferredShares, pooled, supply);
+    }
+
+    function _ethForStakeOut(uint256 output, bool wrappedOutput) internal view returns (uint256 amount) {
+        if (output == 0) return 0;
+        amount = wrappedOutput ? _stForWrappedUp(output) : output;
+        if (_quoteStakeOut(amount, wrappedOutput) >= output) return amount;
+        (uint256 pooled, uint256 supply) = _nativeShareRate();
+        // Submit cannot reduce the share rate. One pooled-unit rounding loss
+        // costs at most ceil(supply / pooled) shares at the pre-submit ratio.
+        uint256 neededShares = wrappedOutput ? output : Math.mulDiv(output, supply, pooled, Math.Rounding.Ceil);
+        neededShares += Math.ceilDiv(supply, pooled);
+        return Math.mulDiv(neededShares, pooled, supply, Math.Rounding.Ceil);
+    }
+
+    /// @dev stETH mint credit is the value of the wrapped receipt actually retained by the vault.
+    function _creditEthValueOfAsset(address token, uint256 amount) internal view returns (uint256) {
+        if (token == stETH()) {
+            uint256 wrapped = IWstETH(wstETH()).getWstETHByStETH(amount);
+            return _stEthFromWstEth(wrapped);
+        }
+        return _assetToEth(token, amount);
+    }
+
     /// @dev Asset amount for an ETH-value (floor). WETH/stETH 1:1; wstETH via Lido rate.
     function _ethToAssetDown(address token, uint256 ethValue) internal view returns (uint256) {
         if (token == weth() || token == stETH()) return ethValue;
@@ -115,32 +235,58 @@ abstract contract LidoWstETHStandardExchangeCommon is ILidoWstETHStandardVault, 
         revert InvalidRoute(token, token);
     }
 
+    /// @dev Minimum input whose credited wrapped value covers the requested ETH value.
+    function _ethToAssetUp(address token, uint256 ethValue) internal view returns (uint256 amount) {
+        if (token == weth()) return ethValue;
+        IWstETH wrapped = IWstETH(wstETH());
+        uint256 wrappedNeeded = wrapped.getWstETHByStETH(ethValue);
+        if (wrapped.getStETHByWstETH(wrappedNeeded) < ethValue) ++wrappedNeeded;
+        if (token == wstETH()) return wrappedNeeded;
+        if (token == stETH()) {
+            return _stForWrappedUp(wrappedNeeded);
+        }
+        revert InvalidRoute(token, token);
+    }
+
     /// @dev Convert eth-value delta into SE shares given totalReserveEth *before* the deposit.
     function _convertEthDeltaToShares(uint256 ethDelta, uint256 totalEthBefore) internal view returns (uint256) {
-        return BetterMath._convertToSharesDown(
-            ethDelta, totalEthBefore, ERC20Repo._totalSupply(), _decimalOffset()
-        );
+        return BetterMath._convertToSharesDown(ethDelta, totalEthBefore, ERC20Repo._totalSupply(), _decimalOffset());
     }
 
     /// @dev Shares required to withdraw `ethOut` of reserve value (ceil / previewWithdraw).
     function _sharesForEthOut(uint256 ethOut) internal view returns (uint256) {
-        return BetterMath._convertToSharesUp(
-            ethOut, totalReserveEth(), ERC20Repo._totalSupply(), _decimalOffset()
-        );
+        return BetterMath._convertToSharesUp(ethOut, totalReserveEth(), ERC20Repo._totalSupply(), _decimalOffset());
     }
 
     /// @dev ETH value redeemed for SE shares (floor / previewRedeem).
     function _previewRedeemSharesToEth(uint256 seShares) internal view returns (uint256 ethOut) {
-        return BetterMath._convertToAssetsDown(
-            seShares, totalReserveEth(), ERC20Repo._totalSupply(), _decimalOffset()
-        );
+        return BetterMath._convertToAssetsDown(seShares, totalReserveEth(), ERC20Repo._totalSupply(), _decimalOffset());
     }
 
     /// @dev ETH value required to mint `seShares` (ceil / previewMint). Reserve is pre-deposit.
     function _ethForSharesOut(uint256 seShares) internal view returns (uint256 ethIn) {
-        return BetterMath._convertToAssetsUp(
-            seShares, totalReserveEth(), ERC20Repo._totalSupply(), _decimalOffset()
-        );
+        return _ethForSharesOut(seShares, totalReserveEth());
+    }
+
+    function _ethForSharesOut(uint256 seShares, uint256 reserveBefore) internal view returns (uint256 ethIn) {
+        return BetterMath._convertToAssetsUp(seShares, reserveBefore, ERC20Repo._totalSupply(), _decimalOffset());
+    }
+
+    /// @dev Remove only this route's authenticated local credit from live NAV. Bare
+    /// underlying receipts (stETH/eETH) are not NAV until wrapped, so are not subtracted.
+    /// Difference-of-valuations preserves the wrapped asset's native rounding.
+    function _reserveBeforePretransfer(address token, uint256 credit) internal view returns (uint256 reserveBefore) {
+        reserveBefore = totalReserveEth();
+        if (credit == 0) return reserveBefore;
+        if (token == weth()) return reserveBefore - credit;
+        if (token == wstETH()) {
+            uint256 held = IERC20(token).balanceOf(address(this));
+            return reserveBefore - (_assetToEth(token, held) - _assetToEth(token, held - credit));
+        }
+    }
+
+    function _quoteMintAtReserve(address token, uint256 shares, uint256 reserveBefore) internal view returns (uint256) {
+        return _ethToAssetUp(token, _ethForSharesOut(shares, reserveBefore));
     }
 
     function _targetLiquidEth() internal view returns (uint256) {
@@ -170,12 +316,17 @@ abstract contract LidoWstETHStandardExchangeCommon is ILidoWstETHStandardVault, 
         view
         returns (uint256 amountOut)
     {
-        if (tokenIn == tokenOut) revert InvalidRoute(tokenIn, tokenOut);
+        // Identity share→share: DETF custom mint tables probe previewExchangeIn(se, amt, se).
+        if (tokenIn == tokenOut) {
+            if (_isSeShare(tokenIn)) return amountIn;
+            revert InvalidRoute(tokenIn, tokenOut);
+        }
 
         // asset → SE mint
         if (_isSeShare(tokenOut)) {
             if (!_isAsset(tokenIn)) revert InvalidRoute(tokenIn, tokenOut);
-            uint256 ethValue = _assetToEth(tokenIn, amountIn);
+            if (tokenIn == stETH()) amountIn = _stReceivedAt(IStETH(stETH()).sharesOf(address(this)), amountIn);
+            uint256 ethValue = _creditEthValueOfAsset(tokenIn, amountIn);
             return _convertEthDeltaToShares(ethValue, totalReserveEth());
         }
 
@@ -183,11 +334,13 @@ abstract contract LidoWstETHStandardExchangeCommon is ILidoWstETHStandardVault, 
         if (_isSeShare(tokenIn)) {
             if (!_isAsset(tokenOut)) revert InvalidRoute(tokenIn, tokenOut);
             uint256 ethOut = _previewRedeemSharesToEth(amountIn);
+            if (tokenOut == stETH()) return _quoteUnwrapToSt(_wstEthFromStEth(ethOut));
             return _ethToAssetDown(tokenOut, ethOut);
         }
 
-        // asset → asset (wrap / stake / inventory eth-value swap)
+        // Pull routes credit the exact native balance delta.
         if (!_isAsset(tokenIn) || !_isAsset(tokenOut)) revert InvalidRoute(tokenIn, tokenOut);
+        if (tokenIn == stETH()) amountIn = _stReceivedAt(IStETH(stETH()).sharesOf(address(this)), amountIn);
         return _quoteAssetToAssetExactIn(tokenIn, amountIn, tokenOut);
     }
 
@@ -199,25 +352,40 @@ abstract contract LidoWstETHStandardExchangeCommon is ILidoWstETHStandardVault, 
         view
         returns (uint256 amountIn)
     {
-        if (tokenIn == tokenOut) revert InvalidRoute(tokenIn, tokenOut);
+        return _quoteExactOut(tokenIn, tokenOut, amountOut, false);
+    }
+
+    function _quoteExactOut(address tokenIn, address tokenOut, uint256 amountOut, bool pretransferred)
+        internal
+        view
+        returns (uint256 amountIn)
+    {
+        if (tokenIn == tokenOut) {
+            if (_isSeShare(tokenIn)) return amountOut;
+            revert InvalidRoute(tokenIn, tokenOut);
+        }
 
         // asset → SE mint (exact shares out)
         if (_isSeShare(tokenOut)) {
             if (!_isAsset(tokenIn)) revert InvalidRoute(tokenIn, tokenOut);
             uint256 ethNeeded = _ethForSharesOut(amountOut);
-            return _ethToAssetDown(tokenIn, ethNeeded);
+            amountIn = _ethToAssetUp(tokenIn, ethNeeded);
+            return tokenIn == stETH() && !pretransferred ? _stPullInput(amountIn) : amountIn;
         }
 
         // SE → asset redeem (exact asset out)
         if (_isSeShare(tokenIn)) {
             if (!_isAsset(tokenOut)) revert InvalidRoute(tokenIn, tokenOut);
-            uint256 ethNeeded = _assetToEth(tokenOut, amountOut);
+            uint256 ethNeeded = tokenOut == stETH()
+                ? _stEthFromWstEth(_wrappedForStDeliveryUp(amountOut))
+                : _assetToEth(tokenOut, amountOut);
             return _sharesForEthOut(ethNeeded);
         }
 
         // asset → asset
         if (!_isAsset(tokenIn) || !_isAsset(tokenOut)) revert InvalidRoute(tokenIn, tokenOut);
-        return _quoteAssetToAssetExactOut(tokenIn, tokenOut, amountOut);
+        amountIn = _quoteAssetToAssetExactOut(tokenIn, tokenOut, amountOut);
+        return tokenIn == stETH() && !pretransferred ? _stPullInput(amountIn) : amountIn;
     }
 
     function _quoteAssetToAssetExactIn(address tokenIn, uint256 amountIn, address tokenOut)
@@ -231,14 +399,14 @@ abstract contract LidoWstETHStandardExchangeCommon is ILidoWstETHStandardVault, 
 
         // stETH ↔ wstETH (Lido wrap/unwrap)
         if (tokenIn == st_ && tokenOut == wst_) return IWstETH(wst_).getWstETHByStETH(amountIn);
-        if (tokenIn == wst_ && tokenOut == st_) return IWstETH(wst_).getStETHByWstETH(amountIn);
+        if (tokenIn == wst_ && tokenOut == st_) return _quoteUnwrapToSt(amountIn);
 
         // WETH → stETH / wstETH (stake path preview: 1:1 eth then Lido wrap rate)
-        if (tokenIn == weth_ && tokenOut == st_) return amountIn;
-        if (tokenIn == weth_ && tokenOut == wst_) return IWstETH(wst_).getWstETHByStETH(amountIn);
+        if (tokenIn == weth_ && tokenOut == st_) return _quoteStakeOut(amountIn, false);
+        if (tokenIn == weth_ && tokenOut == wst_) return _quoteStakeOut(amountIn, true);
 
         // stETH / wstETH → WETH (inventory eth-value swap; liquid checked only on exec)
-        if (tokenIn == st_ && tokenOut == weth_) return amountIn;
+        if (tokenIn == st_ && tokenOut == weth_) return _creditEthValueOfAsset(st_, amountIn);
         if (tokenIn == wst_ && tokenOut == weth_) return IWstETH(wst_).getStETHByWstETH(amountIn);
 
         revert InvalidRoute(tokenIn, tokenOut);
@@ -255,21 +423,15 @@ abstract contract LidoWstETHStandardExchangeCommon is ILidoWstETHStandardVault, 
 
         if (tokenIn == st_ && tokenOut == wst_) {
             // need stETH in such that wrap yields amountOut wst
-            return IWstETH(wst_).getStETHByWstETH(amountOut);
+            return _stForWrappedUp(amountOut);
         }
-        if (tokenIn == wst_ && tokenOut == st_) {
-            return IWstETH(wst_).getWstETHByStETH(amountOut);
-        }
+        if (tokenIn == wst_ && tokenOut == st_) return _wrappedForStDeliveryUp(amountOut);
 
-        if (tokenIn == weth_ && tokenOut == st_) return amountOut;
-        if (tokenIn == weth_ && tokenOut == wst_) {
-            return IWstETH(wst_).getStETHByWstETH(amountOut);
-        }
+        if (tokenIn == weth_ && tokenOut == st_) return _ethForStakeOut(amountOut, false);
+        if (tokenIn == weth_ && tokenOut == wst_) return _ethForStakeOut(amountOut, true);
 
-        if (tokenIn == st_ && tokenOut == weth_) return amountOut;
-        if (tokenIn == wst_ && tokenOut == weth_) {
-            return IWstETH(wst_).getWstETHByStETH(amountOut);
-        }
+        if (tokenIn == st_ && tokenOut == weth_) return _ethToAssetUp(st_, amountOut);
+        if (tokenIn == wst_ && tokenOut == weth_) return _ethToAssetUp(wst_, amountOut);
 
         revert InvalidRoute(tokenIn, tokenOut);
     }
@@ -278,28 +440,75 @@ abstract contract LidoWstETHStandardExchangeCommon is ILidoWstETHStandardVault, 
     /*                         Execution helpers                               */
     /* ---------------------------------------------------------------------- */
 
+    function _bookedReserve(IERC20 token) internal view returns (uint256) {
+        return MultiAssetBasicVaultRepo._reserveOfToken(address(token));
+    }
+
+    function _pretransferCredit(IERC20 token, uint256 maximum) internal view returns (uint256) {
+        return
+            LocalCreditLib.budget(
+                LocalCreditLib.available(token.balanceOf(address(this)), _bookedReserve(token)), maximum
+            );
+    }
+
+    function _refundExactOutCredit(IERC20 token, uint256 credit, uint256 used, bool pretransferred) internal {
+        if (!pretransferred) return;
+        if (used > credit) revert ISecurePullErrors.TransferDeltaInsufficient(used, credit);
+        if (credit > used) {
+            uint256 unusedU = LocalCreditLib.available(token.balanceOf(address(this)), _bookedReserve(token));
+            uint256 refund = credit - used;
+            if (refund > unusedU) refund = unusedU;
+            if (refund > 0) token.safeTransfer(msg.sender, refund);
+        }
+    }
+
+    function _syncAllExpectedHoldReserves() internal {
+        address[] memory tokens = MultiAssetBasicVaultRepo._vaultTokens();
+        for (uint256 i; i < tokens.length; ++i) {
+            IERC20 t = IERC20(tokens[i]);
+            MultiAssetBasicVaultRepo._updateReserve(t, t.balanceOf(address(this)));
+        }
+    }
+
+    /// @dev D47/D30: pause reports capacity 0; otherwise the live stake limit. View reverts propagate.
+    function _lidoStakeCapacity() internal view returns (uint256) {
+        IStETH st = IStETH(stETH());
+        if (st.isStakingPaused()) return 0;
+        return st.getCurrentStakeLimit();
+    }
+
     /**
      * @dev Securely obtain `amountIn` of `token` for this call.
-     *      - !pretransferred: transferFrom and use balance delta (fee-on-transfer safe).
-     *      - pretransferred: require a positive balance delta in this call.
+     *      - !pretransferred: transferFrom; measured delta must equal `amountIn`.
+     *      - pretransferred: contract caller only; credit exactly `amountIn` from unbooked available.
      */
-    function _securePull(IERC20 token, uint256 amountIn, bool pretransferred)
-        internal
-        returns (uint256 actualIn)
-    {
+    function _securePull(IERC20 token, uint256 amountIn, bool pretransferred) internal returns (uint256 actualIn) {
+        if (pretransferred) {
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+            uint256 avail = LocalCreditLib.available(token.balanceOf(address(this)), _bookedReserve(token));
+            if (amountIn > avail) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, avail);
+            }
+            return amountIn;
+        }
+        if (address(token) == stETH()) return _pullNativeSt(amountIn);
         uint256 before = token.balanceOf(address(this));
-        if (!pretransferred) {
-            token.safeTransferFrom(msg.sender, address(this), amountIn);
-        }
-        actualIn = token.balanceOf(address(this)) - before;
-        if (actualIn > amountIn) {
-            actualIn = amountIn;
-        }
-        if (actualIn == 0) {
-            revert InsufficientDeposit(amountIn, 0);
-        }
-        if (pretransferred && actualIn < amountIn) {
-            revert InsufficientDeposit(amountIn, actualIn);
+        token.safeTransferFrom(msg.sender, address(this), amountIn);
+        uint256 delta = token.balanceOf(address(this)) - before;
+        if (delta != amountIn) revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, delta);
+        return amountIn;
+    }
+
+    function _pullNativeSt(uint256 amountIn) private returns (uint256 received) {
+        IStETH st = IStETH(stETH());
+        uint256 beforeShares = st.sharesOf(address(this));
+        uint256 expectedShares = st.getSharesByPooledEth(amountIn);
+        uint256 expectedReceived = _stReceivedAt(beforeShares, amountIn);
+        uint256 beforeBalance = st.balanceOf(address(this));
+        IERC20(address(st)).safeTransferFrom(msg.sender, address(this), amountIn);
+        received = st.balanceOf(address(this)) - beforeBalance;
+        if (st.sharesOf(address(this)) != beforeShares + expectedShares || received != expectedReceived) {
+            revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, received);
         }
     }
 
@@ -321,7 +530,7 @@ abstract contract LidoWstETHStandardExchangeCommon is ILidoWstETHStandardVault, 
     }
 
     /// @dev Pay `amount` of asset to recipient from vault inventory (WETH liquid / wst unlock).
-    function _payAsset(address token, uint256 amount, address recipient) internal {
+    function _payAsset(address token, uint256 amount, address recipient) internal returns (uint256 delivered) {
         address weth_ = weth();
         address st_ = stETH();
         address wst_ = wstETH();
@@ -329,21 +538,17 @@ abstract contract LidoWstETHStandardExchangeCommon is ILidoWstETHStandardVault, 
         if (token == weth_) {
             _requireLiquidWeth(amount);
             IERC20(weth_).safeTransfer(recipient, amount);
-            return;
+            return amount;
         }
         if (token == wst_) {
             _requireLockedWst(amount);
             IERC20(wst_).safeTransfer(recipient, amount);
-            return;
+            return amount;
         }
         if (token == st_) {
-            // Unlock via wstETH unwrap
-            uint256 wstNeeded = IWstETH(wst_).getWstETHByStETH(amount);
-            _requireLockedWst(wstNeeded);
-            uint256 stOut = IWstETH(wst_).unwrap(wstNeeded);
-            if (stOut < amount) revert Slippage();
-            IERC20(st_).safeTransfer(recipient, stOut);
-            return;
+            delivered = _unwrapAndPaySt(_wrappedForStDeliveryUp(amount), recipient);
+            if (delivered < amount) revert Slippage();
+            return delivered;
         }
         revert InvalidRoute(address(0), token);
     }
@@ -371,16 +576,12 @@ abstract contract LidoWstETHStandardExchangeCommon is ILidoWstETHStandardVault, 
 
         // wstETH → stETH unwrap
         if (tokenIn == wst_ && tokenOut == st_) {
-            produced = IWstETH(wst_).unwrap(amountIn);
-            IERC20(st_).safeTransfer(recipient, produced);
-            return produced;
+            return _unwrapAndPaySt(amountIn, recipient);
         }
 
         // WETH → stETH (stake)
         if (tokenIn == weth_ && tokenOut == st_) {
-            produced = _stakeWethToStEth(amountIn);
-            IERC20(st_).safeTransfer(recipient, produced);
-            return produced;
+            return _transferSt(_stakeWethToStEth(amountIn), recipient);
         }
 
         // WETH → wstETH (stake + wrap)
@@ -395,8 +596,7 @@ abstract contract LidoWstETHStandardExchangeCommon is ILidoWstETHStandardVault, 
         // stETH → WETH: keep st as locked (wrap) and pay liquid
         if (tokenIn == st_ && tokenOut == weth_) {
             IERC20(st_).forceApprove(wst_, amountIn);
-            IWstETH(wst_).wrap(amountIn);
-            produced = amountIn; // eth face
+            produced = _stEthFromWstEth(IWstETH(wst_).wrap(amountIn));
             _requireLiquidWeth(produced);
             IERC20(weth_).safeTransfer(recipient, produced);
             return produced;

@@ -12,6 +12,8 @@ import {IRebasingAwareERC4626} from
     "contracts/protocols/staking/rebasingVault/IRebasingAwareERC4626.sol";
 import {RebasingAwareOracle} from
     "test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareOracle.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 
 contract RebasingAwareERC4626_StandardExchange is TestBase_RebasingAwareERC4626 {
     function _se() internal view returns (IStandardExchangeIn) {
@@ -115,13 +117,18 @@ contract RebasingAwareERC4626_StandardExchange is TestBase_RebasingAwareERC4626 
         vm.prank(alice);
         IERC20(address(vault)).transfer(address(vault), shares / 2);
         uint256 P = IERC20(address(vault)).balanceOf(address(vault));
-        uint256 aliceBefore = IERC20(address(vault)).balanceOf(alice);
         vm.prank(alice);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         _se().exchangeIn(
             IERC20(address(vault)), burnAmt, IERC20(address(asset)), 0, bob, true, block.timestamp
         );
-        assertEq(IERC20(address(vault)).balanceOf(address(vault)), 0);
-        assertEq(IERC20(address(vault)).balanceOf(alice), aliceBefore + (P - burnAmt));
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));
+        _se().exchangeIn(
+            IERC20(address(vault)), burnAmt, IERC20(address(asset)), 0, bob, true, block.timestamp
+        );
+        assertEq(IERC20(address(vault)).balanceOf(address(vault)), P - burnAmt);
+        assertEq(IERC20(address(vault)).balanceOf(address(caller)), 0);
     }
 
     function test_API04_invalidRouteReverts() public {
@@ -137,8 +144,12 @@ contract RebasingAwareERC4626_StandardExchange is TestBase_RebasingAwareERC4626 
     }
 
     function test_API04_expiredDeadlineReverts() public {
+        // R2.4: pin the typed selector — `RebasingAwareERC4626Common.requireDeadline` reverts
+        // `IStandardExchangeErrors.DeadlineExceeded(deadline, block.timestamp)` (0x24bf66c5).
         vm.prank(alice);
-        vm.expectRevert();
+        vm.expectRevert(
+            abi.encodeWithSelector(IStandardExchangeErrors.DeadlineExceeded.selector, block.timestamp - 1, block.timestamp)
+        );
         _se().exchangeIn(
             IERC20(address(asset)), 1e18, IERC20(address(vault)), 0, alice, false, block.timestamp - 1
         );
@@ -170,7 +181,7 @@ contract RebasingAwareERC4626_StandardExchange is TestBase_RebasingAwareERC4626 
         );
         assertEq(out, preview);
         vm.prank(alice);
-        vm.expectRevert();
+        vm.expectPartialRevert(bytes4(keccak256("MinAmountNotMet(uint256,uint256)")));
         _se().exchangeIn(
             IERC20(address(asset)),
             1e18,
@@ -192,7 +203,7 @@ contract RebasingAwareERC4626_StandardExchange is TestBase_RebasingAwareERC4626 
         );
         assertEq(paid, need);
         vm.prank(alice);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("MaxAmountExceeded(uint256,uint256)", need - 1, need));
         _seOut().exchangeOut(
             IERC20(address(asset)),
             need - 1,
@@ -215,8 +226,19 @@ contract RebasingAwareERC4626_StandardExchange is TestBase_RebasingAwareERC4626 
         uint256 V = _virtualShares(DEFAULT_OFFSET);
         uint256 assetsOut = 3e18;
         uint256 B = RebasingAwareOracle.sharesForWithdraw(assetsOut, A, S, V);
-        uint256 aliceBefore = IERC20(address(vault)).balanceOf(alice);
         vm.prank(alice);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        _seOut().exchangeOut(
+            IERC20(address(vault)),
+            P,
+            IERC20(address(asset)),
+            assetsOut,
+            bob,
+            true,
+            block.timestamp
+        );
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));
         uint256 burned = _seOut().exchangeOut(
             IERC20(address(vault)),
             P,
@@ -228,12 +250,61 @@ contract RebasingAwareERC4626_StandardExchange is TestBase_RebasingAwareERC4626 
         );
         assertEq(burned, B);
         assertEq(IERC20(address(vault)).balanceOf(address(vault)), 0);
-        assertEq(IERC20(address(vault)).balanceOf(alice), aliceBefore + (P - B));
+        assertEq(IERC20(address(vault)).balanceOf(address(caller)), P - B);
         assertEq(asset.balanceOf(bob), 1_000_000e18 + assetsOut);
     }
 
+    function test_APEX003_eoaSharePretransferRejected() public {
+        vm.prank(alice);
+        uint256 shares = vault.deposit(20e18, alice);
+        vm.prank(alice);
+        IERC20(address(vault)).transfer(address(vault), shares);
+        vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        _se().exchangeIn(
+            IERC20(address(vault)), 1e11, IERC20(address(asset)), 0, attacker, true, block.timestamp
+        );
+    }
+
+    function test_APEX003_contractExactInBurnsRequestedOnly() public {
+        vm.prank(alice);
+        uint256 shares = vault.deposit(50e18, alice);
+        vm.prank(alice);
+        IERC20(address(vault)).transfer(address(vault), shares);
+        uint256 resting = IERC20(address(vault)).balanceOf(address(vault));
+        uint256 burnAmt = resting / 10;
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        bytes memory data = abi.encodeCall(
+            IStandardExchangeIn.exchangeIn,
+            (IERC20(address(vault)), burnAmt, IERC20(address(asset)), 0, address(caller), true, block.timestamp)
+        );
+        uint256 assetsOut = abi.decode(caller.execute(address(vault), data), (uint256));
+        assertGt(assetsOut, 0);
+        assertEq(IERC20(address(vault)).balanceOf(address(vault)), resting - burnAmt);
+        assertEq(IERC20(address(vault)).balanceOf(address(caller)), 0);
+    }
+
+    /// @notice R5.2 (2026-09-23): the exact-in share pretransfer shortfall reverts with the exact
+    ///         `TransferDeltaInsufficient(amountIn, selfShareBalance)` from a contract caller.
+    function test_APEX003_contractExactInShortfall_revertsExactArgs() public {
+        vm.prank(alice);
+        uint256 shares = vault.deposit(50e18, alice);
+        vm.prank(alice);
+        IERC20(address(vault)).transfer(address(vault), shares);
+        uint256 resting = IERC20(address(vault)).balanceOf(address(vault));
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, resting + 1, resting)
+        );
+        IStandardExchangeIn(address(vault)).exchangeIn(
+            IERC20(address(vault)), resting + 1, IERC20(address(asset)), 0, address(caller), true, block.timestamp
+        );
+        assertEq(IERC20(address(vault)).balanceOf(address(vault)), resting, "resting shares untouched");
+    }
+
     function test_previewPositiveInvalidRouteReverts() public {
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("InvalidRoute(address,address)", address(asset), address(asset)));
         _se().previewExchangeIn(IERC20(address(asset)), 1e18, IERC20(address(asset)));
     }
 

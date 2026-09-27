@@ -15,6 +15,7 @@ import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
 import {DETFFundedStakingMath as Math} from "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol";
 import {IDetfNftReserveDonation} from "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {FundedPrimaryRouteAssertions} from "contracts/test/bases/FundedPrimaryRouteAssertions.sol";
 import {TestBase_MixedBufferMultiVaultStableDetf} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/TestBase_MixedBufferMultiVaultStableDetf.sol";
 import {IMixedBufferMultiVaultStableDetfBonding} from "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/IMixedBufferMultiVaultStableDetfBonding.sol";
@@ -147,14 +148,15 @@ contract MixedBufferMultiVaultStableDetf_ReserveDonation is TestBase_MixedBuffer
         _assertRolePositions();
     }
     function test_N7_idetf_forwarder_donorIsCollector() public virtual {
-        address collector_ = makeAddr("collector"); uint256 amt_ = _fixtureAmount(8e18);
-        _fundBuffer(collector_, amt_);
+        AtomicPretransferCaller collector_ = new AtomicPretransferCaller();
+        uint256 amt_ = _fixtureAmount(8e18);
+        _fundBuffer(address(collector_), amt_);
         uint256 before_ = _lpHeld(); bytes memory funded_ = _fundedState();
         address nft_ = address(_nft());
-        vm.prank(collector_); buffer.transfer(nft_, amt_);
+        collector_.execute(address(buffer), abi.encodeCall(IERC20.transfer, (nft_, amt_)));
         vm.expectEmit(true, true, false, false, address(_nft()));
-        emit IDetfNftReserveDonation.ReserveDonated(collector_, address(buffer), amt_, 0);
-        vm.prank(collector_); IDetf(detf).donate(buffer, amt_, true);
+        emit IDetfNftReserveDonation.ReserveDonated(address(collector_), address(buffer), amt_, 0);
+        collector_.execute(detf, abi.encodeCall(IDetf.donate, (buffer, amt_, true)));
         assertGt(_lpHeld(), before_); assertEq(_fundedState(), funded_);
     }
     function test_N8_joinDonatedCapital_eoaReverts() public virtual {

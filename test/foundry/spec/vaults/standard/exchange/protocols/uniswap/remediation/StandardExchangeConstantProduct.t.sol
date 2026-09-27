@@ -82,4 +82,59 @@ contract StandardExchangeConstantProductTest is Test {
     function initialShares(uint256 a,uint256 b,uint256 minimum) external pure returns(uint256) {
         return CP._initialShares(a,b,minimum);
     }
+
+    /* ------------------- D64 exact-out mint (`_amountInForShares`) ------------------- */
+
+    function amountInForShares(uint256 rIn, uint256 rOther, uint256 sharesOut, uint256 supply)
+        external pure returns (uint256)
+    {
+        return CP._amountInForShares(rIn, rOther, sharesOut, supply);
+    }
+
+    /// @dev The single-token deposit forward for a token0-in deposit: amount1Added == 0.
+    function _fwdSingle(uint256 amountIn, uint256 rIn, uint256 rOther, uint256 supply)
+        internal pure returns (uint256)
+    {
+        return CP._sharesForDeposit(amountIn, 0, supply, rIn, rOther);
+    }
+
+    /// @notice D64: the closed-form inverse returns an input whose forward quote is at least the
+    ///         requested shares (no dilution), and it is tight (one wei less falls short) on the
+    ///         invariant branch. Reference values plus the two structural branches.
+    function test_amountInForShares_referenceAndRoundTrip() public pure {
+        // Invariant branch: (100, 10000), supply 100. Ask 5 shares.
+        uint256 rIn = 100 ether; uint256 rOther = 10000 ether; uint256 supply = 100 ether;
+        uint256 want = 5 ether;
+        uint256 need = CP._amountInForShares(rIn, rOther, want, supply);
+        assertGt(need, 0, "positive input");
+        assertGe(_fwdSingle(need, rIn, rOther, supply), want, "forward of the closed-form input meets the request");
+
+        // Linear branch: the paired reserve is empty, forward is mulDiv(amountIn, supply, rIn).
+        assertEq(CP._amountInForShares(1000, 0, 10, 1000), 10, "linear: ceil(10*1000/1000)=10");
+        assertEq(CP._amountInForShares(100000, 0, 3, 1000), 300, "linear: ceil(3*100000/1000)=300");
+        // Linear ceil: ask needs rounding up so the forward is not short.
+        uint256 linNeed = CP._amountInForShares(1000, 0, 7, 999);
+        assertGe(_fwdSingle(linNeed, 1000, 0, 999), 7, "linear inverse is sufficient");
+    }
+
+    function test_amountInForShares_revertsWhereNoClosedForm() public {
+        // First mint (supply 0) has no single-token closed form.
+        vm.expectRevert(CP.InsufficientBacking.selector); this.amountInForShares(100, 100, 1, 0);
+        // Depositing into an empty same-side reserve yields zero shares for any input.
+        vm.expectRevert(CP.InsufficientBacking.selector); this.amountInForShares(0, 100, 1, 100);
+        // Zero shares requested is a no-op (zero input), never a revert.
+        assertEq(CP._amountInForShares(100, 100, 0, 100), 0, "zero request -> zero input");
+    }
+
+    function testFuzz_amountInForSharesIsSufficient(uint96 x, uint96 y, uint96 supply, uint96 requested) public pure {
+        uint256 rIn = bound(uint256(x), 1e3, 1e27);
+        uint256 rOther = bound(uint256(y), 1e3, 1e27);
+        uint256 s = bound(uint256(supply), 1e3, 1e27);
+        // Keep the request within a sane fraction of supply so the input stays representable.
+        uint256 want = bound(uint256(requested), 1, s);
+        uint256 need = CP._amountInForShares(rIn, rOther, want, s);
+        assertGt(need, 0, "positive input for a positive request");
+        // No dilution: minting exactly `want` against `need` booked is backed by the forward quote.
+        assertGe(_fwdSingle(need, rIn, rOther, s), want, "forward of the closed-form input is never short");
+    }
 }

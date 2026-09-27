@@ -26,6 +26,9 @@ import {IIndexedexManagerProxy} from "contracts/interfaces/proxies/IIndexedexMan
  * @notice Library for deploying Slipstream Standard Exchange components via CREATE3.
  * @author cyotee doge <doge.cyotee>
  */
+/// @custom:deprecated APEX D57 (owner ruling 2026-09-21): the Slipstream Standard Exchange is deprecated entirely.
+///         It has no share-to-token route; do not wire it into launch scripts or the vault registry. Sources stay
+///         compiling until a separate deletion request. See docs/audits/apex-2026-09-17-remediation-and-regression-tests.plan.md.
 library Slipstream_Component_FactoryService {
     using BetterEfficientHashLib for bytes;
 
@@ -41,6 +44,19 @@ library Slipstream_Component_FactoryService {
             abi.encode("SlipstreamStandardExchangeInFacet")._hash()
         );
         vm.label(address(instance), "SlipstreamStandardExchangeInFacet");
+    }
+
+    function deploySlipstreamStandardExchangeInFacetExt(ICreate3FactoryProxy create3Factory)
+        internal
+        returns (IFacet instance)
+    {
+        instance = create3Factory.deployFacet(
+            ArtifactCreationCode.creationCode(
+                "SlipstreamStandardExchangeInFacetExt.sol:SlipstreamStandardExchangeInFacetExt"
+            ),
+            abi.encode("SlipstreamStandardExchangeInFacetExt")._hash()
+        );
+        vm.label(address(instance), "SlipstreamStandardExchangeInFacetExt");
     }
 
     function deploySlipstreamStandardExchangeOutFacet(ICreate3FactoryProxy create3Factory)

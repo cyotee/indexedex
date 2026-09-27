@@ -42,6 +42,25 @@ abstract contract UniswapV4FullSpreadStandardExchangeVaultOutBase is
     error UniswapV4ExchangeOut_SlippageExceeded();
     error UniswapV4ExchangeOut_InsufficientInput();
 
+    /// @notice Minimal single-token input to mint exactly `sharesOut` (D64 exact-out mint).
+    /// @dev Inverts the single-token deposit branch against the same total-reserve basis the
+    /// deposit preview uses, so preview and execution agree. Reverts `InsufficientBacking` when
+    /// no closed form exists (empty book, or the deposited-side reserve is zero).
+    function _amountInForZapMint(address tokenIn, uint256 sharesOut) internal view returns (uint256) {
+        return _amountInForZapMint(tokenIn, sharesOut, 0);
+    }
+
+    /// @dev Bounded prepaid input (including the part to refund) is not pre-deposit backing.
+    function _amountInForZapMint(address tokenIn, uint256 sharesOut, uint256 prepaidCredit)
+        internal view returns (uint256)
+    {
+        uint256 supply = IERC20(address(this)).totalSupply();
+        (uint256 reserve0, uint256 reserve1) = _totalVaultReserves();
+        return tokenIn == _token0()
+            ? StandardExchangeConstantProduct._amountInForShares(reserve0 - prepaidCredit, reserve1, sharesOut, supply)
+            : StandardExchangeConstantProduct._amountInForShares(reserve1 - prepaidCredit, reserve0, sharesOut, supply);
+    }
+
     function _previewZapOutWithdrawal(address tokenOut, uint256 desiredAmountOut)
         internal
         view

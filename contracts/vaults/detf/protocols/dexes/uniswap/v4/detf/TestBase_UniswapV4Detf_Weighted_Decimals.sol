@@ -28,6 +28,7 @@ import {
     IUniswapV4Detf
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 import {TestBase_UniswapV4Detf_Decimals} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Decimals.sol";
 
@@ -89,11 +90,11 @@ abstract contract TestBase_UniswapV4Detf_Weighted_Decimals is TestBase_UniswapV4
 
     function _deployWeightedHookPkg() internal {
         IFacet hooksFacet = WeightedFactory.deployHooksFacet(create3Factory);
-        IFacet joinFacet = WeightedFactory.deployJoinFacet(create3Factory);
+        IFacet joinFacet = WeightedFactory.deployLiquidityFacet(create3Factory);
         IFacet exitFacet = WeightedFactory.deployExitFacet(create3Factory);
         IFacet seFacet = WeightedFactory.deploySeFacet(create3Factory);
         weightedHookPkg = WeightedFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, IUniswapV4StandardExchangeWeightedBufferHookPackage.PkgInit({
-                joinQueryFacet: WeightedFactory.deployJoinQueryFacet(create3Factory),
+                joinQueryFacet: WeightedFactory.deployLiquidityFacetExt(create3Factory),
                 joinFlexibleFacet: WeightedFactory.deployJoinFlexibleFacet(create3Factory),
                 exitQueryFacet: WeightedFactory.deployExitQueryFacet(create3Factory),
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
@@ -141,7 +142,7 @@ abstract contract TestBase_UniswapV4Detf_Weighted_Decimals is TestBase_UniswapV4
                 tokens: toks,
                 weights: weights,
                 standardExchanges: ses,
-                rateProviders: rps,
+                rateProviders: RateProviderFixtureLib.providersFor(create3Factory, diamondPackageFactory, toks, ses),
                 tokenDecimals: HookPkgArgsDecimalsLib.tokenDecimals(toks, predicted_),
                 seDecimals: HookPkgArgsDecimalsLib.seDecimals(ses),
                 ownerOnlyLiquidity: args.ownerOnlyLiquidity,

@@ -56,6 +56,7 @@ contract AaveCrossVersionLoopE2E_Test is TestBase_AaveCrossVersionLoopV3Market {
         IFacet outFacet = create3Factory.deployExchangeOutFacet();
         IFacet rebalFacet = create3Factory.deployRebalanceFacet();
         IFacet markerFacet = create3Factory.deployMarkerFacet();
+        IFacet transitionQuoteFacet = create3Factory.deployTransitionQuoteFacet();
 
         IAaveCrossVersionLoopDFPkg.PkgInit memory pkgInit = IAaveCrossVersionLoopDFPkg.PkgInit({
             erc20Facet: erc20Facet,
@@ -67,6 +68,7 @@ contract AaveCrossVersionLoopE2E_Test is TestBase_AaveCrossVersionLoopV3Market {
             exchangeOutFacet: outFacet,
             rebalanceFacet: rebalFacet,
             markerFacet: markerFacet,
+            transitionQuoteFacet: transitionQuoteFacet,
             v36Pool: v36Pool,
             v36AddressesProvider: IPoolAddressesProvider(v36AddressesProvider),
             v36Oracle: IAaveOracle(v36Oracle),
@@ -234,18 +236,28 @@ contract AaveCrossVersionLoopE2E_Test is TestBase_AaveCrossVersionLoopV3Market {
         assertEq(tokenA.balanceOf(address(this)), wallet_ + 1);
     }
 
-    function test_nativeSY_unfreeableExitRevertsWithoutNewBorrowing() public {
+    /// @notice D61 (2026-09-23): a full single-token exit is now freeable through a proportional unwind
+    ///         (it was the F8 defect that it was not). Redeeming the whole balance to tokenA succeeds, repays
+    ///         both debts toward zero and never borrows; an exact-out ask beyond the whole position still
+    ///         reverts AmountOutNotMet (the never-borrow envelope), the pre-D61 unfreeable case.
+    function test_nativeSY_fullSingleTokenExitUnwindsProportionally() public {
         IStandardizedYield sy_ = _fundedSY();
         uint256 shares_ = sy_.balanceOf(address(this));
         uint256 debtV3_ = AaveV36Service.debtOf(v36Pool, address(tokenB), vault);
-        uint256 debtV4_ = AaveV4Service.debtOf(v4Spoke, v4ReserveIdA, vault);
+        uint256 out_ = sy_.previewRedeem(address(tokenA), shares_);
+        assertGt(out_, 0, "full exit is freeable");
+        uint256 wallet_ = tokenA.balanceOf(address(this));
+        assertEq(sy_.redeem(address(this), shares_, address(tokenA), out_, false), out_);
+        assertEq(tokenA.balanceOf(address(this)), wallet_ + out_, "received the full claim");
+        // Every redeemable share is burned; only the permanent first-deposit MINIMUM_LIQUIDITY lock
+        // (1000 wei at address(1), decision 21) is unredeemable and stays behind.
+        assertEq(sy_.totalSupply(), 1000, "only the permanent MINIMUM_LIQUIDITY lock remains");
+        assertLe(AaveV36Service.debtOf(v36Pool, address(tokenB), vault), debtV3_, "debt repaid, never borrowed");
+        // An exact-out ask beyond the whole position is still unfreeable.
+        IStandardizedYield fresh_ = _fundedSY();
+        uint256 whole_ = fresh_.previewRedeem(address(tokenA), fresh_.balanceOf(address(this)));
         vm.expectPartialRevert(IStandardExchangeErrors.AmountOutNotMet.selector);
-        sy_.previewRedeem(address(tokenA), shares_);
-        vm.expectPartialRevert(IStandardExchangeErrors.AmountOutNotMet.selector);
-        sy_.redeem(address(this), shares_, address(tokenA), 0, false);
-        assertEq(sy_.balanceOf(address(this)), shares_);
-        assertEq(AaveV36Service.debtOf(v36Pool, address(tokenB), vault), debtV3_);
-        assertEq(AaveV4Service.debtOf(v4Spoke, v4ReserveIdA, vault), debtV4_);
+        IStandardExchangeOut(vault).previewExchangeOut(IERC20(vault), tokenA, whole_ * 3);
     }
 
     function test_pretransferredInventoryCannotFundPublicDepositOrWithdrawal() public {
@@ -275,8 +287,10 @@ contract AaveCrossVersionLoopE2E_Test is TestBase_AaveCrossVersionLoopV3Market {
         assertEq(sy_.redeem(address(this), shares_, address(tokenA), output_, internal_), output_);
         assertEq(tokenA.balanceOf(address(this)), wallet_ + output_);
         assertEq(sy_.totalSupply(), supply_ - shares_);
-        assertEq(AaveV36Service.debtOf(v36Pool, address(tokenB), vault), v3Debt_, "exit must not borrow on V3");
-        assertEq(AaveV4Service.debtOf(v4Spoke, v4ReserveIdA, vault), v4Debt_, "exit must not borrow on V4");
+        // D61: a pro-rata exit is a proportional unwind — it repays phi of each debt, never borrows, so
+        // both debts are non-increasing and the remaining position's LTV never rises.
+        assertLe(AaveV36Service.debtOf(v36Pool, address(tokenB), vault), v3Debt_, "exit does not borrow on V3");
+        assertLe(AaveV4Service.debtOf(v4Spoke, v4ReserveIdA, vault), v4Debt_, "exit does not borrow on V4");
     }
 
     function _actualNav() private view returns (uint256) {
