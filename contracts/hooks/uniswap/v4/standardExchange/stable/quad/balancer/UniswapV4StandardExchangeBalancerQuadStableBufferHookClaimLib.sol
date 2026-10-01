@@ -5,9 +5,12 @@ import {UniswapV4StandardExchangeBalancerQuadStableBufferHookRepo as Repo} from 
 import {UniswapV4StandardExchangeBalancerQuadStableBufferHookMath as Math} from "./UniswapV4StandardExchangeBalancerQuadStableBufferHookMath.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
+import {UniswapV4SeBufferHookContextQuoteLib as ContextQuote} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookContextQuoteLib.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardExchangeTransitionQuote as Transition} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IRateProvider} from
     "@crane/contracts/protocols/dexes/balancer/common/interfaces/IRateProvider.sol";
@@ -27,7 +30,7 @@ library UniswapV4StandardExchangeBalancerQuadStableBufferHookClaimLib {
     error RateProviderRequired();
     error SeInvertUnavailable();
 
-    function ratedPairUnits(uint8 i) external view returns (uint256) {
+    function ratedPairUnits(uint8 i) public view returns (uint256) {
         Repo.Layout storage l = Repo._layout();
         address se = l.standardExchanges[i];
         address rp = l.rateProviders[i];
@@ -48,6 +51,147 @@ library UniswapV4StandardExchangeBalancerQuadStableBufferHookClaimLib {
     ///         rated conversions read the share metadata directly.
     function shareScale(address se) public view returns (uint256) {
         return Math.baseScaleFromDecimals(IERC20Metadata(se).decimals());
+    }
+
+    function nativeForRatedWad(uint8 i, uint256 wad, bool roundUp) public view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        if (l.rateProviders[i] == address(0)) revert RateProviderRequired();
+        FullMath.Rounding rounding = roundUp ? FullMath.Rounding.Ceil : FullMath.Rounding.Floor;
+        uint256 sharesWad = FullMath.mulDiv(wad, 1e18, _readRate(l.rateProviders[i]), rounding);
+        return FullMath.mulDiv(sharesWad, 1e18, shareScale(l.standardExchanges[i]), rounding);
+    }
+
+    function ratedWadForNativeUp(uint8 i, uint256 shares) public view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        if (l.rateProviders[i] == address(0)) revert RateProviderRequired();
+        uint256 wad = FullMath.mulDiv(shares, shareScale(l.standardExchanges[i]), 1e18, FullMath.Rounding.Ceil);
+        return FullMath.mulDiv(wad, _readRate(l.rateProviders[i]), 1e18, FullMath.Rounding.Ceil);
+    }
+
+    function _nativeAt(uint8 i) private view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        return IERC20(l.standardExchanges[i] == address(0) ? l.tokens[i] : l.standardExchanges[i]).balanceOf(address(this));
+    }
+
+    function quoteSwapExactIn(uint8 i, uint8 j, uint256[] memory rated, uint256 inflow, uint256 amp)
+        external view returns (uint256 amountOut, uint256 sharesOut)
+    {
+        return quoteSwapExactInContext(i, j, rated, inflow, amp, address(0));
+    }
+
+    function quoteSwapExactInContext(uint8 i, uint8 j, uint256[] memory rated, uint256 inflow, uint256 amp, address manager)
+        public view returns (uint256 amountOut, uint256 sharesOut)
+    {
+        Repo.Layout storage l = Repo._layout();
+        if (inflow == 0) revert Math.ZeroAmount();
+        uint256 budget = Math.quoteExactInRated(rated, i, j, inflow, amp);
+        if (budget >= rated[j]) revert Math.WouldZeroReserve();
+        return _outputBudget(j, budget, manager);
+    }
+
+    function _outputBudget(uint8 j, uint256 budget, address manager) private view returns (uint256 amountOut, uint256 sharesOut) {
+        Repo.Layout storage l = Repo._layout();
+        address se = l.standardExchanges[j];
+        if (se != address(0) && se != l.tokens[j]) {
+            if (manager == address(0)) sharesOut = nativeForRatedWad(j, budget, false);
+            else sharesOut = FullMath.mulDiv(FullMath.mulDiv(budget, 1e18,
+                ContextQuote.rate(se, l.tokens[j], l.rateProviders[j], manager)), 1e18, shareScale(se));
+            if (sharesOut >= _nativeAt(j)) revert Math.WouldZeroReserve();
+            if (manager == address(0)) amountOut = sharesOut == 0 ? 0 : IStandardExchangeIn(se).previewExchangeIn(IERC20(se), sharesOut, IERC20(l.tokens[j]));
+            else (amountOut,) = ContextQuote.redeem(se, l.tokens[j], address(this), sharesOut, manager);
+        } else {
+            amountOut = Math.descale(budget, l.ratedScales[j]);
+            if (amountOut >= _nativeAt(j)) revert Math.WouldZeroReserve();
+        }
+        if (amountOut == 0) revert Math.ZeroAmount();
+    }
+
+    function ratedWadAllWithContext(address manager) external view returns (uint256[] memory values) {
+        Repo.Layout storage l = Repo._layout();
+        values = new uint256[](Repo._numTokens());
+        for (uint8 i; i < values.length; ++i) {
+            address se = l.standardExchanges[i];
+            uint256 units;
+            if (se == address(0) || se == l.tokens[i]) units = ratedPairUnits(i);
+            else {
+                if (l.rateProviders[i] == address(0)) revert RateProviderRequired();
+                units = Math.ratedPairUnits(IERC20(se).balanceOf(address(this)), ContextQuote.rate(se, l.tokens[i], l.rateProviders[i], manager), shareScale(se), l.ratedScales[i]);
+            }
+            values[i] = Math.scaleTo(units, l.ratedScales[i]);
+        }
+    }
+
+    function pairInWithContext(uint8 i, uint256 amount, address manager) external view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        address se = l.standardExchanges[i];
+        (uint256 shares,) = ContextQuote.deposit(se, l.tokens[i], address(this), amount, manager);
+        if (shares == 0) return 0;
+        if (l.rateProviders[i] == address(0)) revert RateProviderRequired();
+        return Math.scaleTo(Math.ratedPairUnits(shares, ContextQuote.rate(se, l.tokens[i], l.rateProviders[i], manager), shareScale(se), l.ratedScales[i]), l.ratedScales[i]);
+    }
+
+    function quoteSwapExactOut(uint8 i, uint8 j, uint256[] memory rated, uint256 amountOut, uint256 feeWad, uint256 amp)
+        external view returns (uint256 amountIn)
+    {
+        return quoteSwapExactOutContext(i, j, rated, amountOut, feeWad, amp, address(0));
+    }
+
+    function quoteSwapExactOutContext(uint8 i, uint8 j, uint256[] memory rated, uint256 amountOut, uint256 feeWad, uint256 amp, address manager)
+        public view returns (uint256 amountIn)
+    {
+        uint256 debit = _exactOutputDebit(j, amountOut, manager);
+        uint256 needed = Math.quoteExactOutRated(rated, i, j, debit, amp);
+        amountIn = Math.grossUpExactOut(_inputForRatedContext(i, needed, manager), feeWad);
+        if (amountIn == 0) revert Math.ZeroAmount();
+    }
+
+    function _exactOutputDebit(uint8 j, uint256 amountOut, address manager) private view returns (uint256 debit) {
+        Repo.Layout storage l = Repo._layout();
+        debit = Math.scaleToUp(amountOut, l.ratedScales[j]);
+        address se = l.standardExchanges[j];
+        if (se != address(0) && se != l.tokens[j]) {
+            bytes memory state = ContextQuote.exactOutputState(se, l.tokens[j], manager);
+            uint256 shares = ContextQuote.withdrawFromState(se, l.tokens[j], amountOut, state);
+            if (shares == 0) revert IStandardExchangeOut.ExchangeOutNotAvailable();
+            if (shares >= _nativeAt(j)) revert Math.WouldZeroReserve();
+            if (state.length == 0) return ratedWadForNativeUp(j, shares);
+            uint256 wad = FullMath.mulDiv(shares, shareScale(se), 1e18, FullMath.Rounding.Ceil);
+            debit = FullMath.mulDiv(wad, ContextQuote.rateFromState(se, l.tokens[j], l.rateProviders[j], state), 1e18, FullMath.Rounding.Ceil);
+        } else if (amountOut >= _nativeAt(j)) revert Math.WouldZeroReserve();
+    }
+
+    function _inputForRatedContext(uint8 i, uint256 needed, address manager) private view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        address se = l.standardExchanges[i];
+        bytes memory state = ContextQuote.exactOutputState(se, l.tokens[i], manager);
+        if (state.length == 0) return pairInputForRated(i, needed);
+        uint256 shares = _sharesForRatedContext(i, needed, state);
+        if (shares == 0) return 0;
+        uint256 input = ContextQuote.inputForSharesFromState(se, l.tokens[i], shares, state);
+        if (input == 0) revert SeInvertUnavailable();
+        (,, uint256 minted,) = Transition(se).quoteTransition(state, Transition.Operation.DepositExactIn, input);
+        if (minted < shares) revert SeInvertUnavailable();
+        return input;
+    }
+
+    function _sharesForRatedContext(uint8 i, uint256 needed, bytes memory state) private view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        address se = l.standardExchanges[i];
+        uint256 rate = ContextQuote.rateFromState(se, l.tokens[i], l.rateProviders[i], state);
+        uint256 sharesWad = FullMath.mulDiv(needed, 1e18, rate, FullMath.Rounding.Ceil);
+        return FullMath.mulDiv(sharesWad, 1e18, shareScale(se), FullMath.Rounding.Ceil);
+    }
+
+    function pairInputForRated(uint8 i, uint256 ratedWad) public view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        uint256 pair = Math.descaleUp(ratedWad, l.ratedScales[i]);
+        address se = l.standardExchanges[i];
+        if (se == address(0)) {
+            address rp = l.rateProviders[i];
+            return rp == address(0) ? pair : Math.sharesForPairUnitsUp(pair, _readRate(rp), l.invScales[i], l.ratedScales[i]);
+        }
+        if (se == l.tokens[i]) return pair;
+        return bufferInputForShares(se, l.tokens[i], nativeForRatedWad(i, ratedWad, true));
     }
 
     function getRateFailClosed(address rp) external view returns (uint256 rate) {
@@ -107,16 +251,16 @@ library UniswapV4StandardExchangeBalancerQuadStableBufferHookClaimLib {
         return bufferInputForShares(se, pairToken, sharesOut);
     }
 
-    /// @dev Invert the public deposit quote for SEs without a pair -> shares exact-out route.
-    ///      The returned input is verified to mint the required shares; rounding favors the reserve.
+    /// @dev Context-capable exchanges require their actual inverse in every manager state.
+    /// Non-context legs retain the b019f232 forward-verified compatibility calculation.
     function bufferInputForShares(address se, address pairToken, uint256 sharesOut)
         internal view returns (uint256)
     {
         if (sharesOut == 0) return 0;
+        if (se == pairToken) return sharesOut;
         uint256 high = IStandardExchangeOut(se).previewExchangeOut(IERC20(pairToken), IERC20(se), sharesOut);
-        if (high != 0 && IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), high, IERC20(se)) >= sharesOut) {
-            return high;
-        }
+        if (high != 0 && IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), high, IERC20(se)) >= sharesOut) return high;
+        if (ContextQuote.supported(se)) revert SeInvertUnavailable();
         if (high == 0) high = sharesOut;
         uint256 low;
         while (IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), high, IERC20(se)) < sharesOut) {
@@ -126,11 +270,8 @@ library UniswapV4StandardExchangeBalancerQuadStableBufferHookClaimLib {
         }
         while (high - low > 1) {
             uint256 mid = low + (high - low) / 2;
-            if (IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), mid, IERC20(se)) >= sharesOut) {
-                high = mid;
-            } else {
-                low = mid;
-            }
+            if (IStandardExchangeIn(se).previewExchangeIn(IERC20(pairToken), mid, IERC20(se)) >= sharesOut) high = mid;
+            else low = mid;
         }
         return high;
     }

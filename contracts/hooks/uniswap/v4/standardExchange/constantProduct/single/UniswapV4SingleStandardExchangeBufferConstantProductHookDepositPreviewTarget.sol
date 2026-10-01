@@ -114,6 +114,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
             return _previewSequentialDepositSingle(tokenIn, amountIn);
         }
         (uint256 saleAmt, uint256 otherOut, uint256 kept) = _previewZapSplit(tokenIn, amountIn);
+        if (otherOut == 0 || kept == 0) return 0;
         Repo.Layout storage l = Repo._layout();
         uint256 add0 = tokenIn == l.currency0 ? kept : otherOut;
         uint256 add1 = tokenIn == l.currency0 ? otherOut : kept;
@@ -164,6 +165,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
     function _finishDepositQuote(ZapQuote memory q, uint256 supply_)
         private view returns (uint256 minted_, uint256 finalSupply_)
     {
+        if (q.rawAdded == 0 || q.pairAdded == 0) return (0, supply_);
         Repo.Layout storage l = Repo._layout();
         uint256 x_ = _poolOrderX(q.rawReserve, q.pairReserve);
         uint256 y_ = _poolOrderY(q.rawReserve, q.pairReserve);
@@ -258,7 +260,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         q.pairReserve = ClaimLib.ratedClaimOfState(l.standardExchange, q.state); // D60
         q.rawReserve = IERC20(l.rawToken).balanceOf(address(this));
         if (tokenIn_ == l.rawToken) {
-            (q.state, other_, q.pairReserve) = _quoteZapUnwrap(q.state, other_);
+            uint256 budget_ = Math.fromWadFloor(Math.saleQuote(Math.toWad(sold_, _decimalsOf(l.rawToken)),
+                Math.toWad(q.rawReserve, _decimalsOf(l.rawToken)), Math.toWad(q.pairReserve, _decimalsOf(l.pairToken))), _decimalsOf(l.pairToken));
+            (q.state, other_, q.pairReserve) = _quoteZapUnwrap(q.state, budget_);
             q.rawReserve += sold_;
             q.rawAdded = kept_;
             q.pairAdded = other_;
@@ -327,25 +331,17 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         if (sold == 0 || sold >= amount) sold = amount / 2;
     }
 
-    function _quoteZapUnwrap(bytes memory state_, uint256 wanted_)
+    function _quoteZapUnwrap(bytes memory state_, uint256 budget_)
         private view returns (bytes memory next_, uint256 received_, uint256 claimAfter_)
     {
         Repo.Layout storage l = Repo._layout();
-        uint256 cap_ = _spendableSeShares();
-        uint256 needed_ = type(uint256).max;
-        if (wanted_ > 0) {
-            needed_ = IStandardExchangeOut(l.standardExchange).previewExchangeOut(
-                IERC20(l.standardExchange), IERC20(l.pairToken), wanted_
-            );
-        }
-        IStandardExchangeTransitionQuote.Operation op_ = IStandardExchangeTransitionQuote.Operation.WithdrawExactOut;
-        uint256 amount_ = wanted_;
-        if (needed_ > cap_) {
-            op_ = IStandardExchangeTransitionQuote.Operation.RedeemExactIn;
-            amount_ = cap_;
-        }
+        uint256 held_ = IStandardExchangeTransitionQuote(l.standardExchange).quoteShareBalance(state_);
+        uint256 amount_ = ClaimLib.sharesForPairUnitsDownAtState(budget_, state_);
+        if (amount_ == 0) return (state_, 0, ClaimLib.ratedClaimOfState(l.standardExchange, state_));
+        if (amount_ >= held_) revert InsufficientTokenOut();
         (next_,, received_,) = IStandardExchangeTransitionQuote(l.standardExchange)
-            .quoteTransition(state_, op_, amount_);
+            .quoteTransition(state_, IStandardExchangeTransitionQuote.Operation.RedeemExactIn, amount_);
+        if (received_ == 0) return (state_, 0, ClaimLib.ratedClaimOfState(l.standardExchange, state_));
         claimAfter_ = ClaimLib.ratedClaimOfState(l.standardExchange, next_); // D60
     }
 

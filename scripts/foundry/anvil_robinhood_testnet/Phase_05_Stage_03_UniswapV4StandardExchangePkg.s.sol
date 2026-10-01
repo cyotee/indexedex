@@ -24,7 +24,10 @@ contract Phase_05_Stage_03_UniswapV4StandardExchangePkg is LaunchStageBase {
             UniV4SePkgLib.execute(s);
             vm.stopBroadcast();
         }
-        _exportPkg("p0503", FILE_05_03, "uniV4SePkg", address(s.uniV4SePkg));
+        vm.serializeAddress("p0503", "uniV4SePkg", address(s.uniV4SePkg));
+        vm.serializeString("p0503", "uniV4SePkgName", s.uniV4SePkg.packageName());
+        string memory json = vm.serializeUint("p0503", "chainId", block.chainid);
+        _writeJson(json, FILE_05_03);
         _logAddress("uniV4SePkg:", address(s.uniV4SePkg));
         _logComplete("Phase 05 Stage 03");
     }

@@ -12,6 +12,18 @@ checks = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(checks)
 
 class FeeAccrualChecks(unittest.TestCase):
+    def test_v4_package_resolution_selects_pons_not_hookless(self):
+        filename, key = checks.PACKAGE_MANIFESTS['uniswapV4Se']
+        self.assertEqual(key, 'uniV4PonsSePkg')
+        manifests = self.package_manifests()
+        pons = manifests[filename][key]
+        manifests[filename]['uniV4SePkg'] = '0x' + 'ff' * 20
+        resolved = checks.resolve_package_config({'packages': {}}, manifests)
+        self.assertEqual(resolved['packages']['uniswapV4Se'], pons)
+        del manifests[filename][key]
+        with self.assertRaises((ValueError, KeyError)):
+            checks.resolve_package_config({'packages': {}}, manifests)
+
     def test_script_update_requires_exact_reviewed_pair_and_unchanged_identity(self):
         before = {'scriptSourceSha256': 'old', 'configSha256': 'config', 'instanceId': 'public-4663', 'coreCodeSha256': {'core': 'code'}}
         after = {**before, 'scriptSourceSha256': 'new'}

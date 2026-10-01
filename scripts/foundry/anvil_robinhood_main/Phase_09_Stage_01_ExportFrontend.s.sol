@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {ROBINHOOD_MAIN} from "@crane/contracts/constants/networks/ROBINHOOD_MAIN.sol";
 
 import {LaunchStageBase} from "./LaunchStageBase.sol";
 import {RobinhoodCanonicalLib} from "./RobinhoodCanonicalLib.sol";
@@ -52,6 +53,10 @@ contract Phase_09_Stage_01_ExportFrontend is LaunchStageBase {
         json = vm.serializeAddress("p", "twapOracle", address(s.twapOracle));
         json = vm.serializeAddress("p", "twapAdapterFactory", s.twapAdapterFactory);
         json = vm.serializeAddress("p", "uniV4SePkg", address(s.uniV4SePkg));
+        json = vm.serializeAddress("p", "uniV4PonsSePkg", address(s.uniV4PonsSePkg));
+        json = vm.serializeAddress("p", "uniV4PonsSeHook", ROBINHOOD_MAIN.PONS_V2_MEME_HOOK);
+        json = vm.serializeString("p", "uniV4SePkgName", s.uniV4SePkg.packageName());
+        json = vm.serializeString("p", "uniV4PonsSePkgName", s.uniV4PonsSePkg.packageName());
         json = vm.serializeAddress("p", "uniV2SePkg", s.uniV2SePkg);
         json = vm.serializeAddress("p", "uniV3SePkg", s.uniV3SePkg);
         json = vm.serializeAddress("p", "uniswapV2Factory", RobinhoodCanonicalLib.v2Factory());

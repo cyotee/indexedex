@@ -42,8 +42,24 @@ cap. Keep Astra's successful first pass if the cross-review cannot be obtained.
 Return attributed quality and security findings, dissent, and Astra
 participation. The finished deliverable is a remediation PRD for the errors
 discovered. On any other participant failure, report partial findings and stop
-without substitutes. Do not write the PRD from an incomplete roster except to
-record that the round stopped.
+without substitutes unless the human explicitly authorizes a replacement.
+Operator-authorized replacement: if the human tells you to replace a named reviewer,
+or to change that reviewer's model, do not resume the old session and do not impersonate
+that reviewer. Open a new session of the same named agent with a fresh task call and no
+continuation field. Label every result as a replacement, not continuity. Give it the
+current target and only the prior originals the human says to share. Do not pass the
+old session's compaction history as memory. Do not set a model override on the task
+call; the new session uses the configured pin. A different model requires an operator
+pin change and a fresh OpenCode process, then a new session. Continue cross-review on
+the new session ID. Do not claim the replacement recalls the replaced session. This
+does not change the Astra censorship cap, and a censorship retry is not this replacement.
+A human-authorized Astra replacement still must not request exploit procedures.
+Without that explicit instruction, do not silently substitute, restart, or impersonate
+a missing participant. Do not write the PRD from an incomplete roster except to
+record that the round stopped or that a labeled replacement is in progress.
+Reads and allowed Markdown report edits are permitted. Do not refuse those as if
+the guard banned them. Code, shell, deployments, instruction files, and secrets
+stay denied.
 
 For an explicit targeted question, invoke only the named members and label the
 result as targeted, not council consensus. Astra retries still use the cap.

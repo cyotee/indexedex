@@ -54,6 +54,8 @@ library ArtifactCreationCode {
         private
         returns (bytes memory code_)
     {
+        uint256 scratchStart_;
+        assembly ("memory-safe") { scratchStart_ := mload(0x40) }
         require(depth_ < 32, "ArtifactCreationCode: cyclic or excessive library dependencies");
         string memory json_ = _artifactJson(artifactId_);
         bytes memory hexCode_ = bytes(VM.parseJsonString(json_, ".bytecode.object"));
@@ -71,6 +73,19 @@ library ArtifactCreationCode {
         // parseBytes rejects malformed hex and any unresolved solc placeholders.
         code_ = VM.parseBytes(string(hexCode_));
         require(code_.length != 0, string.concat("ArtifactCreationCode: empty bytecode ", artifactId_));
+        // Only bytecode escapes this call. Compact it over the temporary JSON,
+        // decoded keys and link data so successive fixture deployments do not
+        // retain megabytes of unreachable scratch memory. Caller-owned inputs
+        // and recursive parent data precede scratchStart_ and remain untouched.
+        // Forward copying is safe for overlap because the destination is lower.
+        assembly ("memory-safe") {
+            let size := and(add(mload(code_), 0x3f), not(0x1f))
+            for { let offset := 0 } lt(offset, size) { offset := add(offset, 0x20) } {
+                mstore(add(scratchStart_, offset), mload(add(code_, offset)))
+            }
+            code_ := scratchStart_
+            mstore(0x40, add(scratchStart_, size))
+        }
     }
 
     function _linkSource(

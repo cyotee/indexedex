@@ -356,7 +356,8 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookHooksTarget is Unisw
         returns (uint256 amountOut)
     {
         if (amountIn == 0 || !_isLive()) return 0;
-        return _previewSwapExactIn(tokenIn, tokenOut, amountIn);
+        return _previewSwapExactInContext(tokenIn, tokenOut, amountIn,
+            _feeOracle().dexSwapFeeOfVault(address(this)), Repo._layout().poolManager).amountOut;
     }
 
 
@@ -366,7 +367,8 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookHooksTarget is Unisw
         returns (uint256 amountIn)
     {
         if (amountOut == 0 || !_isLive()) return 0;
-        return _previewSwapExactOut(tokenIn, tokenOut, amountOut);
+        return ClaimLib.previewSwapExactOutContext(tokenIn, tokenOut, amountOut,
+            _feeOracle().dexSwapFeeOfVault(address(this)), Repo._layout().poolManager);
     }
 
     function tokens() public view returns (address[] memory t) {

@@ -11,7 +11,6 @@ import {IERC20MintBurn} from "@crane/contracts/interfaces/IERC20MintBurn.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
-import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/IUniswapV4StandardExchangeDFPkg.sol";
 
 /// @title UniV4SeInstanceLib
 /// @notice Required `DTF`/`TTWETH` SE plus the three SEs that feed `TTDOL-Q`.
@@ -63,6 +62,7 @@ library UniV4SeInstanceLib {
         uint256 seed
     ) private returns (address se, address rp) {
         PoolKey memory key = PoolSeedLib.buildKey(tokenA, tokenB);
+        require(address(key.hooks) == address(0), "hookless pool required");
         PoolSeedLib.initAndSeed(IPoolManager(RobinhoodCanonicalLib.poolManager()), seeder, key, seed, seed);
         se = s.uniV4SePkg.deployVault(key);
         PoolSeedLib.activateStandardExchange(se, key, seed, receiver);

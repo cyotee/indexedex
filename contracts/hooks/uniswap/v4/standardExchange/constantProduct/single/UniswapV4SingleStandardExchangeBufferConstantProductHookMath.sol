@@ -40,6 +40,25 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookMath {
         return FullMath.mulDiv(pairUnits_, denominator_, rate_, FullMath.Rounding.Ceil);
     }
 
+    function sharesForPairUnitsDown(uint256 pairUnits_, uint256 rate_, uint256 invScale_, uint256 ratedScale_)
+        external pure returns (uint256)
+    {
+        if (rate_ == 0) revert MathDomain();
+        uint256 denominator_ = invScale_ <= ratedScale_
+            ? RATE_PRECISION * (ratedScale_ / invScale_)
+            : RATE_PRECISION / (invScale_ / ratedScale_);
+        return FullMath.mulDiv(pairUnits_, denominator_, rate_);
+    }
+
+    function ratedPairUnitsUp(uint256 shares_, uint256 rate_, uint256 invScale_, uint256 ratedScale_)
+        external pure returns (uint256)
+    {
+        uint256 denominator_ = invScale_ <= ratedScale_
+            ? RATE_PRECISION * (ratedScale_ / invScale_)
+            : RATE_PRECISION / (invScale_ / ratedScale_);
+        return FullMath.mulDiv(shares_, rate_, denominator_, FullMath.Rounding.Ceil);
+    }
+
     function toWad(uint256 amount, uint8 decimals) external pure returns (uint256) {
         if (decimals == 18) return amount;
         if (decimals < 18) return amount * (10 ** (18 - decimals));

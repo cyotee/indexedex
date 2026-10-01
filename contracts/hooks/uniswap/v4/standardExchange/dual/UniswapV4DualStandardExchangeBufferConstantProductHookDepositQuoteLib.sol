@@ -128,9 +128,15 @@ library UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib {
         // Split into helpers so the no-via-ir stack stays under the 16-slot limit (D62/F9).
         uint256 sale = _saleAmount(input, amountIn);
         uint256 claimIn = ClaimLib.projectedBufferClaimIn(input.se, input.state, sale);
-        other = _otherFromClaim(input, output, claimIn);
+        uint256 budget = _otherFromClaim(input, output, claimIn);
+        ClaimLib.OutputQuote memory quote;
+        bytes memory nextOutput;
+        (quote, nextOutput) = ClaimLib.projectOutputExactIn(output.se, output.state, budget);
         _transition(input, Transition.Operation.DepositExactIn, sale);
-        _transition(output, Transition.Operation.WithdrawExactOut, other);
+        output.state = nextOutput;
+        output.shares = Transition(output.se).quoteShareBalance(nextOutput);
+        output.claim = ClaimLib.ratedReserveOfState(output.se, nextOutput);
+        other = quote.amount;
         return (amountIn - sale, other);
     }
 
@@ -208,17 +214,21 @@ library UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib {
         p.ys = IERC20(_seFor(l.currency1)).balanceOf(address(this));
         address tokenOut = tokenIn == l.currency0 ? l.currency1 : l.currency0;
         uint256 sharesIn = _previewRawShares(_seFor(tokenIn), tokenIn, p.amountToSwap);
-        uint256 sharesOut = _previewSharesForExactOut(_seFor(tokenOut), tokenOut, p.amountOtherOut);
+        uint256 budget = Math.fromWadFloor(Math.saleQuote(Math.toWad(claimInDelta, _decimalsOfToken(tokenIn)),
+            Math.toWad(tokenIn == l.currency0 ? p.x : p.y, _decimalsOfToken(tokenIn)),
+            Math.toWad(tokenIn == l.currency0 ? p.y : p.x, _decimalsOfToken(tokenOut))), _decimalsOfToken(tokenOut));
+        ClaimLib.OutputQuote memory output = ClaimLib.previewOutputExactIn(_seFor(tokenOut), budget);
+        uint256 sharesOut = output.shares;
         if (tokenIn == l.currency0) {
             p.x += claimInDelta;
-            p.y = p.y > p.amountOtherOut ? p.y - p.amountOtherOut : 0;
             p.xs += sharesIn;
-            p.ys = p.ys > sharesOut ? p.ys - sharesOut : 0;
+            p.ys -= sharesOut;
+            p.y = ClaimLib.ratedOf(_seFor(tokenOut), p.ys);
         } else {
             p.y += claimInDelta;
-            p.x = p.x > p.amountOtherOut ? p.x - p.amountOtherOut : 0;
             p.ys += sharesIn;
-            p.xs = p.xs > sharesOut ? p.xs - sharesOut : 0;
+            p.xs -= sharesOut;
+            p.x = ClaimLib.ratedOf(_seFor(tokenOut), p.xs);
         }
     }
 
@@ -228,10 +238,9 @@ library UniswapV4DualStandardExchangeBufferConstantProductHookDepositQuoteLib {
         return IStandardExchangeIn(se).previewExchangeIn(IERC20(pair), amount, IERC20(se));
     }
 
-    function _previewSharesForExactOut(address se, address pair, uint256 amountOut) private view returns (uint256) {
-        if (amountOut == 0) return 0;
-        if (se == pair) return amountOut;
-        return IStandardExchangeOut(se).previewExchangeOut(IERC20(se), IERC20(pair), amountOut);
+    function _decimalsOfToken(address token) private view returns (uint8) {
+        Repo.Layout storage l = Repo._layout();
+        return token == l.currency0 ? l.decimalsCurrency0 : l.decimalsCurrency1;
     }
 
 

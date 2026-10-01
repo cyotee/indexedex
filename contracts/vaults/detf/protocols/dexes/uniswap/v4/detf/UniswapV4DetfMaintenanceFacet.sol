@@ -20,7 +20,7 @@ contract UniswapV4DetfMaintenanceFacet is UniswapV4DetfFacet, UniswapV4DetfMaint
 
     /// @inheritdoc UniswapV4DetfFacet
     function facetFuncs() public pure override returns (bytes4[] memory funcs_) {
-        funcs_ = new bytes4[](7);
+        funcs_ = new bytes4[](8);
         funcs_[0] = IUniswapV4Detf.donate.selector;
         funcs_[1] = IUniswapV4Detf.sweepDust.selector;
         funcs_[2] = IUniswapV4Detf.joinDonatedCapital.selector;
@@ -28,5 +28,6 @@ contract UniswapV4DetfMaintenanceFacet is UniswapV4DetfFacet, UniswapV4DetfMaint
         funcs_[4] = IUniswapV4DetfSelfCall.sweepDustAtomic.selector;
         funcs_[5] = IUniswapV4DetfSelfCall.sweepPairToShare.selector;
         funcs_[6] = IDETFFundedRewards.synchronizeRewards.selector;
+        funcs_[7] = IUniswapV4DetfSelfCall.joinResidualAtomic.selector;
     }
 }

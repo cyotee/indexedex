@@ -52,6 +52,11 @@ abstract contract UniswapV4DetfMaintenanceTarget is UniswapV4DetfTarget {
         _entrySweepDustAtomic();
     }
 
+    /// @notice Performs one self-only residual join without a duplicate preview.
+    function joinResidualAtomic(address token, uint256 amount, bool singleAsset) external returns (uint256 lpOut) {
+        return _entryJoinResidualAtomic(token, amount, singleAsset);
+    }
+
     /// @notice Wraps residual pair tokens through their SE vault; only the diamond itself may call.
     function sweepPairToShare(address se_, address pair_, uint256 amount_) external returns (uint256 shares_) {
         return _entrySweepPairToShare(se_, pair_, amount_);

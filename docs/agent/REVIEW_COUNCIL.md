@@ -39,6 +39,21 @@ coverage. Live routing has not been verified here.
 The full-roster protocol is the default. A targeted request invokes only the named
 members and is labeled targeted, not consensus.
 
+If the human explicitly tells the coordinator to replace a named reviewer, or to
+change that reviewer's model, that is an operator-authorized replacement, not a
+resume and not an Astra censorship retry. Open a new session of the same named
+agent with a fresh task call and no continuation field. Label every result as a
+replacement, not continuity. Share only the current target and the prior originals
+the human says to share. Do not pass the old session's compaction history as
+memory, and do not set a model override on the task call. The new session uses
+the configured pin. A different model requires an operator pin change and a fresh
+OpenCode process, then a new session. Continue cross-review on the new session ID.
+Do not claim the replacement recalls the replaced session. The Astra censorship
+cap is unchanged. A human-authorized Astra replacement still must not request
+exploit procedures. Without that explicit instruction, do not silently substitute,
+restart, or impersonate a missing reviewer. Reads and allowed Markdown report
+edits remain permitted. Code edits stay denied.
+
 The coordinator sends the same target and the same optional document paths for
 four independent first passes. Synchronous calls may run sequentially. Each
 substantive original is attributed and keeps its session ID. Cross-review resumes
@@ -93,11 +108,32 @@ LSP/AST writes, browser, other MCP, background or arbitrary custom tools.
 `.opencode/plugins/review-council.ts` loads the same guard as the research council,
 with `reviewProfile` from `.opencode/support/research-council.ts`. The research
 plugin keeps `researchProfile` and does not accept review-council targets. Each
-plugin returns other agents unchanged after attribution. Fail-closed attribution
-still applies: an unattributable call is denied by whichever guard is checking a
-council agent, and a broken SDK denies the call. Diagnostic text is
+plugin assesses `owned` / `outside` / `unknown` scope before strict attribution,
+using one validated SDK history snapshot for both stages. Positive outside scope
+returns arguments unchanged and unfrozen, with `output.args` still writable.
+Exact-call enclosing assistant identity does not depend on complete tool/state
+payloads. Own-profile exact-call evidence or the latest same-session council user
+turn requires strict validation. Conflicting exact identities, ambiguous message
+envelopes and unresolved newer users remain strict. No older coding-user fallback,
+argument-supplied identity or cached last agent is trusted. Unrelated historical
+council calls and malformed historical part payloads do not taint outside scope.
+
+If the exact call part is missing, a valid latest same-session outside-profile
+user identity can establish scope. This is not per-call authorization: without a
+persisted tool owner, an indistinguishable stale call after a coding switch may
+pass. A visible exact council call still stays strict. Unknown scope still uses
+the original model, parent, status and unique-call checks; SDK errors and invalid
+response envelopes remain sanitized `RC_UNAVAILABLE`. Not all unknown coding
+sessions are guaranteed to pass. Both plugin orders retain each owner's policy
+and reject cross-profile council delegation. Diagnostic text is
 `Review council: [RC_...]`. Codes match the research council. Fixed pins are
 checked from metadata, not provider truth.
+
+Restart in a fresh OpenCode process to load guard changes. Current runtime context
+is **1.18.32**, with installed plugin/SDK packages **1.17.18**. Source-level
+possibilities include native subtask `part.id` versus persisted `part.callID` and
+tool-part visibility timing; these are not a live reproduction or confirmed root
+cause. See [research council scope and limits](RESEARCH_COUNCIL.md#enforcement).
 
 Writing a review never authorizes implementing it. Do not edit code while reviewing.
 

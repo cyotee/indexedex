@@ -18,11 +18,15 @@ abstract contract UniswapV4Detf_Alignment_RedeemD15PolicyBase_Decimals is Uniswa
     }
 
     function _skewMintBlocked(address d) internal {
+        _prepareD22MintBlocked(d);
+        assertFalse(IUniswapV4Detf(d).isMintingAllowed(), "Policy deadband");
+    }
+
+    function _prepareD22MintBlocked(address d) internal virtual {
         IUniswapV4Detf info = IUniswapV4Detf(d);
         for (uint256 i; i < 40 && info.isMintingAllowed(); ++i) {
             _skewSyntheticDown(d);
         }
-        assertFalse(info.isMintingAllowed(), "Policy deadband");
     }
 
     function test_D22_claimUngated() public {

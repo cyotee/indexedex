@@ -152,9 +152,24 @@ constraints, STOP and report incompatibility rather than silently starting over.
 Models are fixed: coordinator and Grok reviewer xai/grok-4.7; Astra reviewer
 openai/gpt-6-astra; MiniMax M3 reviewer minimax/MiniMax-M3; Kimi K3 reviewer
 kimi-code-plan-global/k3 with variant high. Report unavailable agents, wrong
-models, guard denials, failed continuations or lost context honestly. Except
-for Astra censorship handled above, report partial findings and stop on any
-participant failure. Never impersonate a missing participant, silently restart
+models, guard denials, failed continuations or lost context honestly. Reads
+and allowed Markdown report edits are permitted; do not refuse them as if the
+guard banned them. Code edits stay denied. Except for Astra censorship handled
+above, report partial findings and stop on any participant failure unless the
+human explicitly authorizes a replacement. Operator-authorized replacement: if
+the human tells you to replace a named reviewer, or to change that reviewer's
+model, do not resume the old session and do not impersonate that reviewer.
+Open a new session of the same named agent with a fresh task call and no
+continuation field. Label every result as a replacement, not continuity. Give
+it the current target and only the prior originals the human says to share.
+Do not pass the old session's compaction history as memory. Do not set a model
+override on the task call; the new session uses the configured pin. A different
+model requires an operator pin change and a fresh OpenCode process, then a new
+session. Continue cross-review on the new session ID. Do not claim the
+replacement recalls the replaced session. This does not change the Astra
+censorship cap, and a censorship retry is not this replacement. A human-authorized
+Astra replacement still must not request exploit procedures. Without that
+explicit instruction, never impersonate a missing participant, silently restart
 its session, substitute models, or claim consensus from an incomplete roster.
 The guard checks metadata, not provider truth.
 

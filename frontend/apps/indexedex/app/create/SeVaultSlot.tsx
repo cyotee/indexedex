@@ -3,7 +3,7 @@
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { decodeEventLog, type Address } from 'viem'
+import type { Address } from 'viem'
 import {
   useAccount,
   useReadContract,
@@ -25,7 +25,6 @@ import { toPoolId } from '../swap/lib/v4PoolId'
 import { ZERO_ADDRESS } from '../swap/lib/v4Types'
 
 import {
-  NEW_VAULT_EVENT,
   V3_FACTORY_ABI,
   V3_POOL_ABI,
   V3_SE_PKG_ABI,
@@ -35,9 +34,10 @@ import {
   VAULT_REGISTRY_SE_ABI,
   VAULT_TOKENS_ABI,
 } from './lib/seAbi'
-import { resolveSePlatform } from './lib/sePlatform'
+import { resolveSePlatform, selectV4SePkg, v4SePkgSelectionMessage } from './lib/sePlatform'
 import { lookupV4PoolKeyById, readV4PoolInitialized, slot0IsInitialized, uniqueAddresses } from './lib/sePoolRead'
 import { requireContractCode, resolveWalletProvider, waitForCreateReceipt } from './lib/seTx'
+import { vaultFromReceipt } from './lib/seReceipt'
 import { useCreateChainClients } from './lib/useCreateChainClients'
 import { MorphoMarketForm } from './MorphoMarketForm'
 import type { CreateSeHostId } from './detfTypes'
@@ -223,7 +223,28 @@ export function SeVaultSlot({
 
   const v4PoolId = v4Key ? toPoolId(v4Key) : undefined
 
-  const pkg = version === 'v4' ? platform.uniV4SePkg : platform.uniV3SePkg
+  const v4PkgSelection = useMemo(
+    () =>
+      selectV4SePkg({
+        hooks: v4Key?.hooks ?? hooks,
+        uniV4SePkg: platform.uniV4SePkg,
+        uniV4SePkgName: platform.uniV4SePkgName,
+        uniV4PonsSePkg: platform.uniV4PonsSePkg,
+        uniV4PonsSePkgName: platform.uniV4PonsSePkgName,
+        uniV4PonsSeHook: platform.uniV4PonsSeHook,
+      }),
+    [
+      v4Key?.hooks,
+      hooks,
+      platform.uniV4SePkg,
+      platform.uniV4SePkgName,
+      platform.uniV4PonsSePkg,
+      platform.uniV4PonsSePkgName,
+      platform.uniV4PonsSeHook,
+    ],
+  )
+  const pkg = version === 'v4' ? v4PkgSelection.pkg : platform.uniV3SePkg
+  const v4PkgMessage = version === 'v4' ? v4SePkgSelectionMessage(v4PkgSelection) : null
   const pairTokens = useMemo(
     () => (sorted ? ([sorted.currency0, sorted.currency1] as Address[]) : undefined),
     [sorted],
@@ -433,7 +454,7 @@ export function SeVaultSlot({
   const canAct = !!sorted && tokenA !== tokenB
   const v3Ready = version !== 'v3' || !!platform.v3Factory
   const v4Ready = version !== 'v4' || !!platform.poolManager
-  const pkgReady = version === 'v4' ? !!platform.uniV4SePkg : !!platform.uniV3SePkg
+  const pkgReady = version === 'v4' ? v4PkgSelection.status === 'ready' : !!platform.uniV3SePkg
   const networkReady = version === 'v3' ? v3Ready : v4Ready
 
   const poolGate = resolveWalletGate({
@@ -584,17 +605,18 @@ export function SeVaultSlot({
       } else {
         let vault: Address | undefined
         if (version === 'v4') {
-          if (!platform.uniV4SePkg) throw new Error('No Uniswap V4 SE package on this network.')
+          if (v4PkgMessage) throw new Error(v4PkgMessage)
+          if (!pkg) throw new Error('No Uniswap V4 SE package on this network.')
           if (!v4Key) throw new Error('Need a V4 pool key.')
           await requireContractCode({
             walletProvider,
-            address: platform.uniV4SePkg,
+            address: pkg,
             label: 'The strategy vault factory',
           })
           let gas: bigint | undefined
           try {
             gas = await readClient.estimateContractGas({
-              address: platform.uniV4SePkg,
+              address: pkg,
               abi: V4_SE_PKG_ABI,
               functionName: 'deployVault',
               args: [v4Key],
@@ -605,7 +627,7 @@ export function SeVaultSlot({
             throw new Error(parseContractError(err))
           }
           submittedHash = await writeOnWallet({
-            address: platform.uniV4SePkg,
+            address: pkg,
             abi: V4_SE_PKG_ABI,
             functionName: 'deployVault',
             args: [v4Key],
@@ -613,7 +635,7 @@ export function SeVaultSlot({
           })
           setStatus('Waiting for the vault transaction…')
           const receipt = await waitMined(submittedHash)
-          vault = vaultFromReceipt(receipt.logs, platform.uniV4SePkg)
+          vault = vaultFromReceipt(receipt.logs, pkg)
         } else {
           if (!platform.uniV3SePkg) throw new Error('No Uniswap V3 SE package on this network.')
           await requireContractCode({
@@ -1231,7 +1253,13 @@ export function SeVaultSlot({
           <div className="mt-4 space-y-1 text-sm text-[var(--text-muted,#9aa3b2)]">
             {!v3Ready ? <p>No Uniswap V3 factory on this network.</p> : null}
             {!v4Ready ? <p>No Uniswap V4 pool manager on this network.</p> : null}
-            {!pkgReady ? <p>No {version === 'v4' ? 'V4' : 'V3'} SE package on this network.</p> : null}
+            {!pkgReady ? (
+              <p>
+                {version === 'v4'
+                  ? (v4PkgMessage ?? 'No V4 SE package on this network.')
+                  : 'No V3 SE package on this network.'}
+              </p>
+            ) : null}
             {sorted && networkReady ? (
               <p data-testid={`${testIdPrefix}-status`}>
                 Pool: {poolStatusCopy(readyState)}. SE vault:{' '}
@@ -1418,29 +1446,4 @@ function TokenSelect({
       </select>
     </label>
   )
-}
-
-function vaultFromReceipt(
-  logs: { data: `0x${string}`; topics: readonly `0x${string}`[] }[] | undefined,
-  pkg: Address,
-): Address | undefined {
-  if (!logs) return undefined
-  for (const log of logs) {
-    try {
-      const decoded = decodeEventLog({
-        abi: [NEW_VAULT_EVENT],
-        data: log.data,
-        topics: log.topics as [`0x${string}`, ...`0x${string}`[]],
-      })
-      if (decoded.eventName !== 'NewVault') continue
-      const args = decoded.args as { vault?: Address; package?: Address }
-      if (args.package && args.package.toLowerCase() === pkg.toLowerCase() && args.vault) {
-        return args.vault
-      }
-      if (args.vault) return args.vault
-    } catch {
-      /* next */
-    }
-  }
-  return undefined
 }

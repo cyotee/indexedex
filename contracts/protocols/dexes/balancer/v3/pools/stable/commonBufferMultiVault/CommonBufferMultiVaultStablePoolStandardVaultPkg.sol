@@ -18,6 +18,7 @@ import {
 } from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IUnbalancedLiquidityInvariantRatioBounds.sol";
 import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
 import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
+import {IBalancerV3PoolLiquidityQuote} from "contracts/protocols/dexes/balancer/v3/pools/IBalancerV3PoolLiquidityQuote.sol";
 import {IBalancerPoolToken} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IBalancerPoolToken.sol";
 import {IHooks} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IHooks.sol";
 import {
@@ -178,7 +179,7 @@ contract CommonBufferMultiVaultStablePoolStandardVaultPkg is
     }
 
     function facetInterfaces() public view returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](19);
+        interfaces = new bytes4[](20);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20Metadata).interfaceId ^ type(IERC20).interfaceId;
@@ -198,6 +199,7 @@ contract CommonBufferMultiVaultStablePoolStandardVaultPkg is
         interfaces[16] = type(IStandardExchangeOut).interfaceId;
         interfaces[17] = type(IStandardizedYield).interfaceId;
         interfaces[18] = type(IStandardExchangeTransitionQuote).interfaceId;
+        interfaces[19] = type(IBalancerV3PoolLiquidityQuote).interfaceId;
     }
 
     function facetAddresses() public view returns (address[] memory facetAddresses_) {

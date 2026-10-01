@@ -28,7 +28,7 @@ library UniswapV4SingleStandardExchangeBufferHook_FactoryService {
 
     function deployProductFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         facet = create3Factory.deployFacet(
-            ArtifactCreationCode.creationCode("UniswapV4SingleStandardExchangeBufferHookFacet.sol:UniswapV4SingleStandardExchangeBufferHookFacet"),
+            ArtifactCreationCode.creationCode(create3Factory, "UniswapV4SingleStandardExchangeBufferHookFacet.sol:UniswapV4SingleStandardExchangeBufferHookFacet"),
             abi.encode("UniswapV4SingleStandardExchangeBufferHookFacet")._hash()
         );
         vm.label(address(facet), "UniswapV4SingleStandardExchangeBufferHookFacet");

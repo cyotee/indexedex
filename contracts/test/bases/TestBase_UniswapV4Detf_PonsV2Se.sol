@@ -95,6 +95,10 @@ abstract contract TestBase_UniswapV4Detf_PonsV2Se is TestBase_UniswapV4StandardE
     IStandardExchangeIn internal detfExchangeIn;
     address internal detfUser = address(0xD37F);
 
+    function _ponsHookFeeBps() internal pure override returns (uint16) {
+        return 0;
+    }
+
     function setUp() public virtual override {
         TestBase_UniswapV4StandardExchange_PonsV2.setUp();
         _activatePonsSe();

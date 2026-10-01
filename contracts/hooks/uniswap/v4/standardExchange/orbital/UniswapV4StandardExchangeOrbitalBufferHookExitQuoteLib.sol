@@ -95,8 +95,8 @@ library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
             added = ClaimLib.ratedNative(minted, input.rate, input.se, input.asset);
             if (added == 0) added = input.withdrawn;
         }
-        uint256 faceOut = _sale(legs, from, to, added);
-        received = _receiveOutput(output, faceOut);
+        uint256 effectiveOut = _saleBudget(legs, from, to, added);
+        received = _receiveOutput(output, effectiveOut);
         if (input.se == address(0)) input.effective += input.withdrawn;
         else {
             input.state = nextInput;
@@ -104,21 +104,18 @@ library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
         }
     }
 
-    function _receiveOutput(Leg memory output, uint256 faceOut) private view returns (uint256 received) {
+    function _receiveOutput(Leg memory output, uint256 effectiveOut) private view returns (uint256 received) {
         if (output.se == address(0)) {
-            output.effective -= faceOut;
-            received = faceOut;
+            output.effective -= effectiveOut;
+            received = effectiveOut;
         } else {
-            (bytes memory next, uint256 needed, uint256 paid,) = Transition(output.se).quoteTransition(
-                output.state, Transition.Operation.WithdrawExactOut, faceOut
-            );
+            uint256 shares = ClaimLib.sharesForNativeUp(effectiveOut, output.rate, output.se, output.asset);
             uint256 cap = output.shares > 1 ? output.shares - 1 : 0;
-            if (needed > cap) {
-                (next,, paid,) = Transition(output.se).quoteTransition(
-                    output.state, Transition.Operation.RedeemExactIn, cap
-                );
-                if (paid < faceOut) revert Math.Drain();
-            }
+            if (shares == 0 || shares > cap) revert Math.Drain();
+            (bytes memory next,, uint256 paid,) = Transition(output.se).quoteTransition(
+                output.state, Transition.Operation.RedeemExactIn, shares
+            );
+            if (paid == 0) revert Math.Drain();
             output.state = next;
             received = paid;
             _refresh(output);
@@ -126,6 +123,12 @@ library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
     }
 
     function _sale(Leg[3] memory legs, uint8 from, uint8 to, uint256 added) private view returns (uint256 out) {
+        out = _saleBudget(legs, from, to, added);
+        if (legs[to].se != address(0)) out = _unwrapPayout(legs[to], out);
+        if (out == 0) revert Math.Drain();
+    }
+
+    function _saleBudget(Leg[3] memory legs, uint8 from, uint8 to, uint256 added) private view returns (uint256 out) {
         Repo.Layout storage l = Repo._layout();
         uint256 x = _toWad(legs[from].effective, legs[from].decimals);
         uint256 y = _toWad(legs[to].effective, legs[to].decimals);
@@ -134,7 +137,6 @@ library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
             _toWad(added, legs[from].decimals), IVaultFeeOracleQuery(l.feeOracle).dexSwapFeeOfVault(address(this))
         );
         out = Math.fromWadFloor(_cappedSphereOut(l.R, x, y, z, net), legs[to].decimals);
-        if (legs[to].se != address(0)) out = _unwrapPayout(legs[to], out);
         if (out == 0 || out >= legs[to].effective) revert Math.Drain();
     }
 

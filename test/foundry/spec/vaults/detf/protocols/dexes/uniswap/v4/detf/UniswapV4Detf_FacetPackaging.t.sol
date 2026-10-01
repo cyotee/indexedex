@@ -161,7 +161,7 @@ contract UniswapV4Detf_FacetPackaging is TestBase_UniswapV4Detf {
         IDiamond.FacetCut[] memory cuts = detfPkg.facetCuts();
         assertEq(cuts.length, 10, "five shared facets plus five product facets");
         uint256 count;
-        bytes4[] memory seen = new bytes4[](46);
+        bytes4[] memory seen = new bytes4[](47);
         for (uint256 i; i < detfProductFacets.length; ++i) {
             assertEq(cuts[i + 5].facetAddress, address(detfProductFacets[i]), "package facet order");
             bytes4[] memory selectors = detfProductFacets[i].facetFuncs();
@@ -175,7 +175,7 @@ contract UniswapV4Detf_FacetPackaging is TestBase_UniswapV4Detf {
                 seen[count++] = selectors[j];
             }
         }
-        assertEq(count, 46, "funded product selector count");
+        assertEq(count, 47, "funded product selector count");
         assertTrue(IERC165(detf).supportsInterface(type(IUniswapV4Detf).interfaceId), "composed DETF interface");
         assertTrue(
             IERC165(detf).supportsInterface(type(IStandardExchangeIn).interfaceId), "composed exchange interface"
@@ -220,6 +220,10 @@ contract UniswapV4Detf_FacetPackaging is TestBase_UniswapV4Detf {
         IUniswapV4DetfSelfCall(target).sweepDustAtomic();
         vm.expectRevert(expectedError_);
         IUniswapV4DetfSelfCall(target).sweepPairToShare(address(0), address(0), 1);
+        vm.expectRevert(expectedError_);
+        IUniswapV4DetfSelfCall(target).joinResidualAtomic(address(0), 1, false);
+        vm.expectRevert(expectedError_);
+        IUniswapV4DetfSelfCall(target).joinResidualAtomic(address(0), 1, true);
     }
 }
 

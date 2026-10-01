@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {UniswapV4SeBufferHookContextQuoteLib as ContextQuote} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookContextQuoteLib.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
@@ -258,18 +259,22 @@ abstract contract UniswapV4SingleStandardExchangeBufferHookTarget is
     /* ---------------------------------------------------------------------- */
 
     function previewWrap(uint256 pairIn) external view returns (uint256 seOut) {
-        return _previewWrap(pairIn);
+        _requireNonZero(pairIn);
+        (seOut,) = ContextQuote.deposit(_se(), _pair(), address(this), pairIn, address(poolManager()));
     }
 
     function previewWrapExactOut(uint256 seOut) external view returns (uint256 pairIn) {
-        return _previewWrapExactOut(seOut);
+        _requireNonZero(seOut);
+        return ContextQuote.inputForShares(_se(), _pair(), seOut, address(poolManager()));
     }
 
     function previewUnwrap(uint256 seIn) external view returns (uint256 pairOut) {
-        return _previewUnwrap(seIn);
+        _requireNonZero(seIn);
+        return ContextQuote.redeemReceived(_se(), _pair(), seIn, address(poolManager()));
     }
 
     function previewUnwrapExactOut(uint256 pairOut) external view returns (uint256 seIn) {
-        return _previewUnwrapExactOut(pairOut);
+        _requireNonZero(pairOut);
+        return ContextQuote.withdraw(_se(), _pair(), address(0), pairOut, address(poolManager()));
     }
 }

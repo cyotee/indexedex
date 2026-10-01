@@ -5,7 +5,7 @@ import { join, relative } from "node:path";
 import { parse } from "yaml";
 import researchCouncil from "../plugins/research-council";
 import reviewCouncil from "../plugins/review-council";
-import { reviewProfile } from "../support/research-council";
+import { researchProfile, reviewProfile } from "../support/research-council";
 
 const { describe, test }: Pick<typeof import("node:test"), "describe" | "test"> = require("bun:test");
 
@@ -74,6 +74,10 @@ describe("review-council definitions", () => {
       assert.equal(config.variant, name === "review-council-kimi" ? "high" : undefined);
       assert.equal(config.mode, name === "review-council" ? "primary" : "subagent");
       assert.equal(config.permission["*"], "deny");
+      assert.equal(config.permission.research_json_read, undefined);
+      assert.equal(reviewProfile.tools.has("research_json_read"), false);
+      assert.equal(researchProfile.tools.has("research_json_read"), true);
+      assert.notEqual(researchProfile.tools, reviewProfile.tools);
       assert.deepEqual(Object.entries(config.permission.edit).filter(([, value]) => value === "allow").map(([key]) => key),
         [...documentRoots.flatMap(path => [`${path}/*.md`, `${path}/**/*.md`]), "*REMEDIATION_PRD.md", "**/*REMEDIATION_PRD.md"]);
       for (const base of documentRoots) {
@@ -107,6 +111,12 @@ describe("review-council definitions", () => {
     assert.match(text, /do not invent intended behavior/i);
     assert.match(text, /continue with Grok, MiniMax M3 and Kimi K3/);
     assert.match(text, /Do not impersonate Astra/);
+    assert.match(text, /Operator-authorized replacement/);
+    assert.match(text, /do not resume the old session/i);
+    assert.match(text, /continuation field/);
+    assert.match(text, /Do not set a model override/);
+    assert.match(text, /censorship retry is not this replacement/);
+    assert.match(text, /Reads and allowed Markdown report edits are permitted/);
     assert.match(text, /jailbreak/i);
     assert.match(text, /must not request exploit procedures/);
     assert.match(text, /remediation PRD/);
@@ -141,6 +151,52 @@ describe("review-council definitions", () => {
 });
 
 describe("review-council guard", () => {
+  for (const plugins of [[researchCouncil, reviewCouncil], [reviewCouncil, researchCouncil]]) {
+    const order = plugins[0] === researchCouncil ? "research first" : "review first";
+    test(`combined chain ${order}: coding missing part passes unchanged`, async () => {
+      const f = fixture("build", "apply_patch");
+      f.client.session.messages = async () => ({ data: [user("build")] });
+      const args = { load_skills: ["coding"], patchText: "coding edit" };
+      const output = { args };
+      for (const plugin of plugins) {
+        const hooks = await plugin({ client: f.client, directory: root });
+        await hooks["tool.execute.before"](f.input, output);
+      }
+      assert.equal(Object.isFrozen(args), false);
+      assert.equal(Object.isFrozen(args.load_skills), false);
+      output.args = { load_skills: [], patchText: "replacement" };
+    });
+    for (const profile of [researchProfile, reviewProfile]) {
+      async function chain(tool: string, args: unknown, missing = false) {
+        const agent = profile.moderator;
+        const [providerID, modelID] = profile.models[agent].split("/");
+        const parent = user(agent);
+        parent.info.model = { providerID, modelID };
+        const assistant = message(agent, tool);
+        Object.assign(assistant.info, { providerID, modelID });
+        if (missing) assistant.parts = [];
+        const f = fixture(agent, tool);
+        f.client.session.messages = async () => ({ data: [parent, assistant] });
+        const output = { args };
+        for (const plugin of plugins) {
+          const hooks = await plugin({ client: f.client, directory: root });
+          await hooks["tool.execute.before"](f.input, output);
+        }
+        return output;
+      }
+      test(`combined chain ${order}: ${profile.moderator} still owns policy and attribution`, async () => {
+        await assert.rejects(chain("bash", {}), { message: `${profile.label}: [RC_POLICY] tool policy validation failed; report the failure, do not bypass it` });
+        await assert.rejects(chain("apply_patch", {}, true), { message: `${profile.label}: [RC_ATTRIBUTION] active call attribution failed; report the failure, do not bypass it` });
+        const output = await chain("websearch", {});
+        assert.ok(Object.isFrozen(output.args));
+      });
+      test(`combined chain ${order}: ${profile.moderator} cannot delegate across profiles`, async () => {
+        const target = profile === researchProfile ? "review-council-grok" : "council-grok";
+        await assert.rejects(chain("task", { ...taskArgs(), subagent_type: target }),
+          { message: `${profile.label}: [RC_POLICY] tool policy validation failed; report the failure, do not bypass it` });
+      });
+    }
+  }
   test("allows a synchronous reviewer task and a second Astra call", async () => {
     const args = taskArgs();
     await (await hook())(args);
@@ -165,6 +221,8 @@ describe("review-council guard", () => {
       await hooks["tool.execute.before"](f.input, { args: prd });
       assert.ok(Object.isFrozen(prd));
       await assert.rejects(hooks["tool.execute.before"](f.input, { args: { filePath: "contracts/vaults/standard/Foo.sol", content: "contract Foo {}" } }),
+        /Review council: \[RC_POLICY\]/);
+      await assert.rejects(hooks["tool.execute.before"](f.input, { args: { filePath: "docs/reviews/sketch.sol", content: "contract Sketch {}" } }),
         /Review council: \[RC_POLICY\]/);
       await assert.rejects(readFile(join(directory, "docs/reviews/report.md")), { code: "ENOENT" });
     } finally { await rm(directory, { recursive: true, force: true }); }

@@ -42,7 +42,7 @@ import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {IUniswapV2StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v2/IUniswapV2StandardExchangeDFPkg.sol";
 import {IUniswapV3StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v3/IUniswapV3StandardExchangeDFPkg.sol";
-import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/IUniswapV4StandardExchangeDFPkg.sol";
+import {IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg.sol";
 import {IMorphoBlueStandardExchangeDFPkg} from "contracts/vaults/standard/exchange/protocols/morpho/blue/IMorphoBlueStandardExchangeDFPkg.sol";
 import {IUniswapV4Detf, IUniswapV4DetfDFPkg} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
 import {IUniswapV4HookStagedPairInit} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
@@ -519,7 +519,11 @@ contract RobinhoodReleaseRehearsalTest is TestBase_UniswapV4Detf {
         }
         if (backend == 2) {
             PoolKey memory key = SeDeploy.initAndSeedUniv4Pool(pm, pair, other);
-            address vault_ = SeDeploy.deployUniv4Vault(IUniswapV4StandardExchangeDFPkg(_pin("phase05_stage03_uniswap_v4_standard_exchange_pkg.json", ".uniV4SePkg", true)), key);
+            // Stage 05-03 now produces H at this pin, not the legacy generic-hook package.
+            IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg pkg_ =
+                IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg(_pin("phase05_stage03_uniswap_v4_standard_exchange_pkg.json", ".uniV4SePkg", true));
+            assertEq(pkg_.packageName(), "UniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg", "stale V4 package pin");
+            address vault_ = SeDeploy.deployUniv4Vault(pkg_, key);
             _activatePositionSe(vault_, pair, other);
             return vault_;
         }

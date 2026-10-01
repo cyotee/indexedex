@@ -71,17 +71,106 @@ abstract contract V4FundedPolicyAssertions is Test {
     }
 
     function _policyPublicTrade(address hook_, IERC20 input_, IERC20 output_, uint256 amount_) internal {
-        address user_ = _fundedPolicyUser();
+        _policyPublicTrade(hook_, input_, output_, amount_, _fundedPolicyUser());
+    }
+
+    function _policyPublicTrade(address hook_, IERC20 input_, IERC20 output_, uint256 amount_, address user_)
+        internal returns (uint256 paid_)
+    {
         uint256 quote_ = IStandardExchangeIn(hook_).previewExchangeIn(input_, amount_, output_);
         uint256[2] memory before_ = [input_.balanceOf(user_), output_.balanceOf(user_)];
         vm.startPrank(user_);
         input_.approve(hook_, amount_);
-        uint256 paid_ = IStandardExchangeIn(hook_)
+        paid_ = IStandardExchangeIn(hook_)
             .exchangeIn(input_, amount_, output_, quote_, user_, false, block.timestamp + 1 hours);
         vm.stopPrank();
         assertEq(paid_, quote_, "public reserve preview/execution");
         assertEq(before_[0] - input_.balanceOf(user_), amount_, "actual public payment");
         assertEq(output_.balanceOf(user_) - before_[1], paid_, "actual public payout");
+    }
+
+    /// @dev D22 opt-in: preserve the claimant's sDETF and fund a separate market actor.
+    /// Both decimal fixtures derive the bond payment from the actual payment token.
+    function _prepareD22FundedDeadband(address d) internal {
+        address trader_ = makeAddr("D22 funded market trader");
+        assertTrue(trader_ != _fundedPolicyUser(), "D22 independent trader");
+        _fundD22TradingBudget(d, trader_);
+        IUniswapV4Detf info_ = IUniswapV4Detf(d);
+        address hook_ = info_.hook();
+        for (uint256 i_; i_ < 64; ++i_) {
+            if (!info_.isMintingAllowed()) return;
+            (IERC20 pair_, uint256 price_) = _d22RichestMintPair(d);
+            assertTrue(address(pair_) != address(0), "D22 open route must have a reserve pair");
+            uint256 amount_ = IERC20(d).balanceOf(trader_);
+            assertGt(amount_, 0, "D22 independent trading budget exhausted");
+            uint256 cap_ = IERC20(d).balanceOf(hook_) / 20;
+            assertGt(cap_, 0, "D22 reserve trade budget is zero");
+            if (amount_ > cap_) amount_ = cap_;
+            assertGt(
+                _policyPublicTrade(hook_, IERC20(d), pair_, amount_, trader_),
+                0,
+                "D22 reserve trade must have positive output"
+            );
+            assertLt(
+                _policyRouteSynthetic(d, IUniswapV4SeBufferHook(hook_).standardExchangeOf(address(pair_))),
+                price_,
+                "D22 reserve trade must lower selected route price"
+            );
+        }
+        assertFalse(info_.isMintingAllowed(), "D22 funded rebalance iteration bound");
+    }
+
+    /// @dev Purchase with 100 native-scaled pair units; only actual claimed DETF funds swaps.
+    function _fundD22TradingBudget(address d, address trader_) private {
+        assertEq(IERC20(d).balanceOf(trader_), 0, "D22 trader starts without DETF");
+        uint256 id_;
+        {
+            IERC20 token_ = _fundedPolicyMintToken(d);
+            uint256 payment_ = _policyTokenUnits(token_, 100);
+            _fundedPolicyFundToken(address(token_), trader_, payment_);
+            uint256 before_ = token_.balanceOf(trader_);
+            vm.startPrank(trader_);
+            token_.approve(d, payment_);
+            (id_,) = IUniswapV4Detf(d).bond(
+                token_, payment_, _fundedPolicyLock(), trader_, false, block.timestamp + 1 hours
+            );
+            vm.stopPrank();
+            assertEq(before_ - token_.balanceOf(trader_), payment_, "D22 actual bond payment");
+        }
+        uint256 funded_;
+        {
+            IDetfBondNFT nft_ = IDetfBondNFT(IUniswapV4Detf(d).bondNftVault());
+            DETFFundedStakingMath.BondPosition memory position_ = nft_.positionOf(id_);
+            uint256 maturity_ = position_.startTimestamp + position_.vestingDuration;
+            if (block.timestamp < maturity_) vm.warp(maturity_);
+            vm.prank(trader_);
+            (uint256 principal_, uint256 rewards_) = nft_.claimBond(id_, trader_);
+            funded_ = principal_ + rewards_;
+        }
+        assertGt(funded_, 0, "D22 bond must fund trading inventory");
+        IERC20 staking_ = IERC20(IUniswapV4Detf(d).rebasingClaimToken());
+        uint256 rawBefore_ = IERC20(d).balanceOf(trader_);
+        vm.prank(trader_);
+        uint256 out_ = IStandardExchangeIn(address(staking_)).exchangeIn(
+            staking_, funded_, IERC20(d), funded_, trader_, false, block.timestamp
+        );
+        assertEq(out_, funded_, "D22 funded trading unstake is one-to-one");
+        assertEq(IERC20(d).balanceOf(trader_) - rawBefore_, funded_, "D22 actual trading inventory");
+    }
+
+    /// @dev Re-read every raw reserve-pair gate and valuation after each real trade.
+    function _d22RichestMintPair(address d) private view returns (IERC20 pair_, uint256 price_) {
+        IUniswapV4Detf info_ = IUniswapV4Detf(d);
+        IUniswapV4SeBufferHook hook_ = IUniswapV4SeBufferHook(info_.hook());
+        address[] memory tokens_ = hook_.tokens();
+        for (uint256 i_; i_ < tokens_.length; ++i_) {
+            if (tokens_[i_] == d || !info_.isMintingAllowed(IERC20(tokens_[i_]))) continue;
+            uint256 candidate_ = _policyRouteSynthetic(d, hook_.standardExchangeOf(tokens_[i_]));
+            if (candidate_ > price_) {
+                pair_ = IERC20(tokens_[i_]);
+                price_ = candidate_;
+            }
+        }
     }
 
     /// @dev Keep distinct reserve-pair gates: a public trade may close one pair

@@ -19,6 +19,32 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMatrix_Unisw
         return f;
     }
 
-    /// @dev F6 fixed 2026-09-21 (D55): FullSpread exact-out spends the previewed shares and delivers exactly the
-    ///      request, so the gold body and default residual tolerance apply. Red record: run 6 tolerances.
+    // H-only domain assertions replace historical two-leg EO success; generic rows are unchanged.
+    function test_row_partialConsumption_bookedNotRefunded() public override {
+        _seed(); SeMatrix_FullSpreadV4Fixture(address(fx)).assertBlockedAccounting(hook);
+    }
+    function test_row_ammCallerFundSeparation() public override {
+        _seed(); SeMatrix_FullSpreadV4Fixture(address(fx)).assertBlockedAccounting(hook);
+    }
+    function test_row_hookSwap_exactOut_trueFlag_refundsCreditMinusUsed() public override {
+        _seed(); SeMatrix_FullSpreadV4Fixture(address(fx)).assertExactOutRejected(hook, raw, face, true);
+        SeMatrix_FullSpreadV4Fixture(address(fx)).assertExactOutRejected(hook, face, raw, true);
+    }
+    function test_row_hookSwap_exactOut_falseFlag_pullsUsedOnly() public override {
+        _seed(); SeMatrix_FullSpreadV4Fixture(address(fx)).assertExactOutRejected(hook, raw, face, false);
+        SeMatrix_FullSpreadV4Fixture(address(fx)).assertExactOutRejected(hook, face, raw, false);
+    }
+    function test_row_poolManagerSwap_bothDirections_noFaceResidual() public override {
+        _seed();
+        uint256 faceBefore = IERC20(face).balanceOf(user);
+        uint256 rawBefore = IERC20(raw).balanceOf(user);
+        _swapExactIn(face, raw, _f(1));
+        assertGt(IERC20(raw).balanceOf(user), rawBefore);
+        faceBefore = IERC20(face).balanceOf(user);
+        _swapExactIn(raw, face, 1 ether);
+        assertGt(IERC20(face).balanceOf(user), faceBefore);
+        SeMatrix_FullSpreadV4Fixture(address(fx)).assertRouterExactOutRejected(address(swapRouter), poolKey, raw, face);
+        SeMatrix_FullSpreadV4Fixture(address(fx)).assertRouterExactOutRejected(address(swapRouter), poolKey, face, raw);
+        assertLe(IERC20(face).balanceOf(hook), DUST);
+    }
 }

@@ -173,11 +173,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookWithdrawTarget is Un
     }
 
     function _swapExitResidual(address tokenIn, address tokenOut, uint256 amountIn) private {
-        uint256 quoted = _previewSwapExactIn(tokenIn, tokenOut, amountIn);
-        if (_seOf(tokenOut) != address(0)) _unwrapExactTokenOut(tokenOut, quoted);
-        else Repo._layout().reserves[tokenOut] -= quoted;
-        _bufferToken(tokenIn, amountIn);
-        _recomputeL2();
+        _internalSwapExactIn(tokenIn, tokenOut, amountIn, _feeOracle().dexSwapFeeOfVault(address(this)));
     }
 
     function exitSingleAssetExactTokenOut(

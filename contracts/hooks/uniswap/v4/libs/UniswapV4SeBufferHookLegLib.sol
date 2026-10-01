@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote, IStandardExchangeRateQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeUnlockContextQuote} from "contracts/interfaces/IStandardExchangeUnlockContextQuote.sol";
 import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
 import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -75,7 +76,7 @@ library UniswapV4SeBufferHookLegLib {
         q.heldShares = q.exchange.quoteShareBalance(q.state);
         if (amountIn == 0) return q;
         if (
-            tokenIn != se
+            tokenIn != se && !_hasContextQuote(se)
                 && IStandardExchangeIn(se).previewExchangeIn(IERC20(tokenIn), amountIn, IERC20(se)) == 0
         ) {
             return q;
@@ -91,7 +92,7 @@ library UniswapV4SeBufferHookLegLib {
         if (assets == 0) return (0, q.heldAssets);
         address se = address(q.exchange);
         if (
-            q.pair != address(0) && q.pair != se
+            q.pair != address(0) && q.pair != se && !_hasContextQuote(se)
                 && IStandardExchangeIn(se).previewExchangeIn(IERC20(q.pair), assets, IERC20(se)) == 0
         ) {
             return (0, q.heldAssets);
@@ -122,6 +123,12 @@ library UniswapV4SeBufferHookLegLib {
     }
 
     error RateProviderFailed();
+
+    function _hasContextQuote(address se) private view returns (bool) {
+        (bool ok, bytes memory data) = se.staticcall(abi.encodeCall(IERC165.supportsInterface,
+            (type(IStandardExchangeUnlockContextQuote).interfaceId)));
+        return ok && data.length == 32 && abi.decode(data, (bool));
+    }
 
     function rateAfterExchange(ExternalQuote memory q, address pair, address provider)
         external view returns (uint256 rate)

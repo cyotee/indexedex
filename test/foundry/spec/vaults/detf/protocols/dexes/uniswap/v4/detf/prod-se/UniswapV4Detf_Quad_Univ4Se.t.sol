@@ -52,8 +52,12 @@ contract UniswapV4Detf_Quad_Univ4Se is TestBase_UniswapV4Detf_Quad_Univ4Se {
 
         vm.startPrank(detfUser);
         IERC20(detf).approve(detf, burnIn);
-        uint256 amountOut = IStandardExchangeIn(address(detfInfo)).exchangeIn{gas: 30_000_000}(IERC20(address(detfInfo)), burnIn, IERC20(mintToken), 0, detfUser, false, block.timestamp + 1 hours);
+        uint256 gasBefore = gasleft();
+        uint256 amountOut = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(detfInfo)), burnIn, IERC20(mintToken), 0, detfUser, false, block.timestamp + 1 hours);
+        uint256 operationGas = gasBefore - gasleft();
         vm.stopPrank();
+        emit log_named_uint("consumer quad burn operation gas", operationGas);
+        assertLe(operationGas, 30_000_000, "consumer quad burn execution budget");
 
         assertEq(amountOut, preview, "previewBurn==exec");
         uint256 pairAfter = IERC20(mintToken).balanceOf(detfUser);

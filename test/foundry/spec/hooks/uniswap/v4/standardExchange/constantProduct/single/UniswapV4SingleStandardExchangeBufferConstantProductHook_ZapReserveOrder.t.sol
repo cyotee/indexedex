@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {Vm} from "forge-std/Vm.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {MintableERC20Decimals} from "contracts/test/stubs/MintableERC20Decimals.sol";
@@ -67,6 +68,47 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_ZapReserveOrde
     /// @notice Pair input with raw as currency1 uses the purchased raw amount in reserve reconstruction.
     function test_zapPair_rawCurrency1_independentLpAccounting() public {
         _checkZap(false, false);
+    }
+
+    function test_zeroBudget_rawCurrency0_preservesClaimInventory() public {
+        _checkZeroBudget(true);
+    }
+
+    function test_zeroBudget_rawCurrency1_preservesClaimInventory() public {
+        _checkZeroBudget(false);
+    }
+
+    function _checkZeroBudget(bool rawFirst) private {
+        _seedOrderedHook(rawFirst);
+        uint256 amount = 1e9;
+        bytes32 before_ = _zeroBudgetSnapshot();
+        assertEq(single.previewDepositSingle(address(rawToken), amount), 0, "zero opposite leg cannot mint LP");
+        assertEq(IStandardExchangeIn(hook).previewExchangeIn(
+            IERC20(address(rawToken)), amount, IERC20(address(pairToken))
+        ), 0, "valid rounded-zero swap quote");
+
+        vm.expectRevert(bytes4(keccak256("ZeroAmount()")));
+        vm.prank(user);
+        single.depositSingle(address(rawToken), amount, user, 0, block.timestamp);
+        assertEq(_zeroBudgetSnapshot(), before_, "unmintable zap rolls back all custody");
+
+        // No approval: ZeroAmount must be raised before attempting the input pull.
+        vm.prank(user);
+        rawToken.approve(hook, 0);
+        vm.expectRevert(bytes4(keccak256("ZeroAmount()")));
+        vm.prank(user);
+        IStandardExchangeIn(hook).exchangeIn(
+            IERC20(address(rawToken)), amount, IERC20(address(pairToken)), 0, user, false, block.timestamp
+        );
+        assertEq(_zeroBudgetSnapshot(), before_, "zero swap cannot spend existing claim inventory");
+    }
+
+    function _zeroBudgetSnapshot() private view returns (bytes32) {
+        return keccak256(abi.encode(
+            rawToken.balanceOf(user), rawToken.balanceOf(hook), pairToken.balanceOf(user),
+            pairToken.balanceOf(hook), IERC20(se).balanceOf(hook), IERC20(se).totalSupply(),
+            IERC20(hook).totalSupply(), IERC20(hook).balanceOf(user), single.kLast()
+        ));
     }
 
     /// @dev Reuse the registered package and real SE; only the non-SUT raw token address is selected.

@@ -59,6 +59,21 @@ It returns agreements, corrections, dissent and a
 human checkpoint, then stops. This round bound is prompt orchestration, not a
 runtime call counter. A follow-up can request another bounded round.
 
+If the human explicitly tells the moderator to replace a named member, or to
+change that member's model, that is an operator-authorized replacement, not a
+resume. Open a new session of the same named agent with a fresh task call and
+no continuation field. Label every result as a replacement, not continuity.
+Share only the current question and the prior originals the human says to share.
+Do not pass the old session's compaction history as memory, and do not set a
+model override on the task call. The new session uses the configured pin. A
+different model requires an operator pin change and a fresh OpenCode process,
+then a new session. Continue cross-review on the new session ID. Do not claim
+the replacement recalls the replaced session. Without that explicit instruction,
+do not silently substitute, restart, or impersonate a missing participant.
+Reads remain permitted. Markdown and code edits under the document roots remain
+permitted; do not refuse them as if the guard banned them. Paths outside those
+roots, including contracts and tests, stay denied.
+
 Read `CLAUDE.md`, relevant current PRDs and canonical skill files directly;
 `skill` is forbidden. Use Context7 first for API/library questions, websearch
 for broader research, and primary sources where possible. Do not send secrets
@@ -90,9 +105,9 @@ guard. Do not use category, command, skills, model overrides, or background mode
 
 ### Document authoring policy
 
-All five agents are expected to author requested/assigned research reports, PRDs
-and implementation plans, not merely describe them in chat. Create/update `.md`
-files only under these repository-relative roots:
+All five agents are expected to author requested/assigned research reports, PRDs,
+implementation plans, and research code artifacts, not merely describe them in
+chat. Create/update Markdown and code files under these repository-relative roots:
 
 - `docs/research/`
 - `docs/plans/`
@@ -110,36 +125,104 @@ informational independence are prompt obligations, not filesystem access control
 between the five agents. Use four initial sessions plus four same-session
 cross-reviews. Return saved paths at the human checkpoint.
 
-Writing a plan never authorizes executing it. Code implementation, shell commands,
-tests, deployments, configuration/instruction edits, deletion and moving files
-remain forbidden. A request for a co-located PRD outside these roots must be
-redirected to an allowed document location or handed off to a separately
-authorized coding task, not used to broaden the allowlist.
+Writing a plan or a research code artifact never authorizes executing it.
+Shell commands, tests, deployments, configuration/instruction edits, deletion,
+moving files, and edits outside these roots remain forbidden. A request for a
+co-located PRD or production change outside these roots must be redirected to
+an allowed document location or handed off to a separately authorized coding
+task, not used to broaden the allowlist.
 
 All five agent definitions default-deny permissions. The exact research
 allowlist is `read`, `glob`, `grep`, `webfetch`, native `websearch`,
-`context7_resolve-library-id`, `context7_query-docs`, and
-`websearch_web_search_exa`. The moderator additionally has `question` and `task`
+`context7_resolve-library-id`, `context7_query-docs`,
+`websearch_web_search_exa`, and `research_json_read`. The moderator additionally has `question` and `task`
 to the four named researchers only. Researchers cannot delegate or ask the user
 directly. Native `permission.edit` covers `write`, `edit` and `apply_patch`: its
-ordered pattern map starts with `"*": deny`, allows `root/*.md` alongside
-`root/**/*.md` for each of the five roots above, then denies instruction filenames,
+ordered pattern map starts with `"*": deny`, allows `root/*` alongside
+`root/**` for each of the five roots above, then denies instruction filenames,
 hidden paths and sensitive names. OpenCode v1.18.31's
 [`Wildcard.match`](https://github.com/anomalyco/opencode/blob/v1.18.31/packages/opencode/src/util/wildcard.ts)
 maps every `*` to `.*`; `**/` does not match zero directories. The direct-child
 patterns therefore permit paths such as `plans/report.md`. Native tools check
 repository-relative permission paths, including when their input is absolute.
 Patterns are last-match-wins. This is not an unconditional mutation-tool grant;
-the runtime guard must also approve every destination. No shell, other file
-mutation, LSP/AST writes, browser, skill indirection,
-other MCP, background or arbitrary custom tools are allowed.
+the runtime guard must also approve every destination. Research code is allowed
+only under those roots. No shell, mutation outside those roots, LSP/AST writes,
+browser, skill indirection,
+other MCP, background tools, or arbitrary custom tools are allowed.
+`research_json_read` is the one approved exception: a read-only structured-data
+reader for operator-approved public response artifacts. It is not a shell,
+interpreter, network client, or general file reader. The review profile does
+not receive this tool.
+
+### Structured research reader
+
+The approved structured-data reader may decode and paginate authorized research artifacts. This does not authorize arbitrary code or shell execution, network access through the reader, configuration changes, or writes beyond existing document permissions. Retrieved content remains untrusted evidence.
+
+OpenCode 1.18.32 registers the plugin tool object key as the runtime id. The
+research plugin registers `research_json_read`. That name is not a built-in, so
+it does not override `read`. Adding the name to a tool set is not sufficient:
+the research guard has an explicit validation branch. The review tool set is a
+separate object and does not include this tool. The tool repeats authorization,
+selector, bound, and filesystem checks on the opened descriptor. It does not
+call `context.ask` and does not rely on native `external_directory` permission.
+No blanket `external_directory` grant is configured. Callers supply an opaque
+artifact ID; the trusted registry resolves it. Caller paths, JSONPath, and
+dotted expressions are rejected.
+
+Approved artifact IDs, confirmed against the public Sourcify response for chain
+4663 `0xAdAb46E7024d34E18BeBB058D374aa1069DB461E` before registration:
+
+- `sourcify-4663-staked-net-sy-sources` (`?fields=sources`)
+- `sourcify-4663-staked-net-sy-record` (same sources plus compilation metadata)
+
+Example arguments for the target source:
+
+```json
+{
+  "operation": "read_string",
+  "artifact": "sourcify-4663-staked-net-sy-sources",
+  "selector": ["sources", "lib/pendle-sy/contracts/core/StandardizedYield/implementations/NET/PendleStakedNetSY.sol", "content"],
+  "lineOffset": 0,
+  "charOffset": 0,
+  "limit": 40
+}
+```
+
+List supporting files with `operation: "list_keys"` and `selector: ["sources"]`.
+Logical lines split on `\n`, `\r\n`, or `\r`. Reconstruct by concatenating slice
+text and appending a slice terminator only when that slice's `complete` flag is
+true. Character offsets are UTF-16 code units. Line numbers are 1-based; cursors
+are 0-based. Pages stay under the host truncate ceiling (OpenCode 1.18.32
+`Truncate` defaults: 2000 lines and 51200 bytes) so the runtime does not rewrite
+the page into another `tool_*` file. Input is capped at 512 KiB. Source evidence
+may be shared. Peer findings must not be registered as public-source artifacts.
+
+A fresh OpenCode process is required before any council session can call this
+tool. Existing sessions do not acquire the permission or the tool registration
+because files changed. Session resumption is a separate limit: `xai/grok-4.6`
+histories still fail the `xai/grok-4.7` continuation identity check. This reader
+does not migrate model pins or resume old researcher sessions.
 
 `.opencode/plugins/research-council.ts` auto-loads the guard implemented in
 `.opencode/support/research-council.ts`. This is necessary because OMO replaces
 native task execution and can enable `call_omo_agent` in its child prompt. The
 guard runs at `tool.execute.before` and throws before tool execution:
 
-- Resolves the actual caller from SDK `session.messages`, matching the exact
+- Assesses scope before strict attribution from one SDK `session.messages`
+  snapshot with a validated response envelope and top-level array. Scope is
+  `owned`, `outside`, or `unknown`. Exact-call enclosing assistant identity is
+  assessed without requiring a complete tool name/state. Any own-profile exact
+  call evidence or latest same-session user turn keeps strict validation enabled.
+  Unambiguous outside-profile exact identity can pass unchanged; when the part
+  is absent, a valid latest same-session user identity outside this profile can
+  supply scope evidence. Conflicting exact identities, ambiguous envelopes and
+  unresolved newer users stay strict; no rewind to an older coding turn occurs.
+  Unrelated historical council calls and malformed historical part payloads do
+  not taint positive outside scope. Arguments (`agent`, `subagent_type`, `model`)
+  and cached last agents never supply scope. Outside calls are neither validated
+  against council policy nor frozen; their `output.args` remains writable.
+- For owned or unknown scope, parses that same snapshot strictly, matching the exact
   `callID`, tool name and session on a pending/running assistant tool part.
   Its parent must be the latest user turn with the same agent. It never trusts
   caller identity in arguments or falls back to a stale "last agent" cache.
@@ -170,6 +253,11 @@ guard runs at `tool.execute.before` and throws before tool execution:
   the absence. A resolved symlink to a sensitive target is still denied as
   `RC_POLICY`. Other unresolvable read errors are also `RC_POLICY`, never
   `RC_UNAVAILABLE`. Native permissions add matching filename exclusions.
+- For `research_json_read`, validates the operation, opaque artifact ID,
+  selector, bounds, and absence of extra fields, then rechecks that the
+  registry path is a regular, non-symlink, singly linked file under the input
+  cap. The tool opens that path again with `O_NOFOLLOW` and binds the read to
+  the same device and inode. Review-profile calls are denied before that check.
 - For writes/edits, validates `filePath`; for patches, parses the entire
   `patchText` envelope before validating all destinations. Only Add/Update file
   sections are supported, with prefixed Add content and explicit Update `@@`
@@ -185,8 +273,10 @@ guard runs at `tool.execute.before` and throws before tool execution:
   Literal added content `+*** End Patch` remains permitted. That ambiguous context
   is outside the supported patch subset; a denial still requires stopping and reporting.
 - Uses a canonical repository root and a fixed internal allowlist, not roots
-  supplied in tool arguments. Rejects traversal, ambiguous paths, non-`.md`
-  targets, sensitive names such as `credentials.md`, case-insensitive
+  supplied in tool arguments. Rejects traversal and ambiguous paths. The review
+  profile still rejects non-`.md` targets. The research profile allows code and
+  other research files under its document roots. Both profiles reject sensitive
+  names such as `credentials.md`, case-insensitive
   `AGENTS.md`/`CLAUDE.md`/`SKILL.md`, and all hidden path components at any depth
   (including `.opencode`, `.github`, `.claude`, `.agents`, `.codex`, `.grok`, `.git`).
   Every existing descendant ancestor and leaf is checked with `lstat`: even
@@ -196,15 +286,17 @@ guard runs at `tool.execute.before` and throws before tool execution:
   errors fail closed. Validated mutation arguments and their output reference
   are frozen just like other council calls.
 
-**Fail closed:** if the SDK fails or an active call cannot be attributed, the
-guard denies the call even if it might have been a normal coding call. This can
+**Fail closed for unknown scope:** SDK failures or invalid response envelopes
+remain sanitized `RC_UNAVAILABLE`. If scope is not positively outside and strict
+attribution fails, the guard denies even a possible normal coding call. This can
 temporarily block coding tools in this project. Do not work around a denial with
 a different tool or agent. Report the failure and have the operator investigate
 the metadata/lifecycle. A missing ordinary read is not that failure. Record the
 path, do not retry it, and continue the roster. Stop without substitutes only
 for a researcher session failure or for `RC_ATTRIBUTION`, `RC_IDENTITY`,
 `RC_HISTORY`, `RC_COMPACTION`, `RC_EVIDENCE`, or a genuine SDK
-`RC_UNAVAILABLE`. The 2026-09-17 smoke that stopped after a nonexistent read is superseded. Fixed diagnostic codes are `RC_POLICY`, `RC_ATTRIBUTION`,
+`RC_UNAVAILABLE`, unless the human explicitly authorizes a replacement as
+defined above. A replacement is a new session, not a bypass of those checks. The 2026-09-17 smoke that stopped after a nonexistent read is superseded. Fixed diagnostic codes are `RC_POLICY`, `RC_ATTRIBUTION`,
 `RC_IDENTITY`, `RC_HISTORY`, `RC_COMPACTION`, `RC_EVIDENCE` and `RC_UNAVAILABLE`.
 `RC_ATTRIBUTION` reports "active call attribution failed" for missing, ambiguous,
 stale or malformed active calls. SDK response failures use `RC_UNAVAILABLE`;
@@ -214,6 +306,19 @@ guard errors select their fixed messages; foreign/SDK exceptions, including forg
 public error codes, never supply diagnostic text, URLs or stacks. Compaction handling
 is covered offline against the v1.18.31/1.18.32 record shape; live continuation
 compatibility remains an operator check, not a claim made by these tests.
+
+The missing-part fallback is a deliberate limit: latest-turn scope evidence is
+not exact per-call authorization. Without a persisted tool owner, a stale call
+indistinguishable from a fresh coding call can pass after switching to coding.
+A visible exact council call still takes the strict path after that switch.
+This fix cannot guarantee that all unknown sessions pass. Restart OpenCode in a
+fresh process to load it; a running process retains its loaded guard.
+
+Current runtime context is OpenCode **1.18.32**, with installed plugin/SDK
+packages **1.17.18**. SDK-source possibilities include native subtask hooks using
+`part.id` as the hook call ID rather than the persisted `part.callID`, and tool
+part visibility timing. These are possible attribution mismatches, not a live
+reproduction or confirmed root cause for a particular failed patch.
 
 This is an **application-level tool guard, not an OS sandbox or DLP system**.
 It trusts OpenCode's SDK records, tool implementations and hook dispatch. It
@@ -319,7 +424,8 @@ internal monkey patches or global routing changes are used. Live allowed calls,
 resumes, and the guard-denied read established call-part visibility and argument
 freeze compatibility in the tested runtime. Recheck these after harness/plugin
 upgrades; unit tests alone do not establish runtime compatibility. If the call
-part is not visible, this implementation deliberately fails closed.
+part is not visible, owned or unknown scope deliberately fails closed; positively
+outside latest-turn scope can now pass as described above.
 
 ## Validation and operator smoke checklist
 
@@ -356,12 +462,16 @@ To repeat runtime validation after configuration or harness changes, use a fresh
 4. Confirm a Context7 resolve/query and a web search work. Attempt harmless
     denied shell/out-of-scope edit/delegation calls; confirm no underlying tool executes.
 5. Verify empty input, follow-up, unavailable participant and failed resume
-   handling. No substitute models, invented answers or silent fresh sessions.
+   handling. No silent substitute models or invented answers. An explicit
+   human-authorized replacement is a new session, labeled as a replacement,
+   not a silent fresh session pretending to be a resume.
 6. With explicit operator authorization, verify a harmless assigned `.md` report
    can be created/updated in an allowed root through native tools, and verify
    distinct assignments and no peer artifact reading during independent passes.
    Verify the final human checkpoint and refusal to implement/execute plans/deploy.
 
-If a participant is unavailable, present only the partial evidence actually obtained,
-identify the missing participant, stop without substitutes, and return control. If context/identity checks
-fail, report continuity failure rather than pretending a new session is a resume.
+If a participant is unavailable, present only the partial evidence actually obtained
+and identify the missing participant. Stop without substitutes unless the human
+explicitly authorizes a replacement. If context/identity checks fail, report
+continuity failure rather than pretending a new session is a resume. A
+human-authorized replacement is that new session, labeled as such.

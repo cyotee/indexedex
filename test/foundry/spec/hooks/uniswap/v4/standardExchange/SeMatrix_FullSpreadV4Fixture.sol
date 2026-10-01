@@ -4,6 +4,17 @@ pragma solidity ^0.8.0;
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IMultiStepOwnable} from "@crane/contracts/interfaces/IMultiStepOwnable.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {IStandardExchangeErrors} from "contracts/interfaces/IStandardExchangeErrors.sol";
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
+import {WrapperExactOutRouter} from "contracts/test/stubs/WrapperExactOutRouter.sol";
+import {IUnlockCallback} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/callback/IUnlockCallback.sol";
+import {SwapParams} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolOperation.sol";
+import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/TickMath.sol";
+import {Hooks} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Hooks.sol";
+import {CustomRevert} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/CustomRevert.sol";
+import {LPFeeLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/LPFeeLibrary.sol";
 import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
 import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
 import {IPositionManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPositionManager.sol";
@@ -18,14 +29,14 @@ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.so
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {
-    IUniswapV4FullSpreadStandardExchangeVaultDFPkg
-} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/IUniswapV4FullSpreadStandardExchangeVaultDFPkg.sol";
+    IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg
+} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg.sol";
 import {
-    UniswapV4FullSpreadStandardExchangeVault_Component_FactoryService
-} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVault_Component_FactoryService.sol";
+    UniswapV4FullSpreadHooklessStandardExchangeVault_Component_FactoryService as HooklessFactory
+} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/UniswapV4FullSpreadHooklessStandardExchangeVault_Component_FactoryService.sol";
 import {
-    IUniswapV4FullSpreadStandardExchangeVaultLiquidReserve
-} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/interfaces/IUniswapV4FullSpreadStandardExchangeVaultLiquidReserve.sol";
+    IUniswapV4FullSpreadHooklessStandardExchangeVaultLiquidReserve
+} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/interfaces/IUniswapV4FullSpreadHooklessStandardExchangeVaultLiquidReserve.sol";
 import {
     IUniswapV4MultiPoolTwapOracle
 } from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4MultiPoolTwapOracle.sol";
@@ -36,58 +47,54 @@ import {UniswapV4TwapOracleFactoryService} from "contracts/oracles/uniswap/v4/tw
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {SeMatrixFixture} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/SeMatrixFixture.sol";
 import {
-    FullSpreadLiquidityProvider
-} from "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/StandardExchangeFullSpreadAdversarialBehavior.sol";
+    UniswapV4FullSpreadConsumerLiquidityProvider
+} from "contracts/test/stubs/UniswapV4FullSpreadConsumerLiquidityProvider.sol";
 
 /**
  * @title SeMatrix_FullSpreadV4Fixture
- * @notice `UniswapV4FullSpreadStandardExchangeVault` row fixture, ERC-20 variant only (open item 1
+ * @notice `UniswapV4FullSpreadHooklessStandardExchangeVault` row fixture, ERC-20 variant only (open item 1
  *         PRD §5 / M6; the native-ETH variant is out of scope for the hook rows). Face token = pool
  *         `currency0` (18-decimal `SimpleMintableERC20` minted here); `otherToken()` = `currency1`.
  *         The SE is deployed through the production FullSpread V4 package on its own CREATE3
  *         `PoolManager` (separate from the hook's) with a 3000-fee / 60-spacing pool that an
- *         independent LP (`FullSpreadLiquidityProvider`, the `_seedMarket` pattern of
+ *         independent LP (`UniswapV4FullSpreadConsumerLiquidityProvider`, the `_seedMarket` pattern of
  *         `TestBase_UniswapV4FullSpreadStandardExchangeVault_Adversarial`) seeds with 50_000e18
  *         full-range liquidity so the SE can quote. The fixture bootstraps the SE with a 100/100
  *         dual deposit so single-sided face buffering mints shares.
- * @dev Sleeve model (R14 = the `LiquidReserve` sleeve, `_configureSleeve` pattern):
- *      - Default per-vault sleeve is 100% (`IDLE_SLEEVE_WAD`), the configuration the family's own
- *        A0 / E6 / CROPS suites run under (`_configureSleeve(1e18)`): every buffered face stays local
- *        (`localReserve(face)`), no position exists, and an other-token caller never re-pairs the
- *        booked face (D33 row).
- *      - A face-only deposit never deploys at any sleeve: the full-range center plan takes face and
- *        pair 1:1 at the seeded price, so `getLiquidityForAmounts(excess0, 0) == 0`. The pair-side
- *        excess therefore bounds the face that can be invested, which is how `limitCapacity` and
- *        `openCapacity` are expressed (see those functions).
+ * @dev At p=1e18 H targets half of the placeable book locally, not all-local custody.
+ *      H-specific row overrides prove blocked booking using a real outer unlock and assert
+ *      unsupported EO domains explicitly. Token-delivery failure uses a real rejecting ERC20.
  *      - `seBooked()` is the SE's local face reserve view, `localReserve(currency0)`.
  *      - Package deployment is idempotent across fixtures: pass `pkg()` of an earlier fixture as
  *        `existingPkg`. The `PoolManager` singleton is CREATE3-deployed under a fixed salt, which
  *        the Crane factory resolves idempotently (`Create3FactoryService._create3WithArgs`), so a
  *        reused package and a new fixture always meet on the same `PoolManager`.
  */
-contract SeMatrix_FullSpreadV4Fixture is SeMatrixFixture {
-    using UniswapV4FullSpreadStandardExchangeVault_Component_FactoryService for ICreate3FactoryProxy;
+contract SeMatrix_FullSpreadV4Fixture is SeMatrixFixture, IUnlockCallback {
+    using HooklessFactory for ICreate3FactoryProxy;
     using UniswapV4TwapOracleFactoryService for ICreate3FactoryProxy;
 
-    /// @dev `TestBase_UniswapV4FullSpreadStandardExchangeVault.DEFAULT_V4_LIQUID_RESERVE_PCT`.
+    /// @dev Shared H/P fee-oracle type default.
     uint256 public constant FAMILY_SLEEVE_WAD = 0.2e18;
-    /// @dev 100% liquid reserve: nothing is deployed, everything stays local.
+    /// @dev Historical constant name; p=1e18 targets F=T/2, not all-local custody.
     uint256 public constant IDLE_SLEEVE_WAD = 1e18;
     /// @dev Lower clamp; 0 would fall back to the type default in the fee oracle.
     uint256 internal constant MIN_SLEEVE_WAD = 0.01e18;
-    uint128 internal constant EXTERNAL_LIQUIDITY = 50_000 ether;
-    uint256 internal constant EXTERNAL_FUNDING = 100_000 ether;
+    /// @dev The matrix's 500-token resting donations must remain inside the fixed
+    /// composition impact domain. Limit rejection is covered by the family suites.
+    uint128 internal constant EXTERNAL_LIQUIDITY = 500_000 ether;
+    uint256 internal constant EXTERNAL_FUNDING = 1_000_000 ether;
     uint256 internal constant BOOTSTRAP_AMOUNT = 100 ether;
     uint24 internal constant POOL_FEE = 3000;
     int24 internal constant POOL_TICK_SPACING = 60;
     bytes32 internal constant POOL_MANAGER_SALT = keccak256("SeMatrix_FullSpreadV4_PoolManager");
 
-    IUniswapV4FullSpreadStandardExchangeVaultDFPkg internal pkg_;
+    IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg internal pkg_;
     IPoolManager public poolManager;
     IWETH public weth;
     SimpleMintableERC20 public token0;
     SimpleMintableERC20 public token1;
-    FullSpreadLiquidityProvider public provider;
+    UniswapV4FullSpreadConsumerLiquidityProvider public provider;
     PoolKey internal poolKey;
     address internal seVault;
 
@@ -95,7 +102,8 @@ contract SeMatrix_FullSpreadV4Fixture is SeMatrixFixture {
         _deployPoolManagerSingleton(c);
         pkg_ = existingPkg == address(0)
             ? _deployPkg(c)
-            : IUniswapV4FullSpreadStandardExchangeVaultDFPkg(existingPkg);
+            : IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg(existingPkg);
+        require(keccak256(bytes(pkg_.packageName())) == keccak256("UniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg"), "matrix: stale family");
         _createMarket();
         vm.prank(c.owner);
         seVault = pkg_.deployVault(poolKey);
@@ -121,26 +129,26 @@ contract SeMatrix_FullSpreadV4Fixture is SeMatrixFixture {
         vm.stopPrank();
     }
 
-    function _deployPkg(Ctx memory c) internal returns (IUniswapV4FullSpreadStandardExchangeVaultDFPkg pkgOut) {
+    function _deployPkg(Ctx memory c) internal returns (IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg pkgOut) {
         address factoryOwner = IMultiStepOwnable(address(c.create3Factory)).owner();
         vm.startPrank(factoryOwner);
         IUniswapV4MultiPoolTwapOracle twap = _deployTwap(c);
-        IUniswapV4FullSpreadStandardExchangeVaultDFPkg.PkgInit memory init = _facetInit(c);
+        IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg.PkgInit memory init = _facetInit(c);
         vm.stopPrank();
         weth = IWETH(address(new WETH9()));
         init.weth = weth;
-        init = UniswapV4FullSpreadStandardExchangeVault_Component_FactoryService.attachTwapOracle(init, twap);
+        init = HooklessFactory.attachTwapOracle(init, twap);
         init.positionManager = IPositionManager(address(0));
         vm.startPrank(c.owner);
         IVaultFeeOracleManager(address(c.indexedexManager)).setDefaultLiquidReservePercentageOfTypeId(
-            type(IUniswapV4FullSpreadStandardExchangeVaultLiquidReserve).interfaceId, FAMILY_SLEEVE_WAD
+            type(IUniswapV4FullSpreadHooklessStandardExchangeVaultLiquidReserve).interfaceId, FAMILY_SLEEVE_WAD
         );
-        pkgOut = UniswapV4FullSpreadStandardExchangeVault_Component_FactoryService
-            .deployUniswapV4FullSpreadStandardExchangeVaultDFPkg(c.indexedexManager, init);
+        pkgOut = HooklessFactory
+            .deployUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg(c.indexedexManager, init);
         vm.stopPrank();
     }
 
-    /// @dev Same TWAP wiring as `TestBase_UniswapV4FullSpreadStandardExchangeVault.setUp`.
+    /// @dev Same TWAP wiring as the H family TestBase.
     function _deployTwap(Ctx memory c) internal returns (IUniswapV4MultiPoolTwapOracle twap) {
         IUniswapV4MultiPoolTwapOracleDFPkg twapPkg = c.create3Factory.deployUniswapV4MultiPoolTwapOracleDFPkg(
             c.create3Factory.deployUniswapV4MultiPoolTwapOracleFacet(), c.create3Factory.diamondPackageFactory()
@@ -148,48 +156,48 @@ contract SeMatrix_FullSpreadV4Fixture is SeMatrixFixture {
         twap = twapPkg.deployOracle(IUniswapV4MultiPoolTwapOracleDFPkg.PkgArgs({poolManager: address(poolManager)}));
     }
 
-    /// @dev Same facet wiring as `TestBase_UniswapV4FullSpreadStandardExchangeVault._univ4SePkgInitCore`.
+    /// @dev Each facet belongs to the H family; only generic vault facets are shared.
     function _facetInit(Ctx memory c)
         internal
-        returns (IUniswapV4FullSpreadStandardExchangeVaultDFPkg.PkgInit memory init)
+        returns (IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg.PkgInit memory init)
     {
-        UniswapV4FullSpreadStandardExchangeVault_Component_FactoryService.Univ4SePkgInitCore memory core;
+        HooklessFactory.Univ4SePkgInitCore memory core;
         core.erc20Facet = c.erc20Facet;
         core.erc5267Facet = c.erc5267Facet;
         core.erc2612Facet = c.erc2612Facet;
         core.multiAssetBasicVaultFacet = c.multiAssetBasicVaultFacet;
         core.multiAssetStandardVaultFacet = c.multiAssetStandardVaultFacet;
         core.uniswapV4StandardExchangeInFacet =
-            c.create3Factory.deployUniswapV4FullSpreadStandardExchangeVaultInFacet();
+            c.create3Factory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultInFacet();
         core.uniswapV4StandardExchangeInQueryFacet =
-            c.create3Factory.deployUniswapV4FullSpreadStandardExchangeVaultInQueryFacet();
+            c.create3Factory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultInQueryFacet();
         core.uniswapV4StandardExchangePositionImportFacet =
-            c.create3Factory.deployUniswapV4FullSpreadStandardExchangeVaultPositionImportFacet();
+            c.create3Factory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultPositionImportFacet();
         core.uniswapV4StandardExchangeOutFacet =
-            c.create3Factory.deployUniswapV4FullSpreadStandardExchangeVaultOutFacet();
+            c.create3Factory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultOutFacet();
         core.uniswapV4StandardExchangeOutQueryFacet =
-            c.create3Factory.deployUniswapV4FullSpreadStandardExchangeVaultOutQueryFacet();
+            c.create3Factory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultOutQueryFacet();
         core.uniswapV4StandardExchangeLiquidReserveFacet =
-            c.create3Factory.deployUniswapV4FullSpreadStandardExchangeVaultLiquidReserveFacet();
+            c.create3Factory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultLiquidReserveFacet();
         core.vaultFeeOracleQuery = IVaultFeeOracleQuery(address(c.indexedexManager));
         core.vaultRegistryDeployment = IVaultRegistryDeployment(address(c.indexedexManager));
         core.permit2 = c.permit2;
         core.poolManager = poolManager;
-        init = UniswapV4FullSpreadStandardExchangeVault_Component_FactoryService
-            .buildArgsUniswapV4FullSpreadStandardExchangeVaultPkgInit(core);
-        init = UniswapV4FullSpreadStandardExchangeVault_Component_FactoryService
-            .attachUniswapV4FullSpreadStandardExchangeVaultMultiFacets(
+        init = HooklessFactory
+            .buildArgsUniswapV4FullSpreadHooklessStandardExchangeVaultPkgInit(core);
+        init = HooklessFactory
+            .attachUniswapV4FullSpreadHooklessStandardExchangeVaultMultiFacets(
             init,
-            c.create3Factory.deployUniswapV4FullSpreadStandardExchangeVaultInMultiFacet(),
-            c.create3Factory.deployUniswapV4FullSpreadStandardExchangeVaultInMultiQueryFacet(),
-            c.create3Factory.deployUniswapV4FullSpreadStandardExchangeVaultOutMultiFacet(),
-            c.create3Factory.deployUniswapV4FullSpreadStandardExchangeVaultOutMultiQueryFacet()
+            c.create3Factory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultInMultiFacet(),
+            c.create3Factory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultInMultiQueryFacet(),
+            c.create3Factory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultOutMultiFacet(),
+            c.create3Factory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultOutMultiQueryFacet()
         );
     }
 
     function _createMarket() internal {
-        SimpleMintableERC20 a = new SimpleMintableERC20("FullSpread V4 Face", "FS4A");
-        SimpleMintableERC20 b = new SimpleMintableERC20("FullSpread V4 Pair", "FS4B");
+        SimpleMintableERC20 a = new SeMatrixRejectingERC20("FullSpread V4 Face", "FS4A");
+        SimpleMintableERC20 b = new SeMatrixRejectingERC20("FullSpread V4 Pair", "FS4B");
         (token0, token1) = address(a) < address(b) ? (a, b) : (b, a);
         poolKey = PoolKey({
             currency0: Currency.wrap(address(token0)),
@@ -204,13 +212,13 @@ contract SeMatrix_FullSpreadV4Fixture is SeMatrixFixture {
     /// @dev `_seedMarket` of the V4 adversarial TestBase: an independent LP adds full-range liquidity.
     ///      `weth` is only consulted by the provider for native currencies; ERC-20 pools ignore it.
     function _seedMarket() internal {
-        provider = new FullSpreadLiquidityProvider();
+        provider = new UniswapV4FullSpreadConsumerLiquidityProvider();
         token0.mint(address(provider), EXTERNAL_FUNDING);
         token1.mint(address(provider), EXTERNAL_FUNDING);
         provider.addV4(poolManager, poolKey, weth, EXTERNAL_LIQUIDITY);
     }
 
-    /// @dev First mint through the real dual-deposit route at the idle sleeve (nothing deployed).
+    /// @dev First mint through the real dual-deposit route with p=1e18.
     function _bootstrapVault() internal {
         token0.mint(address(this), BOOTSTRAP_AMOUNT);
         token1.mint(address(this), BOOTSTRAP_AMOUNT);
@@ -229,8 +237,8 @@ contract SeMatrix_FullSpreadV4Fixture is SeMatrixFixture {
 
     /* ------------------------------- sleeve ------------------------------- */
 
-    function _lr() internal view returns (IUniswapV4FullSpreadStandardExchangeVaultLiquidReserve) {
-        return IUniswapV4FullSpreadStandardExchangeVaultLiquidReserve(seVault);
+    function _lr() internal view returns (IUniswapV4FullSpreadHooklessStandardExchangeVaultLiquidReserve) {
+        return IUniswapV4FullSpreadHooklessStandardExchangeVaultLiquidReserve(seVault);
     }
 
     /// @dev `_configureSleeve` of the adversarial TestBase: owner sets the per-vault liquid reserve.
@@ -239,9 +247,8 @@ contract SeMatrix_FullSpreadV4Fixture is SeMatrixFixture {
         IVaultFeeOracleManager(address(ctx.indexedexManager)).setLiquidReservePercentageOfVault(seVault, pct);
     }
 
-    /// @dev The independent LP adds the pair side through the SE's real deposit route while the
-    ///      sleeve is idle (no deployment), then the family default sleeve is restored, so the NEXT
-    ///      face deposit finds excess on both sides and deploys through `poolManager.unlock`.
+    /// @dev Real pair-side funding followed by restoration of the family sleeve default.
+    ///      The funding operation itself may compose and place assets; no deferred-sweep claim.
     function _openInvestment() internal {
         _setSleeve(IDLE_SLEEVE_WAD);
         (uint256 dep0,) = _lr().deployedReserve();
@@ -257,7 +264,7 @@ contract SeMatrix_FullSpreadV4Fixture is SeMatrixFixture {
     /* ------------------------------ identity ------------------------------ */
 
     function familyName() external pure override returns (string memory) {
-        return "UniswapV4FullSpreadStandardExchangeVault";
+        return "UniswapV4FullSpreadHooklessStandardExchangeVault";
     }
 
     function pkg() external view returns (address) {
@@ -288,28 +295,13 @@ contract SeMatrix_FullSpreadV4Fixture is SeMatrixFixture {
         return true;
     }
 
-    /// @notice Closest expressible allowance. The full-range center takes face and pair 1:1 at the
-    ///         seeded price, so the invested face is bounded by the pair-side excess above the sleeve
-    ///         target. The sleeve is set so that excess equals 99% of `allowFace`: the next face
-    ///         deposit invests just under `allowFace` and books the rest locally (D22 / D31). The
-    ///         1% margin absorbs rounding; `allowFace == 0` resolves to the idle sleeve.
+    /// @notice H has no configurable investment quota; its row uses a real blocked-state case.
     function limitCapacity(uint256 allowFace) external override {
-        uint256 free1 = _lr().localReserve(address(token1));
-        (, uint256 dep1) = _lr().deployedReserve();
-        uint256 pairExcess = allowFace - allowFace / 100;
-        uint256 pct;
-        if (pairExcess >= free1) {
-            pct = MIN_SLEEVE_WAD;
-        } else {
-            pct = ((free1 - pairExcess) * 1e18) / (free1 + dep1);
-        }
-        if (pct < MIN_SLEEVE_WAD) pct = MIN_SLEEVE_WAD;
-        if (pct > IDLE_SLEEVE_WAD) pct = IDLE_SLEEVE_WAD;
-        _setSleeve(pct);
+        require(allowFace == 0, "H capacity is measured under an actual outer unlock");
+        _setSleeve(IDLE_SLEEVE_WAD);
     }
 
-    /// @notice Restores the family default sleeve with enough pair-side inventory that the next
-    ///         investing operation sweeps the booked face into the pool.
+    /// @notice Perform real pair-side funding and restore the default policy.
     function openCapacity() external override {
         _openInvestment();
     }
@@ -320,19 +312,14 @@ contract SeMatrix_FullSpreadV4Fixture is SeMatrixFixture {
 
     /* --------------------------- operative failure ------------------------ */
 
-    /// @notice Makes the SE's operative investment call (`IPoolManager.unlock` on the SE's own
-    ///         `PoolManager`, reached from `_rebalanceLiquidReserveBestEffort` ->
-    ///         `_deployExcessLiquidity` -> `_executeUnlock(AddLiquidity)`) revert with
-    ///         `rejectBytes()`. The pair side is supplied first so the next face deposit reaches that
-    ///         call; previews stay view-only and keep passing. The hook's own `PoolManager` is a
-    ///         different instance and is not touched.
+    /// @notice Reject the real token delivery into the SE while leaving reads and caller funding
+    ///         available. This tests atomic buffering failure, not a mocked investment failure.
     function armOperativeRevert() external override {
-        _openInvestment();
-        vm.mockCallRevert(address(poolManager), abi.encodeWithSelector(IPoolManager.unlock.selector), rejectBytes());
+        SeMatrixRejectingERC20(address(token0)).setRejection(seVault, rejectBytes());
     }
 
     function disarmOperativeRevert() external override {
-        vm.clearMockedCalls();
+        SeMatrixRejectingERC20(address(token0)).setRejection(address(0), bytes(""));
     }
 
     /* --------------------------------- AMM -------------------------------- */
@@ -347,5 +334,202 @@ contract SeMatrix_FullSpreadV4Fixture is SeMatrixFixture {
 
     function fundOther(address to, uint256 amount) external override {
         token1.mint(to, amount);
+    }
+
+    function domainReason(address output) public view returns (bytes memory) {
+        return output == address(token0)
+            ? abi.encodeWithSelector(IStandardExchangeErrors.InvalidRoute.selector, seVault, address(token0))
+            : abi.encodeWithSelector(IStandardExchangeErrors.InvalidRoute.selector, address(token0), seVault);
+    }
+
+    function _digest(address target, IERC20 input, IERC20 output, address caller) private view returns (bytes32) {
+        return keccak256(abi.encode(_ownSeDigest(target), _custodyDigest(target, input, output, caller),
+            _callerDigest(target, input, output, caller)));
+    }
+
+    function _ownSeDigest(address target) private view returns (bytes32) {
+        (uint256 d0, uint256 d1) = _lr().deployedReserve();
+        return keccak256(abi.encode(IERC20(seVault).totalSupply(), IERC20(seVault).balanceOf(target),
+            token0.balanceOf(seVault), token1.balanceOf(seVault), d0, d1));
+    }
+
+    function _callerDigest(address target, IERC20 input, IERC20 output, address caller) private view returns (bytes32) {
+        bytes32 balances = keccak256(abi.encode(input.balanceOf(address(this)), input.balanceOf(target), input.balanceOf(caller)));
+        return keccak256(abi.encode(balances, output.balanceOf(target), output.balanceOf(caller), input.allowance(address(this), caller)));
+    }
+
+    function _custodyDigest(address target, IERC20 input, IERC20 output, address caller) private view returns (bytes32 digest) {
+        digest = keccak256(abi.encode(output.balanceOf(address(this)),
+            IBasicVault(seVault).reserveOfToken(address(token0)), IBasicVault(seVault).reserveOfToken(address(token1)),
+            IBasicVault(seVault).reserveOfToken(seVault), input.allowance(caller, target), input.allowance(target, seVault)));
+        (bool ok, bytes memory data) = caller.staticcall(abi.encodeWithSignature("manager()"));
+        if (ok && data.length == 32) {
+            address manager = abi.decode(data, (address));
+            digest = keccak256(abi.encode(digest, input.balanceOf(manager), output.balanceOf(manager)));
+        }
+        (ok, data) = target.staticcall(abi.encodeWithSignature("tokens()"));
+        if (ok && data.length >= 64) {
+            address[] memory tokens = abi.decode(data, (address[]));
+            for (uint256 i; i < tokens.length; ++i) {
+                (bool bound, bytes memory result) = target.staticcall(abi.encodeWithSignature("standardExchangeOf(address)", tokens[i]));
+                if (bound && result.length == 32) {
+                    address exchange = abi.decode(result, (address));
+                    if (exchange != address(0)) digest = keccak256(abi.encode(digest, _boundExchangeDigest(exchange, tokens[i], target)));
+                }
+            }
+        }
+    }
+
+    function _boundExchangeDigest(address exchange, address token, address target) private view returns (bytes32) {
+        return keccak256(abi.encode(IERC20(exchange).totalSupply(), IERC20(exchange).balanceOf(target),
+            IERC20(token).balanceOf(exchange), IERC20(exchange).allowance(target, exchange)));
+    }
+
+    /// @notice Unsupported outer EO must reject its preview AND execution, including atomic pretransfer.
+    function assertExactOutRejected(address target, address input, address output, bool prepaid) external {
+        IERC20 tin = IERC20(input);
+        IERC20 tout = IERC20(output);
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        uint256 maximum = 10 ether;
+        if (input != seVault) SimpleMintableERC20(input).mint(address(this), maximum);
+        tin.approve(address(caller), maximum);
+        bytes32 beforeState = _digest(target, tin, tout, address(caller));
+        bytes memory reason = domainReason(output);
+        vm.expectRevert(reason);
+        IStandardExchangeOut(target).previewExchangeOut(tin, tout, 1e12);
+        bytes memory data = abi.encodeCall(IStandardExchangeOut.exchangeOut,
+            (tin, maximum, tout, 1e12, address(caller), prepaid, block.timestamp));
+        vm.expectRevert(reason);
+        if (prepaid) caller.consumePretransfer(tin, address(this), target, maximum, data);
+        else caller.consumePull(tin, address(this), target, maximum, data);
+        require(_digest(target, tin, tout, address(caller)) == beforeState, "EO rollback");
+    }
+
+    /// @notice Calls the real router directly, not an EO helper that can stop at preview.
+    function assertRouterExactOutRejected(address router, PoolKey memory key, address input, address output) external {
+        _assertRouterExactOutRejected(router, key, input, output);
+    }
+
+    function _assertRouterExactOutRejected(address router, PoolKey memory key, address input, address output) private {
+        uint256 maximum = 10 ether;
+        if (input != seVault) SimpleMintableERC20(input).mint(address(this), maximum);
+        IERC20(input).approve(router, maximum);
+        bytes32 beforeState = _digest(address(key.hooks), IERC20(input), IERC20(output), router);
+        bool zeroForOne = input == Currency.unwrap(key.currency0);
+        SwapParams memory params = SwapParams(zeroForOne, int256(1e12),
+            zeroForOne ? TickMath.MIN_SQRT_PRICE + 1 : TickMath.MAX_SQRT_PRICE - 1);
+        bytes memory reason = abi.encodeWithSelector(CustomRevert.WrappedError.selector, address(key.hooks),
+            IHooks.beforeSwap.selector, domainReason(output), abi.encodePacked(Hooks.HookCallFailed.selector));
+        vm.expectRevert(reason);
+        WrapperExactOutRouter(router).swapExactOut(key, params, maximum, bytes(""));
+        require(_digest(address(key.hooks), IERC20(input), IERC20(output), router) == beforeState, "router EO rollback");
+    }
+
+    struct RouterState {
+        uint256 quote;
+        uint256 input;
+        uint256 output;
+        uint256 resting;
+        uint256 held;
+        uint256 supply;
+    }
+
+    function assertRouterPairRoutes(address router, address hook, address input, address output, int24 spacing) external {
+        PoolKey memory key = PoolKey(Currency.wrap(input < output ? input : output), Currency.wrap(input < output ? output : input),
+            LPFeeLibrary.DYNAMIC_FEE_FLAG, spacing, IHooks(hook));
+        SimpleMintableERC20(input).mint(address(this), 1 ether);
+        IERC20(input).approve(router, 1 ether);
+        RouterState memory state;
+        state.quote = IStandardExchangeIn(hook).previewExchangeIn(IERC20(input), 1 ether, IERC20(output));
+        require(state.quote > 0, "nonzero EI quote");
+        state.input = IERC20(input).balanceOf(address(this));
+        state.output = IERC20(output).balanceOf(address(this));
+        state.resting = IERC20(output).balanceOf(hook);
+        state.held = IERC20(seVault).balanceOf(hook);
+        state.supply = IERC20(seVault).totalSupply();
+        bool zfo = input < output;
+        WrapperExactOutRouter(router).swapExactIn(key, SwapParams(zfo, -int256(1 ether),
+            zfo ? TickMath.MIN_SQRT_PRICE + 1 : TickMath.MAX_SQRT_PRICE - 1), bytes(""));
+        require(IERC20(input).balanceOf(address(this)) == state.input - 1 ether, "exact EI input");
+        require(IERC20(output).balanceOf(address(this)) == state.output + state.quote, "exact EI payout parity");
+        uint256 afterFace = IERC20(output).balanceOf(hook);
+        if (output == address(token0)) {
+            require(afterFace > state.resting ? afterFace - state.resting <= 10 : state.resting - afterFace <= 10, "no output dust subsidy");
+            uint256 burned = state.held - IERC20(seVault).balanceOf(hook);
+            require(burned > 0 && burned < state.held && state.supply - IERC20(seVault).totalSupply() == burned, "exact output share burn");
+        } else {
+            require(afterFace + state.quote == state.resting, "raw output reserve pays exactly the quote");
+        }
+        _assertRouterExactOutRejected(router, key, input, output);
+    }
+
+    /// @notice Funded blocked deposits book only this caller's input; existing holder shares do not move.
+    function assertBlockedAccounting(address holder) external {
+        uint256 held = IERC20(seVault).balanceOf(holder);
+        (uint256 d0, uint256 d1) = _lr().deployedReserve();
+        require(d0 > 0 && d1 > 0 && _lr().localReserve(address(token0)) > 0 && _lr().localReserve(address(token1)) > 0,
+            "p=1 is funded half-book, not all-local");
+        for (uint256 i; i < 2; ++i) {
+            SimpleMintableERC20 input = i == 0 ? token0 : token1;
+            SimpleMintableERC20 other = i == 0 ? token1 : token0;
+            input.mint(address(this), 1 ether);
+            input.approve(seVault, 1 ether);
+            uint256 booked = IBasicVault(seVault).reserveOfToken(address(input));
+            uint256 untouched = other.balanceOf(seVault);
+            uint256 sharesBefore = IERC20(seVault).balanceOf(address(this));
+            uint256 usedBefore = input.balanceOf(address(this));
+            uint256 minted = abi.decode(poolManager.unlock(abi.encode(address(input))), (uint256));
+            require(minted > 0 && IERC20(seVault).balanceOf(address(this)) == sharesBefore + minted, "funded shares");
+            require(input.balanceOf(address(this)) == usedBefore - 1 ether, "no input refund");
+            require(IBasicVault(seVault).reserveOfToken(address(input)) == booked + 1 ether, "entire blocked input booked");
+            require(other.balanceOf(seVault) == untouched, "no other caller funds consumed");
+        }
+        require(IERC20(seVault).balanceOf(holder) == held, "holder shares unchanged");
+        (uint256 after0, uint256 after1) = _lr().deployedReserve();
+        require(d0 == after0 && d1 == after1, "blocked path does not touch liquidity");
+    }
+
+    function unlockCallback(bytes calldata data) external returns (bytes memory) {
+        require(msg.sender == address(poolManager), "manager only");
+        require(!_lr().canOpenPoolManagerUnlock(), "real blocked state");
+        IERC20 input = IERC20(abi.decode(data, (address)));
+        uint256 quoted = IStandardExchangeIn(seVault).previewExchangeIn(input, 1 ether, IERC20(seVault));
+        uint256 minted = IStandardExchangeIn(seVault).exchangeIn(input, 1 ether, IERC20(seVault), quoted, address(this), false, block.timestamp);
+        require(minted == quoted, "blocked quote parity");
+        return abi.encode(minted);
+    }
+}
+
+/// @dev Real ERC20 failure harness, not a mocked vault, hook or PoolManager.
+contract SeMatrixRejectingERC20 is SimpleMintableERC20 {
+    address private immutable controller;
+    address private rejectedRecipient;
+    bytes private rejection;
+    constructor(string memory name_, string memory symbol_) SimpleMintableERC20(name_, symbol_) { controller = msg.sender; }
+    function setRejection(address recipient, bytes calldata reason) external {
+        require(msg.sender == controller, "fixture controller");
+        rejectedRecipient = recipient;
+        rejection = reason;
+    }
+    function _check(address to) private view {
+        if (to != address(0) && to == rejectedRecipient) {
+            bytes memory reason = rejection;
+            assembly ("memory-safe") { revert(add(reason, 32), mload(reason)) }
+        }
+    }
+    function transfer(address to, uint256 amount) external override returns (bool) {
+        _check(to);
+        _transfer(msg.sender, to, amount);
+        return true;
+    }
+    function transferFrom(address from, address to, uint256 amount) external override returns (bool) {
+        _check(to);
+        uint256 allowed = allowance[from][msg.sender];
+        if (allowed != type(uint256).max) {
+            require(allowed >= amount, "allowance");
+            allowance[from][msg.sender] = allowed - amount;
+        }
+        _transfer(from, to, amount);
+        return true;
     }
 }

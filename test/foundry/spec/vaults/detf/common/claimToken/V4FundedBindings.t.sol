@@ -372,13 +372,14 @@ contract OrbitalV4PositionFundedBindingTest is TestBase_UniswapV4Detf_Orbital_Un
 
     function _measurePositionWithdrawalQuotes(address se_, address token_) private {
         uint256 start_ = gasleft();
-        uint256 shares_ = IStandardExchangeOut(se_).previewExchangeOut(IERC20(se_), IERC20(token_), 1 ether);
-        emit log_named_uint("Standard exact-output quote gas", start_ - gasleft());
+        // R6 exact-output share redemption is unsupported on a two-backed book. R5 exact-in is the adopted route.
+        uint256 shares_ = IStandardExchangeIn(se_).previewExchangeIn(IERC20(se_), 1 ether, IERC20(token_));
+        emit log_named_uint("Standard exact-input redemption quote gas", start_ - gasleft());
         start_ = gasleft();
         (bytes memory state_,) = ITransition(se_).quoteState(token_, detfInfo.hook());
-        (, uint256 projected_,,) = ITransition(se_).quoteTransition(state_, ITransition.Operation.WithdrawExactOut, 1 ether);
-        emit log_named_uint("State-based exact-output quote gas", start_ - gasleft());
-        assertEq(projected_, shares_, "state-based and standard withdrawal shares agree");
+        (, uint256 projected_,,) = ITransition(se_).quoteTransition(state_, ITransition.Operation.RedeemExactIn, 1 ether);
+        emit log_named_uint("State-based exact-input redemption quote gas", start_ - gasleft());
+        assertEq(projected_, shares_, "state-based and standard withdrawal amounts agree");
     }
 
     function _measuredPositionSyDeposit(IStandardizedYield sy_, IERC20 in_, uint256 amount_, uint256 minimum_)

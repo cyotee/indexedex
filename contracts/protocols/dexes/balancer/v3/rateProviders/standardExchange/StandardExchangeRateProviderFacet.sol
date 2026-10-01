@@ -14,6 +14,7 @@ import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balance
 /* -------------------------------------------------------------------------- */
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {ERC165Checker} from "@crane/contracts/external/openzeppelin-contracts-v5/utils/introspection/ERC165Checker.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
@@ -26,6 +27,7 @@ import {Math} from "@crane/contracts/utils/Math.sol";
 /* -------------------------------------------------------------------------- */
 
 import {IStandardExchangeTransitionQuote, IStandardExchangeRateQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {IStandardExchangeUnlockContextQuote} from "contracts/interfaces/IStandardExchangeUnlockContextQuote.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {
@@ -63,6 +65,12 @@ contract StandardExchangeRateProviderFacet is IStandardExchangeRateProvider, IFa
         IERC20 subject_ = layoutStruct.rateSubject;
         if (address(subject_) == address(0)) {
             subject_ = IERC20(address(layoutStruct.reserveVault));
+        }
+        if (state.length == 0 && address(subject_) == address(layoutStruct.reserveVault)
+            && _supportsUnlockContext(address(subject_))) {
+            // Use the same quantity probe as projected rates, at the actual live
+            // context. A zero-share holder snapshot does not impose payout cover.
+            (state,) = IStandardExchangeTransitionQuote(address(subject_)).quoteState(address(layoutStruct.rateTarget), address(0));
         }
         uint256 totalShares = state.length == 0 ? subject_.totalSupply()
             : IStandardExchangeTransitionQuote(address(layoutStruct.reserveVault)).quoteTotalSupply(state);
@@ -143,6 +151,10 @@ contract StandardExchangeRateProviderFacet is IStandardExchangeRateProvider, IFa
         if (targetDecimals == 18) return out;
         if (targetDecimals < 18) return out * (10 ** (18 - targetDecimals));
         return out / (10 ** (targetDecimals - 18));
+    }
+
+    function _supportsUnlockContext(address subject_) private view returns (bool) {
+        return ERC165Checker.supportsInterface(subject_, type(IStandardExchangeUnlockContextQuote).interfaceId);
     }
 
     function _safePreviewExchangeIn(uint256 quoteAmount_, bytes memory state)

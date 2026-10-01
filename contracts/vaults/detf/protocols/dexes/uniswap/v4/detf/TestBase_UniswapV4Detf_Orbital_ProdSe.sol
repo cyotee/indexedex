@@ -3,6 +3,10 @@ pragma solidity ^0.8.0;
 
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {IStandardExchangeTransitionQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {IStandardExchangeExactOutputQuantityQuote} from "contracts/interfaces/IStandardExchangeExactOutputQuantityQuote.sol";
 import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 
@@ -233,12 +237,8 @@ abstract contract TestBase_UniswapV4Detf_Orbital_ProdSe is TestBase_UniswapV4Det
         if (needSweep) detfInfo.sweepDust{gas: 30_000_000}();
         assertEq(IERC20(hook_).balanceOf(detf), 0, "R19 hook LP");
         for (uint256 i; i < toks.length; ++i) {
-            uint256 bal = IERC20(toks[i]).balanceOf(detf);
-            if (bal > 10) {
-                _logR19JoinFailure(hook_, toks[i], bal);
-                assertLe(bal, 10, string.concat("R19 token after sweep ", vm.toString(toks[i])));
-            }
             address se_ = IUniswapV4SeBufferHook(hook_).standardExchangeOf(toks[i]);
+            _assertPairResidualBooked(toks[i], se_);
             if (se_ != address(0)) {
                 uint256 seBal = IERC20(se_).balanceOf(detf);
                 if (seBal > 10) {
@@ -271,9 +271,59 @@ abstract contract TestBase_UniswapV4Detf_Orbital_ProdSe is TestBase_UniswapV4Det
     function _assertNoJoinableDust() internal view virtual override {
         address hook_ = detfInfo.hook();
         assertEq(IERC20(hook_).balanceOf(detf), 0, "no hook LP on diamond");
-        assertLe(IERC20(pairAddr0).balanceOf(detf), 10, "no pair0 on diamond");
-        assertLe(IERC20(pairAddr1).balanceOf(detf), 10, "no pair1 on diamond");
+        _assertPairResidualBooked(pairAddr0, se0);
+        _assertPairResidualBooked(pairAddr1, se1);
         assertLe(IERC20(se0).balanceOf(detf), 10, "no se0 share on diamond");
         assertLe(IERC20(se1).balanceOf(detf), 10, "no se1 share on diamond");
+    }
+
+    /// @dev Above-dust custody requires SE no-issuance or exact alignment rejection in the attempted hook mode.
+    function _assertPairResidualBooked(address pair_, address se_) internal view {
+        uint256 retained_ = IERC20(pair_).balanceOf(detf);
+        if (retained_ <= 10) return;
+        assertTrue(se_ != address(0) && se_ != pair_, "retained pair must have a buffering SE");
+        bool subShare_;
+        if (IERC165(se_).supportsInterface(type(IStandardExchangeExactOutputQuantityQuote).interfaceId)) {
+            (bytes memory state_,) = IStandardExchangeTransitionQuote(se_).quoteState(pair_, address(0));
+            try IStandardExchangeExactOutputQuantityQuote(se_).quoteInputForExactShares(state_, 1)
+                returns (uint256 minimum_) {
+                subShare_ = retained_ < minimum_;
+            } catch {
+                // Interface support does not promise an inverse in this context.
+                // Failure supplies no proof; check the full-input forward route.
+            }
+        }
+        if (!subShare_) {
+            try IStandardExchangeIn(se_).previewExchangeIn(IERC20(pair_), retained_, IERC20(se_))
+                returns (uint256 shares_) {
+                if (shares_ != 0) _assertResidualHookAlignment(pair_, retained_);
+            } catch (bytes memory reason_) {
+                assertEq(reason_, abi.encodeWithSignature("AlignmentNotAchievable()"),
+                    "only exact full-input alignment rejection permits retention");
+            }
+        }
+        assertEq(IBasicVault(detf).reserveOfToken(pair_), retained_, "retained pair fully booked");
+    }
+
+    /// @dev Mirror residual mode selection: alignment stops unbalanced; only zero LP proceeds to single-asset.
+    function _assertResidualHookAlignment(address pair_, uint256 retained_) internal view {
+        IUniswapV4SeBufferHook hook_ = IUniswapV4SeBufferHook(detfInfo.hook());
+        address[] memory tokens_ = new address[](1);
+        uint256[] memory amounts_ = new uint256[](1);
+        tokens_[0] = pair_;
+        amounts_[0] = retained_;
+        try hook_.previewJoinUnbalanced(tokens_, amounts_) returns (uint256 lp_) {
+            assertEq(lp_, 0, "positive unbalanced quote cannot prove retained alignment failure");
+        } catch (bytes memory reason_) {
+            assertEq(reason_, abi.encodeWithSignature("AlignmentNotAchievable()"),
+                "unbalanced retention requires exact alignment rejection");
+            return;
+        }
+        try hook_.previewJoinSingleAssetExactIn(pair_, retained_) returns (uint256) {
+            revert("single-asset retention requires alignment rejection, not a returned quote");
+        } catch (bytes memory reason_) {
+            assertEq(reason_, abi.encodeWithSignature("AlignmentNotAchievable()"),
+                "single-asset retention requires exact alignment rejection");
+        }
     }
 }

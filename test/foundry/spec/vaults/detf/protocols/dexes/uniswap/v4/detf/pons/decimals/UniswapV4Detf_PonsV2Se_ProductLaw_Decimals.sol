@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
-import {IUniswapV4StandardExchangeLiquidReserve} from "contracts/protocols/dexes/uniswap/v4/interfaces/IUniswapV4StandardExchangeLiquidReserve.sol";
+import {IUniswapV4FullSpreadPonsFamilyHookLiquidReserve} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/ponsFamilyV2Hook/interfaces/IUniswapV4FullSpreadPonsFamilyHookLiquidReserve.sol";
 import {IERC721Errors} from "@crane/contracts/interfaces/IERC721Errors.sol";
 import {Vm} from "forge-std/Vm.sol";
 import {DETFFundedStakingMath} from "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol";
@@ -418,7 +418,7 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
         vm.prank(detfUser);
         IERC20(launchToken).transfer(address(ponsSe), dust_);
         uint256 Rh = IBasicVault(address(ponsSe)).reserveOfToken(launchToken);
-        (uint256 deployed0_, uint256 deployed1_) = IUniswapV4StandardExchangeLiquidReserve(address(ponsSe)).deployedReserve();
+        (uint256 deployed0_, uint256 deployed1_) = IUniswapV4FullSpreadPonsFamilyHookLiquidReserve(address(ponsSe)).deployedReserve();
         uint256 deployed_ = launchToken < address(weth) ? deployed0_ : deployed1_;
         uint256 faceBooked_ = Rh > deployed_ ? Rh - deployed_ : 0;
         uint256 Bh = IERC20(launchToken).balanceOf(address(ponsSe));

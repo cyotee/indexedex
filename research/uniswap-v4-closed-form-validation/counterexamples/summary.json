@@ -1,0 +1,416 @@
+{
+  "seed": 20260927,
+  "CF-R": {
+    "attempted": 20,
+    "executed": 20,
+    "within_1bp": 6,
+    "max_error_bps": 10000,
+    "cases": [
+      {
+        "status": "executed",
+        "sqrt_next": 77444695801180412768602321494,
+        "amount_in": 23029,
+        "fee_amount": 0,
+        "amount_out": 22510,
+        "error_bps": 10000,
+        "total0": 26971,
+        "total1": 27510,
+        "fee": 0,
+        "owned_pct": 0,
+        "sqrt_target": 77444695801180412768602321494
+      },
+      {
+        "status": "executed",
+        "sqrt_next": 77444695801180412768602321494,
+        "amount_in": 23029,
+        "fee_amount": 0,
+        "amount_out": 22510,
+        "error_bps": 2,
+        "total0": 29201,
+        "total1": 29784,
+        "fee": 0,
+        "owned_pct": 1,
+        "sqrt_target": 77444695801180412768602321494
+      },
+      {
+        "status": "executed",
+        "sqrt_next": 77444695801180412768602321494,
+        "amount_in": 23029,
+        "fee_amount": 0,
+        "amount_out": 22510,
+        "error_bps": 0,
+        "total0": 138485,
+        "total1": 141254,
+        "fee": 0,
+        "owned_pct": 50,
+        "sqrt_target": 77444695801180412768602321494
+      },
+      {
+        "status": "executed",
+        "sqrt_next": 77444695801180412768602321494,
+        "amount_in": 23029,
+        "fee_amount": 0,
+        "amount_out": 22510,
+        "error_bps": 0,
+        "total0": 249999,
+        "total1": 254999,
+        "fee": 0,
+        "owned_pct": 100,
+        "sqrt_target": 77444695801180412768602321494
+      },
+      {
+        "status": "executed",
+        "sqrt_next": 77444776107574547671389147613,
+        "amount_in": 23028,
+        "fee_amount": 3,
+        "amount_out": 22509,
+        "error_bps": 10000,
+        "total0": 26969,
+        "total1": 27509,
+        "fee": 100,
+        "owned_pct": 0,
+        "sqrt_target": 77444776107574547671389147613
+      },
+      {
+        "status": "executed",
+        "sqrt_next": 77444775304543261951846615712,
+        "amount_in": 23028,
+        "fee_amount": 3,
+        "amount_out": 22509,
+        "error_bps": 2,
+        "total0": 29199,
+        "total1": 29783,
+        "fee": 100,
+        "owned_pct": 1,
+        "sqrt_target": 77444775304543261951846615712
+      },
+      {
+        "status": "executed",
+        "sqrt_next": 77444735955202132154624125365,
+        "amount_in": 23029,
+        "fee_amount": 3,
+        "amount_out": 22510,
+        "error_bps": 0,
+        "total0": 138482,
+        "total1": 141254,
+        "fee": 100,
+        "owned_pct": 50,
+        "sqrt_target": 77444735955202132154624125365
+      },
+      {
+        "status": "executed",
+        "sqrt_next": 77444695801180412768602321494,
+        "amount_in": 23029,
+        "fee_amount": 3,
+        "amount_out": 22510,
+        "error_bps": 0,
+        "total0": 249996,
+        "total1": 254999,
+        "fee": 100,
+        "owned_pct": 100,
+        "sqrt_target": 77444695801180412768602321494
+      },
+      {
+        "status": "executed",
+        "sqrt_next": 77445097427823555668384715225,
+        "amount_in": 23024,
+        "fee_amount": 12,
+        "amount_out": 22505,
+        "error_bps": 10000,
+        "total0": 26964,
+        "total1": 27505,
+        "fee": 500,
+        "owned_pct": 0,
+        "sqrt_target": 77445097427823555668384715225
+      },
+      {
+        "status": "executed",
+        "sqrt_next": 77445093412373929839467067336,
+        "amount_in": 23024,
+        "fee_amount": 12,
+        "amount_out": 22505,
+        "error_bps": 3,
+        "total0": 29194,
+        "total1": 29779,
+        "fee": 500,
+        "owned_pct": 1,
+        "sqrt_target": 77445093412373929839467067336
+      },
+      {
+        "status": "executed",
+        "sqrt_next": 77444896635130243211639034269,
+        "amount_in": 23027,
+        "fee_amount": 12,
+        "amount_out": 22507,
+        "error_bps": 0,
+        "total0": 138474,
+        "total1": 141253,
+        "fee": 500,
+        "owned_pct": 50,
+        "sqrt_target": 77444896635130243211639034269
+      },
+      {
+        "status": "executed",
+        "sqrt_next": 77444695801180412768602321494,
+        "amount_in": 23029,
+        "fee_amount": 12,
+        "amount_out": 22510,
+        "error_bps": 0,
+        "total0": 249987,
+        "total1": 254999,
+        "fee": 500,
+        "owned_pct": 100,
+        "sqrt_target": 77444695801180412768602321494
+      },
+      {
+        "status": "executed",
+        "sqrt_next": 77447109117018329503000644997,
+        "amount_in": 22998,
+        "fee_amount": 70,
+        "amount_out": 22480,
+        "error_bps": 10000,
+        "total0": 26932,
+        "total1": 27480,
+        "fee": 3000,
+        "owned_pct": 0,
+        "sqrt_target": 77447109117018329503000644997
+      },
+      {
+        "status": "executed",
+        "sqrt_next": 77447085013358541707989754137,
+        "amount_in": 22998,
+        "fee_amount": 70,
+        "amount_out": 22480,
+        "error_bps": 2,
+        "total0": 29161,
+        "total1": 29755,
+        "fee": 3000,
+        "owned_pct": 1,
+        "sqrt_target": 77447085013358541707989754137
+      },
+      {
+        "status": "executed",
+        "sqrt_next": 77445903204416199641167782678,
+        "amount_in": 23013,
+        "fee_amount": 70,
+        "amount_out": 22495,
+        "error_bps": 2,
+        "total0": 138423,
+        "total1": 141247,
+        "fee": 3000,
+        "owned_pct": 50,
+        "sqrt_target": 77445903204416199641167782678
+      },
+      {
+        "status": "executed",
+        "sqrt_next": 77444695801180412768602321494,
+        "amount_in": 23029,
+        "fee_amount": 70,
+        "amount_out": 22510,
+        "error_bps": 2,
+        "total0": 249929,
+        "total1": 254999,
+        "fee": 3000,
+        "owned_pct": 100,
+        "sqrt_target": 77444695801180412768602321494
+      },
+      {
+        "status": "executed",
+        "sqrt_next": 77452773553520857291559548794,
+        "amount_in": 22923,
+        "fee_amount": 232,
+        "amount_out": 22408,
+        "error_bps": 10000,
+        "total0": 26845,
+        "total1": 27408,
+        "fee": 10000,
+        "owned_pct": 0,
+        "sqrt_target": 77452773553520857291559548794
+      },
+      {
+        "status": "executed",
+        "sqrt_next": 77452693106696482164493910219,
+        "amount_in": 22924,
+        "fee_amount": 232,
+        "amount_out": 22409,
+        "error_bps": 3,
+        "total0": 29073,
+        "total1": 29684,
+        "fee": 10000,
+        "owned_pct": 1,
+        "sqrt_target": 77452693106696482164493910219
+      },
+      {
+        "status": "executed",
+        "sqrt_next": 77448743043493667903891759321,
+        "amount_in": 22976,
+        "fee_amount": 233,
+        "amount_out": 22459,
+        "error_bps": 8,
+        "total0": 138278,
+        "total1": 141229,
+        "fee": 10000,
+        "owned_pct": 50,
+        "sqrt_target": 77448743043493667903891759321
+      },
+      {
+        "status": "executed",
+        "sqrt_next": 77444695801180412768602321494,
+        "amount_in": 23029,
+        "fee_amount": 233,
+        "amount_out": 22510,
+        "error_bps": 9,
+        "total0": 249766,
+        "total1": 254999,
+        "fee": 10000,
+        "owned_pct": 100,
+        "sqrt_target": 77444695801180412768602321494
+      }
+    ]
+  },
+  "CF-B": {
+    "attempted": 76,
+    "bracketed": 58,
+    "failures": 18,
+    "samples": [
+      {
+        "supply": 100,
+        "reserve_out": 50,
+        "reserve_other": 50,
+        "amount_out": 12,
+        "candidate": 13,
+        "forward": 11,
+        "previous": 11
+      },
+      {
+        "supply": 100,
+        "reserve_out": 50,
+        "reserve_other": 50,
+        "amount_out": 45,
+        "candidate": 69,
+        "forward": 44,
+        "previous": 44
+      },
+      {
+        "supply": 1000,
+        "reserve_out": 50,
+        "reserve_other": 50,
+        "amount_out": 5,
+        "candidate": 52,
+        "forward": 3,
+        "previous": 3
+      },
+      {
+        "supply": 1000,
+        "reserve_out": 50,
+        "reserve_other": 50,
+        "amount_out": 12,
+        "candidate": 129,
+        "forward": 11,
+        "previous": 11
+      },
+      {
+        "supply": 1000,
+        "reserve_out": 50,
+        "reserve_other": 50,
+        "amount_out": 25,
+        "candidate": 293,
+        "forward": 24,
+        "previous": 24
+      },
+      {
+        "supply": 1000,
+        "reserve_out": 50,
+        "reserve_other": 50,
+        "amount_out": 45,
+        "candidate": 684,
+        "forward": 44,
+        "previous": 44
+      },
+      {
+        "supply": 10000,
+        "reserve_out": 50,
+        "reserve_other": 50,
+        "amount_out": 5,
+        "candidate": 514,
+        "forward": 3,
+        "previous": 3
+      },
+      {
+        "supply": 10000,
+        "reserve_out": 50,
+        "reserve_other": 50,
+        "amount_out": 12,
+        "candidate": 1283,
+        "forward": 11,
+        "previous": 11
+      },
+      {
+        "supply": 10000,
+        "reserve_out": 50,
+        "reserve_other": 50,
+        "amount_out": 25,
+        "candidate": 2929,
+        "forward": 24,
+        "previous": 24
+      },
+      {
+        "supply": 10000,
+        "reserve_out": 50,
+        "reserve_other": 50,
+        "amount_out": 45,
+        "candidate": 6838,
+        "forward": 44,
+        "previous": 44
+      },
+      {
+        "supply": 1000000,
+        "reserve_out": 1000000,
+        "reserve_other": 250000,
+        "amount_out": 10000,
+        "candidate": 5013,
+        "forward": 9999,
+        "previous": 9998
+      },
+      {
+        "supply": 1000000,
+        "reserve_out": 1000000,
+        "reserve_other": 250000,
+        "amount_out": 100000,
+        "candidate": 51317,
+        "forward": 99999,
+        "previous": 99998
+      }
+    ]
+  },
+  "CF-G": {
+    "attempted": 6,
+    "forward_hit": 6,
+    "failures": []
+  },
+  "CF-M-shortcut": {
+    "amount_in_with_fee": 10133,
+    "amount_out": 10000,
+    "pre_swap_shortcut_error_bps": 102,
+    "price_impact_wad": 20304050607080910
+  },
+  "sleeve": {
+    "total": 120,
+    "p": 200000000000000000,
+    "approved": 20,
+    "old_percent_of_total": 24,
+    "distinct": true
+  },
+  "fee-rounding": {
+    "sqrt_next": 78832021701693015905576230584,
+    "integer_amount_in": 5026,
+    "integer_fee": 16,
+    "integer_amount_out": 5000,
+    "continuous_input_ignores_rounding": 0,
+    "input_gap": 5026
+  },
+  "CF-Q": {
+    "status": "REFUTED",
+    "reason": "MiniMax WP-C sizes the route with UniswapV4Quoter.quoteExactOutput. The pinned quoter loops in UniswapV4Quoter.sol:172-176."
+  }
+}

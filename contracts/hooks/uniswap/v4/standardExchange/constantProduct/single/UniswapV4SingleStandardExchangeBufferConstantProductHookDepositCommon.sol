@@ -342,14 +342,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         seIn = IStandardExchangeOut(l.standardExchange)
             .previewExchangeOut(IERC20(l.standardExchange), IERC20(l.pairToken), pairOut);
         // Never unwrap the last MAX_DUST_WEI SE shares — both book legs stay live.
-        if (seIn > cap) {
-            uint256 pairGot = _unwrapSeShares(cap);
-            if (pairGot == 0) {
-                if (Repo._layout().ownerOnlyLiquidity) return 0;
-                revert InsufficientTokenOut();
-            }
-            return cap;
-        }
+        if (seIn == 0 || seIn > cap) revert InsufficientTokenOut();
         IERC20(l.standardExchange).forceApprove(l.standardExchange, seIn);
         uint256 spent = IStandardExchangeOut(l.standardExchange)
             .exchangeOut(
@@ -383,10 +376,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
             uint256 bal = IERC20(l.pairToken).balanceOf(address(this));
             if (bal <= Repo.MAX_DUST_WEI) return;
             uint256 excess = bal - Repo.MAX_DUST_WEI;
-            uint256 preview = IStandardExchangeIn(l.standardExchange)
-                .previewExchangeIn(IERC20(l.pairToken), excess, IERC20(l.standardExchange));
+            uint256 preview = ClaimLib.previewResidualBuffer(excess);
             if (preview == 0) return;
-            _bufferPair(excess);
+            ClaimLib.bufferQuotedResidual(excess, preview);
         }
     }
 
@@ -408,7 +400,8 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
             uint256 rInN = Math.toWad(rawBal, _decimalsOf(l.rawToken));
             uint256 rOutN = Math.toWad(seClaim, _decimalsOf(l.pairToken));
             uint256 aInN = Math.toWad(amountIn, _decimalsOf(l.rawToken));
-            amountOut = Math.fromWadFloor(Math.saleQuote(aInN, rInN, rOutN), _decimalsOf(l.pairToken));
+            uint256 budget = Math.fromWadFloor(Math.saleQuote(aInN, rInN, rOutN), _decimalsOf(l.pairToken));
+            if (budget != 0 && ClaimLib.sharesForPairUnitsDown(budget) != 0) amountOut = ClaimLib.previewBudget(budget).amountOut;
         } else {
             // pair in → claimIn → raw out
             uint256 claimIn = _previewBufferClaimIn(amountIn);
@@ -808,23 +801,16 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         if (saleAmt == 0 || saleAmt >= amountIn) saleAmt = amountIn / 2;
 
         // Quote on pre-buffer book with pulled inventory (raw-in includes amountIn for face quote).
-        amountOtherOut = _quoteExactInZap(zfo, saleAmt, tokenIn, amountIn);
+        ClaimLib.ExactInOutput memory output = _quoteExactInZapPlan(zfo, saleAmt, tokenIn, amountIn);
+        amountOtherOut = output.amountOut;
 
         if (tokenIn == l.pairToken) {
             _bufferPair(saleAmt);
         } else {
-            if (amountOtherOut == 0) {
-                uint256 cap = _spendableSeShares();
-                if (cap > 0) amountOtherOut = _unwrapSeShares(cap);
-            } else {
-                amountOtherOut = _unwrapPairLeavingDust(amountOtherOut);
-            }
-            // Owner last-exit rejoin (D15/D30) must mint lpOut > 0 against dust.
-            // Public zaps still revert when the other leg cannot be sourced.
-            if (amountOtherOut == 0 && !Repo._layout().ownerOnlyLiquidity) {
-                revert InsufficientTokenOut();
-            }
+            if (output.sharesOut != 0) amountOtherOut = ClaimLib.unwrapQuoted(output);
         }
+        // An unmintable zap must roll back its pull and intermediate swap.
+        if (amountOtherOut == 0) revert ZeroAmount();
         emit ZapSwap(msg.sender, tokenIn, tokenOut, saleAmt, amountOtherOut);
     }
 
@@ -833,6 +819,12 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         internal
         view
         returns (uint256 amountOut)
+    {
+        return _quoteExactInZapPlan(zeroForOne, amountIn, tokenIn, pulledIn).amountOut;
+    }
+
+    function _quoteExactInZapPlan(bool zeroForOne, uint256 amountIn, address tokenIn, uint256 pulledIn)
+        internal view returns (ClaimLib.ExactInOutput memory output)
     {
         Repo.Layout storage l = Repo._layout();
         bool rawIn = zeroForOne == _zeroForOneIsRawIn();
@@ -847,13 +839,14 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
             uint256 rInN = Math.toWad(rawBal, _decimalsOf(l.rawToken));
             uint256 rOutN = Math.toWad(seClaim, _decimalsOf(l.pairToken));
             uint256 aInN = Math.toWad(amountIn, _decimalsOf(l.rawToken));
-            amountOut = Math.fromWadFloor(Math.saleQuote(aInN, rInN, rOutN), _decimalsOf(l.pairToken));
+            uint256 budget = Math.fromWadFloor(Math.saleQuote(aInN, rInN, rOutN), _decimalsOf(l.pairToken));
+            if (budget != 0 && ClaimLib.sharesForPairUnitsDown(budget) != 0) output = ClaimLib.previewBudget(budget);
         } else {
             uint256 claimIn = _previewBufferClaimIn(amountIn);
             uint256 rInN = Math.toWad(seClaim, _decimalsOf(l.pairToken));
             uint256 rOutN = Math.toWad(rawBal, _decimalsOf(l.rawToken));
             uint256 cInN = Math.toWad(claimIn, _decimalsOf(l.pairToken));
-            amountOut = Math.fromWadFloor(Math.saleQuote(cInN, rInN, rOutN), _decimalsOf(l.rawToken));
+            output.amountOut = Math.fromWadFloor(Math.saleQuote(cInN, rInN, rOutN), _decimalsOf(l.rawToken));
         }
     }
 

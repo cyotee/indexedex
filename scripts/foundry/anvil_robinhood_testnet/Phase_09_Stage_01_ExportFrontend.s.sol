@@ -53,6 +53,7 @@ contract Phase_09_Stage_01_ExportFrontend is LaunchStageBase {
         json = vm.serializeAddress("p", "twapOracle", address(s.twapOracle));
         json = vm.serializeAddress("p", "twapAdapterFactory", s.twapAdapterFactory);
         json = vm.serializeAddress("p", "uniV4SePkg", address(s.uniV4SePkg));
+        json = vm.serializeString("p", "uniV4SePkgName", s.uniV4SePkg.packageName());
         json = vm.serializeAddress("p", "v3Factory", s.v3Factory);
         json = vm.serializeAddress("p", "uniswapV3Factory", s.v3Factory);
         json = vm.serializeAddress("p", "uniV3SePkg", s.uniV3SePkg);

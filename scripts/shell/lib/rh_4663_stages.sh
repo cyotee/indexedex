@@ -152,6 +152,8 @@ build_rehearsal_artifacts() {
       contracts/protocols/dexes/uniswap/v2 \
       contracts/protocols/dexes/uniswap/v3 \
       contracts/protocols/dexes/uniswap/v4 \
+      contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless \
+      contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/ponsFamilyV2Hook \
       | rg '(Facet|DFPkg|ExecutionDelegate|ClaimLib|ExitQuoteLib|LegLib)\.sol$' \
       | sort
   )

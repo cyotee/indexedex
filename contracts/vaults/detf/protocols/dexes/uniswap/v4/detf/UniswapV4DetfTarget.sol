@@ -183,7 +183,7 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
         if (!_mintPriceGate(pair_, true)) {
             userDetf = address(tokenIn) != pair_
                 ? IDetfReserveQuote(s.hook).previewSwapAfterExchange(address(tokenIn), pair_, address(this), amountIn)
-                : _hook().previewSwapExactIn(pair_, address(this), pairEq_);
+                : IStandardExchangeIn(address(_hook())).previewExchangeIn(IERC20(pair_), pairEq_, IERC20(address(this)));
             return (0, userDetf);
         }
         grossDetf = _quoteMintGross(pair_, pairEq_);
@@ -387,7 +387,7 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
         IStandardExchange v_ = s.burnTable.vaultOf[address(tokenOut)];
         address pair_ = _hookPairOfVault(v_);
         if (!_burnPriceGate(pair_, true)) {
-            uint256 acquired_ = _hook().previewSwapExactIn(address(this), pair_, detfIn);
+            uint256 acquired_ = IStandardExchangeIn(address(_hook())).previewExchangeIn(IERC20(address(this)), detfIn, IERC20(pair_));
             if (address(tokenOut) == pair_) return acquired_;
             return v_.previewExchangeIn(IERC20(pair_), acquired_, tokenOut);
         }

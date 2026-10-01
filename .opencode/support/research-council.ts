@@ -1,5 +1,6 @@
 import { lstat, realpath } from "node:fs/promises";
 import { isAbsolute, relative, resolve } from "node:path";
+import { RESEARCH_JSON_READ_TOOL, validateResearchJsonCall } from "./research-json-read";
 
 // Keep helpers outside plugins/: OpenCode treats every plugin export as an initializer.
 export interface CouncilClient {
@@ -18,10 +19,14 @@ export interface CouncilProfile {
   researchers: ReadonlySet<string>;
   documentRoots: readonly string[];
   reportSuffixes?: readonly string[];
+  allowCode?: boolean;
   tools: ReadonlySet<string>;
 }
-const researchTools = new Set(["read", "glob", "grep", "webfetch", "websearch",
-  "context7_resolve-library-id", "context7_query-docs", "websearch_web_search_exa"]);
+
+const baseResearchTools = ["read", "glob", "grep", "webfetch", "websearch",
+  "context7_resolve-library-id", "context7_query-docs", "websearch_web_search_exa"];
+const reviewTools = new Set(baseResearchTools);
+const researchTools = new Set([...baseResearchTools, RESEARCH_JSON_READ_TOOL]);
 export const researchProfile: CouncilProfile = {
   label: "Research council",
   moderator: "council",
@@ -34,6 +39,7 @@ export const researchProfile: CouncilProfile = {
   },
   researchers: new Set(["council-astra", "council-grok", "council-minimax", "council-kimi"]),
   documentRoots: ["docs/research", "docs/plans", "docs/strategies", "research", "plans"],
+  allowCode: true,
   tools: researchTools,
 };
 export const reviewProfile: CouncilProfile = {
@@ -49,7 +55,7 @@ export const reviewProfile: CouncilProfile = {
   researchers: new Set(["review-council-astra", "review-council-grok", "review-council-minimax", "review-council-kimi"]),
   documentRoots: ["docs/reviews", "reviews"],
   reportSuffixes: ["REMEDIATION_PRD.md"],
-  tools: researchTools,
+  tools: reviewTools,
 };
 
 export function observeTaskDefinition(runtime: CouncilRuntime, input: { toolID: string }, output: { jsonSchema?: unknown }) {
@@ -107,15 +113,55 @@ function verifyIdentity(info: Record<string, unknown>, agent: string, profile: C
   if (info.agent !== agent || modelOf(info) !== profile.models[agent]) deny("agent/model identity mismatch", "RC_IDENTITY");
 }
 async function messages(client: CouncilClient, id: string, code: DiagnosticCode = "RC_HISTORY") {
-  return list(data(await client.session.messages({ path: { id } }))).map(value => {
+  return parseMessages(list(data(await client.session.messages({ path: { id } }))), code);
+}
+function parseMessages(history: unknown[], code: DiagnosticCode) {
+  return history.map(value => {
     const message = record(value, code);
     return { info: record(message.info, code), parts: list(message.parts, code) };
   });
 }
 
-async function caller(client: CouncilClient, input: ToolInput, profile: CouncilProfile): Promise<string> {
+type Scope = "owned" | "outside" | "unknown";
+function shape(value: unknown): Record<string, unknown> | undefined {
+  return value !== null && typeof value === "object" && !Array.isArray(value)
+    ? value as Record<string, unknown> : undefined;
+}
+function scopeOf(history: unknown[], input: ToolInput, profile: CouncilProfile): Scope {
+  if (!text(input.sessionID) || !text(input.callID)) return "unknown";
+  let latestUser: Record<string, unknown> | undefined;
+  let ambiguous = false;
+  let owned = false;
+  const identities = new Set<string>();
+  for (const value of history) {
+    const message = shape(value);
+    const info = shape(message?.info);
+    if (!message || !info) { ambiguous = true; continue; }
+    if (info.role === "user") latestUser = info;
+    else if (info.role !== "assistant") ambiguous = true;
+    // Scope needs the enclosing identity, not tool state or a complete payload.
+    if (!Array.isArray(message.parts)) { ambiguous = true; continue; }
+    for (const value of message.parts) {
+      const part = shape(value);
+      if (part?.callID !== input.callID) continue;
+      if (text(info.agent) && hasOwn(profile.models, info.agent)) owned = true;
+      if (info.role !== "assistant" || info.sessionID !== input.sessionID ||
+          !text(info.id) || !text(info.agent)) { ambiguous = true; continue; }
+      identities.add(JSON.stringify([info.id, info.sessionID, info.agent]));
+    }
+  }
+  if (owned || (latestUser?.sessionID === input.sessionID && text(latestUser.agent) &&
+      hasOwn(profile.models, latestUser.agent))) return "owned";
+  // Never rewind past an unresolved newer user to an older coding turn.
+  if (ambiguous || identities.size > 1 || !latestUser || latestUser.sessionID !== input.sessionID ||
+      !text(latestUser.id) || !text(latestUser.agent)) return "unknown";
+  // Without an exact part, latest-turn scope is evidence, not per-call authorization.
+  return "outside";
+}
+
+function caller(rawHistory: unknown[], input: ToolInput, profile: CouncilProfile): string {
   if (!text(input.sessionID) || !text(input.callID)) deny("missing call identity", "RC_ATTRIBUTION");
-  const history = await messages(client, input.sessionID, "RC_ATTRIBUTION");
+  const history = parseMessages(rawHistory, "RC_ATTRIBUTION");
   const matches = history.flatMap(message => message.parts.filter(value => {
     const part = record(value, "RC_ATTRIBUTION");
     return part.type === "tool" && part.callID === input.callID;
@@ -288,7 +334,9 @@ async function validateDocumentPath(value: unknown, root: string, profile: Counc
   const local = relative(root, path);
   const underRoot = profile.documentRoots.some(base => local.startsWith(`${base}/`));
   const namedReport = (profile.reportSuffixes ?? []).some(suffix => local.toLowerCase().endsWith(suffix.toLowerCase()));
-  if ((!underRoot && !namedReport) || !local.endsWith(".md")) deny("outside document roots");
+  const markdown = local.endsWith(".md");
+  const researchCode = profile.allowCode === true && underRoot;
+  if ((!underRoot && !namedReport) || (!markdown && !researchCode)) deny("outside document roots");
   const segments = local.split("/");
   if (sensitive(local) || segments.some(part => part.startsWith(".") || /^(AGENTS|CLAUDE|SKILL)\.md$/i.test(part)))
     deny("sensitive or instruction document");
@@ -369,16 +417,26 @@ async function validateMutation(tool: string, args: Record<string, unknown>, dir
 export function createCouncilGuard(client: CouncilClient, directory: string, runtime: CouncilRuntime = {}, profile: CouncilProfile = researchProfile) {
   return async (input: ToolInput, output: { args: unknown }): Promise<void> => {
     try {
-      const agent = await caller(client, input, profile);
+      const history = list(data(await client.session.messages({ path: { id: input.sessionID } })));
+      if (scopeOf(history, input, profile) === "outside") return;
+      const agent = caller(history, input, profile);
       if (!hasOwn(profile.models, agent)) return;
       const args = record(output.args);
       if (input.tool === "task" && agent === profile.moderator) await validateTask(client, input, args, runtime, profile);
       else if (input.tool === "question" && agent === profile.moderator) { /* Human checkpoint only. */ }
       else if (input.tool === "write" || input.tool === "edit" || input.tool === "apply_patch")
         await validateMutation(input.tool, args, directory, profile);
-      else if (!profile.tools.has(input.tool)) deny("tool is not allowed");
+      else if (input.tool === RESEARCH_JSON_READ_TOOL) {
+        if (!profile.tools.has(RESEARCH_JSON_READ_TOOL)) deny("tool is not allowed");
+        try {
+          await validateResearchJsonCall(args);
+        } catch {
+          deny("structured reader validation failed");
+        }
+      } else if (!profile.tools.has(input.tool)) deny("tool is not allowed");
       if (input.tool === "read") await validateRead(args, directory);
       if (Array.isArray(args.load_skills)) Object.freeze(args.load_skills);
+      if (input.tool === RESEARCH_JSON_READ_TOOL && Array.isArray(args.selector)) Object.freeze(args.selector);
       Object.freeze(args);
       // Prevent a later hook from replacing the validated argument object.
       Object.defineProperty(output, "args", { value: args, writable: false, configurable: false, enumerable: true });

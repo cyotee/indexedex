@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib as ClaimLib} from "./UniswapV4StandardExchangeCurveQuadStableBufferHookClaimLib.sol";
 
 import {IStandardExchangeTransitionQuote as ITransition} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -126,8 +127,23 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookJoinCore is
         bool firstMint,
         uint256 protocolSharesMinted
     ) internal {
+        uint256[4] memory noMinimums;
+        _commitJoinQuoted(pairUsed, to, shares, firstMint, protocolSharesMinted, noMinimums);
+    }
+
+    function _commitJoinQuoted(
+        uint256[4] memory pairUsed,
+        address to,
+        uint256 shares,
+        bool firstMint,
+        uint256 protocolSharesMinted,
+        uint256[4] memory minimums
+    ) internal {
         _pullAmounts(pairUsed);
-        _bufferLast(pairUsed);
+        for (uint8 i; i < Repo.N_TOKENS; ++i) {
+            if (minimums[i] != 0) ClaimLib.bufferQuotedJoin(i, pairUsed[i], minimums[i]);
+            else if (pairUsed[i] != 0) _bufferToken(i, pairUsed[i]);
+        }
         if (firstMint) {
             _mintLp(address(0), Math.MINIMUM_LIQUIDITY);
         }
@@ -240,9 +256,19 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookJoinCore is
             return shares;
         }
         if (!Math.isFullBookReserves(_nativeAll())) revert NotFullBook();
-        shares = _quoteUnbalancedJoin(used, _totalSupply());
+        uint256[4] memory minimums;
+        (shares, minimums) = _quoteUnbalancedJoinWithMinimums(used, _totalSupply());
         if (shares < sharesMin) revert Slippage();
-        _commitJoin(acc.edge, to, shares, false, protocolShares);
+        uint256 nonzero;
+        Repo.Layout storage l = Repo._layout();
+        for (uint8 i; i < Repo.N_TOKENS; ++i) {
+            if (acc.edge[i] != 0) ++nonzero;
+            if (l.standardExchanges[i] == address(0) || l.standardExchanges[i] == l.tokens[i]) minimums[i] = 0;
+        }
+        if (nonzero != 1) {
+            for (uint8 i; i < Repo.N_TOKENS; ++i) minimums[i] = 0;
+        }
+        _commitJoinQuoted(acc.edge, to, shares, false, protocolShares, minimums);
     }
 
     function _quoteUnbalancedJoinEdge(uint256[4] memory edge, bool[] memory isSe, uint256 supply)
@@ -261,11 +287,17 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookJoinCore is
         view
         returns (uint256 shares)
     {
+        (shares,) = _quoteUnbalancedJoinWithMinimums(pairAmounts, supply);
+    }
+
+    function _quoteUnbalancedJoinWithMinimums(uint256[] memory pairAmounts, uint256 supply)
+        private view returns (uint256 shares, uint256[4] memory invIn)
+    {
         _requireAmountsLen4(pairAmounts);
         uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
         if (feeWad >= Math.WAD) revert InvalidFeeWad();
         uint256[4] memory pairIn = _toFixed4(pairAmounts);
-        uint256[4] memory invIn = _pairToInvPreview(pairIn);
+        invIn = _pairToInvPreview(pairIn);
         shares = Math.unbalancedJoinShares(
             _invWadAll(), _scaleInv(invIn), _amp(), supply, feeWad
         );

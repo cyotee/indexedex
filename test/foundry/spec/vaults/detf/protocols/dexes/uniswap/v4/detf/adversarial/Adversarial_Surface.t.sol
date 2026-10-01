@@ -24,7 +24,7 @@ abstract contract V4FundedSurfaceBehavior is Test {
     function _surfacePayment() internal view virtual returns (IERC20);
 
     function _controlSelectors() internal pure returns (bytes4[] memory s_) {
-        s_ = new bytes4[](46);
+        s_ = new bytes4[](47);
         s_[0] = IStandardExchangeIn.exchangeIn.selector;
         s_[1] = IStandardExchangeIn.previewExchangeIn.selector;
         s_[2] = IUniswapV4Detf.bond.selector;
@@ -71,6 +71,7 @@ abstract contract V4FundedSurfaceBehavior is Test {
         s_[43] = IDETFStandardizedYield.rawSY.selector;
         s_[44] = IDETFStandardizedYield.stakingSY.selector;
         s_[45] = IUniswapV4Detf.previewFirstBondPayments.selector;
+        s_[46] = IUniswapV4DetfSelfCall.joinResidualAtomic.selector;
     }
 
     function test_J1_facetFuncs_coversTargetApi() public view {
@@ -86,6 +87,17 @@ abstract contract V4FundedSurfaceBehavior is Test {
                 for (uint256 k_; k_ < declared_.length; ++k_) if (declared_[k_] == expected_[i_]) ++occurrences_;
             }
             assertEq(occurrences_, 1, string.concat("selector missing or duplicated: ", vm.toString(expected_[i_])));
+        }
+    }
+
+    function test_residualJoinCallbackIsSelfOnlyBothModes() public {
+        address proxy_ = address(_surfaceSubject());
+        address attacker_ = _surfaceAttacker();
+        address token_ = address(_surfacePayment());
+        for (uint256 i_; i_ < 2; ++i_) {
+            vm.prank(attacker_);
+            vm.expectRevert(abi.encodeWithSelector(UniswapV4DetfRepo.NotAuthorized.selector, attacker_));
+            IUniswapV4DetfSelfCall(proxy_).joinResidualAtomic(token_, 1, i_ == 1);
         }
     }
 

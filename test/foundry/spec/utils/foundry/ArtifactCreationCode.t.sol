@@ -72,6 +72,24 @@ contract ArtifactCreationCode_Test is CraneTest {
     }
 
     using BetterEfficientHashLib for bytes;
+
+    function test_repeatedLinkedLoadsDiscardJsonScratchButPreserveCallerMemory() public {
+        bytes memory sentinel = abi.encode("caller-owned", uint256(123), address(this));
+        bytes32 sentinelHash = keccak256(sentinel);
+        bytes memory first = ArtifactCreationCode.creationCode(create3Factory, SE_FACET);
+        bytes32 firstHash = keccak256(first);
+        for (uint256 i; i < 8; ++i) {
+            uint256 beforeFree;
+            assembly ("memory-safe") { beforeFree := mload(0x40) }
+            bytes memory loaded = ArtifactCreationCode.creationCode(create3Factory, SE_FACET);
+            uint256 afterFree;
+            assembly ("memory-safe") { afterFree := mload(0x40) }
+            assertLe(afterFree - beforeFree, loaded.length + 2048, "only return data and call inputs stay allocated");
+            assertEq(keccak256(loaded), firstHash, "recursive linking unchanged");
+            assertEq(keccak256(first), firstHash, "prior return remains live");
+            assertEq(keccak256(sentinel), sentinelHash, "caller-owned memory preserved");
+        }
+    }
     string internal constant SE_FACET =
         "UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet.sol:UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet";
     string internal constant MATH = "UniswapV4SingleStandardExchangeBufferConstantProductHookMath";

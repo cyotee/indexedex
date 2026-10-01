@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import { join, relative } from "node:path";
 import { parse } from "yaml";
 import researchCouncil from "../plugins/research-council";
+import reviewCouncil from "../plugins/review-council";
 
 // Bun's node:test-compatible registration surface; no Bun type package is installed.
 const { describe, test }: Pick<typeof import("node:test"), "describe" | "test"> = require("bun:test");
@@ -406,8 +407,11 @@ describe("agent and command definitions", () => {
       assert.equal(config.permission.read["*"], "allow");
       for (const pattern of ["**/.env", "**/.env.*", "**/auth.json", "**/*.key", "**/*.pem"])
         assert.equal(config.permission.read[pattern], "deny");
+      assert.equal(config.permission.research_json_read, "allow");
+      assert.match(text, /The approved structured-data reader may decode and paginate authorized research artifacts/);
+      assert.match(text, /peer findings must not be registered as public-source artifacts/);
       assert.deepEqual(Object.keys(config.permission).sort(), [
-        "*", ...allowed, "edit", ...(name === "council" ? ["question", "task"] : []),
+        "*", ...allowed, "edit", "research_json_read", ...(name === "council" ? ["question", "task"] : []),
       ].sort());
       if (name === "council") assert.deepEqual(config.permission.task, { "*": "deny", "council-astra": "allow", "council-grok": "allow", "council-minimax": "allow", "council-kimi": "allow" });
       assert.ok(text.includes("CLAUDE.md"));
@@ -415,10 +419,10 @@ describe("agent and command definitions", () => {
       assert.equal(Object.keys(config.permission.edit)[0], "*");
       assert.equal(config.permission.edit["*"], "deny");
       assert.deepEqual(Object.entries(config.permission.edit).filter(([, value]) => value === "allow").map(([key]) => key),
-        documentRoots.flatMap(path => [`${path}/*.md`, `${path}/**/*.md`]));
+        documentRoots.flatMap(path => [`${path}/*`, `${path}/**`]));
       for (const pattern of ["**/AGENTS.md", "**/CLAUDE.md", "**/SKILL.md", "**/.*/**", "**/credentials*", "**/secrets*"])
         assert.equal(config.permission.edit[pattern], "deny");
-      assert.ok(Object.keys(config.permission.edit).indexOf("**/AGENTS.md") > Object.keys(config.permission.edit).indexOf("plans/**/*.md"));
+      assert.ok(Object.keys(config.permission.edit).indexOf("**/AGENTS.md") > Object.keys(config.permission.edit).indexOf("plans/**"));
       assert.match(text, /research reports, PRDs and implementation plans/);
       assert.match(text, /no peer artifact reading during independent passes/i);
       assert.match(text, /Writing a plan never authorizes executing it/);
@@ -438,13 +442,17 @@ describe("agent and command definitions", () => {
           // Native tools check repository-relative permission paths, including for absolute inputs.
           assert.equal(nativeEditPermission(relative(root, join(root, path)), config.permission.edit), "allow", path);
         }
+        for (const suffix of ["sketch.sol", "nested/sketch.ts", "config.json", "notes.py"]) {
+          const path = `${base}/${suffix}`;
+          assert.equal(nativeEditPermission(path, config.permission.edit), "allow", path);
+        }
         for (const suffix of ["AGENTS.md", "CLAUDE.md", "SKILL.md", "credentials.md", "secrets.md", "auth.md", ".env.md",
-          ".opencode/report.md", "nested/.github/report.md", "nested/AGENTS.md", "nested/secrets.md", "code.ts"]) {
+          ".opencode/report.md", "nested/.github/report.md", "nested/AGENTS.md", "nested/secrets.md"]) {
           const path = `${base}/${suffix}`;
           assert.equal(nativeEditPermission(path, config.permission.edit), "deny", path);
         }
       }
-      for (const path of ["report.md", "docs/agent/report.md", "plans-other/report.md"])
+      for (const path of ["report.md", "docs/agent/report.md", "plans-other/report.md", "contracts/vaults/Foo.sol", "code.ts"])
         assert.equal(nativeEditPermission(path, config.permission.edit), "deny", path);
       const entries = Object.entries(config.permission.edit);
       const lastAllow = entries.map(([, action]) => action).lastIndexOf("allow");
@@ -470,6 +478,11 @@ describe("agent and command definitions", () => {
     assert.match(text, /genuine SDK RC_UNAVAILABLE/);
     assert.match(text, /All five agents/);
     assert.match(text, /Kimi K3/);
+    assert.match(text, /Operator-authorized replacement/);
+    assert.match(text, /do not resume the old session/i);
+    assert.match(text, /continuation field/);
+    assert.match(text, /Do not set a model override/);
+    assert.match(text, /Markdown and code edits under/);
   });
   test("moderator requires four initial passes before four combined cross-reviews", async () => {
     const text = await readFile(`${root}.opencode/agents/council.md`, "utf8");
@@ -538,7 +551,7 @@ describe("bounded document mutations (real filesystem, no provider)", () => {
 
   for (const agent of Object.keys(models)) for (const tool of ["write", "edit", "apply_patch"]) {
     test(`${agent} permits bounded ${tool}, relative/absolute/new nested, and freezes arguments`, async () => sandbox(async directory => {
-      for (const base of documentRoots) for (const filePath of [`${base}/new/nested/report.md`, join(directory, base, "report.md"), "docs/research/existing.md"]) {
+      for (const base of documentRoots) for (const filePath of [`${base}/new/nested/report.md`, `${base}/sketch.sol`, join(directory, base, "report.md"), "docs/research/existing.md"]) {
         const args = argsFor(tool, filePath);
         const output = await mutation(directory, agent, tool, args);
         assert.ok(Object.isFrozen(args));
@@ -548,10 +561,10 @@ describe("bounded document mutations (real filesystem, no provider)", () => {
       await assert.rejects(readFile(join(directory, "docs/research/new/nested/report.md")), { code: "ENOENT" });
     }));
     test(`${agent} rejects unsafe ${tool} paths`, async () => sandbox(async directory => {
-      for (const filePath of ["code.ts", "docs/research/code.ts", "docs/research/config.json", "docs/agent/report.md",
+      for (const filePath of ["code.ts", "contracts/vaults/Foo.sol", "docs/agent/report.md",
         "docs/research/../plans/report.md", "../plans/report.md", "docs/researchish/report.md", `${directory}-sibling/plans/report.md`,
         "./plans/report.md", "plans//report.md", "plans/report.md/", "plans\\report.md", "plans/%2e%2e/report.md",
-        "plans/report.md\n", "plans/report.md\0", "plans/ report.md", "plans/report.MD", "plans/report.md ",
+        "plans/report.md\n", "plans/report.md\0", "plans/ report.md", "plans/report.md ",
         "plans/AGENTS.md", "plans/claude.MD", "plans/skill.md", "plans/nested/AgEnTs.md",
         ...[".opencode", ".github", ".claude", ".agents", ".codex", ".grok", ".git", ".config"].map(dir => `plans/nested/${dir}/report.md`),
         "plans/credentials.md", "plans/secrets.md", "plans/auth.md", "plans/.env.md", "plans/private.key/report.md"]) {
@@ -771,7 +784,7 @@ describe("auto-loaded plugin boundary (SDK doubles, no provider)", () => {
     }, directory: root });
     await assert.rejects(hooks["tool.execute.before"](f.input, { args: taskArgs() }));
   });
-  test("known coding caller is denied temporarily when SDK attribution fails", async () => {
+  test("coding caller with no known scope during SDK outage is denied temporarily", async () => {
     const f = fixture("build", "bash");
     f.state.fail = true;
     await assert.rejects((await hook(f))({ command: "coding" }));
@@ -873,4 +886,79 @@ describe("auto-loaded plugin boundary (SDK doubles, no provider)", () => {
     test(`rejects sensitive read ${file}`, async () => {
       await assert.rejects((await hook(fixture("council", "read")))({ filePath: `${root}${file}` }));
     });
+});
+
+describe("scope before strict attribution (both plugin wrappers)", () => {
+  for (const [plugin, owner] of [[researchCouncil, "council"], [reviewCouncil, "review-council"]] as const) {
+    async function run(history: unknown[], args: unknown = {}, tool = "apply_patch") {
+      let reads = 0;
+      const f = fixture();
+      f.client.session.messages = async () => { reads++; return { data: history }; };
+      const hooks = await plugin({ client: f.client, directory: root });
+      const output = { args };
+      try { await hooks["tool.execute.before"]({ ...f.input, tool }, output); }
+      finally { assert.equal(reads, 1, "one raw history snapshot per guard invocation"); }
+      return output;
+    }
+    const variants: Record<string, (history: HistoryMessage[]) => void> = {
+      "missing part": h => { h[1].parts = []; },
+      "null state": h => { h[1].parts[0].state = null; },
+      "wrong tool": h => { h[1].parts[0].tool = "read"; },
+      "completed part": h => { h[1].parts[0].state = { status: "completed" }; },
+      "duplicate same identity": h => { h[1].parts.push({ ...h[1].parts[0] }); },
+      "incomplete part": h => { h[1].parts = [{ callID: "call_1" }]; },
+      "malformed unrelated history": h => { h.unshift(Object.assign(message(owner, "read", "old_call"), { parts: [null] })); },
+    };
+    for (const agent of ["build", "Sisyphus-Junior", "other-coding-agent"]) {
+      for (const [name, mutate] of Object.entries(variants)) test(`${owner}: ${agent} outside with ${name}`, async () => {
+        const history: HistoryMessage[] = [user(agent), message(agent, "apply_patch")];
+        mutate(history);
+        const args = { agent: owner, subagent_type: owner, model: "ignored", load_skills: ["coding"], patchText: "coding edit" };
+        const output = await run(history, args);
+        assert.equal(output.args, args);
+        assert.equal(Object.isFrozen(args), false);
+        assert.equal(Object.isFrozen(args.load_skills), false);
+        args.load_skills.push("still writable");
+        output.args = {};
+      });
+    }
+    for (const [name, mutate] of Object.entries(variants)) test(`${owner}: owned ${name} still denied`, async () => {
+      const history: HistoryMessage[] = [user(owner), message(owner, "apply_patch")];
+      mutate(history);
+      await assert.rejects(run(history), /\[RC_/);
+    });
+    test(`${owner}: council to coding missing-part fallback ignores unrelated council calls`, async () => {
+      await run([user(owner, "old_user"), message(owner, "read", "old_call", "old_user"), user("build", "new_user")]);
+    });
+    test(`${owner}: coding to council missing-part call stays strict`, async () => {
+      await assert.rejects(run([user("build"), user(owner, "new_user")]), /\[RC_ATTRIBUTION\]/);
+    });
+    test(`${owner}: exact council evidence survives a later coding user`, async () => {
+      await assert.rejects(run([user(owner), message(owner, "apply_patch"), user("build", "new_user")]), /\[RC_ATTRIBUTION\]/);
+    });
+    test(`${owner}: latest council user overrides exact coding evidence`, async () => {
+      await assert.rejects(run([user("build"), message("build", "apply_patch"), user(owner, "new_user")]), /\[RC_ATTRIBUTION\]/);
+    });
+    for (const agent of [undefined, "", null]) test(`${owner}: unresolved latest user ${agent} never rewinds`, async () => {
+      await assert.rejects(run([user("build"), { info: { ...user("build", "new_user").info, agent }, parts: [] }]), /\[RC_ATTRIBUTION\]/);
+    });
+    for (const second of ["other-coding-agent", owner]) test(`${owner}: conflicting exact agents ${second} denied`, async () => {
+      await assert.rejects(run([user("build"), message("build", "apply_patch"), message(second, "apply_patch")]), /\[RC_ATTRIBUTION\]/);
+    });
+    for (const history of [[], [null], [{ info: {}, parts: [] }], [user("build"), { info: null, parts: [] }],
+      [user("build"), { info: { ...message("build").info, agent: undefined }, parts: [{ callID: "call_1" }] }],
+      [user("build"), { info: { ...user("build", "new_user").info, sessionID: undefined }, parts: [] }]]) {
+      test(`${owner}: unknown ownership ${JSON.stringify(history)} fails closed`, async () => {
+        await assert.rejects(run(history), /\[RC_ATTRIBUTION\]/);
+      });
+    }
+    for (const response of [null, {}, { data: null }, { data: {} }, { error: "SECRET", data: [user("build")] }]) {
+      test(`${owner}: invalid envelope remains unavailable`, async () => {
+        const f = fixture("build");
+        f.client.session.messages = async () => response;
+        const hooks = await plugin({ client: f.client, directory: root });
+        await assert.rejects(hooks["tool.execute.before"](f.input, { args: {} }), /\[RC_UNAVAILABLE\]/);
+      });
+    }
+  }
 });

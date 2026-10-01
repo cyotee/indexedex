@@ -12,6 +12,8 @@ import {TestBase_UniswapV4Detf_Cp_Univ4Se} from
 
 /// @notice H-CP-GV4 money paths: firstBond / mint / burn / close against Uni V4 SE.
 contract UniswapV4Detf_Cp_Univ4Se is TestBase_UniswapV4Detf_Cp_Univ4Se {
+    // Preserve the original execution budget below the observed 32M chain cap.
+    uint256 internal constant CONSUMER_BURN_GAS_BUDGET = 30_000_000;
     function _seedBothSeAssets() private {
         uint256 amount = 10_000 ether;
         pairToken.mint(address(this), amount);
@@ -102,8 +104,12 @@ contract UniswapV4Detf_Cp_Univ4Se is TestBase_UniswapV4Detf_Cp_Univ4Se {
 
         vm.startPrank(detfUser);
         IERC20(detf).approve(detf, burnIn);
-        uint256 amountOut = IStandardExchangeIn(address(detfInfo)).exchangeIn{gas: 30_000_000}(IERC20(address(detfInfo)), burnIn, IERC20(mintToken), 0, detfUser, false, block.timestamp + 1 hours);
+        uint256 gasBefore = gasleft();
+        uint256 amountOut = IStandardExchangeIn(address(detfInfo)).exchangeIn{gas: CONSUMER_BURN_GAS_BUDGET}(IERC20(address(detfInfo)), burnIn, IERC20(mintToken), 0, detfUser, false, block.timestamp + 1 hours);
+        uint256 operationGas = gasBefore - gasleft();
         vm.stopPrank();
+        emit log_named_uint("consumer burn operation gas", operationGas);
+        assertLe(operationGas, CONSUMER_BURN_GAS_BUDGET, "consumer burn execution budget");
 
         assertEq(amountOut, preview, "previewBurn==exec");
         uint256 pairAfter = IERC20(mintToken).balanceOf(detfUser);

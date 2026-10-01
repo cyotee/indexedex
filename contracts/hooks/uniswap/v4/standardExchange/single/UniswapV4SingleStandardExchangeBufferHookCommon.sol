@@ -100,7 +100,8 @@ abstract contract UniswapV4SingleStandardExchangeBufferHookCommon {
         _requireNonZero(seOut);
         address se = _se();
         address pair = _pair();
-        return IStandardExchangeOut(se).previewExchangeOut(IERC20(pair), IERC20(se), seOut);
+        pairIn = IStandardExchangeOut(se).previewExchangeOut(IERC20(pair), IERC20(se), seOut);
+        if (pairIn == 0) revert IStandardExchangeOut.ExchangeOutNotAvailable();
     }
 
     function _previewUnwrap(uint256 seIn) internal view returns (uint256 pairOut) {
@@ -114,7 +115,8 @@ abstract contract UniswapV4SingleStandardExchangeBufferHookCommon {
         _requireNonZero(pairOut);
         address se = _se();
         address pair = _pair();
-        return IStandardExchangeOut(se).previewExchangeOut(IERC20(se), IERC20(pair), pairOut);
+        seIn = IStandardExchangeOut(se).previewExchangeOut(IERC20(se), IERC20(pair), pairOut);
+        if (seIn == 0) revert IStandardExchangeOut.ExchangeOutNotAvailable();
     }
 
     /* ---------------------------------------------------------------------- */

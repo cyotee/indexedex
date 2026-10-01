@@ -18,6 +18,26 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_SeMatrix_UniswapV4FullSpread
         return f;
     }
 
-    /// @dev F6 fixed 2026-09-21 (D55): FullSpread exact-out spends the previewed shares and delivers exactly the
-    ///      request, so the gold body and default residual tolerance apply. Red record: run 6 tolerances.
+    function test_row_partialConsumption_bookedNotRefunded() public override {
+        _seed(); SeMatrix_FullSpreadV4Fixture(address(fx0)).assertBlockedAccounting(hook);
+    }
+    function test_row_ammCallerFundSeparation() public override {
+        _seed();
+        SeMatrix_FullSpreadV4Fixture(address(fx0)).assertBlockedAccounting(hook);
+        SeMatrix_FullSpreadV4Fixture(address(fx1)).assertBlockedAccounting(hook);
+        SeMatrix_FullSpreadV4Fixture(address(fx2)).assertBlockedAccounting(hook);
+    }
+    function test_row_hookSwap_exactOut_trueFlag_refundsCreditMinusUsed() public override {
+        _seed(); SeMatrix_FullSpreadV4Fixture(address(fx0)).assertExactOutRejected(hook, face1, face0, true);
+        SeMatrix_FullSpreadV4Fixture(address(fx1)).assertExactOutRejected(hook, face0, face1, true);
+    }
+    function test_row_hookSwap_exactOut_falseFlag_pullsUsedOnly() public override {
+        _seed(); SeMatrix_FullSpreadV4Fixture(address(fx0)).assertExactOutRejected(hook, face1, face0, false);
+        SeMatrix_FullSpreadV4Fixture(address(fx1)).assertExactOutRejected(hook, face0, face1, false);
+    }
+    function test_row_poolManagerSwap_bothDirections_noFaceResidual() public override {
+        _seed();
+        SeMatrix_FullSpreadV4Fixture(address(fx0)).assertRouterPairRoutes(address(swapRouter), hook, face1, face0, 60);
+        SeMatrix_FullSpreadV4Fixture(address(fx1)).assertRouterPairRoutes(address(swapRouter), hook, face0, face1, 60);
+    }
 }

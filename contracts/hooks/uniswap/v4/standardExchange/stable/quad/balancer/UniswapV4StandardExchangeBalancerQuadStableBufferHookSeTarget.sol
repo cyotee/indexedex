@@ -70,21 +70,16 @@ abstract contract UniswapV4StandardExchangeBalancerQuadStableBufferHookSeTarget 
         _tokenIndex(tout);
 
         // Quote on pre-intake book, then fund (L-GAPS-11 delta gate — no free leftover credit).
-        amountOut = _previewSwapExactInFunded(tin, tout, amountIn, pretransferred);
+        ExactInOutput memory output = _previewSwapExactInPlan(tin, tout, amountIn, pretransferred);
+        amountOut = output.amountOut;
         if (amountOut < minAmountOut) revert Slippage();
 
         _securePull(IERC20(tin), amountIn, pretransferred);
 
-        uint8 j = _tokenIndex(tout);
         uint8 i = _tokenIndex(tin);
         Repo.Layout storage l = Repo._layout();
-        if (l.standardExchanges[j] != address(0)) {
-            _unwrapExactTokenOut(j, amountOut, recipient);
-        } else {
-            if (amountOut >= _nativeAt(j)) revert WouldZeroReserve();
-            _debitRawIntentional(j, amountOut);
-            IERC20(tout).safeTransfer(recipient, amountOut);
-        }
+        amountOut = _payExactInOutput(_tokenIndex(tout), output, recipient);
+        if (amountOut < minAmountOut) revert Slippage();
         if (l.standardExchanges[i] != address(0)) {
             _bufferToken(i, amountIn);
         } else {

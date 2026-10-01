@@ -2,7 +2,9 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
 import {IStandardExchangeTransitionQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {IBalancerV3PoolLiquidityQuote} from "contracts/protocols/dexes/balancer/v3/pools/IBalancerV3PoolLiquidityQuote.sol";
 import {BalancerV3VaultAwareRepo} from "@crane/contracts/protocols/dexes/balancer/v3/vault/BalancerV3VaultAwareRepo.sol";
 import {IVault} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IVault.sol";
 import {IBasePool} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IBasePool.sol";
@@ -26,11 +28,10 @@ import {ScalingHelpers} from "@crane/contracts/external/balancer/v3/solidity-uti
  *      rounding (add = ROUND_UP, remove = ROUND_DOWN, matching the Vault's
  *      `addLiquidity(ROUND_UP)` / `removeLiquidity(ROUND_DOWN)` loads and
  *      `_quotePoolData(joining)`), then delegates the invariant/balance math to the live pool
- *      through `IBasePool(address(this))`. Those callbacks (`computeInvariant` / `computeBalance`
- *      / `getMinimumInvariantRatio` / `getMaximumInvariantRatio`) are pure functions of the
- *      passed balances plus the pool's immutable params and the storage that a single-token
- *      liquidity op never changes (virtual buffer book, effective-weight rate, amp), so they
- *      project off-state.
+ *      through `IBasePool(address(this))` for the existing callback-based projections.
+ *      Pools exposing IBalancerV3PoolLiquidityQuote instead own an opaque projected math/hook book. In
+ *      particular stable CommonBuffer/MixedBuffer scale their virtuals after every removal;
+ *      subsequent math must not read the pre-removal storage book.
  *
  *      All six buffer-pool families register every token with `paysYieldFees = false`, so the
  *      join-side yield-fee accrual in `_quotePoolData(true)` is a no-op and one raw-balance
@@ -49,12 +50,16 @@ abstract contract BalancerV3PoolStandardExchangeTransitionQuoteTarget is IStanda
         uint256 supply;
         // Projected holder BPT balance.
         uint256 holderShares;
-        // Projected raw token balances (the only mutated pool field).
+        // Projected raw token balances, net of aggregate swap fees.
         uint256[] balancesRaw;
         // Vault decimal scaling factors (fixed).
         uint256[] scalingFactors;
         // Vault token rates (fixed for the projection window).
         uint256[] rates;
+        // Zero in recovery mode, matching Vault._computeAndChargeAggregateSwapFees.
+        uint256 aggregateSwapFee;
+        // Optional protocol-owned projected virtual state; consumers never decode this.
+        bytes poolState;
     }
 
     function _poolVault() private view returns (IVault) {
@@ -104,6 +109,18 @@ abstract contract BalancerV3PoolStandardExchangeTransitionQuoteTarget is IStanda
             q.rates[i] = d.tokenRates[i];
         }
         q.swapFee = PoolConfigLib.getStaticSwapFeePercentage(d.poolConfigBits);
+        q.aggregateSwapFee = PoolConfigLib.isPoolInRecoveryMode(d.poolConfigBits)
+            ? 0 : PoolConfigLib.getAggregateSwapFeePercentage(d.poolConfigBits);
+        if (IERC165(address(this)).supportsInterface(type(IBalancerV3PoolLiquidityQuote).interfaceId)) {
+            q.poolState = IBalancerV3PoolLiquidityQuote(address(this)).quotePoolState(q.scalingFactors, q.rates);
+            if (q.poolState.length == 0) revert InvalidQuoteState();
+        } else {
+            // Old stable-buffer deployments cannot project their mutable virtual book.
+            // Do not silently fall back to storage callbacks for these subjects.
+            (bool stable, bytes memory amp) = address(this).staticcall(abi.encodeWithSignature("getAmplificationParameter()"));
+            (bool buffered, bytes memory buffer) = address(this).staticcall(abi.encodeWithSignature("virtualBuffer()"));
+            if (stable && amp.length == 96 && buffered && buffer.length == 32) revert InvalidQuoteState();
+        }
     }
 
     /// @dev `balancesLiveScaled18` from the projected raw balances, with the op's rounding:
@@ -122,24 +139,66 @@ abstract contract BalancerV3PoolStandardExchangeTransitionQuoteTarget is IStanda
     ///      `BalancerV3PoolStandardExchangeTarget._previewPoolLiquidity`, but over the projected
     ///      balances and supply. `joining` selects add vs remove; `exactOut` the direction.
     function _project(PoolQuoteState memory q, bool joining, bool exactOut, uint256 amount)
-        private view returns (uint256 result)
+        private view returns (uint256 result, uint256[] memory fees)
     {
         uint256[] memory live = _liveBalances(q, joining);
+        if (q.poolState.length != 0) return _projectPoolState(q, live, joining, exactOut, amount);
         IBasePool pool = IBasePool(address(this));
         uint256 idx = q.index;
         if (joining && !exactOut) {
             uint256[] memory amounts = new uint256[](live.length);
             amounts[idx] = ScalingHelpers.toScaled18ApplyRateRoundDown(amount, q.scalingFactors[idx], q.rates[idx]);
-            (result,) = BasePoolMath.computeAddLiquidityUnbalanced(live, amounts, q.supply, q.swapFee, pool);
+            (result, fees) = BasePoolMath.computeAddLiquidityUnbalanced(live, amounts, q.supply, q.swapFee, pool);
         } else if (joining) {
-            (result,) = BasePoolMath.computeAddLiquiditySingleTokenExactOut(live, idx, amount, q.supply, q.swapFee, pool);
+            (result, fees) = BasePoolMath.computeAddLiquiditySingleTokenExactOut(live, idx, amount, q.supply, q.swapFee, pool);
             result = ScalingHelpers.toRawUndoRateRoundUp(result, q.scalingFactors[idx], q.rates[idx]);
         } else if (!exactOut) {
-            (result,) = BasePoolMath.computeRemoveLiquiditySingleTokenExactIn(live, idx, amount, q.supply, q.swapFee, pool);
+            (result, fees) = BasePoolMath.computeRemoveLiquiditySingleTokenExactIn(live, idx, amount, q.supply, q.swapFee, pool);
             result = ScalingHelpers.toRawUndoRateRoundDown(result, q.scalingFactors[idx], q.rates[idx]);
         } else {
             uint256 liveOut = ScalingHelpers.toScaled18ApplyRateRoundUp(amount, q.scalingFactors[idx], q.rates[idx]);
-            (result,) = BasePoolMath.computeRemoveLiquiditySingleTokenExactOut(live, idx, liveOut, q.supply, q.swapFee, pool);
+            (result, fees) = BasePoolMath.computeRemoveLiquiditySingleTokenExactOut(live, idx, liveOut, q.supply, q.swapFee, pool);
+        }
+    }
+
+    function _projectPoolState(PoolQuoteState memory q, uint256[] memory live, bool joining, bool exactOut, uint256 amount)
+        private view returns (uint256 result, uint256[] memory fees)
+    {
+        IBalancerV3PoolLiquidityQuote.LiquidityQuoteParams memory p;
+        p.balancesLiveScaled18 = live;
+        p.index = q.index;
+        p.amountScaled18 = amount;
+        p.supply = q.supply;
+        p.swapFee = q.swapFee;
+        p.joining = joining;
+        p.exactOut = exactOut;
+        if (joining && !exactOut) {
+            p.amountScaled18 = ScalingHelpers.toScaled18ApplyRateRoundDown(amount, q.scalingFactors[q.index], q.rates[q.index]);
+        } else if (!joining && exactOut) {
+            p.amountScaled18 = ScalingHelpers.toScaled18ApplyRateRoundUp(amount, q.scalingFactors[q.index], q.rates[q.index]);
+        }
+        (result, fees) = IBalancerV3PoolLiquidityQuote(address(this)).quotePoolLiquidity(q.poolState, p);
+        if (!joining && !exactOut) {
+            result = ScalingHelpers.toRawUndoRateRoundDown(result, q.scalingFactors[q.index], q.rates[q.index]);
+        } else if (joining && exactOut) {
+            result = ScalingHelpers.toRawUndoRateRoundUp(result, q.scalingFactors[q.index], q.rates[q.index]);
+        }
+    }
+
+    function _afterLiquidity(PoolQuoteState memory q, uint256[] memory fees, bool joining, uint256 bptAmount)
+        private view
+    {
+        if (fees.length != q.balancesRaw.length) revert InvalidQuoteState();
+        for (uint256 i; i < fees.length; ++i) {
+            // Vault first rounds the total fee down into raw units, then rounds the
+            // aggregate share down. Combining these two divisions changes the result.
+            uint256 rawFee = ScalingHelpers.toRawUndoRateRoundDown(fees[i], q.scalingFactors[i], q.rates[i]);
+            q.balancesRaw[i] -= (rawFee * q.aggregateSwapFee) / 1e18;
+        }
+        if (q.poolState.length != 0) {
+            q.poolState = IBalancerV3PoolLiquidityQuote(address(this)).quotePoolStateAfterLiquidity(
+                q.poolState, joining, bptAmount, q.supply
+            );
         }
     }
 
@@ -147,12 +206,18 @@ abstract contract BalancerV3PoolStandardExchangeTransitionQuoteTarget is IStanda
     ///      `shares` BPT would pay at the projected state. Zero for empty holder or supply.
     function _valueShares(PoolQuoteState memory q, uint256 shares) private view returns (uint256) {
         if (shares == 0 || q.supply == 0) return 0;
-        return _project(q, false, false, shares);
+        (uint256 assets,) = _project(q, false, false, shares);
+        return assets;
     }
 
     function _decode(bytes memory state_) private view returns (PoolQuoteState memory q) {
         q = abi.decode(state_, (PoolQuoteState));
-        if (q.pool != address(this)) revert InvalidQuoteState();
+        if (q.pool != address(this) || q.index >= q.balancesRaw.length
+            || q.balancesRaw.length != q.scalingFactors.length || q.rates.length != q.balancesRaw.length) {
+            revert InvalidQuoteState();
+        }
+        if (IERC165(address(this)).supportsInterface(type(IBalancerV3PoolLiquidityQuote).interfaceId)
+            && q.poolState.length == 0) revert InvalidQuoteState();
     }
 
     function quoteState(address asset_, address holder_)
@@ -172,6 +237,7 @@ abstract contract BalancerV3PoolStandardExchangeTransitionQuoteTarget is IStanda
         external view returns (bytes memory nextState_, uint256 amountIn_, uint256 amountOut_, uint256 holderAssetsAfter_)
     {
         PoolQuoteState memory q = _decode(state_);
+        uint256[] memory fees;
         if (operation_ == Operation.ReceiveShares) {
             q.holderShares += amount_;
             if (q.holderShares > q.supply) revert InvalidQuoteState();
@@ -179,23 +245,26 @@ abstract contract BalancerV3PoolStandardExchangeTransitionQuoteTarget is IStanda
         }
         if (operation_ == Operation.DepositExactIn) {
             amountIn_ = amount_;
-            amountOut_ = _project(q, true, false, amount_);
+            (amountOut_, fees) = _project(q, true, false, amount_);
             q.balancesRaw[q.index] += amount_;
+            _afterLiquidity(q, fees, true, amountOut_);
             q.supply += amountOut_;
             q.holderShares += amountOut_;
         } else if (operation_ == Operation.RedeemExactIn) {
             amountIn_ = amount_;
             if (amount_ > q.holderShares) revert InsufficientQuoteShares(amount_, q.holderShares);
-            amountOut_ = _project(q, false, false, amount_);
+            (amountOut_, fees) = _project(q, false, false, amount_);
             q.balancesRaw[q.index] -= amountOut_;
+            _afterLiquidity(q, fees, false, amount_);
             q.supply -= amount_;
             q.holderShares -= amount_;
         } else {
             // WithdrawExactOut: `amount_` is the exact raw asset paid to the holder.
             amountOut_ = amount_;
-            amountIn_ = _project(q, false, true, amount_);
+            (amountIn_, fees) = _project(q, false, true, amount_);
             if (amountIn_ > q.holderShares) revert InsufficientQuoteShares(amountIn_, q.holderShares);
             q.balancesRaw[q.index] -= amount_;
+            _afterLiquidity(q, fees, false, amountIn_);
             q.supply -= amountIn_;
             q.holderShares -= amountIn_;
         }

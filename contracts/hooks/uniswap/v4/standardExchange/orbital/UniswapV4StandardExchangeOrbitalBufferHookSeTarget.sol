@@ -107,34 +107,24 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookSeTarget is UniswapV
         address tout = address(tokenOut);
         if (!_isBound(tin) || !_isBound(tout) || tin == tout) revert InvalidRoute(tin, tout);
         // Reject SE share addresses
-        Repo.Layout storage l = Repo._layout();
-        if (tin == l.se0 || tin == l.se1 || tin == l.se2 || tout == l.se0 || tout == l.se1 || tout == l.se2) {
-            revert InvalidRoute(tin, tout);
+        {
+            Repo.Layout storage l = Repo._layout();
+            if (tin == l.se0 || tin == l.se1 || tin == l.se2 || tout == l.se0 || tout == l.se1 || tout == l.se2) {
+                revert InvalidRoute(tin, tout);
+            }
         }
-
-        // L-GAPS-11 / ISecurePullErrors: pretransfer credits only in-window delta (I1/I3).
-        // Leftover spendable economics unchanged (surplus delta not exact-matched).
-        _securePull(IERC20(tin), amountIn, pretransferred);
 
         uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
-        amountOut = _previewSwapExactIn(tin, tout, amountIn);
+        ExactInOutput memory output = _previewSwapExactInPlan(tin, tout, amountIn, feeWad);
+        amountOut = output.amountOut;
         if (amountOut < minAmountOut) revert InsufficientTokenOut();
+        // Delta-gate funding only after the complete forward payout is known.
+        _securePull(IERC20(tin), amountIn, pretransferred);
 
         // Execute book swap (no PM)
-        if (_seOf(tout) != address(0)) {
-            _unwrapExactTokenOut(tout, amountOut);
-        } else {
-            l.reserves[tout] -= amountOut;
-        }
-        if (_seOf(tin) != address(0)) {
-            _bufferToken(tin, amountIn);
-        } else {
-            l.reserves[tin] += amountIn;
-        }
-        _recomputeL2();
-        IERC20(tout).safeTransfer(recipient, amountOut);
-        _syncVaultReserves();
-        emit Swap(msg.sender, tin, tout, amountIn, amountOut, feeWad);
+        amountOut = _receiveExactInOutput(tout, output);
+        if (amountOut < minAmountOut) revert InsufficientTokenOut();
+        _finishSwap(tin, tout, amountIn, amountOut, recipient, feeWad);
     }
 
 
@@ -211,10 +201,14 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookSeTarget is UniswapV
         if (!_isBound(tokenIn) || !_isBound(tokenOut) || tokenIn == tokenOut) {
             revert InvalidRoute(tokenIn, tokenOut);
         }
-        amountOut = _previewSwapExactIn(tokenIn, tokenOut, amountIn);
+        uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
+        ExactInOutput memory output = _previewSwapExactInPlan(tokenIn, tokenOut, amountIn, feeWad);
+        amountOut = output.amountOut;
         if (amountOut < minAmountOut) revert InsufficientTokenOut();
         _securePull(IERC20(tokenIn), amountIn, false);
-        _payOwnerSwap(tokenIn, tokenOut, amountIn, amountOut);
+        amountOut = _receiveExactInOutput(tokenOut, output);
+        if (amountOut < minAmountOut) revert InsufficientTokenOut();
+        _finishOwnerSwap(tokenIn, tokenOut, amountIn, amountOut, feeWad);
     }
 
     /// @notice D89: owner exact-out; internal book settlement (no nested PoolManager.unlock).
@@ -251,13 +245,22 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookSeTarget is UniswapV
         } else {
             l.reserves[tokenOut] -= amountOut;
         }
+        _finishOwnerSwap(tokenIn, tokenOut, amountIn, amountOut, feeWad);
+    }
+
+    function _finishOwnerSwap(address tokenIn, address tokenOut, uint256 amountIn, uint256 amountOut, uint256 feeWad) private {
+        _finishSwap(tokenIn, tokenOut, amountIn, amountOut, msg.sender, feeWad);
+    }
+
+    function _finishSwap(address tokenIn, address tokenOut, uint256 amountIn, uint256 amountOut, address recipient, uint256 feeWad) private {
+        Repo.Layout storage l = Repo._layout();
         if (_seOf(tokenIn) != address(0)) {
             _bufferToken(tokenIn, amountIn);
         } else {
             l.reserves[tokenIn] += amountIn;
         }
         _recomputeL2();
-        IERC20(tokenOut).safeTransfer(msg.sender, amountOut);
+        IERC20(tokenOut).safeTransfer(recipient, amountOut);
         _syncVaultReserves();
         emit Swap(msg.sender, tokenIn, tokenOut, amountIn, amountOut, feeWad);
     }

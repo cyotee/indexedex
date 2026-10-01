@@ -282,7 +282,9 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookHooksTar
         view
         returns (uint256 amountIn)
     {
-        return _previewSwapExactOut(zeroForOne, amountOut);
+        _requireNonZero(amountOut);
+        _requireLive();
+        return ClaimLib.quoteExactOutContext(zeroForOne, amountOut, Repo._layout().poolManager);
     }
 
     function tokens() public view returns (address[] memory t) {
@@ -336,7 +338,7 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookHooksTar
         if (!_isLive() || amountOut == 0) return 0;
         (bool ok, bool zfo) = _tryRouteZeroForOne(tokenIn, tokenOut);
         if (!ok) return 0;
-        return _previewSwapExactOut(zfo, amountOut);
+        return ClaimLib.quoteExactOutContext(zfo, amountOut, Repo._layout().poolManager);
     }
 
     /// @dev Dual has no DETF self-leg. Do not invent Dual-as-DETF-reserve math (H2).

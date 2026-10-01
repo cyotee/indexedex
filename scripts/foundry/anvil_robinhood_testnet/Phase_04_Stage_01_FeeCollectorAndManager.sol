@@ -18,8 +18,8 @@ import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeplo
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
 import {
-    IUniswapV4StandardExchangeLiquidReserve
-} from "contracts/protocols/dexes/uniswap/v4/interfaces/IUniswapV4StandardExchangeLiquidReserve.sol";
+    IUniswapV4FullSpreadHooklessStandardExchangeVaultLiquidReserve
+} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/interfaces/IUniswapV4FullSpreadHooklessStandardExchangeVaultLiquidReserve.sol";
 
 /// @title Phase_04_Stage_01_FeeCollectorAndManager
 /// @notice FeeCollector and Manager facets, then packages, then diamonds. Hook factory + fee defaults + CREATE3 setOperator.
@@ -44,7 +44,7 @@ library Phase_04_Stage_01_FeeCollectorAndManager {
         feeMgr.setDefaultDexSwapFee(FixtureEconomics.DEX_SWAP_FEE);
         feeMgr.setDefaultSeigniorageIncentivePercentage(FixtureEconomics.SEIGNIORAGE);
         feeMgr.setDefaultLiquidReservePercentageOfTypeId(
-            type(IUniswapV4StandardExchangeLiquidReserve).interfaceId, FixtureEconomics.V4_LIQUID_RESERVE
+            type(IUniswapV4FullSpreadHooklessStandardExchangeVaultLiquidReserve).interfaceId, FixtureEconomics.V4_LIQUID_RESERVE
         );
         feeMgr.setDefaultBondTerms(
             BondTerms({

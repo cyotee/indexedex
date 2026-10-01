@@ -269,12 +269,8 @@ abstract contract TestBase_UniswapV4Detf_Orbital_ProdSe_Decimals is TestBase_Uni
         if (needSweep) detfInfo.sweepDust();
         assertEq(IERC20(hook_).balanceOf(detf), 0, "R19 hook LP");
         for (uint256 i; i < toks.length; ++i) {
-            uint256 bal = IERC20(toks[i]).balanceOf(detf);
-            if (bal > 10) {
-                _logR19JoinFailure(hook_, toks[i], bal);
-                assertLe(bal, 10, string.concat("R19 token after sweep ", vm.toString(toks[i])));
-            }
             address se_ = IUniswapV4SeBufferHook(hook_).standardExchangeOf(toks[i]);
+            _assertPairResidualBooked(toks[i], se_);
             if (se_ != address(0)) {
                 uint256 seBal = IERC20(se_).balanceOf(detf);
                 if (seBal > 10) {
@@ -307,8 +303,8 @@ abstract contract TestBase_UniswapV4Detf_Orbital_ProdSe_Decimals is TestBase_Uni
     function _assertNoJoinableDust() internal view virtual override {
         address hook_ = detfInfo.hook();
         assertEq(IERC20(hook_).balanceOf(detf), 0, "no hook LP on diamond");
-        assertLe(IERC20(pairAddr0).balanceOf(detf), 10, "no pair0 on diamond");
-        assertLe(IERC20(pairAddr1).balanceOf(detf), 10, "no pair1 on diamond");
+        _assertPairResidualBooked(pairAddr0, se0);
+        _assertPairResidualBooked(pairAddr1, se1);
         assertLe(IERC20(se0).balanceOf(detf), 10, "no se0 share on diamond");
         assertLe(IERC20(se1).balanceOf(detf), 10, "no se1 share on diamond");
     }
