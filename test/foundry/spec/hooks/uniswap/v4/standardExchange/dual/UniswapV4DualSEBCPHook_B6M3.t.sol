@@ -203,7 +203,7 @@ contract UniswapV4DualSEBCPHook_B6M3_Test is TestBase_UniswapV4DualSEBCPHook {
 
     function test_M3_unsupportedRoute_reverts() public {
         _depositBoth(50 ether, 50 ether);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("UnsupportedRoute()"));
         IStandardExchangeIn(hook).previewExchangeIn(IERC20(seA), 1 ether, IERC20(address(tokenA)));
     }
 

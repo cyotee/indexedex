@@ -33,7 +33,7 @@ abstract contract ERC4626StandardYieldTarget is NativeStandardYieldTarget, ERC46
         IERC4626 vault_ = protocolVault();
         uint256 supply_ = ERC20Repo._totalSupply();
         if (supply_ == 0) return vault_.convertToAssets(1e18);
-        uint256 held_ = IERC20(address(vault_)).balanceOf(address(this));
-        return Math.mulDiv(vault_.convertToAssets(held_), 1e18, supply_);
+        uint256 backing_ = _receiptBacking();
+        return Math.mulDiv(vault_.convertToAssets(backing_), 1e18, supply_);
     }
 }

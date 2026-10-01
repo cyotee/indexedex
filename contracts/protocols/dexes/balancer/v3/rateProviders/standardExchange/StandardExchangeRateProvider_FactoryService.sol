@@ -47,7 +47,7 @@ library StandardExchangeRateProvider_FactoryService {
     {
         bytes memory code_ = ArtifactCreationCode.creationCode("StandardExchangeRateProviderFacet.sol:StandardExchangeRateProviderFacet");
         instance = create3Factory.deployFacet(
-            code_, ArtifactCreationCode.releaseSalt(abi.encode("StandardExchangeRateProviderFacet")._hash(), code_, bytes(""))
+            code_, ArtifactCreationCode.releaseSalt(abi.encode("StandardExchangeRateProviderFacet")._hash())
         );
         vm.label(address(instance), "StandardExchangeRateProviderFacet");
     }
@@ -58,7 +58,7 @@ library StandardExchangeRateProvider_FactoryService {
     {
         bytes memory code_ = ArtifactCreationCode.creationCode("WrappedStandardExchangeRateProviderFacet.sol:WrappedStandardExchangeRateProviderFacet");
         instance = create3Factory.deployFacet(
-            code_, ArtifactCreationCode.releaseSalt(abi.encode("WrappedStandardExchangeRateProviderFacet")._hash(), code_, bytes(""))
+            code_, ArtifactCreationCode.releaseSalt(abi.encode("WrappedStandardExchangeRateProviderFacet")._hash())
         );
         vm.label(address(instance), "WrappedStandardExchangeRateProviderFacet");
     }
@@ -84,7 +84,7 @@ library StandardExchangeRateProvider_FactoryService {
             address(
                 create3Factory.deployPackageWithArgs(
                     code_, args_,
-                    ArtifactCreationCode.releaseSalt(abi.encode("StandardExchangeRateProviderDFPkg")._hash(), code_, args_)
+                    ArtifactCreationCode.releaseSalt(abi.encode("StandardExchangeRateProviderDFPkg")._hash())
                 )
             )
         );
@@ -109,7 +109,7 @@ library StandardExchangeRateProvider_FactoryService {
             address(
                 create3Factory.deployPackageWithArgs(
                     code_, args_,
-                    ArtifactCreationCode.releaseSalt(abi.encode("WrappedStandardExchangeRateProviderDFPkg")._hash(), code_, args_)
+                    ArtifactCreationCode.releaseSalt(abi.encode("WrappedStandardExchangeRateProviderDFPkg")._hash())
                 )
             )
         );

@@ -1,0 +1,478 @@
+{
+  "status": "VALIDATED: final code passes concrete artifact refresh, both deterministic lifecycles, and both 256x64 campaigns.",
+  "validationClone": "/tmp/apex-review-fullspread-validation",
+  "files": [
+    {
+      "path": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/invariants/StandardExchangeHandler.sol",
+      "beforeSha256": "6027160cee881f6d88a484045e1964cfa3f4348a9792afcf1f5edca1a1cecd02",
+      "afterSha256": "a6f793a4d4246d464c307b5bc422f81833569e8b688a16598aaea10b926ef35f"
+    },
+    {
+      "path": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/invariants/UniswapV3FullSpreadStandardExchangeVault_Invariant.t.sol",
+      "beforeSha256": "a3a0d7b3cc135da3bba0212fab988e93764f983eda5ea4be9bf373b956e9bddf",
+      "afterSha256": "73b1ea2ea7102e665629c87e1487b1f1c1ad9bd359813616192bc6a897568844"
+    },
+    {
+      "path": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/invariants/UniswapV4FullSpreadStandardExchangeVault_Invariant.t.sol",
+      "beforeSha256": "fd946cff67e10f09ebbdca3907fb424ce5974d3f2348ab30ded444854a1375c7",
+      "afterSha256": "2fa01c19126c122d0b6cf29711778e98a1d38699e2bc9bbf551807196c6e0b44"
+    }
+  ],
+  "actions": [
+    {
+      "index": 0,
+      "name": "mint_exact_in_pull",
+      "expectedRevertAction": false
+    },
+    {
+      "index": 1,
+      "name": "mint_exact_in_atomic_push",
+      "expectedRevertAction": false
+    },
+    {
+      "index": 2,
+      "name": "burn_exact_in_pull",
+      "expectedRevertAction": false
+    },
+    {
+      "index": 3,
+      "name": "burn_exact_in_atomic_push",
+      "expectedRevertAction": false
+    },
+    {
+      "index": 4,
+      "name": "mint_exact_out_pull",
+      "expectedRevertAction": false
+    },
+    {
+      "index": 5,
+      "name": "mint_exact_out_atomic_push",
+      "expectedRevertAction": false
+    },
+    {
+      "index": 6,
+      "name": "burn_exact_out_pull",
+      "expectedRevertAction": false
+    },
+    {
+      "index": 7,
+      "name": "burn_exact_out_atomic_push",
+      "expectedRevertAction": false
+    },
+    {
+      "index": 8,
+      "name": "swap_exact_in_pull",
+      "expectedRevertAction": false
+    },
+    {
+      "index": 9,
+      "name": "swap_exact_in_atomic_push",
+      "expectedRevertAction": false
+    },
+    {
+      "index": 10,
+      "name": "swap_exact_out_pull",
+      "expectedRevertAction": false
+    },
+    {
+      "index": 11,
+      "name": "swap_exact_out_atomic_push",
+      "expectedRevertAction": false
+    },
+    {
+      "index": 12,
+      "name": "share_transfer",
+      "expectedRevertAction": false
+    },
+    {
+      "index": 13,
+      "name": "direct_market_trade",
+      "expectedRevertAction": false
+    },
+    {
+      "index": 14,
+      "name": "donate_and_rebalance",
+      "expectedRevertAction": false
+    },
+    {
+      "index": 15,
+      "name": "trade_and_collect_fees_via_funded_mint",
+      "expectedRevertAction": false
+    },
+    {
+      "index": 16,
+      "name": "change_sleeve_and_rebalance",
+      "expectedRevertAction": false
+    },
+    {
+      "index": 17,
+      "name": "contract_no_delivery_in_and_out",
+      "expectedRevertAction": true
+    },
+    {
+      "index": 18,
+      "name": "eoa_no_delivery",
+      "expectedRevertAction": true
+    },
+    {
+      "index": 19,
+      "name": "atomic_and_staged_short_delivery",
+      "expectedRevertAction": true
+    },
+    {
+      "index": 20,
+      "name": "repeat_used_credit",
+      "expectedRevertAction": true
+    },
+    {
+      "index": 21,
+      "name": "configured_token_callback_reentry",
+      "expectedRevertAction": false
+    },
+    {
+      "index": 22,
+      "name": "resting_partial_credit_no_refund",
+      "expectedRevertAction": false
+    },
+    {
+      "index": 23,
+      "name": "atomic_post_swap_slippage_rollback",
+      "expectedRevertAction": true
+    }
+  ],
+  "schedule": "First eight handler calls execute the 24 required actions; subsequent calls vary one action per call. Three funded holders, all counters initially zero. afterInvariant enforces per-action and per-holder success gates.",
+  "artifactSeedInodes": {
+    "seedV3DFPkg": 418261051,
+    "cloneV3DFPkg": 418657412
+  },
+  "counters": "attempted and succeeded count handler action executions; expectedReverts counts individual checked nested failures within that action. Unexpected failures propagate and fail the campaign.",
+  "validationLogs": [
+    "/tmp/apex-review-fullspread-validation/validation-logs/fullspread-build-deterministic.log",
+    "/tmp/apex-review-fullspread-validation/validation-logs/fullspread-final-release.log",
+    "/tmp/apex-review-fullspread-validation/validation-logs/fullspread-conservation-release.log"
+  ],
+  "seed": "0x20260917",
+  "counterMeaning": "attempted/succeeded count handler action executions; expectedReverts counts each checked nested rejection within that action. Unexpected failures propagate.",
+  "sharedCheckoutChanged": false,
+  "finalCommand": "FOUNDRY_FUZZ_RUNS=10000 FOUNDRY_INVARIANT_RUNS=256 FOUNDRY_INVARIANT_DEPTH=64 forge test --fuzz-seed 0x20260917 -vv --match-path 'test/foundry/spec/vaults/standard/exchange/protocols/uniswap/invariants/**' --skip 'contracts/**' --skip 'test/foundry/spec/constants/**' --skip 'test/foundry/spec/fee/**' --skip 'test/foundry/spec/hooks/**' --skip 'test/foundry/spec/manager/**' --skip 'test/foundry/spec/oracles/**' --skip 'test/foundry/spec/permit2/**' --skip 'test/foundry/spec/protocol/**' --skip 'test/foundry/spec/protocols/**' --skip 'test/foundry/spec/registries/**' --skip 'test/foundry/spec/routers/**' --skip 'test/foundry/spec/saf/**' --skip 'test/foundry/spec/scripts/**' --skip 'test/foundry/spec/test/**' --skip 'test/foundry/spec/utils/**' --skip test/foundry/spec/vaults/StandardExchangeOut_Refund.t.sol --skip 'test/foundry/spec/vaults/basic/**' --skip 'test/foundry/spec/vaults/detf/**' --skip 'test/foundry/spec/vaults/standard-exchange/**' --skip test/foundry/spec/vaults/standard/TransitionQuoteAssertions.sol --skip 'test/foundry/spec/vaults/standard/erc4626/**' --skip 'test/foundry/spec/vaults/standard/exchange/invariant/**' --skip 'test/foundry/spec/vaults/standard/exchange/protocols/morpho/**' --skip 'test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/**' --skip 'test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/**' --skip 'test/foundry/spec/vaults/standard/exchange/protocols/uniswap/remediation/**' --skip 'test/foundry/spec/vaults/standard/sy/**'",
+  "finalExitCode": 0,
+  "results": [
+    {
+      "suite": "UniswapV3FullSpreadStandardExchangeVault_Invariant",
+      "deterministicCounters": {
+        "0": {
+          "attempted": 3,
+          "succeeded": 3,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "1": {
+          "attempted": 3,
+          "succeeded": 3,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "2": {
+          "attempted": 2,
+          "succeeded": 2,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "3": {
+          "attempted": 5,
+          "succeeded": 5,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "4": {
+          "attempted": 5,
+          "succeeded": 5,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "5": {
+          "attempted": 5,
+          "succeeded": 5,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "6": {
+          "attempted": 2,
+          "succeeded": 2,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "7": {
+          "attempted": 5,
+          "succeeded": 5,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "8": {
+          "attempted": 8,
+          "succeeded": 8,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "9": {
+          "attempted": 3,
+          "succeeded": 3,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "10": {
+          "attempted": 1,
+          "succeeded": 1,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "11": {
+          "attempted": 3,
+          "succeeded": 3,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "12": {
+          "attempted": 3,
+          "succeeded": 3,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "13": {
+          "attempted": 3,
+          "succeeded": 3,
+          "expected reverts": 15,
+          "unexpected reverts": 0
+        },
+        "14": {
+          "attempted": 4,
+          "succeeded": 4,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "15": {
+          "attempted": 1,
+          "succeeded": 1,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "16": {
+          "attempted": 2,
+          "succeeded": 2,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "17": {
+          "attempted": 2,
+          "succeeded": 0,
+          "expected reverts": 4,
+          "unexpected reverts": 0
+        },
+        "18": {
+          "attempted": 5,
+          "succeeded": 0,
+          "expected reverts": 5,
+          "unexpected reverts": 0
+        },
+        "19": {
+          "attempted": 3,
+          "succeeded": 0,
+          "expected reverts": 6,
+          "unexpected reverts": 0
+        },
+        "20": {
+          "attempted": 3,
+          "succeeded": 0,
+          "expected reverts": 3,
+          "unexpected reverts": 0
+        },
+        "21": {
+          "attempted": 4,
+          "succeeded": 4,
+          "expected reverts": 4,
+          "unexpected reverts": 0
+        },
+        "22": {
+          "attempted": 3,
+          "succeeded": 3,
+          "expected reverts": 3,
+          "unexpected reverts": 0
+        },
+        "23": {
+          "attempted": 2,
+          "succeeded": 0,
+          "expected reverts": 2,
+          "unexpected reverts": 0
+        }
+      },
+      "invariant": {
+        "name": "invariant_APEX_allInputsSharesAndCustodyReconcile",
+        "runs": 256,
+        "calls": 16384,
+        "unexpectedHandlerReverts": 0
+      }
+    },
+    {
+      "suite": "UniswapV4FullSpreadStandardExchangeVault_Invariant",
+      "deterministicCounters": {
+        "0": {
+          "attempted": 3,
+          "succeeded": 3,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "1": {
+          "attempted": 3,
+          "succeeded": 3,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "2": {
+          "attempted": 2,
+          "succeeded": 2,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "3": {
+          "attempted": 5,
+          "succeeded": 5,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "4": {
+          "attempted": 5,
+          "succeeded": 5,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "5": {
+          "attempted": 5,
+          "succeeded": 5,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "6": {
+          "attempted": 2,
+          "succeeded": 2,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "7": {
+          "attempted": 5,
+          "succeeded": 5,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "8": {
+          "attempted": 8,
+          "succeeded": 8,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "9": {
+          "attempted": 3,
+          "succeeded": 3,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "10": {
+          "attempted": 1,
+          "succeeded": 1,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "11": {
+          "attempted": 3,
+          "succeeded": 3,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "12": {
+          "attempted": 3,
+          "succeeded": 3,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "13": {
+          "attempted": 3,
+          "succeeded": 3,
+          "expected reverts": 15,
+          "unexpected reverts": 0
+        },
+        "14": {
+          "attempted": 4,
+          "succeeded": 4,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "15": {
+          "attempted": 1,
+          "succeeded": 1,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "16": {
+          "attempted": 2,
+          "succeeded": 2,
+          "expected reverts": 0,
+          "unexpected reverts": 0
+        },
+        "17": {
+          "attempted": 2,
+          "succeeded": 0,
+          "expected reverts": 4,
+          "unexpected reverts": 0
+        },
+        "18": {
+          "attempted": 5,
+          "succeeded": 0,
+          "expected reverts": 5,
+          "unexpected reverts": 0
+        },
+        "19": {
+          "attempted": 3,
+          "succeeded": 0,
+          "expected reverts": 6,
+          "unexpected reverts": 0
+        },
+        "20": {
+          "attempted": 3,
+          "succeeded": 0,
+          "expected reverts": 3,
+          "unexpected reverts": 0
+        },
+        "21": {
+          "attempted": 4,
+          "succeeded": 4,
+          "expected reverts": 4,
+          "unexpected reverts": 0
+        },
+        "22": {
+          "attempted": 3,
+          "succeeded": 3,
+          "expected reverts": 3,
+          "unexpected reverts": 0
+        },
+        "23": {
+          "attempted": 2,
+          "succeeded": 0,
+          "expected reverts": 2,
+          "unexpected reverts": 0
+        }
+      },
+      "invariant": {
+        "name": "invariant_APEX_allInputsSharesAndCustodyReconcile",
+        "runs": 256,
+        "calls": 16384,
+        "unexpectedHandlerReverts": 0
+      }
+    }
+  ],
+  "finalLogSha256": "68d9b6e24de37b8f0e5ad78ffbe4725fefbebcfe307a1132f6602713441ea668",
+  "formatCheck": "forge fmt --check passed for all three files",
+  "whitespaceCheck": "git diff --no-index --check emitted no whitespace errors (exit 1 denotes the source differences)",
+  "productionChanges": [],
+  "patch": "/tmp/apex-fullspread-invariant.patch",
+  "patchSha256": "ac66d436c6dab5636dab3995b548c100fa5587c39fbd108b30b52b4badac5996",
+  "sharedCheckoutApplyCheck": "git apply --check /tmp/apex-fullspread-invariant.patch passed; patch was not applied."
+}

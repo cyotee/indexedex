@@ -361,7 +361,7 @@ contract UniswapV4SingleSEBufferHook_StagedInit_Test is TestBase {
         assertTrue(init.finalizeInitialization());
         PoolKey memory key = PairPoolLib.pairKey(t0, t1, 60, IHooks(h));
         // Same product key: PoolManager already has the pool from deployPair.
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("PoolAlreadyInitialized()"));
         pm.initialize(key, TickMath.getSqrtPriceAtTick(0));
 
         // View-only checks: valid wrap-aware pair + fee 0 succeeds (no poolInitialized write).

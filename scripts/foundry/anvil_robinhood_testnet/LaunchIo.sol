@@ -13,7 +13,7 @@ import {
     IUniswapV4HookDiamondPackageCallBackFactory
 } from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackageCallBackFactory.sol";
 import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
-import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/IUniswapV4StandardExchangeDFPkg.sol";
+import {IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg.sol";
 import {
     IUniswapV4MultiPoolTwapOracle
 } from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4MultiPoolTwapOracle.sol";
@@ -139,7 +139,8 @@ abstract contract LaunchIo is DeploymentBase {
         bool ok;
         (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "uniV4SePkg");
         if (!ok || !_hasCode(a)) return false;
-        s.uniV4SePkg = IUniswapV4StandardExchangeDFPkg(a);
+            s.uniV4SePkg = IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg(a);
+            require(keccak256(bytes(s.uniV4SePkg.packageName())) == keccak256("UniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg"), "Phase 05-03: stale family");
         (a, ok) = _readAddressSafe(FILE_UNIV4_PKGS, "cpHookPkg");
         if (!ok || !_hasCode(a)) return false;
         s.cpHookPkg = a;
@@ -202,6 +203,7 @@ abstract contract LaunchIo is DeploymentBase {
         string memory json;
         json = vm.serializeAddress("g03", "cpHookPkg", s.cpHookPkg);
         json = vm.serializeAddress("g03", "uniV4SePkg", address(s.uniV4SePkg));
+        json = vm.serializeString("g03", "uniV4SePkgName", "UniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg");
         json = vm.serializeAddress("g03", "bondNftVaultPkg", s.bondNftVaultPkg);
         json = vm.serializeAddress("g03", "rebasingClaimTokenPkg", s.rebasingClaimTokenPkg);
         json = vm.serializeAddress("g03", "uniV4DetfPkg", s.uniV4DetfPkg);
@@ -566,7 +568,8 @@ abstract contract LaunchIo is DeploymentBase {
     function _requireUniV4SePkg(LaunchState storage s) internal {
         address a = _loadAddr(FILE_05_03, "uniV4SePkg");
         require(_hasCode(a), "run Phase 05 Stage 03 first");
-        s.uniV4SePkg = IUniswapV4StandardExchangeDFPkg(a);
+        s.uniV4SePkg = IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg(a);
+        require(keccak256(bytes(s.uniV4SePkg.packageName())) == keccak256("UniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg"), "Phase 05-03: stale family");
     }
 
     function _requireCoreTokens(LaunchState storage s) internal {

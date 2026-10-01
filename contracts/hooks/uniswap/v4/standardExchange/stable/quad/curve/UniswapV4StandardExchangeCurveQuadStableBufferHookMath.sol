@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {FixedPointMathLib} from "@crane/contracts/utils/FixedPointMathLib.sol";
+import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
 
 /**
  * @title UniswapV4StandardExchangeCurveQuadStableBufferHookMath
@@ -38,6 +39,30 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookMath {
     function baseScaleFromDecimals(uint8 decimals) internal pure returns (uint256) {
         if (decimals < 6 || decimals > 36) revert MathDomain();
         return 10 ** (36 - uint256(decimals));
+    }
+
+
+    /// @notice D60: convert raw SE shares to pair units through a WAD rate of whole pair tokens per whole
+    ///         share. `invScale` is 10^(36 - shareDecimals), `ratedScale` 10^(36 - pairDecimals); combining
+    ///         the denominator before mulDiv keeps precision and supports shares above 18 decimals.
+    function ratedPairUnits(uint256 shares_, uint256 rate_, uint256 invScale_, uint256 ratedScale_)
+        internal pure returns (uint256)
+    {
+        uint256 denominator_ = invScale_ <= ratedScale_
+            ? RATE_PRECISION * (ratedScale_ / invScale_)
+            : RATE_PRECISION / (invScale_ / ratedScale_);
+        return FullMath.mulDiv(shares_, rate_, denominator_);
+    }
+
+    /// @notice D60: inverse of `ratedPairUnits`, rounding up (shares needed for `pairUnits_`).
+    function sharesForPairUnitsUp(uint256 pairUnits_, uint256 rate_, uint256 invScale_, uint256 ratedScale_)
+        internal pure returns (uint256)
+    {
+        if (rate_ == 0) revert MathDomain();
+        uint256 denominator_ = invScale_ <= ratedScale_
+            ? RATE_PRECISION * (ratedScale_ / invScale_)
+            : RATE_PRECISION / (invScale_ / ratedScale_);
+        return FullMath.mulDiv(pairUnits_, denominator_, rate_, FullMath.Rounding.Ceil);
     }
 
     function scaleTo(uint256 amount, uint256 rate) internal pure returns (uint256) {

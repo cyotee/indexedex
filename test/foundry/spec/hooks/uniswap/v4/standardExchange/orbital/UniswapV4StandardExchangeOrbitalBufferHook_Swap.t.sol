@@ -73,7 +73,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_SwapTest is
     function test_swap_beforeLive_reverts() public {
         // fresh inert would need new deploy — use radius check via empty second instance is heavy;
         // drain attempt: swap more than reserve reverts
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("MathDomain()"));
         orbital.previewSwapExactIn(address(token0), address(token1), 10_000_000 ether);
     }
 

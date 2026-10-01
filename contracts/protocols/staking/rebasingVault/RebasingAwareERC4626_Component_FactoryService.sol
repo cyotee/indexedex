@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
+
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 import {Vm} from "forge-std/Vm.sol";
@@ -14,16 +16,15 @@ import {IRebasingAwareERC4626DFPkg} from
     "contracts/protocols/staking/rebasingVault/IRebasingAwareERC4626DFPkg.sol";
 
 library RebasingAwareERC4626_Component_FactoryService {
-    string internal constant RELEASE_ID = "indexedex.rebasing-aware-erc4626.sy-se.v1";
-
+    using BetterEfficientHashLib for bytes;
     Vm constant vm = Vm(VM_ADDRESS);
 
-    function releaseSalt(string memory componentName, bytes memory initCode, bytes memory initArgs)
+    function releaseSalt(string memory componentName)
         internal
         pure
         returns (bytes32)
     {
-        return keccak256(abi.encode(RELEASE_ID, componentName, keccak256(initCode), keccak256(initArgs)));
+        return abi.encode(componentName)._hash();
     }
 
     function deployRebasingAwareERC4626Facet(ICreate3FactoryProxy create3Factory)
@@ -32,7 +33,7 @@ library RebasingAwareERC4626_Component_FactoryService {
     {
         bytes memory code =
             ArtifactCreationCode.creationCode("RebasingAwareERC4626Facet.sol:RebasingAwareERC4626Facet");
-        instance = create3Factory.deployFacet(code, releaseSalt("RebasingAwareERC4626Facet", code, ""));
+        instance = create3Factory.deployFacet(code, releaseSalt("RebasingAwareERC4626Facet"));
         vm.label(address(instance), "RebasingAwareERC4626Facet");
     }
 
@@ -44,7 +45,7 @@ library RebasingAwareERC4626_Component_FactoryService {
             "RebasingAwareStandardExchangeFacet.sol:RebasingAwareStandardExchangeFacet"
         );
         instance =
-            create3Factory.deployFacet(code, releaseSalt("RebasingAwareStandardExchangeFacet", code, ""));
+            create3Factory.deployFacet(code, releaseSalt("RebasingAwareStandardExchangeFacet"));
         vm.label(address(instance), "RebasingAwareStandardExchangeFacet");
     }
 
@@ -55,7 +56,7 @@ library RebasingAwareERC4626_Component_FactoryService {
         bytes memory code = ArtifactCreationCode.creationCode(
             "RebasingAwareStandardYieldFacet.sol:RebasingAwareStandardYieldFacet"
         );
-        instance = create3Factory.deployFacet(code, releaseSalt("RebasingAwareStandardYieldFacet", code, ""));
+        instance = create3Factory.deployFacet(code, releaseSalt("RebasingAwareStandardYieldFacet"));
         vm.label(address(instance), "RebasingAwareStandardYieldFacet");
     }
 
@@ -66,7 +67,7 @@ library RebasingAwareERC4626_Component_FactoryService {
         bytes memory code = ArtifactCreationCode.creationCode(
             "RebasingAwareVaultMetadataFacet.sol:RebasingAwareVaultMetadataFacet"
         );
-        instance = create3Factory.deployFacet(code, releaseSalt("RebasingAwareVaultMetadataFacet", code, ""));
+        instance = create3Factory.deployFacet(code, releaseSalt("RebasingAwareVaultMetadataFacet"));
         vm.label(address(instance), "RebasingAwareVaultMetadataFacet");
     }
 
@@ -78,7 +79,7 @@ library RebasingAwareERC4626_Component_FactoryService {
             "RebasingAwareStandardExchangeQuoteFacet.sol:RebasingAwareStandardExchangeQuoteFacet"
         );
         instance = create3Factory.deployFacet(
-            code, releaseSalt("RebasingAwareStandardExchangeQuoteFacet", code, "")
+            code, releaseSalt("RebasingAwareStandardExchangeQuoteFacet")
         );
         vm.label(address(instance), "RebasingAwareStandardExchangeQuoteFacet");
     }
@@ -92,7 +93,7 @@ library RebasingAwareERC4626_Component_FactoryService {
         bytes memory args = abi.encode(pkgInit);
         instance = IRebasingAwareERC4626DFPkg(
             IVaultRegistryDeployment(address(indexedexManager)).deployPkg(
-                code, args, releaseSalt("RebasingAwareERC4626DFPkg", code, args)
+                code, args, releaseSalt("RebasingAwareERC4626DFPkg")
             )
         );
         vm.label(address(instance), "RebasingAwareERC4626DFPkg");

@@ -1,6 +1,13 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {Creation} from "@crane/contracts/utils/Creation.sol";
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
+
+
+import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
@@ -9,6 +16,7 @@ import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {Behavior_IFacet} from "@crane/contracts/factories/diamondPkg/Behavior_IFacet.sol";
 
@@ -33,6 +41,30 @@ import {IRebasingAwareERC4626DFPkg} from
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 
 contract RebasingAwareERC4626_Packaging is TestBase_RebasingAwareERC4626 {
+    /// @notice Release labels stay metadata; component identity is solely the ABI-encoded contract name.
+    function test_create3CanonicalSalt_bindingsAndReuse() public {
+        bytes32 salt = RebasingAwareERC4626_Component_FactoryService.releaseSalt("RebasingAwareERC4626DFPkg");
+        assertEq(salt, abi.encode("RebasingAwareERC4626DFPkg")._hash());
+        assertTrue(salt != abi.encode("indexedex.rebasing-aware-erc4626.sy-se.v1", "RebasingAwareERC4626DFPkg")._hash());
+        assertEq(address(pkg), Creation._create3AddressFromOf(address(create3Factory), salt));
+        address[] memory initial = pkg.facetAddresses();
+        assertEq(initial[0], address(erc20Facet));
+        assertEq(initial[1], address(rebasingAwareErc4626Facet));
+        assertEq(initial[2], address(standardExchangeFacet));
+        assertEq(initial[3], address(standardYieldFacet));
+        assertEq(initial[4], address(vaultMetadataFacet));
+        assertEq(initial[5], address(transitionQuoteFacet));
+        IRebasingAwareERC4626DFPkg.PkgInit memory init = _pkgInit();
+        init.standardExchangeFacet = create3Factory.deployFacet(
+            ArtifactCreationCode.creationCode("RebasingAwareStandardExchangeFacet.sol:RebasingAwareStandardExchangeFacet"),
+            abi.encode("RebasingAwareERC4626_Packaging.alternateExchange")._hash());
+        vm.prank(owner);
+        IRebasingAwareERC4626DFPkg again = RebasingAwareERC4626_Component_FactoryService.deployRebasingAwareERC4626DFPkg(indexedexManager, init);
+        assertEq(address(again), address(pkg));
+        assertEq(again.facetAddresses(), initial);
+    }
+
+    using BetterEfficientHashLib for bytes;
     uint256 constant MAX_RUNTIME = 24_576;
 
     /// @notice Compare every installed function against compiler-generated ABI signatures.
@@ -144,7 +176,8 @@ contract RebasingAwareERC4626_Packaging is TestBase_RebasingAwareERC4626 {
         assertGt(out, 0);
         vm.prank(alice);
         IERC20(address(vault)).transfer(address(vault), shares / 4);
-        vm.prank(alice);
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));
         IStandardExchangeIn(address(vault)).exchangeIn(
             IERC20(address(vault)),
             shares / 8,
@@ -156,8 +189,8 @@ contract RebasingAwareERC4626_Packaging is TestBase_RebasingAwareERC4626 {
         );
         vm.prank(alice);
         IERC20(address(vault)).transfer(address(vault), shares / 16);
-        vm.prank(bob);
-        IStandardizedYield(address(vault)).redeem(bob, shares / 16, address(asset), 0, true);
+        vm.prank(address(caller));
+        IStandardizedYield(address(vault)).redeem(address(caller), shares / 16, address(asset), 0, true);
     }
 
     function test_releaseIdentifier() public view {
@@ -218,9 +251,10 @@ contract RebasingAwareERC4626_Packaging is TestBase_RebasingAwareERC4626 {
         bad.standardExchangeFacet = erc20Facet;
         vm.prank(owner);
         IRebasingAwareERC4626DFPkg badPkg =
-            RebasingAwareERC4626_Component_FactoryService.deployRebasingAwareERC4626DFPkg(
-                indexedexManager, bad
-            );
+            IRebasingAwareERC4626DFPkg(IVaultRegistryDeployment(address(indexedexManager)).deployPkg(
+                ArtifactCreationCode.creationCode("RebasingAwareERC4626DFPkg.sol:RebasingAwareERC4626DFPkg"),
+                abi.encode(bad), abi.encode("RebasingAwareERC4626_Packaging.wrongFacet")._hash()
+            ));
         vm.expectRevert();
         badPkg.deployVault(IERC20Metadata(address(asset)), 10, bytes32(uint256(77)));
     }

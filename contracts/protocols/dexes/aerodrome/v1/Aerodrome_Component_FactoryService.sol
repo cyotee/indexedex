@@ -33,7 +33,7 @@ library Aerodrome_Component_FactoryService {
 
     function deployAerodromeStandardExchangeInFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
         bytes memory code = ArtifactCreationCode.creationCode("AerodromeStandardExchangeInFacet.sol:AerodromeStandardExchangeInFacet");
-        bytes32 releaseSalt = keccak256(abi.encode("AerodromeStandardExchangeInFacet", keccak256(code)));
+        bytes32 releaseSalt = abi.encode("AerodromeStandardExchangeInFacet")._hash();
         instance = create3Factory.deployFacet(code, releaseSalt);
         vm.label(address(instance), "AerodromeStandardExchangeInFacet");
     }
@@ -43,7 +43,7 @@ library Aerodrome_Component_FactoryService {
         returns (IFacet instance)
     {
         bytes memory code = ArtifactCreationCode.creationCode("AerodromeStandardExchangeOutFacet.sol:AerodromeStandardExchangeOutFacet");
-        bytes32 releaseSalt = keccak256(abi.encode("AerodromeStandardExchangeOutFacet", keccak256(code)));
+        bytes32 releaseSalt = abi.encode("AerodromeStandardExchangeOutFacet")._hash();
         instance = create3Factory.deployFacet(code, releaseSalt);
         vm.label(address(instance), "AerodromeStandardExchangeOutFacet");
     }
@@ -53,7 +53,7 @@ library Aerodrome_Component_FactoryService {
         returns (IFacet instance)
     {
         bytes memory code = ArtifactCreationCode.creationCode("AerodromeStandardExchangeOutQueryFacet.sol:AerodromeStandardExchangeOutQueryFacet");
-        bytes32 releaseSalt = keccak256(abi.encode("AerodromeStandardExchangeOutQueryFacet", keccak256(code)));
+        bytes32 releaseSalt = abi.encode("AerodromeStandardExchangeOutQueryFacet")._hash();
         instance = create3Factory.deployFacet(code, releaseSalt);
         vm.label(address(instance), "AerodromeStandardExchangeOutQueryFacet");
     }
@@ -64,7 +64,7 @@ library Aerodrome_Component_FactoryService {
     ) internal returns (IAerodromeStandardExchangeDFPkg instance) {
         bytes memory code = ArtifactCreationCode.creationCode("AerodromeStandardExchangeDFPkg.sol:AerodromeStandardExchangeDFPkg");
         bytes memory arguments = abi.encode(pkgInit);
-        bytes32 releaseSalt = keccak256(abi.encode("AerodromeStandardExchangeDFPkg", keccak256(code), keccak256(arguments)));
+        bytes32 releaseSalt = abi.encode("AerodromeStandardExchangeDFPkg")._hash();
         instance = IAerodromeStandardExchangeDFPkg(address(vaultRegistry.deployPkg(code, arguments, releaseSalt)));
         vm.label(address(instance), "AerodromeStandardExchangeDFPkg");
     }

@@ -1,0 +1,15 @@
+## Astra — independent review of saved initial PRD
+
+Reviewed `NETNET_PENDLE_DETF_PRD_INITIAL.md:1–273` directly. Prior-round history retained; no peer artifacts read.
+
+1. **Must-fix — specify the external-bond reentry accounting boundary** (`:108,186–190`). Before reentry, external notes/pending NET are exclusive NFT property, excluded from common backing. After actual contribution, acquired strategy assets become common backing; the NFT exclusively controls the corresponding locked DETF/staking receipts. Do not keep contributed assets excluded while issuing common-backed DETF, or count those receipts as an additional external liability against already outstanding DETF. This clarifies conservation without changing mandatory same-NFT reinvestment.
+
+2. **Must-fix before freezing — define atomic attribution snapshots** (`:65,100,110–112,139,155`). Require one coherent ownership/accounting snapshot for each composed operation, projected through its ordered transitions. Explicitly settle or attribute accrued claims before changing facade ownership, DETF participation or NFT control. Define the treatment of unsolicited upstream notes and harvested amounts without silently assigning them to the next depositor. The draft rightly leaves economic eligibility OPEN; engineering must not choose it implicitly.
+
+3. **Must-fix — separate NFT transfer policy from custody feasibility** (`:215,217`). O08 currently combines “external note custody” with owner decisions. NFT transferability and failure entitlements are product choices; proving a viable aggregate-redemption custody design is an engineering gate. Human approval cannot create upstream per-note redemption or prevent arbitrary-recipient deposits. Retain the strong warning at `:192` and avoid weakening it into a routine implementation task.
+
+4. **Optional — make epoch-counter semantics testable** (`:135–141`). State that cached markers reference the verified staking instance and observed processed epochs, not elapsed intervals alone. Distinguish previously queued distribution from newly funded next-epoch amounts, including no-circulating-stake retention. Source: `lib/crane/contracts/protocols/pol/net/src/Staking.sol:134–150`.
+
+5. **Optional — strengthen provenance** (`:244–267`). Expand abbreviated `src/...` references into full repository paths and add per-source revision/access metadata during dependency pinning. The date discrepancy and Net snapshot 2026-08-28/Pendle V6–V7 limitations are already accurately disclosed; no fresh API claim or deployment verification is implied by this review.
+
+**Verdict:** Faithful and ready for consolidated review-draft handoff, not execution-ready. Earlier concerns about conditional primary redemption, common versus exclusive income, double subtraction and D52 are substantially resolved. Preserve physical V2 USDG, Keep-YT/ordinary-LP distinctions, public swaps, removed automatic fallback, NET-state synchronization and mandatory locked reinvestment. No new owner approval inferred.

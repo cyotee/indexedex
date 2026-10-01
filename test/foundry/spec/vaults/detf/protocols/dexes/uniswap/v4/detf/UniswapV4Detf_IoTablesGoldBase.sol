@@ -28,6 +28,7 @@ import {TestBase_UniswapV4Detf} from
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {SimpleYieldERC4626} from "contracts/test/stubs/SimpleYieldERC4626.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 
 /// @dev Non-SUT hook-shape harness: DETF self-leg plus a pair with `standardExchangeOf == 0`.
 contract BarePairHookHarness {
@@ -275,7 +276,8 @@ abstract contract UniswapV4Detf_IoTablesGoldBase is TestBase_UniswapV4Detf {
                 pairTokenDecimals: HookPkgArgsDecimalsLib.tokenDec(address(pairToken)),
                 rawTokenDecimals: predicted_.code.length == 0 ? uint8(9) : HookPkgArgsDecimalsLib.tokenDec(predicted_),
                 ownerOnlyLiquidity: true,
-                owner: predicted_
+                owner: predicted_,
+                rateProvider: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, se, address(pairToken)) // D60
             });
         uint256 mineNonce = CpHookFactory.findMineNonce(hookFactory, hookPkg, hArgs);
         reserveHook = CpHookFactory.deployHook(hookPkg, hArgs, mineNonce);

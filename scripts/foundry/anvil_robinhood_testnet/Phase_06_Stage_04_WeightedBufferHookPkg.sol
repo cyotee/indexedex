@@ -25,13 +25,13 @@ library Phase_06_Stage_04_WeightedBufferHookPkg {
     function execute(LaunchState storage s) internal {
         IVaultRegistryDeployment reg = IVaultRegistryDeployment(address(s.indexedexManager));
         IVaultFeeOracleQuery feeOracle = IVaultFeeOracleQuery(address(s.indexedexManager));
-        IFacet joinFacet = WeightedHookFS.deployJoinFacet(s.create3Factory);
+        IFacet joinFacet = WeightedHookFS.deployLiquidityFacet(s.create3Factory);
         IFacet exitFacet = WeightedHookFS.deployExitFacet(s.create3Factory);
         IFacet seFacet = WeightedHookFS.deploySeFacet(s.create3Factory);
         IFacet hooksFacet = WeightedHookFS.deployHooksFacet(s.create3Factory);
         IWeightedHookPkg.PkgInit memory init_;
         init_.vaultRegistryDeployment = reg;
-        init_.joinQueryFacet = WeightedHookFS.deployJoinQueryFacet(s.create3Factory);
+        init_.joinQueryFacet = WeightedHookFS.deployLiquidityFacetExt(s.create3Factory);
         init_.joinFlexibleFacet = WeightedHookFS.deployJoinFlexibleFacet(s.create3Factory);
         init_.exitQueryFacet = WeightedHookFS.deployExitQueryFacet(s.create3Factory);
         init_.vaultFeeOracleQuery = feeOracle;
@@ -48,7 +48,7 @@ library Phase_06_Stage_04_WeightedBufferHookPkg {
         s.weightedHookPkg = reg.deployPkg(
             ArtifactCreationCode.creationCode(s.create3Factory, "UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol:UniswapV4StandardExchangeWeightedBufferHookDFPkg"),
             abi.encode(init_),
-            abi.encode(type(IWeightedHookPkg).name, FixtureEconomics.SALT_NS)._hash()
+            abi.encode("UniswapV4StandardExchangeWeightedBufferHookDFPkg")._hash()
         );
     }
 }

@@ -29,9 +29,16 @@ import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracle
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
 import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {BasicVaultCommon} from "contracts/vaults/basic/BasicVaultCommon.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 
 // abstract
 contract UniswapV2StandardExchangeCommon is BasicVaultCommon {
+    /// @dev Active D16 availability. Base checked subtraction remains the historical default.
+    function _unbookedSurplus(IERC20 token) internal view override returns (uint256) {
+        return LocalCreditLib.available(token.balanceOf(address(this)), _bookedReserve(token));
+    }
+
     /// @dev Separate frame to avoid stack-too-deep in exchangeIn/Out dispatchers.
     function _requireNotDisabled() internal view {
         if (IVaultRegistryDisableQuery(address(StandardVaultRepo._feeOracle())).isDisabled(address(this))) {
@@ -414,4 +421,63 @@ contract UniswapV2StandardExchangeCommon is BasicVaultCommon {
     //     (uint256 reserve0, uint256 reserve1,) = pool_.getReserves();
     //     (reserveKnown, reserveUnknown) = ConstProdUtils._sortReserves(address(tokenIn), _token0(), reserve0, reserve1);
     // }
+
+    function _secureTokenTransfer(IERC20 tokenIn, uint256 amountTokenToDeposit, bool pretransferred)
+        internal
+        virtual
+        override
+        returns (uint256 actualIn)
+    {
+        if (pretransferred) {
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+            uint256 avail = LocalCreditLib.available(
+                tokenIn.balanceOf(address(this)), _bookedReserve(tokenIn)
+            );
+            if (amountTokenToDeposit > avail) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(amountTokenToDeposit, avail);
+            }
+            return amountTokenToDeposit;
+        }
+        uint256 B0 = tokenIn.balanceOf(address(this));
+        if (tokenIn.allowance(msg.sender, address(this)) < amountTokenToDeposit) {
+            Permit2AwareRepo._permit2()
+                .transferFrom(msg.sender, address(this), uint160(amountTokenToDeposit), address(tokenIn));
+        } else {
+            tokenIn.safeTransferFrom(msg.sender, address(this), amountTokenToDeposit);
+        }
+        uint256 delta = tokenIn.balanceOf(address(this)) - B0;
+        if (delta != amountTokenToDeposit) {
+            revert ISecurePullErrors.TransferDeltaInsufficient(amountTokenToDeposit, delta);
+        }
+        return amountTokenToDeposit;
+    }
+
+    function _secureSelfBurn(address owner, uint256 burnAmount, bool preTransferred)
+        internal
+        virtual
+        override
+    {
+        if (preTransferred) {
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+            // D23/R7.3: no self-share book exists here; short self-shares revert with the shared error.
+            uint256 selfBal = IERC20(address(this)).balanceOf(address(this));
+            if (burnAmount > selfBal) revert ISecurePullErrors.TransferDeltaInsufficient(burnAmount, selfBal);
+        }
+        super._secureSelfBurn(owner, burnAmount, preTransferred);
+    }
+
+    function _pretransferCredit(IERC20 token, uint256 maximum) internal view returns (uint256) {
+        return LocalCreditLib.budget(
+            LocalCreditLib.available(token.balanceOf(address(this)), _bookedReserve(token)),
+            maximum
+        );
+    }
+
+    function _refundExactOutCredit(IERC20 token, uint256 credit, uint256 used, bool pretransferred)
+        internal
+    {
+        if (!pretransferred) return;
+        if (used > credit) revert ISecurePullErrors.TransferDeltaInsufficient(used, credit);
+        _refundExcess(token, credit, used, true, msg.sender);
+    }
 }

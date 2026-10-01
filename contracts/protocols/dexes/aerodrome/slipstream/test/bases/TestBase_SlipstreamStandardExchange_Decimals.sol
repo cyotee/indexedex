@@ -37,6 +37,7 @@ abstract contract TestBase_SlipstreamStandardExchange_Decimals is TestBase_Permi
     uint24 internal constant FEE_LOW = 500;
 
     IFacet slipstreamStandardExchangeInFacet;
+    IFacet slipstreamStandardExchangeInFacetExt;
     IFacet slipstreamStandardExchangeOutFacet;
     ISlipstreamStandardExchangeDFPkg internal slipstreamStandardExchangeDFPkg;
 
@@ -71,6 +72,7 @@ abstract contract TestBase_SlipstreamStandardExchange_Decimals is TestBase_Permi
         TestBase_Permit2.setUp();
         TestBase_VaultComponents.setUp();
         slipstreamStandardExchangeInFacet = create3Factory.deploySlipstreamStandardExchangeInFacet();
+        slipstreamStandardExchangeInFacetExt = create3Factory.deploySlipstreamStandardExchangeInFacetExt();
         slipstreamStandardExchangeOutFacet = create3Factory.deploySlipstreamStandardExchangeOutFacet();
 
         pairToken = new MintableERC20Decimals("PairToken", "PT", _tokenADecimals());
@@ -101,6 +103,7 @@ abstract contract TestBase_SlipstreamStandardExchange_Decimals is TestBase_Permi
             multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
             multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
             slipstreamStandardExchangeInFacet: slipstreamStandardExchangeInFacet,
+            slipstreamStandardExchangeInFacetExt: slipstreamStandardExchangeInFacetExt,
             slipstreamStandardExchangeOutFacet: slipstreamStandardExchangeOutFacet,
             vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
             vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),

@@ -1,0 +1,14 @@
+{
+  "createdAt": "2026-09-25T08:32:27.707678+00:00",
+  "files": [
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BalancerV3SinglePoolStandardExchange_PoolActionsInvariant.t.sol",
+      "baselineSha256": null,
+      "overlaySha256": "15d10bf627116dab26821b98eab5c2a2e3c68af9f7cda2afd51fc2fab29e55dd"
+    }
+  ],
+  "externalReviewedDependency": {
+    "path": "test/foundry/spec/vaults/standard/exchange/invariant/StandardExchangeAccountingHandler.sol",
+    "sha256": "327bb71428f90670d2d7ef02347032f61234f1eb1cee87598b92d3c019061e7e"
+  }
+}

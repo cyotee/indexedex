@@ -18,7 +18,7 @@ contract Adversarial_Access_Test is AdvBase {
         SwapParams memory params = SwapParams({
             zeroForOne: true, amountSpecified: -1e18, sqrtPriceLimitX96: 0
         });
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("NotPoolManager()"));
         IHooks(hook).beforeSwap(address(this), poolKey, params, "");
     }
 

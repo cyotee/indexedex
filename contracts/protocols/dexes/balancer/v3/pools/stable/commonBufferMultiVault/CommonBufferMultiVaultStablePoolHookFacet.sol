@@ -33,7 +33,9 @@ contract CommonBufferMultiVaultStablePoolHookFacet is CommonBufferMultiVaultStab
     }
 
     function facetFuncs() public pure returns (bytes4[] memory f) {
-        f = new bytes4[](13);
+        // D56 (2026-09-21): the self-call entry points __preSeatAttempt / __reconcileAttempt were removed once D37
+        // made the pre-seat and reconcile paths direct internal calls (open item 9).
+        f = new bytes4[](11);
         f[0] = IHooks.onRegister.selector;
         f[1] = IHooks.getHookFlags.selector;
         f[2] = IHooks.onBeforeInitialize.selector;
@@ -45,8 +47,6 @@ contract CommonBufferMultiVaultStablePoolHookFacet is CommonBufferMultiVaultStab
         f[8] = IHooks.onBeforeSwap.selector;
         f[9] = IHooks.onAfterSwap.selector;
         f[10] = IHooks.onComputeDynamicSwapFeePercentage.selector;
-        f[11] = this.__preSeatAttempt.selector;
-        f[12] = this.__reconcileAttempt.selector;
     }
 
     function facetMetadata() external pure returns (string memory n, bytes4[] memory i, bytes4[] memory funcs) {

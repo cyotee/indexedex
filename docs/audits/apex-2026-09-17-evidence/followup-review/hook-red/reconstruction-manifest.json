@@ -1,0 +1,91 @@
+{
+  "status": "RECONSTRUCTED_PRE_REVIEW_HOOK_ACCOUNTING",
+  "method": "Copy current fixed source, reverse only this reviewer's native-custody helper and identity-book additions. Preserve prior dirty D60 implementation. Original pre-edit files were not saved; reconstructed hashes are not asserted to identify an original byte-for-byte snapshot. Comments may differ; old B>=R helper body and storage/sync behavior are restored.",
+  "createdAt": "2026-09-25T06:58:27.478689+00:00",
+  "sourceFiles": [
+    {
+      "file": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookCommon.sol",
+      "currentFixedSha256": "5432fa00b13b4282c98590ea06177b9b0075d3a657f5e03f3e541b5c4f44b8e5",
+      "reconstructedSha256": "dafbcaaf5e3a094156fb66aa17cf4d06a2892766789598c45e6a66ed892f1d5d",
+      "originalPreEditSha256": null
+    },
+    {
+      "file": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookCommon.sol",
+      "currentFixedSha256": "1985beea6d2cee1c40350b2f78d7e6148165615e2eb548945832a364eb5f6539",
+      "reconstructedSha256": "491d0d607b9855c93e947dd9153d5a382914df644a9e3e9486f3bc4515625f81",
+      "originalPreEditSha256": null
+    },
+    {
+      "file": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookRepo.sol",
+      "currentFixedSha256": "f5f765bbc9f3e894141c7675c88d4e8e187164eedaed386b26a816db6b7d9771",
+      "reconstructedSha256": "90739f39a1372dcf4044312c5043ac1fadd477f692b747d3991ec098b24e23c9",
+      "originalPreEditSha256": null
+    },
+    {
+      "file": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookRepo.sol",
+      "currentFixedSha256": "af071fab414794a833fd18f1461dc0ba1d2529300efd5194bd0f59b1adee6605",
+      "reconstructedSha256": "39622d262800327adbd87f4801c93ab37efdc357f58db2a9c84f1585243efe37",
+      "originalPreEditSha256": null
+    },
+    {
+      "file": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDepositCommon.sol",
+      "currentFixedSha256": "313d32d8bd9833be3d9e6a9b55bf453ab3dd05d6afba7cd60ceebb78b6eda026",
+      "reconstructedSha256": "8dbfa9bcfe8cf07771ab46b065868f9390b721f8280fa57709979a2070e4a7bf",
+      "originalPreEditSha256": null
+    },
+    {
+      "file": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawTarget.sol",
+      "currentFixedSha256": "94b8c75832adbc0f189b77db01c84ef66aa29a755c3d13444042b3ea6a1af6ac",
+      "reconstructedSha256": "631be19195da5e5f08bd97f26e3d5bf2804537d2837c2d3d6988817561a64b12",
+      "originalPreEditSha256": null
+    },
+    {
+      "file": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookTarget.sol",
+      "currentFixedSha256": "5e892a6ebea9f35d673b291e15b3efcfe5162b7e5c8b2385a778822a145e81c2",
+      "reconstructedSha256": "4f7ca4ed48ff02ae566e234b5ad385916c3a36f25be04fbe5b205fe368e8f628",
+      "originalPreEditSha256": null
+    },
+    {
+      "file": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarget.sol",
+      "currentFixedSha256": "f1946fec7e2dfd1e465799ed3b9fbfdae3f9dba44840e8e7ebd73f6c74d2c2ef",
+      "reconstructedSha256": "b8529dc7084367f8d3c95c528aa8d99601a50aa4f1dcd2f4af24b68647469083",
+      "originalPreEditSha256": null
+    }
+  ],
+  "tests": [
+    {
+      "file": "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_Apex008.t.sol",
+      "sha256": "b3116bc1cf43bafbec59e8bf92c4ca0160db741f4678ff10dfe5d27052d15075"
+    },
+    {
+      "file": "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_RatedReserve.t.sol",
+      "sha256": "af9d858dc825d102e4e17299332c1bfcba6208a96036e00dd824a778bb27ac74"
+    },
+    {
+      "file": "test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualSEBCPHook_SeMatrix_ERC4626StandardExchange.t.sol",
+      "sha256": "d93b55dfa5ddecb0a179f13f8577e0e0963d59c51b90038006cb8f5e03c76e42"
+    },
+    {
+      "file": "test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualSEBCPHook_SeMatrix_RebasingAwareERC4626.t.sol",
+      "sha256": "f58ee91be8e167af92b643dea60de107311f1b36b2e4960756cc3602d730be21"
+    },
+    {
+      "file": "test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMatrix_ERC4626StandardExchange.t.sol",
+      "sha256": "03f019dcb395356cd040e39efcf14a84299e2ce2be1bcaa27ca620a8bb823abd"
+    },
+    {
+      "file": "test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMatrix_RebasingAwareERC4626.t.sol",
+      "sha256": "68e211e7856c9bc84d1249f0538dfb4e55ab47ac56694f8561b5b70bebd8d226"
+    }
+  ],
+  "out": {
+    "liveInode": 410823287,
+    "cloneInode": 418250494,
+    "cloneResolvedPath": "/private/tmp/apex-review-accounting-red-run/out"
+  },
+  "cache_forge": {
+    "liveInode": 397960057,
+    "cloneInode": 418267719,
+    "cloneResolvedPath": "/private/tmp/apex-review-accounting-red-run/cache_forge"
+  }
+}

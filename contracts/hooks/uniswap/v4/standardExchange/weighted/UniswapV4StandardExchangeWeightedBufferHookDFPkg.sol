@@ -395,8 +395,9 @@ contract UniswapV4StandardExchangeWeightedBufferHookDFPkg is
             if (a.weights[i] < Math.MIN_WEIGHT) revert InvalidWeight();
             weightSum += a.weights[i];
 
-            if (a.rateProviders[i] != address(0) && a.standardExchanges[i] == address(0)) {
-                revert RateProviderWithoutSE();
+            // D60: every buffered leg needs a rate provider; a raw leg may carry one.
+            if (a.standardExchanges[i] != address(0) && a.rateProviders[i] == address(0)) {
+                revert RateProviderRequired();
             }
             uint8 pd = a.tokenDecimals[i];
             if (
@@ -449,18 +450,11 @@ contract UniswapV4StandardExchangeWeightedBufferHookDFPkg is
     function _requireSeOwnsToken(address se, address token) private view {
         if (UniswapV4SeBufferHookLegLib.isWrapperShareInventory(token, se)) return;
         if (se == token) revert InvalidSE();
-        try IBasicVault(se).vaultTokens() returns (address[] memory toks) {
-            bool found;
-            for (uint256 i; i < toks.length; ++i) {
-                if (toks[i] == token) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) revert InvalidSE();
-        } catch {
-            revert InvalidSE();
+        address[] memory toks = IBasicVault(se).vaultTokens();
+        for (uint256 i; i < toks.length; ++i) {
+            if (toks[i] == token) return;
         }
+        revert InvalidSE();
     }
 
 }

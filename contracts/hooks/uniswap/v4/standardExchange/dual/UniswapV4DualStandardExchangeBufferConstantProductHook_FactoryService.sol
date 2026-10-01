@@ -63,15 +63,14 @@ library UniswapV4DualStandardExchangeBufferConstantProductHook_FactoryService {
     function deployPackage(
         IVaultRegistryDeployment registry,
         address owner,
-        IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgInit memory init,
-        bytes32 salt
+        IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgInit memory init
     ) internal returns (IUniswapV4DualStandardExchangeBufferConstantProductHookPackage pkg) {
         vm.prank(owner);
         pkg = IUniswapV4DualStandardExchangeBufferConstantProductHookPackage(
             registry.deployPkg(
                 ArtifactCreationCode.creationCode("UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg.sol:UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg"),
                 abi.encode(init),
-                salt
+                abi.encode("UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg")._hash()
             )
         );
         vm.label(address(pkg), "UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg");

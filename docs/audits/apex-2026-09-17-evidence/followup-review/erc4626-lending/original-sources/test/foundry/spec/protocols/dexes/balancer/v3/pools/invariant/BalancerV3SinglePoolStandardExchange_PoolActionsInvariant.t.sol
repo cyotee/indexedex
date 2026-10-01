@@ -1,0 +1,216 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.24;
+
+import {Test} from "forge-std/Test.sol";
+import {ERC20} from "@crane/contracts/tokens/ERC20/ERC20.sol";
+import {ERC20TestToken} from "@crane/contracts/protocols/dexes/balancer/v3/test/mocks/ERC20TestToken.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IRouter} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IRouter.sol";
+import {IVault} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IVault.sol";
+import {IAllowanceTransfer} from "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
+import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+import {InitDevService} from "@crane/contracts/InitDevService.sol";
+import {TestBase_BalancerV3_8020WeightedPool} from "@crane/contracts/protocols/dexes/balancer/v3/test/bases/TestBase_BalancerV3_8020WeightedPool.sol";
+import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {Handler_BalancerV3SinglePoolSE} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BalancerV3SinglePoolStandardExchange_Invariant.t.sol";
+
+/// @dev External callback-token dependency; the adapter and weighted pool remain production code.
+contract SinglePoolCallbackToken is ERC20 {
+    address public target;
+    bytes internal payload;
+    bool internal entered;
+    constructor() ERC20("Callback DAI", "cDAI") {}
+    function mint(address recipient, uint256 amount) external { _mint(recipient, amount); }
+    function arm(address target_, bytes memory payload_) external { target = target_; payload = payload_; }
+    function transferFrom(address from, address to, uint256 amount) public override returns (bool) {
+        bool result = super.transferFrom(from, to, amount);
+        if (!entered && target != address(0) && msg.sender == target && to == target) {
+            entered = true;
+            (bool ok, bytes memory reason) = target.call(payload);
+            if (!ok) assembly ("memory-safe") { revert(add(reason, 32), mload(reason)) }
+            entered = false;
+        }
+        return result;
+    }
+}
+
+contract Handler_SinglePoolActions is Test {
+    Handler_BalancerV3SinglePoolSE internal immutable core;
+    IStandardExchange internal immutable adapter;
+    SinglePoolCallbackToken internal immutable base;
+    IERC20 internal immutable other;
+    IERC20 internal immutable bpt;
+    IRouter internal immutable router;
+    IVault internal immutable vault;
+    IAllowanceTransfer internal immutable permit2;
+    address[3] public traders = [address(0xBB1101), address(0xBB1102), address(0xBB1103)];
+    address public constant attackRecipient = address(0xBADB11);
+    uint256 public cycles;
+    uint256 public swaps;
+    uint256 public callbackRejections;
+    uint256 public controls;
+    mapping(address => uint256) public actorCycles;
+
+    constructor(Handler_BalancerV3SinglePoolSE core_, IStandardExchange adapter_, SinglePoolCallbackToken base_,
+        IERC20 other_, IERC20 bpt_, IRouter router_, IVault vault_, IAllowanceTransfer permit2_) {
+        core = core_; adapter = adapter_; base = base_; other = other_; bpt = bpt_;
+        router = router_; vault = vault_; permit2 = permit2_;
+        for (uint256 i; i < 3; ++i) {
+            vm.startPrank(traders[i]);
+            base_.approve(address(permit2_), type(uint256).max);
+            other_.approve(address(permit2_), type(uint256).max);
+            permit2_.approve(address(base_), address(router_), type(uint160).max, type(uint48).max);
+            permit2_.approve(address(other_), address(router_), type(uint160).max, type(uint48).max);
+            vm.stopPrank();
+        }
+    }
+
+    function cycle(uint256 amountSeed, uint256 tradeSeed) external {
+        // Keep the complete shared issuance/withdrawal/attack campaign live while reserves move.
+        core.cycle(amountSeed, tradeSeed);
+        address actor = traders[cycles % 3];
+        ++cycles;
+        ++actorCycles[actor];
+        uint256 amount = bound(tradeSeed, 1e12, 1e15);
+        _trade(actor, amount, cycles % 2 == 0);
+        _callbackRollback(actor, amount);
+    }
+
+    function _trade(address actor, uint256 amount, bool reverse) internal {
+        IERC20 input = reverse ? other : IERC20(address(base));
+        IERC20 output = reverse ? IERC20(address(base)) : other;
+        if (reverse) ERC20TestToken(address(other)).mint(actor, amount);
+        else base.mint(actor, amount);
+        uint256 beforeInput = input.balanceOf(actor);
+        uint256 beforeOutput = output.balanceOf(actor);
+        uint256 supply = bpt.totalSupply();
+        vm.prank(actor);
+        uint256 paid = router.swapSingleTokenExactIn(address(bpt), input, output, amount, 1, block.timestamp + 1 hours, false, "");
+        assertGt(paid, 0, "real weighted pool trade pays");
+        assertEq(beforeInput - input.balanceOf(actor), amount, "trade input debited once");
+        assertEq(output.balanceOf(actor) - beforeOutput, paid, "trade output delivered once");
+        assertEq(bpt.totalSupply(), supply, "trading cannot mint adapter shares");
+        ++swaps;
+    }
+
+    function _callbackRollback(address actor, uint256 amount) internal {
+        base.mint(actor, amount + 1e8);
+        vm.startPrank(actor);
+        base.transfer(address(adapter), 1e8);
+        base.approve(address(adapter), amount);
+        vm.stopPrank();
+        // The callback consumes the just-delivered principal through the real pool. The outer
+        // exact-delta check must reject and roll back both operations, without assuming a lock.
+        base.arm(address(adapter), abi.encodeCall(IStandardExchangeIn.exchangeIn,
+            (IERC20(address(base)), amount, bpt, 0, attackRecipient, true, block.timestamp + 1 hours)));
+        bytes32 beforeState = _state();
+        vm.prank(actor);
+        (bool ok, bytes memory reason) = address(adapter).call(abi.encodeCall(IStandardExchangeIn.exchangeIn,
+            (IERC20(address(base)), amount, bpt, 0, actor, false, block.timestamp + 1 hours)));
+        assertFalse(ok, "callback consumption rejects outer accounting");
+        assertEq(reason, abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, amount, uint256(0)),
+            "actual exact-delta boundary rejects nested consumption");
+        assertEq(_state(), beforeState, "callback and outer money operations roll back completely");
+        ++callbackRejections;
+        base.arm(address(0), "");
+        // Exercise the same funded principal with the callback disabled. Issue to an isolated
+        // control and immediately burn all of it so the shared supply ledger remains exact.
+        uint256 beforeBase = base.balanceOf(actor);
+        uint256 supply = bpt.totalSupply();
+        uint256 beforeBpt = bpt.balanceOf(actor);
+        vm.prank(actor);
+        uint256 issued = adapter.exchangeIn(IERC20(address(base)), amount, bpt, 1, actor, false, block.timestamp + 1 hours);
+        assertGt(issued, 0, "callback-disabled funded control succeeds");
+        assertEq(beforeBase - base.balanceOf(actor), amount, "control exact debit");
+        assertEq(bpt.balanceOf(actor) - beforeBpt, issued, "control exact issuance");
+        vm.startPrank(actor);
+        bpt.approve(address(adapter), issued);
+        uint256 paid = adapter.exchangeIn(bpt, issued, IERC20(address(base)), 1, actor, false, block.timestamp + 1 hours);
+        vm.stopPrank();
+        assertGt(paid, 0, "control exit pays");
+        assertEq(base.balanceOf(actor), beforeBase - amount + paid, "control complete cash accounting");
+        assertEq(bpt.balanceOf(actor), beforeBpt, "control burns exactly issued shares");
+        assertEq(bpt.totalSupply(), supply, "control cycle preserves independent shared supply ledger");
+        ++controls;
+    }
+
+    function _state() internal view returns (bytes32 state) {
+        (,, uint256[] memory raw, uint256[] memory live) = vault.getPoolTokenInfo(address(bpt));
+        state = keccak256(abi.encode(raw, live));
+        for (uint256 i; i < 3; ++i) {
+            IERC20 token = i == 0 ? IERC20(address(base)) : i == 1 ? other : bpt;
+            state = keccak256(abi.encode(state, token.totalSupply(), token.balanceOf(address(adapter)),
+                token.balanceOf(address(vault)), token.balanceOf(address(router)), token.balanceOf(attackRecipient),
+                token.balanceOf(address(base)), token.allowance(address(adapter), address(permit2)),
+                token.allowance(address(adapter), address(router))));
+            (uint160 permitAmount, uint48 expiration, uint48 nonce) = permit2.allowance(address(adapter), address(token), address(router));
+            // Production adapter storage: dynamic token list slot 0, index mapping slot 1,
+            // native reserve mapping slot 2. Read actual books without replacing or mutating SUT.
+            bytes32 booked = vm.load(address(adapter), keccak256(abi.encode(address(token), uint256(2))));
+            state = keccak256(abi.encode(state, permitAmount, expiration, nonce, booked));
+            for (uint256 j; j < 3; ++j) state = keccak256(abi.encode(state, token.balanceOf(traders[j]),
+                token.balanceOf(core.actors(j)), token.allowance(traders[j], address(adapter))));
+        }
+    }
+
+    function assertAccounting() public view {
+        core.assertAccounting();
+        assertEq(swaps, cycles, "every cycle trades the actual pool");
+        assertEq(callbackRejections, cycles, "every cycle reaches callback rollback");
+        assertEq(controls, cycles, "every cycle reaches callback-disabled funded control");
+        assertEq(bpt.balanceOf(attackRecipient), 0, "callback gains no shares");
+        assertEq(bpt.balanceOf(address(adapter)), 0, "no retained BPT");
+    }
+    function assertCampaign() external view {
+        assertAccounting();
+        assertGe(cycles, 4, "funded randomized actions reached");
+        for (uint256 i; i < 3; ++i) assertGt(actorCycles[traders[i]], 0, "all traders participated");
+    }
+}
+
+/// forge-config: default.invariant.runs = 256
+/// forge-config: default.invariant.depth = 64
+/// forge-config: default.invariant.fail-on-revert = true
+contract BalancerV3SinglePoolStandardExchange_PoolActionsInvariant is TestBase_BalancerV3_8020WeightedPool {
+    Handler_BalancerV3SinglePoolSE internal handler;
+    IStandardExchange internal adapter;
+    IERC20 internal bpt;
+    Handler_SinglePoolActions internal actions;
+    function createDaiUsdc8020WeightedPool() internal override returns (address newPool, bytes memory poolArgs) {
+        dai = ERC20TestToken(address(new SinglePoolCallbackToken()));
+        _approveForAllUsers(IERC20(address(dai)));
+        return super.createDaiUsdc8020WeightedPool();
+    }
+    function setUp() public override {
+        super.setUp();
+        if (address(create3Factory) == address(0)) {
+            (create3Factory, diamondPackageFactory) = InitDevService.initEnv(address(this));
+            diamondFactory = diamondPackageFactory;
+        }
+        initDaiUsdc8020WeightedPool();
+        IERC20[] memory poolTokens = new IERC20[](2);
+        poolTokens[0] = IERC20(daiUsdc8020WeightedPoolTokens[0]);
+        poolTokens[1] = IERC20(daiUsdc8020WeightedPoolTokens[1]);
+        bpt = IERC20(address(daiUsdc8020WeightedPool));
+        adapter = IStandardExchange(create3Factory.create3WithArgs(
+            ArtifactCreationCode.creationCode(create3Factory,
+                "contracts/protocols/dexes/balancer/v3/pools/BalancerV3SinglePoolStandardExchange.sol:BalancerV3SinglePoolStandardExchange"),
+            abi.encode(IRouter(address(router)), address(bpt), bpt, poolTokens), keccak256("SinglePoolActionsInvariant")));
+        handler = new Handler_BalancerV3SinglePoolSE(IStandardExchangeIn(address(adapter)), dai, bpt,
+            makeAddr("actionsCore0"), makeAddr("actionsCore1"), makeAddr("actionsCoreAttacker"));
+        actions = new Handler_SinglePoolActions(handler, adapter, SinglePoolCallbackToken(address(dai)),
+            IERC20(address(usdc)), bpt, IRouter(address(router)), IVault(address(vault)), IAllowanceTransfer(address(permit2)));
+        bytes4[] memory selectors = new bytes4[](1);
+        selectors[0] = actions.cycle.selector;
+        targetContract(address(actions));
+        targetSelector(FuzzSelector({addr: address(actions), selectors: selectors}));
+    }
+    function afterInvariant() public view { actions.assertCampaign(); }
+    function invariant_poolActionsAccounting() public view { actions.assertAccounting(); }
+    function test_deterministicPoolActionsLifecycle() public {
+        for (uint256 i; i < 6; ++i) actions.cycle(1e16 + i, 1e13 + i);
+        actions.assertCampaign();
+    }
+}

@@ -185,9 +185,9 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Swap is
         _firstMintEqual(50 ether);
 
         rp.mockRate(0); // fail-closed
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("RateProviderFailed()"));
         weighted.ratedBalance(0);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("RateProviderFailed()"));
         weighted.previewSwapExactIn(address(token0), address(token1), 1 ether);
     }
 }

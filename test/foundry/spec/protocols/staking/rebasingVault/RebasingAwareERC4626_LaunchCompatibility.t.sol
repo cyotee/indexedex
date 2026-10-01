@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
+import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
+
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
 import {IOperable} from "@crane/contracts/interfaces/IOperable.sol";
@@ -18,6 +22,7 @@ import {RebasingAwareERC4626_Component_FactoryService} from
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 
 contract RebasingAwareERC4626_LaunchCompatibility is TestBase_RebasingAwareERC4626 {
+    using BetterEfficientHashLib for bytes;
     LaunchState internal launchState;
 
     function test_stageReplaySamePackage() public {
@@ -133,9 +138,10 @@ contract RebasingAwareERC4626_LaunchCompatibility is TestBase_RebasingAwareERC46
         bad.vaultRegistry = IVaultRegistryDeployment(address(erc20Facet));
         vm.prank(owner);
         IRebasingAwareERC4626DFPkg badPkg =
-            RebasingAwareERC4626_Component_FactoryService.deployRebasingAwareERC4626DFPkg(
-                indexedexManager, bad
-            );
+            IRebasingAwareERC4626DFPkg(IVaultRegistryDeployment(address(indexedexManager)).deployPkg(
+                ArtifactCreationCode.creationCode("RebasingAwareERC4626DFPkg.sol:RebasingAwareERC4626DFPkg"),
+                abi.encode(bad), abi.encode("RebasingAwareERC4626_LaunchCompatibility.wrongRegistry")._hash()
+            ));
         vm.expectRevert();
         badPkg.deployVault(IERC20Metadata(address(asset)), 10, bytes32(uint256(88)));
     }

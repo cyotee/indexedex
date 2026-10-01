@@ -33,10 +33,10 @@ import {
 } from "contracts/interfaces/proxies/IBalancerV3StandardExchangeRouterProxy.sol";
 import {IBalancerV3ConstantProductPoolStandardVaultPkg} from "contracts/protocols/dexes/balancer/v3/pools/constProd/IBalancerV3ConstantProductPoolStandardVaultPkg.sol";
 import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
-import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/IUniswapV4StandardExchangeDFPkg.sol";
+import {IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg.sol";
 import {
-    UniswapV4_Component_FactoryService
-} from "contracts/protocols/dexes/uniswap/v4/UniswapV4_Component_FactoryService.sol";
+    UniswapV4FullSpreadHooklessStandardExchangeVault_Component_FactoryService as HooklessFactory
+} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/UniswapV4FullSpreadHooklessStandardExchangeVault_Component_FactoryService.sol";
 import {
     IUniswapV4MultiPoolTwapOracle
 } from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4MultiPoolTwapOracle.sol";
@@ -66,7 +66,7 @@ import {IUniswapV4LiquiditySeeder} from "scripts/foundry/shared/IUniswapV4Liquid
 /// @notice Deploys Scenario 3: SingleStandardExchangeDETF + Uni V4 SE leg + outer Balancer WETH/DETF pool.
 contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
     using BetterEfficientHashLib for bytes;
-    using UniswapV4_Component_FactoryService for ICreate3FactoryProxy;
+    using HooklessFactory for ICreate3FactoryProxy;
     using UniswapV4TwapOracleFactoryService for ICreate3FactoryProxy;
     using VaultComponentFactoryService for ICreate3FactoryProxy;
     using SingleStandardExchangeDETF_Component_FactoryService for ICreate3FactoryProxy;
@@ -123,7 +123,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
 
     IDetfSelfNftInventoryDFPkg private detfNFTVaultPkg;
     IRebasingClaimTokenDFPkg private rebasingClaimTokenPkg;
-    IUniswapV4StandardExchangeDFPkg private underlyingVaultPkg;
+    IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg private underlyingVaultPkg;
     ISingleStandardExchangeDETDFPkg private inventoryDetfPkg;
     IPoolManager private poolManager;
     IUniswapV4MultiPoolTwapOracle private twapOracle;
@@ -241,7 +241,8 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         }
         (address underlyingVaultPkgAddr, ) = _readAddressSafe(ARTIFACT_FILE, "underlyingVaultPkg");
         if (underlyingVaultPkgAddr != address(0)) {
-            underlyingVaultPkg = IUniswapV4StandardExchangeDFPkg(underlyingVaultPkgAddr);
+            underlyingVaultPkg = IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg(underlyingVaultPkgAddr);
+            require(keccak256(bytes(underlyingVaultPkg.packageName())) == keccak256("UniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg"), "Scenario 3: stale V4 family");
         }
         (address seederAddr, ) = _readAddressSafe(ARTIFACT_FILE, "liquiditySeeder");
         if (seederAddr != address(0) && seederAddr.code.length > 0) {
@@ -262,7 +263,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
             create3Factory.create3WithArgs(
                 ArtifactCreationCode.creationCode(create3Factory, "WeightedPoolFactory.sol:WeightedPoolFactory"),
                 abi.encode(address(balancerV3Vault), uint32(365 days), "Factory v1", "Pool v1"),
-                keccak256("LocalTestingScenario3WeightedPoolFactory")
+                abi.encode("WeightedPoolFactory")._hash()
             )
         );
     }
@@ -274,21 +275,21 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
         singleStandardExchangeDetfExchangeInFacet = create3Factory.deployExchangeInFacet();
 
         detfNFTVaultFacet = create3Factory.deployDETFNFTVaultFacet();
-        uniswapV4StandardExchangeInFacet = create3Factory.deployUniswapV4StandardExchangeInFacet();
-        uniswapV4StandardExchangeInQueryFacet = create3Factory.deployUniswapV4StandardExchangeInQueryFacet();
-        uniswapV4StandardExchangePositionImportFacet = create3Factory.deployUniswapV4StandardExchangePositionImportFacet();
-        uniswapV4StandardExchangeOutFacet = create3Factory.deployUniswapV4StandardExchangeOutFacet();
-        uniswapV4StandardExchangeOutQueryFacet = create3Factory.deployUniswapV4StandardExchangeOutQueryFacet();
-        uniswapV4StandardExchangeLiquidReserveFacet = create3Factory.deployUniswapV4StandardExchangeLiquidReserveFacet();
-        uniswapV4StandardExchangeInMultiFacet = create3Factory.deployUniswapV4StandardExchangeInMultiFacet();
-        uniswapV4StandardExchangeInMultiQueryFacet = create3Factory.deployUniswapV4StandardExchangeInMultiQueryFacet();
-        uniswapV4StandardExchangeOutMultiFacet = create3Factory.deployUniswapV4StandardExchangeOutMultiFacet();
-        uniswapV4StandardExchangeOutMultiQueryFacet = create3Factory.deployUniswapV4StandardExchangeOutMultiQueryFacet();
+        uniswapV4StandardExchangeInFacet = create3Factory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultInFacet();
+        uniswapV4StandardExchangeInQueryFacet = create3Factory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultInQueryFacet();
+        uniswapV4StandardExchangePositionImportFacet = create3Factory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultPositionImportFacet();
+        uniswapV4StandardExchangeOutFacet = create3Factory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultOutFacet();
+        uniswapV4StandardExchangeOutQueryFacet = create3Factory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultOutQueryFacet();
+        uniswapV4StandardExchangeLiquidReserveFacet = create3Factory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultLiquidReserveFacet();
+        uniswapV4StandardExchangeInMultiFacet = create3Factory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultInMultiFacet();
+        uniswapV4StandardExchangeInMultiQueryFacet = create3Factory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultInMultiQueryFacet();
+        uniswapV4StandardExchangeOutMultiFacet = create3Factory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultOutMultiFacet();
+        uniswapV4StandardExchangeOutMultiQueryFacet = create3Factory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultOutMultiQueryFacet();
 
         erc721Facet = IFacet(
             create3Factory.deployFacet(
                 ArtifactCreationCode.creationCode(create3Factory, "ERC721Facet.sol:ERC721Facet"),
-                keccak256("LocalTestingScenario3_ERC721Facet")
+                abi.encode("ERC721Facet")._hash()
             )
         );
     }
@@ -302,7 +303,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
                 create3Factory.create3WithArgs(
                     ArtifactCreationCode.creationCode(create3Factory, "PoolManager.sol:PoolManager"),
                     abi.encode(owner),
-                    keccak256("LocalTestingScenario3PoolManager")
+                    abi.encode("PoolManager")._hash()
                 )
             );
         }
@@ -322,7 +323,7 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
                 create3Factory.create3WithArgs(
                     ArtifactCreationCode.creationCode(create3Factory, "UniswapV4LiquiditySeeder.sol:UniswapV4LiquiditySeeder"),
                     abi.encode(poolManager),
-                    keccak256("LocalTestingScenario3LiquiditySeeder")
+                    abi.encode("UniswapV4LiquiditySeeder")._hash()
                 )
             );
         }
@@ -366,12 +367,12 @@ contract Script_12_DeployScenario3Overlay is LocalTestingDeploymentBase {
             )
         );
 
-        underlyingVaultPkg = UniswapV4_Component_FactoryService.deployUniswapV4StandardExchangeDFPkgFromVaultRegistry(
+        underlyingVaultPkg = HooklessFactory.deployUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkgFromVaultRegistry(
             vaultRegistry,
-            UniswapV4_Component_FactoryService.attachTwapOracle(
-            UniswapV4_Component_FactoryService.attachUniswapV4StandardExchangeMultiFacets(
-                UniswapV4_Component_FactoryService.buildArgsUniswapV4StandardExchangePkgInit(
-                    UniswapV4_Component_FactoryService.Univ4SePkgInitCore({
+            HooklessFactory.attachTwapOracle(
+            HooklessFactory.attachUniswapV4FullSpreadHooklessStandardExchangeVaultMultiFacets(
+                HooklessFactory.buildArgsUniswapV4FullSpreadHooklessStandardExchangeVaultPkgInit(
+                    HooklessFactory.Univ4SePkgInitCore({
                         erc20Facet: erc20Facet,
                         erc5267Facet: erc5267Facet,
                         erc2612Facet: erc2612Facet,

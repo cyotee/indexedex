@@ -49,11 +49,11 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Partial is
         assertFalse(weighted.isFullBook());
 
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("NotFullBook()"));
         weighted.depositSingle(address(token0), 1 ether, user, 0, block.timestamp + 1 hours);
 
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("NotFullBook()"));
         weighted.joinSingleAssetExactIn(address(token1), 1 ether, user, 0, block.timestamp + 1 hours);
     }
 
@@ -81,7 +81,7 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Partial is
         uint256[] memory one = new uint256[](3);
         one[0] = 10 ether;
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("ZeroAmount()"));
         weighted.joinProportional(one, user, 0, block.timestamp + 1 hours);
     }
 }

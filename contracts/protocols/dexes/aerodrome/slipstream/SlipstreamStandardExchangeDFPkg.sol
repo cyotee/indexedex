@@ -38,6 +38,9 @@ import {ISlipstreamStandardExchangeDFPkg} from "contracts/protocols/dexes/aerodr
  * @author cyotee doge <doge.cyotee>
  * @notice Deploys vaults that wrap Slipstream concentrated liquidity positions.
  */
+/// @custom:deprecated APEX D57 (owner ruling 2026-09-21): the Slipstream Standard Exchange is deprecated entirely.
+///         It has no share-to-token route; do not wire it into launch scripts or the vault registry. Sources stay
+///         compiling until a separate deletion request. See docs/audits/apex-2026-09-17-remediation-and-regression-tests.plan.md.
 contract SlipstreamStandardExchangeDFPkg is ISlipstreamStandardExchangeDFPkg {
     using BetterEfficientHashLib for bytes;
     using BetterSafeERC20 for IERC20;
@@ -48,6 +51,7 @@ contract SlipstreamStandardExchangeDFPkg is ISlipstreamStandardExchangeDFPkg {
     IFacet immutable MULTI_ASSET_BASIC_VAULT_FACET;
     IFacet immutable MULTI_ASSET_STANDARD_VAULT_FACET;
     IFacet immutable SLIPSTREAM_EXCHANGE_IN_FACET;
+    IFacet immutable SLIPSTREAM_EXCHANGE_IN_FACET_EXT;
     IFacet immutable SLIPSTREAM_EXCHANGE_OUT_FACET;
     IVaultFeeOracleQuery immutable VAULT_FEE_ORACLE_QUERY;
     IVaultRegistryDeployment immutable VAULT_REGISTRY_DEPLOYMENT;
@@ -61,6 +65,7 @@ contract SlipstreamStandardExchangeDFPkg is ISlipstreamStandardExchangeDFPkg {
         MULTI_ASSET_BASIC_VAULT_FACET = pkgInit.multiAssetBasicVaultFacet;
         MULTI_ASSET_STANDARD_VAULT_FACET = pkgInit.multiAssetStandardVaultFacet;
         SLIPSTREAM_EXCHANGE_IN_FACET = pkgInit.slipstreamStandardExchangeInFacet;
+        SLIPSTREAM_EXCHANGE_IN_FACET_EXT = pkgInit.slipstreamStandardExchangeInFacetExt;
         SLIPSTREAM_EXCHANGE_OUT_FACET = pkgInit.slipstreamStandardExchangeOutFacet;
         VAULT_FEE_ORACLE_QUERY = pkgInit.vaultFeeOracleQuery;
         VAULT_REGISTRY_DEPLOYMENT = pkgInit.vaultRegistryDeployment;
@@ -114,7 +119,7 @@ contract SlipstreamStandardExchangeDFPkg is ISlipstreamStandardExchangeDFPkg {
     }
 
     function facetCuts() public view override returns (IDiamond.FacetCut[] memory facetCuts_) {
-        facetCuts_ = new IDiamond.FacetCut[](7);
+        facetCuts_ = new IDiamond.FacetCut[](8);
 
         facetCuts_[0] = IDiamond.FacetCut({
             facetAddress: address(ERC20_FACET),
@@ -153,6 +158,12 @@ contract SlipstreamStandardExchangeDFPkg is ISlipstreamStandardExchangeDFPkg {
         });
 
         facetCuts_[6] = IDiamond.FacetCut({
+            facetAddress: address(SLIPSTREAM_EXCHANGE_IN_FACET_EXT),
+            action: IDiamond.FacetCutAction.Add,
+            functionSelectors: SLIPSTREAM_EXCHANGE_IN_FACET_EXT.facetFuncs()
+        });
+
+        facetCuts_[7] = IDiamond.FacetCut({
             facetAddress: address(SLIPSTREAM_EXCHANGE_OUT_FACET),
             action: IDiamond.FacetCutAction.Add,
             functionSelectors: SLIPSTREAM_EXCHANGE_OUT_FACET.facetFuncs()
@@ -211,14 +222,15 @@ contract SlipstreamStandardExchangeDFPkg is ISlipstreamStandardExchangeDFPkg {
     /* -------------------------------------------------------------------------- */
 
     function facetAddresses() public view returns (address[] memory facetAddresses_) {
-        facetAddresses_ = new address[](7);
+        facetAddresses_ = new address[](8);
         facetAddresses_[0] = address(ERC20_FACET);
         facetAddresses_[1] = address(ERC5267_FACET);
         facetAddresses_[2] = address(ERC2612_FACET);
         facetAddresses_[3] = address(MULTI_ASSET_BASIC_VAULT_FACET);
         facetAddresses_[4] = address(MULTI_ASSET_STANDARD_VAULT_FACET);
         facetAddresses_[5] = address(SLIPSTREAM_EXCHANGE_IN_FACET);
-        facetAddresses_[6] = address(SLIPSTREAM_EXCHANGE_OUT_FACET);
+        facetAddresses_[6] = address(SLIPSTREAM_EXCHANGE_IN_FACET_EXT);
+        facetAddresses_[7] = address(SLIPSTREAM_EXCHANGE_OUT_FACET);
         return facetAddresses_;
     }
 
@@ -254,10 +266,6 @@ contract SlipstreamStandardExchangeDFPkg is ISlipstreamStandardExchangeDFPkg {
     }
 
     function _symbolOrToken(address token) internal view returns (string memory symbol_) {
-        try IERC20Metadata(token).symbol() returns (string memory fetchedSymbol) {
-            return fetchedSymbol;
-        } catch {
-            return "TOKEN";
-        }
+        return IERC20Metadata(token).symbol();
     }
 }

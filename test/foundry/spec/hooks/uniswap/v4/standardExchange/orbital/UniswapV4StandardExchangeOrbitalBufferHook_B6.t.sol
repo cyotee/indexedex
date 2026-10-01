@@ -134,7 +134,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_B6_Test is
     function test_B6_seShareFlagOnRawLeg_reverts() public {
         _seedThreeLeg(50 ether);
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("InvalidSeShareLeg()"));
         orbital.depositFlexible(
             10 ether, false, 10 ether, true, 10 ether, false, user, 0, block.timestamp + 1 hours
         );

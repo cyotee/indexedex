@@ -111,7 +111,8 @@ contract AaveCrossVersionLoopExchangeOut_Test is TestBase_AaveCrossVersionLoopV3
         _seedBorrowLiquidity();
         _deposit(100e18);
 
-        // Requesting far more than the buffer can free reverts (all-or-revert, decision 15).
+        // D61: an exact-out ask beyond the whole position (shares > supply) is not a pro-rata claim and
+        // reverts AmountOutNotMet from the never-borrow envelope (all-or-revert, decision 15).
         vm.expectRevert();
         vault.previewExchangeOut(IERC20(address(vault)), tokenA, 10_000e18);
     }

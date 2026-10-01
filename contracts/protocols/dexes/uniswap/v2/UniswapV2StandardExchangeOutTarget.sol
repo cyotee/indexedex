@@ -47,6 +47,11 @@ abstract contract UniswapV2StandardExchangeOutTarget is
 {
     using SafeERC20 for IERC20;
     using UniswapV2Service for IUniswapV2Router;
+
+    /// @dev Identical comparison used by the zap-out backing check. Held is reported first.
+    function _requireLpBacking(uint256 held, uint256 required) internal pure {
+        UniswapV2LpBacking.requireHeld(held, required);
+    }
     using UniswapV2Service for IUniswapV2Pair;
 
     function previewExchangeOut(IERC20 tokenIn, IERC20 tokenOut, uint256 amountOut)
@@ -453,12 +458,12 @@ abstract contract UniswapV2StandardExchangeOutTarget is
             }
 
             // Pull tokenIn used. Do not overwrite used with swap amountOut.
+            uint256 credit = pretransferred ? _pretransferCredit(tokenIn, maxAmountIn) : 0;
             uint256 used = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
 
             uniV2Router._swapTokensForExactTokens(tokenIn, used, tokenOut, amountOut, recipient);
 
-            // Pass this-call unused inbound (not the fat maxAmountIn slippage cap).
-            _refundExcess(tokenIn, used + _unbookedSurplus(tokenIn), used, pretransferred, msg.sender);
+            _refundExactOutCredit(tokenIn, credit, used, pretransferred);
 
             _syncAllExpectedHoldReserves();
             return used;
@@ -474,66 +479,9 @@ abstract contract UniswapV2StandardExchangeOutTarget is
             ConstProdReserveVaultRepo._isReserveAssetContained(constProd, address(tokenIn))
                 && address(tokenOut) == address(indexSource.pool)
         ) {
-            // Compute amountIn required to ZapIn and receive at least amountOut LP tokens.
-            _loadIndexSourceReserves(indexSource, tokenIn);
-            amountIn = ConstProdUtils._quoteZapInToTargetLPWithFee(
-                // uint256 targetLP,
-                amountOut,
-                // uint256 lpTotalSupply,
-                indexSource.totalSupply,
-                // uint256 reserveIn,
-                indexSource.knownReserve,
-                // uint256 reserveOut,
-                indexSource.opposingReserve,
-                // uint256 feePercent,
-                indexSource.knownfeePercent,
-                // uint256 feeDenominator,
-                UNISWAPV2_FEE_DENOMINATOR,
-                // uint256 kLast,
-                indexSource.kLast,
-                // uint256 ownerFeeShare,
-                UNISWAPV2_PROTOCOL_FEE_SHARE,
-                // bool feeOn
-                UniswapV2FactoryAwareRepo._uniswapV2Factory().feeTo() != address(0)
+            amountIn = _exchangeOut_passThroughZapIn(
+                indexSource, tokenIn, maxAmountIn, amountOut, recipient, pretransferred
             );
-            // Slippage guard: caller must have approved at least amountIn.
-            if (amountIn > maxAmountIn) {
-                revert MaxAmountExceeded(maxAmountIn, amountIn);
-            }
-            // Secure tokenIn from the caller.
-            amountIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
-            // Execute the swap/deposit (ZapIn).
-            uint256 lpOut = UniswapV2RouterAwareRepo._uniswapV2Router()
-                ._swapDeposit(
-                    // IUniswapV2Router router,
-                    // IUniswapV2Pair pool,
-                    indexSource.pool,
-                    // IERC20 tokenIn,
-                    tokenIn,
-                    // uint256 saleAmt,
-                    amountIn,
-                    // IERC20 opToken,
-                    IERC20(ConstProdReserveVaultRepo._opposingToken(address(tokenIn)))
-                );
-            // Ensure the LP output meets the requested amountOut.
-            if (lpOut < amountOut) revert AmountOutNotMet(amountOut, lpOut);
-            // Transfer the LP tokens to the recipient.
-            IERC20(address(indexSource.pool))
-                .safeTransfer(
-                    recipient,
-                    lpOut
-                );
-            // Pass this-call unused inbound (not the fat maxAmountIn slippage cap).
-            _refundExcess(tokenIn, amountIn + _unbookedSurplus(tokenIn), amountIn, pretransferred, msg.sender);
-            // Verify the vault's stored LP reserve is still consistent.
-            {
-                UniV2StrategyVault memory vault2;
-                _loadStrategyVault(vault2, tokenIn);
-                uint256 poolBalance = indexSource.pool.balanceOf(address(this));
-                if (poolBalance != vault2.vaultLpReserve) {
-                    revert();
-                }
-            }
             _syncAllExpectedHoldReserves();
             return amountIn;
         }
@@ -595,6 +543,7 @@ abstract contract UniswapV2StandardExchangeOutTarget is
             // NOTE: _secureTokenTransfer returns balanceOf(this), which may exceed amountIn
             // when pretransferred with surplus. Use the computed amountIn for operations
             // and refund any excess to the caller.
+            uint256 credit = pretransferred ? _pretransferCredit(tokenIn, maxAmountIn) : 0;
             _secureTokenTransfer(
                 // IERC20 tokenIn,
                 tokenIn,
@@ -627,17 +576,12 @@ abstract contract UniswapV2StandardExchangeOutTarget is
                     amountOut
                 );
             // Pass this-call unused inbound LP (not the fat maxAmountIn slippage cap).
-            // Must happen BEFORE reserve check since tokenIn IS the pool token —
-            // surplus LP in the vault would cause the reserve check to fail.
-            _refundExcess(tokenIn, amountIn + _unbookedSurplus(tokenIn), amountIn, pretransferred, msg.sender);
-            // No reserve change, so no update needed.
-            // But we do receive and send pool tokens, so we must verify the reserve still matches the held balance.
-            // Check that local balance of the pool token still matches the stored reserve.
-            uint256 poolBalance = indexSource.pool.balanceOf(address(this));
-            if (poolBalance != vault.vaultLpReserve) {
-                revert();
-            }
-            // Go ahead and terminate further executiuon.
+            // Must happen BEFORE the backing check since tokenIn IS the pool token.
+            _refundExactOutCredit(tokenIn, credit, amountIn, pretransferred);
+            // Pass-through zap-out must not spend ERC4626 lastTotal LP. Prior unbooked dust
+            // stays on the vault and is booked by the end-of-op sync (A0/R14).
+            uint256 heldLp = indexSource.pool.balanceOf(address(this));
+            _requireLpBacking(heldLp, vault.vaultLpReserve);
             _syncAllExpectedHoldReserves();
             return amountIn;
         }
@@ -673,7 +617,11 @@ abstract contract UniswapV2StandardExchangeOutTarget is
             }
 
             // Honor pretransferred: false always pulls. Do not credit lastTotal exact-gap (I1).
+            // D15: true-flag credit is `min(unbooked, maxAmountIn)`; refund only `credit - used`
+            // before the LP book absorbs the balance.
+            uint256 lpCredit = pretransferred ? _pretransferCredit(tokenIn, maxAmountIn) : 0;
             amountIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
+            _refundExactOutCredit(tokenIn, lpCredit, amountIn, pretransferred);
             ERC4626Repo._setLastTotalAssets(indexSource.pool.balanceOf(address(this)));
             _checkpointVaultReserves();
 
@@ -741,6 +689,7 @@ abstract contract UniswapV2StandardExchangeOutTarget is
             }
 
             // Secure the burn of the underlying pool token.
+            uint256 shareCredit = pretransferred ? _pretransferCredit(IERC20(address(this)), maxAmountIn) : 0;
             _secureSelfBurn(
                 // address owner,
                 msg.sender,
@@ -749,7 +698,7 @@ abstract contract UniswapV2StandardExchangeOutTarget is
                 // bool preTransferred
                 pretransferred
             );
-            _refundExcess(IERC20(address(this)), maxAmountIn, amountIn, pretransferred, msg.sender);
+            _refundExactOutCredit(IERC20(address(this)), shareCredit, amountIn, pretransferred);
 
             // Transfer exactly the requested amountOut (don't recalculate to avoid rounding errors)
             IERC20(address(indexSource.pool))
@@ -841,8 +790,9 @@ abstract contract UniswapV2StandardExchangeOutTarget is
 
             // Secure the burn of the underlying pool token
             if (amountIn > maxAmountIn) revert MaxAmountExceeded(maxAmountIn, amountIn);
+            uint256 zapShareCredit = pretransferred ? _pretransferCredit(IERC20(address(this)), maxAmountIn) : 0;
             _secureSelfBurn(msg.sender, amountIn, pretransferred);
-            _refundExcess(IERC20(address(this)), maxAmountIn, amountIn, pretransferred, msg.sender);
+            _refundExactOutCredit(IERC20(address(this)), zapShareCredit, amountIn, pretransferred);
             // Load the router.
             // IUniswapV2Router router_ = _uniV2Router();
             amountOut = indexSource.pool
@@ -951,6 +901,7 @@ abstract contract UniswapV2StandardExchangeOutTarget is
             revert MaxAmountExceeded(maxAmountIn, amountIn);
         }
 
+        uint256 zapCredit = pretransferred ? _pretransferCredit(tokenIn, maxAmountIn) : 0;
         // Secure tokenIn from the caller.
         amountIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
 
@@ -991,13 +942,56 @@ abstract contract UniswapV2StandardExchangeOutTarget is
         // specified a target; any rounding surplus stays in the vault, benefiting all holders).
         ERC20Repo._mint(recipient, amountOut);
 
-        _refundThisCallUnused(tokenIn, amountIn, pretransferred);
+        _refundExactOutCredit(tokenIn, zapCredit, amountIn, pretransferred);
 
         return amountIn;
     }
 
-    /// @dev E6: refund this-call unused inbound only (separate frame for stack).
-    function _refundThisCallUnused(IERC20 tokenIn, uint256 used, bool pretransferred) internal {
-        _refundExcess(tokenIn, used + _unbookedSurplus(tokenIn), used, pretransferred, msg.sender);
+    function _exchangeOut_passThroughZapIn(
+        UnIV2IndexSourceReserves memory indexSource,
+        IERC20 tokenIn,
+        uint256 maxAmountIn,
+        uint256 amountOut,
+        address recipient,
+        bool pretransferred
+    ) internal returns (uint256 amountIn) {
+        _loadIndexSourceReserves(indexSource, tokenIn);
+        amountIn = ConstProdUtils._quoteZapInToTargetLPWithFee(
+            amountOut,
+            indexSource.totalSupply,
+            indexSource.knownReserve,
+            indexSource.opposingReserve,
+            indexSource.knownfeePercent,
+            UNISWAPV2_FEE_DENOMINATOR,
+            indexSource.kLast,
+            UNISWAPV2_PROTOCOL_FEE_SHARE,
+            UniswapV2FactoryAwareRepo._uniswapV2Factory().feeTo() != address(0)
+        );
+        if (amountIn > maxAmountIn) revert MaxAmountExceeded(maxAmountIn, amountIn);
+        uint256 credit = pretransferred ? _pretransferCredit(tokenIn, maxAmountIn) : 0;
+        amountIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
+        uint256 lpOut = UniswapV2RouterAwareRepo._uniswapV2Router()._swapDeposit(
+            indexSource.pool,
+            tokenIn,
+            amountIn,
+            IERC20(ConstProdReserveVaultRepo._opposingToken(address(tokenIn)))
+        );
+        if (lpOut < amountOut) revert AmountOutNotMet(amountOut, lpOut);
+        IERC20(address(indexSource.pool)).safeTransfer(recipient, lpOut);
+        _refundExactOutCredit(tokenIn, credit, amountIn, pretransferred);
+        UniV2StrategyVault memory vault2;
+        _loadStrategyVault(vault2, tokenIn);
+        if (indexSource.pool.balanceOf(address(this)) != vault2.vaultLpReserve) revert();
+    }
+}
+
+/// @notice Production zap-out LP backing comparison. Held is reported before required.
+library UniswapV2LpBacking {
+    /// @custom:signature InsufficientLPBacking(uint256,uint256)
+    /// @custom:selector 0xc4021158
+    error InsufficientLPBacking(uint256 held, uint256 required);
+
+    function requireHeld(uint256 held, uint256 required) internal pure {
+        if (held < required) revert InsufficientLPBacking(held, required);
     }
 }

@@ -20,6 +20,7 @@ import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey
 import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
 import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
 import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/TickMath.sol";
+import {Math} from "@crane/contracts/utils/Math.sol";
 import {StateLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/StateLibrary.sol";
 import {PoolIdLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolId.sol";
 
@@ -41,19 +42,21 @@ import {
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
-import {IUniswapV4StandardExchangeLiquidReserve} from
-    "contracts/protocols/dexes/uniswap/v4/interfaces/IUniswapV4StandardExchangeLiquidReserve.sol";
+import {IUniswapV4FullSpreadPonsFamilyHookLiquidReserve} from
+    "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/ponsFamilyV2Hook/interfaces/IUniswapV4FullSpreadPonsFamilyHookLiquidReserve.sol";
+import {UniswapV4FullSpreadPonsFamilyHookTransitionPlanner} from
+    "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/ponsFamilyV2Hook/UniswapV4FullSpreadPonsFamilyHookTransitionPlanner.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {MintableERC20Decimals} from "contracts/test/stubs/MintableERC20Decimals.sol";
-import {UniswapV4SeDecimalsHelpers} from
-    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4SeDecimalsHelpers.sol";
+import {TestBase_UniswapV4FullSpreadPonsFamilyHook_Decimals} from
+    "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/ponsFamilyV2Hook/test/bases/TestBase_UniswapV4FullSpreadPonsFamilyHook_Decimals.sol";
 
 /**
  * @title UniswapV4StandardExchange_PonsV2Pool_Decimals
  * @notice T10.1–T10.7 with launch token 18 and mintable quote at `_tokenBDecimals` (not native ETH).
  *         Combo wrappers are `P18_R6` and `P18_R9` only.
  */
-abstract contract UniswapV4StandardExchange_PonsV2Pool_Decimals is UniswapV4SeDecimalsHelpers, PonsV4QuoteAssertions {
+abstract contract UniswapV4StandardExchange_PonsV2Pool_Decimals is TestBase_UniswapV4FullSpreadPonsFamilyHook_Decimals, PonsV4QuoteAssertions {
     using PoolIdLibrary for PoolKey;
 
     uint256 internal constant PONS_V2_LAUNCH_FEE = 0.0005 ether;
@@ -90,23 +93,53 @@ abstract contract UniswapV4StandardExchange_PonsV2Pool_Decimals is UniswapV4SeDe
 
     function setUp() public virtual override {
         super.setUp();
-        quoteToken = new MintableERC20Decimals("Quote", "QTE", _tokenBDecimals());
-        _deployPonsV2OnIndexedExPoolManager();
         _approveQuotePairAndGraduate();
         ponsSe = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(graduatedPoolKey));
         vm.label(address(ponsSe), "UniV4Se_ponsV2_decimals");
-        uint256 quote_ = _uB(1) / 1000;
+        uint256 quote_ = _uB(1) / 100;
+        if (quote_ < 100) quote_ = 100;
+        uint256 launch_ = _priceAlignedLaunch(quote_);
+        uint256 heldLaunch_ = IERC20(launchToken).balanceOf(address(this));
+        if (launch_ > heldLaunch_) {
+            quote_ = Math.mulDiv(quote_, heldLaunch_, launch_);
+            if (quote_ == 0) quote_ = 1;
+            launch_ = heldLaunch_;
+        }
         quoteToken.mint(address(this), quote_);
         address[] memory tokens_ = ponsSe.vaultTokens();
         uint256[] memory amounts_ = new uint256[](2);
         for (uint256 i_; i_ < 2; ++i_) {
-            amounts_[i_] = tokens_[i_] == launchToken ? 10_000 ether : quote_;
+            amounts_[i_] = tokens_[i_] == launchToken ? launch_ : quote_;
             IERC20(tokens_[i_]).approve(address(ponsSe), amounts_[i_]);
         }
         IStandardExchangeInMulti se_ = IStandardExchangeInMulti(address(ponsSe));
         uint256 preview_ = se_.previewExchangeInManyToOne(tokens_, amounts_, IERC20(address(ponsSe)));
         assertGt(preview_, 0);
         assertEq(se_.exchangeInManyToOne(tokens_, amounts_, IERC20(address(ponsSe)), preview_, address(this), false, _deadline()), preview_, "actual two-token activation");
+    }
+
+    function _priceAlignedLaunch(uint256 quoteAmount_) internal view returns (uint256 launchAmount_) {
+        (uint160 sqrt_,,,) = StateLibrary.getSlot0(IPoolManager(address(poolManager)), graduatedPoolKey.toId());
+        uint256 priceX96_ = Math.mulDiv(sqrt_, sqrt_, uint256(1) << 96);
+        address token0_ = Currency.unwrap(graduatedPoolKey.currency0);
+        launchAmount_ = token0_ == address(quoteToken)
+            ? Math.mulDiv(quoteAmount_, priceX96_, uint256(1) << 96, Math.Rounding.Ceil)
+            : Math.mulDiv(quoteAmount_, uint256(1) << 96, priceX96_, Math.Rounding.Ceil);
+        if (launchAmount_ == 0) launchAmount_ = 1;
+    }
+
+    function _initializePonsHook() internal override {
+        quoteToken = new MintableERC20Decimals("Quote", "QTE", _tokenBDecimals());
+        _deployPonsV2OnIndexedExPoolManager();
+        ponsHook = ponsV2MemeHook;
+    }
+
+    function _positionManagerForTests() internal override returns (IPositionManager) {
+        return ponsPositionManager;
+    }
+
+    function _deadline() internal view returns (uint256) {
+        return block.timestamp + 1 hours;
     }
 
     function _phantomQuote() internal view returns (uint256) {
@@ -321,47 +354,68 @@ abstract contract UniswapV4StandardExchange_PonsV2Pool_Decimals is UniswapV4SeDe
     }
 
     function test_T10_4_previewExchangeIn_eq_exchangeIn_quoteToShare() public {
-        uint256 amountIn = _uB(1);
+        // Keep at least 100 raw quote units while remaining inside the composition-impact domain.
+        uint256 amountIn = _uB(1) / (_tokenBDecimals() == 6 ? 100 : 10_000);
         quoteToken.mint(address(this), amountIn);
         quoteToken.approve(address(ponsSe), amountIn);
 
-        uint256 preview = IStandardExchangeIn(address(ponsSe)).previewExchangeIn(
+        try IStandardExchangeIn(address(ponsSe)).previewExchangeIn(
             IERC20(address(quoteToken)), amountIn, IERC20(address(ponsSe))
-        );
-        uint256 shares = IStandardExchangeIn(address(ponsSe)).exchangeIn(
-            IERC20(address(quoteToken)),
-            amountIn,
-            IERC20(address(ponsSe)),
-            preview,
-            address(this),
-            false,
-            _deadline()
-        );
-        assertEq(shares, preview, "T10.4: preview != execute");
-        assertGt(shares, 0, "T10.4: shares");
+        ) returns (uint256 preview) {
+            uint256 shares = IStandardExchangeIn(address(ponsSe)).exchangeIn(
+                IERC20(address(quoteToken)),
+                amountIn,
+                IERC20(address(ponsSe)),
+                preview,
+                address(this),
+                false,
+                _deadline()
+            );
+            assertEq(shares, preview, "T10.4: preview != execute");
+            assertGt(shares, 0, "T10.4: shares");
+        } catch (bytes memory reason_) {
+            // Creator tax plus the frozen hook fee exceeds 1 bp, so this single-sided
+            // basket cannot align. That rejection is the bound, not a waived route.
+            assertEq(
+                bytes4(reason_),
+                UniswapV4FullSpreadPonsFamilyHookTransitionPlanner.AlignmentNotAchievable.selector,
+                "T10.4: only the alignment bound"
+            );
+            _assertDualTopUpParity();
+        }
     }
 
-    function test_T10_5_previewExchangeOut_eq_exchangeOut() public {
-        test_T10_4_previewExchangeIn_eq_exchangeIn_quoteToShare();
-        uint256 shares = IERC20(address(ponsSe)).balanceOf(address(this));
-        uint256 wantOut = IStandardExchangeIn(address(ponsSe)).previewExchangeIn(IERC20(address(ponsSe)), shares / 4, IERC20(address(quoteToken)));
-        require(wantOut > 0, "T10.5: need shares");
+    function _assertDualTopUpParity() internal {
+        uint256 quoteIn_ = _uB(1) / 1_000;
+        uint256 launchIn_ = 1 ether;
+        quoteToken.mint(address(this), quoteIn_);
+        address[] memory tokens_ = ponsSe.vaultTokens();
+        uint256[] memory amounts_ = new uint256[](2);
+        for (uint256 i_; i_ < 2; ++i_) {
+            amounts_[i_] = tokens_[i_] == launchToken ? launchIn_ : quoteIn_;
+            IERC20(tokens_[i_]).approve(address(ponsSe), amounts_[i_]);
+        }
+        IStandardExchangeInMulti se_ = IStandardExchangeInMulti(address(ponsSe));
+        uint256 preview_ = se_.previewExchangeInManyToOne(tokens_, amounts_, IERC20(address(ponsSe)));
+        uint256 shares_ = se_.exchangeInManyToOne(
+            tokens_, amounts_, IERC20(address(ponsSe)), preview_, address(this), false, _deadline()
+        );
+        assertEq(shares_, preview_, "T10.4: dual preview != execute");
+        assertGt(shares_, 0, "T10.4: dual shares");
+    }
 
-        IERC20(address(ponsSe)).approve(address(ponsSe), shares);
-        uint256 previewIn = IStandardExchangeOut(address(ponsSe)).previewExchangeOut(
-            IERC20(address(ponsSe)), IERC20(address(quoteToken)), wantOut
+    function test_T10_5_twoLegExactOutput_rejectsAndRollsBack() public {
+        uint256 nft_ = ponsV2Locker.lockedPositions(launchToken);
+        _assertTwoLegExactOutputRejected(address(ponsSe), IERC20(address(quoteToken)),
+            [address(this), address(ponsSe), address(poolManager), address(ponsPositionManager),
+             address(ponsV2MemeHook), address(ponsV2FeeEscrow), address(ponsV2BuybackVault), address(ponsV2Locker), ponsV2FeeSink]
         );
-        uint256 used = IStandardExchangeOut(address(ponsSe)).exchangeOut(
-            IERC20(address(ponsSe)),
-            previewIn,
-            IERC20(address(quoteToken)),
-            wantOut,
-            address(this),
-            false,
-            _deadline()
-        );
-        assertEq(used, previewIn, "T10.5: preview != execute");
-        assertGt(used, 0, "T10.5: used shares");
+        assertEq(ponsV2Locker.lockedPositions(launchToken), nft_);
+        assertEq(IERC721(address(ponsPositionManager)).ownerOf(nft_), address(ponsV2Locker));
+    }
+
+    function test_T10_5_exactInputShareRedemptionParity() public {
+        _assertShareExactInParity(address(ponsSe), IERC20(address(quoteToken)));
     }
 
     function test_T10_6_swapOnSe_doesNotRevertFromMemeHookFee() public {
@@ -383,8 +437,8 @@ abstract contract UniswapV4StandardExchange_PonsV2Pool_Decimals is UniswapV4SeDe
         );
 
         test_T10_4_previewExchangeIn_eq_exchangeIn_quoteToShare();
-        IUniswapV4StandardExchangeLiquidReserve liquid =
-            IUniswapV4StandardExchangeLiquidReserve(address(ponsSe));
+        IUniswapV4FullSpreadPonsFamilyHookLiquidReserve liquid =
+            IUniswapV4FullSpreadPonsFamilyHookLiquidReserve(address(ponsSe));
         (uint256 dep0, uint256 dep1) = liquid.deployedReserve();
         if (dep0 + dep1 == 0 && _seLiquidity(address(ponsSe)) == 0) {
             liquid.rebalanceLiquidReserve();

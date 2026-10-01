@@ -96,13 +96,15 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookSeTarget
         if (recipient == address(0)) revert ZeroAddress();
         bool zfo = _routeZeroForOne(address(tokenIn), address(tokenOut));
         // Quote on pre-pull book so inventory does not reprice the trade mid-path.
-        amountOut = _previewSwapExactIn(zfo, amountIn);
+        BookSwapPlan memory plan = _planExactIn(zfo, amountIn);
+        amountOut = plan.output.amount;
         if (amountOut < minAmountOut) revert InsufficientTokenOut();
         // L-GAPS-11 / ISecurePullErrors: pretransfer credits claimed only when in-window
         // delta covers it — blocks free extract of dual SE book / pair inventory. Leftover
         // spendable economics unchanged (surplus delta not exact-matched).
         _securePull(IERC20(address(tokenIn)), amountIn, pretransferred);
-        _executeBookSwap(zfo, amountIn, amountOut, recipient);
+        amountOut = _executePlannedSwap(plan, true, recipient);
+        if (amountOut < minAmountOut) revert InsufficientTokenOut();
     }
 
 
@@ -135,15 +137,13 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookSeTarget
         _requireNonZero(amountOut);
         if (recipient == address(0)) revert ZeroAddress();
         bool zfo = _routeZeroForOne(address(tokenIn), address(tokenOut));
-        amountIn = _previewSwapExactOut(zfo, amountOut);
+        BookSwapPlan memory plan = _planExactOut(zfo, amountOut);
+        amountIn = plan.amountIn;
         if (amountIn > maxAmountIn) revert InsufficientTokenOut();
-        // L-GAPS-11: delta-gate claimed amountIn. Refund only in-window surplus above amountIn
-        // (never absolute maxAmountIn - amountIn from free inventory / SE book).
-        uint256 observedDelta = _securePull(IERC20(address(tokenIn)), amountIn, pretransferred);
-        if (pretransferred && observedDelta > amountIn) {
-            IERC20(address(tokenIn)).safeTransfer(msg.sender, observedDelta - amountIn);
-        }
-        _executeBookSwap(zfo, amountIn, amountOut, recipient);
+        // D15: false-flag pulls exactly `amountIn`; true-flag credits `budget(unbooked, maxAmountIn)`
+        // and refunds only `credit - amountIn` (never booked inventory or SE book).
+        _pullExactOutInput(IERC20(address(tokenIn)), amountIn, maxAmountIn, pretransferred);
+        _executePlannedSwap(plan, false, recipient);
     }
 
     function ownerSwapExactIn(
@@ -160,10 +160,12 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookSeTarget
         if (!ok) revert InvalidRoute();
         if (_classify(tokenIn) != UniswapV4SeBufferHookLegLib.LegKind.Pair) revert InvalidRoute();
         if (_classify(tokenOut) != UniswapV4SeBufferHookLegLib.LegKind.Pair) revert InvalidRoute();
-        amountOut = _previewSwapExactIn(zfo, amountIn);
+        BookSwapPlan memory plan = _planExactIn(zfo, amountIn);
+        amountOut = plan.output.amount;
         if (amountOut < minAmountOut) revert InsufficientTokenOut();
         _securePull(IERC20(tokenIn), amountIn, false);
-        _executeBookSwap(zfo, amountIn, amountOut, msg.sender);
+        amountOut = _executePlannedSwap(plan, true, msg.sender);
+        if (amountOut < minAmountOut) revert InsufficientTokenOut();
     }
 
     function ownerSwapExactOut(
@@ -180,10 +182,11 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookSeTarget
         if (!ok) revert InvalidRoute();
         if (_classify(tokenIn) != UniswapV4SeBufferHookLegLib.LegKind.Pair) revert InvalidRoute();
         if (_classify(tokenOut) != UniswapV4SeBufferHookLegLib.LegKind.Pair) revert InvalidRoute();
-        amountIn = _previewSwapExactOut(zfo, amountOut);
+        BookSwapPlan memory plan = _planExactOut(zfo, amountOut);
+        amountIn = plan.amountIn;
         if (amountIn > maxAmountIn) revert InsufficientTokenOut();
         _securePull(IERC20(tokenIn), amountIn, false);
-        _executeBookSwap(zfo, amountIn, amountOut, msg.sender);
+        _executePlannedSwap(plan, false, msg.sender);
     }
 
 

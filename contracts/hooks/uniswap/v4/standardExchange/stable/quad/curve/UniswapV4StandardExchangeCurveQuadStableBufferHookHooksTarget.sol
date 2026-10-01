@@ -43,6 +43,11 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget 
 {
     using SafeERC20 for IERC20;
 
+    struct ExactInOutput {
+        uint256 amountOut;
+        uint256 sharesOut;
+    }
+
     /* ---------------------------------------------------------------------- */
     /*                                  IHooks                                */
     /* ---------------------------------------------------------------------- */
@@ -195,7 +200,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget 
     {
         if (!_isLive() || amountIn == 0 || tokenIn == tokenOut) return 0;
         if (!_isBoundToken(tokenIn) || !_isBoundToken(tokenOut)) return 0;
-        return _previewSwapExactIn(tokenIn, tokenOut, amountIn);
+        return _previewSwapExactInContext(tokenIn, tokenOut, amountIn, Repo._layout().poolManager).amountOut;
     }
 
     function previewSwapExactOut(address tokenIn, address tokenOut, uint256 amountOut)
@@ -205,7 +210,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget 
     {
         if (!_isLive() || amountOut == 0 || tokenIn == tokenOut) return 0;
         if (!_isBoundToken(tokenIn) || !_isBoundToken(tokenOut)) return 0;
-        return _previewSwapExactOut(tokenIn, tokenOut, amountOut);
+        return _previewSwapExactOutContext(tokenIn, tokenOut, amountOut, Repo._layout().poolManager);
     }
 
     function _isBoundToken(address t) private view returns (bool) {
@@ -218,31 +223,31 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget 
         view
         returns (uint256 amountOut)
     {
-        if (amountIn == 0) revert ZeroAmount();
-        if (tokenIn == tokenOut) revert InvalidPair();
-        uint8 i = _tokenIndex(tokenIn);
-        uint8 j = _tokenIndex(tokenOut);
-        uint256[4] memory rated = _ratedWadAllForSwapIn(i, amountIn);
-        if (rated[i] == 0 || rated[j] == 0) revert SwapNotLive();
+        return _previewSwapExactInPlan(tokenIn, tokenOut, amountIn).amountOut;
+    }
 
-        Repo.Layout storage l = Repo._layout();
-        uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
-        if (feeWad >= Math.WAD) revert InvalidFeeWad();
+    function _previewSwapExactInPlan(address tokenIn, address tokenOut, uint256 amountIn)
+        internal view returns (ExactInOutput memory)
+    {
+        return _previewSwapExactInContext(tokenIn, tokenOut, amountIn, address(0));
+    }
 
-        uint256 netIn = Math.applyTradingFeeNet(amountIn, feeWad);
-        uint256 ratedInflow = _mapPairInToRatedWad(i, netIn);
-        return _quoteRatedSwapExactIn(i, j, rated, ratedInflow);
+    function _previewSwapExactInContext(address tokenIn, address tokenOut, uint256 amountIn, address manager)
+        private view returns (ExactInOutput memory output)
+    {
+        (output.amountOut, output.sharesOut) = ClaimLib.previewSwapExactInContext(tokenIn, tokenOut, amountIn, manager);
     }
 
     function _quoteRatedSwapExactIn(uint8 i, uint8 j, uint256[4] memory rated, uint256 ratedInflow)
         internal view returns (uint256 amountOut)
     {
-        Repo.Layout storage l = Repo._layout();
-        if (ratedInflow == 0) revert ZeroAmount();
-        uint256 outScaled = Math.quoteExactInRated(rated, i, j, ratedInflow, _amp());
-        amountOut = Math.descale(outScaled, l.ratedScales[j]);
-        if (amountOut == 0) revert ZeroAmount();
-        if (amountOut >= _ratedPairUnits(j)) revert WouldZeroReserve();
+        return _quoteRatedSwapExactInPlan(i, j, rated, ratedInflow).amountOut;
+    }
+
+    function _quoteRatedSwapExactInPlan(uint8 i, uint8 j, uint256[4] memory rated, uint256 ratedInflow)
+        internal view returns (ExactInOutput memory output)
+    {
+        (output.amountOut, output.sharesOut) = ClaimLib.quoteSwapExactIn(i, j, rated, ratedInflow, _amp());
     }
 
 
@@ -271,23 +276,7 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget 
     }
 
     function _mapPairInToRatedWad(uint8 i, uint256 pairAmount) internal view returns (uint256) {
-        Repo.Layout storage l = Repo._layout();
-        address se = l.standardExchanges[i];
-        if (se == address(0) || se == l.tokens[i]) {
-            return Math.scaleTo(pairAmount, l.ratedScales[i]);
-        }
-        // Buffer preview → shares → pair units (rate or claim) → rated WAD
-        uint256 shares =
-            IStandardExchangeIn(se).previewExchangeIn(IERC20(l.tokens[i]), pairAmount, IERC20(se));
-        if (shares == 0) return 0;
-        address rp = l.rateProviders[i];
-        uint256 pairUnits;
-        if (rp != address(0)) {
-            pairUnits = (shares * _getRateFailClosed(rp)) / Math.RATE_PRECISION;
-        } else {
-            pairUnits = IStandardExchangeIn(se).previewExchangeIn(IERC20(se), shares, IERC20(l.tokens[i]));
-        }
-        return Math.scaleTo(pairUnits, l.ratedScales[i]);
+        return ClaimLib.mapPairInToRatedWad(i, pairAmount);
     }
 
     function _previewSwapExactOut(address tokenIn, address tokenOut, uint256 amountOut)
@@ -295,61 +284,54 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookHooksTarget 
         view
         returns (uint256 amountIn)
     {
+        return _previewSwapExactOutContext(tokenIn, tokenOut, amountOut, address(0));
+    }
+
+    function _previewSwapExactOutContext(address tokenIn, address tokenOut, uint256 amountOut, address manager)
+        private view returns (uint256)
+    {
         if (amountOut == 0) revert ZeroAmount();
         if (tokenIn == tokenOut) revert InvalidPair();
         uint8 i = _tokenIndex(tokenIn);
         uint8 j = _tokenIndex(tokenOut);
-        if (amountOut >= _ratedPairUnits(j)) revert WouldZeroReserve();
-        uint256[4] memory rated = _ratedWadAll();
+        uint256[4] memory rated = manager == address(0) ? _ratedWadAll() : ClaimLib.ratedWadAllWithContext(manager);
         if (rated[i] == 0 || rated[j] == 0) revert SwapNotLive();
 
         Repo.Layout storage l = Repo._layout();
         uint256 feeWad = _feeOracle().dexSwapFeeOfVault(address(this));
         if (feeWad >= Math.WAD) revert InvalidFeeWad();
 
-        uint256 outScaled = Math.scaleToUp(amountOut, l.ratedScales[j]);
-        uint256 netInRated = Math.quoteExactOutRated(rated, i, j, outScaled, _amp());
-        // Map rated net inflow back to pair units then gross-up for fee
-        uint256 netPair = _mapRatedWadToPairIn(i, netInRated);
-        amountIn = Math.grossUpExactOut(netPair, feeWad);
-        if (amountIn == 0) revert ZeroAmount();
+        return ClaimLib.quoteSwapExactOutContext(i, j, rated, amountOut, feeWad, _amp(), manager);
     }
 
     /// @dev Invert rated WAD inflow through public SE quotes, rounding input up.
     function _mapRatedWadToPairIn(uint8 i, uint256 ratedWadIn) internal view returns (uint256 pairIn) {
-        Repo.Layout storage l = Repo._layout();
-        uint256 pairUnits = Math.descaleUp(ratedWadIn, l.ratedScales[i]);
-        address se = l.standardExchanges[i];
-        if (se == address(0)) {
-            return pairUnits;
-        }
-        // Convert claim/rate units into the required native SE shares.
-        address rp = l.rateProviders[i];
-        uint256 sharesNeeded;
-        if (rp != address(0)) {
-            uint256 rate = _getRateFailClosed(rp);
-            sharesNeeded = Math.descaleUp(pairUnits, rate);
-        } else {
-            // The SE exact-out quote supplies enough shares for the required claim.
-            sharesNeeded = IStandardExchangeOut(se).previewExchangeOut(
-                IERC20(se), IERC20(l.tokens[i]), pairUnits
-            );
-        }
-        return ClaimLib.bufferInputForShares(se, l.tokens[i], sharesNeeded);
+        return ClaimLib.pairInputForRated(i, ratedWadIn);
     }
 
     function _swapExactInExecute(address tokenIn, address tokenOut, uint256 amountIn, uint256)
         internal
         returns (uint256 amountOut)
     {
-        amountOut = _previewSwapExactIn(tokenIn, tokenOut, amountIn);
-        uint8 j = _tokenIndex(tokenOut);
+        ExactInOutput memory output = _previewSwapExactInPlan(tokenIn, tokenOut, amountIn);
+        amountOut = _payExactInOutput(_tokenIndex(tokenOut), output, address(this));
+    }
+
+    function _payExactInOutput(uint8 j, ExactInOutput memory output, address recipient)
+        internal returns (uint256 amountOut)
+    {
         Repo.Layout storage l = Repo._layout();
-        if (l.standardExchanges[j] != address(0)) {
-            _unwrapExactTokenOut(j, amountOut, address(this));
+        if (output.sharesOut != 0) {
+            if (output.sharesOut >= _nativeAt(j)) revert WouldZeroReserve();
+            uint256 beforeOut = IERC20(l.tokens[j]).balanceOf(recipient);
+            _unwrapSeShares(j, output.sharesOut, recipient);
+            amountOut = IERC20(l.tokens[j]).balanceOf(recipient) - beforeOut;
+            if (amountOut < output.amountOut) revert UnwrapFailed();
         } else {
+            amountOut = output.amountOut;
             if (amountOut >= _nativeAt(j)) revert WouldZeroReserve();
-            _debitRawIntentional(j, amountOut);
+            if (l.standardExchanges[j] == address(0)) _debitRawIntentional(j, amountOut);
+            if (recipient != address(this)) IERC20(l.tokens[j]).safeTransfer(recipient, amountOut);
         }
     }
 
@@ -414,16 +396,15 @@ abstract contract UniswapV4StandardExchangeCurveQuadStableBufferHookQuoteTarget 
         if (feeWad >= Math.WAD) revert InvalidFeeWad();
         (uint256 minted,) = LegLib.depositAfterExchange(q, Math.applyTradingFeeNet(q.assets, feeWad));
         uint256[4] memory rated = _ratedWadAll();
-        uint256 held = q.heldAssets;
-        uint256 inflow = q.exchange.quoteAssets(q.state, minted);
-        if (l.rateProviders[i] != address(0)) {
+        if (l.rateProviders[i] == address(0)) revert ClaimLib.RateProviderRequired();
+        {
+            // D60: held reserve and inflow are shares x rate; `minted` carries the rated inflow from here on.
             uint256 rate = LegLib.rateAfterExchange(q, l.tokens[i], l.rateProviders[i]);
-            held = q.heldShares * rate / Math.RATE_PRECISION;
-            inflow = minted * rate / Math.RATE_PRECISION;
+            rated[i] = Math.scaleTo(ClaimLib.ratedWith(i, q.heldShares, rate), l.ratedScales[i]);
+            minted = ClaimLib.ratedWith(i, minted, rate);
         }
-        rated[i] = Math.scaleTo(held, l.ratedScales[i]);
         if (rated[i] == 0 || rated[j] == 0) revert SwapNotLive();
-        return _quoteRatedSwapExactIn(i, j, rated, Math.scaleTo(inflow, l.ratedScales[i]));
+        return _quoteRatedSwapExactIn(i, j, rated, Math.scaleTo(minted, l.ratedScales[i]));
     }
 
 }

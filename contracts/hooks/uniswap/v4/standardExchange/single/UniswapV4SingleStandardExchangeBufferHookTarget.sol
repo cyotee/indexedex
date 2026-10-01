@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {UniswapV4SeBufferHookContextQuoteLib as ContextQuote} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookContextQuoteLib.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
@@ -222,7 +223,10 @@ abstract contract UniswapV4SingleStandardExchangeBufferHookTarget is
     {
         pairOut = _previewUnwrap(seIn);
         _take(seC, address(this), seIn);
+        // SE pulls shares via transferFrom when pretransferred=false (e.g. Balancer pool SE, Uni V3/V4 SE).
+        IERC20(_se()).forceApprove(_se(), seIn);
         uint256 got = _seExchangeIn(IERC20(_se()), seIn, IERC20(_pair()), pairOut, false);
+        IERC20(_se()).forceApprove(_se(), 0);
         require(got >= pairOut, "unwrap pairOut");
         pairOut = got;
         _settle(pairC, pairOut);
@@ -236,12 +240,18 @@ abstract contract UniswapV4SingleStandardExchangeBufferHookTarget is
         _take(seC, address(this), seIn);
         // Delta-only settle: never settle full balanceOf (O11 idle donations must not enter swap accounting).
         uint256 pairBefore = IERC20(_pair()).balanceOf(address(this));
+        // SE pulls shares via transferFrom when pretransferred=false (e.g. Balancer pool SE, Uni V3/V4 SE).
+        IERC20(_se()).forceApprove(_se(), seIn);
         uint256 spent = _seExchangeOut(IERC20(_se()), seIn, IERC20(_pair()), pairOut, false);
+        IERC20(_se()).forceApprove(_se(), 0);
         require(spent == seIn, "unwrap exact-out spend");
-        // Settle actual pair received from this exchange (may exceed pairOut on ceil/floor redeem).
+        // Settle exactly the delta `beforeSwap` reports (`pairOut`). An AMM SE zap-out can deliver
+        // `got > pairOut`; settling `got` would leave the surplus as a positive PoolManager credit that
+        // nothing takes and end the swap `CurrencyNotSettled()` (APEX matrix finding F5). The surplus
+        // stays on the hook as retained residual (D6).
         uint256 got = IERC20(_pair()).balanceOf(address(this)) - pairBefore;
         require(got >= pairOut, "unwrap exact-out short");
-        _settle(pairC, got);
+        _settle(pairC, pairOut);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -249,18 +259,22 @@ abstract contract UniswapV4SingleStandardExchangeBufferHookTarget is
     /* ---------------------------------------------------------------------- */
 
     function previewWrap(uint256 pairIn) external view returns (uint256 seOut) {
-        return _previewWrap(pairIn);
+        _requireNonZero(pairIn);
+        (seOut,) = ContextQuote.deposit(_se(), _pair(), address(this), pairIn, address(poolManager()));
     }
 
     function previewWrapExactOut(uint256 seOut) external view returns (uint256 pairIn) {
-        return _previewWrapExactOut(seOut);
+        _requireNonZero(seOut);
+        return ContextQuote.inputForShares(_se(), _pair(), seOut, address(poolManager()));
     }
 
     function previewUnwrap(uint256 seIn) external view returns (uint256 pairOut) {
-        return _previewUnwrap(seIn);
+        _requireNonZero(seIn);
+        return ContextQuote.redeemReceived(_se(), _pair(), seIn, address(poolManager()));
     }
 
     function previewUnwrapExactOut(uint256 pairOut) external view returns (uint256 seIn) {
-        return _previewUnwrapExactOut(pairOut);
+        _requireNonZero(pairOut);
+        return ContextQuote.withdraw(_se(), _pair(), address(0), pairOut, address(poolManager()));
     }
 }

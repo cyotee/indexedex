@@ -21,7 +21,7 @@ CORE = {
 }
 
 PACKAGE_MANIFESTS = {
-    'uniswapV4Se': ('phase05_stage03_uniswap_v4_standard_exchange_pkg.json', 'uniV4SePkg'),
+    'uniswapV4Se': ('phase05_stage03_uniswap_v4_standard_exchange_pkg.json', 'uniV4PonsSePkg'),
     'rebasingAwareErc4626': ('phase06_stage10_rebasing_aware_erc4626_pkg.json', 'rebasingAwareErc4626Pkg'),
     'rateProvider': ('phase05_stage01_se_rate_provider_pkg.json', 'rateProviderPkg'),
     'weightedHook': ('phase06_stage04_weighted_buffer_hook_pkg.json', 'weightedHookPkg'),

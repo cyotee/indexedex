@@ -30,6 +30,7 @@ import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
 import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {SingleStandardExchangeDETFRepo as Repo} from "./SingleStandardExchangeDETFRepo.sol";
 
@@ -89,13 +90,9 @@ abstract contract SingleStandardExchangeDETFCommon is ReentrancyLockModifiers, D
         uint256 vaultShares_ = amount_;
         if (address(token_) != address(s.standardExchangeVaultShare)) {
             if (!_isAllowlistedTokenIn(token_)) return 0;
-            try IStandardExchangeIn(address(s.standardExchangeVault)).previewExchangeIn(
+            vaultShares_ = IStandardExchangeIn(address(s.standardExchangeVault)).previewExchangeIn(
                 token_, amount_, s.standardExchangeVaultShare
-            ) returns (uint256 sh_) {
-                vaultShares_ = sh_;
-            } catch {
-                return 0;
-            }
+            );
         }
         return _previewUnbalancedBpt(s.vaultShareIndex, vaultShares_);
     }
@@ -436,12 +433,18 @@ abstract contract SingleStandardExchangeDETFCommon is ReentrancyLockModifiers, D
             token_.safeTransferFrom(msg.sender, address(this), amount_);
             uint256 received_ = token_.balanceOf(address(this)) - before_;
             if (received_ != amount_) revert ISecurePullErrors.TransferDeltaInsufficient(amount_, received_);
-        } else {
-            uint256 reserved_ = MultiAssetBasicVaultRepo._reserveOfToken(address(token_));
-            uint256 available_ = before_ > reserved_ ? before_ - reserved_ : 0;
-            if (amount_ > available_) revert ISecurePullErrors.TransferDeltaInsufficient(amount_, available_);
+            return amount_;
         }
+        LocalCreditLib.requirePretransferCaller(msg.sender);
+        uint256 available_ = LocalCreditLib.available(
+            before_, MultiAssetBasicVaultRepo._reserveOfToken(address(token_))
+        );
+        if (amount_ > available_) revert ISecurePullErrors.TransferDeltaInsufficient(amount_, available_);
         return amount_;
+    }
+
+    function _requirePrepaidCaller(bool prepaid_) internal view {
+        if (prepaid_) LocalCreditLib.requirePretransferCaller(msg.sender);
     }
 
     function _receiveVaultShares(IERC20 token_, uint256 amount_, bool prepaid_, uint256 deadline_)

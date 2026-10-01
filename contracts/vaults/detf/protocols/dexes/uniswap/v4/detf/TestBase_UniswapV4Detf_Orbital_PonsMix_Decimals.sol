@@ -62,8 +62,8 @@ abstract contract TestBase_UniswapV4Detf_Orbital_PonsMix_Decimals is TestBase_Un
         IUniswapV3Pool poolV1 = SeLib.ponsV1Pool(launchTokenV1);
         address seV1 = SeLib.deployUniv3Vault(v3pkg.pkg, poolV1);
 
-        SeLib.Univ4SePkg memory v4pkg = SeLib.deployUniv4SePkg(_craneCtx(), pm, weth);
-        address seV2 = SeLib.deployUniv4Vault(v4pkg.pkg, graduatedKeyV2);
+        SeLib.PonsV2SePkg memory v4pkg = SeLib.deployPonsV2SePkg(_craneCtx(), pm, weth, ponsV2);
+        address seV2 = SeLib.deployPonsV2Vault(v4pkg.pkg, graduatedKeyV2);
 
         _finishOrbitalDetf(launchTokenV1, launchTokenV2, seV1, seV2);
         require(mintToken == launchTokenV1, "mintToken is pons v1");

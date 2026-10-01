@@ -11,6 +11,7 @@ import {IReentrancyLock} from "@crane/contracts/interfaces/IReentrancyLock.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {
     TestBase_RebasingAwareERC4626
 } from "contracts/protocols/staking/rebasingVault/TestBase_RebasingAwareERC4626.sol";
@@ -94,7 +95,8 @@ contract RebasingAwareERC4626_ReleaseReview is TestBase_RebasingAwareERC4626 {
             _enter(route, address(vault));
             uint256 shares = IERC20(address(vault)).balanceOf(address(vault));
             assertGt(shares, 0);
-            vm.prank(alice);
+            AtomicPretransferCaller caller = new AtomicPretransferCaller();
+            vm.prank(address(caller));
             IStandardizedYield(address(vault)).redeem(alice, shares, address(asset), 1, true);
             assertEq(IERC20(address(vault)).balanceOf(address(vault)), 0);
         }

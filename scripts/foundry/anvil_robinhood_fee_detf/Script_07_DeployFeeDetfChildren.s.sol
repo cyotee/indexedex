@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
+
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 import {DeploymentBase} from "./DeploymentBase.sol";
@@ -24,6 +26,7 @@ import {VaultComponentFactoryService} from "contracts/vaults/VaultComponentFacto
 /// @title Script_07_DeployFeeDetfChildren
 /// @notice Bond NFT vault DFPkg + rebasing claim DFPkg + default bond terms.
 contract Script_07_DeployFeeDetfChildren is DeploymentBase {
+    using BetterEfficientHashLib for bytes;
     using DetfFacetFactoryService for ICreate3FactoryProxy;
     using DetfPkgFactoryService for ICreate3FactoryProxy;
     using DetfPkgFactoryService for IVaultRegistryDeployment;
@@ -103,7 +106,7 @@ contract Script_07_DeployFeeDetfChildren is DeploymentBase {
     function _deployBondNftVaultPkg() internal {
         IFacet detfNFTVaultFacet = create3Factory.deployDETFNFTVaultFacet();
         IFacet erc721FacetDetf =
-            IFacet(create3Factory.deployFacet(ArtifactCreationCode.creationCode(create3Factory, "ERC721Facet.sol:ERC721Facet"), keccak256("FeeDetf_ERC721Facet")));
+            IFacet(create3Factory.deployFacet(ArtifactCreationCode.creationCode(create3Factory, "ERC721Facet.sol:ERC721Facet"), abi.encode("ERC721Facet")._hash()));
 
         IDETFNFTVaultDFPkg.PkgInit memory nftPkgInit = DetfComponentFactoryService.buildDETFNFTVaultPkgInit(
             erc721FacetDetf,

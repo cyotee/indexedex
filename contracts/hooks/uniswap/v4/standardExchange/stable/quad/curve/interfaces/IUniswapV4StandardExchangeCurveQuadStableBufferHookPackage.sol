@@ -26,15 +26,19 @@ interface IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage is
     error ZeroStandardExchangeRequired();
     error SameStandardExchange();
     error RateProviderWithoutSE();
+    /// @notice D60: a buffered leg was declared without a rate provider.
+    error RateProviderRequired();
     error InvalidSE();
     error InvalidDecimals();
     error ArrayLengthMismatch();
     error InvalidAmp();
 
     struct PkgInit {
+        /// @dev Filled by `UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacetExt` (join previews, views and SY; D19 split).
         IFacet joinQueryFacet;
         IVaultRegistryDeployment vaultRegistryDeployment;
         IVaultFeeOracleQuery vaultFeeOracleQuery;
+        /// @dev Filled by `UniswapV4StandardExchangeCurveQuadStableBufferHookLiquidityFacet` (mutating joins and deposits; D19 split).
         IFacet liquidityFacet;
         IFacet exitFacet;
         IFacet seFacet;

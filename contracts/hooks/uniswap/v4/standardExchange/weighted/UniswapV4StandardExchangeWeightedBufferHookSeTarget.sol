@@ -114,22 +114,16 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookSeTarget is
         _tokenIndex(tin);
         _tokenIndex(tout);
 
+        ExactInOutput memory output = _previewSwapExactInPlan(tin, tout, amountIn);
+        amountOut = output.amountOut;
+        if (amountOut < minAmountOut) revert Slippage();
         // L-GAPS-11 / ISecurePullErrors: pretransfer credits only in-window delta (I1/I3).
         _securePull(IERC20(tin), amountIn, pretransferred);
 
-        amountOut = _previewSwapExactIn(tin, tout, amountIn);
-        if (amountOut < minAmountOut) revert Slippage();
-
-        uint8 j = _tokenIndex(tout);
         uint8 i = _tokenIndex(tin);
         Repo.Layout storage l = Repo._layout();
-        if (l.standardExchanges[j] != address(0)) {
-            _unwrapExactTokenOut(j, amountOut, recipient);
-        } else {
-            if (amountOut >= l.rawReserves[j]) revert WouldZeroReserve();
-            l.rawReserves[j] -= amountOut;
-            IERC20(tout).safeTransfer(recipient, amountOut);
-        }
+        amountOut = _payExactInOutput(_tokenIndex(tout), output, recipient);
+        if (amountOut < minAmountOut) revert Slippage();
         // buffer-last in
         if (l.standardExchanges[i] != address(0)) {
             _bufferToken(i, amountIn);
@@ -185,7 +179,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookSeTarget is
         if (amountIn > maxAmountIn) revert Slippage();
 
         // L-GAPS-11: delta-gate claimed amountIn (no absolute free inventory credit).
-        _securePull(IERC20(tin), amountIn, pretransferred);
+        _pullExactOutInput(IERC20(tin), amountIn, maxAmountIn, pretransferred);
 
         uint8 j = _tokenIndex(tout);
         uint8 ii = _tokenIndex(tin);
@@ -219,10 +213,13 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookSeTarget is
         if (tokenIn == tokenOut) revert InvalidRoute(tokenIn, tokenOut);
         _tokenIndex(tokenIn);
         _tokenIndex(tokenOut);
-        amountOut = _previewSwapExactIn(tokenIn, tokenOut, amountIn);
+        ExactInOutput memory output = _previewSwapExactInPlan(tokenIn, tokenOut, amountIn);
+        amountOut = output.amountOut;
         if (amountOut < minAmountOut) revert Slippage();
         _securePull(IERC20(tokenIn), amountIn, false);
-        _payOwnerSwap(tokenIn, tokenOut, amountIn, amountOut);
+        amountOut = _payExactInOutput(_tokenIndex(tokenOut), output, msg.sender);
+        if (amountOut < minAmountOut) revert Slippage();
+        _bufferOwnerSwapInput(tokenIn, amountIn);
     }
 
     /// @notice D89: owner exact-out; internal book settlement (no nested PoolManager.unlock).
@@ -251,7 +248,6 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookSeTarget is
 
     function _payOwnerSwap(address tokenIn, address tokenOut, uint256 amountIn, uint256 amountOut) private {
         uint8 j = _tokenIndex(tokenOut);
-        uint8 i = _tokenIndex(tokenIn);
         Repo.Layout storage l = Repo._layout();
         if (l.standardExchanges[j] != address(0)) {
             _unwrapExactTokenOut(j, amountOut, msg.sender);
@@ -260,6 +256,12 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookSeTarget is
             l.rawReserves[j] -= amountOut;
             IERC20(tokenOut).safeTransfer(msg.sender, amountOut);
         }
+        _bufferOwnerSwapInput(tokenIn, amountIn);
+    }
+
+    function _bufferOwnerSwapInput(address tokenIn, uint256 amountIn) private {
+        uint8 i = _tokenIndex(tokenIn);
+        Repo.Layout storage l = Repo._layout();
         if (l.standardExchanges[i] != address(0)) {
             _bufferToken(i, amountIn);
         } else {

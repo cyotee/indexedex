@@ -17,6 +17,7 @@ import {
 } from "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHook_FactoryService.sol";
 import {TestBase_UniswapV4DualSEBCPHook_Decimals} from
     "test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/TestBase_UniswapV4DualSEBCPHook_Decimals.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 
 /**
  * @title UniswapV4DualSEBCPHook_Adversarial_Decimals
@@ -106,7 +107,9 @@ abstract contract UniswapV4DualSEBCPHook_Adversarial_Decimals is
                 standardExchange0: seH,
                 token0: address(hostile),
                 standardExchange1: seO,
-                token1: address(other)
+                token1: address(other),
+                rateProvider0: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, seH, address(hostile)), // D60
+                rateProvider1: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, seO, address(other)) // D60
             });
         uint256 mineNonce = DualFactory.findMineNonce(hookFactory, hookPkg, args);
         address hHook = DualFactory.deployHook(hookPkg, args, mineNonce);

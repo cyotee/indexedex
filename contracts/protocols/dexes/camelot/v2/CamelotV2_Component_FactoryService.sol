@@ -32,7 +32,7 @@ library CamelotV2_Component_FactoryService {
 
     function _deployFacet(ICreate3FactoryProxy factory_, string memory name_) private returns (IFacet instance) {
         bytes memory code = ArtifactCreationCode.creationCode(string.concat(name_, ".sol:", name_));
-        instance = factory_.deployFacet(code, ArtifactCreationCode.releaseSalt(abi.encode(name_)._hash(), code, ""));
+        instance = factory_.deployFacet(code, ArtifactCreationCode.releaseSalt(abi.encode(name_)._hash()));
         vm.label(address(instance), name_);
     }
 
@@ -54,7 +54,7 @@ library CamelotV2_Component_FactoryService {
         bytes memory code = ArtifactCreationCode.creationCode("CamelotV2StandardExchangeDFPkg.sol:CamelotV2StandardExchangeDFPkg");
         bytes memory args = abi.encode(init_);
         instance = ICamelotV2StandardExchangeDFPkg(address(registry_.deployPkg(
-            code, args, ArtifactCreationCode.releaseSalt(abi.encode("CamelotV2StandardExchangeDFPkg")._hash(), code, args)
+            code, args, ArtifactCreationCode.releaseSalt(abi.encode("CamelotV2StandardExchangeDFPkg")._hash())
         )));
         vm.label(address(instance), "CamelotV2StandardExchangeDFPkg");
     }

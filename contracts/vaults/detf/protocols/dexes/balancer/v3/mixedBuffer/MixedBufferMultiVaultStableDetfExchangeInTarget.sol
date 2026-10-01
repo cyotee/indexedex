@@ -13,8 +13,27 @@ abstract contract MixedBufferMultiVaultStableDetfExchangeInTarget is MixedBuffer
     using BetterSafeERC20 for IERC20;
 
     function exchangeIn(
-        IERC20 in_, uint256 amount_, IERC20 out_, uint256 minimum_, address to_, bool prepaid_, uint256 deadline_
+        IERC20 in_,
+        uint256 amount_,
+        IERC20 out_,
+        uint256 minimum_,
+        address to_,
+        bool prepaid_,
+        uint256 deadline_
     ) public virtual nonReentrant returns (uint256 received_) {
+        return _exchangeIn(in_, amount_, out_, minimum_, to_, prepaid_, deadline_);
+    }
+
+    /// @dev Shared guarded entry body; both external exchange routes hold the lock.
+    function _exchangeIn(
+        IERC20 in_,
+        uint256 amount_,
+        IERC20 out_,
+        uint256 minimum_,
+        address to_,
+        bool prepaid_,
+        uint256 deadline_
+    ) internal returns (uint256 received_) {
         _requireActive(deadline_, amount_);
         if (address(in_) == address(out_)) revert Repo.InvalidRoute(address(in_), address(out_));
         Repo.Storage storage s_ = Repo._layoutStruct();
@@ -24,27 +43,30 @@ abstract contract MixedBufferMultiVaultStableDetfExchangeInTarget is MixedBuffer
         _updateExpansionMintOnRewards();
         if (address(in_) == address(staking_)) {
             _pullToken(in_, amount_, prepaid_);
-            IStakedDETF(address(staking_)).exchangeIn(
-                staking_, amount_, IERC20(address(this)), amount_, address(this), false, deadline_
-            );
+            IStakedDETF(address(staking_))
+                .exchangeIn(staking_, amount_, IERC20(address(this)), amount_, address(this), false, deadline_);
             if (address(out_) == address(this)) {
                 received_ = amount_;
                 out_.safeTransfer(to_, amount_);
-            } else received_ = _burnHeldDetf(amount_, out_, minimum_, to_);
+            } else {
+                received_ = _burnHeldDetf(amount_, out_, minimum_, to_);
+            }
         } else if (address(out_) == address(staking_)) {
             uint256 principal_ = address(in_) == address(this)
-                ? _pullToken(in_, amount_, prepaid_) : _acquireDetf(in_, amount_, prepaid_);
+                ? _pullToken(in_, amount_, prepaid_)
+                : _acquireDetf(in_, amount_, prepaid_);
             IERC20(address(this)).forceApprove(address(staking_), principal_);
-            received_ = IStakedDETF(address(staking_)).exchangeIn(
-                IERC20(address(this)), principal_, staking_, minimum_, to_, false, deadline_
-            );
+            received_ = IStakedDETF(address(staking_))
+                .exchangeIn(IERC20(address(this)), principal_, staking_, minimum_, to_, false, deadline_);
             IERC20(address(this)).forceApprove(address(staking_), 0);
         } else if (address(in_) == address(this)) {
             received_ = _burnHeldDetf(_pullToken(in_, amount_, prepaid_), out_, minimum_, to_);
         } else if (address(out_) == address(this)) {
             received_ = _acquireDetf(in_, amount_, prepaid_);
             out_.safeTransfer(to_, received_);
-        } else revert Repo.InvalidRoute(address(in_), address(out_));
+        } else {
+            revert Repo.InvalidRoute(address(in_), address(out_));
+        }
         if (received_ < minimum_) revert IStandardExchangeErrors.MinAmountNotMet(minimum_, received_);
         _syncAllExpectedHoldReserves();
     }

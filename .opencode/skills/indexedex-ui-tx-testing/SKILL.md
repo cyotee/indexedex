@@ -1,12 +1,6 @@
 ---
 name: indexedex-ui-tx-testing
-description: >-
-  Runs IndexedEx/DTF frontend transactions through the UI with Playwright
-  injected wallets (not MetaMask) and verifies on-chain effects. Use when the
-  user asks to "test UI txs", "e2e bond", "live swap UI", "Playwright staking",
-  "verify deposit through UI", "DTF e2e", "Robinhood Anvil UI", "click through
-  money path", or after frontend money-path changes. DO NOT use for Foundry
-  contract tests (crane-testing / indexedex-testing) or pure copy/IA smoke without txs.
+description: Playwright injected-wallet e2e of IndexedEx/DTF UI money paths with on-chain verification. Use for UI tx tests, e2e bond/stake/swap; not Foundry tests.
 license: MIT
 ---
 
@@ -83,8 +77,9 @@ E2E_SKIP_WEBSERVER=1 npm run test:e2e:live -w @indexedex/app-dtf
 3. **Query vs execute** — deposit query **8-tuple** / execute **10-tuple**; never spread execute into query.
 4. **Approvals** — multi-leg uses **split** Permit2 + router CTAs (`swap-approve-*`, ActionCta gates).
 5. **List-driven addresses** — read `chain/<id>/` tokenlists + `platform.json`; do not hardcode vaults.
-6. **Two Anvil families** — `fee_detf` (CHIR live) vs `main` (inert demos). Last export wins for `chain/4663/`.
-7. **Do not invent APY/USD** in assertions or UI checks.
+6. **Two Anvil families** — `fee_detf` ($DTF-DETF live after first bond) vs `main` (inert demos). Last export wins for `chain/4663/`.
+7. **Approvals** — button says Approve until the approval receipt, then Stake.
+8. **Do not invent APY/USD** in assertions or UI checks.
 
 ## Key files
 

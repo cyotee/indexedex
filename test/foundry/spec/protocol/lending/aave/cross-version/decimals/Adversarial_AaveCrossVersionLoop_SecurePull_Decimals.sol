@@ -60,6 +60,7 @@ abstract contract Adversarial_AaveCrossVersionLoop_SecurePull_Decimals is
         IFacet outFacet = create3Factory.deployExchangeOutFacet();
         IFacet rebalFacet = create3Factory.deployRebalanceFacet();
         IFacet markerFacet = create3Factory.deployMarkerFacet();
+        IFacet transitionQuoteFacet = create3Factory.deployTransitionQuoteFacet();
         IAaveCrossVersionLoopDFPkg.PkgInit memory pkgInit = IAaveCrossVersionLoopDFPkg.PkgInit({
             erc20Facet: erc20Facet,
             erc5267Facet: erc5267Facet,
@@ -70,6 +71,7 @@ abstract contract Adversarial_AaveCrossVersionLoop_SecurePull_Decimals is
             exchangeOutFacet: outFacet,
             rebalanceFacet: rebalFacet,
             markerFacet: markerFacet,
+            transitionQuoteFacet: transitionQuoteFacet,
             v36Pool: v36Pool,
             v36AddressesProvider: IPoolAddressesProvider(v36AddressesProvider),
             v36Oracle: IAaveOracle(v36Oracle),
@@ -141,7 +143,7 @@ abstract contract Adversarial_AaveCrossVersionLoop_SecurePull_Decimals is
         assertGt(claimedShares_, 0, "preview shares");
         uint256 attackerTokenBefore = tokenA.balanceOf(attacker);
         vm.prank(attacker);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("TransferDeltaInsufficient(uint256,uint256)", claimedShares_, 0));
         IStandardExchangeOut(vault).exchangeOut(
             IERC20(vault), type(uint256).max, tokenA, want_, attacker, true, _deadline()
         );
@@ -186,8 +188,10 @@ abstract contract Adversarial_AaveCrossVersionLoop_SecurePull_Decimals is
         _mint(tokenA, vault, _seedInAmt());
         uint256 honestShares_ = _honestDeposit(honest, _depositAmt());
         assertGt(honestShares_, 0, "partial honest path");
-        uint256 residual_ = tokenA.balanceOf(vault);
-        assertGt(residual_, 0, "residual inventory after honest In");
+        // APEX D31/D32: raw tokenA resting on the loop vault is vault-owned backing (no public
+        // pretransfer exists), so the honest deposit sweeps it into the position first.
+        assertEq(tokenA.balanceOf(vault), 0, "D31: seeded raw tokenA swept into the loop");
+        uint256 residual_ = _seedInAmt();
         uint256 attackerBefore = IERC20(vault).balanceOf(attacker);
         uint256 supplyBefore = IERC20(vault).totalSupply();
         vm.prank(attacker);
@@ -197,7 +201,7 @@ abstract contract Adversarial_AaveCrossVersionLoop_SecurePull_Decimals is
         IStandardExchangeIn(vault).exchangeIn(tokenA, residual_, IERC20(vault), 0, attacker, true, _deadline());
         assertEq(IERC20(vault).balanceOf(attacker), attackerBefore, "I3 In: no second free credit");
         assertEq(IERC20(vault).totalSupply(), supplyBefore, "I3 In: supply unchanged");
-        assertEq(tokenA.balanceOf(vault), residual_, "I3 In: residual unmoved");
+        assertEq(tokenA.balanceOf(vault), 0, "I3 In: no raw tokenA is left unbooked after the sweep");
     }
 
     function test_I3_exchangeOut_residualSelfShares_cannotFundSecondFreeCredit() public {

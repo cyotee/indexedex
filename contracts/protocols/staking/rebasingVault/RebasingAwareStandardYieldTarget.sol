@@ -19,6 +19,7 @@ import {RebasingAwareERC4626Repo} from
 import {RebasingAwareERC4626Common} from
     "contracts/protocols/staking/rebasingVault/RebasingAwareERC4626Common.sol";
 import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
 
 contract RebasingAwareStandardYieldTarget is ReentrancyLockModifiers {
     function deposit(address receiver, address tokenIn, uint256 amountTokenToDeposit, uint256 minSharesOut)
@@ -37,6 +38,10 @@ contract RebasingAwareStandardYieldTarget is ReentrancyLockModifiers {
             RebasingAwareERC4626Common.executeDeposit(amountTokenToDeposit, receiver, minSharesOut, true);
     }
 
+    /// @param burnFromInternalBalance Integrating-contract flag only when true and `msg.sender != address(this)`.
+    ///        Transfer-and-consume must be atomic; staged use is at integrator risk. Callers with no bytecode
+    ///        revert `EOAPretransferNotAllowed()`. Burns exactly `amountSharesToRedeem` from vault-held shares
+    ///        and refunds nothing (API-12). The vault's own self-call path is unaffected.
     function redeem(
         address receiver,
         uint256 amountSharesToRedeem,
@@ -48,6 +53,9 @@ contract RebasingAwareStandardYieldTarget is ReentrancyLockModifiers {
         address asset_ = address(RebasingAwareERC4626Repo._asset());
         if (tokenOut != asset_) {
             revert IStandardExchangeErrors.InvalidRoute(address(this), tokenOut);
+        }
+        if (burnFromInternalBalance && msg.sender != address(this)) {
+            LocalCreditLib.requirePretransferCaller(msg.sender);
         }
         RebasingAwareERC4626Common.ShareSource source = burnFromInternalBalance
             ? RebasingAwareERC4626Common.ShareSource.PublicBalanceExactBurn

@@ -33,6 +33,20 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Liquidity is TestBas
         assertEq(IERC20(hook).totalSupply(), supply - burn);
     }
 
+    function test_D36_restingFace_notPaidToJoiner() public {
+        _firstMintEqual(100 ether);
+        address donor = address(0xD0D0);
+        token0.mint(donor, 500 ether);
+        vm.prank(donor);
+        token0.transfer(hook, 500 ether);
+        uint256 user0 = token0.balanceOf(user);
+        uint256[] memory amounts = new uint256[](4);
+        for (uint256 i; i < 4; ++i) amounts[i] = 1 ether;
+        vm.prank(user);
+        quad.joinProportional(amounts, user, 0, block.timestamp + 1 hours);
+        assertLt(token0.balanceOf(user), user0, "D36: joiner does not collect resting face");
+    }
+
     function test_exitProportional_doesNotDumpDustOnCaller() public {
         uint256 shares = _firstMintEqual(500 ether);
         assertLe(token0.balanceOf(hook), 10, "SE-buffered pair after deposit is dust");

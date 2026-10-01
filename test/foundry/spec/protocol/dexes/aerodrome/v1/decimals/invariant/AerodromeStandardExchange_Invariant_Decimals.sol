@@ -15,8 +15,6 @@ import {
  * @dev After Aerodrome pool address sort, token0/token1 may swap; roles stay pairToken vs other.
  *      vaultShare stays 18. Dust cap is 1000 human units of each token.
  */
-/// forge-config: default.invariant.runs = 24
-/// forge-config: default.invariant.depth = 10
 abstract contract AerodromeStandardExchange_Invariant_Decimals is TestBase_AerodromeStandardExchange_Decimals {
     Handler_AerodromeStandardExchange_Decimals internal handler;
     address internal invActor0;

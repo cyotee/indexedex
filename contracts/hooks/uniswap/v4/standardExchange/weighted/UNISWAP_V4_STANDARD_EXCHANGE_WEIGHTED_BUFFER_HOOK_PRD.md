@@ -914,3 +914,14 @@ Public swaps stay public. Non-owner cannot use the owner path. Alignment D15 las
 Implementation plan is co-located: [`UNISWAP_V4_STANDARD_EXCHANGE_WEIGHTED_BUFFER_HOOK_IMPLEMENTATION_AND_TEST_PLAN.md`](./UNISWAP_V4_STANDARD_EXCHANGE_WEIGHTED_BUFFER_HOOK_IMPLEMENTATION_AND_TEST_PLAN.md) (**v1.0**). **Only remaining implementor branch:** Phase 0a closed-form audit → ship or omit **`withdrawSingleExactOut`** / exit exact-token-out (Q21 / D42a). **`joinSingleAssetExactOut` is required** (Q27). Everything else is locked product law — implement per plan phases 0–K.
 
 **End of PRD — UniswapV4StandardExchangeWeightedBufferHook (Draft v0.7)**
+
+---
+
+## Addendum: APEX D60 held-reserve valuation (2026-09-22)
+
+Owner ruling recorded in `docs/audits/apex-2026-09-17-remediation-and-regression-tests.plan.md` (D59, D60) and `docs/audits/apex-2026-09-17-open-item-10-cp-hook-rate-providers-PRD.md`; supersedes any statement in this PRD that values a held SE leg through the SE's own quote (`previewExchangeIn(se, heldShares, token)` or transition-quote `quoteAssets`).
+
+- `PkgArgs.rateProviders[i]` is required on every SE leg and accepted on any leg (`RateProviderWithoutSE` removed, `RateProviderRequired` added). `ClaimLib.ratedPairUnits(i)` is the only reserve valuation. Getters are hosted on `ExitQueryTarget` / `ExitQueryFacet`.
+- Swap-side valuation of a buffered leg is `shares x rate` (`Math.ratedPairUnits` with the Balancer rate scaling `invScale = 10^(36 - seDecimals)`, `ratedScale = 10^(36 - tokenDecimals)`); the SE is asked only how many shares a buffer mints or how much pair an unwrap pays.
+- Liquidity operations use raw balances (D59): LP issuance for a buffered leg follows the share ratio, exits are pro rata in raw shares and raw tokens.
+- Getters `rateProviders()` and `rateProvider(address token)` are on the proxy surface.

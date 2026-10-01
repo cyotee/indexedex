@@ -1,0 +1,1455 @@
+--- a/test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/Handler_StandardExchangeBufferPool.sol
++++ b/test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/Handler_StandardExchangeBufferPool.sol
+@@ -1,214 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+-pragma solidity ^0.8.0;
++pragma solidity ^0.8.24;
++import {BufferPoolInvariantHandler, IBufferInvariantFunding} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BufferPoolInvariantHandler.sol";
+ 
+-import {Test} from "forge-std/Test.sol";
+-import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+-
+-import {TestBase_StandardExchangeBufferPool} from
+-    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/bases/TestBase_StandardExchangeBufferPool.sol";
+-import {IStandardExchangeBufferPool} from
+-    "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPool.sol";
+-
+-/**
+- * @title Handler_StandardExchangeBufferPool
+- * @notice Foundry invariant handler for the Standard Exchange Buffer Pool.
+- *
+- * @dev The Foundry invariant fuzzer calls this contract's public functions with random inputs.
+- *      Each action is wrapped in try/catch so that out-of-bounds fuzz inputs (which trigger pool
+- *      reverts) are silently discarded; only successful operations increment ghost counters.
+- *      The invariant test contract (Task 24) reads the ghost variables to correlate successful
+- *      operations with the pool state it asserts on.
+- *
+- * Actor model:
+- *   - Two actors (alice, bob) are picked via seed % 2.
+- *   - Before each action the handler mints/tops-up the actor's token balance so the
+- *     pool bounds - not insufficient balance - are the limiting factor for rejection.
+- */
+-contract Handler_StandardExchangeBufferPool is Test {
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                               References                                */
+-    /* ---------------------------------------------------------------------- */
+-
+-    TestBase_StandardExchangeBufferPool public immutable BASE;
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                           Ghost Accumulators                            */
+-    /* ---------------------------------------------------------------------- */
+-
+-    /// @notice Cumulative TTA sent into the pool via TTA→shares swaps.
+-    uint256 public ghost_totalTTAIn;
+-    /// @notice Cumulative shares received from TTA→shares swaps.
+-    uint256 public ghost_totalSharesOut;
+-    /// @notice Cumulative shares sent into the pool via shares→TTA swaps.
+-    uint256 public ghost_totalSharesIn;
+-    /// @notice Cumulative TTA received from shares→TTA swaps.
+-    uint256 public ghost_totalTTAOut;
+-    /// @notice Number of successful LP add operations (proportional).
+-    uint256 public ghost_lpDepositCount;
+-    /// @notice Number of successful LP add operations (unbalanced, Change 1).
+-    uint256 public ghost_lpUnbalancedDepositCount;
+-    /// @notice Number of successful LP remove operations.
+-    uint256 public ghost_lpRemoveCount;
+-    /// @notice Number of successful TTA→shares swaps.
+-    uint256 public ghost_swapTTAtoSharesCount;
+-    /// @notice Number of successful shares→TTA swaps.
+-    uint256 public ghost_swapSharesToTTACount;
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                               Actors                                    */
+-    /* ---------------------------------------------------------------------- */
+-
+-    address internal immutable _alice;
+-    address internal immutable _bob;
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                             Constructor                                 */
+-    /* ---------------------------------------------------------------------- */
+-
+-    constructor(TestBase_StandardExchangeBufferPool base_) {
+-        BASE = base_;
+-        _alice = base_.getAlice();
+-        _bob   = base_.getBob();
+-    }
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                            Internal Helpers                             */
+-    /* ---------------------------------------------------------------------- */
+-
+-    /// @dev Returns one of the two actors deterministically from an arbitrary seed.
+-    function _pickActor(uint256 seed) internal view returns (address) {
+-        return (seed % 2 == 0) ? _alice : _bob;
+-    }
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                           User-Facing Actions                           */
+-    /* ---------------------------------------------------------------------- */
+-
+-    /**
+-     * @notice Fuzz action: swap TTA (DAI) into the pool and receive shares.
+-     * @dev Mints enough TTA to the actor if needed so the pool bounds - not a zero
+-     *      balance - drive rejection.  Bounded to [1e15, 100e18] to stay within
+-     *      realistic pool liquidity.
+-     */
+-    function swap_TTA_in(uint256 amount, uint256 actorSeed) public {
+-        address actor = _pickActor(actorSeed);
+-
+-        // Ensure the actor has a sufficient TTA balance.
+-        uint256 actorBal = BASE.tta().balanceOf(actor);
+-        uint256 cap = 100e18;
+-        if (actorBal < 1e15) {
+-            BASE.mintTTA(actor, cap);
+-            actorBal = BASE.tta().balanceOf(actor);
+-        }
+-
+-        amount = bound(amount, 1e15, actorBal > cap ? cap : actorBal);
+-
+-        try BASE.swapTTAforShares(actor, amount) returns (uint256 out) {
+-            ghost_totalTTAIn     += amount;
+-            ghost_totalSharesOut += out;
+-            ghost_swapTTAtoSharesCount++;
+-        } catch {
+-            // Pool bounds or fee constraints rejected the swap - not an invariant violation.
+-        }
+-    }
+-
+-    /**
+-     * @notice Fuzz action: swap shares into the pool and receive TTA.
+-     * @dev Mints shares to the actor via the full Aerodrome→SE-vault path if needed.
+-     *      Bounded to [1e15, 100e18].
+-     */
+-    function swap_shares_in(uint256 amount, uint256 actorSeed) public {
+-        address actor = _pickActor(actorSeed);
+-
+-        uint256 actorBal = BASE.shares().balanceOf(actor);
+-        uint256 cap = 100e18;
+-        if (actorBal < 1e15) {
+-            BASE.mintShares(actor, cap);
+-            actorBal = BASE.shares().balanceOf(actor);
+-        }
+-
+-        amount = bound(amount, 1e15, actorBal > cap ? cap : actorBal);
+-
+-        try BASE.swapSharesForTTA(actor, amount) returns (uint256 out) {
+-            ghost_totalSharesIn += amount;
+-            ghost_totalTTAOut   += out;
+-            ghost_swapSharesToTTACount++;
+-        } catch {
+-            // Ignore reversions from pool math / fee bounds.
+-        }
+-    }
+-
+-    /**
+-     * @notice Fuzz action: add proportional liquidity to the pool.
+-     * @dev Ensures the actor has enough of both tokens before attempting the add.
+-     *      bptOut is bounded to at most half the current BPT supply to avoid
+-     *      exhausting the pool.
+-     */
+-    function lp_add(uint256 bptOut, uint256 actorSeed) public {
+-        address actor = _pickActor(actorSeed);
+-        address pool  = BASE.bufferPool();
+-
+-        uint256 supply = IERC20(pool).totalSupply();
+-        if (supply == 0) return;
+-
+-        bptOut = bound(bptOut, 1e12, supply / 2);
+-
+-        // Top-up both token balances so the actor can contribute.
+-        BASE.mintTTA(actor, type(uint128).max);
+-        BASE.mintShares(actor, 100e18);
+-
+-        try BASE.addLiquidityProportional(actor, bptOut, type(uint128).max, type(uint128).max) {
+-            ghost_lpDepositCount++;
+-        } catch {
+-            // Ignore: ratio bounds or hook constraints may reject.
+-        }
+-    }
+-
+-    /**
+-     * @notice Fuzz action: add liquidity unbalanced - shares only (Change 1).
+-     * @dev Contributes only shares, exercising the new UNBALANCED code path in onAfterAddLiquidity.
+-     *      Shares-only unbalanced adds increase derived_y (the pool's BPT-visible invariant side),
+-     *      so they produce a positive bptAmountOut. TTA-only unbalanced adds cannot produce BPT
+-     *      because computeInvariant reads virtualTTA from storage (not from balancesLiveScaled18),
+-     *      so the invariant appears unchanged to the Vault's computeAddLiquidityUnbalanced.
+-     *      Bounded to [1e15, 20e18] to stay within realistic pool depth.
+-     */
+-    function lp_add_unbalanced(uint256 sharesAmount, uint256 actorSeed) public {
+-        address actor = _pickActor(actorSeed);
+-
+-        // Ensure the actor has sufficient shares.
+-        uint256 cap = 20e18;
+-        sharesAmount = bound(sharesAmount, 1e15, cap);
+-        BASE.mintShares(actor, cap); // mint enough to guarantee sharesAmount is covered
+-
+-        try BASE.addLiquidityUnbalanced(actor, 0, sharesAmount) returns (uint256) {
+-            ghost_lpUnbalancedDepositCount++;
+-            // Count as a deposit for the noFreeValue invariant skip logic.
+-            ghost_lpDepositCount++;
+-        } catch {
+-            // Pool math or invariant ratio bounds may reject - not an invariant violation.
+-        }
+-    }
+-
+-    /**
+-     * @notice Fuzz action: remove proportional liquidity from the pool.
+-     * @dev Only proceeds if the actor holds BPT.  bptIn is bounded to the actor's
+-     *      entire BPT balance so the pool is never left with a negative supply.
+-     */
+-    function lp_remove(uint256 bptIn, uint256 actorSeed) public {
+-        address actor = _pickActor(actorSeed);
+-        address pool  = BASE.bufferPool();
+-
+-        uint256 actorBpt = IERC20(pool).balanceOf(actor);
+-        if (actorBpt == 0) return;
+-
+-        bptIn = bound(bptIn, 1, actorBpt);
+-
+-        try BASE.removeLiquidityProportional(actor, bptIn, 0, 0) {
+-            ghost_lpRemoveCount++;
+-        } catch {
+-            // Ignore: minimum-supply or dust-amount guards may reject.
+-        }
+-    }
++contract Handler_StandardExchangeBufferPool is BufferPoolInvariantHandler {
++    constructor(Config memory config_) BufferPoolInvariantHandler(config_) {}
+ }
+--- a/test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPool.invariant.t.sol
++++ b/test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPool.invariant.t.sol
+@@ -1,216 +1,53 @@
+ // SPDX-License-Identifier: BSL-1.1
+-pragma solidity ^0.8.0;
++pragma solidity ^0.8.24;
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+-import {TestBase_StandardExchangeBufferPool} from
+-    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/bases/TestBase_StandardExchangeBufferPool.sol";
+-import {Handler_StandardExchangeBufferPool} from
+-    "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/Handler_StandardExchangeBufferPool.sol";
+-import {IStandardExchangeBufferPool} from
+-    "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPool.sol";
++import {IRouter} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IRouter.sol";
++import {IAllowanceTransfer} from "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
++import {TestBase_StandardExchangeBufferPool as TestBase} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/bases/TestBase_StandardExchangeBufferPool.sol";
++import {BufferPoolInvariantHandler, IBufferInvariantFunding} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BufferPoolInvariantHandler.sol";
++import {Handler_StandardExchangeBufferPool} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/Handler_StandardExchangeBufferPool.sol";
+ 
+-/**
+- * @title StandardExchangeBufferPoolInvariant
+- * @notice Foundry invariant test suite for the Standard Exchange Buffer Pool.
+- *
+- * @dev **L3 GOLD** for IndexedEx property/invariant program
+- *      (`docs/testing/FUZZ_INVARIANT_COVERAGE_GAP_REPORT.md`).
+- *
+- *      Uses Handler_StandardExchangeBufferPool to drive random swap, LP-add, and LP-remove
+- *      operations against the deployed pool.  Each invariant_* function corresponds to a
+- *      spec section 8.3 assertion.
+- *
+- *      Forge-config overrides keep the default run count small enough for CI:
+- *        runs = 50   (50 random call sequences)
+- *        depth = 20  (20 handler calls per sequence)
+- */
++
+ /// forge-config: default.invariant.runs = 256
+ /// forge-config: default.invariant.depth = 64
+-contract StandardExchangeBufferPoolInvariant is TestBase_StandardExchangeBufferPool {
+-
+-    Handler_StandardExchangeBufferPool internal handler;
+-
+-    /* ---------------------------------------------------------------------- */
+-    /*                                setUp                                     */
+-    /* ---------------------------------------------------------------------- */
++/// forge-config: default.invariant.fail-on-revert = true
++contract StandardExchangeBufferPoolInvariant is TestBase, IBufferInvariantFunding {
++    BufferPoolInvariantHandler internal handler;
+ 
+     function setUp() public override {
+         super.setUp();
+-
+-        handler = new Handler_StandardExchangeBufferPool(this);
+-
+-        // Restrict the fuzzer to the five handler entry-points (includes unbalanced add, Change 1).
+-        bytes4[] memory selectors = new bytes4[](5);
+-        selectors[0] = Handler_StandardExchangeBufferPool.swap_TTA_in.selector;
+-        selectors[1] = Handler_StandardExchangeBufferPool.swap_shares_in.selector;
+-        selectors[2] = Handler_StandardExchangeBufferPool.lp_add.selector;
+-        selectors[3] = Handler_StandardExchangeBufferPool.lp_remove.selector;
+-        selectors[4] = Handler_StandardExchangeBufferPool.lp_add_unbalanced.selector;
+-
++        BufferPoolInvariantHandler.Config memory c;
++        c.pool = bufferPool;
++        c.router = IRouter(address(router));
++        c.vault = bv3Vault;
++        c.permit2 = IAllowanceTransfer(address(permit2));
++        c.buffer = IERC20(address(dai));
++        c.shares = IERC20(address(seVault));
++        c.funding = IBufferInvariantFunding(address(this));
++        c.virtualBookCount = 1;
++        c.buffers = new IERC20[](1);
++        c.buffers[0] = IERC20(address(dai));
++        c.bookCalls = new bytes[](2);
++        c.bookCalls[0] = abi.encodeWithSignature("virtualTTA()");
++        c.bookCalls[1] = abi.encodeWithSignature("hookSharesDelta()");
++        handler = new Handler_StandardExchangeBufferPool(c);
++        bytes4[] memory selectors = new bytes4[](1);
++        selectors[0] = handler.cycle.selector;
+         targetContract(address(handler));
+         targetSelector(FuzzSelector({addr: address(handler), selectors: selectors}));
+     }
+ 
+-    /* ---------------------------------------------------------------------- */
+-    /*                            Invariant Tests                               */
+-    /* ---------------------------------------------------------------------- */
+-
+-    /**
+-     * @notice §8.3 I-1: virtualTTA is always a uint256 that does not exceed a sane upper
+-     *         bound, i.e. the pool's virtual accounting never silently wraps around.
+-     *
+-     *         uint256 cannot be negative, so the primary risk is an overflow / wraparound
+-     *         that sets virtualTTA to a value close to type(uint256).max.  We cap at
+-     *         type(uint128).max as a generous-but-finite sentinel.
+-     */
+-    function invariant_virtualTTABounded() public view {
+-        IStandardExchangeBufferPool p = IStandardExchangeBufferPool(bufferPool);
+-        assertLt(p.virtualTTA(), type(uint128).max, "I-1: virtualTTA overflowed uint128 boundary");
++    function fundInvariantToken(address actor, IERC20 token, uint256 amount) external {
++        if (address(token) == address(seVault)) mintShares(actor, amount);
++        else dai.mint(actor, amount);
+     }
+ 
+-    /**
+-     * @notice §8.3 I-2: BPT total supply remains strictly positive after pool initialization.
+-     *
+-     *         The pool mints a minimum BPT dust on init and should never reach zero supply
+-     *         through normal swaps or LP removals (Balancer V3 guards the minimum supply).
+-     */
+-    function invariant_bptSupplyPositive() public view {
+-        assertGt(
+-            IERC20(bufferPool).totalSupply(),
+-            0,
+-            "I-2: BPT total supply dropped to zero"
+-        );
+-    }
+-
+-    /**
+-     * @notice §8.3 I-3: virtualTTA is always non-zero after initialization.
+-     *
+-     *         The pool is seeded with a non-trivial virtualTTA at init.  If every swap
+-     *         drains it, the pool's PoolTTASideExhausted guard fires and reverts; virtualTTA
+-     *         should therefore never reach zero under normal handler activity.
+-     */
+-    function invariant_virtualTTAPositive() public view {
+-        IStandardExchangeBufferPool p = IStandardExchangeBufferPool(bufferPool);
+-        assertGt(p.virtualTTA(), 0, "I-3: virtualTTA reached zero unexpectedly");
+-    }
+-
+-    /**
+-     * @notice §8.3 I-4: The pool's actual TTA balance in the Balancer Vault is bounded.
+-     *
+-     *         Under Change 1 (eventual zero TTA), unbalanced LP adds can leave physical TTA
+-     *         sitting in the pool between operations.  The strict "proportional growth" bound
+-     *         no longer applies.  We relax to a permissive ceiling of type(uint128).max,
+-     *         which catches only catastrophic overflow / unbounded accumulation bugs.
+-     *
+-     *         Tighter bounding (e.g. "actual TTA <= sum of unbalanced TTA deposits minus drained
+-     *         TTA") is deferred to a dedicated integration test once the opportunistic drain
+-     *         mechanism (onAfterSwap reconcile) is fully characterised.  In steady state -
+-     *         when swaps occur regularly - the existing onAfterSwap drain maintains near-zero
+-     *         actual TTA for TTA→shares swap paths.
+-     */
+-    function invariant_actualTTABounded() public view {
+-        (, , uint256[] memory rawBalances, ) = bv3Vault.getPoolTokenInfo(bufferPool);
+-        IStandardExchangeBufferPool p = IStandardExchangeBufferPool(bufferPool);
+-        uint256 ttaBal = rawBalances[p.ttaIndex()];
+-
+-        assertLt(
+-            ttaBal,
+-            type(uint128).max,
+-            "I-4: actual TTA exceeded uint128 boundary - drain failure or overflow?"
+-        );
+-    }
+-
+-    /**
+-     * @notice §8.3 I-5: No free value via swaps only - TTA extracted via shares→TTA swaps
+-     *         does not exceed TTA contributed via TTA→shares swaps plus the TTA-equivalent
+-     *         value of shares contributed (using the canonical rate provider), with a small
+-     *         rounding allowance.  Only checked when no LP operations occurred in the sequence.
+-     *
+-     *         The handler's lp_add action freely mints TTA and shares to actors; this value
+-     *         is not tracked in ghost_totalTTAIn and would cause a spurious failure if LP
+-     *         operations are mixed with swap tracking.  This invariant therefore checks a
+-     *         swap-isolated sub-property: when the sequence contains only swaps and LP removes
+-     *         (which consume rather than inject value), the swap ghost counters balance out.
+-     *
+-     *         When LP adds have occurred (ghost_lpDepositCount > 0) the invariant is skipped
+-     *         because the minted collateral makes the ghost-only accounting incomplete.
+-     *
+-     *         Shares are converted to TTA-equivalent using the pool's rate provider so the
+-     *         invariant is correct regardless of the rate provider implementation.
+-     */
+-    function invariant_noFreeValue() public view {
+-        // Skip if any LP add occurred - free mints during lp_add break ghost accounting.
+-        if (handler.ghost_lpDepositCount() > 0) return;
+-
+-        uint256 ttaOut   = handler.ghost_totalTTAOut();
+-        uint256 ttaIn    = handler.ghost_totalTTAIn();
+-        uint256 sharesIn = handler.ghost_totalSharesIn();
+-
+-        // Nothing happened: trivially satisfied.
+-        if (ttaIn == 0 && sharesIn == 0 && ttaOut == 0) return;
+-
+-        // Convert shares contributed to TTA-equivalent using the current rate.
+-        // rate = TTA per 1e18 shares (WAD).  Fall back to 1e18 if rate is zero.
+-        uint256 rate = IStandardExchangeBufferPool(bufferPool).rateProvider().getRate();
+-        if (rate == 0) rate = 1e18;
+-        uint256 sharesInTTA = (sharesIn * rate) / 1e18;
+-
+-        // TTA contributed plus TTA-equivalent of shares contributed must meet or exceed
+-        // TTA extracted.  1e18 headroom absorbs CP slippage and rounding artifacts.
+-        assertLe(
+-            ttaOut,
+-            ttaIn + sharesInTTA + 1e18,
+-            "I-5: TTA extracted via swaps exceeds TTA + shares contributed (swap-only sequences)"
+-        );
+-    }
+-
+-    /**
+-     * @notice §8.3 I-6: Successful swap count is non-decreasing (sanity check that the
+-     *         handler ghost variables never decrement, which would indicate a re-entrancy
+-     *         or storage-collision issue in the test harness itself).
+-     *
+-     *         Because Foundry resets state between invariant runs this assertion verifies
+-     *         monotonicity only within one fuzz sequence.
+-     */
+-    function invariant_ghostCountersMonotonic() public view {
+-        // Ghost counters are additive-only: they start at 0 and only increment on success.
+-        // Asserting >= 0 is trivially satisfied for uint256, so we assert the two swap
+-        // direction counts sum to the total observed swap operations.
+-        uint256 totalSwaps = handler.ghost_swapTTAtoSharesCount() + handler.ghost_swapSharesToTTACount();
+-        uint256 totalLp    = handler.ghost_lpDepositCount() + handler.ghost_lpRemoveCount();
+-        // These must be valid uint256 values (non-wrapping) - the assertion fires if
+-        // the addition itself overflowed, which would indicate a ghost variable bug.
+-        assertLe(totalSwaps, type(uint128).max, "I-6a: swap ghost counter wrapped");
+-        assertLe(totalLp,    type(uint128).max, "I-6b: LP ghost counter wrapped");
+-    }
+-
+-    /**
+-     * @notice §8.3 I-7: hookSharesDelta can be any int256 but must not silently overflow.
+-     *
+-     *         The delta tracks how many shares the hook owes back to the pool after a swap.
+-     *         We assert its absolute value stays below type(int128).max as a sanity ceiling.
+-     */
+-    function invariant_hookSharesDeltaBounded() public view {
+-        IStandardExchangeBufferPool p = IStandardExchangeBufferPool(bufferPool);
+-        int256 delta = p.hookSharesDelta();
+-        int256 ceiling = int256(uint256(type(uint128).max));
+-        assertTrue(delta > -ceiling && delta < ceiling, "I-7: hookSharesDelta exceeded int128 boundary");
+-    }
+-
+-    /**
+-     * @notice §8.3 I-8: After every handler action the pool still has a positive shares
+-     *         balance in the Balancer Vault (the shares side must never be fully drained).
+-     *
+-     *         PoolSharesSideExhausted guards prevent this in normal operation; if shares
+-     *         somehow reached zero it would break all future TTA→shares swaps permanently.
+-     */
+-    function invariant_actualSharesPositive() public view {
+-        (, , uint256[] memory rawBalances, ) = bv3Vault.getPoolTokenInfo(bufferPool);
+-        IStandardExchangeBufferPool p = IStandardExchangeBufferPool(bufferPool);
+-        assertGt(
+-            rawBalances[p.sharesIndex()],
+-            0,
+-            "I-8: actual shares balance in Vault reached zero"
+-        );
++    function invariant_bufferPoolAccounting() public view { handler.assertAccounting(); }
++    function afterInvariant() public view { handler.assertCampaign(); }
++    function test_deterministicBufferLifecycle() public {
++        for (uint256 i; i < 24; ++i) handler.cycle(1e15, i, i);
++        assertEq(handler.attempted(), 24);
++        handler.assertCampaign();
+     }
+ }
+--- /dev/null
++++ b/test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BufferPoolInvariantHandler.sol
+@@ -0,0 +1,372 @@
++// SPDX-License-Identifier: BSL-1.1
++pragma solidity ^0.8.24;
++
++import {Test} from "forge-std/Test.sol";
++import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
++import {IRouter} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IRouter.sol";
++import {IVault} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IVault.sol";
++import {IHooks} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IHooks.sol";
++import {PoolSwapParams, SwapKind} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/VaultTypes.sol";
++import {IAllowanceTransfer} from "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
++import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
++
++interface IBufferInvariantFunding {
++    /// @dev TestBase adapter funds external tokens or acquires SE shares through the real protocol.
++    function fundInvariantToken(address actor, IERC20 token, uint256 amount) external;
++}
++
++/// @dev Integration fixture which treats the documented false callback as a failed operation.
++contract AtomicFalseHookCaller {
++    error CallbackRejected();
++    function transferAndCheck(IERC20 token, address payer, address target, uint256 amount, bytes calldata data) external {
++        token.transferFrom(payer, target, amount);
++        (bool ok, bytes memory returned) = target.call(data);
++        if (!ok) assembly ("memory-safe") { revert(add(returned, 32), mload(returned)) }
++        if (!abi.decode(returned, (bool))) revert CallbackRejected();
++    }
++}
++
++/// @notice Real Balancer router lifecycles with funded actions, three holders and exact accounting.
++/// @dev D32 callbacks reject unauthorized callers by returning false. The handler asserts that exact
++///      status and complete rollback at a checking integration boundary. No action is catch-and-ignored.
++contract BufferPoolInvariantHandler is Test {
++    struct Config {
++        address pool;
++        IRouter router;
++        IVault vault;
++        IAllowanceTransfer permit2;
++        IERC20 buffer;
++        IERC20 shares;
++        IERC20[] buffers;
++        IERC20 unpaired;
++        IBufferInvariantFunding funding;
++        bytes[] bookCalls;
++        uint256 virtualBookCount;
++    }
++    address public immutable pool;
++    IRouter internal immutable router;
++    IVault internal immutable vault;
++    IAllowanceTransfer internal immutable permit2;
++    IBufferInvariantFunding internal immutable funding;
++    IERC20 internal immutable buffer;
++    IERC20 internal immutable share;
++    IERC20 internal immutable unpaired;
++    mapping(IERC20 => bool) internal isBuffer;
++    IERC20[] internal tokens;
++    bytes[] internal bookCalls;
++    uint256 internal immutable virtualBookCount;
++    uint256 internal immutable bufferIndex;
++    uint256 internal immutable shareIndex;
++    uint256 internal immutable initialSupply;
++    AtomicPretransferCaller public immutable attackerContract;
++    AtomicFalseHookCaller public immutable integrator;
++    address[3] public actors = [address(0xBA1101), address(0xBA1102), address(0xBA1103)];
++    address public constant attacker = address(0xBAD211);
++    uint256 public attempted;
++    uint256 public joined;
++    uint256 public exited;
++    uint256 public minted;
++    uint256 public burned;
++    mapping(address => uint256) public expectedShares;
++    uint256[8] public actionAttempts;
++    uint256[8] public actionSuccesses;
++    uint256[8] public expectedRejections;
++
++    constructor(Config memory c) {
++        pool = c.pool;
++        router = c.router;
++        vault = c.vault;
++        permit2 = c.permit2;
++        funding = c.funding;
++        buffer = c.buffer;
++        share = c.shares;
++        unpaired = c.unpaired;
++        for (uint256 i; i < c.buffers.length; ++i) isBuffer[c.buffers[i]] = true;
++        bookCalls = c.bookCalls;
++        virtualBookCount = c.virtualBookCount;
++        (IERC20[] memory listed,,,) = c.vault.getPoolTokenInfo(c.pool);
++        tokens = listed;
++        uint256 bi;
++        uint256 si;
++        for (uint256 i; i < listed.length; ++i) {
++            if (listed[i] == c.buffer) bi = i;
++            if (listed[i] == c.shares) si = i;
++            for (uint256 j; j < 3; ++j) {
++                vm.startPrank(actors[j]);
++                listed[i].approve(address(c.permit2), type(uint256).max);
++                c.permit2.approve(address(listed[i]), address(c.router), type(uint160).max, type(uint48).max);
++                vm.stopPrank();
++            }
++        }
++        bufferIndex = bi;
++        shareIndex = si;
++        for (uint256 j; j < 3; ++j) {
++            vm.startPrank(actors[j]);
++            IERC20(c.pool).approve(address(c.router), type(uint256).max);
++            IERC20(c.pool).approve(address(c.permit2), type(uint256).max);
++            c.permit2.approve(c.pool, address(c.router), type(uint160).max, type(uint48).max);
++            vm.stopPrank();
++        }
++        initialSupply = IERC20(c.pool).totalSupply();
++        attackerContract = new AtomicPretransferCaller();
++        integrator = new AtomicFalseHookCaller();
++    }
++
++    function cycle(uint256 amountSeed, uint256 actorSeed, uint256 exitSeed) external {
++        uint256 step = attempted++;
++        address actor = actors[(step < 24 ? step : actorSeed) % 3];
++        uint256 action = (step < 24 ? step : amountSeed) % 8;
++        uint256 bpt = _join(actor, amountSeed);
++        _exit(actor, bound(exitSeed, bpt / 4, bpt / 2));
++        ++actionAttempts[action];
++        uint256 amount = bound(amountSeed, 1e12, 1e15);
++        if (action < 4) _swap(actor, amount, action);
++        else if (action == 4) _donateAndTransfer(actor, actorSeed, amount);
++        else if (action == 5) _falseControls();
++        else if (action == 6) _atomicRollback(actor, amount);
++        else {
++            _joinUnbalanced(actor, amount);
++            if (address(unpaired) != address(0)) _swapUnpaired(actor, amount);
++        }
++        ++actionSuccesses[action];
++    }
++
++    function _fundAtLeast(address actor, IERC20 token, uint256 required) internal {
++        // Existing honest balances fund subsequent actions. Reacquire external protocol shares
++        // only when necessary; do not fabricate shares or skip an action for insufficient funds.
++        if (token.balanceOf(actor) < required) funding.fundInvariantToken(actor, token, 100 ether);
++        assertGe(token.balanceOf(actor), required, "production funding covers the action");
++    }
++
++    function _join(address actor, uint256 seed) internal returns (uint256 bpt) {
++        uint256[] memory maxIn = new uint256[](tokens.length);
++        uint256[] memory beforeBalances = new uint256[](tokens.length);
++        for (uint256 i; i < tokens.length; ++i) _fundAtLeast(actor, tokens[i], 1 ether);
++        // Acquiring a share token can also move its underlying face token. Snapshot only after
++        // all production funding routes finish, immediately before the liquidity operation.
++        for (uint256 i; i < tokens.length; ++i) {
++            beforeBalances[i] = tokens[i].balanceOf(actor);
++            maxIn[i] = beforeBalances[i];
++        }
++        // Physical buffer can remain after initialization; fund every registered token so the
++        // proportional route satisfies the live production book, including any residual face.
++        bpt = bound(seed, 1e12, IERC20(pool).totalSupply() / 10000);
++        uint256 lpBefore = IERC20(pool).balanceOf(actor);
++        uint256 supplyBefore = IERC20(pool).totalSupply();
++        int256[] memory booksBefore = _readBooks();
++        vm.prank(actor);
++        uint256[] memory used = router.addLiquidityProportional(pool, maxIn, bpt, false, "");
++        assertEq(IERC20(pool).balanceOf(actor) - lpBefore, bpt, "exact BPT issuance");
++        uint256 totalUsed;
++        for (uint256 i; i < tokens.length; ++i) {
++            totalUsed += used[i];
++            assertEq(beforeBalances[i] - tokens[i].balanceOf(actor), used[i], "proportional input debit");
++            assertLe(used[i], maxIn[i], "proportional input budget");
++        }
++        assertGt(totalUsed, 0, "successful join consumes real input");
++        _assertScaledBooks(booksBefore, bpt, supplyBefore, true);
++        expectedShares[actor] += bpt;
++        minted += bpt;
++        ++joined;
++    }
++
++    function _exit(address actor, uint256 bpt) internal {
++        uint256[] memory beforeBalances = new uint256[](tokens.length);
++        for (uint256 i; i < tokens.length; ++i) beforeBalances[i] = tokens[i].balanceOf(actor);
++        uint256 lpBefore = IERC20(pool).balanceOf(actor);
++        uint256 supplyBefore = IERC20(pool).totalSupply();
++        int256[] memory booksBefore = _readBooks();
++        vm.prank(actor);
++        uint256[] memory paid = router.removeLiquidityProportional(pool, bpt, new uint256[](tokens.length), false, "");
++        assertEq(lpBefore - IERC20(pool).balanceOf(actor), bpt, "exact BPT burn");
++        uint256 total;
++        for (uint256 i; i < tokens.length; ++i) {
++            assertEq(tokens[i].balanceOf(actor) - beforeBalances[i], paid[i], "partial exit delivery");
++            total += paid[i];
++        }
++        assertGt(total, 0, "partial exit is funded");
++        _assertScaledBooks(booksBefore, bpt, supplyBefore, false);
++        expectedShares[actor] -= bpt;
++        burned += bpt;
++        ++exited;
++    }
++
++    function _swap(address actor, uint256 amount, uint256 action) internal {
++        IERC20 input = action % 2 == 0 ? buffer : share;
++        IERC20 output = action % 2 == 0 ? share : buffer;
++        _fundAtLeast(actor, input, 1 ether);
++        uint256 beforeInput = input.balanceOf(actor);
++        uint256 beforeOutput = output.balanceOf(actor);
++        vm.prank(actor);
++        uint256 result = action < 2
++            ? router.swapSingleTokenExactIn(pool, input, output, amount, 1, block.timestamp + 1 hours, false, "")
++            : router.swapSingleTokenExactOut(pool, input, output, amount, beforeInput, block.timestamp + 1 hours, false, "");
++        assertGt(result, 0, "funded trade executes");
++        assertEq(beforeInput - input.balanceOf(actor), action < 2 ? amount : result, "trade input debit/refund");
++        assertEq(output.balanceOf(actor) - beforeOutput, action < 2 ? result : amount, "trade output delivery");
++    }
++
++    function _swapUnpaired(address actor, uint256 amount) internal {
++        _fundAtLeast(actor, unpaired, 1 ether);
++        uint256 beforeIn = unpaired.balanceOf(actor);
++        uint256 beforeOut = buffer.balanceOf(actor);
++        vm.prank(actor);
++        uint256 out = router.swapSingleTokenExactIn(pool, unpaired, buffer, amount, 1, block.timestamp + 1 hours, false, "");
++        assertEq(beforeIn - unpaired.balanceOf(actor), amount, "unpaired trade input debit");
++        assertEq(buffer.balanceOf(actor) - beforeOut, out, "unpaired trade delivery");
++        assertGt(out, 0, "unpaired trade pays");
++    }
++
++    function _joinUnbalanced(address actor, uint256 amount) internal {
++        _fundAtLeast(actor, share, 1 ether);
++        uint256[] memory amounts = new uint256[](tokens.length);
++        amounts[shareIndex] = amount;
++        uint256 beforeShare = share.balanceOf(actor);
++        uint256 beforeBpt = IERC20(pool).balanceOf(actor);
++        vm.prank(actor);
++        uint256 out = router.addLiquidityUnbalanced(pool, amounts, 1, false, "");
++        assertGt(out, 0, "unbalanced join mints");
++        assertEq(IERC20(pool).balanceOf(actor) - beforeBpt, out, "unbalanced mint accounting");
++        assertEq(beforeShare - share.balanceOf(actor), amount, "unbalanced exact input");
++        expectedShares[actor] += out;
++        minted += out;
++    }
++
++    function _donateAndTransfer(address actor, uint256 seed, uint256 amount) internal {
++        _fundAtLeast(actor, share, 1 ether);
++        uint256[] memory amounts = new uint256[](tokens.length);
++        amounts[shareIndex] = amount;
++        uint256 supply = IERC20(pool).totalSupply();
++        bytes32 virtualBefore = _virtualHash();
++        uint256 shareBefore = share.balanceOf(actor);
++        vm.prank(actor);
++        router.donate(pool, amounts, false, "");
++        assertEq(shareBefore - share.balanceOf(actor), amount, "donation exact debit");
++        assertEq(IERC20(pool).totalSupply(), supply, "donation mints no BPT");
++        assertEq(_virtualHash(), virtualBefore, "donation cannot fabricate virtual backing");
++        uint256 index = actor == actors[0] ? 0 : actor == actors[1] ? 1 : 2;
++        address recipient = actors[(index + 1 + seed % 2) % 3];
++        uint256 moved = expectedShares[actor] / 7;
++        vm.prank(actor);
++        IERC20(pool).transfer(recipient, moved);
++        expectedShares[actor] -= moved;
++        expectedShares[recipient] += moved;
++        assertEq(IERC20(pool).totalSupply(), supply, "transfer preserves supply");
++    }
++
++    function _callbackData() internal view returns (bytes memory) {
++        return abi.encodeCall(IHooks.onBeforeSwap, (PoolSwapParams({kind: SwapKind.EXACT_IN,
++            amountGivenScaled18: 1e12, balancesScaled18: new uint256[](tokens.length),
++            indexIn: bufferIndex, indexOut: shareIndex, router: address(router), userData: ""}), pool));
++    }
++
++    function _falseControls() internal {
++        bytes32 beforeState = _snapshot();
++        bytes memory data = _callbackData();
++        vm.prank(attacker);
++        (bool ok, bytes memory returned) = pool.call(data);
++        assertTrue(ok, "D32 unauthorized callback returns normally");
++        assertEq(returned, abi.encode(false), "D32 exact false status");
++        assertEq(_snapshot(), beforeState, "EOA false callback unchanged");
++        for (uint256 i; i < 2; ++i) {
++            returned = attackerContract.execute(pool, data);
++            assertEq(returned, abi.encode(false), "D32 contract and repeat false status");
++            assertEq(_snapshot(), beforeState, "contract false callback unchanged");
++        }
++        expectedRejections[5] += 3;
++    }
++
++    function _atomicRollback(address actor, uint256 amount) internal {
++        _fundAtLeast(actor, buffer, amount * 2);
++        vm.startPrank(actor);
++        buffer.transfer(pool, amount);
++        buffer.approve(address(integrator), amount);
++        vm.stopPrank();
++        bytes32 beforeState = _snapshot();
++        (bool ok, bytes memory reason) = address(integrator).call(abi.encodeCall(AtomicFalseHookCaller.transferAndCheck,
++            (buffer, actor, pool, amount, _callbackData())));
++        assertFalse(ok, "false callback cannot complete checked atomic transfer");
++        assertEq(reason, abi.encodeWithSelector(AtomicFalseHookCaller.CallbackRejected.selector), "intended integration rejection");
++        assertEq(_snapshot(), beforeState, "atomic transfer and allowance roll back; prior transfer remains");
++        ++expectedRejections[6];
++    }
++
++    function _snapshot() internal view returns (bytes32 state) {
++        (,, uint256[] memory raw, uint256[] memory live) = vault.getPoolTokenInfo(pool);
++        state = keccak256(abi.encode(raw, live, IERC20(pool).totalSupply()));
++        for (uint256 i; i < bookCalls.length; ++i) {
++            (bool ok, bytes memory value) = pool.staticcall(bookCalls[i]);
++            assertTrue(ok, "configured public accounting view exists");
++            state = keccak256(abi.encode(state, value));
++        }
++        for (uint256 i; i <= tokens.length; ++i) {
++            IERC20 token = i == tokens.length ? IERC20(pool) : tokens[i];
++            state = keccak256(abi.encode(state, token.totalSupply(), token.balanceOf(pool), token.balanceOf(address(vault)),
++                token.balanceOf(address(router)), token.balanceOf(attacker), token.balanceOf(address(attackerContract)),
++                token.balanceOf(address(integrator))));
++            for (uint256 j; j < 3; ++j) state = keccak256(abi.encode(state, token.balanceOf(actors[j]),
++                token.allowance(actors[j], address(permit2)), token.allowance(actors[j], address(integrator)),
++                token.allowance(actors[j], address(router))));
++        }
++    }
++
++    function _readBooks() internal view returns (int256[] memory result) {
++        result = new int256[](bookCalls.length);
++        for (uint256 i; i < bookCalls.length; ++i) {
++            (bool ok, bytes memory value) = pool.staticcall(bookCalls[i]);
++            assertTrue(ok, "public accounting view exists");
++            result[i] = abi.decode(value, (int256));
++        }
++    }
++
++    function _assertScaledBooks(int256[] memory beforeBooks, uint256 bpt, uint256 supply, bool adding) internal view {
++        int256[] memory afterBooks = _readBooks();
++        for (uint256 i; i < beforeBooks.length; ++i) {
++            int256 delta = beforeBooks[i] * int256(bpt) / int256(supply);
++            assertEq(afterBooks[i], adding ? beforeBooks[i] + delta : beforeBooks[i] - delta,
++                "virtual backing and signed share obligations scale with exact LP ownership");
++        }
++    }
++
++    function _virtualHash() internal view returns (bytes32 result) {
++        for (uint256 i; i < virtualBookCount; ++i) {
++            (bool ok, bytes memory value) = pool.staticcall(bookCalls[i]);
++            assertTrue(ok, "public virtual book exists");
++            result = keccak256(abi.encode(result, value));
++        }
++    }
++
++    function assertAccounting() public view {
++        (,, uint256[] memory raw,) = vault.getPoolTokenInfo(pool);
++        assertGt(raw[shareIndex], 0, "funded pool share backing remains positive");
++        for (uint256 i; i < tokens.length; ++i) {
++            assertLt(raw[i], type(uint128).max, "native pool accounting bounded");
++            if (isBuffer[tokens[i]]) assertLt(raw[i], 50_000 ether, "physical buffer does not accumulate unboundedly");
++        }
++        for (uint256 i; i < bookCalls.length; ++i) {
++            (bool ok, bytes memory value) = pool.staticcall(bookCalls[i]);
++            assertTrue(ok, "public accounting view exists");
++            if (i < virtualBookCount) {
++                uint256 virtualBalance = abi.decode(value, (uint256));
++                assertGt(virtualBalance, 0, "virtual backing remains positive");
++                assertLt(virtualBalance, type(uint128).max, "virtual backing bounded");
++            } else {
++                int256 delta = abi.decode(value, (int256));
++                assertGt(delta, -int256(uint256(type(uint128).max)), "negative delta bounded");
++                assertLt(delta, int256(uint256(type(uint128).max)), "positive delta bounded");
++            }
++        }
++        assertEq(joined, attempted, "every randomized proportional join succeeds");
++        assertEq(exited, attempted, "every randomized partial exit succeeds");
++        for (uint256 i; i < 3; ++i) assertEq(IERC20(pool).balanceOf(actors[i]), expectedShares[actors[i]], "each honest LP entitlement");
++        assertEq(IERC20(pool).totalSupply(), initialSupply + minted - burned, "exact aggregate BPT supply");
++        for (uint256 i; i < 8; ++i) assertEq(actionAttempts[i], actionSuccesses[i], "no ignored action failure");
++    }
++
++    function assertCampaign() external view {
++        assertAccounting();
++        for (uint256 i; i < 8; ++i) assertGt(actionSuccesses[i], 0, "every required action executed in campaign");
++        assertGt(expectedRejections[5], 2, "EOA contract and repeated callback controls reached");
++        assertGt(expectedRejections[6], 0, "atomic false-status rollback reached");
++    }
++}
+--- /dev/null
++++ b/test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePool.invariant.t.sol
+@@ -0,0 +1,62 @@
++// SPDX-License-Identifier: BSL-1.1
++pragma solidity ^0.8.24;
++
++import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
++import {IRouter} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IRouter.sol";
++import {IAllowanceTransfer} from "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
++import {TestBase_CommonBufferMultiVaultStablePool as TestBase} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/bases/TestBase_CommonBufferMultiVaultStablePool.sol";
++import {BufferPoolInvariantHandler, IBufferInvariantFunding} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BufferPoolInvariantHandler.sol";
++
++contract Handler_CommonBufferMultiVaultStable is BufferPoolInvariantHandler {
++    constructor(Config memory config_) BufferPoolInvariantHandler(config_) {}
++}
++
++/// forge-config: default.invariant.runs = 256
++/// forge-config: default.invariant.depth = 64
++/// forge-config: default.invariant.fail-on-revert = true
++contract CommonBufferMultiVaultStablePoolInvariant is TestBase, IBufferInvariantFunding {
++    BufferPoolInvariantHandler internal handler;
++    function _targetVaultCount() internal pure override returns (uint8) { return 2; }
++
++    function setUp() public override {
++        super.setUp();
++        BufferPoolInvariantHandler.Config memory c;
++        c.pool = bufferPool;
++        c.router = IRouter(address(router));
++        c.vault = bv3Vault;
++        c.permit2 = IAllowanceTransfer(address(permit2));
++        c.buffer = IERC20(address(dai));
++        c.shares = IERC20(address(seVault));
++        c.funding = IBufferInvariantFunding(address(this));
++        c.virtualBookCount = 1;
++        c.buffers = new IERC20[](1);
++        c.buffers[0] = IERC20(address(dai));
++        c.bookCalls = new bytes[](3);
++        c.bookCalls[0] = abi.encodeWithSignature("virtualBuffer()");
++        c.bookCalls[1] = abi.encodeWithSignature("hookShareDelta(uint256)", 0);
++        c.bookCalls[2] = abi.encodeWithSignature("hookShareDelta(uint256)", 1);
++        handler = new Handler_CommonBufferMultiVaultStable(c);
++        bytes4[] memory selectors = new bytes4[](1);
++        selectors[0] = handler.cycle.selector;
++        targetContract(address(handler));
++        targetSelector(FuzzSelector({addr: address(handler), selectors: selectors}));
++    }
++
++    function fundInvariantToken(address actor, IERC20 token, uint256 amount) external {
++        for (uint8 i; i < 2; ++i) {
++            if (address(token) == address(_seVaultAt(i))) {
++                mintSharesForVault(i, actor, amount);
++                return;
++            }
++        }
++        _mintToken(address(token), actor, amount);
++    }
++
++    function invariant_bufferPoolAccounting() public view { handler.assertAccounting(); }
++    function afterInvariant() public view { handler.assertCampaign(); }
++    function test_deterministicBufferLifecycle() public {
++        for (uint256 i; i < 24; ++i) handler.cycle(1e15, i, i);
++        assertEq(handler.attempted(), 24);
++        handler.assertCampaign();
++    }
++}
+--- a/test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/Handler_MixedBufferMultiVaultStablePool.sol
++++ b/test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/Handler_MixedBufferMultiVaultStablePool.sol
+@@ -1,47 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+-pragma solidity ^0.8.0;
++pragma solidity ^0.8.24;
++import {BufferPoolInvariantHandler, IBufferInvariantFunding} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BufferPoolInvariantHandler.sol";
+ 
+-import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+-import {ERC20TestToken} from "@crane/contracts/protocols/dexes/balancer/v3/test/mocks/ERC20TestToken.sol";
+-import {
+-    TestBase_MixedBufferMultiVaultStablePool
+-} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/bases/TestBase_MixedBufferMultiVaultStablePool.sol";
+-
+-/// @notice Invariant handler driving real router paths on the mixed buffer stable pool.
+-contract Handler_MixedBufferMultiVaultStablePool {
+-    TestBase_MixedBufferMultiVaultStablePool public immutable base;
+-
+-    constructor(TestBase_MixedBufferMultiVaultStablePool base_) {
+-        base = base_;
+-    }
+-
+-    function swap_buffer_in(uint256 amountSeed) external {
+-        uint256 amount = _bound(amountSeed, 1e16, 30e18);
+-        address user = base.handlerAlice();
+-        ERC20TestToken(address(base.handlerDai())).mint(user, amount);
+-        try base.swapExactIn(user, base.handlerDai(), IERC20(base.handlerSeVault0()), amount) {} catch {}
+-    }
+-
+-    function swap_share_in(uint256 amountSeed) external {
+-        uint256 amount = _bound(amountSeed, 1e16, 20e18);
+-        address user = base.handlerAlice();
+-        address se = base.handlerSeVault0();
+-        if (IERC20(se).balanceOf(user) < amount) {
+-            try base.mintSharesForVault(0, user, amount * 3) {} catch {}
+-        }
+-        try base.swapExactIn(user, IERC20(se), base.handlerDai(), amount) {} catch {}
+-    }
+-
+-    function swap_unpaired_in(uint256 amountSeed) external {
+-        uint256 amount = _bound(amountSeed, 1e16, 20e18);
+-        address user = base.handlerAlice();
+-        IERC20 unpaired = base.handlerUnpaired0();
+-        ERC20TestToken(address(unpaired)).mint(user, amount);
+-        try base.swapExactIn(user, unpaired, base.handlerDai(), amount) {} catch {}
+-    }
+-
+-    function _bound(uint256 x, uint256 min, uint256 max) internal pure returns (uint256) {
+-        if (max <= min) return min;
+-        return min + (x % (max - min + 1));
+-    }
++contract Handler_MixedBufferMultiVaultStablePool is BufferPoolInvariantHandler {
++    constructor(Config memory config_) BufferPoolInvariantHandler(config_) {}
+ }
+--- a/test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePool.invariant.t.sol
++++ b/test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePool.invariant.t.sol
+@@ -1,55 +1,61 @@
+ // SPDX-License-Identifier: BSL-1.1
+-pragma solidity ^0.8.0;
++pragma solidity ^0.8.24;
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+-import {
+-    TestBase_MixedBufferMultiVaultStablePool
+-} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/bases/TestBase_MixedBufferMultiVaultStablePool.sol";
+-import {
+-    Handler_MixedBufferMultiVaultStablePool
+-} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/Handler_MixedBufferMultiVaultStablePool.sol";
++import {IRouter} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IRouter.sol";
++import {IAllowanceTransfer} from "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
++import {TestBase_MixedBufferMultiVaultStablePool as TestBase} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/bases/TestBase_MixedBufferMultiVaultStablePool.sol";
++import {BufferPoolInvariantHandler, IBufferInvariantFunding} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BufferPoolInvariantHandler.sol";
++import {Handler_MixedBufferMultiVaultStablePool} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/Handler_MixedBufferMultiVaultStablePool.sol";
++
+ 
+ /// forge-config: default.invariant.runs = 256
+ /// forge-config: default.invariant.depth = 64
+-contract MixedBufferMultiVaultStablePoolInvariant is TestBase_MixedBufferMultiVaultStablePool {
+-    function _targetVaultCount() internal pure override returns (uint8) {
+-        return 2;
+-    }
+-
+-    Handler_MixedBufferMultiVaultStablePool internal handler;
++/// forge-config: default.invariant.fail-on-revert = true
++contract MixedBufferMultiVaultStablePoolInvariant is TestBase, IBufferInvariantFunding {
++    BufferPoolInvariantHandler internal handler;
++    function _targetVaultCount() internal pure override returns (uint8) { return 2; }
+ 
+     function setUp() public override {
+         super.setUp();
+-        handler = new Handler_MixedBufferMultiVaultStablePool(this);
+-        bytes4[] memory selectors = new bytes4[](3);
+-        selectors[0] = Handler_MixedBufferMultiVaultStablePool.swap_buffer_in.selector;
+-        selectors[1] = Handler_MixedBufferMultiVaultStablePool.swap_share_in.selector;
+-        selectors[2] = Handler_MixedBufferMultiVaultStablePool.swap_unpaired_in.selector;
++        BufferPoolInvariantHandler.Config memory c;
++        c.pool = bufferPool;
++        c.router = IRouter(address(router));
++        c.vault = bv3Vault;
++        c.permit2 = IAllowanceTransfer(address(permit2));
++        c.buffer = IERC20(address(dai));
++        c.shares = IERC20(address(seVault));
++        c.funding = IBufferInvariantFunding(address(this));
++        c.virtualBookCount = 1;
++        c.unpaired = _unpairedTokenAt(0);
++        c.buffers = new IERC20[](1);
++        c.buffers[0] = IERC20(address(dai));
++        c.bookCalls = new bytes[](3);
++        c.bookCalls[0] = abi.encodeWithSignature("virtualBuffer()");
++        c.bookCalls[1] = abi.encodeWithSignature("hookShareDelta(uint256)", 0);
++        c.bookCalls[2] = abi.encodeWithSignature("hookShareDelta(uint256)", 1);
++        handler = new Handler_MixedBufferMultiVaultStablePool(c);
++        bytes4[] memory selectors = new bytes4[](1);
++        selectors[0] = handler.cycle.selector;
+         targetContract(address(handler));
+         targetSelector(FuzzSelector({addr: address(handler), selectors: selectors}));
+     }
+ 
+-    function invariant_virtualNonNegativeBounded() public view {
+-        assertLt(mbmvs().virtualBuffer(), type(uint128).max, "virtual overflow");
+-        // virtual is uint256 storage - always >= 0 by type; assert still live after ops
+-        assertTrue(mbmvs().virtualBuffer() >= 0);
++    function fundInvariantToken(address actor, IERC20 token, uint256 amount) external {
++        for (uint8 i; i < 2; ++i) {
++            if (address(token) == address(_seVaultAt(i))) {
++                mintSharesForVault(i, actor, amount);
++                return;
++            }
++        }
++        _mintToken(address(token), actor, amount);
+     }
+ 
+-    function invariant_bptSupplyPositive() public view {
+-        assertGt(IERC20(mbmvsPool).totalSupply(), 0, "BPT supply");
+-    }
+-
+-    function invariant_physicalBufferBounded() public view {
+-        assertLt(rawPoolBufferBalance(), 50_000e18, "runaway physical buffer");
+-    }
+-
+-    function invariant_unpairedNotVirtualized() public view {
+-        // unpaired math balance equals live - virtualBuffer is only for buffer leg
+-        uint256 uIdx = mbmvs().unpairedIndex(0);
+-        (,, uint256[] memory balancesRaw,) = bv3Vault.getPoolTokenInfo(mbmvsPool);
+-        // derived depth API is for shares only; ensure buffer virtual is independent of unpaired raw
+-        assertTrue(
+-            mbmvs().virtualBuffer() != balancesRaw[uIdx] || balancesRaw[uIdx] == 0 || mbmvs().virtualBuffer() > 0
+-        );
++    function invariant_bufferPoolAccounting() public view { handler.assertAccounting(); }
++    function afterInvariant() public view { handler.assertCampaign(); }
++    function test_deterministicBufferLifecycle() public {
++        for (uint256 i; i < 24; ++i) handler.cycle(1e15, i, i);
++        assertEq(handler.attempted(), 24);
++        handler.assertCampaign();
+     }
+ }
+--- a/test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPool.invariant.t.sol
++++ b/test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPool.invariant.t.sol
+@@ -1,44 +1,60 @@
+ // SPDX-License-Identifier: BSL-1.1
+-pragma solidity ^0.8.0;
++pragma solidity ^0.8.24;
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+-import {
+-    TestBase_CommonBufferMultiVaultWeightedPool
+-} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/bases/TestBase_CommonBufferMultiVaultWeightedPool.sol";
+-import {
+-    Handler_CommonBufferMultiVault
+-} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/Handler_CommonBufferMultiVault.sol";
++import {IRouter} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IRouter.sol";
++import {IAllowanceTransfer} from "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
++import {TestBase_CommonBufferMultiVaultWeightedPool as TestBase} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/bases/TestBase_CommonBufferMultiVaultWeightedPool.sol";
++import {BufferPoolInvariantHandler, IBufferInvariantFunding} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BufferPoolInvariantHandler.sol";
++import {Handler_CommonBufferMultiVault} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/Handler_CommonBufferMultiVault.sol";
++
+ 
+ /// forge-config: default.invariant.runs = 256
+ /// forge-config: default.invariant.depth = 64
+-contract CommonBufferMultiVaultWeightedPoolInvariant is TestBase_CommonBufferMultiVaultWeightedPool {
+-    function _targetVaultCount() internal pure override returns (uint8) {
+-        return 2;
+-    }
+-
+-    Handler_CommonBufferMultiVault internal handler;
++/// forge-config: default.invariant.fail-on-revert = true
++contract CommonBufferMultiVaultWeightedPoolInvariant is TestBase, IBufferInvariantFunding {
++    BufferPoolInvariantHandler internal handler;
++    function _targetVaultCount() internal pure override returns (uint8) { return 2; }
+ 
+     function setUp() public override {
+         super.setUp();
+-        handler = new Handler_CommonBufferMultiVault(this);
+-        bytes4[] memory selectors = new bytes4[](3);
+-        selectors[0] = Handler_CommonBufferMultiVault.swap_buffer_in.selector;
+-        selectors[1] = Handler_CommonBufferMultiVault.swap_share_in.selector;
+-        selectors[2] = Handler_CommonBufferMultiVault.lp_add_proportional.selector;
++        BufferPoolInvariantHandler.Config memory c;
++        c.pool = bufferPool;
++        c.router = IRouter(address(router));
++        c.vault = bv3Vault;
++        c.permit2 = IAllowanceTransfer(address(permit2));
++        c.buffer = IERC20(address(dai));
++        c.shares = IERC20(address(seVault));
++        c.funding = IBufferInvariantFunding(address(this));
++        c.virtualBookCount = 1;
++        c.buffers = new IERC20[](1);
++        c.buffers[0] = IERC20(address(dai));
++        c.bookCalls = new bytes[](3);
++        c.bookCalls[0] = abi.encodeWithSignature("virtualBuffer()");
++        c.bookCalls[1] = abi.encodeWithSignature("hookShareDelta(uint256)", 0);
++        c.bookCalls[2] = abi.encodeWithSignature("hookShareDelta(uint256)", 1);
++        handler = new Handler_CommonBufferMultiVault(c);
++        bytes4[] memory selectors = new bytes4[](1);
++        selectors[0] = handler.cycle.selector;
+         targetContract(address(handler));
+         targetSelector(FuzzSelector({addr: address(handler), selectors: selectors}));
+     }
+ 
+-    function invariant_virtualBounded() public view {
+-        assertLt(cbmv().virtualBuffer(), type(uint128).max, "virtual overflow");
++    function fundInvariantToken(address actor, IERC20 token, uint256 amount) external {
++        for (uint8 i; i < 2; ++i) {
++            if (address(token) == address(_seVaultAt(i))) {
++                mintSharesForVault(i, actor, amount);
++                return;
++            }
++        }
++        _mintToken(address(token), actor, amount);
+     }
+ 
+-    function invariant_bptSupplyPositive() public view {
+-        assertGt(IERC20(cbmvPool).totalSupply(), 0, "BPT supply");
+-    }
+-
+-    function invariant_physicalBufferSmall() public view {
+-        // After ops, residual physical buffer should stay modest (swept on buffer-in).
+-        assertLt(rawPoolBufferBalance(), 50_000e18, "runaway physical buffer");
++    function invariant_bufferPoolAccounting() public view { handler.assertAccounting(); }
++    function afterInvariant() public view { handler.assertCampaign(); }
++    function test_deterministicBufferLifecycle() public {
++        for (uint256 i; i < 24; ++i) handler.cycle(1e15, i, i);
++        assertEq(handler.attempted(), 24);
++        handler.assertCampaign();
+     }
+ }
+--- a/test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/Handler_CommonBufferMultiVault.sol
++++ b/test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/Handler_CommonBufferMultiVault.sol
+@@ -1,47 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+-pragma solidity ^0.8.0;
++pragma solidity ^0.8.24;
++import {BufferPoolInvariantHandler, IBufferInvariantFunding} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BufferPoolInvariantHandler.sol";
+ 
+-import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+-import {ERC20TestToken} from "@crane/contracts/protocols/dexes/balancer/v3/test/mocks/ERC20TestToken.sol";
+-import {
+-    TestBase_CommonBufferMultiVaultWeightedPool
+-} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/bases/TestBase_CommonBufferMultiVaultWeightedPool.sol";
+-
+-/// @notice Minimal invariant handler driving real router paths on the CBMV pool.
+-contract Handler_CommonBufferMultiVault {
+-    TestBase_CommonBufferMultiVaultWeightedPool public immutable base;
+-
+-    constructor(TestBase_CommonBufferMultiVaultWeightedPool base_) {
+-        base = base_;
+-    }
+-
+-    function swap_buffer_in(uint256 amountSeed) external {
+-        uint256 amount = _bound(amountSeed, 1e16, 30e18);
+-        address user = base.handlerAlice();
+-        ERC20TestToken(address(base.handlerDai())).mint(user, amount);
+-        try base.swapExactIn(user, base.handlerDai(), IERC20(base.handlerSeVault0()), amount) {} catch {}
+-    }
+-
+-    function swap_share_in(uint256 amountSeed) external {
+-        uint256 amount = _bound(amountSeed, 1e16, 20e18);
+-        address user = base.handlerAlice();
+-        address se = base.handlerSeVault0();
+-        if (IERC20(se).balanceOf(user) < amount) {
+-            try base.mintSharesForVault(0, user, amount * 3) {} catch {}
+-        }
+-        try base.swapExactIn(user, IERC20(se), base.handlerDai(), amount) {} catch {}
+-    }
+-
+-    function lp_add_proportional(uint256 seed) external {
+-        // Stand-in activity: small buffer-in (proportional LP needs multi-asset arrays).
+-        uint256 amount = _bound(seed, 1e16, 30e18);
+-        address user = base.handlerAlice();
+-        ERC20TestToken(address(base.handlerDai())).mint(user, amount);
+-        try base.swapExactIn(user, base.handlerDai(), IERC20(base.handlerSeVault0()), amount) {} catch {}
+-    }
+-
+-    function _bound(uint256 x, uint256 min, uint256 max) internal pure returns (uint256) {
+-        if (max <= min) return min;
+-        return min + (x % (max - min + 1));
+-    }
++contract Handler_CommonBufferMultiVault is BufferPoolInvariantHandler {
++    constructor(Config memory config_) BufferPoolInvariantHandler(config_) {}
+ }
+--- a/test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPool.invariant.t.sol
++++ b/test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPool.invariant.t.sol
+@@ -1,77 +1,65 @@
+ // SPDX-License-Identifier: BSL-1.1
+-pragma solidity ^0.8.0;
++pragma solidity ^0.8.24;
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
++import {IRouter} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IRouter.sol";
++import {IAllowanceTransfer} from "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
++import {TestBase_MixedLegWeightedBufferPool as TestBase} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/bases/TestBase_MixedLegWeightedBufferPool.sol";
++import {BufferPoolInvariantHandler, IBufferInvariantFunding} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BufferPoolInvariantHandler.sol";
+ 
+-import {IMixedLegWeightedBufferPool} from
+-    "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/IMixedLegWeightedBufferPool.sol";
+-import {
+-    TestBase_MixedLegWeightedBufferPool
+-} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/bases/TestBase_MixedLegWeightedBufferPool.sol";
++contract Handler_MixedLegBufferInvariant is BufferPoolInvariantHandler {
++    constructor(Config memory config_) BufferPoolInvariantHandler(config_) {}
++}
+ 
+-/**
+- * @title MixedLegWeightedBufferPoolInvariant
+- * @notice Lightweight invariant-style smokes: virtual non-negative; unbalanced LP grows virtual;
+- *         donation does not free-mint BPT (A3 overlap with core).
+- */
+-contract MixedLegWeightedBufferPoolInvariant is TestBase_MixedLegWeightedBufferPool {
+-    function test_invariant_virtualBuffer_nonNegative_afterSwaps() public {
+-        for (uint256 i; i < 5; ++i) {
+-            uint256 amt = 1e17 + i * 1e16;
+-            dai.mint(alice, amt);
+-            swapExactIn(alice, IERC20(address(dai)), IERC20(address(seVault)), amt);
+-            assertGe(ml().virtualBuffer(0), 0);
++/// forge-config: default.invariant.runs = 256
++/// forge-config: default.invariant.depth = 64
++/// forge-config: default.invariant.fail-on-revert = true
++contract MixedLegWeightedBufferPoolInvariant is TestBase, IBufferInvariantFunding {
++    BufferPoolInvariantHandler internal handler;
++    function _targetPairCount() internal pure override returns (uint8) { return 2; }
+ 
+-            mintSharesForPair(0, alice, amt * 2);
+-            uint256 shBal = IERC20(address(seVault)).balanceOf(alice);
+-            if (shBal > amt / 2) {
+-                swapExactIn(alice, IERC20(address(seVault)), IERC20(address(dai)), amt / 2);
++    function setUp() public override {
++        super.setUp();
++        BufferPoolInvariantHandler.Config memory c;
++        c.pool = bufferPool;
++        c.router = IRouter(address(router));
++        c.vault = bv3Vault;
++        c.permit2 = IAllowanceTransfer(address(permit2));
++        c.buffer = IERC20(address(dai));
++        c.shares = IERC20(address(seVault));
++        c.funding = IBufferInvariantFunding(address(this));
++        c.virtualBookCount = 2;
++        c.unpaired = _unpairedTokenAt(0);
++        c.buffers = new IERC20[](2);
++        c.buffers[0] = IERC20(address(dai));
++        c.buffers[1] = _bufferAt(1);
++        c.bookCalls = new bytes[](4);
++        c.bookCalls[0] = abi.encodeWithSignature("virtualBuffer(uint256)", 0);
++        c.bookCalls[1] = abi.encodeWithSignature("virtualBuffer(uint256)", 1);
++        c.bookCalls[2] = abi.encodeWithSignature("hookShareDelta(uint256)", 0);
++        c.bookCalls[3] = abi.encodeWithSignature("hookShareDelta(uint256)", 1);
++        handler = new Handler_MixedLegBufferInvariant(c);
++        bytes4[] memory selectors = new bytes4[](1);
++        selectors[0] = handler.cycle.selector;
++        targetContract(address(handler));
++        targetSelector(FuzzSelector({addr: address(handler), selectors: selectors}));
++    }
++
++    function fundInvariantToken(address actor, IERC20 token, uint256 amount) external {
++        for (uint8 i; i < 2; ++i) {
++            if (address(token) == address(_seVaultAt(i))) {
++                mintSharesForPair(i, actor, amount);
++                return;
+             }
+         }
++        _mintToken(address(token), actor, amount);
+     }
+ 
+-    function test_unbalanced_add_growsVirtual() public {
+-        uint256 vtBefore = ml().virtualBuffer(0);
+-        mintSharesForPair(0, alice, 200e18);
+-        dai.mint(alice, 200e18);
+-        usdc.mint(alice, 200e18);
+-        _mintToken(address(weth), alice, 200e18);
+-
+-        uint256 n = ml().tokenCount();
+-        uint256[] memory exactIn = new uint256[](n);
+-        for (uint256 t; t < n; ++t) {
+-            (IMixedLegWeightedBufferPool.TokenKind kind,) = ml().resolveTokenIndex(t);
+-            if (kind == IMixedLegWeightedBufferPool.TokenKind.Buffer) {
+-                exactIn[t] = 100e18;
+-            } else if (kind == IMixedLegWeightedBufferPool.TokenKind.Share) {
+-                exactIn[t] = 50e18;
+-            } else {
+-                exactIn[t] = 50e18; // unpaired non-zero for join stability
+-            }
+-        }
+-
+-        vm.startPrank(alice);
+-        dai.approve(address(router), type(uint256).max);
+-        usdc.approve(address(router), type(uint256).max);
+-        IERC20(address(weth)).approve(address(router), type(uint256).max);
+-        IERC20(address(seVault)).approve(address(router), type(uint256).max);
+-        router.addLiquidityUnbalanced(mixedLegPool, exactIn, 0, false, bytes(""));
+-        vm.stopPrank();
+-
+-        assertEq(ml().virtualBuffer(0), vtBefore + 100e18);
+-    }
+-
+-    function test_donation_noBptMint_virtualUnchanged() public {
+-        uint256 bptBefore = IERC20(mixedLegPool).totalSupply();
+-        uint256 vtBefore = ml().virtualBuffer(0);
+-        dai.mint(alice, 50e18);
+-        uint256[] memory amounts = new uint256[](ml().tokenCount());
+-        amounts[ml().bufferIndex(0)] = 50e18;
+-        vm.startPrank(alice);
+-        dai.approve(address(router), type(uint256).max);
+-        router.donate(mixedLegPool, amounts, false, bytes(""));
+-        vm.stopPrank();
+-        assertEq(IERC20(mixedLegPool).totalSupply(), bptBefore);
+-        assertEq(ml().virtualBuffer(0), vtBefore);
++    function invariant_bufferPoolAccounting() public view { handler.assertAccounting(); }
++    function afterInvariant() public view { handler.assertCampaign(); }
++    function test_deterministicBufferLifecycle() public {
++        for (uint256 i; i < 24; ++i) handler.cycle(1e15, i, i);
++        assertEq(handler.attempted(), 24);
++        handler.assertCampaign();
+     }
+ }
+--- a/test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPool.invariant.t.sol
++++ b/test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPool.invariant.t.sol
+@@ -1,48 +1,64 @@
+ // SPDX-License-Identifier: BSL-1.1
+-pragma solidity ^0.8.0;
++pragma solidity ^0.8.24;
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+-import {
+-    TestBase_MultiPairStandardExchangeBufferPool
+-} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/bases/TestBase_MultiPairStandardExchangeBufferPool.sol";
+-import {IMultiPairStandardExchangeBufferPool} from
+-    "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/IMultiPairStandardExchangeBufferPool.sol";
++import {IRouter} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IRouter.sol";
++import {IAllowanceTransfer} from "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
++import {TestBase_MultiPairStandardExchangeBufferPool as TestBase} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/bases/TestBase_MultiPairStandardExchangeBufferPool.sol";
++import {BufferPoolInvariantHandler, IBufferInvariantFunding} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BufferPoolInvariantHandler.sol";
+ 
+-/**
+- * @title MultiPairStandardExchangeBufferPoolInvariant
+- * @notice Lightweight invariant-style smoke: random small swaps keep virtual non-negative.
+- */
+-contract MultiPairStandardExchangeBufferPoolInvariant is TestBase_MultiPairStandardExchangeBufferPool {
+-    function test_invariant_virtualBuffer_nonNegative_afterSwaps() public {
+-        for (uint256 i; i < 5; ++i) {
+-            uint256 amt = 1e17 + i * 1e16;
+-            dai.mint(alice, amt);
+-            swapExactIn(alice, tta, IERC20(address(seVault)), amt);
+-            assertGe(mp().virtualBuffer(0), 0);
++contract Handler_MultiPairBufferInvariant is BufferPoolInvariantHandler {
++    constructor(Config memory config_) BufferPoolInvariantHandler(config_) {}
++}
+ 
+-            mintShares(alice, amt * 2);
+-            uint256 shBal = IERC20(address(seVault)).balanceOf(alice);
+-            if (shBal > amt / 2) {
+-                swapExactIn(alice, IERC20(address(seVault)), tta, amt / 2);
+-            }
+-            // virtual may be lower but must not underflow (would have reverted)
+-            assertTrue(true);
+-        }
++/// forge-config: default.invariant.runs = 256
++/// forge-config: default.invariant.depth = 64
++/// forge-config: default.invariant.fail-on-revert = true
++contract MultiPairStandardExchangeBufferPoolInvariant is TestBase, IBufferInvariantFunding {
++    BufferPoolInvariantHandler internal handler;
++    function _targetPairCount() internal pure override returns (uint8) { return 2; }
++
++    function setUp() public override {
++        super.setUp();
++        BufferPoolInvariantHandler.Config memory c;
++        c.pool = bufferPool;
++        c.router = IRouter(address(router));
++        c.vault = bv3Vault;
++        c.permit2 = IAllowanceTransfer(address(permit2));
++        c.buffer = IERC20(address(dai));
++        c.shares = IERC20(address(seVault));
++        c.funding = IBufferInvariantFunding(address(this));
++        c.virtualBookCount = 2;
++        c.buffers = new IERC20[](2);
++        c.buffers[0] = IERC20(address(dai));
++        c.buffers[1] = _bufferAt(1);
++        c.bookCalls = new bytes[](4);
++        c.bookCalls[0] = abi.encodeWithSignature("virtualBuffer(uint256)", 0);
++        c.bookCalls[1] = abi.encodeWithSignature("virtualBuffer(uint256)", 1);
++        c.bookCalls[2] = abi.encodeWithSignature("hookShareDelta(uint256)", 0);
++        c.bookCalls[3] = abi.encodeWithSignature("hookShareDelta(uint256)", 1);
++        handler = new Handler_MultiPairBufferInvariant(c);
++        bytes4[] memory selectors = new bytes4[](1);
++        selectors[0] = handler.cycle.selector;
++        targetContract(address(handler));
++        targetSelector(FuzzSelector({addr: address(handler), selectors: selectors}));
+     }
+ 
+-    function test_unbalanced_add_growsVirtual() public {
+-        uint256 vtBefore = mp().virtualBuffer(0);
+-        mintShares(alice, 200e18);
+-        dai.mint(alice, 200e18);
+-        uint256[] memory exactIn = new uint256[](2);
+-        // Unbalanced: more buffer than shares (both non-zero for weighted join stability).
+-        exactIn[mp().bufferIndex(0)] = 100e18;
+-        exactIn[mp().shareIndex(0)] = 50e18;
+-        vm.startPrank(alice);
+-        dai.approve(address(router), type(uint256).max);
+-        IERC20(address(seVault)).approve(address(router), type(uint256).max);
+-        router.addLiquidityUnbalanced(multiPairPool, exactIn, 0, false, bytes(""));
+-        vm.stopPrank();
+-        assertEq(mp().virtualBuffer(0), vtBefore + 100e18);
++    function fundInvariantToken(address actor, IERC20 token, uint256 amount) external {
++        for (uint8 i; i < 2; ++i) {
++            if (address(token) == address(_seVaultAt(i))) {
++                mintSharesForPair(i, actor, amount);
++                return;
++            }
++        }
++        _mintToken(address(token), actor, amount);
++    }
++
++    function invariant_bufferPoolAccounting() public view { handler.assertAccounting(); }
++    function afterInvariant() public view { handler.assertCampaign(); }
++    function test_deterministicBufferLifecycle() public {
++        for (uint256 i; i < 24; ++i) handler.cycle(1e15, i, i);
++        assertEq(handler.attempted(), 24);
++        handler.assertCampaign();
+     }
+ }

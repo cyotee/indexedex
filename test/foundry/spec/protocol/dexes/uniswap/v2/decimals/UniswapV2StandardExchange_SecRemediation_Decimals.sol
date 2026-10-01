@@ -5,6 +5,7 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IUniswapV2Pair} from "@crane/contracts/interfaces/protocols/dexes/uniswap/v2/IUniswapV2Pair.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {IVaultRegistryDisableManager} from "contracts/interfaces/IVaultRegistryDisableManager.sol";
 import {
@@ -65,10 +66,8 @@ abstract contract UniswapV2StandardExchange_SecRemediation_Decimals is TestBase_
         vm.prank(attacker);
         uniswapBalancedTokenA.transfer(address(vault_), used_);
 
-        uint256 attackerABefore_ = uniswapBalancedTokenA.balanceOf(attacker);
-        uint256 liveAfterPush_ = uniswapBalancedTokenA.balanceOf(address(vault_));
-
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vault_.exchangeOut(
             IERC20(address(uniswapBalancedTokenA)),
             fatMax_,
@@ -78,12 +77,6 @@ abstract contract UniswapV2StandardExchange_SecRemediation_Decimals is TestBase_
             true,
             _deadline()
         );
-
-        uint256 attackerAGain_ = uniswapBalancedTokenA.balanceOf(attacker) - attackerABefore_;
-        assertEq(attackerAGain_, 0, "E6: no pairToken refund from booked R");
-        assertGe(uniswapBalancedTokenA.balanceOf(address(vault_)), bookedR_, "E6: booked pairToken R intact");
-        assertLe(uniswapBalancedTokenA.balanceOf(address(vault_)), liveAfterPush_, "E6: vault did not gain attacker skim");
-        assertLt(attackerAGain_, bookedR_, "E6: attacker must not receive booked R");
     }
 
     /// @notice A0: donated reserve LP blocks zap-in deposit; attacker mints nothing.
@@ -184,10 +177,15 @@ abstract contract UniswapV2StandardExchange_SecRemediation_Decimals is TestBase_
         if (claimed_ == 0) claimed_ = booked_;
 
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        vault_.exchangeIn(lp_, claimed_, IERC20(address(vault_)), 0, attacker, true, _deadline());
+
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
         );
-        vault_.exchangeIn(lp_, claimed_, IERC20(address(vault_)), 0, attacker, true, _deadline());
+        vault_.exchangeIn(lp_, claimed_, IERC20(address(vault_)), 0, address(caller), true, _deadline());
 
         assertEq(vault_.totalSupply(), supplyBefore_, "I1: no free mint against booked LP");
         assertEq(lp_.balanceOf(address(vault_)), booked_, "I1: booked LP unmoved");

@@ -20,7 +20,7 @@ library Phase_04_Stage_02_Erc20MinterFacade {
             address(
                 s.create3Factory.deployPackage(
                     ArtifactCreationCode.creationCode(s.create3Factory, "ERC20MinterFacadeFacetDFPkg.sol:ERC20MinterFacadeFacetDFPkg"),
-                    abi.encode("ERC20MinterFacadeFacetDFPkg", FixtureEconomics.SALT_NS)._hash()
+                    abi.encode("ERC20MinterFacadeFacetDFPkg")._hash()
                 )
             )
         );

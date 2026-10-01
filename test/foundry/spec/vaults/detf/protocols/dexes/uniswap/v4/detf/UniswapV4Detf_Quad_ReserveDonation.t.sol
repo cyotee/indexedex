@@ -79,10 +79,7 @@ contract UniswapV4Detf_Quad_ReserveDonation is
         IFacet seFacet = CpHookFactory.deploySeFacet(create3Factory);
         IFacet depositFacet = CpHookFactory.deployDepositFacet(create3Factory);
         IFacet withdrawFacet = CpHookFactory.deployWithdrawFacet(create3Factory);
-        hookPkg = CpHookFactory.deployPackage(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            owner,
-            IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgInit({
+        hookPkg = CpHookFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgInit({
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
                 seFacet: seFacet,
@@ -96,8 +93,6 @@ contract UniswapV4Detf_Quad_ReserveDonation is
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
                 multiStepOwnableFacet: multiStepOwnableFacet
-            }),
-            abi.encode(type(IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage).name, "v1")._hash()
-        );
+            }));
     }
 }

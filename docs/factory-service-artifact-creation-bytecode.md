@@ -1,5 +1,7 @@
 # FactoryService artifact creation bytecode
 
+Salt-policy update (2026-09-16): [CREATE3 release salt input correction](create3-release-salt-input-correction.md) supersedes this artifact migration's salt-preservation policy. Named CREATE3 components use `abi.encode(contractIdentifier)._hash()` via `BetterEfficientHashLib`; automatic libraries use their source-qualified artifact identifier. `releaseSalt` is namespace-only. Constructor payloads, artifact loading and linking remain required. Occupied identities retain existing deployments; source changes do not upgrade them.
+
 - **Status:** planned
 - **Created:** 2026-09-02
 - **Updated:** 2026-09-02 (D1–D14 decided; plan written)
@@ -7,7 +9,7 @@
 
 ## Summary
 
-IndexedEx FactoryService libraries stop importing Facet and DFPkg **implementations** solely to read `type(C).creationCode` / `type(C).name`. They load **creation bytecode** from Foundry build artifacts (`foundry.toml` `out = 'out'`) at cheatcode time via `ArtifactCreationCode.creationCode("File.sol:ContractName")`, keep interface-only typing, and keep the same CREATE3 salts and `vm.label` names. Crane implementations those services deploy are compiled by a src seed file (`CraneFactoryArtifactSeed.sol`), not by FactoryService imports. TestBases that already `using` a FactoryService stay on that path. After this, editing production implementation source no longer invalidates the FactoryService compile unit, so the TestBase / script fan-out does not recompile. Agents must run **`forge build` then `forge test`** (or `forge script`) after production edits so `out/` is current. Do not treat `forge test` as a substitute for that build.
+IndexedEx FactoryService libraries stop importing Facet and DFPkg **implementations** solely to read `type(C).creationCode` / `type(C).name`. They load **creation bytecode** from Foundry build artifacts (`foundry.toml` `out = 'out'`) at cheatcode time via `ArtifactCreationCode.creationCode("File.sol:ContractName")`, keep interface-only typing, and keep `vm.label` names and use the corrected name-only CREATE3 salts. Crane implementations those services deploy are compiled by a src seed file (`CraneFactoryArtifactSeed.sol`), not by FactoryService imports. TestBases that already `using` a FactoryService stay on that path. After this, editing production implementation source no longer invalidates the FactoryService compile unit, so the TestBase / script fan-out does not recompile. Agents must run **`forge build` then `forge test`** (or `forge script`) after production edits so `out/` is current. Do not treat `forge test` as a substitute for that build.
 
 ## Requirements
 
@@ -24,7 +26,7 @@ IndexedEx FactoryService libraries stop importing Facet and DFPkg **implementati
    - [ ] Those files no longer `import` Facet / DFPkg / Target **implementation** contracts used only for `type()`, except for contracts covered by that exception.
    - [ ] **Unlinked-library exception:** if the Foundry artifact for a deployed contract is unlinked (creation bytecode contains `__$` placeholders), that one deploy helper keeps `type(C).creationCode` and the implementation import. Mark it with a one-line comment (`unlinked artifact; type().creationCode required`). Do not use `type()` as a general fallback.
    - [ ] Interface imports stay (`IFacet`, `ICreate3FactoryProxy`, `I*DFPkg`, `PkgInit` / `PkgArgs` on the interface).
-   - [ ] CREATE3 salts keep today’s `abi.encode(...)` argument list. Only `type(C).name` becomes the string literal `"<ContractName>"` (the Solidity contract identifier, not the file path). Facet salts that are `abi.encode(type(C).name)._hash()` become `abi.encode("ContractName")._hash()`. DFPkg salts that also encode `pkgInitArgs` (for example `abi.encode(type(FeeCollectorDFPkg).name, pkgInitArgs)._hash()`) keep those extra arguments. Do not drop extra salt components.
+- [ ] Superseded salt criterion: component salts follow `abi.encode(contractIdentifier)._hash()`; preserve constructor arguments in the deployment payload only.
    - [ ] `vm.label` strings stay the same contract identifier (the literal that equals today’s `type(C).name`).
    - [ ] Public helper names and `using X for ICreate3FactoryProxy` / `IIndexedexManagerProxy` / `IVaultRegistryDeployment` surfaces stay the same so TestBases and scripts do not need call-site rewrites.
 
@@ -61,7 +63,7 @@ IndexedEx FactoryService libraries stop importing Facet and DFPkg **implementati
 - Do not rewrite Crane submodule FactoryServices (`lib/crane/contracts/**/*FactoryService.sol`), including `AccessFacetFactoryService` and `IntrospectionFacetFactoryService` on `IndexedexTest`.
 - Do not move interfaces into new files to kill remaining “import `IFoo` from `Foo.sol`” leaks.
 - Do not change CREATE3 factories, vault-registry `deployPkg`, hook-factory routing, or `never new facets/DFPkgs`.
-- Do not change salts, labels, or deploy helper signatures.
+- Do not change labels. The later salt correction governs salt inputs and component-helper signatures.
 - Do not parse ABI to deploy. ABI is not creation bytecode.
 - Do not use `vm.getDeployedCode` (runtime) as initcode.
 - Do not put `vm.getCode` on an on-chain production path. FactoryServices are already Foundry-only (`Vm` / `vm.label`).
@@ -98,7 +100,7 @@ IndexedEx FactoryService libraries stop importing Facet and DFPkg **implementati
 | D10 | Keep `type(C).creationCode` only for contracts whose Foundry artifacts are unlinked. `ArtifactCreationCode` reverts on `__$` placeholders. | Decided | Owner: unlinked artifacts are the only `type()` escape hatch. Not a general fallback. |
 | D11 | Done means grep + hub import check. No compile-cache smoke. | Decided | Owner: no `type().creationCode` except annotated unlinked exceptions; manager, vault-component, and Balancer V3 constant-product services do not import the facets they deploy (Crane facets go through the seed). |
 | D12 | Helper API is `ArtifactCreationCode.creationCode(string memory artifactId_)` returning creation bytecode. No `using` for `string`. `__$` reverts with a string that includes the artifact id. Missing artifact is `vm.getCode`’s revert. | Decided | Review: one call shape for all rewrite-set sites; name parallels `type(C).creationCode`. |
-| D13 | Salt rewrite replaces only `type(C).name` with the equal string literal. Extra `abi.encode` components (including `pkgInitArgs`) stay. Uni V3/V4 `bytes.concat(..., abi.encode(executionDelegate))` stays. Existing `create3` / `deployFacet` / `deployPackageWithArgs` / `deployPkg` routing stays. | Decided | Review: FeeCollector DFPkg salt is `abi.encode(name, pkgInitArgs)._hash()`, not name-only. Uni V3/V4 In/Out facets concat constructor args. Changing either would move CREATE3 addresses or break constructor initcode. |
+| D13 | Superseded for salt inputs by the CREATE3 salt correction: use ABI-encoded contract identifiers only. Preserve Uni V3/V4 constructor concatenation and existing factory/registry routing. | Superseded | Later CREATE3 correction; constructor payload and artifact-loading requirements retained. |
 | D14 | Crane-sourced FactoryService deploy targets compile via `contracts/utils/foundry/CraneFactoryArtifactSeed.sol`. The seed imports the nine Crane implementations listed in requirement 5 and references `type(C).name` so they emit `out/` artifacts. FactoryServices load those bytes with `ArtifactCreationCode.creationCode`. Do not keep `type().creationCode` for Crane sources and do not rely on copied `out/` alone. | Decided | Review: `lib/crane` is not `src`. Dropping FactoryService imports without a src compile root makes `vm.getCode` fail. The seed is that root without putting Crane on the TestBase fan-out. |
 
 ## Inventory

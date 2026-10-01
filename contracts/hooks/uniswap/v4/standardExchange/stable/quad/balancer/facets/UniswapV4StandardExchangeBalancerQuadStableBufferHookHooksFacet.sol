@@ -25,7 +25,7 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksFacet is
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](37);
+        funcs = new bytes4[](39);
         funcs[0] = IHooks.beforeInitialize.selector;
         funcs[1] = IHooks.afterInitialize.selector;
         funcs[2] = IHooks.beforeAddLiquidity.selector;
@@ -45,7 +45,7 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksFacet is
         funcs[16] = IUniswapV4StandardExchangeBalancerQuadStableBufferHook.baseAmp.selector;
         funcs[17] = IUniswapV4StandardExchangeBalancerQuadStableBufferHook.getCurrentAmp.selector;
         funcs[18] = IUniswapV4StandardExchangeBalancerQuadStableBufferHook.standardExchange.selector;
-        funcs[19] = IUniswapV4StandardExchangeBalancerQuadStableBufferHook.rateProvider.selector;
+        funcs[19] = bytes4(keccak256("rateProvider(uint256)"));
         funcs[20] = IUniswapV4StandardExchangeBalancerQuadStableBufferHook.isBuffered.selector;
         funcs[21] = IUniswapV4StandardExchangeBalancerQuadStableBufferHook.nativeReserve.selector;
         funcs[22] = IUniswapV4StandardExchangeBalancerQuadStableBufferHook.nativeReserves.selector;
@@ -63,6 +63,8 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHookHooksFacet is
         funcs[34] = IUniswapV4StandardExchangeBalancerQuadStableBufferHook.pairDoorCount.selector;
         funcs[35] = IUniswapV4StandardExchangeBalancerQuadStableBufferHook.previewSwapExactIn.selector;
         funcs[36] = IUniswapV4StandardExchangeBalancerQuadStableBufferHook.previewSwapExactOut.selector;
+        funcs[37] = IUniswapV4StandardExchangeBalancerQuadStableBufferHook.rateProviders.selector;
+        funcs[38] = bytes4(keccak256("rateProvider(address)"));
     }
 
     function facetMetadata()

@@ -1,6 +1,15 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {Creation} from "@crane/contracts/utils/Creation.sol";
+import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {IFeeCollectorDFPkg} from "contracts/fee/collector/IFeeCollectorDFPkg.sol";
+import {FeeCollectorFactoryService} from "contracts/fee/collector/FeeCollectorFactoryService.sol";
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+
+
+import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IndexedexTest} from "contracts/test/IndexedexTest.sol";
 import {IFeeCollectorManager} from "contracts/interfaces/IFeeCollectorManager.sol";
@@ -11,6 +20,27 @@ import {IFeeCollectorProxy} from "contracts/interfaces/proxies/IFeeCollectorProx
  * @notice Tests that all IFeeCollectorManager selectors route correctly through the proxy
  */
 contract FeeCollectorProxy_Selectors_Test is IndexedexTest {
+    /// @notice The name-only package identity preserves all initial constructor bindings on reuse.
+    function test_create3NameSalt_constructorBindingsAndReuse() public {
+        IFeeCollectorDFPkg first = FeeCollectorFactoryService.deployFeeCollectorDFPkg(
+            create3Factory, diamondCutFacet, multiStepOwnableFacet, feeCollectorSingleTokenPushFacet, feeCollectorManagerFacet);
+        assertEq(address(first), Creation._create3AddressFromOf(address(create3Factory), abi.encode("FeeCollectorDFPkg")._hash()));
+        address[] memory facets = first.facetAddresses();
+        assertEq(facets[0], address(diamondCutFacet));
+        assertEq(facets[1], address(multiStepOwnableFacet));
+        assertEq(facets[2], address(feeCollectorSingleTokenPushFacet));
+        assertEq(facets[3], address(feeCollectorManagerFacet));
+        IFacet alternate = create3Factory.deployFacet(
+            ArtifactCreationCode.creationCode("FeeCollectorManagerFacet.sol:FeeCollectorManagerFacet"),
+            abi.encode("FeeCollectorProxy_Selectors.alternateManager")._hash());
+        IFeeCollectorDFPkg again = FeeCollectorFactoryService.deployFeeCollectorDFPkg(
+            create3Factory, diamondCutFacet, multiStepOwnableFacet, feeCollectorSingleTokenPushFacet, alternate);
+        assertEq(address(again), address(first));
+        assertEq(again.facetAddresses(), facets);
+        assertEq(again.facetCuts()[3].facetAddress, address(feeCollectorManagerFacet));
+    }
+
+    using BetterEfficientHashLib for bytes;
     function setUp() public override {
         super.setUp();
     }

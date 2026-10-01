@@ -1,0 +1,12 @@
+[
+  "python3",
+  "scripts/forge-artifacts.py",
+  "test",
+  "contracts/protocols/lending/aave/cross-version/CrossVersionLoopExecutor.sol",
+  "--test-root",
+  "test/foundry/spec/protocol/lending/aave/cross-version",
+  "--",
+  "--fuzz-seed",
+  "0x20260917",
+  "-vv"
+]

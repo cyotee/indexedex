@@ -9,11 +9,13 @@ interface IDetfNftReserveDonation {
     /// @notice `amountIn` is the observed inbound delta of `token` (not the caller's claimed amount).
     event ReserveDonated(address indexed donor, address indexed token, uint256 amountIn, uint256 lpOut);
 
+    /// @param pretransferred Integrating-contract flag only. Callers with no bytecode revert `EOAPretransferNotAllowed()`.
     function donate(IERC20 token, uint256 amount, uint256 minLpOut, bool pretransferred, uint256 deadline)
         external
         returns (uint256 lpOut);
 
     /// @notice DETF-only. Records `donor` as the economic donor. EOAs cannot spoof `donor`.
+    /// @param pretransferred Integrating-contract flag only. Callers with no bytecode revert `EOAPretransferNotAllowed()`.
     function donate(
         address donor,
         IERC20 token,

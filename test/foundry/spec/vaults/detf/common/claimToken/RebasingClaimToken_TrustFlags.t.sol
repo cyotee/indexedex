@@ -6,6 +6,7 @@ import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
 import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
 import {StakedDETFTarget} from "contracts/vaults/detf/common/claimToken/StakedDETFTarget.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {TestBase_UniswapV4Detf} from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
 
 /// @notice Catalog I1/I2/I3 using real paid bonds and the funded staking proxy.
@@ -41,11 +42,18 @@ contract RebasingClaimToken_TrustFlags_Test is TestBase_UniswapV4Detf {
                 uint256 amount_ = claims_[i_];
                 bytes memory error_ = abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, amount_, 0);
                 vm.prank(attacker_);
-                vm.expectRevert(error_);
+                vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
                 staking_.exchangeIn(in_, amount_, out_, 0, attacker_, true, block.timestamp);
                 vm.prank(attacker_);
-                vm.expectRevert(error_);
+                vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
                 staking_.exchangeOut(in_, amount_, out_, amount_, attacker_, true, block.timestamp);
+                AtomicPretransferCaller caller_ = new AtomicPretransferCaller();
+                vm.prank(address(caller_));
+                vm.expectRevert(error_);
+                staking_.exchangeIn(in_, amount_, out_, 0, address(caller_), true, block.timestamp);
+                vm.prank(address(caller_));
+                vm.expectRevert(error_);
+                staking_.exchangeOut(in_, amount_, out_, amount_, address(caller_), true, block.timestamp);
             }
         }
         assertEq(staking_.balanceOf(address(staking_)), held_);
@@ -71,8 +79,12 @@ contract RebasingClaimToken_TrustFlags_Test is TestBase_UniswapV4Detf {
         uint256 backing_ = IERC20(detf).balanceOf(address(staking_));
         address attacker_ = makeAddr("residual staking attacker");
         vm.prank(attacker_);
-        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, donation_, 0));
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         staking_.exchangeIn(IERC20(detf), donation_, IERC20(address(staking_)), 0, attacker_, true, block.timestamp);
+        AtomicPretransferCaller caller_ = new AtomicPretransferCaller();
+        vm.prank(address(caller_));
+        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, donation_, 0));
+        staking_.exchangeIn(IERC20(detf), donation_, IERC20(address(staking_)), 0, address(caller_), true, block.timestamp);
         assertEq(staking_.balanceOf(detfUser), remaining_);
         assertEq(staking_.balanceOf(attacker_), 0);
         assertEq(IERC20(detf).balanceOf(address(staking_)), backing_);

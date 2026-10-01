@@ -117,7 +117,7 @@ contract Script_07_DeployTestTokens is DeploymentBase {
                 create3Factory.deployPackageWithArgs(
                     type(ERC20PermitDFPkg).creationCode,
                     abi.encode(richPkgInit),
-                    abi.encode(type(ERC20PermitDFPkg).name, "DemoRichToken")._hash()
+                    abi.encode("ERC20PermitDFPkg")._hash()
                 )
             )
         );

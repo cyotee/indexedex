@@ -57,6 +57,7 @@ import {UniswapV4Detf_Facet_FactoryService} from
 import {UniswapV4Detf_Pkg_FactoryService} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Pkg_FactoryService.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 import {
     TestBase_UniswapV4StandardExchange_PonsV2
 } from "contracts/test/bases/TestBase_UniswapV4StandardExchange_PonsV2.sol";
@@ -93,6 +94,10 @@ abstract contract TestBase_UniswapV4Detf_PonsV2Se is TestBase_UniswapV4StandardE
     IUniswapV4Detf internal detfInfo;
     IStandardExchangeIn internal detfExchangeIn;
     address internal detfUser = address(0xD37F);
+
+    function _ponsHookFeeBps() internal pure override returns (uint16) {
+        return 0;
+    }
 
     function setUp() public virtual override {
         TestBase_UniswapV4StandardExchange_PonsV2.setUp();
@@ -142,10 +147,7 @@ abstract contract TestBase_UniswapV4Detf_PonsV2Se is TestBase_UniswapV4StandardE
         IFacet seFacet = CpHookFactory.deploySeFacet(create3Factory);
         IFacet depositFacet = CpHookFactory.deployDepositFacet(create3Factory);
         IFacet withdrawFacet = CpHookFactory.deployWithdrawFacet(create3Factory);
-        hookPkg = CpHookFactory.deployPackage(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            owner,
-            IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgInit({
+        hookPkg = CpHookFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgInit({
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
                 seFacet: seFacet,
@@ -159,9 +161,7 @@ abstract contract TestBase_UniswapV4Detf_PonsV2Se is TestBase_UniswapV4StandardE
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
                 multiStepOwnableFacet: multiStepOwnableFacet
-            }),
-            abi.encode(type(IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage).name, "pons")._hash()
-        );
+            }));
     }
 
     function _deployBondNftVaultPkg() internal {
@@ -274,7 +274,8 @@ abstract contract TestBase_UniswapV4Detf_PonsV2Se is TestBase_UniswapV4StandardE
                 pairTokenDecimals: HookPkgArgsDecimalsLib.tokenDec(launchToken),
                 rawTokenDecimals: predicted_.code.length == 0 ? uint8(9) : HookPkgArgsDecimalsLib.tokenDec(predicted_),
                 ownerOnlyLiquidity: args.ownerOnlyLiquidity,
-                owner: predicted_
+                owner: predicted_,
+                rateProvider: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, address(ponsSe), launchToken) // D60
             });
         uint256 mineNonce = CpHookFactory.findMineNonce(hookFactory, hookPkg, hArgs);
         reserveHook = CpHookFactory.deployHook(hookPkg, hArgs, mineNonce);

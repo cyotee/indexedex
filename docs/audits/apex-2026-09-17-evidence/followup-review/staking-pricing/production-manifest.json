@@ -1,0 +1,47 @@
+[
+  {
+    "path": "contracts/protocols/staking/lido/LidoWstETHStandardExchangeCommon.sol",
+    "beforeSha256": "cc8883698f448b271df66f15c17782086af1202fde446666b3b00e5390b6ac58",
+    "overlaySha256": "3d7be5aa160b81e061d696b5306ca3ae408b758cac021df25a0d5c2fe4109491"
+  },
+  {
+    "path": "contracts/protocols/staking/lido/LidoWstETHStandardExchangeInTarget.sol",
+    "beforeSha256": "81dfe2d11a0ed101707126123a86aa781ada910af239f0e18835f624e02783cd",
+    "overlaySha256": "734d3cbe8fd5d7c1b028954b7079d2aeca8ef6843bfda2a84d9dbf369f98e6f9"
+  },
+  {
+    "path": "contracts/protocols/staking/lido/LidoWstETHStandardExchangeOutTarget.sol",
+    "beforeSha256": "0adeb14128a4bf0b3e1ea57ec08b8058c852c0da3825a9a7299e29668767398c",
+    "overlaySha256": "13011b3c10c5ebc8036b6d69d73ae0fb6b242e686ad61a95d38f27bf6170e811"
+  },
+  {
+    "path": "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeCommon.sol",
+    "beforeSha256": "829ad31ab608e964b3e13e4cce014c3342faac19a1ad859919b3a00ab65f7ae3",
+    "overlaySha256": "e9fcfe9ecd8a968d8af1d3ceaf57f824d2cd0f7fff08cac4ba691ae663059d75"
+  },
+  {
+    "path": "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeInTarget.sol",
+    "beforeSha256": "1edf1987a264fac5ca2ba262be592e6594b9927635a8c2b142343480d32a649e",
+    "overlaySha256": "a73b8f9ff8302a1ea5c55c8c6a85eaaf9a546f2325741e7bdefb68d198413e02"
+  },
+  {
+    "path": "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeOutTarget.sol",
+    "beforeSha256": "b89f8bc2c989cff60a65f3591dbd5944fd3ddf30a9b63e97e649e15db01b5897",
+    "overlaySha256": "7382e5e2845493f302f968286161f417207e89a22e62e35c334e621259aacfcb"
+  },
+  {
+    "path": "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeCommon.sol",
+    "beforeSha256": "a077444d271a50917d6ef77666c2ca0c94b628998f111cd518d485f4b9082bb8",
+    "overlaySha256": "672fb129838336e5e1cb16e4e3023f35dcf2df6ed8d9796d9713b4724c49bc93"
+  },
+  {
+    "path": "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeInTarget.sol",
+    "beforeSha256": "33c38b5e7689db388da4d3238eb7156c34247b442bc8abb29fcd38a4a578a51b",
+    "overlaySha256": "6c33448a70e0028fee7fcdc1dd6f824b78de098740c145b03a560984a4c01046"
+  },
+  {
+    "path": "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeOutTarget.sol",
+    "beforeSha256": "8ab9efa845835c5e21d0be5b441ba8601ab97ee8961cdada3cb52ed3b1421dae",
+    "overlaySha256": "9524c59d3cac3a9afe4023113ecda138e90c8afccca85b746cdf884b10220f5a"
+  }
+]

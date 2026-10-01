@@ -19,7 +19,6 @@ import {BalanceDelta} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Ba
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
-import {DETFDecimalScaleLib} from "contracts/vaults/detf/common/core/DETFDecimalScaleLib.sol";
 import {
     UniswapV4StandardExchangeOrbitalBufferHookCommon
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookCommon.sol";
@@ -77,6 +76,22 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookHooksTarget is Unisw
         return Repo._rpAt(Repo._layout(), i);
     }
 
+    /// @notice D60: the configured rate providers, one per leg (address(0) on a raw leg without one).
+    function rateProviders() public view returns (address[] memory rps) {
+        Repo.Layout storage l = Repo._layout();
+        rps = new address[](3);
+        for (uint8 i; i < 3; ++i) rps[i] = Repo._rpAt(l, i);
+    }
+
+    /// @notice D60: the rate provider configured for `token`, address(0) when none or unknown token.
+    function rateProvider(address token_) public view returns (address) {
+        Repo.Layout storage l = Repo._layout();
+        for (uint8 i; i < 3; ++i) {
+            if (Repo._tokenAt(l, i) == token_) return Repo._rpAt(l, i);
+        }
+        return address(0);
+    }
+
 
     function isBuffered(uint8 i) public view returns (bool) {
         return Repo._seAt(Repo._layout(), i) != address(0);
@@ -108,7 +123,8 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookHooksTarget is Unisw
         Repo.Layout storage l = Repo._layout();
         address se = Repo._seAt(l, i);
         if (se == address(0)) return 0;
-        return ClaimLib.seClaimOf(se, Repo._tokenAt(l, i), IERC20(se).balanceOf(address(this)));
+        // D60: the held SE reserve is valued through the leg's rate provider, never through the SE's quotes.
+        return ClaimLib.effectiveNative(se, Repo._rpAt(l, i), Repo._tokenAt(l, i), 0, IERC20(se).balanceOf(address(this)));
     }
 
 
@@ -340,7 +356,8 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookHooksTarget is Unisw
         returns (uint256 amountOut)
     {
         if (amountIn == 0 || !_isLive()) return 0;
-        return _previewSwapExactIn(tokenIn, tokenOut, amountIn);
+        return _previewSwapExactInContext(tokenIn, tokenOut, amountIn,
+            _feeOracle().dexSwapFeeOfVault(address(this)), Repo._layout().poolManager).amountOut;
     }
 
 
@@ -350,7 +367,8 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookHooksTarget is Unisw
         returns (uint256 amountIn)
     {
         if (amountOut == 0 || !_isLive()) return 0;
-        return _previewSwapExactOut(tokenIn, tokenOut, amountOut);
+        return ClaimLib.previewSwapExactOutContext(tokenIn, tokenOut, amountOut,
+            _feeOracle().dexSwapFeeOfVault(address(this)), Repo._layout().poolManager);
     }
 
     function tokens() public view returns (address[] memory t) {
@@ -406,10 +424,34 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookHooksTarget is Unisw
         }
         if (!_isLive()) return 0;
         address out_ = _resolveNumeraire(numeraire);
-        if (out_ == address(0)) return 0;
-        uint256 pairOut = IDetfReserveQuote(address(this)).previewBurnToToken(ctx.ownedLp, out_);
-        if (pairOut == 0) return 0;
-        uint256 pairWad = DETFDecimalScaleLib.nativeToWad(out_, pairOut);
+        address detf_ = Repo._layout().legs.detfToken;
+        if (out_ == address(0) || detf_ == address(0) || out_ == detf_) return 0;
+        Repo.Layout storage l = Repo._layout();
+        uint256 R = l.R;
+        uint256 x = _toWad(detf_, _effectiveNativeOf(detf_));
+        uint256 y = _toWad(out_, _effectiveNativeOf(out_));
+        if (R == 0 || x >= R || y >= R || y == 0) return 0;
+        // Sphere spot moves with reserve swaps. Skip pool DETF: marking it at
+        // spot cancels a swap to first order. Non-DETF inventory times spot is
+        // the pair-WAD NAV; outstanding DETF (expansion is minted to the NFT)
+        // stays in the denominator.
+        uint256 spot = ((R - x) * 1e18) / (R - y);
+        if (spot == 0) return 0;
+        uint256 others = y;
+        if (l.token0 != detf_ && l.token0 != out_) {
+            others += _toWad(l.token0, _effectiveNativeOf(l.token0));
+        }
+        if (l.token1 != detf_ && l.token1 != out_) {
+            others += _toWad(l.token1, _effectiveNativeOf(l.token1));
+        }
+        if (l.token2 != detf_ && l.token2 != out_) {
+            others += _toWad(l.token2, _effectiveNativeOf(l.token2));
+        }
+        uint256 lpSupply = _totalSupply();
+        if (lpSupply == 0 || others == 0) return 0;
+        uint256 pairWad = (others * ctx.ownedLp) / lpSupply;
+        pairWad = (pairWad * spot) / 1e18;
+        if (pairWad == 0) return 0;
         uint256 mid_ = (pairWad * 1e18) / ctx.detfTotalSupply;
         return (mid_ * 1e18) / ctx.creationPairPerDetfWad;
     }

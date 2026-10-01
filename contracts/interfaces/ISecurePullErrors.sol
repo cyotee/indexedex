@@ -11,4 +11,7 @@ interface ISecurePullErrors {
     /// @param claimed Amount the caller requested to credit.
     /// @param observedDelta Observed inbound: same-tx `balanceAfter - balanceBefore`, or durable `U`.
     error TransferDeltaInsufficient(uint256 claimed, uint256 observedDelta);
+
+    /// @notice Public pretransfer / prepaid / internal-balance burn is restricted to callers with bytecode.
+    error EOAPretransferNotAllowed();
 }

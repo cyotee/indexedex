@@ -18,6 +18,7 @@
 | **Primary storage** | `MultiAssetBasicVaultRepo` / `BasicVaultRepo` (`reserveOfToken` / `_reserveOfToken`, same slot) |
 | **Shared error** | `contracts/interfaces/ISecurePullErrors.sol` → `TransferDeltaInsufficient(claimed, observedDelta)` |
 | **Supersedes (semantics)** | In-call-only `balBefore` pretransfer baseline from `gap_cover(i-common)` **for vaults that book `reserveOfToken`** — see §4.3 |
+| **APEX 2026-09-17** | D9/D15 supersede L-RSRV-CALLER “any caller”: public `pretransferred=true` is contract-only (`EOAPretransferNotAllowed()` for code-less callers). Exact-in pretransfer credits exactly `amountIn` and refunds nothing. Exact-out pretransfer refunds only `credit - used`. False-flag exact-out pulls quoted used. Booked inventory is never paid. See `docs/audits/apex-2026-09-17-remediation-and-regression-tests.md`. |
 | **Does not reopen** | Absolute `balanceOf >= claimed` free credit (PAT-I-ABS) |
 | **Related law** | L-GAPS-9/10 (credit claimed iff delta-sufficient; shared error); L-CLAIM-3; CLONE_API_FREEZE (to be amended) |
 | **Diagnosis context** | Transfer-before-call + `pretransferred=true` fails with `TransferDeltaInsufficient(claimed, 0)` after i-common; `reserveOfToken` was never wired into `_secureTokenTransfer` |
@@ -31,7 +32,7 @@ These override any earlier “default if silent” / open-question language in t
 
 | ID | Decision | Law |
 |----|----------|-----|
-| **L-RSRV-CALLER** | **Any caller** may pass `pretransferred=true`. No principal-only / router-only gate in this program. | Expectation (off-chain / integrator discipline): use `true` only inside an **atomic** fund+call (same transaction). The protocol does **not** enforce atomicity on-chain beyond reserve-delta math. |
+| **L-RSRV-CALLER** | **Superseded by APEX 2026-09-17 D9.** Public `pretransferred=true` is for integrating contracts only. A code-less EOA reverts `EOAPretransferNotAllowed()`. Constructor-time callers also reject. Deployed wallets and EIP-7702 delegated EOAs pass the bytecode guard (accepted D12 residual). D32 surfaces keep their existing hard public-pretransfer reject. | Atomic fund+call remains integrator discipline. The bytecode guard does not prove on-chain atomicity. |
 | **L-RSRV-SYNC-WHEN** | Reserve is synced at the **end of each successful money workflow**, for tokens the vault is **expected to hold**. | A Solidity `modifier` cannot return route outputs, so **do not** rely on a wrapper modifier for post-return sync. Each vault route **must** call sync helpers at the end of its workflow (after refunds). |
 | **L-RSRV-SYNC-ROUTES** | **Every route that changes vault reserve balances** must end-sync — not only paths that call `_secureTokenTransfer`. | Includes **deposits**, **withdrawals**, and any other op that mutates booked ERC20 inventory (compound, harvest, rebalance, fee-compound, zap, etc.). View-only / pure quote paths do **not** sync. |
 | **L-RSRV-SYNC-WHICH** | Sync **only** tokens the vault is **expected to hold** (see §4.4 hold-set). | Do **not** attempt to book arbitrary unrelated ERC20s. |
@@ -294,7 +295,7 @@ Packages whose public `reserveOfToken` is an **economic** reserve (e.g. effectiv
 
 | Policy | Locked choice |
 |--------|----------------|
-| **Who may pass `pretransferred=true`?** | **Any caller** (L-RSRV-CALLER). No on-chain principal-only / router-only restriction in this program. |
+| **Who may pass `pretransferred=true`?** | Integrating contracts only (APEX 2026-09-17 D9). EOA reverts `EOAPretransferNotAllowed()`. |
 | **Atomicity** | **Integrator expectation:** fund (push) and `exchange*` with `true` in the **same transaction**. The vault enforces only reserve-delta math, not “same-tx as push” beyond that. |
 | **Can unbooked surplus `U` fund `true`?** | **Yes** — same mechanism as intentional push (required for transfer-before-call). Also crude recovery for **not-yet-synced** / **non-expected-hold** inventory (L-RSRV-DUST). |
 | **After an op syncs token `T`** | Leftover unclaimed `T` (including under-claimed push) is **absorbed** into `R` (no mint, no refund of unclaimed surplus — L-RSRV-ABSORB). Further `true` on `T` needs new unbooked inflow. |
@@ -508,7 +509,7 @@ Full SE filters as needed before merge.
 
 | ID | Decision | See |
 |----|----------|-----|
-| **OQ-1** | **Any caller** may use `pretransferred=true`; atomic fund+call is integrator expectation only | L-RSRV-CALLER, §1.1, §4.6 |
+| **OQ-1** | Integrating-contract callers only; EOA reverts `EOAPretransferNotAllowed()`; atomic fund+call remains integrator risk (D12) | L-RSRV-CALLER as amended, APEX D9 |
 | **OQ-3** | **No** DETF push migration in Wave 0; later wave | L-RSRV-DETF-W0, §5.5 |
 | **OQ-2** | **No** dedicated production `B < R` error/assert branch; correctness via INV-R1 tests | L-RSRV-NO-UNDERFLOW-BRANCH, §4.2 / §4.5 |
 | **OQ-4** | Sync **expected-hold** tokens at end of workflow; not arbitrary ERC20s | L-RSRV-SYNC-*, §4.4 |
@@ -530,7 +531,7 @@ Full SE filters as needed before merge.
 ## 11. Summary for implementers
 
 1. **`reserveOfToken` is the durable snapshot** after each successful money op (for expected-hold tokens).  
-2. **`pretransferred=true` credits `claimed` only against unbooked surplus `balance − reserve`.** Any caller may use it; prefer atomic fund+call.  
+2. **`pretransferred=true` credits `claimed` only against unbooked surplus `balance − reserve`.** Integrating contracts only; EOA reverts `EOAPretransferNotAllowed()`. Prefer atomic fund+call.
 3. **`pretransferred=false` pulls** (ERC20 then Permit2) and credits pull delta.  
 4. **Every money route** end-syncs the **full expected-hold set** after refunds (L-RSRV-SYNC-FULL). No sync modifier; no route-touched-only.  
 5. **Expected-hold** = underlying reserve tokens + sleeve inventory + dust pending compound/rebalance; **not** vault share.  

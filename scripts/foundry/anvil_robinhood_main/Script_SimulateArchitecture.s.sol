@@ -66,6 +66,7 @@ contract Script_SimulateArchitecture is LaunchIo {
         _logAddress("IndexedexManager:", address(s.indexedexManager));
         _logAddress("twapOracle:", address(s.twapOracle));
         _logAddress("uniV4SePkg:", address(s.uniV4SePkg));
+        _logAddress("uniV4PonsSePkg:", address(s.uniV4PonsSePkg));
         _logAddress("uniV3SePkg:", s.uniV3SePkg);
         _logAddress("uniV2SePkg:", s.uniV2SePkg);
         _logAddress("morphoBlueSePkg:", s.morphoBlueSePkg);

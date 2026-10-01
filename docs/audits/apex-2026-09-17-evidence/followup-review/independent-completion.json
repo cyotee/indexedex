@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "scope": "Local source remediation and plan verification; no deployment or migration.",
+  "completedUtc": "2026-09-25T17:49:19.937529+00:00",
+  "acceptanceCriteria": 108,
+  "hermeticTests": 34909,
+  "hermeticSuites": 3053,
+  "failed": 0,
+  "skipped": 0,
+  "campaignCount": 33,
+  "campaignCalls": 540672,
+  "matrix": {
+    "COMPATIBLE": 195,
+    "DEPRECATED": 7,
+    "INCOMPATIBLE": 1
+  },
+  "runtimeArtifacts": 571,
+  "fuzzSourceProperties": 16,
+  "minimumFuzzCases": 10000,
+  "releaseSummary": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-summary.json",
+  "sourceAndRuntimeManifest": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-identity-after.json",
+  "campaignEvidence": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-campaigns.json",
+  "matrixEvidence": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-hook-se-matrix.json",
+  "historicalEvidence": "docs/audits/apex-2026-09-17-evidence/followup-review/historical.log",
+  "sourceChecks": "docs/audits/apex-2026-09-17-evidence/followup-review/final-source-checks.json"
+}

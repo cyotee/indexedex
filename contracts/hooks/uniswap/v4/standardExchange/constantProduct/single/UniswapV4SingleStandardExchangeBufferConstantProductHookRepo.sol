@@ -41,6 +41,14 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookRepo {
         bool initializationFinalized;
         bool ownerOnlyLiquidity;
         UniswapV4SeBufferHookLegLib.Layout legs;
+        // --- D60 rated reserve ---
+        /// @dev Rate provider for the buffered pair leg (WAD whole pair tokens per whole SE share).
+        ///      Required whenever `pairToken != standardExchange`; optional on an identity leg.
+        address rateProvider;
+        /// @dev `IERC20Metadata(standardExchange).decimals()` snapshot for the rated scale.
+        uint8 seDecimals;
+        /// @dev Native token book for an identity pair leg, independent of provider rate.
+        uint256 localPairReserve;
     }
 
     function _layout() internal pure returns (Layout storage l) {

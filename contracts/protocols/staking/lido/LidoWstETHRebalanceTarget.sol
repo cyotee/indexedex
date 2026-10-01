@@ -34,6 +34,7 @@ contract LidoWstETHRebalanceTarget is LidoWstETHStandardExchangeCommon, Reentran
         } else if (liquid + band < target) {
             _queueDeficit(target - liquid);
         }
+        _syncAllExpectedHoldReserves();
     }
 
     function _claimAndWrap() internal {
@@ -57,12 +58,15 @@ contract LidoWstETHRebalanceTarget is LidoWstETHStandardExchangeCommon, Reentran
 
     function _stakeExcess(uint256 wethAmount) internal {
         if (wethAmount == 0) return;
+        uint256 capacity = _lidoStakeCapacity();
+        uint256 stakeAmt = wethAmount < capacity ? wethAmount : capacity;
+        if (stakeAmt == 0) return;
         address weth_ = weth();
         address st_ = stETH();
         address wst_ = wstETH();
 
-        IWETH(payable(weth_)).withdraw(wethAmount);
-        uint256 shares = IStETH(st_).submit{value: wethAmount}(address(0));
+        IWETH(payable(weth_)).withdraw(stakeAmt);
+        uint256 shares = IStETH(st_).submit{value: stakeAmt}(address(0));
         uint256 stBal = IERC20(st_).balanceOf(address(this));
         if (stBal == 0 && shares > 0) {
             // no-op; hermetic may mint face

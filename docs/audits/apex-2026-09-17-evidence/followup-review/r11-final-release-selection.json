@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "environment": {
+    "FOUNDRY_FUZZ_RUNS": "10000",
+    "FOUNDRY_INVARIANT_RUNS": "256",
+    "FOUNDRY_INVARIANT_DEPTH": "64"
+  },
+  "seed": "0x20260917",
+  "testSelector": "^(testFuzz_APEX_.*|testFuzz_FUZZ05_decimalsAndQuantizedRate|testFuzz_FUZZ10_FUZZ12_exactOutPublicBudget|testFuzz_deliveryAcrossSleeveRatios|testFuzz_noPhantomCreditAfterTrade|testFuzz_importedPositionCannotBecomeUnfundedCredit|testFuzz_exchangeOut_(swap_)?refundInvariant)\\(",
+  "purpose": "Independent bounded-credit arithmetic, native-decimal custody accounting, delivery after market movement/import, and actual prepaid refunds."
+}

@@ -1,12 +1,95 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {Creation} from "@crane/contracts/utils/Creation.sol";
+
+
+import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
+
 import {CraneTest} from "@crane/contracts/test/CraneTest.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 /// @notice Exercise actual production artifacts without importing their implementations.
 contract ArtifactCreationCode_Test is CraneTest {
+    bytes32 internal constant MATH_NAME_SALT = keccak256(abi.encode("UniswapV4SingleStandardExchangeBufferConstantProductHookMath"));
+
+    /// @notice ABI encoding is canonical, repeatable, and distinct from raw/packed name hashing.
+    function test_releaseSalt_namespaceAndEncodingVectors() public pure {
+        bytes32 salt = abi.encode(MATH)._hash();
+        assertEq(salt, MATH_NAME_SALT);
+        assertEq(ArtifactCreationCode.releaseSalt(salt), salt);
+        assertEq(ArtifactCreationCode.releaseSalt(bytes32(uint256(123))), bytes32(uint256(123)));
+        assertTrue(salt != bytes(MATH)._hash());
+        assertTrue(salt != abi.encodePacked(MATH)._hash());
+        assertTrue(salt != abi.encode("FeeCollectorManagerFacet")._hash());
+        string memory id = string.concat(MATH_SOURCE, ":", MATH);
+        assertEq(ArtifactCreationCode.releaseSalt(abi.encode(id)._hash()), abi.encode(id)._hash());
+        assertTrue(abi.encode(id)._hash() != abi.encode(string.concat("different/source.sol:", MATH))._hash());
+    }
+
+    /// @notice Changes to both creation code and constructor data cannot replace an occupied identity.
+    function test_releaseSalt_changedPayloadRetainsRuntimeAndConstructor() public {
+        bytes32 salt = ArtifactCreationCode.releaseSalt(abi.encode("ArtifactCreationCode.payload")._hash());
+        bytes memory code = ArtifactCreationCode.creationCode("ERC20PermitMintableStub.sol:ERC20PermitMintableStub");
+        address first = create3Factory.create3WithArgs(code, abi.encode("First", "ONE", uint8(6), address(this), uint256(123)), salt);
+        bytes memory runtime = first.code;
+        address again = create3Factory.create3WithArgs(code, abi.encode("Second", "TWO", uint8(18), address(this), uint256(456)), salt);
+        assertEq(again, first);
+        assertEq(first, Creation._create3AddressFromOf(address(create3Factory), salt));
+        assertEq(first.code, runtime);
+        (bool ok, bytes memory result) = first.staticcall(abi.encodeWithSignature("name()"));
+        assertTrue(ok);
+        assertEq(abi.decode(result, (string)), "First");
+        (ok, result) = first.staticcall(abi.encodeWithSignature("totalSupply()"));
+        assertTrue(ok);
+        assertEq(abi.decode(result, (uint256)), 123);
+        address changedCode = create3Factory.create3(
+            ArtifactCreationCode.creationCode("FeeCollectorManagerFacet.sol:FeeCollectorManagerFacet"), salt
+        );
+        assertEq(changedCode, first);
+        assertEq(first.code, runtime);
+    }
+
+    /// @notice Loader links to an occupied source identity and leaves its different real payload intact.
+    function test_occupiedLibraryIdentityRetainsOriginalRuntime() public {
+        string memory id = string.concat(MATH_SOURCE, ":", MATH);
+        bytes memory other = ArtifactCreationCode.creationCode(create3Factory,
+            "UniswapV4StandardExchangeWeightedBufferHookMath.sol:UniswapV4StandardExchangeWeightedBufferHookMath");
+        address occupied = create3Factory.create3(other, abi.encode(id)._hash());
+        bytes memory runtime = occupied.code;
+        bytes memory linked = ArtifactCreationCode.creationCode(create3Factory, SE_FACET);
+        assertEq(_linkedAddress(linked, _mathOffset()), occupied);
+        assertEq(occupied, Creation._create3AddressFromOf(address(create3Factory), abi.encode(id)._hash()));
+        assertEq(occupied.code, runtime);
+        assertEq(ArtifactCreationCode.creationCode(create3Factory, SE_FACET), linked);
+    }
+
+    function _mathOffset() private view returns (uint256) {
+        string memory json = vm.readFile(string.concat(vm.projectRoot(),
+            "/out/UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet.sol/UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet.json"));
+        return vm.parseJsonUint(json, string.concat('.bytecode.linkReferences["', MATH_SOURCE, '"]["', MATH, '"][0].start'));
+    }
+
+    using BetterEfficientHashLib for bytes;
+
+    function test_repeatedLinkedLoadsDiscardJsonScratchButPreserveCallerMemory() public {
+        bytes memory sentinel = abi.encode("caller-owned", uint256(123), address(this));
+        bytes32 sentinelHash = keccak256(sentinel);
+        bytes memory first = ArtifactCreationCode.creationCode(create3Factory, SE_FACET);
+        bytes32 firstHash = keccak256(first);
+        for (uint256 i; i < 8; ++i) {
+            uint256 beforeFree;
+            assembly ("memory-safe") { beforeFree := mload(0x40) }
+            bytes memory loaded = ArtifactCreationCode.creationCode(create3Factory, SE_FACET);
+            uint256 afterFree;
+            assembly ("memory-safe") { afterFree := mload(0x40) }
+            assertLe(afterFree - beforeFree, loaded.length + 2048, "only return data and call inputs stay allocated");
+            assertEq(keccak256(loaded), firstHash, "recursive linking unchanged");
+            assertEq(keccak256(first), firstHash, "prior return remains live");
+            assertEq(keccak256(sentinel), sentinelHash, "caller-owned memory preserved");
+        }
+    }
     string internal constant SE_FACET =
         "UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet.sol:UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet";
     string internal constant MATH = "UniswapV4SingleStandardExchangeBufferConstantProductHookMath";
@@ -35,6 +118,7 @@ contract ArtifactCreationCode_Test is CraneTest {
         );
         address math_ = _linkedAddress(code_, offset_);
         assertGt(math_.code.length, 0);
+        assertEq(math_, Creation._create3AddressFromOf(address(create3Factory), abi.encode(string.concat(MATH_SOURCE, ":", MATH))._hash()));
         (bool success_, bytes memory result_) =
             math_.staticcall(abi.encodeWithSignature("toWad(uint256,uint8)", 123, 6));
         assertTrue(success_);

@@ -41,10 +41,9 @@ contract SlipstreamStandardExchangeInFacet is SlipstreamStandardExchangeInTarget
             bytes4[] memory interfaces
         )
     {
-        interfaces = new bytes4[](3);
-        interfaces[0] = type(IStandardExchangeIn).interfaceId;
-        interfaces[1] = type(ICLMintCallback).interfaceId;
-        interfaces[2] = type(ICLSwapCallback).interfaceId;
+        interfaces = new bytes4[](2);
+        interfaces[0] = type(ICLMintCallback).interfaceId;
+        interfaces[1] = type(ICLSwapCallback).interfaceId;
     }
 
     function facetFuncs()
@@ -56,11 +55,10 @@ contract SlipstreamStandardExchangeInFacet is SlipstreamStandardExchangeInTarget
             bytes4[] memory funcs
         )
     {
-        funcs = new bytes4[](4);
-        funcs[0] = IStandardExchangeIn.previewExchangeIn.selector;
-        funcs[1] = IStandardExchangeIn.exchangeIn.selector;
-        funcs[2] = ICLMintCallback.uniswapV3MintCallback.selector;
-        funcs[3] = ICLSwapCallback.uniswapV3SwapCallback.selector;
+        funcs = new bytes4[](3);
+        funcs[0] = IStandardExchangeIn.exchangeIn.selector;
+        funcs[1] = ICLMintCallback.uniswapV3MintCallback.selector;
+        funcs[2] = ICLSwapCallback.uniswapV3SwapCallback.selector;
     }
 
     function facetMetadata()

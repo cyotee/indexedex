@@ -198,9 +198,12 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookWithdraw
         (uint256 a0, uint256 a1) = _withdrawAndSettle(sharesIn, address(this), 0, 0, deadline, false);
         uint256 residual = state.outIs0 ? a1 : a0;
         if (residual > 0) {
-            uint256 extra = _previewSwapExactIn(!state.outIs0, residual);
-            if (extra > 0) _executeBookSwap(!state.outIs0, residual, extra, address(this));
-            else IERC20(state.outIs0 ? l.currency1 : l.currency0).safeTransfer(msg.sender, residual);
+            BookSwapPlan memory plan = _planExactIn(!state.outIs0, residual);
+            if (plan.output.amount > 0) {
+                _executePlannedSwap(plan, true, address(this));
+            } else {
+                IERC20(state.outIs0 ? l.currency1 : l.currency0).safeTransfer(msg.sender, residual);
+            }
         }
         // Credit actual operation proceeds, including rounding surplus, but no prior inventory.
         amountOut = IERC20(state.pair).balanceOf(address(this)) - state.beforeOut;
@@ -231,29 +234,20 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookWithdraw
             && ClaimLib.supportsTransitionQuote(_seFor(other), other, address(this))) {
             return _previewSequentialExit(pair, other, sharesIn, asShare);
         }
-        amountOut = _previewFallbackExit(pair, other, sharesIn, outIs0);
+        amountOut = _previewFallbackExit(pair, sharesIn, outIs0);
         if (asShare && amountOut > 0) {
             amountOut = IStandardExchangeIn(tokenOut).previewExchangeIn(IERC20(pair), amountOut, IERC20(tokenOut));
         }
     }
 
-    function _previewFallbackExit(address pair, address other, uint256 sharesIn, bool outIs0)
+    function _previewFallbackExit(address pair, uint256 sharesIn, bool outIs0)
         private view returns (uint256)
     {
-        // The residual trade uses the remaining share book after proportional withdrawal.
+        // Quote only the proportional withdraw. Residual swap at execute is extra
+        // output and must not raise minOut above what `_withdrawAndSettle` pays.
+        pair;
         (uint256 a0, uint256 a1) = _previewWithdraw(sharesIn);
-        uint256 residual = outIs0 ? a1 : a0;
-        uint256 claimIn = residual == 0 ? 0 : _previewBufferClaimIn(_seFor(other), other, residual);
-        return (outIs0 ? a0 : a1) + _exitSaleQuote(
-            other, pair, claimIn, _remainingClaim(other, sharesIn), _remainingClaim(pair, sharesIn)
-        );
-    }
-
-    function _remainingClaim(address pair, uint256 lpAmount) private view returns (uint256) {
-        address se = _seFor(pair);
-        uint256 held = IERC20(se).balanceOf(address(this));
-        uint256 removed = FullMath.mulDiv(held, lpAmount, _supplyAfterProtocolMint());
-        return _claimOfSe(se, pair, held - removed);
+        return outIs0 ? a0 : a1;
     }
 
     function _previewSequentialExit(address pair, address other, uint256 sharesIn, bool asShare)
@@ -262,27 +256,28 @@ abstract contract UniswapV4DualStandardExchangeBufferConstantProductHookWithdraw
         uint256 supply = _supplyAfterProtocolMint();
         ExitQuoteLeg memory output = _previewWithdrawLeg(pair, sharesIn, supply);
         ExitQuoteLeg memory input = _previewWithdrawLeg(other, sharesIn, supply);
-        amountOut = output.withdrawn;
-        if (input.withdrawn > 0) {
-            uint256 assetsAfter;
-            (,,, assetsAfter) = Transition(input.se).quoteTransition(
-                input.state, Transition.Operation.DepositExactIn, input.withdrawn
-            );
-            uint256 addedClaim = assetsAfter > input.assets ? assetsAfter - input.assets : 0;
-            uint256 extra = _exitSaleQuote(other, pair, addedClaim, input.assets, output.assets);
-            if (extra > 0) {
-                uint256 received;
-                (output.state,, received, output.assets) = Transition(output.se).quoteTransition(
-                    output.state, Transition.Operation.WithdrawExactOut, extra
-                );
-                amountOut += received;
-            }
-        }
+        amountOut = output.withdrawn + _projectExitResidual(input, output, other, pair);
         if (asShare && amountOut > 0) {
             (,, amountOut,) = Transition(output.se).quoteTransition(
                 output.state, Transition.Operation.DepositExactIn, amountOut
             );
         }
+    }
+
+    function _projectExitResidual(ExitQuoteLeg memory input, ExitQuoteLeg memory output, address tokenIn, address tokenOut)
+        private view returns (uint256 received)
+    {
+        if (input.withdrawn == 0) return 0;
+        uint256 claimIn = ClaimLib.projectedBufferClaimIn(input.se, input.state, input.withdrawn);
+        uint256 budget = _exitSaleQuote(tokenIn, tokenOut, claimIn,
+            ClaimLib.ratedReserveOfState(input.se, input.state), ClaimLib.ratedReserveOfState(output.se, output.state));
+        ClaimLib.OutputQuote memory quote;
+        bytes memory next;
+        (quote, next) = ClaimLib.projectOutputExactIn(output.se, output.state, budget);
+        if (quote.amount == 0) return 0;
+        (input.state,,,) = Transition(input.se).quoteTransition(input.state, Transition.Operation.DepositExactIn, input.withdrawn);
+        output.state = next;
+        return quote.amount;
     }
 
     function _previewWithdrawLeg(address pair, uint256 sharesIn, uint256 supply)

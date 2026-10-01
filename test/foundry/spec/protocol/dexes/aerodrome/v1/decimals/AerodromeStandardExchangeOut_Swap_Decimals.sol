@@ -14,7 +14,9 @@ import {IPool} from "@crane/contracts/interfaces/protocols/dexes/aerodrome/IPool
 /*                                  Indexedex                                 */
 /* -------------------------------------------------------------------------- */
 
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {
     TestBase_AerodromeStandardExchange_Decimals
 } from "contracts/protocols/dexes/aerodrome/v1/test/bases/TestBase_AerodromeStandardExchange_Decimals.sol";
@@ -34,6 +36,37 @@ abstract contract AerodromeStandardExchangeOut_Swap_Decimals is TestBase_Aerodro
     function setUp() public override {
         super.setUp();
         caller = makeAddr("caller");
+    }
+
+    function _atomicExchangeOut(
+        IStandardExchangeProxy vault,
+        IERC20 tokenIn,
+        IERC20 tokenOut,
+        uint256 maxIn,
+        uint256 amountOut
+    ) private returns (uint256 used, address atomicAddr) {
+        AtomicPretransferCaller atomic = new AtomicPretransferCaller();
+        atomicAddr = address(atomic);
+        tokenIn.approve(atomicAddr, maxIn);
+        used = abi.decode(
+            atomic.consumePretransfer(
+                tokenIn,
+                caller,
+                address(vault),
+                maxIn,
+                abi.encodeWithSelector(
+                    IStandardExchangeOut.exchangeOut.selector,
+                    tokenIn,
+                    maxIn,
+                    tokenOut,
+                    amountOut,
+                    atomicAddr,
+                    true,
+                    _deadline()
+                )
+            ),
+            (uint256)
+        );
     }
 
     /// @dev Get a safe amountOut that is within pool reserves for the given direction.
@@ -148,34 +181,14 @@ abstract contract AerodromeStandardExchangeOut_Swap_Decimals is TestBase_Aerodro
         // Create surplus: send 2x the needed amount
         uint256 maxAmountIn = expectedAmountIn * 2;
         tokenInStub.mint(caller, maxAmountIn);
-
         vm.startPrank(caller);
-        // Pretransfer all tokens to the vault
-        tokenIn.transfer(address(vault), maxAmountIn);
-
-        uint256 callerTokenInBefore = tokenIn.balanceOf(caller);
-        assertEq(callerTokenInBefore, 0, "Caller should have 0 tokenIn after pretransfer");
-
-        // Execute exchangeOut with pretransferred = true
-        uint256 amountIn = vault.exchangeOut(
-            tokenIn,
-            maxAmountIn,
-            tokenOut,
-            amountOut,
-            caller,
-            true, // pretransferred
-            _deadline()
-        );
+        (uint256 amountIn, address atomic) = _atomicExchangeOut(vault, tokenIn, tokenOut, maxAmountIn, amountOut);
         vm.stopPrank();
 
-        // Verify the surplus was refunded
-        uint256 callerTokenInAfter = tokenIn.balanceOf(caller);
         uint256 refundAmount = maxAmountIn - amountIn;
         assertGt(refundAmount, 0, "Refund must be > 0 when surplus exists");
-        assertEq(callerTokenInAfter, refundAmount, "Caller should receive refund of unused tokens");
-
-        // Verify the output was received
-        assertGe(tokenOut.balanceOf(caller), amountOut, "Caller should receive at least amountOut");
+        assertEq(tokenIn.balanceOf(atomic), refundAmount, "Caller should receive refund of unused tokens");
+        assertGe(tokenOut.balanceOf(atomic), amountOut, "Caller should receive at least amountOut");
     }
 
     /* ---------------------------------------------------------------------- */
@@ -205,27 +218,13 @@ abstract contract AerodromeStandardExchangeOut_Swap_Decimals is TestBase_Aerodro
 
         // Mint exactly the needed amount
         tokenInStub.mint(caller, expectedAmountIn);
-
         vm.startPrank(caller);
-        // Pretransfer exactly the needed amount
-        tokenIn.transfer(address(vault), expectedAmountIn);
-
-        // Execute exchangeOut with exact amount pretransferred
-        uint256 amountIn = vault.exchangeOut(
-            tokenIn,
-            expectedAmountIn,
-            tokenOut,
-            amountOut,
-            caller,
-            true, // pretransferred
-            _deadline()
-        );
+        (uint256 amountIn, address atomic) = _atomicExchangeOut(vault, tokenIn, tokenOut, expectedAmountIn, amountOut);
         vm.stopPrank();
 
-        // No refund because exact amount was used
-        assertEq(tokenIn.balanceOf(caller), 0, "No refund when exact amount pretransferred");
+        assertEq(tokenIn.balanceOf(atomic), 0, "No refund when exact amount pretransferred");
         assertEq(amountIn, expectedAmountIn, "AmountIn should match preview");
-        assertGe(tokenOut.balanceOf(caller), amountOut, "Caller should receive at least amountOut");
+        assertGe(tokenOut.balanceOf(atomic), amountOut, "Caller should receive at least amountOut");
     }
 
     /* ---------------------------------------------------------------------- */
@@ -271,19 +270,10 @@ abstract contract AerodromeStandardExchangeOut_Swap_Decimals is TestBase_Aerodro
         tokenA.mint(caller, maxAmountIn);
 
         vm.startPrank(caller);
-        uint256 callerTokenInBefore = tokenIn.balanceOf(caller);
-        tokenIn.transfer(address(vault), maxAmountIn);
-
-        uint256 amountIn = vault.exchangeOut(tokenIn, maxAmountIn, tokenOut, amountOut, caller, true, _deadline());
+        (uint256 amountIn, address atomic) = _atomicExchangeOut(vault, tokenIn, tokenOut, maxAmountIn, amountOut);
         vm.stopPrank();
 
-        // Invariant: the net tokens spent by the caller is exactly amountIn
-        uint256 callerTokenInAfter = tokenIn.balanceOf(caller);
-        uint256 netSpent = callerTokenInBefore - callerTokenInAfter;
-        assertEq(netSpent, amountIn, "Refund invariant: caller net spent == amountIn");
-
-        // Equivalently, the refund was maxAmountIn - amountIn
-        uint256 refundReceived = callerTokenInAfter - (callerTokenInBefore - maxAmountIn);
-        assertEq(refundReceived, maxAmountIn - amountIn, "Refund invariant: refund == maxAmountIn - amountIn");
+        assertEq(tokenIn.balanceOf(atomic), maxAmountIn - amountIn, "Refund invariant: refund == maxAmountIn - amountIn");
+        assertGe(tokenOut.balanceOf(atomic), amountOut, "Caller should receive at least amountOut");
     }
 }

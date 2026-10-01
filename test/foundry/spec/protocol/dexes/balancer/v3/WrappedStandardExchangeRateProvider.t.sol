@@ -18,6 +18,7 @@ import {IERC4626PermitDFPkg} from "@crane/contracts/tokens/ERC4626/IERC4626Permi
 
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
 import {IWrappedStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/IWrappedStandardExchangeRateProviderDFPkg.sol";
+import {ApexD48QuoteReplyFixture} from "contracts/test/stubs/ApexD48QuoteReplyFixture.sol";
 import {
     StandardExchangeRateProvider_FactoryService
 } from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProvider_FactoryService.sol";
@@ -100,6 +101,44 @@ contract WrappedStandardExchangeRateProvider_Test is TestBase_UniswapV2StandardE
         assertTrue(IERC165(address(wrapped)).supportsInterface(type(IStandardExchangeRateQuote).interfaceId));
         _assertProjectedRates(standard, wrapped, true);
         _assertProjectedRates(standard, wrapped, false);
+    }
+
+    function _deployWrappedFixtureProvider(ApexD48QuoteReplyFixture fx) internal returns (IRateProvider) {
+        return wrappedRateProviderPkg.deployRateProvider(
+            wrappedForTokenA, IStandardExchangeIn(address(fx)), IERC20(address(uniswapBalancedTokenA))
+        );
+    }
+
+    function test_APEX_D48_wrapped_ok32_nonzero() public {
+        ApexD48QuoteReplyFixture fx = new ApexD48QuoteReplyFixture();
+        fx.setReply(ApexD48QuoteReplyFixture.Reply.Ok32, 1e18);
+        uint256 rate = _deployWrappedFixtureProvider(fx).getRate();
+        assertGt(rate, 0);
+    }
+
+    function test_APEX_D48_wrapped_okShort_returnsZero() public {
+        ApexD48QuoteReplyFixture fx = new ApexD48QuoteReplyFixture();
+        fx.setReply(ApexD48QuoteReplyFixture.Reply.OkShort, 0);
+        assertEq(_deployWrappedFixtureProvider(fx).getRate(), 0);
+    }
+
+    function test_APEX_D48_wrapped_okEmpty_returnsZero() public {
+        ApexD48QuoteReplyFixture fx = new ApexD48QuoteReplyFixture();
+        fx.setReply(ApexD48QuoteReplyFixture.Reply.OkEmpty, 0);
+        assertEq(_deployWrappedFixtureProvider(fx).getRate(), 0);
+    }
+
+    function test_APEX_D48_wrapped_okOverlong_returnsZero() public {
+        ApexD48QuoteReplyFixture fx = new ApexD48QuoteReplyFixture();
+        fx.setReply(ApexD48QuoteReplyFixture.Reply.OkOverlong, 1e18);
+        assertEq(_deployWrappedFixtureProvider(fx).getRate(), 0);
+    }
+
+    function test_APEX_D48_wrapped_customRevert_scaleUpOrZero() public {
+        ApexD48QuoteReplyFixture fx = new ApexD48QuoteReplyFixture();
+        fx.setReply(ApexD48QuoteReplyFixture.Reply.RevertCustom, 0);
+        uint256 rate = _deployWrappedFixtureProvider(fx).getRate();
+        assertEq(rate, 0);
     }
 
     struct RateComparison {

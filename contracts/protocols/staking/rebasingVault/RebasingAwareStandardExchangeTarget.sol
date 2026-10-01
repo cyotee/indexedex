@@ -21,6 +21,9 @@ import {RebasingAwareERC4626Repo} from
     "contracts/protocols/staking/rebasingVault/RebasingAwareERC4626Repo.sol";
 import {RebasingAwareERC4626Common} from
     "contracts/protocols/staking/rebasingVault/RebasingAwareERC4626Common.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
+import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 
 contract RebasingAwareStandardExchangeTarget is
     ReentrancyLockModifiers,
@@ -77,8 +80,11 @@ contract RebasingAwareStandardExchangeTarget is
         if (assetIn) {
             return RebasingAwareERC4626Common.executeDeposit(amountIn, recipient, minAmountOut, false);
         }
+        if (pretransferred) {
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+        }
         RebasingAwareERC4626Common.ShareSource source = pretransferred
-            ? RebasingAwareERC4626Common.ShareSource.PublicBalanceRefundExcess
+            ? RebasingAwareERC4626Common.ShareSource.PublicBalanceExactBurn
             : RebasingAwareERC4626Common.ShareSource.CallerOrApprovedOwner;
         address owner = pretransferred ? address(this) : msg.sender;
         return RebasingAwareERC4626Common.executeRedeem(
@@ -108,12 +114,33 @@ contract RebasingAwareStandardExchangeTarget is
         if (assetIn) {
             return RebasingAwareERC4626Common.executeMint(amountOut, recipient, maxAmountIn, false);
         }
-        RebasingAwareERC4626Common.ShareSource source = pretransferred
-            ? RebasingAwareERC4626Common.ShareSource.PublicBalanceRefundExcess
-            : RebasingAwareERC4626Common.ShareSource.CallerOrApprovedOwner;
-        address owner = pretransferred ? address(this) : msg.sender;
+        if (pretransferred) {
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+            uint256 selfBal = ERC20Repo._balanceOf(address(this));
+            uint256 credit = LocalCreditLib.budget(LocalCreditLib.available(selfBal, 0), maxAmountIn);
+            uint256 needed = RebasingAwareERC4626Common.sharesForWithdraw(
+                amountOut, RebasingAwareERC4626Common.liveBook()
+            );
+            if (needed > credit) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(needed, credit);
+            }
+            uint256 burned = RebasingAwareERC4626Common.executeWithdraw(
+                amountOut,
+                recipient,
+                address(this),
+                credit,
+                RebasingAwareERC4626Common.ShareSource.PublicBalanceExactBurn,
+                false
+            );
+            if (credit > burned) {
+                ERC20Repo._transfer(address(this), msg.sender, credit - burned);
+            }
+            return burned;
+        }
+        RebasingAwareERC4626Common.ShareSource source =
+            RebasingAwareERC4626Common.ShareSource.CallerOrApprovedOwner;
         return RebasingAwareERC4626Common.executeWithdraw(
-            amountOut, recipient, owner, maxAmountIn, source, false
+            amountOut, recipient, msg.sender, maxAmountIn, source, false
         );
     }
 

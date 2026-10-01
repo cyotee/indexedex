@@ -1,0 +1,410 @@
+{
+  "status": "PASS",
+  "seed": "0x20260917",
+  "scope": "32 production families plus the standalone Balancer pool-action supplement; decimal and historical campaigns remain supplementary.",
+  "log": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-hermetic.log",
+  "logSha256": "8f94d584faa0e155ef7a8e1dbb96379edec97c42e933bdc1803e6e7ed41f8e62",
+  "campaignCount": 33,
+  "totalCalls": 540672,
+  "campaigns": [
+    {
+      "source": "test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/invariant/UniswapV4SingleStandardExchangeBufferConstantProductHook_Invariant.t.sol",
+      "sourceSha256": "797b452bb2630a7d87c5f9fb63d29eb7d00edf7244e56c0fef91e91759064195",
+      "suite": "test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/invariant/UniswapV4SingleStandardExchangeBufferConstantProductHook_Invariant.t.sol:UniswapV4SingleStandardExchangeBufferConstantProductHook_Invariant",
+      "invariant": "invariant_liquidityAccounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_deterministicLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/invariant/UniswapV4DualSEBCPHook_Invariant.t.sol",
+      "sourceSha256": "b70daa8555d906729491f2bcf3cb851d6a68d76aabffe9b6ef50b215426729c2",
+      "suite": "test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/invariant/UniswapV4DualSEBCPHook_Invariant.t.sol:UniswapV4DualSEBCPHook_Invariant",
+      "invariant": "invariant_liquidityAccounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_deterministicLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/invariant/UniswapV4StandardExchangeOrbitalBufferHook_Invariant.t.sol",
+      "sourceSha256": "b306d6767db990c2cf5b9a4a31e89f262ee836c54a365488d52ce5f34729f965",
+      "suite": "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/invariant/UniswapV4StandardExchangeOrbitalBufferHook_Invariant.t.sol:UniswapV4StandardExchangeOrbitalBufferHook_Invariant",
+      "invariant": "invariant_liquidityAccounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_deterministicLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/hooks/uniswap/v4/standardExchange/single/invariant/UniswapV4SingleSEBufferHook_Invariant.t.sol",
+      "sourceSha256": "eceb808fa7aaebb891b5b2c774c3dd8a66aebba62b56a150392397772521856a",
+      "suite": "test/foundry/spec/hooks/uniswap/v4/standardExchange/single/invariant/UniswapV4SingleSEBufferHook_Invariant.t.sol:UniswapV4SingleSEBufferHook_Invariant",
+      "invariant": "invariant_liquidityAccounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_deterministicLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/invariant/UniswapV4StandardExchangeBalancerQuadStableBufferHook_Invariant.t.sol",
+      "sourceSha256": "4ee7e2b9f18e6001b331e599aefb86b2529e4f74745a6bf3402944446fbf37ed",
+      "suite": "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/invariant/UniswapV4StandardExchangeBalancerQuadStableBufferHook_Invariant.t.sol:UniswapV4StandardExchangeBalancerQuadStableBufferHook_Invariant",
+      "invariant": "invariant_liquidityAccounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_deterministicLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/invariant/UniswapV4StandardExchangeCurveQuadStableBufferHook_Invariant.t.sol",
+      "sourceSha256": "05366c86a98e2cd6893ea0d298c25bd6d725e3f56bda496fcd250357fcc5a2f9",
+      "suite": "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/invariant/UniswapV4StandardExchangeCurveQuadStableBufferHook_Invariant.t.sol:UniswapV4StandardExchangeCurveQuadStableBufferHook_Invariant",
+      "invariant": "invariant_liquidityAccounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_deterministicLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/invariant/UniswapV4StandardExchangeWeightedBufferHook_Invariant.t.sol",
+      "sourceSha256": "eece9a9a5506739eca05b1d99cb584c4e46f428a043bf1da918b7b5f078487e1",
+      "suite": "test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/invariant/UniswapV4StandardExchangeWeightedBufferHook_Invariant.t.sol:UniswapV4StandardExchangeWeightedBufferHook_Invariant",
+      "invariant": "invariant_liquidityAccounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_deterministicLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/aerodrome/v1/invariant/AerodromeStandardExchange.invariant.t.sol",
+      "sourceSha256": "840e21c3ef3ab20eb599e3048d615193ced693f2d1f7525c13f639f708dbf532",
+      "suite": "test/foundry/spec/protocol/dexes/aerodrome/v1/invariant/AerodromeStandardExchange.invariant.t.sol:AerodromeStandardExchangeInvariant",
+      "invariant": "invariant_APEX_accounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_APEX_deterministicLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/camelot/v2/invariant/CamelotV2StandardExchange_AccountingInvariant.t.sol",
+      "sourceSha256": "8ff17d0cb41502b196fcd8039c7150438816e21efa6b509258dcce460d4e9198",
+      "suite": "test/foundry/spec/protocol/dexes/camelot/v2/invariant/CamelotV2StandardExchange_AccountingInvariant.t.sol:CamelotV2StandardExchange_AccountingInvariant",
+      "invariant": "invariant_APEX_accounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_APEX_deterministicLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/protocol/dexes/uniswap/v2/invariant/UniswapV2StandardExchange_AccountingInvariant.t.sol",
+      "sourceSha256": "b18d5fd8a50d088889c5326d092c5c4aa26db5416583ff34fd64200381b1c49a",
+      "suite": "test/foundry/spec/protocol/dexes/uniswap/v2/invariant/UniswapV2StandardExchange_AccountingInvariant.t.sol:UniswapV2StandardExchange_AccountingInvariant",
+      "invariant": "invariant_APEX_accounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_APEX_deterministicLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/cross-version/invariant/AaveCrossVersionLoop_Invariant.t.sol",
+      "sourceSha256": "85fe65adea9b0755e918b4ae23f6843a37d58c6f511f50d7963014ac71798bfc",
+      "suite": "test/foundry/spec/protocol/lending/aave/cross-version/invariant/AaveCrossVersionLoop_Invariant.t.sol:AaveCrossVersionLoop_Invariant",
+      "invariant": "invariant_APEX_accounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_APEX_deterministicLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/protocol/lending/aave/v3.6/invariant/AaveV3StataStandardExchange_Invariant.t.sol",
+      "sourceSha256": "389116d554fdcdf074235949b41701b3675c673c98e0f0c91026a219dc067bd3",
+      "suite": "test/foundry/spec/protocol/lending/aave/v3.6/invariant/AaveV3StataStandardExchange_Invariant.t.sol:AaveV3StataStandardExchange_Invariant",
+      "invariant": "invariant_APEX_accounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_APEX_deterministicLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/protocol/staking/etherfi/invariant/EtherFiWeETHStandardExchange_Invariant.t.sol",
+      "sourceSha256": "c264608ba1d3eb6e1362e64e52eefcb3f3da421e75ab467044be68e99d440b26",
+      "suite": "test/foundry/spec/protocol/staking/etherfi/invariant/EtherFiWeETHStandardExchange_Invariant.t.sol:EtherFiWeETHStandardExchange_Invariant_Test",
+      "invariant": "invariant_APEX_accounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_APEX_deterministicLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/protocol/staking/lido/invariant/LidoWstETHStandardExchange_Invariant.t.sol",
+      "sourceSha256": "66c23070f723b9bfa22ad59523409f2c7c46b5b0fa643290ff211867d473768a",
+      "suite": "test/foundry/spec/protocol/staking/lido/invariant/LidoWstETHStandardExchange_Invariant.t.sol:LidoWstETHStandardExchange_Invariant_Test",
+      "invariant": "invariant_APEX_accounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_APEX_deterministicLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/protocol/staking/rocket-pool/invariant/RocketPoolRETHStandardExchange_Invariant.t.sol",
+      "sourceSha256": "b7031ccf2a6bed851738e8802d80c1e3f310b155c13aecff541e7f2a9df10196",
+      "suite": "test/foundry/spec/protocol/staking/rocket-pool/invariant/RocketPoolRETHStandardExchange_Invariant.t.sol:RocketPoolRETHStandardExchange_Invariant_Test",
+      "invariant": "invariant_APEX_accounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_APEX_deterministicLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPool.invariant.t.sol",
+      "sourceSha256": "90926dfd80a8ae39933b07e4ccdfdbee0d99f16611cd9b768572035fce026b48",
+      "suite": "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPool.invariant.t.sol:StandardExchangeBufferPoolInvariant",
+      "invariant": "invariant_bufferPoolAccounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_deterministicBufferLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BalancerV3SinglePoolStandardExchange_Invariant.t.sol",
+      "sourceSha256": "264a139ce6aa5adf349c1ac3800a27ab1616a6fc425d45f83e012b3508ffe53d",
+      "suite": "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BalancerV3SinglePoolStandardExchange_Invariant.t.sol:BalancerV3SinglePoolStandardExchange_Invariant",
+      "invariant": "invariant_APEX_accounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_APEX_deterministicLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BalancerV3SinglePoolStandardExchange_PoolActionsInvariant.t.sol",
+      "sourceSha256": "df07f0af781766bb53c9ac1be40bebcbfdd200321ec1fb0bced65109b27ba918",
+      "suite": "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BalancerV3SinglePoolStandardExchange_PoolActionsInvariant.t.sol:BalancerV3SinglePoolStandardExchange_PoolActionsInvariant",
+      "invariant": "invariant_poolActionsAccounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_deterministicPoolActionsLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePool.invariant.t.sol",
+      "sourceSha256": "1c420fa7e7d8b020358fc02e7e68d161112534af4b2594010aeed74a53e1deea",
+      "suite": "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePool.invariant.t.sol:CommonBufferMultiVaultStablePoolInvariant",
+      "invariant": "invariant_bufferPoolAccounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_deterministicBufferLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePool.invariant.t.sol",
+      "sourceSha256": "afbe2010c009cb5f7d81b8a6fb613071caea09797d93b3a469b321374933f401",
+      "suite": "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePool.invariant.t.sol:MixedBufferMultiVaultStablePoolInvariant",
+      "invariant": "invariant_bufferPoolAccounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_deterministicBufferLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPool.invariant.t.sol",
+      "sourceSha256": "229db56f4a0adcd3e71d7bed856eb36fc1f18aee7df96b1a8262a1d40c0a4fc9",
+      "suite": "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPool.invariant.t.sol:CommonBufferMultiVaultWeightedPoolInvariant",
+      "invariant": "invariant_bufferPoolAccounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_deterministicBufferLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPool.invariant.t.sol",
+      "sourceSha256": "2e30d6293d551243204f5e400c02050612e25c3aa4827b38f136b8273ed24330",
+      "suite": "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPool.invariant.t.sol:MixedLegWeightedBufferPoolInvariant",
+      "invariant": "invariant_bufferPoolAccounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_deterministicBufferLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPool.invariant.t.sol",
+      "sourceSha256": "5eb214c3f9444ed9380dbffc72c7f5cff7308a7a87479fd9abf9429a7890aba9",
+      "suite": "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPool.invariant.t.sol:MultiPairStandardExchangeBufferPoolInvariant",
+      "invariant": "invariant_bufferPoolAccounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_deterministicBufferLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Invariant.t.sol",
+      "sourceSha256": "861656d24acc962e6ffbe83f0ede3541f671876a969cd3e2d994d13ebe004cfd",
+      "suite": "test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Invariant.t.sol:RebasingAwareERC4626_Invariant",
+      "invariant": "invariant_INV01_through15_independentAccounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_APEX_custodyLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/invariant/MixedBufferMultiVaultStableDetf_Invariant.t.sol",
+      "sourceSha256": "8e87306342c0468ddfe64bb07901433cf0d257a767e500edab021f75e42cad82",
+      "suite": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/invariant/MixedBufferMultiVaultStableDetf_Invariant.t.sol:MixedBufferMultiVaultStableDetf_Invariant",
+      "invariant": "invariant_accounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_deterministicLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/invariant/MultiVaultWeightedDetf.invariant.t.sol",
+      "sourceSha256": "df80a6f9081619ccd2cc99b68b85622abe789bf33255ca8dbeb2adb5fd9a833b",
+      "suite": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/invariant/MultiVaultWeightedDetf.invariant.t.sol:MultiVaultWeightedDetfInvariant",
+      "invariant": "invariant_accounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_deterministicLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/invariant/ComposedStableCommonDetf_Invariant.t.sol",
+      "sourceSha256": "98b76d7ded4083d4f983c6f40394a35357a02f45218455fe7609b622d02c7b11",
+      "suite": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/invariant/ComposedStableCommonDetf_Invariant.t.sol:ComposedStableCommonDetf_Invariant",
+      "invariant": "invariant_accounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_deterministicLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/invariant/SingleStandardExchangeDETF.invariant.t.sol",
+      "sourceSha256": "f6f5a48a287e8a3dbedb89f3d13f8dba54408a87aa0c55af59ea3bb4d4ffc29f",
+      "suite": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/invariant/SingleStandardExchangeDETF.invariant.t.sol:SingleStandardExchangeDETFInvariant",
+      "invariant": "invariant_accounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_deterministicLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/invariant/UniswapV4Detf_Invariant.t.sol",
+      "sourceSha256": "466a41001d9b300845dcab0c9c26456b65561c39b8b0880131140fd94d39666a",
+      "suite": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/invariant/UniswapV4Detf_Invariant.t.sol:UniswapV4Detf_Invariant",
+      "invariant": "invariant_accounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_deterministicLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/vaults/standard/erc4626/invariant/ERC4626StandardExchange_Invariant.t.sol",
+      "sourceSha256": "47632130e0853cf2b756863b14242bbf6d5e77315488132fbfffcbdf58a6f030",
+      "suite": "test/foundry/spec/vaults/standard/erc4626/invariant/ERC4626StandardExchange_Invariant.t.sol:ERC4626StandardExchange_Invariant",
+      "invariant": "invariant_APEX_accounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_APEX_deterministicLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/vaults/standard/exchange/protocols/morpho/blue/invariant/MorphoBlueStandardExchange_Invariant.t.sol",
+      "sourceSha256": "8c620d5cd11148ecac7163f62d85469e7ad46666938970f855afd288cbb41851",
+      "suite": "test/foundry/spec/vaults/standard/exchange/protocols/morpho/blue/invariant/MorphoBlueStandardExchange_Invariant.t.sol:MorphoBlueStandardExchange_Invariant",
+      "invariant": "invariant_APEX_accounting",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_APEX_deterministicLifecycle"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/invariants/UniswapV3FullSpreadStandardExchangeVault_Invariant.t.sol",
+      "sourceSha256": "950beda72c62a667c802e1f2b7ac84217b7c2de32905c8ab3f82e5ad4e43c686",
+      "suite": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/invariants/UniswapV3FullSpreadStandardExchangeVault_Invariant.t.sol:UniswapV3FullSpreadStandardExchangeVault_Invariant",
+      "invariant": "invariant_APEX_allInputsSharesAndCustodyReconcile",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_APEX_deterministicSequenceExercisesEveryHandler"
+      ]
+    },
+    {
+      "source": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/invariants/UniswapV4FullSpreadStandardExchangeVault_Invariant.t.sol",
+      "sourceSha256": "f48e25307b58cc5aff1ac6ba2185aeb7818da0529a53d7c877d08294c305c5be",
+      "suite": "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/invariants/UniswapV4FullSpreadStandardExchangeVault_Invariant.t.sol:UniswapV4FullSpreadStandardExchangeVault_Invariant",
+      "invariant": "invariant_APEX_allInputsSharesAndCustodyReconcile",
+      "runs": 256,
+      "calls": 16384,
+      "outerReverts": 0,
+      "deterministicLifecycle": [
+        "test_APEX_deterministicSequenceExercisesEveryHandler"
+      ]
+    }
+  ],
+  "configuration": "The hermetic command uses the default profile. Each canonical invariant pins 256 runs and depth 64 in its verified source. Targeted fuzz commands record explicit release environment overrides. foundry.toml defaults are unchanged.",
+  "priorInventory": "docs/audits/apex-2026-09-17-evidence/followup-review/before-independent-final-r11-stdinvariant-campaigns.json",
+  "familiesWithoutStdInvariantCampaign": []
+}

@@ -22,6 +22,7 @@ import {FundedBondLifecycleAssertions} from "contracts/test/bases/FundedBondLife
 import {FundedPrimaryRouteAssertions} from "contracts/test/bases/FundedPrimaryRouteAssertions.sol";
 import {IDetfNftReserveDonation} from "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 import {
     DETF_CREATOR_BOND_NFT_ID,
@@ -239,16 +240,14 @@ abstract contract MultiVaultWeightedDetf_ReserveDonation_Decimals is
     }
 
     function test_N7_idetf_forwarder_donorIsCollector() public {
-        address collector = makeAddr("collector");
-        uint256 amt_ = _fundSeShares0(collector, 80e18);
+        AtomicPretransferCaller collector = new AtomicPretransferCaller();
+        uint256 amt_ = _fundSeShares0(address(collector), 80e18);
         IDetfBondNFT nft_ = _nft();
         uint256 lpBeforeDonation_ = nft_.lpToken().balanceOf(address(nft_));
-        vm.prank(collector);
-        seShare0.transfer(address(nft_), amt_);
+        collector.execute(address(seShare0), abi.encodeCall(IERC20.transfer, (address(nft_), amt_)));
         vm.expectEmit(true, true, false, false, address(nft_));
-        emit IDetfNftReserveDonation.ReserveDonated(collector, address(seShare0), amt_, 0);
-        vm.prank(collector);
-        IDetf(detf).donate(seShare0, amt_, true);
+        emit IDetfNftReserveDonation.ReserveDonated(address(collector), address(seShare0), amt_, 0);
+        collector.execute(detf, abi.encodeCall(IDetf.donate, (seShare0, amt_, true)));
         assertGt(nft_.lpToken().balanceOf(address(nft_)), lpBeforeDonation_, "N7 protocol LP");
     }
 

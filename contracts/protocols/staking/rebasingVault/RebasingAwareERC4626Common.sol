@@ -26,6 +26,7 @@ import {RebasingAwareERC4626Repo} from
     "contracts/protocols/staking/rebasingVault/RebasingAwareERC4626Repo.sol";
 import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {IStandardExchangeTransitionQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 
 /**
  * @title RebasingAwareERC4626Common
@@ -319,15 +320,9 @@ library RebasingAwareERC4626Common {
         }
         uint256 prepaid = ERC20Repo._balanceOf(address(this));
         if (amount > prepaid) {
-            revert IRebasingAwareERC4626.InsufficientPretransferredShares(amount, prepaid);
+            revert ISecurePullErrors.TransferDeltaInsufficient(amount, prepaid);
         }
         ERC20Repo._burn(address(this), amount);
-        if (source == ShareSource.PublicBalanceRefundExcess) {
-            uint256 refund = prepaid - amount;
-            if (refund > 0) {
-                ERC20Repo._transfer(address(this), msg.sender, refund);
-            }
-        }
     }
 
     function assertEntryCapacity(Book memory book, uint256 assetsIn, uint256 sharesMinted) internal pure {

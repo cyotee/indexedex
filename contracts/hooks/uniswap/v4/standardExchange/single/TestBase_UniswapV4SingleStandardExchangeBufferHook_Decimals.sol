@@ -121,19 +121,12 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferHook_Decimals is
         IVaultRegistryDeployment(address(indexedexManager)).setHookDiamondPackageFactory(address(hookFactory));
 
         IFacet productFacet = PkgFactory.deployProductFacet(create3Factory);
-        hookPkg = PkgFactory.deployPackage(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            owner,
-            IUniswapV4SingleStandardExchangeBufferHookPackage.PkgInit({
+        hookPkg = PkgFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, IUniswapV4SingleStandardExchangeBufferHookPackage.PkgInit({
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
                 productFacet: productFacet,
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet
-            }),
-            abi.encode(
-                type(IUniswapV4SingleStandardExchangeBufferHookPackage).name, "v1", _pairDecimals()
-            )._hash()
-        );
+            }));
 
         IUniswapV4SingleStandardExchangeBufferHookPackage.PkgArgs memory args = _defaultPkgArgs();
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
@@ -185,9 +178,12 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferHook_Decimals is
     }
 
     /// @notice O17 only path for protocolVault: Crane ERC4626PermitDFPkg.
+    /// @dev Do not pass IndexedEx ReceiptBackedERC4626Facet (D45 overwrites `erc4626Facet`
+    ///      on the SE TestBase). The underlying is a Crane ERC-4626, not an SE family diamond.
     function _deployCraneErc4626(address asset) internal returns (IERC4626 vault) {
+        IFacet craneErc4626Facet = create3Factory.deployERC4626Facet();
         IERC4626PermitDFPkg pkg =
-            create3Factory.deployERC4626PermitDFPkg(erc20Facet, erc5267Facet, erc2612Facet, erc4626Facet);
+            create3Factory.deployERC4626PermitDFPkg(erc20Facet, erc5267Facet, erc2612Facet, craneErc4626Facet);
         IERC4626PermitDFPkg.PkgArgs memory args = IERC4626PermitDFPkg.PkgArgs({
             reserveAsset: IERC20Metadata(asset),
             optionalDecimalOffset: 0,

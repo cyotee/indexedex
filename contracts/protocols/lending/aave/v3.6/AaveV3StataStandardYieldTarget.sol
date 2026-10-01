@@ -8,6 +8,10 @@ import {Math} from "@crane/contracts/utils/Math.sol";
 import {IStataTokenV2} from "@crane/contracts/protocols/lending/aave/v3.6/extensions/stata-token/interfaces/IStataTokenV2.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStandardYieldTarget.sol";
+import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
+import {
+    ReceiptBackedERC4626AccountingLib
+} from "contracts/vaults/standard/erc4626/ReceiptBackedERC4626AccountingLib.sol";
 
 /// @notice SY at the existing Stata SE address; protocol rewards retain their existing fee-recipient forwarding.
 abstract contract AaveV3StataStandardYieldTarget is NativeStandardYieldTarget {
@@ -26,6 +30,9 @@ abstract contract AaveV3StataStandardYieldTarget is NativeStandardYieldTarget {
         IStataTokenV2 stata_ = _yieldVault();
         uint256 supply_ = ERC20Repo._totalSupply();
         if (supply_ == 0) return stata_.convertToAssets(1e18);
-        return Math.mulDiv(stata_.convertToAssets(IERC20(address(stata_)).balanceOf(address(this))), 1e18, supply_);
+        uint256 backing_ = ReceiptBackedERC4626AccountingLib.backingReceiptUnits(
+            IERC4626(address(stata_)), address(this), true
+        );
+        return Math.mulDiv(stata_.convertToAssets(backing_), 1e18, supply_);
     }
 }

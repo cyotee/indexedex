@@ -170,19 +170,19 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_B6Firm is TestBase {
         bool[] memory isSe = new bool[](4);
         isSe[1] = true; // raw leg
 
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("SeShareNotBuffered()"));
         quad.previewJoinProportionalFlexible(amounts, isSe);
 
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("SeShareNotBuffered()"));
         quad.joinProportionalFlexible(amounts, isSe, user, 0, block.timestamp + 1 hours);
 
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("SeShareNotBuffered()"));
         quad.previewDepositSingleFlexible(address(token1), 1 ether, true);
 
         bool[] memory recvSe = new bool[](4);
         recvSe[1] = true;
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("SeShareNotBuffered()"));
         quad.previewExitProportionalFlexible(1 ether, recvSe);
     }
 

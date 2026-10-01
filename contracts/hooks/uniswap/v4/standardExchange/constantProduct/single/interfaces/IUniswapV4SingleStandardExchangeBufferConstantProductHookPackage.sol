@@ -22,6 +22,8 @@ interface IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage is IU
     error SameToken();
     error RawIsSE();
     error InvalidDecimals();
+    /// @notice D60: a buffered pair leg (`pairToken != standardExchange`) needs a rate provider.
+    error RateProviderRequired();
 
     struct PkgInit {
         IVaultRegistryDeployment vaultRegistryDeployment;
@@ -53,6 +55,9 @@ interface IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage is IU
         bool ownerOnlyLiquidity;
         /// @notice MultiStepOwnable initial owner. DETF reserve deploys set this to the DETF diamond.
         address owner;
+        /// @notice D60: rate provider for the pair leg (WAD whole pair tokens per whole SE share).
+        ///         Required when `pairToken != standardExchange`; optional on an identity leg.
+        address rateProvider;
     }
 
     function VAULT_REGISTRY_DEPLOYMENT() external view returns (IVaultRegistryDeployment);

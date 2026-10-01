@@ -7,6 +7,7 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IPool} from "@crane/contracts/interfaces/protocols/dexes/aerodrome/IPool.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {
     TestBase_AerodromeStandardExchange_Decimals
 } from "contracts/protocols/dexes/aerodrome/v1/test/bases/TestBase_AerodromeStandardExchange_Decimals.sol";
@@ -63,9 +64,7 @@ abstract contract AerodromeStandardExchange_E6_A0_I1_Decimals is TestBase_Aerodr
         uint256 liveAfterPush_ = tokenA.balanceOf(address(vault_));
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, fatMax_, usedIn_)
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vault_.exchangeOut(
             IERC20(address(tokenA)),
             fatMax_,
@@ -198,10 +197,15 @@ abstract contract AerodromeStandardExchange_E6_A0_I1_Decimals is TestBase_Aerodr
         if (claimed_ == 0) claimed_ = booked_;
 
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        vault_.exchangeIn(lp_, claimed_, IERC20(address(vault_)), 0, attacker, true, _deadline());
+
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
         );
-        vault_.exchangeIn(lp_, claimed_, IERC20(address(vault_)), 0, attacker, true, _deadline());
+        vault_.exchangeIn(lp_, claimed_, IERC20(address(vault_)), 0, address(caller), true, _deadline());
 
         assertEq(vault_.totalSupply(), supplyBefore_, "I1: no free mint against booked LP");
         assertEq(lp_.balanceOf(address(vault_)), booked_, "I1: booked LP unmoved");

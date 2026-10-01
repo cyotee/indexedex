@@ -13,6 +13,7 @@ import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IDetfBondNFT, IDetfStakingToken} from "contracts/interfaces/IDetfBondNFT.sol";
 import {IStakedDETF, IDETFFundedRewards} from "contracts/interfaces/IStakedDETF.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
 import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
@@ -372,9 +373,9 @@ contract DETFFundedBondTarget is ReentrancyLockModifiers, IDetfNftReserveDonatio
         address detfAddr_ = address(detf_);
         address oracle_ = address(StandardVaultRepo._feeOracle());
         if (oracle_ != address(0)) {
-            try IVaultRegistryDisableQuery(oracle_).isDisabled(detfAddr_) returns (bool disabled_) {
-                if (disabled_) revert IVaultRegistryDisableQuery.VaultDisabled(detfAddr_);
-            } catch {}
+            if (IVaultRegistryDisableQuery(oracle_).isDisabled(detfAddr_)) {
+                revert IVaultRegistryDisableQuery.VaultDisabled(detfAddr_);
+            }
         }
         if (!_staticIsReserveLive(detfAddr_)) revert ReserveNotLive();
     }
@@ -396,11 +397,10 @@ contract DETFFundedBondTarget is ReentrancyLockModifiers, IDetfNftReserveDonatio
         bytes memory permit2Data_
     ) private returns (uint256 actual_) {
         if (pretransferred_) {
-            uint256 bal_ = token_.balanceOf(address(this));
-            uint256 surplus_ = bal_;
-            if (surplus_ == 0) revert ZeroAmount();
-            if (amount_ > surplus_) {
-                revert ISecurePullErrors.TransferDeltaInsufficient(amount_, surplus_);
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+            uint256 available_ = LocalCreditLib.available(token_.balanceOf(address(this)), 0);
+            if (amount_ > available_) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(amount_, available_);
             }
             return amount_;
         }
@@ -414,7 +414,9 @@ contract DETFFundedBondTarget is ReentrancyLockModifiers, IDetfNftReserveDonatio
             token_.safeTransferFrom(from_, address(this), amount_);
         }
         actual_ = token_.balanceOf(address(this)) - before_;
-        if (actual_ == 0) revert ZeroAmount();
+        if (actual_ != amount_) {
+            revert ISecurePullErrors.TransferDeltaInsufficient(amount_, actual_);
+        }
     }
 
     function _pullPermit2Signature(

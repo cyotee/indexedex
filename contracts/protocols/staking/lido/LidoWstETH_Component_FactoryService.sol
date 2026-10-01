@@ -22,7 +22,7 @@ library LidoWstETH_Component_FactoryService {
         returns (IFacet instance)
     {
         bytes memory code = ArtifactCreationCode.creationCode("LidoWstETHStandardExchangeInFacet.sol:LidoWstETHStandardExchangeInFacet");
-        instance = create3Factory.deployFacet(code, ArtifactCreationCode.releaseSalt(abi.encode("LidoWstETHStandardExchangeInFacet")._hash(), code, ""));
+        instance = create3Factory.deployFacet(code, ArtifactCreationCode.releaseSalt(abi.encode("LidoWstETHStandardExchangeInFacet")._hash()));
         vm.label(address(instance), "LidoWstETHStandardExchangeInFacet");
     }
 
@@ -31,19 +31,19 @@ library LidoWstETH_Component_FactoryService {
         returns (IFacet instance)
     {
         bytes memory code = ArtifactCreationCode.creationCode("LidoWstETHStandardExchangeOutFacet.sol:LidoWstETHStandardExchangeOutFacet");
-        instance = create3Factory.deployFacet(code, ArtifactCreationCode.releaseSalt(abi.encode("LidoWstETHStandardExchangeOutFacet")._hash(), code, ""));
+        instance = create3Factory.deployFacet(code, ArtifactCreationCode.releaseSalt(abi.encode("LidoWstETHStandardExchangeOutFacet")._hash()));
         vm.label(address(instance), "LidoWstETHStandardExchangeOutFacet");
     }
 
     function deployLidoWstETHMarkerFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
         bytes memory code = ArtifactCreationCode.creationCode("LidoWstETHMarkerFacet.sol:LidoWstETHMarkerFacet");
-        instance = create3Factory.deployFacet(code, ArtifactCreationCode.releaseSalt(abi.encode("LidoWstETHMarkerFacet")._hash(), code, ""));
+        instance = create3Factory.deployFacet(code, ArtifactCreationCode.releaseSalt(abi.encode("LidoWstETHMarkerFacet")._hash()));
         vm.label(address(instance), "LidoWstETHMarkerFacet");
     }
 
     function deployLidoWstETHRebalanceFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
         bytes memory code = ArtifactCreationCode.creationCode("LidoWstETHRebalanceFacet.sol:LidoWstETHRebalanceFacet");
-        instance = create3Factory.deployFacet(code, ArtifactCreationCode.releaseSalt(abi.encode("LidoWstETHRebalanceFacet")._hash(), code, ""));
+        instance = create3Factory.deployFacet(code, ArtifactCreationCode.releaseSalt(abi.encode("LidoWstETHRebalanceFacet")._hash()));
         vm.label(address(instance), "LidoWstETHRebalanceFacet");
     }
 
@@ -54,7 +54,7 @@ library LidoWstETH_Component_FactoryService {
         bytes memory code = ArtifactCreationCode.creationCode("LidoWstETHStandardExchangeDFPkg.sol:LidoWstETHStandardExchangeDFPkg");
         bytes memory args = abi.encode(pkgInit);
         instance = ILidoWstETHStandardExchangeDFPkg(IVaultRegistryDeployment(address(indexedexManager)).deployPkg(
-            code, args, ArtifactCreationCode.releaseSalt(abi.encode("LidoWstETHStandardExchangeDFPkg")._hash(), code, args)
+            code, args, ArtifactCreationCode.releaseSalt(abi.encode("LidoWstETHStandardExchangeDFPkg")._hash())
         ));
         vm.label(address(instance), "LidoWstETHStandardExchangeDFPkg");
     }

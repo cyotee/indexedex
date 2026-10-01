@@ -124,7 +124,7 @@ contract Script_06_DeployFoundationAssets is LocalTestingDeploymentBase {
     function _deployTestTokens() internal {
         IFacet mintBurnOwnableFacet = create3Factory.deployFacet(
             ArtifactCreationCode.creationCode(create3Factory, "ERC20MintBurnOwnableFacet.sol:ERC20MintBurnOwnableFacet"),
-            abi.encode("ERC20MintBurnOwnableFacet", "LocalTesting")._hash()
+            abi.encode("ERC20MintBurnOwnableFacet")._hash()
         );
 
         IERC20MintBurnOwnableOperableDFPkg.PkgInit memory pkgInit;
@@ -141,7 +141,7 @@ contract Script_06_DeployFoundationAssets is LocalTestingDeploymentBase {
                 create3Factory.deployPackageWithArgs(
                     ArtifactCreationCode.creationCode(create3Factory, "ERC20MintBurnOwnableOperableDFPkg.sol:ERC20MintBurnOwnableOperableDFPkg"),
                     abi.encode(pkgInit),
-                    abi.encode("ERC20MintBurnOwnableOperableDFPkg", "LocalTesting")._hash()
+                    abi.encode("ERC20MintBurnOwnableOperableDFPkg")._hash()
                 )
             )
         );
@@ -158,7 +158,7 @@ contract Script_06_DeployFoundationAssets is LocalTestingDeploymentBase {
             address(
                 create3Factory.deployPackage(
                     ArtifactCreationCode.creationCode(create3Factory, "ERC20MinterFacadeFacetDFPkg.sol:ERC20MinterFacadeFacetDFPkg"),
-                    abi.encode("ERC20MinterFacadeFacetDFPkg", "LocalTesting")._hash()
+                    abi.encode("ERC20MinterFacadeFacetDFPkg")._hash()
                 )
             )
         );
@@ -187,7 +187,7 @@ contract Script_06_DeployFoundationAssets is LocalTestingDeploymentBase {
                             erc2612Facet: erc2612Facet
                         })
                     ),
-                    abi.encode("ERC20PermitDFPkg", "LocalTestingRich")._hash()
+                    abi.encode("ERC20PermitDFPkg")._hash()
                 )
             )
         );

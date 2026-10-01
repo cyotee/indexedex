@@ -30,10 +30,14 @@ library UniswapV4DetfProcessArgsLib {
         if (n_ < 2 || n_ > 8) revert IUniswapV4DetfDFPkg.InvalidHook();
         uint256 selfLegs_;
         for (uint256 i; i < n_; ++i) {
-            if (IUniswapV4SeBufferHook(hook_).standardExchangeOf(tokens_[i]) == address(0)) {
+            address se_ = IUniswapV4SeBufferHook(hook_).standardExchangeOf(tokens_[i]);
+            if (se_ == address(0)) {
                 unchecked {
                     ++selfLegs_;
                 }
+            } else if (se_ != tokens_[i] && IUniswapV4SeBufferHook(hook_).rateProvider(tokens_[i]) == address(0)) {
+                // D60: the reserve prices every buffered leg as shares x provider rate.
+                revert IUniswapV4DetfDFPkg.HookRateProviderRequired(tokens_[i]);
             }
         }
         // Dual: no DETF self-leg (all tokens have an SE). Bare pair: extra SE==0 legs.
@@ -41,9 +45,7 @@ library UniswapV4DetfProcessArgsLib {
     }
 
     function requireLiquidityPolicy(address hook_, bool expected_) internal view {
-        try IUniswapV4HookLiquidityPolicy(hook_).ownerOnlyLiquidity() returns (bool actual_) {
-            if (actual_ != expected_) revert IUniswapV4DetfDFPkg.HookLiquidityPolicyMismatch();
-        } catch {
+        if (IUniswapV4HookLiquidityPolicy(hook_).ownerOnlyLiquidity() != expected_) {
             revert IUniswapV4DetfDFPkg.HookLiquidityPolicyMismatch();
         }
     }
@@ -59,11 +61,7 @@ library UniswapV4DetfProcessArgsLib {
             }
         }
         if (hits_ != 1) revert IUniswapV4DetfDFPkg.DetfNotInHookTokens();
-        try IMultiStepOwnable(hook_).owner() returns (address owner_) {
-            if (owner_ != detf_) revert IUniswapV4DetfDFPkg.HookOwnerMismatch();
-        } catch {
-            revert IUniswapV4DetfDFPkg.HookOwnerMismatch();
-        }
+        if (IMultiStepOwnable(hook_).owner() != detf_) revert IUniswapV4DetfDFPkg.HookOwnerMismatch();
     }
 
     function requireCreationRates(IUniswapV4Detf.PkgArgs memory args, uint256 pairCount_) internal pure {
@@ -211,19 +209,12 @@ library UniswapV4DetfProcessArgsLib {
     }
 
     function _requireShareRoute(IStandardExchange vault_) private view {
-        try vault_.previewExchangeIn(IERC20(address(vault_)), ONE_WAD, IERC20(address(vault_))) returns (uint256) {
-            return;
-        } catch {
-            // share identity is legal even if preview of share→share reverts
-        }
+        vault_.previewExchangeIn(IERC20(address(vault_)), ONE_WAD, IERC20(address(vault_)));
     }
 
     function _requireClosedForm(IStandardExchange vault_, IERC20 token_) private view {
         IERC20 share_ = IERC20(address(vault_));
-        try IStandardExchangeIn(address(vault_)).previewExchangeIn(token_, ONE_WAD, share_) returns (uint256 out_) {
-            if (out_ == 0) revert IUniswapV4DetfDFPkg.InvalidRouteTable();
-        } catch {
-            revert IUniswapV4DetfDFPkg.InvalidRouteTable();
-        }
+        uint256 out_ = IStandardExchangeIn(address(vault_)).previewExchangeIn(token_, ONE_WAD, share_);
+        if (out_ == 0) revert IUniswapV4DetfDFPkg.InvalidRouteTable();
     }
 }

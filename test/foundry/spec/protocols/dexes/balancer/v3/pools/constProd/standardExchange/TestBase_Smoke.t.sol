@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeTransitionQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {StandardExchangeBufferPoolStandardVaultPkg} from
@@ -72,18 +73,21 @@ contract TestBase_Smoke is TestBase_StandardExchangeBufferPool {
         assertEq(fromPool, fromDFPkg, "pool RP must equal canonical RP for the (seVault, tta) pair");
     }
 
-    /// @notice The registered package retains its eleven actual production facets.
+    /// @notice The registered package retains its eleven production facets plus the mandatory
+    ///         transition-quote facet (D68) always wired by the package (twelve total).
     function test_facetAddresses_length() public view {
-        assertEq(bufferPoolPkg.facetAddresses().length, 11);
+        assertEq(bufferPoolPkg.facetAddresses().length, 12);
     }
 
-    /// @notice Existing declarations include standard exchange and native Pendle SY on the live pool.
+    /// @notice Existing declarations include standard exchange and native Pendle SY on the live pool,
+    ///         plus the mandatory IStandardExchangeTransitionQuote (D68) on every deployment.
     function test_facetInterfaces_length() public view {
         bytes4[] memory interfaces = bufferPoolPkg.facetInterfaces();
-        assertEq(interfaces.length, 18);
+        assertEq(interfaces.length, 19);
         assertEq(interfaces[15], type(IStandardExchangeIn).interfaceId);
         assertEq(interfaces[16], type(IStandardExchangeOut).interfaceId);
         assertEq(interfaces[17], type(IStandardizedYield).interfaceId);
+        assertEq(interfaces[18], type(IStandardExchangeTransitionQuote).interfaceId);
         for (uint256 i; i < interfaces.length; ++i) {
             assertTrue(IERC165(bufferPool).supportsInterface(interfaces[i]), "live pool declares package interface");
         }
@@ -91,10 +95,11 @@ contract TestBase_Smoke is TestBase_StandardExchangeBufferPool {
 
     /// @notice Compare exact constructor bindings to the real deployed facet addresses.
     function test_facetAddresses_matchesInit() public view {
-        address[11] memory expected = [address(multiAssetBasicVaultFacet), address(multiAssetStandardVaultFacet),
+        address[12] memory expected = [address(multiAssetBasicVaultFacet), address(multiAssetStandardVaultFacet),
             address(balancerV3VaultAwareFacet), address(betterBalancerV3PoolTokenFacet), address(defaultPoolInfoFacet),
             address(standardSwapFeePercentageBoundsFacet), address(unbalancedLiquidityInvariantRatioBoundsFacet),
-            address(balancerV3AuthenticationFacet), address(bufferPoolFacet), address(poolLiquidityFacet), address(hookFacet)];
+            address(balancerV3AuthenticationFacet), address(bufferPoolFacet), address(poolLiquidityFacet), address(hookFacet),
+            address(transitionQuoteFacet)];
         address[] memory actual = bufferPoolPkg.facetAddresses();
         for (uint256 i; i < expected.length; ++i) {
             assertEq(actual[i], expected[i], "registered constructor facet binding");

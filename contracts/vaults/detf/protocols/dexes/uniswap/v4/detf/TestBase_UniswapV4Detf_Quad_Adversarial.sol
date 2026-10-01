@@ -18,6 +18,8 @@ import {TestBase_UniswapV4Detf} from
 import {TestBase_UniswapV4Detf_Quad} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 import {
     TestBase_UniswapV4Detf_Adversarial,
     UniV4DetfPretransferHelper
@@ -42,6 +44,7 @@ abstract contract TestBase_UniswapV4Detf_Quad_Adversarial is
         victim = makeAddr("victim");
         aliceAdv = makeAddr("aliceAdv");
         preHelper = new UniV4DetfPretransferHelper();
+        apexCaller = new AtomicPretransferCaller();
     }
 
     function _firstBond(uint256 pairAmount_)
@@ -129,7 +132,7 @@ abstract contract TestBase_UniswapV4Detf_Quad_Adversarial is
                 feeOracle: address(indexedexManager),
                 tokens: toks,
                 standardExchanges: ses,
-                rateProviders: rps,
+                rateProviders: RateProviderFixtureLib.providersFor4(create3Factory, diamondPackageFactory, toks, ses),
                 tokenDecimals: HookPkgArgsDecimalsLib.tokenDecimals4(toks, predicted_),
                 seDecimals: HookPkgArgsDecimalsLib.seDecimals4(ses),
                 baseAmp: QUAD_BASE_AMP,

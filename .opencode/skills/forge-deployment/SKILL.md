@@ -279,4 +279,4 @@ broadcast/
 3. **Verify contracts**: Always verify source code on explorers
 4. **Save deployment addresses**: Log addresses for future reference
 5. **Test on testnets first**: Deploy to Sepolia before mainnet
-6. **Use deterministic deployments**: CREATE2 for consistent addresses
+6. **Use deterministic deployments**: CREATE3 for IndexedEx/Crane facets and packages; verify already-deployed CREATE3 on Robinhood Blockscout with Sourcify import/flatten in small batches

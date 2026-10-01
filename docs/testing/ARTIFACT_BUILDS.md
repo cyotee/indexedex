@@ -65,7 +65,7 @@ The audit reports reverse-import counts, runtime artifacts whose implementations
 
 The Foundry-only loader reads artifact JSON directly. Unlinked bytecode uses the overload that accepts the CREATE3 factory, which deploys and links external libraries recursively. Missing/empty/malformed bytecode and unresolved links fail rather than deploy incomplete code. This workflow retains the registry/CREATE3 deployment paths; it does not replace onchain deployment logic with cheatcodes.
 
-External libraries now deploy through CREATE3 with salts derived from their source identifier and fully linked creation code. These addresses replace Forge's automatic library addresses, so linked component bytecode and addresses derived through `releaseSalt` can change. Fixed instance salts still reuse occupied CREATE3 addresses; this migration does not replace already deployed instances at those salts.
+External libraries deploy through CREATE3 with `abi.encode(sourceQualifiedArtifactId)._hash()` via `BetterEfficientHashLib`, where the identity is `source:Library`. Named components use `abi.encode(contractIdentifier)._hash()`; `ArtifactCreationCode.releaseSalt` returns that namespace unchanged. Creation bytecode and constructor arguments remain deployment payloads and never enter these salts. Occupied identities reuse existing code and bindings; source edits do not upgrade live contracts or guarantee unused addresses. See the [CREATE3 release salt input correction](../create3-release-salt-input-correction.md).
 
 ## Migration measurements
 

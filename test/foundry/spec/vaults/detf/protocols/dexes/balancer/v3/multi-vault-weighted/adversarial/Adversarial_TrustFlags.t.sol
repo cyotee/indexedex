@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {
     TestBase_MultiVaultWeightedDetf_Adversarial
 } from "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/adversarial/TestBase_MultiVaultWeightedDetf_Adversarial.sol";
@@ -68,10 +69,12 @@ contract PretransferRouterHelper {
  */
 contract Adversarial_TrustFlags_Test is TestBase_MultiVaultWeightedDetf_Adversarial {
     PretransferRouterHelper internal preHelper;
+    AtomicPretransferCaller internal apexCaller;
 
     function setUp() public virtual override {
         super.setUp();
         preHelper = new PretransferRouterHelper();
+        apexCaller = new AtomicPretransferCaller();
     }
 
     /// @dev Donate residual then honest !pretransferred mint so full-set end-sync books residual (R==B).
@@ -108,11 +111,16 @@ contract Adversarial_TrustFlags_Test is TestBase_MultiVaultWeightedDetf_Adversar
         assertEq(seShares[0].balanceOf(attacker), 0);
 
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeIn(instance_)
+            .exchangeIn(seShares[0], claimed_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours);
+
+        vm.prank(address(apexCaller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
         );
         IStandardExchangeIn(instance_)
-            .exchangeIn(seShares[0], claimed_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours);
+            .exchangeIn(seShares[0], claimed_, IERC20(instance_), 0, address(apexCaller), true, block.timestamp + 1 hours);
 
         assertEq(seShares[0].balanceOf(instance_), balBefore_, "I1 mint must not move inventory");
         assertEq(IERC20(instance_).balanceOf(attacker), attackerDetfBefore_, "I1: no free detfToken mint");
@@ -144,11 +152,16 @@ contract Adversarial_TrustFlags_Test is TestBase_MultiVaultWeightedDetf_Adversar
         uint256 attackerShareBefore_ = seShares[0].balanceOf(attacker);
 
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeIn(instance_)
+            .exchangeIn(IERC20(instance_), residualDetf_, seShares[0], 0, attacker, true, block.timestamp + 1 hours);
+
+        vm.prank(address(apexCaller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, residualDetf_, uint256(0))
         );
         IStandardExchangeIn(instance_)
-            .exchangeIn(IERC20(instance_), residualDetf_, seShares[0], 0, attacker, true, block.timestamp + 1 hours);
+            .exchangeIn(IERC20(instance_), residualDetf_, seShares[0], 0, address(apexCaller), true, block.timestamp + 1 hours);
 
         assertEq(IERC20(instance_).balanceOf(instance_), invBefore_, "I1 burn must not free-burn inventory");
         assertEq(seShares[0].balanceOf(attacker), attackerShareBefore_, "I1: no free vaultShare extract");
@@ -164,11 +177,16 @@ contract Adversarial_TrustFlags_Test is TestBase_MultiVaultWeightedDetf_Adversar
         uint256 balBefore_ = seShares[0].balanceOf(instance_);
 
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IMultiVaultWeightedDetfBonding(instance_)
+            .bond(seShares[0], claimed_, DEFAULT_MIN_LOCK, attacker, true, block.timestamp + 1 hours);
+
+        vm.prank(address(apexCaller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
         );
         IMultiVaultWeightedDetfBonding(instance_)
-            .bond(seShares[0], claimed_, DEFAULT_MIN_LOCK, attacker, true, block.timestamp + 1 hours);
+            .bond(seShares[0], claimed_, DEFAULT_MIN_LOCK, address(apexCaller), true, block.timestamp + 1 hours);
 
         assertEq(seShares[0].balanceOf(instance_), balBefore_, "bond I1: inventory unchanged");
     }
@@ -292,11 +310,16 @@ contract Adversarial_TrustFlags_Test is TestBase_MultiVaultWeightedDetf_Adversar
 
         uint256 attackerDetfBefore_ = IERC20(instance_).balanceOf(attacker);
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeIn(instance_)
+            .exchangeIn(seShares[0], claim_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours);
+
+        vm.prank(address(apexCaller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claim_, uint256(0))
         );
         IStandardExchangeIn(instance_)
-            .exchangeIn(seShares[0], claim_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours);
+            .exchangeIn(seShares[0], claim_, IERC20(instance_), 0, address(apexCaller), true, block.timestamp + 1 hours);
 
         assertEq(seShares[0].balanceOf(instance_), residual_, "I3 residual unmoved");
         assertEq(IERC20(instance_).balanceOf(attacker), attackerDetfBefore_, "I3 no free mint");
@@ -323,11 +346,16 @@ contract Adversarial_TrustFlags_Test is TestBase_MultiVaultWeightedDetf_Adversar
         assertGe(residual_, residualSeed_, "residual detfToken remains");
 
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeIn(instance_)
+            .exchangeIn(IERC20(instance_), residualSeed_, seShares[0], 0, attacker, true, block.timestamp + 1 hours);
+
+        vm.prank(address(apexCaller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, residualSeed_, uint256(0))
         );
         IStandardExchangeIn(instance_)
-            .exchangeIn(IERC20(instance_), residualSeed_, seShares[0], 0, attacker, true, block.timestamp + 1 hours);
+            .exchangeIn(IERC20(instance_), residualSeed_, seShares[0], 0, address(apexCaller), true, block.timestamp + 1 hours);
 
         assertEq(IERC20(instance_).balanceOf(instance_), residual_, "I3 burn residual unmoved");
     }
@@ -361,11 +389,16 @@ contract Adversarial_TrustFlags_Test is TestBase_MultiVaultWeightedDetf_Adversar
 
         // Booked residual cannot free-credit.
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeIn(instance_)
+            .exchangeIn(seShares[0], donated_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours);
+
+        vm.prank(address(apexCaller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, donated_, uint256(0))
         );
         IStandardExchangeIn(instance_)
-            .exchangeIn(seShares[0], donated_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours);
+            .exchangeIn(seShares[0], donated_, IERC20(instance_), 0, address(apexCaller), true, block.timestamp + 1 hours);
 
         assertEq(seShares[0].balanceOf(instance_), balBefore_, "K1 booked donation unmoved");
         assertEq(IERC20(instance_).balanceOf(attacker), attackerDetfBefore_, "K1 no free detfToken");

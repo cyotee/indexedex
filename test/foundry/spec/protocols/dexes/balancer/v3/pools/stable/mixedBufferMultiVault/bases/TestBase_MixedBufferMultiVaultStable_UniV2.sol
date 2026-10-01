@@ -87,6 +87,7 @@ abstract contract TestBase_MixedBufferMultiVaultStable_UniV2 is TestBase_Standar
         pkgInit.bufferPoolFacet = bufferPoolFacet;
         pkgInit.poolLiquidityFacet = poolLiquidityFacet;
         pkgInit.hookFacet = hookFacet;
+        pkgInit.transitionQuoteFacet = transitionQuoteFacet;
         pkgInit.vaultRegistry = IVaultRegistryDeployment(address(indexedexManager));
         pkgInit.vaultFeeOracle = IVaultFeeOracleQuery(address(indexedexManager));
         pkgInit.balancerV3Vault = bv3Vault;

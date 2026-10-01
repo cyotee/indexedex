@@ -4,6 +4,11 @@ pragma solidity ^0.8.0;
 /// @notice Existing diamond callbacks used for atomic best-effort operations and quotes.
 /// @dev State-changing callbacks remain self-only on the maintenance target.
 interface IUniswapV4DetfSelfCall {
+    error ResidualJoinUnavailable();
+
+    /// @notice Atomically joins residual inventory, reverting if it cannot mint LP.
+    /// @dev Only the diamond itself may call; zero-LP attempts roll back token movement.
+    function joinResidualAtomic(address token, uint256 amount, bool singleAsset) external returns (uint256 lpOut);
     /// @notice Quotes an input token amount in its configured vault's reserve-pair units.
     function peekPairEq(address vault, address tokenIn, uint256 amountIn) external view returns (uint256);
     /// @notice Executes one atomic dust-sweep attempt; only the diamond itself may call.

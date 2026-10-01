@@ -83,6 +83,8 @@ IFacet facet = factory.deployFacet(
 );
 ```
 
+IndexedEx FactoryServices load creation bytecode from `out/` via `ArtifactCreationCode`. After production edits run `forge build` then deploy/test. Do not teach `type(MyFacet).creationCode` as the IndexedEx path.
+
 ### `deployPackageWithArgs()`
 
 Deploy a package with constructor arguments:

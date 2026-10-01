@@ -11,7 +11,8 @@ import {
     IUniswapV4HookDiamondPackageCallBackFactory
 } from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackageCallBackFactory.sol";
 import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
-import {IUniswapV4StandardExchangeDFPkg} from "contracts/protocols/dexes/uniswap/v4/IUniswapV4StandardExchangeDFPkg.sol";
+import {IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/hookless/IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg.sol";
+import {IUniswapV4FullSpreadPonsFamilyHookDFPkg} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/ponsFamilyV2Hook/IUniswapV4FullSpreadPonsFamilyHookDFPkg.sol";
 import {
     IUniswapV4MultiPoolTwapOracle
 } from "contracts/oracles/uniswap/v4/twap/interfaces/IUniswapV4MultiPoolTwapOracle.sol";
@@ -46,7 +47,8 @@ struct LaunchState {
     IUniswapV4MultiPoolTwapOracle twapOracle;
     address twapAdapterFactory;
     address cpHookPkg;
-    IUniswapV4StandardExchangeDFPkg uniV4SePkg;
+    IUniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg uniV4SePkg;
+    IUniswapV4FullSpreadPonsFamilyHookDFPkg uniV4PonsSePkg;
     address morphoBlueSePkg;
     address uniV3SePkg;
     address uniV2SePkg;

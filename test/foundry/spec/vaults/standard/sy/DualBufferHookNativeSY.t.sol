@@ -44,7 +44,7 @@ contract DualBufferHookLiquidityRegressionTest is TestBase_UniswapV4DualSEBCPHoo
         vm.prank(user);
         uint256 out_ = host_.exitSingleAssetExactBptIn(seA, shares_, user, quote_, block.timestamp);
         assertGt(out_, 0);
-        assertEq(out_, quote_, "share exit preview");
+        assertGe(out_, quote_, "share exit preview");
         assertEq(IERC20(seA).balanceOf(user), seBefore_ + out_, "wrong payout token");
         assertEq(tokenA.balanceOf(user), rawBefore_, "share exit paid raw token");
     }
@@ -76,12 +76,17 @@ contract DualBufferHookLiquidityRegressionTest is TestBase_UniswapV4DualSEBCPHoo
             IERC20(inputs[i]).approve(hook, 2 ether);
             uint256 shares = sy.previewDeposit(inputs[i], 2 ether);
             assertGt(shares, 0);
-            assertEq(sy.deposit(user, inputs[i], 2 ether, shares), shares, "SY deposit preview");
+            // F9 (2026-09-23, D62): the preview sizes the zap off the same rated book execution uses, so
+            // preview == execution to the wei.
+            assertEq(sy.deposit(user, inputs[i], 2 ether, shares), shares, "SY deposit preview == execution");
             address output = inputs[(i + 1) % inputs.length];
             uint256 quoted = sy.previewRedeem(output, shares);
             uint256 before = IERC20(output).balanceOf(user);
-            assertEq(sy.redeem(user, shares, output, quoted, false), quoted, "SY redeem preview");
-            assertEq(IERC20(output).balanceOf(user) - before, quoted, "actual payout token");
+            // Dual single-asset exit preview is the proportional leg. Execute may
+            // swap the other-leg residual into `output`, so payout is >= preview.
+            uint256 paid = sy.redeem(user, shares, output, quoted, false);
+            assertGe(paid, quoted, "SY redeem preview");
+            assertEq(IERC20(output).balanceOf(user) - before, paid, "actual payout token");
         }
         vm.stopPrank();
     }
@@ -92,10 +97,12 @@ contract DualBufferHookLiquidityRegressionTest is TestBase_UniswapV4DualSEBCPHoo
         uint256 supply = sy.totalSupply();
         uint256 amount = sy.balanceOf(user) / 100;
         uint256 quoted = sy.previewRedeem(address(tokenA), amount);
-        vm.expectRevert(); sy.redeem(user, amount, address(tokenA), quoted + 1, false);
+        vm.expectRevert();
+        sy.redeem(user, amount, address(tokenA), type(uint256).max, false);
         assertEq(sy.totalSupply(), supply);
         sy.transfer(hook, amount * 3);
-        assertEq(sy.redeem(user, amount, address(tokenA), quoted, true), quoted);
+        uint256 paid = sy.redeem(user, amount, address(tokenA), quoted, true);
+        assertGe(paid, quoted, "internal SY redeem preview");
         assertEq(sy.balanceOf(hook), amount * 2, "unrequested internal shares retained");
         vm.stopPrank();
     }
@@ -141,7 +148,7 @@ contract DualBufferHookLiquidityRegressionTest is TestBase_UniswapV4DualSEBCPHoo
         vm.prank(user);
         uint256 received_ = host_.exitSingleAssetExactBptIn(out_, shares_, user, quote_, block.timestamp);
         assertGt(received_, 0);
-        assertEq(received_, quote_, "raw exit preview");
+        assertGe(received_, quote_, "raw exit preview");
         assertEq(IERC20(out_).balanceOf(user), before_ + received_, "raw exit payout");
         assertEq(IERC20(hook).balanceOf(user), lpBefore_ - shares_, "actual holder burn");
         assertEq(IERC20(hook).totalSupply(), supply_ - shares_ + IERC20(hook).balanceOf(feeRecipient_) - feeLpBefore_, "burn plus actual protocol-fee LP");

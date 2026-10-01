@@ -1,0 +1,970 @@
+diff --git a/contracts/protocols/staking/etherfi/test/hermetic/HermeticEtherFiPorts.sol b/contracts/protocols/staking/etherfi/test/hermetic/HermeticEtherFiPorts.sol
+--- a/contracts/protocols/staking/etherfi/test/hermetic/HermeticEtherFiPorts.sol
++++ b/contracts/protocols/staking/etherfi/test/hermetic/HermeticEtherFiPorts.sol
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
+ 
++import {Math} from "@crane/contracts/utils/Math.sol";
+ import {ERC20} from "@crane/contracts/external/openzeppelin-contracts/token/ERC20/ERC20.sol";
+ 
+ /**
+@@ -28,45 +29,63 @@
+     }
+ }
+ 
++/// @dev Native shares are stored in the ERC20 ledger. Nominal transfers floor at the
++/// current pooled/share ratio, as EETH does; the virtual base bootstraps an empty pool.
+ contract HermeticEETH is ERC20 {
++    uint256 private pooled = 1 ether;
+     constructor() ERC20("ether.fi ETH", "eETH") {}
+ 
+-    /// @dev Test helper
+     function mint(address to, uint256 amount) external {
+-        _mint(to, amount);
++        uint256 minted = balanceToShares(amount);
++        pooled += amount;
++        _mint(to, minted);
+     }
+ 
+     function burn(address from, uint256 amount) external {
+-        _burn(from, amount);
+-    }
+-
+-    /// @dev Share total for the rate closed form: a fixed virtual base plus every eETH minted by the pool,
+-    ///      so a stake grows shares by the minted amount as mainnet does (the SE transition quote projects
+-    ///      that growth, APEX F4). The pool's `getTotalPooledEther()` scales by the same factor, so the ratio
+-    ///      stays `rateWad`.
++        uint256 burned = balanceToShares(amount);
++        pooled -= amount;
++        _burn(from, burned);
++    }
++
++    function setRate(uint256 rate) external {
++        require(rate > 0, "rate");
++        pooled = Math.mulDiv(totalShares(), rate, 1 ether);
++    }
++
+     function getTotalShares() external view returns (uint256) {
+-        return 1e18 + totalSupply();
++        return totalShares();
+     }
+ 
+     function getTotalPooledEther() external view returns (uint256) {
+-        return 1e18 + totalSupply();
+-    }
+-
+-    /// @dev Mainnet eETH exposes `totalShares()`; the SE transition quote reads it (D46 fixture, APEX F4).
+-    function totalShares() external view returns (uint256) {
+-        return 1e18 + totalSupply();
+-    }
+-
+-    function shares(address) external pure returns (uint256) {
+-        return 0;
+-    }
+-
+-    function sharesToBalance(uint256 sharesAmount) external pure returns (uint256) {
+-        return sharesAmount;
+-    }
+-
+-    function balanceToShares(uint256 balance) external pure returns (uint256) {
+-        return balance;
++        return pooled;
++    }
++
++    function totalShares() public view returns (uint256) {
++        return 1 ether + super.totalSupply();
++    }
++
++    function totalSupply() public view override returns (uint256) {
++        return sharesToBalance(super.totalSupply());
++    }
++
++    function shares(address user) external view returns (uint256) {
++        return super.balanceOf(user);
++    }
++
++    function balanceOf(address user) public view override returns (uint256) {
++        return sharesToBalance(super.balanceOf(user));
++    }
++
++    function sharesToBalance(uint256 amount) public view returns (uint256) {
++        return Math.mulDiv(amount, pooled, totalShares());
++    }
++
++    function balanceToShares(uint256 amount) public view returns (uint256) {
++        return Math.mulDiv(amount, totalShares(), pooled);
++    }
++
++    function _update(address from, address to, uint256 amount) internal override {
++        super._update(from, to, from == address(0) || to == address(0) ? amount : balanceToShares(amount));
+     }
+ }
+ 
+@@ -82,6 +101,7 @@
+     function setRate(uint256 rateWad_) external {
+         require(rateWad_ > 0, "rate");
+         rateWad = rateWad_;
++        eEthToken.setRate(rateWad_);
+     }
+ 
+     function wrap(uint256 eETHAmount) external returns (uint256) {
+@@ -103,16 +123,16 @@
+ 
+     /// @dev sharesForAmount: floor(e * 1e18 / rate)
+     function getWeETHByeETH(uint256 eETHAmount) public view returns (uint256) {
+-        return (eETHAmount * 1e18) / rateWad;
++        return eEthToken.balanceToShares(eETHAmount);
+     }
+ 
+     /// @dev amountForShare: floor(we * rate / 1e18)
+     function getEETHByWeETH(uint256 weETHAmount) public view returns (uint256) {
+-        return (weETHAmount * rateWad) / 1e18;
++        return eEthToken.sharesToBalance(weETHAmount);
+     }
+ 
+     function getRate() external view returns (uint256) {
+-        return rateWad;
++        return eEthToken.sharesToBalance(1 ether);
+     }
+ 
+     function eETH() external view returns (address) {
+@@ -162,11 +182,9 @@
+         return address(eETHToken);
+     }
+ 
+-    /// @dev Pooled ether = rateWad x total eETH shares (virtual base plus minted), so T/S is the rate and a
+-    ///      stake grows pooled ether by the staked amount at rate 1 (D46 fixture, APEX F4).
++    /// @dev Deposits add nominal pooled ETH and mint floor native shares at the pre-deposit ratio.
+     function getTotalPooledEther() external view returns (uint256) {
+-        uint256 rate = address(weETHToken) == address(0) ? 1e18 : weETHToken.rateWad();
+-        return (rate * (1e18 + eETHToken.totalSupply())) / 1e18;
++        return eETHToken.getTotalPooledEther();
+     }
+ 
+     /// @dev Mainnet `LiquidityPool.totalValueInLp()`: ETH held liquid in the pool. Deposits stay on
+@@ -176,19 +194,16 @@
+     }
+ 
+     function sharesForAmount(uint256 amount) external view returns (uint256) {
+-        uint256 rate = address(weETHToken) == address(0) ? 1e18 : weETHToken.rateWad();
+-        return (amount * 1e18) / rate;
++        return eETHToken.balanceToShares(amount);
+     }
+ 
+     function amountForShare(uint256 shares) external view returns (uint256) {
+-        uint256 rate = address(weETHToken) == address(0) ? 1e18 : weETHToken.rateWad();
+-        return (shares * rate) / 1e18;
++        return eETHToken.sharesToBalance(shares);
+     }
+ 
+     /// @dev Ceiling shares for withdrawal face (protocol-favoring).
+     function sharesForWithdrawalAmount(uint256 amount) external view returns (uint256) {
+-        uint256 rate = address(weETHToken) == address(0) ? 1e18 : weETHToken.rateWad();
+-        return (amount * 1e18 + rate - 1) / rate;
++        return Math.mulDiv(amount, eETHToken.totalShares(), eETHToken.getTotalPooledEther(), Math.Rounding.Ceil);
+     }
+ 
+     function setPaused(bool paused_) external {
+@@ -329,13 +344,28 @@
+     function tokenToRedemptionInfo(address)
+         external
+         view
+-        returns (uint256 capacity, uint256 remaining, uint256 lastRefill, uint256 refillRate, uint256 treasurySplit, uint256 exitFee, uint256 lowWatermark)
++        returns (
++            uint256 capacity,
++            uint256 remaining,
++            uint256 lastRefill,
++            uint256 refillRate,
++            uint256 treasurySplit,
++            uint256 exitFee,
++            uint256 lowWatermark
++        )
+     {
+         uint256 units = paused ? 0 : capacityEth / 1e12;
+         return (units, units, block.timestamp, 0, 0, exitFeeBps, 0);
+     }
+ 
+-    function canRedeem(uint256 amount, address /*token*/) external view returns (bool) {
++    function canRedeem(
++        uint256 amount,
++        address /*token*/
++    )
++        external
++        view
++        returns (bool)
++    {
+         if (paused) return false;
+         return amount <= capacityEth && amount <= address(this).balance;
+     }
+diff --git a/contracts/test/stubs/NativeEtherFiPorts.sol b/contracts/test/stubs/NativeEtherFiPorts.sol
+new file mode 100644
+--- /dev/null
++++ b/contracts/test/stubs/NativeEtherFiPorts.sol
+@@ -0,0 +1,71 @@
++// SPDX-License-Identifier: BSL-1.1
++pragma solidity ^0.8.0;
++
++import {EETH} from "@crane/contracts/external/etherfi/core/EETH.sol";
++import {Math} from "@crane/contracts/utils/Math.sol";
++
++/// @dev Non-SUT administrative dependencies; token transfers and wrapping use the vendored tokens.
++contract NativeEtherFiPolicy {
++    function nonBlacklisted(address) external pure {}
++
++    function blacklistedUntil(address) external pure returns (uint256) {
++        return 0;
++    }
++    function consumeToken(bytes32, uint64) external pure {}
++}
++
++/// @dev External LP fixture with the protocol's native share/pooled-ETH conversion and deposit order.
++contract NativeEtherFiPool {
++    EETH public eETH;
++    NativeEtherFiPolicy public immutable blacklister;
++    uint256 public pooled;
++    bool public paused;
++    uint256 public pausedUntil;
++
++    constructor(NativeEtherFiPolicy policy_) {
++        blacklister = policy_;
++    }
++
++    function bind(EETH token_) external {
++        require(address(eETH) == address(0));
++        eETH = token_;
++    }
++
++    function getTotalPooledEther() external view returns (uint256) {
++        return pooled;
++    }
++
++    function totalValueInLp() external view returns (uint256) {
++        return address(this).balance;
++    }
++
++    function getTotalEtherClaimOf(address user_) external view returns (uint256) {
++        return amountForShare(eETH.shares(user_));
++    }
++
++    function sharesForAmount(uint256 amount_) public view returns (uint256) {
++        return pooled == 0 ? amount_ : Math.mulDiv(amount_, eETH.totalShares(), pooled);
++    }
++
++    function sharesForWithdrawalAmount(uint256 amount_) external view returns (uint256) {
++        return pooled == 0 ? amount_ : Math.mulDiv(amount_, eETH.totalShares(), pooled, Math.Rounding.Ceil);
++    }
++
++    function amountForShare(uint256 shares_) public view returns (uint256) {
++        uint256 supply_ = eETH.totalShares();
++        return supply_ == 0 ? 0 : Math.mulDiv(shares_, pooled, supply_);
++    }
++
++    function deposit() external payable returns (uint256 minted_) {
++        require(!paused && pausedUntil < block.timestamp);
++        minted_ = sharesForAmount(msg.value);
++        pooled += msg.value;
++        eETH.mintShares(msg.sender, minted_);
++    }
++
++    /// @dev Simulate consensus rewards or slashing on the external protocol, never on the vault.
++    function setPooled(uint256 pooled_) external {
++        require(pooled_ > 0);
++        pooled = pooled_;
++    }
++}
+diff --git a/test/foundry/spec/protocol/staking/etherfi/invariant/EtherFiWeETHStandardExchange_NativeRounding.t.sol b/test/foundry/spec/protocol/staking/etherfi/invariant/EtherFiWeETHStandardExchange_NativeRounding.t.sol
+new file mode 100644
+--- /dev/null
++++ b/test/foundry/spec/protocol/staking/etherfi/invariant/EtherFiWeETHStandardExchange_NativeRounding.t.sol
+@@ -0,0 +1,450 @@
++// SPDX-License-Identifier: BSL-1.1
++pragma solidity ^0.8.0;
++
++import {TestBase_EtherFiWeETHStandardExchange} from "contracts/test/bases/TestBase_EtherFiWeETHStandardExchange.sol";
++import {HermeticWETH} from "contracts/protocols/staking/etherfi/test/hermetic/HermeticEtherFiPorts.sol";
++import {Math} from "@crane/contracts/utils/Math.sol";
++import {
++    IStandardExchangeTransitionQuote,
++    IStandardExchangeExternalQuote
++} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
++import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
++import {EETH} from "@crane/contracts/external/etherfi/core/EETH.sol";
++import {WeETH} from "@crane/contracts/external/etherfi/core/WeETH.sol";
++import {ERC1967Proxy} from "@crane/contracts/external/openzeppelin-contracts-v4/proxy/ERC1967/ERC1967Proxy.sol";
++import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
++import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
++import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
++import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
++import {
++    IEtherFiWeETHStandardVault
++} from "contracts/protocols/staking/etherfi/interfaces/IEtherFiWeETHStandardVault.sol";
++import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
++import {NativeEtherFiPool, NativeEtherFiPolicy} from "contracts/test/stubs/NativeEtherFiPorts.sol";
++
++/// @dev External adversarial token; canonical WETH transfer must remain nominally exact.
++contract EtherFiShortDeliveryWETH is HermeticWETH {
++    bool public shortDelivery = true;
++
++    function setShortDelivery(bool enabled_) external {
++        shortDelivery = enabled_;
++    }
++
++    function transferFrom(address from_, address to_, uint256 amount_) public override returns (bool) {
++        return super.transferFrom(from_, to_, shortDelivery ? amount_ - 1 : amount_);
++    }
++}
++
++contract EtherFiWeETHStandardExchange_NativeRounding is TestBase_EtherFiWeETHStandardExchange {
++    EETH internal nativeE;
++    WeETH internal nativeWe;
++    NativeEtherFiPool internal nativePool;
++    AtomicPretransferCaller internal atomic;
++    address internal recipient = address(0xA11CE);
++
++    function setUp() public override {
++        super.setUp();
++        NativeEtherFiPolicy policy_ = new NativeEtherFiPolicy();
++        nativePool = new NativeEtherFiPool(policy_);
++        EETH implementation_ = new EETH(address(nativePool), address(policy_), address(policy_), address(policy_));
++        nativeE = EETH(address(new ERC1967Proxy(address(implementation_), abi.encodeCall(EETH.initialize, ()))));
++        nativePool.bind(nativeE);
++        WeETH wrapped_ = new WeETH(address(nativeE), address(nativePool), address(policy_), address(policy_));
++        nativeWe = WeETH(address(new ERC1967Proxy(address(wrapped_), abi.encodeCall(WeETH.initialize, ()))));
++        vm.deal(address(this), 200 ether);
++        nativePool.deposit{value: 100 ether}();
++        nativePool.setPooled(150 ether);
++        nativeE.approve(address(nativeWe), 60 ether);
++        nativeWe.wrap(60 ether);
++        vm.prank(owner);
++        seVault = etherFiSeDFPkg.deployVault(
++            address(nativeE),
++            address(nativeWe),
++            address(hermeticWeth),
++            address(nativePool),
++            address(hermeticQueue),
++            address(0)
++        );
++        etherFiSe = IEtherFiWeETHStandardVault(seVault);
++        seIn = IStandardExchangeIn(seVault);
++        seOut = IStandardExchangeOut(seVault);
++        nativeWe.approve(seVault, type(uint256).max);
++        nativeE.approve(seVault, type(uint256).max);
++        seIn.exchangeIn(IERC20(address(nativeWe)), 20 ether, IERC20(seVault), 1, address(this), false, block.timestamp);
++        _fundSleeve(20 ether);
++        atomic = new AtomicPretransferCaller();
++        nativeE.approve(address(atomic), type(uint256).max);
++    }
++
++    function _book() internal view returns (uint256) {
++        return IBasicVault(seVault).reserveOfToken(address(nativeE));
++    }
++
++    function _assertBooks() internal view {
++        assertEq(_book(), nativeE.balanceOf(seVault));
++        assertEq(IBasicVault(seVault).reserveOfToken(address(nativeWe)), nativeWe.balanceOf(seVault));
++        assertGe(nativeE.shares(address(nativeWe)), nativeWe.totalSupply(), "real wrapper remains natively backed");
++    }
++
++    function _receive(uint256 held_, uint256 nominal_) internal view returns (uint256) {
++        return
++            nativePool.amountForShare(held_ + nativePool.sharesForAmount(nominal_)) - nativePool.amountForShare(held_);
++    }
++
++    function test_APEX_nativePullWrapCreditsOnlyActualReceipt() public {
++        uint256 expected_ = nativePool.sharesForAmount(_receive(nativeE.shares(seVault), 5));
++        uint256 before_ = nativeWe.balanceOf(recipient);
++        uint256 out_ = seIn.exchangeIn(
++            IERC20(address(nativeE)), 5, IERC20(address(nativeWe)), expected_, recipient, false, block.timestamp
++        );
++        assertEq(out_, expected_);
++        assertEq(nativeWe.balanceOf(recipient) - before_, out_);
++        _assertBooks();
++    }
++
++    function test_APEX_nativeUnwrapReportsActualRecipientDelta() public {
++        uint256 expected_ = _receive(0, _receive(nativeE.shares(seVault), nativePool.amountForShare(5)));
++        uint256 out_ = seIn.exchangeIn(
++            IERC20(address(nativeWe)), 5, IERC20(address(nativeE)), expected_, recipient, false, block.timestamp
++        );
++        assertEq(out_, nativeE.balanceOf(recipient), "return is actual native delivery");
++        assertEq(out_, expected_);
++        _assertBooks();
++    }
++
++    function test_APEX_nativeUnwrapMinimumUsesActualRecipientDelta() public {
++        bytes32 beforeState_ = _state();
++        uint256 before_ = nativeWe.balanceOf(address(this));
++        vm.expectRevert(IEtherFiWeETHStandardVault.Slippage.selector);
++        seIn.exchangeIn(IERC20(address(nativeWe)), 5, IERC20(address(nativeE)), 7, recipient, false, block.timestamp);
++        assertEq(nativeWe.balanceOf(address(this)), before_);
++        assertEq(nativeE.balanceOf(recipient), 0);
++        assertEq(_state(), beforeState_, "complete minimum failure rollback");
++    }
++
++    function test_APEX_nativeExactOutUnwrapDeliversRequestedMinimum() public {
++        uint256 quote_ = seOut.previewExchangeOut(IERC20(address(nativeWe)), IERC20(address(nativeE)), 7);
++        uint256 before_ = nativeWe.balanceOf(address(this));
++        uint256 paid_ = seOut.exchangeOut(
++            IERC20(address(nativeWe)), quote_, IERC20(address(nativeE)), 7, recipient, false, block.timestamp
++        );
++        assertEq(paid_, quote_);
++        assertEq(before_ - nativeWe.balanceOf(address(this)), paid_);
++        assertGe(nativeE.balanceOf(recipient), 7);
++        _assertBooks();
++    }
++
++    function test_APEX_nativeExactOutPullWrapCoversBothFloors() public {
++        uint256 quote_ = seOut.previewExchangeOut(IERC20(address(nativeE)), IERC20(address(nativeWe)), 7);
++        uint256 beforeShares_ = nativeE.shares(address(this));
++        uint256 paid_ = seOut.exchangeOut(
++            IERC20(address(nativeE)), quote_, IERC20(address(nativeWe)), 7, recipient, false, block.timestamp
++        );
++        assertEq(paid_, quote_);
++        assertEq(beforeShares_ - nativeE.shares(address(this)), nativePool.sharesForAmount(paid_));
++        assertGe(nativeWe.balanceOf(recipient), 7);
++        _assertBooks();
++    }
++
++    function test_APEX_nativePrepaidExactInUsesAlreadyDeliveredCredit() public {
++        uint256 payer_ = nativeE.shares(address(this));
++        uint256 out_ = abi.decode(
++            atomic.consumePretransfer(
++                IERC20(address(nativeE)),
++                address(this),
++                seVault,
++                14,
++                abi.encodeCall(
++                    IStandardExchangeIn.exchangeIn,
++                    (IERC20(address(nativeE)), 11, IERC20(address(nativeWe)), 7, recipient, true, block.timestamp)
++                )
++            ),
++            (uint256)
++        );
++        assertEq(out_, 7);
++        assertEq(nativeWe.balanceOf(recipient), 7);
++        assertEq(nativeE.shares(address(this)), payer_ - nativePool.sharesForAmount(14));
++        assertEq(nativeE.balanceOf(address(atomic)), 0, "exact input never refunds");
++        assertGt(nativeE.balanceOf(seVault), 0);
++        _assertBooks();
++    }
++
++    function test_APEX_nativePrepaidExactOutUsesCreditAndBoundsRefund() public {
++        uint256 paid_ = abi.decode(
++            atomic.consumePretransfer(
++                IERC20(address(nativeE)),
++                address(this),
++                seVault,
++                14,
++                abi.encodeCall(
++                    IStandardExchangeOut.exchangeOut,
++                    (IERC20(address(nativeE)), 13, IERC20(address(nativeWe)), 7, recipient, true, block.timestamp)
++                )
++            ),
++            (uint256)
++        );
++        assertEq(paid_, 11, "prepaid input skips incoming transfer inverse");
++        assertEq(nativeWe.balanceOf(recipient), 7);
++        assertEq(nativeE.shares(address(atomic)), nativePool.sharesForAmount(13 - paid_));
++        assertLe(nativeE.balanceOf(address(atomic)), 13 - paid_);
++        _assertBooks();
++    }
++
++    function test_APEX_nativeShareRedemptionReportsActualDeliveryAndHonorsClaimBudget() public {
++        uint256 shares_ = IERC20(seVault).balanceOf(address(this)) / 13;
++        uint256 budget_ = seIn.previewExchangeIn(IERC20(seVault), shares_, IERC20(address(nativeWe)));
++        uint256 before_ = nativeWe.balanceOf(seVault);
++        uint256 out_ =
++            seIn.exchangeIn(IERC20(seVault), shares_, IERC20(address(nativeE)), 1, recipient, false, block.timestamp);
++        assertEq(out_, nativeE.balanceOf(recipient));
++        assertLe(before_ - nativeWe.balanceOf(seVault), budget_, "native exact input does not overspend share claim");
++        _assertBooks();
++    }
++
++    function _state() internal view returns (bytes32 state_) {
++        address[6] memory holders_ =
++            [address(this), seVault, recipient, address(atomic), address(nativeWe), address(nativePool)];
++        IERC20[4] memory tokens_ =
++            [IERC20(address(nativeE)), IERC20(address(nativeWe)), IERC20(address(hermeticWeth)), IERC20(seVault)];
++        for (uint256 i_; i_ < tokens_.length; ++i_) {
++            state_ = keccak256(
++                abi.encode(state_, tokens_[i_].totalSupply(), IBasicVault(seVault).reserveOfToken(address(tokens_[i_])))
++            );
++            for (uint256 j_; j_ < holders_.length; ++j_) {
++                state_ = keccak256(
++                    abi.encode(
++                        state_,
++                        tokens_[i_].balanceOf(holders_[j_]),
++                        tokens_[i_].allowance(holders_[j_], seVault),
++                        tokens_[i_].allowance(holders_[j_], address(atomic))
++                    )
++                );
++            }
++        }
++        for (uint256 j_; j_ < holders_.length; ++j_) {
++            state_ = keccak256(abi.encode(state_, nativeE.shares(holders_[j_]), holders_[j_].balance));
++        }
++        return keccak256(
++            abi.encode(
++                state_, nativeE.totalShares(), nativePool.pooled(), nativeE.allowance(seVault, address(nativeWe))
++            )
++        );
++    }
++
++    function _in(IERC20 token_, uint256 amount_, IERC20 output_, uint256 minimum_) internal returns (uint256) {
++        return seIn.exchangeIn(token_, amount_, output_, minimum_, recipient, false, block.timestamp);
++    }
++
++    function _nativeShareSum() internal view returns (uint256) {
++        return nativeE.shares(address(this)) + nativeE.shares(seVault) + nativeE.shares(recipient)
++            + nativeE.shares(address(atomic)) + nativeE.shares(address(nativeWe));
++    }
++
++    function _bookIdle() internal returns (uint256 held_) {
++        nativeE.transfer(seVault, 5);
++        _in(IERC20(address(nativeWe)), 3, IERC20(address(hermeticWeth)), 4);
++        held_ = nativeE.shares(seVault);
++        assertGt(held_, 0);
++        _assertBooks();
++    }
++
++    function test_APEX_nativeExactInMintCreditsWrappedValue() public {
++        uint256 received_ = _receive(nativeE.shares(seVault), 11);
++        uint256 wrapped_ = nativePool.sharesForAmount(received_);
++        uint256 quote_ = seIn.previewExchangeIn(IERC20(address(nativeWe)), wrapped_, IERC20(seVault));
++        uint256 before_ = nativeWe.balanceOf(seVault);
++        assertEq(seIn.previewExchangeIn(IERC20(address(nativeE)), 11, IERC20(seVault)), quote_);
++        assertEq(_in(IERC20(address(nativeE)), 11, IERC20(seVault), quote_), quote_);
++        assertEq(IERC20(seVault).balanceOf(recipient), quote_);
++        assertEq(nativeWe.balanceOf(seVault) - before_, wrapped_);
++        _assertBooks();
++    }
++
++    function test_APEX_nativeExactOutMintCoversIncomingFloor() public {
++        uint256 wanted_ = 7000;
++        uint256 quote_ = seOut.previewExchangeOut(IERC20(address(nativeE)), IERC20(seVault), wanted_);
++        uint256 before_ = nativeE.shares(address(this));
++        assertEq(
++            seOut.exchangeOut(
++                IERC20(address(nativeE)), quote_, IERC20(seVault), wanted_, recipient, false, block.timestamp
++            ),
++            quote_
++        );
++        assertEq(IERC20(seVault).balanceOf(recipient), wanted_);
++        assertEq(before_ - nativeE.shares(address(this)), nativePool.sharesForAmount(quote_));
++        _assertBooks();
++    }
++
++    function test_APEX_nativeInventoryWethPaysOnlyRetainedValue() public {
++        uint256 before_ = nativeWe.balanceOf(seVault);
++        uint256 liquid_ = hermeticWeth.balanceOf(seVault);
++        uint256 expected_ = nativePool.amountForShare(nativePool.sharesForAmount(_receive(nativeE.shares(seVault), 11)));
++        assertEq(_in(IERC20(address(nativeE)), 11, IERC20(address(hermeticWeth)), expected_), expected_);
++        assertEq(hermeticWeth.balanceOf(recipient), expected_);
++        assertEq(
++            liquid_ - hermeticWeth.balanceOf(seVault), nativePool.amountForShare(nativeWe.balanceOf(seVault) - before_)
++        );
++        _assertBooks();
++    }
++
++    function test_APEX_nativeInventoryTransitionMatchesWrappedValue() public {
++        (bytes memory state_,) =
++            IStandardExchangeTransitionQuote(seVault).quoteState(address(hermeticWeth), address(this));
++        (bytes memory next_, uint256 projected_, uint256 holder_) =
++            IStandardExchangeExternalQuote(seVault).quoteExternalExchange(state_, address(nativeE), 11);
++        assertEq(projected_, 9);
++        assertEq(_in(IERC20(address(nativeE)), 11, IERC20(address(hermeticWeth)), projected_), projected_);
++        (bytes memory actual_, uint256 actualHolder_) =
++            IStandardExchangeTransitionQuote(seVault).quoteState(address(hermeticWeth), address(this));
++        assertEq(keccak256(next_), keccak256(actual_), "entire projected state matches custody and native shares");
++        assertEq(holder_, actualHolder_);
++        _assertBooks();
++    }
++
++    function test_APEX_nativeExactOutBudgetFailureRollsBackAtomicFunding() public {
++        bytes32 before_ = _state();
++        vm.expectRevert(IEtherFiWeETHStandardVault.Slippage.selector);
++        atomic.consumePretransfer(
++            IERC20(address(nativeE)),
++            address(this),
++            seVault,
++            14,
++            abi.encodeCall(
++                IStandardExchangeOut.exchangeOut,
++                (IERC20(address(nativeE)), 10, IERC20(address(nativeWe)), 7, recipient, true, block.timestamp)
++            )
++        );
++        assertEq(_state(), before_, "atomic native shares, books and allowances rollback");
++    }
++
++    function test_APEX_nativeHeldBookSurvivesBoundedRefund() public {
++        uint256 held_ = _bookIdle();
++        uint256 shares_ = _nativeShareSum();
++        uint256 paid_ = abi.decode(
++            atomic.consumePretransfer(
++                IERC20(address(nativeE)),
++                address(this),
++                seVault,
++                14,
++                abi.encodeCall(
++                    IStandardExchangeOut.exchangeOut,
++                    (IERC20(address(nativeE)), 12, IERC20(address(nativeWe)), 7, recipient, true, block.timestamp)
++                )
++            ),
++            (uint256)
++        );
++        assertEq(paid_, 11);
++        assertGe(nativeE.shares(seVault), held_, "held native book never funds wrap or refund");
++        assertLe(nativeE.balanceOf(address(atomic)), 12 - paid_, "refund never includes excess delivery");
++        assertEq(_nativeShareSum(), shares_, "all native shares remain owned across transfer/wrap/refund");
++        _assertBooks();
++    }
++
++    function test_APEX_nativeExactOutShareRedemptionFundsRecipient() public {
++        uint256 shares_ = IERC20(seVault).balanceOf(address(this));
++        uint256 quote_ = seOut.previewExchangeOut(IERC20(seVault), IERC20(address(nativeE)), 7);
++        uint256 paid_ =
++            seOut.exchangeOut(IERC20(seVault), quote_, IERC20(address(nativeE)), 7, recipient, false, block.timestamp);
++        assertEq(paid_, quote_);
++        assertEq(shares_ - IERC20(seVault).balanceOf(address(this)), quote_);
++        assertGe(nativeE.balanceOf(recipient), 7);
++        _assertBooks();
++    }
++
++    function test_APEX_nativeNonemptyRecipientReceivesMeasuredDelta() public {
++        nativeE.transfer(recipient, 5);
++        uint256 before_ = nativeE.balanceOf(recipient);
++        uint256 quote_ = seIn.previewExchangeIn(IERC20(address(nativeWe)), 5, IERC20(address(nativeE)));
++        uint256 delivered_ = _in(IERC20(address(nativeWe)), 5, IERC20(address(nativeE)), quote_);
++        assertEq(delivered_, nativeE.balanceOf(recipient) - before_);
++        assertGe(delivered_, quote_);
++        _assertBooks();
++    }
++
++    function test_APEX_nativeWethStakeUsesActualTransfer() public {
++        _dealWeth(address(this), 11);
++        hermeticWeth.approve(seVault, 11);
++        uint256 quote_ = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), 11, IERC20(address(nativeE)));
++        assertEq(quote_, 9);
++        assertEq(_in(IERC20(address(hermeticWeth)), 11, IERC20(address(nativeE)), quote_), quote_);
++        assertEq(nativeE.balanceOf(recipient), quote_);
++        _assertBooks();
++    }
++
++    function test_APEX_nativeZeroReceiptRejectsAndRollsBack() public {
++        bytes32 before_ = _state();
++        vm.expectRevert(WeETH.ZeroAmount.selector);
++        _in(IERC20(address(nativeE)), 1, IERC20(seVault), 0);
++        assertEq(_state(), before_, "zero native delivery issues no shares");
++    }
++
++    function testFuzz_APEX_nativePullWrapConservesShares(uint96 amountSeed_, uint64 rateSeed_, uint96 idleSeed_)
++        public
++    {
++        uint256 amount_ = bound(uint256(amountSeed_), 10, 1 ether);
++        uint256 rate_ = bound(uint256(rateSeed_), 0.5 ether, 3 ether);
++        nativePool.setPooled(Math.mulDiv(nativeE.totalShares(), rate_, 1 ether));
++        uint256 idle_ = bound(uint256(idleSeed_), 0, 1000);
++        if (idle_ != 0) nativeE.transfer(seVault, idle_);
++        uint256 held_ = nativeE.shares(seVault);
++        uint256 sum_ = _nativeShareSum();
++        uint256 incoming_ = nativePool.sharesForAmount(amount_);
++        uint256 expected_ = nativePool.sharesForAmount(_receive(held_, amount_));
++        uint256 quote_ = seIn.previewExchangeIn(IERC20(address(nativeE)), amount_, IERC20(address(nativeWe)));
++        assertEq(quote_, expected_);
++        assertEq(_in(IERC20(address(nativeE)), amount_, IERC20(address(nativeWe)), quote_), expected_);
++        assertEq(nativeWe.balanceOf(recipient), expected_);
++        assertEq(
++            nativeE.shares(seVault) + expected_,
++            held_ + incoming_,
++            "native input shares split only into wrapper and held dust"
++        );
++        assertEq(_nativeShareSum(), sum_);
++        _assertBooks();
++    }
++
++    function testFuzz_APEX_nativeExactOutStakeFundsDelivery(uint96 amountSeed_, uint64 rateSeed_, bool wrappedOutput_)
++        public
++    {
++        uint256 amount_ = bound(uint256(amountSeed_), 3, 1 ether);
++        uint256 rate_ = bound(uint256(rateSeed_), 0.5 ether, 3 ether);
++        nativePool.setPooled(Math.mulDiv(nativeE.totalShares(), rate_, 1 ether));
++        nativeE.transfer(seVault, 5);
++        nativeE.transfer(recipient, 7);
++        IERC20 output_ = wrappedOutput_ ? IERC20(address(nativeWe)) : IERC20(address(nativeE));
++        uint256 before_ = output_.balanceOf(recipient);
++        uint256 quote_ = seOut.previewExchangeOut(IERC20(address(hermeticWeth)), output_, amount_);
++        _dealWeth(address(this), quote_);
++        hermeticWeth.approve(seVault, quote_);
++        uint256 paid_ = seOut.exchangeOut(
++            IERC20(address(hermeticWeth)), quote_, output_, amount_, recipient, false, block.timestamp
++        );
++        assertEq(paid_, quote_);
++        assertGe(output_.balanceOf(recipient) - before_, amount_);
++        _assertBooks();
++    }
++
++    function test_APEX_nativeCorrectionKeepsOtherTokenPullsStrict() public {
++        EtherFiShortDeliveryWETH short_ = new EtherFiShortDeliveryWETH();
++        hermeticWeth = short_;
++        vm.prank(owner);
++        seVault = etherFiSeDFPkg.deployVault(
++            address(nativeE),
++            address(nativeWe),
++            address(short_),
++            address(nativePool),
++            address(hermeticQueue),
++            address(0)
++        );
++        seIn = IStandardExchangeIn(seVault);
++        _dealWeth(address(this), 100);
++        short_.approve(seVault, 100);
++        bytes32 before_ = _state();
++        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 100, 99));
++        _in(IERC20(address(short_)), 100, IERC20(seVault), 0);
++        assertEq(_state(), before_, "other token short delivery rolls back balances/books/allowances");
++        short_.setShortDelivery(false);
++        assertGt(_in(IERC20(address(short_)), 100, IERC20(seVault), 1), 0);
++        _assertBooks();
++    }
++}
+diff --git a/test/foundry/spec/protocol/staking/etherfi/invariant/EtherFiWeETHStandardExchange_NonUnitPretransfer.t.sol b/test/foundry/spec/protocol/staking/etherfi/invariant/EtherFiWeETHStandardExchange_NonUnitPretransfer.t.sol
+--- a/test/foundry/spec/protocol/staking/etherfi/invariant/EtherFiWeETHStandardExchange_NonUnitPretransfer.t.sol
++++ b/test/foundry/spec/protocol/staking/etherfi/invariant/EtherFiWeETHStandardExchange_NonUnitPretransfer.t.sol
+@@ -26,7 +26,8 @@
+         integrator = new AtomicPretransferCaller();
+         _fund(IERC20(address(wrapped)), 2 ether);
+         wrapped.approve(vault, 2 ether);
+-        uint256 issued = IStandardExchangeIn(vault).exchangeIn(IERC20(address(wrapped)), 2 ether, IERC20(vault), 1, address(this), false, block.timestamp);
++        uint256 issued = IStandardExchangeIn(vault)
++            .exchangeIn(IERC20(address(wrapped)), 2 ether, IERC20(vault), 1, address(this), false, block.timestamp);
+         assertEq(issued, 3 ether * 1000, "initial receipt value with package virtual offset");
+     }
+ 
+@@ -36,25 +37,32 @@
+             hermeticEEth.mint(address(this), assets);
+             hermeticEEth.approve(address(wrapped), assets);
+             assertGe(wrapped.wrap(assets), amount_, "real receipt funding");
+-        } else hermeticEEth.mint(address(this), amount_);
++        } else {
++            hermeticEEth.mint(address(this), amount_);
++        }
+     }
+ 
+     function _required(IERC20 token_, uint256 desired_) internal view returns (uint256) {
+         uint256 nav = wrapped.getEETHByWeETH(wrapped.balanceOf(vault));
+         uint256 ethRequired = Math.mulDiv(desired_, nav + 1, IERC20(vault).totalSupply() + 1000, Math.Rounding.Ceil);
+         uint256 receiptRequired = Math.mulDiv(ethRequired, 1 ether, 1.5 ether, Math.Rounding.Ceil);
+-        return address(token_) == address(wrapped) ? receiptRequired : Math.mulDiv(receiptRequired, 1.5 ether, 1 ether, Math.Rounding.Ceil);
++        return address(token_) == address(wrapped)
++            ? receiptRequired
++            : Math.mulDiv(receiptRequired, 1.5 ether, 1 ether, Math.Rounding.Ceil);
+     }
+ 
+     function _mint(IERC20 token_, uint256 maximum_, uint256 desired_, bool prepaid_) internal returns (uint256) {
+         _fund(token_, maximum_);
+         if (!prepaid_) {
+             token_.approve(vault, maximum_);
+-            return IStandardExchangeOut(vault).exchangeOut(token_, maximum_, IERC20(vault), desired_, address(this), false, block.timestamp);
++            return IStandardExchangeOut(vault)
++                .exchangeOut(token_, maximum_, IERC20(vault), desired_, address(this), false, block.timestamp);
+         }
+         token_.approve(address(integrator), maximum_);
+-        bytes memory data = abi.encodeCall(IStandardExchangeOut.exchangeOut,
+-            (token_, maximum_, IERC20(vault), desired_, address(this), true, block.timestamp));
++        bytes memory data = abi.encodeCall(
++            IStandardExchangeOut.exchangeOut,
++            (token_, maximum_, IERC20(vault), desired_, address(this), true, block.timestamp)
++        );
+         return abi.decode(integrator.consumePretransfer(token_, address(this), vault, maximum_, data), (uint256));
+     }
+ 
+@@ -62,7 +70,11 @@
+         uint256 desired = 1001; // needs 2 wei ETH, whose floor wrapped inverse would underfund by one wei.
+         uint256 expected = _required(token_, desired);
+         assertGt(expected, 0);
+-        assertEq(IStandardExchangeOut(vault).previewExchangeOut(token_, IERC20(vault), desired), expected, "independent ceil inverse");
++        assertEq(
++            IStandardExchangeOut(vault).previewExchangeOut(token_, IERC20(vault), desired),
++            expected,
++            "independent ceil inverse"
++        );
+         uint256 snapshot = vm.snapshotState();
+         assertEq(_mint(token_, expected, desired, false), expected, "funded pull accepts exact quote");
+         assertTrue(vm.revertToState(snapshot));
+@@ -73,24 +85,95 @@
+         assertEq(token_.balanceOf(address(integrator)), maximum - expected, "only bounded unused credit refunded");
+     }
+ 
+-    function test_APEX_nonUnitWrappedExactOutCeilAndPretransfer() public { _assertExactOut(IERC20(address(wrapped))); }
+-    function test_APEX_nonUnitUnderlyingWrapExactOutCeilAndPretransfer() public { _assertExactOut(IERC20(address(hermeticEEth))); }
++    function test_APEX_nonUnitWrappedExactOutCeilAndPretransfer() public {
++        _assertExactOut(IERC20(address(wrapped)));
++    }
++
++    function test_APEX_nonUnitUnderlyingWrapExactOutCeilAndPretransfer() public {
++        // Fund before quoting: a native deposit itself changes the global share ratio.
++        hermeticEEth.mint(address(this), 30);
++        hermeticEEth.approve(vault, 30);
++        hermeticEEth.approve(address(integrator), 30);
++        uint256 desired = 1001;
++        uint256 required = _required(IERC20(address(hermeticEEth)), desired);
++        assertEq(required, 3, "2 wrapped shares need3 nominal eETH at the native rate");
++        assertEq(
++            IStandardExchangeOut(vault).previewExchangeOut(IERC20(address(hermeticEEth)), IERC20(vault), desired),
++            required
++        );
++        uint256 snapshot = vm.snapshotState();
++        assertEq(
++            IStandardExchangeOut(vault)
++                .exchangeOut(
++                    IERC20(address(hermeticEEth)),
++                    required,
++                    IERC20(vault),
++                    desired,
++                    address(this),
++                    false,
++                    block.timestamp
++                ),
++            required
++        );
++        assertTrue(vm.revertToState(snapshot));
++        uint256 beforeShares = IERC20(vault).balanceOf(address(this));
++        uint256 maximum = 13;
++        uint256 paid = abi.decode(
++            integrator.consumePretransfer(
++                IERC20(address(hermeticEEth)),
++                address(this),
++                vault,
++                15,
++                abi.encodeCall(
++                    IStandardExchangeOut.exchangeOut,
++                    (
++                        IERC20(address(hermeticEEth)),
++                        maximum,
++                        IERC20(vault),
++                        desired,
++                        address(this),
++                        true,
++                        block.timestamp
++                    )
++                )
++            ),
++            (uint256)
++        );
++        assertEq(paid, required, "prepaid native credit wraps the required shares");
++        assertEq(IERC20(vault).balanceOf(address(this)) - beforeShares, desired);
++        uint256 returnedNativeShares = hermeticEEth.balanceToShares(maximum - required);
++        assertEq(
++            hermeticEEth.shares(address(integrator)),
++            returnedNativeShares,
++            "refund transfers floor native shares of bounded surplus"
++        );
++        assertEq(hermeticEEth.balanceOf(address(integrator)), hermeticEEth.sharesToBalance(returnedNativeShares));
++        assertEq(
++            hermeticEEth.shares(vault),
++            hermeticEEth.balanceToShares(15) - wrapped.getWeETHByeETH(required) - returnedNativeShares,
++            "excess delivery and unrepresentable refund remain held"
++        );
++    }
+ 
+     function _exactIn(IERC20 token_, uint256 amount_, uint256 minimum_, bool prepaid_) internal returns (uint256) {
+         _fund(token_, amount_);
+         if (!prepaid_) {
+             token_.approve(vault, amount_);
+-            return IStandardExchangeIn(vault).exchangeIn(token_, amount_, IERC20(vault), minimum_, address(this), false, block.timestamp);
++            return IStandardExchangeIn(vault)
++                .exchangeIn(token_, amount_, IERC20(vault), minimum_, address(this), false, block.timestamp);
+         }
+         token_.approve(address(integrator), amount_);
+-        bytes memory data = abi.encodeCall(IStandardExchangeIn.exchangeIn,
+-            (token_, amount_, IERC20(vault), minimum_, address(this), true, block.timestamp));
++        bytes memory data = abi.encodeCall(
++            IStandardExchangeIn.exchangeIn,
++            (token_, amount_, IERC20(vault), minimum_, address(this), true, block.timestamp)
++        );
+         return abi.decode(integrator.consumePretransfer(token_, address(this), vault, amount_, data), (uint256));
+     }
+ 
+     function _assertExactIn(IERC20 token_, uint256 amount_, uint256 credited_) internal {
+-        uint256 expected = Math.mulDiv(credited_, IERC20(vault).totalSupply() + 1000,
+-            wrapped.getEETHByWeETH(wrapped.balanceOf(vault)) + 1);
++        uint256 expected = Math.mulDiv(
++            credited_, IERC20(vault).totalSupply() + 1000, wrapped.getEETHByWeETH(wrapped.balanceOf(vault)) + 1
++        );
+         uint256 quote = IStandardExchangeIn(vault).previewExchangeIn(token_, amount_, IERC20(vault));
+         uint256 snapshot = vm.snapshotState();
+         assertEq(_exactIn(token_, amount_, expected, false), expected, "funded pull credits native wrapped value");
+@@ -102,6 +185,70 @@
+         assertEq(token_.balanceOf(address(integrator)), 0, "exact-in never refunds residual credit");
+     }
+ 
+-    function test_APEX_nonUnitUnderlyingExactInPreviewAndPretransfer() public { _assertExactIn(IERC20(address(hermeticEEth)), 2, 1); }
+-    function test_APEX_nonUnitWrappedExactInPreviewAndPretransfer() public { _assertExactIn(IERC20(address(wrapped)), 2, 3); }
++    function test_APEX_nonUnitUnderlyingExactInPreviewAndPretransfer() public {
++        hermeticEEth.mint(address(this), 30);
++        hermeticEEth.approve(vault, 30);
++        hermeticEEth.approve(address(integrator), 30);
++        uint256 nominal = 11;
++        uint256 delivered = hermeticEEth.sharesToBalance(hermeticEEth.balanceToShares(nominal));
++        uint256 credited = wrapped.getEETHByWeETH(wrapped.getWeETHByeETH(delivered));
++        assertEq(delivered, 10, "native input transfer floor");
++        assertEq(credited, 9, "wrap credits retained native value");
++        uint256 expected = Math.mulDiv(
++            credited, IERC20(vault).totalSupply() + 1000, wrapped.getEETHByWeETH(wrapped.balanceOf(vault)) + 1
++        );
++        assertEq(
++            IStandardExchangeIn(vault).previewExchangeIn(IERC20(address(hermeticEEth)), nominal, IERC20(vault)),
++            expected
++        );
++        uint256 snapshot = vm.snapshotState();
++        assertEq(
++            IStandardExchangeIn(vault)
++                .exchangeIn(
++                    IERC20(address(hermeticEEth)),
++                    nominal,
++                    IERC20(vault),
++                    expected,
++                    address(this),
++                    false,
++                    block.timestamp
++                ),
++            expected
++        );
++        assertTrue(vm.revertToState(snapshot));
++        uint256 beforeShares = IERC20(vault).balanceOf(address(this));
++        uint256 minted = abi.decode(
++            integrator.consumePretransfer(
++                IERC20(address(hermeticEEth)),
++                address(this),
++                vault,
++                nominal,
++                abi.encodeCall(
++                    IStandardExchangeIn.exchangeIn,
++                    (
++                        IERC20(address(hermeticEEth)),
++                        delivered,
++                        IERC20(vault),
++                        expected,
++                        address(this),
++                        true,
++                        block.timestamp
++                    )
++                )
++            ),
++            (uint256)
++        );
++        assertEq(minted, expected, "prepaid execution consumes actually delivered credit");
++        assertEq(IERC20(vault).balanceOf(address(this)) - beforeShares, expected);
++        assertEq(hermeticEEth.balanceOf(address(integrator)), 0, "exact input does not refund");
++        assertEq(
++            hermeticEEth.shares(vault),
++            hermeticEEth.balanceToShares(nominal) - wrapped.getWeETHByeETH(delivered),
++            "native wrapping remainder remains held"
++        );
++    }
++
++    function test_APEX_nonUnitWrappedExactInPreviewAndPretransfer() public {
++        _assertExactIn(IERC20(address(wrapped)), 2, 3);
++    }
+ }

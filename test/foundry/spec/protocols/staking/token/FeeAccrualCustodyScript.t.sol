@@ -34,7 +34,9 @@ contract FeeAccrualCustodyScript is TestBase_RebasingAwareERC4626 {
     function test_custodyProvider_normalizesWholeSharesAndTracksDonations() public {
         address custody = Custody.execute(address(indexedexManager), diamondPackageFactory, pkg, IERC20Metadata(address(asset)), 10, keccak256("fee-provider"));
         address provider = Providers.execute(diamondPackageFactory, launch.rateProviderPkg, custody, address(asset));
-        assertEq(IRateProvider(provider).getRate(), 0, "unfunded provider is zero");
+        // D60 (2026-09-22): an unfunded provider publishes the custody's initial mint rate (one whole asset per
+        // whole share) instead of 0, so hooks can price a first buffer.
+        assertEq(IRateProvider(provider).getRate(), 1e18, "unfunded provider quotes the initial mint rate");
         vm.startPrank(alice);
         asset.approve(custody, 1 ether);
         assertEq(IERC4626(custody).deposit(1 ether, alice), 1e28, "one displayed share");

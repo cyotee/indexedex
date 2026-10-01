@@ -37,12 +37,12 @@ Copy into every subagent prompt. Full text: PRD §1.1 / §4.
 
 | ID | Implementer rule |
 |----|------------------|
-| **L-RSRV-CALLER** | Any caller may pass `pretransferred=true`. No principal gate. |
+| **L-RSRV-CALLER** | **Superseded by APEX 2026-09-17 D9.** Public `pretransferred=true` is for integrating contracts only. A code-less EOA reverts `EOAPretransferNotAllowed()`. Constructor-time callers also reject. Deployed wallets and EIP-7702 delegated EOAs pass the bytecode guard (accepted D12 residual). D32 surfaces keep their existing hard public-pretransfer reject. |
 | **L-RSRV-SYNC-WHEN** | Sync at **end** of successful money workflow after `_refundExcess`. **No** post-return modifier. |
 | **L-RSRV-SYNC-ROUTES** | **Every** deposit / withdraw / compound / harvest / rebalance / zap / fee-compound / other balance-mutating money path. Not view/quote. |
 | **L-RSRV-HOLD-SET** | Expected-hold = underlyings + package sleeve + compound/rebalance residuals. **Not** vault share token. |
 | **L-RSRV-SYNC-FULL** | Sync **full** expected-hold set every money op — **not** route-touched-only. |
-| **L-RSRV-ABSORB** | `claimed < U` surplus → absorb into `R` at sync. **No** refund of `U − claimed`. Refund only exact-out `max > used`. |
+| **L-RSRV-ABSORB** | `claimed < U` surplus → absorb into `R` at sync. **No** refund of `U − claimed`. Exact-in pretransfer never refunds. Pretransferred exact-out refunds only `credit - used`. False-flag exact-out pulls quoted used and refunds nothing. |
 | **L-RSRV-COMPOUND-DUST** | Retained compound dust included in end-of-op `R` (booked → I1). |
 | **L-RSRV-DUST** | Crude recovery only for **not-yet-synced** / **non-expected-hold** inventory. |
 | **L-RSRV-BOOTSTRAP** | Init `R = 0`; live balance fully unbooked until claim/sync. |

@@ -30,8 +30,11 @@ contract BasicVaultCommon is ISecurePullErrors {
         return MultiAssetBasicVaultRepo._reserveOfToken(address(token));
     }
 
-    /// @notice Unbooked surplus `U = balanceOf - reserveOfToken` (checked math; no underflow product error).
-    function _unbookedSurplus(IERC20 token) internal view returns (uint256) {
+    /// @notice Legacy unbooked surplus. Checked subtraction is the historical default.
+    /// @dev Active D16 families override this with `LocalCreditLib.available`, which returns zero
+    ///      when balance is below book. Historical consumers outside that override set keep this
+    ///      panic. Do not read a base panic as the active-family credit rule.
+    function _unbookedSurplus(IERC20 token) internal view virtual returns (uint256) {
         return token.balanceOf(address(this)) - MultiAssetBasicVaultRepo._reserveOfToken(address(token));
     }
 
@@ -68,7 +71,9 @@ contract BasicVaultCommon is ISecurePullErrors {
      * @param tokenIn The token to transfer into the vault.
      * @param amountTokenToDeposit Claimed amount to pull / credit.
      * @param pretransferred When true, no transfer is performed in this call; credit requires
-     *        `claimed <= unbooked surplus` relative to durable reserve.
+     *        `claimed <= unbooked surplus` relative to durable reserve. Public true-flag
+     *        callers must already have passed `LocalCreditLib.requirePretransferCaller`.
+     *        Exact-in credits exactly `amountTokenToDeposit` and refunds nothing.
      * @return actualIn Credited amount: claimed when pretransferred and surplus-sufficient;
      *         otherwise the observed inbound pull delta.
      */
@@ -105,7 +110,8 @@ contract BasicVaultCommon is ISecurePullErrors {
      * @dev E6 law: refund `min(maxAmount_ - usedAmount_, unused U)` only, where
      *      `U = balanceOf(this) - reserveOfToken` (unbooked surplus). Never pays booked `R`.
      *      If `U == 0`, refund is 0. Gate remains `pretransferred_ && maxAmount_ > usedAmount_`.
-     *      Does **not** refund unclaimed push surplus beyond this-call unused inbound;
+     *      False-flag exact-out never refunds. Does **not** refund unclaimed push surplus
+     *      beyond this-call unused inbound;
      *      leftover surplus is absorbed into booked reserve at end-of-op full-set sync.
      *      Call **before** `_syncAllExpectedHoldReserves()`.
      * @param token_ The token to refund.
@@ -142,7 +148,7 @@ contract BasicVaultCommon is ISecurePullErrors {
      * @param burnAmount Shares to burn.
      * @param preTransferred When true, burn from `address(this)` (already-held self-shares).
      */
-    function _secureSelfBurn(address owner, uint256 burnAmount, bool preTransferred) internal {
+    function _secureSelfBurn(address owner, uint256 burnAmount, bool preTransferred) internal virtual {
         if (preTransferred) {
             ERC20Repo._burn(address(this), burnAmount);
         } else {

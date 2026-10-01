@@ -57,6 +57,10 @@ contract UniswapV4Detf_Quad_PonsMix_Policy is
         return _nLegDetfArgs(3);
     }
 
+    function _prepareD22MintBlocked(address d) internal override {
+        _prepareD22FundedDeadband(d);
+    }
+
 
 
 

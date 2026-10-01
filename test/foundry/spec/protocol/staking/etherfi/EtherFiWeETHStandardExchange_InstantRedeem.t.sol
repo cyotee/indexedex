@@ -46,12 +46,7 @@ contract EtherFiWeETHStandardExchange_InstantRedeem_Test is TestBase_EtherFiWeET
         assertEq(hermeticRedeem.capacityEth(), 0);
 
         uint256 amountOut = 5 ether;
-        uint256 available = etherFiSe.liquidReserveEth();
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                IEtherFiWeETHStandardVault.InsufficientLiquidReserve.selector, amountOut, available
-            )
-        );
+        vm.expectRevert(bytes("capacity"));
         seOut.exchangeOut(
             IERC20(seVault),
             type(uint256).max,

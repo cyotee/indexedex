@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
+import {CraneTest} from "@crane/contracts/test/CraneTest.sol";
+import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
+import {Creation} from "@crane/contracts/utils/Creation.sol";
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 import {AaveV3Stata_Component_FactoryService} from "contracts/protocols/lending/aave/v3.6/AaveV3Stata_Component_FactoryService.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
@@ -137,12 +140,21 @@ contract AaveStataNativeSYTest is TestBase_AaveV3StataStandardExchange, StataPro
         _assertExternalDepositQuote(subject, IERC20(aToken), IERC20(underlying), 10 ether, HOLDER);
     }
 
-    function test_stataCurrentFacetCannotReuseOccupiedLegacyNamespace() public {
+}
+
+/// @notice Populate the canonical slot before the Stata helper is ever invoked.
+contract AaveStataOccupiedNamespaceTest is CraneTest {
+    using BetterEfficientHashLib for bytes;
+
+    function test_stataFacetReusesOccupiedNamespaceWithoutReplacingRuntime() public {
+        bytes32 salt = abi.encode("AaveV3StataStandardExchangeInFacet")._hash();
         bytes memory otherCode = ArtifactCreationCode.creationCode("ERC20Facet.sol:ERC20Facet");
-        IFacet occupied = create3Factory.deployFacet(otherCode, keccak256(abi.encode("AaveV3StataStandardExchangeInFacet")));
+        IFacet occupied = create3Factory.deployFacet(otherCode, salt);
+        bytes memory originalRuntime = address(occupied).code;
         IFacet current = AaveV3Stata_Component_FactoryService.deployAaveV3StataStandardExchangeInFacet(create3Factory);
-        assertNotEq(address(current), address(occupied), "legacy occupied namespace cannot select stale implementation");
-        assertEq(address(current), address(aaveV3StataStandardExchangeInFacet), "current code deployment is deterministic");
-        assertEq(current.facetName(), "AaveV3StataStandardExchangeInFacet");
+        assertEq(address(current), address(occupied), "canonical identity reuses the occupied address");
+        assertEq(address(current), Creation._create3AddressFromOf(address(create3Factory), salt));
+        assertEq(address(current).code, originalRuntime, "reuse does not install the current artifact");
+        assertEq(current.facetName(), "ERC20Facet");
     }
 }

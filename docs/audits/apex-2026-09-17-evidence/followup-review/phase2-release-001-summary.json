@@ -1,0 +1,92 @@
+{
+  "tag": "phase2-release-001",
+  "seed": "0x20260917",
+  "steps": [
+    {
+      "label": "build",
+      "command": [
+        "forge",
+        "build"
+      ],
+      "environmentOverrides": {},
+      "exitCode": 0,
+      "elapsedSeconds": 435.8584430217743,
+      "log": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-build.log",
+      "logSha256": "da5bdc15d22432cfcd58cc566a0946767eae7cb937ce62d3e60704b7fbcd2837"
+    },
+    {
+      "label": "preflight",
+      "command": [
+        "python3",
+        "scripts/r12_selector_size_compare.py",
+        "--output",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-sizes-before.json",
+        "--manifest",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-identity-before.json"
+      ],
+      "environmentOverrides": {},
+      "exitCode": 0,
+      "elapsedSeconds": 13.492374897003174,
+      "log": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-preflight.log",
+      "logSha256": "f47056aa93ef9f9acd32677b302ba7a31a5001936e8875dd4def0a65b96ac6b8"
+    },
+    {
+      "label": "fuzz",
+      "command": [
+        "forge",
+        "test",
+        "--match-test",
+        "^(testFuzz_APEX_.*|testFuzz_FUZZ05_decimalsAndQuantizedRate|testFuzz_FUZZ10_FUZZ12_exactOutPublicBudget|testFuzz_deliveryAcrossSleeveRatios|testFuzz_noPhantomCreditAfterTrade|testFuzz_importedPositionCannotBecomeUnfundedCredit|testFuzz_exchangeOut_(swap_)?refundInvariant)\\(",
+        "--fuzz-seed",
+        "0x20260917",
+        "-vv"
+      ],
+      "environmentOverrides": {
+        "FOUNDRY_FUZZ_RUNS": "10000",
+        "FOUNDRY_INVARIANT_RUNS": "256",
+        "FOUNDRY_INVARIANT_DEPTH": "64"
+      },
+      "exitCode": 0,
+      "elapsedSeconds": 344.20744585990906,
+      "log": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-fuzz.log",
+      "logSha256": "9085c655f3d8acaf8b469d9325e9643b19f5dcb970a96a61d5bc8f8273fd7407"
+    },
+    {
+      "label": "hermetic",
+      "command": [
+        "forge",
+        "test",
+        "--fuzz-seed",
+        "0x20260917",
+        "-vv"
+      ],
+      "environmentOverrides": {},
+      "exitCode": 0,
+      "elapsedSeconds": 3441.3637182712555,
+      "log": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-hermetic.log",
+      "logSha256": "8f94d584faa0e155ef7a8e1dbb96379edec97c42e933bdc1803e6e7ed41f8e62"
+    },
+    {
+      "label": "postflight",
+      "command": [
+        "python3",
+        "scripts/r12_selector_size_compare.py",
+        "--output",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-sizes-after.json",
+        "--manifest",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-identity-after.json",
+        "--test-log",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-hermetic.log",
+        "--test-log",
+        "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex/docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-fuzz.log"
+      ],
+      "environmentOverrides": {},
+      "exitCode": 0,
+      "elapsedSeconds": 15.21593976020813,
+      "log": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-release-001-postflight.log",
+      "logSha256": "7800e90021f0646a9ebca731de8490f95069c2d82fd79803a37ab12268e2755e"
+    }
+  ],
+  "sourceAndRuntimeIdentityStable": true,
+  "status": "PASS"
+}

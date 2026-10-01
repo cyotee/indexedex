@@ -48,13 +48,12 @@ library UniswapV4WeightedSwapHook_FactoryService {
     function deployPackage(
         IVaultRegistryDeployment registry,
         address owner,
-        IUniswapV4WeightedSwapHookPackage.PkgInit memory init,
-        bytes32 salt
+        IUniswapV4WeightedSwapHookPackage.PkgInit memory init
     ) internal returns (IUniswapV4WeightedSwapHookPackage pkg) {
         vm.prank(owner);
         pkg = IUniswapV4WeightedSwapHookPackage(
             registry.deployPkg(
-                ArtifactCreationCode.creationCode("UniswapV4WeightedSwapHookDFPkg.sol:UniswapV4WeightedSwapHookDFPkg"), abi.encode(init), salt
+                ArtifactCreationCode.creationCode("UniswapV4WeightedSwapHookDFPkg.sol:UniswapV4WeightedSwapHookDFPkg"), abi.encode(init), abi.encode("UniswapV4WeightedSwapHookDFPkg")._hash()
             )
         );
         vm.label(address(pkg), "UniswapV4WeightedSwapHookDFPkg");

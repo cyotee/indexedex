@@ -147,6 +147,8 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_FundedBal
             .deployMixedBufferMultiVaultStableLiquidityFacet(create3Factory);
         mbmvsHookFacet =
             MixedBufferMultiVaultStablePool_FactoryService.deployMixedBufferMultiVaultStableHookFacet(create3Factory);
+        IFacet mbmvsTransitionQuoteFacet =
+            MixedBufferMultiVaultStablePool_FactoryService.deployTransitionQuoteFacet(create3Factory);
 
         IMixedBufferMultiVaultStablePoolPkg.PkgInit memory pkgInit;
         pkgInit.basicVaultFacet = multiAssetBasicVaultFacetPool;
@@ -160,6 +162,7 @@ abstract contract TestBase_MixedBufferMultiVaultStableDetf is TestBase_FundedBal
         pkgInit.bufferPoolFacet = mbmvsBufferPoolFacet;
         pkgInit.poolLiquidityFacet = mbmvsPoolLiquidityFacet;
         pkgInit.hookFacet = mbmvsHookFacet;
+        pkgInit.transitionQuoteFacet = mbmvsTransitionQuoteFacet;
         pkgInit.vaultRegistry = IVaultRegistryDeployment(address(indexedexManager));
         pkgInit.vaultFeeOracle = IVaultFeeOracleQuery(address(indexedexManager));
         pkgInit.balancerV3Vault = IVault(address(vault));

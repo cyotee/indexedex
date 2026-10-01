@@ -1,0 +1,427 @@
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_OwnerDuringLock.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_OwnerDuringLock.t.sol
+@@ -177,8 +177,10 @@
+         assertFalse(single.isZapEligible(), "public zap closed at MIN");
+ 
+         vm.prank(user);
+-        vm.expectRevert(abi.encodeWithSignature("NotZapEligible()"));
++        vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, user));
+         single.depositSingle(address(pairToken), 20 ether, user, 0, block.timestamp + 1 hours);
++
++        assertEq(IERC20(hook).totalSupply(), 1000, "unauthorized join preserves MIN supply");
+ 
+         vm.prank(owner);
+         uint256 lpOut = single.depositSingle(address(pairToken), 50 ether, owner, 0, block.timestamp + 1 hours);
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_SeBufferAbi.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_SeBufferAbi.t.sol
+@@ -38,7 +38,7 @@
+     function test_T1_4_joinSingleAssetExactIn_beforeLive_reverts() public {
+         assertFalse(single.isLive(), "pre-live");
+         vm.prank(user);
+-        vm.expectRevert(abi.encodeWithSignature("NotZapEligible()"));
++        vm.expectRevert(abi.encodeWithSignature("NotLive()"));
+         single.joinSingleAssetExactIn(address(pairToken), 10 ether, user, 0, block.timestamp + 1 hours);
+     }
+ 
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_Swap.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_Swap.t.sol
+@@ -178,7 +178,7 @@
+ 
+     function test_SE4_badTokens_reverts() public {
+         vm.prank(user);
+-        vm.expectRevert(abi.encodeWithSignature("InvalidPoolToken()"));
++        vm.expectRevert(abi.encodeWithSignature("UnsupportedRoute()"));
+         IStandardExchangeIn(hook).exchangeIn(
+             IERC20(address(rawToken)),
+             1 ether,
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_VaultViews.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_VaultViews.t.sol
+@@ -1,6 +1,8 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
+ 
++import {IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage as IPkg} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.sol";
++import {IUniswapV4HookStagedPairInit as IInit} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
+ import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
+ import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
+ import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
+@@ -73,18 +75,28 @@
+     }
+ 
+     function test_I1_I2_poolInit_guards() public {
+-        PoolKey memory badFee = PoolKey({
+-            currency0: Currency.wrap(single.currency0()),
+-            currency1: Currency.wrap(single.currency1()),
+-            fee: 1,
+-            tickSpacing: 60,
+-            hooks: IHooks(hook)
+-        });
+-        vm.expectRevert(abi.encodeWithSignature("WrappedError(address,bytes4,bytes,bytes)", hook, bytes4(keccak256("beforeInitialize(address,(address,address,uint24,int24,address),uint160)")), abi.encodeWithSignature("InvalidPoolFee()"), abi.encodeWithSignature("HookCallFailed()")));
++        // Fee validation must run on a fresh production bootstrap before the one-shot init guard.
++        IPkg.PkgArgs memory args = _defaultPkgArgs();
++        args.owner = makeAddr("fresh-init-owner");
++        address fresh = _deployBootstrapOnly(args);
++        IInit init = IInit(fresh);
++        PoolKey memory key = init.pairPoolKey(address(rawToken), address(pairToken));
++        PoolKey memory badFee = key;
++        badFee.fee = 1;
++        vm.expectRevert(abi.encodeWithSignature("WrappedError(address,bytes4,bytes,bytes)", fresh,
++            IHooks.beforeInitialize.selector, abi.encodeWithSignature("InvalidPoolFee()"),
++            abi.encodeWithSignature("HookCallFailed()")));
+         pm.initialize(badFee, SQRT_PRICE_1_1);
++        assertFalse(init.isPairPoolLive(address(rawToken), address(pairToken)), "invalid fee cannot consume initialization");
+ 
+-        // already seeded live (initialized); second init reverts
+-        vm.expectRevert(abi.encodeWithSignature("WrappedError(address,bytes4,bytes,bytes)", hook, bytes4(keccak256("beforeInitialize(address,(address,address,uint24,int24,address),uint160)")), abi.encodeWithSignature("AlreadyInitialized()"), abi.encodeWithSignature("HookCallFailed()")));
+-        pm.initialize(poolKey, SQRT_PRICE_1_1);
++        // The valid key still initializes successfully after the rejected attempt.
++        key.fee = 0;
++        pm.initialize(key, SQRT_PRICE_1_1);
++        assertTrue(init.isPairPoolLive(address(rawToken), address(pairToken)), "valid initialization succeeds");
++        vm.expectRevert(abi.encodeWithSignature("WrappedError(address,bytes4,bytes,bytes)", fresh,
++            IHooks.beforeInitialize.selector, abi.encodeWithSignature("AlreadyInitialized()"),
++            abi.encodeWithSignature("HookCallFailed()")));
++        pm.initialize(key, SQRT_PRICE_1_1);
++        assertTrue(init.isPairPoolLive(address(rawToken), address(pairToken)), "repeat rejection preserves live pool");
+     }
+ }
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_Adversarial.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_Adversarial.t.sol
+@@ -379,6 +379,7 @@
+         IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory args = _defaultPkgArgs();
+         args.se0 = se0;
+         args.se2 = se0;
++        args.rp2 = args.rp0; // Reach the duplicate-SE guard with both providers configured.
+         vm.expectRevert(abi.encodeWithSignature("SameStandardExchange()"));
+         hookPkg.processArgs(abi.encode(args));
+     }
+@@ -410,28 +411,30 @@
+         o.addLiquidity(100 ether, 100 ether, 100 ether, user, 0, block.timestamp + 1 hours, "");
+         vm.stopPrank();
+ 
+-        // Make SE.previewExchangeOut always revert → ClaimLib.SeInvertUnavailable on exact-out path
+-        vm.mockCallRevert(
+-            se1,
+-            abi.encodeWithSelector(
+-                IStandardExchangeOut.previewExchangeOut.selector,
+-                IERC20(se1),
+-                IERC20(address(token1)),
+-                uint256(1 ether)
+-            ),
+-            abi.encodeWithSignature("Error(string)", "no invert")
+-        );
+-        // Broader: any previewExchangeOut on se1 reverts
+-        vm.mockCallRevert(
+-            se1,
+-            bytes4(keccak256("previewExchangeOut(address,address,uint256)")),
+-            abi.encodeWithSignature("Error(string)", "no invert")
+-        );
+-
+-        // Exact-out of buffered token1 requires invert → full tx revert (D31a)
++        // Downstream quote failures intentionally bubble through the production hook.
++        uint256[5] memory beforeState = [token0.balanceOf(user), token1.balanceOf(user),
++            o.rawReserve(0), o.seBalance(1), IERC20(h).totalSupply()];
++        uint256 needed = o.previewSwapExactOut(address(token0), address(token1), 1 ether);
++        assertGt(needed, 0, "funded downstream quote positive control");
++        vm.mockCallRevert(se1, IStandardExchangeOut.previewExchangeOut.selector,
++            abi.encodeWithSignature("Error(string)", "no invert"));
++        vm.expectRevert(abi.encodeWithSignature("Error(string)", "no invert"));
++        o.previewSwapExactOut(address(token0), address(token1), 1 ether);
+         vm.prank(user);
+-        vm.expectRevert(abi.encodeWithSignature("SeInvertUnavailable()"));
+-        o.previewSwapExactOut(address(token0), address(token1), 1 ether);
++        vm.expectRevert(abi.encodeWithSignature("Error(string)", "no invert"));
++        IStandardExchangeOut(h).exchangeOut(IERC20(address(token0)), needed + 1 ether,
++            IERC20(address(token1)), 1 ether, user, false, block.timestamp + 1 hours);
++        assertEq(token0.balanceOf(user), beforeState[0], "failed downstream quote preserves payer");
++        assertEq(token1.balanceOf(user), beforeState[1], "failed downstream quote cannot pay output");
++        assertEq(o.rawReserve(0), beforeState[2], "failed transaction preserves raw book");
++        assertEq(o.seBalance(1), beforeState[3], "failed transaction preserves SE book");
++        assertEq(IERC20(h).totalSupply(), beforeState[4], "failed transaction preserves LP supply");
++        vm.clearMockedCalls();
++        vm.prank(user);
++        uint256 used = IStandardExchangeOut(h).exchangeOut(IERC20(address(token0)), needed + 1 ether,
++            IERC20(address(token1)), 1 ether, user, false, block.timestamp + 1 hours);
++        assertEq(beforeState[0] - token0.balanceOf(user), used, "restored downstream route debits exact input");
++        assertEq(token1.balanceOf(user) - beforeState[1], 1 ether, "restored downstream route pays exact output");
+     }
+ 
+     /// @notice C1: hostile token reenters addLiquidity mid transferFrom → outer fails; no LP mint.
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_Binding.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_Binding.t.sol
+@@ -71,6 +71,7 @@
+     function test_binding_reject_sameSE() public {
+         IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory args = _argsWithSE(true, false, false);
+         args.se1 = se0; // same SE on two legs — reject
++        args.rp1 = args.rp0; // Satisfy provider validation before the duplicate-SE guard.
+         vm.expectRevert(abi.encodeWithSignature("SameStandardExchange()"));
+         hookPkg.processArgs(abi.encode(args));
+     }
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_LedgerReconcile.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_LedgerReconcile.t.sol
+@@ -96,7 +96,7 @@
+         assertApproxEqRel(sumAfter, sumBefore, 0.01e18, "effective sum conserved within 1% (no value leak)");
+     }
+ 
+-    // R6.3 test 3: the radius guard blocks an over-radius swap and preserves the book.
++    // R6.3 test 3: swap math and LP accounting both reject crossing the fixed radius.
+     // Assert the complete PoolManager wrapper and its intended inner guard.
+     function test_R6_3_reserveExceedRadius_guarded() public {
+         _seedThreeLeg(200 ether);
+@@ -106,13 +106,34 @@
+         uint256 radius = orbital.radius();
+         uint256 seBal0 = orbital.seBalance(0);
+ 
+-        // Drive token1's raw reserve massively up (buying token2 out) so leg1 would breach the
+-        // radius. maxAmountIn is unbounded; amountOut stays below token2's reserve so the
+-        // primitive Drain guard does not pre-empt the radius guard.
+-        vm.expectRevert(abi.encodeWithSignature("WrappedError(address,bytes4,bytes,bytes)", hook, bytes4(keccak256("beforeSwap(address,(address,address,uint24,int24,address),(bool,int256,uint160),bytes)")), abi.encodeWithSignature("ReservesExceedRadius()"), abi.encodeWithSignature("HookCallFailed()")));
+-        _swapExactOut(address(token1), address(token2), (r2 * 9) / 10, type(uint256).max);
++        // Fund a real exact-input swap whose input alone would put leg1 beyond the radius.
++        // A 90% exact-output trade does not necessarily approach this boundary, and a
++        // uint256.max router prepayment fails at the payer before reaching the hook.
++        token0.mint(user, radius);
++        token1.mint(user, radius);
++        token2.mint(user, radius);
++        uint256 userBefore = token1.balanceOf(user);
++        uint256 hookBefore = token1.balanceOf(hook);
++        uint256 supplyBefore = IERC20(hook).totalSupply();
++        vm.expectRevert(abi.encodeWithSignature("WrappedError(address,bytes4,bytes,bytes)", hook,
++            bytes4(keccak256("beforeSwap(address,(address,address,uint24,int24,address),(bool,int256,uint160),bytes)")),
++            abi.encodeWithSignature("MathDomain()"), abi.encodeWithSignature("HookCallFailed()")));
++        _swapExactIn(address(token1), address(token2), radius);
++        assertEq(token1.balanceOf(user), userBefore, "radius rejection rolls back prepaid input");
++        assertEq(token1.balanceOf(hook), hookBefore, "radius rejection preserves custody");
++        assertEq(IERC20(hook).totalSupply(), supplyBefore, "radius rejection preserves supply");
+ 
+-        // Book unchanged by the reverted swap.
++        // The proportional LP path reaches the distinct post-state radius guard.
++        uint256 beforeUser0 = token0.balanceOf(user);
++        uint256 beforeUser2 = token2.balanceOf(user);
++        vm.expectRevert(abi.encodeWithSignature("ReservesExceedRadius()"));
++        _addLiquidity(radius, radius, radius);
++        assertEq(token0.balanceOf(user), beforeUser0, "failed join restores buffered input");
++        assertEq(token1.balanceOf(user), userBefore, "failed join restores first raw input");
++        assertEq(token2.balanceOf(user), beforeUser2, "failed join restores second raw input");
++        assertEq(IERC20(hook).totalSupply(), supplyBefore, "failed join cannot issue LP");
++
++        // Book unchanged by both rejected operations.
+         assertEq(orbital.rawReserve(1), r0, "leg1 reserve unchanged after guarded revert");
+         assertEq(orbital.rawReserve(2), r2, "leg2 reserve unchanged after guarded revert");
+         assertEq(orbital.seBalance(0), seBal0, "leg0 SE balance unchanged after guarded revert");
+@@ -122,6 +143,8 @@
+         assertLt(orbital.effectiveReserve(0), radius, "leg0 under radius");
+         assertLt(orbital.effectiveReserve(1), radius, "leg1 under radius");
+         assertLt(orbital.effectiveReserve(2), radius, "leg2 under radius");
++        _swapExactIn(address(token1), address(token2), 1 ether);
++        _assertPerLegReconciled();
+     }
+ 
+     function _assertPerLegReconciled() internal view {
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_OwnerDuringLock.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_OwnerDuringLock.t.sol
+@@ -99,9 +99,11 @@
+         assertEq(IERC20(hook).totalSupply(), 1000, "MIN remains");
+         assertFalse(orbital.isZapEligible());
+ 
+-        vm.expectRevert(abi.encodeWithSignature("NotZapEligible()"));
++        vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, user));
+         vm.prank(user);
+         orbital.depositSingle(address(token1), 20 ether, user, 0, block.timestamp + 1 hours, "");
++
++        assertEq(IERC20(hook).totalSupply(), 1000, "unauthorized join preserves MIN supply");
+ 
+         vm.prank(owner);
+         uint256 lpOut = orbital.depositSingle(address(token1), 50 ether, owner, 0, block.timestamp + 1 hours, "");
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_RateProvider.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_RateProvider.t.sol
+@@ -111,8 +111,12 @@
+         o.addLiquidity(50 ether, 50 ether, 50 ether, user, 0, block.timestamp + 1 hours, "");
+         vm.stopPrank();
+ 
++        uint256 beforeReserve = o.effectiveReserve(0);
++        assertGt(beforeReserve, 0, "funded rate read succeeds");
+         rp.setFail(true);
+-        vm.expectRevert(abi.encodeWithSignature("Error(string)", "rate fail"));
++        vm.expectRevert(abi.encodeWithSignature("RateProviderFailed()"));
+         o.effectiveReserve(0);
++        rp.setFail(false);
++        assertEq(o.effectiveReserve(0), beforeReserve, "failed provider read preserves reserve");
+     }
+ }
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_SeBufferAbi.t.sol
+@@ -69,7 +69,7 @@
+     function test_T2_3_joinSingleAssetExactIn_beforeLive_reverts() public {
+         assertFalse(orbital.isLive(), "pre-live");
+         vm.prank(user);
+-        vm.expectRevert(abi.encodeWithSignature("NotZapEligible()"));
++        vm.expectRevert(abi.encodeWithSignature("NotLive()"));
+         orbital.joinSingleAssetExactIn(address(token1), 10 ether, user, 0, block.timestamp + 1 hours);
+     }
+ 
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_StagedInit.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_StagedInit.t.sol
+@@ -359,7 +359,7 @@
+         SimpleMintableERC20(t0).approve(address(swapRouter), type(uint256).max);
+         SimpleMintableERC20(t1).approve(address(swapRouter), type(uint256).max);
+         bool zeroForOne = t0 == Currency.unwrap(key.currency0);
+-        vm.expectRevert(abi.encodeWithSignature("WrappedError(address,bytes4,bytes,bytes)", h, bytes4(keccak256("beforeSwap(address,(address,address,uint24,int24,address),(bool,int256,uint160),bytes)")), abi.encodeWithSignature("NotLive()"), abi.encodeWithSignature("HookCallFailed()")));
++        vm.expectRevert(abi.encodeWithSignature("WrappedError(address,bytes4,bytes,bytes)", h, bytes4(keccak256("beforeSwap(address,(address,address,uint24,int24,address),(bool,int256,uint160),bytes)")), abi.encodeWithSignature("NoTargetFor(bytes4)", IHooks.beforeSwap.selector), abi.encodeWithSignature("HookCallFailed()")));
+         swapRouter.swapExactIn(
+             key,
+             SwapParams({
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/single/adversarial/Adversarial_Accounting.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/single/adversarial/Adversarial_Accounting.t.sol
+@@ -34,8 +34,19 @@
+         uint256 amountIn = buffer.previewWrapExactOut(seOut);
+         bool zfo = _isWrapZFO();
+         // Pass maxIn too low
++        uint256 beforePair = pairToken.balanceOf(user);
++        uint256 beforeShares = IERC20(se).balanceOf(user);
++        uint256 beforeSupply = IERC20(se).totalSupply();
++        uint256 beforeBacking = pairToken.balanceOf(address(protocolVault));
++        // The router prepays only maxIn. PoolManager's attempted transfer of the full
++        // required input fails, wrapped by the currency library and then the hook call.
++        bytes memory currencyFailure = abi.encodeWithSignature("WrappedError(address,bytes4,bytes,bytes)",
++            address(pairToken), IERC20.transfer.selector, abi.encodeWithSignature("Error(string)", "balance"),
++            abi.encodeWithSignature("ERC20TransferFailed()"));
+         vm.prank(user);
+-        vm.expectRevert(abi.encodeWithSignature("CurrencyNotSettled()"));
++        vm.expectRevert(abi.encodeWithSignature("WrappedError(address,bytes4,bytes,bytes)", hook,
++            bytes4(keccak256("beforeSwap(address,(address,address,uint24,int24,address),(bool,int256,uint160),bytes)")),
++            currencyFailure, abi.encodeWithSignature("HookCallFailed()")));
+         swapRouter.swapExactOut(
+             poolKey,
+             SwapParams({zeroForOne: zfo, amountSpecified: int256(seOut), sqrtPriceLimitX96: _sqrtLimit(zfo)}),
+@@ -43,5 +54,11 @@
+             ""
+         );
+         _assertHookFlat();
++        assertEq(pairToken.balanceOf(user), beforePair, "insufficient prepayment rolls back payer");
++        assertEq(IERC20(se).balanceOf(user), beforeShares, "no output from rejected wrap");
++        assertEq(IERC20(se).totalSupply(), beforeSupply, "rejected wrap cannot issue shares");
++        assertEq(pairToken.balanceOf(address(protocolVault)), beforeBacking, "rejected wrap preserves backing");
++        assertEq(_wrapExactOut(seOut), amountIn, "same-state fully funded wrap succeeds");
++        _assertHookFlat();
+     }
+ }
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/single/adversarial/Adversarial_Griefing.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/single/adversarial/Adversarial_Griefing.t.sol
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
++
++import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ 
+ import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
+ import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
+@@ -30,14 +32,31 @@
+         uint256 seOut = 4 ether;
+         uint256 amountIn = buffer.previewWrapExactOut(seOut);
+         bool zfo = _isWrapZFO();
++        uint256 beforePair = pairToken.balanceOf(user);
++        uint256 beforeShares = IERC20(se).balanceOf(user);
++        uint256 beforeSupply = IERC20(se).totalSupply();
++        uint256 beforeBacking = pairToken.balanceOf(address(protocolVault));
++        // The router prepays only maxIn. PoolManager's attempted transfer of the full
++        // required input fails, wrapped by the currency library and then the hook call.
++        bytes memory currencyFailure = abi.encodeWithSignature("WrappedError(address,bytes4,bytes,bytes)",
++            address(pairToken), IERC20.transfer.selector, abi.encodeWithSignature("Error(string)", "balance"),
++            abi.encodeWithSignature("ERC20TransferFailed()"));
+         vm.prank(user);
+-        vm.expectRevert(abi.encodeWithSignature("CurrencyNotSettled()"));
++        vm.expectRevert(abi.encodeWithSignature("WrappedError(address,bytes4,bytes,bytes)", hook,
++            bytes4(keccak256("beforeSwap(address,(address,address,uint24,int24,address),(bool,int256,uint160),bytes)")),
++            currencyFailure, abi.encodeWithSignature("HookCallFailed()")));
+         swapRouter.swapExactOut(
+             poolKey,
+             SwapParams({zeroForOne: zfo, amountSpecified: int256(seOut), sqrtPriceLimitX96: _sqrtLimit(zfo)}),
+             amountIn > 1 ? amountIn - 1 : 0,
+             ""
+         );
++        _assertHookFlat();
++        assertEq(pairToken.balanceOf(user), beforePair, "insufficient prepayment rolls back payer");
++        assertEq(IERC20(se).balanceOf(user), beforeShares, "no output from rejected wrap");
++        assertEq(IERC20(se).totalSupply(), beforeSupply, "rejected wrap cannot issue shares");
++        assertEq(pairToken.balanceOf(address(protocolVault)), beforeBacking, "rejected wrap preserves backing");
++        assertEq(_wrapExactOut(seOut), amountIn, "same-state fully funded wrap succeeds");
+         _assertHookFlat();
+     }
+ 
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_TokenCount.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_TokenCount.t.sol
+@@ -270,7 +270,10 @@
+         assertTrue(init.finalizeInitialization());
+         assertLt(beforeGas - gasleft(), 30_000_000);
+         assertEq(IHook(staged).numTokens(), activeCount());
+-        vm.expectRevert(abi.encodeWithSignature("InitializationAlreadyFinalized()")); init.finalizeInitialization();
++        assertEq(IDiamondLoupe(staged).facetAddress(IInit.finalizeInitialization.selector), address(0), "bootstrap finalizer removed");
++        vm.expectRevert(abi.encodeWithSignature("NoTargetFor(bytes4)", IInit.finalizeInitialization.selector));
++        init.finalizeInitialization();
++        assertEq(IHook(staged).numTokens(), activeCount(), "rejected replay preserves live product");
+     }
+ 
+     function test_count_rejects_each_array_mismatch() public {
+@@ -335,7 +338,7 @@
+         vm.prank(user);
+         assertEq(units.joinUnbalanced(ts, amounts, user, expected, block.timestamp), expected);
+         flags[0] = true;
+-        vm.expectRevert(abi.encodeWithSignature("SeShareNotBuffered()")); units.previewJoinProportionalFlexible(amounts, flags);
++        vm.expectRevert(abi.encodeWithSignature("InvalidPair()")); units.previewJoinProportionalFlexible(amounts, flags);
+         ts[0] = ts[n - 1];
+         vm.expectRevert(abi.encodeWithSignature("InvalidPair()")); units.previewJoinUnbalanced(ts, amounts);
+     }
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_OwnerDuringLock.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_OwnerDuringLock.t.sol
+@@ -106,9 +106,11 @@
+ 
+         uint256 joinAmt = token1.balanceOf(hook) / 4;
+         if (joinAmt == 0) joinAmt = 1;
+-        vm.expectRevert(abi.encodeWithSignature("NotLive()"));
++        vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, user));
+         vm.prank(user);
+         quad.depositSingle(address(token1), joinAmt, user, 0, block.timestamp + 1 days);
++
++        assertEq(IERC20(hook).totalSupply(), 1000, "unauthorized join preserves MIN supply");
+ 
+         vm.prank(owner);
+         uint256 lpOut = quad.depositSingle(address(token1), joinAmt, owner, 0, block.timestamp + 1 days);
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_Adversarial.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_Adversarial.t.sol
+@@ -311,11 +311,18 @@
+ 
+         uint256 remaining = IERC20(hook).balanceOf(user);
+         uint256 almostAll = remaining > 10 ? remaining - 1 : remaining;
+-        vm.prank(user);
+-        vm.expectRevert(abi.encodeWithSignature("MaxOutRatio()"));
++        uint256 before0 = weighted.nativeReserve(0);
++        uint256 before1 = weighted.nativeReserve(1);
++        uint256 beforeSupply = IERC20(hook).totalSupply();
++        vm.prank(user);
++        vm.expectRevert(abi.encodeWithSignature("MinInvariantRatio()"));
+         weighted.exitSingleAssetExactBptIn(
+             address(token1), almostAll, user, 0, block.timestamp + 1 hours
+         );
++        assertEq(weighted.nativeReserve(0), before0, "failed exit preserves leg0");
++        assertEq(weighted.nativeReserve(1), before1, "failed exit preserves leg1");
++        assertEq(IERC20(hook).totalSupply(), beforeSupply, "failed exit cannot burn LP");
++        assertEq(IERC20(hook).balanceOf(user), remaining, "failed exit preserves user shares");
+     }
+ 
+     /// @notice H3: native CL addLiquidity always blocked.
+--- a/test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_OwnerDuringLock.t.sol
++++ b/test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_OwnerDuringLock.t.sol
+@@ -102,9 +102,11 @@
+         // token1 is the raw (unbuffered) leg; size join to remaining MIN inventory.
+         uint256 joinAmt = token1.balanceOf(hook) / 4;
+         if (joinAmt == 0) joinAmt = 1;
+-        vm.expectRevert(abi.encodeWithSignature("NotFullBook()"));
++        vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, user));
+         vm.prank(user);
+         weighted.depositSingle(address(token1), joinAmt, user, 0, block.timestamp + 1 days);
++
++        assertEq(IERC20(hook).totalSupply(), 1000, "unauthorized join preserves MIN supply");
+ 
+         vm.prank(owner);
+         uint256 lpOut = weighted.depositSingle(address(token1), joinAmt, owner, 0, block.timestamp + 1 days);

@@ -10,6 +10,7 @@ import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchang
 import {IFeeCollectorProxy} from "contracts/interfaces/proxies/IFeeCollectorProxy.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
 import {DETFDecimalScaleLib} from "contracts/vaults/detf/common/core/DETFDecimalScaleLib.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {
@@ -210,7 +211,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         if (!_isLive() || amountIn == 0) return 0;
         (bool ok, bool zfo) = _tryRouteZeroForOne(tokenIn, tokenOut);
         if (!ok) return 0;
-        return _quoteExactIn(zfo, amountIn);
+        return _quoteExactInContext(zfo, amountIn, Repo._layout().poolManager).amountOut;
     }
 
     function previewSwapExactOut(address tokenIn, address tokenOut, uint256 amountOut)
@@ -221,7 +222,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         if (!_isLive() || amountOut == 0) return 0;
         (bool ok, bool zfo) = _tryRouteZeroForOne(tokenIn, tokenOut);
         if (!ok) return 0;
-        return _quoteExactOut(zfo, amountOut);
+        return ClaimLib.quoteExactOutContext(zfo, amountOut, Repo._layout().poolManager);
     }
 
     function _quotePairClaimIn(uint256 seClaim, uint256 claimIn) private view returns (uint256) {
@@ -267,15 +268,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         return (false, false);
     }
 
+    /// @dev D60: SE shares held x provider rate (pair units); never an SE self-quote.
     function _seClaim() internal view returns (uint256) {
-        Repo.Layout storage l = Repo._layout();
-        uint256 seBal = IERC20(l.standardExchange).balanceOf(address(this));
-        if (seBal == 0) return 0;
-        if (l.pairToken == l.standardExchange) return seBal;
-        uint256 claim = IStandardExchangeIn(l.standardExchange).previewExchangeIn(
-            IERC20(l.standardExchange), seBal, IERC20(l.pairToken)
-        );
-        return claim == 0 ? 1 : claim;
+        return ClaimLib.ratedReserve();
     }
 
     function _reserveOfCurrency(address c) internal view returns (uint256) {
@@ -300,6 +295,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
     function _syncReserves() internal {
         Repo.Layout storage l = Repo._layout();
         MultiAssetBasicVaultRepo._updateReserve(IERC20(l.rawToken), IERC20(l.rawToken).balanceOf(address(this)));
+        if (l.pairToken == l.standardExchange) {
+            l.localPairReserve = IERC20(l.pairToken).balanceOf(address(this));
+        }
         MultiAssetBasicVaultRepo._updateReserve(IERC20(l.pairToken), _seClaim());
     }
 
@@ -359,25 +357,11 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
     }
 
     function _previewBufferClaimIn(uint256 amountInRaw) internal view returns (uint256) {
-        Repo.Layout storage l = Repo._layout();
-        return ClaimLib.previewBufferClaimIn(
-            l.standardExchange,
-            l.pairToken,
-            amountInRaw,
-            IVaultFeeOracleQuery(l.feeOracle),
-            address(this)
-        );
+        return ClaimLib.previewBufferClaimIn(amountInRaw);
     }
 
     function _invertBufferClaimIn(uint256 claimInNeeded) internal view returns (uint256) {
-        Repo.Layout storage l = Repo._layout();
-        return ClaimLib.invertBufferClaimIn(
-            l.standardExchange,
-            l.pairToken,
-            claimInNeeded,
-            IVaultFeeOracleQuery(l.feeOracle),
-            address(this)
-        );
+        return ClaimLib.invertBufferClaimIn(claimInNeeded);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -385,12 +369,13 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
     /* ---------------------------------------------------------------------- */
 
     function _bufferPair(uint256 amount) internal returns (uint256 seOut) {
-        _requireNonZero(amount);
+        if (amount == 0) return 0;
         Repo.Layout storage l = Repo._layout();
         if (l.pairToken == l.standardExchange) return amount;
         uint256 minOut = IStandardExchangeIn(l.standardExchange).previewExchangeIn(
             IERC20(l.pairToken), amount, IERC20(l.standardExchange)
         );
+        if (minOut == 0) return 0;
         IERC20(l.pairToken).forceApprove(l.standardExchange, amount);
         seOut = IStandardExchangeIn(l.standardExchange).exchangeIn(
             IERC20(l.pairToken),
@@ -420,14 +405,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         if (seIn == 0) return 0;
         Repo.Layout storage l = Repo._layout();
         if (l.pairToken == l.standardExchange) return seIn;
-        uint256 minOut;
-        try IStandardExchangeIn(l.standardExchange).previewExchangeIn(
+        uint256 minOut = IStandardExchangeIn(l.standardExchange).previewExchangeIn(
             IERC20(l.standardExchange), seIn, IERC20(l.pairToken)
-        ) returns (uint256 m) {
-            minOut = m;
-        } catch {
-            minOut = 0;
-        }
+        );
         // Uni V3/V4 SE pulls shares via transferFrom when pretransferred=false.
         IERC20(l.standardExchange).forceApprove(l.standardExchange, seIn);
         pairOut = IStandardExchangeIn(l.standardExchange).exchangeIn(
@@ -448,19 +428,11 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         if (l.pairToken == l.standardExchange) return pairOut;
         uint256 cap = _spendableSeShares();
         if (cap == 0) revert InsufficientTokenOut();
-        try IStandardExchangeOut(l.standardExchange).previewExchangeOut(
+        seIn = IStandardExchangeOut(l.standardExchange).previewExchangeOut(
             IERC20(l.standardExchange), IERC20(l.pairToken), pairOut
-        ) returns (uint256 need) {
-            seIn = need;
-        } catch {
-            seIn = type(uint256).max;
-        }
-        // Never unwrap the last MAX_DUST_WEI SE shares — both book legs stay live.
-        if (seIn > cap) {
-            uint256 pairGot = _unwrapSeShares(cap);
-            if (pairGot == 0) revert InsufficientTokenOut();
-            return cap;
-        }
+        );
+        // Exact-output never falls back to a clamped exact-input redemption.
+        if (seIn == 0 || seIn > cap) revert InsufficientTokenOut();
         IERC20(l.standardExchange).forceApprove(l.standardExchange, seIn);
         uint256 spent = IStandardExchangeOut(l.standardExchange).exchangeOut(
             IERC20(l.standardExchange),
@@ -509,11 +481,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
             uint256 bal = IERC20(l.pairToken).balanceOf(address(this));
             if (bal <= Repo.MAX_DUST_WEI) return;
             uint256 excess = bal - Repo.MAX_DUST_WEI;
-            uint256 preview = IStandardExchangeIn(l.standardExchange).previewExchangeIn(
-                IERC20(l.pairToken), excess, IERC20(l.standardExchange)
-            );
+            uint256 preview = ClaimLib.previewResidualBuffer(excess);
             if (preview == 0) return;
-            _bufferPair(excess);
+            ClaimLib.bufferQuotedResidual(excess, preview);
         }
     }
 
@@ -677,18 +647,16 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         address tokenIn = zeroForOne ? l.currency0 : l.currency1;
         address tokenOut = zeroForOne ? l.currency1 : l.currency0;
 
-        amountOut = _quoteExactIn(zeroForOne, amountIn);
-        if (amountOut == 0) revert InsufficientTokenOut();
+        ClaimLib.ExactInOutput memory output = _quoteExactInPlan(zeroForOne, amountIn);
+        amountOut = output.amountOut;
+        if (amountOut == 0) revert ZeroAmount();
 
         if (viaPm) {
             _take(Currency.wrap(tokenIn), address(this), amountIn);
         }
 
         if (rawIn) {
-            // raw → pair: CP on face raw vs seClaim; unwrap pair
-            uint256 claimOut = amountOut; // amountOut is pair face ≈ claim units
-            uint256 got = _unwrapPairLeavingDust(claimOut);
-            if (got < claimOut) revert InsufficientTokenOut();
+            amountOut = ClaimLib.unwrapQuoted(output);
         } else {
             // pair → raw: buffer pair last after quote; pay raw
             _bufferPair(amountIn);
@@ -734,49 +702,41 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
     }
 
     function _quoteExactIn(bool zeroForOne, uint256 amountIn) internal view returns (uint256 amountOut) {
+        return _quoteExactInPlan(zeroForOne, amountIn).amountOut;
+    }
+
+    function _quoteExactInPlan(bool zeroForOne, uint256 amountIn) internal view returns (ClaimLib.ExactInOutput memory output) {
+        return _quoteExactInContext(zeroForOne, amountIn, address(0));
+    }
+
+    function _quoteExactInContext(bool zeroForOne, uint256 amountIn, address manager) internal view returns (ClaimLib.ExactInOutput memory output) {
+        if (amountIn == 0) revert ZeroAmount();
         Repo.Layout storage l = Repo._layout();
         bool rawIn = zeroForOne == _zeroForOneIsRawIn();
         uint256 rawBal = IERC20(l.rawToken).balanceOf(address(this));
-        uint256 seClaim = _seClaim();
+        uint256 seClaim = manager == address(0) ? _seClaim() : ClaimLib.ratedReserveWithContext(manager);
         if (rawIn) {
             // face raw in → claim/pair out
             uint256 rInN = Math.toWad(rawBal, _decimalsOf(l.rawToken));
             uint256 rOutN = Math.toWad(seClaim, _decimalsOf(l.pairToken));
             uint256 aInN = Math.toWad(amountIn, _decimalsOf(l.rawToken));
-            amountOut = Math.fromWadFloor(Math.saleQuote(aInN, rInN, rOutN), _decimalsOf(l.pairToken));
+            uint256 budget = Math.fromWadFloor(Math.saleQuote(aInN, rInN, rOutN), _decimalsOf(l.pairToken));
+            output = manager == address(0) ? ClaimLib.previewBudget(budget) : ClaimLib.previewBudgetWithContext(budget, manager);
         } else {
             // pair in → claimIn → raw out
-            amountOut = _quotePairClaimIn(seClaim, _previewBufferClaimIn(amountIn));
+            output.amountOut = _quotePairClaimIn(seClaim, manager == address(0) ? _previewBufferClaimIn(amountIn) : ClaimLib.previewBufferClaimInWithContext(amountIn, manager));
         }
     }
 
     function _quoteExactOut(bool zeroForOne, uint256 amountOut) internal view returns (uint256 amountIn) {
-        Repo.Layout storage l = Repo._layout();
-        bool rawIn = zeroForOne == _zeroForOneIsRawIn();
-        uint256 rawBal = IERC20(l.rawToken).balanceOf(address(this));
-        uint256 seClaim = _seClaim();
-        if (rawIn) {
-            // need pair out → raw in
-            uint256 claimOutN = Math.toWad(amountOut, _decimalsOf(l.pairToken));
-            uint256 rInN = Math.toWad(rawBal, _decimalsOf(l.rawToken));
-            uint256 rOutN = Math.toWad(seClaim, _decimalsOf(l.pairToken));
-            amountIn = Math.fromWadCeil(Math.purchaseQuote(claimOutN, rInN, rOutN), _decimalsOf(l.rawToken));
-        } else {
-            // need raw out → claimIn → invert buffer
-            uint256 rawOutN = Math.toWad(amountOut, _decimalsOf(l.rawToken));
-            uint256 rInN = Math.toWad(seClaim, _decimalsOf(l.pairToken));
-            uint256 rOutN = Math.toWad(rawBal, _decimalsOf(l.rawToken));
-            uint256 claimInN = Math.purchaseQuote(rawOutN, rInN, rOutN);
-            uint256 claimIn = Math.fromWadCeil(claimInN, _decimalsOf(l.pairToken));
-            amountIn = _invertBufferClaimIn(claimIn);
-        }
+        return ClaimLib.quoteExactOutContext(zeroForOne, amountOut, address(0));
     }
     function previewSwapExactIn(bool zeroForOne, uint256 amountIn)
         external
         view
         returns (uint256 amountOut)
     {
-        return _quoteExactIn(zeroForOne, amountIn);
+        return _quoteExactInContext(zeroForOne, amountIn, Repo._layout().poolManager).amountOut;
     }
 
     function previewSwapExactOut(bool zeroForOne, uint256 amountOut)
@@ -784,7 +744,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         view
         returns (uint256 amountIn)
     {
-        return _quoteExactOut(zeroForOne, amountOut);
+        return ClaimLib.quoteExactOutContext(zeroForOne, amountOut, Repo._layout().poolManager);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -826,8 +786,10 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         _requireDeadline(deadline);
         bool zfo = _routeZeroForOne(address(tokenIn), address(tokenOut));
         // Quote on pre-pull book so inventory does not reprice the trade mid-path.
-        amountOut = _quoteExactIn(zfo, amountIn);
+        ClaimLib.ExactInOutput memory output = _quoteExactInPlan(zfo, amountIn);
+        amountOut = output.amountOut;
         if (amountOut < minAmountOut) revert InsufficientTokenOut();
+        if (amountOut == 0) revert ZeroAmount();
         // L-GAPS-11 / ISecurePullErrors: pretransfer credits claimed only when in-window
         // delta covers it — blocks free extract of SE book / raw inventory. Leftover
         // spendable economics unchanged (surplus delta not exact-matched).
@@ -836,8 +798,8 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         Repo.Layout storage l = Repo._layout();
         bool rawIn = zfo == _zeroForOneIsRawIn();
         if (rawIn) {
-            uint256 got = _unwrapPairLeavingDust(amountOut);
-            if (got < amountOut) revert InsufficientTokenOut();
+            amountOut = ClaimLib.unwrapQuoted(output);
+            if (amountOut < minAmountOut) revert InsufficientTokenOut();
             IERC20(l.pairToken).safeTransfer(recipient, amountOut);
         } else {
             _bufferPair(amountIn);
@@ -883,12 +845,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         bool zfo = _routeZeroForOne(address(tokenIn), address(tokenOut));
         amountIn = _quoteExactOut(zfo, amountOut);
         if (amountIn > maxAmountIn) revert InsufficientTokenOut();
-        // L-GAPS-11: delta-gate claimed amountIn. Refund only in-window surplus above amountIn
-        // (never absolute maxAmountIn - amountIn from free inventory / SE book).
-        uint256 observedDelta = _securePull(IERC20(address(tokenIn)), amountIn, pretransferred);
-        if (pretransferred && observedDelta > amountIn) {
-            IERC20(address(tokenIn)).safeTransfer(msg.sender, observedDelta - amountIn);
-        }
+        // D15: false-flag pulls exactly `amountIn`; true-flag credits `budget(unbooked, maxAmountIn)`
+        // and refunds only `credit - amountIn` (never booked inventory or SE book).
+        _pullExactOutInput(IERC20(address(tokenIn)), amountIn, maxAmountIn, pretransferred);
 
         Repo.Layout storage l = Repo._layout();
         bool rawIn = zfo == _zeroForOneIsRawIn();
@@ -916,10 +875,18 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         _requireDeadline(deadline);
         _requireLive();
         bool zfo = _routeZeroForOne(tokenIn, tokenOut);
-        amountOut = _quoteExactIn(zfo, amountIn);
+        ClaimLib.ExactInOutput memory output = _quoteExactInPlan(zfo, amountIn);
+        amountOut = output.amountOut;
         if (amountOut < minAmountOut) revert InsufficientTokenOut();
+        if (amountOut == 0) revert ZeroAmount();
         _securePull(IERC20(tokenIn), amountIn, false);
-        amountOut = _payOwnerSwap(zfo, amountIn, amountOut);
+        if (zfo == _zeroForOneIsRawIn()) {
+            amountOut = ClaimLib.unwrapQuoted(output);
+            IERC20(Repo._layout().pairToken).safeTransfer(msg.sender, amountOut);
+            _syncReserves();
+        } else {
+            amountOut = _payOwnerSwap(zfo, amountIn, amountOut);
+        }
         if (amountOut < minAmountOut) revert InsufficientTokenOut();
     }
 
@@ -958,27 +925,22 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         if (rawIn) {
             uint256 got = _unwrapPairLeavingDust(amountOut);
             if (got == 0) revert InsufficientTokenOut();
-            paidOut = got < amountOut ? got : amountOut;
+            if (got < amountOut) revert InsufficientTokenOut();
+            paidOut = amountOut;
             IERC20(l.pairToken).safeTransfer(msg.sender, paidOut);
         } else {
             _bufferPair(amountIn);
             uint256 cap = _spendableRaw();
             if (cap == 0) revert InsufficientTokenOut();
-            paidOut = amountOut > cap ? cap : amountOut;
+            if (amountOut > cap) revert InsufficientTokenOut();
+            paidOut = amountOut;
             IERC20(l.rawToken).safeTransfer(msg.sender, paidOut);
         }
         _syncReserves();
     }
 
-    /// @dev Delta-based secure pull (L-GAPS-11 / ISecurePullErrors; BasicVaultCommon peer).
-    ///      Measures `observedDelta` over the pull window. Pretransfer credits exactly `claimed`
-    ///      only when `claimed <= observedDelta`; otherwise reverts
-    ///      `TransferDeltaInsufficient(claimed, observedDelta)`. Absolute inventory without a
-    ///      positive in-window delta cannot free-extract SE book / raw face (I1). Surplus delta
-    ///      is not exact-matched (leftover spendable / no exact-delta grief).
-    /// @dev Reserve-delta pull: `!pretransferred` returns pull delta only.
-    ///      `pretransferred`: credit `claimed` iff `claimed <= U`. Face book when `B >= R`;
-    ///      when virtual pair `R > B` (seClaim), all face is unbooked for ERC20 push credit.
+    /// @dev Pulls must deliver exactly `claimed`; contract pretransfers may consume only
+    ///      unbooked local tokens in native units, independent of the reserve's rated value.
     function _securePull(IERC20 tokenIn, uint256 claimed, bool pretransferred)
         internal
         returns (uint256 observedDelta)
@@ -986,14 +948,41 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookSeTarg
         uint256 B0 = tokenIn.balanceOf(address(this));
         if (!pretransferred) {
             tokenIn.safeTransferFrom(msg.sender, address(this), claimed);
-            return tokenIn.balanceOf(address(this)) - B0;
+            uint256 delta = tokenIn.balanceOf(address(this)) - B0;
+            if (delta != claimed) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(claimed, delta);
+            }
+            return claimed;
         }
-        uint256 R = MultiAssetBasicVaultRepo._reserveOfToken(address(tokenIn));
-        uint256 U = B0 >= R ? B0 - R : B0;
+        LocalCreditLib.requirePretransferCaller(msg.sender);
+        uint256 U = _unbookedBalance(tokenIn);
         if (claimed > U) {
             revert ISecurePullErrors.TransferDeltaInsufficient(claimed, U);
         }
         return claimed;
+    }
+
+    /// @dev Raw and identity legs deduct native custody books; buffered face has no local book.
+    function _unbookedBalance(IERC20 token) internal view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        uint256 booked;
+        if (address(token) == l.rawToken) {
+            booked = MultiAssetBasicVaultRepo._reserveOfToken(l.rawToken);
+        } else if (l.pairToken == l.standardExchange) {
+            booked = l.localPairReserve;
+        }
+        return LocalCreditLib.available(token.balanceOf(address(this)), booked);
+    }
+
+    /// @dev Exact-out input (D15): false-flag pulls `used` and refunds nothing. True-flag credits
+    ///      `budget(available, maxAmountIn)` and refunds `credit - used` to `msg.sender` only.
+    function _pullExactOutInput(IERC20 token, uint256 used, uint256 maxAmountIn, bool pretransferred)
+        internal
+    {
+        _securePull(token, used, pretransferred);
+        if (!pretransferred) return;
+        uint256 credit = LocalCreditLib.budget(_unbookedBalance(token), maxAmountIn);
+        if (credit > used) token.safeTransfer(msg.sender, credit - used);
     }
 
     function _routeZeroForOne(address tokenIn, address tokenOut) internal view returns (bool) {

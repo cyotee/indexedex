@@ -1,0 +1,34 @@
+{
+  "cwd": "/private/tmp/apex-review-detf-validation",
+  "command": [
+    "python3",
+    "scripts/forge-artifacts.py",
+    "test",
+    "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeInTarget.sol",
+    "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeQueryTarget.sol",
+    "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeInTarget.sol",
+    "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeQueryTarget.sol",
+    "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.sol",
+    "--test-root",
+    "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol",
+    "--test-root",
+    "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol",
+    "--test-root",
+    "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol",
+    "--",
+    "--match-test",
+    "test_directExactOutRefundsBoundedCreditInBothDirections|test_directExactOutUnstakeRefundIndependently|test_stakingReserveExactOutReturnsUntouchedInputWithoutSpendingProtectedRaw",
+    "-vv"
+  ],
+  "source_hashes": {
+    "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeInTarget.sol": "7b6a1c441dce11ff3ee8032ea7da59a3a29d9439d3770379c828180d1f3f4cf8",
+    "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeQueryTarget.sol": "ce95a0e683af2af727137276bd40db323a551bb0299c441e552b0e9f7b3cdbdd",
+    "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeInTarget.sol": "89b0afd9e9aa471da739cba3a417907c80fa7a8d8f565a99f6b7372709ea0253",
+    "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeQueryTarget.sol": "73c5d772a66147f0fc5a0211550dffb6296cac2a001b57786213b0a39666087b",
+    "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.sol": "66391f0475eb7a8337472adb00833b91267772489198d63e18e4132d70e2b584",
+    "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol": "ac341ccdc3c5487e298c9ca8630a449eca5641fa8b01090a0e0c307133eefada",
+    "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol": "59eb6088f69be79ebcae96ea6cffdf4ca0600fc7134066e0ac83e2d704b03bb2",
+    "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol": "e0a0c4756a1862b72a9f82abe32318f42003159c28d9225be3b8368c4fe86583",
+    "contracts/test/bases/DetfExactOutCreditAssertions.sol": "62a880739dc80419c1d845866318269fde82a3b19f50ebdb7b36dc30b36357d2"
+  }
+}

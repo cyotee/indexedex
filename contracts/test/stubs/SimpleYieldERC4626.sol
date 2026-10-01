@@ -131,14 +131,30 @@ contract SimpleYieldERC4626 is SimpleMintableERC20, IStandardExchangeTransitionQ
         return convertToAssets(shares);
     }
 
-    function deposit(uint256 assets, address receiver) external virtual returns (uint256 shares) {
+    function maxDeposit(address) public view virtual returns (uint256) {
+        return type(uint256).max;
+    }
+
+    function maxMint(address) public view virtual returns (uint256) {
+        return type(uint256).max;
+    }
+
+    function maxWithdraw(address owner) public view virtual returns (uint256) {
+        return convertToAssets(balanceOf[owner]);
+    }
+
+    function maxRedeem(address owner) public view virtual returns (uint256) {
+        return balanceOf[owner];
+    }
+
+    function deposit(uint256 assets, address receiver) public virtual returns (uint256 shares) {
         shares = convertToShares(assets);
         require(assetToken.transferFrom(msg.sender, address(this), assets), "pull");
         totalAssetsStored += assets;
         _mintShares(receiver, shares);
     }
 
-    function mint(uint256 shares, address receiver) external returns (uint256 assets) {
+    function mint(uint256 shares, address receiver) public virtual returns (uint256 assets) {
         assets = previewMint(shares);
         require(assetToken.transferFrom(msg.sender, address(this), assets), "pull");
         totalAssetsStored += assets;
@@ -147,6 +163,7 @@ contract SimpleYieldERC4626 is SimpleMintableERC20, IStandardExchangeTransitionQ
 
     function withdraw(uint256 assets, address receiver, address owner_)
         external
+        virtual
         returns (uint256 shares)
     {
         shares = previewWithdraw(assets);

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
+
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 import {FixtureEconomics} from "./FixtureEconomics.sol";
@@ -27,6 +29,7 @@ interface IWeth9 {
 /// @title PoolSeedLib
 /// @notice Uni V4 pool init + seed via CREATE3 seeder (never `new` Uni V4 SUT).
 library PoolSeedLib {
+    using BetterEfficientHashLib for bytes;
     using BetterSafeERC20 for IERC20;
     function buildKey(address a, address b) internal pure returns (PoolKey memory key) {
         (address token0, address token1) = a < b ? (a, b) : (b, a);
@@ -43,7 +46,7 @@ library PoolSeedLib {
         seeder = ICreate3Factory(address(factory)).create3WithArgs(
             ArtifactCreationCode.creationCode(factory, "UniswapV4LiquiditySeeder.sol:UniswapV4LiquiditySeeder"),
             abi.encode(pm),
-            keccak256(abi.encode(FixtureEconomics.SALT_NS, "V4LiquiditySeeder"))
+            abi.encode("UniswapV4LiquiditySeeder")._hash()
         );
     }
 

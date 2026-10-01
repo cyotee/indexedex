@@ -5,6 +5,9 @@ import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3FactoryProxy.sol";
+import {AaveCrossVersionLoop_Component_FactoryService} from
+    "contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoop_Component_FactoryService.sol";
 import {IPermit2} from "@crane/contracts/interfaces/protocols/utils/permit2/IPermit2.sol";
 import {IPoolAddressesProvider} from
     "@crane/contracts/protocols/lending/aave/v3.6/interfaces/IPoolAddressesProvider.sol";
@@ -52,12 +55,16 @@ contract _MockRegistry is IVaultRegistryDeployment {
  *         versions) and that a valid pair is routed through the VaultRegistry deployment path.
  */
 contract AaveCrossVersionLoopDFPkg_Test is TestBase_AaveCrossVersionLoopV3Market {
+    using AaveCrossVersionLoop_Component_FactoryService for ICreate3FactoryProxy;
+
     IAaveCrossVersionLoopDFPkg internal dfpkg;
     _MockRegistry internal registry;
 
     function _deployDFPkg() internal {
         registry = new _MockRegistry();
 
+        // The transition-quote facet is required (constructor reverts if codeless); deploy the real one.
+        IFacet transitionQuoteFacet = create3Factory.deployTransitionQuoteFacet();
         IAaveCrossVersionLoopDFPkg.PkgInit memory pkgInit = IAaveCrossVersionLoopDFPkg.PkgInit({
             erc20Facet: IFacet(address(0)),
             erc5267Facet: IFacet(address(0)),
@@ -68,6 +75,7 @@ contract AaveCrossVersionLoopDFPkg_Test is TestBase_AaveCrossVersionLoopV3Market
             exchangeOutFacet: IFacet(address(0)),
             rebalanceFacet: IFacet(address(0)),
             markerFacet: IFacet(address(0)),
+            transitionQuoteFacet: transitionQuoteFacet,
             v36Pool: v36Pool,
             v36AddressesProvider: IPoolAddressesProvider(v36AddressesProvider),
             v36Oracle: IAaveOracle(v36Oracle),

@@ -34,6 +34,7 @@ import {
     IUniswapV4Detf
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 import {TestBase_UniswapV4Detf} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
 
@@ -94,10 +95,7 @@ abstract contract TestBase_UniswapV4Detf_Orbital is TestBase_UniswapV4Detf {
         IFacet depositFacet = OrbitalFactory.deployDepositFacet(create3Factory);
         IFacet withdrawFacet = OrbitalFactory.deployWithdrawFacet(create3Factory);
         IFacet seFacet = OrbitalFactory.deploySeFacet(create3Factory);
-        orbitalHookPkg = OrbitalFactory.deployPackage(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            owner,
-            IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgInit({
+        orbitalHookPkg = OrbitalFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgInit({
                 depositQueryFacet: OrbitalFactory.deployDepositQueryFacet(create3Factory),
                 depositZapFacet: OrbitalFactory.deployDepositZapFacet(create3Factory),
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
@@ -112,9 +110,7 @@ abstract contract TestBase_UniswapV4Detf_Orbital is TestBase_UniswapV4Detf {
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
                 multiStepOwnableFacet: multiStepOwnableFacet
-            }),
-            abi.encode(type(IUniswapV4StandardExchangeOrbitalBufferHookPackage).name, "v1")._hash()
-        );
+            }));
     }
 
     /// @dev Bind a 3-token orbital hook to `args.hook` without deploying the DETF.
@@ -137,9 +133,9 @@ abstract contract TestBase_UniswapV4Detf_Orbital is TestBase_UniswapV4Detf {
                 se0: _seOf(t0, predicted_),
                 se1: _seOf(t1, predicted_),
                 se2: _seOf(t2, predicted_),
-                rp0: address(0),
-                rp1: address(0),
-                rp2: address(0),
+                rp0: RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, _seOf(t0, predicted_), t0),
+                rp1: RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, _seOf(t1, predicted_), t1),
+                rp2: RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, _seOf(t2, predicted_), t2),
                 tickSpacing: 0,
                 sqrtPriceX96: 0,
                 ownerOnlyLiquidity: args.ownerOnlyLiquidity,
@@ -206,10 +202,7 @@ abstract contract TestBase_UniswapV4Detf_Orbital is TestBase_UniswapV4Detf {
         IFacet seFacet = CpHookFactory.deploySeFacet(create3Factory);
         IFacet depositFacet = CpHookFactory.deployDepositFacet(create3Factory);
         IFacet withdrawFacet = CpHookFactory.deployWithdrawFacet(create3Factory);
-        hookPkg = CpHookFactory.deployPackage(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            owner,
-            IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgInit({
+        hookPkg = CpHookFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgInit({
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
                 seFacet: seFacet,
@@ -223,8 +216,6 @@ abstract contract TestBase_UniswapV4Detf_Orbital is TestBase_UniswapV4Detf {
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
                 multiStepOwnableFacet: multiStepOwnableFacet
-            }),
-            abi.encode(type(IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage).name, "v1")._hash()
-        );
+            }));
     }
 }

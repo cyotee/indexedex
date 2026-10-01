@@ -24,6 +24,7 @@ import {
 import {
     TestBase_UniswapV4DualSEBCPHook as TestBase
 } from "test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/TestBase_UniswapV4DualSEBCPHook.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 
 /**
  * @title Adversarial DoD: dual SE buffer CP catalog A–H residual + I1/I3 pretransfer.
@@ -116,7 +117,9 @@ contract UniswapV4DualSEBCPHook_Adversarial_Test is TestBase {
             standardExchange0: seH,
             token0: address(hostile),
             standardExchange1: seO,
-            token1: address(other)
+            token1: address(other),
+            rateProvider0: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, seH, address(hostile)), // D60
+            rateProvider1: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, seO, address(other)) // D60
         });
         uint256 mineNonce = DualFactory.findMineNonce(hookFactory, hookPkg, args);
         address hHook = DualFactory.deployHook(hookPkg, args, mineNonce);
@@ -183,10 +186,10 @@ contract UniswapV4DualSEBCPHook_Adversarial_Test is TestBase {
         _depositBoth(50 ether, 50 ether);
         address c0 = dual.currency0();
         address c1 = dual.currency1();
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("ZeroAmount()"));
         IStandardExchangeIn(hook).previewExchangeIn(IERC20(c0), 0, IERC20(c1));
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("ZeroAmount()"));
         dual.deposit(0, 0, user, 0, block.timestamp + 1);
     }
 
@@ -210,7 +213,7 @@ contract UniswapV4DualSEBCPHook_Adversarial_Test is TestBase {
         _initPool();
         SwapParams memory params =
             SwapParams({zeroForOne: true, amountSpecified: -1e18, sqrtPriceLimitX96: 0});
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("NotPoolManager()"));
         IHooks(hook).beforeSwap(address(this), poolKey, params, "");
     }
 
@@ -234,7 +237,7 @@ contract UniswapV4DualSEBCPHook_Adversarial_Test is TestBase {
 
         vm.startPrank(user);
         IERC20(c0).approve(hook, amountIn_);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("InsufficientTokenOut()"));
         IStandardExchangeIn(hook).exchangeIn(
             IERC20(c0), amountIn_, IERC20(c1), type(uint256).max, user, false, block.timestamp + 1
         );
@@ -251,7 +254,7 @@ contract UniswapV4DualSEBCPHook_Adversarial_Test is TestBase {
         _depositBoth(50 ether, 50 ether);
         _initPool();
         vm.prank(address(pm));
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("LiquidityNotAllowed()"));
         IHooks(hook).beforeAddLiquidity(
             address(this),
             poolKey,
@@ -284,7 +287,13 @@ contract UniswapV4DualSEBCPHook_Adversarial_Test is TestBase {
         uint256 se0HookBefore_ = IERC20(_seForCurrency(c0)).balanceOf(hook);
         uint256 se1HookBefore_ = IERC20(_seForCurrency(c1)).balanceOf(hook);
 
+        // APEX D9: an EOA is rejected before any credit; the booked-inventory rule is asserted
+        // from this contract (bytecode present), which still cannot claim booked inventory.
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeIn(hook).exchangeIn(
+            IERC20(c0), claimed_, IERC20(c1), 0, attacker, true, block.timestamp + 1
+        );
         vm.expectRevert(
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
@@ -320,7 +329,13 @@ contract UniswapV4DualSEBCPHook_Adversarial_Test is TestBase {
         uint256 se0HookBefore_ = IERC20(_seForCurrency(c0)).balanceOf(hook);
         uint256 se1HookBefore_ = IERC20(_seForCurrency(c1)).balanceOf(hook);
 
+        // APEX D9: an EOA is rejected before any credit; the booked-inventory rule is asserted
+        // from this contract (bytecode present), which still cannot claim booked inventory.
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeIn(hook).exchangeIn(
+            IERC20(c1), claimed_, IERC20(c0), 0, attacker, true, block.timestamp + 1
+        );
         vm.expectRevert(
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
@@ -354,7 +369,13 @@ contract UniswapV4DualSEBCPHook_Adversarial_Test is TestBase {
         uint256 c1AttBefore_ = IERC20(c1).balanceOf(attacker);
         uint256 c0HookBefore_ = IERC20(c0).balanceOf(hook);
 
+        // APEX D9: an EOA is rejected before any credit; the booked-inventory rule is asserted
+        // from this contract (bytecode present), which still cannot claim booked inventory.
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeOut(hook).exchangeOut(
+            IERC20(c0), needIn_, IERC20(c1), wantOut_, attacker, true, block.timestamp + 1
+        );
         vm.expectRevert(
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, needIn_, uint256(0)
@@ -401,7 +422,13 @@ contract UniswapV4DualSEBCPHook_Adversarial_Test is TestBase {
         uint256 c0HookBefore_ = IERC20(c0).balanceOf(hook);
         uint256 c1AttBefore_ = IERC20(c1).balanceOf(attacker);
 
+        // APEX D9: an EOA is rejected before any credit; the booked-inventory rule is asserted
+        // from this contract (bytecode present), which still cannot claim booked inventory.
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeIn(hook).exchangeIn(
+            IERC20(c0), claimed_, IERC20(c1), 0, attacker, true, block.timestamp + 1
+        );
         vm.expectRevert(
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)

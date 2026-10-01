@@ -43,8 +43,8 @@ abstract contract TestBase_UniswapV4Detf_Weighted_PonsV2Se_Decimals is TestBase_
         ))));
         weth = SeLib.newWeth();
 
-        SeLib.Univ4SePkg memory v4pkg = SeLib.deployUniv4SePkg(_craneCtx(), pm, weth);
         ponsV2 = SeLib.deployPonsV2Stack(pm, permit2, weth);
+        SeLib.PonsV2SePkg memory v4pkg = SeLib.deployPonsV2SePkg(_craneCtx(), pm, weth, ponsV2);
         launchToken0 = ponsV2.launchToken;
         sePoolKey0 = ponsV2.graduatedPoolKey;
         (launchToken1,, sePoolKey1) = SeLib.launchAndGraduatePonsV2(
@@ -53,8 +53,8 @@ abstract contract TestBase_UniswapV4Detf_Weighted_PonsV2Se_Decimals is TestBase_
             SeLib.ponsV2TokenParams("Pons Se Wrap B", "PSEB", keccak256("wp-udsm-we-pons-v2-b"))
         );
         require(launchToken0 != launchToken1, "distinct launch tokens");
-        se0 = SeLib.deployUniv4Vault(v4pkg.pkg, sePoolKey0);
-        se1 = SeLib.deployUniv4Vault(v4pkg.pkg, sePoolKey1);
+        se0 = SeLib.deployPonsV2Vault(v4pkg.pkg, sePoolKey0);
+        se1 = SeLib.deployPonsV2Vault(v4pkg.pkg, sePoolKey1);
         pairA = launchToken0;
         pairB = launchToken1;
 

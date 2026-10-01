@@ -1,0 +1,90 @@
+{
+  "files": [
+    {
+      "path": "contracts/protocols/lending/aave/cross-version/CrossVersionLoopExecutor.sol",
+      "beforeSha256": "a0af12d7512422554bc304b450806ccd0f1fa1cb87e7abe2ad36b1d2a3389f5e",
+      "candidateSha256": "9892b2f930686190dcc1f62507591369c1a0d08f9c8f76dc493929b5e6dac02a"
+    },
+    {
+      "path": "test/foundry/spec/protocol/lending/aave/cross-version/invariant/AaveCrossVersionLoop_Invariant.t.sol",
+      "beforeSha256": "4686ebca8bdbf9d7cccd21aade26651e8d761c8a2731289f20dec8bd74a614c5",
+      "candidateSha256": "85fe65adea9b0755e918b4ae23f6843a37d58c6f511f50d7963014ac71798bfc"
+    }
+  ],
+  "status": "PASS",
+  "fullFamilyResult": "full-family-001-result.json",
+  "artifacts": {
+    "AaveCrossVersionLoopExchangeInFacet": {
+      "artifactSha256": "824d717a892d3860e1941efd5ba9f81c94d4600530f117f71a6f937b65f53717",
+      "runtimeBytes": 15447,
+      "methodIdentifiers": {
+        "exchangeIn(address,uint256,address,uint256,address,bool,uint256)": "d02d3063",
+        "facetFuncs()": "574a4cff",
+        "facetInterfaces()": "2ea80826",
+        "facetMetadata()": "f10d7a75",
+        "facetName()": "5b6f4d01",
+        "initCrossVersionLoop((address,address,address,address,address,address,address,address,uint256,uint256,uint256,uint256,string,string))": "4aff9fa0",
+        "previewExchangeIn(address,uint256,address)": "89d61912"
+      }
+    },
+    "AaveCrossVersionLoopExchangeOutFacet": {
+      "artifactSha256": "b93ab15e492d9c24ea76e57137ee87ee783627826a70f98c5f5d6057e07fec6a",
+      "runtimeBytes": 19975,
+      "methodIdentifiers": {
+        "accruedRewards(address)": "128fced1",
+        "assetInfo()": "a40bee50",
+        "claimRewards(address)": "ef5cfb8c",
+        "deposit(address,address,uint256,uint256)": "20e8c565",
+        "exchangeOut(address,uint256,address,uint256,address,bool,uint256)": "bbac8477",
+        "exchangeRate()": "3ba0b9a9",
+        "facetFuncs()": "574a4cff",
+        "facetInterfaces()": "2ea80826",
+        "facetMetadata()": "f10d7a75",
+        "facetName()": "5b6f4d01",
+        "getRewardTokens()": "c4f59f9b",
+        "getTokensIn()": "213cae63",
+        "getTokensOut()": "071bc3c9",
+        "initCrossVersionLoop((address,address,address,address,address,address,address,address,uint256,uint256,uint256,uint256,string,string))": "4aff9fa0",
+        "isValidTokenIn(address)": "fa5a4f06",
+        "isValidTokenOut(address)": "784367d6",
+        "previewDeposit(address,uint256)": "b8f82b26",
+        "previewExchangeOut(address,address,uint256)": "db149bc5",
+        "previewRedeem(address,uint256)": "cbe52ae3",
+        "redeem(address,uint256,address,uint256,bool)": "769f8e5d",
+        "rewardIndexesCurrent()": "f8b2f991",
+        "rewardIndexesStored()": "da88ecb4",
+        "yieldToken()": "76d5de85"
+      }
+    },
+    "AaveCrossVersionLoopRebalanceFacet": {
+      "artifactSha256": "5bb4b35ad9f4736975c8e7cfef76fce0806d5d22c6f89d790ea0da14f5def02f",
+      "runtimeBytes": 10505,
+      "methodIdentifiers": {
+        "facetFuncs()": "574a4cff",
+        "facetInterfaces()": "2ea80826",
+        "facetMetadata()": "f10d7a75",
+        "facetName()": "5b6f4d01",
+        "forceRepay()": "ff853904",
+        "initCrossVersionLoop((address,address,address,address,address,address,address,address,uint256,uint256,uint256,uint256,string,string))": "4aff9fa0",
+        "previewNetCarry()": "744eb19c",
+        "rebalance()": "7d7c2a1c"
+      }
+    },
+    "AaveCrossVersionLoopStandardExchangeTransitionQuoteFacet": {
+      "artifactSha256": "d2b22dcad6b22962b6519f24f74ec5b7b1589484a24555a385ac41fa56705548",
+      "runtimeBytes": 8692,
+      "methodIdentifiers": {
+        "facetFuncs()": "574a4cff",
+        "facetInterfaces()": "2ea80826",
+        "facetMetadata()": "f10d7a75",
+        "facetName()": "5b6f4d01",
+        "initCrossVersionLoop((address,address,address,address,address,address,address,address,uint256,uint256,uint256,uint256,string,string))": "4aff9fa0",
+        "quoteAssets(bytes,uint256)": "dedbf308",
+        "quoteShareBalance(bytes)": "2e5f15dc",
+        "quoteState(address,address)": "844c633c",
+        "quoteTotalSupply(bytes)": "43225235",
+        "quoteTransition(bytes,uint8,uint256)": "2fb41732"
+      }
+    }
+  }
+}

@@ -367,3 +367,13 @@ See updated Progress Snapshot above for current state. Run `forge test --match-p
 **Next step after initial write:** Review this plan together, decide on the open questions, then we can begin implementing the first components or refine sections. 
 
 What parts of this plan do you want to adjust or expand first?
+
+## APEX 2026-09-17 amendments (supersede conflicting text above)
+
+Source: `docs/audits/apex-2026-09-17-remediation-and-regression-tests.md` (D9, D15, D22, D30, D31, D34, D45, R14).
+
+- `prepaid_ = true` on `exchangeIn` / `exchangeOut` is for integrating contracts only; a caller with no bytecode reverts `EOAPretransferNotAllowed()`.
+- Exact-input pretransfer credits exactly the requested amount when at least that much unbooked input exists, refunds nothing and leaves the excess uncredited. Exact-output pretransfer credits `min(unbooked, maximum) `, reverts `TransferDeltaInsufficient(used, credit)` when the quote exceeds the credit and refunds only `credit - used`. `prepaid_ = false` exact-output burns exactly the quoted shares.
+- Underlying-to-SE issuance prechecks `IStataTokenV2.maxDeposit(address(this))`, sweeps previously booked underlying first, re-reads the capacity, invests only what fits and books the remainder as local reserve while minting on the full credited input (D22/D31). Existing Stata-receipt and aToken (`depositATokens`) inputs keep their routes and are not gated by the underlying capacity.
+- IERC4626, SE, SY and transition-quote valuation count held Stata plus the accounting value (`convertToShares`) of booked local underlying (shared `ReceiptBackedERC4626` adapter, D45). Underlying payouts spend local cash first and withdraw only the shortfall; Stata and aToken payouts require actual receipts and revert `InsufficientReceiptInventory` otherwise.
+- Reward refresh / collect / claim are hard calls; an incentives-controller revert rolls back the operation (D34).

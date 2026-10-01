@@ -69,9 +69,7 @@ contract Adversarial_SingleSE_TrustFlag_Test is TestBase_SingleStandardExchangeD
         assertEq(seShare.allowance(attacker, instance_), 0, "no allowance");
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         IStandardExchangeIn(instance_)
             .exchangeIn(seShare, claimed_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours);
 
@@ -105,9 +103,7 @@ contract Adversarial_SingleSE_TrustFlag_Test is TestBase_SingleStandardExchangeD
         uint256 seShareBefore_ = seShare.balanceOf(attacker);
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, residualDetf_, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         IStandardExchangeIn(instance_)
             .exchangeIn(IERC20(instance_), residualDetf_, seShare, 0, attacker, true, block.timestamp + 1 hours);
 
@@ -125,9 +121,7 @@ contract Adversarial_SingleSE_TrustFlag_Test is TestBase_SingleStandardExchangeD
         uint256 invBefore_ = seShare.balanceOf(instance_);
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         ISingleStandardExchangeDETFBonding(instance_)
             .bond(seShare, claimed_, DEFAULT_MIN_LOCK, attacker, true, block.timestamp + 1 hours);
 
@@ -185,9 +179,7 @@ contract Adversarial_SingleSE_TrustFlag_Test is TestBase_SingleStandardExchangeD
 
         // Second call: pretransferred against residual, no new inbound transfer.
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, residual_, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         IStandardExchangeIn(instance_)
             .exchangeIn(seShare, residual_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours);
 

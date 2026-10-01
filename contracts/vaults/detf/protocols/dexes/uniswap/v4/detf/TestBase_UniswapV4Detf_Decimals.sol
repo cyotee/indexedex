@@ -29,6 +29,9 @@ import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.so
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {BondTerms} from "contracts/interfaces/VaultFeeTypes.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {IStandardExchangeTransitionQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {IStandardExchangeExactOutputQuantityQuote} from "contracts/interfaces/IStandardExchangeExactOutputQuantityQuote.sol";
 import {ThresholdMode} from "contracts/vaults/detf/common/core/DETFThresholdPolicy.sol";
 import {DetfComponentFactoryService} from "contracts/vaults/detf/common/factory/DetfComponentFactoryService.sol";
 import {DetfFacetFactoryService} from "contracts/vaults/detf/common/factory/DetfFacetFactoryService.sol";
@@ -68,6 +71,7 @@ import {
 import {UniswapV4Detf_Facet_FactoryService} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Facet_FactoryService.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 import {UniswapV4Detf_Pkg_FactoryService} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4Detf_Pkg_FactoryService.sol";
 
@@ -268,10 +272,7 @@ abstract contract TestBase_UniswapV4Detf_Decimals is TestBase_ERC4626StandardExc
         IFacet seFacet = CpHookFactory.deploySeFacet(create3Factory);
         IFacet depositFacet = CpHookFactory.deployDepositFacet(create3Factory);
         IFacet withdrawFacet = CpHookFactory.deployWithdrawFacet(create3Factory);
-        hookPkg = CpHookFactory.deployPackage(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            owner,
-            IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgInit({
+        hookPkg = CpHookFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgInit({
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
                 seFacet: seFacet,
@@ -285,9 +286,7 @@ abstract contract TestBase_UniswapV4Detf_Decimals is TestBase_ERC4626StandardExc
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
                 multiStepOwnableFacet: multiStepOwnableFacet
-            }),
-            abi.encode(type(IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage).name, "v1")._hash()
-        );
+            }));
     }
 
     function _deployBondNftVaultPkg() internal {
@@ -413,7 +412,8 @@ abstract contract TestBase_UniswapV4Detf_Decimals is TestBase_ERC4626StandardExc
                 pairTokenDecimals: HookPkgArgsDecimalsLib.tokenDec(address(pairToken)),
                 rawTokenDecimals: predicted_.code.length == 0 ? uint8(9) : HookPkgArgsDecimalsLib.tokenDec(predicted_),
                 ownerOnlyLiquidity: args.ownerOnlyLiquidity,
-                owner: predicted_
+                owner: predicted_,
+                rateProvider: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, se, address(pairToken)) // D60
             });
         uint256 mineNonce = CpHookFactory.findMineNonce(hookFactory, hookPkg, hArgs);
         reserveHook = CpHookFactory.deployHook(hookPkg, hArgs, mineNonce);
@@ -487,10 +487,7 @@ abstract contract TestBase_UniswapV4Detf_Decimals is TestBase_ERC4626StandardExc
         IFacet depositFacet = DualFactory.deployDepositFacet(create3Factory);
         IFacet withdrawFacet = DualFactory.deployWithdrawFacet(create3Factory);
         IFacet seFacet = DualFactory.deploySeFacet(create3Factory);
-        IUniswapV4DualStandardExchangeBufferConstantProductHookPackage dualPkg = DualFactory.deployPackage(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            owner,
-            IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgInit({
+        IUniswapV4DualStandardExchangeBufferConstantProductHookPackage dualPkg = DualFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgInit({
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
                 hooksFacet: hooksFacet,
@@ -502,27 +499,84 @@ abstract contract TestBase_UniswapV4Detf_Decimals is TestBase_ERC4626StandardExc
                 erc2612Facet: erc2612Facet,
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet
-            }),
-            abi.encode(type(IUniswapV4DualStandardExchangeBufferConstantProductHookPackage).name, "v1")._hash()
-        );
+            }));
         IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgArgs memory args =
-        IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgArgs({
-            poolManager: address(pm),
-            feeOracle: address(indexedexManager),
-            standardExchange0: seA,
-            token0: address(tokenA),
-            standardExchange1: seB,
-            token1: address(tokenB)
-        });
+            _dualHookArgs(seA, address(tokenA), seB, address(tokenB));
         uint256 mineNonce = DualFactory.findMineNonce(hookFactory, dualPkg, args);
         dualHook_ = DualFactory.deployHook(dualPkg, args, mineNonce);
+    }
+
+    /// @dev Hoisted out of `_deployDualHook` (stack depth); D60 providers built here.
+    function _dualHookArgs(address seA_, address tokenA_, address seB_, address tokenB_)
+        internal returns (IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgArgs memory)
+    {
+        return IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgArgs({
+            poolManager: address(pm),
+            feeOracle: address(indexedexManager),
+            standardExchange0: seA_,
+            token0: tokenA_,
+            standardExchange1: seB_,
+            token1: tokenB_,
+            rateProvider0: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, seA_, tokenA_), // D60
+            rateProvider1: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, seB_, tokenB_) // D60
+        });
     }
 
     function _assertNoJoinableDust() internal view virtual {
         address hook_ = detfInfo.hook();
         assertEq(IERC20(hook_).balanceOf(detf), 0, "no hook LP on diamond");
-        assertLe(IERC20(address(pairToken)).balanceOf(detf), 10, "no pair on diamond");
+        _assertPairResidualBooked(address(pairToken), se);
         assertLe(IERC20(se).balanceOf(detf), 10, "no SE share on diamond");
+    }
+
+    /// @dev Above-dust custody requires SE no-issuance or exact alignment rejection in the attempted hook mode.
+    function _assertPairResidualBooked(address pair_, address se_) internal view {
+        uint256 retained_ = IERC20(pair_).balanceOf(detf);
+        if (retained_ <= 10) return;
+        assertTrue(se_ != address(0) && se_ != pair_, "retained pair must have a buffering SE");
+        bool subShare_;
+        if (IERC165(se_).supportsInterface(type(IStandardExchangeExactOutputQuantityQuote).interfaceId)) {
+            (bytes memory state_,) = IStandardExchangeTransitionQuote(se_).quoteState(pair_, address(0));
+            try IStandardExchangeExactOutputQuantityQuote(se_).quoteInputForExactShares(state_, 1)
+                returns (uint256 minimum_) {
+                subShare_ = retained_ < minimum_;
+            } catch {
+                // Interface support does not promise an inverse in this context.
+                // Failure supplies no proof; check the full-input forward route.
+            }
+        }
+        if (!subShare_) {
+            try IStandardExchangeIn(se_).previewExchangeIn(IERC20(pair_), retained_, IERC20(se_))
+                returns (uint256 shares_) {
+                if (shares_ != 0) _assertResidualHookAlignment(pair_, retained_);
+            } catch (bytes memory reason_) {
+                assertEq(reason_, abi.encodeWithSignature("AlignmentNotAchievable()"),
+                    "only exact full-input alignment rejection permits retention");
+            }
+        }
+        assertEq(IBasicVault(detf).reserveOfToken(pair_), retained_, "retained pair fully booked");
+    }
+
+    /// @dev Mirror residual mode selection: alignment stops unbalanced; only zero LP proceeds to single-asset.
+    function _assertResidualHookAlignment(address pair_, uint256 retained_) internal view {
+        IUniswapV4SeBufferHook hook_ = IUniswapV4SeBufferHook(detfInfo.hook());
+        address[] memory tokens_ = new address[](1);
+        uint256[] memory amounts_ = new uint256[](1);
+        tokens_[0] = pair_;
+        amounts_[0] = retained_;
+        try hook_.previewJoinUnbalanced(tokens_, amounts_) returns (uint256 lp_) {
+            assertEq(lp_, 0, "positive unbalanced quote cannot prove retained alignment failure");
+        } catch (bytes memory reason_) {
+            assertEq(reason_, abi.encodeWithSignature("AlignmentNotAchievable()"),
+                "unbalanced retention requires exact alignment rejection");
+            return;
+        }
+        try hook_.previewJoinSingleAssetExactIn(pair_, retained_) returns (uint256) {
+            revert("single-asset retention requires alignment rejection, not a returned quote");
+        } catch (bytes memory reason_) {
+            assertEq(reason_, abi.encodeWithSignature("AlignmentNotAchievable()"),
+                "single-asset retention requires exact alignment rejection");
+        }
     }
 
     /// @dev Exercise the actual purchased bond, its funded payout and one-to-one unstaking.

@@ -177,8 +177,10 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_OwnerDuringLoc
         assertFalse(single.isZapEligible(), "public zap closed at MIN");
 
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSelector(IMultiStepOwnable.NotOwner.selector, user));
         single.depositSingle(address(pairToken), 20 ether, user, 0, block.timestamp + 1 hours);
+
+        assertEq(IERC20(hook).totalSupply(), 1000, "unauthorized join preserves MIN supply");
 
         vm.prank(owner);
         uint256 lpOut = single.depositSingle(address(pairToken), 50 ether, owner, 0, block.timestamp + 1 hours);

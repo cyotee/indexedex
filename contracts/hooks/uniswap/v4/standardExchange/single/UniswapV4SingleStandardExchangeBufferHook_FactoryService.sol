@@ -28,7 +28,7 @@ library UniswapV4SingleStandardExchangeBufferHook_FactoryService {
 
     function deployProductFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         facet = create3Factory.deployFacet(
-            ArtifactCreationCode.creationCode("UniswapV4SingleStandardExchangeBufferHookFacet.sol:UniswapV4SingleStandardExchangeBufferHookFacet"),
+            ArtifactCreationCode.creationCode(create3Factory, "UniswapV4SingleStandardExchangeBufferHookFacet.sol:UniswapV4SingleStandardExchangeBufferHookFacet"),
             abi.encode("UniswapV4SingleStandardExchangeBufferHookFacet")._hash()
         );
         vm.label(address(facet), "UniswapV4SingleStandardExchangeBufferHookFacet");
@@ -37,15 +37,14 @@ library UniswapV4SingleStandardExchangeBufferHook_FactoryService {
     function deployPackage(
         IVaultRegistryDeployment registry,
         address owner,
-        IUniswapV4SingleStandardExchangeBufferHookPackage.PkgInit memory init,
-        bytes32 salt
+        IUniswapV4SingleStandardExchangeBufferHookPackage.PkgInit memory init
     ) internal returns (IUniswapV4SingleStandardExchangeBufferHookPackage pkg) {
         vm.prank(owner);
         pkg = IUniswapV4SingleStandardExchangeBufferHookPackage(
             registry.deployPkg(
                 ArtifactCreationCode.creationCode("UniswapV4SingleStandardExchangeBufferHookDFPkg.sol:UniswapV4SingleStandardExchangeBufferHookDFPkg"),
                 abi.encode(init),
-                salt
+                abi.encode("UniswapV4SingleStandardExchangeBufferHookDFPkg")._hash()
             )
         );
         vm.label(address(pkg), "UniswapV4SingleStandardExchangeBufferHookDFPkg");

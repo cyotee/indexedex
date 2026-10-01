@@ -10,6 +10,7 @@ import {ModifyLiquidityParams} from
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {
     TestBase_UniswapV4StandardExchangeOrbitalBufferHook
 } from "contracts/hooks/uniswap/v4/standardExchange/orbital/TestBase_UniswapV4StandardExchangeOrbitalBufferHook.sol";
@@ -38,6 +39,7 @@ import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHash
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 import {
     IUniswapV4HookDiamondPackageCallBackFactory
 } from "contracts/hooks/uniswap/v4/factory/interfaces/IUniswapV4HookDiamondPackageCallBackFactory.sol";
@@ -82,6 +84,19 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
         uint256 raw1Before_ = orbital.rawReserve(1);
 
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeIn(hook).exchangeIn(
+            IERC20(address(token0)),
+            claimed_,
+            IERC20(address(token1)),
+            0,
+            attacker,
+            true,
+            block.timestamp + 1 hours
+        );
+
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));
         vm.expectRevert(
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
@@ -92,7 +107,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
             claimed_,
             IERC20(address(token1)),
             0,
-            attacker,
+            address(caller),
             true,
             block.timestamp + 1 hours
         );
@@ -119,6 +134,19 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
         uint256 face1Before_ = token1.balanceOf(hook);
 
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeIn(hook).exchangeIn(
+            IERC20(address(token1)),
+            claimed_,
+            IERC20(address(token2)),
+            0,
+            attacker,
+            true,
+            block.timestamp + 1 hours
+        );
+
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));
         vm.expectRevert(
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
@@ -129,7 +157,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
             claimed_,
             IERC20(address(token2)),
             0,
-            attacker,
+            address(caller),
             true,
             block.timestamp + 1 hours
         );
@@ -157,6 +185,19 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
         uint256 raw2Before_ = orbital.rawReserve(2);
 
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeOut(hook).exchangeOut(
+            IERC20(address(token1)),
+            needIn_,
+            IERC20(address(token2)),
+            wantOut_,
+            attacker,
+            true,
+            block.timestamp + 1 hours
+        );
+
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));
         vm.expectRevert(
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, needIn_, uint256(0)
@@ -167,7 +208,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
             needIn_,
             IERC20(address(token2)),
             wantOut_,
-            attacker,
+            address(caller),
             true,
             block.timestamp + 1 hours
         );
@@ -181,6 +222,19 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
     function test_I1_pretransferred_unfunded_revertsDelta0() public {
         _seedThreeLeg(200 ether);
         vm.prank(user);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeIn(hook).exchangeIn(
+            IERC20(address(token0)),
+            5 ether,
+            IERC20(address(token1)),
+            0,
+            user,
+            true,
+            block.timestamp + 1 hours
+        );
+
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));
         vm.expectRevert(
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, uint256(5 ether), uint256(0)
@@ -191,7 +245,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
             5 ether,
             IERC20(address(token1)),
             0,
-            user,
+            address(caller),
             true,
             block.timestamp + 1 hours
         );
@@ -231,6 +285,19 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
         uint256 outAttBefore_ = token2.balanceOf(attacker);
 
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeIn(hook).exchangeIn(
+            IERC20(address(token1)),
+            claimed_,
+            IERC20(address(token2)),
+            0,
+            attacker,
+            true,
+            block.timestamp + 1 hours
+        );
+
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));
         vm.expectRevert(
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
@@ -241,7 +308,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
             claimed_,
             IERC20(address(token2)),
             0,
-            attacker,
+            address(caller),
             true,
             block.timestamp + 1 hours
         );
@@ -258,6 +325,19 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
             IERC20(address(token0)), IERC20(address(token1)), 1 ether
         );
         vm.prank(user);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeOut(hook).exchangeOut(
+            IERC20(address(token0)),
+            type(uint256).max,
+            IERC20(address(token1)),
+            1 ether,
+            user,
+            true,
+            block.timestamp + 1 hours
+        );
+
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));
         vm.expectRevert(
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, need_, uint256(0)
@@ -268,7 +348,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
             type(uint256).max,
             IERC20(address(token1)),
             1 ether,
-            user,
+            address(caller),
             true,
             block.timestamp + 1 hours
         );
@@ -280,7 +360,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
         ModifyLiquidityParams memory p =
             ModifyLiquidityParams({tickLower: -60, tickUpper: 60, liquidityDelta: 1e18, salt: bytes32(0)});
         vm.prank(address(pm));
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("LiquidityNotAllowed()"));
         IHooks(hook).beforeAddLiquidity(address(this), poolKey01, p, "");
     }
 
@@ -290,7 +370,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
         ModifyLiquidityParams memory p =
             ModifyLiquidityParams({tickLower: -60, tickUpper: 60, liquidityDelta: -1e18, salt: bytes32(0)});
         vm.prank(address(pm));
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("LiquidityNotAllowed()"));
         IHooks(hook).beforeRemoveLiquidity(address(this), poolKey01, p, "");
     }
 
@@ -299,7 +379,8 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
         IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory args = _defaultPkgArgs();
         args.se0 = se0;
         args.se2 = se0;
-        vm.expectRevert();
+        args.rp2 = args.rp0; // Reach the duplicate-SE guard with both providers configured.
+        vm.expectRevert(abi.encodeWithSignature("SameStandardExchange()"));
         hookPkg.processArgs(abi.encode(args));
     }
 
@@ -330,28 +411,30 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
         o.addLiquidity(100 ether, 100 ether, 100 ether, user, 0, block.timestamp + 1 hours, "");
         vm.stopPrank();
 
-        // Make SE.previewExchangeOut always revert → ClaimLib.SeInvertUnavailable on exact-out path
-        vm.mockCallRevert(
-            se1,
-            abi.encodeWithSelector(
-                IStandardExchangeOut.previewExchangeOut.selector,
-                IERC20(se1),
-                IERC20(address(token1)),
-                uint256(1 ether)
-            ),
-            abi.encodeWithSignature("Error(string)", "no invert")
-        );
-        // Broader: any previewExchangeOut on se1 reverts
-        vm.mockCallRevert(
-            se1,
-            bytes4(keccak256("previewExchangeOut(address,address,uint256)")),
-            abi.encodeWithSignature("Error(string)", "no invert")
-        );
-
-        // Exact-out of buffered token1 requires invert → full tx revert (D31a)
-        vm.prank(user);
-        vm.expectRevert();
+        // Downstream quote failures intentionally bubble through the production hook.
+        uint256[5] memory beforeState = [token0.balanceOf(user), token1.balanceOf(user),
+            o.rawReserve(0), o.seBalance(1), IERC20(h).totalSupply()];
+        uint256 needed = o.previewSwapExactOut(address(token0), address(token1), 1 ether);
+        assertGt(needed, 0, "funded downstream quote positive control");
+        vm.mockCallRevert(se1, IStandardExchangeOut.previewExchangeOut.selector,
+            abi.encodeWithSignature("Error(string)", "no invert"));
+        vm.expectRevert(abi.encodeWithSignature("Error(string)", "no invert"));
         o.previewSwapExactOut(address(token0), address(token1), 1 ether);
+        vm.prank(user);
+        vm.expectRevert(abi.encodeWithSignature("Error(string)", "no invert"));
+        IStandardExchangeOut(h).exchangeOut(IERC20(address(token0)), needed + 1 ether,
+            IERC20(address(token1)), 1 ether, user, false, block.timestamp + 1 hours);
+        assertEq(token0.balanceOf(user), beforeState[0], "failed downstream quote preserves payer");
+        assertEq(token1.balanceOf(user), beforeState[1], "failed downstream quote cannot pay output");
+        assertEq(o.rawReserve(0), beforeState[2], "failed transaction preserves raw book");
+        assertEq(o.seBalance(1), beforeState[3], "failed transaction preserves SE book");
+        assertEq(IERC20(h).totalSupply(), beforeState[4], "failed transaction preserves LP supply");
+        vm.clearMockedCalls();
+        vm.prank(user);
+        uint256 used = IStandardExchangeOut(h).exchangeOut(IERC20(address(token0)), needed + 1 ether,
+            IERC20(address(token1)), 1 ether, user, false, block.timestamp + 1 hours);
+        assertEq(beforeState[0] - token0.balanceOf(user), used, "restored downstream route debits exact input");
+        assertEq(token1.balanceOf(user) - beforeState[1], 1 ether, "restored downstream route pays exact output");
     }
 
     /// @notice C1: hostile token reenters addLiquidity mid transferFrom → outer fails; no LP mint.
@@ -386,9 +469,9 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_AdversarialTest is
             se0: seLeg0,
             se1: address(0),
             se2: address(0),
-            rp0: address(0),
-            rp1: address(0),
-            rp2: address(0),
+            rp0: RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, seLeg0, address(t0)),
+            rp1: RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, address(0), address(t1)),
+            rp2: RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, address(0), address(hostile)),
             tickSpacing: 0,
             sqrtPriceX96: 0,
             ownerOnlyLiquidity: _pkgOwnerOnlyLiquidity(),

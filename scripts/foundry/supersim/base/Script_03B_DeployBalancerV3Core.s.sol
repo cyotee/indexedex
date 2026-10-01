@@ -81,7 +81,7 @@ contract Script_03B_DeployBalancerV3Core is DeploymentBase {
 
         balancerAuthorizer = _deployCreate3(
             ArtifactCreationCode.creationCode(create3Factory, "lib/crane/contracts/protocols/dexes/balancer/v3/test/mocks/BasicAuthorizerMock.sol:BasicAuthorizerMock"),
-            _salt("BaseSepoliaBalancerV3Authorizer")
+            _salt("BasicAuthorizerMock")
         );
 
         balancerProtocolFeeController = address(0);

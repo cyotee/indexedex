@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
-import {IUniswapV4StandardExchangeLiquidReserve} from "contracts/protocols/dexes/uniswap/v4/interfaces/IUniswapV4StandardExchangeLiquidReserve.sol";
+import {IUniswapV4FullSpreadPonsFamilyHookLiquidReserve} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/ponsFamilyV2Hook/interfaces/IUniswapV4FullSpreadPonsFamilyHookLiquidReserve.sol";
 import {IERC721Errors} from "@crane/contracts/interfaces/IERC721Errors.sol";
 import {Vm} from "forge-std/Vm.sol";
 import {DETFFundedStakingMath} from "contracts/vaults/detf/common/core/DETFFundedStakingMath.sol";
@@ -22,6 +22,7 @@ import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfac
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
 import {IDetfErrors} from "contracts/interfaces/IDetfErrors.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IVaultRegistryDisableManager} from "contracts/interfaces/IVaultRegistryDisableManager.sol";
 import {IVaultRegistryDisableQuery} from "contracts/interfaces/IVaultRegistryDisableQuery.sol";
@@ -281,7 +282,7 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
         _bookPairResidual(detf, residual_);
         uint256 claimed_ = residual_;
         vm.prank(attacker);
-        vm.expectRevert(_deltaRevert(claimed_, 0));
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(launchToken), claimed_, IERC20(address(detfInfo)), 0, attacker, true, _deadline());
         assertEq(IERC20(detf).balanceOf(attacker), 0, "I1: no free detfToken mint");
     }
@@ -291,7 +292,7 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
         uint256 residual_ = 6 ether;
         _bookPairResidual(detf, residual_);
         vm.prank(attacker);
-        vm.expectRevert(_deltaRevert(residual_, 0));
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         detfInfo.bond(IERC20(launchToken), residual_, DEFAULT_MIN_LOCK, attacker, true, _deadline());
         assertEq(IERC20(detf).balanceOf(attacker), 0, "bond I1: no free detfToken");
     }
@@ -360,7 +361,7 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
             residualAfter_ = IERC20(launchToken).balanceOf(detf);
         }
         vm.prank(attacker);
-        vm.expectRevert(_deltaRevert(residualAfter_, 0));
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(launchToken), residualAfter_, IERC20(address(detfInfo)), 0, attacker, true, _deadline());
         assertEq(IERC20(detf).balanceOf(attacker), 0, "I3: no free mint");
     }
@@ -369,7 +370,7 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
         _goLive(200 ether);
         _bookPairResidual(detf, 4 ether);
         vm.prank(attacker);
-        vm.expectRevert(_deltaRevert(1 ether, 0));
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         detfInfo.bond(IERC20(launchToken), 1 ether, DEFAULT_MIN_LOCK, attacker, true, _deadline());
         assertEq(IERC20(detf).balanceOf(attacker), 0, "I3 bond: no free");
     }
@@ -383,7 +384,7 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
         detfInfo.donate(IERC20(launchToken), 8 ether, false);
         vm.stopPrank();
         vm.prank(attacker);
-        vm.expectRevert(IDetfErrors.ZeroAmount.selector);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         detfInfo.donate(IERC20(launchToken), 1 ether, true);
         assertEq(IERC20(detf).balanceOf(attacker), 0, "I3 donate: no free");
     }
@@ -398,7 +399,7 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
         assertGt(victimOut_, 0, "victim honest mint");
         uint256 attBefore_ = IERC20(detf).balanceOf(attacker);
         vm.prank(attacker);
-        vm.expectRevert(_deltaRevert(donate_, 0));
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(launchToken), donate_, IERC20(address(detfInfo)), 0, attacker, true, _deadline());
         assertEq(IERC20(detf).balanceOf(attacker), attBefore_, "K1: donation not mint credit");
     }
@@ -417,7 +418,7 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
         vm.prank(detfUser);
         IERC20(launchToken).transfer(address(ponsSe), dust_);
         uint256 Rh = IBasicVault(address(ponsSe)).reserveOfToken(launchToken);
-        (uint256 deployed0_, uint256 deployed1_) = IUniswapV4StandardExchangeLiquidReserve(address(ponsSe)).deployedReserve();
+        (uint256 deployed0_, uint256 deployed1_) = IUniswapV4FullSpreadPonsFamilyHookLiquidReserve(address(ponsSe)).deployedReserve();
         uint256 deployed_ = launchToken < address(weth) ? deployed0_ : deployed1_;
         uint256 faceBooked_ = Rh > deployed_ ? Rh - deployed_ : 0;
         uint256 Bh = IERC20(launchToken).balanceOf(address(ponsSe));
@@ -543,9 +544,9 @@ abstract contract UniswapV4Detf_PonsV2Se_ProductLaw_Decimals is UniswapV4Detf_Po
         DnLiveSnap memory before_ = _snapLive(dnUserOriginal);
         uint256 quote_ = _nftDonate().previewDonate(token_, amount_);
         vm.startPrank(dnDonor);
-        token_.transfer(address(_nft()), amount_);
+        token_.approve(address(_nft()), amount_);
         vm.recordLogs();
-        detfInfo.donate(token_, amount_, true);
+        detfInfo.donate(token_, amount_, false);
         vm.stopPrank();
         Vm.Log[] memory logs_ = vm.getRecordedLogs();
         bool found_;

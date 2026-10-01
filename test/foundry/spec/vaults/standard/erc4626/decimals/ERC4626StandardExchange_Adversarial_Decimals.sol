@@ -27,9 +27,7 @@ abstract contract ERC4626StandardExchange_Adversarial_Decimals is
         uint256 supplyBefore_ = IERC20(se).totalSupply();
         uint256 attackerSeBefore_ = IERC20(se).balanceOf(attacker);
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         seIn.exchangeIn(
             IERC20(address(protocolVault)), claimed_, IERC20(se), 0, attacker, true, _deadline()
         );
@@ -44,9 +42,7 @@ abstract contract ERC4626StandardExchange_Adversarial_Decimals is
         assertEq(underlying.balanceOf(se), 0, "wrap deposits leftover cash");
         uint256 supplyBefore_ = IERC20(se).totalSupply();
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         seIn.exchangeIn(IERC20(address(underlying)), claimed_, IERC20(se), 0, attacker, true, _deadline());
         assertEq(IERC20(se).totalSupply(), supplyBefore_, "I1 wrap: no free mint");
         assertEq(underlying.balanceOf(se), 0, "I1 wrap: no underlying pulled");
@@ -62,9 +58,7 @@ abstract contract ERC4626StandardExchange_Adversarial_Decimals is
         uint256 invBefore_ = IERC20(address(protocolVault)).balanceOf(se);
         assertGe(invBefore_, claimedIn_, "booked inventory");
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimedIn_, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         seOut.exchangeOut(
             IERC20(address(protocolVault)), maxIn_, IERC20(se), seDesired_, attacker, true, _deadline()
         );
@@ -85,9 +79,7 @@ abstract contract ERC4626StandardExchange_Adversarial_Decimals is
         assertEq(U_, short_, "unbooked surplus == short transfer");
         uint256 supplyBefore_ = IERC20(se).totalSupply();
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, short_)
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         seIn.exchangeIn(
             IERC20(address(protocolVault)), claimed_, IERC20(se), 0, attacker, true, _deadline()
         );
@@ -111,9 +103,7 @@ abstract contract ERC4626StandardExchange_Adversarial_Decimals is
         uint256 supplyBefore_ = IERC20(se).totalSupply();
         uint256 claim_ = residualSeed_;
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claim_, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         seIn.exchangeIn(
             IERC20(address(protocolVault)), claim_, IERC20(se), 0, attacker, true, _deadline()
         );

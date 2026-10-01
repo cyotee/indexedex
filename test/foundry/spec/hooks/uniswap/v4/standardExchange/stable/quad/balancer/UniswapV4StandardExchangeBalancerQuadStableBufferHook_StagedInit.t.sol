@@ -317,7 +317,7 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_StagedInit_Test i
             tickSpacing: PairPoolLib.TICK_SPACING,
             hooks: IHooks(h)
         });
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("WrappedError(address,bytes4,bytes,bytes)", h, bytes4(keccak256("beforeInitialize(address,(address,address,uint24,int24,address),uint160)")), abi.encodeWithSignature("InvalidPoolKey()"), abi.encodeWithSignature("HookCallFailed()")));
         pm.initialize(extraFeeThis, TickMath.getSqrtPriceAtTick(0));
 
         PoolKey memory extraTickThis = PoolKey({
@@ -327,7 +327,7 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHook_StagedInit_Test i
             tickSpacing: 60,
             hooks: IHooks(h)
         });
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("WrappedError(address,bytes4,bytes,bytes)", h, bytes4(keccak256("beforeInitialize(address,(address,address,uint24,int24,address),uint160)")), abi.encodeWithSignature("InvalidPoolKey()"), abi.encodeWithSignature("HookCallFailed()")));
         pm.initialize(extraTickThis, TickMath.getSqrtPriceAtTick(0));
 
         PoolKey memory extra = PoolKey({

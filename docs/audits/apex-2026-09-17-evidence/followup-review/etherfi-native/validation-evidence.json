@@ -1,0 +1,444 @@
+{
+  "status": "PASS",
+  "scope": "EtherFi native eETH quantization correction and full EtherFi family",
+  "clone": "/private/tmp/apex-review-fullspread-validation",
+  "overlay": "/tmp/apex-etherfi-native-rounding-overlay",
+  "patch": "/tmp/apex-etherfi-native-rounding-overlay/READY.patch",
+  "patch_sha256": "dda0bb2eb95886b1332821a70ff27ca487e9008bdae297aca51007ecd0ee049e",
+  "files": [
+    {
+      "path": "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeCommon.sol",
+      "before_sha256": "e9fcfe9ecd8a968d8af1d3ceaf57f824d2cd0f7fff08cac4ba691ae663059d75",
+      "sha256": "ce6bcb58cb8c90dfce6b4bb91ba231ccb78c860c20411ebe018c6a491da2d975",
+      "shared_matches_frozen_baseline": true
+    },
+    {
+      "path": "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeInTarget.sol",
+      "before_sha256": "a73b8f9ff8302a1ea5c55c8c6a85eaaf9a546f2325741e7bdefb68d198413e02",
+      "sha256": "27d7bcb3b1b3ca0bbae40a452e51008d297b266f1bb6927e500d6ee4023b5471",
+      "shared_matches_frozen_baseline": true
+    },
+    {
+      "path": "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeOutTarget.sol",
+      "before_sha256": "7382e5e2845493f302f968286161f417207e89a22e62e35c334e621259aacfcb",
+      "sha256": "9dddb9d1aa5a613d10bed0a79e0ef91e86871dda77601abf58e6a9fb42645a86",
+      "shared_matches_frozen_baseline": true
+    },
+    {
+      "path": "contracts/protocols/staking/etherfi/test/hermetic/HermeticEtherFiPorts.sol",
+      "before_sha256": "83a3a35d5b46391ab5a20accfd6cf018c5ed090d044e7f226a72c9c6da8b6cee",
+      "sha256": "9c47b3a2ec2150c1aa1f60606ff4c7975b78ba49498f4e32ed4d64425b2ec8c2",
+      "shared_matches_frozen_baseline": true
+    },
+    {
+      "path": "contracts/test/stubs/NativeEtherFiPorts.sol",
+      "before_sha256": null,
+      "sha256": "fbd7650e15e5cad409f4110165be7d3c46067da72a92c1f12c0e88e998f485f3",
+      "shared_matches_frozen_baseline": true
+    },
+    {
+      "path": "test/foundry/spec/protocol/staking/etherfi/invariant/EtherFiWeETHStandardExchange_NativeRounding.t.sol",
+      "before_sha256": null,
+      "sha256": "ff92fd460f59b725e8d4bee4afa6c89dee26f78d9fa86d44bb7f7b307a2b12a5",
+      "shared_matches_frozen_baseline": true
+    },
+    {
+      "path": "test/foundry/spec/protocol/staking/etherfi/invariant/EtherFiWeETHStandardExchange_NonUnitPretransfer.t.sol",
+      "before_sha256": "96e594b94f989bdf5479ddc42347bc8714ad0336f4727a08620d507c293f25ea",
+      "sha256": "b5eb88c225acb7b94878010248b7e5e9804d7f69f1c4cf9fd7cd5a0ff5a54942",
+      "shared_matches_frozen_baseline": true
+    }
+  ],
+  "seed": "0x20260917",
+  "red": {
+    "path": "/tmp/apex-review-fullspread-validation/etherfi-native-validation/red-003",
+    "exit_code": 1,
+    "runtime_failures": 19,
+    "passing_controls": 2,
+    "log_sha256": "d41f1aec449738736972274996a07ecb0bd72534118e05a4682f7152870a1d98",
+    "command": {
+      "command": [
+        "python3",
+        "scripts/forge-artifacts.py",
+        "test",
+        "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeCommon.sol",
+        "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeInTarget.sol",
+        "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeOutTarget.sol",
+        "--test-root",
+        "test/foundry/spec/protocol/staking/etherfi/invariant/EtherFiWeETHStandardExchange_NativeRounding.t.sol",
+        "--",
+        "-vv",
+        "--fuzz-seed",
+        "0x20260917"
+      ],
+      "cwd": "/private/tmp/apex-review-fullspread-validation",
+      "source_hashes": {
+        "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeCommon.sol": "e9fcfe9ecd8a968d8af1d3ceaf57f824d2cd0f7fff08cac4ba691ae663059d75",
+        "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeInTarget.sol": "a73b8f9ff8302a1ea5c55c8c6a85eaaf9a546f2325741e7bdefb68d198413e02",
+        "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeOutTarget.sol": "7382e5e2845493f302f968286161f417207e89a22e62e35c334e621259aacfcb",
+        "test/foundry/spec/protocol/staking/etherfi/invariant/EtherFiWeETHStandardExchange_NativeRounding.t.sol": "ff92fd460f59b725e8d4bee4afa6c89dee26f78d9fa86d44bb7f7b307a2b12a5",
+        "contracts/test/stubs/NativeEtherFiPorts.sol": "fbd7650e15e5cad409f4110165be7d3c46067da72a92c1f12c0e88e998f485f3",
+        "contracts/protocols/staking/etherfi/test/hermetic/HermeticEtherFiPorts.sol": "9c47b3a2ec2150c1aa1f60606ff4c7975b78ba49498f4e32ed4d64425b2ec8c2",
+        "test/foundry/spec/protocol/staking/etherfi/invariant/EtherFiWeETHStandardExchange_NonUnitPretransfer.t.sol": "b5eb88c225acb7b94878010248b7e5e9804d7f69f1c4cf9fd7cd5a0ff5a54942",
+        "lib/crane/contracts/external/etherfi/core/EETH.sol": "66a2df4dd2f55ba5d7951cecb846bde5317be00c577cd5a2589c0fe6fee69e6b",
+        "lib/crane/contracts/external/etherfi/core/WeETH.sol": "cfd51624b8d5d5f4bca35e8d31bcf1c22898c0ccb165502ba9d9b1258238129c",
+        "foundry.toml": "14536c5fabad6b40fea707ad11d8b80d48b6ada96c5995eaa25e2384908e8d38",
+        "test/foundry/spec/vaults/standard/exchange/invariant/StakingStandardExchangeAccountingHandler.sol": "6a8287871369ffa1d7463ad02153cc12cbf22bf0b3af5bc2f807438245f4fdbe",
+        "test/foundry/spec/vaults/standard/exchange/invariant/StandardExchangeAccountingHandler.sol": "327bb71428f90670d2d7ef02347032f61234f1eb1cee87598b92d3c019061e7e"
+      },
+      "started_at": 1790352559.258615
+    },
+    "original_runtime": {
+      "EtherFiWeETHStandardExchangeInFacet": {
+        "sha256": "37188e69ff5ac9d263cc9a6ba038b1d3d25bfe199842ec1929c07d8c92621c1a",
+        "methodIdentifiers": {
+          "actualLiquidReservePercentage()": "f21bb1fd",
+          "eETH()": "0de371e2",
+          "exchangeIn(address,uint256,address,uint256,address,bool,uint256)": "d02d3063",
+          "facetFuncs()": "574a4cff",
+          "facetInterfaces()": "2ea80826",
+          "facetMetadata()": "f10d7a75",
+          "facetName()": "5b6f4d01",
+          "liquidReserveEth()": "aa082655",
+          "liquidityPool()": "665a11ca",
+          "lockedReserveEth()": "71d88369",
+          "previewExchangeIn(address,uint256,address)": "89d61912",
+          "quoteAssets(bytes,uint256)": "dedbf308",
+          "quoteExternalDeposit(bytes,address,uint256)": "cad1be6b",
+          "quoteExternalExchange(bytes,address,uint256)": "0558d1f9",
+          "quoteShareBalance(bytes)": "2e5f15dc",
+          "quoteState(address,address)": "844c633c",
+          "quoteTotalSupply(bytes)": "43225235",
+          "quoteTransition(bytes,uint8,uint256)": "2fb41732",
+          "redemptionManager()": "3278eb04",
+          "targetLiquidReservePercentage()": "43748618",
+          "totalReserveEth()": "98f696cf",
+          "weETH()": "c72bf7a5",
+          "weth()": "3fc8cef3",
+          "withdrawRequestNFT()": "71cb700f"
+        },
+        "runtime_bytes": 20325
+      },
+      "EtherFiWeETHStandardExchangeOutFacet": {
+        "sha256": "d12685fd59a635b5f64889439cbf9ad299791e244c470b5a8bf1fb0bce7e70e0",
+        "methodIdentifiers": {
+          "actualLiquidReservePercentage()": "f21bb1fd",
+          "eETH()": "0de371e2",
+          "exchangeOut(address,uint256,address,uint256,address,bool,uint256)": "bbac8477",
+          "facetFuncs()": "574a4cff",
+          "facetInterfaces()": "2ea80826",
+          "facetMetadata()": "f10d7a75",
+          "facetName()": "5b6f4d01",
+          "liquidReserveEth()": "aa082655",
+          "liquidityPool()": "665a11ca",
+          "lockedReserveEth()": "71d88369",
+          "previewExchangeOut(address,address,uint256)": "db149bc5",
+          "redemptionManager()": "3278eb04",
+          "targetLiquidReservePercentage()": "43748618",
+          "totalReserveEth()": "98f696cf",
+          "weETH()": "c72bf7a5",
+          "weth()": "3fc8cef3",
+          "withdrawRequestNFT()": "71cb700f"
+        },
+        "runtime_bytes": 13544
+      },
+      "EtherFiWeETHMarkerFacet": {
+        "sha256": "cdd0f90e4769b37f4d5178c678eaeede304fe4ef00c13f257eefac754b89b286",
+        "methodIdentifiers": {
+          "accruedRewards(address)": "128fced1",
+          "actualLiquidReservePercentage()": "f21bb1fd",
+          "assetInfo()": "a40bee50",
+          "claimRewards(address)": "ef5cfb8c",
+          "deposit(address,address,uint256,uint256)": "20e8c565",
+          "eETH()": "0de371e2",
+          "exchangeRate()": "3ba0b9a9",
+          "facetFuncs()": "574a4cff",
+          "facetInterfaces()": "2ea80826",
+          "facetMetadata()": "f10d7a75",
+          "facetName()": "5b6f4d01",
+          "getRewardTokens()": "c4f59f9b",
+          "getTokensIn()": "213cae63",
+          "getTokensOut()": "071bc3c9",
+          "isValidTokenIn(address)": "fa5a4f06",
+          "isValidTokenOut(address)": "784367d6",
+          "liquidReserveEth()": "aa082655",
+          "liquidityPool()": "665a11ca",
+          "lockedReserveEth()": "71d88369",
+          "previewDeposit(address,uint256)": "b8f82b26",
+          "previewRedeem(address,uint256)": "cbe52ae3",
+          "redeem(address,uint256,address,uint256,bool)": "769f8e5d",
+          "redemptionManager()": "3278eb04",
+          "rewardIndexesCurrent()": "f8b2f991",
+          "rewardIndexesStored()": "da88ecb4",
+          "targetLiquidReservePercentage()": "43748618",
+          "totalReserveEth()": "98f696cf",
+          "weETH()": "c72bf7a5",
+          "weth()": "3fc8cef3",
+          "withdrawRequestNFT()": "71cb700f",
+          "yieldToken()": "76d5de85"
+        },
+        "runtime_bytes": 8016
+      },
+      "EtherFiWeETHRebalanceFacet": {
+        "sha256": "af4fc11108eb615c0674831f6f9a0051d0544088169b0011dfaa4a39f503d6d9",
+        "methodIdentifiers": {
+          "actualLiquidReservePercentage()": "f21bb1fd",
+          "eETH()": "0de371e2",
+          "facetFuncs()": "574a4cff",
+          "facetInterfaces()": "2ea80826",
+          "facetMetadata()": "f10d7a75",
+          "facetName()": "5b6f4d01",
+          "liquidReserveEth()": "aa082655",
+          "liquidityPool()": "665a11ca",
+          "lockedReserveEth()": "71d88369",
+          "onERC721Received(address,address,uint256,bytes)": "150b7a02",
+          "rebalance()": "7d7c2a1c",
+          "redemptionManager()": "3278eb04",
+          "targetLiquidReservePercentage()": "43748618",
+          "totalReserveEth()": "98f696cf",
+          "weETH()": "c72bf7a5",
+          "weth()": "3fc8cef3",
+          "withdrawRequestNFT()": "71cb700f"
+        },
+        "runtime_bytes": 6684
+      }
+    }
+  },
+  "green": {
+    "path": "/tmp/apex-review-fullspread-validation/etherfi-native-validation/family-003",
+    "test_suites": 9,
+    "tests_passed": 100,
+    "failed": 0,
+    "skipped": 0,
+    "native_tests": 21,
+    "fuzz_properties": [
+      {
+        "name": "testFuzz_APEX_nativeExactOutStakeFundsDelivery(uint96,uint64,bool)",
+        "runs": 10001
+      },
+      {
+        "name": "testFuzz_APEX_nativePullWrapConservesShares(uint96,uint64,uint96)",
+        "runs": 10001
+      }
+    ],
+    "invariant": {
+      "runs": 256,
+      "depth": 64,
+      "calls": 16384,
+      "reverts": 0,
+      "discards": 0
+    },
+    "log_sha256": "6dfadc2cd1fd50f1f65e467e897c7f78f7194a15e42cee3114e5de276d05ed35",
+    "command": {
+      "command": [
+        "python3",
+        "scripts/forge-artifacts.py",
+        "test",
+        "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeCommon.sol",
+        "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeInTarget.sol",
+        "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeOutTarget.sol",
+        "--test-root",
+        "test/foundry/spec/protocol/staking/etherfi",
+        "--",
+        "-vv",
+        "--fuzz-seed",
+        "0x20260917",
+        "--fuzz-runs",
+        "10000"
+      ],
+      "cwd": "/private/tmp/apex-review-fullspread-validation",
+      "source_hashes": {
+        "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeCommon.sol": "ce6bcb58cb8c90dfce6b4bb91ba231ccb78c860c20411ebe018c6a491da2d975",
+        "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeInTarget.sol": "27d7bcb3b1b3ca0bbae40a452e51008d297b266f1bb6927e500d6ee4023b5471",
+        "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeOutTarget.sol": "9dddb9d1aa5a613d10bed0a79e0ef91e86871dda77601abf58e6a9fb42645a86",
+        "test/foundry/spec/protocol/staking/etherfi/invariant/EtherFiWeETHStandardExchange_NativeRounding.t.sol": "ff92fd460f59b725e8d4bee4afa6c89dee26f78d9fa86d44bb7f7b307a2b12a5",
+        "contracts/test/stubs/NativeEtherFiPorts.sol": "fbd7650e15e5cad409f4110165be7d3c46067da72a92c1f12c0e88e998f485f3",
+        "contracts/protocols/staking/etherfi/test/hermetic/HermeticEtherFiPorts.sol": "9c47b3a2ec2150c1aa1f60606ff4c7975b78ba49498f4e32ed4d64425b2ec8c2",
+        "test/foundry/spec/protocol/staking/etherfi/invariant/EtherFiWeETHStandardExchange_NonUnitPretransfer.t.sol": "b5eb88c225acb7b94878010248b7e5e9804d7f69f1c4cf9fd7cd5a0ff5a54942",
+        "lib/crane/contracts/external/etherfi/core/EETH.sol": "66a2df4dd2f55ba5d7951cecb846bde5317be00c577cd5a2589c0fe6fee69e6b",
+        "lib/crane/contracts/external/etherfi/core/WeETH.sol": "cfd51624b8d5d5f4bca35e8d31bcf1c22898c0ccb165502ba9d9b1258238129c",
+        "foundry.toml": "14536c5fabad6b40fea707ad11d8b80d48b6ada96c5995eaa25e2384908e8d38",
+        "test/foundry/spec/vaults/standard/exchange/invariant/StakingStandardExchangeAccountingHandler.sol": "6a8287871369ffa1d7463ad02153cc12cbf22bf0b3af5bc2f807438245f4fdbe",
+        "test/foundry/spec/vaults/standard/exchange/invariant/StandardExchangeAccountingHandler.sol": "327bb71428f90670d2d7ef02347032f61234f1eb1cee87598b92d3c019061e7e"
+      },
+      "started_at": 1790352638.06286
+    },
+    "environment": {
+      "FOUNDRY_INVARIANT_RUNS": "256",
+      "FOUNDRY_INVARIANT_DEPTH": "64"
+    },
+    "runtime": {
+      "EtherFiWeETHStandardExchangeInFacet": {
+        "sha256": "5a5f19f7c98f41d5079ea593db60b1254c1cf7d4d918e0ec0264c9907964921a",
+        "methodIdentifiers": {
+          "actualLiquidReservePercentage()": "f21bb1fd",
+          "eETH()": "0de371e2",
+          "exchangeIn(address,uint256,address,uint256,address,bool,uint256)": "d02d3063",
+          "facetFuncs()": "574a4cff",
+          "facetInterfaces()": "2ea80826",
+          "facetMetadata()": "f10d7a75",
+          "facetName()": "5b6f4d01",
+          "liquidReserveEth()": "aa082655",
+          "liquidityPool()": "665a11ca",
+          "lockedReserveEth()": "71d88369",
+          "previewExchangeIn(address,uint256,address)": "89d61912",
+          "quoteAssets(bytes,uint256)": "dedbf308",
+          "quoteExternalDeposit(bytes,address,uint256)": "cad1be6b",
+          "quoteExternalExchange(bytes,address,uint256)": "0558d1f9",
+          "quoteShareBalance(bytes)": "2e5f15dc",
+          "quoteState(address,address)": "844c633c",
+          "quoteTotalSupply(bytes)": "43225235",
+          "quoteTransition(bytes,uint8,uint256)": "2fb41732",
+          "redemptionManager()": "3278eb04",
+          "targetLiquidReservePercentage()": "43748618",
+          "totalReserveEth()": "98f696cf",
+          "weETH()": "c72bf7a5",
+          "weth()": "3fc8cef3",
+          "withdrawRequestNFT()": "71cb700f"
+        },
+        "runtime_bytes": 23534
+      },
+      "EtherFiWeETHStandardExchangeOutFacet": {
+        "sha256": "476d74da51ecb716a89710aff8fa04ab3a474b45c779e6332528a0858b0ca989",
+        "methodIdentifiers": {
+          "actualLiquidReservePercentage()": "f21bb1fd",
+          "eETH()": "0de371e2",
+          "exchangeOut(address,uint256,address,uint256,address,bool,uint256)": "bbac8477",
+          "facetFuncs()": "574a4cff",
+          "facetInterfaces()": "2ea80826",
+          "facetMetadata()": "f10d7a75",
+          "facetName()": "5b6f4d01",
+          "liquidReserveEth()": "aa082655",
+          "liquidityPool()": "665a11ca",
+          "lockedReserveEth()": "71d88369",
+          "previewExchangeOut(address,address,uint256)": "db149bc5",
+          "redemptionManager()": "3278eb04",
+          "targetLiquidReservePercentage()": "43748618",
+          "totalReserveEth()": "98f696cf",
+          "weETH()": "c72bf7a5",
+          "weth()": "3fc8cef3",
+          "withdrawRequestNFT()": "71cb700f"
+        },
+        "runtime_bytes": 16747
+      },
+      "EtherFiWeETHMarkerFacet": {
+        "sha256": "acd3279a42d62037448ee9385b93c56e4754da1fb2026492ee4cd7be78d937a9",
+        "methodIdentifiers": {
+          "accruedRewards(address)": "128fced1",
+          "actualLiquidReservePercentage()": "f21bb1fd",
+          "assetInfo()": "a40bee50",
+          "claimRewards(address)": "ef5cfb8c",
+          "deposit(address,address,uint256,uint256)": "20e8c565",
+          "eETH()": "0de371e2",
+          "exchangeRate()": "3ba0b9a9",
+          "facetFuncs()": "574a4cff",
+          "facetInterfaces()": "2ea80826",
+          "facetMetadata()": "f10d7a75",
+          "facetName()": "5b6f4d01",
+          "getRewardTokens()": "c4f59f9b",
+          "getTokensIn()": "213cae63",
+          "getTokensOut()": "071bc3c9",
+          "isValidTokenIn(address)": "fa5a4f06",
+          "isValidTokenOut(address)": "784367d6",
+          "liquidReserveEth()": "aa082655",
+          "liquidityPool()": "665a11ca",
+          "lockedReserveEth()": "71d88369",
+          "previewDeposit(address,uint256)": "b8f82b26",
+          "previewRedeem(address,uint256)": "cbe52ae3",
+          "redeem(address,uint256,address,uint256,bool)": "769f8e5d",
+          "redemptionManager()": "3278eb04",
+          "rewardIndexesCurrent()": "f8b2f991",
+          "rewardIndexesStored()": "da88ecb4",
+          "targetLiquidReservePercentage()": "43748618",
+          "totalReserveEth()": "98f696cf",
+          "weETH()": "c72bf7a5",
+          "weth()": "3fc8cef3",
+          "withdrawRequestNFT()": "71cb700f",
+          "yieldToken()": "76d5de85"
+        },
+        "runtime_bytes": 8016
+      },
+      "EtherFiWeETHRebalanceFacet": {
+        "sha256": "4f1c4db65d9743ecbe2c73acf0b47c98154101a448c6eca275e7a7c97d77ccd5",
+        "methodIdentifiers": {
+          "actualLiquidReservePercentage()": "f21bb1fd",
+          "eETH()": "0de371e2",
+          "facetFuncs()": "574a4cff",
+          "facetInterfaces()": "2ea80826",
+          "facetMetadata()": "f10d7a75",
+          "facetName()": "5b6f4d01",
+          "liquidReserveEth()": "aa082655",
+          "liquidityPool()": "665a11ca",
+          "lockedReserveEth()": "71d88369",
+          "onERC721Received(address,address,uint256,bytes)": "150b7a02",
+          "rebalance()": "7d7c2a1c",
+          "redemptionManager()": "3278eb04",
+          "targetLiquidReservePercentage()": "43748618",
+          "totalReserveEth()": "98f696cf",
+          "weETH()": "c72bf7a5",
+          "weth()": "3fc8cef3",
+          "withdrawRequestNFT()": "71cb700f"
+        },
+        "runtime_bytes": 6684
+      }
+    }
+  },
+  "artifact_inode_isolation": [
+    {
+      "path": "out/EtherFiWeETHStandardExchangeInFacet.sol/EtherFiWeETHStandardExchangeInFacet.json",
+      "shared_inode": 410863432,
+      "isolated_inode": 418660049
+    },
+    {
+      "path": "out/EtherFiWeETHStandardExchangeOutFacet.sol/EtherFiWeETHStandardExchangeOutFacet.json",
+      "shared_inode": 410863434,
+      "isolated_inode": 418651108
+    },
+    {
+      "path": "out/EtherFiWeETHMarkerFacet.sol/EtherFiWeETHMarkerFacet.json",
+      "shared_inode": 410863426,
+      "isolated_inode": 418649567
+    },
+    {
+      "path": "out/EtherFiWeETHRebalanceFacet.sol/EtherFiWeETHRebalanceFacet.json",
+      "shared_inode": 410863428,
+      "isolated_inode": 418654032
+    }
+  ],
+  "configuration": {
+    "solc": "0.8.35",
+    "optimizer": true,
+    "optimizer_runs": 1,
+    "via_ir": false
+  },
+  "selectors_unchanged": true,
+  "facet_size_limit": 24576,
+  "apply_check": {
+    "command": [
+      "git",
+      "apply",
+      "--check",
+      "--whitespace=error",
+      "/tmp/apex-etherfi-native-rounding-overlay/READY.patch"
+    ],
+    "cwd": "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex",
+    "returncode": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "format_check": "PASS",
+  "coverage": [
+    "Real vendored EETH and WeETH through ERC1967 proxies; production package-deployed SE",
+    "Nominal pull versus actual prepaid credit",
+    "Exact-in mint, wrap, unwrap, redemption and WETH inventory output",
+    "Exact-output mint, wrap, unwrap and redemption with native inverse rounding",
+    "Actual recipient delta and minimum enforcement, including nonempty recipient",
+    "Maximum-input rollback across atomic funding, all token balances/native shares/supplies/books/allowances",
+    "Bounded native refunds preserve held native shares and book unrepresentable dust",
+    "Sequential eETH-to-WETH projection matches full observed quote state",
+    "Native stake input/output rate transitions from 0.5 to 3.0",
+    "Strict short-delivery rejection for other tokens and successful normal control",
+    "Existing receipt/WETH equivalence, lifecycle, reentrancy, custody and accounting suite"
+  ],
+  "integration_fanout": "HermeticEtherFiPorts also feeds SeMatrix_EtherFiFixture. Parent notified to include all seven EtherFi hook matrix rows in shared integration gate."
+}

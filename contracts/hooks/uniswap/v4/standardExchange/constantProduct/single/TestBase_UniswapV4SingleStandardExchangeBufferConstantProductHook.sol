@@ -43,6 +43,7 @@ import {
     IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 import {
     UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService as PkgFactory
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService.sol";
@@ -114,10 +115,7 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferConstantProductH
         IFacet seFacet = PkgFactory.deploySeFacet(create3Factory);
         IFacet depositFacet = PkgFactory.deployDepositFacet(create3Factory);
         IFacet withdrawFacet = PkgFactory.deployWithdrawFacet(create3Factory);
-        hookPkg = PkgFactory.deployPackage(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            owner,
-            IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgInit({
+        hookPkg = PkgFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgInit({
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
                 seFacet: seFacet,
@@ -131,9 +129,7 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferConstantProductH
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
                 multiStepOwnableFacet: multiStepOwnableFacet
-            }),
-            abi.encode(type(IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage).name, "v1")._hash()
-        );
+            }));
 
         IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs memory args = _defaultPkgArgs();
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
@@ -177,7 +173,7 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferConstantProductH
         (lp,,) = single.depositWithSeShares(amtRaw, amtSe, user, 0, block.timestamp + 1 hours);
     }
 
-    function _defaultPkgArgs() internal view returns (IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs memory) {
+    function _defaultPkgArgs() internal returns (IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs memory) {
         return IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs({
             poolManager: address(pm),
             feeOracle: address(indexedexManager),
@@ -187,7 +183,8 @@ abstract contract TestBase_UniswapV4SingleStandardExchangeBufferConstantProductH
             pairTokenDecimals: HookPkgArgsDecimalsLib.tokenDec(address(pairToken)),
             rawTokenDecimals: address(rawToken).code.length == 0 ? uint8(18) : HookPkgArgsDecimalsLib.tokenDec(address(rawToken)),
             ownerOnlyLiquidity: _pkgOwnerOnlyLiquidity(),
-            owner: _pkgOwner()
+            owner: _pkgOwner(),
+            rateProvider: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, se, address(pairToken)) // D60
         });
     }
 

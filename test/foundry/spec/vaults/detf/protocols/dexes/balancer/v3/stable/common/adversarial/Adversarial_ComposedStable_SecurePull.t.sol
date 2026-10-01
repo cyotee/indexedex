@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {
     ComposedStableCommonDetf_IntegratedDeploy_Test
 } from "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetf_IntegratedDeploy.t.sol";
@@ -11,14 +12,14 @@ import {
  * @title Adversarial_ComposedStable_SecurePull_Test
  * @notice Catalog I1/I2/I3 on production ComposedStable proxy under durable U = B - R.
  * @dev Hold-set (vaultTokens) is detfToken + stable/common BPT — **not** DAI.
- *      Bare DAI donation free-credits by design (L-RSRV-DUST) until/unless hold-set membership changes.
- *      I1/I2 mint on DAI: after bootstrap free DAI balance is 0 → U=0 → free true reverts (claimed, 0).
- *      I3: after honest mint, if free DAI residual remains it free-credits (L-RSRV-DUST);
- *          if residual is 0, free true reverts U=0. Booked hold-set residual (detfToken) cannot free-credit.
+ *      EOA `pretransferred=true` reverts `EOAPretransferNotAllowed` first.
+ *      Contract callers with U=0 revert `TransferDeltaInsufficient(claimed, 0)`.
+ *      Unbooked DAI is contract-only pretransfer credit (D12 / L-RSRV-DUST).
  */
 contract Adversarial_ComposedStable_SecurePull_Test is ComposedStableCommonDetf_IntegratedDeploy_Test {
     address internal attacker;
     address internal honest;
+    AtomicPretransferCaller internal apexCaller;
 
     uint256 internal CLAIMED;
     uint256 internal HONEST_PULL;
@@ -29,6 +30,7 @@ contract Adversarial_ComposedStable_SecurePull_Test is ComposedStableCommonDetf_
         HONEST_PULL = CLAIMED;
         attacker = makeAddr("csPullAttacker");
         honest = makeAddr("csPullHonest");
+        apexCaller = new AtomicPretransferCaller();
     }
 
     /* ---------------------------------------------------------------------- */
@@ -48,11 +50,16 @@ contract Adversarial_ComposedStable_SecurePull_Test is ComposedStableCommonDetf_
         uint256 attDetfBefore = detfToken.balanceOf(attacker);
 
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeIn(deployedDetfVault)
+            .exchangeIn(dai, CLAIMED, detfToken, 0, attacker, true, block.timestamp + 1);
+
+        vm.prank(address(apexCaller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, CLAIMED, uint256(0))
         );
         IStandardExchangeIn(deployedDetfVault)
-            .exchangeIn(dai, CLAIMED, detfToken, 0, attacker, true, block.timestamp + 1);
+            .exchangeIn(dai, CLAIMED, detfToken, 0, address(apexCaller), true, block.timestamp + 1);
 
         assertEq(dai.balanceOf(deployedDetfVault), 0, "I1 must not transfer in-call");
         assertEq(detfToken.balanceOf(attacker), attDetfBefore, "I1 must not mint free DETF");
@@ -66,15 +73,20 @@ contract Adversarial_ComposedStable_SecurePull_Test is ComposedStableCommonDetf_
         if (claimed == 0) claimed = 1;
 
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeIn(deployedDetfVault)
+            .exchangeIn(dai, claimed, detfToken, 0, attacker, true, block.timestamp + 1);
+
+        vm.prank(address(apexCaller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed, uint256(0))
         );
         IStandardExchangeIn(deployedDetfVault)
-            .exchangeIn(dai, claimed, detfToken, 0, attacker, true, block.timestamp + 1);
+            .exchangeIn(dai, claimed, detfToken, 0, address(apexCaller), true, block.timestamp + 1);
     }
 
-    /// @notice L-RSRV-DUST control: bare DAI donation free-credits (DAI not hold-set / not booked).
-    /// @dev Documents product law — not a security failure. Contrasts with I1 booked hold-set paths.
+    /// @notice L-RSRV-DUST control: unbooked DAI is contract-only pretransfer credit.
+    /// @dev EOA prepaid is rejected (D9). A contract may consume unbooked DAI (D12).
     function test_L_RSRV_DUST_bareDaiDonation_freeCreditsPretransfer() public {
         _bootstrapReserveGraph();
         deal(address(dai), honest, CLAIMED, true);
@@ -82,12 +94,16 @@ contract Adversarial_ComposedStable_SecurePull_Test is ComposedStableCommonDetf_
         dai.transfer(deployedDetfVault, CLAIMED);
         assertEq(dai.balanceOf(deployedDetfVault), CLAIMED, "unbooked DAI inventory");
 
-        // U = B - R = CLAIMED - 0 → free true succeeds (dust recovery).
         vm.prank(attacker);
-        uint256 out_ = IStandardExchangeIn(deployedDetfVault)
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeIn(deployedDetfVault)
             .exchangeIn(dai, CLAIMED, detfToken, 0, attacker, true, block.timestamp + 1);
-        assertGt(out_, 0, "L-RSRV-DUST: unbooked DAI funds pretransfer by design");
-        assertGt(detfToken.balanceOf(attacker), 0, "attacker received detfToken");
+
+        vm.prank(address(apexCaller));
+        uint256 out_ = IStandardExchangeIn(deployedDetfVault)
+            .exchangeIn(dai, CLAIMED, detfToken, 0, address(apexCaller), true, block.timestamp + 1);
+        assertGt(out_, 0, "L-RSRV-DUST: unbooked DAI funds contract pretransfer");
+        assertGt(detfToken.balanceOf(address(apexCaller)), 0, "contract caller received detfToken");
     }
 
     // Rebasing claim redeem free-extract is owned by WP-I-CLAIM-001.
@@ -102,11 +118,16 @@ contract Adversarial_ComposedStable_SecurePull_Test is ComposedStableCommonDetf_
         assertEq(dai.balanceOf(deployedDetfVault), 0, "no free DAI");
 
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeIn(deployedDetfVault)
+            .exchangeIn(dai, CLAIMED, detfToken, 0, attacker, true, block.timestamp + 1);
+
+        vm.prank(address(apexCaller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, CLAIMED, uint256(0))
         );
         IStandardExchangeIn(deployedDetfVault)
-            .exchangeIn(dai, CLAIMED, detfToken, 0, attacker, true, block.timestamp + 1);
+            .exchangeIn(dai, CLAIMED, detfToken, 0, address(apexCaller), true, block.timestamp + 1);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -129,24 +150,32 @@ contract Adversarial_ComposedStable_SecurePull_Test is ComposedStableCommonDetf_
 
         uint256 residualDai_ = dai.balanceOf(deployedDetfVault);
         if (residualDai_ > 0) {
-            // DAI not in hold-set: residual free-credits by design (L-RSRV-DUST). Not an I3 failure.
+            // DAI not in hold-set: residual is unbooked contract credit (L-RSRV-DUST). Not an I3 failure.
             // Prove instead that a second free true claiming more than residual reverts with U=residual.
             uint256 overClaim_ = residualDai_ + 1;
             vm.prank(attacker);
+            vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+            IStandardExchangeIn(deployedDetfVault)
+                .exchangeIn(dai, overClaim_, detfToken, 0, attacker, true, block.timestamp + 1);
+            vm.prank(address(apexCaller));
             vm.expectRevert(
                 abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, overClaim_, residualDai_)
             );
             IStandardExchangeIn(deployedDetfVault)
-                .exchangeIn(dai, overClaim_, detfToken, 0, attacker, true, block.timestamp + 1);
+                .exchangeIn(dai, overClaim_, detfToken, 0, address(apexCaller), true, block.timestamp + 1);
             assertEq(dai.balanceOf(deployedDetfVault), residualDai_, "I3 over-claim does not move residual");
         } else {
-            // No free DAI residual → U=0; free true reverts.
+            // No free DAI residual → U=0; EOA then contract short both revert.
             vm.prank(attacker);
+            vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+            IStandardExchangeIn(deployedDetfVault)
+                .exchangeIn(dai, CLAIMED, detfToken, 0, attacker, true, block.timestamp + 1);
+            vm.prank(address(apexCaller));
             vm.expectRevert(
                 abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, CLAIMED, uint256(0))
             );
             IStandardExchangeIn(deployedDetfVault)
-                .exchangeIn(dai, CLAIMED, detfToken, 0, attacker, true, block.timestamp + 1);
+                .exchangeIn(dai, CLAIMED, detfToken, 0, address(apexCaller), true, block.timestamp + 1);
             assertEq(dai.balanceOf(deployedDetfVault), 0, "I3: still no free DAI");
             assertEq(detfToken.balanceOf(attacker), 0, "I3 no free DETF");
         }

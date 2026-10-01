@@ -172,19 +172,19 @@ contract Script_03_DeployBaseProtocols is LocalTestingDeploymentBase {
     }
 
     function _deployLocalTokensAndRouters() internal {
-        localWeth = _deployCreate3(ArtifactCreationCode.creationCode(create3Factory, "lib/crane/contracts/protocols/tokens/wrappers/weth/v9/WETH9.sol:WETH9"), _salt("LocalTestingWETH9"));
-        localPermit2 = _deployCreate3(ArtifactCreationCode.creationCode(create3Factory, "BetterPermit2.sol:BetterPermit2"), _salt("LocalTestingBetterPermit2"));
+        localWeth = _deployCreate3(ArtifactCreationCode.creationCode(create3Factory, "lib/crane/contracts/protocols/tokens/wrappers/weth/v9/WETH9.sol:WETH9"), _salt("WETH9"));
+        localPermit2 = _deployCreate3(ArtifactCreationCode.creationCode(create3Factory, "BetterPermit2.sol:BetterPermit2"), _salt("BetterPermit2"));
 
         uniswapV2Factory = _deployWithArgs(
             ArtifactCreationCode.creationCode(create3Factory, "UniV2Factory.sol:UniV2Factory"),
             abi.encode(owner),
-            _salt("LocalTestingUniV2Factory")
+            _salt("UniV2Factory")
         );
 
         uniswapV2Router = _deployWithArgs(
             ArtifactCreationCode.creationCode(create3Factory, "UniV2Router02.sol:UniV2Router02"),
             abi.encode(uniswapV2Factory, localWeth),
-            _salt("LocalTestingUniV2Router02")
+            _salt("UniV2Router02")
         );
     }
 
@@ -193,7 +193,7 @@ contract Script_03_DeployBaseProtocols is LocalTestingDeploymentBase {
 
         balancerAuthorizer = _deployCreate3(
             ArtifactCreationCode.creationCode(create3Factory, "lib/crane/contracts/protocols/dexes/balancer/v3/test/mocks/BasicAuthorizerMock.sol:BasicAuthorizerMock"),
-            _salt("LocalTestingBalancerV3Authorizer")
+            _salt("BasicAuthorizerMock")
         );
 
         balancerProtocolFeeController = address(0);
@@ -229,7 +229,7 @@ contract Script_03_DeployBaseProtocols is LocalTestingDeploymentBase {
         pkgInit.senderGuardFacet = IFacet(
             create3Factory.deployFacet(
                 ArtifactCreationCode.creationCode(create3Factory, "SenderGuardFacet.sol:SenderGuardFacet"),
-                abi.encode("SenderGuardFacet", "LocalTesting")._hash()
+                abi.encode("SenderGuardFacet")._hash()
             )
         );
         pkgInit.balancerV3StandardExchangeRouterExactInQueryFacet =

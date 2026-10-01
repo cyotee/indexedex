@@ -14,6 +14,7 @@ import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {IPool} from "@crane/contracts/interfaces/protocols/dexes/aerodrome/IPool.sol";
 import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
@@ -297,6 +298,36 @@ contract AerodromeNativeSYTest is TestBase_AerodromeStandardExchange, ConstantPr
         else _assertFundedExactOutput(lp_, payment_, 1 ether);
     }
 
+    function _atomicExchangeOut(
+        IERC20 payment_,
+        IERC20 output_,
+        uint256 maximum_,
+        uint256 target_
+    ) private returns (uint256 used, address atomicAddr) {
+        AtomicPretransferCaller atomic = new AtomicPretransferCaller();
+        atomicAddr = address(atomic);
+        payment_.approve(atomicAddr, maximum_);
+        used = abi.decode(
+            atomic.consumePretransfer(
+                payment_,
+                nativeUser,
+                address(nativeSY),
+                maximum_,
+                abi.encodeWithSelector(
+                    IStandardExchangeOut.exchangeOut.selector,
+                    payment_,
+                    maximum_,
+                    output_,
+                    target_,
+                    atomicAddr,
+                    true,
+                    block.timestamp
+                )
+            ),
+            (uint256)
+        );
+    }
+
     function test_nativeExactOutputLpPrepaidMaximumRefundsOnlyItsSurplusAfterFees() public {
         IERC20 lp_ = _fundLpAndAccrueFees();
         IStandardExchangeOut exchange_ = IStandardExchangeOut(address(nativeSY));
@@ -306,18 +337,20 @@ contract AerodromeNativeSYTest is TestBase_AerodromeStandardExchange, ConstantPr
         uint256 balance_ = lp_.balanceOf(nativeUser);
         uint256 shares_ = nativeSY.balanceOf(nativeUser);
         vm.startPrank(nativeUser);
-        lp_.transfer(address(nativeSY), maximum_);
-        assertEq(exchange_.exchangeOut(lp_, maximum_, IERC20(address(nativeSY)), target_, nativeUser, true, block.timestamp), required_);
+        (uint256 used_, address atomic_) = _atomicExchangeOut(lp_, IERC20(address(nativeSY)), maximum_, target_);
         vm.stopPrank();
-        assertEq(lp_.balanceOf(nativeUser), balance_ - required_);
-        assertEq(nativeSY.balanceOf(nativeUser), shares_ + target_);
+        assertEq(used_, required_);
+        assertEq(lp_.balanceOf(nativeUser), balance_ - maximum_);
+        assertEq(lp_.balanceOf(atomic_), maximum_ - required_);
+        assertEq(nativeSY.balanceOf(atomic_), target_);
+        assertEq(nativeSY.balanceOf(nativeUser), shares_);
     }
 
     function test_nativeExactInputLpUnfundedPrepaymentCannotSpendNewlyCompoundedFees() public {
         IERC20 lp_ = _fundLpAndAccrueFees();
         uint256 held_ = lp_.balanceOf(address(nativeSY));
         uint256 shares_ = nativeSY.balanceOf(nativeUser);
-        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, uint256(1), uint256(0)));
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vm.prank(nativeUser);
         IStandardExchangeIn(address(nativeSY)).exchangeIn(lp_, 1, IERC20(address(nativeSY)), 0, nativeUser, true, block.timestamp);
         assertEq(lp_.balanceOf(address(nativeSY)), held_);
@@ -353,8 +386,8 @@ contract AerodromeNativeSYTest is TestBase_AerodromeStandardExchange, ConstantPr
         IERC20 lp_ = _fundLpAndAccrueFees();
         uint256 held_ = lp_.balanceOf(address(nativeSY));
         uint256 shares_ = nativeSY.balanceOf(nativeUser);
-        // No LP is pushed. Even a single unit must fail against the pre-compound book.
-        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, uint256(1), uint256(0)));
+        // No LP is pushed. EOA prepaid is rejected before the pre-compound book is read.
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vm.prank(nativeUser);
         IStandardExchangeOut(address(nativeSY)).exchangeOut(lp_, 1, IERC20(address(nativeSY)), 1, nativeUser, true, block.timestamp);
         assertEq(lp_.balanceOf(address(nativeSY)), held_);
@@ -372,7 +405,7 @@ contract AerodromeNativeSYTest is TestBase_AerodromeStandardExchange, ConstantPr
         uint256 held_ = lp_.balanceOf(address(nativeSY));
         uint256 shares_ = nativeSY.balanceOf(nativeUser);
         uint256 tokens_ = payment_.balanceOf(nativeUser);
-        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, uint256(1), uint256(0)));
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vm.prank(nativeUser);
         if (exactOutput_) {
             IStandardExchangeOut(address(nativeSY)).exchangeOut(payment_, 1, IERC20(address(nativeSY)), 1, nativeUser, true, block.timestamp);
@@ -396,11 +429,13 @@ contract AerodromeNativeSYTest is TestBase_AerodromeStandardExchange, ConstantPr
         uint256 balance_ = payment_.balanceOf(nativeUser);
         uint256 shares_ = nativeSY.balanceOf(nativeUser);
         vm.startPrank(nativeUser);
-        payment_.transfer(address(nativeSY), maximum_);
-        assertEq(exchange_.exchangeOut(payment_, maximum_, IERC20(address(nativeSY)), target_, nativeUser, true, block.timestamp), required_);
+        (uint256 used_, address atomic_) = _atomicExchangeOut(payment_, IERC20(address(nativeSY)), maximum_, target_);
         vm.stopPrank();
-        assertEq(payment_.balanceOf(nativeUser), balance_ - required_);
-        assertGe(nativeSY.balanceOf(nativeUser), shares_ + target_);
+        assertEq(used_, required_);
+        assertEq(payment_.balanceOf(nativeUser), balance_ - maximum_);
+        assertEq(payment_.balanceOf(atomic_), maximum_ - required_);
+        assertGe(nativeSY.balanceOf(address(atomic_)), target_);
+        assertEq(nativeSY.balanceOf(nativeUser), shares_);
     }
 
     function _assertFundedExactOutput(IERC20 input_, IERC20 output_, uint256 target_) private {

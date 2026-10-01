@@ -10,6 +10,7 @@ import {IMultiVaultWeightedDetfBonding} from "contracts/vaults/detf/protocols/de
 import {IMultiVaultWeightedDetfInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/IMultiVaultWeightedDetfInfo.sol";
 import {IBasicVault} from "contracts/vaults/basic/IBasicVault.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 
 /// @notice Explicit T-NEST-1…8 + T-LOCAL-PUSH/I1 for BAL-MV (L-DETF-TEST-EXPLICIT).
 /// @dev Production MultiVaultWeightedDetf + Aerodrome SE legs via TestBase (no SUT mocks).
@@ -161,16 +162,25 @@ contract MultiVaultWeightedDetf_NestedPush_Test is TestBase_MultiVaultWeightedDe
         _bootstrap(alice, 1_000e18);
         uint256 seShares_ = _fundSeShares0(bob, 80e18);
         IERC20 share0_ = _share0();
+        AtomicPretransferCaller caller_ = new AtomicPretransferCaller();
         vm.prank(bob);
-        share0_.transfer(openDetf, seShares_);
+        share0_.approve(address(caller_), seShares_);
         uint256 R0 = openBook.reserveOfToken(address(share0_));
-        uint256 B0 = share0_.balanceOf(openDetf);
-        assertTrue(B0 - R0 >= seShares_, "U covers push");
-        vm.prank(bob);
-        uint256 out_ = openExchangeIn.exchangeIn(
-            share0_, seShares_, IERC20(openDetf), 0, bob, true, block.timestamp + 1 hours
+        uint256 out_ = abi.decode(
+            caller_.consumePretransfer(
+                share0_,
+                bob,
+                openDetf,
+                seShares_,
+                abi.encodeCall(
+                    IStandardExchangeIn.exchangeIn,
+                    (share0_, seShares_, IERC20(openDetf), 0, address(caller_), true, block.timestamp + 1 hours)
+                )
+            ),
+            (uint256)
         );
         assertTrue(out_ > 0, "T-LOCAL-PUSH");
+        assertGe(share0_.balanceOf(openDetf), R0, "share held");
         assertEq(openBook.reserveOfToken(address(share0_)), share0_.balanceOf(openDetf), "R==B");
     }
 
@@ -186,12 +196,21 @@ contract MultiVaultWeightedDetf_NestedPush_Test is TestBase_MultiVaultWeightedDe
         );
         vm.stopPrank();
         assertEq(openBook.reserveOfToken(address(share0_)), share0_.balanceOf(openDetf), "booked");
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1, 0)
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vm.prank(bob);
         openExchangeIn.exchangeIn(
             share0_, 1, IERC20(openDetf), 0, bob, true, block.timestamp + 1 hours
+        );
+        AtomicPretransferCaller caller_ = new AtomicPretransferCaller();
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1, 0)
+        );
+        caller_.execute(
+            openDetf,
+            abi.encodeCall(
+                IStandardExchangeIn.exchangeIn,
+                (share0_, 1, IERC20(openDetf), 0, address(caller_), true, block.timestamp + 1 hours)
+            )
         );
     }
 }

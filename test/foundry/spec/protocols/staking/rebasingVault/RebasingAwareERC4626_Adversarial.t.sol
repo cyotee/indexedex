@@ -16,6 +16,8 @@ import {TaxedERC20Harness} from "contracts/test/stubs/TaxedERC20Harness.sol";
 import {ReentrantERC20Harness} from "contracts/test/stubs/ReentrantERC20Harness.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 
 contract RebasingAwareERC4626_Adversarial is TestBase_RebasingAwareERC4626 {
     function test_ADV_firstDepositorDonationInflationOffset() public {
@@ -61,7 +63,11 @@ contract RebasingAwareERC4626_Adversarial is TestBase_RebasingAwareERC4626 {
         vm.prank(alice);
         IERC20(address(vault)).transfer(address(vault), shares);
         vm.prank(attacker);
-        uint256 out = IStandardizedYield(address(vault)).redeem(attacker, shares, address(asset), 0, true);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardizedYield(address(vault)).redeem(attacker, shares, address(asset), 0, true);
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));
+        uint256 out = IStandardizedYield(address(vault)).redeem(address(caller), shares, address(asset), 0, true);
         assertGt(out, 0);
         assertEq(IERC20(address(vault)).balanceOf(address(vault)), 0);
     }
@@ -91,10 +97,15 @@ contract RebasingAwareERC4626_Adversarial is TestBase_RebasingAwareERC4626 {
     function test_ADV02_insufficientSharePretransferReverts() public {
         vm.prank(alice);
         vault.deposit(10e18, alice);
-        vm.prank(alice);
-        vm.expectRevert();
+        // The EOA-rejection path is covered by test_ADV_publicSharesArePublic. This test validates the
+        // named condition: a permitted (contract) pretransfer caller that claims more shares than it
+        // actually pretransferred. With nothing pretransferred, the vault's self-balance credit is 0, so
+        // the share-input redeem reverts TransferDeltaInsufficient(claimed, delivered), NOT the EOA gate.
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));
+        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, uint256(1e18), uint256(0)));
         IStandardExchangeIn(address(vault)).exchangeIn(
-            IERC20(address(vault)), 1e18, IERC20(address(asset)), 0, alice, true, block.timestamp
+            IERC20(address(vault)), 1e18, IERC20(address(asset)), 0, address(caller), true, block.timestamp
         );
     }
 
@@ -135,20 +146,31 @@ contract RebasingAwareERC4626_Adversarial is TestBase_RebasingAwareERC4626 {
         wrapped.deposit(10e18, alice);
         vm.stopPrank();
         taxed.setTaxBps(100);
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
         uint256 snap = vm.snapshotState();
         for (uint256 route; route < 5; ++route) {
             vm.prank(alice);
             wrapped.transfer(address(wrapped), 2e28);
             vm.expectRevert(abi.encodeWithSelector(
                 IRebasingAwareERC4626.AssetSupplyChangedDuringTransfer.selector, 100e18, 100e18 - 1e16));
-            vm.prank(alice);
-            if (route == 0) wrapped.redeem(1e28, bob, alice);
-            else if (route == 1) wrapped.withdraw(1e18, bob, alice);
-            else if (route == 2) IStandardExchangeIn(address(wrapped)).exchangeIn(
-                IERC20(address(wrapped)), 1e28, IERC20(address(taxed)), 0, bob, true, block.timestamp);
-            else if (route == 3) IStandardExchangeOut(address(wrapped)).exchangeOut(
-                IERC20(address(wrapped)), 2e28, IERC20(address(taxed)), 1e18, bob, true, block.timestamp);
-            else IStandardizedYield(address(wrapped)).redeem(bob, 1e28, address(taxed), 0, true);
+            if (route == 0) {
+                vm.prank(alice);
+                wrapped.redeem(1e28, bob, alice);
+            } else if (route == 1) {
+                vm.prank(alice);
+                wrapped.withdraw(1e18, bob, alice);
+            } else if (route == 2) {
+                vm.prank(address(caller));
+                IStandardExchangeIn(address(wrapped)).exchangeIn(
+                    IERC20(address(wrapped)), 1e28, IERC20(address(taxed)), 0, bob, true, block.timestamp);
+            } else if (route == 3) {
+                vm.prank(address(caller));
+                IStandardExchangeOut(address(wrapped)).exchangeOut(
+                    IERC20(address(wrapped)), 2e28, IERC20(address(taxed)), 1e18, bob, true, block.timestamp);
+            } else {
+                vm.prank(address(caller));
+                IStandardizedYield(address(wrapped)).redeem(bob, 1e28, address(taxed), 0, true);
+            }
             assertEq(wrapped.totalSupply(), 1e29);
             assertEq(wrapped.balanceOf(alice), 8e28);
             assertEq(wrapped.balanceOf(address(wrapped)), 2e28, "failed payout consumed public shares/refund");

@@ -1,0 +1,18 @@
+{
+  "command": [
+    "python3",
+    "scripts/forge-artifacts.py",
+    "test",
+    "--test-root",
+    "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/remediation",
+    "--test-root",
+    "test/foundry/spec/protocols/staking/rebasingVault",
+    "--test-root",
+    "test/foundry/spec/vaults/standard/erc4626",
+    "--",
+    "-vv"
+  ],
+  "exitCode": 0,
+  "seconds": 121.35317587852478,
+  "kind": "existing baseline; no production edits; macOS proxy sandbox crash workaround"
+}

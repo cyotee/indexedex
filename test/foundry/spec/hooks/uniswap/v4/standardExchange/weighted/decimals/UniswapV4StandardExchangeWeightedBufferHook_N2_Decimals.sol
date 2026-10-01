@@ -453,7 +453,7 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHook_N2_Decimals is
 
     function _n2PkgArgs()
         internal
-        view
+
         returns (IPkg.PkgArgs memory)
     {
         address[] memory toks = new address[](2);

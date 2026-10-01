@@ -70,7 +70,8 @@ JSON_NAME = {
     "twapOracleFacet": "UniswapV4MultiPoolTwapOracleFacet",
     "twapOraclePkg": "UniswapV4MultiPoolTwapOracleDFPkg",
     "rateProviderPkg": "StandardExchangeRateProviderDFPkg",
-    "uniV4SePkg": "UniswapV4StandardExchangeDFPkg",
+    "uniV4SePkg": "UniswapV4FullSpreadHooklessStandardExchangeVaultDFPkg",
+    "uniV4PonsSePkg": "UniswapV4FullSpreadPonsFamilyHookDFPkg",
     "morphoBlueSePkg": "MorphoBlueStandardExchangeDFPkg",
     "bondNftVaultPkg": "UniswapV4DetfBondNFTVaultDFPkg",
     "rebasingClaimTokenPkg": "RebasingClaimTokenDFPkg",
@@ -215,6 +216,9 @@ def add_item(
             "initCode": init_code,
         }
         return
+    if existing["source"].startswith("json:") and source.startswith(("registry:", "broadcast:")):
+        existing.update(name=name, kind=kind_of(name), source=source, path=path, initCode=init_code)
+        return
     if not existing.get("path") and path:
         existing["path"] = path
     if not existing.get("initCode") and init_code:
@@ -304,6 +308,12 @@ def load_deploy_json(repo: Path, deployments_dir: Path) -> dict[str, dict]:
                 continue
             name = JSON_NAME.get(key)
             if not name:
+                continue
+            if key in ("uniV4SePkg", "uniV4PonsSePkg") and data.get(f"{key}Name") != name:
+                # The old uniV4SePkg key also named the retired generic-hook family.
+                # Let actual broadcast/registry identity recover historical deployments;
+                # never label their addresses as H/P from an ambiguous JSON key.
+                print(f"warning: ignoring unqualified V4 package {key} in {path.name}", file=sys.stderr)
                 continue
             add_item(items, value, name, f"json:{path.name}")
     return items

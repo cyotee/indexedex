@@ -24,6 +24,8 @@ interface IUniswapV4StandardExchangeOrbitalBufferHookPackage is
     error SameToken();
     error SameStandardExchange();
     error RateProviderWithoutSE();
+    /// @notice D60: a buffered leg was declared without a rate provider.
+    error RateProviderRequired();
     error InvalidSE();
     /// @notice Remediation min-SE: at least one non-zero standardExchange is required (H7).
     error MinOneStandardExchange();

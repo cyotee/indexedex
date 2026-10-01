@@ -1,0 +1,13 @@
+{
+  "command": [
+    "git",
+    "apply",
+    "--check",
+    "--whitespace=error",
+    "/tmp/apex-etherfi-native-rounding-overlay/READY.patch"
+  ],
+  "cwd": "/Users/cyotee/Development/projects-defi/daosys/lib/indexedex",
+  "returncode": 0,
+  "stdout": "",
+  "stderr": ""
+}

@@ -47,6 +47,19 @@ library MultiPairStandardExchangeBufferPool_FactoryService {
         vm.label(address(instance), "MultiPairStandardExchangeHookFacet");
     }
 
+    /**
+     * @notice Deploy the shared IStandardExchangeTransitionQuote facet (D68, mandatory).
+     * @dev Verbatim across all six Balancer V3 buffer-pool SE families; wire into
+     *      PkgInit.transitionQuoteFacet - the package reverts if it is codeless.
+     */
+    function deployTransitionQuoteFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
+        instance = create3Factory.deployFacet(
+            ArtifactCreationCode.creationCode("BalancerV3PoolStandardExchangeTransitionQuoteFacet.sol:BalancerV3PoolStandardExchangeTransitionQuoteFacet"),
+            abi.encode("BalancerV3PoolStandardExchangeTransitionQuoteFacet")._hash()
+        );
+        vm.label(address(instance), "BalancerV3PoolStandardExchangeTransitionQuoteFacet");
+    }
+
     function deployMultiPairBufferPoolPkg(
         IVaultRegistryDeployment vaultRegistry,
         IMultiPairStandardExchangeBufferPoolPkg.PkgInit memory pkgInit

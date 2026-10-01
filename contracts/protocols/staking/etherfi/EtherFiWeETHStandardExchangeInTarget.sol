@@ -1,12 +1,16 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
-import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {
+    IStandardExchangeTransitionQuote,
+    IStandardExchangeExternalQuote
+} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {Math} from "@crane/contracts/utils/Math.sol";
 import {BetterMath} from "@crane/contracts/utils/math/BetterMath.sol";
 import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
-import {EtherFiWeETHStandardExchangeRepo} from "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeRepo.sol";
-
+import {
+    EtherFiWeETHStandardExchangeRepo
+} from "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeRepo.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
@@ -56,10 +60,13 @@ contract EtherFiWeETHStandardExchangeInTarget is
         // SE redeem exact-in: burn shares, pay asset
         if (_isSeShare(in_)) {
             if (!_isAsset(out_)) revert InvalidRoute(in_, out_);
-            amountOut = _quoteExactIn(in_, amountIn, out_);
-            if (amountOut < minAmountOut) revert Slippage();
+            uint256 wrappedOut;
+            if (out_ == eETH()) wrappedOut = _weEthFromEEth(_previewRedeemSharesToEth(amountIn));
+            else amountOut = _quoteExactIn(in_, amountIn, out_);
             _burnShares(amountIn);
-            _payAsset(out_, amountOut, recipient);
+            amountOut = out_ == eETH() ? _unwrapAndPayE(wrappedOut, recipient) : _payAsset(out_, amountOut, recipient);
+            if (amountOut < minAmountOut) revert Slippage();
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
@@ -68,14 +75,15 @@ contract EtherFiWeETHStandardExchangeInTarget is
             if (!_isAsset(in_)) revert InvalidRoute(in_, out_);
             uint256 totalBefore = totalReserveEth();
             uint256 actualIn = _securePull(tokenIn, amountIn, pretransferred);
+            if (pretransferred) totalBefore = _reserveBeforePretransfer(in_, actualIn);
             uint256 ethValue = _creditAssetToReserve(in_, actualIn);
             amountOut = _convertEthDeltaToShares(ethValue, totalBefore);
             if (amountOut < minAmountOut) revert Slippage();
             _mintWithUsageFee(recipient, amountOut);
-            // D12b: WETH→SE split sleeve to target %
             if (in_ == weth()) {
                 _splitWethSleeveAfterSeMint();
             }
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
@@ -84,11 +92,13 @@ contract EtherFiWeETHStandardExchangeInTarget is
             uint256 actualIn = _securePull(tokenIn, amountIn, pretransferred);
             amountOut = _execAssetToAsset(in_, actualIn, out_, recipient);
             if (amountOut < minAmountOut) revert Slippage();
+            _syncAllExpectedHoldReserves();
             return amountOut;
         }
 
         revert InvalidRoute(in_, out_);
     }
+
     /// @dev Project the actual global eETH share ratio, liquid sleeve, wrapped
     /// inventory and pending queue face separately. Idle eETH is not reserve NAV.
     struct EtherFiQuoteState {
@@ -136,9 +146,8 @@ contract EtherFiWeETHStandardExchangeInTarget is
     }
 
     function _efSnapshotRedemption(EtherFiQuoteState memory q) private view {
-        (bool ok, bytes memory data) = redemptionManager().staticcall(
-            abi.encodeWithSignature("tokenToRedemptionInfo(address)", ETH_SENTINEL)
-        );
+        (bool ok, bytes memory data) =
+            redemptionManager().staticcall(abi.encodeWithSignature("tokenToRedemptionInfo(address)", ETH_SENTINEL));
         if (!ok || data.length != 7 * 32) revert InvalidQuoteState();
         uint256[7] memory words = abi.decode(data, (uint256[7]));
         // Bucket units are 1e12 wei, not wei. Refill once at this timestamp;
@@ -186,7 +195,9 @@ contract EtherFiWeETHStandardExchangeInTarget is
     }
 
     function _efReceiveAndWrap(EtherFiQuoteState memory q, uint256 amount)
-        private pure returns (uint256 received, uint256 wrapped)
+        private
+        pure
+        returns (uint256 received, uint256 wrapped)
     {
         uint256 beforeBalance = _efPooled(q, q.idleEShares);
         q.idleEShares += _efShares(q, amount);
@@ -222,7 +233,9 @@ contract EtherFiWeETHStandardExchangeInTarget is
     }
 
     function _efDeposit(EtherFiQuoteState memory q, address token, uint256 amount, bool toHolder)
-        private view returns (uint256 minted)
+        private
+        view
+        returns (uint256 minted)
     {
         if (amount == 0) return 0;
         uint256 beforeNav = _efNav(q);
@@ -237,13 +250,17 @@ contract EtherFiWeETHStandardExchangeInTarget is
             (, uint256 wrapped) = _efReceiveAndWrap(q, amount);
             q.wrapped += wrapped;
             credited = _efPooled(q, wrapped);
-        } else revert UnsupportedQuoteAsset(token);
+        } else {
+            revert UnsupportedQuoteAsset(token);
+        }
         minted = BetterMath._convertToSharesDown(credited, beforeNav, q.supply, _decimalOffset());
         q.supply += minted;
         if (toHolder) q.holderShares += minted;
         address beneficiary = address(VaultFeeOracleQueryAwareRepo._feeOracle().feeTo());
         if (beneficiary != address(0)) {
-            uint256 fee = BetterMath._percentageOfWAD(minted, VaultFeeOracleQueryAwareRepo._feeOracle().usageFeeOfVault(address(this)));
+            uint256 fee = BetterMath._percentageOfWAD(
+                minted, VaultFeeOracleQueryAwareRepo._feeOracle().usageFeeOfVault(address(this))
+            );
             q.supply += fee;
             if (q.holder == beneficiary) q.holderShares += fee;
         }
@@ -252,8 +269,8 @@ contract EtherFiWeETHStandardExchangeInTarget is
 
     function _efCanRedeem(EtherFiQuoteState memory q, uint256 face) private pure returns (bool) {
         uint256 low = Math.mulDiv(q.pooledEth, q.lowWatermark, 10_000);
-        return face < uint256(type(uint64).max) * 1e12 && q.poolLiquid >= low
-            && face <= q.poolLiquid - low && Math.ceilDiv(face, 1e12) <= q.redeemUnits;
+        return face < uint256(type(uint64).max) * 1e12 && q.poolLiquid >= low && face <= q.poolLiquid - low
+            && Math.ceilDiv(face, 1e12) <= q.redeemUnits;
     }
 
     function _efRedeemShortfall(EtherFiQuoteState memory q, uint256 shortfall) private view {
@@ -295,7 +312,9 @@ contract EtherFiWeETHStandardExchangeInTarget is
     }
 
     function quoteTransition(bytes calldata state, Operation operation, uint256 amount)
-        external view returns (bytes memory, uint256 amountIn, uint256 amountOut, uint256)
+        external
+        view
+        returns (bytes memory, uint256 amountIn, uint256 amountOut, uint256)
     {
         EtherFiQuoteState memory q = _readEtherFiQuote(state);
         amountIn = amount;
@@ -310,7 +329,9 @@ contract EtherFiWeETHStandardExchangeInTarget is
                 uint256 face = q.asset == weth() ? amount : _efPooled(q, amount);
                 amountIn = BetterMath._convertToSharesUp(face, _efNav(q), q.supply, _decimalOffset());
                 amountOut = amount;
-            } else amountOut = _efAssets(q, amount);
+            } else {
+                amountOut = _efAssets(q, amount);
+            }
             if (amountIn > q.holderShares) revert InsufficientQuoteShares(amountIn, q.holderShares);
             q.holderShares -= amountIn;
             q.supply -= amountIn;
@@ -320,7 +341,9 @@ contract EtherFiWeETHStandardExchangeInTarget is
     }
 
     function quoteExternalDeposit(bytes calldata state, address tokenIn, uint256 amount)
-        external view returns (bytes memory, uint256 minted, uint256)
+        external
+        view
+        returns (bytes memory, uint256 minted, uint256)
     {
         EtherFiQuoteState memory q = _readEtherFiQuote(state);
         minted = _efDeposit(q, tokenIn, amount, false);
@@ -328,7 +351,9 @@ contract EtherFiWeETHStandardExchangeInTarget is
     }
 
     function quoteExternalExchange(bytes calldata state, address tokenIn, uint256 amount)
-        external view returns (bytes memory, uint256 amountOut, uint256)
+        external
+        view
+        returns (bytes memory, uint256 amountOut, uint256)
     {
         EtherFiQuoteState memory q = _readEtherFiQuote(state);
         if (q.asset == weth()) {
@@ -336,18 +361,21 @@ contract EtherFiWeETHStandardExchangeInTarget is
                 q.wrapped += amount;
                 amountOut = _efPooled(q, amount);
             } else if (tokenIn == eETH()) {
-                (uint256 received, uint256 wrapped) = _efReceiveAndWrap(q, amount);
+                (, uint256 wrapped) = _efReceiveAndWrap(q, amount);
                 q.wrapped += wrapped;
-                amountOut = received;
-            } else revert UnsupportedQuoteAsset(tokenIn);
+                amountOut = _efPooled(q, wrapped);
+            } else {
+                revert UnsupportedQuoteAsset(tokenIn);
+            }
             _efPay(q, amountOut);
         } else if (tokenIn == weth()) {
             q.liquid += amount;
             amountOut = _efStake(q, amount);
         } else if (tokenIn == eETH()) {
             (, amountOut) = _efReceiveAndWrap(q, amount);
-        } else revert UnsupportedQuoteAsset(tokenIn);
+        } else {
+            revert UnsupportedQuoteAsset(tokenIn);
+        }
         return (abi.encode(q), amountOut, _efAssets(q, q.holderShares));
     }
-
 }

@@ -1,0 +1,11 @@
+{
+  "runtime_bytes": {
+    "LidoWstETHStandardExchangeInFacet": 21893,
+    "LidoWstETHStandardExchangeOutFacet": 15453,
+    "LidoWstETHRebalanceFacet": 6312,
+    "LidoWstETHMarkerFacet": 7770,
+    "LidoWstETHStandardExchangeDFPkg": 9775
+  },
+  "maximum": 24576,
+  "via_ir": false
+}

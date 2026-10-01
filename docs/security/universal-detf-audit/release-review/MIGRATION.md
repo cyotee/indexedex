@@ -1,5 +1,7 @@
 # Product package migration for the Robinhood release
 
+**Superseded salt candidate (2026-09-16).** The [CREATE3 release salt input correction](../../../create3-release-salt-input-correction.md) replaces this document's bytecode/constructor-sensitive salt policy with ABI-encoded component identities. Do not reapply `release-salts.patch` or its automatic-new-address policy as current guidance. The candidate text, patches, RPC evidence and reported results below remain dated historical records. Occupied salts still reuse existing code and constructor bindings; source edits do not upgrade live contracts.
+
 **Not a release approval.** Resolve the open gates in [RELEASE_REVIEW.md](RELEASE_REVIEW.md) before any broadcast. The salt/stage correction is currently prepared in `release-salts.patch`, not applied. This document describes that candidate change.
 
 ## Hook package interfaces

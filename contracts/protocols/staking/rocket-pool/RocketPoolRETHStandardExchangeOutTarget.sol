@@ -50,24 +50,28 @@ contract RocketPoolRETHStandardExchangeOutTarget is
             if (amountIn > maxAmountIn) revert Slippage();
             _burnShares(amountIn);
             _payAsset(out_, amountOut, recipient);
+            _syncAllExpectedHoldReserves();
             return amountIn;
         }
 
         // asset → SE mint exact-out
         if (_isSeShare(out_)) {
             if (!_isAsset(in_)) revert InvalidRoute(in_, out_);
-            amountIn = _quoteExactOut(in_, out_, amountOut);
+            uint256 credit = pretransferred ? _pretransferCredit(tokenIn, maxAmountIn) : 0;
+            // The unused part of this bounded payment is refunded, never existing backing.
+            uint256 totalBefore = _reserveBeforePretransfer(in_, credit);
+            amountIn = _quoteMintAtReserve(in_, amountOut, totalBefore);
             if (amountIn > maxAmountIn) revert Slippage();
-
-            uint256 totalBefore = totalReserveEth();
             uint256 actualIn = _securePull(tokenIn, amountIn, pretransferred);
             uint256 ethValue = _creditAssetToReserve(in_, actualIn);
             uint256 minted = _convertEthDeltaToShares(ethValue, totalBefore);
             if (minted < amountOut) revert Slippage();
             _mintWithUsageFee(recipient, amountOut);
+            _refundExactOutCredit(tokenIn, credit, amountIn, pretransferred);
             if (in_ == weth()) {
                 _bestEffortStakeOverageTowardTarget();
             }
+            _syncAllExpectedHoldReserves();
             return amountIn;
         }
 
@@ -75,10 +79,12 @@ contract RocketPoolRETHStandardExchangeOutTarget is
         if (_isAsset(in_) && _isAsset(out_)) {
             amountIn = _quoteExactOut(in_, out_, amountOut);
             if (amountIn > maxAmountIn) revert Slippage();
+            uint256 credit = pretransferred ? _pretransferCredit(tokenIn, maxAmountIn) : 0;
             uint256 actualIn = _securePull(tokenIn, amountIn, pretransferred);
-            if (actualIn < amountIn) revert InsufficientDeposit(amountIn, actualIn);
             uint256 produced = _execAssetToAsset(in_, actualIn, out_, recipient);
             if (produced < amountOut) revert Slippage();
+            _refundExactOutCredit(tokenIn, credit, amountIn, pretransferred);
+            _syncAllExpectedHoldReserves();
             return amountIn;
         }
 

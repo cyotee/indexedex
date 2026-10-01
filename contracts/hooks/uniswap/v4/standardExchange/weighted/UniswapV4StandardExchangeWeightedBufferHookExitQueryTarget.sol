@@ -5,8 +5,10 @@ import {NativeStandardYieldTarget} from "contracts/vaults/standard/sy/NativeStan
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
 import {IDetfReserveQuote} from "contracts/hooks/uniswap/v4/interfaces/IDetfReserveQuote.sol";
-import {DETFDecimalScaleLib} from "contracts/vaults/detf/common/core/DETFDecimalScaleLib.sol";
 import {UniswapV4StandardExchangeWeightedBufferHookRepo as Repo} from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookRepo.sol";
+import {
+    UniswapV4SeBufferHookLegLib
+} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
 
 import {UniswapV4StandardExchangeWeightedBufferHookExitCore} from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookExitCore.sol";
 
@@ -93,17 +95,46 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookExitQueryTarget is 
             return 0;
         }
         if (!_isLive()) return 0;
+        Repo.Layout storage l = Repo._layout();
         address out_ = numeraire;
         if (out_ == address(0)) {
             address[] memory nums_ = syntheticNumeraires();
             if (nums_.length == 0) return 0;
             out_ = nums_[0];
         }
-        uint256 pairOut = IDetfReserveQuote(address(this)).previewBurnToToken(ctx.ownedLp, out_);
-        if (pairOut == 0) return 0;
+        UniswapV4SeBufferHookLegLib.LegKind k =
+            UniswapV4SeBufferHookLegLib.classify(l.legs, out_);
+        if (k == UniswapV4SeBufferHookLegLib.LegKind.Unknown) return 0;
+        if (k == UniswapV4SeBufferHookLegLib.LegKind.StandardExchange) {
+            out_ = l.legs.pairOfStandardExchange[out_];
+        }
+        address detf_ = l.legs.detfToken;
+        if (out_ == address(0) || out_ == detf_) return 0;
+        uint8 j = _tokenIndex(out_);
+        uint256[] memory rated = _ratedWadAll();
+        uint256 wOut = l.weights[j];
+        if (rated[j] == 0 || wOut == 0) return 0;
+        // Marginal weighted spot mark of non-DETF inventory in `out_`.
+        // Do not route through previewBurnToToken leftover 1:1; that couples
+        // every pair and cannot close one mint gate while leaving another open.
+        uint256 marked;
+        for (uint8 i; i < l.numTokens; ++i) {
+            if (l.tokens[i] == detf_) continue;
+            if (i == j) {
+                marked += rated[i];
+                continue;
+            }
+            uint256 wIn = l.weights[i];
+            if (rated[i] == 0 || wIn == 0) continue;
+            marked += FullMath.mulDiv(rated[j], wIn, wOut);
+        }
+        if (marked == 0) return 0;
+        uint256 lpSupply = _previewSupplyAfterProtocolMint();
+        if (lpSupply == 0) return 0;
+        uint256 pairWad = FullMath.mulDiv(marked, ctx.ownedLp, lpSupply);
+        if (pairWad == 0) return 0;
         uint256 den_ = ctx.detfTotalSupply + ctx.pendingExpansion;
         if (den_ == 0) return 0;
-        uint256 pairWad = DETFDecimalScaleLib.nativeToWad(out_, pairOut);
         uint256 mid_ = (pairWad * 1e18) / den_;
         return (mid_ * 1e18) / ctx.creationPairPerDetfWad;
     }
@@ -138,4 +169,18 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookExitQueryTarget is 
     }
 
     function getTokensOut() public view override returns (address[] memory) { return getTokensIn(); }
+
+    /// @notice D60: the configured rate providers, one per leg (address(0) on a raw leg without one).
+    function rateProviders() public view returns (address[] memory) {
+        return Repo._layout().rateProviders;
+    }
+
+    /// @notice D60: the rate provider configured for `token_`, address(0) when none or unknown token.
+    function rateProvider(address token_) public view returns (address) {
+        Repo.Layout storage l = Repo._layout();
+        for (uint256 i; i < l.tokens.length; ++i) {
+            if (l.tokens[i] == token_) return l.rateProviders[i];
+        }
+        return address(0);
+    }
 }

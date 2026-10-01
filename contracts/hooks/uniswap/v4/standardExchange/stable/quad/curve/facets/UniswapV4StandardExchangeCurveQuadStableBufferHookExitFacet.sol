@@ -20,7 +20,7 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet is
     }
     function facetInterfaces() public pure returns (bytes4[] memory interfaces) { interfaces = new bytes4[](0); }
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](17);
+        funcs = new bytes4[](19);
         funcs[0] = IUniswapV4SeBufferHook.previewExitProportional.selector;
         funcs[1] = IUniswapV4SeBufferHook.exitProportional.selector;
         funcs[2] = IUniswapV4SeBufferHook.previewExitSingleAssetExactBptIn.selector;
@@ -38,6 +38,8 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHookExitFacet is
         funcs[14] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.previewWithdrawSingleFlexible.selector;
         funcs[15] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.withdrawSingleFlexible.selector;
         funcs[16] = IDetfReserveQuote.previewBurnToToken.selector;
+        funcs[17] = IUniswapV4StandardExchangeCurveQuadStableBufferHook.rateProviders.selector; // D60
+        funcs[18] = bytes4(keccak256("rateProvider(address)")); // D60
     }
     function facetMetadata() external pure returns (string memory name_, bytes4[] memory interfaces, bytes4[] memory functions) {
         name_ = facetName(); interfaces = facetInterfaces(); functions = facetFuncs();

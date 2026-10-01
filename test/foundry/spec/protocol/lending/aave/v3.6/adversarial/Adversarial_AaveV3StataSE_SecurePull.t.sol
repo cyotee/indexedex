@@ -82,9 +82,7 @@ contract Adversarial_AaveV3StataSE_SecurePull is Adversarial_AaveV3StataSE_Secur
 
         // Money path on proxy: product error (not FunctionNotFound) — I1 free-credit reverts.
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, uint256(1e18), uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         IStandardExchangeIn(realVault).exchangeIn(
             IERC20(realStata), 1e18, IERC20(realVault), 0, attacker, true, block.timestamp + 1 hours
         );

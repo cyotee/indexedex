@@ -9,6 +9,7 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IDetfNftReserveDonation} from "contracts/vaults/detf/common/bondNft/IDetfReserveDonation.sol";
 import {DETF_PROTOCOL_BOND_NFT_ID} from "contracts/vaults/detf/common/core/DETFBondNftIds.sol";
@@ -71,6 +72,7 @@ abstract contract UniswapV4Detf_Stage11OpenSuite_Decimals is
         victim = makeAddr("victim");
         aliceAdv = makeAddr("aliceAdv");
         preHelper = new UniV4DetfPretransferHelper_Decimals();
+        apexCaller = new AtomicPretransferCaller();
         _rebindPairTokenToHook();
     }
 

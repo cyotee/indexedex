@@ -1,6 +1,16 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {Creation} from "@crane/contracts/utils/Creation.sol";
+import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
+import {IRocketPoolRETHStandardExchangeDFPkg} from "contracts/protocols/staking/rocket-pool/interfaces/IRocketPoolRETHStandardExchangeDFPkg.sol";
+import {RocketPoolRETHStandardExchangeDFPkg} from "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeDFPkg.sol";
+import {RocketPoolRETH_Component_FactoryService} from "contracts/protocols/staking/rocket-pool/RocketPoolRETH_Component_FactoryService.sol";
+import {IVaultRegistryVaultPackageQuery} from "contracts/interfaces/IVaultRegistryVaultPackageQuery.sol";
+
+
+import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
+
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IERC4626} from "@crane/contracts/interfaces/IERC4626.sol";
 import {TestBase_RocketPoolRETHStandardExchange} from
@@ -16,6 +26,29 @@ import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExch
  * @notice Deploy, dual-surface route matrix, preview==exec, soft stake, sleeve shortfall.
  */
 contract RocketPoolRETHStandardExchange_Core_Test is TestBase_RocketPoolRETHStandardExchange {
+    /// @notice Real manager registration and immutable bindings survive changed constructor inputs.
+    function test_create3CanonicalSalt_bindingsAndReuse() public {
+        RocketPoolRETHStandardExchangeDFPkg first = RocketPoolRETHStandardExchangeDFPkg(address(rocketPoolSeDFPkg));
+        assertEq(address(first), Creation._create3AddressFromOf(address(create3Factory), abi.encode("RocketPoolRETHStandardExchangeDFPkg")._hash()));
+        assertEq(address(rocketPoolExchangeInFacet), Creation._create3AddressFromOf(address(create3Factory), abi.encode("RocketPoolRETHStandardExchangeInFacet")._hash()));
+        assertTrue(IVaultRegistryVaultPackageQuery(address(indexedexManager)).isPackage(address(first)));
+        assertEq(address(first.EXCHANGE_IN_FACET()), address(rocketPoolExchangeInFacet));
+        assertEq(address(first.EXCHANGE_OUT_FACET()), address(rocketPoolExchangeOutFacet));
+        assertEq(address(first.MARKER_FACET()), address(rocketPoolMarkerFacet));
+        assertEq(address(first.REBALANCE_FACET()), address(rocketPoolRebalanceFacet));
+        assertEq(address(first.PERMIT2()), address(permit2));
+        assertEq(address(first.VAULT_REGISTRY_DEPLOYMENT()), address(indexedexManager));
+        IRocketPoolRETHStandardExchangeDFPkg.PkgInit memory init = _buildPkgInit();
+        init.exchangeInFacet = create3Factory.deployFacet(
+            ArtifactCreationCode.creationCode("RocketPoolRETHStandardExchangeInFacet.sol:RocketPoolRETHStandardExchangeInFacet"),
+            abi.encode("RocketPoolRETHStandardExchange_Core.alternateIn")._hash());
+        vm.prank(owner);
+        IRocketPoolRETHStandardExchangeDFPkg again = RocketPoolRETH_Component_FactoryService.deployRocketPoolRETHStandardExchangeDFPkg(indexedexManager, init);
+        assertEq(address(again), address(first));
+        assertEq(address(first.EXCHANGE_IN_FACET()), address(rocketPoolExchangeInFacet));
+    }
+
+    using BetterEfficientHashLib for bytes;
     function test_D1_deploy_markerAndTokens() public view {
         assertEq(rocketPoolSe.rETH(), address(hermeticReth));
         assertEq(rocketPoolSe.weth(), address(hermeticWeth));
@@ -163,9 +196,7 @@ contract RocketPoolRETHStandardExchange_Core_Test is TestBase_RocketPoolRETHStan
         assertEq(rocketPoolSe.liquidReserveEth(), 0);
         uint256 requested = 1 ether;
 
-        vm.expectRevert(
-            abi.encodeWithSelector(IRocketPoolRETHStandardVault.InsufficientLiquidReserve.selector, requested, 0)
-        );
+        vm.expectRevert(bytes("collateral"));
         seOut.exchangeOut(
             IERC20(seVault),
             type(uint256).max,

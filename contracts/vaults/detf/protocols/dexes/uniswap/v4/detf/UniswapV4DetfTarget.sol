@@ -17,6 +17,7 @@ import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IDetfBondNFT} from "contracts/interfaces/IDetfBondNFT.sol";
 import {IStakedDETF} from "contracts/interfaces/IStakedDETF.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
 
 import {IDetf} from "contracts/interfaces/detf/IDetf.sol";
 import {IRebasingClaimToken} from "contracts/interfaces/IRebasingClaimToken.sol";
@@ -178,18 +179,11 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
         if (!s.mintTable.tokens._contains(address(tokenIn))) return (0, 0);
         IStandardExchange v_ = s.mintTable.vaultOf[address(tokenIn)];
         address pair_ = _hookPairOfVault(v_);
-        uint256 pairEq_;
-        try IUniswapV4DetfSelfCall(address(this)).peekPairEq(address(v_), address(tokenIn), amountIn) returns (
-            uint256 eq_
-        ) {
-            pairEq_ = eq_;
-        } catch {
-            return (0, 0);
-        }
+        uint256 pairEq_ = IUniswapV4DetfSelfCall(address(this)).peekPairEq(address(v_), address(tokenIn), amountIn);
         if (!_mintPriceGate(pair_, true)) {
             userDetf = address(tokenIn) != pair_
                 ? IDetfReserveQuote(s.hook).previewSwapAfterExchange(address(tokenIn), pair_, address(this), amountIn)
-                : _hook().previewSwapExactIn(pair_, address(this), pairEq_);
+                : IStandardExchangeIn(address(_hook())).previewExchangeIn(IERC20(pair_), pairEq_, IERC20(address(this)));
             return (0, userDetf);
         }
         grossDetf = _quoteMintGross(pair_, pairEq_);
@@ -210,6 +204,7 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
         bool pretransferred_,
         uint256 deadline_
     ) internal virtual nonReentrant returns (uint256 amountOut_) {
+        if (pretransferred_) LocalCreditLib.requirePretransferCaller(msg.sender);
         _requireActive(deadline_, amountIn_);
         if (recipient_ == address(0)) recipient_ = msg.sender;
         address claim_ = address(Repo._layoutStruct().rebasingClaimToken);
@@ -392,7 +387,7 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
         IStandardExchange v_ = s.burnTable.vaultOf[address(tokenOut)];
         address pair_ = _hookPairOfVault(v_);
         if (!_burnPriceGate(pair_, true)) {
-            uint256 acquired_ = _hook().previewSwapExactIn(address(this), pair_, detfIn);
+            uint256 acquired_ = IStandardExchangeIn(address(_hook())).previewExchangeIn(IERC20(address(this)), detfIn, IERC20(pair_));
             if (address(tokenOut) == pair_) return acquired_;
             return v_.previewExchangeIn(IERC20(pair_), acquired_, tokenOut);
         }
@@ -403,18 +398,7 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
         // Match _entryBurn(): exitProportional + rejoin DETF + pay remaining pair (H10: not exitSingleAsset).
         uint256 residual_ = _previewPropPairResidual(lpOut_, pair_);
         if (address(tokenOut) == pair_) return residual_;
-        if (address(tokenOut) == address(v_)) {
-            try v_.previewExchangeIn(IERC20(pair_), residual_, IERC20(address(v_))) returns (uint256 sh_) {
-                return sh_;
-            } catch {
-                return 0;
-            }
-        }
-        try v_.previewExchangeIn(IERC20(pair_), residual_, tokenOut) returns (uint256 o_) {
-            return o_;
-        } catch {
-            return 0;
-        }
+        return v_.previewExchangeIn(IERC20(pair_), residual_, tokenOut);
     }
 
     function _previewPropPairResidual(uint256 lpOut_, address pair_) private view returns (uint256 residual_) {
@@ -714,6 +698,7 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
     /* ---------------------------------------------------------------------- */
 
     function _entryDonate(IERC20 token, uint256 amount, bool pretransferred) internal {
+        if (pretransferred) LocalCreditLib.requirePretransferCaller(msg.sender);
         Repo.Storage storage s = Repo._layoutStruct();
         IDetfNftReserveDonation(address(s.bondNftVault))
             .donate(msg.sender, token, amount, 0, pretransferred, block.timestamp + 1);

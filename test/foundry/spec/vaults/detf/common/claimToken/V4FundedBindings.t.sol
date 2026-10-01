@@ -196,6 +196,7 @@ contract CurveQuadFundedBindingTest is TestBase_UniswapV4Detf_CurveQuad, V4Funde
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
+import {IUniswapV4StandardExchangeOrbitalBufferHook} from "contracts/hooks/uniswap/v4/standardExchange/orbital/interfaces/IUniswapV4StandardExchangeOrbitalBufferHook.sol";
 import {UniswapV4StandardExchangeOrbitalBufferHookClaimLib as ClaimLib} from "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookClaimLib.sol";
 import {IStandardExchangeTransitionQuote as ITransition} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
@@ -358,23 +359,27 @@ contract OrbitalV4PositionFundedBindingTest is TestBase_UniswapV4Detf_Orbital_Un
 
     function _assertCachedBufferClaim(address se_, address hook_, uint256 amount_) private view {
         address token_ = se_ == se0 ? pairAddr0 : pairAddr1;
-        ClaimLib.BufferClaimQuote memory quote_ = ClaimLib.bufferClaimQuote(se_, address(0), token_, hook_);
+        // D60: a buffered leg is valued through its configured rate provider; the quote helpers are exercised
+        // with the hook's own provider for this leg.
+        address rp_ = IUniswapV4StandardExchangeOrbitalBufferHook(hook_).rateProvider(token_);
+        ClaimLib.BufferClaimQuote memory quote_ = ClaimLib.bufferClaimQuote(se_, rp_, token_, hook_);
         assertEq(
             ClaimLib.previewBufferClaimIn(quote_, amount_),
-            ClaimLib.previewBufferClaimIn(se_, address(0), token_, amount_, hook_),
-            "cached balance and claim preserve the existing forward quote"
+            ClaimLib.previewBufferClaimIn(se_, rp_, token_, amount_, hook_),
+            "cached rate and claim preserve the existing forward quote"
         );
     }
 
     function _measurePositionWithdrawalQuotes(address se_, address token_) private {
         uint256 start_ = gasleft();
-        uint256 shares_ = IStandardExchangeOut(se_).previewExchangeOut(IERC20(se_), IERC20(token_), 1 ether);
-        emit log_named_uint("Standard exact-output quote gas", start_ - gasleft());
+        // R6 exact-output share redemption is unsupported on a two-backed book. R5 exact-in is the adopted route.
+        uint256 shares_ = IStandardExchangeIn(se_).previewExchangeIn(IERC20(se_), 1 ether, IERC20(token_));
+        emit log_named_uint("Standard exact-input redemption quote gas", start_ - gasleft());
         start_ = gasleft();
         (bytes memory state_,) = ITransition(se_).quoteState(token_, detfInfo.hook());
-        (, uint256 projected_,,) = ITransition(se_).quoteTransition(state_, ITransition.Operation.WithdrawExactOut, 1 ether);
-        emit log_named_uint("State-based exact-output quote gas", start_ - gasleft());
-        assertEq(projected_, shares_, "state-based and standard withdrawal shares agree");
+        (, uint256 projected_,,) = ITransition(se_).quoteTransition(state_, ITransition.Operation.RedeemExactIn, 1 ether);
+        emit log_named_uint("State-based exact-input redemption quote gas", start_ - gasleft());
+        assertEq(projected_, shares_, "state-based and standard withdrawal amounts agree");
     }
 
     function _measuredPositionSyDeposit(IStandardizedYield sy_, IERC20 in_, uint256 amount_, uint256 minimum_)

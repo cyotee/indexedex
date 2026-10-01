@@ -1,0 +1,894 @@
+Command: python3 scripts/forge-artifacts.py test contracts/vaults/standard/exchange/protocols/uniswap/StandardExchangeConstantProduct.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/IUniswapV3FullSpreadStandardExchangeVaultDFPkg.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultCommon.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultDFPkg.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultFactoryAwareRepo.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInBase.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInExecutionDelegate.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInMultiFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInMultiQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInMultiQueryTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInMultiTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInQueryTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultLiquidReserveFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultLiquidReserveTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutBase.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutExecuteTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutExecutionDelegate.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutMultiFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutMultiQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutMultiQueryTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutMultiTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutQueryTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultPoolAwareRepo.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultPositionImportFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultPositionImportTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultRepo.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/interfaces/IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/test/bases/TestBase_UniswapV3FullSpreadStandardExchangeVault.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/IUniswapV4FullSpreadStandardExchangeVaultDFPkg.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultCommon.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultDFPkg.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultInBase.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultInExecutionDelegate.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultInFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultInMultiFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultInMultiQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultInMultiQueryTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultInMultiTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultInQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultInQueryTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultInTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultLiquidReserveFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultLiquidReserveTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultOutBase.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultOutExecuteTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultOutExecutionDelegate.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultOutFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultOutMultiFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultOutMultiQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultOutMultiQueryTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultOutMultiTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultOutQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultOutQueryTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultOutTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultPoolKeyAwareRepo.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultPoolManagerAwareRepo.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultPositionImportFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultPositionImportTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultPositionRepo.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultQuoteService.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVault_Component_FactoryService.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/interfaces/IUniswapV4FullSpreadStandardExchangeVaultLiquidReserve.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/test/bases/TestBase_UniswapV4FullSpreadStandardExchangeVault.sol --test-root test/foundry/spec/vaults/standard/exchange/protocols/uniswap -- --fuzz-runs 128
+121 build roots; 456 sources in import closure; 80 runtime artifact IDs.
+forge build contracts/fee/collector/FeeCollectorDFPkg.sol contracts/fee/collector/FeeCollectorManagerFacet.sol contracts/fee/collector/FeeCollectorSingleTokenPushFacet.sol contracts/manager/IndexedexManagerDFPkg.sol contracts/oracles/fee/VaultFeeOracleManagerFacet.sol contracts/oracles/fee/VaultFeeOracleQueryFacet.sol contracts/oracles/uniswap/v4/twap/UniswapV4MultiPoolTwapOracleDFPkg.sol contracts/oracles/uniswap/v4/twap/UniswapV4MultiPoolTwapOracleFacet.sol contracts/oracles/uniswap/v4/twap/UniswapV4TwapAdapterFactory.sol contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeDFPkg.sol contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInExecutionDelegate.sol contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInFacet.sol contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInMultiFacet.sol contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInMultiQueryFacet.sol contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeInQueryFacet.sol contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeLiquidReserveFacet.sol contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutExecutionDelegate.sol contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutFacet.sol contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutMultiFacet.sol contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutMultiQueryFacet.sol contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangeOutQueryFacet.sol contracts/protocols/dexes/uniswap/v3/UniswapV3StandardExchangePositionImportFacet.sol contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeDFPkg.sol contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInExecutionDelegate.sol contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInFacet.sol contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInMultiFacet.sol contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInMultiQueryFacet.sol contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeInQueryFacet.sol contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeLiquidReserveFacet.sol contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutExecutionDelegate.sol contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutFacet.sol contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiFacet.sol contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutMultiQueryFacet.sol contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangeOutQueryFacet.sol contracts/protocols/dexes/uniswap/v4/UniswapV4StandardExchangePositionImportFacet.sol contracts/registries/vault/VaultRegistryDeploymentFacet.sol contracts/registries/vault/VaultRegistryDisableManagerFacet.sol contracts/registries/vault/VaultRegistryDisableQueryFacet.sol contracts/registries/vault/VaultRegistryVaultManagerFacet.sol contracts/registries/vault/VaultRegistryVaultPackageManagerFacet.sol contracts/registries/vault/VaultRegistryVaultPackageQueryFacet.sol contracts/registries/vault/VaultRegistryVaultQueryFacet.sol contracts/vaults/basic/ERC4626BasedBasicVaultFacet.sol contracts/vaults/basic/MultiAssetBasicVaultFacet.sol contracts/vaults/standard/ERC4626StandardVaultFacet.sol contracts/vaults/standard/MultiAssetStandardVaultFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/StandardExchangeConstantProduct.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/IUniswapV3FullSpreadStandardExchangeVaultDFPkg.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultCommon.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultDFPkg.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultFactoryAwareRepo.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInBase.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInExecutionDelegate.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInMultiFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInMultiQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInMultiQueryTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInMultiTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInQueryTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultInTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultLiquidReserveFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultLiquidReserveTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutBase.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutExecuteTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutExecutionDelegate.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutMultiFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutMultiQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutMultiQueryTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutMultiTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutQueryTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultOutTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultPoolAwareRepo.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultPositionImportFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultPositionImportTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultRepo.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVault_Component_FactoryService.sol contracts/vaults/standard/exchange/protocols/uniswap/v3/interfaces/IUniswapV3FullSpreadStandardExchangeVaultLiquidReserve.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/IUniswapV4FullSpreadStandardExchangeVaultDFPkg.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultCommon.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultDFPkg.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultInBase.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultInExecutionDelegate.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultInFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultInMultiFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultInMultiQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultInMultiQueryTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultInMultiTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultInQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultInQueryTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultInTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultLiquidReserveFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultLiquidReserveTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultOutBase.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultOutExecuteTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultOutExecutionDelegate.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultOutFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultOutMultiFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultOutMultiQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultOutMultiQueryTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultOutMultiTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultOutQueryFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultOutQueryTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultOutTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultPoolKeyAwareRepo.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultPoolManagerAwareRepo.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultPositionImportFacet.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultPositionImportTarget.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultPositionRepo.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultQuoteService.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVault_Component_FactoryService.sol contracts/vaults/standard/exchange/protocols/uniswap/v4/interfaces/IUniswapV4FullSpreadStandardExchangeVaultLiquidReserve.sol lib/crane/contracts/protocols/dexes/uniswap/v4/PoolManager.sol lib/crane/contracts/tokens/ERC20/ERC20Facet.sol lib/crane/contracts/tokens/ERC2612/ERC2612Facet.sol lib/crane/contracts/tokens/ERC4626/ERC4626Facet.sol lib/crane/contracts/tokens/ERC4626/ERC4626PermitDFPkg.sol lib/crane/contracts/utils/cryptography/ERC5267/ERC5267Facet.sol scripts/foundry/shared/UniswapV4LiquiditySeeder.sol
+forge test --fuzz-runs 128 --skip 'contracts/**' --skip 'test/foundry/spec/constants/**' --skip 'test/foundry/spec/fee/**' --skip 'test/foundry/spec/hooks/**' --skip 'test/foundry/spec/manager/**' --skip 'test/foundry/spec/oracles/**' --skip 'test/foundry/spec/permit2/**' --skip 'test/foundry/spec/protocol/**' --skip 'test/foundry/spec/protocols/**' --skip 'test/foundry/spec/registries/**' --skip 'test/foundry/spec/routers/**' --skip 'test/foundry/spec/saf/**' --skip 'test/foundry/spec/scripts/**' --skip 'test/foundry/spec/test/**' --skip 'test/foundry/spec/utils/**' --skip test/foundry/spec/vaults/StandardExchangeOut_Refund.t.sol --skip 'test/foundry/spec/vaults/basic/**' --skip 'test/foundry/spec/vaults/detf/**' --skip 'test/foundry/spec/vaults/standard-exchange/**' --skip test/foundry/spec/vaults/standard/TransitionQuoteAssertions.sol --skip 'test/foundry/spec/vaults/standard/erc4626/**' --skip 'test/foundry/spec/vaults/standard/exchange/protocols/morpho/**' --skip 'test/foundry/spec/vaults/standard/sy/**'
+No files changed, compilation skipped
+note[asm-keccak256]: use of inefficient hashing mechanism; consider using inline assembly
+  --> contracts/oracles/uniswap/v4/twap/UniswapV4TwapAdapterFactory.sol:26:24
+   |
+26 |         bytes32 salt = keccak256(abi.encode(oracle, key, secondsAgo, collateralIsCurrency0, maxWriteAge));
+   |                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: https://book.getfoundry.sh/reference/forge/forge-lint#asm-keccak256
+
+note[asm-keccak256]: use of inefficient hashing mechanism; consider using inline assembly
+  --> contracts/oracles/uniswap/v4/twap/UniswapV4TwapAdapterFactory.sol:52:24
+   |
+52 |         bytes32 salt = keccak256(abi.encode(oracle, key, secondsAgo, invert, maxWriteAge));
+   |                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: https://book.getfoundry.sh/reference/forge/forge-lint#asm-keccak256
+
+note[asm-keccak256]: use of inefficient hashing mechanism; consider using inline assembly
+  --> contracts/oracles/uniswap/v4/twap/UniswapV4TwapAdapterFactory.sol:74:24
+   |
+74 |         bytes32 salt = keccak256(abi.encode(oracle, key, secondsAgo, collateralIsCurrency0, maxWriteAge));
+   |                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: https://book.getfoundry.sh/reference/forge/forge-lint#asm-keccak256
+
+note[asm-keccak256]: use of inefficient hashing mechanism; consider using inline assembly
+  --> contracts/oracles/uniswap/v4/twap/UniswapV4TwapAdapterFactory.sol:89:24
+   |
+89 |         bytes32 salt = keccak256(abi.encode(oracle, key, secondsAgo, invert, maxWriteAge));
+   |                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: https://book.getfoundry.sh/reference/forge/forge-lint#asm-keccak256
+
+note[asm-keccak256]: use of inefficient hashing mechanism; consider using inline assembly
+  --> contracts/oracles/uniswap/v4/twap/UniswapV4MultiPoolTwapOracleDFPkg.sol:82:16
+   |
+82 |         return keccak256(abi.encode(decoded.poolManager));
+   |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: https://book.getfoundry.sh/reference/forge/forge-lint#asm-keccak256
+
+note[asm-keccak256]: use of inefficient hashing mechanism; consider using inline assembly
+  --> contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultRepo.sol:72:16
+   |
+72 |         return keccak256(abi.encodePacked(owner_, tickLower_, tickUpper_));
+   |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: https://book.getfoundry.sh/reference/forge/forge-lint#asm-keccak256
+
+Compiling 6 files with Solc 0.8.35
+Solc 0.8.35 finished in 84.02s
+Compiler run successful!
+
+Ran 5 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVaultOutMultiQueryFacet_IFacet_Test.t.sol:UniswapV3FullSpreadStandardExchangeVaultOutMultiQueryFacet_IFacet_Test
+[PASS] test_IFacet_FacetFunctions() (gas: 187188)
+[PASS] test_IFacet_FacetInterfaces() (gas: 186463)
+[PASS] test_IFacet_FacetMetadata_Consistency() (gas: 380475)
+[PASS] test_IFacet_InterfaceId_Computation() (gas: 1753)
+[PASS] test_IFacet_facetName() (gas: 31176)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 45.99ms (4.58ms CPU time)
+
+Ran 5 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v4/UniswapV4FullSpreadStandardExchangeVaultInMultiQueryFacet_IFacet_Test.t.sol:UniswapV4FullSpreadStandardExchangeVaultInMultiQueryFacet_IFacet_Test
+[PASS] test_IFacet_FacetFunctions() (gas: 241242)
+[PASS] test_IFacet_FacetInterfaces() (gas: 240527)
+[PASS] test_IFacet_FacetMetadata_Consistency() (gas: 488179)
+[PASS] test_IFacet_InterfaceId_Computation() (gas: 1753)
+[PASS] test_IFacet_facetName() (gas: 31172)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 50.75ms (7.84ms CPU time)
+
+Ran 5 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVaultLiquidReserveFacet_IFacet_Test.t.sol:UniswapV3FullSpreadStandardExchangeVaultLiquidReserveFacet_IFacet_Test
+[PASS] test_IFacet_FacetFunctions() (gas: 457655)
+[PASS] test_IFacet_FacetInterfaces() (gas: 186481)
+[PASS] test_IFacet_FacetMetadata_Consistency() (gas: 650017)
+[PASS] test_IFacet_InterfaceId_Computation() (gas: 1753)
+[PASS] test_IFacet_facetName() (gas: 31238)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 51.01ms (9.89ms CPU time)
+
+Ran 5 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v4/UniswapV4FullSpreadStandardExchangeVaultOutFacet_IFacet_Test.t.sol:UniswapV4FullSpreadStandardExchangeVaultOutQueryFacet_IFacet_Test
+[PASS] test_IFacet_FacetFunctions() (gas: 241242)
+[PASS] test_IFacet_FacetInterfaces() (gas: 48832)
+[PASS] test_IFacet_FacetMetadata_Consistency() (gas: 296965)
+[PASS] test_IFacet_InterfaceId_Computation() (gas: 1753)
+[PASS] test_IFacet_facetName() (gas: 31169)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 52.78ms (4.67ms CPU time)
+
+Ran 5 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVaultOutMultiFacet_IFacet_Test.t.sol:UniswapV3FullSpreadStandardExchangeVaultOutMultiFacet_IFacet_Test
+[PASS] test_IFacet_FacetFunctions() (gas: 187188)
+[PASS] test_IFacet_FacetInterfaces() (gas: 186463)
+[PASS] test_IFacet_FacetMetadata_Consistency() (gas: 380471)
+[PASS] test_IFacet_InterfaceId_Computation() (gas: 1753)
+[PASS] test_IFacet_facetName() (gas: 31173)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 57.94ms (7.24ms CPU time)
+
+Ran 5 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVaultOutQueryFacet_IFacet_Test.t.sol:UniswapV3FullSpreadStandardExchangeVaultOutQueryFacet_IFacet_Test
+[PASS] test_IFacet_FacetFunctions() (gas: 1141881)
+[PASS] test_IFacet_FacetInterfaces() (gas: 240615)
+[PASS] test_IFacet_FacetMetadata_Consistency() (gas: 1387683)
+[PASS] test_IFacet_InterfaceId_Computation() (gas: 1753)
+[PASS] test_IFacet_facetName() (gas: 31279)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 62.24ms (14.44ms CPU time)
+
+Ran 5 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v4/UniswapV4FullSpreadStandardExchangeVaultInMultiFacet_IFacet_Test.t.sol:UniswapV4FullSpreadStandardExchangeVaultInMultiFacet_IFacet_Test
+[PASS] test_IFacet_FacetFunctions() (gas: 187184)
+[PASS] test_IFacet_FacetInterfaces() (gas: 186459)
+[PASS] test_IFacet_FacetMetadata_Consistency() (gas: 380481)
+[PASS] test_IFacet_InterfaceId_Computation() (gas: 1753)
+[PASS] test_IFacet_facetName() (gas: 31169)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 52.43ms (5.05ms CPU time)
+
+Ran 5 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v4/UniswapV4FullSpreadStandardExchangeVaultInFacet_IFacet_Test.t.sol:UniswapV4FullSpreadStandardExchangeVaultInFacet_IFacet_Test
+[PASS] test_IFacet_FacetFunctions() (gas: 241242)
+[PASS] test_IFacet_FacetInterfaces() (gas: 186456)
+[PASS] test_IFacet_FacetMetadata_Consistency() (gas: 434320)
+[PASS] test_IFacet_InterfaceId_Computation() (gas: 1753)
+[PASS] test_IFacet_facetName() (gas: 31169)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 64.64ms (5.86ms CPU time)
+
+Ran 5 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v4/UniswapV4FullSpreadStandardExchangeVaultOutMultiFacet_IFacet_Test.t.sol:UniswapV4FullSpreadStandardExchangeVaultOutMultiFacet_IFacet_Test
+[PASS] test_IFacet_FacetFunctions() (gas: 187184)
+[PASS] test_IFacet_FacetInterfaces() (gas: 186459)
+[PASS] test_IFacet_FacetMetadata_Consistency() (gas: 380481)
+[PASS] test_IFacet_InterfaceId_Computation() (gas: 1753)
+[PASS] test_IFacet_facetName() (gas: 31169)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 48.48ms (4.40ms CPU time)
+
+Ran 5 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v4/UniswapV4FullSpreadStandardExchangeVaultInQueryFacet_IFacet_Test.t.sol:UniswapV4FullSpreadStandardExchangeVaultInQueryFacet_IFacet_Test
+[PASS] test_IFacet_FacetFunctions() (gas: 457677)
+[PASS] test_IFacet_FacetInterfaces() (gas: 240571)
+[PASS] test_IFacet_FacetMetadata_Consistency() (gas: 704003)
+[PASS] test_IFacet_InterfaceId_Computation() (gas: 1753)
+[PASS] test_IFacet_facetName() (gas: 31257)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 57.96ms (6.12ms CPU time)
+
+Ran 5 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v4/UniswapV4FullSpreadStandardExchangeVaultOutFacet_IFacet_Test.t.sol:UniswapV4FullSpreadStandardExchangeVaultOutFacet_IFacet_Test
+[PASS] test_IFacet_FacetFunctions() (gas: 187184)
+[PASS] test_IFacet_FacetInterfaces() (gas: 186456)
+[PASS] test_IFacet_FacetMetadata_Consistency() (gas: 380476)
+[PASS] test_IFacet_InterfaceId_Computation() (gas: 1753)
+[PASS] test_IFacet_facetName() (gas: 31169)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 55.14ms (4.80ms CPU time)
+
+Ran 5 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v4/UniswapV4FullSpreadStandardExchangeVaultOutMultiQueryFacet_IFacet_Test.t.sol:UniswapV4FullSpreadStandardExchangeVaultOutMultiQueryFacet_IFacet_Test
+[PASS] test_IFacet_FacetFunctions() (gas: 1141881)
+[PASS] test_IFacet_FacetInterfaces() (gas: 240615)
+[PASS] test_IFacet_FacetMetadata_Consistency() (gas: 1387712)
+[PASS] test_IFacet_InterfaceId_Computation() (gas: 1753)
+[PASS] test_IFacet_facetName() (gas: 31282)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 84.76ms (10.90ms CPU time)
+
+Ran 5 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVaultInMultiFacet_IFacet_Test.t.sol:UniswapV3FullSpreadStandardExchangeVaultInMultiFacet_IFacet_Test
+[PASS] test_IFacet_FacetFunctions() (gas: 187188)
+[PASS] test_IFacet_FacetInterfaces() (gas: 186463)
+[PASS] test_IFacet_FacetMetadata_Consistency() (gas: 380471)
+[PASS] test_IFacet_InterfaceId_Computation() (gas: 1753)
+[PASS] test_IFacet_facetName() (gas: 31173)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 83.78ms (15.17ms CPU time)
+
+Ran 9 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/remediation/StandardExchangeConstantProduct.t.sol:StandardExchangeConstantProductTest
+[PASS] testFuzz_inverseRoundsUpToSufficientShares(uint96,uint96,uint96,uint96) (runs: 128, μ: 47008, ~: 34139)
+[PASS] testFuzz_singleExitMatchesIndependentBurnThenSwap(uint96,uint96,uint96,uint96) (runs: 128, μ: 4024, ~: 4207)
+[PASS] test_dustAndZeroSupplyCannotProduceOutput() (gas: 2527)
+[PASS] test_fullSupplyAndReserveExhaustionHaveExplicitErrors() (gas: 21567)
+[PASS] test_minimumBoundary_revertsExactly() (gas: 5034)
+[PASS] test_mixedDecimalsAndLargeProduct() (gas: 6325)
+[PASS] test_proportionalMintAndSurplusDonationPolicy() (gas: 2079)
+[PASS] test_scaledMinimumLiquidity_decimalMatrix() (gas: 4200)
+[PASS] test_zeroFeeSwapThenProportionalMintReference() (gas: 7853)
+Suite result: ok. 9 passed; 0 failed; 0 skipped; finished in 217.26ms (243.38ms CPU time)
+
+Ran 5 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVaultInMultiQueryFacet_IFacet_Test.t.sol:UniswapV3FullSpreadStandardExchangeVaultInMultiQueryFacet_IFacet_Test
+[PASS] test_IFacet_FacetFunctions() (gas: 241242)
+[PASS] test_IFacet_FacetInterfaces() (gas: 240527)
+[PASS] test_IFacet_FacetMetadata_Consistency() (gas: 488157)
+[PASS] test_IFacet_InterfaceId_Computation() (gas: 1753)
+[PASS] test_IFacet_facetName() (gas: 31172)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 54.99ms (15.58ms CPU time)
+
+Ran 5 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v4/UniswapV4FullSpreadStandardExchangeVaultPositionImportFacet_IFacet_Test.t.sol:UniswapV4FullSpreadStandardExchangeVaultPositionImportFacet_IFacet_Test
+[PASS] test_IFacet_FacetFunctions() (gas: 187184)
+[PASS] test_IFacet_FacetInterfaces() (gas: 186459)
+[PASS] test_IFacet_FacetMetadata_Consistency() (gas: 247305)
+[PASS] test_IFacet_InterfaceId_Computation() (gas: 1753)
+[PASS] test_IFacet_facetName() (gas: 31172)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 80.54ms (4.24ms CPU time)
+
+Ran 5 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVaultInQueryFacet_IFacet_Test.t.sol:UniswapV3FullSpreadStandardExchangeVaultInQueryFacet_IFacet_Test
+[PASS] test_IFacet_FacetFunctions() (gas: 511779)
+[PASS] test_IFacet_FacetInterfaces() (gas: 240571)
+[PASS] test_IFacet_FacetMetadata_Consistency() (gas: 757893)
+[PASS] test_IFacet_InterfaceId_Computation() (gas: 1753)
+[PASS] test_IFacet_facetName() (gas: 31257)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 65.10ms (8.87ms CPU time)
+
+Ran 5 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVaultPositionImportFacet_IFacet_Test.t.sol:UniswapV3FullSpreadStandardExchangeVaultPositionImportFacet_IFacet_Test
+[PASS] test_IFacet_FacetFunctions() (gas: 241268)
+[PASS] test_IFacet_FacetInterfaces() (gas: 186463)
+[PASS] test_IFacet_FacetMetadata_Consistency() (gas: 434337)
+[PASS] test_IFacet_InterfaceId_Computation() (gas: 1753)
+[PASS] test_IFacet_facetName() (gas: 31176)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 413.34ms (5.07ms CPU time)
+
+Ran 5 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVaultOutFacet_IFacet_Test.t.sol:UniswapV3FullSpreadStandardExchangeVaultOutFacet_IFacet_Test
+[PASS] test_IFacet_FacetFunctions() (gas: 187206)
+[PASS] test_IFacet_FacetInterfaces() (gas: 186456)
+[PASS] test_IFacet_FacetMetadata_Consistency() (gas: 380454)
+[PASS] test_IFacet_InterfaceId_Computation() (gas: 1753)
+[PASS] test_IFacet_facetName() (gas: 31169)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 426.85ms (5.38ms CPU time)
+
+Ran 1 test for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVault_FeeCompound.t.sol:UniswapV3FullSpreadStandardExchangeVault_FeeCompound_Test
+[PASS] test_d27_subsequentTinyZap_doesNotDiluteIncumbentIntoFees_freeRemainsSleeve() (gas: 1103693)
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 477.25ms (22.12ms CPU time)
+
+Ran 9 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVault_Previews.t.sol:UniswapV3FullSpreadStandardExchangeVault_Previews_Test
+[PASS] test_P_IN_01_exactIn_token0_to_token1() (gas: 321458)
+[PASS] test_P_IN_02_exactIn_token1_to_token0() (gas: 300577)
+[PASS] test_P_IN_03_singleToken0ActivationRejected() (gas: 222125)
+[PASS] test_P_IN_04_singleToken1ActivationRejected() (gas: 223061)
+[PASS] test_P_IN_05_zapIn_subsequent_afterFees() (gas: 1215865)
+[PASS] test_P_OUT_01_exactOut_token0_to_token1() (gas: 400479)
+[PASS] test_P_OUT_02_exactOut_token1_to_token0() (gas: 379257)
+[PASS] test_P_OUT_03_04_zapOut_bothTokens() (gas: 2587494)
+[PASS] test_P_PRE_01_pretransferred_exactIn() (gas: 311875)
+Suite result: ok. 9 passed; 0 failed; 0 skipped; finished in 612.63ms (132.47ms CPU time)
+
+Ran 16 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVault_MultiJoinExit.t.sol:UniswapV3FullSpreadStandardExchangeVault_MultiJoinExit_Test
+[PASS] test_A0_residualDeadShares_firstMinterNotWhole() (gas: 935791)
+[PASS] test_ME1_lengthNotTwo_reverts() (gas: 637763)
+[PASS] test_ME2_idleProportionalExit_paysBoth() (gas: 968195)
+[PASS] test_ME3_unbalancedExit_reverts_noSend() (gas: 730355)
+[PASS] test_ME4_blockedCoverVsShort() (gas: 1417756)
+[PASS] test_ME5_maxAmountInTooLow_reverts() (gas: 763377)
+[PASS] test_ME6_previewExitSharesMatchExec() (gas: 957442)
+[PASS] test_ME7_maxAmountInAboveS_refundsUnusedShares() (gas: 970710)
+[PASS] test_ME8_D24_fees_previewJoinAndOneToOneExit() (gas: 1744400)
+[PASS] test_MJ1_lengthNotTwo_reverts() (gas: 42801)
+[PASS] test_MJ2_idleProportionalJoin_fullRangeL_andSleeve() (gas: 664667)
+[PASS] test_MJ3_unbalancedJoin_paysBoth_noSwap() (gas: 743867)
+[PASS] test_MJ4_blockedJoin_mints_noNestedMint() (gas: 1039676)
+[PASS] test_MJ5_pretransferredTrue_noDelivery_noFreeMint() (gas: 657931)
+[PASS] test_MJ7_previewJoinSharesMatchExec_idleAndBlocked() (gas: 1162828)
+[PASS] test_MJ8_descendingTokenIn_reverts() (gas: 45267)
+Suite result: ok. 16 passed; 0 failed; 0 skipped; finished in 686.86ms (238.30ms CPU time)
+
+Ran 5 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v4/UniswapV4FullSpreadStandardExchangeVaultDFPkg_Deploy.t.sol:UniswapV4FullSpreadStandardExchangeVaultDFPkg_Deploy_Test
+[PASS] test_componentSalts_areAbiEncodedNamesOnFactoryPath() (gas: 608343605)
+[PASS] test_deployVault_nativeEthCurrency0_registersVault() (gas: 11785201)
+[PASS] test_deployVault_registersVaultAndInitializesConfig() (gas: 11858248)
+[PASS] test_packageMetadata_matchesExpectedFacets() (gas: 57837)
+[PASS] test_packageSalt_isAbiEncodedNameOnRegistryPath() (gas: 4042792)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 1.07s (630.52ms CPU time)
+
+Ran 9 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVault_Routes.t.sol:UniswapV3FullSpreadStandardExchangeVault_Routes_Test
+[PASS] test_callbackSpoof_reverts() (gas: 25949)
+[PASS] test_deadline_reverts() (gas: 103664)
+[PASS] test_exchangeIn_exactIn_bothDirections() (gas: 446390)
+[PASS] test_exchangeOut_exactOut_bothDirections() (gas: 559900)
+[PASS] test_slippage_revertsWithoutPartialMint() (gas: 772489)
+[PASS] test_twoTokenActivation_createsPositionsAndShares() (gas: 629975)
+[PASS] test_unsupportedRoutes_revert() (gas: 1678782)
+[PASS] test_zapIn_subsequentDeposit_addsSameTicks() (gas: 969418)
+[PASS] test_zapOut_paysMeasuredToken() (gas: 1096311)
+Suite result: ok. 9 passed; 0 failed; 0 skipped; finished in 686.35ms (200.59ms CPU time)
+
+Ran 5 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVaultDFPkg_Deploy.t.sol:UniswapV3FullSpreadStandardExchangeVaultDFPkg_Deploy_Test
+[PASS] test_componentSalts_areAbiEncodedNamesOnFactoryPath() (gas: 480014115)
+[PASS] test_deployVault_registersAndInitializesPool() (gas: 16498905)
+[PASS] test_deployVault_revertsWhenPoolFactoryMismatch() (gas: 15713918)
+[PASS] test_packageMetadata_matchesExpectedFacets() (gas: 48434)
+[PASS] test_packageSalt_isAbiEncodedNameOnRegistryPath() (gas: 3258012)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 1.02s (597.61ms CPU time)
+
+Ran 23 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v4/UniswapV4FullSpreadStandardExchangeVaultRoutes_Test.t.sol:UniswapV4FullSpreadStandardExchangeVaultRoutes_Test
+[PASS] test_exchangeIn_direct_token0ToToken1() (gas: 459284)
+[PASS] test_exchangeIn_direct_token1ToToken0() (gas: 446814)
+[PASS] test_exchangeIn_zap_pretransferred_true() (gas: 1174941)
+[PASS] test_exchangeIn_zap_reverts_whenMinSharesTooHigh() (gas: 1011761)
+[PASS] test_exchangeIn_zap_secondDeposit_checkpointsAccruedFees_afterRoundTripTrading() (gas: 1438482)
+[PASS] test_exchangeIn_zap_secondDeposit_refreshesReserves_afterExternalPriceMove() (gas: 1355760)
+[PASS] test_exchangeIn_zap_token0ToShares_secondDeposit() (gas: 1235144)
+[PASS] test_exchangeOut_direct_refunds_excess_input() (gas: 522705)
+[PASS] test_exchangeOut_direct_reverts_whenMaxInputTooLow() (gas: 182235)
+[PASS] test_exchangeOut_direct_token0ToToken1() (gas: 495712)
+[PASS] test_exchangeOut_direct_token1ToToken0() (gas: 482669)
+[PASS] test_exchangeOut_zap_pretransferred_true() (gas: 1501325)
+[PASS] test_exchangeOut_zap_reverts_whenMaxSharesTooLow() (gas: 1289254)
+[PASS] test_exchangeOut_zap_sharesToToken0() (gas: 1494952)
+[PASS] test_exchangeOut_zap_sharesToToken1() (gas: 1552882)
+[PASS] test_previewExchangeIn_direct_matchesExecution_token0ToToken1() (gas: 457808)
+[PASS] test_previewExchangeIn_zap_secondDeposit_matchesExecution_token0ToShares() (gas: 1225799)
+[PASS] test_previewExchangeIn_zap_secondDeposit_matchesExecution_token1ToShares() (gas: 1226522)
+[PASS] test_previewExchangeOut_direct_matchesExecution_token0ToToken1() (gas: 493654)
+[PASS] test_previewExchangeOut_zap_matchesExecution_sharesToToken0() (gas: 1549955)
+[PASS] test_previewExchangeOut_zap_matchesExecution_sharesToToken1() (gas: 1625431)
+[PASS] test_twoTokenActivation_token0Dominant_previewAndExecution() (gas: 950151)
+[PASS] test_twoTokenActivation_token1Dominant_previewAndExecution() (gas: 950400)
+Suite result: ok. 23 passed; 0 failed; 0 skipped; finished in 1.04s (538.94ms CPU time)
+
+Ran 9 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/sy/UniswapV3FullSpreadStandardExchangeVault_NativeSY.t.sol:UniswapV3FullSpreadStandardExchangeVault_NativeSYTest
+[PASS] test_installedQueryFacetsFitRuntimeLimit() (gas: 106917)
+[PASS] test_nativeSYAccruedFeeDepositMatchesItsPreview() (gas: 1026165)
+[PASS] test_nativeSYInternalBalanceBurnsOnlyTheRequestedShares() (gas: 1020976)
+[PASS] test_nativeSYLaterSingleTokenRoutesAndCallerRedemption() (gas: 1166118)
+[PASS] test_nativeSYMetadataAndWholeBookRate() (gas: 697704)
+[PASS] test_nativeSYPreservesFundedSleeveOperationsDuringPoolLock() (gas: 953821)
+[PASS] test_nativeSYRequiresBothTokensForInitialActivation() (gas: 762546)
+[PASS] test_nativeSYSlippageRollbackPreservesBothLedgers() (gas: 1099840)
+[PASS] test_receivedSharesDoNotRebalanceOrChangePoolInventory() (gas: 804077)
+Suite result: ok. 9 passed; 0 failed; 0 skipped; finished in 793.94ms (152.82ms CPU time)
+
+Ran 5 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVaultInFacet_IFacet_Test.t.sol:UniswapV3FullSpreadStandardExchangeVaultInFacet_IFacet_Test
+[PASS] test_IFacet_FacetFunctions() (gas: 295350)
+[PASS] test_IFacet_FacetInterfaces() (gas: 294617)
+[PASS] test_IFacet_FacetMetadata_Consistency() (gas: 595914)
+[PASS] test_IFacet_InterfaceId_Computation() (gas: 1753)
+[PASS] test_IFacet_facetName() (gas: 31173)
+Suite result: ok. 5 passed; 0 failed; 0 skipped; finished in 483.35ms (7.27ms CPU time)
+
+Ran 4 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/remediation/UniswapV3StandardExchange_PreservedBaseline.t.sol:UniswapV3StandardExchange_PreservedBaseline
+[PASS] test_preserved_lockedExitOmitsOtherTokenEntitlement() (gas: 935300)
+[PASS] test_preserved_noMovementControlRejectsUnfundedCredit() (gas: 883971)
+[PASS] test_preserved_phantomMintAndRedemption_token0() (gas: 1882175)
+[PASS] test_preserved_phantomMintAndRedemption_token1() (gas: 1874872)
+Suite result: ok. 4 passed; 0 failed; 0 skipped; finished in 681.74ms (77.58ms CPU time)
+
+Ran 7 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v4/UniswapV4FullSpreadStandardExchangeVault_TwapPoke.t.sol:UniswapV4FullSpreadStandardExchangeVault_TwapPoke
+[PASS] test_H14_vaultTwapOracleAndZapPokesBoundPool() (gas: 781673)
+[PASS] test_H15_firstWriterMatchesPostTradeTick() (gas: 772291)
+[PASS] test_H16_pokeRevertFailOpen() (gas: 16586519)
+[PASS] test_H17_transferDoesNotPokeAndForeignUpdateWrites() (gas: 1077135)
+[PASS] test_H27_everyVaultSharesPackageOracle() (gas: 465795)
+[PASS] test_H28_deployVaultRevertsOnPmMismatch() (gas: 5549877)
+[PASS] test_H29_constructZeroOrMismatchReverts() (gas: 1846143)
+Suite result: ok. 7 passed; 0 failed; 0 skipped; finished in 661.34ms (196.69ms CPU time)
+
+Ran 4 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/remediation/UniswapV4StandardExchange_PreservedBaseline.t.sol:UniswapV4StandardExchange_PreservedBaseline
+[PASS] test_preserved_lockedExitOmitsOtherTokenEntitlement() (gas: 1025988)
+[PASS] test_preserved_noMovementControlRejectsUnfundedCredit() (gas: 986307)
+[PASS] test_preserved_phantomMintAndRedemption_token0() (gas: 2025734)
+[PASS] test_preserved_phantomMintAndRedemption_token1() (gas: 2018628)
+Suite result: ok. 4 passed; 0 failed; 0 skipped; finished in 822.98ms (119.35ms CPU time)
+
+Ran 11 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVault_Import.t.sol:UniswapV3FullSpreadStandardExchangeVault_Import_Test
+[PASS] testFuzz_importedPositionCannotBecomeUnfundedCredit(bool) (runs: 128, μ: 1398925, ~: 1401544)
+[PASS] test_A0_importBelowFloor_previewAndExecutionRollback() (gas: 789558)
+[PASS] test_import_approvedVaultDoesNotAuthorizeAnUnrelatedCaller() (gas: 636311)
+[PASS] test_import_emptyNft_originalOwnerCannotCollect() (gas: 1120697)
+[PASS] test_import_happyPath_principalOnly_leavesEmptyNft() (gas: 1509464)
+[PASS] test_import_oneSidedPositionCannotActivateVault() (gas: 708053)
+[PASS] test_import_secondImport_reverts() (gas: 1509935)
+[PASS] test_import_withFees_compoundsCenter() (gas: 1545132)
+[PASS] test_import_withoutApproval_reverts() (gas: 698171)
+[PASS] test_import_wrongPool_reverts() (gas: 5701928)
+[PASS] test_import_zeroLiquidity_reverts() (gas: 679386)
+Suite result: ok. 11 passed; 0 failed; 0 skipped; finished in 3.94s (3.63s CPU time)
+
+Ran 7 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v4/decimals/UniswapV4FullSpreadStandardExchangeVault_FullRangeBook_P18_R6.t.sol:UniswapV4FullSpreadStandardExchangeVault_FullRangeBook_P18_R6
+[PASS] testFuzz_singleDeposit_roundTripPreservesIncumbentValue(bool) (runs: 128, μ: 1323533, ~: 1301138)
+[PASS] test_FR1_centerTicksFullRange_wingsUnused() (gas: 860045)
+[PASS] test_FR2_spotWalk_centerStaysInRange_feesOrTotalsGrow() (gas: 977117)
+[PASS] test_FR3_rebalanceAfterWalk_ticksUnchanged_sleeveDeadband() (gas: 1135171)
+[PASS] test_FR4_blockedJoin_thenIdleRebalance_sameFullRangeTicks() (gas: 1157229)
+[PASS] test_FR5_bothTokensActivateThenSingleTokenDepositsRemainAvailable() (gas: 1268486)
+[PASS] test_FR6_importConvertsRealNftToFullRangeIncludingEarnedFees() (gas: 27231492)
+Suite result: ok. 7 passed; 0 failed; 0 skipped; finished in 3.73s (3.36s CPU time)
+
+Ran 3 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v4/UniswapV4FullSpreadStandardExchangeVault_NativeEthWrap.t.sol:UniswapV4FullSpreadStandardExchangeVault_NativeEthWrap
+[PASS] test_swap_nativeEthPool_wrapsTakenEthToWeth() (gas: 1434969)
+[PASS] test_zapIn_nativeEthPool_unwrapsWethAndLeavesNoEthDust() (gas: 1505599)
+[PASS] test_zapOut_nativeEthPool_paysWethNotEth() (gas: 1296061)
+Suite result: ok. 3 passed; 0 failed; 0 skipped; finished in 773.04ms (101.07ms CPU time)
+
+Ran 7 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v4/decimals/UniswapV4FullSpreadStandardExchangeVault_FullRangeBook_P6_R18.t.sol:UniswapV4FullSpreadStandardExchangeVault_FullRangeBook_P6_R18
+[PASS] testFuzz_singleDeposit_roundTripPreservesIncumbentValue(bool) (runs: 128, μ: 1328502, ~: 1351542)
+[PASS] test_FR1_centerTicksFullRange_wingsUnused() (gas: 860355)
+[PASS] test_FR2_spotWalk_centerStaysInRange_feesOrTotalsGrow() (gas: 978991)
+[PASS] test_FR3_rebalanceAfterWalk_ticksUnchanged_sleeveDeadband() (gas: 1137045)
+[PASS] test_FR4_blockedJoin_thenIdleRebalance_sameFullRangeTicks() (gas: 1040775)
+[PASS] test_FR5_bothTokensActivateThenSingleTokenDepositsRemainAvailable() (gas: 1152014)
+[PASS] test_FR6_importConvertsRealNftToFullRangeIncludingEarnedFees() (gas: 27308625)
+Suite result: ok. 7 passed; 0 failed; 0 skipped; finished in 3.95s (3.47s CPU time)
+
+Ran 79 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV4FullSpreadStandardExchangeVault_Adversarial.t.sol:UniswapV4FullSpreadStandardExchangeVault_Adversarial
+[PASS] testFuzz_deliveryAcrossSleeveRatios(bool,uint8) (runs: 129, μ: 1509942, ~: 1494653)
+[PASS] testFuzz_noPhantomCreditAfterTrade(bool,uint96) (runs: 128, μ: 1079894, ~: 1079750)
+[PASS] test_A0_dustFirstMint_reverts() (gas: 361427)
+[PASS] test_A0_dustFirstMint_reverts_sixDecimals() (gas: 13999749)
+[PASS] test_A0_dustFirstMint_thenDonate_victimJoin_attackerCannotTakeHalf() (gas: 1838225)
+[PASS] test_A0_floor_decimalSumBelowSix() (gas: 13998496)
+[PASS] test_A0_floor_oddDecimalSum() (gas: 14000111)
+[PASS] test_A0_floor_revertingMetadataFallsBackToEighteen() (gas: 13594285)
+[PASS] test_A0_floor_sixEighteen() (gas: 14000749)
+[PASS] test_A0_minimumPlusOne_previewAndExecution_blocked() (gas: 1563024)
+[PASS] test_A0_minimumPlusOne_previewAndExecution_idleAndBlocked() (gas: 916458)
+[PASS] test_A0_residualDeadShares_firstMinterNotWhole() (gas: 555672)
+[PASS] test_C1_nestedMoneyPaths_recordedAndPropagating() (gas: 1940219)
+[PASS] test_CROPS_disableInboundStillAllowsExitAndSY() (gas: 2149707)
+[PASS] test_E6_dualExit_refundMatrix_blocked() (gas: 2943732)
+[PASS] test_E6_dualExit_shortShares_idleAndBlocked() (gas: 1954749)
+[PASS] test_E6_dualExit_unusedShares_fatMax_transferOnlyUsed_doesNotPayBooked() (gas: 2805098)
+[PASS] test_E6_exchangeOut_tokenExactOut_fatMax_transferOnlyUsed_doesNotPayBooked() (gas: 3170093)
+[PASS] test_E6_pretransferredZapOut_cannotBurnMoreThanDelivered() (gas: 2719273)
+[PASS] test_E6_zapOut_refundMatrix_blocked() (gas: 4099855)
+[PASS] test_E6_zapOut_refundMatrix_idle() (gas: 7417337)
+[PASS] test_F5_rebalancePaysCallerNothing() (gas: 1021770)
+[PASS] test_H_lockedExitAfterPermissionlessRebalance() (gas: 1153429)
+[PASS] test_H_lockedExit_onePercentOfSupply() (gas: 1154617)
+[PASS] test_H_positiveSleeveInsufficientCapacity_rollsBack() (gas: 1191979)
+[PASS] test_H_zeroSleeveCanBlockLockedExit() (gas: 1173775)
+[PASS] test_I1_exchangeOut_pretransferredTrue_noDelivery() (gas: 2541633)
+[PASS] test_I1_pretransferredTrue_noDelivery_noFreeMint() (gas: 972280)
+[PASS] test_I2_dualJoinOneExcessLeg_rollsBack() (gas: 990799)
+[PASS] test_I2_excessExactIn_reverts() (gas: 972849)
+[PASS] test_I2_exchangeOut_usedGtActualIn_reverts() (gas: 2542078)
+[PASS] test_I2_shortPush_pretransferred_claimedGtDelta_reverts() (gas: 973157)
+[PASS] test_I3_exchangeOut_residualAfterSuccessfulPush() (gas: 2051974)
+[PASS] test_I3_residualAfterSuccessfulPush_cannotFundSecondFreePretransfer() (gas: 1752354)
+[PASS] test_I_reserveOfTokenWrittenAfterRebalanceAndSwap() (gas: 1411495)
+[PASS] test_I_routerTransferFromUserToVault() (gas: 1414138)
+[PASS] test_J1_TargetSelectorsMatchFacetDeclarations() (gas: 45436906)
+[PASS] test_J2_allTargetSelectorsInstalledOnProxy() (gas: 43394319)
+[PASS] test_J3_proxyFundedMoneyPathsAndRemovedPrepare() (gas: 2037304)
+[PASS] test_J3_queryAndNativeSYProductSelectors() (gas: 2578694)
+[PASS] test_L1_poolTradeThenFalsePretransfer_noCredit() (gas: 1231415)
+[PASS] test_L2_FoT_forbidden() (gas: 1380727)
+[PASS] test_L3_spotSkew_noUnfundedMint() (gas: 1224399)
+[PASS] test_SYFailureRollsBackAndCanRetry() (gas: 1446896)
+[PASS] test_bookedSharesCannotBeClaimed() (gas: 1190992)
+[PASS] test_disabledPackageRejectsDepositButPermitsWithdrawals() (gas: 2608132)
+[PASS] test_disabledVaultRejectsDepositButPermitsWithdrawals() (gas: 2605765)
+[PASS] test_everyTargetSelectorIsInstalledOnRegistryProxy() (gas: 43394119)
+[PASS] test_excessPushedTransferRejected() (gas: 972475)
+[PASS] test_failedRouteRollsBackCreditAndCanRetry() (gas: 1265966)
+[PASS] test_feeOnTransferInputRejectedAndRolledBack() (gas: 1000901)
+[PASS] test_fundedCallerMaySelectRecipient() (gas: 1211714)
+[PASS] test_lockedExactOutputRefundsPushedShares() (gas: 1328883)
+[PASS] test_lockedExitSettlesBothEntitlements() (gas: 1125855)
+[PASS] test_lockedPushedDeposit() (gas: 1255032)
+[PASS] test_nativeSYCallerRedemptionNeedsNoAllowance() (gas: 1324097)
+[PASS] test_nativeSYInternalHolderBurnAndInsufficientBalance() (gas: 1462153)
+[PASS] test_nativeSYInternalMinimumRollbackAndContextRestored() (gas: 1597138)
+[PASS] test_nativeSYRequestedRecipientAndOrdinaryCallerDenied() (gas: 1379899)
+[PASS] test_noPositionNoMovementDoesNotEnableUnpushedInput() (gas: 310359)
+[PASS] test_priceMoveCannotCreditPhantomDeposit_token0() (gas: 1231151)
+[PASS] test_priceMoveCannotCreditPhantomDeposit_token1() (gas: 1224707)
+[PASS] test_proxyRemovedPreparationSurface() (gas: 108996)
+[PASS] test_pullAndPushedDepositsAfterPriceMovement() (gas: 1751472)
+[PASS] test_pullDualExit_maxAllowanceAndBalance_blocked() (gas: 2697211)
+[PASS] test_pullDualExit_maxAllowanceAndBalance_idle() (gas: 3105069)
+[PASS] test_pushedDirectExactInputSwap() (gas: 1480425)
+[PASS] test_pushedDualWithdrawalRefundsOnlyDeliveredShares() (gas: 1767791)
+[PASS] test_pushedExactOutputRefundOnlyUnusedInput() (gas: 1585457)
+[PASS] test_pushedExactOutputShareWithdrawal() (gas: 4517967)
+[PASS] test_pushedMultiDepositAndMissingSecondToken() (gas: 1569041)
+[PASS] test_pushedSharesRedeemAndCannotReplay() (gas: 1481920)
+[PASS] test_rebalanceCannotCreatePushedCredit() (gas: 1334208)
+[PASS] test_sharePermitAuthorizesOnlySignedSpenderAndCannotReplay() (gas: 1026081)
+[PASS] test_shortPushedTransferRejected() (gas: 972937)
+[PASS] test_transferCallbackCannotExchangeMidDeposit() (gas: 1300341)
+[PASS] test_transferCallbackCannotRedeemOwnedSYClaimsMidDeposit() (gas: 1299218)
+[PASS] test_transferCallbackCannotReenter() (gas: 1302147)
+[PASS] test_unpushedDirectSwapAndExactOutputRejected() (gas: 1300104)
+Suite result: ok. 79 passed; 0 failed; 0 skipped; finished in 6.02s (7.82s CPU time)
+
+Ran 7 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v4/decimals/UniswapV4FullSpreadStandardExchangeVault_FullRangeBook_P9_R18.t.sol:UniswapV4FullSpreadStandardExchangeVault_FullRangeBook_P9_R18
+[PASS] testFuzz_singleDeposit_roundTripPreservesIncumbentValue(bool) (runs: 128, μ: 1353214, ~: 1353636)
+[PASS] test_FR1_centerTicksFullRange_wingsUnused() (gas: 860771)
+[PASS] test_FR2_spotWalk_centerStaysInRange_feesOrTotalsGrow() (gas: 979369)
+[PASS] test_FR3_rebalanceAfterWalk_ticksUnchanged_sleeveDeadband() (gas: 1137812)
+[PASS] test_FR4_blockedJoin_thenIdleRebalance_sameFullRangeTicks() (gas: 1041607)
+[PASS] test_FR5_bothTokensActivateThenSingleTokenDepositsRemainAvailable() (gas: 1152846)
+[PASS] test_FR6_importConvertsRealNftToFullRangeIncludingEarnedFees() (gas: 27248004)
+Suite result: ok. 7 passed; 0 failed; 0 skipped; finished in 3.85s (3.60s CPU time)
+
+Ran 36 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/remediation/UniswapV3FullSpreadStandardExchangeVault_Delivery.t.sol:UniswapV3FullSpreadStandardExchangeVault_Delivery
+[PASS] testFuzz_deliveryAcrossSleeveRatios(bool,uint8) (runs: 128, μ: 1341357, ~: 1339756)
+[PASS] testFuzz_noPhantomCreditAfterTrade(bool,uint96) (runs: 128, μ: 973137, ~: 975634)
+[PASS] test_SYFailureRollsBackAndCanRetry() (gas: 1334344)
+[PASS] test_bookedSharesCannotBeClaimed() (gas: 1080547)
+[PASS] test_disabledPackageRejectsDepositButPermitsWithdrawals() (gas: 3284714)
+[PASS] test_disabledVaultRejectsDepositButPermitsWithdrawals() (gas: 3282281)
+[PASS] test_everyTargetSelectorIsInstalledOnRegistryProxy() (gas: 23530637)
+[PASS] test_excessPushedTransferRejected() (gas: 879510)
+[PASS] test_failedRouteRollsBackCreditAndCanRetry() (gas: 1179339)
+[PASS] test_feeOnTransferInputRejectedAndRolledBack() (gas: 907979)
+[PASS] test_fundedCallerMaySelectRecipient() (gas: 1124286)
+[PASS] test_lockedExactOutputRefundsPushedShares() (gas: 1245511)
+[PASS] test_lockedExitSettlesBothEntitlements() (gas: 1047052)
+[PASS] test_lockedPushedDeposit() (gas: 1159992)
+[PASS] test_nativeSYCallerRedemptionNeedsNoAllowance() (gas: 1179110)
+[PASS] test_nativeSYInternalHolderBurnAndInsufficientBalance() (gas: 1296202)
+[PASS] test_nativeSYInternalMinimumRollbackAndContextRestored() (gas: 1466591)
+[PASS] test_nativeSYRequestedRecipientAndOrdinaryCallerDenied() (gas: 1210509)
+[PASS] test_noPositionNoMovementDoesNotEnableUnpushedInput() (gas: 176089)
+[PASS] test_priceMoveCannotCreditPhantomDeposit_token0() (gas: 1126612)
+[PASS] test_priceMoveCannotCreditPhantomDeposit_token1() (gas: 1118121)
+[PASS] test_proxyRemovedPreparationSurface() (gas: 108249)
+[PASS] test_pullAndPushedDepositsAfterPriceMovement() (gas: 1635620)
+[PASS] test_pushedDirectExactInputSwap() (gas: 1393207)
+[PASS] test_pushedDualWithdrawalRefundsOnlyDeliveredShares() (gas: 1743390)
+[PASS] test_pushedExactOutputRefundOnlyUnusedInput() (gas: 1505737)
+[PASS] test_pushedExactOutputShareWithdrawal() (gas: 6837095)
+[PASS] test_pushedMultiDepositAndMissingSecondToken() (gas: 1451055)
+[PASS] test_pushedSharesRedeemAndCannotReplay() (gas: 1424203)
+[PASS] test_rebalanceCannotCreatePushedCredit() (gas: 1253744)
+[PASS] test_sharePermitAuthorizesOnlySignedSpenderAndCannotReplay() (gas: 931412)
+[PASS] test_shortPushedTransferRejected() (gas: 879752)
+[PASS] test_transferCallbackCannotExchangeMidDeposit() (gas: 1200275)
+[PASS] test_transferCallbackCannotRedeemOwnedSYClaimsMidDeposit() (gas: 1200162)
+[PASS] test_transferCallbackCannotReenter() (gas: 1201575)
+[PASS] test_unpushedDirectSwapAndExactOutputRejected() (gas: 1205592)
+Suite result: ok. 36 passed; 0 failed; 0 skipped; finished in 5.71s (7.75s CPU time)
+
+Ran 4 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVault_Decimals.t.sol:UniswapV3FullSpreadStandardExchangeVault_Decimals
+[PASS] testFuzz_decimalDirections(bool,uint8) (runs: 128, μ: 19565921, ~: 19565461)
+[PASS] test_decimals6and18() (gas: 19564908)
+[PASS] test_decimals6and6() (gas: 19564442)
+[PASS] test_decimals9and18() (gas: 19565236)
+Suite result: ok. 4 passed; 0 failed; 0 skipped; finished in 8.17s (7.74s CPU time)
+
+Ran 15 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v4/UniswapV4FullSpreadStandardExchangeVault_MultiJoinExit.t.sol:UniswapV4FullSpreadStandardExchangeVault_MultiJoinExit
+[PASS] test_ME1_lengthNotTwo_reverts_singleZapOutStillWorks() (gas: 1518747)
+[PASS] test_ME2_idleProportionalExit_paysBoth_ticksUnchanged() (gas: 1246794)
+[PASS] test_ME3_unbalancedExit_reverts_noSendNoSwap() (gas: 929207)
+[PASS] test_ME4_blockedProportional_coverPays_shortRevertsWholeTx() (gas: 1327099)
+[PASS] test_ME5_maxAmountInTooLow_noPartialSend() (gas: 969581)
+[PASS] test_ME6_previewExitSharesMatchExec_idleAndBlocked() (gas: 1394355)
+[PASS] test_ME7_maxAmountInAboveS_refundsUnusedShares() (gas: 1205817)
+[PASS] test_MJ1_lengthNotTwo_reverts_singleZapInStillWorks() (gas: 1163369)
+[PASS] test_MJ2_idleProportionalJoin_fullRangeL_andSleeve() (gas: 876996)
+[PASS] test_MJ3_unbalancedJoin_paysBoth_surplusStaysSleeve() (gas: 947287)
+[PASS] test_MJ4_blockedJoin_mints_noNestedUnlock_laterRebalance() (gas: 889375)
+[PASS] test_MJ5_pretransferredTrue_noDelivery_noFreeMint() (gas: 873381)
+[PASS] test_MJ6_unsortedDuplicateNonPoolOrWrongOut_reverts() (gas: 140042)
+[PASS] test_MJ7_previewJoinSharesMatchExec_idleAndBlocked() (gas: 1039422)
+[PASS] test_MJ8_descendingTokenIn_reverts() (gas: 45547)
+Suite result: ok. 15 passed; 0 failed; 0 skipped; finished in 8.82s (184.87ms CPU time)
+
+Ran 18 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVault_FullRangeBook.t.sol:UniswapV3FullSpreadStandardExchangeVault_FullRangeBook_Test
+[PASS] testFuzz_firstDeposit_preservesEveryDonatedAsset(bool,uint32) (runs: 129, μ: 710824, ~: 710681)
+[PASS] testFuzz_freeInventoryExit_matchesQuote(bool,bool) (runs: 129, μ: 841353, ~: 936717)
+[PASS] testFuzz_fundedSleeveWithdrawalRounding(uint128,uint128) (runs: 129, μ: 969424, ~: 977545)
+[PASS] testFuzz_singleDeposit_preservesInvariantPerShare(bool,uint32,uint32) (runs: 129, μ: 611319, ~: 611369)
+[PASS] testFuzz_singleDeposit_roundTripPreservesIncumbentValue(bool) (runs: 128, μ: 1079388, ~: 1079388)
+[PASS] testFuzz_transitionSequence_fundedPool(bool,uint16) (runs: 128, μ: 3636552, ~: 3641776)
+[PASS] testFuzz_zapOut_accruedFees_matchQuote(bool) (runs: 128, μ: 1057594, ~: 1047057)
+[PASS] testFuzz_zapOut_exactOutputChargesQuotedShares(bool) (runs: 128, μ: 1860608, ~: 1922473)
+[PASS] testFuzz_zapOut_previewIncludesRemovedLiquidity(bool,uint16) (runs: 128, μ: 1036804, ~: 988399)
+[PASS] test_FR1_centerTicksFullRange_noWings() (gas: 659675)
+[PASS] test_FR2_spotWalk_centerStaysInRange_feesOrTotalsGrow() (gas: 774315)
+[PASS] test_FR3_rebalanceAfterWalk_ticksUnchanged_sleeveDeadband() (gas: 862388)
+[PASS] test_FR4_blockedJoin_thenIdleRebalance_sameFullRangeTicks() (gas: 1237662)
+[PASS] test_FR5_bothTokensActivateThenSingleTokenDepositsRemainAvailable() (gas: 1132422)
+[PASS] test_FR6_importedNftConvertedToFullRange() (gas: 1554951)
+[PASS] test_accruedFees_blockedDepositMatchesIdlePreview() (gas: 1078315)
+[PASS] test_externalDepositTransition_preservesFundedHolderBook() (gas: 1532157)
+[PASS] test_externalSwapTransition_preservesFundedHolderBook() (gas: 1503725)
+Suite result: ok. 18 passed; 0 failed; 0 skipped; finished in 21.08s (45.42s CPU time)
+
+Ran 36 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/remediation/UniswapV4FullSpreadStandardExchangeVault_NativeDelivery.t.sol:UniswapV4FullSpreadStandardExchangeVault_NativeDelivery
+[PASS] testFuzz_deliveryAcrossSleeveRatios(bool,uint8) (runs: 129, μ: 1514151, ~: 1502052)
+[PASS] testFuzz_noPhantomCreditAfterTrade(bool,uint96) (runs: 128, μ: 1066673, ~: 1060884)
+[PASS] test_SYFailureRollsBackAndCanRetry() (gas: 1491185)
+[PASS] test_bookedSharesCannotBeClaimed() (gas: 1162246)
+[PASS] test_disabledPackageRejectsDepositButPermitsWithdrawals() (gas: 2735353)
+[PASS] test_disabledVaultRejectsDepositButPermitsWithdrawals() (gas: 2732920)
+[PASS] test_everyTargetSelectorIsInstalledOnRegistryProxy() (gas: 43396055)
+[PASS] test_excessPushedTransferRejected() (gas: 950554)
+[PASS] test_failedRouteRollsBackCreditAndCanRetry() (gas: 1271498)
+[PASS] test_feeOnTransferInputRejectedAndRolledBack() (gas: 969808)
+[PASS] test_fundedCallerMaySelectRecipient() (gas: 1207947)
+[PASS] test_lockedExactOutputRefundsPushedShares() (gas: 1303902)
+[PASS] test_lockedExitSettlesBothEntitlements() (gas: 1097972)
+[PASS] test_lockedPushedDeposit() (gas: 1257346)
+[PASS] test_nativeSYCallerRedemptionNeedsNoAllowance() (gas: 1342669)
+[PASS] test_nativeSYInternalHolderBurnAndInsufficientBalance() (gas: 1479573)
+[PASS] test_nativeSYInternalMinimumRollbackAndContextRestored() (gas: 1641314)
+[PASS] test_nativeSYRequestedRecipientAndOrdinaryCallerDenied() (gas: 1396227)
+[PASS] test_noPositionNoMovementDoesNotEnableUnpushedInput() (gas: 296602)
+[PASS] test_priceMoveCannotCreditPhantomDeposit_token0() (gas: 1223423)
+[PASS] test_priceMoveCannotCreditPhantomDeposit_token1() (gas: 1209488)
+[PASS] test_proxyRemovedPreparationSurface() (gas: 108050)
+[PASS] test_pullAndPushedDepositsAfterPriceMovement() (gas: 1810458)
+[PASS] test_pushedDirectExactInputSwap() (gas: 1528386)
+[PASS] test_pushedDualWithdrawalRefundsOnlyDeliveredShares() (gas: 1765942)
+[PASS] test_pushedExactOutputRefundOnlyUnusedInput() (gas: 1635717)
+[PASS] test_pushedExactOutputShareWithdrawal() (gas: 4539515)
+[PASS] test_pushedMultiDepositAndMissingSecondToken() (gas: 1583790)
+[PASS] test_pushedSharesRedeemAndCannotReplay() (gas: 1512346)
+[PASS] test_rebalanceCannotCreatePushedCredit() (gas: 1359460)
+[PASS] test_sharePermitAuthorizesOnlySignedSpenderAndCannotReplay() (gas: 993937)
+[PASS] test_shortPushedTransferRejected() (gas: 950796)
+[PASS] test_transferCallbackCannotExchangeMidDeposit() (gas: 1273578)
+[PASS] test_transferCallbackCannotRedeemOwnedSYClaimsMidDeposit() (gas: 1272408)
+[PASS] test_transferCallbackCannotReenter() (gas: 1274879)
+[PASS] test_unpushedDirectSwapAndExactOutputRejected() (gas: 1293911)
+Suite result: ok. 36 passed; 0 failed; 0 skipped; finished in 39.62s (8.18s CPU time)
+
+Ran 30 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v4/UniswapV4FullSpreadStandardExchangeVault_FullRangeBook.t.sol:UniswapV4FullSpreadStandardExchangeVault_FullRangeBook
+[PASS] testFuzz_directSwap_protocolFeeQuoteMatches(bool,uint16) (runs: 128, μ: 505106, ~: 498613)
+[PASS] testFuzz_firstDeposit_preservesEveryDonatedAsset(bool,uint32) (runs: 129, μ: 918951, ~: 918876)
+[PASS] testFuzz_freeInventoryExit_matchesQuote(bool,bool) (runs: 129, μ: 930855, ~: 832141)
+[PASS] testFuzz_fundedSleeveWithdrawalRounding(uint128,uint128) (runs: 129, μ: 915491, ~: 931445)
+[PASS] testFuzz_importedPositionCannotBecomeUnfundedCredit(bool) (runs: 128, μ: 26794829, ~: 26792101)
+[PASS] testFuzz_singleDeposit_preservesInvariantPerShare(bool,uint32,uint32) (runs: 129, μ: 698230, ~: 698443)
+[PASS] testFuzz_singleDeposit_roundTripPreservesIncumbentValue(bool) (runs: 128, μ: 1353571, ~: 1356629)
+[PASS] testFuzz_transitionSequence_fundedPool(bool,uint16) (runs: 128, μ: 7001694, ~: 6979801)
+[PASS] testFuzz_zapOut_accruedFees_matchQuote(bool) (runs: 128, μ: 1369428, ~: 1353416)
+[PASS] testFuzz_zapOut_exactOutputChargesQuotedShares(bool,bool,uint96) (runs: 128, μ: 10723484, ~: 9687150)
+[PASS] testFuzz_zapOut_previewIncludesRemovedLiquidity(bool,uint16) (runs: 128, μ: 1347011, ~: 1280988)
+[PASS] test_A0_importBelowFloor_rollsBack() (gas: 25963426)
+[PASS] test_FR1_centerTicksFullRange_wingsUnused() (gas: 882969)
+[PASS] test_FR2_spotWalk_centerStaysInRange_feesOrTotalsGrow() (gas: 1009836)
+[PASS] test_FR3_rebalanceAfterWalk_ticksUnchanged_sleeveDeadband() (gas: 1165943)
+[PASS] test_FR4_blockedJoin_thenIdleRebalance_sameFullRangeTicks() (gas: 1193841)
+[PASS] test_FR5_firstActivationRequiresBothTokens() (gas: 978762)
+[PASS] test_FR6_importConvertsRealNftToFullRangeIncludingEarnedFees() (gas: 27121633)
+[PASS] test_M3_noImportedIncrease_permit2AllowanceToPositionManagerStaysZero() (gas: 26561472)
+[PASS] test_accruedFees_blockedDepositMatchesIdlePreview() (gas: 1090037)
+[PASS] test_accruedFees_rebalancePreservesDepositPrice() (gas: 1179923)
+[PASS] test_externalDepositTransition_preservesFundedHolderBook() (gas: 2598772)
+[PASS] test_externalSwapTransition_preservesFundedHolderBook() (gas: 3478131)
+[PASS] test_importEnforcesOwnershipAndMinimumWithoutCapturingSleeves() (gas: 26756593)
+[PASS] test_importRejectsUnfundedSideAndRollsBackNftTransfer() (gas: 25913680)
+[PASS] test_launchHelperActivatesBothTokensAndDoesNotReseed() (gas: 1090908)
+[PASS] test_nativeSYMetadataRateAndFacetSize() (gas: 4660356)
+[PASS] test_nativeSYRoutesInternalBalancesAndSlippage() (gas: 2074091)
+[PASS] test_nativeSYUsesFundedSleeveDuringManagerSession() (gas: 1200248)
+[PASS] test_transitionFullRedemption_retainsUnswappedInput() (gas: 3653436)
+Suite result: ok. 30 passed; 0 failed; 0 skipped; finished in 33.77s (99.61s CPU time)
+
+Ran 79 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV4FullSpreadStandardExchangeVault_NativeAdversarial.t.sol:UniswapV4FullSpreadStandardExchangeVault_NativeAdversarial
+[PASS] testFuzz_deliveryAcrossSleeveRatios(bool,uint8) (runs: 129, μ: 1501209, ~: 1502226)
+[PASS] testFuzz_noPhantomCreditAfterTrade(bool,uint96) (runs: 128, μ: 1067442, ~: 1061627)
+[PASS] test_A0_dustFirstMint_reverts() (gas: 360312)
+[PASS] test_A0_dustFirstMint_reverts_sixDecimals() (gas: 14016839)
+[PASS] test_A0_dustFirstMint_thenDonate_victimJoin_attackerCannotTakeHalf() (gas: 1850738)
+[PASS] test_A0_floor_decimalSumBelowSix() (gas: 14015586)
+[PASS] test_A0_floor_oddDecimalSum() (gas: 14017201)
+[PASS] test_A0_floor_revertingMetadataFallsBackToEighteen() (gas: 13611375)
+[PASS] test_A0_floor_sixEighteen() (gas: 14017839)
+[PASS] test_A0_minimumPlusOne_previewAndExecution_blocked() (gas: 1546617)
+[PASS] test_A0_minimumPlusOne_previewAndExecution_idleAndBlocked() (gas: 889222)
+[PASS] test_A0_residualDeadShares_firstMinterNotWhole() (gas: 545033)
+[PASS] test_C1_nestedMoneyPaths_recordedAndPropagating() (gas: 1938671)
+[PASS] test_CROPS_disableInboundStillAllowsExitAndSY() (gas: 2223981)
+[PASS] test_E6_dualExit_refundMatrix_blocked() (gas: 2969759)
+[PASS] test_E6_dualExit_shortShares_idleAndBlocked() (gas: 1941238)
+[PASS] test_E6_dualExit_unusedShares_fatMax_transferOnlyUsed_doesNotPayBooked() (gas: 2835380)
+[PASS] test_E6_exchangeOut_tokenExactOut_fatMax_transferOnlyUsed_doesNotPayBooked() (gas: 3260683)
+[PASS] test_E6_pretransferredZapOut_cannotBurnMoreThanDelivered() (gas: 2709998)
+[PASS] test_E6_zapOut_refundMatrix_blocked() (gas: 4112870)
+[PASS] test_E6_zapOut_refundMatrix_idle() (gas: 7525011)
+[PASS] test_F5_rebalancePaysCallerNothing() (gas: 991997)
+[PASS] test_H_lockedExitAfterPermissionlessRebalance() (gas: 1126682)
+[PASS] test_H_lockedExit_onePercentOfSupply() (gas: 1127870)
+[PASS] test_H_positiveSleeveInsufficientCapacity_rollsBack() (gas: 1164090)
+[PASS] test_H_zeroSleeveCanBlockLockedExit() (gas: 1145886)
+[PASS] test_I1_exchangeOut_pretransferredTrue_noDelivery() (gas: 2532580)
+[PASS] test_I1_pretransferredTrue_noDelivery_noFreeMint() (gas: 941057)
+[PASS] test_I2_dualJoinOneExcessLeg_rollsBack() (gas: 969118)
+[PASS] test_I2_excessExactIn_reverts() (gas: 951169)
+[PASS] test_I2_exchangeOut_usedGtActualIn_reverts() (gas: 2539725)
+[PASS] test_I2_shortPush_pretransferred_claimedGtDelta_reverts() (gas: 951477)
+[PASS] test_I3_exchangeOut_residualAfterSuccessfulPush() (gas: 2059323)
+[PASS] test_I3_residualAfterSuccessfulPush_cannotFundSecondFreePretransfer() (gas: 1811581)
+[PASS] test_I_reserveOfTokenWrittenAfterRebalanceAndSwap() (gas: 1461596)
+[PASS] test_I_routerTransferFromUserToVault() (gas: 1416491)
+[PASS] test_J1_TargetSelectorsMatchFacetDeclarations() (gas: 45436906)
+[PASS] test_J2_allTargetSelectorsInstalledOnProxy() (gas: 43394319)
+[PASS] test_J3_proxyFundedMoneyPathsAndRemovedPrepare() (gas: 2073936)
+[PASS] test_J3_queryAndNativeSYProductSelectors() (gas: 2625433)
+[PASS] test_L1_poolTradeThenFalsePretransfer_noCredit() (gas: 1224038)
+[PASS] test_L2_FoT_forbidden() (gas: 1370122)
+[PASS] test_L3_spotSkew_noUnfundedMint() (gas: 1209553)
+[PASS] test_SYFailureRollsBackAndCanRetry() (gas: 1491317)
+[PASS] test_bookedSharesCannotBeClaimed() (gas: 1162444)
+[PASS] test_disabledPackageRejectsDepositButPermitsWithdrawals() (gas: 2735441)
+[PASS] test_disabledVaultRejectsDepositButPermitsWithdrawals() (gas: 2733074)
+[PASS] test_everyTargetSelectorIsInstalledOnRegistryProxy() (gas: 43394119)
+[PASS] test_excessPushedTransferRejected() (gas: 950795)
+[PASS] test_failedRouteRollsBackCreditAndCanRetry() (gas: 1272311)
+[PASS] test_feeOnTransferInputRejectedAndRolledBack() (gas: 969940)
+[PASS] test_fundedCallerMaySelectRecipient() (gas: 1208210)
+[PASS] test_lockedExactOutputRefundsPushedShares() (gas: 1304716)
+[PASS] test_lockedExitSettlesBothEntitlements() (gas: 1098622)
+[PASS] test_lockedPushedDeposit() (gas: 1258005)
+[PASS] test_nativeSYCallerRedemptionNeedsNoAllowance() (gas: 1342757)
+[PASS] test_nativeSYInternalHolderBurnAndInsufficientBalance() (gas: 1479661)
+[PASS] test_nativeSYInternalMinimumRollbackAndContextRestored() (gas: 1641644)
+[PASS] test_nativeSYRequestedRecipientAndOrdinaryCallerDenied() (gas: 1396623)
+[PASS] test_noPositionNoMovementDoesNotEnableUnpushedInput() (gas: 296953)
+[PASS] test_priceMoveCannotCreditPhantomDeposit_token0() (gas: 1223774)
+[PASS] test_priceMoveCannotCreditPhantomDeposit_token1() (gas: 1209861)
+[PASS] test_proxyRemovedPreparationSurface() (gas: 108820)
+[PASS] test_pullAndPushedDepositsAfterPriceMovement() (gas: 1810699)
+[PASS] test_pullDualExit_maxAllowanceAndBalance_blocked() (gas: 2694554)
+[PASS] test_pullDualExit_maxAllowanceAndBalance_idle() (gas: 3122471)
+[PASS] test_pushedDirectExactInputSwap() (gas: 1528958)
+[PASS] test_pushedDualWithdrawalRefundsOnlyDeliveredShares() (gas: 1766096)
+[PASS] test_pushedExactOutputRefundOnlyUnusedInput() (gas: 1636663)
+[PASS] test_pushedExactOutputShareWithdrawal() (gas: 4540065)
+[PASS] test_pushedMultiDepositAndMissingSecondToken() (gas: 1584538)
+[PASS] test_pushedSharesRedeemAndCannotReplay() (gas: 1512434)
+[PASS] test_rebalanceCannotCreatePushedCredit() (gas: 1359855)
+[PASS] test_sharePermitAuthorizesOnlySignedSpenderAndCannotReplay() (gas: 994553)
+[PASS] test_shortPushedTransferRejected() (gas: 951257)
+[PASS] test_transferCallbackCannotExchangeMidDeposit() (gas: 1273703)
+[PASS] test_transferCallbackCannotRedeemOwnedSYClaimsMidDeposit() (gas: 1273062)
+[PASS] test_transferCallbackCannotReenter() (gas: 1275510)
+[PASS] test_unpushedDirectSwapAndExactOutputRejected() (gas: 1293955)
+Suite result: ok. 79 passed; 0 failed; 0 skipped; finished in 39.26s (7.97s CPU time)
+
+Ran 36 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/remediation/UniswapV4FullSpreadStandardExchangeVault_Delivery.t.sol:UniswapV4FullSpreadStandardExchangeVault_Delivery
+[PASS] testFuzz_deliveryAcrossSleeveRatios(bool,uint8) (runs: 129, μ: 1487735, ~: 1491711)
+[PASS] testFuzz_noPhantomCreditAfterTrade(bool,uint96) (runs: 128, μ: 1076596, ~: 1078942)
+[PASS] test_SYFailureRollsBackAndCanRetry() (gas: 1444380)
+[PASS] test_bookedSharesCannotBeClaimed() (gas: 1188410)
+[PASS] test_disabledPackageRejectsDepositButPermitsWithdrawals() (gas: 2605468)
+[PASS] test_disabledVaultRejectsDepositButPermitsWithdrawals() (gas: 2603035)
+[PASS] test_everyTargetSelectorIsInstalledOnRegistryProxy() (gas: 43396055)
+[PASS] test_excessPushedTransferRejected() (gas: 969658)
+[PASS] test_failedRouteRollsBackCreditAndCanRetry() (gas: 1262385)
+[PASS] test_feeOnTransferInputRejectedAndRolledBack() (gas: 998193)
+[PASS] test_fundedCallerMaySelectRecipient() (gas: 1208875)
+[PASS] test_lockedExactOutputRefundsPushedShares() (gas: 1325685)
+[PASS] test_lockedExitSettlesBothEntitlements() (gas: 1122821)
+[PASS] test_lockedPushedDeposit() (gas: 1251797)
+[PASS] test_nativeSYCallerRedemptionNeedsNoAllowance() (gas: 1321625)
+[PASS] test_nativeSYInternalHolderBurnAndInsufficientBalance() (gas: 1459681)
+[PASS] test_nativeSYInternalMinimumRollbackAndContextRestored() (gas: 1594424)
+[PASS] test_nativeSYRequestedRecipientAndOrdinaryCallerDenied() (gas: 1377119)
+[PASS] test_noPositionNoMovementDoesNotEnableUnpushedInput() (gas: 310008)
+[PASS] test_priceMoveCannotCreditPhantomDeposit_token0() (gas: 1228224)
+[PASS] test_priceMoveCannotCreditPhantomDeposit_token1() (gas: 1221758)
+[PASS] test_proxyRemovedPreparationSurface() (gas: 108226)
+[PASS] test_pullAndPushedDepositsAfterPriceMovement() (gas: 1748463)
+[PASS] test_pushedDirectExactInputSwap() (gas: 1477085)
+[PASS] test_pushedDualWithdrawalRefundsOnlyDeliveredShares() (gas: 1765253)
+[PASS] test_pushedExactOutputRefundOnlyUnusedInput() (gas: 1581743)
+[PASS] test_pushedExactOutputShareWithdrawal() (gas: 4515033)
+[PASS] test_pushedMultiDepositAndMissingSecondToken() (gas: 1565333)
+[PASS] test_pushedSharesRedeemAndCannotReplay() (gas: 1479448)
+[PASS] test_rebalanceCannotCreatePushedCredit() (gas: 1331237)
+[PASS] test_sharePermitAuthorizesOnlySignedSpenderAndCannotReplay() (gas: 1023081)
+[PASS] test_shortPushedTransferRejected() (gas: 969900)
+[PASS] test_transferCallbackCannotExchangeMidDeposit() (gas: 1297640)
+[PASS] test_transferCallbackCannotRedeemOwnedSYClaimsMidDeposit() (gas: 1295988)
+[PASS] test_transferCallbackCannotReenter() (gas: 1298940)
+[PASS] test_unpushedDirectSwapAndExactOutputRejected() (gas: 1297484)
+Suite result: ok. 36 passed; 0 failed; 0 skipped; finished in 39.69s (7.99s CPU time)
+
+Ran 7 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v4/decimals/UniswapV4FullSpreadStandardExchangeVault_FullRangeBook_H6.t.sol:UniswapV4FullSpreadStandardExchangeVault_FullRangeBook_H6
+[PASS] testFuzz_singleDeposit_roundTripPreservesIncumbentValue(bool) (runs: 128, μ: 1301457, ~: 1298441)
+[PASS] test_FR1_centerTicksFullRange_wingsUnused() (gas: 859244)
+[PASS] test_FR2_spotWalk_centerStaysInRange_feesOrTotalsGrow() (gas: 983194)
+[PASS] test_FR3_rebalanceAfterWalk_ticksUnchanged_sleeveDeadband() (gas: 1140859)
+[PASS] test_FR4_blockedJoin_thenIdleRebalance_sameFullRangeTicks() (gas: 1154691)
+[PASS] test_FR5_bothTokensActivateThenSingleTokenDepositsRemainAvailable() (gas: 1265527)
+[PASS] test_FR6_importConvertsRealNftToFullRangeIncludingEarnedFees() (gas: 27088509)
+Suite result: ok. 7 passed; 0 failed; 0 skipped; finished in 33.68s (3.75s CPU time)
+
+Ran 79 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/adversarial/UniswapV3FullSpreadStandardExchangeVault_Adversarial.t.sol:UniswapV3FullSpreadStandardExchangeVault_Adversarial
+[PASS] testFuzz_deliveryAcrossSleeveRatios(bool,uint8) (runs: 128, μ: 1374809, ~: 1344184)
+[PASS] testFuzz_noPhantomCreditAfterTrade(bool,uint96) (runs: 128, μ: 973582, ~: 973000)
+[PASS] test_A0_dustFirstMint_reverts() (gas: 374032)
+[PASS] test_A0_dustFirstMint_reverts_sixDecimals() (gas: 18427843)
+[PASS] test_A0_dustFirstMint_thenDonate_victimJoin_attackerCannotTakeHalf() (gas: 1761771)
+[PASS] test_A0_floor_decimalSumBelowSix() (gas: 18426578)
+[PASS] test_A0_floor_oddDecimalSum() (gas: 18428209)
+[PASS] test_A0_floor_revertingMetadataFallsBackToEighteen() (gas: 18022204)
+[PASS] test_A0_floor_sixEighteen() (gas: 18428847)
+[PASS] test_A0_minimumPlusOne_previewAndExecution_blocked() (gas: 1471005)
+[PASS] test_A0_minimumPlusOne_previewAndExecution_idleAndBlocked() (gas: 831836)
+[PASS] test_A0_residualDeadShares_firstMinterNotWhole() (gas: 431805)
+[PASS] test_C1_nestedMoneyPaths_recordedAndPropagating() (gas: 1854304)
+[PASS] test_CROPS_disableInboundStillAllowsExitAndSY() (gas: 2645655)
+[PASS] test_E6_dualExit_refundMatrix_blocked() (gas: 3187105)
+[PASS] test_E6_dualExit_shortShares_idleAndBlocked() (gas: 1920992)
+[PASS] test_E6_dualExit_unusedShares_fatMax_transferOnlyUsed_doesNotPayBooked() (gas: 2945387)
+[PASS] test_E6_exchangeOut_tokenExactOut_fatMax_transferOnlyUsed_doesNotPayBooked() (gas: 3109029)
+[PASS] test_E6_pretransferredZapOut_cannotBurnMoreThanDelivered() (gas: 2633138)
+[PASS] test_E6_zapOut_refundMatrix_blocked() (gas: 4196303)
+[PASS] test_E6_zapOut_refundMatrix_idle() (gas: 7302593)
+[PASS] test_F5_rebalancePaysCallerNothing() (gas: 908521)
+[PASS] test_H_lockedExitAfterPermissionlessRebalance() (gas: 1044839)
+[PASS] test_H_lockedExit_onePercentOfSupply() (gas: 1046027)
+[PASS] test_H_positiveSleeveInsufficientCapacity_rollsBack() (gas: 1088100)
+[PASS] test_H_zeroSleeveCanBlockLockedExit() (gas: 1069940)
+[PASS] test_I1_exchangeOut_pretransferredTrue_noDelivery() (gas: 2441732)
+[PASS] test_I1_pretransferredTrue_noDelivery_noFreeMint() (gas: 879748)
+[PASS] test_I2_dualJoinOneExcessLeg_rollsBack() (gas: 897908)
+[PASS] test_I2_excessExactIn_reverts() (gas: 880125)
+[PASS] test_I2_exchangeOut_usedGtActualIn_reverts() (gas: 2442177)
+[PASS] test_I2_shortPush_pretransferred_claimedGtDelta_reverts() (gas: 880433)
+[PASS] test_I3_exchangeOut_residualAfterSuccessfulPush() (gas: 1956556)
+[PASS] test_I3_residualAfterSuccessfulPush_cannotFundSecondFreePretransfer() (gas: 1636743)
+[PASS] test_I_reserveOfTokenWrittenAfterRebalanceAndSwap() (gas: 1182706)
+[PASS] test_I_routerTransferFromUserToVault() (gas: 1326973)
+[PASS] test_J1_TargetSelectorsMatchFacetDeclarations() (gas: 25172413)
+[PASS] test_J2_allTargetSelectorsInstalledOnProxy() (gas: 23528873)
+[PASS] test_J3_proxyFundedMoneyPathsAndRemovedPrepare() (gas: 3792790)
+[PASS] test_J3_queryAndNativeSYProductSelectors() (gas: 2645747)
+[PASS] test_L1_poolTradeThenFalsePretransfer_noCredit() (gas: 1127227)
+[PASS] test_L2_FoT_forbidden() (gas: 1389285)
+[PASS] test_L3_spotSkew_noUnfundedMint() (gas: 1118186)
+[PASS] test_SYFailureRollsBackAndCanRetry() (gas: 1334476)
+[PASS] test_bookedSharesCannotBeClaimed() (gas: 1080745)
+[PASS] test_disabledPackageRejectsDepositButPermitsWithdrawals() (gas: 3284802)
+[PASS] test_disabledVaultRejectsDepositButPermitsWithdrawals() (gas: 3282435)
+[PASS] test_everyTargetSelectorIsInstalledOnRegistryProxy() (gas: 23528673)
+[PASS] test_excessPushedTransferRejected() (gas: 879751)
+[PASS] test_failedRouteRollsBackCreditAndCanRetry() (gas: 1180152)
+[PASS] test_feeOnTransferInputRejectedAndRolledBack() (gas: 908111)
+[PASS] test_fundedCallerMaySelectRecipient() (gas: 1124549)
+[PASS] test_lockedExactOutputRefundsPushedShares() (gas: 1246325)
+[PASS] test_lockedExitSettlesBothEntitlements() (gas: 1047702)
+[PASS] test_lockedPushedDeposit() (gas: 1160651)
+[PASS] test_nativeSYCallerRedemptionNeedsNoAllowance() (gas: 1179198)
+[PASS] test_nativeSYInternalHolderBurnAndInsufficientBalance() (gas: 1296290)
+[PASS] test_nativeSYInternalMinimumRollbackAndContextRestored() (gas: 1466921)
+[PASS] test_nativeSYRequestedRecipientAndOrdinaryCallerDenied() (gas: 1210905)
+[PASS] test_noPositionNoMovementDoesNotEnableUnpushedInput() (gas: 176440)
+[PASS] test_priceMoveCannotCreditPhantomDeposit_token0() (gas: 1126963)
+[PASS] test_priceMoveCannotCreditPhantomDeposit_token1() (gas: 1118494)
+[PASS] test_proxyRemovedPreparationSurface() (gas: 109019)
+[PASS] test_pullAndPushedDepositsAfterPriceMovement() (gas: 1635861)
+[PASS] test_pullDualExit_maxAllowanceAndBalance_blocked() (gas: 2726729)
+[PASS] test_pullDualExit_maxAllowanceAndBalance_idle() (gas: 3059169)
+[PASS] test_pushedDirectExactInputSwap() (gas: 1393779)
+[PASS] test_pushedDualWithdrawalRefundsOnlyDeliveredShares() (gas: 1743544)
+[PASS] test_pushedExactOutputRefundOnlyUnusedInput() (gas: 1506683)
+[PASS] test_pushedExactOutputShareWithdrawal() (gas: 6837645)
+[PASS] test_pushedMultiDepositAndMissingSecondToken() (gas: 1451803)
+[PASS] test_pushedSharesRedeemAndCannotReplay() (gas: 1424291)
+[PASS] test_rebalanceCannotCreatePushedCredit() (gas: 1254139)
+[PASS] test_sharePermitAuthorizesOnlySignedSpenderAndCannotReplay() (gas: 932028)
+[PASS] test_shortPushedTransferRejected() (gas: 880213)
+[PASS] test_transferCallbackCannotExchangeMidDeposit() (gas: 1200400)
+[PASS] test_transferCallbackCannotRedeemOwnedSYClaimsMidDeposit() (gas: 1200816)
+[PASS] test_transferCallbackCannotReenter() (gas: 1202206)
+[PASS] test_unpushedDirectSwapAndExactOutputRejected() (gas: 1205636)
+Suite result: ok. 79 passed; 0 failed; 0 skipped; finished in 39.71s (8.27s CPU time)
+
+Ran 2 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/invariants/UniswapV4FullSpreadStandardExchangeVault_Invariant.t.sol:UniswapV4FullSpreadStandardExchangeVault_Invariant
+[PASS] invariant_allInputsSharesAndCustodyReconcile() (runs: 64, calls: 6144, reverts: 0)
+
+╭-------------------------+-------------+-------+---------+----------╮
+| Contract                | Selector    | Calls | Reverts | Discards |
++====================================================================+
+| StandardExchangeHandler | deposit     | 1061  | 0       | 0        |
+|-------------------------+-------------+-------+---------+----------|
+| StandardExchangeHandler | donate      | 1063  | 0       | 0        |
+|-------------------------+-------------+-------+---------+----------|
+| StandardExchangeHandler | marketTrade | 1030  | 0       | 0        |
+|-------------------------+-------------+-------+---------+----------|
+| StandardExchangeHandler | rebalance   | 996   | 0       | 0        |
+|-------------------------+-------------+-------+---------+----------|
+| StandardExchangeHandler | sleeve      | 998   | 0       | 0        |
+|-------------------------+-------------+-------+---------+----------|
+| StandardExchangeHandler | withdraw    | 996   | 0       | 0        |
+╰-------------------------+-------------+-------+---------+----------╯
+
+[PASS] test_deterministicSequenceExercisesEveryHandler() (gas: 2098441)
+Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 57.44s (56.39s CPU time)
+
+Ran 2 tests for test/foundry/spec/vaults/standard/exchange/protocols/uniswap/invariants/UniswapV3FullSpreadStandardExchangeVault_Invariant.t.sol:UniswapV3FullSpreadStandardExchangeVault_Invariant
+[PASS] invariant_allInputsSharesAndCustodyReconcile() (runs: 64, calls: 6144, reverts: 0)
+
+╭-------------------------+-------------+-------+---------+----------╮
+| Contract                | Selector    | Calls | Reverts | Discards |
++====================================================================+
+| StandardExchangeHandler | deposit     | 1001  | 0       | 0        |
+|-------------------------+-------------+-------+---------+----------|
+| StandardExchangeHandler | donate      | 1048  | 0       | 0        |
+|-------------------------+-------------+-------+---------+----------|
+| StandardExchangeHandler | marketTrade | 1021  | 0       | 0        |
+|-------------------------+-------------+-------+---------+----------|
+| StandardExchangeHandler | rebalance   | 1046  | 0       | 0        |
+|-------------------------+-------------+-------+---------+----------|
+| StandardExchangeHandler | sleeve      | 1029  | 0       | 0        |
+|-------------------------+-------------+-------+---------+----------|
+| StandardExchangeHandler | withdraw    | 999   | 0       | 0        |
+╰-------------------------+-------------+-------+---------+----------╯
+
+[PASS] test_deterministicSequenceExercisesEveryHandler() (gas: 1956971)
+Suite result: ok. 2 passed; 0 failed; 0 skipped; finished in 57.93s (57.09s CPU time)
+
+Ran 49 test suites in 57.94s (418.21s CPU time): 654 tests passed, 0 failed, 0 skipped (654 total tests)
+Exit status: 0

@@ -2,6 +2,8 @@
 pragma solidity ^0.8.0;
 
 import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote, IStandardExchangeRateQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeUnlockContextQuote} from "contracts/interfaces/IStandardExchangeUnlockContextQuote.sol";
 import {IERC165} from "@crane/contracts/interfaces/IERC165.sol";
 import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
@@ -42,12 +44,14 @@ library UniswapV4SeBufferHookLegLib {
         uint256 assets;
         uint256 heldAssets;
         uint256 heldShares;
+        address pair;
     }
 
     function afterExternalExchange(address se, address pair, address tokenIn, uint256 amountIn, address holder)
         external view returns (ExternalQuote memory q)
     {
         q.exchange = IStandardExchangeTransitionQuote(se);
+        q.pair = pair;
         (q.state,) = q.exchange.quoteState(pair, holder);
         if (tokenIn == se) {
             (q.state,,,) = q.exchange.quoteTransition(
@@ -67,7 +71,16 @@ library UniswapV4SeBufferHookLegLib {
         external view returns (ExternalQuote memory q)
     {
         q.exchange = IStandardExchangeTransitionQuote(se);
-        (q.state,) = q.exchange.quoteState(pair, holder);
+        q.pair = pair;
+        (q.state, q.heldAssets) = q.exchange.quoteState(pair, holder);
+        q.heldShares = q.exchange.quoteShareBalance(q.state);
+        if (amountIn == 0) return q;
+        if (
+            tokenIn != se && !_hasContextQuote(se)
+                && IStandardExchangeIn(se).previewExchangeIn(IERC20(tokenIn), amountIn, IERC20(se)) == 0
+        ) {
+            return q;
+        }
         (q.state, q.assets, q.heldAssets) = IStandardExchangeExternalQuote(se)
             .quoteExternalDeposit(q.state, tokenIn, amountIn);
         q.heldShares = q.exchange.quoteShareBalance(q.state);
@@ -76,6 +89,14 @@ library UniswapV4SeBufferHookLegLib {
     function depositAfterExchange(ExternalQuote memory q, uint256 assets)
         external view returns (uint256 minted, uint256 heldAssetsAfter)
     {
+        if (assets == 0) return (0, q.heldAssets);
+        address se = address(q.exchange);
+        if (
+            q.pair != address(0) && q.pair != se && !_hasContextQuote(se)
+                && IStandardExchangeIn(se).previewExchangeIn(IERC20(q.pair), assets, IERC20(se)) == 0
+        ) {
+            return (0, q.heldAssets);
+        }
         (,, minted, heldAssetsAfter) = q.exchange.quoteTransition(
             q.state, IStandardExchangeTransitionQuote.Operation.DepositExactIn, assets
         );
@@ -103,13 +124,22 @@ library UniswapV4SeBufferHookLegLib {
 
     error RateProviderFailed();
 
+    function _hasContextQuote(address se) private view returns (bool) {
+        (bool ok, bytes memory data) = se.staticcall(abi.encodeCall(IERC165.supportsInterface,
+            (type(IStandardExchangeUnlockContextQuote).interfaceId)));
+        return ok && data.length == 32 && abi.decode(data, (bool));
+    }
+
     function rateAfterExchange(ExternalQuote memory q, address pair, address provider)
         external view returns (uint256 rate)
     {
         bool projected;
-        try IERC165(provider).supportsInterface(type(IStandardExchangeRateQuote).interfaceId)
-            returns (bool supported) { projected = supported; }
-        catch {}
+        (bool probeOk, bytes memory probeData) = provider.staticcall(
+            abi.encodeCall(IERC165.supportsInterface, (type(IStandardExchangeRateQuote).interfaceId))
+        );
+        if (probeOk && probeData.length == 32) {
+            projected = abi.decode(probeData, (bool));
+        }
         bytes memory input = projected
             ? abi.encodeCall(IStandardExchangeRateQuote.quoteRate, (address(q.exchange), pair, q.state))
             : abi.encodeCall(IRateProvider.getRate, ());

@@ -106,10 +106,7 @@ abstract contract TestBase_UniswapV4WeightedSwapHook is TestBase_VaultComponents
         // --- Product package ---
         IFacet hooksFacet = PkgFactory.deployHooksFacet(create3Factory);
         IFacet liquidityFacet = PkgFactory.deployLiquidityFacet(create3Factory);
-        hookPkg = PkgFactory.deployPackage(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            owner,
-            IUniswapV4WeightedSwapHookPackage.PkgInit({
+        hookPkg = PkgFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, IUniswapV4WeightedSwapHookPackage.PkgInit({
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
                 hooksFacet: hooksFacet,
@@ -119,9 +116,7 @@ abstract contract TestBase_UniswapV4WeightedSwapHook is TestBase_VaultComponents
                 erc2612Facet: erc2612Facet,
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet
-            }),
-            abi.encode(type(IUniswapV4WeightedSwapHookPackage).name, "v1")._hash()
-        );
+            }));
     }
 
     /* ---------------------------------------------------------------------- */

@@ -78,10 +78,7 @@ contract UniswapV4OrbitalSwapHook_Reentrancy_Test is TestBase_VaultComponents {
 
         IFacet hooksFacet = PkgFactory.deployHooksFacet(create3Factory);
         IFacet liquidityFacet = PkgFactory.deployLiquidityFacet(create3Factory);
-        IUniswapV4OrbitalSwapHookPackage hookPkg = PkgFactory.deployPackage(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            owner,
-            IUniswapV4OrbitalSwapHookPackage.PkgInit({
+        IUniswapV4OrbitalSwapHookPackage hookPkg = PkgFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, IUniswapV4OrbitalSwapHookPackage.PkgInit({
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
                 hooksFacet: hooksFacet,
@@ -91,9 +88,7 @@ contract UniswapV4OrbitalSwapHook_Reentrancy_Test is TestBase_VaultComponents {
                 erc2612Facet: erc2612Facet,
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet
-            }),
-            abi.encode("orbital-reentrancy", "v1")._hash()
-        );
+            }));
 
         IUniswapV4OrbitalSwapHookPackage.PkgArgs memory args = IUniswapV4OrbitalSwapHookPackage.PkgArgs({
             poolManager: address(pm),

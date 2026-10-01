@@ -5,12 +5,7 @@
   ],
   "mcp": {
     "higgsfield": {
-      "type": "remote",
-      "url": "https://mcp.higgsfield.ai/mcp",
-      "enabled": true,
-      "oauth": {
-        "callbackPort": 19877
-      }
+      "enabled": false
     },
     "voltaire": {
       "type": "remote",

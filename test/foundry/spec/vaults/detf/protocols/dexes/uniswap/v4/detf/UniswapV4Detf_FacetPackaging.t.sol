@@ -1,6 +1,12 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {CraneTest} from "@crane/contracts/test/CraneTest.sol";
+import {Creation} from "@crane/contracts/utils/Creation.sol";
+
+
+import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
+
 import {ArtifactCreationCode} from "contracts/utils/foundry/ArtifactCreationCode.sol";
 
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
@@ -28,6 +34,7 @@ import {TestBase_UniswapV4Detf} from "contracts/vaults/detf/protocols/dexes/unis
 
 /// @notice Real CREATE3 facets and manager-deployed package must satisfy size and routing gates.
 contract UniswapV4Detf_FacetPackaging is TestBase_UniswapV4Detf {
+    using BetterEfficientHashLib for bytes;
     LaunchState private releaseState;
 
     function test_releaseStage_currentDependenciesResolveCurrentPackage() public {
@@ -54,8 +61,9 @@ contract UniswapV4Detf_FacetPackaging is TestBase_UniswapV4Detf {
             rebasingClaimTokenFacet: erc20Facet,
             diamondFactory: diamondPackageFactory
         });
-        releaseState.rebasingClaimTokenPkg = address(DetfPkgFactoryService.deployRebasingClaimTokenDFPkg(
-            create3Factory, init
+        releaseState.rebasingClaimTokenPkg = address(create3Factory.deployPackageWithArgs(
+            ArtifactCreationCode.creationCode("RebasingClaimTokenDFPkg.sol:RebasingClaimTokenDFPkg"),
+            abi.encode(init), abi.encode("UniswapV4Detf_FacetPackaging.wrongClaimFacet")._hash()
         ));
         vm.expectRevert(bytes("Phase 06-07: stale dependency facet; run 06-01 and 06-02"));
         this.executeReleaseStage();
@@ -81,26 +89,8 @@ contract UniswapV4Detf_FacetPackaging is TestBase_UniswapV4Detf {
         releaseState.rebasingClaimTokenPkg = address(rebasingClaimTokenPkg);
     }
 
-    /// @notice Existing type-name deployments cannot shadow the current claim implementation.
-    function test_releaseSalt_legacyFacetDoesNotShadowCurrentFacet() public {
-        bytes memory expectedRuntime = vm.parseJsonBytes(
-            vm.readFile("out/RebasingClaimTokenFacet.sol/RebasingClaimTokenFacet.json"), ".deployedBytecode.object"
-        );
-        IFacet legacy = create3Factory.deployFacet(
-            ArtifactCreationCode.creationCode(create3Factory, "lib/crane/contracts/tokens/ERC20/ERC20Facet.sol:ERC20Facet"), keccak256(abi.encode("RebasingClaimTokenFacet"))
-        );
-        assertTrue(address(legacy).codehash != keccak256(expectedRuntime), "occupied slot has different code");
-        IFacet current = DetfFacetFactoryService.deployRebasingClaimTokenFacet(create3Factory);
-        assertTrue(address(current) != address(legacy), "release does not reuse the legacy salt");
-        assertEq(address(current).code, expectedRuntime, "current implementation installed");
-        assertEq(
-            address(DetfFacetFactoryService.deployRebasingClaimTokenFacet(create3Factory)),
-            address(current), "identical release remains idempotent"
-        );
-    }
-
-    /// @notice A different valid facet binding creates a new package and preserves the previous one.
-    function test_releaseSalt_constructorChangeCreatesNewPackage() public {
+    /// @notice A changed constructor binding reuses the original package without rerunning initialization.
+    function test_releaseSalt_constructorChangeReusesOriginalPackage() public {
         IUniswapV4DetfDFPkg.PkgInit memory init = _releasePkgInit();
         IVaultRegistryDeployment reg = IVaultRegistryDeployment(address(indexedexManager));
         vm.startPrank(owner);
@@ -117,9 +107,9 @@ contract UniswapV4Detf_FacetPackaging is TestBase_UniswapV4Detf {
         IUniswapV4DetfDFPkg changed = UniswapV4Detf_Pkg_FactoryService.deployUniswapV4DetfDFPkg(reg, init);
         IUniswapV4DetfDFPkg repeated = UniswapV4Detf_Pkg_FactoryService.deployUniswapV4DetfDFPkg(reg, init);
         vm.stopPrank();
-        assertTrue(address(changed) != address(detfPkg), "constructor change gets a new package");
+        assertEq(address(changed), address(detfPkg), "occupied identity reuses original package");
         assertEq(address(repeated), address(changed), "new constructor also remains idempotent");
-        assertEq(changed.facetCuts()[6].facetAddress, address(replacement), "new immutable facet binding");
+        assertEq(changed.facetCuts()[6].facetAddress, address(detfProductFacets[1]), "original immutable binding retained");
         assertEq(detfPkg.facetCuts()[6].facetAddress, address(detfProductFacets[1]), "old package remains intact");
     }
 
@@ -171,7 +161,7 @@ contract UniswapV4Detf_FacetPackaging is TestBase_UniswapV4Detf {
         IDiamond.FacetCut[] memory cuts = detfPkg.facetCuts();
         assertEq(cuts.length, 10, "five shared facets plus five product facets");
         uint256 count;
-        bytes4[] memory seen = new bytes4[](46);
+        bytes4[] memory seen = new bytes4[](47);
         for (uint256 i; i < detfProductFacets.length; ++i) {
             assertEq(cuts[i + 5].facetAddress, address(detfProductFacets[i]), "package facet order");
             bytes4[] memory selectors = detfProductFacets[i].facetFuncs();
@@ -185,7 +175,7 @@ contract UniswapV4Detf_FacetPackaging is TestBase_UniswapV4Detf {
                 seen[count++] = selectors[j];
             }
         }
-        assertEq(count, 46, "funded product selector count");
+        assertEq(count, 47, "funded product selector count");
         assertTrue(IERC165(detf).supportsInterface(type(IUniswapV4Detf).interfaceId), "composed DETF interface");
         assertTrue(
             IERC165(detf).supportsInterface(type(IStandardExchangeIn).interfaceId), "composed exchange interface"
@@ -230,5 +220,28 @@ contract UniswapV4Detf_FacetPackaging is TestBase_UniswapV4Detf {
         IUniswapV4DetfSelfCall(target).sweepDustAtomic();
         vm.expectRevert(expectedError_);
         IUniswapV4DetfSelfCall(target).sweepPairToShare(address(0), address(0), 1);
+        vm.expectRevert(expectedError_);
+        IUniswapV4DetfSelfCall(target).joinResidualAtomic(address(0), 1, false);
+        vm.expectRevert(expectedError_);
+        IUniswapV4DetfSelfCall(target).joinResidualAtomic(address(0), 1, true);
+    }
+}
+
+/// @notice An occupied canonical component identity retains its first real deployment.
+contract UniswapV4Detf_OccupiedFacetSalt is CraneTest {
+    using BetterEfficientHashLib for bytes;
+
+    function test_releaseSalt_legacyFacetShadowsCurrentFacet() public {
+        bytes32 salt = abi.encode("RebasingClaimTokenFacet")._hash();
+        IFacet legacy = create3Factory.deployFacet(
+            ArtifactCreationCode.creationCode("lib/crane/contracts/tokens/ERC20/ERC20Facet.sol:ERC20Facet"), salt
+        );
+        bytes memory runtime = address(legacy).code;
+        assertEq(address(legacy), Creation._create3AddressFromOf(address(create3Factory), salt));
+        IFacet current = DetfFacetFactoryService.deployRebasingClaimTokenFacet(create3Factory);
+        assertEq(address(current), address(legacy));
+        assertEq(address(current).code, runtime);
+        assertEq(current.facetName(), "ERC20Facet");
+        assertEq(address(DetfFacetFactoryService.deployRebasingClaimTokenFacet(create3Factory)), address(legacy));
     }
 }

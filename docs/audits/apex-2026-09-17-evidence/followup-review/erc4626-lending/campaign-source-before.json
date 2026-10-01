@@ -1,0 +1,462 @@
+[
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/BalancerV3PoolStandardExchangeRepo.sol",
+    "sha256": "eb2d6d37829d5cfa467c5459d0fdafda5289fcc585f0f9e9c77fd9b67f486c7c"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/BalancerV3PoolStandardExchangeTarget.sol",
+    "sha256": "6c9acac70ba1605a55769e1cf5bdbc6ad29a1b6a896793b3f333253e69f4ffb6"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/BalancerV3PoolStandardExchangeTransitionQuoteFacet.sol",
+    "sha256": "91f682488993360c6f1fc28b792802b1c3b5af01ec90643d68a5edc11f5093f7"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/BalancerV3PoolStandardExchangeTransitionQuoteTarget.sol",
+    "sha256": "f9d86ecfa6814904b2b75877165ddaa78945e3abfe5e515883c32a26cb171141"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/BalancerV3SinglePoolStandardExchange.sol",
+    "sha256": "d6565a8d56476649431098efb7a5270817216b329d56693b8bb8d8201a30d01f"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPoolStandardVaultPkg.sol",
+    "sha256": "d7babe93bf4762f7c296fbdcd3a4c42026d703c2bcabaafc99c2fe31a45f558d"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPool_FactoryService.sol",
+    "sha256": "bd0efd33f6e130f793bd9e0071417a7762408d6d53a2ef6284050d0547a58969"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/IBalancerV3ConstantProductPoolStandardVaultPkg.sol",
+    "sha256": "917a5b95c824b81273a3fa748e6955abccb062850227d25939ab3f2879b14e21"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/facets/DefaultPoolInfoFacet.sol",
+    "sha256": "f945421124711c38aa9b42d0fd86799a9d56bdd1921156b54eaaddeb905afe63"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/facets/StandardSwapFeePercentageBoundsFacet.sol",
+    "sha256": "36a8b9dffcaf293112d38b1a8cb4f2cbaee2f6ab4dfce68b016346ec86ea0117"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/facets/StandardUnbalancedLiquidityInvariantRatioBoundsFacet.sol",
+    "sha256": "3f11746a94c81d59e03727733706e05e5149f76c3cd7ac1916c33d5d04dd7eb8"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPool.sol",
+    "sha256": "3651b55e93df659e12cebf433110a481eeccf2d4847dcf81b8aed65585d7e500"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/IStandardExchangeBufferPoolPkg.sol",
+    "sha256": "a487b5a0826411dc66ff5bea614791a5f182b0ba9b28eea856b6810f90f0ead8"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferHookTarget.sol",
+    "sha256": "646a8d29ddaf7f1ef68e79d9f218b7f2d5d3c480cbb96a995b40e21352849437"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolCommon.sol",
+    "sha256": "2538268da7e07a8b65fca75782fec47a0a7c3d9b880c38bfcbe3176954aa4d93"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolFacet.sol",
+    "sha256": "f0492a268bcf300ec0d92c666deebc2b195b6c01d47dcd7ddc2222c29faf2e27"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolLiquidityFacet.sol",
+    "sha256": "19ef040fbf105f154d54d1aad925d99a706cb166d5f365880e24abbc69f1e09e"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolLiquidityTarget.sol",
+    "sha256": "88d1dc0fc3b3f984b1e45caa47982f0febb3ef2c186aa268a41d873f29ccc924"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolRepo.sol",
+    "sha256": "581212bc48838812c9f878c7be250a07b4e29ce1c8f3ad1843792ea347af1343"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolStandardVaultPkg.sol",
+    "sha256": "0adf912f71c42f07ba122f19f29bd51ea21a0ec95c2d737a0143c25a3b8cc49c"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolTarget.sol",
+    "sha256": "c68fd0486b3a26882bacd15109114163d85230e9b04f4efa9ebf04cfd229ba77"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPool_FactoryService.sol",
+    "sha256": "80f87ea391cb97ed70538c54c8a905dc25e6844513d9d7eb895da7918aea62aa"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeHookFacet.sol",
+    "sha256": "e08993855d40c29c64a6b0b193ac58f810027a7b8b8664b9d18c90c36e35b697"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolCommon.sol",
+    "sha256": "5c205990151581980c2eb2d2d376b641bc8407556007329fddfca76abf33d4c0"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolFacet.sol",
+    "sha256": "4c6748f5e54f42068adb79ca75780074b606e26a6b2115fa20ce0ed141e1c541"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolHookFacet.sol",
+    "sha256": "973e56e499367ef8b9a100e637ebd58846a5778d46945cda74d81d7f8e21822c"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolHookTarget.sol",
+    "sha256": "21fdfe2c807ea7781bdcbafaf5808bd7bb1730d524c1eafc8853c1cf923b48ed"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolLiquidityFacet.sol",
+    "sha256": "d68e398287aba3d8cf838d0968d7b6d9dcf82998090c556cd1ef664a51db1956"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolLiquidityTarget.sol",
+    "sha256": "4f010736baae6240cb98c7f1d44523d2b47715bd1002859c72c5baeb531ba15d"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolRepo.sol",
+    "sha256": "7d09e406885ff149ca5e131e4ad4b00d7efddae7eaf12c26c38299b828d28648"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolStandardVaultPkg.sol",
+    "sha256": "b5d2bbb737124149011f04075055370e659b13892049d7bd77d7a08c1019a5db"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolTarget.sol",
+    "sha256": "6c3f42fb26937684e0f2584303a024041a955bcc2e4cce56a08a68c78cc6e9a1"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePool_FactoryService.sol",
+    "sha256": "848d3c9c2ac066da40492d34ea251b3c7b45f8441c59a950acb2adb894bfb2b6"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/ICommonBufferMultiVaultStablePool.sol",
+    "sha256": "c6efc64a1c17d3b477f4bcefd3c7df16b198dd4642eb12ff0491bb919c9a345d"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/ICommonBufferMultiVaultStablePoolPkg.sol",
+    "sha256": "e4b311652f979a0654853031d05923a2cf917f4693a2f6cc5a118d2a139a6912"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/IMixedBufferMultiVaultStablePool.sol",
+    "sha256": "1e1f4c54ab0fe6c1a8a49c68ab3d0d6b0042487c40527749cdfe92f4a09eeb16"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/IMixedBufferMultiVaultStablePoolPkg.sol",
+    "sha256": "26159ada0da9e10300dbb364eba08b5f28ecae523759557eb3c1baf85f5c2e0e"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolCommon.sol",
+    "sha256": "63b8d68a3a5558c517556f06f06e5975a3f072ee767173df26d29013bc197d9e"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolFacet.sol",
+    "sha256": "abbe8c305394cc08060b1242339a60b4da3545d3c25f94d6e6c1e941ea4fb373"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolHookFacet.sol",
+    "sha256": "5d2895e6a5b9f8db52e5a8cc99d57b0c46e5ef7d2849ef94e7bdc4512a1804a9"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolHookTarget.sol",
+    "sha256": "2e5d8bca8d6aa6b2e23af4539d0d4911d99234aa692d89230fd9a6d58d8917ef"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolLiquidityFacet.sol",
+    "sha256": "409100054c56cb50727c8ce2b911c0b55aec8ba9d915bd2049007cc7dc33b0f8"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolLiquidityTarget.sol",
+    "sha256": "e21a38a4d136547f415cd653b8959f7b7b9cc23a482009bc9574a18a78b3eae8"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolRepo.sol",
+    "sha256": "e3dbb58ab14d5de7ea3b5e494ac505232e6bd07f1ec25ba0e8cd225db5421f20"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolStandardVaultPkg.sol",
+    "sha256": "3a6da8f5cfd7c8539d2741c791f82cb0dd565653acf7b0f37c17bc6b1826148f"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolTarget.sol",
+    "sha256": "41388151a63c76b1afc3a0452959154d4a1f40d4af0ba4fcb92d1e0930e71802"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePool_FactoryService.sol",
+    "sha256": "a78efe09edefb262b6189c0f9d3dcec9895e9c12f211cdc3256d6b037b77dcc2"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolCommon.sol",
+    "sha256": "6c1a040e5ed1ce1c9ece7f0e0734cd9f5a05d2ed807a10fc6bac2182a3b54b4e"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolFacet.sol",
+    "sha256": "c6bf0e95b7a42242a3a8bc61541ecbbb82003ea994c8e0cf9ae3f0893a724a88"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolHookFacet.sol",
+    "sha256": "08729138dbbbc7ab626121b9ab688194c0624a03691e2ad28eabf0d517c46aae"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolHookTarget.sol",
+    "sha256": "d038c0e0b9e7eb1fd9eab1b27ce7ecafa0447a216e848982f5d0d402561868da"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolLiquidityFacet.sol",
+    "sha256": "f40485a10f48b04bed14c6f50f379c66015d81f09358fa71ab6217434610d285"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolLiquidityTarget.sol",
+    "sha256": "cbe88c592760e02bf64bc5b8cad7728bd22119dca671a41899c1ce6b0fad28c3"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolRepo.sol",
+    "sha256": "97329063c0b910cbb8c05a627fe8a5d795ab7e6f118fc673e8df8be08d6305c5"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolStandardVaultPkg.sol",
+    "sha256": "0a636cee17e9e1824e436bb2541937fca3f14803d35fc3988238492ba937b770"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolTarget.sol",
+    "sha256": "0da569a82fac35239324d091e762e8b7ef5178d46e8eeae4bba322c8341acdcb"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPool_FactoryService.sol",
+    "sha256": "099995c11d541dded934cbda79e9ab136c02ed47449136eadd6fa13b552a47d5"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/ICommonBufferMultiVaultWeightedPool.sol",
+    "sha256": "6d63f61ee2a3b715a51930fba05ed83567db11754633100f1d0815b7091b07a8"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/ICommonBufferMultiVaultWeightedPoolPkg.sol",
+    "sha256": "71b3f09e7d22859476224c85c2a352cfc463d0edce8e7c07c02c1614b4c787b7"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/IMixedLegWeightedBufferPool.sol",
+    "sha256": "e7b58ccd9f21b3e62afc7665fbdc32b44afdfacc216df57b6b5a6f0a2e609295"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/IMixedLegWeightedBufferPoolPkg.sol",
+    "sha256": "e253f88215c25e42b2b0b2f7d22ded5a4ca6cc51a5f94036e0032ae6ee1a6e89"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolCommon.sol",
+    "sha256": "4bfd5121a5971a92953fd7594487fe5050810683b037ce43708e17e326ab73ea"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolFacet.sol",
+    "sha256": "6e106f4bef36c1d0dd27c8f76810b53f2723d7e9f8f53c68281923b6b88299a6"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolHookFacet.sol",
+    "sha256": "ebcc51b009c9927bf79f1f647bd8a690af9e3f54f3c5762ccb3f5be5d76ae224"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolHookTarget.sol",
+    "sha256": "15d6b29ad123127ec7863f62ac220ffb89d2dc49a1ff873059c3d39225515f71"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolLiquidityFacet.sol",
+    "sha256": "b571084e63e67c0d138e26870a680f0af8d4c3de2b80286c669b616dc58b479b"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolLiquidityTarget.sol",
+    "sha256": "ee256fc13e095c57e122cacd1a2211b0bcd613cf33e84ce3290c07eea0f7a568"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolRepo.sol",
+    "sha256": "88b6ed7bd6beadbea6471c7f84105e045e9a3994333f458748eb62c46f103f28"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolStandardVaultPkg.sol",
+    "sha256": "86ab5d2cdf157fe2699683391d42d6dd5e9b740dd6e878d80535c5b907fc6c66"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolTarget.sol",
+    "sha256": "01e4bde67b5257b55c19909f6f556e361534ed22f600de9fa0b6b76c0e3fe827"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPool_FactoryService.sol",
+    "sha256": "e67fec6bf535f38dbe5ca0838c22bd3f5fd1c2a55a3c59e89fbf108cdfd0fb5d"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/IMultiPairStandardExchangeBufferPool.sol",
+    "sha256": "fc95741198213deecffb8eba3a0d4190761ad6b864572b2fed57c04700af905f"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/IMultiPairStandardExchangeBufferPoolPkg.sol",
+    "sha256": "05d17db9a962efdac71b9e01cd7da2d61038be9bf8084c77683d715a0db6619f"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferHookTarget.sol",
+    "sha256": "bf4ea1929ef28ab3938c9cb2813d211db1386e387bdf26b33f1127a41ac96e52"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPoolCommon.sol",
+    "sha256": "1e78f72147a9870774efbb9a25a418ac9cc6d320b03e78d3f1524b2b99c4f10d"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPoolFacet.sol",
+    "sha256": "2dec24d467ce73adc80f7af4d9e1268b67f01935ebad05e5503bf4f226f8ef53"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPoolLiquidityFacet.sol",
+    "sha256": "9c177718342d6f13224e66172c91978ecb0557cfdfc06d15250b7c568eae06d0"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPoolLiquidityTarget.sol",
+    "sha256": "7e3dc88bd1337c238344acd6ee5e76def5c75046253fe470f28fb4cb1d6c9ba3"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPoolRepo.sol",
+    "sha256": "75da8b5fbcb1c47376ff932b0fe0fabe84e9809d82852e8acc2e47e8383173d3"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPoolStandardVaultPkg.sol",
+    "sha256": "e22da457169a82eac76881d25b5f774efb07625d3007ad5461cf11887eb64e2d"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPoolTarget.sol",
+    "sha256": "47a47fda9f4212ce1d6c60c7bbe62b454a800bac9987ef703e9dd569842936f7"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPool_FactoryService.sol",
+    "sha256": "00a9961063eb22f7e282ffbc84bf7b5fd7f6446395f3fcd5b588a6e4576b6214"
+  },
+  {
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeHookFacet.sol",
+    "sha256": "9796f11fff24c3de11330f52f1d89bef7edd9ef5a4e76ac3edb089e40afd7b02"
+  },
+  {
+    "path": "contracts/protocols/lending/aave/v3.6/AaveV3StataMarkerFacet.sol",
+    "sha256": "14bfe7d59bf93277dad242b8635851ad7e001ec72ab37ca024e94f405d1bacdb"
+  },
+  {
+    "path": "contracts/protocols/lending/aave/v3.6/AaveV3StataMarkerTarget.sol",
+    "sha256": "7c3f0445b31f0c3a46d94cc8a16ece9ec4bf8fa75323258053ba52470490bfa5"
+  },
+  {
+    "path": "contracts/protocols/lending/aave/v3.6/AaveV3StataStandardExchangeCommon.sol",
+    "sha256": "89c5ff6658ef71f9ae80467eae4eeb530f51241be9d9865f755b4252a2a14e2a"
+  },
+  {
+    "path": "contracts/protocols/lending/aave/v3.6/AaveV3StataStandardExchangeDFPkg.sol",
+    "sha256": "2d1ffcd2fe2578cfa9f38d48c0411a513db27c40e0f2a767ef8b7842ea83929d"
+  },
+  {
+    "path": "contracts/protocols/lending/aave/v3.6/AaveV3StataStandardExchangeInFacet.sol",
+    "sha256": "2571da7c0333a5bbab6c801e83214c818ee33ca38d6cadb34ad58c843a074667"
+  },
+  {
+    "path": "contracts/protocols/lending/aave/v3.6/AaveV3StataStandardExchangeInTarget.sol",
+    "sha256": "1c2a94be77d1c74a6ef01de1254efb3404e1a4be0098adf19985c48a7f498602"
+  },
+  {
+    "path": "contracts/protocols/lending/aave/v3.6/AaveV3StataStandardExchangeOutFacet.sol",
+    "sha256": "fe42b460d756e970df69c2c2ceb65f6cf473b2f6cb914567fe8cfbde06b85fa2"
+  },
+  {
+    "path": "contracts/protocols/lending/aave/v3.6/AaveV3StataStandardExchangeOutTarget.sol",
+    "sha256": "1f56c02b3d46b4f989050cd9d6463d7c274d76efe5417f04e14ed37b362cdd71"
+  },
+  {
+    "path": "contracts/protocols/lending/aave/v3.6/AaveV3StataStandardYieldTarget.sol",
+    "sha256": "0c7b4da012dd805a32adfdb5313b5dde0acde251861e560ff73ade07d1a901e4"
+  },
+  {
+    "path": "contracts/protocols/lending/aave/v3.6/AaveV3Stata_Component_FactoryService.sol",
+    "sha256": "27e80c11e8b1ce57186e27b694418f77ae981008ed01e05ed6ddf520d9a0548c"
+  },
+  {
+    "path": "contracts/protocols/lending/aave/v3.6/IAaveV3StataStandardExchangeDFPkg.sol",
+    "sha256": "0ad36d3b69eaaf55028d3552d1c1db9a147338b25ea7ffe17aa91c7f15c5822f"
+  },
+  {
+    "path": "contracts/vaults/standard/erc4626/ERC4626StandardExchangeCommon.sol",
+    "sha256": "28409bcc026511682f6ae936cc79b2e6aa53cc9fae8961acf457722a457aa5ad"
+  },
+  {
+    "path": "contracts/vaults/standard/erc4626/ERC4626StandardExchangeDFPkg.sol",
+    "sha256": "a17a8d793c0d558c15dabef99912348d5a9d3432da5f3d7cd1eba23edc5f0552"
+  },
+  {
+    "path": "contracts/vaults/standard/erc4626/ERC4626StandardExchangeInFacet.sol",
+    "sha256": "f7aeb2284868cfdfc89d1dc4bbd1cb2382ff2b0520925ebd921f5b33561a025f"
+  },
+  {
+    "path": "contracts/vaults/standard/erc4626/ERC4626StandardExchangeInTarget.sol",
+    "sha256": "562e541f384080249d9bf646e73c0d017948e7cd517f7490df041b920d6ef17b"
+  },
+  {
+    "path": "contracts/vaults/standard/erc4626/ERC4626StandardExchangeMarkerFacet.sol",
+    "sha256": "3e8b5135880cbffb0afdd9c37a029c75344f3631d955f1a3ed8147f8170a5e03"
+  },
+  {
+    "path": "contracts/vaults/standard/erc4626/ERC4626StandardExchangeOutFacet.sol",
+    "sha256": "19d3766244f540710eff15e08df4110fb08f4b3b418b154987570e3ac227a775"
+  },
+  {
+    "path": "contracts/vaults/standard/erc4626/ERC4626StandardExchangeOutTarget.sol",
+    "sha256": "b8ef1386cdfbf550ff998257e2ca6c89de43c12a9b86180acdad5f8c0799125f"
+  },
+  {
+    "path": "contracts/vaults/standard/erc4626/ERC4626StandardExchangeQuoteTarget.sol",
+    "sha256": "e9d14227527f52ec00554b5c59353a5fea78f5f2a03d6269b92942dc3ccce970"
+  },
+  {
+    "path": "contracts/vaults/standard/erc4626/ERC4626StandardExchange_Component_FactoryService.sol",
+    "sha256": "ad6b354f5ce5d1ac42b8ff23076238f1b665ea506887a9a45fa6f196d7d6077b"
+  },
+  {
+    "path": "contracts/vaults/standard/erc4626/ERC4626StandardYieldTarget.sol",
+    "sha256": "4f3b05385298f3de369788c74a9ee2dbe53e9a4132e9ebee6c8a42ce763bd7b8"
+  },
+  {
+    "path": "contracts/vaults/standard/erc4626/IERC4626StandardExchange.sol",
+    "sha256": "d1bf1d4cebf23a9726c754400ed7447c51ab1a801e75d9aa3bb70109d395049d"
+  },
+  {
+    "path": "contracts/vaults/standard/erc4626/IERC4626StandardExchangeDFPkg.sol",
+    "sha256": "b489700b2421867acbf900430116bf725dff6e99017827d3711151a3aeb4990e"
+  },
+  {
+    "path": "contracts/vaults/standard/erc4626/ReceiptBackedERC4626AccountingLib.sol",
+    "sha256": "59b08f488f630e1a3d37d969f44fbf844ad2d71671933b872ae8297292cadf6b"
+  },
+  {
+    "path": "contracts/vaults/standard/erc4626/ReceiptBackedERC4626Facet.sol",
+    "sha256": "3184f8cd779e815d7d9c61fb2cebf5da45e4521fddb2290cb84c319f22ef6cc0"
+  },
+  {
+    "path": "contracts/vaults/standard/erc4626/ReceiptBackedERC4626Target.sol",
+    "sha256": "04e7b37bb7a3d30c88493324dad8a837527e46858bc0f92f56d36b2ad98862db"
+  },
+  {
+    "path": "test/foundry/spec/protocol/lending/aave/v3.6/invariant/AaveV3StataStandardExchange_Invariant.t.sol",
+    "sha256": "389116d554fdcdf074235949b41701b3675c673c98e0f0c91026a219dc067bd3"
+  },
+  {
+    "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BalancerV3SinglePoolStandardExchange_Invariant.t.sol",
+    "sha256": "264a139ce6aa5adf349c1ac3800a27ab1616a6fc425d45f83e012b3508ffe53d"
+  },
+  {
+    "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BalancerV3SinglePoolStandardExchange_PoolActionsInvariant.t.sol",
+    "sha256": "df07f0af781766bb53c9ac1be40bebcbfdd200321ec1fb0bced65109b27ba918"
+  },
+  {
+    "path": "test/foundry/spec/vaults/standard/erc4626/invariant/ERC4626StandardExchange_Invariant.t.sol",
+    "sha256": "235683e7b9dbebefbcecb5a10fbc3e9e73f6769fa76e2546e98b2ee05a5ff8d4"
+  },
+  {
+    "path": "test/foundry/spec/vaults/standard/exchange/invariant/LendingAccountingHandler.sol",
+    "sha256": "a7467d4830e069ed12be0c8cd9858d959388d4863178b1fe35e7a61a9db90f72"
+  },
+  {
+    "path": "test/foundry/spec/vaults/standard/exchange/invariant/StandardExchangeAccountingHandler.sol",
+    "sha256": "327bb71428f90670d2d7ef02347032f61234f1eb1cee87598b92d3c019061e7e"
+  }
+]

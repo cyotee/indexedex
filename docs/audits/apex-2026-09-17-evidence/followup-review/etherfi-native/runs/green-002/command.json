@@ -1,0 +1,26 @@
+{
+  "command": [
+    "python3",
+    "scripts/forge-artifacts.py",
+    "test",
+    "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeCommon.sol",
+    "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeInTarget.sol",
+    "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeOutTarget.sol",
+    "--test-root",
+    "test/foundry/spec/protocol/staking/etherfi/invariant/EtherFiWeETHStandardExchange_NativeRounding.t.sol",
+    "--",
+    "-vv",
+    "--fuzz-seed",
+    "0x20260917"
+  ],
+  "cwd": "/private/tmp/apex-review-fullspread-validation",
+  "source_hashes": {
+    "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeCommon.sol": "ce6bcb58cb8c90dfce6b4bb91ba231ccb78c860c20411ebe018c6a491da2d975",
+    "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeInTarget.sol": "27d7bcb3b1b3ca0bbae40a452e51008d297b266f1bb6927e500d6ee4023b5471",
+    "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeOutTarget.sol": "9dddb9d1aa5a613d10bed0a79e0ef91e86871dda77601abf58e6a9fb42645a86",
+    "test/foundry/spec/protocol/staking/etherfi/invariant/EtherFiWeETHStandardExchange_NativeRounding.t.sol": "c27408364005081e1a60d11333a346fa59caaa6c2cd8019ab4e068fd08a7732d",
+    "contracts/test/stubs/NativeEtherFiPorts.sol": "fbd7650e15e5cad409f4110165be7d3c46067da72a92c1f12c0e88e998f485f3",
+    "contracts/protocols/staking/etherfi/test/hermetic/HermeticEtherFiPorts.sol": "237c2cbbfba0644e2cb390c3d6e7d9c8f7e390052b583ab31c2694c9bcb08d35"
+  },
+  "started_at": 1790352271.5289211
+}

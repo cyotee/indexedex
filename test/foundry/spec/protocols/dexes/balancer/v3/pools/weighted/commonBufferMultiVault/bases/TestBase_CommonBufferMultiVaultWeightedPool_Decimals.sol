@@ -79,6 +79,7 @@ abstract contract TestBase_CommonBufferMultiVaultWeightedPool_Decimals is TestBa
         pkgInit.bufferPoolFacet = bufferPoolFacet;
         pkgInit.poolLiquidityFacet = poolLiquidityFacet;
         pkgInit.hookFacet = hookFacet;
+        pkgInit.transitionQuoteFacet = transitionQuoteFacet;
         pkgInit.vaultRegistry = IVaultRegistryDeployment(address(indexedexManager));
         pkgInit.vaultFeeOracle = IVaultFeeOracleQuery(address(indexedexManager));
         pkgInit.balancerV3Vault = bv3Vault;

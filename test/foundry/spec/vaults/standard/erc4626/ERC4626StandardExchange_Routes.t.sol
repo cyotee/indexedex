@@ -2,12 +2,14 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {stdError} from "forge-std/StdError.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {TestBase_ERC4626StandardExchange} from
     "contracts/test/bases/TestBase_ERC4626StandardExchange.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
@@ -257,6 +259,22 @@ contract ERC4626StandardExchange_Routes_Test is TestBase_ERC4626StandardExchange
         assertGe(underlying.balanceOf(user) - uBefore, underlyingWanted);
     }
 
+    /// @notice R7.5 (2026-09-23): a non-pretransferred owner burn beyond the caller's own share balance fails
+    ///         at the share ledger (`ERC20Repo._burn` underflows: arithmetic panic) and changes nothing; no
+    ///         allowance is involved on this path because the SE burns from `msg.sender` directly.
+    function test_O7_ownerBurn_insufficientBalance_revertsAndRollsBack() public {
+        _seedLiquidity(100 ether);
+        uint256 seBal = IERC20(se).balanceOf(user);
+        uint256 supply = IERC20(se).totalSupply();
+        uint256 uBefore = underlying.balanceOf(user);
+        vm.prank(user);
+        vm.expectRevert(stdError.arithmeticError);
+        seIn.exchangeIn(IERC20(se), seBal + 1, IERC20(address(underlying)), 0, user, false, block.timestamp);
+        assertEq(IERC20(se).balanceOf(user), seBal, "shares untouched");
+        assertEq(IERC20(se).totalSupply(), supply, "supply untouched");
+        assertEq(underlying.balanceOf(user), uBefore, "no payout");
+    }
+
     /* ---------------------------------------------------------------------- */
     /*                            Unwrap exact-in                             */
     /* ---------------------------------------------------------------------- */
@@ -446,11 +464,9 @@ contract ERC4626StandardExchange_Routes_Test is TestBase_ERC4626StandardExchange
         address giftSe = _deployERC4626SE(address(giftVault));
 
         giftU.mint(user, 1_000 ether);
-        giftU.setGift(100); // extra 100 wei on each transferFrom
 
         vm.startPrank(user);
         giftU.approve(giftSe, type(uint256).max);
-        // Seed
         IStandardExchangeIn(giftSe).exchangeIn(
             IERC20(address(giftU)), 50 ether, IERC20(giftSe), 0, user, false, block.timestamp
         );
@@ -459,10 +475,13 @@ contract ERC4626StandardExchange_Routes_Test is TestBase_ERC4626StandardExchange
         uint256 amountIn = IStandardExchangeOut(giftSe).previewExchangeOut(
             IERC20(address(giftU)), IERC20(giftSe), seDesired
         );
-        uint256 uBefore = giftU.balanceOf(user);
-
         giftU.setGift(100);
-        uint256 spent = IStandardExchangeOut(giftSe).exchangeOut(
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                ISecurePullErrors.TransferDeltaInsufficient.selector, amountIn, amountIn + 100
+            )
+        );
+        IStandardExchangeOut(giftSe).exchangeOut(
             IERC20(address(giftU)),
             amountIn,
             IERC20(giftSe),
@@ -472,10 +491,6 @@ contract ERC4626StandardExchange_Routes_Test is TestBase_ERC4626StandardExchange
             block.timestamp
         );
         vm.stopPrank();
-
-        assertEq(spent, amountIn);
-        // Net spend should be amountIn only (gift surplus refunded)
-        assertEq(uBefore - giftU.balanceOf(user), amountIn, "surplus gift refunded");
     }
 
     /// @dev O6: post-deposit residual ≤ MAX_DUST_WEI absorbed to feeTo when non-zero (exact-in wrap).
@@ -494,13 +509,15 @@ contract ERC4626StandardExchange_Routes_Test is TestBase_ERC4626StandardExchange
             IERC20(address(dustU)), 50 ether, IERC20(dustSe), 0, user, false, block.timestamp
         );
 
-        dustVault.setLeaveDust(5); // leave 5 wei on SE after deposit under-consume
+        dustVault.setLeaveDust(5);
         uint256 feeBefore = dustU.balanceOf(feeTo);
+        uint256 seBefore = dustU.balanceOf(dustSe);
         IStandardExchangeIn(dustSe).exchangeIn(
             IERC20(address(dustU)), 10 ether, IERC20(dustSe), 0, user, false, block.timestamp
         );
         vm.stopPrank();
-        assertEq(dustU.balanceOf(feeTo) - feeBefore, 5, "dust to feeTo");
+        assertEq(dustU.balanceOf(feeTo), feeBefore, "dust not paid to feeTo");
+        assertEq(dustU.balanceOf(dustSe) - seBefore, 5, "under-consumed remainder booked locally");
     }
 
     /// @dev O6b: residual dust path must not revert (absorb or skip).

@@ -103,12 +103,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookTestDeployLib {
     ) private returns (IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage hookPkg) {
         IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgInit memory init =
             _buildPkgInit(create3Factory, indexedexManager, vf);
-        hookPkg = PkgFactory.deployPackage(
-            IVaultRegistryDeployment(indexedexManager),
-            owner,
-            init,
-            keccak256(abi.encode(type(IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage).name, "v1"))
-        );
+        hookPkg = PkgFactory.deployPackage(IVaultRegistryDeployment(indexedexManager), owner, init);
     }
 
     function _buildPkgInit(
@@ -120,7 +115,7 @@ library UniswapV4StandardExchangeCurveQuadStableBufferHookTestDeployLib {
         returns (IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgInit memory init)
     {
         init.vaultRegistryDeployment = IVaultRegistryDeployment(indexedexManager);
-        init.joinQueryFacet = PkgFactory.deployJoinQueryFacet(create3Factory);
+        init.joinQueryFacet = PkgFactory.deployLiquidityFacetExt(create3Factory);
         init.vaultFeeOracleQuery = IVaultFeeOracleQuery(indexedexManager);
         init.liquidityFacet = PkgFactory.deployLiquidityFacet(create3Factory);
         init.exitFacet = PkgFactory.deployExitFacet(create3Factory);

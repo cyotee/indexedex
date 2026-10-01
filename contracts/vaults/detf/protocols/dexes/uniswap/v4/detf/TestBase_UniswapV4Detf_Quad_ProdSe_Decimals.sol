@@ -31,6 +31,7 @@ import {
 import {TestBase_UniswapV4Detf_Quad_Decimals} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Quad_Decimals.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 import {
     UniswapV4DetfProductionSeDeployLib as SeLib
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol";
@@ -53,6 +54,7 @@ abstract contract TestBase_UniswapV4Detf_Quad_ProdSe_Decimals is TestBase_Uniswa
     IWETH internal weth;
     SeLib.Univ3SePkg internal univ3SePkg;
     SeLib.Univ4SePkg internal univ4SePkg;
+    SeLib.PonsV2SePkg internal ponsV2SePkg;
     SeLib.PonsV1Stack internal ponsV1;
     SeLib.PonsV2Stack internal ponsV2;
     SeLib.MorphoStack internal morphoStack;
@@ -70,7 +72,7 @@ abstract contract TestBase_UniswapV4Detf_Quad_ProdSe_Decimals is TestBase_Uniswa
             keccak256("TestBase_UniswapV4Detf_Quad_ProdSe_Decimals_PoolManager")
         ))));
 
-        _deployProductionSes();
+        this.deployProductionSesForFixture();
 
         _deployHookFactory();
         _deployQuadHookPkg();
@@ -95,6 +97,12 @@ abstract contract TestBase_UniswapV4Detf_Quad_ProdSe_Decimals is TestBase_Uniswa
         SeLib.activatePositionVault(hookSe0, hookPair0, detfUser, address(weth));
         SeLib.activatePositionVault(hookSe1, hookPair1, detfUser, address(weth));
         SeLib.activatePositionVault(hookSe2, hookPair2, detfUser, address(weth));
+    }
+
+    /// @dev Isolate artifact JSON/linking scratch memory from later hook setup.
+    function deployProductionSesForFixture() external {
+        require(msg.sender == address(this), "fixture self call only");
+        _deployProductionSes();
     }
 
     function _deployProductionSes() internal virtual;
@@ -156,8 +164,11 @@ abstract contract TestBase_UniswapV4Detf_Quad_ProdSe_Decimals is TestBase_Uniswa
     }
 
     function _deployPonsV2Univ4Se(PoolKey memory key) internal returns (address vault) {
-        _ensureUniv4SePkg();
-        vault = SeLib.deployUniv4Vault(univ4SePkg.pkg, key);
+        _ensureWeth();
+        if (address(ponsV2SePkg.pkg) == address(0)) {
+            ponsV2SePkg = SeLib.deployPonsV2SePkg(_craneCtx(), pm, weth, ponsV2);
+        }
+        vault = SeLib.deployPonsV2Vault(ponsV2SePkg.pkg, key);
     }
 
     function tryLaunchPonsV1(bytes32 saltStart) external returns (address token) {
@@ -308,7 +319,7 @@ abstract contract TestBase_UniswapV4Detf_Quad_ProdSe_Decimals is TestBase_Uniswa
                 feeOracle: address(indexedexManager),
                 tokens: toks,
                 standardExchanges: ses,
-                rateProviders: rps,
+                rateProviders: RateProviderFixtureLib.providersFor4(create3Factory, diamondPackageFactory, toks, ses),
                 tokenDecimals: HookPkgArgsDecimalsLib.tokenDecimals4(toks, predicted_),
                 seDecimals: HookPkgArgsDecimalsLib.seDecimals4(ses),
                 baseAmp: QUAD_BASE_AMP,

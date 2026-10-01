@@ -1,6 +1,6 @@
 ---
 name: indexedex-testing
-description: This skill should be used when writing or reviewing IndexedEx Foundry tests, TestBases, mocks, vm.mockCall, IndexedexTest, vault DFPkg deploy, Standard Exchange tests, DETF tests, fork tests, or when an agent is tempted to mock vaults/manager/registry. Prefer production code over mocks.
+description: Production-first Foundry testing law for IndexedEx vaults, DETFs and Standard Exchanges: gold TestBases, proxy surface matrix, trust-flag negatives.
 license: MIT
 ---
 
@@ -156,9 +156,9 @@ Do not mix live addresses with hermetic protocol ports in one base without an ex
 - [ ] PkgInit uses real facet addresses (never `address(0)`)
 - [ ] `PkgInit` / `PkgArgs` defined on the **interface**, not the contract (Crane rule)
 - [ ] **Facet surface:** `controlFacetFuncs` from Target/product interface; every product selector on live proxy after registry deploy
-- [ ] **Trust flags:** negative tests for `pretransferred=true` without transfer (vault already funded) — not only happy path
-- [ ] Inbound credit uses measured **delta**, not absolute balance + claimed amount
-- [ ] Token policy (do not re-ask): FoT forbidden; rebasing **underlyings** forbidden (`rebasingClaimToken` is a protocol product); non-18 decimals allowed (scale to 18); pause/blacklist accepted; no `PkgArgs` allowlist
+- [ ] **Trust flags:** EOA `pretransferred=true` reverts `EOAPretransferNotAllowed()`. Booked-inventory I1 reverts `TransferDeltaInsufficient`. Exact-in pretransfer never refunds. False-flag exact-out pulls quoted used and refunds nothing. Not only happy path.
+- [ ] Inbound credit uses `LocalCreditLib.available(balance, booked)` / `budget`, not absolute balance + claimed amount. Never bless EOA prepayment, exact-in refunds, excess-pretransfer rejection, blanket catch-and-book, or pull-max-then-refund on `pretransferred=false` exact-out.
+- [ ] Token policy (do not re-ask): FoT forbidden; rebasing **underlyings** forbidden (`rebasingClaimToken` is a protocol product); non-18 decimals allowed (normalize only where the price adapter requires WAD; retain native units at token boundaries; DETF/sDETF/SY are 9-dec); pause/blacklist accepted; no `PkgArgs` allowlist
 - [ ] `--match-test` prefixes unique enough (or `--match-contract` the suite); do not treat colliding extras as this change
 - [ ] After production contract edits: `forge build` then `forge test` (FactoryService reads `out/`; tests can deploy stale bytecode)
 
@@ -172,9 +172,13 @@ When implementing or reviewing tests for any path that mints shares or credits d
 
 | Case | Assert |
 |------|--------|
-| `pretransferred=true`, no tokens sent, vault holds inventory | Revert **or** zero shares minted; attacker product balance unchanged |
-| `pretransferred=true`, short delivery | Exact transfer-not-received / insufficient selector |
-| Donation then deposit | No free mint from donation (or documented beneficiary + no victim loss) |
+| `pretransferred=true` from a code-less EOA | Revert `EOAPretransferNotAllowed()`; no state change. Constructor-time callers also reject. Contract wallets and EIP-7702 delegated EOAs pass the bytecode guard (accepted D12 residual, not a defect). D32 surfaces keep their existing hard public-pretransfer reject and do not gain this guard. |
+| `pretransferred=true`, no tokens sent, vault holds booked inventory | Revert `TransferDeltaInsufficient(claimed, 0)`; attacker product balance unchanged. Do not treat “zero credit” as a pass. |
+| `pretransferred=true` exact-in with unbooked available ≥ `amountIn` | Credit/process exactly `amountIn`; refund nothing; excess unbooked is not this operation’s input |
+| `pretransferred=true` exact-out | Credit `min(unbooked, maxAmountIn)`; refund only `credit - used` to `msg.sender`. Booked inventory is never paid. |
+| `pretransferred=false` exact-out | Quote `used`, pull exactly `used`, refund nothing |
+| `pretransferred=true`, short delivery | Exact `TransferDeltaInsufficient` |
+| Donation then deposit | No free mint; donation LP goes to bond-held reserve for all live bonds, never token 0 as beneficiary |
 | Fat `max` + transfer only `used` + booked `R` | Attacker does not receive booked inventory (E6) |
 | `setVaultAddressDisabled(true)` then mature close / redeem / `exchangeOut` | Still succeeds (CROPS; inbound may stay gated) |
 | Product fn only on Target/Facet impl | Must also succeed on **deployed vault/DETF proxy** |

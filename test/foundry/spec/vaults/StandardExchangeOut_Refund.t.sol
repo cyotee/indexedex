@@ -9,6 +9,7 @@ import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.so
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeErrors} from "contracts/interfaces/IStandardExchangeErrors.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {
     TestBase_UniswapV2StandardExchange_MultiPool
 } from "contracts/protocols/dexes/uniswap/v2/test/bases/TestBase_UniswapV2StandardExchange_MultiPool.sol";
@@ -30,6 +31,37 @@ contract StandardExchangeOut_Refund_Test is TestBase_UniswapV2StandardExchange_M
     /* ---------------------------------------------------------------------- */
     /*                            Helper Functions                            */
     /* ---------------------------------------------------------------------- */
+
+    function _atomicExchangeOut(
+        IStandardExchangeProxy vault,
+        IERC20 tokenIn,
+        IERC20 tokenOut,
+        uint256 maxIn,
+        uint256 amountOut
+    ) private returns (uint256 used, address atomicAddr) {
+        AtomicPretransferCaller atomic = new AtomicPretransferCaller();
+        atomicAddr = address(atomic);
+        tokenIn.approve(atomicAddr, maxIn);
+        used = abi.decode(
+            atomic.consumePretransfer(
+                tokenIn,
+                caller,
+                address(vault),
+                maxIn,
+                abi.encodeWithSelector(
+                    IStandardExchangeOut.exchangeOut.selector,
+                    tokenIn,
+                    maxIn,
+                    tokenOut,
+                    amountOut,
+                    atomicAddr,
+                    true,
+                    _deadline()
+                )
+            ),
+            (uint256)
+        );
+    }
 
     /// @dev Get LP tokens for the caller by minting constituent tokens and adding liquidity.
     function _fundCallerWithLP(
@@ -73,33 +105,14 @@ contract StandardExchangeOut_Refund_Test is TestBase_UniswapV2StandardExchange_M
         // Use all LP as maxAmountIn (creating a surplus)
         uint256 maxAmountIn = callerLP;
 
-        // Pretransfer all LP to the vault
         vm.startPrank(caller);
-        tokenIn.transfer(address(vault), maxAmountIn);
-
-        uint256 callerLPBefore = tokenIn.balanceOf(caller);
-        assertEq(callerLPBefore, 0, "Caller should have 0 LP after pretransfer");
-
-        // Execute exchangeOut with pretransferred = true
-        uint256 amountIn = vault.exchangeOut(
-            tokenIn,
-            maxAmountIn,
-            tokenOut,
-            amountOut,
-            caller,
-            true, // pretransferred
-            _deadline()
-        );
+        (uint256 amountIn, address atomic) = _atomicExchangeOut(vault, tokenIn, tokenOut, maxAmountIn, amountOut);
         vm.stopPrank();
 
-        // Verify the surplus was refunded
-        uint256 callerLPAfter = tokenIn.balanceOf(caller);
         uint256 refundAmount = maxAmountIn - amountIn;
         assertGt(refundAmount, 0, "Refund must be > 0 when surplus LP exists");
-        assertEq(callerLPAfter, refundAmount, "Caller should receive refund of unused LP tokens");
-
-        // Verify the output was received
-        assertGe(tokenOut.balanceOf(caller), amountOut, "Caller should receive at least amountOut");
+        assertEq(tokenIn.balanceOf(atomic), refundAmount, "Caller should receive refund of unused LP tokens");
+        assertGe(tokenOut.balanceOf(atomic), amountOut, "Caller should receive at least amountOut");
     }
 
     /// @notice When pretransferred == true with exact amount, no refund needed.
@@ -116,18 +129,14 @@ contract StandardExchangeOut_Refund_Test is TestBase_UniswapV2StandardExchange_M
         uint256 expectedAmountIn = vault.previewExchangeOut(tokenIn, tokenOut, amountOut);
         require(expectedAmountIn > 0 && expectedAmountIn <= callerLP, "Preview in range");
 
-        // Pretransfer exactly the needed amount
         vm.startPrank(caller);
-        // First return excess LP back (we only want to send exactly expectedAmountIn)
         tokenIn.transfer(address(this), callerLP - expectedAmountIn);
-        tokenIn.transfer(address(vault), expectedAmountIn);
-
-        uint256 amountIn = vault.exchangeOut(tokenIn, expectedAmountIn, tokenOut, amountOut, caller, true, _deadline());
+        (uint256 amountIn, address atomic) = _atomicExchangeOut(vault, tokenIn, tokenOut, expectedAmountIn, amountOut);
         vm.stopPrank();
 
-        // No refund because exact amount was used
-        assertEq(tokenIn.balanceOf(caller), 0, "No refund when exact amount pretransferred");
+        assertEq(tokenIn.balanceOf(atomic), 0, "No refund when exact amount pretransferred");
         assertEq(amountIn, expectedAmountIn, "AmountIn should match preview");
+        assertGe(tokenOut.balanceOf(atomic), amountOut, "Caller should receive at least amountOut");
     }
 
     /// @notice When pretransferred == false, normal approval flow works.
@@ -178,15 +187,16 @@ contract StandardExchangeOut_Refund_Test is TestBase_UniswapV2StandardExchange_M
         uint256 expectedAmountIn = vault.previewExchangeOut(tokenIn, tokenOut, amountOut);
 
         uint256 dust = 1e15;
+        uint256 vaultLpBeforeDust = tokenIn.balanceOf(address(vault));
         vm.prank(caller);
         tokenIn.transfer(address(vault), dust);
 
         vm.startPrank(caller);
-        tokenIn.transfer(address(vault), expectedAmountIn);
-        vault.exchangeOut(tokenIn, expectedAmountIn, tokenOut, amountOut, caller, true, _deadline());
+        (, address atomic) = _atomicExchangeOut(vault, tokenIn, tokenOut, expectedAmountIn, amountOut);
         vm.stopPrank();
 
-        assertGe(tokenOut.balanceOf(caller), amountOut, "honest zap-out paid");
+        assertGe(tokenOut.balanceOf(atomic), amountOut, "honest zap-out paid");
+        assertEq(tokenIn.balanceOf(address(vault)), vaultLpBeforeDust + dust, "dust LP stays booked");
     }
 
     /* ---------------------------------------------------------------------- */
@@ -233,15 +243,13 @@ contract StandardExchangeOut_Refund_Test is TestBase_UniswapV2StandardExchange_M
         uint256 maxAmountIn = callerLP; // Use all LP as max, creating surplus
 
         vm.startPrank(caller);
-        tokenIn.transfer(address(vault), maxAmountIn);
-
-        uint256 amountIn = vault.exchangeOut(tokenIn, maxAmountIn, tokenOut, amountOut, caller, true, _deadline());
+        (uint256 amountIn, address atomic) = _atomicExchangeOut(vault, tokenIn, tokenOut, maxAmountIn, amountOut);
         vm.stopPrank();
 
-        uint256 callerRefund = tokenIn.balanceOf(caller);
         uint256 expectedRefund = maxAmountIn - amountIn;
         assertGt(expectedRefund, 0, "Should have surplus to refund");
-        assertEq(callerRefund, expectedRefund, "Refund amount correct for unbalanced pool");
+        assertEq(tokenIn.balanceOf(atomic), expectedRefund, "Refund amount correct for unbalanced pool");
+        assertGe(tokenOut.balanceOf(atomic), amountOut, "Caller should receive at least amountOut");
     }
 
     /// @notice Verifies that the pretransferred refund exactly equals maxAmountIn - amountIn
@@ -263,19 +271,13 @@ contract StandardExchangeOut_Refund_Test is TestBase_UniswapV2StandardExchange_M
 
         vm.startPrank(caller);
         uint256 callerLPBefore = tokenIn.balanceOf(caller);
-        tokenIn.transfer(address(vault), maxAmountIn);
-
-        uint256 amountIn = vault.exchangeOut(tokenIn, maxAmountIn, tokenOut, amountOut, caller, true, _deadline());
+        (uint256 amountIn, address atomic) = _atomicExchangeOut(vault, tokenIn, tokenOut, maxAmountIn, amountOut);
         vm.stopPrank();
 
-        // The net LP spent by the caller should be exactly amountIn
         uint256 callerLPAfter = tokenIn.balanceOf(caller);
-        uint256 netSpent = callerLPBefore - callerLPAfter;
-        assertEq(netSpent, amountIn, "Net LP spent should equal amountIn");
-
-        // The refund received should be maxAmountIn - amountIn
-        uint256 refundReceived = callerLPAfter - (callerLPBefore - maxAmountIn);
-        assertEq(refundReceived, maxAmountIn - amountIn, "Refund should equal maxAmountIn - amountIn");
+        assertEq(callerLPBefore - callerLPAfter, maxAmountIn, "EOA sent the prepaid surplus to the atomic caller");
+        assertEq(tokenIn.balanceOf(atomic), maxAmountIn - amountIn, "Refund should equal maxAmountIn - amountIn");
+        assertGe(tokenOut.balanceOf(atomic), amountOut, "Caller should receive at least amountOut");
     }
 
     /* ---------------------------------------------------------------------- */
@@ -301,17 +303,12 @@ contract StandardExchangeOut_Refund_Test is TestBase_UniswapV2StandardExchange_M
 
         vm.startPrank(caller);
         uint256 callerLPBefore = tokenIn.balanceOf(caller);
-        tokenIn.transfer(address(vault), maxAmountIn);
-
-        uint256 amountIn = vault.exchangeOut(tokenIn, maxAmountIn, tokenOut, amountOut, caller, true, _deadline());
+        (uint256 amountIn, address atomic) = _atomicExchangeOut(vault, tokenIn, tokenOut, maxAmountIn, amountOut);
         vm.stopPrank();
 
-        // Invariant: the net LP spent by the caller is exactly amountIn
         uint256 callerLPAfter = tokenIn.balanceOf(caller);
-        uint256 netSpent = callerLPBefore - callerLPAfter;
-        assertEq(netSpent, amountIn, "Refund invariant: caller net LP spent == amountIn");
-        // Equivalently, the refund was maxAmountIn - amountIn
-        uint256 refundReceived = callerLPAfter - (callerLPBefore - maxAmountIn);
-        assertEq(refundReceived, maxAmountIn - amountIn, "Refund invariant: refund == maxAmountIn - amountIn");
+        assertEq(callerLPBefore - callerLPAfter, maxAmountIn, "EOA sent the prepaid surplus to the atomic caller");
+        assertEq(tokenIn.balanceOf(atomic), maxAmountIn - amountIn, "Refund invariant: refund == maxAmountIn - amountIn");
+        assertGe(tokenOut.balanceOf(atomic), amountOut, "Caller should receive at least amountOut");
     }
 }

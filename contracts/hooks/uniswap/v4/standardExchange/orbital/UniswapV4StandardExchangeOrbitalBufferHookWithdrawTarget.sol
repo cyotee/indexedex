@@ -45,6 +45,8 @@ import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 
 /// @title UniswapV4StandardExchangeOrbitalBufferHookWithdrawTarget
 /// @notice Role Target for orbital buffer hook size split (Option 1a).
+/// @dev Unused offered amounts and SE receipts from this call are refunded to `msg.sender`.
+///      Resting face is unrecorded pretransfer credit (D12), never this caller's refund.
 abstract contract UniswapV4StandardExchangeOrbitalBufferHookWithdrawTarget is UniswapV4StandardExchangeOrbitalBufferHookCommon {
     using SafeERC20 for IERC20;
 
@@ -171,11 +173,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookWithdrawTarget is Un
     }
 
     function _swapExitResidual(address tokenIn, address tokenOut, uint256 amountIn) private {
-        uint256 quoted = _previewSwapExactIn(tokenIn, tokenOut, amountIn);
-        if (_seOf(tokenOut) != address(0)) _unwrapExactTokenOut(tokenOut, quoted);
-        else Repo._layout().reserves[tokenOut] -= quoted;
-        _bufferToken(tokenIn, amountIn);
-        _recomputeL2();
+        _internalSwapExactIn(tokenIn, tokenOut, amountIn, _feeOracle().dexSwapFeeOfVault(address(this)));
     }
 
     function exitSingleAssetExactTokenOut(
@@ -223,9 +221,7 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHookWithdrawTarget is Un
         private view returns (uint256)
     {
         if (amountIn == 0) return 0;
-        try IUniswapV4SeBufferHook(address(this)).previewSwapExactIn(tokenIn, tokenOut, amountIn)
-            returns (uint256 amountOut) { return amountOut; }
-        catch { return 0; }
+        return _fromWadFloor(tokenOut, _toWad(tokenIn, amountIn));
     }
 
     function _resolveBurnTokenOut(address tokenOut) private view returns (address) {

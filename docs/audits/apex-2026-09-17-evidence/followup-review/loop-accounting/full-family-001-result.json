@@ -1,0 +1,17 @@
+{
+  "exitCode": 0,
+  "elapsedSeconds": 3336.088392019272,
+  "command": [
+    "python3",
+    "scripts/forge-artifacts.py",
+    "test",
+    "contracts/protocols/lending/aave/cross-version/CrossVersionLoopExecutor.sol",
+    "--test-root",
+    "test/foundry/spec/protocol/lending/aave/cross-version",
+    "--",
+    "--fuzz-seed",
+    "0x20260917",
+    "-vv"
+  ],
+  "logSha256": "14473e503133bf7abdc111163c7d432a4fde439bffe10d14c70ca99f218a0b86"
+}

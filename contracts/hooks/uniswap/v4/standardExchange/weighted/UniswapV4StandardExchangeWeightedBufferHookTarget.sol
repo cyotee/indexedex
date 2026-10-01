@@ -26,6 +26,7 @@ import {IAllowanceTransfer} from
     "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {
     UniswapV4HookOwnerOnlyLiquidityLib
@@ -470,17 +471,39 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
         uint256 B0 = tokenIn.balanceOf(address(this));
         if (!pretransferred) {
             _pull(address(tokenIn), claimed);
-            return tokenIn.balanceOf(address(this)) - B0;
+            uint256 delta = tokenIn.balanceOf(address(this)) - B0;
+            if (delta != claimed) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(claimed, delta);
+            }
+            return claimed;
         }
-        Repo.Layout storage l = Repo._layout();
-        uint8 i = _tokenIndex(address(tokenIn));
-        uint256 R = l.standardExchanges[i] == address(0)
-            ? MultiAssetBasicVaultRepo._reserveOfToken(address(tokenIn)) : l.rawReserves[i];
-        uint256 U = B0 > R ? B0 - R : 0;
+        LocalCreditLib.requirePretransferCaller(msg.sender);
+        uint256 U = _unbookedBalance(tokenIn);
         if (claimed > U) {
             revert ISecurePullErrors.TransferDeltaInsufficient(claimed, U);
         }
         return claimed;
+    }
+
+    /// @dev Unbooked face balance available as pretransfer credit (D2/D28): raw legs book
+    ///      `reserveOfToken`, buffered legs book `rawReserves[i]`.
+    function _unbookedBalance(IERC20 token) internal view returns (uint256) {
+        Repo.Layout storage l = Repo._layout();
+        uint8 i = _tokenIndex(address(token));
+        uint256 R = l.standardExchanges[i] == address(0)
+            ? MultiAssetBasicVaultRepo._reserveOfToken(address(token)) : l.rawReserves[i];
+        return LocalCreditLib.available(token.balanceOf(address(this)), R);
+    }
+
+    /// @dev Exact-out input (D15): false-flag pulls `used` and refunds nothing. True-flag credits
+    ///      `budget(available, maxAmountIn)` and refunds `credit - used` to `msg.sender` only.
+    function _pullExactOutInput(IERC20 token, uint256 used, uint256 maxAmountIn, bool pretransferred)
+        internal
+    {
+        _securePull(token, used, pretransferred);
+        if (!pretransferred) return;
+        uint256 credit = LocalCreditLib.budget(_unbookedBalance(token), maxAmountIn);
+        if (credit > used) token.safeTransfer(msg.sender, credit - used);
     }
 
     function _pull(address token_, uint256 amount) internal {
@@ -587,23 +610,15 @@ abstract contract UniswapV4StandardExchangeWeightedBufferHookTarget {
 
     function _refundBufferedDust() internal {
         Repo.Layout storage l = Repo._layout();
-        address to = msg.sender;
         for (uint8 i; i < l.numTokens; ++i) {
             address se = l.standardExchanges[i];
             if (se == address(0) || se == l.tokens[i]) continue;
             IERC20 pair_ = IERC20(l.tokens[i]);
             uint256 bal = pair_.balanceOf(address(this));
-            if (bal <= Repo.MAX_DUST_WEI) continue;
-            uint256 excess = bal - Repo.MAX_DUST_WEI;
-            uint256 preview = IStandardExchangeIn(se).previewExchangeIn(pair_, excess, IERC20(se));
-            if (preview > 0) {
-                _bufferToken(i, excess);
-                bal = pair_.balanceOf(address(this));
-                if (bal <= Repo.MAX_DUST_WEI) continue;
-                excess = bal - Repo.MAX_DUST_WEI;
-            }
-            if (to == address(0) || to == address(this)) continue;
-            pair_.safeTransfer(to, excess);
+            if (bal == 0) continue;
+            uint256 preview = IStandardExchangeIn(se).previewExchangeIn(pair_, bal, IERC20(se));
+            if (preview > 0) _bufferToken(i, bal);
+            // Unconvertible remainder stays as D12 resting credit (D36).
         }
     }
 

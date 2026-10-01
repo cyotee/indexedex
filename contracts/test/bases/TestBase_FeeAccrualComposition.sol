@@ -62,12 +62,14 @@ abstract contract TestBase_FeeAccrualComposition is TestBase_UniswapV4Detf_Weigh
             keccak256("TestBase_FeeAccrualComposition_PoolManager")
         ))));
         weth = SeLib.newWeth();
-        SeLib.Univ4SePkg memory v4pkg_ = SeLib.deployUniv4SePkg(_craneCtx(), pm, weth);
-        _nativePonsPool();
-        se0 = SeLib.deployUniv4Vault(v4pkg_.pkg, baseKey);
+        SeLib.PonsV2Stack memory pons_ = _nativePonsPool();
+        SeLib.PonsV2SePkg memory v4pkg_ = SeLib.deployPonsV2SePkg(_craneCtx(), pm, weth, pons_);
+        se0 = SeLib.deployPonsV2Vault(v4pkg_.pkg, baseKey);
         weth.deposit{value: 0.001 ether}();
+        // 1e9 wei is below the 18/18 F0 minimum on this pool (raw ~6.08e12 < 1e15).
+        // 2e11 wei is about 200x that seed and still leaves the first bond funded.
         (, seedDtf) = Seed.execute(pm, baseKey, Seed.Config(se0, address(this), address(dtf), address(weth),
-            1e9, 1 ether, block.timestamp + 1 hours));
+            2e11, 100 ether, block.timestamp + 1 hours));
         launch.create3Factory = create3Factory;
         launch.diamondPackageFactory = diamondPackageFactory;
         launch.indexedexManager = indexedexManager;
@@ -101,8 +103,11 @@ abstract contract TestBase_FeeAccrualComposition is TestBase_UniswapV4Detf_Weigh
             ITokenStakingDFPkg.PkgArgs(IERC20(address(dtf)), 7 days, owner, 2 days, keccak256("fee-staking")));
     }
 
-    function _nativePonsPool() internal {
-        SeLib.PonsV2Stack memory pons_ = SeLib.deployPonsV2Stack(pm, permit2, weth);
+    function _nativePonsPool() internal returns (SeLib.PonsV2Stack memory pons_) {
+        pons_ = SeLib.deployPonsV2Stack(pm, permit2, weth);
+        // The default 100 bp hook fee makes a later single-sided composition miss the 1 bp bound.
+        vm.prank(vm.addr(uint256(keccak256("ponsV2Owner"))));
+        pons_.memeHook.setHookFeeBps(0);
         vm.prank(pons_.launcher);
         (address token_, address curve_) = pons_.factory.launchToken{value: 0.0005 ether}(
             SeLib.ponsV2TokenParams("DTF", "DTF", keccak256("fee-native-dtf")), pons_.launchConfigId, address(0));
@@ -153,7 +158,7 @@ abstract contract TestBase_FeeAccrualComposition is TestBase_UniswapV4Detf_Weigh
 
     function _bootstrap() internal {
         Bootstrap.execute(detfInfo, Bootstrap.Config(address(this), address(this), address(dtf), address(weth),
-            0.001 ether - 1e9, 1_000_000 ether - seedDtf, DEFAULT_MIN_LOCK, 1, block.timestamp + 1 hours));
+            0.001 ether - 2e11, 1_000_000 ether - seedDtf, DEFAULT_MIN_LOCK, 1, block.timestamp + 1 hours));
     }
 
 }

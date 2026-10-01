@@ -47,6 +47,7 @@ import {
 import {
     UniswapV4DualStandardExchangeBufferConstantProductHook_FactoryService as DualFactory
 } from "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHook_FactoryService.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 
 /**
  * @title TestBase_UniswapV4DualSEBCPHook_Decimals
@@ -124,10 +125,7 @@ abstract contract TestBase_UniswapV4DualSEBCPHook_Decimals is TestBase_ERC4626St
         IFacet depositFacet = DualFactory.deployDepositFacet(create3Factory);
         IFacet withdrawFacet = DualFactory.deployWithdrawFacet(create3Factory);
         IFacet seFacet = DualFactory.deploySeFacet(create3Factory);
-        hookPkg = DualFactory.deployPackage(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            owner,
-            IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgInit({
+        hookPkg = DualFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgInit({
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
                 hooksFacet: hooksFacet,
@@ -139,14 +137,7 @@ abstract contract TestBase_UniswapV4DualSEBCPHook_Decimals is TestBase_ERC4626St
                 erc2612Facet: erc2612Facet,
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet
-            }),
-            abi.encode(
-                type(IUniswapV4DualStandardExchangeBufferConstantProductHookPackage).name,
-                "v1",
-                _leftDecimals(),
-                _rightDecimals()
-            )._hash()
-        );
+            }));
 
         IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgArgs memory args = _defaultPkgArgs();
         uint256 mineNonce = DualFactory.findMineNonce(hookFactory, hookPkg, args);
@@ -172,7 +163,7 @@ abstract contract TestBase_UniswapV4DualSEBCPHook_Decimals is TestBase_ERC4626St
 
     function _defaultPkgArgs()
         internal
-        view
+
         returns (IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgArgs memory)
     {
         return IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgArgs({
@@ -181,7 +172,9 @@ abstract contract TestBase_UniswapV4DualSEBCPHook_Decimals is TestBase_ERC4626St
             standardExchange0: seA,
             token0: address(tokenA),
             standardExchange1: seB,
-            token1: address(tokenB)
+            token1: address(tokenB),
+            rateProvider0: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, seA, address(tokenA)), // D60
+            rateProvider1: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, seB, address(tokenB)) // D60
         });
     }
 

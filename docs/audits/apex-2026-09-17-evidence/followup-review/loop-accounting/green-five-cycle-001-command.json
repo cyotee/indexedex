@@ -1,0 +1,12 @@
+[
+  "python3",
+  "scripts/forge-artifacts.py",
+  "test",
+  "contracts/protocols/lending/aave/cross-version/CrossVersionLoopExecutor.sol",
+  "--test-root",
+  "test/foundry/spec/protocol/lending/aave/cross-version/invariant/AaveCrossVersionLoop_Invariant.t.sol",
+  "--",
+  "--match-test",
+  "test_APEX_loopAccruedFiveCycleRegression",
+  "-vvvv"
+]

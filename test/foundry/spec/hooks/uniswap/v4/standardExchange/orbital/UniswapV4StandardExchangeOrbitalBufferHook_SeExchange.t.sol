@@ -71,7 +71,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_SeExchangeTest is
 
     function test_exchangeIn_sameToken_reverts() public {
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("InvalidRoute(address,address)", address(token0), address(token0)));
         IStandardExchangeIn(hook).exchangeIn(
             IERC20(address(token0)),
             1 ether,

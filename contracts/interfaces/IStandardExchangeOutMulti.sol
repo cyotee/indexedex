@@ -20,11 +20,11 @@ interface IStandardExchangeOutMulti {
     /**
      * @notice Exact-out dual exit: burn shares to receive exact `amountsOut` of both pool tokens.
      * @param tokenIn The input token. Must be vault shares (`address(this)`).
-     * @param maxAmountIn Maximum shares the caller is willing to burn. Unused shares are refunded to `msg.sender`.
+     * @param maxAmountIn Maximum shares the caller is willing to burn. Pretransfer refunds only `min(unrecorded balance, maxAmountIn) - used`. False-flag pulls quoted used and refunds nothing.
      * @param tokensOut The two unique pool currencies in the vault's declared order. V4 uses PoolKey order with WETH as the ERC20 face of a native currency.
      * @param amountsOut Exact amounts of each `tokensOut` that must be received.
      * @param recipient The address that will receive both output tokens.
-     * @param pretransferred Whether the shares have already been transferred to the vault.
+     * @param pretransferred Integrating-contract flag only. Transfer-and-consume must be atomic to avoid exposing resting credit; staged use is at integrator risk. Callers with no bytecode revert `EOAPretransferNotAllowed()`. Booked holder backing is never pretransfer credit. Exact-output refunds only `min(unrecorded balance, maxAmountIn) - used`. Amounts above `maxAmountIn` are never refunded. False-flag exact-output pulls quoted used and refunds nothing.
      * @param deadline The timestamp after which the transaction will revert.
      * @return amountIn Shares burned (not the output token amounts).
      */

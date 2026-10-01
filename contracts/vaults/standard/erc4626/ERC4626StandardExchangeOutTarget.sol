@@ -7,16 +7,16 @@ import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
 import {BetterSafeERC20 as SafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC20.sol";
 import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {ERC4626StandardExchangeCommon} from "contracts/vaults/standard/erc4626/ERC4626StandardExchangeCommon.sol";
 
 /**
  * @title ERC4626StandardExchangeOutTarget
  * @notice Exact-out routes for ERC-4626 SE: wrap (tokenOut=SE), protocolVault→SE, and exits.
  *
- * @dev Exact-out law (D38/D50/D66/D69/D71/D74):
- *      calculate amountIn, consume only that, refund refundable surplus;
- *      unrefundable residual ≤ MAX_DUST_WEI → feeTo when non-zero, skip if feeTo==0;
- *      delivered out < amountOut → Slippage (not dust).
+ * @dev Exact-out law (D6/D15/D38): calculate amountIn, consume only that, and refund only
+ *      authorized unused exact-output credit. Protocol residual, including dust, stays booked.
+ *      It is not paid to feeTo. Delivered out < amountOut → Slippage (not dust).
  *      Non-burn tokenIn: durable reserve-delta `_securePull` (no free-mint on booked reserve).
  *      Every money route end-syncs expected-hold reserves after refunds.
  */
@@ -72,20 +72,17 @@ contract ERC4626StandardExchangeOutTarget is
         if (address(tokenIn) == underlying && address(tokenOut) == address(this)) {
             amountIn = _previewUnderlyingInForSeOut(amountOut);
             if (amountIn > maxAmountIn) revert Slippage();
+            _pullExactOutInput(tokenIn, amountIn, maxAmountIn, pretransferred);
 
-            // Durable U pull. Prefer !pretransferred+transferFrom; true requires claimed ≤ U.
-            _securePull(tokenIn, amountIn, pretransferred);
-
-            // Vault-token inventory before deposit (underlying pull does not change it).
-            uint256 totalBefore = IERC20(address(vault)).balanceOf(address(this));
-            tokenIn.forceApprove(address(vault), amountIn);
-            uint256 vaultDelta = vault.deposit(amountIn, address(this));
-            uint256 sharesFromDelta = _convertVaultDeltaToShares(vaultDelta, totalBefore);
+            // Backing before this caller's credit (unbooked underlying is not in the backing).
+            uint256 backingBefore = _receiptBacking();
+            // D22/D31: precheck capacity, sweep booked reserve first, invest what fits, and
+            // value the full credited input at the pre-investment accounting rate.
+            uint256 receiptEquiv = vault.convertToShares(amountIn);
+            _investCreditedUnderlying(amountIn);
+            uint256 sharesFromDelta = _convertVaultDeltaToShares(receiptEquiv, backingBefore);
             if (sharesFromDelta < amountOut) revert Slippage();
             _mintWithUsageFee(recipient, amountOut);
-
-            // Idle underlying leftover after deposit only (not protocol-vault reserve)
-            _refundOrAbsorbAbove(tokenIn, msg.sender, 0);
             _syncAllExpectedHoldReserves();
             return amountIn;
         }
@@ -99,21 +96,20 @@ contract ERC4626StandardExchangeOutTarget is
         if (address(tokenIn) == address(this) && address(tokenOut) == address(vault)) {
             amountIn = _previewSharesForVaultOut(amountOut);
             if (amountIn > maxAmountIn) revert Slippage();
-            _burnSeShares(msg.sender, amountIn, pretransferred);
+            uint256 held = IERC20(address(vault)).balanceOf(address(this));
+            if (amountOut > held) revert InsufficientReceiptInventory(amountOut, held);
+            _burnExactOutShares(amountIn, maxAmountIn, pretransferred);
             IERC20(address(vault)).safeTransfer(recipient, amountOut);
             _syncAllExpectedHoldReserves();
             return amountIn;
         }
 
-        // Unwrap exact-out: SE → underlying — burn only amountIn; Slippage if short
+        // Unwrap exact-out: SE → underlying — burn only amountIn; local cash pays first (R14.15).
         if (address(tokenIn) == address(this) && address(tokenOut) == underlying) {
             amountIn = _previewSeInForUnderlyingOut(amountOut);
             if (amountIn > maxAmountIn) revert Slippage();
-
-            uint256 vaultOut = _previewRedeemShares(amountIn);
-            _burnSeShares(msg.sender, amountIn, pretransferred);
-            uint256 underlyingOut = vault.redeem(vaultOut, recipient, address(this));
-            if (underlyingOut < amountOut) revert Slippage();
+            _burnExactOutShares(amountIn, maxAmountIn, pretransferred);
+            _payUnderlyingLocalFirst(vault, amountOut, recipient);
             _syncAllExpectedHoldReserves();
             return amountIn;
         }
@@ -129,7 +125,9 @@ contract ERC4626StandardExchangeOutTarget is
         bool pretransferred
     ) internal returns (uint256 required) {
         uint256 prepaid = pretransferred ? _prepaidCredit(receipt, maximum) : 0;
-        uint256 totalBefore = receipt.balanceOf(address(this)) - prepaid;
+        // Full backing before this caller's credit: prepaid receipts already sit in the held
+        // balance; a pulled receipt arrives after this snapshot.
+        uint256 totalBefore = _receiptBacking() - prepaid;
         required = _vaultInForSeOut(shares, totalBefore);
         if (required > maximum) revert Slippage();
         uint256 received = _securePull(receipt, required, pretransferred);

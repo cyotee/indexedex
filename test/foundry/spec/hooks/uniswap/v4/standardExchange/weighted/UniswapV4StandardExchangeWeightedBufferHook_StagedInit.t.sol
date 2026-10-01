@@ -303,7 +303,7 @@ contract UniswapV4StandardExchangeWeightedBufferHook_StagedInit_Test is
     function test_finalize_extraTickSpacingDoesNotCount() public {
         (address h, IUniswapV4HookStagedPairInit init, address[] memory toks) = _freshBootstrapN(2);
         PoolKey memory extraThis = PairPoolLib.pairKey(toks[0], toks[1], 60, IHooks(h));
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("WrappedError(address,bytes4,bytes,bytes)", h, bytes4(keccak256("beforeInitialize(address,(address,address,uint24,int24,address),uint160)")), abi.encodeWithSignature("InvalidPoolKey()"), abi.encodeWithSignature("HookCallFailed()")));
         pm.initialize(extraThis, TickMath.getSqrtPriceAtTick(0));
 
         (address c0, address c1) = toks[0] < toks[1] ? (toks[0], toks[1]) : (toks[1], toks[0]);

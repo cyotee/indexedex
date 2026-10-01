@@ -60,11 +60,7 @@ abstract contract Adversarial_AaveV3StataSE_SecurePull_Decimals is
         uint256 invBefore_ = IERC20(realStata).balanceOf(realVault);
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                ISecurePullErrors.TransferDeltaInsufficient.selector, residualStata_, uint256(0)
-            )
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         IStandardExchangeIn(realVault).exchangeIn(
             IERC20(realStata), residualStata_, IERC20(realVault), 0, attacker, true, _deadline()
         );
@@ -92,9 +88,7 @@ abstract contract Adversarial_AaveV3StataSE_SecurePull_Decimals is
         uint256 supplyBefore_ = IERC20(realVault).totalSupply();
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         IStandardExchangeIn(realVault).exchangeIn(
             IERC20(realStata), claimed_, IERC20(realVault), 0, attacker, true, _deadline()
         );
@@ -118,9 +112,7 @@ abstract contract Adversarial_AaveV3StataSE_SecurePull_Decimals is
         uint256 supplyBefore_ = IERC20(realVault).totalSupply();
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         IStandardExchangeIn(realVault).exchangeIn(
             IERC20(realBase), claimed_, IERC20(realVault), 0, attacker, true, _deadline()
         );

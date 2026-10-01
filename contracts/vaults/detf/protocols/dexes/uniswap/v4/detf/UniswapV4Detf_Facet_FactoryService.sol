@@ -32,7 +32,7 @@ library UniswapV4Detf_Facet_FactoryService {
     {
         bytes memory initCode_ = ArtifactCreationCode.creationCode("UniswapV4DetfExchangeFacet.sol:UniswapV4DetfExchangeFacet");
         instance = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4DetfExchangeFacet")._hash(), initCode_, bytes(""))
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4DetfExchangeFacet")._hash())
         );
         vm.label(address(instance), "UniswapV4DetfExchangeFacet");
     }
@@ -43,7 +43,7 @@ library UniswapV4Detf_Facet_FactoryService {
     {
         bytes memory initCode_ = ArtifactCreationCode.creationCode("UniswapV4DetfBondFacet.sol:UniswapV4DetfBondFacet");
         instance = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4DetfBondFacet")._hash(), initCode_, bytes(""))
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4DetfBondFacet")._hash())
         );
         vm.label(address(instance), "UniswapV4DetfBondFacet");
     }
@@ -54,7 +54,7 @@ library UniswapV4Detf_Facet_FactoryService {
     {
         bytes memory initCode_ = ArtifactCreationCode.creationCode("UniswapV4DetfMaintenanceFacet.sol:UniswapV4DetfMaintenanceFacet");
         instance = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4DetfMaintenanceFacet")._hash(), initCode_, bytes(""))
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4DetfMaintenanceFacet")._hash())
         );
         vm.label(address(instance), "UniswapV4DetfMaintenanceFacet");
     }
@@ -65,7 +65,7 @@ library UniswapV4Detf_Facet_FactoryService {
     {
         bytes memory initCode_ = ArtifactCreationCode.creationCode("UniswapV4DetfClaimFacet.sol:UniswapV4DetfClaimFacet");
         instance = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4DetfClaimFacet")._hash(), initCode_, bytes(""))
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4DetfClaimFacet")._hash())
         );
         vm.label(address(instance), "UniswapV4DetfClaimFacet");
     }
@@ -76,7 +76,7 @@ library UniswapV4Detf_Facet_FactoryService {
     {
         bytes memory initCode_ = ArtifactCreationCode.creationCode("UniswapV4DetfQueryFacet.sol:UniswapV4DetfQueryFacet");
         instance = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4DetfQueryFacet")._hash(), initCode_, bytes(""))
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4DetfQueryFacet")._hash())
         );
         vm.label(address(instance), "UniswapV4DetfQueryFacet");
     }

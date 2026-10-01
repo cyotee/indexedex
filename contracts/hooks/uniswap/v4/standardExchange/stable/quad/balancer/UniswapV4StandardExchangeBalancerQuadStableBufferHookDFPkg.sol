@@ -364,8 +364,9 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg is
                 if (a.tokens[i] == a.tokens[j]) revert SameToken();
             }
 
-            if (a.rateProviders[i] != address(0) && a.standardExchanges[i] == address(0)) {
-                revert RateProviderWithoutSE();
+            // D60: every buffered leg needs a rate provider; a raw leg may carry one.
+            if (a.standardExchanges[i] != address(0) && a.rateProviders[i] == address(0)) {
+                revert RateProviderRequired();
             }
 
             uint8 pd = a.tokenDecimals[i];
@@ -383,8 +384,10 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg is
             if (a.standardExchanges[i] == address(0)) {
                 if (a.seDecimals[i] != 0) revert InvalidDecimals();
             } else if (!wrapperInv) {
+                // D65: SE share decimals may be 6..36 (the rated scale is 10^(36 - decimals)); the live
+                // metadata cross-check below binds the declared value to the SE.
                 uint8 sd = a.seDecimals[i];
-                if (sd < 6 || sd > 18) revert InvalidDecimals();
+                if (sd < 6 || sd > 36) revert InvalidDecimals();
             }
 
             if (a.standardExchanges[i] != address(0)) {
@@ -417,18 +420,11 @@ contract UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg is
     function _requireSeOwnsToken(address se, address token) private view {
         if (UniswapV4SeBufferHookLegLib.isWrapperShareInventory(token, se)) return;
         if (se == token || se.code.length == 0) revert InvalidSE();
-        try IBasicVault(se).vaultTokens() returns (address[] memory toks) {
-            bool found;
-            for (uint256 i; i < toks.length; ++i) {
-                if (toks[i] == token) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) revert InvalidSE();
-        } catch {
-            revert InvalidSE();
+        address[] memory toks = IBasicVault(se).vaultTokens();
+        for (uint256 i; i < toks.length; ++i) {
+            if (toks[i] == token) return;
         }
+        revert InvalidSE();
     }
 
 }

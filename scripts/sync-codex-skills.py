@@ -98,7 +98,13 @@ def load_catalog(root):
         raise ValueError(f"Catalog entry budget exceeded: {stats['entries']} > {budget['max_entries']}")
     if stats["catalog_chars"] > budget["max_catalog_chars"]:
         raise ValueError(f"Catalog character budget exceeded: {stats['catalog_chars']} > {budget['max_catalog_chars']}")
+    # Skills mirrored from another repository (today the Crane submodule) keep their upstream
+    # descriptions; the budget applies to skills this repository authors.
+    exempt = tuple(budget.get("description_budget_exempt_source_prefixes", ()))
     for record in records:
+        relative = os.path.relpath(record["source"], root)
+        if exempt and relative.startswith(exempt):
+            continue
         if len(record["description"]) > budget["max_description_chars"]:
             raise ValueError(f"Description budget exceeded: {record['key']}")
     return records, topics, stats

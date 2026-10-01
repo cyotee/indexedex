@@ -1,0 +1,27 @@
+[
+  {
+    "label": "build",
+    "command": [
+      "forge",
+      "build"
+    ],
+    "exitCode": 0,
+    "elapsedSeconds": 336.22295904159546,
+    "log": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-native-detf-integration-001-build.log"
+  },
+  {
+    "label": "tests",
+    "command": [
+      "forge",
+      "test",
+      "--match-test",
+      "^(test_row_.*|test_APEX_.*|test_directExactOutRefundsBoundedCreditInBothDirections|test_directExactOutUnstakeRefundIndependently|test_stakingReserveExactOutReturnsUntouchedInputWithoutSpendingProtectedRaw|test_deterministicLifecycle)\\(",
+      "--fuzz-seed",
+      "0x20260917",
+      "-vv"
+    ],
+    "exitCode": 1,
+    "elapsedSeconds": 114.60847997665405,
+    "log": "docs/audits/apex-2026-09-17-evidence/followup-review/phase2-native-detf-integration-001-tests.log"
+  }
+]

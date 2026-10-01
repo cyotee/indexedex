@@ -466,7 +466,7 @@ contract ResearchFixture_DetfSingleSeUniV2 is ResearchFixture_UniswapV2SeRateMat
         seRouterDFPkg = create3Factory.deployBalancerV3StandardExchangeRouterDFPkg(pkgInit);
         seRouter = diamondPackageFactory.deployBalancerV3StandardExchangeRouter(seRouterDFPkg);
 
-        bytes32 salt = abi.encodePacked("ResearchDetfSingleSe_WeightedPoolFactory")._hash();
+        bytes32 salt = abi.encode("WeightedPoolFactory")._hash();
         bytes memory initCode = ArtifactCreationCode.creationCode(create3Factory, "WeightedPoolFactory.sol:WeightedPoolFactory");
         bytes memory initArgs = abi.encode(IVault(address(vault)), uint32(365 days), "Factory v1", "Pool v1");
         weightedPoolFactory = create3Factory.create3WithArgs(initCode, initArgs, salt);
@@ -484,7 +484,7 @@ contract ResearchFixture_DetfSingleSeUniV2 is ResearchFixture_UniswapV2SeRateMat
         IFacet rateProviderFacet = IFacet(
             create3Factory.deployFacet(
                 ArtifactCreationCode.creationCode(create3Factory, "StandardExchangeRateProviderFacet.sol:StandardExchangeRateProviderFacet"),
-                keccak256("ResearchDetfSingleSe_RateProviderFacet")
+                abi.encode("StandardExchangeRateProviderFacet")._hash()
             )
         );
         detfRateProviderPkg = IStandardExchangeRateProviderDFPkg(
@@ -497,7 +497,7 @@ contract ResearchFixture_DetfSingleSeUniV2 is ResearchFixture_UniswapV2SeRateMat
                             diamondFactory: diamondPackageFactory
                         })
                     ),
-                    keccak256("ResearchDetfSingleSe_RateProviderDFPkg")
+                    abi.encode("StandardExchangeRateProviderDFPkg")._hash()
                 )
             )
         );
@@ -505,7 +505,7 @@ contract ResearchFixture_DetfSingleSeUniV2 is ResearchFixture_UniswapV2SeRateMat
         detfNFTVaultFacet = create3Factory.deployDETFNFTVaultFacet();
         erc721Facet = IFacet(
             create3Factory.deployFacet(
-                ArtifactCreationCode.creationCode(create3Factory, "ERC721Facet.sol:ERC721Facet"), keccak256("ResearchDetfSingleSe_ERC721Facet")
+                ArtifactCreationCode.creationCode(create3Factory, "ERC721Facet.sol:ERC721Facet"), abi.encode("ERC721Facet")._hash()
             )
         );
 

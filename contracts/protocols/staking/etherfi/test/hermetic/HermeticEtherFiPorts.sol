@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {Math} from "@crane/contracts/utils/Math.sol";
 import {ERC20} from "@crane/contracts/external/openzeppelin-contracts/token/ERC20/ERC20.sol";
 
 /**
@@ -28,37 +29,63 @@ contract HermeticWETH is ERC20 {
     }
 }
 
+/// @dev Native shares are stored in the ERC20 ledger. Nominal transfers floor at the
+/// current pooled/share ratio, as EETH does; the virtual base bootstraps an empty pool.
 contract HermeticEETH is ERC20 {
+    uint256 private pooled = 1 ether;
     constructor() ERC20("ether.fi ETH", "eETH") {}
 
-    /// @dev Test helper
     function mint(address to, uint256 amount) external {
-        _mint(to, amount);
+        uint256 minted = balanceToShares(amount);
+        pooled += amount;
+        _mint(to, minted);
     }
 
     function burn(address from, uint256 amount) external {
-        _burn(from, amount);
+        uint256 burned = balanceToShares(amount);
+        pooled -= amount;
+        _burn(from, burned);
     }
 
-    /// @dev Share total for rate closed form (fixed virtual share base).
-    function getTotalShares() external pure returns (uint256) {
-        return 1e18;
+    function setRate(uint256 rate) external {
+        require(rate > 0, "rate");
+        pooled = Math.mulDiv(totalShares(), rate, 1 ether);
     }
 
-    function getTotalPooledEther() external pure returns (uint256) {
-        return 1e18;
+    function getTotalShares() external view returns (uint256) {
+        return totalShares();
     }
 
-    function shares(address) external pure returns (uint256) {
-        return 0;
+    function getTotalPooledEther() external view returns (uint256) {
+        return pooled;
     }
 
-    function sharesToBalance(uint256 sharesAmount) external pure returns (uint256) {
-        return sharesAmount;
+    function totalShares() public view returns (uint256) {
+        return 1 ether + super.totalSupply();
     }
 
-    function balanceToShares(uint256 balance) external pure returns (uint256) {
-        return balance;
+    function totalSupply() public view override returns (uint256) {
+        return sharesToBalance(super.totalSupply());
+    }
+
+    function shares(address user) external view returns (uint256) {
+        return super.balanceOf(user);
+    }
+
+    function balanceOf(address user) public view override returns (uint256) {
+        return sharesToBalance(super.balanceOf(user));
+    }
+
+    function sharesToBalance(uint256 amount) public view returns (uint256) {
+        return Math.mulDiv(amount, pooled, totalShares());
+    }
+
+    function balanceToShares(uint256 amount) public view returns (uint256) {
+        return Math.mulDiv(amount, totalShares(), pooled);
+    }
+
+    function _update(address from, address to, uint256 amount) internal override {
+        super._update(from, to, from == address(0) || to == address(0) ? amount : balanceToShares(amount));
     }
 }
 
@@ -74,6 +101,7 @@ contract HermeticWeETH is ERC20 {
     function setRate(uint256 rateWad_) external {
         require(rateWad_ > 0, "rate");
         rateWad = rateWad_;
+        eEthToken.setRate(rateWad_);
     }
 
     function wrap(uint256 eETHAmount) external returns (uint256) {
@@ -95,16 +123,16 @@ contract HermeticWeETH is ERC20 {
 
     /// @dev sharesForAmount: floor(e * 1e18 / rate)
     function getWeETHByeETH(uint256 eETHAmount) public view returns (uint256) {
-        return (eETHAmount * 1e18) / rateWad;
+        return eEthToken.balanceToShares(eETHAmount);
     }
 
     /// @dev amountForShare: floor(we * rate / 1e18)
     function getEETHByWeETH(uint256 weETHAmount) public view returns (uint256) {
-        return (weETHAmount * rateWad) / 1e18;
+        return eEthToken.sharesToBalance(weETHAmount);
     }
 
     function getRate() external view returns (uint256) {
-        return rateWad;
+        return eEthToken.sharesToBalance(1 ether);
     }
 
     function eETH() external view returns (address) {
@@ -112,13 +140,34 @@ contract HermeticWeETH is ERC20 {
     }
 }
 
+contract HermeticBlacklister {
+    mapping(address => uint256) public blacklistedUntil;
+
+    error BlacklistedUser(address user);
+
+    function setBlacklistedUntil(address user, uint256 until_) external {
+        blacklistedUntil[user] = until_;
+    }
+
+    function nonBlacklisted(address user) public view {
+        if (blacklistedUntil[user] > block.timestamp) revert BlacklistedUser(user);
+    }
+}
+
 contract HermeticLiquidityPool {
     HermeticEETH public immutable eETHToken;
     HermeticWeETH public weETHToken;
     HermeticWithdrawRequestNFT public withdrawNFT;
+    HermeticBlacklister public immutable blacklister;
+    bool public paused;
+    uint256 public pausedUntil;
+
+    error ContractPaused();
+    error ContractPausedUntil(uint256 until_);
 
     constructor(HermeticEETH eETH_) {
         eETHToken = eETH_;
+        blacklister = new HermeticBlacklister();
     }
 
     function setWeETH(HermeticWeETH we_) external {
@@ -133,34 +182,53 @@ contract HermeticLiquidityPool {
         return address(eETHToken);
     }
 
-    /// @dev Virtual pooled ether = rateWad so T/S = rate with S=1e18.
+    /// @dev Deposits add nominal pooled ETH and mint floor native shares at the pre-deposit ratio.
     function getTotalPooledEther() external view returns (uint256) {
-        return address(weETHToken) == address(0) ? 1e18 : weETHToken.rateWad();
+        return eETHToken.getTotalPooledEther();
+    }
+
+    /// @dev Mainnet `LiquidityPool.totalValueInLp()`: ETH held liquid in the pool. Deposits stay on
+    ///      this stub, so its balance is the liquid value (D46 fixture, APEX F4).
+    function totalValueInLp() external view returns (uint256) {
+        return address(this).balance;
     }
 
     function sharesForAmount(uint256 amount) external view returns (uint256) {
-        uint256 rate = address(weETHToken) == address(0) ? 1e18 : weETHToken.rateWad();
-        return (amount * 1e18) / rate;
+        return eETHToken.balanceToShares(amount);
     }
 
     function amountForShare(uint256 shares) external view returns (uint256) {
-        uint256 rate = address(weETHToken) == address(0) ? 1e18 : weETHToken.rateWad();
-        return (shares * rate) / 1e18;
+        return eETHToken.sharesToBalance(shares);
     }
 
     /// @dev Ceiling shares for withdrawal face (protocol-favoring).
     function sharesForWithdrawalAmount(uint256 amount) external view returns (uint256) {
-        uint256 rate = address(weETHToken) == address(0) ? 1e18 : weETHToken.rateWad();
-        return (amount * 1e18 + rate - 1) / rate;
+        return Math.mulDiv(amount, eETHToken.totalShares(), eETHToken.getTotalPooledEther(), Math.Rounding.Ceil);
+    }
+
+    function setPaused(bool paused_) external {
+        paused = paused_;
+    }
+
+    function setPausedUntil(uint256 until_) external {
+        pausedUntil = until_;
+    }
+
+    function _requireDepositOpen() internal view {
+        if (paused) revert ContractPaused();
+        if (pausedUntil >= block.timestamp) revert ContractPausedUntil(pausedUntil);
+        blacklister.nonBlacklisted(msg.sender);
     }
 
     function deposit() external payable returns (uint256) {
+        _requireDepositOpen();
         require(msg.value > 0, "ZERO_DEPOSIT");
         eETHToken.mint(msg.sender, msg.value);
         return msg.value;
     }
 
     function deposit(address) external payable returns (uint256) {
+        _requireDepositOpen();
         require(msg.value > 0, "ZERO_DEPOSIT");
         eETHToken.mint(msg.sender, msg.value);
         return msg.value;
@@ -269,7 +337,35 @@ contract HermeticRedemptionManager {
         paused = p;
     }
 
-    function canRedeem(uint256 amount, address /*token*/) external view returns (bool) {
+    /// @dev Mainnet `EtherFiRedemptionManager.tokenToRedemptionInfo(token)` as the SE transition quote
+    ///      reads it (seven words): bucket capacity, remaining units, last refill timestamp, refill rate
+    ///      per second, treasury split (bps), exit fee (bps), low watermark (bps). Units are 1e12 wei.
+    ///      This stub has no refill and no low watermark; paused publishes zero units (D46, APEX F4).
+    function tokenToRedemptionInfo(address)
+        external
+        view
+        returns (
+            uint256 capacity,
+            uint256 remaining,
+            uint256 lastRefill,
+            uint256 refillRate,
+            uint256 treasurySplit,
+            uint256 exitFee,
+            uint256 lowWatermark
+        )
+    {
+        uint256 units = paused ? 0 : capacityEth / 1e12;
+        return (units, units, block.timestamp, 0, 0, exitFeeBps, 0);
+    }
+
+    function canRedeem(
+        uint256 amount,
+        address /*token*/
+    )
+        external
+        view
+        returns (bool)
+    {
         if (paused) return false;
         return amount <= capacityEth && amount <= address(this).balance;
     }

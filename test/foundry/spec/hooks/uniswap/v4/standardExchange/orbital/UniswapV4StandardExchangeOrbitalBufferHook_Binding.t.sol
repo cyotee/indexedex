@@ -24,7 +24,7 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_BindingTest is
 
     function test_binding_reject_zeroSE() public {
         IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory args = _argsZeroSE();
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("MinOneStandardExchange()"));
         hookPkg.processArgs(abi.encode(args));
     }
 
@@ -71,21 +71,30 @@ contract UniswapV4StandardExchangeOrbitalBufferHook_BindingTest is
     function test_binding_reject_sameSE() public {
         IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory args = _argsWithSE(true, false, false);
         args.se1 = se0; // same SE on two legs — reject
-        vm.expectRevert();
+        args.rp1 = args.rp0; // Satisfy provider validation before the duplicate-SE guard.
+        vm.expectRevert(abi.encodeWithSignature("SameStandardExchange()"));
         hookPkg.processArgs(abi.encode(args));
     }
 
-    function test_binding_reject_rpWithoutSE() public {
+    /// @dev D60: a rate provider may be configured on any leg; a raw leg with one is accepted at init.
+    function test_binding_accept_rpOnRawLeg() public {
         IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory args = _argsWithSE(true, false, false);
-        args.rp1 = address(0xB0B); // RP on raw leg without SE
-        vm.expectRevert();
+        args.rp1 = address(0xB0B); // RP on raw leg: allowed, the deployer vouches for the pairing
+        hookPkg.processArgs(abi.encode(args));
+    }
+
+    /// @dev D60: a leg that declares a Standard Exchange must carry a rate provider.
+    function test_binding_reject_seWithoutRp() public {
+        IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory args = _argsWithSE(true, false, false);
+        args.rp0 = address(0);
+        vm.expectRevert(IUniswapV4StandardExchangeOrbitalBufferHookPackage.RateProviderRequired.selector);
         hookPkg.processArgs(abi.encode(args));
     }
 
     function test_binding_reject_sameTokens() public {
         IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory args = _defaultPkgArgs();
         args.token1 = args.token0;
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("SameToken()"));
         hookPkg.processArgs(abi.encode(args));
     }
 }

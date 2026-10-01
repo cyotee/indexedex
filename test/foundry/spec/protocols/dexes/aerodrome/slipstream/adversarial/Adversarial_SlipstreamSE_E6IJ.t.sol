@@ -10,6 +10,7 @@ import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {
     TestBase_SlipstreamStandardExchange
 } from "contracts/protocols/dexes/aerodrome/slipstream/test/bases/TestBase_SlipstreamStandardExchange.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 
 /// @notice WP-SEC-E6-SLIP-001: E6 refund cap + I1 skip-pull + J1–J3 proxy surface.
 /// @dev Production DFPkg via manager registry. Hermetic CL book is not SUT.
@@ -62,39 +63,40 @@ contract Adversarial_SlipstreamSE_E6IJ_Test is TestBase_SlipstreamStandardExchan
         vm.stopPrank();
 
         assertGt(sharesOut, 0, "honest zap minted");
-        // After paying AMOUNT_IN, leftover refund is the only pair tokens the attacker may hold.
+        // APEX D15/D33: exact-in never refunds. Unpaired zap leftover stays with the vault and is
+        // booked as local NAV at the end-of-route sync; the caller holds no pair tokens afterwards.
         uint256 attTokensAfter = pairToken0.balanceOf(attacker) + pairToken1.balanceOf(attacker);
-        assertLe(attTokensAfter, AMOUNT_IN, "E6: refund cannot exceed this-call inbound");
-        assertLt(attTokensAfter, BOOKED, "E6: attacker must not be paid booked R");
+        assertEq(attTokensAfter, 0, "D15: exact-in refunds nothing");
         assertGe(pairToken0.balanceOf(address(vault)), BOOKED, "E6: booked token0 remains");
         assertGe(pairToken1.balanceOf(address(vault)), BOOKED, "E6: booked token1 remains");
+        assertEq(vault.reserveOfToken(address(pairToken0)), pairToken0.balanceOf(address(vault)), "leftover token0 booked");
+        assertEq(vault.reserveOfToken(address(pairToken1)), pairToken1.balanceOf(address(vault)), "leftover token1 booked");
     }
 
     /// @notice E6 Out: seed booked R; fat max + transfer-only-used must not skim R.
-    /// @dev Same-tx inbound-delta pull: transfer-then-call with no in-window delta reverts I1.
-    ///      Pass = exploit blocked (inventory unchanged).
     function test_E6_out_pretransferred_fatMax_doesNotSkimBook() public {
         pairToken0.mint(address(vault), BOOKED);
-        uint256 used = 1e18;
-        uint256 fatMax = used + 50e18;
+        pairToken0.mint(attacker, AMOUNT_IN);
+        vm.startPrank(attacker);
+        pairToken0.approve(address(vault), AMOUNT_IN);
+        vault.exchangeIn(
+            IERC20(address(pairToken0)), AMOUNT_IN, IERC20(address(pairToken1)), 0, attacker, false, _deadline()
+        );
+        vm.stopPrank();
+
         uint256 amountOut = 1e17;
         uint256 quotedUsed = vault.previewExchangeOut(
             IERC20(address(pairToken0)), IERC20(address(pairToken1)), amountOut
         );
         assertGt(quotedUsed, 0, "quoted used");
-        assertLe(quotedUsed, fatMax, "quoted fits fat max");
+        uint256 fatMax = quotedUsed + 50e18;
 
-        pairToken0.mint(attacker, used);
+        pairToken0.mint(attacker, quotedUsed);
         vm.prank(attacker);
-        pairToken0.transfer(address(vault), used);
-
-        uint256 vaultBefore = pairToken0.balanceOf(address(vault));
-        uint256 attBefore = pairToken0.balanceOf(attacker);
+        pairToken0.transfer(address(vault), quotedUsed);
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, quotedUsed, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vault.exchangeOut(
             IERC20(address(pairToken0)),
             fatMax,
@@ -105,8 +107,22 @@ contract Adversarial_SlipstreamSE_E6IJ_Test is TestBase_SlipstreamStandardExchan
             _deadline()
         );
 
-        assertEq(pairToken0.balanceOf(address(vault)), vaultBefore, "E6 out: booked R stays");
-        assertEq(pairToken0.balanceOf(attacker), attBefore, "E6 out: attacker not paid R");
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        uint256 vaultBefore = pairToken0.balanceOf(address(vault));
+        uint256 callerBefore = pairToken0.balanceOf(address(caller));
+        vm.prank(address(caller));
+        vault.exchangeOut(
+            IERC20(address(pairToken0)),
+            fatMax,
+            IERC20(address(pairToken1)),
+            amountOut,
+            address(caller),
+            true,
+            _deadline()
+        );
+        assertGe(pairToken0.balanceOf(address(vault)), BOOKED, "E6 out: booked R stays");
+        assertLe(pairToken0.balanceOf(address(caller)) - callerBefore, quotedUsed, "E6 out: no booked skim");
+        assertLe(pairToken0.balanceOf(address(vault)), vaultBefore, "E6 out: used consumed from unbooked");
     }
 
     /* ---------------------------------------------------------------------- */
@@ -115,14 +131,32 @@ contract Adversarial_SlipstreamSE_E6IJ_Test is TestBase_SlipstreamStandardExchan
 
     /// @notice I1 exchangeIn: booked pair inventory cannot free-credit a zap or swap.
     function test_I1_pretransferred_inventoryNoInCallTransfer_revertsDelta0() public {
-        pairToken0.mint(address(vault), BOOKED);
+        pairToken0.mint(attacker, AMOUNT_IN);
+        vm.startPrank(attacker);
+        pairToken0.approve(address(vault), AMOUNT_IN);
+        vault.exchangeIn(
+            IERC20(address(pairToken0)), AMOUNT_IN, IERC20(address(vault)), 0, attacker, false, _deadline()
+        );
+        vm.stopPrank();
+
         uint256 invBefore = pairToken0.balanceOf(address(vault));
-        uint256 claimed = BOOKED;
+        uint256 claimed = 1 ether;
         uint256 attSharesBefore = IERC20(address(vault)).balanceOf(attacker);
-        assertEq(pairToken0.balanceOf(attacker), 0, "attacker drained");
-        assertEq(pairToken0.allowance(attacker, address(vault)), 0, "no allowance");
 
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        vault.exchangeIn(
+            IERC20(address(pairToken0)),
+            claimed,
+            IERC20(address(vault)),
+            0,
+            attacker,
+            true,
+            _deadline()
+        );
+
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed, uint256(0))
         );
@@ -131,7 +165,7 @@ contract Adversarial_SlipstreamSE_E6IJ_Test is TestBase_SlipstreamStandardExchan
             claimed,
             IERC20(address(vault)),
             0,
-            attacker,
+            address(caller),
             true,
             _deadline()
         );
@@ -143,9 +177,17 @@ contract Adversarial_SlipstreamSE_E6IJ_Test is TestBase_SlipstreamStandardExchan
     /// @notice I1 exchangeOut: booked inventory cannot fund exact-out without inbound delta.
     function test_I1_exchangeOut_pretransferred_inventoryNoInCallTransfer_revertsDelta0() public {
         pairToken0.mint(address(vault), BOOKED);
-        uint256 invBefore = pairToken0.balanceOf(address(vault));
         uint256 amountOut = 1e17;
         uint256 claimed = 1e18;
+
+        pairToken0.mint(attacker, AMOUNT_IN);
+        vm.startPrank(attacker);
+        pairToken0.approve(address(vault), AMOUNT_IN);
+        vault.exchangeIn(
+            IERC20(address(pairToken0)), AMOUNT_IN, IERC20(address(pairToken1)), 0, attacker, false, _deadline()
+        );
+        vm.stopPrank();
+        uint256 invBefore = pairToken0.balanceOf(address(vault));
         uint256 quotedUsed = vault.previewExchangeOut(
             IERC20(address(pairToken0)), IERC20(address(pairToken1)), amountOut
         );
@@ -155,6 +197,18 @@ contract Adversarial_SlipstreamSE_E6IJ_Test is TestBase_SlipstreamStandardExchan
         uint256 att1Before = pairToken1.balanceOf(attacker);
 
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        vault.exchangeOut(
+            IERC20(address(pairToken0)),
+            claimed,
+            IERC20(address(pairToken1)),
+            amountOut,
+            attacker,
+            true,
+            _deadline()
+        );
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, quotedUsed, uint256(0))
         );
@@ -163,7 +217,7 @@ contract Adversarial_SlipstreamSE_E6IJ_Test is TestBase_SlipstreamStandardExchan
             claimed,
             IERC20(address(pairToken1)),
             amountOut,
-            attacker,
+            address(caller),
             true,
             _deadline()
         );
@@ -188,7 +242,7 @@ contract Adversarial_SlipstreamSE_E6IJ_Test is TestBase_SlipstreamStandardExchan
         );
         assertTrue(
             _facetFuncsContains(
-                IFacet(address(slipstreamStandardExchangeInFacet)).facetFuncs(),
+                IFacet(address(slipstreamStandardExchangeInFacetExt)).facetFuncs(),
                 IStandardExchangeIn.previewExchangeIn.selector
             ),
             "J1 previewExchangeIn"
@@ -244,11 +298,55 @@ contract Adversarial_SlipstreamSE_E6IJ_Test is TestBase_SlipstreamStandardExchan
         assertGt(previewOut_, 0, "J3 previewExchangeOut live on proxy");
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, uint256(1 ether), uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         IStandardExchangeIn(address(vault)).exchangeIn(
             IERC20(address(pairToken0)), 1 ether, IERC20(address(pairToken1)), 0, attacker, true, _deadline()
         );
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*  APEX-2026-004B / D15: token exact-out refund is `min(availableBefore, max) - used`  */
+    /* ---------------------------------------------------------------------- */
+
+    function test_APEX004B_exactOut_refundTriples_contractCaller() public {
+        uint256 amountOut = 1e18;
+        uint256 used_ = vault.previewExchangeOut(IERC20(address(pairToken0)), IERC20(address(pairToken1)), amountOut);
+        require(used_ > 0, "preview used");
+        uint256 hundred_ = (used_ * 100) / 60;
+        uint256 eighty_ = (used_ * 80) / 60;
+        uint256[3] memory available_ = [hundred_, hundred_, used_];
+        uint256[3] memory maximum_ = [hundred_, eighty_, hundred_];
+        for (uint256 i; i < 3; ++i) {
+            uint256 snap = vm.snapshotState();
+            AtomicPretransferCaller caller = new AtomicPretransferCaller();
+            pairToken0.mint(address(this), available_[i]);
+            pairToken0.approve(address(caller), available_[i]);
+            uint256 bookedBefore_ = vault.reserveOfToken(address(pairToken0));
+            bytes memory data = abi.encodeCall(
+                IStandardExchangeOut.exchangeOut,
+                (IERC20(address(pairToken0)), maximum_[i], IERC20(address(pairToken1)), amountOut, address(caller), true, _deadline())
+            );
+            uint256 spent_ = abi.decode(
+                caller.consumePretransfer(IERC20(address(pairToken0)), address(this), address(vault), available_[i], data), (uint256)
+            );
+            uint256 credit_ = available_[i] < maximum_[i] ? available_[i] : maximum_[i];
+            assertLe(spent_, credit_, "used within credit");
+            assertEq(pairToken0.balanceOf(address(caller)), credit_ - spent_, "refund = min(available, max) - used");
+            assertEq(pairToken1.balanceOf(address(caller)), amountOut, "exact output");
+            assertGe(vault.reserveOfToken(address(pairToken0)), bookedBefore_, "booked backing never paid out");
+            assertTrue(vm.revertToState(snap));
+        }
+    }
+
+    /// @dev D9: a short or zero self-funded EOA is rejected with the exact error on both modes.
+    function test_APEX005_eoaPretransfer_bothModes_rejected() public {
+        pairToken0.mint(attacker, 1e18);
+        vm.startPrank(attacker);
+        pairToken0.transfer(address(vault), 1e18);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        vault.exchangeIn(IERC20(address(pairToken0)), 1e18, IERC20(address(pairToken1)), 0, attacker, true, _deadline());
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        vault.exchangeOut(IERC20(address(pairToken0)), 1e18, IERC20(address(pairToken1)), 1e15, attacker, true, _deadline());
+        vm.stopPrank();
     }
 }

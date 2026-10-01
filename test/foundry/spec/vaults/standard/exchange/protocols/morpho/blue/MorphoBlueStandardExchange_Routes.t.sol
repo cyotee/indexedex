@@ -17,6 +17,10 @@ contract ERC20Mock6 is ERC20Mock {
     function decimals() public pure override returns (uint8) {
         return 6;
     }
+
+    function symbol() external pure returns (string memory) {
+        return "L6";
+    }
 }
 
 /**

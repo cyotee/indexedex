@@ -1,0 +1,31 @@
+{
+  "capturedUtc": "2026-09-19T01:34:37.437833+00:00",
+  "sha256": {
+    "finding-matrix.json": "137e47bfa06438bca787226cb1369d3b0262da6bc562cf8a6e167649c96acd6f",
+    "prefixed-red-003-005-custody.log": "ae9586e354b137b96e16dbb5e09eed340f23a8d6420ec8807ba57b60a310c4ae",
+    "prefixed-red-009-004B-005-erc4626.log": "946c2321aa7413e969f63fc510e8dab4aadb95d799c78592b631c958452ba38e",
+    "green-003-custody.log": "aa158d09a91eeeb53e1e87317d3d8761f4f9c04eefb68e13a57767f64be9a77a",
+    "green-009-004B-erc4626.log": "6ef93f0613021a75683c983c2037bfbdcf3bd10eba7a806231a2713629555e6d",
+    "green-005-local-credit.log": "dd3ab6d28459f3b7b33eb5997ddc4c2b336292e9a4a31bd000856fa4f666b067",
+    "green-009-morpho.log": "d25df927d3512a7275e332a87febd8099d14fc9883bcf555b885cc42f59acfe2",
+    "selector-size-compare.json": "13cf4f492d31e97c0419c55510a5d2685c77e169d6d6f21761f8ab60693311e8",
+    "r12-gating.json": "826c13fd6d824be6b785cef3d0951b0457121f528ce83f3b2dd268ba18d8480c",
+    "r12-hermetic-summary.json": "e5334fa2cf5df47b13c46442f133bb99344a06fe7cda206a72b9e951832d9328",
+    "r12-hermetic-rerun.log": "73d0e8f83174a755f6d65c8d7f5f47d935b8c19c157358ba3e5e700ef3c859d0",
+    "r12-apex-fuzz-invariant.log": "9001d4ec0d4177e8467e7b3beeb2a0b8cb19004fb9b6e6db42671054cab8a443",
+    "apex-hermetic-failure-catalog.json": "069a89fc4aacba3113673f158c42e457dd242c044d432fd0b42aa69b732aa821"
+  },
+  "liveInstancesUnremediated": true,
+  "completeAuditClosureClaimed": false,
+  "hermetic": {
+    "passed": 25737,
+    "failed": 6424,
+    "exit": 1,
+    "claimGreen": false
+  },
+  "selectorSize": {
+    "compared": 569,
+    "oversizeCount": 0,
+    "selectorDiffCount": 4
+  }
+}

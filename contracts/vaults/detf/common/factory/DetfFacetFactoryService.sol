@@ -30,7 +30,7 @@ library DetfFacetFactoryService {
     function deployDETFFundedBondMetadataFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
         bytes memory code_ = ArtifactCreationCode.creationCode("DETFFundedBondMetadataFacet.sol:DETFFundedBondMetadataFacet");
         instance = create3Factory.deployFacet(
-            code_, ArtifactCreationCode.releaseSalt(keccak256("DETFFundedBondMetadataFacet"), code_, bytes(""))
+            code_, ArtifactCreationCode.releaseSalt(abi.encode("DETFFundedBondMetadataFacet")._hash())
         );
         vm.label(address(instance), "DETFFundedBondMetadataFacet");
     }
@@ -39,7 +39,7 @@ library DetfFacetFactoryService {
     function deployDETFSYFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
         bytes memory code_ = ArtifactCreationCode.creationCode("DETFSYFacet.sol:DETFSYFacet");
         instance = create3Factory.deployFacet(
-            code_, ArtifactCreationCode.releaseSalt(keccak256("DETFSYFacet"), code_, bytes(""))
+            code_, ArtifactCreationCode.releaseSalt(abi.encode("DETFSYFacet")._hash())
         );
         vm.label(address(instance), "DETFSYFacet");
     }
@@ -58,7 +58,7 @@ library DetfFacetFactoryService {
     {
         bytes memory initCode_ = ArtifactCreationCode.creationCode("UniswapV4DetfBondNFTVaultFacet.sol:UniswapV4DetfBondNFTVaultFacet");
         instance = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4DetfBondNFTVaultFacet")._hash(), initCode_, bytes(""))
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4DetfBondNFTVaultFacet")._hash())
         );
         vm.label(address(instance), "UniswapV4DetfBondNFTVaultFacet");
     }
@@ -66,7 +66,7 @@ library DetfFacetFactoryService {
     function deployRebasingClaimTokenFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode("RebasingClaimTokenFacet.sol:RebasingClaimTokenFacet");
         instance = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("RebasingClaimTokenFacet")._hash(), initCode_, bytes(""))
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("RebasingClaimTokenFacet")._hash())
         );
         vm.label(address(instance), "RebasingClaimTokenFacet");
     }

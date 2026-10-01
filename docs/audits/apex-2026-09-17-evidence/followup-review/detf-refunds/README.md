@@ -1,0 +1,1 @@
+The red run has seven expected runtime failures. The green run passes all seven refund regressions; its overall exit is nonzero because a separately selected UniV4 invariant fixture still needed a staged-selector correction. Do not classify green-003 as an entirely passing run. Final invariant/release evidence supersedes this intermediate fixture result.

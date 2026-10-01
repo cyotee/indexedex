@@ -28,6 +28,9 @@ interface IStandardExchangeBufferPoolPkg is IDiamondFactoryPackage, IStandardVau
         IFacet bufferPoolFacet;
         IFacet poolLiquidityFacet;
         IFacet hookFacet;
+        // Mandatory (D68 2026-09-24): adds IStandardExchangeTransitionQuote to the pool diamond so
+        // buffered hooks can project this SE. Deployment reverts when address(0)/codeless.
+        IFacet transitionQuoteFacet;
         IVaultRegistryDeployment vaultRegistry;
         IVaultFeeOracleQuery vaultFeeOracle;
         IVault balancerV3Vault;

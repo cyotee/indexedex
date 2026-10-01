@@ -159,7 +159,6 @@ library UniswapV4StandardExchangeOrbitalBufferHookMath {
         shares = s0;
         if (s1 < shares) shares = s1;
         if (s2 < shares) shares = s2;
-        if (shares == 0) revert MathDomain();
     }
 
     /// @dev Tiny helper — kept internal so call sites avoid external+nested stack pressure.
@@ -320,14 +319,15 @@ library UniswapV4StandardExchangeOrbitalBufferHookMath {
     }
 
     function _zapSplitWadPacked(ZapSplitArgs memory a) private pure returns (ZapSplitResult memory r) {
-        if (a.amountInWad < 3 || a.e0 == 0 || a.e1 == 0 || a.e2 == 0 || a.R == 0) revert MathDomain();
+        // Unquotable leftover (H2): 18-dec 1 wei is amountInWad=1; empty book/R. Return zeros.
+        if (a.amountInWad < 3 || a.e0 == 0 || a.e1 == 0 || a.e2 == 0 || a.R == 0) return r;
         ResidualSearchCtx memory c;
         c.a = a;
         (c.j, c.k) = _otherIndices(a.inIdx);
         c.eIn = _pick(a.e0, a.e1, a.e2, a.inIdx);
         c.eJ = _pick(a.e0, a.e1, a.e2, c.j);
         c.eK = _pick(a.e0, a.e1, a.e2, c.k);
-        if (c.eIn == 0 || c.eJ == 0 || c.eK == 0) revert MathDomain();
+        if (c.eIn == 0 || c.eJ == 0 || c.eK == 0) return r;
 
         // residual ∈ (0, amountIn); search so residual/eIn ≈ outJ/eJ ≈ outK/eK after sequential sales.
         uint256 lo = 1;
@@ -359,7 +359,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookMath {
             }
         }
         if (!found || r.aInWad == 0 || r.aJWad == 0 || r.aKWad == 0 || r.sJWad == 0 || r.sKWad == 0) {
-            revert MathDomain();
+            return ZapSplitResult(0, 0, 0, 0, 0);
         }
     }
 
@@ -371,7 +371,6 @@ library UniswapV4StandardExchangeOrbitalBufferHookMath {
         shares = s0;
         if (s1 < shares) shares = s1;
         if (s2 < shares) shares = s2;
-        if (shares == 0) revert MathDomain();
     }
 
     function sphereNavShares(SphereNavArgs memory a) external pure returns (uint256 shares) {
@@ -386,8 +385,10 @@ library UniswapV4StandardExchangeOrbitalBufferHookMath {
         uint256 vBefore = p0 * a.r0Wad + p1 * a.r1Wad + p2 * a.r2Wad;
         if (vBefore == 0) revert MathDomain();
         uint256 vIn = p0 * a.used0Wad + p1 * a.used1Wad + p2 * a.used2Wad;
+        // Zero used is not a NAV. Non-zero used that cannot mint a share is an
+        // unquotable leftover join: preview returns 0, execute still ZeroAmount.
+        if (vIn == 0) revert MathDomain();
         shares = a.supply.fullMulDiv(vIn, vBefore);
-        if (shares == 0) revert MathDomain();
     }
 
     /// @dev cmp > 0 residual too large vs outs; < 0 residual too small; 0 matched within 1e-6 relative (WAD/1e6).
@@ -506,6 +507,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookMath {
         if (c.j == 0) e0b = eJ2;
         else if (c.j == 1) e1b = eJ2;
         else e2b = eJ2;
+        if (c.a.R == 0 || e0b >= c.a.R || e1b >= c.a.R || e2b >= c.a.R) return 0;
         return _recomputeL2(c.a.R, e0b, e1b, e2b);
     }
 

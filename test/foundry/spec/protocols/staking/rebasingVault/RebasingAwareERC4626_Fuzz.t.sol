@@ -15,6 +15,7 @@ import {RebasingAwareOracle} from
 import {
     IStandardExchangeTransitionQuote
 } from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 
 contract RebasingAwareERC4626_Fuzz is TestBase_RebasingAwareERC4626 {
     function testFuzz_FUZZ01_depositMatchesOracle(uint96 assets) public {
@@ -145,12 +146,13 @@ contract RebasingAwareERC4626_Fuzz is TestBase_RebasingAwareERC4626 {
         uint256 burnAmt = prepaid / 3;
         vm.assume(burnAmt > 0);
         uint256 aliceBefore = IERC20(address(vault)).balanceOf(alice);
-        vm.prank(alice);
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));
         IStandardExchangeIn(address(vault)).exchangeIn(
             IERC20(address(vault)), burnAmt, IERC20(address(asset)), 0, bob, true, block.timestamp
         );
-        assertEq(IERC20(address(vault)).balanceOf(address(vault)), 0);
-        assertEq(IERC20(address(vault)).balanceOf(alice), aliceBefore + (P - burnAmt));
+        assertEq(IERC20(address(vault)).balanceOf(address(vault)), P - burnAmt, "exact-in does not refund excess");
+        assertEq(IERC20(address(vault)).balanceOf(alice), aliceBefore);
     }
 
     function testFuzz_FUZZ11_quoteDepositMatchesExecution(uint96 assets) public {

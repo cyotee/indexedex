@@ -1,77 +1,65 @@
 // SPDX-License-Identifier: BSL-1.1
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.24;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IRouter} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IRouter.sol";
+import {IAllowanceTransfer} from "@crane/contracts/interfaces/protocols/utils/permit2/IAllowanceTransfer.sol";
+import {TestBase_MixedLegWeightedBufferPool as TestBase} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/bases/TestBase_MixedLegWeightedBufferPool.sol";
+import {BufferPoolInvariantHandler, IBufferInvariantFunding} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BufferPoolInvariantHandler.sol";
 
-import {IMixedLegWeightedBufferPool} from
-    "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/IMixedLegWeightedBufferPool.sol";
-import {
-    TestBase_MixedLegWeightedBufferPool
-} from "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/bases/TestBase_MixedLegWeightedBufferPool.sol";
+contract Handler_MixedLegBufferInvariant is BufferPoolInvariantHandler {
+    constructor(Config memory config_) BufferPoolInvariantHandler(config_) {}
+}
 
-/**
- * @title MixedLegWeightedBufferPoolInvariant
- * @notice Lightweight invariant-style smokes: virtual non-negative; unbalanced LP grows virtual;
- *         donation does not free-mint BPT (A3 overlap with core).
- */
-contract MixedLegWeightedBufferPoolInvariant is TestBase_MixedLegWeightedBufferPool {
-    function test_invariant_virtualBuffer_nonNegative_afterSwaps() public {
-        for (uint256 i; i < 5; ++i) {
-            uint256 amt = 1e17 + i * 1e16;
-            dai.mint(alice, amt);
-            swapExactIn(alice, IERC20(address(dai)), IERC20(address(seVault)), amt);
-            assertGe(ml().virtualBuffer(0), 0);
+/// forge-config: default.invariant.runs = 256
+/// forge-config: default.invariant.depth = 64
+/// forge-config: default.invariant.fail-on-revert = true
+contract MixedLegWeightedBufferPoolInvariant is TestBase, IBufferInvariantFunding {
+    BufferPoolInvariantHandler internal handler;
+    function _targetPairCount() internal pure override returns (uint8) { return 2; }
 
-            mintSharesForPair(0, alice, amt * 2);
-            uint256 shBal = IERC20(address(seVault)).balanceOf(alice);
-            if (shBal > amt / 2) {
-                swapExactIn(alice, IERC20(address(seVault)), IERC20(address(dai)), amt / 2);
-            }
-        }
+    function setUp() public override {
+        super.setUp();
+        BufferPoolInvariantHandler.Config memory c;
+        c.pool = bufferPool;
+        c.router = IRouter(address(router));
+        c.vault = bv3Vault;
+        c.permit2 = IAllowanceTransfer(address(permit2));
+        c.buffer = IERC20(address(dai));
+        c.shares = IERC20(address(seVault));
+        c.funding = IBufferInvariantFunding(address(this));
+        c.virtualBookCount = 2;
+        c.unpaired = _unpairedTokenAt(0);
+        c.buffers = new IERC20[](2);
+        c.buffers[0] = IERC20(address(dai));
+        c.buffers[1] = _bufferAt(1);
+        c.bookCalls = new bytes[](4);
+        c.bookCalls[0] = abi.encodeWithSignature("virtualBuffer(uint256)", 0);
+        c.bookCalls[1] = abi.encodeWithSignature("virtualBuffer(uint256)", 1);
+        c.bookCalls[2] = abi.encodeWithSignature("hookShareDelta(uint256)", 0);
+        c.bookCalls[3] = abi.encodeWithSignature("hookShareDelta(uint256)", 1);
+        handler = new Handler_MixedLegBufferInvariant(c);
+        bytes4[] memory selectors = new bytes4[](1);
+        selectors[0] = handler.cycle.selector;
+        targetContract(address(handler));
+        targetSelector(FuzzSelector({addr: address(handler), selectors: selectors}));
     }
 
-    function test_unbalanced_add_growsVirtual() public {
-        uint256 vtBefore = ml().virtualBuffer(0);
-        mintSharesForPair(0, alice, 200e18);
-        dai.mint(alice, 200e18);
-        usdc.mint(alice, 200e18);
-        _mintToken(address(weth), alice, 200e18);
-
-        uint256 n = ml().tokenCount();
-        uint256[] memory exactIn = new uint256[](n);
-        for (uint256 t; t < n; ++t) {
-            (IMixedLegWeightedBufferPool.TokenKind kind,) = ml().resolveTokenIndex(t);
-            if (kind == IMixedLegWeightedBufferPool.TokenKind.Buffer) {
-                exactIn[t] = 100e18;
-            } else if (kind == IMixedLegWeightedBufferPool.TokenKind.Share) {
-                exactIn[t] = 50e18;
-            } else {
-                exactIn[t] = 50e18; // unpaired non-zero for join stability
+    function fundInvariantToken(address actor, IERC20 token, uint256 amount) external {
+        for (uint8 i; i < 2; ++i) {
+            if (address(token) == address(_seVaultAt(i))) {
+                mintSharesForPair(i, actor, amount);
+                return;
             }
         }
-
-        vm.startPrank(alice);
-        dai.approve(address(router), type(uint256).max);
-        usdc.approve(address(router), type(uint256).max);
-        IERC20(address(weth)).approve(address(router), type(uint256).max);
-        IERC20(address(seVault)).approve(address(router), type(uint256).max);
-        router.addLiquidityUnbalanced(mixedLegPool, exactIn, 0, false, bytes(""));
-        vm.stopPrank();
-
-        assertEq(ml().virtualBuffer(0), vtBefore + 100e18);
+        _mintToken(address(token), actor, amount);
     }
 
-    function test_donation_noBptMint_virtualUnchanged() public {
-        uint256 bptBefore = IERC20(mixedLegPool).totalSupply();
-        uint256 vtBefore = ml().virtualBuffer(0);
-        dai.mint(alice, 50e18);
-        uint256[] memory amounts = new uint256[](ml().tokenCount());
-        amounts[ml().bufferIndex(0)] = 50e18;
-        vm.startPrank(alice);
-        dai.approve(address(router), type(uint256).max);
-        router.donate(mixedLegPool, amounts, false, bytes(""));
-        vm.stopPrank();
-        assertEq(IERC20(mixedLegPool).totalSupply(), bptBefore);
-        assertEq(ml().virtualBuffer(0), vtBefore);
+    function invariant_bufferPoolAccounting() public view { handler.assertAccounting(); }
+    function afterInvariant() public view { handler.assertCampaign(); }
+    function test_deterministicBufferLifecycle() public {
+        for (uint256 i; i < 24; ++i) handler.cycle(1e15, i, i);
+        assertEq(handler.attempted(), 24);
+        handler.assertCampaign();
     }
 }

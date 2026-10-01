@@ -20,6 +20,7 @@ import {
     IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/interfaces/IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 import {
     UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService as PkgFactory
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService.sol";
@@ -444,7 +445,8 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Decim
                 pairTokenDecimals: HookPkgArgsDecimalsLib.tokenDec(address(pairC1)),
                 rawTokenDecimals: address(hostile).code.length == 0 ? uint8(18) : HookPkgArgsDecimalsLib.tokenDec(address(hostile)),
                 ownerOnlyLiquidity: _pkgOwnerOnlyLiquidity(),
-                owner: _pkgOwner()
+                owner: _pkgOwner(),
+                rateProvider: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, se2, address(pairC1)) // D60
             });
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
         address hHook = PkgFactory.deployHook(hookPkg, args, mineNonce);

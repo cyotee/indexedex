@@ -11,8 +11,6 @@ import {
     ISingleSeDetfInvHost_Decimals
 } from "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/decimals/invariant/Handler_SingleStandardExchangeDETF_Decimals.sol";
 
-/// forge-config: default.invariant.runs = 24
-/// forge-config: default.invariant.depth = 10
 abstract contract SingleStandardExchangeDETFInvariant_Decimals is TestBase_SingleStandardExchangeDETF_Decimals, ISingleSeDetfInvHost_Decimals {
     Handler_SingleStandardExchangeDETF internal handler;
     address internal invInstanceAddr;

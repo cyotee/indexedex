@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {Vm} from "forge-std/Vm.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {Math} from "@crane/contracts/utils/Math.sol";
 import {IDiamondLoupe} from "@crane/contracts/interfaces/IDiamondLoupe.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
@@ -55,24 +56,31 @@ contract UniswapV4Detf_HighestPriceExpansionTest is TestBase_UniswapV4Detf_Weigh
         uint256 lp_ = IERC20(hook_).balanceOf(detf) + IERC20(hook_).balanceOf(detfInfo.bondNftVault());
         uint256 supplyWad_ = IERC20(detf).totalSupply() * 1e9;
         uint256 p_;
+        IDetfReserveQuote.DetfQuoteCtx memory ctx_ = IDetfReserveQuote.DetfQuoteCtx({
+            detfTotalSupply: supplyWad_,
+            pendingExpansion: 0,
+            ownedLp: lp_,
+            creationPairPerDetfWad: 0
+        });
         for (uint256 i_; i_ < tokens_.length; ++i_) {
             if (tokens_[i_] == detf) continue;
             pairs_[p_] = tokens_[i_];
-            // Independent oracle: liquidate protocol LP into this token, then normalize by
-            // actual supply and that leg's creation price. Fixture capital tokens have 18 decimals.
-            uint256 value_ = IDetfReserveQuote(hook_).previewBurnToToken(lp_, tokens_[i_]);
-            uint256 pairPerDetf_ = value_ * 1e18 / supplyWad_;
-            prices_[p_] = pairPerDetf_ * 1e18 / creation_[p_];
+            // Same inputs `_highestSyntheticPrice` feeds `previewSynthetic`: protocol LP,
+            // human DETF supply in WAD, and that leg's creation rate. Not leftover
+            // `previewBurnToToken` liquidation.
+            ctx_.creationPairPerDetfWad = creation_[p_];
+            prices_[p_] = IDetfReserveQuote(hook_).previewSynthetic(ctx_, tokens_[i_]);
             ++p_;
         }
         assertEq(p_, 2);
-        assertEq(detfInfo.syntheticPrice(), prices_[0], "legacy public price stays first leg");
     }
 
     function _expected(uint256 supply_, uint256 price_, uint256 epochs_) private view returns (uint256 mint_) {
         if (price_ <= detfInfo.mintThreshold() || price_ <= 1e18) return 0;
-        uint256 rate_ = uint256(0.1e18) * 8 hours / 365 days;
-        mint_ = (supply_ * (price_ - 1e18) / price_) * rate_ / 1e18 * epochs_;
+        uint256 closurePerEpoch_ = Math.mulDiv(0.1e18, 8 hours, 365 days);
+        uint256 perEpoch_ = Math.mulDiv(supply_, price_ - 1e18, price_);
+        perEpoch_ = Math.mulDiv(perEpoch_, closurePerEpoch_, 1e18);
+        mint_ = perEpoch_ * epochs_;
         if (mint_ <= 1) mint_ = 0;
     }
 

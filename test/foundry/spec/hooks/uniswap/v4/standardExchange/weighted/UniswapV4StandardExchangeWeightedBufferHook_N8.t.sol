@@ -10,6 +10,7 @@ import {
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {SimpleYieldERC4626} from "contracts/test/stubs/SimpleYieldERC4626.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 
 /**
  * @title UniswapV4StandardExchangeWeightedBufferHook_N8
@@ -56,7 +57,6 @@ contract UniswapV4StandardExchangeWeightedBufferHook_N8 is
         a.tokens = new address[](8);
         a.weights = new uint256[](8);
         a.standardExchanges = new address[](8);
-        a.rateProviders = new address[](8);
         uint256 sum;
         for (uint256 i; i < 8; ++i) {
             a.tokens[i] = address(toks[i]);
@@ -69,6 +69,7 @@ contract UniswapV4StandardExchangeWeightedBufferHook_N8 is
         a.owner = _pkgOwner();
         a.tokenDecimals = HookPkgArgsDecimalsLib.tokenDecimals(a.tokens);
         a.seDecimals = HookPkgArgsDecimalsLib.seDecimals(a.standardExchanges);
+        a.rateProviders = RateProviderFixtureLib.providersFor(create3Factory, diamondPackageFactory, a.tokens, a.standardExchanges); // D60
 
         _deployHookWithArgs(a);
         for (uint256 i; i < 8; ++i) {

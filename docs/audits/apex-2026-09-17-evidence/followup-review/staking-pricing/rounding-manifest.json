@@ -1,0 +1,17 @@
+[
+  {
+    "path": "test/foundry/spec/protocol/staking/lido/invariant/LidoWstETHStandardExchange_NonUnitPretransfer.t.sol",
+    "beforeSha256": "eeaa0997b3f7d3c481a40db79623f1564cdf8d49a518d4ece14f5d82f2910562",
+    "overlaySha256": "c110b5040fd04fe2e8fd627dc447f6a29da03418a6e98f08457b1f438fd02d24"
+  },
+  {
+    "path": "test/foundry/spec/protocol/staking/etherfi/invariant/EtherFiWeETHStandardExchange_NonUnitPretransfer.t.sol",
+    "beforeSha256": null,
+    "overlaySha256": "96e594b94f989bdf5479ddc42347bc8714ad0336f4727a08620d507c293f25ea"
+  },
+  {
+    "path": "contracts/protocols/staking/lido/LidoWstETHStandardExchangeCommon.sol",
+    "beforeSha256": "3d7be5aa160b81e061d696b5306ca3ae408b758cac021df25a0d5c2fe4109491",
+    "overlaySha256": "71f5da979fb5ee66cb3d8bb5dae8274ee8579216ee5629e1130985377d1c5872"
+  }
+]

@@ -1,5 +1,7 @@
 # Robinhood universal DETF release review
 
+**Superseded salt candidate (2026-09-16).** The [CREATE3 release salt input correction](../../../create3-release-salt-input-correction.md) replaces this document's bytecode/constructor-sensitive salt policy with ABI-encoded component identities. Do not reapply `release-salts.patch` or its automatic-new-address policy as current guidance. The candidate text, patches, RPC evidence and reported results below remain dated historical records. Occupied salts still reuse existing code and constructor bindings; source edits do not upgrade live contracts.
+
 Status: **release blocked; review and remediation in progress**. This review covers the universal Uniswap V4 DETF, its claim and bond NFT dependencies, and the CP single-buffer, Weighted, Orbital, and Curve Quad buffer-hook packages. It does not certify every contract in the monorepo. No transaction has been signed or broadcast by this review.
 
 The previous audit's 136/137 passing checkpoint is a historical baseline, not a green release gate. This review preserves its fixes and unresolved failures. `baseline.json` records the starting Git heads and 601 scoped source hashes; `source-before/` preserves the working versions of files changed here, including changes made before this review.

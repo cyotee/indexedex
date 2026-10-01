@@ -109,9 +109,7 @@ abstract contract Adversarial_TrustFlags_Decimals_DexBalV3Mul is TestBase_MultiV
         assertEq(seShares[0].balanceOf(attacker), 0);
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         IStandardExchangeIn(instance_)
             .exchangeIn(seShares[0], claimed_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours);
 
@@ -145,9 +143,7 @@ abstract contract Adversarial_TrustFlags_Decimals_DexBalV3Mul is TestBase_MultiV
         uint256 attackerShareBefore_ = seShares[0].balanceOf(attacker);
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, residualDetf_, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         IStandardExchangeIn(instance_)
             .exchangeIn(IERC20(instance_), residualDetf_, seShares[0], 0, attacker, true, block.timestamp + 1 hours);
 
@@ -165,9 +161,7 @@ abstract contract Adversarial_TrustFlags_Decimals_DexBalV3Mul is TestBase_MultiV
         uint256 balBefore_ = seShares[0].balanceOf(instance_);
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         IMultiVaultWeightedDetfBonding(instance_)
             .bond(seShares[0], claimed_, DEFAULT_MIN_LOCK, attacker, true, block.timestamp + 1 hours);
 
@@ -293,9 +287,7 @@ abstract contract Adversarial_TrustFlags_Decimals_DexBalV3Mul is TestBase_MultiV
 
         uint256 attackerDetfBefore_ = IERC20(instance_).balanceOf(attacker);
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claim_, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         IStandardExchangeIn(instance_)
             .exchangeIn(seShares[0], claim_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours);
 
@@ -324,9 +316,7 @@ abstract contract Adversarial_TrustFlags_Decimals_DexBalV3Mul is TestBase_MultiV
         assertGe(residual_, residualSeed_, "residual detfToken remains");
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, residualSeed_, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         IStandardExchangeIn(instance_)
             .exchangeIn(IERC20(instance_), residualSeed_, seShares[0], 0, attacker, true, block.timestamp + 1 hours);
 
@@ -362,9 +352,7 @@ abstract contract Adversarial_TrustFlags_Decimals_DexBalV3Mul is TestBase_MultiV
 
         // Booked residual cannot free-credit.
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, donated_, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         IStandardExchangeIn(instance_)
             .exchangeIn(seShares[0], donated_, IERC20(instance_), 0, attacker, true, block.timestamp + 1 hours);
 

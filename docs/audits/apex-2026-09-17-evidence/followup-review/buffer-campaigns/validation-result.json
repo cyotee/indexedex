@@ -1,0 +1,20 @@
+{
+  "completedAt": "2026-09-25T08:48:20.131824+00:00",
+  "exitCode": 0,
+  "suites": 7,
+  "testsPassed": 14,
+  "testsFailed": 0,
+  "testsSkipped": 0,
+  "invariantRunsPerSuite": 256,
+  "invariantDepth": 64,
+  "callsPerSuite": 16384,
+  "invariantHandlerCalls": 114688,
+  "deterministicHandlerCalls": 150,
+  "outerReverts": 0,
+  "fuzzSeed": "0x20260917",
+  "sourceHashesVerified": true,
+  "campaignLog": "/tmp/apex-review-buffer-validation/buffer-singlepool-campaign-evidence/campaigns.log",
+  "command": "/tmp/apex-review-buffer-validation/buffer-singlepool-campaign-evidence/command.json",
+  "bufferManifest": "/tmp/apex-buffer-invariant-overlay/source-manifest.json",
+  "singlePoolManifest": "/tmp/apex-singlepool-invariant-overlay/source-manifest.json"
+}

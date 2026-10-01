@@ -1,0 +1,8 @@
+{
+  "exitCode": 0,
+  "elapsedSeconds": 334.91743326187134,
+  "sourceHashes": {
+    "contracts/protocols/staking/rebasingVault/RebasingAwareStandardExchangeTarget.sol": "1ae3423540901c1877c4687dd34010a5a2553e4c9560f99ee922cad92c05b50f",
+    "test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_Invariant.t.sol": "861656d24acc962e6ffbe83f0ede3541f671876a969cd3e2d994d13ebe004cfd"
+  }
+}

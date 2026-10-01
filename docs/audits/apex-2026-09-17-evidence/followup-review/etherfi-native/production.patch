@@ -1,0 +1,648 @@
+diff --git a/contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeCommon.sol b/contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeCommon.sol
+--- a/contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeCommon.sol
++++ b/contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeCommon.sol
+@@ -10,9 +10,10 @@
+ import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
+ import {Math} from "@crane/contracts/utils/Math.sol";
+ import {IWeETH} from "@crane/contracts/protocols/staking/ethereum/etherfi/interfaces/IWeETH.sol";
+-import {IEETH} from "@crane/contracts/protocols/staking/ethereum/etherfi/interfaces/IEETH.sol";
+-import {IEtherFiLiquidityPool} from
+-    "@crane/contracts/protocols/staking/ethereum/etherfi/interfaces/IEtherFiLiquidityPool.sol";
++import {IeETH as NativeEETH} from "@crane/contracts/external/etherfi/core/interfaces/IeETH.sol";
++import {
++    IEtherFiLiquidityPool
++} from "@crane/contracts/protocols/staking/ethereum/etherfi/interfaces/IEtherFiLiquidityPool.sol";
+ import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol";
+ 
+ import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+@@ -22,9 +23,7 @@
+ import {
+     IEtherFiWeETHStandardVault
+ } from "contracts/protocols/staking/etherfi/interfaces/IEtherFiWeETHStandardVault.sol";
+-import {
+-    IEtherFiRedemptionManager
+-} from "contracts/protocols/staking/etherfi/interfaces/IEtherFiRedemptionManager.sol";
++import {IEtherFiRedemptionManager} from "contracts/protocols/staking/etherfi/interfaces/IEtherFiRedemptionManager.sol";
+ import {
+     EtherFiWeETHStandardExchangeRepo
+ } from "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeRepo.sol";
+@@ -44,7 +43,7 @@
+     uint256 internal constant MIN_EETH_WITHDRAWAL = 100;
+     uint256 internal constant MAX_EETH_WITHDRAWAL = 1000 ether;
+     /// @dev Rebalance hysteresis: 10% of target liquid (band on target).
+-    uint256 internal constant REBALANCE_BAND_WAD = 0.10e18;
++    uint256 internal constant REBALANCE_BAND_WAD = 0.1e18;
+     uint256 internal constant MAX_QUEUE_REQUESTS_PER_REBALANCE = 5;
+ 
+     /// @notice Deposit tokens received less than requested (or zero when pretransferred without credit).
+@@ -180,52 +179,106 @@
+         return we;
+     }
+ 
+-    /**
+-     * @dev Minimum eETH such that sharesForAmount(e) / wrap(e) >= weOut (ceil).
+-     *      Closed form: ceil(weOut * totalPooledEther / totalShares).
+-     */
+-    function _eEthForWeEthUp(uint256 weOut) internal view returns (uint256) {
+-        if (weOut == 0) return 0;
+-        address pool = liquidityPool();
+-        uint256 totalPooled = IEtherFiLiquidityPool(pool).getTotalPooledEther();
+-        uint256 totalShares = IEETH(eETH()).getTotalShares();
+-        if (totalShares == 0 || totalPooled == 0) {
+-            // Bootstrap / hermetic empty pool: treat 1:1 then correct via round-trip.
+-            uint256 e = weOut;
+-            while (IWeETH(weETH()).getWeETHByeETH(e) < weOut) {
+-                unchecked {
+-                    ++e;
+-                }
+-            }
+-            return e;
+-        }
+-        uint256 eIn = BetterMath._mulDiv(weOut, totalPooled, totalShares, Math.Rounding.Ceil);
+-        // Guard against interface/rate drift.
+-        if (eIn == 0) eIn = 1;
+-        while (IWeETH(weETH()).getWeETHByeETH(eIn) < weOut) {
+-            unchecked {
+-                ++eIn;
+-            }
+-        }
+-        return eIn;
++    /// @dev Native nominal transfers move floor shares; existing native shares affect the balance delta.
++    function _eReceivedAt(uint256 heldShares, uint256 amount) internal view returns (uint256) {
++        IEtherFiLiquidityPool pool = IEtherFiLiquidityPool(liquidityPool());
++        return pool.amountForShare(heldShares + pool.sharesForAmount(amount)) - pool.amountForShare(heldShares);
++    }
++
++    function _eInputForReceivedAt(uint256 heldShares, uint256 received) internal view returns (uint256 amount) {
++        if (received == 0) return 0;
++        IEtherFiLiquidityPool pool = IEtherFiLiquidityPool(liquidityPool());
++        uint256 targetBalance = pool.amountForShare(heldShares) + received;
++        uint256 targetShares = pool.sharesForAmount(targetBalance);
++        if (pool.amountForShare(targetShares) < targetBalance) ++targetShares;
++        uint256 movedShares = targetShares - heldShares;
++        amount = pool.amountForShare(movedShares);
++        if (pool.sharesForAmount(amount) < movedShares) ++amount;
++    }
++
++    /// @dev Canonical native share totals supplied by eETH and its liquidity pool.
++    function _nativeShareRate() internal view returns (uint256 pooled, uint256 supply) {
++        return (IEtherFiLiquidityPool(liquidityPool()).getTotalPooledEther(), NativeEETH(eETH()).totalShares());
++    }
++
++    function _ePullInput(uint256 received) internal view returns (uint256) {
++        return _eInputForReceivedAt(NativeEETH(eETH()).shares(address(this)), received);
++    }
++
++    function _eEthForWeEthUp(uint256 wrappedAmount) internal view returns (uint256 amount) {
++        IWeETH wrapped = IWeETH(weETH());
++        amount = wrapped.getEETHByWeETH(wrappedAmount);
++        if (wrapped.getWeETHByeETH(amount) < wrappedAmount) ++amount;
++    }
++
++    /// @dev Public previews have no recipient. An empty recipient is the
++    /// conservative native-transfer floor; execution measures its actual delta.
++    function _quoteUnwrapToE(uint256 wrappedAmount) internal view returns (uint256) {
++        uint256 received = _eReceivedAt(NativeEETH(eETH()).shares(address(this)), _eEthFromWeEth(wrappedAmount));
++        return _eReceivedAt(0, received);
++    }
++
++    function _wrappedForEDeliveryUp(uint256 delivered) internal view returns (uint256 wrappedAmount) {
++        uint256 transferable = _eInputForReceivedAt(0, delivered);
++        uint256 unwrapNominal = _ePullInput(transferable);
++        IWeETH wrapped = IWeETH(weETH());
++        wrappedAmount = wrapped.getWeETHByeETH(unwrapNominal);
++        if (wrapped.getEETHByWeETH(wrappedAmount) < unwrapNominal) ++wrappedAmount;
++    }
++
++    function _transferE(uint256 amount, address recipient) internal returns (uint256 delivered) {
++        IERC20 native_ = IERC20(eETH());
++        uint256 beforeBalance = native_.balanceOf(recipient);
++        native_.safeTransfer(recipient, amount);
++        delivered = native_.balanceOf(recipient) - beforeBalance;
++    }
++
++    function _unwrapAndPayE(uint256 wrappedAmount, address recipient) internal returns (uint256 delivered) {
++        _requireLockedWe(wrappedAmount);
++        IERC20 native_ = IERC20(eETH());
++        uint256 beforeBalance = native_.balanceOf(address(this));
++        IWeETH(weETH()).unwrap(wrappedAmount);
++        delivered = _transferE(native_.balanceOf(address(this)) - beforeBalance, recipient);
++    }
++
++    /// @dev Deposit changes the global ratio when the minted native shares round
++    /// down. Model that change before the next wrap or eETH transfer.
++    function _quoteStakeOut(uint256 ethAmount, bool wrappedOutput) internal view returns (uint256) {
++        NativeEETH native_ = NativeEETH(eETH());
++        (uint256 pooled, uint256 supply) = _nativeShareRate();
++        uint256 minted = supply == 0 ? ethAmount : Math.mulDiv(ethAmount, supply, pooled);
++        uint256 held = native_.shares(address(this));
++        uint256 beforeBalance = supply == 0 ? held : Math.mulDiv(held, pooled, supply);
++        supply += minted;
++        pooled += ethAmount;
++        if (supply == 0) return 0;
++        uint256 received = Math.mulDiv(held + minted, pooled, supply) - beforeBalance;
++        uint256 transferredShares = Math.mulDiv(received, supply, pooled);
++        return wrappedOutput ? transferredShares : Math.mulDiv(transferredShares, pooled, supply);
++    }
++
++    function _ethForStakeOut(uint256 output, bool wrappedOutput) internal view returns (uint256 amount) {
++        if (output == 0) return 0;
++        amount = wrappedOutput ? _eEthForWeEthUp(output) : output;
++        if (_quoteStakeOut(amount, wrappedOutput) >= output) return amount;
++        (uint256 pooled, uint256 supply) = _nativeShareRate();
++        // Deposit cannot reduce the share rate. One pooled-unit rounding loss
++        // costs at most ceil(supply / pooled) shares at the pre-deposit ratio.
++        uint256 neededShares = wrappedOutput ? output : Math.mulDiv(output, supply, pooled, Math.Rounding.Ceil);
++        neededShares += Math.ceilDiv(supply, pooled);
++        return Math.mulDiv(neededShares, pooled, supply, Math.Rounding.Ceil);
+     }
+ 
+     function _convertEthDeltaToShares(uint256 ethDelta, uint256 totalEthBefore) internal view returns (uint256) {
+-        return BetterMath._convertToSharesDown(
+-            ethDelta, totalEthBefore, ERC20Repo._totalSupply(), _decimalOffset()
+-        );
++        return BetterMath._convertToSharesDown(ethDelta, totalEthBefore, ERC20Repo._totalSupply(), _decimalOffset());
+     }
+ 
+     function _sharesForEthOut(uint256 ethOut) internal view returns (uint256) {
+-        return BetterMath._convertToSharesUp(
+-            ethOut, totalReserveEth(), ERC20Repo._totalSupply(), _decimalOffset()
+-        );
++        return BetterMath._convertToSharesUp(ethOut, totalReserveEth(), ERC20Repo._totalSupply(), _decimalOffset());
+     }
+ 
+     function _previewRedeemSharesToEth(uint256 seShares) internal view returns (uint256 ethOut) {
+-        return BetterMath._convertToAssetsDown(
+-            seShares, totalReserveEth(), ERC20Repo._totalSupply(), _decimalOffset()
+-        );
++        return BetterMath._convertToAssetsDown(seShares, totalReserveEth(), ERC20Repo._totalSupply(), _decimalOffset());
+     }
+ 
+     function _ethForSharesOut(uint256 seShares) internal view returns (uint256 ethIn) {
+@@ -233,9 +286,7 @@
+     }
+ 
+     function _ethForSharesOut(uint256 seShares, uint256 reserveBefore) internal view returns (uint256 ethIn) {
+-        return BetterMath._convertToAssetsUp(
+-            seShares, reserveBefore, ERC20Repo._totalSupply(), _decimalOffset()
+-        );
++        return BetterMath._convertToAssetsUp(seShares, reserveBefore, ERC20Repo._totalSupply(), _decimalOffset());
+     }
+ 
+     /// @dev Remove only this route's authenticated local credit from live NAV. Bare
+@@ -284,6 +335,7 @@
+         // asset → SE mint: quote using post-credit eth value (eETH wrap double-floor matches exec)
+         if (_isSeShare(tokenOut)) {
+             if (!_isAsset(tokenIn)) revert InvalidRoute(tokenIn, tokenOut);
++            if (tokenIn == eETH()) amountIn = _eReceivedAt(NativeEETH(eETH()).shares(address(this)), amountIn);
+             uint256 ethValue = _creditEthValueOfAsset(tokenIn, amountIn);
+             return _convertEthDeltaToShares(ethValue, totalReserveEth());
+         }
+@@ -291,14 +343,21 @@
+         if (_isSeShare(tokenIn)) {
+             if (!_isAsset(tokenOut)) revert InvalidRoute(tokenIn, tokenOut);
+             uint256 ethOut = _previewRedeemSharesToEth(amountIn);
++            if (tokenOut == eETH()) return _quoteUnwrapToE(_weEthFromEEth(ethOut));
+             return _ethToAssetDown(tokenOut, ethOut);
+         }
+ 
+         if (!_isAsset(tokenIn) || !_isAsset(tokenOut)) revert InvalidRoute(tokenIn, tokenOut);
++        if (tokenIn == eETH()) amountIn = _eReceivedAt(NativeEETH(eETH()).shares(address(this)), amountIn);
+         return _quoteAssetToAssetExactIn(tokenIn, amountIn, tokenOut);
+     }
+ 
+-    function _quoteExactOut(address tokenIn, address tokenOut, uint256 amountOut)
++    /// @dev Public previews quote a nominal pull. Prepaid execution starts with already delivered credit.
++    function _quoteExactOut(address tokenIn, address tokenOut, uint256 amountOut) internal view returns (uint256) {
++        return _quoteExactOut(tokenIn, tokenOut, amountOut, false);
++    }
++
++    function _quoteExactOut(address tokenIn, address tokenOut, uint256 amountOut, bool pretransferred)
+         internal
+         view
+         returns (uint256 amountIn)
+@@ -310,18 +369,22 @@
+         if (_isSeShare(tokenOut)) {
+             if (!_isAsset(tokenIn)) revert InvalidRoute(tokenIn, tokenOut);
+             uint256 ethNeeded = _ethForSharesOut(amountOut);
+-            return _ethToAssetUp(tokenIn, ethNeeded);
++            amountIn = _ethToAssetUp(tokenIn, ethNeeded);
++            return tokenIn == eETH() && !pretransferred ? _ePullInput(amountIn) : amountIn;
+         }
+ 
+         // SE → asset redeem (exact asset out)
+         if (_isSeShare(tokenIn)) {
+             if (!_isAsset(tokenOut)) revert InvalidRoute(tokenIn, tokenOut);
+-            uint256 ethNeeded = _assetToEth(tokenOut, amountOut);
++            uint256 ethNeeded = tokenOut == eETH()
++                ? _eEthFromWeEth(_wrappedForEDeliveryUp(amountOut))
++                : _assetToEth(tokenOut, amountOut);
+             return _sharesForEthOut(ethNeeded);
+         }
+ 
+         if (!_isAsset(tokenIn) || !_isAsset(tokenOut)) revert InvalidRoute(tokenIn, tokenOut);
+-        return _quoteAssetToAssetExactOut(tokenIn, tokenOut, amountOut);
++        amountIn = _quoteAssetToAssetExactOut(tokenIn, tokenOut, amountOut);
++        return tokenIn == eETH() && !pretransferred ? _ePullInput(amountIn) : amountIn;
+     }
+ 
+     function _quoteAssetToAssetExactIn(address tokenIn, uint256 amountIn, address tokenOut)
+@@ -334,13 +397,13 @@
+         address we_ = weETH();
+ 
+         if (tokenIn == e_ && tokenOut == we_) return IWeETH(we_).getWeETHByeETH(amountIn);
+-        if (tokenIn == we_ && tokenOut == e_) return IWeETH(we_).getEETHByWeETH(amountIn);
+-
+-        if (tokenIn == weth_ && tokenOut == e_) return amountIn;
+-        if (tokenIn == weth_ && tokenOut == we_) return IWeETH(we_).getWeETHByeETH(amountIn);
++        if (tokenIn == we_ && tokenOut == e_) return _quoteUnwrapToE(amountIn);
++
++        if (tokenIn == weth_ && tokenOut == e_) return _quoteStakeOut(amountIn, false);
++        if (tokenIn == weth_ && tokenOut == we_) return _quoteStakeOut(amountIn, true);
+ 
+         // Inventory eth-value swap; liquid checked only on exec
+-        if (tokenIn == e_ && tokenOut == weth_) return amountIn;
++        if (tokenIn == e_ && tokenOut == weth_) return _creditEthValueOfAsset(e_, amountIn);
+         if (tokenIn == we_ && tokenOut == weth_) return IWeETH(we_).getEETHByWeETH(amountIn);
+ 
+         revert InvalidRoute(tokenIn, tokenOut);
+@@ -357,13 +420,13 @@
+ 
+         // Ceil inputs so floor wrap/unwrap still meets amountOut on live rates.
+         if (tokenIn == e_ && tokenOut == we_) return _eEthForWeEthUp(amountOut);
+-        if (tokenIn == we_ && tokenOut == e_) return _weEthForEEthUp(amountOut);
+-
+-        if (tokenIn == weth_ && tokenOut == e_) return amountOut;
++        if (tokenIn == we_ && tokenOut == e_) return _wrappedForEDeliveryUp(amountOut);
++
++        if (tokenIn == weth_ && tokenOut == e_) return _ethForStakeOut(amountOut, false);
+         // stake 1:1 then wrap: need eETH face that wraps to >= amountOut weETH
+-        if (tokenIn == weth_ && tokenOut == we_) return _eEthForWeEthUp(amountOut);
+-
+-        if (tokenIn == e_ && tokenOut == weth_) return amountOut;
++        if (tokenIn == weth_ && tokenOut == we_) return _ethForStakeOut(amountOut, true);
++
++        if (tokenIn == e_ && tokenOut == weth_) return _ethToAssetUp(e_, amountOut);
+         // inventory swap pays eth face of weETH in; need we such that eth face >= amountOut
+         if (tokenIn == we_ && tokenOut == weth_) return _weEthForEEthUp(amountOut);
+ 
+@@ -379,15 +442,13 @@
+     }
+ 
+     function _pretransferCredit(IERC20 token, uint256 maximum) internal view returns (uint256) {
+-        return LocalCreditLib.budget(
+-            LocalCreditLib.available(token.balanceOf(address(this)), _bookedReserve(token)),
+-            maximum
+-        );
+-    }
+-
+-    function _refundExactOutCredit(IERC20 token, uint256 credit, uint256 used, bool pretransferred)
+-        internal
+-    {
++        return
++            LocalCreditLib.budget(
++                LocalCreditLib.available(token.balanceOf(address(this)), _bookedReserve(token)), maximum
++            );
++    }
++
++    function _refundExactOutCredit(IERC20 token, uint256 credit, uint256 used, bool pretransferred) internal {
+         if (!pretransferred) return;
+         if (used > credit) revert ISecurePullErrors.TransferDeltaInsufficient(used, credit);
+         if (credit > used) {
+@@ -426,17 +487,13 @@
+         }
+         address bl = abi.decode(_staticcallWord(pool, abi.encodeWithSignature("blacklister()")), (address));
+         uint256 until_ = abi.decode(
+-            _staticcallWord(bl, abi.encodeWithSignature("blacklistedUntil(address)", address(this))),
+-            (uint256)
++            _staticcallWord(bl, abi.encodeWithSignature("blacklistedUntil(address)", address(this))), (uint256)
+         );
+         if (until_ > block.timestamp) return false;
+         return true;
+     }
+ 
+-    function _securePull(IERC20 token, uint256 amountIn, bool pretransferred)
+-        internal
+-        returns (uint256 actualIn)
+-    {
++    function _securePull(IERC20 token, uint256 amountIn, bool pretransferred) internal returns (uint256 actualIn) {
+         if (pretransferred) {
+             LocalCreditLib.requirePretransferCaller(msg.sender);
+             uint256 avail = LocalCreditLib.available(token.balanceOf(address(this)), _bookedReserve(token));
+@@ -445,6 +502,7 @@
+             }
+             return amountIn;
+         }
++        if (address(token) == eETH()) return _pullNativeE(amountIn);
+         uint256 before_ = token.balanceOf(address(this));
+         token.safeTransferFrom(msg.sender, address(this), amountIn);
+         uint256 delta = token.balanceOf(address(this)) - before_;
+@@ -452,6 +510,19 @@
+             revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, delta);
+         }
+         return amountIn;
++    }
++
++    function _pullNativeE(uint256 amountIn) private returns (uint256 received) {
++        NativeEETH native_ = NativeEETH(eETH());
++        uint256 beforeShares = native_.shares(address(this));
++        uint256 expectedShares = IEtherFiLiquidityPool(liquidityPool()).sharesForAmount(amountIn);
++        uint256 expectedReceived = _eReceivedAt(beforeShares, amountIn);
++        uint256 beforeBalance = native_.balanceOf(address(this));
++        IERC20(address(native_)).safeTransferFrom(msg.sender, address(this), amountIn);
++        received = native_.balanceOf(address(this)) - beforeBalance;
++        if (native_.shares(address(this)) != beforeShares + expectedShares || received != expectedReceived) {
++            revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, received);
++        }
+     }
+ 
+     function _burnShares(uint256 shares) internal {
+@@ -513,34 +584,26 @@
+     }
+ 
+     /// @dev Pay weETH or eETH from locked inventory.
+-    function _payYield(address token, uint256 amount, address recipient) internal {
+-        address e_ = eETH();
+-        address we_ = weETH();
+-
+-        if (token == we_) {
++    function _payYield(address token, uint256 amount, address recipient) internal returns (uint256 delivered) {
++        if (token == weETH()) {
+             _requireLockedWe(amount);
+-            IERC20(we_).safeTransfer(recipient, amount);
+-            return;
+-        }
+-        if (token == e_) {
+-            // Ceil weETH so floor unwrap still yields >= amount eETH on live rates.
+-            uint256 weNeeded = _weEthForEEthUp(amount);
+-            _requireLockedWe(weNeeded);
+-            uint256 eOut = IWeETH(we_).unwrap(weNeeded);
+-            if (eOut < amount) revert Slippage();
+-            IERC20(e_).safeTransfer(recipient, amount);
+-            // Dust eETH from ceil stays in vault inventory (will be re-wrapped on credit paths).
+-            return;
++            IERC20(weETH()).safeTransfer(recipient, amount);
++            return amount;
++        }
++        if (token == eETH()) {
++            delivered = _unwrapAndPayE(_wrappedForEDeliveryUp(amount), recipient);
++            if (delivered < amount) revert Slippage();
++            return delivered;
+         }
+         revert InvalidRoute(address(0), token);
+     }
+ 
+-    function _payAsset(address token, uint256 amount, address recipient) internal {
++    function _payAsset(address token, uint256 amount, address recipient) internal returns (uint256) {
+         if (token == weth()) {
+             _payWeth(amount, recipient);
+-            return;
+-        }
+-        _payYield(token, amount, recipient);
++            return amount;
++        }
++        return _payYield(token, amount, recipient);
+     }
+ 
+     function _execAssetToAsset(address tokenIn, uint256 amountIn, address tokenOut, address recipient)
+@@ -561,16 +624,12 @@
+ 
+         // weETH → eETH unwrap
+         if (tokenIn == we_ && tokenOut == e_) {
+-            produced = IWeETH(we_).unwrap(amountIn);
+-            IERC20(e_).safeTransfer(recipient, produced);
+-            return produced;
++            return _unwrapAndPayE(amountIn, recipient);
+         }
+ 
+         // WETH → eETH (stake)
+         if (tokenIn == weth_ && tokenOut == e_) {
+-            produced = _stakeWethToEEth(amountIn);
+-            IERC20(e_).safeTransfer(recipient, produced);
+-            return produced;
++            return _transferE(_stakeWethToEEth(amountIn), recipient);
+         }
+ 
+         // WETH → weETH (stake + wrap)
+@@ -583,8 +642,7 @@
+         // eETH → WETH: keep e as locked (wrap) and pay liquid via ladder
+         if (tokenIn == e_ && tokenOut == weth_) {
+             IERC20(e_).forceApprove(we_, amountIn);
+-            IWeETH(we_).wrap(amountIn);
+-            produced = amountIn;
++            produced = _eEthFromWeEth(IWeETH(we_).wrap(amountIn));
+             _payWeth(produced, recipient);
+             return produced;
+         }
+diff --git a/contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeInTarget.sol b/contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeInTarget.sol
+--- a/contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeInTarget.sol
++++ b/contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeInTarget.sol
+@@ -1,12 +1,16 @@
+ // SPDX-License-Identifier: BSL-1.1
+ pragma solidity ^0.8.0;
+-import {IStandardExchangeTransitionQuote, IStandardExchangeExternalQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
++import {
++    IStandardExchangeTransitionQuote,
++    IStandardExchangeExternalQuote
++} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
+ import {ERC20Repo} from "@crane/contracts/tokens/ERC20/ERC20Repo.sol";
+ import {Math} from "@crane/contracts/utils/Math.sol";
+ import {BetterMath} from "@crane/contracts/utils/math/BetterMath.sol";
+ import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
+-import {EtherFiWeETHStandardExchangeRepo} from "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeRepo.sol";
+-
++import {
++    EtherFiWeETHStandardExchangeRepo
++} from "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeRepo.sol";
+ 
+ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+ import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/ReentrancyLockModifiers.sol";
+@@ -56,10 +60,12 @@
+         // SE redeem exact-in: burn shares, pay asset
+         if (_isSeShare(in_)) {
+             if (!_isAsset(out_)) revert InvalidRoute(in_, out_);
+-            amountOut = _quoteExactIn(in_, amountIn, out_);
++            uint256 wrappedOut;
++            if (out_ == eETH()) wrappedOut = _weEthFromEEth(_previewRedeemSharesToEth(amountIn));
++            else amountOut = _quoteExactIn(in_, amountIn, out_);
++            _burnShares(amountIn);
++            amountOut = out_ == eETH() ? _unwrapAndPayE(wrappedOut, recipient) : _payAsset(out_, amountOut, recipient);
+             if (amountOut < minAmountOut) revert Slippage();
+-            _burnShares(amountIn);
+-            _payAsset(out_, amountOut, recipient);
+             _syncAllExpectedHoldReserves();
+             return amountOut;
+         }
+@@ -92,6 +98,7 @@
+ 
+         revert InvalidRoute(in_, out_);
+     }
++
+     /// @dev Project the actual global eETH share ratio, liquid sleeve, wrapped
+     /// inventory and pending queue face separately. Idle eETH is not reserve NAV.
+     struct EtherFiQuoteState {
+@@ -139,9 +146,8 @@
+     }
+ 
+     function _efSnapshotRedemption(EtherFiQuoteState memory q) private view {
+-        (bool ok, bytes memory data) = redemptionManager().staticcall(
+-            abi.encodeWithSignature("tokenToRedemptionInfo(address)", ETH_SENTINEL)
+-        );
++        (bool ok, bytes memory data) =
++            redemptionManager().staticcall(abi.encodeWithSignature("tokenToRedemptionInfo(address)", ETH_SENTINEL));
+         if (!ok || data.length != 7 * 32) revert InvalidQuoteState();
+         uint256[7] memory words = abi.decode(data, (uint256[7]));
+         // Bucket units are 1e12 wei, not wei. Refill once at this timestamp;
+@@ -189,7 +195,9 @@
+     }
+ 
+     function _efReceiveAndWrap(EtherFiQuoteState memory q, uint256 amount)
+-        private pure returns (uint256 received, uint256 wrapped)
++        private
++        pure
++        returns (uint256 received, uint256 wrapped)
+     {
+         uint256 beforeBalance = _efPooled(q, q.idleEShares);
+         q.idleEShares += _efShares(q, amount);
+@@ -225,7 +233,9 @@
+     }
+ 
+     function _efDeposit(EtherFiQuoteState memory q, address token, uint256 amount, bool toHolder)
+-        private view returns (uint256 minted)
++        private
++        view
++        returns (uint256 minted)
+     {
+         if (amount == 0) return 0;
+         uint256 beforeNav = _efNav(q);
+@@ -240,13 +250,17 @@
+             (, uint256 wrapped) = _efReceiveAndWrap(q, amount);
+             q.wrapped += wrapped;
+             credited = _efPooled(q, wrapped);
+-        } else revert UnsupportedQuoteAsset(token);
++        } else {
++            revert UnsupportedQuoteAsset(token);
++        }
+         minted = BetterMath._convertToSharesDown(credited, beforeNav, q.supply, _decimalOffset());
+         q.supply += minted;
+         if (toHolder) q.holderShares += minted;
+         address beneficiary = address(VaultFeeOracleQueryAwareRepo._feeOracle().feeTo());
+         if (beneficiary != address(0)) {
+-            uint256 fee = BetterMath._percentageOfWAD(minted, VaultFeeOracleQueryAwareRepo._feeOracle().usageFeeOfVault(address(this)));
++            uint256 fee = BetterMath._percentageOfWAD(
++                minted, VaultFeeOracleQueryAwareRepo._feeOracle().usageFeeOfVault(address(this))
++            );
+             q.supply += fee;
+             if (q.holder == beneficiary) q.holderShares += fee;
+         }
+@@ -255,8 +269,8 @@
+ 
+     function _efCanRedeem(EtherFiQuoteState memory q, uint256 face) private pure returns (bool) {
+         uint256 low = Math.mulDiv(q.pooledEth, q.lowWatermark, 10_000);
+-        return face < uint256(type(uint64).max) * 1e12 && q.poolLiquid >= low
+-            && face <= q.poolLiquid - low && Math.ceilDiv(face, 1e12) <= q.redeemUnits;
++        return face < uint256(type(uint64).max) * 1e12 && q.poolLiquid >= low && face <= q.poolLiquid - low
++            && Math.ceilDiv(face, 1e12) <= q.redeemUnits;
+     }
+ 
+     function _efRedeemShortfall(EtherFiQuoteState memory q, uint256 shortfall) private view {
+@@ -298,7 +312,9 @@
+     }
+ 
+     function quoteTransition(bytes calldata state, Operation operation, uint256 amount)
+-        external view returns (bytes memory, uint256 amountIn, uint256 amountOut, uint256)
++        external
++        view
++        returns (bytes memory, uint256 amountIn, uint256 amountOut, uint256)
+     {
+         EtherFiQuoteState memory q = _readEtherFiQuote(state);
+         amountIn = amount;
+@@ -313,7 +329,9 @@
+                 uint256 face = q.asset == weth() ? amount : _efPooled(q, amount);
+                 amountIn = BetterMath._convertToSharesUp(face, _efNav(q), q.supply, _decimalOffset());
+                 amountOut = amount;
+-            } else amountOut = _efAssets(q, amount);
++            } else {
++                amountOut = _efAssets(q, amount);
++            }
+             if (amountIn > q.holderShares) revert InsufficientQuoteShares(amountIn, q.holderShares);
+             q.holderShares -= amountIn;
+             q.supply -= amountIn;
+@@ -323,7 +341,9 @@
+     }
+ 
+     function quoteExternalDeposit(bytes calldata state, address tokenIn, uint256 amount)
+-        external view returns (bytes memory, uint256 minted, uint256)
++        external
++        view
++        returns (bytes memory, uint256 minted, uint256)
+     {
+         EtherFiQuoteState memory q = _readEtherFiQuote(state);
+         minted = _efDeposit(q, tokenIn, amount, false);
+@@ -331,7 +351,9 @@
+     }
+ 
+     function quoteExternalExchange(bytes calldata state, address tokenIn, uint256 amount)
+-        external view returns (bytes memory, uint256 amountOut, uint256)
++        external
++        view
++        returns (bytes memory, uint256 amountOut, uint256)
+     {
+         EtherFiQuoteState memory q = _readEtherFiQuote(state);
+         if (q.asset == weth()) {
+@@ -339,18 +361,21 @@
+                 q.wrapped += amount;
+                 amountOut = _efPooled(q, amount);
+             } else if (tokenIn == eETH()) {
+-                (uint256 received, uint256 wrapped) = _efReceiveAndWrap(q, amount);
++                (, uint256 wrapped) = _efReceiveAndWrap(q, amount);
+                 q.wrapped += wrapped;
+-                amountOut = received;
+-            } else revert UnsupportedQuoteAsset(tokenIn);
++                amountOut = _efPooled(q, wrapped);
++            } else {
++                revert UnsupportedQuoteAsset(tokenIn);
++            }
+             _efPay(q, amountOut);
+         } else if (tokenIn == weth()) {
+             q.liquid += amount;
+             amountOut = _efStake(q, amount);
+         } else if (tokenIn == eETH()) {
+             (, amountOut) = _efReceiveAndWrap(q, amount);
+-        } else revert UnsupportedQuoteAsset(tokenIn);
++        } else {
++            revert UnsupportedQuoteAsset(tokenIn);
++        }
+         return (abi.encode(q), amountOut, _efAssets(q, q.holderShares));
+     }
+-
+ }
+diff --git a/contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeOutTarget.sol b/contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeOutTarget.sol
+--- a/contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeOutTarget.sol
++++ b/contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeOutTarget.sol
+@@ -47,7 +47,7 @@
+         // SE redeem exact-out: burn shares for fixed asset out
+         if (_isSeShare(in_)) {
+             if (!_isAsset(out_)) revert InvalidRoute(in_, out_);
+-            amountIn = _quoteExactOut(in_, out_, amountOut);
++            amountIn = _quoteExactOut(in_, out_, amountOut, pretransferred);
+             if (amountIn > maxAmountIn) revert Slippage();
+             _burnShares(amountIn);
+             _payAsset(out_, amountOut, recipient);
+@@ -62,6 +62,7 @@
+             // The unused part of this bounded payment is refunded, never existing backing.
+             uint256 totalBefore = _reserveBeforePretransfer(in_, credit);
+             amountIn = _quoteMintAtReserve(in_, amountOut, totalBefore);
++            if (in_ == eETH() && !pretransferred) amountIn = _ePullInput(amountIn);
+             if (amountIn > maxAmountIn) revert Slippage();
+             uint256 actualIn = _securePull(tokenIn, amountIn, pretransferred);
+             uint256 ethValue = _creditAssetToReserve(in_, actualIn);
+@@ -78,7 +79,7 @@
+ 
+         // asset → asset exact-out
+         if (_isAsset(in_) && _isAsset(out_)) {
+-            amountIn = _quoteExactOut(in_, out_, amountOut);
++            amountIn = _quoteExactOut(in_, out_, amountOut, pretransferred);
+             if (amountIn > maxAmountIn) revert Slippage();
+             uint256 credit = pretransferred ? _pretransferCredit(tokenIn, maxAmountIn) : 0;
+             uint256 actualIn = _securePull(tokenIn, amountIn, pretransferred);

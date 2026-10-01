@@ -401,14 +401,8 @@ abstract contract MixedLegWeightedBufferPoolHookTarget is MixedLegWeightedBuffer
         IERC20 bufferTok = Repo._bufferToken(pairOut);
         shareTok.approve(address(seVault), drainAmount);
         _passPrepay(seRouter, address(seVault));
-        try seVault.exchangeOut(
-            shareTok, drainAmount, bufferTok, yBufferRaw, address(vault), false, block.timestamp
-        ) returns (uint256 sc) {
-            sharesConsumed = sc;
-        } catch {
-            _restorePrepay(seRouter);
-            revert IMixedLegWeightedBufferPool.PreSeatRedemptionFailed(drainAmount, yBufferRaw);
-        }
+        sharesConsumed =
+            seVault.exchangeOut(shareTok, drainAmount, bufferTok, yBufferRaw, address(vault), false, block.timestamp);
         _restorePrepay(seRouter);
         if (sharesConsumed == 0) {
             revert IMixedLegWeightedBufferPool.PreSeatRedemptionFailed(drainAmount, yBufferRaw);
@@ -442,16 +436,22 @@ abstract contract MixedLegWeightedBufferPoolHookTarget is MixedLegWeightedBuffer
 
     function _donatePreSeatBuffer(uint256, uint256, uint256) internal pure {}
 
+    function _isPrepayRouter(address seRouter) internal view returns (bool) {
+        if (seRouter == address(0) || seRouter.code.length == 0) return false;
+        (bool ok, bytes memory ret) = seRouter.staticcall(
+            abi.encodeWithSelector(IBalancerV3StandardExchangeRouterPrepay.prepaySessionActive.selector)
+        );
+        return ok && ret.length == 32;
+    }
+
     function _passPrepay(address seRouter, address seVault) internal {
-        if (seRouter != address(0) && seRouter.code.length > 0) {
-            try IBalancerV3StandardExchangeRouterPrepay(seRouter).passPrepayAuth(seVault) {} catch {}
-        }
+        if (!_isPrepayRouter(seRouter)) return;
+        IBalancerV3StandardExchangeRouterPrepay(seRouter).passPrepayAuth(seVault);
     }
 
     function _restorePrepay(address seRouter) internal {
-        if (seRouter != address(0) && seRouter.code.length > 0) {
-            try IBalancerV3StandardExchangeRouterPrepay(seRouter).restorePrepayAuth() {} catch {}
-        }
+        if (!_isPrepayRouter(seRouter)) return;
+        IBalancerV3StandardExchangeRouterPrepay(seRouter).restorePrepayAuth();
     }
 
     function _reconcileBufferIn(uint256 xRaw, uint256 pairIn, address seRouter) internal {
@@ -466,15 +466,7 @@ abstract contract MixedLegWeightedBufferPoolHookTarget is MixedLegWeightedBuffer
 
         bufferTok.approve(address(seVault), xRaw);
         _passPrepay(seRouter, address(seVault));
-        uint256 minted;
-        try seVault.exchangeIn(bufferTok, xRaw, shareTok, 0, address(vault), false, block.timestamp) returns (
-            uint256 m
-        ) {
-            minted = m;
-        } catch {
-            _restorePrepay(seRouter);
-            revert IMixedLegWeightedBufferPool.PostSwapDepositFailed(xRaw);
-        }
+        uint256 minted = seVault.exchangeIn(bufferTok, xRaw, shareTok, 0, address(vault), false, block.timestamp);
         _restorePrepay(seRouter);
         if (minted == 0) revert IMixedLegWeightedBufferPool.PostSwapDepositFailed(xRaw);
 

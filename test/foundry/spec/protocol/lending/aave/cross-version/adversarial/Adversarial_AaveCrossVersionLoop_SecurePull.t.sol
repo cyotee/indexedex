@@ -58,6 +58,7 @@ contract Adversarial_AaveCrossVersionLoop_SecurePull is TestBase_AaveCrossVersio
         IFacet outFacet = create3Factory.deployExchangeOutFacet();
         IFacet rebalFacet = create3Factory.deployRebalanceFacet();
         IFacet markerFacet = create3Factory.deployMarkerFacet();
+        IFacet transitionQuoteFacet = create3Factory.deployTransitionQuoteFacet();
 
         IAaveCrossVersionLoopDFPkg.PkgInit memory pkgInit = IAaveCrossVersionLoopDFPkg.PkgInit({
             erc20Facet: erc20Facet,
@@ -69,6 +70,7 @@ contract Adversarial_AaveCrossVersionLoop_SecurePull is TestBase_AaveCrossVersio
             exchangeOutFacet: outFacet,
             rebalanceFacet: rebalFacet,
             markerFacet: markerFacet,
+            transitionQuoteFacet: transitionQuoteFacet,
             v36Pool: v36Pool,
             v36AddressesProvider: IPoolAddressesProvider(v36AddressesProvider),
             v36Oracle: IAaveOracle(v36Oracle),
@@ -247,8 +249,10 @@ contract Adversarial_AaveCrossVersionLoop_SecurePull is TestBase_AaveCrossVersio
         _mint(tokenA, vault, SEED_IN);
         uint256 honestShares_ = _honestDeposit(honest, DEPOSIT);
         assertGt(honestShares_, 0, "partial honest path");
-        uint256 residual_ = tokenA.balanceOf(vault);
-        assertGt(residual_, 0, "residual inventory after honest In");
+        // APEX D31/D32: raw tokenA resting on the loop vault is vault-owned backing (no public
+        // pretransfer exists), so the honest deposit sweeps it into the position first.
+        assertEq(tokenA.balanceOf(vault), 0, "D31: seeded raw tokenA swept into the loop");
+        uint256 residual_ = SEED_IN;
 
         uint256 attackerBefore = IERC20(vault).balanceOf(attacker);
         uint256 supplyBefore = IERC20(vault).totalSupply();
@@ -275,7 +279,7 @@ contract Adversarial_AaveCrossVersionLoop_SecurePull is TestBase_AaveCrossVersio
 
         assertEq(IERC20(vault).balanceOf(attacker), attackerBefore, "I3 In: no second free credit");
         assertEq(IERC20(vault).totalSupply(), supplyBefore, "I3 In: supply unchanged");
-        assertEq(tokenA.balanceOf(vault), residual_, "I3 In: residual unmoved");
+        assertEq(tokenA.balanceOf(vault), 0, "I3 In: no raw tokenA is left unbooked after the sweep");
     }
 
     /// @notice I3 Out: leftover self-shares after a partial honest Out cannot fund a free extract.

@@ -367,23 +367,9 @@ abstract contract StandardExchangeBufferHookTarget is StandardExchangeBufferPool
         // 2) Best-effort deposit of the full amount.
         //    When IndexedEx router has a prepay session, pass auth to the SE (hooks==pool principal).
         ttaTok.approve(address(seVault), X_raw);
-        if (seRouter != address(0) && seRouter.code.length > 0) {
-            try IBalancerV3StandardExchangeRouterPrepay(seRouter).passPrepayAuth(address(seVault)) {} catch {}
-        }
-        uint256 minted;
-        try seVault.exchangeIn(ttaTok, X_raw, shareTok, 0, address(vault), false, block.timestamp) returns (
-            uint256 m
-        ) {
-            minted = m;
-        } catch {
-            if (seRouter != address(0) && seRouter.code.length > 0) {
-                try IBalancerV3StandardExchangeRouterPrepay(seRouter).restorePrepayAuth() {} catch {}
-            }
-            revert IStandardExchangeBufferPool.PostSwapDepositFailed(X_raw);
-        }
-        if (seRouter != address(0) && seRouter.code.length > 0) {
-            try IBalancerV3StandardExchangeRouterPrepay(seRouter).restorePrepayAuth() {} catch {}
-        }
+        _passPrepay(seRouter, address(seVault));
+        uint256 minted = seVault.exchangeIn(ttaTok, X_raw, shareTok, 0, address(vault), false, block.timestamp);
+        _restorePrepay(seRouter);
         if (minted == 0) revert IStandardExchangeBufferPool.PostSwapDepositFailed(X_raw);
 
         // 3) Credit the Balancer Vault for the minted shares (round-trip capped).
@@ -508,22 +494,10 @@ abstract contract StandardExchangeBufferHookTarget is StandardExchangeBufferPool
         //    Pass prepay auth when IndexedEx router session is active (hooks==pool principal).
         shareTok.approve(address(seVault), drainAmount);
         address seRouter = params.router;
-        if (seRouter != address(0) && seRouter.code.length > 0) {
-            try IBalancerV3StandardExchangeRouterPrepay(seRouter).passPrepayAuth(address(seVault)) {} catch {}
-        }
-        uint256 sharesConsumed;
-        try seVault.exchangeOut(shareTok, drainAmount, ttaTok, Y_TTA_raw, address(vault), false, block.timestamp)
-        returns (uint256 sc) {
-            sharesConsumed = sc;
-        } catch {
-            if (seRouter != address(0) && seRouter.code.length > 0) {
-                try IBalancerV3StandardExchangeRouterPrepay(seRouter).restorePrepayAuth() {} catch {}
-            }
-            revert IStandardExchangeBufferPool.PreSeatRedemptionFailed(drainAmount, Y_TTA_raw);
-        }
-        if (seRouter != address(0) && seRouter.code.length > 0) {
-            try IBalancerV3StandardExchangeRouterPrepay(seRouter).restorePrepayAuth() {} catch {}
-        }
+        _passPrepay(seRouter, address(seVault));
+        uint256 sharesConsumed =
+            seVault.exchangeOut(shareTok, drainAmount, ttaTok, Y_TTA_raw, address(vault), false, block.timestamp);
+        _restorePrepay(seRouter);
         if (sharesConsumed == 0) revert IStandardExchangeBufferPool.PreSeatRedemptionFailed(drainAmount, Y_TTA_raw);
 
         // 4) Settle TTA received from the SE Vault.
@@ -603,14 +577,7 @@ abstract contract StandardExchangeBufferHookTarget is StandardExchangeBufferPool
         IStandardExchange seVault = Repo._standardExchangeVault();
         IERC20 shareTok = Repo._shareToken();
         ttaTok.approve(address(seVault), drainRaw);
-        uint256 minted;
-        try seVault.exchangeIn(ttaTok, drainRaw, shareTok, 0, address(vault), false, block.timestamp) returns (
-            uint256 m
-        ) {
-            minted = m;
-        } catch {
-            return;
-        }
+        uint256 minted = seVault.exchangeIn(ttaTok, drainRaw, shareTok, 0, address(vault), false, block.timestamp);
         if (minted == 0) return;
 
         uint256 donationRaw = _bv3SharesDonationRaw(minted);
@@ -623,7 +590,23 @@ abstract contract StandardExchangeBufferHookTarget is StandardExchangeBufferPool
         Repo._setHookSharesDelta(Repo._hookSharesDelta() + int256(donationRaw));
     }
 
+    function _isPrepayRouter(address seRouter) internal view returns (bool) {
+        if (seRouter == address(0) || seRouter.code.length == 0) return false;
+        (bool ok, bytes memory ret) = seRouter.staticcall(
+            abi.encodeWithSelector(IBalancerV3StandardExchangeRouterPrepay.prepaySessionActive.selector)
+        );
+        return ok && ret.length == 32;
+    }
 
+    function _passPrepay(address seRouter, address seVault) internal {
+        if (!_isPrepayRouter(seRouter)) return;
+        IBalancerV3StandardExchangeRouterPrepay(seRouter).passPrepayAuth(seVault);
+    }
+
+    function _restorePrepay(address seRouter) internal {
+        if (!_isPrepayRouter(seRouter)) return;
+        IBalancerV3StandardExchangeRouterPrepay(seRouter).restorePrepayAuth();
+    }
 
     /**
      * @dev Builds an AddLiquidityParams struct for calling vault.addLiquidity.

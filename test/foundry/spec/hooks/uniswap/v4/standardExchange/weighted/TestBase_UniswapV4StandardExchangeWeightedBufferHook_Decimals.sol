@@ -43,6 +43,7 @@ import {
     UniswapV4StandardExchangeWeightedBufferHookTestDeployLib as DeployLib
 } from "test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookTestDeployLib.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 import {
     UniswapV4StandardExchangeWeightedBufferHookPairPoolLib as PairPoolLib
 } from "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookPairPoolLib.sol";
@@ -402,16 +403,16 @@ abstract contract TestBase_UniswapV4StandardExchangeWeightedBufferHook_Decimals 
         uint256[] memory weights,
         address[] memory ses,
         address[] memory rps
-    ) internal view returns (IUniswapV4StandardExchangeWeightedBufferHookPackage.PkgArgs memory a) {
+    ) internal returns (IUniswapV4StandardExchangeWeightedBufferHookPackage.PkgArgs memory a) {
         a.poolManager = address(pm);
         a.feeOracle = address(indexedexManager);
         a.n = uint8(toks.length);
         a.tokens = toks;
         a.weights = weights;
         a.standardExchanges = ses;
-        a.rateProviders = rps;
         a.tokenDecimals = HookPkgArgsDecimalsLib.tokenDecimals(a.tokens);
         a.seDecimals = HookPkgArgsDecimalsLib.seDecimals(a.standardExchanges);
+        a.rateProviders = RateProviderFixtureLib.fillMissing(create3Factory, diamondPackageFactory, a.tokens, a.standardExchanges, rps); // D60: caller-supplied providers kept
         a.ownerOnlyLiquidity = _pkgOwnerOnlyLiquidity();
         a.owner = _pkgOwner();
     }

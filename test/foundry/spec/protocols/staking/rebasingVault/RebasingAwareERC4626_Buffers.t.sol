@@ -311,7 +311,7 @@ contract RebasingAwareERC4626_Buffers is TestBase_UniswapV4SingleStandardExchang
 
     function _wrapperArgs()
         internal
-        view
+
         returns (IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs memory args)
     {
         args = _defaultPkgArgs();

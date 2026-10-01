@@ -115,6 +115,7 @@ contract ComposedStableCommonDetfBondingFacet is ComposedStableCommonDetfCommon,
         if (msg.sender != address(Repo._layoutStruct().bondNftVault)) revert Repo.NotAuthorized(msg.sender);
     }
     function donate(IERC20 token_, uint256 amount_, bool prepaid_) external {
+        _requirePrepaidCaller(prepaid_);
         IDetfNftReserveDonation(address(Repo._layoutStruct().bondNftVault)).donate(msg.sender, token_, amount_, 0, prepaid_, block.timestamp);
     }
 

@@ -22,7 +22,7 @@ library RocketPoolRETH_Component_FactoryService {
         returns (IFacet instance)
     {
         bytes memory code = ArtifactCreationCode.creationCode("RocketPoolRETHStandardExchangeInFacet.sol:RocketPoolRETHStandardExchangeInFacet");
-        instance = create3Factory.deployFacet(code, keccak256(abi.encode("RocketPoolRETHStandardExchangeInFacet", keccak256(code))));
+        instance = create3Factory.deployFacet(code, abi.encode("RocketPoolRETHStandardExchangeInFacet")._hash());
         vm.label(address(instance), "RocketPoolRETHStandardExchangeInFacet");
     }
 
@@ -31,13 +31,13 @@ library RocketPoolRETH_Component_FactoryService {
         returns (IFacet instance)
     {
         bytes memory code = ArtifactCreationCode.creationCode("RocketPoolRETHStandardExchangeOutFacet.sol:RocketPoolRETHStandardExchangeOutFacet");
-        instance = create3Factory.deployFacet(code, keccak256(abi.encode("RocketPoolRETHStandardExchangeOutFacet", keccak256(code))));
+        instance = create3Factory.deployFacet(code, abi.encode("RocketPoolRETHStandardExchangeOutFacet")._hash());
         vm.label(address(instance), "RocketPoolRETHStandardExchangeOutFacet");
     }
 
     function deployRocketPoolRETHMarkerFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
         bytes memory code = ArtifactCreationCode.creationCode("RocketPoolRETHMarkerFacet.sol:RocketPoolRETHMarkerFacet");
-        instance = create3Factory.deployFacet(code, keccak256(abi.encode("RocketPoolRETHMarkerFacet", keccak256(code))));
+        instance = create3Factory.deployFacet(code, abi.encode("RocketPoolRETHMarkerFacet")._hash());
         vm.label(address(instance), "RocketPoolRETHMarkerFacet");
     }
 
@@ -46,7 +46,7 @@ library RocketPoolRETH_Component_FactoryService {
         returns (IFacet instance)
     {
         bytes memory code = ArtifactCreationCode.creationCode("RocketPoolRETHRebalanceFacet.sol:RocketPoolRETHRebalanceFacet");
-        instance = create3Factory.deployFacet(code, keccak256(abi.encode("RocketPoolRETHRebalanceFacet", keccak256(code))));
+        instance = create3Factory.deployFacet(code, abi.encode("RocketPoolRETHRebalanceFacet")._hash());
         vm.label(address(instance), "RocketPoolRETHRebalanceFacet");
     }
 
@@ -56,7 +56,7 @@ library RocketPoolRETH_Component_FactoryService {
     ) internal returns (IRocketPoolRETHStandardExchangeDFPkg instance) {
         bytes memory code = ArtifactCreationCode.creationCode("RocketPoolRETHStandardExchangeDFPkg.sol:RocketPoolRETHStandardExchangeDFPkg");
         bytes memory arguments = abi.encode(pkgInit);
-        bytes32 releaseSalt = keccak256(abi.encode("RocketPoolRETHStandardExchangeDFPkg", keccak256(code), keccak256(arguments)));
+        bytes32 releaseSalt = abi.encode("RocketPoolRETHStandardExchangeDFPkg")._hash();
         instance = IRocketPoolRETHStandardExchangeDFPkg(address(
             IVaultRegistryDeployment(address(indexedexManager)).deployPkg(code, arguments, releaseSalt)
         ));

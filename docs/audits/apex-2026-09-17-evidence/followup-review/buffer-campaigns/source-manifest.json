@@ -1,0 +1,55 @@
+{
+  "createdAt": "2026-09-25T08:27:31.304426+00:00",
+  "files": [
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/Handler_StandardExchangeBufferPool.sol",
+      "baselineSha256": "2c60daa2adf84d0b1014e28eb1e0e8044ba300f1c663ea0bebb3949d8ce215f2",
+      "overlaySha256": "603128ead484ca468a7765a9163315ba6a6f43517667223305237c9023ad0bcd"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPool.invariant.t.sol",
+      "baselineSha256": "1c044c7e62586a89431126430f168449de57ce5bca173a56af296c246da724a9",
+      "overlaySha256": "90926dfd80a8ae39933b07e4ccdfdbee0d99f16611cd9b768572035fce026b48"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/invariant/BufferPoolInvariantHandler.sol",
+      "baselineSha256": null,
+      "overlaySha256": "97f6fdd42ff97284253751a043cb69eccd33bcb91d5a19a8f28b07861e4b3266"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePool.invariant.t.sol",
+      "baselineSha256": null,
+      "overlaySha256": "1c420fa7e7d8b020358fc02e7e68d161112534af4b2594010aeed74a53e1deea"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/Handler_MixedBufferMultiVaultStablePool.sol",
+      "baselineSha256": "f8529311ebd57508824f1945df091d090782458e19a08a898575a38678f1279e",
+      "overlaySha256": "dd79a24a6c1d1277b180f73067da2259e3cd40d01785e1856309ed913b1ff31e"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePool.invariant.t.sol",
+      "baselineSha256": "7370ad1f8592448b9d78cb8fbe9507ccd34a94a4c7fe94bf3516f9738eff92a4",
+      "overlaySha256": "afbe2010c009cb5f7d81b8a6fb613071caea09797d93b3a469b321374933f401"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPool.invariant.t.sol",
+      "baselineSha256": "f667cceb26dabc5144dface2ea4673df60f954e3262b28343ce4b68f1fd90afb",
+      "overlaySha256": "229db56f4a0adcd3e71d7bed856eb36fc1f18aee7df96b1a8262a1d40c0a4fc9"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/Handler_CommonBufferMultiVault.sol",
+      "baselineSha256": "7a362b13ae12ee9d1699843c83a55f7cc242d13a56d86cf209cd5a34d2c3b088",
+      "overlaySha256": "d0a79753cc74447eeb534ab9ee9a5f1d9ba9e4172344b076d99e160623a3225a"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPool.invariant.t.sol",
+      "baselineSha256": "ff2fd94901458a8130a49aceedfca1d3824de0694a69d8a94f1df509b7847a61",
+      "overlaySha256": "2e30d6293d551243204f5e400c02050612e25c3aa4827b38f136b8273ed24330"
+    },
+    {
+      "path": "test/foundry/spec/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPool.invariant.t.sol",
+      "baselineSha256": "92e0811b373349fe376d6d860b8f2331594a43165c746c4a1292e76710036461",
+      "overlaySha256": "5eb214c3f9444ed9380dbffc72c7f5cff7308a7a87479fd9abf9429a7890aba9"
+    }
+  ]
+}

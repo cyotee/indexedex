@@ -129,10 +129,7 @@ abstract contract TestBase_UniswapV4OrbitalSwapHook_Decimals is TestBase_VaultCo
         // --- Product package ---
         IFacet hooksFacet = PkgFactory.deployHooksFacet(create3Factory);
         IFacet liquidityFacet = PkgFactory.deployLiquidityFacet(create3Factory);
-        hookPkg = PkgFactory.deployPackage(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            owner,
-            IUniswapV4OrbitalSwapHookPackage.PkgInit({
+        hookPkg = PkgFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, IUniswapV4OrbitalSwapHookPackage.PkgInit({
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
                 hooksFacet: hooksFacet,
@@ -142,9 +139,7 @@ abstract contract TestBase_UniswapV4OrbitalSwapHook_Decimals is TestBase_VaultCo
                 erc2612Facet: erc2612Facet,
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet
-            }),
-            abi.encode(type(IUniswapV4OrbitalSwapHookPackage).name, "v1")._hash()
-        );
+            }));
 
         IUniswapV4OrbitalSwapHookPackage.PkgArgs memory args = _defaultPkgArgs();
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);

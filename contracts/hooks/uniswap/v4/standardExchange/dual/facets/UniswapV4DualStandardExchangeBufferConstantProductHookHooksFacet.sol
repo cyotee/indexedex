@@ -65,7 +65,7 @@ contract UniswapV4DualStandardExchangeBufferConstantProductHookHooksFacet is
     }
 
     function _b() private pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](21);
+        funcs = new bytes4[](23);
         funcs[0] = IHook.claimSupply1.selector;
         funcs[1] = IHook.claimSupplyCurrency0.selector;
         funcs[2] = IHook.claimSupplyCurrency1.selector;
@@ -87,6 +87,8 @@ contract UniswapV4DualStandardExchangeBufferConstantProductHookHooksFacet is
         funcs[18] = IUniswapV4SeBufferHook.previewSwapExactIn.selector;
         funcs[19] = IUniswapV4SeBufferHook.previewSwapExactOut.selector;
         funcs[20] = IDetfReserveQuote.previewSynthetic.selector;
+        funcs[21] = IHook.rateProviders.selector; // D60
+        funcs[22] = IHook.rateProvider.selector; // D60
     }
 
     function facetMetadata()

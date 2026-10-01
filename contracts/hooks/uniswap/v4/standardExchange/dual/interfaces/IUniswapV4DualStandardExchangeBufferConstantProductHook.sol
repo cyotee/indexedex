@@ -82,6 +82,10 @@ interface IUniswapV4DualStandardExchangeBufferConstantProductHook is
     function token1() external view returns (address);
     function currency0() external view returns (address);
     function currency1() external view returns (address);
+    /// @notice D60: configured rate providers in pool order.
+    function rateProviders() external view returns (address[] memory);
+    /// @notice D60: configured rate provider for `token` (pair token or its SE; address(0) when unknown).
+    function rateProvider(address token) external view returns (address);
 
     // --- Claims ---
     function claimSupply0() external view returns (uint256);

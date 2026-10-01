@@ -40,6 +40,7 @@ contract Script_09_DeployChirInstance is DeploymentBase {
     string internal constant CORE_FILE = "02_indexedex_core.json";
     string internal constant HOOK_FACTORY_FILE = "03_hook_factory.json";
     string internal constant SE_FILE = "05_univ3_se_rich.json";
+    string internal constant RATE_PROVIDER_FILE = "06_rate_provider.json";
     string internal constant PKGS_FILE = "08_fee_detf_packages.json";
     string internal constant ARTIFACT_FILE = "09_chir_instance.json";
 
@@ -48,6 +49,8 @@ contract Script_09_DeployChirInstance is DeploymentBase {
     IUniswapV4HookDiamondPackageCallBackFactory private hookFactory;
     address private bufferCpHookPkg;
     address private uniV3Se_rich;
+    /// @dev D60: the CP hook's pair leg is valued as SE shares x this provider's rate.
+    address private rp_se_rich_weth;
     address private chirDetfPkg;
     address private bondNftVaultPkg;
     address private rebasingClaimTokenPkg;
@@ -92,7 +95,8 @@ contract Script_09_DeployChirInstance is DeploymentBase {
             RobinhoodCanonicalLib.poolManager(),
             indexedexManager,
             uniV3Se_rich,
-            weth_
+            weth_,
+            rp_se_rich_weth
         );
         vm.startBroadcast();
         IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs memory hArgs =
@@ -105,7 +109,8 @@ contract Script_09_DeployChirInstance is DeploymentBase {
                 pairTokenDecimals: HookPkgArgsDecimalsLib.tokenDec(weth_),
                 rawTokenDecimals: predicted.code.length == 0 ? uint8(9) : HookPkgArgsDecimalsLib.tokenDec(predicted),
                 ownerOnlyLiquidity: args.ownerOnlyLiquidity,
-                owner: predicted
+                owner: predicted,
+                rateProvider: rp_se_rich_weth // D60
             });
         address hook_ = CpHookFactory.deployHook(
             IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage(bufferCpHookPkg), hArgs, nonce
@@ -150,6 +155,7 @@ contract Script_09_DeployChirInstance is DeploymentBase {
 
     function _loadPrior() internal {
         indexedexManager = _readAddress(CORE_FILE, "indexedexManager");
+        rp_se_rich_weth = _readAddress(RATE_PROVIDER_FILE, "rp_se_rich_weth");
         diamondPackageFactory =
             IDiamondPackageCallBackFactory(_readAddress(CRANE_FOUNDATION_FILE, "diamondPackageFactory"));
         hookFactory = IUniswapV4HookDiamondPackageCallBackFactory(_readAddress(HOOK_FACTORY_FILE, "hookFactory"));

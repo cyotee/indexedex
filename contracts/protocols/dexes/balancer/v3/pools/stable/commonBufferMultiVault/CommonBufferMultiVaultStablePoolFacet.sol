@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {IBalancerV3Pool} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IBalancerV3Pool.sol";
 import {IFacet} from "@crane/contracts/interfaces/IFacet.sol";
+import {IBalancerV3PoolLiquidityQuote} from "contracts/protocols/dexes/balancer/v3/pools/IBalancerV3PoolLiquidityQuote.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
 import {StableMath} from "@crane/contracts/external/balancer/v3/solidity-utils/contracts/math/StableMath.sol";
@@ -90,13 +91,14 @@ contract CommonBufferMultiVaultStablePoolFacet is CommonBufferMultiVaultStablePo
     }
 
     function facetInterfaces() public pure returns (bytes4[] memory ifaces) {
-        ifaces = new bytes4[](2);
+        ifaces = new bytes4[](3);
         ifaces[0] = type(IBalancerV3Pool).interfaceId;
         ifaces[1] = type(ICommonBufferMultiVaultStablePool).interfaceId;
+        ifaces[2] = type(IBalancerV3PoolLiquidityQuote).interfaceId;
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](18);
+        funcs = new bytes4[](21);
         funcs[0] = IBalancerV3Pool.computeInvariant.selector;
         funcs[1] = IBalancerV3Pool.computeBalance.selector;
         funcs[2] = IBalancerV3Pool.onSwap.selector;
@@ -115,6 +117,9 @@ contract CommonBufferMultiVaultStablePoolFacet is CommonBufferMultiVaultStablePo
         funcs[15] = this.deepestVault.selector;
         funcs[16] = this.derivedShareDepth.selector;
         funcs[17] = this.getAmplificationParameter.selector;
+        funcs[18] = IBalancerV3PoolLiquidityQuote.quotePoolState.selector;
+        funcs[19] = IBalancerV3PoolLiquidityQuote.quotePoolLiquidity.selector;
+        funcs[20] = IBalancerV3PoolLiquidityQuote.quotePoolStateAfterLiquidity.selector;
     }
 
     function facetMetadata() external pure returns (string memory n, bytes4[] memory i, bytes4[] memory f) {

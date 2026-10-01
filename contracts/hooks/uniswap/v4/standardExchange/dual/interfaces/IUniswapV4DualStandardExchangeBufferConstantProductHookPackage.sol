@@ -26,6 +26,8 @@ interface IUniswapV4DualStandardExchangeBufferConstantProductHookPackage is
     error SameStandardExchange();
     error SamePairToken();
     error TokenNotInVaultTokens();
+    /// @notice D60: a buffered leg (`token != standardExchange`) needs a rate provider.
+    error RateProviderRequired();
 
     struct PkgInit {
         IVaultRegistryDeployment vaultRegistryDeployment;
@@ -51,6 +53,10 @@ interface IUniswapV4DualStandardExchangeBufferConstantProductHookPackage is
         address token0;
         address standardExchange1;
         address token1;
+        /// @notice D60: rate providers per leg (WAD whole pair tokens per whole SE share).
+        ///         Required when `tokenN != standardExchangeN`; optional on an identity leg.
+        address rateProvider0;
+        address rateProvider1;
     }
 
     function VAULT_REGISTRY_DEPLOYMENT() external view returns (IVaultRegistryDeployment);

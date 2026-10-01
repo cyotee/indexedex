@@ -1,0 +1,50 @@
+{
+  "prefixed": {
+    "path": "/private/tmp/indexedex-apex-20260917-kgq82ijp/prefixed",
+    "indexedex": "2d69dc1e954f51698f7e26699940171dec2d8a3b plus starting dirty docs/agent files",
+    "crane": "dfc93a9bcf7bcb4376333a10c74d924417b2bfbe copied as independent directory",
+    "outInodeIndependent": true,
+    "cacheIndependent": true,
+    "rebuild": "REBUILT_TARGETED_003_009_004B_005",
+    "rebuildNote": "forge-artifacts.py test rebuilt custody SE and ERC-4626 SE runtime artifacts against prefixed source. Independent out inode. Audited copy still COPIED_REBUILD_PENDING."
+  },
+  "audited": {
+    "path": "/private/tmp/indexedex-apex-20260917-kgq82ijp/audited",
+    "indexedex": "aca16198a87ab292a87e104f85fd7035fbb3320d",
+    "crane": "d87c74b76ad30f6055211e6a37089c600d3ab3c3 copied as independent directory",
+    "outInodeIndependent": true,
+    "cacheIndependent": true,
+    "rebuild": "COPIED_REBUILD_PENDING"
+  },
+  "implementationCheckout": {
+    "indexedex": "2d69dc1e954f51698f7e26699940171dec2d8a3b",
+    "crane": "dfc93a9bcf7bcb4376333a10c74d924417b2bfbe",
+    "note": "never copy historical out/ or cache_forge back into this checkout"
+  },
+  "counts": {
+    "packages": 41,
+    "creditSurfaces": 178,
+    "catchSites": 130,
+    "r14Rows": 19,
+    "hookMatrixRows": 119,
+    "catchExtrasAdded": [
+      {
+        "family": "HK",
+        "path": "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol",
+        "line": 110,
+        "expression": "IERC165(provider).supportsInterface(...) catch {}",
+        "rule": "D41",
+        "state": "REPORTED"
+      },
+      {
+        "family": "U3",
+        "path": "contracts/vaults/standard/exchange/protocols/uniswap/StandardExchangeConstantProduct.sol",
+        "line": 26,
+        "expression": "IERC20Metadata(token).decimals() returns (uint8 d) { } catch { return 18; }",
+        "rule": "D34",
+        "state": "REPORTED",
+        "note": "shared FullSpread helper; also consumed by U4"
+      }
+    ]
+  }
+}

@@ -111,18 +111,12 @@ contract WrappedStandardExchangeRateProviderTarget is IWrappedStandardExchangeRa
         IStandardExchangeIn standardExchange_ = l.standardExchange;
         IERC20 reserveVaultToken_ = l.reserveVaultToken;
         IERC20 rateTarget_ = l.rateTarget;
-        if (state.length != 0) {
-            try IStandardExchangeTransitionQuote(address(standardExchange_)).quoteAssets(state, reserveShareAmount_)
-                returns (uint256 quotedOut) { return (true, quotedOut); }
-            catch { return (false, 0); }
-        }
-		try standardExchange_.previewExchangeIn(reserveVaultToken_, reserveShareAmount_, rateTarget_) returns (
-			uint256 quotedOut
-		) {
-			return (true, quotedOut);
-		} catch {
-			return (false, 0);
-		}
+        bytes memory input = state.length != 0
+            ? abi.encodeCall(IStandardExchangeTransitionQuote.quoteAssets, (state, reserveShareAmount_))
+            : abi.encodeCall(IStandardExchangeIn.previewExchangeIn, (reserveVaultToken_, reserveShareAmount_, rateTarget_));
+        (bool ok, bytes memory data) = address(standardExchange_).staticcall(input);
+        if (!ok || data.length != 32) return (false, 0);
+        return (true, abi.decode(data, (uint256)));
 	}
 
 	function rateSubject() public view returns (IERC4626) {

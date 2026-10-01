@@ -28,6 +28,7 @@ import {ModifyLiquidityParams} from
 import {IDiamond} from "@crane/contracts/interfaces/IDiamond.sol";
 import {IDiamondCut} from "@crane/contracts/interfaces/IDiamondCut.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 
 /**
  * @title Adversarial DoD: catalog A–H residual + I1/I3 pretransfer (O16 / N1–N4 mapped).
@@ -64,7 +65,19 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
         uint256 rawHookBefore_ = rawToken.balanceOf(hook);
         uint256 seHookBefore_ = IERC20(se).balanceOf(hook);
 
+        // APEX D9: an EOA is rejected before any credit; the booked-inventory rule is asserted
+        // from this contract (bytecode present), which still cannot claim booked inventory.
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeIn(hook).exchangeIn(
+            IERC20(address(rawToken)),
+            claimed_,
+            IERC20(address(pairToken)),
+            0,
+            attacker,
+            true,
+            block.timestamp + 1
+        );
         vm.expectRevert(
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
@@ -101,7 +114,19 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
         uint256 pairHookBefore_ = pairToken.balanceOf(hook);
         uint256 seHookBefore_ = IERC20(se).balanceOf(hook);
 
+        // APEX D9: an EOA is rejected before any credit; the booked-inventory rule is asserted
+        // from this contract (bytecode present), which still cannot claim booked inventory.
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeIn(hook).exchangeIn(
+            IERC20(address(pairToken)),
+            claimed_,
+            IERC20(address(rawToken)),
+            0,
+            attacker,
+            true,
+            block.timestamp + 1
+        );
         vm.expectRevert(
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
@@ -158,7 +183,19 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
         uint256 pairAttBefore_ = pairToken.balanceOf(attacker);
         uint256 rawHookBefore_ = rawToken.balanceOf(hook);
 
+        // APEX D9: an EOA is rejected before any credit; the booked-inventory rule is asserted
+        // from this contract (bytecode present), which still cannot claim booked inventory.
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeOut(hook).exchangeOut(
+            IERC20(address(rawToken)),
+            needRaw_,
+            IERC20(address(pairToken)),
+            wantOut_,
+            attacker,
+            true,
+            block.timestamp + 1
+        );
         vm.expectRevert(
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, needRaw_, uint256(0)
@@ -210,7 +247,19 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
         uint256 seClaimBefore_ = single.seClaimSupply();
         uint256 pairAttBefore_ = pairToken.balanceOf(attacker);
 
+        // APEX D9: an EOA is rejected before any credit; the booked-inventory rule is asserted
+        // from this contract (bytecode present), which still cannot claim booked inventory.
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeIn(hook).exchangeIn(
+            IERC20(address(rawToken)),
+            residualSeed_,
+            IERC20(address(pairToken)),
+            0,
+            attacker,
+            true,
+            block.timestamp + 1
+        );
         vm.expectRevert(
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, residualSeed_, uint256(0)
@@ -300,7 +349,8 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
                 pairTokenDecimals: HookPkgArgsDecimalsLib.tokenDec(address(pairToken)),
                 rawTokenDecimals: address(hostile).code.length == 0 ? uint8(18) : HookPkgArgsDecimalsLib.tokenDec(address(hostile)),
                 ownerOnlyLiquidity: _pkgOwnerOnlyLiquidity(),
-                owner: _pkgOwner()
+                owner: _pkgOwner(),
+                rateProvider: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, se2, address(pairToken)) // D60
             });
         uint256 mineNonce = PkgFactory.findMineNonce(hookFactory, hookPkg, args);
         address hHook = PkgFactory.deployHook(hookPkg, args, mineNonce);
@@ -374,10 +424,10 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
     function test_E2_zeroAmount_reverts() public {
         _seedLiveLiquidity();
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("ZeroAmount()"));
         single.deposit(0, 0, user, 0, block.timestamp + 1);
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("ZeroAmount()"));
         IStandardExchangeIn(hook).exchangeIn(
             IERC20(address(rawToken)),
             0,
@@ -419,7 +469,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
         uint256 a0 = _amountForCurrency(single.currency0(), 10 ether, 10 ether);
         uint256 a1 = _amountForCurrency(single.currency1(), 10 ether, 10 ether);
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("Error(string)", "SE_DOWN"));
         single.deposit(a0, a1, user, 0, block.timestamp + 1);
 
         // Full rollback
@@ -435,7 +485,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Adversarial_Te
     function test_H3_addLiquidity_alwaysReverts() public {
         _seedLiveLiquidity(); // initializes poolKey
         vm.prank(address(pm));
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("LiquidityNotAllowed()"));
         IHooks(hook).beforeAddLiquidity(
             address(this),
             poolKey,

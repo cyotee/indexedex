@@ -20,6 +20,8 @@ import {TestBase_UniswapV4Detf} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
 import {TestBase_UniswapV4Detf_Orbital} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Orbital.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 import {
     TestBase_UniswapV4Detf_Adversarial,
     UniV4DetfPretransferHelper
@@ -44,6 +46,7 @@ abstract contract TestBase_UniswapV4Detf_Orbital_Adversarial is
         victim = makeAddr("victim");
         aliceAdv = makeAddr("aliceAdv");
         preHelper = new UniV4DetfPretransferHelper();
+        apexCaller = new AtomicPretransferCaller();
     }
 
     function _firstBond(uint256 pairAmount_)
@@ -120,6 +123,10 @@ abstract contract TestBase_UniswapV4Detf_Orbital_Adversarial is
         hArgs.se0 = _hostileSeOf(t0, predicted_, pair_, se_, seB_);
         hArgs.se1 = _hostileSeOf(t1, predicted_, pair_, se_, seB_);
         hArgs.se2 = _hostileSeOf(t2, predicted_, pair_, se_, seB_);
+        // D60: every buffered leg carries a rate provider.
+        hArgs.rp0 = RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, hArgs.se0, t0);
+        hArgs.rp1 = RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, hArgs.se1, t1);
+        hArgs.rp2 = RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, hArgs.se2, t2);
         hArgs.ownerOnlyLiquidity = args.ownerOnlyLiquidity;
         hArgs.owner = predicted_;
         uint256 mineNonce = OrbitalFactory.findMineNonce(hookFactory, orbitalHookPkg, hArgs);

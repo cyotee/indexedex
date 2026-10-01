@@ -10,6 +10,7 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {IDETFNFTVault} from "contracts/interfaces/IDETFNFTVault.sol";
 import {IUniswapV4SeBufferHook} from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4SeBufferHook.sol";
 import {IUniswapV4Detf} from
@@ -68,6 +69,7 @@ abstract contract UniswapV4Detf_Stage11OpenSuite is
         victim = makeAddr("victim");
         aliceAdv = makeAddr("aliceAdv");
         preHelper = new UniV4DetfPretransferHelper();
+        apexCaller = new AtomicPretransferCaller();
         _rebindPairTokenToHook();
     }
 

@@ -1,0 +1,371 @@
+[
+ {
+  "family": "ER",
+  "precheck": "IERC4626.maxDeposit(address(this))",
+  "leftover": "actualIn - min(actualIn, maxDeposit)",
+  "sweep": "D31 on later investing exchangeIn/Out",
+  "state": "EVIDENCED 2026-09-23",
+  "tests": [
+   "test/foundry/spec/vaults/standard/erc4626/ERC4626StandardExchange_APEX_R14.t.sol::test_APEX_R14_cappedUnderlying_booksRemainder_mintsOnFullInput",
+   "::test_APEX_R14_sweepOnNextExchangeIn_80booked_100capacity_50caller",
+   "::test_APEX_R14_exactOutWrap_underCap_booksRemainder",
+   "test/foundry/spec/vaults/standard/erc4626/ERC4626StandardExchange_Routes.t.sol::test_O6_dustAbsorb_toFeeTo"
+  ],
+  "logs": [
+   "review-20260920/t-erc4626.summary.log",
+   "erc4626-routes.log",
+   "review-20260921/full-hermetic-run-10.log"
+  ]
+ },
+ {
+  "family": "MO",
+  "precheck": "none; Morpho.supply is a hard call",
+  "leftover": "zero; supply revert propagates",
+  "sweep": "none",
+  "state": "EVIDENCED 2026-09-23",
+  "tests": [
+   "test/foundry/spec/vaults/standard/exchange/protocols/morpho/blue/adversarial/Adversarial_MorphoBlueStandardExchange_P0.t.sol::test_I1_pretransferred_noTransfer_bookedInventory_reverts",
+   "::test_H3_minOutFail_fullRevert_morphoUnchanged"
+  ],
+  "logs": [
+   "green-009-morpho.log",
+   "morpho-blue-d15.log",
+   "review-20260921/full-hermetic-run-10.log"
+  ]
+ },
+ {
+  "family": "ST",
+  "precheck": "underlying stata.asset() only: IStataTokenV2.maxDeposit(address(this))",
+  "leftover": "underlying-to-SE: actualIn - min(actualIn, maxDeposit); receipt/aToken routes leave zero unprocessed caller input",
+  "sweep": "D31 only when sweep calls stata.deposit",
+  "state": "EVIDENCED 2026-09-23",
+  "tests": [
+   "test/foundry/spec/protocol/lending/aave/v3.6/AaveV3StataStandardExchange_APEX_R14.t.sol::test_APEX_R14_supplyCapReached_booksUnderlying_mintsOnFullInput",
+   "::test_APEX_R14_sweepBookedReserveWhenCapacityReopens"
+  ],
+  "logs": [
+   "stata-d15.log",
+   "review-20260920/t-lst.summary.log",
+   "review-20260921/full-hermetic-run-10.log"
+  ]
+ },
+ {
+  "family": "CV",
+  "precheck": "tokenA v3.6 supply headroom (ValidationLogic.validateSupply)",
+  "leftover": "unsupplied principal booked; recursive borrow capped (D43)",
+  "sweep": "D31 reserve-first loop then caller loop",
+  "state": "EVIDENCED 2026-09-23",
+  "tests": [
+   "test/foundry/spec/protocol/lending/aave/cross-version/AaveCrossVersionLoop_APEX_D43.t.sol::test_APEX_D43_capReachedInLaterIteration_retainsPartialPosition",
+   "::test_APEX_D43_zeroCapacity_booksPrincipal_navAndExitLocalFirst_thenSweep"
+  ],
+  "logs": [
+   "aave-loop-d15-d43.log",
+   "review-20260920/t-loop.summary.log",
+   "review-20260921/full-hermetic-run-10.log"
+  ]
+ },
+ {
+  "family": "LI",
+  "precheck": "IStETH.isStakingPaused / getCurrentStakeLimit on two D47 sites",
+  "leftover": "exchangeInEth SE branch wraps unstaked remainder to WETH sleeve; WETH-to-SE credits sleeve only",
+  "sweep": "rebalance() only; no D31 on exchangeInEth",
+  "state": "EVIDENCED 2026-09-23",
+  "tests": [
+   "test/foundry/spec/protocol/staking/lido/adversarial/Adversarial_LidoWstETH_P0.t.sol::test_APEX_D47_rebalanceSkipsWhenPaused",
+   "::test_APEX_D47_rebalancePartialCapacity",
+   "::test_APEX_D47_exchangeInEthSeSharePaused_wrapsAllNoSubmit",
+   "::test_APEX_D47_wethToSeDoesNotStake"
+  ],
+  "logs": [
+   "lido-d15-d47.log",
+   "review-20260921/full-hermetic-run-10.log"
+  ]
+ },
+ {
+  "family": "RP",
+  "precheck": "getMaximumDepositAmount then getMinimumDeposit (D39)",
+  "leftover": "target WETH sleeve plus capacity/minimum-limited excess",
+  "sweep": "D31 separate deposit if eligible >= minimum",
+  "state": "EVIDENCED 2026-09-23",
+  "tests": [
+   "test/foundry/spec/protocol/staking/rocket-pool/RocketPoolRETHStandardExchange_APEX_R14.t.sol::test_APEX_D39_subMinimumInput_bookedAndMintedWithoutDeposit",
+   "::test_APEX_D39_bookedExcessBelowMinimum_skippedThenSweptWhenEligible",
+   "::test_APEX_R14_reserveFirst_80booked_100capacity_50caller_target0"
+  ],
+  "logs": [
+   "rocket-d15-d39.log",
+   "review-20260920/t-lst.summary.log",
+   "review-20260921/full-hermetic-run-10.log"
+  ]
+ },
+ {
+  "family": "EF",
+  "precheck": "paused / pausedUntil / blacklister / blacklistedUntil staticcalls (D40)",
+  "leftover": "target WETH sleeve; paused/blacklist books whole actualIn",
+  "sweep": "D31 skipped while capacity 0",
+  "state": "EVIDENCED 2026-09-23",
+  "tests": [
+   "test/foundry/spec/protocol/staking/etherfi/adversarial/Adversarial_EtherFiWeETH_P0.t.sol::test_APEX_D40_pausedUntilWethToSeBooksWithoutStake",
+   "::test_APEX_D40_pausedWethToSeBooksWithoutStake",
+   "::test_APEX_D40_rebalanceSkipsWhenPaused"
+  ],
+  "logs": [
+   "etherfi-d15-d40.log",
+   "review-20260921/full-hermetic-run-10.log"
+  ]
+ },
+ {
+  "family": "V2",
+  "precheck": "no protocol cap",
+  "leftover": "exact-out quote leftover and exact-in unpaired remainder as local NAV unless D33",
+  "sweep": "D33 wholly booked mintable set only",
+  "state": "EVIDENCED 2026-09-23",
+  "tests": [
+   "test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMatrix_UniswapV2StandardExchange.t.sol::test_row_partialConsumption_bookedNotRefunded"
+  ],
+  "logs": [
+   "review-20260921/hook-se-matrix-run-12.log"
+  ]
+ },
+ {
+  "family": "CA",
+  "precheck": "no protocol cap",
+  "leftover": "exact-out quote leftover and exact-in unpaired remainder as local NAV unless D33",
+  "sweep": "D33 wholly booked mintable set only",
+  "state": "EVIDENCED 2026-09-23",
+  "tests": [
+   "test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMatrix_CamelotV2StandardExchange.t.sol::test_row_partialConsumption_bookedNotRefunded"
+  ],
+  "logs": [
+   "review-20260921/hook-se-matrix-run-12.log"
+  ]
+ },
+ {
+  "family": "AE",
+  "precheck": "no protocol cap",
+  "leftover": "exact-out quote leftover and exact-in unpaired remainder as local NAV unless D33",
+  "sweep": "D33 wholly booked mintable set only",
+  "state": "EVIDENCED 2026-09-23",
+  "tests": [
+   "test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMatrix_AerodromeStandardExchange.t.sol::test_row_partialConsumption_bookedNotRefunded"
+  ],
+  "logs": [
+   "review-20260921/hook-se-matrix-run-12.log"
+  ]
+ },
+ {
+  "family": "SL",
+  "precheck": "no protocol cap",
+  "leftover": "exact-out quote leftover and exact-in unpaired remainder as local NAV unless D33",
+  "sweep": "D33 wholly booked mintable set only",
+  "state": "DEPRECATED (D57, 2026-09-21): the Slipstream SE is retired; its rows record the check they would fail",
+  "tests": [
+   "test_DEPRECATED_Slipstream_D57_ExchangeInNotAvailable on every Slipstream matrix row"
+  ],
+  "logs": [
+   "review-20260921/hook-se-matrix-run-12.log"
+  ]
+ },
+ {
+  "family": "U3",
+  "precheck": "existing rebalanceLiquidReserve sleeve; no extra cap view",
+  "leftover": "LiquidReserve sleeve plus exact-out quote leftover; D33 unpaired remainder",
+  "sweep": "rebalanceLiquidReserve keeps sleeve rules",
+  "state": "EVIDENCED 2026-09-23",
+  "tests": [
+   "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/remediation/StandardExchangeReleaseBehavior.sol::UniswapV3FullSpreadStandardExchangeVault_Delivery::test_nativeSYInternalHolderBurnAndInsufficientBalance",
+   "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v3/UniswapV3FullSpreadStandardExchangeVault_Import.t.sol::testFuzz_importedPositionCannotBecomeUnfundedCredit",
+   "StandardExchangeDeliveryBehavior.sol::test_rebalanceCannotCreatePushedCredit"
+  ],
+  "logs": [
+   "fullspread-delivery.log",
+   "review-20260921/full-hermetic-run-10.log"
+  ]
+ },
+ {
+  "family": "U4",
+  "precheck": "existing rebalanceLiquidReserve sleeve; no extra cap view",
+  "leftover": "LiquidReserve sleeve plus exact-out quote leftover; D33 unpaired remainder",
+  "sweep": "rebalanceLiquidReserve keeps sleeve rules",
+  "state": "EVIDENCED 2026-09-23",
+  "tests": [
+   "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/remediation/StandardExchangeReleaseBehavior.sol::UniswapV4FullSpreadStandardExchangeVault_Delivery::test_nativeSYInternalHolderBurnAndInsufficientBalance",
+   "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/release/v4/UniswapV4FullSpreadStandardExchangeVault_FullRangeBook.t.sol::test_accruedFees_blockedDepositMatchesIdlePreview",
+   "StandardExchangeDeliveryBehavior.sol::test_rebalanceCannotCreatePushedCredit"
+  ],
+  "logs": [
+   "fullspread-delivery.log",
+   "review-20260921/f6-fix-run-2.log",
+   "review-20260921/full-hermetic-run-10.log"
+  ]
+ },
+ {
+  "family": "BA-native-BPT",
+  "precheck": "no capacity-to-local-issuance fallback",
+  "leftover": "failed joins propagate Balancer error; no local BPT (D38)",
+  "sweep": "none new",
+  "state": "EVIDENCED 2026-09-23",
+  "tests": [
+   "test/foundry/spec/vaults/standard/sy/BalancerPoolNativeSY.t.sol::test_poolSYEveryAdvertisedInputQuotesActualBptAndPreservesIdleAssets",
+   "::test_poolStandardExactOutputUsesOnlyQuotedInputAndRefundsRemainder"
+  ],
+  "logs": [
+   "balancer-native-sy-d32-d38.log",
+   "review-20260921/full-hermetic-run-10.log"
+  ]
+ },
+ {
+  "family": "BA-single-adapter",
+  "precheck": "no capacity-to-local-issuance fallback",
+  "leftover": "delivers external BPT or pool token; failed joins propagate",
+  "sweep": "none new",
+  "state": "EVIDENCED 2026-09-23",
+  "tests": [
+   "test/foundry/spec/protocols/dexes/balancer/v3/pools/adversarial/Adversarial_BalancerV3SinglePoolSE.t.sol::test_APEX_D38_pausedJoinRevertsBalancerErrorThenSucceeds",
+   "::test_E6_refund_fatMax_transferOnlyUsed_doesNotPayBooked"
+  ],
+  "logs": [
+   "balancer-singlepool-d15-d38.log",
+   "review-20260921/full-hermetic-run-10.log"
+  ]
+ },
+ {
+  "family": "CU",
+  "precheck": "none",
+  "leftover": "no downstream deposit",
+  "sweep": "none",
+  "state": "EVIDENCED 2026-09-23",
+  "tests": [
+   "test/foundry/spec/protocols/staking/rebasingVault/RebasingAwareERC4626_StandardExchange.t.sol::test_APEX003_contractExactInBurnsRequestedOnly",
+   "::test_API07_sharePretransferBurnsBAndRefundsPB"
+  ],
+  "logs": [
+   "custody-se.log",
+   "green-003-custody.log",
+   "review-20260921/full-hermetic-run-10.log"
+  ]
+ },
+ {
+  "family": "HK-orbital",
+  "precheck": "none",
+  "leftover": "no new leftover face book; R6 D12 resting-credit boundary",
+  "sweep": "none",
+  "state": "EVIDENCED 2026-09-23",
+  "tests": [
+   "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_SeMatrixBehavior.sol::test_row_partialConsumption_bookedNotRefunded",
+   "::test_row_poolManagerSwap_bothDirections_noFaceResidual",
+   "test/foundry/spec/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHook_Apex008.t.sol::test_R6_dustBoundary_restingLeftInPlace",
+   "::test_R6_rawLeg_resting500_notRefunded"
+  ],
+  "logs": [
+   "review-20260921/hook-se-matrix-run-12.log",
+   "orbital-008.log"
+  ]
+ },
+ {
+  "family": "HK-weighted",
+  "precheck": "none",
+  "leftover": "no new leftover face book; R6 D12 resting-credit boundary",
+  "sweep": "none",
+  "state": "EVIDENCED 2026-09-23",
+  "tests": [
+   "test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHook_SeMatrixBehavior.sol::test_row_partialConsumption_bookedNotRefunded",
+   "::test_row_poolManagerSwap_bothDirections_noFaceResidual"
+  ],
+  "logs": [
+   "review-20260921/hook-se-matrix-run-12.log"
+  ]
+ },
+ {
+  "family": "HK-curve-quad",
+  "precheck": "none",
+  "leftover": "no new leftover face book; R6 D12 resting-credit boundary",
+  "sweep": "none",
+  "state": "EVIDENCED 2026-09-23",
+  "tests": [
+   "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHook_SeMatrixBehavior.sol::test_row_partialConsumption_bookedNotRefunded",
+   "::test_row_poolManagerSwap_bothDirections_noFaceResidual"
+  ],
+  "logs": [
+   "review-20260921/hook-se-matrix-run-12.log"
+  ]
+ },
+ {
+  "family": "HK-balancer-quad",
+  "precheck": "none",
+  "leftover": "no new leftover face book; R6 D12 resting-credit boundary",
+  "sweep": "none",
+  "state": "EVIDENCED 2026-09-23",
+  "tests": [
+   "test/foundry/spec/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHook_SeMatrixBehavior.sol::test_row_partialConsumption_bookedNotRefunded",
+   "::test_row_poolManagerSwap_bothDirections_noFaceResidual"
+  ],
+  "logs": [
+   "review-20260921/hook-se-matrix-run-12.log"
+  ]
+ },
+ {
+  "family": "HK-single-cp",
+  "precheck": "none",
+  "leftover": "no new leftover face book; R6 D12 resting-credit boundary",
+  "sweep": "none",
+  "state": "EVIDENCED 2026-09-23",
+  "tests": [
+   "test/foundry/spec/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHook_SeMatrixBehavior.sol::test_row_partialConsumption_bookedNotRefunded",
+   "::test_row_poolManagerSwap_bothDirections_noFaceResidual"
+  ],
+  "logs": [
+   "review-20260921/hook-se-matrix-run-12.log"
+  ]
+ },
+ {
+  "family": "HK-dual",
+  "precheck": "none",
+  "leftover": "no new leftover face book; R6 D12 resting-credit boundary",
+  "sweep": "none",
+  "state": "EVIDENCED 2026-09-23",
+  "tests": [
+   "test/foundry/spec/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualSEBCPHook_SeMatrixBehavior.sol::test_row_partialConsumption_bookedNotRefunded",
+   "::test_row_poolManagerSwap_bothDirections_noFaceResidual"
+  ],
+  "logs": [
+   "review-20260921/hook-se-matrix-run-12.log"
+  ]
+ },
+ {
+  "family": "HK-single-noncp",
+  "precheck": "none",
+  "leftover": "no new leftover face book; R6 D12 resting-credit boundary",
+  "sweep": "none",
+  "state": "EVIDENCED 2026-09-23",
+  "tests": [
+   "test/foundry/spec/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleSEBufferHook_SeMatrixBehavior.sol::test_row_partialConsumption_bookedNotRefunded",
+   "::test_row_poolManagerSwap_bothDirections_noFaceResidual"
+  ],
+  "logs": [
+   "review-20260921/hook-se-matrix-run-12.log"
+  ]
+ },
+ {
+  "family": "RQ",
+  "precheck": "n/a",
+  "leftover": "n/a",
+  "sweep": "n/a",
+  "state": "NOT_APPLICABLE: no capacity concept on this family (row kept for completeness)"
+ },
+ {
+  "family": "DT",
+  "precheck": "family SE/precheck of underlying vault",
+  "leftover": "prepaid pull uses D15; no new DETF leftover book",
+  "sweep": "none new on bond economics",
+  "state": "EVIDENCED 2026-09-23",
+  "tests": [
+   "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Adversarial.sol::test_APEX_R13_5_partialRestingCredit_creditsRequestedOnly"
+  ],
+  "logs": [
+   "review-20260921/wp2-run-6-detf.log",
+   "review-20260921/full-hermetic-run-10.log"
+  ]
+ }
+]

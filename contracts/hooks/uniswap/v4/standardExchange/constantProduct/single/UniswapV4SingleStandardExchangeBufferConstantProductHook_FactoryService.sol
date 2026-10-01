@@ -25,7 +25,7 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService 
     function deploySeFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet.sol:UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet");
         facet = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet")._hash(), initCode_, bytes(""))
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet")._hash())
         );
         vm.label(address(facet), "UniswapV4SingleStandardExchangeBufferConstantProductHookSeFacet");
     }
@@ -33,7 +33,7 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService 
     function deployDepositFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet.sol:UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet");
         facet = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet")._hash(), initCode_, bytes(""))
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet")._hash())
         );
         vm.label(address(facet), "UniswapV4SingleStandardExchangeBufferConstantProductHookDepositFacet");
     }
@@ -41,7 +41,7 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService 
     function deployDepositSingleFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFacet.sol:UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFacet");
         facet = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFacet")._hash(), initCode_, bytes(""))
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFacet")._hash())
         );
         vm.label(address(facet), "UniswapV4SingleStandardExchangeBufferConstantProductHookDepositSingleFacet");
     }
@@ -49,7 +49,7 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService 
     function deployDepositPreviewFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet.sol:UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet");
         facet = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet")._hash(), initCode_, bytes(""))
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet")._hash())
         );
         vm.label(address(facet), "UniswapV4SingleStandardExchangeBufferConstantProductHookDepositPreviewFacet");
     }
@@ -57,7 +57,7 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService 
     function deployWithdrawFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet facet) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode(create3Factory, "UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet.sol:UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet");
         facet = create3Factory.deployFacet(
-            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet")._hash(), initCode_, bytes(""))
+            initCode_, ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet")._hash())
         );
         vm.label(address(facet), "UniswapV4SingleStandardExchangeBufferConstantProductHookWithdrawFacet");
     }
@@ -65,8 +65,7 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService 
     function deployPackage(
         IVaultRegistryDeployment registry,
         address owner,
-        IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgInit memory init,
-        bytes32 salt
+        IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgInit memory init
     ) internal returns (IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage pkg) {
         bytes memory initCode_ = ArtifactCreationCode.creationCode("UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg.sol:UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg");
         bytes memory initArgs_ = abi.encode(init);
@@ -75,7 +74,7 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHook_FactoryService 
             registry.deployPkg(
                 initCode_,
                 initArgs_,
-                ArtifactCreationCode.releaseSalt(salt, initCode_, initArgs_)
+                ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg")._hash())
             )
         );
         vm.label(address(pkg), "UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg");

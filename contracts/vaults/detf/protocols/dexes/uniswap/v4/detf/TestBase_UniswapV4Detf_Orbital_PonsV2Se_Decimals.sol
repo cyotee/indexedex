@@ -57,9 +57,9 @@ abstract contract TestBase_UniswapV4Detf_Orbital_PonsV2Se_Decimals is TestBase_U
             graduatedKey1 = tmpKey;
         }
 
-        SeLib.Univ4SePkg memory v4pkg = SeLib.deployUniv4SePkg(_craneCtx(), pm, weth);
-        address vault0 = SeLib.deployUniv4Vault(v4pkg.pkg, graduatedKey0);
-        address vault1 = SeLib.deployUniv4Vault(v4pkg.pkg, graduatedKey1);
+        SeLib.PonsV2SePkg memory v4pkg = SeLib.deployPonsV2SePkg(_craneCtx(), pm, weth, ponsV2);
+        address vault0 = SeLib.deployPonsV2Vault(v4pkg.pkg, graduatedKey0);
+        address vault1 = SeLib.deployPonsV2Vault(v4pkg.pkg, graduatedKey1);
 
         _finishOrbitalDetf(launchToken0, launchToken1, vault0, vault1);
         require(reserveHook != address(ponsV2.memeHook), "not PonsV2MemeHook");

@@ -50,6 +50,7 @@ contract RocketPoolRETHStandardExchange_Rebalance_Test is TestBase_RocketPoolRET
         _seedVaultInventory(0, 50 ether);
         uint256 liquidBefore = rocketPoolSe.liquidReserveEth();
         uint256 rethBefore = hermeticReth.balanceOf(seVault);
+        vm.expectRevert(bytes("collateral"));
         seRebalance.rebalance();
         assertEq(rocketPoolSe.liquidReserveEth(), liquidBefore);
         assertEq(hermeticReth.balanceOf(seVault), rethBefore);

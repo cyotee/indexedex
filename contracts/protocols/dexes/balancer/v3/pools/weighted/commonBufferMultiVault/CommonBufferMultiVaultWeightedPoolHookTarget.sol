@@ -18,6 +18,8 @@ import {
 import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
 import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {Math} from "@crane/contracts/utils/Math.sol";
 import {WeightedMath} from "@crane/contracts/external/balancer/v3/solidity-utils/contracts/math/WeightedMath.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
@@ -130,8 +132,9 @@ abstract contract CommonBufferMultiVaultWeightedPoolHookTarget is CommonBufferMu
 
     function onAfterInitialize(uint256[] memory, uint256, bytes memory) external virtual override returns (bool) {
         if (msg.sender != _balancerV3Vault()) return false;
-        // L25: fold init physical buffer into SE vaults (virtual already seeded; no virtual bump).
-        _depositPhysicalBuffer(0, address(0), false, 0);
+        // Vault.initialize is nonReentrant. sendTo / addLiquidity / removeLiquidity share that
+        // guard, so the leftover-buffer SE fold cannot run here. Unbalanced add and afterSwap
+        // still fold physical buffer. Virtual is already seeded in onBeforeInitialize.
         return true;
     }
 
@@ -361,27 +364,17 @@ abstract contract CommonBufferMultiVaultWeightedPoolHookTarget is CommonBufferMu
     {
         IStandardExchange seVault = Repo._standardExchangeVault(vaultIdx);
         IERC20 shareTok = Repo._shareToken(vaultIdx);
-        uint256 S;
-        try seVault.previewExchangeOut(shareTok, Repo._bufferToken(), yBufferRaw) returns (uint256 sPreview) {
-            S = sPreview;
-        } catch {
-            return false;
-        }
+        (bool ok, bytes memory ret) = address(seVault).staticcall(
+            abi.encodeCall(IStandardExchangeOut.previewExchangeOut, (shareTok, Repo._bufferToken(), yBufferRaw))
+        );
+        if (!ok || ret.length != 32) return false;
+        uint256 S = abi.decode(ret, (uint256));
         if (S == 0) return false;
         uint256 drainAmount = _bv3SharesRemoveOutRaw(S, Repo._shareIndex(vaultIdx));
-        try this.__preSeatAttempt(seRouter, vaultIdx, yBufferRaw, drainAmount) {
-            return true;
-        } catch {
-            return false;
-        }
-    }
-
-    /// @dev External-self call so try/catch can revert without undoing outer state incorrectly.
-    function __preSeatAttempt(address seRouter, uint8 vaultIdx, uint256 yBufferRaw, uint256 drainAmount)
-        external
-    {
-        require(msg.sender == address(this), "only self");
+        // D37: preview already probed; hard-call internally. An external self-call
+        // through the diamond during a Balancer hook callback empty-reverts.
         _doPreSeat(seRouter, vaultIdx, yBufferRaw, drainAmount);
+        return true;
     }
 
     function _doPreSeat(address seRouter, uint8 vaultIdx, uint256 yBufferRaw, uint256 drainAmount) internal {
@@ -408,14 +401,9 @@ abstract contract CommonBufferMultiVaultWeightedPoolHookTarget is CommonBufferMu
 
         shareTok.approve(address(seVault), drainAmount);
         _passPrepay(seRouter, address(seVault));
-        try seVault.exchangeOut(
+        sharesConsumed = seVault.exchangeOut(
             shareTok, drainAmount, Repo._bufferToken(), yBufferRaw, address(vault), false, block.timestamp
-        ) returns (uint256 sc) {
-            sharesConsumed = sc;
-        } catch {
-            _restorePrepay(seRouter);
-            revert ICommonBufferMultiVaultWeightedPool.PreSeatRedemptionFailed(drainAmount, yBufferRaw);
-        }
+        );
         _restorePrepay(seRouter);
         if (sharesConsumed == 0) {
             revert ICommonBufferMultiVaultWeightedPool.PreSeatRedemptionFailed(drainAmount, yBufferRaw);
@@ -482,22 +470,17 @@ abstract contract CommonBufferMultiVaultWeightedPoolHookTarget is CommonBufferMu
         bool bumpVirtual,
         uint256 virtualBump
     ) internal returns (bool) {
-        try this.__reconcileAttempt(seRouter, vaultIdx, physicalRaw, bumpVirtual, virtualBump) {
-            return true;
-        } catch {
-            return false;
-        }
-    }
-
-    function __reconcileAttempt(
-        address seRouter,
-        uint8 vaultIdx,
-        uint256 physicalRaw,
-        bool bumpVirtual,
-        uint256 virtualBump
-    ) external {
-        require(msg.sender == address(this), "only self");
+        IStandardExchange seVault = Repo._standardExchangeVault(vaultIdx);
+        (bool ok, bytes memory ret) = address(seVault).staticcall(
+            abi.encodeCall(
+                IStandardExchangeIn.previewExchangeIn,
+                (Repo._bufferToken(), physicalRaw, Repo._shareToken(vaultIdx))
+            )
+        );
+        if (!ok || ret.length != 32) return false;
+        if (abi.decode(ret, (uint256)) == 0) return false;
         _doReconcile(seRouter, vaultIdx, physicalRaw, bumpVirtual, virtualBump);
+        return true;
     }
 
     function _doReconcile(
@@ -523,14 +506,7 @@ abstract contract CommonBufferMultiVaultWeightedPoolHookTarget is CommonBufferMu
         vault.sendTo(bufferTok, address(this), xRaw);
         bufferTok.approve(address(seVault), xRaw);
         _passPrepay(seRouter, address(seVault));
-        try seVault.exchangeIn(bufferTok, xRaw, shareTok, 0, address(vault), false, block.timestamp) returns (
-            uint256 m
-        ) {
-            minted = m;
-        } catch {
-            _restorePrepay(seRouter);
-            revert ICommonBufferMultiVaultWeightedPool.PostSwapDepositFailed(xRaw);
-        }
+        minted = seVault.exchangeIn(bufferTok, xRaw, shareTok, 0, address(vault), false, block.timestamp);
         _restorePrepay(seRouter);
         if (minted == 0) revert ICommonBufferMultiVaultWeightedPool.PostSwapDepositFailed(xRaw);
     }
@@ -564,16 +540,22 @@ abstract contract CommonBufferMultiVaultWeightedPoolHookTarget is CommonBufferMu
         Repo._setHookShareDelta(vaultIdx, Repo._hookShareDelta(vaultIdx) + int256(donationRaw));
     }
 
+    function _isPrepayRouter(address seRouter) internal view returns (bool) {
+        if (seRouter == address(0) || seRouter.code.length == 0) return false;
+        (bool ok, bytes memory ret) = seRouter.staticcall(
+            abi.encodeWithSelector(IBalancerV3StandardExchangeRouterPrepay.prepaySessionActive.selector)
+        );
+        return ok && ret.length == 32;
+    }
+
     function _passPrepay(address seRouter, address seVault) internal {
-        if (seRouter != address(0) && seRouter.code.length > 0) {
-            try IBalancerV3StandardExchangeRouterPrepay(seRouter).passPrepayAuth(seVault) {} catch {}
-        }
+        if (!_isPrepayRouter(seRouter)) return;
+        IBalancerV3StandardExchangeRouterPrepay(seRouter).passPrepayAuth(seVault);
     }
 
     function _restorePrepay(address seRouter) internal {
-        if (seRouter != address(0) && seRouter.code.length > 0) {
-            try IBalancerV3StandardExchangeRouterPrepay(seRouter).restorePrepayAuth() {} catch {}
-        }
+        if (!_isPrepayRouter(seRouter)) return;
+        IBalancerV3StandardExchangeRouterPrepay(seRouter).restorePrepayAuth();
     }
 
     function _buildAddLiquidityParams(

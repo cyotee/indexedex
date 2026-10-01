@@ -34,6 +34,7 @@ import {RebasingAwareERC4626_Component_FactoryService} from
     "contracts/protocols/staking/rebasingVault/RebasingAwareERC4626_Component_FactoryService.sol";
 import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeployment.sol";
 import {RebasingERC20Harness} from "contracts/test/stubs/RebasingERC20Harness.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 
 abstract contract TestBase_RebasingAwareDetfComposition is TestBase_UniswapV4Detf {
     using RebasingAwareERC4626_Component_FactoryService for ICreate3FactoryProxy;
@@ -61,7 +62,8 @@ abstract contract TestBase_RebasingAwareDetfComposition is TestBase_UniswapV4Det
                 pairTokenDecimals: IERC20Metadata(address(w)).decimals(),
                 rawTokenDecimals: 9,
                 ownerOnlyLiquidity: args.ownerOnlyLiquidity,
-                owner: predicted
+                owner: predicted,
+                rateProvider: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, address(w), address(w)) // D60
             });
         uint256 mineNonce = CpHookFactory.findMineNonce(hookFactory, hookPkg, hArgs);
         address wHook = CpHookFactory.deployHook(hookPkg, hArgs, mineNonce);
@@ -207,7 +209,7 @@ contract RebasingAwareERC4626_Buffers_Detf_Weighted is TestBase_UniswapV4Detf_We
             tokens: toks,
             weights: weights,
             standardExchanges: ses,
-            rateProviders: rps,
+            rateProviders: RateProviderFixtureLib.providersFor(create3Factory, diamondPackageFactory, toks, ses), // D60
             tokenDecimals: HookPkgArgsDecimalsLib.tokenDecimals(toks, predicted),
             seDecimals: HookPkgArgsDecimalsLib.seDecimals(ses),
             ownerOnlyLiquidity: args.ownerOnlyLiquidity,

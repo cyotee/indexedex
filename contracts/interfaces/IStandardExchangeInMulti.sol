@@ -24,7 +24,7 @@ interface IStandardExchangeInMulti {
      * @param tokenOut The output token address.
      * @param minAmountOut The minimum amount of tokenOut that must be received.
      * @param recipient The address that will receive the output tokens.
-     * @param pretransferred Whether the input tokens have already been transferred.
+     * @param pretransferred Integrating-contract flag only. Transfer-and-consume must be atomic to avoid exposing resting credit; staged use is at integrator risk. Callers with no bytecode revert `EOAPretransferNotAllowed()`. Exact-input processes each requested amount when unbooked available covers it, leaves excess uncredited, and refunds nothing.
      * @param deadline The timestamp after which the transaction will revert.
      * @return amountOut The amount of tokenOut that was received.
      */

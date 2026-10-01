@@ -1,0 +1,12 @@
+[
+  "python3",
+  "scripts/forge-artifacts.py",
+  "test",
+  "contracts/protocols/staking/lido/LidoWstETHStandardExchangeCommon.sol",
+  "contracts/protocols/staking/lido/LidoWstETHStandardExchangeInTarget.sol",
+  "contracts/protocols/staking/lido/LidoWstETHStandardExchangeOutTarget.sol",
+  "--test-root",
+  "test/foundry/spec/protocol/staking/lido/invariant/LidoWstETHStandardExchange_NativeRounding.t.sol",
+  "--",
+  "-vvv"
+]

@@ -32,12 +32,11 @@ contract RocketPoolRETHRebalanceTarget is
         uint256 band = (target * REBALANCE_BAND_WAD) / ONE_WAD;
 
         if (liquid > target + band) {
-            // Soft stake excess toward target (capacity-capped, no-op if 0)
             _stakeWethToRethSoft(liquid - target);
         } else if (liquid + band < target) {
-            // Burn rETH to refill sleeve toward target (collateral-capped)
             _burnDeficit(target - liquid);
         }
+        _syncAllExpectedHoldReserves();
     }
 
     function _burnDeficit(uint256 ethDeficit) internal {
@@ -49,13 +48,10 @@ contract RocketPoolRETHRebalanceTarget is
         if (rethNeeded > rethBal) rethNeeded = rethBal;
 
         uint256 ethBefore = address(this).balance;
-        try IRETH(reth_).burn(rethNeeded) {
-            uint256 ethGot = address(this).balance - ethBefore;
-            if (ethGot > 0) {
-                IWETH(payable(weth())).deposit{value: ethGot}();
-            }
-        } catch {
-            // collateral dry: no-op
+        IRETH(reth_).burn(rethNeeded);
+        uint256 ethGot = address(this).balance - ethBefore;
+        if (ethGot > 0) {
+            IWETH(payable(weth())).deposit{value: ethGot}();
         }
     }
 }

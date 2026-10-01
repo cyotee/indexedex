@@ -1,0 +1,692 @@
+{
+  "status": "PASS",
+  "scope": "Seven DETF exact-output refund regressions, five deterministic eight-cycle lifecycles, five 256 x 64 stateful campaigns",
+  "seed": "0x20260917",
+  "clone": "/private/tmp/apex-review-detf-validation",
+  "source_manifest": [
+    {
+      "path": "contracts/test/bases/DetfExactOutCreditAssertions.sol",
+      "group": "regression",
+      "base_sha256": null,
+      "overlay_sha256": "6a4f57d53c8b5427350708c3ab354328ada396c77d84be1b8dc6047c7d4d490c"
+    },
+    {
+      "path": "contracts/test/bases/DetfStatefulActions.sol",
+      "group": "invariants",
+      "base_sha256": null,
+      "overlay_sha256": "4fe17d34b49bed2628f32318485cf399b1811eef96257def2642005117b5d0ab"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeInTarget.sol",
+      "group": "production",
+      "base_sha256": "7b6a1c441dce11ff3ee8032ea7da59a3a29d9439d3770379c828180d1f3f4cf8",
+      "overlay_sha256": "882bfc477b864356fe2827470178a9c15623ddbedf734a89742a934e10ab349e"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeQueryTarget.sol",
+      "group": "production",
+      "base_sha256": "ce95a0e683af2af727137276bd40db323a551bb0299c441e552b0e9f7b3cdbdd",
+      "overlay_sha256": "3cfcbbe92838db3392e023737d46261a2343617bbd89d435367f7b5b0a796a25"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeInTarget.sol",
+      "group": "production",
+      "base_sha256": "89b0afd9e9aa471da739cba3a417907c80fa7a8d8f565a99f6b7372709ea0253",
+      "overlay_sha256": "edcc04d6a1a827cde97a1f2a54e64097b6ca2ac99f09018963323ab860af9873"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeQueryTarget.sol",
+      "group": "production",
+      "base_sha256": "73c5d772a66147f0fc5a0211550dffb6296cac2a001b57786213b0a39666087b",
+      "overlay_sha256": "d366fab38704ae5babc3137b185ec554869f0823b92e8204457e55b93ef749e7"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.sol",
+      "group": "production",
+      "base_sha256": "66391f0475eb7a8337472adb00833b91267772489198d63e18e4132d70e2b584",
+      "overlay_sha256": "32e0c7076254bcbff2eaaab392240647d0eb5391464ece23f416a3a5034f1ed1"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol",
+      "group": "regression",
+      "base_sha256": "1e1f96be9c431b3da5acdde060579fb49056eeb7f2a3ec5c45f1c82c21f343a6",
+      "overlay_sha256": "a88305bef02250d1d6b7e257f320c3346882770171f87f370166d78607a72495"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol",
+      "group": "regression",
+      "base_sha256": "46f860d6c5822631f7ce4ecc996f3eeaaa3e07716d28ac404ad31f3fe19dd858",
+      "overlay_sha256": "5f6d3ead9a793b914fe8c38d8fd8235a98c67b5d3930c540c1fb75246672bfcb"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol",
+      "group": "regression",
+      "base_sha256": "a364c55c2bd8f093f2045eea130475321ddc557c3dbc722038bfbc6214dc2ccf",
+      "overlay_sha256": "d3666065248147699d217ba286ab4f585a69f2741eb6aff5fadb87caa64bdb35"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/invariant/MixedBufferMultiVaultStableDetf_Invariant.t.sol",
+      "group": "invariants",
+      "base_sha256": "6d390a26829b5960bb33000cf62d1be810180da37dc04a88cb804d34dce08419",
+      "overlay_sha256": "8e87306342c0468ddfe64bb07901433cf0d257a767e500edab021f75e42cad82"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/invariant/MultiVaultWeightedDetf.invariant.t.sol",
+      "group": "invariants",
+      "base_sha256": "dc71ca1141c10cdbbea0a949b8f589d688ac8e83df83be5ab5dc0cb39c60a40a",
+      "overlay_sha256": "df80a6f9081619ccd2cc99b68b85622abe789bf33255ca8dbeb2adb5fd9a833b"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/invariant/ComposedStableCommonDetf_Invariant.t.sol",
+      "group": "invariants",
+      "base_sha256": "39ed76e889f78ca558b45b84dd6af3cb83edb6466e46eefd37feaddd9f77afb5",
+      "overlay_sha256": "98b76d7ded4083d4f983c6f40394a35357a02f45218455fe7609b622d02c7b11"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/invariant/SingleStandardExchangeDETF.invariant.t.sol",
+      "group": "invariants",
+      "base_sha256": "328bb986f71a6de84025d8ab0e626057904231e325d6155dca9ee94a7e256261",
+      "overlay_sha256": "f6f5a48a287e8a3dbedb89f3d13f8dba54408a87aa0c55af59ea3bb4d4ffc29f"
+    },
+    {
+      "path": "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/invariant/UniswapV4Detf_Invariant.t.sol",
+      "group": "invariants",
+      "base_sha256": "b6d20eb903a6cccb573e669a3ff4c413b4e0aba4c1d57e4fa8ce5d5c54b635b8",
+      "overlay_sha256": "8878899b5f74102bd0101adcb3e0576a6824f5a4b3f75d9efc42607ee641afad"
+    }
+  ],
+  "artifacts": [
+    {
+      "contract": "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeInFacet.sol:MixedBufferMultiVaultStableDetfExchangeInFacet",
+      "artifact": "out/MixedBufferMultiVaultStableDetfExchangeInFacet.sol/MixedBufferMultiVaultStableDetfExchangeInFacet.json",
+      "original_sha256": "f85d9dac4912c7fccfb5dfbbd1a496cc3cf3094efca7358f362f76be8ef6bf77",
+      "corrected_sha256": "8358fc49fa0173f151243878d42fe450059f7555929cdab642e058db5042f63e",
+      "original_runtime_bytes": 17563,
+      "corrected_runtime_bytes": 17873,
+      "selectors_unchanged": true
+    },
+    {
+      "contract": "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeInFacet.sol:MultiVaultWeightedDetfExchangeInFacet",
+      "artifact": "out/MultiVaultWeightedDetfExchangeInFacet.sol/MultiVaultWeightedDetfExchangeInFacet.json",
+      "original_sha256": "add4792a705498c424dd3735501a6a9600fc7d2550114c609aecfc678d8dbd3b",
+      "corrected_sha256": "8932a00f301c0df27a38b0a9abbcd8563562613a5d21b4033b52ba5e095ae6ea",
+      "original_runtime_bytes": 20749,
+      "corrected_runtime_bytes": 21059,
+      "selectors_unchanged": true
+    },
+    {
+      "contract": "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.sol:ComposedStableCommonDetfExchangeOutQueryFacet",
+      "artifact": "out/ComposedStableCommonDetfExchangeOutQueryFacet.sol/ComposedStableCommonDetfExchangeOutQueryFacet.json",
+      "original_sha256": "2c4d147d918d91b80e4bb360c4813410c50c3082d7a52e1b49a99fbfcc65ad75",
+      "corrected_sha256": "23b5bf65e75f7356e6d47453479912103cde2de4b6ac4ed303aa7d339d266469",
+      "original_runtime_bytes": 20778,
+      "corrected_runtime_bytes": 20937,
+      "selectors_unchanged": true
+    }
+  ],
+  "red": {
+    "directory": "/private/tmp/apex-review-detf-validation/detf-validation/red-003",
+    "tests": 7,
+    "failed": 7,
+    "runtime_assertion_failures": true,
+    "command": {
+      "cwd": "/private/tmp/apex-review-detf-validation",
+      "command": [
+        "python3",
+        "scripts/forge-artifacts.py",
+        "test",
+        "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeInTarget.sol",
+        "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeQueryTarget.sol",
+        "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeInTarget.sol",
+        "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeQueryTarget.sol",
+        "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.sol",
+        "--test-root",
+        "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol",
+        "--test-root",
+        "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol",
+        "--test-root",
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol",
+        "--",
+        "--match-test",
+        "test_directExactOutRefundsBoundedCreditInBothDirections|test_directExactOutUnstakeRefundIndependently|test_stakingReserveExactOutReturnsUntouchedInputWithoutSpendingProtectedRaw",
+        "-vv"
+      ],
+      "source_hashes": {
+        "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeInTarget.sol": "7b6a1c441dce11ff3ee8032ea7da59a3a29d9439d3770379c828180d1f3f4cf8",
+        "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeQueryTarget.sol": "ce95a0e683af2af727137276bd40db323a551bb0299c441e552b0e9f7b3cdbdd",
+        "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeInTarget.sol": "89b0afd9e9aa471da739cba3a417907c80fa7a8d8f565a99f6b7372709ea0253",
+        "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeQueryTarget.sol": "73c5d772a66147f0fc5a0211550dffb6296cac2a001b57786213b0a39666087b",
+        "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.sol": "66391f0475eb7a8337472adb00833b91267772489198d63e18e4132d70e2b584",
+        "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol": "ac341ccdc3c5487e298c9ca8630a449eca5641fa8b01090a0e0c307133eefada",
+        "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol": "59eb6088f69be79ebcae96ea6cffdf4ca0600fc7134066e0ac83e2d704b03bb2",
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol": "e0a0c4756a1862b72a9f82abe32318f42003159c28d9225be3b8368c4fe86583",
+        "contracts/test/bases/DetfExactOutCreditAssertions.sol": "62a880739dc80419c1d845866318269fde82a3b19f50ebdb7b36dc30b36357d2"
+      }
+    }
+  },
+  "green": {
+    "directory": "/private/tmp/apex-review-detf-validation/detf-validation/green-005",
+    "tests": 12,
+    "passed": 12,
+    "command": {
+      "cwd": "/private/tmp/apex-review-detf-validation",
+      "command": [
+        "python3",
+        "scripts/forge-artifacts.py",
+        "test",
+        "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeInTarget.sol",
+        "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeQueryTarget.sol",
+        "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeInTarget.sol",
+        "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeQueryTarget.sol",
+        "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.sol",
+        "--test-root",
+        "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol",
+        "--test-root",
+        "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol",
+        "--test-root",
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol",
+        "--test-root",
+        "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/invariant/MixedBufferMultiVaultStableDetf_Invariant.t.sol",
+        "--test-root",
+        "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/invariant/MultiVaultWeightedDetf.invariant.t.sol",
+        "--test-root",
+        "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/invariant/ComposedStableCommonDetf_Invariant.t.sol",
+        "--test-root",
+        "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/invariant/SingleStandardExchangeDETF.invariant.t.sol",
+        "--test-root",
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/invariant/UniswapV4Detf_Invariant.t.sol",
+        "--",
+        "--match-test",
+        "test_directExactOutRefundsBoundedCreditInBothDirections|test_directExactOutUnstakeRefundIndependently|test_stakingReserveExactOutReturnsUntouchedInputWithoutSpendingProtectedRaw|test_deterministicLifecycle",
+        "--fuzz-seed",
+        "0x20260917",
+        "-vv"
+      ],
+      "environment": {
+        "FOUNDRY_FUZZ_RUNS": "10000",
+        "FOUNDRY_INVARIANT_RUNS": "256",
+        "FOUNDRY_INVARIANT_DEPTH": "64"
+      },
+      "source_hashes": {
+        "contracts/test/bases/DetfExactOutCreditAssertions.sol": "6a4f57d53c8b5427350708c3ab354328ada396c77d84be1b8dc6047c7d4d490c",
+        "contracts/test/bases/DetfStatefulActions.sol": "4fe17d34b49bed2628f32318485cf399b1811eef96257def2642005117b5d0ab",
+        "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeInTarget.sol": "882bfc477b864356fe2827470178a9c15623ddbedf734a89742a934e10ab349e",
+        "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeQueryTarget.sol": "3cfcbbe92838db3392e023737d46261a2343617bbd89d435367f7b5b0a796a25",
+        "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeInTarget.sol": "edcc04d6a1a827cde97a1f2a54e64097b6ca2ac99f09018963323ab860af9873",
+        "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeQueryTarget.sol": "d366fab38704ae5babc3137b185ec554869f0823b92e8204457e55b93ef749e7",
+        "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.sol": "32e0c7076254bcbff2eaaab392240647d0eb5391464ece23f416a3a5034f1ed1",
+        "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol": "a88305bef02250d1d6b7e257f320c3346882770171f87f370166d78607a72495",
+        "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol": "5f6d3ead9a793b914fe8c38d8fd8235a98c67b5d3930c540c1fb75246672bfcb",
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol": "d3666065248147699d217ba286ab4f585a69f2741eb6aff5fadb87caa64bdb35",
+        "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/invariant/MixedBufferMultiVaultStableDetf_Invariant.t.sol": "8e87306342c0468ddfe64bb07901433cf0d257a767e500edab021f75e42cad82",
+        "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/invariant/MultiVaultWeightedDetf.invariant.t.sol": "df80a6f9081619ccd2cc99b68b85622abe789bf33255ca8dbeb2adb5fd9a833b",
+        "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/invariant/ComposedStableCommonDetf_Invariant.t.sol": "98b76d7ded4083d4f983c6f40394a35357a02f45218455fe7609b622d02c7b11",
+        "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/invariant/SingleStandardExchangeDETF.invariant.t.sol": "f6f5a48a287e8a3dbedb89f3d13f8dba54408a87aa0c55af59ea3bb4d4ffc29f",
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/invariant/UniswapV4Detf_Invariant.t.sol": "8878899b5f74102bd0101adcb3e0576a6824f5a4b3f75d9efc42607ee641afad"
+      },
+      "started_at": 1790349605.2571259
+    }
+  },
+  "campaign": {
+    "directory": "/private/tmp/apex-review-detf-validation/detf-validation/campaign-001",
+    "families": 5,
+    "runs_per_family": 256,
+    "depth": 64,
+    "calls_per_family": 16384,
+    "reverts": 0,
+    "command": {
+      "cwd": "/private/tmp/apex-review-detf-validation",
+      "command": [
+        "python3",
+        "scripts/forge-artifacts.py",
+        "test",
+        "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeInTarget.sol",
+        "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeQueryTarget.sol",
+        "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeInTarget.sol",
+        "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeQueryTarget.sol",
+        "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.sol",
+        "--test-root",
+        "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/invariant/MixedBufferMultiVaultStableDetf_Invariant.t.sol",
+        "--test-root",
+        "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/invariant/MultiVaultWeightedDetf.invariant.t.sol",
+        "--test-root",
+        "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/invariant/ComposedStableCommonDetf_Invariant.t.sol",
+        "--test-root",
+        "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/invariant/SingleStandardExchangeDETF.invariant.t.sol",
+        "--test-root",
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/invariant/UniswapV4Detf_Invariant.t.sol",
+        "--",
+        "--match-test",
+        "invariant_accounting",
+        "--fuzz-seed",
+        "0x20260917",
+        "-vv"
+      ],
+      "environment": {
+        "FOUNDRY_FUZZ_RUNS": "10000",
+        "FOUNDRY_INVARIANT_RUNS": "256",
+        "FOUNDRY_INVARIANT_DEPTH": "64"
+      },
+      "source_hashes": {
+        "contracts/test/bases/DetfExactOutCreditAssertions.sol": "6a4f57d53c8b5427350708c3ab354328ada396c77d84be1b8dc6047c7d4d490c",
+        "contracts/test/bases/DetfStatefulActions.sol": "4fe17d34b49bed2628f32318485cf399b1811eef96257def2642005117b5d0ab",
+        "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeInTarget.sol": "882bfc477b864356fe2827470178a9c15623ddbedf734a89742a934e10ab349e",
+        "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeQueryTarget.sol": "3cfcbbe92838db3392e023737d46261a2343617bbd89d435367f7b5b0a796a25",
+        "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeInTarget.sol": "edcc04d6a1a827cde97a1f2a54e64097b6ca2ac99f09018963323ab860af9873",
+        "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeQueryTarget.sol": "d366fab38704ae5babc3137b185ec554869f0823b92e8204457e55b93ef749e7",
+        "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.sol": "32e0c7076254bcbff2eaaab392240647d0eb5391464ece23f416a3a5034f1ed1",
+        "test/foundry/spec/vaults/detf/common/claimToken/ComposedStableFundedStaking.t.sol": "a88305bef02250d1d6b7e257f320c3346882770171f87f370166d78607a72495",
+        "test/foundry/spec/vaults/detf/common/claimToken/MixedBufferFundedStaking.t.sol": "5f6d3ead9a793b914fe8c38d8fd8235a98c67b5d3930c540c1fb75246672bfcb",
+        "test/foundry/spec/vaults/detf/common/claimToken/MultiWeightedFundedStaking.t.sol": "d3666065248147699d217ba286ab4f585a69f2741eb6aff5fadb87caa64bdb35",
+        "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/invariant/MixedBufferMultiVaultStableDetf_Invariant.t.sol": "8e87306342c0468ddfe64bb07901433cf0d257a767e500edab021f75e42cad82",
+        "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/invariant/MultiVaultWeightedDetf.invariant.t.sol": "df80a6f9081619ccd2cc99b68b85622abe789bf33255ca8dbeb2adb5fd9a833b",
+        "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/stable/common/invariant/ComposedStableCommonDetf_Invariant.t.sol": "98b76d7ded4083d4f983c6f40394a35357a02f45218455fe7609b622d02c7b11",
+        "test/foundry/spec/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/invariant/SingleStandardExchangeDETF.invariant.t.sol": "f6f5a48a287e8a3dbedb89f3d13f8dba54408a87aa0c55af59ea3bb4d4ffc29f",
+        "test/foundry/spec/vaults/detf/protocols/dexes/uniswap/v4/detf/invariant/UniswapV4Detf_Invariant.t.sol": "8878899b5f74102bd0101adcb3e0576a6824f5a4b3f75d9efc42607ee641afad"
+      },
+      "started_at": 1790349685.589094
+    }
+  },
+  "logs": {
+    "detf-validation/red-003/red.log": {
+      "sha256": "fb59b5658828801a39d80c8508e44dbdfe33e90b7cdbb61de5b20258e3aad258",
+      "bytes": 15659
+    },
+    "detf-validation/green-005/run.log": {
+      "sha256": "659e5d3ec368debe8bc4590455965d4da997d10f26f4c327d808961cec236ac5",
+      "bytes": 38764
+    },
+    "detf-validation/campaign-001/run.log": {
+      "sha256": "bf7451c0a01546cada0f6e677d7dc82316fc527136f84202ee840d7ecdb82008",
+      "bytes": 38218
+    }
+  },
+  "regression_formatting": "Four regression-group files were formatted after red-003; refund assertions and control flow were unchanged.",
+  "limitations": [
+    "This is scoped family validation, not a full hermetic release suite.",
+    "Source method selectors are compared here; package loupe/declaration checks are part of the parent release integration gate."
+  ],
+  "patch_sha256": "f81038a84578b98dd7b585d6a7f991cb07783943d0e0c2b4c11ab09153730427",
+  "forge_version": "forge Version: 1.5.1-stable\nCommit SHA: b0a9dd9ceda36f63e2326ce530c10e6916f4b8a2\nBuild Timestamp: 2025-12-22T11:41:27.543573000Z (1766403687)\nBuild Profile: maxperf",
+  "clone_source_isolation": [
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeInTarget.sol",
+      "source_inode": 412730072,
+      "clone_inode": 418342154,
+      "sha256": "7b6a1c441dce11ff3ee8032ea7da59a3a29d9439d3770379c828180d1f3f4cf8"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfExchangeQueryTarget.sol",
+      "source_inode": 412730074,
+      "clone_inode": 418342168,
+      "sha256": "ce95a0e683af2af727137276bd40db323a551bb0299c441e552b0e9f7b3cdbdd"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeInTarget.sol",
+      "source_inode": 412730099,
+      "clone_inode": 418342330,
+      "sha256": "89b0afd9e9aa471da739cba3a417907c80fa7a8d8f565a99f6b7372709ea0253"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfExchangeQueryTarget.sol",
+      "source_inode": 412730101,
+      "clone_inode": 418342326,
+      "sha256": "73c5d772a66147f0fc5a0211550dffb6296cac2a001b57786213b0a39666087b"
+    },
+    {
+      "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfExchangeOutQueryFacet.sol",
+      "source_inode": 412730125,
+      "clone_inode": 418342192,
+      "sha256": "66391f0475eb7a8337472adb00833b91267772489198d63e18e4132d70e2b584"
+    }
+  ],
+  "artifact_cache_isolation": [
+    {
+      "path": "out/ComposedStableCommonDetfExchangeOutQueryFacet.sol/ComposedStableCommonDetfExchangeOutQueryFacet.json",
+      "seed_inode": 418260753,
+      "clone_inode": 418480222
+    },
+    {
+      "path": "cache_forge/solidity-files-cache.json",
+      "seed_inode": 418268412,
+      "clone_inode": 418487935
+    }
+  ],
+  "foundry_config_sha256": "14536c5fabad6b40fea707ad11d8b80d48b6ada96c5995eaa25e2384908e8d38",
+  "format_check": {
+    "exit_code": 0,
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "asserted_action_counts_per_64_call_run": {
+    "MixedBuffer": {
+      "deposit": {
+        "attempted": 64,
+        "succeeded": 64,
+        "unexpected_revert": 0
+      },
+      "partial_redemption": {
+        "attempted": 64,
+        "succeeded": 64,
+        "unexpected_revert": 0
+      },
+      "EOA_delivery_rejection": {
+        "attempted": 64,
+        "expected_revert": 64,
+        "unexpected_revert": 0
+      },
+      "contract_delivery_rejection": {
+        "attempted": 64,
+        "expected_revert": 64,
+        "unexpected_revert": 0
+      },
+      "prepaid_exact_in": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      },
+      "prepaid_replay": {
+        "attempted": 8,
+        "expected_revert": 8,
+        "unexpected_revert": 0
+      },
+      "donation": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      },
+      "share_transfer": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      },
+      "market_trade": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      },
+      "epoch_maintenance": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      },
+      "raw_SY_deposit_partial_redeem": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      },
+      "funded_reentry": {
+        "attempted": 8,
+        "succeeded": 8,
+        "expected_revert": 8,
+        "unexpected_revert": 0
+      },
+      "exact_out_stake_and_unstake": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      }
+    },
+    "MultiWeighted": {
+      "deposit": {
+        "attempted": 64,
+        "succeeded": 64,
+        "unexpected_revert": 0
+      },
+      "partial_redemption": {
+        "attempted": 64,
+        "succeeded": 64,
+        "unexpected_revert": 0
+      },
+      "EOA_delivery_rejection": {
+        "attempted": 64,
+        "expected_revert": 64,
+        "unexpected_revert": 0
+      },
+      "contract_delivery_rejection": {
+        "attempted": 64,
+        "expected_revert": 64,
+        "unexpected_revert": 0
+      },
+      "prepaid_exact_in": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      },
+      "prepaid_replay": {
+        "attempted": 8,
+        "expected_revert": 8,
+        "unexpected_revert": 0
+      },
+      "donation": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      },
+      "share_transfer": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      },
+      "market_trade": {
+        "attempted": 16,
+        "succeeded": 16,
+        "unexpected_revert": 0
+      },
+      "epoch_maintenance": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      },
+      "raw_SY_deposit_partial_redeem": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      },
+      "exact_out_stake_and_unstake": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      }
+    },
+    "Composed": {
+      "deposit": {
+        "attempted": 64,
+        "succeeded": 64,
+        "unexpected_revert": 0
+      },
+      "partial_redemption": {
+        "attempted": 64,
+        "succeeded": 64,
+        "unexpected_revert": 0
+      },
+      "EOA_delivery_rejection": {
+        "attempted": 64,
+        "expected_revert": 64,
+        "unexpected_revert": 0
+      },
+      "contract_delivery_rejection": {
+        "attempted": 64,
+        "expected_revert": 64,
+        "unexpected_revert": 0
+      },
+      "prepaid_exact_in": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      },
+      "prepaid_replay": {
+        "attempted": 8,
+        "expected_revert": 8,
+        "unexpected_revert": 0
+      },
+      "donation": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      },
+      "share_transfer": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      },
+      "market_trade": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      },
+      "epoch_maintenance": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      },
+      "raw_SY_deposit_partial_redeem": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      },
+      "funded_reentry": {
+        "attempted": 8,
+        "succeeded": 8,
+        "expected_revert": 8,
+        "unexpected_revert": 0
+      },
+      "exact_out_stake_and_unstake": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      }
+    },
+    "SingleSE": {
+      "deposit": {
+        "attempted": 64,
+        "succeeded": 64,
+        "unexpected_revert": 0
+      },
+      "partial_redemption": {
+        "attempted": 64,
+        "succeeded": 64,
+        "unexpected_revert": 0
+      },
+      "EOA_delivery_rejection": {
+        "attempted": 64,
+        "expected_revert": 64,
+        "unexpected_revert": 0
+      },
+      "contract_delivery_rejection": {
+        "attempted": 64,
+        "expected_revert": 64,
+        "unexpected_revert": 0
+      },
+      "prepaid_exact_in": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      },
+      "prepaid_replay": {
+        "attempted": 8,
+        "expected_revert": 8,
+        "unexpected_revert": 0
+      },
+      "donation": {
+        "attempted": 16,
+        "succeeded": 16,
+        "unexpected_revert": 0
+      },
+      "share_transfer": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      },
+      "market_trade": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      },
+      "epoch_maintenance": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      },
+      "raw_SY_deposit_partial_redeem": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      },
+      "funded_reentry": {
+        "attempted": 8,
+        "succeeded": 8,
+        "expected_revert": 8,
+        "unexpected_revert": 0
+      }
+    },
+    "UniV4": {
+      "deposit": {
+        "attempted": 64,
+        "succeeded": 64,
+        "unexpected_revert": 0
+      },
+      "partial_redemption": {
+        "attempted": 64,
+        "succeeded": 64,
+        "unexpected_revert": 0
+      },
+      "EOA_delivery_rejection": {
+        "attempted": 64,
+        "expected_revert": 64,
+        "unexpected_revert": 0
+      },
+      "contract_delivery_rejection": {
+        "attempted": 64,
+        "expected_revert": 64,
+        "unexpected_revert": 0
+      },
+      "prepaid_exact_in": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      },
+      "prepaid_replay": {
+        "attempted": 8,
+        "expected_revert": 8,
+        "unexpected_revert": 0
+      },
+      "donation": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      },
+      "share_transfer": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      },
+      "market_trade": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      },
+      "epoch_maintenance": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      },
+      "raw_SY_deposit_partial_redeem": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      },
+      "funded_reentry": {
+        "attempted": 8,
+        "succeeded": 8,
+        "expected_revert": 8,
+        "unexpected_revert": 0
+      },
+      "sweep": {
+        "attempted": 8,
+        "succeeded": 8,
+        "unexpected_revert": 0
+      }
+    }
+  },
+  "counter_evidence": "Each cycle and afterInvariant assert exact counters against the rotation schedule. Every campaign completed 256 depth-64 runs with zero handler reverts; counts are derived from those passing onchain assertions, not independently printed events."
+}

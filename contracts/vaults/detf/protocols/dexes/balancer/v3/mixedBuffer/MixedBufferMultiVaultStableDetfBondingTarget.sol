@@ -130,6 +130,7 @@ abstract contract MixedBufferMultiVaultStableDetfBondingTarget is MixedBufferMul
     function notifyReserveDonated() external { _requireBondNft(); }
     function donate(IERC20 token_, uint256 amount_, bool prepaid_) external {
         _requireNotDisabled();
+        _requirePrepaidCaller(prepaid_);
         IDetfNftReserveDonation(address(Repo._layoutStruct().bondNftVault)).donate(
             msg.sender, token_, amount_, 0, prepaid_, block.timestamp
         );

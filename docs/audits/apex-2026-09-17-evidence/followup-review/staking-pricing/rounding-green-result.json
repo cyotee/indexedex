@@ -1,0 +1,41 @@
+{
+  "stage": "rounding-green",
+  "command": [
+    "python3",
+    "scripts/forge-artifacts.py",
+    "test",
+    "contracts/protocols/staking/lido/LidoWstETHStandardExchangeCommon.sol",
+    "contracts/protocols/staking/lido/LidoWstETHStandardExchangeInTarget.sol",
+    "contracts/protocols/staking/lido/LidoWstETHStandardExchangeOutTarget.sol",
+    "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeCommon.sol",
+    "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeInTarget.sol",
+    "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeOutTarget.sol",
+    "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeCommon.sol",
+    "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeInTarget.sol",
+    "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeOutTarget.sol",
+    "--test-root",
+    "test/foundry/spec/protocol/staking/lido/invariant/LidoWstETHStandardExchange_Invariant.t.sol",
+    "--test-root",
+    "test/foundry/spec/protocol/staking/etherfi/invariant/EtherFiWeETHStandardExchange_Invariant.t.sol",
+    "--test-root",
+    "test/foundry/spec/protocol/staking/rocket-pool/invariant/RocketPoolRETHStandardExchange_Invariant.t.sol",
+    "--test-root",
+    "test/foundry/spec/protocol/staking/lido/invariant/LidoWstETHStandardExchange_NonUnitPretransfer.t.sol",
+    "--test-root",
+    "test/foundry/spec/vaults/standard/exchange/protocols/morpho/blue/invariant/MorphoBlueStandardExchange_Invariant.t.sol",
+    "--test-root",
+    "test/foundry/spec/protocol/staking/etherfi/invariant/EtherFiWeETHStandardExchange_NonUnitPretransfer.t.sol",
+    "--",
+    "--match-test",
+    "test_APEX",
+    "-vvv"
+  ],
+  "environmentOverrides": {
+    "FOUNDRY_FUZZ_RUNS": "10000",
+    "FOUNDRY_INVARIANT_RUNS": "256",
+    "FOUNDRY_INVARIANT_DEPTH": "64"
+  },
+  "exitCode": 0,
+  "elapsedSeconds": 264.2478940486908,
+  "log": "/private/tmp/apex-review-staking-validation/rounding-green.log"
+}

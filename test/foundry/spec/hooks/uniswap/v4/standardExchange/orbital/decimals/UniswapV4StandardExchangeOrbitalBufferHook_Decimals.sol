@@ -24,6 +24,8 @@ import {ReentrantMockERC20} from "contracts/test/stubs/ReentrantMockERC20.sol";
 import {SimpleMintableERC20} from "contracts/test/stubs/SimpleMintableERC20.sol";
 import {SimpleYieldERC4626} from "contracts/test/stubs/SimpleYieldERC4626.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
+import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 
 /// @dev Minimal IRateProvider harness (not a mock of the hook SUT). Copied from gold RateProvider suite.
 contract StaticRateProviderDecimals {
@@ -299,8 +301,16 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHook_Decimals is
     /*                             Rate provider                              */
     /* ---------------------------------------------------------------------- */
 
+    /// @dev D60: a 2.0x rate in the provider convention (WAD whole target tokens per whole share); when the
+    ///      SE's share metadata decimals exceed the token's, that is 2 x 10^(sd - td) x 1e18.
+    function _rateFor2x(address se, address token) internal view returns (uint256) {
+        uint8 sd = IERC20Metadata(se).decimals();
+        uint8 td = IERC20Metadata(token).decimals();
+        return sd >= td ? 2e18 * (10 ** uint256(sd - td)) : 2e18 / (10 ** uint256(td - sd));
+    }
+
     function test_RP1_effectiveReserve_is_sharesTimesRate() public {
-        StaticRateProviderDecimals rp = new StaticRateProviderDecimals(2e18);
+        StaticRateProviderDecimals rp = new StaticRateProviderDecimals(_rateFor2x(se0, address(token0)));
         IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgArgs memory args = _argsWithSE(
             true, token1.decimals() != 18, token2.decimals() != 18
         );
@@ -322,8 +332,8 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHook_Decimals is
 
         uint256 seBal = o.seBalance(0);
         assertGt(seBal, 0, "SE shares");
-        uint256 expected = (seBal * 2e18) / 1e18;
-        assertEq(o.effectiveReserve(0), expected, "effective = shares * rate / 1e18");
+        uint256 expected = seBal * 2; // D60: the rate is whole tokens per whole share; 2x in metadata terms
+        assertEq(o.effectiveReserve(0), expected, "effective = shares x rate (metadata scales)");
         assertEq(o.rateProvider(0), address(rp));
     }
 
@@ -359,9 +369,9 @@ abstract contract UniswapV4StandardExchangeOrbitalBufferHook_Decimals is
             se0: seLeg0,
             se1: address(0),
             se2: address(0),
-            rp0: address(0),
-            rp1: address(0),
-            rp2: address(0),
+            rp0: RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, seLeg0, address(t0)),
+            rp1: RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, address(0), address(t1)),
+            rp2: RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, address(0), address(hostile)),
             tickSpacing: 0,
             sqrtPriceX96: 0,
             ownerOnlyLiquidity: _pkgOwnerOnlyLiquidity(),

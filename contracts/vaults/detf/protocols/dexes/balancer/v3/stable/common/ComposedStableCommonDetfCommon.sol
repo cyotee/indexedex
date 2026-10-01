@@ -12,6 +12,7 @@ import {BalancerV3VaultAwareRepo} from "@crane/contracts/protocols/dexes/balance
 import {BalancerV3WeightedPoolQuote} from "@crane/contracts/protocols/dexes/balancer/v3/utils/BalancerV3WeightedPoolQuote.sol";
 import {IDetfErrors} from "contracts/interfaces/IDetfErrors.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
 import {IStandardExchangeErrors} from "contracts/interfaces/IStandardExchangeErrors.sol";
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "contracts/interfaces/IStandardExchangeOut.sol";
@@ -327,12 +328,8 @@ abstract contract ComposedStableCommonDetfCommon is IStandardExchangeErrors, IDe
         if (router_ == address(0)) {
             return (false, 0);
         }
-
-        try IStandardExchangeOut(router_).previewExchangeOut(tokenIn_, tokenOut_, amountOut_) returns (uint256 quotedIn_) {
-            return (true, quotedIn_);
-        } catch {
-            return (false, 0);
-        }
+        amountIn_ = IStandardExchangeOut(router_).previewExchangeOut(tokenIn_, tokenOut_, amountOut_);
+        return (true, amountIn_);
     }
 
     function _tryPreviewExchangeIn(address router_, IERC20 tokenIn_, uint256 amountIn_, IERC20 tokenOut_)
@@ -343,14 +340,8 @@ abstract contract ComposedStableCommonDetfCommon is IStandardExchangeErrors, IDe
         if (router_ == address(0)) {
             return (false, 0);
         }
-
-        try IStandardExchangeIn(router_).previewExchangeIn(tokenIn_, amountIn_, tokenOut_) returns (
-            uint256 quotedOut_
-        ) {
-            return (true, quotedOut_);
-        } catch {
-            return (false, 0);
-        }
+        amountOut_ = IStandardExchangeIn(router_).previewExchangeIn(tokenIn_, amountIn_, tokenOut_);
+        return (true, amountOut_);
     }
 
     function _resolveUnwindRouteEligibility(ComposedStableCommonDetfRepo.RouteConfig storage route_, IERC20 tokenOut_)
@@ -777,16 +768,31 @@ abstract contract ComposedStableCommonDetfCommon is IStandardExchangeErrors, IDe
     }
     function _secureTokenTransfer(IERC20 token_, uint256 amount_, bool prepaid_) internal returns (uint256) {
         uint256 before_ = token_.balanceOf(address(this));
-        if (prepaid_) {
-            uint256 reserve_ = MultiAssetBasicVaultRepo._reserveOfToken(address(token_));
-            uint256 available_ = before_ > reserve_ ? before_ - reserve_ : 0;
-            if (amount_ > available_) revert ISecurePullErrors.TransferDeltaInsufficient(amount_, available_);
-        } else {
+        if (!prepaid_) {
             token_.safeTransferFrom(msg.sender, address(this), amount_);
             uint256 received_ = token_.balanceOf(address(this)) - before_;
             if (received_ != amount_) revert ISecurePullErrors.TransferDeltaInsufficient(amount_, received_);
+            return amount_;
         }
+        LocalCreditLib.requirePretransferCaller(msg.sender);
+        uint256 available_ = LocalCreditLib.available(
+            before_, MultiAssetBasicVaultRepo._reserveOfToken(address(token_))
+        );
+        if (amount_ > available_) revert ISecurePullErrors.TransferDeltaInsufficient(amount_, available_);
         return amount_;
+    }
+
+    function _requirePrepaidCaller(bool prepaid_) internal view {
+        if (prepaid_) LocalCreditLib.requirePretransferCaller(msg.sender);
+    }
+
+    /// @dev Exact-out pretransfer credit (D15): `min(unbooked, maximum)`. Contract callers only.
+    function _prepaidExactOutCredit(IERC20 token_, uint256 maximum_) internal view returns (uint256) {
+        LocalCreditLib.requirePretransferCaller(msg.sender);
+        return LocalCreditLib.budget(
+            LocalCreditLib.available(token_.balanceOf(address(this)), MultiAssetBasicVaultRepo._reserveOfToken(address(token_))),
+            maximum_
+        );
     }
     function _joinReserve(uint256 detf_, uint256 stable_, uint256 common_, bool initialize_) internal returns (uint256 lp_) {
         Repo.Storage storage s_ = Repo._layoutStruct();

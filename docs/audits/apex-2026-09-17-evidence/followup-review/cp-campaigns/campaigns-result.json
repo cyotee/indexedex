@@ -1,0 +1,29 @@
+{
+  "stage": "campaigns",
+  "command": [
+    "python3",
+    "scripts/forge-artifacts.py",
+    "test",
+    "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeInTarget.sol",
+    "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeInTarget.sol",
+    "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeInTarget.sol",
+    "--test-root",
+    "test/foundry/spec/protocol/dexes/uniswap/v2/invariant/UniswapV2StandardExchange_AccountingInvariant.t.sol",
+    "--test-root",
+    "test/foundry/spec/protocol/dexes/camelot/v2/invariant/CamelotV2StandardExchange_AccountingInvariant.t.sol",
+    "--test-root",
+    "test/foundry/spec/protocol/dexes/aerodrome/v1/invariant/AerodromeStandardExchange.invariant.t.sol",
+    "--",
+    "--match-test",
+    "(test_APEX_deterministicLifecycle|invariant_APEX_accounting)",
+    "-vv"
+  ],
+  "environmentOverrides": {
+    "FOUNDRY_FUZZ_RUNS": "10000",
+    "FOUNDRY_INVARIANT_RUNS": "256",
+    "FOUNDRY_INVARIANT_DEPTH": "64"
+  },
+  "exitCode": 0,
+  "elapsedSeconds": 260.05165910720825,
+  "log": "/private/tmp/apex-review-cp-validation/campaigns.log"
+}

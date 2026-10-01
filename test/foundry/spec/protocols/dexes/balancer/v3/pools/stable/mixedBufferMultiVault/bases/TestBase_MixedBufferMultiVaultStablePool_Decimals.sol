@@ -86,6 +86,7 @@ abstract contract TestBase_MixedBufferMultiVaultStablePool_Decimals is TestBase_
         pkgInit.bufferPoolFacet = bufferPoolFacet;
         pkgInit.poolLiquidityFacet = poolLiquidityFacet;
         pkgInit.hookFacet = hookFacet;
+        pkgInit.transitionQuoteFacet = transitionQuoteFacet;
         pkgInit.vaultRegistry = IVaultRegistryDeployment(address(indexedexManager));
         pkgInit.vaultFeeOracle = IVaultFeeOracleQuery(address(indexedexManager));
         pkgInit.balancerV3Vault = bv3Vault;

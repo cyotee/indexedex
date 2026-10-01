@@ -29,6 +29,7 @@ import {
     IUniswapV4Detf
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 import {TestBase_UniswapV4Detf} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf.sol";
 
@@ -93,14 +94,11 @@ abstract contract TestBase_UniswapV4Detf_Quad is TestBase_UniswapV4Detf {
 
     function _deployQuadHookPkg() internal {
         IFacet hooksFacet = QuadFactory.deployHooksFacet(create3Factory);
-        IFacet joinFacet = QuadFactory.deployJoinFacet(create3Factory);
+        IFacet joinFacet = QuadFactory.deployLiquidityFacet(create3Factory);
         IFacet exitFacet = QuadFactory.deployExitFacet(create3Factory);
         IFacet seFacet = QuadFactory.deploySeFacet(create3Factory);
-        quadHookPkg = QuadFactory.deployPackage(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            owner,
-            IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgInit({
-                joinQueryFacet: QuadFactory.deployJoinQueryFacet(create3Factory),
+        quadHookPkg = QuadFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgInit({
+                joinQueryFacet: QuadFactory.deployLiquidityFacetExt(create3Factory),
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
                 vaultFeeOracleQuery: IVaultFeeOracleQuery(address(indexedexManager)),
                 liquidityFacet: joinFacet,
@@ -113,9 +111,7 @@ abstract contract TestBase_UniswapV4Detf_Quad is TestBase_UniswapV4Detf {
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
                 multiStepOwnableFacet: multiStepOwnableFacet
-            }),
-            abi.encode(type(IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage).name, "v1")._hash()
-        );
+            }));
     }
 
     function _deployQuadHookThenDetf(IUniswapV4Detf.PkgArgs memory args) internal virtual returns (address detf_) {
@@ -140,7 +136,7 @@ abstract contract TestBase_UniswapV4Detf_Quad is TestBase_UniswapV4Detf {
                 feeOracle: address(indexedexManager),
                 tokens: toks,
                 standardExchanges: ses,
-                rateProviders: rps,
+                rateProviders: RateProviderFixtureLib.providersFor4(create3Factory, diamondPackageFactory, toks, ses),
                 tokenDecimals: HookPkgArgsDecimalsLib.tokenDecimals4(toks, predicted_),
                 seDecimals: HookPkgArgsDecimalsLib.seDecimals4(ses),
                 baseAmp: QUAD_BASE_AMP,

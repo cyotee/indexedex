@@ -7,6 +7,7 @@ import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExch
 import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {MintableERC20Decimals} from "contracts/test/stubs/MintableERC20Decimals.sol";
 import {TestBase_CamelotV2StandardExchange_Decimals} from
     "contracts/protocols/dexes/camelot/v2/test/bases/TestBase_CamelotV2StandardExchange_Decimals.sol";
@@ -328,10 +329,15 @@ abstract contract CamelotSE_Adversarial_Decimals is TestBase_CamelotV2StandardEx
         uint256 invBefore_ = tokenA.balanceOf(address(vault));
 
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        vault.exchangeIn(IERC20(address(tokenA)), residual_, IERC20(address(tokenB)), 0, attacker, true, _deadline());
+
+        AtomicPretransferCaller atomic = new AtomicPretransferCaller();
+        vm.prank(address(atomic));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, residual_, uint256(0))
         );
-        vault.exchangeIn(IERC20(address(tokenA)), residual_, IERC20(address(tokenB)), 0, attacker, true, _deadline());
+        vault.exchangeIn(IERC20(address(tokenA)), residual_, IERC20(address(tokenB)), 0, address(atomic), true, _deadline());
 
         assertEq(vault.totalSupply(), supplyBefore_, "I1: no free share mint");
         assertEq(vault.balanceOf(attacker), attackerSharesBefore_, "I1: attacker shares unchanged");
@@ -353,26 +359,49 @@ abstract contract CamelotSE_Adversarial_Decimals is TestBase_CamelotV2StandardEx
         assertGe(tokenA.balanceOf(address(vault)), claimed_, "claimed <= booked inventory");
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0))
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vault.exchangeIn(IERC20(address(tokenA)), claimed_, IERC20(address(tokenB)), 0, attacker, true, _deadline());
     }
 
-    /// @notice Reserve-delta push: transfer-before-call + pretransferred=true succeeds when claimed ≤ U.
+    /// @notice EOA prepaid is rejected; a contract may consume unbooked push credit atomically.
     function test_I2_transferBeforeCall_pretransferred_revertsDelta0() public {
         uint256 claimed_ = _uA(50);
 
         tokenA.mint(attacker, claimed_);
         vm.prank(attacker);
         tokenA.transfer(address(vault), claimed_);
-
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         vm.prank(attacker);
-        uint256 out_ = vault.exchangeIn(
+        vault.exchangeIn(
             IERC20(address(tokenA)), claimed_, IERC20(address(tokenB)), 0, attacker, true, _deadline()
         );
+
+        AtomicPretransferCaller atomic = new AtomicPretransferCaller();
+        tokenA.mint(attacker, claimed_);
+        vm.startPrank(attacker);
+        tokenA.approve(address(atomic), claimed_);
+        uint256 out_ = abi.decode(
+            atomic.consumePretransfer(
+                IERC20(address(tokenA)),
+                attacker,
+                address(vault),
+                claimed_,
+                abi.encodeWithSelector(
+                    vault.exchangeIn.selector,
+                    IERC20(address(tokenA)),
+                    claimed_,
+                    IERC20(address(tokenB)),
+                    0,
+                    address(atomic),
+                    true,
+                    _deadline()
+                )
+            ),
+            (uint256)
+        );
+        vm.stopPrank();
         assertGt(out_, 0, "push pretransfer succeeds under reserve-delta");
-        assertEq(tokenB.balanceOf(attacker), out_, "attacker received tokenB");
+        assertEq(tokenB.balanceOf(address(atomic)), out_, "contract caller received tokenB");
     }
 
     /// @notice I3: residual inventory after honest pull cannot fund second free pretransfer credit.
@@ -396,10 +425,15 @@ abstract contract CamelotSE_Adversarial_Decimals is TestBase_CamelotV2StandardEx
 
         uint256 claim_ = residualSeed_;
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        vault.exchangeIn(IERC20(address(tokenA)), claim_, IERC20(address(tokenB)), 0, attacker, true, _deadline());
+
+        AtomicPretransferCaller atomic = new AtomicPretransferCaller();
+        vm.prank(address(atomic));
         vm.expectRevert(
             abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claim_, uint256(0))
         );
-        vault.exchangeIn(IERC20(address(tokenA)), claim_, IERC20(address(tokenB)), 0, attacker, true, _deadline());
+        vault.exchangeIn(IERC20(address(tokenA)), claim_, IERC20(address(tokenB)), 0, address(atomic), true, _deadline());
 
         assertEq(tokenA.balanceOf(address(vault)), residual_, "I3 second call must not move inventory");
     }

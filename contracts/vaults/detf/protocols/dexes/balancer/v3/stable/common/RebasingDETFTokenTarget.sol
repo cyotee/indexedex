@@ -16,6 +16,7 @@ import {IMultiStepOwnable} from '@crane/contracts/access/ERC8023/IMultiStepOwnab
 
 import {IRebasingClaimToken} from 'contracts/interfaces/IRebasingClaimToken.sol';
 import {ISecurePullErrors} from 'contracts/interfaces/ISecurePullErrors.sol';
+import {LocalCreditLib} from 'contracts/utils/LocalCreditLib.sol';
 import {IStandardExchangeIn} from 'contracts/interfaces/IStandardExchangeIn.sol';
 import {IStandardExchangeOut} from 'contracts/interfaces/IStandardExchangeOut.sol';
 import {IDETF} from 'contracts/interfaces/IDETF.sol';
@@ -235,11 +236,17 @@ contract RebasingDETFTokenTarget is IDetfErrors, ReentrancyLockModifiers, MultiS
             revert SlippageExceeded(maxAmountIn, amountIn);
         }
 
-        // Always measure delta (L-GAPS-9/10). Pretransferred free credit of idle inventory is forbidden.
-        uint256 depositedIn = _secureTokenTransfer(tokenIn, amountIn, pretransferred);
-
-        if (depositedIn < amountIn) {
-            revert SlippageExceeded(amountIn, depositedIn);
+        // D15: false-flag pulls exactly `amountIn` (measured delta). True-flag credits
+        // `min(unbooked, maxAmountIn)` from a contract caller and refunds `credit - amountIn`.
+        uint256 credit;
+        if (pretransferred) {
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+            credit = LocalCreditLib.budget(
+                LocalCreditLib.available(tokenIn.balanceOf(address(this)), 0), maxAmountIn
+            );
+            if (amountIn > credit) revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, credit);
+        } else {
+            _secureTokenTransfer(tokenIn, amountIn, false);
         }
 
         uint256 actualAmountOut = _executeCommonTokenClaim(layoutStruct, amountIn, recipient == address(0) ? msg.sender : recipient);
@@ -247,8 +254,8 @@ contract RebasingDETFTokenTarget is IDetfErrors, ReentrancyLockModifiers, MultiS
             revert SlippageExceeded(amountOut, actualAmountOut);
         }
 
-        if (depositedIn > amountIn) {
-            IERC20(address(this)).safeTransfer(msg.sender, depositedIn - amountIn);
+        if (credit > amountIn) {
+            tokenIn.safeTransfer(msg.sender, credit - amountIn);
         }
     }
 
@@ -269,6 +276,8 @@ contract RebasingDETFTokenTarget is IDetfErrors, ReentrancyLockModifiers, MultiS
             revert IMultiStepOwnable.NotOwner(msg.sender);
         }
         if (rebasingClaimAmount == 0) revert ZeroAmount();
+        // R13.1: the true flag means the claim tokens already sit on this contract; contract callers only.
+        if (pretransferred) LocalCreditLib.requirePretransferCaller(msg.sender);
 
         RebasingDETFTokenRepo.Storage storage layoutStruct = RebasingDETFTokenRepo._layoutStruct();
         uint256 rate = _getCurrentRedemptionRate(layoutStruct);
@@ -464,19 +473,21 @@ contract RebasingDETFTokenTarget is IDetfErrors, ReentrancyLockModifiers, MultiS
             } else {
                 token_.safeTransferFrom(msg.sender, address(this), amount_);
             }
-        }
-        uint256 observedDelta = token_.balanceOf(address(this)) - balanceBefore;
-        if (pretransferred_) {
-            if (amount_ > observedDelta) {
+            uint256 observedDelta = token_.balanceOf(address(this)) - balanceBefore;
+            if (address(token_) == address(this)) {
+                return amount_;
+            }
+            if (observedDelta != amount_) {
                 revert ISecurePullErrors.TransferDeltaInsufficient(amount_, observedDelta);
             }
             return amount_;
         }
-        // Self-token transfer is exact (share accounting); foreign may be FoT-short.
-        if (address(token_) == address(this)) {
-            return amount_;
+        LocalCreditLib.requirePretransferCaller(msg.sender);
+        uint256 available_ = LocalCreditLib.available(token_.balanceOf(address(this)), 0);
+        if (amount_ > available_) {
+            revert ISecurePullErrors.TransferDeltaInsufficient(amount_, available_);
         }
-        return observedDelta;
+        return amount_;
     }
 
     function _getCurrentRedemptionRate(RebasingDETFTokenRepo.Storage storage layoutStruct_) internal view returns (uint256) {

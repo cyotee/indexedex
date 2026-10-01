@@ -44,8 +44,8 @@ import {IPonsV2LaunchFactory} from "@crane/contracts/protocols/launchpads/ponsFa
 import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
 import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
 import {
-    TestBase_UniswapV4StandardExchange
-} from "contracts/protocols/dexes/uniswap/v4/test/bases/TestBase_UniswapV4StandardExchange.sol";
+    TestBase_UniswapV4FullSpreadPonsFamilyHook
+} from "contracts/vaults/standard/exchange/protocols/uniswap/v4/fullSpread/ponsFamilyV2Hook/test/bases/TestBase_UniswapV4FullSpreadPonsFamilyHook.sol";
 
 /**
  * @title TestBase_UniswapV4StandardExchange_PonsV2
@@ -55,7 +55,7 @@ import {
  *      PoolManager). Wiring is copied from that TestBase with injected manager,
  *      PositionManager, Permit2, and WETH.
  */
-abstract contract TestBase_UniswapV4StandardExchange_PonsV2 is TestBase_UniswapV4StandardExchange {
+abstract contract TestBase_UniswapV4StandardExchange_PonsV2 is TestBase_UniswapV4FullSpreadPonsFamilyHook {
     using PoolIdLibrary for PoolKey;
 
     uint256 internal constant PONS_V2_LAUNCH_FEE = 0.0005 ether;
@@ -92,11 +92,20 @@ abstract contract TestBase_UniswapV4StandardExchange_PonsV2 is TestBase_UniswapV
     IStandardExchangeProxy internal ponsSe;
 
     function setUp() public virtual override {
-        TestBase_UniswapV4StandardExchange.setUp();
-        _deployPonsV2OnIndexedExPoolManager();
+        TestBase_UniswapV4FullSpreadPonsFamilyHook.setUp();
         _approveWethPairAndGraduate();
         ponsSe = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(graduatedPoolKey));
         vm.label(address(ponsSe), "UniV4Se_ponsV2");
+    }
+
+    /// @dev Bind the P package to the real launch stack before its registry deployment.
+    function _initializePonsHook() internal override {
+        _deployPonsV2OnIndexedExPoolManager();
+        ponsHook = ponsV2MemeHook;
+    }
+
+    function _positionManagerForTests() internal override returns (IPositionManager) {
+        return ponsPositionManager;
     }
 
     /// @dev Activate the SE with actual graduated launch tokens and wrapped ETH before single-token routes.
@@ -197,6 +206,7 @@ abstract contract TestBase_UniswapV4StandardExchange_PonsV2 is TestBase_UniswapV
         ponsV2Factory.setPairTokenApproved(address(weth), true);
         ponsV2Factory.setSnipeTaxStartBps(0);
         ponsV2Factory.setLaunchEnabled(true);
+        ponsV2MemeHook.setHookFeeBps(_ponsHookFeeBps());
         vm.stopPrank();
 
         vm.deal(ponsV2Launcher, 100 ether);
@@ -275,6 +285,11 @@ abstract contract TestBase_UniswapV4StandardExchange_PonsV2 is TestBase_UniswapV
             expectedEconomics: bytes32(0),
             salt: keccak256(abi.encodePacked(name_, symbol_))
         });
+    }
+
+    /// @dev DETF fixtures override this to 0 so single-sided composition can meet the 1 bp bound.
+    function _ponsHookFeeBps() internal view virtual returns (uint16) {
+        return 100;
     }
 
     function _deadline() internal view returns (uint256) {

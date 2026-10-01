@@ -9,7 +9,6 @@ import {
 import {ISingleStandardExchangeDETFInfo} from "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/ISingleStandardExchangeDETFInfo.sol";
 
 /// @notice L1 property fuzz for SingleStandardExchangeDETF (Wave 1B).
-/// forge-config: default.fuzz.runs = 64
 contract SingleStandardExchangeDETF_Fuzz_Test is TestBase_SingleStandardExchangeDETF {
     address internal actorA;
     address internal actorB;

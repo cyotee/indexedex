@@ -54,15 +54,15 @@ abstract contract TestBase_UniswapV4Detf_Weighted_PonsMix is TestBase_UniswapV4D
         SeLib.Univ3SePkg memory v3pkg;
         v3pkg.factory = univ3Factory;
         v3pkg.pkg = SeLib.deployUniv3SePkg(_craneCtx(), univ3Factory);
-        SeLib.Univ4SePkg memory v4pkg = SeLib.deployUniv4SePkg(_craneCtx(), pm, weth);
         ponsV2 = SeLib.deployPonsV2Stack(pm, permit2, weth);
+        SeLib.PonsV2SePkg memory v4pkg = SeLib.deployPonsV2SePkg(_craneCtx(), pm, weth, ponsV2);
 
         (launchV1, launchV2) = _launchOrderedPonsMix();
         ponsV1Pool = SeLib.ponsV1Pool(launchV1);
         ponsV2PoolKey = _poolKeyOf(launchV2);
 
         se0 = SeLib.deployUniv3Vault(v3pkg.pkg, ponsV1Pool);
-        se1 = SeLib.deployUniv4Vault(v4pkg.pkg, ponsV2PoolKey);
+        se1 = SeLib.deployPonsV2Vault(v4pkg.pkg, ponsV2PoolKey);
         pairA = launchV1;
         pairB = launchV2;
 

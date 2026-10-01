@@ -180,15 +180,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
         return Repo._layout().kLast;
     }
 
+    /// @dev D60: SE shares held x provider rate (pair units); never an SE self-quote.
     function _seClaim() internal view returns (uint256) {
-        Repo.Layout storage l = Repo._layout();
-        uint256 seBal = IERC20(l.standardExchange).balanceOf(address(this));
-        if (seBal == 0) return 0;
-        if (l.pairToken == l.standardExchange) return seBal;
-        uint256 claim = IStandardExchangeIn(l.standardExchange).previewExchangeIn(
-            IERC20(l.standardExchange), seBal, IERC20(l.pairToken)
-        );
-        return claim == 0 ? 1 : claim;
+        return ClaimLib.ratedReserve();
     }
 
     function _reserveOfCurrency(address c) internal view returns (uint256) {
@@ -213,6 +207,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
     function _syncReserves() internal {
         Repo.Layout storage l = Repo._layout();
         MultiAssetBasicVaultRepo._updateReserve(IERC20(l.rawToken), IERC20(l.rawToken).balanceOf(address(this)));
+        if (l.pairToken == l.standardExchange) {
+            l.localPairReserve = IERC20(l.pairToken).balanceOf(address(this));
+        }
         MultiAssetBasicVaultRepo._updateReserve(IERC20(l.pairToken), _seClaim());
     }
 
@@ -272,25 +269,11 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
     }
 
     function _previewBufferClaimIn(uint256 amountInRaw) internal view returns (uint256) {
-        Repo.Layout storage l = Repo._layout();
-        return ClaimLib.previewBufferClaimIn(
-            l.standardExchange,
-            l.pairToken,
-            amountInRaw,
-            IVaultFeeOracleQuery(l.feeOracle),
-            address(this)
-        );
+        return ClaimLib.previewBufferClaimIn(amountInRaw);
     }
 
     function _invertBufferClaimIn(uint256 claimInNeeded) internal view returns (uint256) {
-        Repo.Layout storage l = Repo._layout();
-        return ClaimLib.invertBufferClaimIn(
-            l.standardExchange,
-            l.pairToken,
-            claimInNeeded,
-            IVaultFeeOracleQuery(l.feeOracle),
-            address(this)
-        );
+        return ClaimLib.invertBufferClaimIn(claimInNeeded);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -298,12 +281,13 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
     /* ---------------------------------------------------------------------- */
 
     function _bufferPair(uint256 amount) internal returns (uint256 seOut) {
-        _requireNonZero(amount);
+        if (amount == 0) return 0;
         Repo.Layout storage l = Repo._layout();
         if (l.pairToken == l.standardExchange) return amount;
         uint256 minOut = IStandardExchangeIn(l.standardExchange).previewExchangeIn(
             IERC20(l.pairToken), amount, IERC20(l.standardExchange)
         );
+        if (minOut == 0) return 0;
         IERC20(l.pairToken).forceApprove(l.standardExchange, amount);
         seOut = IStandardExchangeIn(l.standardExchange).exchangeIn(
             IERC20(l.pairToken),
@@ -333,14 +317,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
         if (seIn == 0) return 0;
         Repo.Layout storage l = Repo._layout();
         if (l.pairToken == l.standardExchange) return seIn;
-        uint256 minOut;
-        try IStandardExchangeIn(l.standardExchange).previewExchangeIn(
+        uint256 minOut = IStandardExchangeIn(l.standardExchange).previewExchangeIn(
             IERC20(l.standardExchange), seIn, IERC20(l.pairToken)
-        ) returns (uint256 m) {
-            minOut = m;
-        } catch {
-            minOut = 0;
-        }
+        );
         // Uni V3/V4 SE pulls shares via transferFrom when pretransferred=false.
         IERC20(l.standardExchange).forceApprove(l.standardExchange, seIn);
         pairOut = IStandardExchangeIn(l.standardExchange).exchangeIn(
@@ -361,19 +340,11 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
         if (l.pairToken == l.standardExchange) return pairOut;
         uint256 cap = _spendableSeShares();
         if (cap == 0) revert InsufficientTokenOut();
-        try IStandardExchangeOut(l.standardExchange).previewExchangeOut(
+        seIn = IStandardExchangeOut(l.standardExchange).previewExchangeOut(
             IERC20(l.standardExchange), IERC20(l.pairToken), pairOut
-        ) returns (uint256 need) {
-            seIn = need;
-        } catch {
-            seIn = type(uint256).max;
-        }
+        );
         // Never unwrap the last MAX_DUST_WEI SE shares — both book legs stay live.
-        if (seIn > cap) {
-            uint256 pairGot = _unwrapSeShares(cap);
-            if (pairGot == 0) revert InsufficientTokenOut();
-            return cap;
-        }
+        if (seIn == 0 || seIn > cap) revert InsufficientTokenOut();
         IERC20(l.standardExchange).forceApprove(l.standardExchange, seIn);
         uint256 spent = IStandardExchangeOut(l.standardExchange).exchangeOut(
             IERC20(l.standardExchange),
@@ -409,11 +380,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
             uint256 bal = IERC20(l.pairToken).balanceOf(address(this));
             if (bal <= Repo.MAX_DUST_WEI) return;
             uint256 excess = bal - Repo.MAX_DUST_WEI;
-            uint256 preview = IStandardExchangeIn(l.standardExchange).previewExchangeIn(
-                IERC20(l.pairToken), excess, IERC20(l.standardExchange)
-            );
+            uint256 preview = ClaimLib.previewResidualBuffer(excess);
             if (preview == 0) return;
-            _bufferPair(excess);
+            ClaimLib.bufferQuotedResidual(excess, preview);
         }
     }
 
@@ -701,22 +670,23 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
 
         if (lpAmount > ERC20Repo._balanceOf(msg.sender)) revert InsufficientLpOut();
 
-        // O13: quote residual sell once on pre-buffer / pre-unwrap book (same as previewWithdrawSingle).
-        amountOut = _previewWithdrawSingleAfterFeeMint(lpAmount, tokenOut);
-        if (amountOut < minAmountOut) revert InsufficientTokenOut();
-
         (uint256 rawUser, uint256 seUser) = _proRataRawAndSe(lpAmount);
+        ClaimLib.WithdrawalPlan memory plan = ClaimLib.withdrawalPlan(rawUser, seUser,
+            IERC20(l.rawToken).balanceOf(address(this)) - rawUser, tokenOut == l.pairToken);
+        amountOut = (tokenOut == l.pairToken ? plan.pairUser : rawUser) + plan.residualOut;
+        if (amountOut < minAmountOut) revert InsufficientTokenOut();
         _burnLp(msg.sender, lpAmount);
 
         uint256 pairUser = seUser > 0 ? _unwrapSeShares(seUser) : 0;
+        if (pairUser < plan.pairUser) revert InsufficientTokenOut();
         if (tokenOut == l.pairToken) {
-            // Realize residual raw → pair using closed-form amount already quoted.
-            uint256 residual = amountOut > pairUser ? amountOut - pairUser : 0;
-            if (residual > 0) {
-                uint256 got = _unwrapPairLeavingDust(residual);
+            amountOut = pairUser;
+            if (plan.residualShares != 0) {
+                uint256 got = ClaimLib.unwrapQuoted(ClaimLib.ExactInOutput(plan.residualOut, plan.residualShares));
                 emit ZapSwap(msg.sender, l.rawToken, l.pairToken, rawUser, got);
-                amountOut = pairUser + got;
+                amountOut += got;
             }
+            if (amountOut < minAmountOut) revert InsufficientTokenOut();
             if (amountOut > 0) IERC20(l.pairToken).safeTransfer(to, amountOut);
         } else {
             // Realize residual pair → raw: buffer pair last after quote (O13).
@@ -727,6 +697,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
             }
             uint256 capRaw = _spendableRaw();
             if (amountOut > capRaw) amountOut = capRaw;
+            if (amountOut < minAmountOut) revert InsufficientTokenOut();
             if (amountOut > 0) IERC20(l.rawToken).safeTransfer(to, amountOut);
         }
 
@@ -742,24 +713,7 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
         view
         returns (uint256 amountOut)
     {
-        Repo.Layout storage l = Repo._layout();
-        uint256 supply = ERC20Repo._totalSupply();
-        if (lpAmount == 0 || supply == 0) return 0;
-        uint256 rawBal = IERC20(l.rawToken).balanceOf(address(this));
-        uint256 seBal = IERC20(l.standardExchange).balanceOf(address(this));
-        uint256 rawUser = (rawBal * lpAmount) / supply;
-        uint256 seUser = (seBal * lpAmount) / supply;
-        uint256 pairUser = seUser == 0 ? 0 : _previewUnwrapSe(seUser);
-        uint256 rawRemain = rawBal - rawUser;
-        uint256 seClaimRem = _previewSeClaimOf(seBal - seUser);
-
-        if (tokenOut == l.pairToken) {
-            return pairUser + _saleQuoteRawToPair(rawUser, rawRemain, seClaimRem);
-        }
-        if (tokenOut == l.rawToken) {
-            return rawUser + _saleQuotePairToRaw(pairUser, seClaimRem, rawRemain);
-        }
-        revert InvalidToken();
+        return _previewWithdrawalPlan(lpAmount, ERC20Repo._totalSupply(), tokenOut);
     }
 
     /* ---------------------------------------------------------------------- */
@@ -844,26 +798,25 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
         // Mirror exec: use post-protocol-mint supply for pro-rata weights when fee-on would mint.
         uint256 supplyNow = ERC20Repo._totalSupply();
         if (lpAmount == 0 || supplyNow == 0) return 0;
-        // Temporarily view-simulate protocol mint by using adjusted supply only in pro-rata.
-        // Exec mints first then divides by post-mint supply — same as _supplyAfterProtocolMint.
-        // Inventory amounts still taken from current balances (protocol mint is LP-only).
-        uint256 supply = _supplyAfterProtocolMint();
+        return _previewWithdrawalPlan(lpAmount, _supplyAfterProtocolMint(), tokenOut);
+    }
+
+    function _previewWithdrawalPlan(uint256 lpAmount, uint256 supply, address tokenOut) private view returns (uint256) {
+        if (lpAmount == 0 || supply == 0) return 0;
         Repo.Layout storage l = Repo._layout();
+        if (tokenOut != l.rawToken && tokenOut != l.pairToken) revert InvalidToken();
         uint256 rawBal = IERC20(l.rawToken).balanceOf(address(this));
         uint256 seBal = IERC20(l.standardExchange).balanceOf(address(this));
         uint256 rawUser = (rawBal * lpAmount) / supply;
         uint256 seUser = (seBal * lpAmount) / supply;
-        uint256 pairUser = seUser == 0 ? 0 : _previewUnwrapSe(seUser);
-        uint256 rawRemain = rawBal - rawUser;
-        uint256 seClaimRem = _previewSeClaimOf(seBal - seUser);
-
-        if (tokenOut == l.pairToken) {
-            return pairUser + _saleQuoteRawToPair(rawUser, rawRemain, seClaimRem);
-        }
-        if (tokenOut == l.rawToken) {
-            return rawUser + _saleQuotePairToRaw(pairUser, seClaimRem, rawRemain);
-        }
-        revert InvalidToken();
+        uint256 rawCap = rawBal > Repo.MAX_DUST_WEI ? rawBal - Repo.MAX_DUST_WEI : 0;
+        uint256 seCap = seBal > Repo.MAX_DUST_WEI ? seBal - Repo.MAX_DUST_WEI : 0;
+        if (rawUser > rawCap) rawUser = rawCap;
+        if (seUser > seCap) seUser = seCap;
+        ClaimLib.WithdrawalPlan memory plan = ClaimLib.withdrawalPlan(rawUser, seUser, rawBal - rawUser, tokenOut == l.pairToken);
+        uint256 result = (tokenOut == l.pairToken ? plan.pairUser : rawUser) + plan.residualOut;
+        if (tokenOut == l.rawToken && result >= rawBal) result = rawBal > 1 ? rawBal - 1 : 0;
+        return result;
     }
 
     function _previewUnwrapSe(uint256 seAmount) internal view returns (uint256) {
@@ -875,9 +828,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookWithdr
         );
     }
 
+    /// @dev D60: rated valuation of `seBal` shares (pair units).
     function _previewSeClaimOf(uint256 seBal) internal view returns (uint256) {
-        if (seBal == 0) return 0;
-        return _previewUnwrapSe(seBal);
+        return ClaimLib.ratedOf(seBal);
     }
 
     function _saleQuoteRawToPair(uint256 rawIn, uint256 rawRes, uint256 pairRes)

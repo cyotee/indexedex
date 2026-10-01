@@ -11,6 +11,7 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHooks.sol";
 import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
 import {ModifyLiquidityParams} from
@@ -46,12 +47,14 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Adversarial is
             IERC20(address(token0)), retained, IERC20(address(token1)), 0, attacker, true, block.timestamp
         );
         uint256 quote = weighted.previewSwapExactIn(address(token0), address(token1), 1 ether);
-        vm.startPrank(user);
-        token0.transfer(hook, 1 ether);
-        assertEq(IStandardExchangeIn(hook).exchangeIn(
-            IERC20(address(token0)), 1 ether, IERC20(address(token1)), quote, user, true, block.timestamp
-        ), quote);
-        vm.stopPrank();
+        // APEX D9: pretransfer is contract-only; the honest funded push goes through the atomic fixture.
+        AtomicPretransferCaller atomic_ = new AtomicPretransferCaller();
+        vm.prank(user);
+        token0.approve(address(atomic_), 1 ether);
+        assertEq(abi.decode(atomic_.consumePretransfer(
+            IERC20(address(token0)), user, hook, 1 ether,
+            abi.encodeCall(IStandardExchangeIn.exchangeIn, (IERC20(address(token0)), 1 ether, IERC20(address(token1)), quote, user, true, block.timestamp))
+        ), (uint256)), quote);
         assertEq(token0.balanceOf(hook), retained, "fresh funding cannot consume retained inventory");
     }
 
@@ -78,7 +81,19 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Adversarial is
         uint256 faceBefore_ = token0.balanceOf(hook);
         uint256 raw1Before_ = weighted.nativeReserve(1);
 
+        // APEX D9: an EOA is rejected before any credit; the booked-inventory rule is asserted
+        // from this contract (bytecode present), which still cannot claim booked inventory.
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeIn(hook).exchangeIn(
+            IERC20(address(token0)),
+            claimed_,
+            IERC20(address(token1)),
+            0,
+            attacker,
+            true,
+            block.timestamp + 1 hours
+        );
         vm.expectRevert(
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
@@ -115,7 +130,19 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Adversarial is
         uint256 face1Before_ = token1.balanceOf(hook);
         uint256 raw1Before_ = weighted.nativeReserve(1);
 
+        // APEX D9: an EOA is rejected before any credit; the booked-inventory rule is asserted
+        // from this contract (bytecode present), which still cannot claim booked inventory.
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeIn(hook).exchangeIn(
+            IERC20(address(token1)),
+            claimed_,
+            IERC20(address(token0)),
+            0,
+            attacker,
+            true,
+            block.timestamp + 1 hours
+        );
         vm.expectRevert(
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
@@ -153,7 +180,19 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Adversarial is
         uint256 face1Before_ = token1.balanceOf(hook);
         uint256 se0Before_ = IERC20(se0).balanceOf(hook);
 
+        // APEX D9: an EOA is rejected before any credit; the booked-inventory rule is asserted
+        // from this contract (bytecode present), which still cannot claim booked inventory.
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeOut(hook).exchangeOut(
+            IERC20(address(token1)),
+            needIn_,
+            IERC20(address(token0)),
+            wantOut_,
+            attacker,
+            true,
+            block.timestamp + 1 hours
+        );
         vm.expectRevert(
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, needIn_, uint256(0)
@@ -203,7 +242,19 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Adversarial is
         uint256 se0Before_ = IERC20(se0).balanceOf(hook);
         uint256 outAttBefore_ = token0.balanceOf(attacker);
 
+        // APEX D9: an EOA is rejected before any credit; the booked-inventory rule is asserted
+        // from this contract (bytecode present), which still cannot claim booked inventory.
         vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        IStandardExchangeIn(hook).exchangeIn(
+            IERC20(address(token1)),
+            claimed_,
+            IERC20(address(token0)),
+            0,
+            attacker,
+            true,
+            block.timestamp + 1 hours
+        );
         vm.expectRevert(
             abi.encodeWithSelector(
                 ISecurePullErrors.TransferDeltaInsufficient.selector, claimed_, uint256(0)
@@ -233,7 +284,7 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Adversarial is
     /// @notice H1: pre-live swap preview reverts (no book).
     function test_H1_preLive_swapReverts() public {
         assertEq(IERC20(hook).totalSupply(), 0);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("SwapNotLive()"));
         weighted.previewSwapExactIn(address(token0), address(token1), 1 ether);
     }
 
@@ -243,7 +294,7 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Adversarial is
         amounts[0] = 10 ether;
         amounts[1] = 0;
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("ZeroAmount()"));
         weighted.joinProportional(amounts, user, 0, block.timestamp + 1 hours);
     }
 
@@ -260,11 +311,18 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Adversarial is
 
         uint256 remaining = IERC20(hook).balanceOf(user);
         uint256 almostAll = remaining > 10 ? remaining - 1 : remaining;
+        uint256 before0 = weighted.nativeReserve(0);
+        uint256 before1 = weighted.nativeReserve(1);
+        uint256 beforeSupply = IERC20(hook).totalSupply();
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("MinInvariantRatio()"));
         weighted.exitSingleAssetExactBptIn(
             address(token1), almostAll, user, 0, block.timestamp + 1 hours
         );
+        assertEq(weighted.nativeReserve(0), before0, "failed exit preserves leg0");
+        assertEq(weighted.nativeReserve(1), before1, "failed exit preserves leg1");
+        assertEq(IERC20(hook).totalSupply(), beforeSupply, "failed exit cannot burn LP");
+        assertEq(IERC20(hook).balanceOf(user), remaining, "failed exit preserves user shares");
     }
 
     /// @notice H3: native CL addLiquidity always blocked.
@@ -272,7 +330,7 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Adversarial is
         _firstMintEqual(50 ether);
         PoolKey memory key = PairPoolLib.pairKey(address(token0), address(token1), 1, IHooks(hook));
         vm.prank(address(pm));
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("LiquidityNotAllowed()"));
         IHooks(hook).beforeAddLiquidity(
             address(this),
             key,
@@ -286,7 +344,7 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Adversarial is
         _firstMintEqual(50 ether);
         PoolKey memory key = PairPoolLib.pairKey(address(token0), address(token1), 1, IHooks(hook));
         vm.prank(address(pm));
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("DonateNotAllowed()"));
         IHooks(hook).beforeDonate(address(this), key, 1, 1, "");
     }
 

@@ -174,19 +174,19 @@ contract UniswapV4StandardExchangeWeightedBufferHook_B6Firm is
         bool[] memory isSe = new bool[](2);
         isSe[1] = true; // raw leg
 
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("SeShareNotBuffered()"));
         weighted.previewJoinProportionalFlexible(amounts, isSe);
 
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("SeShareNotBuffered()"));
         weighted.joinProportionalFlexible(amounts, isSe, user, 0, block.timestamp + 1 hours);
 
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("SeShareNotBuffered()"));
         weighted.previewDepositSingleFlexible(address(token1), 1 ether, true);
 
         bool[] memory recvSe = new bool[](2);
         recvSe[1] = true;
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("SeShareNotBuffered()"));
         weighted.previewExitProportionalFlexible(1 ether, recvSe);
     }
 

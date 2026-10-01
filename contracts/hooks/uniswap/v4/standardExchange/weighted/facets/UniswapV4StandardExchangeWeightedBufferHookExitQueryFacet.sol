@@ -29,7 +29,7 @@ contract UniswapV4StandardExchangeWeightedBufferHookExitQueryFacet is
     }
 
     function facetFuncs() public pure returns (bytes4[] memory funcs) {
-        funcs = new bytes4[](10);
+        funcs = new bytes4[](12);
         funcs[0] = IUniswapV4StandardExchangeWeightedBufferHook.previewExitProportional.selector;
         funcs[1] = IUniswapV4StandardExchangeWeightedBufferHook.previewExitSingleAssetExactBptIn.selector;
         funcs[2] = IUniswapV4StandardExchangeWeightedBufferHook.previewExitSingleAssetExactTokenOut.selector;
@@ -40,6 +40,8 @@ contract UniswapV4StandardExchangeWeightedBufferHookExitQueryFacet is
         funcs[7] = IUniswapV4StandardExchangeWeightedBufferHook.previewWithdrawSingleFlexible.selector;
         funcs[8] = IDetfReserveQuote.previewBurnToToken.selector;
         funcs[9] = IDetfReserveQuote.previewSynthetic.selector;
+        funcs[10] = IUniswapV4StandardExchangeWeightedBufferHook.rateProviders.selector; // D60
+        funcs[11] = bytes4(keccak256("rateProvider(address)")); // D60
         funcs = NativeStandardYieldSelectors._append(funcs);
     }
 

@@ -110,6 +110,20 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
         return _deposit(amount0, amount1, to, minLpAmount, deadline);
     }
 
+    /// @notice D60: configured rate providers in pool order (address(0) on the raw leg).
+    function rateProviders() public view returns (address[] memory providers) {
+        Repo.Layout storage l = Repo._layout();
+        providers = new address[](2);
+        providers[l.currency0 == l.pairToken ? 0 : 1] = l.rateProvider;
+    }
+
+    /// @notice D60: the rate provider configured for `token_` (address(0) when none or unknown).
+    function rateProvider(address token_) public view returns (address) {
+        Repo.Layout storage l = Repo._layout();
+        if (token_ == l.pairToken || token_ == l.standardExchange) return l.rateProvider;
+        return address(0);
+    }
+
     /// @notice CP depositWithSeShares entry point.
     function depositWithSeShares(uint256 amountRaw, uint256 amountSe, address to, uint256 minLpAmount, uint256 deadline)
         external

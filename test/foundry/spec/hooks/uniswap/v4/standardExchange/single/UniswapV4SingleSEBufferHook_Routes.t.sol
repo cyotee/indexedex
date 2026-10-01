@@ -32,13 +32,13 @@ contract UniswapV4SingleSEBufferHook_Routes_Test is TestBase {
     }
 
     function test_HP_zeroPreview_reverts() public {
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("ZeroAmount()"));
         buffer.previewWrap(0);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("ZeroAmount()"));
         buffer.previewUnwrap(0);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("ZeroAmount()"));
         buffer.previewWrapExactOut(0);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("ZeroAmount()"));
         buffer.previewUnwrapExactOut(0);
     }
 }

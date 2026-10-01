@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BSL-1.1
 pragma solidity ^0.8.0;
 
+import {BetterEfficientHashLib} from "@crane/contracts/utils/BetterEfficientHashLib.sol";
+
 /* -------------------------------------------------------------------------- */
 /*                                   Foundry                                  */
 /* -------------------------------------------------------------------------- */
@@ -17,6 +19,7 @@ import {ICreate3FactoryProxy} from "@crane/contracts/interfaces/proxies/ICreate3
  *      Artifact IDs use `File.sol:ContractName`; full source paths are also accepted.
  */
 library ArtifactCreationCode {
+    using BetterEfficientHashLib for bytes;
     Vm internal constant VM = Vm(VM_ADDRESS);
 
     // parseJson encodes object members alphabetically: length precedes start.
@@ -30,27 +33,29 @@ library ArtifactCreationCode {
     }
 
     /// @notice Load bytecode and deploy/link external libraries through the same CREATE3 factory.
-    /// @dev Library salts include the fully linked initcode hash, so a changed library
-    ///      cannot silently reuse an older deployment. Requires normal factory authorization.
+    /// @dev Library identities are source-qualified names. Occupied identities reuse their
+    ///      existing deployment. Requires normal factory authorization.
     function creationCode(ICreate3FactoryProxy factory_, string memory artifactId_) internal returns (bytes memory) {
         return _creationCode(factory_, artifactId_, 0);
     }
 
-    /// @notice Bind a type-name namespace to the implementation and constructor.
+    /// @notice Return the ABI-encoded component-name namespace unchanged.
     /// @dev CREATE3 itself reuses occupied salts without checking their code.
     ///      Product component deployments use this salt; instance salts do not.
-    function releaseSalt(bytes32 namespace_, bytes memory initCode_, bytes memory initArgs_)
+    function releaseSalt(bytes32 namespace_)
         internal
         pure
         returns (bytes32)
     {
-        return keccak256(abi.encode(namespace_, keccak256(initCode_), keccak256(initArgs_)));
+        return namespace_;
     }
 
     function _creationCode(ICreate3FactoryProxy factory_, string memory artifactId_, uint256 depth_)
         private
         returns (bytes memory code_)
     {
+        uint256 scratchStart_;
+        assembly ("memory-safe") { scratchStart_ := mload(0x40) }
         require(depth_ < 32, "ArtifactCreationCode: cyclic or excessive library dependencies");
         string memory json_ = _artifactJson(artifactId_);
         bytes memory hexCode_ = bytes(VM.parseJsonString(json_, ".bytecode.object"));
@@ -68,6 +73,19 @@ library ArtifactCreationCode {
         // parseBytes rejects malformed hex and any unresolved solc placeholders.
         code_ = VM.parseBytes(string(hexCode_));
         require(code_.length != 0, string.concat("ArtifactCreationCode: empty bytecode ", artifactId_));
+        // Only bytecode escapes this call. Compact it over the temporary JSON,
+        // decoded keys and link data so successive fixture deployments do not
+        // retain megabytes of unreachable scratch memory. Caller-owned inputs
+        // and recursive parent data precede scratchStart_ and remain untouched.
+        // Forward copying is safe for overlap because the destination is lower.
+        assembly ("memory-safe") {
+            let size := and(add(mload(code_), 0x3f), not(0x1f))
+            for { let offset := 0 } lt(offset, size) { offset := add(offset, 0x20) } {
+                mstore(add(scratchStart_, offset), mload(add(code_, offset)))
+            }
+            code_ := scratchStart_
+            mstore(0x40, add(scratchStart_, size))
+        }
     }
 
     function _linkSource(
@@ -82,7 +100,7 @@ library ArtifactCreationCode {
         for (uint256 i_; i_ < names_.length; ++i_) {
             string memory id_ = string.concat(source_, ":", names_[i_]);
             bytes memory initCode_ = _creationCode(factory_, id_, depth_ + 1);
-            bytes32 salt_ = keccak256(abi.encode("IndexedEx.ArtifactLibrary", id_, keccak256(initCode_)));
+            bytes32 salt_ = abi.encode(id_)._hash();
             address library_ = factory_.create3(initCode_, salt_);
             require(library_.code.length != 0, "ArtifactCreationCode: library deployment failed");
             VM.label(library_, names_[i_]);

@@ -23,6 +23,8 @@ import {BetterSafeERC20} from "@crane/contracts/tokens/ERC20/utils/BetterSafeERC
 /* -------------------------------------------------------------------------- */
 
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
+import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {SlipstreamPoolAwareRepo} from "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamPoolAwareRepo.sol";
 import {SlipstreamVaultRepo} from "contracts/vaults/slipstream/SlipstreamVaultRepo.sol";
 
@@ -466,33 +468,59 @@ contract SlipstreamStandardExchangeCommon is ISecurePullErrors, ICLMintCallback,
         require(amountOut >= minAmountOut, "SlipstreamCommon: insufficient output");
     }
 
-    /**
-     * @notice Securely pulls tokens using balance-delta accounting (L-GAPS-9/10 / ISecurePullErrors).
-     * @dev Measures `observedDelta = balanceAfter - balanceBefore` over the pull window.
-     *      - `!pretransferred`: transferFrom, return observedDelta (FoT-safe).
-     *      - `pretransferred`: no in-call transfer; credit exactly `amountIn` only when
-     *        `amountIn <= observedDelta`; otherwise revert
-     *        `TransferDeltaInsufficient(claimed, observedDelta)`.
-     *        Absolute `balanceOf >= claimed` without a positive in-window delta is forbidden
-     *        (blocks free inventory credit / I1).
-     */
+    function _bookedReserve(IERC20 token) internal view returns (uint256) {
+        return MultiAssetBasicVaultRepo._reserveOfToken(address(token));
+    }
+
+    function _pretransferCredit(IERC20 token, uint256 maximum) internal view returns (uint256) {
+        return LocalCreditLib.budget(
+            LocalCreditLib.available(token.balanceOf(address(this)), _bookedReserve(token)),
+            maximum
+        );
+    }
+
+    function _refundExactOutCredit(IERC20 token, uint256 credit, uint256 used, bool pretransferred)
+        internal
+    {
+        if (!pretransferred) return;
+        if (used > credit) revert ISecurePullErrors.TransferDeltaInsufficient(used, credit);
+        if (credit > used) {
+            uint256 unusedU = LocalCreditLib.available(token.balanceOf(address(this)), _bookedReserve(token));
+            uint256 refund = credit - used;
+            if (refund > unusedU) refund = unusedU;
+            if (refund > 0) token.safeTransfer(msg.sender, refund);
+        }
+    }
+
+    function _syncAllExpectedHoldReserves() internal {
+        address[] memory tokens = MultiAssetBasicVaultRepo._vaultTokens();
+        for (uint256 i; i < tokens.length; ++i) {
+            IERC20 t = IERC20(tokens[i]);
+            MultiAssetBasicVaultRepo._updateReserve(t, t.balanceOf(address(this)));
+        }
+    }
+
+    /// @dev Pretransfer credits unbooked surplus vs durable reserve. Pulls require exact delta.
     function _secureTokenTransfer(IERC20 tokenIn, uint256 amountIn, bool pretransferred)
         internal
         returns (uint256 actualIn)
     {
-        uint256 balBefore = tokenIn.balanceOf(address(this));
-        if (!pretransferred) {
-            tokenIn.safeTransferFrom(msg.sender, address(this), amountIn);
-        }
-        uint256 observedDelta = tokenIn.balanceOf(address(this)) - balBefore;
         if (pretransferred) {
-            if (amountIn > observedDelta) {
-                revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, observedDelta);
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+            uint256 avail = LocalCreditLib.available(
+                tokenIn.balanceOf(address(this)), _bookedReserve(tokenIn)
+            );
+            if (amountIn > avail) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, avail);
             }
-            // Credit exactly claimed; surplus delta is not credited (no exact-delta grief).
             return amountIn;
         }
-        // !pretransferred: FoT-safe — return actual inbound delta (may be < claimed).
-        return observedDelta;
+        uint256 B0 = tokenIn.balanceOf(address(this));
+        tokenIn.safeTransferFrom(msg.sender, address(this), amountIn);
+        uint256 delta = tokenIn.balanceOf(address(this)) - B0;
+        if (delta != amountIn) {
+            revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, delta);
+        }
+        return amountIn;
     }
 }

@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import {ConstProdUtils} from "@crane/contracts/utils/math/ConstProdUtils.sol";
 import {FixedPointMathLib} from "@crane/contracts/utils/FixedPointMathLib.sol";
+import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
 import {
     UniswapV4SingleStandardExchangeBufferConstantProductHookRepo as Repo
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookRepo.sol";
@@ -14,6 +15,49 @@ import {
 library UniswapV4SingleStandardExchangeBufferConstantProductHookMath {
     using ConstProdUtils for uint256;
     error MathDomain();
+
+    uint256 internal constant RATE_PRECISION = 1e18;
+
+    /// @notice D60: SE shares valued in pair-token units at the provider rate.
+    /// @dev `invScale_ = 10^(36 - seDecimals)`, `ratedScale_ = 10^(36 - pairDecimals)` (Balancer rate scaling).
+    function ratedPairUnits(uint256 shares_, uint256 rate_, uint256 invScale_, uint256 ratedScale_)
+        external pure returns (uint256)
+    {
+        uint256 denominator_ = invScale_ <= ratedScale_
+            ? RATE_PRECISION * (ratedScale_ / invScale_)
+            : RATE_PRECISION / (invScale_ / ratedScale_);
+        return FullMath.mulDiv(shares_, rate_, denominator_);
+    }
+
+    /// @notice D60: inverse of `ratedPairUnits`, rounding up (shares needed for `pairUnits_`).
+    function sharesForPairUnitsUp(uint256 pairUnits_, uint256 rate_, uint256 invScale_, uint256 ratedScale_)
+        external pure returns (uint256)
+    {
+        if (rate_ == 0) revert MathDomain();
+        uint256 denominator_ = invScale_ <= ratedScale_
+            ? RATE_PRECISION * (ratedScale_ / invScale_)
+            : RATE_PRECISION / (invScale_ / ratedScale_);
+        return FullMath.mulDiv(pairUnits_, denominator_, rate_, FullMath.Rounding.Ceil);
+    }
+
+    function sharesForPairUnitsDown(uint256 pairUnits_, uint256 rate_, uint256 invScale_, uint256 ratedScale_)
+        external pure returns (uint256)
+    {
+        if (rate_ == 0) revert MathDomain();
+        uint256 denominator_ = invScale_ <= ratedScale_
+            ? RATE_PRECISION * (ratedScale_ / invScale_)
+            : RATE_PRECISION / (invScale_ / ratedScale_);
+        return FullMath.mulDiv(pairUnits_, denominator_, rate_);
+    }
+
+    function ratedPairUnitsUp(uint256 shares_, uint256 rate_, uint256 invScale_, uint256 ratedScale_)
+        external pure returns (uint256)
+    {
+        uint256 denominator_ = invScale_ <= ratedScale_
+            ? RATE_PRECISION * (ratedScale_ / invScale_)
+            : RATE_PRECISION / (invScale_ / ratedScale_);
+        return FullMath.mulDiv(shares_, rate_, denominator_, FullMath.Rounding.Ceil);
+    }
 
     function toWad(uint256 amount, uint8 decimals) external pure returns (uint256) {
         if (decimals == 18) return amount;

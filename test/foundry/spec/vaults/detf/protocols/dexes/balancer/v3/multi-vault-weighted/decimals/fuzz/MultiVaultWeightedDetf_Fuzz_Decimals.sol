@@ -12,7 +12,6 @@ import {InvariantAssertLib} from "contracts/test/invariant/InvariantAssertLib.so
 /// @title MultiVaultWeightedDetf_Fuzz
 /// @notice L1 property fuzz for MultiVaultWeightedDetf (Wave 1A).
 /// @dev Production-first hermetic TestBase. Complements adversarial suite (not a catalog port).
-/// forge-config: default.fuzz.runs = 64
 abstract contract MultiVaultWeightedDetf_Fuzz_Decimals is TestBase_MultiVaultWeightedDetf_Decimals {
     address internal actorA;
     address internal actorB;

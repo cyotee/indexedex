@@ -20,6 +20,7 @@ import {
 } from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IUnbalancedLiquidityInvariantRatioBounds.sol";
 import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
 import {IRateProvider} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IRateProvider.sol";
+import {IBalancerV3PoolLiquidityQuote} from "contracts/protocols/dexes/balancer/v3/pools/IBalancerV3PoolLiquidityQuote.sol";
 import {IBalancerPoolToken} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IBalancerPoolToken.sol";
 import {IHooks} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IHooks.sol";
 import {
@@ -68,6 +69,7 @@ import {IVaultRegistryDeployment} from "contracts/interfaces/IVaultRegistryDeplo
 import {IVaultFeeOracleQuery} from "contracts/interfaces/IVaultFeeOracleQuery.sol";
 import {IStandardVaultPkg} from "contracts/interfaces/IStandardVaultPkg.sol";
 import {IStandardExchange} from "contracts/interfaces/IStandardExchange.sol";
+import {IStandardExchangeTransitionQuote} from "contracts/interfaces/IStandardExchangeTransitionQuote.sol";
 import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {StandardVaultRepo} from "contracts/vaults/standard/StandardVaultRepo.sol";
 import {
@@ -90,6 +92,7 @@ contract MixedBufferMultiVaultStablePoolStandardVaultPkg is
     using TokenConfigUtils for TokenConfig[];
 
     error NotCalledByRegistry(address caller);
+    error TransitionQuoteFacetRequired(address facet);
 
     uint256 private constant _MIN_SWAP_FEE_PERCENTAGE = 1e14;
     uint256 private constant _MAX_SWAP_FEE_PERCENTAGE = 0.1e18;
@@ -114,6 +117,8 @@ contract MixedBufferMultiVaultStablePoolStandardVaultPkg is
     IFacet public immutable BUFFER_POOL_FACET;
     IFacet public immutable POOL_LIQUIDITY_FACET;
     IFacet public immutable HOOK_FACET;
+    /// @dev Mandatory transition-quote facet (D68 2026-09-24): every SE pool diamond must expose IStandardExchangeTransitionQuote.
+    IFacet public immutable TRANSITION_QUOTE_FACET;
 
     constructor(PkgInit memory init) {
         SELF = this;
@@ -133,6 +138,10 @@ contract MixedBufferMultiVaultStablePoolStandardVaultPkg is
         BUFFER_POOL_FACET = init.bufferPoolFacet;
         POOL_LIQUIDITY_FACET = init.poolLiquidityFacet;
         HOOK_FACET = init.hookFacet;
+        if (address(init.transitionQuoteFacet).code.length == 0) {
+            revert TransitionQuoteFacetRequired(address(init.transitionQuoteFacet));
+        }
+        TRANSITION_QUOTE_FACET = init.transitionQuoteFacet;
 
         BalancerV3BasePoolFactoryRepo._initialize(365 days, address(VAULT_FEE_ORACLE.feeTo()));
         BalancerV3AuthenticationRepo._initialize(keccak256(abi.encode(address(this))));
@@ -158,11 +167,11 @@ contract MixedBufferMultiVaultStablePoolStandardVaultPkg is
         );
     }
 
-    function vaultTypes() public pure returns (bytes4[] memory typeIDs) {
+    function vaultTypes() public view returns (bytes4[] memory typeIDs) {
         return facetInterfaces();
     }
 
-    function vaultDeclaration() public pure returns (VaultPkgDeclaration memory declaration) {
+    function vaultDeclaration() public view returns (VaultPkgDeclaration memory declaration) {
         return VaultPkgDeclaration({name: name(), vaultFeeTypeIds: vaultFeeTypeIds(), vaultTypes: vaultTypes()});
     }
 
@@ -170,8 +179,8 @@ contract MixedBufferMultiVaultStablePoolStandardVaultPkg is
         return type(MixedBufferMultiVaultStablePoolStandardVaultPkg).name;
     }
 
-    function facetInterfaces() public pure returns (bytes4[] memory interfaces) {
-        interfaces = new bytes4[](18);
+    function facetInterfaces() public view returns (bytes4[] memory interfaces) {
+        interfaces = new bytes4[](20);
         interfaces[0] = type(IERC20).interfaceId;
         interfaces[1] = type(IERC20Metadata).interfaceId;
         interfaces[2] = type(IERC20Metadata).interfaceId ^ type(IERC20).interfaceId;
@@ -190,10 +199,12 @@ contract MixedBufferMultiVaultStablePoolStandardVaultPkg is
             interfaces[15] = type(IStandardExchangeIn).interfaceId;
         interfaces[16] = type(IStandardExchangeOut).interfaceId;
         interfaces[17] = type(IStandardizedYield).interfaceId;
+        interfaces[18] = type(IStandardExchangeTransitionQuote).interfaceId;
+        interfaces[19] = type(IBalancerV3PoolLiquidityQuote).interfaceId;
     }
 
     function facetAddresses() public view returns (address[] memory facetAddresses_) {
-        facetAddresses_ = new address[](11);
+        facetAddresses_ = new address[](12);
         facetAddresses_[0] = address(BASIC_VAULT_FACET);
         facetAddresses_[1] = address(STANDARD_VAULT_FACET);
         facetAddresses_[2] = address(BALANCER_V3_VAULT_AWARE_FACET);
@@ -205,6 +216,7 @@ contract MixedBufferMultiVaultStablePoolStandardVaultPkg is
         facetAddresses_[8] = address(BUFFER_POOL_FACET);
         facetAddresses_[9] = address(POOL_LIQUIDITY_FACET);
         facetAddresses_[10] = address(HOOK_FACET);
+        facetAddresses_[11] = address(TRANSITION_QUOTE_FACET);
     }
 
     function packageMetadata()
@@ -393,11 +405,8 @@ contract MixedBufferMultiVaultStablePoolStandardVaultPkg is
         if (!_previewBufferIn(vault, buffer, share, _bufferQuoteAmount(buffer))) {
             if (!_previewBufferIn(vault, buffer, share, 1e18)) return false;
         }
-        try vault.previewExchangeOut(share, buffer, 1e15) returns (uint256 sharesIn) {
-            return sharesIn > 0;
-        } catch {
-            return false;
-        }
+        uint256 sharesIn = vault.previewExchangeOut(share, buffer, 1e15);
+        return sharesIn > 0;
     }
 
     function _previewBufferIn(IStandardExchange vault, IERC20 buffer, IERC20 share, uint256 amt)
@@ -405,33 +414,26 @@ contract MixedBufferMultiVaultStablePoolStandardVaultPkg is
         view
         returns (bool)
     {
-        try vault.previewExchangeIn(buffer, amt, share) returns (uint256 minted) {
-            return minted > 0;
-        } catch {
-            return false;
-        }
+        uint256 minted = vault.previewExchangeIn(buffer, amt, share);
+        return minted > 0;
     }
 
     /// @dev 1 whole token in native units. 1e18 of a 6/9-dec buffer is not a valid probe.
     function _bufferQuoteAmount(IERC20 buffer) internal view returns (uint256 amt) {
-        uint8 d = 18;
-        try IERC20Metadata(address(buffer)).decimals() returns (uint8 got) {
-            if (got > 0 && got <= 36) d = got;
-        } catch {}
+        uint8 d = IERC20Metadata(address(buffer)).decimals();
+        if (d == 0 || d > 36) d = 18;
         amt = 10 ** uint256(d);
     }
 
     function _tokenListContainsVault(address vault, address buffer) internal view returns (bool) {
-        try IBasicVault(vault).vaultTokens() returns (address[] memory toks) {
-            for (uint256 i; i < toks.length; ++i) {
-                if (toks[i] == buffer) return true;
-            }
-        } catch {}
-        try IStandardVault(vault).vaultConfig() returns (IStandardVault.VaultConfig memory cfg) {
-            for (uint256 i; i < cfg.tokens.length; ++i) {
-                if (cfg.tokens[i] == buffer) return true;
-            }
-        } catch {}
+        address[] memory toks = IBasicVault(vault).vaultTokens();
+        for (uint256 i; i < toks.length; ++i) {
+            if (toks[i] == buffer) return true;
+        }
+        IStandardVault.VaultConfig memory cfg = IStandardVault(vault).vaultConfig();
+        for (uint256 i; i < cfg.tokens.length; ++i) {
+            if (cfg.tokens[i] == buffer) return true;
+        }
         return false;
     }
 

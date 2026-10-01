@@ -12,7 +12,9 @@ import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchange
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {IVault} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IVault.sol";
-import {TokenConfig, TokenType} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/VaultTypes.sol";
+import {TokenConfig, TokenType, PoolConfig, PoolRoleAccounts} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/VaultTypes.sol";
+import {IVaultErrors} from "@crane/contracts/external/balancer/v3/interfaces/contracts/vault/IVaultErrors.sol";
+import {IUnbalancedLiquidityInvariantRatioBounds} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IUnbalancedLiquidityInvariantRatioBounds.sol";
 import {IBalancerV3ConstantProductPoolStandardVaultPkg} from "contracts/protocols/dexes/balancer/v3/pools/constProd/IBalancerV3ConstantProductPoolStandardVaultPkg.sol";
 import {BalancerV3ConstantProductPool_FactoryService} from "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPool_FactoryService.sol";
 import {BalancerV3PoolStandardExchangeTarget} from "contracts/protocols/dexes/balancer/v3/pools/BalancerV3PoolStandardExchangeTarget.sol";
@@ -180,6 +182,143 @@ abstract contract BalancerPoolNativeSYBehavior is Test {
         vm.prank(vault_); vm.expectRevert(BalancerV3PoolStandardExchangeTarget.UnauthorizedPoolLiquidity.selector);
         BalancerV3PoolStandardExchangeTarget(address(sy_)).executePoolLiquidity(p_);
         assertEq(IERC20(token_).balanceOf(address(sy_)), amount_);
+    }
+
+    /* ------------------------------------------------------------------ */
+    /*                   R14.8 — packaged native-BPT joins                 */
+    /* ------------------------------------------------------------------ */
+
+    struct RollbackState {
+        uint256 actorIn;
+        uint256 actorBpt;
+        uint256 supply;
+        uint256 reserves;
+        uint256 idle;
+        uint256 allowance;
+    }
+
+    /// @dev Pause / unpause via the packaged pool's exclusive pauseManager (feeTo), read from the pool.
+    function _pauseNativePool() internal {
+        IVault v_ = _nativeVault();
+        address pm_ = v_.getPoolRoleAccounts(_nativePool()).pauseManager;
+        assertTrue(pm_ != address(0), "packaged pool has an exclusive pauseManager");
+        vm.prank(pm_);
+        v_.pausePool(_nativePool());
+    }
+
+    function _unpauseNativePool() internal {
+        IVault v_ = _nativeVault();
+        address pm_ = v_.getPoolRoleAccounts(_nativePool()).pauseManager;
+        vm.prank(pm_);
+        v_.unpausePool(_nativePool());
+    }
+
+    function _snap(IERC20 token_) internal view returns (RollbackState memory s_) {
+        IStandardizedYield sy_ = _sy();
+        s_.actorIn = token_.balanceOf(_nativeActor());
+        s_.actorBpt = sy_.balanceOf(_nativeActor());
+        s_.supply = sy_.totalSupply();
+        s_.reserves = _nativeVault().getReservesOf(token_);
+        s_.idle = token_.balanceOf(_nativePool());
+        s_.allowance = token_.allowance(_nativePool(), address(_nativeVault()));
+    }
+
+    function _assertSnapEq(IERC20 token_, RollbackState memory s_) internal view {
+        IStandardizedYield sy_ = _sy();
+        assertEq(token_.balanceOf(_nativeActor()), s_.actorIn, "rollback: actor input");
+        assertEq(sy_.balanceOf(_nativeActor()), s_.actorBpt, "rollback: actor BPT");
+        assertEq(sy_.totalSupply(), s_.supply, "rollback: BPT supply");
+        assertEq(_nativeVault().getReservesOf(token_), s_.reserves, "rollback: vault reserves");
+        assertEq(token_.balanceOf(_nativePool()), s_.idle, "rollback: idle-at-pool");
+        assertEq(token_.allowance(_nativePool(), address(_nativeVault())), s_.allowance, "rollback: allowance");
+        assertTrue(
+            token_.allowance(_nativePool(), address(_nativeVault())) != type(uint256).max,
+            "no dangling max allowance"
+        );
+    }
+
+    /// @dev R14.8: a paused packaged pool rejects both the exact-in and the exact-out join with
+    ///      `PoolPaused(pool)` and a full rollback; after unpause a funded join reconciles.
+    ///      RED (vulnerable version): a join that swallowed / mistranslated the Balancer pause revert,
+    ///      or partially settled before the vault's pause check, would fail the selector match or the
+    ///      full-rollback snapshot below.
+    function test_poolSY_pausedJoin_revertsPoolPaused_thenReconciles() public {
+        IStandardizedYield sy_ = _sy();
+        address actor_ = _nativeActor();
+        address pool_ = _nativePool();
+        IERC20 token_ = IERC20(sy_.getTokensIn()[0]);
+        uint256 amount_ = _fundInput(address(token_)) / 2;
+        assertGt(amount_, 0, "funded input");
+        uint256 wanted_ = sy_.previewDeposit(address(token_), amount_); // exact-out target while unpaused
+
+        _pauseNativePool();
+
+        RollbackState memory s1_ = _snap(token_);
+        vm.prank(actor_);
+        vm.expectRevert(abi.encodeWithSelector(IVaultErrors.PoolPaused.selector, pool_));
+        sy_.deposit(actor_, address(token_), amount_, 0);
+        _assertSnapEq(token_, s1_);
+
+        RollbackState memory s2_ = _snap(token_);
+        vm.prank(actor_);
+        vm.expectRevert(abi.encodeWithSelector(IVaultErrors.PoolPaused.selector, pool_));
+        IStandardExchange(pool_).exchangeOut(token_, type(uint256).max, IERC20(pool_), wanted_, actor_, false, block.timestamp);
+        _assertSnapEq(token_, s2_);
+
+        _unpauseNativePool();
+        _reconcileFundedJoin(token_, amount_);
+    }
+
+    /// @dev Extracted to keep the paused-join test within the stack limit (via_ir is forbidden).
+    function _reconcileFundedJoin(IERC20 token_, uint256 amount_) internal {
+        IStandardizedYield sy_ = _sy();
+        address actor_ = _nativeActor();
+        uint256 quote_ = sy_.previewDeposit(address(token_), amount_);
+        uint256 supplyBefore_ = sy_.totalSupply();
+        uint256 reservesBefore_ = _nativeVault().getReservesOf(token_);
+        uint256 actorInBefore_ = token_.balanceOf(actor_);
+        uint256 actorBptBefore_ = sy_.balanceOf(actor_);
+        vm.prank(actor_);
+        uint256 minted_ = sy_.deposit(actor_, address(token_), amount_, quote_);
+        assertEq(minted_, quote_, "received == quote after unpause");
+        assertEq(sy_.balanceOf(actor_) - actorBptBefore_, minted_, "issuance to actor");
+        assertEq(sy_.totalSupply() - supplyBefore_, minted_, "BPT supply delta == issuance");
+        assertEq(actorInBefore_ - token_.balanceOf(actor_), amount_, "input taken from actor");
+        assertEq(_nativeVault().getReservesOf(token_) - reservesBefore_, amount_, "input settled to the Vault");
+        assertTrue(
+            token_.allowance(_nativePool(), address(_nativeVault())) != type(uint256).max, "no dangling max allowance"
+        );
+    }
+
+    /// @dev R14.8: a real above-max-invariant-ratio join is rejected. Exact-out BPT that lifts the
+    ///      invariant ratio past the pool's maximum reverts `InvariantRatioAboveMax` in the preview,
+    ///      before any transferFrom (the actor's input is untouched). No `vm.mockCallRevert`.
+    ///      Selector 0x3e8960dc re-derived from BasePoolMath.sol (InvariantRatioAboveMax(uint256,uint256)).
+    ///      BPT-out maps directly to the invariant ratio `(supply + bptOut)/supply`, so sizing from
+    ///      `getMaximumInvariantRatio()` is weight- and pool-type-independent.
+    function test_poolSY_aboveMaxInvariantRatio_exactOutRevertsBeforePull() public {
+        IStandardizedYield sy_ = _sy();
+        address actor_ = _nativeActor();
+        address pool_ = _nativePool();
+        IERC20 token_ = IERC20(sy_.getTokensIn()[0]);
+        uint256 maxRatio_ = IUnbalancedLiquidityInvariantRatioBounds(pool_).getMaximumInvariantRatio();
+        assertGt(maxRatio_, 1e18, "sane maximum invariant ratio");
+        uint256 supply_ = sy_.totalSupply();
+        // ratio = (supply + bptOut)/supply = 1 + maxRatio/1e18 > maxRatio.
+        uint256 bptOut_ = supply_ * maxRatio_ / 1e18;
+        uint256 actorInBefore_ = token_.balanceOf(actor_);
+
+        vm.prank(actor_);
+        vm.expectPartialRevert(bytes4(0x3e8960dc));
+        IStandardExchange(pool_).exchangeOut(token_, type(uint256).max, IERC20(pool_), bptOut_, actor_, false, block.timestamp);
+        assertEq(token_.balanceOf(actor_), actorInBefore_, "exact-out reverts before any transferFrom");
+    }
+
+    /// @dev R14.8: `disableUnbalancedLiquidity` is never reachable on a packaged path — the hooks reject
+    ///      that registration, so the packaged pool always enables unbalanced liquidity.
+    function test_poolSY_packagedPathEnablesUnbalancedLiquidity() public view {
+        PoolConfig memory cfg_ = _nativeVault().getPoolConfig(_nativePool());
+        assertFalse(cfg_.liquidityManagement.disableUnbalancedLiquidity, "packaged path enables unbalanced liquidity");
     }
 }
 

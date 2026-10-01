@@ -108,3 +108,14 @@ StableSwap AMM on 2–5 pair tokens with combinatorial V4 pair doors, **Balancer
 | 2026-09-06 | Corrected the intended range to 2–5 tokens per user clarification. Superseded fixed-four D4 and six-pair acceptance; linked the detailed remediation requirements. Current implementation still requires correction. |
 
 *End of product PRD.*
+
+---
+
+## Addendum: APEX D60 held-reserve valuation (2026-09-22)
+
+Owner ruling recorded in `docs/audits/apex-2026-09-17-remediation-and-regression-tests.plan.md` (D59, D60) and `docs/audits/apex-2026-09-17-open-item-10-cp-hook-rate-providers-PRD.md`; supersedes any statement in this PRD that values a held SE leg through the SE's own quote (`previewExchangeIn(se, heldShares, token)` or transition-quote `quoteAssets`).
+
+- `PkgArgs.rateProviders[i]` is required on every SE leg and accepted on any leg (`RateProviderWithoutSE` removed, `RateProviderRequired` added). Rated conversions use the SE share metadata scale (`shareScale(se)`). Getters are hosted on `HooksTarget` / `HooksFacet`.
+- Swap-side valuation of a buffered leg is `shares x rate` (`Math.ratedPairUnits` with the Balancer rate scaling `invScale = 10^(36 - seDecimals)`, `ratedScale = 10^(36 - tokenDecimals)`); the SE is asked only how many shares a buffer mints or how much pair an unwrap pays.
+- Liquidity operations use raw balances (D59): LP issuance for a buffered leg follows the share ratio, exits are pro rata in raw shares and raw tokens.
+- Getters `rateProviders()` and `rateProvider(address token)` are on the proxy surface.

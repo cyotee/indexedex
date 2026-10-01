@@ -26,6 +26,7 @@ interface ISlipstreamStandardExchangeDFPkg is IDiamondFactoryPackage, IStandardV
         IFacet multiAssetBasicVaultFacet;
         IFacet multiAssetStandardVaultFacet;
         IFacet slipstreamStandardExchangeInFacet;
+        IFacet slipstreamStandardExchangeInFacetExt;
         IFacet slipstreamStandardExchangeOutFacet;
         IVaultFeeOracleQuery vaultFeeOracleQuery;
         IVaultRegistryDeployment vaultRegistryDeployment;

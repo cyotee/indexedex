@@ -95,7 +95,16 @@ contract UniswapV4StandardExchangeWeightedBufferHook_Scale is
         _swapExactIn(address(token1), address(token0), 1 ether);
     }
 
-    function test_custody28_withoutProviderUsesLiveClaim() public {
+    /// @dev D60: a buffered leg without a rate provider is rejected at init; the hook never values a
+    ///      custody share through the SE's own claim quote.
+    function test_custody28_withoutProviderRejected() public {
+        (WeightedPkg.PkgArgs memory args_,) = _custodyArgs(10);
+        args_.rateProviders[0] = address(0);
+        vm.expectRevert(WeightedPkg.RateProviderRequired.selector);
+        hookPkg.processArgs(abi.encode(args_));
+    }
+
+    function _custody28_withoutProviderUsesLiveClaim_retired() internal {
         (WeightedPkg.PkgArgs memory args_, IERC4626 custody_) = _custodyArgs(10);
         args_.rateProviders[0] = address(0);
         _deployHookWithArgs(args_);

@@ -25,6 +25,7 @@ import {
 import {TestBase_UniswapV4Detf_Decimals} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/TestBase_UniswapV4Detf_Decimals.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 import {
     UniswapV4DetfProductionSeDeployLib as SeLib
 } from "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfProductionSeDeployLib.sol";
@@ -63,10 +64,7 @@ abstract contract TestBase_UniswapV4Detf_Orbital_ProdSe_Decimals is TestBase_Uni
         IFacet depositFacet = OrbitalFactory.deployDepositFacet(create3Factory);
         IFacet withdrawFacet = OrbitalFactory.deployWithdrawFacet(create3Factory);
         IFacet seFacet = OrbitalFactory.deploySeFacet(create3Factory);
-        orbitalHookPkg = OrbitalFactory.deployPackage(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            owner,
-            IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgInit({
+        orbitalHookPkg = OrbitalFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, IUniswapV4StandardExchangeOrbitalBufferHookPackage.PkgInit({
                 depositQueryFacet: OrbitalFactory.deployDepositQueryFacet(create3Factory),
                 depositZapFacet: OrbitalFactory.deployDepositZapFacet(create3Factory),
                 vaultRegistryDeployment: IVaultRegistryDeployment(address(indexedexManager)),
@@ -81,9 +79,15 @@ abstract contract TestBase_UniswapV4Detf_Orbital_ProdSe_Decimals is TestBase_Uni
                 multiAssetBasicVaultFacet: multiAssetBasicVaultFacet,
                 multiAssetStandardVaultFacet: multiAssetStandardVaultFacet,
                 multiStepOwnableFacet: multiStepOwnableFacet
-            }),
-            abi.encode(type(IUniswapV4StandardExchangeOrbitalBufferHookPackage).name, "v1")._hash()
-        );
+            }));
+    }
+
+    /// @dev D60: provider for the leg's SE (address(0) on a raw leg); hoisted out of the argument literal
+    ///      to keep the stack shallow.
+    function _orbitalRp(address t, address predicted_, address p0, address p1, address s0, address s1)
+        internal returns (address)
+    {
+        return RateProviderFixtureLib.providerFor(create3Factory, diamondPackageFactory, _seOfPair(t, predicted_, p0, p1, s0, s1), t);
     }
 
     function _seOfPair(address token_, address predicted_, address p0, address p1, address s0, address s1)
@@ -157,9 +161,9 @@ abstract contract TestBase_UniswapV4Detf_Orbital_ProdSe_Decimals is TestBase_Uni
                 se0: _seOfPair(t0, predicted_, p0, p1, s0, s1),
                 se1: _seOfPair(t1, predicted_, p0, p1, s0, s1),
                 se2: _seOfPair(t2, predicted_, p0, p1, s0, s1),
-                rp0: address(0),
-                rp1: address(0),
-                rp2: address(0),
+                rp0: _orbitalRp(t0, predicted_, p0, p1, s0, s1),
+                rp1: _orbitalRp(t1, predicted_, p0, p1, s0, s1),
+                rp2: _orbitalRp(t2, predicted_, p0, p1, s0, s1),
                 tickSpacing: 0,
                 sqrtPriceX96: 0,
                 ownerOnlyLiquidity: args.ownerOnlyLiquidity,
@@ -265,12 +269,8 @@ abstract contract TestBase_UniswapV4Detf_Orbital_ProdSe_Decimals is TestBase_Uni
         if (needSweep) detfInfo.sweepDust();
         assertEq(IERC20(hook_).balanceOf(detf), 0, "R19 hook LP");
         for (uint256 i; i < toks.length; ++i) {
-            uint256 bal = IERC20(toks[i]).balanceOf(detf);
-            if (bal > 10) {
-                _logR19JoinFailure(hook_, toks[i], bal);
-                assertLe(bal, 10, string.concat("R19 token after sweep ", vm.toString(toks[i])));
-            }
             address se_ = IUniswapV4SeBufferHook(hook_).standardExchangeOf(toks[i]);
+            _assertPairResidualBooked(toks[i], se_);
             if (se_ != address(0)) {
                 uint256 seBal = IERC20(se_).balanceOf(detf);
                 if (seBal > 10) {
@@ -303,8 +303,8 @@ abstract contract TestBase_UniswapV4Detf_Orbital_ProdSe_Decimals is TestBase_Uni
     function _assertNoJoinableDust() internal view virtual override {
         address hook_ = detfInfo.hook();
         assertEq(IERC20(hook_).balanceOf(detf), 0, "no hook LP on diamond");
-        assertLe(IERC20(pairAddr0).balanceOf(detf), 10, "no pair0 on diamond");
-        assertLe(IERC20(pairAddr1).balanceOf(detf), 10, "no pair1 on diamond");
+        _assertPairResidualBooked(pairAddr0, se0);
+        _assertPairResidualBooked(pairAddr1, se1);
         assertLe(IERC20(se0).balanceOf(detf), 10, "no se0 share on diamond");
         assertLe(IERC20(se1).balanceOf(detf), 10, "no se1 share on diamond");
     }

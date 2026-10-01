@@ -257,11 +257,7 @@ contract MorphoBlueStandardExchangeDFPkg is IMorphoBlueStandardExchangeDFPkg {
     }
 
     function _shareName(address loanToken_) private view returns (string memory) {
-        try IERC20Metadata(loanToken_).symbol() returns (string memory symbol_) {
-            if (bytes(symbol_).length != 0) {
-                return string.concat("IndexedEx Morpho Blue SE ", symbol_);
-            }
-        } catch {}
-        return "IndexedEx Morpho Blue SE";
+        string memory symbol_ = IERC20Metadata(loanToken_).symbol();
+        return string.concat("IndexedEx Morpho Blue SE ", symbol_);
     }
 }

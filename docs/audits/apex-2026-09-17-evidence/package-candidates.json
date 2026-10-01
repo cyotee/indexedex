@@ -1,0 +1,412 @@
+[
+  {
+    "family": "U3",
+    "path": "contracts/vaults/standard/exchange/protocols/uniswap/v3/UniswapV3FullSpreadStandardExchangeVaultDFPkg.sol",
+    "contract": "UniswapV3FullSpreadStandardExchangeVaultDFPkg",
+    "state": "REPORTED",
+    "review": "D16 production family; EOA/D15/LocalCreditLib/R14 apply",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "U4",
+    "path": "contracts/vaults/standard/exchange/protocols/uniswap/v4/UniswapV4FullSpreadStandardExchangeVaultDFPkg.sol",
+    "contract": "UniswapV4FullSpreadStandardExchangeVaultDFPkg",
+    "state": "REPORTED",
+    "review": "D16 production family; EOA/D15/LocalCreditLib/R14 apply",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "CU",
+    "path": "contracts/protocols/staking/rebasingVault/RebasingAwareERC4626DFPkg.sol",
+    "contract": "RebasingAwareERC4626DFPkg",
+    "state": "REPORTED",
+    "review": "D16 production family; EOA/D15/LocalCreditLib/R14 apply",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "ER",
+    "path": "contracts/vaults/standard/erc4626/ERC4626StandardExchangeDFPkg.sol",
+    "contract": "ERC4626StandardExchangeDFPkg",
+    "state": "REPORTED",
+    "review": "D16 production family; EOA/D15/LocalCreditLib/R14 apply",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "MO",
+    "path": "contracts/vaults/standard/exchange/protocols/morpho/blue/MorphoBlueStandardExchangeDFPkg.sol",
+    "contract": "MorphoBlueStandardExchangeDFPkg",
+    "state": "REPORTED",
+    "review": "D16 production family; EOA/D15/LocalCreditLib/R14 apply",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "ST",
+    "path": "contracts/protocols/lending/aave/v3.6/AaveV3StataStandardExchangeDFPkg.sol",
+    "contract": "AaveV3StataStandardExchangeDFPkg",
+    "state": "REPORTED",
+    "review": "D16 production family; EOA/D15/LocalCreditLib/R14 apply",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "CV",
+    "path": "contracts/protocols/lending/aave/cross-version/AaveCrossVersionLoopDFPkg.sol",
+    "contract": "AaveCrossVersionLoopDFPkg",
+    "state": "REPORTED",
+    "review": "D16 in-scope; public pretransfer remains hard-reject; false-flag D15/R14",
+    "scope": "D16",
+    "d32PublicPretransferReject": true,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "LI",
+    "path": "contracts/protocols/staking/lido/LidoWstETHStandardExchangeDFPkg.sol",
+    "contract": "LidoWstETHStandardExchangeDFPkg",
+    "state": "REPORTED",
+    "review": "D16 production family; EOA/D15/LocalCreditLib/R14 apply",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "RP",
+    "path": "contracts/protocols/staking/rocket-pool/RocketPoolRETHStandardExchangeDFPkg.sol",
+    "contract": "RocketPoolRETHStandardExchangeDFPkg",
+    "state": "REPORTED",
+    "review": "D16 production family; EOA/D15/LocalCreditLib/R14 apply",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "EF",
+    "path": "contracts/protocols/staking/etherfi/EtherFiWeETHStandardExchangeDFPkg.sol",
+    "contract": "EtherFiWeETHStandardExchangeDFPkg",
+    "state": "REPORTED",
+    "review": "D16 production family; EOA/D15/LocalCreditLib/R14 apply",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "V2",
+    "path": "contracts/protocols/dexes/uniswap/v2/UniswapV2StandardExchangeDFPkg.sol",
+    "contract": "UniswapV2StandardExchangeDFPkg",
+    "state": "REPORTED",
+    "review": "D16 production family; EOA/D15/LocalCreditLib/R14 apply",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "CA",
+    "path": "contracts/protocols/dexes/camelot/v2/CamelotV2StandardExchangeDFPkg.sol",
+    "contract": "CamelotV2StandardExchangeDFPkg",
+    "state": "REPORTED",
+    "review": "D16 production family; EOA/D15/LocalCreditLib/R14 apply",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "AE",
+    "path": "contracts/protocols/dexes/aerodrome/v1/AerodromeStandardExchangeDFPkg.sol",
+    "contract": "AerodromeStandardExchangeDFPkg",
+    "state": "REPORTED",
+    "review": "D16 production family; EOA/D15/LocalCreditLib/R14 apply",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "SL",
+    "path": "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeDFPkg.sol",
+    "contract": "SlipstreamStandardExchangeDFPkg",
+    "state": "REPORTED",
+    "review": "D16 production family; EOA/D15/LocalCreditLib/R14 apply",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "BA",
+    "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/BalancerV3ConstantProductPoolStandardVaultPkg.sol",
+    "contract": "BalancerV3ConstantProductPoolStandardVaultPkg",
+    "state": "REPORTED",
+    "review": "D16 in-scope; public pretransfer remains hard-reject; false-flag D15/R14",
+    "scope": "D16",
+    "d32PublicPretransferReject": true,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "BA",
+    "path": "contracts/protocols/dexes/balancer/v3/pools/constProd/standardExchange/StandardExchangeBufferPoolStandardVaultPkg.sol",
+    "contract": "StandardExchangeBufferPoolStandardVaultPkg",
+    "state": "REPORTED",
+    "review": "D16 in-scope; public pretransfer remains hard-reject; false-flag D15/R14",
+    "scope": "D16",
+    "d32PublicPretransferReject": true,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "BA",
+    "path": "contracts/protocols/dexes/balancer/v3/pools/stable/commonBufferMultiVault/CommonBufferMultiVaultStablePoolStandardVaultPkg.sol",
+    "contract": "CommonBufferMultiVaultStablePoolStandardVaultPkg",
+    "state": "REPORTED",
+    "review": "D16 in-scope; public pretransfer remains hard-reject; false-flag D15/R14",
+    "scope": "D16",
+    "d32PublicPretransferReject": true,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "BA",
+    "path": "contracts/protocols/dexes/balancer/v3/pools/stable/mixedBufferMultiVault/MixedBufferMultiVaultStablePoolStandardVaultPkg.sol",
+    "contract": "MixedBufferMultiVaultStablePoolStandardVaultPkg",
+    "state": "REPORTED",
+    "review": "D16 in-scope; public pretransfer remains hard-reject; false-flag D15/R14",
+    "scope": "D16",
+    "d32PublicPretransferReject": true,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "BA",
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/commonBufferMultiVault/CommonBufferMultiVaultWeightedPoolStandardVaultPkg.sol",
+    "contract": "CommonBufferMultiVaultWeightedPoolStandardVaultPkg",
+    "state": "REPORTED",
+    "review": "D16 in-scope; public pretransfer remains hard-reject; false-flag D15/R14",
+    "scope": "D16",
+    "d32PublicPretransferReject": true,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "BA",
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/mixedLegBuffer/MixedLegWeightedBufferPoolStandardVaultPkg.sol",
+    "contract": "MixedLegWeightedBufferPoolStandardVaultPkg",
+    "state": "REPORTED",
+    "review": "D16 in-scope; public pretransfer remains hard-reject; false-flag D15/R14",
+    "scope": "D16",
+    "d32PublicPretransferReject": true,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "BA",
+    "path": "contracts/protocols/dexes/balancer/v3/pools/weighted/multiPairBuffer/MultiPairStandardExchangeBufferPoolStandardVaultPkg.sol",
+    "contract": "MultiPairStandardExchangeBufferPoolStandardVaultPkg",
+    "state": "REPORTED",
+    "review": "D16 in-scope; public pretransfer remains hard-reject; false-flag D15/R14",
+    "scope": "D16",
+    "d32PublicPretransferReject": true,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "DT",
+    "path": "contracts/vaults/detf/common/bondNft/DETFNFTVaultDFPkg.sol",
+    "contract": "DETFNFTVaultDFPkg",
+    "state": "REPORTED",
+    "review": "D16 production family; EOA/D15/LocalCreditLib/R14 apply",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "DT",
+    "path": "contracts/vaults/detf/common/claimToken/RebasingClaimTokenDFPkg.sol",
+    "contract": "RebasingClaimTokenDFPkg",
+    "state": "REPORTED",
+    "review": "D16 production family; EOA/D15/LocalCreditLib/R14 apply",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "DT",
+    "path": "contracts/vaults/detf/common/sy/DETFSYDFPkg.sol",
+    "contract": "DETFSYDFPkg",
+    "state": "REPORTED",
+    "review": "D16 production family; EOA/D15/LocalCreditLib/R14 apply",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "DT",
+    "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/mixedBuffer/MixedBufferMultiVaultStableDetfDFPkg.sol",
+    "contract": "MixedBufferMultiVaultStableDetfDFPkg",
+    "state": "REPORTED",
+    "review": "D16 in-scope; public pretransfer remains hard-reject; false-flag D15/R14",
+    "scope": "D16",
+    "d32PublicPretransferReject": true,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "DT",
+    "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/multi-vault-weighted/MultiVaultWeightedDetfDFPkg.sol",
+    "contract": "MultiVaultWeightedDetfDFPkg",
+    "state": "REPORTED",
+    "review": "D16 production family; EOA/D15/LocalCreditLib/R14 apply",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "DT",
+    "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfBondNFTVaultDFPkg.sol",
+    "contract": "ComposedStableCommonDetfBondNFTVaultDFPkg",
+    "state": "REPORTED",
+    "review": "D16 production family; EOA/D15/LocalCreditLib/R14 apply",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "DT",
+    "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/ComposedStableCommonDetfDFPkg.sol",
+    "contract": "ComposedStableCommonDetfDFPkg",
+    "state": "REPORTED",
+    "review": "D16 production family; EOA/D15/LocalCreditLib/R14 apply",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "DT",
+    "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/stable/common/RebasingDETFTokenDFPkg.sol",
+    "contract": "RebasingDETFTokenDFPkg",
+    "state": "REPORTED",
+    "review": "D16 production family; EOA/D15/LocalCreditLib/R14 apply",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "DT",
+    "path": "contracts/vaults/detf/protocols/dexes/balancer/v3/standardExchange/single/SingleStandardExchangeDETDFPkg.sol",
+    "contract": "SingleStandardExchangeDETDFPkg",
+    "state": "REPORTED",
+    "review": "D16 production family; EOA/D15/LocalCreditLib/R14 apply",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "DT",
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/bondNft/UniswapV4DetfBondNFTVaultDFPkg.sol",
+    "contract": "UniswapV4DetfBondNFTVaultDFPkg",
+    "state": "REPORTED",
+    "review": "D16 production family; EOA/D15/LocalCreditLib/R14 apply",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "DT",
+    "path": "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/UniswapV4DetfDFPkg.sol",
+    "contract": "UniswapV4DetfDFPkg",
+    "state": "REPORTED",
+    "review": "D16 production family; EOA/D15/LocalCreditLib/R14 apply",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "HK",
+    "path": "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg.sol",
+    "contract": "UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg",
+    "state": "REPORTED",
+    "review": "D16 SE buffer hook family; bind IERC20(se) as share",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "HK",
+    "path": "contracts/hooks/uniswap/v4/standardExchange/dual/UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg.sol",
+    "contract": "UniswapV4DualStandardExchangeBufferConstantProductHookDFPkg",
+    "state": "REPORTED",
+    "review": "D16 SE buffer hook family; bind IERC20(se) as share",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "HK",
+    "path": "contracts/hooks/uniswap/v4/standardExchange/orbital/UniswapV4StandardExchangeOrbitalBufferHookDFPkg.sol",
+    "contract": "UniswapV4StandardExchangeOrbitalBufferHookDFPkg",
+    "state": "REPORTED",
+    "review": "D16 SE buffer hook family; bind IERC20(se) as share",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "HK",
+    "path": "contracts/hooks/uniswap/v4/standardExchange/single/UniswapV4SingleStandardExchangeBufferHookDFPkg.sol",
+    "contract": "UniswapV4SingleStandardExchangeBufferHookDFPkg",
+    "state": "REPORTED",
+    "review": "D16 SE buffer hook family; bind IERC20(se) as share",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "HK",
+    "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/balancer/UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg.sol",
+    "contract": "UniswapV4StandardExchangeBalancerQuadStableBufferHookDFPkg",
+    "state": "REPORTED",
+    "review": "D16 SE buffer hook family; bind IERC20(se) as share",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "HK",
+    "path": "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg.sol",
+    "contract": "UniswapV4StandardExchangeCurveQuadStableBufferHookDFPkg",
+    "state": "REPORTED",
+    "review": "D16 SE buffer hook family; bind IERC20(se) as share",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "HK",
+    "path": "contracts/hooks/uniswap/v4/standardExchange/weighted/UniswapV4StandardExchangeWeightedBufferHookDFPkg.sol",
+    "contract": "UniswapV4StandardExchangeWeightedBufferHookDFPkg",
+    "state": "REPORTED",
+    "review": "D16 SE buffer hook family; bind IERC20(se) as share",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "RQ",
+    "path": "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProviderDFPkg.sol",
+    "contract": "StandardExchangeRateProviderDFPkg",
+    "state": "REPORTED",
+    "review": "D48 staticcall rewrite and R12 selector/size only; no pretransfer/credit/refund",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  },
+  {
+    "family": "RQ",
+    "path": "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/wrapped/WrappedStandardExchangeRateProviderDFPkg.sol",
+    "contract": "WrappedStandardExchangeRateProviderDFPkg",
+    "state": "REPORTED",
+    "review": "D48 staticcall rewrite and R12 selector/size only; no pretransfer/credit/refund",
+    "scope": "D16",
+    "d32PublicPretransferReject": false,
+    "deployPath": "indexedexManager.deploy*DFPkg then package deployVault / registry"
+  }
+]

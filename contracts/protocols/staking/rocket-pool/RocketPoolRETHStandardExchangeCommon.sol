@@ -13,7 +13,11 @@ import {IRocketDepositPool} from
     "@crane/contracts/protocols/staking/ethereum/rocket-pool/interfaces/IRocketDepositPool.sol";
 import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol";
 
+import {IRocketStorage} from "@crane/contracts/protocols/staking/ethereum/rocket-pool/interfaces/IRocketStorage.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
 import {VaultFeeOracleQueryAwareRepo} from "contracts/oracles/fee/VaultFeeOracleQueryAwareRepo.sol";
+import {MultiAssetBasicVaultRepo} from "contracts/vaults/basic/MultiAssetBasicVaultRepo.sol";
 import {
     IRocketPoolRETHStandardVault
 } from "contracts/protocols/staking/rocket-pool/interfaces/IRocketPoolRETHStandardVault.sol";
@@ -151,9 +155,29 @@ abstract contract RocketPoolRETHStandardExchangeCommon is
     }
 
     function _ethForSharesOut(uint256 seShares) internal view returns (uint256 ethIn) {
+        return _ethForSharesOut(seShares, totalReserveEth());
+    }
+
+    function _ethForSharesOut(uint256 seShares, uint256 reserveBefore) internal view returns (uint256 ethIn) {
         return BetterMath._convertToAssetsUp(
-            seShares, totalReserveEth(), ERC20Repo._totalSupply(), _decimalOffset()
+            seShares, reserveBefore, ERC20Repo._totalSupply(), _decimalOffset()
         );
+    }
+
+    /// @dev Remove only this route's authenticated local credit from live NAV. Both WETH
+    /// and rETH contribute to this family's live NAV. Difference-of-valuations preserves the wrapped asset's native rounding.
+    function _reserveBeforePretransfer(address token, uint256 credit) internal view returns (uint256 reserveBefore) {
+        reserveBefore = totalReserveEth();
+        if (credit == 0) return reserveBefore;
+        if (token == weth()) return reserveBefore - credit;
+        if (token == rETH()) {
+            uint256 held = IERC20(token).balanceOf(address(this));
+            return reserveBefore - (_assetToEth(token, held) - _assetToEth(token, held - credit));
+        }
+    }
+
+    function _quoteMintAtReserve(address token, uint256 shares, uint256 reserveBefore) internal view returns (uint256) {
+        return _ethToAssetUp(token, _ethForSharesOut(shares, reserveBefore));
     }
 
     function _targetLiquidEth() internal view returns (uint256) {
@@ -165,11 +189,21 @@ abstract contract RocketPoolRETHStandardExchangeCommon is
     function _maxDepositAmount() internal view returns (uint256) {
         address pool = depositPool();
         if (pool == address(0)) return 0;
-        try IRocketDepositPool(pool).getMaximumDepositAmount() returns (uint256 maxDep) {
-            return maxDep;
-        } catch {
-            return 0;
+        return IRocketDepositPool(pool).getMaximumDepositAmount();
+    }
+
+    /// @dev D39/D30: settings `getMinimumDeposit()` via staticcall; non-32-byte replies revert with returned bytes.
+    function _minimumDeposit() internal view returns (uint256) {
+        address settings = IRocketStorage(RocketPoolRETHStandardExchangeRepo._rocketStorage()).getAddress(
+            keccak256(abi.encodePacked("contract.address", "rocketDAOProtocolSettingsDeposit"))
+        );
+        (bool ok, bytes memory result) = settings.staticcall(abi.encodeWithSignature("getMinimumDeposit()"));
+        if (!ok || result.length != 32) {
+            assembly ("memory-safe") {
+                revert(add(result, 32), mload(result))
+            }
         }
+        return abi.decode(result, (uint256));
     }
 
     /* ---------------------------------------------------------------------- */
@@ -274,24 +308,57 @@ abstract contract RocketPoolRETHStandardExchangeCommon is
     /*                         Execution helpers                               */
     /* ---------------------------------------------------------------------- */
 
+    function _bookedReserve(IERC20 token) internal view returns (uint256) {
+        return MultiAssetBasicVaultRepo._reserveOfToken(address(token));
+    }
+
+    function _pretransferCredit(IERC20 token, uint256 maximum) internal view returns (uint256) {
+        return LocalCreditLib.budget(
+            LocalCreditLib.available(token.balanceOf(address(this)), _bookedReserve(token)),
+            maximum
+        );
+    }
+
+    function _refundExactOutCredit(IERC20 token, uint256 credit, uint256 used, bool pretransferred)
+        internal
+    {
+        if (!pretransferred) return;
+        if (used > credit) revert ISecurePullErrors.TransferDeltaInsufficient(used, credit);
+        if (credit > used) {
+            uint256 unusedU = LocalCreditLib.available(token.balanceOf(address(this)), _bookedReserve(token));
+            uint256 refund = credit - used;
+            if (refund > unusedU) refund = unusedU;
+            if (refund > 0) token.safeTransfer(msg.sender, refund);
+        }
+    }
+
+    function _syncAllExpectedHoldReserves() internal {
+        address[] memory tokens = MultiAssetBasicVaultRepo._vaultTokens();
+        for (uint256 i; i < tokens.length; ++i) {
+            IERC20 t = IERC20(tokens[i]);
+            MultiAssetBasicVaultRepo._updateReserve(t, t.balanceOf(address(this)));
+        }
+    }
+
     function _securePull(IERC20 token, uint256 amountIn, bool pretransferred)
         internal
         returns (uint256 actualIn)
     {
+        if (pretransferred) {
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+            uint256 avail = LocalCreditLib.available(token.balanceOf(address(this)), _bookedReserve(token));
+            if (amountIn > avail) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, avail);
+            }
+            return amountIn;
+        }
         uint256 before_ = token.balanceOf(address(this));
-        if (!pretransferred) {
-            token.safeTransferFrom(msg.sender, address(this), amountIn);
+        token.safeTransferFrom(msg.sender, address(this), amountIn);
+        uint256 delta = token.balanceOf(address(this)) - before_;
+        if (delta != amountIn) {
+            revert ISecurePullErrors.TransferDeltaInsufficient(amountIn, delta);
         }
-        actualIn = token.balanceOf(address(this)) - before_;
-        if (actualIn > amountIn) {
-            actualIn = amountIn;
-        }
-        if (actualIn == 0) {
-            revert InsufficientDeposit(amountIn, 0);
-        }
-        if (pretransferred && actualIn < amountIn) {
-            revert InsufficientDeposit(amountIn, actualIn);
-        }
+        return amountIn;
     }
 
     function _burnShares(uint256 shares) internal {
@@ -325,7 +392,7 @@ abstract contract RocketPoolRETHStandardExchangeCommon is
         IERC20(weth()).safeTransfer(recipient, amount);
     }
 
-    /// @dev Best-effort burn of vault rETH to cover shortfall; failures leave sleeve unchanged.
+    /// @dev Burn vault rETH to cover shortfall. Protocol revert bytes propagate (D34).
     function _tryBurnRethForWeth(uint256 shortfallEth) internal {
         if (shortfallEth == 0) return;
         address reth_ = rETH();
@@ -335,13 +402,10 @@ abstract contract RocketPoolRETHStandardExchangeCommon is
         if (rethNeeded > rethBal) rethNeeded = rethBal;
 
         uint256 ethBefore = address(this).balance;
-        try IRETH(reth_).burn(rethNeeded) {
-            uint256 ethGot = address(this).balance - ethBefore;
-            if (ethGot > 0) {
-                IWETH(payable(weth())).deposit{value: ethGot}();
-            }
-        } catch {
-            // collateral/pause: fall through to InsufficientLiquidReserve
+        IRETH(reth_).burn(rethNeeded);
+        uint256 ethGot = address(this).balance - ethBefore;
+        if (ethGot > 0) {
+            IWETH(payable(weth())).deposit{value: ethGot}();
         }
     }
 
@@ -378,25 +442,20 @@ abstract contract RocketPoolRETHStandardExchangeCommon is
         if (rethOut == 0) revert Slippage();
     }
 
-    /// @dev Soft stake: capacity-capped; never reverts on capacity 0 (returns 0).
+    /// @dev Soft stake: skip when capacity or minimum is 0; otherwise deposit directly (D34/D39).
     function _stakeWethToRethSoft(uint256 wethAmount) internal returns (uint256 rethOut) {
         if (wethAmount == 0) return 0;
         uint256 maxDep = _maxDepositAmount();
-        if (maxDep == 0) return 0;
+        uint256 minDep = _minimumDeposit();
         uint256 stakeable = wethAmount > maxDep ? maxDep : wethAmount;
-        if (stakeable == 0) return 0;
-        // Soft path: catch protocol reverts (disabled deposits mid-flight, min deposit, etc.)
+        if (stakeable == 0 || stakeable < minDep) return 0;
         address pool = depositPool();
         address reth_ = rETH();
         uint256 beforeBal = IERC20(reth_).balanceOf(address(this));
         IWETH(payable(weth())).withdraw(stakeable);
-        try IRocketDepositPool(pool).deposit{value: stakeable}() {
-            rethOut = IERC20(reth_).balanceOf(address(this)) - beforeBal;
-        } catch {
-            // Re-wrap ETH back to WETH sleeve so soft path never loses eth face
-            IWETH(payable(weth())).deposit{value: stakeable}();
-            return 0;
-        }
+        IRocketDepositPool(pool).deposit{value: stakeable}();
+        rethOut = IERC20(reth_).balanceOf(address(this)) - beforeBal;
+        if (rethOut == 0) revert Slippage();
     }
 
     function _execAssetToAsset(address tokenIn, uint256 amountIn, address tokenOut, address recipient)
@@ -441,13 +500,17 @@ abstract contract RocketPoolRETHStandardExchangeCommon is
     function _bestEffortStakeOverageTowardTarget() internal {
         uint256 liquid = liquidReserveEth();
         if (liquid == 0) return;
-
-        uint256 total = totalReserveEth();
-        uint256 pct = targetLiquidReservePercentage();
-        uint256 target = (total * pct) / ONE_WAD;
-
+        uint256 target = (totalReserveEth() * targetLiquidReservePercentage()) / ONE_WAD;
         if (liquid <= target) return;
-        uint256 excess = liquid - target;
-        _stakeWethToRethSoft(excess);
+        uint256 eligible = liquid - target;
+        uint256 booked = _bookedReserve(IERC20(weth()));
+        uint256 fromBooked = eligible < booked ? eligible : booked;
+        if (fromBooked > 0) {
+            _stakeWethToRethSoft(fromBooked);
+        }
+        liquid = liquidReserveEth();
+        target = (totalReserveEth() * targetLiquidReservePercentage()) / ONE_WAD;
+        if (liquid <= target) return;
+        _stakeWethToRethSoft(liquid - target);
     }
 }

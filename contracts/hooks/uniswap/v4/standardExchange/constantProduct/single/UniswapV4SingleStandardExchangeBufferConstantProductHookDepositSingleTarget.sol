@@ -14,6 +14,9 @@ import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {UniswapV4SingleStandardExchangeBufferConstantProductHookMath as Math} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookMath.sol";
 import {UniswapV4SeBufferHookLegLib} from "contracts/hooks/uniswap/v4/libs/UniswapV4SeBufferHookLegLib.sol";
 import {Math as FullMath} from "@crane/contracts/utils/Math.sol";
+import {
+    UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib as ClaimLib
+} from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib.sol";
 
 import {
     UniswapV4SingleStandardExchangeBufferConstantProductHookDepositCommon
@@ -43,10 +46,14 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
             .afterExternalDeposit(l.standardExchange, pairToken, tokenIn, amountIn, address(this));
         pairValue = q.exchange.quoteAssets(q.state, q.assets);
         if (!_isLive()) return (pairValue, 0, 0);
-        liquidityDetf = UniswapV4SeBufferHookLegLib.matchingLiquidityDetf(
-            q, IERC20(l.rawToken).balanceOf(address(this)), pairValue,
-            _supplyAfterProtocolMintForPairClaim(q.heldAssets), Repo.MAX_DUST_WEI
-        );
+        {
+            // D60: the held book at the projected state is shares x that state's provider rate.
+            (uint256 heldRated,) = ClaimLib.projectedClaimIn(address(q.exchange), q.state, q.heldShares, 0);
+            liquidityDetf = UniswapV4SeBufferHookLegLib.matchingLiquidityDetf(
+                q, IERC20(l.rawToken).balanceOf(address(this)), pairValue,
+                _supplyAfterProtocolMintForPairClaim(heldRated), Repo.MAX_DUST_WEI
+            );
+        }
         q.assets = FullMath.mulDiv(pairValue, multiplier, 1e18);
         purchasedDetf = _swapAtExternalState(q);
     }
@@ -54,11 +61,12 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
     function _swapAtExternalState(UniswapV4SeBufferHookLegLib.ExternalQuote memory q)
         private view returns (uint256)
     {
-        (uint256 minted, uint256 afterClaim) = UniswapV4SeBufferHookLegLib.depositAfterExchange(q, q.assets);
-        uint256 beforeClaim = q.heldAssets;
+        // D60: swap reserve and claim-in are shares x provider rate at the projected states (the route's own
+        // SE transition first, then the buffer); the SE only counts shares minted.
+        (uint256 beforeClaim, uint256 claimIn) =
+            ClaimLib.projectedClaimIn(address(q.exchange), q.state, q.heldShares, q.assets);
         if (beforeClaim == 0 && q.heldShares > 0) beforeClaim = 1;
-        if (afterClaim == 0 && q.heldShares + minted > 0) afterClaim = 1;
-        return _quotePairClaimIn(beforeClaim, afterClaim > beforeClaim ? afterClaim - beforeClaim : 0);
+        return _quotePairClaimIn(beforeClaim, claimIn);
     }
 
     function _quotePairClaimIn(uint256 seClaim, uint256 claimIn) private view returns (uint256) {

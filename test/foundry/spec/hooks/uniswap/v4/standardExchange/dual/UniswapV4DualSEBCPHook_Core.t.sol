@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IRateProvider} from "@crane/contracts/protocols/dexes/balancer/common/interfaces/IRateProvider.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {
@@ -18,6 +19,7 @@ import {
 import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
 import {IStandardVault} from "contracts/interfaces/IStandardVault.sol";
 import {IVaultRegistryVaultQuery} from "contracts/interfaces/IVaultRegistryVaultQuery.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 
 /**
  * @title UniswapV4DualSEBCPHook_Core_Test
@@ -58,7 +60,9 @@ contract UniswapV4DualSEBCPHook_Core_Test is TestBase_UniswapV4DualSEBCPHook {
             standardExchange0: seB,
             token0: address(tokenB),
             standardExchange1: seA,
-            token1: address(tokenA)
+            token1: address(tokenA),
+            rateProvider0: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, seB, address(tokenB)), // D60
+            rateProvider1: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, seA, address(tokenA)) // D60
         });
         // Same economic binding → same package salt
         assertEq(hookPkg.calcSalt(abi.encode(swapped)), hookPkg.calcSalt(abi.encode(_defaultPkgArgs())));
@@ -85,7 +89,7 @@ contract UniswapV4DualSEBCPHook_Core_Test is TestBase_UniswapV4DualSEBCPHook {
 
     function test_D4_secondPoolInit_reverts() public {
         _initPool();
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("WrappedError(address,bytes4,bytes,bytes)", hook, bytes4(keccak256("beforeInitialize(address,(address,address,uint24,int24,address),uint160)")), abi.encodeWithSignature("AlreadyInitialized()"), abi.encodeWithSignature("HookCallFailed()")));
         pm.initialize(poolKey, SQRT_PRICE_1_1);
     }
 
@@ -95,6 +99,17 @@ contract UniswapV4DualSEBCPHook_Core_Test is TestBase_UniswapV4DualSEBCPHook {
         assertEq(IERC20(hook).balanceOf(address(0)), 1000); // MINIMUM_LIQUIDITY
         assertGt(dual.claimSupplyCurrency0(), 0);
         assertGt(dual.claimSupplyCurrency1(), 0);
+    }
+
+    function test_D36_restingFace_notPaidToJoiner() public {
+        _depositBoth(100 ether, 100 ether);
+        address donor = address(0xD0D0);
+        tokenA.mint(donor, 500 ether);
+        vm.prank(donor);
+        tokenA.transfer(hook, 500 ether);
+        uint256 userA = tokenA.balanceOf(user);
+        _depositBoth(1 ether, 1 ether);
+        assertLt(tokenA.balanceOf(user), userA, "D36: joiner does not collect resting face");
     }
 
     function test_P3_subsequentDeposit_previewEqualsExecution() public {
@@ -111,7 +126,7 @@ contract UniswapV4DualSEBCPHook_Core_Test is TestBase_UniswapV4DualSEBCPHook {
 
     function test_P5_deadline_reverts() public {
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("DeadlineExpired()"));
         dual.deposit(1 ether, 1 ether, user, 0, block.timestamp - 1);
     }
 
@@ -130,7 +145,7 @@ contract UniswapV4DualSEBCPHook_Core_Test is TestBase_UniswapV4DualSEBCPHook {
 
     function test_Z3_depositSingle_emptyBook_reverts() public {
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("NotZapEligible()"));
         dual.depositSingle(address(tokenA), 10 ether, user, 0, block.timestamp + 1);
     }
 
@@ -145,7 +160,8 @@ contract UniswapV4DualSEBCPHook_Core_Test is TestBase_UniswapV4DualSEBCPHook {
 
         vm.prank(user);
         uint256 lp = dual.depositSingle(address(tokenA), 20 ether, user, 0, block.timestamp + 1);
-        assertApproxEqAbs(lp, pred, DUST);
+        // F9 (2026-09-23, D62): the preview sizes the zap off the rated book, so it matches execution exactly.
+        assertEq(lp, pred, "depositSingle preview == execution");
         assertGt(lp, 0);
     }
 
@@ -155,7 +171,7 @@ contract UniswapV4DualSEBCPHook_Core_Test is TestBase_UniswapV4DualSEBCPHook {
         dual.withdraw(lp, user, 0, 0, block.timestamp + 1);
         assertEq(IERC20(hook).totalSupply(), 1000);
         vm.prank(user);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("NotZapEligible()"));
         dual.depositSingle(address(tokenA), 10 ether, user, 0, block.timestamp + 1);
         _depositBoth(50 ether, 50 ether);
         assertGt(IERC20(hook).totalSupply(), 1000);
@@ -226,11 +242,54 @@ contract UniswapV4DualSEBCPHook_Core_Test is TestBase_UniswapV4DualSEBCPHook {
         assertEq(got, pred);
     }
 
-    function test_thinIsExpectedInstance_codeAndFlagsOnly() public view {
+    function test_thinIsExpectedInstance_codeAndFlagsOnly() public {
         // Thin gate: any address with correct flag bits and code would pass; empty fails.
         assertFalse(hookPkg.isExpectedInstance(address(0xBEEF), ""));
         assertTrue(hookPkg.isExpectedInstance(hook, abi.encode(_defaultPkgArgs())));
         // Different (wrong) binding args still true if flags match — not deep binding gate.
         assertTrue(hookPkg.isExpectedInstance(hook, abi.encode(uint256(0xdead))));
+    }
+
+    /* ------------------------------- D60 rated reserves ------------------------------- */
+
+    /// @notice D60: every buffered leg (token != SE) must carry a rate provider.
+    function test_D60_processArgs_bufferedLegWithoutRateProvider_reverts() public {
+        IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgArgs memory args = _defaultPkgArgs();
+        args.rateProvider0 = address(0);
+        vm.expectRevert(IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.RateProviderRequired.selector);
+        hookPkg.processArgs(abi.encode(args));
+        args = _defaultPkgArgs();
+        args.rateProvider1 = address(0);
+        vm.expectRevert(IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.RateProviderRequired.selector);
+        hookPkg.processArgs(abi.encode(args));
+    }
+
+    /// @notice D60: getters expose the configured providers in pool order and by token / SE.
+    function test_D60_rateProviderGetters() public {
+        IUniswapV4DualStandardExchangeBufferConstantProductHookPackage.PkgArgs memory args = _defaultPkgArgs();
+        assertTrue(args.rateProvider0 != address(0) && args.rateProvider1 != address(0), "fixture providers");
+        assertEq(dual.rateProvider(address(tokenA)), args.rateProvider0, "by token A");
+        assertEq(dual.rateProvider(seA), args.rateProvider0, "by SE A");
+        assertEq(dual.rateProvider(address(tokenB)), args.rateProvider1, "by token B");
+        assertEq(dual.rateProvider(seB), args.rateProvider1, "by SE B");
+        assertEq(dual.rateProvider(address(0xDEAD)), address(0), "unknown token");
+        address[] memory rps = dual.rateProviders();
+        assertEq(rps.length, 2, "pool order length");
+        assertEq(rps[0], dual.currency0() == address(tokenA) ? args.rateProvider0 : args.rateProvider1, "slot 0");
+        assertEq(rps[1], dual.currency1() == address(tokenB) ? args.rateProvider1 : args.rateProvider0, "slot 1");
+    }
+
+    /// @notice D60: each leg's swap reserve is SE shares held x that leg's provider rate.
+    function test_D60_swapReservesAreSharesTimesRate() public {
+        _initPool();
+        _depositBoth(100 ether, 100 ether);
+        tokenA.mint(address(this), 13 ether);
+        tokenA.approve(address(vaultA), 13 ether);
+        vaultA.simulateYield(13 ether);
+        uint256 rateA = IRateProvider(dual.rateProvider(seA)).getRate();
+        uint256 rateB = IRateProvider(dual.rateProvider(seB)).getRate();
+        assertGt(rateA, 1e18, "yield raised rate A");
+        assertEq(dual.claimSupply0(), IERC20(seA).balanceOf(hook) * rateA / 1e18, "reserve A = shares x rate");
+        assertEq(dual.claimSupply1(), IERC20(seB).balanceOf(hook) * rateB / 1e18, "reserve B = shares x rate");
     }
 }

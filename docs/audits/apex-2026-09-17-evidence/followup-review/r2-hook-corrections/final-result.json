@@ -1,0 +1,14 @@
+{
+  "completedAt": "2026-09-25T15:16:13.485285+00:00",
+  "exitCode": 0,
+  "testSuites": 20,
+  "testsPassed": 25,
+  "testsFailed": 0,
+  "testsSkipped": 0,
+  "sourceHashesVerified": true,
+  "sourceManifest": "/tmp/apex-r2-hook-corrections/source-manifest.json",
+  "log": "/tmp/apex-review-accounting-red-run/r2-hook-corrections-evidence/compile-and-focused.log",
+  "command": "/tmp/apex-review-accounting-red-run/r2-hook-corrections-evidence/command.json",
+  "focusedForgeCommand": "/tmp/apex-review-accounting-red-run/r2-hook-corrections-evidence/focused-forge-command.json",
+  "initialNoMatchRunExcludedFromValidation": true
+}

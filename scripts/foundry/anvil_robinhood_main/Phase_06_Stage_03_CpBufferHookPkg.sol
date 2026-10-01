@@ -48,7 +48,7 @@ library Phase_06_Stage_03_CpBufferHookPkg {
         s.cpHookPkg = reg.deployPkg(
             initCode_,
             initArgs_,
-            ArtifactCreationCode.releaseSalt(abi.encode(type(ICpHookPkg).name, FixtureEconomics.SALT_NS)._hash(), initCode_, initArgs_)
+            ArtifactCreationCode.releaseSalt(abi.encode("UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg")._hash())
         );
     }
 }

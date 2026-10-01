@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "families": [
+    "UniswapV2",
+    "CamelotV2",
+    "Aerodrome"
+  ],
+  "deterministicLifecycles": 3,
+  "invariantCampaigns": 3,
+  "runsPerCampaign": 256,
+  "depthPerRun": 64,
+  "callsPerCampaign": 16384,
+  "totalCalls": 49152,
+  "outerReverts": 0,
+  "sourceHashesUnchanged": true,
+  "log": "/tmp/apex-review-cp-validation/campaigns.log",
+  "logSha256": "ed7cf9a633ede70648829435c45a9cfe97aa26486c86daaa050be3f89f85c039",
+  "patch": "/tmp/apex-r11-cp-overlay/review.patch",
+  "patchSha256": "6319f70ce4c9225db1e5fad14c5b2b4bb896e2c6399b25c2832d95f2f7da9afd"
+}

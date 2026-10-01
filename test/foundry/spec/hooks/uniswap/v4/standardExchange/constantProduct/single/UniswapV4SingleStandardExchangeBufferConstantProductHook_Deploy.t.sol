@@ -2,6 +2,10 @@
 pragma solidity ^0.8.0;
 
 import {Hooks} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/Hooks.sol";
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IRateProvider} from "@crane/contracts/protocols/dexes/balancer/common/interfaces/IRateProvider.sol";
 import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {IERC20Permit} from "@crane/contracts/interfaces/IERC20Permit.sol";
 import {IERC5267} from "@crane/contracts/interfaces/IERC5267.sol";
@@ -139,7 +143,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Deploy_Test is
         hookPkg.processArgs(abi.encode(args));
     }
 
-    function test_calcSalt_differsWhenPairDecimalsDiffer() public view {
+    function test_calcSalt_differsWhenPairDecimalsDiffer() public {
         IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs memory args =
             _defaultPkgArgs();
         args.pairTokenDecimals = 6;
@@ -176,5 +180,67 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_Deploy_Test is
         assertEq(version, "1", "eip712 version");
         assertEq(chainId, block.chainid, "eip712 chainId");
         assertEq(verifyingContract, hook, "eip712 verifyingContract is hook");
+    }
+
+    /* ------------------------------- D60 rated reserve ------------------------------- */
+
+    /// @notice D60: a buffered pair leg (pairToken != SE) must carry a rate provider.
+    function test_D60_processArgs_bufferedLegWithoutRateProvider_reverts() public {
+        IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs memory args =
+            _defaultPkgArgs();
+        args.rateProvider = address(0);
+        vm.expectRevert(
+            IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.RateProviderRequired.selector
+        );
+        hookPkg.processArgs(abi.encode(args));
+    }
+
+    /// @notice D60: getters expose the configured provider in pool order and by token.
+    function test_D60_rateProviderGetters() public {
+        address rp = _defaultPkgArgs().rateProvider; // idempotent CREATE3 fixture: same provider address
+        assertTrue(rp != address(0), "fixture provider");
+        assertEq(single.rateProvider(address(pairToken)), rp, "by pair token");
+        assertEq(single.rateProvider(se), rp, "by SE");
+        assertEq(single.rateProvider(address(rawToken)), address(0), "raw leg has none");
+        address[] memory rps = single.rateProviders();
+        assertEq(rps.length, 2, "pool order length");
+        assertEq(rps[single.currency0() == address(pairToken) ? 0 : 1], rp, "pool-order slot");
+        assertEq(rps[single.currency0() == address(pairToken) ? 1 : 0], address(0), "raw slot");
+    }
+
+    /// @notice D60: the swap reserve of the pair leg is SE shares held x provider rate, never an SE self-quote.
+    function test_D60_swapReserveIsSharesTimesRate() public {
+        _seedLiveLiquidity();
+        _accrueYield(37 ether);
+        uint256 shares = IERC20(se).balanceOf(hook);
+        uint256 rate = IRateProvider(single.rateProvider(se)).getRate();
+        assertGt(rate, 1e18, "yield raised the rate");
+        assertEq(single.seClaimSupply(), shares * rate / 1e18, "reserve = shares x rate");
+        // The BasicVault reserve is the snapshot written at the last operation; it catches up on the next sync.
+        _depositBoth(1 ether, 1 ether);
+        assertEq(single.seClaimSupply(), IBasicVault(hook).reserveOfToken(address(pairToken)), "vault reserve view after sync");
+    }
+
+    /// @notice D60 liquidity invariant: LP minted for the pair leg follows the raw SE share ratio,
+    ///         independent of the provider rate (linear rating), so joins are proportional in raw balances.
+    function test_D60_proportionalJoinFollowsShareRatioAfterRateChange() public {
+        _seedLiveLiquidity();
+        _accrueYield(50 ether);
+        uint256 sharesBefore = IERC20(se).balanceOf(hook);
+        uint256 pairIn = 10 ether;
+        uint256 sharesIn = IStandardExchangeIn(se).previewExchangeIn(IERC20(address(pairToken)), pairIn, IERC20(se));
+        // Over-offer raw so the pair leg binds the clamp.
+        uint256 lp = _depositBoth(1_000 ether, pairIn);
+        // The join accrues the protocol-fee LP for the rate growth first; measure against the supply it joined.
+        uint256 supplyJoined = IERC20(hook).totalSupply() - lp;
+        uint256 expected = sharesIn * supplyJoined / sharesBefore;
+        assertApproxEqRel(lp, expected, 0.0001e18, "LP follows dShares / shares");
+        assertEq(IERC20(se).balanceOf(hook), sharesBefore + sharesIn, "shares buffered");
+    }
+
+    function _accrueYield(uint256 assets) private {
+        pairToken.mint(address(this), assets);
+        pairToken.approve(address(pairProtocolVault), assets);
+        pairProtocolVault.simulateYield(assets);
     }
 }

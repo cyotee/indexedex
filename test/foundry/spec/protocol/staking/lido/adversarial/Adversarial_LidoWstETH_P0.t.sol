@@ -12,16 +12,15 @@ import {ILidoWstETHStandardVault, ILidoWstETHRebalance} from
 import {IStandardExchangeErrors} from "@crane/contracts/interfaces/IStandardExchangeErrors.sol";
 import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
+import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
 import {IVaultFeeOracleManager} from "contracts/interfaces/IVaultFeeOracleManager.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {HostileWETH} from "contracts/protocols/staking/lido/test/hermetic/HostileWETH.sol";
 import {
     HermeticStETH,
     HermeticWstETH,
     HermeticWithdrawalQueue
 } from "contracts/protocols/staking/lido/test/hermetic/HermeticLidoPorts.sol";
-import {
-    LidoWstETHStandardExchangeCommon
-} from "contracts/protocols/staking/lido/LidoWstETHStandardExchangeCommon.sol";
 import {
     LidoWstETHStandardExchangeInTarget
 } from "contracts/protocols/staking/lido/LidoWstETHStandardExchangeInTarget.sol";
@@ -49,11 +48,7 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
 
         uint256 fakeIn = 1 ether;
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                LidoWstETHStandardExchangeCommon.InsufficientDeposit.selector, fakeIn, 0
-            )
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         seIn.exchangeIn(
             IERC20(address(hermeticWeth)),
             fakeIn,
@@ -70,7 +65,7 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
 
         // Cannot exchangeOut steal sleeve without shares
         vm.prank(attacker);
-        vm.expectRevert(); // burn fails / insufficient shares
+        vm.expectRevert(abi.encodeWithSignature("Panic(uint256)", 0x11)); // checked burn rejects missing shares
         seOut.exchangeOut(
             IERC20(seVault),
             type(uint256).max,
@@ -81,6 +76,24 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
             block.timestamp + 1 hours
         );
         assertEq(lidoSe.liquidReserveEth(), sleeveBefore);
+        assertEq(IERC20(seVault).totalSupply(), supplyBefore);
+        assertEq(IERC20(seVault).balanceOf(attacker), attackerBefore);
+
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        _dealWeth(victim, 2 ether);
+        vm.prank(victim);
+        hermeticWeth.approve(address(caller), 2 ether);
+        uint256 minted = abi.decode(caller.consumePull(IERC20(address(hermeticWeth)), victim, seVault, 2 ether,
+            abi.encodeCall(IStandardExchangeIn.exchangeIn,
+                (IERC20(address(hermeticWeth)), 2 ether, IERC20(seVault), 1, address(caller), false, block.timestamp + 1 hours))), (uint256));
+        assertGt(minted, 0);
+        assertEq(hermeticWeth.balanceOf(victim), 0);
+        uint256 burned = abi.decode(caller.execute(seVault, abi.encodeCall(IStandardExchangeOut.exchangeOut,
+            (IERC20(seVault), minted, IERC20(address(hermeticWeth)), 1 ether, victim, false, block.timestamp + 1 hours))), (uint256));
+        assertGt(burned, 0);
+        assertEq(IERC20(seVault).balanceOf(address(caller)), minted - burned);
+        assertEq(hermeticWeth.balanceOf(victim), 1 ether);
+        assertEq(lidoSe.liquidReserveEth(), sleeveBefore + 1 ether);
     }
 
     /// @dev A1: donate WETH does not grant free SE shares
@@ -230,7 +243,7 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
         seRebalance.rebalance(); // claim once
 
         vm.prank(seVault);
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("Error(string)", "claimed"));
         hermeticQueue.claimWithdrawal(reqId);
     }
 
@@ -534,11 +547,7 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
         assertEq(hermeticWeth.allowance(attacker, seVault), 0, "no allowance");
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                LidoWstETHStandardExchangeCommon.InsufficientDeposit.selector, claimed, uint256(0)
-            )
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         seIn.exchangeIn(
             IERC20(address(hermeticWeth)),
             claimed,
@@ -549,13 +558,28 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
             block.timestamp + 1 hours
         );
 
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed, uint256(0))
+        );
+        seIn.exchangeIn(
+            IERC20(address(hermeticWeth)),
+            claimed,
+            IERC20(seVault),
+            0,
+            address(caller),
+            true,
+            block.timestamp + 1 hours
+        );
+
         assertEq(IERC20(seVault).totalSupply(), supplyBefore, "I1: no free vaultShare");
         assertEq(IERC20(seVault).balanceOf(attacker), attackerSharesBefore, "I1: attacker shares unchanged");
         assertEq(hermeticWeth.balanceOf(seVault), invBefore, "I1: inventory unchanged");
     }
 
     /// @notice I2: short prior push then claim more with pretransferred=true.
-    ///         Same-tx snapshot is after the push, so observed delta=0 → InsufficientDeposit(claimed, 0).
+    ///         Unbooked available is the short push; claiming more reverts TransferDeltaInsufficient.
     function test_I2_shortPush_pretransferred_claimedGtDelta_reverts() public {
         _seedVaultInventory(5 ether, 5 ether);
         uint256 claimed = 1 ether;
@@ -571,17 +595,28 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
         assertEq(hermeticWeth.allowance(attacker, seVault), 0, "I2: no in-call allowance");
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                LidoWstETHStandardExchangeCommon.InsufficientDeposit.selector, claimed, uint256(0)
-            )
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         seIn.exchangeIn(
             IERC20(address(hermeticWeth)),
             claimed,
             IERC20(seVault),
             0,
             attacker,
+            true,
+            block.timestamp + 1 hours
+        );
+
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claimed, shortPush)
+        );
+        seIn.exchangeIn(
+            IERC20(address(hermeticWeth)),
+            claimed,
+            IERC20(seVault),
+            0,
+            address(caller),
             true,
             block.timestamp + 1 hours
         );
@@ -619,17 +654,28 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
         assertEq(hermeticWeth.allowance(attacker, seVault), 0, "I3: no allowance");
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                LidoWstETHStandardExchangeCommon.InsufficientDeposit.selector, claim, uint256(0)
-            )
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         seIn.exchangeIn(
             IERC20(address(hermeticWeth)),
             claim,
             IERC20(seVault),
             0,
             attacker,
+            true,
+            block.timestamp + 1 hours
+        );
+
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        vm.prank(address(caller));
+        vm.expectRevert(
+            abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, claim, uint256(0))
+        );
+        seIn.exchangeIn(
+            IERC20(address(hermeticWeth)),
+            claim,
+            IERC20(seVault),
+            0,
+            address(caller),
             true,
             block.timestamp + 1 hours
         );
@@ -713,11 +759,7 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
         assertGt(previewOut_, 0, "J3 previewExchangeOut live on proxy");
 
         vm.prank(attacker);
-        vm.expectRevert(
-            abi.encodeWithSelector(
-                LidoWstETHStandardExchangeCommon.InsufficientDeposit.selector, uint256(1 ether), uint256(0)
-            )
-        );
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         IStandardExchangeIn(seVault).exchangeIn(
             IERC20(address(hermeticWeth)), 1 ether, IERC20(seVault), 0, attacker, true, block.timestamp + 1 hours
         );
@@ -728,6 +770,206 @@ contract Adversarial_LidoWstETH_P0_Test is TestBase_LidoWstETHStandardExchange {
         );
 
         seRebalance.rebalance();
+    }
+
+    /* ---------------------------------------------------------------------- */
+    /*  APEX-2026-005 / D47: LocalCreditLib, EOA, capacity                     */
+    /* ---------------------------------------------------------------------- */
+
+    function test_APEX005_eoaPretransferRejected() public {
+        _seedVaultInventory(5 ether, 5 ether);
+        _dealWeth(attacker, 1 ether);
+        vm.prank(attacker);
+        hermeticWeth.transfer(seVault, 1 ether);
+        vm.prank(attacker);
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
+        seIn.exchangeIn(
+            IERC20(address(hermeticWeth)),
+            1 ether,
+            IERC20(seVault),
+            0,
+            attacker,
+            true,
+            block.timestamp + 1 hours
+        );
+    }
+
+    function test_APEX005_atomicExactInCreditsRequestedOnly() public {
+        _seedVaultInventory(5 ether, 5 ether);
+        uint256 amountIn = 1 ether;
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        _dealWeth(address(this), amountIn);
+        hermeticWeth.approve(address(caller), amountIn);
+        uint256 sleeveBefore = lidoSe.liquidReserveEth();
+        uint256 shares = abi.decode(
+            caller.consumePretransfer(
+                IERC20(address(hermeticWeth)),
+                address(this),
+                seVault,
+                amountIn,
+                abi.encodeWithSelector(
+                    IStandardExchangeIn.exchangeIn.selector,
+                    IERC20(address(hermeticWeth)),
+                    amountIn,
+                    IERC20(seVault),
+                    0,
+                    address(caller),
+                    true,
+                    block.timestamp + 1 hours
+                )
+            ),
+            (uint256)
+        );
+        assertGt(shares, 0, "atomic mint");
+        assertEq(lidoSe.liquidReserveEth(), sleeveBefore + amountIn, "credited requested only");
+        assertEq(hermeticWeth.balanceOf(address(caller)), 0, "exact-in refunds nothing");
+    }
+
+    function test_APEX005_exactOutRefundsCreditMinusUsed() public {
+        _seedVaultInventory(5 ether, 5 ether);
+        uint256 sharesOut = 1 ether;
+        uint256 previewUsed = seOut.previewExchangeOut(
+            IERC20(address(hermeticWeth)), IERC20(seVault), sharesOut
+        );
+        assertGt(previewUsed, 0);
+        uint256 fatMax = previewUsed + 2 ether;
+        AtomicPretransferCaller caller = new AtomicPretransferCaller();
+        _dealWeth(address(this), fatMax);
+        hermeticWeth.approve(address(caller), fatMax);
+        uint256 used = abi.decode(
+            caller.consumePretransfer(
+                IERC20(address(hermeticWeth)),
+                address(this),
+                seVault,
+                fatMax,
+                abi.encodeWithSelector(
+                    IStandardExchangeOut.exchangeOut.selector,
+                    IERC20(address(hermeticWeth)),
+                    fatMax,
+                    IERC20(seVault),
+                    sharesOut,
+                    address(caller),
+                    true,
+                    block.timestamp + 1 hours
+                )
+            ),
+            (uint256)
+        );
+        assertLe(used, fatMax, "used within credit");
+        assertEq(IERC20(seVault).balanceOf(address(caller)), sharesOut, "minted exact out");
+        assertEq(hermeticWeth.balanceOf(address(caller)), fatMax - used, "refund credit-used");
+        assertEq(hermeticWeth.balanceOf(address(this)), 0, "payer spent fatMax");
+    }
+
+    function test_APEX_D47_rebalanceSkipsWhenPaused() public {
+        _seedVaultInventory(100 ether, 1 ether);
+        uint256 liquidBefore = lidoSe.liquidReserveEth();
+        hermeticStEth.setStakingPaused(true);
+        seRebalance.rebalance();
+        assertEq(lidoSe.liquidReserveEth(), liquidBefore, "paused: no stake");
+        hermeticStEth.setStakingPaused(false);
+        seRebalance.rebalance();
+        assertLt(lidoSe.liquidReserveEth(), liquidBefore, "unpaused: stakes excess");
+    }
+
+    function test_APEX_D47_rebalancePartialCapacity() public {
+        _seedVaultInventory(100 ether, 1 ether);
+        uint256 liquidBefore = lidoSe.liquidReserveEth();
+        hermeticStEth.setStakeLimit(10 ether);
+        seRebalance.rebalance();
+        assertEq(lidoSe.liquidReserveEth(), liquidBefore - 10 ether, "stake min(excess, capacity)");
+        assertEq(hermeticStEth.getCurrentStakeLimit(), 0);
+    }
+
+    function test_APEX_D47_exchangeInEthSeSharePartialCapacity() public {
+        _seedVaultInventory(5 ether, 5 ether);
+        hermeticStEth.setStakeLimit(3 ether);
+        uint256 liquidBefore = lidoSe.liquidReserveEth();
+        uint256 lockedBefore = lidoSe.lockedReserveEth();
+        vm.deal(address(this), 10 ether);
+        uint256 shares = LidoWstETHStandardExchangeInTarget(payable(seVault)).exchangeInEth{value: 10 ether}(
+            IERC20(seVault), 0, address(this), block.timestamp + 1 hours
+        );
+        assertGt(shares, 0);
+        assertEq(lidoSe.liquidReserveEth(), liquidBefore + 7 ether, "unstaked remainder to WETH sleeve");
+        assertEq(lidoSe.lockedReserveEth(), lockedBefore + 3 ether, "staked amount locked");
+        assertEq(address(seVault).balance, 0, "no leftover native");
+    }
+
+    function test_APEX_D47_exchangeInEthSeSharePaused_wrapsAllNoSubmit() public {
+        _seedVaultInventory(5 ether, 5 ether);
+        hermeticStEth.setStakingPaused(true);
+        uint256 liquidBefore = lidoSe.liquidReserveEth();
+        uint256 lockedBefore = lidoSe.lockedReserveEth();
+        uint256 preview = seIn.previewExchangeIn(IERC20(address(hermeticWeth)), 100 ether, IERC20(seVault));
+        vm.deal(address(this), 100 ether);
+        uint256 shares = LidoWstETHStandardExchangeInTarget(payable(seVault)).exchangeInEth{value: 100 ether}(
+            IERC20(seVault), 0, address(this), block.timestamp + 1 hours
+        );
+        assertEq(shares, preview, "mints on the full 100 like the WETH preview");
+        assertEq(lidoSe.liquidReserveEth(), liquidBefore + 100 ether, "all 100 wrapped into the sleeve");
+        assertEq(lidoSe.lockedReserveEth(), lockedBefore, "no submit while paused");
+        assertEq(address(seVault).balance, 0, "no leftover native");
+    }
+
+    function test_APEX_D47_exchangeInEthSeShareOpen_stakesAll() public {
+        _seedVaultInventory(5 ether, 5 ether);
+        hermeticStEth.setStakeLimit(100 ether);
+        uint256 liquidBefore = lidoSe.liquidReserveEth();
+        uint256 lockedBefore = lidoSe.lockedReserveEth();
+        vm.deal(address(this), 100 ether);
+        LidoWstETHStandardExchangeInTarget(payable(seVault)).exchangeInEth{value: 100 ether}(
+            IERC20(seVault), 0, address(this), block.timestamp + 1 hours
+        );
+        assertEq(lidoSe.liquidReserveEth(), liquidBefore, "sleeve unchanged");
+        assertEq(lidoSe.lockedReserveEth(), lockedBefore + 100 ether, "all 100 staked");
+        assertEq(hermeticStEth.getCurrentStakeLimit(), 0, "exactly one submit of 100 consumed the limit");
+    }
+
+    function test_APEX_D47_exchangeInEthStEthOut_hardRevertWhenPaused() public {
+        _seedVaultInventory(5 ether, 5 ether);
+        hermeticStEth.setStakingPaused(true);
+        vm.deal(address(this), 1 ether);
+        vm.expectRevert(bytes("STAKING_PAUSED"));
+        LidoWstETHStandardExchangeInTarget(payable(seVault)).exchangeInEth{value: 1 ether}(
+            IERC20(address(hermeticStEth)), 0, address(this), block.timestamp + 1 hours
+        );
+    }
+
+    function test_APEX_D47_wethToSeDoesNotStake() public {
+        hermeticStEth.setStakingPaused(true);
+        uint256 amount = 2 ether;
+        _dealWeth(address(this), amount);
+        hermeticWeth.approve(seVault, amount);
+        uint256 shares = seIn.exchangeIn(
+            IERC20(address(hermeticWeth)),
+            amount,
+            IERC20(seVault),
+            0,
+            address(this),
+            false,
+            block.timestamp + 1 hours
+        );
+        assertGt(shares, 0);
+        assertEq(lidoSe.liquidReserveEth(), amount);
+        assertEq(hermeticWstEth.balanceOf(seVault), 0);
+    }
+
+    function test_APEX_D47_wethToStEthHardRevertWhenPaused() public {
+        hermeticStEth.setStakingPaused(true);
+        uint256 amount = 1 ether;
+        _dealWeth(address(this), amount);
+        hermeticWeth.approve(seVault, amount);
+        vm.expectRevert(bytes("STAKING_PAUSED"));
+        seIn.exchangeIn(
+            IERC20(address(hermeticWeth)),
+            amount,
+            IERC20(address(hermeticStEth)),
+            0,
+            address(this),
+            false,
+            block.timestamp + 1 hours
+        );
     }
 }
 

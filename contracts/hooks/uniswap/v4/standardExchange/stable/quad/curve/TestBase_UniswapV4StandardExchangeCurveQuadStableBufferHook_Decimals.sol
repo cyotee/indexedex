@@ -50,6 +50,7 @@ import {
     UniswapV4StandardExchangeCurveQuadStableBufferHookPairPoolLib as PairPoolLib
 } from "contracts/hooks/uniswap/v4/standardExchange/stable/quad/curve/UniswapV4StandardExchangeCurveQuadStableBufferHookPairPoolLib.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 import {
     IUniswapV4HookStagedPairInit
 } from "contracts/hooks/uniswap/v4/interfaces/IUniswapV4HookStagedPairInit.sol";
@@ -177,7 +178,7 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook_De
 
         IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgInit memory init;
         init.vaultRegistryDeployment = IVaultRegistryDeployment(address(indexedexManager));
-        init.joinQueryFacet = PkgFactory.deployJoinQueryFacet(create3Factory);
+        init.joinQueryFacet = PkgFactory.deployLiquidityFacetExt(create3Factory);
         init.vaultFeeOracleQuery = IVaultFeeOracleQuery(address(indexedexManager));
         init.liquidityFacet = PkgFactory.deployLiquidityFacet(create3Factory);
         init.exitFacet = PkgFactory.deployExitFacet(create3Factory);
@@ -189,19 +190,7 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook_De
         init.multiAssetBasicVaultFacet = multiAssetBasicVaultFacet;
         init.multiAssetStandardVaultFacet = multiAssetStandardVaultFacet;
         init.multiStepOwnableFacet = multiStepOwnableFacet;
-        hookPkg = PkgFactory.deployPackage(
-            IVaultRegistryDeployment(address(indexedexManager)),
-            owner,
-            init,
-            abi.encode(
-                type(IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage).name,
-                "v1",
-                _dec0(),
-                _dec1(),
-                _dec2(),
-                _dec3()
-            )._hash()
-        );
+        hookPkg = PkgFactory.deployPackage(IVaultRegistryDeployment(address(indexedexManager)), owner, init);
     }
 
     function _raw(MintableERC20Decimals t, uint256 human) internal view returns (uint256) {
@@ -317,7 +306,6 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook_De
 
     function _defaultPkgArgs()
         internal
-        view
         returns (IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgArgs memory)
     {
         address[4] memory toks;
@@ -336,7 +324,7 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook_De
             feeOracle: address(indexedexManager),
             tokens: toks,
             standardExchanges: ses,
-            rateProviders: rps,
+            rateProviders: RateProviderFixtureLib.providersFor4(create3Factory, diamondPackageFactory, toks, ses),
             tokenDecimals: HookPkgArgsDecimalsLib.tokenDecimals4(toks),
             seDecimals: HookPkgArgsDecimalsLib.seDecimals4(ses),
             baseAmp: DEFAULT_BASE_AMP,
@@ -426,7 +414,6 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook_De
 
     function _argsSeCount(uint8 seCount)
         internal
-        view
         returns (IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgArgs memory a)
     {
         require(seCount >= 1 && seCount <= 4, "seCount");
@@ -445,6 +432,7 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook_De
         a.owner = _pkgOwner();
         a.tokenDecimals = HookPkgArgsDecimalsLib.tokenDecimals4(a.tokens);
         a.seDecimals = HookPkgArgsDecimalsLib.seDecimals4(a.standardExchanges);
+        a.rateProviders = RateProviderFixtureLib.providersFor4(create3Factory, diamondPackageFactory, a.tokens, a.standardExchanges); // D60
     }
 
     function _pkgArgs(
@@ -452,15 +440,15 @@ abstract contract TestBase_UniswapV4StandardExchangeCurveQuadStableBufferHook_De
         address[4] memory ses,
         address[4] memory rps,
         uint256 baseAmp
-    ) internal view returns (IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgArgs memory a) {
+    ) internal returns (IUniswapV4StandardExchangeCurveQuadStableBufferHookPackage.PkgArgs memory a) {
         a.poolManager = address(pm);
         a.feeOracle = address(indexedexManager);
         a.tokens = toks;
         a.standardExchanges = ses;
-        a.rateProviders = rps;
         a.baseAmp = baseAmp;
         a.tokenDecimals = HookPkgArgsDecimalsLib.tokenDecimals4(a.tokens);
         a.seDecimals = HookPkgArgsDecimalsLib.seDecimals4(a.standardExchanges);
+        a.rateProviders = RateProviderFixtureLib.fillMissing4(create3Factory, diamondPackageFactory, a.tokens, a.standardExchanges, rps); // D60: caller-supplied providers kept
         a.ownerOnlyLiquidity = _pkgOwnerOnlyLiquidity();
         a.owner = _pkgOwner();
     }

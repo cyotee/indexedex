@@ -9,6 +9,7 @@ import {
 import {IBalancerV3Pool} from "@crane/contracts/interfaces/protocols/dexes/balancer/v3/IBalancerV3Pool.sol";
 import {FixedPoint} from "@crane/contracts/external/balancer/v3/solidity-utils/contracts/math/FixedPoint.sol";
 import {StableMath} from "@crane/contracts/external/balancer/v3/solidity-utils/contracts/math/StableMath.sol";
+import {BalancerV3StableBufferPoolQuoteTarget} from "contracts/protocols/dexes/balancer/v3/pools/stable/BalancerV3StableBufferPoolQuoteTarget.sol";
 
 import {
     IMixedBufferMultiVaultStablePool
@@ -24,8 +25,21 @@ import {
  * @title MixedBufferMultiVaultStablePoolTarget
  * @notice StableMath onSwap / invariant / computeBalance over math balances + package amp.
  */
-contract MixedBufferMultiVaultStablePoolTarget is MixedBufferMultiVaultStablePoolCommon, IBalancerV3Pool {
+contract MixedBufferMultiVaultStablePoolTarget is MixedBufferMultiVaultStablePoolCommon, IBalancerV3Pool, BalancerV3StableBufferPoolQuoteTarget {
     using FixedPoint for uint256;
+
+    function _stableBufferQuoteState() internal view override returns (StableBufferQuoteState memory q) {
+        (q.amp,) = Repo._getAmplificationParameter();
+        q.bufferIndex = Repo._bufferIndex();
+        q.virtualBuffer = Repo._virtualBuffer();
+        uint256 n = Repo._vaultCount();
+        q.shareIndices = new uint256[](n);
+        q.hookShareDeltas = new int256[](n);
+        for (uint256 i; i < n; ++i) {
+            q.shareIndices[i] = Repo._shareIndex(i);
+            q.hookShareDeltas[i] = Repo._hookShareDelta(i);
+        }
+    }
 
     function computeInvariant(uint256[] memory balancesLiveScaled18, Rounding rounding)
         public

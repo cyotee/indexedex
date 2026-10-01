@@ -26,6 +26,7 @@ battlechain
 bech
 BERC
 betterconsole
+bffe
 bignumber
 Boba
 bootstrapper
@@ -44,6 +45,7 @@ calldatasize
 chainid
 Chainlink
 cheatcode
+checkpointing
 checksummed
 CHIR
 claimliquidity
@@ -51,9 +53,11 @@ CMLT
 Codehash
 collateralized
 constprodreserve
+consultable
 contractlist
 contractlists
 cooldown
+cooldowns
 copyignored
 copyleft
 copymodified
@@ -93,6 +97,7 @@ dont
 drawio
 drpc
 ECLP
+edffed
 EIGHTYK
 endswith
 ERC
@@ -100,10 +105,13 @@ esbuild
 Ethena
 ethskills
 eventsource
+executability
 FAKEGAS
 Farcaster
 fastmcp
 FBAL
+ffeid
+ffej
 FIFTYK
 FIVEHUNDREDM
 FIVEK
@@ -147,6 +155,7 @@ inheritdoc
 Initcode
 initer
 interfaceid
+interleavings
 IRBAC
 IRICHIR
 IRICHIRDF
@@ -157,6 +166,7 @@ jridgewell
 jumpdest
 keccak
 keypair
+kimi
 Kleros
 knownfee
 kroki
@@ -167,6 +177,7 @@ LLAMMA
 lookback
 LPWD
 LUSD
+LXQMGVW
 Merkle
 micropayment
 micropayments
@@ -188,6 +199,7 @@ NFTID
 nohup
 nomicfoundation
 noncirculating
+noncompounding
 Nonfungible
 nullglob
 nums
@@ -204,6 +216,7 @@ OZIERC
 Pachira
 PACHIRAV
 pathtoroot
+payables
 Perc
 Percs
 permissioned
@@ -235,7 +248,9 @@ Reentrancy
 refetches
 reimplementation
 remappings
+remediations
 remint
+representability
 returndatacopy
 returndatasize
 revdate
@@ -257,11 +272,14 @@ Sighash
 slashable
 Slava
 SLOAD
+SNET
 solady
 Solana
 solhint
 solmate
 solskill
+Sourcify's
+spendability
 SRBT
 SSLOAD
 SSTORE
@@ -275,6 +293,8 @@ struct
 subcourt
 subcourts
 subexpression
+subshare
+subshares
 Superchain
 supersim
 Superteam
@@ -296,7 +316,9 @@ tokenlists
 tokenomic
 Tokenomics
 toplevel
+touchpoints
 Trunc
+Ttpr
 TWAP
 TWENTYK
 TWOB
@@ -306,15 +328,20 @@ uints
 unaliased
 unbond
 unboosted
+Undeployed
 underdelivers
 underlyings
 ungated
 Unichain
 UNISWAPV
+unminted
+unmodelled
+unstake
 unstaked
 unvested
 unwindable
 uqdiv
+USDG
 usedapp
 viem
 virality
@@ -332,6 +359,9 @@ Workstream
 Workstreams
 worktree
 worktrees
+WSNET
 WSYS
 YOURHANDLE
+zapin
 zapout
+ZZUSMs

@@ -18,8 +18,6 @@ import {
  * @dev Production-first N=1 open-threshold DETF + Aerodrome SE leg. Handler try/catch pattern
  *      from BufferPool L3 gold. Complements adversarial P0/P1 (does not replace catalog cases).
  */
-/// forge-config: default.invariant.runs = 24
-/// forge-config: default.invariant.depth = 10
 abstract contract MultiVaultWeightedDetfInvariant_Decimals is TestBase_MultiVaultWeightedDetf_Decimals, IMultiVaultInvHost_Decimals {
     Handler_MultiVaultWeightedDetf internal handler;
     address internal invInstanceAddr;

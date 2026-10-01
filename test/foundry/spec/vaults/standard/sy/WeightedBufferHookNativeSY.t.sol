@@ -10,6 +10,7 @@ import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchang
 import {IStandardizedYield} from "@crane/contracts/protocols/perps/pendle/interfaces/IStandardizedYield.sol";
 import {Math} from "@crane/contracts/utils/Math.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 import {TestBase_UniswapV4StandardExchangeWeightedBufferHook} from "test/foundry/spec/hooks/uniswap/v4/standardExchange/weighted/TestBase_UniswapV4StandardExchangeWeightedBufferHook.sol";
 
 contract WeightedBufferHookNativeSYTest is TestBase_UniswapV4StandardExchangeWeightedBufferHook {
@@ -128,9 +129,24 @@ contract WeightedBufferHookNativeSYTest is TestBase_UniswapV4StandardExchangeWei
         vm.expectRevert();
         sy_.redeem(user, 1 ether, se0, type(uint256).max, false);
         IERC20(se0).transfer(hook, 1 ether);
-        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1 ether, 0));
+        vm.expectRevert(ISecurePullErrors.EOAPretransferNotAllowed.selector);
         IStandardExchangeIn(hook).exchangeIn(IERC20(se0), 1 ether, IERC20(hook), 0, user, true, block.timestamp);
         vm.stopPrank();
+        AtomicPretransferCaller atomic = new AtomicPretransferCaller();
+        vm.expectRevert(abi.encodeWithSelector(ISecurePullErrors.TransferDeltaInsufficient.selector, 1 ether, 0));
+        atomic.execute(
+            hook,
+            abi.encodeWithSelector(
+                IStandardExchangeIn.exchangeIn.selector,
+                IERC20(se0),
+                uint256(1 ether),
+                IERC20(hook),
+                uint256(0),
+                address(atomic),
+                true,
+                block.timestamp
+            )
+        );
         assertEq(IERC20(se0).balanceOf(user), before_ - 1 ether);
         assertEq(sy_.balanceOf(user), shares_);
     }

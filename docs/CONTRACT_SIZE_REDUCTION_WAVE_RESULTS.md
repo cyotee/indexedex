@@ -109,3 +109,6 @@
 | Uni V4 OutExecutionDelegate | CREATE3 helper contract (not Facet) for zap-out body; still ≤ EIP-170. |
 | Weighted DETF compound self-calls | `IWeightedDetfCompoundSelf(address(this))` instead of `this.fn()` so Common does not declare external compound entrypoints. |
 | Stack-too-deep | Aerodrome DFPkg multi-arg deploy path removed; PkgInit-only. Nested external Math call sites use temps / keep tiny helpers `internal`. |
+
+
+> 2026-09-21 (APEX open item 4): the weighted and curve-quad `JoinFacet` / `JoinQueryFacet` artifacts were retired. Their selector sets are served by the thinned `LiquidityFacet` and the `LiquidityFacetExt` split from the APEX D19 remediation, which the launch scripts install.

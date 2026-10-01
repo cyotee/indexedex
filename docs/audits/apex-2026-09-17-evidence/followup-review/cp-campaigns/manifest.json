@@ -1,0 +1,27 @@
+[
+  {
+    "path": "test/foundry/spec/vaults/standard/exchange/invariant/ConstantProductAccountingHandler.sol",
+    "beforeSha256": null,
+    "overlaySha256": "0487c55acada9c207b3e0cea04cc2e5b839952c87170d9807ce65e20d7abea1e"
+  },
+  {
+    "path": "test/foundry/spec/protocol/dexes/uniswap/v2/invariant/UniswapV2StandardExchange_AccountingInvariant.t.sol",
+    "beforeSha256": null,
+    "overlaySha256": "b18d5fd8a50d088889c5326d092c5c4aa26db5416583ff34fd64200381b1c49a"
+  },
+  {
+    "path": "test/foundry/spec/protocol/dexes/camelot/v2/invariant/CamelotV2StandardExchange_AccountingInvariant.t.sol",
+    "beforeSha256": null,
+    "overlaySha256": "8ff17d0cb41502b196fcd8039c7150438816e21efa6b509258dcce460d4e9198"
+  },
+  {
+    "path": "test/foundry/spec/protocol/dexes/aerodrome/v1/invariant/AerodromeStandardExchange.invariant.t.sol",
+    "beforeSha256": "fcaeb21410c63105bcd937362c868747b983c556f5cb22ce3a5ce1316b424153",
+    "overlaySha256": "840e21c3ef3ab20eb599e3048d615193ced693f2d1f7525c13f639f708dbf532"
+  },
+  {
+    "path": "test/foundry/spec/protocol/dexes/aerodrome/v1/invariant/Handler_AerodromeStandardExchange.sol",
+    "beforeSha256": "bccb626194bb66523be45f1b7fe1e3190cb68102343e84b3ae5fe62dd7c27a43",
+    "overlaySha256": "bf7c9425c799fea7e42eb011aaccdb3d7c79db3c63058efb0e3da2ee679c67de"
+  }
+]

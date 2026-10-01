@@ -46,6 +46,7 @@ import {
     UniswapV4SingleStandardExchangeBufferConstantProductHookInitFacet
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/facets/UniswapV4SingleStandardExchangeBufferConstantProductHookInitFacet.sol";
 import {HookPkgArgsDecimalsLib} from "contracts/test/libs/HookPkgArgsDecimalsLib.sol";
+import {RateProviderFixtureLib} from "contracts/test/libs/RateProviderFixtureLib.sol";
 import {
     UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg
 } from "contracts/hooks/uniswap/v4/standardExchange/constantProduct/single/UniswapV4SingleStandardExchangeBufferConstantProductHookDFPkg.sol";
@@ -421,7 +422,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_StagedInit_Tes
         init.deployPair(t0, t1);
         assertTrue(init.finalizeInitialization());
         PoolKey memory key = PairPoolLib.pairKey(t0, t1, 60, IHooks(h));
-        vm.expectRevert();
+        vm.expectRevert(abi.encodeWithSignature("WrappedError(address,bytes4,bytes,bytes)", h, bytes4(keccak256("beforeInitialize(address,(address,address,uint24,int24,address),uint160)")), abi.encodeWithSignature("AlreadyInitialized()"), abi.encodeWithSignature("HookCallFailed()")));
         pm.initialize(key, TickMath.getSqrtPriceAtTick(0));
 
         vm.prank(address(pm));
@@ -467,7 +468,7 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_StagedInit_Tes
 
     function _pkgArgs(address se_, address raw_, address pair_)
         internal
-        view
+
         returns (IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs memory)
     {
         return IUniswapV4SingleStandardExchangeBufferConstantProductHookPackage.PkgArgs({
@@ -479,7 +480,8 @@ contract UniswapV4SingleStandardExchangeBufferConstantProductHook_StagedInit_Tes
             pairTokenDecimals: HookPkgArgsDecimalsLib.tokenDec(pair_),
             rawTokenDecimals: raw_.code.length == 0 ? uint8(18) : HookPkgArgsDecimalsLib.tokenDec(raw_),
             ownerOnlyLiquidity: _pkgOwnerOnlyLiquidity(),
-            owner: _pkgOwner()
+            owner: _pkgOwner(),
+            rateProvider: RateProviderFixtureLib.providerForCp(create3Factory, diamondPackageFactory, se_, pair_) // D60
         });
     }
 

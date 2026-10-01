@@ -45,6 +45,7 @@ abstract contract AaveCrossVersionLoopE2E_Decimals is TestBase_AaveCrossVersionL
         IFacet outFacet = create3Factory.deployExchangeOutFacet();
         IFacet rebalFacet = create3Factory.deployRebalanceFacet();
         IFacet markerFacet = create3Factory.deployMarkerFacet();
+        IFacet transitionQuoteFacet = create3Factory.deployTransitionQuoteFacet();
 
         IAaveCrossVersionLoopDFPkg.PkgInit memory pkgInit = IAaveCrossVersionLoopDFPkg.PkgInit({
             erc20Facet: erc20Facet,
@@ -56,6 +57,7 @@ abstract contract AaveCrossVersionLoopE2E_Decimals is TestBase_AaveCrossVersionL
             exchangeOutFacet: outFacet,
             rebalanceFacet: rebalFacet,
             markerFacet: markerFacet,
+            transitionQuoteFacet: transitionQuoteFacet,
             v36Pool: v36Pool,
             v36AddressesProvider: IPoolAddressesProvider(v36AddressesProvider),
             v36Oracle: IAaveOracle(v36Oracle),

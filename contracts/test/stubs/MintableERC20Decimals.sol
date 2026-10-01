@@ -42,7 +42,7 @@ contract MintableERC20Decimals is IERC20 {
         emit Transfer(address(0), to, amount);
     }
 
-    function approve(address spender, uint256 amount) external override returns (bool) {
+    function approve(address spender, uint256 amount) external virtual override returns (bool) {
         allowance[msg.sender][spender] = amount;
         emit Approval(msg.sender, spender, amount);
         return true;

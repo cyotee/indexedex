@@ -89,10 +89,18 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Deploy is TestBase {
         hookPkg.processArgs(abi.encode(args));
     }
 
-    function test_reject_rpWithoutSE() public {
+    /// @dev D60: a rate provider may be configured on any leg; a raw leg with one is accepted.
+    function test_accept_rpOnRawLeg() public {
         IPkg.PkgArgs memory args = _defaultPkgArgs();
         args.rateProviders[1] = address(new RateProviderMock());
-        vm.expectRevert(IPkg.RateProviderWithoutSE.selector);
+        hookPkg.processArgs(abi.encode(args));
+    }
+
+    /// @dev D60: a leg that declares a Standard Exchange must carry a rate provider.
+    function test_reject_seWithoutRp() public {
+        IPkg.PkgArgs memory args = _defaultPkgArgs();
+        args.rateProviders[0] = address(0);
+        vm.expectRevert(IPkg.RateProviderRequired.selector);
         hookPkg.processArgs(abi.encode(args));
     }
 
@@ -175,7 +183,7 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Deploy is TestBase {
         hookPkg.processArgs(abi.encode(args));
     }
 
-    function test_calcSalt_differsWhenTokenDecimalsDiffer() public view {
+    function test_calcSalt_differsWhenTokenDecimalsDiffer() public {
         IPkg.PkgArgs memory args = _defaultPkgArgs();
         args.tokenDecimals[0] = 6;
         bytes32 salt6 = hookPkg.calcSalt(abi.encode(args));
@@ -186,7 +194,7 @@ contract UniswapV4StandardExchangeCurveQuadStableBufferHook_Deploy is TestBase {
 
     function _emptySelfLegArgs(address emptySelf)
         internal
-        view
+
         returns (IPkg.PkgArgs memory)
     {
         address[4] memory toks;

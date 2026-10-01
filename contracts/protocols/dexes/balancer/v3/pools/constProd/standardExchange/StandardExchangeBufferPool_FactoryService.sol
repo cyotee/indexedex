@@ -67,6 +67,19 @@ library StandardExchangeBufferPool_FactoryService {
         vm.label(address(instance), "StandardExchangeHookFacet");
     }
 
+    /**
+     * @notice Deploy the shared IStandardExchangeTransitionQuote facet (D68, mandatory).
+     * @dev Verbatim across all six Balancer V3 buffer-pool SE families; wire into
+     *      PkgInit.transitionQuoteFacet - the package reverts if it is codeless.
+     */
+    function deployTransitionQuoteFacet(ICreate3FactoryProxy create3Factory) internal returns (IFacet instance) {
+        instance = create3Factory.deployFacet(
+            ArtifactCreationCode.creationCode("BalancerV3PoolStandardExchangeTransitionQuoteFacet.sol:BalancerV3PoolStandardExchangeTransitionQuoteFacet"),
+            abi.encode("BalancerV3PoolStandardExchangeTransitionQuoteFacet")._hash()
+        );
+        vm.label(address(instance), "BalancerV3PoolStandardExchangeTransitionQuoteFacet");
+    }
+
     /* ---------------------------------------------------------------------- */
     /*                            Package Deployment                          */
     /* ---------------------------------------------------------------------- */

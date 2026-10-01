@@ -2,6 +2,8 @@
 pragma solidity ^0.8.0;
 
 import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+import {IStandardExchangeIn} from "contracts/interfaces/IStandardExchangeIn.sol";
+import {AtomicPretransferCaller} from "contracts/test/stubs/AtomicPretransferCaller.sol";
 
 import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
 import {ERC20PermitMintableStub} from "@crane/contracts/tokens/ERC20/ERC20PermitMintableStub.sol";
@@ -18,6 +20,34 @@ contract UniswapV3StandardExchange_Previews_Test is TestBase_UniswapV3StandardEx
     IUniswapV3Pool internal pool;
     IStandardExchangeProxy internal vault;
     address internal alice = makeAddr("alice");
+
+    function _atomicExchangeIn(IERC20 tokenIn, IERC20 tokenOut, uint256 amountIn)
+        private
+        returns (uint256 executed, address atomicAddr)
+    {
+        AtomicPretransferCaller atomic = new AtomicPretransferCaller();
+        atomicAddr = address(atomic);
+        tokenIn.approve(atomicAddr, amountIn);
+        executed = abi.decode(
+            atomic.consumePretransfer(
+                tokenIn,
+                alice,
+                address(vault),
+                amountIn,
+                abi.encodeWithSelector(
+                    IStandardExchangeIn.exchangeIn.selector,
+                    tokenIn,
+                    amountIn,
+                    tokenOut,
+                    uint256(0),
+                    atomicAddr,
+                    true,
+                    block.timestamp + 1
+                )
+            ),
+            (uint256)
+        );
+    }
 
     /// @dev Caller has already funded/approved token0 and is pranking as alice.
     function _activateWithFundedToken0(uint256 amount0, uint256 amount1) internal returns (uint256 shares) {
@@ -202,9 +232,7 @@ contract UniswapV3StandardExchange_Previews_Test is TestBase_UniswapV3StandardEx
 
         ERC20PermitMintableStub(token0).mint(alice, amountIn);
         vm.startPrank(alice);
-        IERC20(token0).transfer(address(vault), amountIn);
-        uint256 executed =
-            vault.exchangeIn(IERC20(token0), amountIn, IERC20(token1), 0, alice, true, block.timestamp + 1);
+        (uint256 executed,) = _atomicExchangeIn(IERC20(token0), IERC20(token1), amountIn);
         vm.stopPrank();
 
         assertEq(preview, executed, "P-PRE-01");

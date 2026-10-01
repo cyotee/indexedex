@@ -17,6 +17,7 @@ import {ReentrancyLockModifiers} from "@crane/contracts/access/reentrancy/Reentr
 
 import {IStandardExchangeOut} from "@crane/contracts/interfaces/IStandardExchangeOut.sol";
 import {ISecurePullErrors} from "contracts/interfaces/ISecurePullErrors.sol";
+import {LocalCreditLib} from "contracts/utils/LocalCreditLib.sol";
 import {SlipstreamPoolAwareRepo} from "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamPoolAwareRepo.sol";
 import {SlipstreamVaultRepo} from "contracts/vaults/slipstream/SlipstreamVaultRepo.sol";
 import {SlipstreamStandardExchangeCommon} from "contracts/protocols/dexes/aerodrome/slipstream/SlipstreamStandardExchangeCommon.sol";
@@ -81,11 +82,11 @@ contract SlipstreamStandardExchangeOutTarget is SlipstreamStandardExchangeCommon
             amountIn = _quoteSwapOut(address(tokenIn), address(tokenOut), amountOut);
             if (amountIn > maxAmountIn) revert SlipstreamExchangeOut_InsufficientOutput();
 
-            uint256 balBefore = tokenIn.balanceOf(address(this));
+            uint256 credit = pretransferred ? _pretransferCredit(tokenIn, maxAmountIn) : 0;
             _secureTokenTransfer(tokenIn, amountIn, pretransferred);
-            uint256 inbound = tokenIn.balanceOf(address(this)) - balBefore;
             _swap(address(tokenIn), address(tokenOut), amountIn, amountOut, recipient);
-            _refundExcess(tokenIn, maxAmountIn, amountIn, inbound, pretransferred, msg.sender);
+            _refundExactOutCredit(tokenIn, credit, amountIn, pretransferred);
+            _syncAllExpectedHoldReserves();
             return amountIn;
         }
 
@@ -174,24 +175,23 @@ contract SlipstreamStandardExchangeOutTarget is SlipstreamStandardExchangeCommon
         state.actualOut = IERC20(address(tokenOut)).balanceOf(address(this)) - state.outBalanceBefore;
         if (state.actualOut < minAmountOut) revert SlipstreamExchangeOut_SlippageExceeded();
 
-        uint256 selfBefore = IERC20(address(this)).balanceOf(address(this));
         if (pretransferred) {
-            uint256 inbound = IERC20(address(this)).balanceOf(address(this)) - selfBefore;
-            if (sharesBurned > inbound) {
-                revert ISecurePullErrors.TransferDeltaInsufficient(sharesBurned, inbound);
+            LocalCreditLib.requirePretransferCaller(msg.sender);
+            uint256 selfBal = IERC20(address(this)).balanceOf(address(this));
+            uint256 credit = LocalCreditLib.budget(selfBal, maxSharesToBurn);
+            if (sharesBurned > credit) {
+                revert ISecurePullErrors.TransferDeltaInsufficient(sharesBurned, credit);
             }
             ERC20Repo._burn(address(this), sharesBurned);
-            uint256 unused = inbound - sharesBurned;
-            uint256 claimedUnused = maxSharesToBurn > sharesBurned ? maxSharesToBurn - sharesBurned : 0;
-            uint256 refundShares = unused < claimedUnused ? unused : claimedUnused;
-            if (refundShares > 0) {
-                ERC20Repo._transfer(address(this), msg.sender, refundShares);
+            if (credit > sharesBurned) {
+                ERC20Repo._transfer(address(this), msg.sender, credit - sharesBurned);
             }
         } else {
             ERC20Repo._burn(msg.sender, sharesBurned);
         }
 
         IERC20(address(tokenOut)).safeTransfer(recipient, state.actualOut);
+        _syncAllExpectedHoldReserves();
     }
 
     function _burnManagedLiquidity(uint256 sharesBurned, uint256 totalShares)
@@ -246,23 +246,4 @@ contract SlipstreamStandardExchangeOutTarget is SlipstreamStandardExchangeCommon
         amount1 = IERC20(token1).balanceOf(address(this)) - bal1Before;
     }
 
-    /// @dev E6: refund `min(max−used, this-call unused inbound)` only. Never pay booked R.
-    function _refundExcess(
-        IERC20 token,
-        uint256 maxAmount,
-        uint256 usedAmount,
-        uint256 inbound,
-        bool pretransferred,
-        address recipient
-    ) internal {
-        if (!pretransferred || maxAmount <= usedAmount) {
-            return;
-        }
-        uint256 claimedUnused = maxAmount - usedAmount;
-        uint256 unusedInbound = inbound > usedAmount ? inbound - usedAmount : 0;
-        uint256 refund = claimedUnused < unusedInbound ? claimedUnused : unusedInbound;
-        if (refund > 0) {
-            token.safeTransfer(recipient, refund);
-        }
-    }
 }

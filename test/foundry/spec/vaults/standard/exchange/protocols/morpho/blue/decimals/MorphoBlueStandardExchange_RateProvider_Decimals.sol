@@ -10,6 +10,7 @@ import {
     StandardExchangeRateProvider_FactoryService
 } from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/StandardExchangeRateProvider_FactoryService.sol";
 import {IStandardExchangeRateProviderDFPkg} from "contracts/protocols/dexes/balancer/v3/rateProviders/standardExchange/IStandardExchangeRateProviderDFPkg.sol";
+import {IERC20Metadata} from "@crane/contracts/interfaces/IERC20Metadata.sol";
 import {TestBase_MorphoBlueStandardExchange_Decimals} from
     "contracts/vaults/standard/exchange/protocols/morpho/blue/test/bases/TestBase_MorphoBlueStandardExchange_Decimals.sol";
 
@@ -38,8 +39,10 @@ abstract contract MorphoBlueStandardExchange_RateProvider_Decimals is
         return supply < 1 ether ? supply : 1 ether;
     }
 
-    function test_RP0_emptySe_getRateZero() public view {
-        assertEq(rp.getRate(), 0, "RP0 empty");
+    function test_RP0_emptySe_getRateInitialMint() public view {
+        // D60 (2026-09-22): an empty SE publishes its initial mint rate (one whole share per whole target token
+        // at first mint, scaled to 18 decimals of the target) instead of 0, so hooks can price a first buffer.
+        assertEq(rp.getRate(), 10 ** (36 - uint256(IERC20Metadata(address(loanToken)).decimals())), "RP0 empty: initial mint rate");
     }
 
     function _rateFromPreview(uint256 sample, uint256 quote) internal view returns (uint256) {
