@@ -8,6 +8,8 @@
 
 ## 1. Purpose
 
+**Hookless sizing follow-up (2026-10-03):** The owner selected an Aperture-inspired analytic composition refactor, specified in [the Hookless Aperture refactor PRD](UNISWAP_V4_HOOKLESS_APERTURE_OPTIMAL_SWAP_REFACTOR_PRD.md). It preserves this document's ownership, scalar routes, sleeve, funding and protection requirements while replacing the planned Hookless caller-composition refinement algorithm. The owner removed Gate M on 2026-10-04. Vault integration is not waiting on that record. This does not change Pons, public-repair policy, live instances or the current source merely by documentation.
+
 The vault must support productive single-token deposits without waiting for another user to supply the opposite token.
 
 When PoolManager interaction is available, the existing deposit route must:
