@@ -18,6 +18,7 @@ import {IHooks} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IHo
 import {StateLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/StateLibrary.sol";
 import {PoolIdLibrary} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolId.sol";
 import {Math} from "@crane/contracts/utils/Math.sol";
+import {UniswapV4FullSpreadConsumerLiquidityProvider} from "contracts/test/stubs/UniswapV4FullSpreadConsumerLiquidityProvider.sol";
 import {PonsV2BondingCurve} from "@crane/contracts/protocols/launchpads/ponsFamily/v2/PonsV2BondingCurve.sol";
 import {GraduationPhase} from "@crane/contracts/protocols/launchpads/ponsFamily/v2/interfaces/ILaunchpadV2.sol";
 import {IPonsV2LaunchFactory} from "@crane/contracts/protocols/launchpads/ponsFamily/v2/interfaces/ILaunchpadV2.sol";
@@ -119,9 +120,23 @@ abstract contract TestBase_FeeAccrualComposition is TestBase_UniswapV4Detf_Weigh
         assertEq(uint256(pons_.factory.getLaunchedToken(token_).phase), uint256(GraduationPhase.PoolCreated));
         dtf = IERC20Metadata(token_);
         baseKey = PoolKey(Currency.wrap(address(0)), Currency.wrap(token_), record_.poolFee, record_.tickSpacing, IHooks(address(pons_.memeHook)));
+        // Graduation sweeps only the 4.2 ETH threshold. A later 1 ETH composition quote
+        // against that book exceeds the 50 bp bound. Deepen in place; do not widen the bound.
+        _deepenGraduatedBook();
         (uint160 sqrt_,,,) = pm.getSlot0(baseKey.toId());
         uint256 dtfPerEth_ = Math.mulDiv(sqrt_, sqrt_, 1 << 96);
         creationWeth = Math.mulDiv(1e18, 1 << 96, dtfPerEth_);
+    }
+
+    /// @dev Full-range liquidity at the graduated price. 1e21 is enough that a 1 ETH
+    ///      single-sided quote stays inside 50 bp on this tick spacing.
+    function _deepenGraduatedBook() internal {
+        UniswapV4FullSpreadConsumerLiquidityProvider provider = new UniswapV4FullSpreadConsumerLiquidityProvider();
+        uint256 funding = 1_000_000_000_000 ether;
+        vm.deal(address(weth), funding);
+        deal(address(weth), address(provider), funding);
+        deal(address(dtf), address(provider), funding);
+        provider.addV4(pm, baseKey, weth, 10_000_000 ether);
     }
 
     function _dependencies() internal returns (Composition.Dependencies memory d_) {

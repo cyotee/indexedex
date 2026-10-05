@@ -68,9 +68,21 @@ contract StandardExchangeRateProviderFacet is IStandardExchangeRateProvider, IFa
         }
         if (state.length == 0 && address(subject_) == address(layoutStruct.reserveVault)
             && _supportsUnlockContext(address(subject_))) {
-            // Use the same quantity probe as projected rates, at the actual live
-            // context. A zero-share holder snapshot does not impose payout cover.
-            (state,) = IStandardExchangeTransitionQuote(address(subject_)).quoteState(address(layoutStruct.rateTarget), address(0));
+            // Same quantity probe as projected rates when it fits. quoteState is
+            // about 50k and the redemption quote after it is larger. A chain-capped
+            // deposit that cannot pay for both must not burn its remaining stipend
+            // on a snapshot that cannot return. Failure falls through to the live
+            // supply probe instead of reverting.
+            if (gasleft() > 250_000) {
+                uint256 probeGas = gasleft() - 80_000;
+                (bool ok, bytes memory data) = address(subject_).staticcall{gas: probeGas}(
+                    abi.encodeCall(
+                        IStandardExchangeTransitionQuote.quoteState,
+                        (address(layoutStruct.rateTarget), address(0))
+                    )
+                );
+                if (ok && data.length >= 64) (state,) = abi.decode(data, (bytes, uint256));
+            }
         }
         uint256 totalShares = state.length == 0 ? subject_.totalSupply()
             : IStandardExchangeTransitionQuote(address(layoutStruct.reserveVault)).quoteTotalSupply(state);

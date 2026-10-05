@@ -26,6 +26,10 @@ import {IUniswapV4Detf} from
     "contracts/vaults/detf/protocols/dexes/uniswap/v4/detf/interfaces/IUniswapV4Detf.sol";
 import {TestBase_UniswapV4Detf_PonsV2Se} from
     "contracts/test/bases/TestBase_UniswapV4Detf_PonsV2Se.sol";
+import {IPoolManager} from "@crane/contracts/protocols/dexes/uniswap/v4/interfaces/IPoolManager.sol";
+import {IWETH} from "@crane/contracts/interfaces/protocols/tokens/wrappers/weth/v9/IWETH.sol";
+import {UniswapV4FullSpreadConsumerLiquidityProvider} from
+    "contracts/test/stubs/UniswapV4FullSpreadConsumerLiquidityProvider.sol";
 
 /**
  * @title TokenStaking_PonsUv4Detf
@@ -52,6 +56,17 @@ contract TokenStaking_PonsUv4Detf is TestBase_UniswapV4Detf_PonsV2Se {
         args.bondRoutes = routes_;
         args.donateRouteMode = IUniswapV4Detf.RouteTableMode.Custom;
         args.donateRoutes = routes_;
+    }
+
+    /// @dev Graduation leaves a 4.2 ETH book. The two-route deploy quotes a WETH leg
+    ///      that misses 50 bp on that book. Deepen before activation; do not widen the bound.
+    function _activatePonsSe() internal override {
+        UniswapV4FullSpreadConsumerLiquidityProvider provider = new UniswapV4FullSpreadConsumerLiquidityProvider();
+        uint256 funding = 1_000_000_000_000 ether;
+        deal(address(weth), address(provider), funding);
+        deal(launchToken, address(provider), funding);
+        provider.addV4(IPoolManager(address(poolManager)), graduatedPoolKey, IWETH(address(weth)), 10_000_000 ether);
+        super._activatePonsSe();
     }
 
     function setUp() public override {

@@ -46,7 +46,10 @@ contract StandardExchangeStages is TestBase_VaultComponents {
         // Real external protocol implementations at the stage's canonical pins.
         deployCodeTo("UniV2Factory.sol:UniV2Factory", abi.encode(address(this)), RobinhoodCanonicalLib.v2Factory());
         deployCodeTo("UniV2Router02.sol:UniV2Router02", abi.encode(RobinhoodCanonicalLib.v2Factory(), RobinhoodCanonicalLib.weth()), RobinhoodCanonicalLib.v2Router());
-        deployCodeTo("UniswapV3Factory.sol:UniswapV3Factory", RobinhoodCanonicalLib.v3Factory());
+        deployCodeTo(
+            "lib/crane/contracts/protocols/dexes/uniswap/v3/UniswapV3Factory.sol:UniswapV3Factory",
+            RobinhoodCanonicalLib.v3Factory()
+        );
     }
 
     function test_v2Stage_replayAndRegisteredVaultDeposit() public {

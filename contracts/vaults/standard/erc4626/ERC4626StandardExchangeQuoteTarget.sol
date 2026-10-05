@@ -110,7 +110,9 @@ abstract contract ERC4626StandardExchangeQuoteTarget is ERC4626StandardExchangeC
                 amountOut_ = vaultOut_;
             } else {
                 // R14.15: booked local underlying pays first; only the shortfall leaves the vault.
-                amountOut_ = _vaultAssets(q, vaultOut_);
+                // WithdrawExactOut pays the requested assets. Converting the ceiling-rounded
+                // share charge back through floor mulDiv can invent one extra wei.
+                amountOut_ = operation_ == Operation.WithdrawExactOut ? amount_ : _vaultAssets(q, vaultOut_);
                 uint256 fromLocal_ = amountOut_ < q.localUnderlying ? amountOut_ : q.localUnderlying;
                 q.localUnderlying -= fromLocal_;
                 if (amountOut_ > fromLocal_) _vaultTransition(q, Operation.WithdrawExactOut, amountOut_ - fromLocal_);

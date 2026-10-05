@@ -109,7 +109,7 @@ abstract contract TestBase_UniswapV4StandardExchange_PonsV2 is TestBase_UniswapV
     }
 
     /// @dev Activate the SE with actual graduated launch tokens and wrapped ETH before single-token routes.
-    function _activatePonsSe() internal {
+    function _activatePonsSe() internal virtual {
         uint256 quote_ = 0.001 ether;
         _wrapWeth(address(this), quote_);
         address[] memory tokens_ = ponsSe.vaultTokens();

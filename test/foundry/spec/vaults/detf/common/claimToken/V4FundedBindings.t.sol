@@ -377,7 +377,7 @@ contract OrbitalV4PositionFundedBindingTest is TestBase_UniswapV4Detf_Orbital_Un
         emit log_named_uint("Standard exact-input redemption quote gas", start_ - gasleft());
         start_ = gasleft();
         (bytes memory state_,) = ITransition(se_).quoteState(token_, detfInfo.hook());
-        (, uint256 projected_,,) = ITransition(se_).quoteTransition(state_, ITransition.Operation.RedeemExactIn, 1 ether);
+        (,, uint256 projected_,) = ITransition(se_).quoteTransition(state_, ITransition.Operation.RedeemExactIn, 1 ether);
         emit log_named_uint("State-based exact-input redemption quote gas", start_ - gasleft());
         assertEq(projected_, shares_, "state-based and standard withdrawal amounts agree");
     }

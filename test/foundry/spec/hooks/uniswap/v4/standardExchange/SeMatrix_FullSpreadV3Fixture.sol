@@ -92,7 +92,9 @@ contract SeMatrix_FullSpreadV3Fixture is SeMatrixFixture {
     ///      returns the existing deployment when the salt is occupied. Creation code is loaded from
     ///      `out/` so the fixture's own runtime stays under EIP-170.
     function _deployFactorySingleton(Ctx memory c) internal {
-        bytes memory code = ArtifactCreationCode.creationCode("UniswapV3Factory.sol:UniswapV3Factory");
+        bytes memory code = ArtifactCreationCode.creationCode(
+            "lib/crane/contracts/protocols/dexes/uniswap/v3/UniswapV3Factory.sol:UniswapV3Factory"
+        );
         address factoryOwner = IMultiStepOwnable(address(c.create3Factory)).owner();
         vm.prank(factoryOwner);
         uniswapV3Factory = IUniswapV3Factory(c.create3Factory.create3(code, FACTORY_SALT));
