@@ -162,12 +162,65 @@ library UniswapV4StandardExchangeOrbitalBufferHookMath {
     }
 
     /// @dev Tiny helper — kept internal so call sites avoid external+nested stack pressure.
+    ///      Partial and projected sphere-NAV callers still pass rated WAD. Do not change
+    ///      this rounding for raw ownership; use the raw helpers below.
     function fullBookUsedWad(uint256 shares, uint256 rWad, uint256 supply)
         internal
         pure
         returns (uint256)
     {
         return (shares * rWad) / supply;
+    }
+
+    /// @dev Floor LP from one raw leg. `contribution` and `incumbent` share units.
+    ///      No rate and no WAD scale. A zero incumbent is not a full-book leg.
+    function rawLegFloorShares(uint256 supply, uint256 contribution, uint256 incumbent)
+        internal
+        pure
+        returns (uint256)
+    {
+        if (supply == 0 || contribution == 0 || incumbent == 0) return 0;
+        return supply.fullMulDiv(contribution, incumbent);
+    }
+
+    /// @dev Ceil inventory that backs `shares` against `incumbent` at `supply`.
+    function rawRequiredInventory(uint256 shares, uint256 incumbent, uint256 supply)
+        internal
+        pure
+        returns (uint256)
+    {
+        if (shares == 0 || supply == 0) return 0;
+        return shares.fullMulDivUp(incumbent, supply);
+    }
+
+    /// @dev `delivered * supply >= shares * incumbent`, overflow-safe.
+    function rawInventoryBacks(uint256 delivered, uint256 supply, uint256 shares, uint256 incumbent)
+        internal
+        pure
+        returns (bool)
+    {
+        if (shares == 0) return true;
+        if (delivered == 0 || supply == 0 || incumbent == 0) return false;
+        return delivered.fullMulDiv(supply, shares) >= incumbent;
+    }
+
+    /// @dev Minimum raw-leg floor mint. Zero on any zero leg. Not a rated ratio.
+    function rawFullBookShares(
+        uint256 supply,
+        uint256 c0,
+        uint256 b0,
+        uint256 c1,
+        uint256 b1,
+        uint256 c2,
+        uint256 b2
+    ) internal pure returns (uint256 shares) {
+        uint256 s0 = rawLegFloorShares(supply, c0, b0);
+        uint256 s1 = rawLegFloorShares(supply, c1, b1);
+        uint256 s2 = rawLegFloorShares(supply, c2, b2);
+        if (s0 == 0 || s1 == 0 || s2 == 0) return 0;
+        shares = s0;
+        if (s1 < shares) shares = s1;
+        if (s2 < shares) shares = s2;
     }
 
     function sphereSpotWeight(uint256 R, uint256 rWad) internal pure returns (uint256) {

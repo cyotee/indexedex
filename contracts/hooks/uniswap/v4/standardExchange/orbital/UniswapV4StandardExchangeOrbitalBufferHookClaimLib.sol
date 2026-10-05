@@ -389,6 +389,18 @@ library UniswapV4StandardExchangeOrbitalBufferHookClaimLib {
         return ratedNative(seBal, getRateFailClosed(rp), se, token);
     }
 
+    /// @notice Shares a face deposit would mint. Zero stays zero — no face-value ownership credit.
+    ///         Identity and raw legs return the face amount. Does not read a rate provider.
+    function previewBufferSharesIn(address se, address token, uint256 amountInRaw)
+        public
+        view
+        returns (uint256 sharesOut)
+    {
+        if (amountInRaw == 0 || se == address(0)) return 0;
+        if (se == token) return amountInRaw;
+        sharesOut = IStandardExchangeIn(se).previewExchangeIn(IERC20(token), amountInRaw, IERC20(se));
+    }
+
     /// @notice Preview claim-in (effective native) from buffering `amountInRaw` pool tokens into SE.
     function previewBufferClaimIn(
         address se,

@@ -22,6 +22,8 @@ library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
         uint256 shares;
         uint256 effective;
         uint256 withdrawn;
+        /// @dev Shares redeemed to pay this leg's last simulated swap output. Zero for a raw leg.
+        uint256 redeemShares;
     }
 
     function preview(uint256 lp, uint256 supply, address tokenOut) external view returns (uint256 amountOut) {
@@ -97,6 +99,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
         }
         uint256 effectiveOut = _saleBudget(legs, from, to, added);
         received = _receiveOutput(output, effectiveOut);
+        legs[to].redeemShares = output.redeemShares;
         if (input.se == address(0)) input.effective += input.withdrawn;
         else {
             input.state = nextInput;
@@ -112,6 +115,7 @@ library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
             uint256 shares = ClaimLib.sharesForNativeUp(effectiveOut, output.rate, output.se, output.asset);
             uint256 cap = output.shares > 1 ? output.shares - 1 : 0;
             if (shares == 0 || shares > cap) revert Math.Drain();
+            output.redeemShares = shares;
             (bytes memory next,, uint256 paid,) = Transition(output.se).quoteTransition(
                 output.state, Transition.Operation.RedeemExactIn, shares
             );
@@ -229,6 +233,8 @@ library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
         uint256 shares;
         uint256[3] offered;
         uint256[3] used;
+        uint256 sharesJ;
+        uint256 sharesK;
     }
 
     /// @notice Plan a ratio zap against the SE state produced by each preceding swap.
@@ -266,26 +272,85 @@ library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
     function _planDeposit(Leg[3] memory legs, DepositQuote memory q, uint256 amount) private view {
         _depositSales(legs, q, amount);
         _depositOutputs(legs, q);
-        uint256[3] memory claims;
-        for (uint8 i; i < 3; ++i) claims[i] = _claimIn(legs[i], q.offered[i]);
-        Math.FullBookArgs memory fb;
-        fb.a0Wad = Math.toWad(claims[0], legs[0].decimals);
-        fb.a1Wad = Math.toWad(claims[1], legs[1].decimals);
-        fb.a2Wad = Math.toWad(claims[2], legs[2].decimals);
-        fb.e0Wad = Math.toWad(legs[0].effective, legs[0].decimals);
-        fb.e1Wad = Math.toWad(legs[1].effective, legs[1].decimals);
-        fb.e2Wad = Math.toWad(legs[2].effective, legs[2].decimals);
-        fb.supply = q.supply;
-        if (fb.supply == 0 || fb.e0Wad == 0 || fb.e1Wad == 0 || fb.e2Wad == 0) return;
-        q.shares = Math.fullBookShares(fb);
+        _planRawTerminal(legs, q);
+    }
+
+    /// @dev Terminal admission after rated swaps. Inventory is the projected post-swap
+    ///      raw book, not live balances and not rated `effective`.
+    function _planRawTerminal(Leg[3] memory legs, DepositQuote memory q) private view {
+        if (q.supply == 0) return;
+        uint256 b0 = _rawHeld(legs[0]);
+        uint256 b1 = _rawHeld(legs[1]);
+        uint256 b2 = _rawHeld(legs[2]);
+        if (b0 == 0 || b1 == 0 || b2 == 0) return;
+        uint256 c0 = _rawOffer(legs[0], q.offered[0]);
+        uint256 c1 = _rawOffer(legs[1], q.offered[1]);
+        uint256 c2 = _rawOffer(legs[2], q.offered[2]);
+        q.shares = Math.rawFullBookShares(q.supply, c0, b0, c1, b1, c2, b2);
         if (q.shares == 0) return;
-        for (uint8 i; i < 3; ++i) {
-            uint256 needed = Math.fromWadFloor(
-                Math.fullBookUsedWad(q.shares, Math.toWad(legs[i].effective, legs[i].decimals), q.supply),
-                legs[i].decimals
-            );
-            q.used[i] = _faceForClaim(legs[i], needed, q.offered[i], claims[i]);
+        q.used[0] = _faceForRawOffer(legs[0], _bufferedRequired(q.shares, b0, q.supply, legs[0], q.offered[0]), q.offered[0]);
+        q.used[1] = _faceForRawOffer(legs[1], _bufferedRequired(q.shares, b1, q.supply, legs[1], q.offered[1]), q.offered[1]);
+        q.used[2] = _faceForRawOffer(legs[2], _bufferedRequired(q.shares, b2, q.supply, legs[2], q.offered[2]), q.offered[2]);
+    }
+
+    function _rawHeld(Leg memory leg) private pure returns (uint256) {
+        if (leg.se == address(0)) return leg.effective;
+        return leg.shares;
+    }
+
+    /// @dev Projected share mint for a terminal face offer. Zero mint is zero credit.
+    function _rawOffer(Leg memory leg, uint256 face) private view returns (uint256 minted) {
+        if (face == 0 || leg.se == address(0) || leg.se == leg.asset) return face;
+        (,, minted,) = Transition(leg.se).quoteTransition(leg.state, Transition.Operation.DepositExactIn, face);
+    }
+
+    /// @dev Live fee-bearing pools can mint a few share wei under the quote. Ask for that
+    ///      cushion only when the offered face already quotes it, so the search cannot revert.
+    function _bufferedRequired(
+        uint256 shares,
+        uint256 incumbent,
+        uint256 supply,
+        Leg memory leg,
+        uint256 offered
+    ) private view returns (uint256) {
+        uint256 required = Math.rawRequiredInventory(shares, incumbent, supply);
+        if (required == 0 || leg.se == address(0) || leg.se == leg.asset) return required;
+        uint256 cushion = 1024;
+        if (required > type(uint256).max - cushion) return required;
+        if (_rawOffer(leg, offered) < required + cushion) return required;
+        return required + cushion;
+    }
+
+    function _faceForRawOffer(Leg memory leg, uint256 required, uint256 available) private view returns (uint256) {
+        if (required == 0) return 0;
+        if (leg.se == address(0) || leg.se == leg.asset) {
+            if (required > available) revert Math.MathDomain();
+            return required;
         }
+        uint256 above = _rawOffer(leg, available);
+        if (above < required || available == 0) revert Math.MathDomain();
+        uint256 low = 1;
+        uint256 high = available;
+        uint256 below;
+        uint256 probes;
+        while (low < high) {
+            uint256 mid = low + (high - low) / 2;
+            if (above > below && probes < 8) {
+                mid = low - 1 + FullMath.mulDiv(required - below, high - low + 1, above - below);
+                mid = FullMath.max(low, FullMath.min(mid, high - 1));
+                unchecked { ++probes; }
+            }
+            uint256 got = _rawOffer(leg, mid);
+            if (got >= required) {
+                high = mid;
+                above = got;
+            } else {
+                low = mid + 1;
+                below = got;
+            }
+        }
+        if (_rawOffer(leg, low) < required) revert Math.MathDomain();
+        return low;
     }
 
     function _depositSales(Leg[3] memory legs, DepositQuote memory q, uint256 amount) private view {
@@ -324,45 +389,16 @@ library UniswapV4StandardExchangeOrbitalBufferHookExitQuoteLib {
     }
 
     function _depositOutputs(Leg[3] memory legs, DepositQuote memory q) private view {
-        // _swap updates both SE snapshots, including exact-out overpayment and
-        // rebalancing. The next swap and LP quote see those updated books.
         if (q.saleJ > 0) {
             legs[q.input].withdrawn = q.saleJ;
             q.offered[q.j] = _swap(legs, q.input, q.j);
+            q.sharesJ = legs[q.j].redeemShares;
         }
         if (q.saleK > 0) {
             legs[q.input].withdrawn = q.saleK;
             q.offered[q.k] = _swap(legs, q.input, q.k);
+            q.sharesK = legs[q.k].redeemShares;
         }
-    }
-
-    function _faceForClaim(Leg memory leg, uint256 desired, uint256 available, uint256 above)
-        private view returns (uint256)
-    {
-        if (desired == 0) return 0;
-        if (above < desired) revert Math.MathDomain();
-        if (leg.se == address(0)) return desired;
-        uint256 low = 1;
-        uint256 high = available;
-        uint256 below;
-        uint256 probes;
-        while (low < high) {
-            uint256 mid = low + (high - low) / 2;
-            if (above > below && probes < 8) {
-                mid = low - 1 + FullMath.mulDiv(desired - below, high - low + 1, above - below);
-                mid = FullMath.max(low, FullMath.min(mid, high - 1));
-                ++probes;
-            }
-            uint256 claim = _claimIn(leg, mid);
-            if (claim >= desired) {
-                high = mid;
-                above = claim;
-            } else {
-                low = mid + 1;
-                below = claim;
-            }
-        }
-        return low;
     }
 
     function _claimIn(Leg memory leg, uint256 amount) private view returns (uint256) {
