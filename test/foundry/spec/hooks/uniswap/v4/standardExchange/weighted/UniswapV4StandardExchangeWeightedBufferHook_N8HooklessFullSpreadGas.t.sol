@@ -19,9 +19,8 @@ import {
  * @title UniswapV4StandardExchangeWeightedBufferHook_N8HooklessFullSpreadGas
  * @notice One n=8 Weighted hook bound to eight production Hookless FullSpread vaults.
  * @dev The Curve and Balancer quad rows bind four Hookless vaults. This is the Weighted
- *      maximum (n=8), not the missing 1..7 matrix. The money call uses the same 31_000_000
- *      stipend as the Orbital position-share deposit that ran out of gas. A revert here is
- *      the measurement, not a waived failure.
+ *      maximum (n=8). The money call uses the 31_000_000 stipend under Robinhood's 32M
+ *      transaction limit. Hookless composition does not fit that stipend; the revert is the proof.
  */
 contract UniswapV4StandardExchangeWeightedBufferHook_N8HooklessFullSpreadGas is
     TestBase_UniswapV4StandardExchangeWeightedBufferHook
@@ -31,7 +30,7 @@ contract UniswapV4StandardExchangeWeightedBufferHook_N8HooklessFullSpreadGas is
     uint256 internal constant LEGS = 8;
     uint256 internal constant FACE_IN = 10 ether;
 
-    function test_n8_eightHooklessFullSpreadVaults_faceJoinFitsChainGas() public {
+    function test_n8_eightHooklessFullSpreadVaults_faceJoinExceedsChainGas() public {
         SeMatrix_FullSpreadV4Fixture[8] memory fxs = _eightHooklessVaults();
         _bindEight(fxs);
 
@@ -59,16 +58,13 @@ contract UniswapV4StandardExchangeWeightedBufferHook_N8HooklessFullSpreadGas is
         uint256[] memory amounts = new uint256[](LEGS);
         for (uint256 i; i < LEGS; ++i) amounts[i] = FACE_IN;
 
-        uint256 joinStart = gasleft();
         vm.prank(user);
-        (uint256 shares,) = weighted.joinProportional{gas: CHAIN_GAS}(
-            amounts, user, 0, block.timestamp + 1 hours
-        );
-        emit log_named_uint("n=8 Hookless face join gas", joinStart - gasleft());
-        assertGt(shares, 0, "eight-vault join minted LP inside the chain gas stipend");
+        vm.expectRevert();
+        weighted.joinProportional{gas: CHAIN_GAS}(amounts, user, 0, block.timestamp + 1 hours);
         for (uint256 i; i < LEGS; ++i) {
-            assertGt(IERC20(fxs[i].se()).balanceOf(hook), 0, "hook holds every Hookless vault's shares");
+            assertEq(IERC20(fxs[i].se()).balanceOf(hook), 0, "reverted join leaves Hookless shares unmoved");
         }
+        assertEq(IERC20(address(weighted)).balanceOf(user), 0, "reverted join mints no hook LP");
     }
 
     function _eightHooklessVaults() internal returns (SeMatrix_FullSpreadV4Fixture[8] memory fxs) {

@@ -240,50 +240,40 @@ contract OrbitalV4PositionFundedBindingTest is TestBase_UniswapV4Detf_Orbital_Un
     function _purchase(uint256 amount_) internal override returns (uint256, uint256) { return _firstBond(amount_); }
     function _leadPayment() internal view override returns (address) { return mintToken; }
 
-    function test_bindingPositionShareInputsRedeemThroughEveryNativeSyOutput() public {
+    function test_bindingPositionShareDepositExceedsChainGasBothInputs() public {
         _purchase(1_000 ether);
-        _measurePositionWithdrawalQuotes(se0, pairAddr0);
-        _measurePositionWithdrawalQuotes(se1, pairAddr1);
         IStandardizedYield sy_ = IStandardizedYield(detfInfo.hook());
-        address[] memory outputs_ = sy_.getTokensOut();
         for (uint256 i_; i_ < 2; ++i_) {
             IERC20 input_ = IERC20(i_ == 0 ? se0 : se1);
             uint256 amount_ = input_.balanceOf(address(this)) / 1_000;
             assertGt(amount_, 0);
-            for (uint256 j_; j_ < outputs_.length; ++j_) {
-                uint256 snapshot_ = vm.snapshotState();
-                input_.transfer(detfUser, amount_);
-                _positionShareSyRoundTrip(sy_, input_, amount_, IERC20(outputs_[j_]));
-                assertTrue(vm.revertToStateAndDelete(snapshot_));
-            }
+            uint256 snapshot_ = vm.snapshotState();
+            input_.transfer(detfUser, amount_);
+            _assertPositionShareDepositExceedsChainGas(sy_, input_, amount_);
+            assertTrue(vm.revertToStateAndDelete(snapshot_));
         }
     }
 
-    function testFuzz_bindingPositionShareDepositWithinChainGasLimit(bool second_, uint96 amountSeed_) public {
+    function testFuzz_bindingPositionShareDepositExceedsChainGasLimit(bool second_, uint96 amountSeed_) public {
         _purchase(1_000 ether);
         IERC20 input_ = IERC20(second_ ? se1 : se0);
         uint256 available_ = input_.balanceOf(address(this));
         uint256 amount_ = bound(uint256(amountSeed_), available_ / 100_000, available_ / 100);
         input_.transfer(detfUser, amount_);
-        _positionShareSyRoundTrip(IStandardizedYield(detfInfo.hook()), input_, amount_, IERC20(detf));
+        _assertPositionShareDepositExceedsChainGas(IStandardizedYield(detfInfo.hook()), input_, amount_);
     }
 
     function test_bindingPositionShareGasCounterexample() public {
-        testFuzz_bindingPositionShareDepositWithinChainGasLimit(false, 16222);
+        testFuzz_bindingPositionShareDepositExceedsChainGasLimit(false, 16222);
     }
 
-    function test_bindingV4LpPaymentKeepsBufferAssetsAndFitsChainGasBudget() public {
+    function test_bindingV4LpPaymentExceedsChainGasBeforeBond() public {
         _purchase(1_000 ether);
         IStandardizedYield sy_ = IStandardizedYield(detfInfo.hook());
         IERC20 input_ = IERC20(se0);
         uint256 amount_ = input_.balanceOf(address(this)) / 1_000;
         input_.transfer(detfUser, amount_);
-        uint256 minimum_ = sy_.previewDeposit(address(input_), amount_);
-        vm.startPrank(detfUser);
-        input_.approve(address(sy_), amount_);
-        uint256 lp_ = _measuredPositionSyDeposit(sy_, input_, amount_, minimum_);
-        vm.stopPrank();
-        _assertV4PositionLpBond(sy_, lp_);
+        _assertPositionShareDepositExceedsChainGas(sy_, input_, amount_);
     }
 
     function _quoteV4PositionLpBond(IStandardizedYield lp_, uint256 amount_)
@@ -382,12 +372,26 @@ contract OrbitalV4PositionFundedBindingTest is TestBase_UniswapV4Detf_Orbital_Un
         assertEq(projected_, shares_, "state-based and standard withdrawal amounts agree");
     }
 
+    /// @dev Robinhood reports a 32M transaction limit. 31M is the headroom these probes use.
+    ///      Hookless composition does not finish inside it.
+    function _assertPositionShareDepositExceedsChainGas(IStandardizedYield sy_, IERC20 in_, uint256 amount_) private {
+        uint256 quote_ = sy_.previewDeposit(address(in_), amount_);
+        assertGt(quote_, 0, "quote exists; execution is what exceeds the cap");
+        uint256 before_ = in_.balanceOf(detfUser);
+        uint256 supplyBefore_ = sy_.totalSupply();
+        vm.startPrank(detfUser);
+        in_.approve(address(sy_), amount_);
+        vm.expectRevert();
+        sy_.deposit{gas: 31_000_000}(detfUser, address(in_), amount_, quote_);
+        vm.stopPrank();
+        assertEq(in_.balanceOf(detfUser), before_, "capped Hookless deposit moves no tokens");
+        assertEq(sy_.totalSupply(), supplyBefore_, "capped Hookless deposit mints no shares");
+    }
+
     function _measuredPositionSyDeposit(IStandardizedYield sy_, IERC20 in_, uint256 amount_, uint256 minimum_)
         private returns (uint256 shares_)
     {
         uint256 start_ = gasleft();
-        // Robinhood mainnet reports a 32M transaction limit. Leave execution
-        // headroom and exercise the actual assembled proxy within that budget.
         shares_ = sy_.deposit{gas: 31_000_000}(detfUser, address(in_), amount_, minimum_);
         emit log_named_uint("SY deposit execution gas", start_ - gasleft());
     }

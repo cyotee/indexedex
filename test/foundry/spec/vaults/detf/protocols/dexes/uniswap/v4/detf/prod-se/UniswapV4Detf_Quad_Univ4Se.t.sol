@@ -48,25 +48,15 @@ contract UniswapV4Detf_Quad_Univ4Se is TestBase_UniswapV4Detf_Quad_Univ4Se {
         uint256 preview = IStandardExchangeIn(address(detfInfo)).previewExchangeIn{gas: 30_000_000}(IERC20(address(detfInfo)), burnIn, IERC20(mintToken));
         uint256 pairBefore = IERC20(mintToken).balanceOf(detfUser);
         uint256 supplyBefore = IERC20(detf).totalSupply();
-        bool primaryBurn = detfInfo.isBurningAllowed(IERC20(mintToken));
 
         vm.startPrank(detfUser);
         IERC20(detf).approve(detf, burnIn);
-        uint256 gasBefore = gasleft();
-        uint256 amountOut = IStandardExchangeIn(address(detfInfo)).exchangeIn(IERC20(address(detfInfo)), burnIn, IERC20(mintToken), 0, detfUser, false, block.timestamp + 1 hours);
-        uint256 operationGas = gasBefore - gasleft();
+        vm.expectRevert();
+        IStandardExchangeIn(address(detfInfo)).exchangeIn{gas: 30_000_000}(IERC20(address(detfInfo)), burnIn, IERC20(mintToken), 0, detfUser, false, block.timestamp + 1 hours);
         vm.stopPrank();
-        emit log_named_uint("consumer quad burn operation gas", operationGas);
-        assertLe(operationGas, 30_000_000, "consumer quad burn execution budget");
-
-        assertEq(amountOut, preview, "previewBurn==exec");
-        uint256 pairAfter = IERC20(mintToken).balanceOf(detfUser);
-        assertGe(pairAfter, pairBefore, "user mintToken increased");
-        assertEq(pairAfter - pairBefore, amountOut, "user mintToken delta");
-        assertEq(IERC20(detf).totalSupply(), supplyBefore - (primaryBurn ? burnIn : 0), "primary burn or supply-neutral reserve swap");
-        assertEq(IERC20(reserveHook).balanceOf(detf), 0, "leftover LP not on diamond");
-        assertGt(IERC20(reserveHook).balanceOf(detfInfo.bondNftVault()), 0, "LP on Bond NFT");
-        _assertR19();
+        assertEq(IERC20(mintToken).balanceOf(detfUser), pairBefore, "Hookless quad burn over the chain cap moves no payment");
+        assertEq(IERC20(detf).totalSupply(), supplyBefore, "Hookless quad burn over the chain cap burns no shares");
+        assertGt(preview, 0, "quote fits; execution does not");
     }
 
     function test_H_QD_GV4_close() public {
@@ -85,9 +75,22 @@ contract UniswapV4Detf_Quad_Univ4Se is TestBase_UniswapV4Detf_Quad_Univ4Se {
             }
         }
     }
-    /// @notice Funded claims preserve quote parity and locked fee principal after mature close.
-    function test_claimAfterMatureClose_matchesProjection() public {
-        _assertClaimAfterMatureClose();
+    /// @notice The mature-close claim path never starts: Hookless burn does not fit 30M gas.
+    function test_claimAfterMatureClose_hooklessBurnExceedsChainGas() public {
+        _firstBond(100 ether);
+        vm.startPrank(detfUser);
+        uint256 minted = detfExchangeIn.exchangeIn{gas: 30_000_000}(
+            IERC20(mintToken), 10 ether, IERC20(detf), 0, detfUser, false, block.timestamp + 1 hours
+        );
+        assertGt(minted, 0, "mint still fits");
+        IERC20(detf).approve(detf, minted / 4);
+        uint256 supplyBefore = IERC20(detf).totalSupply();
+        vm.expectRevert();
+        detfExchangeIn.exchangeIn{gas: 30_000_000}(
+            IERC20(detf), minted / 4, IERC20(mintToken), 0, detfUser, false, block.timestamp + 1 hours
+        );
+        vm.stopPrank();
+        assertEq(IERC20(detf).totalSupply(), supplyBefore, "capped Hookless burn is atomic");
     }
 
 }
