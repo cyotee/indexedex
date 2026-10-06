@@ -385,14 +385,27 @@ library UniswapV4FullSpreadHooklessStandardExchangeVaultAnalyticSwapMath {
 
     function _floorSqrt2048(Types.Uint2048 memory value_) internal pure returns (Types.Uint2048 memory root_, bool ok_) {
         if (_isZeroMag(value_)) return (root_, true);
+        // A one-limb value is a uint256. Newton's floor root matches the digit walk and
+        // avoids 64 empty high-digit searches. Those searches were the consumer OOG.
+        if (_higherLimbsZero(value_, 0)) {
+            root_.limb[0] = _smallSqrt(value_.limb[0]);
+            return (root_, true);
+        }
+        // Two limbs are a 512-bit integer. Its floor root fits in one limb. Newton
+        // replaces the remaining high-digit walk, which still exceeded 30M on burns.
+        if (_higherLimbsZero(value_, 1)) {
+            root_.limb[0] = _sqrt512(value_.limb[1], value_.limb[0]);
+            return (root_, true);
+        }
         uint256[8] memory value;
         uint256[8] memory remainder;
         uint256[8] memory root;
         uint256[8] memory shifted;
         uint256[8] memory product;
         for (uint256 i; i < 8; ++i) value[i] = value_.limb[i];
+        uint256 start = _firstOccupiedPair(value);
         ok_ = true;
-        for (uint256 pair; pair < PAIR_COUNT; ++pair) {
+        for (uint256 pair = start; pair < PAIR_COUNT; ++pair) {
             if (!_shlBits(remainder, PAIR_BITS) || !_addWordRaw(remainder, _digit32Raw(value, pair))) return (root_, false);
             uint256 digit = _largestDigitRaw(root, remainder, shifted, product);
             if (!_digitProductRaw(root, digit, shifted, product) || _cmp8(product, remainder) > 0) return (root_, false);
@@ -466,6 +479,54 @@ library UniswapV4FullSpreadHooklessStandardExchangeVaultAnalyticSwapMath {
     function _topIndex(uint256[8] memory value_) private pure returns (uint256) {
         for (uint256 i = 8; i > 0; --i) if (value_[i - 1] != 0) return i - 1;
         return 0;
+    }
+
+    function _higherLimbsZero(Types.Uint2048 memory value_, uint256 last_) private pure returns (bool) {
+        for (uint256 i = last_ + 1; i < 8; ++i) if (value_.limb[i] != 0) return false;
+        return true;
+    }
+
+    /// @dev Pair 0 is the highest 32 bits. Starting there still shifts empty remainder limbs.
+    function _firstOccupiedPair(uint256[8] memory value_) private pure returns (uint256 pair_) {
+        for (uint256 limb = 8; limb > 0; --limb) {
+            uint256 word = value_[limb - 1];
+            if (word == 0) continue;
+            uint256 bit = (limb - 1) * 256 + _msb(word);
+            uint256 fromTop = 2047 - bit;
+            return fromTop / PAIR_BITS;
+        }
+        return PAIR_COUNT;
+    }
+
+    function _msb(uint256 value_) private pure returns (uint256 bit_) {
+        if (value_ >= 1 << 128) { value_ >>= 128; bit_ += 128; }
+        if (value_ >= 1 << 64) { value_ >>= 64; bit_ += 64; }
+        if (value_ >= 1 << 32) { value_ >>= 32; bit_ += 32; }
+        if (value_ >= 1 << 16) { value_ >>= 16; bit_ += 16; }
+        if (value_ >= 1 << 8) { value_ >>= 8; bit_ += 8; }
+        if (value_ >= 1 << 4) { value_ >>= 4; bit_ += 4; }
+        if (value_ >= 1 << 2) { value_ >>= 2; bit_ += 2; }
+        if (value_ >= 1 << 1) bit_ += 1;
+    }
+
+    function _sqrt512(uint256 hi_, uint256 lo_) private pure returns (uint256 z_) {
+        if (hi_ == 0) return _smallSqrt(lo_);
+        uint256 low = 1;
+        uint256 rootHi = Math.sqrt(hi_);
+        uint256 high = rootHi == type(uint128).max ? type(uint256).max : (rootHi + 1) << 128;
+        while (low < high) {
+            uint256 mid = low + (high - low + 1) / 2;
+            if (_squareFits512(mid, hi_, lo_)) low = mid;
+            else high = mid - 1;
+        }
+        return low;
+    }
+
+    function _squareFits512(uint256 z_, uint256 hi_, uint256 lo_) private pure returns (bool) {
+        (uint256 shi, uint256 slo) = Math.mul512(z_, z_);
+        if (shi < hi_) return true;
+        if (shi > hi_) return false;
+        return slo <= lo_;
     }
 
     function _smallSqrt(uint256 value_) private pure returns (uint256 z_) {
