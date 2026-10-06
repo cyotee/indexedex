@@ -1,0 +1,9 @@
+{
+  "passed": 84,
+  "failed": 0,
+  "skipped": 0,
+  "suites": 12,
+  "fuzz_runs": 256,
+  "log": "rebalance-tests.log",
+  "scope": "First rebalance/linking pass; subsequent deficit-restoration and projected-swap engine edits pending"
+}

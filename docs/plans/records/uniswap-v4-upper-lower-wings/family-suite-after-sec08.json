@@ -1,0 +1,12 @@
+{
+  "passed": 139,
+  "failed": 0,
+  "skipped": 0,
+  "suites": 23,
+  "fuzz_runs": 256,
+  "exit": 0,
+  "log": "family-suite-after-sec08.log",
+  "command": "python3 scripts/forge-artifacts.py test --test-root test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings -- --fuzz-runs 256 -vv",
+  "production_sources_changed": false,
+  "release_claim": false
+}

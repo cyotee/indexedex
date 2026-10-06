@@ -1,0 +1,26 @@
+{
+  "source_sha256": {
+    "contracts/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/UniswapV4UpperLowerWingsStandardExchangeVaultAccounting.sol": "0086b2d9aa923bc159e0d5163bb00f7028f91e191df0adf75f39b8f39b1d26bf",
+    "contracts/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/UniswapV4UpperLowerWingsStandardExchangeVaultGeometry.sol": "fa74a8d58b38f20a2bde692e36a0f982e4127b00538ed690a05edde324ed869c",
+    "contracts/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/UniswapV4UpperLowerWingsStandardExchangeVaultInventory.sol": "666a7e5bb19699e8567713e7d2a9b26472c59590a21e67daee3df113cd0f7df6",
+    "contracts/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/UniswapV4UpperLowerWingsStandardExchangeVaultTypes.sol": "52af373e47aee37db942cbb51811020ed585927156b749d4bffc24a6437ecb78",
+    "docs/plans/UNISWAP_V4_UPPER_LOWER_WINGS_STANDARD_EXCHANGE_VAULT_PRD.md": "1f478dd4e6c944439123dd5643301febc998fdcbfe8276cad8bf4fd5bc3742df",
+    "docs/plans/UNISWAP_V4_UPPER_LOWER_WINGS_STANDARD_EXCHANGE_VAULT_PRD.plan.md": "d504ae8bb5448475f2f5cc4ab5e32091661ebc557b3ba693722ac7538da2403d",
+    "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/UniswapV4UpperLowerWingsStandardExchangeVaultGeometry.t.sol": "e9052f5b8ca359dfc323d27477fb62914b1d47fbf15471c0b23ef0d525790b2a",
+    "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/UniswapV4UpperLowerWingsStandardExchangeVaultInventory.t.sol": "12a5e31c8ed53da094ab97bd7775c6ce3d914e8a7280cdef1decb451159867a3",
+    "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/UniswapV4UpperLowerWingsStandardExchangeVaultInventoryVectors.t.sol": "bb7eb3992837e7ab51612140811f1256623f2e1cebdbab02a35085630d35ffe2",
+    "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/UniswapV4UpperLowerWingsStandardExchangeVaultRecoveryValue.t.sol": "1302c459d37d6477bbbc245b87c846c7d49162388d0608af724e639c9f38066b",
+    "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/UniswapV4UpperLowerWingsStandardExchangeVaultSleeve.t.sol": "a60cbdf39932d011a60eb2fd2e99eb88cb2f855bbece18c477a3a5d2b6a637fc",
+    "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/reference/UniswapV4UpperLowerWingsStandardExchangeVaultAccountingReference.t.sol": "4a20f295303a6cdaf54a016b27bb0b21a5e3186addcab3d7aa976a7b0cdb12f1",
+    "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/reference/UniswapV4UpperLowerWingsStandardExchangeVaultInventoryVectors.json": "2fc677eb3d912d713dc27840b3ecdf06e9bac1356666cd645b47935e65003dff",
+    "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/reference/UniswapV4UpperLowerWingsStandardExchangeVaultPoolActor.sol": "ed22988ec7062902ad1ef7ecb7a3af7cc2fe2a24691e2dfb676913f4202db748",
+    "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/reference/UniswapV4UpperLowerWingsStandardExchangeVaultReference.sol": "435156dcd1be33dec90f383a5ae90a01c06f0ea50a9771dc2d690db16a00952d",
+    "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/reference/generate_inventory_vectors.py": "493ec71334cfe2dab988d3e2f3081ee308f1c28e6e1e1e3202a95c47f8eecfde"
+  },
+  "artifact_sha256": {
+    "out/UniswapV4UpperLowerWingsStandardExchangeVaultAccounting.sol/UniswapV4UpperLowerWingsStandardExchangeVaultAccounting.json": "2b1e635767dd04b84dd2811b751d6857db690a8e15ef3cc661b0f02507c91ad3",
+    "out/UniswapV4UpperLowerWingsStandardExchangeVaultGeometry.sol/UniswapV4UpperLowerWingsStandardExchangeVaultGeometry.json": "2c6fba43bc8a41fc6251a8f778e29832b777ee15a369b44d6504931819fb33f1",
+    "out/UniswapV4UpperLowerWingsStandardExchangeVaultInventory.sol/UniswapV4UpperLowerWingsStandardExchangeVaultInventory.json": "e1f64ad73710d1fd9917981506a961cd26bb245ba8fd2680353da2b6bdfd2045",
+    "out/UniswapV4UpperLowerWingsStandardExchangeVaultTypes.sol/UniswapV4UpperLowerWingsStandardExchangeVaultTypes.json": "730b7ec26552691849de2ecfd9d61443cd93dbc2cef707e06ad0f5770fb6a4ee"
+  }
+}

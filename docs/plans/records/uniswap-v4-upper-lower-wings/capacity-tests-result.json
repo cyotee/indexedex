@@ -1,0 +1,9 @@
+{
+  "passed": 80,
+  "failed": 0,
+  "skipped": 0,
+  "suites": 11,
+  "fuzz_runs": 256,
+  "log": "capacity-tests.log",
+  "scope": "Tick-capacity implementation before linked harvest/rebalance changes"
+}

@@ -1,0 +1,61 @@
+{
+  "files": {
+    "contracts/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/UniswapV4UpperLowerWingsStandardExchangeVaultGeometry.sol": "fa74a8d58b38f20a2bde692e36a0f982e4127b00538ed690a05edde324ed869c",
+    "contracts/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/UniswapV4UpperLowerWingsStandardExchangeVaultInventory.sol": "666a7e5bb19699e8567713e7d2a9b26472c59590a21e67daee3df113cd0f7df6",
+    "contracts/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/UniswapV4UpperLowerWingsStandardExchangeVaultTypes.sol": "52af373e47aee37db942cbb51811020ed585927156b749d4bffc24a6437ecb78",
+    "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/UniswapV4UpperLowerWingsStandardExchangeVaultGeometry.t.sol": "e9052f5b8ca359dfc323d27477fb62914b1d47fbf15471c0b23ef0d525790b2a",
+    "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/UniswapV4UpperLowerWingsStandardExchangeVaultInventory.t.sol": "12a5e31c8ed53da094ab97bd7775c6ce3d914e8a7280cdef1decb451159867a3",
+    "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/UniswapV4UpperLowerWingsStandardExchangeVaultInventoryVectors.t.sol": "bb7eb3992837e7ab51612140811f1256623f2e1cebdbab02a35085630d35ffe2",
+    "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/reference/UniswapV4UpperLowerWingsStandardExchangeVaultAccountingReference.t.sol": "9b148110f06915fd1526ac93285267a90635719fa2a2d03d2e09dbf70bf11e84",
+    "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/reference/UniswapV4UpperLowerWingsStandardExchangeVaultInventoryVectors.json": "2fc677eb3d912d713dc27840b3ecdf06e9bac1356666cd645b47935e65003dff",
+    "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/reference/UniswapV4UpperLowerWingsStandardExchangeVaultReference.sol": "435156dcd1be33dec90f383a5ae90a01c06f0ea50a9771dc2d690db16a00952d",
+    "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/reference/generate_inventory_vectors.py": "493ec71334cfe2dab988d3e2f3081ee308f1c28e6e1e1e3202a95c47f8eecfde"
+  },
+  "artifacts": [
+    {
+      "path": "out/UniswapV4UpperLowerWingsStandardExchangeVaultInventory.sol/UniswapV4UpperLowerWingsStandardExchangeVaultInventory.json",
+      "sha256": "e1f64ad73710d1fd9917981506a961cd26bb245ba8fd2680353da2b6bdfd2045",
+      "compiler": {
+        "version": "0.8.35+commit.47b9dedd"
+      },
+      "settings": {
+        "evmVersion": "prague",
+        "optimizer": {
+          "enabled": true,
+          "runs": 1
+        },
+        "viaIR": null
+      }
+    },
+    {
+      "path": "out/UniswapV4UpperLowerWingsStandardExchangeVaultTypes.sol/UniswapV4UpperLowerWingsStandardExchangeVaultTypes.json",
+      "sha256": "730b7ec26552691849de2ecfd9d61443cd93dbc2cef707e06ad0f5770fb6a4ee",
+      "compiler": {
+        "version": "0.8.35+commit.47b9dedd"
+      },
+      "settings": {
+        "evmVersion": "prague",
+        "optimizer": {
+          "enabled": true,
+          "runs": 1
+        },
+        "viaIR": null
+      }
+    },
+    {
+      "path": "out/UniswapV4UpperLowerWingsStandardExchangeVaultGeometry.sol/UniswapV4UpperLowerWingsStandardExchangeVaultGeometry.json",
+      "sha256": "2c6fba43bc8a41fc6251a8f778e29832b777ee15a369b44d6504931819fb33f1",
+      "compiler": {
+        "version": "0.8.35+commit.47b9dedd"
+      },
+      "settings": {
+        "evmVersion": "prague",
+        "optimizer": {
+          "enabled": true,
+          "runs": 1
+        },
+        "viaIR": null
+      }
+    }
+  ]
+}

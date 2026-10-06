@@ -1,0 +1,17 @@
+{
+  "passed": 148,
+  "failed": 0,
+  "skipped": 0,
+  "suites": 26,
+  "fuzz_runs": 256,
+  "exit": 0,
+  "log": "family-suite-complete.log",
+  "controls": {
+    "log": "fullspread-pons-controls.log",
+    "passed": 12,
+    "failed": 0,
+    "suites": 2
+  },
+  "release_claim": false,
+  "deployment": false
+}

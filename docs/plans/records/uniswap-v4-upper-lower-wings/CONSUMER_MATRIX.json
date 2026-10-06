@@ -1,0 +1,340 @@
+{
+  "schema_version": 1,
+  "status": "IN_PROGRESS",
+  "completion_claim": false,
+  "representation": "Finite Cartesian-product domains with explicit predicates; unlisted results are PENDING. Domain enumeration is not execution evidence.",
+  "wings_leg_variants": [
+    {
+      "family": "Wings",
+      "target": 0,
+      "manager_relation": "same"
+    },
+    {
+      "family": "Wings",
+      "target": 0,
+      "manager_relation": "different"
+    },
+    {
+      "family": "Wings",
+      "target": 1,
+      "manager_relation": "same"
+    },
+    {
+      "family": "Wings",
+      "target": 1,
+      "manager_relation": "different"
+    }
+  ],
+  "homogeneous_and_raw_domains": [
+    {
+      "hook": "Weighted",
+      "arity": 2,
+      "per_leg_choices": [
+        "raw",
+        "Wings-target0-same",
+        "Wings-target1-same",
+        "Wings-target0-different",
+        "Wings-target1-different"
+      ],
+      "predicate": "at least one Wings leg; distinct sorted face-token addresses",
+      "ordered_assignment_count": 24,
+      "default_status": "PENDING"
+    },
+    {
+      "hook": "Weighted",
+      "arity": 3,
+      "per_leg_choices": [
+        "raw",
+        "Wings-target0-same",
+        "Wings-target1-same",
+        "Wings-target0-different",
+        "Wings-target1-different"
+      ],
+      "predicate": "at least one Wings leg; distinct sorted face-token addresses",
+      "ordered_assignment_count": 124,
+      "default_status": "PENDING"
+    },
+    {
+      "hook": "Weighted",
+      "arity": 4,
+      "per_leg_choices": [
+        "raw",
+        "Wings-target0-same",
+        "Wings-target1-same",
+        "Wings-target0-different",
+        "Wings-target1-different"
+      ],
+      "predicate": "at least one Wings leg; distinct sorted face-token addresses",
+      "ordered_assignment_count": 624,
+      "default_status": "PENDING"
+    },
+    {
+      "hook": "Weighted",
+      "arity": 5,
+      "per_leg_choices": [
+        "raw",
+        "Wings-target0-same",
+        "Wings-target1-same",
+        "Wings-target0-different",
+        "Wings-target1-different"
+      ],
+      "predicate": "at least one Wings leg; distinct sorted face-token addresses",
+      "ordered_assignment_count": 3124,
+      "default_status": "PENDING"
+    },
+    {
+      "hook": "Weighted",
+      "arity": 6,
+      "per_leg_choices": [
+        "raw",
+        "Wings-target0-same",
+        "Wings-target1-same",
+        "Wings-target0-different",
+        "Wings-target1-different"
+      ],
+      "predicate": "at least one Wings leg; distinct sorted face-token addresses",
+      "ordered_assignment_count": 15624,
+      "default_status": "PENDING"
+    },
+    {
+      "hook": "Weighted",
+      "arity": 7,
+      "per_leg_choices": [
+        "raw",
+        "Wings-target0-same",
+        "Wings-target1-same",
+        "Wings-target0-different",
+        "Wings-target1-different"
+      ],
+      "predicate": "at least one Wings leg; distinct sorted face-token addresses",
+      "ordered_assignment_count": 78124,
+      "default_status": "PENDING"
+    },
+    {
+      "hook": "Weighted",
+      "arity": 8,
+      "per_leg_choices": [
+        "raw",
+        "Wings-target0-same",
+        "Wings-target1-same",
+        "Wings-target0-different",
+        "Wings-target1-different"
+      ],
+      "predicate": "at least one Wings leg; distinct sorted face-token addresses",
+      "ordered_assignment_count": 390624,
+      "default_status": "PENDING"
+    },
+    {
+      "hook": "Orbital",
+      "arity": 3,
+      "per_leg_choices": [
+        "raw",
+        "Wings-target0-same",
+        "Wings-target1-same",
+        "Wings-target0-different",
+        "Wings-target1-different"
+      ],
+      "predicate": "at least one Wings leg; distinct sorted face-token addresses",
+      "ordered_assignment_count": 124,
+      "default_status": "PENDING"
+    },
+    {
+      "hook": "BalancerQuad",
+      "arity": 4,
+      "per_leg_choices": [
+        "raw",
+        "Wings-target0-same",
+        "Wings-target1-same",
+        "Wings-target0-different",
+        "Wings-target1-different"
+      ],
+      "predicate": "at least one Wings leg; distinct sorted face-token addresses",
+      "ordered_assignment_count": 624,
+      "default_status": "PENDING"
+    },
+    {
+      "hook": "CurveQuad",
+      "arity": 4,
+      "per_leg_choices": [
+        "raw",
+        "Wings-target0-same",
+        "Wings-target1-same",
+        "Wings-target0-different",
+        "Wings-target1-different"
+      ],
+      "predicate": "at least one Wings leg; distinct sorted face-token addresses",
+      "ordered_assignment_count": 624,
+      "default_status": "PENDING"
+    },
+    {
+      "hook": "ConstantProductDual",
+      "arity": 2,
+      "per_leg_choices": [
+        "raw",
+        "Wings-target0-same",
+        "Wings-target1-same",
+        "Wings-target0-different",
+        "Wings-target1-different"
+      ],
+      "predicate": "at least one Wings leg; distinct sorted face-token addresses",
+      "ordered_assignment_count": 24,
+      "default_status": "PENDING"
+    }
+  ],
+  "additional_required_domains": [
+    {
+      "name": "constant-product-single",
+      "status": "PENDING",
+      "description": "Wings in the configured buffered leg; both targets and manager relations."
+    },
+    {
+      "name": "mixed-existing-SE-families",
+      "status": "PENDING",
+      "description": "Enumerate eligible concrete family assignments from existing SeMatrix fixtures; no symmetry reduction accepted."
+    },
+    {
+      "name": "funded-DETF",
+      "status": "PENDING",
+      "description": "Mandatory raw DETF leg; weighted total arity<=8 means Wings buffered count<=7; family funded money paths."
+    },
+    {
+      "name": "shared-Wings-PoolKey",
+      "status": "PENDING",
+      "description": "Distinct opposite-target Wings vaults share one underlying pool; sequential cross-vault effects."
+    }
+  ],
+  "fixture_cases": [
+    {
+      "id": "weighted-n2-mask1-manager-same-opposite-targets-shared-key",
+      "test": "UniswapV4UpperLowerWingsStandardExchangeVaultWeightedConsumerTest.test_weightedTwoLegAllBufferedMasksBothManagerRelations",
+      "status": "PASSED",
+      "buffered_mask": 1,
+      "manager_relation": "same",
+      "weights": [
+        "370000000000000000",
+        "630000000000000000"
+      ],
+      "decimals": "6/18, paired with actual canonical address sorting",
+      "routes": [
+        "proportional join",
+        "proportional exit"
+      ]
+    },
+    {
+      "id": "weighted-n2-mask1-manager-different-opposite-targets-shared-key",
+      "test": "UniswapV4UpperLowerWingsStandardExchangeVaultWeightedConsumerTest.test_weightedTwoLegAllBufferedMasksBothManagerRelations",
+      "status": "PASSED",
+      "buffered_mask": 1,
+      "manager_relation": "different",
+      "weights": [
+        "370000000000000000",
+        "630000000000000000"
+      ],
+      "decimals": "6/18, paired with actual canonical address sorting",
+      "routes": [
+        "proportional join",
+        "proportional exit"
+      ]
+    },
+    {
+      "id": "weighted-n2-mask2-manager-same-opposite-targets-shared-key",
+      "test": "UniswapV4UpperLowerWingsStandardExchangeVaultWeightedConsumerTest.test_weightedTwoLegAllBufferedMasksBothManagerRelations",
+      "status": "PASSED",
+      "buffered_mask": 2,
+      "manager_relation": "same",
+      "weights": [
+        "370000000000000000",
+        "630000000000000000"
+      ],
+      "decimals": "6/18, paired with actual canonical address sorting",
+      "routes": [
+        "proportional join",
+        "proportional exit"
+      ]
+    },
+    {
+      "id": "weighted-n2-mask2-manager-different-opposite-targets-shared-key",
+      "test": "UniswapV4UpperLowerWingsStandardExchangeVaultWeightedConsumerTest.test_weightedTwoLegAllBufferedMasksBothManagerRelations",
+      "status": "PASSED",
+      "buffered_mask": 2,
+      "manager_relation": "different",
+      "weights": [
+        "370000000000000000",
+        "630000000000000000"
+      ],
+      "decimals": "6/18, paired with actual canonical address sorting",
+      "routes": [
+        "proportional join",
+        "proportional exit"
+      ]
+    },
+    {
+      "id": "weighted-n2-mask3-manager-same-opposite-targets-shared-key",
+      "test": "UniswapV4UpperLowerWingsStandardExchangeVaultWeightedConsumerTest.test_weightedTwoLegAllBufferedMasksBothManagerRelations",
+      "status": "PASSED",
+      "buffered_mask": 3,
+      "manager_relation": "same",
+      "weights": [
+        "370000000000000000",
+        "630000000000000000"
+      ],
+      "decimals": "6/18, paired with actual canonical address sorting",
+      "routes": [
+        "proportional join",
+        "proportional exit"
+      ]
+    },
+    {
+      "id": "weighted-n2-mask3-manager-different-opposite-targets-shared-key",
+      "test": "UniswapV4UpperLowerWingsStandardExchangeVaultWeightedConsumerTest.test_weightedTwoLegAllBufferedMasksBothManagerRelations",
+      "status": "PASSED",
+      "buffered_mask": 3,
+      "manager_relation": "different",
+      "weights": [
+        "370000000000000000",
+        "630000000000000000"
+      ],
+      "decimals": "6/18, paired with actual canonical address sorting",
+      "routes": [
+        "proportional join",
+        "proportional exit"
+      ]
+    },
+    {
+      "id": "weighted-n3-through-n7-alternating-mask-same-manager",
+      "test": "UniswapV4UpperLowerWingsStandardExchangeVaultWeightedConsumerTest.test_weightedAritiesThreeThroughSevenAlternatingMasks",
+      "status": "PASSED",
+      "evidence": "family-suite-after-sec08.log",
+      "note": "Alternating mask only. Not every legal mask."
+    },
+    {
+      "id": "weighted-n8-homogeneous-both-manager-relations",
+      "test": "UniswapV4UpperLowerWingsStandardExchangeVaultWeightedConsumerTest.test_weightedHomogeneousEightWingsBothManagerRelations",
+      "status": "PASSED",
+      "evidence": "family-suite-after-sec08.log",
+      "note": "Homogeneous eight Wings legs only. Not every eight-leg mask."
+    }
+  ],
+  "exclusions": [
+    {
+      "family": "Slipstream Standard Exchange",
+      "status": "DEPRECATED",
+      "authority": "CLAUDE.md / APEX D57 owner ruling 2026-09-21"
+    },
+    {
+      "cell": "weighted standalone homogeneous eight buffered Wings",
+      "status": "REQUIRED_NOT_EXCLUDED"
+    },
+    {
+      "cell": "funded DETF with eight Wings plus mandatory raw DETF",
+      "status": "INVALID",
+      "reason": "Nine legs exceed weighted arity eight."
+    }
+  ],
+  "executed_evidence": "family-suite-complete.log passed weighted samples plus one Orbital, Curve quad, Balancer quad, single CP, dual CP and funded DETF money path. Cartesian domains above stay PENDING.",
+  "release_blockers": [
+    "Cartesian masks are not individually executed",
+    "Live chain receipts and EIP-7825 activation were not queried",
+    "Independent audit was not performed"
+  ]
+}

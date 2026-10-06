@@ -1,0 +1,25 @@
+{
+  "command": [
+    "python3",
+    "scripts/forge-artifacts.py",
+    "test",
+    "contracts/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/UniswapV4UpperLowerWingsStandardExchangeVaultGeometry.sol",
+    "contracts/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/UniswapV4UpperLowerWingsStandardExchangeVaultInventory.sol",
+    "contracts/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/UniswapV4UpperLowerWingsStandardExchangeVaultTypes.sol",
+    "contracts/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings/UniswapV4UpperLowerWingsStandardExchangeVaultAccounting.sol",
+    "--test-root",
+    "test/foundry/spec/vaults/standard/exchange/protocols/uniswap/v4/upperLowerWings",
+    "--",
+    "--fuzz-runs",
+    "256",
+    "-vv"
+  ],
+  "exit_code": 0,
+  "elapsed_seconds": 330.54,
+  "suites": 6,
+  "passed": 30,
+  "failed": 0,
+  "skipped": 0,
+  "fuzz_properties": 7,
+  "fuzz_runs_per_property": 256
+}
