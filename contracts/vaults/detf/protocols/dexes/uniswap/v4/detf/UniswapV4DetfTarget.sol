@@ -669,15 +669,20 @@ abstract contract UniswapV4DetfTarget is UniswapV4DetfCommon {
     }
 
     function _firstBondPair(address tokenIn_) internal view returns (address pair_) {
+        bool found_;
+        (pair_, found_) = _tryFirstBondPair(tokenIn_);
+        if (!found_) revert Repo.InvalidRoute(tokenIn_, address(this));
+    }
+
+    function _tryFirstBondPair(address tokenIn_) internal view returns (address pair_, bool found_) {
         Repo.Storage storage s = Repo._layoutStruct();
-        if (s.hookPairTokens._contains(tokenIn_)) return tokenIn_;
+        if (s.hookPairTokens._contains(tokenIn_)) return (tokenIn_, true);
         address[] storage pairs_ = s.hookPairTokens._values();
         for (uint256 i; i < pairs_.length; ++i) {
             address se_ = IUniswapV4SeBufferHook(s.hook).standardExchangeOf(pairs_[i]);
-            if (tokenIn_ == se_) return pairs_[i];
+            if (tokenIn_ == se_) return (pairs_[i], true);
         }
-        if (pairs_.length == 1) return pairs_[0];
-        revert Repo.InvalidRoute(tokenIn_, address(this));
+        if (pairs_.length == 1) return (pairs_[0], true);
     }
 
     function _openBondNft(uint256 principal_, uint256 lockDuration_, address recipient_)

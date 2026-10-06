@@ -267,7 +267,9 @@ abstract contract UniswapV4SingleStandardExchangeBufferConstantProductHookDeposi
             q.rawAdded = kept_;
             q.pairAdded = other_;
         } else {
-            (q.state,,, q.pairReserve) = _quoteMintablePairDeposit(q.state, sold_);
+            uint256 minted_;
+            (q.state,, minted_, q.pairReserve) = _quoteMintablePairDeposit(q.state, sold_);
+            if (minted_ == 0) return q;
             q.rawReserve -= other_;
             q.rawAdded = other_;
             q.pairAdded = kept_;

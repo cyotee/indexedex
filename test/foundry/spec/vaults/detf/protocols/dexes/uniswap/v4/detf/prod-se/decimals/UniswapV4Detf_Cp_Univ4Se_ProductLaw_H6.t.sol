@@ -50,10 +50,10 @@ contract UniswapV4Detf_Cp_Univ4Se_ProductLaw_H6 is UniswapV4Detf_Cp_Univ4Se_Prod
         assertTrue(IERC165(se).supportsInterface(type(IStandardExchangeExactOutputQuantityQuote).interfaceId),
             "interface exists despite context restriction");
         (bytes memory state_,) = IStandardExchangeTransitionQuote(se).quoteState(address(pair_), address(0));
-        vm.expectRevert(abi.encodeWithSignature("InvalidRoute(address,address)", address(pair_), se));
-        IStandardExchangeExactOutputQuantityQuote(se).quoteInputForExactShares(state_, 1);
-        vm.expectRevert(abi.encodeWithSignature("AlignmentNotAchievable()"));
-        IStandardExchangeIn(se).previewExchangeIn(pair_, retained_, IERC20(se));
+        assertEq(IStandardExchangeExactOutputQuantityQuote(se).quoteInputForExactShares(state_, 1), 0,
+            "unsupported inverse quotes zero");
+        assertEq(IStandardExchangeIn(se).previewExchangeIn(pair_, retained_, IERC20(se)), 0,
+            "unalignable input quotes zero");
         assertEq(pair_.balanceOf(detf), retained_, "full residual remains in custody");
         assertEq(IBasicVault(detf).reserveOfToken(address(pair_)), retained_, "full residual remains booked");
     }

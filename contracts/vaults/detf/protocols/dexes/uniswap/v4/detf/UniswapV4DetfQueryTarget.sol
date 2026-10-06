@@ -156,23 +156,29 @@ abstract contract UniswapV4DetfQueryTarget is UniswapV4DetfTarget {
     function previewBond(IERC20 tokenIn_, uint256 amountIn_, uint256 lockDuration_) external view
         returns (uint256 purchasedDetf_, uint256 principalDetf_, uint256 rewardsDetf_, uint256 liquidityDetf_)
     {
-        uint256 duration_ = _effectiveLockDuration(lockDuration_);
-        if (amountIn_ == 0) revert Repo.ZeroAmount();
+        if (amountIn_ == 0) return (0, 0, 0, 0);
+        uint256 minLock_ = DETFBondNFTMathLib._bondTerms(address(this)).minLockDuration;
+        uint256 maxLock_ = DETFBondNFTMathLib._bondTerms(address(this)).maxLockDuration;
+        if (lockDuration_ < minLock_) return (0, 0, 0, 0);
+        uint256 duration_ = lockDuration_ > maxLock_ ? maxLock_ : lockDuration_;
         Repo.Storage storage s_ = Repo._layoutStruct();
         if (address(tokenIn_) == s_.hook) {
+            if (!s_.isReserveLive) return (0, 0, 0, 0);
             purchasedDetf_ = _quoteReserveLpBond(amountIn_, duration_);
         } else {
             address pair_;
             IStandardExchange vault_;
             if (!s_.isReserveLive) {
-                pair_ = _firstBondPair(address(tokenIn_));
+                bool found_;
+                (pair_, found_) = _tryFirstBondPair(address(tokenIn_));
+                if (!found_) return (0, 0, 0, 0);
                 vault_ = IStandardExchange(_hook().standardExchangeOf(pair_));
             } else {
-                if (!s_.bondTable.tokens._contains(address(tokenIn_))) {
-                    revert Repo.InvalidRoute(address(tokenIn_), address(this));
-                }
+                if (!s_.bondTable.tokens._contains(address(tokenIn_))) return (0, 0, 0, 0);
                 vault_ = s_.bondTable.vaultOf[address(tokenIn_)];
-                pair_ = _hookPairOfVault(vault_);
+                bool found_;
+                (pair_, found_) = _tryHookPairOfVault(vault_);
+                if (!found_) return (0, 0, 0, 0);
             }
             if (address(tokenIn_) == pair_ || address(tokenIn_) == address(vault_)) {
                 uint256 pairEq_ = _pairEq(vault_, tokenIn_, amountIn_);

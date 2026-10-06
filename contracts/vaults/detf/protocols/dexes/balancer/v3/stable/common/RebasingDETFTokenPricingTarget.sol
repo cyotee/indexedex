@@ -51,10 +51,10 @@ abstract contract RebasingDETFTokenPricingTarget is ComposedStableCommonDetfComm
         return s_.rebasingDetfToken.previewDistributions(pots_).gonsPerUnit;
     }
     function previewExchangeIn(IERC20 in_, uint256 amount_, IERC20 out_) external view returns (uint256) {
-        if (in_ == out_) revert InvalidRoute(address(in_), address(out_));
+        if (in_ == out_) return 0;
         IERC20 staking_ = IERC20(address(Repo._layoutStruct().rebasingDetfToken));
         if ((address(in_) == address(this) && address(out_) == address(staking_)) || (in_ == staking_ && address(out_) == address(this))) return amount_;
-        _requireReservePoolInitialized();
+        if (!_isReserveLive()) return 0;
         if (address(out_) == address(this) || address(out_) == address(staking_)) {
             (RoutedPoolSelection memory path_,,uint256 bpt_) = _previewRoutedPoolBpt(in_, amount_);
             return _previewPrimaryMint() ? _previewMintSplit(bpt_, path_.depositToStablePool).userDetfOut : _quoteReserveSwap(bpt_, path_.depositToStablePool, true);
@@ -63,7 +63,7 @@ abstract contract RebasingDETFTokenPricingTarget is ComposedStableCommonDetfComm
             return _previewPrimaryBurn() ? _previewExitSettle(_bptForDetfShares(amount_, true), out_)
                 : _selectExactInExit(out_, amount_).tokenOutAmountOut;
         }
-        revert InvalidRoute(address(in_), address(out_));
+        return 0;
     }
 
     function previewJoinDonatedCapital(IERC20 token_, uint256 amount_) external view returns (uint256) {

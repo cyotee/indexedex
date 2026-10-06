@@ -149,6 +149,12 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
     }
 
     function _hookPairOfVault(IStandardExchange vault_) internal view returns (address pair_) {
+        bool found_;
+        (pair_, found_) = _tryHookPairOfVault(vault_);
+        if (!found_) revert Repo.InvalidRoute(address(vault_), address(this));
+    }
+
+    function _tryHookPairOfVault(IStandardExchange vault_) internal view returns (address pair_, bool found_) {
         Repo.Storage storage s = Repo._layoutStruct();
         address[] storage pairs_ = s.hookPairTokens._values();
         for (uint256 i; i < pairs_.length; ++i) {
@@ -156,10 +162,9 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
                 address(s.mintTable.vaultOf[pairs_[i]]) == address(vault_)
                     || IUniswapV4SeBufferHook(s.hook).standardExchangeOf(pairs_[i]) == address(vault_)
             ) {
-                return pairs_[i];
+                return (pairs_[i], true);
             }
         }
-        revert Repo.InvalidRoute(address(vault_), address(this));
     }
 
     function _pairEq(IStandardExchange vault_, IERC20 tokenIn_, uint256 amountIn_)
@@ -567,6 +572,7 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
             if (amt_ > before_) amt_ = before_;
             if (amt_ == 0) break;
             if (_retainSubSharePairResidual(token_, amt_)) return true;
+            if (_pairQuoteIsZero(token_, amt_)) return true;
             IERC20(token_).forceApprove(hook_, amt_);
             uint256 lpOut_;
             try IUniswapV4DetfSelfCall(address(this)).joinResidualAtomic(token_, amt_, true) returns (uint256 joined_) {
@@ -574,8 +580,7 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
             } catch (bytes memory reason_) {
                 IERC20(token_).forceApprove(hook_, 0);
                 if (reason_.length == 4 && bytes4(reason_) == IUniswapV4DetfSelfCall.ResidualJoinUnavailable.selector) break;
-                _requireAlignmentFailure(reason_);
-                return true;
+                assembly ("memory-safe") { revert(add(reason_, 32), mload(reason_)) }
             }
             IERC20(token_).forceApprove(hook_, 0);
 
@@ -599,6 +604,7 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
             if (amt_ > before_) amt_ = before_;
             if (amt_ == 0) break;
             if (_retainSubSharePairResidual(token_, amt_)) return true;
+            if (_pairQuoteIsZero(token_, amt_)) return true;
             IERC20(token_).forceApprove(hook_, amt_);
             uint256 lpOut_;
             try IUniswapV4DetfSelfCall(address(this)).joinResidualAtomic(token_, amt_, false) returns (uint256 joined_) {
@@ -606,8 +612,7 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
             } catch (bytes memory reason_) {
                 IERC20(token_).forceApprove(hook_, 0);
                 if (reason_.length == 4 && bytes4(reason_) == IUniswapV4DetfSelfCall.ResidualJoinUnavailable.selector) break;
-                _requireAlignmentFailure(reason_);
-                return true;
+                assembly ("memory-safe") { revert(add(reason_, 32), mload(reason_)) }
             }
             IERC20(token_).forceApprove(hook_, 0);
 
@@ -664,12 +669,7 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
         try IERC165(se_).supportsInterface(type(IStandardExchangeExactOutputQuantityQuote).interfaceId)
             returns (bool supported_) {
             if (!supported_) {
-                try IStandardExchangeIn(se_).previewExchangeIn(IERC20(pair_), amount_, IERC20(se_))
-                    returns (uint256 shares_) {
-                    if (shares_ != 0) return false;
-                } catch {
-                    return false;
-                }
+                if (IStandardExchangeIn(se_).previewExchangeIn(IERC20(pair_), amount_, IERC20(se_)) != 0) return false;
                 MultiAssetBasicVaultRepo._updateReserve(IERC20(pair_), IERC20(pair_).balanceOf(address(this)));
                 return true;
             }
@@ -677,12 +677,8 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
             return false;
         }
         (bytes memory state_,) = IStandardExchangeTransitionQuote(se_).quoteState(pair_, address(0));
-        try IStandardExchangeExactOutputQuantityQuote(se_).quoteInputForExactShares(state_, 1)
-            returns (uint256 minimum_) {
-            if (amount_ >= minimum_) return false;
-        } catch {
-            return false;
-        }
+        uint256 minimum_ = IStandardExchangeExactOutputQuantityQuote(se_).quoteInputForExactShares(state_, 1);
+        if (minimum_ == 0 || amount_ >= minimum_) return false;
         MultiAssetBasicVaultRepo._updateReserve(IERC20(pair_), IERC20(pair_).balanceOf(address(this)));
         return true;
     }
@@ -695,30 +691,17 @@ abstract contract UniswapV4DetfCommon is ReentrancyLockModifiers {
         if (_retainSubSharePairResidual(pair_, amount_)) return true;
         address se_ = IUniswapV4SeBufferHook(Repo._layoutStruct().hook).standardExchangeOf(pair_);
         if (se_ == address(0) || se_ == pair_) return false;
-        bool alignmentRejected_;
-        try IStandardExchangeIn(se_).previewExchangeIn(IERC20(pair_), amount_, IERC20(se_)) returns (uint256 shares_) {
-            if (shares_ != 0) return false;
-        } catch (bytes memory reason_) {
-            // An alignment-protected SE rejects a sub-share input instead of
-            // quoting zero. Only that domain failure can use the existing
-            // independently bounded dust donation; all other failures bubble.
-            _requireAlignmentFailure(reason_);
-            alignmentRejected_ = true;
-        }
-        uint256 quantum_ = IStandardExchangeIn(se_).previewExchangeIn(IERC20(se_), 10, IERC20(pair_));
-        if (quantum_ <= amount_) {
-            if (!alignmentRejected_) return false;
-            MultiAssetBasicVaultRepo._updateReserve(IERC20(pair_), IERC20(pair_).balanceOf(address(this)));
-            return true;
-        }
-        IERC20(pair_).safeTransfer(se_, amount_);
+        if (!_pairQuoteIsZero(pair_, amount_)) return false;
+        MultiAssetBasicVaultRepo._updateReserve(IERC20(pair_), IERC20(pair_).balanceOf(address(this)));
         return true;
     }
 
-    function _requireAlignmentFailure(bytes memory reason_) private pure {
-        if (reason_.length != 4 || bytes4(reason_) != bytes4(keccak256("AlignmentNotAchievable()"))) {
-            assembly ("memory-safe") { revert(add(reason_, 32), mload(reason_)) }
-        }
+    /// @dev A zero vault quote means this amount cannot enter yet. Book it and wait.
+    function _pairQuoteIsZero(address pair_, uint256 amount_) private view returns (bool) {
+        if (amount_ == 0 || !Repo._layoutStruct().hookPairTokens._contains(pair_)) return false;
+        address se_ = IUniswapV4SeBufferHook(Repo._layoutStruct().hook).standardExchangeOf(pair_);
+        if (se_ == address(0) || se_ == pair_) return false;
+        return IStandardExchangeIn(se_).previewExchangeIn(IERC20(pair_), amount_, IERC20(se_)) == 0;
     }
 
     function _parkResidualOnHook(address token_) internal {

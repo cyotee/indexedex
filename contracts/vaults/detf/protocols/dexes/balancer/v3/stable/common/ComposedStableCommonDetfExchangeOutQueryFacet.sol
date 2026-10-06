@@ -24,11 +24,9 @@ contract ComposedStableCommonDetfExchangeOutQueryFacet is
             (address(in_) == address(this) && address(out_) == address(staking_))
                 || (in_ == staking_ && address(out_) == address(this))
         ) return amount_;
-        if (address(in_) != address(this) && address(in_) != address(staking_)) {
-            revert IStandardExchangeOut.ExchangeOutNotAvailable();
-        }
-        if (!_isFamilyBurnToken(out_)) revert InvalidRoute(address(in_), address(out_));
-        _requireReservePoolInitialized();
+        if (address(in_) != address(this) && address(in_) != address(staking_)) return 0;
+        if (!_isFamilyBurnToken(out_)) return 0;
+        if (!_isReserveLive()) return 0;
         return _selectExactOutExit(out_, amount_).detfAmountIn;
     }
 

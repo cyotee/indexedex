@@ -26,9 +26,7 @@ contract UniswapV4FullSpreadPonsFamilyHookInQueryTarget is UniswapV4FullSpreadPo
         if (sharesOut == 0) return 0;
         (uint256 total0, uint256 total1) = _inventoryTotals(q);
         uint256 backingIn = q.token0 ? total0 : total1;
-        if (q.idle || q.supply == 0 || backingIn == 0) {
-            revert IStandardExchangeErrors.InvalidRoute(q.token0 ? _token0() : _token1(), address(this));
-        }
+        if (q.idle || q.supply == 0 || backingIn == 0) return 0;
         return Inventory._blockedInputForShares(backingIn, q.token0 ? total1 : total0, sharesOut, q.supply);
     }
 
@@ -161,16 +159,17 @@ contract UniswapV4FullSpreadPonsFamilyHookInQueryTarget is UniswapV4FullSpreadPo
     }
 
     function _inventoryDeposit(InventoryQuote memory q, uint256 amount) private view returns (uint256 minted) {
-        if (q.supply == 0) revert IStandardExchangeErrors.InvalidRoute(q.token0 ? _token0() : _token1(), address(this));
+        if (q.supply == 0) return 0;
         if (q.idle) {
             Types.Snapshot memory state = _inventoryState(q);
             Types.Plan memory plan = Planner._composition(state, _quoteParams(state, q.token0, 0), amount);
+            if (!plan.valid) return 0;
             minted = plan.shares;
             _storeInventory(q, plan.placement.afterState);
         } else {
             (uint256 reserve0, uint256 reserve1) = _inventoryTotals(q);
             minted = _sharesOutForDeposit(q.token0 ? amount : 0, q.token0 ? 0 : amount, q.supply, reserve0, reserve1);
-            if (minted == 0) revert IStandardExchangeErrors.InvalidRoute(q.token0 ? _token0() : _token1(), address(this));
+            if (minted == 0) return 0;
             if (q.token0) q.free0 += amount; else q.free1 += amount;
             q.supply += minted;
         }

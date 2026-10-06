@@ -546,13 +546,8 @@ abstract contract TestBase_UniswapV4Detf_Decimals is TestBase_ERC4626StandardExc
             }
         }
         if (!subShare_) {
-            try IStandardExchangeIn(se_).previewExchangeIn(IERC20(pair_), retained_, IERC20(se_))
-                returns (uint256 shares_) {
-                if (shares_ != 0) _assertResidualHookAlignment(pair_, retained_);
-            } catch (bytes memory reason_) {
-                assertEq(reason_, abi.encodeWithSignature("AlignmentNotAchievable()"),
-                    "only exact full-input alignment rejection permits retention");
-            }
+            uint256 shares_ = IStandardExchangeIn(se_).previewExchangeIn(IERC20(pair_), retained_, IERC20(se_));
+            if (shares_ != 0) _assertResidualHookAlignment(pair_, retained_);
         }
         assertEq(IBasicVault(detf).reserveOfToken(pair_), retained_, "retained pair fully booked");
     }
@@ -571,12 +566,8 @@ abstract contract TestBase_UniswapV4Detf_Decimals is TestBase_ERC4626StandardExc
                 "unbalanced retention requires exact alignment rejection");
             return;
         }
-        try hook_.previewJoinSingleAssetExactIn(pair_, retained_) returns (uint256) {
-            revert("single-asset retention requires alignment rejection, not a returned quote");
-        } catch (bytes memory reason_) {
-            assertEq(reason_, abi.encodeWithSignature("AlignmentNotAchievable()"),
-                "single-asset retention requires exact alignment rejection");
-        }
+        assertEq(hook_.previewJoinSingleAssetExactIn(pair_, retained_), 0,
+            "single-asset retention is a zero quote");
     }
 
     /// @dev Exercise the actual purchased bond, its funded payout and one-to-one unstaking.

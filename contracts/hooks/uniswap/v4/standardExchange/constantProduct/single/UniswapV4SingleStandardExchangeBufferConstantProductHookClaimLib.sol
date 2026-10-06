@@ -241,20 +241,13 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib {
         return Math.ratedPairUnitsUp(shares, _rateForState(l, state), invScale, ratedScale);
     }
 
-    /// @dev Residual maintenance only. An alignment-rejected remainder stays
-    /// owned locally, just like the existing zero-share residual case.
+    /// @dev Residual maintenance only. A zero quote means the amount cannot enter
+    /// the vault yet and stays owned locally.
     function previewResidualBuffer(uint256 amount) external view returns (uint256 shares) {
         Repo.Layout storage l = Repo._layout();
-        try IStandardExchangeIn(l.standardExchange).previewExchangeIn(
+        return IStandardExchangeIn(l.standardExchange).previewExchangeIn(
             IERC20(l.pairToken), amount, IERC20(l.standardExchange)
-        ) returns (uint256 quoted) {
-            return quoted;
-        } catch (bytes memory reason) {
-            if (reason.length != 4 || bytes4(reason) != bytes4(keccak256("AlignmentNotAchievable()"))) {
-                assembly ("memory-safe") { revert(add(reason, 32), mload(reason)) }
-            }
-            return 0;
-        }
+        );
     }
 
     /// @dev Consume the immediately preceding residual quote without evaluating
@@ -394,7 +387,7 @@ library UniswapV4SingleStandardExchangeBufferConstantProductHookClaimLib {
         returns (bytes memory nextState, uint256 amountIn, uint256 amountOut, uint256 ratedHolderClaimAfter)
     {
         Repo.Layout storage l = Repo._layout();
-        if (amountInRaw == 0 || (!ContextQuote.supported(se) && _previewPairToShares(se, pairToken, amountInRaw) == 0)) {
+        if (amountInRaw == 0 || _previewPairToShares(se, pairToken, amountInRaw) == 0) {
             return (state, 0, 0, _ratedClaimOfState(l, se, state));
         }
         (nextState, amountIn, amountOut,) = IStandardExchangeTransitionQuote(se).quoteTransition(

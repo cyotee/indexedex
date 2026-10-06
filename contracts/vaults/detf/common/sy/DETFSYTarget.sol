@@ -145,7 +145,7 @@ contract DETFSYTarget is IStandardizedYield, ReentrancyLockModifiers {
 
     /// @inheritdoc IStandardizedYield
     function previewDeposit(address tokenIn_, uint256 amount_) external view returns (uint256) {
-        if (!isValidTokenIn(tokenIn_)) revert InvalidToken(tokenIn_);
+        if (!isValidTokenIn(tokenIn_)) return 0;
         Repo.Storage storage s_ = Repo._layoutStruct();
         uint256 detfAmount_ = amount_;
         if (tokenIn_ != address(s_.detf) && !(s_.isStaking && tokenIn_ == address(s_.staking))) {
@@ -160,7 +160,7 @@ contract DETFSYTarget is IStandardizedYield, ReentrancyLockModifiers {
 
     /// @inheritdoc IStandardizedYield
     function previewRedeem(address tokenOut_, uint256 shares_) external view returns (uint256) {
-        if (!isValidTokenOut(tokenOut_)) revert InvalidToken(tokenOut_);
+        if (!isValidTokenOut(tokenOut_)) return 0;
         Repo.Storage storage s_ = Repo._layoutStruct();
         uint256 detfAmount_ = shares_;
         if (s_.isStaking) {

@@ -73,7 +73,7 @@ library UniswapV4FullSpreadPonsFamilyHookTransitionPlanner {
     function _composition(Types.Snapshot memory state_, Quotes.Params memory params_, uint256 credit_)
         public view returns (Types.Plan memory best_)
     {
-        if (!state_.idle || state_.book.supply == 0 || credit_ == 0) revert AlignmentNotAchievable();
+        if (!state_.idle || state_.book.supply == 0 || credit_ == 0) return best_;
         // State free balances exclude caller credit. Collection is modeled exactly once.
         state_ = abi.decode(abi.encode(state_), (Types.Snapshot));
         Inventory._collect(state_.book);
@@ -102,7 +102,7 @@ library UniswapV4FullSpreadPonsFamilyHookTransitionPlanner {
         best_ = _betterComposition(best_, candidate);
         (candidate,) = _compositionCandidate(state_, params_, credit_, high);
         best_ = _betterComposition(best_, candidate);
-        if (!best_.valid) revert AlignmentNotAchievable();
+        if (!best_.valid) return best_;
         best_.refinements = refinements;
         best_.evaluations = evaluations + 2;
     }

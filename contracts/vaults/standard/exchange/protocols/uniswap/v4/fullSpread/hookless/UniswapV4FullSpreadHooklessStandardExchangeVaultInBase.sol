@@ -109,14 +109,13 @@ abstract contract UniswapV4FullSpreadHooklessStandardExchangeVaultInBase is Unis
         }
 
         uint256 totalShares = IERC20(address(this)).totalSupply();
-        if (totalShares == 0) revert IStandardExchangeErrors.InvalidRoute(address(this), tokenOut);
+        if (totalShares == 0) return 0;
 
         // D24: blocked preview models sleeve cover only; free models PM path.
         if (!canOpenPoolManagerUnlock()) {
             uint256 output = _quoteSleeveZapOutAmount(tokenOut, sharesBurned, totalShares);
             uint256 available = _localBalance(tokenOut);
-            if (output > available) revert UniswapV4Exchange_InsufficientLocalReserve(tokenOut, output, available);
-            if (output == 0) revert IStandardExchangeErrors.InvalidRoute(address(this), tokenOut);
+            if (output > available || output == 0) return 0;
             return output;
         }
 
@@ -265,12 +264,15 @@ abstract contract UniswapV4FullSpreadHooklessStandardExchangeVaultInBase is Unis
     function _previewZapInDeposit(address tokenIn, uint256 amountIn) internal view returns (uint256 sharesOut) {
         if (amountIn == 0) return 0;
         Types.Snapshot memory state = _snapshot(0, 0);
-        if (state.book.supply == 0) revert IStandardExchangeErrors.InvalidRoute(tokenIn, address(this));
-        if (state.idle) return Planner._composition(state, _quoteParams(state, tokenIn == _token0(), 0), amountIn).shares;
+        if (state.book.supply == 0) return 0;
+        if (state.idle) {
+            Types.Plan memory plan = Planner._composition(state, _quoteParams(state, tokenIn == _token0(), 0), amountIn);
+            return plan.valid ? plan.shares : 0;
+        }
         uint256[2] memory backing = Inventory._totals(state.book);
         sharesOut = _sharesOutForDeposit(tokenIn == _token0() ? amountIn : 0, tokenIn == _token1() ? amountIn : 0,
             state.book.supply, backing[0], backing[1]);
-        if (sharesOut == 0) revert IStandardExchangeErrors.InvalidRoute(tokenIn, address(this));
+        if (sharesOut == 0) return 0;
     }
 
     
@@ -280,8 +282,10 @@ abstract contract UniswapV4FullSpreadHooklessStandardExchangeVaultInBase is Unis
         if (amountIn == 0) revert UniswapV4Exchange_ZeroAmount();
         bool token0 = tokenIn == _token0();
         Types.Snapshot memory state = _snapshot(token0 ? amountIn : 0, token0 ? 0 : amountIn);
+        if (state.book.supply == 0) revert IStandardExchangeErrors.InvalidRoute(tokenIn, address(this));
         if (state.idle) {
             Types.Plan memory plan = Planner._composition(state, _quoteParams(state, token0, 0), amountIn);
+            if (!plan.valid) revert AlignmentNotAchievable();
             sharesOut = plan.shares;
             if (sharesOut < minSharesOut) revert UniswapV4ExchangeIn_SlippageExceeded();
             _commitExecutionPlan(keccak256(abi.encode(plan)), 0, 0);
@@ -315,7 +319,7 @@ abstract contract UniswapV4FullSpreadHooklessStandardExchangeVaultInBase is Unis
         uint256 totalShares = IERC20(address(this)).totalSupply();
         (uint256 reserve0, uint256 reserve1) = _totalVaultReserves();
         sharesOut = _sharesOutForDeposit(amount0Added, amount1Added, totalShares, reserve0, reserve1);
-        if (sharesOut == 0) revert IStandardExchangeErrors.InvalidRoute(_token0(), address(this));
+        if (sharesOut == 0) return 0;
     }
 
     

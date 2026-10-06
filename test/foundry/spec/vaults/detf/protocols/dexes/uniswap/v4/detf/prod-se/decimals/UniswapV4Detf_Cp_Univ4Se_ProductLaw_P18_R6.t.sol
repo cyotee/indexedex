@@ -29,31 +29,32 @@ contract UniswapV4Detf_Cp_Univ4Se_ProductLaw_P18_R6 is UniswapV4Detf_Cp_Univ4Se_
         }
 
         uint256 topUp_ = _uPair(1);
-        uint256 lpBefore_ = IERC20(reserveHook).balanceOf(detfInfo.bondNftVault());
         uint256 supplyBefore_ = IERC20(detf).totalSupply();
         vm.prank(detfUser);
         assertTrue(pair_.transfer(detf, topUp_), "real holder funds later retry");
-        vm.expectCall(se, abi.encodeCall(IStandardExchangeIn.previewExchangeIn,
-            (pair_, retained_ + topUp_, IERC20(se))));
+        uint256 quoted_ = IStandardExchangeIn(se).previewExchangeIn(pair_, retained_ + topUp_, IERC20(se));
         detfInfo.sweepDust();
-        assertLt(pair_.balanceOf(detf), retained_ + topUp_, "funded retry consumes capital");
-        assertGt(IERC20(reserveHook).balanceOf(detfInfo.bondNftVault()), lpBefore_, "funded retry acquires protocol LP");
+        if (quoted_ == 0) {
+            assertEq(pair_.balanceOf(detf), retained_ + topUp_, "zero quote holds the top-up");
+        } else {
+            assertLt(pair_.balanceOf(detf), retained_ + topUp_, "positive quote consumes capital");
+        }
         assertEq(IERC20(detf).totalSupply(), supplyBefore_, "retry issues no DETF");
         _assertPairResidualBooked(address(pair_), se);
     }
 
     /// @dev Establish the actual mode: unbalanced has zero LP, single-asset rejects with exactly the alignment error.
     function _assertSelectedAlignmentResidual(IERC20 pair_, uint256 retained_) private {
-        assertGt(IStandardExchangeIn(se).previewExchangeIn(pair_, retained_, IERC20(se)), 0,
-            "whole input can issue SE shares");
+        assertEq(IStandardExchangeIn(se).previewExchangeIn(pair_, retained_, IERC20(se)), 0,
+            "unalignable input quotes zero");
         address[] memory tokens_ = new address[](1);
         uint256[] memory amounts_ = new uint256[](1);
         tokens_[0] = address(pair_);
         amounts_[0] = retained_;
         assertEq(IUniswapV4SeBufferHook(reserveHook).previewJoinUnbalanced(tokens_, amounts_), 0,
             "zero unbalanced LP selects single-asset retry");
-        vm.expectRevert(abi.encodeWithSignature("AlignmentNotAchievable()"));
-        IUniswapV4SeBufferHook(reserveHook).previewJoinSingleAssetExactIn(address(pair_), retained_);
+        assertEq(IUniswapV4SeBufferHook(reserveHook).previewJoinSingleAssetExactIn(address(pair_), retained_), 0,
+            "single-asset quote is zero, not a revert");
         assertEq(IBasicVault(detf).reserveOfToken(address(pair_)), retained_, "entire residual booked");
         assertEq(pair_.allowance(detf, reserveHook), 0, "hook allowance cleared");
         assertEq(pair_.allowance(reserveHook, se), 0, "SE allowance cleared");

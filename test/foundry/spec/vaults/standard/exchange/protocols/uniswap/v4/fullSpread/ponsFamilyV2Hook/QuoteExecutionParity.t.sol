@@ -14,8 +14,7 @@ contract UniswapV4FullSpreadPonsFamilyHookQuoteExecutionParityTest is Acceptance
     function test_singleSidedActivationRejectedBeforeTokenPull() public {
         token0.approve(address(vault), 0);
         bytes memory expected = abi.encodeWithSelector(IStandardExchangeErrors.InvalidRoute.selector, address(token0), address(vault));
-        vm.expectRevert(expected);
-        vault.previewExchangeIn(token0, 1e18, IERC20(address(vault)));
+        assertEq(vault.previewExchangeIn(token0, 1e18, IERC20(address(vault))), 0, "invalid activation quotes zero");
         vm.expectRevert(expected);
         vault.exchangeIn(token0, 1e18, IERC20(address(vault)), 0, address(this), false, block.timestamp);
         assertEq(vault.totalSupply(), 0);

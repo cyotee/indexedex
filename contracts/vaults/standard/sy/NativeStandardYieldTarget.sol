@@ -67,12 +67,12 @@ abstract contract NativeStandardYieldTarget {
     }
 
     function previewDeposit(address tokenIn_, uint256 amount_) external view returns (uint256) {
-        if (!isValidTokenIn(tokenIn_)) revert InvalidSYToken(tokenIn_);
+        if (!isValidTokenIn(tokenIn_)) return 0;
         return IStandardExchangeIn(address(this)).previewExchangeIn(IERC20(tokenIn_), amount_, IERC20(address(this)));
     }
 
     function previewRedeem(address tokenOut_, uint256 shares_) external view returns (uint256) {
-        if (!isValidTokenOut(tokenOut_)) revert InvalidSYToken(tokenOut_);
+        if (!isValidTokenOut(tokenOut_)) return 0;
         return IStandardExchangeIn(address(this)).previewExchangeIn(IERC20(address(this)), shares_, IERC20(tokenOut_));
     }
 

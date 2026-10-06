@@ -22,28 +22,27 @@ abstract contract MultiVaultWeightedDetfExchangeQueryTarget is MultiVaultWeighte
 
     function previewExchangeIn(IERC20 in_, uint256 amount_, IERC20 out_) public view virtual returns (uint256) {
         if (_directStakingRoute(in_, out_)) return amount_;
-        if (address(in_) == address(out_)) revert Repo.InvalidRoute(address(in_), address(out_));
-        _requireReserveLive();
+        if (address(in_) == address(out_) || !Repo._layoutStruct().isReserveLive) return 0;
         address staking_ = address(Repo._layoutStruct().rebasingClaimToken);
         if (address(in_) == address(this) || address(in_) == staking_) {
             (bool found_, uint256 leg_) = Repo._findVaultShareIndex(out_);
-            if (!found_) revert Repo.InvalidRoute(address(in_), address(out_));
+            if (!found_) return 0;
             return _previewPrimaryBurn()
                 ? _previewBptUnwind(leg_, _bptForDetfShares(amount_, true))
                 : _quoteReserveSwap(leg_, true, amount_);
         }
         if (address(out_) == address(this) || address(out_) == staking_) {
             (bool found_, uint256 leg_) = Repo._findVaultShareIndex(in_);
-            if (!found_) revert Repo.InvalidRoute(address(in_), address(out_));
+            if (!found_) return 0;
             return _previewPrimaryMint()
                 ? _splitMintedDetf(_quoteDetfOutForVaultShares(leg_, amount_)).userDetf
                 : _quoteReserveSwap(leg_, false, amount_);
         }
-        revert Repo.InvalidRoute(address(in_), address(out_));
+        return 0;
     }
 
     function previewExchangeOut(IERC20 in_, IERC20 out_, uint256 amount_) public view virtual returns (uint256) {
-        if (!_directStakingRoute(in_, out_)) revert Repo.InvalidRoute(address(in_), address(out_));
+        if (!_directStakingRoute(in_, out_)) return 0;
         return amount_;
     }
 

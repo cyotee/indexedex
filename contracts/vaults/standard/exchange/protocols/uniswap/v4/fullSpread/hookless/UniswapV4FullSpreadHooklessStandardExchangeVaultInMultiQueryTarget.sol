@@ -20,9 +20,7 @@ contract UniswapV4FullSpreadHooklessStandardExchangeVaultInMultiQueryTarget is U
             (address(tokenIn) == token0 && address(tokenOut) == token1)
                 || (address(tokenIn) == token1 && address(tokenOut) == token0)
         ) {
-            if (!canOpenPoolManagerUnlock()) {
-                revert UniswapV4Exchange_PoolManagerInteractionBlocked();
-            }
+            if (!canOpenPoolManagerUnlock()) return 0;
             return _quoteSwapIn(amountIn, address(tokenIn) == token0);
         }
 
@@ -34,7 +32,7 @@ contract UniswapV4FullSpreadHooklessStandardExchangeVaultInMultiQueryTarget is U
             return _previewZapOutExactIn(address(tokenOut), amountIn);
         }
 
-        revert IStandardExchangeIn.ExchangeInNotAvailable();
+        return 0;
     }
 
     function previewExchangeInManyToOne(address[] calldata tokenIn, uint256[] calldata amountsIn, IERC20 tokenOut)
@@ -43,7 +41,7 @@ contract UniswapV4FullSpreadHooklessStandardExchangeVaultInMultiQueryTarget is U
         returns (uint256 amountOut)
     {
         if (address(tokenOut) != address(this) || !_isDualPoolCurrencies(tokenIn) || !_dualAmountsPositive(amountsIn)) {
-            revert IStandardExchangeIn.ExchangeInNotAvailable();
+            return 0;
         }
         return _previewZapInDualDeposit(amountsIn[0], amountsIn[1]);
     }

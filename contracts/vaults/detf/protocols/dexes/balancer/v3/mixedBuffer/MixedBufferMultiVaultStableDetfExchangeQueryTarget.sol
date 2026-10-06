@@ -24,23 +24,26 @@ abstract contract MixedBufferMultiVaultStableDetfExchangeQueryTarget is
 
     function previewExchangeIn(IERC20 in_, uint256 amount_, IERC20 out_) public view virtual returns (uint256) {
         if (_directStakingRoute(in_, out_)) return amount_;
-        if (address(in_) == address(out_)) revert Repo.InvalidRoute(address(in_), address(out_));
-        _requireReserveLive();
+        if (address(in_) == address(out_) || !Repo._layoutStruct().isReserveLive) return 0;
         address staking_ = address(Repo._layoutStruct().rebasingClaimToken);
         if (address(in_) == address(this) || address(in_) == staking_) {
             return _previewBurnToken(out_, amount_);
         }
         if (address(out_) == address(this) || address(out_) == staking_) {
+            if (address(in_) != address(Repo._layoutStruct().bufferToken)) {
+                (bool found_,) = Repo._findVaultShareIndex(in_);
+                if (!found_) return 0;
+            }
             uint256 index_ = _paymentIndex(in_);
             return _previewPrimaryMint()
                 ? _splitMintedDetf(_quoteOrdinaryDetf(in_, amount_)).userDetf
                 : _quoteSwap(index_, Repo._layoutStruct().detfIndex, amount_);
         }
-        revert Repo.InvalidRoute(address(in_), address(out_));
+        return 0;
     }
 
     function previewExchangeOut(IERC20 in_, IERC20 out_, uint256 amount_) public view virtual returns (uint256) {
-        if (!_directStakingRoute(in_, out_)) revert Repo.InvalidRoute(address(in_), address(out_));
+        if (!_directStakingRoute(in_, out_)) return 0;
         return amount_;
     }
 

@@ -77,7 +77,9 @@ library UniswapV4FullSpreadHooklessStandardExchangeVaultTransitionPlanner {
         AnalyticComposition.ProjectedPoolOverlay memory live;
         AnalyticComposition.Failure failure;
         (best_, , failure) = AnalyticComposition._plan(state_, params_, credit_, live);
-        if (failure == AnalyticComposition.Failure.WorkLimit) revert Quotes.QuoteWorkLimit();
+        // A view quote must not revert. Work-limit and alignment failure are an
+        // invalid plan; the state-changing caller reverts from that result.
+        if (failure == AnalyticComposition.Failure.WorkLimit) return best_;
         if (failure == AnalyticComposition.Failure.None && best_.valid) {
             best_.refinements = 0;
             return best_;
@@ -85,7 +87,7 @@ library UniswapV4FullSpreadHooklessStandardExchangeVaultTransitionPlanner {
         // A price already at the swap limit has no positive in-domain root. The
         // deposit is still valid when the whole credit stays on the input leg.
         best_ = _zeroSwap(state_, params_, credit_);
-        if (!best_.valid) revert AlignmentNotAchievable();
+        if (!best_.valid) return best_;
         best_.refinements = 0;
     }
 
