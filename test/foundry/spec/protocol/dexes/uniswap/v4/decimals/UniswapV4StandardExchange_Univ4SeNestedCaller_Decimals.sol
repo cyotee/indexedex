@@ -1,0 +1,118 @@
+// SPDX-License-Identifier: BSL-1.1
+pragma solidity ^0.8.0;
+
+import {IStandardExchangeInMulti} from "contracts/interfaces/IStandardExchangeInMulti.sol";
+
+import {IERC20} from "@crane/contracts/interfaces/IERC20.sol";
+import {SafeTransferLib} from "@crane/contracts/tokens/ERC20/utils/SafeTransferLib.sol";
+import {PoolKey} from "@crane/contracts/protocols/dexes/uniswap/v4/types/PoolKey.sol";
+import {Currency} from "@crane/contracts/protocols/dexes/uniswap/v4/types/Currency.sol";
+import {TickMath} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/TickMath.sol";
+import {LiquidityAmounts} from "@crane/contracts/protocols/dexes/uniswap/v4/libraries/LiquidityAmounts.sol";
+
+import {IStandardExchangeIn} from "@crane/contracts/interfaces/IStandardExchangeIn.sol";
+import {IStandardExchangeProxy} from "contracts/interfaces/proxies/IStandardExchangeProxy.sol";
+import {IBasicVault} from "contracts/interfaces/IBasicVault.sol";
+import {MintableERC20Decimals} from "contracts/test/stubs/MintableERC20Decimals.sol";
+import {UniswapV4SeDecimalsHelpers} from
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/UniswapV4SeDecimalsHelpers.sol";
+import {UniswapV4LiquiditySeeder_ProDexUniV4} from
+    "test/foundry/spec/protocol/dexes/uniswap/v4/decimals/harness/UniswapV4SeDecimalsPoolOps.sol";
+
+/// @dev Holds Uni V4 SE shares and redeems with pretransferred=false (transferFrom). Copied from gold.
+contract Univ4SeNestedShareHolderDecimals {
+    function redeemShares(address se, uint256 shares, address tokenOut, uint256 deadline)
+        external
+        returns (uint256)
+    {
+        return IStandardExchangeIn(se).exchangeIn(
+            IERC20(se), shares, IERC20(tokenOut), 0, address(this), false, deadline
+        );
+    }
+
+    function approve(address token, address spender, uint256 amount) external {
+        IERC20(token).approve(spender, amount);
+    }
+}
+
+/**
+ * @title UniswapV4StandardExchange_Univ4SeNestedCaller_Decimals
+ * @notice Nested-caller share pull on combo decimals. pairToken = tokenA. vaultShare stays 18.
+ */
+abstract contract UniswapV4StandardExchange_Univ4SeNestedCaller_Decimals is UniswapV4SeDecimalsHelpers {
+    MintableERC20Decimals internal tokenA;
+    MintableERC20Decimals internal tokenB;
+    IStandardExchangeProxy internal vault;
+    Univ4SeNestedShareHolderDecimals internal holder;
+    PoolKey internal poolKey;
+
+    function _mintInitialShares() internal returns (uint256 shares) {
+        tokenA.mint(address(this), _uA(10));
+        tokenB.mint(address(this), _uB(10));
+        tokenA.approve(address(vault), _uA(10));
+        tokenB.approve(address(vault), _uB(10));
+        address[] memory tokens = new address[](2);
+        tokens[0] = Currency.unwrap(poolKey.currency0);
+        tokens[1] = Currency.unwrap(poolKey.currency1);
+        uint256[] memory amounts = new uint256[](2);
+        amounts[0] = tokens[0] == address(tokenA) ? _uA(10) : _uB(10);
+        amounts[1] = tokens[1] == address(tokenA) ? _uA(10) : _uB(10);
+        shares = IStandardExchangeInMulti(address(vault)).exchangeInManyToOne(
+            tokens, amounts, IERC20(address(vault)), 0, address(this), false, _deadline()
+        );
+    }
+
+    function setUp() public virtual override {
+        super.setUp();
+        tokenA = new MintableERC20Decimals("Token A", "TKNA", _tokenADecimals());
+        tokenB = new MintableERC20Decimals("Token B", "TKNB", _tokenBDecimals());
+        poolKey = _buildPoolKey(address(tokenA), address(tokenB));
+        uint160 sqrtP = _oneToOneHumanSqrtPrice(
+            Currency.unwrap(poolKey.currency0), Currency.unwrap(poolKey.currency1)
+        );
+        poolManager.initialize(poolKey, sqrtP);
+
+        UniswapV4LiquiditySeeder_ProDexUniV4 seeder = new UniswapV4LiquiditySeeder_ProDexUniV4(poolManager);
+        tokenA.mint(address(seeder), _uA(1_000_000));
+        tokenB.mint(address(seeder), _uB(1_000_000));
+        (int24 tickLower, int24 tickUpper) = _seedTicksAround(sqrtP, poolKey.tickSpacing);
+        uint128 liq = LiquidityAmounts.getLiquidityForAmounts(
+            sqrtP,
+            TickMath.getSqrtPriceAtTick(tickLower),
+            TickMath.getSqrtPriceAtTick(tickUpper),
+            _uOf(Currency.unwrap(poolKey.currency0), 100_000),
+            _uOf(Currency.unwrap(poolKey.currency1), 100_000)
+        );
+        seeder.addLiquidity(poolKey, tickLower, tickUpper, liq);
+
+        vault = IStandardExchangeProxy(uniswapV4StandardExchangeDFPkg.deployVault(poolKey));
+        holder = new Univ4SeNestedShareHolderDecimals();
+    }
+
+    function _tokenOut() internal view returns (address) {
+        return IBasicVault(address(vault)).vaultTokens()[0];
+    }
+
+    function test_exchangeIn_shares_contractHolder_zeroAllowance_revertsTransferFromFailed() public {
+        uint256 shares = _mintInitialShares();
+        assertGt(shares, 0, "minted shares");
+
+        IERC20(address(vault)).transfer(address(holder), shares);
+        assertEq(IERC20(address(vault)).allowance(address(holder), address(vault)), 0, "holder allowance 0");
+
+        address tokenOut = _tokenOut();
+        vm.expectRevert(SafeTransferLib.TransferFromFailed.selector);
+        holder.redeemShares(address(vault), shares, tokenOut, _deadline());
+    }
+
+    function test_exchangeIn_shares_contractHolder_afterApprove_succeeds() public {
+        uint256 shares = _mintInitialShares();
+        assertGt(shares, 0, "minted shares");
+
+        IERC20(address(vault)).transfer(address(holder), shares);
+        holder.approve(address(vault), address(vault), shares);
+        uint256 pairOut = holder.redeemShares(address(vault), shares, _tokenOut(), _deadline());
+        assertGt(pairOut, 0, "unwrap after approve");
+        assertGt(IERC20(_tokenOut()).balanceOf(address(holder)), 0, "holder received pair");
+    }
+}
